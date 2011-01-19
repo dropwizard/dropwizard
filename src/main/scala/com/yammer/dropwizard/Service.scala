@@ -19,8 +19,8 @@ trait Service extends Logging {
       new RequestLogHandlerModule,
       new ServletModule)
     val allModules = (includedModules ++ modules ++ servlets).toArray
-    log.debug("Using modules: %s", allModules.mkString(", "))
     val injector = Guice.createInjector(Stage.PRODUCTION, allModules: _*)
+    log.debug("Using modules: %s", allModules.mkString(", "))
 
     log.info("Starting %s", name)
     val server = injector.getInstance(classOf[jetty.Server])
