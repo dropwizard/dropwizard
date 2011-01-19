@@ -1,6 +1,6 @@
 package com.yammer.dropwizard
 
-import com.google.inject.{Inject, Injector}
+import com.google.inject.{Inject, Injector, Singleton}
 import java.io.File
 import com.sun.jersey.api.core.{ResourceConfig, ClasspathResourceConfig}
 import com.sun.jersey.guice.spi.container.servlet.GuiceContainer
@@ -12,6 +12,7 @@ import com.sun.jersey.spi.container.servlet.WebConfig
  *
  * @author coda
  */
+@Singleton
 class ScanningGuiceContainer @Inject() (injector: Injector) extends GuiceContainer(injector) {
   override def getDefaultResourceConfig(props: java.util.Map[String, Object], webConfig: WebConfig) = {
     val config = new ClasspathResourceConfig(classpath)
