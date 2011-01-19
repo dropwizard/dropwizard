@@ -3,13 +3,12 @@ package com.yammer.dropwizard
 import com.codahale.fig.Configuration
 import org.eclipse.jetty.util.thread.QueuedThreadPool
 import org.eclipse.jetty.server.bio.SocketConnector
-import com.google.inject.{Injector, Singleton, Provides, AbstractModule}
+import com.google.inject.{Injector, Singleton, Provides}
 import org.eclipse.jetty.server.handler.{HandlerCollection, RequestLogHandler}
 import com.yammer.metrics.core.MetricsServlet
 import com.yammer.metrics.jetty.InstrumentedHandler
 import org.eclipse.jetty.{server => jetty}
 import org.eclipse.jetty.server.Connector
-import com.codahale.logula.Logging
 import org.eclipse.jetty.servlet.{DefaultServlet, FilterMapping, ServletContextHandler, ServletHolder}
 import com.google.inject.servlet.{GuiceServletContextListener, GuiceFilter}
 
@@ -17,9 +16,7 @@ import com.google.inject.servlet.{GuiceServletContextListener, GuiceFilter}
  *
  * @author coda
  */
-class ServerModule extends AbstractModule with Logging {
-  def configure = {}
-
+class ServerModule extends ProviderModule {
   @Provides
   @Singleton
   def provideServer(config: Configuration, injector: Injector): jetty.Server = {
@@ -38,7 +35,6 @@ class ServerModule extends AbstractModule with Logging {
 
   private def mainConnector(config: Configuration) = {
     val port = config("http.port").or(8080)
-    log.debug("Creating main SocketConnector on port %d", port)
     val connector = new SocketConnector
     config("http.hostname").asOption[String].foreach(connector.setHost)
     connector.setForwarded(config("http.forwarded").or(false))

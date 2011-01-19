@@ -10,10 +10,14 @@ import com.yammer.dropwizard.{Service, ScanningGuiceContainer}
 trait Jersey extends Service {
   def rootUri = "/*"
 
-  override def servlets = super.servlets ++ Seq(new ServletModule {
-    override def configureServlets = {
-      // TODO: 1/19/11 <coda> -- this needs a wrapper, bad
-      serve(rootUri).`with`(classOf[ScanningGuiceContainer])
-    }
-  })
+  // TODO: 1/19/11 <coda> -- this needs a wrapper, bad
+  override def servlets = super.servlets ++ Seq(new JerseyModule(rootUri))
+}
+
+case class JerseyModule(rootUri: String) extends ServletModule {
+  override def configureServlets = {
+    serve(rootUri).`with`(classOf[ScanningGuiceContainer])
+  }
+
+  override def toString = "%s(%s)".format(getClass.getCanonicalName, rootUri)
 }

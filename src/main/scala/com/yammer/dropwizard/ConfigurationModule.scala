@@ -49,4 +49,6 @@ class ConfigurationModule(filename: String) extends AbstractModule {
       }
     }
   }
+
+  override def toString = "%s(%s)".format(getClass.getCanonicalName, filename)
 }
