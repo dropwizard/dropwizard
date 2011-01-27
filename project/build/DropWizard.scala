@@ -27,8 +27,8 @@ class DropWizard(info: ProjectInfo) extends DefaultProject(info)
   /**
    * Jersey Dependencies
    */
-  val jerseyGuice = "com.sun.jersey.contribs" % "jersey-guice" % "1.5-ea08"
-  val jerseyScala = "com.codahale" %% "jersey-scala" % "0.1.1"
+  val jerseyGuice = "com.sun.jersey.contribs" % "jersey-guice" % "1.5"
+  val jerseyScala = "com.codahale" %% "jersey-scala" % "0.1.2"
 
   /**
    * Misc Dependencies
