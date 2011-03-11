@@ -1,7 +1,6 @@
 package com.yammer.dropwizard.services
 
-import com.google.inject.servlet.ServletModule
-import com.yammer.dropwizard.{Service, ScanningGuiceContainer}
+import com.yammer.dropwizard.{GuiceServletModule, Service, ScanningGuiceContainer}
 
 /**
  *
@@ -14,9 +13,9 @@ trait Jersey extends Service {
   override def servlets = super.servlets ++ Seq(new JerseyModule(rootUri))
 }
 
-case class JerseyModule(rootUri: String) extends ServletModule {
+case class JerseyModule(rootUri: String) extends GuiceServletModule {
   override def configureServlets = {
-    serve(rootUri).`with`(classOf[ScanningGuiceContainer])
+    serve(rootUri).using[ScanningGuiceContainer]
   }
 
   override def toString = "%s(%s)".format(getClass.getCanonicalName, rootUri)
