@@ -15,6 +15,8 @@ trait Service extends Logging {
 
   def servlets: Iterable[ServletModule] = Seq.empty
 
+  def actions: Map[String, Seq[String] => Unit] = Map.empty
+
   def run(args: Array[String]) {
     args.toList match {
       case "server" :: filename :: Nil => {
@@ -37,6 +39,9 @@ trait Service extends Logging {
         val server = injector.getInstance(classOf[jetty.Server])
         server.start()
         server.join()
+      }
+      case action :: args if actions.contains(action) => {
+        actions(action)(args)
       }
       case cmds => {
         System.err.println("Unrecognized command: " + cmds.mkString(" "))
