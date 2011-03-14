@@ -3,6 +3,7 @@ package com.yammer.dropwizard
 import com.codahale.fig.Configuration
 import org.eclipse.jetty.util.thread.QueuedThreadPool
 import org.eclipse.jetty.server.bio.SocketConnector
+import org.eclipse.jetty.server.nio.{SelectChannelConnector, BlockingChannelConnector}
 import com.google.inject.{Injector, Singleton, Provides}
 import org.eclipse.jetty.server.handler.{HandlerCollection, RequestLogHandler}
 import com.yammer.metrics.core.MetricsServlet
@@ -33,9 +34,15 @@ class ServerModule extends ProviderModule {
     server
   }
 
+  private def newConnector(config: Configuration) = config("http.connector").or("blocking_channel") match {
+    case "socket" => new SocketConnector
+    case "select_channel" => new SelectChannelConnector
+    case "blocking_channel" => new BlockingChannelConnector
+  }
+
   private def mainConnector(config: Configuration) = {
     val port = config("http.port").or(8080)
-    val connector = new SocketConnector
+    val connector = newConnector(config)
     config("http.hostname").asOption[String].foreach(connector.setHost)
     connector.setForwarded(config("http.forwarded").or(false))
     connector.setPort(port)
@@ -54,8 +61,8 @@ class ServerModule extends ProviderModule {
   }
 
   private def internalConnector(config: Configuration) = {
-    val connector = new SocketConnector
-    connector.setPort(config("metrics.http_port").or(8081))
+    val connector = newConnector(config)
+    connector.setPort(config("metrics.port").or(8081))
     connector.setName("internal")
     connector
   }
