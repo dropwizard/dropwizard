@@ -19,6 +19,14 @@ trait Service extends Logging {
 
   def run(args: Array[String]) {
     args.toList match {
+      case Nil || "--help" :: Nil || "-h":: Nil => {
+        println("""
+usage: %s <COMMAND> [ARG1 ARG2 ...]
+
+Useful commands:
+   server <config file>       runs %s web service
+""".format(name, name))
+      }
       case "server" :: filename :: Nil => {
         val includedModules = Seq(
           new ConfigurationModule(filename),
