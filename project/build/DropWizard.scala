@@ -60,7 +60,7 @@ class DropWizard(info: ProjectInfo) extends DefaultProject(info)
    * Jetty Dependencies
    */
   val servletApi = "javax.servlet" % "servlet-api" % "2.5"
-  val jettyVersion = "7.2.2.v20101205"
+  val jettyVersion = "7.3.1.v20110307"
   val jettyServlet = "org.eclipse.jetty" % "jetty-servlet" % jettyVersion
   val jettyServlets = "org.eclipse.jetty" % "jetty-servlets" % jettyVersion
 
