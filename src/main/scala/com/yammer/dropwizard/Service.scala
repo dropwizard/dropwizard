@@ -19,7 +19,7 @@ trait Service extends Logging {
 
   def run(args: Array[String]) {
     args.toList match {
-      case Nil || "--help" :: Nil || "-h":: Nil => {
+      case Nil | "--help" :: Nil | "-h":: Nil => {
         println("""
 usage: %s <COMMAND> [ARG1 ARG2 ...]
 
