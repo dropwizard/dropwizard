@@ -12,6 +12,11 @@ class DropWizard(info: ProjectInfo) extends DefaultProject(info)
   override def packageToPublishActions = super.packageToPublishActions ++ Seq(packageSrc)
 
   /**
+   * Publish to internal Yammer repo for now.
+   */
+  lazy val publishTo = Resolver.sftp("repo.yammer.com", "repo.yammer.com", "/opt/repos/maven/")
+
+  /**
    * Repositories
    */
   val codasRepo = "Coda's Repo" at "http://repo.codahale.com"
@@ -27,16 +32,16 @@ class DropWizard(info: ProjectInfo) extends DefaultProject(info)
   /**
    * Jersey Dependencies
    */
-  val jerseyGuice = "com.sun.jersey.contribs" % "jersey-guice" % "1.5-ea08"
-  val jerseyScala = "com.codahale" %% "jersey-scala" % "0.1.1"
+  val jerseyGuice = "com.sun.jersey.contribs" % "jersey-guice" % "1.5"
+  val jerseyScala = "com.codahale" %% "jersey-scala" % "0.1.2"
 
   /**
    * Misc Dependencies
    */
   val fig = "com.codahale" %% "fig" % "1.1.1"
-  val jerkson = "com.codahale" %% "jerkson" % "0.1.4"
-  val jackson = "org.codehaus.jackson" % "jackson-core-asl" % "1.7.1"
-  val metrics = "com.yammer" %% "metrics" % "2.0.0-BETA8-SNAPSHOT"
+  val jerkson = "com.codahale" %% "jerkson" % "0.1.6"
+  val jackson = "org.codehaus.jackson" % "jackson-core-asl" % "1.7.3"
+  val metrics = "com.yammer" %% "metrics" % "2.0.0-BETA9"
 
   /**
    * Logging Dependencies
@@ -55,9 +60,11 @@ class DropWizard(info: ProjectInfo) extends DefaultProject(info)
    * Jetty Dependencies
    */
   val servletApi = "javax.servlet" % "servlet-api" % "2.5"
-  val jettyVersion = "7.2.2.v20101205"
-  val jettyServlet = "org.eclipse.jetty" % "jetty-servlet" % jettyVersion
-  val jettyServlets = "org.eclipse.jetty" % "jetty-servlets" % jettyVersion
+  val jettyVersion = "7.3.1.v20110307"
+  val jetty = "org.eclipse.jetty"
+  val jettyServer = jetty % "jetty-server" % jettyVersion
+  val jettyServlet = jetty % "jetty-servlet" % jettyVersion
+  val jettyServlets = jetty % "jetty-servlets" % jettyVersion
 
   override def fork = forkRun(List(
     "-server", // make sure we're using the 64-bit server VM

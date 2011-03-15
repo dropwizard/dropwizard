@@ -2,7 +2,7 @@ package com.yammer.dropwizard
 
 import org.eclipse.jetty.server.handler.RequestLogHandler
 import com.codahale.fig.Configuration
-import com.google.inject.{AbstractModule, Provides, Singleton}
+import com.google.inject.{Provides, Singleton}
 import org.eclipse.jetty.server.NCSARequestLog
 
 /**
@@ -10,9 +10,7 @@ import org.eclipse.jetty.server.NCSARequestLog
  *
  * @author coda
  */
-class RequestLogHandlerModule extends AbstractModule {
-  def configure = {}
-
+class RequestLogHandlerModule extends ProviderModule {
   @Provides
   @Singleton
   def provideRequestLogHandler(config: Configuration): RequestLogHandler = {
