@@ -24,7 +24,7 @@ class LoggingExceptionMapper extends ExceptionMapper[Throwable] with Logging {
       log.error(exception, "Error handling a request, ID:%x", id)
       Response.status(Status.INTERNAL_SERVER_ERROR)
         .`type`(MediaType.TEXT_PLAIN)
-        .entity("There was an error processing your request. It has been logged (ID %x)\n".format(id))
+        .entity("There was an error processing your request. It has been logged (ID %x).\n".format(id))
         .build
     }
   }
