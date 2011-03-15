@@ -1,4 +1,4 @@
 Drop Wizard
 ===========
 
-We gon' write some damn services.
+No docs yet, still hacking.
