@@ -61,8 +61,10 @@ class DropWizard(info: ProjectInfo) extends DefaultProject(info)
    */
   val servletApi = "javax.servlet" % "servlet-api" % "2.5"
   val jettyVersion = "7.3.1.v20110307"
-  val jettyServlet = "org.eclipse.jetty" % "jetty-servlet" % jettyVersion
-  val jettyServlets = "org.eclipse.jetty" % "jetty-servlets" % jettyVersion
+  val jetty = "org.eclipse.jetty"
+  val jettyServer = jetty % "jetty-server" % jettyVersion
+  val jettyServlet = jetty % "jetty-servlet" % jettyVersion
+  val jettyServlets = jetty % "jetty-servlets" % jettyVersion
 
   override def fork = forkRun(List(
     "-server", // make sure we're using the 64-bit server VM
