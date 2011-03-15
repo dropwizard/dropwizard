@@ -11,12 +11,12 @@ import org.slf4j.bridge.SLF4JBridgeHandler
  *
  * @author coda
  */
-class ConfigurationModule(filename: String) extends AbstractModule {
+class ConfigurationModule(filename: String) extends GuiceModule {
   private val config = new Configuration(filename)
 
   def configure = {
     configureLogging()
-    bind(classOf[Configuration]).toInstance(config)
+    bind[Configuration].toInstance(config)
   }
 
   private def configureLogging() {
