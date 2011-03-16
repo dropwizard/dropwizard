@@ -1,13 +1,9 @@
 package com.yammer.dropwizard.examples
 
 import com.yammer.dropwizard.Service
-import com.yammer.dropwizard.services.Jersey
+import com.yammer.dropwizard.service.Jersey
 
-/**
- *
- * @author coda
- */
-class ExampleService extends Service with Jersey {
+object Example extends Service with Jersey {
   def name = "Example"
 
   override def banner = Some("""
@@ -21,5 +17,6 @@ class ExampleService extends Service with Jersey {
                                       dP
 """)
 
-  override def modules = Seq(new SayingModule)
+  require(new SayingModule)
+  provide(new SayCommand)
 }

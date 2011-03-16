@@ -1,4 +1,4 @@
-package com.yammer.dropwizard
+package com.yammer.dropwizard.modules
 
 import scala.collection.JavaConversions.asJavaMap
 import javax.servlet.Filter

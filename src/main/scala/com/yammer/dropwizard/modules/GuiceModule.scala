@@ -1,4 +1,4 @@
-package com.yammer.dropwizard
+package com.yammer.dropwizard.modules
 
 import com.google.inject.AbstractModule
 import com.google.inject.binder.{LinkedBindingBuilder, ScopedBindingBuilder, AnnotatedBindingBuilder}
@@ -11,6 +11,8 @@ import com.google.inject.binder.{LinkedBindingBuilder, ScopedBindingBuilder, Ann
 abstract class GuiceModule extends AbstractModule {
   implicit def linkedBindingBuilder2scalaBuilder[A](builder: LinkedBindingBuilder[A]) = new {
     def to[T <: A](implicit mf: Manifest[T]): ScopedBindingBuilder = builder.to(mf.erasure.asInstanceOf[Class[A]])
+
+    def providedBy[T](implicit mf: Manifest[T]) = "poop"
   }
 
   protected def bind[A](implicit mf: Manifest[A]): AnnotatedBindingBuilder[A] = bind(mf.erasure.asInstanceOf[Class[A]])

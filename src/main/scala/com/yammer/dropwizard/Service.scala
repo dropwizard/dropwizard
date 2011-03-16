@@ -1,60 +1,56 @@
 package com.yammer.dropwizard
 
-import org.eclipse.jetty.{server => jetty}
+import collection.{immutable, mutable}
 import com.codahale.logula.Logging
-import com.google.inject.servlet.ServletModule
 import com.google.inject.{Stage, Guice, Module}
+import com.yammer.dropwizard.modules.{ServerModule, RequestLogHandlerModule}
+import com.yammer.dropwizard.cli.{ServerCommand, Command}
 
 trait Service extends Logging {
-  // TODO: 1/19/11 <coda> -- possible to just expose more Scala-y binding rules?
-  def modules: Iterable[Module] = Seq.empty
+  private val modules = new mutable.ArrayBuffer[Module]() ++ Seq(new RequestLogHandlerModule, new ServerModule)
+
+  protected def require(modules: Module*) { this.modules ++= modules }
+
+  private var commands = new immutable.TreeMap[String, Command]
+  protected def provide(commands: Command*) { commands.foreach { c => this.commands += c.name -> c } }
+  provide(new ServerCommand(this))
 
   def name: String
 
   def banner: Option[String] = None
 
-  def servlets: Iterable[ServletModule] = Seq.empty
+  protected lazy val injector = Guice.createInjector(Stage.PRODUCTION, modules.toArray: _*)
 
-  def actions: Map[String, Seq[String] => Unit] = Map.empty
+  private def printUsage(error: Option[String] = None) {
+    for (msg <- error) {
+      System.err.printf("Error: %s\n\n", msg)
+    }
 
-  def run(args: Array[String]) {
+    printf("%s <command> [arg1 arg2]\n\n", cli.jarSyntax)
+
+
+    println("Commands")
+    println("========\n")
+    for (cmd <- commands.values) {
+      println(cmd.name)
+      println("-" * cmd.name.length)
+      cmd.printUsage()
+      println("\n")
+    }
+  }
+
+  def main(args: Array[String]) {
     args.toList match {
-      case Nil | "--help" :: Nil | "-h":: Nil => {
-        println("""
-usage: %s <COMMAND> [ARG1 ARG2 ...]
-
-Useful commands:
-   server <config file>       runs %s web service
-""".format(name, name))
-      }
-      case "server" :: filename :: Nil => {
-        val includedModules = Seq(
-          new ConfigurationModule(filename),
-          new ServerModule,
-          new RequestLogHandlerModule,
-          new ServletModule
-        )
-        val allModules = (includedModules ++ modules ++ servlets).toArray
-        val injector = Guice.createInjector(Stage.PRODUCTION, allModules: _*)
-        log.debug("Using modules: %s", allModules.mkString(", "))
-
-        log.info("Starting %s", name)
-
-        if (banner.isDefined) {
-          log.info("\n%s\n", banner.get)
+      case Nil | "-h" :: Nil | "--help" :: Nil => printUsage()
+      case command :: args => {
+        commands.get(command) match {
+          case Some(cmd) => cmd.execute(modules.toSeq, args).foreach {
+            s => cmd.printUsage(Some(s))
+          }
+          case None => printUsage(Some("Unrecognized command: " + command))
         }
-
-        val server = injector.getInstance(classOf[jetty.Server])
-        server.start()
-        server.join()
-      }
-      case action :: args if actions.contains(action) => {
-        actions(action)(args)
-      }
-      case cmds => {
-        System.err.println("Unrecognized command: " + cmds.mkString(" "))
-
       }
     }
   }
 }
+

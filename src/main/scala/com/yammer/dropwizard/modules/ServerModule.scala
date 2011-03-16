@@ -1,4 +1,4 @@
-package com.yammer.dropwizard
+package com.yammer.dropwizard.modules
 
 import com.codahale.fig.Configuration
 import org.eclipse.jetty.util.thread.QueuedThreadPool
@@ -8,19 +8,14 @@ import com.google.inject.{Injector, Singleton, Provides}
 import org.eclipse.jetty.server.handler.{HandlerCollection, RequestLogHandler}
 import com.yammer.metrics.core.MetricsServlet
 import com.yammer.metrics.jetty.InstrumentedHandler
-import org.eclipse.jetty.{server => jetty}
-import org.eclipse.jetty.server.Connector
 import org.eclipse.jetty.servlet.{DefaultServlet, FilterMapping, ServletContextHandler, ServletHolder}
 import com.google.inject.servlet.{GuiceServletContextListener, GuiceFilter}
+import org.eclipse.jetty.server.{Connector, Server}
 
-/**
- *
- * @author coda
- */
 class ServerModule extends ProviderModule {
   @Provides
   @Singleton
-  def provideServer(config: Configuration, injector: Injector): jetty.Server = {
+  def provideServer(config: Configuration, injector: Injector): Server = {
     val server = makeServer(config, mainConnector(config), internalConnector(config))
 
     val handlers = new HandlerCollection
@@ -51,7 +46,7 @@ class ServerModule extends ProviderModule {
   }
 
   private def makeServer(config: Configuration, connectors: Connector*) = {
-    val server = new jetty.Server
+    val server = new Server
     connectors.foreach(server.addConnector)
     server.setSendServerVersion(false)
     server.setThreadPool(new QueuedThreadPool(config("http.max_connections").or(50)))

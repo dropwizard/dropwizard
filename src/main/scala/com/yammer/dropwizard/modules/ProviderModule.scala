@@ -1,11 +1,7 @@
-package com.yammer.dropwizard
+package com.yammer.dropwizard.modules
 
 import com.google.inject.AbstractModule
 
-/**
- *
- * @author coda
- */
 abstract class ProviderModule extends AbstractModule {
   def configure = {}
 
