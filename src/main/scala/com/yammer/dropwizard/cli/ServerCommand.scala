@@ -9,6 +9,9 @@ class ServerCommand(service: Service) extends ConfiguredCommand {
   override protected def commandSyntax(jarSyntax: String) =
     "%s %s <config file>".format(jarSyntax, name)
 
+
+  override def description = Some("Starts an HTTP server running the service")
+
   def runWithConfigFile(opts: Map[String, List[String]],
                         args: List[String]) = {
     log.info("Starting %s", service.name)

@@ -6,6 +6,9 @@ import org.apache.commons.cli.Options
 class SayCommand extends ConfiguredCommand {
   def name = "say"
 
+
+  override def description = Some("Prints out the saying to console")
+
   override def cliOptions = {
     val opts = new Options
     opts.addOption("v", "verbose", false, "yell it a lot")

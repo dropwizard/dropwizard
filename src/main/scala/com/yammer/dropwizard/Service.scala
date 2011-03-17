@@ -32,8 +32,6 @@ trait Service extends Logging with JarAware {
     println("Commands")
     println("========\n")
     for (cmd <- commands.values) {
-      println(cmd.name)
-      println("-" * cmd.name.length)
       cmd.printUsage(jarSyntax)
       println("\n")
     }

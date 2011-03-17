@@ -12,6 +12,8 @@ trait Command extends Logging {
 
   def name: String
 
+  def description: Option[String] = None
+
   def cliOptions: Option[Options] = None
 
   def execute(modules: Seq[Module], args: Seq[String]): Option[String] = {
@@ -44,6 +46,10 @@ trait Command extends Logging {
     }
 
     val formatter = new HelpFormatter
+    val title = "%s%s".format(name, description.map { d => ": %s".format(d) }.getOrElse(""))
+
+    println(title)
+    println("-" * title.length)
     formatter.printHelp(commandSyntax(jarSyntax), cliOptions.getOrElse(new Options), false)
   }
 }
