@@ -6,7 +6,7 @@ import com.google.inject.{Stage, Guice, Module}
 import com.yammer.dropwizard.modules.{ServerModule, RequestLogHandlerModule}
 import com.yammer.dropwizard.cli.{ServerCommand, Command}
 
-trait Service extends Logging {
+trait Service extends Logging with JarAware {
   private val modules = new mutable.ArrayBuffer[Module]() ++ Seq(new RequestLogHandlerModule, new ServerModule)
 
   protected def require(modules: Module*) { this.modules ++= modules }
@@ -26,7 +26,7 @@ trait Service extends Logging {
       System.err.printf("Error: %s\n\n", msg)
     }
 
-    printf("%s <command> [arg1 arg2]\n\n", cli.jarSyntax)
+    printf("%s <command> [arg1 arg2]\n\n", jarSyntax)
 
 
     println("Commands")
@@ -34,7 +34,7 @@ trait Service extends Logging {
     for (cmd <- commands.values) {
       println(cmd.name)
       println("-" * cmd.name.length)
-      cmd.printUsage()
+      cmd.printUsage(jarSyntax)
       println("\n")
     }
   }
@@ -45,7 +45,7 @@ trait Service extends Logging {
       case command :: args => {
         commands.get(command) match {
           case Some(cmd) => cmd.execute(modules.toSeq, args).foreach {
-            s => cmd.printUsage(Some(s))
+            s => cmd.printUsage(jarSyntax, Some(s))
           }
           case None => printUsage(Some("Unrecognized command: " + command))
         }

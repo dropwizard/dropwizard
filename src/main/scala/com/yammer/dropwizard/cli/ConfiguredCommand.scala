@@ -5,7 +5,8 @@ import com.codahale.jerkson.ParsingException
 import com.yammer.dropwizard.modules.ConfigurationModule
 
 trait ConfiguredCommand extends Command {
-  override protected def commandSyntax = "%s %s [options] <config file> [argumemts]".format(jarSyntax, name)
+  override protected def commandSyntax(jarSyntax: String) =
+    "%s %s [options] <config file> [argumemts]".format(jarSyntax, name)
 
   def run(opts: Map[String, List[String]], args: List[String]) = args match {
     case filename :: others => {

@@ -1,6 +1,6 @@
 package com.yammer.dropwizard
 
-package object cli {
+trait JarAware {
   def jarSyntax = {
     val thisJar = this.getClass.getProtectionDomain.getCodeSource.getLocation.getFile
     "java -jar %s".format(

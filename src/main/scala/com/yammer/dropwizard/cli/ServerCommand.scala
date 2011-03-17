@@ -6,7 +6,8 @@ import com.yammer.dropwizard.Service
 class ServerCommand(service: Service) extends ConfiguredCommand {
   def name = "server"
 
-  override protected def commandSyntax = "%s %s <config file>".format(jarSyntax, name)
+  override protected def commandSyntax(jarSyntax: String) =
+    "%s %s <config file>".format(jarSyntax, name)
 
   def runWithConfigFile(opts: Map[String, List[String]],
                         args: List[String]) = {

@@ -33,16 +33,17 @@ trait Command extends Logging {
 
   def run(opts: Map[String, List[String]], args: List[String]): Option[String]
 
-  protected def commandSyntax = "%s %s [options] [arguments]".format(jarSyntax, name)
+  protected def commandSyntax(jarSyntax: String) =
+    "%s %s [options] [arguments]".format(jarSyntax, name)
 
   protected lazy val injector = Guice.createInjector(Stage.PRODUCTION, modules: _*)
 
-  def printUsage(error: Option[String] = None) {
+  def printUsage(jarSyntax: String, error: Option[String] = None) {
     for (msg <- error) {
       System.err.printf("Error: %s\n\n", msg)
     }
 
     val formatter = new HelpFormatter
-    formatter.printHelp(commandSyntax, cliOptions.getOrElse(new Options), false)
+    formatter.printHelp(commandSyntax(jarSyntax), cliOptions.getOrElse(new Options), false)
   }
 }
