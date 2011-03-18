@@ -23,7 +23,7 @@ trait Service extends Logging with JarAware {
 
   private def printUsage(error: Option[String] = None) {
     for (msg <- error) {
-      System.err.printf("Error: %s\n\n", msg)
+      System.err.printf("%s\n\n", msg)
     }
 
     printf("%s <command> [arg1 arg2]\n\n", jarSyntax)
@@ -42,8 +42,8 @@ trait Service extends Logging with JarAware {
       case Nil | "-h" :: Nil | "--help" :: Nil => printUsage()
       case command :: args => {
         commands.get(command) match {
-          case Some(cmd) => cmd.execute(modules.toSeq, args).foreach {
-            s => cmd.printUsage(jarSyntax, Some(s))
+          case Some(cmd) => {
+            cmd.execute(jarSyntax, modules.toSeq, args)
           }
           case None => printUsage(Some("Unrecognized command: " + command))
         }

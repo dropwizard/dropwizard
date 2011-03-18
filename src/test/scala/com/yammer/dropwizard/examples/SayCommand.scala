@@ -1,19 +1,13 @@
 package com.yammer.dropwizard.examples
 
-import com.yammer.dropwizard.cli.ConfiguredCommand
-import org.apache.commons.cli.Options
+import com.yammer.dropwizard.cli.{Flag, ConfiguredCommand}
 
 class SayCommand extends ConfiguredCommand {
   def name = "say"
 
-
   override def description = Some("Prints out the saying to console")
 
-  override def cliOptions = {
-    val opts = new Options
-    opts.addOption("v", "verbose", false, "yell it a lot")
-    Some(opts)
-  }
+  override def options = Flag("v", "verbose", "yell it a lot") :: Nil
 
   def runWithConfigFile(opts: Map[String, List[String]],
                         args: List[String]) = {

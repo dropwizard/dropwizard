@@ -3,8 +3,9 @@ package com.yammer.dropwizard.cli
 import java.io.File
 import com.codahale.jerkson.ParsingException
 import com.yammer.dropwizard.modules.ConfigurationModule
+import com.codahale.logula.Logging
 
-trait ConfiguredCommand extends Command {
+trait ConfiguredCommand extends Command with Logging {
   override protected def commandSyntax(jarSyntax: String) =
     "%s %s [options] <config file> [argumemts]".format(jarSyntax, name)
 

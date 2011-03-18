@@ -18,5 +18,5 @@ object Example extends Service with Jersey {
 """)
 
   require(new SayingModule)
-  provide(new SayCommand)
+  provide(new SayCommand, new SplodyCommand)
 }
