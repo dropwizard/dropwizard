@@ -5,6 +5,7 @@ import com.codahale.logula.Logging
 import com.google.inject.{Stage, Guice, Module}
 import com.yammer.dropwizard.modules.{ServerModule, RequestLogHandlerModule}
 import com.yammer.dropwizard.cli.{ServerCommand, Command}
+import util.JarAware
 
 trait Service extends Logging with JarAware {
   private val modules = new mutable.ArrayBuffer[Module]() ++ Seq(new RequestLogHandlerModule, new ServerModule)

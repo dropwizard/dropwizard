@@ -1,4 +1,4 @@
-package com.yammer.dropwizard
+package com.yammer.dropwizard.util
 
 trait JarAware {
   def jarSyntax = {
