@@ -2,7 +2,7 @@ package com.yammer.dropwizard
 
 import collection.{immutable, mutable}
 import com.codahale.logula.Logging
-import com.google.inject.{Stage, Guice, Module}
+import com.google.inject.Module
 import com.yammer.dropwizard.modules.{ServerModule, RequestLogHandlerModule}
 import com.yammer.dropwizard.cli.{ServerCommand, Command}
 import util.JarAware
@@ -19,8 +19,6 @@ trait Service extends Logging with JarAware {
   def name: String
 
   def banner: Option[String] = None
-
-  protected lazy val injector = Guice.createInjector(Stage.PRODUCTION, modules.toArray: _*)
 
   private def printUsage(error: Option[String] = None) {
     for (msg <- error) {
