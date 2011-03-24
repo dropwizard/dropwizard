@@ -6,11 +6,11 @@ import org.eclipse.jetty.server.bio.SocketConnector
 import org.eclipse.jetty.server.nio.{SelectChannelConnector, BlockingChannelConnector}
 import com.google.inject.{Injector, Singleton, Provides}
 import org.eclipse.jetty.server.handler.{HandlerCollection, RequestLogHandler}
-import com.yammer.metrics.core.MetricsServlet
 import com.yammer.metrics.jetty.InstrumentedHandler
 import org.eclipse.jetty.servlet.{DefaultServlet, FilterMapping, ServletContextHandler, ServletHolder}
 import com.google.inject.servlet.{GuiceServletContextListener, GuiceFilter}
 import org.eclipse.jetty.server.{Connector, Server}
+import com.yammer.metrics.reporting.MetricsServlet
 
 class ServerModule extends ProviderModule {
   @Provides

@@ -2,7 +2,7 @@ package com.yammer.dropwizard.cli
 
 import org.eclipse.jetty.server.Server
 import com.yammer.dropwizard.Service
-import com.yammer.metrics.core.Metrics
+import com.yammer.metrics.HealthChecks
 
 class ServerCommand(service: Service) extends ConfiguredCommand {
   def name = "server"
@@ -15,7 +15,7 @@ class ServerCommand(service: Service) extends ConfiguredCommand {
 
   def runWithConfigFile(opts: Map[String, List[String]],
                         args: List[String]) = {
-    if (!Metrics.hasHealthChecks) {
+    if (!HealthChecks.hasHealthChecks) {
       log.warn("""
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
