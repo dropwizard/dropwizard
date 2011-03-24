@@ -6,6 +6,7 @@ import com.google.inject.Module
 import com.yammer.dropwizard.modules.{ServerModule, RequestLogHandlerModule}
 import com.yammer.dropwizard.cli.{ServerCommand, Command}
 import util.JarAware
+import com.yammer.metrics.core.{Metrics, HealthCheck}
 
 trait Service extends Logging with JarAware {
   private val modules = new mutable.ArrayBuffer[Module]() ++ Seq(new RequestLogHandlerModule, new ServerModule)
@@ -15,6 +16,10 @@ trait Service extends Logging with JarAware {
   private var commands = new immutable.TreeMap[String, Command]
   protected def provide(commands: Command*) { commands.foreach { c => this.commands += c.name -> c } }
   provide(new ServerCommand(this))
+
+  protected def healthCheck(name: String, healthCheck: HealthCheck) {
+    Metrics.registerHealthCheck(name, healthCheck)
+  }
 
   def name: String
 
