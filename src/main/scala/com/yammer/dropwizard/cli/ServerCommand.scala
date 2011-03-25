@@ -1,8 +1,11 @@
 package com.yammer.dropwizard.cli
 
+import collection.JavaConversions._
 import org.eclipse.jetty.server.Server
 import com.yammer.dropwizard.Service
 import com.yammer.metrics.HealthChecks
+import com.yammer.metrics.core.HealthCheck
+import com.google.inject.{ConfigurationException, Key, TypeLiteral}
 
 class ServerCommand(service: Service) extends ConfiguredCommand {
   def name = "server"
@@ -15,8 +18,12 @@ class ServerCommand(service: Service) extends ConfiguredCommand {
 
   def runWithConfigFile(opts: Map[String, List[String]],
                         args: List[String]) = {
-    if (!HealthChecks.hasHealthChecks) {
-      log.warn("""
+    try {
+      val healthchecks = injector.getInstance(Key.get(new TypeLiteral[java.util.Set[HealthCheck]]() {}))
+      healthchecks.foreach(HealthChecks.registerHealthCheck)
+    } catch {
+      case e: ConfigurationException => {
+        log.warn("""
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -26,6 +33,7 @@ class ServerCommand(service: Service) extends ConfiguredCommand {
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 """)
+      }
     }
 
     log.info("Starting %s", service.name)
