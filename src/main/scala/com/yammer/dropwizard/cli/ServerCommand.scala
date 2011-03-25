@@ -6,6 +6,7 @@ import com.yammer.dropwizard.Service
 import com.yammer.metrics.HealthChecks
 import com.yammer.metrics.core.HealthCheck
 import com.google.inject.{ConfigurationException, Key, TypeLiteral}
+import com.yammer.dropwizard.lifecycle.JettyManager
 
 class ServerCommand(service: Service) extends ConfiguredCommand {
   def name = "server"
@@ -16,7 +17,7 @@ class ServerCommand(service: Service) extends ConfiguredCommand {
 
   override def description = Some("Starts an HTTP server running the service")
 
-  def runWithConfigFile(opts: Map[String, List[String]],
+  final def runWithConfigFile(opts: Map[String, List[String]],
                         args: List[String]) = {
     try {
       val healthchecks = injector.getInstance(Key.get(new TypeLiteral[java.util.Set[HealthCheck]]() {}))
@@ -41,6 +42,7 @@ class ServerCommand(service: Service) extends ConfiguredCommand {
     service.banner.foreach {s => log.info("\n%s\n", s)}
 
     val server = injector.getInstance(classOf[Server])
+    JettyManager.collect(injector).foreach(server.addBean)
     server.start()
     server.join()
     None

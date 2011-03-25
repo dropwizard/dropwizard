@@ -9,7 +9,7 @@ trait ConfiguredCommand extends Command with Logging {
   override protected def commandSyntax(jarSyntax: String) =
     "%s %s [options] <config file> [argumemts]".format(jarSyntax, name)
 
-  def run(opts: Map[String, List[String]], args: List[String]) = args match {
+  final def run(opts: Map[String, List[String]], args: List[String]) = args match {
     case filename :: others => {
       val f = new File(filename)
       if (f.exists && f.isFile) {

@@ -19,5 +19,6 @@ object Example extends Service with Jersey {
 
   require(new SayingModule)
   provide(new SayCommand, new SplodyCommand)
+  manage[StartableObject]
   healthCheck[DumbHealthCheck]
 }

@@ -1,6 +1,7 @@
 package com.yammer.dropwizard
 
 import collection.{immutable, mutable}
+import lifecycle.Managed
 import util.JarAware
 import com.codahale.logula.Logging
 import com.google.inject.Module
@@ -21,6 +22,16 @@ trait Service extends Logging with JarAware {
       def configure {
         multibind[HealthCheck] { healthchecks =>
           healthchecks.addBinding.to(mf.erasure.asInstanceOf[Class[HealthCheck]])
+        }
+      }
+    }
+  }
+
+  protected def manage[A <: Managed](implicit mf: Manifest[A]) {
+    modules += new GuiceModule {
+      def configure {
+        multibind[Managed] {lifecycles =>
+          lifecycles.addBinding.to(mf.erasure.asInstanceOf[Class[Managed]])
         }
       }
     }
