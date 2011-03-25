@@ -1,7 +1,7 @@
 import sbt._
 import maven._
 
-class DropWizardProject(info: ProjectInfo) extends DefaultProject(info)
+class DropwizardProject(info: ProjectInfo) extends DefaultProject(info)
                                                    with IdeaProject
                                                    with MavenDependencies {
   /**
