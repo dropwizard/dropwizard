@@ -2,15 +2,20 @@ package com.yammer.dropwizard
 
 import collection.{immutable, mutable}
 import lifecycle.Managed
-import modules.{GuiceMultibindingModule, GuiceModule, ServerModule, RequestLogHandlerModule}
+import modules.{GuiceMultibindingModule, ServerModule, RequestLogHandlerModule}
 import util.JarAware
 import com.codahale.logula.Logging
 import com.google.inject.Module
 import com.yammer.dropwizard.cli.{ServerCommand, Command}
 import com.yammer.metrics.core.HealthCheck
+import com.yammer.metrics.guice.InstrumentationModule
 
 trait Service extends Logging with JarAware {
-  private val modules = new mutable.ArrayBuffer[Module]() ++ Seq(new RequestLogHandlerModule, new ServerModule)
+  private val modules = new mutable.ArrayBuffer[Module]() ++ Seq(
+    new RequestLogHandlerModule,
+    new ServerModule,
+    new InstrumentationModule
+  )
   protected def require(modules: Module*) { this.modules ++= modules }
 
   private var commands = new immutable.TreeMap[String, Command]
