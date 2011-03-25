@@ -9,6 +9,12 @@ class StartableObject @Inject()(template: String) extends Managed with Logging {
     log.info("Starting: %s", template)
   }
 
+  /**
+   * N.B.: This actually gets called, but if you're running it through SBT
+   * and you hit ^C you won't see the final set of log statements indicating
+   * that it actually does the full shutdown. It does. kill -SIGINT the JVM
+   * instead of hitting ^C and you'll see the log statements.
+   */
   override def stop() {
     log.info("Stopping")
   }
