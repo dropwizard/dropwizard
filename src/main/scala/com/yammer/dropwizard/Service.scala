@@ -2,11 +2,11 @@ package com.yammer.dropwizard
 
 import collection.{immutable, mutable}
 import lifecycle.Managed
+import modules.{GuiceMultibindingModule, GuiceModule, ServerModule, RequestLogHandlerModule}
 import util.JarAware
 import com.codahale.logula.Logging
 import com.google.inject.Module
 import com.yammer.dropwizard.cli.{ServerCommand, Command}
-import modules.{GuiceModule, ServerModule, RequestLogHandlerModule}
 import com.yammer.metrics.core.HealthCheck
 
 trait Service extends Logging with JarAware {
@@ -18,23 +18,11 @@ trait Service extends Logging with JarAware {
   provide(new ServerCommand(this))
   
   protected def healthCheck[A <: HealthCheck](implicit mf: Manifest[A]) {
-    modules += new GuiceModule {
-      def configure {
-        multibind[HealthCheck] { healthchecks =>
-          healthchecks.addBinding.to(mf.erasure.asInstanceOf[Class[HealthCheck]])
-        }
-      }
-    }
+    modules += new GuiceMultibindingModule(classOf[HealthCheck], mf.erasure.asInstanceOf[Class[HealthCheck]])
   }
 
   protected def manage[A <: Managed](implicit mf: Manifest[A]) {
-    modules += new GuiceModule {
-      def configure {
-        multibind[Managed] {lifecycles =>
-          lifecycles.addBinding.to(mf.erasure.asInstanceOf[Class[Managed]])
-        }
-      }
-    }
+    modules += new GuiceMultibindingModule(classOf[Managed], mf.erasure.asInstanceOf[Class[Managed]])
   }
 
   def name: String
