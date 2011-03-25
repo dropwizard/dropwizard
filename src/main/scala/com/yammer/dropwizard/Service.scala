@@ -7,7 +7,6 @@ import com.google.inject.Module
 import com.yammer.dropwizard.cli.{ServerCommand, Command}
 import modules.{GuiceModule, ServerModule, RequestLogHandlerModule}
 import com.yammer.metrics.core.HealthCheck
-import com.google.inject.multibindings.Multibinder
 
 trait Service extends Logging with JarAware {
   private val modules = new mutable.ArrayBuffer[Module]() ++ Seq(new RequestLogHandlerModule, new ServerModule)
@@ -20,8 +19,9 @@ trait Service extends Logging with JarAware {
   protected def healthCheck[A <: HealthCheck](implicit mf: Manifest[A]) {
     modules += new GuiceModule {
       def configure {
-        val healthchecks = Multibinder.newSetBinder(binder, classOf[HealthCheck])
-        healthchecks.addBinding.to(mf.erasure.asInstanceOf[Class[HealthCheck]])
+        multibind[HealthCheck] { healthchecks =>
+          healthchecks.addBinding.to(mf.erasure.asInstanceOf[Class[HealthCheck]])
+        }
       }
     }
   }
