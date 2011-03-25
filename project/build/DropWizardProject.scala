@@ -2,8 +2,8 @@ import sbt._
 import maven._
 
 class DropWizardProject(info: ProjectInfo) extends DefaultProject(info)
-                                            with IdeaProject
-                                            with MavenDependencies {
+                                                   with IdeaProject
+                                                   with MavenDependencies {
   /**
    * Publish the source as well as the class files.
    */
@@ -28,6 +28,11 @@ class DropWizardProject(info: ProjectInfo) extends DefaultProject(info)
    */
   val simplespec = "com.codahale" %% "simplespec" % "0.2.0" % "test"
   val mockito = "org.mockito" % "mockito-all" % "1.8.4" % "test"
+
+  /**
+   * Guice Dependencies
+   */
+  val guiceMultibindings = "com.google.inject.extensions" % "guice-multibindings" % "2.0"
 
   /**
    * Jersey Dependencies
