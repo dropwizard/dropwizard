@@ -1,4 +1,4 @@
-package com.yammer.dropwizard
+package com.yammer.dropwizard.jersey
 
 import com.google.inject.{Inject, Injector, Singleton}
 import java.io.File

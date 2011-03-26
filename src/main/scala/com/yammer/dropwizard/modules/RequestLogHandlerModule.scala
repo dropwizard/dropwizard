@@ -1,4 +1,4 @@
-package com.yammer.dropwizard
+package com.yammer.dropwizard.modules
 
 import org.eclipse.jetty.server.handler.RequestLogHandler
 import com.codahale.fig.Configuration

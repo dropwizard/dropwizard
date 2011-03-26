@@ -1,9 +1,9 @@
 import sbt._
 import maven._
 
-class DropWizard(info: ProjectInfo) extends DefaultProject(info)
-                                            with IdeaProject
-                                            with MavenDependencies {
+class DropwizardProject(info: ProjectInfo) extends DefaultProject(info)
+                                                   with IdeaProject
+                                                   with MavenDependencies {
   /**
    * Publish the source as well as the class files.
    */
@@ -30,6 +30,11 @@ class DropWizard(info: ProjectInfo) extends DefaultProject(info)
   val mockito = "org.mockito" % "mockito-all" % "1.8.4" % "test"
 
   /**
+   * Guice Dependencies
+   */
+  val guiceMultibindings = "com.google.inject.extensions" % "guice-multibindings" % "2.0"
+
+  /**
    * Jersey Dependencies
    */
   val jerseyGuice = "com.sun.jersey.contribs" % "jersey-guice" % "1.5"
@@ -41,7 +46,8 @@ class DropWizard(info: ProjectInfo) extends DefaultProject(info)
   val fig = "com.codahale" %% "fig" % "1.1.1"
   val jerkson = "com.codahale" %% "jerkson" % "0.1.6"
   val jackson = "org.codehaus.jackson" % "jackson-core-asl" % "1.7.3"
-  val metrics = "com.yammer" %% "metrics" % "2.0.0-BETA9"
+  val metrics = "com.yammer" %% "metrics" % "2.0.0-BETA10"
+  val commonsCli = "commons-cli" % "commons-cli" % "1.2"
 
   /**
    * Logging Dependencies
