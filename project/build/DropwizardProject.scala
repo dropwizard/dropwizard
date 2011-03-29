@@ -12,9 +12,9 @@ class DropwizardProject(info: ProjectInfo) extends DefaultProject(info)
   override def packageToPublishActions = super.packageToPublishActions ++ Seq(packageSrc)
 
   /**
-   * Publish to internal Yammer repo for now.
+   * Publish to repo.codahale.com
    */
-  lazy val publishTo = Resolver.sftp("repo.yammer.com", "repo.yammer.com", "/opt/repos/maven/")
+  lazy val publishTo = Resolver.sftp("Personal Repo", "codahale.com", "/home/codahale/repo.codahale.com/")
 
   /**
    * Repositories
