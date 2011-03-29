@@ -37,8 +37,10 @@ class DropwizardProject(info: ProjectInfo) extends DefaultProject(info)
   /**
    * Jersey Dependencies
    */
-  val jerseyGuice = "com.sun.jersey.contribs" % "jersey-guice" % "1.5"
-  val jerseyScala = "com.codahale" %% "jersey-scala" % "0.1.2"
+  val jerseyScala = "com.codahale" %% "jersey-scala" % "0.1.3"
+  // TODO: 3/29/11 <coda> -- Change back to regular packaging once
+  // http://java.net/jira/browse/JERSEY-697 is resolved.
+  val jerseyGuice = "com.sun.jersey.contribs" % "jersey-guice-nogrizzly" % "1.6"
 
   /**
    * Misc Dependencies
@@ -56,11 +58,6 @@ class DropwizardProject(info: ProjectInfo) extends DefaultProject(info)
   val slf4jBindings = "org.slf4j" % "slf4j-log4j12" % slf4jVersion
   val jul2slf4j = "org.slf4j" % "jul-to-slf4j" % slf4jVersion
   val logula = "com.codahale" %% "logula" % "2.1.0"
-
-  /**
-   * Guice Dependencies
-   */
-  val guiceServlet = "com.google.inject.extensions" % "guice-servlet" % "2.0"
 
   /**
    * Jetty Dependencies
