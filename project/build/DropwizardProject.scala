@@ -12,10 +12,12 @@ class DropwizardProject(info: ProjectInfo) extends DefaultProject(info)
   override def packageToPublishActions = super.packageToPublishActions ++ Seq(packageSrc)
 
   /**
-   * Publish to repo.codahale.com
+   * Publish via maven-sbt.
    */
-  lazy val publishTo = Resolver.sftp("Personal Repo", "codahale.com", "/home/codahale/repo.codahale.com/")
-
+  lazy val publishTo = Resolver.sftp("repo.codahale.com",
+                                     "codahale.com",
+                                     "/home/codahale/repo.codahale.com/")
+  
   /**
    * Repositories
    */
