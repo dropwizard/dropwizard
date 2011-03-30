@@ -17,14 +17,8 @@ class ServerCommand(service: Service) extends ConfiguredCommand {
 
   override def description = Some("Starts an HTTP server running the service")
 
-  final def runWithConfigFile(opts: Map[String, List[String]],
-                        args: List[String]) = {
-    try {
-      val healthchecks = injector.getInstance(Key.get(new TypeLiteral[java.util.Set[HealthCheck]]() {}))
-      healthchecks.foreach(HealthChecks.registerHealthCheck)
-    } catch {
-      case e: ConfigurationException => {
-        log.warn("""
+  private def complainAboutHealthChecks() {
+    log.warn("""
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -34,7 +28,19 @@ class ServerCommand(service: Service) extends ConfiguredCommand {
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 """)
+  }
+
+  final def runWithConfigFile(opts: Map[String, List[String]],
+                        args: List[String]) = {
+    try {
+      val healthchecks = injector.getInstance(Key.get(new TypeLiteral[java.util.Set[HealthCheck]]() {}))
+      healthchecks.foreach(HealthChecks.registerHealthCheck)
+
+      if (healthchecks.size == 1) {
+        complainAboutHealthChecks()
       }
+    } catch {
+      case e: ConfigurationException => complainAboutHealthChecks()
     }
 
     log.info("Starting %s", service.name)

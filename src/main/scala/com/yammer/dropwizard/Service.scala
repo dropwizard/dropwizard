@@ -7,8 +7,8 @@ import util.JarAware
 import com.codahale.logula.Logging
 import com.google.inject.Module
 import com.yammer.dropwizard.cli.{ServerCommand, Command}
-import com.yammer.metrics.core.HealthCheck
 import com.yammer.metrics.guice.InstrumentationModule
+import com.yammer.metrics.core.{DeadlockHealthCheck, HealthCheck}
 
 trait Service extends Logging with JarAware {
   private val modules = new mutable.ArrayBuffer[Module]() ++ Seq(
@@ -25,6 +25,7 @@ trait Service extends Logging with JarAware {
   protected def healthCheck[A <: HealthCheck](implicit mf: Manifest[A]) {
     modules += new GuiceMultibindingModule(classOf[HealthCheck], mf.erasure.asInstanceOf[Class[HealthCheck]])
   }
+  healthCheck[DeadlockHealthCheck]
 
   protected def manage[A <: Managed](implicit mf: Manifest[A]) {
     modules += new GuiceMultibindingModule(classOf[Managed], mf.erasure.asInstanceOf[Class[Managed]])
