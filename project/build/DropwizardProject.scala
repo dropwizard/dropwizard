@@ -59,7 +59,7 @@ class DropwizardProject(info: ProjectInfo) extends DefaultProject(info)
   val slf4jVersion = "1.6.1"
   val slf4jBindings = "org.slf4j" % "slf4j-log4j12" % slf4jVersion
   val jul2slf4j = "org.slf4j" % "jul-to-slf4j" % slf4jVersion
-  val logula = "com.codahale" %% "logula" % "2.1.0"
+  val logula = "com.codahale" %% "logula" % "2.1.1"
 
   /**
    * Jetty Dependencies
