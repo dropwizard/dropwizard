@@ -34,7 +34,9 @@ class DropwizardProject(info: ProjectInfo) extends DefaultProject(info)
   /**
    * Guice Dependencies
    */
-  val guiceMultibindings = "com.google.inject.extensions" % "guice-multibindings" % "2.0"
+  val guice = "com.google.inject" % "guice" % "3.0"
+  val guiceMultibindings = "com.google.inject.extensions" % "guice-servlet" % "3.0"
+  val guiceServlet = "com.google.inject.extensions" % "guice-multibindings" % "3.0"
 
   /**
    * Jersey Dependencies
