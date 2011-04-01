@@ -48,8 +48,7 @@ class DropwizardProject(info: ProjectInfo) extends DefaultProject(info)
    * Misc Dependencies
    */
   val fig = "com.codahale" %% "fig" % "1.1.1"
-  val jerkson = "com.codahale" %% "jerkson" % "0.1.6"
-  val jackson = "org.codehaus.jackson" % "jackson-core-asl" % "1.7.3"
+  val jerkson = "com.codahale" %% "jerkson" % "0.1.7"
   val metrics = "com.yammer" %% "metrics" % "2.0.0-BETA11-SNAPSHOT"
   val commonsCli = "commons-cli" % "commons-cli" % "1.2"
 
