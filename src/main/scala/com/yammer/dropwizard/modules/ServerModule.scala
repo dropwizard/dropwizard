@@ -47,9 +47,12 @@ class ServerModule extends ProviderModule {
 
   private def makeServer(config: Configuration, connectors: Connector*) = {
     val server = new Server
+    val threadPool = new QueuedThreadPool
     connectors.foreach(server.addConnector)
     server.setSendServerVersion(false)
-    server.setThreadPool(new QueuedThreadPool(config("http.max_connections").or(50)))
+    threadPool.setMaxThreads(config("http.max_connections").or(50))
+    threadPool.setMinThreads(config("http.min_connections").or(8))
+    server.setThreadPool(threadPool)
     server.setStopAtShutdown(true)
     server.setGracefulShutdown(config("http.shutdown_milliseconds").or(2000))
     server

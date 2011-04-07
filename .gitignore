@@ -8,3 +8,4 @@ streamie.conf
 atlassian-ide-plugin.xml
 project/plugins/project/build.properties
 logs
+*.iml
