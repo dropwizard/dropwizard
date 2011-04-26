@@ -34,7 +34,7 @@ class ServerCommand(service: Service) extends ConfiguredCommand {
                         args: List[String]) = {
     try {
       val healthchecks = injector.getInstance(Key.get(new TypeLiteral[java.util.Set[HealthCheck]]() {}))
-      healthchecks.foreach(HealthChecks.registerHealthCheck)
+      healthchecks.foreach(HealthChecks.register)
 
       if (healthchecks.size == 1) {
         complainAboutHealthChecks()
