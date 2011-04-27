@@ -17,7 +17,7 @@ class DropwizardProject(info: ProjectInfo) extends DefaultProject(info)
   lazy val publishTo = Resolver.sftp("repo.codahale.com",
                                      "codahale.com",
                                      "/home/codahale/repo.codahale.com/")
-
+  
   /**
    * Repositories
    */
@@ -34,21 +34,24 @@ class DropwizardProject(info: ProjectInfo) extends DefaultProject(info)
   /**
    * Guice Dependencies
    */
-  val guiceMultibindings = "com.google.inject.extensions" % "guice-multibindings" % "2.0"
+  val guice = "com.google.inject" % "guice" % "3.0"
+  val guiceServlet = "com.google.inject.extensions" % "guice-servlet" % "3.0"
+  val guiceMultibindings = "com.google.inject.extensions" % "guice-multibindings" % "3.0"
 
   /**
    * Jersey Dependencies
    */
-  val jerseyGuice = "com.sun.jersey.contribs" % "jersey-guice" % "1.5"
-  val jerseyScala = "com.codahale" %% "jersey-scala" % "0.1.2"
+  val jerseyScala = "com.codahale" %% "jersey-scala" % "0.1.3"
+  // TODO: 3/29/11 <coda> -- Change back to regular packaging once
+  // http://java.net/jira/browse/JERSEY-697 is resolved.
+  val jerseyGuice = "com.sun.jersey.contribs" % "jersey-guice-nogrizzly" % "1.6"
 
   /**
    * Misc Dependencies
    */
   val fig = "com.codahale" %% "fig" % "1.1.1"
-  val jerkson = "com.codahale" %% "jerkson" % "0.1.6"
-  val jackson = "org.codehaus.jackson" % "jackson-core-asl" % "1.7.3"
-  val metrics = "com.yammer" %% "metrics" % "2.0.0-BETA10"
+  val jerkson = "com.codahale" %% "jerkson" % "0.1.7"
+  val metrics = "com.yammer" %% "metrics" % "2.0.0-BETA11"
   val commonsCli = "commons-cli" % "commons-cli" % "1.2"
 
   /**
@@ -57,18 +60,13 @@ class DropwizardProject(info: ProjectInfo) extends DefaultProject(info)
   val slf4jVersion = "1.6.1"
   val slf4jBindings = "org.slf4j" % "slf4j-log4j12" % slf4jVersion
   val jul2slf4j = "org.slf4j" % "jul-to-slf4j" % slf4jVersion
-  val logula = "com.codahale" %% "logula" % "2.1.0"
-
-  /**
-   * Guice Dependencies
-   */
-  val guiceServlet = "com.google.inject.extensions" % "guice-servlet" % "2.0"
+  val logula = "com.codahale" %% "logula" % "2.1.1"
 
   /**
    * Jetty Dependencies
    */
   val servletApi = "javax.servlet" % "servlet-api" % "2.5"
-  val jettyVersion = "7.3.1.v20110307"
+  val jettyVersion = "7.4.0.v20110414"
   val jetty = "org.eclipse.jetty"
   val jettyServer = jetty % "jetty-server" % jettyVersion
   val jettyServlet = jetty % "jetty-servlet" % jettyVersion

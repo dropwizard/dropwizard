@@ -35,6 +35,12 @@ class ConfigurationModule(filename: String) extends GuiceModule {
         log.file.threshold = Level.toLevel(l, Level.ALL)
       }
     }
+
+    if (config("logging.syslog.enabled").or(false)) {
+      log.syslog.enabled = true
+      log.syslog.host = config("logging.syslog.host").asRequired[String]
+      log.syslog.facility = config("logging.syslog.facility").asRequired[String]
+    }
   }
 
   def configure {
