@@ -5,7 +5,7 @@ import com.sun.jersey.api.core.ResourceConfig._
 import com.codahale.logula.Logging
 import com.sun.jersey.api.core.DefaultResourceConfig
 import com.yammer.metrics.HealthChecks
-import com.yammer.metrics.core.{DeadlockHealthCheck, HealthCheck}
+import com.yammer.metrics.core.HealthCheck
 
 class Environment extends DefaultResourceConfig with Logging {
   private[dropwizard] var resources = Set.empty[Object]
