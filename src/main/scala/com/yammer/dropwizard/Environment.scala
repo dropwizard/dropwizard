@@ -6,11 +6,19 @@ import com.codahale.logula.Logging
 import com.sun.jersey.api.core.DefaultResourceConfig
 import com.yammer.metrics.HealthChecks
 import com.yammer.metrics.core.HealthCheck
+import providers.LoggingExceptionMapper
+import com.codahale.jersey.inject.ScalaCollectionsQueryParamInjectableProvider
+import com.codahale.jersey.providers.{JValueProvider, JsonCaseClassProvider}
 
 class Environment extends DefaultResourceConfig with Logging {
   private[dropwizard] var resources = Set.empty[Object]
   private[dropwizard] var healthChecks = Set.empty[HealthCheck]
-  private[dropwizard] var providers = Set.empty[Object]
+  private[dropwizard] var providers = Set[Object](
+    new LoggingExceptionMapper,
+    new JsonCaseClassProvider,
+    new ScalaCollectionsQueryParamInjectableProvider,
+    new JValueProvider
+  )
   private[dropwizard] var managedObjects = IndexedSeq.empty[Managed]
 
   def addResource(resource: Object) {
