@@ -19,8 +19,8 @@ object Example extends Service {
   
   provide(new SayCommand, new SplodyCommand)
 
-  def configure(config: Configuration, environment: Environment) {
-    implicit val template = SayingFactory.buildSaying(config)
+  def configure(implicit config: Configuration, environment: Environment) {
+    implicit val template = SayingFactory.buildSaying
     environment.addResource(new HelloWorldResource)
     environment.addHealthCheck(new DumbHealthCheck)
     environment.manage(new StartableObject)

@@ -15,7 +15,7 @@ trait Service extends Logging with JarAware {
 
   def banner: Option[String] = None
 
-  def configure(config: Configuration, environment: Environment)
+  def configure(implicit config: Configuration, environment: Environment)
 
   private def printUsage(error: Option[String] = None) {
     for (msg <- error) {
