@@ -2,20 +2,22 @@ package com.yammer.dropwizard.cli
 
 import java.io.File
 import com.codahale.jerkson.ParsingException
-import com.yammer.dropwizard.modules.ConfigurationModule
 import com.codahale.logula.Logging
+import com.yammer.dropwizard.config.ConfigurationFactory
+import com.codahale.fig.Configuration
+import com.yammer.dropwizard.Service
 
 trait ConfiguredCommand extends Command with Logging {
   override protected def commandSyntax(jarSyntax: String) =
     "%s %s [options] <config file> [argumemts]".format(jarSyntax, name)
 
-  final def run(opts: Map[String, List[String]], args: List[String]) = args match {
+  final def run(service: Service, opts: Map[String, List[String]], args: List[String]) = args match {
     case filename :: others => {
       val f = new File(filename)
       if (f.exists && f.isFile) {
         try {
-          require(new ConfigurationModule(filename))
-          runWithConfigFile(opts, others)
+          val config = ConfigurationFactory.buildConfiguration(filename)
+          run(service, config, opts, others)
         } catch {
           case e: ParsingException => Some("Bad configuration file: " + e.getMessage)
           case e => Some("Error: " + e.getMessage)
@@ -27,5 +29,5 @@ trait ConfiguredCommand extends Command with Logging {
     case Nil => Some("no configuration file specified")
   }
 
-  def runWithConfigFile(opts: Map[String, List[String]], args: List[String]): Option[String]
+  def run(service: Service, config: Configuration, opts: Map[String, List[String]], args: List[String]): Option[String]
 }

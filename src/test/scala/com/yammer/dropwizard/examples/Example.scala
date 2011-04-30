@@ -1,9 +1,9 @@
 package com.yammer.dropwizard.examples
 
-import com.yammer.dropwizard.Service
-import com.yammer.dropwizard.service.Jersey
+import com.codahale.fig.Configuration
+import com.yammer.dropwizard.{Environment, Service}
 
-object Example extends Service with Jersey {
+object Example extends Service {
   def name = "Example"
 
   override def banner = Some("""
@@ -16,9 +16,13 @@ object Example extends Service with Jersey {
                                       88
                                       dP
 """)
-
-  require(new SayingModule)
+  
   provide(new SayCommand, new SplodyCommand)
-  manage[StartableObject]
-  healthCheck[DumbHealthCheck]
+
+  def configure(config: Configuration, environment: Environment) {
+    implicit val template = SayingFactory.buildSaying(config)
+    environment.addResource(new HelloWorldResource)
+    environment.addHealthCheck(new DumbHealthCheck)
+    environment.manage(new StartableObject)
+  }
 }

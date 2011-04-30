@@ -1,19 +1,11 @@
-package com.yammer.dropwizard.modules
+package com.yammer.dropwizard.config
 
-import org.eclipse.jetty.server.handler.RequestLogHandler
 import com.codahale.fig.Configuration
-import com.google.inject.{Provides, Singleton}
 import org.eclipse.jetty.server.NCSARequestLog
+import org.eclipse.jetty.server.handler.RequestLogHandler
 
-/**
- * Given a Configuration instance, provides a RequestLogHandler instance.
- *
- * @author coda
- */
-class RequestLogHandlerModule extends ProviderModule {
-  @Provides
-  @Singleton
-  def provideRequestLogHandler(config: Configuration): RequestLogHandler = {
+object RequestLogHandlerFactory {
+  def buildHandler(implicit config: Configuration) = {
     val log = new NCSARequestLog
     log.setIgnorePaths(config("request_log.ignore_paths").asList[String].toArray)
     config("request_log.append").asOption[Boolean].foreach(log.setAppend)
