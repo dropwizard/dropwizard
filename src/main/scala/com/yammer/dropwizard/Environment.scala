@@ -11,14 +11,15 @@ import com.codahale.jersey.inject.ScalaCollectionsQueryParamInjectableProvider
 import com.codahale.jersey.providers.{JValueProvider, JsonCaseClassProvider}
 
 class Environment extends DefaultResourceConfig with Logging {
-  private[dropwizard] var resources = Set.empty[Object]
-  private[dropwizard] var healthChecks = Set.empty[HealthCheck]
-  private[dropwizard] var providers = Set[Object](
+  Seq(
     new LoggingExceptionMapper,
     new JsonCaseClassProvider,
     new ScalaCollectionsQueryParamInjectableProvider,
     new JValueProvider
-  )
+  ).foreach(getSingletons.add)
+  private[dropwizard] var resources = Set.empty[Object]
+  private[dropwizard] var healthChecks = Set.empty[HealthCheck]
+  private[dropwizard] var providers = Set.empty[Object]
   private[dropwizard] var managedObjects = IndexedSeq.empty[Managed]
 
   def addResource(resource: Object) {
