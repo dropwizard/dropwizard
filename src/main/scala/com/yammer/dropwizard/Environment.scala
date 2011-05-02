@@ -7,7 +7,7 @@ import com.codahale.logula.Logging
 import com.yammer.metrics.core.HealthCheck
 import javax.servlet.{Servlet, Filter}
 import com.sun.jersey.core.reflection.MethodList
-import javax.ws.rs.HttpMethod
+import javax.ws.rs.{Path, HttpMethod}
 
 class Environment extends Logging {
   private[dropwizard] var resources = Set.empty[Object]
@@ -23,7 +23,7 @@ class Environment extends Logging {
         " is not a @Path-annotated resource class")
     }
 
-    if (new MethodList(resource.getClass, true).hasMetaAnnotation(classOf[HttpMethod]).isEmpty) {
+    if (annotatedMethods(resource).isEmpty) {
       throw new IllegalArgumentException(resource.getClass.getCanonicalName +
         " has no @GET/@POST/etc-annotated methods")
     }
@@ -56,10 +56,29 @@ class Environment extends Logging {
   }
 
   private[dropwizard] def validate() {
-    log.info("resources = %s", resources.mkString("{", ", ", "}"))
-    log.info("providers = %s", providers.mkString("{", ", ", "}"))
-    log.info("health checks = %s", healthChecks.mkString("{", ", ", "}"))
-    log.info("managed objects = %s", managedObjects.mkString("{", ", ", "}"))
+    def logResources() {
+      def httpMethods(resource: Object) = annotatedMethods(resource).map {
+        _.getMetaMethodAnnotations(classOf[HttpMethod]).map { _.value() }
+      }.flatten.toIndexedSeq.sorted
+
+      def paths(resource: Object) =
+        resource.getClass.getAnnotation(classOf[Path]).value() :: Nil
+
+      val out = new StringBuilder("\n\n")
+      for (resource <- resources;
+           path <- paths(resource);
+           method <- httpMethods(resource)) {
+        out.append("    %s %s (%s)\n".format(method, path, resource.getClass.getCanonicalName))
+      }
+      log.info(out.toString)
+    }
+
+    log.debug("resources = %s", resources.mkString("{", ", ", "}"))
+    log.debug("providers = %s", providers.mkString("{", ", ", "}"))
+    log.debug("health checks = %s", healthChecks.mkString("{", ", ", "}"))
+    log.debug("managed objects = %s", managedObjects.mkString("{", ", ", "}"))
+
+    logResources()
 
     if (healthChecks.isEmpty) {
       log.warn("""
@@ -76,4 +95,7 @@ class Environment extends Logging {
 """)
     }
   }
+
+  private def annotatedMethods(resource: Object) =
+    new MethodList(resource.getClass, true).hasMetaAnnotation(classOf[HttpMethod])
 }
