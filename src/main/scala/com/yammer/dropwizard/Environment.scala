@@ -1,10 +1,13 @@
 package com.yammer.dropwizard
 
+import collection.JavaConversions._
 import lifecycle.Managed
 import com.sun.jersey.api.core.ResourceConfig._
 import com.codahale.logula.Logging
 import com.yammer.metrics.core.HealthCheck
 import javax.servlet.{Servlet, Filter}
+import com.sun.jersey.core.reflection.MethodList
+import javax.ws.rs.HttpMethod
 
 class Environment extends Logging {
   private[dropwizard] var resources = Set.empty[Object]
@@ -19,6 +22,12 @@ class Environment extends Logging {
       throw new IllegalArgumentException(resource.getClass.getCanonicalName +
         " is not a @Path-annotated resource class")
     }
+
+    if (new MethodList(resource.getClass, true).hasMetaAnnotation(classOf[HttpMethod]).isEmpty) {
+      throw new IllegalArgumentException(resource.getClass.getCanonicalName +
+        " has no @GET/@POST/etc-annotated methods")
+    }
+
     resources += resource
   }
 
