@@ -4,7 +4,9 @@ import com.codahale.fig.Configuration
 import java.util.logging.Logger
 import org.slf4j.bridge.SLF4JBridgeHandler
 import com.codahale.logula.Logging
-import org.apache.log4j.Level
+import org.apache.log4j.{LogManager, Level}
+import org.apache.log4j.varia.NullAppender
+import com.yammer.metrics.log4j.InstrumentedAppender
 
 object ConfigurationFactory {
   def buildConfiguration(filename: String) = {
@@ -48,5 +50,8 @@ object ConfigurationFactory {
         log.syslog.facility = config("logging.syslog.facility").asRequired[String]
       }
     }
+
+    // add in an instrumented null appender to get full logging stats
+    LogManager.getRootLogger.addAppender(new InstrumentedAppender(new NullAppender))
   }
 }

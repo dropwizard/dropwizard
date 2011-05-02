@@ -41,9 +41,11 @@ class DropwizardProject(info: ProjectInfo) extends DefaultProject(info)
    */
   val fig = "com.codahale" %% "fig" % "1.1.1"
   val jerkson = "com.codahale" %% "jerkson" % "0.1.7"
-  val metricsCore = "com.yammer.metrics" %% "metrics-core" % "2.0.0-BETA12-SNAPSHOT"
-  val metricsServlet = "com.yammer.metrics" %% "metrics-servlet" % "2.0.0-BETA12-SNAPSHOT"
-  val metricsJetty = "com.yammer.metrics" %% "metrics-jetty" % "2.0.0-BETA12-SNAPSHOT"
+  val metricsVersion = "2.0.0-BETA12-SNAPSHOT"
+  val metricsCore = "com.yammer.metrics" %% "metrics-core" % metricsVersion
+  val metricsServlet = "com.yammer.metrics" %% "metrics-servlet" % metricsVersion
+  val metricsJetty = "com.yammer.metrics" %% "metrics-jetty" % metricsVersion
+  val metricsLog4j = "com.yammer.metrics" %% "metrics-log4j" % metricsVersion
   val commonsCli = "commons-cli" % "commons-cli" % "1.2"
   val jacksonCore = "org.codehaus.jackson" % "jackson-core-asl" % "1.7.5"
   val jacksonMapper = "org.codehaus.jackson" % "jackson-mapper-asl" % "1.7.5"
