@@ -3,24 +3,16 @@ package com.yammer.dropwizard
 import lifecycle.Managed
 import com.sun.jersey.api.core.ResourceConfig._
 import com.codahale.logula.Logging
-import com.sun.jersey.api.core.DefaultResourceConfig
-import com.yammer.metrics.HealthChecks
 import com.yammer.metrics.core.HealthCheck
-import providers.LoggingExceptionMapper
-import com.codahale.jersey.inject.ScalaCollectionsQueryParamInjectableProvider
-import com.codahale.jersey.providers.{JValueProvider, JsonCaseClassProvider}
+import javax.servlet.{Servlet, Filter}
 
-class Environment extends DefaultResourceConfig with Logging {
-  Seq(
-    new LoggingExceptionMapper,
-    new JsonCaseClassProvider,
-    new ScalaCollectionsQueryParamInjectableProvider,
-    new JValueProvider
-  ).foreach(getSingletons.add)
+class Environment extends Logging {
   private[dropwizard] var resources = Set.empty[Object]
   private[dropwizard] var healthChecks = Set.empty[HealthCheck]
   private[dropwizard] var providers = Set.empty[Object]
   private[dropwizard] var managedObjects = IndexedSeq.empty[Managed]
+  private[dropwizard] var filters = Map.empty[String, Filter]
+  private[dropwizard] var servlets = Map.empty[String, Servlet]
 
   def addResource(resource: Object) {
     if (!isRootResourceClass(resource.getClass)) {
@@ -28,7 +20,6 @@ class Environment extends DefaultResourceConfig with Logging {
         " is not a @Path-annotated resource class")
     }
     resources += resource
-    getSingletons.add(resource)
   }
 
   def addProvider(provider: Object) {
@@ -37,21 +28,25 @@ class Environment extends DefaultResourceConfig with Logging {
         " is not a @Provider-annotated provider class")
     }
     providers += provider
-    getSingletons.add(provider)
   }
 
   def addHealthCheck(healthCheck: HealthCheck) {
     healthChecks += healthCheck
-    HealthChecks.register(healthCheck)
   }
 
   def manage(managedObject: Managed) {
     managedObjects ++= IndexedSeq(managedObject)
   }
 
-  override def validate() {
-    super.validate()
+  def addFilter(filter: Filter, pathSpec: String) {
+    filters += pathSpec -> filter
+  }
 
+  def addServlet(servlet: Servlet, pathSpec: String) {
+    servlets += pathSpec -> servlet
+  }
+
+  private[dropwizard] def validate() {
     log.info("resources = %s", resources.mkString("{", ", ", "}"))
     log.info("providers = %s", providers.mkString("{", ", ", "}"))
     log.info("health checks = %s", healthChecks.mkString("{", ", ", "}"))

@@ -4,9 +4,9 @@ import com.yammer.metrics.HealthChecks
 import com.codahale.fig.Configuration
 import com.yammer.dropwizard.config.ServerFactory
 import com.sun.jersey.spi.container.servlet.ServletContainer
-import com.yammer.dropwizard.{Environment, Service}
 import com.yammer.metrics.core.DeadlockHealthCheck
 import com.yammer.dropwizard.lifecycle.JettyManager
+import com.yammer.dropwizard.{JerseyConfig, Environment, Service}
 
 class ServerCommand(service: Service) extends ConfiguredCommand {
   def name = "server"
@@ -22,9 +22,9 @@ class ServerCommand(service: Service) extends ConfiguredCommand {
     service.configure(config, env)
     env.healthChecks.foreach(HealthChecks.register)
     HealthChecks.register(new DeadlockHealthCheck)
+    env.addServlet(new ServletContainer(new JerseyConfig(env)), "/*")
 
-    val servlet = new ServletContainer(env)
-    val server = ServerFactory.provideServer(config, servlet)
+    val server = ServerFactory.provideServer(config, env.servlets, env.filters)
     env.managedObjects.map { new JettyManager(_) }.foreach(server.addBean)
 
     log.info("Starting %s", service.name)

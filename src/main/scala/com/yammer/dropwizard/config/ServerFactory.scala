@@ -5,14 +5,15 @@ import com.yammer.metrics.jetty.InstrumentedHandler
 import org.eclipse.jetty.server.handler.HandlerCollection
 import org.eclipse.jetty.server.bio.SocketConnector
 import org.eclipse.jetty.server.nio.{BlockingChannelConnector, SelectChannelConnector}
-import org.eclipse.jetty.server.{Server, Connector}
 import org.eclipse.jetty.util.thread.QueuedThreadPool
 import com.yammer.metrics.reporting.MetricsServlet
-import javax.servlet.Servlet
 import org.eclipse.jetty.servlet._
+import javax.servlet.{Filter, Servlet}
+import java.util.EnumSet
+import org.eclipse.jetty.server.{DispatcherType, Server, Connector}
 
 object ServerFactory {
-  def provideServer(implicit config: Configuration, servlet: Servlet) = {
+  def provideServer(implicit config: Configuration, servlets: Map[String, Servlet], filters: Map[String, Filter]) = {
     val server = makeServer(mainConnector, internalConnector)
 
     val handlers = new HandlerCollection
@@ -67,9 +68,17 @@ object ServerFactory {
     connector
   }
 
-  private def servletContext(implicit servlet: Servlet) = {
+  private def servletContext(implicit servlets: Map[String, Servlet], filters: Map[String, Filter]) = {
     val context = new ServletContextHandler()
-    context.addServlet(new ServletHolder(servlet), "/")
+
+    for ((pathSpec, servlet) <- servlets) {
+      context.addServlet(new ServletHolder(servlet), pathSpec)
+    }
+
+    for ((pathSpec, filter) <- filters) {
+      context.addFilter(new FilterHolder(filter), pathSpec, EnumSet.of(DispatcherType.REQUEST))
+    }
+    
     context.setConnectorNames(Array("main"))
     context
   }
