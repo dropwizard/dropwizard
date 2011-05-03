@@ -1,6 +1,7 @@
 package com.yammer.dropwizard.examples
 
 import com.yammer.dropwizard.cli.{Flag, FlagGroup, Command}
+import com.yammer.dropwizard.Service
 
 class SplodyCommand extends Command {
   def name = "splody"
@@ -9,22 +10,16 @@ class SplodyCommand extends Command {
 
   override def options =
     FlagGroup(Seq(Flag("r", "required", "a required option")),required = true) ::
-    Flag("g", "guice", "do something dumb with Guice") ::
     Flag("e", "exception", "throw an exception") ::
     Flag("m", "message", "return an error message") ::
     Nil
 
-  def run(opts: Map[String, List[String]], args: List[String]) = {
-    if (opts.contains("guice")) {
-      println("Using the injector to get an instance of something Guice doesn't know about")
-      injector.getInstance(classOf[Command])
-    }
-
+  def run(service: Service, opts: Map[String, List[String]], args: List[String]) = {
     if (opts.contains("exception")) {
       println("Throwing an exception")
       error("EXPERIENCE BIJ")
     }
-    
+
     opts.get("message").map { _ => "Y U NO DO RIGHT THING" }
   }
 }

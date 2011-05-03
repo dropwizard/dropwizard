@@ -1,0 +1,101 @@
+package com.yammer.dropwizard
+
+import collection.JavaConversions._
+import lifecycle.Managed
+import com.sun.jersey.api.core.ResourceConfig._
+import com.codahale.logula.Logging
+import com.yammer.metrics.core.HealthCheck
+import javax.servlet.{Servlet, Filter}
+import com.sun.jersey.core.reflection.MethodList
+import javax.ws.rs.{Path, HttpMethod}
+
+class Environment extends Logging {
+  private[dropwizard] var resources = Set.empty[Object]
+  private[dropwizard] var healthChecks = Set.empty[HealthCheck]
+  private[dropwizard] var providers = Set.empty[Object]
+  private[dropwizard] var managedObjects = IndexedSeq.empty[Managed]
+  private[dropwizard] var filters = Map.empty[String, Filter]
+  private[dropwizard] var servlets = Map.empty[String, Servlet]
+
+  def addResource(resource: Object) {
+    if (!isRootResourceClass(resource.getClass)) {
+      throw new IllegalArgumentException(resource.getClass.getCanonicalName +
+        " is not a @Path-annotated resource class")
+    }
+
+    if (annotatedMethods(resource).isEmpty) {
+      throw new IllegalArgumentException(resource.getClass.getCanonicalName +
+        " has no @GET/@POST/etc-annotated methods")
+    }
+
+    resources += resource
+  }
+
+  def addProvider(provider: Object) {
+    if (!isProviderClass(provider.getClass)) {
+      throw new IllegalArgumentException(provider.getClass.getCanonicalName +
+        " is not a @Provider-annotated provider class")
+    }
+    providers += provider
+  }
+
+  def addHealthCheck(healthCheck: HealthCheck) {
+    healthChecks += healthCheck
+  }
+
+  def manage(managedObject: Managed) {
+    managedObjects ++= IndexedSeq(managedObject)
+  }
+
+  def addFilter(filter: Filter, pathSpec: String) {
+    filters += pathSpec -> filter
+  }
+
+  def addServlet(servlet: Servlet, pathSpec: String) {
+    servlets += pathSpec -> servlet
+  }
+
+  private[dropwizard] def validate() {
+    def logResources() {
+      def httpMethods(resource: Object) = annotatedMethods(resource).map {
+        _.getMetaMethodAnnotations(classOf[HttpMethod]).map { _.value() }
+      }.flatten.toIndexedSeq.sorted
+
+      def paths(resource: Object) =
+        resource.getClass.getAnnotation(classOf[Path]).value() :: Nil
+
+      val out = new StringBuilder("\n\n")
+      for (resource <- resources;
+           path <- paths(resource);
+           method <- httpMethods(resource)) {
+        out.append("    %s %s (%s)\n".format(method, path, resource.getClass.getCanonicalName))
+      }
+      log.info(out.toString)
+    }
+
+    log.debug("resources = %s", resources.mkString("{", ", ", "}"))
+    log.debug("providers = %s", providers.mkString("{", ", ", "}"))
+    log.debug("health checks = %s", healthChecks.mkString("{", ", ", "}"))
+    log.debug("managed objects = %s", managedObjects.mkString("{", ", ", "}"))
+
+    logResources()
+
+    if (healthChecks.isEmpty) {
+      log.warn("""
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!    THIS SERVICE HAS NO HEALTHCHECKS. THIS MEANS YOU WILL NEVER KNOW IF IT    !
+!    DIES IN PRODUCTION, WHICH MEANS YOU WILL NEVER KNOW IF YOU'RE LETTING     !
+!     YOUR USERS DOWN. YOU SHOULD ADD A HEALTHCHECK FOR EACH DEPENDENCY OF     !
+!     YOUR SERVICE WHICH FULLY (BUT LIGHTLY) TESTS YOUR SERVICE'S ABILITY TO   !
+!      USE THAT SERVICE. THINK OF IT AS A CONTINUOUS INTEGRATION TEST.         !
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+""")
+    }
+  }
+
+  private def annotatedMethods(resource: Object) =
+    new MethodList(resource.getClass, true).hasMetaAnnotation(classOf[HttpMethod])
+}

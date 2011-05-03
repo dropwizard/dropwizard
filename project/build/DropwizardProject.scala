@@ -32,27 +32,23 @@ class DropwizardProject(info: ProjectInfo) extends DefaultProject(info)
   val mockito = "org.mockito" % "mockito-all" % "1.8.4" % "test"
 
   /**
-   * Guice Dependencies
-   */
-  val guice = "com.google.inject" % "guice" % "3.0"
-  val guiceServlet = "com.google.inject.extensions" % "guice-servlet" % "3.0"
-  val guiceMultibindings = "com.google.inject.extensions" % "guice-multibindings" % "3.0"
-
-  /**
    * Jersey Dependencies
    */
   val jerseyScala = "com.codahale" %% "jersey-scala" % "0.1.3"
-  // TODO: 3/29/11 <coda> -- Change back to regular packaging once
-  // http://java.net/jira/browse/JERSEY-697 is resolved.
-  val jerseyGuice = "com.sun.jersey.contribs" % "jersey-guice-nogrizzly" % "1.6"
 
   /**
    * Misc Dependencies
    */
   val fig = "com.codahale" %% "fig" % "1.1.1"
   val jerkson = "com.codahale" %% "jerkson" % "0.1.7"
-  val metrics = "com.yammer" %% "metrics" % "2.0.0-BETA11"
+  val metricsVersion = "2.0.0-BETA12-SNAPSHOT"
+  val metricsCore = "com.yammer.metrics" %% "metrics-core" % metricsVersion
+  val metricsServlet = "com.yammer.metrics" %% "metrics-servlet" % metricsVersion
+  val metricsJetty = "com.yammer.metrics" %% "metrics-jetty" % metricsVersion
+  val metricsLog4j = "com.yammer.metrics" %% "metrics-log4j" % metricsVersion
   val commonsCli = "commons-cli" % "commons-cli" % "1.2"
+  val jacksonCore = "org.codehaus.jackson" % "jackson-core-asl" % "1.7.5"
+  val jacksonMapper = "org.codehaus.jackson" % "jackson-mapper-asl" % "1.7.5"
 
   /**
    * Logging Dependencies

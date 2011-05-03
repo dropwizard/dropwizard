@@ -1,14 +1,9 @@
 package com.yammer.dropwizard.cli
 
-import collection.mutable
-import com.google.inject._
 import org.apache.commons.cli.{ParseException, GnuParser, Options, HelpFormatter, Option => ApacheOption, OptionGroup}
+import com.yammer.dropwizard.Service
 
 trait Command {
-  private val modules = new mutable.ArrayBuffer[Module]
-
-  protected def require(modules: Module*) {this.modules ++= modules}
-
   def name: String
 
   def description: Option[String] = None
@@ -32,10 +27,8 @@ trait Command {
     opts
   }
 
-  def execute(jarSyntax: String, modules: Seq[Module], args: Seq[String]) {
+  def execute(service: Service, jarSyntax: String, args: Seq[String]) {
     try {
-      this.modules ++= modules
-
       if (args == Seq("-h") || args == Seq("--help")) {
         printUsage(jarSyntax, None)
       } else {
@@ -46,7 +39,7 @@ trait Command {
               Option(o.getValues).getOrElse(Array.empty[String]).toList
         }.toMap
 
-        run(opts, cmdLine.getArgs.toList).foreach { e =>
+        run(service, opts, cmdLine.getArgs.toList).foreach { e =>
            printUsage(jarSyntax, Some(e))
         }
       }
@@ -54,19 +47,16 @@ trait Command {
       case e: ParseException => {
         printUsage(jarSyntax, Some(e.getMessage))
       }
-      case e: CreationException => System.err.println(e.getMessage)
       case e => {
         e.printStackTrace()
       }
     }
   }
 
-  def run(opts: Map[String, List[String]], args: List[String]): Option[String]
+  def run(service: Service, opts: Map[String, List[String]], args: List[String]): Option[String]
 
   protected def commandSyntax(jarSyntax: String) =
     "%s %s [options] [arguments]".format(jarSyntax, name)
-
-  protected lazy val injector = Guice.createInjector(Stage.PRODUCTION, modules: _*)
 
   def printUsage(jarSyntax: String, error: Option[String] = None) {
     for (msg <- error) {
