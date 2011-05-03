@@ -48,36 +48,36 @@ class Environment extends Logging {
     managedObjects ++= IndexedSeq(managedObject)
   }
 
-  def addFilter(filter: Filter,
-                pathSpec: String,
-                params: Map[String, String] = Map.empty) {
+  def addFilter[T <: Filter](filter: T,
+                             pathSpec: String,
+                             params: Map[String, String] = Map.empty) {
     val holder = new FilterHolder(filter)
     holder.setInitParameters(params)
     filters += pathSpec -> holder
   }
 
-  def addFilter(klass: Class[_ <: Filter],
-                pathSpec: String,
-                params: Map[String, String] = Map.empty) {
+  def addFilterClass[T <: Filter](klass: Class[T],
+                                  pathSpec: String,
+                                  params: Map[String, String] = Map.empty) {
     val holder = new FilterHolder(klass)
     holder.setInitParameters(params)
     filters += pathSpec -> holder
   }
 
-  def addServlet(servlet: Servlet,
-                 pathSpec: String,
-                 params: Map[String, String] = Map.empty,
-                 initOrder: Int = 0) {
+  def addServlet[T <: Servlet](servlet: T,
+                               pathSpec: String,
+                               params: Map[String, String] = Map.empty,
+                               initOrder: Int = 0) {
     val holder = new ServletHolder(servlet)
     holder.setInitParameters(params)
     holder.setInitOrder(initOrder)
     servlets += pathSpec -> holder
   }
 
-  def addServlet(klass: Class[_ <: Servlet],
-                 pathSpec: String,
-                 params: Map[String, String] = Map.empty,
-                 initOrder: Int = 0) {
+  def addServletClass[T <: Servlet](klass: Class[T],
+                                    pathSpec: String,
+                                    params: Map[String, String] = Map.empty,
+                                    initOrder: Int = 0) {
     val holder = new ServletHolder(klass)
     holder.setInitParameters(params)
     holder.setInitOrder(initOrder)
