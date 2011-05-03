@@ -48,8 +48,12 @@ class Environment extends Logging {
     managedObjects ++= IndexedSeq(managedObject)
   }
 
-  def addFilter(filter: Filter, pathSpec: String) {
-    filters += pathSpec -> new FilterHolder(filter)
+  def addFilter(filter: Filter,
+                pathSpec: String,
+                params: Map[String, String] = Map.empty) {
+    val holder = new FilterHolder(filter)
+    holder.setInitParameters(params)
+    filters += pathSpec -> holder
   }
 
   def addFilter(klass: Class[_ <: Filter],
@@ -60,8 +64,14 @@ class Environment extends Logging {
     filters += pathSpec -> holder
   }
 
-  def addServlet(servlet: Servlet, pathSpec: String) {
-    servlets += pathSpec -> new ServletHolder(servlet)
+  def addServlet(servlet: Servlet,
+                 pathSpec: String,
+                 params: Map[String, String] = Map.empty,
+                 initOrder: Int = 0) {
+    val holder = new ServletHolder(servlet)
+    holder.setInitParameters(params)
+    holder.setInitOrder(initOrder)
+    servlets += pathSpec -> holder
   }
 
   def addServlet(klass: Class[_ <: Servlet],
