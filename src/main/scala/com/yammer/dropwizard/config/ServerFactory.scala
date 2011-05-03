@@ -13,7 +13,9 @@ import java.util.EnumSet
 import org.eclipse.jetty.server.{DispatcherType, Server, Connector}
 
 object ServerFactory {
-  def provideServer(implicit config: Configuration, servlets: Map[String, Servlet], filters: Map[String, Filter]) = {
+  def provideServer(implicit config: Configuration,
+                    servlets: Map[String, ServletHolder],
+                    filters: Map[String, FilterHolder]) = {
     val server = makeServer(mainConnector, internalConnector)
 
     val handlers = new HandlerCollection
@@ -68,15 +70,16 @@ object ServerFactory {
     connector
   }
 
-  private def servletContext(implicit servlets: Map[String, Servlet], filters: Map[String, Filter]) = {
+  private def servletContext(implicit servlets: Map[String, ServletHolder],
+                             filters: Map[String, FilterHolder]) = {
     val context = new ServletContextHandler()
 
     for ((pathSpec, servlet) <- servlets) {
-      context.addServlet(new ServletHolder(servlet), pathSpec)
+      context.addServlet(servlet, pathSpec)
     }
 
     for ((pathSpec, filter) <- filters) {
-      context.addFilter(new FilterHolder(filter), pathSpec, EnumSet.of(DispatcherType.REQUEST))
+      context.addFilter(filter, pathSpec, EnumSet.of(DispatcherType.REQUEST))
     }
     
     context.setConnectorNames(Array("main"))

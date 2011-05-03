@@ -8,14 +8,15 @@ import com.yammer.metrics.core.HealthCheck
 import javax.servlet.{Servlet, Filter}
 import com.sun.jersey.core.reflection.MethodList
 import javax.ws.rs.{Path, HttpMethod}
+import org.eclipse.jetty.servlet.{ServletHolder, FilterHolder}
 
 class Environment extends Logging {
   private[dropwizard] var resources = Set.empty[Object]
   private[dropwizard] var healthChecks = Set.empty[HealthCheck]
   private[dropwizard] var providers = Set.empty[Object]
   private[dropwizard] var managedObjects = IndexedSeq.empty[Managed]
-  private[dropwizard] var filters = Map.empty[String, Filter]
-  private[dropwizard] var servlets = Map.empty[String, Servlet]
+  private[dropwizard] var filters = Map.empty[String, FilterHolder]
+  private[dropwizard] var servlets = Map.empty[String, ServletHolder]
 
   def addResource(resource: Object) {
     if (!isRootResourceClass(resource.getClass)) {
@@ -48,11 +49,29 @@ class Environment extends Logging {
   }
 
   def addFilter(filter: Filter, pathSpec: String) {
-    filters += pathSpec -> filter
+    filters += pathSpec -> new FilterHolder(filter)
+  }
+
+  def addFilter(klass: Class[_ <: Filter],
+                pathSpec: String,
+                params: Map[String, String] = Map.empty) {
+    val holder = new FilterHolder(klass)
+    holder.setInitParameters(params)
+    filters += pathSpec -> holder
   }
 
   def addServlet(servlet: Servlet, pathSpec: String) {
-    servlets += pathSpec -> servlet
+    servlets += pathSpec -> new ServletHolder(servlet)
+  }
+
+  def addServlet(klass: Class[_ <: Servlet],
+                 pathSpec: String,
+                 params: Map[String, String] = Map.empty,
+                 initOrder: Int = 0) {
+    val holder = new ServletHolder(klass)
+    holder.setInitParameters(params)
+    holder.setInitOrder(initOrder)
+    servlets += pathSpec -> holder
   }
 
   private[dropwizard] def validate() {
@@ -70,7 +89,7 @@ class Environment extends Logging {
            method <- httpMethods(resource)) {
         out.append("    %s %s (%s)\n".format(method, path, resource.getClass.getCanonicalName))
       }
-      log.info(out.toString)
+      log.info(out.toString())
     }
 
     log.debug("resources = %s", resources.mkString("{", ", ", "}"))
