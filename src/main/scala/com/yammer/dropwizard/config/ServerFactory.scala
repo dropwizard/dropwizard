@@ -32,7 +32,14 @@ object ServerFactory {
   private def newConnector(implicit config: Configuration) =
     config("http.connector").or("blocking_channel") match {
       case "socket" => new SocketConnector
-      case "select_channel" => new SelectChannelConnector
+      case "select_channel" => {
+        val connector = new SelectChannelConnector
+        connector.setAcceptors(config("http.acceptor_threads").or(2))
+        connector.setMaxIdleTime(config("http.max_idle_time_seconds").or(300))
+        connector.setLowResourcesConnections(config("http.low_resources_connections").or(25000))
+        connector.setLowResourcesMaxIdleTime(config("http.low_resources_max_idle_time_seconds").or(5))
+        connector
+      }
       case "blocking_channel" => new BlockingChannelConnector
     }
 
@@ -58,8 +65,8 @@ object ServerFactory {
 
   private def makeThreadPool(implicit config: Configuration) = {
     val pool = new QueuedThreadPool
-    config("http.max_connections").asOption[Int].foreach(pool.setMaxThreads)
-    config("http.min_connections").asOption[Int].foreach(pool.setMinThreads)
+    config("http.max_threads").asOption[Int].foreach(pool.setMaxThreads)
+    config("http.min_threads").asOption[Int].foreach(pool.setMinThreads)
     pool
   }
 
