@@ -71,7 +71,7 @@ object ServerFactory {
   }
 
   private def internalConnector(implicit config: Configuration) = {
-    val connector = newConnector(config)
+    val connector = new SocketConnector
     connector.setPort(config("metrics.port").or(8081))
     connector.setName("internal")
     connector
