@@ -11,6 +11,7 @@ import org.eclipse.jetty.servlet._
 import javax.servlet.{Filter, Servlet}
 import java.util.EnumSet
 import org.eclipse.jetty.server.{DispatcherType, Server, Connector}
+import com.yammer.dropwizard.util.QuietErrorHandler
 
 object ServerFactory {
   def provideServer(implicit config: Configuration,
@@ -56,6 +57,7 @@ object ServerFactory {
   private def makeServer(connectors: Connector*)(implicit config: Configuration) = {
     val server = new Server
     connectors.foreach(server.addConnector)
+    server.addBean(new QuietErrorHandler)
     server.setSendServerVersion(false)
     server.setThreadPool(makeThreadPool)
     server.setStopAtShutdown(true)
