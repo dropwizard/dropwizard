@@ -15,4 +15,4 @@ It's a little bit of opinionated glue code which bangs together a set of librari
 [Yammer](https://www.yammer.com)'s high-performance, low-latency, Scala services all use Dropwizard. In fact, Dropwizard
 is really just a simple extraction of [Yammer](https://www.yammer.com)'s glue code.
 
-For more information, check out the [wiki](https://github.com/codahale/dropwizard/wiki).
+For more information, check out the [wiki](https://github.com/codahale/dropwizard/wiki) and the [example application](https://github.com/codahale/dropwizard-example/).
