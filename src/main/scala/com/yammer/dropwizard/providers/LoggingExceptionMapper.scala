@@ -1,4 +1,4 @@
-package com.yammer.dropwizard.jersey
+package com.yammer.dropwizard.providers
 
 import util.Random
 import javax.ws.rs.WebApplicationException

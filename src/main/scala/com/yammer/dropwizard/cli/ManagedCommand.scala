@@ -1,19 +1,23 @@
 package com.yammer.dropwizard.cli
 
 import org.eclipse.jetty.util.component.AggregateLifeCycle
+import com.codahale.fig.Configuration
+import com.yammer.dropwizard.{Environment, Service}
 import com.yammer.dropwizard.lifecycle.JettyManager
 
-trait ManagedCommand extends Command {
-  final def run(opts: Map[String, List[String]], args: List[String]) = {
+trait ManagedCommand extends ConfiguredCommand {
+  final def run(service: Service, config: Configuration, opts: Map[String, List[String]], args: List[String]): Option[String] = {
     val aggregate = new AggregateLifeCycle
-    JettyManager.collect(injector).foreach(aggregate.addBean)
+    val env = new Environment
+    service.configure(config, env)
+    env.managedObjects.map {new JettyManager(_)}.foreach(aggregate.addBean)
     aggregate.start()
     try {
-      runWithManagement(opts, args)
+      run(opts, args)
     } finally {
       aggregate.stop()
     }
   }
 
-  def runWithManagement(opts: Map[String, List[String]], args: List[String]): Option[String]
+  def run(opts: Map[String, List[String]], args: List[String]): Option[String]
 }
