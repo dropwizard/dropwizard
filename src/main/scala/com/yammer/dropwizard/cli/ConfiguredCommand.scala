@@ -20,7 +20,7 @@ trait ConfiguredCommand extends Command with Logging {
           run(service, config, opts, others)
         } catch {
           case e: ParsingException => Some("Bad configuration file: " + e.getMessage)
-          case e => Some("Error: " + e.getMessage)
+          case e => throw e
         }
       } else {
         Some(filename + " does not exist or is not a file")
