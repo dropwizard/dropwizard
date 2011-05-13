@@ -28,27 +28,26 @@ class DropwizardProject(info: ProjectInfo) extends DefaultProject(info)
   /**
    * Test Dependencies
    */
-  val simplespec = "com.codahale" %% "simplespec" % "0.2.0" % "test"
-  val mockito = "org.mockito" % "mockito-all" % "1.8.4" % "test"
+  val simplespec = "com.codahale" %% "simplespec" % "0.3.3" % "test"
+  def specs2Framework = new TestFramework("org.specs2.runner.SpecsFramework")
+  override def testFrameworks = super.testFrameworks ++ Seq(specs2Framework)
 
   /**
    * Jersey Dependencies
    */
-  val jerseyScala = "com.codahale" %% "jersey-scala" % "0.1.3"
+  val jerseyScala = "com.codahale" %% "jersey-scala" % "0.1.4"
 
   /**
    * Misc Dependencies
    */
-  val fig = "com.codahale" %% "fig" % "1.1.1"
-  val jerkson = "com.codahale" %% "jerkson" % "0.1.8"
-  val metricsVersion = "2.0.0-BETA12"
+  val fig = "com.codahale" %% "fig" % "1.1.2"
+  val jerkson = "com.codahale" %% "jerkson" % "0.2.1"
+  val metricsVersion = "2.0.0-BETA13"
   val metricsCore = "com.yammer.metrics" %% "metrics-core" % metricsVersion
   val metricsServlet = "com.yammer.metrics" %% "metrics-servlet" % metricsVersion
   val metricsJetty = "com.yammer.metrics" %% "metrics-jetty" % metricsVersion
   val metricsLog4j = "com.yammer.metrics" %% "metrics-log4j" % metricsVersion
   val commonsCli = "commons-cli" % "commons-cli" % "1.2"
-  val jacksonCore = "org.codehaus.jackson" % "jackson-core-asl" % "1.7.6"
-  val jacksonMapper = "org.codehaus.jackson" % "jackson-mapper-asl" % "1.7.6"
 
   /**
    * Logging Dependencies
@@ -56,7 +55,7 @@ class DropwizardProject(info: ProjectInfo) extends DefaultProject(info)
   val slf4jVersion = "1.6.1"
   val slf4jBindings = "org.slf4j" % "slf4j-log4j12" % slf4jVersion
   val jul2slf4j = "org.slf4j" % "jul-to-slf4j" % slf4jVersion
-  val logula = "com.codahale" %% "logula" % "2.1.1"
+  val logula = "com.codahale" %% "logula" % "2.1.2"
 
   /**
    * Jetty Dependencies
