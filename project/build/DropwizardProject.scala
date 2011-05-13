@@ -28,7 +28,7 @@ class DropwizardProject(info: ProjectInfo) extends DefaultProject(info)
   /**
    * Test Dependencies
    */
-  val simplespec = "com.codahale" %% "simplespec" % "0.3.2" % "test"
+  val simplespec = "com.codahale" %% "simplespec" % "0.3.3" % "test"
   def specs2Framework = new TestFramework("org.specs2.runner.SpecsFramework")
   override def testFrameworks = super.testFrameworks ++ Seq(specs2Framework)
 
@@ -42,7 +42,7 @@ class DropwizardProject(info: ProjectInfo) extends DefaultProject(info)
    */
   val fig = "com.codahale" %% "fig" % "1.1.2"
   val jerkson = "com.codahale" %% "jerkson" % "0.2.1"
-  val metricsVersion = "2.0.0-BETA13-SNAPSHOT"
+  val metricsVersion = "2.0.0-BETA13"
   val metricsCore = "com.yammer.metrics" %% "metrics-core" % metricsVersion
   val metricsServlet = "com.yammer.metrics" %% "metrics-servlet" % metricsVersion
   val metricsJetty = "com.yammer.metrics" %% "metrics-jetty" % metricsVersion
