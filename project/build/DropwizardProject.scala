@@ -35,7 +35,7 @@ class DropwizardProject(info: ProjectInfo) extends DefaultProject(info)
   /**
    * Jersey Dependencies
    */
-  val jerseyScala = "com.codahale" %% "jersey-scala" % "0.1.4"
+  val jerseyScala = "com.codahale" %% "jersey-scala" % "0.1.5"
 
   /**
    * Misc Dependencies
