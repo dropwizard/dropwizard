@@ -9,6 +9,7 @@ class CacheBustingFilter extends Filter {
   def doFilter(request: ServletRequest, response: ServletResponse, chain: FilterChain) {
     if (response.isInstanceOf[HttpServletResponse]) {
       response.asInstanceOf[HttpServletResponse].setHeader("Cache-Control", "must-revalidate,no-cache,no-store")
+      chain.doFilter(request, response)
     }
   }
 
