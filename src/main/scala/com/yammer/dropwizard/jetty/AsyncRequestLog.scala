@@ -8,6 +8,7 @@ import org.eclipse.jetty.util.log.Log
 import org.eclipse.jetty.server.{Authentication, Response, Request, RequestLog}
 import org.eclipse.jetty.util.{DateCache, RolloverFileOutputStream}
 import java.util.{Locale, ArrayList, TimeZone}
+import java.lang.ThreadLocal
 
 object AsyncRequestLog {
   private val i = new AtomicInteger
@@ -28,8 +29,13 @@ class AsyncRequestLog(filenamePattern: Option[String],
   import collection.JavaConversions._
 
   private val queue = new LinkedBlockingQueue[String]
-  private val logDateCache = new DateCache("dd/MMM/yyyy:HH:mm:ss Z", Locale.getDefault)
-  logDateCache.setTimeZoneID("UTC")
+  private val logDateCache = new ThreadLocal[DateCache] {
+    override def initialValue() = {
+      val cache = new DateCache("dd/MMM/yyyy:HH:mm:ss Z", Locale.getDefault)
+      cache.setTimeZoneID("UTC")
+      cache
+    }
+  }
   private val dispatcher = new Dispatcher
   private val dispatchThread = new Thread(dispatcher)
   dispatchThread.setName("async-request-log-dispatcher-" + i.incrementAndGet())
@@ -88,7 +94,7 @@ class AsyncRequestLog(filenamePattern: Option[String],
       buf.append(" - ")
     }
 
-    buf.append(" [").append(logDateCache.format(request.getTimeStamp)).append("] \"")
+    buf.append(" [").append(logDateCache.get().format(request.getTimeStamp)).append("] \"")
     buf.append(request.getMethod).append(' ').append(request.getUri.toString)
     buf.append(' ').append(request.getProtocol).append("\" ")
 

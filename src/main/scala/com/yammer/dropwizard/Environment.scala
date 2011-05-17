@@ -9,6 +9,7 @@ import javax.servlet.{Servlet, Filter}
 import com.sun.jersey.core.reflection.MethodList
 import javax.ws.rs.{Path, HttpMethod}
 import org.eclipse.jetty.servlet.{ServletHolder, FilterHolder}
+import com.yammer.dropwizard.jetty.NonblockingServletHolder
 
 class Environment extends Logging {
   private[dropwizard] var resources = Set.empty[Object]
@@ -68,7 +69,7 @@ class Environment extends Logging {
                                pathSpec: String,
                                params: Map[String, String] = Map.empty,
                                initOrder: Int = 0) {
-    val holder = new ServletHolder(servlet)
+    val holder = new NonblockingServletHolder(servlet)
     holder.setInitParameters(params)
     holder.setInitOrder(initOrder)
     servlets += pathSpec -> holder
