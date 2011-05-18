@@ -10,6 +10,7 @@ trait ManagedCommand extends ConfiguredCommand {
     val aggregate = new AggregateLifeCycle
     val env = new Environment
     service.configure(config, env)
+    env.jettyObjects.foreach(aggregate.addBean)
     env.managedObjects.map {new JettyManaged(_)}.foreach(aggregate.addBean)
     aggregate.start()
     try {

@@ -25,6 +25,7 @@ class ServerCommand(service: Service) extends ConfiguredCommand {
     env.addServlet(new ServletContainer(new JerseyConfig(env)), "/*")
 
     val server = ServerFactory.provideServer(config, env.servlets, env.filters)
+    env.jettyObjects.foreach(server.addBean)
     env.managedObjects.map { new JettyManaged(_) }.foreach(server.addBean)
 
     log.info("Starting %s", service.name)

@@ -9,13 +9,15 @@ import javax.servlet.{Servlet, Filter}
 import com.sun.jersey.core.reflection.MethodList
 import javax.ws.rs.{Path, HttpMethod}
 import org.eclipse.jetty.servlet.{ServletHolder, FilterHolder}
-import com.yammer.dropwizard.jetty.NonblockingServletHolder
+import org.eclipse.jetty.util.component.LifeCycle
+import com.yammer.dropwizard.jetty.{JettyManaged, NonblockingServletHolder}
 
 class Environment extends Logging {
   private[dropwizard] var resources = Set.empty[Object]
   private[dropwizard] var healthChecks = Set.empty[HealthCheck]
   private[dropwizard] var providers = Set.empty[Object]
   private[dropwizard] var managedObjects = IndexedSeq.empty[Managed]
+  private[dropwizard] var jettyObjects = IndexedSeq.empty[LifeCycle]
   private[dropwizard] var filters = Map.empty[String, FilterHolder]
   private[dropwizard] var servlets = Map.empty[String, ServletHolder]
 
@@ -47,6 +49,10 @@ class Environment extends Logging {
 
   def manage(managedObject: Managed) {
     managedObjects ++= IndexedSeq(managedObject)
+  }
+
+  def manage(jettyObject: LifeCycle) {
+    jettyObjects ++= IndexedSeq(jettyObject)
   }
 
   def addFilter[T <: Filter](filter: T,
