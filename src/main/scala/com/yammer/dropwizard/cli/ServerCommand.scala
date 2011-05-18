@@ -22,11 +22,14 @@ class ServerCommand(service: Service) extends ConfiguredCommand {
     service.configure(config, env)
     env.healthChecks.foreach(HealthChecks.register)
     HealthChecks.register(new DeadlockHealthCheck)
-    env.addServlet(new ServletContainer(new JerseyConfig(env)), "/*")
+
+    env.addServlet(new ServletContainer(new JerseyConfig(env)), "/*", initOrder = Int.MaxValue)
 
     val server = ServerFactory.provideServer(config, env.servlets, env.filters)
     env.jettyObjects.foreach(server.addBean)
     env.managedObjects.map { new JettyManaged(_) }.foreach(server.addBean)
+
+
 
     log.info("Starting %s", service.name)
     service.banner.foreach {s => log.info("\n%s\n", s)}
