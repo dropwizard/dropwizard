@@ -41,7 +41,7 @@ class DropwizardProject(info: ProjectInfo) extends DefaultProject(info)
    * Misc Dependencies
    */
   val fig = "com.codahale" %% "fig" % "1.1.2"
-  val jerkson = "com.codahale" %% "jerkson" % "0.2.1"
+  val jerkson = "com.codahale" %% "jerkson" % "0.2.2"
   val metricsVersion = "2.0.0-BETA13"
   val metricsCore = "com.yammer.metrics" %% "metrics-core" % metricsVersion
   val metricsServlet = "com.yammer.metrics" %% "metrics-servlet" % metricsVersion
