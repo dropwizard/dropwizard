@@ -42,12 +42,12 @@ class DropwizardProject(info: ProjectInfo) extends DefaultProject(info)
   /**
    * Jersey Dependencies
    */
-  val jerseyScala = "com.codahale" %% "jersey-scala" % "0.1.5"
+  val jerseyScala = "com.codahale" %% "jersey-scala" % "0.1.6"
 
   /**
    * Misc Dependencies
    */
-  val fig = "com.codahale" %% "fig" % "1.1.2"
+  val fig = "com.codahale" %% "fig" % "1.1.4"
   val jerkson = "com.codahale" %% "jerkson" % "0.2.2"
   val metricsVersion = "2.0.0-BETA13"
   val metricsCore = "com.yammer.metrics" %% "metrics-core" % metricsVersion
