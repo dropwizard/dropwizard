@@ -98,23 +98,28 @@
         </dependency>
         <dependency>
             <groupId>com.yammer.metrics</groupId>
-            <artifactId>metrics-core_2.9.0</artifactId>
-            <version>2.0.0-BETA13</version>
+            <artifactId>metrics-core</artifactId>
+            <version>2.0.0-BETA14-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.yammer.metrics</groupId>
-            <artifactId>metrics-servlet_2.9.0</artifactId>
-            <version>2.0.0-BETA13</version>
+            <artifactId>metrics-servlet</artifactId>
+            <version>2.0.0-BETA14-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.yammer.metrics</groupId>
-            <artifactId>metrics-jetty_2.9.0</artifactId>
-            <version>2.0.0-BETA13</version>
+            <artifactId>metrics-jetty</artifactId>
+            <version>2.0.0-BETA14-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>com.yammer.metrics</groupId>
-            <artifactId>metrics-log4j_2.9.0</artifactId>
-            <version>2.0.0-BETA13</version>
+            <artifactId>metrics-log4j</artifactId>
+            <version>2.0.0-BETA14-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.yammer.metrics</groupId>
+            <artifactId>metrics-scala_${scala.version}</artifactId>
+            <version>2.0.0-BETA14-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>commons-cli</groupId>
