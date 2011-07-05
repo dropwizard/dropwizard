@@ -25,7 +25,7 @@ class ServerCommand(service: Service) extends ConfiguredCommand {
 
     env.addServlet(new ServletContainer(new JerseyConfig(env)), "/*", initOrder = Int.MaxValue)
 
-    val server = ServerFactory.provideServer(config, env.servlets, env.filters)
+    val server = ServerFactory.provideServer(config, env.servlets, env.filters, env.tasks)
     env.jettyObjects.foreach(server.addBean)
     env.managedObjects.map { new JettyManaged(_) }.foreach(server.addBean)
 

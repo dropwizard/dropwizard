@@ -10,7 +10,8 @@ import com.sun.jersey.core.reflection.MethodList
 import javax.ws.rs.{Path, HttpMethod}
 import org.eclipse.jetty.servlet.{ServletHolder, FilterHolder}
 import org.eclipse.jetty.util.component.LifeCycle
-import com.yammer.dropwizard.jetty.{JettyManaged, NonblockingServletHolder}
+import com.yammer.dropwizard.jetty.NonblockingServletHolder
+import com.yammer.dropwizard.tasks.{GarbageCollectionTask, Task}
 
 class Environment extends Logging {
   private[dropwizard] var resources = Set.empty[Object]
@@ -20,6 +21,7 @@ class Environment extends Logging {
   private[dropwizard] var jettyObjects = IndexedSeq.empty[LifeCycle]
   private[dropwizard] var filters = Map.empty[String, FilterHolder]
   private[dropwizard] var servlets = Map.empty[String, ServletHolder]
+  private[dropwizard] var tasks: Set[Task] = Set(new GarbageCollectionTask)
 
   def addResource(resource: Object) {
     if (!isRootResourceClass(resource.getClass)) {
@@ -89,6 +91,10 @@ class Environment extends Logging {
     holder.setInitParameters(params)
     holder.setInitOrder(initOrder)
     servlets += pathSpec -> holder
+  }
+
+  def addTask(task: Task) {
+    tasks += task
   }
 
   private[dropwizard] def validate() {

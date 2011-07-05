@@ -7,16 +7,18 @@ import org.eclipse.jetty.server.bio.SocketConnector
 import org.eclipse.jetty.server.nio.{BlockingChannelConnector, SelectChannelConnector}
 import org.eclipse.jetty.util.thread.QueuedThreadPool
 import com.yammer.metrics.reporting.MetricsServlet
-import org.eclipse.jetty.servlet._
 import javax.servlet.{Filter, Servlet}
 import java.util.EnumSet
 import org.eclipse.jetty.server.{DispatcherType, Server, Connector}
 import com.yammer.dropwizard.util.QuietErrorHandler
+import org.eclipse.jetty.servlet._
+import com.yammer.dropwizard.tasks.{Task, TaskServlet}
 
 object ServerFactory {
   def provideServer(implicit config: Configuration,
                     servlets: Map[String, ServletHolder],
-                    filters: Map[String, FilterHolder]) = {
+                    filters: Map[String, FilterHolder],
+                    tasks: Set[Task]) = {
     val server = makeServer(mainConnector, internalConnector)
 
     val handlers = new HandlerCollection
@@ -95,8 +97,9 @@ object ServerFactory {
     context
   }
 
-  private def internalServletContext = {
+  private def internalServletContext(implicit tasks: Set[Task]) = {
     val internalContext = new ServletContextHandler()
+    internalContext.addServlet(new ServletHolder(new TaskServlet(tasks)), "/tasks/*")
     internalContext.addServlet(new ServletHolder(new MetricsServlet), "/*")
     internalContext.setConnectorNames(Array("internal"))
     internalContext
