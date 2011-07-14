@@ -158,11 +158,6 @@
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-servlets</artifactId>
-            <version>7.4.1.v20110513</version>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-http</artifactId>
             <version>7.4.1.v20110513PARSERHOTFIX2</version>
         </dependency>
