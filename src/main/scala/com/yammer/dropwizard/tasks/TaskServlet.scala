@@ -10,6 +10,7 @@ class TaskServlet(tasks: Set[Task]) extends HttpServlet with Logging {
     tasksByName.get(req.getPathInfo) match {
       case Some(task) => {
         try {
+          resp.setContentType("text/plain")
           val output = resp.getWriter
           task.execute(params(req), output)
           output.close()

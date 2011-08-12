@@ -6,7 +6,7 @@
 
     <groupId>com.yammer</groupId>
     <artifactId>dropwizard_2.9.0-1</artifactId>
-    <version>0.0.8</version>
+    <version>0.0.9</version>
     <name>Dropwizard for Scala ${scala.version}</name>
 
     <properties>
@@ -89,7 +89,7 @@
         <dependency>
             <groupId>com.codahale</groupId>
             <artifactId>jersey-scala_${scala.version}</artifactId>
-            <version>0.1.7</version>
+            <version>0.1.8</version>
         </dependency>
         <dependency>
             <groupId>com.codahale</groupId>
@@ -99,12 +99,12 @@
         <dependency>
             <groupId>com.codahale</groupId>
             <artifactId>jerkson_${scala.version}</artifactId>
-            <version>0.3.2</version>
+            <version>0.4.0</version>
         </dependency>
         <dependency>
             <groupId>com.codahale</groupId>
             <artifactId>fig_${scala.version}</artifactId>
-            <version>1.1.5</version>
+            <version>1.1.6</version>
         </dependency>
         <dependency>
             <groupId>com.yammer.metrics</groupId>
@@ -158,18 +158,13 @@
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-servlets</artifactId>
-            <version>7.4.1.v20110513</version>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-http</artifactId>
             <version>7.4.1.v20110513PARSERHOTFIX2</version>
         </dependency>
         <dependency>
             <groupId>com.codahale</groupId>
             <artifactId>simplespec_${scala.version}</artifactId>
-            <version>0.3.4</version>
+            <version>0.4.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
