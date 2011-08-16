@@ -11,6 +11,8 @@
 
     <properties>
         <scala.version>2.8.1</scala.version>
+        <jersey.version>1.8</jersey.version>
+        <metrics.version>2.0.0-BETA15</metrics.version>
     </properties>
 
     <developers>
@@ -79,12 +81,12 @@
         <dependency>
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-core</artifactId>
-            <version>1.8</version>
+            <version>${jersey.version}</version>
         </dependency>
         <dependency>
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-server</artifactId>
-            <version>1.8</version>
+            <version>${jersey.version}</version>
         </dependency>
         <dependency>
             <groupId>com.codahale</groupId>
@@ -109,27 +111,27 @@
         <dependency>
             <groupId>com.yammer.metrics</groupId>
             <artifactId>metrics-core</artifactId>
-            <version>2.0.0-BETA14</version>
+            <version>${metrics.version}</version>
         </dependency>
         <dependency>
             <groupId>com.yammer.metrics</groupId>
             <artifactId>metrics-servlet</artifactId>
-            <version>2.0.0-BETA14</version>
+            <version>${metrics.version}</version>
         </dependency>
         <dependency>
             <groupId>com.yammer.metrics</groupId>
             <artifactId>metrics-jetty</artifactId>
-            <version>2.0.0-BETA14</version>
+            <version>${metrics.version}</version>
         </dependency>
         <dependency>
             <groupId>com.yammer.metrics</groupId>
             <artifactId>metrics-log4j</artifactId>
-            <version>2.0.0-BETA14</version>
+            <version>${metrics.version}</version>
         </dependency>
         <dependency>
             <groupId>com.yammer.metrics</groupId>
             <artifactId>metrics-scala_${scala.version}</artifactId>
-            <version>2.0.0-BETA14</version>
+            <version>${metrics.version}</version>
         </dependency>
         <dependency>
             <groupId>commons-cli</groupId>
