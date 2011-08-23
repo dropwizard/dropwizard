@@ -6,7 +6,7 @@
 
     <groupId>com.yammer</groupId>
     <artifactId>dropwizard_2.9.0-1</artifactId>
-    <version>0.0.10</version>
+    <version>0.0.11-SNAPSHOT</version>
     <name>Dropwizard for Scala ${scala.version}</name>
 
     <properties>
