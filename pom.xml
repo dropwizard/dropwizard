@@ -13,6 +13,7 @@
         <scala.version>2.9.0-1</scala.version>
         <jersey.version>1.8</jersey.version>
         <metrics.version>2.0.0-BETA16</metrics.version>
+        <jetty.version>[7.5.0,7.6.0)</jetty.version>
     </properties>
 
     <developers>
@@ -151,17 +152,17 @@
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-server</artifactId>
-            <version>7.4.1.v20110513</version>
+            <version>${jetty.version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-servlet</artifactId>
-            <version>7.4.1.v20110513</version>
+            <version>${jetty.version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-http</artifactId>
-            <version>7.4.1.v20110513PARSERHOTFIX2</version>
+            <version>${jetty.version}</version>
         </dependency>
         <dependency>
             <groupId>com.codahale</groupId>
