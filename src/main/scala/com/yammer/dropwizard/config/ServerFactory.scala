@@ -1,20 +1,20 @@
 package com.yammer.dropwizard.config
 
+import java.util.EnumSet
 import com.codahale.fig.Configuration
-import com.yammer.metrics.jetty.InstrumentedHandler
 import org.eclipse.jetty.server.handler.HandlerCollection
 import org.eclipse.jetty.server.bio.SocketConnector
 import org.eclipse.jetty.server.nio.{BlockingChannelConnector, SelectChannelConnector}
 import org.eclipse.jetty.util.thread.QueuedThreadPool
-import com.yammer.metrics.reporting.MetricsServlet
-import javax.servlet.{Filter, Servlet}
-import java.util.EnumSet
 import org.eclipse.jetty.server.{DispatcherType, Server, Connector}
-import com.yammer.dropwizard.util.QuietErrorHandler
 import org.eclipse.jetty.servlet._
+import com.yammer.metrics.jetty.InstrumentedHandler
+import com.yammer.metrics.reporting.MetricsServlet
+import com.yammer.dropwizard.util.QuietErrorHandler
 import com.yammer.dropwizard.tasks.{Task, TaskServlet}
+import com.codahale.logula.Logging
 
-object ServerFactory {
+object ServerFactory extends Logging {
   def provideServer(implicit config: Configuration,
                     servlets: Map[String, ServletHolder],
                     filters: Map[String, FilterHolder],
@@ -34,7 +34,11 @@ object ServerFactory {
 
   private def newConnector(implicit config: Configuration) =
     config("http.connector").or("blocking_channel") match {
-      case "socket" => new SocketConnector
+      case "socket" => {
+        log.warn("Usage of socket connectors with Jetty 7.4.x-7.5.0 is not recommended.")
+        log.warn("Use blocking_channel instead.")
+        new SocketConnector
+      }
       case "select_channel" => {
         val connector = new SelectChannelConnector
         connector.setAcceptors(config("http.acceptor_threads").or(2))
