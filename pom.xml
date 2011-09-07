@@ -11,7 +11,7 @@
 
     <properties>
         <scala.version>2.9.0-1</scala.version>
-        <jersey.version>1.8</jersey.version>
+        <jersey.version>1.9</jersey.version>
         <metrics.version>2.0.0-BETA16</metrics.version>
         <jetty.version>[7.5.0,7.6.0)</jetty.version>
     </properties>
