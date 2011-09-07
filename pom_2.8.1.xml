@@ -167,7 +167,7 @@
         <dependency>
             <groupId>com.codahale</groupId>
             <artifactId>simplespec_${scala.version}</artifactId>
-            <version>0.4.0</version>
+            <version>0.5.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
