@@ -50,10 +50,6 @@
             <url>http://scala-tools.org/repo-releases/</url>
         </repository>
         <repository>
-            <id>java.net.m2</id>
-            <url>http://download.java.net/maven/2/</url>
-        </repository>
-        <repository>
             <id>repo.codahale.com</id>
             <url>http://repo.codahale.com</url>
         </repository>
