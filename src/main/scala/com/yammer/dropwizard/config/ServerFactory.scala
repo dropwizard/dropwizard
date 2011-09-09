@@ -82,6 +82,7 @@ object ServerFactory extends Logging {
     val connector = new SocketConnector
     connector.setPort(config("metrics.port").or(8081))
     connector.setName("internal")
+    connector.setThreadPool(new QueuedThreadPool(8))
     connector
   }
 
