@@ -5,12 +5,12 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.yammer</groupId>
-    <artifactId>dropwizard_2.8.1</artifactId>
+    <artifactId>dropwizard_2.9.0-1</artifactId>
     <version>0.0.11-SNAPSHOT</version>
     <name>Dropwizard for Scala ${scala.version}</name>
 
     <properties>
-        <scala.version>2.8.1</scala.version>
+        <scala.version>2.9.0-1</scala.version>
         <jersey.version>1.9</jersey.version>
         <metrics.version>2.0.0-BETA16</metrics.version>
         <jetty.version>[7.5.0.0,7.6.0.0)</jetty.version>
