@@ -88,7 +88,7 @@
         <dependency>
             <groupId>com.codahale</groupId>
             <artifactId>jersey-scala_${scala.version}</artifactId>
-            <version>0.1.8</version>
+            <version>0.1.9</version>
         </dependency>
         <dependency>
             <groupId>com.codahale</groupId>
@@ -98,12 +98,12 @@
         <dependency>
             <groupId>com.codahale</groupId>
             <artifactId>jerkson_${scala.version}</artifactId>
-            <version>0.4.0</version>
+            <version>0.4.1</version>
         </dependency>
         <dependency>
             <groupId>com.codahale</groupId>
             <artifactId>fig_${scala.version}</artifactId>
-            <version>1.1.6</version>
+            <version>1.1.7</version>
         </dependency>
         <dependency>
             <groupId>com.yammer.metrics</groupId>
@@ -163,7 +163,7 @@
         <dependency>
             <groupId>com.codahale</groupId>
             <artifactId>simplespec_${scala.version}</artifactId>
-            <version>0.5.0</version>
+            <version>0.5.1</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
