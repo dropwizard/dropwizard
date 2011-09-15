@@ -1,18 +1,20 @@
 package com.yammer.dropwizard.config
 
+import scala.collection.JavaConverters._
 import java.util.EnumSet
 import com.codahale.fig.Configuration
+import com.codahale.logula.Logging
+import com.yammer.metrics.jetty.InstrumentedHandler
+import com.yammer.metrics.reporting.MetricsServlet
+import com.yammer.dropwizard.util.QuietErrorHandler
+import com.yammer.dropwizard.tasks.{Task, TaskServlet}
+import com.yammer.dropwizard.jetty.GzipHandler
 import org.eclipse.jetty.server.handler.HandlerCollection
 import org.eclipse.jetty.server.bio.SocketConnector
 import org.eclipse.jetty.server.nio.{BlockingChannelConnector, SelectChannelConnector}
 import org.eclipse.jetty.util.thread.QueuedThreadPool
 import org.eclipse.jetty.server.{DispatcherType, Server, Connector}
 import org.eclipse.jetty.servlet._
-import com.yammer.metrics.jetty.InstrumentedHandler
-import com.yammer.metrics.reporting.MetricsServlet
-import com.yammer.dropwizard.util.QuietErrorHandler
-import com.yammer.dropwizard.tasks.{Task, TaskServlet}
-import com.codahale.logula.Logging
 
 object ServerFactory extends Logging {
   def provideServer(implicit config: Configuration,
@@ -87,7 +89,8 @@ object ServerFactory extends Logging {
   }
 
   private def servletContext(implicit servlets: Map[String, ServletHolder],
-                             filters: Map[String, FilterHolder]) = {
+                             filters: Map[String, FilterHolder],
+                             config: Configuration) = {
     val context = new ServletContextHandler()
 
     for ((pathSpec, servlet) <- servlets) {
@@ -99,7 +102,14 @@ object ServerFactory extends Logging {
     }
     
     context.setConnectorNames(Array("main"))
-    context
+    if (config("http.gzip.enabled").or(true)) {
+      val gzip = new GzipHandler(context)
+      config("http.gzip.min_entity_size_bytes").asOption[Int].foreach(gzip.setMinGzipSize)
+      config("http.gzip.buffer_size_kilobytes").asOption[Int].foreach { n => gzip.setBufferSize(n * 1024) }
+      config("http.gzip.excluded_user_agents").asOption[Set[String]].foreach { s => gzip.setExcluded(s.asJava) }
+      config("http.gzip.mime_types").asOption[Set[String]].foreach {s => gzip.setMimeTypes(s.asJava)}
+      gzip
+    } else context
   }
 
   private def internalServletContext(implicit tasks: Set[Task]) = {

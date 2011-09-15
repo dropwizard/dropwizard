@@ -22,6 +22,7 @@ object Example extends Service {
   def configure(implicit config: Configuration, environment: Environment) {
     implicit val template = SayingFactory.buildSaying
     environment.addResource(new HelloWorldResource)
+    environment.addResource(new UploadResource)
     environment.addHealthCheck(new DumbHealthCheck)
     environment.manage(new StartableObject)
   }
