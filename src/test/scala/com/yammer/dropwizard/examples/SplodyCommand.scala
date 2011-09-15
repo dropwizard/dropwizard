@@ -17,7 +17,7 @@ class SplodyCommand extends Command {
   def run(service: Service, opts: Map[String, List[String]], args: List[String]) = {
     if (opts.contains("exception")) {
       println("Throwing an exception")
-      error("EXPERIENCE BIJ")
+      sys.error("EXPERIENCE BIJ")
     }
 
     opts.get("message").map { _ => "Y U NO DO RIGHT THING" }

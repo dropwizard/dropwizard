@@ -2,6 +2,7 @@ package com.yammer.dropwizard.examples
 
 import com.codahale.fig.Configuration
 import com.yammer.dropwizard.{Environment, Service}
+import com.yammer.dropwizard.providers.OauthTokenProvider
 
 object Example extends Service {
   def name = "Example"
@@ -22,6 +23,8 @@ object Example extends Service {
   def configure(implicit config: Configuration, environment: Environment) {
     implicit val template = SayingFactory.buildSaying
     environment.addResource(new HelloWorldResource)
+    environment.addResource(new UploadResource)
+    environment.addResource(new ProtectedResource)
     environment.addHealthCheck(new DumbHealthCheck)
     environment.manage(new StartableObject)
   }

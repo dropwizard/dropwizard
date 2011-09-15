@@ -1,20 +1,22 @@
 package com.yammer.dropwizard.config
 
+import scala.collection.JavaConverters._
+import java.util.EnumSet
 import com.codahale.fig.Configuration
+import com.codahale.logula.Logging
 import com.yammer.metrics.jetty.InstrumentedHandler
+import com.yammer.metrics.reporting.MetricsServlet
+import com.yammer.dropwizard.util.QuietErrorHandler
+import com.yammer.dropwizard.tasks.{Task, TaskServlet}
+import com.yammer.dropwizard.jetty.GzipHandler
 import org.eclipse.jetty.server.handler.HandlerCollection
 import org.eclipse.jetty.server.bio.SocketConnector
 import org.eclipse.jetty.server.nio.{BlockingChannelConnector, SelectChannelConnector}
 import org.eclipse.jetty.util.thread.QueuedThreadPool
-import com.yammer.metrics.reporting.MetricsServlet
-import javax.servlet.{Filter, Servlet}
-import java.util.EnumSet
 import org.eclipse.jetty.server.{DispatcherType, Server, Connector}
-import com.yammer.dropwizard.util.QuietErrorHandler
 import org.eclipse.jetty.servlet._
-import com.yammer.dropwizard.tasks.{Task, TaskServlet}
 
-object ServerFactory {
+object ServerFactory extends Logging {
   def provideServer(implicit config: Configuration,
                     servlets: Map[String, ServletHolder],
                     filters: Map[String, FilterHolder],
@@ -34,7 +36,11 @@ object ServerFactory {
 
   private def newConnector(implicit config: Configuration) =
     config("http.connector").or("blocking_channel") match {
-      case "socket" => new SocketConnector
+      case "socket" => {
+        log.warn("Usage of socket connectors with Jetty 7.4.x-7.5.0 is not recommended.")
+        log.warn("Use blocking_channel instead.")
+        new SocketConnector
+      }
       case "select_channel" => {
         val connector = new SelectChannelConnector
         connector.setAcceptors(config("http.acceptor_threads").or(2))
@@ -78,11 +84,13 @@ object ServerFactory {
     val connector = new SocketConnector
     connector.setPort(config("metrics.port").or(8081))
     connector.setName("internal")
+    connector.setThreadPool(new QueuedThreadPool(8))
     connector
   }
 
   private def servletContext(implicit servlets: Map[String, ServletHolder],
-                             filters: Map[String, FilterHolder]) = {
+                             filters: Map[String, FilterHolder],
+                             config: Configuration) = {
     val context = new ServletContextHandler()
 
     for ((pathSpec, servlet) <- servlets) {
@@ -94,7 +102,14 @@ object ServerFactory {
     }
     
     context.setConnectorNames(Array("main"))
-    context
+    if (config("http.gzip.enabled").or(true)) {
+      val gzip = new GzipHandler(context)
+      config("http.gzip.min_entity_size_bytes").asOption[Int].foreach(gzip.setMinGzipSize)
+      config("http.gzip.buffer_size_kilobytes").asOption[Int].foreach { n => gzip.setBufferSize(n * 1024) }
+      config("http.gzip.excluded_user_agents").asOption[Set[String]].foreach { s => gzip.setExcluded(s.asJava) }
+      config("http.gzip.mime_types").asOption[Set[String]].foreach {s => gzip.setMimeTypes(s.asJava)}
+      gzip
+    } else context
   }
 
   private def internalServletContext(implicit tasks: Set[Task]) = {

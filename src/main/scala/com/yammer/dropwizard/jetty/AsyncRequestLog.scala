@@ -12,6 +12,7 @@ import java.lang.ThreadLocal
 
 object AsyncRequestLog {
   private val i = new AtomicInteger
+  private val log = Log.getLogger(classOf[AsyncRequestLog])
 }
 
 /**
@@ -70,7 +71,7 @@ class AsyncRequestLog(filenamePattern: Option[String],
     this.writer = new PrintWriter(
       filenamePattern.map { f =>
           val output = new RolloverFileOutputStream(f, true, numberOfFileToRetain.getOrElse(7), TimeZone.getTimeZone("UTC"))
-          Log.info("Opened " + output.getDatedFilename)
+          AsyncRequestLog.log.info("Opened " + output.getDatedFilename)
           output
       }.getOrElse(System.out)
     )

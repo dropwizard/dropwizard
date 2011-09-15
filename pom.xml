@@ -5,14 +5,15 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.yammer</groupId>
-    <artifactId>dropwizard_2.9.0-1</artifactId>
-    <version>0.0.10-1</version>
+    <artifactId>dropwizard_2.9.1</artifactId>
+    <version>0.0.11</version>
     <name>Dropwizard for Scala ${scala.version}</name>
 
     <properties>
-        <scala.version>2.9.0-1</scala.version>
-        <jersey.version>1.8</jersey.version>
+        <scala.version>2.9.1</scala.version>
+        <jersey.version>1.9</jersey.version>
         <metrics.version>2.0.0-BETA16</metrics.version>
+        <jetty.version>[7.5.0.0,7.6.0.0)</jetty.version>
     </properties>
 
     <developers>
@@ -47,10 +48,6 @@
         <repository>
             <id>scala-tools-releases</id>
             <url>http://scala-tools.org/repo-releases/</url>
-        </repository>
-        <repository>
-            <id>java.net.m2</id>
-            <url>http://download.java.net/maven/2/</url>
         </repository>
         <repository>
             <id>repo.codahale.com</id>
@@ -91,7 +88,7 @@
         <dependency>
             <groupId>com.codahale</groupId>
             <artifactId>jersey-scala_${scala.version}</artifactId>
-            <version>0.1.8</version>
+            <version>0.1.9</version>
         </dependency>
         <dependency>
             <groupId>com.codahale</groupId>
@@ -101,12 +98,12 @@
         <dependency>
             <groupId>com.codahale</groupId>
             <artifactId>jerkson_${scala.version}</artifactId>
-            <version>0.4.0</version>
+            <version>0.4.1</version>
         </dependency>
         <dependency>
             <groupId>com.codahale</groupId>
             <artifactId>fig_${scala.version}</artifactId>
-            <version>1.1.6</version>
+            <version>1.1.7</version>
         </dependency>
         <dependency>
             <groupId>com.yammer.metrics</groupId>
@@ -141,32 +138,32 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
-            <version>1.6.1</version>
+            <version>1.6.2</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>jul-to-slf4j</artifactId>
-            <version>1.6.1</version>
+            <version>1.6.2</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-server</artifactId>
-            <version>7.4.1.v20110513</version>
+            <version>${jetty.version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-servlet</artifactId>
-            <version>7.4.1.v20110513</version>
+            <version>${jetty.version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-http</artifactId>
-            <version>7.4.1.v20110513PARSERHOTFIX2</version>
+            <version>${jetty.version}</version>
         </dependency>
         <dependency>
             <groupId>com.codahale</groupId>
             <artifactId>simplespec_${scala.version}</artifactId>
-            <version>0.4.0</version>
+            <version>0.5.2</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
