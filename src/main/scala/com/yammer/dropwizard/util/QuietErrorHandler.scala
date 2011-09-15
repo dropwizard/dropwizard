@@ -4,7 +4,9 @@ import annotation.switch
 import java.io.Writer
 import javax.servlet.http.{HttpServletResponse, HttpServletRequest}
 import org.eclipse.jetty.server.handler.ErrorHandler
-import org.eclipse.jetty.http.HttpGenerator
+import org.eclipse.jetty.server.{HttpConnection, Request}
+import org.eclipse.jetty.http.{HttpHeaders, MimeTypes, HttpMethods, HttpGenerator}
+import org.eclipse.jetty.util.ByteArrayISO8859Writer
 
 class QuietErrorHandler extends ErrorHandler {
   import HttpServletResponse._
@@ -68,11 +70,28 @@ class QuietErrorHandler extends ErrorHandler {
       case status =>
         "Your request could not be processed: " + HttpGenerator.getReasonBuffer(status)
   }
+  
+  override def handle(target: String,
+                      baseRequest: Request,
+                      request: HttpServletRequest,
+                      response: HttpServletResponse) {
+    val connection = HttpConnection.getCurrentConnection
+    connection.getRequest.setHandled(true)
 
-  override def handleErrorPage(request: HttpServletRequest,
-                               writer: Writer,
-                               code: Int,
-                               message: String) {
-    writer.append(errorMessage(request, code)).append("\n\n")
+    val method = request.getMethod
+    if (method == HttpMethods.GET || method == HttpMethods.POST || method == HttpMethods.HEAD) {
+      response.setContentType(MimeTypes.TEXT_PLAIN)
+      if (getCacheControl != null) {
+        response.setHeader(HttpHeaders.CACHE_CONTROL, getCacheControl)
+      }
+
+      val writer = new ByteArrayISO8859Writer(4096)
+      writer.append(errorMessage(request, connection.getResponse.getStatus)).append("\n\n")
+      writer.flush()
+
+      response.setContentLength(writer.size)
+      writer.writeTo(response.getOutputStream)
+      writer.destroy()
+    }
   }
 }
