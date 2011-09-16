@@ -24,7 +24,7 @@ object ServerFactory extends Logging {
     val server = makeServer(mainConnector, internalConnector)
 
     val handlers = new HandlerCollection
-    handlers.addHandler(new InstrumentedHandler(servletContext))
+    handlers.addHandler(servletContext)
     handlers.addHandler(internalServletContext)
     if (config("request_log.enabled").or(false)) {
       handlers.addHandler(RequestLogHandlerFactory.buildHandler)
@@ -102,14 +102,16 @@ object ServerFactory extends Logging {
     }
     
     context.setConnectorNames(Array("main"))
+
+    val instrumented = new InstrumentedHandler(context)
     if (config("http.gzip.enabled").or(true)) {
-      val gzip = new GzipHandler(context)
+      val gzip = new GzipHandler(instrumented)
       config("http.gzip.min_entity_size_bytes").asOption[Int].foreach(gzip.setMinGzipSize)
       config("http.gzip.buffer_size_kilobytes").asOption[Int].foreach { n => gzip.setBufferSize(n * 1024) }
       config("http.gzip.excluded_user_agents").asOption[Set[String]].foreach { s => gzip.setExcluded(s.asJava) }
       config("http.gzip.mime_types").asOption[Set[String]].foreach {s => gzip.setMimeTypes(s.asJava)}
       gzip
-    } else context
+    } else instrumented
   }
 
   private def internalServletContext(implicit tasks: Set[Task]) = {
