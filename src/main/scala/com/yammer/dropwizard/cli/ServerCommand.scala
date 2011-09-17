@@ -29,8 +29,6 @@ class ServerCommand(service: Service) extends ConfiguredCommand {
     env.jettyObjects.foreach(server.addBean)
     env.managedObjects.map { new JettyManaged(_) }.foreach(server.addBean)
 
-
-
     log.info("Starting %s", service.name)
     service.banner.foreach {s => log.info("\n%s\n", s)}
 

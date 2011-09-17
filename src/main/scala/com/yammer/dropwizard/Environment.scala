@@ -22,6 +22,7 @@ class Environment extends Logging {
   private[dropwizard] var filters = Map.empty[String, FilterHolder]
   private[dropwizard] var servlets = Map.empty[String, ServletHolder]
   private[dropwizard] var tasks: Set[Task] = Set(new GarbageCollectionTask)
+  private[dropwizard] var jerseyParams = Map.empty[String, AnyRef]
 
   def addResource(resource: Object) {
     if (!isRootResourceClass(resource.getClass)) {
@@ -95,6 +96,10 @@ class Environment extends Logging {
 
   def addTask(task: Task) {
     tasks += task
+  }
+
+  def addJerseyParam(name: String, value: AnyRef) {
+    jerseyParams += name -> value
   }
 
   private[dropwizard] def validate() {
