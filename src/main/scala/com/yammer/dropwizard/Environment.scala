@@ -103,8 +103,8 @@ class Environment extends Logging {
     tasks += task
   }
 
-  def addJerseyParam(name: String, value: AnyRef) {
-    jerseyParams += name -> value
+  def addJerseyParam(name: String, value: Any) {
+    jerseyParams += name -> value.asInstanceOf[AnyRef]
   }
 
   private[dropwizard] def validate() {
