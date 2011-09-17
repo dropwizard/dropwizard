@@ -20,7 +20,7 @@ class JerseyConfig(env: Environment) extends DefaultResourceConfig with Logging 
   ).foreach(getSingletons.add)
 
   setPropertiesAndFeatures(env.jerseyParams)
-  getProviderClasses.addAll(env.providerClasses)
+  getClasses.addAll(env.providerClasses)
 
   override def validate() {
     env.validate()
