@@ -92,7 +92,6 @@ object ServerFactory extends Logging {
                              filters: Map[String, FilterHolder],
                              config: Configuration) = {
     val context = new ServletContextHandler()
-    context.setResourceBase("/")
 
     for ((pathSpec, servlet) <- servlets) {
       context.addServlet(servlet, pathSpec)
