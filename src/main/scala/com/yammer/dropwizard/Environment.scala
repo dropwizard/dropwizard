@@ -17,11 +17,13 @@ class Environment extends Logging {
   private[dropwizard] var resources = Set.empty[Object]
   private[dropwizard] var healthChecks = Set.empty[HealthCheck]
   private[dropwizard] var providers = Set.empty[Object]
+  private[dropwizard] var providerClasses = Set.empty[Class[_]]
   private[dropwizard] var managedObjects = IndexedSeq.empty[Managed]
   private[dropwizard] var jettyObjects = IndexedSeq.empty[LifeCycle]
   private[dropwizard] var filters = Map.empty[String, FilterHolder]
   private[dropwizard] var servlets = Map.empty[String, ServletHolder]
   private[dropwizard] var tasks: Set[Task] = Set(new GarbageCollectionTask)
+  private[dropwizard] var jerseyParams = Map.empty[String, AnyRef]
 
   def addResource(resource: Object) {
     if (!isRootResourceClass(resource.getClass)) {
@@ -43,6 +45,10 @@ class Environment extends Logging {
         " is not a @Provider-annotated provider class")
     }
     providers += provider
+  }
+
+  def addProviderClass[A](implicit mf: Manifest[A]) {
+    providerClasses += mf.erasure
   }
 
   def addHealthCheck(healthCheck: HealthCheck) {
@@ -95,6 +101,10 @@ class Environment extends Logging {
 
   def addTask(task: Task) {
     tasks += task
+  }
+
+  def addJerseyParam(name: String, value: Any) {
+    jerseyParams += name -> value.asInstanceOf[AnyRef]
   }
 
   private[dropwizard] def validate() {

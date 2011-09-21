@@ -1,14 +1,14 @@
 package com.yammer.dropwizard.util
 
-import annotation.switch
-import java.io.Writer
+import scala.annotation.switch
 import javax.servlet.http.{HttpServletResponse, HttpServletRequest}
-import org.eclipse.jetty.server.handler.ErrorHandler
-import org.eclipse.jetty.server.{HttpConnection, Request}
+import com.codahale.logula.Logging
 import org.eclipse.jetty.http.{HttpHeaders, MimeTypes, HttpMethods, HttpGenerator}
+import org.eclipse.jetty.server.handler.ErrorHandler
 import org.eclipse.jetty.util.ByteArrayISO8859Writer
+import org.eclipse.jetty.server.{Response, HttpConnection, Request}
 
-class QuietErrorHandler extends ErrorHandler {
+class QuietErrorHandler extends ErrorHandler with Logging {
   import HttpServletResponse._
 
   private def errorMessage(request: HttpServletRequest, code: Int) =
@@ -78,6 +78,9 @@ class QuietErrorHandler extends ErrorHandler {
     val connection = HttpConnection.getCurrentConnection
     connection.getRequest.setHandled(true)
 
+    val jettyResponse = connection.getResponse
+    jettyResponse.setStatus(jettyResponse.getStatus)
+    
     val method = request.getMethod
     if (method == HttpMethods.GET || method == HttpMethods.POST || method == HttpMethods.HEAD) {
       response.setContentType(MimeTypes.TEXT_PLAIN)
@@ -86,7 +89,7 @@ class QuietErrorHandler extends ErrorHandler {
       }
 
       val writer = new ByteArrayISO8859Writer(4096)
-      writer.append(errorMessage(request, connection.getResponse.getStatus)).append("\n\n")
+      writer.append(errorMessage(request, jettyResponse.getStatus)).append("\n\n")
       writer.flush()
 
       response.setContentLength(writer.size)

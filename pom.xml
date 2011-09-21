@@ -6,12 +6,12 @@
 
     <groupId>com.yammer</groupId>
     <artifactId>dropwizard_2.9.1</artifactId>
-    <version>0.0.11-1</version>
+    <version>0.0.12</version>
     <name>Dropwizard for Scala ${scala.version}</name>
 
     <properties>
         <scala.version>2.9.1</scala.version>
-        <jersey.version>1.9</jersey.version>
+        <jersey.version>1.9.1</jersey.version>
         <metrics.version>2.0.0-BETA16</metrics.version>
         <jetty.version>[7.5.0.0,7.6.0.0)</jetty.version>
     </properties>
@@ -52,6 +52,10 @@
         <repository>
             <id>repo.codahale.com</id>
             <url>http://repo.codahale.com</url>
+        </repository>
+        <repository>
+            <id>nativelibs4java</id>
+            <url>http://nativelibs4java.sourceforge.net/maven</url>
         </repository>
     </repositories>
 
@@ -98,7 +102,7 @@
         <dependency>
             <groupId>com.codahale</groupId>
             <artifactId>jerkson_${scala.version}</artifactId>
-            <version>0.4.1</version>
+            <version>0.4.2</version>
         </dependency>
         <dependency>
             <groupId>com.codahale</groupId>
@@ -212,6 +216,13 @@
                         <arg>-unchecked</arg>
                         <arg>-deprecation</arg>
                     </args>
+                    <compilerPlugins>
+                        <compilerPlugin>
+                            <groupId>com.nativelibs4java</groupId>
+                            <artifactId>scalacl-compiler-plugin</artifactId>
+                            <version>0.2</version>
+                        </compilerPlugin>
+                    </compilerPlugins>
                     <charset>UTF-8</charset>
                     <launchers>
                         <launcher>
