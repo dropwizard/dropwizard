@@ -15,6 +15,7 @@ import org.eclipse.jetty.server.nio.{BlockingChannelConnector, SelectChannelConn
 import org.eclipse.jetty.util.thread.QueuedThreadPool
 import org.eclipse.jetty.server.{DispatcherType, Server, Connector}
 import org.eclipse.jetty.servlet._
+import java.util.concurrent.TimeUnit
 
 object ServerFactory extends Logging {
   def provideServer(implicit config: Configuration,
@@ -43,20 +44,85 @@ object ServerFactory extends Logging {
       }
       case "select_channel" => {
         val connector = new SelectChannelConnector
-        connector.setAcceptors(config("http.acceptor_threads").or(2))
-        connector.setMaxIdleTime(config("http.max_idle_time_seconds").or(300))
-        connector.setLowResourcesConnections(config("http.low_resources_connections").or(25000))
-        connector.setLowResourcesMaxIdleTime(config("http.low_resources_max_idle_time_seconds").or(5))
+        
+        for (value <- config("http.low_resources_connections").asOption[Int]) {
+          connector.setLowResourcesConnections(value)
+        }
+
+        for (value <- config("http.use_direct_buffers").asOption[Boolean]) {
+          connector.setUseDirectBuffers(value)
+        }
+
         connector
       }
-      case "blocking_channel" => new BlockingChannelConnector
+      case "blocking_channel" => {
+        val connector = new BlockingChannelConnector
+
+        for (value <- config("http.use_direct_buffers").asOption[Boolean]) {
+          connector.setUseDirectBuffers(value)
+        }
+
+        connector
+      }
     }
 
   private def mainConnector(implicit config: Configuration) = {
     val port = config("http.port").or(8080)
     val connector = newConnector(config)
     config("http.hostname").asOption[String].foreach(connector.setHost)
-    connector.setForwarded(config("http.forwarded").or(false))
+
+    for (value <- config("http.acceptor_threads").asOption[Int]) {
+      connector.setAcceptors(value)
+    }
+
+    for (value <- config("http.forwarded").asOption[Boolean]) {
+      connector.setForwarded(value)
+    }
+
+    for (value <- config("http.max_idle_time_seconds").asOption[Int]) {
+      connector.setMaxIdleTime(TimeUnit.SECONDS.toMillis(value).toInt)
+    }
+
+    for (value <- config("http.low_resources_max_idle_time_seconds").asOption[Int]) {
+      connector.setLowResourcesMaxIdleTime(TimeUnit.SECONDS.toMillis(value).toInt)
+    }
+
+    for (value <- config("http.acceptor_priority_offset").asOption[Int]) {
+      connector.setAcceptorPriorityOffset(value)
+    }
+
+    for (value <- config("http.accept_queue_size").asOption[Int]) {
+      connector.setAcceptQueueSize(value)
+    }
+
+    for (value <- config("http.max_buffers").asOption[Int]) {
+      connector.setMaxBuffers(value)
+    }
+
+    for (value <- config("http.request_buffer_size_kilobytes").asOption[Int]) {
+      connector.setRequestBufferSize(value * 1024)
+    }
+
+    for (value <- config("http.request_header_buffer_size_kilobytes").asOption[Int]) {
+      connector.setRequestHeaderSize(value * 1024)
+    }
+
+    for (value <- config("http.response_buffer_size_kilobytes").asOption[Int]) {
+      connector.setResponseBufferSize(value * 1024)
+    }
+
+    for (value <- config("http.response_header_buffer_size_kilobytes").asOption[Int]) {
+      connector.setResponseHeaderSize(value * 1024)
+    }
+
+    for (value <- config("http.reuse_address").asOption[Boolean]) {
+      connector.setReuseAddress(value)
+    }
+
+    for (value <- config("http.so_linger_time_seconds").asOption[Int]) {
+      connector.setSoLingerTime(value * 1000)
+    }
+    
     connector.setPort(port)
     connector.setName("main")
     connector
@@ -66,6 +132,9 @@ object ServerFactory extends Logging {
     val server = new Server
     connectors.foreach(server.addConnector)
     server.addBean(new QuietErrorHandler)
+    for (value <- config("http.enable_date_header").asOption[Boolean]) {
+      server.setSendDateHeader(value)
+    }
     server.setSendServerVersion(false)
     server.setThreadPool(makeThreadPool)
     server.setStopAtShutdown(true)
