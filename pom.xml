@@ -53,6 +53,10 @@
             <id>repo.codahale.com</id>
             <url>http://repo.codahale.com</url>
         </repository>
+        <repository>
+            <id>nativelibs4java</id>
+            <url>http://nativelibs4java.sourceforge.net/maven</url>
+        </repository>
     </repositories>
 
     <pluginRepositories>
@@ -212,6 +216,13 @@
                         <arg>-unchecked</arg>
                         <arg>-deprecation</arg>
                     </args>
+                    <compilerPlugins>
+                        <compilerPlugin>
+                            <groupId>com.nativelibs4java</groupId>
+                            <artifactId>scalacl-compiler-plugin</artifactId>
+                            <version>0.2</version>
+                        </compilerPlugin>
+                    </compilerPlugins>
                     <charset>UTF-8</charset>
                     <launchers>
                         <launcher>
