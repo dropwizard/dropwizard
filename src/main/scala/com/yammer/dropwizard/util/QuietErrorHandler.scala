@@ -79,10 +79,8 @@ class QuietErrorHandler extends ErrorHandler with Logging {
     connection.getRequest.setHandled(true)
 
     val jettyResponse = connection.getResponse
-    if (jettyResponse.getStatus == SC_INTERNAL_SERVER_ERROR) {
-      log.warn("Internal server error for %s: %s", baseRequest.getRequestURI, jettyResponse.getReason)
-    }
-
+    jettyResponse.setStatus(jettyResponse.getStatus)
+    
     val method = request.getMethod
     if (method == HttpMethods.GET || method == HttpMethods.POST || method == HttpMethods.HEAD) {
       response.setContentType(MimeTypes.TEXT_PLAIN)
