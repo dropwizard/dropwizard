@@ -92,7 +92,7 @@
         <dependency>
             <groupId>com.codahale</groupId>
             <artifactId>jersey-scala_${scala.version}</artifactId>
-            <version>0.1.9</version>
+            <version>0.2.0</version>
         </dependency>
         <dependency>
             <groupId>com.codahale</groupId>

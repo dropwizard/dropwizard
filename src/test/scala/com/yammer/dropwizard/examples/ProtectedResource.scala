@@ -11,7 +11,7 @@ class ProtectedResource {
   @GET
   def access(@BearerToken token: Option[String]) = {
     if (token.isDefined) {
-      "You are ok, Mr. " + token.get
+      Map("you" -> ("You are ok, Mr. " + token.get))
     } else throw new WebApplicationException(Status.FORBIDDEN)
   }
 }
