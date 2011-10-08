@@ -18,7 +18,7 @@ class GzipHandler(underlying: Handler) extends JettyGzipHandler {
     super.handle(target,
       baseRequest,
       if (request.getHeader(HttpHeaders.CONTENT_ENCODING) == "gzip") {
-        new GzipServletRequest(request, super.setBufferSize())
+        new GzipServletRequest(request, super.getBufferSize())
       } else request,
       response)
   }
