@@ -4,18 +4,17 @@ import scala.collection.JavaConverters._
 import java.util.EnumSet
 import com.codahale.fig.Configuration
 import com.codahale.logula.Logging
-import com.yammer.metrics.jetty.InstrumentedHandler
 import com.yammer.metrics.reporting.MetricsServlet
 import com.yammer.dropwizard.util.QuietErrorHandler
 import com.yammer.dropwizard.tasks.{Task, TaskServlet}
 import com.yammer.dropwizard.jetty.GzipHandler
 import org.eclipse.jetty.server.handler.HandlerCollection
 import org.eclipse.jetty.server.bio.SocketConnector
-import org.eclipse.jetty.server.nio.{BlockingChannelConnector, SelectChannelConnector}
 import org.eclipse.jetty.util.thread.QueuedThreadPool
 import org.eclipse.jetty.server.{DispatcherType, Server, Connector}
 import org.eclipse.jetty.servlet._
 import java.util.concurrent.TimeUnit
+import com.yammer.metrics.jetty._
 
 object ServerFactory extends Logging {
   def provideServer(implicit config: Configuration,
@@ -35,15 +34,15 @@ object ServerFactory extends Logging {
     server
   }
 
-  private def newConnector(implicit config: Configuration) =
+  private def newConnector(implicit config: Configuration, port: Int) =
     config("http.connector").or("blocking_channel") match {
       case "socket" => {
         log.warn("Usage of socket connectors with Jetty 7.4.x-7.5.0 is not recommended.")
         log.warn("Use blocking_channel instead.")
-        new SocketConnector
+        new InstrumentedSocketConnector(port)
       }
       case "select_channel" => {
-        val connector = new SelectChannelConnector
+        val connector = new InstrumentedSelectChannelConnector(port)
         
         for (value <- config("http.low_resources_connections").asOption[Int]) {
           connector.setLowResourcesConnections(value)
@@ -56,7 +55,7 @@ object ServerFactory extends Logging {
         connector
       }
       case "blocking_channel" => {
-        val connector = new BlockingChannelConnector
+        val connector = new InstrumentedBlockingChannelConnector(port)
 
         for (value <- config("http.use_direct_buffers").asOption[Boolean]) {
           connector.setUseDirectBuffers(value)
@@ -67,8 +66,7 @@ object ServerFactory extends Logging {
     }
 
   private def mainConnector(implicit config: Configuration) = {
-    val port = config("http.port").or(8080)
-    val connector = newConnector(config)
+    val connector = newConnector(config, config("http.port").or(8080))
     config("http.hostname").asOption[String].foreach(connector.setHost)
 
     for (value <- config("http.acceptor_threads").asOption[Int]) {
@@ -123,7 +121,6 @@ object ServerFactory extends Logging {
       connector.setSoLingerTime(value * 1000)
     }
     
-    connector.setPort(port)
     connector.setName("main")
     connector
   }
@@ -143,7 +140,7 @@ object ServerFactory extends Logging {
   }
 
   private def makeThreadPool(implicit config: Configuration) = {
-    val pool = new QueuedThreadPool
+    val pool = new InstrumentedQueuedThreadPool
     config("http.max_threads").asOption[Int].foreach(pool.setMaxThreads)
     config("http.min_threads").asOption[Int].foreach(pool.setMinThreads)
     pool
