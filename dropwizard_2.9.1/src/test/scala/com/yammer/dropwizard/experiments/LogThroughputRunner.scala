@@ -39,7 +39,7 @@ object LogThroughputRunner extends Instrumented {
 
   def newLog() = {
 //    new NCSARequestLog("./logs/ncsa_request_log_yyyy_mm_dd.log")
-    new AsyncRequestLog(Some("./logs/async_request_log_yyyy_mm_dd.log"), Some(1))
+    new AsyncRequestLog("./logs/async_request_log_yyyy_mm_dd.log", 1)
   }
 
   def main(args: Array[String]) {

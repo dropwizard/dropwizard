@@ -7,8 +7,8 @@ import com.yammer.dropwizard.jetty.AsyncRequestLog
 object RequestLogHandlerFactory {
   def buildHandler(implicit config: Configuration) = {
     val log = new AsyncRequestLog(
-      config("request_log.filename").asOption[String],
-      config("request_log.retain_days").asOption[Int]
+      config("request_log.filename").asRequired[String],
+      config("request_log.retain_days").asRequired[Int]
     )
     
     val handler = new RequestLogHandler()
