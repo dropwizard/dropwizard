@@ -181,7 +181,7 @@ object ServerFactory extends Logging {
 
   private def internalServletContext(implicit tasks: Set[Task]) = {
     val internalContext = new ServletContextHandler()
-    internalContext.addServlet(new ServletHolder(new TaskServlet(tasks)), "/tasks/*")
+    internalContext.addServlet(new ServletHolder(new TaskServlet(tasks.asJava)), "/tasks/*")
     internalContext.addServlet(new ServletHolder(new MetricsServlet), "/*")
     internalContext.setConnectorNames(Array("internal"))
     internalContext
