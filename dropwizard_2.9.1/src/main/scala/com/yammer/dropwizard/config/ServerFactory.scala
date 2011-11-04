@@ -5,9 +5,7 @@ import java.util.EnumSet
 import com.codahale.fig.Configuration
 import com.codahale.logula.Logging
 import com.yammer.metrics.reporting.MetricsServlet
-import com.yammer.dropwizard.util.QuietErrorHandler
 import com.yammer.dropwizard.tasks.{Task, TaskServlet}
-import com.yammer.dropwizard.jetty.GzipHandler
 import org.eclipse.jetty.server.handler.HandlerCollection
 import org.eclipse.jetty.server.bio.SocketConnector
 import org.eclipse.jetty.util.thread.QueuedThreadPool
@@ -15,6 +13,7 @@ import org.eclipse.jetty.server.{DispatcherType, Server, Connector}
 import org.eclipse.jetty.servlet._
 import java.util.concurrent.TimeUnit
 import com.yammer.metrics.jetty._
+import com.yammer.dropwizard.jetty.{QuietErrorHandler, GzipHandler}
 
 object ServerFactory extends Logging {
   def provideServer(implicit config: Configuration,
