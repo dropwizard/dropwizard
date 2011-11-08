@@ -57,7 +57,7 @@ public class ConfigurationFactoryTest {
         } catch (ConfigurationException e) {
             assertThat(e.getMessage(),
                        endsWith("factory-test-invalid.yml has the following errors:\n" +
-                                "  * name must match \"[\\w]+[\\s]+[\\w]+\""));
+                                "  * name must match \"[\\w]+[\\s]+[\\w]+\" (was Boop)"));
         }
     }
 }
