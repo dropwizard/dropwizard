@@ -4,7 +4,6 @@ import com.google.common.base.Optional;
 import com.yammer.dropwizard.util.Duration;
 import com.yammer.dropwizard.util.Size;
 
-import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -42,9 +41,9 @@ public class HttpConfiguration {
     public static class GzipConfiguration {
         private boolean enabled = true;
 
-        private Size minimumEntitySize = null;
+        private String minimumEntitySize = null;
 
-        private Size bufferSize = null;
+        private String bufferSize = null;
 
         private List<String> excludedUserAgents = null;
 
@@ -55,11 +54,17 @@ public class HttpConfiguration {
         }
 
         public Optional<Size> getMinimumEntitySize() {
-            return Optional.fromNullable(minimumEntitySize);
+            if (minimumEntitySize == null) {
+                return Optional.absent();
+            }
+            return Optional.of(Size.parse(minimumEntitySize));
         }
 
         public Optional<Size> getBufferSize() {
-            return Optional.fromNullable(bufferSize);
+            if (bufferSize == null) {
+                return Optional.absent();
+            }
+            return Optional.of(Size.parse(bufferSize));
         }
 
         public Optional<List<String>> getExcludedUserAgents() {
@@ -105,8 +110,8 @@ public class HttpConfiguration {
     private String connectorType = "blocking";
 
     @NotNull
-    @Valid
-    private Duration maxIdleTime = Duration.seconds(1);
+    @Pattern(regexp = Duration.VALID_DURATION)
+    private String maxIdleTime = "1s";
 
     @Min(1)
     @Max(128)
@@ -123,36 +128,36 @@ public class HttpConfiguration {
     private int maxBufferCount = 1024;
 
     @NotNull
-    @Valid
-    private Size requestBufferSize = Size.kilobytes(32);
+    @Pattern(regexp = Size.VALID_SIZE)
+    private String requestBufferSize = "32KiB";
 
     @NotNull
-    @Valid
-    private Size requestHeaderBufferSize = Size.kilobytes(6);
+    @Pattern(regexp = Size.VALID_SIZE)
+    private String requestHeaderBufferSize = "3KiB";
 
     @NotNull
-    @Valid
-    private Size responseBufferSize = Size.kilobytes(32);
+    @Pattern(regexp = Size.VALID_SIZE)
+    private String responseBufferSize = "32KiB";
 
     @NotNull
-    @Valid
-    private Size responseHeaderBufferSize = Size.kilobytes(6);
+    @Pattern(regexp = Size.VALID_SIZE)
+    private String responseHeaderBufferSize = "6KiB";
 
     private boolean reuseAddress = true;
 
-    @Valid
-    private Duration soLingerTime = null;
+    @Pattern(regexp = Duration.VALID_DURATION)
+    private String soLingerTime = null;
 
     @Min(1)
     private int lowResourcesConnectionThreshold = 25000;
 
     @NotNull
-    @Valid
-    private Duration lowResourcesMaxIdleTime = Duration.seconds(5);
+    @Pattern(regexp = Duration.VALID_DURATION)
+    private String lowResourcesMaxIdleTime = "5s";
 
     @NotNull
-    @Valid
-    private Duration shutdownGracePeriod = Duration.seconds(2);
+    @Pattern(regexp = Duration.VALID_DURATION)
+    private String shutdownGracePeriod = "2s";
 
     private boolean useServerHeader = false;
 
@@ -201,7 +206,7 @@ public class HttpConfiguration {
     }
 
     public Duration getMaxIdleTime() {
-        return maxIdleTime;
+        return Duration.parse(maxIdleTime);
     }
 
     public int getAcceptorThreadCount() {
@@ -221,19 +226,19 @@ public class HttpConfiguration {
     }
 
     public Size getRequestBufferSize() {
-        return requestBufferSize;
+        return Size.parse(requestBufferSize);
     }
 
     public Size getRequestHeaderBufferSize() {
-        return requestHeaderBufferSize;
+        return Size.parse(requestHeaderBufferSize);
     }
 
     public Size getResponseBufferSize() {
-        return responseBufferSize;
+        return Size.parse(responseBufferSize);
     }
 
     public Size getResponseHeaderBufferSize() {
-        return responseHeaderBufferSize;
+        return Size.parse(responseHeaderBufferSize);
     }
 
     public boolean enableReuseAddress() {
@@ -241,7 +246,10 @@ public class HttpConfiguration {
     }
 
     public Optional<Duration> getSoLingerTime() {
-        return Optional.fromNullable(soLingerTime);
+        if (soLingerTime == null) {
+            return Optional.absent();
+        }
+        return Optional.of(Duration.parse(soLingerTime));
     }
 
     public int getLowResourcesConnectionThreshold() {
@@ -249,11 +257,11 @@ public class HttpConfiguration {
     }
 
     public Duration getLowResourcesMaxIdleTime() {
-        return lowResourcesMaxIdleTime;
+        return Duration.parse(lowResourcesMaxIdleTime);
     }
 
     public Duration getShutdownGracePeriod() {
-        return shutdownGracePeriod;
+        return Duration.parse(shutdownGracePeriod);
     }
 
     public boolean useForwardedHeaders() {
