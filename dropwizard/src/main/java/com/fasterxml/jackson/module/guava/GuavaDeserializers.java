@@ -1,14 +1,12 @@
 package com.fasterxml.jackson.module.guava;
 
+import com.fasterxml.jackson.module.guava.deser.*;
 import com.google.common.base.Optional;
 import com.google.common.collect.*;
-
 import org.codehaus.jackson.map.*;
 import org.codehaus.jackson.map.type.CollectionType;
 import org.codehaus.jackson.map.type.MapType;
 import org.codehaus.jackson.type.JavaType;
-
-import com.fasterxml.jackson.module.guava.deser.*;
 
 /**
  * Custom deserializers module offers.
@@ -27,7 +25,7 @@ public class GuavaDeserializers
         if (Optional.class.isAssignableFrom(type.getRawClass())) {
             final JavaType elementType = type.containedType(0);
             return new OptionalDeserializer<Object>(
-                    elementType, provider.findTypedValueDeserializer(config, elementType, property));
+                    provider.findTypedValueDeserializer(config, elementType, property));
         }
         return super.findBeanDeserializer(type, config, provider, beanDesc, property);
     }

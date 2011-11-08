@@ -44,15 +44,15 @@ public abstract class ConfiguredCommand<T extends Configuration> extends Command
     }
 
     @Override
-    protected final void run(Service service,
+    @SuppressWarnings("unchecked")
+    protected final void run(Service<?> service,
                              CommandLine params) throws Exception {
         LoggingFactory.bootstrap();
         final String[] args = params.getArgs();
         if (args.length == 1) {
             try {
-                // FIXME: 11/7/11 <coda> -- parameterize service
                 final T configuration = factory.build(new File(args[0]));
-                run(service, configuration, params);
+                run((Service<T>) service, configuration, params);
             } catch (ConfigurationException e) {
                 UsagePrinter.printCommandHelp(this, Optional.fromNullable(e.getMessage()));
             }
@@ -62,7 +62,7 @@ public abstract class ConfiguredCommand<T extends Configuration> extends Command
         }
     }
 
-    protected abstract void run(Service service,
+    protected abstract void run(Service<T> service,
                                 T configuration,
                                 CommandLine params) throws  Exception;
 }

@@ -26,7 +26,7 @@ public abstract class Service<T extends Configuration> {
         this.name = name;
         this.commands = new TreeMap<String, Command>();
 
-        final ServerCommand serverCommand = new ServerCommand(configurationClass);
+        final ServerCommand<T> serverCommand = new ServerCommand<T>(configurationClass);
         this.commands.put(serverCommand.getName(), serverCommand);
 
         for (Command command : commands) {

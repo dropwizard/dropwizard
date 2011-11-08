@@ -44,7 +44,7 @@
         </dependency>
         <dependency>
             <groupId>com.yammer</groupId>
-            <artifactId>dropwizard-core</artifactId>
+            <artifactId>dropwizard</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -73,20 +73,9 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>com.codahale</groupId>
-            <artifactId>fig_${scala.version}</artifactId>
-            <version>1.1.7</version>
-        </dependency>
-        <dependency>
             <groupId>com.yammer.metrics</groupId>
             <artifactId>metrics-scala_${scala.version}</artifactId>
             <version>${metrics.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.codahale</groupId>
-            <artifactId>simplespec_${scala.version}</artifactId>
-            <version>0.5.2</version>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 

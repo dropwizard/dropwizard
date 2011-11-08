@@ -25,7 +25,7 @@ public class ServerCommand<T extends Configuration> extends ConfiguredCommand<T>
     }
 
     @Override
-    protected final void run(Service service,
+    protected final void run(Service<T> service,
                              T config,
                              CommandLine params) throws Exception {
         new LoggingFactory(config.getLoggingConfiguration()).configure();

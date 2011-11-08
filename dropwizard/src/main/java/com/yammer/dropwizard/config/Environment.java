@@ -36,6 +36,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 // TODO: 10/12/11 <coda> -- document Environment
 // TODO: 10/12/11 <coda> -- test Environment
+// TODO: 11/7/11 <coda> -- add support for Jersey params
 
 @NotThreadSafe
 public class Environment extends AggregateLifeCycle {

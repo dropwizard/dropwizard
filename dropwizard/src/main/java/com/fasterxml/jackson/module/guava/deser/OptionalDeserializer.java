@@ -7,18 +7,14 @@ import org.codehaus.jackson.JsonToken;
 import org.codehaus.jackson.map.DeserializationContext;
 import org.codehaus.jackson.map.JsonDeserializer;
 import org.codehaus.jackson.map.annotate.JsonCachable;
-import org.codehaus.jackson.type.JavaType;
 
 import java.io.IOException;
 
 @JsonCachable
 public class OptionalDeserializer<T> extends JsonDeserializer<Optional<T>> {
-    private final JavaType elementType;
     private final JsonDeserializer<T> elementDeserializer;
 
-    public OptionalDeserializer(JavaType elementType,
-                                JsonDeserializer<T> elementDeserializer) {
-        this.elementType = elementType;
+    public OptionalDeserializer(JsonDeserializer<T> elementDeserializer) {
         this.elementDeserializer = elementDeserializer;
     }
 

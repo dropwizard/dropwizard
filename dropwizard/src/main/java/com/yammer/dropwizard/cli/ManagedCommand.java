@@ -23,8 +23,8 @@ public abstract class ManagedCommand<T extends Configuration> extends Configured
     }
 
     @Override
-    protected final void run(Service service,
-                             Configuration configuration,
+    protected final void run(Service<T> service,
+                             T configuration,
                              CommandLine params) throws Exception {
         new LoggingFactory(configuration.getLoggingConfiguration()).configure();
         final Environment environment = new Environment();

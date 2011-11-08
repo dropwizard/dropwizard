@@ -1,7 +1,5 @@
 package com.yammer.dropwizard.jersey.params;
 
-import javax.annotation.Nonnull;
-
 public class BooleanParam extends AbstractParam<Boolean> {
     public BooleanParam(String input) {
         super(input);

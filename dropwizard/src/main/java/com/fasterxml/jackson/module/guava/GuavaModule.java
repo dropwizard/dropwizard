@@ -5,7 +5,7 @@ import org.codehaus.jackson.map.*;
 
 public class GuavaModule extends Module // can't use just SimpleModule, due to generic types
 {
-    private final String NAME = "GuavaModule";
+    private static final String NAME = "GuavaModule";
     
     // Should externalize this, probably...
     private final static Version VERSION = new Version(0, 1, 0, null); // 0.1.0

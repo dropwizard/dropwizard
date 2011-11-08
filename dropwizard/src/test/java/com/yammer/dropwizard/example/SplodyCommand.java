@@ -7,7 +7,6 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionGroup;
 import org.apache.commons.cli.Options;
 
-@SuppressWarnings("NullableProblems")
 public class SplodyCommand extends Command {
     public SplodyCommand() {
         super("splody", "throws various errors");
@@ -25,7 +24,7 @@ public class SplodyCommand extends Command {
     }
 
     @Override
-    protected void run(Service service,
+    protected void run(Service<?> service,
                        CommandLine params) throws Exception {
         if (params.hasOption('e')) {
             System.err.println("throwing an exception");

@@ -1,5 +1,3 @@
-saying: Hello, world!
-
 # HTTP-specific options.
 http:
 
@@ -76,13 +74,13 @@ http:
 
   # The hostname of the interface to which the HTTP server socket wil be found. If omitted, the
   # socket will listen on all interfaces.
-  # bindHost: app1.example.com
+  bindHost: app1.example.com
 
   # HTTP request log settings
   requestLog:
 
     # Whether or not to log HTTP requests.
-    enabled: false
+    enabled: true
 
     # The filename to which HTTP requests will be logged. The string 'yyyy_mm_dd' will be replaced
     # with the current date, and the logs will be rolled accordingly.

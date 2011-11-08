@@ -1,6 +1,7 @@
 package com.yammer.dropwizard.cli;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Preconditions;
 import com.yammer.dropwizard.Service;
 import com.yammer.dropwizard.util.JarLocation;
 import org.apache.commons.cli.*;
@@ -52,7 +53,7 @@ public abstract class Command {
         return options;
     }
 
-    protected abstract void run(Service service,
+    protected abstract void run(Service<?> service,
                                 CommandLine params) throws Exception;
 
     protected String getSyntax() {
@@ -63,13 +64,13 @@ public abstract class Command {
         return format("%s %s %s", new JarLocation(), getName(), getSyntax());
     }
 
-    public final void run(Service service,
+    public final void run(Service<?> service,
                           String[] arguments) throws Exception {
         final CommandLine cmdLine = new GnuParser().parse(getOptionsWithHelp(), checkNotNull(arguments));
         if (cmdLine.hasOption("help")) {
             UsagePrinter.printCommandHelp(this);
         } else {
-            run(checkNotNull(service), cmdLine);
+            run(Preconditions.checkNotNull(service), cmdLine);
         }
     }
 }

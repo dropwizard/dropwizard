@@ -2,7 +2,6 @@ package com.yammer.dropwizard.example;
 
 import com.yammer.dropwizard.Service;
 import com.yammer.dropwizard.cli.ConfiguredCommand;
-import com.yammer.dropwizard.config.Configuration;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
 
@@ -18,7 +17,7 @@ public class SayCommand extends ConfiguredCommand<ExampleConfiguration> {
     }
 
     @Override
-    protected void run(Service service,
+    protected void run(Service<ExampleConfiguration> service,
                        ExampleConfiguration configuration,
                        CommandLine params) throws Exception {
         final String saying = configuration.getSaying();
