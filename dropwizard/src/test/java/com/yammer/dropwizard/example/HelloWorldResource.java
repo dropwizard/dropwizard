@@ -1,11 +1,11 @@
-package com.yammer.flopwizard.example;
+package com.yammer.dropwizard.example;
+
+import com.google.common.collect.ImmutableList;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-import java.util.Collections;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Path("/hello-world")
@@ -20,8 +20,8 @@ public class HelloWorldResource {
     }
 
     @GET
-    public List<Saying> sayHello() {
-        return Collections.singletonList(new Saying(id.incrementAndGet(), saying));
+    public ImmutableList<Saying> sayHello() {
+        return ImmutableList.of(new Saying(id.incrementAndGet(), saying));
     }
 
     @POST

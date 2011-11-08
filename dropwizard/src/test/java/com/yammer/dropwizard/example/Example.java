@@ -1,4 +1,4 @@
-package com.yammer.flopwizard.example;
+package com.yammer.dropwizard.example;
 
 import com.google.common.base.Optional;
 import com.yammer.dropwizard.Service;
