@@ -53,85 +53,85 @@ public class DurationTest {
 
     @Test
     public void parsesDays() throws Exception {
-        assertThat(new Duration("1d"),
+        assertThat(Duration.parse("1d"),
                    is(Duration.days(1)));
 
-        assertThat(new Duration("1 day"),
+        assertThat(Duration.parse("1 day"),
                    is(Duration.days(1)));
 
-        assertThat(new Duration("2 days"),
+        assertThat(Duration.parse("2 days"),
                    is(Duration.days(2)));
     }
 
     @Test
     public void parsesHours() throws Exception {
-        assertThat(new Duration("1h"),
+        assertThat(Duration.parse("1h"),
                    is(Duration.hours(1)));
 
-        assertThat(new Duration("1 hour"),
+        assertThat(Duration.parse("1 hour"),
                    is(Duration.hours(1)));
 
-        assertThat(new Duration("2 hours"),
+        assertThat(Duration.parse("2 hours"),
                    is(Duration.hours(2)));
     }
 
     @Test
     public void parsesMinutes() throws Exception {
-        assertThat(new Duration("1m"),
+        assertThat(Duration.parse("1m"),
                    is(Duration.minutes(1)));
 
-        assertThat(new Duration("1 minute"),
+        assertThat(Duration.parse("1 minute"),
                    is(Duration.minutes(1)));
 
-        assertThat(new Duration("2 minutes"),
+        assertThat(Duration.parse("2 minutes"),
                    is(Duration.minutes(2)));
     }
 
     @Test
     public void parsesSeconds() throws Exception {
-        assertThat(new Duration("1s"),
+        assertThat(Duration.parse("1s"),
                    is(Duration.seconds(1)));
 
-        assertThat(new Duration("1 second"),
+        assertThat(Duration.parse("1 second"),
                    is(Duration.seconds(1)));
 
-        assertThat(new Duration("2 seconds"),
+        assertThat(Duration.parse("2 seconds"),
                    is(Duration.seconds(2)));
     }
 
     @Test
     public void parsesMilliseconds() throws Exception {
-        assertThat(new Duration("1ms"),
+        assertThat(Duration.parse("1ms"),
                    is(Duration.milliseconds(1)));
 
-        assertThat(new Duration("1 millisecond"),
+        assertThat(Duration.parse("1 millisecond"),
                    is(Duration.milliseconds(1)));
 
-        assertThat(new Duration("2 milliseconds"),
+        assertThat(Duration.parse("2 milliseconds"),
                    is(Duration.milliseconds(2)));
     }
 
     @Test
     public void parsesMicroseconds() throws Exception {
-        assertThat(new Duration("1us"),
+        assertThat(Duration.parse("1us"),
                    is(Duration.microseconds(1)));
 
-        assertThat(new Duration("1 microsecond"),
+        assertThat(Duration.parse("1 microsecond"),
                    is(Duration.microseconds(1)));
 
-        assertThat(new Duration("2 microseconds"),
+        assertThat(Duration.parse("2 microseconds"),
                    is(Duration.microseconds(2)));
     }
 
     @Test
     public void parsesNanoseconds() throws Exception {
-        assertThat(new Duration("1ns"),
+        assertThat(Duration.parse("1ns"),
                    is(Duration.nanoseconds(1)));
 
-        assertThat(new Duration("1 nanosecond"),
+        assertThat(Duration.parse("1 nanosecond"),
                    is(Duration.nanoseconds(1)));
 
-        assertThat(new Duration("2 nanoseconds"),
+        assertThat(Duration.parse("2 nanoseconds"),
                    is(Duration.nanoseconds(2)));
     }
 

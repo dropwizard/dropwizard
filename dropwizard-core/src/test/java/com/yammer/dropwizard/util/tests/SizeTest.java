@@ -39,73 +39,73 @@ public class SizeTest {
 
     @Test
     public void parsesTerabytes() throws Exception {
-        assertThat(new Size("2TB"),
+        assertThat(Size.parse("2TB"),
                    is(Size.terabytes(2)));
 
-        assertThat(new Size("2TiB"),
+        assertThat(Size.parse("2TiB"),
                    is(Size.terabytes(2)));
         
-        assertThat(new Size("1 terabyte"),
+        assertThat(Size.parse("1 terabyte"),
                    is(Size.terabytes(1)));
 
-        assertThat(new Size("2 terabytes"),
+        assertThat(Size.parse("2 terabytes"),
                    is(Size.terabytes(2)));
     }
 
     @Test
     public void parsesGigabytes() throws Exception {
-        assertThat(new Size("2GB"),
+        assertThat(Size.parse("2GB"),
                    is(Size.gigabytes(2)));
 
-        assertThat(new Size("2GiB"),
+        assertThat(Size.parse("2GiB"),
                    is(Size.gigabytes(2)));
 
-        assertThat(new Size("1 gigabyte"),
+        assertThat(Size.parse("1 gigabyte"),
                    is(Size.gigabytes(1)));
 
-        assertThat(new Size("2 gigabytes"),
+        assertThat(Size.parse("2 gigabytes"),
                    is(Size.gigabytes(2)));
     }
 
     @Test
     public void parsesMegabytes() throws Exception {
-        assertThat(new Size("2MB"),
+        assertThat(Size.parse("2MB"),
                    is(Size.megabytes(2)));
 
-        assertThat(new Size("2MiB"),
+        assertThat(Size.parse("2MiB"),
                    is(Size.megabytes(2)));
 
-        assertThat(new Size("1 megabyte"),
+        assertThat(Size.parse("1 megabyte"),
                    is(Size.megabytes(1)));
 
-        assertThat(new Size("2 megabytes"),
+        assertThat(Size.parse("2 megabytes"),
                    is(Size.megabytes(2)));
     }
 
     @Test
     public void parsesKilobytes() throws Exception {
-        assertThat(new Size("2KB"),
+        assertThat(Size.parse("2KB"),
                    is(Size.kilobytes(2)));
 
-        assertThat(new Size("2KiB"),
+        assertThat(Size.parse("2KiB"),
                    is(Size.kilobytes(2)));
 
-        assertThat(new Size("1 kilobyte"),
+        assertThat(Size.parse("1 kilobyte"),
                    is(Size.kilobytes(1)));
 
-        assertThat(new Size("2 kilobytes"),
+        assertThat(Size.parse("2 kilobytes"),
                    is(Size.kilobytes(2)));
     }
 
     @Test
     public void parsesBytes() throws Exception {
-        assertThat(new Size("2B"),
+        assertThat(Size.parse("2B"),
                    is(Size.bytes(2)));
 
-        assertThat(new Size("1 byte"),
+        assertThat(Size.parse("1 byte"),
                    is(Size.bytes(1)));
 
-        assertThat(new Size("2 bytes"),
+        assertThat(Size.parse("2 bytes"),
                    is(Size.bytes(2)));
     }
 

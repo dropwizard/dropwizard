@@ -6,6 +6,12 @@ import com.google.common.collect.ImmutableMap;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class Size {
+    public static final String VALID_SIZE = "[\\d]+[\\s]*(B|byte(s)?|" +
+                                                         "KB|KiB|kilobyte(s)?|" +
+                                                         "MB|MiB|megabyte(s)?|" +
+                                                         "GB|GiB|gigabyte(s)?|" +
+                                                         "TB|TiB|terabyte(s)?)";
+
     private static final ImmutableMap<String, SizeUnit> SUFFIXES;
     static {
         final ImmutableMap.Builder<String, SizeUnit> suffixes = ImmutableMap.builder();
@@ -70,13 +76,16 @@ public class Size {
         }
         throw new IllegalArgumentException("Unable to parse as size: " + s);
     }
+    
+    public static Size parse(String size) {
+        if (size.matches(VALID_SIZE)) {
+            return new Size(parseCount(size), parseUnit(size));
+        }
+        throw new IllegalArgumentException("Unable to parse size: " + size);
+    }
 
     private final long count;
     private final SizeUnit unit;
-    
-    public Size(String s) {
-        this(parseCount(s), parseUnit(s));
-    }
 
     private Size(long count, SizeUnit unit) {
         this.count = count;

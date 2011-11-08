@@ -8,6 +8,14 @@ import java.util.concurrent.TimeUnit;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class Duration {
+    public static final String VALID_DURATION = "[\\d]+[\\s]*(ns|nanosecond(s)?|" +
+                                                             "us|microsecond(s)?|" +
+                                                             "ms|millisecond(s)?|" +
+                                                             "s|second(s)?|" +
+                                                             "m|minute(s)?|" +
+                                                             "h|hour(s)?|" +
+                                                             "d|day(s)?)";
+    
     private static final ImmutableMap<String, TimeUnit> SUFFIXES;
     static {
         final ImmutableMap.Builder<String, TimeUnit> suffixes = ImmutableMap.builder();
@@ -86,12 +94,15 @@ public class Duration {
         throw new IllegalArgumentException("Unable to parse as duration: " + s);
     }
 
+    public static Duration parse(String duration) {
+        if (duration.matches(VALID_DURATION)) {
+            return new Duration(parseCount(duration), parseUnit(duration));
+        }
+        throw new IllegalArgumentException("Unable to parse as duration: " + duration);
+    }
+
     private final long count;
     private final TimeUnit unit;
-    
-    public Duration(String s) {
-        this(parseCount(s), parseUnit(s));
-    }
 
     private Duration(long count, TimeUnit unit) {
         this.count = count;
