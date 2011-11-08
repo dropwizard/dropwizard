@@ -3,6 +3,7 @@ package com.yammer.dropwizard.config.tests;
 import com.google.common.io.Resources;
 import com.yammer.dropwizard.config.ConfigurationException;
 import com.yammer.dropwizard.config.ConfigurationFactory;
+import com.yammer.dropwizard.util.Validator;
 import org.junit.Test;
 import org.yaml.snakeyaml.error.YAMLException;
 
@@ -12,9 +13,7 @@ import java.io.File;
 
 import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 public class ConfigurationFactoryTest {
     public static class Example {
@@ -28,7 +27,8 @@ public class ConfigurationFactoryTest {
         }
     }
 
-    final ConfigurationFactory<Example> factory = new ConfigurationFactory<Example>(Example.class);
+    final Validator validator = new Validator();
+    final ConfigurationFactory<Example> factory = ConfigurationFactory.forClass(Example.class, validator);
     final File malformedFile = new File(Resources.getResource("factory-test-malformed.yml").getFile());
     final File invalidFile = new File(Resources.getResource("factory-test-invalid.yml").getFile());
     final File validFile = new File(Resources.getResource("factory-test-valid.yml").getFile());
