@@ -16,8 +16,14 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.SortedMap;
 
+/**
+ * The base class for both Java and Scala services.
+ *
+ * @param <T> the type of configuration class for this service
+ */
 public abstract class AbstractService<T extends Configuration> {
     static {
+        // make sure spinning up Hibernate Validator doesn't yell at us
         LoggingFactory.bootstrap();
     }
 
@@ -33,12 +39,22 @@ public abstract class AbstractService<T extends Configuration> {
         addCommand(new ServerCommand<T>(getConfigurationClass()));
     }
 
+    /**
+     * A simple reminder that this particular class isn't meant to be extended by non-DW classes.
+     */
+    @SuppressWarnings("UnusedDeclaration")
     protected abstract void subclassServiceInsteadOfThis();
 
-    public String getName() {
+    public final String getName() {
         return name;
     }
 
+    /**
+     * Returns the {@link Class} of the configuration class type parameter.
+     *
+     * @return the configuration class
+     * @see <a href="http://gafter.blogspot.com/2006/12/super-type-tokens.html">Super Type Tokens</a>
+     */
     @SuppressWarnings("unchecked")
     public final Class<T> getConfigurationClass() {
         return (Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
