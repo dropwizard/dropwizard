@@ -16,8 +16,16 @@ import org.slf4j.LoggerFactory;
 // TODO: 10/12/11 <coda> -- write docs for ServerCommand
 
 public class ServerCommand<T extends Configuration> extends ConfiguredCommand<T> {
+    private final Class<T> configurationClass;
+
     public ServerCommand(Class<T> configurationClass) {
-        super(configurationClass, "server", "Starts an HTTP server running the service");
+        super("server", "Starts an HTTP server running the service");
+        this.configurationClass = configurationClass;
+    }
+
+    @Override
+    protected Class<T> getConfigurationClass() {
+        return configurationClass;
     }
 
     @Override

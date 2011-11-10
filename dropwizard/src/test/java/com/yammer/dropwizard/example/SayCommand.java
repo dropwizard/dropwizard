@@ -8,7 +8,7 @@ import org.apache.commons.cli.Options;
 @SuppressWarnings("NullableProblems")
 public class SayCommand extends ConfiguredCommand<ExampleConfiguration> {
     public SayCommand() {
-        super(ExampleConfiguration.class, "say", "Prints out the saying to console");
+        super("say", "Prints out the saying to console");
     }
 
     @Override

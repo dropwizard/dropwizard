@@ -10,24 +10,24 @@ import com.yammer.dropwizard.util.Validator;
 import org.apache.commons.cli.CommandLine;
 
 import java.io.File;
+import java.lang.reflect.ParameterizedType;
 
 // TODO: 10/12/11 <coda> -- write tests for ConfiguredCommand
 // TODO: 10/12/11 <coda> -- write docs for ConfiguredCommand
-// REVIEW: 11/9/11 <coda> -- figure out if there's a way to not pass the config class around
 
 public abstract class ConfiguredCommand<T extends Configuration> extends Command {
-    private final ConfigurationFactory<T> factory;
-
-    protected ConfiguredCommand(Class<T> configurationClass,
-                                String name) {
-        this(configurationClass, name, null);
+    protected ConfiguredCommand(String name) {
+        super(name, null);
     }
 
-    protected ConfiguredCommand(Class<T> configurationClass,
-                                String name,
+    protected ConfiguredCommand(String name,
                                 String description) {
         super(name, description);
-        this.factory = ConfigurationFactory.forClass(configurationClass, new Validator());
+    }
+
+    @SuppressWarnings("unchecked")
+    protected Class<T> getConfigurationClass() {
+        return (Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
     }
 
     protected Optional<String> getConfiguredSyntax() {
@@ -52,6 +52,8 @@ public abstract class ConfiguredCommand<T extends Configuration> extends Command
         final String[] args = params.getArgs();
         if (args.length == 1) {
             try {
+                final ConfigurationFactory<T> factory = new ConfigurationFactory<T>(getConfigurationClass(),
+                                                                                    new Validator());
                 final T configuration = factory.build(new File(args[0]));
                 run((AbstractService<T>) service, configuration, params);
             } catch (ConfigurationException e) {

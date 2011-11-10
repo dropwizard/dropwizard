@@ -12,15 +12,13 @@ import org.slf4j.LoggerFactory;
 public abstract class ManagedCommand<T extends Configuration> extends ConfiguredCommand<T> {
     private static final Logger LOGGER = LoggerFactory.getLogger(ManagedCommand.class);
 
-    protected ManagedCommand(Class<T> configurationClass,
-                             String name) {
-        super(configurationClass, name);
+    protected ManagedCommand(String name) {
+        super(name);
     }
 
-    protected ManagedCommand(Class<T> configurationClass,
-                             String name,
+    protected ManagedCommand(String name,
                              String description) {
-        super(configurationClass, name, description);
+        super(name, description);
     }
 
     @Override

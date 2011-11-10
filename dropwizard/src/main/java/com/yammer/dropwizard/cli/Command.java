@@ -24,11 +24,6 @@ public abstract class Command {
         this.description = Optional.fromNullable(description);
     }
 
-    protected Command(String name) {
-        this.name = checkNotNull(name);
-        this.description = Optional.absent();
-    }
-
     public final String getName() {
         return name;
     }
