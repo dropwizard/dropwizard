@@ -3,7 +3,7 @@ package com.yammer.dropwizard.examples
 import com.codahale.logula.Logging
 import com.yammer.dropwizard.lifecycle.Managed
 
-class StartableObject(implicit template: String) extends Managed with Logging {
+class StartableObject(template: String) extends Managed with Logging {
   override def start() {
     log.info("Starting: %s", template)
   }

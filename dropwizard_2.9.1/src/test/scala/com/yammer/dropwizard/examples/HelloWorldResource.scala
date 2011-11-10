@@ -6,7 +6,7 @@ import core.{Response, MediaType}
 
 @Path("/hello-world")
 @Produces(Array(MediaType.APPLICATION_JSON))
-class HelloWorldResource(implicit saying: String) {
+class HelloWorldResource(saying: String) {
   @GET
   def sayHello(@QueryParam("opt") opt: Option[String]) = Seq(saying)
 

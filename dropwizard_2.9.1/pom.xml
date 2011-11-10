@@ -51,6 +51,16 @@
             <groupId>com.codahale</groupId>
             <artifactId>jersey-scala_${scala.version}</artifactId>
             <version>0.2.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.sun.jersey</groupId>
+                    <artifactId>jersey-server</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.codahale</groupId>
@@ -110,7 +120,7 @@
                     <launchers>
                         <launcher>
                             <id>server</id>
-                            <mainClass>com.yammer.com.yammer.dropwizard.examples.Example</mainClass>
+                            <mainClass>com.yammer.com.yammer.dropwizard.examples.ExampleService</mainClass>
                             <args>
                                 <arg>server</arg>
                                 <arg>src/test/resources/example.conf</arg>

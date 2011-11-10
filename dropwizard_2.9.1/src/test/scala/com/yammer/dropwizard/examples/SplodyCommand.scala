@@ -1,25 +1,27 @@
 package com.yammer.dropwizard.examples
 
-import com.yammer.dropwizard.cli.{Flag, FlagGroup, Command}
-import com.yammer.dropwizard.Service
+import com.yammer.dropwizard.cli.Command
+import com.yammer.dropwizard.{AbstractService, Service}
+import org.apache.commons.cli.{CommandLine, OptionGroup, Options, Option => CliOption}
 
-class SplodyCommand extends Command {
-  def name = "splody"
+class SplodyCommand extends Command("splody", "Explodes with an error") {
+  override def getOptions = {
+    val opts = new Options
 
-  override def description = Some("Explodes with a Guice error")
+    val group = new OptionGroup
+    group.setRequired(true)
+    group.addOption(new CliOption("r", "required", false, "a required option"))
 
-  override def options =
-    FlagGroup(Seq(Flag("r", "required", "a required option")),required = true) ::
-    Flag("e", "exception", "throw an exception") ::
-    Flag("m", "message", "return an error message") ::
-    Nil
+    opts.addOptionGroup(group)
+    opts.addOption("e", "exception", false, "throw an exception")
 
-  def run(service: Service, opts: Map[String, List[String]], args: List[String]) = {
-    if (opts.contains("exception")) {
+    opts
+  }
+
+  protected def run(service: AbstractService[_], params: CommandLine) {
+    if (params.hasOption("exception")) {
       println("Throwing an exception")
       sys.error("EXPERIENCE BIJ")
     }
-
-    opts.get("message").map { _ => "Y U NO DO RIGHT THING" }
   }
 }

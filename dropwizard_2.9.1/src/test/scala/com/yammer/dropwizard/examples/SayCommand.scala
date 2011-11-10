@@ -1,29 +1,23 @@
 package com.yammer.dropwizard.examples
 
 import com.yammer.dropwizard.cli.{ConfiguredCommand}
-import com.yammer.dropwizard.Service
 import com.yammer.dropwizard.config.Configuration
-import org.apache.commons.cli.CommandLine
+import org.apache.commons.cli.{Options, CommandLine}
+import com.codahale.logula.Logging
+import com.yammer.dropwizard.{AbstractService, Service}
 
-class SayCommand extends ConfiguredCommand[ExampleConfiguration](classOf[ExampleConfiguration], "say") {
+class SayCommand extends ConfiguredCommand[ExampleConfiguration]("say", "Prints out the saying to console") with Logging {
+  override def getOptions = {
+    val options = new Options
+    options.addOption("v", "verbose", false, "yell it a lot")
+    options
+  }
 
-
-//  def name = "say"
-//
-//  override def description = Some("Prints out the saying to console")
-//
-//  override def options = Flag("v", "verbose", "yell it a lot") :: Nil
-//
-//  def run(service: Service, config: Configuration, opts: Map[String, List[String]], args: List[String]) = {
-//    val saying = SayingFactory.buildSaying(config)
-//    for (i <- 1 to (if (opts.contains("verbose")) 10 else 1)) {
-//      log.warn(saying)
-//    }
-//    None
-//  }
-  protected def run(service: Service[_ <: Configuration],
+  protected def run(service: AbstractService[ExampleConfiguration],
                     configuration: ExampleConfiguration,
                     params: CommandLine) {
-
+    for (i <- 1 to (if (params.hasOption("verbose")) 10 else 1)) {
+      log.warn(configuration.getSaying())
+    }
   }
 }
