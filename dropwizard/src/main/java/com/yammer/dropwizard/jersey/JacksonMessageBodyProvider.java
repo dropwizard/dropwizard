@@ -1,13 +1,12 @@
 package com.yammer.dropwizard.jersey;
 
+import com.google.common.collect.ImmutableList;
+import com.yammer.dropwizard.Validated;
 import com.yammer.dropwizard.json.Json;
+import com.yammer.dropwizard.util.Validator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
@@ -22,7 +21,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
-import java.util.Set;
 
 // TODO: 10/12/11 <coda> -- write tests for JacksonMessageBodyProvider
 // TODO: 10/12/11 <coda> -- write docs for JacksonMessageBodyProvider
@@ -33,7 +31,7 @@ import java.util.Set;
 public class JacksonMessageBodyProvider implements MessageBodyReader<Object>,
                                                    MessageBodyWriter<Object> {
     private static final Logger LOGGER = LoggerFactory.getLogger(JacksonMessageBodyProvider.class);
-    private static final ValidatorFactory VALIDATOR_FACTORY = Validation.buildDefaultValidatorFactory();
+    private static final Validator VALIDATOR = new Validator();
     private static final Response.StatusType UNPROCESSABLE_ENTITY = new Response.StatusType() {
         @Override
         public int getStatusCode() {
@@ -67,17 +65,18 @@ public class JacksonMessageBodyProvider implements MessageBodyReader<Object>,
                            MultivaluedMap<String, String> httpHeaders,
                            InputStream entityStream) throws IOException, WebApplicationException {
         final Object value = Json.read(entityStream, genericType);
-        final Validator validator = VALIDATOR_FACTORY.getValidator();
-        final Set<ConstraintViolation<Object>> violations = validator.validate(value);
-        if (!violations.isEmpty()) {
-            final StringBuilder msg = new StringBuilder("The request entity had the following errors:\n");
-            for (ConstraintViolation<?> v : violations) {
-                msg.append("  * ").append(v.getPropertyPath()).append(' ').append(v.getMessage());
+        if (value.getClass().isAnnotationPresent(Validated.class)) {
+            final ImmutableList<String> errors = VALIDATOR.validate(value);
+            if (!errors.isEmpty()) {
+                final StringBuilder msg = new StringBuilder("The request entity had the following errors:\n");
+                for (String error : errors) {
+                    msg.append("  * ").append(error).append('\n');
+                }
+                throw new WebApplicationException(Response.status(UNPROCESSABLE_ENTITY)
+                                                          .entity(msg.toString())
+                                                          .type(MediaType.TEXT_PLAIN_TYPE)
+                                                          .build());
             }
-            throw new WebApplicationException(Response.status(UNPROCESSABLE_ENTITY)
-                                                      .entity(msg.toString())
-                                                      .type(MediaType.TEXT_PLAIN_TYPE)
-                                                      .build());
         }
         return value;
     }
