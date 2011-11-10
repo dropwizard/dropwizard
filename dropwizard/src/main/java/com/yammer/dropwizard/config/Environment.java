@@ -54,7 +54,103 @@ public class Environment extends AggregateLifeCycle {
             @Override
             public void validate() {
                 super.validate();
-                logDetails();
+                logResources();
+                logProviders();
+                logHealthChecks();
+                logManagedObjects();
+                logEndpoints();
+            }
+
+            private void logManagedObjects() {
+                final ImmutableSet.Builder<String> builder = ImmutableSet.builder();
+                for (Object bean : getBeans()) {
+                    builder.add(bean.getClass().getCanonicalName());
+                }
+                LOGGER.debug("managed objects = {}", builder.build());
+            }
+
+            private void logHealthChecks() {
+                final ImmutableSet.Builder<String> builder = ImmutableSet.builder();
+                for (HealthCheck healthCheck : healthChecks.build()) {
+                    builder.add(healthCheck.getClass().getCanonicalName());
+                }
+                LOGGER.debug("health checks = {}", builder.build());
+            }
+
+            private void logResources() {
+                final ImmutableSet.Builder<String> builder = ImmutableSet.builder();
+
+                for (Class<?> klass : config.getClasses()) {
+                    if (klass.isAnnotationPresent(Path.class)) {
+                        builder.add(klass.getCanonicalName());
+                    }
+                }
+
+                for (Object o : config.getSingletons()) {
+                    if (o.getClass().isAnnotationPresent(Path.class)) {
+                        builder.add(o.getClass().getCanonicalName());
+                    }
+                }
+
+                LOGGER.debug("resources = {}", builder.build());
+            }
+
+            private void logProviders() {
+                final ImmutableSet.Builder<String> builder = ImmutableSet.builder();
+
+                for (Class<?> klass : config.getClasses()) {
+                    if (klass.isAnnotationPresent(Provider.class)) {
+                        builder.add(klass.getCanonicalName());
+                    }
+                }
+
+                for (Object o : config.getSingletons()) {
+                    if (o.getClass().isAnnotationPresent(Provider.class)) {
+                        builder.add(o.getClass().getCanonicalName());
+                    }
+                }
+
+                LOGGER.debug("providers = {}", builder.build());
+            }
+
+            private void logEndpoints() {
+                final StringBuilder stringBuilder = new StringBuilder(1024).append("\n\n");
+
+                final ImmutableList.Builder<Class<?>> builder = ImmutableList.builder();
+                for (Object o : config.getSingletons()) {
+                    if (o.getClass().isAnnotationPresent(Path.class)) {
+                        builder.add(o.getClass());
+                    }
+                }
+                for (Class<?> klass : config.getClasses()) {
+                    if (klass.isAnnotationPresent(Path.class)) {
+                        builder.add(klass);
+                    }
+                }
+
+                for (Class<?> klass : builder.build()) {
+                    final String path = klass.getAnnotation(Path.class).value();
+                    final ImmutableList.Builder<String> endpoints = ImmutableList.builder();
+                    for (AnnotatedMethod method : annotatedMethods(klass)) {
+                        for (HttpMethod verb : method.getMetaMethodAnnotations(HttpMethod.class)) {
+                            endpoints.add(String.format("    %-7s %s (%s)",
+                                                        verb.value(),
+                                                        path,
+                                                        klass.getCanonicalName()));
+                        }
+                    }
+
+                    for (String line : Ordering.natural()
+                                               .sortedCopy(endpoints.build())) {
+                        stringBuilder.append(line).append('\n');
+                    }
+                }
+
+                LOGGER.info(stringBuilder.toString());
+            }
+
+            private MethodList annotatedMethods(Class<?> resource) {
+                return new MethodList(resource, true).hasMetaAnnotation(HttpMethod.class);
             }
         };
         this.healthChecks = ImmutableSet.builder();
@@ -197,105 +293,5 @@ public class Environment extends AggregateLifeCycle {
 
     ImmutableSet<Task> getTasks() {
         return tasks.build();
-    }
-
-    private void logDetails() {
-        logResources();
-        logProviders();
-        logHealthChecks();
-        logManagedObjects();
-        logEndpoints();
-    }
-
-    private void logManagedObjects() {
-        final ImmutableSet.Builder<String> managedObjects = ImmutableSet.builder();
-        for (Object bean : getBeans()) {
-            managedObjects.add(bean.getClass().getCanonicalName());
-        }
-        LOGGER.debug("managed objects = {}", managedObjects.build());
-    }
-
-    private void logHealthChecks() {
-        final ImmutableSet.Builder<String> healthChecks = ImmutableSet.builder();
-        for (HealthCheck healthCheck : this.healthChecks.build()) {
-            healthChecks.add(healthCheck.getClass().getCanonicalName());
-        }
-        LOGGER.debug("health checks = {}", healthChecks.build());
-    }
-
-    private void logResources() {
-        final ImmutableSet.Builder<String> resources = ImmutableSet.builder();
-
-        for (Class<?> klass : config.getClasses()) {
-            if (klass.isAnnotationPresent(Path.class)) {
-                resources.add(klass.getCanonicalName());
-            }
-        }
-
-        for (Object o : config.getSingletons()) {
-            if (o.getClass().isAnnotationPresent(Path.class)) {
-                resources.add(o.getClass().getCanonicalName());
-            }
-        }
-
-        LOGGER.debug("resources = {}", resources.build());
-    }
-
-    private void logProviders() {
-        final ImmutableSet.Builder<String> providers = ImmutableSet.builder();
-
-        for (Class<?> klass : config.getClasses()) {
-            if (klass.isAnnotationPresent(Provider.class)) {
-                providers.add(klass.getCanonicalName());
-            }
-        }
-
-        for (Object o : config.getSingletons()) {
-            if (o.getClass().isAnnotationPresent(Provider.class)) {
-                providers.add(o.getClass().getCanonicalName());
-            }
-        }
-
-        LOGGER.debug("providers = {}", providers.build());
-    }
-
-    private void logEndpoints() {
-        final StringBuilder builder = new StringBuilder(1024).append("\n\n");
-
-        final ImmutableList.Builder<Class<?>> classes = ImmutableList.builder();
-        for (Object o : config.getSingletons()) {
-            if (o.getClass().isAnnotationPresent(Path.class)) {
-                classes.add(o.getClass());
-            }
-        }
-        for (Class<?> k : config.getClasses()) {
-            if (k.isAnnotationPresent(Path.class)) {
-                classes.add(k);
-            }
-        }
-
-        for (Class<?> klass : classes.build()) {
-            final String path = klass.getAnnotation(Path.class).value();
-            final ImmutableList.Builder<String> endpoints = ImmutableList.builder();
-            for (AnnotatedMethod method : annotatedMethods(klass)) {
-                for (HttpMethod verb : method.getMetaMethodAnnotations(HttpMethod.class)) {
-                    endpoints.add(String.format("    %-7s %s (%s)",
-                                                verb.value(),
-                                                path,
-                                                klass.getCanonicalName()));
-                }
-            }
-
-            for (String line : Ordering.natural()
-                                       .sortedCopy(endpoints.build())) {
-                builder.append(line).append('\n');
-            }
-        }
-
-        LOGGER.info(builder.toString());
-    }
-
-    private MethodList annotatedMethods(Class<?> resource) {
-        return new MethodList(resource, true).hasMetaAnnotation(HttpMethod.class);
     }
 }

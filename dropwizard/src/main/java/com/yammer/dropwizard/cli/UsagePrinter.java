@@ -1,7 +1,7 @@
 package com.yammer.dropwizard.cli;
 
 import com.google.common.base.Optional;
-import com.yammer.dropwizard.Service;
+import com.yammer.dropwizard.AbstractService;
 import com.yammer.dropwizard.util.JarLocation;
 import org.apache.commons.cli.HelpFormatter;
 
@@ -10,7 +10,7 @@ public class UsagePrinter {
         // singleton
     }
     
-    public static void printRootHelp(Service<?> service) {
+    public static void printRootHelp(AbstractService<?> service) {
         System.out.printf("java -jar %s <command> [arg1 arg2]\n\n", new JarLocation());
         System.out.println("Commands");
         System.out.println("========\n");

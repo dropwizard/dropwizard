@@ -1,7 +1,8 @@
 package com.yammer.dropwizard.cli;
 
 import com.google.common.base.Optional;
-import com.yammer.dropwizard.Service;
+import com.yammer.dropwizard.Module;
+import com.yammer.dropwizard.AbstractService;
 import com.yammer.dropwizard.config.Configuration;
 import com.yammer.dropwizard.config.Environment;
 import com.yammer.dropwizard.config.LoggingFactory;
@@ -25,27 +26,30 @@ public class ServerCommand<T extends Configuration> extends ConfiguredCommand<T>
     }
 
     @Override
-    protected final void run(Service<T> service,
-                             T config,
+    protected final void run(AbstractService<T> service,
+                             T configuration,
                              CommandLine params) throws Exception {
-        new LoggingFactory(config.getLoggingConfiguration()).configure();
+        new LoggingFactory(configuration.getLoggingConfiguration()).configure();
         final Environment environment = new Environment();
-        service.configure(config, environment);
+        for (Module module : service.getModules()) {
+            module.initialize(environment);
+        }
+        service.initialize(configuration, environment);
 
-        final Server server = new ServerFactory(config.getHttpConfiguration()).buildServer(environment);
+        final Server server = new ServerFactory(configuration.getHttpConfiguration()).buildServer(environment);
 
         final Logger logger = LoggerFactory.getLogger(ServerCommand.class);
         logger.info("Starting " + service.getName());
 
-        if (service.getBanner().isPresent()) {
-            logger.info("\n" + service.getBanner().get() + "\n");
+        if (service.hasBanner()) {
+            logger.info('\n' + service.getBanner() + '\n');
         }
 
         try {
             server.start();
             server.join();
         } catch (Exception e) {
-            logger.error("Unable to start server, shutting down");
+            logger.error("Unable to start server, shutting down", e);
             server.stop();
         }
     }

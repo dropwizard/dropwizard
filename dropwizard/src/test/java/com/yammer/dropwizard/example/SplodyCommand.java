@@ -1,6 +1,6 @@
 package com.yammer.dropwizard.example;
 
-import com.yammer.dropwizard.Service;
+import com.yammer.dropwizard.AbstractService;
 import com.yammer.dropwizard.cli.Command;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Option;
@@ -24,7 +24,7 @@ public class SplodyCommand extends Command {
     }
 
     @Override
-    protected void run(Service<?> service,
+    protected void run(AbstractService<?> service,
                        CommandLine params) throws Exception {
         if (params.hasOption('e')) {
             System.err.println("throwing an exception");

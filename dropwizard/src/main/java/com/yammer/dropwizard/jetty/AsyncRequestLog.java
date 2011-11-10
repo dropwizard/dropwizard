@@ -4,6 +4,7 @@ package com.yammer.dropwizard.jetty;
 
 import org.eclipse.jetty.http.HttpHeaders;
 import org.eclipse.jetty.server.Authentication;
+import org.eclipse.jetty.server.NCSARequestLog;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.RequestLog;
 import org.eclipse.jetty.server.Response;
@@ -23,11 +24,10 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * A non-blocking, asynchronous {@link org.eclipse.jetty.server.RequestLog} implementation which
- * implements a subset of the functionality of {@link org.eclipse.jetty.server.NCSARequestLog}. Log
- * entries are added to an in-memory queue and an offline thread handles the responsibility of
- * batching them to disk. The date format is fixed, UTC time zone is fixed, and latency is always
- * logged.
+ * A non-blocking, asynchronous {@link RequestLog} implementation which implements a subset of the
+ * functionality of {@link NCSARequestLog}. Log entries are added to an in-memory queue and an
+ * offline thread handles the responsibility of batching them to disk. The date format is fixed,
+ * UTC time zone is fixed, and latency is always logged.
  */
 public class AsyncRequestLog extends AbstractLifeCycle implements RequestLog {
     private static final AtomicInteger THREAD_COUNTER = new AtomicInteger();

@@ -7,6 +7,10 @@ public class ConfigurationException extends Exception {
         super(formatMessage(file, errors));
     }
 
+    public ConfigurationException(Exception e) {
+        super(e);
+    }
+
     private static String formatMessage(File file, Iterable<String> errors) {
         final StringBuilder msg = new StringBuilder(file.toString())
                 .append(" has the following errors:\n");

@@ -17,7 +17,7 @@ public class ConfigurationFactory<T> {
     public static <T> ConfigurationFactory<T> forClass(Class<T> klass, Validator validator) {
         return new ConfigurationFactory<T>(klass, validator);
     }
-    
+
     private final Class<T> klass;
     private final Validator validator;
 

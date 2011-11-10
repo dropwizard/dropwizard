@@ -30,8 +30,8 @@ import java.util.Set;
 @Provider
 @Produces("application/json")
 @Consumes("application/json")
-public class JacksonMessageBodyProvider<T> implements MessageBodyReader<T>,
-                                                      MessageBodyWriter<T> {
+public class JacksonMessageBodyProvider implements MessageBodyReader<Object>,
+                                                   MessageBodyWriter<Object> {
     private static final Logger LOGGER = LoggerFactory.getLogger(JacksonMessageBodyProvider.class);
     private static final ValidatorFactory VALIDATOR_FACTORY = Validation.buildDefaultValidatorFactory();
     private static final Response.StatusType UNPROCESSABLE_ENTITY = new Response.StatusType() {
@@ -60,19 +60,19 @@ public class JacksonMessageBodyProvider<T> implements MessageBodyReader<T>,
     }
 
     @Override
-    public T readFrom(Class<T> type,
-                      Type genericType,
-                      Annotation[] annotations,
-                      MediaType mediaType,
-                      MultivaluedMap<String, String> httpHeaders,
-                      InputStream entityStream) throws IOException, WebApplicationException {
-        final T value = Json.read(entityStream, genericType);
+    public Object readFrom(Class<Object> type,
+                           Type genericType,
+                           Annotation[] annotations,
+                           MediaType mediaType,
+                           MultivaluedMap<String, String> httpHeaders,
+                           InputStream entityStream) throws IOException, WebApplicationException {
+        final Object value = Json.read(entityStream, genericType);
         final Validator validator = VALIDATOR_FACTORY.getValidator();
-        final Set<ConstraintViolation<T>> violations = validator.validate(value);
+        final Set<ConstraintViolation<Object>> violations = validator.validate(value);
         if (!violations.isEmpty()) {
             final StringBuilder msg = new StringBuilder("The request entity had the following errors:\n");
             for (ConstraintViolation<?> v : violations) {
-                msg.append("  * ").append(v.getPropertyPath()).append(" ").append(v.getMessage());
+                msg.append("  * ").append(v.getPropertyPath()).append(' ').append(v.getMessage());
             }
             throw new WebApplicationException(Response.status(UNPROCESSABLE_ENTITY)
                                                       .entity(msg.toString())
@@ -91,7 +91,7 @@ public class JacksonMessageBodyProvider<T> implements MessageBodyReader<T>,
     }
 
     @Override
-    public long getSize(T t,
+    public long getSize(Object t,
                         Class<?> type,
                         Type genericType,
                         Annotation[] annotations,
@@ -100,7 +100,7 @@ public class JacksonMessageBodyProvider<T> implements MessageBodyReader<T>,
     }
 
     @Override
-    public void writeTo(T t,
+    public void writeTo(Object t,
                         Class<?> type,
                         Type genericType,
                         Annotation[] annotations,
