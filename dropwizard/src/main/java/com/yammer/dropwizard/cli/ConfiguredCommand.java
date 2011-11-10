@@ -39,7 +39,7 @@ public abstract class ConfiguredCommand<T extends Configuration> extends Command
         final StringBuilder syntax = new StringBuilder("<config file>");
         final Optional<String> configured = getConfiguredSyntax();
         if (configured.isPresent() && !configured.get().isEmpty()) {
-            syntax.append(' ').append(configured);
+            syntax.append(' ').append(configured.get());
         }
         return syntax.toString();
     }
