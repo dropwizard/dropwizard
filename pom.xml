@@ -6,7 +6,7 @@
 
     <groupId>com.yammer</groupId>
     <artifactId>dropwizard-parent</artifactId>
-    <version>0.0.14-SNAPSHOT</version>
+    <version>0.1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <modules>
