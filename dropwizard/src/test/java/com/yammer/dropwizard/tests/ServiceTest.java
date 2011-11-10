@@ -1,20 +1,14 @@
 package com.yammer.dropwizard.tests;
 
-import com.google.common.collect.ImmutableList;
 import com.yammer.dropwizard.Module;
 import com.yammer.dropwizard.Service;
-import com.yammer.dropwizard.cli.Command;
-import com.yammer.dropwizard.cli.ManagedCommand;
 import com.yammer.dropwizard.config.Configuration;
 import com.yammer.dropwizard.config.Environment;
-import org.junit.Before;
 import org.junit.Test;
 
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.sameInstance;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class ServiceTest {
     @SuppressWarnings({"PackageVisibleInnerClass", "EmptyClass"})
@@ -26,8 +20,6 @@ public class ServiceTest {
         FakeService() {
             super("test");
             addModule(module);
-            addCommand(command);
-            addCommand(managedCommand);
             setBanner("woo");
         }
 
@@ -37,16 +29,7 @@ public class ServiceTest {
     }
 
     private final Module module = mock(Module.class);
-    private final Command command = mock(Command.class);
-    @SuppressWarnings("unchecked")
-    private final ManagedCommand<FakeConfiguration> managedCommand = mock(ManagedCommand.class);
     private final FakeService service = new FakeService();
-
-    @Before
-    public void setUp() throws Exception {
-        when(command.getName()).thenReturn("command");
-        when(managedCommand.getName()).thenReturn("managed-command");
-    }
 
     @Test
     public void hasAReferenceToItsTypeParameter() throws Exception {
@@ -57,13 +40,7 @@ public class ServiceTest {
     @Test
     public void hasModules() throws Exception {
         assertThat(service.getModules(),
-                   is(ImmutableList.of(module)));
-    }
-
-    @Test
-    public void hasCommands() throws Exception {
-        assertThat(service.getCommands(),
-                   is(ImmutableList.<Command>of(command, managedCommand)));
+                   hasItem(module));
     }
 
     @Test
