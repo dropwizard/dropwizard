@@ -11,7 +11,7 @@
     </parent>
 
     <groupId>com.yammer</groupId>
-    <artifactId>dropwizard-core</artifactId>
+    <artifactId>dropwizard</artifactId>
     <name>Dropwizard</name>
 
     <properties>
