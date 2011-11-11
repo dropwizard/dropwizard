@@ -3,9 +3,10 @@ package com.yammer.dropwizard.util;
 import java.io.File;
 import java.net.URL;
 
-// TODO: 10/12/11 <coda> -- write tests for JarLocation
-// TODO: 10/12/11 <coda> -- write docs for JarLocation
-
+/**
+ * A class which encapsulates the location on the local filesystem of the JAR in which the current
+ * code is executing.
+ */
 public class JarLocation {
     @Override
     public String toString() {
@@ -16,7 +17,7 @@ public class JarLocation {
                 return jar;
             }
             return "project.jar";
-        } catch (Exception e) {
+        } catch (Exception ignored) {
             return "project.jar";
         }
     }
