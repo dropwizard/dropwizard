@@ -1,7 +1,6 @@
 package com.yammer.dropwizard.cli;
 
 import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
 import com.yammer.dropwizard.AbstractService;
 import com.yammer.dropwizard.util.JarLocation;
 import org.apache.commons.cli.*;
@@ -65,7 +64,7 @@ public abstract class Command {
         if (cmdLine.hasOption("help")) {
             UsagePrinter.printCommandHelp(this);
         } else {
-            run(Preconditions.checkNotNull(service), cmdLine);
+            run(checkNotNull(service), cmdLine);
         }
     }
 }

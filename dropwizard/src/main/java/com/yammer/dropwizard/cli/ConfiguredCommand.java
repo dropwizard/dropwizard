@@ -30,16 +30,16 @@ public abstract class ConfiguredCommand<T extends Configuration> extends Command
         return (Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
     }
 
-    protected Optional<String> getConfiguredSyntax() {
-        return Optional.absent();
+    protected String getConfiguredSyntax() {
+        return null;
     }
 
     @Override
     protected final String getSyntax() {
         final StringBuilder syntax = new StringBuilder("<config file>");
-        final Optional<String> configured = getConfiguredSyntax();
-        if (configured.isPresent() && !configured.get().isEmpty()) {
-            syntax.append(' ').append(configured.get());
+        final String configured = getConfiguredSyntax();
+        if (configured != null && !configured.isEmpty()) {
+            syntax.append(' ').append(configured);
         }
         return syntax.toString();
     }
@@ -50,11 +50,12 @@ public abstract class ConfiguredCommand<T extends Configuration> extends Command
                              CommandLine params) throws Exception {
         LoggingFactory.bootstrap();
         final String[] args = params.getArgs();
-        if (args.length == 1) {
+        if (args.length >= 1) {
             try {
                 final ConfigurationFactory<T> factory = new ConfigurationFactory<T>(getConfigurationClass(),
                                                                                     new Validator());
                 final T configuration = factory.build(new File(args[0]));
+                new LoggingFactory(configuration.getLoggingConfiguration()).configure();
                 run((AbstractService<T>) service, configuration, params);
             } catch (ConfigurationException e) {
                 UsagePrinter.printCommandHelp(this, Optional.fromNullable(e.getMessage()));

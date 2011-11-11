@@ -1,11 +1,9 @@
 package com.yammer.dropwizard.cli;
 
-import com.google.common.base.Optional;
-import com.yammer.dropwizard.Module;
 import com.yammer.dropwizard.AbstractService;
+import com.yammer.dropwizard.Module;
 import com.yammer.dropwizard.config.Configuration;
 import com.yammer.dropwizard.config.Environment;
-import com.yammer.dropwizard.config.LoggingFactory;
 import com.yammer.dropwizard.config.ServerFactory;
 import org.apache.commons.cli.CommandLine;
 import org.eclipse.jetty.server.Server;
@@ -29,15 +27,9 @@ public class ServerCommand<T extends Configuration> extends ConfiguredCommand<T>
     }
 
     @Override
-    protected final Optional<String> getConfiguredSyntax() {
-        return Optional.absent();
-    }
-
-    @Override
     protected final void run(AbstractService<T> service,
                              T configuration,
                              CommandLine params) throws Exception {
-        new LoggingFactory(configuration.getLoggingConfiguration()).configure();
         final Environment environment = new Environment();
         for (Module module : service.getModules()) {
             module.initialize(environment);
