@@ -5,11 +5,12 @@ import com.yammer.dropwizard.AbstractService;
 import com.yammer.dropwizard.util.JarLocation;
 import org.apache.commons.cli.HelpFormatter;
 
+@SuppressWarnings("UseOfSystemOutOrSystemErr")
 public class UsagePrinter {
     private UsagePrinter() {
         // singleton
     }
-    
+
     public static void printRootHelp(AbstractService<?> service) {
         System.out.printf("java -jar %s <command> [arg1 arg2]\n\n", new JarLocation());
         System.out.println("Commands");
