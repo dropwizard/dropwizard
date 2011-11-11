@@ -38,7 +38,7 @@ public abstract class ConfiguredCommand<T extends Configuration> extends Command
     protected final String getSyntax() {
         final StringBuilder syntax = new StringBuilder("<config file>");
         final String configured = getConfiguredSyntax();
-        if (configured != null && !configured.isEmpty()) {
+        if ((configured != null) && !configured.isEmpty()) {
             syntax.append(' ').append(configured);
         }
         return syntax.toString();
@@ -49,11 +49,12 @@ public abstract class ConfiguredCommand<T extends Configuration> extends Command
     protected final void run(AbstractService<?> service,
                              CommandLine params) throws Exception {
         LoggingFactory.bootstrap();
+        final ConfigurationFactory<T> factory = new ConfigurationFactory<T>(getConfigurationClass(),
+                                                                            new Validator());
         final String[] args = params.getArgs();
         if (args.length >= 1) {
+            params.getArgList().remove(0);
             try {
-                final ConfigurationFactory<T> factory = new ConfigurationFactory<T>(getConfigurationClass(),
-                                                                                    new Validator());
                 final T configuration = factory.build(new File(args[0]));
                 new LoggingFactory(configuration.getLoggingConfiguration()).configure();
                 run((AbstractService<T>) service, configuration, params);

@@ -40,8 +40,7 @@ public class RenderCommand extends ConfiguredCommand<HelloWorldConfiguration> {
             LOGGER.info("DEFAULT => {}", template.render(Optional.<String>absent()));
         }
 
-        for (int i = 1; i < params.getArgs().length; i++) {
-            final String name = params.getArgs()[i];
+        for (String name : params.getArgs()) {
             LOGGER.info("{} => {}", name, template.render(Optional.of(name)));
         }
     }
