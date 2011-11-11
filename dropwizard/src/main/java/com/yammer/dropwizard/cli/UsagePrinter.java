@@ -37,12 +37,10 @@ public class UsagePrinter {
                                 cmd.getOptionsWithHelp());
         System.out.println("\n");
     }
-    
+
     private static String formatTitle(Command cmd) {
-        final String title = cmd.getName() +
-                (cmd.getDescription().isPresent() ? "" : ": " + cmd.getDescription().get());
-        
-        return title + "\n" + getBanner(title.length());
+        final String title = cmd.getName() + ": " + cmd.getDescription();
+        return title + '\n' + getBanner(title.length());
     }
 
     private static String getBanner(int length) {
