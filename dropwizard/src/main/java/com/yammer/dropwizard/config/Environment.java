@@ -155,14 +155,14 @@ public class Environment extends AbstractLifeCycle {
      *
      * @param servlet       the servlet instance
      * @param urlPattern    the URL pattern for requests that should be handled by {@code servlet}
-     * @return a {@link ServletMapping} instance allowing for further configuration
+     * @return a {@link ServletConfiguration} instance allowing for further configuration
      */
-    public ServletMapping addServlet(Servlet servlet,
-                                     String urlPattern) {
+    public ServletConfiguration addServlet(Servlet servlet,
+                                           String urlPattern) {
         final ServletHolder holder = new ServletHolder(checkNotNull(servlet));
-        final ServletMapping mapping = new ServletMapping(holder, servlets);
-        mapping.addUrlPattern(checkNotNull(urlPattern));
-        return mapping;
+        final ServletConfiguration configuration = new ServletConfiguration(holder, servlets);
+        configuration.addUrlPattern(checkNotNull(urlPattern));
+        return configuration;
     }
 
     /**
@@ -171,14 +171,14 @@ public class Environment extends AbstractLifeCycle {
      * @param klass         the servlet class
      * @param urlPattern    the URL pattern for requests that should be handled by instances of
      *                      {@code klass}
-     * @return a {@link ServletMapping} instance allowing for further configuration
+     * @return a {@link ServletConfiguration} instance allowing for further configuration
      */
-    public ServletMapping addServlet(Class<? extends Servlet> klass,
-                                     String urlPattern) {
+    public ServletConfiguration addServlet(Class<? extends Servlet> klass,
+                                           String urlPattern) {
         final ServletHolder holder = new ServletHolder(checkNotNull(klass));
-        final ServletMapping mapping = new ServletMapping(holder, servlets);
-        mapping.addUrlPattern(checkNotNull(urlPattern));
-        return mapping;
+        final ServletConfiguration configuration = new ServletConfiguration(holder, servlets);
+        configuration.addUrlPattern(checkNotNull(urlPattern));
+        return configuration;
     }
 
     /**
