@@ -1,8 +1,8 @@
 package com.yammer.dropwizard.tasks;
 
+import com.google.common.collect.ImmutableMultimap;
+
 import java.io.PrintWriter;
-import java.util.List;
-import java.util.Map;
 
 // TODO: 10/12/11 <coda> -- write tests for Task
 // TODO: 10/12/11 <coda> -- write docs for Task
@@ -36,7 +36,8 @@ public abstract class Task {
      *
      * @param parameters the query string parameters
      * @param output     a {@link PrintWriter} wrapping the output stream of the task
+     * @throws Exception if something goes wrong
      */
-    public abstract void execute(Map<String, List<String>> parameters,
+    public abstract void execute(ImmutableMultimap<String, String> parameters,
                                  PrintWriter output) throws Exception;
 }

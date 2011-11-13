@@ -1,6 +1,7 @@
 package com.yammer.dropwizard.tasks;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMultimap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,13 +18,14 @@ import java.util.*;
 // TODO: 10/12/11 <coda> -- write docs for TaskServlet
 
 public class TaskServlet extends HttpServlet {
+    private static final long serialVersionUID = 7404713218661358124L;
     private static final Logger LOGGER = LoggerFactory.getLogger(TaskServlet.class);
     private final ImmutableMap<String, Task> tasks;
 
     public TaskServlet(Iterable<Task> tasks) {
         final ImmutableMap.Builder<String, Task> builder = ImmutableMap.builder();
         for (Task task : tasks) {
-            builder.put("/" + task.getName(), task);
+            builder.put('/' + task.getName(), task);
         }
         this.tasks = builder.build();
     }
@@ -47,14 +49,14 @@ public class TaskServlet extends HttpServlet {
         }
     }
 
-    private Map<String, List<String>> getParams(HttpServletRequest req) {
-        final Map<String, List<String>> results = new HashMap<String, List<String>>();
-        final Enumeration names = req.getParameterNames();
+    private static ImmutableMultimap<String, String> getParams(HttpServletRequest req) {
+        final ImmutableMultimap.Builder<String, String> results = ImmutableMultimap.builder();
+        final Enumeration<?> names = req.getParameterNames();
         while (names.hasMoreElements()) {
             final String name = (String) names.nextElement();
             final String[] values = req.getParameterValues(name);
-            results.put(name, Arrays.asList(values));
+            results.putAll(name, values);
         }
-        return results;
+        return results.build();
     }
 }
