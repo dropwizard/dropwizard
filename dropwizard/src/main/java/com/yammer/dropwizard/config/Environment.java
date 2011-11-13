@@ -186,14 +186,14 @@ public class Environment extends AbstractLifeCycle {
      *
      * @param filter        the filter instance
      * @param urlPattern    the URL pattern for requests that should be handled by {@code filter}
-     * @return a {@link FilterMapping} instance allowing for further configuration
+     * @return a {@link FilterConfiguration} instance allowing for further configuration
      */
-    public FilterMapping addFilter(Filter filter,
-                                   String urlPattern) {
+    public FilterConfiguration addFilter(Filter filter,
+                                         String urlPattern) {
         final FilterHolder holder = new FilterHolder(checkNotNull(filter));
-        final FilterMapping mapping = new FilterMapping(holder, filters);
-        mapping.addUrlPattern(checkNotNull(urlPattern));
-        return mapping;
+        final FilterConfiguration configuration = new FilterConfiguration(holder, filters);
+        configuration.addUrlPattern(checkNotNull(urlPattern));
+        return configuration;
     }
 
     /**
@@ -202,14 +202,14 @@ public class Environment extends AbstractLifeCycle {
      * @param klass         the filter class
      * @param urlPattern    the URL pattern for requests that should be handled by instances of
      *                      {@code klass}
-     * @return a {@link FilterMapping} instance allowing for further configuration
+     * @return a {@link FilterConfiguration} instance allowing for further configuration
      */
-    public FilterMapping addFilter(Class<? extends Filter> klass,
-                                   String urlPattern) {
+    public FilterConfiguration addFilter(Class<? extends Filter> klass,
+                                         String urlPattern) {
         final FilterHolder holder = new FilterHolder(checkNotNull(klass));
-        final FilterMapping mapping = new FilterMapping(holder, filters);
-        mapping.addUrlPattern(checkNotNull(urlPattern));
-        return mapping;
+        final FilterConfiguration configuration = new FilterConfiguration(holder, filters);
+        configuration.addUrlPattern(checkNotNull(urlPattern));
+        return configuration;
     }
 
     /**
