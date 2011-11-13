@@ -18,7 +18,7 @@ public class FilterConfiguration {
      * Creates a new {@link FilterConfiguration}.
      *
      * @param holder      the {@link FilterHolder} containing the {@link javax.servlet.Filter}
-     * @param mappings    the mappings of URL patterns to {@link javax.servlet.Filter}
+     * @param mappings    the mappings of URL patterns to {@link javax.servlet.Filter}s
      */
     public FilterConfiguration(FilterHolder holder,
                                ImmutableMap.Builder<String, FilterHolder> mappings) {
