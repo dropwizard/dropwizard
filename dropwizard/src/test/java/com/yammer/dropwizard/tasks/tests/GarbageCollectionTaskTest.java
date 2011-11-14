@@ -2,19 +2,18 @@ package com.yammer.dropwizard.tasks.tests;
 
 import com.google.common.collect.ImmutableMultimap;
 import com.yammer.dropwizard.tasks.GarbageCollectionTask;
+import com.yammer.dropwizard.tasks.Task;
 import org.junit.Test;
 
 import java.io.PrintWriter;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @SuppressWarnings("CallToSystemGC")
 public class GarbageCollectionTaskTest {
     private final Runtime runtime = mock(Runtime.class);
     private final PrintWriter output = mock(PrintWriter.class);
-    private final GarbageCollectionTask task = new GarbageCollectionTask(runtime);
+    private final Task task = new GarbageCollectionTask(runtime);
 
     @Test
     public void runsOnceWithNoParameters() throws Exception {
