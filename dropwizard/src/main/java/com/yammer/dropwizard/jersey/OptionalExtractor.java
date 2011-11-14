@@ -5,6 +5,9 @@ import com.sun.jersey.server.impl.model.parameter.multivalued.MultivaluedParamet
 
 import javax.ws.rs.core.MultivaluedMap;
 
+// TODO: 11/14/11 <coda> -- test OptionalExtractor
+// TODO: 11/14/11 <coda> -- document OptionalExtractor
+
 public class OptionalExtractor implements MultivaluedParameterExtractor {
     private final String parameterName;
     private final Optional<String> defaultValue;

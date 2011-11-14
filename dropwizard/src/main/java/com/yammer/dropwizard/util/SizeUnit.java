@@ -9,7 +9,7 @@ public enum SizeUnit {
 
     private final long bits;
 
-    private SizeUnit(long bits) {
+    SizeUnit(long bits) {
         this.bits = bits;
     }
 
@@ -17,23 +17,23 @@ public enum SizeUnit {
         return (size * unit.bits) / bits;
     }
 
-    public long toBytes(long d) {
-        return BYTES.convert(d, this);
+    public long toBytes(long l) {
+        return BYTES.convert(l, this);
     }
 
-    public long toKilobytes(long d) {
-        return KILOBYTES.convert(d, this);
+    public long toKilobytes(long l) {
+        return KILOBYTES.convert(l, this);
     }
 
-    public long toMegabytes(long d) {
-        return MEGABYTES.convert(d, this);
+    public long toMegabytes(long l) {
+        return MEGABYTES.convert(l, this);
     }
 
-    public long toGigabytes(long d) {
-        return GIGABYTES.convert(d, this);
+    public long toGigabytes(long l) {
+        return GIGABYTES.convert(l, this);
     }
 
-    public long toTerabytes(long d) {
-        return TERABYTES.convert(d, this);
+    public long toTerabytes(long l) {
+        return TERABYTES.convert(l, this);
     }
 }

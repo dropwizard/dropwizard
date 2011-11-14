@@ -15,7 +15,7 @@ import static java.lang.String.format;
  * A simple façade for Hibernate Validator.
  */
 public class Validator {
-    private static final ValidatorFactory FACTORY = Validation.buildDefaultValidatorFactory();
+    private final ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
 
     /**
      * Validates the given object, and returns a list of error messages, if any. If the returned
@@ -27,7 +27,7 @@ public class Validator {
      */
     public <T> ImmutableList<String> validate(T o) {
         final Set<String> errors = Sets.newHashSet();
-        final Set<ConstraintViolation<T>> violations = FACTORY.getValidator().validate(o);
+        final Set<ConstraintViolation<T>> violations = factory.getValidator().validate(o);
         for (ConstraintViolation<T> v : violations) {
             errors.add(format("%s %s (was %s)", v.getPropertyPath(),
                                                 v.getMessage(),

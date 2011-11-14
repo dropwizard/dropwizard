@@ -4,6 +4,7 @@ import com.google.common.base.CharMatcher;
 import com.google.common.collect.ImmutableMap;
 
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -15,8 +16,9 @@ public class Duration {
                                                              "m|minute(s)?|" +
                                                              "h|hour(s)?|" +
                                                              "d|day(s)?)";
-    
+    private static final Pattern DURATION_PATTERN = Pattern.compile(VALID_DURATION);
     private static final ImmutableMap<String, TimeUnit> SUFFIXES;
+
     static {
         final ImmutableMap.Builder<String, TimeUnit> suffixes = ImmutableMap.builder();
 
@@ -95,7 +97,7 @@ public class Duration {
     }
 
     public static Duration parse(String duration) {
-        if (duration.matches(VALID_DURATION)) {
+        if (DURATION_PATTERN.matcher(duration).matches()) {
             return new Duration(parseCount(duration), parseUnit(duration));
         }
         throw new IllegalArgumentException("Unable to parse as duration: " + duration);
@@ -138,17 +140,17 @@ public class Duration {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) { return true; }
-        if (o == null || getClass() != o.getClass()) { return false; }
-        final Duration duration = (Duration) o;
-        return count == duration.count && unit == duration.unit;
+    public boolean equals(Object obj) {
+        if (this == obj) { return true; }
+        if ((obj == null) || (getClass() != obj.getClass())) { return false; }
+        final Duration duration = (Duration) obj;
+        return (count == duration.count) && (unit == duration.unit);
 
     }
 
     @Override
     public int hashCode() {
-        return 31 * (int) (count ^ (count >>> 32)) + unit.hashCode();
+        return (31 * (int) (count ^ (count >>> 32))) + unit.hashCode();
     }
 
     @Override
@@ -157,6 +159,6 @@ public class Duration {
         if (count == 1) {
             units = units.substring(0, units.length() - 1);
         }
-        return Long.toString(count) + " " + units;
+        return Long.toString(count) + ' ' + units;
     }
 }

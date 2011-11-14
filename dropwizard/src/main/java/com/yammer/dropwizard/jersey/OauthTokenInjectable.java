@@ -6,6 +6,9 @@ import com.sun.jersey.server.impl.inject.AbstractHttpContextInjectable;
 
 import javax.ws.rs.core.HttpHeaders;
 
+// TODO: 11/14/11 <coda> -- test OauthTokenInjectable
+// TODO: 11/14/11 <coda> -- document OauthTokenInjectable
+
 public class OauthTokenInjectable extends AbstractHttpContextInjectable<Optional<String>> {
     private final String prefix;
 

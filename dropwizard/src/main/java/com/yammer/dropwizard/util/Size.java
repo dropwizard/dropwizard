@@ -3,6 +3,8 @@ package com.yammer.dropwizard.util;
 import com.google.common.base.CharMatcher;
 import com.google.common.collect.ImmutableMap;
 
+import java.util.regex.Pattern;
+
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class Size {
@@ -11,8 +13,10 @@ public class Size {
                                                          "MB|MiB|megabyte(s)?|" +
                                                          "GB|GiB|gigabyte(s)?|" +
                                                          "TB|TiB|terabyte(s)?)";
+    private static final Pattern SIZE_PATTERN = Pattern.compile(VALID_SIZE);
 
     private static final ImmutableMap<String, SizeUnit> SUFFIXES;
+
     static {
         final ImmutableMap.Builder<String, SizeUnit> suffixes = ImmutableMap.builder();
         suffixes.put("B", SizeUnit.BYTES);
@@ -78,7 +82,7 @@ public class Size {
     }
     
     public static Size parse(String size) {
-        if (size.matches(VALID_SIZE)) {
+        if (SIZE_PATTERN.matcher(size).matches()) {
             return new Size(parseCount(size), parseUnit(size));
         }
         throw new IllegalArgumentException("Unable to parse size: " + size);
@@ -113,16 +117,16 @@ public class Size {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) { return true; }
-        if (o == null || getClass() != o.getClass()) { return false; }
-        final Size size = (Size) o;
-        return count == size.count && unit == size.unit;
+    public boolean equals(Object obj) {
+        if (this == obj) { return true; }
+        if ((obj == null) || (getClass() != obj.getClass())) { return false; }
+        final Size size = (Size) obj;
+        return (count == size.count) && (unit == size.unit);
     }
 
     @Override
     public int hashCode() {
-        return 31 * (int) (count ^ (count >>> 32)) + unit.hashCode();
+        return (31 * (int) (count ^ (count >>> 32))) + unit.hashCode();
     }
 
     @Override
@@ -131,6 +135,6 @@ public class Size {
         if (count == 1) {
             units = units.substring(0, units.length() - 1);
         }
-        return Long.toString(count) + " " + units;
+        return Long.toString(count) + ' ' + units;
     }
 }

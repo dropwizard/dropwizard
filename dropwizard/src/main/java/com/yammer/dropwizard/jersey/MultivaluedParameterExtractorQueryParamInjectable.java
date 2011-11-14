@@ -6,6 +6,9 @@ import com.sun.jersey.server.impl.inject.AbstractHttpContextInjectable;
 import com.sun.jersey.server.impl.model.parameter.multivalued.ExtractorContainerException;
 import com.sun.jersey.server.impl.model.parameter.multivalued.MultivaluedParameterExtractor;
 
+// TODO: 11/14/11 <coda> -- test MultivaluedParameterExtractorQueryParamInjectable
+// TODO: 11/14/11 <coda> -- document MultivaluedParameterExtractorQueryParamInjectable
+
 public class MultivaluedParameterExtractorQueryParamInjectable extends AbstractHttpContextInjectable<Object> {
     private final MultivaluedParameterExtractor extractor;
     private final boolean isEncoded;

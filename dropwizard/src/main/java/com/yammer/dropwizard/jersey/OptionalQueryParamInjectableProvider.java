@@ -10,6 +10,9 @@ import com.sun.jersey.spi.inject.InjectableProvider;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.ext.Provider;
 
+// TODO: 11/14/11 <coda> -- test OptionalQueryParamInjectableProvider
+// TODO: 11/14/11 <coda> -- document OptionalQueryParamInjectableProvider
+
 @Provider
 public class OptionalQueryParamInjectableProvider implements InjectableProvider<QueryParam, Parameter> {
     @Override

@@ -10,6 +10,9 @@ import com.yammer.dropwizard.BearerToken;
 
 import javax.ws.rs.ext.Provider;
 
+// TODO: 11/14/11 <coda> -- test OauthTokenProvider
+// TODO: 11/14/11 <coda> -- document OauthTokenProvider
+
 @Provider
 public class OauthTokenProvider implements InjectableProvider<BearerToken, Parameter> {
     @Override

@@ -4,6 +4,8 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+// TODO: 11/14/11 <coda> -- test AbstractParam
+
 /**
  * An abstract base class from which to build Jersey parameter classes.
  *
@@ -17,6 +19,7 @@ public abstract class AbstractParam<T> {
      *
      * @param input an input value from a client request
      */
+    @SuppressWarnings({"AbstractMethodCallInConstructor", "OverriddenMethodCallDuringObjectConstruction"})
     protected AbstractParam(String input) {
         try {
             this.value = parse(input);
@@ -60,6 +63,7 @@ public abstract class AbstractParam<T> {
      *
      * @return the HTTP {@link Status} of the error message
      */
+    @SuppressWarnings("MethodMayBeStatic")
     protected Status getErrorStatus() {
         return Status.BAD_REQUEST;
     }
@@ -82,10 +86,10 @@ public abstract class AbstractParam<T> {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) { return true; }
-        if (o == null || getClass() != o.getClass()) { return false; }
-        final AbstractParam that = (AbstractParam) o;
+    public boolean equals(Object obj) {
+        if (this == obj) { return true; }
+        if ((obj == null) || (getClass() != obj.getClass())) { return false; }
+        final AbstractParam<?> that = (AbstractParam<?>) obj;
         return value.equals(that.value);
     }
 
