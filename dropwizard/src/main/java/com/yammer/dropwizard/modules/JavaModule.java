@@ -6,6 +6,9 @@ import com.yammer.dropwizard.jersey.JacksonMessageBodyProvider;
 import com.yammer.dropwizard.jersey.OauthTokenProvider;
 import com.yammer.dropwizard.jersey.OptionalQueryParamInjectableProvider;
 
+/**
+ * Initializes the service with support for Java classes.
+ */
 public class JavaModule implements Module {
     @Override
     public void initialize(Environment environment) {
