@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
  * serialized and deserialized using {@code snake_case} JSON field names instead
  * of {@code camelCase} field names.
  */
-@Target({ElementType.TYPE})
+@Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @JacksonAnnotation
 public @interface JsonSnakeCase {
