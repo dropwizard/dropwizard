@@ -5,25 +5,39 @@ import com.google.common.collect.ImmutableMultimap;
 
 import java.io.PrintWriter;
 
-// TODO: 10/12/11 <coda> -- write tests for GarbageCollectionTask
-// TODO: 10/12/11 <coda> -- write docs for GarbageCollectionTask
-
 /**
  * Performs a full JVM garbage collection (probably).
  */
 public class GarbageCollectionTask extends Task {
+    private final Runtime runtime;
+
+    /**
+     * Creates a new {@link GarbageCollectionTask}.
+     */
     public GarbageCollectionTask() {
+        this(Runtime.getRuntime());
+    }
+
+    /**
+     * Creates a new {@link GarbageCollectionTask} with the given {@link Runtime} instance.
+     * <p/>
+     * <b>Use {@link GarbageCollectionTask#GarbageCollectionTask()} instead.</b>
+     *
+     * @param runtime    a {@link Runtime} instance
+     */
+    public GarbageCollectionTask(Runtime runtime) {
         super("gc");
+        this.runtime = runtime;
     }
 
     @Override
     @SuppressWarnings("CallToSystemGC")
     public void execute(ImmutableMultimap<String, String> parameters, PrintWriter output) {
         final int count = parseRuns(parameters);
-        for (int i = 1; i < count; i++) {
+        for (int i = 0; i < count; i++) {
             output.println("Running GC...");
             output.flush();
-            System.gc();
+            runtime.gc();
         }
 
         output.println("Done!");
