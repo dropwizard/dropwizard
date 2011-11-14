@@ -14,14 +14,23 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.*;
 
-// TODO: 10/12/11 <coda> -- write tests for TaskServlet
-// TODO: 10/12/11 <coda> -- write docs for TaskServlet
-
+/**
+ * A servlet which provides access to administrative {@link Task}s. It only responds to {@code POST}
+ * requests, since most {@link Task}s aren't side-effect free, and passes along the query string
+ * parameters of the request to the task as a multimap.
+ *
+ * @see Task
+ */
 public class TaskServlet extends HttpServlet {
     private static final long serialVersionUID = 7404713218661358124L;
     private static final Logger LOGGER = LoggerFactory.getLogger(TaskServlet.class);
     private final ImmutableMap<String, Task> tasks;
 
+    /**
+     * Creates a new {@link TaskServlet} given the provided set of {@link Task} instances.
+     *
+     * @param tasks a series of tasks which the servlet will provide access to
+     */
     public TaskServlet(Iterable<Task> tasks) {
         final ImmutableMap.Builder<String, Task> builder = ImmutableMap.builder();
         for (Task task : tasks) {
@@ -38,8 +47,11 @@ public class TaskServlet extends HttpServlet {
             try {
                 resp.setContentType(MediaType.TEXT_PLAIN);
                 final PrintWriter output = resp.getWriter();
-                task.execute(getParams(req), output);
-                output.close();
+                try {
+                    task.execute(getParams(req), output);
+                } finally {
+                    output.close();
+                }
             } catch (Exception e) {
                 LOGGER.error("Error running " + task.getName(), e);
                 resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
