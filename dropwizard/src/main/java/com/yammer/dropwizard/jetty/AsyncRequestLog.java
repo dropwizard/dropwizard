@@ -4,7 +4,6 @@ package com.yammer.dropwizard.jetty;
 
 import org.eclipse.jetty.http.HttpHeaders;
 import org.eclipse.jetty.server.Authentication;
-import org.eclipse.jetty.server.NCSARequestLog;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.RequestLog;
 import org.eclipse.jetty.server.Response;
@@ -25,9 +24,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * A non-blocking, asynchronous {@link RequestLog} implementation which implements a subset of the
- * functionality of {@link NCSARequestLog}. Log entries are added to an in-memory queue and an
- * offline thread handles the responsibility of batching them to disk. The date format is fixed,
- * UTC time zone is fixed, and latency is always logged.
+ * functionality of {@link org.eclipse.jetty.server.NCSARequestLog}. Log entries are added to an
+ * in-memory queue and an offline thread handles the responsibility of batching them to disk. The
+ * date format is fixed, UTC time zone is fixed, and latency is always logged.
  */
 public class AsyncRequestLog extends AbstractLifeCycle implements RequestLog {
     private static final AtomicInteger THREAD_COUNTER = new AtomicInteger();
@@ -35,12 +34,12 @@ public class AsyncRequestLog extends AbstractLifeCycle implements RequestLog {
     private static final int BATCH_SIZE = 10000;
 
     private class Dispatcher implements Runnable {
-        private volatile boolean stopped = false;
+        private volatile boolean running = true;
         private final List<String> statements = new ArrayList<String>(BATCH_SIZE);
 
         @Override
         public void run() {
-            while (!stopped) {
+            while (running) {
                 try {
                     statements.add(queue.take());
                     queue.drainTo(statements, BATCH_SIZE);
@@ -49,39 +48,51 @@ public class AsyncRequestLog extends AbstractLifeCycle implements RequestLog {
                     }
                     writer.flush();
                     statements.clear();
-                } catch (InterruptedException e) {
+                } catch (InterruptedException ignored) {
                     Thread.currentThread().interrupt();
                 }
             }
         }
 
         public void stop() {
-            this.stopped = false;
+            this.running = true;
         }
     }
 
+    private static final ThreadLocal<DateCache> DATE_CACHE = new ThreadLocal<DateCache>() {
+        @Override
+        protected DateCache initialValue() {
+            final DateCache cache = new DateCache("dd/MMM/yyyy:HH:mm:ss Z",
+                                                  Locale.getDefault());
+            cache.setTimeZoneID("UTC");
+            return cache;
+        }
+    };
+
     private final BlockingQueue<String> queue;
-    private final ThreadLocal<DateCache> dateCache;
     private final String filenamePattern;
     private final int numberOfFilesToRetain;
     private final Thread dispatchThread;
     private final Dispatcher dispatcher;
     private PrintWriter writer;
 
+    /**
+     * Creates a new {@link AsyncRequestLog}.
+     *
+     * @param filenamePattern          The filename pattern to which the log statements will be
+     *                                 written. If {@code filenamePattern} contains the string
+     *                                 {@code yyyy_mm_dd}, the file will be rotated every day, with
+     *                                 {@code yyyy_mm_dd} being replaced by the year, month, and
+     *                                 day. If {@code filenamePattern} is {@code null}, statements
+     *                                 will be logged to STDOUT.
+     * @param numberOfFilesToRetain    If {@code filenamePattern} is to be rotated, the number of
+     *                                 total log files (including the active one) to be kept.
+     */
     public AsyncRequestLog(String filenamePattern, int numberOfFilesToRetain) {
         this.filenamePattern = filenamePattern;
         this.numberOfFilesToRetain = numberOfFilesToRetain;
         this.writer = null;
         this.queue = new LinkedBlockingQueue<String>();
-        this.dateCache = new ThreadLocal<DateCache>() {
-            @Override
-            protected DateCache initialValue() {
-                final DateCache cache = new DateCache("dd/MMM/yyyy:HH:mm:ss Z",
-                                                      Locale.getDefault());
-                cache.setTimeZoneID("UTC");
-                return cache;
-            }
-        };
         this.dispatcher = new Dispatcher();
         this.dispatchThread = new Thread(dispatcher);
         dispatchThread.setName("async-request-log-dispatcher-" + THREAD_COUNTER.incrementAndGet());
@@ -89,6 +100,7 @@ public class AsyncRequestLog extends AbstractLifeCycle implements RequestLog {
     }
 
     @Override
+    @SuppressWarnings({"IOResourceOpenedButNotSafelyClosed", "UseOfSystemOutOrSystemErr"})
     protected void doStart() throws Exception {
         if (filenamePattern == null) {
             this.writer = new PrintWriter(System.out);
@@ -134,7 +146,7 @@ public class AsyncRequestLog extends AbstractLifeCycle implements RequestLog {
         }
 
         buf.append(" [");
-        buf.append(dateCache.get().format(request.getTimeStamp()));
+        buf.append(DATE_CACHE.get().format(request.getTimeStamp()));
 
         buf.append("] \"");
         buf.append(request.getMethod());
@@ -145,29 +157,35 @@ public class AsyncRequestLog extends AbstractLifeCycle implements RequestLog {
         buf.append("\" ");
         if (request.getAsyncContinuation().isInitial()) {
             int status = response.getStatus();
-            if (status <= 0)
+            if (status <= 0) {
                 status = 404;
+            }
             buf.append((char) ('0' + ((status / 100) % 10)));
             buf.append((char) ('0' + ((status / 10) % 10)));
             buf.append((char) ('0' + (status % 10)));
-        } else
+        } else {
             buf.append("Async");
+        }
 
-        long responseLength = response.getContentCount();
+        final long responseLength = response.getContentCount();
         if (responseLength >= 0) {
             buf.append(' ');
             if (responseLength > 99999) {
                 buf.append(responseLength);
             } else {
-                if (responseLength > 9999)
+                if (responseLength > 9999) {
                     buf.append((char) ('0' + ((responseLength / 10000) % 10)));
-                if (responseLength > 999)
+                }
+                if (responseLength > 999) {
                     buf.append((char) ('0' + ((responseLength / 1000) % 10)));
-                if (responseLength > 99)
+                }
+                if (responseLength > 99) {
                     buf.append((char) ('0' + ((responseLength / 100) % 10)));
-                if (responseLength > 9)
+                }
+                if (responseLength > 9) {
                     buf.append((char) ('0' + ((responseLength / 10) % 10)));
-                buf.append((char) ('0' + (responseLength) % 10));
+                }
+                buf.append((char) ('0' + (responseLength % 10)));
             }
             buf.append(' ');
         } else {
@@ -175,10 +193,10 @@ public class AsyncRequestLog extends AbstractLifeCycle implements RequestLog {
         }
 
         final long now = System.currentTimeMillis();
-        final long d = request.getDispatchTime();
+        final long dispatchTime = request.getDispatchTime();
 
         buf.append(' ');
-        buf.append(now - (d == 0 ? request.getTimeStamp() : d));
+        buf.append(now - ((dispatchTime == 0) ? request.getTimeStamp() : dispatchTime));
 
         buf.append(' ');
         buf.append(now - request.getTimeStamp());
