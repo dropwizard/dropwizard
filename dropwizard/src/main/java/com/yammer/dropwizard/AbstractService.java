@@ -93,6 +93,13 @@ public abstract class AbstractService<T extends Configuration> {
     }
 
     public abstract void initialize(T configuration, Environment environment);
+    
+    public void initializeWithModules(T configuration, Environment environment) {
+        for (Module module : modules) {
+            module.initialize(environment);
+        }
+        initialize(configuration, environment);
+    }
 
     public final void run(String[] arguments) throws Exception {
         if (isHelp(arguments)) {

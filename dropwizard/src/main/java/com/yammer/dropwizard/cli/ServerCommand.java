@@ -1,7 +1,6 @@
 package com.yammer.dropwizard.cli;
 
 import com.yammer.dropwizard.AbstractService;
-import com.yammer.dropwizard.Module;
 import com.yammer.dropwizard.config.Configuration;
 import com.yammer.dropwizard.config.Environment;
 import com.yammer.dropwizard.config.ServerFactory;
@@ -31,10 +30,7 @@ public class ServerCommand<T extends Configuration> extends ConfiguredCommand<T>
                              T configuration,
                              CommandLine params) throws Exception {
         final Environment environment = new Environment();
-        for (Module module : service.getModules()) {
-            module.initialize(environment);
-        }
-        service.initialize(configuration, environment);
+        service.initializeWithModules(configuration, environment);
 
         final Server server = new ServerFactory(configuration.getHttpConfiguration()).buildServer(environment);
 

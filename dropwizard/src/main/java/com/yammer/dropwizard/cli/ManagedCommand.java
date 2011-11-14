@@ -1,7 +1,6 @@
 package com.yammer.dropwizard.cli;
 
 import com.yammer.dropwizard.AbstractService;
-import com.yammer.dropwizard.Module;
 import com.yammer.dropwizard.config.Configuration;
 import com.yammer.dropwizard.config.Environment;
 import com.yammer.dropwizard.config.LoggingFactory;
@@ -27,10 +26,7 @@ public abstract class ManagedCommand<T extends Configuration> extends Configured
                              CommandLine params) throws Exception {
         new LoggingFactory(configuration.getLoggingConfiguration()).configure();
         final Environment environment = new Environment();
-        for (Module module : service.getModules()) {
-            module.initialize(environment);
-        }
-        service.initialize(configuration, environment);
+        service.initializeWithModules(configuration, environment);
         LOGGER.info("Starting " + service.getName());
         environment.start();
         try {
