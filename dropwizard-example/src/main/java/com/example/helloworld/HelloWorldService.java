@@ -18,8 +18,8 @@ public class HelloWorldService extends Service<HelloWorldConfiguration> {
     }
 
     @Override
-    public void initialize(HelloWorldConfiguration configuration,
-                           Environment environment) {
+    protected void initialize(HelloWorldConfiguration configuration,
+                              Environment environment) {
         final Template template = configuration.buildTemplate();
 
         environment.addHealthCheck(new TemplateHealthCheck(template));

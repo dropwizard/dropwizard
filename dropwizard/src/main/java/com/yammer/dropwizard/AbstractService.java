@@ -17,9 +17,10 @@ import java.util.List;
 import java.util.SortedMap;
 
 /**
- * The base class for both Java and Scala services.
+ * The base class for both Java and Scala services. Do not extend this directly. Use {@link Service}
+ * instead.
  *
- * @param <T> the type of configuration class for this service
+ * @param <T>    the type of configuration class for this service
  */
 public abstract class AbstractService<T extends Configuration> {
     static {
@@ -32,6 +33,11 @@ public abstract class AbstractService<T extends Configuration> {
     private final SortedMap<String, Command> commands;
     private String banner = null;
 
+    /**
+     * Creates a new service with the given name.
+     *
+     * @param name    the service's name
+     */
     protected AbstractService(String name) {
         this.name = name;
         this.modules = Lists.newArrayList();
@@ -60,47 +66,111 @@ public abstract class AbstractService<T extends Configuration> {
         return (Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
     }
 
+    /**
+     * Returns a list of registered {@link Module} instances.
+     *
+     * @return a list of modules
+     */
     public final ImmutableList<Module> getModules() {
         return ImmutableList.copyOf(modules);
     }
 
+    /**
+     * Registers a {@link Module} to be used in initializing the service's {@link Environment}.
+     *
+     * @param module    a module
+     * @see Module
+     */
     protected final void addModule(Module module) {
         modules.add(module);
     }
 
+    /**
+     * Returns a list of registered {@link Command} instances.
+     *
+     * @return a list of commands
+     */
     public final ImmutableList<Command> getCommands() {
         return ImmutableList.copyOf(commands.values());
     }
 
+    /**
+     * Registers a {@link Command} which the service will provide.
+     *
+     * @param command    a command
+     */
     protected final void addCommand(Command command) {
         commands.put(command.getName(), command);
     }
 
+    /**
+     * Registers a {@link ConfiguredCommand} which the service will provide.
+     *
+     * @param command    a command
+     */
     protected final void addCommand(ConfiguredCommand<T> command) {
         commands.put(command.getName(), command);
     }
 
+    /**
+     * Returns {@code true} if the service has a banner.
+     *
+     * @return whether or not the service has a banner
+     */
     public final boolean hasBanner() {
         return banner != null;
     }
 
+    /**
+     * Returns the service's banner, if any. The banner will be printed out when the service starts
+     * up.
+     *
+     * @return the service's banner
+     */
     public final String getBanner() {
         return banner;
     }
 
+    /**
+     * Sets the service's banner. The banner will be printed out when the service starts up.
+     *
+     * @param banner    a banner
+     */
     protected final void setBanner(String banner) {
         this.banner = banner;
     }
 
-    public abstract void initialize(T configuration, Environment environment);
-    
-    public void initializeWithModules(T configuration, Environment environment) {
+    /**
+     * When the service runs, this is called after the {@link Module}s are run. Override it to add
+     * providers, resources, etc. for your service.
+     *
+     * @param configuration    the parsed {@link Configuration} object
+     * @param environment      the service's {@link Environment}
+     */
+    protected abstract void initialize(T configuration, Environment environment);
+
+    /**
+     * Initializes the given {@link Environment} given a {@link Configuration} instances. First the
+     * modules are initialized in the order they were added, then the service's
+     * {@link #initialize(Configuration, Environment)} method is called.
+     *
+     * @param configuration    the parsed {@link Configuration} object
+     * @param environment      the service's {@link Environment}
+     */
+    public final void initializeWithModules(T configuration, Environment environment) {
         for (Module module : modules) {
             module.initialize(environment);
         }
         initialize(configuration, environment);
     }
 
+    /**
+     * Parses command-line arguments and runs the service. Call this method from a
+     * {@code public static void main} entry point in your application.
+     *
+     * @param arguments    the command-line arguments
+     * @throws Exception if something goes wrong
+     */
     public final void run(String[] arguments) throws Exception {
         if (isHelp(arguments)) {
             UsagePrinter.printRootHelp(this);
