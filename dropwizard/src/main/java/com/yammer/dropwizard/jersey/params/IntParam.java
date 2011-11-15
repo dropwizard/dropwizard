@@ -1,8 +1,9 @@
 package com.yammer.dropwizard.jersey.params;
 
-// TODO: 11/14/11 <coda> -- document IntParam
-// TODO: 11/14/11 <coda> -- test IntParam
-
+/**
+ * A parameter encapsulating integer values. All non-decimal values will return a
+ * {@code 400 Bad Request} response.
+ */
 public class IntParam extends AbstractParam<Integer> {
     public IntParam(String input) {
         super(input);

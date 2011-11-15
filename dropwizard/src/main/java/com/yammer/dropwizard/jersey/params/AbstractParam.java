@@ -4,8 +4,6 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-// TODO: 11/14/11 <coda> -- test AbstractParam
-
 /**
  * An abstract base class from which to build Jersey parameter classes.
  *
@@ -73,8 +71,9 @@ public abstract class AbstractParam<T> {
     *
     * @param input the raw input
     * @return {@code input}, parsed as an instance of {@code T}
+    * @throws Exception if there is an error parsing the input
     */
-    protected abstract T parse(String input);
+    protected abstract T parse(String input) throws Exception;
 
     /**
      * Returns the underlying value.

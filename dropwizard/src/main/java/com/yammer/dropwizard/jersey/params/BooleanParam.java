@@ -1,8 +1,11 @@
 package com.yammer.dropwizard.jersey.params;
 
-// TODO: 11/14/11 <coda> -- document BooleanParam
-// TODO: 11/14/11 <coda> -- test BooleanParam
-
+/**
+ * A parameter encapsulating boolean values. If the query parameter value is {@code "true"},
+ * regardless of case, the returned value is {@link Boolean#TRUE}. If the query parameter value is
+ * {@code "false"}, regardless of case, the returned value is {@link Boolean#FALSE}. All other
+ * values will return a {@code 400 Bad Request} response.
+ */
 public class BooleanParam extends AbstractParam<Boolean> {
     public BooleanParam(String input) {
         super(input);
@@ -10,11 +13,17 @@ public class BooleanParam extends AbstractParam<Boolean> {
 
     @Override
     protected String errorMessage(String input, Exception e) {
-        return '"' + input + "\" must be \"true\" or \"false\"";
+        return '"' + input + "\" must be \"true\" or \"false\".";
     }
 
     @Override
-    protected Boolean parse(String input) {
-        return Boolean.valueOf(input);
+    protected Boolean parse(String input) throws Exception {
+        if ("true".equalsIgnoreCase(input)) {
+            return Boolean.TRUE;
+        }
+        if ("false".equalsIgnoreCase(input)) {
+            return Boolean.FALSE;
+        }
+        throw new Exception();
     }
 }
