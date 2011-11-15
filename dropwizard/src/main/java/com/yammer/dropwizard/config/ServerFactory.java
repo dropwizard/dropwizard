@@ -2,7 +2,7 @@ package com.yammer.dropwizard.config;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableSet;
-import com.yammer.dropwizard.jetty.GzipHandler;
+import com.yammer.dropwizard.jetty.BiDiGzipHandler;
 import com.yammer.dropwizard.jetty.QuietErrorHandler;
 import com.yammer.dropwizard.tasks.TaskServlet;
 import com.yammer.dropwizard.util.Duration;
@@ -53,7 +53,7 @@ public class ServerFactory {
         }
 
         if (env.getHealthChecks().isEmpty()) {
-            LOGGER.warn("\n" +
+            LOGGER.warn('\n' +
                 "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" +
                 "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" +
                 "!    THIS SERVICE HAS NO HEALTHCHECKS. THIS MEANS YOU WILL NEVER KNOW IF IT    !\n" +
@@ -72,7 +72,7 @@ public class ServerFactory {
         return server;
     }
 
-    private Server createServer() throws ConfigurationException {
+    private Server createServer() {
         final Server server = new Server();
 
         server.addConnector(createExternalConnector());
@@ -80,8 +80,8 @@ public class ServerFactory {
 
         server.addBean(new QuietErrorHandler());
 
-        server.setSendDateHeader(config.enableDateHeader());
-        server.setSendServerVersion(config.enableServerHeader());
+        server.setSendDateHeader(config.isDateHeaderEnabled());
+        server.setSendServerVersion(config.isServerHeaderEnabled());
 
         server.setThreadPool(createThreadPool());
 
@@ -92,7 +92,7 @@ public class ServerFactory {
         return server;
     }
 
-    private Connector createExternalConnector() throws ConfigurationException {
+    private Connector createExternalConnector() {
         final AbstractConnector connector = createConnector();
 
         connector.setHost(config.getBindHost().orNull());
@@ -120,7 +120,7 @@ public class ServerFactory {
 
         connector.setResponseHeaderSize((int) config.getResponseHeaderBufferSize().toBytes());
 
-        connector.setReuseAddress(config.enableReuseAddress());
+        connector.setReuseAddress(config.isReuseAddressEnabled());
         
         final Optional<Duration> lingerTime = config.getSoLingerTime();
 
@@ -134,7 +134,7 @@ public class ServerFactory {
         return connector;
     }
 
-    private AbstractConnector createConnector() throws ConfigurationException {
+    private AbstractConnector createConnector() {
         final AbstractConnector connector;
         switch (config.getConnectorType()) {
             case BLOCKING_CHANNEL:
@@ -148,7 +148,7 @@ public class ServerFactory {
                 ((SelectChannelConnector) connector).setLowResourcesConnections(config.getLowResourcesConnectionThreshold());
                 break;
             default:
-                throw new IllegalStateException();
+                throw new IllegalStateException("Invalid connector type: " + config.getConnectorType());
         }
 
         if (connector instanceof AbstractNIOConnector) {
@@ -172,7 +172,7 @@ public class ServerFactory {
         return collection;
     }
 
-    private Handler createInternalServlet(Environment env) {
+    private static Handler createInternalServlet(Environment env) {
         final ServletContextHandler handler = new ServletContextHandler();
         handler.addServlet(new ServletHolder(new TaskServlet(env.getTasks())), "/tasks/*");
         handler.addServlet(new ServletHolder(new MetricsServlet()), "/*");
@@ -201,7 +201,7 @@ public class ServerFactory {
         final InstrumentedHandler instrumented = new InstrumentedHandler(handler);
         final GzipConfiguration gzip = config.getGzipConfiguration();
         if (gzip.isEnabled()) {
-            final GzipHandler gzipHandler = new GzipHandler(instrumented);
+            final BiDiGzipHandler gzipHandler = new BiDiGzipHandler(instrumented);
 
             final Optional<Size> minEntitySize = gzip.getMinimumEntitySize();
             if (minEntitySize.isPresent()) {

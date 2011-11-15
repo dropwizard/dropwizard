@@ -22,6 +22,7 @@ import java.util.SortedMap;
  *
  * @param <T>    the type of configuration class for this service
  */
+@SuppressWarnings("EmptyMethod")
 public abstract class AbstractService<T extends Configuration> {
     static {
         // make sure spinning up Hibernate Validator doesn't yell at us
@@ -48,7 +49,6 @@ public abstract class AbstractService<T extends Configuration> {
     /**
      * A simple reminder that this particular class isn't meant to be extended by non-DW classes.
      */
-    @SuppressWarnings("UnusedDeclaration")
     protected abstract void subclassServiceInsteadOfThis();
 
     public final String getName() {

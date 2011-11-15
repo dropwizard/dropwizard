@@ -13,7 +13,7 @@ import java.util.List;
 // TODO: 11/7/11 <coda> -- document HttpConfiguration
 // TODO: 11/7/11 <coda> -- test HttpConfiguration
 
-@SuppressWarnings("FieldCanBeLocal")
+@SuppressWarnings({"FieldCanBeLocal", "FieldMayBeFinal", "CanBeFinal"})
 public class HttpConfiguration {
     public static class RequestLogConfiguration {
         private boolean enabled = true;
@@ -82,7 +82,7 @@ public class HttpConfiguration {
     @NotNull
     private GzipConfiguration gzip = new GzipConfiguration();
 
-    public static enum ConnectorType {
+    public enum ConnectorType {
         SOCKET,
         BLOCKING_CHANNEL,
         SELECT_CHANNEL
@@ -178,11 +178,11 @@ public class HttpConfiguration {
     }
 
     public ConnectorType getConnectorType() {
-        if (connectorType.equalsIgnoreCase("blocking")) {
+        if ("blocking".equalsIgnoreCase(connectorType)) {
             return ConnectorType.BLOCKING_CHANNEL;
-        } else if (connectorType.equalsIgnoreCase("legacy")) {
+        } else if ("legacy".equalsIgnoreCase(connectorType)) {
             return ConnectorType.SOCKET;
-        } else if (connectorType.equalsIgnoreCase("nonblocking")) {
+        } else if ("nonblocking".equalsIgnoreCase(connectorType)) {
             return ConnectorType.SELECT_CHANNEL;
         } else {
             throw new IllegalStateException("Invalid connector type: " + connectorType);
@@ -241,7 +241,7 @@ public class HttpConfiguration {
         return Size.parse(responseHeaderBufferSize);
     }
 
-    public boolean enableReuseAddress() {
+    public boolean isReuseAddressEnabled() {
         return reuseAddress;
     }
 
@@ -276,11 +276,11 @@ public class HttpConfiguration {
         return Optional.fromNullable(bindHost);
     }
 
-    public boolean enableDateHeader() {
+    public boolean isDateHeaderEnabled() {
         return useDateHeader;
     }
 
-    public boolean enableServerHeader() {
+    public boolean isServerHeaderEnabled() {
         return useServerHeader;
     }
 }

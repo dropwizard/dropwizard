@@ -11,7 +11,6 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 public class ValidatorTest {
-    @SuppressWarnings("UnusedDeclaration")
     public static class Example {
         @NotNull
         private String notNull = null;

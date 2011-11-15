@@ -18,7 +18,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 public class LoggingConfigurationTest {
-    private ConfigurationFactory<LoggingConfiguration> factory =
+    private final ConfigurationFactory<LoggingConfiguration> factory =
             ConfigurationFactory.forClass(LoggingConfiguration.class, new Validator());
     private LoggingConfiguration config;
 

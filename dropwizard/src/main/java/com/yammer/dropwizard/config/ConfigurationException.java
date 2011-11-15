@@ -3,12 +3,10 @@ package com.yammer.dropwizard.config;
 import java.io.File;
 
 public class ConfigurationException extends Exception {
+    private static final long serialVersionUID = 5325162099634227047L;
+
     public ConfigurationException(File file, Iterable<String> errors) {
         super(formatMessage(file, errors));
-    }
-
-    public ConfigurationException(Exception e) {
-        super(e);
     }
 
     private static String formatMessage(File file, Iterable<String> errors) {

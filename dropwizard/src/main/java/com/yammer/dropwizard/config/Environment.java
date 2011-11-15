@@ -11,6 +11,7 @@ import com.sun.jersey.core.reflection.MethodList;
 import com.sun.jersey.spi.container.servlet.ServletContainer;
 import com.yammer.dropwizard.jersey.LoggingExceptionMapper;
 import com.yammer.dropwizard.jetty.JettyManaged;
+import com.yammer.dropwizard.jetty.NonblockingServletHolder;
 import com.yammer.dropwizard.lifecycle.Managed;
 import com.yammer.dropwizard.tasks.GarbageCollectionTask;
 import com.yammer.dropwizard.tasks.Task;
@@ -159,7 +160,7 @@ public class Environment extends AbstractLifeCycle {
      */
     public ServletConfiguration addServlet(Servlet servlet,
                                            String urlPattern) {
-        final ServletHolder holder = new ServletHolder(checkNotNull(servlet));
+        final ServletHolder holder = new NonblockingServletHolder(checkNotNull(servlet));
         final ServletConfiguration configuration = new ServletConfiguration(holder, servlets);
         configuration.addUrlPattern(checkNotNull(urlPattern));
         return configuration;

@@ -3,6 +3,7 @@ package com.yammer.dropwizard.jetty;
 import org.eclipse.jetty.http.HttpHeaders;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Request;
+import org.eclipse.jetty.server.handler.GzipHandler;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
@@ -14,10 +15,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.zip.GZIPInputStream;
 
-// TODO: 10/12/11 <coda> -- write tests for GzipHandler
-// TODO: 10/12/11 <coda> -- write docs for GzipHandler
+// TODO: 10/12/11 <coda> -- write tests for BiDiGzipHandler
+// TODO: 10/12/11 <coda> -- write docs for BiDiGzipHandler
 
-public class GzipHandler extends org.eclipse.jetty.server.handler.GzipHandler {
+@SuppressWarnings("IOResourceOpenedButNotSafelyClosed")
+public class BiDiGzipHandler extends GzipHandler {
     private static final String GZIP_ENCODING = "gzip";
 
     private static class GzipServletInputStream extends ServletInputStream {
@@ -33,8 +35,8 @@ public class GzipHandler extends org.eclipse.jetty.server.handler.GzipHandler {
         }
 
         @Override
-        public int read(byte[] buf, int off, int len) throws IOException {
-            return input.read(buf, off, len);
+        public int read(byte[] b, int off, int len) throws IOException {
+            return input.read(b, off, len);
         }
 
         @Override
@@ -43,8 +45,8 @@ public class GzipHandler extends org.eclipse.jetty.server.handler.GzipHandler {
         }
 
         @Override
-        public void mark(int limit) {
-            input.mark(limit);
+        public void mark(int readlimit) {
+            input.mark(readlimit);
         }
 
         @Override
@@ -94,7 +96,7 @@ public class GzipHandler extends org.eclipse.jetty.server.handler.GzipHandler {
         }
     }
 
-    public GzipHandler(Handler underlying) {
+    public BiDiGzipHandler(Handler underlying) {
         setHandler(underlying);
     }
 
@@ -106,7 +108,7 @@ public class GzipHandler extends org.eclipse.jetty.server.handler.GzipHandler {
         if (GZIP_ENCODING.equalsIgnoreCase(request.getHeader(HttpHeaders.CONTENT_ENCODING))) {
             super.handle(target,
                          baseRequest,
-                         new GzipServletRequest(request, super.getBufferSize()),
+                         new GzipServletRequest(request, getBufferSize()),
                          response);
         } else {
             super.handle(target, baseRequest, request, response);

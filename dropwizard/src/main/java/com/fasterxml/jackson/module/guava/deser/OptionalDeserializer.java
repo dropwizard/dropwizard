@@ -2,7 +2,6 @@ package com.fasterxml.jackson.module.guava.deser;
 
 import com.google.common.base.Optional;
 import org.codehaus.jackson.JsonParser;
-import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.JsonToken;
 import org.codehaus.jackson.map.DeserializationContext;
 import org.codehaus.jackson.map.JsonDeserializer;
@@ -20,7 +19,7 @@ public class OptionalDeserializer<T> extends JsonDeserializer<Optional<T>> {
 
     @Override
     public Optional<T> deserialize(JsonParser jp,
-                                   DeserializationContext ctxt) throws IOException, JsonProcessingException {
+                                   DeserializationContext ctxt) throws IOException {
         if (jp.getCurrentToken() == JsonToken.VALUE_NULL) {
             return Optional.absent();
         }

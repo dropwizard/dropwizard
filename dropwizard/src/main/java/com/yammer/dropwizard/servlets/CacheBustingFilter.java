@@ -9,7 +9,6 @@ import java.io.IOException;
 /**
  * Adds a no-cache header to all responses.
  */
-@SuppressWarnings("UnusedDeclaration")
 public class CacheBustingFilter implements Filter {
     private static final String CACHE_SETTINGS = "must-revalidate,no-cache,no-store";
 

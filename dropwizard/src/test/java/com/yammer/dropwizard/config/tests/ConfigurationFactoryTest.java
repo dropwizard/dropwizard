@@ -13,13 +13,14 @@ import java.io.File;
 
 import static org.hamcrest.Matchers.endsWith;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.startsWith;
 import static org.junit.Assert.*;
 
 public class ConfigurationFactoryTest {
+    @SuppressWarnings("UnusedDeclaration")
     public static class Example {
         @NotNull
         @Pattern(regexp = "[\\w]+[\\s]+[\\w]+")
-        @SuppressWarnings("UnusedDeclaration")
         private String name;
 
         public String getName() {
@@ -27,11 +28,11 @@ public class ConfigurationFactoryTest {
         }
     }
 
-    final Validator validator = new Validator();
-    final ConfigurationFactory<Example> factory = ConfigurationFactory.forClass(Example.class, validator);
-    final File malformedFile = new File(Resources.getResource("factory-test-malformed.yml").getFile());
-    final File invalidFile = new File(Resources.getResource("factory-test-invalid.yml").getFile());
-    final File validFile = new File(Resources.getResource("factory-test-valid.yml").getFile());
+    private final Validator validator = new Validator();
+    private final ConfigurationFactory<Example> factory = ConfigurationFactory.forClass(Example.class, validator);
+    private final File malformedFile = new File(Resources.getResource("factory-test-malformed.yml").getFile());
+    private final File invalidFile = new File(Resources.getResource("factory-test-invalid.yml").getFile());
+    private final File validFile = new File(Resources.getResource("factory-test-valid.yml").getFile());
 
     @Test
     public void loadsValidConfigFiles() throws Exception {
@@ -46,7 +47,7 @@ public class ConfigurationFactoryTest {
             factory.build(malformedFile);
             fail("expected a YAMLException to be thrown, but none was");
         } catch (YAMLException e) {
-            assertTrue(true);
+            assertThat(e.getMessage(), startsWith("null"));
         }
     }
 

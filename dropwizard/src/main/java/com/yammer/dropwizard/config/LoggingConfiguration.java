@@ -30,6 +30,7 @@ public class LoggingConfiguration {
         }
     }
 
+    @SuppressWarnings("CanBeFinal")
     public static class FileConfiguration {
         private boolean enabled = false;
 
@@ -122,11 +123,11 @@ public class LoggingConfiguration {
     }
 
     public ImmutableMap<String, Level> getLoggers() {
-        final ImmutableMap.Builder<String, Level> loggers = ImmutableMap.builder();
-        for (Map.Entry<String, String> entry : this.loggers.entrySet()) {
-            loggers.put(entry.getKey(), Level.toLevel(entry.getValue()));
+        final ImmutableMap.Builder<String, Level> builder = ImmutableMap.builder();
+        for (Map.Entry<String, String> entry : loggers.entrySet()) {
+            builder.put(entry.getKey(), Level.toLevel(entry.getValue()));
         }
-        return loggers.build();
+        return builder.build();
     }
 
     public ConsoleConfiguration getConsoleConfiguration() {
