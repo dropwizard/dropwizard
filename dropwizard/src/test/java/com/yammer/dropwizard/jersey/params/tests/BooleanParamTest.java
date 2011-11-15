@@ -56,7 +56,7 @@ public class BooleanParamTest {
                        is(400));
             
             assertThat((String) response.getEntity(),
-                       is("\"null\" must be \"true\" or \"false\""));
+                       is("\"null\" must be \"true\" or \"false\"."));
         }
     }
 
