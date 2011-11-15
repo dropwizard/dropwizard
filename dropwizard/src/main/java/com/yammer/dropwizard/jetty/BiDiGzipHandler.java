@@ -16,8 +16,12 @@ import java.io.InputStreamReader;
 import java.util.zip.GZIPInputStream;
 
 // TODO: 10/12/11 <coda> -- write tests for BiDiGzipHandler
-// TODO: 10/12/11 <coda> -- write docs for BiDiGzipHandler
 
+/**
+ * A Jetty {@link Handler} which both compresses response entities to requests with {@code gzip} as
+ * an acceptable content-encoding and decompresses request entities with {@code gzip} as the given
+ * content-encoding.
+ */
 @SuppressWarnings("IOResourceOpenedButNotSafelyClosed")
 public class BiDiGzipHandler extends GzipHandler {
     private static final String GZIP_ENCODING = "gzip";
@@ -96,6 +100,11 @@ public class BiDiGzipHandler extends GzipHandler {
         }
     }
 
+    /**
+     * Creates a new {@link BiDiGzipHandler} which forwards requests to the given handler.
+     *
+     * @param underlying    the underlying handler
+     */
     public BiDiGzipHandler(Handler underlying) {
         setHandler(underlying);
     }
