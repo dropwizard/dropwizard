@@ -3,11 +3,11 @@ package com.yammer.dropwizard.logging;
 // TODO: 10/12/11 <coda> -- test LoggingBean
 // TODO: 10/12/11 <coda> -- document LoggingBean
 
+import com.google.common.collect.Lists;
 import org.apache.log4j.Category;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
@@ -22,11 +22,10 @@ public class LoggingBean implements LoggingMXBean {
 
     @Override
     public List<String> getLoggerNames() {
-        final List<String> names = new ArrayList<String>();
-
-        final Enumeration loggers = Logger.getRootLogger()
-                                          .getLoggerRepository()
-                                          .getCurrentLoggers();
+        final List<String> names = Lists.newArrayList();
+        final Enumeration<?> loggers = Logger.getRootLogger()
+                                             .getLoggerRepository()
+                                             .getCurrentLoggers();
         while (loggers.hasMoreElements()) {
             final Logger logger = (Logger) loggers.nextElement();
             names.add(logger.getName());
