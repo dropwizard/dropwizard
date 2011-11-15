@@ -5,15 +5,18 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.yammer</groupId>
-    <artifactId>dropwizard_2.9.1</artifactId>
-    <version>0.0.13</version>
-    <name>Dropwizard for Scala ${scala.version}</name>
+    <artifactId>dropwizard-parent</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>dropwizard</module>
+        <module>dropwizard-example</module>
+        <module>dropwizard_2.9.1</module>
+    </modules>
 
     <properties>
-        <scala.version>2.9.1</scala.version>
-        <jersey.version>1.9.1</jersey.version>
-        <metrics.version>2.0.0-BETA17</metrics.version>
-        <jetty.version>[7.5.2.0,7.6.0.0)</jetty.version>
+        <metrics.version>2.0.0-BETA18-SNAPSHOT</metrics.version>
     </properties>
 
     <developers>
@@ -33,38 +36,22 @@
     </licenses>
 
     <scm>
-        <connection>scm:git:git://github.com/codahale/dropwizard.git</connection>
-        <developerConnection>scm:git:git@github.com:codahale/dropwizard.git
-        </developerConnection>
-        <url>http://github.com/codahale/dropwizard/</url>
+        <connection>scm:git:git://github.com/codahale/com.yammer.dropwizard.git</connection>
+        <developerConnection>scm:git:git@github.com:codahale/com.yammer.dropwizard.git</developerConnection>
+        <url>http://github.com/codahale/com.yammer.dropwizard/</url>
     </scm>
 
     <issueManagement>
         <system>github</system>
-        <url>http://github.com/codahale/dropwizard/issues#issue/</url>
+        <url>http://github.com/codahale/com.yammer.dropwizard/issues#issue/</url>
     </issueManagement>
 
     <repositories>
         <repository>
-            <id>scala-tools-releases</id>
-            <url>http://scala-tools.org/repo-releases/</url>
-        </repository>
-        <repository>
             <id>repo.codahale.com</id>
             <url>http://repo.codahale.com</url>
         </repository>
-        <repository>
-            <id>nativelibs4java</id>
-            <url>http://nativelibs4java.sourceforge.net/maven</url>
-        </repository>
     </repositories>
-
-    <pluginRepositories>
-        <pluginRepository>
-            <id>scala-tools-releases</id>
-            <url>http://scala-tools.org/repo-releases/</url>
-        </pluginRepository>
-    </pluginRepositories>
 
     <distributionManagement>
         <repository>
@@ -75,99 +62,21 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.scala-lang</groupId>
-            <artifactId>scala-library</artifactId>
-            <version>${scala.version}</version>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.10</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.sun.jersey</groupId>
-            <artifactId>jersey-core</artifactId>
-            <version>${jersey.version}</version>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>1.9.0-rc1</version>
+            <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.sun.jersey</groupId>
-            <artifactId>jersey-server</artifactId>
-            <version>${jersey.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.codahale</groupId>
-            <artifactId>jersey-scala_${scala.version}</artifactId>
-            <version>0.2.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.codahale</groupId>
-            <artifactId>logula_${scala.version}</artifactId>
-            <version>2.1.3</version>
-        </dependency>
-        <dependency>
-            <groupId>com.codahale</groupId>
-            <artifactId>jerkson_${scala.version}</artifactId>
-            <version>0.5.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.codahale</groupId>
-            <artifactId>fig_${scala.version}</artifactId>
-            <version>1.1.7</version>
-        </dependency>
-        <dependency>
-            <groupId>com.yammer.metrics</groupId>
-            <artifactId>metrics-core</artifactId>
-            <version>${metrics.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.yammer.metrics</groupId>
-            <artifactId>metrics-servlet</artifactId>
-            <version>${metrics.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.yammer.metrics</groupId>
-            <artifactId>metrics-jetty</artifactId>
-            <version>${metrics.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.yammer.metrics</groupId>
-            <artifactId>metrics-log4j</artifactId>
-            <version>${metrics.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.yammer.metrics</groupId>
-            <artifactId>metrics-scala_${scala.version}</artifactId>
-            <version>${metrics.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>commons-cli</groupId>
-            <artifactId>commons-cli</artifactId>
-            <version>1.2</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <version>1.6.2</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>jul-to-slf4j</artifactId>
-            <version>1.6.2</version>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-server</artifactId>
-            <version>${jetty.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-servlet</artifactId>
-            <version>${jetty.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-http</artifactId>
-            <version>${jetty.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.codahale</groupId>
-            <artifactId>simplespec_${scala.version}</artifactId>
-            <version>0.5.2</version>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-all</artifactId>
+            <version>1.1</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -199,44 +108,6 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.scala-tools</groupId>
-                <artifactId>maven-scala-plugin</artifactId>
-                <version>2.15.2</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>compile</goal>
-                            <goal>testCompile</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <args>
-                        <arg>-optimise</arg>
-                        <arg>-unchecked</arg>
-                        <arg>-deprecation</arg>
-                    </args>
-                    <compilerPlugins>
-                        <compilerPlugin>
-                            <groupId>com.nativelibs4java</groupId>
-                            <artifactId>scalacl-compiler-plugin</artifactId>
-                            <version>0.2</version>
-                        </compilerPlugin>
-                    </compilerPlugins>
-                    <charset>UTF-8</charset>
-                    <launchers>
-                        <launcher>
-                            <id>server</id>
-                            <mainClass>com.yammer.dropwizard.examples.Example</mainClass>
-                            <args>
-                                <arg>server</arg>
-                                <arg>src/test/resources/example.conf</arg>
-                            </args>
-                        </launcher>
-                    </launchers>
-                </configuration>
-            </plugin>
-            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>2.3.2</version>
@@ -264,22 +135,8 @@
                 <artifactId>maven-resources-plugin</artifactId>
                 <version>2.5</version>
                 <configuration>
+                    <outputDirectory/>
                     <encoding>UTF-8</encoding>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.8.1</version>
-                <configuration>
-                    <useSystemClassLoader>false</useSystemClassLoader>
-                    <argLine>-Xmx1024m</argLine>
-                    <includes>
-                        <include>**/*Spec.java</include>
-                    </includes>
-                    <excludes>
-                        <exclude>**/*Test.java</exclude>
-                    </excludes>
                 </configuration>
             </plugin>
         </plugins>
@@ -291,14 +148,4 @@
             </extension>
         </extensions>
     </build>
-
-    <reporting>
-        <plugins>
-            <plugin>
-                <groupId>org.scala-tools</groupId>
-                <artifactId>maven-scala-plugin</artifactId>
-                <version>2.15.2</version>
-            </plugin>
-        </plugins>
-    </reporting>
 </project>
