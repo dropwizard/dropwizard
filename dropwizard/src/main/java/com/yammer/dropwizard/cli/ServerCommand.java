@@ -10,16 +10,29 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 // TODO: 10/12/11 <coda> -- write tests for ServerCommand
-// TODO: 10/12/11 <coda> -- write docs for ServerCommand
 
+/**
+ * Runs a service as an HTTP server.
+ *
+ * @param <T> the {@link Configuration} subclass which is loaded from the configuration file
+ */
 public class ServerCommand<T extends Configuration> extends ConfiguredCommand<T> {
     private final Class<T> configurationClass;
 
+    /**
+     * Creates a new {@link ServerCommand} with the given configuration class.
+     *
+     * @param configurationClass    the configuration class the YAML file is parsed as
+     */
     public ServerCommand(Class<T> configurationClass) {
         super("server", "Starts an HTTP server running the service");
         this.configurationClass = configurationClass;
     }
 
+    /*
+     * Since we don't subclass ServerCommand, we need a concrete reference to the configuration
+     * class.
+     */
     @Override
     protected Class<T> getConfigurationClass() {
         return configurationClass;

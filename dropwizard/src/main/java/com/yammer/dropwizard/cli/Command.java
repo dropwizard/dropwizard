@@ -1,6 +1,5 @@
 package com.yammer.dropwizard.cli;
 
-import com.google.common.base.Optional;
 import com.yammer.dropwizard.AbstractService;
 import com.yammer.dropwizard.util.JarLocation;
 import org.apache.commons.cli.*;
@@ -119,6 +118,6 @@ public abstract class Command {
     }
 
     protected final void printHelp(String message) {
-        UsagePrinter.printCommandHelp(this, Optional.fromNullable(message));
+        UsagePrinter.printCommandHelp(this, message);
     }
 }

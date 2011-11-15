@@ -1,6 +1,5 @@
 package com.yammer.dropwizard.cli;
 
-import com.google.common.base.Optional;
 import com.yammer.dropwizard.AbstractService;
 import com.yammer.dropwizard.util.JarLocation;
 import org.apache.commons.cli.HelpFormatter;
@@ -22,12 +21,12 @@ public class UsagePrinter {
     }
 
     public static void printCommandHelp(Command cmd) {
-        printCommandHelp(cmd, Optional.<String>absent());
+        printCommandHelp(cmd, null);
     }
 
-    public static void printCommandHelp(Command cmd, Optional<String> errorMessage) {
-        if (errorMessage.isPresent()) {
-            System.err.printf("%s\n", errorMessage.get());
+    public static void printCommandHelp(Command cmd, String errorMessage) {
+        if (errorMessage != null) {
+            System.err.println(errorMessage);
             System.out.println();
         }
 

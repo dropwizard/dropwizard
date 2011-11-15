@@ -10,7 +10,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.util.Map;
 
-@SuppressWarnings("FieldCanBeLocal")
+@SuppressWarnings({"FieldCanBeLocal", "FieldMayBeFinal"})
 public class LoggingConfiguration {
     private static final String VALID_LEVEL = "(OFF|FATAL|ERROR|WARN|INFO|DEBUG|TRACE|ALL)";
 
@@ -28,7 +28,6 @@ public class LoggingConfiguration {
         public Level getThreshold() {
             return Level.toLevel(threshold);
         }
-
     }
 
     public static class FileConfiguration {
