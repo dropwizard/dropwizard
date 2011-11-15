@@ -1,5 +1,6 @@
 package com.yammer.dropwizard.jetty;
 
+import com.google.common.collect.ImmutableSet;
 import org.eclipse.jetty.http.HttpGenerator;
 import org.eclipse.jetty.http.HttpHeaders;
 import org.eclipse.jetty.http.HttpMethods;
@@ -16,35 +17,50 @@ import java.io.IOException;
 
 import static javax.servlet.http.HttpServletResponse.*;
 
-// TODO: 10/12/11 <coda> -- write tests for QuietErrorHandler
-// TODO: 10/12/11 <coda> -- write docs for QuietErrorHandler
-
+/**
+ * An {@link ErrorHandler} subclass which returns concise, {@code text/plain} error messages.
+ */
 public class QuietErrorHandler extends ErrorHandler {
+    /*
+     * Sadly, this class is basically untestable.
+     */
+    private static final ImmutableSet<String> ALLOWED_METHODS = ImmutableSet.of(
+            HttpMethods.GET, HttpMethods.HEAD, HttpMethods.POST, HttpMethods.PUT, HttpMethods.DELETE
+    );
+
     @Override
-    public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void handle(String target,
+                       Request baseRequest,
+                       HttpServletRequest request,
+                       HttpServletResponse response) throws IOException {
         final HttpConnection connection = HttpConnection.getCurrentConnection();
         final Response jettyResponse = connection.getResponse();
         jettyResponse.setStatus(jettyResponse.getStatus());
 
         connection.getRequest().setHandled(true);
         final String method = request.getMethod();
-        if (!method.equals(HttpMethods.GET) && !method.equals(HttpMethods.POST) && !method.equals(
-                HttpMethods.HEAD)) {
+        
+        if (!ALLOWED_METHODS.contains(method)) {
             return;
         }
+
         response.setContentType(MimeTypes.TEXT_HTML_8859_1);
         if (getCacheControl() != null) {
-            response.setHeader(HttpHeaders.CACHE_CONTROL, this.getCacheControl());
+            response.setHeader(HttpHeaders.CACHE_CONTROL, getCacheControl());
         }
         final ByteArrayISO8859Writer writer = new ByteArrayISO8859Writer(4096);
-        writer.append(errorMessage(request, jettyResponse.getStatus())).append("\n\n");
-        writer.flush();
-        response.setContentLength(writer.size());
-        writer.writeTo(response.getOutputStream());
-        writer.destroy();
+        try {
+            writer.append(errorMessage(request, jettyResponse.getStatus())).append("\n\n");
+            writer.flush();
+            response.setContentLength(writer.size());
+            writer.writeTo(response.getOutputStream());
+        } finally {
+            writer.close();
+            writer.destroy();
+        }
     }
 
-    private String errorMessage(HttpServletRequest request, int status) {
+    private static String errorMessage(HttpServletRequest request, int status) {
         switch (status) {
             case SC_BAD_REQUEST:
                 return "Your HTTP client sent a request that this server could " +
@@ -107,8 +123,8 @@ public class QuietErrorHandler extends ErrorHandler {
             case SC_UNSUPPORTED_MEDIA_TYPE:
                 return "The server does not support the media type transmitted in the request.";
             default:
-                return "Your request could not be processed: " + HttpGenerator.getReasonBuffer(
-                        status);
+                return "Your request could not be processed: " +
+                        HttpGenerator.getReasonBuffer(status);
         }
     }
 }
