@@ -18,8 +18,8 @@ public class RenderCommand extends ConfiguredCommand<HelloWorldConfiguration> {
     }
 
     @Override
-    protected String getConfiguredSyntax() {
-        return "[name1 name2]";
+    protected Optional<String> getConfiguredSyntax() {
+        return Optional.of("[name1 name2]");
     }
 
     @Override
