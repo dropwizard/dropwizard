@@ -29,10 +29,10 @@ public class HelloWorldResource {
     }
 
     @GET
-    public Saying sayHello(@QueryParam("name") Optional<String> name) {
+    public Saying sayHello(@QueryParam("name") String name) {
         final TimerContext context = GETS.time();
         try {
-            return new Saying(counter.incrementAndGet(), template.render(name));
+            return new Saying(counter.incrementAndGet(), template.render(Optional.fromNullable(name)));
         } finally {
             context.stop();
         }
