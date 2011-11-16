@@ -11,6 +11,7 @@
 
     <modules>
         <module>dropwizard</module>
+        <module>dropwizard-client</module>
         <module>dropwizard-example</module>
         <module>dropwizard-testing</module>
         <module>dropwizard_2.9.1</module>
@@ -18,6 +19,7 @@
 
     <properties>
         <metrics.version>2.0.0-BETA18-SNAPSHOT</metrics.version>
+        <jersey.version>1.10</jersey.version>
     </properties>
 
     <developers>
