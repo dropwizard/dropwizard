@@ -39,12 +39,6 @@ public class ServiceTest {
     }
 
     @Test
-    public void hasModules() throws Exception {
-        assertThat(service.getModules(),
-                   hasItem(module));
-    }
-
-    @Test
     public void mightHaveABanner() throws Exception {
         assertThat(service.hasBanner(),
                    is(true));
