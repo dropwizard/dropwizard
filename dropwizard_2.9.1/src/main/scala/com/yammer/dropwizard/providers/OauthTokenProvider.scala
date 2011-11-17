@@ -13,7 +13,7 @@ import com.yammer.dropwizard.BearerToken
 class OauthTokenProvider extends InjectableProvider[BearerToken, Parameter] {
   def getInjectable(ic: ComponentContext, a: BearerToken, c: Parameter) =
     if (c.getParameterClass.isAssignableFrom(classOf[Option[String]])) {
-      new OauthTokenInjectable(a.value() + " ")
+      new OauthTokenInjectable(a.prefix() + " ")
     } else {
       null
     }

@@ -25,7 +25,7 @@ public class OauthTokenProvider implements InjectableProvider<BearerToken, Param
                                        BearerToken a,
                                        Parameter c) {
         if (c.getParameterClass().isAssignableFrom(Optional.class)) {
-            return new OauthTokenInjectable(a.value() + ' ');
+            return new OauthTokenInjectable(a.prefix() + ' ');
         }
         return null;
     }
