@@ -13,6 +13,7 @@
     <modules>
         <module>dropwizard</module>
         <module>dropwizard-client</module>
+        <module>dropwizard-db</module>
         <module>dropwizard-example</module>
         <module>dropwizard-templates</module>
         <module>dropwizard-testing</module>
