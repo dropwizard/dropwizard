@@ -1,6 +1,7 @@
 package com.yammer.dropwizard.client;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import com.sun.jersey.api.client.filter.GZIPContentEncodingFilter;
 import com.sun.jersey.client.apache4.ApacheHttpClient4Handler;
 import com.sun.jersey.client.apache4.config.ApacheHttpClient4Config;
 import com.sun.jersey.client.apache4.config.DefaultApacheHttpClient4Config;
@@ -30,6 +31,10 @@ public class JerseyClientFactory {
         final JerseyClient jerseyClient = new JerseyClient(handler, config);
         jerseyClient.setExecutorService(buildThreadPool());
         environment.manage(jerseyClient);
+
+        if (configuration.isGzipEnabled()) {
+            jerseyClient.addFilter(new GZIPContentEncodingFilter());
+        }
 
         return jerseyClient;
     }

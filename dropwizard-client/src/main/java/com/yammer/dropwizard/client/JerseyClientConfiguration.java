@@ -14,6 +14,8 @@ public class JerseyClientConfiguration extends HttpClientConfiguration {
     @Min(1)
     private int maxThreads = 128;
 
+    private boolean gzipEnabled = true;
+
     public int getMinThreads() {
         return minThreads;
     }
@@ -28,5 +30,13 @@ public class JerseyClientConfiguration extends HttpClientConfiguration {
 
     public void setMaxThreads(int maxThreads) {
         this.maxThreads = maxThreads;
+    }
+
+    public boolean isGzipEnabled() {
+        return gzipEnabled;
+    }
+
+    public void setGzipEnabled(boolean enable) {
+        this.gzipEnabled = enable;
     }
 }
