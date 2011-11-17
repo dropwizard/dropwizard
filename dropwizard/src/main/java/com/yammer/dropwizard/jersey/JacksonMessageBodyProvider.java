@@ -1,12 +1,12 @@
 package com.yammer.dropwizard.jersey;
 
 import com.google.common.collect.ImmutableList;
-import com.yammer.dropwizard.Validated;
 import com.yammer.dropwizard.json.Json;
 import com.yammer.dropwizard.util.Validator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
@@ -49,12 +49,6 @@ public class JacksonMessageBodyProvider implements MessageBodyReader<Object>,
         }
     };
 
-    private final boolean validating;
-
-    public JacksonMessageBodyProvider(boolean validating) {
-        this.validating = validating;
-    }
-
     @Override
     public boolean isReadable(Class<?> type,
                               Type genericType,
@@ -70,8 +64,13 @@ public class JacksonMessageBodyProvider implements MessageBodyReader<Object>,
                            MediaType mediaType,
                            MultivaluedMap<String, String> httpHeaders,
                            InputStream entityStream) throws IOException, WebApplicationException {
+        boolean validating = false;
+        for (Annotation annotation : annotations) {
+            validating = validating || (annotation.annotationType() == Valid.class);
+        }
+
         final Object value = Json.read(entityStream, genericType);
-        if (validating && value.getClass().isAnnotationPresent(Validated.class)) {
+        if (validating) {
             final ImmutableList<String> errors = VALIDATOR.validate(value);
             if (!errors.isEmpty()) {
                 final StringBuilder msg = new StringBuilder("The request entity had the following errors:\n");
