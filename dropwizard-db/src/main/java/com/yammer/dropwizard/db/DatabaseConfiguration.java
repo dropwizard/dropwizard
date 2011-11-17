@@ -24,7 +24,6 @@ public class DatabaseConfiguration {
         private String password = "";
 
         @NotNull
-        @URL(protocol = "jdbc")
         private String url = null;
 
         @NotNull
