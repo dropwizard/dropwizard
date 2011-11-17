@@ -8,11 +8,11 @@ public class JerseyClientConfiguration extends HttpClientConfiguration {
 
     @Max(16 * 1024)
     @Min(1)
-    private int minThreads;
+    private int minThreads = 1;
 
     @Max(16 * 1024)
     @Min(1)
-    private int maxThreads;
+    private int maxThreads = 128;
 
     public int getMinThreads() {
         return minThreads;
