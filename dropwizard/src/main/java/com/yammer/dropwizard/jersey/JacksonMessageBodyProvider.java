@@ -49,6 +49,12 @@ public class JacksonMessageBodyProvider implements MessageBodyReader<Object>,
         }
     };
 
+    private final boolean validating;
+
+    public JacksonMessageBodyProvider(boolean validating) {
+        this.validating = validating;
+    }
+
     @Override
     public boolean isReadable(Class<?> type,
                               Type genericType,
@@ -65,7 +71,7 @@ public class JacksonMessageBodyProvider implements MessageBodyReader<Object>,
                            MultivaluedMap<String, String> httpHeaders,
                            InputStream entityStream) throws IOException, WebApplicationException {
         final Object value = Json.read(entityStream, genericType);
-        if (value.getClass().isAnnotationPresent(Validated.class)) {
+        if (validating && value.getClass().isAnnotationPresent(Validated.class)) {
             final ImmutableList<String> errors = VALIDATOR.validate(value);
             if (!errors.isEmpty()) {
                 final StringBuilder msg = new StringBuilder("The request entity had the following errors:\n");

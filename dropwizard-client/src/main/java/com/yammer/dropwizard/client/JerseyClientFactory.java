@@ -2,7 +2,10 @@ package com.yammer.dropwizard.client;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.sun.jersey.client.apache4.ApacheHttpClient4Handler;
+import com.sun.jersey.client.apache4.config.ApacheHttpClient4Config;
+import com.sun.jersey.client.apache4.config.DefaultApacheHttpClient4Config;
 import com.yammer.dropwizard.config.Environment;
+import com.yammer.dropwizard.jersey.JacksonMessageBodyProvider;
 import org.apache.http.client.HttpClient;
 
 import java.util.concurrent.*;
@@ -21,7 +24,10 @@ public class JerseyClientFactory {
 
         final ApacheHttpClient4Handler handler = new ApacheHttpClient4Handler(client, null, true);
 
-        final JerseyClient jerseyClient = new JerseyClient(handler);
+        final ApacheHttpClient4Config config = new DefaultApacheHttpClient4Config();
+        config.getSingletons().add(new JacksonMessageBodyProvider(false));
+
+        final JerseyClient jerseyClient = new JerseyClient(handler, config);
         jerseyClient.setExecutorService(buildThreadPool());
         environment.manage(jerseyClient);
 

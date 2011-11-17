@@ -13,7 +13,7 @@ public class JavaModule implements Module {
     @Override
     public void initialize(Environment environment) {
         environment.addProvider(new OptionalQueryParamInjectableProvider());
-        environment.addProvider(new JacksonMessageBodyProvider());
+        environment.addProvider(new JacksonMessageBodyProvider(true));
         environment.addProvider(new OauthTokenProvider());
     }
 }
