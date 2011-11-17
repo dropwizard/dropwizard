@@ -151,7 +151,7 @@ public abstract class AbstractService<T extends Configuration> {
      * @param configuration    the parsed {@link Configuration} object
      * @param environment      the service's {@link Environment}
      */
-    protected abstract void initialize(T configuration, Environment environment);
+    protected abstract void initialize(T configuration, Environment environment) throws Exception;
 
     /**
      * Initializes the given {@link Environment} given a {@link Configuration} instances. First the
@@ -161,7 +161,7 @@ public abstract class AbstractService<T extends Configuration> {
      * @param configuration    the parsed {@link Configuration} object
      * @param environment      the service's {@link Environment}
      */
-    public final void initializeWithModules(T configuration, Environment environment) {
+    public final void initializeWithModules(T configuration, Environment environment) throws Exception {
         for (Module module : modules) {
             module.initialize(environment);
         }
