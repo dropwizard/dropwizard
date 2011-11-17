@@ -12,6 +12,7 @@
 
     <groupId>com.yammer</groupId>
     <artifactId>dropwizard-testing</artifactId>
+    <name>Dropwizard Test Helpers</name>
 
     <dependencies>
         <dependency>

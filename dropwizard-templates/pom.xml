@@ -12,6 +12,7 @@
 
     <groupId>com.yammer</groupId>
     <artifactId>dropwizard-templates</artifactId>
+    <name>Dropwizard Templates</name>
     
     <dependencies>
         <dependency>

@@ -12,6 +12,7 @@
 
     <groupId>com.yammer</groupId>
     <artifactId>dropwizard-client</artifactId>
+    <name>Dropwizard HTTP Client</name>
 
     <dependencies>
         <dependency>
