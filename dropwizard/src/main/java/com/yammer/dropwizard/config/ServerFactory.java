@@ -21,6 +21,7 @@ import org.eclipse.jetty.server.nio.SelectChannelConnector;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.util.thread.ThreadPool;
 import org.slf4j.Logger;
@@ -183,6 +184,7 @@ public class ServerFactory {
     private Handler createExternalServlet(Map<String, ServletHolder> servlets,
                                           Map<String, FilterHolder> filters) {
         final ServletContextHandler handler = new ServletContextHandler();
+        handler.setBaseResource(Resource.newClassPathResource("."));
 
         for (Map.Entry<String, ServletHolder> entry : servlets.entrySet()) {
             handler.addServlet(entry.getValue(), entry.getKey());
