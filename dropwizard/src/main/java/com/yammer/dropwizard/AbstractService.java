@@ -121,6 +121,7 @@ public abstract class AbstractService<T extends Configuration> {
      *
      * @param configuration    the parsed {@link Configuration} object
      * @param environment      the service's {@link Environment}
+     * @throws Exception if something goes wrong
      */
     protected abstract void initialize(T configuration, Environment environment) throws Exception;
 
@@ -131,6 +132,7 @@ public abstract class AbstractService<T extends Configuration> {
      *
      * @param configuration    the parsed {@link Configuration} object
      * @param environment      the service's {@link Environment}
+     * @throws Exception if something goes wrong
      */
     public final void initializeWithModules(T configuration, Environment environment) throws Exception {
         for (Module module : modules) {
