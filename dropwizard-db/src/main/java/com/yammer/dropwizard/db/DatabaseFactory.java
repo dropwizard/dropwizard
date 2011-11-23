@@ -63,6 +63,7 @@ public class DatabaseFactory {
         pool.setTestWhileIdle(connectionConfig.checkConnectionWhileIdle());
         pool.setTimeBetweenEvictionRunsMillis(connectionConfig.getCheckConnectionHealthWhenIdleFor().toMilliseconds());
         pool.setMinEvictableIdleTimeMillis(connectionConfig.getCloseConnectionIfIdleFor().toMilliseconds());
+        pool.setWhenExhaustedAction(GenericObjectPool.WHEN_EXHAUSTED_BLOCK);
         return pool;
     }
 }
