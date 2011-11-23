@@ -44,7 +44,7 @@ public class DatabaseConfiguration {
 
         @Max(1024)
         @Min(1)
-        private int maxSize = 1;
+        private int maxSize = 8;
 
         private boolean checkConnectionWhileIdle;
 
