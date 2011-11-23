@@ -20,7 +20,6 @@ public class ServiceTest {
         FakeService() {
             super("test");
             addModule(module);
-            setBanner("woo");
         }
 
         @Override
@@ -36,14 +35,5 @@ public class ServiceTest {
     public void hasAReferenceToItsTypeParameter() throws Exception {
         assertThat(service.getConfigurationClass(),
                    is(sameInstance(FakeConfiguration.class)));
-    }
-
-    @Test
-    public void mightHaveABanner() throws Exception {
-        assertThat(service.hasBanner(),
-                   is(true));
-        
-        assertThat(service.getBanner(),
-                   is("woo"));
     }
 }

@@ -1,5 +1,7 @@
 package com.yammer.dropwizard.cli;
 
+import com.google.common.base.Charsets;
+import com.google.common.io.Resources;
 import com.yammer.dropwizard.AbstractService;
 import com.yammer.dropwizard.config.Configuration;
 import com.yammer.dropwizard.config.Environment;
@@ -50,8 +52,10 @@ public class ServerCommand<T extends Configuration> extends ConfiguredCommand<T>
         final Logger logger = LoggerFactory.getLogger(ServerCommand.class);
         logger.info("Starting " + service.getName());
 
-        if (service.hasBanner()) {
-            logger.info('\n' + service.getBanner() + '\n');
+        try {
+            logger.info('\n' + Resources.toString(Resources.getResource("banner.txt"), Charsets.UTF_8));
+        } catch (IllegalArgumentException ignored) {
+            // don't display the banner if there isn't one
         }
 
         try {

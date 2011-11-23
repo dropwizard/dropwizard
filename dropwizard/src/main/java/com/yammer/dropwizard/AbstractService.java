@@ -33,7 +33,6 @@ public abstract class AbstractService<T extends Configuration> {
     private final List<Module> modules;
     private final List<ConfiguredModule<? super T>> configuredModules;
     private final SortedMap<String, Command> commands;
-    private String banner = null;
 
     /**
      * Creates a new service with the given name.
@@ -114,34 +113,6 @@ public abstract class AbstractService<T extends Configuration> {
      */
     protected final void addCommand(ConfiguredCommand<T> command) {
         commands.put(command.getName(), command);
-    }
-
-    /**
-     * Returns {@code true} if the service has a banner.
-     *
-     * @return whether or not the service has a banner
-     */
-    public final boolean hasBanner() {
-        return banner != null;
-    }
-
-    /**
-     * Returns the service's banner, if any. The banner will be printed out when the service starts
-     * up.
-     *
-     * @return the service's banner
-     */
-    public final String getBanner() {
-        return banner;
-    }
-
-    /**
-     * Sets the service's banner. The banner will be printed out when the service starts up.
-     *
-     * @param banner    a banner
-     */
-    protected final void setBanner(String banner) {
-        this.banner = banner;
     }
 
     /**
