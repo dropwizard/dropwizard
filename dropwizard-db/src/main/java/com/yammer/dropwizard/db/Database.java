@@ -1,6 +1,7 @@
 package com.yammer.dropwizard.db;
 
 import com.yammer.dropwizard.lifecycle.Managed;
+import com.yammer.metrics.Metrics;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.tomcat.dbcp.pool.ObjectPool;
@@ -21,6 +22,8 @@ public class Database extends DBI implements Managed {
         super(dataSource);
         this.pool = pool;
         setSQLLog(new Log4JLog(LOGGER, Level.TRACE));
+        setTimingCollector(new MetricsTimingCollector(Metrics.defaultRegistry()));
+
     }
 
     @Override
