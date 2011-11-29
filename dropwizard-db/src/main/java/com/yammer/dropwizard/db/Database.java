@@ -6,21 +6,27 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.tomcat.dbcp.pool.ObjectPool;
 import org.skife.jdbi.v2.DBI;
-import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.logging.Log4JLog;
-import org.skife.jdbi.v2.util.IntegerMapper;
+import org.skife.jdbi.v2.sqlobject.SqlQuery;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
 
 public class Database extends DBI implements Managed {
+    public interface Ping {
+        @SqlQuery("SELECT 1")
+        public Integer ping();
+    }
+
     private static final Logger LOGGER = Logger.getLogger(Database.class);
 
     private final ObjectPool pool;
+    private final Ping ping;
 
     public Database(DataSource dataSource, ObjectPool pool) {
         super(dataSource);
         this.pool = pool;
+        this.ping = onDemand(Ping.class);
         setSQLLog(new Log4JLog(LOGGER, Level.TRACE));
         setTimingCollector(new MetricsTimingCollector(Metrics.defaultRegistry()));
 
@@ -37,14 +43,9 @@ public class Database extends DBI implements Managed {
     }
 
     public void ping() throws SQLException {
-        final Handle handle = open();
-        try {
-            final Integer first = handle.createQuery("SELECT 1").map(IntegerMapper.FIRST).first();
-            if (!Integer.valueOf(1).equals(first)) {
-                throw new SQLException("Expected 1 from 'SELECT 1', got " + first);
-            }
-        } finally {
-            handle.close();
+        final Integer value = ping.ping();
+        if (!Integer.valueOf(1).equals(value)) {
+            throw new SQLException("Expected 1 from 'SELECT 1', got " + value);
         }
     }
 }
