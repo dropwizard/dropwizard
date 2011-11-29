@@ -5,7 +5,7 @@ import com.yammer.dropwizard.config.Configuration;
 import com.yammer.dropwizard.config.ConfigurationException;
 import com.yammer.dropwizard.config.ConfigurationFactory;
 import com.yammer.dropwizard.config.LoggingFactory;
-import com.yammer.dropwizard.util.Validator;
+import com.yammer.dropwizard.validation.Validator;
 import org.apache.commons.cli.CommandLine;
 
 import java.io.File;

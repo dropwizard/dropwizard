@@ -2,7 +2,7 @@ package com.yammer.dropwizard.config.tests;
 
 import com.yammer.dropwizard.config.Configuration;
 import com.yammer.dropwizard.config.ConfigurationFactory;
-import com.yammer.dropwizard.util.Validator;
+import com.yammer.dropwizard.validation.Validator;
 import org.junit.Test;
 
 import java.io.File;

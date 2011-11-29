@@ -5,7 +5,7 @@ import com.google.common.io.Resources;
 import com.yammer.dropwizard.config.ConfigurationFactory;
 import com.yammer.dropwizard.config.LoggingConfiguration;
 import com.yammer.dropwizard.util.Size;
-import com.yammer.dropwizard.util.Validator;
+import com.yammer.dropwizard.validation.Validator;
 import org.apache.log4j.Level;
 import org.junit.Before;
 import org.junit.Test;

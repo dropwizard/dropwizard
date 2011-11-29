@@ -3,6 +3,7 @@ package com.yammer.dropwizard.db;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.yammer.dropwizard.util.Duration;
+import com.yammer.dropwizard.validation.ValidationMethod;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
@@ -34,8 +35,6 @@ public class DatabaseConfiguration {
         
         @NotNull
         private String validationQuery = "/* Health Check */ SELECT 1";
-
-        // TODO: 11/16/11 <coda> -- validate minSize <= maxSize
 
         @Max(1024)
         @Min(1)
@@ -149,6 +148,11 @@ public class DatabaseConfiguration {
 
         public void setCloseConnectionIfIdleFor(Duration timeout) {
             this.closeConnectionIfIdleFor = timeout.toString();
+        }
+
+        @ValidationMethod(message = ".minSize must be less than or equal to maxSize")
+        public boolean isPoolSizedCorrectly() {
+            return minSize <= maxSize;
         }
     }
 

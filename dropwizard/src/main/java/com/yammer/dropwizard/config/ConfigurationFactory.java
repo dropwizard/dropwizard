@@ -3,7 +3,7 @@ package com.yammer.dropwizard.config;
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableList;
 import com.google.common.io.Files;
-import com.yammer.dropwizard.util.Validator;
+import com.yammer.dropwizard.validation.Validator;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.error.YAMLException;

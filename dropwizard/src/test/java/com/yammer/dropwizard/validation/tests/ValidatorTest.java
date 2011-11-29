@@ -1,7 +1,7 @@
-package com.yammer.dropwizard.util.tests;
+package com.yammer.dropwizard.validation.tests;
 
 import com.google.common.collect.ImmutableList;
-import com.yammer.dropwizard.util.Validator;
+import com.yammer.dropwizard.validation.Validator;
 import org.junit.Test;
 
 import javax.validation.constraints.Max;
@@ -27,7 +27,7 @@ public class ValidatorTest {
         }
     }
 
-    final Validator validator = new Validator();
+    private final Validator validator = new Validator();
 
     @Test
     public void returnsASetOfErrorsForAnObject() throws Exception {

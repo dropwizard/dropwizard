@@ -1,11 +1,11 @@
 package com.yammer.dropwizard.client;
 
+import com.yammer.dropwizard.validation.ValidationMethod;
+
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 
 public class JerseyClientConfiguration extends HttpClientConfiguration {
-    // TODO: 11/16/11 <coda> -- validate minThreads <= maxThreads
-
     @Max(16 * 1024)
     @Min(1)
     private int minThreads = 1;
@@ -38,5 +38,10 @@ public class JerseyClientConfiguration extends HttpClientConfiguration {
 
     public void setGzipEnabled(boolean enable) {
         this.gzipEnabled = enable;
+    }
+
+    @ValidationMethod(message = ".minThreads must be less than or equal to maxThreads")
+    public boolean isThreadPoolSizedCorrectly() {
+        return minThreads <= maxThreads;
     }
 }

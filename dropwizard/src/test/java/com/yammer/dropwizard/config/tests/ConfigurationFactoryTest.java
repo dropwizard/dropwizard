@@ -3,7 +3,7 @@ package com.yammer.dropwizard.config.tests;
 import com.google.common.io.Resources;
 import com.yammer.dropwizard.config.ConfigurationException;
 import com.yammer.dropwizard.config.ConfigurationFactory;
-import com.yammer.dropwizard.util.Validator;
+import com.yammer.dropwizard.validation.Validator;
 import org.junit.Test;
 import org.yaml.snakeyaml.error.YAMLException;
 

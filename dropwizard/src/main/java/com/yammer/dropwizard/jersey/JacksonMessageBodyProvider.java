@@ -2,7 +2,7 @@ package com.yammer.dropwizard.jersey;
 
 import com.google.common.collect.ImmutableList;
 import com.yammer.dropwizard.json.Json;
-import com.yammer.dropwizard.util.Validator;
+import com.yammer.dropwizard.validation.Validator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
