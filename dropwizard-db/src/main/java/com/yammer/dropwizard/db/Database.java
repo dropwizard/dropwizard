@@ -29,7 +29,7 @@ public class Database extends DBI implements Managed {
         this.ping = onDemand(Ping.class);
         setSQLLog(new Log4JLog(LOGGER, Level.TRACE));
         setTimingCollector(new MetricsTimingCollector(Metrics.defaultRegistry()));
-
+        setStatementRewriter(new NamePrependingStatementRewriter());
     }
 
     @Override

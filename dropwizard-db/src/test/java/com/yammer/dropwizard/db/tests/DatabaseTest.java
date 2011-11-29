@@ -2,6 +2,7 @@ package com.yammer.dropwizard.db.tests;
 
 import com.google.common.collect.ImmutableList;
 import com.yammer.dropwizard.config.Environment;
+import com.yammer.dropwizard.config.LoggingFactory;
 import com.yammer.dropwizard.db.Database;
 import com.yammer.dropwizard.db.DatabaseConfiguration;
 import com.yammer.dropwizard.db.DatabaseFactory;
@@ -21,9 +22,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 public class DatabaseTest {
-    private DatabaseConfiguration config = new DatabaseConfiguration();
-    private DatabaseConnectionConfiguration hsqlConfig = new DatabaseConnectionConfiguration();
+    private final DatabaseConfiguration config = new DatabaseConfiguration();
+    private final DatabaseConnectionConfiguration hsqlConfig = new DatabaseConnectionConfiguration();
     {
+        LoggingFactory.bootstrap();
         hsqlConfig.setUrl("jdbc:hsqldb:mem:DbTest-"+System.currentTimeMillis());
         hsqlConfig.setUser("sa");
         hsqlConfig.setDriverClass("org.hsqldb.jdbcDriver");
