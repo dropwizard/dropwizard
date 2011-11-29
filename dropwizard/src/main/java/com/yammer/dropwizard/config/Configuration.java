@@ -3,8 +3,6 @@ package com.yammer.dropwizard.config;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-// TODO: 11/7/11 <coda> -- test Configuration
-
 /**
  * An object representation of the YAML configuration file. Extend this with your own configuration
  * properties, and they'll be parsed from the YAML file as well.
