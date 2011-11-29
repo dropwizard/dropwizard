@@ -31,9 +31,9 @@
             <version>7.0.23</version>
         </dependency>
         <dependency>
-            <groupId>org.hsqldb</groupId>
+            <groupId>hsqldb</groupId>
             <artifactId>hsqldb</artifactId>
-            <version>2.2.6</version>
+            <version>1.8.0.10</version>
             <scope>test</scope>
         </dependency>
         <dependency>
