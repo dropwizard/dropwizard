@@ -15,7 +15,7 @@
     <name>Dropwizard</name>
 
     <properties>
-        <jetty.version>7.5.4.v20111024</jetty.version>
+        <jetty.version>7.6.0.RC0</jetty.version>
         <jackson.version>1.9.2</jackson.version>
         <slf4j.version>1.6.4</slf4j.version>
     </properties>
