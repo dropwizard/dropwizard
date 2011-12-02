@@ -6,7 +6,7 @@ import org.eclipse.jetty.http.HttpGenerator;
 import org.eclipse.jetty.http.HttpHeaders;
 import org.eclipse.jetty.http.HttpMethods;
 import org.eclipse.jetty.http.MimeTypes;
-import org.eclipse.jetty.server.HttpConnection;
+import org.eclipse.jetty.server.AbstractHttpConnection;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Response;
 import org.eclipse.jetty.server.handler.ErrorHandler;
@@ -39,7 +39,7 @@ public class QuietErrorHandler extends ErrorHandler {
                        Request baseRequest,
                        HttpServletRequest request,
                        HttpServletResponse response) throws IOException {
-        final HttpConnection connection = HttpConnection.getCurrentConnection();
+        final AbstractHttpConnection connection = AbstractHttpConnection.getCurrentConnection();
         final Response jettyResponse = connection.getResponse();
         jettyResponse.setStatus(jettyResponse.getStatus());
 
