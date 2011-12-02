@@ -14,7 +14,7 @@ object LogThroughputRunner extends Instrumented {
   class LogWriter(log: RequestLog) extends Runnable {
     val fields = new HttpFields
 
-    val conn = mock(classOf[HttpConnection])
+    val conn = mock(classOf[AbstractHttpConnection])
     when(conn.getRequestFields).thenReturn(fields)
 
     val request = new Request(conn)
