@@ -2,7 +2,7 @@ package com.yammer.dropwizard.modules;
 
 import com.yammer.dropwizard.Module;
 import com.yammer.dropwizard.config.Environment;
-import org.eclipse.jetty.servlet.DefaultServlet;
+import com.yammer.dropwizard.servlets.AssetServlet;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
@@ -38,9 +38,6 @@ public class AssetsModule implements Module {
 
     @Override
     public void initialize(Environment environment) {
-        environment.addServlet(DefaultServlet.class, path + '*')
-                   .setInitParam("dirAllowed", "false")
-                   .setInitParam("pathInfoOnly", "true")
-                   .setInitParam("relativeResourceBase", path);
+        environment.addServlet(new AssetServlet(path), path + '*');
     }
 }
