@@ -13,7 +13,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.concurrent.TimeUnit;
 
 public class AssetServlet extends HttpServlet {
     private static final long serialVersionUID = 6393345594784987908L;
@@ -39,16 +38,14 @@ public class AssetServlet extends HttpServlet {
     private final Cache<String, byte[]> cache;
     private final MimeTypes mimeTypes;
 
-    public AssetServlet(String base) {
-        this.cache = buildCache(base);
+    public AssetServlet(String base, int maxCacheSize) {
+        this.cache = buildCache(base, maxCacheSize);
         this.mimeTypes = new MimeTypes();
     }
 
-    private static Cache<String, byte[]> buildCache(String base) {
+    private static Cache<String, byte[]> buildCache(String base, int maxCacheSize) {
         return CacheBuilder.newBuilder()
-                           .maximumSize(100)
-                           .concurrencyLevel(16)
-                           .expireAfterAccess(10, TimeUnit.MINUTES)
+                           .maximumSize(maxCacheSize)
                            .build(new AssetLoader(base));
     }
 
