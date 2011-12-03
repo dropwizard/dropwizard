@@ -11,18 +11,18 @@ import com.sun.jersey.server.impl.model.parameter.multivalued.MultivaluedParamet
 
 public class MultivaluedParameterExtractorQueryParamInjectable extends AbstractHttpContextInjectable<Object> {
     private final MultivaluedParameterExtractor extractor;
-    private final boolean isEncoded;
+    private final boolean decode;
 
     public MultivaluedParameterExtractorQueryParamInjectable(MultivaluedParameterExtractor extractor,
-                                                             boolean encoded) {
+                                                             boolean decode) {
         this.extractor = extractor;
-        isEncoded = encoded;
+        this.decode = decode;
     }
 
     @Override
     public Object getValue(HttpContext c) {
         try {
-            return extractor.extract(c.getUriInfo().getQueryParameters(isEncoded));
+            return extractor.extract(c.getUriInfo().getQueryParameters(decode));
         } catch (ExtractorContainerException e) {
             throw new ParamException.QueryParamException(e.getCause(),
                                                          extractor.getName(),

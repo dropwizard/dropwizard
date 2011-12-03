@@ -29,7 +29,7 @@ public class OptionalQueryParamInjectableProvider implements InjectableProvider<
                 c.getParameterClass().isAssignableFrom(Optional.class)) {
             return new MultivaluedParameterExtractorQueryParamInjectable(
                     new OptionalExtractor(parameterName, c.getDefaultValue()),
-                    c.isEncoded()
+                    !c.isEncoded()
             );
         }
         return null;
