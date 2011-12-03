@@ -2,14 +2,13 @@ package com.example.helloworld;
 
 import com.example.helloworld.core.Template;
 import com.yammer.dropwizard.config.Configuration;
-
-import javax.validation.constraints.NotNull;
+import org.hibernate.validator.constraints.NotEmpty;
 
 public class HelloWorldConfiguration extends Configuration {
-    @NotNull
+    @NotEmpty
     private String template;
     
-    @NotNull
+    @NotEmpty
     private String defaultName = "Stranger";
 
     public String getTemplate() {
