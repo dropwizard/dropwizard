@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Getting Started | Dropwizard</title>
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <script src="js/prettify.js"></script>
+    <script src="js/lang-yaml.js"></script>
+
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/prettify.css">
+    <style type="text/css">
+        body {
+            padding-top: 60px;
+        }
+
+        .content a {
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body onload="prettyPrint();">
+
+<div class="topbar">
+    <div class="topbar-inner">
+        <div class="container-fluid">
+            <a class="brand" href="index.html">Dropwizard</a>
+            <ul class="nav">
+                <li><a href="index.html">Home</a></li>
+                <li class="active"><a href="getting-started.html">Getting Started</a></li>
+                <li><a href="manual.html">Manual</a></li>
+                <li><a href="https://github.com/codahale/dropwizard">Code</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="sidebar">
+        <div class="well">
+            <h5>Getting Started</h5>
+            <ul>
+                <li><a href="#overview">Overview</a></li>
+                <li><a href="#maven">Setting Up Maven</a></li>
+                <li><a href="#configuration">Creating A Configuration Class</a></li>
+                <li><a href="#service">Creating A Service Class</a></li>
+                <li><a href="#representation">Creating A Representation Class</a></li>
+                <li><a href="#resource">Creating A Resource Class</a></li>
+                <li><a href="#healthcheck">Adding A Health Check</a></li>
+                <li><a href="#building-jars">Building Fat JARs</a></li>
+                <li><a href="#running">Running Your Service</a></li>
+                <li><a href="#next-steps">Next Steps</a></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="content">
+        <h1>Getting Started</h1>
+        
+        <p>
+            The goal of this document is to guide you through the process of creating a simple
+            Dropwizard project: Hello World. Along the way, we‘ll explain the various underlying
+            libraries and their roles, important concepts in Dropwizard, and suggest some
+            organizational techniques to help you as your project grows. (Or you can just skip to
+            the <a href="#maven">fun part</a>.)
+        </p>
+
+        <h2 id="overview">Overview</h2>
+        
+        <p>
+            Dropwizard straddles the line between being a library and a framework. Its goal is to
+            provide performant, reliable implementations of everything a production-ready web
+            service needs. Because this functionality is extracted into a reusable library, your
+            service remains lean and focused, reducing both time-to-market and maintenance burdens.
+        </p>
+        
+        <p>
+            Because you can't be a web service without HTTP, Dropwizard uses the
+            <a href="http://www.eclipse.org/jetty/">Jetty</a> HTTP library to embed an incredibly
+            tuned HTTP server directly into your project. Instead of handing your service off to
+            a complicated application server, Dropwizard projects have a <code>main</code> method
+            which spins up an HTTP server. Running your service as a simple process eliminates a
+            number of unsavory aspects of Java in production (no PermGem issues, no application
+            server configuration and maintenance, no arcane deployment tools, no
+            <code>ClassLoader</code> troubles, no hidden application logs, no trying to tune a
+            single garbage collector to work with multiple application workloads) and allows you
+            to use all of Unix's existing process management tools instead.
+        </p>
+        
+        <p>
+            For building <abbr title="REpresentation State Transfer">RESTful</abbr> web services,
+            we've found nothing beats <a href="http://jersey.java.net">Jersey</a>
+            (the <a href="http://jcp.org/en/jsr/detail?id=311">JAX-RS</a> reference implementation)
+            in terms of features or performance. It allows you to write clean, testable class which
+            gracefully map HTTP requests to simple Java objects. It supports streaming output,
+            matrix URI parameters, conditional <code>GET</code> requests, and much, much more.
+        </p>
+        
+        <p>
+            In terms of data formats, JSON has become the web‘s <em>lingua franca</em>, and
+            <a href="http://jackson.codehaus.org/">Jackson</a> is the king of JSON on the JVM. In
+            addition to being lightning fast, it has a sophisticated object mapper, allowing you to
+            export your domain models directly.
+        </p>
+        
+        <p>
+            Our very own <a href="https://github.com/codahale/metrics">Metrics</a>
+            library rounds things out, providing you with unparalleled insight into your code‘s
+            behavior in your production environment.
+        </p>
+        
+        <p>
+            In addition to Jetty, Jersey, and Jackson, Dropwizard also includes a number of
+            libraries that we've come to rely on:
+        </p>
+
+        <ul>
+            <li>
+                <a href="http://code.google.com/p/guava-libraries/">Guava</a>,
+                which, in addition to highly optimized immutable data structures, provides a growing
+                number of classes to speed up development in Java.
+            </li>
+            <li>
+                <a href="http://logging.apache.org/log4j/1.2/">Log4j</a> and
+                <a href="http://www.slf4j.org/">slf4j</a> for performant logging.
+            </li>
+            <li>
+                <a href="http://www.hibernate.org/subprojects/validator.html">Hibernate Validator</a>,
+                the <a href="http://jcp.org/en/jsr/detail?id=303">JSR-303</a> reference
+                implementation, provides an easy, declarative framework for validating user input
+                and generating helpful, internationalizable error messages.
+            </li>
+            <li>
+                <a href="http://hc.apache.org/httpcomponents-client-ga/index.html">Apache HttpClient</a>
+                and Jersey's client library allow for both low- and high-level interaction with
+                other web services.
+            </li>
+            <li>
+                <a href="http://www.jdbi.org">JDBI</a> is the most straight-forward way to use a
+                relational database with Java.
+            </li>
+            <li>
+                <a href="http://freemarker.sourceforge.net/">Freemarker</a> is a simple template
+                system for more user-facing services.
+            </li>
+        </ul>
+        
+        <p>
+            Now that you've gotten the lay of the land, let's dig in!
+        </p>
+
+        <hr>
+
+        <h2 id="maven">Setting Up Maven</h2>
+        
+        <p>
+            We recommend you use <a href="http://maven.apache.org">Maven</a> for new Dropwizard
+            services. If you're a big
+            <a href="http://ant.apache.org/">Ant</a>/<a href="http://ant.apache.org/ivy/">Ivy</a>,
+            <a href="http://buildr.apache.org/">Buildr</a>,
+            <a href="http://www.gradle.org/">Gradle</a>,
+            <a href="https://github.com/harrah/xsbt/wiki">SBT</a>,
+            or <a href="http://gant.codehaus.org/">Gant</a> fan, that‘s cool, but we use Maven and
+            we'll be using Maven as we go through this example service. If you have any questions
+            about how Maven works,
+            <a href="http://www.sonatype.com/books/mvnref-book/reference/">Maven: The Complete Reference</a>
+            should have what you‘re looking for. (We‘re assuming you know how to create a new
+            Maven project.)
+        </p>
+
+        <p>
+            <strong>First off</strong>, add the repository where the Dropwizard JARs are hosted:
+        </p>
+
+        <pre class="prettyprint lang-xml">
+&lt;repositories&gt;
+    &lt;repository&gt;
+        &lt;id&gt;repo.codahale.com&lt;/id&gt;
+        &lt;url&gt;http://repo.codahale.com&lt;/url&gt;
+    &lt;/repository&gt;
+&lt;/repositories&gt;</pre>
+
+        <p>
+            <strong>Second</strong>, add the <code>dropwizard</code> library as a dependency:
+        </p>
+
+        <pre class="prettyprint lang-xml">
+&lt;dependencies&gt;
+    &lt;dependency&gt;
+        &lt;groupId&gt;com.yammer&lt;/groupId&gt;
+        &lt;artifactId&gt;dropwizard&lt;/artifactId&gt;
+        &lt;version&gt;0.1.0-SNAPSHOT&lt;/version&gt;
+    &lt;/dependency&gt;
+&lt;/dependencies&gt;</pre>
+        
+        <p>
+            Alright, that‘s enough XML. We‘ve got a Maven project set up now, and it‘s time to start
+            writing real code.
+        </p>
+
+        <hr>
+
+        <h2 id="configuration">Creating A Configuration Class</h2>
+        
+        <p>
+            Each Dropwizard service has its own subclass of the <code>Configuration</code> class
+            which specify environment-specific parameters. These parameters are specified in a
+            <a href="http://www.yaml.org/">YAML</a> configuration file which is deserialized to
+            an instance of your service‘s configuration class and validated.
+        </p>
+        
+        <p>
+            The service we‘re building is a high-performance Hello World service, and part of our
+            requirements is that we need to be able to vary how it says hello from environment to
+            environment. We‘ll need to specify at least two things to begin with: a template for
+            saying hello and a default name to use in case the user doesn‘t specify their name.
+        </p>
+        
+        <p>
+            Here's what our configuration class will look like:
+        </p>
+
+        <pre class="prettyprint lang-java">
+package com.example.helloworld;
+
+import com.yammer.dropwizard.config.Configuration;
+import org.hibernate.validator.constraints.NotEmpty;
+
+public class HelloWorldConfiguration extends Configuration {
+    @NotEmpty
+    private String template;
+
+    @NotEmpty
+    private String defaultName = "Stranger";
+
+    public String getTemplate() {
+        return template;
+    }
+
+    public String getDefaultName() {
+        return defaultName;
+    }
+}</pre>
+        <p>
+            There's a lot going on here, so let‘s unpack a bit of it.
+        </p>
+        
+        <p>
+            When this class is deserialized from the YAML file, it will pull two root-level fields
+            from the YAML object: <code>template</code>, the template for our Hello World saying,
+            and <code>defaultName</code>, the default name to use. Both <code>template</code> and
+            <code>defaultName</code> are annotated with <code>@NotEmpty</code>, so if the YAML
+            configuration file has blank values for either or is missing <code>template</code>
+            entirely an informative exception will be thrown and your service won‘t start.
+        </p>
+        
+        <p>
+            Our YAML file, then, will look like this:
+        </p>
+
+        <pre class="prettyprint lang-yaml">
+template: Hello, %s!
+defaultName: Stranger</pre>
+        
+        <p>
+            Dropwizard has a <em>lot</em> more configuration parameters than that, but they all have
+            sane defaults so you can keep your configuration files small and focused.
+        </p>
+        
+        <p>
+            So save that YAML file as <code>hello-world.yml</code>, because we‘ll be getting up
+            and running pretty soon and we‘ll need it. Next up, we‘re creating our service class!
+        </p>
+
+        <hr>
+
+        <h2 id="service">Creating A Service Class</h2>
+
+        <p>
+            Combined with your project‘s <code>Configuration</code> subclass, its
+            <code>Service</code> form the core of your Dropwizard service. The <code>Service</code>
+            class pulls together the various modules and commands which provide basic functionality.
+            (More on that later.) For now, though, our <code>HelloWorldService</code> looks like
+            this:
+        </p>
+
+        <pre class="prettyprint">
+package com.example.helloworld;
+
+import com.yammer.dropwizard.Service;
+import com.yammer.dropwizard.config.Environment;
+
+public class HelloWorldService extends Service&lt;HelloWorldConfiguration&gt; {
+    public static void main(String[] args) throws Exception {
+        new HelloWorldService().run(args);
+    }
+
+    private HelloWorldService() {
+        super("hello-world");
+    }
+
+    @Override
+    protected void initialize(HelloWorldConfiguration configuration,
+                              Environment environment) {
+        // nothing to do yet
+    }
+
+}</pre>
+
+        <p>
+            As you can see, <code>HelloWorldService</code> is parameterized with the service‘s
+            configuration type, <code>HelloWorldConfiguration</code>.
+            <code>HelloWorldService</code>‘s constructor provides the service‘s name:
+            <code>hello-world</code>. Also, we‘ve added a <code>static</code> <code>main</code>
+            method, which will be our service‘s entry point. Right now, we don‘t have any
+            functionality implemented, so our <code>initialize</code> method is a little boring.
+            Let‘s fix that!
+        </p>
+
+        <hr>
+
+        <h2 id="representation">Creating A Representation Class</h2>
+        
+        <p>
+            Before we can get into the nuts-and-bolts of our Hello World service, we need to stop
+            and think about our API. Luckily, our service needs to conform to an industry standard,
+            <a href="http://www.ietf.org/rfc/rfc1149.txt" title="This is a joke.">RFC 1149</a>,
+            which specifies the following JSON representation of a Hello World saying:
+        </p>
+
+        <pre class="prettyprint lang-json">
+{
+  "id": 1,
+  "content": "Hello, stranger!"
+}</pre>
+        
+        <p>
+            The <code>id</code> field is a unique identifier for the saying, and
+            <code>content</code> is the textual representation of the saying. (Thankfully, this is a
+            fairly straight-forward industry standard.)
+        </p>
+        
+        <p>
+            To model this representation, we'll create a representation class:
+        </p>
+
+        <pre class="prettyprint lang-java">
+package com.example.helloworld.core;
+
+public class Saying {
+    private final long id;
+    private final String content;
+
+    public Saying(long id, String content) {
+        this.id = id;
+        this.content = content;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public String getContent() {
+        return content;
+    }
+}</pre>
+        
+        <p>
+            This is a pretty simple POJO, but there are a few things worth noting here.
+        </p>
+        
+        <p>
+            First, it‘s immutable. This makes <code>Saying</code> instances <em>very</em> easy to
+            reason about multi-threaded environments as well as single-threaded environments.
+            Second, it uses the Java Bean standard for the <code>id</code> and <code>code</code>
+            properties. This allows Jackson to serialize it to the JSON we need. The Jackson object
+            mapping code will populate the <code>id</code> field of the JSON object with the return
+            value of <code>getId()</code>, likewise with <code>content</code> and
+            <code>getContent()</code>.
+        </p>
+        
+        <p>
+            Now that we‘ve got our representation class, it makes sense to start in on the resource
+            it represents.
+        </p>
+
+        <hr>
+
+        <h2 id="resource">Creating A Resource Class</h2>
+        
+        <p>
+            Jersey resources are the meat-and-potatoes of a Dropwizard service. Each resource class
+            is associated with a <abbr title="Uniform Resource Identifier">URI</abbr> template. For
+            our service, we need a resource which returns new <code>Saying</code> instances from
+            the URI <code>/hello-world</code>, so our resource class will look like this:
+        </p>
+
+        <pre class="prettyprint lang-java">
+package com.example.helloworld.resources;
+
+import com.example.helloworld.core.Saying;
+import com.google.common.base.Optional;
+import com.yammer.metrics.Metrics;
+import com.yammer.metrics.core.TimerContext;
+import com.yammer.metrics.core.TimerMetric;
+
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
+import java.util.concurrent.atomic.AtomicLong;
+
+import static java.lang.String.format;
+
+@Path("/hello-world")
+@Produces(MediaType.APPLICATION_JSON)
+public class HelloWorldResource {
+    private static final TimerMetric GETS = Metrics.newTimer(HelloWorldResource.class,
+                                                             "get-requests");
+
+    private final String template;
+    private final String defaultName;
+    private final AtomicLong counter;
+
+    public HelloWorldResource(String template, String defaultName) {
+        this.template = template;
+        this.defaultName = defaultName;
+        this.counter = new AtomicLong();
+    }
+
+    @GET
+    public Saying sayHello(@QueryParam("name") Optional&lt;String&gt; name) {
+        final TimerContext context = GETS.time();
+        try {
+            return new Saying(counter.incrementAndGet(), format(template, name.or(defaultName)));
+        } finally {
+            context.stop();
+        }
+    }
+}</pre>
+        
+        <p>
+            Finally, we‘re in the thick of it! Let‘s start from the top and work our way down.
+        </p>
+        
+        <p>
+            <code>HelloWorldResource</code> has two annotations: <code>@Path</code> and
+            <code>@Produces</code>. <code>@Path("/hello-world")</code> tells Jersey that this
+            resource is accessible at the URI <code>/hello-world</code>, and
+            <code>@Produces(MediaType.APPLICATION_JSON)</code> lets Jersey‘s content negotiation
+            code know that this resource produces representations which are
+            <code>application/json</code>.
+        </p>
+        
+        <p>
+            <code>GETS</code> is a <code>TimerMetric</code> from the Metrics library which we use
+            to monitor both the latency and rate of <code>GET</code> requests for this resource.
+        </p>
+
+        <p>
+            <code>HelloWorldResource</code> takes two parameters for construction: the
+            <code>template</code> it uses to produce the saying and the <code>defaultName</code>
+            used when the user declines to tell us their name. An <code>AtomicLong</code> provides
+            us with a cheap, thread-safe way of generating unique(ish) IDs. (<strong>N.B.:</strong>
+            resource classes are used by multiple threads concurrently. In general, we recommend
+            that resources be stateless/immutable, but it‘s important to keep the context in mind.)
+        </p>
+        
+        <p>
+            <code>sayHello(Optional&lt;String&gt;)</code> is the meat of this class, and it‘s a
+            fairly simple method. The <code>@QueryParam("name")</code> tells Jersey to map the
+            <code>name</code> parameter from the query string to the <code>name</code> parameter
+            in the method. If the client sends a request to <code>/hello-world?name=Dougie</code>,
+            <code>sayHello</code> will be called with <code>Optional.of("Dougie")</code>; if there
+            is no <code>name</code> parameter in the query string, <code>sayHello</code> will be
+            called with <code>Option.absent()</code>. (Support for Guava's <code>Optional</code>
+            is a little extra sauce that Dropwizard adds to Jersey's existing functionality.)
+        </p>
+        
+        <p>
+            Inside the <code>sayHello</code> method, we get a <code>TimerContext</code> from the
+            timer, which allows us to measure now much time each request takes and how many requests
+            per second our service is doing at any point in time. We increment the counter, format
+            the template using <code>String.format(String, Object...)</code>, and return a new
+            <code>Saying</code> instance.
+        </p>
+        
+        <p>
+            Once <code>sayHello</code> has returned, Jersey takes the <code>Saying</code> instance
+            and looks for a provider class which can write <code>Saying</code> instances as
+            <code>application/json</code>. Dropwizard has one such provider built in which allows
+            for producing and consuming Java objects as JSON objects. The provider writes out the
+            JSON and the client receives a <code>200 OK</code> response with a content type of
+            <code>application/json</code>.
+        </p>
+        
+        <p>
+            Before that will actually work, though, we need to go back to our
+            <code>HelloWorldService</code> and add this new resource class. In its
+            <code>initialize</code> method we can read the template and default name from the
+            <code>HelloWorldConfiguration</code> instance, create a new
+            <code>HelloWorldService</code> instance, and then add it to the service‘s environment:
+        </p>
+
+        <pre class="prettyprint lang-java">
+@Override
+protected void initialize(HelloWorldConfiguration configuration,
+                          Environment environment) {
+    final String template = configuration.getTemplate();
+    final String defaultName = configuration.getDefaultName();
+    environment.addResource(new HelloWorldResource(template, defaultName));
+}</pre>
+        
+        <p>
+            When our service starts, we create a new instance of our resource class with the
+            parameters from the configuration file and hand it off to the <code>Environment</code>,
+            which acts like a registry of all the things your service can do.
+        </p>
+        
+        <p>
+            Before we go too far, we should add a health check for our service.
+        </p>
+        
+        <hr>
+        
+        <h2 id="healthcheck">Adding A Health Check</h2>
+
+        <p>
+            Health checks give you a way of adding small tests to your service to allow you and your
+            ops team to verify that your service is functioning correctly in production. We
+            <strong>strongly</strong> recommend that all of your services have at least a minimal
+            set of health checks. (We recommend this so strongly, in fact, that Dropwizard will nag
+            you should you neglect to add a health check to your project.)
+        </p>
+
+        <p>
+            Since formatting strings is not likely to fail while a service is running (unlike,
+            say, a database connection pool), we‘ll have to get a little creative here. We‘ll add
+            a health check to make sure we can actually format the provided template:
+        </p>
+
+        <pre class="prettyprint lang-java">
+package com.example.helloworld.health;
+
+import com.yammer.metrics.core.HealthCheck;
+
+import static java.lang.String.format;
+
+public class TemplateHealthCheck extends HealthCheck {
+    private final String template;
+
+    public TemplateHealthCheck(String template) {
+        this.template = template;
+    }
+
+    @Override
+    public String name() {
+        return "template";
+    }
+
+    @Override
+    public Result check() throws Exception {
+        final String saying = format(template, "TEST");
+        if (!saying.contains("TEST")) {
+            return Result.unhealthy("template doesn't include a name");
+        }
+        return Result.healthy();
+    }
+}</pre>
+        
+        <p>
+            <code>TemplateHealthCheck</code> checks for two things: that the provided template is
+            actually a well-formed format string, and that the template actually produces output
+            with the given name.
+        </p>
+        
+        <p>
+            If the string is not a well-formed format string (for example, someone accidentally put
+            <code>Hello, %s%</code> in the configuration file), then
+            <code>String.format(String, Object...)</code> will throw an
+            <code>IllegalFormatException</code> and the health check will implicitly fail. If the
+            rendered saying doesn‘t include the test string, the health check will explicitly fail
+            by returning an unhealthy <code>Result</code>.
+        </p>
+        
+        <p>
+            As with most things in Dropwizard, we create a new instance with the appropriate
+            parameters and add it to the <code>Environment</code>:
+        </p>
+        
+                <pre class="prettyprint lang-java">
+@Override
+protected void initialize(HelloWorldConfiguration configuration,
+                          Environment environment) {
+    final String template = configuration.getTemplate();
+    final String defaultName = configuration.getDefaultName();
+    environment.addResource(new HelloWorldResource(template, defaultName));
+    environment.addHealthCheck(new TemplateHealthCheck(template));
+}</pre>
+
+        <p>
+            Now we're almost ready to go!
+        </p>
+
+        <hr>
+
+        <h2 id="building-jars">Building Fat JARs</h2>
+
+        <p>
+            We recommend that you build your Dropwizard services as “fat” JAR files—single
+            <code>.jar</code> files which contain <em>all</em> of the <code>.class</code> files
+            required to run your service. This allows you to build a single deployable artifact
+            which you can copy from your staging environment to your QA environment to your
+            production environment without worrying about differences in installed libraries. To
+            start building our Hello World service as a fat JAR, we need to configure a Maven plugin
+            called <code>maven-shade</code>. In your <code>pom.xml</code> file, add this:
+        </p>
+        
+        <pre class="prettyprint lang-xml">
+&lt;plugin&gt;
+    &lt;groupId&gt;org.apache.maven.plugins&lt;/groupId&gt;
+    &lt;artifactId&gt;maven-shade-plugin&lt;/artifactId&gt;
+    &lt;version&gt;1.4&lt;/version&gt;
+    &lt;configuration&gt;
+        &lt;createDependencyReducedPom&gt;true&lt;/createDependencyReducedPom&gt;
+    &lt;/configuration&gt;
+    &lt;executions&gt;
+        &lt;execution&gt;
+            &lt;phase&gt;package&lt;/phase&gt;
+            &lt;goals&gt;
+                &lt;goal&gt;shade&lt;/goal&gt;
+            &lt;/goals&gt;
+            &lt;configuration&gt;
+                &lt;transformers&gt;
+                    &lt;transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/&gt;
+                    &lt;transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer"&gt;
+                        &lt;mainClass&gt;com.example.helloworld.HelloWorldService&lt;/mainClass&gt;
+                    &lt;/transformer&gt;
+                &lt;/transformers&gt;
+            &lt;/configuration&gt;
+        &lt;/execution&gt;
+    &lt;/executions&gt;
+&lt;/plugin&gt;
+        </pre>
+        
+        <p>
+            This configures Maven to do a couple of things during its <code>package</code> phase:
+        </p>
+
+        <ul>
+            <li>
+                Produce a <code>pom.xml</code> file which doesn‘t include dependencies for the
+                libraries whose contents are included in the fat JAR.
+            </li>
+            <li>
+                Collate the various <code>META-INF/services</code> entries in the JARs instead of
+                overwriting them. (<strong>N.B.:</strong> Jersey doesn‘t work without those.)
+            </li>
+            <li>
+                Set <code>com.example.helloworld.HelloWorldService</code> as the JAR‘s
+                <code>MainClass</code>.
+            </li>
+        </ul>
+
+        <p>
+            Once you‘ve got that configured, go into your project directory and run
+            <code>mvn package</code> (or run the <code>package</code> goal from your IDE). You
+            should see something like this:
+        </p>
+
+        <pre class="uglyprint">
+[INFO] Including org.eclipse.jetty:jetty-util:jar:7.6.0.RC0 in the shaded jar.
+[INFO] Including com.google.guava:guava:jar:10.0.1 in the shaded jar.
+[INFO] Including com.google.code.findbugs:jsr305:jar:1.3.9 in the shaded jar.
+[INFO] Including org.hibernate:hibernate-validator:jar:4.2.0.Final in the shaded jar.
+[INFO] Including javax.validation:validation-api:jar:1.0.0.GA in the shaded jar.
+[INFO] Including org.yaml:snakeyaml:jar:1.9 in the shaded jar.
+[INFO] Replacing original artifact with shaded artifact.
+[INFO] Replacing /Users/yourname/Projects/hello-world/target/hello-world-0.0.1-SNAPSHOT.jar with /Users/yourname/Projects/hello-world/target/hello-world-0.0.1-SNAPSHOT-shaded.jar
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 8.415s
+[INFO] Finished at: Fri Dec 02 16:26:42 PST 2011
+[INFO] Final Memory: 11M/81M
+[INFO] ------------------------------------------------------------------------</pre>
+
+        <p>
+            <strong>Congratulations!</strong> You‘ve built your first Dropwizard project! Now it‘s
+            time to run it!
+        </p>
+
+        <hr>
+
+        <h2 id="running">Running Your Service</h2>
+        
+        <p>
+            Now that you‘ve built a JAR file, it‘s time to run it.
+        </p>
+        
+        <p>
+            In your project directory, run
+            <code>java -jar target/hello-world-0.0.1-SNAPSHOT.jar</code>. You should see something
+            like the following:
+        </p>
+
+        <pre class="uglyprint">
+java -jar dropwizard-example-0.1.0-SNAPSHOT.jar &lt;command&gt; [arg1 arg2]
+
+Commands
+========
+
+server: Starts an HTTP server running the service
+-------------------------------------------------
+usage: java -jar dropwizard-example-0.1.0-SNAPSHOT.jar server &lt;config
+            file&gt;
+ -h, --help   display usage information</pre>
+
+        <p>
+            Dropwizard takes the first command line argument and dispatches it to a matching
+            command. In this case, the only command available is <code>server</code>, which runs
+            your service as an HTTP server. The <code>server</code> command requires a configuration
+            file, so let‘s go ahead and give it
+            <a href="#configuration">the one we previous saved</a>:
+            <code>java -jar target/hello-world-0.0.1-SNAPSHOT.jar server hello-world.yml</code>
+        </p>
+        
+        <p>
+            You should see something like the following:
+        </p>
+
+        <pre class="uglyprint">
+INFO  [2011-12-03 00:38:32,927] com.yammer.dropwizard.cli.ServerCommand: Starting hello-world
+INFO  [2011-12-03 00:38:32,931] org.eclipse.jetty.server.Server: jetty-7.x.y-SNAPSHOT
+INFO  [2011-12-03 00:38:32,936] org.eclipse.jetty.server.handler.ContextHandler: started o.e.j.s.ServletContextHandler{/,null}
+INFO  [2011-12-03 00:38:32,999] com.sun.jersey.server.impl.application.WebApplicationImpl: Initiating Jersey application, version 'Jersey: 1.10 11/02/2011 03:53 PM'
+INFO  [2011-12-03 00:38:33,041] com.yammer.dropwizard.config.Environment:
+
+    GET     /hello-world (com.example.helloworld.resources.HelloWorldResource)
+
+INFO  [2011-12-03 00:38:33,215] org.eclipse.jetty.server.handler.ContextHandler: started o.e.j.s.ServletContextHandler{/,null}
+INFO  [2011-12-03 00:38:33,235] org.eclipse.jetty.server.AbstractConnector: Started BlockingChannelConnector@0.0.0.0:8080 STARTING
+INFO  [2011-12-03 00:38:33,238] org.eclipse.jetty.server.AbstractConnector: Started SocketConnector@0.0.0.0:8081 STARTING</pre>
+
+        <p>
+            Your Dropwizard service is now listening on ports <code>8080</code> for service requests
+            and <code>8081</code> for administration requests. If you press
+            <kbd title="Command-C">^C</kbd>, the service will shut down gracefully, first closing
+            the server socket, then allowing a few seconds for in-flight requests to be processed,
+            then shutting down the process itself.
+        </p>
+        
+        <p>
+            But while it‘s up, let‘s give it a whirl!
+            <a target="_blank" href="http://localhost:8080/hello-world">Click here to say hello!</a>
+            <a target="_blank" href="http://localhost:8080/hello-world?name=Successful+Dropwizard+User">Click here to get even friendlier!</a>
+        </p>
+
+        <p>
+            So, we‘re generating sayings. Awesome. But that‘s not all your service can do. One of
+            the main reasons for using Dropwizard is the out-of-the-box operational tools it
+            provides, all of which can be found
+            <a target="_blank" href="http://localhost:8081/">on the admin port</a>.
+        </p>
+        
+        <p>
+            If you click through to
+            <a target="_blank" href="http://localhost:8081/metrics">metrics</a>, you can see all of
+            your service‘s metrics represented as a JSON object.
+        </p>
+
+        <p>
+            The <a target="_blank" href="http://localhost:8081/threads">threads</a> resource allows
+            you to quickly get a thread dump of all the threads running in that process.
+        </p>
+
+        <p>
+            The <a target="_blank" href="http://localhost:8081/healthcheck">healthcheck</a>
+            resource runs the <a href="#healthcheck"><code>TemplateHealthCheck</code> instance we
+            wrote</a>. You should see something like this:
+        </p>
+
+        <pre class="uglyprint">
+* deadlocks: OK
+* template: OK</pre>
+        
+        <p>
+            <code>template</code> here is the result of your <code>TemplateHealthCheck</code>, which
+            unsurprisingly passed. <code>deadlocks</code> is a built-in health check which looks for
+            deadlocked JVM threads and prints out a listing if any are found.
+        </p>
+
+        <hr>
+        
+        <h2 id="next-steps">Next Steps</h2>
+        
+        <p>
+            Well, congratulations. You‘ve got a Hello World service ready for production (except for
+            the lack of tests) that‘s capable of doing 15,000-20,000 requests per second. Hopefully
+            you've gotten a feel for how Dropwizard combines Jetty, Jersey, Jackson, and other
+            stable, mature libraries to provide a phenomenal platform for developing RESTful web
+            services.
+        </p>
+        
+        <p>
+            There‘s a lot more to Dropwizard than is covered here (commands, modules, servlets,
+            advanced configuration, validation, HTTP clients, database clients, templates, etc.),
+            all of which is covered in <a href="manual.html">by Dropwizard's manual.</a>
+        </p>
+
+        <p><a class="btn" href="manual.html">Learn more about Dropwizard &raquo;</a></p>
+
+        <p><a class="btn" href="http://www.sonatype.com/books/mvnref-book/reference/">Learn more about Maven &raquo;</a></p>
+
+        <p><a class="btn" href="http://wiki.eclipse.org/Jetty">Learn more about Jetty &raquo;</a></p>
+
+        <p><a class="btn" href="http://jersey.java.net/nonav/documentation/latest/user-guide.html">Learn more about Jersey &raquo;</a></p>
+
+        <p><a class="btn" href="http://wiki.fasterxml.com/JacksonDocumentation">Learn more about Jackson &raquo;</a></p>
+
+        <p><a class="btn" href="http://www.yaml.org/YAML_for_ruby.html">Learn more about YAML &raquo;</a></p>
+
+        <footer>
+            <p>&copy; Yammer 2011</p>
+        </footer>
+    </div>
+</div>
+
+</body>
+</html>
