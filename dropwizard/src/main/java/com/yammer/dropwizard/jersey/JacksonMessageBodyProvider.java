@@ -3,6 +3,7 @@ package com.yammer.dropwizard.jersey;
 import com.google.common.collect.ImmutableList;
 import com.yammer.dropwizard.json.Json;
 import com.yammer.dropwizard.validation.Validator;
+import org.eclipse.jetty.io.EofException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -113,6 +114,8 @@ public class JacksonMessageBodyProvider implements MessageBodyReader<Object>,
                         OutputStream entityStream) throws IOException, WebApplicationException {
         try {
             Json.write(entityStream, t);
+        } catch (EofException ignored) {
+            // we don't care about these
         } catch (IOException e) {
             LOGGER.error("Error writing response", e);
         }
