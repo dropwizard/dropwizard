@@ -93,11 +93,22 @@ public class DatabaseTest {
     }
 
     @Test
-    public void sqlObjectsCanReturnImmutableLists() throws Exception {
+    public void sqlObjectsCanAcceptOptionalParams() throws Exception {
         final PersonDAO dao = database.open(PersonDAO.class);
         try {
             assertThat(dao.findByName(Optional.of("Coda Hale")),
                        is("Coda Hale"));
+        } finally {
+            database.close(dao);
+        }
+    }
+
+    @Test
+    public void sqlObjectsCanReturnImmutableLists() throws Exception {
+        final PersonDAO dao = database.open(PersonDAO.class);
+        try {
+            assertThat(dao.findAllNames(),
+                       is(ImmutableList.of("Coda Hale", "Kris Gale", "Old Guy")));
         } finally {
             database.close(dao);
         }

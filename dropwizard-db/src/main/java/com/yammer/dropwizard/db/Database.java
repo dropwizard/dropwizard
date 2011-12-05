@@ -33,6 +33,7 @@ public class Database extends DBI implements Managed {
         setStatementRewriter(new NamePrependingStatementRewriter());
         setStatementLocator(new ScopedStatementLocator());
         registerArgumentFactory(new OptionalArgumentFactory());
+        registerContainerFactory(new ImmutableListContainerFactory());
     }
 
     @Override
