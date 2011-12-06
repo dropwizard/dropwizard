@@ -4,14 +4,14 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.yammer</groupId>
+    <groupId>com.yammer.dropwizard</groupId>
     <artifactId>dropwizard-parent</artifactId>
     <version>0.1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Dropwizard Project</name>
 
     <modules>
-        <module>dropwizard</module>
+        <module>dropwizard-core</module>
         <module>dropwizard-client</module>
         <module>dropwizard-db</module>
         <module>dropwizard-example</module>
