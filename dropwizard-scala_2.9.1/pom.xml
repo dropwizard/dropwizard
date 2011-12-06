@@ -11,7 +11,7 @@
     </parent>
 
     <groupId>com.yammer.dropwizard</groupId>
-    <artifactId>dropwizard_2.9.1</artifactId>
+    <artifactId>dropwizard-scala_2.9.1</artifactId>
     <name>Dropwizard for Scala ${scala.version}</name>
 
     <properties>
@@ -26,6 +26,10 @@
         <repository>
             <id>nativelibs4java</id>
             <url>http://nativelibs4java.sourceforge.net/maven</url>
+        </repository>
+        <repository>
+            <id>repo.codahale.com</id>
+            <url>http://repo.codahale.com/</url>
         </repository>
     </repositories>
 
@@ -43,8 +47,8 @@
             <version>${scala.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.yammer</groupId>
-            <artifactId>dropwizard</artifactId>
+            <groupId>com.yammer.dropwizard</groupId>
+            <artifactId>dropwizard-core</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
