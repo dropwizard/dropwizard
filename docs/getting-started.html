@@ -14,16 +14,8 @@
     <script src="js/lang-yaml.js"></script>
 
     <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/additional.css">
     <link rel="stylesheet" href="css/prettify.css">
-    <style type="text/css">
-        body {
-            padding-top: 60px;
-        }
-
-        .content a {
-            font-weight: bold;
-        }
-    </style>
 </head>
 
 <body onload="prettyPrint();">
@@ -64,9 +56,9 @@
     <div class="content">
         <h1>Getting Started</h1>
         
-        <p>
+        <p class="lead">
             The goal of this document is to guide you through the process of creating a simple
-            Dropwizard project: Hello World. Along the way, we‘ll explain the various underlying
+            Dropwizard project: Hello World. Along the way, we’ll explain the various underlying
             libraries and their roles, important concepts in Dropwizard, and suggest some
             organizational techniques to help you as your project grows. (Or you can just skip to
             the <a href="#maven">fun part</a>.)
@@ -110,7 +102,7 @@
         <h3>Jackson <small>for JSON</small></h3>
         
         <p>
-            In terms of data formats, JSON has become the web‘s <em>lingua franca</em>, and
+            In terms of data formats, JSON has become the web’s <em>lingua franca</em>, and
             <a href="http://jackson.codehaus.org/">Jackson</a> is the king of JSON on the JVM. In
             addition to being lightning fast, it has a sophisticated object mapper, allowing you to
             export your domain models directly.
@@ -120,7 +112,7 @@
         
         <p>
             Our very own <a href="https://github.com/codahale/metrics">Metrics</a>
-            library rounds things out, providing you with unparalleled insight into your code‘s
+            library rounds things out, providing you with unparalleled insight into your code’s
             behavior in your production environment.
         </p>
 
@@ -177,11 +169,11 @@
             <a href="http://buildr.apache.org/">Buildr</a>,
             <a href="http://www.gradle.org/">Gradle</a>,
             <a href="https://github.com/harrah/xsbt/wiki">SBT</a>,
-            or <a href="http://gant.codehaus.org/">Gant</a> fan, that‘s cool, but we use Maven and
+            or <a href="http://gant.codehaus.org/">Gant</a> fan, that’s cool, but we use Maven and
             we'll be using Maven as we go through this example service. If you have any questions
             about how Maven works,
             <a href="http://www.sonatype.com/books/mvnref-book/reference/">Maven: The Complete Reference</a>
-            should have what you‘re looking for. (We‘re assuming you know how to create a new
+            should have what you’re looking for. (We’re assuming you know how to create a new
             Maven project.)
         </p>
 
@@ -211,7 +203,7 @@
 &lt;/dependencies&gt;</pre>
         
         <p>
-            Alright, that‘s enough XML. We‘ve got a Maven project set up now, and it‘s time to start
+            Alright, that’s enough XML. We’ve got a Maven project set up now, and it’s time to start
             writing real code.
         </p>
 
@@ -223,14 +215,14 @@
             Each Dropwizard service has its own subclass of the <code>Configuration</code> class
             which specify environment-specific parameters. These parameters are specified in a
             <a href="http://www.yaml.org/">YAML</a> configuration file which is deserialized to
-            an instance of your service‘s configuration class and validated.
+            an instance of your service’s configuration class and validated.
         </p>
         
         <p>
-            The service we‘re building is a high-performance Hello World service, and part of our
+            The service we’re building is a high-performance Hello World service, and part of our
             requirements is that we need to be able to vary how it says hello from environment to
-            environment. We‘ll need to specify at least two things to begin with: a template for
-            saying hello and a default name to use in case the user doesn‘t specify their name.
+            environment. We’ll need to specify at least two things to begin with: a template for
+            saying hello and a default name to use in case the user doesn’t specify their name.
         </p>
         
         <p>
@@ -259,7 +251,7 @@ public class HelloWorldConfiguration extends Configuration {
     }
 }</pre>
         <p>
-            There's a lot going on here, so let‘s unpack a bit of it.
+            There's a lot going on here, so let’s unpack a bit of it.
         </p>
         
         <p>
@@ -268,7 +260,7 @@ public class HelloWorldConfiguration extends Configuration {
             and <code>defaultName</code>, the default name to use. Both <code>template</code> and
             <code>defaultName</code> are annotated with <code>@NotEmpty</code>, so if the YAML
             configuration file has blank values for either or is missing <code>template</code>
-            entirely an informative exception will be thrown and your service won‘t start.
+            entirely an informative exception will be thrown and your service won’t start.
         </p>
         
         <p>
@@ -285,8 +277,8 @@ defaultName: Stranger</pre>
         </p>
         
         <p>
-            So save that YAML file as <code>hello-world.yml</code>, because we‘ll be getting up
-            and running pretty soon and we‘ll need it. Next up, we‘re creating our service class!
+            So save that YAML file as <code>hello-world.yml</code>, because we’ll be getting up
+            and running pretty soon and we’ll need it. Next up, we’re creating our service class!
         </p>
 
         <hr>
@@ -294,7 +286,7 @@ defaultName: Stranger</pre>
         <h2 id="service">Creating A Service Class</h2>
 
         <p>
-            Combined with your project‘s <code>Configuration</code> subclass, its
+            Combined with your project’s <code>Configuration</code> subclass, its
             <code>Service</code> form the core of your Dropwizard service. The <code>Service</code>
             class pulls together the various modules and commands which provide basic functionality.
             (More on that later.) For now, though, our <code>HelloWorldService</code> looks like
@@ -325,13 +317,13 @@ public class HelloWorldService extends Service&lt;HelloWorldConfiguration&gt; {
 }</pre>
 
         <p>
-            As you can see, <code>HelloWorldService</code> is parameterized with the service‘s
+            As you can see, <code>HelloWorldService</code> is parameterized with the service’s
             configuration type, <code>HelloWorldConfiguration</code>.
-            <code>HelloWorldService</code>‘s constructor provides the service‘s name:
-            <code>hello-world</code>. Also, we‘ve added a <code>static</code> <code>main</code>
-            method, which will be our service‘s entry point. Right now, we don‘t have any
+            <code>HelloWorldService</code>’s constructor provides the service’s name:
+            <code>hello-world</code>. Also, we’ve added a <code>static</code> <code>main</code>
+            method, which will be our service’s entry point. Right now, we don’t have any
             functionality implemented, so our <code>initialize</code> method is a little boring.
-            Let‘s fix that!
+            Let’s fix that!
         </p>
 
         <hr>
@@ -387,7 +379,7 @@ public class Saying {
         </p>
         
         <p>
-            First, it‘s immutable. This makes <code>Saying</code> instances <em>very</em> easy to
+            First, it’s immutable. This makes <code>Saying</code> instances <em>very</em> easy to
             reason about multi-threaded environments as well as single-threaded environments.
             Second, it uses the Java Bean standard for the <code>id</code> and <code>code</code>
             properties. This allows Jackson to serialize it to the JSON we need. The Jackson object
@@ -397,7 +389,7 @@ public class Saying {
         </p>
         
         <p>
-            Now that we‘ve got our representation class, it makes sense to start in on the resource
+            Now that we’ve got our representation class, it makes sense to start in on the resource
             it represents.
         </p>
 
@@ -458,14 +450,14 @@ public class HelloWorldResource {
 }</pre>
         
         <p>
-            Finally, we‘re in the thick of it! Let‘s start from the top and work our way down.
+            Finally, we’re in the thick of it! Let’s start from the top and work our way down.
         </p>
         
         <p>
             <code>HelloWorldResource</code> has two annotations: <code>@Path</code> and
             <code>@Produces</code>. <code>@Path("/hello-world")</code> tells Jersey that this
             resource is accessible at the URI <code>/hello-world</code>, and
-            <code>@Produces(MediaType.APPLICATION_JSON)</code> lets Jersey‘s content negotiation
+            <code>@Produces(MediaType.APPLICATION_JSON)</code> lets Jersey’s content negotiation
             code know that this resource produces representations which are
             <code>application/json</code>.
         </p>
@@ -479,13 +471,17 @@ public class HelloWorldResource {
             <code>HelloWorldResource</code> takes two parameters for construction: the
             <code>template</code> it uses to produce the saying and the <code>defaultName</code>
             used when the user declines to tell us their name. An <code>AtomicLong</code> provides
-            us with a cheap, thread-safe way of generating unique(ish) IDs. (<strong>N.B.:</strong>
-            resource classes are used by multiple threads concurrently. In general, we recommend
-            that resources be stateless/immutable, but it‘s important to keep the context in mind.)
+            us with a cheap, thread-safe way of generating unique(ish) IDs.
         </p>
         
         <p>
-            <code>sayHello(Optional&lt;String&gt;)</code> is the meat of this class, and it‘s a
+            <strong>Remember</strong>: Resource classes are used by multiple threads concurrently.
+            In general, we recommend that resources be stateless/immutable, but it’s important to
+            keep the context in mind.
+        </p>
+        
+        <p>
+            <code>sayHello(Optional&lt;String&gt;)</code> is the meat of this class, and it’s a
             fairly simple method. The <code>@QueryParam("name")</code> tells Jersey to map the
             <code>name</code> parameter from the query string to the <code>name</code> parameter
             in the method. If the client sends a request to <code>/hello-world?name=Dougie</code>,
@@ -517,7 +513,7 @@ public class HelloWorldResource {
             <code>HelloWorldService</code> and add this new resource class. In its
             <code>initialize</code> method we can read the template and default name from the
             <code>HelloWorldConfiguration</code> instance, create a new
-            <code>HelloWorldService</code> instance, and then add it to the service‘s environment:
+            <code>HelloWorldService</code> instance, and then add it to the service’s environment:
         </p>
 
         <pre class="prettyprint lang-java">
@@ -553,7 +549,7 @@ protected void initialize(HelloWorldConfiguration configuration,
 
         <p>
             Since formatting strings is not likely to fail while a service is running (unlike,
-            say, a database connection pool), we‘ll have to get a little creative here. We‘ll add
+            say, a database connection pool), we’ll have to get a little creative here. We’ll add
             a health check to make sure we can actually format the provided template:
         </p>
 
@@ -597,7 +593,7 @@ public class TemplateHealthCheck extends HealthCheck {
             <code>Hello, %s%</code> in the configuration file), then
             <code>String.format(String, Object...)</code> will throw an
             <code>IllegalFormatException</code> and the health check will implicitly fail. If the
-            rendered saying doesn‘t include the test string, the health check will explicitly fail
+            rendered saying doesn’t include the test string, the health check will explicitly fail
             by returning an unhealthy <code>Result</code>.
         </p>
         
@@ -667,21 +663,21 @@ protected void initialize(HelloWorldConfiguration configuration,
 
         <ul>
             <li>
-                Produce a <code>pom.xml</code> file which doesn‘t include dependencies for the
+                Produce a <code>pom.xml</code> file which doesn’t include dependencies for the
                 libraries whose contents are included in the fat JAR.
             </li>
             <li>
                 Collate the various <code>META-INF/services</code> entries in the JARs instead of
-                overwriting them. (<strong>N.B.:</strong> Jersey doesn‘t work without those.)
+                overwriting them. (Jersey doesn’t work without those.)
             </li>
             <li>
-                Set <code>com.example.helloworld.HelloWorldService</code> as the JAR‘s
+                Set <code>com.example.helloworld.HelloWorldService</code> as the JAR’s
                 <code>MainClass</code>.
             </li>
         </ul>
 
         <p>
-            Once you‘ve got that configured, go into your project directory and run
+            Once you’ve got that configured, go into your project directory and run
             <code>mvn package</code> (or run the <code>package</code> goal from your IDE). You
             should see something like this:
         </p>
@@ -704,7 +700,7 @@ protected void initialize(HelloWorldConfiguration configuration,
 [INFO] ------------------------------------------------------------------------</pre>
 
         <p>
-            <strong>Congratulations!</strong> You‘ve built your first Dropwizard project! Now it‘s
+            <strong>Congratulations!</strong> You’ve built your first Dropwizard project! Now it’s
             time to run it!
         </p>
 
@@ -713,7 +709,7 @@ protected void initialize(HelloWorldConfiguration configuration,
         <h2 id="running">Running Your Service</h2>
         
         <p>
-            Now that you‘ve built a JAR file, it‘s time to run it.
+            Now that you’ve built a JAR file, it’s time to run it.
         </p>
         
         <p>
@@ -738,7 +734,7 @@ usage: java -jar dropwizard-example-0.1.0-SNAPSHOT.jar server &lt;config
             Dropwizard takes the first command line argument and dispatches it to a matching
             command. In this case, the only command available is <code>server</code>, which runs
             your service as an HTTP server. The <code>server</code> command requires a configuration
-            file, so let‘s go ahead and give it
+            file, so let’s go ahead and give it
             <a href="#configuration">the one we previous saved</a>:
             <code>java -jar target/hello-world-0.0.1-SNAPSHOT.jar server hello-world.yml</code>
         </p>
@@ -769,13 +765,13 @@ INFO  [2011-12-03 00:38:33,238] org.eclipse.jetty.server.AbstractConnector: Star
         </p>
         
         <p>
-            But while it‘s up, let‘s give it a whirl!
+            But while it’s up, let’s give it a whirl!
             <a target="_blank" href="http://localhost:8080/hello-world">Click here to say hello!</a>
             <a target="_blank" href="http://localhost:8080/hello-world?name=Successful+Dropwizard+User">Click here to get even friendlier!</a>
         </p>
 
         <p>
-            So, we‘re generating sayings. Awesome. But that‘s not all your service can do. One of
+            So, we’re generating sayings. Awesome. But that’s not all your service can do. One of
             the main reasons for using Dropwizard is the out-of-the-box operational tools it
             provides, all of which can be found
             <a target="_blank" href="http://localhost:8081/">on the admin port</a>.
@@ -784,7 +780,7 @@ INFO  [2011-12-03 00:38:33,238] org.eclipse.jetty.server.AbstractConnector: Star
         <p>
             If you click through to
             <a target="_blank" href="http://localhost:8081/metrics">metrics</a>, you can see all of
-            your service‘s metrics represented as a JSON object.
+            your service’s metrics represented as a JSON object.
         </p>
 
         <p>
@@ -813,15 +809,15 @@ INFO  [2011-12-03 00:38:33,238] org.eclipse.jetty.server.AbstractConnector: Star
         <h2 id="next-steps">Next Steps</h2>
         
         <p>
-            Well, congratulations. You‘ve got a Hello World service ready for production (except for
-            the lack of tests) that‘s capable of doing 15,000-20,000 requests per second. Hopefully
+            Well, congratulations. You’ve got a Hello World service ready for production (except for
+            the lack of tests) that’s capable of doing 15,000-20,000 requests per second. Hopefully
             you've gotten a feel for how Dropwizard combines Jetty, Jersey, Jackson, and other
             stable, mature libraries to provide a phenomenal platform for developing RESTful web
             services.
         </p>
         
         <p>
-            There‘s a lot more to Dropwizard than is covered here (commands, modules, servlets,
+            There’s a lot more to Dropwizard than is covered here (commands, modules, servlets,
             advanced configuration, validation, HTTP clients, database clients, templates, etc.),
             all of which is covered in <a href="manual.html">by Dropwizard's manual.</a>
         </p>
