@@ -14,13 +14,6 @@
     <artifactId>dropwizard-db</artifactId>
     <name>Dropwizard Database Client</name>
 
-    <repositories>
-        <repository>
-            <id>sonatype-nexus-snapshots</id>
-            <url>http://oss.sonatype.org/content/repositories/snapshots</url>
-        </repository>
-    </repositories>
-
     <dependencies>
         <dependency>
             <groupId>com.yammer</groupId>
@@ -30,7 +23,7 @@
         <dependency>
             <groupId>org.jdbi</groupId>
             <artifactId>jdbi</artifactId>
-            <version>2.28-SNAPSHOT</version>
+            <version>2.28</version>
         </dependency>
         <dependency>
             <groupId>org.apache.tomcat</groupId>
