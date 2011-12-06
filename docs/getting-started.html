@@ -178,26 +178,28 @@
         </p>
 
         <p>
-            <strong>First off</strong>, add the repository where the Dropwizard JARs are hosted:
+            <strong>First off</strong>, add the repository where the Dropwizard
+            <code>SNAPSHOT</code>JARs are hosted:
         </p>
 
         <pre class="prettyprint lang-xml">
 &lt;repositories&gt;
     &lt;repository&gt;
-        &lt;id&gt;repo.codahale.com&lt;/id&gt;
-        &lt;url&gt;http://repo.codahale.com&lt;/url&gt;
+        &lt;id&gt;sonatype-nexus-snapshots&lt;/id&gt;
+        &lt;name&gt;Sonatype Nexus Snapshots&lt;/name&gt;
+        &lt;url&gt;http://oss.sonatype.org/content/repositories/snapshots&lt;/url&gt;
     &lt;/repository&gt;
 &lt;/repositories&gt;</pre>
 
         <p>
-            <strong>Second</strong>, add the <code>dropwizard</code> library as a dependency:
+            <strong>Second</strong>, add the <code>dropwizard-core</code> library as a dependency:
         </p>
 
         <pre class="prettyprint lang-xml">
 &lt;dependencies&gt;
     &lt;dependency&gt;
-        &lt;groupId&gt;com.yammer&lt;/groupId&gt;
-        &lt;artifactId&gt;dropwizard&lt;/artifactId&gt;
+        &lt;groupId&gt;com.yammer.dropwizard&lt;/groupId&gt;
+        &lt;artifactId&gt;dropwizard-core&lt;/artifactId&gt;
         &lt;version&gt;0.1.0-SNAPSHOT&lt;/version&gt;
     &lt;/dependency&gt;
 &lt;/dependencies&gt;</pre>
