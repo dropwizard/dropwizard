@@ -10,7 +10,7 @@
         <version>0.1.0-SNAPSHOT</version>
     </parent>
 
-    <groupId>com.yammer</groupId>
+    <groupId>com.yammer.dropwizard</groupId>
     <artifactId>dropwizard-client</artifactId>
     <name>Dropwizard HTTP Client</name>
 
