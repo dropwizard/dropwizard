@@ -26,7 +26,7 @@ public abstract class ManagedCommand<T extends Configuration> extends Configured
                              CommandLine params) throws Exception {
         new LoggingFactory(configuration.getLoggingConfiguration()).configure();
         final Environment environment = new Environment();
-        service.initializeWithModules(configuration, environment);
+        service.initializeWithBundles(configuration, environment);
         LOGGER.info("Starting " + service.getName());
         environment.start();
         try {

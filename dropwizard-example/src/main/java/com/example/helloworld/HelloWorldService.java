@@ -6,7 +6,7 @@ import com.example.helloworld.health.TemplateHealthCheck;
 import com.example.helloworld.resources.HelloWorldResource;
 import com.yammer.dropwizard.Service;
 import com.yammer.dropwizard.config.Environment;
-import com.yammer.dropwizard.modules.AssetsModule;
+import com.yammer.dropwizard.bundles.AssetsBundle;
 
 public class HelloWorldService extends Service<HelloWorldConfiguration> {
     public static void main(String[] args) throws Exception {
@@ -16,7 +16,7 @@ public class HelloWorldService extends Service<HelloWorldConfiguration> {
     private HelloWorldService() {
         super("hello-world");
         addCommand(new RenderCommand());
-        addModule(new AssetsModule());
+        addBundle(new AssetsBundle());
     }
 
     @Override

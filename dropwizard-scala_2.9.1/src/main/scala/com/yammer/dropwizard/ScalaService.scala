@@ -1,10 +1,10 @@
 package com.yammer.dropwizard
 
 import config.Configuration
-import modules.ScalaModule
+import bundles.ScalaBundle
 
 abstract class ScalaService[T <: Configuration](name: String) extends AbstractService[T](name) {
-  addModule(ScalaModule)
+  addBundle(ScalaBundle)
   override final def subclassServiceInsteadOfThis() {}
 
   final def main(args: Array[String]) {

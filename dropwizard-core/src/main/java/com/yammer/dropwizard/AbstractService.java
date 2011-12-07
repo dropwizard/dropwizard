@@ -30,8 +30,8 @@ public abstract class AbstractService<T extends Configuration> {
     }
 
     private final String name;
-    private final List<Module> modules;
-    private final List<ConfiguredModule<? super T>> configuredModules;
+    private final List<Bundle> bundles;
+    private final List<ConfiguredBundle<? super T>> configuredBundles;
     private final SortedMap<String, Command> commands;
 
     /**
@@ -41,8 +41,8 @@ public abstract class AbstractService<T extends Configuration> {
      */
     protected AbstractService(String name) {
         this.name = name;
-        this.modules = Lists.newArrayList();
-        this.configuredModules = Lists.newArrayList();
+        this.bundles = Lists.newArrayList();
+        this.configuredBundles = Lists.newArrayList();
         this.commands = Maps.newTreeMap();
         addCommand(new ServerCommand<T>(getConfigurationClass()));
     }
@@ -68,24 +68,24 @@ public abstract class AbstractService<T extends Configuration> {
     }
 
     /**
-     * Registers a {@link Module} to be used in initializing the service's {@link Environment}.
+     * Registers a {@link Bundle} to be used in initializing the service's {@link Environment}.
      *
-     * @param module    a module
-     * @see Module
+     * @param bundle    a bundle
+     * @see Bundle
      */
-    protected final void addModule(Module module) {
-        modules.add(module);
+    protected final void addBundle(Bundle bundle) {
+        bundles.add(bundle);
     }
 
     /**
-     * Registers a {@link ConfiguredModule} to be used in initializing the service's
+     * Registers a {@link ConfiguredBundle} to be used in initializing the service's
      * {@link Environment}.
      *
-     * @param module a module
-     * @see ConfiguredModule
+     * @param bundle a bundle
+     * @see ConfiguredBundle
      */
-    protected final void addModule(ConfiguredModule<? super T> module) {
-        configuredModules.add(module);
+    protected final void addBundle(ConfiguredBundle<? super T> bundle) {
+        configuredBundles.add(bundle);
     }
 
     /**
@@ -116,7 +116,7 @@ public abstract class AbstractService<T extends Configuration> {
     }
 
     /**
-     * When the service runs, this is called after the {@link Module}s are run. Override it to add
+     * When the service runs, this is called after the {@link Bundle}s are run. Override it to add
      * providers, resources, etc. for your service.
      *
      * @param configuration    the parsed {@link Configuration} object
@@ -127,19 +127,19 @@ public abstract class AbstractService<T extends Configuration> {
 
     /**
      * Initializes the given {@link Environment} given a {@link Configuration} instances. First the
-     * modules are initialized in the order they were added, then the service's
+     * bundles are initialized in the order they were added, then the service's
      * {@link #initialize(Configuration, Environment)} method is called.
      *
      * @param configuration    the parsed {@link Configuration} object
      * @param environment      the service's {@link Environment}
      * @throws Exception if something goes wrong
      */
-    public final void initializeWithModules(T configuration, Environment environment) throws Exception {
-        for (Module module : modules) {
-            module.initialize(environment);
+    public final void initializeWithBundles(T configuration, Environment environment) throws Exception {
+        for (Bundle bundle : bundles) {
+            bundle.initialize(environment);
         }
-        for (ConfiguredModule<? super T> module : configuredModules) {
-            module.initialize(configuration, environment);
+        for (ConfiguredBundle<? super T> bundle : configuredBundles) {
+            bundle.initialize(configuration, environment);
         }
         initialize(configuration, environment);
     }

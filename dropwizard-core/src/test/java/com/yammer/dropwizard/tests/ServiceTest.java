@@ -1,6 +1,6 @@
 package com.yammer.dropwizard.tests;
 
-import com.yammer.dropwizard.Module;
+import com.yammer.dropwizard.Bundle;
 import com.yammer.dropwizard.Service;
 import com.yammer.dropwizard.config.Configuration;
 import com.yammer.dropwizard.config.Environment;
@@ -19,7 +19,7 @@ public class ServiceTest {
     private class FakeService extends Service<FakeConfiguration> {
         FakeService() {
             super("test");
-            addModule(module);
+            addBundle(bundle);
         }
 
         @Override
@@ -28,7 +28,7 @@ public class ServiceTest {
         }
     }
 
-    private final Module module = mock(Module.class);
+    private final Bundle bundle = mock(Bundle.class);
     private final FakeService service = new FakeService();
 
     @Test

@@ -1,11 +1,11 @@
-package com.yammer.dropwizard.modules;
+package com.yammer.dropwizard.bundles;
 
 import com.sun.jersey.freemarker.FreemarkerViewProcessor;
-import com.yammer.dropwizard.Module;
+import com.yammer.dropwizard.Bundle;
 import com.yammer.dropwizard.config.Environment;
 
 /**
- * A {@link Module} which enables the rendering of FreeMarker templates by your service.
+ * A {@link Bundle} which enables the rendering of FreeMarker templates by your service.
  *
  * <p>A resource method with a template would looks something like this:</p>
  *
@@ -35,22 +35,22 @@ import com.yammer.dropwizard.config.Environment;
  *
  * @see <a href="http://freemarker.sourceforge.net/docs/index.html">FreeMarker Manual</a>
  */
-public class TemplateModule implements Module {
+public class TemplateBundle implements Bundle {
     private final String templatePath;
 
     /**
-     * Creates a new {@link TemplateModule} with no specified template path.
+     * Creates a new {@link TemplateBundle} with no specified template path.
      */
-    public TemplateModule() {
+    public TemplateBundle() {
         this(null);
     }
 
     /**
-     * Creates a new {@link TemplateModule} with the specified template path.
+     * Creates a new {@link TemplateBundle} with the specified template path.
      *
      * @param templatePath    the location, in the class path, of the FreeMarker templates
      */
-    public TemplateModule(String templatePath) {
+    public TemplateBundle(String templatePath) {
         this.templatePath = templatePath;
     }
 

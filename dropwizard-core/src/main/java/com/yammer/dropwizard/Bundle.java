@@ -3,9 +3,9 @@ package com.yammer.dropwizard;
 import com.yammer.dropwizard.config.Environment;
 
 /**
- * A reusable module, used to define blocks of service behavior.
+ * A reusable bundle of functionality, used to define blocks of service behavior.
  */
-public interface Module {
+public interface Bundle {
     /**
      * Initializes the environment.
      *

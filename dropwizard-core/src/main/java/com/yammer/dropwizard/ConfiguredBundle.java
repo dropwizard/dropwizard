@@ -4,12 +4,12 @@ import com.yammer.dropwizard.config.Configuration;
 import com.yammer.dropwizard.config.Environment;
 
 /**
- * A reusable module, used to define blocks of service behavior that are conditional on
- * configuration parameters.
+ * A reusable bundle of functionality, used to define blocks of service behavior that are
+ * conditional on configuration parameters.
  *
  * @param <T>    the required configuration class
  */
-public interface ConfiguredModule<T extends Configuration> {
+public interface ConfiguredBundle<T extends Configuration> {
     /**
      * Initializes the environment.
      *

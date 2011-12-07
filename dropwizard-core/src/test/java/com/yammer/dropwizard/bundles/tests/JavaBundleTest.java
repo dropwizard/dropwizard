@@ -1,37 +1,37 @@
-package com.yammer.dropwizard.modules.tests;
+package com.yammer.dropwizard.bundles.tests;
 
 import com.yammer.dropwizard.config.Environment;
 import com.yammer.dropwizard.jersey.JacksonMessageBodyProvider;
 import com.yammer.dropwizard.jersey.OauthTokenProvider;
 import com.yammer.dropwizard.jersey.OptionalQueryParamInjectableProvider;
-import com.yammer.dropwizard.modules.JavaModule;
+import com.yammer.dropwizard.bundles.JavaBundle;
 import org.junit.Test;
 
 import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-public class JavaModuleTest {
+public class JavaBundleTest {
     private final Environment environment = mock(Environment.class);
-    private final JavaModule module = new JavaModule();
+    private final JavaBundle bundle = new JavaBundle();
 
     @Test
     public void addsOAuthSupport() throws Exception {
-        module.initialize(environment);
+        bundle.initialize(environment);
 
         verify(environment).addProvider(isA(OauthTokenProvider.class));
     }
 
     @Test
     public void addsJSONSupport() throws Exception {
-        module.initialize(environment);
+        bundle.initialize(environment);
         
         verify(environment).addProvider(isA(JacksonMessageBodyProvider.class));
     }
 
     @Test
     public void addsOptionalQueryParamSupport() throws Exception {
-        module.initialize(environment);
+        bundle.initialize(environment);
 
         verify(environment).addProvider(isA(OptionalQueryParamInjectableProvider.class));
     }

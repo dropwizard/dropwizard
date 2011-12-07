@@ -1,7 +1,7 @@
 package com.yammer.dropwizard;
 
 import com.yammer.dropwizard.config.Configuration;
-import com.yammer.dropwizard.modules.JavaModule;
+import com.yammer.dropwizard.bundles.JavaBundle;
 
 /**
  * The default Java service class. Extend this to write your own service.
@@ -12,7 +12,7 @@ import com.yammer.dropwizard.modules.JavaModule;
 public abstract class Service<T extends Configuration> extends AbstractService<T> {
     protected Service(String name) {
         super(name);
-        addModule(new JavaModule());
+        addBundle(new JavaBundle());
     }
 
     @Override

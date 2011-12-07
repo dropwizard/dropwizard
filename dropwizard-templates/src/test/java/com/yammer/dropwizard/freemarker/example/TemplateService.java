@@ -3,7 +3,7 @@ package com.yammer.dropwizard.freemarker.example;
 import com.yammer.dropwizard.Service;
 import com.yammer.dropwizard.config.Configuration;
 import com.yammer.dropwizard.config.Environment;
-import com.yammer.dropwizard.modules.TemplateModule;
+import com.yammer.dropwizard.bundles.TemplateBundle;
 
 public class TemplateService extends Service<Configuration> {
     public static void main(String[] args) throws Exception {
@@ -12,7 +12,7 @@ public class TemplateService extends Service<Configuration> {
 
     private TemplateService() {
         super("template");
-        addModule(new TemplateModule());
+        addBundle(new TemplateBundle());
     }
 
     @Override
