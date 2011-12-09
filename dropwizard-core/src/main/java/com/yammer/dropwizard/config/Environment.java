@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Ordering;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.sun.jersey.api.core.DefaultResourceConfig;
 import com.sun.jersey.api.core.ResourceConfig;
 import com.sun.jersey.core.reflection.AnnotatedMethod;
@@ -12,6 +13,7 @@ import com.sun.jersey.spi.container.servlet.ServletContainer;
 import com.yammer.dropwizard.jersey.LoggingExceptionMapper;
 import com.yammer.dropwizard.jetty.JettyManaged;
 import com.yammer.dropwizard.jetty.NonblockingServletHolder;
+import com.yammer.dropwizard.lifecycle.ExecutorServiceManager;
 import com.yammer.dropwizard.lifecycle.Managed;
 import com.yammer.dropwizard.tasks.GarbageCollectionTask;
 import com.yammer.dropwizard.tasks.Task;
@@ -30,6 +32,7 @@ import javax.servlet.Servlet;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.Path;
 import javax.ws.rs.ext.Provider;
+import java.util.concurrent.*;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -252,6 +255,62 @@ public class Environment extends AbstractLifeCycle {
     public void setJerseyProperty(String name,
                                   @Nullable Object value) {
         config.getProperties().put(checkNotNull(name), value);
+    }
+
+    /**
+     * Creates a new {@link ExecutorService} instance with the given parameters whose lifecycle is
+     * managed by the service.
+     *
+     * @param nameFormat               a {@link String#format(String, Object...)}-compatible format
+     *                                 String, to which a unique integer (0, 1, etc.) will be
+     *                                 supplied as the single parameter.
+     * @param corePoolSize             the number of threads to keep in the pool, even if they are
+     *                                 idle.
+     * @param maximumPoolSize          the maximum number of threads to allow in the pool.
+     * @param keepAliveTime            when the number of threads is greater than the core, this is
+     *                                 the maximum time that excess idle threads will wait for new
+     *                                 tasks before terminating.
+     * @param unit                     the time unit for the keepAliveTime argument.
+     *
+     * @return a new {@link ExecutorService} instance
+     */
+    public ExecutorService managedExecutorService(String nameFormat,
+                                                  int corePoolSize,
+                                                  int maximumPoolSize,
+                                                  long keepAliveTime,
+                                                  TimeUnit unit) {
+        final ThreadFactory threadFactory = new ThreadFactoryBuilder().setNameFormat(nameFormat)
+                                                                      .build();
+        final ExecutorService service = new ThreadPoolExecutor(corePoolSize,
+                                                               maximumPoolSize,
+                                                               keepAliveTime,
+                                                               unit,
+                                                               new LinkedBlockingQueue<Runnable>(),
+                                                               threadFactory);
+        manage(new ExecutorServiceManager(service, 5, TimeUnit.SECONDS));
+        return service;
+    }
+
+    /**
+     * Creates a new {@link ScheduledExecutorService} instance with the given parameters whose
+     * lifecycle is managed by the service.
+     *
+     * @param nameFormat               a {@link String#format(String, Object...)}-compatible format
+     *                                 String, to which a unique integer (0, 1, etc.) will be
+     *                                 supplied as the single parameter.
+     * @param corePoolSize             the number of threads to keep in the pool, even if they are
+     *                                 idle.
+     *
+     * @return a new {@link ScheduledExecutorService} instance
+     */
+    public ScheduledExecutorService managedScheduledExecutorService(String nameFormat,
+                                                                    int corePoolSize) {
+        final ThreadFactory threadFactory = new ThreadFactoryBuilder().setNameFormat(nameFormat)
+                                                                      .build();
+        final ScheduledExecutorService service = new ScheduledThreadPoolExecutor(corePoolSize,
+                                                                                 threadFactory);
+        manage(new ExecutorServiceManager(service, 5, TimeUnit.SECONDS));
+        return service;
     }
 
     /*
