@@ -38,16 +38,34 @@
         <div class="well">
             <h5>Dropwizard User’s Manual</h5>
             <ul>
+                <li><a href="#organization">Organization</a></li>
                 <li>
                     <a href="#services">Services</a>
                     <ul>
                         <li><a href="#configuration">Configuration</a></li>
-                        <li><a href="#initialization">Initialization</a></li>
+                        <li><a href="#environments">Environments</a></li>
+                        <li><a href="#health-checks">Health Checks</a></li>
                         <li><a href="#managed">Managed Objects</a></li>
-                        <li><a href="#commands">Commands</a></li>
+                        <li><a href="#bundles">Bundles</a></li>
+                        <li>
+                            <a href="#commands">Commands</a>
+                            <ul>
+                                <li><a href="#configured-commands">Configured Commands</a></li>
+                                <li><a href="#managed-commands">Managed Commands</a></li>
+                            </ul>
+                        </li>
+
                         <li><a href="#tasks">Tasks</a></li>
-                        <li><a href="#logging">Logging</a></li>
-                        <li><a href="#testing-services">Testing</a></li>
+                        <li>
+                            <a href="#logging">Logging</a>
+                            <ul>
+                                <li><a href="#console-logging">Console Logging</a></li>
+                                <li><a href="#file-logging">File Logging</a></li>
+                                <li><a href="#syslog-logging">Syslog Logging</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="#testing-services">Testing Services</a></li>
+                        <li><a href="#banners">Banners</a></li>
                     </ul>
                 </li>
                 <li>
@@ -69,7 +87,7 @@
                     <ul>
                         <li><a href="#json">Basic JSON</a></li>
                         <li>
-                            <a href="#custom-json">Advanced JSON</a>
+                            <a href="#advanced-json">Advanced JSON</a>
                             <ul>
                                 <li><a href="#snakecase">snake_case</a></li>
                             </ul>
@@ -81,14 +99,17 @@
                                 <li><a href="#advanced-validation">Advanced</a></li>
                             </ul>
                         </li>
+                        <li><a href="#streaming">Streaming Output</a></li>
                         <li><a href="#testing-representations">Testing</a></li>
                     </ul>
                 </li>
+                <li><a href="#running">Running Services</a></li>
+                <li><a href="#production">In Production</a></li>
                 <li><a href="#client">Dropwizard Client</a></li>
                 <li><a href="#db">Dropwizard DB</a></li>
                 <li><a href="#templates">Dropwizard Templates</a></li>
-                <li><a href="#scala">Dropwizard Scala</a></li>
-                <li><a href="#production">In Production</a></li>
+                <li><a href="#scala">Dropwizard &amp; Scala</a></li>
+
             </ul>
         </div>
     </div>
@@ -97,8 +118,630 @@
         <h1>Dropwizard User’s Manual</h1>
 
         <p>
-            coming soon
+            This goal of this document is to provide you with all the information required to
+            build, organize, test, deploy, and maintain Dropwizard-based services.
         </p>
+
+        <h2 id="organization">Organization</h2>
+
+        <p>
+            In general, we recommend you separate your projects into three Maven modules:
+            <code><strong>project-api</strong></code>, <code><strong>project-client</strong></code>,
+            and <code><strong>project-server</strong></code>. <code>project-api</code> should
+            contain your <a href="#representations">representation classes</a>;
+            <code>project-client</code> should use those classes and an HTTP client from
+            <a href="#client"><code>dropwizard-client</code></a> to implement a full-fledged client
+            for your service, and <code>project-server</code> should provide the actual service
+            implementation, including <a href="#resources">resources</a>.
+        </p>
+
+        <p>Our services tend to look like this:</p>
+
+        <dl>
+            <dt><code><strong>com.example.myservice.api</strong></code></dt>
+            <dd><a href="#representations">Representation</a> classes</dd>
+            <dt><code><strong>com.example.myservice.cli</strong></code></dt>
+            <dd>Service <a href="#commands">command</a> classes</dd>
+            <dt><code><strong>com.example.myservice.client</strong></code></dt>
+            <dd>Client implementation</dd>
+            <dt><code><strong>com.example.myservice.core</strong></code></dt>
+            <dd>Domain implementation</dd>
+            <dt><code><strong>com.example.myservice.health</strong></code></dt>
+            <dd><a href="#health-checks">Health check</a> classes</dd>
+            <dt><code><strong>com.example.myservice.resources</strong></code></dt>
+            <dd><a href="#resources">Resource</a> classes</dd>
+            <dt><code><strong>com.example.myservice.MyService</strong></code></dt>
+            <dd>The <a href="#services">service</a> class</dd>
+            <dt><code><strong>com.example.myservice.MyServiceConfiguration</strong></code></dt>
+            <dd>The <a href="#configuration">configuration</a> class</dd>
+        </dl>
+
+        <h2 id="services">Services</h2>
+
+        <p>
+            The main entry point into a Dropwizard service is, unsurprisingly, the
+            <code>Service</code> class. Each <code>Service</code> has a <strong>name</strong>,
+            which is mostly used to render the command-line interface. In the constructor of your
+            <code>Service</code> you can add <a href="#bundles">bundles</a> and
+            <a href="#commands">commands</a> to your service.
+        </p>
+
+        <h3 id="configuration">Configuration</h3>
+
+        <p>
+            Each <code>Service</code> subclass has a single type parameter: that of its matching
+            <code>Configuration</code> subclass. These are usually at the root of your service’s
+            main package. For example, your User service would have two classes:
+            <code>UserServiceConfiguration</code>, extending <code>Configuration</code>,
+            and <code>UserService</code>, extending
+            <code>Service&lt;UserServiceConfiguration&gt;</code>.
+        </p>
+
+        <p>
+            When your service runs a <a href="#configured-commands">configured command</a> like the
+            <code>server</code> command, Dropwizard parses the provided YAML configuration file and
+            builds an instance of your service’s configuration class by mapping YAML field names to
+            object field names.
+        </p>
+
+        <p>
+            In order to keep your configuration file and class manageable, we recommend grouping
+            related configuration parameters into independent configuration classes.  If your
+            service requires a set of configuration parameters in order to connect to a message
+            queue, for example, we recommend that you create a new
+            <code>MessageQueueConfiguration</code> class:
+        </p>
+
+        <pre class="prettyprint lang-java">
+public class MessageQueueConfiguration {
+    @NotEmpty
+    private String host;
+
+    @Min(1)
+    @Max(65535)
+    private int port = 5672;
+
+    public String getHost() {
+        return host;
+    }
+
+    public int getPort() {
+        return port;
+    }
+}</pre>
+
+        <p>
+            Your main <code>Configuration</code> subclass can then include this as a member field:
+        </p>
+
+        <pre class="prettyprint lang-java">
+public class ExampleServiceConfiguration extends Configuration {
+    @NotNull
+    private MessageQueueConfiguration messageQueue = new MessageQueueConfiguration();
+
+    public MessageQueueConfiguration getMessageQueueConfiguration() {
+        return messageQueue;
+    }
+}</pre>
+
+        <p>
+            Then, in your service’s YAML file, you can use a nested <code>messageQueue</code> field:
+        </p>
+
+        <pre class="prettyprint lang-yaml">
+messageQueue:
+  host: mq.example.com
+  port: 5673</pre>
+
+        <p>
+            The <code>@NotNull</code>, <code>@NotEmpty</code>, <code>@Min</code>, and
+            <code>@Max</code> annotations are part of Dropwizard’s
+            <a href="#validation">validation</a> functionality. If your YAML configuration file’s
+            <code>messageQueue.host</code> field was missing (or was a blank string), Dropwizard
+            would refuse to start and would output an error message describing the issues.
+        </p>
+
+        <p>
+            Once your service has parsed the YAML file and constructed its
+            <code>Configuration</code> instance, Dropwizard then calls your <code>Service</code>
+            subclass to initialize your service’s <code>Environment</code>.
+        </p>
+
+        <h3 id="environments">Environments</h3>
+
+        <p>
+            A Dropwizard <code>Environment</code> consists of all the
+            <a href="#resources">resource classes</a>, servlets, filters,
+            <a href="#health-checks">health checks</a>, Jersey providers,
+            <a href="#managed">managed objects</a>, <a href="#tasks">tasks</a>, and Jersey
+            properties which your service provides.
+        </p>
+
+        <p>
+            Each <code>Service</code> subclass implements an <code>initialize</code> method. This
+            is where you should be creating new resource instances, etc., and adding them to the
+            given <code>Environment</code> class:
+        </p>
+
+        <pre class="prettyprint lang-java">
+@Override
+protected void initialize(ExampleConfiguration config,
+                          Environment environment) {
+    // encapsulate complicated setup logic in factories
+    final ThingyFactory thingyFactory = new ThingyFactory(config.getThingyConfiguration());
+
+    final Thingy thingy = thingyFactory.build();
+
+    environment.addResource(new ThingyResource(thingy));
+    environment.addHealthCheck(new ThingyHealthCheck(thingy));
+}</pre>
+
+        <p>
+            It’s important to keep the <code>initialize</code> method clean, so if creating an
+            instance of something is complicated, like the <code>Thingy</code> class above, extract
+            that logic into a factory.
+        </p>
+
+        <h3 id="health-checks">Health Checks</h3>
+
+        <p>
+            A health check is a runtime test which you can use to verify your service’s behavior
+            in its production environment. For example, you may want to ensure that your database
+            client is connected to the database:
+        </p>
+
+        <pre class="prettyprint lang-java">
+public class DatabaseHealthCheck extends HealthCheck {
+    private final Database database;
+
+    public DatabaseHealthCheck(Database database) {
+        this.database = database;
+    }
+
+    @Override
+    public String name() {
+        return "database";
+    }
+
+    @Override
+    public Result check() throws Exception {
+        if (database.isConnected()) {
+            return Result.healthy();
+        } else {
+            return Result.unhealthy("Cannot connect to " + database.getUrl());
+        }
+    }
+}</pre>
+        
+        <p>
+            You can then add this health check to your service’s environment:
+        </p>
+
+        <pre class="prettyprint lang-java">
+environment.addHealthCheck(new DatabaseHealthCheck(database));</pre>
+
+        <p>
+            By sending a <code>GET</code> request to <code>/healthcheck</code> on the admin port you
+            can run these tests and view the results:
+        </p>
+
+        <pre class="uglyprint">
+$ curl http://dw.example.com:8081/healthcheck
+* deadlocks: OK
+* database: OK</pre>
+
+        <p>
+            If all health checks report success, a <code>200 OK</code> is returned. If any fail,
+            a <code>500 Internal Server Error</code> is returned with the error messages and
+            exception stack traces (if an exception was thrown).
+        </p>
+
+        <p>
+            All Dropwizard services ship with the <code>deadlocks</code> health check installed by
+            default, which uses Java 1.6's built-in thread deadlock detection to determine if any
+            threads are deadlocked.
+        </p>
+
+        <h3 id="managed">Managed Objects</h3>
+
+        <p>
+            Most services involve objects which need to be started and stopped: thread pools,
+            database connections, etc. Dropwizard provides the <code>Managed</code> interface for
+            this. You can either have the class in question implement <code>Managed</code>’s
+            <code>start()</code> and <code>stop()</code> methods, or write a wrapper class which
+            does so. Adding a <code>Managed</code> instance to your service’s
+            <code>Environment</code> ties that object’s lifecycle to that of the service’s HTTP
+            server. Before the server starts, the <code>Managed</code>’s <code>start()</code> method
+            is called. After the server has stopped (and after its graceful shutdown period) the
+            <code>Managed</code>’s <code>stop()</code> method is called.
+        </p>
+
+        <p>
+            For example, given a theoretical <a href="http://riak.basho.com">Riak</a> client which
+            needs to be started and stopped:
+        </p>
+
+        <pre class="prettyprint lang-java">
+public class RiakClientManager implements Managed {
+    private final RiakClient client;
+
+    public RiakClientManager(RiakClient client) {
+        this.client = client;
+    }
+
+    @Override
+    public void start() throws Exception {
+        client.start();
+    }
+
+    @Override
+    public void stop() throws Exception {
+        client.stop();
+    }
+}</pre>
+
+        <p>
+            If <code>RiakClientManager#start()</code> throws an exception—e.g., an error connecting
+            to the server—your service will not start and a full exception will be logged. If
+            <code>RiakClientManager#stop()</code> throws an exception, the exception will be logged
+            but your service will still be able to shut down.
+        </p>
+
+        <p>
+            It should be noted that <code>Environment</code> has built-in constructors for
+            <code>ExecutorService</code> and <code>ScheduledExecutorService</code> instances which
+            are managed. See <code>Environment#managedExecutorService</code> and
+            <code>Environment#managedScheduledExecutorService</code> for details.
+        </p>
+
+        <h3 id="bundles">Bundles</h3>
+
+        <p>
+            A Dropwizard bundle is a reusable group of functionality, used to define blocks of a
+            service’s behavior. For example, <code>AssetBundle</code> provides a simple way to serve
+            static assets from your service’s <code>src/main/resources/assets</code> directory as
+            files available from <code>/assets/*</code> in your service.
+        </p>
+
+        <p>
+            Some bundles require configuration parameters. The bundles implement
+            <code>ConfiguredBundle</code> and will require your service’s <code>Configuration</code>
+            subclass to implement a specific interface.
+        </p>
+
+        <h3 id="commands">Commands</h3>
+
+        <p>
+            Commands are basic actions which Dropwizard runs based on the arguments provided on the
+            command line. The built-in <code>server</code> command, for example, spins up an HTTP
+            server and runs your service. Each <code>Command</code> subclass has a name and a set
+            of command line options which Dropwizard will use to parse the given command line
+            arguments.
+        </p>
+
+        <h4 id="configured-commands">Configured Commands</h4>
+
+        <p>
+            Some commands require access to configuration parameters and should extend the
+            <code>ConfiguredCommand</code> class, using your service’s <code>Configuration</code>
+            class as its type parameter. Dropwizard will treat the first argument on the command
+            line as the path to a YAML configuration file, parse and validate it, and provide your
+            command with an instance of the configuration class.
+        </p>
+
+        <h4 id="managed-commands">Managed Commands</h4>
+
+        <p>
+            Managed commands further extend configured commands by creating a lifecycle process for
+            your service’s <a href="#managed">managed objects</a>. All <code>Managed</code>
+            instances registered with your service’s <code>Environment</code> will be started before
+            your command is run, and will be stopped afterward.
+        </p>
+        
+        <h3 id="tasks">Tasks</h3>
+
+        <p>
+            A <code>Task</code> is a run-time action your service provides access to on the
+            administrative port via HTTP. All Dropwizard services start with the <code>gc</code>
+            task, which explicitly triggers the JVM's garbage collection. (This is useful, for
+            example, for running full garbage collections during off-peak times or while the given
+            service is out of rotation.)
+        </p>
+
+        <p>
+            Running a task can be done by sending a <code>POST</code> request to
+            <code>/tasks/{task-name}</code> on the admin port. For example:
+        </p>
+        
+        <pre class="uglyprint">
+$ curl -X POST http://dw.example.com:8081/tasks/gc
+Running GC...
+Done!</pre>
+        
+        <h3 id="logging">Logging</h3>
+
+        <p>
+            Dropwizard uses <a href="http://logging.apache.org/log4j">Log4j</a> for its logging
+            backend. It provides a <a href="http://www.slf4j.org/">slf4j</a> implementation, and
+            even routes all <code>java.util.logging</code> usage through log4j.
+        </p>
+
+        <p>Dropwizard’s log format has a few specific goals:</p>
+
+        <ul>
+            <li>Be human readable.</li>
+            <li>Be machine parsable.</li>
+            <li>
+                Be easy for sleepy ops folks to figure out why things are pear-shaped at 3:30AM
+                using standard UNIXy tools like <code>tail</code> and <code>grep</code>.
+            </li>
+        </ul>
+
+        <p>The logging output looks like this:</p>
+
+    <pre class="uglyprint">
+TRACE [2010-04-06 06:42:35,271] com.example.dw.Thing: Contemplating doing a thing.
+DEBUG [2010-04-06 06:42:35,274] com.example.dw.Thing: About to do a thing.
+INFO  [2010-04-06 06:42:35,274] com.example.dw.Thing: Doing a thing
+WARN  [2010-04-06 06:42:35,275] com.example.dw.Thing: Doing a thing
+ERROR [2010-04-06 06:42:35,275] com.example.dw.Thing: This may get ugly.
+FATAL [2010-04-06 06:42:35,275] com.example.dw.Thing: The thing has gone horribly wrong.
+! java.lang.RuntimeException: oh noes!
+! at com.example.dw.Thing.run(Thing.java:16)
+!</pre>
+
+        <p>A few items of note:</p>
+
+        <ul>
+            <li>All timestamps are in UTC and ISO 8601 format.</li>
+            <li>
+                You can grep for messages of a specific level really easily:
+                <code>tail -f dw.log | grep '^WARN'</code>
+            </li>
+            <li>
+                You can grep for messages from a specific class or package really easily:
+                <code>tail -f dw.log | grep 'com.example.dw.Thing'</code>
+            </li>
+            <li>
+                You can even pull out full exception stack traces, plus the accompanying
+                log message: <code>tail -f dw.log | grep -B 1 '^\!'</code>
+            </li>
+        </ul>
+
+        <p>
+            You can specify a default logger level and even override the levels of other loggers in
+            your YAML configuration file:
+        </p>
+
+        <pre class="prettyprint lang-yaml">
+# Logging settings.
+logging:
+  # The default level of all loggers. Can be OFF, FATAL, ERROR, WARN, INFO, DEBUG, TRACE, or ALL.
+  level: INFO
+  # Logger-specific levels.
+  loggers:
+    # Overrides the level of com.example.dw.Thing and sets it to DEBUG.
+    "com.example.dw.Thing": DEBUG</pre>
+
+        <h4 id="console-logging">Console Logging</h4>
+
+        <p>
+            By default, Dropwizard services log <code>INFO</code> and higher to <code>STDOUT</code>.
+            You can configure this by editing the <code>logging</code> section of your YAML
+            configuration file:
+        </p>
+
+        <pre class="prettyprint lang-yaml">
+logging:
+  # ...
+  # Settings for logging to stdout.
+  console:
+    # If true, write log statements to stdout.
+    enabled: true
+    # Do not display log statements below this threshold to stdout.
+    threshold: ALL</pre>
+
+        <h4 id="file-logging">File Logging</h4>
+
+        <p>
+            Dropwizard can also log to an automatically rotated set of log files. This is the
+            recommended configuration for your production environment:
+        </p>
+
+        <pre class="prettyprint lang-yaml">
+logging:
+  # ...
+  # Settings for logging to a file.
+  file:
+    # If true, write log statements to a file.
+    enabled: false
+    # Do not write log statements below this threshold to the file.
+    threshold: ALL
+    # The file to which statements will be logged. When the log file reaches the maximum size, the
+    # file will be renamed example.log.1, example.log will be truncated, and new statements written
+    # to it.
+    filenamePattern: ./logs/example.log
+    # The maximum size of any log file. Can also be "1GiB" etc
+    maxFileSize: 50MB
+    # The maximum number of log files to retain.
+    retainedFileCount: 5</pre>
+
+        <h4 id="syslog-logging">Syslog Logging</h4>
+
+        <p>
+            Finally, Dropwizard can also log statements to syslog. (<strong>Note:</strong> because
+            Java doesn’t use the native syslog bindings, your syslog server <strong>must</strong>
+            have an open network socket.)
+        </p>
+
+        <pre class="prettyprint lang-yaml">
+logging:
+  # ...
+  # Settings for logging to syslog.
+  syslog:
+    # If true, write log statements to syslog.
+    enabled: false
+    # The hostname of the syslog server to which statements will be sent.
+    # N.B.: If this is the local host, the local syslog instance will need to be configured to
+    # listen on an inet socket, not just a Unix socket.
+    host: localhost
+    # The syslog facility to which statements will be sent.
+    facility: local0
+        </pre>
+
+        <h3 id="testing-services">Testing Services</h3>
+
+        <p>
+            All of Dropwizard’s APIs are designed with testability in mind, so even your services
+            can have unit tests:
+        </p>
+
+        <pre class="prettyprint lang-java">
+public class MyServiceTest {
+    private final Environment environment = mock(Environment.class);
+    private final MyService service = new MyService();
+    private final MyConfiguration config = new MyConfiguration();
+
+    @Before
+    public void setup() throws Exception {
+        config.setMyParam("yay");
+    }
+
+    @Test
+    public void buildsAThingResource() throws Exception {
+        service.initialize(config, environment);
+
+        verify(environment).addResource(any(ThingResource.class));
+    }
+}</pre>
+
+        <p>
+            We highly recommend <a href="http://code.google.com/p/mockito/">Mockito</a> for all your
+            mocking needs.
+        </p>
+
+        <h3 id="banners">Banners</h3>
+
+        <p>
+            At Yammer, each of our services prints out a big ASCII art banner on startup. Yours
+            should, too. It’s fun. Just add a <code>banner.txt</code> class to
+            <code>src/main/resources</code> and it’ll print it out when your service starts:
+        </p>
+
+        <pre class="uglyprint">
+INFO  [2011-12-09 21:56:37,209] com.yammer.dropwizard.cli.ServerCommand: Starting hello-world
+INFO  [2011-12-09 21:56:37,214] com.yammer.dropwizard.cli.ServerCommand:
+                                                 dP
+                                                 88
+  .d8888b. dP.  .dP .d8888b. 88d8b.d8b. 88d888b. 88 .d8888b.
+  88ooood8  `8bd8'  88'  `88 88'`88'`88 88'  `88 88 88ooood8
+  88.  ...  .d88b.  88.  .88 88  88  88 88.  .88 88 88.  ...
+  `88888P' dP'  `dP `88888P8 dP  dP  dP 88Y888P' dP `88888P'
+                                        88
+                                        dP
+
+INFO  [2011-12-09 21:56:37,214] org.eclipse.jetty.server.Server: jetty-7.6.0.RC1
+...</pre>
+
+        <h2 id="resources">Resources</h2>
+
+        <p>TODO</p>
+
+        <h3 id="paths">Paths</h3>
+
+        <p>TODO</p>
+
+        <h3 id="parameters">Parameters</h3>
+
+        <p>TODO</p>
+
+        <h3 id="conneg">Media Types</h3>
+
+        <p>TODO</p>
+
+        <h3 id="request-entities">Request Entities</h3>
+
+        <p>TODO</p>
+        
+        <h3 id="responses">Responses</h3>
+
+        <p>TODO</p>
+        
+        <h3 id="error-handling">Error Handling</h3>
+
+        <p>TODO</p>
+        
+        <h3 id="uris">URIs</h3>
+
+        <p>TODO</p>
+        
+        <h3 id="testing-resources">Testing</h3>
+
+        <p>TODO</p>
+        
+        <h3 id="oauth">OAuth2</h3>
+
+        <p>TODO</p>
+
+        <h2 id="representations">Representations</h2>
+
+        <p>TODO</p>
+        
+        <h3 id="json">Basic JSON</h3>
+
+        <p>TODO</p>
+        
+        <h3 id="advanced-json">Advanced JSON</h3>
+
+        <p>TODO</p>
+        
+        <h4 id="snakecase">snake_case</h4>
+
+        <p>TODO</p>
+        
+        <h3 id="validation">Validation</h3>
+
+        <p>TODO</p>
+
+        <h4 id="basic-validation">Basic</h4>
+
+        <p>TODO</p>
+        
+        <h4 id="advanced-validation">Advanced</h4>
+
+        <p>TODO</p>
+        
+        <h3 id="streaming">Streaming Output</h3>
+
+        <p>TODO</p>
+        
+        <h3 id="testing-representations">Testing</h3>
+
+        <p>TODO</p>
+
+        <h2 id="running">Running Services</h2>
+
+        <p>TODO</p>
+
+        <h2 id="production">In Production</h2>
+
+        <p>TODO</p>
+
+        <h2 id="client">Dropwizard Client</h2>
+
+        <p>TODO</p>
+
+        <h2 id="db">Dropwizard DB</h2>
+
+        <p>TODO</p>
+
+        <h2 id="templates">Dropwizard Templates</h2>
+
+        <p>TODO</p>
+
+        <h2 id="scala">Dropwizard &amp; Scala</h2>
+
+        <p>TODO</p>
 
         <footer>
             <p>&copy; Yammer 2011</p>
