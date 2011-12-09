@@ -34,7 +34,7 @@ public class TaskServlet extends HttpServlet {
     public TaskServlet(Iterable<Task> tasks) {
         final ImmutableMap.Builder<String, Task> builder = ImmutableMap.builder();
         for (Task task : tasks) {
-            builder.put('/' + task.getName(), task);
+            builder.put("/tasks/" + task.getName(), task);
         }
         this.tasks = builder.build();
     }
