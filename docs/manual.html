@@ -358,8 +358,9 @@ $ curl http://dw.example.com:8081/healthcheck
         </p>
 
         <p>
-            For example, given a theoretical <a href="http://riak.basho.com">Riak</a> client which
-            needs to be started and stopped:
+            For example, given a theoretical
+            <a href="http://riak.basho.com" target="_blank">Riak</a> client which needs to be
+            started and stopped:
         </p>
 
         <pre class="prettyprint lang-java">
@@ -462,9 +463,10 @@ Done!</pre>
         <h3 id="logging">Logging</h3>
 
         <p>
-            Dropwizard uses <a href="http://logging.apache.org/log4j">Log4j</a> for its logging
-            backend. It provides a <a href="http://www.slf4j.org/">slf4j</a> implementation, and
-            even routes all <code>java.util.logging</code> usage through log4j.
+            Dropwizard uses <a href="http://logging.apache.org/log4j" target="_blank">Log4j</a> for
+            its logging backend. It provides an
+            <a href="http://www.slf4j.org/" target="_blank">slf4j</a> implementation, and even
+            routes all <code>java.util.logging</code> usage through log4j.
         </p>
 
         <p>Dropwizard’s log format has a few specific goals:</p>
@@ -617,7 +619,8 @@ public class MyServiceTest {
 }</pre>
 
         <p>
-            We highly recommend <a href="http://code.google.com/p/mockito/">Mockito</a> for all your
+            We highly recommend
+            <a href="http://code.google.com/p/mockito/" target="_blank">Mockito</a> for all your
             mocking needs.
         </p>
 
@@ -654,8 +657,8 @@ INFO  [2011-12-09 21:56:37,214] org.eclipse.jetty.server.Server: jetty-7.6.0.RC1
         <p>
             Unsurprisingly, most of your day-to-day work with a Dropwizard service will be in the
             resource classes, which model the resources exposed in your RESTful API. Dropwizard
-            uses <a href="http://jersey.java.net/">Jersey</a> for this, so most of this section is
-            just re-hashing or collecting various bits of Jersey documentation.
+            uses <a href="http://jersey.java.net/" target="_blank">Jersey</a> for this, so most of
+            this section is just re-hashing or collecting various bits of Jersey documentation.
         </p>
 
         <p>
@@ -708,9 +711,9 @@ public class NotificationsResource {
         <p>
             <strong>Every resource class must have a <code>@Path</code> annotation.</strong> The
             <code>@Path</code> annotation isn’t just a static string, it's a
-            <a href="http://tools.ietf.org/html/draft-gregorio-uritemplate-07">URI Template</a>. The
-            <code>{user}</code> part denotes a named variable, and when the template matches a URI
-            the value of that variable will be accessible via <code>@PathParam</code>-annotated
+            <a href="http://tools.ietf.org/html/draft-gregorio-uritemplate-07" target="_blank">URI Template</a>.
+            The <code>{user}</code> part denotes a named variable, and when the template matches a
+            URI the value of that variable will be accessible via <code>@PathParam</code>-annotated
             method parameters.
         </p>
 
@@ -891,7 +894,7 @@ UriBuilder.fromResource(UserResource.class).build(user.getId());</pre>
 
         <p>
             Testing, then, consists of creating an instance of your resource class and passing it
-            a mock. (Again: <a href="http://code.google.com/p/mockito/">Mockito</a>.)
+            a mock. (Again: <a href="http://code.google.com/p/mockito/" target="_blank">Mockito</a>.)
         </p>
 
         <pre class="prettyprint lang-java">
@@ -918,7 +921,7 @@ public class NotificationsResourceTest {
 
         <p>
             Dropwizard provides some super-minimalist support for
-            <a href="http://tools.ietf.org/html/draft-ietf-oauth-v2-22">Oauth 2</a>:
+            <a href="http://tools.ietf.org/html/draft-ietf-oauth-v2-22" target="_blank">Oauth 2</a>:
         </p>
 
         <pre class="prettyprint lang-java">

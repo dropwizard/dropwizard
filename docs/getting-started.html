@@ -77,7 +77,7 @@
         
         <p>
             Because you can't be a web service without HTTP, Dropwizard uses the
-            <a href="http://www.eclipse.org/jetty/">Jetty</a> HTTP library to embed an incredibly
+            <a href="http://www.eclipse.org/jetty/" target="_blank">Jetty</a> HTTP library to embed an incredibly
             tuned HTTP server directly into your project. Instead of handing your service off to
             a complicated application server, Dropwizard projects have a <code>main</code> method
             which spins up an HTTP server. Running your service as a simple process eliminates a
@@ -92,20 +92,21 @@
         
         <p>
             For building <abbr title="REpresentation State Transfer">RESTful</abbr> web services,
-            we've found nothing beats <a href="http://jersey.java.net">Jersey</a>
-            (the <a href="http://jcp.org/en/jsr/detail?id=311">JAX-RS</a> reference implementation)
-            in terms of features or performance. It allows you to write clean, testable class which
-            gracefully map HTTP requests to simple Java objects. It supports streaming output,
-            matrix URI parameters, conditional <code>GET</code> requests, and much, much more.
+            we've found nothing beats <a href="http://jersey.java.net" target="_blank">Jersey</a>
+            (the <a href="http://jcp.org/en/jsr/detail?id=311" target="_blank">JAX-RS</a> reference
+            implementation) in terms of features or performance. It allows you to write clean,
+            testable class which gracefully map HTTP requests to simple Java objects. It supports
+            streaming output, matrix URI parameters, conditional <code>GET</code> requests, and
+            much, much more.
         </p>
 
         <h3>Jackson <small>for JSON</small></h3>
         
         <p>
             In terms of data formats, JSON has become the web’s <em>lingua franca</em>, and
-            <a href="http://jackson.codehaus.org/">Jackson</a> is the king of JSON on the JVM. In
-            addition to being lightning fast, it has a sophisticated object mapper, allowing you to
-            export your domain models directly.
+            <a href="http://jackson.codehaus.org/" target="_blank">Jackson</a> is the king of JSON
+            on the JVM. In addition to being lightning fast, it has a sophisticated object mapper,
+            allowing you to export your domain models directly.
         </p>
 
         <h3>Metrics <small>for metrics (duh)</small></h3>
@@ -125,32 +126,32 @@
 
         <ul>
             <li>
-                <a href="http://code.google.com/p/guava-libraries/">Guava</a>,
+                <a href="http://code.google.com/p/guava-libraries/" target="_blank">Guava</a>,
                 which, in addition to highly optimized immutable data structures, provides a growing
                 number of classes to speed up development in Java.
             </li>
             <li>
-                <a href="http://logging.apache.org/log4j/1.2/">Log4j</a> and
-                <a href="http://www.slf4j.org/">slf4j</a> for performant logging.
+                <a href="http://logging.apache.org/log4j/1.2/" target="_blank">Log4j</a> and
+                <a href="http://www.slf4j.org/" target="_blank">slf4j</a> for performant logging.
             </li>
             <li>
-                <a href="http://www.hibernate.org/subprojects/validator.html">Hibernate Validator</a>,
-                the <a href="http://jcp.org/en/jsr/detail?id=303">JSR-303</a> reference
+                <a href="http://www.hibernate.org/subprojects/validator.html" target="_blank">Hibernate Validator</a>,
+                the <a href="http://jcp.org/en/jsr/detail?id=303" target="_blank">JSR-303</a> reference
                 implementation, provides an easy, declarative framework for validating user input
                 and generating helpful, internationalizable error messages.
             </li>
             <li>
-                <a href="http://hc.apache.org/httpcomponents-client-ga/index.html">Apache HttpClient</a>
+                <a href="http://hc.apache.org/httpcomponents-client-ga/index.html" target="_blank">Apache HttpClient</a>
                 and Jersey's client library allow for both low- and high-level interaction with
                 other web services.
             </li>
             <li>
-                <a href="http://www.jdbi.org">JDBI</a> is the most straight-forward way to use a
-                relational database with Java.
+                <a href="http://www.jdbi.org" target="_blank">JDBI</a> is the most straight-forward
+                way to use a relational database with Java.
             </li>
             <li>
-                <a href="http://freemarker.sourceforge.net/">Freemarker</a> is a simple template
-                system for more user-facing services.
+                <a href="http://freemarker.sourceforge.net/" target="_blank">Freemarker</a> is a
+                simple template system for more user-facing services.
             </li>
         </ul>
         
@@ -163,16 +164,16 @@
         <h2 id="maven">Setting Up Maven</h2>
         
         <p>
-            We recommend you use <a href="http://maven.apache.org">Maven</a> for new Dropwizard
-            services. If you're a big
-            <a href="http://ant.apache.org/">Ant</a>/<a href="http://ant.apache.org/ivy/">Ivy</a>,
-            <a href="http://buildr.apache.org/">Buildr</a>,
-            <a href="http://www.gradle.org/">Gradle</a>,
+            We recommend you use <a href="http://maven.apache.org" target="_blank">Maven</a> for new
+            Dropwizard services. If you're a big
+            <a href="http://ant.apache.org/" target="_blank">Ant</a>/<a href="http://ant.apache.org/ivy/" target="_blank">Ivy</a>,
+            <a href="http://buildr.apache.org/" target="_blank">Buildr</a>,
+            <a href="http://www.gradle.org/" target="_blank">Gradle</a>,
             <a href="https://github.com/harrah/xsbt/wiki">SBT</a>,
-            or <a href="http://gant.codehaus.org/">Gant</a> fan, that’s cool, but we use Maven and
-            we'll be using Maven as we go through this example service. If you have any questions
-            about how Maven works,
-            <a href="http://www.sonatype.com/books/mvnref-book/reference/">Maven: The Complete Reference</a>
+            or <a href="http://gant.codehaus.org/" target="_blank">Gant</a> fan, that’s cool, but we
+            use Maven and we'll be using Maven as we go through this example service. If you have
+            any questions about how Maven works,
+            <a href="http://www.sonatype.com/books/mvnref-book/reference/" target="_blank">Maven: The Complete Reference</a>
             should have what you’re looking for. (We’re assuming you know how to create a new
             Maven project.)
         </p>
@@ -216,8 +217,8 @@
         <p>
             Each Dropwizard service has its own subclass of the <code>Configuration</code> class
             which specify environment-specific parameters. These parameters are specified in a
-            <a href="http://www.yaml.org/">YAML</a> configuration file which is deserialized to
-            an instance of your service’s configuration class and validated.
+            <a href="http://www.yaml.org/" target="_blank">YAML</a> configuration file which is
+            deserialized to an instance of your service’s configuration class and validated.
         </p>
         
         <p>
