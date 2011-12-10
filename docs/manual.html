@@ -72,9 +72,10 @@
                     <a href="#resources">Resources</a>
                     <ul>
                         <li><a href="#paths">Paths</a></li>
+                        <li><a href="#methods">Methods</a></li>
                         <li><a href="#parameters">Parameters</a></li>
-                        <li><a href="#conneg">Media Types</a></li>
                         <li><a href="#request-entities">Request Entities</a></li>
+                        <li><a href="#conneg">Media Types</a></li>
                         <li><a href="#responses">Responses</a></li>
                         <li><a href="#error-handling">Error Handling</a></li>
                         <li><a href="#uris">URIs</a></li>
@@ -643,41 +644,275 @@ INFO  [2011-12-09 21:56:37,214] com.yammer.dropwizard.cli.ServerCommand:
 INFO  [2011-12-09 21:56:37,214] org.eclipse.jetty.server.Server: jetty-7.6.0.RC1
 ...</pre>
 
+        <p>
+            We could probably make up an argument about why this is a serious devops best practice
+            with high ROI and an Agile Tool, but honestly we just enjoy this.
+        </p>
+
         <h2 id="resources">Resources</h2>
 
-        <p>TODO</p>
+        <p>
+            Unsurprisingly, most of your day-to-day work with a Dropwizard service will be in the
+            resource classes, which model the resources exposed in your RESTful API. Dropwizard
+            uses <a href="http://jersey.java.net/">Jersey</a> for this, so most of this section is
+            just re-hashing or collecting various bits of Jersey documentation.
+        </p>
+
+        <p>
+            Jersey is a framework for mapping various aspects of incoming HTTP requests to POJOs and
+            then mapping various aspects of POJOs to outgoing HTTP responses. Here’s a basic
+            resource class:
+        </p>
+
+        <pre id="resource-example" class="prettyprint lang-java">
+@Path("/{user}/notifications")
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
+public class NotificationsResource {
+    private final NotificationStore store;
+
+    public NotificationsResource(NotificationStore store) {
+        this.store = store;
+    }
+
+    @GET
+    public NotificationList fetch(@PathParam("user") LongParam userId,
+                                  @QueryParam("count") @DefaultValue("20") IntParam count) {
+        final List&lt;Notification&gt; notifications = store.fetch(userId.get(), count.get());
+        if (notifications != null) {
+            return new NotificationList(userId, notifications);
+        }
+        throw new WebApplicationException(Status.NOT_FOUND);
+    }
+
+    @POST
+    public Response add(@PathParam("user") LongParam userId,
+                        @Valid Notification notification) {
+        final long id = store.add(userId.get(), notification);
+        return Response.created(UriBuilder.fromResource(NotificationResource.class)
+                                          .build(userId.get(), id)
+                       .build();
+    }
+}</pre>
+
+        <p>
+            This class provides a resource (a user’s list of notifications) which responds to
+            <code>GET</code> and <code>POST</code> requests to <code>/{user}/notifications</code>,
+            providing and consuming <code>application/json</code> representations. There’s quite a
+            lot of functionality on display here, and this section will explain in detail what’s
+            in play and how to use these features in your service.
+        </p>
 
         <h3 id="paths">Paths</h3>
 
-        <p>TODO</p>
+        <p>
+            <strong>Every resource class must have a <code>@Path</code> annotation.</strong> The
+            <code>@Path</code> annotation isn’t just a static string, it's a
+            <a href="http://tools.ietf.org/html/draft-gregorio-uritemplate-07">URI Template</a>. The
+            <code>{user}</code> part denotes a named variable, and when the template matches a URI
+            the value of that variable will be accessible via <code>@PathParam</code>-annotated
+            method parameters.
+        </p>
+
+        <p>
+            For example, an incoming request for <code>/1001/notifications</code> would match the
+            URI template, and the value <code>1001</code> would be available as the path parameter
+            named <code>user</code>.
+        </p>
+
+        <p>
+            If your service doesn’t have a resource class whose <code>@Path</code> URI template
+            matches the URI of an incoming request, Jersey will automatically return a
+            <code>404 Not Found</code> to the client.
+        </p>
+        
+        <h3 id="methods">Methods</h3>
+        
+        <p>
+            Methods on a resource class which accept incoming requests are annotated with the HTTP
+            methods they handle: <code>@GET</code>, <code>@POST</code>, <code>@PUT</code>,
+            <code>@DELETE</code>, <code>@HEAD</code>, <code>@OPTIONS</code>, and even
+            <code>@HttpMethod</code> for arbitrary new methods.
+        </p>
+        
+        <p>
+            If a request comes in which matches a resource class’s path but has a method which the
+            class doesn’t support, Jersey will automatically return a
+            <code>405 Method Not Allowed</code> to the client.
+        </p>
+
+        <p>
+            The return value of the method (in this case, a <code>NotificationList</code> instance)
+            is then mapped to the <a href="#conneg">negotiated content type</a>. In this case, our
+            resource only supports JSON, and so the <code>NotificationList</code> is serialized to
+            JSON using Jackson.
+        </p>
 
         <h3 id="parameters">Parameters</h3>
 
-        <p>TODO</p>
+        <p>
+            The annotated methods on a resource class can accept parameters which are mapped to from
+            aspects of the incoming request. The <code>*Param</code> annotations determine which
+            part of the request the data is mapped, and the parameter <em>type</em> determines how
+            the data is mapped.
+        </p>
+
+        <p>
+            For example:
+        </p>
+
+        <ul>
+            <li>
+                A <code>@PathParam("user")</code>-annotated <code>String</code> takes the raw value
+                from the <code>user</code> variable in the matched URI template and passes it into
+                the method as a <code>String</code>.
+            </li>
+            <li>
+                A <code>@QueryParam("count")</code>-annotated <code>IntParam</code> parameter takes
+                the first <code>count</code> value from the request’s query string and passes it as
+                a <code>String</code> to <code>IntParam</code>’s constructor. <code>IntParam</code>
+                (and all other <code>com.yammer.dropwizard.jersey.params.*</code> classes) parses
+                the string as an <code>Integer</code>, returning a <code>400 Bad Request</code> if
+                the value is malformed.
+            </li>
+            <li>
+                A <code>@FormParam("name")</code>-annotated <code>Set&lt;String&gt;</code> parameter
+                takes all the <code>name</code> values from a posted form and passes them to the
+                method as a set of strings.
+            </li>
+        </ul>
+
+        <p>
+            What’s noteworthy here is that you can actually encapsulate the vast majority of your
+            validation logic using specialized parameter objects. See <code>AbstractParam</code> for
+            details.
+        </p>
+
+        <h3 id="request-entities">Request Entities</h3>
+        
+        <p>
+            If you’re handling request entities (e.g., an <code>application/json</code> object on
+            a <code>PUT</code> request), you can model this as a parameter without a
+            <code>*Param</code> annotation. In the <a href="#resource-example">example code</a>,
+            the <code>add</code> method provides a good example of this:
+        </p>
+
+        <pre class="prettyprint lang-java">
+@POST
+public Response add(@PathParam("user") LongParam userId,
+                    @Valid Notification notification) {
+    final long id = store.add(userId.get(), notification);
+    return Response.created(UriBuilder.fromResource(NotificationResource.class)
+                                      .build(userId.get(), id)
+                   .build();
+}</pre>
+
+        <p>
+            Jersey maps the request entity to any single, unbound parameter. In this case, because
+            the resource is annotated with <code>@Consumes(MediaType.APPLICATION_JSON)</code>, it
+            uses the Dropwizard-provided Jackson support which, in addition to parsing the JSON and
+            mapping it to an instance of <code>Notification</code>, also runs it through
+            Dropwizard’s <a href="#validation">validation</a>.
+        </p>
+
+        <p>
+            If the deserialized <code>Notification</code> isn’t valid, Dropwizard returns a
+            <code>422 Unprocessable Entity</code> response to the client.
+        </p>
 
         <h3 id="conneg">Media Types</h3>
 
-        <p>TODO</p>
+        <p>
+            Jersey also provides full content negotiation, so if your resource class consumes
+            <code>application/json</code> but the client sends a <code>text/plain</code> entity,
+            Jersey will automatically reply with a <code>406 Not Acceptable</code>. Jersey’s even
+            smart enough to use client-provided <code>q</code>-values in their <code>Accept</code>
+            headers to pick the best response content type based on what both the client and server
+            will support.
+        </p>
 
-        <h3 id="request-entities">Request Entities</h3>
-
-        <p>TODO</p>
-        
         <h3 id="responses">Responses</h3>
 
-        <p>TODO</p>
+        <p>
+            If your clients are expecting custom headers or additional information (or, if you
+            simply desire an additional degree of control over your responses), you can return
+            explicitly-built <code>Response</code> objects:
+        </p>
+
+        <pre class="prettyprint lang-java">
+return Response.noContent().language(Locale.GERMAN).build();</pre>
+
+        <p>
+            In general, though, we recommend you return actual domain objects if at all possible.
+            It makes <a href="#testing-resources">testing resources</a> much easier.
+        </p>
         
         <h3 id="error-handling">Error Handling</h3>
 
-        <p>TODO</p>
+        <p>
+            If your resource class unintentionally throws an exception, Dropwizard will log that
+            exception (including stack traces) and return a terse, safe <code>500</code> response.
+        </p>
+
+        <p>
+            If your resource class needs to return an error to the client (e.g., the requested
+            record doesn’t exist), you have two options: throw a
+            <code>WebApplicationException</code> or restructure your method to return a
+            <code>Response</code>.
+        </p>
+
+        <p>
+            If at all possible, prefer throwing <code>WebApplicationException</code> instances to
+            returning <code>Response</code> objects.
+        </p>
         
         <h3 id="uris">URIs</h3>
 
-        <p>TODO</p>
+        <p>
+            While Jersey doesn’t quite have first-class support for hyperlink-driven services, the
+            provided <code>UriBuilder</code> functionality does quite well.
+        </p>
+
+        <p>
+            Rather than duplicate resource URIs, it’s possible (and recommended!) to initialize a
+            <code>UriBuilder</code> with the path from the resource class itself:
+        </p>
+
+        <pre class="prettyprint lang-java">
+UriBuilder.fromResource(UserResource.class).build(user.getId());</pre>
         
         <h3 id="testing-resources">Testing</h3>
 
-        <p>TODO</p>
+        <p>
+            As with just about everything in Dropwizard, we recommend you design your resources to
+            be testable. Dependencies which aren’t request-injected should be passed in via the
+            constructor and assigned to <code>final</code> fields.
+        </p>
+
+        <p>
+            Testing, then, consists of creating an instance of your resource class and passing it
+            a mock. (Again: <a href="http://code.google.com/p/mockito/">Mockito</a>.)
+        </p>
+
+        <pre class="prettyprint lang-java">
+public class NotificationsResourceTest {
+    private final NotificationStore store = mock(NotificationStore.class);
+    private final NotificationsResource resource = new NotificationsResource(store);
+
+    @Test
+    public void getsReturnNotifications() {
+        final List&lt;Notification&gt; notifications = mock(List.class);
+        when(store.fetch(1, 20)).thenReturn(notifications);
+
+        final NotificationList list = resource.fetch(new LongParam("1"), new IntParam("20"));
+
+        assertThat(list.getUserId(),
+                  is(1L));
+
+        assertThat(list.getNotifications(),
+                   is(notifications));
+    }
+}</pre>
         
         <h3 id="oauth">OAuth2</h3>
 
