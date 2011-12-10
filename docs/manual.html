@@ -96,12 +96,12 @@
                         <li>
                             <a href="#validation">Validation</a>
                             <ul>
-                                <li><a href="#basic-validation">Basic</a></li>
                                 <li><a href="#advanced-validation">Advanced</a></li>
                             </ul>
                         </li>
                         <li><a href="#streaming">Streaming Output</a></li>
                         <li><a href="#testing-representations">Testing</a></li>
+                        <li><a href="#custom-representations">Custom Representations</a></li>
                     </ul>
                 </li>
                 <li><a href="#running">Running Services</a></li>
@@ -916,43 +916,273 @@ public class NotificationsResourceTest {
         
         <h3 id="oauth">OAuth2</h3>
 
-        <p>TODO</p>
+        <p>
+            Dropwizard provides some super-minimalist support for
+            <a href="http://tools.ietf.org/html/draft-ietf-oauth-v2-22">Oauth 2</a>:
+        </p>
+
+        <pre class="prettyprint lang-java">
+public Blah doAThing(@BearerToken String token) {
+    // etc
+}</pre>
+
+        <p>
+            The Oauth 2 bearer token will be passed in via <code>token</code>.
+        </p>
 
         <h2 id="representations">Representations</h2>
 
-        <p>TODO</p>
+        <p>
+            Representation classes are classes which, when handled to various Jersey
+            <code>MessageBodyReader</code> and <code>MessageBodyWriter</code> providers, become the
+            entities in your service’s API. Dropwizard heavily favors JSON, but it’s possible to
+            map from any POJO to custom formats and back.
+        </p>
         
         <h3 id="json">Basic JSON</h3>
 
-        <p>TODO</p>
+        <p>
+            Jackson is awesome at converting regular POJOs to JSON and back. This file:
+        </p>
+
+        <pre class="prettyprint lang-java">
+public class Notification {
+    @JsonProperty
+    private String text;
+
+    public Notification(String text) {
+        this.text = text;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public String setText(String text) {
+        this.text = text;
+    }
+}</pre>
+
+        <p>
+            gets converted into this JSON:
+        </p>
+        
+        <pre class="prettyprint lang-json">
+{
+    "text": "hey it's the value of the text field"
+}</pre>
+
+        <p>
+            If, at some point, you need to change the JSON field name or the Java field without
+            affecting the other, you can add an explicit field name to the
+            <code>@JsonProperty</code> annotation.
+        </p>
+
+        <p>
+            If you prefer immutable objects rather than JavaBeans, that’s also doable:
+        </p>
+
+        <pre class="prettyprint lang-java">
+public class Notification {
+    @JsonProperty
+    private final String text;
+
+    public Notification(@JsonProperty("text") String text) {
+        this.text = text;
+    }
+
+    public String getText() {
+        return text;
+    }
+}</pre>
         
         <h3 id="advanced-json">Advanced JSON</h3>
 
-        <p>TODO</p>
-        
+        <p>
+            Not all JSON representations map nicely to the objects your service deals with, so it’s
+            sometimes necessary to use custom serializers and deserializers. Just annotate your
+            object like this:
+        </p>
+
+        <pre class="prettyprint lang-java">
+@JsonSerialize(using=FunkySerializer.class)
+@JsonDeserialize(using=FunkyDeserializer.class)
+public class Funky {
+    // ...
+}</pre>
+
+        <p>
+            Then make a <code>FunkySerializer</code> class which implements
+            <code>JsonSerializer&lt;Funky&gt;</code> and a <code>FunkyDeserializer</code> class
+            which implements <code>JsonDeserializer&lt;Funky&gt;</code>.
+        </p>
+
         <h4 id="snakecase">snake_case</h4>
 
-        <p>TODO</p>
-        
+        <p>
+            A common issue with JSON is the disagreement between <code>camelCase</code> and
+            <code>snake_case</code> field names. Java and Javascript folks tend to like
+            <code>camelCase</code>; Ruby, Python, and Perl folks insist on <code>snake_case</code>.
+            To make Dropwizard automatically convert field names to <code>snake_case</code> (and
+            back), just annotate the class with <code>@JsonSnakeCase</code>:
+        </p>
+
+
+
+        <pre class="prettyprint lang-java">
+@JsonSnakeCase
+public class Person {
+    @JsonProperty
+    private String firstName;
+
+    public Person(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+}</pre>
+
+        <p>
+            gets converted into this JSON:
+        </p>
+
+        <pre class="prettyprint lang-json">
+{
+    "first_name": "Coda"
+}</pre>
+
         <h3 id="validation">Validation</h3>
 
-        <p>TODO</p>
+        <p>
+            Like <a href="#configuration">configuration classes</a>, you can add validation
+            annotations to fields of your representation classes and validate them. If we‘re
+            accepting client-provided <code>Person</code> objects, we probably want to ensure that
+            the <code>name</code> field of the object isn’t <code>null</code> or blank. We can do
+            this as follows:
+        </p>
 
-        <h4 id="basic-validation">Basic</h4>
+        <pre class="prettyprint lang-java">
+public class Person {
+    @NotEmpty // ensure that name isn't null or blank
+    @JsonProperty
+    private final String name;
 
-        <p>TODO</p>
+    public Person(@JsonProperty("name") String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+}</pre>
+
+        <p>
+            Then, in our resource class, we can add the <code>@Valid</code> annotation to the
+            <code>Person</code> annotation:
+        </p>
+
+        <pre class="prettyprint lang-java">
+@PUT
+public Response replace(@Valid Person person) {
+    // ...
+}</pre>
+
+        <p>
+            If the <code>name</code> field is missing, Dropwizard will return a
+            <code>text/plain</code> <code>422 Unprocessable Entity</code> response detailing the
+            validation errors:
+        </p>
+
+        <pre class="uglyprint">
+* name may not be empty</pre>
         
         <h4 id="advanced-validation">Advanced</h4>
 
-        <p>TODO</p>
+        <p>
+            More complex validations (for example, cross-field comparisons) are often hard to
+            do using declarative annotations. As an emergency maneuver, add the
+            <code>@ValidationMethod</code> to any <code>boolean</code>-returning method which
+            begins with <code>is</code>:
+        </p>
+
+        <pre class="prettyprint lang-java">
+@ValidationMethod(message="may not be Coda")
+public boolean isNotCoda() {
+    return !("Coda".equals(name));
+}</pre>
+
+        <p>
+            Due to the rather daft JavaBeans conventions, <strong>the method must begin with
+            <code><strong>is</strong></code></strong>. This is a limitation of Hibernate Validator,
+            not Dropwizard.
+        </p>
         
         <h3 id="streaming">Streaming Output</h3>
 
-        <p>TODO</p>
+        <p>
+            If your service happens to return lots of information, you may get a big performance
+            and efficiency bump by using streaming output. By returning an object which implements
+            Jersey’s <code>StreamingOutput</code> interface, your method can stream the response
+            entity in a chunk-encoded output stream. Otherwise, you’ll need to fully construct your
+            return value and <em>then</em> hand it off to be sent to the client.
+        </p>
         
         <h3 id="testing-representations">Testing</h3>
 
-        <p>TODO</p>
+        <p>
+            The <code>dropwizard-testing</code> module contains a number of helper methods for
+            testing JSON parsing and generating. Given a JSON fixture file (e.g.,
+            <code>src/test/resources/fixtures/person.json</code>), you can test that a
+            <code>Person</code> instance generates the same JSON as the fixture with the following:
+        </p>
+
+        <pre class="prettyprint lang-java">
+import static com.yammer.dropwizard.testing.JsonHelpers.asJson;
+import static com.yammer.dropwizard.testing.JsonHelpers.jsonFixture;
+
+@Test
+public void producesTheExpectedJson() throws Exception {
+    assertThat("rendering a person as JSON produces a valid API representation",
+               asJson(person),
+               is(jsonFixture("fixtures/person.json")));
+}</pre>
+
+        <p>
+            This does a whitespace- and comment-insensitive comparison of the generated JSON and the
+            JSON in the file. If they’re different, both JSON representations are helpfully
+            displayed in the assertion error.
+        </p>
+        
+        <p>
+            Likewise, you can also test the parsing of the same JSON file to guarantee round-trip
+            compatibility:
+        </p>
+
+        <pre class="prettyprint lang-java">
+import static com.yammer.dropwizard.testing.JsonHelpers.fromJson;
+
+@Test
+public void consumesTheExpectedJson() throws Exception {
+    assertThat("parsing a valid API representation produces a person",
+               fromJson(jsonFixture("fixtures/person.json"), Person.class),
+               is(person));
+}</pre>
+        
+        <h3 id="custom-representations">Custom Representations</h3>
+
+        <p>
+            Sometimes, though, you’ve got some wacky output format you need to produce or consume
+            and no amount of arguing will make JSON acceptable. That’s unfortunate but OK. You can
+            add support for arbitrary input and output formats by creating classes which implement
+            Jersey’s <code>MessageBodyReader&lt;T&gt;</code> and
+            <code>MessageBodyWriter&lt;T&gt;</code> interfaces. (Make sure they’re annotated with
+            <code>@Provider</code> and <code>@Produces("text/gibberish")</code> or
+            <code>@Consumes("text/gibberish")</code>.) Once you’re done, just add instances of them
+            (or their classes if they depend on Jersey’s <code>@Context</code> injection) with your
+            service’s <code>Environment</code> on initialization.
+        </p>
 
         <h2 id="running">Running Services</h2>
 
