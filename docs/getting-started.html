@@ -423,8 +423,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import java.util.concurrent.atomic.AtomicLong;
 
-import static java.lang.String.format;
-
 @Path("/hello-world")
 @Produces(MediaType.APPLICATION_JSON)
 public class HelloWorldResource {
@@ -445,7 +443,8 @@ public class HelloWorldResource {
     public Saying sayHello(@QueryParam("name") Optional&lt;String&gt; name) {
         final TimerContext context = GETS.time();
         try {
-            return new Saying(counter.incrementAndGet(), format(template, name.or(defaultName)));
+            return new Saying(counter.incrementAndGet(),
+                              String.format(template, name.or(defaultName)));
         } finally {
             context.stop();
         }
@@ -561,8 +560,6 @@ package com.example.helloworld.health;
 
 import com.yammer.metrics.core.HealthCheck;
 
-import static java.lang.String.format;
-
 public class TemplateHealthCheck extends HealthCheck {
     private final String template;
 
@@ -577,7 +574,7 @@ public class TemplateHealthCheck extends HealthCheck {
 
     @Override
     public Result check() throws Exception {
-        final String saying = format(template, "TEST");
+        final String saying = String.format(template, "TEST");
         if (!saying.contains("TEST")) {
             return Result.unhealthy("template doesn't include a name");
         }
