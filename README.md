@@ -19,4 +19,4 @@ historically not sucked:
 Dropwizard. In fact, Dropwizard is really just a simple extraction of
 [Yammer](https://www.yammer.com)'s glue code.
 
-Read more at [dropwizard.github.com].
+Read more at [dropwizard.codahale.com](http://dropwizard.codahale.com).
