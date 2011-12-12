@@ -384,7 +384,7 @@ public class Saying {
         <p>
             First, it’s immutable. This makes <code>Saying</code> instances <em>very</em> easy to
             reason about multi-threaded environments as well as single-threaded environments.
-            Second, it uses the Java Bean standard for the <code>id</code> and <code>code</code>
+            Second, it uses the Java Bean standard for the <code>id</code> and <code>content</code>
             properties. This allows Jackson to serialize it to the JSON we need. The Jackson object
             mapping code will populate the <code>id</code> field of the JSON object with the return
             value of <code>getId()</code>, likewise with <code>content</code> and
