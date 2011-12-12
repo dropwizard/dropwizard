@@ -18,3 +18,5 @@ historically not sucked:
 [Yammer](https://www.yammer.com)'s high-performance, low-latency, Java and Scala services all use
 Dropwizard. In fact, Dropwizard is really just a simple extraction of
 [Yammer](https://www.yammer.com)'s glue code.
+
+Read more at [dropwizard.github.com].
