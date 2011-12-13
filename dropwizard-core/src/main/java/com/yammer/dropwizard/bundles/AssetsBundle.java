@@ -32,7 +32,7 @@ public class AssetsBundle implements Bundle {
      * {@code path} of {@code "/assets"}, {@code src/main/resources/assets/example.js} would be
      * served up from {@code /assets/example.js}.
      *
-     * @param path the classpath and URI root of the static asset files
+     * @param path    the classpath and URI root of the static asset files
      * @see AssetsBundle#AssetsBundle(String, int)
      */
     public AssetsBundle(String path) {
