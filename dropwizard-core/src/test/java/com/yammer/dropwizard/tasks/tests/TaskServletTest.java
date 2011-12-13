@@ -37,7 +37,7 @@ public class TaskServletTest {
     @Test
     public void returnsA404WhenNotFound() throws Exception {
         when(request.getMethod()).thenReturn("POST");
-        when(request.getRequestURI()).thenReturn("/test");
+        when(request.getRequestURI()).thenReturn("/tasks/test");
 
         servlet.service(request, response);
 
@@ -49,7 +49,7 @@ public class TaskServletTest {
         final PrintWriter output = mock(PrintWriter.class);
 
         when(request.getMethod()).thenReturn("POST");
-        when(request.getRequestURI()).thenReturn("/gc");
+        when(request.getRequestURI()).thenReturn("/tasks/gc");
         when(request.getParameterNames()).thenReturn(Collections.enumeration(ImmutableList.of()));
         when(response.getWriter()).thenReturn(output);
 
@@ -63,7 +63,7 @@ public class TaskServletTest {
         final PrintWriter output = mock(PrintWriter.class);
 
         when(request.getMethod()).thenReturn("POST");
-        when(request.getRequestURI()).thenReturn("/gc");
+        when(request.getRequestURI()).thenReturn("/tasks/gc");
         when(request.getParameterNames()).thenReturn(Collections.enumeration(ImmutableList.of("runs")));
         when(request.getParameterValues("runs")).thenReturn(new String[]{"1"});
         when(response.getWriter()).thenReturn(output);
@@ -77,7 +77,7 @@ public class TaskServletTest {
     @SuppressWarnings("unchecked")
     public void returnsA500OnExceptions() throws Exception {
         when(request.getMethod()).thenReturn("POST");
-        when(request.getRequestURI()).thenReturn("/gc");
+        when(request.getRequestURI()).thenReturn("/tasks/gc");
         when(request.getParameterNames()).thenReturn(Collections.enumeration(ImmutableList.of()));
 
         final RuntimeException ex = new RuntimeException("whoops");
