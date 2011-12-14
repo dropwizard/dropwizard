@@ -30,7 +30,7 @@ public class Database extends DBI implements Managed {
         this.pool = pool;
         this.ping = onDemand(Ping.class);
         setSQLLog(new Log4JLog(LOGGER, Level.TRACE));
-        setTimingCollector(new InstrumentedTimingCollector(Metrics.defaultRegistry(), Database.class));
+        setTimingCollector(new InstrumentedTimingCollector(Metrics.defaultRegistry()));
         setStatementRewriter(new NamePrependingStatementRewriter());
         setStatementLocator(new ScopedStatementLocator());
         registerArgumentFactory(new OptionalArgumentFactory());
