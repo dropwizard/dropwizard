@@ -32,7 +32,7 @@ public class DatabaseFactory {
         return database;
     }
 
-    private DataSource buildDataSource(DatabaseConnectionConfiguration connectionConfig, GenericObjectPool pool) {
+    private static DataSource buildDataSource(DatabaseConnectionConfiguration connectionConfig, GenericObjectPool pool) {
         final Properties properties = new Properties();
         for (Map.Entry<String, String> property : connectionConfig.getProperties().entrySet()) {
             properties.setProperty(property.getKey(), property.getValue());
@@ -55,7 +55,7 @@ public class DatabaseFactory {
         return new PoolingDataSource(pool);
     }
 
-    private GenericObjectPool buildPool(DatabaseConnectionConfiguration connectionConfig) {
+    private static GenericObjectPool buildPool(DatabaseConnectionConfiguration connectionConfig) {
         final GenericObjectPool pool = new GenericObjectPool(null);
         pool.setMaxWait(connectionConfig.getMaxWaitForConnection().toMilliseconds());
         pool.setMinIdle(connectionConfig.getMinSize());
