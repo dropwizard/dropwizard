@@ -31,7 +31,7 @@ public class DatabaseConfiguration {
 
         @NotNull
         @Pattern(regexp = Duration.VALID_DURATION)
-        private String maxWaitForConnection = "8ms";
+        private String maxWaitForConnection = "1s";
         
         @NotNull
         private String validationQuery = "/* Health Check */ SELECT 1";
