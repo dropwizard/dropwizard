@@ -3,9 +3,7 @@ package com.example.helloworld.resources;
 import com.example.helloworld.core.Saying;
 import com.example.helloworld.core.Template;
 import com.google.common.base.Optional;
-import com.yammer.metrics.Metrics;
-import com.yammer.metrics.core.TimerContext;
-import com.yammer.metrics.core.TimerMetric;
+import com.yammer.metrics.aop.annotation.Timed;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -17,9 +15,6 @@ import java.util.concurrent.atomic.AtomicLong;
 @Path("/hello-world")
 @Produces(MediaType.APPLICATION_JSON)
 public class HelloWorldResource {
-    private static final TimerMetric GETS = Metrics.newTimer(HelloWorldResource.class,
-                                                             "get-requests");
-
     private final Template template;
     private final AtomicLong counter;
 
@@ -29,12 +24,8 @@ public class HelloWorldResource {
     }
 
     @GET
+    @Timed(name = "get-requests")
     public Saying sayHello(@QueryParam("name") Optional<String> name) {
-        final TimerContext context = GETS.time();
-        try {
-            return new Saying(counter.incrementAndGet(), template.render(name));
-        } finally {
-            context.stop();
-        }
+        return new Saying(counter.incrementAndGet(), template.render(name));
     }
 }

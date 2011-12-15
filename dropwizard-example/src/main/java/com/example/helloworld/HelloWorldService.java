@@ -5,8 +5,10 @@ import com.example.helloworld.core.Template;
 import com.example.helloworld.health.TemplateHealthCheck;
 import com.example.helloworld.resources.HelloWorldResource;
 import com.yammer.dropwizard.Service;
-import com.yammer.dropwizard.config.Environment;
 import com.yammer.dropwizard.bundles.AssetsBundle;
+import com.yammer.dropwizard.config.Environment;
+
+import static com.yammer.metrics.aop.Instrumentation.instrument;
 
 public class HelloWorldService extends Service<HelloWorldConfiguration> {
     public static void main(String[] args) throws Exception {
@@ -25,7 +27,7 @@ public class HelloWorldService extends Service<HelloWorldConfiguration> {
         final Template template = configuration.buildTemplate();
 
         environment.addHealthCheck(new TemplateHealthCheck(template));
-        environment.addResource(new HelloWorldResource(template));
+        environment.addResource(instrument(new HelloWorldResource(template)));
     }
 
 }
