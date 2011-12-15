@@ -70,7 +70,7 @@ public class Environment extends AbstractLifeCycle {
         this.lifeCycle = new AggregateLifeCycle();
 
         enableJerseyFeature(ResourceConfig.FEATURE_DISABLE_WADL);
-        addProvider(new LoggingExceptionMapper());
+        addProvider(new LoggingExceptionMapper<Throwable>() {}); // create a subclass to pin it to Throwable
         addServlet(new ServletContainer(config), ROOT_PATH).setInitOrder(Integer.MAX_VALUE);
         addTask(new GarbageCollectionTask());
     }

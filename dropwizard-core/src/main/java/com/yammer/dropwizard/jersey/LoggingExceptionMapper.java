@@ -14,24 +14,36 @@ import java.util.Random;
 // TODO: 10/12/11 <coda> -- write docs for LoggingExceptionMapper
 
 @Provider
-public class LoggingExceptionMapper implements ExceptionMapper<Throwable> {
-    private final Logger logger = LoggerFactory.getLogger(LoggingExceptionMapper.class);
-    private final Random random = new Random();
+public class LoggingExceptionMapper<E extends Throwable> implements ExceptionMapper<E> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(LoggingExceptionMapper.class);
+    private static final Random RANDOM = new Random();
 
     @Override
-    public Response toResponse(Throwable exception) {
+    public Response toResponse(E exception) {
         if (exception instanceof WebApplicationException) {
             return ((WebApplicationException) exception).getResponse();
         }
-
-        final long id = random.nextLong();
-        logger.error(String.format("Error handling a request: %016x", id), exception);
-
+        final long id = randomId();
+        logException(id, exception);
         return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                        .type(MediaType.TEXT_PLAIN_TYPE)
-                       .entity(String.format(
-                               "There was an error processing your request. It has been logged (ID %016x).\n",
-                               id))
+                       .entity(formatResponseEntity(id, exception))
                        .build();
+    }
+
+    protected void logException(long id, E exception) {
+        LOGGER.error(formatLogMessage(id, exception), exception);
+    }
+
+    protected String formatResponseEntity(long id, Throwable exception) {
+        return String.format("There was an error processing your request. It has been logged (ID %016x).\n", id);
+    }
+
+    protected String formatLogMessage(long id, Throwable exception) {
+        return String.format("Error handling a request: %016x", id);
+    }
+
+    protected static long randomId() {
+        return RANDOM.nextLong();
     }
 }
