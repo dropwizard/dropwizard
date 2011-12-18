@@ -1,10 +1,4 @@
 .idea
-lib_managed
-src_managed
-project/boot
 target
-src/main/java/com/yammer/streamie/data/pb
-streamie.conf
 atlassian-ide-plugin.xml
-project/plugins/project/build.properties
 logs
