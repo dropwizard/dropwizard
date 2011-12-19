@@ -104,7 +104,7 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>11.0-rc1</version>
+            <version>11.0</version>
         </dependency>
         <dependency>
             <groupId>org.hibernate</groupId>
