@@ -21,7 +21,7 @@
     </modules>
 
     <properties>
-        <metrics.version>2.0.0-BETA18-SNAPSHOT</metrics.version>
+        <metrics.version>2.0.0-BETA18</metrics.version>
         <jersey.version>1.11</jersey.version>
     </properties>
 
