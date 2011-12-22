@@ -47,14 +47,14 @@
     </licenses>
 
     <scm>
-        <connection>scm:git:git://github.com/codahale/com.yammer.dropwizard.git</connection>
-        <developerConnection>scm:git:git@github.com:codahale/com.yammer.dropwizard.git</developerConnection>
-        <url>http://github.com/codahale/com.yammer.dropwizard/</url>
+        <connection>scm:git:git://github.com/codahale/dropwizard.git</connection>
+        <developerConnection>scm:git:git@github.com:codahale/dropwizard.git</developerConnection>
+        <url>http://github.com/codahale/dropwizard/</url>
     </scm>
 
     <issueManagement>
         <system>github</system>
-        <url>http://github.com/codahale/com.yammer.dropwizard/issues#issue/</url>
+        <url>http://github.com/codahale/dropwizard/issues#issue/</url>
     </issueManagement>
 
     <repositories>
