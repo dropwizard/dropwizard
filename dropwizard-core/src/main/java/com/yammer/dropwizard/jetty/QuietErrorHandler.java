@@ -26,6 +26,7 @@ import java.util.ResourceBundle;
  */
 public class QuietErrorHandler extends ErrorHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(QuietErrorHandler.class);
+    private static final int RESPONSE_BUFFER_SIZE = 4096;
 
     /*
      * Sadly, this class is basically untestable.
@@ -40,30 +41,35 @@ public class QuietErrorHandler extends ErrorHandler {
                        HttpServletRequest request,
                        HttpServletResponse response) throws IOException {
         final AbstractHttpConnection connection = AbstractHttpConnection.getCurrentConnection();
-        final Response jettyResponse = connection.getResponse();
-        jettyResponse.setStatus(jettyResponse.getStatus());
+        if (connection != null) {
+            connection.getRequest().setHandled(true);
+            final Response jettyResponse = connection.getResponse();
+            jettyResponse.setStatus(jettyResponse.getStatus());
 
-        connection.getRequest().setHandled(true);
-        final String method = request.getMethod();
-        
-        if (!ALLOWED_METHODS.contains(method)) {
-            return;
-        }
+            connection.getRequest().setHandled(true);
+            final String method = request.getMethod();
 
-        response.setContentType(MimeTypes.TEXT_PLAIN_UTF_8);
-        if (getCacheControl() != null) {
-            response.setHeader(HttpHeaders.CACHE_CONTROL, getCacheControl());
-        }
+            if (!ALLOWED_METHODS.contains(method)) {
+                return;
+            }
 
-        final StringBuilder builder = new StringBuilder(4096);
-        builder.append(errorMessage(request, jettyResponse.getStatus())).append('\n').append('\n');
-        final byte[] bytes = builder.toString().getBytes(Charsets.UTF_8);
-        response.setContentLength(bytes.length);
-        final ServletOutputStream output = response.getOutputStream();
-        try {
-            output.write(bytes);
-        } finally {
-            output.close();
+            response.setContentType(MimeTypes.TEXT_PLAIN_UTF_8);
+            if (getCacheControl() != null) {
+                response.setHeader(HttpHeaders.CACHE_CONTROL, getCacheControl());
+            }
+
+            final StringBuilder builder = new StringBuilder(RESPONSE_BUFFER_SIZE);
+            builder.append(errorMessage(request, jettyResponse.getStatus()))
+                   .append('\n')
+                   .append('\n');
+            final byte[] bytes = builder.toString().getBytes(Charsets.UTF_8);
+            response.setContentLength(bytes.length);
+            final ServletOutputStream output = response.getOutputStream();
+            try {
+                output.write(bytes);
+            } finally {
+                output.close();
+            }
         }
     }
 
