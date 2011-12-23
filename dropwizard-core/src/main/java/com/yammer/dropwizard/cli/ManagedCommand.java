@@ -30,12 +30,13 @@ public abstract class ManagedCommand<T extends Configuration> extends Configured
         LOGGER.info("Starting " + service.getName());
         environment.start();
         try {
-            run(configuration, params);
+            run(configuration, environment, params);
         } finally {
             environment.stop();
         }
     }
 
-    protected abstract void run(Configuration configuration,
+    protected abstract void run(T configuration,
+                                Environment environment,
                                 CommandLine params) throws Exception;
 }
