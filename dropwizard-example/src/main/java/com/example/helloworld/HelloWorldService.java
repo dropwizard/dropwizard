@@ -8,8 +8,6 @@ import com.yammer.dropwizard.Service;
 import com.yammer.dropwizard.bundles.AssetsBundle;
 import com.yammer.dropwizard.config.Environment;
 
-import static com.yammer.metrics.aop.Instrumentation.instrument;
-
 public class HelloWorldService extends Service<HelloWorldConfiguration> {
     public static void main(String[] args) throws Exception {
         new HelloWorldService().run(args);
@@ -27,7 +25,7 @@ public class HelloWorldService extends Service<HelloWorldConfiguration> {
         final Template template = configuration.buildTemplate();
 
         environment.addHealthCheck(new TemplateHealthCheck(template));
-        environment.addResource(instrument(new HelloWorldResource(template)));
+        environment.addResource(new HelloWorldResource(template));
     }
 
 }
