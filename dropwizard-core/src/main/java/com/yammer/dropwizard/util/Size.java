@@ -5,15 +5,15 @@ import com.google.common.collect.ImmutableMap;
 
 import java.util.regex.Pattern;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class Size {
-    public static final String VALID_SIZE = "[\\d]+[\\s]*(B|byte(s)?|" +
-                                                         "KB|KiB|kilobyte(s)?|" +
-                                                         "MB|MiB|megabyte(s)?|" +
-                                                         "GB|GiB|gigabyte(s)?|" +
-                                                         "TB|TiB|terabyte(s)?)";
-    private static final Pattern SIZE_PATTERN = Pattern.compile(VALID_SIZE);
+    private static final Pattern PATTERN = Pattern.compile("[\\d]+[\\s]*(B|byte(s)?|" +
+                                                                   "KB|KiB|kilobyte(s)?|" +
+                                                                   "MB|MiB|megabyte(s)?|" +
+                                                                   "GB|GiB|gigabyte(s)?|" +
+                                                                   "TB|TiB|terabyte(s)?)");
 
     private static final ImmutableMap<String, SizeUnit> SUFFIXES;
 
@@ -67,6 +67,7 @@ public class Size {
     }
 
     private static long parseCount(String s) {
+        checkArgument(PATTERN.matcher(s).matches(), "Invalid size: %s", s);
         final String value = CharMatcher.WHITESPACE.removeFrom(s);
         return Long.parseLong(CharMatcher.JAVA_LETTER.trimTrailingFrom(value));
     }
@@ -74,22 +75,19 @@ public class Size {
     private static SizeUnit parseUnit(String s) {
         final String value = CharMatcher.WHITESPACE.removeFrom(s);
         final String suffix = CharMatcher.DIGIT.trimLeadingFrom(value).trim();
-        final SizeUnit unit = SUFFIXES.get(suffix);
-        if (unit != null) {
-            return unit;
-        }
-        throw new IllegalArgumentException("Unable to parse as size: " + s);
+        return SUFFIXES.get(suffix);
     }
     
     public static Size parse(String size) {
-        if (SIZE_PATTERN.matcher(size).matches()) {
-            return new Size(parseCount(size), parseUnit(size));
-        }
-        throw new IllegalArgumentException("Unable to parse size: " + size);
+        return new Size(parseCount(size), parseUnit(size));
     }
 
     private final long count;
     private final SizeUnit unit;
+    
+    public Size(String size) {
+        this(parseCount(size), parseUnit(size));
+    }
 
     private Size(long count, SizeUnit unit) {
         this.count = count;

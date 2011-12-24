@@ -110,8 +110,7 @@ public class HttpConfiguration {
     private String connectorType = "blocking";
 
     @NotNull
-    @Pattern(regexp = Duration.VALID_DURATION)
-    private String maxIdleTime = "1s";
+    private Duration maxIdleTime = Duration.seconds(1);
 
     @Min(1)
     @Max(128)
@@ -128,36 +127,29 @@ public class HttpConfiguration {
     private int maxBufferCount = 1024;
 
     @NotNull
-    @Pattern(regexp = Size.VALID_SIZE)
-    private String requestBufferSize = "32KiB";
+    private Size requestBufferSize = Size.kilobytes(32);
 
     @NotNull
-    @Pattern(regexp = Size.VALID_SIZE)
-    private String requestHeaderBufferSize = "3KiB";
+    private Size requestHeaderBufferSize = Size.kilobytes(3);
 
     @NotNull
-    @Pattern(regexp = Size.VALID_SIZE)
-    private String responseBufferSize = "32KiB";
+    private Size responseBufferSize = Size.kilobytes(32);
 
     @NotNull
-    @Pattern(regexp = Size.VALID_SIZE)
-    private String responseHeaderBufferSize = "6KiB";
+    private Size responseHeaderBufferSize = Size.kilobytes(6);
 
     private boolean reuseAddress = true;
 
-    @Pattern(regexp = Duration.VALID_DURATION)
-    private String soLingerTime = null;
+    private Duration soLingerTime = null;
 
     @Min(1)
     private int lowResourcesConnectionThreshold = 25000;
 
     @NotNull
-    @Pattern(regexp = Duration.VALID_DURATION)
-    private String lowResourcesMaxIdleTime = "5s";
+    private Duration lowResourcesMaxIdleTime = Duration.seconds(5);
 
     @NotNull
-    @Pattern(regexp = Duration.VALID_DURATION)
-    private String shutdownGracePeriod = "2s";
+    private Duration shutdownGracePeriod = Duration.seconds(2);
 
     private boolean useServerHeader = false;
 
@@ -206,7 +198,7 @@ public class HttpConfiguration {
     }
 
     public Duration getMaxIdleTime() {
-        return Duration.parse(maxIdleTime);
+        return maxIdleTime;
     }
 
     public int getAcceptorThreadCount() {
@@ -226,19 +218,19 @@ public class HttpConfiguration {
     }
 
     public Size getRequestBufferSize() {
-        return Size.parse(requestBufferSize);
+        return requestBufferSize;
     }
 
     public Size getRequestHeaderBufferSize() {
-        return Size.parse(requestHeaderBufferSize);
+        return requestHeaderBufferSize;
     }
 
     public Size getResponseBufferSize() {
-        return Size.parse(responseBufferSize);
+        return responseBufferSize;
     }
 
     public Size getResponseHeaderBufferSize() {
-        return Size.parse(responseHeaderBufferSize);
+        return responseHeaderBufferSize;
     }
 
     public boolean isReuseAddressEnabled() {
@@ -246,10 +238,7 @@ public class HttpConfiguration {
     }
 
     public Optional<Duration> getSoLingerTime() {
-        if (soLingerTime == null) {
-            return Optional.absent();
-        }
-        return Optional.of(Duration.parse(soLingerTime));
+        return Optional.fromNullable(soLingerTime);
     }
 
     public int getLowResourcesConnectionThreshold() {
@@ -257,11 +246,11 @@ public class HttpConfiguration {
     }
 
     public Duration getLowResourcesMaxIdleTime() {
-        return Duration.parse(lowResourcesMaxIdleTime);
+        return lowResourcesMaxIdleTime;
     }
 
     public Duration getShutdownGracePeriod() {
-        return Duration.parse(shutdownGracePeriod);
+        return shutdownGracePeriod;
     }
 
     public boolean useForwardedHeaders() {

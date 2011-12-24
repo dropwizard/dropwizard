@@ -6,17 +6,19 @@ import com.google.common.collect.ImmutableMap;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class Duration {
-    public static final String VALID_DURATION = "[\\d]+[\\s]*(ns|nanosecond(s)?|" +
-                                                             "us|microsecond(s)?|" +
-                                                             "ms|millisecond(s)?|" +
-                                                             "s|second(s)?|" +
-                                                             "m|minute(s)?|" +
-                                                             "h|hour(s)?|" +
-                                                             "d|day(s)?)";
-    private static final Pattern DURATION_PATTERN = Pattern.compile(VALID_DURATION);
+    private static final Pattern PATTERN = Pattern.compile("[\\d]+[\\s]*(" +
+            "ns|nanosecond(s)?|" +
+            "us|microsecond(s)?|" +
+            "ms|millisecond(s)?|" +
+            "s|second(s)?|" +
+            "m|minute(s)?|" +
+            "h|hour(s)?|" +
+            "d|day(s)?" +
+            ')');
     private static final ImmutableMap<String, TimeUnit> SUFFIXES;
 
     static {
@@ -82,6 +84,7 @@ public class Duration {
     }
     
     private static long parseCount(String s) {
+        checkArgument(PATTERN.matcher(s).matches(), "Invalid duration: %s", s);
         final String value = CharMatcher.WHITESPACE.removeFrom(s);
         return Long.parseLong(CharMatcher.JAVA_LETTER.trimTrailingFrom(value));
     }
@@ -89,22 +92,19 @@ public class Duration {
     private static TimeUnit parseUnit(String s) {
         final String value = CharMatcher.WHITESPACE.removeFrom(s);
         final String suffix = CharMatcher.DIGIT.trimLeadingFrom(value);
-        final TimeUnit unit = SUFFIXES.get(suffix);
-        if (unit != null) {
-            return unit;
-        }
-        throw new IllegalArgumentException("Unable to parse as duration: " + s);
+        return SUFFIXES.get(suffix);
     }
 
     public static Duration parse(String duration) {
-        if (DURATION_PATTERN.matcher(duration).matches()) {
-            return new Duration(parseCount(duration), parseUnit(duration));
-        }
-        throw new IllegalArgumentException("Unable to parse as duration: " + duration);
+        return new Duration(parseCount(duration), parseUnit(duration));
     }
 
     private final long count;
     private final TimeUnit unit;
+    
+    public Duration(String duration) {
+        this(parseCount(duration), parseUnit(duration));
+    }
 
     private Duration(long count, TimeUnit unit) {
         this.count = count;

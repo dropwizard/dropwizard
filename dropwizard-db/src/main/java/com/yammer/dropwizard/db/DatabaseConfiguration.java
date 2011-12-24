@@ -9,7 +9,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import java.util.Map;
 
 @SuppressWarnings("FieldMayBeFinal")
@@ -30,8 +29,7 @@ public class DatabaseConfiguration {
         private Map<String, String> properties = Maps.newHashMap();
 
         @NotNull
-        @Pattern(regexp = Duration.VALID_DURATION)
-        private String maxWaitForConnection = "1s";
+        private Duration maxWaitForConnection = Duration.seconds(1);
         
         @NotNull
         private String validationQuery = "/* Health Check */ SELECT 1";
@@ -47,12 +45,10 @@ public class DatabaseConfiguration {
         private boolean checkConnectionWhileIdle;
 
         @NotNull
-        @Pattern(regexp = Duration.VALID_DURATION)
-        private String checkConnectionHealthWhenIdleFor = "10s";
+        private Duration checkConnectionHealthWhenIdleFor = Duration.seconds(10);
 
         @NotNull
-        @Pattern(regexp = Duration.VALID_DURATION)
-        private String closeConnectionIfIdleFor = "10m";
+        private Duration closeConnectionIfIdleFor = Duration.minutes(1);
 
         public String getDriverClass() {
             return driverClass;
@@ -95,11 +91,11 @@ public class DatabaseConfiguration {
         }
 
         public Duration getMaxWaitForConnection() {
-            return Duration.parse(maxWaitForConnection);
+            return maxWaitForConnection;
         }
 
         public void setMaxWaitForConnection(Duration maxWait) {
-            this.maxWaitForConnection = maxWait.toString();
+            this.maxWaitForConnection = maxWait;
         }
 
         public String getValidationQuery() {
@@ -135,19 +131,19 @@ public class DatabaseConfiguration {
         }
 
         public Duration getCheckConnectionHealthWhenIdleFor() {
-            return Duration.parse(checkConnectionHealthWhenIdleFor);
+            return checkConnectionHealthWhenIdleFor;
         }
 
         public void setCheckConnectionHealthWhenIdleFor(Duration timeout) {
-            this.checkConnectionHealthWhenIdleFor = timeout.toString();
+            this.checkConnectionHealthWhenIdleFor = timeout;
         }
 
         public Duration getCloseConnectionIfIdleFor() {
-            return Duration.parse(closeConnectionIfIdleFor);
+            return closeConnectionIfIdleFor;
         }
 
         public void setCloseConnectionIfIdleFor(Duration timeout) {
-            this.closeConnectionIfIdleFor = timeout.toString();
+            this.closeConnectionIfIdleFor = timeout;
         }
 
         @ValidationMethod(message = ".minSize must be less than or equal to maxSize")

@@ -5,16 +5,13 @@ import com.yammer.dropwizard.util.Duration;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 
 public class HttpClientConfiguration {
     @NotNull
-    @Pattern(regexp = Duration.VALID_DURATION)
-    private String timeout = "500ms";
+    private Duration timeout = Duration.milliseconds(500);
 
     @NotNull
-    @Pattern(regexp = Duration.VALID_DURATION)
-    private String timeToLive = "1 hour";
+    private Duration timeToLive = Duration.hours(1);
 
     private boolean cookiesEnabled = false;
 
@@ -23,11 +20,11 @@ public class HttpClientConfiguration {
     private int maxConnections = 1024;
 
     public Duration getTimeout() {
-        return Duration.parse(timeout);
+        return timeout;
     }
 
     public Duration getTimeToLive() {
-        return Duration.parse(timeToLive);
+        return timeToLive;
     }
 
     public boolean isCookiesEnabled() {
@@ -35,11 +32,11 @@ public class HttpClientConfiguration {
     }
 
     public void setTimeout(Duration duration) {
-        this.timeout = duration.toString();
+        this.timeout = duration;
     }
 
     public void setTimeToLive(Duration timeToLive) {
-        this.timeToLive = timeToLive.toString();
+        this.timeToLive = timeToLive;
     }
 
     public void setCookiesEnabled(boolean enabled) {

@@ -42,8 +42,7 @@ public class LoggingConfiguration {
         private String filenamePattern = "./logs/example.log";
 
         @NotNull
-        @Pattern(regexp = Size.VALID_SIZE)
-        private String maxFileSize = "50MB";
+        private Size maxFileSize = Size.megabytes(50);
 
         @Min(1)
         @Max(50)
@@ -62,7 +61,7 @@ public class LoggingConfiguration {
         }
 
         public Size getMaxFileSize() {
-            return Size.parse(maxFileSize);
+            return maxFileSize;
         }
 
         public int getRetainedFileCount() {
