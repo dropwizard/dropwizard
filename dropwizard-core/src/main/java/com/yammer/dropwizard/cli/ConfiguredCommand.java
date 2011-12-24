@@ -21,15 +21,6 @@ import java.lang.reflect.ParameterizedType;
  */
 public abstract class ConfiguredCommand<T extends Configuration> extends Command {
     /**
-     * Creates a new {@link ConfiguredCommand} with the given name.
-     *
-     * @param name    the command's name
-     */
-    protected ConfiguredCommand(String name) {
-        super(name, null);
-    }
-
-    /**
      * Creates a new {@link ConfiguredCommand} with the given name and configuration.
      *
      * @param name           the command's name

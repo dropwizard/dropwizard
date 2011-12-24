@@ -11,10 +11,6 @@ import org.slf4j.LoggerFactory;
 public abstract class ManagedCommand<T extends Configuration> extends ConfiguredCommand<T> {
     private static final Logger LOGGER = LoggerFactory.getLogger(ManagedCommand.class);
 
-    protected ManagedCommand(String name) {
-        super(name);
-    }
-
     protected ManagedCommand(String name,
                              String description) {
         super(name, description);
