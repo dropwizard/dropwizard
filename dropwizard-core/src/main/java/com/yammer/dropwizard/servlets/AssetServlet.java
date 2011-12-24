@@ -35,8 +35,8 @@ public class AssetServlet extends HttpServlet {
         }
     }
     
-    private final Cache<String, byte[]> cache;
-    private final MimeTypes mimeTypes;
+    private final transient Cache<String, byte[]> cache;
+    private final transient MimeTypes mimeTypes;
 
     public AssetServlet(String base, int maxCacheSize) {
         this.cache = buildCache(base, maxCacheSize);
