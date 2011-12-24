@@ -1,8 +1,8 @@
 package com.yammer.dropwizard.servlets;
 
-import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.google.common.io.Resources;
 import org.eclipse.jetty.http.MimeTypes;
 import org.eclipse.jetty.util.URIUtil;
@@ -35,7 +35,7 @@ public class AssetServlet extends HttpServlet {
         }
     }
     
-    private final transient Cache<String, byte[]> cache;
+    private final transient LoadingCache<String, byte[]> cache;
     private final transient MimeTypes mimeTypes;
 
     public AssetServlet(String base, int maxCacheSize) {
@@ -43,7 +43,7 @@ public class AssetServlet extends HttpServlet {
         this.mimeTypes = new MimeTypes();
     }
 
-    private static Cache<String, byte[]> buildCache(String base, int maxCacheSize) {
+    private static LoadingCache<String, byte[]> buildCache(String base, int maxCacheSize) {
         return CacheBuilder.newBuilder()
                            .maximumSize(maxCacheSize)
                            .build(new AssetLoader(base));
