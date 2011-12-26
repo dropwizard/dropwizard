@@ -138,5 +138,12 @@ public class Json {
     public static <T> T read(String json, TypeReference<T> ref) throws IOException {
         return mapper.readValue(json, ref);
     }
-    
+
+    public static <T> T read(byte[] json, Class<T> klass) throws IOException {
+        return mapper.readValue(json, constructType(klass));
+    }
+
+    public static <T> T read(byte[] json, TypeReference<T> ref) throws IOException {
+        return mapper.readValue(json, ref);
+    }
 }
