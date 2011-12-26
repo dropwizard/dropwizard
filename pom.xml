@@ -74,6 +74,10 @@
             <name>Nexus Release Repository</name>
             <url>http://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
+        <site>
+            <id>dropwizard-codahale.com</id>
+            <url>scpexe://codahale.com/home/codahale/dropwizard.codahale.com/maven/</url>
+        </site>
     </distributionManagement>
 
     <profiles>
@@ -167,11 +171,24 @@
                     <preparationGoals>clean verify gpg:sign</preparationGoals>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <version>3.0</version>
+                <configuration>
+
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <version>2.4</version>
+            </plugin>
         </plugins>
         <extensions>
             <extension>
                 <groupId>org.apache.maven.wagon</groupId>
-                <artifactId>wagon-ssh</artifactId>
+                <artifactId>wagon-ssh-external</artifactId>
                 <version>1.0-beta-7</version>
             </extension>
         </extensions>
