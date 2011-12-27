@@ -26,7 +26,7 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
-            <version>1.9.0-rc1</version>
+            <version>1.9.0</version>
         </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>
