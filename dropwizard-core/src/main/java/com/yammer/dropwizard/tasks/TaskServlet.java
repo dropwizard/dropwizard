@@ -2,8 +2,7 @@ package com.yammer.dropwizard.tasks;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.yammer.dropwizard.logging.Log;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -12,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.MediaType;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.*;
+import java.util.Enumeration;
 
 /**
  * A servlet which provides access to administrative {@link Task}s. It only responds to {@code POST}
@@ -23,7 +22,7 @@ import java.util.*;
  */
 public class TaskServlet extends HttpServlet {
     private static final long serialVersionUID = 7404713218661358124L;
-    private static final Logger LOGGER = LoggerFactory.getLogger(TaskServlet.class);
+    private static final Log LOG = Log.forClass(TaskServlet.class);
     private final ImmutableMap<String, Task> tasks;
 
     /**
@@ -53,7 +52,7 @@ public class TaskServlet extends HttpServlet {
                     output.close();
                 }
             } catch (Exception e) {
-                LOGGER.error("Error running " + task.getName(), e);
+                LOG.error(e, "Error running {}", task.getName());
                 resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
         } else {

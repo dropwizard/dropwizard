@@ -4,12 +4,11 @@ import com.yammer.dropwizard.AbstractService;
 import com.yammer.dropwizard.config.Configuration;
 import com.yammer.dropwizard.config.Environment;
 import com.yammer.dropwizard.config.LoggingFactory;
+import com.yammer.dropwizard.logging.Log;
 import org.apache.commons.cli.CommandLine;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public abstract class ManagedCommand<T extends Configuration> extends ConfiguredCommand<T> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ManagedCommand.class);
+    private static final Log LOG = Log.forClass(ManagedCommand.class);
 
     protected ManagedCommand(String name,
                              String description) {
@@ -23,7 +22,7 @@ public abstract class ManagedCommand<T extends Configuration> extends Configured
         new LoggingFactory(configuration.getLoggingConfiguration()).configure();
         final Environment environment = new Environment();
         service.initializeWithBundles(configuration, environment);
-        LOGGER.info("Starting " + service.getName());
+        LOG.info("Starting {}", service.getName());
         environment.start();
         try {
             run(configuration, environment, params);

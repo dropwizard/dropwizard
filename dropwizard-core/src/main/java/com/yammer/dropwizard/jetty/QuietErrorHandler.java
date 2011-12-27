@@ -2,6 +2,7 @@ package com.yammer.dropwizard.jetty;
 
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableSet;
+import com.yammer.dropwizard.logging.Log;
 import org.eclipse.jetty.http.HttpGenerator;
 import org.eclipse.jetty.http.HttpHeaders;
 import org.eclipse.jetty.http.HttpMethods;
@@ -10,8 +11,6 @@ import org.eclipse.jetty.server.AbstractHttpConnection;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Response;
 import org.eclipse.jetty.server.handler.ErrorHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -25,7 +24,7 @@ import java.util.ResourceBundle;
  * An {@link ErrorHandler} subclass which returns concise, {@code text/plain} error messages.
  */
 public class QuietErrorHandler extends ErrorHandler {
-    private static final Logger LOGGER = LoggerFactory.getLogger(QuietErrorHandler.class);
+    private static final Log LOG = Log.forClass(QuietErrorHandler.class);
     private static final int RESPONSE_BUFFER_SIZE = 4096;
 
     /*
@@ -83,7 +82,7 @@ public class QuietErrorHandler extends ErrorHandler {
                 return format.format(new Object[]{request.getMethod()});
             }
         } catch (MissingResourceException e) {
-            LOGGER.error("Unable to load HttpErrorMessages.properties", e);
+            LOG.error(e, "Unable to load HttpErrorMessages.properties");
         }
         return "Your request could not be processed: " + HttpGenerator.getReasonBuffer(status);
     }

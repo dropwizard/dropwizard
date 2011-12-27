@@ -6,10 +6,9 @@ import com.yammer.dropwizard.AbstractService;
 import com.yammer.dropwizard.config.Configuration;
 import com.yammer.dropwizard.config.Environment;
 import com.yammer.dropwizard.config.ServerFactory;
+import com.yammer.dropwizard.logging.Log;
 import org.apache.commons.cli.CommandLine;
 import org.eclipse.jetty.server.Server;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 // TODO: 10/12/11 <coda> -- write tests for ServerCommand
 
@@ -49,8 +48,8 @@ public class ServerCommand<T extends Configuration> extends ConfiguredCommand<T>
 
         final Server server = new ServerFactory(configuration.getHttpConfiguration()).buildServer(environment);
 
-        final Logger logger = LoggerFactory.getLogger(ServerCommand.class);
-        logger.info("Starting " + service.getName());
+        final Log logger = Log.forClass(ServerCommand.class);
+        logger.info("Starting {}", service.getName());
 
         try {
             logger.info('\n' + Resources.toString(Resources.getResource("banner.txt"), Charsets.UTF_8));

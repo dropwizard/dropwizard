@@ -2,6 +2,7 @@ package com.yammer.dropwizard.jetty;
 
 // TODO: 10/12/11 <coda> -- write tests for AsyncRequestLog
 
+import com.yammer.dropwizard.logging.Log;
 import org.eclipse.jetty.http.HttpHeaders;
 import org.eclipse.jetty.server.Authentication;
 import org.eclipse.jetty.server.Request;
@@ -10,8 +11,6 @@ import org.eclipse.jetty.server.Response;
 import org.eclipse.jetty.util.DateCache;
 import org.eclipse.jetty.util.RolloverFileOutputStream;
 import org.eclipse.jetty.util.component.AbstractLifeCycle;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -30,7 +29,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class AsyncRequestLog extends AbstractLifeCycle implements RequestLog {
     private static final AtomicInteger THREAD_COUNTER = new AtomicInteger();
-    private static final Logger LOGGER = LoggerFactory.getLogger(AsyncRequestLog.class);
+    private static final Log LOG = Log.forClass(AsyncRequestLog.class);
     private static final int BATCH_SIZE = 10000;
 
     private class Dispatcher implements Runnable {
@@ -111,7 +110,7 @@ public class AsyncRequestLog extends AbstractLifeCycle implements RequestLog {
                     numberOfFilesToRetain,
                     TimeZone.getTimeZone("UTC"));
             this.writer = new PrintWriter(outputStream);
-            LOGGER.info("Opened {}", outputStream.getDatedFilename());
+            LOG.info("Opened {}", outputStream.getDatedFilename());
         }
 
         dispatchThread.start();

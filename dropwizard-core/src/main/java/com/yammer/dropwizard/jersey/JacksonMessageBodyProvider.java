@@ -2,10 +2,9 @@ package com.yammer.dropwizard.jersey;
 
 import com.google.common.collect.ImmutableList;
 import com.yammer.dropwizard.json.Json;
+import com.yammer.dropwizard.logging.Log;
 import com.yammer.dropwizard.validation.Validator;
 import org.eclipse.jetty.io.EofException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.validation.Valid;
 import javax.ws.rs.Consumes;
@@ -31,7 +30,7 @@ import java.lang.reflect.Type;
 @Consumes("application/json")
 public class JacksonMessageBodyProvider implements MessageBodyReader<Object>,
                                                    MessageBodyWriter<Object> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(JacksonMessageBodyProvider.class);
+    private static final Log LOG = Log.forClass(JacksonMessageBodyProvider.class);
     private static final Validator VALIDATOR = new Validator();
     private static final Response.StatusType UNPROCESSABLE_ENTITY = new Response.StatusType() {
         @Override
@@ -117,7 +116,7 @@ public class JacksonMessageBodyProvider implements MessageBodyReader<Object>,
         } catch (EofException ignored) {
             // we don't care about these
         } catch (IOException e) {
-            LOGGER.error("Error writing response", e);
+            LOG.error(e, "Error writing response");
         }
     }
 }
