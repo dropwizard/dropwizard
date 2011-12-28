@@ -1,4 +1,4 @@
-v0.1.1: TBD
+v0.1.1: Dec 28 2011
 ===================
 
 * Fixed `ManagedCommand` to provide access to the `Environment`, among other things.

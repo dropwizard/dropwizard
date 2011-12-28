@@ -79,7 +79,7 @@
             <url>scpexe://codahale.com/home/codahale/dropwizard.codahale.com/maven/</url>
         </site>
     </distributionManagement>
-    
+
     <profiles>
         <profile>
             <id>sign</id>
