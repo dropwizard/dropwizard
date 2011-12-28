@@ -168,7 +168,7 @@
                     <autoVersionSubmodules>true</autoVersionSubmodules>
                     <mavenExecutorId>forked-path</mavenExecutorId>
                     <tagNameFormat>v@{project.version}</tagNameFormat>
-                    <preparationGoals>clean</preparationGoals>
+                    <preparationGoals>clean test</preparationGoals>
                 </configuration>
             </plugin>
             <plugin>
