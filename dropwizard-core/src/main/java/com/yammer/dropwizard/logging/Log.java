@@ -16,12 +16,61 @@ import org.slf4j.helpers.MessageFormatter;
  * LOG.warn(exception, "Exceptions go first but don't prevent message formatting: {}", otherStuff);
  * </code>
  */
+@SuppressWarnings("UnusedDeclaration")
 public class Log {
+    /**
+     * Returns a {@link Log} instance for the given class.
+     *
+     * @param klass    a given class
+     * @return a {@link Log} instance with {@code klass}'s name
+     */
     public static Log forClass(Class<?> klass) {
-        return new Log(Logger.getLogger(klass));
+        return forLog4jLogger(Logger.getLogger(klass));
+    }
+
+    /**
+     * Returns a {@link Log} instance with the given name.
+     *
+     * @param name    a given name
+     * @return a {@link Log} instance with the given name
+     */
+    public static Log named(String name) {
+        return forLog4jLogger(Logger.getLogger(name));
+    }
+
+    /**
+     * Returns a {@link Log} instance with the same name as the given Log4j {@link Logger} instance.
+     *
+     * @param logger    a Log4j {@link Logger}
+     * @return a {@link Log} instance with the same name as {@code logger}
+     */
+    public static Log forLog4jLogger(Logger logger) {
+        return new Log(logger);
+    }
+
+    /**
+     * Returns a {@link Log} instance with the same name as the given slf4j {@link org.slf4j.Logger}
+     * instance.
+     *
+     * @param logger    an Slf4j {@link org.slf4j.Logger}
+     * @return a {@link Log} instance with the same name as {@code logger}
+     */
+    public static Log forSlf4jLogger(org.slf4j.Logger logger) {
+        return named(logger.getName());
+    }
+
+    /**
+     * Returns a {@link Log} instance with the same name as the given {@code java.util.logging}
+     * {@link java.util.logging.Logger} instance.
+     *
+     * @param logger    a {@code java.util.logging} {@link java.util.logging.Logger} instance
+     * @return a {@link Log} instance with the same name as {@code logger}
+     */
+    public static Log forJulLogger(java.util.logging.Logger logger) {
+        return named(logger.getName());
     }
     
-    private Logger logger;
+    private final Logger logger;
 
     private Log(Logger logger) {
         this.logger = logger;
