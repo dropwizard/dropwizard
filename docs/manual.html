@@ -74,6 +74,7 @@
                     <ul>
                         <li><a href="#paths">Paths</a></li>
                         <li><a href="#methods">Methods</a></li>
+                        <li><a href="#metrics">Metrics</a></li>
                         <li><a href="#parameters">Parameters</a></li>
                         <li><a href="#request-entities">Request Entities</a></li>
                         <li><a href="#conneg">Media Types</a></li>
@@ -750,6 +751,14 @@ public class NotificationsResource {
             is then mapped to the <a href="#conneg">negotiated content type</a>. In this case, our
             resource only supports JSON, and so the <code>NotificationList</code> is serialized to
             JSON using Jackson.
+        </p>
+        
+        <h3 id="metrics">Metrics</h3>
+
+        <p>
+            Every resource method can be annotated with <code>@Timed</code>, <code>@Metered</code>,
+            and <code>@ExceptionMetered</code>. Dropwizard augments Jersey to automatically record
+            runtime information about your resource methods.
         </p>
 
         <h3 id="parameters">Parameters</h3>

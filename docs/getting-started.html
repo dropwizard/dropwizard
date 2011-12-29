@@ -399,9 +399,7 @@ package com.example.helloworld.resources;
 
 import com.example.helloworld.core.Saying;
 import com.google.common.base.Optional;
-import com.yammer.metrics.Metrics;
-import com.yammer.metrics.core.TimerContext;
-import com.yammer.metrics.core.TimerMetric;
+import com.yammer.metrics.annotation.Timed;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -413,9 +411,6 @@ import java.util.concurrent.atomic.AtomicLong;
 @Path("/hello-world")
 @Produces(MediaType.APPLICATION_JSON)
 public class HelloWorldResource {
-    private static final TimerMetric GETS = Metrics.newTimer(HelloWorldResource.class,
-                                                             "get-requests");
-
     private final String template;
     private final String defaultName;
     private final AtomicLong counter;
@@ -427,14 +422,10 @@ public class HelloWorldResource {
     }
 
     @GET
+    @Timed
     public Saying sayHello(@QueryParam("name") Optional&lt;String&gt; name) {
-        final TimerContext context = GETS.time();
-        try {
-            return new Saying(counter.incrementAndGet(),
-                              String.format(template, name.or(defaultName)));
-        } finally {
-            context.stop();
-        }
+        return new Saying(counter.incrementAndGet(),
+                          String.format(template, name.or(defaultName)));
     }
 }</pre>
         
@@ -449,11 +440,6 @@ public class HelloWorldResource {
             <code>@Produces(MediaType.APPLICATION_JSON)</code> lets Jersey’s content negotiation
             code know that this resource produces representations which are
             <code>application/json</code>.
-        </p>
-        
-        <p>
-            <code>GETS</code> is a <code>TimerMetric</code> from the Metrics library which we use
-            to monitor both the latency and rate of <code>GET</code> requests for this resource.
         </p>
 
         <p>
@@ -481,11 +467,14 @@ public class HelloWorldResource {
         </p>
         
         <p>
-            Inside the <code>sayHello</code> method, we get a <code>TimerContext</code> from the
-            timer, which allows us to measure now much time each request takes and how many requests
-            per second our service is doing at any point in time. We increment the counter, format
-            the template using <code>String.format(String, Object...)</code>, and return a new
+            Inside the <code>sayHello</code> method, we increment the counter, format the template
+            using <code>String.format(String, Object...)</code>, and return a new
             <code>Saying</code> instance.
+        </p>
+
+        <p>
+            Because <code>sayHello</code> is annotated with <code>@Timed</code>, Dropwizard
+            automatically records the duration and rate of its invocations as a Metrics Timer.
         </p>
         
         <p>
