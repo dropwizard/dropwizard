@@ -9,6 +9,11 @@
 
     <repositories>
         <repository>
+            <id>sonatype-nexus-snapshots</id>
+            <name>Sonatype Nexus Snapshots</name>
+            <url>http://oss.sonatype.org/content/repositories/snapshots</url>
+        </repository>
+        <repository>
             <id>repo.codahale.com</id>
             <url>http://repo.codahale.com/</url>
         </repository>
