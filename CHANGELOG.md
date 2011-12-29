@@ -3,6 +3,7 @@ v0.1.2: TBD
 
 * All Jersey resource methods annotated with `@Timed`, `@Metered`, or `@ExceptionMetered` are now
   instrumented via `metrics-jersey`.
+* Now licensed under Apache License 2.0.
 
 
 v0.1.1: Dec 28 2011
