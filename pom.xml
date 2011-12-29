@@ -38,8 +38,8 @@
 
     <licenses>
         <license>
-            <url>http://codahale.com/mit.txt</url>
-            <name>The MIT License</name>
+            <name>Apache License 2.0</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
             <distribution>repo</distribution>
         </license>
     </licenses>
