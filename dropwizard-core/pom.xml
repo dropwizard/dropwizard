@@ -55,6 +55,11 @@
             <version>${metrics.version}</version>
         </dependency>
         <dependency>
+            <groupId>com.yammer.metrics</groupId>
+            <artifactId>metrics-jersey</artifactId>
+            <version>${metrics.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.codehaus.jackson</groupId>
             <artifactId>jackson-core-asl</artifactId>
             <version>${jackson.version}</version>

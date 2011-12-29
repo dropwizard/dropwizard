@@ -3,7 +3,7 @@ package com.example.helloworld.resources;
 import com.example.helloworld.core.Saying;
 import com.example.helloworld.core.Template;
 import com.google.common.base.Optional;
-import com.yammer.metrics.aop.annotation.Timed;
+import com.yammer.metrics.annotation.Timed;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;

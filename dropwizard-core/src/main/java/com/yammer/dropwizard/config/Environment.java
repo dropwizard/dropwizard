@@ -19,6 +19,7 @@ import com.yammer.dropwizard.logging.Log;
 import com.yammer.dropwizard.tasks.GarbageCollectionTask;
 import com.yammer.dropwizard.tasks.Task;
 import com.yammer.metrics.core.HealthCheck;
+import com.yammer.metrics.jersey.InstrumentedResourceMethodDispatchProvider;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.component.AbstractLifeCycle;
@@ -70,6 +71,7 @@ public class Environment extends AbstractLifeCycle {
 
         enableJerseyFeature(ResourceConfig.FEATURE_DISABLE_WADL);
         addProvider(new LoggingExceptionMapper<Throwable>() {}); // create a subclass to pin it to Throwable
+        addProvider(InstrumentedResourceMethodDispatchProvider.class);
         addServlet(new ServletContainer(config), ROOT_PATH).setInitOrder(Integer.MAX_VALUE);
         addTask(new GarbageCollectionTask());
     }
