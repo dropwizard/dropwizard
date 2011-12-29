@@ -1,3 +1,10 @@
+v0.1.2: TBD
+===================
+
+* All Jersey resource methods annotated with `@Timed`, `@Metered`, or `@ExceptionMetered` are now
+  instrumented via `metrics-jersey`.
+
+
 v0.1.1: Dec 28 2011
 ===================
 
