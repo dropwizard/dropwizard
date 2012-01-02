@@ -8,16 +8,12 @@ public class TemplateHealthCheck extends HealthCheck {
     private final Template template;
 
     public TemplateHealthCheck(Template template) {
+        super("template");
         this.template = template;
     }
 
     @Override
-    public String name() {
-        return "template";
-    }
-
-    @Override
-    public Result check() throws Exception {
+    protected Result check() throws Exception {
         template.render(Optional.of("woo"));
         template.render(Optional.<String>absent());
         return Result.healthy();
