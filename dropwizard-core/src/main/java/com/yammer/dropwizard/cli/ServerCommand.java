@@ -40,9 +40,9 @@ public class ServerCommand<T extends Configuration> extends ConfiguredCommand<T>
     }
 
     @Override
-    protected final void run(AbstractService<T> service,
-                             T configuration,
-                             CommandLine params) throws Exception {
+    protected void run(AbstractService<T> service,
+                       T configuration,
+                       CommandLine params) throws Exception {
         final Environment environment = new Environment();
         service.initializeWithBundles(configuration, environment);
 
