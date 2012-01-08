@@ -24,7 +24,7 @@
     </modules>
 
     <properties>
-        <metrics.version>2.0.0-BETA19-SNAPSHOT</metrics.version>
+        <metrics.version>2.0.0-BETA19</metrics.version>
         <jersey.version>1.11</jersey.version>
     </properties>
 
@@ -55,13 +55,13 @@
         <url>http://github.com/codahale/dropwizard/issues#issue/</url>
     </issueManagement>
 
-    <repositories>
-        <repository>
-            <id>sonatype-nexus-snapshots</id>
-            <name>Sonatype Nexus Snapshots</name>
-            <url>http://oss.sonatype.org/content/repositories/snapshots</url>
-        </repository>
-    </repositories>
+    <!--<repositories>-->
+        <!--<repository>-->
+            <!--<id>sonatype-nexus-snapshots</id>-->
+            <!--<name>Sonatype Nexus Snapshots</name>-->
+            <!--<url>http://oss.sonatype.org/content/repositories/snapshots</url>-->
+        <!--</repository>-->
+    <!--</repositories>-->
 
     <distributionManagement>
         <snapshotRepository>
