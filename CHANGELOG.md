@@ -1,4 +1,9 @@
-v0.1.2: TBD
+v0.1.3: TBD
+===================
+
+
+
+v0.1.2: Jan 07 2012
 ===================
 
 * All Jersey resource methods annotated with `@Timed`, `@Metered`, or `@ExceptionMetered` are now
