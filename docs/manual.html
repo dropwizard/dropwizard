@@ -60,6 +60,8 @@
                         <li>
                             <a href="#logging">Logging</a>
                             <ul>
+                                <li><a href="#log">The <code>Log</code> class</a></li>
+                                <li><a href="#log-format">Log Format</a></li>
                                 <li><a href="#console-logging">Console Logging</a></li>
                                 <li><a href="#file-logging">File Logging</a></li>
                                 <li><a href="#syslog-logging">Syslog Logging</a></li>
@@ -466,6 +468,78 @@ Done!</pre>
             <a href="http://www.slf4j.org/" target="_blank">slf4j</a> implementation, and even
             routes all <code>java.util.logging</code> usage through log4j.
         </p>
+
+        <h4 id="log">The <code>Log</code> class</h4>
+        
+        <p>
+            Dropwizard comes with a <code>Log</code> convenience class, since most of the logging
+            APIs are horrendous.
+        </p>
+
+        <pre class="prettyprint lang-java">
+public class Example {
+    private static final Log LOG = Log.forClass(Example.class);
+
+    public long fetchAge(long userId) {
+        LOG.debug("Fetching age for user {}", userId);
+
+        try {
+            final User user = users.find(userId);
+            return user.getAge();
+        } catch (IOException e) {
+            LOG.error(e, "Error connecting to user store for user {}", userId);
+        } catch (UserNotFoundException e) {
+            LOG.warn(e, "Unable to fetch age for user {}", userId);
+        }
+    }
+}</pre>
+
+        <p>
+            <code>Log</code> provides the same statement formatting amenities as SLF4J, so you can
+            pass arbitrary objects in without having to concatenate strings. Instances of
+            <code>{}</code> in the log message are replaced with the string representation of the
+            objects. To log exceptions, just pass the <code>Throwable</code> instance as the first
+            parameter and it'll log the exception type, message, and stack trace.
+        </p>
+
+        <p>
+            The <code>Log</code> class also provides the following logging levels:
+        </p>
+
+        <dl>
+            <dt>FATAL</dt>
+            <dd>
+                Very severe error events that will presumably lead the application to abort.
+            </dd>
+
+            <dt>ERROR</dt>
+            <dd>
+                Error events that might still allow the application to continue running.
+            </dd>
+
+            <dt>WARN</dt>
+            <dd>
+                Potentially harmful situations.
+            </dd>
+
+            <dt>INFO</dt>
+            <dd>
+                Informational messages that highlight the progress of the application at
+                coarse-grained level.
+            </dd>
+
+            <dt>DEBUG</dt>
+            <dd>
+                Fine-grained informational events that are most useful to debug an application.
+            </dd>
+
+            <dt>TRACE</dt>
+            <dd>
+                Finer-grained informational events than the <b>DEBUG</b> level.
+            </dd>
+        </dl>
+
+        <h4 id="log-format">Log Format</h4>
 
         <p>Dropwizard’s log format has a few specific goals:</p>
 
