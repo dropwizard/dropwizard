@@ -52,7 +52,7 @@ public class ServerCommand<T extends Configuration> extends ConfiguredCommand<T>
         log.info("Starting {}", service.getName());
 
         try {
-            log.info("{}\n", Resources.toString(Resources.getResource("banner.txt"), Charsets.UTF_8));
+            log.info("\n{}", Resources.toString(Resources.getResource("banner.txt"), Charsets.UTF_8));
         } catch (IllegalArgumentException ignored) {
             // don't display the banner if there isn't one
         }
