@@ -10,15 +10,12 @@ import org.apache.commons.cli.CommandLine;
 public abstract class ManagedCommand<T extends Configuration> extends ConfiguredCommand<T> {
     private static final Log LOG = Log.forClass(ManagedCommand.class);
 
-    protected ManagedCommand(String name,
-                             String description) {
+    protected ManagedCommand(String name, String description) {
         super(name, description);
     }
 
     @Override
-    protected final void run(AbstractService<T> service,
-                             T configuration,
-                             CommandLine params) throws Exception {
+    protected final void run(AbstractService<T> service, T configuration, CommandLine params) throws Exception {
         new LoggingFactory(configuration.getLoggingConfiguration()).configure();
         final Environment environment = new Environment(configuration);
         service.initializeWithBundles(configuration, environment);
@@ -31,7 +28,5 @@ public abstract class ManagedCommand<T extends Configuration> extends Configured
         }
     }
 
-    protected abstract void run(T configuration,
-                                Environment environment,
-                                CommandLine params) throws Exception;
+    protected abstract void run(T configuration, Environment environment, CommandLine params) throws Exception;
 }

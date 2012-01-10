@@ -90,8 +90,7 @@ public class Environment extends AbstractLifeCycle {
     /**
      * Adds the given object as a Jersey singleton resource.
      * 
-     * @param resource
-     *            a Jersey singleton resource
+     * @param resource a Jersey singleton resource
      */
     public void addResource(Object resource) {
         config.getSingletons().add(checkNotNull(resource));
@@ -103,8 +102,7 @@ public class Environment extends AbstractLifeCycle {
      * <b>N.B.:</b> This class must either have a no-args constructor or use
      * Jersey's built-in dependency injection.
      * 
-     * @param klass
-     *            a Jersey resource class
+     * @param klass a Jersey resource class
      */
     public void addResource(Class<?> klass) {
         config.getClasses().add(checkNotNull(klass));
@@ -113,8 +111,7 @@ public class Environment extends AbstractLifeCycle {
     /**
      * Adds the given object as a Jersey provider.
      * 
-     * @param provider
-     *            a Jersey provider
+     * @param provider a Jersey provider
      */
     public void addProvider(Object provider) {
         config.getSingletons().add(checkNotNull(provider));
@@ -126,8 +123,7 @@ public class Environment extends AbstractLifeCycle {
      * <b>N.B.:</b> This class must either have a no-args constructor or use
      * Jersey's built-in dependency injection.
      * 
-     * @param klass
-     *            a Jersey provider class
+     * @param klass a Jersey provider class
      */
     public void addProvider(Class<?> klass) {
         config.getClasses().add(checkNotNull(klass));
@@ -137,8 +133,7 @@ public class Environment extends AbstractLifeCycle {
      * Adds the given health check to the set of health checks exposed on the
      * admin port.
      * 
-     * @param healthCheck
-     *            a health check
+     * @param healthCheck a health check
      */
     public void addHealthCheck(HealthCheck healthCheck) {
         healthChecks.add(checkNotNull(healthCheck));
@@ -149,8 +144,7 @@ public class Environment extends AbstractLifeCycle {
      * the server's lifecycle. When the server starts, {@code managed} will be
      * started. When the server stops, {@code managed} will be stopped.
      * 
-     * @param managed
-     *            a managed object
+     * @param managed a managed object
      */
     public void manage(Managed managed) {
         lifeCycle.addBean(new JettyManaged(checkNotNull(managed)));
@@ -160,8 +154,7 @@ public class Environment extends AbstractLifeCycle {
      * Adds the given Jetty {@link LifeCycle} instances to the server's
      * lifecycle.
      * 
-     * @param managed
-     *            a Jetty-managed object
+     * @param managed a Jetty-managed object
      */
     public void manage(LifeCycle managed) {
         lifeCycle.addBean(checkNotNull(managed));
@@ -170,10 +163,8 @@ public class Environment extends AbstractLifeCycle {
     /**
      * Add a servlet instance.
      * 
-     * @param servlet
-     *            the servlet instance
-     * @param urlPattern
-     *            the URL pattern for requests that should be handled by
+     * @param servlet the servlet instance
+     * @param urlPattern the URL pattern for requests that should be handled by
      *            {@code servlet}
      * @return a {@link ServletConfiguration} instance allowing for further
      *         configuration
@@ -188,10 +179,8 @@ public class Environment extends AbstractLifeCycle {
     /**
      * Add a servlet class.
      * 
-     * @param klass
-     *            the servlet class
-     * @param urlPattern
-     *            the URL pattern for requests that should be handled by
+     * @param klass the servlet class
+     * @param urlPattern the URL pattern for requests that should be handled by
      *            instances of {@code klass}
      * @return a {@link ServletConfiguration} instance allowing for further
      *         configuration
@@ -206,10 +195,8 @@ public class Environment extends AbstractLifeCycle {
     /**
      * Add a filter instance.
      * 
-     * @param filter
-     *            the filter instance
-     * @param urlPattern
-     *            the URL pattern for requests that should be handled by
+     * @param filter the filter instance
+     * @param urlPattern the URL pattern for requests that should be handled by
      *            {@code filter}
      * @return a {@link FilterConfiguration} instance allowing for further
      *         configuration
@@ -224,10 +211,8 @@ public class Environment extends AbstractLifeCycle {
     /**
      * Add a filter class.
      * 
-     * @param klass
-     *            the filter class
-     * @param urlPattern
-     *            the URL pattern for requests that should be handled by
+     * @param klass the filter class
+     * @param urlPattern the URL pattern for requests that should be handled by
      *            instances of {@code klass}
      * @return a {@link FilterConfiguration} instance allowing for further
      *         configuration
@@ -242,8 +227,7 @@ public class Environment extends AbstractLifeCycle {
     /**
      * Adds a {@link Task} instance.
      * 
-     * @param task
-     *            a {@link Task}
+     * @param task a {@link Task}
      */
     public void addTask(Task task) {
         tasks.add(checkNotNull(task));
@@ -252,8 +236,7 @@ public class Environment extends AbstractLifeCycle {
     /**
      * Enables the Jersey feature with the given name.
      * 
-     * @param name
-     *            the name of the feature to be enabled
+     * @param name the name of the feature to be enabled
      * @see ResourceConfig
      */
     public void enableJerseyFeature(String name) {
@@ -263,8 +246,7 @@ public class Environment extends AbstractLifeCycle {
     /**
      * Disables the Jersey feature with the given name.
      * 
-     * @param name
-     *            the name of the feature to be disabled
+     * @param name the name of the feature to be disabled
      * @see ResourceConfig
      */
     public void disableJerseyFeature(String name) {
@@ -274,10 +256,8 @@ public class Environment extends AbstractLifeCycle {
     /**
      * Sets the given Jersey property.
      * 
-     * @param name
-     *            the name of the Jersey property
-     * @param value
-     *            the value of the Jersey property
+     * @param name the name of the Jersey property
+     * @param value the value of the Jersey property
      * @see ResourceConfig
      */
     public void setJerseyProperty(String name, @Nullable Object value) {
@@ -288,21 +268,17 @@ public class Environment extends AbstractLifeCycle {
      * Creates a new {@link ExecutorService} instance with the given parameters
      * whose lifecycle is managed by the service.
      * 
-     * @param nameFormat
-     *            a {@link String#format(String, Object...)}-compatible format
-     *            String, to which a unique integer (0, 1, etc.) will be
+     * @param nameFormat a {@link String#format(String, Object...)}-compatible
+     *            format String, to which a unique integer (0, 1, etc.) will be
      *            supplied as the single parameter.
-     * @param corePoolSize
-     *            the number of threads to keep in the pool, even if they are
-     *            idle.
-     * @param maximumPoolSize
-     *            the maximum number of threads to allow in the pool.
-     * @param keepAliveTime
-     *            when the number of threads is greater than the core, this is
-     *            the maximum time that excess idle threads will wait for new
-     *            tasks before terminating.
-     * @param unit
-     *            the time unit for the keepAliveTime argument.
+     * @param corePoolSize the number of threads to keep in the pool, even if
+     *            they are idle.
+     * @param maximumPoolSize the maximum number of threads to allow in the
+     *            pool.
+     * @param keepAliveTime when the number of threads is greater than the core,
+     *            this is the maximum time that excess idle threads will wait
+     *            for new tasks before terminating.
+     * @param unit the time unit for the keepAliveTime argument.
      * 
      * @return a new {@link ExecutorService} instance
      */
@@ -319,13 +295,11 @@ public class Environment extends AbstractLifeCycle {
      * Creates a new {@link ScheduledExecutorService} instance with the given
      * parameters whose lifecycle is managed by the service.
      * 
-     * @param nameFormat
-     *            a {@link String#format(String, Object...)}-compatible format
-     *            String, to which a unique integer (0, 1, etc.) will be
+     * @param nameFormat a {@link String#format(String, Object...)}-compatible
+     *            format String, to which a unique integer (0, 1, etc.) will be
      *            supplied as the single parameter.
-     * @param corePoolSize
-     *            the number of threads to keep in the pool, even if they are
-     *            idle.
+     * @param corePoolSize the number of threads to keep in the pool, even if
+     *            they are idle.
      * 
      * @return a new {@link ScheduledExecutorService} instance
      */
