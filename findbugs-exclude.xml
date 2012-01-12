@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FindBugsFilter>
+    <!-- we're *supposed* to manually GC there -->
+    <Match>
+        <Class name="com.yammer.dropwizard.tasks.GarbageCollectionTask"/>
+        <Method name="execute"/>
+        <Bug pattern="DM_GC"/>
+    </Match>
+
+    <!-- given this is a console command, exit(-1) is right -->
+    <Match>
+        <Class name="com.yammer.dropwizard.cli.ConfiguredCommand"/>
+        <Method name="run"/>
+        <Bug pattern="DM_EXIT"/>
+    </Match>
+
+    <!-- don't check Tatu's work -->
+    <Class name="~com\.fasterxml\.jackson\..*"/>
+
+    <!-- ignore default null values in Configuration classes -->
+    <Match>
+        <Class name="~com\.yammer\.dropwizard\.config\..*Configuration.*"/>
+        <Bug pattern="UWF_NULL_FIELD"/>
+    </Match>
+
+    <!-- haven't started caring about servlet serialization either -->
+    <Match>
+        <Class name="com.yammer.dropwizard.servlets.AssetServlet"/>
+        <Bug pattern="SE_TRANSIENT_FIELD_NOT_RESTORED"/>
+    </Match>
+
+    <!-- Scala bytecode is weird. I know. -->
+    <Class name="com.yammer.dropwizard.providers.OauthTokenInjectable"/>
+    <Class name="com.yammer.dropwizard.providers.OauthTokenProvider"/>
+    <Class name="com.yammer.dropwizard.ScalaService"/>
+</FindBugsFilter>
