@@ -38,18 +38,17 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 // TODO: 10/12/11 <coda> -- test Environment
 /*
-    REVIEW: 11/12/11 <coda> -- Probably better to invert this code.
-    Instead of letting it collect intermediate results and then exposing those via package-private
-    getters, it might be better to pass this a ServletContextHandler, etc., and have it modify
-    those directly. That's easier to test.
-*/
+ REVIEW: 11/12/11 <coda> -- Probably better to invert this code.
+ Instead of letting it collect intermediate results and then exposing those via package-private
+ getters, it might be better to pass this a ServletContextHandler, etc., and have it modify
+ those directly. That's easier to test.
+ */
 
 /**
  * A Dropwizard service's environment.
  */
 public class Environment extends AbstractLifeCycle {
     private static final Log LOG = Log.forClass(Environment.class);
-    private static final String ROOT_PATH = "/*";
 
     private final ResourceConfig config;
     private final ImmutableSet.Builder<HealthCheck> healthChecks;
@@ -61,7 +60,7 @@ public class Environment extends AbstractLifeCycle {
     /**
      * Creates a new environment.
      */
-    public Environment() {
+    public Environment(Configuration configuration) {
         this.config = new DropwizardResourceConfig();
         this.healthChecks = ImmutableSet.builder();
         this.servlets = ImmutableMap.builder();
@@ -70,9 +69,11 @@ public class Environment extends AbstractLifeCycle {
         this.lifeCycle = new AggregateLifeCycle();
 
         enableJerseyFeature(ResourceConfig.FEATURE_DISABLE_WADL);
-        addProvider(new LoggingExceptionMapper<Throwable>() {}); // create a subclass to pin it to Throwable
+        addProvider(new LoggingExceptionMapper<Throwable>() {
+        }); // create a subclass to pin it to Throwable
         addProvider(InstrumentedResourceMethodDispatchAdapter.class);
-        addServlet(new ServletContainer(config), ROOT_PATH).setInitOrder(Integer.MAX_VALUE);
+        addServlet(new ServletContainer(config), configuration.getHttpConfiguration().getRootPath()).setInitOrder(
+                Integer.MAX_VALUE);
         addTask(new GarbageCollectionTask());
     }
 
@@ -88,8 +89,8 @@ public class Environment extends AbstractLifeCycle {
 
     /**
      * Adds the given object as a Jersey singleton resource.
-     *
-     * @param resource    a Jersey singleton resource
+     * 
+     * @param resource a Jersey singleton resource
      */
     public void addResource(Object resource) {
         config.getSingletons().add(checkNotNull(resource));
@@ -97,10 +98,11 @@ public class Environment extends AbstractLifeCycle {
 
     /**
      * Adds the given class as a Jersey resource.
-     * <p/><b>N.B.:</b> This class must either have a no-args constructor or use Jersey's built-in
-     * dependency injection.
-     *
-     * @param klass    a Jersey resource class
+     * <p/>
+     * <b>N.B.:</b> This class must either have a no-args constructor or use
+     * Jersey's built-in dependency injection.
+     * 
+     * @param klass a Jersey resource class
      */
     public void addResource(Class<?> klass) {
         config.getClasses().add(checkNotNull(klass));
@@ -108,8 +110,8 @@ public class Environment extends AbstractLifeCycle {
 
     /**
      * Adds the given object as a Jersey provider.
-     *
-     * @param provider    a Jersey provider
+     * 
+     * @param provider a Jersey provider
      */
     public void addProvider(Object provider) {
         config.getSingletons().add(checkNotNull(provider));
@@ -117,39 +119,42 @@ public class Environment extends AbstractLifeCycle {
 
     /**
      * Adds the given class as a Jersey provider.
-     * <p/><b>N.B.:</b> This class must either have a no-args constructor or use Jersey's built-in
-     * dependency injection.
-     *
-     * @param klass    a Jersey provider class
+     * <p/>
+     * <b>N.B.:</b> This class must either have a no-args constructor or use
+     * Jersey's built-in dependency injection.
+     * 
+     * @param klass a Jersey provider class
      */
     public void addProvider(Class<?> klass) {
         config.getClasses().add(checkNotNull(klass));
     }
 
     /**
-     * Adds the given health check to the set of health checks exposed on the admin port.
-     *
-     * @param healthCheck    a health check
+     * Adds the given health check to the set of health checks exposed on the
+     * admin port.
+     * 
+     * @param healthCheck a health check
      */
     public void addHealthCheck(HealthCheck healthCheck) {
         healthChecks.add(checkNotNull(healthCheck));
     }
 
     /**
-     * Adds the given {@link Managed} instance to the set of objects managed by the server's
-     * lifecycle. When the server starts, {@code managed} will be started. When the server stops,
-     * {@code managed} will be stopped.
-     *
-     * @param managed    a managed object
+     * Adds the given {@link Managed} instance to the set of objects managed by
+     * the server's lifecycle. When the server starts, {@code managed} will be
+     * started. When the server stops, {@code managed} will be stopped.
+     * 
+     * @param managed a managed object
      */
     public void manage(Managed managed) {
         lifeCycle.addBean(new JettyManaged(checkNotNull(managed)));
     }
 
     /**
-     * Adds the given Jetty {@link LifeCycle} instances to the server's lifecycle.
-     *
-     * @param managed    a Jetty-managed object
+     * Adds the given Jetty {@link LifeCycle} instances to the server's
+     * lifecycle.
+     * 
+     * @param managed a Jetty-managed object
      */
     public void manage(LifeCycle managed) {
         lifeCycle.addBean(checkNotNull(managed));
@@ -157,13 +162,14 @@ public class Environment extends AbstractLifeCycle {
 
     /**
      * Add a servlet instance.
-     *
-     * @param servlet       the servlet instance
-     * @param urlPattern    the URL pattern for requests that should be handled by {@code servlet}
-     * @return a {@link ServletConfiguration} instance allowing for further configuration
+     * 
+     * @param servlet the servlet instance
+     * @param urlPattern the URL pattern for requests that should be handled by
+     *            {@code servlet}
+     * @return a {@link ServletConfiguration} instance allowing for further
+     *         configuration
      */
-    public ServletConfiguration addServlet(Servlet servlet,
-                                           String urlPattern) {
+    public ServletConfiguration addServlet(Servlet servlet, String urlPattern) {
         final ServletHolder holder = new NonblockingServletHolder(checkNotNull(servlet));
         final ServletConfiguration configuration = new ServletConfiguration(holder, servlets);
         configuration.addUrlPattern(checkNotNull(urlPattern));
@@ -172,14 +178,14 @@ public class Environment extends AbstractLifeCycle {
 
     /**
      * Add a servlet class.
-     *
-     * @param klass         the servlet class
-     * @param urlPattern    the URL pattern for requests that should be handled by instances of
-     *                      {@code klass}
-     * @return a {@link ServletConfiguration} instance allowing for further configuration
+     * 
+     * @param klass the servlet class
+     * @param urlPattern the URL pattern for requests that should be handled by
+     *            instances of {@code klass}
+     * @return a {@link ServletConfiguration} instance allowing for further
+     *         configuration
      */
-    public ServletConfiguration addServlet(Class<? extends Servlet> klass,
-                                           String urlPattern) {
+    public ServletConfiguration addServlet(Class<? extends Servlet> klass, String urlPattern) {
         final ServletHolder holder = new ServletHolder(checkNotNull(klass));
         final ServletConfiguration configuration = new ServletConfiguration(holder, servlets);
         configuration.addUrlPattern(checkNotNull(urlPattern));
@@ -188,13 +194,14 @@ public class Environment extends AbstractLifeCycle {
 
     /**
      * Add a filter instance.
-     *
-     * @param filter        the filter instance
-     * @param urlPattern    the URL pattern for requests that should be handled by {@code filter}
-     * @return a {@link FilterConfiguration} instance allowing for further configuration
+     * 
+     * @param filter the filter instance
+     * @param urlPattern the URL pattern for requests that should be handled by
+     *            {@code filter}
+     * @return a {@link FilterConfiguration} instance allowing for further
+     *         configuration
      */
-    public FilterConfiguration addFilter(Filter filter,
-                                         String urlPattern) {
+    public FilterConfiguration addFilter(Filter filter, String urlPattern) {
         final FilterHolder holder = new FilterHolder(checkNotNull(filter));
         final FilterConfiguration configuration = new FilterConfiguration(holder, filters);
         configuration.addUrlPattern(checkNotNull(urlPattern));
@@ -203,14 +210,14 @@ public class Environment extends AbstractLifeCycle {
 
     /**
      * Add a filter class.
-     *
-     * @param klass         the filter class
-     * @param urlPattern    the URL pattern for requests that should be handled by instances of
-     *                      {@code klass}
-     * @return a {@link FilterConfiguration} instance allowing for further configuration
+     * 
+     * @param klass the filter class
+     * @param urlPattern the URL pattern for requests that should be handled by
+     *            instances of {@code klass}
+     * @return a {@link FilterConfiguration} instance allowing for further
+     *         configuration
      */
-    public FilterConfiguration addFilter(Class<? extends Filter> klass,
-                                         String urlPattern) {
+    public FilterConfiguration addFilter(Class<? extends Filter> klass, String urlPattern) {
         final FilterHolder holder = new FilterHolder(checkNotNull(klass));
         final FilterConfiguration configuration = new FilterConfiguration(holder, filters);
         configuration.addUrlPattern(checkNotNull(urlPattern));
@@ -219,8 +226,8 @@ public class Environment extends AbstractLifeCycle {
 
     /**
      * Adds a {@link Task} instance.
-     *
-     * @param task    a {@link Task}
+     * 
+     * @param task a {@link Task}
      */
     public void addTask(Task task) {
         tasks.add(checkNotNull(task));
@@ -228,8 +235,8 @@ public class Environment extends AbstractLifeCycle {
 
     /**
      * Enables the Jersey feature with the given name.
-     *
-     * @param name    the name of the feature to be enabled
+     * 
+     * @param name the name of the feature to be enabled
      * @see ResourceConfig
      */
     public void enableJerseyFeature(String name) {
@@ -238,8 +245,8 @@ public class Environment extends AbstractLifeCycle {
 
     /**
      * Disables the Jersey feature with the given name.
-     *
-     * @param name    the name of the feature to be disabled
+     * 
+     * @param name the name of the feature to be disabled
      * @see ResourceConfig
      */
     public void disableJerseyFeature(String name) {
@@ -248,68 +255,57 @@ public class Environment extends AbstractLifeCycle {
 
     /**
      * Sets the given Jersey property.
-     *
-     * @param name     the name of the Jersey property
-     * @param value    the value of the Jersey property
+     * 
+     * @param name the name of the Jersey property
+     * @param value the value of the Jersey property
      * @see ResourceConfig
      */
-    public void setJerseyProperty(String name,
-                                  @Nullable Object value) {
+    public void setJerseyProperty(String name, @Nullable Object value) {
         config.getProperties().put(checkNotNull(name), value);
     }
 
     /**
-     * Creates a new {@link ExecutorService} instance with the given parameters whose lifecycle is
-     * managed by the service.
-     *
-     * @param nameFormat               a {@link String#format(String, Object...)}-compatible format
-     *                                 String, to which a unique integer (0, 1, etc.) will be
-     *                                 supplied as the single parameter.
-     * @param corePoolSize             the number of threads to keep in the pool, even if they are
-     *                                 idle.
-     * @param maximumPoolSize          the maximum number of threads to allow in the pool.
-     * @param keepAliveTime            when the number of threads is greater than the core, this is
-     *                                 the maximum time that excess idle threads will wait for new
-     *                                 tasks before terminating.
-     * @param unit                     the time unit for the keepAliveTime argument.
-     *
+     * Creates a new {@link ExecutorService} instance with the given parameters
+     * whose lifecycle is managed by the service.
+     * 
+     * @param nameFormat a {@link String#format(String, Object...)}-compatible
+     *            format String, to which a unique integer (0, 1, etc.) will be
+     *            supplied as the single parameter.
+     * @param corePoolSize the number of threads to keep in the pool, even if
+     *            they are idle.
+     * @param maximumPoolSize the maximum number of threads to allow in the
+     *            pool.
+     * @param keepAliveTime when the number of threads is greater than the core,
+     *            this is the maximum time that excess idle threads will wait
+     *            for new tasks before terminating.
+     * @param unit the time unit for the keepAliveTime argument.
+     * 
      * @return a new {@link ExecutorService} instance
      */
-    public ExecutorService managedExecutorService(String nameFormat,
-                                                  int corePoolSize,
-                                                  int maximumPoolSize,
-                                                  long keepAliveTime,
-                                                  TimeUnit unit) {
-        final ThreadFactory threadFactory = new ThreadFactoryBuilder().setNameFormat(nameFormat)
-                                                                      .build();
-        final ExecutorService service = new ThreadPoolExecutor(corePoolSize,
-                                                               maximumPoolSize,
-                                                               keepAliveTime,
-                                                               unit,
-                                                               new LinkedBlockingQueue<Runnable>(),
-                                                               threadFactory);
+    public ExecutorService managedExecutorService(String nameFormat, int corePoolSize, int maximumPoolSize,
+            long keepAliveTime, TimeUnit unit) {
+        final ThreadFactory threadFactory = new ThreadFactoryBuilder().setNameFormat(nameFormat).build();
+        final ExecutorService service = new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, unit,
+                new LinkedBlockingQueue<Runnable>(), threadFactory);
         manage(new ExecutorServiceManager(service, 5, TimeUnit.SECONDS));
         return service;
     }
 
     /**
-     * Creates a new {@link ScheduledExecutorService} instance with the given parameters whose
-     * lifecycle is managed by the service.
-     *
-     * @param nameFormat               a {@link String#format(String, Object...)}-compatible format
-     *                                 String, to which a unique integer (0, 1, etc.) will be
-     *                                 supplied as the single parameter.
-     * @param corePoolSize             the number of threads to keep in the pool, even if they are
-     *                                 idle.
-     *
+     * Creates a new {@link ScheduledExecutorService} instance with the given
+     * parameters whose lifecycle is managed by the service.
+     * 
+     * @param nameFormat a {@link String#format(String, Object...)}-compatible
+     *            format String, to which a unique integer (0, 1, etc.) will be
+     *            supplied as the single parameter.
+     * @param corePoolSize the number of threads to keep in the pool, even if
+     *            they are idle.
+     * 
      * @return a new {@link ScheduledExecutorService} instance
      */
-    public ScheduledExecutorService managedScheduledExecutorService(String nameFormat,
-                                                                    int corePoolSize) {
-        final ThreadFactory threadFactory = new ThreadFactoryBuilder().setNameFormat(nameFormat)
-                                                                      .build();
-        final ScheduledExecutorService service = new ScheduledThreadPoolExecutor(corePoolSize,
-                                                                                 threadFactory);
+    public ScheduledExecutorService managedScheduledExecutorService(String nameFormat, int corePoolSize) {
+        final ThreadFactory threadFactory = new ThreadFactoryBuilder().setNameFormat(nameFormat).build();
+        final ScheduledExecutorService service = new ScheduledThreadPoolExecutor(corePoolSize, threadFactory);
         manage(new ExecutorServiceManager(service, 5, TimeUnit.SECONDS));
         return service;
     }
@@ -417,15 +413,11 @@ public class Environment extends AbstractLifeCycle {
                 final ImmutableList.Builder<String> endpoints = ImmutableList.builder();
                 for (AnnotatedMethod method : annotatedMethods(klass)) {
                     for (HttpMethod verb : method.getMetaMethodAnnotations(HttpMethod.class)) {
-                        endpoints.add(String.format("    %-7s %s (%s)",
-                                                    verb.value(),
-                                                    path,
-                                                    klass.getCanonicalName()));
+                        endpoints.add(String.format("    %-7s %s (%s)", verb.value(), path, klass.getCanonicalName()));
                     }
                 }
 
-                for (String line : Ordering.natural()
-                                           .sortedCopy(endpoints.build())) {
+                for (String line : Ordering.natural().sortedCopy(endpoints.build())) {
                     stringBuilder.append(line).append('\n');
                 }
             }

@@ -96,6 +96,9 @@ public class HttpConfiguration {
     @Max(65535)
     private int adminPort = 8081;
 
+    @NotNull
+    private String rootPath = "/*";
+    
     @Min(10)
     @Max(20000)
     private int maxThreads = 100;
@@ -272,4 +275,12 @@ public class HttpConfiguration {
     public boolean isServerHeaderEnabled() {
         return useServerHeader;
     }
+
+	public String getRootPath() {
+		return rootPath;
+	}
+
+	public void setRootPath(String rootPath) {
+		this.rootPath = rootPath;
+	}
 }
