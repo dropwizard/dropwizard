@@ -2,6 +2,10 @@ v0.1.3: TBD
 ===================
 
 * Upgraded to Guava 11.0.1.
+* Fixed logging in `ServerCommand`. For the last time.
+* Switched to using the instrumented connectors from `metrics-jetty`. This allows for much
+  lower-level metrics about your service, including whether or not your thread pools are overloaded.
+* Added FindBugs to the build process.
 * Added `ResourceTest` to `dropwizard-testing`, which uses the Jersey Test Framework to provide
   full testing of resources.
 
