@@ -5,12 +5,10 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Ordering;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import com.sun.jersey.api.core.DefaultResourceConfig;
 import com.sun.jersey.api.core.ResourceConfig;
 import com.sun.jersey.core.reflection.AnnotatedMethod;
 import com.sun.jersey.core.reflection.MethodList;
 import com.sun.jersey.spi.container.servlet.ServletContainer;
-import com.yammer.dropwizard.jersey.LoggingExceptionMapper;
 import com.yammer.dropwizard.jetty.JettyManaged;
 import com.yammer.dropwizard.jetty.NonblockingServletHolder;
 import com.yammer.dropwizard.lifecycle.ExecutorServiceManager;
@@ -19,7 +17,6 @@ import com.yammer.dropwizard.logging.Log;
 import com.yammer.dropwizard.tasks.GarbageCollectionTask;
 import com.yammer.dropwizard.tasks.Task;
 import com.yammer.metrics.core.HealthCheck;
-import com.yammer.metrics.jersey.InstrumentedResourceMethodDispatchAdapter;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.component.AbstractLifeCycle;
@@ -62,16 +59,23 @@ public class Environment extends AbstractLifeCycle {
      * Creates a new environment.
      */
     public Environment() {
-        this.config = new DropwizardResourceConfig();
+        this.config = new DropwizardResourceConfig() {
+            @Override
+            public void validate() {
+                super.validate();
+                logResources();
+                logProviders();
+                logHealthChecks();
+                logManagedObjects();
+                logEndpoints();
+            }
+        };
         this.healthChecks = ImmutableSet.builder();
         this.servlets = ImmutableMap.builder();
         this.filters = ImmutableMap.builder();
         this.tasks = ImmutableSet.builder();
         this.lifeCycle = new AggregateLifeCycle();
 
-        enableJerseyFeature(ResourceConfig.FEATURE_DISABLE_WADL);
-        addProvider(new LoggingExceptionMapper<Throwable>() {}); // create a subclass to pin it to Throwable
-        addProvider(InstrumentedResourceMethodDispatchAdapter.class);
         addServlet(new ServletContainer(config), ROOT_PATH).setInitOrder(Integer.MAX_VALUE);
         addTask(new GarbageCollectionTask());
     }
@@ -334,107 +338,95 @@ public class Environment extends AbstractLifeCycle {
         return tasks.build();
     }
 
-    private class DropwizardResourceConfig extends DefaultResourceConfig {
-        @Override
-        public void validate() {
-            super.validate();
-            logResources();
-            logProviders();
-            logHealthChecks();
-            logManagedObjects();
-            logEndpoints();
+    private void logManagedObjects() {
+        final ImmutableSet.Builder<String> builder = ImmutableSet.builder();
+        for (Object bean : lifeCycle.getBeans()) {
+            builder.add(bean.getClass().getCanonicalName());
+        }
+        LOG.debug("managed objects = {}", builder.build());
+    }
+
+    private void logHealthChecks() {
+        final ImmutableSet.Builder<String> builder = ImmutableSet.builder();
+        for (HealthCheck healthCheck : healthChecks.build()) {
+            builder.add(healthCheck.getClass().getCanonicalName());
+        }
+        LOG.debug("health checks = {}", builder.build());
+    }
+
+    private void logResources() {
+        final ImmutableSet.Builder<String> builder = ImmutableSet.builder();
+
+        for (Class<?> klass : config.getClasses()) {
+            if (klass.isAnnotationPresent(Path.class)) {
+                builder.add(klass.getCanonicalName());
+            }
         }
 
-        private void logManagedObjects() {
-            final ImmutableSet.Builder<String> builder = ImmutableSet.builder();
-            for (Object bean : lifeCycle.getBeans()) {
-                builder.add(bean.getClass().getCanonicalName());
+        for (Object o : config.getSingletons()) {
+            if (o.getClass().isAnnotationPresent(Path.class)) {
+                builder.add(o.getClass().getCanonicalName());
             }
-            LOG.debug("managed objects = {}", builder.build());
         }
 
-        private void logHealthChecks() {
-            final ImmutableSet.Builder<String> builder = ImmutableSet.builder();
-            for (HealthCheck healthCheck : healthChecks.build()) {
-                builder.add(healthCheck.getClass().getCanonicalName());
+        LOG.debug("resources = {}", builder.build());
+    }
+
+    private void logProviders() {
+        final ImmutableSet.Builder<String> builder = ImmutableSet.builder();
+
+        for (Class<?> klass : config.getClasses()) {
+            if (klass.isAnnotationPresent(Provider.class)) {
+                builder.add(klass.getCanonicalName());
             }
-            LOG.debug("health checks = {}", builder.build());
         }
 
-        private void logResources() {
-            final ImmutableSet.Builder<String> builder = ImmutableSet.builder();
-
-            for (Class<?> klass : config.getClasses()) {
-                if (klass.isAnnotationPresent(Path.class)) {
-                    builder.add(klass.getCanonicalName());
-                }
+        for (Object o : config.getSingletons()) {
+            if (o.getClass().isAnnotationPresent(Provider.class)) {
+                builder.add(o.getClass().getCanonicalName());
             }
-
-            for (Object o : config.getSingletons()) {
-                if (o.getClass().isAnnotationPresent(Path.class)) {
-                    builder.add(o.getClass().getCanonicalName());
-                }
-            }
-
-            LOG.debug("resources = {}", builder.build());
         }
 
-        private void logProviders() {
-            final ImmutableSet.Builder<String> builder = ImmutableSet.builder();
+        LOG.debug("providers = {}", builder.build());
+    }
 
-            for (Class<?> klass : config.getClasses()) {
-                if (klass.isAnnotationPresent(Provider.class)) {
-                    builder.add(klass.getCanonicalName());
-                }
+    private void logEndpoints() {
+        final StringBuilder stringBuilder = new StringBuilder(1024).append("\n\n");
+
+        final ImmutableList.Builder<Class<?>> builder = ImmutableList.builder();
+        for (Object o : config.getSingletons()) {
+            if (o.getClass().isAnnotationPresent(Path.class)) {
+                builder.add(o.getClass());
             }
-
-            for (Object o : config.getSingletons()) {
-                if (o.getClass().isAnnotationPresent(Provider.class)) {
-                    builder.add(o.getClass().getCanonicalName());
-                }
+        }
+        for (Class<?> klass : config.getClasses()) {
+            if (klass.isAnnotationPresent(Path.class)) {
+                builder.add(klass);
             }
-
-            LOG.debug("providers = {}", builder.build());
         }
 
-        private void logEndpoints() {
-            final StringBuilder stringBuilder = new StringBuilder(1024).append("\n\n");
-
-            final ImmutableList.Builder<Class<?>> builder = ImmutableList.builder();
-            for (Object o : config.getSingletons()) {
-                if (o.getClass().isAnnotationPresent(Path.class)) {
-                    builder.add(o.getClass());
-                }
-            }
-            for (Class<?> klass : config.getClasses()) {
-                if (klass.isAnnotationPresent(Path.class)) {
-                    builder.add(klass);
+        for (Class<?> klass : builder.build()) {
+            final String path = klass.getAnnotation(Path.class).value();
+            final ImmutableList.Builder<String> endpoints = ImmutableList.builder();
+            for (AnnotatedMethod method : annotatedMethods(klass)) {
+                for (HttpMethod verb : method.getMetaMethodAnnotations(HttpMethod.class)) {
+                    endpoints.add(String.format("    %-7s %s (%s)",
+                                                verb.value(),
+                                                path,
+                                                klass.getCanonicalName()));
                 }
             }
 
-            for (Class<?> klass : builder.build()) {
-                final String path = klass.getAnnotation(Path.class).value();
-                final ImmutableList.Builder<String> endpoints = ImmutableList.builder();
-                for (AnnotatedMethod method : annotatedMethods(klass)) {
-                    for (HttpMethod verb : method.getMetaMethodAnnotations(HttpMethod.class)) {
-                        endpoints.add(String.format("    %-7s %s (%s)",
-                                                    verb.value(),
-                                                    path,
-                                                    klass.getCanonicalName()));
-                    }
-                }
-
-                for (String line : Ordering.natural()
-                                           .sortedCopy(endpoints.build())) {
-                    stringBuilder.append(line).append('\n');
-                }
+            for (String line : Ordering.natural()
+                                       .sortedCopy(endpoints.build())) {
+                stringBuilder.append(line).append('\n');
             }
-
-            LOG.info(stringBuilder.toString());
         }
 
-        private MethodList annotatedMethods(Class<?> resource) {
-            return new MethodList(resource, true).hasMetaAnnotation(HttpMethod.class);
-        }
+        LOG.info(stringBuilder.toString());
+    }
+
+    private MethodList annotatedMethods(Class<?> resource) {
+        return new MethodList(resource, true).hasMetaAnnotation(HttpMethod.class);
     }
 }

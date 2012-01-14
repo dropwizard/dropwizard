@@ -2,6 +2,8 @@ v0.1.3: TBD
 ===================
 
 * Upgraded to Guava 11.0.1.
+* Added `ResourceTest` to `dropwizard-testing`, which uses the Jersey Test Framework to provide
+  full testing of resources.
 
 v0.1.2: Jan 07 2012
 ===================
