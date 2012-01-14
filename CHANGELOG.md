@@ -8,6 +8,7 @@ v0.1.3: TBD
 * Added FindBugs to the build process.
 * Added `ResourceTest` to `dropwizard-testing`, which uses the Jersey Test Framework to provide
   full testing of resources.
+* Upgraded to Jetty 7.6.0.RC4.
 
 v0.1.2: Jan 07 2012
 ===================
