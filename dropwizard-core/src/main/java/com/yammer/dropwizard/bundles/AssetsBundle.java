@@ -62,7 +62,6 @@ public class AssetsBundle implements Bundle {
      *
      * @param resourcePath    the resource path (in the classpath) of the static asset files
      * @param maxCacheSize    the maximum number of resources to cache
-     * @param uriPath    the uri path for the static asset files
      */
     public AssetsBundle(String resourcePath, int maxCacheSize) {
         this(resourcePath, maxCacheSize, resourcePath);
