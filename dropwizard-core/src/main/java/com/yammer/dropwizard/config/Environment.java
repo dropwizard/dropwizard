@@ -56,6 +56,8 @@ public class Environment extends AbstractLifeCycle {
 
     /**
      * Creates a new environment.
+     * 
+     * @param configuration    the service's {@link Configuration}
      */
     public Environment(Configuration configuration) {
         this.config = new DropwizardResourceConfig() {
