@@ -9,6 +9,11 @@ v0.1.3: TBD
 * Added `ResourceTest` to `dropwizard-testing`, which uses the Jersey Test Framework to provide
   full testing of resources.
 * Upgraded to Jetty 7.6.0.RC4.
+* Decoupled URIs and resource paths in `AssetServlet` and `AssetsBundle`.
+* Added `rootPath` to `Configuration`. It allows you to serve Jersey assets off a specific path
+  (e.g., `/resources/*` vs `/*`).
+* `AssetServlet` now looks for `index.htm` when handling requests for the root URI.
+
 
 v0.1.2: Jan 07 2012
 ===================
