@@ -13,7 +13,8 @@ public class AssetsBundle implements Bundle {
     public static final String DEFAULT_PATH = "/assets";
     public static final int DEFAULT_MAX_CACHE_SIZE = 100;
     
-    private final String path;
+    private final String resourcePath;
+    private final String uriPath;
     private final int maxCacheSize;
 
     /**
@@ -36,7 +37,21 @@ public class AssetsBundle implements Bundle {
      * @see AssetsBundle#AssetsBundle(String, int)
      */
     public AssetsBundle(String path) {
-        this(path, DEFAULT_MAX_CACHE_SIZE);
+        this(path, DEFAULT_MAX_CACHE_SIZE, path);
+    }
+
+    /**
+     * Creates a new {@link AssetsBundle} which will configure the service to serve the static files
+     * located in {@code src/main/resources/${resourcePath}} as {@code /${uriPath}}. For example, given a
+     * {@code resourcePath} of {@code "/assets"} and a uriPath of {@code "/js"},
+     * {@code src/main/resources/assets/example.js} would be served up from {@code /js/example.js}.
+     *
+     * @param resourcePath    the resource path (in the classpath) of the static asset files
+     * @param uriPath    the uri path for the static asset files
+     * @see AssetsBundle#AssetsBundle(String, int)
+     */
+    public AssetsBundle(String resourcePath, String uriPath) {
+        this(resourcePath, DEFAULT_MAX_CACHE_SIZE, uriPath);
     }
 
     /**
@@ -45,20 +60,34 @@ public class AssetsBundle implements Bundle {
      * {@code path} of {@code "/assets"}, {@code src/main/resources/assets/example.js} would be
      * served up from {@code /assets/example.js}.
      *
-     * @param path            the classpath and URI root of the static asset files
+     * @param resourcePath    the resource path (in the classpath) of the static asset files
      * @param maxCacheSize    the maximum number of resources to cache
+     * @param uriPath    the uri path for the static asset files
      */
-    public AssetsBundle(String path, int maxCacheSize) {
-        checkArgument(path.startsWith("/"), "%s is not an absolute path", path);
-        checkArgument(!"/".equals(path), "%s is the classpath root");
-        this.path = path.endsWith("/") ? path : (path + '/');
+    public AssetsBundle(String resourcePath, int maxCacheSize) {
+        this(resourcePath, maxCacheSize, resourcePath);
+    }
+
+    /**
+     * Creates a new {@link AssetsBundle} which will configure the service to serve the static files
+     * located in {@code src/main/resources/${resourcePath}} as {@code /${uriPath}}. For example, given a
+     * {@code resourcePath} of {@code "/assets"} and a uriPath of {@code "/js"},
+     * {@code src/main/resources/assets/example.js} would be served up from {@code /js/example.js}.
+     *
+     * @param resourcePath    the resource path (in the classpath) of the static asset files
+     * @param maxCacheSize    the maximum number of resources to cache
+     * @param uriPath    the uri path for the static asset files
+     */
+    public AssetsBundle(String resourcePath, int maxCacheSize, String uriPath) {
+        checkArgument(resourcePath.startsWith("/"), "%s is not an absolute path", resourcePath);
+        checkArgument(!"/".equals(resourcePath), "%s is the classpath root");
+        this.resourcePath = resourcePath.endsWith("/") ? resourcePath : (resourcePath + '/');
+        this.uriPath = uriPath.endsWith("/") ? uriPath : (uriPath + '/');
         this.maxCacheSize = maxCacheSize;
     }
 
-
-
     @Override
     public void initialize(Environment environment) {
-        environment.addServlet(new AssetServlet(path, maxCacheSize), path + '*');
+        environment.addServlet(new AssetServlet(resourcePath, maxCacheSize, uriPath), uriPath + '*');
     }
 }

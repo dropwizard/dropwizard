@@ -105,6 +105,9 @@ public class HttpConfiguration {
     private int minThreads = 10;
 
     @NotNull
+    private String rootPath = "/*";
+    
+    @NotNull
     @Pattern(regexp = "(blocking|nonblocking|legacy)",
              flags = {Pattern.Flag.CASE_INSENSITIVE})
     private String connectorType = "blocking";
@@ -271,5 +274,13 @@ public class HttpConfiguration {
 
     public boolean isServerHeaderEnabled() {
         return useServerHeader;
+    }
+
+    public String getRootPath() {
+        return rootPath;
+    }
+
+    public void setRootPath(String rootPath) {
+        this.rootPath = rootPath;
     }
 }
