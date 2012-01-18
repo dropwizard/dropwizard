@@ -46,7 +46,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class Environment extends AbstractLifeCycle {
     private static final Log LOG = Log.forClass(Environment.class);
-    private static final String ROOT_PATH = "/*";
 
     private final ResourceConfig config;
     private final ImmutableSet.Builder<HealthCheck> healthChecks;
@@ -58,7 +57,7 @@ public class Environment extends AbstractLifeCycle {
     /**
      * Creates a new environment.
      */
-    public Environment() {
+    public Environment(Configuration configuration) {
         this.config = new DropwizardResourceConfig() {
             @Override
             public void validate() {
@@ -76,7 +75,7 @@ public class Environment extends AbstractLifeCycle {
         this.tasks = ImmutableSet.builder();
         this.lifeCycle = new AggregateLifeCycle();
 
-        addServlet(new ServletContainer(config), ROOT_PATH).setInitOrder(Integer.MAX_VALUE);
+        addServlet(new ServletContainer(config), configuration.getHttpConfiguration().getRootPath()).setInitOrder(Integer.MAX_VALUE);
         addTask(new GarbageCollectionTask());
     }
 
