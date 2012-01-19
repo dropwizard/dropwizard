@@ -14,7 +14,7 @@ import com.yammer.metrics.jetty.InstrumentedBlockingChannelConnector;
 import com.yammer.metrics.jetty.InstrumentedHandler;
 import com.yammer.metrics.jetty.InstrumentedSelectChannelConnector;
 import com.yammer.metrics.jetty.InstrumentedSocketConnector;
-import com.yammer.metrics.reporting.MetricsServlet;
+import com.yammer.metrics.reporting.AdminServlet;
 import com.yammer.metrics.util.DeadlockHealthCheck;
 import org.eclipse.jetty.server.*;
 import org.eclipse.jetty.server.bio.SocketConnector;
@@ -177,7 +177,7 @@ public class ServerFactory {
     private static Handler createInternalServlet(Environment env) {
         final ServletContextHandler handler = new ServletContextHandler();
         handler.addServlet(new ServletHolder(new TaskServlet(env.getTasks())), "/tasks/*");
-        handler.addServlet(new ServletHolder(new MetricsServlet()), "/*");
+        handler.addServlet(new ServletHolder(new AdminServlet()), "/*");
         handler.setConnectorNames(new String[]{"internal"});
         return handler;
     }
