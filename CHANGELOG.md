@@ -13,6 +13,7 @@ v0.1.3: TBD
 * Added `rootPath` to `Configuration`. It allows you to serve Jersey assets off a specific path
   (e.g., `/resources/*` vs `/*`).
 * `AssetServlet` now looks for `index.htm` when handling requests for the root URI.
+* Upgraded to Metrics 2.0.0-RC0.
 
 
 v0.1.2: Jan 07 2012
