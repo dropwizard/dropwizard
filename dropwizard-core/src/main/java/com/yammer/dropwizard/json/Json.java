@@ -1,6 +1,6 @@
 package com.yammer.dropwizard.json;
 
-import com.fasterxml.jackson.module.guava.GuavaModule;
+import com.fasterxml.jackson.datatype.guava.GuavaModule;
 import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonNode;

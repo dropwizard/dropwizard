@@ -1,3 +1,9 @@
+v0.1.4: TBD
+===================
+
+* Switched to using `jackson-datatype-guava` for JSON serialization/deserialization of Guava types.
+
+
 v0.1.3: Jan 19 2012
 ===================
 
