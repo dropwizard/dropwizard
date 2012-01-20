@@ -14,6 +14,7 @@
     <packaging>pom</packaging>
 
     <modules>
+      <module>dropwizard-daemon</module>
     </modules>
 
     <!-- override findbugs-exclude path due to additional nesting level -->
