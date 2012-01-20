@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.yammer.dropwizard</groupId>
+        <artifactId>dropwizard-parent</artifactId>
+        <version>0.1.4-SNAPSHOT</version>
+    </parent>
+
+    <groupId>com.yammer.dropwizard</groupId>
+    <artifactId>dropwizard-contrib</artifactId>
+    <name>Contributed Dropwizard Modules</name>
+    <packaging>pom</packaging>
+
+    <modules>
+    </modules>
+
+    <!-- override findbugs-exclude path due to additional nesting level -->
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>findbugs-maven-plugin</artifactId>
+                <configuration>
+                    <excludeFilterFile>${basedir}/../../findbugs-exclude.xml</excludeFilterFile>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
