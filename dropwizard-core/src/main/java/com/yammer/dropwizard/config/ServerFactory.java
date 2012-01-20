@@ -10,10 +10,7 @@ import com.yammer.dropwizard.util.Duration;
 import com.yammer.dropwizard.util.Size;
 import com.yammer.metrics.HealthChecks;
 import com.yammer.metrics.core.HealthCheck;
-import com.yammer.metrics.jetty.InstrumentedBlockingChannelConnector;
-import com.yammer.metrics.jetty.InstrumentedHandler;
-import com.yammer.metrics.jetty.InstrumentedSelectChannelConnector;
-import com.yammer.metrics.jetty.InstrumentedSocketConnector;
+import com.yammer.metrics.jetty.*;
 import com.yammer.metrics.reporting.AdminServlet;
 import com.yammer.metrics.util.DeadlockHealthCheck;
 import org.eclipse.jetty.server.*;
@@ -232,7 +229,7 @@ public class ServerFactory {
     }
 
     private ThreadPool createThreadPool() {
-        final QueuedThreadPool pool = new QueuedThreadPool();
+        final InstrumentedQueuedThreadPool pool = new InstrumentedQueuedThreadPool();
         pool.setMinThreads(config.getMinThreads());
         pool.setMaxThreads(config.getMaxThreads());
         return pool;
