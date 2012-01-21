@@ -3,6 +3,9 @@ v0.1.4: TBD
 
 * Switched to using `jackson-datatype-guava` for JSON serialization/deserialization of Guava types.
 * Use `InstrumentedQueuedThreadPool` from `metrics-jetty`.
+* Upgraded to Jackson 1.9.4.
+* Upgraded to Jetty 7.6.0.RC5.
+* Upgraded to tomcat-dbcp 7.0.25.
 
 
 v0.1.3: Jan 19 2012
