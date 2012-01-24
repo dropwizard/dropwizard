@@ -21,6 +21,12 @@ import java.io.File;
  *   }
  * </code>
  *
+ * Or for a Scala service:
+ *
+ * <code>
+ *   class MyServiceDaemon extends ServiceDaemon[MyConfiguration](new MyService)
+ * </code>
+ *
  * You may then run your service using either of the Apache Commons Daemon
  * wrappers (jsvc on UNIX or procrun on Win32):
  * <pre>
@@ -36,9 +42,9 @@ public abstract class ServiceDaemon<T extends Configuration> implements Daemon {
   private ConfigurationFactory<T> factory;
   private Server server;
   private String[] args;
-  private Service<T> service;
+  private AbstractService<T> service;
 
-  protected ServiceDaemon(Service<T> service) {
+  protected ServiceDaemon(AbstractService<T> service) {
     this.service = service;
   }
 
