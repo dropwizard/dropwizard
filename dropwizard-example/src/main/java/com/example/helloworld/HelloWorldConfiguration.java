@@ -4,6 +4,7 @@ import com.example.helloworld.core.Template;
 import com.yammer.dropwizard.config.Configuration;
 import org.hibernate.validator.constraints.NotEmpty;
 
+@SuppressWarnings("FieldMayBeFinal")
 public class HelloWorldConfiguration extends Configuration {
     @NotEmpty
     private String template;
@@ -17,14 +18,6 @@ public class HelloWorldConfiguration extends Configuration {
 
     public String getDefaultName() {
         return defaultName;
-    }
-
-    public void setTemplate(String template) {
-        this.template = template;
-    }
-
-    public void setDefaultName(String defaultName) {
-        this.defaultName = defaultName;
     }
 
     public Template buildTemplate() {

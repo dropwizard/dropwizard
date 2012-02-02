@@ -2,6 +2,7 @@ package com.yammer.dropwizard.util;
 
 import com.google.common.base.CharMatcher;
 import com.google.common.collect.ImmutableMap;
+import org.codehaus.jackson.annotate.JsonCreator;
 
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
@@ -95,16 +96,13 @@ public class Duration {
         return SUFFIXES.get(suffix);
     }
 
+    @JsonCreator
     public static Duration parse(String duration) {
         return new Duration(parseCount(duration), parseUnit(duration));
     }
 
     private final long count;
     private final TimeUnit unit;
-    
-    public Duration(String duration) {
-        this(parseCount(duration), parseUnit(duration));
-    }
 
     private Duration(long count, TimeUnit unit) {
         this.count = count;

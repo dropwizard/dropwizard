@@ -1,0 +1,3 @@
+enabled: true
+filenamePattern: "/var/log/dingo/logs/yyyy_mm_dd.log"
+retainedFileCount: 20

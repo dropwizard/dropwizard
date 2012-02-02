@@ -1,0 +1,5 @@
+enabled: false
+minimumEntitySize: 12KB
+bufferSize: 32KB
+excludedUserAgents: ["IE"]
+compressedMimeTypes: ["text/plain"]

@@ -2,6 +2,7 @@ package com.yammer.dropwizard.util;
 
 import com.google.common.base.CharMatcher;
 import com.google.common.collect.ImmutableMap;
+import org.codehaus.jackson.annotate.JsonCreator;
 
 import java.util.regex.Pattern;
 
@@ -77,17 +78,14 @@ public class Size {
         final String suffix = CharMatcher.DIGIT.trimLeadingFrom(value).trim();
         return SUFFIXES.get(suffix);
     }
-    
+
+    @JsonCreator
     public static Size parse(String size) {
         return new Size(parseCount(size), parseUnit(size));
     }
 
     private final long count;
     private final SizeUnit unit;
-    
-    public Size(String size) {
-        this(parseCount(size), parseUnit(size));
-    }
 
     private Size(long count, SizeUnit unit) {
         this.count = count;

@@ -1,51 +1,59 @@
 package com.yammer.dropwizard.config;
 
 import com.google.common.collect.ImmutableMap;
+import com.yammer.dropwizard.json.LevelDeserializer;
 import com.yammer.dropwizard.util.Size;
 import org.apache.log4j.Level;
+import org.codehaus.jackson.annotate.JsonProperty;
+import org.codehaus.jackson.map.annotate.JsonDeserialize;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-import java.util.Map;
 
 @SuppressWarnings({"FieldCanBeLocal", "FieldMayBeFinal"})
 public class LoggingConfiguration {
-    private static final String VALID_LEVEL = "(OFF|FATAL|ERROR|WARN|INFO|DEBUG|TRACE|ALL)";
-
     public static class ConsoleConfiguration {
+        @JsonProperty
         private boolean enabled = true;
 
         @NotNull
-        @Pattern(regexp = VALID_LEVEL, flags = {Pattern.Flag.CASE_INSENSITIVE})
-        private String threshold = "ALL";
+        @JsonProperty
+        @JsonDeserialize(using = LevelDeserializer.class)
+        private Level threshold = Level.ALL;
 
         public boolean isEnabled() {
             return enabled;
         }
 
         public Level getThreshold() {
-            return Level.toLevel(threshold);
+            return threshold;
         }
     }
 
     @SuppressWarnings("CanBeFinal")
     public static class FileConfiguration {
+        @JsonProperty
         private boolean enabled = false;
 
         @NotNull
-        @Pattern(regexp = VALID_LEVEL, flags = {Pattern.Flag.CASE_INSENSITIVE})
-        private String threshold = "ALL";
+        @JsonProperty
+        @JsonDeserialize(using = LevelDeserializer.class)
+        private Level threshold = Level.ALL;
 
         @NotNull
+        @JsonProperty
         private String filenamePattern = "./logs/example.log";
 
         @NotNull
+        @JsonProperty
         private Size maxFileSize = Size.megabytes(50);
 
         @Min(1)
         @Max(50)
+        @JsonProperty
         private int retainedFileCount = 5;
 
         public boolean isEnabled() {
@@ -53,7 +61,7 @@ public class LoggingConfiguration {
         }
 
         public Level getThreshold() {
-            return Level.toLevel(threshold);
+            return threshold;
         }
 
         public String getFilenamePattern() {
@@ -70,17 +78,21 @@ public class LoggingConfiguration {
     }
 
     public static class SyslogConfiguration {
+        @JsonProperty
         private boolean enabled = true;
 
         @NotNull
-        @Pattern(regexp = VALID_LEVEL, flags = {Pattern.Flag.CASE_INSENSITIVE})
-        private String threshold = "ALL";
+        @JsonProperty
+        @JsonDeserialize(using = LevelDeserializer.class)
+        private Level threshold = Level.ALL;
 
         @NotNull
+        @JsonProperty
         private String host = "localhost";
 
-        @Pattern(regexp = "auth|authpriv|daemon|cron|ftp|lpr|kern|mail|news|syslog|user|uucp|local[0-7]]")
         @NotNull
+        @JsonProperty
+        @Pattern(regexp = "(auth|authpriv|daemon|cron|ftp|lpr|kern|mail|news|syslog|user|uucp|local[0-7])")
         private String facility = "local0";
 
         public boolean isEnabled() {
@@ -88,7 +100,7 @@ public class LoggingConfiguration {
         }
 
         public Level getThreshold() {
-            return Level.toLevel(threshold);
+            return threshold;
         }
 
         public String getHost() {
@@ -101,32 +113,36 @@ public class LoggingConfiguration {
     }
 
     @NotNull
-    @Pattern(regexp = VALID_LEVEL, flags = {Pattern.Flag.CASE_INSENSITIVE})
-    private String level = "INFO";
+    @JsonProperty
+    @JsonDeserialize(using = LevelDeserializer.class)
+    private Level level = Level.INFO;
 
     @NotNull
-    // TODO: 11/7/11 <coda> -- figure out how to validate these values
-    private Map<String, String> loggers = ImmutableMap.of();
+    @JsonProperty
+    @JsonDeserialize(contentUsing = LevelDeserializer.class)
+    private ImmutableMap<String, Level> loggers = ImmutableMap.of();
 
+    @Valid
     @NotNull
+    @JsonProperty
     private ConsoleConfiguration console = new ConsoleConfiguration();
 
+    @Valid
     @NotNull
+    @JsonProperty
     private FileConfiguration file = new FileConfiguration();
 
+    @Valid
     @NotNull
+    @JsonProperty
     private SyslogConfiguration syslog = new SyslogConfiguration();
 
     public Level getLevel() {
-        return Level.toLevel(level);
+        return level;
     }
 
     public ImmutableMap<String, Level> getLoggers() {
-        final ImmutableMap.Builder<String, Level> builder = ImmutableMap.builder();
-        for (Map.Entry<String, String> entry : loggers.entrySet()) {
-            builder.put(entry.getKey(), Level.toLevel(entry.getValue()));
-        }
-        return builder.build();
+        return loggers;
     }
 
     public ConsoleConfiguration getConsoleConfiguration() {

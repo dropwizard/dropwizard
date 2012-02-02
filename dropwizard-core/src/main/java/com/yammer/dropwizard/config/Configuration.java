@@ -1,5 +1,7 @@
 package com.yammer.dropwizard.config;
 
+import org.codehaus.jackson.annotate.JsonProperty;
+
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
@@ -42,10 +44,12 @@ import javax.validation.constraints.NotNull;
 public class Configuration {
     @NotNull
     @Valid
+    @JsonProperty
     private HttpConfiguration http = new HttpConfiguration();
 
     @NotNull
     @Valid
+    @JsonProperty
     private LoggingConfiguration logging = new LoggingConfiguration();
 
     /**

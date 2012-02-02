@@ -26,10 +26,7 @@ import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.util.thread.ThreadPool;
 
 import java.util.EnumSet;
-import java.util.List;
 import java.util.Map;
-
-import static com.yammer.dropwizard.config.HttpConfiguration.GzipConfiguration;
 
 // TODO: 11/7/11 <coda> -- document ServerFactory
 // TODO: 11/7/11 <coda> -- document ServerFactory
@@ -213,14 +210,14 @@ public class ServerFactory {
                 gzipHandler.setBufferSize((int) bufferSize.get().toBytes());
             }
 
-            final Optional<List<String>> userAgents = gzip.getExcludedUserAgents();
+            final Optional<ImmutableSet<String>> userAgents = gzip.getExcludedUserAgents();
             if (userAgents.isPresent()) {
-                gzipHandler.setExcluded(ImmutableSet.copyOf(userAgents.get()));
+                gzipHandler.setExcluded(userAgents.get());
             }
 
-            final Optional<List<String>> mimeTypes = gzip.getCompressedMimeTypes();
+            final Optional<ImmutableSet<String>> mimeTypes = gzip.getCompressedMimeTypes();
             if (mimeTypes.isPresent()) {
-                gzipHandler.setMimeTypes(ImmutableSet.copyOf(mimeTypes.get()));
+                gzipHandler.setMimeTypes(mimeTypes.get());
             }
 
             return gzipHandler;

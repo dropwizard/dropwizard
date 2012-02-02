@@ -3,8 +3,6 @@ package com.yammer.dropwizard.config;
 import com.yammer.dropwizard.jetty.AsyncRequestLog;
 import org.eclipse.jetty.server.handler.RequestLogHandler;
 
-import static com.yammer.dropwizard.config.HttpConfiguration.RequestLogConfiguration;
-
 // TODO: 11/7/11 <coda> -- document RequestLogHandlerFactory
 // TODO: 11/7/11 <coda> -- test RequestLogHandlerFactory
 

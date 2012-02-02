@@ -5,16 +5,15 @@ import com.yammer.dropwizard.config.ConfigurationException;
 import com.yammer.dropwizard.config.ConfigurationFactory;
 import com.yammer.dropwizard.validation.Validator;
 import org.junit.Test;
-import org.yaml.snakeyaml.error.YAMLException;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.io.File;
+import java.io.IOException;
 
-import static org.hamcrest.Matchers.endsWith;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.startsWith;
-import static org.junit.Assert.*;
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 public class ConfigurationFactoryTest {
     @SuppressWarnings("UnusedDeclaration")
@@ -46,8 +45,8 @@ public class ConfigurationFactoryTest {
         try {
             factory.build(malformedFile);
             fail("expected a YAMLException to be thrown, but none was");
-        } catch (YAMLException e) {
-            assertThat(e.getMessage(), startsWith("null"));
+        } catch (IOException e) {
+            assertThat(e.getMessage(), startsWith("Can not instantiate"));
         }
     }
 

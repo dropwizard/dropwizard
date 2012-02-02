@@ -37,9 +37,9 @@ public class Json {
         // singleton
     }
 
-    private static final JsonFactory factory;
-    private static final ObjectMapper mapper;
-    private static final TypeFactory typeFactory;
+    static final JsonFactory factory;
+    static final ObjectMapper mapper;
+    static final TypeFactory typeFactory;
 
     static {
         factory = new MappingJsonFactory();

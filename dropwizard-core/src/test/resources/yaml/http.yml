@@ -1,0 +1,29 @@
+requestLog:
+  enabled: true
+gzip:
+  enabled: false
+port: 9080
+adminPort: 9081
+maxThreads: 101
+minThreads: 89
+rootPath: "/services/*"
+connectorType: legacy
+maxIdleTime: 2s
+acceptorThreadCount: 2
+acceptorThreadPriorityOffset: -3
+acceptQueueSize: 100
+maxBufferCount: 512
+requestBufferSize: 16KB
+requestHeaderBufferSize: 17KB
+responseBufferSize: 18KB
+responseHeaderBufferSize: 19KB
+reuseAddress: false
+soLingerTime: 2s
+lowResourcesConnectionThreshold: 1000
+lowResourcesMaxIdleTime: 1s
+shutdownGracePeriod: 5s
+useServerHeader: true
+useDateHeader: false
+useForwardedHeaders: false
+useDirectBuffers: false
+bindHost: "localhost"
