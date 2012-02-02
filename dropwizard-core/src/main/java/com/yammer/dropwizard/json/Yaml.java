@@ -13,9 +13,9 @@ public class Yaml {
     private final JsonNode node;
 
     public Yaml(File file) throws IOException {
-        final FileReader reader = new FileReader(file);
         final ByteArrayOutputStream output = new ByteArrayOutputStream();
         final JsonGenerator json = Json.factory.createJsonGenerator(output).useDefaultPrettyPrinter();
+        final FileReader reader = new FileReader(file);
         try {
             final Node yaml = new org.yaml.snakeyaml.Yaml().compose(reader);
             build(yaml, json);
