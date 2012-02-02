@@ -1,12 +1,9 @@
 package com.yammer.dropwizard.config;
 
-import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableList;
-import com.google.common.io.Files;
 import com.yammer.dropwizard.json.Yaml;
 import com.yammer.dropwizard.validation.Validator;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 
@@ -24,14 +21,9 @@ public class ConfigurationFactory<T> {
     }
     
     public T build(File file) throws IOException, ConfigurationException {
-        final BufferedReader reader = Files.newReader(file, Charsets.UTF_8);
-        try {
-            final T config = new Yaml(file).read(klass);
-            validate(file, config);
-            return config;
-        } finally {
-            reader.close();
-        }
+        final T config = new Yaml(file).read(klass);
+        validate(file, config);
+        return config;
     }
 
     private void validate(File file, T config) throws ConfigurationException {
