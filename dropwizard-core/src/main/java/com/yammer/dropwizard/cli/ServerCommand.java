@@ -49,12 +49,12 @@ public class ServerCommand<T extends Configuration> extends ConfiguredCommand<T>
         final Server server = new ServerFactory(configuration.getHttpConfiguration()).buildServer(environment);
 
         final Log log = Log.forClass(ServerCommand.class);
-        log.info("Starting {}", service.getName());
-
         try {
-            log.info("\n{}", Resources.toString(Resources.getResource("banner.txt"), Charsets.UTF_8));
+            final String banner = Resources.toString(Resources.getResource("banner.txt"), Charsets.UTF_8);
+            log.info("Starting {}\n{}", service.getName(), banner);
         } catch (IllegalArgumentException ignored) {
             // don't display the banner if there isn't one
+            log.info("Starting {}", service.getName());
         }
 
         try {

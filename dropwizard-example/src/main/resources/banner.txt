@@ -1,4 +1,4 @@
-                                                 dP
+                           web-scale hello world dP for the web
                                                  88
   .d8888b. dP.  .dP .d8888b. 88d8b.d8b. 88d888b. 88 .d8888b.
   88ooood8  `8bd8'  88'  `88 88'`88'`88 88'  `88 88 88ooood8
