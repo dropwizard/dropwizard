@@ -26,9 +26,9 @@ import java.lang.reflect.Type;
  * </ul>
  */
 public class Json {
-    final JsonFactory factory;
-    final ObjectMapper mapper;
-    final TypeFactory typeFactory;
+    private final JsonFactory factory;
+    private final ObjectMapper mapper;
+    private final TypeFactory typeFactory;
 
     /**
      * Creates a new {@link Json} instance.
