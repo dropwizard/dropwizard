@@ -64,6 +64,13 @@ public class JsonHelpers {
         return JSON.readValue(json, reference);
     }
 
+    /**
+     * Loads the given fixture resource as a normalized JSON string.
+     *
+     * @param filename    the filename of the fixture
+     * @return the contents of {@code filename} as a normalized JSON string
+     * @throws IOException if there is an error parsing {@code filename}
+     */
     public static String jsonFixture(String filename) throws IOException {
         return JSON.writeValueAsString(JSON.readValue(fixture(filename), JsonNode.class));
     }
