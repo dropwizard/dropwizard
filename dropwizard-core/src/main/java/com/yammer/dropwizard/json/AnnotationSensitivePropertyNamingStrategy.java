@@ -6,15 +6,12 @@ import org.codehaus.jackson.map.introspect.AnnotatedField;
 import org.codehaus.jackson.map.introspect.AnnotatedMethod;
 import org.codehaus.jackson.map.introspect.AnnotatedParameter;
 
-// TODO: 10/12/11 <coda> -- write tests for AnnotationSensitivePropertyNamingStrategy
-// TODO: 10/12/11 <coda> -- write docs for AnnotationSensitivePropertyNamingStrategy
-
-public class AnnotationSensitivePropertyNamingStrategy extends PropertyNamingStrategy {
+class AnnotationSensitivePropertyNamingStrategy extends PropertyNamingStrategy {
     static final AnnotationSensitivePropertyNamingStrategy INSTANCE =
             new AnnotationSensitivePropertyNamingStrategy();
     private final PropertyNamingStrategy snakeCase;
 
-    public AnnotationSensitivePropertyNamingStrategy() {
+    AnnotationSensitivePropertyNamingStrategy() {
         super();
         this.snakeCase = PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES;
     }

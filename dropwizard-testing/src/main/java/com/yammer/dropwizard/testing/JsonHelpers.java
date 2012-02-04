@@ -23,6 +23,8 @@ import static com.yammer.dropwizard.testing.FixtureHelpers.fixture;
  * </code></pre>
  */
 public class JsonHelpers {
+    private static final Json JSON = new Json();
+
     private JsonHelpers() { /* singleton */ }
 
     /**
@@ -33,7 +35,7 @@ public class JsonHelpers {
      * @throws IOException if there is an error writing {@code object} as JSON
      */
     public static JsonNode asJson(Object object) throws IOException {
-        return Json.read(Json.write(object), JsonNode.class);
+        return JSON.writeValueAsTree(object);
     }
 
     /**
@@ -46,7 +48,7 @@ public class JsonHelpers {
      * @throws IOException if there is an error reading {@code json} as an instance of {@code T}
      */
     public static <T> T fromJson(JsonNode json, Class<T> klass) throws IOException {
-        return Json.read(json, klass);
+        return JSON.readValue(json, klass);
     }
 
     /**
@@ -59,10 +61,10 @@ public class JsonHelpers {
      * @throws IOException if there is an error reading {@code json} as an instance of {@code T}
      */
     public static <T> T fromJson(JsonNode json, TypeReference<T> reference) throws IOException {
-        return Json.read(json, reference);
+        return JSON.readValue(json, reference);
     }
 
     public static JsonNode jsonFixture(String filename) throws IOException {
-        return Json.read(fixture(filename), JsonNode.class);
+        return JSON.readValue(fixture(filename), JsonNode.class);
     }
 }

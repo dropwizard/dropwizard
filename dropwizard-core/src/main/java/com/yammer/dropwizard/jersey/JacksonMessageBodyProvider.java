@@ -49,12 +49,14 @@ public class JacksonMessageBodyProvider implements MessageBodyReader<Object>,
         }
     };
 
+    private final Json json = new Json();
+
     @Override
     public boolean isReadable(Class<?> type,
                               Type genericType,
                               Annotation[] annotations,
                               MediaType mediaType) {
-        return Json.canDeserialize(type);
+        return json.canDeserialize(type);
     }
 
     @Override
@@ -69,7 +71,7 @@ public class JacksonMessageBodyProvider implements MessageBodyReader<Object>,
             validating = validating || (annotation.annotationType() == Valid.class);
         }
 
-        final Object value = Json.read(entityStream, genericType);
+        final Object value = json.readValue(entityStream, genericType);
         if (validating) {
             final ImmutableList<String> errors = VALIDATOR.validate(value);
             if (!errors.isEmpty()) {
@@ -91,7 +93,7 @@ public class JacksonMessageBodyProvider implements MessageBodyReader<Object>,
                                Type genericType,
                                Annotation[] annotations,
                                MediaType mediaType) {
-        return Json.canSerialize(type);
+        return json.canSerialize(type);
     }
 
     @Override
@@ -112,7 +114,7 @@ public class JacksonMessageBodyProvider implements MessageBodyReader<Object>,
                         MultivaluedMap<String, Object> httpHeaders,
                         OutputStream entityStream) throws IOException, WebApplicationException {
         try {
-            Json.write(entityStream, t);
+            json.writeValue(entityStream, t);
         } catch (EofException ignored) {
             // we don't care about these
         } catch (IOException e) {

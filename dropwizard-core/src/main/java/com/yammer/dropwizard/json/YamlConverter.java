@@ -1,33 +1,42 @@
 package com.yammer.dropwizard.json;
 
 import com.yammer.dropwizard.logging.Log;
+import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.type.TypeReference;
 import org.yaml.snakeyaml.nodes.*;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 
-public class Yaml {
-    private static final Log LOG = Log.forClass(Yaml.class);
-    private final JsonNode node;
+class YamlConverter {
+    private static final Log LOG = Log.forClass(YamlConverter.class);
+    private final Json json;
+    private final JsonFactory factory;
 
-    public Yaml(File file) throws IOException {
+    YamlConverter(Json json, JsonFactory factory) {
+        this.factory = factory;
+        this.json = json;
+    }
+
+    JsonNode convert(File file) throws IOException {
         final ByteArrayOutputStream output = new ByteArrayOutputStream();
-        final JsonGenerator json = Json.factory.createJsonGenerator(output).useDefaultPrettyPrinter();
+        final JsonGenerator generator = factory.createJsonGenerator(output).useDefaultPrettyPrinter();
         final FileReader reader = new FileReader(file);
         try {
             final Node yaml = new org.yaml.snakeyaml.Yaml().compose(reader);
-            build(yaml, json);
-            json.close();
+            build(yaml, generator);
+            generator.close();
             LOG.debug("Parsed {} as:\n {}", file, output.toString());
-            this.node = Json.read(output.toByteArray(), JsonNode.class);
+            return json.readValue(output.toByteArray(), JsonNode.class);
         } finally {
             reader.close();
         }
     }
 
-    private static void build(Node yaml, JsonGenerator json) throws IOException {
+    private void build(Node yaml, JsonGenerator json) throws IOException {
         if (yaml instanceof MappingNode) {
             final MappingNode mappingNode = (MappingNode) yaml;
             json.writeStartObject();
@@ -58,13 +67,5 @@ public class Yaml {
                 json.writeString(scalarNode.getValue());
             }
         }
-    }
-
-    public <T> T read(Class<T> klass) throws IOException {
-        return Json.read(node, klass);
-    }
-
-    public <T> T read(TypeReference<T> ref) throws IOException {
-        return Json.read(node, ref);
     }
 }
