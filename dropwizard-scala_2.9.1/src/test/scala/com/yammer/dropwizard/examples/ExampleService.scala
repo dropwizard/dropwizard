@@ -2,8 +2,9 @@ package com.yammer.dropwizard.examples
 
 import com.yammer.dropwizard.config.Environment
 import com.yammer.dropwizard.ScalaService
+import com.codahale.logula.Logging
 
-object ExampleService extends ScalaService[ExampleConfiguration]("example") {
+object ExampleService extends ScalaService[ExampleConfiguration]("example") with Logging {
   addCommand(new SayCommand)
   addCommand(new SplodyCommand)
 

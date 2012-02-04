@@ -7,6 +7,7 @@ import com.yammer.dropwizard.config.ConfigurationFactory;
 import com.yammer.dropwizard.config.LoggingFactory;
 import com.yammer.dropwizard.validation.Validator;
 import org.apache.commons.cli.CommandLine;
+import org.codehaus.jackson.map.Module;
 
 import java.io.File;
 import java.lang.reflect.ParameterizedType;
@@ -59,8 +60,9 @@ public abstract class ConfiguredCommand<T extends Configuration> extends Command
     @SuppressWarnings("unchecked")
     protected final void run(AbstractService<?> service,
                              CommandLine params) throws Exception {
-        final ConfigurationFactory<T> factory = new ConfigurationFactory<T>(getConfigurationClass(),
-                                                                            new Validator());
+        final ConfigurationFactory<T> factory = ConfigurationFactory.forClass(getConfigurationClass(),
+                                                                              new Validator(),
+                                                                              service.getJacksonModules());
         final String[] args = params.getArgs();
         if (args.length >= 1) {
             params.getArgList().remove(0);

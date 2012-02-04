@@ -17,8 +17,8 @@ public class RequestLogConfigurationTest {
 
     @Before
     public void setUp() throws Exception {
-        this.requestLog = new ConfigurationFactory<RequestLogConfiguration>(RequestLogConfiguration.class,
-                                                                            new Validator()).build(new File(Resources.getResource("yaml/requestLog.yml").getFile()));
+        this.requestLog = ConfigurationFactory.forClass(RequestLogConfiguration.class,
+                                                        new Validator()).build(new File(Resources.getResource("yaml/requestLog.yml").getFile()));
     }
 
     @Test

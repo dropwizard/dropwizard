@@ -20,8 +20,8 @@ public class GzipConfigurationTest {
 
     @Before
     public void setUp() throws Exception {
-        this.gzip = new ConfigurationFactory<GzipConfiguration>(GzipConfiguration.class,
-                                                                new Validator()).build(new File(Resources.getResource("yaml/gzip.yml").getFile()));
+        this.gzip = ConfigurationFactory.forClass(GzipConfiguration.class,
+                                                  new Validator()).build(new File(Resources.getResource("yaml/gzip.yml").getFile()));
     }
 
     @Test

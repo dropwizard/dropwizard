@@ -10,6 +10,7 @@ import com.yammer.dropwizard.cli.UsagePrinter;
 import com.yammer.dropwizard.config.Configuration;
 import com.yammer.dropwizard.config.Environment;
 import com.yammer.dropwizard.config.LoggingFactory;
+import org.codehaus.jackson.map.Module;
 
 import java.lang.reflect.ParameterizedType;
 import java.util.Arrays;
@@ -24,6 +25,8 @@ import java.util.SortedMap;
  */
 @SuppressWarnings("EmptyMethod")
 public abstract class AbstractService<T extends Configuration> {
+    private static final Module[] NO_MODULES = new Module[0];
+
     static {
         // make sure spinning up Hibernate Validator doesn't yell at us
         LoggingFactory.bootstrap();
@@ -32,6 +35,7 @@ public abstract class AbstractService<T extends Configuration> {
     private final String name;
     private final List<Bundle> bundles;
     private final List<ConfiguredBundle<? super T>> configuredBundles;
+    private final List<Module> modules;
     private final SortedMap<String, Command> commands;
 
     /**
@@ -43,6 +47,7 @@ public abstract class AbstractService<T extends Configuration> {
         this.name = name;
         this.bundles = Lists.newArrayList();
         this.configuredBundles = Lists.newArrayList();
+        this.modules = Lists.newArrayList();
         this.commands = Maps.newTreeMap();
         addCommand(new ServerCommand<T>(getConfigurationClass()));
     }
@@ -116,6 +121,16 @@ public abstract class AbstractService<T extends Configuration> {
     }
 
     /**
+     * Registers a Jackson {@link Module} which the service will use to parse the configuration file
+     * and to parse/generate any {@code application/json} entities.
+     *
+     * @param module    a {@link Module}
+     */
+    protected final void addJacksonModule(Module module) {
+        modules.add(module);
+    }
+
+    /**
      * When the service runs, this is called after the {@link Bundle}s are run. Override it to add
      * providers, resources, etc. for your service.
      *
@@ -162,6 +177,15 @@ public abstract class AbstractService<T extends Configuration> {
                 UsagePrinter.printRootHelp(this);
             }
         }
+    }
+
+    /**
+     * Returns a list of Jackson {@link Module}s used to parse JSON (and the configuration files).
+     *
+     * @return a list of {@link Module}s
+     */
+    public ImmutableList<Module> getJacksonModules() {
+        return ImmutableList.copyOf(modules);
     }
 
     private static boolean isHelp(String[] arguments) {

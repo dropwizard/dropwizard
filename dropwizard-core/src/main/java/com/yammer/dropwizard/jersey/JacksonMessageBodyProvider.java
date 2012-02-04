@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.yammer.dropwizard.json.Json;
 import com.yammer.dropwizard.logging.Log;
 import com.yammer.dropwizard.validation.Validator;
+import org.codehaus.jackson.map.Module;
 import org.eclipse.jetty.io.EofException;
 
 import javax.validation.Valid;
@@ -49,7 +50,14 @@ public class JacksonMessageBodyProvider implements MessageBodyReader<Object>,
         }
     };
 
-    private final Json json = new Json();
+    private final Json json;
+
+    public JacksonMessageBodyProvider(Iterable<Module> modules) {
+        this.json = new Json();
+        for (Module module : modules) {
+            json.registerModule(module);
+        }
+    }
 
     @Override
     public boolean isReadable(Class<?> type,

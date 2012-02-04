@@ -9,6 +9,7 @@ import com.sun.jersey.api.core.ResourceConfig;
 import com.sun.jersey.core.reflection.AnnotatedMethod;
 import com.sun.jersey.core.reflection.MethodList;
 import com.sun.jersey.spi.container.servlet.ServletContainer;
+import com.yammer.dropwizard.AbstractService;
 import com.yammer.dropwizard.jetty.JettyManaged;
 import com.yammer.dropwizard.jetty.NonblockingServletHolder;
 import com.yammer.dropwizard.lifecycle.ExecutorServiceManager;
@@ -47,6 +48,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class Environment extends AbstractLifeCycle {
     private static final Log LOG = Log.forClass(Environment.class);
 
+    private final AbstractService<?> service;
     private final ResourceConfig config;
     private final ImmutableSet.Builder<HealthCheck> healthChecks;
     private final ImmutableMap.Builder<String, ServletHolder> servlets;
@@ -58,8 +60,10 @@ public class Environment extends AbstractLifeCycle {
      * Creates a new environment.
      * 
      * @param configuration    the service's {@link Configuration}
+     * @param service          the service
      */
-    public Environment(Configuration configuration) {
+    public Environment(Configuration configuration, AbstractService<?> service) {
+        this.service = service;
         this.config = new DropwizardResourceConfig() {
             @Override
             public void validate() {
@@ -429,5 +433,9 @@ public class Environment extends AbstractLifeCycle {
 
     private MethodList annotatedMethods(Class<?> resource) {
         return new MethodList(resource, true).hasMetaAnnotation(HttpMethod.class);
+    }
+
+    public AbstractService<?> getService() {
+        return service;
     }
 }
