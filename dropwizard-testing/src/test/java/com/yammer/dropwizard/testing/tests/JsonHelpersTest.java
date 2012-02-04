@@ -1,29 +1,19 @@
 package com.yammer.dropwizard.testing.tests;
 
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.node.JsonNodeFactory;
-import org.codehaus.jackson.node.ObjectNode;
 import org.codehaus.jackson.type.TypeReference;
 import org.junit.Test;
 
-import static com.yammer.dropwizard.testing.JsonHelpers.asJson;
-import static com.yammer.dropwizard.testing.JsonHelpers.fromJson;
-import static com.yammer.dropwizard.testing.JsonHelpers.jsonFixture;
+import static com.yammer.dropwizard.testing.JsonHelpers.*;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 public class JsonHelpersTest {
-    private final JsonNodeFactory factory = JsonNodeFactory.instance;
-    private final ObjectNode json = factory.objectNode();
-    {
-        json.put("name", "Coda");
-        json.put("email", "coda@example.com");
-    }
+    private final String json = "{\"name\":\"Coda\",\"email\":\"coda@example.com\"}";
 
     @Test
     public void readsJsonFixturesAsJsonNodes() throws Exception {
         assertThat(jsonFixture("fixtures/person.json"),
-                   is((JsonNode) json));
+                   is(json));
     }
 
     @Test
