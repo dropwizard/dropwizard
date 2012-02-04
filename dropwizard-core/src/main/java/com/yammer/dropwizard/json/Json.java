@@ -47,6 +47,7 @@ public class Json {
         mapper.disable(SerializationConfig.Feature.WRITE_ENUMS_USING_TO_STRING);
         mapper.disable(DeserializationConfig.Feature.READ_ENUMS_USING_TO_STRING);
         mapper.registerModule(new GuavaModule());
+        mapper.registerModule(new Log4jModule());
 
         this.typeFactory = mapper.getTypeFactory();
     }

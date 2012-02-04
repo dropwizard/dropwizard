@@ -1,11 +1,9 @@
 package com.yammer.dropwizard.config;
 
 import com.google.common.collect.ImmutableMap;
-import com.yammer.dropwizard.json.LevelDeserializer;
 import com.yammer.dropwizard.util.Size;
 import org.apache.log4j.Level;
 import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.map.annotate.JsonDeserialize;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
@@ -21,7 +19,6 @@ public class LoggingConfiguration {
 
         @NotNull
         @JsonProperty
-        @JsonDeserialize(using = LevelDeserializer.class)
         private Level threshold = Level.ALL;
 
         public boolean isEnabled() {
@@ -40,7 +37,6 @@ public class LoggingConfiguration {
 
         @NotNull
         @JsonProperty
-        @JsonDeserialize(using = LevelDeserializer.class)
         private Level threshold = Level.ALL;
 
         @NotNull
@@ -83,7 +79,6 @@ public class LoggingConfiguration {
 
         @NotNull
         @JsonProperty
-        @JsonDeserialize(using = LevelDeserializer.class)
         private Level threshold = Level.ALL;
 
         @NotNull
@@ -114,12 +109,10 @@ public class LoggingConfiguration {
 
     @NotNull
     @JsonProperty
-    @JsonDeserialize(using = LevelDeserializer.class)
     private Level level = Level.INFO;
 
     @NotNull
     @JsonProperty
-    @JsonDeserialize(contentUsing = LevelDeserializer.class)
     private ImmutableMap<String, Level> loggers = ImmutableMap.of();
 
     @Valid
