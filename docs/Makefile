@@ -1,2 +1,5 @@
+default:
+	mook
+
 upload:
-	rsync -avz ./ codahale.com:/home/codahale/dropwizard.codahale.com/
+	rsync -avz target/ codahale.com:/home/codahale/dropwizard.codahale.com/
