@@ -1,4 +1,4 @@
-v0.1.4: TBD
+v0.2.0: TBD
 ===================
 
 * Switched to using `jackson-datatype-guava` for JSON serialization/deserialization of Guava types.
@@ -6,6 +6,17 @@ v0.1.4: TBD
 * Upgraded to Jackson 1.9.4.
 * Upgraded to Jetty 7.6.0 final.
 * Upgraded to tomcat-dbcp 7.0.25.
+* Improved fool-proofing for `Service` vs. `ScalaService`.
+* Switched to using Jackson for configuration file parsing. SnakeYAML is used to parse YAML
+  configuration files to a JSON intermediary form, then Jackson is used to map that to your
+  `Configuration` subclass and its fields. Configuration files which don't end in `.yaml` or `.yml`
+  are treated as JSON.
+* Rewrote `Json` to no longer be a singleton.
+* Converted `JsonHelpers` in `dropwizard-testing` to use normalized JSON strings to compare JSON.
+* Collapsed `DatabaseConfiguration`. It's no longer a map of connection names to configuration
+  objects.
+* Changed `Database` to use the validation query in `DatabaseConfiguration` for its `#ping()`
+  method.
 
 
 v0.1.3: Jan 19 2012
