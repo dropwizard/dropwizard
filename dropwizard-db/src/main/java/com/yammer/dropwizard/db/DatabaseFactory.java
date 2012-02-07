@@ -10,29 +10,24 @@ import javax.sql.DataSource;
 import java.util.Map;
 import java.util.Properties;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import static com.yammer.dropwizard.db.DatabaseConfiguration.DatabaseConnectionConfiguration;
-
 public class DatabaseFactory {
-    private final DatabaseConfiguration config;
+    private final Environment environment;
 
-    public DatabaseFactory(DatabaseConfiguration config) {
-        this.config = config;
+    public DatabaseFactory(Environment environment) {
+        this.environment = environment;
     }
 
-    public Database build(String name, Environment environment) throws ClassNotFoundException {
-        final DatabaseConnectionConfiguration connectionConfig = config.getConnection(name);
-        Class.forName(connectionConfig.getDriverClass());
-        checkNotNull(connectionConfig, "%s is not the name of a configured connection.", name);
-        final GenericObjectPool pool = buildPool(connectionConfig);
-        final DataSource dataSource = buildDataSource(connectionConfig, pool);
+    public Database build(DatabaseConfiguration configuration, String name) throws ClassNotFoundException {
+        Class.forName(configuration.getDriverClass());
+        final GenericObjectPool pool = buildPool(configuration);
+        final DataSource dataSource = buildDataSource(configuration, pool);
         final Database database = new Database(dataSource, pool);
         environment.manage(database);
         environment.addHealthCheck(new DatabaseHealthCheck(database, name));
         return database;
     }
 
-    private static DataSource buildDataSource(DatabaseConnectionConfiguration connectionConfig, GenericObjectPool pool) {
+    private static DataSource buildDataSource(DatabaseConfiguration connectionConfig, GenericObjectPool pool) {
         final Properties properties = new Properties();
         for (Map.Entry<String, String> property : connectionConfig.getProperties().entrySet()) {
             properties.setProperty(property.getKey(), property.getValue());
@@ -55,15 +50,16 @@ public class DatabaseFactory {
         return new PoolingDataSource(pool);
     }
 
-    private static GenericObjectPool buildPool(DatabaseConnectionConfiguration connectionConfig) {
+    private static GenericObjectPool buildPool(DatabaseConfiguration configuration) {
         final GenericObjectPool pool = new GenericObjectPool(null);
-        pool.setMaxWait(connectionConfig.getMaxWaitForConnection().toMilliseconds());
-        pool.setMinIdle(connectionConfig.getMinSize());
-        pool.setMaxActive(connectionConfig.getMaxSize());
-        pool.setMaxIdle(connectionConfig.getMaxSize());
-        pool.setTestWhileIdle(connectionConfig.checkConnectionWhileIdle());
-        pool.setTimeBetweenEvictionRunsMillis(connectionConfig.getCheckConnectionHealthWhenIdleFor().toMilliseconds());
-        pool.setMinEvictableIdleTimeMillis(connectionConfig.getCloseConnectionIfIdleFor().toMilliseconds());
+        pool.setMaxWait(configuration.getMaxWaitForConnection().toMilliseconds());
+        pool.setMinIdle(configuration.getMinSize());
+        pool.setMaxActive(configuration.getMaxSize());
+        pool.setMaxIdle(configuration.getMaxSize());
+        pool.setTestWhileIdle(configuration.isCheckConnectionWhileIdle());
+        pool.setTimeBetweenEvictionRunsMillis(configuration.getCheckConnectionHealthWhenIdleFor().toMilliseconds());
+        pool.setMinEvictableIdleTimeMillis(configuration.getCloseConnectionIfIdleFor()
+                                                        .toMilliseconds());
         pool.setWhenExhaustedAction(GenericObjectPool.WHEN_EXHAUSTED_BLOCK);
         return pool;
     }
