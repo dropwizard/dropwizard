@@ -21,7 +21,7 @@ public class DatabaseFactory {
         Class.forName(configuration.getDriverClass());
         final GenericObjectPool pool = buildPool(configuration);
         final DataSource dataSource = buildDataSource(configuration, pool);
-        final Database database = new Database(dataSource, pool);
+        final Database database = new Database(dataSource, pool, configuration.getValidationQuery());
         environment.manage(database);
         environment.addHealthCheck(new DatabaseHealthCheck(database, name));
         return database;
