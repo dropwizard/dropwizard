@@ -64,7 +64,7 @@ public class HttpConfiguration {
 
     @NotNull
     @JsonProperty
-    private Duration maxIdleTime = Duration.seconds(1);
+    private Duration maxIdleTime = Duration.seconds(200);
 
     @Min(1)
     @Max(128)
