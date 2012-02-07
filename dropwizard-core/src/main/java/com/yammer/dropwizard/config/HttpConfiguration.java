@@ -69,7 +69,7 @@ public class HttpConfiguration {
     @Min(1)
     @Max(128)
     @JsonProperty
-    private int acceptorThreadCount = Runtime.getRuntime().availableProcessors();
+    private int acceptorThreadCount = 1;
 
     @Min(-Thread.NORM_PRIORITY)
     @Max(Thread.NORM_PRIORITY)
