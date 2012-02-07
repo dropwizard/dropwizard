@@ -106,13 +106,12 @@ public class HttpConfiguration {
     @JsonProperty
     private Duration soLingerTime = null;
 
-    @Min(1)
     @JsonProperty
-    private int lowResourcesConnectionThreshold = 25000;
+    private int lowResourcesConnectionThreshold = 0;
 
     @NotNull
     @JsonProperty
-    private Duration lowResourcesMaxIdleTime = Duration.seconds(5);
+    private Duration lowResourcesMaxIdleTime = Duration.seconds(0);
 
     @NotNull
     @JsonProperty
