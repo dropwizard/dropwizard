@@ -3,6 +3,7 @@ package com.yammer.dropwizard.config;
 import com.google.common.base.Optional;
 import com.yammer.dropwizard.util.Duration;
 import com.yammer.dropwizard.util.Size;
+import com.yammer.dropwizard.validation.ValidationMethod;
 import org.codehaus.jackson.annotate.JsonProperty;
 
 import javax.validation.Valid;
@@ -41,15 +42,15 @@ public class HttpConfiguration {
     @JsonProperty
     private int adminPort = 8081;
 
-    @Min(10)
-    @Max(20000)
+    @Min(2)
+    @Max(1000000)
     @JsonProperty
-    private int maxThreads = 100;
+    private int maxThreads = 254;
 
-    @Min(10)
-    @Max(20000)
+    @Min(1)
+    @Max(1000000)
     @JsonProperty
-    private int minThreads = 10;
+    private int minThreads = 8;
 
     @NotNull
     @JsonProperty
@@ -131,6 +132,11 @@ public class HttpConfiguration {
 
     @JsonProperty
     private String bindHost = null;
+
+    @ValidationMethod
+    public boolean isThreadPoolSizedCorrectly() {
+        return minThreads <= maxThreads;
+    }
 
     public RequestLogConfiguration getRequestLogConfiguration() {
         return requestLog;
