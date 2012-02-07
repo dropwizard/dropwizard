@@ -1,5 +1,6 @@
 package com.yammer.dropwizard.db;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.ImmutableMap;
 import com.yammer.dropwizard.util.Duration;
 import com.yammer.dropwizard.validation.ValidationMethod;
@@ -10,7 +11,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.Map;
 
-@SuppressWarnings("FieldMayBeFinal")
+@SuppressWarnings({ "FieldMayBeFinal", "UnusedDeclaration" })
 public class DatabaseConfiguration {
     @NotNull
     @JsonProperty
@@ -159,5 +160,59 @@ public class DatabaseConfiguration {
     @ValidationMethod(message = ".minSize must be less than or equal to maxSize")
     public boolean isPoolSizedCorrectly() {
         return minSize <= maxSize;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) { return true; }
+        if ((obj == null) || (getClass() != obj.getClass())) { return false; }
+        final DatabaseConfiguration that = (DatabaseConfiguration) obj;
+        return (checkConnectionWhileIdle == that.checkConnectionWhileIdle) &&
+                (maxSize == that.maxSize) &&
+                (minSize == that.minSize) &&
+                !((checkConnectionHealthWhenIdleFor != null) ? !checkConnectionHealthWhenIdleFor.equals(that.checkConnectionHealthWhenIdleFor) : (that.checkConnectionHealthWhenIdleFor != null)) &&
+                !((closeConnectionIfIdleFor != null) ? !closeConnectionIfIdleFor.equals(that.closeConnectionIfIdleFor) : (that.closeConnectionIfIdleFor != null)) &&
+                !((driverClass != null) ? !driverClass.equals(that.driverClass) : (that.driverClass != null)) &&
+                !((maxWaitForConnection != null) ? !maxWaitForConnection.equals(that.maxWaitForConnection) : (that.maxWaitForConnection != null)) &&
+                !((password != null) ? !password.equals(that.password) : (that.password != null)) &&
+                !((properties != null) ? !properties.equals(that.properties) : (that.properties != null)) &&
+                !((url != null) ? !url.equals(that.url) : (that.url != null)) &&
+                !((user != null) ? !user.equals(that.user) : (that.user != null)) &&
+                !((validationQuery != null) ? !validationQuery.equals(that.validationQuery) : (that.validationQuery != null));
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (driverClass != null) ? driverClass.hashCode() : 0;
+        result = (31 * result) + ((user != null) ? user.hashCode() : 0);
+        result = (31 * result) + ((password != null) ? password.hashCode() : 0);
+        result = (31 * result) + ((url != null) ? url.hashCode() : 0);
+        result = (31 * result) + ((properties != null) ? properties.hashCode() : 0);
+        result = (31 * result) + ((maxWaitForConnection != null) ? maxWaitForConnection.hashCode() : 0);
+        result = (31 * result) + ((validationQuery != null) ? validationQuery.hashCode() : 0);
+        result = (31 * result) + minSize;
+        result = (31 * result) + maxSize;
+        result = (31 * result) + (checkConnectionWhileIdle ? 1 : 0);
+        result = (31 * result) + ((checkConnectionHealthWhenIdleFor != null) ? checkConnectionHealthWhenIdleFor.hashCode() : 0);
+        result = (31 * result) + ((closeConnectionIfIdleFor != null) ? closeConnectionIfIdleFor.hashCode() : 0);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return Objects.toStringHelper(this)
+                      .add("driverClass", driverClass)
+                      .add("user", user)
+                      .add("password", password)
+                      .add("url", url)
+                      .add("properties", properties)
+                      .add("maxWaitForConnection", maxWaitForConnection)
+                      .add("validationQuery", validationQuery)
+                      .add("minSize", minSize)
+                      .add("maxSize", maxSize)
+                      .add("checkConnectionWhileIdle", checkConnectionWhileIdle)
+                      .add("checkConnectionHealthWhenIdleFor", checkConnectionHealthWhenIdleFor)
+                      .add("closeConnectionIfIdleFor", closeConnectionIfIdleFor)
+                      .toString();
     }
 }
