@@ -17,6 +17,7 @@ v0.2.0: TBD
   objects.
 * Changed `Database` to use the validation query in `DatabaseConfiguration` for its `#ping()`
   method.
+* Upgraded to Metrics 2.0.0.
 
 
 v0.1.3: Jan 19 2012
