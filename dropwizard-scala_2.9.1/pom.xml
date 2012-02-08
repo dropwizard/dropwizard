@@ -18,21 +18,10 @@
 
     <repositories>
         <repository>
-            <id>scala-tools-releases</id>
-            <url>http://scala-tools.org/repo-releases/</url>
-        </repository>
-        <repository>
             <id>repo.codahale.com</id>
             <url>http://repo.codahale.com/</url>
         </repository>
     </repositories>
-
-    <pluginRepositories>
-        <pluginRepository>
-            <id>scala-tools-releases</id>
-            <url>http://scala-tools.org/repo-releases/</url>
-        </pluginRepository>
-    </pluginRepositories>
 
     <dependencies>
         <dependency>
