@@ -26,7 +26,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <metrics.version>2.0.0-RC0</metrics.version>
+        <metrics.version>2.0.0</metrics.version>
         <jersey.version>1.11</jersey.version>
     </properties>
 
