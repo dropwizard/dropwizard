@@ -27,6 +27,7 @@ import org.eclipse.jetty.util.component.LifeCycle;
 import javax.annotation.Nullable;
 import javax.servlet.Filter;
 import javax.servlet.Servlet;
+import javax.servlet.ServletContextListener;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.Path;
 import javax.ws.rs.ext.Provider;
@@ -52,6 +53,7 @@ public class Environment extends AbstractLifeCycle {
     private final ResourceConfig config;
     private final ImmutableSet.Builder<HealthCheck> healthChecks;
     private final ImmutableMap.Builder<String, ServletHolder> servlets;
+    private final ImmutableSet.Builder<ServletContextListener> servletContextListeners;
     private final ImmutableMap.Builder<String, FilterHolder> filters;
     private final ImmutableSet.Builder<Task> tasks;
     private final AggregateLifeCycle lifeCycle;
@@ -77,6 +79,7 @@ public class Environment extends AbstractLifeCycle {
         };
         this.healthChecks = ImmutableSet.builder();
         this.servlets = ImmutableMap.builder();
+        this.servletContextListeners = ImmutableSet.builder();
         this.filters = ImmutableMap.builder();
         this.tasks = ImmutableSet.builder();
         this.lifeCycle = new AggregateLifeCycle();
@@ -323,6 +326,15 @@ public class Environment extends AbstractLifeCycle {
         return service;
     }
 
+    /**
+     * Adds a {@link ServletContextListener} to the servlet context.
+     *
+     * @param listener    a {@link ServletContextListener}
+     */
+    public void addServletContextListener(ServletContextListener listener) {
+        servletContextListeners.add(listener);
+    }
+
     /*
      * Internal Accessors
      */
@@ -337,6 +349,10 @@ public class Environment extends AbstractLifeCycle {
 
     ImmutableMap<String, FilterHolder> getFilters() {
         return filters.build();
+    }
+
+    ImmutableSet<ServletContextListener> getServletContextListeners() {
+        return servletContextListeners.build();
     }
 
     ImmutableSet<Task> getTasks() {

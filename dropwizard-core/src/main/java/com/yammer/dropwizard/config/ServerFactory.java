@@ -1,6 +1,7 @@
 package com.yammer.dropwizard.config;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.yammer.dropwizard.jetty.BiDiGzipHandler;
 import com.yammer.dropwizard.jetty.QuietErrorHandler;
@@ -25,8 +26,9 @@ import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.util.thread.ThreadPool;
 
+import javax.servlet.ServletContextListener;
 import java.util.EnumSet;
-import java.util.Map;
+import java.util.EventListener;
 
 // TODO: 11/7/11 <coda> -- document ServerFactory
 // TODO: 11/7/11 <coda> -- document ServerFactory
@@ -158,7 +160,7 @@ public class ServerFactory {
     private Handler createHandler(Environment env) {
         final HandlerCollection collection = new HandlerCollection();
 
-        collection.addHandler(createExternalServlet(env.getServlets(), env.getFilters()));
+        collection.addHandler(createExternalServlet(env.getServlets(), env.getFilters(), env.getServletContextListeners()));
         collection.addHandler(createInternalServlet(env));
 
         if (requestLogHandlerFactory.isEnabled()) {
@@ -176,18 +178,23 @@ public class ServerFactory {
         return handler;
     }
 
-    private Handler createExternalServlet(Map<String, ServletHolder> servlets,
-                                          Map<String, FilterHolder> filters) {
+    private Handler createExternalServlet(ImmutableMap<String, ServletHolder> servlets,
+                                          ImmutableMap<String, FilterHolder> filters,
+                                          ImmutableSet<ServletContextListener> listeners) {
         final ServletContextHandler handler = new ServletContextHandler();
         handler.setBaseResource(Resource.newClassPathResource("."));
 
-        for (Map.Entry<String, ServletHolder> entry : servlets.entrySet()) {
+        for (ImmutableMap.Entry<String, ServletHolder> entry : servlets.entrySet()) {
             handler.addServlet(entry.getValue(), entry.getKey());
         }
 
-        for (Map.Entry<String, FilterHolder> entry : filters.entrySet()) {
+        for (ImmutableMap.Entry<String, FilterHolder> entry : filters.entrySet()) {
             handler.addFilter(entry.getValue(), entry.getKey(), EnumSet.of(DispatcherType.REQUEST));
         }
+
+        final EventListener[] eventListeners = new EventListener[listeners.size()];
+        listeners.toArray(eventListeners);
+        handler.setEventListeners(eventListeners);
 
         handler.setConnectorNames(new String[]{"main"});
 
