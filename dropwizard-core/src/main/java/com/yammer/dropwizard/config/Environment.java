@@ -294,14 +294,14 @@ public class Environment extends AbstractLifeCycle {
                                                   TimeUnit unit) {
         final ThreadFactory threadFactory = new ThreadFactoryBuilder().setNameFormat(nameFormat)
                                                                       .build();
-        final ExecutorService service = new ThreadPoolExecutor(corePoolSize,
-                                                               maximumPoolSize,
-                                                               keepAliveTime,
-                                                               unit,
-                                                               new LinkedBlockingQueue<Runnable>(),
-                                                               threadFactory);
-        manage(new ExecutorServiceManager(service, 5, TimeUnit.SECONDS));
-        return service;
+        final ExecutorService executor = new ThreadPoolExecutor(corePoolSize,
+                                                                maximumPoolSize,
+                                                                keepAliveTime,
+                                                                unit,
+                                                                new LinkedBlockingQueue<Runnable>(),
+                                                                threadFactory);
+        manage(new ExecutorServiceManager(executor, 5, TimeUnit.SECONDS));
+        return executor;
     }
 
     /**
@@ -320,10 +320,10 @@ public class Environment extends AbstractLifeCycle {
                                                                     int corePoolSize) {
         final ThreadFactory threadFactory = new ThreadFactoryBuilder().setNameFormat(nameFormat)
                                                                       .build();
-        final ScheduledExecutorService service = new ScheduledThreadPoolExecutor(corePoolSize,
-                                                                                 threadFactory);
-        manage(new ExecutorServiceManager(service, 5, TimeUnit.SECONDS));
-        return service;
+        final ScheduledExecutorService executor = new ScheduledThreadPoolExecutor(corePoolSize,
+                                                                                  threadFactory);
+        manage(new ExecutorServiceManager(executor, 5, TimeUnit.SECONDS));
+        return executor;
     }
 
     /**
