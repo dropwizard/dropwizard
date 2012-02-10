@@ -1,5 +1,6 @@
 package com.yammer.dropwizard.logging;
 
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.slf4j.helpers.MessageFormatter;
 
@@ -74,6 +75,10 @@ public class Log {
 
     private Log(Logger logger) {
         this.logger = logger;
+    }
+
+    public void setLevel(Level level) {
+        logger.setLevel(level);
     }
 
     // TRACE
