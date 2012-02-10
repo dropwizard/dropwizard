@@ -1,6 +1,7 @@
 package com.yammer.dropwizard.config.tests;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMultimap;
 import com.yammer.dropwizard.config.FilterConfiguration;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.junit.Test;
@@ -13,7 +14,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 public class FilterConfigurationTest {
     private final FilterHolder holder = mock(FilterHolder.class);
-    private final ImmutableMap.Builder<String, FilterHolder> mappings = ImmutableMap.builder();
+    private final ImmutableMultimap.Builder<String, FilterHolder> mappings = ImmutableMultimap.builder();
     private final FilterConfiguration config = new FilterConfiguration(holder, mappings);
 
     @Test
@@ -37,7 +38,7 @@ public class FilterConfigurationTest {
         config.addUrlPattern("/one");
 
         assertThat(mappings.build(),
-                   is(ImmutableMap.of("/one", holder)));
+                   is(ImmutableMultimap.of("/one", holder)));
     }
 
     @Test
@@ -45,7 +46,7 @@ public class FilterConfigurationTest {
         config.addUrlPatterns("/one", "/two");
 
         assertThat(mappings.build(),
-                   is(ImmutableMap.of("/one", holder,
-                                      "/two", holder)));
+                   is(ImmutableMultimap.of("/one", holder,
+                                           "/two", holder)));
     }
 }

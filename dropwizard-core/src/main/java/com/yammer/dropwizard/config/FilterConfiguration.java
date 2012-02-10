@@ -1,6 +1,6 @@
 package com.yammer.dropwizard.config;
 
-import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMultimap;
 import org.eclipse.jetty.servlet.FilterHolder;
 
 import java.util.Map;
@@ -12,7 +12,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class FilterConfiguration {
     private final FilterHolder holder;
-    private final ImmutableMap.Builder<String, FilterHolder> mappings;
+    private final ImmutableMultimap.Builder<String, FilterHolder> mappings;
 
     /**
      * Creates a new {@link FilterConfiguration}.
@@ -21,7 +21,7 @@ public class FilterConfiguration {
      * @param mappings    the mappings of URL patterns to {@link javax.servlet.Filter}s
      */
     public FilterConfiguration(FilterHolder holder,
-                               ImmutableMap.Builder<String, FilterHolder> mappings) {
+                               ImmutableMultimap.Builder<String, FilterHolder> mappings) {
         this.holder = holder;
         this.mappings = mappings;
     }
