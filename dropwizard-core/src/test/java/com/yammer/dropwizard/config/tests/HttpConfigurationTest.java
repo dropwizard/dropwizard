@@ -1,6 +1,7 @@
 package com.yammer.dropwizard.config.tests;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.io.Resources;
 import com.yammer.dropwizard.config.ConfigurationFactory;
 import com.yammer.dropwizard.config.HttpConfiguration;
@@ -36,6 +37,12 @@ public class HttpConfigurationTest {
                    is(true));
     }
 
+    @Test
+    public void loadsContextParams() throws Exception {
+        assertThat(http.getContextParameters(), 
+                   is(ImmutableMap.of("param", "value")));
+    }
+    
     @Test
     public void hasAServicePort() throws Exception {
         assertThat(http.getPort(),
