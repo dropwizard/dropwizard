@@ -8,9 +8,15 @@ import java.net.URL;
  * code is executing.
  */
 public class JarLocation {
+    private final Class<?> klass;
+
+    public JarLocation(Class<?> klass) {
+        this.klass = klass;
+    }
+
     @Override
     public String toString() {
-        final URL location = JarLocation.class.getProtectionDomain().getCodeSource().getLocation();
+        final URL location = klass.getProtectionDomain().getCodeSource().getLocation();
         try {
             final String jar = new File(location.getFile()).getName();
             if (jar.endsWith(".jar")) {

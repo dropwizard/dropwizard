@@ -11,20 +11,20 @@ public class UsagePrinter {
     }
 
     public static void printRootHelp(AbstractService<?> service) {
-        System.out.printf("java -jar %s <command> [arg1 arg2]\n\n", new JarLocation());
+        System.out.printf("java -jar %s <command> [arg1 arg2]\n\n", new JarLocation(service.getClass()));
         System.out.println("Commands");
         System.out.println("========\n");
 
         for (Command command : service.getCommands()) {
-            printCommandHelp(command);
+            printCommandHelp(command, service.getClass());
         }
     }
 
-    public static void printCommandHelp(Command cmd) {
-        printCommandHelp(cmd, null);
+    public static void printCommandHelp(Command cmd, Class<?> klass) {
+        printCommandHelp(cmd, klass, null);
     }
 
-    public static void printCommandHelp(Command cmd, String errorMessage) {
+    public static void printCommandHelp(Command cmd, Class<?> klass, String errorMessage) {
         if (errorMessage != null) {
             System.err.println(errorMessage);
             System.out.println();
@@ -33,7 +33,7 @@ public class UsagePrinter {
         System.out.println(formatTitle(cmd));
         final HelpFormatter helpFormatter = new HelpFormatter();
         helpFormatter.setLongOptPrefix(" --");
-        helpFormatter.printHelp(String.format("java -jar %s", cmd.getUsage()),
+        helpFormatter.printHelp(String.format("java -jar %s", cmd.getUsage(klass)),
                                 cmd.getOptionsWithHelp());
         System.out.println("\n");
     }

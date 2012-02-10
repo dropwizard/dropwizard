@@ -9,7 +9,7 @@ import static org.junit.Assert.assertThat;
 public class JarLocationTest {
     @Test
     public void isHumanReadable() throws Exception {
-        assertThat(new JarLocation().toString(),
+        assertThat(new JarLocation(JarLocationTest.class).toString(),
                    is("project.jar"));
     }
 }

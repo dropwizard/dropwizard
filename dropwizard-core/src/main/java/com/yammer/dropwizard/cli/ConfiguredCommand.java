@@ -7,7 +7,6 @@ import com.yammer.dropwizard.config.ConfigurationFactory;
 import com.yammer.dropwizard.config.LoggingFactory;
 import com.yammer.dropwizard.validation.Validator;
 import org.apache.commons.cli.CommandLine;
-import org.codehaus.jackson.map.Module;
 
 import java.io.File;
 import java.lang.reflect.ParameterizedType;
@@ -71,10 +70,10 @@ public abstract class ConfiguredCommand<T extends Configuration> extends Command
                 new LoggingFactory(configuration.getLoggingConfiguration()).configure();
                 run((AbstractService<T>) service, configuration, params);
             } catch (ConfigurationException e) {
-                printHelp(e.getMessage());
+                printHelp(e.getMessage(), service.getClass());
             }
         } else {
-            printHelp();
+            printHelp(service.getClass());
             System.exit(-1);
         }
     }

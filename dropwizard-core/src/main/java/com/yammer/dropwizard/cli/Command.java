@@ -92,8 +92,8 @@ public abstract class Command {
      *
      * @return the usage string for the command
      */
-    protected String getUsage() {
-        return format("%s %s %s", new JarLocation(), getName(), getSyntax());
+    protected String getUsage(Class<?> klass) {
+        return format("%s %s %s", new JarLocation(klass), getName(), getSyntax());
     }
 
     /**
@@ -107,17 +107,17 @@ public abstract class Command {
                           String[] arguments) throws Exception {
         final CommandLine cmdLine = new GnuParser().parse(getOptionsWithHelp(), checkNotNull(arguments));
         if (cmdLine.hasOption("help")) {
-            printHelp();
+            printHelp(service.getClass());
         } else {
             run(checkNotNull(service), cmdLine);
         }
     }
 
-    protected final void printHelp() {
-        UsagePrinter.printCommandHelp(this);
+    protected final void printHelp(Class<?> klass) {
+        UsagePrinter.printCommandHelp(this, klass);
     }
 
-    protected final void printHelp(String message) {
-        UsagePrinter.printCommandHelp(this, message);
+    protected final void printHelp(String message, Class<?> klass) {
+        UsagePrinter.printCommandHelp(this, klass, message);
     }
 }
