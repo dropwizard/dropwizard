@@ -88,7 +88,11 @@ http:
 
     # The maximum number of old log files to retain.
     retainedFileCount: 5
-
+  
+  # Servlet context parameters
+  contextParameters:
+    param: value
+    
 # Logging settings.
 logging:
 

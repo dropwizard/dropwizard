@@ -28,6 +28,7 @@ import org.eclipse.jetty.util.thread.ThreadPool;
 
 import java.util.EnumSet;
 import java.util.EventListener;
+import java.util.Map;
 
 // TODO: 11/7/11 <coda> -- document ServerFactory
 // TODO: 11/7/11 <coda> -- document ServerFactory
@@ -195,6 +196,10 @@ public class ServerFactory {
             handler.addEventListener(listener);
         }
 
+        for (Map.Entry<String, String> entry : config.getContextParameters().entrySet()) {
+            handler.setInitParameter( entry.getKey(), entry.getValue() );
+        }
+        
         handler.setConnectorNames(new String[]{"main"});
 
         return wrapHandler(handler);

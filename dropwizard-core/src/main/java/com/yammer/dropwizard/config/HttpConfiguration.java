@@ -1,6 +1,7 @@
 package com.yammer.dropwizard.config;
 
 import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableMap;
 import com.yammer.dropwizard.util.Duration;
 import com.yammer.dropwizard.util.Size;
 import com.yammer.dropwizard.validation.ValidationMethod;
@@ -26,6 +27,10 @@ public class HttpConfiguration {
     @JsonProperty
     private GzipConfiguration gzip = new GzipConfiguration();
 
+    @NotNull
+    @JsonProperty
+    private ImmutableMap<String, String> contextParameters = ImmutableMap.of();
+    
     public enum ConnectorType {
         SOCKET,
         BLOCKING_CHANNEL,
@@ -145,6 +150,10 @@ public class HttpConfiguration {
         return gzip;
     }
 
+    public ImmutableMap<String, String> getContextParameters() {
+        return contextParameters;
+    }
+    
     public ConnectorType getConnectorType() {
         if ("blocking".equalsIgnoreCase(connectorType)) {
             return ConnectorType.BLOCKING_CHANNEL;
