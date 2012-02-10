@@ -17,7 +17,11 @@ v0.2.0: TBD
   objects.
 * Changed `Database` to use the validation query in `DatabaseConfiguration` for its `#ping()`
   method.
-* Upgraded to Metrics 2.0.0.
+* Changed many `HttpConfiguration` defaults to match Jetty's defaults.
+* Upgrade to JDBI 2.31.2.
+* Fixed JAR locations in the CLI usage screens.
+* Upgraded to Metrics 2.0.2.
+* Added support for `ServletContextListener`s.
 
 
 v0.1.3: Jan 19 2012
