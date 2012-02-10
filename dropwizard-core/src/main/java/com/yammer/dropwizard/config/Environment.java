@@ -27,10 +27,11 @@ import org.eclipse.jetty.util.component.LifeCycle;
 import javax.annotation.Nullable;
 import javax.servlet.Filter;
 import javax.servlet.Servlet;
-import javax.servlet.ServletContextListener;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.Path;
 import javax.ws.rs.ext.Provider;
+
+import java.util.EventListener;
 import java.util.concurrent.*;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -53,8 +54,8 @@ public class Environment extends AbstractLifeCycle {
     private final ResourceConfig config;
     private final ImmutableSet.Builder<HealthCheck> healthChecks;
     private final ImmutableMap.Builder<String, ServletHolder> servlets;
-    private final ImmutableSet.Builder<ServletContextListener> servletContextListeners;
     private final ImmutableMap.Builder<String, FilterHolder> filters;
+    private final ImmutableSet.Builder<EventListener> servletListeners;
     private final ImmutableSet.Builder<Task> tasks;
     private final AggregateLifeCycle lifeCycle;
 
@@ -79,8 +80,8 @@ public class Environment extends AbstractLifeCycle {
         };
         this.healthChecks = ImmutableSet.builder();
         this.servlets = ImmutableMap.builder();
-        this.servletContextListeners = ImmutableSet.builder();
         this.filters = ImmutableMap.builder();
+        this.servletListeners = ImmutableSet.builder();
         this.tasks = ImmutableSet.builder();
         this.lifeCycle = new AggregateLifeCycle();
 
@@ -230,6 +231,20 @@ public class Environment extends AbstractLifeCycle {
     }
 
     /**
+     * Add one or more servlet event listeners.
+     * 
+     * @param listeners one or more listener instances that implement
+     *                  {@link javax.servlet.ServletContextListener}, 
+     *                  {@link javax.servlet.ServletContextAttributeListener}, 
+     *                  {@link javax.servlet.ServletRequestListener} or 
+     *                  {@link javax.servlet.ServletRequestAttributeListener}
+     * 
+     */
+    public void addServletListeners(EventListener... listeners) {
+        this.servletListeners.add( listeners );
+    }
+    
+    /**
      * Adds a {@link Task} instance.
      *
      * @param task    a {@link Task}
@@ -326,15 +341,6 @@ public class Environment extends AbstractLifeCycle {
         return executor;
     }
 
-    /**
-     * Adds a {@link ServletContextListener} to the servlet context.
-     *
-     * @param listener    a {@link ServletContextListener}
-     */
-    public void addServletContextListener(ServletContextListener listener) {
-        servletContextListeners.add(listener);
-    }
-
     /*
      * Internal Accessors
      */
@@ -351,14 +357,14 @@ public class Environment extends AbstractLifeCycle {
         return filters.build();
     }
 
-    ImmutableSet<ServletContextListener> getServletContextListeners() {
-        return servletContextListeners.build();
-    }
-
     ImmutableSet<Task> getTasks() {
         return tasks.build();
     }
 
+    ImmutableSet<EventListener> getServletListeners() {
+        return servletListeners.build();
+    }
+    
     private void logManagedObjects() {
         final ImmutableSet.Builder<String> builder = ImmutableSet.builder();
         for (Object bean : lifeCycle.getBeans()) {
