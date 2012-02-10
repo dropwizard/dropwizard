@@ -5,7 +5,9 @@ import org.eclipse.jetty.servlet.FilterHolder;
 
 import java.util.Map;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 /**
  * The configuration for a servlet {@link javax.servlet.Filter}.
@@ -26,6 +28,23 @@ public class FilterConfiguration {
         this.mappings = mappings;
     }
 
+    /**
+     * Sets the filter's name.
+     * 
+     * @param name    the name of the filter
+     * @return {@code this}
+     */
+    public FilterConfiguration setName(String name) {
+        checkArgument( !isNullOrEmpty( name ), "name must be non-empty" );
+        /*
+         * We are warned against ordering setting the held class (which 
+         * has already happened by the time this configuration is instantiated) 
+         * before the name, but it seems harmless to do so.
+         */
+        holder.setName( name );
+        return this;
+    }
+    
     /**
      * Sets the given filter initialization parameter.
      *
