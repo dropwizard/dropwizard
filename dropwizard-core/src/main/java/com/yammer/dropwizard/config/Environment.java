@@ -24,6 +24,7 @@ import org.eclipse.jetty.util.component.LifeCycle;
 import javax.annotation.Nullable;
 import javax.servlet.Filter;
 import javax.servlet.Servlet;
+import javax.servlet.http.HttpServlet;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.Path;
 import javax.ws.rs.ext.Provider;
@@ -48,7 +49,7 @@ public class Environment extends AbstractLifeCycle {
     private static final Log LOG = Log.forClass(Environment.class);
 
     private final AbstractService<?> service;
-    private final ResourceConfig config;
+    private final DropwizardResourceConfig config;
     private final ImmutableSet.Builder<HealthCheck> healthChecks;
     private final ImmutableMap.Builder<String, ServletHolder> servlets;
     private final ImmutableMultimap.Builder<String, FilterHolder> filters;
@@ -82,7 +83,11 @@ public class Environment extends AbstractLifeCycle {
         this.tasks = ImmutableSet.builder();
         this.lifeCycle = new AggregateLifeCycle();
 
-        addServlet(new ServletContainer(config), configuration.getHttpConfiguration().getRootPath()).setInitOrder(Integer.MAX_VALUE);
+        
+        HttpServlet jerseyContainer = service.getJerseyContainer(config);
+        if (jerseyContainer != null) {
+            addServlet(jerseyContainer, configuration.getHttpConfiguration().getRootPath()).setInitOrder(Integer.MAX_VALUE);
+        }
         addTask(new GarbageCollectionTask());
     }
 
