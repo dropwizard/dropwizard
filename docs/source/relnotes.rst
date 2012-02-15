@@ -31,8 +31,11 @@ v0.2.0: TBD
 * Upgraded to JDBI 2.31.2.
 * Fixed JAR locations in the CLI usage screens.
 * Upgraded to Metrics 2.0.2.
-* Added support for ``ServletContextListener`` instances.
+* Added support for all servlet listener types.
 * Added ``Log#setLevel(Level)``.
+* Added ``Service#getJerseyContainer``, which allows services to fully customize the Jersey
+  container instance.
+* Added the ``http.contextParameters`` configuration parameter.
 
 .. _rel-0.1.3:
 
