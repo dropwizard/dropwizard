@@ -3,7 +3,7 @@
 // --------------------------------------------------------
 
 // Inline and block code styles
-code,
+.code-and-pre,
 pre {
   padding: 0 3px 2px;
   #font > #family > .monospace;
@@ -11,8 +11,8 @@ pre {
   color: @grayDark;
   .border-radius(3px);
 }
-code {
-  padding: 3px 4px;
+.code, code {
+  .code-and-pre();
   color: #d14;
   background-color: #f7f7f9;
   border: 1px solid #e1e1e8;
