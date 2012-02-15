@@ -12,7 +12,6 @@
 {%- else %}
 {%- set titlesuffix = "" %}
 {%- endif %}
-{% set css_files = ['_static/bootstrap.min.css'] + css_files %}
 <head>
     <meta charset="{{ encoding }}">
     <title>{{ title|striptags|e }}{{ titlesuffix }}</title>
