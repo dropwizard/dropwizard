@@ -21,6 +21,7 @@
         <module>dropwizard-templates</module>
         <module>dropwizard-testing</module>
         <module>dropwizard-scala_2.9.1</module>
+        <module>contrib</module>
     </modules>
 
     <properties>
