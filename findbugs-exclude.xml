@@ -26,6 +26,30 @@
         <Bug pattern="SE_TRANSIENT_FIELD_NOT_RESTORED"/>
     </Match>
 
+    <!-- I don't care about Windows, sorry. -->
+    <Match>
+        <Bug pattern="VA_FORMAT_STRING_USES_NEWLINE"/>
+    </Match>
+
+    <!-- blissfully unconcerned about serialization -->
+    <Match>
+        <Bug code="Se"/>
+    </Match>
+
+    <!-- false alarms -->
+    <Match>
+        <Class name="com.yammer.dropwizard.jetty.AsyncRequestLog"/>
+        <Bug pattern="DM_DEFAULT_ENCODING"/>
+    </Match>
+    <Match>
+        <Class name="com.yammer.dropwizard.jetty.BiDiGzipHandler$GzipServletRequest"/>
+        <Bug pattern="DM_DEFAULT_ENCODING"/>
+    </Match>
+    <Match>
+        <Class name="com.yammer.dropwizard.json.YamlConverter"/>
+        <Bug pattern="DM_DEFAULT_ENCODING"/>
+    </Match>
+
     <!-- Scala bytecode is weird. I know. -->
     <Class name="~com\.yammer\.dropwizard\.providers\.OauthTokenInjectable.*"/>
     <Class name="~com\.yammer\.dropwizard\.providers\.OauthTokenProvider.*"/>
