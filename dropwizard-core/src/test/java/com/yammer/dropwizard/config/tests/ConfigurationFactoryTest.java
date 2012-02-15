@@ -10,6 +10,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.io.File;
 import java.io.IOException;
+import java.util.Locale;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
@@ -55,9 +56,11 @@ public class ConfigurationFactoryTest {
         try {
             factory.build(invalidFile);
         } catch (ConfigurationException e) {
-            assertThat(e.getMessage(),
-                       endsWith("factory-test-invalid.yml has the following errors:\n" +
-                                "  * name must match \"[\\w]+[\\s]+[\\w]+\" (was Boop)"));
+            if ("en".equals(Locale.getDefault().getLanguage())) {
+                assertThat(e.getMessage(),
+                           endsWith("factory-test-invalid.yml has the following errors:\n" +
+                                    "  * name must match \"[\\w]+[\\s]+[\\w]+\" (was Boop)"));
+            }
         }
     }
 }

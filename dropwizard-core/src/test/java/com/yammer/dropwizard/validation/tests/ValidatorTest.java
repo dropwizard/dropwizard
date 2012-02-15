@@ -7,6 +7,8 @@ import org.junit.Test;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
 
+import java.util.Locale;
+
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -31,9 +33,11 @@ public class ValidatorTest {
 
     @Test
     public void returnsASetOfErrorsForAnObject() throws Exception {
-        assertThat(validator.validate(new Example()),
-                   is(ImmutableList.of("notNull may not be null (was null)",
-                                       "tooBig must be less than or equal to 30 (was 50)")));
+        if ("en".equals(Locale.getDefault().getLanguage())) {
+            assertThat(validator.validate(new Example()),
+                       is(ImmutableList.of("notNull may not be null (was null)",
+                                           "tooBig must be less than or equal to 30 (was 50)")));
+        }
     }
 
     @Test
