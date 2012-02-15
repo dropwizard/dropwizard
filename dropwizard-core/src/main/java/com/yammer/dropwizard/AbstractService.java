@@ -3,11 +3,13 @@ package com.yammer.dropwizard;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.sun.jersey.spi.container.servlet.ServletContainer;
 import com.yammer.dropwizard.cli.Command;
 import com.yammer.dropwizard.cli.ConfiguredCommand;
 import com.yammer.dropwizard.cli.ServerCommand;
 import com.yammer.dropwizard.cli.UsagePrinter;
 import com.yammer.dropwizard.config.Configuration;
+import com.yammer.dropwizard.config.DropwizardResourceConfig;
 import com.yammer.dropwizard.config.Environment;
 import com.yammer.dropwizard.config.LoggingFactory;
 import org.codehaus.jackson.map.Module;
@@ -16,6 +18,8 @@ import java.lang.reflect.ParameterizedType;
 import java.util.Arrays;
 import java.util.List;
 import java.util.SortedMap;
+
+import javax.annotation.CheckForNull;
 
 /**
  * The base class for both Java and Scala services. Do not extend this directly. Use {@link Service}
@@ -188,6 +192,26 @@ public abstract class AbstractService<T extends Configuration> {
         return ImmutableList.copyOf(modules);
     }
 
+    /**
+     * Returns the Jersey servlet container used to serve HTTP requests. This implementation
+     * creates a new {@link ServletContainer} instance with the given resource configuration.
+     * Subclasses must either use the same {@code config} instance or delegate to it.
+     * <p>
+     * This method may be called before the service initialized with 
+     * {@link #initialize(Configuration, Environment)}; service implementations must not 
+     * assume the service has been initialized.
+     * <p>
+     * An implementation that chooses to return {@code null} is responsible for creating
+     * a container with the given config by other means during initialization and startup.
+     * 
+     * @param config the Jersey resource config to use for the container
+     * @return a Jersey servlet container, or {@code null} if the Jersey container
+     *         will be created by other means 
+     */
+    public @CheckForNull ServletContainer getJerseyContainer(DropwizardResourceConfig config) {
+        return new ServletContainer(config);
+    }
+    
     private static boolean isHelp(String[] arguments) {
         return (arguments.length == 0) ||
                 ((arguments.length == 1) &&
