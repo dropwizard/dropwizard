@@ -6,7 +6,8 @@ Dropwizard Core
 
 .. highlight:: text
 
-The ``dropwizard-core`` module provides you with everything you'll need for most of your services.
+.. rubric:: The ``dropwizard-core`` module provides you with everything you'll need for most of your
+            services.
 
 It includes:
 
