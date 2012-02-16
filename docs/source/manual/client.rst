@@ -4,6 +4,8 @@
 Dropwizard Client
 #################
 
+.. highlight:: text
+
 .. rubric:: The ``dropwizard-client`` module provides you with two different performant,
             instrumented HTTP clients so you can integrate your service with other web
             services: :ref:`man-client-apache` and :ref:`man-client-jersey`.
@@ -51,9 +53,14 @@ Your service's configuration file will then look like this:
 .. code-block:: yaml
 
     httpClient:
-      timeout: 1s # timeout after 1s while connecting, reading, or writing
-      timeToLive: 10m # keep connections open for 10 minutes
-      cookiesEnabled: false # don't track cookies
+      # timeout after 1s while connecting, reading, or writing
+      timeout: 1s
+
+      # keep connections open for 10 minutes
+      timeToLive: 10m
+
+      # don't track cookies
+      cookiesEnabled: false
 
 .. _man-client-apache-metrics:
 
