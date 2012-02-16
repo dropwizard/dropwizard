@@ -6,12 +6,14 @@ package com.yammer.dropwizard.logging;
 import org.apache.log4j.EnhancedPatternLayout;
 import org.apache.log4j.spi.LoggingEvent;
 
+import java.util.TimeZone;
+
 public class LogFormatter extends EnhancedPatternLayout {
     private static final String STACK_TRACE_PREFIX = "! ";
     private static final char NEWLINE = '\n';
 
-    public LogFormatter() {
-        super("%-5p [%d{ISO8601}{UTC}] %c: %m\n");
+    public LogFormatter(TimeZone timeZone) {
+        super("%-5p [%d{ISO8601}{" + timeZone.getID() + "}] %c: %m\n");
     }
 
     @Override

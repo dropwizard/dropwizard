@@ -19,7 +19,7 @@ import static com.yammer.dropwizard.config.LoggingConfiguration.*;
 
 public class LoggingFactory {
     public static void bootstrap() {
-        final ConsoleAppender appender = new ConsoleAppender(new LogFormatter());
+        final ConsoleAppender appender = new ConsoleAppender(new LogFormatter(UTC));
         appender.setThreshold(Level.WARN);
         Logger.getRootLogger().addAppender(appender);
     }
@@ -91,7 +91,7 @@ public class LoggingFactory {
         final FileConfiguration file = config.getFileConfiguration();
         if (file.isEnabled()) {
             final RollingFileAppender a = new RollingFileAppender();
-            a.setLayout(new LogFormatter());
+            a.setLayout(new LogFormatter(file.getTimeZone()));
             a.setAppend(true);
             a.setFile(file.getFilenamePattern());
             a.setMaximumFileSize(file.getMaxFileSize().toBytes());
@@ -105,7 +105,7 @@ public class LoggingFactory {
     private void configureConsoleLogging(AsyncAppender appender) {
         final ConsoleConfiguration console = config.getConsoleConfiguration();
         if (console.isEnabled()) {
-            final ConsoleAppender a = new ConsoleAppender(new LogFormatter());
+            final ConsoleAppender a = new ConsoleAppender(new LogFormatter(console.getTimeZone()));
             a.setThreshold(console.getThreshold());
             appender.addAppender(a);
         }

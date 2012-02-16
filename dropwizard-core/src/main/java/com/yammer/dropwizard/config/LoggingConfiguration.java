@@ -10,9 +10,12 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import java.util.TimeZone;
 
 @SuppressWarnings({"FieldCanBeLocal", "FieldMayBeFinal"})
 public class LoggingConfiguration {
+    static final TimeZone UTC = TimeZone.getTimeZone("UTC");
+
     public static class ConsoleConfiguration {
         @JsonProperty
         private boolean enabled = true;
@@ -21,12 +24,20 @@ public class LoggingConfiguration {
         @JsonProperty
         private Level threshold = Level.ALL;
 
+        @NotNull
+        @JsonProperty
+        private TimeZone timeZone = UTC;
+
         public boolean isEnabled() {
             return enabled;
         }
 
         public Level getThreshold() {
             return threshold;
+        }
+
+        public TimeZone getTimeZone() {
+            return timeZone;
         }
     }
 
@@ -52,6 +63,10 @@ public class LoggingConfiguration {
         @JsonProperty
         private int retainedFileCount = 5;
 
+        @NotNull
+        @JsonProperty
+        private TimeZone timeZone = UTC;
+
         public boolean isEnabled() {
             return enabled;
         }
@@ -70,6 +85,10 @@ public class LoggingConfiguration {
 
         public int getRetainedFileCount() {
             return retainedFileCount;
+        }
+
+        public TimeZone getTimeZone() {
+            return timeZone;
         }
     }
 
