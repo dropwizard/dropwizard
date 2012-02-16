@@ -6,7 +6,7 @@ Release Notes
 
 .. _rel-0.2.0:
 
-v0.2.0: TBD
+v0.2.0: Feb 15 2012
 ===================
 
 * Switched to using ``jackson-datatype-guava`` for JSON serialization/deserialization of Guava
