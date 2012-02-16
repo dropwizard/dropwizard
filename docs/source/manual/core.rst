@@ -251,7 +251,7 @@ For example, given a theoretical Riak__ client which needs to be started and sto
     }
 
 
-If ``RiakClientManager#start()`` throws an exception—e.g., an error connecting to the server—your
+If ``RiakClientManager#start()`` throws an exception--e.g., an error connecting to the server--your
 service will not start and a full exception will be logged. If ``RiakClientManager#stop()`` throws
 an exception, the exception will be logged but your service will still be able to shut down.
 
