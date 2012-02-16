@@ -17,6 +17,4 @@ User Manual
     scala
     templates
     testing
-    running
-    production
 
