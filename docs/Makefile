@@ -156,4 +156,4 @@ less:
 	lessc --compress source/_themes/yammerdoc/less/yammerdoc.less > source/_themes/yammerdoc/static/yammerdoc.css
 
 upload: clean dirhtml
-	rsync -avz --delete --exclude=maven $(BUILDDIR)/dirhtml/ codahale.com:/home/codahale/dropwizard.codahale.com/sphinx-ex/
+	rsync -avz --delete --exclude=maven $(BUILDDIR)/dirhtml/ codahale.com:/home/codahale/dropwizard.codahale.com/
