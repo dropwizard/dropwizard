@@ -103,7 +103,8 @@ html_theme_options = {
     'gradient_text': u'#ffffff',
     'gradient_bg': u'#363F45',
     'landing_logo': u'dropwizard-hat.png',
-    'landing_logo_width': u'150px'
+    'landing_logo_width': u'150px',
+    'github_page': u'https://github.com/codahale/dropwizard'
 }
 
 # Add any paths that contain custom themes here, relative to this directory.
