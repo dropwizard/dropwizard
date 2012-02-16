@@ -23,7 +23,7 @@ team to ship a *production-quality* HTTP+JSON web service in the shortest time p
 
    getting-started
    manual/index
-   relnotes
+   about/index
 
 .. raw:: html
 
