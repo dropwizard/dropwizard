@@ -7,11 +7,12 @@ import org.apache.log4j.EnhancedPatternLayout;
 import org.apache.log4j.spi.LoggingEvent;
 
 public class LogFormatter extends EnhancedPatternLayout {
+    private static final String DROPWIZARD_LOG_PATTERN = "%-5p [%d{ISO8601}{UTC}] %c: %m\n";
     private static final String STACK_TRACE_PREFIX = "! ";
     private static final char NEWLINE = '\n';
 
     public LogFormatter() {
-        super("%-5p [%d{ISO8601}{UTC}] %c: %m\n");
+        super(System.getProperty("logging.layout.pattern", DROPWIZARD_LOG_PATTERN));
     }
 
     @Override
