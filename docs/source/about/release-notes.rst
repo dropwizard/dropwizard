@@ -4,10 +4,10 @@
 Release Notes
 #############
 
-.. _rel-0.2.1:
+.. _rel-0.2.1-SNAPSHOT:
 
-v0.2.1: TBD
-===================
+v0.2.1-SNAPSHOT
+===============
 
 * Added ``logging.console.timeZone`` and ``logging.file.timeZone`` to control the time zone of
   the timestamps in the logs. Defaults to UTC.
