@@ -36,9 +36,12 @@
     {%- endif %}
     {%- endblock %}
     <style lang="text/css">
-        #top-bar {
+        #top-bar, #top-bar small, #top-bar a {
             text-shadow: 0px -1px 0px {{theme_gradient_end}};
             color: {{theme_gradient_text}};
+        }
+        
+        #top-bar {
             background-color: {{theme_gradient_bg}};
             background-image: -moz-linear-gradient(top, {{theme_gradient_start}}, {{theme_gradient_end}});
             background-image: -ms-linear-gradient(top, {{theme_gradient_start}}, {{theme_gradient_end}});
@@ -52,9 +55,6 @@
             border-radius: 0;
         }
 
-        #top-bar a {
-            color: {{theme_gradient_text}};
-        }
 
         .hero-unit {
             background-image: url("{{ pathto('_static/' + theme_landing_logo, 1) }}") !important;
