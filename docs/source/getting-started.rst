@@ -519,7 +519,7 @@ plugin called ``maven-shade``. In the ``<build><plugins>`` section of your ``pom
 this:
 
 .. code-block:: xml
-    :emphasize-lines: 6,10,16,17,18,19
+    :emphasize-lines: 6,8,9,10,11,12,13,14,15,26,27,28,29
 
     <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -527,6 +527,16 @@ this:
         <version>1.4</version>
         <configuration>
             <createDependencyReducedPom>true</createDependencyReducedPom>
+            <filters>
+                <filter>
+                    <artifact>*:*</artifact>
+                    <excludes>
+                        <exclude>META-INF/*.SF</exclude>
+                        <exclude>META-INF/*.DSA</exclude>
+                        <exclude>META-INF/*.RSA</exclude>
+                    </excludes>
+                </filter>
+            </filters>
         </configuration>
         <executions>
             <execution>
@@ -550,10 +560,22 @@ This configures Maven to do a couple of things during its ``package`` phase:
 
 * Produce a ``pom.xml`` file which doesn't include dependencies for the libraries whose contents are
   included in the fat JAR.
+* Exclude all digital signatures from signed JARs. If you don't, then Java considers the signature
+  invalid and won't load or run your JAR file.
 * Collate the various ``META-INF/services`` entries in the JARs instead of overwriting them. (Jersey
   doesn't work without those.)
 * Set ``com.example.helloworld.HelloWorldService`` as the JAR's ``MainClass``. This will allow you
   to run the JAR using ``java -jar``.
+
+.. warning::
+
+    If your application has a dependency which *must* be signed (e.g., a `JCA/JCE`__ provider or
+    other trusted library), you have to add an exclusion__ to the ``maven-shade-plugin``
+    configuration for that library and include that JAR in the classpath.
+
+.. __: http://docs.oracle.com/javase/7/docs/technotes/guides/security/crypto/CryptoSpec.html
+.. __: http://maven.apache.org/plugins/maven-shade-plugin/examples/includes-excludes.html
+
 
 Once you've got that configured, go into your project directory and run ``mvn package`` (or run the
 ``package`` goal from your IDE). You should see something like this:
