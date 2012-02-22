@@ -14,12 +14,11 @@ import com.yammer.dropwizard.config.Environment;
 import com.yammer.dropwizard.config.LoggingFactory;
 import org.codehaus.jackson.map.Module;
 
+import javax.annotation.CheckForNull;
 import java.lang.reflect.ParameterizedType;
 import java.util.Arrays;
 import java.util.List;
 import java.util.SortedMap;
-
-import javax.annotation.CheckForNull;
 
 /**
  * The base class for both Java and Scala services. Do not extend this directly. Use {@link Service}
@@ -208,7 +207,8 @@ public abstract class AbstractService<T extends Configuration> {
      * @return a Jersey servlet container, or {@code null} if the Jersey container
      *         will be created by other means 
      */
-    public @CheckForNull ServletContainer getJerseyContainer(DropwizardResourceConfig config) {
+    @CheckForNull
+    public ServletContainer getJerseyContainer(DropwizardResourceConfig config) {
         return new ServletContainer(config);
     }
     
