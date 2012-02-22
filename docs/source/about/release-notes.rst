@@ -12,6 +12,10 @@ v0.2.1-SNAPSHOT
 * Added ``logging.console.timeZone`` and ``logging.file.timeZone`` to control the time zone of
   the timestamps in the logs. Defaults to UTC.
 * Upgraded to Jetty 7.6.1.
+* Upgraded to Jersey 1.12.
+* Upgraded to Guava 11.0.2.
+* Upgraded to SnakeYAML 1.10.
+* Upgraded to tomcat-dbcp 7.0.26.
 
 .. _rel-0.2.0:
 
