@@ -86,8 +86,8 @@
             <url>http://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
         <site>
-            <id>dropwizard-codahale.com</id>
-            <url>scpexe://codahale.com/home/codahale/dropwizard.codahale.com/maven/</url>
+            <id>repo.codahale.com</id>
+            <url>scp://codahale.com/home/codahale/dropwizard.codahale.com/maven/</url>
         </site>
     </distributionManagement>
 
@@ -203,6 +203,15 @@
                     <reportPlugins>
                         <plugin>
                             <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-project-info-reports-plugin</artifactId>
+                            <version>2.4</version>
+                            <configuration>
+                                <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
+                                <dependencyDetailsEnabled>false</dependencyDetailsEnabled>
+                            </configuration>
+                        </plugin>
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
                             <artifactId>maven-javadoc-plugin</artifactId>
                             <version>2.8.1</version>
                         </plugin>
@@ -227,7 +236,7 @@
         <extensions>
             <extension>
                 <groupId>org.apache.maven.wagon</groupId>
-                <artifactId>wagon-ssh-external</artifactId>
+                <artifactId>wagon-ssh</artifactId>
                 <version>2.2</version>
             </extension>
         </extensions>
