@@ -91,6 +91,11 @@
             {%- if title != "Home" %}
             <div class="span3" id="sidebar">
                 {{ toctree(maxdepth=-1) }}
+                <hr/>
+                <ul>
+                    <li><a href="{{theme_mailing_list}}">Mailing List</a></li>
+                    <li><a href="{{theme_maven_site}}">Maven Site</a></li>
+                </ul>
             </div>
             {%- endif %}
             {%- endblock %}

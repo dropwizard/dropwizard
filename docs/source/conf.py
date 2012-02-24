@@ -104,7 +104,9 @@ html_theme_options = {
     'gradient_bg': u'#363F45',
     'landing_logo': u'dropwizard-hat.png',
     'landing_logo_width': u'150px',
-    'github_page': u'https://github.com/codahale/dropwizard'
+    'github_page': u'https://github.com/codahale/dropwizard',
+    'mailing_list': u'https://groups.google.com/forum/#!forum/dropwizard-user',
+    'maven_site': u'http://dropwizard.codahale.com/maven/'
 }
 
 # Add any paths that contain custom themes here, relative to this directory.
@@ -138,6 +140,8 @@ html_static_path = ['_static']
 # If true, SmartyPants will be used to convert quotes and dashes to
 # typographically correct entities.
 html_use_smartypants = True
+
+html_add_permalinks = None
 
 # Custom sidebar templates, maps document names to template names.
 #html_sidebars = {}
