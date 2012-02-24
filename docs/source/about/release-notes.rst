@@ -16,6 +16,7 @@ v0.2.1-SNAPSHOT
 * Upgraded to Guava 11.0.2.
 * Upgraded to SnakeYAML 1.10.
 * Upgraded to tomcat-dbcp 7.0.26.
+* Upgraded to Metrics 2.0.3.
 
 .. _rel-0.2.0:
 
