@@ -14,7 +14,7 @@
 
     <properties>
         <jetty.version>7.6.1.v20120215</jetty.version>
-        <jackson.version>1.9.4</jackson.version>
+        <jackson.version>1.9.5</jackson.version>
         <slf4j.version>1.6.4</slf4j.version>
     </properties>
 
