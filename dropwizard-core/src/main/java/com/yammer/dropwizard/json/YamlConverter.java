@@ -63,6 +63,8 @@ class YamlConverter {
                 json.writeNumber(Long.parseLong(scalarNode.getValue()));
             } else if ("float".equals(className)) {
                 json.writeNumber(Double.parseDouble(scalarNode.getValue()));
+            } else if ("null".equals(className)) {
+                json.writeNull();
             } else {
                 json.writeString(scalarNode.getValue());
             }
