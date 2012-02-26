@@ -4,6 +4,13 @@
 Release Notes
 #############
 
+.. _rel-0.2.2:
+
+v0.2.2-SNAPSHOT
+===============
+
+* Upgraded to JDBI 2.31.3.
+
 .. _rel-0.2.1:
 
 v0.2.1: Feb 24 2012
