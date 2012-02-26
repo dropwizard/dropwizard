@@ -11,7 +11,6 @@ public class RequestLogConfiguration {
     @JsonProperty
     private boolean enabled = false;
 
-    @NotNull
     @JsonProperty
     private String filenamePattern = "./logs/yyyy_mm_dd.log";
 
