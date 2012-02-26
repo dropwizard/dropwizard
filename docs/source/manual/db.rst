@@ -16,7 +16,7 @@ Access to JDBI is provided via a ``DBI`` subclass: ``Database``.
 Configuration
 =============
 
-To create a :ref:`manged <man-core-managed>`, instrumented ``Database`` instance, your
+To create a :ref:`managed <man-core-managed>`, instrumented ``Database`` instance, your
 :ref:`configuration class <man-core-configuration>` needs an ``DatabaseConfiguration`` instance:
 
 .. code-block:: java
