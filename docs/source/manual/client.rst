@@ -20,7 +20,7 @@ well-tested HTTP client library.
 
 .. _HttpClient: http://hc.apache.org/httpcomponents-client-ga/
 
-To create a :ref:`manged <man-core-managed>`, instrumented ``HttpClient`` instance, your
+To create a :ref:`managed <man-core-managed>`, instrumented ``HttpClient`` instance, your
 :ref:`configuration class <man-core-configuration>` needs an ``HttpClientConfiguration`` instance:
 
 .. code-block:: java
@@ -120,7 +120,7 @@ to, for example, deserialize ``application/json`` request entities as POJOs.
 
 .. _Client API: http://jersey.java.net/nonav/documentation/latest/user-guide.html#client-api
 
-To create a :ref:`manged <man-core-managed>`, instrumented ``JerseyClient`` instance, your
+To create a :ref:`managed <man-core-managed>`, instrumented ``JerseyClient`` instance, your
 :ref:`configuration class <man-core-configuration>` needs an ``JerseyClientConfiguration`` instance:
 
 .. code-block:: java
