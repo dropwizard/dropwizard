@@ -1,6 +1,7 @@
 package com.yammer.dropwizard.jersey.params;
 
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
@@ -40,12 +41,22 @@ public abstract class AbstractParam<T> {
     protected Response error(String input, Exception e) {
         return Response.status(getErrorStatus())
                        .entity(errorMessage(input, e))
+                       .type(mediaType())
                        .build();
     }
 
     /**
+     * Returns the media type of the error message entity.
+     *
+     * @return the media type of the error message entity
+     */
+    protected MediaType mediaType() {
+        return MediaType.TEXT_PLAIN_TYPE;
+    }
+
+    /**
      * Given a string representation which was unable to be parsed and the exception thrown, produce
-     * a plain text entity to be sent to the client.
+     * an entity to be sent to the client.
      *
      * @param input the raw input value
      * @param e the exception thrown while parsing {@code input}
