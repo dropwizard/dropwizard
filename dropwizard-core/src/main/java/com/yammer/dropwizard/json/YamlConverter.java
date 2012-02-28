@@ -1,15 +1,13 @@
 package com.yammer.dropwizard.json;
 
+import com.google.common.base.Charsets;
 import com.yammer.dropwizard.logging.Log;
 import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.JsonNode;
 import org.yaml.snakeyaml.nodes.*;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 
 class YamlConverter {
     private static final Log LOG = Log.forClass(YamlConverter.class);
@@ -24,7 +22,7 @@ class YamlConverter {
     JsonNode convert(File file) throws IOException {
         final ByteArrayOutputStream output = new ByteArrayOutputStream();
         final JsonGenerator generator = factory.createJsonGenerator(output).useDefaultPrettyPrinter();
-        final FileReader reader = new FileReader(file);
+        final Reader reader = new InputStreamReader(new FileInputStream(file), Charsets.UTF_8);
         try {
             final Node yaml = new org.yaml.snakeyaml.Yaml().compose(reader);
             build(yaml, generator);

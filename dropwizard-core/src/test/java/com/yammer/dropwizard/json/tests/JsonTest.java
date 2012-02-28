@@ -169,11 +169,11 @@ public class JsonTest {
 
     @Test
     public void readsValuesFromReaders() throws Exception {
-        assertThat(json.readValue(new FileReader(Resources.getResource("json/string.json").getFile()),
+        assertThat(json.readValue(new InputStreamReader(new FileInputStream(Resources.getResource("json/string.json").getFile()), Charsets.UTF_8),
                                   String.class),
                    is("a string"));
 
-        assertThat(json.readValue(new FileReader(Resources.getResource("json/string.json").getFile()),
+        assertThat(json.readValue(new InputStreamReader(new FileInputStream(Resources.getResource("json/string.json").getFile()), Charsets.UTF_8),
                                   new TypeReference<String>() {}),
                    is("a string"));
     }
