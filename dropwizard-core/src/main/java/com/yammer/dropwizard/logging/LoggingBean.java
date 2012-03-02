@@ -17,7 +17,7 @@ import java.util.logging.LoggingMXBean;
 public class LoggingBean implements LoggingMXBean {
     @Override
     public String getLoggerLevel(String loggerName) {
-        return Logger.getLogger(loggerName).getLevel().toString();
+        return Logger.getLogger(loggerName).getEffectiveLevel().toString();
     }
 
     @Override
