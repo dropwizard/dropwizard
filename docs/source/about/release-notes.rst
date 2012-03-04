@@ -4,12 +4,19 @@
 Release Notes
 #############
 
-.. _rel-0.2.2:
+.. _rel-0.3.0:
 
-v0.2.2-SNAPSHOT
+v0.3.0-SNAPSHOT
 ===============
 
 * Upgraded to JDBI 2.31.3.
+* Upgraded to Jackson 1.9.5.
+* Upgraded to Jetty 8.1.1.
+* Dropped ``dropwizard-templates`` and added ``dropwizard-views`` instead.
+* Added ``AbstractParam#getMediaType()``.
+* Fixed potential encoding bug in parsing YAML files.
+* Fixed a ``NullPointerException`` when getting logging levels via JMX.
+* Dropped support for ``@BearerToken``.
 
 .. _rel-0.2.1:
 
