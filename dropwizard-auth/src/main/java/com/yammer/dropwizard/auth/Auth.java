@@ -1,9 +1,10 @@
-package com.yammer.dropwizard.auth.oauth;
+package com.yammer.dropwizard.auth;
 
 import java.lang.annotation.*;
 
 @Target({ ElementType.PARAMETER, ElementType.METHOD, ElementType.FIELD })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface OAuth {
+public @interface Auth {
+    boolean required() default true;
 }

@@ -23,10 +23,12 @@ class BasicAuthInjectable<T> extends AbstractHttpContextInjectable<T> {
 
     private final Authenticator<BasicCredentials, T> authenticator;
     private final String realm;
+    private final boolean required;
 
-    BasicAuthInjectable(Authenticator<BasicCredentials, T> authenticator, String realm) {
+    BasicAuthInjectable(Authenticator<BasicCredentials, T> authenticator, String realm, boolean required) {
         this.authenticator = authenticator;
         this.realm = realm;
+        this.required = true;
     }
 
     @Override
@@ -60,11 +62,15 @@ class BasicAuthInjectable<T> extends AbstractHttpContextInjectable<T> {
             LOG.warn(e, "Error authentication credentials");
             throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
         }
-        throw new WebApplicationException(Response.status(Response.Status.UNAUTHORIZED)
-                                                  .header(HEADER_NAME,
-                                                          String.format(HEADER_VALUE, realm))
-                                                  .entity("Credentials are required to access this resource.")
-                                                  .type(MediaType.TEXT_PLAIN_TYPE)
-                                                  .build());
+
+        if (required) {
+            throw new WebApplicationException(Response.status(Response.Status.UNAUTHORIZED)
+                                                      .header(HEADER_NAME,
+                                                              String.format(HEADER_VALUE, realm))
+                                                      .entity("Credentials are required to access this resource.")
+                                                      .type(MediaType.TEXT_PLAIN_TYPE)
+                                                      .build());
+        }
+        return null;
     }
 }

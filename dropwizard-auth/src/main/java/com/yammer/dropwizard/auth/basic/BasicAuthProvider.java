@@ -5,12 +5,13 @@ import com.sun.jersey.core.spi.component.ComponentContext;
 import com.sun.jersey.core.spi.component.ComponentScope;
 import com.sun.jersey.spi.inject.Injectable;
 import com.sun.jersey.spi.inject.InjectableProvider;
+import com.yammer.dropwizard.auth.Auth;
 import com.yammer.dropwizard.auth.Authenticator;
 
 import javax.ws.rs.ext.Provider;
 
 @Provider
-class BasicAuthProvider<T> implements InjectableProvider<BasicAuth, Parameter> {
+class BasicAuthProvider<T> implements InjectableProvider<Auth, Parameter> {
     private final Authenticator<BasicCredentials, T> authenticator;
     private final String realm;
 
@@ -26,8 +27,8 @@ class BasicAuthProvider<T> implements InjectableProvider<BasicAuth, Parameter> {
 
     @Override
     public Injectable<?> getInjectable(ComponentContext ic,
-                                       BasicAuth a,
+                                       Auth a,
                                        Parameter c) {
-        return new BasicAuthInjectable<T>(authenticator, realm);
+        return new BasicAuthInjectable<T>(authenticator, realm, a.required());
     }
 }
