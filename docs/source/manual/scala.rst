@@ -37,4 +37,3 @@ Features
 * ``Array[A]`` request and response entities. (Due to the JVM's type erasure and mismatches between
   Scala and Java type signatures, this is the only "generic" class supported since ``Array`` type
   parameters are reified.)
-* ``BearerToken``-annotated parameters of type ``Option[String]``.

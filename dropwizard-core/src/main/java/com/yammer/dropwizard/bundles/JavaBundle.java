@@ -5,7 +5,6 @@ import com.yammer.dropwizard.Bundle;
 import com.yammer.dropwizard.Service;
 import com.yammer.dropwizard.config.Environment;
 import com.yammer.dropwizard.jersey.JacksonMessageBodyProvider;
-import com.yammer.dropwizard.jersey.OauthTokenProvider;
 import com.yammer.dropwizard.jersey.OptionalQueryParamInjectableProvider;
 
 /**
@@ -13,8 +12,7 @@ import com.yammer.dropwizard.jersey.OptionalQueryParamInjectableProvider;
  */
 public class JavaBundle implements Bundle {
     public static final ImmutableList<Object> DEFAULT_PROVIDERS = ImmutableList.<Object>of(
-            new OptionalQueryParamInjectableProvider(),
-            new OauthTokenProvider()
+            new OptionalQueryParamInjectableProvider()
     );
 
     private final Service<?> service;

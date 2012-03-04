@@ -807,23 +807,6 @@ Testing, then, consists of creating an instance of your resource class and passi
         }
     }
 
-.. _man-core-resources-oauth2:
-
-OAuth2
-------
-
-Dropwizard provides some super-minimalist support for `Oauth 2`__:
-
-.. __: http://tools.ietf.org/html/draft-ietf-oauth-v2-22
-
-.. code-block:: java
-
-    public Blah doAThing(@BearerToken String token) {
-        // etc
-    }
-
-The Oauth 2 bearer token will be passed in via ``token``.
-
 .. _man-core-representations:
 
 Representations

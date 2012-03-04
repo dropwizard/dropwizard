@@ -5,15 +5,12 @@ import com.yammer.dropwizard.Service;
 import com.yammer.dropwizard.bundles.JavaBundle;
 import com.yammer.dropwizard.config.Environment;
 import com.yammer.dropwizard.jersey.JacksonMessageBodyProvider;
-import com.yammer.dropwizard.jersey.OauthTokenProvider;
 import com.yammer.dropwizard.jersey.OptionalQueryParamInjectableProvider;
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.mockito.Matchers.isA;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class JavaBundleTest {
     private final Environment environment = mock(Environment.class);
@@ -23,13 +20,6 @@ public class JavaBundleTest {
     @Before
     public void setUp() throws Exception {
         when(service.getJacksonModules()).thenReturn(ImmutableList.of());
-    }
-
-    @Test
-    public void addsOAuthSupport() throws Exception {
-        bundle.initialize(environment);
-
-        verify(environment).addProvider(isA(OauthTokenProvider.class));
     }
 
     @Test
