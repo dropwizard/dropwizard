@@ -9,8 +9,8 @@
     </parent>
 
     <groupId>com.yammer.dropwizard</groupId>
-    <artifactId>dropwizard-templates</artifactId>
-    <name>Dropwizard Templates</name>
+    <artifactId>dropwizard-views</artifactId>
+    <name>Dropwizard Views</name>
     
     <dependencies>
         <dependency>

@@ -14,7 +14,6 @@ User Manual
     core
     client
     db
+    views
     scala
-    templates
     testing
-

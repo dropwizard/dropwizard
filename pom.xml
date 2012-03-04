@@ -21,7 +21,7 @@
         <module>dropwizard-client</module>
         <module>dropwizard-db</module>
         <module>dropwizard-example</module>
-        <module>dropwizard-templates</module>
+        <module>dropwizard-views</module>
         <module>dropwizard-testing</module>
         <module>dropwizard-scala_2.9.1</module>
     </modules>
