@@ -7,6 +7,7 @@ import com.google.common.collect.ImmutableSet;
 import com.yammer.dropwizard.jetty.BiDiGzipHandler;
 import com.yammer.dropwizard.jetty.QuietErrorHandler;
 import com.yammer.dropwizard.logging.Log;
+import com.yammer.dropwizard.servlets.ThreadNameFilter;
 import com.yammer.dropwizard.tasks.TaskServlet;
 import com.yammer.dropwizard.util.Duration;
 import com.yammer.dropwizard.util.Size;
@@ -187,6 +188,7 @@ public class ServerFactory {
                                           ImmutableMultimap<String, FilterHolder> filters,
                                           ImmutableSet<EventListener> listeners) {
         final ServletContextHandler handler = new ServletContextHandler();
+        handler.addFilter(ThreadNameFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST));
         handler.setBaseResource(Resource.newClassPathResource("."));
 
         for (ImmutableMap.Entry<String, ServletHolder> entry : servlets.entrySet()) {
