@@ -69,7 +69,7 @@ public class ViewMessageBodyWriter implements MessageBodyWriter<View<?>> {
             configuration.setClassForTemplateLoading(type, "/");
             final Template template = configuration.getTemplate(t.getTemplateName(),
                                                                 detectLocale(headers));
-            template.process(t.getModel(), new OutputStreamWriter(entityStream));
+            template.process(t.getModel(), new OutputStreamWriter(entityStream, template.getEncoding()));
         } catch (TemplateException e) {
             throw new ContainerException(e);
         } catch (FileNotFoundException e) {
