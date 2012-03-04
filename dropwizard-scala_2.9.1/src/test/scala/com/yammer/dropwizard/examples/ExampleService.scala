@@ -11,7 +11,6 @@ object ExampleService extends ScalaService[ExampleConfiguration]("example") with
   def initialize(configuration: ExampleConfiguration, environment: Environment) {
     environment.addResource(new HelloWorldResource(configuration.saying))
     environment.addResource(new UploadResource)
-    environment.addResource(new ProtectedResource)
     environment.addResource(new SplodyResource)
     environment.addHealthCheck(new DumbHealthCheck)
     environment.manage(new StartableObject(configuration.saying))
