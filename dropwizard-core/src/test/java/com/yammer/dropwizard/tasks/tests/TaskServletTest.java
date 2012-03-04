@@ -50,7 +50,7 @@ public class TaskServletTest {
 
         when(request.getMethod()).thenReturn("POST");
         when(request.getRequestURI()).thenReturn("/tasks/gc");
-        when(request.getParameterNames()).thenReturn(Collections.enumeration(ImmutableList.of()));
+        when(request.getParameterNames()).thenReturn(Collections.enumeration(ImmutableList.<String>of()));
         when(response.getWriter()).thenReturn(output);
 
         servlet.service(request, response);
@@ -78,7 +78,7 @@ public class TaskServletTest {
     public void returnsA500OnExceptions() throws Exception {
         when(request.getMethod()).thenReturn("POST");
         when(request.getRequestURI()).thenReturn("/tasks/gc");
-        when(request.getParameterNames()).thenReturn(Collections.enumeration(ImmutableList.of()));
+        when(request.getParameterNames()).thenReturn(Collections.enumeration(ImmutableList.<String>of()));
 
         final RuntimeException ex = new RuntimeException("whoops");
         
