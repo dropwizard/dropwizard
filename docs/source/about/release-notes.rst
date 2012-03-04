@@ -16,7 +16,7 @@ v0.3.0-SNAPSHOT
 * Added ``AbstractParam#getMediaType()``.
 * Fixed potential encoding bug in parsing YAML files.
 * Fixed a ``NullPointerException`` when getting logging levels via JMX.
-* Dropped support for ``@BearerToken``.
+* Dropped support for ``@BearerToken`` and added ``dropwizard-auth`` instead.
 
 .. _rel-0.2.1:
 

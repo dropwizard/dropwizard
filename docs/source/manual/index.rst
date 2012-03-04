@@ -14,6 +14,7 @@ User Manual
     core
     client
     db
+    auth
     views
     scala
     testing
