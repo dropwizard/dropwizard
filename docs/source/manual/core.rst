@@ -807,6 +807,8 @@ Testing, then, consists of creating an instance of your resource class and passi
         }
     }
 
+.. todo:: Document @CacheControl
+
 .. _man-core-representations:
 
 Representations

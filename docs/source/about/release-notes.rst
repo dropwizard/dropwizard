@@ -17,6 +17,7 @@ v0.3.0-SNAPSHOT
 * Fixed potential encoding bug in parsing YAML files.
 * Fixed a ``NullPointerException`` when getting logging levels via JMX.
 * Dropped support for ``@BearerToken`` and added ``dropwizard-auth`` instead.
+* Added ``@CacheControl`` for resource methods.
 
 .. _rel-0.2.1:
 
