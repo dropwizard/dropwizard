@@ -23,7 +23,7 @@ public class JavaBundle implements Bundle {
 
     @Override
     public void initialize(Environment environment) {
-        environment.addProvider(new JacksonMessageBodyProvider(service.getJacksonModules()));
+        environment.addProvider(new JacksonMessageBodyProvider(service.getJson()));
         for (Object provider : DEFAULT_PROVIDERS) {
             environment.addProvider(provider);
         }

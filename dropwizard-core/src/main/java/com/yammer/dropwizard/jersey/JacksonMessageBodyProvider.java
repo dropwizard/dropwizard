@@ -52,11 +52,8 @@ public class JacksonMessageBodyProvider implements MessageBodyReader<Object>,
 
     private final Json json;
 
-    public JacksonMessageBodyProvider(Iterable<Module> modules) {
-        this.json = new Json();
-        for (Module module : modules) {
-            json.registerModule(module);
-        }
+    public JacksonMessageBodyProvider(Json json) {
+        this.json = json;
     }
 
     @Override
