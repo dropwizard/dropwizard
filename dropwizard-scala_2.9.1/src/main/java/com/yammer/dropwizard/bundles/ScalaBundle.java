@@ -15,7 +15,7 @@ public class ScalaBundle implements Bundle {
 
     @Override
     public void initialize(Environment environment) {
-        environment.addProvider(new JacksonMessageBodyProvider(service.getJacksonModules()));
+        environment.addProvider(new JacksonMessageBodyProvider(service.getJson()));
         environment.addProvider(new ScalaCollectionsQueryParamInjectableProvider());
     }
 }

@@ -26,7 +26,7 @@ public class JerseyClientFactory {
         final ApacheHttpClient4Handler handler = new ApacheHttpClient4Handler(client, null, true);
 
         final ApacheHttpClient4Config config = new DefaultApacheHttpClient4Config();
-        config.getSingletons().add(new JacksonMessageBodyProvider(environment.getService().getJacksonModules()));
+        config.getSingletons().add(new JacksonMessageBodyProvider(environment.getService().getJson()));
 
         final JerseyClient jerseyClient = new JerseyClient(handler, config);
         jerseyClient.setExecutorService(environment.managedExecutorService("jersey-client-%d",

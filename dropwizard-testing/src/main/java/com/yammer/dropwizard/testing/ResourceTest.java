@@ -1,5 +1,12 @@
 package com.yammer.dropwizard.testing;
 
+import java.util.List;
+import java.util.Set;
+
+import org.codehaus.jackson.map.Module;
+import org.junit.After;
+import org.junit.Before;
+
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.sun.jersey.api.client.Client;
@@ -9,12 +16,7 @@ import com.sun.jersey.test.framework.LowLevelAppDescriptor;
 import com.yammer.dropwizard.bundles.JavaBundle;
 import com.yammer.dropwizard.config.DropwizardResourceConfig;
 import com.yammer.dropwizard.jersey.JacksonMessageBodyProvider;
-import org.codehaus.jackson.map.Module;
-import org.junit.After;
-import org.junit.Before;
-
-import java.util.List;
-import java.util.Set;
+import com.yammer.dropwizard.json.Json;
 
 /**
  * A base test class for testing Dropwizard resources.
@@ -49,7 +51,11 @@ public abstract class ResourceTest {
                 for (Object provider : JavaBundle.DEFAULT_PROVIDERS) { // sorry, Scala folks
                     config.getSingletons().add(provider);
                 }
-                config.getSingletons().add(new JacksonMessageBodyProvider(modules));
+                Json json = new Json();
+                for (Module module : modules) {
+                    json.registerModule(module);
+                }
+                config.getSingletons().add(new JacksonMessageBodyProvider(json));
                 config.getSingletons().addAll(singletons);
                 return new LowLevelAppDescriptor.Builder(config).build();
             }
