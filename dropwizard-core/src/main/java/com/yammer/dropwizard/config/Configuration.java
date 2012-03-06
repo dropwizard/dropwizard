@@ -52,6 +52,11 @@ public class Configuration {
     @JsonProperty
     private LoggingConfiguration logging = new LoggingConfiguration();
 
+    @Valid
+    @NotNull
+    @JsonProperty
+    private JsonConfiguration json = new JsonConfiguration();
+
     /**
      * Returns the HTTP-specific section of the configuration file.
      *
@@ -68,5 +73,14 @@ public class Configuration {
      */
     public LoggingConfiguration getLoggingConfiguration() {
         return logging;
+    }
+
+    /**
+     * Returns the json-specific section of the configuration file.
+     *
+     * @return json-specific configuration parameters
+     */
+    public JsonConfiguration getJsonConfiguration() {
+        return json;
     }
 }

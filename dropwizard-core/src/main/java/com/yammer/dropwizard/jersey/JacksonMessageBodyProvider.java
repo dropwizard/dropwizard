@@ -52,8 +52,12 @@ public class JacksonMessageBodyProvider implements MessageBodyReader<Object>,
 
     private final Json json;
 
-    public JacksonMessageBodyProvider(Iterable<Module> modules) {
-        this.json = new Json();
+    public JacksonMessageBodyProvider(Class<? extends Json> jsonEnvironmentClass, Iterable<Module> modules) {
+        try {
+            this.json = jsonEnvironmentClass.newInstance();
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Could not create json environment class", e);
+        }
         for (Module module : modules) {
             json.registerModule(module);
         }

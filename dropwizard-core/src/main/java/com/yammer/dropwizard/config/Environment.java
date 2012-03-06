@@ -8,6 +8,7 @@ import com.sun.jersey.core.reflection.MethodList;
 import com.yammer.dropwizard.AbstractService;
 import com.yammer.dropwizard.jetty.JettyManaged;
 import com.yammer.dropwizard.jetty.NonblockingServletHolder;
+import com.yammer.dropwizard.json.Json;
 import com.yammer.dropwizard.lifecycle.ExecutorServiceManager;
 import com.yammer.dropwizard.lifecycle.Managed;
 import com.yammer.dropwizard.logging.Log;
@@ -24,6 +25,7 @@ import javax.annotation.Nullable;
 import javax.servlet.Filter;
 import javax.servlet.Servlet;
 import javax.servlet.http.HttpServlet;
+import javax.validation.ValidationException;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.Path;
 import javax.ws.rs.ext.Provider;
@@ -54,6 +56,7 @@ public class Environment extends AbstractLifeCycle {
     private final ImmutableSet.Builder<EventListener> servletListeners;
     private final ImmutableSet.Builder<Task> tasks;
     private final AggregateLifeCycle lifeCycle;
+    private final Class<? extends Json> jsonEnvironmentClass;
 
     /**
      * Creates a new environment.
@@ -81,11 +84,28 @@ public class Environment extends AbstractLifeCycle {
         this.tasks = ImmutableSet.builder();
         this.lifeCycle = new AggregateLifeCycle();
         
+        jsonEnvironmentClass = classForJsonEnvironment(configuration);
+        
         final HttpServlet jerseyContainer = service.getJerseyContainer(config);
         if (jerseyContainer != null) {
             addServlet(jerseyContainer, configuration.getHttpConfiguration().getRootPath()).setInitOrder(Integer.MAX_VALUE);
         }
         addTask(new GarbageCollectionTask());
+    }
+
+    @SuppressWarnings("unchecked")
+    protected Class<? extends Json> classForJsonEnvironment(Configuration configuration) {
+        String jsonEnvironmentClassName = configuration.getJsonConfiguration().getJsonEnvironmentClass();
+        try {
+            Class klass = Class.forName(jsonEnvironmentClassName);
+            if(Json.class.isAssignableFrom(klass)) {
+                return klass;
+            } else {
+                throw new ValidationException("Class does not extend Json: " + jsonEnvironmentClassName);
+            }
+        } catch (ClassNotFoundException e) {
+            throw new ValidationException("Invalid class name: " + jsonEnvironmentClassName);
+        }
     }
 
     @Override
@@ -362,6 +382,10 @@ public class Environment extends AbstractLifeCycle {
 
     ImmutableSet<EventListener> getServletListeners() {
         return servletListeners.build();
+    }
+    
+    public Class<? extends Json> getJsonEnvironmentClass() {
+        return jsonEnvironmentClass;
     }
     
     private void logManagedObjects() {

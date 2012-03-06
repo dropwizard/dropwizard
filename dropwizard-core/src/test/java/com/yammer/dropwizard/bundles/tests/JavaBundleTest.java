@@ -7,6 +7,8 @@ import com.yammer.dropwizard.config.Environment;
 import com.yammer.dropwizard.jersey.JacksonMessageBodyProvider;
 import com.yammer.dropwizard.jersey.OauthTokenProvider;
 import com.yammer.dropwizard.jersey.OptionalQueryParamInjectableProvider;
+import com.yammer.dropwizard.json.Json;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -23,6 +25,8 @@ public class JavaBundleTest {
     @Before
     public void setUp() throws Exception {
         when(service.getJacksonModules()).thenReturn(ImmutableList.of());
+        Class jsonClass= Json.class;
+        when(environment.getJsonEnvironmentClass()).thenReturn(jsonClass);
     }
 
     @Test
