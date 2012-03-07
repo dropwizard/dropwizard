@@ -807,7 +807,20 @@ Testing, then, consists of creating an instance of your resource class and passi
         }
     }
 
-.. todo:: Document @CacheControl
+Caching
+-------
+
+Adding a ``Cache-Control`` statement to your resource class is simple with Dropwizard:
+
+.. code-block:: java
+
+    @GET
+    @CacheControl(maxAge = 6, maxAgeUnit = TimeUnit.HOURS)
+    public String getCachableValue() {
+        return "yay";
+    }
+
+The ``@CacheControl`` annotation will take all of the parameters of the ``Cache-Control`` header.
 
 .. _man-core-representations:
 
