@@ -1,4 +1,4 @@
-package com.yammer.dropwizard.freemarker.example;
+package com.yammer.dropwizard.views.example;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;

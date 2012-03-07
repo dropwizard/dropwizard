@@ -1,4 +1,4 @@
-<#-- @ftlvariable name="" type="com.yammer.dropwizard.freemarker.example.HelloWorldView" -->
+<#-- @ftlvariable name="" type="com.yammer.dropwizard.views.example.HelloWorldView" -->
 <!DOCTYPE html>
 <html>
 <head>

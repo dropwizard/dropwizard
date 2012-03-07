@@ -1,14 +1,12 @@
-package com.yammer.dropwizard.bundles;
+package com.yammer.dropwizard.views;
 
 import com.yammer.dropwizard.Bundle;
 import com.yammer.dropwizard.config.Environment;
-import com.yammer.dropwizard.templates.ViewMessageBodyWriter;
 
 /**
  * A {@link Bundle} which enables the rendering of FreeMarker views by your service.
  *
- * <p>A view is the combination of a Freemarker file ({@code .ftl}) and a model, which is any
- * Java object:</p>
+ * <p>A view combines a Freemarker template with a set of Java objects:</p>
  *
  * <pre><code>
  * public class PersonView extends View {
@@ -51,10 +49,10 @@ import com.yammer.dropwizard.templates.ViewMessageBodyWriter;
  * </html>
  * }</pre>
  *
- * <p>In this template, {@code ${name}} calls {@code Person#getName()}, and the {@code ?html}
- * escapes all HTML control characters in the result. The {@code ftlvariable} comment at the top
- * indicate to Freemarker (and your IDE) that the root object is a {@code Person}, allowing for
- * better typesafety in your templates.</p>
+ * <p>In this template, {@code ${person.name}} calls {@code getPerson().getName()}, and the
+ * {@code ?html} escapes all HTML control characters in the result. The {@code ftlvariable} comment
+ * at the top indicate to Freemarker (and your IDE) that the root object is a {@code Person},
+ * allowing for better typesafety in your templates.</p>
  *
  * @see <a href="http://freemarker.sourceforge.net/docs/index.html">FreeMarker Manual</a>
  */

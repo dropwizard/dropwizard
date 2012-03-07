@@ -1,4 +1,4 @@
-package com.yammer.dropwizard.templates;
+package com.yammer.dropwizard.views;
 
 import com.google.common.base.Charsets;
 import com.google.common.cache.CacheBuilder;
@@ -48,10 +48,16 @@ public class ViewMessageBodyWriter implements MessageBodyWriter<View> {
     private final LoadingCache<Class<?>, Configuration> configurationCache;
 
     @Context
-    @SuppressWarnings("UnusedDeclaration")
+    @SuppressWarnings("FieldMayBeFinal")
     private HttpHeaders headers;
 
+    @SuppressWarnings("UnusedDeclaration")
     public ViewMessageBodyWriter() {
+        this(null);
+    }
+
+    public ViewMessageBodyWriter(HttpHeaders headers) {
+        this.headers = headers;
         this.configurationCache = CacheBuilder.newBuilder()
                                               .concurrencyLevel(128)
                                               .build(new TemplateLoader());

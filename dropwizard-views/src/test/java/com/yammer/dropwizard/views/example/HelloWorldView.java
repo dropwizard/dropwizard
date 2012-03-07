@@ -1,6 +1,6 @@
-package com.yammer.dropwizard.freemarker.example;
+package com.yammer.dropwizard.views.example;
 
-import com.yammer.dropwizard.templates.View;
+import com.yammer.dropwizard.views.View;
 
 public class HelloWorldView extends View {
     private final Person person;

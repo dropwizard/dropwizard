@@ -1,4 +1,4 @@
-package com.yammer.dropwizard.templates;
+package com.yammer.dropwizard.views;
 
 public abstract class View {
     private final String templateName;

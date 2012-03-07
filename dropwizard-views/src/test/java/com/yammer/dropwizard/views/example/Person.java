@@ -1,4 +1,4 @@
-package com.yammer.dropwizard.freemarker.example;
+package com.yammer.dropwizard.views.example;
 
 public class Person {
     private final String name;
