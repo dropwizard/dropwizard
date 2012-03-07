@@ -18,6 +18,12 @@ v0.3.0-SNAPSHOT
 * Fixed a ``NullPointerException`` when getting logging levels via JMX.
 * Dropped support for ``@BearerToken`` and added ``dropwizard-auth`` instead.
 * Added ``@CacheControl`` for resource methods.
+* Added ``AbstractService#getJson()`` for full Jackson customization.
+* Fixed formatting of configuration file parsing errors.
+* ``ThreadNameFilter`` is now added by default. The thread names Jetty worker threads are set to the
+  method and URI of the HTTP request they are currently processing.
+* Added command-line overriding of configuration parameters via system properties. For example,
+  ``-Ddw.http.port=8090`` will override the configuration file to set ``http.port`` to ``8090``.
 
 .. _rel-0.2.1:
 
