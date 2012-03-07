@@ -24,9 +24,16 @@ Then, in your :ref:`resource method <man-core-resources>`, add a ``View`` class:
 
 .. code-block:: java
 
-    public class PersonView extends View<Person> {
+    public class PersonView extends View {
+        private final Person person;
+
         public PersonView(Person person) {
-            super("person.ftl", person);
+            super("person.ftl");
+            this.person = person;
+        }
+
+        public Person getPerson() {
+            return person;
         }
     }
 
@@ -45,18 +52,18 @@ Your template file might look something like this:
 .. code-block:: html
     :emphasize-lines: 1, 5
 
-    <#-- @ftlvariable name="" type="com.example.core.Person" -->
+    <#-- @ftlvariable name="" type="com.example.views.PersonView" -->
     <html>
         <body>
-            <!-- calls Person#getName() and sanitizes it -->
-            <h1>Hello, ${name?html}!</h1>
+            <!-- calls getPerson().getName() and sanitizes it -->
+            <h1>Hello, ${person.name?html}!</h1>
         </body>
     </html>
 
 The ``@fltvariable`` lets Freemarker (and any Freemarker IDE plugins you may be using) that the
-root object is a ``com.example.core.Person`` instance. If you attempt to call a property which
-doesn't exist on ``Person``--``getConnectionPool()``, for example--it will flag that line in your
-IDE.
+root object is a ``com.example.views.PersonView`` instance. If you attempt to call a property which
+doesn't exist on ``PersonView``--``getConnectionPool()``, for example--it will flag that line in
+your IDE.
 
 Once you have your view and Freemarker template, you can simply return an instance of your ``View``
 subclass:
