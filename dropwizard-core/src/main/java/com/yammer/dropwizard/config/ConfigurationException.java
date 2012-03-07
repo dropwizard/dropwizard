@@ -22,7 +22,7 @@ public class ConfigurationException extends Exception {
         final StringBuilder msg = new StringBuilder(file.toString())
                 .append(" has the following errors:\n");
         for (String error : errors) {
-            msg.append("  * ").append(error);
+            msg.append("  * ").append(error).append('\n');
         }
         return msg.toString();
     }
