@@ -58,7 +58,7 @@ server, for example), Dropwizard provides a decorator class which provides cachi
                                           .expireAfterAccess(5, TimeUnit.MINUTES));
 
 This uses Guava's ``CacheBuilder`` to cache up to 10,000 principals with an LRU policy, evicting
-stale entries after 10 minutes.
+stale entries after 5 minutes.
 
 .. _man-auth-basic:
 
