@@ -56,6 +56,12 @@ public class HttpConfigurationTest {
     }
 
     @Test
+    public void canEnableAdmin() throws Exception {
+        assertThat(http.isAdminEnabled(),
+                   is(false));
+    }
+
+    @Test
     public void hasAMaximumNumberOfThreads() throws Exception {
         assertThat(http.getMaxThreads(),
                    is(101));

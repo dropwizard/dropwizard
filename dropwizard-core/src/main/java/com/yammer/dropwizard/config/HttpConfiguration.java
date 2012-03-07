@@ -47,6 +47,9 @@ public class HttpConfiguration {
     @JsonProperty
     private int adminPort = 8081;
 
+    @JsonProperty
+    private boolean adminEnabled = true;
+
     @Min(2)
     @Max(1000000)
     @JsonProperty
@@ -172,6 +175,10 @@ public class HttpConfiguration {
 
     public int getAdminPort() {
         return adminPort;
+    }
+
+    public boolean isAdminEnabled() {
+        return adminEnabled;
     }
 
     public int getMaxThreads() {

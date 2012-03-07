@@ -4,6 +4,7 @@ gzip:
   enabled: false
 port: 9080
 adminPort: 9081
+adminEnabled: false
 maxThreads: 101
 minThreads: 89
 rootPath: "/services/*"
