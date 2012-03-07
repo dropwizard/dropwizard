@@ -1,15 +1,23 @@
 package com.yammer.dropwizard.config;
 
+import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import com.yammer.dropwizard.json.Json;
 import com.yammer.dropwizard.validation.Validator;
+import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.Module;
+import org.codehaus.jackson.node.ObjectNode;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Iterator;
+import java.util.Map;
 
 public class ConfigurationFactory<T> {
+
+    private static final String PROPERTY_PREFIX = "dw.";
+
     public static <T> ConfigurationFactory<T> forClass(Class<T> klass, Validator validator, Iterable<Module> modules) {
         return new ConfigurationFactory<T>(klass, validator, modules);
     }
@@ -33,16 +41,47 @@ public class ConfigurationFactory<T> {
     }
     
     public T build(File file) throws IOException, ConfigurationException {
-        final T config = parse(file);
+        final JsonNode node = parse(file);
+        for (Map.Entry<Object, Object> pref : System.getProperties().entrySet()) {
+            final String prefName = (String) pref.getKey();
+            if (prefName.startsWith(PROPERTY_PREFIX)) {
+                final String configName = prefName.substring(PROPERTY_PREFIX.length());
+                addOverride(node, configName, System.getProperty(prefName));
+            }
+        }
+        final T config = json.readValue(node, klass);
         validate(file, config);
         return config;
     }
 
-    private T parse(File file) throws IOException {
-        if (file.getName().endsWith(".yaml") || file.getName().endsWith(".yml")) {
-            return json.readYamlValue(file, klass);
+    private void addOverride(JsonNode root, String name, String value) {
+        JsonNode node = root;
+        final Iterator<String> keys = Splitter.on('.').trimResults().split(name).iterator();
+        while (keys.hasNext()) {
+            final String key = keys.next();
+            if (!(node instanceof ObjectNode)) {
+                throw new IllegalArgumentException("Unable to override " + name + "; it's not a valid path.");
+            }
+
+            final ObjectNode obj = (ObjectNode) node;
+            if (keys.hasNext()) {
+                JsonNode child = obj.get(key);
+                if (child == null) {
+                    child = obj.objectNode();
+                    obj.put(key, child);
+                }
+                node = child;
+            } else {
+                obj.put(key, value);
+            }
         }
-        return json.readValue(file, klass);
+    }
+
+    private JsonNode parse(File file) throws IOException {
+        if (file.getName().endsWith(".yaml") || file.getName().endsWith(".yml")) {
+            return json.readYamlValue(file, JsonNode.class);
+        }
+        return json.readValue(file, JsonNode.class);
     }
 
     private void validate(File file, T config) throws ConfigurationException {
