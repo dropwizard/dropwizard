@@ -1,4 +1,4 @@
-<#-- @ftlvariable name="" type="com.yammer.dropwizard.freemarker.example.Person" -->
+<#-- @ftlvariable name="" type="com.yammer.dropwizard.freemarker.example.HelloWorldView" -->
 <!DOCTYPE html>
 <html>
 <head>
@@ -7,7 +7,7 @@
 <body>
 <h1>Hello!</h1>
 
-<p>Hello, ${name?html}!</p>
+<p>Hello, ${person.name?html}!</p>
 
 <p>How's it going?</p>
 

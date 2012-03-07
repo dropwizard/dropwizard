@@ -7,6 +7,6 @@ import javax.ws.rs.Path;
 public class BadResource {
     @GET
     public BadView messUp() {
-        return new BadView("never gonna work");
+        return new BadView();
     }
 }

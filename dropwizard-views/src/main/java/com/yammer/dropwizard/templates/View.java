@@ -1,19 +1,13 @@
 package com.yammer.dropwizard.templates;
 
-public abstract class View<T> {
+public abstract class View {
     private final String templateName;
-    private final T model;
 
-    protected View(String templateName, T model) {
+    protected View(String templateName) {
         this.templateName = templateName;
-        this.model = model;
     }
 
     public String getTemplateName() {
         return templateName;
-    }
-
-    public T getModel() {
-        return model;
     }
 }

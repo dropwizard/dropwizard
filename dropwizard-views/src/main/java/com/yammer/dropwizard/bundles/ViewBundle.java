@@ -11,9 +11,16 @@ import com.yammer.dropwizard.templates.ViewMessageBodyWriter;
  * Java object:</p>
  *
  * <pre><code>
- * public class PersonView extends View&lt;Person&gt; {
+ * public class PersonView extends View {
+ *     private final Person person;
+ *
  *     public PersonView(Person person) {
- *         super("profile.ftl", person);
+ *         super("profile.ftl");
+ *         this.person = person;
+ *     }
+ *
+ *     public Person getPerson() {
+ *         return person;
  *     }
  * }
  * </code></pre>
@@ -36,10 +43,10 @@ import com.yammer.dropwizard.templates.ViewMessageBodyWriter;
  * <p>Freemarker templates look something like this:</p>
  *
  * <pre>{@code
- * <#-- @ftlvariable name="" type="com.example.service.Person" -->
+ * <#-- @ftlvariable name="" type="com.example.service.PersonView" -->
  * <html>
  *     <body>
- *         <h1>Hello, ${name?html}!</h1>
+ *         <h1>Hello, ${person.name?html}!</h1>
  *     </body>
  * </html>
  * }</pre>
