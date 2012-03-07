@@ -17,6 +17,6 @@ public class ConfigurationExceptionTest {
 
         assertThat(e.getMessage(),
                    is("config.yml has the following errors:\n" +
-                      "  * woo may not be null"));
+                      "  * woo may not be null\n"));
     }
 }
