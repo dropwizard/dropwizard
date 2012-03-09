@@ -11,7 +11,8 @@ v0.3.0-SNAPSHOT
 
 * Upgraded to JDBI 2.31.3.
 * Upgraded to Jackson 1.9.5.
-* Upgraded to Jetty 8.1.1.
+* Upgraded to Jetty 8.1.2. (Jetty 9 is now the experimental branch. Jetty 8 is just Jetty 7 with
+  Servlet 3.0 support.)
 * Dropped ``dropwizard-templates`` and added ``dropwizard-views`` instead.
 * Added ``AbstractParam#getMediaType()``.
 * Fixed potential encoding bug in parsing YAML files.
