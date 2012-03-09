@@ -85,4 +85,4 @@ subclass:
         }
     }
 
-For more information on how to use Freemarker, see the `Freemarker documentation <Freemarker>`_.
+For more information on how to use Freemarker, see the `Freemarker`_ documentation.

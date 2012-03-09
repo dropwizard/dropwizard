@@ -109,7 +109,7 @@ Setting Up Maven
 We recommend you use Maven_ for new Dropwizard services. If you're a big Ant_ / Ivy_, Buildr_,
 Gradle_, SBT_, Leiningen_, or Gant_ fan, that’s cool, but we use Maven and we'll be using Maven as
 we go through this example service. If you have any questions about how Maven works,
-`Maven: The Complete Reference <maven-book>`_ should have what you’re looking for. (We’re assuming
+`Maven: The Complete Reference`__ should have what you’re looking for. (We’re assuming
 you know how to create a new Maven project.)
 
 .. _Maven: http://maven.apache.org
@@ -120,7 +120,7 @@ you know how to create a new Maven project.)
 .. _SBT: https://github.com/harrah/xsbt/wiki
 .. _Gant: http://gant.codehaus.org/
 .. _Leiningen: https://github.com/technomancy/leiningen
-.. _maven-book: http://www.sonatype.com/books/mvnref-book/reference/
+.. __: http://www.sonatype.com/books/mvnref-book/reference/
 
 Add the ``dropwizard-core`` library as a dependency:
 
@@ -198,12 +198,12 @@ exception will be thrown and your service won't start.
 
     The mapping from YAML to your service's ``Configuration`` instance is done by Jackson_. This
     means your ``Configuration`` class can use all of Jackon's
-    `object-mapping annotations <jackson-annotations>`_. The validation of ``@NotEmpty`` is handled
-    by Hibernate Validator, which has a `wide range of built-in constraints <validator-annotations>`_
+    `object-mapping annotations`__. The validation of ``@NotEmpty`` is handled
+    by Hibernate Validator, which has a `wide range of built-in constraints`__
     for you to use.
 
-.. _jackson-annotations: http://wiki.fasterxml.com/JacksonAnnotations
-.. _validator-annotations: http://docs.jboss.org/hibernate/validator/4.2/reference/en-US/html_single/#validator-defineconstraints-builtin
+.. __: http://wiki.fasterxml.com/JacksonAnnotations
+.. __: http://docs.jboss.org/hibernate/validator/4.2/reference/en-US/html_single/#validator-defineconstraints-builtin
 
 Our YAML file, then, will look like this:
 
@@ -319,8 +319,10 @@ of ``#getId()``, likewise with ``content`` and ``#getContent()``.
     
     The JSON serialization here is done by Jackson, which supports far more than simple JavaBean
     objects like this one. In addition to the sophisticated set of
-    `annotations <jackson-annotations>`_, you can even write your own custom serializers and
+    `annotations`__, you can even write your own custom serializers and
     deserializers.
+
+.. __: http://wiki.fasterxml.com/JacksonAnnotations
 
 Now that we've got our representation class, it makes sense to start in on the
 resource it represents.
