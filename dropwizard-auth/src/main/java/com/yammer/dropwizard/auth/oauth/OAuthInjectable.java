@@ -6,14 +6,11 @@ import com.sun.jersey.server.impl.inject.AbstractHttpContextInjectable;
 import com.yammer.dropwizard.auth.AuthenticationException;
 import com.yammer.dropwizard.auth.Authenticator;
 import com.yammer.dropwizard.logging.Log;
-import org.eclipse.jetty.util.B64Code;
-import org.eclipse.jetty.util.StringUtil;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.io.UnsupportedEncodingException;
 
 class OAuthInjectable<T> extends AbstractHttpContextInjectable<T> {
     private static final Log LOG = Log.forClass(OAuthInjectable.class);
@@ -31,17 +28,28 @@ class OAuthInjectable<T> extends AbstractHttpContextInjectable<T> {
         this.required = required;
     }
 
+    public Authenticator<String, T> getAuthenticator() {
+        return authenticator;
+    }
+
+    public String getRealm() {
+        return realm;
+    }
+
+    public boolean isRequired() {
+        return required;
+    }
+
     @Override
     public T getValue(HttpContext c) {
-        final String header = c.getRequest().getHeaderValue(HttpHeaders.AUTHORIZATION);
         try {
+            final String header = c.getRequest().getHeaderValue(HttpHeaders.AUTHORIZATION);
             if (header != null) {
                 final int space = header.indexOf(' ');
                 if (space > 0) {
                     final String method = header.substring(0, space);
                     if (PREFIX.equalsIgnoreCase(method)) {
-                        final String credentials = B64Code.decode(header.substring(space + 1),
-                                                                  StringUtil.__ISO_8859_1);
+                        final String credentials = header.substring(space + 1);
                         final Optional<T> result = authenticator.authenticate(credentials);
                         if (result.isPresent()) {
                             return result.get();
@@ -49,8 +57,6 @@ class OAuthInjectable<T> extends AbstractHttpContextInjectable<T> {
                     }
                 }
             }
-        } catch (UnsupportedEncodingException e) {
-            LOG.debug(e, "Error decoding credentials");
         } catch (AuthenticationException e) {
             LOG.warn(e, "Error authentication credentials");
             throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);

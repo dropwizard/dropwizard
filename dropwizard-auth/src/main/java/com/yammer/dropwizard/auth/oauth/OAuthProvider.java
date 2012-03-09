@@ -22,6 +22,14 @@ class OAuthProvider<T> implements InjectableProvider<Auth, Parameter> {
         return ComponentScope.PerRequest;
     }
 
+    public Authenticator<String, T> getAuthenticator() {
+        return authenticator;
+    }
+
+    public String getRealm() {
+        return realm;
+    }
+
     @Override
     public Injectable<?> getInjectable(ComponentContext ic,
                                        Auth a,
