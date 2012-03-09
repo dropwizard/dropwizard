@@ -674,6 +674,10 @@ your service's metrics represented as a JSON object.
 The `threads resource <http://localhost:8081/threads>`_ allows you to quickly get a thread dump of
 all the threads running in that process.
 
+.. hint:: When a Jetty worker thread is handling an incoming HTTP request, the thread name is set to
+          the method and URI of the request. This can be *very* helpful when debugging a
+          poorly-behaving request.
+
 The `healthcheck resource <http://localhost:8081/healthcheck>`_ runs the
 :ref:`health check class we wrote <gs-healthcheck>`. You should see something like this::
 
