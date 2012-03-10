@@ -1,4 +1,4 @@
-package com.yammer.dropwizard.auth.oauth;
+package com.yammer.dropwizard.auth.basic;
 
 import com.sun.jersey.core.spi.component.ComponentScope;
 import com.yammer.dropwizard.auth.Auth;
@@ -11,10 +11,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @SuppressWarnings("unchecked")
-public class OAuthProviderTest {
-    private final Authenticator<String, String> authenticator = mock(Authenticator.class);
-    private final OAuthProvider<String> provider = new OAuthProvider<String>(authenticator,
-                                                                             "realm");
+public class BasicAuthProviderTest {
+    private final Authenticator<BasicCredentials, String> authenticator = mock(Authenticator.class);
+    private final BasicAuthProvider<String> provider = new BasicAuthProvider<String>(authenticator,
+                                                                                     "realm");
 
     @Test
     public void isPerRequest() throws Exception {
@@ -27,14 +27,15 @@ public class OAuthProviderTest {
         final Auth auth = mock(Auth.class);
         when(auth.required()).thenReturn(true);
 
-        final OAuthInjectable<String> injectable = (OAuthInjectable<String>) provider.getInjectable(null, auth, null);
+        final BasicAuthInjectable<String> injectable =
+                (BasicAuthInjectable<String>) provider.getInjectable(null, auth, null);
 
         assertThat(injectable.getAuthenticator(),
                    is(authenticator));
-        
+
         assertThat(injectable.getRealm(),
                    is("realm"));
-        
+
         assertThat(injectable.isRequired(),
                    is(true));
     }

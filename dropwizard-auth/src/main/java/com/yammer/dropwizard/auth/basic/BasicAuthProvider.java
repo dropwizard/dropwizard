@@ -8,9 +8,6 @@ import com.sun.jersey.spi.inject.InjectableProvider;
 import com.yammer.dropwizard.auth.Auth;
 import com.yammer.dropwizard.auth.Authenticator;
 
-import javax.ws.rs.ext.Provider;
-
-@Provider
 class BasicAuthProvider<T> implements InjectableProvider<Auth, Parameter> {
     private final Authenticator<BasicCredentials, T> authenticator;
     private final String realm;
@@ -18,6 +15,14 @@ class BasicAuthProvider<T> implements InjectableProvider<Auth, Parameter> {
     BasicAuthProvider(Authenticator<BasicCredentials, T> authenticator, String realm) {
         this.authenticator = authenticator;
         this.realm = realm;
+    }
+
+    public Authenticator<BasicCredentials, T> getAuthenticator() {
+        return authenticator;
+    }
+
+    public String getRealm() {
+        return realm;
     }
 
     @Override

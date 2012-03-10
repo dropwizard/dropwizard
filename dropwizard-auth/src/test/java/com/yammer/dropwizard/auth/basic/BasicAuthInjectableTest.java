@@ -1,4 +1,4 @@
-package com.yammer.dropwizard.auth.oauth;
+package com.yammer.dropwizard.auth.basic;
 
 import com.google.common.base.Optional;
 import com.sun.jersey.api.core.HttpContext;
@@ -6,41 +6,42 @@ import com.sun.jersey.api.core.HttpRequestContext;
 import com.yammer.dropwizard.auth.AuthenticationException;
 import com.yammer.dropwizard.auth.Authenticator;
 import com.yammer.dropwizard.auth.User;
+import org.eclipse.jetty.util.B64Code;
 import org.junit.Before;
 import org.junit.Test;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.nullValue;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class OAuthInjectableTest {
-
-    private final Authenticator<String, User> authenticator = new Authenticator<String, User>() {
+public class BasicAuthInjectableTest {
+    private final Authenticator<BasicCredentials, User> authenticator = new Authenticator<BasicCredentials, User>() {
         @Override
-        public Optional<User> authenticate(String credentials) throws AuthenticationException {
-            if ("good".equals(credentials)) {
-                return Optional.of(new User(credentials));
+        public Optional<User> authenticate(BasicCredentials credentials) throws AuthenticationException {
+            if ("good".equals(credentials.getPassword())) {
+                return Optional.of(new User(credentials.getUsername()));
             }
 
-            if ("bad".equals(credentials)) {
+            if ("bad".equals(credentials.getPassword())) {
                 throw new AuthenticationException("OH NOE");
             }
 
             return Optional.absent();
         }
     };
+    private final BasicAuthInjectable<User> required = new BasicAuthInjectable<User>(authenticator,
+                                                                                     "Realm",
+                                                                                     true);
 
-    private final OAuthInjectable<User> required = new OAuthInjectable<User>(authenticator,
-                                                                             "Realm",
-                                                                             true);
-
-    private final OAuthInjectable<User> optional = new OAuthInjectable<User>(authenticator,
-                                                                             "Realm",
-                                                                             false);
+    private final BasicAuthInjectable<User> optional = new BasicAuthInjectable<User>(authenticator,
+                                                                                     "Realm",
+                                                                                     false);
 
     private final HttpContext context = mock(HttpContext.class);
     private final HttpRequestContext requestContext = mock(HttpRequestContext.class);
@@ -72,7 +73,7 @@ public class OAuthInjectableTest {
 
     @Test
     public void requiredAuthWithBadSchemeReturnsUnauthorized() throws Exception {
-        when(requestContext.getHeaderValue("Authorization")).thenReturn("Barer WAUGH");
+        when(requestContext.getHeaderValue("Authorization")).thenReturn("Basically WAUGH");
 
         try {
             required.getValue(context);
@@ -84,7 +85,7 @@ public class OAuthInjectableTest {
 
     @Test
     public void optionalAuthWithBadSchemeReturnsNull() throws Exception {
-        when(requestContext.getHeaderValue("Authorization")).thenReturn("Barer WAUGH");
+        when(requestContext.getHeaderValue("Authorization")).thenReturn("Basically WAUGH");
 
         assertThat(optional.getValue(context),
                    is(nullValue()));
@@ -92,7 +93,7 @@ public class OAuthInjectableTest {
 
     @Test
     public void requiredAuthWithNoSchemeReturnsUnauthorized() throws Exception {
-        when(requestContext.getHeaderValue("Authorization")).thenReturn("Barer_WAUGH");
+        when(requestContext.getHeaderValue("Authorization")).thenReturn("Basically_WAUGH");
 
         try {
             required.getValue(context);
@@ -104,15 +105,67 @@ public class OAuthInjectableTest {
 
     @Test
     public void optionalAuthWithNoSchemeReturnsNull() throws Exception {
-        when(requestContext.getHeaderValue("Authorization")).thenReturn("Barer_WAUGH");
+        when(requestContext.getHeaderValue("Authorization")).thenReturn("Basically_WAUGH");
 
         assertThat(optional.getValue(context),
                    is(nullValue()));
     }
 
     @Test
+    public void requiredAuthWithMalformedCredsReturnsUnauthorized() throws Exception {
+        when(requestContext.getHeaderValue("Authorization")).thenReturn("Basic " + B64Code.encode("poops"));
+
+        try {
+            required.getValue(context);
+            fail("should have thrown a WebApplicationException but didn't");
+        } catch (WebApplicationException e) {
+            assertUnauthorized(e);
+        }
+    }
+
+    @Test
+    public void optionalAuthWithMalformedCredsReturnsNull() throws Exception {
+        when(requestContext.getHeaderValue("Authorization")).thenReturn("Basic " + B64Code.encode("poops"));
+
+        assertThat(optional.getValue(context),
+                   is(nullValue()));
+    }
+
+    @Test
+    public void requiredAuthWithReallyMalformedCredsReturnsUnauthorized() throws Exception {
+        when(requestContext.getHeaderValue("Authorization")).thenReturn("Basic woofff");
+
+        try {
+            required.getValue(context);
+            fail("should have thrown a WebApplicationException but didn't");
+        } catch (WebApplicationException e) {
+            assertUnauthorized(e);
+        }
+    }
+
+    @Test
+    public void optionalAuthWithReallyMalformedCredsReturnsNull() throws Exception {
+        when(requestContext.getHeaderValue("Authorization")).thenReturn("Basic woofff");
+
+        assertThat(optional.getValue(context),
+                   is(nullValue()));
+    }
+
+    @Test
+    public void requiredAuthWithUtf8CredsReturnsUnauthorized() throws Exception {
+        when(requestContext.getHeaderValue("Authorization")).thenReturn("Basic AK0AnAk=");
+
+        try {
+            required.getValue(context);
+            fail("should have thrown a WebApplicationException but didn't");
+        } catch (WebApplicationException e) {
+            assertUnauthorized(e);
+        }
+    }
+
+    @Test
     public void requiredAuthWithBadCredsReturnsUnauthorized() throws Exception {
-        when(requestContext.getHeaderValue("Authorization")).thenReturn("Bearer WAUGH");
+        when(requestContext.getHeaderValue("Authorization")).thenReturn("Basic " + B64Code.encode("dude:mop"));
 
         try {
             required.getValue(context);
@@ -124,7 +177,7 @@ public class OAuthInjectableTest {
 
     @Test
     public void optionalAuthWithBadCredsReturnsNull() throws Exception {
-        when(requestContext.getHeaderValue("Authorization")).thenReturn("Bearer WAUGH");
+        when(requestContext.getHeaderValue("Authorization")).thenReturn("Basic " + B64Code.encode("dude:mop"));
 
         assertThat(optional.getValue(context),
                    is(nullValue()));
@@ -132,23 +185,22 @@ public class OAuthInjectableTest {
 
     @Test
     public void requiredAuthWithGoodCredsReturnsAUser() throws Exception {
-        when(requestContext.getHeaderValue("Authorization")).thenReturn("Bearer good");
-        
+        when(requestContext.getHeaderValue("Authorization")).thenReturn("Basic " + B64Code.encode("dude:good"));
+
         assertThat(required.getValue(context),
-                   is(new User("good")));
+                   is(new User("dude")));
     }
 
     @Test
     public void optionalAuthWithGoodCredsReturnsAUser() throws Exception {
-        when(requestContext.getHeaderValue("Authorization")).thenReturn("Bearer good");
+        when(requestContext.getHeaderValue("Authorization")).thenReturn("Basic " + B64Code.encode("dude:good"));
 
         assertThat(optional.getValue(context),
-                   is(new User("good")));
+                   is(new User("dude")));
     }
-
     @Test
     public void authenticatorFailureReturnsInternalServerError() throws Exception {
-        when(requestContext.getHeaderValue("Authorization")).thenReturn("Bearer bad");
+        when(requestContext.getHeaderValue("Authorization")).thenReturn("Basic " + B64Code.encode("dude:bad"));
 
         try {
             required.getValue(context);
@@ -166,7 +218,7 @@ public class OAuthInjectableTest {
                    is(401));
 
         assertThat(response.getMetadata().getFirst("WWW-Authenticate").toString(),
-                   is("Bearer realm=\"Realm\""));
+                   is("Basic realm=\"Realm\""));
 
         assertThat(response.getMetadata().getFirst("Content-Type").toString(),
                    is("text/plain"));

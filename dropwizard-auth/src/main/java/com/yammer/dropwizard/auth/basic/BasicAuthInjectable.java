@@ -28,7 +28,19 @@ class BasicAuthInjectable<T> extends AbstractHttpContextInjectable<T> {
     BasicAuthInjectable(Authenticator<BasicCredentials, T> authenticator, String realm, boolean required) {
         this.authenticator = authenticator;
         this.realm = realm;
-        this.required = true;
+        this.required = required;
+    }
+
+    public Authenticator<BasicCredentials, T> getAuthenticator() {
+        return authenticator;
+    }
+
+    public String getRealm() {
+        return realm;
+    }
+
+    public boolean isRequired() {
+        return required;
     }
 
     @Override
@@ -57,6 +69,8 @@ class BasicAuthInjectable<T> extends AbstractHttpContextInjectable<T> {
                 }
             }
         } catch (UnsupportedEncodingException e) {
+            LOG.debug(e, "Error decoding credentials");
+        } catch (IllegalArgumentException e) {
             LOG.debug(e, "Error decoding credentials");
         } catch (AuthenticationException e) {
             LOG.warn(e, "Error authentication credentials");
