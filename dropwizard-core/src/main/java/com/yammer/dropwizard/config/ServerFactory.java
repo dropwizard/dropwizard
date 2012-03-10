@@ -87,7 +87,10 @@ public class ServerFactory {
         final Server server = new Server();
 
         server.addConnector(createExternalConnector());
-        server.addConnector(createInternalConnector());
+
+        if (config.getAdminPort() == config.getPort() ) {
+            server.addConnector(createInternalConnector());
+        }
 
         server.addBean(new QuietErrorHandler());
 
@@ -187,7 +190,13 @@ public class ServerFactory {
         final ServletContextHandler handler = new ServletContextHandler();
         handler.addServlet(new ServletHolder(new TaskServlet(env.getTasks())), "/tasks/*");
         handler.addServlet(new ServletHolder(new AdminServlet()), "/*");
-        handler.setConnectorNames(new String[]{"internal"});
+
+        if (config.getAdminPort() == config.getPort()) {
+            handler.setContextPath("/admin");
+            handler.setConnectorNames(new String[]{"main"});
+        } else {
+            handler.setConnectorNames(new String[]{"internal"});
+        }
 
         if (config.getAdminUsername().isPresent() && config.getAdminPassword().isPresent()) {
             handler.setSecurityHandler(basicAuthHandler(config.getAdminUsername().get(), config.getAdminPassword().get()));
