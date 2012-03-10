@@ -80,7 +80,9 @@ public class ServerFactory {
         final Server server = new Server();
 
         server.addConnector(createExternalConnector());
-        server.addConnector(createInternalConnector());
+        if(config.isAdminEnabled()) {
+            server.addConnector(createInternalConnector());
+        }
 
         server.addBean(new QuietErrorHandler());
 
@@ -167,7 +169,9 @@ public class ServerFactory {
         final HandlerCollection collection = new HandlerCollection();
 
         collection.addHandler(createExternalServlet(env.getServlets(), env.getFilters(), env.getServletListeners()));
-        collection.addHandler(createInternalServlet(env));
+        if(config.isAdminEnabled()) {
+            collection.addHandler(createInternalServlet(env));
+        }
 
         if (requestLogHandlerFactory.isEnabled()) {
             collection.addHandler(requestLogHandlerFactory.build());
