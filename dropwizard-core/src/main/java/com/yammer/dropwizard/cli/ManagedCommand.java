@@ -3,7 +3,6 @@ package com.yammer.dropwizard.cli;
 import com.yammer.dropwizard.AbstractService;
 import com.yammer.dropwizard.config.Configuration;
 import com.yammer.dropwizard.config.Environment;
-import com.yammer.dropwizard.config.LoggingFactory;
 import com.yammer.dropwizard.logging.Log;
 import org.apache.commons.cli.CommandLine;
 
@@ -19,7 +18,6 @@ public abstract class ManagedCommand<T extends Configuration> extends Configured
     protected final void run(AbstractService<T> service,
                              T configuration,
                              CommandLine params) throws Exception {
-        new LoggingFactory(configuration.getLoggingConfiguration()).configure();
         final Environment environment = new Environment(configuration, service);
         service.initializeWithBundles(configuration, environment);
         LOG.info("Starting {}", service.getName());
