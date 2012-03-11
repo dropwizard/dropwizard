@@ -90,6 +90,7 @@ public abstract class Command {
     /**
      * Returns the usage string for the command, including the JAR file location, if possible.
      *
+     * @param klass    the service class
      * @return the usage string for the command
      */
     protected String getUsage(Class<?> klass) {
