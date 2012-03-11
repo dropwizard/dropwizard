@@ -10,6 +10,8 @@ import com.yammer.dropwizard.logging.Log;
 import org.apache.commons.cli.CommandLine;
 import org.eclipse.jetty.server.Server;
 
+import java.io.IOException;
+
 // TODO: 10/12/11 <coda> -- write tests for ServerCommand
 
 /**
@@ -45,24 +47,28 @@ public class ServerCommand<T extends Configuration> extends ConfiguredCommand<T>
                        CommandLine params) throws Exception {
         final Environment environment = new Environment(configuration, service);
         service.initializeWithBundles(configuration, environment);
-
         final Server server = new ServerFactory(configuration.getHttpConfiguration()).buildServer(environment);
-
         final Log log = Log.forClass(ServerCommand.class);
-        try {
-            final String banner = Resources.toString(Resources.getResource("banner.txt"), Charsets.UTF_8);
-            log.info("Starting {}\n{}", service.getName(), banner);
-        } catch (IllegalArgumentException ignored) {
-            // don't display the banner if there isn't one
-            log.info("Starting {}", service.getName());
-        }
-
+        logBanner(service, log);
         try {
             server.start();
             server.join();
         } catch (Exception e) {
             log.error(e, "Unable to start server, shutting down");
             server.stop();
+        }
+    }
+
+    private void logBanner(AbstractService<T> service, Log log) {
+        try {
+            final String banner = Resources.toString(Resources.getResource("banner.txt"),
+                                                     Charsets.UTF_8);
+            log.info("Starting {}\n{}", service.getName(), banner);
+        } catch (IllegalArgumentException ignored) {
+            // don't display the banner if there isn't one
+            log.info("Starting {}", service.getName());
+        } catch (IOException ignored) {
+            log.info("Starting {}", service.getName());
         }
     }
 }
