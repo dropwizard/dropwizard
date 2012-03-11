@@ -25,6 +25,7 @@ v0.3.0-SNAPSHOT
   method and URI of the HTTP request they are currently processing.
 * Added command-line overriding of configuration parameters via system properties. For example,
   ``-Ddw.http.port=8090`` will override the configuration file to set ``http.port`` to ``8090``.
+* Removed ``ManagedCommand``. It was rarely used and confusing.
 
 .. _rel-0.2.1:
 
