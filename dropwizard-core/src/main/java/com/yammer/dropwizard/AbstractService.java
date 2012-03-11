@@ -30,8 +30,6 @@ import java.util.SortedMap;
  */
 @SuppressWarnings("EmptyMethod")
 public abstract class AbstractService<T extends Configuration> {
-    private static final Module[] NO_MODULES = new Module[0];
-
     static {
         // make sure spinning up Hibernate Validator doesn't yell at us
         LoggingFactory.bootstrap();
