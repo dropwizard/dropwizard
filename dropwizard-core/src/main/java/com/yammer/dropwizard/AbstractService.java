@@ -9,7 +9,7 @@ import com.yammer.dropwizard.cli.ConfiguredCommand;
 import com.yammer.dropwizard.cli.ServerCommand;
 import com.yammer.dropwizard.cli.UsagePrinter;
 import com.yammer.dropwizard.config.Configuration;
-import com.yammer.dropwizard.config.DropwizardResourceConfig;
+import com.yammer.dropwizard.jersey.DropwizardResourceConfig;
 import com.yammer.dropwizard.config.Environment;
 import com.yammer.dropwizard.config.LoggingFactory;
 import com.yammer.dropwizard.json.Json;

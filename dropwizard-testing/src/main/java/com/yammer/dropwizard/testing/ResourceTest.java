@@ -3,6 +3,7 @@ package com.yammer.dropwizard.testing;
 import java.util.List;
 import java.util.Set;
 
+import com.yammer.dropwizard.jersey.DropwizardResourceConfig;
 import org.codehaus.jackson.map.Module;
 import org.junit.After;
 import org.junit.Before;
@@ -14,7 +15,6 @@ import com.sun.jersey.test.framework.AppDescriptor;
 import com.sun.jersey.test.framework.JerseyTest;
 import com.sun.jersey.test.framework.LowLevelAppDescriptor;
 import com.yammer.dropwizard.bundles.JavaBundle;
-import com.yammer.dropwizard.config.DropwizardResourceConfig;
 import com.yammer.dropwizard.jersey.JacksonMessageBodyProvider;
 import com.yammer.dropwizard.json.Json;
 

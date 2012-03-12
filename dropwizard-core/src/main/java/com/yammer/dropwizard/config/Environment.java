@@ -6,6 +6,7 @@ import com.sun.jersey.api.core.ResourceConfig;
 import com.sun.jersey.core.reflection.AnnotatedMethod;
 import com.sun.jersey.core.reflection.MethodList;
 import com.yammer.dropwizard.AbstractService;
+import com.yammer.dropwizard.jersey.DropwizardResourceConfig;
 import com.yammer.dropwizard.jetty.JettyManaged;
 import com.yammer.dropwizard.jetty.NonblockingServletHolder;
 import com.yammer.dropwizard.lifecycle.ExecutorServiceManager;

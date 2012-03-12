@@ -1,8 +1,7 @@
-package com.yammer.dropwizard.config;
+package com.yammer.dropwizard.jersey;
 
 import com.sun.jersey.api.core.DefaultResourceConfig;
 import com.sun.jersey.api.core.ResourceConfig;
-import com.yammer.dropwizard.jersey.LoggingExceptionMapper;
 import com.yammer.dropwizard.jersey.caching.CacheControlledResourceMethodDispatchAdapter;
 import com.yammer.metrics.jersey.InstrumentedResourceMethodDispatchAdapter;
 
