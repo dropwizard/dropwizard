@@ -2,6 +2,21 @@ template: Hello, %s!
 
 defaultName: Stranger
 
+# Database settings.
+database:
+
+  # the name of your JDBC driver
+  driverClass: org.h2.Driver
+
+  # the username
+  user: sa
+
+  # the password
+  password: sa
+
+  # the JDBC URL
+  url: jdbc:h2:target/example
+
 # HTTP-specific options.
 http:
 

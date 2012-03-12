@@ -27,6 +27,23 @@
         </dependency>
         <dependency>
             <groupId>com.yammer.dropwizard</groupId>
+            <artifactId>dropwizard-db</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <!-- Required to support string templates in JDBI -->
+        <dependency>
+            <groupId>org.antlr</groupId>
+            <artifactId>stringtemplate</artifactId>
+            <version>3.2.1</version>
+        </dependency>
+        <!-- Small self contained database to illustrate the features of JDBI -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <version>1.3.158</version>
+        </dependency>
+        <dependency>
+            <groupId>com.yammer.dropwizard</groupId>
             <artifactId>dropwizard-auth</artifactId>
             <version>${project.version}</version>
         </dependency>
