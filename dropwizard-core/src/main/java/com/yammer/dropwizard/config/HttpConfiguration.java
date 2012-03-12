@@ -143,9 +143,14 @@ public class HttpConfiguration {
     @JsonProperty
     private String adminPassword = null;
 
-    @ValidationMethod
+    @ValidationMethod(message = "must have a smaller minThreads than maxThreads")
     public boolean isThreadPoolSizedCorrectly() {
         return minThreads <= maxThreads;
+    }
+    
+    @ValidationMethod(message = "must have adminUsername if adminPassword is defined")
+    public boolean isAdminUsernameDefined() {
+        return (adminPassword == null) || (adminUsername != null);
     }
 
     public RequestLogConfiguration getRequestLogConfiguration() {
