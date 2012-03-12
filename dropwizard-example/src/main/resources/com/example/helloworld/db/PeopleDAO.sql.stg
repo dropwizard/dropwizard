@@ -4,7 +4,7 @@ createPeopleTable() ::= <<
   create table people (id Serial primary key, fullName varchar(255), jobTitle varchar(100))
 >>
 
-findById(id) ::= <<
+findById() ::= <<
   select id, fullName, jobTitle from people where id = :id
 >>
 
