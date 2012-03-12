@@ -10,7 +10,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-@Path("/person")
+@Path("/person/{personId}")
 @Produces(MediaType.APPLICATION_JSON)
 public class PersonResource {
 
@@ -21,7 +21,6 @@ public class PersonResource {
     }
 
     @GET
-    @Path("{personId}")
     public Person getPerson(@PathParam("personId") LongParam personId) {
         return peopleDAO.findById(personId.get());
     }
