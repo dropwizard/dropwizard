@@ -5,6 +5,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.sun.jersey.api.container.ContainerException;
+import com.yammer.metrics.core.TimerContext;
 import freemarker.template.Configuration;
 import freemarker.template.DefaultObjectWrapper;
 import freemarker.template.Template;
@@ -85,6 +86,7 @@ public class ViewMessageBodyWriter implements MessageBodyWriter<View> {
                         MediaType mediaType,
                         MultivaluedMap<String, Object> httpHeaders,
                         OutputStream entityStream) throws IOException, WebApplicationException {
+        final TimerContext context = t.getRenderingTimer().time();
         try {
             final Configuration configuration = configurationCache.getUnchecked(type);
             final Template template = configuration.getTemplate(t.getTemplateName(),
@@ -98,6 +100,8 @@ public class ViewMessageBodyWriter implements MessageBodyWriter<View> {
                                                       .type(MediaType.TEXT_HTML_TYPE)
                                                       .entity(msg)
                                                       .build());
+        } finally {
+            context.stop();
         }
     }
 
