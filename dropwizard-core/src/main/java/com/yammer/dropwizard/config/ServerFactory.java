@@ -198,8 +198,8 @@ public class ServerFactory {
             handler.setConnectorNames(new String[]{"internal"});
         }
 
-        if (config.getAdminUsername().isPresent() && config.getAdminPassword().isPresent()) {
-            handler.setSecurityHandler(basicAuthHandler(config.getAdminUsername().get(), config.getAdminPassword().get()));
+        if (config.getAdminUsername().isPresent() || config.getAdminPassword().isPresent()) {
+            handler.setSecurityHandler(basicAuthHandler(config.getAdminUsername().or(""), config.getAdminPassword().or("")));
         }
 
         return handler;
