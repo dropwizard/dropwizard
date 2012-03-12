@@ -110,7 +110,8 @@ We recommend you use Maven_ for new Dropwizard services. If you're a big Ant_ / 
 Gradle_, SBT_, Leiningen_, or Gant_ fan, that’s cool, but we use Maven and we'll be using Maven as
 we go through this example service. If you have any questions about how Maven works,
 `Maven: The Complete Reference`__ should have what you’re looking for. (We’re assuming
-you know how to create a new Maven project.)
+you know how to create a new Maven project. If not, you can use
+`this <https://gist.github.com/2019732>`_ to get started.)
 
 .. _Maven: http://maven.apache.org
 .. _Ant: http://ant.apache.org/
