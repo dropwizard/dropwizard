@@ -8,6 +8,7 @@ About Dropwizard
 
 .. toctree::
 
+    contributors
     faq
     release-notes
     todos
