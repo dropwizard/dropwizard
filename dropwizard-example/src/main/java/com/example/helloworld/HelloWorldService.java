@@ -9,6 +9,7 @@ import com.example.helloworld.db.PeopleDAO;
 import com.example.helloworld.health.TemplateHealthCheck;
 import com.example.helloworld.resources.HelloWorldResource;
 import com.example.helloworld.resources.PeopleResource;
+import com.example.helloworld.resources.PersonResource;
 import com.example.helloworld.resources.ProtectedResource;
 import com.yammer.dropwizard.Service;
 import com.yammer.dropwizard.auth.basic.BasicAuthBundle;
@@ -45,6 +46,7 @@ public class HelloWorldService extends Service<HelloWorldConfiguration> {
         environment.addResource(new ProtectedResource());
 
         environment.addResource(new PeopleResource(peopleDAO));
+        environment.addResource(new PersonResource(peopleDAO));
     }
 
 }

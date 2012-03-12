@@ -1,6 +1,6 @@
 # Introduction
 
-The drop wizard example application was developed to, as it's name implies, provide examples of some of the features
+The drop wizard example application was developed to, as its name implies, provide examples of some of the features
 present in drop wizard.
 
 # Overview
@@ -19,8 +19,8 @@ src/resources under the same path as the `PersonDAO` class file.
 * The `SetupDatabaseCommand` illustrates building a "setup" command which can create your database prior to running
 dropwizard your application for the first time.
 
-* The `PersonResource` is the REST resource which uses the PersonDAO to retrieve data from the database, note the injection
-of the PersonDAO in the constructor.
+* The `PersonResource` and `PeopleResource` are the REST resource which use the PersonDAO to retrieve data from the database, note the injection
+of the PersonDAO in their constructors.
 
 As with all the modules the db example is wired up in the `initialize` function of the `HelloWorldService`.
 
