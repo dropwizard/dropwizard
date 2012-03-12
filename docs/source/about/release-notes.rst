@@ -26,6 +26,11 @@ v0.3.0-SNAPSHOT
 * Added command-line overriding of configuration parameters via system properties. For example,
   ``-Ddw.http.port=8090`` will override the configuration file to set ``http.port`` to ``8090``.
 * Removed ``ManagedCommand``. It was rarely used and confusing.
+* If ``http.adminPort`` is the same as ``http.port``, the admin servlet will be hosted under
+  ``/admin``. This allows Dropwizard applications to be deployed to environments like Heroku, which
+  require applications to open a single port.
+* Added ``http.adminUsername`` and ``http.adminPassword`` to allow for Basic HTTP Authentication
+  for the admin servlet.
 
 .. _rel-0.2.1:
 
