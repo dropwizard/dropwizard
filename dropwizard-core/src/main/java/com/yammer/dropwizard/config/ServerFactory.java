@@ -88,7 +88,7 @@ public class ServerFactory {
 
         server.addConnector(createExternalConnector());
 
-        if (config.getAdminPort() == config.getPort() ) {
+        if (config.getAdminPort() != config.getPort() ) {
             server.addConnector(createInternalConnector());
         }
 
