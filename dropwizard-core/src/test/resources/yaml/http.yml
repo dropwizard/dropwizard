@@ -29,3 +29,5 @@ useDirectBuffers: false
 bindHost: "localhost"
 contextParameters:
   param: value
+adminUsername: admin
+adminPassword: password

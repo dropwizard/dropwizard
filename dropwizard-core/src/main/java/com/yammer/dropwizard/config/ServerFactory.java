@@ -16,6 +16,11 @@ import com.yammer.metrics.core.HealthCheck;
 import com.yammer.metrics.jetty.*;
 import com.yammer.metrics.reporting.AdminServlet;
 import com.yammer.metrics.util.DeadlockHealthCheck;
+import org.eclipse.jetty.security.ConstraintMapping;
+import org.eclipse.jetty.security.ConstraintSecurityHandler;
+import org.eclipse.jetty.security.HashLoginService;
+import org.eclipse.jetty.security.SecurityHandler;
+import org.eclipse.jetty.security.authentication.BasicAuthenticator;
 import org.eclipse.jetty.server.AbstractConnector;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Handler;
@@ -28,6 +33,8 @@ import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.resource.Resource;
+import org.eclipse.jetty.util.security.Constraint;
+import org.eclipse.jetty.util.security.Credential;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.util.thread.ThreadPool;
 
@@ -80,7 +87,10 @@ public class ServerFactory {
         final Server server = new Server();
 
         server.addConnector(createExternalConnector());
-        server.addConnector(createInternalConnector());
+
+        if (config.getAdminPort() != config.getPort() ) {
+            server.addConnector(createInternalConnector());
+        }
 
         server.addBean(new QuietErrorHandler());
 
@@ -166,8 +176,8 @@ public class ServerFactory {
     private Handler createHandler(Environment env) {
         final HandlerCollection collection = new HandlerCollection();
 
-        collection.addHandler(createExternalServlet(env.getServlets(), env.getFilters(), env.getServletListeners()));
         collection.addHandler(createInternalServlet(env));
+        collection.addHandler(createExternalServlet(env.getServlets(), env.getFilters(), env.getServletListeners()));
 
         if (requestLogHandlerFactory.isEnabled()) {
             collection.addHandler(requestLogHandlerFactory.build());
@@ -176,12 +186,48 @@ public class ServerFactory {
         return collection;
     }
 
-    private static Handler createInternalServlet(Environment env) {
+    private Handler createInternalServlet(Environment env) {
         final ServletContextHandler handler = new ServletContextHandler();
         handler.addServlet(new ServletHolder(new TaskServlet(env.getTasks())), "/tasks/*");
         handler.addServlet(new ServletHolder(new AdminServlet()), "/*");
-        handler.setConnectorNames(new String[]{"internal"});
+
+        if (config.getAdminPort() == config.getPort()) {
+            handler.setContextPath("/admin");
+            handler.setConnectorNames(new String[]{"main"});
+        } else {
+            handler.setConnectorNames(new String[]{"internal"});
+        }
+
+        if (config.getAdminUsername().isPresent() || config.getAdminPassword().isPresent()) {
+            handler.setSecurityHandler(basicAuthHandler(config.getAdminUsername().or(""), config.getAdminPassword().or("")));
+        }
+
         return handler;
+    }
+
+    private SecurityHandler basicAuthHandler(String username, String password) {
+
+        HashLoginService l = new HashLoginService();
+        l.putUser(username, Credential.getCredential(password), new String[] {"user"});
+        l.setName("admin");
+
+        Constraint constraint = new Constraint();
+        constraint.setName(Constraint.__BASIC_AUTH);
+        constraint.setRoles(new String[]{"user"});
+        constraint.setAuthenticate(true);
+
+        ConstraintMapping cm = new ConstraintMapping();
+        cm.setConstraint(constraint);
+        cm.setPathSpec("/*");
+
+        ConstraintSecurityHandler csh = new ConstraintSecurityHandler();
+        csh.setAuthenticator(new BasicAuthenticator());
+        csh.setRealmName("admin");
+        csh.addConstraintMapping(cm);
+        csh.setLoginService(l);
+
+        return csh;
+
     }
 
     private Handler createExternalServlet(ImmutableMap<String, ServletHolder> servlets,

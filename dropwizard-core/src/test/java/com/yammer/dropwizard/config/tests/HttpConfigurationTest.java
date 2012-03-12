@@ -192,4 +192,16 @@ public class HttpConfigurationTest {
         assertThat(http.getBindHost(),
                    is(Optional.of("localhost")));
     }
+
+    @Test
+    public void hasAnAdminUsername() throws Exception {
+        assertThat(http.getAdminUsername(),
+                   is(Optional.of("admin")));
+    }
+
+    @Test
+    public void hasAnAdminPassword() throws Exception {
+        assertThat(http.getAdminPassword(),
+                   is(Optional.of("password")));
+    }
 }

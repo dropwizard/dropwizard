@@ -137,6 +137,12 @@ public class HttpConfiguration {
     @JsonProperty
     private String bindHost = null;
 
+    @JsonProperty
+    private String adminUsername = null;
+
+    @JsonProperty
+    private String adminPassword = null;
+
     @ValidationMethod
     public boolean isThreadPoolSizedCorrectly() {
         return minThreads <= maxThreads;
@@ -260,5 +266,13 @@ public class HttpConfiguration {
 
     public String getRootPath() {
         return rootPath;
+    }
+
+    public Optional<String> getAdminUsername() {
+        return Optional.fromNullable(adminUsername);
+    }
+
+    public Optional<String> getAdminPassword() {
+        return Optional.fromNullable(adminPassword);
     }
 }
