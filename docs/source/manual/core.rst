@@ -44,6 +44,7 @@ Our services tend to look like this:
   * ``cli``: :ref:`man-core-commands`
   * ``client``: :ref:`Client <man-client>` implementation for your service
   * ``core``: Domain implementation
+  * ``db``: :ref:`Database <man-db>` access classes
   * ``health``: :ref:`man-core-healthchecks`
   * ``resources``: :ref:`man-core-resources`
   * ``MyService``: The :ref:`service <man-core-service>` class

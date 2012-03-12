@@ -38,7 +38,7 @@ Then, in your service's ``initialize`` method, create a new ``DatabaseFactory``:
 
     @Override
     protected void initialize(ExampleConfiguration config,
-                              Environment environment) {
+                              Environment environment) throws ClassNotFoundException {
         final DatabaseFactory factory = new DatabaseFactory(environment);
         final Database db = factory.build(config.getDatabaseConfiguration(), "postgresql");
         final UserDAO dao = db.onDemand(UserDAO.class);
@@ -47,7 +47,9 @@ Then, in your service's ``initialize`` method, create a new ``DatabaseFactory``:
 
 This will create a new :ref:`managed <man-core-managed>` connection pool to the database, a
 :ref:`health check <man-core-healthchecks>` for connectivity to the database, and a new ``Database``
-instance for you to use.
+instance for you to use. Note the ``ClassNotFoundException`` is thrown by the ``DatabaseFactory`` class
+when the ``build`` method is unable to locate the JDBC driver class. This will cause the service to exit
+displaying the output of the exception.
 
 Your service's configuration file will then look like this:
 
