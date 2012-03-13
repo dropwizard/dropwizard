@@ -85,4 +85,9 @@ subclass:
         }
     }
 
+.. tip::
+
+    Jackson can also serialize your views, allowing you to serve both ``text/html`` and
+    ``application/json`` with a single representation class.
+
 For more information on how to use Freemarker, see the `Freemarker`_ documentation.

@@ -1048,6 +1048,12 @@ Likewise, you can also test the parsing of the same JSON file to guarantee round
                    is(person));
     }
 
+.. _man-core-representations-html:
+
+HTML Representations
+--------------------
+
+For generating HTML pages, check out Dropwizard's :ref:`views support <manual-views>`.
 
 .. _man-core-representations-custom:
 
