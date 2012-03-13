@@ -65,28 +65,46 @@ stale entries after 5 minutes.
 Basic Authentication
 ====================
 
-The ``BasicAuthBundle`` enables HTTP Basic authentication, and requires an authenticator which takes
-instances of ``BasicCredentials``.
+The ``BasicAuthProvider`` enables HTTP Basic authentication, and requires an authenticator which
+takes instances of ``BasicCredentials``:
+
+.. code-block:: java
+
+    @Override
+    protected void initialize(ExampleConfiguration configuration,
+                              Environment environment) {
+        environment.addProvider(new BasicAuthProvider<User>(new ExampleAuthenticator(),
+                                                            "SUPER SECRET STUFF"));
+    }
 
 .. _man-auth-oauth2:
 
 OAuth2
 ======
 
-The ``OAuthBundle`` enables OAuth2 bearer-token authentication, and requires an authentication which
-takes instance of ``String``.
+The ``OAuthProvider`` enables OAuth2 bearer-token authentication, and requires an authenticator
+which takes an instance of ``String``.
 
 .. note:: Because OAuth2 is not finalized, this implementation may change in the future. The
           expectation is that tokens are passed in via the ``Authorization`` header using the
           ``Bearer`` scheme.
+
+.. code-block:: java
+
+    @Override
+    protected void initialize(ExampleConfiguration configuration,
+                              Environment environment) {
+        environment.addProvider(new BasicAuthProvider<User>(new ExampleAuthenticator(),
+                                                            "SUPER SECRET STUFF"));
+    }
 
 .. _man-auth-resources:
 
 Protecting Resources
 ====================
 
-To protect a resource, simply include an ``@Auth``-annotated principal as one of your resouce method
-parameters:
+To protect a resource, simply include an ``@Auth``-annotated principal as one of your resource
+method parameters:
 
 .. code-block:: java
 
@@ -95,8 +113,12 @@ parameters:
         return dao.findPlanForUser(user);
     }
 
+If there are no provided credentials for the request, or if the credentials are invalid, the
+provider will return a scheme-appropriate ``401 Unauthorized`` response without calling your
+resource method.
+
 If you have a resource which is optionally protected (e.g., you want to display a logged-in user's
-name but not require login), set the ``required`` attribute of the annotaton to ``false``:
+name but not require login), set the ``required`` attribute of the annotation to ``false``:
 
 .. code-block:: java
 
@@ -105,4 +127,5 @@ name but not require login), set the ``required`` attribute of the annotaton to 
         return new HomepageView(Optional.fromNullable(user));
     }
 
-If there is no authenticated principal, ``null`` is used instead.
+If there is no authenticated principal, ``null`` is used instead, and your resource method is still
+called.
