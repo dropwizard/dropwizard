@@ -31,7 +31,7 @@ v0.3.0-SNAPSHOT
   require applications to open a single port.
 * Added ``http.adminUsername`` and ``http.adminPassword`` to allow for Basic HTTP Authentication
   for the admin servlet.
-* Upgraded to Metrics 2.1.0.
+* Upgraded to Metrics 2.1.1.
 
 .. _rel-0.2.1:
 
