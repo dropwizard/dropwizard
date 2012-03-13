@@ -1,14 +1,14 @@
-package com.yammer.dropwizard.auth.basic;
+package com.yammer.dropwizard.auth.basic.tests;
 
 import com.sun.jersey.core.spi.component.ComponentScope;
-import com.yammer.dropwizard.auth.Auth;
 import com.yammer.dropwizard.auth.Authenticator;
+import com.yammer.dropwizard.auth.basic.BasicAuthProvider;
+import com.yammer.dropwizard.auth.basic.BasicCredentials;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 @SuppressWarnings("unchecked")
 public class BasicAuthProviderTest {
@@ -20,23 +20,5 @@ public class BasicAuthProviderTest {
     public void isPerRequest() throws Exception {
         assertThat(provider.getScope(),
                    is(ComponentScope.PerRequest));
-    }
-
-    @Test
-    public void returnsAnOAuthInjectable() throws Exception {
-        final Auth auth = mock(Auth.class);
-        when(auth.required()).thenReturn(true);
-
-        final BasicAuthInjectable<String> injectable =
-                (BasicAuthInjectable<String>) provider.getInjectable(null, auth, null);
-
-        assertThat(injectable.getAuthenticator(),
-                   is(authenticator));
-
-        assertThat(injectable.getRealm(),
-                   is("realm"));
-
-        assertThat(injectable.isRequired(),
-                   is(true));
     }
 }

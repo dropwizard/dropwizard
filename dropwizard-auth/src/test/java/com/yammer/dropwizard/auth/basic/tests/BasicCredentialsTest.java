@@ -1,5 +1,6 @@
-package com.yammer.dropwizard.auth.basic;
+package com.yammer.dropwizard.auth.basic.tests;
 
+import com.yammer.dropwizard.auth.basic.BasicCredentials;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.*;

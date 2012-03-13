@@ -5,7 +5,6 @@ import com.sun.jersey.api.core.HttpContext;
 import com.sun.jersey.server.impl.inject.AbstractHttpContextInjectable;
 import com.yammer.dropwizard.auth.AuthenticationException;
 import com.yammer.dropwizard.auth.Authenticator;
-import com.yammer.dropwizard.logging.Log;
 import org.eclipse.jetty.util.B64Code;
 import org.eclipse.jetty.util.StringUtil;
 
@@ -16,7 +15,6 @@ import javax.ws.rs.core.Response;
 import java.io.UnsupportedEncodingException;
 
 class BasicAuthInjectable<T> extends AbstractHttpContextInjectable<T> {
-    private static final Log LOG = Log.forClass(BasicAuthInjectable.class);
     private static final String PREFIX = "Basic";
     private static final String HEADER_NAME = "WWW-Authenticate";
     private static final String HEADER_VALUE = PREFIX + " realm=\"%s\"";
@@ -69,11 +67,11 @@ class BasicAuthInjectable<T> extends AbstractHttpContextInjectable<T> {
                 }
             }
         } catch (UnsupportedEncodingException e) {
-            LOG.debug(e, "Error decoding credentials");
+            BasicAuthProvider.LOG.debug(e, "Error decoding credentials");
         } catch (IllegalArgumentException e) {
-            LOG.debug(e, "Error decoding credentials");
+            BasicAuthProvider.LOG.debug(e, "Error decoding credentials");
         } catch (AuthenticationException e) {
-            LOG.warn(e, "Error authentication credentials");
+            BasicAuthProvider.LOG.warn(e, "Error authentication credentials");
             throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
         }
 

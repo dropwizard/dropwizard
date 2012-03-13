@@ -8,11 +8,23 @@ import com.sun.jersey.spi.inject.InjectableProvider;
 import com.yammer.dropwizard.auth.Auth;
 import com.yammer.dropwizard.auth.Authenticator;
 
-class OAuthProvider<T> implements InjectableProvider<Auth, Parameter> {
+/**
+ * A Jersey providers for OAuth2 bearer tokens.
+ *
+ * @param <T> the principal type
+ */
+public class OAuthProvider<T> implements InjectableProvider<Auth, Parameter> {
     private final Authenticator<String, T> authenticator;
     private final String realm;
 
-    OAuthProvider(Authenticator<String, T> authenticator, String realm) {
+    /**
+     * Creates a new {@link OAuthProvider} with the given {@link Authenticator} and realm.
+     *
+     * @param authenticator    the authenticator which will take the OAuth2 bearer token and convert
+     *                         them into instances of {@code T}
+     * @param realm            the name of the authentication realm
+     */
+    public OAuthProvider(Authenticator<String, T> authenticator, String realm) {
         this.authenticator = authenticator;
         this.realm = realm;
     }
@@ -20,14 +32,6 @@ class OAuthProvider<T> implements InjectableProvider<Auth, Parameter> {
     @Override
     public ComponentScope getScope() {
         return ComponentScope.PerRequest;
-    }
-
-    public Authenticator<String, T> getAuthenticator() {
-        return authenticator;
-    }
-
-    public String getRealm() {
-        return realm;
     }
 
     @Override

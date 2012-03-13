@@ -7,22 +7,29 @@ import com.sun.jersey.spi.inject.Injectable;
 import com.sun.jersey.spi.inject.InjectableProvider;
 import com.yammer.dropwizard.auth.Auth;
 import com.yammer.dropwizard.auth.Authenticator;
+import com.yammer.dropwizard.logging.Log;
 
-class BasicAuthProvider<T> implements InjectableProvider<Auth, Parameter> {
+/**
+ * A Jersey provider for Basic HTTP authentication.
+ *
+ * @param <T>    the principal type.
+ */
+public class BasicAuthProvider<T> implements InjectableProvider<Auth, Parameter> {
+    static final Log LOG = Log.forClass(BasicAuthProvider.class);
+
     private final Authenticator<BasicCredentials, T> authenticator;
     private final String realm;
 
-    BasicAuthProvider(Authenticator<BasicCredentials, T> authenticator, String realm) {
+    /**
+     * Creates a new {@link BasicAuthProvider} with the given {@link Authenticator} and realm.
+     *
+     * @param authenticator    the authenticator which will take the {@link BasicCredentials} and
+     *                         convert them into instances of {@code T}
+     * @param realm            the name of the authentication realm
+     */
+    public BasicAuthProvider(Authenticator<BasicCredentials, T> authenticator, String realm) {
         this.authenticator = authenticator;
         this.realm = realm;
-    }
-
-    public Authenticator<BasicCredentials, T> getAuthenticator() {
-        return authenticator;
-    }
-
-    public String getRealm() {
-        return realm;
     }
 
     @Override

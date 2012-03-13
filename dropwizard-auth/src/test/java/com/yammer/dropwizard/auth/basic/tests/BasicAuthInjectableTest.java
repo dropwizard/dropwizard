@@ -1,11 +1,15 @@
-package com.yammer.dropwizard.auth.basic;
+package com.yammer.dropwizard.auth.basic.tests;
 
 import com.google.common.base.Optional;
 import com.sun.jersey.api.core.HttpContext;
 import com.sun.jersey.api.core.HttpRequestContext;
+import com.sun.jersey.server.impl.inject.AbstractHttpContextInjectable;
+import com.yammer.dropwizard.auth.Auth;
 import com.yammer.dropwizard.auth.AuthenticationException;
 import com.yammer.dropwizard.auth.Authenticator;
 import com.yammer.dropwizard.auth.User;
+import com.yammer.dropwizard.auth.basic.BasicAuthProvider;
+import com.yammer.dropwizard.auth.basic.BasicCredentials;
 import org.eclipse.jetty.util.B64Code;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,6 +24,7 @@ import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@SuppressWarnings("unchecked")
 public class BasicAuthInjectableTest {
     private final Authenticator<BasicCredentials, User> authenticator = new Authenticator<BasicCredentials, User>() {
         @Override
@@ -35,13 +40,14 @@ public class BasicAuthInjectableTest {
             return Optional.absent();
         }
     };
-    private final BasicAuthInjectable<User> required = new BasicAuthInjectable<User>(authenticator,
-                                                                                     "Realm",
-                                                                                     true);
 
-    private final BasicAuthInjectable<User> optional = new BasicAuthInjectable<User>(authenticator,
-                                                                                     "Realm",
-                                                                                     false);
+
+
+    private final BasicAuthProvider<User> provider = new BasicAuthProvider<User>(authenticator,
+                                                                                 "Realm");
+
+    private AbstractHttpContextInjectable<User> required;
+    private AbstractHttpContextInjectable<User> optional;
 
     private final HttpContext context = mock(HttpContext.class);
     private final HttpRequestContext requestContext = mock(HttpRequestContext.class);
@@ -49,6 +55,15 @@ public class BasicAuthInjectableTest {
     @Before
     public void setUp() throws Exception {
         when(context.getRequest()).thenReturn(requestContext);
+        
+        final Auth requiredAuth = mock(Auth.class);
+        when(requiredAuth.required()).thenReturn(true);
+
+        final Auth optionalAuth = mock(Auth.class);
+        when(optionalAuth.required()).thenReturn(false);
+
+        this.required = (AbstractHttpContextInjectable<User>) provider.getInjectable(null, requiredAuth, null);
+        this.optional = (AbstractHttpContextInjectable<User>) provider.getInjectable(null, optionalAuth, null);
     }
 
     @Test

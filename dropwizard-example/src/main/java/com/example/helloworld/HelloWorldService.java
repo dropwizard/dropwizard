@@ -12,7 +12,7 @@ import com.example.helloworld.resources.PeopleResource;
 import com.example.helloworld.resources.PersonResource;
 import com.example.helloworld.resources.ProtectedResource;
 import com.yammer.dropwizard.Service;
-import com.yammer.dropwizard.auth.basic.BasicAuthBundle;
+import com.yammer.dropwizard.auth.basic.BasicAuthProvider;
 import com.yammer.dropwizard.bundles.AssetsBundle;
 import com.yammer.dropwizard.config.Environment;
 import com.yammer.dropwizard.db.Database;
@@ -28,12 +28,14 @@ public class HelloWorldService extends Service<HelloWorldConfiguration> {
         addCommand(new RenderCommand());
         addCommand(new SetupDatabaseCommand());
         addBundle(new AssetsBundle());
-        addBundle(new BasicAuthBundle<User>(new ExampleAuthenticator(), "SUPER SECRET STUFF"));
     }
 
     @Override
     protected void initialize(HelloWorldConfiguration configuration,
-                              Environment environment) throws ClassNotFoundException{
+                              Environment environment) throws ClassNotFoundException {
+        environment.addProvider(new BasicAuthProvider<User>(new ExampleAuthenticator(),
+                                                            "SUPER SECRET STUFF"));
+
         final Template template = configuration.buildTemplate();
 
         final DatabaseFactory factory = new DatabaseFactory(environment);

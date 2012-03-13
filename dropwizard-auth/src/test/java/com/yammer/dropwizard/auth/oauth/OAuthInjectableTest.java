@@ -3,6 +3,8 @@ package com.yammer.dropwizard.auth.oauth;
 import com.google.common.base.Optional;
 import com.sun.jersey.api.core.HttpContext;
 import com.sun.jersey.api.core.HttpRequestContext;
+import com.sun.jersey.server.impl.inject.AbstractHttpContextInjectable;
+import com.yammer.dropwizard.auth.Auth;
 import com.yammer.dropwizard.auth.AuthenticationException;
 import com.yammer.dropwizard.auth.Authenticator;
 import com.yammer.dropwizard.auth.User;
@@ -34,13 +36,10 @@ public class OAuthInjectableTest {
         }
     };
 
-    private final OAuthInjectable<User> required = new OAuthInjectable<User>(authenticator,
-                                                                             "Realm",
-                                                                             true);
+    private final OAuthProvider<User> provider = new OAuthProvider<User>(authenticator, "Realm");
 
-    private final OAuthInjectable<User> optional = new OAuthInjectable<User>(authenticator,
-                                                                             "Realm",
-                                                                             false);
+    private AbstractHttpContextInjectable<User> required;
+    private AbstractHttpContextInjectable<User> optional;
 
     private final HttpContext context = mock(HttpContext.class);
     private final HttpRequestContext requestContext = mock(HttpRequestContext.class);
@@ -48,6 +47,15 @@ public class OAuthInjectableTest {
     @Before
     public void setUp() throws Exception {
         when(context.getRequest()).thenReturn(requestContext);
+
+        final Auth requiredAuth = mock(Auth.class);
+        when(requiredAuth.required()).thenReturn(true);
+
+        final Auth optionalAuth = mock(Auth.class);
+        when(optionalAuth.required()).thenReturn(false);
+
+        this.required = (AbstractHttpContextInjectable<User>) provider.getInjectable(null, requiredAuth, null);
+        this.optional = (AbstractHttpContextInjectable<User>) provider.getInjectable(null, optionalAuth, null);
     }
 
     @Test
