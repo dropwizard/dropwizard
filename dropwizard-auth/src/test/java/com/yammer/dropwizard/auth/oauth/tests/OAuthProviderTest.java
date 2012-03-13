@@ -1,7 +1,8 @@
-package com.yammer.dropwizard.auth.oauth;
+package com.yammer.dropwizard.auth.oauth.tests;
 
 import com.sun.jersey.core.spi.component.ComponentScope;
 import com.yammer.dropwizard.auth.Authenticator;
+import com.yammer.dropwizard.auth.oauth.OAuthProvider;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.is;

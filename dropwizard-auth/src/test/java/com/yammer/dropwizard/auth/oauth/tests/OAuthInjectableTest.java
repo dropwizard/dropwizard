@@ -1,4 +1,4 @@
-package com.yammer.dropwizard.auth.oauth;
+package com.yammer.dropwizard.auth.oauth.tests;
 
 import com.google.common.base.Optional;
 import com.sun.jersey.api.core.HttpContext;
@@ -8,6 +8,7 @@ import com.yammer.dropwizard.auth.Auth;
 import com.yammer.dropwizard.auth.AuthenticationException;
 import com.yammer.dropwizard.auth.Authenticator;
 import com.yammer.dropwizard.auth.User;
+import com.yammer.dropwizard.auth.oauth.OAuthProvider;
 import org.junit.Before;
 import org.junit.Test;
 
