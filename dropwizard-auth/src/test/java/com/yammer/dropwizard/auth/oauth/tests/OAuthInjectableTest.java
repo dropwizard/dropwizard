@@ -20,6 +20,7 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@SuppressWarnings("unchecked")
 public class OAuthInjectableTest {
 
     private final Authenticator<String, User> authenticator = new Authenticator<String, User>() {
