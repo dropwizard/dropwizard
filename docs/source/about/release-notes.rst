@@ -6,8 +6,8 @@ Release Notes
 
 .. _rel-0.3.0:
 
-v0.3.0-SNAPSHOT
-===============
+v0.3.0: Mar 13 2012
+===================
 
 * Upgraded to JDBI 2.31.3.
 * Upgraded to Jackson 1.9.5.
@@ -31,7 +31,7 @@ v0.3.0-SNAPSHOT
   require applications to open a single port.
 * Added ``http.adminUsername`` and ``http.adminPassword`` to allow for Basic HTTP Authentication
   for the admin servlet.
-* Upgraded to Metrics 2.1.1.
+* Upgraded to `Metrics 2.1.1 <http://metrics.codahale.com/about/release-notes/#v2-1-1-mar-13-2012>`_.
 
 .. _rel-0.2.1:
 
