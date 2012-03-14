@@ -6,11 +6,11 @@ import com.sun.jersey.spi.dispatch.RequestDispatcher;
 import javax.ws.rs.core.CacheControl;
 import javax.ws.rs.core.HttpHeaders;
 
-public class CacheControlledRequestDispatcher implements RequestDispatcher {
+class CacheControlledRequestDispatcher implements RequestDispatcher {
     private final RequestDispatcher dispatcher;
     private final CacheControl cacheControl;
 
-    public CacheControlledRequestDispatcher(RequestDispatcher dispatcher, CacheControl cacheControl) {
+    CacheControlledRequestDispatcher(RequestDispatcher dispatcher, CacheControl cacheControl) {
         this.dispatcher = dispatcher;
         this.cacheControl = cacheControl;
     }

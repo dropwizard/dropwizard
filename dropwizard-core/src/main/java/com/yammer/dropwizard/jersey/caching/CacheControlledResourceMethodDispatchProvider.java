@@ -4,7 +4,11 @@ import com.sun.jersey.api.model.AbstractResourceMethod;
 import com.sun.jersey.spi.container.ResourceMethodDispatchProvider;
 import com.sun.jersey.spi.dispatch.RequestDispatcher;
 
+import java.util.concurrent.TimeUnit;
+
 public class CacheControlledResourceMethodDispatchProvider implements ResourceMethodDispatchProvider {
+    private static final int ONE_YEAR_IN_SECONDS = (int) TimeUnit.DAYS.toSeconds(365);
+
     private final ResourceMethodDispatchProvider provider;
 
     public CacheControlledResourceMethodDispatchProvider(ResourceMethodDispatchProvider provider) {
@@ -26,6 +30,9 @@ public class CacheControlledResourceMethodDispatchProvider implements ResourceMe
             cacheControl.setMaxAge((int) control.maxAgeUnit().toSeconds(control.maxAge()));
             cacheControl.setSMaxAge((int) control.sharedMaxAgeUnit()
                                                  .toSeconds(control.sharedMaxAge()));
+            if (control.immutable()) {
+                cacheControl.setMaxAge(ONE_YEAR_IN_SECONDS);
+            }
             return new CacheControlledRequestDispatcher(dispatcher, cacheControl);
         }
         return dispatcher;
