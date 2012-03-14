@@ -10,7 +10,7 @@ import java.lang.annotation.*;
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.PARAMETER, ElementType.METHOD, ElementType.FIELD })
+@Target({ ElementType.PARAMETER, ElementType.FIELD })
 public @interface Auth {
     boolean required() default true;
 }
