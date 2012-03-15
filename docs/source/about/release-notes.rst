@@ -4,6 +4,12 @@
 Release Notes
 #############
 
+.. _rel-0.3.1:
+v0.3.1: Mar 15 2012
+===================
+
+* Fixed debug logging levels for ``Log``.
+
 .. _rel-0.3.0:
 
 v0.3.0: Mar 13 2012
