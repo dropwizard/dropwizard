@@ -139,19 +139,19 @@ public class Log {
 
     public void debug(String message, Object arg) {
         if (isDebugEnabled()) {
-            logger.trace(MessageFormatter.format(message, arg).getMessage());
+            logger.debug(MessageFormatter.format(message, arg).getMessage());
         }
     }
 
     public void debug(String message, Object arg1, Object arg2) {
         if (isDebugEnabled()) {
-            logger.trace(MessageFormatter.format(message, arg1, arg2).getMessage());
+            logger.debug(MessageFormatter.format(message, arg1, arg2).getMessage());
         }
     }
 
     public void debug(String message, Object... args) {
         if (isDebugEnabled()) {
-            logger.trace(MessageFormatter.arrayFormat(message, args).getMessage());
+            logger.debug(MessageFormatter.arrayFormat(message, args).getMessage());
         }
     }
 
