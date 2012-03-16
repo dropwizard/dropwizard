@@ -4,8 +4,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMultimap;
 import com.yammer.dropwizard.tasks.Task;
 import com.yammer.dropwizard.tasks.TaskServlet;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -31,7 +29,7 @@ public class TaskServletTest {
 
     @Before
     public void setUp() throws Exception {
-        Logger.getRootLogger().setLevel(Level.OFF);
+//        Logger.getRootLogger().setLevel(Level.OFF);
     }
 
     @Test

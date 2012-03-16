@@ -34,7 +34,7 @@ public class HttpConfigurationTest {
     @Test
     public void loadsRequestLogConfig() throws Exception {
         assertThat(http.getRequestLogConfiguration().isEnabled(),
-                   is(true));
+                   is(false));
     }
 
     @Test

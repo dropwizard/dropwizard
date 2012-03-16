@@ -3,10 +3,10 @@ package com.yammer.dropwizard.logging;
 // TODO: 10/12/11 <coda> -- test LoggingBean
 // TODO: 10/12/11 <coda> -- document LoggingBean
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
 import com.google.common.collect.Lists;
-import org.apache.log4j.Category;
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.Enumeration;
@@ -17,17 +17,15 @@ import java.util.logging.LoggingMXBean;
 public class LoggingBean implements LoggingMXBean {
     @Override
     public String getLoggerLevel(String loggerName) {
-        return Logger.getLogger(loggerName).getEffectiveLevel().toString();
+        return Log.named(loggerName).getLevel().toString();
     }
 
     @Override
     public List<String> getLoggerNames() {
+        final Logger root = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+
         final List<String> names = Lists.newArrayList();
-        final Enumeration<?> loggers = Logger.getRootLogger()
-                                             .getLoggerRepository()
-                                             .getCurrentLoggers();
-        while (loggers.hasMoreElements()) {
-            final Logger logger = (Logger) loggers.nextElement();
+        for (Logger logger : root.getLoggerContext().getLoggerList()) {
             names.add(logger.getName());
         }
 
@@ -45,15 +43,11 @@ public class LoggingBean implements LoggingMXBean {
     @Override
     public void setLoggerLevel(String loggerName, String levelName) {
         final Level newLevel = Level.toLevel(levelName, Level.INFO);
-        Logger.getLogger(loggerName).setLevel(newLevel);
+        Log.named(loggerName).setLevel(newLevel);
     }
 
     @Override
     public String getParentLoggerName(String loggerName) {
-        final Category parent = Logger.getLogger(loggerName).getParent();
-        if (parent != null) {
-            return parent.getName();
-        }
-        return null;
+        throw new UnsupportedOperationException("Can't determine parents.");
     }
 }

@@ -4,6 +4,29 @@
 Release Notes
 #############
 
+.. _rel-0.4.0:
+
+v0.4.0-SNAPSHOT
+===============
+
+* Switched logging from Log4j__ to Logback__.
+    * Deprecated ``Log#fatal`` methods.
+    * Deprecated Log4j usage.
+    * Removed Log4j JSON support.
+    * Switched file logging to a time-based rotation system with optional GZIP and ZIP compression.
+    * Replaced ``logging.file.filenamePattern`` with ``logging.file.currentLogFilename`` and
+      ``logging.file.archivedLogFilenamePattern``.
+    * Replaced ``logging.file.retainedFileCount`` with ``logging.file.archivedFileCount``.
+    * Moved request logging to use a Logback-backed, time-based rotation system with optional GZIP
+      and ZIP compression.
+    * Replaced ``http.requestLog.filenamePattern`` with ``http.requestLog.currentLogFilename`` and
+      ``http.requestLog.archivedLogFilenamePattern``.
+    * Replaced ``http.requestLog.retainedFileCount`` with ``http.requestLog.archivedFileCount``.
+
+.. __: http://logging.apache.org/log4j/1.2/
+.. __: http://logback.qos.ch/
+
+
 .. _rel-0.3.1:
 
 v0.3.1: Mar 15 2012

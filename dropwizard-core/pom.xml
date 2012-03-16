@@ -16,6 +16,7 @@
         <jetty.version>8.1.2.v20120308</jetty.version>
         <jackson.version>1.9.5</jackson.version>
         <slf4j.version>1.6.4</slf4j.version>
+        <logback.version>1.0.1</logback.version>
     </properties>
 
     <dependencies>
@@ -51,7 +52,7 @@
         </dependency>
         <dependency>
             <groupId>com.yammer.metrics</groupId>
-            <artifactId>metrics-log4j</artifactId>
+            <artifactId>metrics-logback</artifactId>
             <version>${metrics.version}</version>
         </dependency>
         <dependency>
@@ -86,12 +87,22 @@
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
+            <artifactId>jul-to-slf4j</artifactId>
             <version>${slf4j.version}</version>
         </dependency>
         <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+            <version>${logback.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.slf4j</groupId>
-            <artifactId>jul-to-slf4j</artifactId>
+            <artifactId>log4j-over-slf4j</artifactId>
             <version>${slf4j.version}</version>
         </dependency>
         <dependency>

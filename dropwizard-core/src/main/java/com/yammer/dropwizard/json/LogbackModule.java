@@ -1,6 +1,6 @@
 package com.yammer.dropwizard.json;
 
-import org.apache.log4j.Level;
+import ch.qos.logback.classic.Level;
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.Version;
 import org.codehaus.jackson.map.*;
@@ -8,7 +8,7 @@ import org.codehaus.jackson.type.JavaType;
 
 import java.io.IOException;
 
-class Log4jModule extends Module {
+class LogbackModule extends Module {
     private static class LevelDeserializer extends JsonDeserializer<Level> {
         @Override
         public Level deserialize(JsonParser jp,

@@ -1,8 +1,7 @@
 package com.yammer.dropwizard.config;
 
+import ch.qos.logback.classic.Level;
 import com.google.common.collect.ImmutableMap;
-import com.yammer.dropwizard.util.Size;
-import org.apache.log4j.Level;
 import org.codehaus.jackson.annotate.JsonProperty;
 
 import javax.validation.Valid;
@@ -52,16 +51,16 @@ public class LoggingConfiguration {
 
         @NotNull
         @JsonProperty
-        private String filenamePattern = "./logs/example.log";
+        private String currentLogFilename;
 
         @NotNull
         @JsonProperty
-        private Size maxFileSize = Size.megabytes(50);
+        private String archivedLogFilenamePattern;
 
         @Min(1)
         @Max(50)
         @JsonProperty
-        private int retainedFileCount = 5;
+        private int archivedFileCount = 5;
 
         @NotNull
         @JsonProperty
@@ -75,16 +74,16 @@ public class LoggingConfiguration {
             return threshold;
         }
 
-        public String getFilenamePattern() {
-            return filenamePattern;
+        public String getCurrentLogFilename() {
+            return currentLogFilename;
         }
 
-        public Size getMaxFileSize() {
-            return maxFileSize;
+        public int getArchivedFileCount() {
+            return archivedFileCount;
         }
 
-        public int getRetainedFileCount() {
-            return retainedFileCount;
+        public String getArchivedLogFilenamePattern() {
+            return archivedLogFilenamePattern;
         }
 
         public TimeZone getTimeZone() {

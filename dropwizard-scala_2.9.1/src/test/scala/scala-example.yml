@@ -121,16 +121,15 @@ logging:
     # Do not write log statements below this threshold to the file.
     threshold: ALL
 
-    # The file to which statements will be logged. When the log file reaches the maximum size, the
-    # file will be renamed example.log.1, example.log will be truncated, and new statements written
-    # to it.
-    filenamePattern: ./logs/example.log
+    # The file to which statements will be logged.
+    currentLogFilename: ./logs/example.log
 
-    # The maximum size of any log file.
-    maxFileSize: 50MB
+    #  When the log file rolls over, the file will be archived to example-2012-03-15.log.gz,
+    # example.log will be truncated, and new statements written to it.
+    archivedLogFilenamePattern: ./logs/example-%d{HH-mm}.log.gz
 
-    # The maximum number of log files to retain.
-    retainedFileCount: 5
+    # The maximum number of log files to archive.
+    archivedFileCount: 5
 
   # Settings for logging to syslog.
   syslog:

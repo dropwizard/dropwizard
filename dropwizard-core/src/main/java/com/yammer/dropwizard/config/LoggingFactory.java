@@ -1,27 +1,39 @@
 package com.yammer.dropwizard.config;
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.PatternLayout;
+import ch.qos.logback.classic.filter.ThresholdFilter;
+import ch.qos.logback.classic.net.SyslogAppender;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.ConsoleAppender;
+import ch.qos.logback.core.rolling.DefaultTimeBasedFileNamingAndTriggeringPolicy;
+import ch.qos.logback.core.rolling.RollingFileAppender;
+import ch.qos.logback.core.rolling.TimeBasedRollingPolicy;
+import ch.qos.logback.core.spi.FilterAttachable;
 import com.yammer.dropwizard.logging.LogFormatter;
 import com.yammer.dropwizard.logging.LoggingBean;
-import com.yammer.metrics.log4j.InstrumentedAppender;
-import org.apache.log4j.*;
-import org.apache.log4j.net.SyslogAppender;
+import com.yammer.metrics.logback.InstrumentedAppender;
+import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import java.lang.management.ManagementFactory;
 import java.util.Map;
+import java.util.TimeZone;
 
-import static com.yammer.dropwizard.config.LoggingConfiguration.*;
+import static com.yammer.dropwizard.config.LoggingConfiguration.ConsoleConfiguration;
+import static com.yammer.dropwizard.config.LoggingConfiguration.FileConfiguration;
+import static com.yammer.dropwizard.config.LoggingConfiguration.SyslogConfiguration;
 
 // TODO: 11/7/11 <coda> -- document LoggingFactory
 // TODO: 11/7/11 <coda> -- test LoggingFactory
 
 public class LoggingFactory {
     public static void bootstrap() {
-        final ConsoleAppender appender = new ConsoleAppender(new LogFormatter(UTC));
-        appender.setThreshold(Level.WARN);
-        Logger.getRootLogger().addAppender(appender);
+        // initially configure for WARN+ console logging
+        addConsoleAppender(getCleanRoot(), TimeZone.getDefault(), Level.WARN);
     }
 
     private final LoggingConfiguration config;
@@ -35,12 +47,9 @@ public class LoggingFactory {
 
         final Logger root = configureLevels();
 
-        final AsyncAppender appender = new AsyncAppender();
-        root.addAppender(appender);
-
-        configureConsoleLogging(appender);
-        configureFileLogging(appender);
-        configureSyslogLogging(appender);
+        configureConsoleLogging(root);
+        configureFileLogging(root);
+        configureSyslogLogging(root);
 
         final MBeanServer server = ManagementFactory.getPlatformMBeanServer();
         try {
@@ -50,8 +59,14 @@ public class LoggingFactory {
             throw new RuntimeException(e);
         }
 
-        // add in an instrumented null appender to get full logging stats
-        LogManager.getRootLogger().addAppender(new InstrumentedAppender());
+        configureInstrumentation(root);
+    }
+
+    private void configureInstrumentation(Logger root) {
+        final InstrumentedAppender appender = new InstrumentedAppender();
+        appender.setContext(root.getLoggerContext());
+        appender.start();
+        root.addAppender(appender);
     }
 
     private void hijackJDKLogging() {
@@ -63,51 +78,103 @@ public class LoggingFactory {
     }
 
     private Logger configureLevels() {
-        final Logger root = Logger.getRootLogger();
-        root.getLoggerRepository().resetConfiguration();
+        final Logger root = (Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
+        root.getLoggerContext().reset();
         root.setLevel(config.getLevel());
 
         for (Map.Entry<String, Level> entry : config.getLoggers().entrySet()) {
-            Logger.getLogger(entry.getKey()).setLevel(entry.getValue());
+            ((Logger) LoggerFactory.getLogger(entry.getKey())).setLevel(entry.getValue());
         }
 
         return root;
     }
 
-    private void configureSyslogLogging(AsyncAppender appender) {
+    private void configureSyslogLogging(Logger root) {
         final SyslogConfiguration syslog = config.getSyslogConfiguration();
         if (syslog.isEnabled()) {
-            final Layout layout = new PatternLayout("%c: %m");
+            final PatternLayout layout = new PatternLayout();
+            layout.setPattern("%c: %m");
+            layout.start();
+
             final SyslogAppender a = new SyslogAppender();
             a.setLayout(layout);
             a.setSyslogHost(syslog.getHost());
             a.setFacility(syslog.getFacility());
-            a.setThreshold(syslog.getThreshold());
-            appender.addAppender(a);
+            addThresholdFilter(a, syslog.getThreshold());
+            root.addAppender(a);
         }
     }
 
-    private void configureFileLogging(AsyncAppender appender) {
+    private void configureFileLogging(Logger root) {
         final FileConfiguration file = config.getFileConfiguration();
         if (file.isEnabled()) {
-            final RollingFileAppender a = new RollingFileAppender();
-            a.setLayout(new LogFormatter(file.getTimeZone()));
-            a.setAppend(true);
-            a.setFile(file.getFilenamePattern());
-            a.setMaximumFileSize(file.getMaxFileSize().toBytes());
-            a.setMaxBackupIndex(file.getRetainedFileCount());
-            a.setThreshold(file.getThreshold());
-            a.activateOptions();
-            appender.addAppender(a);
+            final DefaultTimeBasedFileNamingAndTriggeringPolicy<ILoggingEvent> triggeringPolicy =
+                    new DefaultTimeBasedFileNamingAndTriggeringPolicy<ILoggingEvent>();
+            triggeringPolicy.setContext(root.getLoggerContext());
+
+            final TimeBasedRollingPolicy<ILoggingEvent> rollingPolicy = new TimeBasedRollingPolicy<ILoggingEvent>();
+            rollingPolicy.setContext(root.getLoggerContext());
+            rollingPolicy.setFileNamePattern(file.getArchivedLogFilenamePattern());
+            rollingPolicy.setTimeBasedFileNamingAndTriggeringPolicy(
+                    triggeringPolicy);
+            triggeringPolicy.setTimeBasedRollingPolicy(rollingPolicy);
+            rollingPolicy.setMaxHistory(file.getArchivedFileCount());
+
+            final LogFormatter formatter = new LogFormatter(root.getLoggerContext(),
+                                                            file.getTimeZone());
+            formatter.start();
+
+            final RollingFileAppender<ILoggingEvent> appender = new RollingFileAppender<ILoggingEvent>();
+            appender.setAppend(true);
+            appender.setContext(root.getLoggerContext());
+            appender.setLayout(formatter);
+            appender.setFile(file.getCurrentLogFilename());
+            appender.setPrudent(false);
+            appender.setRollingPolicy(rollingPolicy);
+            appender.setTriggeringPolicy(triggeringPolicy);
+            addThresholdFilter(appender, file.getThreshold());
+
+            rollingPolicy.setParent(appender);
+            rollingPolicy.start();
+
+            appender.stop();
+            appender.start();
+
+            root.addAppender(appender);
         }
     }
 
-    private void configureConsoleLogging(AsyncAppender appender) {
+    private void configureConsoleLogging(Logger root) {
         final ConsoleConfiguration console = config.getConsoleConfiguration();
         if (console.isEnabled()) {
-            final ConsoleAppender a = new ConsoleAppender(new LogFormatter(console.getTimeZone()));
-            a.setThreshold(console.getThreshold());
-            appender.addAppender(a);
+            addConsoleAppender(root, console.getTimeZone(), console.getThreshold());
         }
+    }
+
+    private static void addConsoleAppender(Logger root, TimeZone timeZone, Level threshold) {
+        final LogFormatter formatter = new LogFormatter(root.getLoggerContext(),
+                                                        timeZone);
+        formatter.start();
+
+        final ConsoleAppender<ILoggingEvent> a = new ConsoleAppender<ILoggingEvent>();
+        a.setContext(root.getLoggerContext());
+        a.setLayout(formatter);
+        addThresholdFilter(a, threshold);
+        a.start();
+
+        root.addAppender(a);
+    }
+
+    private static void addThresholdFilter(FilterAttachable<ILoggingEvent> appender, Level threshold) {
+        final ThresholdFilter filter = new ThresholdFilter();
+        filter.setLevel(threshold.toString());
+        filter.start();
+        appender.addFilter(filter);
+    }
+
+    private static Logger getCleanRoot() {
+        final Logger root = (Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
+        root.detachAndStopAllAppenders();
+        return root;
     }
 }

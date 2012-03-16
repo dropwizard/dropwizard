@@ -1,5 +1,5 @@
 requestLog:
-  enabled: true
+  enabled: false
 gzip:
   enabled: false
 port: 9080

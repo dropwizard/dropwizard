@@ -2,6 +2,10 @@ package com.yammer.dropwizard.jetty;
 
 // TODO: 10/12/11 <coda> -- write tests for AsyncRequestLog
 
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.classic.spi.LoggingEvent;
+import ch.qos.logback.core.FileAppender;
 import com.yammer.dropwizard.logging.Log;
 import org.eclipse.jetty.http.HttpHeaders;
 import org.eclipse.jetty.server.Authentication;
@@ -9,10 +13,8 @@ import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.RequestLog;
 import org.eclipse.jetty.server.Response;
 import org.eclipse.jetty.util.DateCache;
-import org.eclipse.jetty.util.RolloverFileOutputStream;
 import org.eclipse.jetty.util.component.AbstractLifeCycle;
 
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -31,6 +33,7 @@ public class AsyncRequestLog extends AbstractLifeCycle implements RequestLog {
     private static final AtomicInteger THREAD_COUNTER = new AtomicInteger();
     private static final Log LOG = Log.forClass(AsyncRequestLog.class);
     private static final int BATCH_SIZE = 10000;
+    private final FileAppender<ILoggingEvent> appender;
 
     private class Dispatcher implements Runnable {
         private volatile boolean running = true;
@@ -42,10 +45,15 @@ public class AsyncRequestLog extends AbstractLifeCycle implements RequestLog {
                 try {
                     statements.add(queue.take());
                     queue.drainTo(statements, BATCH_SIZE);
+
+                    final LoggingEvent event = new LoggingEvent();
+                    event.setLevel(Level.INFO);
+
                     for (String statement : statements) {
-                        writer.println(statement);
+                        event.setMessage(statement);
+                        appender.doAppend(event);
                     }
-                    writer.flush();
+
                     statements.clear();
                 } catch (InterruptedException ignored) {
                     Thread.currentThread().interrupt();
@@ -58,70 +66,44 @@ public class AsyncRequestLog extends AbstractLifeCycle implements RequestLog {
         }
     }
 
-    private static final ThreadLocal<DateCache> DATE_CACHE = new ThreadLocal<DateCache>() {
-        @Override
-        protected DateCache initialValue() {
-            final DateCache cache = new DateCache("dd/MMM/yyyy:HH:mm:ss Z",
-                                                  Locale.getDefault());
-            cache.setTimeZoneID("UTC");
-            return cache;
-        }
-    };
-
+    @SuppressWarnings("ThreadLocalNotStaticFinal")
+    private final ThreadLocal<DateCache> dateCache;
     private final BlockingQueue<String> queue;
-    private final String filenamePattern;
-    private final int numberOfFilesToRetain;
-    private final Thread dispatchThread;
     private final Dispatcher dispatcher;
-    private PrintWriter writer;
+    private final Thread dispatchThread;
 
-    /**
-     * Creates a new {@link AsyncRequestLog}.
-     *
-     * @param filenamePattern          The filename pattern to which the log statements will be
-     *                                 written. If {@code filenamePattern} contains the string
-     *                                 {@code yyyy_mm_dd}, the file will be rotated every day, with
-     *                                 {@code yyyy_mm_dd} being replaced by the year, month, and
-     *                                 day. If {@code filenamePattern} is {@code null}, statements
-     *                                 will be logged to STDOUT.
-     * @param numberOfFilesToRetain    If {@code filenamePattern} is to be rotated, the number of
-     *                                 total log files (including the active one) to be kept.
-     */
-    public AsyncRequestLog(String filenamePattern, int numberOfFilesToRetain) {
-        this.filenamePattern = filenamePattern;
-        this.numberOfFilesToRetain = numberOfFilesToRetain;
-        this.writer = null;
+    public AsyncRequestLog(FileAppender<ILoggingEvent> appender,
+                           final TimeZone timeZone) {
+
+
         this.queue = new LinkedBlockingQueue<String>();
         this.dispatcher = new Dispatcher();
         this.dispatchThread = new Thread(dispatcher);
         dispatchThread.setName("async-request-log-dispatcher-" + THREAD_COUNTER.incrementAndGet());
         dispatchThread.setDaemon(true);
+
+        this.dateCache = new ThreadLocal<DateCache>() {
+            @Override
+            protected DateCache initialValue() {
+                final DateCache cache = new DateCache("dd/MMM/yyyy:HH:mm:ss Z",
+                                                      Locale.getDefault());
+                cache.setTimeZoneID(timeZone.getID());
+                return cache;
+            }
+        };
+
+        this.appender = appender;
     }
 
-    @Override
-    @SuppressWarnings({"IOResourceOpenedButNotSafelyClosed", "UseOfSystemOutOrSystemErr"})
-    protected void doStart() throws Exception {
-        if (filenamePattern == null) {
-            this.writer = new PrintWriter(System.out);
-        } else {
-            final RolloverFileOutputStream outputStream = new RolloverFileOutputStream(
-                    filenamePattern,
-                    true,
-                    numberOfFilesToRetain,
-                    TimeZone.getTimeZone("UTC"));
-            this.writer = new PrintWriter(outputStream);
-            LOG.info("Opened {}", outputStream.getDatedFilename());
-        }
 
+    @Override
+    protected void doStart() throws Exception {
         dispatchThread.start();
     }
 
     @Override
     protected void doStop() throws Exception {
         dispatcher.stop();
-        if (writer != null) {
-            writer.close();
-        }
     }
 
     @Override
@@ -145,7 +127,7 @@ public class AsyncRequestLog extends AbstractLifeCycle implements RequestLog {
         }
 
         buf.append(" [");
-        buf.append(DATE_CACHE.get().format(request.getTimeStamp()));
+        buf.append(dateCache.get().format(request.getTimeStamp()));
 
         buf.append("] \"");
         buf.append(request.getMethod());

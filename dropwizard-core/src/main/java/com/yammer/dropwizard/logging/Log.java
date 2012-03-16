@@ -1,8 +1,11 @@
 package com.yammer.dropwizard.logging;
 
-import org.apache.log4j.Level;
-import org.apache.log4j.Logger;
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
+import org.slf4j.LoggerFactory;
 import org.slf4j.helpers.MessageFormatter;
+
+import java.util.Locale;
 
 /**
  * A logger class which provides SLF4J-style formatting without SLF4J's less-than-pleasant API.
@@ -26,7 +29,7 @@ public class Log {
      * @return a {@link Log} instance with {@code klass}'s name
      */
     public static Log forClass(Class<?> klass) {
-        return forLog4jLogger(Logger.getLogger(klass));
+        return forSlf4jLogger(LoggerFactory.getLogger(klass));
     }
 
     /**
@@ -36,7 +39,7 @@ public class Log {
      * @return a {@link Log} instance with the given name
      */
     public static Log named(String name) {
-        return forLog4jLogger(Logger.getLogger(name));
+        return forSlf4jLogger(LoggerFactory.getLogger(name));
     }
 
     /**
@@ -45,8 +48,8 @@ public class Log {
      * @param logger    a Log4j {@link Logger}
      * @return a {@link Log} instance with the same name as {@code logger}
      */
-    public static Log forLog4jLogger(Logger logger) {
-        return new Log(logger);
+    public static Log forLog4jLogger(org.apache.log4j.Logger logger) {
+        return named(logger.getName());
     }
 
     /**
@@ -57,7 +60,7 @@ public class Log {
      * @return a {@link Log} instance with the same name as {@code logger}
      */
     public static Log forSlf4jLogger(org.slf4j.Logger logger) {
-        return named(logger.getName());
+        return new Log((Logger) logger);
     }
 
     /**
@@ -79,6 +82,15 @@ public class Log {
 
     public void setLevel(Level level) {
         logger.setLevel(level);
+    }
+
+    @Deprecated
+    public void setLevel(org.apache.log4j.Level level) {
+        final String s = level.toString().toUpperCase(Locale.US);
+        if ("FATAL".equals(s)) {
+            logger.setLevel(Level.ERROR);
+        }
+        logger.setLevel(Level.toLevel(s));
     }
 
     // TRACE
@@ -281,31 +293,42 @@ public class Log {
 
     // FATAL
 
+    @Deprecated
     public void fatal(String message) {
-        logger.fatal(message);
+        logger.error(message);
     }
 
+    @Deprecated
     public void fatal(String message, Object arg) {
-        logger.fatal(MessageFormatter.format(message, arg).getMessage());
+        logger.error(MessageFormatter.format(message, arg).getMessage());
     }
 
+    @Deprecated
     public void fatal(String message, Object arg1, Object arg2) {
-        logger.fatal(MessageFormatter.format(message, arg1, arg2).getMessage());
+        logger.error(MessageFormatter.format(message, arg1, arg2).getMessage());
     }
 
+    @Deprecated
     public void fatal(String message, Object... args) {
-        logger.fatal(MessageFormatter.arrayFormat(message, args).getMessage());
+        logger.error(MessageFormatter.arrayFormat(message, args).getMessage());
     }
 
+    @Deprecated
     public void fatal(Throwable e, String message, Object arg) {
-        logger.fatal(MessageFormatter.format(message, arg).getMessage(), e);
+        logger.error(MessageFormatter.format(message, arg).getMessage(), e);
     }
 
+    @Deprecated
     public void fatal(Throwable e, String message, Object arg1, Object arg2) {
-        logger.fatal(MessageFormatter.format(message, arg1, arg2).getMessage(), e);
+        logger.error(MessageFormatter.format(message, arg1, arg2).getMessage(), e);
     }
 
+    @Deprecated
     public void fatal(Throwable e, String message, Object... args) {
-        logger.fatal(MessageFormatter.arrayFormat(message, args).getMessage(), e);
+        logger.error(MessageFormatter.arrayFormat(message, args).getMessage(), e);
+    }
+
+    public Level getLevel() {
+        return logger.getEffectiveLevel();
     }
 }

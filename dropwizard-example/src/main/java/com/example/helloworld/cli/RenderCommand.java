@@ -40,7 +40,10 @@ public class RenderCommand extends ConfiguredCommand<HelloWorldConfiguration> {
         }
 
         for (String name : params.getArgs()) {
-            LOG.info("{} => {}", name, template.render(Optional.of(name)));
+            for (int i = 0; i < 1000; i++) {
+                LOG.info("{} => {}", name, template.render(Optional.of(name)));
+                Thread.sleep(1000);
+            }
         }
     }
 }

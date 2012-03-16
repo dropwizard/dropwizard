@@ -1,3 +1,4 @@
 enabled: true
-filenamePattern: "/var/log/dingo/logs/yyyy_mm_dd.log"
-retainedFileCount: 20
+currentLogFilename: "/var/log/dingo/dingo.log"
+archivedLogFilenamePattern: "/var/log/dingo/dingo-%d.log.zip"
+archivedFileCount: 5

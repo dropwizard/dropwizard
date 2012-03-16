@@ -1,12 +1,11 @@
 package com.yammer.dropwizard.config.tests;
 
+import ch.qos.logback.classic.Level;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.Resources;
 import com.yammer.dropwizard.config.ConfigurationFactory;
 import com.yammer.dropwizard.config.LoggingConfiguration;
-import com.yammer.dropwizard.util.Size;
 import com.yammer.dropwizard.validation.Validator;
-import org.apache.log4j.Level;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -61,13 +60,13 @@ public class LoggingConfigurationTest {
         assertThat(file.getThreshold(),
                    is(Level.ALL));
         
-        assertThat(file.getFilenamePattern(),
+        assertThat(file.getCurrentLogFilename(),
                    is("./logs/example.log"));
 
-        assertThat(file.getMaxFileSize(),
-                   is(Size.megabytes(50)));
+        assertThat(file.getArchivedLogFilenamePattern(),
+                   is("./logs/example-%d.log.gz"));
 
-        assertThat(file.getRetainedFileCount(),
+        assertThat(file.getArchivedFileCount(),
                    is(5));
     }
 }
