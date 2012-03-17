@@ -110,7 +110,10 @@ public class LoggingConfiguration {
 
         @NotNull
         @JsonProperty
-        @Pattern(regexp = "(auth|authpriv|daemon|cron|ftp|lpr|kern|mail|news|syslog|user|uucp|local[0-7])")
+        @Pattern(
+                regexp = "(auth|authpriv|daemon|cron|ftp|lpr|kern|mail|news|syslog|user|uucp|local[0-7])",
+                message = "must be a valid syslog facility"
+        )
         private String facility = "local0";
 
         public boolean isEnabled() {
