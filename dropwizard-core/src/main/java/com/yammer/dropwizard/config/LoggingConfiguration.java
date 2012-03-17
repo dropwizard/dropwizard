@@ -2,6 +2,7 @@ package com.yammer.dropwizard.config;
 
 import ch.qos.logback.classic.Level;
 import com.google.common.collect.ImmutableMap;
+import com.yammer.dropwizard.validation.ValidationMethod;
 import org.codehaus.jackson.annotate.JsonProperty;
 
 import javax.validation.Valid;
@@ -49,11 +50,9 @@ public class LoggingConfiguration {
         @JsonProperty
         private Level threshold = Level.ALL;
 
-        @NotNull
         @JsonProperty
         private String currentLogFilename;
 
-        @NotNull
         @JsonProperty
         private String archivedLogFilenamePattern;
 
@@ -65,6 +64,12 @@ public class LoggingConfiguration {
         @NotNull
         @JsonProperty
         private TimeZone timeZone = UTC;
+
+        @ValidationMethod(message = "must have logging.file.currentLogFilename and " +
+                "logging.file.archivedLogFilenamePattern if logging.file.enabled is true")
+        public boolean isConfigured() {
+            return !enabled || ((currentLogFilename != null) && (archivedLogFilenamePattern != null));
+        }
 
         public boolean isEnabled() {
             return enabled;
