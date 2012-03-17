@@ -46,10 +46,9 @@ public class AsyncRequestLog extends AbstractLifeCycle implements RequestLog {
                     statements.add(queue.take());
                     queue.drainTo(statements, BATCH_SIZE);
 
-                    final LoggingEvent event = new LoggingEvent();
-                    event.setLevel(Level.INFO);
-
                     for (String statement : statements) {
+                        final LoggingEvent event = new LoggingEvent();
+                        event.setLevel(Level.INFO);
                         event.setMessage(statement);
                         appender.doAppend(event);
                     }
