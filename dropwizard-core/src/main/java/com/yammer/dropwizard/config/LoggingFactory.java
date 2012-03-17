@@ -103,6 +103,7 @@ public class LoggingFactory {
             a.setSyslogHost(syslog.getHost());
             a.setFacility(syslog.getFacility());
             addThresholdFilter(a, syslog.getThreshold());
+            a.start();
             root.addAppender(a);
         }
     }
