@@ -93,10 +93,12 @@ public class LoggingFactory {
         final SyslogConfiguration syslog = config.getSyslogConfiguration();
         if (syslog.isEnabled()) {
             final PatternLayout layout = new PatternLayout();
+            layout.setContext(root.getLoggerContext());
             layout.setPattern("%c: %m");
             layout.start();
 
             final SyslogAppender a = new SyslogAppender();
+            a.setContext(root.getLoggerContext());
             a.setLayout(layout);
             a.setSyslogHost(syslog.getHost());
             a.setFacility(syslog.getFacility());
