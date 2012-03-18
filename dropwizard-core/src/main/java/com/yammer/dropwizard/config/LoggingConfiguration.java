@@ -32,12 +32,24 @@ public class LoggingConfiguration {
             return enabled;
         }
 
+        public void setEnabled(boolean enabled) {
+            this.enabled = enabled;
+        }
+
         public Level getThreshold() {
             return threshold;
         }
 
+        public void setThreshold(Level threshold) {
+            this.threshold = threshold;
+        }
+
         public TimeZone getTimeZone() {
             return timeZone;
+        }
+
+        public void setTimeZone(TimeZone timeZone) {
+            this.timeZone = timeZone;
         }
     }
 

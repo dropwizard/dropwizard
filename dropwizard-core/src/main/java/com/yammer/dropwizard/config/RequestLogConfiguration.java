@@ -1,53 +1,41 @@
 package com.yammer.dropwizard.config;
 
-import com.yammer.dropwizard.validation.ValidationMethod;
 import org.codehaus.jackson.annotate.JsonProperty;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+
 import java.util.TimeZone;
+
+import static com.yammer.dropwizard.config.LoggingConfiguration.*;
 
 @SuppressWarnings({ "FieldMayBeFinal", "FieldCanBeLocal" })
 public class RequestLogConfiguration {
+    @NotNull
     @JsonProperty
-    private boolean enabled = false;
-
-    @Min(1)
-    @Max(50)
-    @JsonProperty
-    private int archivedFileCount = 5;
-
-    @JsonProperty
-    private String currentLogFilename;
-
-    @JsonProperty
-    private String archivedLogFilenamePattern;
+    private ConsoleConfiguration console = new ConsoleConfiguration();
 
     @NotNull
     @JsonProperty
-    private TimeZone timeZone = LoggingConfiguration.UTC;
+    private FileConfiguration file = new FileConfiguration();
 
-    @ValidationMethod(message = "must have a http.requestLog.currentLogFilename and " +
-            "http.requestLog.archivedLogFilenamePattern if http.requestLog.enabled is true")
-    public boolean isConfigured() {
-        return !enabled || ((currentLogFilename != null) && (archivedLogFilenamePattern != null));
+    @NotNull
+    @JsonProperty
+    private SyslogConfiguration syslog = new SyslogConfiguration();
+
+    @NotNull
+    @JsonProperty
+    private TimeZone timeZone = UTC;
+
+    public ConsoleConfiguration getConsoleConfiguration() {
+        return console;
     }
 
-    public boolean isEnabled() {
-        return enabled;
+    public FileConfiguration getFileConfiguration() {
+        return file;
     }
 
-    public String getCurrentLogFilename() {
-        return currentLogFilename;
-    }
-
-    public int getArchivedFileCount() {
-        return archivedFileCount;
-    }
-
-    public String getArchivedLogFilenamePattern() {
-        return archivedLogFilenamePattern;
+    public SyslogConfiguration getSyslogConfiguration() {
+        return syslog;
     }
 
     public TimeZone getTimeZone() {

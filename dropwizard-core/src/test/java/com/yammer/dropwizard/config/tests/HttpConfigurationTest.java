@@ -32,12 +32,6 @@ public class HttpConfigurationTest {
     }
 
     @Test
-    public void loadsRequestLogConfig() throws Exception {
-        assertThat(http.getRequestLogConfiguration().isEnabled(),
-                   is(false));
-    }
-
-    @Test
     public void loadsContextParams() throws Exception {
         assertThat(http.getContextParameters(), 
                    is(ImmutableMap.of("param", "value")));
