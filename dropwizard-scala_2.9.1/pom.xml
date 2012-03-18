@@ -137,10 +137,10 @@
                     <launchers>
                         <launcher>
                             <id>server</id>
-                            <mainClass>com.yammer.com.yammer.dropwizard.examples.ExampleService</mainClass>
+                            <mainClass>com.yammer.dropwizard.examples.ExampleService</mainClass>
                             <args>
                                 <arg>server</arg>
-                                <arg>src/test/resources/example.conf</arg>
+                                <arg>src/test/resources/scala-example.yml</arg>
                             </args>
                         </launcher>
                     </launchers>
