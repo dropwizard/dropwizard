@@ -3,8 +3,8 @@ package com.yammer.dropwizard.servlets;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.google.common.hash.Hashing;
 import com.google.common.io.Resources;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.eclipse.jetty.http.MimeTypes;
 import org.eclipse.jetty.io.Buffer;
 
@@ -63,7 +63,7 @@ public class AssetServlet extends HttpServlet {
 
             final byte[] resource = cache.getUnchecked(req.getRequestURI());
 
-            final String etag = DigestUtils.md5Hex(resource);
+            final String etag = Hashing.murmur3_128().hashBytes(resource).toString();
 
             if ((req.getHeader("If-None-Match") != null) && (req.getHeader("If-None-Match").equals(etag))) {
                 resp.sendError(HttpServletResponse.SC_NOT_MODIFIED);
