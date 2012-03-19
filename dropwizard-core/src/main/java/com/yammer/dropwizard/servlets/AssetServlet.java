@@ -4,6 +4,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.io.Resources;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.eclipse.jetty.http.MimeTypes;
 import org.eclipse.jetty.io.Buffer;
 
@@ -59,7 +60,18 @@ public class AssetServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req,
                          HttpServletResponse resp) throws ServletException, IOException {
         try {
+
             final byte[] resource = cache.getUnchecked(req.getRequestURI());
+
+            final String etag = DigestUtils.md5Hex(resource);
+
+            if ((req.getHeader("If-None-Match") != null) && (req.getHeader("If-None-Match").equals(etag))) {
+                resp.sendError(HttpServletResponse.SC_NOT_MODIFIED);
+                return;
+            }
+
+            resp.setHeader("ETag", etag);
+
             final Buffer mimeType = mimeTypes.getMimeByExtension(req.getRequestURI());
             if (mimeType == null) {
                 resp.setContentType(DEFAULT_MIME_TYPE);
