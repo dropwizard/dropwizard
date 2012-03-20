@@ -18,10 +18,11 @@ v0.4.0-SNAPSHOT
       ``logging.file.archivedLogFilenamePattern``.
     * Replaced ``logging.file.retainedFileCount`` with ``logging.file.archivedFileCount``.
     * Moved request logging to use a Logback-backed, time-based rotation system with optional GZIP
-      and ZIP compression.
-    * Replaced ``http.requestLog.filenamePattern`` with ``http.requestLog.currentLogFilename`` and
-      ``http.requestLog.archivedLogFilenamePattern``.
-    * Replaced ``http.requestLog.retainedFileCount`` with ``http.requestLog.archivedFileCount``.
+      and ZIP compression. ``http.requestLog`` now has ``console``, ``file``, and ``syslog``
+      sections.
+* Fixed validation errors for logging configuration.
+* Added ``ResourceTest#addProvider(Class<?>)``.
+* Added ``ETag`` and ``Last-Modified`` support to ``AssetServlet``.
 
 .. __: http://logging.apache.org/log4j/1.2/
 .. __: http://logback.qos.ch/
