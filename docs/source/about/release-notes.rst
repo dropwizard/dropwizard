@@ -10,16 +10,18 @@ v0.4.0-SNAPSHOT
 ===============
 
 * Switched logging from Log4j__ to Logback__.
-    * Deprecated ``Log#fatal`` methods.
-    * Deprecated Log4j usage.
-    * Removed Log4j JSON support.
-    * Switched file logging to a time-based rotation system with optional GZIP and ZIP compression.
-    * Replaced ``logging.file.filenamePattern`` with ``logging.file.currentLogFilename`` and
-      ``logging.file.archivedLogFilenamePattern``.
-    * Replaced ``logging.file.retainedFileCount`` with ``logging.file.archivedFileCount``.
-    * Moved request logging to use a Logback-backed, time-based rotation system with optional GZIP
-      and ZIP compression. ``http.requestLog`` now has ``console``, ``file``, and ``syslog``
-      sections.
+
+  * Deprecated ``Log#fatal`` methods.
+  * Deprecated Log4j usage.
+  * Removed Log4j JSON support.
+  * Switched file logging to a time-based rotation system with optional GZIP and ZIP compression.
+  * Replaced ``logging.file.filenamePattern`` with ``logging.file.currentLogFilename`` and
+    ``logging.file.archivedLogFilenamePattern``.
+  * Replaced ``logging.file.retainedFileCount`` with ``logging.file.archivedFileCount``.
+  * Moved request logging to use a Logback-backed, time-based rotation system with optional GZIP
+    and ZIP compression. ``http.requestLog`` now has ``console``, ``file``, and ``syslog``
+    sections.
+
 * Fixed validation errors for logging configuration.
 * Added ``ResourceTest#addProvider(Class<?>)``.
 * Added ``ETag`` and ``Last-Modified`` support to ``AssetServlet``.
