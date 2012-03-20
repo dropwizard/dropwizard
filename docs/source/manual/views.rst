@@ -6,7 +6,7 @@ Dropwizard Views
 
 .. highlight:: text
 
-.. rubric:: The ``dropwizard-view`` module provides you with simple, fast HTML views using the
+.. rubric:: The ``dropwizard-views`` module provides you with simple, fast HTML views using the
             Freemarker_ templating library.
 
 .. _Freemarker: http://freemarker.sourceforge.net/
