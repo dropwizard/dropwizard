@@ -415,6 +415,9 @@ A few items of note:
 
     tail -f dw.log | grep -B 1 '^\!'
 
+Configuration
+-------------
+
 You can specify a default logger level and even override the levels of
 other loggers in your YAML configuration file:
 
@@ -428,6 +431,12 @@ other loggers in your YAML configuration file:
       loggers:
         # Overrides the level of com.example.dw.Thing and sets it to DEBUG.
         "com.example.dw.Thing": DEBUG
+
+.. warning::
+
+    YAML, in an attempt to be more helpful, uses ``off`` as an alias for the boolean value ``false``
+    (likewise, ``on`` turns into ``true``). If you'd like to specify ``OFF`` as a logging level,
+    you'll need to use quotes to convince YAML to intend to disable logging: ``"OFF"``.
 
 .. _man-core-logging-console:
 
