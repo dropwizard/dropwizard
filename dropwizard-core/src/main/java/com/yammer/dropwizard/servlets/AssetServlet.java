@@ -3,8 +3,8 @@ package com.yammer.dropwizard.servlets;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.google.common.hash.Hashing;
 import com.google.common.io.Resources;
-import com.yammer.dropwizard.core.CachedAsset;
 import org.eclipse.jetty.http.MimeTypes;
 import org.eclipse.jetty.io.Buffer;
 
@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -49,6 +50,40 @@ public class AssetServlet extends HttpServlet {
 
             return cachedAsset;
         }
+    }
+
+    private static class CachedAsset {
+
+        private final byte[] resource;
+
+        private final String etag;
+
+        private final Date lastModified;
+
+        public CachedAsset(byte[] resource) {
+            this.resource = resource.clone();
+
+            this.etag = Hashing.murmur3_128().hashBytes(resource).toString();
+
+            // lazy and non-aggressive lastModified impl
+            // zero out the millis since the date we get back from If-Modified-Since will not have them
+            Calendar now = Calendar.getInstance();
+            now.set(Calendar.MILLISECOND, 0);
+            this.lastModified = now.getTime();
+        }
+
+        public byte[] getResource() {
+            return resource.clone();
+        }
+
+        public String getEtag() {
+            return etag;
+        }
+
+        public Date getLastModified() {
+            return new Date(lastModified.getTime());
+        }
+
     }
 
     private static final String DEFAULT_MIME_TYPE = "text/html";
