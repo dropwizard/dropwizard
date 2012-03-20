@@ -15,12 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URL;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
-import java.util.TimeZone;
 
 public class AssetServlet extends HttpServlet {
     private static final long serialVersionUID = 6393345594784987908L;
@@ -58,7 +53,7 @@ public class AssetServlet extends HttpServlet {
 
         private final String etag;
 
-        private final Date lastModified;
+        private final long lastModifiedTime;
 
         public CachedAsset(byte[] resource) {
             this.resource = resource.clone();
@@ -69,7 +64,7 @@ public class AssetServlet extends HttpServlet {
             // zero out the millis since the date we get back from If-Modified-Since will not have them
             Calendar now = Calendar.getInstance();
             now.set(Calendar.MILLISECOND, 0);
-            this.lastModified = now.getTime();
+            this.lastModifiedTime = now.getTime().getTime();
         }
 
         public byte[] getResource() {
@@ -80,8 +75,8 @@ public class AssetServlet extends HttpServlet {
             return etag;
         }
 
-        public Date getLastModified() {
-            return new Date(lastModified.getTime());
+        public long getLastModifiedTime() {
+            return lastModifiedTime;
         }
 
     }
@@ -110,30 +105,19 @@ public class AssetServlet extends HttpServlet {
 
             CachedAsset cachedAsset = cache.getUnchecked(req.getRequestURI());
 
-            if ((req.getHeader("If-None-Match") != null) && (req.getHeader("If-None-Match").equals(cachedAsset.getEtag()))) {
+            if ((req.getHeader("If-None-Match") != null) &&
+                    (req.getHeader("If-None-Match").equals(cachedAsset.getEtag()))) {
                 resp.sendError(HttpServletResponse.SC_NOT_MODIFIED);
                 return;
             }
 
-            // http://tools.ietf.org/html/rfc2822
-            // Tue, 15 Nov 1994 12:45:26 GMT
-            final SimpleDateFormat httpDateFormat = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
-            httpDateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
-
-            if (req.getHeader("If-Modified-Since") != null) {
-                try {
-                    final Date modifiedSince = httpDateFormat.parse(req.getHeader("If-Modified-Since"));
-                    if (cachedAsset.getLastModified().getTime() <= modifiedSince.getTime()) {
-                        resp.sendError(HttpServletResponse.SC_NOT_MODIFIED);
-                        return;
-                    }
-                }
-                catch (ParseException e) {
-                    // ignored
-                }
+            if ((req.getHeader("If-Modified-Since") != null) &&
+                    (cachedAsset.getLastModifiedTime() <= req.getDateHeader("If-Modified-Since"))) {
+                resp.sendError(HttpServletResponse.SC_NOT_MODIFIED);
+                return;
             }
 
-            resp.setHeader("Last-Modified", httpDateFormat.format(cachedAsset.getLastModified()));
+            resp.setDateHeader("Last-Modified", cachedAsset.getLastModifiedTime());
             resp.setHeader("ETag", cachedAsset.getEtag());
 
             final Buffer mimeType = mimeTypes.getMimeByExtension(req.getRequestURI());
