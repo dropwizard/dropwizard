@@ -23,6 +23,7 @@ import com.yammer.dropwizard.json.Json;
  */
 public abstract class ResourceTest {
     private final Set<Object> singletons = Sets.newHashSet();
+    private final Set<Class<?>> providers = Sets.newHashSet();
     private final List<Module> modules = Lists.newArrayList();
 
     private JerseyTest test;
@@ -31,6 +32,10 @@ public abstract class ResourceTest {
 
     protected void addResource(Object resource) {
         singletons.add(resource);
+    }
+
+    public void addProvider(Class<?> klass) {
+        providers.add(klass);
     }
 
     protected void addJacksonModule(Module module) {
@@ -50,6 +55,9 @@ public abstract class ResourceTest {
                 final DropwizardResourceConfig config = new DropwizardResourceConfig();
                 for (Object provider : JavaBundle.DEFAULT_PROVIDERS) { // sorry, Scala folks
                     config.getSingletons().add(provider);
+                }
+                for (Class<?> provider : providers) {
+                    config.getClasses().add(provider);
                 }
                 Json json = new Json();
                 for (Module module : modules) {
