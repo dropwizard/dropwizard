@@ -17,7 +17,7 @@ class LogbackModule extends Module {
         }
     }
 
-    private static class Log4jDeserializers extends Deserializers.Base {
+    private static class LogbackDeserializers extends Deserializers.Base {
         @Override
         public JsonDeserializer<?> findBeanDeserializer(JavaType type,
                                                         DeserializationConfig config,
@@ -44,6 +44,6 @@ class LogbackModule extends Module {
 
     @Override
     public void setupModule(SetupContext context) {
-        context.addDeserializers(new Log4jDeserializers());
+        context.addDeserializers(new LogbackDeserializers());
     }
 }
