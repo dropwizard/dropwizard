@@ -54,4 +54,5 @@
     <Class name="~com\.yammer\.dropwizard\.providers\.OauthTokenInjectable.*"/>
     <Class name="~com\.yammer\.dropwizard\.providers\.OauthTokenProvider.*"/>
     <Class name="~com\.yammer\.dropwizard\.ScalaService.*"/>
+    <Class name="~com\.yammer\.dropwizard\.Logging.*" />
 </FindBugsFilter>
