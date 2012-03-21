@@ -1,6 +1,6 @@
 package com.yammer.dropwizard.examples
 
-import com.codahale.logula.Logging
+import com.yammer.dropwizard.Logging
 import com.yammer.dropwizard.lifecycle.Managed
 
 class StartableObject(template: String) extends Managed with Logging {

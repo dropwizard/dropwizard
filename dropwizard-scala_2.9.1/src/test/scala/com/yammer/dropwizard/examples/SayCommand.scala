@@ -2,7 +2,7 @@ package com.yammer.dropwizard.examples
 
 import com.yammer.dropwizard.cli.ConfiguredCommand
 import org.apache.commons.cli.{Options, CommandLine}
-import com.codahale.logula.Logging
+import com.yammer.dropwizard.Logging
 import com.yammer.dropwizard.AbstractService
 
 class SayCommand extends ConfiguredCommand[ExampleConfiguration]("say", "Prints out the saying to console") with Logging {
