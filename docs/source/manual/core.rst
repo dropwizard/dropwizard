@@ -325,7 +325,7 @@ Logging
 =======
 
 Dropwizard uses Logback_ for its logging backend. It provides an slf4j_ implementation, and even
-routes all ``java.util.logging`` usage through Logback.
+routes all ``java.util.logging``, Log4j, and Apache Commons Logging usage through Logback.
 
 .. _Logback: http://logback.qos.ch/
 .. _slf4j: http://www.slf4j.org/
@@ -425,10 +425,13 @@ other loggers in your YAML configuration file:
 
     # Logging settings.
     logging:
+
       # The default level of all loggers. Can be OFF, FATAL, ERROR, WARN, INFO, DEBUG, TRACE, or ALL.
       level: INFO
+
       # Logger-specific levels.
       loggers:
+
         # Overrides the level of com.example.dw.Thing and sets it to DEBUG.
         "com.example.dw.Thing": DEBUG
 
@@ -443,11 +446,14 @@ editing the ``logging`` section of your YAML configuration file:
 .. code-block:: yaml
 
     logging:
+
       # ...
       # Settings for logging to stdout.
       console:
+
         # If true, write log statements to stdout.
         enabled: true
+
         # Do not display log statements below this threshold to stdout.
         threshold: ALL
 
@@ -462,21 +468,30 @@ configuration for your production environment:
 .. code-block:: yaml
 
     logging:
+
       # ...
       # Settings for logging to a file.
       file:
+
         # If true, write log statements to a file.
         enabled: false
+
         # Do not write log statements below this threshold to the file.
         threshold: ALL
-        # The file to which statements will be logged. When the log file reaches the maximum size, the
-        # file will be renamed example.log.1, example.log will be truncated, and new statements written
-        # to it.
-        filenamePattern: ./logs/example.log
-        # The maximum size of any log file. Can also be "1GiB" etc
-        maxFileSize: 50MB
-        # The maximum number of log files to retain.
-        retainedFileCount: 5
+
+        # The file to which current statements will be logged.
+        currentLogFilename: ./logs/example.log
+
+        # When the log file rotates, the archived log will be renamed to this and gzipped. The
+        # %d is replaced with the previous day (yyyy-MM-dd). Custom rolling windows can be created
+        # by passing a SimpleDateFormat-compatible format as an argument: "%d{yyyy-MM-dd-hh}".
+        archivedLogFilenamePattern: ./logs/example-%d.log.gz
+
+        # The number of archived files to keep.
+        archivedFileCount: 5
+
+        # The timezone used to format dates. HINT: USE THE DEFAULT, UTC.
+        timeZone: UTC
 
 .. _man-core-logging-syslog:
 
@@ -493,15 +508,22 @@ Finally, Dropwizard can also log statements to syslog.
 .. code-block:: yaml
 
     logging:
+
       # ...
       # Settings for logging to syslog.
       syslog:
+
         # If true, write log statements to syslog.
         enabled: false
+
+        # Do not write log statements below this threshold to syslog.
+        threshold: ALL
+
         # The hostname of the syslog server to which statements will be sent.
         # N.B.: If this is the local host, the local syslog instance will need to be configured to
         # listen on an inet socket, not just a Unix socket.
         host: localhost
+
         # The syslog facility to which statements will be sent.
         facility: local0
 
