@@ -2,7 +2,7 @@ package com.yammer.dropwizard.examples
 
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.{POST, Consumes, Path}
-import com.codahale.logula.Logging
+import com.yammer.dropwizard.Logging
 import com.yammer.metrics.annotation.Timed
 
 @Path("/upload")
