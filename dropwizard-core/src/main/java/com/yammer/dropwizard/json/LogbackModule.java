@@ -13,7 +13,18 @@ class LogbackModule extends Module {
         @Override
         public Level deserialize(JsonParser jp,
                                  DeserializationContext ctxt) throws IOException {
-            return Level.toLevel(jp.getText());
+
+            final String text = jp.getText();
+
+            if ("false".equalsIgnoreCase(text)) {
+                return Level.OFF;
+            }
+
+            if ("true".equalsIgnoreCase(text)) {
+                return Level.ALL;
+            }
+
+            return Level.toLevel(text, Level.INFO);
         }
     }
 
