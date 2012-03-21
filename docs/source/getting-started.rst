@@ -82,7 +82,7 @@ we've come to rely on:
 
 * Guava_, which, in addition to highly optimized immutable data structures, provides a growing
   number of classes to speed up development in Java.
-* Log4j_ and slf4j_ for performant logging.
+* Logback_ and slf4j_ for performant logging.
 * `Hibernate Validator`_, the `JSR-303`_ reference implementation, provides an easy, declarative
   framework for validating user input and generating helpful, internationalizable error messages.
 * The `Apache HttpClient`_ and Jersey_ client libraries allow for both low- and high-level
@@ -91,7 +91,7 @@ we've come to rely on:
 * Freemarker_ is a simple template system for more user-facing services.
 
 .. _Guava: http://code.google.com/p/guava-libraries/
-.. _Log4j: http://logging.apache.org/log4j/1.2/
+.. _Logback: http://logback.qos.ch/
 .. _slf4j: http://www.slf4j.org/
 .. _Hibernate Validator: http://www.hibernate.org/subprojects/validator.html
 .. _JSR-303: http://jcp.org/en/jsr/detail?id=303

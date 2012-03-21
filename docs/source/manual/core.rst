@@ -16,7 +16,7 @@ It includes:
 * Jackson, the best JSON library for the JVM.
 * Metrics, `Yammer's`__ own library for application metrics.
 * Guava, Google's excellent utility library.
-* Log4j, Java's most widely-used logging framework.
+* Logback, the successor to Log4j, Java's most widely-used logging framework.
 * Hibernate Validator, the reference implementation of the Java Bean Validation standard.
 
 .. __: https://www.yammer.com
@@ -324,10 +324,10 @@ port. For example::
 Logging
 =======
 
-Dropwizard uses Log4j_ for its logging backend. It provides an slf4j_ implementation, and even
-routes all ``java.util.logging`` usage through log4j.
+Dropwizard uses Logback_ for its logging backend. It provides an slf4j_ implementation, and even
+routes all ``java.util.logging`` usage through Logback.
 
-.. _Log4j: http://logging.apache.org/log4j/1.2/
+.. _Logback: http://logback.qos.ch/
 .. _slf4j: http://www.slf4j.org/
 
 .. _man-core-logging-class:
