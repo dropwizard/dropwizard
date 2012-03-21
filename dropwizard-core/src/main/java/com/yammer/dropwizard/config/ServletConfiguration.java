@@ -83,7 +83,12 @@ public class ServletConfiguration {
      * @return {@code this}
      */
     public ServletConfiguration addUrlPattern(String urlPattern) {
-        mappings.put(checkNotNull(urlPattern), holder);
+        try {
+            mappings.put(checkNotNull(urlPattern), holder);
+        } catch (IllegalArgumentException ignored) {
+                throw new IllegalArgumentException("Can't map this servlet to " + urlPattern +
+                                                             ", another servlet is already mapped to that.");
+        }
         return this;
     }
 
