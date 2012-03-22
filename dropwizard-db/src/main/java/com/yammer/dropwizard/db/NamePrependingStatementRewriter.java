@@ -1,11 +1,17 @@
 package com.yammer.dropwizard.db;
 
 import org.skife.jdbi.v2.Binding;
-import org.skife.jdbi.v2.ColonPrefixNamedParamStatementRewriter;
 import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.tweak.RewrittenStatement;
+import org.skife.jdbi.v2.tweak.StatementRewriter;
 
-class NamePrependingStatementRewriter extends ColonPrefixNamedParamStatementRewriter {
+class NamePrependingStatementRewriter implements StatementRewriter {
+    private final StatementRewriter rewriter;
+
+    NamePrependingStatementRewriter(StatementRewriter rewriter) {
+        this.rewriter = rewriter;
+    }
+
     @Override
     public RewrittenStatement rewrite(String sql, Binding params, StatementContext ctx) {
         if ((ctx.getSqlObjectType() != null) && (ctx.getSqlObjectMethod() != null)) {
@@ -18,8 +24,8 @@ class NamePrependingStatementRewriter extends ColonPrefixNamedParamStatementRewr
             query.append(ctx.getSqlObjectMethod().getName());
             query.append(" */ ");
             query.append(sql);
-            return super.rewrite(query.toString(), params, ctx);
+            return rewriter.rewrite(query.toString(), params, ctx);
         }
-        return super.rewrite(sql, params, ctx);
+        return rewriter.rewrite(sql, params, ctx);
     }
 }

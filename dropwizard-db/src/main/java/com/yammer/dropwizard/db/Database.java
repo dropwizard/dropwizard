@@ -8,6 +8,7 @@ import com.yammer.dropwizard.lifecycle.Managed;
 import com.yammer.metrics.Metrics;
 import com.yammer.metrics.jdbi.InstrumentedTimingCollector;
 import org.apache.tomcat.dbcp.pool.ObjectPool;
+import org.skife.jdbi.v2.ColonPrefixNamedParamStatementRewriter;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 import org.slf4j.LoggerFactory;
@@ -27,7 +28,7 @@ public class Database extends DBI implements Managed {
         this.validationQuery = validationQuery;
         setSQLLog(new LogbackLog(LOGGER, Level.TRACE));
         setTimingCollector(new InstrumentedTimingCollector(Metrics.defaultRegistry()));
-        setStatementRewriter(new NamePrependingStatementRewriter());
+        setStatementRewriter(new NamePrependingStatementRewriter(new ColonPrefixNamedParamStatementRewriter()));
         registerArgumentFactory(new OptionalArgumentFactory());
         registerContainerFactory(new ImmutableListContainerFactory());
     }
