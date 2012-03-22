@@ -58,7 +58,7 @@ class OAuthInjectable<T> extends AbstractHttpContextInjectable<T> {
                 }
             }
         } catch (AuthenticationException e) {
-            LOG.warn(e, "Error authentication credentials");
+            LOG.warn(e, "Error authenticating credentials");
             throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
         }
 
