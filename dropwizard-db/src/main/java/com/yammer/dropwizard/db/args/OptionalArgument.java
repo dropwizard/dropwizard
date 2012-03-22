@@ -6,6 +6,7 @@ import org.skife.jdbi.v2.tweak.Argument;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Types;
 
 public class OptionalArgument implements Argument {
     private final Optional<?> value;
@@ -18,6 +19,10 @@ public class OptionalArgument implements Argument {
     public void apply(int position,
                       PreparedStatement statement,
                       StatementContext ctx) throws SQLException {
-        statement.setObject(position, value.orNull());
+        if (value.isPresent()) {
+            statement.setObject(position, value.get());
+        } else {
+            statement.setNull(position, Types.OTHER);
+        }
     }
 }
