@@ -9,6 +9,7 @@
     </parent>
 
     <artifactId>dropwizard-auth</artifactId>
+    <name>Dropwizard Authentication</name>
 
     <dependencies>
         <dependency>
