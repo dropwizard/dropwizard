@@ -42,6 +42,10 @@ public abstract class ResourceTest {
         modules.add(module);
     }
 
+    protected Json getJson() {
+        return new Json();
+    }
+    
     protected Client client() {
         return test.client();
     }
@@ -59,7 +63,7 @@ public abstract class ResourceTest {
                 for (Class<?> provider : providers) {
                     config.getClasses().add(provider);
                 }
-                Json json = new Json();
+                Json json = getJson();
                 for (Module module : modules) {
                     json.registerModule(module);
                 }
