@@ -4,7 +4,7 @@
 
     <groupId>com.yammer.dropwizard</groupId>
     <artifactId>dropwizard-example</artifactId>
-    <version>0.3.1</version>
+    <version>0.3.2-INTERNAL</version>
     <name>Dropwizard Example Application</name>
 
     <repositories>
