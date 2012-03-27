@@ -47,7 +47,8 @@ public class ServerCommand<T extends Configuration> extends ConfiguredCommand<T>
                        CommandLine params) throws Exception {
         final Environment environment = new Environment(configuration, service);
         service.initializeWithBundles(configuration, environment);
-        final Server server = new ServerFactory(configuration.getHttpConfiguration()).buildServer(environment);
+        final Server server = new ServerFactory(configuration.getHttpConfiguration(),
+                                                service.getName()).buildServer(environment);
         final Log log = Log.forClass(ServerCommand.class);
         logBanner(service, log);
         try {

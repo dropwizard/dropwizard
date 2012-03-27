@@ -32,9 +32,11 @@ public class LoggingFactory {
     }
 
     private final LoggingConfiguration config;
+    private final String name;
 
-    public LoggingFactory(LoggingConfiguration config) {
+    public LoggingFactory(LoggingConfiguration config, String name) {
         this.config = config;
+        this.name = name;
     }
 
     public void configure() {
@@ -54,7 +56,9 @@ public class LoggingFactory {
 
         final SyslogConfiguration syslog = config.getSyslogConfiguration();
         if (syslog.isEnabled()) {
-            root.addAppender(LogbackFactory.buildSyslogAppender(syslog, root.getLoggerContext()));
+            root.addAppender(LogbackFactory.buildSyslogAppender(syslog,
+                                                                root.getLoggerContext(),
+                                                                name));
         }
 
         final MBeanServer server = ManagementFactory.getPlatformMBeanServer();

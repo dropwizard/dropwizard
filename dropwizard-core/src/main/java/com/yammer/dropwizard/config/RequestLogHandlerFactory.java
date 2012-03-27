@@ -21,9 +21,11 @@ import static com.yammer.dropwizard.config.LoggingConfiguration.FileConfiguratio
 
 public class RequestLogHandlerFactory {
     private final RequestLogConfiguration config;
+    private final String name;
 
-    public RequestLogHandlerFactory(RequestLogConfiguration config) {
+    public RequestLogHandlerFactory(RequestLogConfiguration config, String name) {
         this.config = config;
+        this.name = name;
     }
     
     public boolean isEnabled() {
@@ -65,7 +67,7 @@ public class RequestLogHandlerFactory {
 
         final LoggingConfiguration.SyslogConfiguration syslog = config.getSyslogConfiguration();
         if (syslog.isEnabled()) {
-            final SyslogAppender appender = LogbackFactory.buildSyslogAppender(syslog, context);
+            final SyslogAppender appender = LogbackFactory.buildSyslogAppender(syslog, context, name + "-requests");
 
             appender.stop();
             appender.setLayout(layout);

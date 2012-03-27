@@ -22,10 +22,11 @@ public class LogbackFactory {
 
 
     public static SyslogAppender buildSyslogAppender(SyslogConfiguration syslog,
-                                                     Context context) {
+                                                     Context context,
+                                                     String name) {
         final PatternLayout layout = new PatternLayout();
         layout.setContext(context);
-        layout.setPattern("%c: %m");
+        layout.setPattern('[' + name + "] %logger %msg");
         layout.start();
 
         final SyslogAppender appender = new SyslogAppender();

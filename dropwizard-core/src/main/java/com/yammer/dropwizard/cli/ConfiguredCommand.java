@@ -67,7 +67,7 @@ public abstract class ConfiguredCommand<T extends Configuration> extends Command
             params.getArgList().remove(0);
             try {
                 final T configuration = factory.build(new File(args[0]));
-                new LoggingFactory(configuration.getLoggingConfiguration()).configure();
+                new LoggingFactory(configuration.getLoggingConfiguration(), service.getName()).configure();
                 run((AbstractService<T>) service, configuration, params);
             } catch (ConfigurationException e) {
                 printHelp(e.getMessage(), service.getClass());
