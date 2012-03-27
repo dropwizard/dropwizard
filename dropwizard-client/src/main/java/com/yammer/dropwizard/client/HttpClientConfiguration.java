@@ -11,6 +11,9 @@ public class HttpClientConfiguration {
     private Duration timeout = Duration.milliseconds(500);
 
     @NotNull
+    private Duration connectionTimeout = Duration.milliseconds(500);
+
+    @NotNull
     private Duration timeToLive = Duration.hours(1);
 
     private boolean cookiesEnabled = false;
@@ -19,8 +22,34 @@ public class HttpClientConfiguration {
     @Min(1)
     private int maxConnections = 1024;
 
+    @NotNull
+    private Duration keepAlive = Duration.milliseconds(0l);
+
+    @Max(Integer.MAX_VALUE)
+    @Min(1)
+    private int maxConnectionsPerRoute = 1024;
+
+    public Duration getKeepAlive() {
+        return keepAlive;
+    }
+
+    public void setKeepAlive(Duration keepAlive) {
+        this.keepAlive = keepAlive;
+    }
+
+    public int getMaxConnectionsPerRoute() {
+        return maxConnectionsPerRoute;
+    }
+
+    public void setMaxConnectionsPerRoute(int maxConnectionsPerRoute) {
+        this.maxConnectionsPerRoute = maxConnectionsPerRoute;
+    }
     public Duration getTimeout() {
         return timeout;
+    }
+
+    public Duration getConnectionTimeout() {
+        return connectionTimeout;
     }
 
     public Duration getTimeToLive() {
@@ -33,6 +62,10 @@ public class HttpClientConfiguration {
 
     public void setTimeout(Duration duration) {
         this.timeout = duration;
+    }
+
+    public void setConnectionTimeout(Duration duration) {
+        this.connectionTimeout = duration;
     }
 
     public void setTimeToLive(Duration timeToLive) {
