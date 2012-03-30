@@ -9,8 +9,17 @@ public abstract class View {
     private final Timer renderingTimer;
 
     protected View(String templateName) {
-        this.templateName = templateName;
+
+        this.templateName = resolveName(templateName);
         this.renderingTimer = Metrics.newTimer(getClass(), "rendering");
+    }
+
+    private String resolveName(String templateName) {
+        if (templateName.startsWith("/")) {
+            return templateName;
+        }
+        final String packagePath = getClass().getPackage().getName().replace('.', '/');
+        return String.format("/%s/%s", packagePath, templateName);
     }
 
     @JsonIgnore

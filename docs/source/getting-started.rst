@@ -161,7 +161,6 @@ Here's what our configuration class will look like:
 .. _gs-configuration-class:
 
 .. code-block:: java
-    :emphasize-lines: 10,14
 
     package com.example.helloworld;
     
@@ -232,7 +231,6 @@ provide basic functionality. (More on that later.) For now, though, our ``HelloW
 like this:
 
 .. code-block:: java
-    :emphasize-lines: 7,8,9,12
 
     package com.example.helloworld;
     
@@ -338,7 +336,6 @@ associated with a URI template. For our service, we need a resource which return
 instances from the URI ``/hello-world``, so our resource class will look like this:
 
 .. code-block:: java
-    :emphasize-lines: 14,15,21,27,28,29
 
     package com.example.helloworld.resources;
     

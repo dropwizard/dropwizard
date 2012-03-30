@@ -1,6 +1,7 @@
 package com.yammer.dropwizard.views.tests;
 
 import com.sun.jersey.core.util.StringKeyIgnoreCaseMultivaluedMap;
+import com.yammer.dropwizard.views.MyOtherView;
 import com.yammer.dropwizard.views.MyView;
 import com.yammer.dropwizard.views.ViewMessageBodyWriter;
 import com.yammer.dropwizard.views.example.BadView;
@@ -51,6 +52,24 @@ public class ViewMessageBodyWriterTest {
         
         assertThat(output.toString(),
                    is("Woop woop. HONK\n"));
+    }
+
+    @Test
+    public void handlesRelativeTemplatePaths() throws Exception {
+        final ByteArrayOutputStream output = new ByteArrayOutputStream();
+
+        final MyOtherView view = new MyOtherView();
+
+        writer.writeTo(view,
+                       MyOtherView.class,
+                       null,
+                       NONE,
+                       MediaType.TEXT_HTML_TYPE,
+                       new StringKeyIgnoreCaseMultivaluedMap<Object>(),
+                       output);
+
+        assertThat(output.toString(),
+                   is("Ok.\n"));
     }
 
     @Test

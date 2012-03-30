@@ -39,7 +39,7 @@ Then, in your :ref:`resource method <man-core-resources>`, add a ``View`` class:
 
 ``person.ftl`` is the path of the template relative to the class name. If this class was
 ``com.example.service.PersonView``, Dropwizard would then look for the file
-``src/main/resources/com/example/service/PersonView/person.ftl``.
+``src/main/resources/com/example/service/person.ftl``.
 
 .. tip::
 

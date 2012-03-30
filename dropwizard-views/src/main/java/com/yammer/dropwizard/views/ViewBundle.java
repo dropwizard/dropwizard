@@ -25,7 +25,7 @@ import com.yammer.dropwizard.config.Environment;
  *
  *<p>The {@code "profile.ftl"} is the path of the template relative to the class name. If this
  * class was {@code com.example.service.PersonView}, Freemarker would then look for the file
- * {@code src/main/resources/com/example/service/PersonView/profile.ftl}. If the template path
+ * {@code src/main/resources/com/example/service/profile.ftl}. If the template path
  * starts with a slash (e.g., {@code "/hello.ftl"}), Freemarker will look for the file {@code
  * src/main/resources/hello.ftl}.
  *
