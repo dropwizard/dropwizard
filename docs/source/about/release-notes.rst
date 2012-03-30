@@ -32,6 +32,9 @@ v0.4.0-SNAPSHOT
 * Improved syslog logging.
 * Fixed template paths for views.
 * Upgraded to Guava 12.0 RC1.
+* Added support for deserializing ``CacheBuilderSpec`` instances from JSON/YAML.
+* Switched ``AssetsBundle`` and servlet to using cache builder specs.
+* Switched ``CachingAuthenticator`` to using cache builder specs.
 
 .. __: http://logging.apache.org/log4j/1.2/
 .. __: http://logback.qos.ch/
