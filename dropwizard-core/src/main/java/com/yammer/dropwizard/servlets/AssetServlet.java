@@ -1,6 +1,7 @@
 package com.yammer.dropwizard.servlets;
 
 import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheBuilderSpec;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.hash.Hashing;
@@ -77,10 +78,9 @@ public class AssetServlet extends HttpServlet {
     private final transient LoadingCache<String, CachedAsset> cache;
     private final transient MimeTypes mimeTypes;
 
-    public AssetServlet(String resourcePath, int maxCacheSize, String uriPath) {
+    public AssetServlet(String resourcePath, CacheBuilderSpec cacheBuilderSpec, String uriPath) {
         // TODO: 3/20/12 <coda> -- make the default filename here configurable
-        this.cache = CacheBuilder.newBuilder()
-                                 .maximumSize(maxCacheSize)
+        this.cache = CacheBuilder.from(cacheBuilderSpec)
                                  .build(new AssetLoader(resourcePath, uriPath, "index.htm"));
         this.mimeTypes = new MimeTypes();
     }
