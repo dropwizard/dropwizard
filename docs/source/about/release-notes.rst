@@ -25,6 +25,12 @@ v0.4.0-SNAPSHOT
 * Fixed validation errors for logging configuration.
 * Added ``ResourceTest#addProvider(Class<?>)``.
 * Added ``ETag`` and ``Last-Modified`` support to ``AssetServlet``.
+* Fixed ``off`` logging levels conflicting with YAML's helpfulness.
+* Improved ``Optional`` support for some JDBC drivers.
+* Added ``ResourceTest#getJson()``.
+* Upgraded to Jackson 1.9.6.
+* Improved syslog logging.
+* Fixed template paths for views.
 
 .. __: http://logging.apache.org/log4j/1.2/
 .. __: http://logback.qos.ch/
