@@ -31,6 +31,7 @@ v0.4.0-SNAPSHOT
 * Upgraded to Jackson 1.9.6.
 * Improved syslog logging.
 * Fixed template paths for views.
+* Upgraded to Guava 12.0 RC1.
 
 .. __: http://logging.apache.org/log4j/1.2/
 .. __: http://logback.qos.ch/
