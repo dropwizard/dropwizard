@@ -1,7 +1,7 @@
 package com.yammer.dropwizard.auth.tests;
 
 import com.google.common.base.Optional;
-import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheBuilderSpec;
 import com.google.common.cache.CacheStats;
 import com.google.common.collect.ImmutableSet;
 import com.yammer.dropwizard.auth.Authenticator;
@@ -10,8 +10,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InOrder;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.*;
 
 public class CachingAuthenticatorTest {
@@ -19,7 +19,7 @@ public class CachingAuthenticatorTest {
     private final Authenticator<String, String> underlying = mock(Authenticator.class);
 
     private final CachingAuthenticator<String, String> cached =
-            CachingAuthenticator.wrap(underlying, CacheBuilder.newBuilder().maximumSize(1));
+            CachingAuthenticator.wrap(underlying, CacheBuilderSpec.parse("maximumSize=1"));
 
     @Before
     public void setUp() throws Exception {

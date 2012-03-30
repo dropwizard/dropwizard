@@ -1,10 +1,7 @@
 package com.yammer.dropwizard.auth;
 
 import com.google.common.base.Optional;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.CacheStats;
-import com.google.common.cache.LoadingCache;
+import com.google.common.cache.*;
 import com.yammer.metrics.Metrics;
 import com.yammer.metrics.core.Meter;
 import com.yammer.metrics.core.Timer;
@@ -21,18 +18,19 @@ import java.util.concurrent.TimeUnit;
  * @param <P>    the type of principals the authenticator returns
  */
 public class CachingAuthenticator<C, P> implements Authenticator<C, P> {
+
     /**
      * Wraps an underlying authenticator with a cache.
      *
-     * @param authenticator    the underlying authenticator
-     * @param builder          a fully-configured {@link CacheBuilder}
-     * @param <C>              the type of credentials the authenticator can authenticate
-     * @param <P>              the type of principals the authenticator returns
+     * @param authenticator the underlying authenticator
+     * @param cacheSpec     a {@link CacheBuilderSpec}
+     * @param <C>           the type of credentials the authenticator can authenticate
+     * @param <P>           the type of principals the authenticator returns
      * @return a cached version of {@code authenticator}
      */
     public static <C, P> CachingAuthenticator<C, P> wrap(Authenticator<C, P> authenticator,
-                                                  CacheBuilder<Object, Object> builder) {
-        return new CachingAuthenticator<C, P>(authenticator, builder);
+                                                         CacheBuilderSpec cacheSpec) {
+        return new CachingAuthenticator<C, P>(authenticator, CacheBuilder.from(cacheSpec));
     }
     
     private final Authenticator<C, P> underlying;
@@ -41,7 +39,7 @@ public class CachingAuthenticator<C, P> implements Authenticator<C, P> {
     private final Timer gets;
 
     private CachingAuthenticator(Authenticator<C, P> authenticator,
-                                CacheBuilder<Object, Object> builder) {
+                                 CacheBuilder<Object, Object> builder) {
         this.underlying = authenticator;
         this.cacheMisses = Metrics.newMeter(authenticator.getClass(),
                                             "cache-misses",
