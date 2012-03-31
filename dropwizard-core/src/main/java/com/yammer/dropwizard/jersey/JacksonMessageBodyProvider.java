@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.yammer.dropwizard.json.Json;
 import com.yammer.dropwizard.logging.Log;
 import com.yammer.dropwizard.validation.Validator;
-import org.codehaus.jackson.map.Module;
+import org.codehaus.jackson.JsonProcessingException;
 import org.eclipse.jetty.io.EofException;
 
 import javax.validation.Valid;
@@ -23,9 +23,12 @@ import java.io.OutputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 
-// TODO: 10/12/11 <coda> -- write tests for JacksonMessageBodyProvider
-// TODO: 10/12/11 <coda> -- write docs for JacksonMessageBodyProvider
-
+/**
+ * A Jersey provider which enables using Jackson to parse request entities into objects and generate
+ * response entities from objects. Any request entity method parameters annotated with
+ * {@code @Valid} are validated, and an informative 422 Unprocessable Entity response is returned
+ * should the entity be invalid.
+ */
 @Provider
 @Produces("application/json")
 @Consumes("application/json")
@@ -76,7 +79,7 @@ public class JacksonMessageBodyProvider implements MessageBodyReader<Object>,
             validating = validating || (annotation.annotationType() == Valid.class);
         }
 
-        final Object value = json.readValue(entityStream, genericType);
+        final Object value = parseEntity(genericType, entityStream);
         if (validating) {
             final ImmutableList<String> errors = VALIDATOR.validate(value);
             if (!errors.isEmpty()) {
@@ -91,6 +94,14 @@ public class JacksonMessageBodyProvider implements MessageBodyReader<Object>,
             }
         }
         return value;
+    }
+
+    private Object parseEntity(Type genericType, InputStream entityStream) throws IOException {
+        try {
+            return json.readValue(entityStream, genericType);
+        } catch (JsonProcessingException e) {
+            throw new WebApplicationException(e, Response.Status.BAD_REQUEST);
+        }
     }
 
     @Override
