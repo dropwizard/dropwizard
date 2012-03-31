@@ -35,6 +35,8 @@ v0.4.0-SNAPSHOT
 * Added support for deserializing ``CacheBuilderSpec`` instances from JSON/YAML.
 * Switched ``AssetsBundle`` and servlet to using cache builder specs.
 * Switched ``CachingAuthenticator`` to using cache builder specs.
+* Malformed JSON request entities now produce a ``400 Bad Request`` instead of a
+  ``500 Server Error`` response.
 
 .. __: http://logging.apache.org/log4j/1.2/
 .. __: http://logback.qos.ch/
