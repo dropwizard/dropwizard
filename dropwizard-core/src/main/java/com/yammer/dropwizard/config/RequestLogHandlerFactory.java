@@ -5,7 +5,8 @@ import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.net.SyslogAppender;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.ConsoleAppender;
-import ch.qos.logback.core.layout.EchoLayout;
+import ch.qos.logback.core.CoreConstants;
+import ch.qos.logback.core.LayoutBase;
 import ch.qos.logback.core.rolling.RollingFileAppender;
 import ch.qos.logback.core.spi.AppenderAttachableImpl;
 import com.yammer.dropwizard.jetty.AsyncRequestLog;
@@ -20,6 +21,13 @@ import static com.yammer.dropwizard.config.LoggingConfiguration.FileConfiguratio
 // TODO: 11/7/11 <coda> -- test RequestLogHandlerFactory
 
 public class RequestLogHandlerFactory {
+    private static class RequestLogLayout extends LayoutBase<ILoggingEvent> {
+        @Override
+        public String doLayout(ILoggingEvent event) {
+            return event.getFormattedMessage() + CoreConstants.LINE_SEPARATOR;
+        }
+    }
+
     private final RequestLogConfiguration config;
     private final String name;
 
@@ -41,7 +49,7 @@ public class RequestLogHandlerFactory {
 
         final AppenderAttachableImpl<ILoggingEvent> appenders = new AppenderAttachableImpl<ILoggingEvent>();
 
-        final EchoLayout<ILoggingEvent> layout = new EchoLayout<ILoggingEvent>();
+        final RequestLogLayout layout = new RequestLogLayout();
         layout.start();
 
         final ConsoleConfiguration console = config.getConsoleConfiguration();
