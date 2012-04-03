@@ -37,6 +37,9 @@ v0.4.0-SNAPSHOT
 * Switched ``CachingAuthenticator`` to using cache builder specs.
 * Malformed JSON request entities now produce a ``400 Bad Request`` instead of a
   ``500 Server Error`` response.
+* Added ``connectionTimeout``, ``maxConnectionsPerRoute``, and ``keepAlive`` to
+  ``HttpClientConfiguration``.
+* Added support for using Guava's ``HostAndPort`` in configuration properties.
 
 .. __: http://logging.apache.org/log4j/1.2/
 .. __: http://logback.qos.ch/
