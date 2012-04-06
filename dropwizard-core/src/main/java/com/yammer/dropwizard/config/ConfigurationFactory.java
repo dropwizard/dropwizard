@@ -17,6 +17,7 @@ import java.util.Map;
 public class ConfigurationFactory<T> {
 
     private static final String PROPERTY_PREFIX = "dw.";
+    private static final String CONFIG_LOCATION = System.getProperty("user.home") + "/.dw/";
 
     public static <T> ConfigurationFactory<T> forClass(Class<T> klass, Validator validator, Iterable<Module> modules) {
         return new ConfigurationFactory<T>(klass, validator, modules);
@@ -42,6 +43,11 @@ public class ConfigurationFactory<T> {
     
     public T build(File file) throws IOException, ConfigurationException {
         final JsonNode node = parse(file);
+        final String appName = file.getName();
+        
+        merge(node, CONFIG_LOCATION + appName);     // contains app specific config maintained by support
+        merge(node, CONFIG_LOCATION + "shared.yml"); // contains shared config values, e.g. common db, paths
+        
         for (Map.Entry<Object, Object> pref : System.getProperties().entrySet()) {
             final String prefName = (String) pref.getKey();
             if (prefName.startsWith(PROPERTY_PREFIX)) {
@@ -53,6 +59,37 @@ public class ConfigurationFactory<T> {
         validate(file, config);
         return config;
     }
+    
+    private void merge(JsonNode node, String fileLocation) throws IOException {
+        File config = new File(fileLocation);
+    	if (config.exists()) {
+    		final JsonNode override = parse(config);
+    		
+    		merge((ObjectNode) node, (ObjectNode) override);
+    	}
+    }
+    
+	private static void merge(ObjectNode n1, ObjectNode n2) {
+		Iterator<Map.Entry<String, JsonNode>> itr = n2.getFields();
+
+		while (itr.hasNext()) {
+			Map.Entry<String, JsonNode> n2ChildEntry = itr.next();
+
+			String childKey = n2ChildEntry.getKey();
+			JsonNode n1Child = n1.get(childKey);
+			JsonNode n2Child = n2ChildEntry.getValue();
+
+			if (n1Child == null) {
+				n1.put(childKey, n2Child);
+			} else {
+				if (n2Child instanceof ObjectNode) {
+					merge((ObjectNode) n1.get(childKey), (ObjectNode) n2Child);
+				} else {
+					n1.put(childKey, n2Child);
+				}
+			}
+		}
+	}
 
     private void addOverride(JsonNode root, String name, String value) {
         JsonNode node = root;
