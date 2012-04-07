@@ -42,6 +42,7 @@ v0.4.0-SNAPSHOT
 * Added support for using Guava's ``HostAndPort`` in configuration properties.
 * Upgraded to tomcat-dbcp 7.0.27.
 * Upgraded to JDBI 2.33.
+* Upgraded to HttpClient 4.1.3.
 
 .. __: http://logging.apache.org/log4j/1.2/
 .. __: http://logback.qos.ch/
