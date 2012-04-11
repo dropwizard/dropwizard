@@ -96,7 +96,7 @@ http:
 # Logging settings.
 logging:
 
-  # The default level of all loggers. Can be OFF, FATAL, ERROR, WARN, INFO, DEBUG, TRACE, or ALL.
+  # The default level of all loggers. Can be OFF, ERROR, WARN, INFO, DEBUG, TRACE, or ALL.
   level: INFO
 
   # Logger-specific levels.
