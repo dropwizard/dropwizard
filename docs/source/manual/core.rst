@@ -363,8 +363,6 @@ the first parameter and it'll log the exception type, message, and stack trace.
 
 The ``Log`` class provides the following logging levels:
 
-``FATAL``
-  Very severe error events that will presumably lead the application to abort.
 ``ERROR``
   Error events that might still allow the application to continue running.
 ``WARN``
@@ -395,7 +393,6 @@ The logging output looks like this::
     INFO  [2010-04-06 06:42:35,274] com.example.dw.Thing: Doing a thing
     WARN  [2010-04-06 06:42:35,275] com.example.dw.Thing: Doing a thing
     ERROR [2010-04-06 06:42:35,275] com.example.dw.Thing: This may get ugly.
-    FATAL [2010-04-06 06:42:35,275] com.example.dw.Thing: The thing has gone horribly wrong.
     ! java.lang.RuntimeException: oh noes!
     ! at com.example.dw.Thing.run(Thing.java:16)
     !
@@ -426,7 +423,7 @@ other loggers in your YAML configuration file:
     # Logging settings.
     logging:
 
-      # The default level of all loggers. Can be OFF, FATAL, ERROR, WARN, INFO, DEBUG, TRACE, or ALL.
+      # The default level of all loggers. Can be OFF, ERROR, WARN, INFO, DEBUG, TRACE, or ALL.
       level: INFO
 
       # Logger-specific levels.
