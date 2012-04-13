@@ -27,6 +27,11 @@ public class HttpConfiguration {
     @JsonProperty
     private GzipConfiguration gzip = new GzipConfiguration();
 
+    @Valid
+    @NotNull
+    @JsonProperty
+    private SslConfiguration ssl = new SslConfiguration();
+
     @NotNull
     @JsonProperty
     private ImmutableMap<String, String> contextParameters = ImmutableMap.of();
@@ -46,6 +51,9 @@ public class HttpConfiguration {
     @Max(65535)
     @JsonProperty
     private int adminPort = 8081;
+
+    @JsonProperty
+    private boolean requireSsl = false;
 
     @Min(2)
     @Max(1000000)
@@ -161,6 +169,10 @@ public class HttpConfiguration {
         return gzip;
     }
 
+    public SslConfiguration getSslConfiguration() {
+        return ssl;
+    }
+
     public ImmutableMap<String, String> getContextParameters() {
         return contextParameters;
     }
@@ -183,6 +195,11 @@ public class HttpConfiguration {
 
     public int getAdminPort() {
         return adminPort;
+    }
+
+    public boolean isRequireSsl()
+    {
+      return requireSsl;
     }
 
     public int getMaxThreads() {
