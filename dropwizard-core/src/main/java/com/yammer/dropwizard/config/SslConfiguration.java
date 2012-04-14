@@ -1,7 +1,6 @@
 package com.yammer.dropwizard.config;
 
 import com.google.common.base.Optional;
-import com.yammer.dropwizard.validation.ValidationMethod;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 
