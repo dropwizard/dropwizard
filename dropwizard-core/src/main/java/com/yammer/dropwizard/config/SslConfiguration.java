@@ -1,7 +1,9 @@
 package com.yammer.dropwizard.config;
 
 import com.google.common.base.Optional;
+import com.yammer.dropwizard.validation.ValidationMethod;
 import org.codehaus.jackson.annotate.JsonProperty;
+import org.eclipse.jetty.util.ssl.SslContextFactory;
 
 /**
  */
@@ -30,5 +32,24 @@ public class SslConfiguration {
 
     public Optional<String> getKeyManagerPassword() {
         return Optional.fromNullable(keyManagerPassword);
+    }
+
+    public SslContextFactory createSslContextFactory()
+    {
+        if (keyStorePath == null) {
+          return null;
+        }
+
+        SslContextFactory factory = new SslContextFactory(keyStorePath);
+
+        if (keyManagerPassword != null) {
+            factory.setKeyManagerPassword(keyManagerPassword);
+        }
+
+        if (keyStorePassword != null) {
+            factory.setKeyStorePassword(keyStorePassword);
+        }
+
+        return factory;
     }
 }

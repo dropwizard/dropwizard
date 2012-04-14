@@ -39,7 +39,9 @@ public class HttpConfiguration {
     public enum ConnectorType {
         SOCKET,
         BLOCKING_CHANNEL,
-        SELECT_CHANNEL
+        SELECT_CHANNEL,
+        SOCKET_SSL,
+        SELECT_CHANNEL_SSL
     }
 
     @Min(1025)
@@ -51,9 +53,6 @@ public class HttpConfiguration {
     @Max(65535)
     @JsonProperty
     private int adminPort = 8081;
-
-    @JsonProperty
-    private boolean requireSsl = false;
 
     @Min(2)
     @Max(1000000)
@@ -70,7 +69,7 @@ public class HttpConfiguration {
     private String rootPath = "/*";
     
     @NotNull
-    @Pattern(regexp = "(blocking|nonblocking|legacy)",
+    @Pattern(regexp = "(blocking(?:\\+ssl)?|nonblocking(?:\\+ssl)?|legacy)",
              flags = {Pattern.Flag.CASE_INSENSITIVE})
     @JsonProperty
     private String connectorType = "blocking";
@@ -184,6 +183,10 @@ public class HttpConfiguration {
             return ConnectorType.SOCKET;
         } else if ("nonblocking".equalsIgnoreCase(connectorType)) {
             return ConnectorType.SELECT_CHANNEL;
+        } else if ("blocking+ssl".equalsIgnoreCase(connectorType)) {
+            return ConnectorType.SOCKET_SSL;
+        } else if ("nonblocking+ssl".equalsIgnoreCase(connectorType)) {
+            return ConnectorType.SELECT_CHANNEL_SSL;
         } else {
             throw new IllegalStateException("Invalid connector type: " + connectorType);
         }
@@ -195,11 +198,6 @@ public class HttpConfiguration {
 
     public int getAdminPort() {
         return adminPort;
-    }
-
-    public boolean isRequireSsl()
-    {
-      return requireSsl;
     }
 
     public int getMaxThreads() {

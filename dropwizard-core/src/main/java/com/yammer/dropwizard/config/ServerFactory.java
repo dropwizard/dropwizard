@@ -154,62 +154,40 @@ public class ServerFactory {
 
     private AbstractConnector createConnector(int port) {
         final AbstractConnector connector;
-        if (config.isRequireSsl()) {
-            final SslConfiguration sslConfiguration = config.getSslConfiguration();
 
-            SslContextFactory factory = null;
-            if (!sslConfiguration.isDefaultKeyStore()) {
-                factory = new SslContextFactory(sslConfiguration.getKeyStorePath().get());
+        final SslConfiguration sslConfiguration = config.getSslConfiguration();
 
-                if (sslConfiguration.getKeyManagerPassword().isPresent()) {
-                    factory.setKeyManagerPassword(sslConfiguration.getKeyManagerPassword().get());
+        switch (config.getConnectorType()) {
+            case BLOCKING_CHANNEL:
+                connector = new InstrumentedBlockingChannelConnector(port);
+                break;
+            case SOCKET:
+                connector = new InstrumentedSocketConnector(port);
+                break;
+            case SELECT_CHANNEL:
+                connector = new InstrumentedSelectChannelConnector(port);
+                ((SelectChannelConnector) connector).setLowResourcesConnections(config.getLowResourcesConnectionThreshold());
+                break;
+            case SOCKET_SSL:
+                if (sslConfiguration.isDefaultKeyStore()) {
+                    connector = new InstrumentedSslSocketConnector(port);
+                    break;
                 }
 
-                if (sslConfiguration.getKeyStorePassword().isPresent()) {
-                    factory.setKeyStorePassword(sslConfiguration.getKeyStorePassword().get());
+                connector = new InstrumentedSslSocketConnector(sslConfiguration.createSslContextFactory(), port);
+                break;
+            case SELECT_CHANNEL_SSL:
+                if (sslConfiguration.isDefaultKeyStore()) {
+                    connector = new InstrumentedSslSelectChannelConnector(port);
+                    ((SelectChannelConnector) connector).setLowResourcesConnections(config.getLowResourcesConnectionThreshold());
+                    break;
                 }
-            }
 
-            switch (config.getConnectorType()) {
-                case BLOCKING_CHANNEL:
-                    throw new IllegalStateException("Cannot create SSL Blocking Channel.");
-                case SOCKET:
-                    if (factory == null) {
-                        connector = new InstrumentedSslSocketConnector(port);
-                        break;
-                    }
-
-                    connector = new InstrumentedSslSocketConnector(factory, port);
-                    break;
-                case SELECT_CHANNEL:
-                    if (factory == null) {
-                        connector = new InstrumentedSslSelectChannelConnector(port);
-                        ((SelectChannelConnector) connector).setLowResourcesConnections(config.getLowResourcesConnectionThreshold());
-                        break;
-                    }
-
-                    connector = new InstrumentedSslSelectChannelConnector(factory, port);
-                    ((SelectChannelConnector) connector).setLowResourcesConnections(config.getLowResourcesConnectionThreshold());
-                    break;
-                default:
-                    throw new IllegalStateException("Invalid connector type: " + config.getConnectorType());
-            }
-        }
-        else {
-            switch (config.getConnectorType()) {
-                case BLOCKING_CHANNEL:
-                    connector = new InstrumentedBlockingChannelConnector(port);
-                    break;
-                case SOCKET:
-                    connector = new InstrumentedSocketConnector(port);
-                    break;
-                case SELECT_CHANNEL:
-                    connector = new InstrumentedSelectChannelConnector(port);
-                    ((SelectChannelConnector) connector).setLowResourcesConnections(config.getLowResourcesConnectionThreshold());
-                    break;
-                default:
-                    throw new IllegalStateException("Invalid connector type: " + config.getConnectorType());
-            }
+                connector = new InstrumentedSslSelectChannelConnector(sslConfiguration.createSslContextFactory(), port);
+                ((SelectChannelConnector) connector).setLowResourcesConnections(config.getLowResourcesConnectionThreshold());
+                break;
+            default:
+                throw new IllegalStateException("Invalid connector type: " + config.getConnectorType());
         }
 
         if (connector instanceof AbstractNIOConnector) {
