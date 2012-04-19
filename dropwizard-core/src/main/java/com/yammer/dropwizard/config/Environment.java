@@ -439,7 +439,7 @@ public class Environment extends AbstractLifeCycle {
                 String methodPath = "";
                 if (method.isAnnotationPresent(Path.class)) {
                     methodPath = method.getAnnotation(Path.class).value();
-                    if (!methodPath.startsWith("/")) {
+                    if (!methodPath.startsWith("/") && !path.endsWith("/")) {
                         methodPath = "/" + methodPath;
                     }
                 }
