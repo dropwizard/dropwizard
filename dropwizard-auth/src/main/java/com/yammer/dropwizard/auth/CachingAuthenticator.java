@@ -49,7 +49,7 @@ public class CachingAuthenticator<C, P> implements Authenticator<C, P> {
                                      "gets",
                                      TimeUnit.MILLISECONDS,
                                      TimeUnit.SECONDS);
-        this.cache = builder.build(new CacheLoader<C, Optional<P>> () {
+        this.cache = builder.recordStats().build(new CacheLoader<C, Optional<P>> () {
             @Override
             public Optional<P> load(C key) throws Exception {
                 cacheMisses.mark();
