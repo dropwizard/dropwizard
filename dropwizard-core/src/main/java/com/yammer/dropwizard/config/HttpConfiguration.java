@@ -28,9 +28,8 @@ public class HttpConfiguration {
     private GzipConfiguration gzip = new GzipConfiguration();
 
     @Valid
-    @NotNull
     @JsonProperty
-    private SslConfiguration ssl = new SslConfiguration();
+    private SslConfiguration ssl = null;
 
     @NotNull
     @JsonProperty
@@ -69,7 +68,7 @@ public class HttpConfiguration {
     private String rootPath = "/*";
     
     @NotNull
-    @Pattern(regexp = "(blocking?|nonblocking(?:\\+ssl)?|legacy|socket\\+ssl)",
+    @Pattern(regexp = "^(blocking|nonblocking|nonblocking\\+ssl|legacy|legacy\\+ssl)$",
              flags = {Pattern.Flag.CASE_INSENSITIVE})
     @JsonProperty
     private String connectorType = "blocking";
@@ -150,6 +149,13 @@ public class HttpConfiguration {
     @JsonProperty
     private String adminPassword = null;
 
+    @ValidationMethod(message = "must have an SSL configuration when using SSL connection")
+    public boolean isSslConfigured() {
+        final ConnectorType type = getConnectorType();
+        return !((ssl == null) && ((type == ConnectorType.SOCKET_SSL) ||
+                                   (type == ConnectorType.SELECT_CHANNEL_SSL)));
+    }
+
     @ValidationMethod(message = "must have a smaller minThreads than maxThreads")
     public boolean isThreadPoolSizedCorrectly() {
         return minThreads <= maxThreads;
@@ -181,10 +187,10 @@ public class HttpConfiguration {
             return ConnectorType.BLOCKING_CHANNEL;
         } else if ("legacy".equalsIgnoreCase(connectorType)) {
             return ConnectorType.SOCKET;
+        } else if ("legacy+ssl".equalsIgnoreCase(connectorType)) {
+            return ConnectorType.SOCKET_SSL;
         } else if ("nonblocking".equalsIgnoreCase(connectorType)) {
             return ConnectorType.SELECT_CHANNEL;
-        } else if ("socket+ssl".equalsIgnoreCase(connectorType)) {
-            return ConnectorType.SOCKET_SSL;
         } else if ("nonblocking+ssl".equalsIgnoreCase(connectorType)) {
             return ConnectorType.SELECT_CHANNEL_SSL;
         } else {

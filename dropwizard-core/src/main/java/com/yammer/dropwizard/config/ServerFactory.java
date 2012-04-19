@@ -31,6 +31,7 @@ import org.eclipse.jetty.server.bio.SocketConnector;
 import org.eclipse.jetty.server.handler.HandlerCollection;
 import org.eclipse.jetty.server.nio.AbstractNIOConnector;
 import org.eclipse.jetty.server.nio.SelectChannelConnector;
+import org.eclipse.jetty.server.ssl.SslConnector;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
@@ -154,9 +155,6 @@ public class ServerFactory {
 
     private AbstractConnector createConnector(int port) {
         final AbstractConnector connector;
-
-        final SslConfiguration sslConfiguration = config.getSslConfiguration();
-
         switch (config.getConnectorType()) {
             case BLOCKING_CHANNEL:
                 connector = new InstrumentedBlockingChannelConnector(port);
@@ -164,30 +162,25 @@ public class ServerFactory {
             case SOCKET:
                 connector = new InstrumentedSocketConnector(port);
                 break;
+            case SOCKET_SSL:
+                connector = new InstrumentedSslSocketConnector(port);
+                break;
             case SELECT_CHANNEL:
                 connector = new InstrumentedSelectChannelConnector(port);
-                ((SelectChannelConnector) connector).setLowResourcesConnections(config.getLowResourcesConnectionThreshold());
-                break;
-            case SOCKET_SSL:
-                if (sslConfiguration.isDefaultKeyStore()) {
-                    connector = new InstrumentedSslSocketConnector(port);
-                    break;
-                }
-
-                connector = new InstrumentedSslSocketConnector(sslConfiguration.createSslContextFactory(), port);
                 break;
             case SELECT_CHANNEL_SSL:
-                if (sslConfiguration.isDefaultKeyStore()) {
-                    connector = new InstrumentedSslSelectChannelConnector(port);
-                    ((SelectChannelConnector) connector).setLowResourcesConnections(config.getLowResourcesConnectionThreshold());
-                    break;
-                }
-
-                connector = new InstrumentedSslSelectChannelConnector(sslConfiguration.createSslContextFactory(), port);
-                ((SelectChannelConnector) connector).setLowResourcesConnections(config.getLowResourcesConnectionThreshold());
+                connector = new InstrumentedSslSelectChannelConnector(port);
                 break;
             default:
                 throw new IllegalStateException("Invalid connector type: " + config.getConnectorType());
+        }
+
+        if (connector instanceof SslConnector) {
+            configureSslContext(((SslConnector) connector).getSslContextFactory());
+        }
+
+        if (connector instanceof SelectChannelConnector) {
+            ((SelectChannelConnector) connector).setLowResourcesConnections(config.getLowResourcesConnectionThreshold());
         }
 
         if (connector instanceof AbstractNIOConnector) {
@@ -195,6 +188,20 @@ public class ServerFactory {
         }
 
         return connector;
+    }
+
+    private void configureSslContext(SslContextFactory factory) {
+        for (String path : config.getSslConfiguration().getKeyStorePath().asSet()) {
+            factory.setKeyStorePath(path);
+        }
+
+        for (String password : config.getSslConfiguration().getKeyStorePassword().asSet()) {
+            factory.setKeyStorePassword(password);
+        }
+
+        for (String password : config.getSslConfiguration().getKeyManagerPassword().asSet()) {
+            factory.setKeyManagerPassword(password);
+        }
     }
 
 

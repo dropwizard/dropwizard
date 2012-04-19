@@ -36,6 +36,7 @@ http:
   # blocking connector should be used for low-latency services with short request durations. The
   # nonblocking connector should be used for services with long request durations or which
   # specifically take advantage of Jetty's continuation support.
+  # If you need SSL support, you can either choose from "nonblocking+ssl" or "legacy+ssl".
   connectorType: blocking
 
   # The maximum amount of time a connection is allowed to be idle before being closed.
@@ -94,6 +95,10 @@ http:
   # The hostname of the interface to which the HTTP server socket wil be found. If omitted, the
   # socket will listen on all interfaces.
   # bindHost: app1.example.com
+
+#  ssl:
+#    keyStorePath: ./example.keystore
+#    keyStorePassword: example
 
   # HTTP request log settings
   requestLog:

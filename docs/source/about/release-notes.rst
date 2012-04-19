@@ -45,6 +45,7 @@ v0.4.0-SNAPSHOT
 * Upgraded to HttpClient 4.1.3.
 * Upgraded to Metrics 2.1.2.
 * Upgraded to Jetty 8.1.3.
+* Added SSL support.
 
 .. __: http://logging.apache.org/log4j/1.2/
 .. __: http://logback.qos.ch/
