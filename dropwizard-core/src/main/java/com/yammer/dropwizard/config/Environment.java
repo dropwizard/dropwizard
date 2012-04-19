@@ -436,10 +436,17 @@ public class Environment extends AbstractLifeCycle {
             final String path = klass.getAnnotation(Path.class).value();
             final ImmutableList.Builder<String> endpoints = ImmutableList.builder();
             for (AnnotatedMethod method : annotatedMethods(klass)) {
+                String methodPath = "";
+                if (method.isAnnotationPresent(Path.class)) {
+                    methodPath = method.getAnnotation(Path.class).value();
+                    if (!methodPath.startsWith("/") && !path.endsWith("/")) {
+                        methodPath = "/" + methodPath;
+                    }
+                }
                 for (HttpMethod verb : method.getMetaMethodAnnotations(HttpMethod.class)) {
                     endpoints.add(String.format("    %-7s %s (%s)",
                                                 verb.value(),
-                                                path,
+                                                path + methodPath,
                                                 klass.getCanonicalName()));
                 }
             }
