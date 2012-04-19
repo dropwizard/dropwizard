@@ -27,6 +27,11 @@ public class HttpConfiguration {
     @JsonProperty
     private GzipConfiguration gzip = new GzipConfiguration();
 
+    @Valid
+    @NotNull
+    @JsonProperty
+    private SslConfiguration ssl = new SslConfiguration();
+
     @NotNull
     @JsonProperty
     private ImmutableMap<String, String> contextParameters = ImmutableMap.of();
@@ -34,7 +39,9 @@ public class HttpConfiguration {
     public enum ConnectorType {
         SOCKET,
         BLOCKING_CHANNEL,
-        SELECT_CHANNEL
+        SELECT_CHANNEL,
+        SOCKET_SSL,
+        SELECT_CHANNEL_SSL
     }
 
     @Min(1025)
@@ -62,7 +69,7 @@ public class HttpConfiguration {
     private String rootPath = "/*";
     
     @NotNull
-    @Pattern(regexp = "(blocking|nonblocking|legacy)",
+    @Pattern(regexp = "(blocking?|nonblocking(?:\\+ssl)?|legacy|socket\\+ssl)",
              flags = {Pattern.Flag.CASE_INSENSITIVE})
     @JsonProperty
     private String connectorType = "blocking";
@@ -161,6 +168,10 @@ public class HttpConfiguration {
         return gzip;
     }
 
+    public SslConfiguration getSslConfiguration() {
+        return ssl;
+    }
+
     public ImmutableMap<String, String> getContextParameters() {
         return contextParameters;
     }
@@ -172,6 +183,10 @@ public class HttpConfiguration {
             return ConnectorType.SOCKET;
         } else if ("nonblocking".equalsIgnoreCase(connectorType)) {
             return ConnectorType.SELECT_CHANNEL;
+        } else if ("socket+ssl".equalsIgnoreCase(connectorType)) {
+            return ConnectorType.SOCKET_SSL;
+        } else if ("nonblocking+ssl".equalsIgnoreCase(connectorType)) {
+            return ConnectorType.SELECT_CHANNEL_SSL;
         } else {
             throw new IllegalStateException("Invalid connector type: " + connectorType);
         }

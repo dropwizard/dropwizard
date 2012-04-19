@@ -5,6 +5,8 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.yammer.dropwizard.jetty.BiDiGzipHandler;
+import com.yammer.dropwizard.jetty.InstrumentedSslSelectChannelConnector;
+import com.yammer.dropwizard.jetty.InstrumentedSslSocketConnector;
 import com.yammer.dropwizard.jetty.QuietErrorHandler;
 import com.yammer.dropwizard.logging.Log;
 import com.yammer.dropwizard.servlets.ThreadNameFilter;
@@ -35,6 +37,7 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.util.security.Constraint;
 import org.eclipse.jetty.util.security.Credential;
+import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.util.thread.ThreadPool;
 
@@ -151,6 +154,9 @@ public class ServerFactory {
 
     private AbstractConnector createConnector(int port) {
         final AbstractConnector connector;
+
+        final SslConfiguration sslConfiguration = config.getSslConfiguration();
+
         switch (config.getConnectorType()) {
             case BLOCKING_CHANNEL:
                 connector = new InstrumentedBlockingChannelConnector(port);
@@ -160,6 +166,24 @@ public class ServerFactory {
                 break;
             case SELECT_CHANNEL:
                 connector = new InstrumentedSelectChannelConnector(port);
+                ((SelectChannelConnector) connector).setLowResourcesConnections(config.getLowResourcesConnectionThreshold());
+                break;
+            case SOCKET_SSL:
+                if (sslConfiguration.isDefaultKeyStore()) {
+                    connector = new InstrumentedSslSocketConnector(port);
+                    break;
+                }
+
+                connector = new InstrumentedSslSocketConnector(sslConfiguration.createSslContextFactory(), port);
+                break;
+            case SELECT_CHANNEL_SSL:
+                if (sslConfiguration.isDefaultKeyStore()) {
+                    connector = new InstrumentedSslSelectChannelConnector(port);
+                    ((SelectChannelConnector) connector).setLowResourcesConnections(config.getLowResourcesConnectionThreshold());
+                    break;
+                }
+
+                connector = new InstrumentedSslSelectChannelConnector(sslConfiguration.createSslContextFactory(), port);
                 ((SelectChannelConnector) connector).setLowResourcesConnections(config.getLowResourcesConnectionThreshold());
                 break;
             default:
