@@ -86,14 +86,14 @@ Next, write a test for serializing a ``Person`` instance to JSON:
 
 .. code-block:: java
 
-    import com.yammer.dropwizard.testing.JsonHelpers.*;
-    import org.hamcrest.Matchers.*;
+    import static com.yammer.dropwizard.testing.JsonHelpers.*;
+    import static org.hamcrest.Matchers.*;
 
     @Test
     public void serializesToJSON() throws Exception {
-        final Person = new Person("Luther Blissett", "lb@example.com");
+        final Person person = new Person("Luther Blissett", "lb@example.com");
         assertThat("a Person can be serialized to JSON",
-                   asJSON(person),
+                   asJson(person),
                    is(equalTo(jsonFixture("fixtures/person.json"))));
     }
 
@@ -113,14 +113,14 @@ Next, write a test for deserializing a ``Person`` instance from JSON:
 
 .. code-block:: java
 
-    import com.yammer.dropwizard.testing.JsonHelpers.*;
-    import org.hamcrest.Matchers.*;
+    import static com.yammer.dropwizard.testing.JsonHelpers.*;
+    import static org.hamcrest.Matchers.*;
 
     @Test
-    public void serializesToJSON() throws Exception {
-        final Person = new Person("Luther Blissett", "lb@example.com");
-        assertThat("a Person can be serialized to JSON",
-                   fromJSON(Person.class, jsonFixture("fixtures/person.json")),
+    public void deserializesFromJSON() throws Exception {
+        final Person person = new Person("Luther Blissett", "lb@example.com");
+        assertThat("a Person can be deserialized from JSON",
+                   fromJson(jsonFixture("fixtures/person.json"), Person.class),
                    is(person));
     }
 
