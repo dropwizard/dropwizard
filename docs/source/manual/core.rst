@@ -138,15 +138,13 @@ Dropwizard then calls your ``Service`` subclass to initialize your service's ``E
 
 .. note::
 
-    You can override configuration settings by passing special Java system
-    properties when starting service instance.
-    Overrides must start with prefix "dw.", followed by path to configuration
-    value being overridden.
+    You can override configuration settings by passing special Java system properties when starting
+    your service. Overrides must start with prefix ``dw.``, followed by the path to the
+    configuration value being overridden.
 
-    For example, to override HTTP port to use, you could start your service
-    with something like:
+    For example, to override the HTTP port to use, you could start your service like this:
 
-    java -Ddw.http.port=9090 server my-config.json
+    ``java -Ddw.http.port=9090 server my-config.json``
 
 .. _man-core-environments:
 
