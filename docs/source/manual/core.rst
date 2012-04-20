@@ -136,6 +136,18 @@ and would output an error message describing the issues.
 Once your service has parsed the YAML file and constructed its ``Configuration`` instance,
 Dropwizard then calls your ``Service`` subclass to initialize your service's ``Environment``.
 
+.. note::
+
+    You can override configuration settings by passing special Java system
+    properties when starting service instance.
+    Overrides must start with prefix "dw.", followed by path to configuration
+    value being overridden.
+
+    For example, to override HTTP port to use, you could start your service
+    with something like:
+
+    java -Ddw.http.port=9090 server my-config.json
+
 .. _man-core-environments:
 
 Environments
