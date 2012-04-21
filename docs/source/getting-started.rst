@@ -524,7 +524,7 @@ this:
     <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
-        <version>1.4</version>
+        <version>1.6</version>
         <configuration>
             <createDependencyReducedPom>true</createDependencyReducedPom>
             <filters>
