@@ -62,9 +62,9 @@ public class TaskServlet extends HttpServlet {
 
     private static ImmutableMultimap<String, String> getParams(HttpServletRequest req) {
         final ImmutableMultimap.Builder<String, String> results = ImmutableMultimap.builder();
-        final Enumeration<?> names = req.getParameterNames();
+        final Enumeration<String> names = req.getParameterNames();
         while (names.hasMoreElements()) {
-            final String name = (String) names.nextElement();
+            final String name = names.nextElement();
             final String[] values = req.getParameterValues(name);
             results.putAll(name, values);
         }
