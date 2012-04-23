@@ -430,6 +430,12 @@ When our service starts, we create a new instance of our resource class with the
 parameters from the configuration file and hand it off to the ``Environment``,
 which acts like a registry of all the things your service can do.
 
+.. note::
+
+    A Dropwizard service can contain *many* resource classes, each corresponding to its own URI
+    pattern. Just add another ``@Path``-annotated resource class and call ``addResource`` with an
+    instance of the new class.
+
 Before we go too far, we should add a health check for our service.
 
 .. _gs-healthcheck:
