@@ -128,6 +128,10 @@ public class LoggingConfiguration {
         )
         private String facility = "local0";
 
+        @NotNull
+        @JsonProperty
+        private TimeZone timeZone = UTC;
+
         public boolean isEnabled() {
             return enabled;
         }
@@ -142,6 +146,10 @@ public class LoggingConfiguration {
 
         public String getFacility() {
             return facility;
+        }
+
+        public TimeZone getTimeZone() {
+            return timeZone;
         }
     }
 
