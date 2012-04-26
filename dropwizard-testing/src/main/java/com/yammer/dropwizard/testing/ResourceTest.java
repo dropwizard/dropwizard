@@ -77,6 +77,8 @@ public abstract class ResourceTest {
 
     @After
     public void tearDownJersey() throws Exception {
-        test.tearDown();
+        if (test != null) {
+            test.tearDown();
+        }
     }
 }
