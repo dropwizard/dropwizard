@@ -177,7 +177,7 @@ public class ServerFactory {
         }
 
         if(connector instanceof  HTTPSPDYServerConnector) {
-            configureSslContext(((SslConnector) connector).getSslContextFactory());
+            configureSslContext(((HTTPSPDYServerConnector) connector).getSslContextFactory());
         }
 
         if (connector instanceof SslConnector) {
