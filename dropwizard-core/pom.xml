@@ -120,6 +120,27 @@
             <version>${jetty.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.eclipse.jetty.spdy</groupId>
+            <artifactId>spdy-jetty</artifactId>
+            <version>${jetty.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty.spdy</groupId>
+            <artifactId>spdy-core</artifactId>
+            <version>${jetty.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty.spdy</groupId>
+            <artifactId>spdy-jetty-http</artifactId>
+            <version>${jetty.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty.npn</groupId>
+            <artifactId>npn-api</artifactId>
+            <version>8.1.2.v20120308</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>12.0-rc2</version>

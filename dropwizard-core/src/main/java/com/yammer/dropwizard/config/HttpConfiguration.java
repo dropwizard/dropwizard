@@ -36,6 +36,7 @@ public class HttpConfiguration {
     private ImmutableMap<String, String> contextParameters = ImmutableMap.of();
     
     public enum ConnectorType {
+        SPDY,
         SOCKET,
         BLOCKING_CHANNEL,
         SELECT_CHANNEL,
@@ -68,7 +69,7 @@ public class HttpConfiguration {
     private String rootPath = "/*";
     
     @NotNull
-    @Pattern(regexp = "^(blocking|nonblocking|nonblocking\\+ssl|legacy|legacy\\+ssl)$",
+    @Pattern(regexp = "^(spdy|blocking|nonblocking|nonblocking\\+ssl|legacy|legacy\\+ssl)$",
              flags = {Pattern.Flag.CASE_INSENSITIVE})
     @JsonProperty
     private String connectorType = "blocking";
@@ -153,7 +154,8 @@ public class HttpConfiguration {
     public boolean isSslConfigured() {
         final ConnectorType type = getConnectorType();
         return !((ssl == null) && ((type == ConnectorType.SOCKET_SSL) ||
-                                   (type == ConnectorType.SELECT_CHANNEL_SSL)));
+                                   (type == ConnectorType.SELECT_CHANNEL_SSL) ||
+                                   (type == ConnectorType.SPDY)));
     }
 
     @ValidationMethod(message = "must have a smaller minThreads than maxThreads")
@@ -183,7 +185,9 @@ public class HttpConfiguration {
     }
     
     public ConnectorType getConnectorType() {
-        if ("blocking".equalsIgnoreCase(connectorType)) {
+        if("spdy".equalsIgnoreCase(connectorType)) {
+            return ConnectorType.SPDY;
+        } else if ("blocking".equalsIgnoreCase(connectorType)) {
             return ConnectorType.BLOCKING_CHANNEL;
         } else if ("legacy".equalsIgnoreCase(connectorType)) {
             return ConnectorType.SOCKET;
