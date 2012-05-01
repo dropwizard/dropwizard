@@ -4,10 +4,7 @@ import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
-import com.yammer.dropwizard.jetty.BiDiGzipHandler;
-import com.yammer.dropwizard.jetty.InstrumentedSslSelectChannelConnector;
-import com.yammer.dropwizard.jetty.InstrumentedSslSocketConnector;
-import com.yammer.dropwizard.jetty.QuietErrorHandler;
+import com.yammer.dropwizard.jetty.*;
 import com.yammer.dropwizard.logging.Log;
 import com.yammer.dropwizard.servlets.ThreadNameFilter;
 import com.yammer.dropwizard.tasks.TaskServlet;
@@ -35,6 +32,7 @@ import org.eclipse.jetty.server.ssl.SslConnector;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.eclipse.jetty.spdy.http.HTTPSPDYServerConnector;
 import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.util.security.Constraint;
 import org.eclipse.jetty.util.security.Credential;
@@ -156,6 +154,9 @@ public class ServerFactory {
     private AbstractConnector createConnector(int port) {
         final AbstractConnector connector;
         switch (config.getConnectorType()) {
+            case SPDY:
+                connector = new InstrumentedSpdyConnector(port);
+                break;
             case BLOCKING_CHANNEL:
                 connector = new InstrumentedBlockingChannelConnector(port);
                 break;
@@ -173,6 +174,10 @@ public class ServerFactory {
                 break;
             default:
                 throw new IllegalStateException("Invalid connector type: " + config.getConnectorType());
+        }
+
+        if(connector instanceof  HTTPSPDYServerConnector) {
+            configureSslContext(((HTTPSPDYServerConnector) connector).getSslContextFactory());
         }
 
         if (connector instanceof SslConnector) {
