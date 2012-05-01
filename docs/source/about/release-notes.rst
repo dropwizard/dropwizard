@@ -6,8 +6,8 @@ Release Notes
 
 .. _rel-0.4.0:
 
-v0.4.0-SNAPSHOT
-===============
+v0.4.0: May 1 2012
+==================
 
 * Switched logging from Log4j__ to Logback__.
 
