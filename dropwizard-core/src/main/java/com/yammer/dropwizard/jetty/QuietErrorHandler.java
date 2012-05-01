@@ -74,7 +74,7 @@ public class QuietErrorHandler extends ErrorHandler {
 
     private static String errorMessage(HttpServletRequest request, int status) {
         try {
-            final ResourceBundle bundle = ResourceBundle.getBundle("HttpErrorMessages",
+            final ResourceBundle bundle = ResourceBundle.getBundle("com.yammer.dropwizard.jetty.HttpErrorMessages",
                                                                    request.getLocale());
             final String message = bundle.getString(Integer.toString(status));
             if (message != null) {
@@ -82,7 +82,7 @@ public class QuietErrorHandler extends ErrorHandler {
                 return format.format(new Object[]{request.getMethod()});
             }
         } catch (MissingResourceException e) {
-            LOG.error(e, "Unable to load HttpErrorMessages.properties");
+            LOG.error(e, "Unable to load HttpErrorMessages.properties to find a message for status {}", status);
         }
         return "Your request could not be processed: " + HttpGenerator.getReasonBuffer(status);
     }
