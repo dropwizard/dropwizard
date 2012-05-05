@@ -124,7 +124,8 @@ Exception Handling
 
 By adding the ``DBIExceptionsBundle`` to your :ref:`service <man-core-service>`, your Dropwizard
 application will automatically unwrap any thrown ``SQLException`` or ``DBIException`` instances.
-This is critical for debugging, since
+This is critical for debugging, since otherwise only the common wrapper exception's stack trace is
+logged.
 
 Prepended Comments
 ==================
