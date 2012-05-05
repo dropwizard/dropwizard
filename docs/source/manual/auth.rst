@@ -60,7 +60,7 @@ configuration file to look like this:
 
 .. code-block:: yaml
 
-    authenticationCachePolicy: maximumSize=10000 expireAfterAccess=10m
+    authenticationCachePolicy: maximumSize=10000, expireAfterAccess=10m
 
 This caches up to 10,000 principals with an LRU policy, evicting stale entries after 10 minutes.
 
