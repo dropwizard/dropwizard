@@ -4,6 +4,14 @@
 Release Notes
 #############
 
+.. _rel-0.4.1:
+
+v0.4.1-SNAPSHOT
+===============
+
+* Fixed type parameter resolution in for subclasses of subclasses of ``ConfiguredCommand``.
+
+
 .. _rel-0.4.0:
 
 v0.4.0: May 1 2012
