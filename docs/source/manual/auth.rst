@@ -53,12 +53,16 @@ server, for example), Dropwizard provides a decorator class which provides cachi
 .. code-block:: java
 
     CachingAuthenticator.wrap(ldapAuthenticator,
-                              CacheBuilder.newBuilder()
-                                          .maximumSize(10000)
-                                          .expireAfterAccess(5, TimeUnit.MINUTES));
+                              config.getAuthenticationCachePolicy());
 
-This uses Guava's ``CacheBuilder`` to cache up to 10,000 principals with an LRU policy, evicting
-stale entries after 5 minutes.
+Dropwizard can parse Guava's ``CacheBuilderSpec`` from the configuration policy, allowing your
+configuration file to look like this:
+
+.. code-block:: yaml
+
+    authenticationCachePolicy: maximumSize=10000 expireAfterAccess=10m
+
+This caches up to 10,000 principals with an LRU policy, evicting stale entries after 10 minutes.
 
 .. _man-auth-basic:
 
