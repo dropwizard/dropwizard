@@ -10,6 +10,7 @@ v0.4.1-SNAPSHOT
 ===============
 
 * Fixed type parameter resolution in for subclasses of subclasses of ``ConfiguredCommand``.
+* Upgraded to Jackson 1.9.7.
 
 
 .. _rel-0.4.0:
