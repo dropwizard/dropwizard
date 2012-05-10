@@ -12,7 +12,7 @@ v0.4.1-SNAPSHOT
 * Fixed type parameter resolution in for subclasses of subclasses of ``ConfiguredCommand``.
 * Upgraded to Jackson 1.9.7.
 * Upgraded to Logback 1.0.3.
-
+* Upgraded to Hibernate Validator 4.3.0.
 
 .. _rel-0.4.0:
 
