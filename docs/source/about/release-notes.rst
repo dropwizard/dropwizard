@@ -13,6 +13,7 @@ v0.4.1-SNAPSHOT
 * Upgraded to Jackson 1.9.7.
 * Upgraded to Logback 1.0.3.
 * Upgraded to Hibernate Validator 4.3.0.
+* Upgraded to JDBI 2.33.3.
 
 .. _rel-0.4.0:
 
