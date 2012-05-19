@@ -9,6 +9,7 @@ import ch.qos.logback.core.CoreConstants;
 import ch.qos.logback.core.LayoutBase;
 import ch.qos.logback.core.rolling.RollingFileAppender;
 import ch.qos.logback.core.spi.AppenderAttachableImpl;
+import com.google.common.base.Optional;
 import com.yammer.dropwizard.jetty.AsyncRequestLog;
 import com.yammer.dropwizard.logging.LogbackFactory;
 import org.eclipse.jetty.server.handler.RequestLogHandler;
@@ -55,7 +56,8 @@ public class RequestLogHandlerFactory {
         final ConsoleConfiguration console = config.getConsoleConfiguration();
         if (console.isEnabled()) {
             final ConsoleAppender<ILoggingEvent> appender = LogbackFactory.buildConsoleAppender(console,
-                                                                                                context);
+                                                                                                context,
+                                                                                                Optional.<String>absent());
             appender.stop();
             appender.setLayout(layout);
             appender.start();
@@ -65,7 +67,8 @@ public class RequestLogHandlerFactory {
         final FileConfiguration file = config.getFileConfiguration();
         if (file.isEnabled()) {
             final RollingFileAppender<ILoggingEvent> appender = LogbackFactory.buildFileAppender(file,
-                                                                                                 context);
+                                                                                                 context,
+                                                                                                 Optional.<String>absent());
 
             appender.stop();
             appender.setLayout(layout);
@@ -75,7 +78,10 @@ public class RequestLogHandlerFactory {
 
         final LoggingConfiguration.SyslogConfiguration syslog = config.getSyslogConfiguration();
         if (syslog.isEnabled()) {
-            final SyslogAppender appender = LogbackFactory.buildSyslogAppender(syslog, context, name + "-requests");
+            final SyslogAppender appender = LogbackFactory.buildSyslogAppender(syslog,
+                                                                               context,
+                                                                               name + "-requests",
+                                                                               Optional.<String>absent());
 
             appender.stop();
             appender.setLayout(layout);
