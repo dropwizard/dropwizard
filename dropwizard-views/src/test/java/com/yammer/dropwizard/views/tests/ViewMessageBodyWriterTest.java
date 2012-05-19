@@ -51,7 +51,7 @@ public class ViewMessageBodyWriterTest {
                        output);
         
         assertThat(output.toString(),
-                   is("Woop woop. HONK\n"));
+                   is(String.format("Woop woop. HONK%n")));
     }
 
     @Test
@@ -69,7 +69,7 @@ public class ViewMessageBodyWriterTest {
                        output);
 
         assertThat(output.toString(),
-                   is("Ok.\n"));
+                is(String.format("Ok.%n")));
     }
 
     @Test
