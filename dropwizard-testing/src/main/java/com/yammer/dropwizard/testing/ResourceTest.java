@@ -50,7 +50,11 @@ public abstract class ResourceTest {
     }
 
     protected Json getJson() {
-        return new Json();
+        final Json json = new Json();
+        for (Module module : modules) {
+            json.registerModule(module);
+        }
+        return json;
     }
     
     protected Client client() {
@@ -71,9 +75,6 @@ public abstract class ResourceTest {
                     config.getClasses().add(provider);
                 }
                 Json json = getJson();
-                for (Module module : modules) {
-                    json.registerModule(module);
-                }
                 for (Map.Entry<String, Boolean> feature : features.entrySet()) {
                     config.getFeatures().put(feature.getKey(), feature.getValue());
                 }
