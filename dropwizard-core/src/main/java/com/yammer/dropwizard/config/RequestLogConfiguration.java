@@ -12,19 +12,19 @@ import static com.yammer.dropwizard.config.LoggingConfiguration.*;
 public class RequestLogConfiguration {
     @NotNull
     @JsonProperty
-    private ConsoleConfiguration console = new ConsoleConfiguration();
+    protected ConsoleConfiguration console = new ConsoleConfiguration();
 
     @NotNull
     @JsonProperty
-    private FileConfiguration file = new FileConfiguration();
+    protected FileConfiguration file = new FileConfiguration();
 
     @NotNull
     @JsonProperty
-    private SyslogConfiguration syslog = new SyslogConfiguration();
+    protected SyslogConfiguration syslog = new SyslogConfiguration();
 
     @NotNull
     @JsonProperty
-    private TimeZone timeZone = UTC;
+    protected TimeZone timeZone = UTC;
 
     public ConsoleConfiguration getConsoleConfiguration() {
         return console;
