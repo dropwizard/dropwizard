@@ -13,6 +13,7 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 public class ValidatorTest {
+    @SuppressWarnings("unused")
     public static class Example {
         @NotNull
         private String notNull = null;

@@ -18,6 +18,7 @@ import org.codehaus.jackson.map.Module;
 
 import javax.annotation.CheckForNull;
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.List;
 import java.util.SortedMap;
@@ -72,7 +73,23 @@ public abstract class AbstractService<T extends Configuration> {
      */
     @SuppressWarnings("unchecked")
     public final Class<T> getConfigurationClass() {
-        return (Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0];
+        Type t = getClass();
+        while (t instanceof Class<?>) {
+            t = ((Class<?>) t).getGenericSuperclass();
+        }
+        // Similar to [Issue-89] (see {@link com.yammer.dropwizard.cli.ConfiguredCommand#getConfigurationClass})
+        if (t instanceof ParameterizedType) {
+            // should typically have one of type parameters (first one) that matches:
+            for (Type param : ((ParameterizedType) t).getActualTypeArguments()) {
+                if (param instanceof Class<?>) {
+                    Class<?> cls = (Class<?>) param;
+                    if (Configuration.class.isAssignableFrom(cls)) {
+                        return (Class<T>) cls;
+                    }
+                }
+            }
+        }
+        throw new IllegalStateException("Can not figure out Configuration type parameterization for "+getClass().getName());
     }
 
     /**
