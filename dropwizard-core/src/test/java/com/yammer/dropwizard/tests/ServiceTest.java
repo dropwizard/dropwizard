@@ -28,6 +28,8 @@ public class ServiceTest {
         }
     }
 
+    private class PoserService extends FakeService { }
+    
     private final Bundle bundle = mock(Bundle.class);
     private final FakeService service = new FakeService();
 
@@ -35,5 +37,11 @@ public class ServiceTest {
     public void hasAReferenceToItsTypeParameter() throws Exception {
         assertThat(service.getConfigurationClass(),
                    is(sameInstance(FakeConfiguration.class)));
+    }
+
+    @Test
+    public void canDetermineConfiguration() throws Exception {
+        assertThat(new PoserService().getConfigurationClass(),
+                is(sameInstance(FakeConfiguration.class)));
     }
 }

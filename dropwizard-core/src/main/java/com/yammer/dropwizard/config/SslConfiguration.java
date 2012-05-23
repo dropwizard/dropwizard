@@ -5,13 +5,13 @@ import org.codehaus.jackson.annotate.JsonProperty;
 
 public class SslConfiguration {
     @JsonProperty
-    private String keyStorePath = null;
+    protected String keyStorePath = null;
 
     @JsonProperty
-    private String keyStorePassword = null;
+    protected String keyStorePassword = null;
 
     @JsonProperty
-    private String keyManagerPassword = null;
+    protected String keyManagerPassword = null;
 
     public Optional<String> getKeyStorePath() {
         return Optional.fromNullable(keyStorePath);

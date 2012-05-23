@@ -8,19 +8,19 @@ import org.codehaus.jackson.annotate.JsonProperty;
 @SuppressWarnings({ "FieldMayBeFinal", "FieldCanBeLocal" })
 public class GzipConfiguration {
     @JsonProperty
-    private boolean enabled = true;
+    protected boolean enabled = true;
 
     @JsonProperty
-    private Size minimumEntitySize = null;
+    protected Size minimumEntitySize = null;
 
     @JsonProperty
-    private Size bufferSize = null;
+    protected Size bufferSize = null;
 
     @JsonProperty
-    private ImmutableSet<String> excludedUserAgents = null;
+    protected ImmutableSet<String> excludedUserAgents = null;
 
     @JsonProperty
-    private ImmutableSet<String> compressedMimeTypes = null;
+    protected ImmutableSet<String> compressedMimeTypes = null;
 
     public boolean isEnabled() {
         return enabled;
