@@ -12,8 +12,6 @@ import java.io.File;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
-// TODO: 10/12/11 <coda> -- write tests for ConfiguredCommand
-
 /**
  * A command whose first parameter is the location of a YAML configuration file. That file is parsed
  *
