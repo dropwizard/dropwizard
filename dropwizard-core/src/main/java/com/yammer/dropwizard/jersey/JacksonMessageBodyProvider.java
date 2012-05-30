@@ -5,6 +5,7 @@ import com.yammer.dropwizard.json.Json;
 import com.yammer.dropwizard.logging.Log;
 import com.yammer.dropwizard.validation.Validator;
 import org.codehaus.jackson.JsonProcessingException;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.eclipse.jetty.io.EofException;
 
 import javax.validation.Valid;
@@ -22,6 +23,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * A Jersey provider which enables using Jackson to parse request entities into objects and generate
@@ -83,13 +87,14 @@ public class JacksonMessageBodyProvider implements MessageBodyReader<Object>,
         if (validating) {
             final ImmutableList<String> errors = VALIDATOR.validate(value);
             if (!errors.isEmpty()) {
-                final StringBuilder msg = new StringBuilder("The request entity had the following errors:\n");
-                for (String error : errors) {
-                    msg.append("  * ").append(error).append('\n');
-                }
+                Map<String,List<String>> errorJson = new HashMap<String,List<String>>();
+                errorJson.put("request_entity_errors", errors);
+                ObjectMapper mapper = new ObjectMapper();
+                final String errorJsonString = mapper.writeValueAsString(errorJson);
+
                 throw new WebApplicationException(Response.status(UNPROCESSABLE_ENTITY)
-                                                          .entity(msg.toString())
-                                                          .type(MediaType.TEXT_PLAIN_TYPE)
+                                                          .entity(errorJsonString)
+                                                          .type(MediaType.APPLICATION_JSON_TYPE)
                                                           .build());
             }
         }
