@@ -2,9 +2,7 @@ package com.yammer.dropwizard.config;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
-import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.jul.LevelChangePropagator;
-import ch.qos.logback.classic.spi.LoggerContextListener;
 import com.google.common.base.Optional;
 import com.yammer.dropwizard.logging.AsyncAppender;
 import com.yammer.dropwizard.logging.LogbackFactory;
@@ -75,9 +73,9 @@ public class LoggingFactory {
 
         final MBeanServer server = ManagementFactory.getPlatformMBeanServer();
         try {
-            ObjectName name = new ObjectName("com.yammer:type=Logging");
-            if (!server.isRegistered(name)) {
-                server.registerMBean(new LoggingBean(), name);
+            final ObjectName objectName = new ObjectName("com.yammer:type=Logging");
+            if (!server.isRegistered(objectName)) {
+                server.registerMBean(new LoggingBean(), objectName);
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -105,10 +103,11 @@ public class LoggingFactory {
         final Logger root = (Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
         root.getLoggerContext().reset();
 
-        final LevelChangePropagator levelChangePropagator = new LevelChangePropagator();
-        levelChangePropagator.setResetJUL(true);
+        final LevelChangePropagator propagator = new LevelChangePropagator();
+        propagator.setContext(root.getLoggerContext());
+        propagator.setResetJUL(true);
 
-        root.getLoggerContext().addListener(levelChangePropagator);
+        root.getLoggerContext().addListener(propagator);
 
         root.setLevel(config.getLevel());
 
