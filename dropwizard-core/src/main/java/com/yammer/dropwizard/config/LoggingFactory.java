@@ -6,6 +6,7 @@ import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.jul.LevelChangePropagator;
 import ch.qos.logback.classic.spi.LoggerContextListener;
 import com.google.common.base.Optional;
+import com.yammer.dropwizard.logging.AsyncAppender;
 import com.yammer.dropwizard.logging.LogbackFactory;
 import com.yammer.dropwizard.logging.LoggingBean;
 import com.yammer.metrics.logback.InstrumentedAppender;
@@ -52,24 +53,24 @@ public class LoggingFactory {
 
         final ConsoleConfiguration console = config.getConsoleConfiguration();
         if (console.isEnabled()) {
-            root.addAppender(LogbackFactory.buildConsoleAppender(console,
-                                                                 root.getLoggerContext(),
-                                                                 console.getLogFormat()));
+            root.addAppender(AsyncAppender.wrap(LogbackFactory.buildConsoleAppender(console,
+                                                                                    root.getLoggerContext(),
+                                                                                    console.getLogFormat())));
         }
 
         final FileConfiguration file = config.getFileConfiguration();
         if (file.isEnabled()) {
-            root.addAppender(LogbackFactory.buildFileAppender(file,
-                                                              root.getLoggerContext(),
-                                                              file.getLogFormat()));
+            root.addAppender(AsyncAppender.wrap(LogbackFactory.buildFileAppender(file,
+                                                                                 root.getLoggerContext(),
+                                                                                 file.getLogFormat())));
         }
 
         final SyslogConfiguration syslog = config.getSyslogConfiguration();
         if (syslog.isEnabled()) {
-            root.addAppender(LogbackFactory.buildSyslogAppender(syslog,
-                                                                root.getLoggerContext(),
-                                                                name,
-                                                                syslog.getLogFormat()));
+            root.addAppender(AsyncAppender.wrap(LogbackFactory.buildSyslogAppender(syslog,
+                                                                                   root.getLoggerContext(),
+                                                                                   name,
+                                                                                   syslog.getLogFormat())));
         }
 
         final MBeanServer server = ManagementFactory.getPlatformMBeanServer();
