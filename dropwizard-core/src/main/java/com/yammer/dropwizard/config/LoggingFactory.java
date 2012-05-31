@@ -74,7 +74,10 @@ public class LoggingFactory {
 
         final MBeanServer server = ManagementFactory.getPlatformMBeanServer();
         try {
-            server.registerMBean(new LoggingBean(), new ObjectName("com.yammer:type=Logging"));
+            ObjectName name = new ObjectName("com.yammer:type=Logging");
+            if (!server.isRegistered(name)) {
+                server.registerMBean(new LoggingBean(), name);
+            }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
