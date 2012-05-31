@@ -26,7 +26,7 @@ public class HttpClientFactory {
     public HttpClient build() {
         final BasicHttpParams params = createHttpParams();
         final InstrumentedClientConnManager manager = createConnectionManager(SchemeRegistryFactory.createDefault());
-        InstrumentedHttpClient client = new InstrumentedHttpClient(manager, params);
+        final InstrumentedHttpClient client = new InstrumentedHttpClient(manager, params);
         setStrategiesForClient(client);
 
         return client;
@@ -50,12 +50,8 @@ public class HttpClientFactory {
             client.setKeepAliveStrategy(new DefaultConnectionKeepAliveStrategy() {
                 @Override
                 public long getKeepAliveDuration(HttpResponse response, HttpContext context) {
-                    long duration = super.getKeepAliveDuration(response, context);
-                    if(duration == -1) {
-                        return keepAlive;
-                    } else {
-                        return duration;
-                    }
+                    final long duration = super.getKeepAliveDuration(response, context);
+                    return (duration == -1) ? keepAlive : duration;
                 }
             });
         }
@@ -66,7 +62,7 @@ public class HttpClientFactory {
      * @return a BasicHttpParams object from the HttpClientConfiguration
      */
     protected BasicHttpParams createHttpParams() {
-        BasicHttpParams params = new BasicHttpParams();
+        final BasicHttpParams params = new BasicHttpParams();
 
         // TODO: 11/16/11 <coda> -- figure out the full set of options to support
 
@@ -95,8 +91,9 @@ public class HttpClientFactory {
      * @return a InstrumentedClientConnManger instance
      */
     protected InstrumentedClientConnManager createConnectionManager(SchemeRegistry registry) {
-        long ttl = configuration.getTimeToLive().toMilliseconds();
-        InstrumentedClientConnManager manager = new InstrumentedClientConnManager(registry, ttl, TimeUnit.MILLISECONDS);
+        final long ttl = configuration.getTimeToLive().toMilliseconds();
+        final InstrumentedClientConnManager manager =
+                new InstrumentedClientConnManager(registry, ttl, TimeUnit.MILLISECONDS);
         manager.setDefaultMaxPerRoute(configuration.getMaxConnectionsPerRoute());
         manager.setMaxTotal(configuration.getMaxConnections());
         return manager;
