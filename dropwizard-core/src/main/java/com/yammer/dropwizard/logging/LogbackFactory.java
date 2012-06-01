@@ -6,6 +6,7 @@ import ch.qos.logback.classic.filter.ThresholdFilter;
 import ch.qos.logback.classic.net.SyslogAppender;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.ConsoleAppender;
+import ch.qos.logback.core.encoder.LayoutWrappingEncoder;
 import ch.qos.logback.core.rolling.DefaultTimeBasedFileNamingAndTriggeringPolicy;
 import ch.qos.logback.core.rolling.RollingFileAppender;
 import ch.qos.logback.core.rolling.TimeBasedRollingPolicy;
@@ -68,6 +69,7 @@ public class LogbackFactory {
         appender.setAppend(true);
         appender.setContext(context);
         appender.setLayout(formatter);
+        ((LayoutWrappingEncoder<?>) appender.getEncoder()).setImmediateFlush(false);
         appender.setFile(file.getCurrentLogFilename());
         appender.setPrudent(false);
         appender.setRollingPolicy(rollingPolicy);
@@ -95,6 +97,7 @@ public class LogbackFactory {
         final ConsoleAppender<ILoggingEvent> appender = new ConsoleAppender<ILoggingEvent>();
         appender.setContext(context);
         appender.setLayout(formatter);
+        ((LayoutWrappingEncoder<?>) appender.getEncoder()).setImmediateFlush(false);
         addThresholdFilter(appender, console.getThreshold());
         appender.start();
 
