@@ -11,10 +11,17 @@ v0.4.1-SNAPSHOT
 
 * Fixed type parameter resolution in for subclasses of subclasses of ``ConfiguredCommand``.
 * Upgraded to Jackson 1.9.7.
-* Upgraded to Logback 1.0.3.
+* Upgraded to Logback 1.0.4, with asynchronous logging.
 * Upgraded to Hibernate Validator 4.3.0.
 * Upgraded to JDBI 2.34.
 * Upgraded to Jetty 8.1.4.
+* Added ``logging.console.format``, ``logging.file.format``, and ``logging.syslog.format``
+  parameters for custom log formats.
+* Extended ``ResourceTest`` to allow for enabling/disabling specific Jersey features.
+* Made ``Configuration`` serializable as JSON.
+* Stopped lumping command-line options in a group in ``Command``.
+* Fixed ``java.util.logging`` level changes.
+* Upgraded to Apache HttpClient 4.2.
 
 .. _rel-0.4.0:
 
