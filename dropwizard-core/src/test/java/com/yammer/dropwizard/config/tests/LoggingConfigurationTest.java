@@ -13,6 +13,8 @@ import java.io.File;
 
 import static com.yammer.dropwizard.config.LoggingConfiguration.ConsoleConfiguration;
 import static com.yammer.dropwizard.config.LoggingConfiguration.FileConfiguration;
+import static com.yammer.dropwizard.config.LoggingConfiguration.SyslogConfiguration;
+import static com.yammer.dropwizard.config.LoggingConfiguration.AppenderConfiguration;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -37,6 +39,17 @@ public class LoggingConfigurationTest {
     public void hasASetOfOverriddenLevels() throws Exception {
         assertThat(config.getLoggers(),
                    is(ImmutableMap.of("com.example.app", Level.DEBUG)));
+    }
+
+    @Test
+    public void hasAppenderConfiguration() throws Exception {
+        final AppenderConfiguration appenderConfig = config.getAppenderConfiguration();
+        assertThat(appenderConfig.getQueueSize(),
+                   is(512));
+        assertThat(appenderConfig.getDiscardingThreshold(),
+                   is(0));
+        assertThat(appenderConfig.isIncludeCallerData(),
+                is(true));
     }
 
     @Test
@@ -68,5 +81,20 @@ public class LoggingConfigurationTest {
 
         assertThat(file.getArchivedFileCount(),
                    is(5));
+    }
+
+    @Test
+    public void hasSyslogConfiguration() throws Exception {
+        final SyslogConfiguration syslog = config.getSyslogConfiguration();
+
+        assertThat(syslog.isEnabled(),
+                   is(false));
+
+        assertThat(syslog.getHost(),
+                   is("localhost"));
+
+        assertThat(syslog.getFacility(),
+                   is("local0"));
+
     }
 }
