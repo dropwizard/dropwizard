@@ -1,9 +1,12 @@
 package com.yammer.dropwizard.jetty;
 
+import com.google.common.collect.ImmutableList;
+import com.yammer.dropwizard.validation.InvalidEntityException;
 import org.eclipse.jetty.server.handler.ErrorHandler;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.io.Writer;
 
 /**
@@ -27,8 +30,39 @@ public class UnbrandedErrorHandler extends ErrorHandler {
         if (showStacks) {
             writeErrorPageStacks(request, writer);
         }
+
+
+
         for (int i= 0; i < 20; i++) {
             writer.write("<br/>                                                \n");
         }
+    }
+
+    public void writeValidationErrorPage(HttpServletRequest request, StringWriter writer, InvalidEntityException exception) throws IOException {
+        writer.write("<html>\n<head>\n");
+        writeErrorPageHead(request, writer, 422, "Unprocessable Entity");
+        writer.write("</head>\n<body>");
+        writeInvalidationErrorPageBody(request,
+                                       writer,
+                                       exception.getMessage(),
+                                       exception.getErrors());
+        writer.write("\n</body>\n</html>\n");
+    }
+
+    private void writeInvalidationErrorPageBody(HttpServletRequest request, StringWriter writer, String message, ImmutableList<String> errors) throws IOException {
+        final String uri = request.getRequestURI();
+        writeErrorPageMessage(request, writer, 422, "Unprocessable Entity", uri);
+
+        writer.write("<h2>");
+        write(writer, message);
+        writer.write("</h2>");
+
+        writer.write("<ul>");
+        for (String error : errors) {
+            writer.write("<li>");
+            write(writer, error);
+            writer.write("</li>");
+        }
+        writer.write("</ul>");
     }
 }

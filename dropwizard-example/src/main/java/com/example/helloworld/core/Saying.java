@@ -1,12 +1,14 @@
 package com.example.helloworld.core;
 
 import org.codehaus.jackson.annotate.JsonProperty;
+import org.hibernate.validator.constraints.Length;
 
 public class Saying {
     @JsonProperty
     private long id;
 
     @JsonProperty
+    @Length(max = 3)
     private String content;
 
     private Saying() {

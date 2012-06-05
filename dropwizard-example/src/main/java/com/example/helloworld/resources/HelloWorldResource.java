@@ -7,6 +7,7 @@ import com.yammer.dropwizard.jersey.caching.CacheControl;
 import com.yammer.dropwizard.logging.Log;
 import com.yammer.metrics.annotation.Timed;
 
+import javax.validation.Valid;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import java.util.concurrent.TimeUnit;
@@ -33,7 +34,7 @@ public class HelloWorldResource {
     }
 
     @POST
-    public void receiveHello(Saying saying) {
+    public void receiveHello(@Valid Saying saying) {
         LOG.info("Received a saying: {}", saying);
     }
 }

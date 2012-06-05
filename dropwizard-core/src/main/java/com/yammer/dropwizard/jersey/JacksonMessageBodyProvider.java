@@ -3,6 +3,7 @@ package com.yammer.dropwizard.jersey;
 import com.google.common.collect.ImmutableList;
 import com.yammer.dropwizard.json.Json;
 import com.yammer.dropwizard.logging.Log;
+import com.yammer.dropwizard.validation.InvalidEntityException;
 import com.yammer.dropwizard.validation.Validator;
 import org.codehaus.jackson.JsonProcessingException;
 import org.eclipse.jetty.io.EofException;
@@ -36,22 +37,6 @@ public class JacksonMessageBodyProvider implements MessageBodyReader<Object>,
                                                    MessageBodyWriter<Object> {
     private static final Log LOG = Log.forClass(JacksonMessageBodyProvider.class);
     private static final Validator VALIDATOR = new Validator();
-    private static final Response.StatusType UNPROCESSABLE_ENTITY = new Response.StatusType() {
-        @Override
-        public int getStatusCode() {
-            return 422;
-        }
-
-        @Override
-        public Response.Status.Family getFamily() {
-            return Response.Status.Family.CLIENT_ERROR;
-        }
-
-        @Override
-        public String getReasonPhrase() {
-            return "Unprocessable Entity";
-        }
-    };
 
     private final Json json;
 
@@ -83,14 +68,8 @@ public class JacksonMessageBodyProvider implements MessageBodyReader<Object>,
         if (validating) {
             final ImmutableList<String> errors = VALIDATOR.validate(value);
             if (!errors.isEmpty()) {
-                final StringBuilder msg = new StringBuilder("The request entity had the following errors:\n");
-                for (String error : errors) {
-                    msg.append("  * ").append(error).append('\n');
-                }
-                throw new WebApplicationException(Response.status(UNPROCESSABLE_ENTITY)
-                                                          .entity(msg.toString())
-                                                          .type(MediaType.TEXT_PLAIN_TYPE)
-                                                          .build());
+                throw new InvalidEntityException("The request entity had the following errors:",
+                                                 errors);
             }
         }
         return value;
