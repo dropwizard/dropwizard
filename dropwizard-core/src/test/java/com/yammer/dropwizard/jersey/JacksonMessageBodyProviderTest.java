@@ -117,9 +117,10 @@ public class JacksonMessageBodyProviderTest {
             assertThat(e.getResponse().getStatus(),
                        is(422));
 
-            assertThat((String) e.getResponse().getEntity(),
-                       is("The request entity had the following errors:\n" +
-                                  "  * id must be greater than or equal to 0 (was -1)\n"));
+            final String body = (String) e.getResponse().getEntity();
+
+            assertThat(body,
+                       is("{\"request_entity_errors\":[\"id must be greater than or equal to 0 (was -1)\"]}"));
         }
     }
 

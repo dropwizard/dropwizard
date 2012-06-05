@@ -3,6 +3,7 @@ package com.yammer.dropwizard.jetty;
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableSet;
 import com.yammer.dropwizard.logging.Log;
+import org.codehaus.jackson.map.*;
 import org.eclipse.jetty.http.HttpGenerator;
 import org.eclipse.jetty.http.HttpHeaders;
 import org.eclipse.jetty.http.HttpMethods;
@@ -17,15 +18,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 /**
- * An {@link ErrorHandler} subclass which returns concise, {@code text/plain} error messages.
+ * An {@link ErrorHandler} subclass which returns {@code application/json} error messages.
  */
-public class QuietErrorHandler extends ErrorHandler {
-    private static final Log LOG = Log.forClass(QuietErrorHandler.class);
-    private static final int RESPONSE_BUFFER_SIZE = 4096;
+public class JsonErrorHandler extends ErrorHandler {
+    private static final Log LOG = Log.forClass(JsonErrorHandler.class);
 
     /*
      * Sadly, this class is basically untestable.
@@ -42,6 +44,7 @@ public class QuietErrorHandler extends ErrorHandler {
         final AbstractHttpConnection connection = AbstractHttpConnection.getCurrentConnection();
         if (connection != null) {
             connection.getRequest().setHandled(true);
+
             final Response jettyResponse = connection.getResponse();
             jettyResponse.setStatus(jettyResponse.getStatus());
 
@@ -52,17 +55,19 @@ public class QuietErrorHandler extends ErrorHandler {
                 return;
             }
 
-            response.setContentType(MimeTypes.TEXT_PLAIN_UTF_8);
+            response.setContentType(MimeTypes.TEXT_JSON_UTF_8);
             if (getCacheControl() != null) {
                 response.setHeader(HttpHeaders.CACHE_CONTROL, getCacheControl());
             }
 
-            final StringBuilder builder = new StringBuilder(RESPONSE_BUFFER_SIZE);
-            builder.append(errorMessage(request, jettyResponse.getStatus()))
-                   .append('\n')
-                   .append('\n');
-            final byte[] bytes = builder.toString().getBytes(Charsets.UTF_8);
+            Map<String,Object> errorJson = new HashMap<String,Object>();
+            errorJson.put("message", errorMessage(request, jettyResponse.getStatus()));
+            errorJson.put("status_code", jettyResponse.getStatus());
+
+            ObjectMapper mapper = new ObjectMapper();
+            final byte[] bytes = mapper.writeValueAsBytes(errorJson);
             response.setContentLength(bytes.length);
+
             final ServletOutputStream output = response.getOutputStream();
             try {
                 output.write(bytes);

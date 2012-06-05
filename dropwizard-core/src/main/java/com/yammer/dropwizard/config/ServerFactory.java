@@ -7,7 +7,7 @@ import com.google.common.collect.ImmutableSet;
 import com.yammer.dropwizard.jetty.BiDiGzipHandler;
 import com.yammer.dropwizard.jetty.InstrumentedSslSelectChannelConnector;
 import com.yammer.dropwizard.jetty.InstrumentedSslSocketConnector;
-import com.yammer.dropwizard.jetty.QuietErrorHandler;
+import com.yammer.dropwizard.jetty.JsonErrorHandler;
 import com.yammer.dropwizard.logging.Log;
 import com.yammer.dropwizard.servlets.ThreadNameFilter;
 import com.yammer.dropwizard.tasks.TaskServlet;
@@ -97,7 +97,7 @@ public class ServerFactory {
             server.addConnector(createInternalConnector());
         }
 
-        server.addBean(new QuietErrorHandler());
+        server.addBean(new JsonErrorHandler());
 
         server.setSendDateHeader(config.isDateHeaderEnabled());
         server.setSendServerVersion(config.isServerHeaderEnabled());
@@ -140,7 +140,7 @@ public class ServerFactory {
         connector.setResponseHeaderSize((int) config.getResponseHeaderBufferSize().toBytes());
 
         connector.setReuseAddress(config.isReuseAddressEnabled());
-        
+
         final Optional<Duration> lingerTime = config.getSoLingerTime();
 
         if (lingerTime.isPresent()) {
@@ -284,7 +284,7 @@ public class ServerFactory {
         for (Map.Entry<String, String> entry : config.getContextParameters().entrySet()) {
             handler.setInitParameter( entry.getKey(), entry.getValue() );
         }
-        
+
         handler.setConnectorNames(new String[]{"main"});
 
         return wrapHandler(handler);
