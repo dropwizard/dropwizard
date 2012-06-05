@@ -12,4 +12,13 @@ abstract class ScalaService[T <: Configuration](name: String) extends AbstractSe
   final def main(args: Array[String]) {
     run(args)
   }
+
+  def withBundle(bundle: Bundle) {
+    addBundle(bundle)
+  }
+
+  def withBundle(bundle: ConfiguredBundle[_ >: T]) {
+    addBundle(bundle)
+  }
 }
+
