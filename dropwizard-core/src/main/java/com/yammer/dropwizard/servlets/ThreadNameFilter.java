@@ -33,11 +33,6 @@ public class ThreadNameFilter implements Filter {
     }
 
     private static String formatName(HttpServletRequest req, String oldName) {
-        return new StringBuilder(150).append(oldName)
-                                     .append(" - ")
-                                     .append(req.getMethod())
-                                     .append(' ')
-                                     .append(getFullUrl(req))
-                                     .toString();
+        return oldName + " - " + req.getMethod() + ' ' + getFullUrl(req);
     }
 }
