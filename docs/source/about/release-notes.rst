@@ -24,6 +24,7 @@ v0.4.1-SNAPSHOT
 * Upgraded to Apache HttpClient 4.2.
 * Improved performance of ``AssetServlet``.
 * Added ``withBundle`` to ``ScalaService`` to enable bundle mix-ins.
+* Upgraded to SLF4J 1.6.5.
 
 .. _rel-0.4.0:
 
