@@ -22,6 +22,8 @@ v0.4.1-SNAPSHOT
 * Stopped lumping command-line options in a group in ``Command``.
 * Fixed ``java.util.logging`` level changes.
 * Upgraded to Apache HttpClient 4.2.
+* Improved performance of ``AssetServlet``.
+* Added ``withBundle`` to ``ScalaService`` to enable bundle mix-ins.
 
 .. _rel-0.4.0:
 
