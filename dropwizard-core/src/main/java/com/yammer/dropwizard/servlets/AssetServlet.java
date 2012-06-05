@@ -61,7 +61,7 @@ public class AssetServlet extends HttpServlet {
         }
 
         public byte[] getResource() {
-            return resource.clone();
+            return resource;
         }
 
         public String getETag() {
