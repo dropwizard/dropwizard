@@ -1,5 +1,6 @@
 package com.yammer.dropwizard.config;
 
+import ch.qos.logback.classic.AsyncAppender;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.jul.LevelChangePropagator;
@@ -48,26 +49,39 @@ public class LoggingFactory {
 
         final Logger root = configureLevels();
 
+        final AppenderConfiguration appenderConfig = config.getAppenderConfiguration();
         final ConsoleConfiguration console = config.getConsoleConfiguration();
         if (console.isEnabled()) {
-            root.addAppender(LogbackFactory.wrapAsync(LogbackFactory.buildConsoleAppender(console,
-                                                                                          root.getLoggerContext(),
-                                                                                          console.getLogFormat())));
+            AsyncAppender appender = (AsyncAppender) LogbackFactory.wrapAsync(LogbackFactory.buildConsoleAppender(console,
+                                                                        root.getLoggerContext(),
+                                                                        console.getLogFormat()));
+            appender.setIncludeCallerData(appenderConfig.isIncludeCallerData());
+            appender.setQueueSize(appenderConfig.getQueueSize());
+            appender.setDiscardingThreshold(appenderConfig.getDiscardingThreshold());
+            root.addAppender(appender);
         }
 
         final FileConfiguration file = config.getFileConfiguration();
         if (file.isEnabled()) {
-            root.addAppender(LogbackFactory.wrapAsync(LogbackFactory.buildFileAppender(file,
-                                                                                       root.getLoggerContext(),
-                                                                                       file.getLogFormat())));
+            AsyncAppender appender = (AsyncAppender) LogbackFactory.wrapAsync(LogbackFactory.buildFileAppender(file,
+                                                                                    root.getLoggerContext(),
+                                                                                    file.getLogFormat()));
+            appender.setIncludeCallerData(appenderConfig.isIncludeCallerData());
+            appender.setQueueSize(appenderConfig.getQueueSize());
+            appender.setDiscardingThreshold(appenderConfig.getDiscardingThreshold());
+            root.addAppender(appender);
         }
 
         final SyslogConfiguration syslog = config.getSyslogConfiguration();
         if (syslog.isEnabled()) {
-            root.addAppender(LogbackFactory.wrapAsync(LogbackFactory.buildSyslogAppender(syslog,
-                                                                                         root.getLoggerContext(),
-                                                                                         name,
-                                                                                         syslog.getLogFormat())));
+            AsyncAppender appender = (AsyncAppender) LogbackFactory.wrapAsync(LogbackFactory.buildSyslogAppender(syslog,
+                                                                                                root.getLoggerContext(),
+                                                                                                name,
+                                                                                                syslog.getLogFormat()));
+            appender.setIncludeCallerData(appenderConfig.isIncludeCallerData());
+            appender.setQueueSize(appenderConfig.getQueueSize());
+            appender.setDiscardingThreshold(appenderConfig.getDiscardingThreshold());
+            root.addAppender(appender);
         }
 
         final MBeanServer server = ManagementFactory.getPlatformMBeanServer();

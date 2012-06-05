@@ -442,6 +442,34 @@ other loggers in your YAML configuration file:
         # Overrides the level of com.example.dw.Thing and sets it to DEBUG.
         "com.example.dw.Thing": DEBUG
 
+.. _man-core-logging-appender:
+
+Logging Appender
+----------------
+
+Dropwizard uses logback async appender. You can configure appender properties by
+editing the ``logging`` section of your YAML configuration file:
+
+.. code-block:: yaml
+
+    logging:
+
+      # ...
+      # Async appender properties.
+      appender:
+
+        # The maximum capacity of the blocking queue where appender buffers events. Default queueSize is set to 256.
+        queueSize: 512
+
+        # When the blocking queue has 20% capacity remaining, it will drop events of level TRACE, DEBUG and INFO,
+        # keeping only events of level WARN and ERROR. To keep all events, set discardingThreshold to 0.
+        discardingThreshold: 0
+
+        # Extracting caller data can be rather expensive. To improve performance, by default, caller data associated
+        # with an event is not extracted when the event added to the event queue. By default, only "cheap" data like the
+        # thread name and the MDC are copied. You can include caller data by setting this property to true.
+        includeCallerData: false
+
 .. _man-core-logging-console:
 
 Console Logging

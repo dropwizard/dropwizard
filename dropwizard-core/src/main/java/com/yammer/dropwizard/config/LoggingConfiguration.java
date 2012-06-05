@@ -17,6 +17,29 @@ import java.util.TimeZone;
 public class LoggingConfiguration {
     static final TimeZone UTC = TimeZone.getTimeZone("UTC");
 
+    public static class AppenderConfiguration {
+        @JsonProperty
+        protected int queueSize;
+
+        @JsonProperty
+        protected int discardingThreshold;
+
+        @JsonProperty
+        protected boolean includeCallerData;
+
+        public int getQueueSize() {
+            return queueSize;
+        }
+
+        public int getDiscardingThreshold() {
+            return discardingThreshold;
+        }
+
+        public boolean isIncludeCallerData() {
+            return includeCallerData;
+        }
+
+    }
     public static class ConsoleConfiguration {
         @JsonProperty
         protected boolean enabled = true;
@@ -183,6 +206,9 @@ public class LoggingConfiguration {
     @JsonProperty
     protected ImmutableMap<String, Level> loggers = ImmutableMap.of();
 
+    @JsonProperty
+    protected AppenderConfiguration appender = new AppenderConfiguration();
+
     @Valid
     @NotNull
     @JsonProperty
@@ -216,5 +242,9 @@ public class LoggingConfiguration {
 
     public SyslogConfiguration getSyslogConfiguration() {
         return syslog;
+    }
+
+    public AppenderConfiguration getAppenderConfiguration() {
+        return appender;
     }
 }

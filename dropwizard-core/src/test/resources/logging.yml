@@ -1,6 +1,10 @@
 level: INFO
 loggers:
   com.example.app: DEBUG
+appender:
+  queueSize: 512
+  discardingThreshold: 0
+  includeCallerData: true
 console:
   enabled: true
   threshold: ALL
