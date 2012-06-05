@@ -64,7 +64,7 @@ public class Environment extends AbstractLifeCycle {
      */
     public Environment(Configuration configuration, AbstractService<?> service) {
         this.service = service;
-        this.config = new DropwizardResourceConfig() {
+        this.config = new DropwizardResourceConfig(false) {
             @Override
             public void validate() {
                 super.validate();

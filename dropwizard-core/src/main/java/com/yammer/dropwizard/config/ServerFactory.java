@@ -7,7 +7,7 @@ import com.google.common.collect.ImmutableSet;
 import com.yammer.dropwizard.jetty.BiDiGzipHandler;
 import com.yammer.dropwizard.jetty.InstrumentedSslSelectChannelConnector;
 import com.yammer.dropwizard.jetty.InstrumentedSslSocketConnector;
-import com.yammer.dropwizard.jetty.QuietErrorHandler;
+import com.yammer.dropwizard.jetty.UnbrandedErrorHandler;
 import com.yammer.dropwizard.logging.Log;
 import com.yammer.dropwizard.servlets.ThreadNameFilter;
 import com.yammer.dropwizard.tasks.TaskServlet;
@@ -97,7 +97,7 @@ public class ServerFactory {
             server.addConnector(createInternalConnector());
         }
 
-        server.addBean(new QuietErrorHandler());
+        server.addBean(new UnbrandedErrorHandler());
 
         server.setSendDateHeader(config.isDateHeaderEnabled());
         server.setSendServerVersion(config.isServerHeaderEnabled());

@@ -1,24 +1,23 @@
 package com.yammer.dropwizard.testing;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import com.google.common.collect.Maps;
-import com.yammer.dropwizard.jersey.DropwizardResourceConfig;
-import org.codehaus.jackson.map.Module;
-import org.junit.After;
-import org.junit.Before;
-
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.test.framework.AppDescriptor;
 import com.sun.jersey.test.framework.JerseyTest;
 import com.sun.jersey.test.framework.LowLevelAppDescriptor;
 import com.yammer.dropwizard.bundles.JavaBundle;
+import com.yammer.dropwizard.jersey.DropwizardResourceConfig;
 import com.yammer.dropwizard.jersey.JacksonMessageBodyProvider;
 import com.yammer.dropwizard.json.Json;
+import org.codehaus.jackson.map.Module;
+import org.junit.After;
+import org.junit.Before;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * A base test class for testing Dropwizard resources.
@@ -67,14 +66,14 @@ public abstract class ResourceTest {
         this.test = new JerseyTest() {
             @Override
             protected AppDescriptor configure() {
-                final DropwizardResourceConfig config = new DropwizardResourceConfig();
+                final DropwizardResourceConfig config = new DropwizardResourceConfig(true);
                 for (Object provider : JavaBundle.DEFAULT_PROVIDERS) { // sorry, Scala folks
                     config.getSingletons().add(provider);
                 }
                 for (Class<?> provider : providers) {
                     config.getClasses().add(provider);
                 }
-                Json json = getJson();
+                final Json json = getJson();
                 for (Map.Entry<String, Boolean> feature : features.entrySet()) {
                     config.getFeatures().put(feature.getKey(), feature.getValue());
                 }

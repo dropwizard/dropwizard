@@ -6,10 +6,13 @@ import com.yammer.dropwizard.jersey.caching.CacheControlledResourceMethodDispatc
 import com.yammer.metrics.jersey.InstrumentedResourceMethodDispatchAdapter;
 
 public class DropwizardResourceConfig extends DefaultResourceConfig {
-    public DropwizardResourceConfig() {
+    public DropwizardResourceConfig(boolean testOnly) {
         super();
         getFeatures().put(ResourceConfig.FEATURE_DISABLE_WADL, Boolean.TRUE);
-        getSingletons().add(new LoggingExceptionMapper<Throwable>() { }); // create a subclass to pin it to Throwable
+        if (!testOnly) {
+            // create a subclass to pin it to Throwable
+            getSingletons().add(new LoggingExceptionMapper<Throwable>() {});
+        }
         getClasses().add(InstrumentedResourceMethodDispatchAdapter.class);
         getClasses().add(CacheControlledResourceMethodDispatchAdapter.class);
     }
