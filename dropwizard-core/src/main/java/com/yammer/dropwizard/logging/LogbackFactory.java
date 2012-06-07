@@ -1,12 +1,10 @@
 package com.yammer.dropwizard.logging;
 
-import ch.qos.logback.classic.AsyncAppender;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.filter.ThresholdFilter;
 import ch.qos.logback.classic.net.SyslogAppender;
 import ch.qos.logback.classic.spi.ILoggingEvent;
-import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.ConsoleAppender;
 import ch.qos.logback.core.encoder.LayoutWrappingEncoder;
 import ch.qos.logback.core.rolling.DefaultTimeBasedFileNamingAndTriggeringPolicy;
@@ -111,13 +109,5 @@ public class LogbackFactory {
         filter.setLevel(threshold.toString());
         filter.start();
         appender.addFilter(filter);
-    }
-
-    public static Appender<ILoggingEvent> wrapAsync(Appender<ILoggingEvent> delegate) {
-        final AsyncAppender appender = new AsyncAppender();
-        appender.setContext(delegate.getContext());
-        appender.addAppender(delegate);
-        appender.start();
-        return appender;
     }
 }
