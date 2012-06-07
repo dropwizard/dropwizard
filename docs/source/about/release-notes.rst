@@ -25,6 +25,7 @@ v0.4.1-SNAPSHOT
 * Improved performance of ``AssetServlet``.
 * Added ``withBundle`` to ``ScalaService`` to enable bundle mix-ins.
 * Upgraded to SLF4J 1.6.5.
+* Enabled configuration-parameterized Jersey containers.
 
 .. _rel-0.4.0:
 

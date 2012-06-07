@@ -20,8 +20,8 @@ public class SetupDatabaseCommand extends ConfiguredCommand<HelloWorldConfigurat
     protected void run(AbstractService<HelloWorldConfiguration> service, HelloWorldConfiguration configuration, CommandLine params) throws Exception {
 
         final Log log = Log.forClass(SetupDatabaseCommand.class);
-        final Environment environment = new Environment(configuration, service);
-        //service.initializeWithBundles(configuration, environment);
+        final Environment environment = new Environment(service, configuration);
+//        service.initializeWithBundles(configuration, environment);
         final DatabaseFactory factory = new DatabaseFactory(environment);
         final Database db = factory.build(configuration.getDatabaseConfiguration(), "h2");
         final PeopleDAO peopleDAO = db.onDemand(PeopleDAO.class);

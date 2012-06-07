@@ -45,7 +45,7 @@ public class ServerCommand<T extends Configuration> extends ConfiguredCommand<T>
     protected void run(AbstractService<T> service,
                        T configuration,
                        CommandLine params) throws Exception {
-        final Environment environment = new Environment(configuration, service);
+        final Environment environment = new Environment(service, configuration);
         service.initializeWithBundles(configuration, environment);
         final Server server = new ServerFactory(configuration.getHttpConfiguration(),
                                                 service.getName()).buildServer(environment);

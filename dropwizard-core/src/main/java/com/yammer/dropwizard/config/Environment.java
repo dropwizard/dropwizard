@@ -58,11 +58,11 @@ public class Environment extends AbstractLifeCycle {
 
     /**
      * Creates a new environment.
-     * 
-     * @param configuration    the service's {@link Configuration}
+     *
      * @param service          the service
+     * @param configuration    the service's {@link com.yammer.dropwizard.config.Configuration}
      */
-    public Environment(Configuration configuration, AbstractService<?> service) {
+    public <T extends Configuration> Environment(AbstractService<T> service, T configuration) {
         this.service = service;
         this.config = new DropwizardResourceConfig(false) {
             @Override
@@ -82,7 +82,7 @@ public class Environment extends AbstractLifeCycle {
         this.tasks = ImmutableSet.builder();
         this.lifeCycle = new AggregateLifeCycle();
         
-        final HttpServlet jerseyContainer = service.getJerseyContainer(config);
+        final HttpServlet jerseyContainer = service.getJerseyContainer(config, configuration);
         if (jerseyContainer != null) {
             addServlet(jerseyContainer, configuration.getHttpConfiguration().getRootPath()).setInitOrder(Integer.MAX_VALUE);
         }

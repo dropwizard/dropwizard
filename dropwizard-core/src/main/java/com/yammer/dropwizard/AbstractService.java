@@ -59,6 +59,7 @@ public abstract class AbstractService<T extends Configuration> {
     /**
      * A simple reminder that this particular class isn't meant to be extended by non-DW classes.
      */
+    @SuppressWarnings("UnusedDeclaration")
     protected abstract void subclassServiceInsteadOfThis();
 
     public final String getName() {
@@ -82,7 +83,7 @@ public abstract class AbstractService<T extends Configuration> {
             // should typically have one of type parameters (first one) that matches:
             for (Type param : ((ParameterizedType) t).getActualTypeArguments()) {
                 if (param instanceof Class<?>) {
-                    Class<?> cls = (Class<?>) param;
+                    final Class<?> cls = (Class<?>) param;
                     if (Configuration.class.isAssignableFrom(cls)) {
                         return (Class<T>) cls;
                     }
@@ -232,13 +233,16 @@ public abstract class AbstractService<T extends Configuration> {
      * An implementation that chooses to return {@code null} is responsible for creating
      * a container with the given config by other means during initialization and startup.
      * 
-     * @param config the Jersey resource config to use for the container
+     *
+     * @param resourceConfig    the Jersey resource config to use for the container
+     * @param serviceConfig     the service configuration object
      * @return a Jersey servlet container, or {@code null} if the Jersey container
      *         will be created by other means 
      */
     @CheckForNull
-    public ServletContainer getJerseyContainer(DropwizardResourceConfig config) {
-        return new ServletContainer(config);
+    public ServletContainer getJerseyContainer(DropwizardResourceConfig resourceConfig,
+                                               T serviceConfig) {
+        return new ServletContainer(resourceConfig);
     }
     
     private static boolean isHelp(String[] arguments) {
