@@ -26,6 +26,7 @@ v0.4.1-SNAPSHOT
 * Added ``withBundle`` to ``ScalaService`` to enable bundle mix-ins.
 * Upgraded to SLF4J 1.6.6.
 * Enabled configuration-parameterized Jersey containers.
+* Upgraded to Jackson Guava 1.9.1, with support for ``Optional``.
 
 .. _rel-0.4.0:
 
