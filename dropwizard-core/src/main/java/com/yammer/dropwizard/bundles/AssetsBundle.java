@@ -80,7 +80,7 @@ public class AssetsBundle implements Bundle {
      */
     public AssetsBundle(String resourcePath, CacheBuilderSpec cacheBuilderSpec, String uriPath) {
         checkArgument(resourcePath.startsWith("/"), "%s is not an absolute path", resourcePath);
-        checkArgument(!"/".equals(resourcePath), "%s is the classpath root");
+        checkArgument(!"/".equals(resourcePath), "%s is the classpath root", resourcePath);
         this.resourcePath = resourcePath.endsWith("/") ? resourcePath : (resourcePath + '/');
         this.uriPath = uriPath.endsWith("/") ? uriPath : (uriPath + '/');
         this.cacheBuilderSpec = cacheBuilderSpec;
