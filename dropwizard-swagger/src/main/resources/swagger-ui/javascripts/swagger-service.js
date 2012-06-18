@@ -58,8 +58,8 @@ function SwaggerService(baseUrl, _apiKey, statusCallback) {
 
     init: function(atts) {
       if (atts) this.load(atts);
-      this.path_json = this.path.replace("{format}", "json");
-      this.path_xml = this.path.replace("{format}", "xml");
+      this.path_json = this.path.replace("{format}", "json") + "/api/describe";
+      this.path_xml = this.path.replace("{format}", "xml") + "/api/describe";
       this.baseUrl = apiHost;
       //execluded 9 letters to remove .{format} from name
       this.name = this.path.substr(1, this.path.length - formatString.length - 1);

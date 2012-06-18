@@ -14,7 +14,7 @@ import javax.ws.rs.core.UriInfo;
 public abstract class SwaggerResourceSupport extends JavaHelp {
 
     @GET
-    @Path("api")
+    @Path("api/describe")
     @Override
     public Response getHelp(@Context ServletConfig servConfig, @Context ResourceConfig resConfig,
                             @Context HttpHeaders headers, @Context UriInfo uriInfo) {
