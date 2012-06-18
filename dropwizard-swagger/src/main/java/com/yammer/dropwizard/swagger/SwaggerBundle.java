@@ -1,9 +1,7 @@
 package com.yammer.dropwizard.swagger;
 
-import com.sun.jersey.spi.container.servlet.ServletContainer;
 import com.yammer.dropwizard.bundles.AssetsBundle;
 import com.yammer.dropwizard.config.Environment;
-import com.yammer.dropwizard.config.ServletConfiguration;
 
 public class SwaggerBundle extends AssetsBundle {
 

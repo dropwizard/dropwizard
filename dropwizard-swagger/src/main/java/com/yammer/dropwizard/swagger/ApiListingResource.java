@@ -7,7 +7,12 @@ import javax.servlet.ServletConfig;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.*;
+import javax.ws.rs.core.Application;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -34,7 +39,8 @@ public class ApiListingResource extends ApiListingResourceJSON {
         }
 
         /**
-         * Merge root resource classes with the singleton classes as an workaround for Swagger
+         * Merge root resource classes with the singleton classes
+         * as an workaround for a limitation (or bug?) in Swagger
          */
         @Override
         public Set<Class<?>> getRootResourceClasses() {
@@ -131,11 +137,6 @@ public class ApiListingResource extends ApiListingResourceJSON {
         @Override
         public void add(Application app) {
             resourceConfig.add(app);
-        }
-
-        @Override
-        public ResourceConfig clone() {
-            return resourceConfig.clone();
         }
 
         public static String[] getElements(String[] elements) {

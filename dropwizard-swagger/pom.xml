@@ -10,8 +10,7 @@
     </parent>
 
     <artifactId>dropwizard-swagger</artifactId>
-    <name>Wordnik Swagger for Dropwizard</name>
-    <packaging>jar</packaging>
+    <name>Dropwizard intergation with Wordnik Swagger</name>
 
     <properties>
         <swagger.version>1.0.1</swagger.version>

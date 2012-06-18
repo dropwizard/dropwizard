@@ -11,10 +11,10 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
-public abstract class SwaggerResourceSupport extends JavaHelp {
+public abstract class SwaggerResource extends JavaHelp {
 
     @GET
-    @Path("api/describe")
+    @Path("__api/describe")
     @Override
     public Response getHelp(@Context ServletConfig servConfig, @Context ResourceConfig resConfig,
                             @Context HttpHeaders headers, @Context UriInfo uriInfo) {
