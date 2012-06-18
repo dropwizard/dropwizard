@@ -17,6 +17,7 @@ import com.yammer.dropwizard.bundles.AssetsBundle;
 import com.yammer.dropwizard.config.Environment;
 import com.yammer.dropwizard.db.Database;
 import com.yammer.dropwizard.db.DatabaseFactory;
+import com.yammer.dropwizard.swagger.SwaggerBundle;
 
 public class HelloWorldService extends Service<HelloWorldConfiguration> {
     public static void main(String[] args) throws Exception {
@@ -28,13 +29,14 @@ public class HelloWorldService extends Service<HelloWorldConfiguration> {
         addCommand(new RenderCommand());
         addCommand(new SetupDatabaseCommand());
         addBundle(new AssetsBundle());
+        addBundle(new SwaggerBundle());
     }
 
     @Override
     protected void initialize(HelloWorldConfiguration configuration,
                               Environment environment) throws ClassNotFoundException {
         environment.addProvider(new BasicAuthProvider<User>(new ExampleAuthenticator(),
-                                                            "SUPER SECRET STUFF"));
+                "SUPER SECRET STUFF"));
 
         final Template template = configuration.buildTemplate();
 
