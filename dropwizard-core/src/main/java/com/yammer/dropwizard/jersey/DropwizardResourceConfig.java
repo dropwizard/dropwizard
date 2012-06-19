@@ -13,6 +13,7 @@ public class DropwizardResourceConfig extends DefaultResourceConfig {
             // create a subclass to pin it to Throwable
             getSingletons().add(new LoggingExceptionMapper<Throwable>() {});
             getSingletons().add(new InvalidEntityExceptionMapper());
+            getSingletons().add(new JsonProcessingExceptionMapper());
         }
         getClasses().add(InstrumentedResourceMethodDispatchAdapter.class);
         getClasses().add(CacheControlledResourceMethodDispatchAdapter.class);
