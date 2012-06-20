@@ -3,6 +3,7 @@ package com.yammer.dropwizard.jersey;
 import com.google.common.base.Splitter;
 import com.yammer.dropwizard.jetty.UnbrandedErrorHandler;
 import com.yammer.dropwizard.logging.Log;
+import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonProcessingException;
 
 import javax.servlet.http.HttpServletRequest;
@@ -28,18 +29,28 @@ public class JsonProcessingExceptionMapper implements ExceptionMapper<JsonProces
 
     @Override
     public Response toResponse(JsonProcessingException exception) {
+        /*
+         * If the error is in the JSON generation, it's a server error.
+         */
+        if (exception instanceof JsonGenerationException) {
+            LOG.warn(exception, "Error generating JSON");
+            return Response.serverError().build();
+        }
+
         final String message = exception.getMessage();
 
         /*
-         * This is a super-specific edge case. Lots of folks forget to add a no-arg constructor, or
-         * depend on a type which isn't deserializable and they won't find out until here. It's not
-         * a 400, for sure, since nothing the client can change will help.
+         * If we can't deserialize the JSON because someone forgot a no-arg constructor, it's a
+         * server error and we should inform the developer.
          */
         if (message.startsWith("No suitable constructor found")) {
             LOG.error(exception, "Unable to deserialize the specific type");
             return Response.serverError().build();
         }
 
+        /*
+         * Otherwise, it's those pesky users.
+         */
         try {
             LOG.debug(exception, "Unable to process JSON");
             final StringWriter writer = new StringWriter(4096);
