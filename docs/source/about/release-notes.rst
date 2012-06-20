@@ -4,6 +4,15 @@
 Release Notes
 #############
 
+.. _rel-0.4.2:
+
+v0.4.2: Jun 20 2012
+===================
+
+* Fixed ``JsonProcessingExceptionMapper``. Now returns human-readable error messages for malformed
+  or invalid JSON as a ``400 Bad Request``. Also handles problems with JSON generation and object
+  mapping in a developer-friendly way.
+
 .. _rel-0.4.1:
 
 v0.4.1: Jun 19 2012
