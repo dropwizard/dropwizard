@@ -110,6 +110,14 @@ public class Duration {
         this.unit = checkNotNull(unit);
     }
 
+    public long getQuantity() {
+        return count;
+    }
+
+    public TimeUnit getUnit() {
+        return unit;
+    }
+
     public long toNanoseconds() {
         return TimeUnit.NANOSECONDS.convert(count, unit);
     }
