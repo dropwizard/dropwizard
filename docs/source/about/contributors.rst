@@ -26,6 +26,7 @@ Many, many thanks to:
 * `Michael Fairley <https://github.com/michaelfairley>`_
 * `Nick Telford <https://github.com/nicktelford>`_
 * `Sam Perman <https://github.com/samperman>`_
+* `Sam Quigley <https://github.com/emerose>`_
 * `Tatu Saloranta <https://github.com/cowtowncoder>`_
 * `Ted Nyman <https://github.com/tnm>`_
 * `Tom Crayford <https://github.com/tcrayford>`_
