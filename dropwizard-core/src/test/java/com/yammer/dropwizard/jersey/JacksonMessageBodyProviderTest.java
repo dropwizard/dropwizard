@@ -1,14 +1,16 @@
 package com.yammer.dropwizard.jersey;
 
+import com.google.common.collect.ImmutableList;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 import com.sun.jersey.core.util.StringKeyObjectValueIgnoreCaseMultivaluedMap;
 import com.yammer.dropwizard.json.Json;
+import com.yammer.dropwizard.validation.InvalidEntityException;
+import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.junit.Test;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -16,6 +18,7 @@ import java.lang.annotation.Annotation;
 
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.startsWith;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.*;
@@ -98,7 +101,7 @@ public class JacksonMessageBodyProviderTest {
     }
 
     @Test
-    public void returnsA422ForInvalidRequestEntities() throws Exception {
+    public void throwsAnInvalidEntityExceptionForInvalidRequestEntities() throws Exception {
         final Annotation valid = mock(Annotation.class);
         doReturn(Valid.class).when(valid).annotationType();
 
@@ -113,18 +116,14 @@ public class JacksonMessageBodyProviderTest {
                               new MultivaluedMapImpl(),
                               entity);
             fail("should have thrown a WebApplicationException but didn't");
-        } catch (WebApplicationException e) {
-            assertThat(e.getResponse().getStatus(),
-                       is(422));
-
-            assertThat((String) e.getResponse().getEntity(),
-                       is("The request entity had the following errors:\n" +
-                                  "  * id must be greater than or equal to 0 (was -1)\n"));
+        } catch (InvalidEntityException e) {
+            assertThat(e.getErrors(),
+                       is(ImmutableList.of("id must be greater than or equal to 0 (was -1)")));
         }
     }
 
     @Test
-    public void returnsA400ForMalformedRequestEntities() throws Exception {
+    public void throwsAJsonProcessingExceptionForMalformedRequestEntities() throws Exception {
         final ByteArrayInputStream entity = new ByteArrayInputStream("{\"id\":-1d".getBytes());
 
         try {
@@ -136,9 +135,9 @@ public class JacksonMessageBodyProviderTest {
                               new MultivaluedMapImpl(),
                               entity);
             fail("should have thrown a WebApplicationException but didn't");
-        } catch (WebApplicationException e) {
-            assertThat(e.getResponse().getStatus(),
-                       is(400));
+        } catch (JsonProcessingException e) {
+            assertThat(e.getMessage(),
+                       startsWith("Unexpected character ('d' (code 100)): was expecting comma to separate OBJECT entries\n"));
         }
     }
 
