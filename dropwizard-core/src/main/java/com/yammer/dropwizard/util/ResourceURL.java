@@ -13,8 +13,6 @@ import java.util.zip.ZipEntry;
 
 /**
  * Helper methods for dealing with {@link java.net.URL} objects for local resources.
- *
- * @author Sam Quigley <quigley@emerose.com>
  */
 public class ResourceURL {
     /**
@@ -25,13 +23,14 @@ public class ResourceURL {
      * @return true if resource is a directory
      */
     public static boolean isDirectory(final URL resourceURL) {
-        String protocol = resourceURL.getProtocol();
-        if (protocol.equals("jar")) {
+        final String protocol = resourceURL.getProtocol();
+        if ("jar".equals(protocol)) {
             try {
-                JarURLConnection jarConnection = (JarURLConnection) resourceURL.openConnection();
-                JarEntry entry = jarConnection.getJarEntry();
-                if (entry.isDirectory())
+                final JarURLConnection jarConnection = (JarURLConnection) resourceURL.openConnection();
+                final JarEntry entry = jarConnection.getJarEntry();
+                if (entry.isDirectory()) {
                     return true;
+                }
 
                 // WARNING! Heuristics ahead.
                 // It turns out that JarEntry#isDirectory() really just tests whether the filename ends in a '/'. If you try
@@ -42,15 +41,15 @@ public class ResourceURL {
 
                 String filename = resourceURL.getFile();
                 filename = filename.substring(filename.indexOf('!') + 2); // leaves just the relative file path inside the jar
-                JarFile jarFile = jarConnection.getJarFile();
-                ZipEntry zipEntry = jarFile.getEntry(filename);
-                InputStream inputStream = jarFile.getInputStream(zipEntry);
+                final JarFile jarFile = jarConnection.getJarFile();
+                final ZipEntry zipEntry = jarFile.getEntry(filename);
+                final InputStream inputStream = jarFile.getInputStream(zipEntry);
 
                 return (inputStream == null);
             } catch (IOException e) {
                 throw new AssertionError(e);
             }
-        } else if (protocol.equals("file")) {
+        } else if ("file".equals(protocol)) {
             return new File(resourceURL.getFile()).isDirectory();
         } else {
             throw new IllegalArgumentException("Unsupported protocol " + resourceURL.getProtocol() + " for resource " + resourceURL);
@@ -65,15 +64,11 @@ public class ResourceURL {
      */
     public static URL appendTrailingSlash(final URL originalURL) {
         try {
-            if (!originalURL.getPath().endsWith("/")) {
-                return new URL(originalURL.getProtocol(),
-                        originalURL.getHost(),
-                        originalURL.getPort(),
-                        originalURL.getFile() + "/");
-            } else {
-                return originalURL;
-            }
-        } catch (MalformedURLException e) { // shouldn't happen
+            return !originalURL.getPath().endsWith("/") ? new URL(originalURL.getProtocol(),
+                                                                  originalURL.getHost(),
+                                                                  originalURL.getPort(),
+                                                                  originalURL.getFile() + '/') : originalURL;
+        } catch (MalformedURLException ignored) { // shouldn't happen
             throw new IllegalArgumentException("Invalid resource URL: " + originalURL);
         }
     }
@@ -89,10 +84,10 @@ public class ResourceURL {
      * @return a new URL object corresponding to the resolved path
      */
     public static URL resolveRelativeURL(final URL context, final String path) {
-        URL newURL;
+        final URL newURL;
         try {
             newURL = new URL(context, path);
-        } catch (MalformedURLException e) {
+        } catch (MalformedURLException ignored) {
             throw new IllegalArgumentException("Failed to make a URL out of " + context + " and " + path);
         }
         // This is pretty blunt, but it seems to work:
@@ -114,27 +109,27 @@ public class ResourceURL {
      * @return the last modified time of the resource, expressed as the number of milliseconds since the epoch, or 0 if there was a problem
      */
     public static long getLastModified(final URL resourceURL) {
-        String protocol = resourceURL.getProtocol();
-        if (protocol.equals("jar")) {
+        final String protocol = resourceURL.getProtocol();
+        if ("jar".equals(protocol)) {
             try {
-                JarURLConnection jarConnection = (JarURLConnection) resourceURL.openConnection();
-                JarEntry entry = jarConnection.getJarEntry();
+                final JarURLConnection jarConnection = (JarURLConnection) resourceURL.openConnection();
+                final JarEntry entry = jarConnection.getJarEntry();
                 return entry.getTime();
-            } catch (IOException e) {
+            } catch (IOException ignored) {
                 return 0;
             }
-        } else if (protocol.equals("file")) {
+        } else if ("file".equals(protocol)) {
             URLConnection connection = null;
             try {
                 connection = resourceURL.openConnection();
                 return connection.getLastModified();
-            } catch (IOException e) {
+            } catch (IOException ignored) {
                 return 0;
             } finally {
                 if (connection != null) {
                     try {
                         connection.getInputStream().close();
-                    } catch (IOException e) {
+                    } catch (IOException ignored) {
                         // do nothing.
                     }
                 }

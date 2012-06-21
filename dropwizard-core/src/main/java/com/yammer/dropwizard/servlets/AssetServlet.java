@@ -37,7 +37,7 @@ public class AssetServlet extends HttpServlet {
         @Override
         public CachedAsset load(String key) throws Exception {
             Preconditions.checkArgument(key.startsWith(uriPath));
-            String requestedResourcePath = key.substring(uriPath.length() + 1);
+            final String requestedResourcePath = key.substring(uriPath.length() + 1);
             URL requestedResourceURL = ResourceURL.resolveRelativeURL(this.resourceURL, requestedResourcePath);
 
             if (ResourceURL.isDirectory(requestedResourceURL)) {

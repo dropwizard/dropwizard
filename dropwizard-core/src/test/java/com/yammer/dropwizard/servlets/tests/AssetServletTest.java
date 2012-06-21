@@ -14,9 +14,7 @@ import org.junit.Test;
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
 
-/**
- * @author Sam Quigley <quigley@emerose.com>
- */
+@SuppressWarnings({ "serial", "StaticNonFinalField", "StaticVariableMayNotBeInitialized" })
 public class AssetServletTest {
     private static ServletTester servletTester;
     private static final String DUMMY_SERVLET = "/dummy_servlet";
@@ -28,6 +26,7 @@ public class AssetServletTest {
     private HttpTester response;
 
     // ServletTester expects to be able to instantiate the servlet with zero arguments
+
     public static class DummyAssetServlet extends AssetServlet {
         public DummyAssetServlet() {
             super(Resources.getResource(RESOURCE_PATH), CACHE_BUILDER_SPEC, DUMMY_SERVLET, "index.htm");
@@ -75,10 +74,10 @@ public class AssetServletTest {
     @Test
     public void assetsHaveAConsistentEtag() throws Exception {
         response.parse(servletTester.getResponses(request.generate()));
-        String firstEtag = response.getHeader(HttpHeaders.ETAG);
+        final String firstEtag = response.getHeader(HttpHeaders.ETAG);
 
         response.parse(servletTester.getResponses(request.generate()));
-        String secondEtag = response.getHeader(HttpHeaders.ETAG);
+        final String secondEtag = response.getHeader(HttpHeaders.ETAG);
 
         assertThat(firstEtag, is(not(nullValue())));
         assertThat(firstEtag, is(not("")));
@@ -88,11 +87,11 @@ public class AssetServletTest {
     @Test
     public void etagsDifferForDifferentFiles() throws Exception {
         response.parse(servletTester.getResponses(request.generate()));
-        String firstEtag = response.getHeader(HttpHeaders.ETAG);
+        final String firstEtag = response.getHeader(HttpHeaders.ETAG);
 
         request.setURI(DUMMY_SERVLET + "/foo.bar");
         response.parse(servletTester.getResponses(request.generate()));
-        String secondEtag = response.getHeader(HttpHeaders.ETAG);
+        final String secondEtag = response.getHeader(HttpHeaders.ETAG);
 
         assertThat(firstEtag, is(not(equalTo(secondEtag))));
     }
@@ -100,15 +99,15 @@ public class AssetServletTest {
     @Test
     public void itSupportsIfNoneMatchRequests() throws Exception {
         response.parse(servletTester.getResponses(request.generate()));
-        String correctEtag = response.getHeader(HttpHeaders.ETAG);
+        final String correctEtag = response.getHeader(HttpHeaders.ETAG);
 
         request.setHeader(HttpHeaders.IF_NONE_MATCH, correctEtag);
         response.parse(servletTester.getResponses(request.generate()));
-        int statusWithMatchingEtag = response.getStatus();
+        final int statusWithMatchingEtag = response.getStatus();
 
         request.setHeader(HttpHeaders.IF_NONE_MATCH, correctEtag + "FOO");
         response.parse(servletTester.getResponses(request.generate()));
-        int statusWithNonMatchingEtag = response.getStatus();
+        final int statusWithNonMatchingEtag = response.getStatus();
 
         assertThat(statusWithMatchingEtag, is(304));
         assertThat(statusWithNonMatchingEtag, is(200));
@@ -117,10 +116,10 @@ public class AssetServletTest {
     @Test
     public void assetsHaveAConsistentLastModifiedTime() throws Exception {
         response.parse(servletTester.getResponses(request.generate()));
-        long firstLastModifiedTime = response.getDateHeader(HttpHeaders.LAST_MODIFIED);
+        final long firstLastModifiedTime = response.getDateHeader(HttpHeaders.LAST_MODIFIED);
 
         response.parse(servletTester.getResponses(request.generate()));
-        long secondLastModifiedTime = response.getDateHeader(HttpHeaders.LAST_MODIFIED);
+        final long secondLastModifiedTime = response.getDateHeader(HttpHeaders.LAST_MODIFIED);
 
         assertThat(firstLastModifiedTime, is(not(nullValue())));
         assertThat(firstLastModifiedTime, is(equalTo(secondLastModifiedTime)));
@@ -129,19 +128,19 @@ public class AssetServletTest {
     @Test
     public void itSupportsIfModifiedSinceRequests() throws Exception {
         response.parse(servletTester.getResponses(request.generate()));
-        long lastModifiedTime = response.getDateHeader(HttpHeaders.LAST_MODIFIED);
+        final long lastModifiedTime = response.getDateHeader(HttpHeaders.LAST_MODIFIED);
 
         request.setDateHeader(HttpHeaders.IF_MODIFIED_SINCE, lastModifiedTime);
         response.parse(servletTester.getResponses(request.generate()));
-        int statusWithMatchingLastModifiedTime = response.getStatus();
+        final int statusWithMatchingLastModifiedTime = response.getStatus();
 
         request.setDateHeader(HttpHeaders.IF_MODIFIED_SINCE, lastModifiedTime - 100);
         response.parse(servletTester.getResponses(request.generate()));
-        int statusWithStaleLastModifiedTime = response.getStatus();
+        final int statusWithStaleLastModifiedTime = response.getStatus();
 
         request.setDateHeader(HttpHeaders.IF_MODIFIED_SINCE, lastModifiedTime + 100);
         response.parse(servletTester.getResponses(request.generate()));
-        int statusWithRecentLastModifiedTime = response.getStatus();
+        final int statusWithRecentLastModifiedTime = response.getStatus();
 
         assertThat(statusWithMatchingLastModifiedTime, is(304));
         assertThat(statusWithStaleLastModifiedTime, is(200));
@@ -163,7 +162,7 @@ public class AssetServletTest {
     @Test
     public void itServesAnIndexFileByDefault() throws Exception {
         // Root directory listing:
-        request.setURI(DUMMY_SERVLET + "/");
+        request.setURI(DUMMY_SERVLET + '/');
         response.parse(servletTester.getResponses(request.generate()));
         assertThat(response.getStatus(), is(200));
         assertThat(response.getContent(), containsString("/assets Index File"));
@@ -184,7 +183,7 @@ public class AssetServletTest {
     @Test
     public void itThrowsA404IfNoIndexFileIsDefined() throws Exception {
         // Root directory listing:
-        request.setURI(NOINDEX_SERVLET + "/");
+        request.setURI(NOINDEX_SERVLET + '/');
         response.parse(servletTester.getResponses(request.generate()));
         assertThat(response.getStatus(), is(404));
 
