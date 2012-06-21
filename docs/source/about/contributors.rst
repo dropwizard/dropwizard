@@ -17,6 +17,7 @@ Many, many thanks to:
 * `Christopher Currie <https://github.com/christophercurrie>`_
 * `Christopher Elkins <https://github.com/celkins>`_
 * `Collin VanDyck <https://github.com/collinvandyck>`_
+* `David Stendardi <https://github.com/dstendardi>`_
 * `Eric Tschetter <https://github.com/metamx>`_
 * `Fredrik Sundberg <https://github.com/KingBuzzer>`_
 * `James Ward <https://github.com/jamesward>`_
