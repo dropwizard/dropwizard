@@ -43,6 +43,8 @@ import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.util.thread.ThreadPool;
 
 import javax.servlet.DispatcherType;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.EventListener;
 import java.util.Map;
@@ -201,6 +203,11 @@ public class ServerFactory {
 
         for (String password : config.getSslConfiguration().getKeyManagerPassword().asSet()) {
             factory.setKeyManagerPassword(password);
+        }
+
+        Collection<String> includeProtocols = config.getSslConfiguration().getIncludeProtocols().orNull();
+        if (includeProtocols != null) {
+            factory.setIncludeProtocols(includeProtocols.toArray(new String[includeProtocols.size()]));
         }
     }
 
