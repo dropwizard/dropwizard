@@ -23,7 +23,7 @@ v0.5.0-SNAPSHOT
 
 .. _rel-0.4.3:
 
-v0.4.2: Jun 22 2012
+v0.4.3: Jun 22 2012
 ===================
 
 * Re-enable immediate flushing for file and console logging appenders.
