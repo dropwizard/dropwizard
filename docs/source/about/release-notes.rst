@@ -4,6 +4,10 @@
 Release Notes
 #############
 
+.. _rel-0.4.3:
+
+* Re-enable immediate flushing for file and console logging appenders.
+
 .. _rel-0.4.2:
 
 v0.4.2: Jun 20 2012
