@@ -29,7 +29,14 @@ public class Log {
      * @return a {@link Log} instance with {@code klass}'s name
      */
     public static Log forClass(Class<?> klass) {
-        return forSlf4jLogger(LoggerFactory.getLogger(klass));
+        // a thread-safe SLF4J initialization routine is apparently hard, so I get to do dumb
+        // shit like this
+        while (true) {
+            final org.slf4j.Logger logger = LoggerFactory.getLogger(klass);
+            if (logger instanceof Logger) {
+                return forSlf4jLogger(logger);
+            }
+        }
     }
 
     /**
@@ -39,7 +46,14 @@ public class Log {
      * @return a {@link Log} instance with the given name
      */
     public static Log named(String name) {
-        return forSlf4jLogger(LoggerFactory.getLogger(name));
+        // a thread-safe SLF4J initialization routine is apparently hard, so I get to do dumb
+        // shit like this
+        while (true) {
+            final org.slf4j.Logger logger = LoggerFactory.getLogger(name);
+            if (logger instanceof Logger) {
+                return forSlf4jLogger(logger);
+            }
+        }
     }
 
     /**
