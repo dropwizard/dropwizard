@@ -41,7 +41,7 @@ public class TaskServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req,
                           HttpServletResponse resp) throws ServletException, IOException {
-        final Task task = tasks.get(req.getRequestURI());
+        final Task task = tasks.get(req.getServletPath());
         if (task != null) {
             try {
                 resp.setContentType(MediaType.TEXT_PLAIN);
