@@ -43,7 +43,7 @@ public class TaskServletTest {
     }
 
     @Test
-    public void runsATestWhenFound() throws Exception {
+    public void runsATaskWhenFound() throws Exception {
         final PrintWriter output = mock(PrintWriter.class);
 
         when(request.getMethod()).thenReturn("POST");
