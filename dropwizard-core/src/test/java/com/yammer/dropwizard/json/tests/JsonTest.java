@@ -16,6 +16,7 @@ import org.codehaus.jackson.type.TypeReference;
 import org.junit.Test;
 
 import java.io.*;
+import java.nio.ByteBuffer;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -209,6 +210,26 @@ public class JsonTest {
     }
 
     @Test
+    public void readsValuesFromByteBuffers() throws Exception {
+        byte[] data = Resources.toByteArray(Resources.getResource("json/string.json"));
+
+        // "heap" ByteBuffers
+        assertThat(json.readValue(ByteBuffer.wrap(data), String.class),
+                   is("a string"));
+        assertThat(json.readValue(ByteBuffer.wrap(data), new TypeReference<String>() {}),
+                   is("a string"));
+
+        // "direct" ByteBuffers
+        ByteBuffer direct = ByteBuffer.allocateDirect(data.length);
+        direct.put(data).flip();
+        assertThat(direct.position(), is(0));
+        assertThat(direct.limit(), is(data.length));
+        assertThat(direct.hasArray(), is(false));
+        assertThat(json.readValue(direct.duplicate(), String.class), is("a string"));
+        assertThat(json.readValue(direct.duplicate(), new TypeReference<String>() {}), is("a string"));
+    }
+
+    @Test
     public void readsValuesFromJsonNodes() throws Exception {
         final JsonNode node = json.readValue(Resources.toByteArray(Resources.getResource(
                 "json/string.json")), JsonNode.class);
@@ -236,6 +257,12 @@ public class JsonTest {
     public void serializesObjectsToByteArrays() throws Exception {
         assertThat(json.writeValueAsBytes("a string"),
                    is("\"a string\"".getBytes(Charsets.UTF_8)));
+    }
+
+    @Test
+    public void serializesObjectsToByteBuffers() throws Exception {
+        assertThat(json.writeValueAsByteBuffer("a string"),
+                   is(ByteBuffer.wrap("\"a string\"".getBytes(Charsets.UTF_8))));
     }
 
     @Test
