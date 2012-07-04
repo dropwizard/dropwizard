@@ -44,7 +44,6 @@ import org.eclipse.jetty.util.thread.ThreadPool;
 
 import javax.servlet.DispatcherType;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.EnumSet;
 import java.util.EventListener;
 import java.util.Map;
