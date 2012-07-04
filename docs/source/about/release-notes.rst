@@ -4,6 +4,30 @@
 Release Notes
 #############
 
+.. _rel-0.5.0:
+
+v0.5.0-SNAPSHOT
+===============
+
+* Upgraded to JDBI 2.37.1.
+* Improved ``AssetServlet``:
+
+  * More accurate ``Last-Modified-At`` timestamps.
+  * More general asset specification.
+  * Default filename is now configurable.
+
+* Added ``@MinSize``, ``@MaxSize``, and ``@SizeRange`` validations.
+* Added ``@MinDuration``, ``@MaxDuration``, and ``@DurationRange`` validations.
+
+
+
+.. _rel-0.4.3:
+
+v0.4.3: Jun 22 2012
+===================
+
+* Re-enable immediate flushing for file and console logging appenders.
+
 .. _rel-0.4.2:
 
 v0.4.2: Jun 20 2012
