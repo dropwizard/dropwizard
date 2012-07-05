@@ -11,8 +11,8 @@ import com.yammer.dropwizard.jersey.OptionalQueryParamInjectableProvider;
  * Initializes the service with support for Java classes.
  */
 public class JavaBundle implements Bundle {
-    public static final ImmutableList<Object> DEFAULT_PROVIDERS = ImmutableList.<Object>of(
-            new OptionalQueryParamInjectableProvider()
+    public static final ImmutableList<Class<?>> DEFAULT_PROVIDERS = ImmutableList.<Class<?>>of(
+            OptionalQueryParamInjectableProvider.class
     );
 
     private final Service<?> service;
@@ -24,7 +24,7 @@ public class JavaBundle implements Bundle {
     @Override
     public void initialize(Environment environment) {
         environment.addProvider(new JacksonMessageBodyProvider(service.getJson()));
-        for (Object provider : DEFAULT_PROVIDERS) {
+        for (Class<?> provider : DEFAULT_PROVIDERS) {
             environment.addProvider(provider);
         }
     }

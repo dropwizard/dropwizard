@@ -9,26 +9,24 @@ import javax.ws.rs.core.MultivaluedMap;
 // TODO: 11/14/11 <coda> -- document OptionalExtractor
 
 public class OptionalExtractor implements MultivaluedParameterExtractor {
-    private final String parameterName;
-    private final Optional<String> defaultValue;
+    private final MultivaluedParameterExtractor extractor;
 
-    public OptionalExtractor(String parameterName, String defaultValue) {
-        this.parameterName = parameterName;
-        this.defaultValue = Optional.fromNullable(defaultValue);
+    public OptionalExtractor(MultivaluedParameterExtractor extractor) {
+        this.extractor = extractor;
     }
 
     @Override
     public String getName() {
-        return parameterName;
+        return extractor.getName();
     }
 
     @Override
     public String getDefaultStringValue() {
-        return defaultValue.orNull();
+        return extractor.getDefaultStringValue();
     }
 
     @Override
     public Object extract(MultivaluedMap<String, String> parameters) {
-        return Optional.fromNullable(parameters.getFirst(parameterName)).or(defaultValue);
+        return Optional.fromNullable(extractor.extract(parameters));
     }
 }
