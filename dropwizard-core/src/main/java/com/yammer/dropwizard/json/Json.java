@@ -9,6 +9,7 @@ import org.codehaus.jackson.type.TypeReference;
 
 import java.io.*;
 import java.lang.reflect.Type;
+import java.nio.ByteBuffer;
 
 /**
  * A basic class for JSON parsing and generating.
@@ -418,6 +419,48 @@ public class Json {
     }
 
     /**
+     * Deserializes the given {@link ByteBuffer} as an instance of the given type.
+     *
+     * @param src a {@link ByteBuffer}
+     * @param valueType the {@link Class} to deserialize {@code src} as
+     * @param <T>       the type of {@code valueType}
+     * @return the contents of {@code src} as an instance of {@code T}
+     * @throws IOException if there is an error mapping {@code src} to {@code T}
+     */
+    public <T> T readValue(ByteBuffer src, Class<T> valueType) throws IOException {
+        int bufLength = src.limit() - src.position();
+
+        if (src.hasArray()) {
+            return readValue(src.array(), src.arrayOffset(), bufLength, valueType);
+        } else {
+            byte[] bytes = new byte[bufLength];
+            src.get(bytes);
+            return readValue(bytes, 0, bufLength, valueType);
+        }
+    }
+
+    /**
+     * Deserializes the given {@link ByteBuffer} as an instance of the given type.
+     *
+     * @param src a ByteBuffer containing some JSON
+     * @param valueTypeRef a {@link TypeReference} of the type to deserialize {@code src} as
+     * @param <T>          the type of {@code valueTypeRef}
+     * @return the contents of {@code src} as an instance of {@code T}
+     * @throws IOException if there is an error parsing {@code src}
+     */
+    public <T> T readValue(ByteBuffer src, TypeReference<T> valueTypeRef) throws IOException {
+        int bufLength = src.limit() - src.position();
+
+        if (src.hasArray()) {
+            return readValue(src.array(), src.arrayOffset(), bufLength, valueTypeRef);
+        } else {
+            byte[] bytes = new byte[bufLength];
+            src.get(bytes);
+            return readValue(bytes, 0, bufLength, valueTypeRef);
+        }
+    }
+
+    /**
      * Serializes the given object to the given {@link File}.
      *
      * @param output the {@link File} to which the JSON will be written
@@ -481,6 +524,17 @@ public class Json {
         } catch (IOException e) {
             throw new IllegalArgumentException(e);
         }
+    }
+
+    /**
+     * Returns the given object as a JSON {@link ByteBuffer}.
+     *
+     * @param value an object
+     * @return {@code value} as a JSON {@link ByteBuffer}
+     * @throws IllegalArgumentException if there is an error encoding {@code value}
+     */
+    public ByteBuffer writeValueAsByteBuffer(Object value) throws IllegalArgumentException {
+        return ByteBuffer.wrap(writeValueAsBytes(value));
     }
 
     /**
