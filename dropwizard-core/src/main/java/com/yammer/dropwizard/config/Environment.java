@@ -68,11 +68,13 @@ public class Environment extends AbstractLifeCycle {
             @Override
             public void validate() {
                 super.validate();
-                logResources();
-                logProviders();
-                logHealthChecks();
-                logManagedObjects();
-                logEndpoints();
+                if (LOG.isDebugEnabled()) {
+                    logResources();
+                    logProviders();
+                    logHealthChecks();
+                    logManagedObjects();
+                    logEndpoints();
+                }
             }
         };
         this.healthChecks = ImmutableSet.builder();
@@ -375,8 +377,13 @@ public class Environment extends AbstractLifeCycle {
 
     private void logHealthChecks() {
         final ImmutableSet.Builder<String> builder = ImmutableSet.builder();
-        for (HealthCheck healthCheck : healthChecks.build()) {
-            builder.add(healthCheck.getClass().getCanonicalName());
+        for (final HealthCheck healthCheck : healthChecks.build()) {
+            final String canonicalName = healthCheck.getClass().getCanonicalName();
+            if (canonicalName == null) {
+                builder.add(String.format("%s(\"%s\")", HealthCheck.class.getCanonicalName(), healthCheck.getName()));
+            } else {
+                builder.add(canonicalName);
+            }
         }
         LOG.debug("health checks = {}", builder.build());
     }
