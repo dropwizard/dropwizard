@@ -211,7 +211,7 @@ public class JsonTest {
 
     @Test
     public void readsValuesFromByteBuffers() throws Exception {
-        byte[] data = Resources.toByteArray(Resources.getResource("json/string.json"));
+        final byte[] data = Resources.toByteArray(Resources.getResource("json/string.json"));
 
         // "heap" ByteBuffers
         assertThat(json.readValue(ByteBuffer.wrap(data), String.class),
@@ -220,7 +220,7 @@ public class JsonTest {
                    is("a string"));
 
         // "direct" ByteBuffers
-        ByteBuffer direct = ByteBuffer.allocateDirect(data.length);
+        final ByteBuffer direct = ByteBuffer.allocateDirect(data.length);
         direct.put(data).flip();
         assertThat(direct.position(), is(0));
         assertThat(direct.limit(), is(data.length));
