@@ -15,7 +15,10 @@ public class SslConfiguration {
     protected String keyManagerPassword = null;
 
     @JsonProperty
-    protected ImmutableList<String> includeProtocols = null;
+    protected ImmutableList<String> includeProtocols = ImmutableList.of("SSLv3",
+                                                                        "TLSv1",
+                                                                        "TLSv1.1",
+                                                                        "TLSv1.2");
 
     public Optional<String> getKeyStorePath() {
         return Optional.fromNullable(keyStorePath);
