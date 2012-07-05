@@ -35,6 +35,6 @@ public class SslConfiguration {
     }
 
     public String[] getSupportedProtocols() {
-        return (String[]) supportedProtocols.toArray();
+        return supportedProtocols.toArray(new String[supportedProtocols.size()]);
     }
 }

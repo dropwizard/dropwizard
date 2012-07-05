@@ -202,7 +202,7 @@ public class ServerFactory {
         for (String password : config.getSslConfiguration().getKeyManagerPassword().asSet()) {
             factory.setKeyManagerPassword(password);
         }
-        
+
         factory.setIncludeProtocols(config.getSslConfiguration().getSupportedProtocols());
     }
 
