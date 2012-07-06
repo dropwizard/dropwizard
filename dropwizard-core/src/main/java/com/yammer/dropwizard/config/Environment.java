@@ -68,12 +68,10 @@ public class Environment extends AbstractLifeCycle {
             @Override
             public void validate() {
                 super.validate();
-                if (LOG.isDebugEnabled()) {
-                    logResources();
-                    logProviders();
-                    logHealthChecks();
-                    logManagedObjects();
-                }
+                logResources();
+                logProviders();
+                logHealthChecks();
+                logManagedObjects();
                 logEndpoints();
             }
         };
@@ -425,9 +423,6 @@ public class Environment extends AbstractLifeCycle {
     }
 
     private void logEndpoints() {
-        if (!LOG.isInfoEnabled()) {
-            return;
-        }
         final StringBuilder stringBuilder = new StringBuilder(1024).append("\n\n");
 
         final ImmutableList.Builder<Class<?>> builder = ImmutableList.builder();
