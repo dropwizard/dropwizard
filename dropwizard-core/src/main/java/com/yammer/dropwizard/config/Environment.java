@@ -73,8 +73,8 @@ public class Environment extends AbstractLifeCycle {
                     logProviders();
                     logHealthChecks();
                     logManagedObjects();
-                    logEndpoints();
                 }
+                logEndpoints();
             }
         };
         this.healthChecks = ImmutableSet.builder();
@@ -425,6 +425,9 @@ public class Environment extends AbstractLifeCycle {
     }
 
     private void logEndpoints() {
+        if (!LOG.isInfoEnabled()) {
+            return;
+        }
         final StringBuilder stringBuilder = new StringBuilder(1024).append("\n\n");
 
         final ImmutableList.Builder<Class<?>> builder = ImmutableList.builder();
