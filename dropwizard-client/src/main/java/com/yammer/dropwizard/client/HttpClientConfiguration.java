@@ -1,12 +1,48 @@
 package com.yammer.dropwizard.client;
 
 import com.yammer.dropwizard.util.Duration;
+import org.codehaus.jackson.annotate.JsonProperty;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.HashMap;
+
+import static com.google.common.base.Preconditions.checkArgument;
 
 public class HttpClientConfiguration {
+
+    public static class DnsOverrides extends HashMap<String, String> {
+
+        @Override
+        public String put(String key, String value) {
+            checkArgument(isValidInetAddress(value), "%s is not a valid inet address", value);
+            return super.put(key, value);
+        }
+
+        public InetAddress lookUp(String name) throws UnknownHostException {
+            return InetAddress.getByName(get(name));
+        }
+
+        private boolean isValidInetAddress(String value) {
+            try {
+                InetAddress.getByName(value);
+            } catch (Exception e) {
+                return false;
+            }
+
+            return true;
+        }
+    }
+
+    @Valid
+    @JsonProperty
+    @NotNull
+    private DnsOverrides dnsOverrides = new DnsOverrides();
+
     @NotNull
     private Duration timeout = Duration.milliseconds(500);
 
@@ -82,5 +118,9 @@ public class HttpClientConfiguration {
 
     public void setMaxConnections(int maxConnections) {
         this.maxConnections = maxConnections;
+    }
+
+    public DnsOverrides getDnsOverrides() {
+        return dnsOverrides;
     }
 }

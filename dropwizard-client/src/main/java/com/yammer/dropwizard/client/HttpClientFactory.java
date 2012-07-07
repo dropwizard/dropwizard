@@ -1,7 +1,7 @@
 package com.yammer.dropwizard.client;
 
-import com.yammer.metrics.httpclient.InstrumentedClientConnManager;
-import com.yammer.metrics.httpclient.InstrumentedHttpClient;
+import com.yammer.metrics.httpclient.NewInstrumentedHttpClient;
+import com.yammer.metrics.httpclient.InstrumentedPoolingClientConnectionManager;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.params.AllClientPNames;
@@ -25,8 +25,8 @@ public class HttpClientFactory {
 
     public HttpClient build() {
         final BasicHttpParams params = createHttpParams();
-        final InstrumentedClientConnManager manager = createConnectionManager(SchemeRegistryFactory.createDefault());
-        final InstrumentedHttpClient client = new InstrumentedHttpClient(manager, params);
+        final InstrumentedPoolingClientConnectionManager manager = createConnectionManager(SchemeRegistryFactory.createDefault());
+        final NewInstrumentedHttpClient client = new NewInstrumentedHttpClient(manager, params);
         setStrategiesForClient(client);
 
         return client;
@@ -37,7 +37,7 @@ public class HttpClientFactory {
      * Note that this method mutates the client object by setting the strategies
      * @param client The InstrumentedHttpClient that should be configured with strategies
      */
-    private void setStrategiesForClient(InstrumentedHttpClient client) {
+    private void setStrategiesForClient(NewInstrumentedHttpClient client) {
         final long keepAlive = configuration.getKeepAlive().toMilliseconds();
 
         //don't keep alive the HTTP connection and thus don't reuse the TCP socket
@@ -87,13 +87,18 @@ public class HttpClientFactory {
     /**
      * Create a InstrumentedClientConnManager based on the HttpClientConfiguration. It sets the maximum connections per
      * route and the maximum total connections that the connection manager can create
+     *
      * @param registry the SchemeRegistry
      * @return a InstrumentedClientConnManger instance
      */
-    protected InstrumentedClientConnManager createConnectionManager(SchemeRegistry registry) {
+    protected InstrumentedPoolingClientConnectionManager createConnectionManager(SchemeRegistry registry) {
         final long ttl = configuration.getTimeToLive().toMilliseconds();
-        final InstrumentedClientConnManager manager =
-                new InstrumentedClientConnManager(registry, ttl, TimeUnit.MILLISECONDS);
+        final InstrumentedPoolingClientConnectionManager manager =
+                new InstrumentedPoolingClientConnectionManager(
+                        registry,
+                        ttl,
+                        TimeUnit.MILLISECONDS,
+                        new OverridingDnsResolver(configuration.getDnsOverrides()));
         manager.setDefaultMaxPerRoute(configuration.getMaxConnectionsPerRoute());
         manager.setMaxTotal(configuration.getMaxConnections());
         return manager;
