@@ -30,6 +30,10 @@ public class AssetServlet extends HttpServlet {
 
         private AssetLoader(URL resourceURL, String uriPath, String indexFilename) {
             this.resourceURL = ResourceURL.appendTrailingSlash(resourceURL);
+
+            if (uriPath.endsWith("/")) {
+                uriPath = uriPath.substring(0, uriPath.length() - 1);
+            }
             this.uriPath = uriPath;
             this.indexFilename = indexFilename;
         }

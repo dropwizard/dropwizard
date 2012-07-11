@@ -17,8 +17,8 @@ import static org.junit.Assert.assertThat;
 @SuppressWarnings({ "serial", "StaticNonFinalField", "StaticVariableMayNotBeInitialized" })
 public class AssetServletTest {
     private static ServletTester servletTester;
-    private static final String DUMMY_SERVLET = "/dummy_servlet";
-    private static final String NOINDEX_SERVLET = "/noindex_servlet";
+    private static final String DUMMY_SERVLET = "/dummy_servlet/";
+    private static final String NOINDEX_SERVLET = "/noindex_servlet/";
     private static final String RESOURCE_PATH = "assets";
     private static final CacheBuilderSpec CACHE_BUILDER_SPEC = CacheBuilderSpec.parse("maximumSize=100");
 
@@ -42,8 +42,8 @@ public class AssetServletTest {
     @BeforeClass
     public static void setup() throws Exception {
         servletTester = new ServletTester();
-        servletTester.addServlet(DummyAssetServlet.class, DUMMY_SERVLET + "/*");
-        servletTester.addServlet(NoIndexAssetServlet.class, NOINDEX_SERVLET + "/*");
+        servletTester.addServlet(DummyAssetServlet.class, DUMMY_SERVLET + "*");
+        servletTester.addServlet(NoIndexAssetServlet.class, NOINDEX_SERVLET + "*");
         servletTester.start();
     }
 
@@ -51,7 +51,7 @@ public class AssetServletTest {
     public void setupTester() throws Exception {
         request = new HttpTester();
         request.setMethod("GET");
-        request.setURI(DUMMY_SERVLET + "/example.txt");
+        request.setURI(DUMMY_SERVLET + "example.txt");
         request.setVersion("HTTP/1.0");
         response = new HttpTester();
     }
@@ -65,7 +65,7 @@ public class AssetServletTest {
 
     @Test
     public void itThrows404IfTheAssetIsMissing() throws Exception {
-        request.setURI(DUMMY_SERVLET + "/doesnotexist.txt");
+        request.setURI(DUMMY_SERVLET + "doesnotexist.txt");
 
         response.parse(servletTester.getResponses(request.generate()));
         assertThat(response.getStatus(), is(404));
@@ -89,7 +89,7 @@ public class AssetServletTest {
         response.parse(servletTester.getResponses(request.generate()));
         final String firstEtag = response.getHeader(HttpHeaders.ETAG);
 
-        request.setURI(DUMMY_SERVLET + "/foo.bar");
+        request.setURI(DUMMY_SERVLET + "foo.bar");
         response.parse(servletTester.getResponses(request.generate()));
         final String secondEtag = response.getHeader(HttpHeaders.ETAG);
 
@@ -153,7 +153,7 @@ public class AssetServletTest {
         assertThat(response.getStatus(), is(200));
         assertThat(response.getContentType(), is(MimeTypes.TEXT_PLAIN));
 
-        request.setURI(DUMMY_SERVLET + "/foo.bar");
+        request.setURI(DUMMY_SERVLET + "foo.bar");
         response.parse(servletTester.getResponses(request.generate()));
         assertThat(response.getStatus(), is(200));
         assertThat(response.getContentType(), is(MimeTypes.TEXT_HTML));
@@ -162,19 +162,19 @@ public class AssetServletTest {
     @Test
     public void itServesAnIndexFileByDefault() throws Exception {
         // Root directory listing:
-        request.setURI(DUMMY_SERVLET + '/');
+        request.setURI(DUMMY_SERVLET);
         response.parse(servletTester.getResponses(request.generate()));
         assertThat(response.getStatus(), is(200));
         assertThat(response.getContent(), containsString("/assets Index File"));
 
         // Subdirectory listing:
-        request.setURI(DUMMY_SERVLET + "/some_directory");
+        request.setURI(DUMMY_SERVLET + "some_directory");
         response.parse(servletTester.getResponses(request.generate()));
         assertThat(response.getStatus(), is(200));
         assertThat(response.getContent(), containsString("/assets/some_directory Index File"));
 
         // Subdirectory listing with slash:
-        request.setURI(DUMMY_SERVLET + "/some_directory/");
+        request.setURI(DUMMY_SERVLET + "some_directory/");
         response.parse(servletTester.getResponses(request.generate()));
         assertThat(response.getStatus(), is(200));
         assertThat(response.getContent(), containsString("/assets/some_directory Index File"));
@@ -188,26 +188,26 @@ public class AssetServletTest {
         assertThat(response.getStatus(), is(404));
 
         // Subdirectory listing:
-        request.setURI(NOINDEX_SERVLET + "/some_directory");
+        request.setURI(NOINDEX_SERVLET + "some_directory");
         response.parse(servletTester.getResponses(request.generate()));
         assertThat(response.getStatus(), is(404));
 
         // Subdirectory listing with slash:
-        request.setURI(NOINDEX_SERVLET + "/some_directory/");
+        request.setURI(NOINDEX_SERVLET + "some_directory/");
         response.parse(servletTester.getResponses(request.generate()));
         assertThat(response.getStatus(), is(404));
     }
 
     @Test
     public void itDoesntAllowOverridingUrls() throws Exception {
-        request.setURI(DUMMY_SERVLET + "/file:/etc/passwd");
+        request.setURI(DUMMY_SERVLET + "file:/etc/passwd");
         response.parse(servletTester.getResponses(request.generate()));
         assertThat(response.getStatus(), is(404));
     }
 
     @Test
     public void itDoesntAllowOverridingPaths() throws Exception {
-        request.setURI(DUMMY_SERVLET + "//etc/passwd");
+        request.setURI(DUMMY_SERVLET + "/etc/passwd");
         response.parse(servletTester.getResponses(request.generate()));
         assertThat(response.getStatus(), is(404));
     }
