@@ -265,8 +265,8 @@ public class LoggingConfiguration {
             return from;
         }
 
-        public String getLocalhost() {
-            return localhost;
+        public Optional<String> getLocalhost() {
+            return Optional.fromNullable(localhost);
         }
 
         public String getHost() {

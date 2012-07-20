@@ -126,7 +126,6 @@ public class LogbackFactory {
         appender.setSubject(smtp.getSubject());
         appender.setSMTPHost(smtp.getHost());
 
-
         Optional<Integer> port = smtp.getPort();
         if (smtp.getSSL()) {
             appender.setSMTPPort(port.or(465));
@@ -134,15 +133,12 @@ public class LogbackFactory {
             appender.setSMTPPort(port.or(25));
         }
 
-
         appender.setUsername(smtp.getUsername());
         appender.setPassword(smtp.getPassword());
         appender.setSSL(smtp.getSSL());
         appender.setSTARTTLS(smtp.getSTARTTLS());
         appender.setCharsetEncoding(smtp.getCharsetEncoding());
-        appender.setLocalhost(smtp.getLocalhost());
-
-
+        appender.setLocalhost(smtp.getLocalhost().orNull());
         appender.start();
 
         return appender;
