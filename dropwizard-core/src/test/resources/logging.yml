@@ -14,3 +14,13 @@ syslog:
   enabled: false
   host: localhost
   facility: local0
+smtp:
+  from: test@testdropwizard.com
+  host: smtp.testdropwizard.org
+  port: 465
+  enabled: false
+  ssl: true
+  to: [test@email.com, another@email.org]
+  subject: test smtp logger
+
+
