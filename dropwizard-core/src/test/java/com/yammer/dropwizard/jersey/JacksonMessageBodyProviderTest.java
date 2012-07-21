@@ -76,6 +76,18 @@ public class JacksonMessageBodyProviderTest {
     }
 
     @Test
+    public void doesNotReadIgnoredTypes() throws Exception {
+        assertThat(provider.isReadable(Ignorable.class, null, null, null),
+                   is(false));
+    }
+
+    @Test
+    public void readsUnIgnoredTypes() throws Exception {
+        assertThat(provider.isReadable(NonIgnorable.class, null, null, null),
+                   is(true));
+    }
+
+    @Test
     public void isChunked() throws Exception {
         assertThat(provider.getSize(null, null, null, null, null),
                    is(-1L));
