@@ -6,6 +6,7 @@ import com.sun.jersey.core.util.StringKeyObjectValueIgnoreCaseMultivaluedMap;
 import com.yammer.dropwizard.json.Json;
 import com.yammer.dropwizard.validation.InvalidEntityException;
 import org.codehaus.jackson.JsonProcessingException;
+import org.codehaus.jackson.annotate.JsonIgnoreType;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.junit.Test;
 
@@ -16,8 +17,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.lang.annotation.Annotation;
 
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.startsWith;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
@@ -31,6 +31,16 @@ public class JacksonMessageBodyProviderTest {
         @Min(0)
         @JsonProperty
         int id;
+    }
+
+    @JsonIgnoreType
+    public static interface Ignorable {
+
+    }
+
+    @JsonIgnoreType(false)
+    public static interface NonIgnorable extends Ignorable {
+
     }
 
     private final Json json = spy(new Json());
@@ -51,6 +61,18 @@ public class JacksonMessageBodyProviderTest {
                    is(true));
 
         verify(json).canSerialize(String.class);
+    }
+
+    @Test
+    public void doesNotWriteIgnoredTypes() throws Exception {
+        assertThat(provider.isWriteable(Ignorable.class, null, null, null),
+                   is(false));
+    }
+
+    @Test
+    public void writesUnIgnoredTypes() throws Exception {
+        assertThat(provider.isWriteable(NonIgnorable.class, null, null, null),
+                   is(true));
     }
 
     @Test
