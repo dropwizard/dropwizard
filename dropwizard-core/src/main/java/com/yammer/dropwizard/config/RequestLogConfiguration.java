@@ -24,6 +24,10 @@ public class RequestLogConfiguration {
 
     @NotNull
     @JsonProperty
+    protected SMTPConfiguration smtp = new SMTPConfiguration();
+
+    @NotNull
+    @JsonProperty
     protected TimeZone timeZone = UTC;
 
     public ConsoleConfiguration getConsoleConfiguration() {
@@ -36,6 +40,10 @@ public class RequestLogConfiguration {
 
     public SyslogConfiguration getSyslogConfiguration() {
         return syslog;
+    }
+
+    public SMTPConfiguration getSMTPConfiguration() {
+        return smtp;
     }
 
     public TimeZone getTimeZone() {

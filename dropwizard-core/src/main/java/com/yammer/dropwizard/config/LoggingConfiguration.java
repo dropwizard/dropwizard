@@ -11,6 +11,8 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.TimeZone;
 
 @SuppressWarnings({"FieldCanBeLocal", "FieldMayBeFinal"})
@@ -175,6 +177,124 @@ public class LoggingConfiguration {
         }
     }
 
+
+    public static final class SMTPConfiguration {
+
+        @NotNull
+        @JsonProperty
+        protected boolean enabled = false;
+
+        @NotNull
+        @JsonProperty
+        protected Level threshold = Level.ERROR;
+
+        @NotNull
+        @JsonProperty
+        protected TimeZone timeZone = UTC;
+
+        @JsonProperty
+        protected String logFormat;
+
+        @JsonProperty
+        protected String username;
+
+        @JsonProperty
+        protected String password;
+
+        @NotNull
+        @JsonProperty
+        protected String host = "localhost";
+
+        @JsonProperty
+        protected Integer port;
+
+        @JsonProperty
+        protected List<String> to = new LinkedList<String>();
+
+        @JsonProperty
+        protected String from;
+
+        @NotNull
+        @JsonProperty
+        protected String subject = "%logger{20} - %m";
+
+        @NotNull
+        @JsonProperty
+        protected boolean ssl = false;
+
+        @NotNull
+        @JsonProperty
+        protected boolean startTLS = false;
+
+        @NotNull
+        @JsonProperty
+        protected String charsetEncoding = "UTF-8";
+
+        @JsonProperty
+        protected String localhost;
+
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public Level getThreshold() {
+            return threshold;
+        }
+
+        public TimeZone getTimeZone() {
+            return timeZone;
+        }
+
+        public Optional<String> getLogFormat() {
+            return Optional.fromNullable(logFormat);
+        }
+
+        public String getUsername() {
+            return username;
+        }
+
+        public String getPassword() {
+            return password;
+        }
+
+        public String getCharsetEncoding() {
+            return charsetEncoding;
+        }
+
+        public String getFrom() {
+            return from;
+        }
+
+        public Optional<String> getLocalhost() {
+            return Optional.fromNullable(localhost);
+        }
+
+        public String getHost() {
+            return host;
+        }
+
+        public Optional<Integer> getPort() {
+            return Optional.fromNullable(port);
+        }
+
+        public String getSubject() {
+            return subject;
+        }
+
+        public List<String> getTo() {
+            return to;
+        }
+
+        public boolean getSSL() {
+            return ssl;
+        }
+
+        public boolean getSTARTTLS() {
+            return startTLS;
+        }
+
+    }
+
     @NotNull
     @JsonProperty
     protected Level level = Level.INFO;
@@ -198,6 +318,11 @@ public class LoggingConfiguration {
     @JsonProperty
     protected SyslogConfiguration syslog = new SyslogConfiguration();
 
+    @Valid
+    @NotNull
+    @JsonProperty
+    protected SMTPConfiguration smtp = new SMTPConfiguration();
+
     public Level getLevel() {
         return level;
     }
@@ -216,5 +341,9 @@ public class LoggingConfiguration {
 
     public SyslogConfiguration getSyslogConfiguration() {
         return syslog;
+    }
+
+    public SMTPConfiguration getSMTPConfiguration() {
+        return smtp;
     }
 }

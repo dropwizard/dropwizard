@@ -13,6 +13,7 @@ import java.io.File;
 
 import static com.yammer.dropwizard.config.LoggingConfiguration.ConsoleConfiguration;
 import static com.yammer.dropwizard.config.LoggingConfiguration.FileConfiguration;
+import static com.yammer.dropwizard.config.LoggingConfiguration.SMTPConfiguration;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
@@ -56,10 +57,10 @@ public class LoggingConfigurationTest {
 
         assertThat(file.isEnabled(),
                    is(false));
-        
+
         assertThat(file.getThreshold(),
                    is(Level.ALL));
-        
+
         assertThat(file.getCurrentLogFilename(),
                    is("./logs/example.log"));
 
@@ -68,5 +69,37 @@ public class LoggingConfigurationTest {
 
         assertThat(file.getArchivedFileCount(),
                    is(5));
+    }
+
+    @Test
+    public void hasOptionalSMTPConfiguration() throws Exception {
+        final SMTPConfiguration smtp = config.getSMTPConfiguration();
+
+        assertThat(smtp.isEnabled(),
+                is(false));
+
+        assertThat(smtp.getFrom(),
+                is("test@testdropwizard.com"));
+
+        assertThat(smtp.getHost(),
+                is("smtp.testdropwizard.org"));
+
+        assertThat(smtp.getPort().get(),
+                is(Integer.valueOf(465)));
+
+        assertThat(smtp.getSSL(),
+                is(Boolean.TRUE));
+
+        assertThat(smtp.getSTARTTLS(),
+                is(Boolean.FALSE));
+
+        assertThat(smtp.getSubject(),
+                is("test smtp logger"));
+
+        assertThat(smtp.getTo().size(),
+                is(2));
+
+        assertThat(smtp.getThreshold(),
+                is(Level.ERROR));
     }
 }

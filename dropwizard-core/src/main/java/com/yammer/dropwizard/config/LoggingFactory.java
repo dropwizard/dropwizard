@@ -71,6 +71,13 @@ public class LoggingFactory {
                                                                                    syslog.getLogFormat())));
         }
 
+        final SMTPConfiguration smtp = config.getSMTPConfiguration();
+        if (smtp.isEnabled()) {
+            root.addAppender(AsyncAppender.wrap(LogbackFactory.buildSMTPAppender(smtp,
+                                                                                 root.getLoggerContext(),
+                                                                                 smtp.getLogFormat())));
+        }
+
         final MBeanServer server = ManagementFactory.getPlatformMBeanServer();
         try {
             final ObjectName objectName = new ObjectName("com.yammer:type=Logging");

@@ -3,6 +3,7 @@ package com.yammer.dropwizard.logging;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.filter.ThresholdFilter;
+import ch.qos.logback.classic.net.SMTPAppender;
 import ch.qos.logback.classic.net.SyslogAppender;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.ConsoleAppender;
@@ -12,7 +13,10 @@ import ch.qos.logback.core.rolling.TimeBasedRollingPolicy;
 import ch.qos.logback.core.spi.FilterAttachable;
 import com.google.common.base.Optional;
 
-import static com.yammer.dropwizard.config.LoggingConfiguration.*;
+import static com.yammer.dropwizard.config.LoggingConfiguration.ConsoleConfiguration;
+import static com.yammer.dropwizard.config.LoggingConfiguration.FileConfiguration;
+import static com.yammer.dropwizard.config.LoggingConfiguration.SMTPConfiguration;
+import static com.yammer.dropwizard.config.LoggingConfiguration.SyslogConfiguration;
 
 public class LogbackFactory {
     private LogbackFactory() {
@@ -96,6 +100,45 @@ public class LogbackFactory {
         appender.setContext(context);
         appender.setLayout(formatter);
         addThresholdFilter(appender, console.getThreshold());
+        appender.start();
+
+        return appender;
+    }
+
+    public static SMTPAppender buildSMTPAppender(SMTPConfiguration smtp,
+                                                               LoggerContext context,
+                                                               Optional<String> logFormat) {
+        final LogFormatter formatter = new LogFormatter(context, smtp.getTimeZone());
+        for (String format : logFormat.asSet()) {
+            formatter.setPattern(format);
+        }
+        formatter.start();
+
+        final SMTPAppender appender = new SMTPAppender();
+        appender.setContext(context);
+        appender.setLayout(formatter);
+        addThresholdFilter(appender, smtp.getThreshold());
+
+        appender.setFrom(smtp.getFrom());
+        for (String to : smtp.getTo()) {
+            appender.addTo(to);
+        }
+        appender.setSubject(smtp.getSubject());
+        appender.setSMTPHost(smtp.getHost());
+
+        Optional<Integer> port = smtp.getPort();
+        if (smtp.getSSL()) {
+            appender.setSMTPPort(port.or(465));
+        } else {
+            appender.setSMTPPort(port.or(25));
+        }
+
+        appender.setUsername(smtp.getUsername());
+        appender.setPassword(smtp.getPassword());
+        appender.setSSL(smtp.getSSL());
+        appender.setSTARTTLS(smtp.getSTARTTLS());
+        appender.setCharsetEncoding(smtp.getCharsetEncoding());
+        appender.setLocalhost(smtp.getLocalhost().orNull());
         appender.start();
 
         return appender;

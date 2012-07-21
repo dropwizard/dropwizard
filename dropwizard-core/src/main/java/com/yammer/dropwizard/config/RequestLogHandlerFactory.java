@@ -2,6 +2,7 @@ package com.yammer.dropwizard.config;
 
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.net.SMTPAppender;
 import ch.qos.logback.classic.net.SyslogAppender;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.ConsoleAppender;
@@ -40,7 +41,8 @@ public class RequestLogHandlerFactory {
     public boolean isEnabled() {
         return config.getConsoleConfiguration().isEnabled() ||
                 config.getFileConfiguration().isEnabled() ||
-                config.getSyslogConfiguration().isEnabled();
+                config.getSyslogConfiguration().isEnabled() ||
+                config.getSMTPConfiguration().isEnabled();
     }
 
     public RequestLogHandler build() {
@@ -83,6 +85,17 @@ public class RequestLogHandlerFactory {
                                                                                name + "-requests",
                                                                                Optional.<String>absent());
 
+            appender.stop();
+            appender.setLayout(layout);
+            appender.start();
+            appenders.addAppender(appender);
+        }
+
+        final LoggingConfiguration.SMTPConfiguration smtp = config.getSMTPConfiguration();
+        if (smtp.isEnabled()) {
+            final SMTPAppender appender = LogbackFactory.buildSMTPAppender(smtp,
+                                                                           context,
+                                                                           Optional.<String>absent());
             appender.stop();
             appender.setLayout(layout);
             appender.start();
