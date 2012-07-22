@@ -18,7 +18,6 @@ public class ServiceTest {
 
     private class FakeService extends Service<FakeConfiguration> {
         FakeService() {
-            super("test");
             addBundle(bundle);
         }
 
@@ -43,5 +42,13 @@ public class ServiceTest {
     public void canDetermineConfiguration() throws Exception {
         assertThat(new PoserService().getConfigurationClass(),
                 is(sameInstance(FakeConfiguration.class)));
+    }
+
+    @Test
+    public void defualtNameIsSimpleNameOfServiceClass() throws Exception {
+        assertThat(new FakeService().getName(),
+                is(FakeService.class.getSimpleName()));
+        assertThat(new PoserService().getName(),
+                is(PoserService.class.getSimpleName()));
     }
 }
