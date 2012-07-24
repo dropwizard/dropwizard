@@ -203,6 +203,10 @@ public class ServerFactory {
             factory.setKeyManagerPassword(password);
         }
 
+        for (String type : config.getSslConfiguration().getKeyStoreType().asSet()) {
+          factory.setKeyStoreType(type);
+        }
+
         factory.setIncludeProtocols(config.getSslConfiguration().getSupportedProtocols());
     }
 
