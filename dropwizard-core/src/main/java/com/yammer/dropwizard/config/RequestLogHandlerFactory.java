@@ -7,7 +7,7 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.ConsoleAppender;
 import ch.qos.logback.core.CoreConstants;
 import ch.qos.logback.core.LayoutBase;
-import ch.qos.logback.core.rolling.RollingFileAppender;
+import ch.qos.logback.core.FileAppender;
 import ch.qos.logback.core.spi.AppenderAttachableImpl;
 import com.google.common.base.Optional;
 import com.yammer.dropwizard.jetty.AsyncRequestLog;
@@ -66,9 +66,9 @@ public class RequestLogHandlerFactory {
 
         final FileConfiguration file = config.getFileConfiguration();
         if (file.isEnabled()) {
-            final RollingFileAppender<ILoggingEvent> appender = LogbackFactory.buildFileAppender(file,
-                                                                                                 context,
-                                                                                                 Optional.<String>absent());
+            final FileAppender<ILoggingEvent> appender = LogbackFactory.buildFileAppender(file,
+                                                                                          context,
+                                                                                          Optional.<String>absent());
 
             appender.stop();
             appender.setLayout(layout);
