@@ -111,6 +111,7 @@ Your main ``Configuration`` subclass can then include this as a member field:
 .. code-block:: java
 
     public class ExampleServiceConfiguration extends Configuration {
+        @Valid
         @NotNull
         @JsonProperty
         private MessageQueueConfiguration messageQueue = new MessageQueueConfiguration();
@@ -128,7 +129,7 @@ Then, in your service's YAML file, you can use a nested ``messageQueue`` field:
       host: mq.example.com
       port: 5673
 
-The ``@NotNull``, ``@NotEmpty``, ``@Min``, and ``@Max`` annotations are part of Dropwizard's
+The ``@NotNull``, ``@NotEmpty``, ``@Min``, ``@Max``, and ``@Valid`` annotations are part of Dropwizard's
 :ref:`man-core-representations-validation` functionality. If your YAML configuration file's
 ``messageQueue.host`` field was missing (or was a blank string), Dropwizard would refuse to start
 and would output an error message describing the issues.
