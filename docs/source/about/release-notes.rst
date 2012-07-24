@@ -19,7 +19,12 @@ v0.5.0-SNAPSHOT
 * Added ``@MinSize``, ``@MaxSize``, and ``@SizeRange`` validations.
 * Added ``@MinDuration``, ``@MaxDuration``, and ``@DurationRange`` validations.
 
+.. _rel-0.4.4:
 
+v0.4.4: Jul 24 2012
+===================
+
+* Added support for ``@JsonIgnoreType`` to ``JacksonMessageBodyProvider``.
 
 .. _rel-0.4.3:
 
