@@ -99,6 +99,8 @@ http:
 #  ssl:
 #    keyStorePath: ./example.keystore
 #    keyStorePassword: example
+#
+#    keyStoreType: JKS # (optional, JKS is default)
 
   # HTTP request log settings
   requestLog:
