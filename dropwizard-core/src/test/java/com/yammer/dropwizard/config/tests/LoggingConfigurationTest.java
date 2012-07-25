@@ -60,6 +60,9 @@ public class LoggingConfigurationTest {
         assertThat(file.getThreshold(),
                    is(Level.ALL));
         
+        assertThat(file.isArchive(),
+                   is(true));
+        
         assertThat(file.getCurrentLogFilename(),
                    is("./logs/example.log"));
 
