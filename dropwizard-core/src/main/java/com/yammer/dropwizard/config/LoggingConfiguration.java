@@ -91,7 +91,7 @@ public class LoggingConfiguration {
         @JsonProperty
         protected String logFormat;
 
-        @ValidationMethod(message = "must have logging.file.archivedLogFilenamePatter if logging.file.archive is true")
+        @ValidationMethod(message = "must have logging.file.archivedLogFilenamePattern if logging.file.archive is true")
         public boolean isValidArchiveConfiguration() {
             return !archive || archivedLogFilenamePattern != null;
         }
