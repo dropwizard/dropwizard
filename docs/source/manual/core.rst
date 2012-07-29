@@ -284,6 +284,35 @@ service.
 Some bundles require configuration parameters. These bundles implement ``ConfiguredBundle`` and will
 require your service's ``Configuration`` subclass to implement a specific interface.
 
+Serving Assets
+--------------
+
+Either your service or your static assets can be served from the root path, but
+not both. The latter is useful when using Dropwizard to back a Javascript
+application. To enable it, move your service to a sub-URL.
+
+.. code-block:: yaml
+
+    http:
+      rootPath: /service/*  # Default is /*
+
+Then use an extended ``AssetsBundle`` constructor to serve resources in the
+``assets`` folder from the root path. ``index.htm`` is served as the default
+page.
+
+.. code-block:: java
+
+    private HelloWorldService() {
+        super("hello-world");
+
+        // By default a restart will be required to pick up any changes to assets.
+        // Use the following spec to disable that behaviour, useful when developing.
+        //CacheBuilderSpec cacheSpec = CacheBuilderSpec.disableCaching();
+
+        CacheBuilderSpec cacheSpec = AssetsBundle.DEFAULT_CACHE_SPEC;
+        addBundle(new AssetsBundle("/assets/", cacheSpec, "/"));
+    }
+
 .. _man-core-commands:
 
 Commands
