@@ -66,6 +66,11 @@ your service.
 Configuration
 =============
 
+Dropwizard provides a number of built-in configuration parameters. They are
+well documented in the `example project's configuration`__.
+
+.. __: https://github.com/codahale/dropwizard/blob/master/dropwizard-example/example.yml
+
 Each ``Service`` subclass has a single type parameter: that of its matching ``Configuration``
 subclass. These are usually at the root of your service's main package. For example, your User
 service would have two classes: ``UserServiceConfiguration``, extending ``Configuration``, and
