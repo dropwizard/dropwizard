@@ -149,6 +149,26 @@ Dropwizard then calls your ``Service`` subclass to initialize your service's ``E
 
 .. _man-core-environments:
 
+SSL
+---
+
+SSL support is built into Dropwizard. You will need to provide your own java
+key store, which is outside the scope of this document (``keytool`` is the
+command you need). There is a test keystore you can use in the
+`Dropwizard example project`__.
+
+.. __: https://github.com/codahale/dropwizard/tree/master/dropwizard-example
+
+.. code-block:: yaml
+
+    http:
+      ssl:
+        keyStorePath: ./example.keystore
+        keyStorePassword: example
+
+        # optional, JKS is default. JCEKS is another likely candidate.
+        keyStoreType: JKS
+
 Environments
 ============
 
