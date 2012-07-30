@@ -315,7 +315,7 @@ public class Environment extends AbstractLifeCycle {
                                                                 unit,
                                                                 new LinkedBlockingQueue<Runnable>(),
                                                                 threadFactory);
-        manage(new ExecutorServiceManager(executor, 5, TimeUnit.SECONDS));
+        manage(new ExecutorServiceManager(executor, 5, TimeUnit.SECONDS, nameFormat));
         return executor;
     }
 
@@ -337,7 +337,7 @@ public class Environment extends AbstractLifeCycle {
                                                                       .build();
         final ScheduledExecutorService executor = new ScheduledThreadPoolExecutor(corePoolSize,
                                                                                   threadFactory);
-        manage(new ExecutorServiceManager(executor, 5, TimeUnit.SECONDS));
+        manage(new ExecutorServiceManager(executor, 5, TimeUnit.SECONDS, nameFormat));
         return executor;
     }
 
@@ -368,7 +368,19 @@ public class Environment extends AbstractLifeCycle {
     private void logManagedObjects() {
         final ImmutableSet.Builder<String> builder = ImmutableSet.builder();
         for (Object bean : lifeCycle.getBeans()) {
-            builder.add(bean.getClass().getCanonicalName());
+            if (bean instanceof JettyManaged) {
+                bean = ((JettyManaged)bean).getWrappedInstance();
+                String canonicalName = bean.getClass().getCanonicalName();
+                if (bean instanceof ExecutorServiceManager) {
+                    String poolName = ((ExecutorServiceManager)bean).getPoolName();
+                    canonicalName += "(" + poolName + ")";
+                }
+                builder.add(canonicalName);
+            }
+            else {
+                builder.add(bean.getClass().getCanonicalName());
+            }
+
         }
         LOG.debug("managed objects = {}", builder.build());
     }
