@@ -49,24 +49,65 @@ public class JacksonMessageBodyProviderTest {
 
     @Test
     public void readsDeserializableTypes() throws Exception {
-        assertThat(provider.isReadable(String.class, null, null, null),
+        assertThat(provider.isReadable(Example.class, null, null, null),
                    is(true));
 
-        verify(json).canDeserialize(String.class);
+        verify(json).canDeserialize(Example.class);
     }
 
     @Test
     public void writesSerializableTypes() throws Exception {
-        assertThat(provider.isWriteable(String.class, null, null, null),
+        assertThat(provider.isWriteable(Example.class, null, null, null),
                    is(true));
 
-        verify(json).canSerialize(String.class);
+        verify(json).canSerialize(Example.class);
     }
 
     @Test
     public void doesNotWriteIgnoredTypes() throws Exception {
         assertThat(provider.isWriteable(Ignorable.class, null, null, null),
                    is(false));
+    }
+
+    @Test
+    public void doesNotWriteDefaultIgnoredTypes() throws Exception {
+        assertThat(provider.isWriteable(byte[].class, null, null, null),
+                   is(false));
+        assertThat(provider.isWriteable(String.class, null, null, null),
+            is(false));
+
+        for (final Class<?> cls : JacksonMessageBodyProvider.DEFAULT_IGNORE) {
+            assertThat(provider.isWriteable(cls, null, null, null),
+                is(false));
+        }
+    }
+
+    @Test
+    public void doesNotWriteNonJsonMediaTypes() throws Exception {
+        assertThat(provider.isWriteable(Example.class, null, null, MediaType.APPLICATION_ATOM_XML_TYPE),
+                   is(false));
+        assertThat(provider.isWriteable(Example.class, null, null, MediaType.APPLICATION_OCTET_STREAM_TYPE),
+            is(false));
+        assertThat(provider.isWriteable(Example.class, null, null, MediaType.TEXT_XML_TYPE),
+            is(false));
+    }
+
+    @Test
+    public void writeJsonMediaTypes() throws Exception {
+        assertThat(provider.isWriteable(Example.class, null, null, MediaType.APPLICATION_JSON_TYPE),
+                   is(true));
+        assertThat(provider.isWriteable(Example.class, null, null, MediaType.valueOf("application/foo+json")),
+            is(true));
+    }
+
+    @Test
+    public void writePossibleJsonMediaTypes() throws Exception {
+        assertThat(provider.isWriteable(Example.class, null, null, null),
+                   is(true));
+        assertThat(provider.isWriteable(Example.class, null, null, MediaType.WILDCARD_TYPE),
+            is(true));
+        assertThat(provider.isWriteable(Example.class, null, null, MediaType.valueOf("application/*")),
+            is(true));
     }
 
     @Test

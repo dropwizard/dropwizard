@@ -1,25 +1,29 @@
 package com.yammer.dropwizard.jersey;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.yammer.dropwizard.json.Json;
 import com.yammer.dropwizard.logging.Log;
 import com.yammer.dropwizard.validation.InvalidEntityException;
 import com.yammer.dropwizard.validation.Validator;
 import org.codehaus.jackson.annotate.JsonIgnoreType;
 import org.eclipse.jetty.io.EofException;
-
 import javax.validation.Valid;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.StreamingOutput;
 import javax.ws.rs.ext.MessageBodyReader;
 import javax.ws.rs.ext.MessageBodyWriter;
 import javax.ws.rs.ext.Provider;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Reader;
+import java.io.Writer;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 
@@ -37,6 +41,11 @@ public class JacksonMessageBodyProvider implements MessageBodyReader<Object>,
     private static final Log LOG = Log.forClass(JacksonMessageBodyProvider.class);
     private static final Validator VALIDATOR = new Validator();
 
+    // The following aren't json objects but canSerialize can handle them as json properties.
+    final static ImmutableSet<Class<?>> DEFAULT_IGNORE = ImmutableSet.<Class<?>>of(
+        StreamingOutput.class, Response.class, InputStream.class, Reader.class, OutputStream.class,
+        Writer.class, char[].class, String.class, byte[].class);
+
     private final Json json;
 
     public JacksonMessageBodyProvider(Json json) {
@@ -48,7 +57,7 @@ public class JacksonMessageBodyProvider implements MessageBodyReader<Object>,
                               Type genericType,
                               Annotation[] annotations,
                               MediaType mediaType) {
-        return !isIgnored(type) && json.canDeserialize(type);
+        return isJsonType(mediaType) && !isIgnored(type) && !isDefaultIgnored(type) && json.canDeserialize(type);
     }
 
     @Override
@@ -59,7 +68,7 @@ public class JacksonMessageBodyProvider implements MessageBodyReader<Object>,
                            MultivaluedMap<String, String> httpHeaders,
                            InputStream entityStream) throws IOException, WebApplicationException {
         boolean validating = false;
-        for (Annotation annotation : annotations) {
+        for (final Annotation annotation : annotations) {
             validating = validating || (annotation.annotationType() == Valid.class);
         }
 
@@ -83,12 +92,23 @@ public class JacksonMessageBodyProvider implements MessageBodyReader<Object>,
                                Type genericType,
                                Annotation[] annotations,
                                MediaType mediaType) {
-        return !isIgnored(type) && json.canSerialize(type);
+        return isJsonType(mediaType) && !isIgnored(type) && !isDefaultIgnored(type) && json.canSerialize(type);
     }
+
 
     private boolean isIgnored(Class<?> type) {
         final JsonIgnoreType ignore = type.getAnnotation(JsonIgnoreType.class);
         return (ignore != null) && ignore.value();
+    }
+
+
+    private boolean isDefaultIgnored(Class<?> type) {
+        for (final Class<?> cls : DEFAULT_IGNORE) {
+            if (cls.isAssignableFrom(type)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
@@ -110,10 +130,19 @@ public class JacksonMessageBodyProvider implements MessageBodyReader<Object>,
                         OutputStream entityStream) throws IOException, WebApplicationException {
         try {
             json.writeValue(entityStream, t);
-        } catch (EofException ignored) {
+        } catch (final EofException ignored) {
             // we don't care about these
-        } catch (IOException e) {
+        } catch (final IOException e) {
             LOG.error(e, "Error writing response");
         }
+    }
+
+    private boolean isJsonType(MediaType mediaType) {
+        if (mediaType == null) {
+            return true; // retain compatibility for clients that don't set type
+        }
+        return ("application".equalsIgnoreCase(mediaType.getType()) || mediaType.isWildcardType())
+            && ("json".equalsIgnoreCase(mediaType.getSubtype()) || mediaType.isWildcardSubtype()
+                || mediaType.getSubtype().endsWith("+json"));
     }
 }
