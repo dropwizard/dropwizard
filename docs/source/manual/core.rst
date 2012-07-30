@@ -66,6 +66,11 @@ your service.
 Configuration
 =============
 
+Dropwizard provides a number of built-in configuration parameters. They are
+well documented in the `example project's configuration`__.
+
+.. __: https://github.com/codahale/dropwizard/blob/master/dropwizard-example/example.yml
+
 Each ``Service`` subclass has a single type parameter: that of its matching ``Configuration``
 subclass. These are usually at the root of your service's main package. For example, your User
 service would have two classes: ``UserServiceConfiguration``, extending ``Configuration``, and
@@ -148,6 +153,26 @@ Dropwizard then calls your ``Service`` subclass to initialize your service's ``E
     ``java -Ddw.http.port=9090 server my-config.json``
 
 .. _man-core-environments:
+
+SSL
+---
+
+SSL support is built into Dropwizard. You will need to provide your own java
+key store, which is outside the scope of this document (``keytool`` is the
+command you need). There is a test keystore you can use in the
+`Dropwizard example project`__.
+
+.. __: https://github.com/codahale/dropwizard/tree/master/dropwizard-example
+
+.. code-block:: yaml
+
+    http:
+      ssl:
+        keyStorePath: ./example.keystore
+        keyStorePassword: example
+
+        # optional, JKS is default. JCEKS is another likely candidate.
+        keyStoreType: JKS
 
 Environments
 ============
@@ -283,6 +308,35 @@ service.
 
 Some bundles require configuration parameters. These bundles implement ``ConfiguredBundle`` and will
 require your service's ``Configuration`` subclass to implement a specific interface.
+
+Serving Assets
+--------------
+
+Either your service or your static assets can be served from the root path, but
+not both. The latter is useful when using Dropwizard to back a Javascript
+application. To enable it, move your service to a sub-URL.
+
+.. code-block:: yaml
+
+    http:
+      rootPath: /service/*  # Default is /*
+
+Then use an extended ``AssetsBundle`` constructor to serve resources in the
+``assets`` folder from the root path. ``index.htm`` is served as the default
+page.
+
+.. code-block:: java
+
+    private HelloWorldService() {
+        super("hello-world");
+
+        // By default a restart will be required to pick up any changes to assets.
+        // Use the following spec to disable that behaviour, useful when developing.
+        //CacheBuilderSpec cacheSpec = CacheBuilderSpec.disableCaching();
+
+        CacheBuilderSpec cacheSpec = AssetsBundle.DEFAULT_CACHE_SPEC;
+        addBundle(new AssetsBundle("/assets/", cacheSpec, "/"));
+    }
 
 .. _man-core-commands:
 
