@@ -54,6 +54,12 @@ public class Json {
         this.typeFactory = mapper.getTypeFactory();
     }
 
+    public ObjectMapper getObjectMapper() {
+        return mapper;
+    }
+
+
+
     /**
      * Registers a module that can extend functionality provided by this class; for example, by
      * adding providers for custom serializers and deserializers.

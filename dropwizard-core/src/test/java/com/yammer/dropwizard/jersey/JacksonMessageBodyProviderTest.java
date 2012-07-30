@@ -49,18 +49,14 @@ public class JacksonMessageBodyProviderTest {
 
     @Test
     public void readsDeserializableTypes() throws Exception {
-        assertThat(provider.isReadable(String.class, null, null, null),
+        assertThat(provider.isReadable(Example.class, null, null, null),
                    is(true));
-
-        verify(json).canDeserialize(String.class);
     }
 
     @Test
     public void writesSerializableTypes() throws Exception {
-        assertThat(provider.isWriteable(String.class, null, null, null),
+        assertThat(provider.isWriteable(Example.class, null, null, null),
                    is(true));
-
-        verify(json).canSerialize(String.class);
     }
 
     @Test
