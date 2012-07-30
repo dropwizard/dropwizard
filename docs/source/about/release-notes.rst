@@ -35,7 +35,7 @@ v0.5.0-SNAPSHOT
   helps out some non-Maven build frameworks with bugs in dependency processing.
 * Added ``addProvider`` to ``JerseyClientFactory``.
 * Fixed ``NullPointerException`` problems with anonymous health check classes.
-* Added support for serializing/deserializing ``ByteBuffer``s as JSON.
+* Added support for serializing/deserializing ``ByteBuffer`` instances as JSON.
 * Added ``supportedProtocols`` to SSL configuration, and disabled SSLv2 by default.
 * Added support for ``Optional<Integer>`` query parameters and others.
 * Removed ``jersey-freemarker`` dependency from ``dropwizard-views``.
