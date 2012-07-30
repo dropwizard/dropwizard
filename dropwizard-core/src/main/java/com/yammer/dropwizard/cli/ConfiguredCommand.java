@@ -66,7 +66,7 @@ public abstract class ConfiguredCommand<T extends Configuration> extends Command
 
     @Override
     protected final String getSyntax() {
-        final StringBuilder syntax = new StringBuilder("<config file>");
+        final StringBuilder syntax = new StringBuilder("[config file]");
         final String configured = getConfiguredSyntax();
         if ((configured != null) && !configured.isEmpty()) {
             syntax.append(' ').append(configured);
@@ -76,24 +76,30 @@ public abstract class ConfiguredCommand<T extends Configuration> extends Command
 
     @Override
     @SuppressWarnings("unchecked")
-    protected final void run(AbstractService<?> service,
-                             CommandLine params) throws Exception {
-        final ConfigurationFactory<T> factory = ConfigurationFactory.forClass(getConfigurationClass(),
-                                                                              new Validator(),
-                                                                              service.getJacksonModules());
+    protected final void run(AbstractService<?> service, CommandLine params) throws Exception {
         final String[] args = params.getArgs();
+        final Class<T> configurationClass = getConfigurationClass();
+        T configuration = null;
         if (args.length >= 1) {
             params.getArgList().remove(0);
+            final ConfigurationFactory<T> configurationFactory =
+                    ConfigurationFactory.forClass(configurationClass, new Validator(), service.getJacksonModules());
             try {
-                final T configuration = factory.build(new File(args[0]));
-                new LoggingFactory(configuration.getLoggingConfiguration(), service.getName()).configure();
-                run((AbstractService<T>) service, configuration, params);
+                configuration = configurationFactory.build(new File(args[0]));
             } catch (ConfigurationException e) {
                 printHelp(e.getMessage(), service.getClass());
             }
         } else {
-            printHelp(service.getClass());
-            System.exit(-1);
+            try {
+                configuration = configurationClass.newInstance();
+            } catch (Exception e) {
+                printHelp("Failed to instantiate configuration class " + configurationClass, service.getClass());
+            }
+        }
+
+        if (configuration != null) {
+            new LoggingFactory(configuration.getLoggingConfiguration(), service.getName()).configure();
+            run((AbstractService<T>)service, configuration, params);
         }
     }
 
