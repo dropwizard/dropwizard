@@ -7,11 +7,13 @@ public class ExecutorServiceManager implements Managed {
     private final ExecutorService executor;
     private final long shutdownPeriod;
     private final TimeUnit unit;
+    private final String poolName;
 
-    public ExecutorServiceManager(ExecutorService executor, long shutdownPeriod, TimeUnit unit) {
+    public ExecutorServiceManager(ExecutorService executor, long shutdownPeriod, TimeUnit unit, String poolName) {
         this.executor = executor;
         this.shutdownPeriod = shutdownPeriod;
         this.unit = unit;
+        this.poolName = poolName;
     }
 
     @Override
@@ -24,4 +26,10 @@ public class ExecutorServiceManager implements Managed {
         executor.shutdown();
         executor.awaitTermination(shutdownPeriod, unit);
     }
+
+    @Override
+    public String toString() {
+        return super.toString() + "(" + poolName + ")";
+    }
+
 }
