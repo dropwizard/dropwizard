@@ -27,7 +27,9 @@ public class ExecutorServiceManager implements Managed {
         executor.awaitTermination(shutdownPeriod, unit);
     }
 
-    public String getPoolName() {
-        return poolName;
+    @Override
+    public String toString() {
+        return super.toString() + "(" + poolName + ")";
     }
+
 }
