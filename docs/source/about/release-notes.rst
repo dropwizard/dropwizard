@@ -6,8 +6,8 @@ Release Notes
 
 .. _rel-0.5.0:
 
-v0.5.0-SNAPSHOT
-===============
+v0.5.0: Jul 30 2012
+===================
 
 * Upgraded to JDBI 2.38.1.
 * Upgraded to Jackson 1.9.9.
