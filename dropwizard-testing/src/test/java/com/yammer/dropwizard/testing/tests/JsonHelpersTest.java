@@ -1,5 +1,8 @@
 package com.yammer.dropwizard.testing.tests;
 
+import java.util.Random;
+
+import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.type.TypeReference;
 import org.junit.Test;
 
@@ -29,5 +32,31 @@ public class JsonHelpersTest {
 
         assertThat(fromJson(jsonFixture("fixtures/person.json"), new TypeReference<Person>() {}),
                    is(new Person("Coda", "coda@example.com")));
+    }
+    
+    @Test
+    public void succesfulRoundTrip() throws Exception {
+        jsonRoundTrip(new Person("Coda", "coda@example.com"));
+    }
+
+    @Test(expected = AssertionError.class)
+    public void failingRoundTrip() throws Exception {
+        jsonRoundTrip(new Person("Mårten", "marten@example.com"));
+    }
+
+    @Test
+    public void succesfulRoundTripWithEquality() throws Exception {
+        jsonRoundTripWithEquality(new Person("Coda", "coda@example.com"));
+    }
+
+    @Test(expected = AssertionError.class)
+    public void roundTripWithBadEquals() throws Exception {
+        jsonRoundTripWithEquality(new BadEquality());
+    }
+    
+    public static class BadEquality {
+        @JsonProperty private String value = "value";
+        
+        BadEquality() { /* Jackson deserialization */ }
     }
 }
