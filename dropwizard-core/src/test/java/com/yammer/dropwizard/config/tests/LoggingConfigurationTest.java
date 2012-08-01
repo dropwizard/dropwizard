@@ -72,4 +72,12 @@ public class LoggingConfigurationTest {
         assertThat(file.getArchivedFileCount(),
                    is(5));
     }
+    
+    @Test
+    public void defaultFileConfigurationIsValid() throws Exception {
+        final FileConfiguration file = new FileConfiguration();
+        
+        assertThat(file.isValidArchiveConfiguration(),
+                   is(true));
+    }
 }
