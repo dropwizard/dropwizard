@@ -37,5 +37,13 @@
             <artifactId>metrics-httpclient</artifactId>
             <version>${metrics.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.github.tomakehurst</groupId>
+            <artifactId>wiremock</artifactId>
+            <version>1.24</version>
+            <classifier>standalone</classifier>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 </project>
