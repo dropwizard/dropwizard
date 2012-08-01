@@ -31,7 +31,7 @@ Many, many thanks to:
 * `Joshua Spiewak <https://github.com/jspiewak>`_
 * `Mark Wolfe <https://github.com/wolfeidau>`_
 * `Michael Fairley <https://github.com/michaelfairley>`_
-* `Mårten Gustafsons <https://github.com/chids>`_
+* `Mårten Gustafson <https://github.com/chids>`_
 * `Nick Telford <https://github.com/nicktelford>`_
 * `Sam Perman <https://github.com/samperman>`_
 * `Sam Quigley <https://github.com/emerose>`_
