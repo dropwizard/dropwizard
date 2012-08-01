@@ -60,6 +60,9 @@ public class LoggingConfigurationTest {
         assertThat(file.getThreshold(),
                    is(Level.ALL));
         
+        assertThat(file.isArchive(),
+                   is(true));
+        
         assertThat(file.getCurrentLogFilename(),
                    is("./logs/example.log"));
 
@@ -68,5 +71,13 @@ public class LoggingConfigurationTest {
 
         assertThat(file.getArchivedFileCount(),
                    is(5));
+    }
+    
+    @Test
+    public void defaultFileConfigurationIsValid() throws Exception {
+        final FileConfiguration file = new FileConfiguration();
+        
+        assertThat(file.isValidArchiveConfiguration(),
+                   is(true));
     }
 }

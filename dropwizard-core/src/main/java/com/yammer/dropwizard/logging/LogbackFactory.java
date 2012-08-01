@@ -6,6 +6,7 @@ import ch.qos.logback.classic.filter.ThresholdFilter;
 import ch.qos.logback.classic.net.SyslogAppender;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.ConsoleAppender;
+import ch.qos.logback.core.FileAppender;
 import ch.qos.logback.core.rolling.DefaultTimeBasedFileNamingAndTriggeringPolicy;
 import ch.qos.logback.core.rolling.RollingFileAppender;
 import ch.qos.logback.core.rolling.TimeBasedRollingPolicy;
@@ -43,39 +44,47 @@ public class LogbackFactory {
         return appender;
     }
 
-    public static RollingFileAppender<ILoggingEvent> buildFileAppender(FileConfiguration file,
+    public static FileAppender<ILoggingEvent> buildFileAppender(FileConfiguration file,
                                                                        LoggerContext context,
                                                                        Optional<String> logFormat) {
-        final DefaultTimeBasedFileNamingAndTriggeringPolicy<ILoggingEvent> triggeringPolicy =
-                new DefaultTimeBasedFileNamingAndTriggeringPolicy<ILoggingEvent>();
-        triggeringPolicy.setContext(context);
-
-        final TimeBasedRollingPolicy<ILoggingEvent> rollingPolicy = new TimeBasedRollingPolicy<ILoggingEvent>();
-        rollingPolicy.setContext(context);
-        rollingPolicy.setFileNamePattern(file.getArchivedLogFilenamePattern());
-        rollingPolicy.setTimeBasedFileNamingAndTriggeringPolicy(
-                triggeringPolicy);
-        triggeringPolicy.setTimeBasedRollingPolicy(rollingPolicy);
-        rollingPolicy.setMaxHistory(file.getArchivedFileCount());
-
         final LogFormatter formatter = new LogFormatter(context, file.getTimeZone());
         for (String format : logFormat.asSet()) {
             formatter.setPattern(format);
         }
         formatter.start();
 
-        final RollingFileAppender<ILoggingEvent> appender = new RollingFileAppender<ILoggingEvent>();
+        final FileAppender<ILoggingEvent> appender = 
+            file.isArchive() ? new RollingFileAppender<ILoggingEvent>() :
+                               new FileAppender<ILoggingEvent>();
+
         appender.setAppend(true);
         appender.setContext(context);
         appender.setLayout(formatter);
         appender.setFile(file.getCurrentLogFilename());
         appender.setPrudent(false);
-        appender.setRollingPolicy(rollingPolicy);
-        appender.setTriggeringPolicy(triggeringPolicy);
+
         addThresholdFilter(appender, file.getThreshold());
 
-        rollingPolicy.setParent(appender);
-        rollingPolicy.start();
+        if (file.isArchive()) {
+
+            final DefaultTimeBasedFileNamingAndTriggeringPolicy<ILoggingEvent> triggeringPolicy =
+                    new DefaultTimeBasedFileNamingAndTriggeringPolicy<ILoggingEvent>();
+            triggeringPolicy.setContext(context);
+
+            final TimeBasedRollingPolicy<ILoggingEvent> rollingPolicy = new TimeBasedRollingPolicy<ILoggingEvent>();
+            rollingPolicy.setContext(context);
+            rollingPolicy.setFileNamePattern(file.getArchivedLogFilenamePattern());
+            rollingPolicy.setTimeBasedFileNamingAndTriggeringPolicy(
+                    triggeringPolicy);
+            triggeringPolicy.setTimeBasedRollingPolicy(rollingPolicy);
+            rollingPolicy.setMaxHistory(file.getArchivedFileCount());
+
+            ((RollingFileAppender<ILoggingEvent>) appender).setRollingPolicy(rollingPolicy);
+            ((RollingFileAppender<ILoggingEvent>) appender).setTriggeringPolicy(triggeringPolicy);
+
+            rollingPolicy.setParent(appender);
+            rollingPolicy.start();
+        }
 
         appender.stop();
         appender.start();

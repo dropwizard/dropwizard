@@ -315,7 +315,7 @@ public class Environment extends AbstractLifeCycle {
                                                                 unit,
                                                                 new LinkedBlockingQueue<Runnable>(),
                                                                 threadFactory);
-        manage(new ExecutorServiceManager(executor, 5, TimeUnit.SECONDS));
+        manage(new ExecutorServiceManager(executor, 5, TimeUnit.SECONDS, nameFormat));
         return executor;
     }
 
@@ -337,7 +337,7 @@ public class Environment extends AbstractLifeCycle {
                                                                       .build();
         final ScheduledExecutorService executor = new ScheduledThreadPoolExecutor(corePoolSize,
                                                                                   threadFactory);
-        manage(new ExecutorServiceManager(executor, 5, TimeUnit.SECONDS));
+        manage(new ExecutorServiceManager(executor, 5, TimeUnit.SECONDS, nameFormat));
         return executor;
     }
 
@@ -368,7 +368,7 @@ public class Environment extends AbstractLifeCycle {
     private void logManagedObjects() {
         final ImmutableSet.Builder<String> builder = ImmutableSet.builder();
         for (Object bean : lifeCycle.getBeans()) {
-            builder.add(bean.getClass().getCanonicalName());
+            builder.add(bean.toString());
         }
         LOG.debug("managed objects = {}", builder.build());
     }

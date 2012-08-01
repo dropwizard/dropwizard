@@ -6,20 +6,52 @@ Release Notes
 
 .. _rel-0.5.0:
 
-v0.5.0-SNAPSHOT
-===============
+v0.5.0: Jul 30 2012
+===================
 
-* Upgraded to JDBI 2.37.1.
+* Upgraded to JDBI 2.38.1.
+* Upgraded to Jackson 1.9.9.
+* Upgraded to Jersey 1.13.
+* Upgraded to Guava 13.0-rc2.
+* Upgraded to HttpClient 4.2.1.
+* Upgraded to tomcat-dbcp 7.0.29.
+* Upgraded to Jetty 8.1.5.
 * Improved ``AssetServlet``:
 
   * More accurate ``Last-Modified-At`` timestamps.
   * More general asset specification.
   * Default filename is now configurable.
 
+* Improved ``JacksonMessageBodyProvider``:
+
+  * Now based on Jackson's JAX-RS support.
+  * Doesn't read or write types annotated with ``@JsonIgnoreType``.
+
 * Added ``@MinSize``, ``@MaxSize``, and ``@SizeRange`` validations.
 * Added ``@MinDuration``, ``@MaxDuration``, and ``@DurationRange`` validations.
+* Fixed race conditions in Logback initialization routines.
+* Fixed ``TaskServlet`` problems with custom context paths.
+* Added ``jersey-text-framework-core`` as an explicit dependency of ``dropwizard-testing``. This
+  helps out some non-Maven build frameworks with bugs in dependency processing.
+* Added ``addProvider`` to ``JerseyClientFactory``.
+* Fixed ``NullPointerException`` problems with anonymous health check classes.
+* Added support for serializing/deserializing ``ByteBuffer`` instances as JSON.
+* Added ``supportedProtocols`` to SSL configuration, and disabled SSLv2 by default.
+* Added support for ``Optional<Integer>`` query parameters and others.
+* Removed ``jersey-freemarker`` dependency from ``dropwizard-views``.
+* Fixed missing thread contexts in logging statements.
+* Made the configuration file argument for the ``server`` command optional.
+* Added support for disabling log rotation.
+* Added support for arbitrary KeyStore types.
+* Added ``Log.forThisClass()``.
+* Made explicit service names optional.
 
+.. _rel-0.4.4:
 
+v0.4.4: Jul 24 2012
+===================
+
+* Added support for ``@JsonIgnoreType`` to ``JacksonMessageBodyProvider``.
 
 .. _rel-0.4.3:
 

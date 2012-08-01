@@ -74,6 +74,9 @@ public class LoggingConfiguration {
         protected String currentLogFilename;
 
         @JsonProperty
+        protected boolean archive = true;
+
+        @JsonProperty
         protected String archivedLogFilenamePattern;
 
         @Min(1)
@@ -88,10 +91,14 @@ public class LoggingConfiguration {
         @JsonProperty
         protected String logFormat;
 
-        @ValidationMethod(message = "must have logging.file.currentLogFilename and " +
-                "logging.file.archivedLogFilenamePattern if logging.file.enabled is true")
+        @ValidationMethod(message = "must have logging.file.archivedLogFilenamePattern if logging.file.archive is true")
+        public boolean isValidArchiveConfiguration() {
+            return !enabled || !archive || archivedLogFilenamePattern != null;
+        }
+
+        @ValidationMethod(message = "must have logging.file.currentLogFilename if logging.file.enabled is true")
         public boolean isConfigured() {
-            return !enabled || ((currentLogFilename != null) && (archivedLogFilenamePattern != null));
+            return !enabled || currentLogFilename != null;
         }
 
         public boolean isEnabled() {
@@ -104,6 +111,10 @@ public class LoggingConfiguration {
 
         public String getCurrentLogFilename() {
             return currentLogFilename;
+        }
+
+        public boolean isArchive() {
+            return archive;
         }
 
         public int getArchivedFileCount() {

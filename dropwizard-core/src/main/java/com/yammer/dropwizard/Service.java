@@ -10,10 +10,15 @@ import com.yammer.dropwizard.config.Configuration;
  * @see Configuration
  */
 public abstract class Service<T extends Configuration> extends AbstractService<T> {
+
     protected Service(String name) {
         super(name);
         addBundle(new JavaBundle(this));
         checkForScalaExtensions();
+    }
+
+    protected Service() {
+        this(null);
     }
 
     @Override

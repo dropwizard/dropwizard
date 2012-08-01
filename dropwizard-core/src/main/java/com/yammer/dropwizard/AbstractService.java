@@ -43,12 +43,13 @@ public abstract class AbstractService<T extends Configuration> {
     private final SortedMap<String, Command> commands;
 
     /**
-     * Creates a new service with the given name.
+     * Creates a new service with the given name. If name is {@code null} the service is named as
+     * the subclass by using {@link Class#getSimpleName()}.
      *
      * @param name    the service's name
      */
     protected AbstractService(String name) {
-        this.name = name;
+        this.name = (name == null) ? getClass().getSimpleName() : name;
         this.bundles = Lists.newArrayList();
         this.configuredBundles = Lists.newArrayList();
         this.modules = Lists.newArrayList();
