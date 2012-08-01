@@ -1,0 +1,3 @@
+dnsOverrides:
+  google.com: localhost
+  some.nonexistent.domain.co.ck: 127.0.0.1
