@@ -93,7 +93,7 @@ public class LoggingConfiguration {
 
         @ValidationMethod(message = "must have logging.file.archivedLogFilenamePattern if logging.file.archive is true")
         public boolean isValidArchiveConfiguration() {
-            return !archive || archivedLogFilenamePattern != null;
+            return !enabled || !archive || archivedLogFilenamePattern != null;
         }
 
         @ValidationMethod(message = "must have logging.file.currentLogFilename if logging.file.enabled is true")
