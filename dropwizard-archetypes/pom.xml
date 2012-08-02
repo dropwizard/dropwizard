@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project 
+  xmlns="http://maven.apache.org/POM/4.0.0" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.yammer.dropwizard</groupId>
+    <artifactId>dropwizard-parent</artifactId>
+    <version>0.5.1-SNAPSHOT</version>
+  </parent>
+
+  <groupId>com.yammer.dropwizard.archetypes</groupId>
+  <artifactId>dropwizard-archetypes</artifactId>
+  <packaging>pom</packaging>
+
+  <name>Dropwizard Service Archetypes</name>
+  <description>
+    A collection of Maven Archetypes for bootstrapping development of a new Dropwizard Service.
+  </description>
+
+  <modules>
+    <module>java-simple</module>
+    <module>scala-simple</module>
+  </modules>
+</project>
