@@ -2,6 +2,7 @@ package com.yammer.dropwizard.views.mustache;
 
 import com.github.mustachejava.Mustache;
 import com.github.mustachejava.MustacheFactory;
+import com.google.common.base.Charsets;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -34,7 +35,7 @@ public class MustacheViewRenderer implements ViewRenderer {
 
     @Override
     public void render(View view, Locale locale, OutputStream output) throws IOException, WebApplicationException {
-        final OutputStreamWriter writer = new OutputStreamWriter(output);
+        final OutputStreamWriter writer = new OutputStreamWriter(output, Charsets.UTF_8);
         try {
             final Mustache template = factories.getUnchecked(view.getClass())
                                                .compile(view.getTemplateName());
