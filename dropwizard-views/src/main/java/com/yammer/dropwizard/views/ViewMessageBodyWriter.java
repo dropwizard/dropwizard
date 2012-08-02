@@ -1,15 +1,9 @@
 package com.yammer.dropwizard.views;
 
-import com.google.common.base.Charsets;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
-import com.sun.jersey.api.container.ContainerException;
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.collect.ImmutableList;
+import com.sun.jersey.spi.service.ServiceFinder;
 import com.yammer.metrics.core.TimerContext;
-import freemarker.template.Configuration;
-import freemarker.template.DefaultObjectWrapper;
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
 
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
@@ -19,7 +13,6 @@ import javax.ws.rs.ext.Provider;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.text.MessageFormat;
@@ -29,39 +22,27 @@ import java.util.Locale;
 @Provider
 @Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_XHTML_XML})
 public class ViewMessageBodyWriter implements MessageBodyWriter<View> {
-    private static class TemplateLoader extends CacheLoader<Class<?>, Configuration> {
-        @Override
-        public Configuration load(Class<?> key) throws Exception {
-            final Configuration configuration = new Configuration();
-            configuration.setObjectWrapper(new DefaultObjectWrapper());
-            configuration.setDefaultEncoding(Charsets.UTF_8.name());
-            configuration.setClassForTemplateLoading(key, "/");
-            return configuration;
-        }
-    }
-
     private static final String MISSING_TEMPLATE_MSG =
             "<html>" +
                 "<head><title>Missing Template</title></head>" +
                 "<body><h1>Missing Template</h1><p>{0}</p></body>" +
             "</html>";
 
-    private final LoadingCache<Class<?>, Configuration> configurationCache;
-
     @Context
     @SuppressWarnings("FieldMayBeFinal")
     private HttpHeaders headers;
+
+    private final ImmutableList<ViewRenderer> renderers;
 
     @SuppressWarnings("UnusedDeclaration")
     public ViewMessageBodyWriter() {
         this(null);
     }
 
+    @VisibleForTesting
     public ViewMessageBodyWriter(HttpHeaders headers) {
         this.headers = headers;
-        this.configurationCache = CacheBuilder.newBuilder()
-                                              .concurrencyLevel(128)
-                                              .build(new TemplateLoader());
+        this.renderers = ImmutableList.copyOf(ServiceFinder.find(ViewRenderer.class));
     }
 
     @Override
@@ -88,12 +69,13 @@ public class ViewMessageBodyWriter implements MessageBodyWriter<View> {
                         OutputStream entityStream) throws IOException, WebApplicationException {
         final TimerContext context = t.getRenderingTimer().time();
         try {
-            final Configuration configuration = configurationCache.getUnchecked(type);
-            final Template template = configuration.getTemplate(t.getTemplateName(),
-                                                                detectLocale(headers));
-            template.process(t, new OutputStreamWriter(entityStream, template.getEncoding()));
-        } catch (TemplateException e) {
-            throw new ContainerException(e);
+            for (ViewRenderer renderer : renderers) {
+                if (renderer.isRenderable(t)) {
+                    renderer.render(t, detectLocale(headers), entityStream);
+                    return;
+                }
+            }
+            throw new ViewRenderException("Unable to find a renderer for " + t.getTemplateName());
         } catch (FileNotFoundException e) {
             final String msg = MessageFormat.format(MISSING_TEMPLATE_MSG, e.getMessage());
             throw new WebApplicationException(Response.serverError()
