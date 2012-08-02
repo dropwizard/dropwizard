@@ -6,6 +6,7 @@ import com.yammer.dropwizard.views.MyView;
 import com.yammer.dropwizard.views.ViewMessageBodyWriter;
 import com.yammer.dropwizard.views.ViewRenderException;
 import com.yammer.dropwizard.views.example.BadView;
+import com.yammer.dropwizard.views.example.MustacheView;
 import com.yammer.dropwizard.views.example.UnknownView;
 import org.junit.Test;
 
@@ -55,6 +56,24 @@ public class ViewMessageBodyWriterTest {
         
         assertThat(output.toString(),
                    is(String.format("Woop woop. HONK%n")));
+    }
+
+    @Test
+    public void writesMustacheViews() throws Exception {
+        final ByteArrayOutputStream output = new ByteArrayOutputStream();
+
+        final MustacheView view = new MustacheView("Stranger");
+
+        writer.writeTo(view,
+                       MustacheView.class,
+                       null,
+                       NONE,
+                       MediaType.TEXT_HTML_TYPE,
+                       new StringKeyIgnoreCaseMultivaluedMap<Object>(),
+                       output);
+
+        assertThat(output.toString(),
+                   is(String.format("Hello Stranger!%nWoo!%n%n")));
     }
 
     @Test
