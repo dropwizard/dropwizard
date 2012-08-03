@@ -80,21 +80,17 @@ public abstract class ConfiguredCommand<T extends Configuration> extends Command
         final String[] args = params.getArgs();
         final Class<T> configurationClass = getConfigurationClass();
         T configuration = null;
-        if (args.length >= 1) {
-            params.getArgList().remove(0);
-            final ConfigurationFactory<T> configurationFactory =
-                    ConfigurationFactory.forClass(configurationClass, new Validator(), service.getJacksonModules());
-            try {
+        final ConfigurationFactory<T> configurationFactory =
+                ConfigurationFactory.forClass(configurationClass, new Validator(), service.getJacksonModules());
+        try {
+            if (args.length >= 1) {
+                params.getArgList().remove(0);
                 configuration = configurationFactory.build(new File(args[0]));
-            } catch (ConfigurationException e) {
-                printHelp(e.getMessage(), service.getClass());
+            } else {
+                configuration = configurationFactory.build();
             }
-        } else {
-            try {
-                configuration = configurationClass.newInstance();
-            } catch (Exception e) {
-                printHelp("Failed to instantiate configuration class " + configurationClass, service.getClass());
-            }
+        } catch (ConfigurationException e) {
+            printHelp(e.getMessage(), service.getClass());
         }
 
         if (configuration != null) {
