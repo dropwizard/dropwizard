@@ -73,7 +73,7 @@ public class ViewMessageBodyWriterTest {
                        output);
 
         assertThat(output.toString(),
-                   is(String.format("Hello Stranger!%nWoo!%n%n")));
+                   is("Hello Stranger!\nWoo!\n\n"));
     }
 
     @Test
