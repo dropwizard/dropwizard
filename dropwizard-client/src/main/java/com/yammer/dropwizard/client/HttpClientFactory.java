@@ -1,16 +1,19 @@
 package com.yammer.dropwizard.client;
 
+import com.yammer.metrics.Metrics;
 import com.yammer.metrics.httpclient.InstrumentedClientConnManager;
 import com.yammer.metrics.httpclient.InstrumentedHttpClient;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.params.AllClientPNames;
 import org.apache.http.client.params.CookiePolicy;
+import org.apache.http.conn.DnsResolver;
 import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.impl.DefaultConnectionReuseStrategy;
 import org.apache.http.impl.NoConnectionReuseStrategy;
 import org.apache.http.impl.client.DefaultConnectionKeepAliveStrategy;
 import org.apache.http.impl.conn.SchemeRegistryFactory;
+import org.apache.http.impl.conn.SystemDefaultDnsResolver;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.protocol.HttpContext;
 
@@ -24,8 +27,12 @@ public class HttpClientFactory {
     }
 
     public HttpClient build() {
+        return build(new SystemDefaultDnsResolver());
+    }
+
+    public HttpClient build(DnsResolver resolver) {
         final BasicHttpParams params = createHttpParams();
-        final InstrumentedClientConnManager manager = createConnectionManager(SchemeRegistryFactory.createDefault());
+        final InstrumentedClientConnManager manager = createConnectionManager(SchemeRegistryFactory.createDefault(), resolver);
         final InstrumentedHttpClient client = new InstrumentedHttpClient(manager, params);
         setStrategiesForClient(client);
 
@@ -90,10 +97,10 @@ public class HttpClientFactory {
      * @param registry the SchemeRegistry
      * @return a InstrumentedClientConnManger instance
      */
-    protected InstrumentedClientConnManager createConnectionManager(SchemeRegistry registry) {
+    protected InstrumentedClientConnManager createConnectionManager(SchemeRegistry registry, DnsResolver resolver) {
         final long ttl = configuration.getTimeToLive().toMilliseconds();
         final InstrumentedClientConnManager manager =
-                new InstrumentedClientConnManager(registry, ttl, TimeUnit.MILLISECONDS);
+                new InstrumentedClientConnManager(Metrics.defaultRegistry(), registry, ttl, TimeUnit.MILLISECONDS, resolver);
         manager.setDefaultMaxPerRoute(configuration.getMaxConnectionsPerRoute());
         manager.setMaxTotal(configuration.getMaxConnections());
         return manager;
