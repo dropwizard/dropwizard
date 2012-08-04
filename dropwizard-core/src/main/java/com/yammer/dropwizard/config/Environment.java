@@ -474,7 +474,7 @@ public class Environment extends AbstractLifeCycle {
                                                "POST", task.getName(), task.getClass().getCanonicalName()));
         }
         
-        LOG.info(stringBuilder.toString());
+        LOG.info("tasks = {}", stringBuilder.toString());
     }
 
     private MethodList annotatedMethods(Class<?> resource) {
