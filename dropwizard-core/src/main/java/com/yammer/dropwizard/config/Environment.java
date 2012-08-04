@@ -73,6 +73,7 @@ public class Environment extends AbstractLifeCycle {
                 logHealthChecks();
                 logManagedObjects();
                 logEndpoints();
+                logTasks();
             }
         };
         this.healthChecks = ImmutableSet.builder();
@@ -463,6 +464,17 @@ public class Environment extends AbstractLifeCycle {
         }
 
         LOG.info(stringBuilder.toString());
+    }
+
+    private void logTasks() {
+        final StringBuilder stringBuilder = new StringBuilder(1024).append("\n\n");
+        
+        for (Task task : tasks.build()) {
+            stringBuilder.append(String.format("    %-7s /tasks/%s (%s)\n",
+                                               "POST", task.getName(), task.getClass().getCanonicalName()));
+        }
+        
+        LOG.info("tasks = {}", stringBuilder.toString());
     }
 
     private MethodList annotatedMethods(Class<?> resource) {
