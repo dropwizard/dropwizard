@@ -57,7 +57,7 @@ public class JerseyClientFactory {
                                                                            TimeUnit.SECONDS));
 
         if (configuration.isGzipEnabled()) {
-            jerseyClient.addFilter(new GZIPContentEncodingFilter());
+            jerseyClient.addFilter(new GZIPContentEncodingFilter(configuration.isCompressRequestEntity()));
         }
 
         return jerseyClient;
