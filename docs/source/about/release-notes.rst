@@ -18,6 +18,7 @@ v0.5.1-SNAPSHOT
 * Added support for arbitrary ``DnsResolver`` implementations in ``HttpClientFactory``.
 * Upgraded to Guava 13.0 final.
 * Fixed task path bugs.
+* Upgraded to Metrics 2.1.3.
 
 .. _rel-0.5.0:
 
