@@ -20,6 +20,7 @@ import com.yammer.dropwizard.logging.Log;
 import com.yammer.dropwizard.tasks.GarbageCollectionTask;
 import com.yammer.dropwizard.tasks.Task;
 import com.yammer.metrics.core.HealthCheck;
+import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.component.AbstractLifeCycle;
@@ -62,6 +63,7 @@ public class Environment extends AbstractLifeCycle {
     private final ImmutableSet.Builder<EventListener> servletListeners;
     private final ImmutableSet.Builder<Task> tasks;
     private final AggregateLifeCycle lifeCycle;
+    private SessionHandler sessionHandler;
 
     /**
      * Creates a new environment.
@@ -274,6 +276,10 @@ public class Environment extends AbstractLifeCycle {
      */
     public void addTask(Task task) {
         tasks.add(checkNotNull(task));
+    }
+
+    public void setSessionHandler(SessionHandler sessionHandler) {
+        this.sessionHandler = sessionHandler;
     }
 
     /**
@@ -505,5 +511,9 @@ public class Environment extends AbstractLifeCycle {
 
     public AbstractService<?> getService() {
         return service;
+    }
+
+    public SessionHandler getSessionHandler() {
+        return sessionHandler;
     }
 }

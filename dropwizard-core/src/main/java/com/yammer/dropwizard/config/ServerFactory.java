@@ -2,7 +2,6 @@ package com.yammer.dropwizard.config;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.yammer.dropwizard.jetty.BiDiGzipHandler;
 import com.yammer.dropwizard.jetty.InstrumentedSslSelectChannelConnector;
@@ -215,7 +214,7 @@ public class ServerFactory {
         final HandlerCollection collection = new HandlerCollection();
 
         collection.addHandler(createInternalServlet(env));
-        collection.addHandler(createExternalServlet(env.getServlets(), env.getFilters(), env.getServletListeners()));
+        collection.addHandler(createExternalServlet(env));
 
         if (requestLogHandlerFactory.isEnabled()) {
             collection.addHandler(requestLogHandlerFactory.build());
@@ -268,29 +267,29 @@ public class ServerFactory {
 
     }
 
-    private Handler createExternalServlet(ImmutableMap<String, ServletHolder> servlets,
-                                          ImmutableMultimap<String, FilterHolder> filters,
-                                          ImmutableSet<EventListener> listeners) {
+    private Handler createExternalServlet(Environment env) {
         final ServletContextHandler handler = new ServletContextHandler();
         handler.addFilter(ThreadNameFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST));
         handler.setBaseResource(Resource.newClassPathResource("."));
 
-        for (ImmutableMap.Entry<String, ServletHolder> entry : servlets.entrySet()) {
+        for (ImmutableMap.Entry<String, ServletHolder> entry : env.getServlets().entrySet()) {
             handler.addServlet(entry.getValue(), entry.getKey());
         }
 
-        for (ImmutableMap.Entry<String, FilterHolder> entry : filters.entries()) {
+        for (ImmutableMap.Entry<String, FilterHolder> entry : env.getFilters().entries()) {
             handler.addFilter(entry.getValue(), entry.getKey(), EnumSet.of(DispatcherType.REQUEST));
         }
 
-        for (EventListener listener : listeners) {
+        for (EventListener listener : env.getServletListeners()) {
             handler.addEventListener(listener);
         }
 
         for (Map.Entry<String, String> entry : config.getContextParameters().entrySet()) {
             handler.setInitParameter( entry.getKey(), entry.getValue() );
         }
-        
+
+        handler.setSessionHandler(env.getSessionHandler());
+
         handler.setConnectorNames(new String[]{"main"});
 
         return wrapHandler(handler);
