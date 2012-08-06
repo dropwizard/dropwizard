@@ -7,6 +7,8 @@ import com.sun.jersey.core.reflection.AnnotatedMethod;
 import com.sun.jersey.core.reflection.MethodList;
 import com.sun.jersey.core.spi.scanning.PackageNamesScanner;
 import com.yammer.dropwizard.AbstractService;
+import com.yammer.dropwizard.executor.InstrumentedScheduledThreadPoolExecutor;
+import com.yammer.dropwizard.executor.InstrumentedThreadPoolExecutor;
 import com.yammer.dropwizard.jersey.DropwizardResourceConfig;
 import com.yammer.dropwizard.jetty.JettyManaged;
 import com.yammer.dropwizard.jetty.NonblockingServletHolder;
@@ -332,13 +334,13 @@ public class Environment extends AbstractLifeCycle {
                                                   TimeUnit unit) {
         final ThreadFactory threadFactory = new ThreadFactoryBuilder().setNameFormat(nameFormat)
                                                                       .build();
-        final ExecutorService executor = new ThreadPoolExecutor(corePoolSize,
+        final ExecutorService executor = new InstrumentedThreadPoolExecutor(corePoolSize,
                                                                 maximumPoolSize,
                                                                 keepAliveTime,
                                                                 unit,
-                                                                new LinkedBlockingQueue<Runnable>(),
-                                                                threadFactory);
-        manage(new ExecutorServiceManager(executor, 5, TimeUnit.SECONDS, nameFormat));
+                                                                threadFactory,
+                                                                nameFormat);
+        manage(new ExecutorServiceManager(executor, 5, TimeUnit.SECONDS, nameFormat));      
         return executor;
     }
 
@@ -358,8 +360,9 @@ public class Environment extends AbstractLifeCycle {
                                                                     int corePoolSize) {
         final ThreadFactory threadFactory = new ThreadFactoryBuilder().setNameFormat(nameFormat)
                                                                       .build();
-        final ScheduledExecutorService executor = new ScheduledThreadPoolExecutor(corePoolSize,
-                                                                                  threadFactory);
+        final ScheduledExecutorService executor = new InstrumentedScheduledThreadPoolExecutor(corePoolSize,
+                                                                                              threadFactory,
+                                                                                              nameFormat);
         manage(new ExecutorServiceManager(executor, 5, TimeUnit.SECONDS, nameFormat));
         return executor;
     }
