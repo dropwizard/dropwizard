@@ -1,27 +1,34 @@
-package com.yammer.dropwizard.jersey;
+package com.yammer.dropwizard.jersey.tests;
 
-import com.google.common.collect.ImmutableList;
-import com.sun.jersey.core.util.MultivaluedMapImpl;
-import com.sun.jersey.core.util.StringKeyObjectValueIgnoreCaseMultivaluedMap;
-import com.yammer.dropwizard.json.Json;
-import com.yammer.dropwizard.validation.InvalidEntityException;
+
+import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.startsWith;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.lang.annotation.Annotation;
+
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
+import javax.ws.rs.core.MediaType;
+
 import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.annotate.JsonIgnoreType;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.junit.Test;
 
-import javax.validation.Valid;
-import javax.validation.constraints.Min;
-import javax.ws.rs.core.MediaType;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.lang.annotation.Annotation;
-
-import static org.hamcrest.Matchers.*;
-import static org.hamcrest.Matchers.startsWith;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
-import static org.mockito.Mockito.*;
+import com.google.common.collect.ImmutableList;
+import com.sun.jersey.core.util.MultivaluedMapImpl;
+import com.sun.jersey.core.util.StringKeyObjectValueIgnoreCaseMultivaluedMap;
+import com.yammer.dropwizard.jersey.JacksonMessageBodyProvider;
+import com.yammer.dropwizard.json.Json;
+import com.yammer.dropwizard.validation.InvalidEntityException;
 
 @SuppressWarnings("unchecked")
 public class JacksonMessageBodyProviderTest {
