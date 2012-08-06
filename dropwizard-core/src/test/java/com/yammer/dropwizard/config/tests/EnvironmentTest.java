@@ -13,12 +13,13 @@ public class EnvironmentTest {
     @Test
     @SuppressWarnings("unchecked")
     public void scanPackagesHandlesEmptyArgumentList() {
-        new Environment(mock(AbstractService.class), mock(Configuration.class)).scanPackages();
+        new Environment(mock(AbstractService.class), mock(Configuration.class)).scanPackagesForResourcesAndProviders();
     }
 
     @Test(expected = NullPointerException.class)
     @SuppressWarnings("unchecked")
     public void scanPackagesThrowsNpeOnNullArgument() {
-        new Environment(mock(AbstractService.class), mock(Configuration.class)).scanPackages((Class<?>[])null);
+        new Environment(mock(AbstractService.class), mock(Configuration.class)).scanPackagesForResourcesAndProviders(
+                (Class<?>[]) null);
     }
 }
