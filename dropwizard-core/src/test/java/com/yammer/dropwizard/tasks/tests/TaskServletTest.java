@@ -78,6 +78,9 @@ public class TaskServletTest {
         when(request.getPathInfo()).thenReturn("/gc");
         when(request.getParameterNames()).thenReturn(Collections.enumeration(ImmutableList.<String>of()));
 
+        final PrintWriter output = mock(PrintWriter.class);
+        when(response.getWriter()).thenReturn(output);
+
         final RuntimeException ex = new RuntimeException("whoops");
         
         doThrow(ex).when(gc).execute(any(ImmutableMultimap.class), any(PrintWriter.class));
