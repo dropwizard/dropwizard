@@ -7,6 +7,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.node.TreeTraversingParser;
 import com.fasterxml.jackson.databind.type.TypeFactory;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.datatype.guava.GuavaModule;
 
 import java.io.*;
@@ -59,8 +60,6 @@ public class Json {
     public ObjectMapper getObjectMapper() {
         return mapper;
     }
-
-
 
     /**
      * Registers a module that can extend functionality provided by this class; for example, by
@@ -575,8 +574,7 @@ public class Json {
      * @throws IOException if there is an error reading from {@code src} or parsing its contents
      */
     public <T> T readYamlValue(File src, Class<T> valueType) throws IOException {
-        final YamlConverter converter = new YamlConverter(this, factory);
-        return readValue(converter.convert(src), valueType);
+        return readValue(parseYaml(src), valueType);
     }
 
     /**
@@ -590,8 +588,11 @@ public class Json {
      * @throws IOException if there is an error reading from {@code src} or parsing its contents
      */
     public <T> T readYamlValue(File src, TypeReference<T> valueTypeRef) throws IOException {
-        final YamlConverter converter = new YamlConverter(this, factory);
-        return readValue(converter.convert(src), valueTypeRef);
+        return readValue(parseYaml(src), valueTypeRef);
+    }
+
+    private JsonNode parseYaml(File file) throws IOException {
+        return new ObjectMapper(new YAMLFactory()).readTree(file);
     }
 
     private JavaType constructType(Type type) {
