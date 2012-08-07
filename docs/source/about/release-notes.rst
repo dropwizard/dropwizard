@@ -19,6 +19,11 @@ v0.5.1-SNAPSHOT
 * Upgraded to Guava 13.0 final.
 * Fixed task path bugs.
 * Upgraded to Metrics 2.1.3.
+* Added ``JerseyClientConfiguration#compressRequestEntity`` for disabling the compression of request
+  entities.
+* Added ``Environment#scanPackagesForResourcesAndProviders`` for automatically detecting Jersey
+  providers and resources.
+* Added ``Environment#setSessionHandler``.
 
 .. _rel-0.5.0:
 
