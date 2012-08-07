@@ -6,8 +6,8 @@ Release Notes
 
 .. _rel-0.5.1:
 
-v0.5.1-SNAPSHOT
-===============
+v0.5.1: Aug 06 2012
+===================
 
 * Fixed logging of managed objects.
 * Fixed default file logging configuration.
