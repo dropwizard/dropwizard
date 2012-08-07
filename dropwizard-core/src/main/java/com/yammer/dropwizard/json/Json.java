@@ -6,8 +6,6 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.node.TreeTraversingParser;
-import com.fasterxml.jackson.databind.type.TypeFactory;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.datatype.guava.GuavaModule;
 
 import java.io.*;
@@ -30,31 +28,48 @@ import java.nio.ByteBuffer;
  * </ul>
  */
 public class Json {
-    protected JsonFactory factory;
-    protected ObjectMapper mapper;
-    protected TypeFactory typeFactory;
+    private final ObjectMapper mapper;
 
     /**
-     * Creates a new {@link Json} instance.
+     * Creates a new {@link Json} instance with the given {@link JsonFactory}. Configures a set of
+     * Jackson features optimized for RESTful APIs.
+     *
+     * @param factory    the factory for generating and parsing JSON
+     */
+    public Json(JsonFactory factory) {
+        this(new ObjectMapper(factory));
+
+        mapper.setPropertyNamingStrategy(AnnotationSensitivePropertyNamingStrategy.INSTANCE);
+
+        enable(JsonGenerator.Feature.AUTO_CLOSE_JSON_CONTENT);
+        enable(JsonGenerator.Feature.AUTO_CLOSE_TARGET);
+        enable(JsonGenerator.Feature.QUOTE_FIELD_NAMES);
+        enable(JsonParser.Feature.ALLOW_COMMENTS);
+        enable(JsonParser.Feature.AUTO_CLOSE_SOURCE);
+
+        disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+        disable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
+        disable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
+        registerModule(new GuavaModule());
+        registerModule(new LogbackModule());
+        registerModule(new GuavaExtrasModule());
+    }
+
+    /**
+     * Creates a new {@link Json} instance. Configures a set of Jackson features optimized for
+     * RESTful APIs.
      */
     public Json() {
-        this.factory = new MappingJsonFactory();
-        factory.enable(JsonGenerator.Feature.AUTO_CLOSE_JSON_CONTENT);
-        factory.enable(JsonGenerator.Feature.AUTO_CLOSE_TARGET);
-        factory.enable(JsonGenerator.Feature.QUOTE_FIELD_NAMES);
-        factory.enable(JsonParser.Feature.ALLOW_COMMENTS);
-        factory.enable(JsonParser.Feature.AUTO_CLOSE_SOURCE);
+        this(new JsonFactory());
+    }
 
-        this.mapper = (ObjectMapper) factory.getCodec();
-        mapper.setPropertyNamingStrategy(AnnotationSensitivePropertyNamingStrategy.INSTANCE);
-        mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-        mapper.disable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
-        mapper.disable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
-        mapper.registerModule(new GuavaModule());
-        mapper.registerModule(new LogbackModule());
-        mapper.registerModule(new GuavaExtrasModule());
-
-        this.typeFactory = mapper.getTypeFactory();
+    /**
+     * Creates a new {@link Json} instance with the given {@link ObjectMapper}.
+     *
+     * @param mapper    an {@link ObjectMapper}
+     */
+    public Json(ObjectMapper mapper) {
+        this.mapper = mapper;
     }
 
     public ObjectMapper getObjectMapper() {
@@ -161,7 +176,7 @@ public class Json {
      */
     public void enable(JsonGenerator.Feature... features) {
         for (JsonGenerator.Feature feature : features) {
-            factory.enable(feature);
+            mapper.getJsonFactory().enable(feature);
         }
     }
 
@@ -173,7 +188,7 @@ public class Json {
      */
     public void disable(JsonGenerator.Feature... features) {
         for (JsonGenerator.Feature feature : features) {
-            factory.disable(feature);
+            mapper.getJsonFactory().disable(feature);
         }
     }
 
@@ -196,7 +211,7 @@ public class Json {
      */
     public void enable(JsonParser.Feature... features) {
         for (JsonParser.Feature feature : features) {
-            factory.enable(feature);
+            mapper.getJsonFactory().enable(feature);
         }
     }
 
@@ -208,7 +223,7 @@ public class Json {
      */
     public void disable(JsonParser.Feature... features) {
         for (JsonParser.Feature feature : features) {
-            factory.disable(feature);
+            mapper.getJsonFactory().disable(feature);
         }
     }
 
@@ -336,19 +351,6 @@ public class Json {
      */
     public <T> T readValue(InputStream src, TypeReference<T> valueTypeRef) throws IOException {
         return mapper.readValue(src, valueTypeRef);
-    }
-
-    /**
-     * Deserializes the given {@link InputStream} as an instance of the given type.
-     *
-     * @param src          a JSON {@link InputStream}
-     * @param valueType    the {@link Type} to deserialize {@code src} as
-     * @param <T>          the type of {@code valueType}
-     * @return the contents of {@code src} as an instance of {@code T}
-     * @throws IOException if there is an error reading from {@code src} or parsing its contents
-     */
-    public <T> T readValue(InputStream src, Type valueType) throws IOException {
-        return mapper.readValue(src, constructType(valueType));
     }
 
     /**
@@ -563,39 +565,7 @@ public class Json {
         return mapper.valueToTree(value);
     }
 
-    /**
-     * Deserializes the given YAML {@link File} as an instance of the given type.
-     * <p><b>N.B.:</b> All tags, comments, and non-JSON elements of the YAML file will be elided.</p>
-     *
-     * @param src          a YAML {@link File}
-     * @param valueType    the {@link Class} to deserialize {@code src} as
-     * @param <T>          the type of {@code valueType}
-     * @return the contents of {@code src} as an instance of {@code T}
-     * @throws IOException if there is an error reading from {@code src} or parsing its contents
-     */
-    public <T> T readYamlValue(File src, Class<T> valueType) throws IOException {
-        return readValue(parseYaml(src), valueType);
-    }
-
-    /**
-     * Deserializes the given YAML {@link File} as an instance of the given type.
-     * <p><b>N.B.:</b> All tags, comments, and non-JSON elements of the YAML file will be elided.</p>
-     *
-     * @param src             a YAML {@link File}
-     * @param valueTypeRef    a {@link TypeReference} of the type to deserialize {@code src} as
-     * @param <T>             the type of {@code valueTypeRef}
-     * @return the contents of {@code src} as an instance of {@code T}
-     * @throws IOException if there is an error reading from {@code src} or parsing its contents
-     */
-    public <T> T readYamlValue(File src, TypeReference<T> valueTypeRef) throws IOException {
-        return readValue(parseYaml(src), valueTypeRef);
-    }
-
-    private JsonNode parseYaml(File file) throws IOException {
-        return new ObjectMapper(new YAMLFactory()).readTree(file);
-    }
-
     private JavaType constructType(Type type) {
-        return typeFactory.constructType(type);
+        return mapper.getTypeFactory().constructType(type);
     }
 }

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import com.yammer.dropwizard.json.Json;
@@ -33,7 +34,7 @@ public class ConfigurationFactory<T> {
 
     private ConfigurationFactory(Class<T> klass, Validator validator, Iterable<Module> modules) {
         this.klass = klass;
-        this.json = new Json();
+        this.json = new Json(new YAMLFactory());
         json.enable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         for (Module module : modules) {
             json.registerModule(module);
@@ -42,7 +43,7 @@ public class ConfigurationFactory<T> {
     }
     
     public T build(File file) throws IOException, ConfigurationException {
-        final JsonNode node = parse(file);
+        final JsonNode node = json.readValue(file, JsonNode.class);
         final String filename = file.toString();
         return build(node, filename);
     }
@@ -85,13 +86,6 @@ public class ConfigurationFactory<T> {
                 obj.put(key, value);
             }
         }
-    }
-
-    private JsonNode parse(File file) throws IOException {
-        if (file.getName().endsWith(".yaml") || file.getName().endsWith(".yml")) {
-            return json.readYamlValue(file, JsonNode.class);
-        }
-        return json.readValue(file, JsonNode.class);
     }
 
     private void validate(String file, T config) throws ConfigurationException {

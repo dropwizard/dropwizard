@@ -300,17 +300,6 @@ public class JsonTest {
     }
 
     @Test
-    public void readsValuesFromYamlFiles() throws Exception {
-        assertThat(json.readYamlValue(new File(Resources.getResource("yaml/string.yml").getFile()),
-                                  String.class),
-                   is("a string"));
-
-        assertThat(json.readYamlValue(new File(Resources.getResource("yaml/string.yml").getFile()),
-                                  new TypeReference<String>() {}),
-                   is("a string"));
-    }
-
-    @Test
     public void deserializesSnakeCaseFieldNames() throws Exception {
         final SnakeCaseExample example = json.readValue("{\"first_name\":\"Coda\"}",
                                                         SnakeCaseExample.class);
