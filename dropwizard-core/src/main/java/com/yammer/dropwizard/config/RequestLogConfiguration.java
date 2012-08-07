@@ -1,9 +1,8 @@
 package com.yammer.dropwizard.config;
 
-import org.codehaus.jackson.annotate.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.validation.constraints.NotNull;
-
 import java.util.TimeZone;
 
 import static com.yammer.dropwizard.config.LoggingConfiguration.*;

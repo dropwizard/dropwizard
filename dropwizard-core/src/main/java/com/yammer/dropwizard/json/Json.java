@@ -1,11 +1,13 @@
 package com.yammer.dropwizard.json;
 
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.node.TreeTraversingParser;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.fasterxml.jackson.datatype.guava.GuavaModule;
-import org.codehaus.jackson.*;
-import org.codehaus.jackson.map.*;
-import org.codehaus.jackson.map.type.TypeFactory;
-import org.codehaus.jackson.type.JavaType;
-import org.codehaus.jackson.type.TypeReference;
 
 import java.io.*;
 import java.lang.reflect.Type;
@@ -44,9 +46,9 @@ public class Json {
 
         this.mapper = (ObjectMapper) factory.getCodec();
         mapper.setPropertyNamingStrategy(AnnotationSensitivePropertyNamingStrategy.INSTANCE);
-        mapper.disable(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES);
-        mapper.disable(SerializationConfig.Feature.WRITE_ENUMS_USING_TO_STRING);
-        mapper.disable(DeserializationConfig.Feature.READ_ENUMS_USING_TO_STRING);
+        mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+        mapper.disable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
+        mapper.disable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
         mapper.registerModule(new GuavaModule());
         mapper.registerModule(new LogbackModule());
         mapper.registerModule(new GuavaExtrasModule());
@@ -65,72 +67,80 @@ public class Json {
      * adding providers for custom serializers and deserializers.
      *
      * @param module Module to register
-     * @see ObjectMapper#registerModule(org.codehaus.jackson.map.Module)
+     * @see ObjectMapper#registerModule(com.fasterxml.jackson.databind.Module)
      */
     public void registerModule(Module module) {
         mapper.registerModule(module);
     }
 
     /**
-     * Returns true if the given {@link DeserializationConfig.Feature} is enabled.
+     * Returns true if the given {@link DeserializationFeature} is enabled.
      *
      * @param feature    a given feature
      * @return {@code true} if {@code feature} is enabled
-     * @see ObjectMapper#isEnabled(org.codehaus.jackson.map.DeserializationConfig.Feature)
+     * @see ObjectMapper#isEnabled(com.fasterxml.jackson.databind.DeserializationFeature)
      */
-    public boolean isEnabled(DeserializationConfig.Feature feature) {
+    public boolean isEnabled(DeserializationFeature feature) {
         return mapper.isEnabled(feature);
     }
 
     /**
-     * Enables the given {@link DeserializationConfig.Feature}s.
+     * Enables the given {@link DeserializationFeature}s.
      *
      * @param features    a set of features to enable
-     * @see ObjectMapper#enable(org.codehaus.jackson.map.DeserializationConfig.Feature...)
+     * @see ObjectMapper#enable(com.fasterxml.jackson.databind.DeserializationFeature)
      */
-    public void enable(DeserializationConfig.Feature... features) {
-        mapper.enable(features);
+    public void enable(DeserializationFeature... features) {
+        for (DeserializationFeature feature : features) {
+            mapper.enable(feature);
+        }
     }
 
     /**
-     * Disables the given {@link DeserializationConfig.Feature}s.
+     * Disables the given {@link DeserializationFeature}s.
      *
      * @param features    a set of features to disable
-     * @see ObjectMapper#disable(org.codehaus.jackson.map.DeserializationConfig.Feature...)
+     * @see ObjectMapper#disable(com.fasterxml.jackson.databind.DeserializationFeature)
      */
-    public void disable(DeserializationConfig.Feature... features) {
-        mapper.disable(features);
+    public void disable(DeserializationFeature... features) {
+        for (DeserializationFeature feature : features) {
+            mapper.disable(feature);
+        }
     }
 
     /**
-     * Returns true if the given {@link SerializationConfig.Feature} is enabled.
+     * Returns true if the given {@link SerializationFeature} is enabled.
      *
      * @param feature    a given feature
      * @return {@code true} if {@code feature} is enabled
-     * @see ObjectMapper#isEnabled(org.codehaus.jackson.map.SerializationConfig.Feature)
+     * @see ObjectMapper#isEnabled(com.fasterxml.jackson.databind.SerializationFeature)
      */
-    public boolean isEnabled(SerializationConfig.Feature feature) {
+    public boolean isEnabled(SerializationFeature feature) {
         return mapper.isEnabled(feature);
     }
 
     /**
-     * Enables the given {@link SerializationConfig.Feature}s.
+     * Enables the given {@link SerializationFeature}s.
      *
      * @param features    a set of features to enable
-     * @see ObjectMapper#enable(org.codehaus.jackson.map.SerializationConfig.Feature...)
+     * @see ObjectMapper#enable(com.fasterxml.jackson.databind.SerializationFeature)
      */
-    public void enable(SerializationConfig.Feature... features) {
-        mapper.enable(features);
+    public void enable(SerializationFeature... features) {
+        for (SerializationFeature feature : features) {
+            mapper.enable(feature);
+        }
     }
 
     /**
-     * Disables the given {@link SerializationConfig.Feature}s.
+     * Disables the given {@link SerializationFeature}s.
      *
      * @param features    a set of features to disable
-     * @see ObjectMapper#disable(org.codehaus.jackson.map.SerializationConfig.Feature...)
+     * @see ObjectMapper#disable(com.fasterxml.jackson.databind.SerializationFeature)
      */
-    public void disable(SerializationConfig.Feature... features) {
-        mapper.disable(features);
+    public void disable(SerializationFeature... features) {
+        for (SerializationFeature feature : features) {
+            mapper.disable(feature);
+        }
     }
 
     /**
@@ -138,7 +148,7 @@ public class Json {
      *
      * @param feature    a given feature
      * @return {@code true} if {@code feature} is enabled
-     * @see ObjectMapper#isEnabled(org.codehaus.jackson.JsonGenerator.Feature)
+     * @see ObjectMapper#isEnabled(com.fasterxml.jackson.core.JsonGenerator.Feature)
      */
     public boolean isEnabled(JsonGenerator.Feature feature) {
         return mapper.isEnabled(feature);
@@ -148,7 +158,7 @@ public class Json {
      * Enables the given {@link JsonGenerator.Feature}s.
      *
      * @param features    a set of features to enable
-     * @see JsonFactory#enable(org.codehaus.jackson.JsonGenerator.Feature)
+     * @see JsonFactory#enable(com.fasterxml.jackson.core.JsonGenerator.Feature)
      */
     public void enable(JsonGenerator.Feature... features) {
         for (JsonGenerator.Feature feature : features) {
@@ -160,7 +170,7 @@ public class Json {
      * Disables the given {@link JsonGenerator.Feature}s.
      *
      * @param features    a set of features to disable
-     * @see JsonFactory#disable(org.codehaus.jackson.JsonGenerator.Feature)
+     * @see JsonFactory#disable(com.fasterxml.jackson.core.JsonGenerator.Feature)
      */
     public void disable(JsonGenerator.Feature... features) {
         for (JsonGenerator.Feature feature : features) {
@@ -173,7 +183,7 @@ public class Json {
      *
      * @param feature    a given feature
      * @return {@code true} if {@code feature} is enabled
-     * @see ObjectMapper#isEnabled(org.codehaus.jackson.JsonParser.Feature)
+     * @see ObjectMapper#isEnabled(com.fasterxml.jackson.core.JsonParser.Feature)
      */
     public boolean isEnabled(JsonParser.Feature feature) {
         return mapper.isEnabled(feature);
@@ -183,7 +193,7 @@ public class Json {
      * Enables the given {@link JsonParser.Feature}s.
      *
      * @param features    a set of features to enable
-     * @see JsonFactory#enable(org.codehaus.jackson.JsonParser.Feature)
+     * @see JsonFactory#enable(com.fasterxml.jackson.core.JsonParser.Feature)
      */
     public void enable(JsonParser.Feature... features) {
         for (JsonParser.Feature feature : features) {
@@ -195,7 +205,7 @@ public class Json {
      * Disables the given {@link JsonParser.Feature}s.
      *
      * @param features    a set of features to disable
-     * @see JsonFactory#disable(org.codehaus.jackson.JsonParser.Feature)
+     * @see JsonFactory#disable(com.fasterxml.jackson.core.JsonParser.Feature)
      */
     public void disable(JsonParser.Feature... features) {
         for (JsonParser.Feature feature : features) {
@@ -408,7 +418,7 @@ public class Json {
      * @throws IOException if there is an error mapping {@code src} to {@code T}
      */
     public <T> T readValue(JsonNode root, Class<T> valueType) throws IOException {
-        return mapper.readValue(root, valueType);
+        return mapper.readValue(new TreeTraversingParser(root), valueType);
     }
 
     /**
@@ -421,7 +431,7 @@ public class Json {
      * @throws IOException if there is an error mapping {@code src} to {@code T}
      */
     public <T> T readValue(JsonNode root, TypeReference<T> valueTypeRef) throws IOException {
-        return mapper.readValue(root, valueTypeRef);
+        return mapper.readValue(new TreeTraversingParser(root), valueTypeRef);
     }
 
     /**
@@ -566,7 +576,7 @@ public class Json {
      */
     public <T> T readYamlValue(File src, Class<T> valueType) throws IOException {
         final YamlConverter converter = new YamlConverter(this, factory);
-        return mapper.readValue(converter.convert(src), valueType);
+        return readValue(converter.convert(src), valueType);
     }
 
     /**
@@ -581,7 +591,7 @@ public class Json {
      */
     public <T> T readYamlValue(File src, TypeReference<T> valueTypeRef) throws IOException {
         final YamlConverter converter = new YamlConverter(this, factory);
-        return mapper.readValue(converter.convert(src), valueTypeRef);
+        return readValue(converter.convert(src), valueTypeRef);
     }
 
     private JavaType constructType(Type type) {

@@ -1,5 +1,6 @@
 package com.yammer.dropwizard;
 
+import com.fasterxml.jackson.databind.Module;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -9,12 +10,10 @@ import com.yammer.dropwizard.cli.ConfiguredCommand;
 import com.yammer.dropwizard.cli.ServerCommand;
 import com.yammer.dropwizard.cli.UsagePrinter;
 import com.yammer.dropwizard.config.Configuration;
-import com.yammer.dropwizard.jersey.DropwizardResourceConfig;
 import com.yammer.dropwizard.config.Environment;
 import com.yammer.dropwizard.config.LoggingFactory;
+import com.yammer.dropwizard.jersey.DropwizardResourceConfig;
 import com.yammer.dropwizard.json.Json;
-
-import org.codehaus.jackson.map.Module;
 
 import javax.annotation.CheckForNull;
 import java.lang.reflect.ParameterizedType;

@@ -1,8 +1,8 @@
 package com.yammer.dropwizard.views;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.yammer.metrics.Metrics;
 import com.yammer.metrics.core.Timer;
-import org.codehaus.jackson.annotate.JsonIgnore;
 
 public abstract class View {
     private final String templateName;

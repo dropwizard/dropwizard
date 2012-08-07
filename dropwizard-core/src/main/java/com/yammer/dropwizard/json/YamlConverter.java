@@ -1,10 +1,10 @@
 package com.yammer.dropwizard.json;
 
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Charsets;
 import com.yammer.dropwizard.logging.Log;
-import org.codehaus.jackson.JsonFactory;
-import org.codehaus.jackson.JsonGenerator;
-import org.codehaus.jackson.JsonNode;
 import org.yaml.snakeyaml.nodes.*;
 
 import java.io.*;

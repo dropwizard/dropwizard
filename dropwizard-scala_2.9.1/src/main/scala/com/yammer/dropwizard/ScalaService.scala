@@ -2,11 +2,11 @@ package com.yammer.dropwizard
 
 import config.Configuration
 import bundles.ScalaBundle
-import com.codahale.jerkson.ScalaModule
+import com.fasterxml.jackson.module.scala.DefaultScalaModule
 
 abstract class ScalaService[T <: Configuration](name: String) extends AbstractService[T](name) {
   addBundle(new ScalaBundle(this))
-  addJacksonModule(new ScalaModule(Thread.currentThread().getContextClassLoader))
+  addJacksonModule(new DefaultScalaModule)
   override final def subclassServiceInsteadOfThis() {}
 
   final def main(args: Array[String]) {

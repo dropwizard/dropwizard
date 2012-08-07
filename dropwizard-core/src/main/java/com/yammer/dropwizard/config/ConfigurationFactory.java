@@ -1,14 +1,14 @@
 package com.yammer.dropwizard.config;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.Module;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import com.yammer.dropwizard.json.Json;
 import com.yammer.dropwizard.validation.Validator;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.DeserializationConfig;
-import org.codehaus.jackson.map.Module;
-import org.codehaus.jackson.node.JsonNodeFactory;
-import org.codehaus.jackson.node.ObjectNode;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,7 +34,7 @@ public class ConfigurationFactory<T> {
     private ConfigurationFactory(Class<T> klass, Validator validator, Iterable<Module> modules) {
         this.klass = klass;
         this.json = new Json();
-        json.enable(DeserializationConfig.Feature.FAIL_ON_UNKNOWN_PROPERTIES);
+        json.enable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         for (Module module : modules) {
             json.registerModule(module);
         }

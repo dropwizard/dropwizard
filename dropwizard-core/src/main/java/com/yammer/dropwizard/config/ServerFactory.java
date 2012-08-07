@@ -15,7 +15,7 @@ import com.yammer.dropwizard.util.Size;
 import com.yammer.metrics.HealthChecks;
 import com.yammer.metrics.core.HealthCheck;
 import com.yammer.metrics.jetty.*;
-import com.yammer.metrics.reporting.AdminServlet;
+import com.yammer.metrics.servlet.AdminServlet;
 import com.yammer.metrics.util.DeadlockHealthCheck;
 import org.eclipse.jetty.security.ConstraintMapping;
 import org.eclipse.jetty.security.ConstraintSecurityHandler;

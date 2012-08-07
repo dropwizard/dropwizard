@@ -1,5 +1,6 @@
 package com.yammer.dropwizard.testing;
 
+import com.fasterxml.jackson.databind.Module;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -11,7 +12,6 @@ import com.yammer.dropwizard.bundles.JavaBundle;
 import com.yammer.dropwizard.jersey.DropwizardResourceConfig;
 import com.yammer.dropwizard.jersey.JacksonMessageBodyProvider;
 import com.yammer.dropwizard.json.Json;
-import org.codehaus.jackson.map.Module;
 import org.junit.After;
 import org.junit.Before;
 

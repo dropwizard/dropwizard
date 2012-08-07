@@ -1,18 +1,18 @@
 package com.yammer.dropwizard.json.tests;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.node.TextNode;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 import com.google.common.io.Resources;
 import com.yammer.dropwizard.json.Json;
 import com.yammer.dropwizard.json.JsonSnakeCase;
-import org.codehaus.jackson.JsonGenerator;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.JsonParser;
-import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.map.DeserializationConfig;
-import org.codehaus.jackson.map.SerializationConfig;
-import org.codehaus.jackson.node.TextNode;
-import org.codehaus.jackson.type.TypeReference;
 import org.junit.Test;
 
 import java.io.*;
@@ -84,33 +84,33 @@ public class JsonTest {
 
     @Test
     public void enablesAndDisablesJsonSerializationFeatures() throws Exception {
-        assertThat(json.isEnabled(SerializationConfig.Feature.INDENT_OUTPUT),
+        assertThat(json.isEnabled(SerializationFeature.INDENT_OUTPUT),
                    is(false));
 
-        json.enable(SerializationConfig.Feature.INDENT_OUTPUT);
+        json.enable(SerializationFeature.INDENT_OUTPUT);
 
-        assertThat(json.isEnabled(SerializationConfig.Feature.INDENT_OUTPUT),
+        assertThat(json.isEnabled(SerializationFeature.INDENT_OUTPUT),
                    is(true));
 
-        json.disable(SerializationConfig.Feature.INDENT_OUTPUT);
+        json.disable(SerializationFeature.INDENT_OUTPUT);
 
-        assertThat(json.isEnabled(SerializationConfig.Feature.INDENT_OUTPUT),
+        assertThat(json.isEnabled(SerializationFeature.INDENT_OUTPUT),
                    is(false));
     }
 
     @Test
     public void enablesAndDisablesJsonDeserializationFeatures() throws Exception {
-        assertThat(json.isEnabled(DeserializationConfig.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY),
+        assertThat(json.isEnabled(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY),
                    is(false));
 
-        json.enable(DeserializationConfig.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
+        json.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
 
-        assertThat(json.isEnabled(DeserializationConfig.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY),
+        assertThat(json.isEnabled(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY),
                    is(true));
 
-        json.disable(DeserializationConfig.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
+        json.disable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
 
-        assertThat(json.isEnabled(DeserializationConfig.Feature.ACCEPT_SINGLE_VALUE_AS_ARRAY),
+        assertThat(json.isEnabled(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY),
                    is(false));
     }
 

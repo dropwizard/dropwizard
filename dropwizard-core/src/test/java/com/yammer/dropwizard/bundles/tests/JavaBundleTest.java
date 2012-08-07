@@ -1,5 +1,6 @@
 package com.yammer.dropwizard.bundles.tests;
 
+import com.fasterxml.jackson.databind.Module;
 import com.google.common.collect.ImmutableList;
 import com.yammer.dropwizard.Service;
 import com.yammer.dropwizard.bundles.JavaBundle;
@@ -7,7 +8,6 @@ import com.yammer.dropwizard.config.Environment;
 import com.yammer.dropwizard.jersey.JacksonMessageBodyProvider;
 import com.yammer.dropwizard.jersey.OptionalQueryParamInjectableProvider;
 import com.yammer.dropwizard.json.Json;
-import org.codehaus.jackson.map.Module;
 import org.junit.Before;
 import org.junit.Test;
 

@@ -1,8 +1,8 @@
 package com.yammer.dropwizard.testing;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.yammer.dropwizard.json.Json;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.type.TypeReference;
 
 import java.io.IOException;
 

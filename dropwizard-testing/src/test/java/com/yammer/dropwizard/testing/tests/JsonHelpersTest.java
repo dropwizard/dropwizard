@@ -1,6 +1,6 @@
 package com.yammer.dropwizard.testing.tests;
 
-import org.codehaus.jackson.type.TypeReference;
+import com.fasterxml.jackson.core.type.TypeReference;
 import org.junit.Test;
 
 import static com.yammer.dropwizard.testing.JsonHelpers.*;

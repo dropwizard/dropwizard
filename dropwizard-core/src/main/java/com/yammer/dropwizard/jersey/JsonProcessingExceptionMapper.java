@@ -1,10 +1,10 @@
 package com.yammer.dropwizard.jersey;
 
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.base.Splitter;
 import com.yammer.dropwizard.jetty.UnbrandedErrorHandler;
 import com.yammer.dropwizard.logging.Log;
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.JsonProcessingException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Context;
