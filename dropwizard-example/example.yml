@@ -37,6 +37,8 @@ http:
   # nonblocking connector should be used for services with long request durations or which
   # specifically take advantage of Jetty's continuation support.
   # If you need SSL support, you can either choose from "nonblocking+ssl" or "legacy+ssl".
+  # To handle https requests you need to route requests on port 443 to a higher port (>1024)
+  # using a load balancer or iptables.
   connectorType: blocking
 
   # The maximum amount of time a connection is allowed to be idle before being closed.
@@ -101,6 +103,8 @@ http:
 #    keyStorePassword: example
 #
 #    keyStoreType: JKS # (optional, JKS is default)
+#
+#  see http section above for routing https requests.
 
   # HTTP request log settings
   requestLog:
