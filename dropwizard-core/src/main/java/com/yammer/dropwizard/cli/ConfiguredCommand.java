@@ -45,7 +45,7 @@ public abstract class ConfiguredCommand<T extends Configuration> extends Command
             // should typically have one of type parameters (first one) that matches:
             for (Type param : ((ParameterizedType) t).getActualTypeArguments()) {
                 if (param instanceof Class<?>) {
-                    Class<?> cls = (Class<?>) param;
+                    final Class<?> cls = (Class<?>) param;
                     if (Configuration.class.isAssignableFrom(cls)) {
                         return (Class<T>) cls;
                     }
@@ -91,6 +91,7 @@ public abstract class ConfiguredCommand<T extends Configuration> extends Command
             }
         } catch (ConfigurationException e) {
             printHelp(e.getMessage(), service.getClass());
+            System.exit(1);
         }
 
         if (configuration != null) {

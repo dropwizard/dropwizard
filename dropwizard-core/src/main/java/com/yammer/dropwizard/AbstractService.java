@@ -191,12 +191,16 @@ public abstract class AbstractService<T extends Configuration> {
     public final void run(String[] arguments) throws Exception {
         if (isHelp(arguments)) {
             UsagePrinter.printRootHelp(this);
+            if (arguments.length == 0) {
+                System.exit(1);
+            }
         } else {
             final Command cmd = commands.get(arguments[0]);
             if (cmd != null) {
                 cmd.run(this, Arrays.copyOfRange(arguments, 1, arguments.length));
             } else {
                 UsagePrinter.printRootHelp(this);
+                System.exit(1);
             }
         }
     }
