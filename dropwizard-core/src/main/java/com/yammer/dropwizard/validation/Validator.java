@@ -9,6 +9,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Path;
 import javax.validation.Validation;
 import javax.validation.ValidatorFactory;
+import javax.validation.groups.Default;
 import java.util.Set;
 
 import static java.lang.String.format;
@@ -28,8 +29,20 @@ public class Validator {
      * @return a list of error messages, if any, regarding {@code o}'s validity
      */
     public <T> ImmutableList<String> validate(T o) {
+        return validate(o, Default.class);
+    }
+
+   /**
+    * Validates the given object, and returns a list of error messages, if any. If the returned
+    * list is empty, the object is valid.
+    * @param o a potentially-valid object
+    * @param groups group or list of groups targeted for validation (default to {@link javax.validation.groups.Default})
+    * @param <T> the type of object to validate
+    * @return a list of error messages, if any, regarding {@code o}'s validity
+    */
+    public <T> ImmutableList<String> validate(T o, Class<?>... groups) {
         final Set<String> errors = Sets.newHashSet();
-        final Set<ConstraintViolation<T>> violations = factory.getValidator().validate(o);
+        final Set<ConstraintViolation<T>> violations = factory.getValidator().validate(o,groups);
         for (ConstraintViolation<T> v : violations) {
             if (v.getConstraintDescriptor().getAnnotation() instanceof ValidationMethod) {
                 final ImmutableList<Path.Node> nodes = ImmutableList.copyOf(v.getPropertyPath());
