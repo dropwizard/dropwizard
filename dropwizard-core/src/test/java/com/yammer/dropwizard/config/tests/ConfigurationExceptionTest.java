@@ -4,8 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.yammer.dropwizard.config.ConfigurationException;
 import org.junit.Test;
 
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+import static org.fest.assertions.api.Assertions.assertThat;
 
 public class ConfigurationExceptionTest {
     @Test
@@ -13,8 +12,8 @@ public class ConfigurationExceptionTest {
         final ConfigurationException e = new ConfigurationException("config.yml",
                                                                     ImmutableList.of("woo may not be null"));
 
-        assertThat(e.getMessage(),
-                   is("config.yml has the following errors:\n" +
-                      "  * woo may not be null\n"));
+        assertThat(e.getMessage())
+                .isEqualTo("config.yml has the following errors:\n" +
+                                   "  * woo may not be null\n");
     }
 }

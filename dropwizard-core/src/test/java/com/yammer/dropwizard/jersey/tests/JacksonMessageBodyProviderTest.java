@@ -1,10 +1,8 @@
 package com.yammer.dropwizard.jersey.tests;
 
-
 import com.fasterxml.jackson.annotation.JsonIgnoreType;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.google.common.collect.ImmutableList;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 import com.sun.jersey.core.util.StringKeyObjectValueIgnoreCaseMultivaluedMap;
 import com.yammer.dropwizard.jersey.JacksonMessageBodyProvider;
@@ -14,15 +12,14 @@ import org.junit.Test;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.lang.annotation.Annotation;
 
-import static org.hamcrest.Matchers.*;
-import static org.hamcrest.Matchers.startsWith;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
+import static org.fest.assertions.api.Assertions.assertThat;
+import static org.fest.assertions.api.Assertions.failBecauseExceptionWasNotThrown;
 import static org.mockito.Mockito.*;
 
 @SuppressWarnings("unchecked")
@@ -51,44 +48,44 @@ public class JacksonMessageBodyProviderTest {
 
     @Test
     public void readsDeserializableTypes() throws Exception {
-        assertThat(provider.isReadable(Example.class, null, null, null),
-                   is(true));
+        assertThat(provider.isReadable(Example.class, null, null, null))
+                .isTrue();
     }
 
     @Test
     public void writesSerializableTypes() throws Exception {
-        assertThat(provider.isWriteable(Example.class, null, null, null),
-                   is(true));
+        assertThat(provider.isWriteable(Example.class, null, null, null))
+                .isTrue();
     }
 
     @Test
     public void doesNotWriteIgnoredTypes() throws Exception {
-        assertThat(provider.isWriteable(Ignorable.class, null, null, null),
-                   is(false));
+        assertThat(provider.isWriteable(Ignorable.class, null, null, null))
+                .isFalse();
     }
 
     @Test
     public void writesUnIgnoredTypes() throws Exception {
-        assertThat(provider.isWriteable(NonIgnorable.class, null, null, null),
-                   is(true));
+        assertThat(provider.isWriteable(NonIgnorable.class, null, null, null))
+                .isTrue();
     }
 
     @Test
     public void doesNotReadIgnoredTypes() throws Exception {
-        assertThat(provider.isReadable(Ignorable.class, null, null, null),
-                   is(false));
+        assertThat(provider.isReadable(Ignorable.class, null, null, null))
+                .isFalse();
     }
 
     @Test
     public void readsUnIgnoredTypes() throws Exception {
-        assertThat(provider.isReadable(NonIgnorable.class, null, null, null),
-                   is(true));
+        assertThat(provider.isReadable(NonIgnorable.class, null, null, null))
+                .isTrue();
     }
 
     @Test
     public void isChunked() throws Exception {
-        assertThat(provider.getSize(null, null, null, null, null),
-                   is(-1L));
+        assertThat(provider.getSize(null, null, null, null, null))
+                .isEqualTo(-1);
     }
 
     @Test
@@ -103,11 +100,11 @@ public class JacksonMessageBodyProviderTest {
                                              new MultivaluedMapImpl(),
                                              entity);
 
-        assertThat(obj,
-                   is(instanceOf(Example.class)));
+        assertThat(obj)
+                .isInstanceOf(Example.class);
 
-        assertThat(((Example) obj).id,
-                   is(1));
+        assertThat(((Example) obj).id)
+                .isEqualTo(1);
     }
 
     @Test
@@ -120,16 +117,16 @@ public class JacksonMessageBodyProviderTest {
 
         final Object obj = provider.readFrom((Class<Object>) klass,
                                              Example.class,
-                                             new Annotation[] { valid },
+                                             new Annotation[]{ valid },
                                              MediaType.APPLICATION_JSON_TYPE,
                                              new MultivaluedMapImpl(),
                                              entity);
 
-        assertThat(obj,
-                   is(instanceOf(Example.class)));
+        assertThat(obj)
+                .isInstanceOf(Example.class);
 
-        assertThat(((Example) obj).id,
-                   is(1));
+        assertThat(((Example) obj).id)
+                .isEqualTo(1);
     }
 
     @Test
@@ -147,10 +144,10 @@ public class JacksonMessageBodyProviderTest {
                               MediaType.APPLICATION_JSON_TYPE,
                               new MultivaluedMapImpl(),
                               entity);
-            fail("should have thrown a WebApplicationException but didn't");
+            failBecauseExceptionWasNotThrown(WebApplicationException.class);
         } catch (InvalidEntityException e) {
-            assertThat(e.getErrors(),
-                       is(ImmutableList.of("id must be greater than or equal to 0 (was -1)")));
+            assertThat(e.getErrors())
+                    .containsOnly("id must be greater than or equal to 0 (was -1)");
         }
     }
 
@@ -166,10 +163,11 @@ public class JacksonMessageBodyProviderTest {
                               MediaType.APPLICATION_JSON_TYPE,
                               new MultivaluedMapImpl(),
                               entity);
-            fail("should have thrown a WebApplicationException but didn't");
+            failBecauseExceptionWasNotThrown(WebApplicationException.class);
         } catch (JsonProcessingException e) {
-            assertThat(e.getMessage(),
-                       startsWith("Unexpected character ('d' (code 100)): was expecting comma to separate OBJECT entries\n"));
+            assertThat(e.getMessage())
+                    .startsWith("Unexpected character ('d' (code 100)): " +
+                                        "was expecting comma to separate OBJECT entries\n");
         }
     }
 
@@ -188,7 +186,7 @@ public class JacksonMessageBodyProviderTest {
                          new StringKeyObjectValueIgnoreCaseMultivaluedMap(),
                          output);
 
-        assertThat(output.toString(),
-                   is("{\"id\":500}"));
+        assertThat(output.toString())
+                .isEqualTo("{\"id\":500}");
     }
 }

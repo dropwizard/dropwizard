@@ -6,12 +6,11 @@ import com.yammer.dropwizard.config.Configuration;
 import com.yammer.dropwizard.config.Environment;
 import org.junit.Test;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertThat;
+import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
 public class ServiceTest {
-    @SuppressWarnings({"PackageVisibleInnerClass", "EmptyClass"})
+    @SuppressWarnings({ "PackageVisibleInnerClass", "EmptyClass" })
     static class FakeConfiguration extends Configuration {
 
     }
@@ -27,28 +26,29 @@ public class ServiceTest {
         }
     }
 
-    private class PoserService extends FakeService { }
-    
+    private class PoserService extends FakeService {
+    }
+
     private final Bundle bundle = mock(Bundle.class);
     private final FakeService service = new FakeService();
 
     @Test
     public void hasAReferenceToItsTypeParameter() throws Exception {
-        assertThat(service.getConfigurationClass(),
-                   is(sameInstance(FakeConfiguration.class)));
+        assertThat(service.getConfigurationClass())
+                .isSameAs(FakeConfiguration.class);
     }
 
     @Test
     public void canDetermineConfiguration() throws Exception {
-        assertThat(new PoserService().getConfigurationClass(),
-                is(sameInstance(FakeConfiguration.class)));
+        assertThat(new PoserService().getConfigurationClass())
+                .isSameAs(FakeConfiguration.class);
     }
 
     @Test
     public void defualtNameIsSimpleNameOfServiceClass() throws Exception {
-        assertThat(new FakeService().getName(),
-                is(FakeService.class.getSimpleName()));
-        assertThat(new PoserService().getName(),
-                is(PoserService.class.getSimpleName()));
+        assertThat(new FakeService().getName())
+                .isEqualTo(FakeService.class.getSimpleName());
+        assertThat(new PoserService().getName())
+                .isEqualTo(PoserService.class.getSimpleName());
     }
 }

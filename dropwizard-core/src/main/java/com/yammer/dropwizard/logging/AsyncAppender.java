@@ -57,11 +57,6 @@ public class AsyncAppender extends AppenderBase<ILoggingEvent> implements Runnab
     @Override
     public void stop() {
         this.running = false;
-        try {
-            dispatcher.join();
-        } catch (InterruptedException ignored) {
-            Thread.currentThread().interrupt();
-        }
         super.stop();
     }
 

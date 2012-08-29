@@ -9,11 +9,8 @@ import javax.servlet.Servlet;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.inOrder;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static org.fest.assertions.api.Assertions.assertThat;
+import static org.mockito.Mockito.*;
 
 public class NonblockingServletHolderTest {
     private final Servlet servlet = mock(Servlet.class);
@@ -24,8 +21,8 @@ public class NonblockingServletHolderTest {
 
     @Test
     public void hasAServlet() throws Exception {
-        assertThat(holder.getServlet(),
-                   is(servlet));
+        assertThat(holder.getServlet())
+                .isEqualTo(servlet);
     }
 
     @Test

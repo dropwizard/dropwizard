@@ -5,8 +5,7 @@ import com.yammer.dropwizard.auth.Authenticator;
 import com.yammer.dropwizard.auth.oauth.OAuthProvider;
 import org.junit.Test;
 
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
 @SuppressWarnings("unchecked")
@@ -17,7 +16,7 @@ public class OAuthProviderTest {
 
     @Test
     public void isPerRequest() throws Exception {
-        assertThat(provider.getScope(),
-                   is(ComponentScope.PerRequest));
+        assertThat(provider.getScope())
+                .isEqualTo(ComponentScope.PerRequest);
     }
 }

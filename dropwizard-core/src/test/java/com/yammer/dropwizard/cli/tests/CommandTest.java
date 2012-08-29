@@ -8,17 +8,14 @@ import com.yammer.dropwizard.config.Environment;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.UnrecognizedOptionException;
-import org.junit.Ignore;
 import org.junit.Test;
 
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.fest.assertions.api.Assertions.*;
 
-@Ignore("DW lifecycle doesn't play well with Surefire")
 public class CommandTest {
     public static class ExampleCommandWithOptions extends Command {
-        private String first, last;
+        private String first;
+        private String last;
         private boolean verbose = false;
 
         public ExampleCommandWithOptions() {
@@ -72,26 +69,26 @@ public class CommandTest {
 
     @Test
     public void hasAName() throws Exception {
-        assertThat(commandWithOptions.getName(),
-            is("name"));
+        assertThat(commandWithOptions.getName())
+            .isEqualTo("name");
     }
 
     @Test
     public void hasADescription() throws Exception {
-        assertThat(commandWithOptions.getDescription(),
-            is("description"));
+        assertThat(commandWithOptions.getDescription())
+            .isEqualTo("description");
     }
 
     @Test
     public void hasEmptyOptionsByDefault() throws Exception {
-        Command command = new Command("name", "description") {
+        final Command command = new Command("name", "description") {
             @Override
             protected void run(AbstractService<?> service,
                                CommandLine params) throws Exception {
             }
         };
-        assertThat(command.getOptions().toString(),
-            is(new Options().toString()));
+        assertThat(command.getOptions().toString())
+            .isEqualTo(new Options().toString());
     }
 
     @Test
@@ -99,11 +96,15 @@ public class CommandTest {
         commandWithOptions.run(new DummyService(),
             new String[]{"-f", "first", "-l", "last", "-v"});
 
-        assertTrue(commandWithOptions.isVerbose());
-        assertThat(commandWithOptions.getFirst(), is("first"));
-        assertThat(commandWithOptions.getLast(), is("last"));
+        assertThat(commandWithOptions.isVerbose())
+                .isTrue();
+        assertThat(commandWithOptions.getFirst())
+                .isEqualTo("first");
+        assertThat(commandWithOptions.getLast())
+                .isEqualTo("last");
     }
 
+    @SuppressWarnings("ExpectedExceptionNeverThrown")
     @Test(expected = UnrecognizedOptionException.class)
     public void failsWithInvalidOption() throws Exception {
         commandWithOptions.run(new DummyService(), new String[]{"-x"});

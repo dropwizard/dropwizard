@@ -6,8 +6,7 @@ import org.junit.Test;
 
 import java.io.PrintWriter;
 
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+import static org.fest.assertions.api.Assertions.*;
 
 public class TaskTest {
     private final Task task = new Task("test") {
@@ -20,7 +19,7 @@ public class TaskTest {
 
     @Test
     public void hasAName() throws Exception {
-        assertThat(task.getName(),
-                   is("test"));
+        assertThat(task.getName())
+                .isEqualTo("test");
     }
 }
