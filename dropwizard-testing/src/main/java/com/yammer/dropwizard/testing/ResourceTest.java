@@ -72,8 +72,8 @@ public abstract class ResourceTest {
             @Override
             protected AppDescriptor configure() {
                 final DropwizardResourceConfig config = new DropwizardResourceConfig(true);
-                for (Object provider : JavaBundle.DEFAULT_PROVIDERS) { // sorry, Scala folks
-                    config.getSingletons().add(provider);
+                for (Class<?> provider : JavaBundle.DEFAULT_PROVIDERS) { // sorry, Scala folks
+                    config.getClasses().add(provider);
                 }
                 for (Class<?> provider : providers) {
                     config.getClasses().add(provider);
