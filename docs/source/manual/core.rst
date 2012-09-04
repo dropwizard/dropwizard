@@ -647,6 +647,10 @@ service starts::
 We could probably make up an argument about why this is a serious devops best practice with high ROI
 and an Agile Tool, but honestly we just enjoy this.
 
+We recommend you use TAAG_ for all your ASCII art banner needs.
+
+.. _TAAG: http://patorjk.com/software/taag/
+
 .. _man-core-resources:
 
 Resources
