@@ -7,22 +7,22 @@ import com.yammer.dropwizard.db.logging.LogbackLog;
 import com.yammer.dropwizard.lifecycle.Managed;
 import com.yammer.metrics.Metrics;
 import com.yammer.metrics.jdbi.InstrumentedTimingCollector;
-import org.apache.tomcat.dbcp.pool.ObjectPool;
 import org.skife.jdbi.v2.ColonPrefixNamedParamStatementRewriter;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 import org.slf4j.LoggerFactory;
 
+import java.io.Closeable;
 import javax.sql.DataSource;
 import java.sql.SQLException;
 
 public class Database extends DBI implements Managed {
     private static final Logger LOGGER = (Logger) LoggerFactory.getLogger(Database.class);
 
-    private final ObjectPool pool;
+    private final Closeable pool;
     private final String validationQuery;
 
-    public Database(DataSource dataSource, ObjectPool pool, String validationQuery) {
+    public Database(DataSource dataSource, Closeable pool, String validationQuery) {
         super(dataSource);
         this.pool = pool;
         this.validationQuery = validationQuery;

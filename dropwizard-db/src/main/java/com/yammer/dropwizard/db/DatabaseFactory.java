@@ -7,6 +7,8 @@ import org.apache.tomcat.dbcp.dbcp.PoolingDataSource;
 import org.apache.tomcat.dbcp.pool.impl.GenericObjectPool;
 
 import javax.sql.DataSource;
+import java.io.Closeable;
+import java.io.IOException;
 import java.util.Map;
 import java.util.Properties;
 
@@ -21,7 +23,13 @@ public class DatabaseFactory {
         Class.forName(configuration.getDriverClass());
         final GenericObjectPool pool = buildPool(configuration);
         final DataSource dataSource = buildDataSource(configuration, pool);
-        final Database database = new Database(dataSource, pool, configuration.getValidationQuery());
+        final Closeable closablePool = new Closeable() {
+          public void close() throws IOException {
+              try { pool.close(); }
+              catch (Exception e) { throw new IOException(e); }
+          }
+        };
+        final Database database = new Database(dataSource, closablePool, configuration.getValidationQuery());
         environment.manage(database);
         environment.addHealthCheck(new DatabaseHealthCheck(database, name));
         return database;
