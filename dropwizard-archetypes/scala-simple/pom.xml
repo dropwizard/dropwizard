@@ -12,6 +12,10 @@
     <relativePath>../pom.xml</relativePath>
   </parent>
 
+  <properties>
+    <scala.version>2.9.1</scala.version>
+  </properties>
+
   <groupId>com.yammer.dropwizard.archetypes</groupId>
   <artifactId>scala-simple</artifactId>
   <packaging>maven-archetype</packaging>
