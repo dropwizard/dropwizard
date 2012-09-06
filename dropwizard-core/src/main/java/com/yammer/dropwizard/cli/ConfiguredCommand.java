@@ -45,7 +45,7 @@ public abstract class ConfiguredCommand<T extends Configuration> extends Command
             // should typically have one of type parameters (first one) that matches:
             for (Type param : ((ParameterizedType) t).getActualTypeArguments()) {
                 if (param instanceof Class<?>) {
-                    Class<?> cls = (Class<?>) param;
+                    final Class<?> cls = (Class<?>) param;
                     if (Configuration.class.isAssignableFrom(cls)) {
                         return (Class<T>) cls;
                     }
@@ -80,21 +80,18 @@ public abstract class ConfiguredCommand<T extends Configuration> extends Command
         final String[] args = params.getArgs();
         final Class<T> configurationClass = getConfigurationClass();
         T configuration = null;
-        if (args.length >= 1) {
-            params.getArgList().remove(0);
-            final ConfigurationFactory<T> configurationFactory =
-                    ConfigurationFactory.forClass(configurationClass, new Validator(), service.getJacksonModules());
-            try {
+        final ConfigurationFactory<T> configurationFactory =
+                ConfigurationFactory.forClass(configurationClass, new Validator(), service.getJacksonModules());
+        try {
+            if (args.length >= 1) {
+                params.getArgList().remove(0);
                 configuration = configurationFactory.build(new File(args[0]));
-            } catch (ConfigurationException e) {
-                printHelp(e.getMessage(), service.getClass());
+            } else {
+                configuration = configurationFactory.build();
             }
-        } else {
-            try {
-                configuration = configurationClass.newInstance();
-            } catch (Exception e) {
-                printHelp("Failed to instantiate configuration class " + configurationClass, service.getClass());
-            }
+        } catch (ConfigurationException e) {
+            printHelp(e.getMessage(), service.getClass());
+            System.exit(1);
         }
 
         if (configuration != null) {

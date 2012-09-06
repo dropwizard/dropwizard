@@ -4,6 +4,27 @@
 Release Notes
 #############
 
+.. _rel-0.5.1:
+
+v0.5.1: Aug 06 2012
+===================
+
+* Fixed logging of managed objects.
+* Fixed default file logging configuration.
+* Added FEST-Assert as a ``dropwizard-testing`` dependency.
+* Added support for Mustache templates (``*.mustache``) to ``dropwizard-views``.
+* Added support for arbitrary view renderers.
+* Fixed command-line overrides when no configuration file is present.
+* Added support for arbitrary ``DnsResolver`` implementations in ``HttpClientFactory``.
+* Upgraded to Guava 13.0 final.
+* Fixed task path bugs.
+* Upgraded to Metrics 2.1.3.
+* Added ``JerseyClientConfiguration#compressRequestEntity`` for disabling the compression of request
+  entities.
+* Added ``Environment#scanPackagesForResourcesAndProviders`` for automatically detecting Jersey
+  providers and resources.
+* Added ``Environment#setSessionHandler``.
+
 .. _rel-0.5.0:
 
 v0.5.0: Jul 30 2012

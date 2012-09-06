@@ -7,6 +7,7 @@ import com.yammer.dropwizard.validation.Validator;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.Module;
+import org.codehaus.jackson.node.JsonNodeFactory;
 import org.codehaus.jackson.node.ObjectNode;
 
 import java.io.File;
@@ -42,6 +43,15 @@ public class ConfigurationFactory<T> {
     
     public T build(File file) throws IOException, ConfigurationException {
         final JsonNode node = parse(file);
+        final String filename = file.toString();
+        return build(node, filename);
+    }
+
+    public T build() throws IOException, ConfigurationException {
+        return build(JsonNodeFactory.instance.objectNode(), "The default configuration");
+    }
+
+    private T build(JsonNode node, String filename) throws IOException, ConfigurationException {
         for (Map.Entry<Object, Object> pref : System.getProperties().entrySet()) {
             final String prefName = (String) pref.getKey();
             if (prefName.startsWith(PROPERTY_PREFIX)) {
@@ -50,7 +60,7 @@ public class ConfigurationFactory<T> {
             }
         }
         final T config = json.readValue(node, klass);
-        validate(file, config);
+        validate(filename, config);
         return config;
     }
 
@@ -84,7 +94,7 @@ public class ConfigurationFactory<T> {
         return json.readValue(file, JsonNode.class);
     }
 
-    private void validate(File file, T config) throws ConfigurationException {
+    private void validate(String file, T config) throws ConfigurationException {
         final ImmutableList<String> errors = validator.validate(config);
         if (!errors.isEmpty()) {
             throw new ConfigurationException(file, errors);

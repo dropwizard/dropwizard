@@ -27,6 +27,7 @@ public abstract class ResourceTest {
     private final Set<Class<?>> providers = Sets.newHashSet();
     private final List<Module> modules = Lists.newArrayList();
     private final Map<String, Boolean> features = Maps.newHashMap();
+    private final Map<String, Object> properties = Maps.newHashMap();
 
     private JerseyTest test;
 
@@ -48,6 +49,10 @@ public abstract class ResourceTest {
         features.put(feature, value);
     }
 
+    protected void addProperty(String property, Object value) {
+        properties.put(property, value);
+    }
+
     protected Json getJson() {
         final Json json = new Json();
         for (Module module : modules) {
@@ -67,8 +72,8 @@ public abstract class ResourceTest {
             @Override
             protected AppDescriptor configure() {
                 final DropwizardResourceConfig config = new DropwizardResourceConfig(true);
-                for (Object provider : JavaBundle.DEFAULT_PROVIDERS) { // sorry, Scala folks
-                    config.getSingletons().add(provider);
+                for (Class<?> provider : JavaBundle.DEFAULT_PROVIDERS) { // sorry, Scala folks
+                    config.getClasses().add(provider);
                 }
                 for (Class<?> provider : providers) {
                     config.getClasses().add(provider);
@@ -76,6 +81,9 @@ public abstract class ResourceTest {
                 final Json json = getJson();
                 for (Map.Entry<String, Boolean> feature : features.entrySet()) {
                     config.getFeatures().put(feature.getKey(), feature.getValue());
+                }
+                for (Map.Entry<String, Object> property : properties.entrySet()) {
+                    config.getProperties().put(property.getKey(), property.getValue());
                 }
                 config.getSingletons().add(new JacksonMessageBodyProvider(json));
                 config.getSingletons().addAll(singletons);

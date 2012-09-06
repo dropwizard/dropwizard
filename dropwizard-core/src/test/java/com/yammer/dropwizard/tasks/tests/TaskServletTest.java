@@ -31,11 +31,11 @@ public class TaskServletTest {
     public void setUp() throws Exception {
 //        Logger.getRootLogger().setLevel(Level.OFF);
     }
-
+    
     @Test
     public void returnsA404WhenNotFound() throws Exception {
         when(request.getMethod()).thenReturn("POST");
-        when(request.getServletPath()).thenReturn("/tasks/test");
+        when(request.getPathInfo()).thenReturn("/test");
 
         servlet.service(request, response);
 
@@ -47,7 +47,7 @@ public class TaskServletTest {
         final PrintWriter output = mock(PrintWriter.class);
 
         when(request.getMethod()).thenReturn("POST");
-        when(request.getServletPath()).thenReturn("/tasks/gc");
+        when(request.getPathInfo()).thenReturn("/gc");
         when(request.getParameterNames()).thenReturn(Collections.enumeration(ImmutableList.<String>of()));
         when(response.getWriter()).thenReturn(output);
 
@@ -61,7 +61,7 @@ public class TaskServletTest {
         final PrintWriter output = mock(PrintWriter.class);
 
         when(request.getMethod()).thenReturn("POST");
-        when(request.getServletPath()).thenReturn("/tasks/gc");
+        when(request.getPathInfo()).thenReturn("/gc");
         when(request.getParameterNames()).thenReturn(Collections.enumeration(ImmutableList.of("runs")));
         when(request.getParameterValues("runs")).thenReturn(new String[]{"1"});
         when(response.getWriter()).thenReturn(output);
@@ -75,8 +75,11 @@ public class TaskServletTest {
     @SuppressWarnings("unchecked")
     public void returnsA500OnExceptions() throws Exception {
         when(request.getMethod()).thenReturn("POST");
-        when(request.getServletPath()).thenReturn("/tasks/gc");
+        when(request.getPathInfo()).thenReturn("/gc");
         when(request.getParameterNames()).thenReturn(Collections.enumeration(ImmutableList.<String>of()));
+
+        final PrintWriter output = mock(PrintWriter.class);
+        when(response.getWriter()).thenReturn(output);
 
         final RuntimeException ex = new RuntimeException("whoops");
         

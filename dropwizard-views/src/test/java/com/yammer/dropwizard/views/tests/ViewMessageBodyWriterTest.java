@@ -4,7 +4,10 @@ import com.sun.jersey.core.util.StringKeyIgnoreCaseMultivaluedMap;
 import com.yammer.dropwizard.views.MyOtherView;
 import com.yammer.dropwizard.views.MyView;
 import com.yammer.dropwizard.views.ViewMessageBodyWriter;
+import com.yammer.dropwizard.views.ViewRenderException;
 import com.yammer.dropwizard.views.example.BadView;
+import com.yammer.dropwizard.views.example.MustacheView;
+import com.yammer.dropwizard.views.example.UnknownView;
 import org.junit.Test;
 
 import javax.ws.rs.WebApplicationException;
@@ -16,6 +19,7 @@ import java.lang.annotation.Annotation;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 
 public class ViewMessageBodyWriterTest {
@@ -37,7 +41,7 @@ public class ViewMessageBodyWriterTest {
     }
 
     @Test
-    public void writesViews() throws Exception {
+    public void writesFreemarkerViews() throws Exception {
         final ByteArrayOutputStream output = new ByteArrayOutputStream();
 
         final MyView view = new MyView("HONK");
@@ -55,7 +59,25 @@ public class ViewMessageBodyWriterTest {
     }
 
     @Test
-    public void handlesRelativeTemplatePaths() throws Exception {
+    public void writesMustacheViews() throws Exception {
+        final ByteArrayOutputStream output = new ByteArrayOutputStream();
+
+        final MustacheView view = new MustacheView("Stranger");
+
+        writer.writeTo(view,
+                       MustacheView.class,
+                       null,
+                       NONE,
+                       MediaType.TEXT_HTML_TYPE,
+                       new StringKeyIgnoreCaseMultivaluedMap<Object>(),
+                       output);
+
+        assertThat(output.toString(),
+                   is("Hello Stranger!\nWoo!\n\n"));
+    }
+
+    @Test
+    public void handlesRelativeFreemarkerTemplatePaths() throws Exception {
         final ByteArrayOutputStream output = new ByteArrayOutputStream();
 
         final MyOtherView view = new MyOtherView();
@@ -73,7 +95,7 @@ public class ViewMessageBodyWriterTest {
     }
 
     @Test
-    public void writesErrorMessagesForBadTemplates() throws Exception {
+    public void writesErrorMessagesForMissingTemplates() throws Exception {
         final ByteArrayOutputStream output = new ByteArrayOutputStream();
 
         final BadView view = new BadView();
@@ -93,7 +115,26 @@ public class ViewMessageBodyWriterTest {
                        is(500));
             
             assertThat((String) response.getEntity(),
-                       is("<html><head><title>Missing Template</title></head><body><h1>Missing Template</h1><p>Template /woo-oo-ahh.txt not found.</p></body></html>"));
+                       is("<html><head><title>Missing Template</title></head><body><h1>Missing Template</h1><p>Template /woo-oo-ahh.txt.ftl not found.</p></body></html>"));
+        }
+    }
+
+    @Test
+    public void throwsExceptionsForUnknownTemplateTypes() throws Exception {
+        final ByteArrayOutputStream output = new ByteArrayOutputStream();
+        final UnknownView view = new UnknownView();
+        try {
+            writer.writeTo(view,
+                           MyView.class,
+                           null,
+                           NONE,
+                           MediaType.TEXT_HTML_TYPE,
+                           new StringKeyIgnoreCaseMultivaluedMap<Object>(),
+                           output);
+            fail("Should have thrown a ViewRenderException but didn't");
+        } catch (ViewRenderException e) {
+            assertThat(e.getMessage(),
+                       is("Unable to find a renderer for /com/yammer/dropwizard/views/example/misterpoops.jjsjk"));
         }
     }
 }
