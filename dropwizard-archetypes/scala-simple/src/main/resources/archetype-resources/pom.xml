@@ -99,6 +99,8 @@
         <version>3.0.2</version>
         <configuration>
           <charset>UTF-8</charset>
+          <recompileMode>incremental</recompileMode>
+          <useZincServer>true</useZincServer>
           <launchers>
             <launcher>
               <id>server</id>
