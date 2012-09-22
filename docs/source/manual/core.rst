@@ -76,7 +76,7 @@ subclass. These are usually at the root of your service's main package. For exam
 service would have two classes: ``UserServiceConfiguration``, extending ``Configuration``, and
 ``UserService``, extending ``Service<UserServiceConfiguration>``.
 
-When your service runs a :ref:`man-core-commands-configured` like the ``server`` command, Dropwizard
+When your service runs :ref:`man-core-commands-configured` like the ``server`` command, Dropwizard
 parses the provided YAML configuration file and builds an instance of your service's configuration
 class by mapping YAML field names to object field names.
 
