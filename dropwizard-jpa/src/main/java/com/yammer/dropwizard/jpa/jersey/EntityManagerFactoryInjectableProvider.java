@@ -32,14 +32,17 @@ public class EntityManagerFactoryInjectableProvider implements InjectableProvide
 
 	@Override
 	public Injectable<EntityManagerFactory> getInjectable(ComponentContext ic, PersistenceUnit a, Type type) {
-		String unitName = a.unitName();
-		if(unitName == null && !repository.hasMultiplePersistenceUnits()) {
-			unitName = repository.getDefaultPersistenceUnit();
+		if(type.equals(EntityManagerFactory.class)) {
+			String unitName = a.unitName();
+			if(unitName == null && !repository.hasMultiplePersistenceUnits()) {
+				unitName = repository.getDefaultPersistenceUnit();
+			}
+			if(!EMFs.containsKey(unitName)) {
+				EMFs.put(unitName, getEntityManagerFactory(unitName));
+			}
+			return new EMFInjectable(EMFs.get(unitName));
 		}
-		if(!EMFs.containsKey(unitName)) {
-			EMFs.put(unitName, getEntityManagerFactory(unitName));
-		}
-		return new EMFInjectable(EMFs.get(unitName));
+		return null;
 	}
 	
 	protected EntityManagerFactory getEntityManagerFactory(String unitName) {
