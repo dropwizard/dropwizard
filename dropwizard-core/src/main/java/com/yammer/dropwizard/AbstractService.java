@@ -3,12 +3,11 @@ package com.yammer.dropwizard;
 import com.fasterxml.jackson.databind.Module;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import com.sun.jersey.spi.container.servlet.ServletContainer;
+import com.yammer.dropwizard.cli.Cli;
 import com.yammer.dropwizard.cli.Command;
 import com.yammer.dropwizard.cli.ConfiguredCommand;
 import com.yammer.dropwizard.cli.ServerCommand;
-import com.yammer.dropwizard.cli.UsagePrinter;
 import com.yammer.dropwizard.config.Configuration;
 import com.yammer.dropwizard.config.Environment;
 import com.yammer.dropwizard.config.LoggingFactory;
@@ -18,9 +17,7 @@ import com.yammer.dropwizard.json.Json;
 import javax.annotation.CheckForNull;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.Arrays;
 import java.util.List;
-import java.util.SortedMap;
 
 /**
  * The base class for both Java and Scala services. Do not extend this directly. Use {@link Service}
@@ -39,7 +36,7 @@ public abstract class AbstractService<T extends Configuration> {
     private final List<Bundle> bundles;
     private final List<ConfiguredBundle<? super T>> configuredBundles;
     private final List<Module> modules;
-    private final SortedMap<String, Command> commands;
+    private final List<Command> commands;
 
     /**
      * Creates a new service with the given name. If name is {@code null} the service is named as
@@ -52,7 +49,7 @@ public abstract class AbstractService<T extends Configuration> {
         this.bundles = Lists.newArrayList();
         this.configuredBundles = Lists.newArrayList();
         this.modules = Lists.newArrayList();
-        this.commands = Maps.newTreeMap();
+        this.commands = Lists.newArrayList();
         addCommand(new ServerCommand<T>(getConfigurationClass()));
     }
 
@@ -120,7 +117,7 @@ public abstract class AbstractService<T extends Configuration> {
      * @return a list of commands
      */
     public final ImmutableList<Command> getCommands() {
-        return ImmutableList.copyOf(commands.values());
+        return ImmutableList.copyOf(commands);
     }
 
     /**
@@ -129,7 +126,7 @@ public abstract class AbstractService<T extends Configuration> {
      * @param command    a command
      */
     protected final void addCommand(Command command) {
-        commands.put(command.getName(), command);
+        commands.add(command);
     }
 
     /**
@@ -138,7 +135,7 @@ public abstract class AbstractService<T extends Configuration> {
      * @param command    a command
      */
     protected final void addCommand(ConfiguredCommand<T> command) {
-        commands.put(command.getName(), command);
+        commands.add(command);
     }
 
     /**
@@ -188,20 +185,8 @@ public abstract class AbstractService<T extends Configuration> {
      * @throws Exception if something goes wrong
      */
     public final void run(String[] arguments) throws Exception {
-        if (isHelp(arguments)) {
-            UsagePrinter.printRootHelp(this);
-            if (arguments.length == 0) {
-                System.exit(1);
-            }
-        } else {
-            final Command cmd = commands.get(arguments[0]);
-            if (cmd != null) {
-                cmd.run(this, Arrays.copyOfRange(arguments, 1, arguments.length));
-            } else {
-                UsagePrinter.printRootHelp(this);
-                System.exit(1);
-            }
-        }
+        final Cli cli = new Cli(this, commands, System.err);
+        cli.runAndExit(arguments);
     }
 
     /**
@@ -247,12 +232,5 @@ public abstract class AbstractService<T extends Configuration> {
     public ServletContainer getJerseyContainer(DropwizardResourceConfig resourceConfig,
                                                T serviceConfig) {
         return new ServletContainer(resourceConfig);
-    }
-    
-    private static boolean isHelp(String[] arguments) {
-        return (arguments.length == 0) ||
-                ((arguments.length == 1) &&
-                        ("-h".equals(arguments[0]) ||
-                                "--help".equals(arguments[0])));
     }
 }

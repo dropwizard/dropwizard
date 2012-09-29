@@ -1,21 +1,18 @@
 package com.yammer.dropwizard.examples
 
 import com.yammer.dropwizard.cli.ConfiguredCommand
-import org.apache.commons.cli.{Options, CommandLine}
 import com.yammer.dropwizard.Logging
 import com.yammer.dropwizard.AbstractService
+import com.beust.jcommander.{Parameter, Parameters}
 
-class SayCommand extends ConfiguredCommand[ExampleConfiguration]("say", "Prints out the saying to console") with Logging {
-  override def getOptions = {
-    val options = new Options
-    options.addOption("v", "verbose", false, "yell it a lot")
-    options
-  }
+@Parameters(commandNames = Array("say"), commandDescription = "Prints out the saying to the console")
+class SayCommand extends ConfiguredCommand[ExampleConfiguration] with Logging {
+  @Parameter(names = Array("-v", "--verbose"), description = "Yell it a lot")
+  private var verbose = false
 
   protected def run(service: AbstractService[ExampleConfiguration],
-                    configuration: ExampleConfiguration,
-                    params: CommandLine) {
-    for (i <- 1 to (if (params.hasOption("verbose")) 10 else 1)) {
+                    configuration: ExampleConfiguration) {
+    for (i <- 1 to (if (verbose) 10 else 1)) {
       log.warn(configuration.saying)
     }
   }

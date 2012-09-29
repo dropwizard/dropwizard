@@ -1,5 +1,6 @@
 package com.example.helloworld.cli;
 
+import com.beust.jcommander.Parameters;
 import com.example.helloworld.HelloWorldConfiguration;
 import com.example.helloworld.db.PeopleDAO;
 import com.yammer.dropwizard.AbstractService;
@@ -8,17 +9,14 @@ import com.yammer.dropwizard.config.Environment;
 import com.yammer.dropwizard.db.Database;
 import com.yammer.dropwizard.db.DatabaseFactory;
 import com.yammer.dropwizard.logging.Log;
-import org.apache.commons.cli.CommandLine;
 
+@Parameters(commandNames = "setup",
+            commandDescription = "Setup the database")
 public class SetupDatabaseCommand extends ConfiguredCommand<HelloWorldConfiguration> {
 
-    public SetupDatabaseCommand() {
-        super("setup", "Setup the database.");
-    }
-
     @Override
-    protected void run(AbstractService<HelloWorldConfiguration> service, HelloWorldConfiguration configuration, CommandLine params) throws Exception {
-
+    protected void run(AbstractService<HelloWorldConfiguration> service,
+                       HelloWorldConfiguration configuration) throws Exception {
         final Log log = Log.forClass(SetupDatabaseCommand.class);
         final Environment environment = new Environment(service, configuration);
 //        service.initializeWithBundles(configuration, environment);
@@ -28,6 +26,5 @@ public class SetupDatabaseCommand extends ConfiguredCommand<HelloWorldConfigurat
 
         log.info("creating tables.");
         peopleDAO.createPeopleTable();
-
     }
 }

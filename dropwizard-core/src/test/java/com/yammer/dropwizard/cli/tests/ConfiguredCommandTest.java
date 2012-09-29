@@ -1,20 +1,25 @@
 package com.yammer.dropwizard.cli.tests;
 
+import com.beust.jcommander.Parameter;
+import com.beust.jcommander.Parameters;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Charsets;
+import com.google.common.collect.ImmutableList;
 import com.google.common.io.Files;
 import com.yammer.dropwizard.AbstractService;
 import com.yammer.dropwizard.Service;
+import com.yammer.dropwizard.cli.Cli;
+import com.yammer.dropwizard.cli.Command;
 import com.yammer.dropwizard.cli.ConfiguredCommand;
 import com.yammer.dropwizard.config.Configuration;
 import com.yammer.dropwizard.config.Environment;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.Options;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.junit.Test;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
@@ -39,28 +44,21 @@ public class ConfiguredCommandTest {
         }
     }
 
+    @Parameters(commandNames = {"test"}, commandDescription = "foobar")
     private static class DirectCommand extends ConfiguredCommand<MyConfig> {
         private String type;
+
+        @Parameter(names = {"-t", "--tag"}, description = "Arbitrary tag")
         private String tag;
+
+        @SuppressWarnings("FieldMayBeFinal")
+        @Parameter(names = { "-v", "--verbose" }, description = "Verbose flag")
         private boolean verbose = false;
-
-        protected DirectCommand() {
-            super("test", "foobar");
-        }
-
-        @Override
-        public Options getOptions() {
-            return super.getOptions()
-                        .addOption("t", "tag", true, "Arbitrary tag")
-                        .addOption("v", "verbose", false, "Verbose flag");
-        }
 
         @Override
         protected void run(AbstractService<MyConfig> service,
-                           MyConfig configuration, CommandLine params) {
+                           MyConfig configuration) {
             this.type = configuration.getType();
-            this.tag = params.getOptionValue("tag");
-            this.verbose = params.hasOption("verbose");
         }
 
         // needed since super-class method is protected
@@ -99,10 +97,15 @@ public class ConfiguredCommandTest {
 
     @Test
     public void parseYmlConfigFile() throws Exception {
+        final MyService service = new MyService();
+        final ByteArrayOutputStream output = new ByteArrayOutputStream();
         final String ymlConfigFile = createTemporaryFile(".yml", "type: yml\n");
 
         final DirectCommand command = new DirectCommand();
-        command.run(new MyService(), new String[]{ ymlConfigFile });
+        final Cli cli = new Cli(service,
+                                ImmutableList.<Command>of(command),
+                                new PrintStream(output));
+        cli.run(new String[]{ "test", ymlConfigFile });
 
         assertThat(command.getType())
                 .isEqualTo("yml");
@@ -115,10 +118,15 @@ public class ConfiguredCommandTest {
 
     @Test
     public void parseJsonConfigFile() throws Exception {
+        final MyService service = new MyService();
+        final ByteArrayOutputStream output = new ByteArrayOutputStream();
         final String jsonConfigFile = createTemporaryFile(".json", "{\"type\": \"json\"}");
 
         final DirectCommand command = new DirectCommand();
-        command.run(new MyService(), new String[]{ jsonConfigFile });
+        final Cli cli = new Cli(service,
+                                ImmutableList.<Command>of(command),
+                                new PrintStream(output));
+        cli.run(new String[]{ "test", jsonConfigFile });
 
         assertThat(command.getType())
                 .isEqualTo("json");
@@ -126,10 +134,15 @@ public class ConfiguredCommandTest {
 
     @Test
     public void argumentsAreParsedAsExpected() throws Exception {
+        final MyService service = new MyService();
+        final ByteArrayOutputStream output = new ByteArrayOutputStream();
         final String jsonConfigFile = createTemporaryFile(".json", "{\"type\": \"json2\"}");
 
         final DirectCommand command = new DirectCommand();
-        command.run(new MyService(), new String[]{ jsonConfigFile, "-v", "--tag", "tag1" });
+        final Cli cli = new Cli(service,
+                                ImmutableList.<Command>of(command),
+                                new PrintStream(output));
+        cli.run(new String[]{ "test", jsonConfigFile, "-v", "--tag", "tag1" });
 
         assertThat(command.getType())
                 .isEqualTo("json2");

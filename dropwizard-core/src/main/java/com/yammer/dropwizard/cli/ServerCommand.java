@@ -1,5 +1,6 @@
 package com.yammer.dropwizard.cli;
 
+import com.beust.jcommander.Parameters;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 import com.yammer.dropwizard.AbstractService;
@@ -7,7 +8,6 @@ import com.yammer.dropwizard.config.Configuration;
 import com.yammer.dropwizard.config.Environment;
 import com.yammer.dropwizard.config.ServerFactory;
 import com.yammer.dropwizard.logging.Log;
-import org.apache.commons.cli.CommandLine;
 import org.eclipse.jetty.server.Server;
 
 import java.io.IOException;
@@ -19,6 +19,8 @@ import java.io.IOException;
  *
  * @param <T> the {@link Configuration} subclass which is loaded from the configuration file
  */
+@Parameters(commandNames = "server",
+            commandDescription = "Run as an HTTP server")
 public class ServerCommand<T extends Configuration> extends ConfiguredCommand<T> {
     private final Class<T> configurationClass;
 
@@ -28,7 +30,6 @@ public class ServerCommand<T extends Configuration> extends ConfiguredCommand<T>
      * @param configurationClass    the configuration class the YAML file is parsed as
      */
     public ServerCommand(Class<T> configurationClass) {
-        super("server", "Starts an HTTP server running the service");
         this.configurationClass = configurationClass;
     }
 
@@ -42,9 +43,7 @@ public class ServerCommand<T extends Configuration> extends ConfiguredCommand<T>
     }
 
     @Override
-    protected void run(AbstractService<T> service,
-                       T configuration,
-                       CommandLine params) throws Exception {
+    protected void run(AbstractService<T> service, T configuration) throws Exception {
         final Environment environment = new Environment(service, configuration);
         service.initializeWithBundles(configuration, environment);
         final Server server = new ServerFactory(configuration.getHttpConfiguration(),
