@@ -40,7 +40,7 @@
         <dependency>
             <groupId>org.easytesting</groupId>
             <artifactId>fest-assert-core</artifactId>
-            <version>2.0M7</version>
+            <version>2.0M8</version>
         </dependency>
     </dependencies>
 </project>
