@@ -391,7 +391,7 @@ the saying and the ``defaultName`` used when the user declines to tell us their 
 ``@QueryParam("name")`` annotation tells Jersey to map the ``name`` parameter from the query string
 to the ``name`` parameter in the method. If the client sends a request to
 ``/hello-world?name=Dougie``, ``sayHello`` will be called with ``Optional.of("Dougie")``; if there
-is no ``name`` parameter in the query string, ``sayHello`` will be called with ``Option.absent()``.
+is no ``name`` parameter in the query string, ``sayHello`` will be called with ``Optional.absent()``.
 (Support for Guava's ``Optional`` is a little extra sauce that Dropwizard adds to Jersey's existing
 functionality.)
 
