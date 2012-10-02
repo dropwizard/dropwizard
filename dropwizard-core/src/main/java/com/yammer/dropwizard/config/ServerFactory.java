@@ -270,7 +270,7 @@ public class ServerFactory {
     private Handler createExternalServlet(Environment env) {
         final ServletContextHandler handler = new ServletContextHandler();
         handler.addFilter(ThreadNameFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST));
-        handler.setBaseResource(Resource.newClassPathResource("."));
+        handler.setBaseResource(env.getBaseResource());
 
         for (ImmutableMap.Entry<String, ServletHolder> entry : env.getServlets().entrySet()) {
             handler.addServlet(entry.getValue(), entry.getKey());

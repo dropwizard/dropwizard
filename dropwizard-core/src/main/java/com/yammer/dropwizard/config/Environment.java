@@ -22,6 +22,8 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.component.AbstractLifeCycle;
 import org.eclipse.jetty.util.component.AggregateLifeCycle;
 import org.eclipse.jetty.util.component.LifeCycle;
+import org.eclipse.jetty.util.resource.Resource;
+import java.io.IOException;
 
 import javax.annotation.Nullable;
 import javax.servlet.Filter;
@@ -56,6 +58,8 @@ public class Environment extends AbstractLifeCycle {
     private final ImmutableMultimap.Builder<String, FilterHolder> filters;
     private final ImmutableSet.Builder<EventListener> servletListeners;
     private final ImmutableSet.Builder<Task> tasks;
+    private final ImmutableSet.Builder<String> protectedTargets;
+    private Resource baseResource;
     private final AggregateLifeCycle lifeCycle;
     private SessionHandler sessionHandler;
 
@@ -84,6 +88,8 @@ public class Environment extends AbstractLifeCycle {
         this.filters = ImmutableMultimap.builder();
         this.servletListeners = ImmutableSet.builder();
         this.tasks = ImmutableSet.builder();
+        this.baseResource = Resource.newClassPathResource(".");
+        this.protectedTargets = ImmutableSet.builder();
         this.lifeCycle = new AggregateLifeCycle();
         
         final HttpServlet jerseyContainer = service.getJerseyContainer(config, configuration);
@@ -272,6 +278,19 @@ public class Environment extends AbstractLifeCycle {
         tasks.add(checkNotNull(task));
     }
 
+    /**
+     * Adds a protected Target (ie a target that 404s)
+     *
+     * @param target  a protected target
+     */
+    public void addProtectedTarget(String target) {
+        protectedTargets.add(checkNotNull(target));
+    }
+
+    public void setBaseResource(Resource baseResource) throws IOException {
+        this.baseResource = Resource.newResource(baseResource.getURL());
+    }
+
     public void setSessionHandler(SessionHandler sessionHandler) {
         this.sessionHandler = sessionHandler;
     }
@@ -382,6 +401,18 @@ public class Environment extends AbstractLifeCycle {
 
     ImmutableSet<Task> getTasks() {
         return tasks.build();
+    }
+
+    ImmutableSet<String> getProtectedTargets() {
+        return protectedTargets.build();
+    }
+
+    Resource getBaseResource() {
+        try {
+            return Resource.newResource(this.baseResource.getURL());
+        } catch(IOException ioe) {
+            return null;
+        }
     }
 
     ImmutableSet<EventListener> getServletListeners() {
