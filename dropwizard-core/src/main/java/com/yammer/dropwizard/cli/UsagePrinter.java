@@ -4,6 +4,8 @@ import com.yammer.dropwizard.AbstractService;
 import com.yammer.dropwizard.util.JarLocation;
 import org.apache.commons.cli.HelpFormatter;
 
+import java.io.PrintWriter;
+
 @SuppressWarnings("UseOfSystemOutOrSystemErr")
 public class UsagePrinter {
     private UsagePrinter() {
@@ -11,9 +13,9 @@ public class UsagePrinter {
     }
 
     public static void printRootHelp(AbstractService<?> service) {
-        System.out.printf("java -jar %s <command> [arg1 arg2]\n\n", new JarLocation(service.getClass()));
-        System.out.println("Commands");
-        System.out.println("========\n");
+        System.err.printf("java -jar %s <command> [arg1 arg2]\n\n", new JarLocation(service.getClass()));
+        System.err.println("Commands");
+        System.err.println("========\n");
 
         for (Command command : service.getCommands()) {
             printCommandHelp(command, service.getClass());
@@ -27,15 +29,24 @@ public class UsagePrinter {
     public static void printCommandHelp(Command cmd, Class<?> klass, String errorMessage) {
         if (errorMessage != null) {
             System.err.println(errorMessage);
-            System.out.println();
+            System.err.println();
         }
 
-        System.out.println(formatTitle(cmd));
+        System.err.println(formatTitle(cmd));
         final HelpFormatter helpFormatter = new HelpFormatter();
         helpFormatter.setLongOptPrefix(" --");
-        helpFormatter.printHelp(String.format("java -jar %s", cmd.getUsage(klass)),
-                                cmd.getOptionsWithHelp());
-        System.out.println("\n");
+        final PrintWriter pw = new PrintWriter(System.err);
+        helpFormatter.printHelp(pw,
+                                HelpFormatter.DEFAULT_WIDTH,
+                                String.format("java -jar %s", cmd.getUsage(klass)),
+                                null,
+                                cmd.getOptionsWithHelp(),
+                                HelpFormatter.DEFAULT_LEFT_PAD,
+                                HelpFormatter.DEFAULT_DESC_PAD,
+                                null,
+                                false);
+        pw.flush();
+        System.err.println("\n");
     }
 
     private static String formatTitle(Command cmd) {

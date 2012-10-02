@@ -27,6 +27,7 @@ Many, many thanks to:
 * `Eric Tschetter <https://github.com/metamx>`_
 * `Fredrik Sundberg <https://github.com/KingBuzzer>`_
 * `James Ward <https://github.com/jamesward>`_
+* `Jared Stehler <https://github.com/cengageng>`_
 * `Jochen Schalanda <https://github.com/joschi>`_
 * `Joshua Spiewak <https://github.com/jspiewak>`_
 * `Mark Wolfe <https://github.com/wolfeidau>`_

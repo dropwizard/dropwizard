@@ -55,4 +55,14 @@
     <Class name="~com\.yammer\.dropwizard\.providers\.OauthTokenProvider.*"/>
     <Class name="~com\.yammer\.dropwizard\.ScalaService.*"/>
     <Class name="~com\.yammer\.dropwizard\.Logging.*" />
+
+    <!-- we're intentionally using default encoding and System.exit -->
+    <Match>
+        <Class name="com.yammer.dropwizard.AbstractService"/>
+        <Bug pattern="DM_EXIT"/>
+    </Match>
+    <Match>
+        <Class name="com.yammer.dropwizard.cli.UsagePrinter"/>
+        <Bug pattern="DM_DEFAULT_ENCODING"/>
+    </Match>
 </FindBugsFilter>

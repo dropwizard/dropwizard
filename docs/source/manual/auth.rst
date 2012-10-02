@@ -98,7 +98,7 @@ which takes an instance of ``String``.
     @Override
     protected void initialize(ExampleConfiguration configuration,
                               Environment environment) {
-        environment.addProvider(new BasicAuthProvider<User>(new ExampleAuthenticator(),
+        environment.addProvider(new OAuthProvider<User>(new ExampleAuthenticator(),
                                                             "SUPER SECRET STUFF"));
     }
 
