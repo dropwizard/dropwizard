@@ -8,7 +8,7 @@ import com.sun.jersey.api.client.Client;
 import com.sun.jersey.test.framework.AppDescriptor;
 import com.sun.jersey.test.framework.JerseyTest;
 import com.sun.jersey.test.framework.LowLevelAppDescriptor;
-import com.yammer.dropwizard.bundles.JavaBundle;
+import com.yammer.dropwizard.bundles.BasicBundle;
 import com.yammer.dropwizard.jersey.DropwizardResourceConfig;
 import com.yammer.dropwizard.jersey.JacksonMessageBodyProvider;
 import com.yammer.dropwizard.json.Json;
@@ -72,7 +72,7 @@ public abstract class ResourceTest {
             @Override
             protected AppDescriptor configure() {
                 final DropwizardResourceConfig config = new DropwizardResourceConfig(true);
-                for (Class<?> provider : JavaBundle.DEFAULT_PROVIDERS) { // sorry, Scala folks
+                for (Class<?> provider : BasicBundle.DEFAULT_PROVIDERS) { // sorry, Scala folks
                     config.getClasses().add(provider);
                 }
                 for (Class<?> provider : providers) {

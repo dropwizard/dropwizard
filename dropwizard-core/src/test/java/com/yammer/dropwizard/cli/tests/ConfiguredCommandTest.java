@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableList;
 import com.google.common.io.Files;
-import com.yammer.dropwizard.AbstractService;
 import com.yammer.dropwizard.Service;
 import com.yammer.dropwizard.cli.Cli;
 import com.yammer.dropwizard.cli.Command;
@@ -56,7 +55,7 @@ public class ConfiguredCommandTest {
         private boolean verbose = false;
 
         @Override
-        protected void run(AbstractService<MyConfig> service,
+        protected void run(Service<MyConfig> service,
                            MyConfig configuration) {
             this.type = configuration.getType();
         }

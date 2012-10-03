@@ -6,7 +6,7 @@ import com.sun.jersey.api.core.ResourceConfig;
 import com.sun.jersey.core.reflection.AnnotatedMethod;
 import com.sun.jersey.core.reflection.MethodList;
 import com.sun.jersey.core.spi.scanning.PackageNamesScanner;
-import com.yammer.dropwizard.AbstractService;
+import com.yammer.dropwizard.Service;
 import com.yammer.dropwizard.jersey.DropwizardResourceConfig;
 import com.yammer.dropwizard.jetty.JettyManaged;
 import com.yammer.dropwizard.jetty.NonblockingServletHolder;
@@ -49,7 +49,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class Environment extends AbstractLifeCycle {
     private static final Log LOG = Log.forClass(Environment.class);
 
-    private final AbstractService<?> service;
+    private final Service<?> service;
     private final DropwizardResourceConfig config;
     private final ImmutableSet.Builder<HealthCheck> healthChecks;
     private final ImmutableMap.Builder<String, ServletHolder> servlets;
@@ -65,7 +65,7 @@ public class Environment extends AbstractLifeCycle {
      * @param service          the service
      * @param configuration    the service's {@link com.yammer.dropwizard.config.Configuration}
      */
-    public <T extends Configuration> Environment(AbstractService<T> service, T configuration) {
+    public <T extends Configuration> Environment(Service<T> service, T configuration) {
         this.service = service;
         this.config = new DropwizardResourceConfig(false) {
             @Override
@@ -503,7 +503,7 @@ public class Environment extends AbstractLifeCycle {
         return new MethodList(resource, true).hasMetaAnnotation(HttpMethod.class);
     }
 
-    public AbstractService<?> getService() {
+    public Service<?> getService() {
         return service;
     }
 

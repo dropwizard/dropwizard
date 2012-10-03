@@ -3,7 +3,7 @@ package com.yammer.dropwizard.bundles.tests;
 import com.fasterxml.jackson.databind.Module;
 import com.google.common.collect.ImmutableList;
 import com.yammer.dropwizard.Service;
-import com.yammer.dropwizard.bundles.JavaBundle;
+import com.yammer.dropwizard.bundles.BasicBundle;
 import com.yammer.dropwizard.config.Environment;
 import com.yammer.dropwizard.jersey.JacksonMessageBodyProvider;
 import com.yammer.dropwizard.jersey.OptionalQueryParamInjectableProvider;
@@ -18,7 +18,7 @@ public class JavaBundleTest {
     private final Environment environment = mock(Environment.class);
     private final Service<?> service = mock(Service.class);
     private final Json json = mock(Json.class);
-    private final JavaBundle bundle = new JavaBundle(service);
+    private final BasicBundle bundle = new BasicBundle(service);
 
     @Before
     public void setUp() throws Exception {

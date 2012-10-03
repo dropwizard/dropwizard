@@ -2,7 +2,7 @@ package com.yammer.dropwizard.cli;
 
 import com.beust.jcommander.JCommander;
 import com.google.common.base.Optional;
-import com.yammer.dropwizard.AbstractService;
+import com.yammer.dropwizard.Service;
 import com.yammer.dropwizard.util.JarLocation;
 
 import java.io.PrintStream;
@@ -10,10 +10,10 @@ import java.io.PrintStream;
 public class Cli {
     private final PrintStream output;
     private final JCommander commander;
-    private final AbstractService<?> service;
+    private final Service<?> service;
     private final HelpCommand helpCommand;
 
-    public Cli(AbstractService<?> service, Iterable<Command> commands, PrintStream output) {
+    public Cli(Service<?> service, Iterable<Command> commands, PrintStream output) {
         this.service = service;
         this.output = output;
         this.commander = new JCommander();

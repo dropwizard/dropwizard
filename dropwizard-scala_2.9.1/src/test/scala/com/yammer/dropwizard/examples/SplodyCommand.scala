@@ -1,7 +1,7 @@
 package com.yammer.dropwizard.examples
 
 import com.yammer.dropwizard.cli.Command
-import com.yammer.dropwizard.{AbstractService, Service}
+import com.yammer.dropwizard.Service
 import com.beust.jcommander.{Parameter, Parameters}
 
 @Parameters(commandNames = Array("splody"), commandDescription = "Explodes with an error")
@@ -12,7 +12,7 @@ class SplodyCommand extends Command {
   @Parameter(names = Array("-e", "--exception"), description = "Throw an exception")
   private var exception = false
 
-  protected def run(service: AbstractService[_]) {
+  protected def run(service: Service[_]) {
     if (exception) {
       println("Throwing an exception")
       sys.error("EXPERIENCE BIJ")

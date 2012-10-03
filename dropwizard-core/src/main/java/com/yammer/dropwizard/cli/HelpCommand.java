@@ -3,7 +3,7 @@ package com.yammer.dropwizard.cli;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
-import com.yammer.dropwizard.AbstractService;
+import com.yammer.dropwizard.Service;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -25,7 +25,7 @@ public class HelpCommand implements Command {
     }
 
     @Override
-    public void run(AbstractService<?> service) throws Exception {
+    public void run(Service<?> service) throws Exception {
         final StringBuilder builder = new StringBuilder();
         if (commands.isEmpty()) {
             commander.usage(builder);

@@ -4,7 +4,7 @@ import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
-import com.yammer.dropwizard.AbstractService;
+import com.yammer.dropwizard.Service;
 import com.yammer.dropwizard.cli.Cli;
 import com.yammer.dropwizard.cli.Command;
 import org.junit.Test;
@@ -27,7 +27,7 @@ public class CliTest {
 
         @Override
         @SuppressWarnings("NewExceptionWithoutArguments")
-        public void run(AbstractService<?> service) throws Exception {
+        public void run(Service<?> service) throws Exception {
             this.ran = true;
             if ("monkey".equals(name)) {
                 throw new RuntimeException("bad thing");
@@ -45,7 +45,7 @@ public class CliTest {
         }
     }
 
-    private final AbstractService<?> service = mock(AbstractService.class);
+    private final Service<?> service = mock(Service.class);
     private final OtherCommand other = new OtherCommand();
     private final ByteArrayOutputStream output = new ByteArrayOutputStream();
     private final Cli cli = new Cli(service,

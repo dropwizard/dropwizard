@@ -1,23 +1,23 @@
 package com.yammer.dropwizard.bundles;
 
 import com.google.common.collect.ImmutableList;
-import com.yammer.dropwizard.Bundle;
 import com.yammer.dropwizard.Service;
+import com.yammer.dropwizard.Bundle;
 import com.yammer.dropwizard.config.Environment;
 import com.yammer.dropwizard.jersey.JacksonMessageBodyProvider;
 import com.yammer.dropwizard.jersey.OptionalQueryParamInjectableProvider;
 
 /**
- * Initializes the service with support for Java classes.
+ * Initializes the service with support for basic Java classes.
  */
-public class JavaBundle implements Bundle {
+public class BasicBundle implements Bundle {
     public static final ImmutableList<Class<?>> DEFAULT_PROVIDERS = ImmutableList.<Class<?>>of(
             OptionalQueryParamInjectableProvider.class
     );
 
     private final Service<?> service;
 
-    public JavaBundle(Service<?> service) {
+    public BasicBundle(Service<?> service) {
         this.service = service;
     }
 

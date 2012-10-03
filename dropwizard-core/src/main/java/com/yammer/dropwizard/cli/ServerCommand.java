@@ -3,7 +3,7 @@ package com.yammer.dropwizard.cli;
 import com.beust.jcommander.Parameters;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
-import com.yammer.dropwizard.AbstractService;
+import com.yammer.dropwizard.Service;
 import com.yammer.dropwizard.config.Configuration;
 import com.yammer.dropwizard.config.Environment;
 import com.yammer.dropwizard.config.ServerFactory;
@@ -43,7 +43,7 @@ public class ServerCommand<T extends Configuration> extends ConfiguredCommand<T>
     }
 
     @Override
-    protected void run(AbstractService<T> service, T configuration) throws Exception {
+    protected void run(Service<T> service, T configuration) throws Exception {
         final Environment environment = new Environment(service, configuration);
         service.initializeWithBundles(configuration, environment);
         final Server server = new ServerFactory(configuration.getHttpConfiguration(),
@@ -59,7 +59,7 @@ public class ServerCommand<T extends Configuration> extends ConfiguredCommand<T>
         }
     }
 
-    private void logBanner(AbstractService<T> service, Log log) {
+    private void logBanner(Service<T> service, Log log) {
         try {
             final String banner = Resources.toString(Resources.getResource("banner.txt"),
                                                      Charsets.UTF_8);

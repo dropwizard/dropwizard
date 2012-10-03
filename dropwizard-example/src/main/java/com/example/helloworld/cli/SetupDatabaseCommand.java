@@ -3,7 +3,7 @@ package com.example.helloworld.cli;
 import com.beust.jcommander.Parameters;
 import com.example.helloworld.HelloWorldConfiguration;
 import com.example.helloworld.db.PeopleDAO;
-import com.yammer.dropwizard.AbstractService;
+import com.yammer.dropwizard.Service;
 import com.yammer.dropwizard.cli.ConfiguredCommand;
 import com.yammer.dropwizard.config.Environment;
 import com.yammer.dropwizard.db.Database;
@@ -15,7 +15,7 @@ import com.yammer.dropwizard.logging.Log;
 public class SetupDatabaseCommand extends ConfiguredCommand<HelloWorldConfiguration> {
 
     @Override
-    protected void run(AbstractService<HelloWorldConfiguration> service,
+    protected void run(Service<HelloWorldConfiguration> service,
                        HelloWorldConfiguration configuration) throws Exception {
         final Log log = Log.forClass(SetupDatabaseCommand.class);
         final Environment environment = new Environment(service, configuration);

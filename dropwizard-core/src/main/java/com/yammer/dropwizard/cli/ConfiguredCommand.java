@@ -3,7 +3,7 @@ package com.yammer.dropwizard.cli;
 import com.beust.jcommander.Parameter;
 import com.fasterxml.jackson.databind.Module;
 import com.google.common.collect.ImmutableList;
-import com.yammer.dropwizard.AbstractService;
+import com.yammer.dropwizard.Service;
 import com.yammer.dropwizard.config.Configuration;
 import com.yammer.dropwizard.config.ConfigurationException;
 import com.yammer.dropwizard.config.ConfigurationFactory;
@@ -58,13 +58,13 @@ public abstract class ConfiguredCommand<T extends Configuration> implements Comm
 
     @Override
     @SuppressWarnings("unchecked")
-    public void run(AbstractService<?> service) throws Exception {
+    public void run(Service<?> service) throws Exception {
         final T configuration = parseConfiguration(getConfigurationClass(),
                                                    service.getJacksonModules());
 
         if (configuration != null) {
             new LoggingFactory(configuration.getLoggingConfiguration(), service.getName()).configure();
-            run((AbstractService<T>)service, configuration);
+            run((Service<T>)service, configuration);
         }
     }
 
@@ -81,13 +81,13 @@ public abstract class ConfiguredCommand<T extends Configuration> implements Comm
     }
 
     /**
-     * Runs the command with the given {@link AbstractService} and {@link Configuration}.
+     * Runs the command with the given {@link com.yammer.dropwizard.Service} and {@link Configuration}.
      *
      * @param service          the service to which the command belongs
      * @param configuration    the configuration object
      * @throws Exception if something goes wrong
      */
-    protected abstract void run(AbstractService<T> service,
+    protected abstract void run(Service<T> service,
                                 T configuration) throws  Exception;
 
     protected final List<String> getArguments() {
