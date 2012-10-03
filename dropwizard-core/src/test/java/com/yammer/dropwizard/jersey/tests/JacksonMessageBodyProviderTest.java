@@ -9,6 +9,7 @@ import static org.junit.Assert.fail;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -17,6 +18,7 @@ import java.lang.annotation.Annotation;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.ws.rs.core.MediaType;
+import javax.validation.constraints.NotNull;
 
 import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.annotate.JsonIgnoreType;
@@ -29,10 +31,24 @@ import com.sun.jersey.core.util.StringKeyObjectValueIgnoreCaseMultivaluedMap;
 import com.yammer.dropwizard.jersey.JacksonMessageBodyProvider;
 import com.yammer.dropwizard.json.Json;
 import com.yammer.dropwizard.validation.InvalidEntityException;
+import com.yammer.dropwizard.validation.Validated;
 
 @SuppressWarnings("unchecked")
 public class JacksonMessageBodyProviderTest {
     private static final Annotation[] NONE = new Annotation[0];
+
+    public interface Partial1{}
+    public interface Partial2{}
+
+    public static class PartialExample {
+        @Min(value = 0, groups = Partial1.class)
+        @JsonProperty
+        int id;
+
+        @NotNull(groups = Partial2.class)
+        @JsonProperty
+        String text;
+    }
 
     public static class Example {
         @Min(0)
@@ -136,6 +152,76 @@ public class JacksonMessageBodyProviderTest {
         assertThat(((Example) obj).id,
                    is(1));
     }
+
+   @Test
+   public void returnsPartialValidatedRequestEntities() throws Exception {
+       final Validated valid = mock(Validated.class);
+       doReturn(Validated.class).when(valid).annotationType();
+       when(valid.value()).thenReturn(new Class<?>[]{Partial1.class,Partial2.class});
+
+       final ByteArrayInputStream entity = new ByteArrayInputStream("{\"id\":1,\"text\":\"hello Cemo\"}".getBytes());
+       final Class<?> klass = PartialExample.class;
+
+       final Object obj = provider.readFrom((Class<Object>) klass,
+                                            PartialExample.class,
+                                            new Annotation[] { valid },
+                                            MediaType.APPLICATION_JSON_TYPE,
+                                            new MultivaluedMapImpl(),
+                                            entity);
+
+       assertThat(obj,
+                  is(instanceOf(PartialExample.class)));
+
+       assertThat(((PartialExample) obj).id,
+                  is(1));
+   }
+
+
+   @Test
+   public void returnsPartialValidatedByGroupRequestEntities() throws Exception {
+       final Validated valid = mock(Validated.class);
+       doReturn(Validated.class).when(valid).annotationType();
+       when(valid.value()).thenReturn(new Class<?>[]{Partial1.class});
+
+       final ByteArrayInputStream entity = new ByteArrayInputStream("{\"id\":1}".getBytes());
+       final Class<?> klass = PartialExample.class;
+
+       final Object obj = provider.readFrom((Class<Object>) klass,
+                                            PartialExample.class,
+                                            new Annotation[] { valid },
+                                            MediaType.APPLICATION_JSON_TYPE,
+                                            new MultivaluedMapImpl(),
+                                            entity);
+
+       assertThat(obj,
+                  is(instanceOf(PartialExample.class)));
+
+       assertThat(((PartialExample) obj).id,
+                  is(1));
+   }
+
+
+   @Test
+   public void throwsAnInvalidEntityExceptionForPartialValidatedRequestEntities() throws Exception {
+       final Validated valid = mock(Validated.class);
+       doReturn(Validated.class).when(valid).annotationType();
+       when(valid.value()).thenReturn(new Class<?>[]{Partial1.class,Partial2.class});
+
+       final ByteArrayInputStream entity = new ByteArrayInputStream("{\"id\":1}".getBytes());
+       final Class<?> klass = PartialExample.class;
+
+       try{
+       final Object obj = provider.readFrom((Class<Object>) klass,
+                                            PartialExample.class,
+                                            new Annotation[] { valid },
+                                            MediaType.APPLICATION_JSON_TYPE,
+                                            new MultivaluedMapImpl(),
+                                            entity);
+       } catch (InvalidEntityException e) {
+          assertThat(e.getErrors(),
+                     is(ImmutableList.of("text may not be null (was null)")));
+       }
+   }
 
     @Test
     public void throwsAnInvalidEntityExceptionForInvalidRequestEntities() throws Exception {

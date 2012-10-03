@@ -3,12 +3,14 @@ package com.yammer.dropwizard.jersey;
 import com.google.common.collect.ImmutableList;
 import com.yammer.dropwizard.json.Json;
 import com.yammer.dropwizard.validation.InvalidEntityException;
+import com.yammer.dropwizard.validation.Validated;
 import com.yammer.dropwizard.validation.Validator;
 import org.codehaus.jackson.annotate.JsonIgnoreType;
 import org.codehaus.jackson.jaxrs.JacksonJaxbJsonProvider;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import javax.validation.Valid;
+import javax.validation.groups.Default;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.ext.Provider;
@@ -28,6 +30,12 @@ import java.lang.reflect.Type;
  */
 @Provider
 public class JacksonMessageBodyProvider extends JacksonJaxbJsonProvider {
+
+    /**
+  	  * The default group array used in case any of the validate methods is called without a group.
+  	  */
+  	 private static final Class<?>[] DEFAULT_GROUP_ARRAY = new Class<?>[] { Default.class };
+
     private static final Validator VALIDATOR = new Validator();
 
     public JacksonMessageBodyProvider(Json json) {
@@ -65,24 +73,28 @@ public class JacksonMessageBodyProvider extends JacksonJaxbJsonProvider {
                                             entityStream));
     }
 
-    private Object validate(Annotation[] annotations, Object value) {
-        boolean validating = false;
-        for (Annotation annotation : annotations) {
-            validating = validating || (annotation.annotationType() == Valid.class);
-        }
+   private Object validate(Annotation[] annotations, Object value) {
+      Class<?>[] classes = null;
 
-        if (validating) {
-            final ImmutableList<String> errors = VALIDATOR.validate(value);
-            if (!errors.isEmpty()) {
-                throw new InvalidEntityException("The request entity had the following errors:",
-                                                 errors);
-            }
-        }
+      for(Annotation annotation : annotations) {
+         if(annotation.annotationType() == Valid.class) {
+            classes = DEFAULT_GROUP_ARRAY;
+         } else if(annotation.annotationType() == Validated.class) {
+            classes = ((Validated) annotation).value();
+         }
+      }
 
-        return value;
-    }
+      if(classes != null) {
+         final ImmutableList<String> errors = VALIDATOR.validate(value,classes);
+         if(!errors.isEmpty()) {
+            throw new InvalidEntityException("The request entity had the following errors:",
+               errors);
+         }
+      }
 
-    @Override
+      return value;
+   }
+   @Override
     public boolean isWriteable(Class<?> type,
                                Type genericType,
                                Annotation[] annotations,

@@ -510,4 +510,8 @@ public class Environment extends AbstractLifeCycle {
     public SessionHandler getSessionHandler() {
         return sessionHandler;
     }
+
+    public DropwizardResourceConfig getConfig() {
+      return config;
+    }
 }
