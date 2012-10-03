@@ -55,7 +55,7 @@
         <dependency>
             <groupId>com.codahale</groupId>
             <artifactId>jerkson_${scala.version}</artifactId>
-            <version>0.5.0</version>
+            <version>0.6.0</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.codehaus.jackson</groupId>
