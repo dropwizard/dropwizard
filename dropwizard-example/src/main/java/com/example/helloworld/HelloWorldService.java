@@ -31,8 +31,8 @@ public class HelloWorldService extends Service<HelloWorldConfiguration> {
     }
 
     @Override
-    protected void initialize(HelloWorldConfiguration configuration,
-                              Environment environment) throws ClassNotFoundException {
+    protected void run(HelloWorldConfiguration configuration,
+                       Environment environment) throws ClassNotFoundException {
         environment.addProvider(new BasicAuthProvider<User>(new ExampleAuthenticator(),
                                                             "SUPER SECRET STUFF"));
 

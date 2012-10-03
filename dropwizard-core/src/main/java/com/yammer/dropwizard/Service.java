@@ -156,25 +156,25 @@ public abstract class Service<T extends Configuration> {
      * @param environment      the service's {@link Environment}
      * @throws Exception if something goes wrong
      */
-    protected abstract void initialize(T configuration, Environment environment) throws Exception;
+    protected abstract void run(T configuration, Environment environment) throws Exception;
 
     /**
      * Initializes the given {@link Environment} given a {@link Configuration} instances. First the
      * bundles are initialized in the order they were added, then the service's
-     * {@link #initialize(Configuration, Environment)} method is called.
+     * {@link #run} method is called.
      *
      * @param configuration    the parsed {@link Configuration} object
      * @param environment      the service's {@link Environment}
      * @throws Exception if something goes wrong
      */
-    public final void initializeWithBundles(T configuration, Environment environment) throws Exception {
+    public final void runWithBundles(T configuration, Environment environment) throws Exception {
         for (Bundle bundle : bundles) {
             bundle.initialize(environment);
         }
         for (ConfiguredBundle<? super T> bundle : configuredBundles) {
             bundle.initialize(configuration, environment);
         }
-        initialize(configuration, environment);
+        run(configuration, environment);
     }
 
     /**
@@ -216,7 +216,7 @@ public abstract class Service<T extends Configuration> {
      * Subclasses must either use the same {@code config} instance or delegate to it.
      * <p>
      * This method may be called before the service initialized with 
-     * {@link #initialize(Configuration, Environment)}; service implementations must not 
+     * {@link #run}; service implementations must not
      * assume the service has been initialized.
      * <p>
      * An implementation that chooses to return {@code null} is responsible for creating

@@ -45,7 +45,7 @@ public class ServerCommand<T extends Configuration> extends ConfiguredCommand<T>
     @Override
     protected void run(Service<T> service, T configuration) throws Exception {
         final Environment environment = new Environment(service, configuration);
-        service.initializeWithBundles(configuration, environment);
+        service.runWithBundles(configuration, environment);
         final Server server = new ServerFactory(configuration.getHttpConfiguration(),
                                                 service.getName()).buildServer(environment);
         final Log log = Log.forClass(ServerCommand.class);

@@ -39,7 +39,7 @@ public class ConfiguredCommandTest {
         }
 
         @Override
-        protected void initialize(MyConfig configuration, Environment environment) throws Exception {
+        protected void run(MyConfig configuration, Environment environment) throws Exception {
         }
     }
 

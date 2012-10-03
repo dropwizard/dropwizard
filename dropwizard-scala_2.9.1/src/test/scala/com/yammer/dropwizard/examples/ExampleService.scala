@@ -7,7 +7,7 @@ object ExampleService extends ScalaService[ExampleConfiguration]("example") with
   addCommand(new SayCommand)
   addCommand(new SplodyCommand)
 
-  def initialize(configuration: ExampleConfiguration, environment: Environment) {
+  def run(configuration: ExampleConfiguration, environment: Environment) {
     environment.addResource(new HelloWorldResource(configuration.saying))
     environment.addResource(new UploadResource)
     environment.addResource(new SplodyResource)

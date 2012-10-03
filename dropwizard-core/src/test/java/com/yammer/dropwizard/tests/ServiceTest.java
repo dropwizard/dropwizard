@@ -21,8 +21,8 @@ public class ServiceTest {
         }
 
         @Override
-        protected void initialize(FakeConfiguration configuration,
-                                  Environment environment) {
+        protected void run(FakeConfiguration configuration,
+                           Environment environment) {
         }
     }
 

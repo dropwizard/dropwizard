@@ -16,7 +16,7 @@ public class TemplateService extends Service<Configuration> {
     }
 
     @Override
-    protected void initialize(Configuration configuration, Environment environment) {
+    protected void run(Configuration configuration, Environment environment) {
         environment.addResource(new HelloWorldResource());
         environment.addResource(new BadResource());
         environment.addResource(new AnotherResource());
