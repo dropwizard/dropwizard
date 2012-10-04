@@ -14,6 +14,7 @@ import com.example.helloworld.resources.ProtectedResource;
 import com.yammer.dropwizard.Service;
 import com.yammer.dropwizard.auth.basic.BasicAuthProvider;
 import com.yammer.dropwizard.bundles.AssetsBundle;
+import com.yammer.dropwizard.config.Bootstrap;
 import com.yammer.dropwizard.config.Environment;
 import com.yammer.dropwizard.db.Database;
 import com.yammer.dropwizard.db.DatabaseFactory;
@@ -23,16 +24,17 @@ public class HelloWorldService extends Service<HelloWorldConfiguration> {
         new HelloWorldService().run(args);
     }
 
-    private HelloWorldService() {
-        super("hello-world");
-        addCommand(new RenderCommand());
-        addCommand(new SetupDatabaseCommand());
-        addBundle(new AssetsBundle());
+    @Override
+    public void initialize(Bootstrap<HelloWorldConfiguration> bootstrap) {
+        bootstrap.setName("hello-world");
+        bootstrap.addCommand(new RenderCommand());
+        bootstrap.addCommand(new SetupDatabaseCommand());
+        bootstrap.addBundle(new AssetsBundle());
     }
 
     @Override
-    protected void run(HelloWorldConfiguration configuration,
-                       Environment environment) throws ClassNotFoundException {
+    public void run(HelloWorldConfiguration configuration,
+                    Environment environment) throws ClassNotFoundException {
         environment.addProvider(new BasicAuthProvider<User>(new ExampleAuthenticator(),
                                                             "SUPER SECRET STUFF"));
 

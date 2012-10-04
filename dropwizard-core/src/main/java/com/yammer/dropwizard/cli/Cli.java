@@ -3,24 +3,27 @@ package com.yammer.dropwizard.cli;
 import com.beust.jcommander.JCommander;
 import com.google.common.base.Optional;
 import com.yammer.dropwizard.Service;
+import com.yammer.dropwizard.config.Bootstrap;
 import com.yammer.dropwizard.util.JarLocation;
 
 import java.io.PrintStream;
 
 public class Cli {
+    private final Bootstrap<?> bootstrap;
     private final PrintStream output;
     private final JCommander commander;
-    private final Service<?> service;
     private final HelpCommand helpCommand;
 
-    public Cli(Service<?> service, Iterable<Command> commands, PrintStream output) {
-        this.service = service;
+    public Cli(Bootstrap<?> bootstrap,
+               Service<?> service,
+               PrintStream output) {
+        this.bootstrap = bootstrap;
         this.output = output;
         this.commander = new JCommander();
         this.helpCommand = new HelpCommand(commander, output);
         commander.addCommand(helpCommand);
         commander.setProgramName("java -jar " + new JarLocation(service.getClass()));
-        for (Command command : commands) {
+        for (Command command : bootstrap.getCommands()) {
             commander.addCommand(command);
         }
     }
@@ -30,14 +33,14 @@ public class Cli {
             commander.parse(arguments);
             final String commandName = commander.getParsedCommand();
             if (commandName == null) {
-                helpCommand.run(service);
+                helpCommand.run(bootstrap);
                 return Optional.of("");
             }
             final Command command = (Command) commander.getCommands()
                                                        .get(commandName)
                                                        .getObjects()
                                                        .get(0);
-            command.run(service);
+            command.run(bootstrap);
             return Optional.absent();
         } catch (Exception e) {
             if (e.getMessage() == null) {

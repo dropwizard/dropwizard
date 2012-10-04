@@ -5,8 +5,8 @@ import com.beust.jcommander.Parameters;
 import com.example.helloworld.HelloWorldConfiguration;
 import com.example.helloworld.core.Template;
 import com.google.common.base.Optional;
-import com.yammer.dropwizard.Service;
 import com.yammer.dropwizard.cli.ConfiguredCommand;
+import com.yammer.dropwizard.config.Bootstrap;
 import com.yammer.dropwizard.logging.Log;
 
 @Parameters(commandNames = "render",
@@ -20,7 +20,7 @@ public class RenderCommand extends ConfiguredCommand<HelloWorldConfiguration> {
     private boolean includeDefault = false;
 
     @Override
-    protected void run(Service<HelloWorldConfiguration> service,
+    protected void run(Bootstrap<HelloWorldConfiguration> bootstrap,
                        HelloWorldConfiguration configuration) throws Exception {
         final Template template = configuration.buildTemplate();
 

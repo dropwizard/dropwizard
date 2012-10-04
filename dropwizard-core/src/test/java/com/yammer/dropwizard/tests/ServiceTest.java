@@ -2,6 +2,7 @@ package com.yammer.dropwizard.tests;
 
 import com.yammer.dropwizard.Bundle;
 import com.yammer.dropwizard.Service;
+import com.yammer.dropwizard.config.Bootstrap;
 import com.yammer.dropwizard.config.Configuration;
 import com.yammer.dropwizard.config.Environment;
 import org.junit.Test;
@@ -16,12 +17,13 @@ public class ServiceTest {
     }
 
     private class FakeService extends Service<FakeConfiguration> {
-        FakeService() {
-            addBundle(bundle);
+        @Override
+        public void initialize(Bootstrap<FakeConfiguration> bootstrap) {
+            bootstrap.addBundle(bundle);
         }
 
         @Override
-        protected void run(FakeConfiguration configuration,
+        public void run(FakeConfiguration configuration,
                            Environment environment) {
         }
     }
@@ -42,13 +44,5 @@ public class ServiceTest {
     public void canDetermineConfiguration() throws Exception {
         assertThat(new PoserService().getConfigurationClass())
                 .isSameAs(FakeConfiguration.class);
-    }
-
-    @Test
-    public void defualtNameIsSimpleNameOfServiceClass() throws Exception {
-        assertThat(new FakeService().getName())
-                .isEqualTo(FakeService.class.getSimpleName());
-        assertThat(new PoserService().getName())
-                .isEqualTo(PoserService.class.getSimpleName());
     }
 }

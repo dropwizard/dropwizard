@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
 import com.google.common.collect.ImmutableList;
-import com.yammer.dropwizard.json.Json;
 import com.yammer.dropwizard.validation.InvalidEntityException;
 import com.yammer.dropwizard.validation.Validator;
 
@@ -29,10 +28,6 @@ import java.lang.reflect.Type;
 @Provider
 public class JacksonMessageBodyProvider extends JacksonJaxbJsonProvider {
     private static final Validator VALIDATOR = new Validator();
-
-    public JacksonMessageBodyProvider(Json json) {
-        setMapper(json.getObjectMapper());
-    }
 
     public JacksonMessageBodyProvider(ObjectMapper mapper) {
         setMapper(mapper);

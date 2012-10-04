@@ -21,16 +21,12 @@ import java.io.IOException;
  */
 @Parameters(commandNames = "server",
             commandDescription = "Run as an HTTP server")
-public class ServerCommand<T extends Configuration> extends ConfiguredCommand<T> {
+public class ServerCommand<T extends Configuration> extends EnvironmentCommand<T> {
     private final Class<T> configurationClass;
 
-    /**
-     * Creates a new {@link ServerCommand} with the given configuration class.
-     *
-     * @param configurationClass    the configuration class the YAML file is parsed as
-     */
-    public ServerCommand(Class<T> configurationClass) {
-        this.configurationClass = configurationClass;
+    public ServerCommand(Service<T> service) {
+        super(service);
+        this.configurationClass = service.getConfigurationClass();
     }
 
     /*
@@ -43,13 +39,11 @@ public class ServerCommand<T extends Configuration> extends ConfiguredCommand<T>
     }
 
     @Override
-    protected void run(Service<T> service, T configuration) throws Exception {
-        final Environment environment = new Environment(service, configuration);
-        service.runWithBundles(configuration, environment);
+    protected void run(Environment environment, T configuration) throws Exception {
         final Server server = new ServerFactory(configuration.getHttpConfiguration(),
-                                                service.getName()).buildServer(environment);
+                                                environment.getName()).buildServer(environment);
         final Log log = Log.forClass(ServerCommand.class);
-        logBanner(service, log);
+        logBanner(environment.getName(), log);
         try {
             server.start();
             server.join();
@@ -59,16 +53,16 @@ public class ServerCommand<T extends Configuration> extends ConfiguredCommand<T>
         }
     }
 
-    private void logBanner(Service<T> service, Log log) {
+    private void logBanner(String name, Log log) {
         try {
             final String banner = Resources.toString(Resources.getResource("banner.txt"),
                                                      Charsets.UTF_8);
-            log.info("Starting {}\n{}", service.getName(), banner);
+            log.info("Starting {}\n{}", name, banner);
         } catch (IllegalArgumentException ignored) {
             // don't display the banner if there isn't one
-            log.info("Starting {}", service.getName());
+            log.info("Starting {}", name);
         } catch (IOException ignored) {
-            log.info("Starting {}", service.getName());
+            log.info("Starting {}", name);
         }
     }
 }

@@ -4,12 +4,11 @@ import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Charsets;
-import com.google.common.collect.ImmutableList;
 import com.google.common.io.Files;
 import com.yammer.dropwizard.Service;
 import com.yammer.dropwizard.cli.Cli;
-import com.yammer.dropwizard.cli.Command;
 import com.yammer.dropwizard.cli.ConfiguredCommand;
+import com.yammer.dropwizard.config.Bootstrap;
 import com.yammer.dropwizard.config.Configuration;
 import com.yammer.dropwizard.config.Environment;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -22,6 +21,7 @@ import java.io.PrintStream;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
+@SuppressWarnings("unchecked")
 public class ConfiguredCommandTest {
     public static class MyConfig extends Configuration {
         @NotEmpty
@@ -34,12 +34,13 @@ public class ConfiguredCommandTest {
     }
 
     private static class MyService extends Service<MyConfig> {
-        MyService() {
-            super("myservice");
+        @Override
+        public void initialize(Bootstrap<MyConfig> bootstrap) {
+            bootstrap.setName("myservice");
         }
 
         @Override
-        protected void run(MyConfig configuration, Environment environment) throws Exception {
+        public void run(MyConfig configuration, Environment environment) throws Exception {
         }
     }
 
@@ -55,7 +56,7 @@ public class ConfiguredCommandTest {
         private boolean verbose = false;
 
         @Override
-        protected void run(Service<MyConfig> service,
+        protected void run(Bootstrap<MyConfig> bootstrap,
                            MyConfig configuration) {
             this.type = configuration.getType();
         }
@@ -97,13 +98,16 @@ public class ConfiguredCommandTest {
     @Test
     public void parseYmlConfigFile() throws Exception {
         final MyService service = new MyService();
+
+
         final ByteArrayOutputStream output = new ByteArrayOutputStream();
         final String ymlConfigFile = createTemporaryFile(".yml", "type: yml\n");
 
         final DirectCommand command = new DirectCommand();
-        final Cli cli = new Cli(service,
-                                ImmutableList.<Command>of(command),
-                                new PrintStream(output));
+        final Bootstrap<MyConfig> bootstrap = new Bootstrap<MyConfig>(service);
+        bootstrap.addCommand(command);
+
+        final Cli cli = new Cli(bootstrap, service, new PrintStream(output));
         cli.run(new String[]{ "test", ymlConfigFile });
 
         assertThat(command.getType())
@@ -122,9 +126,10 @@ public class ConfiguredCommandTest {
         final String jsonConfigFile = createTemporaryFile(".json", "{\"type\": \"json\"}");
 
         final DirectCommand command = new DirectCommand();
-        final Cli cli = new Cli(service,
-                                ImmutableList.<Command>of(command),
-                                new PrintStream(output));
+        final Bootstrap<MyConfig> bootstrap = new Bootstrap<MyConfig>(service);
+        bootstrap.addCommand(command);
+
+        final Cli cli = new Cli(bootstrap, service, new PrintStream(output));
         cli.run(new String[]{ "test", jsonConfigFile });
 
         assertThat(command.getType())
@@ -138,9 +143,10 @@ public class ConfiguredCommandTest {
         final String jsonConfigFile = createTemporaryFile(".json", "{\"type\": \"json2\"}");
 
         final DirectCommand command = new DirectCommand();
-        final Cli cli = new Cli(service,
-                                ImmutableList.<Command>of(command),
-                                new PrintStream(output));
+        final Bootstrap<MyConfig> bootstrap = new Bootstrap<MyConfig>(service);
+        bootstrap.addCommand(command);
+
+        final Cli cli = new Cli(bootstrap, service, new PrintStream(output));
         cli.run(new String[]{ "test", jsonConfigFile, "-v", "--tag", "tag1" });
 
         assertThat(command.getType())

@@ -3,10 +3,12 @@ package com.yammer.dropwizard.cli.tests;
 import com.beust.jcommander.Parameter;
 import com.beust.jcommander.Parameters;
 import com.google.common.base.Optional;
-import com.google.common.collect.ImmutableList;
 import com.yammer.dropwizard.Service;
 import com.yammer.dropwizard.cli.Cli;
 import com.yammer.dropwizard.cli.Command;
+import com.yammer.dropwizard.config.Bootstrap;
+import com.yammer.dropwizard.config.Configuration;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
@@ -27,7 +29,7 @@ public class CliTest {
 
         @Override
         @SuppressWarnings("NewExceptionWithoutArguments")
-        public void run(Service<?> service) throws Exception {
+        public void run(Bootstrap<?> bootstrap) throws Exception {
             this.ran = true;
             if ("monkey".equals(name)) {
                 throw new RuntimeException("bad thing");
@@ -45,12 +47,18 @@ public class CliTest {
         }
     }
 
-    private final Service<?> service = mock(Service.class);
+    @SuppressWarnings("unchecked")
+    private final Service<Configuration> service = mock(Service.class);
     private final OtherCommand other = new OtherCommand();
     private final ByteArrayOutputStream output = new ByteArrayOutputStream();
-    private final Cli cli = new Cli(service,
-                                    ImmutableList.<Command>of(other),
-                                    new PrintStream(output));
+    private final Bootstrap<Configuration> bootstrap = new Bootstrap<Configuration>(service);
+    private Cli cli;
+
+    @Before
+    public void setUp() throws Exception {
+        bootstrap.addCommand(other);
+        this.cli = new Cli(bootstrap, service, new PrintStream(output));
+    }
 
     @Test
     public void displaysUsageWhenGivenNoCommand() throws Exception {

@@ -10,7 +10,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 /**
  * A bundle for serving static asset files from the classpath.
  */
-public class AssetsBundle implements Bundle {
+public class AssetsBundle extends Bundle {
     public static final String DEFAULT_PATH = "/assets";
     public static final CacheBuilderSpec DEFAULT_CACHE_SPEC = CacheBuilderSpec.parse("maximumSize=100");
     
@@ -87,7 +87,7 @@ public class AssetsBundle implements Bundle {
     }
 
     @Override
-    public void initialize(Environment environment) {
+    public void run(Environment environment) {
         environment.addServlet(new AssetServlet(resourcePath, cacheBuilderSpec, uriPath), uriPath + '*');
     }
 }

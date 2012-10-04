@@ -1,13 +1,8 @@
 package com.yammer.dropwizard.cli;
 
 import com.beust.jcommander.Parameter;
-import com.fasterxml.jackson.databind.Module;
-import com.google.common.collect.ImmutableList;
-import com.yammer.dropwizard.Service;
-import com.yammer.dropwizard.config.Configuration;
-import com.yammer.dropwizard.config.ConfigurationException;
-import com.yammer.dropwizard.config.ConfigurationFactory;
-import com.yammer.dropwizard.config.LoggingFactory;
+import com.yammer.dropwizard.config.*;
+import com.yammer.dropwizard.json.ObjectMapperFactory;
 import com.yammer.dropwizard.validation.Validator;
 
 import java.io.File;
@@ -58,20 +53,20 @@ public abstract class ConfiguredCommand<T extends Configuration> implements Comm
 
     @Override
     @SuppressWarnings("unchecked")
-    public void run(Service<?> service) throws Exception {
+    public void run(Bootstrap<?> bootstrap) throws Exception {
         final T configuration = parseConfiguration(getConfigurationClass(),
-                                                   service.getJacksonModules());
+                                                   bootstrap.getObjectMapperFactory().clone());
 
         if (configuration != null) {
-            new LoggingFactory(configuration.getLoggingConfiguration(), service.getName()).configure();
-            run((Service<T>)service, configuration);
+            new LoggingFactory(configuration.getLoggingConfiguration(), bootstrap.getName()).configure();
+            run((Bootstrap<T>) bootstrap, configuration);
         }
     }
 
     private T parseConfiguration(Class<T> configurationClass,
-                                 ImmutableList<Module> modules) throws IOException, ConfigurationException {
+                                 ObjectMapperFactory objectMapperFactory) throws IOException, ConfigurationException {
         final ConfigurationFactory<T> configurationFactory =
-                ConfigurationFactory.forClass(configurationClass, new Validator(), modules);
+                ConfigurationFactory.forClass(configurationClass, new Validator(), objectMapperFactory);
         if (arguments.size() >= 1) {
             final String file = arguments.remove(0);
             return configurationFactory.build(new File(file));
@@ -83,11 +78,11 @@ public abstract class ConfiguredCommand<T extends Configuration> implements Comm
     /**
      * Runs the command with the given {@link com.yammer.dropwizard.Service} and {@link Configuration}.
      *
-     * @param service          the service to which the command belongs
+     * @param bootstrap      the bootstrap bootstrap
      * @param configuration    the configuration object
      * @throws Exception if something goes wrong
      */
-    protected abstract void run(Service<T> service,
+    protected abstract void run(Bootstrap<T> bootstrap,
                                 T configuration) throws  Exception;
 
     protected final List<String> getArguments() {

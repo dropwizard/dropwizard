@@ -1,7 +1,8 @@
 package com.yammer.dropwizard.config.tests;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yammer.dropwizard.config.Configuration;
-import com.yammer.dropwizard.json.Json;
+import com.yammer.dropwizard.json.ObjectMapperFactory;
 import org.junit.Test;
 
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -23,7 +24,8 @@ public class ConfigurationTest {
 
     @Test
     public void ensureConfigSerializable() throws Exception {
-        final Json mapper = new Json();
+        final ObjectMapper mapper = ObjectMapperFactory.defaultInstance().build();
+
         // Issue-96: some types were not serializable
         final String json = mapper.writeValueAsString(configuration);
         assertThat(json)

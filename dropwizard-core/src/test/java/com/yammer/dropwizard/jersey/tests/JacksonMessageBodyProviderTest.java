@@ -3,10 +3,11 @@ package com.yammer.dropwizard.jersey.tests;
 import com.fasterxml.jackson.annotation.JsonIgnoreType;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 import com.sun.jersey.core.util.StringKeyObjectValueIgnoreCaseMultivaluedMap;
 import com.yammer.dropwizard.jersey.JacksonMessageBodyProvider;
-import com.yammer.dropwizard.json.Json;
+import com.yammer.dropwizard.json.ObjectMapperFactory;
 import com.yammer.dropwizard.validation.InvalidEntityException;
 import org.junit.Test;
 
@@ -42,9 +43,8 @@ public class JacksonMessageBodyProviderTest {
 
     }
 
-    private final Json json = spy(new Json());
-
-    private final JacksonMessageBodyProvider provider = new JacksonMessageBodyProvider(json);
+    private final ObjectMapper mapper = spy(ObjectMapperFactory.defaultInstance().build());
+    private final JacksonMessageBodyProvider provider = new JacksonMessageBodyProvider(mapper);
 
     @Test
     public void readsDeserializableTypes() throws Exception {

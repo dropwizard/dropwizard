@@ -1,6 +1,5 @@
 package com.yammer.dropwizard.client;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import com.sun.jersey.api.client.filter.GZIPContentEncodingFilter;
 import com.sun.jersey.client.apache4.ApacheHttpClient4Handler;
 import com.sun.jersey.client.apache4.config.ApacheHttpClient4Config;
@@ -8,7 +7,10 @@ import com.sun.jersey.client.apache4.config.DefaultApacheHttpClient4Config;
 import com.yammer.dropwizard.config.Environment;
 import com.yammer.dropwizard.jersey.JacksonMessageBodyProvider;
 import org.apache.http.client.HttpClient;
+
 import java.util.concurrent.TimeUnit;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 public class JerseyClientFactory {
     private final JerseyClientConfiguration configuration;
@@ -47,7 +49,7 @@ public class JerseyClientFactory {
         final HttpClient client = factory.build();
 
         final ApacheHttpClient4Handler handler = new ApacheHttpClient4Handler(client, null, true);
-        config.getSingletons().add(new JacksonMessageBodyProvider(environment.getService().getJson()));
+        config.getSingletons().add(new JacksonMessageBodyProvider(environment.getObjectMapperFactory().build()));
 
         final JerseyClient jerseyClient = new JerseyClient(handler, config);
         jerseyClient.setExecutorService(environment.managedExecutorService("jersey-client-%d",
