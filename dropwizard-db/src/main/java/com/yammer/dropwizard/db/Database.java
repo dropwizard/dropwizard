@@ -11,14 +11,12 @@ import com.yammer.metrics.jdbi.InstrumentedTimingCollector;
 import com.yammer.metrics.jdbi.strategies.DelegatingStatementNameStrategy;
 import com.yammer.metrics.jdbi.strategies.NameStrategies;
 import com.yammer.metrics.jdbi.strategies.StatementNameStrategy;
-import org.apache.tomcat.dbcp.pool.ObjectPool;
 import org.skife.jdbi.v2.ColonPrefixNamedParamStatementRewriter;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.StatementContext;
 import org.slf4j.LoggerFactory;
 
-import javax.sql.DataSource;
 import java.sql.SQLException;
 
 public class Database extends DBI implements Managed {
@@ -39,12 +37,12 @@ public class Database extends DBI implements Managed {
         }
     }
 
-    private final ObjectPool pool;
+    private final ClosableDataSource dataSource;
     private final String validationQuery;
 
-    public Database(DataSource dataSource, ObjectPool pool, String validationQuery) {
+    public Database(ClosableDataSource dataSource, String validationQuery) {
         super(dataSource);
-        this.pool = pool;
+        this.dataSource = dataSource;
         this.validationQuery = validationQuery;
         setSQLLog(new LogbackLog(LOGGER, Level.TRACE));
         setTimingCollector(new InstrumentedTimingCollector(Metrics.defaultRegistry(),
@@ -61,7 +59,7 @@ public class Database extends DBI implements Managed {
 
     @Override
     public void stop() throws Exception {
-        pool.close();
+        dataSource.close();
     }
 
     public void ping() throws SQLException {
