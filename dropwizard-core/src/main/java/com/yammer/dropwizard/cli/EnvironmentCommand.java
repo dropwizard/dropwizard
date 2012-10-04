@@ -4,6 +4,7 @@ import com.yammer.dropwizard.Service;
 import com.yammer.dropwizard.config.Bootstrap;
 import com.yammer.dropwizard.config.Configuration;
 import com.yammer.dropwizard.config.Environment;
+import com.yammer.dropwizard.config.LoggingFactory;
 
 public abstract class EnvironmentCommand<T extends Configuration> extends ConfiguredCommand<T> {
     private final Service<T> service;
@@ -18,6 +19,8 @@ public abstract class EnvironmentCommand<T extends Configuration> extends Config
                                                         configuration,
                                                         bootstrap.getObjectMapperFactory().clone());
         bootstrap.runWithBundles(service, configuration, environment);
+        new LoggingFactory(configuration.getLoggingConfiguration(),
+                           bootstrap.getName()).configure();
         run(environment, configuration);
     }
 

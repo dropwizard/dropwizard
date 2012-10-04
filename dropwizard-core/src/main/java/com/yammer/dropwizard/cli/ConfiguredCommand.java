@@ -34,9 +34,7 @@ public abstract class ConfiguredCommand<T extends Configuration> implements Comm
     public void run(Bootstrap<?> bootstrap) throws Exception {
         final T configuration = parseConfiguration(getConfigurationClass(),
                                                    bootstrap.getObjectMapperFactory().clone());
-
         if (configuration != null) {
-            new LoggingFactory(configuration.getLoggingConfiguration(), bootstrap.getName()).configure();
             run((Bootstrap<T>) bootstrap, configuration);
         }
     }
