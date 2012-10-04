@@ -16,7 +16,9 @@ import com.yammer.dropwizard.bundles.AssetsBundle;
 import com.yammer.dropwizard.config.Bootstrap;
 import com.yammer.dropwizard.config.Environment;
 import com.yammer.dropwizard.db.Database;
+import com.yammer.dropwizard.db.DatabaseConfiguration;
 import com.yammer.dropwizard.db.DatabaseFactory;
+import com.yammer.dropwizard.db.migrations.MigrationsBundle;
 
 public class HelloWorldService extends Service<HelloWorldConfiguration> {
     public static void main(String[] args) throws Exception {
@@ -28,6 +30,12 @@ public class HelloWorldService extends Service<HelloWorldConfiguration> {
         bootstrap.setName("hello-world");
         bootstrap.addCommand(new RenderCommand());
         bootstrap.addBundle(new AssetsBundle());
+        bootstrap.addBundle(new MigrationsBundle<HelloWorldConfiguration>() {
+            @Override
+            public DatabaseConfiguration getDatabaseConfiguration(HelloWorldConfiguration configuration) {
+                return configuration.getDatabaseConfiguration();
+            }
+        });
     }
 
     @Override

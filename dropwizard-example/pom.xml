@@ -30,6 +30,11 @@
             <artifactId>dropwizard-db</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.yammer.dropwizard</groupId>
+            <artifactId>dropwizard-migrations</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <!-- Required to support string templates in JDBI -->
         <dependency>
             <groupId>org.antlr</groupId>
