@@ -2,6 +2,7 @@ package com.yammer.dropwizard.util.tests;
 
 import com.google.common.io.Files;
 import com.google.common.io.Resources;
+import com.yammer.dropwizard.util.ResourceNotFoundException;
 import com.yammer.dropwizard.util.ResourceURL;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,6 +15,7 @@ import java.util.jar.JarEntry;
 import static org.hamcrest.Matchers.*;
 import static org.hamcrest.core.IsNot.not;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.fail;
 
 public class ResourceURLTest {
     private File directory;
@@ -61,6 +63,19 @@ public class ResourceURLTest {
         final URL url = Resources.getResource("META-INF");
         assertThat(url.getProtocol(), is("jar"));
         assertThat(ResourceURL.isDirectory(url), is(true));
+    }
+
+    @Test
+    public void isDirectoryThrowsResourceNotFoundExceptionForMissingDirectories() throws Exception {
+        URL url = Resources.getResource("META-INF/");
+        url = new URL(url.toExternalForm() + "missing");
+        try {
+            ResourceURL.isDirectory(url);
+            fail("should have thrown an exception");
+        }
+        catch (ResourceNotFoundException e) {
+            // expected
+        }
     }
 
     @Test
