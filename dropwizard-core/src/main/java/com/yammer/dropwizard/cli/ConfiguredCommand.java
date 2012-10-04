@@ -1,7 +1,10 @@
 package com.yammer.dropwizard.cli;
 
 import com.beust.jcommander.Parameter;
-import com.yammer.dropwizard.config.*;
+import com.yammer.dropwizard.config.Bootstrap;
+import com.yammer.dropwizard.config.Configuration;
+import com.yammer.dropwizard.config.ConfigurationException;
+import com.yammer.dropwizard.config.ConfigurationFactory;
 import com.yammer.dropwizard.json.ObjectMapperFactory;
 import com.yammer.dropwizard.util.Generics;
 import com.yammer.dropwizard.validation.Validator;
@@ -52,7 +55,7 @@ public abstract class ConfiguredCommand<T extends Configuration> implements Comm
     }
 
     /**
-     * Runs the command with the given {@link com.yammer.dropwizard.Service} and {@link Configuration}.
+     * Runs the command with the given {@link com.yammer.dropwizard.config.Bootstrap} and {@link Configuration}.
      *
      * @param bootstrap      the bootstrap bootstrap
      * @param configuration    the configuration object
