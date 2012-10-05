@@ -18,6 +18,9 @@ public class SslConfiguration {
     @JsonProperty
     private String keyStoreType = "JKS";
 
+    @JsonProperty
+    private String certAlias = null;
+
     @NotEmpty
     @JsonProperty
     protected ImmutableList<String> supportedProtocols = ImmutableList.of("SSLv3",
@@ -39,6 +42,10 @@ public class SslConfiguration {
 
     public Optional<String> getKeyStoreType() {
         return Optional.fromNullable(keyStoreType);
+    }
+
+    public Optional<String> getCertAlias() {
+        return Optional.fromNullable(certAlias);
     }
 
     public String[] getSupportedProtocols() {

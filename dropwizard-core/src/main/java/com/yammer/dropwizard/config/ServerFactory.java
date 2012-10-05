@@ -42,6 +42,7 @@ import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.util.thread.ThreadPool;
 
 import javax.servlet.DispatcherType;
+import java.security.KeyStore;
 import java.util.EnumSet;
 import java.util.EventListener;
 import java.util.Map;
@@ -202,8 +203,24 @@ public class ServerFactory {
             factory.setKeyManagerPassword(password);
         }
 
+        for (String certAlias : config.getSslConfiguration().getCertAlias().asSet()) {
+            factory.setCertAlias(certAlias);
+        }
+
         for (String type : config.getSslConfiguration().getKeyStoreType().asSet()) {
-          factory.setKeyStoreType(type);
+            if (type.startsWith("Windows-")) {
+                try {
+                    final KeyStore keyStore = KeyStore.getInstance(type);
+
+                    keyStore.load(null, null);
+                    factory.setKeyStore(keyStore);
+
+                } catch (Exception e) {
+                    throw new IllegalStateException("Windows key store not supported", e);
+                }
+            } else {
+                factory.setKeyStoreType(type);
+            }
         }
 
         factory.setIncludeProtocols(config.getSslConfiguration().getSupportedProtocols());
