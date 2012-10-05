@@ -1,18 +1,15 @@
 package com.yammer.dropwizard.cli;
 
-import com.beust.jcommander.Parameter;
-import com.yammer.dropwizard.config.Bootstrap;
-import com.yammer.dropwizard.config.Configuration;
-import com.yammer.dropwizard.config.ConfigurationException;
-import com.yammer.dropwizard.config.ConfigurationFactory;
+import com.yammer.dropwizard.config.*;
 import com.yammer.dropwizard.json.ObjectMapperFactory;
 import com.yammer.dropwizard.util.Generics;
 import com.yammer.dropwizard.validation.Validator;
+import net.sourceforge.argparse4j.inf.Namespace;
+import net.sourceforge.argparse4j.inf.Subparser;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A command whose first parameter is the location of a YAML configuration file. That file is parsed
@@ -22,10 +19,10 @@ import java.util.List;
  * @param <T> the {@link Configuration} subclass which is loaded from the configuration file
  * @see Configuration
  */
-public abstract class ConfiguredCommand<T extends Configuration> implements Command {
-    @Parameter(description = "<configuration file>")
-    @SuppressWarnings("FieldMayBeFinal")
-    private List<String> arguments = new ArrayList<String>(1);
+public abstract class ConfiguredCommand<T extends Configuration> extends Command {
+    protected ConfiguredCommand(String name, String description) {
+        super(name, description);
+    }
 
     @SuppressWarnings("unchecked")
     protected Class<T> getConfigurationClass() {
@@ -33,22 +30,34 @@ public abstract class ConfiguredCommand<T extends Configuration> implements Comm
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public void run(Bootstrap<?> bootstrap) throws Exception {
-        final T configuration = parseConfiguration(getConfigurationClass(),
-                                                   bootstrap.getObjectMapperFactory().clone());
-        if (configuration != null) {
-            run((Bootstrap<T>) bootstrap, configuration);
-        }
+    public void configure(Subparser subparser) {
+        subparser.addArgument("file").nargs("?");
     }
 
-    private T parseConfiguration(Class<T> configurationClass,
+    @Override
+    @SuppressWarnings("unchecked")
+    public void run(Bootstrap<?> bootstrap, Namespace namespace) throws Exception {
+        final T configuration = parseConfiguration(namespace.getString("file"),
+                                                   getConfigurationClass(),
+                                                   bootstrap.getObjectMapperFactory().clone());
+        if (configuration != null) {
+            new LoggingFactory(configuration.getLoggingConfiguration(),
+                               bootstrap.getName()).configure();
+        }
+        run((Bootstrap<T>) bootstrap, namespace, configuration);
+    }
+
+    private T parseConfiguration(String filename,
+                                 Class<T> configurationClass,
                                  ObjectMapperFactory objectMapperFactory) throws IOException, ConfigurationException {
         final ConfigurationFactory<T> configurationFactory =
                 ConfigurationFactory.forClass(configurationClass, new Validator(), objectMapperFactory);
-        if (arguments.size() >= 1) {
-            final String file = arguments.remove(0);
-            return configurationFactory.build(new File(file));
+        if (filename != null) {
+            final File file = new File(filename);
+            if (!file.exists()) {
+                throw new FileNotFoundException("File " + file + " not found");
+            }
+            return configurationFactory.build(file);
         }
 
         return configurationFactory.build();
@@ -62,9 +71,6 @@ public abstract class ConfiguredCommand<T extends Configuration> implements Comm
      * @throws Exception if something goes wrong
      */
     protected abstract void run(Bootstrap<T> bootstrap,
-                                T configuration) throws  Exception;
-
-    protected final List<String> getArguments() {
-        return arguments;
-    }
+                                Namespace namespace,
+                                T configuration) throws Exception;
 }

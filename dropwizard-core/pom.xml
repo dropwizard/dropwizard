@@ -80,9 +80,9 @@
             <version>2.0.3</version>
         </dependency>
         <dependency>
-            <groupId>com.beust</groupId>
-            <artifactId>jcommander</artifactId>
-            <version>1.29</version>
+            <groupId>net.sourceforge.argparse4j</groupId>
+            <artifactId>argparse4j</artifactId>
+            <version>0.2.1</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>

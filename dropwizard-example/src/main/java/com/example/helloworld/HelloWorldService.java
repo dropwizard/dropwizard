@@ -2,7 +2,6 @@ package com.example.helloworld;
 
 import com.example.helloworld.auth.ExampleAuthenticator;
 import com.example.helloworld.cli.RenderCommand;
-import com.example.helloworld.cli.SetupDatabaseCommand;
 import com.example.helloworld.core.Template;
 import com.example.helloworld.core.User;
 import com.example.helloworld.db.PeopleDAO;
@@ -28,7 +27,6 @@ public class HelloWorldService extends Service<HelloWorldConfiguration> {
     public void initialize(Bootstrap<HelloWorldConfiguration> bootstrap) {
         bootstrap.setName("hello-world");
         bootstrap.addCommand(new RenderCommand());
-        bootstrap.addCommand(new SetupDatabaseCommand());
         bootstrap.addBundle(new AssetsBundle());
     }
 

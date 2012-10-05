@@ -1,60 +1,52 @@
 package com.yammer.dropwizard.cli;
 
-import com.beust.jcommander.JCommander;
-import com.google.common.base.Optional;
+import com.google.common.collect.Maps;
 import com.yammer.dropwizard.Service;
 import com.yammer.dropwizard.config.Bootstrap;
 import com.yammer.dropwizard.util.JarLocation;
+import net.sourceforge.argparse4j.ArgumentParsers;
+import net.sourceforge.argparse4j.inf.ArgumentParser;
+import net.sourceforge.argparse4j.inf.ArgumentParserException;
+import net.sourceforge.argparse4j.inf.Namespace;
+import net.sourceforge.argparse4j.inf.Subparser;
 
-import java.io.PrintStream;
+import java.util.SortedMap;
 
 public class Cli {
+    private static final String COMMAND_NAME_ATTR = "command";
+
+    private final SortedMap<String, Command> commands;
     private final Bootstrap<?> bootstrap;
-    private final PrintStream output;
-    private final JCommander commander;
-    private final HelpCommand helpCommand;
+    private final ArgumentParser parser;
 
-    public Cli(Bootstrap<?> bootstrap,
-               Service<?> service,
-               PrintStream output) {
+    public Cli(Bootstrap<?> bootstrap, Service<?> service) {
+        this.commands = Maps.newTreeMap();
+        this.parser = ArgumentParsers.newArgumentParser("java -jar " + new JarLocation(service.getClass()))
+                                     .defaultHelp(true);
+        parser.defaultHelp(true);
         this.bootstrap = bootstrap;
-        this.output = output;
-        this.commander = new JCommander();
-        this.helpCommand = new HelpCommand(commander, output);
-        commander.addCommand(helpCommand);
-        commander.setProgramName("java -jar " + new JarLocation(service.getClass()));
         for (Command command : bootstrap.getCommands()) {
-            commander.addCommand(command);
+            addCommand(command);
         }
     }
 
-    public Optional<String> run(String[] arguments) throws Exception {
+    private void addCommand(Command command) {
+        commands.put(command.getName(), command);
+        parser.addSubparsers().help("Available commands");
+        final Subparser subparser = parser.addSubparsers().addParser(command.getName());
+        command.configure(subparser);
+        subparser.description(command.getDescription())
+                 .setDefault(COMMAND_NAME_ATTR, command.getName())
+                 .defaultHelp(true);
+    }
+
+    public void run(String[] arguments) throws Exception {
         try {
-            commander.parse(arguments);
-            final String commandName = commander.getParsedCommand();
-            if (commandName == null) {
-                helpCommand.run(bootstrap);
-                return Optional.of("");
-            }
-            final Command command = (Command) commander.getCommands()
-                                                       .get(commandName)
-                                                       .getObjects()
-                                                       .get(0);
-            command.run(bootstrap);
-            return Optional.absent();
-        } catch (Exception e) {
-            if (e.getMessage() == null) {
-                return Optional.of("A " + e.getClass().getName() + " was thrown.");
-            }
-            return Optional.of(e.getMessage());
-        }
-    }
-
-    @SuppressWarnings("UseOfSystemOutOrSystemErr")
-    public void runAndExit(String[] arguments) throws Exception {
-        final Optional<String> result = run(arguments);
-        if (result.isPresent()) {
-            output.println(result.get());
+            final Namespace namespace = parser.parseArgs((arguments.length == 0) ? new String[]{ "-h" } : arguments);
+            final Command command = commands.get(namespace.getString(COMMAND_NAME_ATTR));
+            command.run(bootstrap, namespace);
+        } catch (ArgumentParserException e) {
+            parser.handleError(e);
             System.exit(1);
         }
     }
