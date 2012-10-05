@@ -47,7 +47,7 @@ public class ResourceURL {
 
                 return (inputStream == null);
             } catch (IOException e) {
-                throw new AssertionError(e);
+                throw new ResourceNotFoundException(e);
             }
         } else if ("file".equals(protocol)) {
             return new File(resourceURL.getFile()).isDirectory();
