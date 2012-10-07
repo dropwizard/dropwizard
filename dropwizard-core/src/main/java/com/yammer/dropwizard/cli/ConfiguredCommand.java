@@ -24,19 +24,31 @@ public abstract class ConfiguredCommand<T extends Configuration> extends Command
         super(name, description);
     }
 
+    /**
+     * Returns the {@link Class} of the configuration type.
+     *
+     * @return the {@link Class} of the configuration type
+     */
     @SuppressWarnings("unchecked")
     protected Class<T> getConfigurationClass() {
         return (Class<T>) Generics.getTypeParameter(getClass());
     }
 
+    /**
+     * Configure the command's {@link Subparser}. <p><strong> N.B.: if you override this method, you
+     * <em>must</em> call {@code super.override(subparser)} in order to preserve the configuration
+     * file parameter in the subparser. </strong></p>
+     *
+     * @param subparser the {@link Subparser} specific to the command
+     */
     @Override
     public void configure(Subparser subparser) {
-        subparser.addArgument("file").nargs("?");
+        subparser.addArgument("file").nargs("?").help("service configuration file");
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public void run(Bootstrap<?> bootstrap, Namespace namespace) throws Exception {
+    public final void run(Bootstrap<?> bootstrap, Namespace namespace) throws Exception {
         final T configuration = parseConfiguration(namespace.getString("file"),
                                                    getConfigurationClass(),
                                                    bootstrap.getObjectMapperFactory().clone());
@@ -47,11 +59,25 @@ public abstract class ConfiguredCommand<T extends Configuration> extends Command
         run((Bootstrap<T>) bootstrap, namespace, configuration);
     }
 
+    /**
+     * Runs the command with the given {@link Bootstrap} and {@link Configuration}.
+     *
+     * @param bootstrap     the bootstrap bootstrap
+     * @param namespace     the parsed command line namespace
+     * @param configuration the configuration object
+     * @throws Exception if something goes wrong
+     */
+    protected abstract void run(Bootstrap<T> bootstrap,
+                                Namespace namespace,
+                                T configuration) throws Exception;
+
     private T parseConfiguration(String filename,
                                  Class<T> configurationClass,
                                  ObjectMapperFactory objectMapperFactory) throws IOException, ConfigurationException {
         final ConfigurationFactory<T> configurationFactory =
-                ConfigurationFactory.forClass(configurationClass, new Validator(), objectMapperFactory);
+                ConfigurationFactory.forClass(configurationClass,
+                                              new Validator(),
+                                              objectMapperFactory);
         if (filename != null) {
             final File file = new File(filename);
             if (!file.exists()) {
@@ -62,15 +88,4 @@ public abstract class ConfiguredCommand<T extends Configuration> extends Command
 
         return configurationFactory.build();
     }
-
-    /**
-     * Runs the command with the given {@link com.yammer.dropwizard.config.Bootstrap} and {@link Configuration}.
-     *
-     * @param bootstrap      the bootstrap bootstrap
-     * @param configuration    the configuration object
-     * @throws Exception if something goes wrong
-     */
-    protected abstract void run(Bootstrap<T> bootstrap,
-                                Namespace namespace,
-                                T configuration) throws Exception;
 }

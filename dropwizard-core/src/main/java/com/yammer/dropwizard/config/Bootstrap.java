@@ -17,19 +17,13 @@ public class Bootstrap<T extends Configuration> {
     private final List<Bundle> bundles;
     private final List<ConfiguredBundle<? super T>> configuredBundles;
     private final List<Command> commands;
-    private final Class<?> serviceClass;
 
     public Bootstrap(Service<T> service) {
         this.name = service.getClass().getSimpleName();
-        this.serviceClass = service.getClass();
         this.objectMapperFactory = ObjectMapperFactory.defaultInstance();
         this.bundles = Lists.newArrayList();
         this.configuredBundles = Lists.newArrayList();
         this.commands = Lists.newArrayList();
-    }
-
-    public Class<?> getServiceClass() {
-        return serviceClass;
     }
 
     public String getName() {
@@ -61,14 +55,13 @@ public class Bootstrap<T extends Configuration> {
         return objectMapperFactory;
     }
 
-    public void runWithBundles(Service<T> service, T configuration, Environment environment) throws Exception {
+    public void runWithBundles(T configuration, Environment environment) throws Exception {
         for (Bundle bundle : bundles) {
             bundle.run(environment);
         }
         for (ConfiguredBundle<? super T> bundle : configuredBundles) {
             bundle.run(configuration, environment);
         }
-        service.run(configuration, environment);
     }
 
     public ImmutableList<Command> getCommands() {
