@@ -7,7 +7,9 @@ import com.sun.jersey.client.apache4.config.ApacheHttpClient4Config;
 import com.sun.jersey.client.apache4.config.DefaultApacheHttpClient4Config;
 import com.yammer.dropwizard.config.Environment;
 import com.yammer.dropwizard.jersey.JacksonMessageBodyProvider;
+import com.yammer.dropwizard.json.Json;
 import org.apache.http.client.HttpClient;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class JerseyClientFactory {
@@ -43,23 +45,29 @@ public class JerseyClientFactory {
         return this;
     }
 
-    public JerseyClient build(Environment environment) {
+    public JerseyClient build(Json json, ExecutorService executorService) {
         final HttpClient client = factory.build();
 
         final ApacheHttpClient4Handler handler = new ApacheHttpClient4Handler(client, null, true);
-        config.getSingletons().add(new JacksonMessageBodyProvider(environment.getService().getJson()));
+        config.getSingletons().add(new JacksonMessageBodyProvider(json));
 
         final JerseyClient jerseyClient = new JerseyClient(handler, config);
-        jerseyClient.setExecutorService(environment.managedExecutorService("jersey-client-%d",
-                                                                           configuration.getMinThreads(),
-                                                                           configuration.getMaxThreads(),
-                                                                           60,
-                                                                           TimeUnit.SECONDS));
+        jerseyClient.setExecutorService(executorService);
 
         if (configuration.isGzipEnabled()) {
             jerseyClient.addFilter(new GZIPContentEncodingFilter(configuration.isCompressRequestEntity()));
         }
 
         return jerseyClient;
+    }
+
+    public JerseyClient build(Environment environment) {
+        Json json = environment.getService().getJson();
+        ExecutorService executorService = environment.managedExecutorService("jersey-client-%d",
+                                                                             configuration.getMinThreads(),
+                                                                             configuration.getMaxThreads(),
+                                                                             60,
+                                                                             TimeUnit.SECONDS);
+        return build(json, executorService);
     }
 }
