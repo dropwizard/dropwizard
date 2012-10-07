@@ -78,7 +78,7 @@ public abstract class Service<T extends Configuration> {
         bootstrap.addCommand(new ServerCommand<T>(this));
         bootstrap.addBundle(new BasicBundle());
         initialize(bootstrap);
-        final Cli cli = new Cli(bootstrap, this);
+        final Cli cli = new Cli(this.getClass(), bootstrap);
         cli.run(arguments);
     }
 }
