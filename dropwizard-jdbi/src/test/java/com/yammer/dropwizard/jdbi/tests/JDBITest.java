@@ -87,9 +87,9 @@ public class JDBITest {
 
     @Test
     public void managesTheDatabaseWithTheEnvironment() throws Exception {
-        final JDBI jdbi = factory.build(hsqlConfig, "hsql");
+        final JDBI otherJDBI = factory.build(hsqlConfig, "hsql");
 
-        verify(environment).manage(jdbi);
+        verify(environment).manage(otherJDBI);
     }
 
     @Test
@@ -108,6 +108,17 @@ public class JDBITest {
         final PersonDAO dao = jdbi.open(PersonDAO.class);
         try {
             assertThat(dao.findAllNames())
+                    .containsOnly("Coda Hale", "Kris Gale", "Old Guy");
+        } finally {
+            jdbi.close(dao);
+        }
+    }
+
+    @Test
+    public void sqlObjectsCanReturnImmutableSets() throws Exception {
+        final PersonDAO dao = jdbi.open(PersonDAO.class);
+        try {
+            assertThat(dao.findAllUniqueNames())
                     .containsOnly("Coda Hale", "Kris Gale", "Old Guy");
         } finally {
             jdbi.close(dao);

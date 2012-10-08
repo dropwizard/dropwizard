@@ -51,6 +51,7 @@ public class JDBI extends DBI implements Managed {
         setStatementRewriter(new NamePrependingStatementRewriter(new ColonPrefixNamedParamStatementRewriter()));
         registerArgumentFactory(new OptionalArgumentFactory());
         registerContainerFactory(new ImmutableListContainerFactory());
+        registerContainerFactory(new ImmutableSetContainerFactory());
     }
 
     @Override
