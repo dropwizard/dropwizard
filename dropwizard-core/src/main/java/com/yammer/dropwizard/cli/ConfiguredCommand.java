@@ -51,7 +51,7 @@ public abstract class ConfiguredCommand<T extends Configuration> extends Command
     public final void run(Bootstrap<?> bootstrap, Namespace namespace) throws Exception {
         final T configuration = parseConfiguration(namespace.getString("file"),
                                                    getConfigurationClass(),
-                                                   bootstrap.getObjectMapperFactory().clone());
+                                                   bootstrap.getObjectMapperFactory().copy());
         if (configuration != null) {
             new LoggingFactory(configuration.getLoggingConfiguration(),
                                bootstrap.getName()).configure();
