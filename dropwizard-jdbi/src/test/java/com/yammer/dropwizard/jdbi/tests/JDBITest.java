@@ -137,4 +137,23 @@ public class JDBITest {
             jdbi.close(dao);
         }
     }
+
+    @Test
+    public void sqlObjectsCanReturnOptional() throws Exception {
+        final PersonDAO dao = jdbi.open(PersonDAO.class);
+        try {
+            Optional<String> byEmail = dao.findByEmail("chale@yammer-inc.com");
+            assertThat(byEmail).isNotNull();
+            assertThat(byEmail.get()).isEqualTo("Coda Hale");
+
+
+            byEmail = dao.findByEmail("cemalettin.koc@gmail.com");
+            assertThat(byEmail).isNotNull();
+            assertThat(byEmail).isEqualTo(Optional.<String>absent());
+            assertThat(byEmail.orNull()).isNull();
+
+        } finally {
+            jdbi.close(dao);
+        }
+    }
 }

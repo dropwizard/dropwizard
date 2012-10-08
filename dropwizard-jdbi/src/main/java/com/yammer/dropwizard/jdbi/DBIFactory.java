@@ -60,6 +60,7 @@ public class DBIFactory {
         dbi.registerArgumentFactory(new OptionalArgumentFactory());
         dbi.registerContainerFactory(new ImmutableListContainerFactory());
         dbi.registerContainerFactory(new ImmutableSetContainerFactory());
+        dbi.registerContainerFactory(new OptionalContainerFactory());
         return dbi;
     }
 }

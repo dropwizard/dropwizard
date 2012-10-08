@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
+import org.skife.jdbi.v2.sqlobject.customizers.SingleValueResult;
 
 public interface PersonDAO {
     @SqlQuery("SELECT name FROM people WHERE name = :name")
@@ -15,4 +16,8 @@ public interface PersonDAO {
 
     @SqlQuery("SELECT DISTINCT name FROM people")
     public ImmutableSet<String> findAllUniqueNames();
+
+    @SqlQuery("SELECT name FROM people WHERE email = :email ")
+    @SingleValueResult(value = String.class)
+    public Optional<String> findByEmail(@Bind("email")String email);
 }
