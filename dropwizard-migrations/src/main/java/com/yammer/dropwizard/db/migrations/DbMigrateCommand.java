@@ -1,12 +1,13 @@
 package com.yammer.dropwizard.db.migrations;
 
+import com.google.common.base.Charsets;
 import com.yammer.dropwizard.config.Configuration;
 import liquibase.Liquibase;
 import net.sourceforge.argparse4j.impl.Arguments;
 import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
 
-import java.io.PrintWriter;
+import java.io.OutputStreamWriter;
 
 public class DbMigrateCommand<T extends Configuration> extends AbstractLiquibaseCommand<T> {
     public DbMigrateCommand(ConfigurationStrategy<T> strategy, Class<T> configurationClass) {
@@ -35,13 +36,13 @@ public class DbMigrateCommand<T extends Configuration> extends AbstractLiquibase
         final Boolean dryRun = namespace.getBoolean("dry-run");
         if (count != null) {
             if (dryRun) {
-                liquibase.update(count, "", new PrintWriter(System.out));
+                liquibase.update(count, "", new OutputStreamWriter(System.out, Charsets.UTF_8));
             } else {
                 liquibase.update(count, "");
             }
         } else {
             if (dryRun) {
-                liquibase.update("", new PrintWriter(System.out));
+                liquibase.update("", new OutputStreamWriter(System.out, Charsets.UTF_8));
             } else {
                 liquibase.update("");
             }

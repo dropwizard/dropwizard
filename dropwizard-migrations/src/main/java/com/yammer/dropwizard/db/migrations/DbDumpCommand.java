@@ -1,5 +1,6 @@
 package com.yammer.dropwizard.db.migrations;
 
+import com.google.common.base.Charsets;
 import com.yammer.dropwizard.config.Configuration;
 import liquibase.Liquibase;
 import liquibase.diff.Diff;
@@ -10,7 +11,6 @@ import net.sourceforge.argparse4j.inf.ArgumentGroup;
 import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
 
-import java.io.FileOutputStream;
 import java.io.PrintStream;
 
 public class DbDumpCommand<T extends Configuration> extends AbstractLiquibaseCommand<T> {
@@ -145,7 +145,7 @@ public class DbDumpCommand<T extends Configuration> extends AbstractLiquibaseCom
         final DiffResult diffResult = diff.compare();
         final String filename = namespace.getString("output");
         if (filename != null) {
-            final PrintStream file = new PrintStream(new FileOutputStream(filename));
+            final PrintStream file = new PrintStream(filename, Charsets.UTF_8.name());
             try {
                 diffResult.printChangeLog(file, liquibase.getDatabase());
             } finally {

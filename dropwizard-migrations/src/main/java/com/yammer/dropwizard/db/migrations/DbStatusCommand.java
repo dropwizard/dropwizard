@@ -1,12 +1,13 @@
 package com.yammer.dropwizard.db.migrations;
 
+import com.google.common.base.Charsets;
 import com.yammer.dropwizard.config.Configuration;
 import liquibase.Liquibase;
 import net.sourceforge.argparse4j.impl.Arguments;
 import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
 
-import java.io.PrintWriter;
+import java.io.OutputStreamWriter;
 
 public class DbStatusCommand<T extends Configuration> extends AbstractLiquibaseCommand<T> {
     public DbStatusCommand(ConfigurationStrategy<T> strategy, Class<T> configurationClass) {
@@ -26,6 +27,8 @@ public class DbStatusCommand<T extends Configuration> extends AbstractLiquibaseC
     @Override
     @SuppressWarnings("UseOfSystemOutOrSystemErr")
     public void run(Namespace namespace, Liquibase liquibase) throws Exception {
-        liquibase.reportStatus(namespace.getBoolean("verbose"), null, new PrintWriter(System.out));
+        liquibase.reportStatus(namespace.getBoolean("verbose"),
+                               null,
+                               new OutputStreamWriter(System.out, Charsets.UTF_8));
     }
 }

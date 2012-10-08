@@ -1,11 +1,12 @@
 package com.yammer.dropwizard.db.migrations;
 
+import com.google.common.base.Charsets;
 import com.yammer.dropwizard.config.Configuration;
 import liquibase.Liquibase;
 import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
 
-import java.io.PrintWriter;
+import java.io.OutputStreamWriter;
 
 public class DbPrepareRollbackCommand<T extends Configuration> extends AbstractLiquibaseCommand<T> {
     public DbPrepareRollbackCommand(ConfigurationStrategy<T> strategy, Class<T> configurationClass) {
@@ -27,9 +28,9 @@ public class DbPrepareRollbackCommand<T extends Configuration> extends AbstractL
     public void run(Namespace namespace, Liquibase liquibase) throws Exception {
         final Integer count = namespace.getInt("count");
         if (count != null) {
-            liquibase.futureRollbackSQL(count, "", new PrintWriter(System.out));
+            liquibase.futureRollbackSQL(count, "", new OutputStreamWriter(System.out, Charsets.UTF_8));
         } else {
-            liquibase.futureRollbackSQL("", new PrintWriter(System.out));
+            liquibase.futureRollbackSQL("", new OutputStreamWriter(System.out, Charsets.UTF_8));
         }
     }
 }
