@@ -1,11 +1,11 @@
 package com.yammer.dropwizard.config;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import com.yammer.dropwizard.util.Duration;
 import com.yammer.dropwizard.util.Size;
 import com.yammer.dropwizard.validation.ValidationMethod;
-import org.codehaus.jackson.annotate.JsonProperty;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Max;

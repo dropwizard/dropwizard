@@ -6,41 +6,40 @@ import org.junit.Test;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
+import static org.fest.assertions.api.Assertions.assertThat;
+import static org.fest.assertions.api.Assertions.failBecauseExceptionWasNotThrown;
 
 public class BooleanParamTest {
     @Test
     public void trueReturnsTrue() throws Exception {
         final BooleanParam param = new BooleanParam("true");
 
-        assertThat(param.get(),
-                   is(true));
+        assertThat(param.get())
+                .isTrue();
     }
 
     @Test
     public void uppercaseTrueReturnsTrue() throws Exception {
         final BooleanParam param = new BooleanParam("TRUE");
 
-        assertThat(param.get(),
-                   is(true));
+        assertThat(param.get())
+                .isTrue();
     }
 
     @Test
     public void falseReturnsFalse() throws Exception {
         final BooleanParam param = new BooleanParam("false");
-        
-        assertThat(param.get(),
-                   is(false));
+
+        assertThat(param.get())
+                .isFalse();
     }
 
     @Test
     public void uppercaseFalseReturnsFalse() throws Exception {
         final BooleanParam param = new BooleanParam("FALSE");
-        
-        assertThat(param.get(),
-                   is(false));
+
+        assertThat(param.get())
+                .isFalse();
     }
 
     @Test
@@ -48,15 +47,15 @@ public class BooleanParamTest {
     public void nullThrowsAnException() throws Exception {
         try {
             new BooleanParam(null);
-            fail("expected a WebApplicationException, but none was thrown");
+            failBecauseExceptionWasNotThrown(WebApplicationException.class);
         } catch (WebApplicationException e) {
             final Response response = e.getResponse();
-            
-            assertThat(response.getStatus(),
-                       is(400));
-            
-            assertThat((String) response.getEntity(),
-                       is("\"null\" must be \"true\" or \"false\"."));
+
+            assertThat(response.getStatus())
+                    .isEqualTo(400);
+
+            assertThat((String) response.getEntity())
+                    .isEqualTo("\"null\" must be \"true\" or \"false\".");
         }
     }
 
@@ -65,15 +64,15 @@ public class BooleanParamTest {
     public void nonBooleanValuesThrowAnException() throws Exception {
         try {
             new BooleanParam("foo");
-            fail("expected a WebApplicationException, but none was thrown");
+            failBecauseExceptionWasNotThrown(WebApplicationException.class);
         } catch (WebApplicationException e) {
             final Response response = e.getResponse();
 
-            assertThat(response.getStatus(),
-                       is(400));
+            assertThat(response.getStatus())
+                    .isEqualTo(400);
 
-            assertThat((String) response.getEntity(),
-                       is("\"foo\" must be \"true\" or \"false\"."));
+            assertThat(response.getEntity())
+                    .isEqualTo("\"foo\" must be \"true\" or \"false\".");
         }
     }
 }

@@ -24,6 +24,7 @@ public class FreemarkerViewRenderer implements ViewRenderer {
         public Configuration load(Class<?> key) throws Exception {
             final Configuration configuration = new Configuration();
             configuration.setObjectWrapper(new DefaultObjectWrapper());
+            configuration.loadBuiltInEncodingMap();
             configuration.setDefaultEncoding(Charsets.UTF_8.name());
             configuration.setClassForTemplateLoading(key, "/");
             return configuration;

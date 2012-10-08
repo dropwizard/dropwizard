@@ -8,9 +8,9 @@ import com.yammer.dropwizard.jersey.LoggingSQLExceptionMapper;
 /**
  * A bundle for logging SQLExceptions and DBIExceptions so that their actual causes aren't overlooked.
  */
-public class DBIExceptionsBundle implements Bundle {
+public class DBIExceptionsBundle extends Bundle {
     @Override
-    public void initialize(Environment environment) {
+    public void run(Environment environment) {
         environment.addProvider(new LoggingSQLExceptionMapper());
         environment.addProvider(new LoggingDBIExceptionMapper());
     }

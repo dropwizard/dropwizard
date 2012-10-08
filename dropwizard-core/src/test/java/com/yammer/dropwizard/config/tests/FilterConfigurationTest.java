@@ -6,11 +6,8 @@ import com.yammer.dropwizard.config.FilterConfiguration;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.junit.Test;
 
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.fest.assertions.api.Assertions.assertThat;
+import static org.mockito.Mockito.*;
 
 public class FilterConfigurationTest {
     private final FilterHolder holder = mock(FilterHolder.class);
@@ -37,16 +34,16 @@ public class FilterConfigurationTest {
     public void mapsAUrlPatternToAFilter() throws Exception {
         config.addUrlPattern("/one");
 
-        assertThat(mappings.build(),
-                   is(ImmutableMultimap.of("/one", holder)));
+        assertThat(mappings.build())
+                .isEqualTo(ImmutableMultimap.of("/one", holder));
     }
 
     @Test
     public void mapsUrlPatternsToAFilter() throws Exception {
         config.addUrlPatterns("/one", "/two");
 
-        assertThat(mappings.build(),
-                   is(ImmutableMultimap.of("/one", holder,
-                                           "/two", holder)));
+        assertThat(mappings.build())
+                .isEqualTo(ImmutableMultimap.of("/one", holder,
+                                                "/two", holder));
     }
 }

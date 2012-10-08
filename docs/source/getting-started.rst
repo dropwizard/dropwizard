@@ -88,6 +88,8 @@ we've come to rely on:
 * The `Apache HttpClient`_ and Jersey_ client libraries allow for both low- and high-level
   interaction with other web services.
 * JDBI_ is the most straight-forward way to use a relational database with Java.
+* Liquibase_ is a great way to keep your database schema in check throughout your development and
+  release cycles, applying high-level database refactorings instead of one-off DDL scripts.
 * Freemarker_ is a simple template system for more user-facing services.
 
 .. _Guava: http://code.google.com/p/guava-libraries/
@@ -98,6 +100,7 @@ we've come to rely on:
 .. _Apache HttpClient: http://hc.apache.org/httpcomponents-client-ga/index.html
 .. _JDBI: http://www.jdbi.org
 .. _Freemarker: http://freemarker.sourceforge.net/
+.. _Liquibase: http://www.liquibase.org
 
 Now that you've gotten the lay of the land, let's dig in!
 
@@ -133,7 +136,7 @@ Add the ``dropwizard-core`` library as a dependency:
         <dependency>
             <groupId>com.yammer.dropwizard</groupId>
             <artifactId>dropwizard-core</artifactId>
-            <version>0.5.1</version>
+            <version>0.6.0</version>
         </dependency>
     </dependencies>
 
@@ -165,7 +168,7 @@ Here's what our configuration class will look like:
     package com.example.helloworld;
     
     import com.yammer.dropwizard.config.Configuration;
-    import org.codehaus.jackson.annotate.JsonProperty;
+    import com.fasterxml.jackson.annotation.JsonProperty;
     import org.hibernate.validator.constraints.NotEmpty;
     
     public class HelloWorldConfiguration extends Configuration {
@@ -197,7 +200,7 @@ exception will be thrown and your service won't start.
 .. note::
 
     The mapping from YAML to your service's ``Configuration`` instance is done by Jackson_. This
-    means your ``Configuration`` class can use all of Jackon's
+    means your ``Configuration`` class can use all of Jackson's
     `object-mapping annotations`__. The validation of ``@NotEmpty`` is handled
     by Hibernate Validator, which has a `wide range of built-in constraints`__
     for you to use.
@@ -235,30 +238,32 @@ like this:
     package com.example.helloworld;
     
     import com.yammer.dropwizard.Service;
+    import com.yammer.dropwizard.config.Bootstrap;
     import com.yammer.dropwizard.config.Environment;
     
     public class HelloWorldService extends Service<HelloWorldConfiguration> {
         public static void main(String[] args) throws Exception {
             new HelloWorldService().run(args);
         }
-    
-        private HelloWorldService() {
-            super("hello-world");
-        }
-    
+
         @Override
-        protected void initialize(HelloWorldConfiguration configuration,
-                                  Environment environment) {
+        public void initialize(Bootstrap<HelloWorldConfiguration> bootstrap) {
+            bootstrap.setName("hello-world");
+        }
+
+        @Override
+        public void run(HelloWorldConfiguration configuration,
+                        Environment environment) {
             // nothing to do yet
         }
     
     }
 
 As you can see, ``HelloWorldService`` is parameterized with the service's configuration type,
-``HelloWorldConfiguration``. The constructor of ``HelloWorldService`` provides the service's name:
-``hello-world``. Also, we've added a ``static`` ``main`` method, which will be our service's entry
-point. Right now, we don't have any functionality implemented, so our ``initialize`` method is a
-little boring. Let’s fix that!
+``HelloWorldConfiguration``. An ``initialize`` method is used to configure aspects of the service
+required before the service is run — in this case, our service's name: ``hello-world``. Also, we've
+added a ``static`` ``main`` method, which will be our service's entry point. Right now, we don't
+have any functionality implemented, so our ``run`` method is a little boring. Let’s fix that!
 
 .. _gs-representation:
 
@@ -391,7 +396,7 @@ the saying and the ``defaultName`` used when the user declines to tell us their 
 ``@QueryParam("name")`` annotation tells Jersey to map the ``name`` parameter from the query string
 to the ``name`` parameter in the method. If the client sends a request to
 ``/hello-world?name=Dougie``, ``sayHello`` will be called with ``Optional.of("Dougie")``; if there
-is no ``name`` parameter in the query string, ``sayHello`` will be called with ``Option.absent()``.
+is no ``name`` parameter in the query string, ``sayHello`` will be called with ``Optional.absent()``.
 (Support for Guava's ``Optional`` is a little extra sauce that Dropwizard adds to Jersey's existing
 functionality.)
 
@@ -412,15 +417,15 @@ Registering A Resource
 ----------------------
 
 Before that will actually work, though, we need to go back to ``HelloWorldService`` and add this new
-resource class. In its ``initialize`` method we can read the template and default name from the
+resource class. In its ``run`` method we can read the template and default name from the
 ``HelloWorldConfiguration`` instance, create a new ``HelloWorldService`` instance, and then add it
 to the service's environment:
     
 .. code-block:: java
 
     @Override
-    protected void initialize(HelloWorldConfiguration configuration,
-                              Environment environment) {
+    public void run(HelloWorldConfiguration configuration,
+                    Environment environment) {
         final String template = configuration.getTemplate();
         final String defaultName = configuration.getDefaultName();
         environment.addResource(new HelloWorldResource(template, defaultName));
@@ -500,8 +505,8 @@ it to the ``Environment``:
 .. code-block:: java
 
     @Override
-    protected void initialize(HelloWorldConfiguration configuration,
-                              Environment environment) {
+    public void run(HelloWorldConfiguration configuration,
+                    Environment environment) {
         final String template = configuration.getTemplate();
         final String defaultName = configuration.getDefaultName();
         environment.addResource(new HelloWorldResource(template, defaultName));
@@ -582,6 +587,32 @@ This configures Maven to do a couple of things during its ``package`` phase:
 .. __: http://docs.oracle.com/javase/7/docs/technotes/guides/security/crypto/CryptoSpec.html
 .. __: http://maven.apache.org/plugins/maven-shade-plugin/examples/includes-excludes.html
 
+.. _gs-versions:
+
+Versioning Your JARs
+--------------------
+
+Dropwizard can also use the project version if it's embedded in the JAR's manifest as the
+``Implementation-Version``. To embed this information using Maven, add the following to the
+``<build><plugins>`` section of your ``pom.xml`` file:
+
+.. code-block:: xml
+
+    <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>2.3.2</version>
+        <configuration>
+            <archive>
+                <manifest>
+                    <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                </manifest>
+            </archive>
+        </configuration>
+    </plugin>
+
+This can be handy when trying to figure out what version of your service you have deployed on a
+machine.
 
 Once you've got that configured, go into your project directory and run ``mvn package`` (or run the
 ``package`` goal from your IDE). You should see something like this:
@@ -624,16 +655,15 @@ You should see something like the following:
 
 .. code-block:: text
 
-    java -jar dropwizard-example-0.1.0-SNAPSHOT.jar <command> [arg1 arg2]
+    usage: java -jar hello-world-0.0.1-SNAPSHOT.jar
+           [-h] [-v] {server} ...
 
-    Commands
-    ========
+    positional arguments:
+      {server}               available commands
 
-    server: Starts an HTTP server running the service
-    -------------------------------------------------
-    usage: java -jar dropwizard-example-0.1.0-SNAPSHOT.jar server <config
-                file>
-     -h, --help   display usage information
+    optional arguments:
+      -h, --help             show this help message and exit
+      -v, --version          show the service version and exit
 
 Dropwizard takes the first command line argument and dispatches it to a matching command. In this
 case, the only command available is ``server``, which runs your service as an HTTP server. The
@@ -683,7 +713,9 @@ all the threads running in that process.
           poorly-behaving request.
 
 The `healthcheck resource <http://localhost:8081/healthcheck>`_ runs the
-:ref:`health check class we wrote <gs-healthcheck>`. You should see something like this::
+:ref:`health check class we wrote <gs-healthcheck>`. You should see something like this:
+
+.. code-block:: text
 
     * deadlocks: OK
     * template: OK

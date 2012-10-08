@@ -4,8 +4,6 @@ import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.yammer.dropwizard.jetty.BiDiGzipHandler;
-import com.yammer.dropwizard.jetty.InstrumentedSslSelectChannelConnector;
-import com.yammer.dropwizard.jetty.InstrumentedSslSocketConnector;
 import com.yammer.dropwizard.jetty.UnbrandedErrorHandler;
 import com.yammer.dropwizard.logging.Log;
 import com.yammer.dropwizard.servlets.ThreadNameFilter;
@@ -15,7 +13,7 @@ import com.yammer.dropwizard.util.Size;
 import com.yammer.metrics.HealthChecks;
 import com.yammer.metrics.core.HealthCheck;
 import com.yammer.metrics.jetty.*;
-import com.yammer.metrics.reporting.AdminServlet;
+import com.yammer.metrics.servlet.AdminServlet;
 import com.yammer.metrics.util.DeadlockHealthCheck;
 import org.eclipse.jetty.security.ConstraintMapping;
 import org.eclipse.jetty.security.ConstraintSecurityHandler;
@@ -42,6 +40,7 @@ import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.util.thread.ThreadPool;
 
 import javax.servlet.DispatcherType;
+import java.security.KeyStore;
 import java.util.EnumSet;
 import java.util.EventListener;
 import java.util.Map;
@@ -202,8 +201,24 @@ public class ServerFactory {
             factory.setKeyManagerPassword(password);
         }
 
+        for (String certAlias : config.getSslConfiguration().getCertAlias().asSet()) {
+            factory.setCertAlias(certAlias);
+        }
+
         for (String type : config.getSslConfiguration().getKeyStoreType().asSet()) {
-          factory.setKeyStoreType(type);
+            if (type.startsWith("Windows-")) {
+                try {
+                    final KeyStore keyStore = KeyStore.getInstance(type);
+
+                    keyStore.load(null, null);
+                    factory.setKeyStore(keyStore);
+
+                } catch (Exception e) {
+                    throw new IllegalStateException("Windows key store not supported", e);
+                }
+            } else {
+                factory.setKeyStoreType(type);
+            }
         }
 
         factory.setIncludeProtocols(config.getSslConfiguration().getSupportedProtocols());

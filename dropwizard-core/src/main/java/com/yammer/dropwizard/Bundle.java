@@ -1,15 +1,28 @@
 package com.yammer.dropwizard;
 
+import com.yammer.dropwizard.config.Bootstrap;
 import com.yammer.dropwizard.config.Environment;
 
 /**
  * A reusable bundle of functionality, used to define blocks of service behavior.
  */
-public interface Bundle {
+@SuppressWarnings("UnusedParameters")
+public abstract class Bundle {
     /**
-     * Initializes the environment.
+     * Initializes the service bootstrap.
      *
-     * @param environment    the service's {@link Environment}
+     * @param bootstrap the service bootstrap
      */
-    public void initialize(Environment environment);
+    public void initialize(Bootstrap<?> bootstrap) {
+        // no default impl
+    }
+
+    /**
+     * Initializes the service environment.
+     *
+     * @param environment the service environment
+     */
+    public void run(Environment environment) {
+        // no default impl
+    }
 }

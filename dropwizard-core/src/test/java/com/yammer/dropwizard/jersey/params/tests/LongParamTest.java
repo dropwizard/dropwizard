@@ -6,17 +6,16 @@ import org.junit.Test;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
+import static org.fest.assertions.api.Assertions.assertThat;
+import static org.fest.assertions.api.Assertions.failBecauseExceptionWasNotThrown;
 
 public class LongParamTest {
     @Test
     public void aLongReturnsALong() throws Exception {
         final LongParam param = new LongParam("200");
 
-        assertThat(param.get(),
-                   is(200L));
+        assertThat(param.get())
+                .isEqualTo(200L);
     }
 
     @Test
@@ -24,15 +23,15 @@ public class LongParamTest {
     public void aNonIntegerThrowsAnException() throws Exception {
         try {
             new LongParam("foo");
-            fail("expected a WebApplicationException, but none was thrown");
+            failBecauseExceptionWasNotThrown(WebApplicationException.class);
         } catch (WebApplicationException e) {
             final Response response = e.getResponse();
 
-            assertThat(response.getStatus(),
-                       is(400));
+            assertThat(response.getStatus())
+                    .isEqualTo(400);
 
-            assertThat((String) response.getEntity(),
-                       is("\"foo\" is not a number."));
+            assertThat((String) response.getEntity())
+                    .isEqualTo("\"foo\" is not a number.");
         }
     }
 }

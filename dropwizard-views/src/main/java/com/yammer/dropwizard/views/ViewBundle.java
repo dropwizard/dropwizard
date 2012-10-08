@@ -56,9 +56,9 @@ import com.yammer.dropwizard.config.Environment;
  *
  * @see <a href="http://freemarker.sourceforge.net/docs/index.html">FreeMarker Manual</a>
  */
-public class ViewBundle implements Bundle {
+public class ViewBundle extends Bundle {
     @Override
-    public void initialize(Environment environment) {
+    public void run(Environment environment) {
         environment.addProvider(ViewMessageBodyWriter.class);
     }
 }

@@ -1,9 +1,9 @@
 package com.yammer.dropwizard.config;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableSet;
 import com.yammer.dropwizard.util.Size;
-import org.codehaus.jackson.annotate.JsonProperty;
 
 @SuppressWarnings({ "FieldMayBeFinal", "FieldCanBeLocal" })
 public class GzipConfiguration {

@@ -15,5 +15,5 @@ public interface ConfiguredBundle<T> {
      * @param configuration    the configuration object
      * @param environment      the service's {@link Environment}
      */
-    public void initialize(T configuration, Environment environment);
+    public void run(T configuration, Environment environment);
 }

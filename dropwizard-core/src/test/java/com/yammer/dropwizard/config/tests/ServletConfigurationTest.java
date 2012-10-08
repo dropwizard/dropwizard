@@ -5,11 +5,8 @@ import com.yammer.dropwizard.config.ServletConfiguration;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.junit.Test;
 
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.fest.assertions.api.Assertions.assertThat;
+import static org.mockito.Mockito.*;
 
 public class ServletConfigurationTest {
     private final ServletHolder holder = mock(ServletHolder.class);
@@ -43,16 +40,16 @@ public class ServletConfigurationTest {
     public void mapsAUrlPatternToAFilter() throws Exception {
         config.addUrlPattern("/one");
 
-        assertThat(mappings.build(),
-                   is(ImmutableMap.of("/one", holder)));
+        assertThat(mappings.build())
+                .isEqualTo(ImmutableMap.of("/one", holder));
     }
 
     @Test
     public void mapsUrlPatternsToAFilter() throws Exception {
         config.addUrlPatterns("/one", "/two");
 
-        assertThat(mappings.build(),
-                   is(ImmutableMap.of("/one", holder,
-                                      "/two", holder)));
+        assertThat(mappings.build())
+                .isEqualTo(ImmutableMap.of("/one", holder,
+                                           "/two", holder));
     }
 }

@@ -1,8 +1,8 @@
 package com.yammer.dropwizard.config;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
-import org.codehaus.jackson.annotate.JsonProperty;
 import org.hibernate.validator.constraints.NotEmpty;
 
 public class SslConfiguration {
@@ -17,6 +17,9 @@ public class SslConfiguration {
 
     @JsonProperty
     private String keyStoreType = "JKS";
+
+    @JsonProperty
+    private String certAlias = null;
 
     @NotEmpty
     @JsonProperty
@@ -39,6 +42,10 @@ public class SslConfiguration {
 
     public Optional<String> getKeyStoreType() {
         return Optional.fromNullable(keyStoreType);
+    }
+
+    public Optional<String> getCertAlias() {
+        return Optional.fromNullable(certAlias);
     }
 
     public String[] getSupportedProtocols() {

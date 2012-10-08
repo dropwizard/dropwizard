@@ -1,38 +1,39 @@
 package com.yammer.dropwizard.config.tests;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yammer.dropwizard.config.Configuration;
-import com.yammer.dropwizard.json.Json;
-
+import com.yammer.dropwizard.json.ObjectMapperFactory;
 import org.junit.Test;
 
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.notNullValue;
-import static org.junit.Assert.assertThat;
+import static org.fest.assertions.api.Assertions.assertThat;
 
 public class ConfigurationTest {
     private final Configuration configuration = new Configuration();
 
     @Test
     public void hasAnHttpConfiguration() throws Exception {
-        assertThat(configuration.getHttpConfiguration(),
-                   is(notNullValue()));
+        assertThat(configuration.getHttpConfiguration())
+                .isNotNull();
     }
 
     @Test
     public void hasALoggingConfiguration() throws Exception {
-        assertThat(configuration.getLoggingConfiguration(),
-                   is(notNullValue()));
+        assertThat(configuration.getLoggingConfiguration())
+                .isNotNull();
     }
 
     @Test
     public void ensureConfigSerializable() throws Exception {
-        Json mapper = new Json();
+        final ObjectMapper mapper = new ObjectMapperFactory().build();
+
         // Issue-96: some types were not serializable
-        String json = mapper.writeValueAsString(configuration);
-        assertThat(json, is(notNullValue()));
+        final String json = mapper.writeValueAsString(configuration);
+        assertThat(json)
+                .isNotNull();
 
         // and as an added bonus, let's see we can also read it back:
-        Configuration cfg = mapper.readValue(json, Configuration.class);
-        assertThat(cfg, is(notNullValue()));
+        final Configuration cfg = mapper.readValue(json, Configuration.class);
+        assertThat(cfg)
+                .isNotNull();
     }
 }

@@ -16,8 +16,8 @@ features in JDBI.
 * The `PeopleDAO.sql.stg` stores all the SQL statements for use in the `PersonDAO`, note this is located in the
 src/resources under the same path as the `PersonDAO` class file.
 
-* The `SetupDatabaseCommand` illustrates building a "setup" command which can create your database prior to running
-dropwizard your application for the first time.
+* `migrations.xml` illustrates the usage of `dropwizard-migrations` which can create your database prior to running
+your application for the first time.
 
 * The `PersonResource` and `PeopleResource` are the REST resource which use the PersonDAO to retrieve data from the database, note the injection
 of the PersonDAO in their constructors.
@@ -34,7 +34,7 @@ To test the example application run the following commands.
 
 * To setup the h2 database run.
 
-        java -jar target/dropwizard-example-0.3.0-SNAPSHOT.jar setup example.yml
+        java -jar target/dropwizard-example-0.3.0-SNAPSHOT.jar db migrate example.yml
 
 * To run the server run.
 

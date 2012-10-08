@@ -17,21 +17,22 @@ import org.skife.jdbi.v2.util.StringMapper;
 import java.sql.SQLException;
 import java.sql.Types;
 
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
+import static org.fest.assertions.api.Assertions.assertThat;
+import static org.fest.assertions.api.Assertions.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 public class DatabaseTest {
     private final DatabaseConfiguration hsqlConfig = new DatabaseConfiguration();
+
     {
         LoggingFactory.bootstrap();
-        hsqlConfig.setUrl("jdbc:hsqldb:mem:DbTest-"+System.currentTimeMillis());
+        hsqlConfig.setUrl("jdbc:hsqldb:mem:DbTest-" + System.currentTimeMillis());
         hsqlConfig.setUser("sa");
         hsqlConfig.setDriverClass("org.hsqldb.jdbcDriver");
         hsqlConfig.setValidationQuery("SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS");
     }
+
     private final Environment environment = mock(Environment.class);
     private final DatabaseFactory factory = new DatabaseFactory(environment);
     private Database database;
@@ -42,8 +43,7 @@ public class DatabaseTest {
         final Handle handle = database.open();
         try {
             handle.createCall("DROP TABLE people IF EXISTS").invoke();
-            handle.createCall(
-                    "CREATE TABLE people (name varchar(100) primary key, email varchar(100), age int)")
+            handle.createCall("CREATE TABLE people (name varchar(100) primary key, email varchar(100), age int)")
                   .invoke();
             handle.createStatement("INSERT INTO people VALUES (?, ?, ?)")
                   .bind(0, "Coda Hale")
@@ -78,8 +78,8 @@ public class DatabaseTest {
             final Query<String> names = handle.createQuery("SELECT name FROM people WHERE age < ?")
                                               .bind(0, 50)
                                               .map(StringMapper.FIRST);
-            assertThat(ImmutableList.copyOf(names),
-                       is(ImmutableList.of("Coda Hale", "Kris Gale")));
+            assertThat(ImmutableList.copyOf(names))
+                    .containsOnly("Coda Hale", "Kris Gale");
         } finally {
             handle.close();
         }
@@ -96,8 +96,8 @@ public class DatabaseTest {
     public void sqlObjectsCanAcceptOptionalParams() throws Exception {
         final PersonDAO dao = database.open(PersonDAO.class);
         try {
-            assertThat(dao.findByName(Optional.of("Coda Hale")),
-                       is("Coda Hale"));
+            assertThat(dao.findByName(Optional.of("Coda Hale")))
+                    .isEqualTo("Coda Hale");
         } finally {
             database.close(dao);
         }
@@ -107,8 +107,8 @@ public class DatabaseTest {
     public void sqlObjectsCanReturnImmutableLists() throws Exception {
         final PersonDAO dao = database.open(PersonDAO.class);
         try {
-            assertThat(dao.findAllNames(),
-                       is(ImmutableList.of("Coda Hale", "Kris Gale", "Old Guy")));
+            assertThat(dao.findAllNames())
+                    .containsOnly("Coda Hale", "Kris Gale", "Old Guy");
         } finally {
             database.close(dao);
         }

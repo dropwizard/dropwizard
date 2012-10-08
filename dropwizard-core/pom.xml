@@ -5,16 +5,16 @@
     <parent>
         <groupId>com.yammer.dropwizard</groupId>
         <artifactId>dropwizard-parent</artifactId>
-        <version>0.5.2-SNAPSHOT</version>
+        <version>0.6.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>dropwizard-core</artifactId>
     <name>Dropwizard</name>
 
     <properties>
-        <jetty.version>8.1.5.v20120716</jetty.version>
-        <jackson.version>1.9.9</jackson.version>
-        <slf4j.version>1.6.6</slf4j.version>
+        <jetty.version>8.1.7.v20120910</jetty.version>
+        <jackson.version>2.0.6</jackson.version>
+        <slf4j.version>1.7.1</slf4j.version>
         <logback.version>1.0.7</logback.version>
     </properties>
 
@@ -60,29 +60,29 @@
             <version>${metrics.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.codehaus.jackson</groupId>
-            <artifactId>jackson-core-asl</artifactId>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
             <version>${jackson.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.codehaus.jackson</groupId>
-            <artifactId>jackson-mapper-asl</artifactId>
-            <version>${jackson.version}</version>
+            <groupId>com.fasterxml.jackson.jaxrs</groupId>
+            <artifactId>jackson-jaxrs-json-provider</artifactId>
+            <version>2.0.5</version>
         </dependency>
         <dependency>
-            <groupId>org.codehaus.jackson</groupId>
-            <artifactId>jackson-jaxrs</artifactId>
-            <version>${jackson.version}</version>
+            <groupId>com.fasterxml.jackson.dataformat</groupId>
+            <artifactId>jackson-dataformat-yaml</artifactId>
+            <version>2.0.5</version>
         </dependency>
         <dependency>
-            <groupId>com.fasterxml.jackson</groupId>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-guava</artifactId>
-            <version>1.9.1</version>
+            <version>${jackson.version}</version>
         </dependency>
         <dependency>
-            <groupId>commons-cli</groupId>
-            <artifactId>commons-cli</artifactId>
-            <version>1.2</version>
+            <groupId>net.sourceforge.argparse4j</groupId>
+            <artifactId>argparse4j</artifactId>
+            <version>0.2.2</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -138,11 +138,6 @@
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-validator</artifactId>
             <version>4.3.0.Final</version>
-        </dependency>
-        <dependency>
-            <groupId>org.yaml</groupId>
-            <artifactId>snakeyaml</artifactId>
-            <version>1.10</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
