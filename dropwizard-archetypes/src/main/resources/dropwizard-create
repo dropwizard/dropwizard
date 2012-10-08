@@ -73,7 +73,7 @@ EOF
 function version()
 {
   cat << EOF
-dropwizard $VERSION
+dropwizard $DW_VERSION
 Copyright (C) 2011-2012 Coda Hale and Yammer, Inc.
 License Apache License Version 2.0 <http://www.apache.org/licenses/LICENSE-2.0>.
 
