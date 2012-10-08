@@ -16,11 +16,6 @@ public class ClosablePooledDataSource extends PoolingDataSource implements Closa
     }
 
     @Override
-    public Logger getParentLogger() throws SQLFeatureNotSupportedException {
-        throw new SQLFeatureNotSupportedException("Doesn't use java.util.logging");
-    }
-
-    @Override
     public void close() throws IOException {
         try {
             pool.close();
