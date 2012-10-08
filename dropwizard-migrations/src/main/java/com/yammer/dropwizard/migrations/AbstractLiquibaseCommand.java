@@ -3,9 +3,9 @@ package com.yammer.dropwizard.migrations;
 import com.yammer.dropwizard.cli.ConfiguredCommand;
 import com.yammer.dropwizard.config.Bootstrap;
 import com.yammer.dropwizard.config.Configuration;
-import com.yammer.dropwizard.db.ClosableDataSource;
+import com.yammer.dropwizard.db.ManagedDataSource;
 import com.yammer.dropwizard.db.DatabaseConfiguration;
-import com.yammer.dropwizard.db.PooledDataSourceFactory;
+import com.yammer.dropwizard.db.ManagedDataSourceFactory;
 import liquibase.Liquibase;
 import liquibase.database.DatabaseConnection;
 import liquibase.database.jvm.JdbcConnection;
@@ -41,8 +41,8 @@ public abstract class AbstractLiquibaseCommand<T extends Configuration> extends 
         dbConfig.setMaxSize(1);
         dbConfig.setMinSize(1);
 
-        final PooledDataSourceFactory factory = new PooledDataSourceFactory(dbConfig);
-        final ClosableDataSource dataSource = factory.build();
+        final ManagedDataSourceFactory factory = new ManagedDataSourceFactory(dbConfig);
+        final ManagedDataSource dataSource = factory.build();
         try {
             final Connection connection = dataSource.getConnection();
             try {
@@ -58,7 +58,7 @@ public abstract class AbstractLiquibaseCommand<T extends Configuration> extends 
                 connection.close();
             }
         } finally {
-            dataSource.close();
+            dataSource.stop();
         }
     }
 

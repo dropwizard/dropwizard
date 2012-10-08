@@ -3,14 +3,13 @@ package com.yammer.dropwizard.db;
 import org.apache.tomcat.dbcp.dbcp.PoolingDataSource;
 import org.apache.tomcat.dbcp.pool.ObjectPool;
 
-import java.io.IOException;
 import java.sql.SQLFeatureNotSupportedException;
 import java.util.logging.Logger;
 
-public class ClosablePooledDataSource extends PoolingDataSource implements ClosableDataSource {
+public class ManagedPooledDataSource extends PoolingDataSource implements ManagedDataSource {
     private final ObjectPool pool;
 
-    public ClosablePooledDataSource(ObjectPool pool) {
+    public ManagedPooledDataSource(ObjectPool pool) {
         super(pool);
         this.pool = pool;
     }
@@ -21,13 +20,12 @@ public class ClosablePooledDataSource extends PoolingDataSource implements Closa
     }
 
     @Override
-    public void close() throws IOException {
-        try {
-            pool.close();
-        } catch (IOException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new IOException(e);
-        }
+    public void start() throws Exception {
+        // already started
+    }
+
+    @Override
+    public void stop() throws Exception {
+        pool.close();
     }
 }

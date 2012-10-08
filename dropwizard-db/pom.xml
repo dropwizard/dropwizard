@@ -9,7 +9,7 @@
     </parent>
 
     <artifactId>dropwizard-db</artifactId>
-    <name>Dropwizard Database Client</name>
+    <name>Dropwizard Database Support</name>
 
     <dependencies>
         <dependency>
@@ -18,25 +18,9 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.jdbi</groupId>
-            <artifactId>jdbi</artifactId>
-            <version>2.39.1</version>
-        </dependency>
-        <dependency>
-            <groupId>com.yammer.metrics</groupId>
-            <artifactId>metrics-jdbi</artifactId>
-            <version>${metrics.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.apache.tomcat</groupId>
             <artifactId>tomcat-dbcp</artifactId>
             <version>7.0.32</version>
-        </dependency>
-        <dependency>
-            <groupId>hsqldb</groupId>
-            <artifactId>hsqldb</artifactId>
-            <version>1.8.0.10</version>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>

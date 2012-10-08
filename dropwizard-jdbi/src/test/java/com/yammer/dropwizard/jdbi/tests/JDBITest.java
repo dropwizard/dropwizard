@@ -2,23 +2,27 @@ package com.yammer.dropwizard.jdbi.tests;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import com.yammer.dropwizard.config.Environment;
 import com.yammer.dropwizard.config.LoggingFactory;
-import com.yammer.dropwizard.jdbi.JDBI;
 import com.yammer.dropwizard.db.DatabaseConfiguration;
-import com.yammer.dropwizard.jdbi.JDBIFactory;
+import com.yammer.dropwizard.db.ManagedDataSource;
+import com.yammer.dropwizard.jdbi.DBIFactory;
+import com.yammer.dropwizard.lifecycle.Managed;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.Query;
 import org.skife.jdbi.v2.util.StringMapper;
 
-import java.sql.SQLException;
 import java.sql.Types;
+import java.util.List;
 
 import static org.fest.assertions.api.Assertions.assertThat;
-import static org.fest.assertions.api.Assertions.fail;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -34,16 +38,25 @@ public class JDBITest {
     }
 
     private final Environment environment = mock(Environment.class);
-    private final JDBIFactory factory = new JDBIFactory(environment);
-    private JDBI jdbi;
+    private final DBIFactory factory = new DBIFactory(environment);
+    private final List<Managed> managed = Lists.newArrayList();
+    private DBI jdbi;
 
     @Before
     public void setUp() throws Exception {
         this.jdbi = factory.build(hsqlConfig, "hsql");
+        final ArgumentCaptor<Managed> managedCaptor = ArgumentCaptor.forClass(Managed.class);
+        verify(environment).manage(managedCaptor.capture());
+        managed.addAll(managedCaptor.getAllValues());
+        for (Managed obj : managed) {
+            obj.start();
+        }
+
         final Handle handle = jdbi.open();
         try {
             handle.createCall("DROP TABLE people IF EXISTS").invoke();
-            handle.createCall("CREATE TABLE people (name varchar(100) primary key, email varchar(100), age int)")
+            handle.createCall(
+                    "CREATE TABLE people (name varchar(100) primary key, email varchar(100), age int)")
                   .invoke();
             handle.createStatement("INSERT INTO people VALUES (?, ?, ?)")
                   .bind(0, "Coda Hale")
@@ -67,7 +80,9 @@ public class JDBITest {
 
     @After
     public void tearDown() throws Exception {
-        jdbi.stop();
+        for (Managed obj : managed) {
+            obj.stop();
+        }
         this.jdbi = null;
     }
 
@@ -87,9 +102,7 @@ public class JDBITest {
 
     @Test
     public void managesTheDatabaseWithTheEnvironment() throws Exception {
-        final JDBI otherJDBI = factory.build(hsqlConfig, "hsql");
-
-        verify(environment).manage(otherJDBI);
+        verify(environment).manage(any(ManagedDataSource.class));
     }
 
     @Test
@@ -122,17 +135,6 @@ public class JDBITest {
                     .containsOnly("Coda Hale", "Kris Gale", "Old Guy");
         } finally {
             jdbi.close(dao);
-        }
-    }
-
-    @Test
-    @SuppressWarnings("CallToPrintStackTrace")
-    public void pingWorks() throws Exception {
-        try {
-            jdbi.ping();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            fail("shouldn't have thrown an exception but did");
         }
     }
 }

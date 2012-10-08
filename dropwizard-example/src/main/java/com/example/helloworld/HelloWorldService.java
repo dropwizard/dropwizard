@@ -15,10 +15,10 @@ import com.yammer.dropwizard.auth.basic.BasicAuthProvider;
 import com.yammer.dropwizard.bundles.AssetsBundle;
 import com.yammer.dropwizard.config.Bootstrap;
 import com.yammer.dropwizard.config.Environment;
-import com.yammer.dropwizard.jdbi.JDBI;
 import com.yammer.dropwizard.db.DatabaseConfiguration;
-import com.yammer.dropwizard.jdbi.JDBIFactory;
+import com.yammer.dropwizard.jdbi.DBIFactory;
 import com.yammer.dropwizard.migrations.MigrationsBundle;
+import org.skife.jdbi.v2.DBI;
 
 public class HelloWorldService extends Service<HelloWorldConfiguration> {
     public static void main(String[] args) throws Exception {
@@ -46,8 +46,8 @@ public class HelloWorldService extends Service<HelloWorldConfiguration> {
 
         final Template template = configuration.buildTemplate();
 
-        final JDBIFactory factory = new JDBIFactory(environment);
-        final JDBI db = factory.build(configuration.getDatabaseConfiguration(), "h2");
+        final DBIFactory factory = new DBIFactory(environment);
+        final DBI db = factory.build(configuration.getDatabaseConfiguration(), "h2");
         final PeopleDAO peopleDAO = db.onDemand(PeopleDAO.class);
 
 

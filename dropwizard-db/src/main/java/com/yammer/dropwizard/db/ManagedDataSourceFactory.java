@@ -7,14 +7,14 @@ import org.apache.tomcat.dbcp.pool.impl.GenericObjectPool;
 import java.util.Map;
 import java.util.Properties;
 
-public class PooledDataSourceFactory {
+public class ManagedDataSourceFactory {
     private final DatabaseConfiguration configuration;
 
-    public PooledDataSourceFactory(DatabaseConfiguration configuration) {
+    public ManagedDataSourceFactory(DatabaseConfiguration configuration) {
         this.configuration = configuration;
     }
 
-    public ClosableDataSource build() throws ClassNotFoundException {
+    public ManagedDataSource build() throws ClassNotFoundException {
         Class.forName(configuration.getDriverClass());
         final GenericObjectPool pool = buildPool();
 
@@ -38,7 +38,7 @@ public class PooledDataSourceFactory {
                                                                                           true);
         connectionFactory.setPool(pool);
 
-        return new ClosablePooledDataSource(pool);
+        return new ManagedPooledDataSource(pool);
     }
 
     private GenericObjectPool buildPool() {
