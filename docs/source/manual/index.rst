@@ -13,7 +13,8 @@ User Manual
 
     core
     client
-    db
+    jdbi
+    migrations
     auth
     views
     scala
