@@ -18,7 +18,7 @@ public class ServiceTest {
 
     private class FakeService extends Service<FakeConfiguration> {
         @Override
-        public void initialize(Bootstrap<FakeConfiguration> bootstrap) {
+        public void initialize(Bootstrap<FakeConfiguration> bootstrap, Environment environment) {
             bootstrap.addBundle(bundle);
         }
 

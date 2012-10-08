@@ -12,7 +12,7 @@ public class TemplateService extends Service<Configuration> {
     }
 
     @Override
-    public void initialize(Bootstrap<Configuration> bootstrap) {
+    public void initialize(Bootstrap<Configuration> bootstrap, Environment environment) {
         bootstrap.setName("template");
         bootstrap.addBundle(new ViewBundle());
     }

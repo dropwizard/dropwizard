@@ -57,7 +57,7 @@ public abstract class Service<T extends Configuration> {
      *
      * @param bootstrap the service bootstrap
      */
-    public abstract void initialize(Bootstrap<T> bootstrap);
+    public abstract void initialize(Bootstrap<T> bootstrap, Environment environment);
 
     /**
      * When the service runs, this is called after the {@link Bundle}s are run. Override it to add
@@ -81,7 +81,6 @@ public abstract class Service<T extends Configuration> {
         final Bootstrap<T> bootstrap = new Bootstrap<T>(this);
         bootstrap.addCommand(new ServerCommand<T>(this));
         bootstrap.addBundle(new BasicBundle());
-        initialize(bootstrap);
         final Cli cli = new Cli(this.getClass(), bootstrap);
         cli.run(arguments);
     }
