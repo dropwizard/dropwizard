@@ -23,7 +23,7 @@ import java.util.Set;
 public abstract class ResourceTest {
     private final Set<Object> singletons = Sets.newHashSet();
     private final Set<Class<?>> providers = Sets.newHashSet();
-    private final ObjectMapperFactory objectMapperFactory = ObjectMapperFactory.defaultInstance();
+    private final ObjectMapperFactory objectMapperFactory = new ObjectMapperFactory();
     private final Map<String, Boolean> features = Maps.newHashMap();
     private final Map<String, Object> properties = Maps.newHashMap();
 

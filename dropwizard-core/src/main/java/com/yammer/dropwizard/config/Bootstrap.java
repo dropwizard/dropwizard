@@ -20,7 +20,7 @@ public class Bootstrap<T extends Configuration> {
 
     public Bootstrap(Service<T> service) {
         this.name = service.getClass().getSimpleName();
-        this.objectMapperFactory = ObjectMapperFactory.defaultInstance();
+        this.objectMapperFactory = new ObjectMapperFactory();
         this.bundles = Lists.newArrayList();
         this.configuredBundles = Lists.newArrayList();
         this.commands = Lists.newArrayList();

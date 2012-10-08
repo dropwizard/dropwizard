@@ -24,7 +24,7 @@ public class ConfigurationTest {
 
     @Test
     public void ensureConfigSerializable() throws Exception {
-        final ObjectMapper mapper = ObjectMapperFactory.defaultInstance().build();
+        final ObjectMapper mapper = new ObjectMapperFactory().build();
 
         // Issue-96: some types were not serializable
         final String json = mapper.writeValueAsString(configuration);

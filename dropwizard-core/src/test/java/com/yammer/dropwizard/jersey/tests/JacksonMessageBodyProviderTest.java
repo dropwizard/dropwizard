@@ -43,7 +43,7 @@ public class JacksonMessageBodyProviderTest {
 
     }
 
-    private final ObjectMapper mapper = spy(ObjectMapperFactory.defaultInstance().build());
+    private final ObjectMapper mapper = spy(new ObjectMapperFactory().build());
     private final JacksonMessageBodyProvider provider = new JacksonMessageBodyProvider(mapper);
 
     @Test

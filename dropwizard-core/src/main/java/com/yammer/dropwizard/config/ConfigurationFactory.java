@@ -28,7 +28,7 @@ public class ConfigurationFactory<T> {
     }
 
     public static <T> ConfigurationFactory<T> forClass(Class<T> klass, Validator validator) {
-        return new ConfigurationFactory<T>(klass, validator, ObjectMapperFactory.defaultInstance());
+        return new ConfigurationFactory<T>(klass, validator, new ObjectMapperFactory());
     }
 
     private final Class<T> klass;

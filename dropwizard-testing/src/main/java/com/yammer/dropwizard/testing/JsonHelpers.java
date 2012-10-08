@@ -24,7 +24,7 @@ import static com.yammer.dropwizard.testing.FixtureHelpers.fixture;
  * </code></pre>
  */
 public class JsonHelpers {
-    private static final ObjectMapper MAPPER = ObjectMapperFactory.defaultInstance().build();
+    private static final ObjectMapper MAPPER = new ObjectMapperFactory().build();
 
     private JsonHelpers() { /* singleton */ }
 
