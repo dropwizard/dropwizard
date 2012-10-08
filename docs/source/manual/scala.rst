@@ -16,9 +16,9 @@ Dropwizard :ref:`services <man-core-service>` should extend ``ScalaService`` ins
 
 .. code-block:: scala
 
-    object ExampleService extends ScalaService[ExampleConfiguration]("example") {
+    object ExampleService extends ScalaService[ExampleConfiguration]) {
       def initialize(bootstrap: Bootstrap[ExampleConfiguration]) {
-        // add bundles or commands
+        bootstrap.setName("example")
       }
 
       def run(configuration: ExampleConfiguration, environment: Environment) {
