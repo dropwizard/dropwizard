@@ -2,6 +2,7 @@ package com.yammer.dropwizard.migrations;
 
 import com.google.common.base.Charsets;
 import com.yammer.dropwizard.config.Configuration;
+import com.yammer.dropwizard.db.ConfigurationStrategy;
 import liquibase.Liquibase;
 import liquibase.diff.Diff;
 import liquibase.diff.DiffResult;
