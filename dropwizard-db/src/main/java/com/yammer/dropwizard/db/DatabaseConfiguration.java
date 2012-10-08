@@ -11,7 +11,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.Map;
 
-@SuppressWarnings({ "FieldMayBeFinal", "UnusedDeclaration" })
+@SuppressWarnings("UnusedDeclaration")
 public class DatabaseConfiguration {
     @NotNull
     @JsonProperty
