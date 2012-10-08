@@ -14,7 +14,6 @@ public class ManagedPooledDataSource extends PoolingDataSource implements Manage
         this.pool = pool;
     }
 
-    @Override
     public Logger getParentLogger() throws SQLFeatureNotSupportedException {
         throw new SQLFeatureNotSupportedException("Doesn't use java.util.logging");
     }
