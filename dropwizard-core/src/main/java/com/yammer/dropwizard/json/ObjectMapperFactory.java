@@ -11,7 +11,7 @@ import com.google.common.collect.Maps;
 import java.util.List;
 import java.util.Map;
 
-public class ObjectMapperFactory {
+public class ObjectMapperFactory implements Cloneable {
     private final List<Module> modules;
     private final Map<MapperFeature, Boolean> mapperFeatures;
     private final Map<DeserializationFeature, Boolean> deserializationFeatures;
