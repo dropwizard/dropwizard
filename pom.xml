@@ -22,6 +22,7 @@
         <module>dropwizard-db</module>
         <module>dropwizard-jdbi</module>
         <module>dropwizard-migrations</module>
+        <module>dropwizard-hibernate</module>
         <module>dropwizard-auth</module>
         <module>dropwizard-example</module>
         <module>dropwizard-views</module>
