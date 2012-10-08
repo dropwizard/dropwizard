@@ -30,7 +30,7 @@
         </dependency>
         <dependency>
             <groupId>com.yammer.dropwizard</groupId>
-            <artifactId>dropwizard-db</artifactId>
+            <artifactId>dropwizard-jdbi</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

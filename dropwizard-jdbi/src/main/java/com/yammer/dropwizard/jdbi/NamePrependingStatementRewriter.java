@@ -1,4 +1,4 @@
-package com.yammer.dropwizard.db;
+package com.yammer.dropwizard.jdbi;
 
 import org.skife.jdbi.v2.Binding;
 import org.skife.jdbi.v2.StatementContext;

@@ -1,12 +1,12 @@
-package com.yammer.dropwizard.db.tests;
+package com.yammer.dropwizard.jdbi.tests;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.yammer.dropwizard.config.Environment;
 import com.yammer.dropwizard.config.LoggingFactory;
-import com.yammer.dropwizard.db.Database;
+import com.yammer.dropwizard.jdbi.Database;
 import com.yammer.dropwizard.db.DatabaseConfiguration;
-import com.yammer.dropwizard.db.DatabaseFactory;
+import com.yammer.dropwizard.jdbi.DatabaseFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

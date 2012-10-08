@@ -1,6 +1,9 @@
-package com.yammer.dropwizard.db;
+package com.yammer.dropwizard.jdbi;
 
 import com.yammer.dropwizard.config.Environment;
+import com.yammer.dropwizard.db.ClosableDataSource;
+import com.yammer.dropwizard.db.DatabaseConfiguration;
+import com.yammer.dropwizard.db.PooledDataSourceFactory;
 
 public class DatabaseFactory {
     private final Environment environment;

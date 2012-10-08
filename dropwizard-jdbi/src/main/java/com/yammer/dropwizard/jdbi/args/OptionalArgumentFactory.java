@@ -1,4 +1,4 @@
-package com.yammer.dropwizard.db.args;
+package com.yammer.dropwizard.jdbi.args;
 
 import com.google.common.base.Optional;
 import org.skife.jdbi.v2.StatementContext;

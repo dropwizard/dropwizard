@@ -1,5 +1,6 @@
-package com.yammer.dropwizard.jersey;
+package com.yammer.dropwizard.jdbi.jersey;
 
+import com.yammer.dropwizard.jersey.LoggingExceptionMapper;
 import com.yammer.dropwizard.logging.Log;
 import org.skife.jdbi.v2.exceptions.DBIException;
 

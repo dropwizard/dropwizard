@@ -15,9 +15,9 @@ import com.yammer.dropwizard.auth.basic.BasicAuthProvider;
 import com.yammer.dropwizard.bundles.AssetsBundle;
 import com.yammer.dropwizard.config.Bootstrap;
 import com.yammer.dropwizard.config.Environment;
-import com.yammer.dropwizard.db.Database;
+import com.yammer.dropwizard.jdbi.Database;
 import com.yammer.dropwizard.db.DatabaseConfiguration;
-import com.yammer.dropwizard.db.DatabaseFactory;
+import com.yammer.dropwizard.jdbi.DatabaseFactory;
 import com.yammer.dropwizard.db.migrations.MigrationsBundle;
 
 public class HelloWorldService extends Service<HelloWorldConfiguration> {

@@ -1,4 +1,4 @@
-package com.yammer.dropwizard.db;
+package com.yammer.dropwizard.jdbi;
 
 import com.yammer.metrics.core.HealthCheck;
 

@@ -1,4 +1,4 @@
-package com.yammer.dropwizard.db;
+package com.yammer.dropwizard.jdbi;
 
 import com.google.common.collect.ImmutableList;
 import org.skife.jdbi.v2.ContainerBuilder;

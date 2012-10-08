@@ -1,4 +1,4 @@
-package com.yammer.dropwizard.db.tests;
+package com.yammer.dropwizard.jdbi.tests;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;

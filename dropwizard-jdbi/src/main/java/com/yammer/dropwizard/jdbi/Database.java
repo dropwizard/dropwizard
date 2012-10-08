@@ -1,9 +1,10 @@
-package com.yammer.dropwizard.db;
+package com.yammer.dropwizard.jdbi;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
-import com.yammer.dropwizard.db.args.OptionalArgumentFactory;
-import com.yammer.dropwizard.db.logging.LogbackLog;
+import com.yammer.dropwizard.db.ClosableDataSource;
+import com.yammer.dropwizard.jdbi.args.OptionalArgumentFactory;
+import com.yammer.dropwizard.jdbi.logging.LogbackLog;
 import com.yammer.dropwizard.lifecycle.Managed;
 import com.yammer.metrics.Metrics;
 import com.yammer.metrics.core.MetricName;
