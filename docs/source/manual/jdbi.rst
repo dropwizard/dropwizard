@@ -1,4 +1,4 @@
-.. _man-db:
+.. _man-jdbi:
 
 ###############
 Dropwizard JDBI
@@ -11,12 +11,10 @@ Dropwizard JDBI
 
 .. _JDBI: http://jdbi.org/
 
-Access to JDBI is provided via a ``DBI`` subclass: ``JDBI``.
-
 Configuration
 =============
 
-To create a :ref:`managed <man-core-managed>`, instrumented ``JDBI`` instance, your
+To create a :ref:`managed <man-core-managed>`, instrumented ``DBI`` instance, your
 :ref:`configuration class <man-core-configuration>` needs an ``DatabaseConfiguration`` instance:
 
 .. code-block:: java
@@ -32,22 +30,22 @@ To create a :ref:`managed <man-core-managed>`, instrumented ``JDBI`` instance, y
         }
     }
 
-Then, in your service's ``run`` method, create a new ``JDBIFactory``:
+Then, in your service's ``run`` method, create a new ``DBIFactory``:
 
 .. code-block:: java
 
     @Override
     public void run(ExampleConfiguration config,
                     Environment environment) throws ClassNotFoundException {
-        final JDBIFactory factory = new JDBIFactory(environment);
-        final JDBI jdbi = factory.build(config.getDatabaseConfiguration(), "postgresql");
+        final DBIFactory factory = new DBIFactory(environment);
+        final DBI jdbi = factory.build(config.getDatabaseConfiguration(), "postgresql");
         final UserDAO dao = jdbi.onDemand(UserDAO.class);
         environment.addResource(new UserResource(dao));
     }
 
 This will create a new :ref:`managed <man-core-managed>` connection pool to the database, a
-:ref:`health check <man-core-healthchecks>` for connectivity to the database, and a new ``JDBI``
-instance for you to use. Note the ``ClassNotFoundException`` is thrown by the ``JDBIFactory`` class
+:ref:`health check <man-core-healthchecks>` for connectivity to the database, and a new ``DBI``
+instance for you to use. Note the ``ClassNotFoundException`` is thrown by the ``DBIFactory`` class
 when the ``build`` method is unable to locate the JDBC driver class. This will cause the service to
 exit displaying the output of the exception.
 
@@ -122,7 +120,7 @@ code (e.g., ``ResultSet`` -> domain objects) into testable, reusable classes.
 Exception Handling
 ==================
 
-By adding the ``JDBIExceptionsBundle`` to your :ref:`service <man-core-service>`, your Dropwizard
+By adding the ``DBIExceptionsBundle`` to your :ref:`service <man-core-service>`, your Dropwizard
 application will automatically unwrap any thrown ``SQLException`` or ``DBIException`` instances.
 This is critical for debugging, since otherwise only the common wrapper exception's stack trace is
 logged.
@@ -132,8 +130,6 @@ Prepended Comments
 
 If you're using JDBI's `SQL Objects API`_ (and you should be), ``dropwizard-jdbi`` will
 automatically prepend the SQL object's class and method name to the SQL query as an SQL comment:
-
-
 
 .. code-block:: sql
 
@@ -147,5 +143,5 @@ This will allow you to quickly determine the origin of any slow or misbehaving q
 Guava Support
 =============
 
-``JDBI`` supports ``Optional<T>`` arguments and ``ImmutableList<T>`` and ``ImmutableSet<T>`` query
-results.
+``dropwizard-jdbi`` supports ``Optional<T>`` arguments and ``ImmutableList<T>`` and
+``ImmutableSet<T>`` query results.
