@@ -26,7 +26,8 @@ public class HelloWorldService extends Service<HelloWorldConfiguration> {
     }
 
     @Override
-    public void initialize(Bootstrap<HelloWorldConfiguration> bootstrap) {
+    public void initialize(Bootstrap<HelloWorldConfiguration> bootstrap,
+                           Environment environment) {
         bootstrap.setName("hello-world");
         bootstrap.addCommand(new RenderCommand());
         bootstrap.addBundle(new AssetsBundle());

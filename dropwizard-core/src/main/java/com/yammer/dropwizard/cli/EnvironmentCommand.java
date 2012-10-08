@@ -32,6 +32,7 @@ public abstract class EnvironmentCommand<T extends Configuration> extends Config
         final Environment environment = new Environment(bootstrap.getName(),
                                                         configuration,
                                                         bootstrap.getObjectMapperFactory().copy());
+        service.initialize(bootstrap, environment);
         bootstrap.runWithBundles(configuration, environment);
         service.run(configuration, environment);
         run(environment, namespace, configuration);
