@@ -14,6 +14,7 @@ User Manual
     core
     client
     jdbi
+    migrations
     auth
     views
     scala

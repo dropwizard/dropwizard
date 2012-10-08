@@ -15,7 +15,7 @@ Configuration
 =============
 
 To create a :ref:`managed <man-core-managed>`, instrumented ``DBI`` instance, your
-:ref:`configuration class <man-core-configuration>` needs an ``DatabaseConfiguration`` instance:
+:ref:`configuration class <man-core-configuration>` needs a ``DatabaseConfiguration`` instance:
 
 .. code-block:: java
 
