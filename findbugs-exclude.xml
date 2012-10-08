@@ -9,7 +9,7 @@
 
     <!-- given this is a console command, exit(-1) is right -->
     <Match>
-        <Class name="com.yammer.dropwizard.cli.ConfiguredCommand"/>
+        <Class name="com.yammer.dropwizard.cli.Cli"/>
         <Method name="run"/>
         <Bug pattern="DM_EXIT"/>
     </Match>
@@ -55,14 +55,4 @@
     <Class name="~com\.yammer\.dropwizard\.providers\.OauthTokenProvider.*"/>
     <Class name="~com\.yammer\.dropwizard\.ScalaService.*"/>
     <Class name="~com\.yammer\.dropwizard\.Logging.*" />
-
-    <!-- we're intentionally using default encoding and System.exit -->
-    <Match>
-        <Class name="com.yammer.dropwizard.AbstractService"/>
-        <Bug pattern="DM_EXIT"/>
-    </Match>
-    <Match>
-        <Class name="com.yammer.dropwizard.cli.UsagePrinter"/>
-        <Bug pattern="DM_DEFAULT_ENCODING"/>
-    </Match>
 </FindBugsFilter>
