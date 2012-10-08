@@ -6,9 +6,17 @@ import org.apache.tomcat.dbcp.pool.ObjectPool;
 import java.sql.SQLFeatureNotSupportedException;
 import java.util.logging.Logger;
 
+/**
+ * A {@link PoolingDataSource} which is also {@link ManagedDataSource}.
+ */
 public class ManagedPooledDataSource extends PoolingDataSource implements ManagedDataSource {
     private final ObjectPool pool;
 
+    /**
+     * Create a new data source with the given connection pool.
+     *
+     * @param pool    a connection pool
+     */
     public ManagedPooledDataSource(ObjectPool pool) {
         super(pool);
         this.pool = pool;
