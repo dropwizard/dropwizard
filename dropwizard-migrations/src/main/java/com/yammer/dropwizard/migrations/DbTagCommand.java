@@ -1,4 +1,4 @@
-package com.yammer.dropwizard.db.migrations;
+package com.yammer.dropwizard.migrations;
 
 import com.yammer.dropwizard.config.Configuration;
 import liquibase.Liquibase;

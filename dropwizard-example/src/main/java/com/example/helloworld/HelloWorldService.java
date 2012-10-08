@@ -18,7 +18,7 @@ import com.yammer.dropwizard.config.Environment;
 import com.yammer.dropwizard.jdbi.JDBI;
 import com.yammer.dropwizard.db.DatabaseConfiguration;
 import com.yammer.dropwizard.jdbi.JDBIFactory;
-import com.yammer.dropwizard.db.migrations.MigrationsBundle;
+import com.yammer.dropwizard.migrations.MigrationsBundle;
 
 public class HelloWorldService extends Service<HelloWorldConfiguration> {
     public static void main(String[] args) throws Exception {
