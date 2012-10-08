@@ -5,18 +5,18 @@ import com.yammer.dropwizard.db.ClosableDataSource;
 import com.yammer.dropwizard.db.DatabaseConfiguration;
 import com.yammer.dropwizard.db.PooledDataSourceFactory;
 
-public class DatabaseFactory {
+public class JDBIFactory {
     private final Environment environment;
 
-    public DatabaseFactory(Environment environment) {
+    public JDBIFactory(Environment environment) {
         this.environment = environment;
     }
 
-    public Database build(DatabaseConfiguration configuration, String name) throws ClassNotFoundException {
+    public JDBI build(DatabaseConfiguration configuration, String name) throws ClassNotFoundException {
         final ClosableDataSource dataSource = new PooledDataSourceFactory(configuration).build();
-        final Database database = new Database(dataSource, configuration.getValidationQuery());
-        environment.manage(database);
-        environment.addHealthCheck(new DatabaseHealthCheck(database, name));
-        return database;
+        final JDBI JDBI = new JDBI(dataSource, configuration.getValidationQuery());
+        environment.manage(JDBI);
+        environment.addHealthCheck(new JDBIHealthCheck(JDBI, name));
+        return JDBI;
     }
 }

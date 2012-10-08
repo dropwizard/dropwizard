@@ -20,9 +20,9 @@ import org.slf4j.LoggerFactory;
 
 import java.sql.SQLException;
 
-public class Database extends DBI implements Managed {
-    private static final Logger LOGGER = (Logger) LoggerFactory.getLogger(Database.class);
-    private static final MetricName RAW_SQL = new MetricName(Database.class, "raw-sql");
+public class JDBI extends DBI implements Managed {
+    private static final Logger LOGGER = (Logger) LoggerFactory.getLogger(JDBI.class);
+    private static final MetricName RAW_SQL = new MetricName(JDBI.class, "raw-sql");
     private static class SanerNamingStrategy extends DelegatingStatementNameStrategy {
         private SanerNamingStrategy() {
             super(NameStrategies.CHECK_EMPTY,
@@ -41,7 +41,7 @@ public class Database extends DBI implements Managed {
     private final ClosableDataSource dataSource;
     private final String validationQuery;
 
-    public Database(ClosableDataSource dataSource, String validationQuery) {
+    public JDBI(ClosableDataSource dataSource, String validationQuery) {
         super(dataSource);
         this.dataSource = dataSource;
         this.validationQuery = validationQuery;

@@ -2,17 +2,17 @@ package com.yammer.dropwizard.jdbi;
 
 import com.yammer.metrics.core.HealthCheck;
 
-public class DatabaseHealthCheck extends HealthCheck {
-    private final Database database;
+public class JDBIHealthCheck extends HealthCheck {
+    private final JDBI JDBI;
 
-    public DatabaseHealthCheck(Database database, String name) {
+    public JDBIHealthCheck(JDBI JDBI, String name) {
         super(name + "-db");
-        this.database = database;
+        this.JDBI = JDBI;
     }
 
     @Override
     protected Result check() throws Exception {
-        database.ping();
+        JDBI.ping();
         return Result.healthy();
     }
 }

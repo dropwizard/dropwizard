@@ -4,9 +4,9 @@ import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.yammer.dropwizard.config.Environment;
 import com.yammer.dropwizard.config.LoggingFactory;
-import com.yammer.dropwizard.jdbi.Database;
+import com.yammer.dropwizard.jdbi.JDBI;
 import com.yammer.dropwizard.db.DatabaseConfiguration;
-import com.yammer.dropwizard.jdbi.DatabaseFactory;
+import com.yammer.dropwizard.jdbi.JDBIFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,7 +22,7 @@ import static org.fest.assertions.api.Assertions.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-public class DatabaseTest {
+public class JDBITest {
     private final DatabaseConfiguration hsqlConfig = new DatabaseConfiguration();
 
     {
@@ -34,13 +34,13 @@ public class DatabaseTest {
     }
 
     private final Environment environment = mock(Environment.class);
-    private final DatabaseFactory factory = new DatabaseFactory(environment);
-    private Database database;
+    private final JDBIFactory factory = new JDBIFactory(environment);
+    private JDBI jdbi;
 
     @Before
     public void setUp() throws Exception {
-        this.database = factory.build(hsqlConfig, "hsql");
-        final Handle handle = database.open();
+        this.jdbi = factory.build(hsqlConfig, "hsql");
+        final Handle handle = jdbi.open();
         try {
             handle.createCall("DROP TABLE people IF EXISTS").invoke();
             handle.createCall("CREATE TABLE people (name varchar(100) primary key, email varchar(100), age int)")
@@ -67,13 +67,13 @@ public class DatabaseTest {
 
     @After
     public void tearDown() throws Exception {
-        database.stop();
-        this.database = null;
+        jdbi.stop();
+        this.jdbi = null;
     }
 
     @Test
     public void createsAValidDBI() throws Exception {
-        final Handle handle = database.open();
+        final Handle handle = jdbi.open();
         try {
             final Query<String> names = handle.createQuery("SELECT name FROM people WHERE age < ?")
                                               .bind(0, 50)
@@ -87,30 +87,30 @@ public class DatabaseTest {
 
     @Test
     public void managesTheDatabaseWithTheEnvironment() throws Exception {
-        final Database db = factory.build(hsqlConfig, "hsql");
+        final JDBI jdbi = factory.build(hsqlConfig, "hsql");
 
-        verify(environment).manage(db);
+        verify(environment).manage(jdbi);
     }
 
     @Test
     public void sqlObjectsCanAcceptOptionalParams() throws Exception {
-        final PersonDAO dao = database.open(PersonDAO.class);
+        final PersonDAO dao = jdbi.open(PersonDAO.class);
         try {
             assertThat(dao.findByName(Optional.of("Coda Hale")))
                     .isEqualTo("Coda Hale");
         } finally {
-            database.close(dao);
+            jdbi.close(dao);
         }
     }
 
     @Test
     public void sqlObjectsCanReturnImmutableLists() throws Exception {
-        final PersonDAO dao = database.open(PersonDAO.class);
+        final PersonDAO dao = jdbi.open(PersonDAO.class);
         try {
             assertThat(dao.findAllNames())
                     .containsOnly("Coda Hale", "Kris Gale", "Old Guy");
         } finally {
-            database.close(dao);
+            jdbi.close(dao);
         }
     }
 
@@ -118,7 +118,7 @@ public class DatabaseTest {
     @SuppressWarnings("CallToPrintStackTrace")
     public void pingWorks() throws Exception {
         try {
-            database.ping();
+            jdbi.ping();
         } catch (SQLException e) {
             e.printStackTrace();
             fail("shouldn't have thrown an exception but did");

@@ -15,9 +15,9 @@ import com.yammer.dropwizard.auth.basic.BasicAuthProvider;
 import com.yammer.dropwizard.bundles.AssetsBundle;
 import com.yammer.dropwizard.config.Bootstrap;
 import com.yammer.dropwizard.config.Environment;
-import com.yammer.dropwizard.jdbi.Database;
+import com.yammer.dropwizard.jdbi.JDBI;
 import com.yammer.dropwizard.db.DatabaseConfiguration;
-import com.yammer.dropwizard.jdbi.DatabaseFactory;
+import com.yammer.dropwizard.jdbi.JDBIFactory;
 import com.yammer.dropwizard.db.migrations.MigrationsBundle;
 
 public class HelloWorldService extends Service<HelloWorldConfiguration> {
@@ -46,8 +46,8 @@ public class HelloWorldService extends Service<HelloWorldConfiguration> {
 
         final Template template = configuration.buildTemplate();
 
-        final DatabaseFactory factory = new DatabaseFactory(environment);
-        final Database db = factory.build(configuration.getDatabaseConfiguration(), "h2");
+        final JDBIFactory factory = new JDBIFactory(environment);
+        final JDBI db = factory.build(configuration.getDatabaseConfiguration(), "h2");
         final PeopleDAO peopleDAO = db.onDemand(PeopleDAO.class);
 
 
