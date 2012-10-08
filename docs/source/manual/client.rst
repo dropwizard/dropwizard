@@ -36,13 +36,13 @@ To create a :ref:`managed <man-core-managed>`, instrumented ``HttpClient`` insta
         }
     }
 
-Then, in your service's ``initialize`` method, create a new ``HttpClientFactory``:
+Then, in your service's ``run`` method, create a new ``HttpClientFactory``:
 
 .. code-block:: java
 
     @Override
-    protected void initialize(ExampleConfiguration config,
-                              Environment environment) {
+    public void run(ExampleConfiguration config,
+                    Environment environment) {
         final HttpClientFactory factory = new HttpClientFactory(config.getHttpClientConfiguration());
         final HttpClient httpClient = factory.build();
         environment.addResource(new ExternalServiceResource(httpClient));
@@ -136,13 +136,13 @@ To create a :ref:`managed <man-core-managed>`, instrumented ``JerseyClient`` ins
         }
     }
 
-Then, in your service's ``initialize`` method, create a new ``JerseyClientFactory``:
+Then, in your service's ``run`` method, create a new ``JerseyClientFactory``:
 
 .. code-block:: java
 
     @Override
-    protected void initialize(ExampleConfiguration config,
-                              Environment environment) {
+    public void run(ExampleConfiguration config,
+                    Environment environment) {
         final JerseyClientFactory factory = new JerseyClientFactory(config.getJerseyClientConfiguration());
         final JerseyClient jerseyClient = factory.build(environment);
         environment.addResource(new ExternalServiceResource(jerseyClient));
