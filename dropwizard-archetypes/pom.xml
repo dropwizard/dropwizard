@@ -24,4 +24,32 @@
     <module>java-simple</module>
     <module>scala-simple</module>
   </modules>
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>2.6</version>
+        <executions>
+          <execution>
+            <id>package-tools</id>
+            <goals>
+              <goal>resources</goal>
+            </goals>
+            <phase>package</phase>
+            <inherited>false</inherited>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+        <includes>
+          <include>dropwizard-create</include>
+        </includes>
+      </resource>
+    </resources>
+  </build>
 </project>

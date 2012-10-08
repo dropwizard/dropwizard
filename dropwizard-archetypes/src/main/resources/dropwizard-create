@@ -4,7 +4,7 @@
 #
 
 # defaults
-DW_VERSION="0.6.0-SNAPSHOT"
+DW_VERSION="${project.version}"
 LANGUAGE="java"
 SHADED="false"
 PACKAGE=
