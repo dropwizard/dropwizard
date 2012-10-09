@@ -17,15 +17,20 @@ import com.yammer.dropwizard.config.Bootstrap;
 import com.yammer.dropwizard.config.Environment;
 import com.yammer.dropwizard.db.DatabaseConfiguration;
 import com.yammer.dropwizard.hibernate.HibernateBundle;
-import com.yammer.dropwizard.hibernate.SessionAutoCommitFilter;
-import com.yammer.dropwizard.hibernate.SessionFactoryFactory;
 import com.yammer.dropwizard.migrations.MigrationsBundle;
-import org.hibernate.SessionFactory;
 
 public class HelloWorldService extends Service<HelloWorldConfiguration> {
     public static void main(String[] args) throws Exception {
         new HelloWorldService().run(args);
     }
+
+    private final HibernateBundle<HelloWorldConfiguration> hibernateBundle =
+            new HibernateBundle<HelloWorldConfiguration>("com.example.helloworld.core") {
+                @Override
+                public DatabaseConfiguration getDatabaseConfiguration(HelloWorldConfiguration configuration) {
+                    return configuration.getDatabaseConfiguration();
+                }
+            };
 
     @Override
     public void initialize(Bootstrap<HelloWorldConfiguration> bootstrap) {
@@ -38,17 +43,13 @@ public class HelloWorldService extends Service<HelloWorldConfiguration> {
                 return configuration.getDatabaseConfiguration();
             }
         });
-        bootstrap.addBundle(new HibernateBundle());
+        bootstrap.addBundle(hibernateBundle);
     }
 
     @Override
     public void run(HelloWorldConfiguration configuration,
                     Environment environment) throws ClassNotFoundException {
-        final SessionFactory sessionFactory = new SessionFactoryFactory(environment).build(
-                configuration.getDatabaseConfiguration(),
-                "com.example.helloworld.core");
-        final PersonDAO dao = new PersonDAO(sessionFactory);
-        environment.addFilter(new SessionAutoCommitFilter(sessionFactory), "/*");
+        final PersonDAO dao = new PersonDAO(hibernateBundle.getSessionFactory());
 
         environment.addProvider(new BasicAuthProvider<User>(new ExampleAuthenticator(),
                                                             "SUPER SECRET STUFF"));
@@ -62,5 +63,4 @@ public class HelloWorldService extends Service<HelloWorldConfiguration> {
         environment.addResource(new PeopleResource(dao));
         environment.addResource(new PersonResource(dao));
     }
-
 }

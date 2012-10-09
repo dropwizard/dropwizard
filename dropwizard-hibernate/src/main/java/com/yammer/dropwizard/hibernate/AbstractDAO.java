@@ -61,7 +61,7 @@ public class AbstractDAO<E> {
     /**
      * Returns the entity class managed by this DAO.
      *
-     * @return this DAO's entity class
+     * @return the entity class managed by this DAO
      */
     public Class<E> getEntityClass() {
         return entityClass;
@@ -69,7 +69,7 @@ public class AbstractDAO<E> {
 
     /**
      * Convenience method to return a single instance that matches the criteria, or null if the
-     * critera returns no results.
+     * criteria returns no results.
      *
      * @param criteria the {@link Criteria} query to run
      * @return the single result or {@code null}
@@ -108,7 +108,7 @@ public class AbstractDAO<E> {
     }
 
     /**
-     * Get the results of aquery.
+     * Get the results of a query.
      *
      * @param query the query to run
      * @return the list of matched query results

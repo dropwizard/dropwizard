@@ -17,6 +17,7 @@ import org.hibernate.service.jdbc.connections.internal.DatasourceConnectionProvi
 import org.hibernate.service.jdbc.connections.spi.ConnectionProvider;
 
 import javax.persistence.Entity;
+import java.util.List;
 import java.util.Properties;
 import java.util.SortedSet;
 
@@ -28,7 +29,7 @@ public class SessionFactoryFactory {
         this.environment = environment;
     }
 
-    public SessionFactory build(DatabaseConfiguration dbConfig, String... packages) throws ClassNotFoundException {
+    public SessionFactory build(DatabaseConfiguration dbConfig, List<String> packages) throws ClassNotFoundException {
         final ConnectionProvider connectionProvider = buildConnectionProvider(dbConfig);
         return buildSessionFactory(connectionProvider, packages);
     }
@@ -44,12 +45,11 @@ public class SessionFactoryFactory {
         return connectionProvider;
     }
 
-    private SessionFactory buildSessionFactory(ConnectionProvider connectionProvider, String[] packages) {
+    private SessionFactory buildSessionFactory(ConnectionProvider connectionProvider, List<String> packages) {
         final Configuration configuration = new Configuration();
         configuration.setProperty(Environment.CURRENT_SESSION_CONTEXT_CLASS,
                                   LazilyManagedSessionContext.class.getCanonicalName());
-
-        addAnnotatedClasses(configuration, packages);
+        addAnnotatedClasses(configuration, packages.toArray(new String[packages.size()]));
 
         final Properties properties = new Properties();
         final ServiceRegistry registry = new ServiceRegistryBuilder()
