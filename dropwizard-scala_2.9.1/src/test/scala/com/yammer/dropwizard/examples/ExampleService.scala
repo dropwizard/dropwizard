@@ -4,8 +4,7 @@ import com.yammer.dropwizard.config.{Bootstrap, Environment}
 import com.yammer.dropwizard.{Logging, ScalaService}
 
 object ExampleService extends ScalaService[ExampleConfiguration] with Logging {
-  override def initialize(bootstrap: Bootstrap[ExampleConfiguration]) {
-    super.initialize(bootstrap)
+  def initialize(bootstrap: Bootstrap[ExampleConfiguration]) {
     bootstrap.addCommand(new SayCommand)
     bootstrap.addCommand(new SplodyCommand)
   }
