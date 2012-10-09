@@ -22,7 +22,6 @@ public abstract class HibernateBundle<T extends Configuration> extends Configure
     @Override
     public final void initialize(Bootstrap<?> bootstrap) {
         final Hibernate4Module module = new Hibernate4Module();
-        module.enable(Hibernate4Module.Feature.FORCE_LAZY_LOADING);
         bootstrap.getObjectMapperFactory().registerModule(module);
     }
 
