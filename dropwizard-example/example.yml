@@ -150,6 +150,8 @@ logging:
     # Sets the level for 'com.example.app' to DEBUG.
     com.example.app: DEBUG
 
+    org.hibernate.SQL: ALL
+
   # Settings for logging to stdout.
   console:
 

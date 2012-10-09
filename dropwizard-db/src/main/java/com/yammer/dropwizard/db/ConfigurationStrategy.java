@@ -1,4 +1,4 @@
-package com.yammer.dropwizard.migrations;
+package com.yammer.dropwizard.db;
 
 import com.yammer.dropwizard.config.Configuration;
 import com.yammer.dropwizard.db.DatabaseConfiguration;

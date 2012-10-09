@@ -39,6 +39,10 @@ public abstract class ResourceTest {
         providers.add(klass);
     }
 
+    public void addProvider(Object provider) {
+        singletons.add(provider);
+    }
+
     protected ObjectMapperFactory getObjectMapperFactory() {
         return objectMapperFactory;
     }
@@ -53,6 +57,10 @@ public abstract class ResourceTest {
     
     protected Client client() {
         return test.client();
+    }
+
+    protected JerseyTest getJerseyTest() {
+        return test;
     }
 
     @Before

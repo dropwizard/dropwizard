@@ -3,6 +3,7 @@ package com.yammer.dropwizard.migrations;
 import com.yammer.dropwizard.cli.ConfiguredCommand;
 import com.yammer.dropwizard.config.Bootstrap;
 import com.yammer.dropwizard.config.Configuration;
+import com.yammer.dropwizard.db.ConfigurationStrategy;
 import com.yammer.dropwizard.db.ManagedDataSource;
 import com.yammer.dropwizard.db.DatabaseConfiguration;
 import com.yammer.dropwizard.db.ManagedDataSourceFactory;
