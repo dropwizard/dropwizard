@@ -1,14 +1,17 @@
 package ${package}
 
 import com.yammer.dropwizard.ScalaService
-import com.yammer.dropwizard.config.Environment
+import com.yammer.dropwizard.config.{Environment, Bootstrap}
 
 object ${name}Service 
-  extends ScalaService[${name}Configuration]("${name}") {
+  extends ScalaService[${name}Configuration] {
 
-  def initialize(conf: ${name}Configuration, env: Environment) {
-    // TODO: implement service
+  override def initialize(bootstrap: Bootstrap[${name}Configuration]) {
+    bootstrap.setName("${name}")
   }
 
+  override def run(conf: ${name}Configuration, env: Environment) {
+    // TODO: implement service
+  }
 }
 
