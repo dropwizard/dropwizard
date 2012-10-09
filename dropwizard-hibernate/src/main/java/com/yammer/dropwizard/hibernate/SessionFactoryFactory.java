@@ -17,6 +17,7 @@ import org.hibernate.service.jdbc.connections.internal.DatasourceConnectionProvi
 import org.hibernate.service.jdbc.connections.spi.ConnectionProvider;
 
 import javax.persistence.Entity;
+import javax.sql.DataSource;
 import java.util.List;
 import java.util.Properties;
 import java.util.SortedSet;
@@ -30,15 +31,18 @@ public class SessionFactoryFactory {
     }
 
     public SessionFactory build(DatabaseConfiguration dbConfig, List<String> packages) throws ClassNotFoundException {
-        final ConnectionProvider connectionProvider = buildConnectionProvider(dbConfig);
-        return buildSessionFactory(connectionProvider, packages);
-    }
-
-    private ConnectionProvider buildConnectionProvider(DatabaseConfiguration dbConfig) throws ClassNotFoundException {
         final ManagedDataSourceFactory dataSourceFactory = new ManagedDataSourceFactory(dbConfig);
         final ManagedDataSource dataSource = dataSourceFactory.build();
         environment.manage(dataSource);
+        return buildSessionFactory(buildConnectionProvider(dataSource), packages);
+    }
 
+    public SessionFactory build(DataSource dataSource, List<String> packages) throws ClassNotFoundException {
+        final ConnectionProvider connectionProvider = buildConnectionProvider(dataSource);
+        return buildSessionFactory(connectionProvider, packages);
+    }
+
+    private ConnectionProvider buildConnectionProvider(DataSource dataSource) {
         final DatasourceConnectionProviderImpl connectionProvider = new DatasourceConnectionProviderImpl();
         connectionProvider.setDataSource(dataSource);
         connectionProvider.configure(Maps.newHashMap());
