@@ -149,4 +149,20 @@ public class AbstractDAO<E> {
         currentSession().saveOrUpdate(checkNotNull(entity));
         return entity;
     }
+
+    /**
+     * Force initialization of a proxy or persistent collection.
+     * <p/>
+     * Note: This only ensures initialization of a proxy object or collection;
+     * it is not guaranteed that the elements INSIDE the collection will be initialized/materialized.
+     *
+     * @param proxy a persistable object, proxy, persistent collection or {@code null}
+     * @throws HibernateException if we can't initialize the proxy at this time, eg. the {@link Session} was closed
+     */
+    protected <T> T initialize(T proxy) throws HibernateException {
+        if (!Hibernate.isInitialized(proxy)) {
+            Hibernate.initialize(proxy);
+        }
+        return proxy;
+    }
 }
