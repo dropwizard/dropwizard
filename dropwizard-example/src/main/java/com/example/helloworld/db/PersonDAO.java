@@ -8,7 +8,7 @@ import java.util.List;
 
 public class PersonDAO extends AbstractDAO<Person> {
     public PersonDAO(SessionFactory factory) {
-        super(factory, Person.class);
+        super(factory);
     }
 
     public Person findById(Long id) {

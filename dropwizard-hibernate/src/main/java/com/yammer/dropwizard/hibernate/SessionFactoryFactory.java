@@ -1,5 +1,6 @@
 package com.yammer.dropwizard.hibernate;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.sun.jersey.core.spi.scanning.PackageNamesScanner;
@@ -19,7 +20,7 @@ import org.hibernate.service.jdbc.connections.spi.ConnectionProvider;
 import javax.persistence.Entity;
 import javax.sql.DataSource;
 import java.util.List;
-import java.util.Properties;
+import java.util.Map;
 import java.util.SortedSet;
 
 public class SessionFactoryFactory {
@@ -34,7 +35,7 @@ public class SessionFactoryFactory {
         final ManagedDataSourceFactory dataSourceFactory = new ManagedDataSourceFactory(dbConfig);
         final ManagedDataSource dataSource = dataSourceFactory.build();
         environment.manage(dataSource);
-        return buildSessionFactory(buildConnectionProvider(dataSource), packages);
+        return buildSessionFactory(buildConnectionProvider(dataSource), dbConfig.getProperties(), packages);
     }
 
     private ConnectionProvider buildConnectionProvider(DataSource dataSource) {
@@ -44,14 +45,20 @@ public class SessionFactoryFactory {
         return connectionProvider;
     }
 
-    private SessionFactory buildSessionFactory(ConnectionProvider connectionProvider, List<String> packages) {
+    private SessionFactory buildSessionFactory(ConnectionProvider connectionProvider,
+                                               ImmutableMap<String, String> properties,
+                                               List<String> packages) {
         final Configuration configuration = new Configuration();
         configuration.setProperty(Environment.CURRENT_SESSION_CONTEXT_CLASS, "managed");
+        configuration.setProperty(Environment.USE_SQL_COMMENTS, "true");
+        configuration.setProperty(Environment.USE_GET_GENERATED_KEYS, "true");
+        for (Map.Entry<String, String> property : properties.entrySet()) {
+            configuration.setProperty(property.getKey(), property.getValue());
+        }
+
         addAnnotatedClasses(configuration, packages.toArray(new String[packages.size()]));
 
-        final Properties properties = new Properties();
         final ServiceRegistry registry = new ServiceRegistryBuilder()
-                .applySettings(properties)
                 .addService(ConnectionProvider.class, connectionProvider)
                 .buildServiceRegistry();
 
