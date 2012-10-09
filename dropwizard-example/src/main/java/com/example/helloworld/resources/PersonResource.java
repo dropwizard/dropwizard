@@ -2,6 +2,7 @@ package com.example.helloworld.resources;
 
 import com.example.helloworld.core.Person;
 import com.example.helloworld.db.PersonDAO;
+import com.yammer.dropwizard.hibernate.Transactional;
 import com.yammer.dropwizard.jersey.params.LongParam;
 
 import javax.ws.rs.GET;
@@ -21,6 +22,7 @@ public class PersonResource {
     }
 
     @GET
+    @Transactional
     public Person getPerson(@PathParam("personId") LongParam personId) {
         return peopleDAO.findById(personId.get());
     }

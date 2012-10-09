@@ -29,8 +29,7 @@ public abstract class HibernateBundle<T extends Configuration> extends Configure
     public final void run(T configuration, Environment environment) throws Exception {
         final DatabaseConfiguration dbConfig = getDatabaseConfiguration(configuration);
         this.sessionFactory = new SessionFactoryFactory(environment).build(dbConfig, packages);
-
-        environment.addFilter(new SessionAutoCommitFilter(sessionFactory), "/*");
+        environment.addProvider(new TransactionalResourceMethodDispatchAdapter(sessionFactory));
     }
 
     public SessionFactory getSessionFactory() {

@@ -2,6 +2,7 @@ package com.example.helloworld.resources;
 
 import com.example.helloworld.core.Person;
 import com.example.helloworld.db.PersonDAO;
+import com.yammer.dropwizard.hibernate.Transactional;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -21,12 +22,14 @@ public class PeopleResource {
     }
 
     @POST
+    @Transactional
     public Person createPerson(Person person) {
         final long personId = peopleDAO.create(person);
         return peopleDAO.findById(personId);
     }
 
     @GET
+    @Transactional
     public List<Person> listPeople() {
         return peopleDAO.findAll();
     }

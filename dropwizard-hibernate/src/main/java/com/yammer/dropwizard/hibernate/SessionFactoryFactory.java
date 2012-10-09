@@ -37,11 +37,6 @@ public class SessionFactoryFactory {
         return buildSessionFactory(buildConnectionProvider(dataSource), packages);
     }
 
-    public SessionFactory build(DataSource dataSource, List<String> packages) throws ClassNotFoundException {
-        final ConnectionProvider connectionProvider = buildConnectionProvider(dataSource);
-        return buildSessionFactory(connectionProvider, packages);
-    }
-
     private ConnectionProvider buildConnectionProvider(DataSource dataSource) {
         final DatasourceConnectionProviderImpl connectionProvider = new DatasourceConnectionProviderImpl();
         connectionProvider.setDataSource(dataSource);
@@ -51,8 +46,7 @@ public class SessionFactoryFactory {
 
     private SessionFactory buildSessionFactory(ConnectionProvider connectionProvider, List<String> packages) {
         final Configuration configuration = new Configuration();
-        configuration.setProperty(Environment.CURRENT_SESSION_CONTEXT_CLASS,
-                                  LazilyManagedSessionContext.class.getCanonicalName());
+        configuration.setProperty(Environment.CURRENT_SESSION_CONTEXT_CLASS, "managed");
         addAnnotatedClasses(configuration, packages.toArray(new String[packages.size()]));
 
         final Properties properties = new Properties();
