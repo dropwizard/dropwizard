@@ -13,7 +13,7 @@
 
     <properties>
         <jetty.version>8.1.7.v20120910</jetty.version>
-        <jackson.version>2.0.6</jackson.version>
+        <jackson.version>2.1.0</jackson.version>
         <slf4j.version>1.7.1</slf4j.version>
         <logback.version>1.0.7</logback.version>
     </properties>
@@ -72,7 +72,7 @@
         <dependency>
             <groupId>com.fasterxml.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-yaml</artifactId>
-            <version>2.0.5</version>
+            <version>${jackson.version}</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
