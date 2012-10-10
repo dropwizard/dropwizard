@@ -29,7 +29,7 @@ Maintenance Commands
     @Override
     @SuppressWarnings("unchecked")
     public void initialize(Bootstrap<?> bootstrap) {
-        final Class<T> configClass = (Class<T>) Generics.getTypeParameter(getClass());
+        final Class<T> configClass = (Class<T>) Generics.getTypeParameter(getClass(), Configuration.class);
         bootstrap.addCommand(new DbCommand<T>(this, configClass));
     }
 }
