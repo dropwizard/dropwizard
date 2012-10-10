@@ -15,7 +15,7 @@
   <artifactId>dropwizard-archetypes</artifactId>
   <packaging>pom</packaging>
 
-  <name>Dropwizard Service Archetypes</name>
+  <name>Dropwizard Archetypes</name>
   <description>
     A collection of Maven Archetypes for bootstrapping development of a new Dropwizard Service.
   </description>
