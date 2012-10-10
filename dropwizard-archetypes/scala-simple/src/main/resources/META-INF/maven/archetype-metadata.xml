@@ -11,6 +11,9 @@
     <requiredProperty key="shaded">
       <defaultValue>false</defaultValue>
     </requiredProperty>
+    <requiredProperty key="language">
+      <defaultValue>scala</defaultValue>
+    </requiredProperty>
   </requiredProperties>
 
   <fileSets>
@@ -18,7 +21,7 @@
     <fileSet filtered="true" packaged="true">
       <directory>src/main/scala</directory>
       <includes>
-        <include>**/*.scala</include>
+        <include>**/*</include>
       </includes>
     </fileSet>
 
