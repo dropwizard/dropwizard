@@ -22,8 +22,13 @@ public class JerseyClientFactory {
     private final ApacheHttpClient4Config config;
 
     public JerseyClientFactory(JerseyClientConfiguration configuration) {
+        this(configuration, new HttpClientFactory(configuration));
+    }
+
+    public JerseyClientFactory(JerseyClientConfiguration configuration,
+                               HttpClientFactory httpClientFactory) {
         this.configuration = configuration;
-        this.factory = new HttpClientFactory(configuration);
+        this.factory = httpClientFactory;
         this.config = new DefaultApacheHttpClient4Config();
     }
 
