@@ -67,6 +67,7 @@ public class SessionFactoryFactory {
 
         final ServiceRegistry registry = new ServiceRegistryBuilder()
                 .addService(ConnectionProvider.class, connectionProvider)
+                .applySettings(properties)
                 .buildServiceRegistry();
 
         return configuration.buildSessionFactory(registry);
