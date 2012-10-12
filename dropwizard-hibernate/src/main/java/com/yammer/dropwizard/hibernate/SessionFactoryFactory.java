@@ -54,6 +54,11 @@ public class SessionFactoryFactory {
         configuration.setProperty(Environment.CURRENT_SESSION_CONTEXT_CLASS, "managed");
         configuration.setProperty(Environment.USE_SQL_COMMENTS, "true");
         configuration.setProperty(Environment.USE_GET_GENERATED_KEYS, "true");
+        configuration.setProperty(Environment.GENERATE_STATISTICS, "true");
+        configuration.setProperty(Environment.USE_REFLECTION_OPTIMIZER, "true");
+        configuration.setProperty(Environment.ORDER_UPDATES, "true");
+        configuration.setProperty(Environment.ORDER_INSERTS, "true");
+        configuration.setProperty(Environment.USE_NEW_ID_GENERATOR_MAPPINGS, "true");
         for (Map.Entry<String, String> property : properties.entrySet()) {
             configuration.setProperty(property.getKey(), property.getValue());
         }
