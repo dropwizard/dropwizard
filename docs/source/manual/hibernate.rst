@@ -44,7 +44,7 @@ subclass:
     }
 
     @Override
-    public void bootstrap(Bootstrap<ExampleConfiguration> bootstrap) {
+    public void initialize(Bootstrap<ExampleConfiguration> bootstrap) {
         bootstrap.addBundle(hibernateBundle);
     }
 
