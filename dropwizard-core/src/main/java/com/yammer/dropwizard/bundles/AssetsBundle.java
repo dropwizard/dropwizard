@@ -6,6 +6,8 @@ import com.yammer.dropwizard.Bundle;
 import com.yammer.dropwizard.config.Environment;
 import com.yammer.dropwizard.servlets.AssetServlet;
 
+import java.net.URL;
+
 import static com.google.common.base.Preconditions.checkArgument;
 
 /**
@@ -16,10 +18,10 @@ public class AssetsBundle extends Bundle {
     public static final String DEFAULT_PATH = "/assets";
     public static final CacheBuilderSpec DEFAULT_CACHE_SPEC = CacheBuilderSpec.parse("maximumSize=100");
 
-    private final String resourcePath;
-    private final String uriPath;
-    private final String indexFile;
-    private final CacheBuilderSpec cacheBuilderSpec;
+    protected final String resourcePath;
+    protected final String uriPath;
+    protected final String indexFile;
+    protected final CacheBuilderSpec cacheBuilderSpec;
 
     /**
      * Creates a new {@link AssetsBundle} which serves up static assets from
@@ -108,8 +110,12 @@ public class AssetsBundle extends Bundle {
 
     @Override
     public void run(Environment environment) {
-        final AssetServlet assetServlet
-                = new AssetServlet(Resources.getResource(resourcePath), cacheBuilderSpec, uriPath, indexFile);
-        environment.addServlet(assetServlet, uriPath + '*');
+        environment.addServlet(createServlet(), uriPath + '*');
+    }
+
+    protected AssetServlet createServlet() {
+        final URL resourceURL = Resources.getResource(resourcePath.substring(1));
+
+        return new AssetServlet(resourceURL, cacheBuilderSpec, uriPath, indexFile);
     }
 }
