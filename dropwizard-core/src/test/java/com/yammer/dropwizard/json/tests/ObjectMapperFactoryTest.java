@@ -31,7 +31,7 @@ public class ObjectMapperFactoryTest {
         final JsonFactory jsonFactory = new YAMLFactory();
         final ObjectMapper mapper = factory.build(jsonFactory);
 
-        assertThat(mapper.getJsonFactory())
+        assertThat(mapper.getFactory())
                 .isSameAs(jsonFactory);
     }
 
@@ -50,7 +50,7 @@ public class ObjectMapperFactoryTest {
     public void defaultsToAllowingComments() throws Exception {
         final ObjectMapper mapper = factory.build();
 
-        assertThat(mapper.getJsonFactory().isEnabled(JsonParser.Feature.ALLOW_COMMENTS))
+        assertThat(mapper.getFactory().isEnabled(JsonParser.Feature.ALLOW_COMMENTS))
                 .isTrue();
     }
 
