@@ -6,6 +6,12 @@ import org.skife.jdbi.v2.tweak.Argument;
 import org.skife.jdbi.v2.tweak.ArgumentFactory;
 
 public class OptionalArgumentFactory implements ArgumentFactory<Optional<Object>> {
+    private final String jdbcDriver;
+
+    public OptionalArgumentFactory(String jdbcDriver) {
+        this.jdbcDriver = jdbcDriver;
+    }
+
     @Override
     public boolean accepts(Class<?> expectedType, Object value, StatementContext ctx) {
         return value instanceof Optional;
@@ -13,6 +19,6 @@ public class OptionalArgumentFactory implements ArgumentFactory<Optional<Object>
 
     @Override
     public Argument build(Class<?> expectedType, Optional<Object> value, StatementContext ctx) {
-        return new OptionalArgument(value);
+        return new OptionalArgument(value, jdbcDriver);
     }
 }

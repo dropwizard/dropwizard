@@ -9,20 +9,26 @@ import java.sql.SQLException;
 import java.sql.Types;
 
 public class OptionalArgument implements Argument {
-    protected final Optional<?> value;
+    private final Optional<?> value;
+    private final String jdbcDriver;
 
-    public OptionalArgument(Optional<?> value) {
+    public OptionalArgument(Optional<?> value, String jdbcDriver) {
         this.value = value;
+        this.jdbcDriver = jdbcDriver;
     }
 
     @Override
     public void apply(int position,
                       PreparedStatement statement,
                       StatementContext ctx) throws SQLException {
-        if (value.isPresent()) {
-            statement.setObject(position, value.get());
+        if (jdbcDriver.equals("com.microsoft.sqlserver.jdbc.SQLServerDriver")) {
+            statement.setObject(position, value.orNull());
         } else {
-            statement.setNull(position, Types.OTHER);
+            if (value.isPresent()) {
+                statement.setObject(position, value.get());
+            } else {
+                statement.setNull(position, Types.OTHER);
+            }
         }
     }
 }

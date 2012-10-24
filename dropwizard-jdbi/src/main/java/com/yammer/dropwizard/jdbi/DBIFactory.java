@@ -2,13 +2,11 @@ package com.yammer.dropwizard.jdbi;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
-import com.google.common.collect.ImmutableList;
 import com.yammer.dropwizard.config.Environment;
 import com.yammer.dropwizard.db.DatabaseConfiguration;
 import com.yammer.dropwizard.db.ManagedDataSource;
 import com.yammer.dropwizard.db.ManagedDataSourceFactory;
 import com.yammer.dropwizard.jdbi.args.OptionalArgumentFactory;
-import com.yammer.dropwizard.jdbi.args.OptionalArgumentNoSetNullFactory;
 import com.yammer.dropwizard.jdbi.logging.LogbackLog;
 import com.yammer.metrics.Metrics;
 import com.yammer.metrics.core.MetricName;
@@ -19,7 +17,6 @@ import com.yammer.metrics.jdbi.strategies.StatementNameStrategy;
 import org.skife.jdbi.v2.ColonPrefixNamedParamStatementRewriter;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.StatementContext;
-import org.skife.jdbi.v2.tweak.ArgumentFactory;
 import org.slf4j.LoggerFactory;
 
 public class DBIFactory {
@@ -58,17 +55,12 @@ public class DBIFactory {
         environment.addHealthCheck(new DBIHealthCheck(dbi, name, validationQuery));
         dbi.setSQLLog(new LogbackLog(LOGGER, Level.TRACE));
         dbi.setTimingCollector(new InstrumentedTimingCollector(Metrics.defaultRegistry(),
-                                                                new SanerNamingStrategy()));
+                new SanerNamingStrategy()));
         dbi.setStatementRewriter(new NamePrependingStatementRewriter(new ColonPrefixNamedParamStatementRewriter()));
+        dbi.registerArgumentFactory(new OptionalArgumentFactory(configuration.getDriverClass()));
         dbi.registerContainerFactory(new ImmutableListContainerFactory());
         dbi.registerContainerFactory(new ImmutableSetContainerFactory());
         dbi.registerContainerFactory(new OptionalContainerFactory());
-
-        if (configuration.getUrl().startsWith("jdbc:sqlserver")) {
-            dbi.registerArgumentFactory(new OptionalArgumentNoSetNullFactory());
-        } else {
-            dbi.registerArgumentFactory(new OptionalArgumentFactory());
-        }
 
         return dbi;
     }
