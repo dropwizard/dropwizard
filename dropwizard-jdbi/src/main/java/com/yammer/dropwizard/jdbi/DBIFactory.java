@@ -55,7 +55,7 @@ public class DBIFactory {
         environment.addHealthCheck(new DBIHealthCheck(dbi, name, validationQuery));
         dbi.setSQLLog(new LogbackLog(LOGGER, Level.TRACE));
         dbi.setTimingCollector(new InstrumentedTimingCollector(Metrics.defaultRegistry(),
-                new SanerNamingStrategy()));
+                                                               new SanerNamingStrategy()));
         dbi.setStatementRewriter(new NamePrependingStatementRewriter(new ColonPrefixNamedParamStatementRewriter()));
         dbi.registerArgumentFactory(new OptionalArgumentFactory(configuration.getDriverClass()));
         dbi.registerContainerFactory(new ImmutableListContainerFactory());
