@@ -9,7 +9,7 @@ import java.sql.SQLException;
 import java.sql.Types;
 
 public class OptionalArgument implements Argument {
-    private final Optional<?> value;
+    protected final Optional<?> value;
 
     public OptionalArgument(Optional<?> value) {
         this.value = value;
