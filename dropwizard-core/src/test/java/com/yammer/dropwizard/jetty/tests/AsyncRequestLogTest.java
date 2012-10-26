@@ -1,28 +1,32 @@
 package com.yammer.dropwizard.jetty.tests;
 
-import static org.mockito.Mockito.mock;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.Appender;
+import ch.qos.logback.core.spi.AppenderAttachableImpl;
+import com.yammer.dropwizard.jetty.AsyncRequestLog;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.util.TimeZone;
 
-import org.junit.Assert;
-import org.junit.Test;
-
-import ch.qos.logback.core.spi.AppenderAttachableImpl;
-
-import com.yammer.dropwizard.jetty.AsyncRequestLog;
+import static org.mockito.Mockito.*;
 
 public class AsyncRequestLogTest {
-    private final AppenderAttachableImpl appender = mock(AppenderAttachableImpl.class);
-    private final AsyncRequestLog asyncRequestLog = new AsyncRequestLog(appender, TimeZone.getDefault());
+    @SuppressWarnings("unchecked")
+    private final Appender<ILoggingEvent> appender = mock(Appender.class);
+    private final AppenderAttachableImpl<ILoggingEvent> appenders = new AppenderAttachableImpl<ILoggingEvent>();
+    private final AsyncRequestLog asyncRequestLog = new AsyncRequestLog(appenders, TimeZone.getDefault());
+
+    @Before
+    public void setUp() throws Exception {
+        appenders.addAppender(appender);
+    }
 
     @Test
     public void startsAndStops() throws Exception {
         asyncRequestLog.start();
         asyncRequestLog.stop();
-        for (int i=0; i<100; i++) {
-            if (!asyncRequestLog.isThreadAlive()) break;
-            Thread.sleep(100);
-        }
-        Assert.assertFalse(asyncRequestLog.isThreadAlive());
+
+        verify(appender, timeout(1000)).stop();
     }
 }
