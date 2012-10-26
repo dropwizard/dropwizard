@@ -60,7 +60,7 @@ public class AsyncRequestLog extends AbstractLifeCycle implements RequestLog {
         }
 
         public void stop() {
-            this.running = true;
+            this.running = false;
         }
     }
 
@@ -105,6 +105,11 @@ public class AsyncRequestLog extends AbstractLifeCycle implements RequestLog {
         dispatcher.stop();
     }
 
+    // for testing
+    public boolean isThreadAlive() {
+        return dispatchThread.isAlive();
+    }
+    
     @Override
     public void log(Request request, Response response) {
         // copied almost entirely from NCSARequestLog
