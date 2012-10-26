@@ -1,36 +1,44 @@
 package com.yammer.dropwizard.migrations;
 
+import com.yammer.dropwizard.db.DatabaseConfiguration;
 import com.yammer.dropwizard.db.ManagedDataSource;
+import com.yammer.dropwizard.db.ManagedDataSourceFactory;
 import com.yammer.dropwizard.lifecycle.Managed;
 import liquibase.Liquibase;
 import liquibase.database.DatabaseConnection;
-import liquibase.exception.DatabaseException;
+import liquibase.database.jvm.JdbcConnection;
 import liquibase.exception.LiquibaseException;
-import liquibase.exception.LockException;
+import liquibase.resource.ClassLoaderResourceAccessor;
 
-public class ManagedLiquibase implements Managed {
-    private final ManagedDataSource managedDataSource;
-    private final DatabaseConnection dbConnection;
-    private final Liquibase liquibase;
+import java.sql.SQLException;
 
-    public ManagedLiquibase(ManagedDataSource managedDataSource,
-                            DatabaseConnection dbConnection,
-                            Liquibase liquibase) {
-        this.managedDataSource = managedDataSource;
-        this.dbConnection = dbConnection;
-        this.liquibase = liquibase;
+public class ManagedLiquibase extends Liquibase implements Managed {
+    private static class ManagedJdbcConnection extends JdbcConnection implements Managed {
+        private final ManagedDataSource dataSource;
+
+        @SuppressWarnings("JDBCResourceOpenedButNotSafelyClosed")
+        private ManagedJdbcConnection(ManagedDataSource dataSource) throws SQLException {
+            super(dataSource.getConnection());
+            this.dataSource = dataSource;
+        }
+
+        @Override
+        public void start() throws Exception {
+            // ALREADY STARTED
+        }
+
+        @Override
+        public void stop() throws Exception {
+            dataSource.stop();
+        }
     }
 
-    public Liquibase getLiquibase() {
-        return liquibase;
+    public ManagedLiquibase(DatabaseConfiguration configuration) throws LiquibaseException, ClassNotFoundException, SQLException {
+        super("migrations.xml", new ClassLoaderResourceAccessor(), buildConnection(configuration));
     }
 
-    public void migrate() throws LiquibaseException {
-        liquibase.update("");
-    }
-
-    public void dropAll() throws DatabaseException, LockException {
-        liquibase.dropAll();
+    private static DatabaseConnection buildConnection(DatabaseConfiguration configuration) throws ClassNotFoundException, SQLException {
+        return new ManagedJdbcConnection(new ManagedDataSourceFactory(configuration).build());
     }
 
     @Override
@@ -40,10 +48,9 @@ public class ManagedLiquibase implements Managed {
 
     @Override
     public void stop() throws Exception {
-        try {
-            dbConnection.close();
-        } finally {
-            managedDataSource.stop();
+        final DatabaseConnection connection = getDatabase().getConnection();
+        if (connection instanceof ManagedJdbcConnection) {
+            ((ManagedJdbcConnection) connection).stop();
         }
     }
 }

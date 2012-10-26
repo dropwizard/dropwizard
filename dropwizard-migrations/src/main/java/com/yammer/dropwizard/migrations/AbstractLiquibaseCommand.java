@@ -36,8 +36,8 @@ public abstract class AbstractLiquibaseCommand<T extends Configuration> extends 
 
         ManagedLiquibase managedLiquibase = null;
         try {
-            managedLiquibase = ManagedLiquibaseFactory.create(dbConfig);
-            run(namespace, managedLiquibase.getLiquibase());
+            managedLiquibase = new ManagedLiquibase(dbConfig);
+            run(namespace, managedLiquibase);
         } catch (ValidationFailedException e) {
             e.printDescriptiveError(System.err);
         } finally {
