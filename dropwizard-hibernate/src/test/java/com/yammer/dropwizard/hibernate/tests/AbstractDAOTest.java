@@ -18,7 +18,7 @@ import static org.mockito.Mockito.*;
 public class AbstractDAOTest {
     private static class MockDAO extends AbstractDAO<String> {
         MockDAO(SessionFactory factory) {
-            super(factory, String.class);
+            super(factory);
         }
 
         @Override

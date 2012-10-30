@@ -2,6 +2,8 @@ package com.example.helloworld.resources;
 
 import com.example.helloworld.core.Person;
 import com.example.helloworld.db.PersonDAO;
+import com.google.common.base.Optional;
+import com.sun.jersey.api.NotFoundException;
 import com.yammer.dropwizard.hibernate.Transactional;
 import com.yammer.dropwizard.jersey.params.LongParam;
 
@@ -24,7 +26,11 @@ public class PersonResource {
     @GET
     @Transactional
     public Person getPerson(@PathParam("personId") LongParam personId) {
-        return peopleDAO.findById(personId.get());
+        final Optional<Person> person = peopleDAO.findById(personId.get());
+        if (!person.isPresent()) {
+            throw new NotFoundException("No such user.");
+        }
+        return person.get();
     }
 
 }

@@ -1,31 +1,44 @@
 package com.yammer.dropwizard.json;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.cfg.HandlerInstantiator;
+import com.fasterxml.jackson.databind.introspect.VisibilityChecker;
+import com.fasterxml.jackson.databind.jsontype.SubtypeResolver;
+import com.fasterxml.jackson.databind.jsontype.TypeResolverBuilder;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.ser.DefaultSerializerProvider;
+import com.fasterxml.jackson.databind.ser.FilterProvider;
+import com.fasterxml.jackson.databind.ser.SerializerFactory;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.fasterxml.jackson.datatype.guava.GuavaModule;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import java.text.DateFormat;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 
 /**
  * A factory class for {@link ObjectMapper}.
  *
  * <p>By default, ObjectMapperFactory is configured to:</p>
  * <ul>
- *     <li>Automatically close JSON content, if possible.</li>
- *     <li>Automatically close input and output streams.</li>
- *     <li>Quote field names.</li>
  *     <li>Allow both C-style line and block comments.</li>
  *     <li>Not fail when encountering unknown properties.</li>
- *     <li>Read and write enums using {@code toString()}.</li>
  *     <li>Use {@code snake_case} for property names when encoding and decoding
  *         classes annotated with {@link JsonSnakeCase}.</li>
+ *     <li>Support Guava and Logback types.</li>
  * </ul>
  */
+@SuppressWarnings("UnusedDeclaration")
 public class ObjectMapperFactory {
     private final List<Module> modules;
     private final Map<MapperFeature, Boolean> mapperFeatures;
@@ -34,6 +47,26 @@ public class ObjectMapperFactory {
     private final Map<JsonGenerator.Feature, Boolean> generatorFeatures;
     private final Map<JsonParser.Feature, Boolean> parserFeatures;
     private final Map<JsonFactory.Feature, Boolean> factoryFeatures;
+    private final Map<PropertyAccessor, JsonAutoDetect.Visibility> visibilityRules;
+
+    private AnnotationIntrospector annotationIntrospector;
+    private DateFormat dateFormat;
+    private PropertyNamingStrategy propertyNamingStrategy;
+    private TypeResolverBuilder<?> defaultTyping;
+    private FilterProvider filters;
+    private HandlerInstantiator handlerInstantiator;
+    private InjectableValues injectableValues;
+    private Locale locale;
+    private Map<Class<?>, Class<?>> mixinAnnotations;
+    private JsonNodeFactory nodeFactory;
+    private JsonInclude.Include serializationInclusion;
+    private SerializerFactory serializerFactory;
+    private DefaultSerializerProvider serializerProvider;
+    private SubtypeResolver subtypeResolver;
+    private TimeZone timeZone;
+    private TypeFactory typeFactory;
+    private VisibilityChecker<?> visibilityChecker;
+
 
     /**
      * Create a new ObjectMapperFactory.
@@ -46,20 +79,160 @@ public class ObjectMapperFactory {
         this.generatorFeatures = Maps.newHashMap();
         this.parserFeatures = Maps.newHashMap();
         this.factoryFeatures = Maps.newHashMap();
+        this.visibilityRules = Maps.newLinkedHashMap();
 
-        enable(JsonGenerator.Feature.AUTO_CLOSE_JSON_CONTENT);
-        enable(JsonGenerator.Feature.AUTO_CLOSE_TARGET);
-        enable(JsonGenerator.Feature.QUOTE_FIELD_NAMES);
+        this.propertyNamingStrategy = AnnotationSensitivePropertyNamingStrategy.INSTANCE;
+
         enable(JsonParser.Feature.ALLOW_COMMENTS);
-        enable(JsonParser.Feature.AUTO_CLOSE_SOURCE);
-
         disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-        disable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
-        disable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
 
         registerModule(new GuavaModule());
         registerModule(new LogbackModule());
         registerModule(new GuavaExtrasModule());
+    }
+
+    public AnnotationIntrospector getAnnotationIntrospector() {
+        return annotationIntrospector;
+    }
+
+    public void setAnnotationIntrospector(AnnotationIntrospector annotationIntrospector) {
+        this.annotationIntrospector = annotationIntrospector;
+    }
+
+    public DateFormat getDateFormat() {
+        return dateFormat;
+    }
+
+    public void setDateFormat(DateFormat dateFormat) {
+        this.dateFormat = dateFormat;
+    }
+
+    public TypeResolverBuilder<?> getDefaultTyping() {
+        return defaultTyping;
+    }
+
+    public void setDefaultTyping(TypeResolverBuilder<?> defaultTyping) {
+        this.defaultTyping = defaultTyping;
+    }
+
+    public FilterProvider getFilters() {
+        return filters;
+    }
+
+    public void setFilters(FilterProvider filters) {
+        this.filters = filters;
+    }
+
+    public HandlerInstantiator getHandlerInstantiator() {
+        return handlerInstantiator;
+    }
+
+    public void setHandlerInstantiator(HandlerInstantiator handlerInstantiator) {
+        this.handlerInstantiator = handlerInstantiator;
+    }
+
+    public InjectableValues getInjectableValues() {
+        return injectableValues;
+    }
+
+    public void setInjectableValues(InjectableValues injectableValues) {
+        this.injectableValues = injectableValues;
+    }
+
+    public Locale getLocale() {
+        return locale;
+    }
+
+    public void setLocale(Locale locale) {
+        this.locale = locale;
+    }
+
+    public Map<Class<?>, Class<?>> getMixinAnnotations() {
+        return mixinAnnotations;
+    }
+
+    public void setMixinAnnotations(Map<Class<?>, Class<?>> mixinAnnotations) {
+        this.mixinAnnotations = mixinAnnotations;
+    }
+
+    public JsonNodeFactory getNodeFactory() {
+        return nodeFactory;
+    }
+
+    public void setNodeFactory(JsonNodeFactory nodeFactory) {
+        this.nodeFactory = nodeFactory;
+    }
+
+    public PropertyNamingStrategy getPropertyNamingStrategy() {
+        return propertyNamingStrategy;
+    }
+
+    public void setPropertyNamingStrategy(PropertyNamingStrategy propertyNamingStrategy) {
+        this.propertyNamingStrategy = propertyNamingStrategy;
+    }
+
+    public JsonInclude.Include getSerializationInclusion() {
+        return serializationInclusion;
+    }
+
+    public void setSerializationInclusion(JsonInclude.Include serializationInclusion) {
+        this.serializationInclusion = serializationInclusion;
+    }
+
+    public SerializerFactory getSerializerFactory() {
+        return serializerFactory;
+    }
+
+    public void setSerializerFactory(SerializerFactory serializerFactory) {
+        this.serializerFactory = serializerFactory;
+    }
+
+    public DefaultSerializerProvider getSerializerProvider() {
+        return serializerProvider;
+    }
+
+    public void setSerializerProvider(DefaultSerializerProvider serializerProvider) {
+        this.serializerProvider = serializerProvider;
+    }
+
+    public SubtypeResolver getSubtypeResolver() {
+        return subtypeResolver;
+    }
+
+    public void setSubtypeResolver(SubtypeResolver subtypeResolver) {
+        this.subtypeResolver = subtypeResolver;
+    }
+
+    public TimeZone getTimeZone() {
+        return timeZone;
+    }
+
+    public void setTimeZone(TimeZone timeZone) {
+        this.timeZone = timeZone;
+    }
+
+    public TypeFactory getTypeFactory() {
+        return typeFactory;
+    }
+
+    public void setTypeFactory(TypeFactory typeFactory) {
+        this.typeFactory = typeFactory;
+    }
+
+    public JsonAutoDetect.Visibility getVisibility(PropertyAccessor accessor) {
+        return visibilityRules.get(accessor);
+    }
+
+    public void setVisibilityRules(PropertyAccessor accessor, JsonAutoDetect.Visibility visibility) {
+        visibilityRules.put(accessor, visibility);
+    }
+
+    public VisibilityChecker<?> getVisibilityChecker() {
+        return visibilityChecker;
+    }
+
+    public void setVisibilityChecker(VisibilityChecker<?> visibilityChecker) {
+        this.visibilityChecker = visibilityChecker;
     }
 
     /**
@@ -333,18 +506,89 @@ public class ObjectMapperFactory {
         }
 
         for (Map.Entry<JsonGenerator.Feature, Boolean> entry : generatorFeatures.entrySet()) {
-            mapper.getJsonFactory().configure(entry.getKey(), entry.getValue());
+            mapper.getFactory().configure(entry.getKey(), entry.getValue());
         }
 
         for (Map.Entry<JsonParser.Feature, Boolean> entry : parserFeatures.entrySet()) {
-            mapper.getJsonFactory().configure(entry.getKey(), entry.getValue());
+            mapper.getFactory().configure(entry.getKey(), entry.getValue());
         }
 
         for (Map.Entry<JsonFactory.Feature, Boolean> entry : factoryFeatures.entrySet()) {
-            mapper.getJsonFactory().configure(entry.getKey(), entry.getValue());
+            mapper.getFactory().configure(entry.getKey(), entry.getValue());
         }
 
-        mapper.setPropertyNamingStrategy(AnnotationSensitivePropertyNamingStrategy.INSTANCE);
+        if (annotationIntrospector != null) {
+            mapper.setAnnotationIntrospector(annotationIntrospector);
+        }
+
+        if (dateFormat != null) {
+            mapper.setDateFormat(dateFormat);
+        }
+
+        if (defaultTyping != null) {
+            mapper.setDefaultTyping(defaultTyping);
+        }
+
+        if (filters != null) {
+            mapper.setFilters(filters);
+        }
+
+        if (handlerInstantiator != null) {
+            mapper.setHandlerInstantiator(handlerInstantiator);
+        }
+
+        if (injectableValues != null) {
+            mapper.setInjectableValues(injectableValues);
+        }
+
+        if (locale != null) {
+            mapper.setLocale(locale);
+        }
+
+        if (mixinAnnotations != null) {
+            mapper.setMixInAnnotations(mixinAnnotations);
+        }
+
+        if (nodeFactory != null) {
+            mapper.setNodeFactory(nodeFactory);
+        }
+
+        if (propertyNamingStrategy != null) {
+            mapper.setPropertyNamingStrategy(propertyNamingStrategy);
+        }
+
+        if (serializationInclusion != null) {
+            mapper.setSerializationInclusion(serializationInclusion);
+        }
+
+        if (serializerFactory != null) {
+            mapper.setSerializerFactory(serializerFactory);
+        }
+
+        if (serializerProvider != null) {
+            mapper.setSerializerProvider(serializerProvider);
+        }
+
+        if (subtypeResolver != null) {
+            mapper.setSubtypeResolver(subtypeResolver);
+        }
+
+        if (timeZone != null) {
+            mapper.setTimeZone(timeZone);
+        }
+
+        if (typeFactory != null) {
+            mapper.setTypeFactory(typeFactory);
+        }
+
+        for (Map.Entry<PropertyAccessor, JsonAutoDetect.Visibility> rule : visibilityRules.entrySet()) {
+            mapper.setVisibility(rule.getKey(), rule.getValue());
+        }
+
+        if (visibilityChecker != null) {
+            mapper.setVisibilityChecker(visibilityChecker);
+        }
+
 
         return mapper;
     }
@@ -365,6 +609,7 @@ public class ObjectMapperFactory {
      */
     public ObjectMapperFactory copy() {
         final ObjectMapperFactory factory = new ObjectMapperFactory();
+
         factory.modules.addAll(modules);
         factory.mapperFeatures.putAll(mapperFeatures);
         factory.deserializationFeatures.putAll(deserializationFeatures);
@@ -372,6 +617,25 @@ public class ObjectMapperFactory {
         factory.generatorFeatures.putAll(generatorFeatures);
         factory.parserFeatures.putAll(parserFeatures);
         factory.factoryFeatures.putAll(factoryFeatures);
+        factory.visibilityRules.putAll(visibilityRules);
+
+        factory.annotationIntrospector = annotationIntrospector;
+        factory.dateFormat = dateFormat;
+        factory.defaultTyping = defaultTyping;
+        factory.filters = filters;
+        factory.handlerInstantiator = handlerInstantiator;
+        factory.injectableValues = injectableValues;
+        factory.locale = locale;
+        factory.mixinAnnotations = mixinAnnotations;
+        factory.nodeFactory = nodeFactory;
+        factory.propertyNamingStrategy = propertyNamingStrategy;
+        factory.serializationInclusion = serializationInclusion;
+        factory.serializerFactory = serializerFactory;
+        factory.serializerProvider = serializerProvider;
+        factory.subtypeResolver = subtypeResolver;
+        factory.timeZone = timeZone;
+        factory.visibilityChecker = visibilityChecker;
+
         return factory;
     }
 }

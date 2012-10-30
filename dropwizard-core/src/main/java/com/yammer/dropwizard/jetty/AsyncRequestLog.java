@@ -5,6 +5,7 @@ package com.yammer.dropwizard.jetty;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.spi.LoggingEvent;
+import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.spi.AppenderAttachableImpl;
 import com.yammer.dropwizard.logging.Log;
 import org.eclipse.jetty.http.HttpHeaders;
@@ -15,10 +16,7 @@ import org.eclipse.jetty.server.Response;
 import org.eclipse.jetty.util.DateCache;
 import org.eclipse.jetty.util.component.AbstractLifeCycle;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.TimeZone;
+import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -60,7 +58,7 @@ public class AsyncRequestLog extends AbstractLifeCycle implements RequestLog {
         }
 
         public void stop() {
-            this.running = true;
+            this.running = false;
         }
     }
 
@@ -97,14 +95,27 @@ public class AsyncRequestLog extends AbstractLifeCycle implements RequestLog {
 
     @Override
     protected void doStart() throws Exception {
+        final Iterator<Appender<ILoggingEvent>> iterator = appenders.iteratorForAppenders();
+        while (iterator.hasNext()) {
+            iterator.next().start();
+        }
         dispatchThread.start();
     }
 
     @Override
     protected void doStop() throws Exception {
         dispatcher.stop();
+        final Iterator<Appender<ILoggingEvent>> iterator = appenders.iteratorForAppenders();
+        while (iterator.hasNext()) {
+            iterator.next().stop();
+        }
     }
 
+    // for testing
+    public boolean isThreadAlive() {
+        return dispatchThread.isAlive();
+    }
+    
     @Override
     public void log(Request request, Response response) {
         // copied almost entirely from NCSARequestLog

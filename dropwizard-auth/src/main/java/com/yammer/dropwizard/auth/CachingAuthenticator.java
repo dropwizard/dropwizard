@@ -41,14 +41,14 @@ public class CachingAuthenticator<C, P> implements Authenticator<C, P> {
     private CachingAuthenticator(Authenticator<C, P> authenticator,
                                  CacheBuilder<Object, Object> builder) {
         this.underlying = authenticator;
-        this.cacheMisses = Metrics.newMeter(authenticator.getClass(),
-                                            "cache-misses",
-                                            "lookups",
-                                            TimeUnit.SECONDS);
-        this.gets = Metrics.newTimer(authenticator.getClass(),
-                                     "gets",
-                                     TimeUnit.MILLISECONDS,
-                                     TimeUnit.SECONDS);
+        this.cacheMisses = Metrics.defaultRegistry().newMeter(authenticator.getClass(),
+                                                              "cache-misses",
+                                                              "lookups",
+                                                              TimeUnit.SECONDS);
+        this.gets = Metrics.defaultRegistry().newTimer(authenticator.getClass(),
+                                                       "gets",
+                                                       TimeUnit.MILLISECONDS,
+                                                       TimeUnit.SECONDS);
         this.cache = builder.recordStats().build(new CacheLoader<C, Optional<P>> () {
             @Override
             public Optional<P> load(C key) throws Exception {

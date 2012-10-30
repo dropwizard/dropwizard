@@ -180,7 +180,7 @@ command:
 
 .. code-block:: text
 
-     java -jar hello-world.jar db generate-docs ~/db-docs/
+     java -jar hello-world.jar db generate-docs helloworld.yml ~/db-docs/
 
 Dropping All Objects
 ====================
@@ -189,12 +189,25 @@ To drop all objects in the database, use the ``db drop-all`` command:
 
 .. code-block:: text
 
-     java -jar hello-world.jar db drop-all --confirm-delete-everything
+     java -jar hello-world.jar db drop-all --confirm-delete-everything helloworld.yml
 
 .. warning::
 
     You need to specify the ``--confirm-delete-everything`` flag because this command **deletes
     everything in the database**. Be sure you want to do that first.
+
+Fast-Forwarding Through A Change Set
+====================================
+
+To mark a pending change set as applied (e.g., after having backfilled your ``migrations.xml`` with
+``db dump``), use the ``db fast-forward`` command:
+
+.. code-block:: text
+
+     java -jar hello-world.jar db fast-forward helloworld.yml
+
+This will mark the next pending change set as applied. You can also use the ``--all`` flag to mark
+all pending change sets as applied.
 
 More Information
 ================

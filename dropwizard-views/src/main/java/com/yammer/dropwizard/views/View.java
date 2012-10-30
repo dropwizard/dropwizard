@@ -11,7 +11,7 @@ public abstract class View {
     protected View(String templateName) {
 
         this.templateName = resolveName(templateName);
-        this.renderingTimer = Metrics.newTimer(getClass(), "rendering");
+        this.renderingTimer = Metrics.defaultRegistry().newTimer(getClass(), "rendering");
     }
 
     private String resolveName(String templateName) {

@@ -61,9 +61,9 @@ public class ServerFactory {
     }
 
     public Server buildServer(Environment env) throws ConfigurationException {
-        HealthChecks.register(new DeadlockHealthCheck());
+        HealthChecks.defaultRegistry().register(new DeadlockHealthCheck());
         for (HealthCheck healthCheck : env.getHealthChecks()) {
-            HealthChecks.register(healthCheck);
+            HealthChecks.defaultRegistry().register(healthCheck);
         }
 
         if (env.getHealthChecks().isEmpty()) {
