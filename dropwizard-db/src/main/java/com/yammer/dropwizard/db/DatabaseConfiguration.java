@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableMap;
 import com.yammer.dropwizard.util.Duration;
 import com.yammer.dropwizard.validation.ValidationMethod;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.List;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -63,6 +64,9 @@ public class DatabaseConfiguration {
 
     @JsonProperty
     private boolean defaultReadOnly = false;
+
+    @JsonProperty
+    private List<String> connectionInitSqls = null;
 
     public String getDriverClass() {
         return driverClass;
@@ -168,6 +172,14 @@ public class DatabaseConfiguration {
         this.defaultReadOnly = defaultReadOnly;
     }
 
+    public List<String> getConnectionInitSqls() {
+        return connectionInitSqls;
+    }
+
+    public void setConnectionInitSqls(List<String> connectionInitSqls) {
+        this.connectionInitSqls = connectionInitSqls;
+    }
+
     @ValidationMethod(message = ".minSize must be less than or equal to maxSize")
     public boolean isPoolSizedCorrectly() {
         return minSize <= maxSize;
@@ -190,7 +202,8 @@ public class DatabaseConfiguration {
                 !((properties != null) ? !properties.equals(that.properties) : (that.properties != null)) &&
                 !((url != null) ? !url.equals(that.url) : (that.url != null)) &&
                 !((user != null) ? !user.equals(that.user) : (that.user != null)) &&
-                !((validationQuery != null) ? !validationQuery.equals(that.validationQuery) : (that.validationQuery != null));
+                !((validationQuery != null) ? !validationQuery.equals(that.validationQuery) : (that.validationQuery != null)) &&
+                !((connectionInitSqls != null) ? !connectionInitSqls.equals(that.connectionInitSqls) : (that.connectionInitSqls != null));
     }
 
     @Override
@@ -208,6 +221,7 @@ public class DatabaseConfiguration {
         result = (31 * result) + ((checkConnectionHealthWhenIdleFor != null) ? checkConnectionHealthWhenIdleFor.hashCode() : 0);
         result = (31 * result) + ((closeConnectionIfIdleFor != null) ? closeConnectionIfIdleFor.hashCode() : 0);
         result = (31 * result) + (defaultReadOnly ? 1 : 0);
+        result = (31 * result) + ((connectionInitSqls != null) ? connectionInitSqls.hashCode() : 0);
         return result;
     }
 
@@ -227,6 +241,7 @@ public class DatabaseConfiguration {
                       .add("checkConnectionHealthWhenIdleFor", checkConnectionHealthWhenIdleFor)
                       .add("closeConnectionIfIdleFor", closeConnectionIfIdleFor)
                       .add("defaultReadOnly", defaultReadOnly)
+                      .add("connectionInitSqls", connectionInitSqls)
                       .toString();
     }
 }
