@@ -53,8 +53,8 @@ public class ServerCommand<T extends Configuration> extends ConfiguredCommand<T>
         logBanner(service, log);
         try {
             server.start();
-            server.join();
             service.setServer(server);
+            server.join();
         } catch (Exception e) {
             log.error(e, "Unable to start server, shutting down");
             server.stop();

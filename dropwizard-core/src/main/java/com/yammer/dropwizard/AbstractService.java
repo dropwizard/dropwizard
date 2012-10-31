@@ -42,7 +42,6 @@ public abstract class AbstractService<T extends Configuration> {
     private final List<ConfiguredBundle<? super T>> configuredBundles;
     private final List<Module> modules;
     private final SortedMap<String, Command> commands;
-    private Server server;
 
     /**
      * Creates a new service with the given name. If name is {@code null} the service is named as
