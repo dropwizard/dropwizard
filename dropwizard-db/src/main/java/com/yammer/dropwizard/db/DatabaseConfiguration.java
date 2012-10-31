@@ -1,16 +1,16 @@
 package com.yammer.dropwizard.db;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Objects;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.yammer.dropwizard.util.Duration;
 import com.yammer.dropwizard.validation.ValidationMethod;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.collect.ImmutableList;
-import java.util.List;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings("UnusedDeclaration")
@@ -67,7 +67,7 @@ public class DatabaseConfiguration {
     private boolean defaultReadOnly = false;
 
     @JsonProperty
-    private List<String> connectionInitializationStatements = ImmutableList.of();
+    private ImmutableList<String> connectionInitializationStatements = ImmutableList.of();
 
     public String getDriverClass() {
         return driverClass;
@@ -173,12 +173,12 @@ public class DatabaseConfiguration {
         this.defaultReadOnly = defaultReadOnly;
     }
 
-    public List<String> getConnectionInitializationStatements() {
+    public ImmutableList<String> getConnectionInitializationStatements() {
         return connectionInitializationStatements;
     }
 
-    public void setConnectionInitializationStatements(List<String> connectionInitializationStatements) {
-        this.connectionInitializationStatements = connectionInitializationStatements;
+    public void setConnectionInitializationStatements(List<String> statements) {
+        this.connectionInitializationStatements = ImmutableList.copyOf(statements);
     }
 
     @ValidationMethod(message = ".minSize must be less than or equal to maxSize")
