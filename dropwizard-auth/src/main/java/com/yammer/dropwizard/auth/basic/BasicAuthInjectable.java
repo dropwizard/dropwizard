@@ -67,11 +67,11 @@ class BasicAuthInjectable<T> extends AbstractHttpContextInjectable<T> {
                 }
             }
         } catch (UnsupportedEncodingException e) {
-            BasicAuthProvider.LOG.debug(e, "Error decoding credentials");
+            BasicAuthProvider.LOGGER.debug("Error decoding credentials", e);
         } catch (IllegalArgumentException e) {
-            BasicAuthProvider.LOG.debug(e, "Error decoding credentials");
+            BasicAuthProvider.LOGGER.debug("Error decoding credentials", e);
         } catch (AuthenticationException e) {
-            BasicAuthProvider.LOG.warn(e, "Error authenticating credentials");
+            BasicAuthProvider.LOGGER.warn("Error authenticating credentials", e);
             throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
         }
 

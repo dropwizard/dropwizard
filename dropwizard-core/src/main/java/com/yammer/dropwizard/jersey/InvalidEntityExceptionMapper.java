@@ -1,8 +1,9 @@
 package com.yammer.dropwizard.jersey;
 
 import com.yammer.dropwizard.jetty.UnbrandedErrorHandler;
-import com.yammer.dropwizard.logging.Log;
 import com.yammer.dropwizard.validation.InvalidEntityException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Context;
@@ -15,7 +16,7 @@ import java.io.StringWriter;
 
 @Provider
 public class InvalidEntityExceptionMapper implements ExceptionMapper<InvalidEntityException> {
-    private static final Log LOG = Log.forClass(InvalidEntityExceptionMapper.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(InvalidEntityExceptionMapper.class);
     private static final int UNPROCESSABLE_ENTITY = 422;
 
     @Context
@@ -29,7 +30,7 @@ public class InvalidEntityExceptionMapper implements ExceptionMapper<InvalidEnti
         try {
             errorHandler.writeValidationErrorPage(request, writer, exception);
         } catch (IOException e) {
-            LOG.warn(e, "Unable to generate error page");
+            LOGGER.warn("Unable to generate error page", e);
         }
 
         return Response.status(UNPROCESSABLE_ENTITY)

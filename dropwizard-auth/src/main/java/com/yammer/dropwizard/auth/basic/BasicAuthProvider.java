@@ -7,7 +7,8 @@ import com.sun.jersey.spi.inject.Injectable;
 import com.sun.jersey.spi.inject.InjectableProvider;
 import com.yammer.dropwizard.auth.Auth;
 import com.yammer.dropwizard.auth.Authenticator;
-import com.yammer.dropwizard.logging.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A Jersey provider for Basic HTTP authentication.
@@ -15,7 +16,7 @@ import com.yammer.dropwizard.logging.Log;
  * @param <T>    the principal type.
  */
 public class BasicAuthProvider<T> implements InjectableProvider<Auth, Parameter> {
-    static final Log LOG = Log.forClass(BasicAuthProvider.class);
+    static final Logger LOGGER = LoggerFactory.getLogger(BasicAuthProvider.class);
 
     private final Authenticator<BasicCredentials, T> authenticator;
     private final String realm;

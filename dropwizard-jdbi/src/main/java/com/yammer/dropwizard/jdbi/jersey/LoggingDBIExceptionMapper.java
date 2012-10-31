@@ -1,8 +1,9 @@
 package com.yammer.dropwizard.jdbi.jersey;
 
 import com.yammer.dropwizard.jersey.LoggingExceptionMapper;
-import com.yammer.dropwizard.logging.Log;
 import org.skife.jdbi.v2.exceptions.DBIException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.ext.Provider;
 import java.sql.SQLException;
@@ -12,17 +13,17 @@ import java.sql.SQLException;
  */
 @Provider
 public class LoggingDBIExceptionMapper extends LoggingExceptionMapper<DBIException> {
-    private static final Log LOG = Log.forClass(LoggingDBIExceptionMapper.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(LoggingDBIExceptionMapper.class);
 
     @Override
     protected void logException(long id, DBIException exception) {
         final Throwable cause = exception.getCause();
         if (cause instanceof SQLException) {
             for (Throwable throwable : (SQLException)cause) {
-                LOG.error(throwable, formatLogMessage(id, throwable));
+                LOGGER.error(formatLogMessage(id, throwable), throwable);
             }
         } else {
-            LOG.error(exception, formatLogMessage(id, exception));
+            LOGGER.error(formatLogMessage(id, exception), exception);
         }
     }
 }

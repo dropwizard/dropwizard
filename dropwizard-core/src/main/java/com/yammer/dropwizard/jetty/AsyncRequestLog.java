@@ -7,7 +7,6 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.spi.LoggingEvent;
 import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.spi.AppenderAttachableImpl;
-import com.yammer.dropwizard.logging.Log;
 import org.eclipse.jetty.http.HttpHeaders;
 import org.eclipse.jetty.server.Authentication;
 import org.eclipse.jetty.server.Request;
@@ -29,7 +28,6 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class AsyncRequestLog extends AbstractLifeCycle implements RequestLog {
     private static final AtomicInteger THREAD_COUNTER = new AtomicInteger();
-    private static final Log LOG = Log.forClass(AsyncRequestLog.class);
     private static final int BATCH_SIZE = 10000;
 
     private class Dispatcher implements Runnable {

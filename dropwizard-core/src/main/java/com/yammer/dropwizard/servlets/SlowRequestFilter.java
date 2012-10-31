@@ -1,7 +1,8 @@
 package com.yammer.dropwizard.servlets;
 
-import com.yammer.dropwizard.logging.Log;
 import com.yammer.dropwizard.util.Duration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
@@ -15,7 +16,7 @@ import static com.yammer.dropwizard.util.Servlets.getFullUrl;
  * duration of time to complete.
  */
 public class SlowRequestFilter implements Filter {
-    private static final Log LOG = Log.forClass(SlowRequestFilter.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SlowRequestFilter.class);
     private final long threshold;
 
     /**
@@ -51,9 +52,9 @@ public class SlowRequestFilter implements Filter {
         } finally {
             final long elapsedMS = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTime);
             if (elapsedMS >= threshold) {
-                LOG.warn("Slow request: {} {} ({}ms)",
-                         req.getMethod(),
-                         getFullUrl(req), elapsedMS);
+                LOGGER.warn("Slow request: {} {} ({}ms)",
+                            req.getMethod(),
+                            getFullUrl(req), elapsedMS);
             }
         }
     }

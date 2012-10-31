@@ -5,7 +5,8 @@ import com.sun.jersey.api.core.HttpContext;
 import com.sun.jersey.server.impl.inject.AbstractHttpContextInjectable;
 import com.yammer.dropwizard.auth.AuthenticationException;
 import com.yammer.dropwizard.auth.Authenticator;
-import com.yammer.dropwizard.logging.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.HttpHeaders;
@@ -13,7 +14,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 class OAuthInjectable<T> extends AbstractHttpContextInjectable<T> {
-    private static final Log LOG = Log.forClass(OAuthInjectable.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(OAuthInjectable.class);
     private static final String HEADER_NAME = "WWW-Authenticate";
     private static final String HEADER_VALUE = "Bearer realm=\"%s\"";
     private static final String PREFIX = "bearer";
@@ -58,7 +59,7 @@ class OAuthInjectable<T> extends AbstractHttpContextInjectable<T> {
                 }
             }
         } catch (AuthenticationException e) {
-            LOG.warn(e, "Error authenticating credentials");
+            LOGGER.warn("Error authenticating credentials", e);
             throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
         }
 

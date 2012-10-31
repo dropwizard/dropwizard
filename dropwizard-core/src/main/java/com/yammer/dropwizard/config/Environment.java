@@ -13,7 +13,6 @@ import com.yammer.dropwizard.jetty.NonblockingServletHolder;
 import com.yammer.dropwizard.json.ObjectMapperFactory;
 import com.yammer.dropwizard.lifecycle.ExecutorServiceManager;
 import com.yammer.dropwizard.lifecycle.Managed;
-import com.yammer.dropwizard.logging.Log;
 import com.yammer.dropwizard.tasks.GarbageCollectionTask;
 import com.yammer.dropwizard.tasks.Task;
 import com.yammer.metrics.core.HealthCheck;
@@ -23,6 +22,8 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.component.AbstractLifeCycle;
 import org.eclipse.jetty.util.component.AggregateLifeCycle;
 import org.eclipse.jetty.util.component.LifeCycle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
 import javax.servlet.Filter;
@@ -47,7 +48,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * A Dropwizard service's environment.
  */
 public class Environment extends AbstractLifeCycle {
-    private static final Log LOG = Log.forClass(Environment.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Environment.class);
 
     private final String name;
     private final Configuration configuration;
@@ -401,7 +402,7 @@ public class Environment extends AbstractLifeCycle {
         for (Object bean : lifeCycle.getBeans()) {
             builder.add(bean.toString());
         }
-        LOG.debug("managed objects = {}", builder.build());
+        LOGGER.debug("managed objects = {}", builder.build());
     }
 
     private void logHealthChecks() {
@@ -414,7 +415,7 @@ public class Environment extends AbstractLifeCycle {
                 builder.add(canonicalName);
             }
         }
-        LOG.debug("health checks = {}", builder.build());
+        LOGGER.debug("health checks = {}", builder.build());
     }
 
     private void logResources() {
@@ -432,7 +433,7 @@ public class Environment extends AbstractLifeCycle {
             }
         }
 
-        LOG.debug("resources = {}", builder.build());
+        LOGGER.debug("resources = {}", builder.build());
     }
 
     private void logProviders() {
@@ -450,7 +451,7 @@ public class Environment extends AbstractLifeCycle {
             }
         }
 
-        LOG.debug("providers = {}", builder.build());
+        LOGGER.debug("providers = {}", builder.build());
     }
 
     private void logEndpoints() {
@@ -493,7 +494,7 @@ public class Environment extends AbstractLifeCycle {
             }
         }
 
-        LOG.info(stringBuilder.toString());
+        LOGGER.info(stringBuilder.toString());
     }
 
     private void logTasks() {
@@ -504,7 +505,7 @@ public class Environment extends AbstractLifeCycle {
                                                "POST", task.getName(), task.getClass().getCanonicalName()));
         }
 
-        LOG.info("tasks = {}", stringBuilder.toString());
+        LOGGER.info("tasks = {}", stringBuilder.toString());
     }
 
     private MethodList annotatedMethods(Class<?> resource) {
