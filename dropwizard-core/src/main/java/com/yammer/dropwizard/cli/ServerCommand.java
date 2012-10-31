@@ -54,6 +54,7 @@ public class ServerCommand<T extends Configuration> extends ConfiguredCommand<T>
         try {
             server.start();
             server.join();
+            service.setServer(server);
         } catch (Exception e) {
             log.error(e, "Unable to start server, shutting down");
             server.stop();

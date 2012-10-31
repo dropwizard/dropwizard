@@ -15,6 +15,7 @@ import com.yammer.dropwizard.config.LoggingFactory;
 import com.yammer.dropwizard.json.Json;
 
 import org.codehaus.jackson.map.Module;
+import org.eclipse.jetty.server.Server;
 
 import javax.annotation.CheckForNull;
 import java.lang.reflect.ParameterizedType;
@@ -41,6 +42,7 @@ public abstract class AbstractService<T extends Configuration> {
     private final List<ConfiguredBundle<? super T>> configuredBundles;
     private final List<Module> modules;
     private final SortedMap<String, Command> commands;
+    private Server server;
 
     /**
      * Creates a new service with the given name. If name is {@code null} the service is named as
@@ -244,6 +246,15 @@ public abstract class AbstractService<T extends Configuration> {
     public ServletContainer getJerseyContainer(DropwizardResourceConfig resourceConfig,
                                                T serviceConfig) {
         return new ServletContainer(resourceConfig);
+    }
+    
+    /**
+     * Set the server.  The server is initialzed and running.
+     * 
+     * @param server
+     */
+    public void setServer(Server server) {
+        // default is to do nothing
     }
     
     private static boolean isHelp(String[] arguments) {

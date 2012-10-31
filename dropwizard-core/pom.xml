@@ -10,6 +10,7 @@
 
     <artifactId>dropwizard-core</artifactId>
     <name>Dropwizard</name>
+    <version>0.5.1.h-SNAPSHOT</version>
 
     <properties>
         <jetty.version>8.1.5.v20120716</jetty.version>
