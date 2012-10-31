@@ -34,6 +34,7 @@ public class ManagedDataSourceFactory {
                                                                                           pool,
                                                                                           null,
                                                                                           configuration.getValidationQuery(),
+                                                                                          configuration.getConnectionInitializationStatements(),
                                                                                           configuration.isDefaultReadOnly(),
                                                                                           true);
         connectionFactory.setPool(pool);
