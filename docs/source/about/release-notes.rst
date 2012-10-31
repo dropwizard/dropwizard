@@ -26,7 +26,7 @@ v0.6.0-SNAPSHOT: TBD
 * Split ``Environment`` into ``Bootstrap`` and ``Environment``, and broke configuration of each into
   ``Service``'s ``#initialize(Bootstrap)`` and ``#run(Configuration, Environment)``.
 * Combined ``AbstractService`` and ``Service``.
-* Dropped ``ScalaService``. Use ``ScalaBundle`` instead.
+* Trimmed down ``ScalaService``, so be sure to add ``ScalaBundle``.
 * Added support for using ``JerseyClientFactory`` without an ``Environment``.
 * Dropped Jerkson in favor of Jackson's Scala module.
 * Added ``Optional`` support for JDBI.

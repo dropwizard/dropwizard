@@ -10,7 +10,6 @@ public class ScalaBundle extends Bundle {
 
     @Override
     public void initialize(final Bootstrap<?> bootstrap) {
-        bootstrap.addBundle(new ScalaBundle());
         bootstrap.getObjectMapperFactory().registerModule(new DefaultScalaModule());
     }
 
