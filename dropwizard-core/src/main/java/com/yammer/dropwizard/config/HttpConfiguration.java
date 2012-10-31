@@ -2,10 +2,12 @@ package com.yammer.dropwizard.config;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
+import com.yammer.dropwizard.config.validation.PortRange;
 import com.yammer.dropwizard.util.Duration;
 import com.yammer.dropwizard.util.Size;
 import com.yammer.dropwizard.validation.ValidationMethod;
 import org.codehaus.jackson.annotate.JsonProperty;
+import org.hibernate.validator.constraints.Range;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
@@ -42,14 +44,12 @@ public class HttpConfiguration {
         SOCKET_SSL,
         SELECT_CHANNEL_SSL
     }
-
-    @Min(0)
-    @Max(65535)
+  
+    @PortRange
     @JsonProperty
     protected int port = 8080;
 
-    @Min(0)
-    @Max(65535)
+    @PortRange
     @JsonProperty
     protected int adminPort = 8081;
 
