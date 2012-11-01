@@ -18,5 +18,6 @@ public class DropwizardResourceConfig extends ScanningResourceConfig {
         getClasses().add(InstrumentedResourceMethodDispatchAdapter.class);
         getClasses().add(CacheControlledResourceMethodDispatchAdapter.class);
         getClasses().add(OptionalResourceMethodDispatchAdapter.class);
+        getClasses().add(OptionalQueryParamInjectableProvider.class);
     }
 }
