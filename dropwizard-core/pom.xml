@@ -145,5 +145,15 @@
             <version>${jetty.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.sun.jersey.jersey-test-framework</groupId>
+            <artifactId>jersey-test-framework-core</artifactId>
+            <version>${jersey.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.jersey.jersey-test-framework</groupId>
+            <artifactId>jersey-test-framework-inmemory</artifactId>
+            <version>${jersey.version}</version>
+        </dependency>
     </dependencies>
 </project>
