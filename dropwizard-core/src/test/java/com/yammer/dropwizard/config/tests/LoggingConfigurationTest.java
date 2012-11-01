@@ -22,8 +22,7 @@ public class LoggingConfigurationTest {
 
     @Before
     public void setUp() throws Exception {
-        this.config = factory.build(new File(Resources.getResource("logging.yml")
-                                                      .getFile()));
+        this.config = factory.build(new File(Resources.getResource("logging.yml").toURI()));
     }
 
     @Test

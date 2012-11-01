@@ -22,8 +22,7 @@ public class HttpConfigurationTest {
     public void setUp() throws Exception {
         this.http = ConfigurationFactory.forClass(HttpConfiguration.class,
                                                   new Validator())
-                                        .build(new File(Resources.getResource("yaml/http.yml")
-                                                                 .getFile()));
+                                        .build(new File(Resources.getResource("yaml/http.yml").toURI()));
     }
 
     @Test

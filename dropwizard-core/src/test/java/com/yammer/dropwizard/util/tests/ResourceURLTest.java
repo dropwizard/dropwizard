@@ -49,7 +49,7 @@ public class ResourceURLTest {
     }
 
     @Test
-    public void isDirectoryReturnsTrueForDirectoriesInJars() {
+    public void isDirectoryReturnsTrueForDirectoriesInJars() throws Exception {
         final URL url = Resources.getResource("META-INF/");
 
         assertThat(url.getProtocol())
@@ -59,7 +59,7 @@ public class ResourceURLTest {
     }
 
     @Test
-    public void isDirectoryReturnsFalseForFilesInJars() {
+    public void isDirectoryReturnsFalseForFilesInJars() throws Exception {
         final URL url = Resources.getResource("META-INF/MANIFEST.MF");
 
         assertThat(url.getProtocol())
@@ -69,7 +69,7 @@ public class ResourceURLTest {
     }
 
     @Test
-    public void isDirectoryReturnsTrueForDirectoriesInJarsWithoutTrailingSlashes() {
+    public void isDirectoryReturnsTrueForDirectoriesInJarsWithoutTrailingSlashes() throws Exception {
         final URL url = Resources.getResource("META-INF");
 
         assertThat(url.getProtocol())
@@ -86,13 +86,13 @@ public class ResourceURLTest {
             ResourceURL.isDirectory(url);
             fail("should have thrown an exception");
         }
-        catch (ResourceNotFoundException e) {
+        catch (ResourceNotFoundException ignored) {
             // expected
         }
     }
 
     @Test
-    public void appendTrailingSlashAddsASlash() {
+    public void appendTrailingSlashAddsASlash() throws Exception {
         final URL url = Resources.getResource("META-INF");
 
         assertThat(url.toExternalForm())
@@ -102,7 +102,7 @@ public class ResourceURLTest {
     }
 
     @Test
-    public void appendTrailingSlashDoesntASlashWhenOneIsAlreadyPresent() {
+    public void appendTrailingSlashDoesntASlashWhenOneIsAlreadyPresent() throws Exception {
         final URL url = Resources.getResource("META-INF/");
 
         assertThat(url.toExternalForm())
