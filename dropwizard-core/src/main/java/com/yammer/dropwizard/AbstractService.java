@@ -15,7 +15,6 @@ import com.yammer.dropwizard.config.LoggingFactory;
 import com.yammer.dropwizard.json.Json;
 
 import org.codehaus.jackson.map.Module;
-import org.eclipse.jetty.server.Server;
 
 import javax.annotation.CheckForNull;
 import java.lang.reflect.ParameterizedType;
@@ -247,19 +246,16 @@ public abstract class AbstractService<T extends Configuration> {
         return new ServletContainer(resourceConfig);
     }
     
-    /**
-     * Set the server.  The server is initialzed and running.
-     * 
-     * @param server
-     */
-    public void setServer(Server server) {
-        // default is to do nothing
-    }
-    
     private static boolean isHelp(String[] arguments) {
         return (arguments.length == 0) ||
                 ((arguments.length == 1) &&
                         ("-h".equals(arguments[0]) ||
                                 "--help".equals(arguments[0])));
+    }
+    
+    /**
+     * A callback to let you know the Jetty server has been started.
+     */
+    public void serverStarted() {
     }
 }

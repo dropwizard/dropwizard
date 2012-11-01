@@ -16,6 +16,8 @@ import com.yammer.dropwizard.logging.Log;
 import com.yammer.dropwizard.tasks.GarbageCollectionTask;
 import com.yammer.dropwizard.tasks.Task;
 import com.yammer.metrics.core.HealthCheck;
+
+import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletHolder;
@@ -58,6 +60,7 @@ public class Environment extends AbstractLifeCycle {
     private final ImmutableSet.Builder<Task> tasks;
     private final AggregateLifeCycle lifeCycle;
     private SessionHandler sessionHandler;
+    private Server server;
 
     /**
      * Creates a new environment.
@@ -509,5 +512,26 @@ public class Environment extends AbstractLifeCycle {
 
     public SessionHandler getSessionHandler() {
         return sessionHandler;
+    }
+
+    /**
+     * Set the Jetty server instance of the environment.
+     * @param server
+     * @throws IllegalStateException if the server has already
+     *         been set for this environment
+     */
+    public void setServer(Server s) {
+        if (server != null) {
+            throw new IllegalStateException("Server already set");
+        }
+        server = s;
+    }
+
+    /**
+     * 
+     * @return the Jetty server instance
+     */
+    public Server getServer() {
+        return server;
     }
 }

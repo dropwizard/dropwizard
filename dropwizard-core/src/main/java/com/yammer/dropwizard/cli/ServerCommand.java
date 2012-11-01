@@ -49,11 +49,12 @@ public class ServerCommand<T extends Configuration> extends ConfiguredCommand<T>
         service.initializeWithBundles(configuration, environment);
         final Server server = new ServerFactory(configuration.getHttpConfiguration(),
                                                 service.getName()).buildServer(environment);
+        environment.setServer(server);
         final Log log = Log.forClass(ServerCommand.class);
         logBanner(service, log);
         try {
             server.start();
-            service.setServer(server);
+            service.serverStarted();
             server.join();
         } catch (Exception e) {
             log.error(e, "Unable to start server, shutting down");
