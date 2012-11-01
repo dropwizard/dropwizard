@@ -12,6 +12,7 @@ import com.yammer.dropwizard.jetty.JettyManaged;
 import com.yammer.dropwizard.jetty.NonblockingServletHolder;
 import com.yammer.dropwizard.lifecycle.ExecutorServiceManager;
 import com.yammer.dropwizard.lifecycle.Managed;
+import com.yammer.dropwizard.lifecycle.ServerLifecycleListener;
 import com.yammer.dropwizard.logging.Log;
 import com.yammer.dropwizard.tasks.GarbageCollectionTask;
 import com.yammer.dropwizard.tasks.Task;
@@ -61,6 +62,7 @@ public class Environment extends AbstractLifeCycle {
     private final AggregateLifeCycle lifeCycle;
     private SessionHandler sessionHandler;
     private Server server;
+    private ServerLifecycleListener serverListener;
 
     /**
      * Creates a new environment.
@@ -515,16 +517,19 @@ public class Environment extends AbstractLifeCycle {
     }
 
     /**
-     * Set the Jetty server instance of the environment.
+     * Set the Jetty server instance of the environment, notify the listener
      * @param server
      * @throws IllegalStateException if the server has already
      *         been set for this environment
      */
-    public void setServer(Server s) {
+    public void serverStarted(Server s) {
         if (server != null) {
             throw new IllegalStateException("Server already set");
         }
         server = s;
+        if (serverListener != null) {
+            serverListener.serverStarted();
+        }
     }
 
     /**
@@ -533,5 +538,9 @@ public class Environment extends AbstractLifeCycle {
      */
     public Server getServer() {
         return server;
+    }
+     
+    public void setServerLifecycleListener(ServerLifecycleListener listener) {
+        serverListener = listener;
     }
 }

@@ -16,6 +16,11 @@
 
 package com.yammer.dropwizard.config.validation.tests;
 
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertNotNull;
+import static junit.framework.Assert.assertTrue;
+import static junit.framework.Assert.fail;
+
 import java.io.File;
 
 import org.junit.Test;
@@ -24,7 +29,6 @@ import com.google.common.io.Resources;
 import com.yammer.dropwizard.config.ConfigurationException;
 import com.yammer.dropwizard.config.ConfigurationFactory;
 import com.yammer.dropwizard.validation.Validator;
-import static junit.framework.Assert.*;
 
 /**
  * @author hhildebrand
@@ -58,8 +62,7 @@ public class PortRangeTest {
                                                                           Resources.getResource("yaml/invalidPortRange.yml").getFile()));
             fail("should have thrown a configuration exception for an invalid port range");
         } catch (ConfigurationException e) {
-            assertEquals("/Users/hhildebrand/git/dropwizard/dropwizard-core/target/test-classes/yaml/invalidPortRange.yml has the following errors:\n  * testPort port range must be between 1025 and 65535 (was 80)\n",
-                         e.getMessage());
+            assertTrue(e.getMessage().endsWith("invalidPortRange.yml has the following errors:\n  * testPort port range must be between 1025 and 65535 (was 80)\n"));
         }
     }
 

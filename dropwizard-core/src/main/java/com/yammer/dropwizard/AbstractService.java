@@ -252,10 +252,4 @@ public abstract class AbstractService<T extends Configuration> {
                         ("-h".equals(arguments[0]) ||
                                 "--help".equals(arguments[0])));
     }
-    
-    /**
-     * A callback to let you know the Jetty server has been started.
-     */
-    public void serverStarted() {
-    }
 }
