@@ -11,10 +11,17 @@ import org.junit.Test;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.fest.assertions.api.Assertions.failBecauseExceptionWasNotThrown;
 
 public class OptionalResourceMethodDispatchAdapterTest extends JerseyTest {
+    static {
+        Logger.getLogger("com.sun.jersey").setLevel(Level.OFF);
+    }
+
     @Path("/test/")
     @Produces(MediaType.TEXT_PLAIN)
     public static class ExampleResource {
