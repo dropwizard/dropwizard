@@ -5,9 +5,15 @@ import com.yammer.dropwizard.config.Environment;
 import com.yammer.dropwizard.json.ObjectMapperFactory;
 import org.junit.Test;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import static org.mockito.Mockito.mock;
 
 public class EnvironmentTest {
+    static {
+        Logger.getLogger("com.sun.jersey").setLevel(Level.OFF);
+    }
 
     @Test
     @SuppressWarnings("unchecked")
