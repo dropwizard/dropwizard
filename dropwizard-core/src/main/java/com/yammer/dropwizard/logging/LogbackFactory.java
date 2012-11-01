@@ -37,7 +37,7 @@ public class LogbackFactory {
         appender.setContext(context);
         appender.setLayout(layout);
         appender.setSyslogHost(syslog.getHost());
-        appender.setFacility(syslog.getFacility());
+        appender.setFacility(syslog.getFacility().toString());
         addThresholdFilter(appender, syslog.getThreshold());
         appender.start();
 
