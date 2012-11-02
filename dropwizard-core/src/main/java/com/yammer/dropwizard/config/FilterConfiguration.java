@@ -17,7 +17,7 @@ public class FilterConfiguration {
     private final ImmutableMultimap.Builder<String, FilterHolder> mappings;
 
     /**
-     * Creates a new {@link FilterConfiguration}.
+     * Creates a new FilterConfiguration.
      *
      * @param holder   the {@link FilterHolder} containing the {@link javax.servlet.Filter}
      * @param mappings the mappings of URL patterns to {@link javax.servlet.Filter}s

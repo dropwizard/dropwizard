@@ -9,8 +9,7 @@ import com.yammer.dropwizard.config.Environment;
  *
  * @param <T>    the required configuration interface
  */
-@SuppressWarnings("UnusedParameters")
-public abstract class ConfiguredBundle<T> {
+public interface ConfiguredBundle<T> {
     /**
      * Initializes the environment.
      *
@@ -18,16 +17,12 @@ public abstract class ConfiguredBundle<T> {
      * @param environment      the service's {@link Environment}
      * @throws Exception if something goes wrong
      */
-    public void run(T configuration, Environment environment) throws Exception {
-        // no default impl
-    }
+    void run(T configuration, Environment environment) throws Exception;
 
     /**
      * Initializes the service bootstrap.
      *
      * @param bootstrap the service bootstrap
      */
-    public void initialize(Bootstrap<?> bootstrap) {
-        // no default impl
-    }
+    void initialize(Bootstrap<?> bootstrap);
 }

@@ -407,7 +407,7 @@ public class Environment extends AbstractLifeCycle {
 
     private void logHealthChecks() {
         final ImmutableSet.Builder<String> builder = ImmutableSet.builder();
-        for (final HealthCheck healthCheck : healthChecks.build()) {
+        for (HealthCheck healthCheck : healthChecks.build()) {
             final String canonicalName = healthCheck.getClass().getCanonicalName();
             if (canonicalName == null) {
                 builder.add(String.format("%s(\"%s\")", HealthCheck.class.getCanonicalName(), healthCheck.getName()));

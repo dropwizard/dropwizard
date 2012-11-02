@@ -11,7 +11,7 @@ public class JettyManaged extends AbstractLifeCycle implements Managed {
     private final Managed managed;
 
     /**
-     * Creates a new {@link JettyManaged} wrapping {@code managed}.
+     * Creates a new JettyManaged wrapping {@code managed}.
      *
      * @param managed a {@link Managed} instance to be wrapped
      */

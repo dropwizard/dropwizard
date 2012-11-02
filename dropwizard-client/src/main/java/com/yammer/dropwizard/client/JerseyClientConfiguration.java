@@ -57,7 +57,7 @@ public class JerseyClientConfiguration extends HttpClientConfiguration {
     
     @ValidationMethod(message = ".compressRequestEntity requires gzipEnabled set to true")
     public boolean isCompressionConfigurationValid() {
-        return compressRequestEntity ? gzipEnabled : true; 
+        return !compressRequestEntity || gzipEnabled;
     }
     
 }

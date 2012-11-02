@@ -12,14 +12,14 @@ public class GarbageCollectionTask extends Task {
     private final Runtime runtime;
 
     /**
-     * Creates a new {@link GarbageCollectionTask}.
+     * Creates a new GarbageCollectionTask.
      */
     public GarbageCollectionTask() {
         this(Runtime.getRuntime());
     }
 
     /**
-     * Creates a new {@link GarbageCollectionTask} with the given {@link Runtime} instance.
+     * Creates a new GarbageCollectionTask with the given {@link Runtime} instance.
      * <p/>
      * <b>Use {@link GarbageCollectionTask#GarbageCollectionTask()} instead.</b>
      *

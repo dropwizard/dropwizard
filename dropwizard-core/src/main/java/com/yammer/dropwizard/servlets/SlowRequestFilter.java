@@ -15,6 +15,7 @@ import static com.yammer.dropwizard.util.Servlets.getFullUrl;
  * A servlet filter which logs the methods and URIs of requests which take longer than a given
  * duration of time to complete.
  */
+@SuppressWarnings("UnusedDeclaration")
 public class SlowRequestFilter implements Filter {
     private static final Logger LOGGER = LoggerFactory.getLogger(SlowRequestFilter.class);
     private final long threshold;

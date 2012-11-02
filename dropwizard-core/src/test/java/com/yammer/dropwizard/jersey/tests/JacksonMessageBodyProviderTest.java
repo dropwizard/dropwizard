@@ -175,15 +175,16 @@ public class JacksonMessageBodyProviderTest {
         when(valid.value()).thenReturn(new Class<?>[]{Partial1.class, Partial2.class});
 
         final ByteArrayInputStream entity = new ByteArrayInputStream("{\"id\":1}".getBytes());
-        final Class<?> klass = PartialExample.class;
 
         try {
-            final Object obj = provider.readFrom((Class<Object>) klass,
-                PartialExample.class,
-                new Annotation[]{valid},
-                MediaType.APPLICATION_JSON_TYPE,
-                new MultivaluedMapImpl(),
-                entity);
+            final Class<?> klass = PartialExample.class;
+            provider.readFrom((Class<Object>) klass,
+                              PartialExample.class,
+                              new Annotation[]{ valid },
+                              MediaType.APPLICATION_JSON_TYPE,
+                              new MultivaluedMapImpl(),
+                              entity);
+            failBecauseExceptionWasNotThrown(InvalidEntityException.class);
         } catch(InvalidEntityException e) {
             assertThat(e.getErrors())
                 .containsOnly("text may not be null (was null)");

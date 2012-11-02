@@ -73,10 +73,10 @@ public class HttpClientFactory {
 
         // TODO: 11/16/11 <coda> -- figure out the full set of options to support
 
-        if (!configuration.isCookiesEnabled()) {
-            params.setParameter(AllClientPNames.COOKIE_POLICY, CookiePolicy.IGNORE_COOKIES);
-        } else {
+        if (configuration.isCookiesEnabled()) {
             params.setParameter(AllClientPNames.COOKIE_POLICY, CookiePolicy.BEST_MATCH);
+        } else {
+            params.setParameter(AllClientPNames.COOKIE_POLICY, CookiePolicy.IGNORE_COOKIES);
         }
 
         final Integer timeout = (int) configuration.getTimeout().toMilliseconds();

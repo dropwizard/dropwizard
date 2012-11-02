@@ -17,7 +17,7 @@ public class ServletConfiguration {
     private final ImmutableMap.Builder<String, ServletHolder> mappings;
 
     /**
-     * Creates a new {@link ServletConfiguration}.
+     * Creates a new ServletConfiguration.
      *
      * @param holder   the {@link ServletHolder} containing the {@link javax.servlet.Servlet}
      * @param mappings the mappings of URL patterns to {@link javax.servlet.Servlet}s

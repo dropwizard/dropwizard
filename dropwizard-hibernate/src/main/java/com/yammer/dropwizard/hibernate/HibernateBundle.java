@@ -10,7 +10,7 @@ import com.yammer.dropwizard.db.ConfigurationStrategy;
 import com.yammer.dropwizard.db.DatabaseConfiguration;
 import org.hibernate.SessionFactory;
 
-public abstract class HibernateBundle<T extends Configuration> extends ConfiguredBundle<T> implements ConfigurationStrategy<T> {
+public abstract class HibernateBundle<T extends Configuration> implements ConfiguredBundle<T>, ConfigurationStrategy<T> {
     private SessionFactory sessionFactory;
 
     private final ImmutableList<String> packages;

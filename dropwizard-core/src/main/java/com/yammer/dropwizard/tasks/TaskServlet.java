@@ -27,14 +27,14 @@ public class TaskServlet extends HttpServlet {
     private final ImmutableMap<String, Task> tasks;
 
     /**
-     * Creates a new {@link TaskServlet} given the provided set of {@link Task} instances.
+     * Creates a new TaskServlet given the provided set of {@link Task} instances.
      *
      * @param tasks a series of tasks which the servlet will provide access to
      */
     public TaskServlet(Iterable<Task> tasks) {
         final ImmutableMap.Builder<String, Task> builder = ImmutableMap.builder();
         for (Task task : tasks) {
-            builder.put("/" + task.getName(), task);
+            builder.put('/' + task.getName(), task);
         }
         this.tasks = builder.build();
     }

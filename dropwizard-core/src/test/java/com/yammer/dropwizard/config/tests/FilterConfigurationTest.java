@@ -46,4 +46,11 @@ public class FilterConfigurationTest {
                 .isEqualTo(ImmutableMultimap.of("/one", holder,
                                                 "/two", holder));
     }
+
+    @Test
+    public void setsTheNameForAFilter() throws Exception {
+        config.setName("poop");
+
+        verify(holder).setName("poop");
+    }
 }

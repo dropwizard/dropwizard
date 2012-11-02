@@ -37,7 +37,7 @@ public class ServletConfigurationTest {
     }
 
     @Test
-    public void mapsAUrlPatternToAFilter() throws Exception {
+    public void mapsAUrlPatternToAServlet() throws Exception {
         config.addUrlPattern("/one");
 
         assertThat(mappings.build())
@@ -45,11 +45,18 @@ public class ServletConfigurationTest {
     }
 
     @Test
-    public void mapsUrlPatternsToAFilter() throws Exception {
+    public void mapsUrlPatternsToAServlet() throws Exception {
         config.addUrlPatterns("/one", "/two");
 
         assertThat(mappings.build())
                 .isEqualTo(ImmutableMap.of("/one", holder,
                                            "/two", holder));
+    }
+
+    @Test
+    public void setsTheNameForAServlet() throws Exception {
+        config.setName("poop");
+
+        verify(holder).setName("poop");
     }
 }

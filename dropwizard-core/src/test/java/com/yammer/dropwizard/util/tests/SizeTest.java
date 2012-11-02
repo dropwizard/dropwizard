@@ -1,6 +1,7 @@
 package com.yammer.dropwizard.util.tests;
 
 import com.yammer.dropwizard.util.Size;
+import com.yammer.dropwizard.util.SizeUnit;
 import org.junit.Test;
 
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -115,5 +116,17 @@ public class SizeTest {
 
         assertThat(Size.kilobytes(1).toString())
                 .isEqualTo("1 kilobyte");
+    }
+
+    @Test
+    public void hasAQuantity() throws Exception {
+        assertThat(Size.gigabytes(3).getQuantity())
+                .isEqualTo(3);
+    }
+
+    @Test
+    public void hasAUnit() throws Exception {
+        assertThat(Size.gigabytes(3).getUnit())
+                .isEqualTo(SizeUnit.GIGABYTES);
     }
 }

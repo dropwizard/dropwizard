@@ -30,11 +30,7 @@ public class AssetServlet extends HttpServlet {
 
         private AssetLoader(URL resourceURL, String uriPath, String indexFilename) {
             this.resourceURL = ResourceURL.appendTrailingSlash(resourceURL);
-
-            if (uriPath.endsWith("/")) {
-                uriPath = uriPath.substring(0, uriPath.length() - 1);
-            }
-            this.uriPath = uriPath;
+            this.uriPath = uriPath.endsWith("/") ? uriPath.substring(0, uriPath.length() - 1) : uriPath;
             this.indexFilename = indexFilename;
         }
 
@@ -71,7 +67,7 @@ public class AssetServlet extends HttpServlet {
         private final String eTag;
         private final long lastModifiedTime;
 
-        private CachedAsset(final byte[] resource, final long lastModifiedTime) {
+        private CachedAsset(byte[] resource, long lastModifiedTime) {
             this.resource = resource;
             this.eTag = Hashing.murmur3_128().hashBytes(resource).toString();
             this.lastModifiedTime = lastModifiedTime;
@@ -93,6 +89,11 @@ public class AssetServlet extends HttpServlet {
     private static final String DEFAULT_MIME_TYPE = "text/html";
     private static final String DEFAULT_INDEX_FILE = "index.htm";
 
+    private final URL resourceURL;
+    private final CacheBuilderSpec cacheBuilderSpec;
+    private final String uriPath;
+    private final String indexFile;
+
     private final transient LoadingCache<String, CachedAsset> cache;
     private final transient MimeTypes mimeTypes;
 
@@ -111,9 +112,16 @@ public class AssetServlet extends HttpServlet {
      * @param indexFile        the filename to use when directories are requested, or null to serve no indexes
      * @see CacheBuilderSpec
      */
-    public AssetServlet(URL resourceURL, CacheBuilderSpec cacheBuilderSpec, String uriPath, String indexFile) {
+    public AssetServlet(URL resourceURL,
+                        CacheBuilderSpec cacheBuilderSpec,
+                        String uriPath,
+                        String indexFile) {
+        this.resourceURL = resourceURL;
+        this.cacheBuilderSpec = cacheBuilderSpec;
+        this.uriPath = uriPath;
+        this.indexFile = indexFile;
         this.cache = CacheBuilder.from(cacheBuilderSpec)
-                .build(new AssetLoader(resourceURL, uriPath, indexFile));
+                                 .build(new AssetLoader(resourceURL, uriPath, indexFile));
         this.mimeTypes = new MimeTypes();
     }
 
@@ -125,10 +133,26 @@ public class AssetServlet extends HttpServlet {
      * @param cacheBuilderSpec specification for the underlying cache
      * @param uriPath          the URI path fragment in which all requests are rooted
      */
+    @SuppressWarnings("UnusedDeclaration")
     public AssetServlet(String resourcePath, CacheBuilderSpec cacheBuilderSpec, String uriPath) {
         this(Resources.getResource(resourcePath.substring(1)), cacheBuilderSpec, uriPath, DEFAULT_INDEX_FILE);
     }
 
+    public URL getResourceURL() {
+        return resourceURL;
+    }
+
+    public CacheBuilderSpec getCacheBuilderSpec() {
+        return cacheBuilderSpec;
+    }
+
+    public String getUriPath() {
+        return uriPath;
+    }
+
+    public String getIndexFile() {
+        return indexFile;
+    }
 
     @Override
     protected void doGet(HttpServletRequest req,

@@ -57,10 +57,12 @@ public class LoggingExceptionMapper<E extends Throwable> implements ExceptionMap
         LOGGER.error(formatLogMessage(id, exception), exception);
     }
 
+    @SuppressWarnings("UnusedParameters")
     protected String formatResponseEntity(long id, Throwable exception) {
         return String.format("There was an error processing your request. It has been logged (ID %016x).\n", id);
     }
 
+    @SuppressWarnings("UnusedParameters")
     protected String formatLogMessage(long id, Throwable exception) {
         return String.format("Error handling a request: %016x", id);
     }

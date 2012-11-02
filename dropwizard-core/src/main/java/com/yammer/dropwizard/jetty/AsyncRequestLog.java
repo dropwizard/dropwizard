@@ -109,11 +109,6 @@ public class AsyncRequestLog extends AbstractLifeCycle implements RequestLog {
         }
     }
 
-    // for testing
-    public boolean isThreadAlive() {
-        return dispatchThread.isAlive();
-    }
-    
     @Override
     public void log(Request request, Response response) {
         // copied almost entirely from NCSARequestLog

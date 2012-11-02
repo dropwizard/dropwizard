@@ -47,5 +47,5 @@ public abstract class AbstractLiquibaseCommand<T extends Configuration> extends 
         }
     }
 
-    public abstract void run(Namespace namespace, Liquibase liquibase) throws Exception;
+    protected abstract void run(Namespace namespace, Liquibase liquibase) throws Exception;
 }
