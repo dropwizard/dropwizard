@@ -11,9 +11,16 @@ import com.yammer.dropwizard.jersey.JacksonMessageBodyProvider;
 import com.yammer.dropwizard.json.ObjectMapperFactory;
 import org.junit.Test;
 
+import javax.ws.rs.Consumes;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.ext.MessageBodyReader;
+import javax.ws.rs.ext.Provider;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Type;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
@@ -23,6 +30,20 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class JerseyClientBuilderTest {
+    @Provider
+    @Consumes(MediaType.APPLICATION_SVG_XML)
+    public static class FakeMessageBodyReader implements MessageBodyReader<JerseyClientBuilderTest> {
+        @Override
+        public boolean isReadable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
+            return JerseyClientBuilderTest.class.isAssignableFrom(type);
+        }
+
+        @Override
+        public JerseyClientBuilderTest readFrom(Class<JerseyClientBuilderTest> type, Type genericType, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, String> httpHeaders, InputStream entityStream) throws IOException, WebApplicationException {
+            return null;
+        }
+    }
+
     private static final Annotation[] NO_ANNOTATIONS = new Annotation[0];
 
     private final JerseyClientBuilder builder = new JerseyClientBuilder();
@@ -47,6 +68,48 @@ public class JerseyClientBuilderTest {
 
         assertThat(client)
                 .isInstanceOf(ApacheHttpClient4.class);
+    }
+
+    @Test
+    public void includesJerseyProperties() throws Exception {
+        final ApacheHttpClient4 client = (ApacheHttpClient4) builder.withProperty("poop", true)
+                                                                    .using(executorService,
+                                                                           objectMapper)
+                                                                    .build();
+
+        assertThat(client.getProperties().get("poop"))
+                .isEqualTo(Boolean.TRUE);
+    }
+
+    @Test
+    public void includesJerseyProviderSingletons() throws Exception {
+        final FakeMessageBodyReader provider = new FakeMessageBodyReader();
+        final ApacheHttpClient4 client = (ApacheHttpClient4) builder.withProvider(provider)
+                                                                    .using(executorService,
+                                                                           objectMapper)
+                                                                    .build();
+
+        assertThat(client.getProviders()
+                         .getMessageBodyReader(JerseyClientBuilderTest.class,
+                                               null,
+                                               NO_ANNOTATIONS,
+                                               MediaType.APPLICATION_SVG_XML_TYPE))
+                .isSameAs(provider);
+    }
+
+    @Test
+    public void includesJerseyProviderClasses() throws Exception {
+        final ApacheHttpClient4 client = (ApacheHttpClient4) builder.withProvider(FakeMessageBodyReader.class)
+                                                                    .using(executorService,
+                                                                           objectMapper)
+                                                                    .build();
+
+        assertThat(client.getProviders()
+                         .getMessageBodyReader(JerseyClientBuilderTest.class,
+                                               null,
+                                               NO_ANNOTATIONS,
+                                               MediaType.APPLICATION_SVG_XML_TYPE))
+                .isInstanceOf(FakeMessageBodyReader.class);
     }
 
     @Test

@@ -24,8 +24,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
 /**
  * A convenience class for building {@link Client} instances.
  * <p/>
- * Among other things, <ul> <li>Backed by Apache HttpClient</li> <li>Disables stale connection
- * checks</li> <li>Disables Nagle's algorithm</li> <li>Disables cookie management by default</li>
+ * Among other things,
+ *
+ * <ul>
+ *     <li>Backed by Apache HttpClient</li>
+ *     <li>Disables stale connection checks</li>
+ *     <li>Disables Nagle's algorithm</li>
+ *     <li>Disables cookie management by default</li>
  * </ul>
  *
  * @see HttpClientBuilder
@@ -72,6 +77,7 @@ public class JerseyClientBuilder {
      * @param featureState the state of the Jersey feature
      * @return {@code this}
      */
+    @SuppressWarnings("UnusedDeclaration") // basically impossible to test
     public JerseyClientBuilder withFeature(String featureName, boolean featureState) {
         features.put(featureName, featureState);
         return this;
@@ -84,7 +90,7 @@ public class JerseyClientBuilder {
      * @param propertyValue the state of the Jersey property
      * @return {@code this}
      */
-    public JerseyClientBuilder withProperty(String propertyName, String propertyValue) {
+    public JerseyClientBuilder withProperty(String propertyName, Object propertyValue) {
         properties.put(propertyName, propertyValue);
         return this;
     }
@@ -190,8 +196,8 @@ public class JerseyClientBuilder {
 
     private ApacheHttpClient4Config buildConfig(ObjectMapper objectMapper) {
         final ApacheHttpClient4Config config = new DefaultApacheHttpClient4Config();
-        config.getSingletons().add(new JacksonMessageBodyProvider(objectMapper));
         config.getSingletons().addAll(singletons);
+        config.getSingletons().add(new JacksonMessageBodyProvider(objectMapper));
         config.getClasses().addAll(providers);
         config.getFeatures().putAll(features);
         config.getProperties().putAll(properties);
