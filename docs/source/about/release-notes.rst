@@ -11,7 +11,7 @@ v0.6.0-SNAPSHOT: TBD
 
 * Added Hibernate support in ``dropwizard-hibernate``.
 * Added Liquibase migrations in ``dropwizard-migrations``.
-* Renamed ``http.acceptThreadCount`` to ``http.acceptThreads``.
+* Renamed ``http.acceptorThreadCount`` to ``http.acceptorThreads``.
 * Dropped ``JerseyClient``. Use Jersey's ``Client`` class instead.
 * Moved JDBI support to ``dropwizard-jdbi``.
 * Dropped ``Database``. Use JDBI's ``DBI`` class instead.
