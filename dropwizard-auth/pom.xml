@@ -17,5 +17,17 @@
             <artifactId>dropwizard-core</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.sun.jersey.jersey-test-framework</groupId>
+            <artifactId>jersey-test-framework-core</artifactId>
+            <version>${jersey.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.jersey.jersey-test-framework</groupId>
+            <artifactId>jersey-test-framework-inmemory</artifactId>
+            <version>${jersey.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 </project>
