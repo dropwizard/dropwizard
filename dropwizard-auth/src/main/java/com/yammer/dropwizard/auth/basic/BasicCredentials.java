@@ -15,7 +15,7 @@ public class BasicCredentials {
     private final String password;
 
     /**
-     * Creates a new {@link BasicCredentials} with the given username and password.
+     * Creates a new BasicCredentials with the given username and password.
      *
      * @param username    the username
      * @param password    the password
@@ -48,7 +48,7 @@ public class BasicCredentials {
         if (this == obj) { return true; }
         if ((obj == null) || (getClass() != obj.getClass())) { return false; }
         final BasicCredentials that = (BasicCredentials) obj;
-        // N.B.: Do a constant-time comparison here to prevent timing attacks.
+        // N.B.: Doing a constant-time comparison here to prevent timing attacks.
         final byte[] thisBytes = password.getBytes(Charsets.UTF_8);
         final byte[] thatBytes = that.password.getBytes(Charsets.UTF_8);
         return username.equals(that.username) && MessageDigest.isEqual(thisBytes, thatBytes);

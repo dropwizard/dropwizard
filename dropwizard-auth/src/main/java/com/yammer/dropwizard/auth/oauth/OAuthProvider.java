@@ -20,7 +20,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 /**
- * A Jersey providers for OAuth2 bearer tokens.
+ * A Jersey provider for OAuth2 bearer tokens.
  *
  * @param <T> the principal type
  */
