@@ -19,20 +19,62 @@ import org.apache.http.protocol.HttpContext;
 
 import java.util.concurrent.TimeUnit;
 
-public class HttpClientFactory {
-    private final HttpClientConfiguration configuration;
+/**
+ * A convenience class for building {@link HttpClient} instances.
+ * <p>
+ * Among other things,
+ * <ul>
+ *     <li>Disables stale connection checks</li>
+ *     <li>Disables Nagle's algorithm</li>
+ *     <li>Disables cookie management by default</li>
+ * </ul>
+ */
+public class HttpClientBuilder {
+    private HttpClientConfiguration configuration = new HttpClientConfiguration();
+    private DnsResolver resolver = new SystemDefaultDnsResolver();
+    private SchemeRegistry registry = SchemeRegistryFactory.createDefault();
 
-    public HttpClientFactory(HttpClientConfiguration configuration) {
+    /**
+     * Use the given {@link HttpClientConfiguration} instance.
+     *
+     * @param configuration    a {@link HttpClientConfiguration} instance
+     * @return {@code this}
+     */
+    public HttpClientBuilder using(HttpClientConfiguration configuration) {
         this.configuration = configuration;
+        return this;
     }
 
+    /**
+     * Use the given {@link DnsResolver} instance.
+     *
+     * @param resolver    a {@link DnsResolver} instance
+     * @return {@code this}
+     */
+    public HttpClientBuilder using(DnsResolver resolver) {
+        this.resolver = resolver;
+        return this;
+    }
+
+    /**
+     * Use the given {@link SchemeRegistry} instance.
+     *
+     * @param registry    a {@link SchemeRegistry} instance
+     * @return {@code this}
+     */
+    public HttpClientBuilder using(SchemeRegistry registry) {
+        this.registry = registry;
+        return this;
+    }
+
+    /**
+     * Builds the {@link HttpClient}.
+     *
+     * @return an {@link HttpClient}
+     */
     public HttpClient build() {
-        return build(new SystemDefaultDnsResolver());
-    }
-
-    public HttpClient build(DnsResolver resolver) {
         final BasicHttpParams params = createHttpParams();
-        final InstrumentedClientConnManager manager = createConnectionManager(SchemeRegistryFactory.createDefault(), resolver);
+        final InstrumentedClientConnManager manager = createConnectionManager(registry);
         final InstrumentedHttpClient client = new InstrumentedHttpClient(manager, params);
         setStrategiesForClient(client);
 
@@ -40,15 +82,16 @@ public class HttpClientFactory {
     }
 
     /**
-     * Add strategies to client such as ConnectionReuseStrategy and KeepAliveStrategy
-     * Note that this method mutates the client object by setting the strategies
+     * Add strategies to client such as ConnectionReuseStrategy and KeepAliveStrategy Note that this
+     * method mutates the client object by setting the strategies
+     *
      * @param client The InstrumentedHttpClient that should be configured with strategies
      */
-    private void setStrategiesForClient(InstrumentedHttpClient client) {
+    protected void setStrategiesForClient(InstrumentedHttpClient client) {
         final long keepAlive = configuration.getKeepAlive().toMilliseconds();
 
         //don't keep alive the HTTP connection and thus don't reuse the TCP socket
-        if(keepAlive == 0) {
+        if (keepAlive == 0) {
             client.setReuseStrategy(new NoConnectionReuseStrategy());
         } else {
             client.setReuseStrategy(new DefaultConnectionReuseStrategy());
@@ -66,12 +109,11 @@ public class HttpClientFactory {
 
     /**
      * Map the parameters in HttpClientConfiguration to a BasicHttpParams object
+     *
      * @return a BasicHttpParams object from the HttpClientConfiguration
      */
     protected BasicHttpParams createHttpParams() {
         final BasicHttpParams params = new BasicHttpParams();
-
-        // TODO: 11/16/11 <coda> -- figure out the full set of options to support
 
         if (configuration.isCookiesEnabled()) {
             params.setParameter(AllClientPNames.COOKIE_POLICY, CookiePolicy.BEST_MATCH);
@@ -82,7 +124,8 @@ public class HttpClientFactory {
         final Integer timeout = (int) configuration.getTimeout().toMilliseconds();
         params.setParameter(AllClientPNames.SO_TIMEOUT, timeout);
 
-        final Integer connectionTimeout = (int) configuration.getConnectionTimeout().toMilliseconds();
+        final Integer connectionTimeout = (int) configuration.getConnectionTimeout()
+                                                             .toMilliseconds();
         params.setParameter(AllClientPNames.CONNECTION_TIMEOUT, connectionTimeout);
 
         params.setParameter(AllClientPNames.TCP_NODELAY, Boolean.TRUE);
@@ -92,15 +135,21 @@ public class HttpClientFactory {
     }
 
     /**
-     * Create a InstrumentedClientConnManager based on the HttpClientConfiguration. It sets the maximum connections per
-     * route and the maximum total connections that the connection manager can create
+     * Create a InstrumentedClientConnManager based on the HttpClientConfiguration. It sets the
+     * maximum connections per route and the maximum total connections that the connection manager
+     * can create
+     *
      * @param registry the SchemeRegistry
      * @return a InstrumentedClientConnManger instance
      */
-    protected InstrumentedClientConnManager createConnectionManager(SchemeRegistry registry, DnsResolver resolver) {
+    protected InstrumentedClientConnManager createConnectionManager(SchemeRegistry registry) {
         final long ttl = configuration.getTimeToLive().toMilliseconds();
         final InstrumentedClientConnManager manager =
-                new InstrumentedClientConnManager(Metrics.defaultRegistry(), registry, ttl, TimeUnit.MILLISECONDS, resolver);
+                new InstrumentedClientConnManager(Metrics.defaultRegistry(),
+                                                  registry,
+                                                  ttl,
+                                                  TimeUnit.MILLISECONDS,
+                                                  resolver);
         manager.setDefaultMaxPerRoute(configuration.getMaxConnectionsPerRoute());
         manager.setMaxTotal(configuration.getMaxConnections());
         return manager;

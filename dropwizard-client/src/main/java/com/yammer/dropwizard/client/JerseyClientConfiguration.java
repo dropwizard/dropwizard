@@ -1,21 +1,27 @@
 package com.yammer.dropwizard.client;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.yammer.dropwizard.validation.ValidationMethod;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 
+@SuppressWarnings("UnusedDeclaration")
 public class JerseyClientConfiguration extends HttpClientConfiguration {
-    @Max(16 * 1024)
     @Min(1)
+    @Max(16 * 1024)
+    @JsonProperty
     private int minThreads = 1;
 
-    @Max(16 * 1024)
     @Min(1)
+    @Max(16 * 1024)
+    @JsonProperty
     private int maxThreads = 128;
 
+    @JsonProperty
     private boolean gzipEnabled = true;
 
+    @JsonProperty
     private boolean compressRequestEntity = true;
 
     public int getMinThreads() {
@@ -54,10 +60,9 @@ public class JerseyClientConfiguration extends HttpClientConfiguration {
     public boolean isThreadPoolSizedCorrectly() {
         return minThreads <= maxThreads;
     }
-    
+
     @ValidationMethod(message = ".compressRequestEntity requires gzipEnabled set to true")
     public boolean isCompressionConfigurationValid() {
         return !compressRequestEntity || gzipEnabled;
     }
-    
 }

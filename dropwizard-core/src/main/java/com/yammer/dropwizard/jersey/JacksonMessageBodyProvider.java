@@ -36,8 +36,10 @@ public class JacksonMessageBodyProvider extends JacksonJaxbJsonProvider {
      * The default group array used in case any of the validate methods is called without a group.
      */
     private static final Class<?>[] DEFAULT_GROUP_ARRAY = new Class<?>[]{ Default.class };
+    private final ObjectMapper mapper;
 
     public JacksonMessageBodyProvider(ObjectMapper mapper) {
+        this.mapper = mapper;
         setMapper(mapper);
     }
 
@@ -99,5 +101,9 @@ public class JacksonMessageBodyProvider extends JacksonJaxbJsonProvider {
     private boolean isProvidable(Class<?> type) {
         final JsonIgnoreType ignore = type.getAnnotation(JsonIgnoreType.class);
         return (ignore == null) || !ignore.value();
+    }
+
+    public ObjectMapper getObjectMapper() {
+        return mapper;
     }
 }

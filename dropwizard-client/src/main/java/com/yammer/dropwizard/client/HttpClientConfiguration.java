@@ -6,6 +6,7 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
+@SuppressWarnings("UnusedDeclaration")
 public class HttpClientConfiguration {
     @NotNull
     private Duration timeout = Duration.milliseconds(500);
@@ -23,7 +24,7 @@ public class HttpClientConfiguration {
     private int maxConnections = 1024;
 
     @NotNull
-    private Duration keepAlive = Duration.milliseconds(0l);
+    private Duration keepAlive = Duration.milliseconds(0);
 
     @Max(Integer.MAX_VALUE)
     @Min(1)
