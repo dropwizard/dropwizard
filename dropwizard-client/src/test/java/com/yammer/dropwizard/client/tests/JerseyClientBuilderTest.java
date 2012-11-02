@@ -129,18 +129,17 @@ public class JerseyClientBuilderTest {
     @Test
     public void usesAnExecutorServiceFromTheEnvironment() throws Exception {
         final JerseyClientConfiguration configuration = new JerseyClientConfiguration();
+        configuration.setMinThreads(7);
+        configuration.setMaxThreads(532);
 
-        when(environment.managedExecutorService("jersey-client-%d",
-                                                configuration.getMinThreads(),
-                                                configuration.getMaxThreads(),
-                                                60,
-                                                TimeUnit.SECONDS)).thenReturn(executorService);
+        when(environment.managedExecutorService("jersey-client-%d", 7, 532, 60, TimeUnit.SECONDS)).thenReturn(executorService);
         final ObjectMapperFactory factory = mock(ObjectMapperFactory.class);
         when(factory.build()).thenReturn(objectMapper);
 
         when(environment.getObjectMapperFactory()).thenReturn(factory);
 
-        final ApacheHttpClient4 client = (ApacheHttpClient4) builder.using(environment).build();
+        final ApacheHttpClient4 client = (ApacheHttpClient4) builder.using(configuration)
+                                                                    .using(environment).build();
 
         assertThat(client.getExecutorService())
                 .isEqualTo(executorService);

@@ -1,6 +1,8 @@
 package com.yammer.dropwizard.client;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.filter.GZIPContentEncodingFilter;
 import com.sun.jersey.client.apache4.ApacheHttpClient4;
@@ -9,7 +11,11 @@ import com.sun.jersey.client.apache4.config.ApacheHttpClient4Config;
 import com.sun.jersey.client.apache4.config.DefaultApacheHttpClient4Config;
 import com.yammer.dropwizard.config.Environment;
 import com.yammer.dropwizard.jersey.JacksonMessageBodyProvider;
+import org.apache.http.conn.DnsResolver;
+import org.apache.http.conn.scheme.SchemeRegistry;
 
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
@@ -17,22 +23,21 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * A convenience class for building {@link Client} instances.
- * <p>
- * Among other things,
- * <ul>
- *     <li>Backed by Apache HttpClient</li>
- *     <li>Disables stale connection checks</li>
- *     <li>Disables Nagle's algorithm</li>
- *     <li>Disables cookie management by default</li>
+ * <p/>
+ * Among other things, <ul> <li>Backed by Apache HttpClient</li> <li>Disables stale connection
+ * checks</li> <li>Disables Nagle's algorithm</li> <li>Disables cookie management by default</li>
  * </ul>
+ *
  * @see HttpClientBuilder
  */
 public class JerseyClientBuilder {
     private final HttpClientBuilder builder = new HttpClientBuilder();
-    private final ApacheHttpClient4Config config = new DefaultApacheHttpClient4Config();
+    private final List<Object> singletons = Lists.newArrayList();
+    private final List<Class<?>> providers = Lists.newArrayList();
+    private final Map<String, Boolean> features = Maps.newLinkedHashMap();
+    private final Map<String, Object> properties = Maps.newLinkedHashMap();
 
     private JerseyClientConfiguration configuration = new JerseyClientConfiguration();
-
     private Environment environment;
     private ObjectMapper objectMapper;
     private ExecutorService executorService;
@@ -44,7 +49,7 @@ public class JerseyClientBuilder {
      * @return {@code this}
      */
     public JerseyClientBuilder withProvider(Object provider) {
-        config.getSingletons().add(checkNotNull(provider));
+        singletons.add(checkNotNull(provider));
         return this;
     }
 
@@ -56,49 +61,50 @@ public class JerseyClientBuilder {
      * @return {@code this}
      */
     public JerseyClientBuilder withProvider(Class<?> klass) {
-        config.getClasses().add(checkNotNull(klass));
+        providers.add(checkNotNull(klass));
         return this;
     }
 
     /**
      * Sets the state of the given Jersey feature.
      *
-     * @param featureName     the name of the Jersey feature
-     * @param featureState    the state of the Jersey feature
+     * @param featureName  the name of the Jersey feature
+     * @param featureState the state of the Jersey feature
      * @return {@code this}
      */
     public JerseyClientBuilder withFeature(String featureName, boolean featureState) {
-        config.getFeatures().put(featureName, featureState);
+        features.put(featureName, featureState);
         return this;
     }
 
     /**
      * Sets the state of the given Jersey property.
      *
-     * @param propertyName     the name of the Jersey property
-     * @param propertyValue    the state of the Jersey property
+     * @param propertyName  the name of the Jersey property
+     * @param propertyValue the state of the Jersey property
      * @return {@code this}
      */
     public JerseyClientBuilder withProperty(String propertyName, String propertyValue) {
-        config.getProperties().put(propertyName, propertyValue);
+        properties.put(propertyName, propertyValue);
         return this;
     }
 
     /**
      * Uses the given {@link JerseyClientConfiguration}.
      *
-     * @param configuration    a configuration object
+     * @param configuration a configuration object
      * @return {@code this}
      */
     public JerseyClientBuilder using(JerseyClientConfiguration configuration) {
         this.configuration = configuration;
+        builder.using(configuration);
         return this;
     }
 
     /**
      * Uses the given {@link Environment}.
      *
-     * @param environment    a Dropwizard {@link Environment}
+     * @param environment a Dropwizard {@link Environment}
      * @return {@code this}
      * @see #using(java.util.concurrent.ExecutorService, com.fasterxml.jackson.databind.ObjectMapper)
      */
@@ -108,10 +114,32 @@ public class JerseyClientBuilder {
     }
 
     /**
+     * Use the given {@link DnsResolver} instance.
+     *
+     * @param resolver a {@link DnsResolver} instance
+     * @return {@code this}
+     */
+    public JerseyClientBuilder using(DnsResolver resolver) {
+        builder.using(resolver);
+        return this;
+    }
+
+    /**
+     * Use the given {@link SchemeRegistry} instance.
+     *
+     * @param registry a {@link SchemeRegistry} instance
+     * @return {@code this}
+     */
+    public JerseyClientBuilder using(SchemeRegistry registry) {
+        builder.using(registry);
+        return this;
+    }
+
+    /**
      * Uses the given {@link ExecutorService} and {@link ObjectMapper}.
      *
-     * @param executorService    a thread pool
-     * @param objectMapper       an object mapper
+     * @param executorService a thread pool
+     * @param objectMapper    an object mapper
      * @return {@code this}
      * @see #using(com.yammer.dropwizard.config.Environment)
      */
@@ -128,7 +156,8 @@ public class JerseyClientBuilder {
      */
     public Client build() {
         if ((environment == null) && (executorService == null) && (objectMapper == null)) {
-            throw new IllegalStateException("Must have either an environment or both an executor service and an object mapper");
+            throw new IllegalStateException("Must have either an environment or both " +
+                                                    "an executor service and an object mapper");
         }
 
         if (environment == null) {
@@ -145,18 +174,27 @@ public class JerseyClientBuilder {
 
     private Client build(ExecutorService threadPool,
                          ObjectMapper objectMapper) {
-        final ApacheHttpClient4Handler handler = new ApacheHttpClient4Handler(builder.build(),
-                                                                              null,
-                                                                              true);
-        config.getSingletons().add(new JacksonMessageBodyProvider(objectMapper));
-
-        final ApacheHttpClient4 client = new ApacheHttpClient4(handler, config);
+        final Client client = new ApacheHttpClient4(buildHandler(), buildConfig(objectMapper));
         client.setExecutorService(threadPool);
 
         if (configuration.isGzipEnabled()) {
-            client.addFilter(new GZIPContentEncodingFilter(configuration.isCompressRequestEntity()));
+            client.addFilter(new GZIPContentEncodingFilter(configuration.isGzipEnabledForRequests()));
         }
 
         return client;
+    }
+
+    private ApacheHttpClient4Handler buildHandler() {
+        return new ApacheHttpClient4Handler(builder.build(), null, true);
+    }
+
+    private ApacheHttpClient4Config buildConfig(ObjectMapper objectMapper) {
+        final ApacheHttpClient4Config config = new DefaultApacheHttpClient4Config();
+        config.getSingletons().add(new JacksonMessageBodyProvider(objectMapper));
+        config.getSingletons().addAll(singletons);
+        config.getClasses().addAll(providers);
+        config.getFeatures().putAll(features);
+        config.getProperties().putAll(properties);
+        return config;
     }
 }

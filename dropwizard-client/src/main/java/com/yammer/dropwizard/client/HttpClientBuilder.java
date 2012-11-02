@@ -90,13 +90,13 @@ public class HttpClientBuilder {
     protected void setStrategiesForClient(InstrumentedHttpClient client) {
         final long keepAlive = configuration.getKeepAlive().toMilliseconds();
 
-        //don't keep alive the HTTP connection and thus don't reuse the TCP socket
+        // don't keep alive the HTTP connection and thus don't reuse the TCP socket
         if (keepAlive == 0) {
             client.setReuseStrategy(new NoConnectionReuseStrategy());
         } else {
             client.setReuseStrategy(new DefaultConnectionReuseStrategy());
-            //either keep alive based on response header Keep-Alive,
-            //or if the server can keep a persistent connection (-1), then override based on client's configuration
+            // either keep alive based on response header Keep-Alive,
+            // or if the server can keep a persistent connection (-1), then override based on client's configuration
             client.setKeepAliveStrategy(new DefaultConnectionKeepAliveStrategy() {
                 @Override
                 public long getKeepAliveDuration(HttpResponse response, HttpContext context) {
