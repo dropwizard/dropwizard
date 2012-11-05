@@ -36,7 +36,7 @@ v0.6.0-SNAPSHOT: TBD
 * Upgraded to Mockito 1.9.5.
 * Upgraded to tomcat-dbcp 7.0.32.
 * Upgraded to Mustache 0.8.8.
-* Upgraded to Jersey 1.14.
+* Upgraded to Jersey 1.15.
 * Upgraded to Apache HttpClient 4.2.2.
 * Upgraded to Metrics 3.0.0.
 * Upgraded to JDBI 2.41.
