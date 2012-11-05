@@ -5,15 +5,14 @@ import com.yammer.dropwizard.Service;
 import com.yammer.dropwizard.cli.Command;
 import com.yammer.dropwizard.config.Configuration;
 import com.yammer.dropwizard.config.Environment;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.Options;
-import org.apache.commons.cli.UnrecognizedOptionException;
+import org.apache.commons.cli.*;
 import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 @Ignore("DW lifecycle doesn't play well with Surefire")
 public class CommandTest {
@@ -54,6 +53,33 @@ public class CommandTest {
         }
     }
 
+
+    public static class ExampleCommandWithOptionGroups extends Command {
+        private String first, last;
+        private boolean verbose = false;
+
+        public ExampleCommandWithOptionGroups() {
+            super("name", "description");
+        }
+
+        @Override
+        public Options getOptions() {
+            Options options = new Options();
+            OptionGroup group = new OptionGroup();
+            group.addOption(OptionBuilder.create("C"));
+            group.addOption(OptionBuilder.create("P"));
+            options.addOptionGroup(group);
+            return options;
+        }
+
+        @Override
+        protected void run(AbstractService<?> service,
+                           CommandLine params) throws Exception {
+            // Do nothing
+        }
+    }
+
+
     public static class DummyConfig extends Configuration {
     }
 
@@ -69,6 +95,7 @@ public class CommandTest {
     }
 
     private final ExampleCommandWithOptions commandWithOptions = new ExampleCommandWithOptions();
+    private final ExampleCommandWithOptionGroups commandWithOptionGroups = new ExampleCommandWithOptionGroups();
 
     @Test
     public void hasAName() throws Exception {
@@ -103,6 +130,20 @@ public class CommandTest {
         assertThat(commandWithOptions.getFirst(), is("first"));
         assertThat(commandWithOptions.getLast(), is("last"));
     }
+
+
+    @Test
+    public void acceptsOptionGroups() throws Exception {
+        try{
+            commandWithOptionGroups.run(new DummyService(),
+                    new String[]{"-P", "-C"});
+              fail("should have thrown an AlreadySelectedException but didn't");
+        }catch (AlreadySelectedException e){
+             // Everything right !
+        }
+
+    }
+
 
     @Test(expected = UnrecognizedOptionException.class)
     public void failsWithInvalidOption() throws Exception {

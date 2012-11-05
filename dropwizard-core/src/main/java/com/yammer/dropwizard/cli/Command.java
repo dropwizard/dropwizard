@@ -58,9 +58,14 @@ public abstract class Command {
 
     @SuppressWarnings("unchecked")
     final Options getOptionsWithHelp() {
+        Options userOptions = getOptions();
         final Options options = new Options();
-        for (Option option : (Collection<Option>) getOptions().getOptions()) {
+        for (Option option : (Collection<Option>) userOptions.getOptions()) {
             options.addOption(option);
+            OptionGroup group = userOptions.getOptionGroup(option);
+            if (group != null) {
+                 options.addOptionGroup(group);
+            }
         }
         options.addOption("h", "help", false, "display usage information");
         return options;
