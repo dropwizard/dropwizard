@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 public class DBIFactory {
     private static final Logger LOGGER = (Logger) LoggerFactory.getLogger(DBI.class);
     private static final MetricName RAW_SQL = new MetricName(DBI.class, "raw-sql");
+
     private static class SanerNamingStrategy extends DelegatingStatementNameStrategy {
         private SanerNamingStrategy() {
             super(NameStrategies.CHECK_EMPTY,
@@ -37,18 +38,19 @@ public class DBIFactory {
         }
     }
 
-    private final Environment environment;
+    private final ManagedDataSourceFactory dataSourceFactory = new ManagedDataSourceFactory();
 
-    public DBIFactory(Environment environment) {
-        this.environment = environment;
+    public DBI build(Environment environment,
+                     DatabaseConfiguration configuration,
+                     String name) throws ClassNotFoundException {
+        final ManagedDataSource dataSource = dataSourceFactory.build(configuration);
+        return build(environment, configuration, dataSource, name);
     }
 
-    public DBI build(DatabaseConfiguration configuration, String name) throws ClassNotFoundException {
-        final ManagedDataSource dataSource = new ManagedDataSourceFactory(configuration).build();
-        return build(configuration, dataSource, name);
-    }
-
-    public DBI build(DatabaseConfiguration configuration, ManagedDataSource dataSource, String name) {
+    public DBI build(Environment environment,
+                     DatabaseConfiguration configuration,
+                     ManagedDataSource dataSource,
+                     String name) {
         final String validationQuery = configuration.getValidationQuery();
         final DBI dbi = new DBI(dataSource);
         environment.manage(dataSource);

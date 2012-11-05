@@ -4,12 +4,13 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 import com.sun.jersey.core.spi.scanning.PackageNamesScanner;
 import com.sun.jersey.spi.scanning.AnnotationScannerListener;
+import com.yammer.dropwizard.config.Environment;
 import com.yammer.dropwizard.db.DatabaseConfiguration;
 import com.yammer.dropwizard.db.ManagedDataSource;
 import com.yammer.dropwizard.db.ManagedDataSourceFactory;
 import org.hibernate.SessionFactory;
+import org.hibernate.cfg.AvailableSettings;
 import org.hibernate.cfg.Configuration;
-import org.hibernate.cfg.Environment;
 import org.hibernate.service.ServiceRegistry;
 import org.hibernate.service.ServiceRegistryBuilder;
 import org.hibernate.service.jdbc.connections.internal.DatasourceConnectionProviderImpl;
@@ -25,15 +26,13 @@ import java.util.SortedSet;
 
 public class SessionFactoryFactory {
     private static final Logger LOGGER = LoggerFactory.getLogger(SessionFactoryFactory.class);
-    private final com.yammer.dropwizard.config.Environment environment;
 
-    public SessionFactoryFactory(com.yammer.dropwizard.config.Environment environment) {
-        this.environment = environment;
-    }
+    private final ManagedDataSourceFactory dataSourceFactory = new ManagedDataSourceFactory();
 
-    public SessionFactory build(DatabaseConfiguration dbConfig, List<String> packages) throws ClassNotFoundException {
-        final ManagedDataSourceFactory dataSourceFactory = new ManagedDataSourceFactory(dbConfig);
-        final ManagedDataSource dataSource = dataSourceFactory.build();
+    public SessionFactory build(Environment environment,
+                                DatabaseConfiguration dbConfig,
+                                List<String> packages) throws ClassNotFoundException {
+        final ManagedDataSource dataSource = dataSourceFactory.build(dbConfig);
         environment.manage(dataSource);
         return buildSessionFactory(buildConnectionProvider(dataSource, dbConfig.getProperties()),
                                    dbConfig.getProperties(),
@@ -52,14 +51,14 @@ public class SessionFactoryFactory {
                                                ImmutableMap<String, String> properties,
                                                List<String> packages) {
         final Configuration configuration = new Configuration();
-        configuration.setProperty(Environment.CURRENT_SESSION_CONTEXT_CLASS, "managed");
-        configuration.setProperty(Environment.USE_SQL_COMMENTS, "true");
-        configuration.setProperty(Environment.USE_GET_GENERATED_KEYS, "true");
-        configuration.setProperty(Environment.GENERATE_STATISTICS, "true");
-        configuration.setProperty(Environment.USE_REFLECTION_OPTIMIZER, "true");
-        configuration.setProperty(Environment.ORDER_UPDATES, "true");
-        configuration.setProperty(Environment.ORDER_INSERTS, "true");
-        configuration.setProperty(Environment.USE_NEW_ID_GENERATOR_MAPPINGS, "true");
+        configuration.setProperty(AvailableSettings.CURRENT_SESSION_CONTEXT_CLASS, "managed");
+        configuration.setProperty(AvailableSettings.USE_SQL_COMMENTS, "true");
+        configuration.setProperty(AvailableSettings.USE_GET_GENERATED_KEYS, "true");
+        configuration.setProperty(AvailableSettings.GENERATE_STATISTICS, "true");
+        configuration.setProperty(AvailableSettings.USE_REFLECTION_OPTIMIZER, "true");
+        configuration.setProperty(AvailableSettings.ORDER_UPDATES, "true");
+        configuration.setProperty(AvailableSettings.ORDER_INSERTS, "true");
+        configuration.setProperty(AvailableSettings.USE_NEW_ID_GENERATOR_MAPPINGS, "true");
         for (Map.Entry<String, String> property : properties.entrySet()) {
             configuration.setProperty(property.getKey(), property.getValue());
         }

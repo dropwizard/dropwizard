@@ -38,13 +38,13 @@ public class JDBITest {
     }
 
     private final Environment environment = mock(Environment.class);
-    private final DBIFactory factory = new DBIFactory(environment);
+    private final DBIFactory factory = new DBIFactory();
     private final List<Managed> managed = Lists.newArrayList();
     private DBI dbi;
 
     @Before
     public void setUp() throws Exception {
-        this.dbi = factory.build(hsqlConfig, "hsql");
+        this.dbi = factory.build(environment, hsqlConfig, "hsql");
         final ArgumentCaptor<Managed> managedCaptor = ArgumentCaptor.forClass(Managed.class);
         verify(environment).manage(managedCaptor.capture());
         managed.addAll(managedCaptor.getAllValues());
