@@ -13,10 +13,6 @@
     <artifactId>dropwizard-hibernate</artifactId>
     <name>Dropwizard Hibernate Support</name>
 
-    <properties>
-        <hibernate.version>4.1.7.Final</hibernate.version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>com.yammer.dropwizard</groupId>
@@ -31,7 +27,7 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
-            <version>${hibernate.version}</version>
+            <version>4.1.8.Final</version>
         </dependency>
     </dependencies>
 </project>
