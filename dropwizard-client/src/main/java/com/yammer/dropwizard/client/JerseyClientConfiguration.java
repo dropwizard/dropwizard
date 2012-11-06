@@ -94,16 +94,16 @@ public class JerseyClientConfiguration extends HttpClientConfiguration {
         return gzipEnabled;
     }
 
-    public void setGzipEnabled(boolean enable) {
-        this.gzipEnabled = enable;
+    public void setGzipEnabled(boolean enabled) {
+        this.gzipEnabled = enabled;
     }
 
     public boolean isGzipEnabledForRequests() {
         return gzipEnabledForRequests;
     }
 
-    public void setGzipEnabledForRequests(boolean gzipEnabledForRequests) {
-        this.gzipEnabledForRequests = gzipEnabledForRequests;
+    public void setGzipEnabledForRequests(boolean enabled) {
+        this.gzipEnabledForRequests = enabled;
     }
 
     @ValidationMethod(message = ".minThreads must be less than or equal to maxThreads")
