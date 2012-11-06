@@ -12,18 +12,18 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 /**
  * The configuration for a servlet {@link javax.servlet.Filter}.
  */
-public class FilterConfiguration {
+public class FilterBuilder {
     private final FilterHolder holder;
     private final ImmutableMultimap.Builder<String, FilterHolder> mappings;
 
     /**
-     * Creates a new FilterConfiguration.
+     * Creates a new FilterBuilder.
      *
      * @param holder   the {@link FilterHolder} containing the {@link javax.servlet.Filter}
      * @param mappings the mappings of URL patterns to {@link javax.servlet.Filter}s
      */
-    public FilterConfiguration(FilterHolder holder,
-                               ImmutableMultimap.Builder<String, FilterHolder> mappings) {
+    public FilterBuilder(FilterHolder holder,
+                         ImmutableMultimap.Builder<String, FilterHolder> mappings) {
         this.holder = holder;
         this.mappings = mappings;
     }
@@ -34,7 +34,7 @@ public class FilterConfiguration {
      * @param name the name of the filter
      * @return {@code this}
      */
-    public FilterConfiguration setName(String name) {
+    public FilterBuilder setName(String name) {
         checkArgument(!isNullOrEmpty(name), "name must be non-empty");
         holder.setName(name);
         return this;
@@ -47,7 +47,7 @@ public class FilterConfiguration {
      * @param value the value of the parameter
      * @return {@code this}
      */
-    public FilterConfiguration setInitParam(String name, String value) {
+    public FilterBuilder setInitParam(String name, String value) {
         holder.setInitParameter(checkNotNull(name), checkNotNull(value));
         return this;
     }
@@ -58,7 +58,7 @@ public class FilterConfiguration {
      * @param params the initialization parameters
      * @return {@code this}
      */
-    public FilterConfiguration addInitParams(Map<String, String> params) {
+    public FilterBuilder addInitParams(Map<String, String> params) {
         for (Map.Entry<String, String> entry : checkNotNull(params).entrySet()) {
             setInitParam(entry.getKey(), entry.getValue());
         }
@@ -71,7 +71,7 @@ public class FilterConfiguration {
      * @param urlPattern the URL pattern
      * @return {@code this}
      */
-    public FilterConfiguration addUrlPattern(String urlPattern) {
+    public FilterBuilder addUrlPattern(String urlPattern) {
         mappings.put(checkNotNull(urlPattern), holder);
         return this;
     }
@@ -83,7 +83,7 @@ public class FilterConfiguration {
      * @param urlPatterns additional URL patterns
      * @return {@code this}
      */
-    public FilterConfiguration addUrlPatterns(String urlPattern, String... urlPatterns) {
+    public FilterBuilder addUrlPatterns(String urlPattern, String... urlPatterns) {
         addUrlPattern(checkNotNull(urlPattern));
         for (String pattern : checkNotNull(urlPatterns)) {
             addUrlPattern(checkNotNull(pattern));

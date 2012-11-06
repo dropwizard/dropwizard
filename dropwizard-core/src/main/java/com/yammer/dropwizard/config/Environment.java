@@ -198,12 +198,12 @@ public class Environment extends AbstractLifeCycle {
      *
      * @param servlet       the servlet instance
      * @param urlPattern    the URL pattern for requests that should be handled by {@code servlet}
-     * @return a {@link ServletConfiguration} instance allowing for further configuration
+     * @return a {@link ServletBuilder} instance allowing for further configuration
      */
-    public ServletConfiguration addServlet(Servlet servlet,
+    public ServletBuilder addServlet(Servlet servlet,
                                            String urlPattern) {
         final ServletHolder holder = new NonblockingServletHolder(checkNotNull(servlet));
-        final ServletConfiguration servletConfig = new ServletConfiguration(holder, servlets);
+        final ServletBuilder servletConfig = new ServletBuilder(holder, servlets);
         servletConfig.addUrlPattern(checkNotNull(urlPattern));
         return servletConfig;
     }
@@ -214,12 +214,12 @@ public class Environment extends AbstractLifeCycle {
      * @param klass         the servlet class
      * @param urlPattern    the URL pattern for requests that should be handled by instances of
      *                      {@code klass}
-     * @return a {@link ServletConfiguration} instance allowing for further configuration
+     * @return a {@link ServletBuilder} instance allowing for further configuration
      */
-    public ServletConfiguration addServlet(Class<? extends Servlet> klass,
+    public ServletBuilder addServlet(Class<? extends Servlet> klass,
                                            String urlPattern) {
         final ServletHolder holder = new ServletHolder(checkNotNull(klass));
-        final ServletConfiguration servletConfig = new ServletConfiguration(holder, servlets);
+        final ServletBuilder servletConfig = new ServletBuilder(holder, servlets);
         servletConfig.addUrlPattern(checkNotNull(urlPattern));
         return servletConfig;
     }
@@ -229,12 +229,12 @@ public class Environment extends AbstractLifeCycle {
      *
      * @param filter        the filter instance
      * @param urlPattern    the URL pattern for requests that should be handled by {@code filter}
-     * @return a {@link FilterConfiguration} instance allowing for further configuration
+     * @return a {@link FilterBuilder} instance allowing for further configuration
      */
-    public FilterConfiguration addFilter(Filter filter,
+    public FilterBuilder addFilter(Filter filter,
                                          String urlPattern) {
         final FilterHolder holder = new FilterHolder(checkNotNull(filter));
-        final FilterConfiguration filterConfig = new FilterConfiguration(holder, filters);
+        final FilterBuilder filterConfig = new FilterBuilder(holder, filters);
         filterConfig.addUrlPattern(checkNotNull(urlPattern));
         return filterConfig;
     }
@@ -245,12 +245,12 @@ public class Environment extends AbstractLifeCycle {
      * @param klass         the filter class
      * @param urlPattern    the URL pattern for requests that should be handled by instances of
      *                      {@code klass}
-     * @return a {@link FilterConfiguration} instance allowing for further configuration
+     * @return a {@link FilterBuilder} instance allowing for further configuration
      */
-    public FilterConfiguration addFilter(Class<? extends Filter> klass,
+    public FilterBuilder addFilter(Class<? extends Filter> klass,
                                          String urlPattern) {
         final FilterHolder holder = new FilterHolder(checkNotNull(klass));
-        final FilterConfiguration filterConfig = new FilterConfiguration(holder, filters);
+        final FilterBuilder filterConfig = new FilterBuilder(holder, filters);
         filterConfig.addUrlPattern(checkNotNull(urlPattern));
         return filterConfig;
     }

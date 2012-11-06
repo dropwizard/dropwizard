@@ -12,18 +12,18 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 /**
  * The configuration for a {@link javax.servlet.Servlet}.
  */
-public class ServletConfiguration {
+public class ServletBuilder {
     private final ServletHolder holder;
     private final ImmutableMap.Builder<String, ServletHolder> mappings;
 
     /**
-     * Creates a new ServletConfiguration.
+     * Creates a new ServletBuilder.
      *
      * @param holder   the {@link ServletHolder} containing the {@link javax.servlet.Servlet}
      * @param mappings the mappings of URL patterns to {@link javax.servlet.Servlet}s
      */
-    public ServletConfiguration(ServletHolder holder,
-                                ImmutableMap.Builder<String, ServletHolder> mappings) {
+    public ServletBuilder(ServletHolder holder,
+                          ImmutableMap.Builder<String, ServletHolder> mappings) {
         this.holder = holder;
         this.mappings = mappings;
     }
@@ -34,7 +34,7 @@ public class ServletConfiguration {
      * @param name the name of the servlet
      * @return {@code this}
      */
-    public ServletConfiguration setName(String name) {
+    public ServletBuilder setName(String name) {
         checkArgument(!isNullOrEmpty(name), "name must be non-empty");
         holder.setName(name);
         return this;
@@ -46,7 +46,7 @@ public class ServletConfiguration {
      * @param order the initialization order
      * @return {@code this}
      */
-    public ServletConfiguration setInitOrder(int order) {
+    public ServletBuilder setInitOrder(int order) {
         holder.setInitOrder(order);
         return this;
     }
@@ -58,7 +58,7 @@ public class ServletConfiguration {
      * @param value the value of the parameter
      * @return {@code this}
      */
-    public ServletConfiguration setInitParam(String name, String value) {
+    public ServletBuilder setInitParam(String name, String value) {
         holder.setInitParameter(checkNotNull(name), checkNotNull(value));
         return this;
     }
@@ -69,7 +69,7 @@ public class ServletConfiguration {
      * @param params the initialization parameters
      * @return {@code this}
      */
-    public ServletConfiguration addInitParams(Map<String, String> params) {
+    public ServletBuilder addInitParams(Map<String, String> params) {
         for (Map.Entry<String, String> entry : checkNotNull(params).entrySet()) {
             setInitParam(entry.getKey(), entry.getValue());
         }
@@ -82,7 +82,7 @@ public class ServletConfiguration {
      * @param urlPattern the URL pattern
      * @return {@code this}
      */
-    public ServletConfiguration addUrlPattern(String urlPattern) {
+    public ServletBuilder addUrlPattern(String urlPattern) {
         try {
             mappings.put(checkNotNull(urlPattern), holder);
         } catch (IllegalArgumentException ignored) {
@@ -99,7 +99,7 @@ public class ServletConfiguration {
      * @param urlPatterns additional URL patterns
      * @return {@code this}
      */
-    public ServletConfiguration addUrlPatterns(String urlPattern, String... urlPatterns) {
+    public ServletBuilder addUrlPatterns(String urlPattern, String... urlPatterns) {
         addUrlPattern(checkNotNull(urlPattern));
         for (String pattern : checkNotNull(urlPatterns)) {
             addUrlPattern(checkNotNull(pattern));

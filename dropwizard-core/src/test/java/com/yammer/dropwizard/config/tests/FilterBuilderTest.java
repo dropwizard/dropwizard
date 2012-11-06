@@ -2,17 +2,17 @@ package com.yammer.dropwizard.config.tests;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
-import com.yammer.dropwizard.config.FilterConfiguration;
+import com.yammer.dropwizard.config.FilterBuilder;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.junit.Test;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
-public class FilterConfigurationTest {
+public class FilterBuilderTest {
     private final FilterHolder holder = mock(FilterHolder.class);
     private final ImmutableMultimap.Builder<String, FilterHolder> mappings = ImmutableMultimap.builder();
-    private final FilterConfiguration config = new FilterConfiguration(holder, mappings);
+    private final FilterBuilder config = new FilterBuilder(holder, mappings);
 
     @Test
     public void setsInitializationParameters() throws Exception {

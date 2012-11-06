@@ -1,17 +1,17 @@
 package com.yammer.dropwizard.config.tests;
 
 import com.google.common.collect.ImmutableMap;
-import com.yammer.dropwizard.config.ServletConfiguration;
+import com.yammer.dropwizard.config.ServletBuilder;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.junit.Test;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
-public class ServletConfigurationTest {
+public class ServletBuilderTest {
     private final ServletHolder holder = mock(ServletHolder.class);
     private final ImmutableMap.Builder<String, ServletHolder> mappings = ImmutableMap.builder();
-    private final ServletConfiguration config = new ServletConfiguration(holder, mappings);
+    private final ServletBuilder config = new ServletBuilder(holder, mappings);
 
     @Test
     public void setsInitializationOrder() throws Exception {
