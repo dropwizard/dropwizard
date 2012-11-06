@@ -111,7 +111,7 @@ public class JerseyClientConfiguration extends HttpClientConfiguration {
         return minThreads <= maxThreads;
     }
 
-    @ValidationMethod(message = ".compressRequestEntity requires gzipEnabled set to true")
+    @ValidationMethod(message = ".gzipEnabledForRequests requires gzipEnabled set to true")
     public boolean isCompressionConfigurationValid() {
         return !gzipEnabledForRequests || gzipEnabled;
     }
