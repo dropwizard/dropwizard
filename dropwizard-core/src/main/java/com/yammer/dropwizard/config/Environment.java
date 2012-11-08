@@ -309,8 +309,7 @@ public class Environment extends AbstractLifeCycle {
      * @param value    the value of the Jersey property
      * @see ResourceConfig
      */
-    public void setJerseyProperty(String name,
-                                  @Nullable Object value) {
+    public void setJerseyProperty(String name, @Nullable Object value) {
         config.getProperties().put(checkNotNull(name), value);
     }
 
@@ -535,7 +534,7 @@ public class Environment extends AbstractLifeCycle {
     }
 
     public void setJerseyServletContainer(ServletContainer jerseyServletContainer) {
-        this.jerseyServletContainer = jerseyServletContainer;
+        this.jerseyServletContainer = checkNotNull(jerseyServletContainer);
     }
 
     public String getName() {
