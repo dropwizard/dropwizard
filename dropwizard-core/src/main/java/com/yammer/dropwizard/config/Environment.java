@@ -23,9 +23,9 @@ import org.eclipse.jetty.util.component.AbstractLifeCycle;
 import org.eclipse.jetty.util.component.AggregateLifeCycle;
 import org.eclipse.jetty.util.component.LifeCycle;
 import org.eclipse.jetty.util.resource.Resource;
-import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import javax.annotation.Nullable;
 import javax.servlet.Filter;
 import javax.servlet.Servlet;
@@ -292,7 +292,7 @@ public class Environment extends AbstractLifeCycle {
         protectedTargets.add(checkNotNull(target));
     }
 
-    public void setBaseResource(Resource baseResource) throws IOException {
+    public void setBaseResource(Resource baseResource) {
         this.baseResource = baseResource;
     }
 
