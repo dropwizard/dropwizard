@@ -1,5 +1,6 @@
 package com.yammer.dropwizard;
 
+import com.yammer.dropwizard.config.Bootstrap;
 import com.yammer.dropwizard.config.Environment;
 
 /**
@@ -7,9 +8,16 @@ import com.yammer.dropwizard.config.Environment;
  */
 public interface Bundle {
     /**
-     * Initializes the environment.
+     * Initializes the service bootstrap.
      *
-     * @param environment    the service's {@link Environment}
+     * @param bootstrap the service bootstrap
      */
-    public void initialize(Environment environment);
+    void initialize(Bootstrap<?> bootstrap);
+
+    /**
+     * Initializes the service environment.
+     *
+     * @param environment the service environment
+     */
+    void run(Environment environment);
 }

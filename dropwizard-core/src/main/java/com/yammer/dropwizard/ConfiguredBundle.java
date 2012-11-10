@@ -1,5 +1,6 @@
 package com.yammer.dropwizard;
 
+import com.yammer.dropwizard.config.Bootstrap;
 import com.yammer.dropwizard.config.Environment;
 
 /**
@@ -14,6 +15,14 @@ public interface ConfiguredBundle<T> {
      *
      * @param configuration    the configuration object
      * @param environment      the service's {@link Environment}
+     * @throws Exception if something goes wrong
      */
-    public void initialize(T configuration, Environment environment);
+    void run(T configuration, Environment environment) throws Exception;
+
+    /**
+     * Initializes the service bootstrap.
+     *
+     * @param bootstrap the service bootstrap
+     */
+    void initialize(Bootstrap<?> bootstrap);
 }

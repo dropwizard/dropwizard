@@ -1,0 +1,174 @@
+.. _man-hibernate:
+
+####################
+Dropwizard Hibernate
+####################
+
+.. highlight:: text
+
+.. rubric:: The ``dropwizard-hibernate`` module provides you with managed access to Hibernate_, a
+            powerful, industry-standard object-relation mapper (ORM).
+
+.. _Hibernate: http://www.hibernate.org/
+
+Configuration
+=============
+
+To create a :ref:`managed <man-core-managed>`, instrumented ``SessionFactory`` instance, your
+:ref:`configuration class <man-core-configuration>` needs a ``DatabaseConfiguration`` instance:
+
+.. code-block:: java
+
+    public class ExampleConfiguration extends Configuration {
+        @Valid
+        @NotNull
+        @JsonProperty
+        private DatabaseConfiguration database = new DatabaseConfiguration();
+
+        public DatabaseConfiguration getDatabaseConfiguration() {
+            return database;
+        }
+    }
+
+Then, add a ``HibernateModule`` instance to your service class, specifying the packages which
+contain your entity classes and how to get a ``DatabaseConfiguration`` from your configuration
+subclass:
+
+.. code-block:: java
+
+    private final HibernateModule<ExampleConfiguration> hibernate = new HibernateModule<ExampleConfiguration>("com.example.service.entities") {
+        @Override
+        public DatabaseConfiguration getDatabaseConfiguration(ExampleConfiguration configuration) {
+            return configuration.getDatabaseConfiguration();
+        }
+    }
+
+    @Override
+    public void initialize(Bootstrap<ExampleConfiguration> bootstrap) {
+        bootstrap.addBundle(hibernateBundle);
+    }
+
+    @Override
+    public void run(ExampleConfiguration config,
+                    Environment environment) throws ClassNotFoundException {
+        final UserDAO dao = new UserDAO(hibernate.getSessionFactory());
+        environment.addResource(new UserResource(dao));
+    }
+
+This will create a new :ref:`managed <man-core-managed>` connection pool to the database, a
+:ref:`health check <man-core-healthchecks>` for connectivity to the database, and a new
+``SessionFactory`` instance for you to use in your DAO classes.
+
+Your service's configuration file will then look like this:
+
+.. code-block:: yaml
+
+    database:
+      # the name of your JDBC driver
+      driverClass: org.postgresql.Driver
+
+      # the username
+      user: pg-user
+
+      # the password
+      password: iAMs00perSecrEET
+
+      # the JDBC URL
+      url: jdbc:postgresql://db.example.com/db-prod
+
+      # any properties specific to your JDBC driver:
+      properties:
+        charSet: UTF-8
+
+      # the maximum amount of time to wait on an empty pool before throwing an exception
+      maxWaitForConnection: 1s
+
+      # the SQL query to run when validating a connection's liveness
+      validationQuery: "/* MyService Health Check */ SELECT 1"
+
+      # the minimum number of connections to keep open
+      minSize: 8
+
+      # the maximum number of connections to keep open
+      maxSize: 32
+
+      # whether or not idle connections should be validated
+      checkConnectionWhileIdle: false
+
+      # how long a connection must be held before it can be validated
+      checkConnectionHealthWhenIdleFor: 10s
+
+      # the maximum lifetime of an idle connection
+      closeConnectionIfIdleFor: 1 minute
+
+Usage
+=====
+
+Data Access Objects
+-------------------
+
+Dropwizard comes with ``AbstractDAO``, a minimal template for entity-specific DAO classes. It
+contains type-safe wrappers for most of ``SessionFactory``'s common operations:
+
+.. code-block:: java
+
+    public class PersonDAO extends AbstractDAO<Person> {
+        public PersonDAO(SessionFactory factory) {
+            super(factory);
+        }
+
+        public Person findById(Long id) {
+            return get(id);
+        }
+
+        public long create(Person person) {
+            return persist(person).getId();
+        }
+
+        public List<Person> findAll() {
+            return list(namedQuery("com.example.helloworld.core.Person.findAll"));
+        }
+    }
+
+Transactional Resource Methods
+------------------------------
+
+Dropwizard uses a session-per-request method of scoping transactional boundaries. Not all resource
+methods actually require database access, so the ``@Transactional`` annotation is provided:
+
+.. code-block:: java
+
+    @GET
+    @Timed
+    @Transactional
+    public Person findPerson(@PathParam("id") LongParam id) {
+        return dao.findById(id.get());
+    }
+
+This will automatically open a session, begin a transaction, call ``findByPerson``, commit the
+transaction, and finally close the session. If an exception is thrown, the transaction is rolled
+back.
+
+.. important:: The Hibernate session is closed **before** your resource method's return value (e.g.,
+               the ``Person`` from the database), which means your resource method (or DAO) is
+               responsible for initializing all lazily-loaded collections, etc., before returning.
+               Otherwise, you'll get a ``LazyInitializationException`` thrown in your template (or
+               ``null`` values produced by Jackson).
+
+Prepended Comments
+==================
+
+Dropwizard automatically configures Hibernate to prepend a comment describing the context of all
+queries:
+
+.. code-block:: sql
+
+    /* load com.example.helloworld.core.Person */
+    select
+        person0_.id as id0_0_,
+        person0_.fullName as fullName0_0_,
+        person0_.jobTitle as jobTitle0_0_
+    from people person0_
+    where person0_.id=?
+
+This will allow you to quickly determine the origin of any slow or misbehaving queries.

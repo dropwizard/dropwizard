@@ -4,8 +4,9 @@ import com.example.helloworld.core.Saying;
 import com.example.helloworld.core.Template;
 import com.google.common.base.Optional;
 import com.yammer.dropwizard.jersey.caching.CacheControl;
-import com.yammer.dropwizard.logging.Log;
 import com.yammer.metrics.annotation.Timed;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.validation.Valid;
 import javax.ws.rs.*;
@@ -16,7 +17,7 @@ import java.util.concurrent.atomic.AtomicLong;
 @Path("/hello-world")
 @Produces(MediaType.APPLICATION_JSON)
 public class HelloWorldResource {
-    private static final Log LOG = Log.forClass(HelloWorldResource.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(HelloWorldResource.class);
 
     private final Template template;
     private final AtomicLong counter;
@@ -35,6 +36,6 @@ public class HelloWorldResource {
 
     @POST
     public void receiveHello(@Valid Saying saying) {
-        LOG.info("Received a saying: {}", saying);
+        LOGGER.info("Received a saying: {}", saying);
     }
 }

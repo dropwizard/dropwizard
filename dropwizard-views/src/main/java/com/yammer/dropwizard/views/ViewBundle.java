@@ -1,6 +1,7 @@
 package com.yammer.dropwizard.views;
 
 import com.yammer.dropwizard.Bundle;
+import com.yammer.dropwizard.config.Bootstrap;
 import com.yammer.dropwizard.config.Environment;
 
 /**
@@ -41,7 +42,7 @@ import com.yammer.dropwizard.config.Environment;
  * <p>Freemarker templates look something like this:</p>
  *
  * <pre>{@code
- * <#-- @ftlvariable name="" type="com.example.service.PersonView" -->
+ * &lt;#-- @ftlvariable name="" type="com.example.service.PersonView" --&gt;
  * <html>
  *     <body>
  *         <h1>Hello, ${person.name?html}!</h1>
@@ -58,7 +59,12 @@ import com.yammer.dropwizard.config.Environment;
  */
 public class ViewBundle implements Bundle {
     @Override
-    public void initialize(Environment environment) {
+    public void initialize(Bootstrap<?> bootstrap) {
+        // nothing doing
+    }
+
+    @Override
+    public void run(Environment environment) {
         environment.addProvider(ViewMessageBodyWriter.class);
     }
 }

@@ -44,7 +44,7 @@ Our services tend to look like this:
   * ``cli``: :ref:`man-core-commands`
   * ``client``: :ref:`Client <man-client>` implementation for your service
   * ``core``: Domain implementation
-  * ``db``: :ref:`Database <man-db>` access classes
+  * ``jdbi``: :ref:`Database <man-jdbi>` access classes
   * ``health``: :ref:`man-core-healthchecks`
   * ``resources``: :ref:`man-core-resources`
   * ``MyService``: The :ref:`service <man-core-service>` class
@@ -59,7 +59,6 @@ The main entry point into a Dropwizard service is, unsurprisingly, the ``Service
 ``Service`` has a **name**, which is mostly used to render the command-line interface. In the
 constructor of your ``Service`` you can add :ref:`man-core-bundles` and :ref:`man-core-commands` to
 your service.
-
 
 .. _man-core-configuration:
 
@@ -174,6 +173,15 @@ command you need). There is a test keystore you can use in the
         # optional, JKS is default. JCEKS is another likely candidate.
         keyStoreType: JKS
 
+Bootstrapping
+=============
+
+Before a Dropwizard service can provide the command-line interface, parse a configuration file, or
+run as a server, it must first go through a bootstrapping phase. This phase corresponds to your
+``Service`` subclass's ``initialize`` method. You can add :ref:`man-core-bundles`,
+:ref:`man-core-commands`, or register Jackson modules to allow you to include custom types as part
+of your configuration class.
+
 Environments
 ============
 
@@ -181,14 +189,14 @@ A Dropwizard ``Environment`` consists of all the :ref:`man-core-resources`, serv
 :ref:`man-core-healthchecks`, Jersey providers, :ref:`man-core-managed`, :ref:`man-core-tasks`, and
 Jersey properties which your service provides.
 
-Each ``Service`` subclass implements an ``initialize`` method. This is where you should be creating
-new resource instances, etc., and adding them to the given ``Environment`` class:
+Each ``Service`` subclass implements a ``run`` method. This is where you should be creating new
+resource instances, etc., and adding them to the given ``Environment`` class:
 
 .. code-block:: java
 
     @Override
-    protected void initialize(ExampleConfiguration config,
-                              Environment environment) {
+    public void run(ExampleConfiguration config,
+                    Environment environment) {
         // encapsulate complicated setup logic in factories
         final ThingyFactory thingyFactory = new ThingyFactory(config.getThingyConfiguration());
 
@@ -198,7 +206,7 @@ new resource instances, etc., and adding them to the given ``Environment`` class
         environment.addHealthCheck(new ThingyHealthCheck(thingy));
     }
 
-It's important to keep the ``initialize`` method clean, so if creating an instance of something is
+It's important to keep the ``run`` method clean, so if creating an instance of something is
 complicated, like the ``Thingy`` class above, extract that logic into a factory.
 
 .. _man-core-healthchecks:
@@ -395,38 +403,7 @@ routes all ``java.util.logging``, Log4j, and Apache Commons Logging usage throug
 .. _Logback: http://logback.qos.ch/
 .. _slf4j: http://www.slf4j.org/
 
-.. _man-core-logging-class:
-
-The ``Log`` class
------------------
-
-Dropwizard comes with a ``Log`` convenience class, since most of the logging APIs are horrendous.
-
-.. code-block:: java
-
-    public class Example {
-        private static final Log LOG = Log.forClass(Example.class);
-
-        public long fetchAge(long userId) {
-            LOG.debug("Fetching age for user {}", userId);
-
-            try {
-                final User user = users.find(userId);
-                return user.getAge();
-            } catch (IOException e) {
-                LOG.error(e, "Error connecting to user store for user {}", userId);
-            } catch (UserNotFoundException e) {
-                LOG.warn(e, "Unable to fetch age for user {}", userId);
-            }
-        }
-    }
-
-``Log`` provides the same statement formatting amenities as SLF4J, so you can pass arbitrary objects
-in without having to concatenate strings. Instances of ``{}`` in the log message are replaced with
-the string representation of the objects. To log exceptions, just pass the ``Throwable`` instance as
-the first parameter and it'll log the exception type, message, and stack trace.
-
-The ``Log`` class provides the following logging levels:
+slf4j provides the following logging levels:
 
 ``ERROR``
   Error events that might still allow the application to continue running.
@@ -611,7 +588,7 @@ tests:
 
         @Test
         public void buildsAThingResource() throws Exception {
-            service.initialize(config, environment);
+            service.run(config, environment);
 
             verify(environment).addResource(any(ThingResource.class));
         }
@@ -859,8 +836,8 @@ URIs
 While Jersey doesn't quite have first-class support for hyperlink-driven services, the provided
 ``UriBuilder`` functionality does quite well.
 
-Rather than duplicate resource URIs, it's possible (and recommended!) to initialize a
-``UriBuilder`` with the path from the resource class itself:
+Rather than duplicate resource URIs, it's possible (and recommended!) to initialize a ``UriBuilder``
+with the path from the resource class itself:
 
 .. code-block:: java
 

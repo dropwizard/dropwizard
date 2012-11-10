@@ -1,34 +1,29 @@
 package com.yammer.dropwizard.jersey.tests;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreType;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sun.jersey.core.util.MultivaluedMapImpl;
+import com.sun.jersey.core.util.StringKeyObjectValueIgnoreCaseMultivaluedMap;
+import com.yammer.dropwizard.jersey.JacksonMessageBodyProvider;
+import com.yammer.dropwizard.json.ObjectMapperFactory;
+import com.yammer.dropwizard.validation.InvalidEntityException;
+import com.yammer.dropwizard.validation.Validated;
+import org.junit.Test;
 
-import static org.hamcrest.Matchers.instanceOf;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.startsWith;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.MediaType;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.lang.annotation.Annotation;
 
-import javax.validation.Valid;
-import javax.validation.constraints.Min;
-import javax.ws.rs.core.MediaType;
-
-import org.codehaus.jackson.JsonProcessingException;
-import org.codehaus.jackson.annotate.JsonIgnoreType;
-import org.codehaus.jackson.annotate.JsonProperty;
-import org.junit.Test;
-
-import com.google.common.collect.ImmutableList;
-import com.sun.jersey.core.util.MultivaluedMapImpl;
-import com.sun.jersey.core.util.StringKeyObjectValueIgnoreCaseMultivaluedMap;
-import com.yammer.dropwizard.jersey.JacksonMessageBodyProvider;
-import com.yammer.dropwizard.json.Json;
-import com.yammer.dropwizard.validation.InvalidEntityException;
+import static org.fest.assertions.api.Assertions.assertThat;
+import static org.fest.assertions.api.Assertions.failBecauseExceptionWasNotThrown;
+import static org.mockito.Mockito.*;
 
 @SuppressWarnings("unchecked")
 public class JacksonMessageBodyProviderTest {
@@ -38,6 +33,19 @@ public class JacksonMessageBodyProviderTest {
         @Min(0)
         @JsonProperty
         int id;
+    }
+
+    public interface Partial1{}
+    public interface Partial2{}
+
+    public static class PartialExample {
+        @Min(value = 0, groups = Partial1.class)
+        @JsonProperty
+        int id;
+
+        @NotNull(groups = Partial2.class)
+        @JsonProperty
+        String text;
     }
 
     @JsonIgnoreType
@@ -50,50 +58,49 @@ public class JacksonMessageBodyProviderTest {
 
     }
 
-    private final Json json = spy(new Json());
-
-    private final JacksonMessageBodyProvider provider = new JacksonMessageBodyProvider(json);
+    private final ObjectMapper mapper = spy(new ObjectMapperFactory().build());
+    private final JacksonMessageBodyProvider provider = new JacksonMessageBodyProvider(mapper);
 
     @Test
     public void readsDeserializableTypes() throws Exception {
-        assertThat(provider.isReadable(Example.class, null, null, null),
-                   is(true));
+        assertThat(provider.isReadable(Example.class, null, null, null))
+                .isTrue();
     }
 
     @Test
     public void writesSerializableTypes() throws Exception {
-        assertThat(provider.isWriteable(Example.class, null, null, null),
-                   is(true));
+        assertThat(provider.isWriteable(Example.class, null, null, null))
+                .isTrue();
     }
 
     @Test
     public void doesNotWriteIgnoredTypes() throws Exception {
-        assertThat(provider.isWriteable(Ignorable.class, null, null, null),
-                   is(false));
+        assertThat(provider.isWriteable(Ignorable.class, null, null, null))
+                .isFalse();
     }
 
     @Test
     public void writesUnIgnoredTypes() throws Exception {
-        assertThat(provider.isWriteable(NonIgnorable.class, null, null, null),
-                   is(true));
+        assertThat(provider.isWriteable(NonIgnorable.class, null, null, null))
+                .isTrue();
     }
 
     @Test
     public void doesNotReadIgnoredTypes() throws Exception {
-        assertThat(provider.isReadable(Ignorable.class, null, null, null),
-                   is(false));
+        assertThat(provider.isReadable(Ignorable.class, null, null, null))
+                .isFalse();
     }
 
     @Test
     public void readsUnIgnoredTypes() throws Exception {
-        assertThat(provider.isReadable(NonIgnorable.class, null, null, null),
-                   is(true));
+        assertThat(provider.isReadable(NonIgnorable.class, null, null, null))
+                .isTrue();
     }
 
     @Test
     public void isChunked() throws Exception {
-        assertThat(provider.getSize(null, null, null, null, null),
-                   is(-1L));
+        assertThat(provider.getSize(null, null, null, null, null))
+                .isEqualTo(-1);
     }
 
     @Test
@@ -108,11 +115,80 @@ public class JacksonMessageBodyProviderTest {
                                              new MultivaluedMapImpl(),
                                              entity);
 
-        assertThat(obj,
-                   is(instanceOf(Example.class)));
+        assertThat(obj)
+                .isInstanceOf(Example.class);
 
-        assertThat(((Example) obj).id,
-                   is(1));
+        assertThat(((Example) obj).id)
+                .isEqualTo(1);
+    }
+
+    @Test
+    public void returnsPartialValidatedRequestEntities() throws Exception {
+        final Validated valid = mock(Validated.class);
+        doReturn(Validated.class).when(valid).annotationType();
+        when(valid.value()).thenReturn(new Class<?>[]{Partial1.class, Partial2.class});
+
+        final ByteArrayInputStream entity = new ByteArrayInputStream("{\"id\":1,\"text\":\"hello Cemo\"}".getBytes());
+        final Class<?> klass = PartialExample.class;
+
+        final Object obj = provider.readFrom((Class<Object>) klass,
+            PartialExample.class,
+            new Annotation[]{valid},
+            MediaType.APPLICATION_JSON_TYPE,
+            new MultivaluedMapImpl(),
+            entity);
+
+        assertThat(obj)
+            .isInstanceOf(PartialExample.class);
+
+        assertThat(((PartialExample) obj).id)
+            .isEqualTo(1);
+    }
+
+    @Test
+    public void returnsPartialValidatedByGroupRequestEntities() throws Exception {
+        final Validated valid = mock(Validated.class);
+        doReturn(Validated.class).when(valid).annotationType();
+        when(valid.value()).thenReturn(new Class<?>[]{Partial1.class});
+
+        final ByteArrayInputStream entity = new ByteArrayInputStream("{\"id\":1}".getBytes());
+        final Class<?> klass = PartialExample.class;
+
+        final Object obj = provider.readFrom((Class<Object>) klass,
+            PartialExample.class,
+            new Annotation[]{valid},
+            MediaType.APPLICATION_JSON_TYPE,
+            new MultivaluedMapImpl(),
+            entity);
+
+        assertThat(obj)
+            .isInstanceOf(PartialExample.class);
+
+        assertThat(((PartialExample) obj).id)
+            .isEqualTo(1);
+    }
+
+    @Test
+    public void throwsAnInvalidEntityExceptionForPartialValidatedRequestEntities() throws Exception {
+        final Validated valid = mock(Validated.class);
+        doReturn(Validated.class).when(valid).annotationType();
+        when(valid.value()).thenReturn(new Class<?>[]{Partial1.class, Partial2.class});
+
+        final ByteArrayInputStream entity = new ByteArrayInputStream("{\"id\":1}".getBytes());
+
+        try {
+            final Class<?> klass = PartialExample.class;
+            provider.readFrom((Class<Object>) klass,
+                              PartialExample.class,
+                              new Annotation[]{ valid },
+                              MediaType.APPLICATION_JSON_TYPE,
+                              new MultivaluedMapImpl(),
+                              entity);
+            failBecauseExceptionWasNotThrown(InvalidEntityException.class);
+        } catch(InvalidEntityException e) {
+            assertThat(e.getErrors())
+                .containsOnly("text may not be null (was null)");
+        }
     }
 
     @Test
@@ -125,16 +201,16 @@ public class JacksonMessageBodyProviderTest {
 
         final Object obj = provider.readFrom((Class<Object>) klass,
                                              Example.class,
-                                             new Annotation[] { valid },
+                                             new Annotation[]{ valid },
                                              MediaType.APPLICATION_JSON_TYPE,
                                              new MultivaluedMapImpl(),
                                              entity);
 
-        assertThat(obj,
-                   is(instanceOf(Example.class)));
+        assertThat(obj)
+                .isInstanceOf(Example.class);
 
-        assertThat(((Example) obj).id,
-                   is(1));
+        assertThat(((Example) obj).id)
+                .isEqualTo(1);
     }
 
     @Test
@@ -152,10 +228,10 @@ public class JacksonMessageBodyProviderTest {
                               MediaType.APPLICATION_JSON_TYPE,
                               new MultivaluedMapImpl(),
                               entity);
-            fail("should have thrown a WebApplicationException but didn't");
+            failBecauseExceptionWasNotThrown(WebApplicationException.class);
         } catch (InvalidEntityException e) {
-            assertThat(e.getErrors(),
-                       is(ImmutableList.of("id must be greater than or equal to 0 (was -1)")));
+            assertThat(e.getErrors())
+                    .containsOnly("id must be greater than or equal to 0 (was -1)");
         }
     }
 
@@ -171,10 +247,11 @@ public class JacksonMessageBodyProviderTest {
                               MediaType.APPLICATION_JSON_TYPE,
                               new MultivaluedMapImpl(),
                               entity);
-            fail("should have thrown a WebApplicationException but didn't");
+            failBecauseExceptionWasNotThrown(WebApplicationException.class);
         } catch (JsonProcessingException e) {
-            assertThat(e.getMessage(),
-                       startsWith("Unexpected character ('d' (code 100)): was expecting comma to separate OBJECT entries\n"));
+            assertThat(e.getMessage())
+                    .startsWith("Unexpected character ('d' (code 100)): " +
+                                        "was expecting comma to separate OBJECT entries\n");
         }
     }
 
@@ -193,7 +270,7 @@ public class JacksonMessageBodyProviderTest {
                          new StringKeyObjectValueIgnoreCaseMultivaluedMap(),
                          output);
 
-        assertThat(output.toString(),
-                   is("{\"id\":500}"));
+        assertThat(output.toString())
+                .isEqualTo("{\"id\":500}");
     }
 }

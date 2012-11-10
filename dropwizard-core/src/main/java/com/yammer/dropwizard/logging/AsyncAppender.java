@@ -15,7 +15,7 @@ public class AsyncAppender extends AppenderBase<ILoggingEvent> implements Runnab
     private static final int BATCH_SIZE = 1000;
 
     public static Appender<ILoggingEvent> wrap(Appender<ILoggingEvent> delegate) {
-        final AsyncAppender appender = new AsyncAppender(delegate, BATCH_SIZE);
+        final AsyncAppender appender = new AsyncAppender(delegate);
         appender.start();
         return appender;
     }
@@ -29,14 +29,12 @@ public class AsyncAppender extends AppenderBase<ILoggingEvent> implements Runnab
     private final BlockingQueue<ILoggingEvent> queue;
     private final List<ILoggingEvent> batch;
     private final Thread dispatcher;
-    private final int batchSize;
     private volatile boolean running;
 
-    public AsyncAppender(Appender<ILoggingEvent> delegate, int batchSize) {
+    private AsyncAppender(Appender<ILoggingEvent> delegate) {
         this.delegate = delegate;
         this.queue = Queues.newLinkedBlockingQueue();
-        this.batch = Lists.newArrayListWithCapacity(batchSize);
-        this.batchSize = batchSize;
+        this.batch = Lists.newArrayListWithCapacity(BATCH_SIZE);
         this.dispatcher = THREAD_FACTORY.newThread(this);
         setContext(delegate.getContext());
     }
@@ -57,11 +55,6 @@ public class AsyncAppender extends AppenderBase<ILoggingEvent> implements Runnab
     @Override
     public void stop() {
         this.running = false;
-        try {
-            dispatcher.join();
-        } catch (InterruptedException ignored) {
-            Thread.currentThread().interrupt();
-        }
         super.stop();
     }
 
@@ -70,7 +63,7 @@ public class AsyncAppender extends AppenderBase<ILoggingEvent> implements Runnab
         while (running) {
             try {
                 batch.add(queue.take());
-                queue.drainTo(batch, batchSize - 1);
+                queue.drainTo(batch, BATCH_SIZE - 1);
 
                 for (ILoggingEvent event : batch) {
                     delegate.doAppend(event);

@@ -5,7 +5,7 @@ import com.yammer.dropwizard.lifecycle.Managed
 
 class StartableObject(template: String) extends Managed with Logging {
   override def start() {
-    log.info("Starting: %s", template)
+    logger.info("Starting: {}", template)
   }
 
   /**
@@ -15,6 +15,6 @@ class StartableObject(template: String) extends Managed with Logging {
    * instead of hitting ^C and you'll see the log statements.
    */
   override def stop() {
-    log.info("Stopping")
+    logger.info("Stopping")
   }
 }

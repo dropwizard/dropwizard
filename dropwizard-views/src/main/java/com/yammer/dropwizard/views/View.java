@@ -1,8 +1,8 @@
 package com.yammer.dropwizard.views;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.yammer.metrics.Metrics;
 import com.yammer.metrics.core.Timer;
-import org.codehaus.jackson.annotate.JsonIgnore;
 
 public abstract class View {
     private final String templateName;
@@ -11,7 +11,7 @@ public abstract class View {
     protected View(String templateName) {
 
         this.templateName = resolveName(templateName);
-        this.renderingTimer = Metrics.newTimer(getClass(), "rendering");
+        this.renderingTimer = Metrics.defaultRegistry().newTimer(getClass(), "rendering");
     }
 
     private String resolveName(String templateName) {

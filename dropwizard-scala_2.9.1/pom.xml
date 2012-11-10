@@ -5,7 +5,7 @@
     <parent>
         <groupId>com.yammer.dropwizard</groupId>
         <artifactId>dropwizard-parent</artifactId>
-        <version>0.5.2-SNAPSHOT</version>
+        <version>0.6.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>dropwizard-scala_2.9.1</artifactId>
@@ -14,13 +14,6 @@
     <properties>
         <scala.version>2.9.1</scala.version>
     </properties>
-
-    <repositories>
-        <repository>
-            <id>repo.codahale.com</id>
-            <url>http://repo.codahale.com/</url>
-        </repository>
-    </repositories>
 
     <dependencies>
         <dependency>
@@ -34,43 +27,26 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.codahale</groupId>
-            <artifactId>jersey-scala_${scala.version}</artifactId>
-            <version>0.2.0</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.sun.jersey</groupId>
-                    <artifactId>jersey-server</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-api</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.codahale</groupId>
-                    <artifactId>jerkson_${scala.version}</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>com.codahale</groupId>
-            <artifactId>jerkson_${scala.version}</artifactId>
-            <version>0.5.0</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.codehaus.jackson</groupId>
-                    <artifactId>jackson-mapper-asl</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.codehaus.jackson</groupId>
-                    <artifactId>jackson-core-asl</artifactId>
-                </exclusion>
-            </exclusions>
+            <groupId>com.fasterxml.jackson.module</groupId>
+            <artifactId>jackson-module-scala</artifactId>
+            <version>2.1.1</version>
         </dependency>
         <dependency>
             <groupId>com.yammer.metrics</groupId>
             <artifactId>metrics-scala_${scala.version}</artifactId>
             <version>${metrics.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.10</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.simple</groupId>
+            <artifactId>simplespec_${scala.version}</artifactId>
+            <version>0.6.0</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

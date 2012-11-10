@@ -4,6 +4,46 @@
 Release Notes
 #############
 
+.. _rel-0.6.0:
+
+v0.6.0-SNAPSHOT: TBD
+====================
+
+* Added Hibernate support in ``dropwizard-hibernate``.
+* Added Liquibase migrations in ``dropwizard-migrations``.
+* Renamed ``http.acceptorThreadCount`` to ``http.acceptorThreads``.
+* Dropped ``JerseyClient``. Use Jersey's ``Client`` class instead.
+* Moved JDBI support to ``dropwizard-jdbi``.
+* Dropped ``Database``. Use JDBI's ``DBI`` class instead.
+* Dropped the ``Json`` class. Use ``ObjectMapperFactory`` and ``ObjectMapper`` instead.
+* Decoupled JDBI support from tomcat-dbcp.
+* Added group support to ``Validator``.
+* Moved CLI support to argparse4j.
+* Fixed testing support for ``Optional`` resource method parameters.
+* Fixed Freemarker support to use its internal encoding map.
+* Added property support to ``ResourceTest``.
+* Fixed JDBI metrics support for raw SQL queries.
+* Dropped Hamcrest matchers in favor of FEST assertions in ``dropwizard-testing``.
+* Split ``Environment`` into ``Bootstrap`` and ``Environment``, and broke configuration of each into
+  ``Service``'s ``#initialize(Bootstrap)`` and ``#run(Configuration, Environment)``.
+* Combined ``AbstractService`` and ``Service``.
+* Trimmed down ``ScalaService``, so be sure to add ``ScalaBundle``.
+* Added support for using ``JerseyClientFactory`` without an ``Environment``.
+* Dropped Jerkson in favor of Jackson's Scala module.
+* Added ``Optional`` support for JDBI.
+* Fixed bug in stopping ``AsyncRequestLog``.
+* Upgraded to Jetty 8.1.7.
+* Upgraded to Mockito 1.9.5.
+* Upgraded to tomcat-dbcp 7.0.32.
+* Upgraded to Mustache 0.8.8.
+* Upgraded to Jersey 1.15.
+* Upgraded to Apache HttpClient 4.2.2.
+* Upgraded to Metrics 3.0.0.
+* Upgraded to JDBI 2.41.
+* Upgraded to Logback 1.0.7 and SLF4J 1.7.2.
+* Upgraded to Guava 13.0.1.
+* Upgraded to Jackson 2.1.0.
+
 .. _rel-0.5.1:
 
 v0.5.1: Aug 06 2012

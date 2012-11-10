@@ -16,13 +16,13 @@ public class MaxSizeValidator implements ConstraintValidator<MaxSize, Size> {
     private SizeUnit maxUnit;
 
     @Override
-    public void initialize(MaxSize minValue) {
-        this.maxQty = minValue.value();
-        this.maxUnit = minValue.unit();
+    public void initialize(MaxSize constraintAnnotation) {
+        this.maxQty = constraintAnnotation.value();
+        this.maxUnit = constraintAnnotation.unit();
     }
 
     @Override
-    public boolean isValid(Size value, ConstraintValidatorContext constraintValidatorContext) {
-        return value == null || value.toBytes() <= maxUnit.toBytes(maxQty);
+    public boolean isValid(Size value, ConstraintValidatorContext context) {
+        return (value == null) || (value.toBytes() <= maxUnit.toBytes(maxQty));
     }
 }

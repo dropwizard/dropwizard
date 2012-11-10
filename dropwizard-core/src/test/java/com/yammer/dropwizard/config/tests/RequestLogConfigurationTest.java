@@ -10,8 +10,7 @@ import org.junit.Test;
 import java.io.File;
 import java.util.TimeZone;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.fest.assertions.api.Assertions.*;
 
 public class RequestLogConfigurationTest {
     private RequestLogConfiguration requestLog;
@@ -20,17 +19,19 @@ public class RequestLogConfigurationTest {
     public void setUp() throws Exception {
         this.requestLog = ConfigurationFactory
                 .forClass(RequestLogConfiguration.class, new Validator())
-                .build(new File(Resources.getResource("yaml/requestLog.yml").getFile()));
+                .build(new File(Resources.getResource("yaml/requestLog.yml").toURI()));
     }
 
     @Test
     public void defaultTimeZoneIsUTC() {
-        assertThat(requestLog.getTimeZone(), is(TimeZone.getTimeZone("UTC")));
+        assertThat(requestLog.getTimeZone())
+            .isEqualTo(TimeZone.getTimeZone("UTC"));
     }
 
     @Test
     public void fileConfigurationCanBeEnabled() throws Exception {
-        assertThat(requestLog.getFileConfiguration().isEnabled(), is(true));
+        assertThat(requestLog.getFileConfiguration().isEnabled())
+            .isTrue();
     }
 
 }

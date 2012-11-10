@@ -2,7 +2,8 @@ package com.yammer.dropwizard.tasks;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
-import com.yammer.dropwizard.logging.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -22,18 +23,18 @@ import java.util.Enumeration;
  */
 public class TaskServlet extends HttpServlet {
     private static final long serialVersionUID = 7404713218661358124L;
-    private static final Log LOG = Log.forClass(TaskServlet.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TaskServlet.class);
     private final ImmutableMap<String, Task> tasks;
 
     /**
-     * Creates a new {@link TaskServlet} given the provided set of {@link Task} instances.
+     * Creates a new TaskServlet given the provided set of {@link Task} instances.
      *
      * @param tasks a series of tasks which the servlet will provide access to
      */
     public TaskServlet(Iterable<Task> tasks) {
         final ImmutableMap.Builder<String, Task> builder = ImmutableMap.builder();
         for (Task task : tasks) {
-            builder.put("/" + task.getName(), task);
+            builder.put('/' + task.getName(), task);
         }
         this.tasks = builder.build();
     }
@@ -52,7 +53,7 @@ public class TaskServlet extends HttpServlet {
                     output.close();
                 }
             } catch (Exception e) {
-                LOG.error(e, "Error running {}", task.getName());
+                LOGGER.error("Error running {}", task.getName(), e);
                 resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             }
         } else {

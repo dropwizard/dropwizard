@@ -13,8 +13,7 @@ import org.junit.Test;
 
 import java.io.File;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.fest.assertions.api.Assertions.assertThat;
 
 public class HttpConfigurationTest {
     private HttpConfiguration http;
@@ -22,180 +21,181 @@ public class HttpConfigurationTest {
     @Before
     public void setUp() throws Exception {
         this.http = ConfigurationFactory.forClass(HttpConfiguration.class,
-                                                  new Validator()).build(new File(Resources.getResource("yaml/http.yml").getFile()));
+                                                  new Validator())
+                                        .build(new File(Resources.getResource("yaml/http.yml").toURI()));
     }
 
     @Test
     public void loadsGzipConfig() throws Exception {
-        assertThat(http.getGzipConfiguration().isEnabled(),
-                   is(false));
+        assertThat(http.getGzipConfiguration().isEnabled())
+                .isFalse();
     }
 
     @Test
     public void loadsContextParams() throws Exception {
-        assertThat(http.getContextParameters(), 
-                   is(ImmutableMap.of("param", "value")));
+        assertThat(http.getContextParameters())
+                .isEqualTo(ImmutableMap.of("param", "value"));
     }
-    
+
     @Test
     public void hasAServicePort() throws Exception {
-        assertThat(http.getPort(),
-                   is(9080));
+        assertThat(http.getPort())
+                .isEqualTo(9080);
     }
 
     @Test
     public void hasAnAdminPort() throws Exception {
-        assertThat(http.getAdminPort(),
-                   is(9081));
+        assertThat(http.getAdminPort())
+                .isEqualTo(9081);
     }
 
     @Test
     public void hasAMaximumNumberOfThreads() throws Exception {
-        assertThat(http.getMaxThreads(),
-                   is(101));
+        assertThat(http.getMaxThreads())
+                .isEqualTo(101);
     }
 
     @Test
     public void hasAMinimumNumberOfThreads() throws Exception {
-        assertThat(http.getMinThreads(),
-                   is(89));
+        assertThat(http.getMinThreads())
+                .isEqualTo(89);
     }
 
     @Test
     public void hasARootPath() throws Exception {
-        assertThat(http.getRootPath(),
-                   is("/services/*"));
+        assertThat(http.getRootPath())
+                .isEqualTo("/services/*");
     }
 
     @Test
     public void hasAConnectorType() throws Exception {
-        assertThat(http.getConnectorType(),
-                   is(HttpConfiguration.ConnectorType.SOCKET));
+        assertThat(http.getConnectorType())
+                .isEqualTo(HttpConfiguration.ConnectorType.LEGACY);
     }
 
     @Test
     public void hasAMaxIdleTime() throws Exception {
-        assertThat(http.getMaxIdleTime(),
-                   is(Duration.seconds(2)));
+        assertThat(http.getMaxIdleTime())
+                .isEqualTo(Duration.seconds(2));
     }
 
     @Test
     public void hasAnAcceptorThreadCount() throws Exception {
-        assertThat(http.getAcceptorThreadCount(),
-                   is(2));
+        assertThat(http.getAcceptorThreads())
+                .isEqualTo(2);
     }
 
     @Test
     public void hasAnAcceptorThreadPriorityOffset() throws Exception {
-        assertThat(http.getAcceptorThreadPriorityOffset(),
-                   is(-3));
+        assertThat(http.getAcceptorThreadPriorityOffset())
+                .isEqualTo(-3);
     }
 
     @Test
     public void hasAnAcceptQueueSize() throws Exception {
-        assertThat(http.getAcceptQueueSize(),
-                   is(100));
+        assertThat(http.getAcceptQueueSize())
+                .isEqualTo(100);
     }
 
     @Test
     public void hasAMaxBufferCount() throws Exception {
-        assertThat(http.getMaxBufferCount(),
-                   is(512));
+        assertThat(http.getMaxBufferCount())
+                .isEqualTo(512);
     }
 
     @Test
     public void hasARequestBufferSize() throws Exception {
-        assertThat(http.getRequestBufferSize(),
-                   is(Size.kilobytes(16)));
+        assertThat(http.getRequestBufferSize())
+                .isEqualTo(Size.kilobytes(16));
     }
 
     @Test
     public void hasARequestHeaderBufferSize() throws Exception {
-        assertThat(http.getRequestHeaderBufferSize(),
-                   is(Size.kilobytes(17)));
+        assertThat(http.getRequestHeaderBufferSize())
+                .isEqualTo(Size.kilobytes(17));
     }
 
     @Test
     public void hasAResponseBufferSize() throws Exception {
-        assertThat(http.getResponseBufferSize(),
-                   is(Size.kilobytes(18)));
+        assertThat(http.getResponseBufferSize())
+                .isEqualTo(Size.kilobytes(18));
     }
 
     @Test
     public void hasAResponseHeaderBufferSize() throws Exception {
-        assertThat(http.getResponseHeaderBufferSize(),
-                   is(Size.kilobytes(19)));
+        assertThat(http.getResponseHeaderBufferSize())
+                .isEqualTo(Size.kilobytes(19));
     }
 
     @Test
     public void canReuseAddresses() throws Exception {
-        assertThat(http.isReuseAddressEnabled(),
-                   is(false));
+        assertThat(http.isReuseAddressEnabled())
+                .isFalse();
     }
 
     @Test
     public void hasAnSoLingerTime() throws Exception {
-        assertThat(http.getSoLingerTime(),
-                   is(Optional.of(Duration.seconds(2))));
+        assertThat(http.getSoLingerTime())
+                .isEqualTo(Optional.of(Duration.seconds(2)));
     }
 
     @Test
     public void hasALowResourcesConnectionThreshold() throws Exception {
-        assertThat(http.getLowResourcesConnectionThreshold(),
-                   is(1000));
+        assertThat(http.getLowResourcesConnectionThreshold())
+                .isEqualTo(1000);
     }
 
     @Test
     public void hasALowResourcesMaxIdleTime() throws Exception {
-        assertThat(http.getLowResourcesMaxIdleTime(),
-                   is(Duration.seconds(1)));
+        assertThat(http.getLowResourcesMaxIdleTime())
+                .isEqualTo(Duration.seconds(1));
     }
 
     @Test
     public void hasAShutdownGracePeriod() throws Exception {
-        assertThat(http.getShutdownGracePeriod(),
-                   is(Duration.seconds(5)));
+        assertThat(http.getShutdownGracePeriod())
+                .isEqualTo(Duration.seconds(5));
     }
 
     @Test
     public void canSendAServerHeader() throws Exception {
-        assertThat(http.isServerHeaderEnabled(),
-                   is(true));
+        assertThat(http.isServerHeaderEnabled())
+                .isTrue();
     }
 
     @Test
     public void canSendADateHeader() throws Exception {
-        assertThat(http.isDateHeaderEnabled(),
-                   is(false));
+        assertThat(http.isDateHeaderEnabled())
+                .isFalse();
     }
 
     @Test
     public void canForwardHeaders() throws Exception {
-        assertThat(http.useForwardedHeaders(),
-                   is(false));
+        assertThat(http.useForwardedHeaders())
+                .isFalse();
     }
 
     @Test
     public void canUseDirectBuffers() throws Exception {
-        assertThat(http.useDirectBuffers(),
-                   is(false));
+        assertThat(http.useDirectBuffers())
+                .isFalse();
     }
 
     @Test
     public void hasABindHost() throws Exception {
-        assertThat(http.getBindHost(),
-                   is(Optional.of("localhost")));
+        assertThat(http.getBindHost())
+                .isEqualTo(Optional.of("localhost"));
     }
 
     @Test
     public void hasAnAdminUsername() throws Exception {
-        assertThat(http.getAdminUsername(),
-                   is(Optional.of("admin")));
+        assertThat(http.getAdminUsername())
+                .isEqualTo(Optional.of("admin"));
     }
 
     @Test
     public void hasAnAdminPassword() throws Exception {
-        assertThat(http.getAdminPassword(),
-                   is(Optional.of("password")));
+        assertThat(http.getAdminPassword())
+                .isEqualTo(Optional.of("password"));
     }
 }

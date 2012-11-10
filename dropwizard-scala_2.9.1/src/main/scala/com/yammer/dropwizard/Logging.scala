@@ -1,7 +1,7 @@
 package com.yammer.dropwizard
 
-import logging.Log
+import org.slf4j.{LoggerFactory, Logger}
 
 trait Logging {
-  protected lazy val log: Log = Log.forClass(getClass)
+  protected lazy val logger: Logger = LoggerFactory.getLogger(getClass)
 }

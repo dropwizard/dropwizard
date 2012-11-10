@@ -3,16 +3,13 @@ package com.yammer.dropwizard.util;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.JarURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
+import java.net.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
 /**
- * Helper methods for dealing with {@link java.net.URL} objects for local resources.
+ * Helper methods for dealing with {@link URL} objects for local resources.
  */
 public class ResourceURL {
     /**
@@ -22,7 +19,7 @@ public class ResourceURL {
      * @param resourceURL the URL to check
      * @return true if resource is a directory
      */
-    public static boolean isDirectory(final URL resourceURL) {
+    public static boolean isDirectory(URL resourceURL) throws URISyntaxException {
         final String protocol = resourceURL.getProtocol();
         if ("jar".equals(protocol)) {
             try {
@@ -47,10 +44,10 @@ public class ResourceURL {
 
                 return (inputStream == null);
             } catch (IOException e) {
-                throw new AssertionError(e);
+                throw new ResourceNotFoundException(e);
             }
         } else if ("file".equals(protocol)) {
-            return new File(resourceURL.getFile()).isDirectory();
+            return new File(resourceURL.toURI()).isDirectory();
         } else {
             throw new IllegalArgumentException("Unsupported protocol " + resourceURL.getProtocol() + " for resource " + resourceURL);
         }
@@ -62,12 +59,13 @@ public class ResourceURL {
      * @param originalURL The URL to append a slash to
      * @return a new URL object that ends in a slash
      */
-    public static URL appendTrailingSlash(final URL originalURL) {
+    public static URL appendTrailingSlash(URL originalURL) {
         try {
-            return !originalURL.getPath().endsWith("/") ? new URL(originalURL.getProtocol(),
-                                                                  originalURL.getHost(),
-                                                                  originalURL.getPort(),
-                                                                  originalURL.getFile() + '/') : originalURL;
+            return originalURL.getPath().endsWith("/") ? originalURL :
+                    new URL(originalURL.getProtocol(),
+                            originalURL.getHost(),
+                            originalURL.getPort(),
+                            originalURL.getFile() + '/');
         } catch (MalformedURLException ignored) { // shouldn't happen
             throw new IllegalArgumentException("Invalid resource URL: " + originalURL);
         }
@@ -83,7 +81,7 @@ public class ResourceURL {
      * @param path    the relative path to resolve
      * @return a new URL object corresponding to the resolved path
      */
-    public static URL resolveRelativeURL(final URL context, final String path) {
+    public static URL resolveRelativeURL(URL context, String path) {
         final URL newURL;
         try {
             newURL = new URL(context, path);
@@ -108,7 +106,7 @@ public class ResourceURL {
      * @param resourceURL the URL to return the last modified time for
      * @return the last modified time of the resource, expressed as the number of milliseconds since the epoch, or 0 if there was a problem
      */
-    public static long getLastModified(final URL resourceURL) {
+    public static long getLastModified(URL resourceURL) {
         final String protocol = resourceURL.getProtocol();
         if ("jar".equals(protocol)) {
             try {

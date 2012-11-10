@@ -1,7 +1,8 @@
 package com.example.helloworld.resources;
 
 import com.example.helloworld.core.Person;
-import com.example.helloworld.db.PeopleDAO;
+import com.example.helloworld.db.PersonDAO;
+import com.yammer.dropwizard.hibernate.Transactional;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -14,19 +15,20 @@ import java.util.List;
 @Produces(MediaType.APPLICATION_JSON)
 public class PeopleResource {
 
-    private final PeopleDAO peopleDAO;
+    private final PersonDAO peopleDAO;
 
-    public PeopleResource(PeopleDAO peopleDAO) {
+    public PeopleResource(PersonDAO peopleDAO) {
         this.peopleDAO = peopleDAO;
     }
 
     @POST
+    @Transactional
     public Person createPerson(Person person) {
-        final long personId = peopleDAO.create(person);
-        return peopleDAO.findById(personId);
+        return peopleDAO.create(person);
     }
 
     @GET
+    @Transactional
     public List<Person> listPeople() {
         return peopleDAO.findAll();
     }

@@ -1,10 +1,11 @@
 package com.yammer.dropwizard.jersey;
 
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.base.Splitter;
 import com.yammer.dropwizard.jetty.UnbrandedErrorHandler;
-import com.yammer.dropwizard.logging.Log;
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.JsonProcessingException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Context;
@@ -15,7 +16,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 
 public class JsonProcessingExceptionMapper implements ExceptionMapper<JsonProcessingException> {
-    private static final Log LOG = Log.forClass(JsonProcessingExceptionMapper.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(JsonProcessingExceptionMapper.class);
     private static final Splitter LINE_SPLITTER = Splitter.on("\n").trimResults();
 
     @Context
@@ -33,7 +34,7 @@ public class JsonProcessingExceptionMapper implements ExceptionMapper<JsonProces
          * If the error is in the JSON generation, it's a server error.
          */
         if (exception instanceof JsonGenerationException) {
-            LOG.warn(exception, "Error generating JSON");
+            LOGGER.warn("Error generating JSON", exception);
             return Response.serverError().build();
         }
 
@@ -44,7 +45,7 @@ public class JsonProcessingExceptionMapper implements ExceptionMapper<JsonProces
          * server error and we should inform the developer.
          */
         if (message.startsWith("No suitable constructor found")) {
-            LOG.error(exception, "Unable to deserialize the specific type");
+            LOGGER.error("Unable to deserialize the specific type", exception);
             return Response.serverError().build();
         }
 
@@ -52,7 +53,7 @@ public class JsonProcessingExceptionMapper implements ExceptionMapper<JsonProces
          * Otherwise, it's those pesky users.
          */
         try {
-            LOG.debug(exception, "Unable to process JSON");
+            LOGGER.debug("Unable to process JSON", exception);
             final StringWriter writer = new StringWriter(4096);
 
             errorHandler.writeErrorPage(request,
@@ -65,7 +66,7 @@ public class JsonProcessingExceptionMapper implements ExceptionMapper<JsonProces
                            .entity(writer.toString())
                            .build();
         } catch (IOException e) {
-            LOG.debug(e, "Unable to output error message");
+            LOGGER.debug("Unable to output error message", e);
             return Response.serverError().build();
         }
     }

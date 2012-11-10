@@ -13,7 +13,7 @@ public class ViewBundleTest {
 
     @Test
     public void addsTheViewMessageBodyWriterToTheEnvironment() throws Exception {
-        new ViewBundle().initialize(environment);
+        new ViewBundle().run(environment);
 
         verify(environment).addProvider(ViewMessageBodyWriter.class);
     }

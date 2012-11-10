@@ -12,8 +12,7 @@ import org.junit.Test;
 
 import java.io.File;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.*;
+import static org.fest.assertions.api.Assertions.assertThat;
 
 public class GzipConfigurationTest {
     private GzipConfiguration gzip;
@@ -21,36 +20,37 @@ public class GzipConfigurationTest {
     @Before
     public void setUp() throws Exception {
         this.gzip = ConfigurationFactory.forClass(GzipConfiguration.class,
-                                                  new Validator()).build(new File(Resources.getResource("yaml/gzip.yml").getFile()));
+                                                  new Validator())
+                                        .build(new File(Resources.getResource("yaml/gzip.yml").toURI()));
     }
 
     @Test
     public void canBeEnabled() throws Exception {
-        assertThat(gzip.isEnabled(),
-                   is(false));
+        assertThat(gzip.isEnabled())
+                .isFalse();
     }
 
     @Test
     public void hasAMinimumEntitySize() throws Exception {
-        assertThat(gzip.getMinimumEntitySize(),
-                   is(Optional.of(Size.kilobytes(12))));
+        assertThat(gzip.getMinimumEntitySize())
+                .isEqualTo(Optional.of(Size.kilobytes(12)));
     }
 
     @Test
     public void hasABufferSize() throws Exception {
-        assertThat(gzip.getBufferSize(),
-                   is(Optional.of(Size.kilobytes(32))));
+        assertThat(gzip.getBufferSize())
+                .isEqualTo(Optional.of(Size.kilobytes(32)));
     }
 
     @Test
     public void hasExcludedUserAgents() throws Exception {
-        assertThat(gzip.getExcludedUserAgents(),
-                   is(Optional.of(ImmutableSet.of("IE"))));
+        assertThat(gzip.getExcludedUserAgents())
+                .isEqualTo(Optional.of(ImmutableSet.of("IE")));
     }
 
     @Test
     public void hasCompressedMimeTypes() throws Exception {
-        assertThat(gzip.getCompressedMimeTypes(),
-                   is(Optional.of(ImmutableSet.of("text/plain"))));
+        assertThat(gzip.getCompressedMimeTypes())
+                .isEqualTo(Optional.of(ImmutableSet.of("text/plain")));
     }
 }

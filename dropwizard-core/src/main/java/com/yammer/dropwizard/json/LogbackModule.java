@@ -1,16 +1,14 @@
 package com.yammer.dropwizard.json;
 
 import ch.qos.logback.classic.Level;
-import org.codehaus.jackson.JsonParser;
-import org.codehaus.jackson.Version;
-import org.codehaus.jackson.map.*;
-import org.codehaus.jackson.map.annotate.JsonCachable;
-import org.codehaus.jackson.type.JavaType;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.Version;
+import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.deser.Deserializers;
 
 import java.io.IOException;
 
 class LogbackModule extends Module {
-    @JsonCachable
     private static class LevelDeserializer extends JsonDeserializer<Level> {
         @Override
         public Level deserialize(JsonParser jp,
@@ -34,14 +32,11 @@ class LogbackModule extends Module {
         @Override
         public JsonDeserializer<?> findBeanDeserializer(JavaType type,
                                                         DeserializationConfig config,
-                                                        DeserializerProvider provider,
-                                                        BeanDescription beanDesc,
-                                                        BeanProperty property) throws JsonMappingException {
+                                                        BeanDescription beanDesc) throws JsonMappingException {
             if (Level.class.isAssignableFrom(type.getRawClass())) {
                 return new LevelDeserializer();
             }
-
-            return super.findBeanDeserializer(type, config, provider, beanDesc, property);
+            return super.findBeanDeserializer(type, config, beanDesc);
         }
     }
 

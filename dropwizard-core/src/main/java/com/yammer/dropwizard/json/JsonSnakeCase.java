@@ -1,6 +1,6 @@
 package com.yammer.dropwizard.json;
 
-import org.codehaus.jackson.annotate.JacksonAnnotation;
+import com.fasterxml.jackson.annotation.JacksonAnnotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

@@ -1,6 +1,7 @@
 package com.yammer.dropwizard.config;
 
-import org.codehaus.jackson.annotate.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.base.Objects;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -40,17 +41,17 @@ import javax.validation.constraints.NotNull;
  *
  * @see <a href="http://www.yaml.org/YAML_for_ruby.html">YAML Cookbook</a>
  */
-@SuppressWarnings("FieldMayBeFinal")
+@SuppressWarnings("UnusedDeclaration")
 public class Configuration {
     @Valid
     @NotNull
-    @JsonProperty
-    protected HttpConfiguration http = new HttpConfiguration();
+    @JsonProperty("http")
+    private HttpConfiguration httpConfiguration = new HttpConfiguration();
 
     @Valid
     @NotNull
-    @JsonProperty
-    protected LoggingConfiguration logging = new LoggingConfiguration();
+    @JsonProperty("logging")
+    private LoggingConfiguration loggingConfiguration = new LoggingConfiguration();
 
     /**
      * Returns the HTTP-specific section of the configuration file.
@@ -58,7 +59,14 @@ public class Configuration {
      * @return HTTP-specific configuration parameters
      */
     public HttpConfiguration getHttpConfiguration() {
-        return http;
+        return httpConfiguration;
+    }
+
+    /**
+     * Sets the HTTP-specific section of the configuration file.
+     */
+    public void setHttpConfiguration(HttpConfiguration config) {
+        this.httpConfiguration = config;
     }
 
     /**
@@ -67,6 +75,34 @@ public class Configuration {
      * @return logging-specific configuration parameters
      */
     public LoggingConfiguration getLoggingConfiguration() {
-        return logging;
+        return loggingConfiguration;
+    }
+
+    /**
+     * Sets the logging-specific section of the configuration file.
+     */
+    public void setLoggingConfiguration(LoggingConfiguration config) {
+        this.loggingConfiguration = config;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) { return true; }
+        if ((obj == null) || (getClass() != obj.getClass())) { return false; }
+        final Configuration that = (Configuration) obj;
+        return httpConfiguration.equals(that.httpConfiguration) && loggingConfiguration.equals(that.loggingConfiguration);
+    }
+
+    @Override
+    public int hashCode() {
+        int result = httpConfiguration.hashCode();
+        result = (31 * result) + loggingConfiguration.hashCode();
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return Objects.toStringHelper(this).add("http", httpConfiguration).add("logging",
+                                                                               loggingConfiguration).toString();
     }
 }

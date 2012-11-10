@@ -44,7 +44,7 @@ http:
 
   # The number of threads dedicated to accepting connections. If omitted, this defaults to the
   # number of logical CPUs on the current machine.
-  acceptorThreadCount: 3
+  acceptorThreads: 3
 
   # The offset of the acceptor threads' priorities. Can be [-5...5], with -5 dropping the acceptor
   # threads to the lowest possible priority and with 5 raising them to the highest priority.
@@ -149,6 +149,8 @@ logging:
 
     # Sets the level for 'com.example.app' to DEBUG.
     com.example.app: DEBUG
+
+    org.hibernate.SQL: ALL
 
   # Settings for logging to stdout.
   console:

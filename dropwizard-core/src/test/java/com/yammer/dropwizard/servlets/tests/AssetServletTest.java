@@ -11,8 +11,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import static org.hamcrest.Matchers.*;
-import static org.junit.Assert.assertThat;
+import static org.fest.assertions.api.Assertions.*;
 
 @SuppressWarnings({ "serial", "StaticNonFinalField", "StaticVariableMayNotBeInitialized" })
 public class AssetServletTest {
@@ -42,8 +41,8 @@ public class AssetServletTest {
     @BeforeClass
     public static void setup() throws Exception {
         servletTester = new ServletTester();
-        servletTester.addServlet(DummyAssetServlet.class, DUMMY_SERVLET + "*");
-        servletTester.addServlet(NoIndexAssetServlet.class, NOINDEX_SERVLET + "*");
+        servletTester.addServlet(DummyAssetServlet.class, DUMMY_SERVLET + '*');
+        servletTester.addServlet(NoIndexAssetServlet.class, NOINDEX_SERVLET + '*');
         servletTester.start();
     }
 
@@ -57,35 +56,41 @@ public class AssetServletTest {
     }
 
     @Test
-    public void itServesFilesWithA200() throws Exception {
+    public void servesFilesWithA200() throws Exception {
         response.parse(servletTester.getResponses(request.generate()));
-        assertThat(response.getStatus(), is(200));
-        assertThat(response.getContent(), is("HELLO THERE"));
+        assertThat(response.getStatus())
+                .isEqualTo(200);
+        assertThat(response.getContent())
+                .isEqualTo("HELLO THERE");
     }
 
     @Test
-    public void itThrows404IfTheAssetIsMissing() throws Exception {
+    public void throws404IfTheAssetIsMissing() throws Exception {
         request.setURI(DUMMY_SERVLET + "doesnotexist.txt");
 
         response.parse(servletTester.getResponses(request.generate()));
-        assertThat(response.getStatus(), is(404));
+        assertThat(response.getStatus())
+                .isEqualTo(404);
     }
 
     @Test
-    public void assetsHaveAConsistentEtag() throws Exception {
+    public void consistentlyAssignsETags() throws Exception {
         response.parse(servletTester.getResponses(request.generate()));
         final String firstEtag = response.getHeader(HttpHeaders.ETAG);
 
         response.parse(servletTester.getResponses(request.generate()));
         final String secondEtag = response.getHeader(HttpHeaders.ETAG);
 
-        assertThat(firstEtag, is(not(nullValue())));
-        assertThat(firstEtag, is(not("")));
-        assertThat(firstEtag, is(equalTo(secondEtag)));
+        assertThat(firstEtag)
+                .isNotNull();
+        assertThat(firstEtag)
+                .isNotEmpty();
+        assertThat(firstEtag)
+                .isEqualTo(secondEtag);
     }
 
     @Test
-    public void etagsDifferForDifferentFiles() throws Exception {
+    public void assignsDifferentETagsForDifferentFiles() throws Exception {
         response.parse(servletTester.getResponses(request.generate()));
         final String firstEtag = response.getHeader(HttpHeaders.ETAG);
 
@@ -93,11 +98,12 @@ public class AssetServletTest {
         response.parse(servletTester.getResponses(request.generate()));
         final String secondEtag = response.getHeader(HttpHeaders.ETAG);
 
-        assertThat(firstEtag, is(not(equalTo(secondEtag))));
+        assertThat(firstEtag)
+                .isNotEqualTo(secondEtag);
     }
 
     @Test
-    public void itSupportsIfNoneMatchRequests() throws Exception {
+    public void supportsIfNoneMatchRequests() throws Exception {
         response.parse(servletTester.getResponses(request.generate()));
         final String correctEtag = response.getHeader(HttpHeaders.ETAG);
 
@@ -109,24 +115,26 @@ public class AssetServletTest {
         response.parse(servletTester.getResponses(request.generate()));
         final int statusWithNonMatchingEtag = response.getStatus();
 
-        assertThat(statusWithMatchingEtag, is(304));
-        assertThat(statusWithNonMatchingEtag, is(200));
+        assertThat(statusWithMatchingEtag)
+                .isEqualTo(304);
+        assertThat(statusWithNonMatchingEtag)
+                .isEqualTo(200);
     }
 
     @Test
-    public void assetsHaveAConsistentLastModifiedTime() throws Exception {
+    public void consistentlyAssignsLastModifiedTimes() throws Exception {
         response.parse(servletTester.getResponses(request.generate()));
         final long firstLastModifiedTime = response.getDateHeader(HttpHeaders.LAST_MODIFIED);
 
         response.parse(servletTester.getResponses(request.generate()));
         final long secondLastModifiedTime = response.getDateHeader(HttpHeaders.LAST_MODIFIED);
 
-        assertThat(firstLastModifiedTime, is(not(nullValue())));
-        assertThat(firstLastModifiedTime, is(equalTo(secondLastModifiedTime)));
+        assertThat(firstLastModifiedTime)
+                .isEqualTo(secondLastModifiedTime);
     }
 
     @Test
-    public void itSupportsIfModifiedSinceRequests() throws Exception {
+    public void supportsIfModifiedSinceRequests() throws Exception {
         response.parse(servletTester.getResponses(request.generate()));
         final long lastModifiedTime = response.getDateHeader(HttpHeaders.LAST_MODIFIED);
 
@@ -142,73 +150,94 @@ public class AssetServletTest {
         response.parse(servletTester.getResponses(request.generate()));
         final int statusWithRecentLastModifiedTime = response.getStatus();
 
-        assertThat(statusWithMatchingLastModifiedTime, is(304));
-        assertThat(statusWithStaleLastModifiedTime, is(200));
-        assertThat(statusWithRecentLastModifiedTime, is(304));
+        assertThat(statusWithMatchingLastModifiedTime)
+                .isEqualTo(304);
+        assertThat(statusWithStaleLastModifiedTime)
+                .isEqualTo(200);
+        assertThat(statusWithRecentLastModifiedTime)
+                .isEqualTo(304);
     }
 
     @Test
-    public void itGuessesMimeTypesAndDefaultsToHtml() throws Exception {
+    public void guessesMimeTypes() throws Exception {
         response.parse(servletTester.getResponses(request.generate()));
-        assertThat(response.getStatus(), is(200));
-        assertThat(response.getContentType(), is(MimeTypes.TEXT_PLAIN));
+        assertThat(response.getStatus())
+                .isEqualTo(200);
+        assertThat(response.getContentType())
+                .isEqualTo(MimeTypes.TEXT_PLAIN);
+    }
 
+    @Test
+    public void defaultsToHtml() throws Exception {
         request.setURI(DUMMY_SERVLET + "foo.bar");
         response.parse(servletTester.getResponses(request.generate()));
-        assertThat(response.getStatus(), is(200));
-        assertThat(response.getContentType(), is(MimeTypes.TEXT_HTML));
+        assertThat(response.getStatus())
+                .isEqualTo(200);
+        assertThat(response.getContentType())
+                .isEqualTo(MimeTypes.TEXT_HTML);
     }
 
     @Test
-    public void itServesAnIndexFileByDefault() throws Exception {
+    public void servesIndexFilesByDefault() throws Exception {
         // Root directory listing:
         request.setURI(DUMMY_SERVLET);
         response.parse(servletTester.getResponses(request.generate()));
-        assertThat(response.getStatus(), is(200));
-        assertThat(response.getContent(), containsString("/assets Index File"));
+        assertThat(response.getStatus())
+                .isEqualTo(200);
+        assertThat(response.getContent())
+                .contains("/assets Index File");
 
         // Subdirectory listing:
         request.setURI(DUMMY_SERVLET + "some_directory");
         response.parse(servletTester.getResponses(request.generate()));
-        assertThat(response.getStatus(), is(200));
-        assertThat(response.getContent(), containsString("/assets/some_directory Index File"));
+        assertThat(response.getStatus())
+                .isEqualTo(200);
+        assertThat(response.getContent())
+                .contains("/assets/some_directory Index File");
 
         // Subdirectory listing with slash:
         request.setURI(DUMMY_SERVLET + "some_directory/");
         response.parse(servletTester.getResponses(request.generate()));
-        assertThat(response.getStatus(), is(200));
-        assertThat(response.getContent(), containsString("/assets/some_directory Index File"));
+        assertThat(response.getStatus())
+                .isEqualTo(200);
+        assertThat(response.getContent())
+                .contains("/assets/some_directory Index File");
     }
 
     @Test
-    public void itThrowsA404IfNoIndexFileIsDefined() throws Exception {
+    public void throwsA404IfNoIndexFileIsDefined() throws Exception {
         // Root directory listing:
         request.setURI(NOINDEX_SERVLET + '/');
         response.parse(servletTester.getResponses(request.generate()));
-        assertThat(response.getStatus(), is(404));
+        assertThat(response.getStatus())
+                .isEqualTo(404);
 
         // Subdirectory listing:
         request.setURI(NOINDEX_SERVLET + "some_directory");
         response.parse(servletTester.getResponses(request.generate()));
-        assertThat(response.getStatus(), is(404));
+        assertThat(response.getStatus())
+                .isEqualTo(404);
 
         // Subdirectory listing with slash:
         request.setURI(NOINDEX_SERVLET + "some_directory/");
         response.parse(servletTester.getResponses(request.generate()));
-        assertThat(response.getStatus(), is(404));
+        assertThat(response.getStatus())
+                .isEqualTo(404);
     }
 
     @Test
-    public void itDoesntAllowOverridingUrls() throws Exception {
+    public void doesNotAllowOverridingUrls() throws Exception {
         request.setURI(DUMMY_SERVLET + "file:/etc/passwd");
         response.parse(servletTester.getResponses(request.generate()));
-        assertThat(response.getStatus(), is(404));
+        assertThat(response.getStatus())
+                .isEqualTo(404);
     }
 
     @Test
-    public void itDoesntAllowOverridingPaths() throws Exception {
+    public void doesNotAllowOverridingPaths() throws Exception {
         request.setURI(DUMMY_SERVLET + "/etc/passwd");
         response.parse(servletTester.getResponses(request.generate()));
-        assertThat(response.getStatus(), is(404));
+        assertThat(response.getStatus())
+                .isEqualTo(404);
     }
 }
