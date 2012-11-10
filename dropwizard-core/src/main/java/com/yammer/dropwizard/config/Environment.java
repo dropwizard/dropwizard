@@ -22,6 +22,7 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.component.AbstractLifeCycle;
 import org.eclipse.jetty.util.component.AggregateLifeCycle;
 import org.eclipse.jetty.util.component.LifeCycle;
+import org.eclipse.jetty.util.resource.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,6 +59,8 @@ public class Environment extends AbstractLifeCycle {
     private final ImmutableMultimap.Builder<String, FilterHolder> filters;
     private final ImmutableSet.Builder<EventListener> servletListeners;
     private final ImmutableSet.Builder<Task> tasks;
+    private final ImmutableSet.Builder<String> protectedTargets;
+    private Resource baseResource;
     private final AggregateLifeCycle lifeCycle;
     private final ObjectMapperFactory objectMapperFactory;
     private SessionHandler sessionHandler;
@@ -94,6 +97,8 @@ public class Environment extends AbstractLifeCycle {
         this.filters = ImmutableMultimap.builder();
         this.servletListeners = ImmutableSet.builder();
         this.tasks = ImmutableSet.builder();
+        this.baseResource = Resource.newClassPathResource(".");
+        this.protectedTargets = ImmutableSet.builder();
         this.lifeCycle = new AggregateLifeCycle();
         this.jerseyServletContainer = new ServletContainer(config);
         addTask(new GarbageCollectionTask());
@@ -278,6 +283,19 @@ public class Environment extends AbstractLifeCycle {
         tasks.add(checkNotNull(task));
     }
 
+    /**
+     * Adds a protected Target (ie a target that 404s)
+     *
+     * @param target  a protected target
+     */
+    public void addProtectedTarget(String target) {
+        protectedTargets.add(checkNotNull(target));
+    }
+
+    public void setBaseResource(Resource baseResource) {
+        this.baseResource = baseResource;
+    }
+
     public void setSessionHandler(SessionHandler sessionHandler) {
         this.sessionHandler = sessionHandler;
     }
@@ -390,6 +408,14 @@ public class Environment extends AbstractLifeCycle {
 
     ImmutableSet<Task> getTasks() {
         return tasks.build();
+    }
+
+    ImmutableSet<String> getProtectedTargets() {
+        return protectedTargets.build();
+    }
+
+    Resource getBaseResource() {
+        return baseResource;
     }
 
     ImmutableSet<EventListener> getServletListeners() {
