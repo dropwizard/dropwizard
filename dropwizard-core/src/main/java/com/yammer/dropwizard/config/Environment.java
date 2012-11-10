@@ -288,7 +288,7 @@ public class Environment extends AbstractLifeCycle {
     }
 
     public void setBaseResource(Resource baseResource) throws IOException {
-        this.baseResource = Resource.newResource(baseResource.getURL());
+        this.baseResource = baseResource;
     }
 
     public void setSessionHandler(SessionHandler sessionHandler) {
@@ -408,11 +408,7 @@ public class Environment extends AbstractLifeCycle {
     }
 
     Resource getBaseResource() {
-        try {
-            return Resource.newResource(this.baseResource.getURL());
-        } catch(IOException ioe) {
-            return null;
-        }
+        return baseResource;
     }
 
     ImmutableSet<EventListener> getServletListeners() {
