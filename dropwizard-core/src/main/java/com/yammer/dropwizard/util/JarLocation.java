@@ -18,7 +18,7 @@ public class JarLocation {
     public String toString() {
         final URL location = klass.getProtectionDomain().getCodeSource().getLocation();
         try {
-            final String jar = new File(location.getFile()).getName();
+            final String jar = new File(location.toURI()).getName();
             if (jar.endsWith(".jar")) {
                 return jar;
             }

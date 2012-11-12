@@ -16,13 +16,13 @@ public class MaxDurationValidator implements ConstraintValidator<MaxDuration, Du
     private TimeUnit maxUnit;
 
     @Override
-    public void initialize(MaxDuration minValue) {
-        this.maxQty = minValue.value();
-        this.maxUnit = minValue.unit();
+    public void initialize(MaxDuration constraintAnnotation) {
+        this.maxQty = constraintAnnotation.value();
+        this.maxUnit = constraintAnnotation.unit();
     }
 
     @Override
-    public boolean isValid(Duration value, ConstraintValidatorContext constraintValidatorContext) {
-        return value == null || value.toNanoseconds() <= maxUnit.toNanos(maxQty);
+    public boolean isValid(Duration value, ConstraintValidatorContext context) {
+        return (value == null) || (value.toNanoseconds() <= maxUnit.toNanos(maxQty));
     }
 }

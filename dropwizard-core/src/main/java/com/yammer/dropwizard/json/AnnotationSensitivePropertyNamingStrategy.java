@@ -1,17 +1,17 @@
 package com.yammer.dropwizard.json;
 
-import org.codehaus.jackson.map.MapperConfig;
-import org.codehaus.jackson.map.PropertyNamingStrategy;
-import org.codehaus.jackson.map.introspect.AnnotatedField;
-import org.codehaus.jackson.map.introspect.AnnotatedMethod;
-import org.codehaus.jackson.map.introspect.AnnotatedParameter;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.cfg.MapperConfig;
+import com.fasterxml.jackson.databind.introspect.AnnotatedField;
+import com.fasterxml.jackson.databind.introspect.AnnotatedMethod;
+import com.fasterxml.jackson.databind.introspect.AnnotatedParameter;
 
-class AnnotationSensitivePropertyNamingStrategy extends PropertyNamingStrategy {
-    static final AnnotationSensitivePropertyNamingStrategy INSTANCE =
+public class AnnotationSensitivePropertyNamingStrategy extends PropertyNamingStrategy {
+    public static final AnnotationSensitivePropertyNamingStrategy INSTANCE =
             new AnnotationSensitivePropertyNamingStrategy();
     private final PropertyNamingStrategy snakeCase;
 
-    AnnotationSensitivePropertyNamingStrategy() {
+    private AnnotationSensitivePropertyNamingStrategy() {
         super();
         this.snakeCase = PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES;
     }

@@ -16,13 +16,13 @@ public class MinSizeValidator implements ConstraintValidator<MinSize, Size> {
     private SizeUnit minUnit;
 
     @Override
-    public void initialize(MinSize minValue) {
-        this.minQty = minValue.value();
-        this.minUnit = minValue.unit();
+    public void initialize(MinSize constraintAnnotation) {
+        this.minQty = constraintAnnotation.value();
+        this.minUnit = constraintAnnotation.unit();
     }
 
     @Override
-    public boolean isValid(Size value, ConstraintValidatorContext constraintValidatorContext) {
-        return value == null || value.toBytes() >= minUnit.toBytes(minQty);
+    public boolean isValid(Size value, ConstraintValidatorContext context) {
+        return (value == null) || (value.toBytes() >= minUnit.toBytes(minQty));
     }
 }

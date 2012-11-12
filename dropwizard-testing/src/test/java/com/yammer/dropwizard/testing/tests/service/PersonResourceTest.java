@@ -7,8 +7,7 @@ import org.junit.Test;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -29,7 +28,7 @@ public class PersonResourceTest extends ResourceTest {
 
     @Test
     public void simpleResourceTest() throws Exception {
-        assertThat(client().resource("/person/blah").get(Person.class),
-                   is(person));
+        assertThat(client().resource("/person/blah").get(Person.class))
+                .isEqualTo(person);
     }
 }

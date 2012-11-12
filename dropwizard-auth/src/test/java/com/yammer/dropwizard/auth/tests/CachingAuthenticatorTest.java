@@ -10,8 +10,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InOrder;
 
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 public class CachingAuthenticatorTest {
@@ -28,11 +27,11 @@ public class CachingAuthenticatorTest {
 
     @Test
     public void cachesTheFirstReturnedPrincipal() throws Exception {
-        assertThat(cached.authenticate("credentials"),
-                   is(Optional.of("principal")));
+        assertThat(cached.authenticate("credentials"))
+                .isEqualTo(Optional.of("principal"));
 
-        assertThat(cached.authenticate("credentials"),
-                   is(Optional.of("principal")));
+        assertThat(cached.authenticate("credentials"))
+                .isEqualTo(Optional.of("principal"));
 
         verify(underlying, times(1)).authenticate("credentials");
     }
@@ -80,8 +79,8 @@ public class CachingAuthenticatorTest {
     public void calculatesTheSizeOfTheCache() throws Exception {
         cached.authenticate("credentials1");
 
-        assertThat(cached.size(),
-                   is(1L));
+        assertThat(cached.size())
+                .isEqualTo(1);
     }
 
     @Test
@@ -89,8 +88,8 @@ public class CachingAuthenticatorTest {
         cached.authenticate("credentials1");
 
         final CacheStats stats = cached.stats();
-        
-        assertThat(stats.loadCount(),
-                   is(1L));
+
+        assertThat(stats.loadCount())
+                .isEqualTo(1);
     }
 }

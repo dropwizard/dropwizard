@@ -2,11 +2,11 @@ package com.yammer.dropwizard.config;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.jmx.JMXConfigurator;
 import ch.qos.logback.classic.jul.LevelChangePropagator;
 import com.google.common.base.Optional;
 import com.yammer.dropwizard.logging.AsyncAppender;
 import com.yammer.dropwizard.logging.LogbackFactory;
-import com.yammer.dropwizard.logging.LoggingBean;
 import com.yammer.metrics.logback.InstrumentedAppender;
 import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
@@ -71,11 +71,16 @@ public class LoggingFactory {
                                                                                    syslog.getLogFormat())));
         }
 
+
+
         final MBeanServer server = ManagementFactory.getPlatformMBeanServer();
         try {
             final ObjectName objectName = new ObjectName("com.yammer:type=Logging");
             if (!server.isRegistered(objectName)) {
-                server.registerMBean(new LoggingBean(), objectName);
+                server.registerMBean(new JMXConfigurator(root.getLoggerContext(),
+                                                         server,
+                                                         objectName),
+                                     objectName);
             }
         } catch (Exception e) {
             throw new RuntimeException(e);

@@ -36,15 +36,15 @@ To create a :ref:`managed <man-core-managed>`, instrumented ``HttpClient`` insta
         }
     }
 
-Then, in your service's ``initialize`` method, create a new ``HttpClientFactory``:
+Then, in your service's ``run`` method, create a new ``HttpClientBuilder``:
 
 .. code-block:: java
 
     @Override
-    protected void initialize(ExampleConfiguration config,
-                              Environment environment) {
-        final HttpClientFactory factory = new HttpClientFactory(config.getHttpClientConfiguration());
-        final HttpClient httpClient = factory.build();
+    public void run(ExampleConfiguration config,
+                    Environment environment) {
+        final HttpClient httpClient = new HttpClientBuilder().using(config.getHttpClientConfiguration())
+                                                             .build();
         environment.addResource(new ExternalServiceResource(httpClient));
     }
 
@@ -67,7 +67,7 @@ Your service's configuration file will then look like this:
 Metrics
 -------
 
-Dropwizard's ``HttpClientFactory`` actually gives you an instrumented subclass which tracks the
+Dropwizard's ``HttpClientBuilder`` actually gives you an instrumented subclass which tracks the
 following pieces of data:
 
 ``org.apache.http.conn.ClientConnectionManager.connections``
@@ -115,8 +115,8 @@ JerseyClient
 ============
 
 If HttpClient_ is too low-level for you, Dropwizard also supports Jersey's `Client API`_.
-``JerseyClient`` allows you to use all of the server-side media type support that your service uses
-to, for example, deserialize ``application/json`` request entities as POJOs.
+Jersey's ``Client`` allows you to use all of the server-side media type support that your service
+uses to, for example, deserialize ``application/json`` request entities as POJOs.
 
 .. _Client API: http://jersey.java.net/nonav/documentation/latest/user-guide.html#client-api
 
@@ -136,16 +136,17 @@ To create a :ref:`managed <man-core-managed>`, instrumented ``JerseyClient`` ins
         }
     }
 
-Then, in your service's ``initialize`` method, create a new ``JerseyClientFactory``:
+Then, in your service's ``run`` method, create a new ``JerseyClientBuilder``:
 
 .. code-block:: java
 
     @Override
-    protected void initialize(ExampleConfiguration config,
-                              Environment environment) {
-        final JerseyClientFactory factory = new JerseyClientFactory(config.getJerseyClientConfiguration());
-        final JerseyClient jerseyClient = factory.build(environment);
-        environment.addResource(new ExternalServiceResource(jerseyClient));
+    public void run(ExampleConfiguration config,
+                    Environment environment) {
+        final Client client = new JerseyClientBuilder().using(config.getJerseyClientConfiguration())
+                                                       .using(environment)
+                                                       .build();
+        environment.addResource(new ExternalServiceResource(client));
     }
 
 Your service's configuration file will then look like this:
@@ -160,11 +161,3 @@ Your service's configuration file will then look like this:
       minThreads: 1
       maxThreads: 128 # thread pool for JerseyClient's async requests
 
-.. tip::
-
-    As of Jersey 1.11, most of the classes ``JerseyClient`` returns are declared ``final`` and as
-    such aren't mockable using Mockito_. In place of Mockito, we recommend using `PowerMock`_'s
-    Mockito-compatible API.
-
-.. _Mockito: http://code.google.com/p/mockito/
-.. _PowerMock: http://code.google.com/p/powermock/

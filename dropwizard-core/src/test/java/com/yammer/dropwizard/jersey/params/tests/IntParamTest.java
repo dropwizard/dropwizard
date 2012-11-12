@@ -6,17 +6,16 @@ import org.junit.Test;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
+import static org.fest.assertions.api.Assertions.assertThat;
+import static org.fest.assertions.api.Assertions.failBecauseExceptionWasNotThrown;
 
 public class IntParamTest {
     @Test
     public void anIntegerReturnsAnInteger() throws Exception {
         final IntParam param = new IntParam("200");
 
-        assertThat(param.get(),
-                   is(200));
+        assertThat(param.get())
+                .isEqualTo(200);
     }
 
     @Test
@@ -24,15 +23,15 @@ public class IntParamTest {
     public void aNonIntegerThrowsAnException() throws Exception {
         try {
             new IntParam("foo");
-            fail("expected a WebApplicationException, but none was thrown");
+            failBecauseExceptionWasNotThrown(WebApplicationException.class);
         } catch (WebApplicationException e) {
             final Response response = e.getResponse();
 
-            assertThat(response.getStatus(),
-                       is(400));
+            assertThat(response.getStatus())
+                    .isEqualTo(400);
 
-            assertThat((String) response.getEntity(),
-                       is("\"foo\" is not a number."));
+            assertThat(response.getEntity())
+                    .isEqualTo("\"foo\" is not a number.");
         }
     }
 }

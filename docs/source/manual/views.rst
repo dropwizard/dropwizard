@@ -60,7 +60,7 @@ Your template file might look something like this:
         </body>
     </html>
 
-The ``@fltvariable`` lets Freemarker (and any Freemarker IDE plugins you may be using) that the
+The ``@fltvariable`` lets Freemarker (and any Freemarker IDE plugins you may be using) know that the
 root object is a ``com.example.views.PersonView`` instance. If you attempt to call a property which
 doesn't exist on ``PersonView``--``getConnectionPool()``, for example--it will flag that line in
 your IDE.

@@ -1,17 +1,19 @@
 package com.yammer.dropwizard.db;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Objects;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.yammer.dropwizard.util.Duration;
 import com.yammer.dropwizard.validation.ValidationMethod;
-import org.codehaus.jackson.annotate.JsonProperty;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 import java.util.Map;
 
-@SuppressWarnings({ "FieldMayBeFinal", "UnusedDeclaration" })
+@SuppressWarnings("UnusedDeclaration")
 public class DatabaseConfiguration {
     @NotNull
     @JsonProperty
@@ -63,6 +65,9 @@ public class DatabaseConfiguration {
 
     @JsonProperty
     private boolean defaultReadOnly = false;
+
+    @JsonProperty
+    private ImmutableList<String> connectionInitializationStatements = ImmutableList.of();
 
     public String getDriverClass() {
         return driverClass;
@@ -168,6 +173,14 @@ public class DatabaseConfiguration {
         this.defaultReadOnly = defaultReadOnly;
     }
 
+    public ImmutableList<String> getConnectionInitializationStatements() {
+        return connectionInitializationStatements;
+    }
+
+    public void setConnectionInitializationStatements(List<String> statements) {
+        this.connectionInitializationStatements = ImmutableList.copyOf(statements);
+    }
+
     @ValidationMethod(message = ".minSize must be less than or equal to maxSize")
     public boolean isPoolSizedCorrectly() {
         return minSize <= maxSize;
@@ -190,7 +203,8 @@ public class DatabaseConfiguration {
                 !((properties != null) ? !properties.equals(that.properties) : (that.properties != null)) &&
                 !((url != null) ? !url.equals(that.url) : (that.url != null)) &&
                 !((user != null) ? !user.equals(that.user) : (that.user != null)) &&
-                !((validationQuery != null) ? !validationQuery.equals(that.validationQuery) : (that.validationQuery != null));
+                !((validationQuery != null) ? !validationQuery.equals(that.validationQuery) : (that.validationQuery != null)) &&
+                !((connectionInitializationStatements != null) ? !connectionInitializationStatements.equals(that.connectionInitializationStatements) : (that.connectionInitializationStatements != null));
     }
 
     @Override
@@ -208,6 +222,7 @@ public class DatabaseConfiguration {
         result = (31 * result) + ((checkConnectionHealthWhenIdleFor != null) ? checkConnectionHealthWhenIdleFor.hashCode() : 0);
         result = (31 * result) + ((closeConnectionIfIdleFor != null) ? closeConnectionIfIdleFor.hashCode() : 0);
         result = (31 * result) + (defaultReadOnly ? 1 : 0);
+        result = (31 * result) + ((connectionInitializationStatements != null) ? connectionInitializationStatements.hashCode() : 0);
         return result;
     }
 
@@ -227,6 +242,7 @@ public class DatabaseConfiguration {
                       .add("checkConnectionHealthWhenIdleFor", checkConnectionHealthWhenIdleFor)
                       .add("closeConnectionIfIdleFor", closeConnectionIfIdleFor)
                       .add("defaultReadOnly", defaultReadOnly)
+                      .add("connectionInitializationStatements", connectionInitializationStatements)
                       .toString();
     }
 }

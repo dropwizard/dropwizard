@@ -1,7 +1,7 @@
 package com.yammer.dropwizard.examples
 
 import com.yammer.dropwizard.config.Configuration
-import org.codehaus.jackson.annotate.JsonProperty
+import com.fasterxml.jackson.annotation.JsonProperty
 
 class ExampleConfiguration extends Configuration {
   @JsonProperty

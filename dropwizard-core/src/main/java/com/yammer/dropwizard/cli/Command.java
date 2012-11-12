@@ -1,13 +1,8 @@
 package com.yammer.dropwizard.cli;
 
-import com.yammer.dropwizard.AbstractService;
-import com.yammer.dropwizard.util.JarLocation;
-import org.apache.commons.cli.*;
-
-import java.util.Collection;
-
-import static com.google.common.base.Preconditions.checkNotNull;
-import static java.lang.String.format;
+import com.yammer.dropwizard.config.Bootstrap;
+import net.sourceforge.argparse4j.inf.Namespace;
+import net.sourceforge.argparse4j.inf.Subparser;
 
 /**
  * A basic CLI command.
@@ -17,15 +12,14 @@ public abstract class Command {
     private final String description;
 
     /**
-     * Create a new {@link Command} instance.
+     * Create a new command with the given name and description.
      *
-     * @param name the command name (must be unique for the service)
-     * @param description the description of the command
+     * @param name        the name of the command, used for command line invocation
+     * @param description a description of the command's purpose
      */
-    protected Command(String name,
-                      String description) {
-        this.name = checkNotNull(name);
-        this.description = checkNotNull(description);
+    protected Command(String name, String description) {
+        this.name = name;
+        this.description = description;
     }
 
     /**
@@ -47,76 +41,18 @@ public abstract class Command {
     }
 
     /**
-     * Returns an empty {@link Options} instance. Override this to allow your commands to parse
-     * command line arguments.
+     * Configure the command's {@link Subparser}.
      *
-     * @return an empty {@link Options} instance
+     * @param subparser the {@link Subparser} specific to the command
      */
-    public Options getOptions() {
-        return new Options();
-    }
-
-    @SuppressWarnings("unchecked")
-    final Options getOptionsWithHelp() {
-        final Options options = new Options();
-        for (Option option : (Collection<Option>) getOptions().getOptions()) {
-            options.addOption(option);
-        }
-        options.addOption("h", "help", false, "display usage information");
-        return options;
-    }
+    public abstract void configure(Subparser subparser);
 
     /**
      * Executes when the user runs this specific command.
      *
-     * @param service the service to which the command belongs
-     * @param params the command-line parameters of the invocation
+     * @param bootstrap the bootstrap bootstrap
+     * @param namespace the parsed command line namespace
      * @throws Exception if something goes wrong
      */
-    protected abstract void run(AbstractService<?> service,
-                                CommandLine params) throws Exception;
-
-    /**
-     * Returns the usage syntax for the command.
-     *
-     * @return the usage syntax for the command
-     */
-    protected String getSyntax() {
-        return "[options]";
-    }
-
-    /**
-     * Returns the usage string for the command, including the JAR file location, if possible.
-     *
-     * @param klass    the service class
-     * @return the usage string for the command
-     */
-    protected String getUsage(Class<?> klass) {
-        return format("%s %s %s", new JarLocation(klass), getName(), getSyntax());
-    }
-
-    /**
-     * Execute the command.
-     *
-     * @param service the service to which the command belongs
-     * @param arguments the arguments passed to the command
-     * @throws Exception if something goes wrong
-     */
-    public final void run(AbstractService<?> service,
-                          String[] arguments) throws Exception {
-        final CommandLine cmdLine = new GnuParser().parse(getOptionsWithHelp(), checkNotNull(arguments));
-        if (cmdLine.hasOption("help")) {
-            printHelp(service.getClass());
-        } else {
-            run(checkNotNull(service), cmdLine);
-        }
-    }
-
-    protected final void printHelp(Class<?> klass) {
-        UsagePrinter.printCommandHelp(this, klass);
-    }
-
-    protected final void printHelp(String message, Class<?> klass) {
-        UsagePrinter.printCommandHelp(this, klass, message);
-    }
+    public abstract void run(Bootstrap<?> bootstrap, Namespace namespace) throws Exception;
 }

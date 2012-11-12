@@ -2,17 +2,16 @@ package com.yammer.dropwizard.validation.tests;
 
 import com.google.common.collect.ImmutableList;
 import com.yammer.dropwizard.util.Duration;
+import com.yammer.dropwizard.validation.DurationRange;
 import com.yammer.dropwizard.validation.MaxDuration;
 import com.yammer.dropwizard.validation.MinDuration;
-import com.yammer.dropwizard.validation.DurationRange;
 import com.yammer.dropwizard.validation.Validator;
 import org.junit.Test;
 
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+import static org.fest.assertions.api.Assertions.assertThat;
 
 public class DurationValidatorTest {
     @SuppressWarnings("unused")
@@ -42,11 +41,13 @@ public class DurationValidatorTest {
     @Test
     public void returnsASetOfErrorsForAnObject() throws Exception {
         if ("en".equals(Locale.getDefault().getLanguage())) {
-            assertThat(validator.validate(new Example()),
-                    is(ImmutableList.of(
+            final ImmutableList<String> errors = validator.validate(new Example());
+
+            assertThat(errors)
+                    .containsOnly(
                             "outOfRange must be between 10 MINUTES and 30 MINUTES (was 60 minutes)",
                             "tooBig must be less than or equal to 30 SECONDS (was 10 minutes)",
-                            "tooSmall must be greater than or equal to 30 SECONDS (was 100 milliseconds)")));
+                            "tooSmall must be greater than or equal to 30 SECONDS (was 100 milliseconds)");
         }
     }
 
@@ -57,7 +58,7 @@ public class DurationValidatorTest {
         example.setTooSmall(Duration.seconds(100));
         example.setOutOfRange(Duration.minutes(15));
 
-        assertThat(validator.validate(example),
-                is(ImmutableList.<String>of()));
+        assertThat(validator.validate(example))
+                .isEmpty();
     }
 }

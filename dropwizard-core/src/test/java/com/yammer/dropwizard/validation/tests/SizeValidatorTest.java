@@ -1,6 +1,5 @@
 package com.yammer.dropwizard.validation.tests;
 
-import com.google.common.collect.ImmutableList;
 import com.yammer.dropwizard.util.Size;
 import com.yammer.dropwizard.util.SizeUnit;
 import com.yammer.dropwizard.validation.MaxSize;
@@ -11,8 +10,7 @@ import org.junit.Test;
 
 import java.util.Locale;
 
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+import static org.fest.assertions.api.Assertions.assertThat;
 
 public class SizeValidatorTest {
     @SuppressWarnings("unused")
@@ -42,11 +40,10 @@ public class SizeValidatorTest {
     @Test
     public void returnsASetOfErrorsForAnObject() throws Exception {
         if ("en".equals(Locale.getDefault().getLanguage())) {
-            assertThat(validator.validate(new Example()),
-                    is(ImmutableList.of(
-                            "outOfRange must be between 10 KILOBYTES and 100 KILOBYTES (was 2 megabytes)",
-                            "tooBig must be less than or equal to 30 KILOBYTES (was 2 gigabytes)",
-                            "tooSmall must be greater than or equal to 30 KILOBYTES (was 100 bytes)")));
+            assertThat(validator.validate(new Example()))
+                    .containsOnly("outOfRange must be between 10 KILOBYTES and 100 KILOBYTES (was 2 megabytes)",
+                                  "tooBig must be less than or equal to 30 KILOBYTES (was 2 gigabytes)",
+                                  "tooSmall must be greater than or equal to 30 KILOBYTES (was 100 bytes)");
         }
     }
 
@@ -57,7 +54,7 @@ public class SizeValidatorTest {
         example.setTooSmall(Size.megabytes(10));
         example.setOutOfRange(Size.kilobytes(64));
 
-        assertThat(validator.validate(example),
-                is(ImmutableList.<String>of()));
+        assertThat(validator.validate(example))
+                .isEmpty();
     }
 }

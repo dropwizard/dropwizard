@@ -1,6 +1,6 @@
 package com.example.helloworld.core;
 
-import org.codehaus.jackson.annotate.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.validator.constraints.Length;
 
 public class Saying {

@@ -1,14 +1,12 @@
 package com.yammer.dropwizard.validation.tests;
 
-import com.google.common.collect.ImmutableList;
 import com.yammer.dropwizard.validation.ValidationMethod;
 import com.yammer.dropwizard.validation.Validator;
 import org.junit.Test;
 
 import javax.validation.Valid;
 
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
+import static org.fest.assertions.api.Assertions.assertThat;
 
 @SuppressWarnings({"FieldMayBeFinal","MethodMayBeStatic","UnusedDeclaration"})
 public class MethodValidatorTest {
@@ -36,7 +34,8 @@ public class MethodValidatorTest {
 
     @Test
     public void complainsAboutMethodsWhichReturnFalse() throws Exception {
-        assertThat(new Validator().validate(new Example()),
-                   is(ImmutableList.of("must have a false thing", "subExample also needs something special")));
+        assertThat(new Validator().validate(new Example()))
+                .containsOnly("must have a false thing",
+                              "subExample also needs something special");
     }
 }
