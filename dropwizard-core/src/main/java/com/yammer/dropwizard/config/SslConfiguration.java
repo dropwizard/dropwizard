@@ -1,9 +1,10 @@
 package com.yammer.dropwizard.config;
 
-import com.google.common.base.Optional;
-import com.google.common.collect.ImmutableList;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.hibernate.validator.constraints.NotEmpty;
+
+import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableList;
 
 public class SslConfiguration {
     @JsonProperty
@@ -17,6 +18,18 @@ public class SslConfiguration {
 
     @JsonProperty
     private String keyStoreType = "JKS";
+
+    @JsonProperty
+    protected String trustStorePath = null;
+    
+    @JsonProperty
+    protected String trustStorePassword = null;
+    
+    @JsonProperty
+    private String trustStoreType = "JKS";
+    
+    @JsonProperty
+    private Boolean needClientAuth = false;
 
     @NotEmpty
     @JsonProperty
@@ -41,6 +54,22 @@ public class SslConfiguration {
         return Optional.fromNullable(keyStoreType);
     }
 
+    public Optional<String> getTrustStorePath() {
+        return Optional.fromNullable(trustStorePath);
+    }
+    
+    public Optional<String> getTrustStorePassword() {
+        return Optional.fromNullable(trustStorePassword);
+    }
+    
+    public Optional<String> getTrustStoreType() {
+        return Optional.fromNullable(trustStoreType);
+    }
+
+    public Optional<Boolean> getNeedClientAuth() {
+        return Optional.fromNullable(needClientAuth);
+    }
+    
     public String[] getSupportedProtocols() {
         return supportedProtocols.toArray(new String[supportedProtocols.size()]);
     }

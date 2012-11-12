@@ -20,7 +20,6 @@
         <module>dropwizard-core</module>
         <module>dropwizard-client</module>
         <module>dropwizard-db</module>
-        <module>dropwizard-jpa</module>
         <module>dropwizard-auth</module>
         <module>dropwizard-example</module>
         <module>dropwizard-views</module>

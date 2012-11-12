@@ -1,22 +1,11 @@
 package com.yammer.dropwizard.config;
 
-import com.google.common.base.Optional;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.yammer.dropwizard.jetty.BiDiGzipHandler;
-import com.yammer.dropwizard.jetty.InstrumentedSslSelectChannelConnector;
-import com.yammer.dropwizard.jetty.InstrumentedSslSocketConnector;
-import com.yammer.dropwizard.jetty.UnbrandedErrorHandler;
-import com.yammer.dropwizard.logging.Log;
-import com.yammer.dropwizard.servlets.ThreadNameFilter;
-import com.yammer.dropwizard.tasks.TaskServlet;
-import com.yammer.dropwizard.util.Duration;
-import com.yammer.dropwizard.util.Size;
-import com.yammer.metrics.HealthChecks;
-import com.yammer.metrics.core.HealthCheck;
-import com.yammer.metrics.jetty.*;
-import com.yammer.metrics.reporting.AdminServlet;
-import com.yammer.metrics.util.DeadlockHealthCheck;
+import java.util.EnumSet;
+import java.util.EventListener;
+import java.util.Map;
+
+import javax.servlet.DispatcherType;
+
 import org.eclipse.jetty.security.ConstraintMapping;
 import org.eclipse.jetty.security.ConstraintSecurityHandler;
 import org.eclipse.jetty.security.HashLoginService;
@@ -41,10 +30,27 @@ import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.util.thread.ThreadPool;
 
-import javax.servlet.DispatcherType;
-import java.util.EnumSet;
-import java.util.EventListener;
-import java.util.Map;
+import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.yammer.dropwizard.jetty.BiDiGzipHandler;
+import com.yammer.dropwizard.jetty.InstrumentedSslSelectChannelConnector;
+import com.yammer.dropwizard.jetty.InstrumentedSslSocketConnector;
+import com.yammer.dropwizard.jetty.UnbrandedErrorHandler;
+import com.yammer.dropwizard.logging.Log;
+import com.yammer.dropwizard.servlets.ThreadNameFilter;
+import com.yammer.dropwizard.tasks.TaskServlet;
+import com.yammer.dropwizard.util.Duration;
+import com.yammer.dropwizard.util.Size;
+import com.yammer.metrics.HealthChecks;
+import com.yammer.metrics.core.HealthCheck;
+import com.yammer.metrics.jetty.InstrumentedBlockingChannelConnector;
+import com.yammer.metrics.jetty.InstrumentedHandler;
+import com.yammer.metrics.jetty.InstrumentedQueuedThreadPool;
+import com.yammer.metrics.jetty.InstrumentedSelectChannelConnector;
+import com.yammer.metrics.jetty.InstrumentedSocketConnector;
+import com.yammer.metrics.reporting.AdminServlet;
+import com.yammer.metrics.util.DeadlockHealthCheck;
 
 // TODO: 11/7/11 <coda> -- document ServerFactory
 // TODO: 11/7/11 <coda> -- document ServerFactory
@@ -205,7 +211,23 @@ public class ServerFactory {
         for (String type : config.getSslConfiguration().getKeyStoreType().asSet()) {
           factory.setKeyStoreType(type);
         }
+        
+        for (String path : config.getSslConfiguration().getTrustStorePath().asSet()) {
+            factory.setTrustStore(path);
+        }
 
+        for (String password : config.getSslConfiguration().getTrustStorePassword().asSet()) {
+            factory.setTrustStorePassword(password);
+        }
+
+        for (String type : config.getSslConfiguration().getTrustStoreType().asSet()) {
+            factory.setTrustStoreType(type);
+        }
+
+        for (Boolean needClientAuth : config.getSslConfiguration().getNeedClientAuth().asSet()) {
+            factory.setNeedClientAuth(needClientAuth);
+        }
+        
         factory.setIncludeProtocols(config.getSslConfiguration().getSupportedProtocols());
     }
 
