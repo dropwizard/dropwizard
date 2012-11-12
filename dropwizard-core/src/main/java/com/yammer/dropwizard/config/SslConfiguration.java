@@ -1,12 +1,13 @@
 package com.yammer.dropwizard.config;
 
+import java.io.File;
+import java.util.List;
+
+import org.hibernate.validator.constraints.NotEmpty;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
-import org.hibernate.validator.constraints.NotEmpty;
-
-import java.io.File;
-import java.util.List;
 
 @SuppressWarnings("UnusedDeclaration")
 public class SslConfiguration {
@@ -23,6 +24,17 @@ public class SslConfiguration {
     private String keyStoreType = "JKS";
 
     @JsonProperty
+    protected String trustStorePath = null;
+    
+    @JsonProperty
+    protected String trustStorePassword = null;
+    
+    @JsonProperty
+    private String trustStoreType = "JKS";
+    
+    @JsonProperty
+    private Boolean needClientAuth = false;
+
     private String certAlias = null;
 
     @NotEmpty
@@ -60,6 +72,22 @@ public class SslConfiguration {
         return Optional.fromNullable(keyStoreType);
     }
 
+    public Optional<String> getTrustStorePath() {
+        return Optional.fromNullable(trustStorePath);
+    }
+    
+    public Optional<String> getTrustStorePassword() {
+        return Optional.fromNullable(trustStorePassword);
+    }
+    
+    public Optional<String> getTrustStoreType() {
+        return Optional.fromNullable(trustStoreType);
+    }
+
+    public Optional<Boolean> getNeedClientAuth() {
+        return Optional.fromNullable(needClientAuth);
+    }
+    
     public void setKeyStoreType(String keyStoreType) {
         this.keyStoreType = keyStoreType;
     }

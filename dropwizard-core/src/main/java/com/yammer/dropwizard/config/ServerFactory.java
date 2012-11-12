@@ -1,19 +1,13 @@
 package com.yammer.dropwizard.config;
 
-import com.google.common.base.Optional;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.yammer.dropwizard.jetty.BiDiGzipHandler;
-import com.yammer.dropwizard.jetty.UnbrandedErrorHandler;
-import com.yammer.dropwizard.servlets.ThreadNameFilter;
-import com.yammer.dropwizard.tasks.TaskServlet;
-import com.yammer.dropwizard.util.Duration;
-import com.yammer.dropwizard.util.Size;
-import com.yammer.metrics.HealthChecks;
-import com.yammer.metrics.core.HealthCheck;
-import com.yammer.metrics.jetty.*;
-import com.yammer.metrics.servlet.AdminServlet;
-import com.yammer.metrics.util.DeadlockHealthCheck;
+import java.io.File;
+import java.security.KeyStore;
+import java.util.EnumSet;
+import java.util.EventListener;
+import java.util.Map;
+
+import javax.servlet.DispatcherType;
+
 import org.eclipse.jetty.security.ConstraintMapping;
 import org.eclipse.jetty.security.ConstraintSecurityHandler;
 import org.eclipse.jetty.security.HashLoginService;
@@ -31,7 +25,6 @@ import org.eclipse.jetty.server.ssl.SslConnector;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
-import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.util.security.Constraint;
 import org.eclipse.jetty.util.security.Credential;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
@@ -40,12 +33,26 @@ import org.eclipse.jetty.util.thread.ThreadPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.DispatcherType;
-import java.io.File;
-import java.security.KeyStore;
-import java.util.EnumSet;
-import java.util.EventListener;
-import java.util.Map;
+import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
+import com.yammer.dropwizard.jetty.BiDiGzipHandler;
+import com.yammer.dropwizard.jetty.UnbrandedErrorHandler;
+import com.yammer.dropwizard.servlets.ThreadNameFilter;
+import com.yammer.dropwizard.tasks.TaskServlet;
+import com.yammer.dropwizard.util.Duration;
+import com.yammer.dropwizard.util.Size;
+import com.yammer.metrics.HealthChecks;
+import com.yammer.metrics.core.HealthCheck;
+import com.yammer.metrics.jetty.InstrumentedBlockingChannelConnector;
+import com.yammer.metrics.jetty.InstrumentedHandler;
+import com.yammer.metrics.jetty.InstrumentedQueuedThreadPool;
+import com.yammer.metrics.jetty.InstrumentedSelectChannelConnector;
+import com.yammer.metrics.jetty.InstrumentedSocketConnector;
+import com.yammer.metrics.jetty.InstrumentedSslSelectChannelConnector;
+import com.yammer.metrics.jetty.InstrumentedSslSocketConnector;
+import com.yammer.metrics.servlet.AdminServlet;
+import com.yammer.metrics.util.DeadlockHealthCheck;
 
 // TODO: 11/7/11 <coda> -- document ServerFactory
 // TODO: 11/7/11 <coda> -- document ServerFactory
@@ -221,6 +228,34 @@ public class ServerFactory {
             } else {
                 factory.setKeyStoreType(type);
             }
+        }
+        
+        for (String path : config.getSslConfiguration().getTrustStorePath().asSet()) {
+            factory.setTrustStore(path);
+        }
+
+        for (String password : config.getSslConfiguration().getTrustStorePassword().asSet()) {
+            factory.setTrustStorePassword(password);
+        }
+
+        for (String type : config.getSslConfiguration().getTrustStoreType().asSet()) {
+            if (type.startsWith("Windows-")) {
+                try {
+                    final KeyStore keyStore = KeyStore.getInstance(type);
+
+                    keyStore.load(null, null);
+                    factory.setTrustStore(keyStore);
+
+                } catch (Exception e) {
+                    throw new IllegalStateException("Windows key store not supported", e);
+                }
+            } else {
+                factory.setTrustStoreType(type);
+            }
+        }
+
+        for (Boolean needClientAuth : config.getSslConfiguration().getNeedClientAuth().asSet()) {
+            factory.setNeedClientAuth(needClientAuth);
         }
 
         factory.setIncludeProtocols(config.getSslConfiguration()
