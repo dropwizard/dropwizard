@@ -163,6 +163,9 @@
 	       <testResource>
 	           <directory>src/test/more-resources</directory>
 	       </testResource>
+	       <testResource>
+               <directory>src/test/resources</directory>
+           </testResource>
 	    </testResources>
     </build>
 </project>
