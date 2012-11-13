@@ -94,7 +94,8 @@ public class ServerFactory {
 
         server.addConnector(createExternalConnector());
 
-        if (config.getAdminPort() != config.getPort() ) {
+        // if we're dynamically allocating ports, no worries if they are the same (i.e. 0)
+        if (config.getAdminPort() == 0 || (config.getAdminPort() != config.getPort()) ) {
             server.addConnector(createInternalConnector());
         }
 

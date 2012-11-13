@@ -45,6 +45,7 @@ public class ServerCommand<T extends Configuration> extends EnvironmentCommand<T
         logBanner(environment.getName(), logger);
         try {
             server.start();
+            environment.serverStarted(server);
             server.join();
         } catch (Exception e) {
             logger.error("Unable to start server, shutting down", e);
