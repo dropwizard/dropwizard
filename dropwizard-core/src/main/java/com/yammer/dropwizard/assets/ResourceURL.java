@@ -12,6 +12,8 @@ import java.util.zip.ZipEntry;
  * Helper methods for dealing with {@link URL} objects for local resources.
  */
 public class ResourceURL {
+    private ResourceURL() { /* singleton */ }
+
     /**
      * Returns true if the URL passed to it corresponds to a directory.  This is slightly tricky due to some quirks
      * of the {@link JarFile} API.  Only jar:// and file:// URLs are supported.

@@ -1,107 +1,106 @@
 package com.yammer.dropwizard.assets.tests;
 
-import com.google.common.cache.CacheBuilderSpec;
 import com.google.common.io.Resources;
-import com.yammer.dropwizard.assets.AssetsBundle;
-import com.yammer.dropwizard.config.Environment;
 import com.yammer.dropwizard.assets.AssetServlet;
+import com.yammer.dropwizard.assets.AssetsBundle;
+import com.yammer.dropwizard.assets.ResourceURL;
+import com.yammer.dropwizard.config.Environment;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
-import javax.servlet.Servlet;
-import java.net.MalformedURLException;
+import java.net.URL;
 
 import static org.fest.assertions.api.Assertions.assertThat;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
-@SuppressWarnings("JUnitTestMethodWithNoAssertions")
 public class AssetsBundleTest {
-
     private final Environment environment = mock(Environment.class);
 
-    @Test
-    public void allDefaultsFromBundle() throws MalformedURLException {
-        final AssetsBundle bundle = new AssetsBundle();
-        bundle.run(environment);
+    private AssetServlet servlet;
+    private String servletPath;
 
-        assertServletInEnvironment(AssetsBundle.DEFAULT_PATH + '/',
-                AssetsBundle.DEFAULT_PATH + '/',
-                AssetsBundle.DEFAULT_CACHE_SPEC,
-                AssetsBundle.DEFAULT_INDEX_FILE);
+    @Test
+    public void hasADefaultPath() throws Exception {
+        runBundle(new AssetsBundle());
+
+        assertThat(servletPath)
+                .isEqualTo("/assets/*");
+
+        assertThat(servlet.getIndexFile())
+                .isEqualTo("index.htm");
+
+        assertThat(servlet.getResourceURL())
+                .isEqualTo(normalize("assets"));
+
+        assertThat(servlet.getUriPath())
+                .isEqualTo("/assets");
     }
 
     @Test
-    public void customPathChangesResourcePathAndUriPath() {
-        final String path = "/json";
+    public void canHaveCustomPaths() throws Exception {
+        runBundle(new AssetsBundle("/json"));
 
-        final AssetsBundle bundle = new AssetsBundle(path);
-        bundle.run(environment);
+        assertThat(servletPath)
+                .isEqualTo("/json/*");
 
-        assertServletInEnvironment(path + '/', path + '/',
-                AssetsBundle.DEFAULT_CACHE_SPEC, AssetsBundle.DEFAULT_INDEX_FILE);
+        assertThat(servlet.getIndexFile())
+                .isEqualTo("index.htm");
+
+        assertThat(servlet.getResourceURL())
+                .isEqualTo(normalize("json"));
+
+        assertThat(servlet.getUriPath())
+                .isEqualTo("/json");
     }
 
     @Test
-    public void customResourcePathAndUriPath() {
-        final String resourcePath = "/json/";
-        final String uriPath = "/js";
+    public void canHaveDifferentUriAndResourcePaths() throws Exception {
+        runBundle(new AssetsBundle("/json", "/what"));
 
-        final AssetsBundle bundle = new AssetsBundle(resourcePath, uriPath);
-        bundle.run(environment);
+        assertThat(servletPath)
+                .isEqualTo("/what/*");
 
-        assertServletInEnvironment(resourcePath, uriPath + '/',
-                AssetsBundle.DEFAULT_CACHE_SPEC, AssetsBundle.DEFAULT_INDEX_FILE);
+        assertThat(servlet.getIndexFile())
+                .isEqualTo("index.htm");
+
+        assertThat(servlet.getResourceURL())
+                .isEqualTo(normalize("json"));
+
+        assertThat(servlet.getUriPath())
+                .isEqualTo("/what");
     }
 
     @Test
-    public void customPathAndCacheBuilderSpec() {
-        final String path = "/json/";
-        final CacheBuilderSpec spec = CacheBuilderSpec.disableCaching();
+    public void canHaveDifferentUriAndResourcePathsAndIndexFilename() throws Exception {
+        runBundle(new AssetsBundle("/json", "/what", "index.txt"));
 
-        final AssetsBundle bundle = new AssetsBundle(path, spec);
-        bundle.run(environment);
+        assertThat(servletPath)
+                .isEqualTo("/what/*");
 
-        assertServletInEnvironment(path, path, spec, AssetsBundle.DEFAULT_INDEX_FILE);
+        assertThat(servlet.getIndexFile())
+                .isEqualTo("index.txt");
+
+        assertThat(servlet.getResourceURL())
+                .isEqualTo(normalize("json"));
+
+        assertThat(servlet.getUriPath())
+                .isEqualTo("/what");
     }
 
-    @Test
-    public void customResourcePathUriPathAndCacheBuilderSpec() {
-        final String resourcePath = "/json";
-        final String uriPath = "/js/";
-        final CacheBuilderSpec spec = CacheBuilderSpec.disableCaching();
-
-        final AssetsBundle bundle = new AssetsBundle(resourcePath, spec, uriPath);
-        bundle.run(environment);
-
-        assertServletInEnvironment(resourcePath + '/', uriPath, spec, AssetsBundle.DEFAULT_INDEX_FILE);
+    private URL normalize(String path) {
+        return ResourceURL.appendTrailingSlash(Resources.getResource(path));
     }
 
-    @Test
-    public void customResourcePathUriPathCacheBuilderSpecAndIndexFile() {
-        final String resourcePath = "/json/";
-        final String uriPath = "/js/";
-        final CacheBuilderSpec spec = CacheBuilderSpec.disableCaching();
-        final String indexFile = "my-index-file.html";
-
-        final AssetsBundle bundle = new AssetsBundle(resourcePath, spec, uriPath, indexFile);
+    private void runBundle(AssetsBundle bundle) {
         bundle.run(environment);
 
-        assertServletInEnvironment(resourcePath, uriPath, spec, indexFile);
-    }
+        final ArgumentCaptor<AssetServlet> servletCaptor = ArgumentCaptor.forClass(AssetServlet.class);
+        final ArgumentCaptor<String> pathCaptor = ArgumentCaptor.forClass(String.class);
 
-    private void assertServletInEnvironment(String resourcePath, String uriPath, CacheBuilderSpec spec, String indexFile) {
-        final ArgumentCaptor<Servlet> captureServlet = ArgumentCaptor.forClass(Servlet.class);
-        final ArgumentCaptor<String> captureUriPath = ArgumentCaptor.forClass(String.class);
-        verify(environment, times(1)).addServlet(captureServlet.capture(), captureUriPath.capture());
+        verify(environment).addServlet(servletCaptor.capture(), pathCaptor.capture());
 
-        assertThat(captureServlet.getValue()).isInstanceOf(AssetServlet.class);
-
-        final AssetServlet servlet = (AssetServlet) captureServlet.getValue();
-        assertThat(servlet.getResourceURL()).isEqualTo(Resources.getResource(resourcePath.substring(1)));
-        assertThat(servlet.getCacheBuilderSpec()).isSameAs(spec);
-        assertThat(servlet.getUriPath()).isEqualTo(uriPath);
-        assertThat(servlet.getIndexFile()).isEqualTo(indexFile);
-
-        assertThat(captureUriPath.getValue()).isEqualTo(uriPath + '*');
+        this.servlet = servletCaptor.getValue();
+        this.servletPath = pathCaptor.getValue();
     }
 }

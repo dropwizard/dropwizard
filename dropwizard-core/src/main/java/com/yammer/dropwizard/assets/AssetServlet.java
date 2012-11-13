@@ -1,10 +1,7 @@
 package com.yammer.dropwizard.assets;
 
 import com.google.common.base.Preconditions;
-import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheBuilderSpec;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 import com.google.common.hash.Hashing;
 import com.google.common.io.Resources;
 import com.google.common.net.HttpHeaders;
@@ -17,51 +14,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
 
 public class AssetServlet extends HttpServlet {
     private static final long serialVersionUID = 6393345594784987908L;
-
-    private static class AssetLoader extends CacheLoader<String, CachedAsset> {
-        private final String resourcePath;
-        private final String uriPath;
-        private final String indexFilename;
-
-        private AssetLoader(String resourcePath, String uriPath, String indexFilename) {
-            this.resourcePath = resourcePath.substring( 1 ) + "/";
-            this.uriPath = uriPath.endsWith("/") ? uriPath.substring(0, uriPath.length() - 1) : uriPath;
-            this.indexFilename = indexFilename;
-        }
-
-        @Override
-        public CachedAsset load(String key) throws Exception {
-            Preconditions.checkArgument(key.startsWith(uriPath));
-            
-            final String requestedResourcePath = key.substring(uriPath.length() + 1);
-            
-            final String absoluteRequestedResourcePath = this.resourcePath  + requestedResourcePath;
-            URL requestedResourceURL =Resources.getResource(absoluteRequestedResourcePath);
-
-            if (ResourceURL.isDirectory(requestedResourceURL)) {
-                if (indexFilename != null) {
-                    requestedResourceURL =Resources.getResource(absoluteRequestedResourcePath + "/" + indexFilename);
-                } else {
-                    // directory requested but no index file defined
-                    return null;
-                }
-            }
-
-            long lastModified = ResourceURL.getLastModified(requestedResourceURL);
-            if (lastModified < 1) {
-                // Something went wrong trying to get the last modified time: just use the current time
-                lastModified = System.currentTimeMillis();
-            }
-
-            // zero out the millis since the date we get back from If-Modified-Since will not have them
-            lastModified = (lastModified / 1000) * 1000;
-            return new CachedAsset(Resources.toByteArray(requestedResourceURL), lastModified);
-        }
-    }
 
     private static class CachedAsset {
         private final byte[] resource;
@@ -88,14 +45,11 @@ public class AssetServlet extends HttpServlet {
     }
 
     private static final String DEFAULT_MIME_TYPE = "text/html";
-    private static final String DEFAULT_INDEX_FILE = "index.htm";
 
     private final String resourcePath;
-    private final CacheBuilderSpec cacheBuilderSpec;
     private final String uriPath;
     private final String indexFile;
 
-    private final transient LoadingCache<String, CachedAsset> cache;
     private final transient MimeTypes mimeTypes;
 
 
@@ -107,44 +61,22 @@ public class AssetServlet extends HttpServlet {
      * is requested and {@code indexFile} is defined, then {@code AssetServlet} will attempt to serve a file with that
      * name in that directory. If a directory is requested and {@code indexFile} is null, it will serve a 404.
      *
-     * @param resourceURL      the base URL from which assets are loaded
-     * @param cacheBuilderSpec specification for the underlying cache
+     * @param resourcePath      the base URL from which assets are loaded
      * @param uriPath          the URI path fragment in which all requests are rooted
      * @param indexFile        the filename to use when directories are requested, or null to serve no indexes
      * @see CacheBuilderSpec
      */
     public AssetServlet(String resourcePath,
-                        CacheBuilderSpec cacheBuilderSpec,
                         String uriPath,
                         String indexFile) {
-        this.resourcePath = resourcePath.substring(1);
-        this.cacheBuilderSpec = cacheBuilderSpec;
-        this.uriPath = uriPath;
+        this.resourcePath = resourcePath.endsWith("/") ? resourcePath.substring(1) : (resourcePath.substring(1) + '/');
+        this.uriPath = uriPath.endsWith("/") ? uriPath.substring(0, uriPath.length() - 1) : uriPath;
         this.indexFile = indexFile;
-        this.cache = CacheBuilder.from(cacheBuilderSpec)
-                                 .build(new AssetLoader(resourcePath, uriPath, indexFile));
         this.mimeTypes = new MimeTypes();
-    }
-
-    /**
-     * Creates a new {@code AssetServlet}. This is provided for backwards-compatibility; see
-     * {@link AssetServlet#AssetServlet(URL, CacheBuilderSpec, String, String)} for details.
-     *
-     * @param resourcePath     the path of the directory in which assets are stored, starting with '/'
-     * @param cacheBuilderSpec specification for the underlying cache
-     * @param uriPath          the URI path fragment in which all requests are rooted
-     */
-    @SuppressWarnings("UnusedDeclaration")
-    public AssetServlet(String resourcePath, CacheBuilderSpec cacheBuilderSpec, String uriPath) {
-        this(resourcePath, cacheBuilderSpec, uriPath, DEFAULT_INDEX_FILE);
     }
 
     public URL getResourceURL() {
         return Resources.getResource( resourcePath );
-    }
-
-    public CacheBuilderSpec getCacheBuilderSpec() {
-        return cacheBuilderSpec;
     }
 
     public String getUriPath() {
@@ -159,7 +91,7 @@ public class AssetServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req,
                          HttpServletResponse resp) throws ServletException, IOException {
         try {
-            final CachedAsset cachedAsset = cache.getUnchecked(req.getRequestURI());
+            final CachedAsset cachedAsset = loadAsset(req.getRequestURI());
             if (cachedAsset == null) {
                 resp.sendError(HttpServletResponse.SC_NOT_FOUND);
                 return;
@@ -188,7 +120,37 @@ public class AssetServlet extends HttpServlet {
             }
         } catch (RuntimeException ignored) {
             resp.sendError(HttpServletResponse.SC_NOT_FOUND);
+        } catch (URISyntaxException ignored) {
+            resp.sendError(HttpServletResponse.SC_NOT_FOUND);
         }
+    }
+
+    private CachedAsset loadAsset(String key) throws URISyntaxException, IOException {
+        Preconditions.checkArgument(key.startsWith(uriPath));
+
+        final String requestedResourcePath = key.substring(uriPath.length() + 1);
+
+        final String absoluteRequestedResourcePath = this.resourcePath + requestedResourcePath;
+        URL requestedResourceURL = Resources.getResource(absoluteRequestedResourcePath);
+
+        if (ResourceURL.isDirectory(requestedResourceURL)) {
+            if (indexFile != null) {
+                requestedResourceURL = Resources.getResource(absoluteRequestedResourcePath + '/' + indexFile);
+            } else {
+                // directory requested but no index file defined
+                return null;
+            }
+        }
+
+        long lastModified = ResourceURL.getLastModified(requestedResourceURL);
+        if (lastModified < 1) {
+            // Something went wrong trying to get the last modified time: just use the current time
+            lastModified = System.currentTimeMillis();
+        }
+
+        // zero out the millis since the date we get back from If-Modified-Since will not have them
+        lastModified = (lastModified / 1000) * 1000;
+        return new CachedAsset(Resources.toByteArray(requestedResourceURL), lastModified);
     }
 
     private boolean isCachedClientSide(HttpServletRequest req, CachedAsset cachedAsset) {

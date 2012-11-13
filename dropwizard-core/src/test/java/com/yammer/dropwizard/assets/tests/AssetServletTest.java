@@ -1,6 +1,5 @@
 package com.yammer.dropwizard.assets.tests;
 
-import com.google.common.cache.CacheBuilderSpec;
 import com.google.common.net.HttpHeaders;
 import com.yammer.dropwizard.assets.AssetServlet;
 import org.eclipse.jetty.http.MimeTypes;
@@ -10,7 +9,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import static org.fest.assertions.api.Assertions.*;
+import static org.fest.assertions.api.Assertions.assertThat;
 
 @SuppressWarnings({ "serial", "StaticNonFinalField", "StaticVariableMayNotBeInitialized" })
 public class AssetServletTest {
@@ -18,7 +17,6 @@ public class AssetServletTest {
     private static final String DUMMY_SERVLET = "/dummy_servlet/";
     private static final String NOINDEX_SERVLET = "/noindex_servlet/";
     private static final String RESOURCE_PATH = "/assets";
-    private static final CacheBuilderSpec CACHE_BUILDER_SPEC = CacheBuilderSpec.parse("maximumSize=100");
 
     private HttpTester request;
     private HttpTester response;
@@ -27,13 +25,13 @@ public class AssetServletTest {
 
     public static class DummyAssetServlet extends AssetServlet {
         public DummyAssetServlet() {
-            super(RESOURCE_PATH, CACHE_BUILDER_SPEC, DUMMY_SERVLET, "index.htm");
+            super(RESOURCE_PATH, DUMMY_SERVLET, "index.htm");
         }
     }
 
     public static class NoIndexAssetServlet extends AssetServlet {
         public NoIndexAssetServlet() {
-            super(RESOURCE_PATH, CACHE_BUILDER_SPEC, DUMMY_SERVLET, null);
+            super(RESOURCE_PATH, DUMMY_SERVLET, null);
         }
     }
 
