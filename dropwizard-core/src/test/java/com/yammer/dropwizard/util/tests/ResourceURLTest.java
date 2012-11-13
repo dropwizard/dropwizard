@@ -114,33 +114,6 @@ public class ResourceURLTest {
     }
 
     @Test
-    public void resolveRelativeUrlResolvesPathsCorrectly() throws Exception {
-        final URL url = new URL("file:/example/directory/");
-        final URL newUrl = ResourceURL.resolveRelativeURL(url, "foo");
-
-        assertThat(newUrl.toExternalForm())
-                .isEqualTo("file:/example/directory/foo");
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void resolveRelativeUrlThrowsExceptionsIfProtocolIsOverridden() throws Exception {
-        final URL url = new URL("file:/example/directory/");
-        ResourceURL.resolveRelativeURL(url, "http://");
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void resolveRelativeUrlThrowsExceptionsIfAuthorityIsOverridden() throws Exception {
-        final URL url = new URL("file:/example/directory/");
-        ResourceURL.resolveRelativeURL(url, "//foo/");
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void resolveRelativeUrlThrowsExceptionsIfPathIsEscaped() throws Exception {
-        final URL url = new URL("file:/example/directory/");
-        ResourceURL.resolveRelativeURL(url, "../../alternate/directory");
-    }
-
-    @Test
     public void getLastModifiedReturnsTheLastModifiedTimeOfAFile() throws Exception {
         final URL url = file.toURI().toURL();
         final long lastModified = ResourceURL.getLastModified(url);
