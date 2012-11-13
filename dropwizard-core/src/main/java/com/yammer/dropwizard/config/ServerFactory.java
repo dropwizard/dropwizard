@@ -224,6 +224,34 @@ public class ServerFactory {
                 factory.setKeyStoreType(type);
             }
         }
+        
+        for (String path : config.getSslConfiguration().getTrustStorePath().asSet()) {
+            factory.setTrustStore(path);
+        }
+
+        for (String password : config.getSslConfiguration().getTrustStorePassword().asSet()) {
+            factory.setTrustStorePassword(password);
+        }
+
+        for (String type : config.getSslConfiguration().getTrustStoreType().asSet()) {
+            if (type.startsWith("Windows-")) {
+                try {
+                    final KeyStore keyStore = KeyStore.getInstance(type);
+
+                    keyStore.load(null, null);
+                    factory.setTrustStore(keyStore);
+
+                } catch (Exception e) {
+                    throw new IllegalStateException("Windows key store not supported", e);
+                }
+            } else {
+                factory.setTrustStoreType(type);
+            }
+        }
+
+        for (Boolean needClientAuth : config.getSslConfiguration().getNeedClientAuth().asSet()) {
+            factory.setNeedClientAuth(needClientAuth);
+        }
 
         factory.setIncludeProtocols(config.getSslConfiguration()
                                           .getSupportedProtocols()
