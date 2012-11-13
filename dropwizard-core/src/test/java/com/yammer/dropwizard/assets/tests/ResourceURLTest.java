@@ -1,9 +1,9 @@
-package com.yammer.dropwizard.util.tests;
+package com.yammer.dropwizard.assets.tests;
 
 import com.google.common.io.Files;
 import com.google.common.io.Resources;
-import com.yammer.dropwizard.util.ResourceNotFoundException;
-import com.yammer.dropwizard.util.ResourceURL;
+import com.yammer.dropwizard.assets.ResourceNotFoundException;
+import com.yammer.dropwizard.assets.ResourceURL;
 import org.junit.Before;
 import org.junit.Test;
 

@@ -1,4 +1,4 @@
-package com.yammer.dropwizard.util;
+package com.yammer.dropwizard.assets;
 
 import java.io.File;
 import java.io.IOException;

@@ -1,13 +1,9 @@
-package com.yammer.dropwizard.bundles;
+package com.yammer.dropwizard.assets;
 
 import com.google.common.cache.CacheBuilderSpec;
-import com.google.common.io.Resources;
 import com.yammer.dropwizard.Bundle;
 import com.yammer.dropwizard.config.Bootstrap;
 import com.yammer.dropwizard.config.Environment;
-import com.yammer.dropwizard.servlets.AssetServlet;
-
-import java.net.URL;
 
 import static com.google.common.base.Preconditions.checkArgument;
 

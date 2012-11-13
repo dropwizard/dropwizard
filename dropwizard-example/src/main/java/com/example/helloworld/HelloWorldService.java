@@ -12,7 +12,7 @@ import com.example.helloworld.resources.PersonResource;
 import com.example.helloworld.resources.ProtectedResource;
 import com.yammer.dropwizard.Service;
 import com.yammer.dropwizard.auth.basic.BasicAuthProvider;
-import com.yammer.dropwizard.bundles.AssetsBundle;
+import com.yammer.dropwizard.assets.AssetsBundle;
 import com.yammer.dropwizard.config.Bootstrap;
 import com.yammer.dropwizard.config.Environment;
 import com.yammer.dropwizard.db.DatabaseConfiguration;

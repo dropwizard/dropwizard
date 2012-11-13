@@ -1,10 +1,10 @@
-package com.yammer.dropwizard.bundles.tests;
+package com.yammer.dropwizard.assets.tests;
 
 import com.google.common.cache.CacheBuilderSpec;
 import com.google.common.io.Resources;
-import com.yammer.dropwizard.bundles.AssetsBundle;
+import com.yammer.dropwizard.assets.AssetsBundle;
 import com.yammer.dropwizard.config.Environment;
-import com.yammer.dropwizard.servlets.AssetServlet;
+import com.yammer.dropwizard.assets.AssetServlet;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 

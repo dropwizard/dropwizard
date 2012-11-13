@@ -1,9 +1,8 @@
-package com.yammer.dropwizard.servlets.tests;
+package com.yammer.dropwizard.assets.tests;
 
 import com.google.common.cache.CacheBuilderSpec;
-import com.google.common.io.Resources;
 import com.google.common.net.HttpHeaders;
-import com.yammer.dropwizard.servlets.AssetServlet;
+import com.yammer.dropwizard.assets.AssetServlet;
 import org.eclipse.jetty.http.MimeTypes;
 import org.eclipse.jetty.testing.HttpTester;
 import org.eclipse.jetty.testing.ServletTester;

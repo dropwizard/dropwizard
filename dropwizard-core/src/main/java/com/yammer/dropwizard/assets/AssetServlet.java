@@ -1,4 +1,4 @@
-package com.yammer.dropwizard.servlets;
+package com.yammer.dropwizard.assets;
 
 import com.google.common.base.Preconditions;
 import com.google.common.cache.CacheBuilder;
@@ -8,7 +8,6 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.hash.Hashing;
 import com.google.common.io.Resources;
 import com.google.common.net.HttpHeaders;
-import com.yammer.dropwizard.util.ResourceURL;
 import org.eclipse.jetty.http.MimeTypes;
 import org.eclipse.jetty.io.Buffer;
 
