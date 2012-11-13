@@ -120,7 +120,6 @@ public class AssetsBundle implements Bundle {
     }
 
     private AssetServlet createServlet() {
-        final URL resourceURL = Resources.getResource(resourcePath.substring(1));
-        return new AssetServlet(resourceURL, cacheBuilderSpec, uriPath, indexFile);
+        return new AssetServlet(resourcePath, cacheBuilderSpec, uriPath, indexFile);
     }
 }
