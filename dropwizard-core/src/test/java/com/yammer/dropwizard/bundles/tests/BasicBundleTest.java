@@ -11,7 +11,7 @@ import org.junit.Test;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.*;
 
-public class JavaBundleTest {
+public class BasicBundleTest {
     private final ObjectMapperFactory factory = mock(ObjectMapperFactory.class);
     private final Environment environment = mock(Environment.class);
     private final BasicBundle bundle = new BasicBundle();
