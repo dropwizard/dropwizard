@@ -72,31 +72,6 @@ public class ResourceURL {
     }
 
     /**
-     * Resolves a path in the context of a given URL, and returns the resulting {@link URL} object.  Similar to
-     * {@link URL#URL(URL, String)}, except that the resulting URL is guaranteed to be rooted in {@code context}:
-     * {@code path} cannot override the protocol or authority components, nor can '..' tricks be used to escape the
-     * context.
-     *
-     * @param context A URL describing the context in which path should be resolved
-     * @param path    the relative path to resolve
-     * @return a new URL object corresponding to the resolved path
-     */
-    public static URL resolveRelativeURL(URL context, String path) {
-        final URL newURL;
-        try {
-            newURL = new URL(context, path);
-        } catch (MalformedURLException ignored) {
-            throw new IllegalArgumentException("Failed to make a URL out of " + context + " and " + path);
-        }
-        // This is pretty blunt, but it seems to work:
-        if (!newURL.toExternalForm().startsWith(context.toExternalForm())) {
-            throw new IllegalArgumentException("Resolved URL " + newURL.toExternalForm() +
-                    " not within original context " + context.toExternalForm());
-        }
-        return newURL;
-    }
-
-    /**
      * Returns the last modified time for file:// and jar:// URLs.  This is slightly tricky for a couple of reasons:
      * 1) calling getConnection on a {@link URLConnection} to a file opens an {@link InputStream} to that file that must
      * then be closed — though this is not true for {@code URLConnection}s to jar resources

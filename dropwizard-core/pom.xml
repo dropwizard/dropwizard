@@ -158,4 +158,11 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+    <build>
+	    <testResources>
+	       <testResource>
+	           <directory>src/test/more-resources</directory>
+	       </testResource>
+	    </testResources>
+    </build>
 </project>

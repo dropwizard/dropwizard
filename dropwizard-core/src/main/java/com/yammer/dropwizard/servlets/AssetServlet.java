@@ -24,12 +24,12 @@ public class AssetServlet extends HttpServlet {
     private static final long serialVersionUID = 6393345594784987908L;
 
     private static class AssetLoader extends CacheLoader<String, CachedAsset> {
-        private final URL resourceURL;
+        private final String resourcePath;
         private final String uriPath;
         private final String indexFilename;
 
-        private AssetLoader(URL resourceURL, String uriPath, String indexFilename) {
-            this.resourceURL = ResourceURL.appendTrailingSlash(resourceURL);
+        private AssetLoader(String resourcePath, String uriPath, String indexFilename) {
+            this.resourcePath = resourcePath.substring( 1 ) + "/";
             this.uriPath = uriPath.endsWith("/") ? uriPath.substring(0, uriPath.length() - 1) : uriPath;
             this.indexFilename = indexFilename;
         }
@@ -37,13 +37,15 @@ public class AssetServlet extends HttpServlet {
         @Override
         public CachedAsset load(String key) throws Exception {
             Preconditions.checkArgument(key.startsWith(uriPath));
+            
             final String requestedResourcePath = key.substring(uriPath.length() + 1);
-            URL requestedResourceURL = ResourceURL.resolveRelativeURL(this.resourceURL, requestedResourcePath);
+            
+            final String absoluteRequestedResourcePath = this.resourcePath  + requestedResourcePath;
+            URL requestedResourceURL =Resources.getResource(absoluteRequestedResourcePath);
 
             if (ResourceURL.isDirectory(requestedResourceURL)) {
                 if (indexFilename != null) {
-                    requestedResourceURL = ResourceURL.resolveRelativeURL(
-                            ResourceURL.appendTrailingSlash(requestedResourceURL), indexFilename);
+                    requestedResourceURL =Resources.getResource(absoluteRequestedResourcePath + "/" + indexFilename);
                 } else {
                     // directory requested but no index file defined
                     return null;
@@ -89,7 +91,7 @@ public class AssetServlet extends HttpServlet {
     private static final String DEFAULT_MIME_TYPE = "text/html";
     private static final String DEFAULT_INDEX_FILE = "index.htm";
 
-    private final URL resourceURL;
+    private final String resourcePath;
     private final CacheBuilderSpec cacheBuilderSpec;
     private final String uriPath;
     private final String indexFile;
@@ -112,16 +114,16 @@ public class AssetServlet extends HttpServlet {
      * @param indexFile        the filename to use when directories are requested, or null to serve no indexes
      * @see CacheBuilderSpec
      */
-    public AssetServlet(URL resourceURL,
+    public AssetServlet(String resourcePath,
                         CacheBuilderSpec cacheBuilderSpec,
                         String uriPath,
                         String indexFile) {
-        this.resourceURL = resourceURL;
+        this.resourcePath = resourcePath.substring(1);
         this.cacheBuilderSpec = cacheBuilderSpec;
         this.uriPath = uriPath;
         this.indexFile = indexFile;
         this.cache = CacheBuilder.from(cacheBuilderSpec)
-                                 .build(new AssetLoader(resourceURL, uriPath, indexFile));
+                                 .build(new AssetLoader(resourcePath, uriPath, indexFile));
         this.mimeTypes = new MimeTypes();
     }
 
@@ -135,11 +137,11 @@ public class AssetServlet extends HttpServlet {
      */
     @SuppressWarnings("UnusedDeclaration")
     public AssetServlet(String resourcePath, CacheBuilderSpec cacheBuilderSpec, String uriPath) {
-        this(Resources.getResource(resourcePath.substring(1)), cacheBuilderSpec, uriPath, DEFAULT_INDEX_FILE);
+        this(resourcePath, cacheBuilderSpec, uriPath, DEFAULT_INDEX_FILE);
     }
 
     public URL getResourceURL() {
-        return resourceURL;
+        return Resources.getResource( resourcePath );
     }
 
     public CacheBuilderSpec getCacheBuilderSpec() {
