@@ -13,7 +13,7 @@
 
     <properties>
         <jetty.version>8.1.8.v20121106</jetty.version>
-        <jackson.version>2.1.0</jackson.version>
+        <jackson.version>2.1.1</jackson.version>
         <slf4j.version>1.7.2</slf4j.version>
         <logback.version>1.0.7</logback.version>
     </properties>
@@ -77,7 +77,7 @@
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-guava</artifactId>
-            <version>${jackson.version}</version>
+            <version>2.1.0</version>
         </dependency>
         <dependency>
             <groupId>net.sourceforge.argparse4j</groupId>
