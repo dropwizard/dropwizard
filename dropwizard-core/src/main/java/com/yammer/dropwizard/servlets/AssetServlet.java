@@ -32,7 +32,7 @@ public class AssetServlet extends HttpServlet {
         private final String indexFilename;
 
         private AssetLoader(String resourcePath, String uriPath, String indexFilename) {
-            this.resourcePath = resourcePath.substring( 1 ) + "/";
+            this.resourcePath = resourcePath.substring(1) + "/";
             this.uriPath = uriPath.endsWith("/") ? uriPath.substring(0, uriPath.length() - 1) : uriPath;
             this.indexFilename = indexFilename;
         }
@@ -144,7 +144,7 @@ public class AssetServlet extends HttpServlet {
     }
 
     public URL getResourceURL() {
-        return Resources.getResource( resourcePath );
+        return Resources.getResource(resourcePath);
     }
 
     public CacheBuilderSpec getCacheBuilderSpec() {
@@ -187,8 +187,7 @@ public class AssetServlet extends HttpServlet {
             resp.setDateHeader(HttpHeaders.LAST_MODIFIED, cachedAsset.getLastModifiedTime());
             resp.setHeader(HttpHeaders.ETAG, cachedAsset.getETag());
 
-            final String contentTypeOfFile = mimeTypes.getContentType(req
-                .getRequestURI());
+            final String contentTypeOfFile = mimeTypes.getContentType(req.getRequestURI());
             MediaType mediaType = DEFAULT_MEDIA_TYPE;
             
             // FileTypeMap will map unknown types to octet-stream, ignore

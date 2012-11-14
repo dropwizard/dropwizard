@@ -56,7 +56,7 @@ public class AssetServletTest {
     
     @Test
     public void servesFilesFromRootsWithSameName() throws Exception {
-        request.setURI( DUMMY_SERVLET + "example2.txt" );
+        request.setURI(DUMMY_SERVLET + "example2.txt");
         response.parse(servletTester.getResponses(request.generate()));
         assertThat(response.getStatus())
                 .isEqualTo(200);
