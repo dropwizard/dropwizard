@@ -9,7 +9,7 @@ import java.util.List;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * An abstract base class for Guice-injected Hibernate DAO classes.
+ * An abstract base class for Hibernate DAO classes.
  *
  * @param <E> the class which this DAO manages
  * @author coda
