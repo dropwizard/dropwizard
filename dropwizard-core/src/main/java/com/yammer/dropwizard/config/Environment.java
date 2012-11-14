@@ -68,7 +68,6 @@ public class Environment extends AbstractLifeCycle {
     private SessionHandler sessionHandler;
     private ServletContainer jerseyServletContainer;
 
-    private Server server;
     private ServerLifecycleListener serverListener;
 
     /**
@@ -569,30 +568,11 @@ public class Environment extends AbstractLifeCycle {
         return name;
     }
 
-    /**
-     * Set the Jetty server instance of the environment, notify the listener
-     *
-     * @param server
-     * @throws IllegalStateException if the server has already been set for this environment
-     */
-    public void serverStarted(Server server) {
-        if (this.server != null) {
-            throw new IllegalStateException("Server already set");
-        }
-        this.server = server;
-        if (serverListener != null) {
-            serverListener.serverStarted();
-        }
-    }
-
-    /**
-     * @return the Jetty server instance
-     */
-    public Server getServer() {
-        return server;
+    public ServerLifecycleListener getServerListener() {
+        return serverListener;
     }
 
     public void setServerLifecycleListener(ServerLifecycleListener listener) {
-        serverListener = listener;
+        this.serverListener = listener;
     }
 }

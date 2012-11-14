@@ -6,6 +6,7 @@ import com.yammer.dropwizard.Service;
 import com.yammer.dropwizard.config.Configuration;
 import com.yammer.dropwizard.config.Environment;
 import com.yammer.dropwizard.config.ServerFactory;
+import com.yammer.dropwizard.lifecycle.ServerLifecycleListener;
 import net.sourceforge.argparse4j.inf.Namespace;
 import org.eclipse.jetty.server.Server;
 import org.slf4j.Logger;
@@ -45,7 +46,10 @@ public class ServerCommand<T extends Configuration> extends EnvironmentCommand<T
         logBanner(environment.getName(), logger);
         try {
             server.start();
-            environment.serverStarted(server);
+            final ServerLifecycleListener listener = environment.getServerListener();
+            if (listener != null) {
+                listener.serverStarted(server);
+            }
             server.join();
         } catch (Exception e) {
             logger.error("Unable to start server, shutting down", e);
