@@ -1,6 +1,7 @@
 package com.yammer.dropwizard.migrations;
 
 import com.google.common.base.Charsets;
+import com.google.common.base.Joiner;
 import com.yammer.dropwizard.config.Configuration;
 import com.yammer.dropwizard.db.ConfigurationStrategy;
 import liquibase.Liquibase;
@@ -9,6 +10,7 @@ import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
 
 import java.io.OutputStreamWriter;
+import java.util.List;
 
 public class DbMigrateCommand<T extends Configuration> extends AbstractLiquibaseCommand<T> {
     public DbMigrateCommand(ConfigurationStrategy<T> strategy, Class<T> configurationClass) {
@@ -23,30 +25,45 @@ public class DbMigrateCommand<T extends Configuration> extends AbstractLiquibase
                  .action(Arguments.storeTrue())
                  .dest("dry-run")
                  .setDefault(Boolean.FALSE)
-                 .help("Output the DDL to stdout, don't run it");
+                 .help("output the DDL to stdout, don't run it");
+
         subparser.addArgument("-c", "--count")
                  .type(Integer.class)
                  .dest("count")
-                 .help("Only apply the next N change sets");
+                 .help("only apply the next N change sets");
+
+        subparser.addArgument("-i", "--include")
+                 .action(Arguments.append())
+                 .dest("contexts")
+                 .help("include change sets from the given context");
     }
 
     @Override
     @SuppressWarnings("UseOfSystemOutOrSystemErr")
     public void run(Namespace namespace, Liquibase liquibase) throws Exception {
+        final String context = getContext(namespace);
         final Integer count = namespace.getInt("count");
         final Boolean dryRun = namespace.getBoolean("dry-run");
         if (count != null) {
             if (dryRun) {
-                liquibase.update(count, "", new OutputStreamWriter(System.out, Charsets.UTF_8));
+                liquibase.update(count, context, new OutputStreamWriter(System.out, Charsets.UTF_8));
             } else {
-                liquibase.update(count, "");
+                liquibase.update(count, context);
             }
         } else {
             if (dryRun) {
-                liquibase.update("", new OutputStreamWriter(System.out, Charsets.UTF_8));
+                liquibase.update(context, new OutputStreamWriter(System.out, Charsets.UTF_8));
             } else {
-                liquibase.update("");
+                liquibase.update(context);
             }
         }
+    }
+
+    private String getContext(Namespace namespace) {
+        final List<Object> contexts = namespace.getList("contexts");
+        if (contexts == null) {
+            return "";
+        }
+        return Joiner.on(',').join(contexts);
     }
 }
