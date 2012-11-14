@@ -86,21 +86,6 @@ public class Configuration {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) { return true; }
-        if ((obj == null) || (getClass() != obj.getClass())) { return false; }
-        final Configuration that = (Configuration) obj;
-        return httpConfiguration.equals(that.httpConfiguration) && loggingConfiguration.equals(that.loggingConfiguration);
-    }
-
-    @Override
-    public int hashCode() {
-        int result = httpConfiguration.hashCode();
-        result = (31 * result) + loggingConfiguration.hashCode();
-        return result;
-    }
-
-    @Override
     public String toString() {
         return Objects.toStringHelper(this).add("http", httpConfiguration).add("logging",
                                                                                loggingConfiguration).toString();
