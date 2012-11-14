@@ -6,6 +6,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheBuilderSpec;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.hash.Hashing;
 import com.google.common.io.Resources;
 import com.google.common.net.HttpHeaders;
@@ -203,10 +204,7 @@ public class AssetServlet extends HttpServlet {
             
             resp.setContentType(mediaType.type() + "/" + mediaType.subtype());
 
-            // most default servlet implementations will not send a charset; however, it is a good idea to send it on 
-            // documents that can't specify it themselves (i.e., html, xhmlt, and xml)
-            if (mediaType.charset().isPresent() 
-                && mediaType!=MediaType.HTML_UTF_8 && mediaType != MediaType.XHTML_UTF_8 && mediaType!=MediaType.XML_UTF_8) {
+            if (mediaType.is(MediaType.ANY_TEXT_TYPE) && mediaType.charset().isPresent()) {
                 resp.setCharacterEncoding(mediaType.charset().get().toString());                
             }
 

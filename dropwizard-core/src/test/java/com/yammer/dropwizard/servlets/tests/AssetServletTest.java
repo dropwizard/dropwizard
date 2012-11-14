@@ -183,7 +183,7 @@ public class AssetServletTest {
         assertThat(response.getStatus())
                 .isEqualTo(200);
         assertThat(response.getContentType())
-                .isEqualTo(MimeTypes.TEXT_HTML);
+                .isEqualTo(MimeTypes.TEXT_HTML_UTF_8);
     }
 
     @Test
