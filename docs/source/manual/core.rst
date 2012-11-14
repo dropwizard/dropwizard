@@ -403,38 +403,7 @@ routes all ``java.util.logging``, Log4j, and Apache Commons Logging usage throug
 .. _Logback: http://logback.qos.ch/
 .. _slf4j: http://www.slf4j.org/
 
-.. _man-core-logging-class:
-
-The ``Log`` class
------------------
-
-Dropwizard comes with a ``Log`` convenience class, since most of the logging APIs are horrendous.
-
-.. code-block:: java
-
-    public class Example {
-        private static final Log LOG = Log.forClass(Example.class);
-
-        public long fetchAge(long userId) {
-            LOG.debug("Fetching age for user {}", userId);
-
-            try {
-                final User user = users.find(userId);
-                return user.getAge();
-            } catch (IOException e) {
-                LOG.error(e, "Error connecting to user store for user {}", userId);
-            } catch (UserNotFoundException e) {
-                LOG.warn(e, "Unable to fetch age for user {}", userId);
-            }
-        }
-    }
-
-``Log`` provides the same statement formatting amenities as SLF4J, so you can pass arbitrary objects
-in without having to concatenate strings. Instances of ``{}`` in the log message are replaced with
-the string representation of the objects. To log exceptions, just pass the ``Throwable`` instance as
-the first parameter and it'll log the exception type, message, and stack trace.
-
-The ``Log`` class provides the following logging levels:
+slf4j provides the following logging levels:
 
 ``ERROR``
   Error events that might still allow the application to continue running.

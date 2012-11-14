@@ -31,7 +31,7 @@ Because you can't be a web service without HTTP, Dropwizard uses the Jetty_ HTTP
 an incredibly tuned HTTP server directly into your project. Instead of handing your service off to a
 complicated application server, Dropwizard projects have a ``main`` method which spins up an HTTP
 server. Running your service as a simple process eliminates a number of unsavory aspects of Java in
-production (no PermGem issues, no application server configuration and maintenance, no arcane
+production (no PermGen issues, no application server configuration and maintenance, no arcane
 deployment tools, no ``ClassLoader`` troubles, no hidden application logs, no trying to tune a
 single garbage collector to work with multiple application workloads) and allows you to use all of
 the existing Unix process management tools instead.

@@ -1,12 +1,11 @@
 package com.yammer.dropwizard.validation;
 
+import com.yammer.dropwizard.util.SizeUnit;
+
 import javax.validation.Constraint;
 import javax.validation.OverridesAttribute;
 import javax.validation.Payload;
 import javax.validation.ReportAsSingleViolation;
-
-import com.yammer.dropwizard.util.SizeUnit;
-
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
@@ -15,7 +14,8 @@ import static java.lang.annotation.ElementType.*;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * The annotated element has to be in the appropriate range. Apply on {@link Size}
+ * The annotated element has to be in the appropriate range. Apply on
+ * {@link com.yammer.dropwizard.util.Size} instances.
  */
 @Documented
 @Constraint(validatedBy = { })
@@ -41,7 +41,7 @@ public @interface SizeRange {
 
     Class<?>[] groups() default { };
 
-    Class<? extends Payload>[] payload() default { };
+    @SuppressWarnings("UnusedDeclaration") Class<? extends Payload>[] payload() default { };
 
     /**
      * Defines several {@code @SizeRange} annotations on the same element.

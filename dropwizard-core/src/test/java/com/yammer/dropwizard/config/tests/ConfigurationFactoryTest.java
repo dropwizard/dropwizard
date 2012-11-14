@@ -5,6 +5,7 @@ import com.google.common.io.Resources;
 import com.yammer.dropwizard.config.ConfigurationException;
 import com.yammer.dropwizard.config.ConfigurationFactory;
 import com.yammer.dropwizard.validation.Validator;
+import org.junit.Before;
 import org.junit.Test;
 
 import javax.validation.constraints.NotNull;
@@ -29,14 +30,18 @@ public class ConfigurationFactoryTest {
     }
 
     private final Validator validator = new Validator();
-    private final ConfigurationFactory<Example> factory = ConfigurationFactory.forClass(Example.class,
-                                                                                        validator);
-    private final File malformedFile = new File(Resources.getResource("factory-test-malformed.yml")
-                                                         .getFile());
-    private final File invalidFile = new File(Resources.getResource("factory-test-invalid.yml")
-                                                       .getFile());
-    private final File validFile = new File(Resources.getResource("factory-test-valid.yml")
-                                                     .getFile());
+    private final ConfigurationFactory<Example> factory =
+            ConfigurationFactory.forClass(Example.class, validator);
+    private File malformedFile;
+    private File invalidFile;
+    private File validFile;
+
+    @Before
+    public void setUp() throws Exception {
+        this.malformedFile = new File(Resources.getResource("factory-test-malformed.yml").toURI());
+        this.invalidFile = new File(Resources.getResource("factory-test-invalid.yml").toURI());
+        this.validFile = new File(Resources.getResource("factory-test-valid.yml").toURI());
+    }
 
     @Test
     public void loadsValidConfigFiles() throws Exception {

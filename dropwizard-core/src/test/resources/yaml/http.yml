@@ -19,7 +19,7 @@ minThreads: 89
 rootPath: "/services/*"
 connectorType: legacy
 maxIdleTime: 2s
-acceptorThreadCount: 2
+acceptorThreads: 2
 acceptorThreadPriorityOffset: -3
 acceptQueueSize: 100
 maxBufferCount: 512

@@ -11,6 +11,6 @@ class UploadResource extends Logging {
   @POST
   @Timed
   def upload(body: String) {
-    log.info("New upload: %s", body)
+    logger.info("New upload: %s", body)
   }
 }

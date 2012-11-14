@@ -38,13 +38,13 @@ public class JDBITest {
     }
 
     private final Environment environment = mock(Environment.class);
-    private final DBIFactory factory = new DBIFactory(environment);
+    private final DBIFactory factory = new DBIFactory();
     private final List<Managed> managed = Lists.newArrayList();
-    private DBI jdbi;
+    private DBI dbi;
 
     @Before
     public void setUp() throws Exception {
-        this.jdbi = factory.build(hsqlConfig, "hsql");
+        this.dbi = factory.build(environment, hsqlConfig, "hsql");
         final ArgumentCaptor<Managed> managedCaptor = ArgumentCaptor.forClass(Managed.class);
         verify(environment).manage(managedCaptor.capture());
         managed.addAll(managedCaptor.getAllValues());
@@ -52,7 +52,7 @@ public class JDBITest {
             obj.start();
         }
 
-        final Handle handle = jdbi.open();
+        final Handle handle = dbi.open();
         try {
             handle.createCall("DROP TABLE people IF EXISTS").invoke();
             handle.createCall(
@@ -83,21 +83,18 @@ public class JDBITest {
         for (Managed obj : managed) {
             obj.stop();
         }
-        this.jdbi = null;
+        this.dbi = null;
     }
 
     @Test
     public void createsAValidDBI() throws Exception {
-        final Handle handle = jdbi.open();
-        try {
-            final Query<String> names = handle.createQuery("SELECT name FROM people WHERE age < ?")
-                                              .bind(0, 50)
-                                              .map(StringMapper.FIRST);
-            assertThat(ImmutableList.copyOf(names))
-                    .containsOnly("Coda Hale", "Kris Gale");
-        } finally {
-            handle.close();
-        }
+        final Handle handle = dbi.open();
+
+        final Query<String> names = handle.createQuery("SELECT name FROM people WHERE age < ?")
+                                          .bind(0, 50)
+                                          .map(StringMapper.FIRST);
+        assertThat(ImmutableList.copyOf(names))
+                .containsOnly("Coda Hale", "Kris Gale");
     }
 
     @Test
@@ -107,53 +104,41 @@ public class JDBITest {
 
     @Test
     public void sqlObjectsCanAcceptOptionalParams() throws Exception {
-        final PersonDAO dao = jdbi.open(PersonDAO.class);
-        try {
-            assertThat(dao.findByName(Optional.of("Coda Hale")))
-                    .isEqualTo("Coda Hale");
-        } finally {
-            jdbi.close(dao);
-        }
+        final PersonDAO dao = dbi.open(PersonDAO.class);
+
+        assertThat(dao.findByName(Optional.of("Coda Hale")))
+                .isEqualTo("Coda Hale");
     }
 
     @Test
     public void sqlObjectsCanReturnImmutableLists() throws Exception {
-        final PersonDAO dao = jdbi.open(PersonDAO.class);
-        try {
-            assertThat(dao.findAllNames())
-                    .containsOnly("Coda Hale", "Kris Gale", "Old Guy");
-        } finally {
-            jdbi.close(dao);
-        }
+        final PersonDAO dao = dbi.open(PersonDAO.class);
+
+        assertThat(dao.findAllNames())
+                .containsOnly("Coda Hale", "Kris Gale", "Old Guy");
     }
 
     @Test
     public void sqlObjectsCanReturnImmutableSets() throws Exception {
-        final PersonDAO dao = jdbi.open(PersonDAO.class);
-        try {
-            assertThat(dao.findAllUniqueNames())
-                    .containsOnly("Coda Hale", "Kris Gale", "Old Guy");
-        } finally {
-            jdbi.close(dao);
-        }
+        final PersonDAO dao = dbi.open(PersonDAO.class);
+
+        assertThat(dao.findAllUniqueNames())
+                .containsOnly("Coda Hale", "Kris Gale", "Old Guy");
     }
 
     @Test
     public void sqlObjectsCanReturnOptional() throws Exception {
-        final PersonDAO dao = jdbi.open(PersonDAO.class);
-        try {
-            Optional<String> byEmail = dao.findByEmail("chale@yammer-inc.com");
-            assertThat(byEmail).isNotNull();
-            assertThat(byEmail.get()).isEqualTo("Coda Hale");
+        final PersonDAO dao = dbi.open(PersonDAO.class);
+
+        final Optional<String> found = dao.findByEmail("chale@yammer-inc.com");
+        assertThat(found).isNotNull();
+        assertThat(found.isPresent()).isTrue();
+        assertThat(found.get()).isEqualTo("Coda Hale");
 
 
-            byEmail = dao.findByEmail("cemalettin.koc@gmail.com");
-            assertThat(byEmail).isNotNull();
-            assertThat(byEmail).isEqualTo(Optional.<String>absent());
-            assertThat(byEmail.orNull()).isNull();
-
-        } finally {
-            jdbi.close(dao);
-        }
+        final Optional<String> missing = dao.findByEmail("cemalettin.koc@gmail.com");
+        assertThat(missing).isNotNull();
+        assertThat(missing.isPresent()).isFalse();
+        assertThat(missing.orNull()).isNull();
     }
 }

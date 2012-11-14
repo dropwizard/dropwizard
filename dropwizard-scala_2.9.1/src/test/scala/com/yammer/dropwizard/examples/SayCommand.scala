@@ -16,7 +16,7 @@ class SayCommand extends ConfiguredCommand[ExampleConfiguration]("say", "Prints 
                     namespace: Namespace,
                     configuration: ExampleConfiguration) {
     for (i <- 1 to (if (namespace.getBoolean("verbose")) 10 else 1)) {
-      log.warn(configuration.saying)
+      logger.warn(configuration.saying)
     }
   }
 

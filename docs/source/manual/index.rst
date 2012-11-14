@@ -15,6 +15,7 @@ User Manual
     client
     jdbi
     migrations
+    hibernate
     auth
     views
     scala

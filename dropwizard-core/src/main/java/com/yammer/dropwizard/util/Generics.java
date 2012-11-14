@@ -1,15 +1,13 @@
 package com.yammer.dropwizard.util;
 
-import com.yammer.dropwizard.config.Configuration;
-
-import javax.annotation.Nonnull;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
 public class Generics {
     private Generics() { /* singleton */ }
 
-    public static Class<?> getTypeParameter(@Nonnull Class<?> klass) {
+    @SuppressWarnings({ "unchecked", "ConstantConditions" })
+    public static <T> Class<? extends T> getTypeParameter(Class<?> klass, Class<T> parameterBound) {
         Type t = klass;
         while (t instanceof Class<?>) {
             t = ((Class<?>) t).getGenericSuperclass();
@@ -24,13 +22,17 @@ public class Generics {
             for (Type param : ((ParameterizedType) t).getActualTypeArguments()) {
                 if (param instanceof Class<?>) {
                     final Class<?> cls = (Class<?>) param;
-                    if (Configuration.class.isAssignableFrom(cls)) {
-                        return cls;
+                    if (parameterBound.isAssignableFrom(cls)) {
+                        return (Class<? extends T>) cls;
                     }
                 }
             }
         }
         throw new IllegalStateException("Cannot figure out Configuration type parameterization for " +
                                                 klass.getName());
+    }
+
+    public static Class<?> getTypeParameter(Class<?> klass) {
+        return getTypeParameter(klass, Object.class);
     }
 }

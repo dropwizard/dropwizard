@@ -6,11 +6,9 @@ import com.yammer.dropwizard.config.Bootstrap;
 import com.yammer.dropwizard.config.Environment;
 import com.yammer.dropwizard.scala.inject.ScalaCollectionsQueryParamInjectableProvider;
 
-public class ScalaBundle extends Bundle {
-
+public class ScalaBundle implements Bundle {
     @Override
-    public void initialize(final Bootstrap<?> bootstrap) {
-        bootstrap.addBundle(new ScalaBundle());
+    public void initialize(Bootstrap<?> bootstrap) {
         bootstrap.getObjectMapperFactory().registerModule(new DefaultScalaModule());
     }
 

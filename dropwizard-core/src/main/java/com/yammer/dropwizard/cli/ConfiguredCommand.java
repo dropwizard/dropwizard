@@ -31,7 +31,7 @@ public abstract class ConfiguredCommand<T extends Configuration> extends Command
      */
     @SuppressWarnings("unchecked")
     protected Class<T> getConfigurationClass() {
-        return (Class<T>) Generics.getTypeParameter(getClass());
+        return (Class<T>) Generics.getTypeParameter(getClass(), Configuration.class);
     }
 
     /**

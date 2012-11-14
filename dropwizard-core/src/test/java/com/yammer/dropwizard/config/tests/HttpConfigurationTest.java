@@ -22,8 +22,7 @@ public class HttpConfigurationTest {
     public void setUp() throws Exception {
         this.http = ConfigurationFactory.forClass(HttpConfiguration.class,
                                                   new Validator())
-                                        .build(new File(Resources.getResource("yaml/http.yml")
-                                                                 .getFile()));
+                                        .build(new File(Resources.getResource("yaml/http.yml").toURI()));
     }
 
     @Test
@@ -71,7 +70,7 @@ public class HttpConfigurationTest {
     @Test
     public void hasAConnectorType() throws Exception {
         assertThat(http.getConnectorType())
-                .isEqualTo(HttpConfiguration.ConnectorType.SOCKET);
+                .isEqualTo(HttpConfiguration.ConnectorType.LEGACY);
     }
 
     @Test
@@ -82,7 +81,7 @@ public class HttpConfigurationTest {
 
     @Test
     public void hasAnAcceptorThreadCount() throws Exception {
-        assertThat(http.getAcceptorThreadCount())
+        assertThat(http.getAcceptorThreads())
                 .isEqualTo(2);
     }
 

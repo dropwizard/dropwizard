@@ -8,10 +8,16 @@ import org.junit.Test;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import static org.fest.assertions.api.Assertions.assertThat;
 
 @SuppressWarnings("unchecked")
 public class DropwizardResourceConfigTest {
+    static {
+        Logger.getLogger("com.sun.jersey").setLevel(Level.OFF);
+    }
 
     @Test
     public void findsResourceClassInPackage() {
@@ -28,7 +34,8 @@ public class DropwizardResourceConfigTest {
         rc.init(new PackageNamesScanner(new String[] { getClass().getPackage().getName() }));
 
         assertThat(rc.getRootResourceClasses())
-                .containsOnly(DummyResource.class, TestResource.class);
+                .contains
+                        (DummyResource.class, TestResource.class);
     }
 
     @Path("/dummy")

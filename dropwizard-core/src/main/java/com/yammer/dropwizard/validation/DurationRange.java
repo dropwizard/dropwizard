@@ -4,7 +4,6 @@ import javax.validation.Constraint;
 import javax.validation.OverridesAttribute;
 import javax.validation.Payload;
 import javax.validation.ReportAsSingleViolation;
-
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
@@ -14,7 +13,8 @@ import static java.lang.annotation.ElementType.*;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * The annotated element has to be in the appropriate range. Apply on {@link Duration}
+ * The annotated element has to be in the appropriate range. Apply on
+ * {@link com.yammer.dropwizard.util.Duration} instances.
  */
 @Documented
 @Constraint(validatedBy = { })
@@ -40,7 +40,7 @@ public @interface DurationRange {
 
     Class<?>[] groups() default { };
 
-    Class<? extends Payload>[] payload() default { };
+    @SuppressWarnings("UnusedDeclaration") Class<? extends Payload>[] payload() default { };
 
     /**
      * Defines several {@code @DurationRange} annotations on the same element.

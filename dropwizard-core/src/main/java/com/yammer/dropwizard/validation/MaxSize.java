@@ -26,7 +26,7 @@ public @interface MaxSize {
 
     Class<?>[] groups() default { };
 
-    Class<? extends Payload>[] payload() default {};
+    @SuppressWarnings("UnusedDeclaration") Class<? extends Payload>[] payload() default { };
 
     /**
      * @return value the element must be higher or equal to

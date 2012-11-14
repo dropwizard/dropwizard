@@ -8,15 +8,9 @@ import java.util.Map;
 import java.util.Properties;
 
 public class ManagedDataSourceFactory {
-    private final DatabaseConfiguration configuration;
-
-    public ManagedDataSourceFactory(DatabaseConfiguration configuration) {
-        this.configuration = configuration;
-    }
-
-    public ManagedDataSource build() throws ClassNotFoundException {
+    public ManagedDataSource build(DatabaseConfiguration configuration) throws ClassNotFoundException {
         Class.forName(configuration.getDriverClass());
-        final GenericObjectPool pool = buildPool();
+        final GenericObjectPool pool = buildPool(configuration);
 
         final Properties properties = new Properties();
         for (Map.Entry<String, String> property : configuration.getProperties().entrySet()) {
@@ -34,6 +28,7 @@ public class ManagedDataSourceFactory {
                                                                                           pool,
                                                                                           null,
                                                                                           configuration.getValidationQuery(),
+                                                                                          configuration.getConnectionInitializationStatements(),
                                                                                           configuration.isDefaultReadOnly(),
                                                                                           true);
         connectionFactory.setPool(pool);
@@ -41,7 +36,7 @@ public class ManagedDataSourceFactory {
         return new ManagedPooledDataSource(pool);
     }
 
-    private GenericObjectPool buildPool() {
+    private GenericObjectPool buildPool(DatabaseConfiguration configuration) {
         final GenericObjectPool pool = new GenericObjectPool(null);
         pool.setMaxWait(configuration.getMaxWaitForConnection().toMilliseconds());
         pool.setMinIdle(configuration.getMinSize());

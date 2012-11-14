@@ -14,19 +14,19 @@ import java.sql.ResultSet;
 import static org.fest.assertions.api.Assertions.assertThat;
 
 public class ManagedDataSourceFactoryTest {
-    private final DatabaseConfiguration config = new DatabaseConfiguration();
-    private final ManagedDataSourceFactory factory = new ManagedDataSourceFactory(config);
+    private final ManagedDataSourceFactory factory = new ManagedDataSourceFactory();
 
     private ManagedDataSource dataSource;
 
     @Before
     public void setUp() throws Exception {
+        final DatabaseConfiguration config = new DatabaseConfiguration();
         config.setUrl("jdbc:hsqldb:mem:DbTest-" + System.currentTimeMillis());
         config.setUser("sa");
         config.setDriverClass("org.hsqldb.jdbcDriver");
         config.setValidationQuery("SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS");
 
-        this.dataSource = factory.build();
+        this.dataSource = factory.build(config);
     }
 
     @After

@@ -1,7 +1,8 @@
 package com.yammer.dropwizard.jersey;
 
 import com.yammer.dropwizard.jetty.UnbrandedErrorHandler;
-import com.yammer.dropwizard.logging.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.WebApplicationException;
@@ -19,7 +20,7 @@ import java.util.Random;
 
 @Provider
 public class LoggingExceptionMapper<E extends Throwable> implements ExceptionMapper<E> {
-    private static final Log LOG = Log.forClass(LoggingExceptionMapper.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(LoggingExceptionMapper.class);
     private static final Random RANDOM = new Random();
 
     @Context
@@ -43,7 +44,7 @@ public class LoggingExceptionMapper<E extends Throwable> implements ExceptionMap
                                         formatResponseEntity(id, exception),
                                         false);
         } catch (IOException e) {
-            LOG.warn(e, "Unable to generate error page");
+            LOGGER.warn("Unable to generate error page", e);
         }
 
         return Response.serverError()
@@ -53,13 +54,15 @@ public class LoggingExceptionMapper<E extends Throwable> implements ExceptionMap
     }
 
     protected void logException(long id, E exception) {
-        LOG.error(exception, formatLogMessage(id, exception));
+        LOGGER.error(formatLogMessage(id, exception), exception);
     }
 
+    @SuppressWarnings("UnusedParameters")
     protected String formatResponseEntity(long id, Throwable exception) {
         return String.format("There was an error processing your request. It has been logged (ID %016x).\n", id);
     }
 
+    @SuppressWarnings("UnusedParameters")
     protected String formatLogMessage(long id, Throwable exception) {
         return String.format("Error handling a request: %016x", id);
     }

@@ -5,7 +5,7 @@ import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.tweak.RewrittenStatement;
 import org.skife.jdbi.v2.tweak.StatementRewriter;
 
-class NamePrependingStatementRewriter implements StatementRewriter {
+public class NamePrependingStatementRewriter implements StatementRewriter {
     private final StatementRewriter rewriter;
 
     NamePrependingStatementRewriter(StatementRewriter rewriter) {

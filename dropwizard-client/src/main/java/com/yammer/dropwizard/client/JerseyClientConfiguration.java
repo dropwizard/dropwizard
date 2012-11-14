@@ -1,22 +1,78 @@
 package com.yammer.dropwizard.client;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.yammer.dropwizard.validation.ValidationMethod;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 
+/**
+ * The configuration class used by {@link JerseyClientBuilder}. Extends
+ * {@link HttpClientConfiguration}.
+ *
+ * <h1>Additional Properties</h1>
+ * <table>
+ *     <tr>
+ *         <td>Property Name</td>
+ *         <td>Required</td>
+ *         <td>Description</td>
+ *         <td>Default Value</td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code minThreads}</td>
+ *         <td>No</td>
+ *         <td>
+ *             The minimum number of threads to use for asynchronous calls.
+ *         </td>
+ *         <td>1</td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code maxThreads}</td>
+ *         <td>No</td>
+ *         <td>
+ *             The maximum number of threads to use for asynchronous calls.
+ *         </td>
+ *         <td>128</td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code gzipEnabled}</td>
+ *         <td>No</td>
+ *         <td>
+ *             If {@code true}, the {@link com.sun.jersey.api.client.Client} will decode response
+ *             entities with {@code gzip} content encoding.
+ *         </td>
+ *         <td>{@code true}</td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code gzipEnabledForRequests}</td>
+ *         <td>No</td>
+ *         <td>
+ *             If {@code true}, the {@link com.sun.jersey.api.client.Client} will encode request
+ *             entities with {@code gzip} content encoding. (Requires {@code gzipEnabled} to be
+ *             {@code true}.
+ *         </td>
+ *         <td>{@code true}</td>
+ *     </tr>
+ * </table>
+ *
+ * @see HttpClientConfiguration
+ */
 public class JerseyClientConfiguration extends HttpClientConfiguration {
-    @Max(16 * 1024)
     @Min(1)
+    @Max(16 * 1024)
+    @JsonProperty
     private int minThreads = 1;
 
-    @Max(16 * 1024)
     @Min(1)
+    @Max(16 * 1024)
+    @JsonProperty
     private int maxThreads = 128;
 
+    @JsonProperty
     private boolean gzipEnabled = true;
 
-    private boolean compressRequestEntity = true;
+    @JsonProperty
+    private boolean gzipEnabledForRequests = true;
 
     public int getMinThreads() {
         return minThreads;
@@ -38,26 +94,25 @@ public class JerseyClientConfiguration extends HttpClientConfiguration {
         return gzipEnabled;
     }
 
-    public void setGzipEnabled(boolean enable) {
-        this.gzipEnabled = enable;
+    public void setGzipEnabled(boolean enabled) {
+        this.gzipEnabled = enabled;
     }
 
-    public boolean isCompressRequestEntity() {
-        return compressRequestEntity;
+    public boolean isGzipEnabledForRequests() {
+        return gzipEnabledForRequests;
     }
 
-    public void setCompressRequestEntity(boolean compressRequestEntity) {
-        this.compressRequestEntity = compressRequestEntity;
+    public void setGzipEnabledForRequests(boolean enabled) {
+        this.gzipEnabledForRequests = enabled;
     }
 
     @ValidationMethod(message = ".minThreads must be less than or equal to maxThreads")
     public boolean isThreadPoolSizedCorrectly() {
         return minThreads <= maxThreads;
     }
-    
-    @ValidationMethod(message = ".compressRequestEntity requires gzipEnabled set to true")
+
+    @ValidationMethod(message = ".gzipEnabledForRequests requires gzipEnabled set to true")
     public boolean isCompressionConfigurationValid() {
-        return compressRequestEntity ? gzipEnabled : true; 
+        return !gzipEnabledForRequests || gzipEnabled;
     }
-    
 }
