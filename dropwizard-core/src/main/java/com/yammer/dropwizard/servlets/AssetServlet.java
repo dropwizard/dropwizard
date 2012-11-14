@@ -1,5 +1,18 @@
 package com.yammer.dropwizard.servlets;
 
+import java.io.IOException;
+import java.net.URL;
+import java.nio.charset.Charset;
+
+import javax.activation.FileTypeMap;
+import javax.activation.MimetypesFileTypeMap;
+import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.google.common.base.Charsets;
 import com.google.common.base.Preconditions;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheBuilderSpec;
@@ -8,17 +21,8 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.hash.Hashing;
 import com.google.common.io.Resources;
 import com.google.common.net.HttpHeaders;
+import com.google.common.net.MediaType;
 import com.yammer.dropwizard.util.ResourceURL;
-import org.eclipse.jetty.http.MimeTypes;
-import org.eclipse.jetty.io.Buffer;
-
-import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.net.URL;
 
 public class AssetServlet extends HttpServlet {
     private static final long serialVersionUID = 6393345594784987908L;
@@ -88,7 +92,7 @@ public class AssetServlet extends HttpServlet {
         }
     }
 
-    private static final String DEFAULT_MIME_TYPE = "text/html";
+    private static final MediaType DEFAULT_MEDIA_TYPE = MediaType.HTML_UTF_8;
     private static final String DEFAULT_INDEX_FILE = "index.htm";
 
     private final String resourcePath;
@@ -97,8 +101,8 @@ public class AssetServlet extends HttpServlet {
     private final String indexFile;
 
     private final transient LoadingCache<String, CachedAsset> cache;
-    private final transient MimeTypes mimeTypes;
-
+    private final transient FileTypeMap mimeTypes;
+    private Charset defaultCharset = Charsets.UTF_8;
 
     /**
      * Creates a new {@code AssetServlet} that serves static assets loaded from {@code resourceURL} (typically a file:
@@ -124,7 +128,7 @@ public class AssetServlet extends HttpServlet {
         this.indexFile = indexFile;
         this.cache = CacheBuilder.from(cacheBuilderSpec)
                                  .build(new AssetLoader(resourcePath, uriPath, indexFile));
-        this.mimeTypes = new MimeTypes();
+        this.mimeTypes = MimetypesFileTypeMap.getDefaultFileTypeMap();
     }
 
     /**
@@ -151,6 +155,16 @@ public class AssetServlet extends HttpServlet {
     public String getUriPath() {
         return uriPath;
     }
+    
+    public void setDefaultCharset(Charset defaultCharset)
+    {
+        this.defaultCharset = defaultCharset;
+    }
+    
+    public Charset getDefaultCharset()
+    {
+        return this.defaultCharset;
+    }
 
     public String getIndexFile() {
         return indexFile;
@@ -174,11 +188,27 @@ public class AssetServlet extends HttpServlet {
             resp.setDateHeader(HttpHeaders.LAST_MODIFIED, cachedAsset.getLastModifiedTime());
             resp.setHeader(HttpHeaders.ETAG, cachedAsset.getETag());
 
-            final Buffer mimeType = mimeTypes.getMimeByExtension(req.getRequestURI());
-            if (mimeType == null) {
-                resp.setContentType(DEFAULT_MIME_TYPE);
-            } else {
-                resp.setContentType(mimeType.toString());
+            final String contentTypeOfFile = mimeTypes.getContentType(req
+                .getRequestURI());
+            MediaType mediaType = DEFAULT_MEDIA_TYPE;
+            
+            // FileTypeMap will map unknown types to octet-stream, ignore
+            if (contentTypeOfFile != null && !"application/octet-stream".equals(contentTypeOfFile)) {
+                try {
+                    mediaType = MediaType.parse(contentTypeOfFile);
+                    if (defaultCharset != null) {
+                        mediaType = mediaType.withCharset(defaultCharset);
+                    }
+                }catch (IllegalArgumentException ignore) {}
+            }
+            
+            resp.setContentType(mediaType.type() + "/" + mediaType.subtype());
+
+            // most default servlet implementations will not send a charset; however, it is a good idea to send it on 
+            // documents that can't specify it themselves (i.e., html, xhmlt, and xml)
+            if (mediaType.charset().isPresent() 
+                && mediaType!=MediaType.HTML_UTF_8 && mediaType != MediaType.XHTML_UTF_8 && mediaType!=MediaType.XML_UTF_8) {
+                resp.setCharacterEncoding(mediaType.charset().get().toString());                
             }
 
             final ServletOutputStream output = resp.getOutputStream();

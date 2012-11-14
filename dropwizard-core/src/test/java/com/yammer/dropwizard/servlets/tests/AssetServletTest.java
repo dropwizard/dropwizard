@@ -1,7 +1,6 @@
 package com.yammer.dropwizard.servlets.tests;
 
 import com.google.common.cache.CacheBuilderSpec;
-import com.google.common.io.Resources;
 import com.google.common.net.HttpHeaders;
 import com.yammer.dropwizard.servlets.AssetServlet;
 import org.eclipse.jetty.http.MimeTypes;
@@ -57,7 +56,7 @@ public class AssetServletTest {
     
     @Test
     public void servesFilesFromRootsWithSameName() throws Exception {
-        request.setURI( DUMMY_SERVLET+"example2.txt" );
+        request.setURI( DUMMY_SERVLET + "example2.txt" );
         response.parse(servletTester.getResponses(request.generate()));
         assertThat(response.getStatus())
                 .isEqualTo(200);
@@ -174,7 +173,7 @@ public class AssetServletTest {
         assertThat(response.getStatus())
                 .isEqualTo(200);
         assertThat(response.getContentType())
-                .isEqualTo(MimeTypes.TEXT_PLAIN);
+                .isEqualTo(MimeTypes.TEXT_PLAIN_UTF_8);
     }
 
     @Test
