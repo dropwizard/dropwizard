@@ -392,9 +392,11 @@ public class Environment extends AbstractLifeCycle {
     }
 
     ImmutableMap<String, ServletHolder> getServlets() {
-        addServlet(jerseyServletContainer,
-                   configuration.getHttpConfiguration()
-                                .getRootPath()).setInitOrder(Integer.MAX_VALUE);
+        if (jerseyServletContainer != null) {
+            addServlet(jerseyServletContainer,
+                       configuration.getHttpConfiguration()
+                                    .getRootPath()).setInitOrder(Integer.MAX_VALUE);
+        }
         return servlets.build();
     }
 
@@ -560,7 +562,7 @@ public class Environment extends AbstractLifeCycle {
     }
 
     public void setJerseyServletContainer(ServletContainer jerseyServletContainer) {
-        this.jerseyServletContainer = checkNotNull(jerseyServletContainer);
+        this.jerseyServletContainer = jerseyServletContainer;
     }
 
     public String getName() {
