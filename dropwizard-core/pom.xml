@@ -77,7 +77,7 @@
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-guava</artifactId>
-            <version>2.1.0</version>
+            <version>${jackson.version}</version>
         </dependency>
         <dependency>
             <groupId>net.sourceforge.argparse4j</groupId>
