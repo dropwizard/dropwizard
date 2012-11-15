@@ -1,5 +1,6 @@
 package com.yammer.dropwizard.servlets;
 
+import com.google.common.base.CharMatcher;
 import com.google.common.base.Charsets;
 import com.google.common.base.Preconditions;
 import com.google.common.cache.CacheBuilder;
@@ -11,17 +12,17 @@ import com.google.common.io.Resources;
 import com.google.common.net.HttpHeaders;
 import com.google.common.net.MediaType;
 import com.yammer.dropwizard.util.ResourceURL;
+import org.eclipse.jetty.http.MimeTypes;
+import org.eclipse.jetty.io.Buffer;
 
-import javax.activation.FileTypeMap;
-import javax.activation.MimetypesFileTypeMap;
+import java.io.IOException;
+import java.net.URL;
+import java.nio.charset.Charset;
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.net.URL;
-import java.nio.charset.Charset;
 
 public class AssetServlet extends HttpServlet {
     private static final long serialVersionUID = 6393345594784987908L;
@@ -32,21 +33,19 @@ public class AssetServlet extends HttpServlet {
         private final String indexFilename;
 
         private AssetLoader(String resourcePath, String uriPath, String indexFilename) {
-            this.resourcePath = resourcePath.substring(1) + "/";
-            this.uriPath = uriPath.endsWith("/") ? uriPath.substring(0, uriPath.length() - 1) : uriPath;
+            final CharMatcher matcher = CharMatcher.is('/');
+            final String trimmedResource = matcher.trimFrom(resourcePath);
+            this.resourcePath = trimmedResource.length() == 0 ? "" : trimmedResource + "/";
+            final String trimmedUri = matcher.trimTrailingFrom(uriPath);
+            this.uriPath = trimmedUri.length() == 0 ? "/" : trimmedUri;
             this.indexFilename = indexFilename;
         }
 
         @Override
         public CachedAsset load(String key) throws Exception {
             Preconditions.checkArgument(key.startsWith(uriPath));
-            String requestedResourcePath = key.substring(uriPath.length() + 1);
-     
-            if ( requestedResourcePath.endsWith( "/" ) ) {
-                requestedResourcePath = requestedResourcePath.substring( 0,requestedResourcePath.length()-1 );
-            }
-            
-            final String absoluteRequestedResourcePath = this.resourcePath  + requestedResourcePath;
+            final String requestedResourcePath =CharMatcher.is('/').trimFrom(key.substring(uriPath.length()));            
+            final String absoluteRequestedResourcePath = this.resourcePath  + requestedResourcePath;            
             URL requestedResourceURL =Resources.getResource(absoluteRequestedResourcePath);
 
             if (ResourceURL.isDirectory(requestedResourceURL)) {
@@ -103,7 +102,7 @@ public class AssetServlet extends HttpServlet {
     private final String indexFile;
 
     private final transient LoadingCache<String, CachedAsset> cache;
-    private final transient FileTypeMap mimeTypes;
+    private final transient MimeTypes mimeTypes;
     private Charset defaultCharset = Charsets.UTF_8;
 
     /**
@@ -124,13 +123,13 @@ public class AssetServlet extends HttpServlet {
                         CacheBuilderSpec cacheBuilderSpec,
                         String uriPath,
                         String indexFile) {
-        this.resourcePath = resourcePath.substring(1);
+        this.resourcePath = CharMatcher.is('/').trimFrom(resourcePath);
         this.cacheBuilderSpec = cacheBuilderSpec;
         this.uriPath = uriPath;
         this.indexFile = indexFile;
         this.cache = CacheBuilder.from(cacheBuilderSpec)
                                  .build(new AssetLoader(resourcePath, uriPath, indexFile));
-        this.mimeTypes = MimetypesFileTypeMap.getDefaultFileTypeMap();
+        this.mimeTypes = new MimeTypes();
     }
 
     /**
@@ -190,13 +189,13 @@ public class AssetServlet extends HttpServlet {
             resp.setDateHeader(HttpHeaders.LAST_MODIFIED, cachedAsset.getLastModifiedTime());
             resp.setHeader(HttpHeaders.ETAG, cachedAsset.getETag());
 
-            final String contentTypeOfFile = mimeTypes.getContentType(req.getRequestURI());
+            final Buffer mimeTypeOfFile = mimeTypes.getMimeByExtension(req.getRequestURI());
             MediaType mediaType = DEFAULT_MEDIA_TYPE;
             
             // FileTypeMap will map unknown types to octet-stream, ignore
-            if (contentTypeOfFile != null && !"application/octet-stream".equals(contentTypeOfFile)) {
+            if (mimeTypeOfFile != null ) {
                 try {
-                    mediaType = MediaType.parse(contentTypeOfFile);
+                    mediaType = MediaType.parse(mimeTypeOfFile.toString());
                     if (defaultCharset!=null && mediaType.is(MediaType.ANY_TEXT_TYPE)) {
                         mediaType = mediaType.withCharset(defaultCharset);
                     }
