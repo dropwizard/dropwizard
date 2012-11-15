@@ -17,14 +17,17 @@ public abstract class HibernateBundle<T extends Configuration> implements Config
     private final SessionFactoryFactory sessionFactoryFactory;
 
     protected HibernateBundle(String... packages) {
-        this.packages = ImmutableList.copyOf(packages);
-        this.sessionFactoryFactory = new SessionFactoryFactory();
+        this(ImmutableList.copyOf(packages), new SessionFactoryFactory());
+    }
+
+    protected HibernateBundle(ImmutableList<String> packages, SessionFactoryFactory sessionFactoryFactory) {
+        this.packages = packages;
+        this.sessionFactoryFactory = sessionFactoryFactory;
     }
 
     @Override
     public final void initialize(Bootstrap<?> bootstrap) {
-        final Hibernate4Module module = new Hibernate4Module();
-        bootstrap.getObjectMapperFactory().registerModule(module);
+        bootstrap.getObjectMapperFactory().registerModule(new Hibernate4Module());
     }
 
     @Override

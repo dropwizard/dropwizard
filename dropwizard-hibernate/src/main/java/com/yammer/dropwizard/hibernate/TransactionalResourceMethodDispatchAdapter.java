@@ -14,6 +14,10 @@ public class TransactionalResourceMethodDispatchAdapter implements ResourceMetho
         this.sessionFactory = sessionFactory;
     }
 
+    public SessionFactory getSessionFactory() {
+        return sessionFactory;
+    }
+
     @Override
     public ResourceMethodDispatchProvider adapt(ResourceMethodDispatchProvider provider) {
         return new TransactionalResourceMethodDispatchProvider(provider, sessionFactory);
