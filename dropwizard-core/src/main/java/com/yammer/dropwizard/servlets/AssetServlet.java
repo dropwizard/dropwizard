@@ -40,15 +40,18 @@ public class AssetServlet extends HttpServlet {
         @Override
         public CachedAsset load(String key) throws Exception {
             Preconditions.checkArgument(key.startsWith(uriPath));
-            
-            final String requestedResourcePath = key.substring(uriPath.length() + 1);
+            String requestedResourcePath = key.substring(uriPath.length() + 1);
+     
+            if ( requestedResourcePath.endsWith( "/" ) ) {
+                requestedResourcePath = requestedResourcePath.substring( 0,requestedResourcePath.length()-1 );
+            }
             
             final String absoluteRequestedResourcePath = this.resourcePath  + requestedResourcePath;
             URL requestedResourceURL =Resources.getResource(absoluteRequestedResourcePath);
 
             if (ResourceURL.isDirectory(requestedResourceURL)) {
                 if (indexFilename != null) {
-                    requestedResourceURL =Resources.getResource(absoluteRequestedResourcePath + "/" + indexFilename);
+                    requestedResourceURL = Resources.getResource(absoluteRequestedResourcePath + "/" + indexFilename);
                 } else {
                     // directory requested but no index file defined
                     return null;
@@ -194,7 +197,7 @@ public class AssetServlet extends HttpServlet {
             if (contentTypeOfFile != null && !"application/octet-stream".equals(contentTypeOfFile)) {
                 try {
                     mediaType = MediaType.parse(contentTypeOfFile);
-                    if (defaultCharset != null) {
+                    if (defaultCharset!=null && mediaType.is(MediaType.ANY_TEXT_TYPE)) {
                         mediaType = mediaType.withCharset(defaultCharset);
                     }
                 }catch (IllegalArgumentException ignore) {}
@@ -202,7 +205,7 @@ public class AssetServlet extends HttpServlet {
             
             resp.setContentType(mediaType.type() + "/" + mediaType.subtype());
 
-            if (mediaType.is(MediaType.ANY_TEXT_TYPE) && mediaType.charset().isPresent()) {
+            if (mediaType.charset().isPresent()) {
                 resp.setCharacterEncoding(mediaType.charset().get().toString());                
             }
 
