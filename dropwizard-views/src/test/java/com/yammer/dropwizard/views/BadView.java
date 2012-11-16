@@ -1,6 +1,4 @@
-package com.yammer.dropwizard.views.example;
-
-import com.yammer.dropwizard.views.View;
+package com.yammer.dropwizard.views;
 
 public class BadView extends View {
     public BadView() {

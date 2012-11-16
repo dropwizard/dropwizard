@@ -1,6 +1,4 @@
-package com.yammer.dropwizard.views.example;
-
-import com.yammer.dropwizard.views.View;
+package com.yammer.dropwizard.views;
 
 public class MustacheView extends View {
     private final String happyName;
