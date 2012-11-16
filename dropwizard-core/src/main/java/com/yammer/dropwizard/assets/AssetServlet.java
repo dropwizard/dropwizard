@@ -85,7 +85,8 @@ public class AssetServlet extends HttpServlet {
     public AssetServlet(String resourcePath,
                         String uriPath,
                         String indexFile) {
-        this.resourcePath = CharMatcher.is('/').trimFrom(resourcePath);
+        final String trimmedPath = CharMatcher.is('/').trimFrom(resourcePath);
+	this.resourcePath = trimmedPath.isEmpty() ? trimmedPath : trimmedPath + "/";
         final String trimmedUri = CharMatcher.is('/').trimTrailingFrom(uriPath);
         this.uriPath = trimmedUri.length() == 0 ? "/" : trimmedUri;
         this.indexFile = indexFile;
@@ -147,7 +148,7 @@ public class AssetServlet extends HttpServlet {
             } finally {
                 output.close();
             }
-        } catch (RuntimeException ignored) {
+        } catch (RuntimeException ignored) {ignored.printStackTrace();
             resp.sendError(HttpServletResponse.SC_NOT_FOUND);
         } catch (URISyntaxException ignored) {
             resp.sendError(HttpServletResponse.SC_NOT_FOUND);
@@ -157,7 +158,7 @@ public class AssetServlet extends HttpServlet {
     private CachedAsset loadAsset(String key) throws URISyntaxException, IOException {
         Preconditions.checkArgument(key.startsWith(uriPath));
         final String requestedResourcePath = CharMatcher.is('/').trimFrom(key.substring(uriPath.length()));
-        final String absoluteRequestedResourcePath = this.resourcePath + (this.resourcePath.isEmpty()? "" : "/") + requestedResourcePath;
+        final String absoluteRequestedResourcePath = this.resourcePath + requestedResourcePath;
         
         URL requestedResourceURL = Resources.getResource(absoluteRequestedResourcePath);
 
