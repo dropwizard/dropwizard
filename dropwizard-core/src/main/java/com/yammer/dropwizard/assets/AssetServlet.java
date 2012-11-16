@@ -1,10 +1,14 @@
 package com.yammer.dropwizard.assets;
 
+import com.google.common.base.CharMatcher;
+import com.google.common.base.Charsets;
 import com.google.common.base.Preconditions;
 import com.google.common.cache.CacheBuilderSpec;
 import com.google.common.hash.Hashing;
 import com.google.common.io.Resources;
 import com.google.common.net.HttpHeaders;
+import com.google.common.net.MediaType;
+
 import org.eclipse.jetty.http.MimeTypes;
 import org.eclipse.jetty.io.Buffer;
 
@@ -16,6 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.charset.Charset;
 
 public class AssetServlet extends HttpServlet {
     private static final long serialVersionUID = 6393345594784987908L;
@@ -44,14 +49,25 @@ public class AssetServlet extends HttpServlet {
         }
     }
 
-    private static final String DEFAULT_MIME_TYPE = "text/html";
+    private static final MediaType DEFAULT_MEDIA_TYPE = MediaType.HTML_UTF_8;
 
     private final String resourcePath;
     private final String uriPath;
     private final String indexFile;
 
     private final transient MimeTypes mimeTypes;
+    
+    private Charset defaultCharset = Charsets.UTF_8;
 
+    public void setDefaultCharset( Charset defaultCharset )
+    {
+        this.defaultCharset = defaultCharset;
+    }
+
+    public Charset getDefaultCharset()
+    {
+        return this.defaultCharset;
+    }
 
     /**
      * Creates a new {@code AssetServlet} that serves static assets loaded from {@code resourceURL} (typically a file:
@@ -69,8 +85,9 @@ public class AssetServlet extends HttpServlet {
     public AssetServlet(String resourcePath,
                         String uriPath,
                         String indexFile) {
-        this.resourcePath = resourcePath.endsWith("/") ? resourcePath.substring(1) : (resourcePath.substring(1) + '/');
-        this.uriPath = uriPath.endsWith("/") ? uriPath.substring(0, uriPath.length() - 1) : uriPath;
+        this.resourcePath = CharMatcher.is('/').trimFrom(resourcePath);
+        final String trimmedUri = CharMatcher.is('/').trimTrailingFrom(uriPath);
+        this.uriPath = trimmedUri.length() == 0 ? "/" : trimmedUri;
         this.indexFile = indexFile;
         this.mimeTypes = new MimeTypes();
     }
@@ -106,10 +123,22 @@ public class AssetServlet extends HttpServlet {
             resp.setHeader(HttpHeaders.ETAG, cachedAsset.getETag());
 
             final Buffer mimeType = mimeTypes.getMimeByExtension(req.getRequestURI());
-            if (mimeType == null) {
-                resp.setContentType(DEFAULT_MIME_TYPE);
-            } else {
-                resp.setContentType(mimeType.toString());
+            MediaType mediaType = DEFAULT_MEDIA_TYPE;
+            
+            if (mimeType != null) {
+                try {
+                    mediaType = MediaType.parse( mimeType.toString() );
+                    if (defaultCharset != null && mediaType.is( MediaType.ANY_TEXT_TYPE)) {
+                        mediaType = mediaType.withCharset(defaultCharset);
+                    }
+                }
+                catch ( IllegalArgumentException ignore ) {}
+            }
+            
+            resp.setContentType( mediaType.type() + "/" + mediaType.subtype() );
+
+            if (mediaType.charset().isPresent()) {
+                resp.setCharacterEncoding( mediaType.charset().get().toString() );
             }
 
             final ServletOutputStream output = resp.getOutputStream();
@@ -127,10 +156,9 @@ public class AssetServlet extends HttpServlet {
 
     private CachedAsset loadAsset(String key) throws URISyntaxException, IOException {
         Preconditions.checkArgument(key.startsWith(uriPath));
-
-        final String requestedResourcePath = key.substring(uriPath.length() + 1);
-
-        final String absoluteRequestedResourcePath = this.resourcePath + requestedResourcePath;
+        final String requestedResourcePath = CharMatcher.is('/').trimFrom(key.substring(uriPath.length()));
+        final String absoluteRequestedResourcePath = this.resourcePath + (this.resourcePath.isEmpty()? "" : "/") + requestedResourcePath;
+        
         URL requestedResourceURL = Resources.getResource(absoluteRequestedResourcePath);
 
         if (ResourceURL.isDirectory(requestedResourceURL)) {

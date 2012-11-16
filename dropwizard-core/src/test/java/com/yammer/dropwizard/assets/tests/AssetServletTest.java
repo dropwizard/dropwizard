@@ -16,6 +16,8 @@ public class AssetServletTest {
     private static ServletTester servletTester;
     private static final String DUMMY_SERVLET = "/dummy_servlet/";
     private static final String NOINDEX_SERVLET = "/noindex_servlet/";
+    private static final String NOCHARSET_SERVLET = "/nocharset_servlet/";
+    private static final String ROOT_SERVLET = "/";
     private static final String RESOURCE_PATH = "/assets";
 
     private HttpTester request;
@@ -34,12 +36,26 @@ public class AssetServletTest {
             super(RESOURCE_PATH, DUMMY_SERVLET, null);
         }
     }
+    public static class RootAssetServlet extends AssetServlet {
+        public RootAssetServlet() {
+            super("/", ROOT_SERVLET, null);
+        }
+    }
+    
+    public static class NoCharsetAssetServlet extends AssetServlet {
+        public NoCharsetAssetServlet() {
+            super(RESOURCE_PATH,DUMMY_SERVLET, NOCHARSET_SERVLET);
+            setDefaultCharset(null);
+        }
+    }
 
     @BeforeClass
     public static void setup() throws Exception {
         servletTester = new ServletTester();
         servletTester.addServlet(DummyAssetServlet.class, DUMMY_SERVLET + '*');
         servletTester.addServlet(NoIndexAssetServlet.class, NOINDEX_SERVLET + '*');
+        servletTester.addServlet(NoCharsetAssetServlet.class, NOCHARSET_SERVLET + '*');
+        servletTester.addServlet(RootAssetServlet.class, ROOT_SERVLET + '*');
         servletTester.start();
     }
 
@@ -50,6 +66,33 @@ public class AssetServletTest {
         request.setURI(DUMMY_SERVLET + "example.txt");
         request.setVersion("HTTP/1.0");
         response = new HttpTester();
+    }
+    
+    @Test
+    public void servesFilesMappedToRoot() throws Exception {
+        request.setURI(ROOT_SERVLET + "assets/example.txt");
+        response.parse(servletTester.getResponses(request.generate()));
+        assertThat(response.getStatus())
+                .isEqualTo(200);
+        assertThat(response.getContent())
+                .isEqualTo("HELLO THERE");
+    }
+    
+    @Test
+    public void servesCharset() throws Exception {        
+        request.setURI(DUMMY_SERVLET + "example.txt");
+        response.parse(servletTester.getResponses(request.generate()));
+        assertThat(response.getStatus())
+                .isEqualTo(200);
+        assertThat(response.getContentType())
+                .isEqualTo(MimeTypes.TEXT_PLAIN_UTF_8);
+        
+        request.setURI(NOCHARSET_SERVLET + "example.txt");
+        response.parse(servletTester.getResponses(request.generate()));
+        assertThat(response.getStatus())
+                .isEqualTo(200);
+        assertThat(response.getContentType())
+                .isEqualTo(MimeTypes.TEXT_PLAIN);
     }
     
     @Test
@@ -171,7 +214,7 @@ public class AssetServletTest {
         assertThat(response.getStatus())
                 .isEqualTo(200);
         assertThat(response.getContentType())
-                .isEqualTo(MimeTypes.TEXT_PLAIN);
+                .isEqualTo(MimeTypes.TEXT_PLAIN_UTF_8);
     }
 
     @Test
@@ -181,7 +224,7 @@ public class AssetServletTest {
         assertThat(response.getStatus())
                 .isEqualTo(200);
         assertThat(response.getContentType())
-                .isEqualTo(MimeTypes.TEXT_HTML);
+                .isEqualTo(MimeTypes.TEXT_HTML_UTF_8);
     }
 
     @Test
