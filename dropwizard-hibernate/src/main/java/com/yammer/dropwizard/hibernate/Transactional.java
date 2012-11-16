@@ -1,5 +1,8 @@
 package com.yammer.dropwizard.hibernate;
 
+import org.hibernate.CacheMode;
+import org.hibernate.FlushMode;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
@@ -21,6 +24,24 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 public @interface Transactional {
     /**
      * If {@code true}, the Hibernate session will default to loading read-only entities.
+     *
+     * @see org.hibernate.Session#setDefaultReadOnly(boolean)
      */
     boolean readOnly() default false;
+
+    /**
+     * The {@link CacheMode} for the session.
+     *
+     * @see CacheMode
+     * @see org.hibernate.Session#setCacheMode(CacheMode)
+     */
+    CacheMode cacheMode() default CacheMode.NORMAL;
+
+    /**
+     * The {@link FlushMode} for the session.
+     *
+     * @see FlushMode
+     * @see org.hibernate.Session#setFlushMode(org.hibernate.FlushMode)
+     */
+    FlushMode flushMode() default FlushMode.AUTO;
 }
