@@ -8,11 +8,14 @@ import org.hibernate.Transaction;
 import org.hibernate.context.internal.ManagedSessionContext;
 
 public class TransactionalRequestDispatcher implements RequestDispatcher {
+    private final Transactional transactional;
     private final RequestDispatcher dispatcher;
     private final SessionFactory sessionFactory;
 
-    public TransactionalRequestDispatcher(RequestDispatcher dispatcher,
+    public TransactionalRequestDispatcher(Transactional transactional,
+                                          RequestDispatcher dispatcher,
                                           SessionFactory sessionFactory) {
+        this.transactional = transactional;
         this.dispatcher = dispatcher;
         this.sessionFactory = sessionFactory;
     }
@@ -21,6 +24,7 @@ public class TransactionalRequestDispatcher implements RequestDispatcher {
     public void dispatch(Object resource, HttpContext context) {
         final Session session = sessionFactory.openSession();
         try {
+            session.setDefaultReadOnly(transactional.readOnly());
             ManagedSessionContext.bind(session);
             final Transaction txn = session.beginTransaction();
             try {

@@ -18,8 +18,10 @@ public class TransactionalResourceMethodDispatchProvider implements ResourceMeth
     @Override
     public RequestDispatcher create(AbstractResourceMethod abstractResourceMethod) {
         final RequestDispatcher dispatcher = provider.create(abstractResourceMethod);
-        if (abstractResourceMethod.getMethod().isAnnotationPresent(Transactional.class)) {
-            return new TransactionalRequestDispatcher(dispatcher, sessionFactory);
+        final Transactional transactional = abstractResourceMethod.getMethod()
+                                                                  .getAnnotation(Transactional.class);
+        if (transactional != null) {
+            return new TransactionalRequestDispatcher(transactional, dispatcher, sessionFactory);
         }
         return dispatcher;
     }
