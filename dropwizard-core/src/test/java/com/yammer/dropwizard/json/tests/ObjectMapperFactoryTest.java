@@ -38,12 +38,12 @@ public class ObjectMapperFactoryTest {
     @Test
     public void defaultsToAnnotationSensitivePropertyNames() throws Exception {
         assertThat(factory.getPropertyNamingStrategy())
-                .isEqualTo(AnnotationSensitivePropertyNamingStrategy.INSTANCE);
+                .isInstanceOf(AnnotationSensitivePropertyNamingStrategy.class);
 
         final ObjectMapper mapper = factory.build();
 
         assertThat(mapper.getDeserializationConfig().getPropertyNamingStrategy())
-                .isSameAs(AnnotationSensitivePropertyNamingStrategy.INSTANCE);
+                .isInstanceOf(AnnotationSensitivePropertyNamingStrategy.class);
     }
 
     @Test

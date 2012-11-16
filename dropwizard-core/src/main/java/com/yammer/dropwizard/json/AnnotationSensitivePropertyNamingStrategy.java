@@ -6,14 +6,19 @@ import com.fasterxml.jackson.databind.introspect.AnnotatedField;
 import com.fasterxml.jackson.databind.introspect.AnnotatedMethod;
 import com.fasterxml.jackson.databind.introspect.AnnotatedParameter;
 
+/**
+ * A {@link PropertyNamingStrategy} implementation which, if the declaring class of a property is
+ * annotated with {@link JsonSnakeCase}, uses a {@link LowerCaseWithUnderscoresStrategy}, and uses
+ * the default {@link PropertyNamingStrategy} otherwise.
+ */
 public class AnnotationSensitivePropertyNamingStrategy extends PropertyNamingStrategy {
-    public static final AnnotationSensitivePropertyNamingStrategy INSTANCE =
-            new AnnotationSensitivePropertyNamingStrategy();
-    private final PropertyNamingStrategy snakeCase;
+    private static final long serialVersionUID = -1372862028366311230L;
 
-    private AnnotationSensitivePropertyNamingStrategy() {
+    private final LowerCaseWithUnderscoresStrategy snakeCase;
+
+    public AnnotationSensitivePropertyNamingStrategy() {
         super();
-        this.snakeCase = PropertyNamingStrategy.CAMEL_CASE_TO_LOWER_CASE_WITH_UNDERSCORES;
+        this.snakeCase = new LowerCaseWithUnderscoresStrategy();
     }
 
     @Override
