@@ -63,7 +63,7 @@ public abstract class ResourceTest {
     }
 
     @Before
-    public void setUpJersey() throws Exception {
+    public final void setUpJersey() throws Exception {
         setUpResources();
         this.test = new JerseyTest() {
             @Override
@@ -72,13 +72,13 @@ public abstract class ResourceTest {
                 for (Class<?> provider : providers) {
                     config.getClasses().add(provider);
                 }
-                final ObjectMapper mapper = getObjectMapperFactory().build();
                 for (Map.Entry<String, Boolean> feature : features.entrySet()) {
                     config.getFeatures().put(feature.getKey(), feature.getValue());
                 }
                 for (Map.Entry<String, Object> property : properties.entrySet()) {
                     config.getProperties().put(property.getKey(), property.getValue());
                 }
+                final ObjectMapper mapper = getObjectMapperFactory().build();
                 config.getSingletons().add(new JacksonMessageBodyProvider(mapper));
                 config.getSingletons().addAll(singletons);
                 return new LowLevelAppDescriptor.Builder(config).build();
@@ -88,7 +88,7 @@ public abstract class ResourceTest {
     }
 
     @After
-    public void tearDownJersey() throws Exception {
+    public final void tearDownJersey() throws Exception {
         if (test != null) {
             test.tearDown();
         }
