@@ -3,6 +3,10 @@ package com.yammer.dropwizard.util;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
+/**
+ * Helper methods for class type parameters.
+ * @see <a href="http://gafter.blogspot.com/2006/12/super-type-tokens.html">Super Type Tokens</a>
+ */
 public class Generics {
     private Generics() { /* singleton */ }
 
