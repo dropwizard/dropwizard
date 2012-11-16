@@ -1,6 +1,6 @@
-package com.yammer.dropwizard.bundles.tests;
+package com.yammer.dropwizard.json.tests;
 
-import com.yammer.dropwizard.bundles.BasicBundle;
+import com.yammer.dropwizard.json.JsonBundle;
 import com.yammer.dropwizard.config.Environment;
 import com.yammer.dropwizard.jersey.JacksonMessageBodyProvider;
 import com.yammer.dropwizard.jersey.OptionalQueryParamInjectableProvider;
@@ -11,10 +11,10 @@ import org.junit.Test;
 import static org.mockito.Matchers.isA;
 import static org.mockito.Mockito.*;
 
-public class BasicBundleTest {
+public class JsonBundleTest {
     private final ObjectMapperFactory factory = mock(ObjectMapperFactory.class);
     private final Environment environment = mock(Environment.class);
-    private final BasicBundle bundle = new BasicBundle();
+    private final JsonBundle bundle = new JsonBundle();
 
     @Before
     public void setUp() throws Exception {
