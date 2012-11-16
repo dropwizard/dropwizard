@@ -14,16 +14,16 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @param <E> the class which this DAO manages
  */
 public class AbstractDAO<E> {
-    private final SessionFactory provider;
+    private final SessionFactory sessionFactory;
     private final Class<?> entityClass;
 
     /**
      * Creates a new DAO with a given session provider.
      *
-     * @param provider    a session provider
+     * @param sessionFactory    a session provider
      */
-    public AbstractDAO(SessionFactory provider) {
-        this.provider = checkNotNull(provider);
+    public AbstractDAO(SessionFactory sessionFactory) {
+        this.sessionFactory = checkNotNull(sessionFactory);
         this.entityClass = Generics.getTypeParameter(getClass());
     }
 
@@ -33,7 +33,7 @@ public class AbstractDAO<E> {
      * @return the current session
      */
     protected Session currentSession() {
-        return provider.getCurrentSession();
+        return sessionFactory.getCurrentSession();
     }
 
     /**

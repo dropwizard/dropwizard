@@ -62,7 +62,7 @@ public class SessionFactoryFactoryTest {
             session.createSQLQuery("CREATE TABLE people (name varchar(100) primary key, email varchar(100), age int)").executeUpdate();
             session.createSQLQuery("INSERT INTO people VALUES ('Coda', 'coda@example.com', 300)").executeUpdate();
 
-            final ExampleEntity entity = (ExampleEntity) session.get(ExampleEntity.class, "Coda");
+            final Person entity = (Person) session.get(Person.class, "Coda");
 
             assertThat(entity.getName())
                     .isEqualTo("Coda");
