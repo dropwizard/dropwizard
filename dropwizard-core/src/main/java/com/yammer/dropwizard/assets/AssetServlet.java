@@ -59,16 +59,6 @@ public class AssetServlet extends HttpServlet {
     
     private Charset defaultCharset = Charsets.UTF_8;
 
-    public void setDefaultCharset( Charset defaultCharset )
-    {
-        this.defaultCharset = defaultCharset;
-    }
-
-    public Charset getDefaultCharset()
-    {
-        return this.defaultCharset;
-    }
-
     /**
      * Creates a new {@code AssetServlet} that serves static assets loaded from {@code resourceURL} (typically a file:
      * or jar: URL). The assets are served at URIs rooted at {@code uriPath}. For example, given a {@code resourceURL}
@@ -94,11 +84,19 @@ public class AssetServlet extends HttpServlet {
     }
 
     public URL getResourceURL() {
-        return Resources.getResource( resourcePath );
+        return Resources.getResource(resourcePath);
     }
 
     public String getUriPath() {
         return uriPath;
+    }
+    
+    public void setDefaultCharset(Charset defaultCharset) {
+        this.defaultCharset = defaultCharset;
+    }
+
+    public Charset getDefaultCharset() {
+        return this.defaultCharset;
     }
 
     public String getIndexFile() {
@@ -128,18 +126,18 @@ public class AssetServlet extends HttpServlet {
             
             if (mimeTypeOfExtension != null) {
                 try {
-                    mediaType = MediaType.parse( mimeTypeOfExtension.toString() );
-                    if (defaultCharset != null && mediaType.is( MediaType.ANY_TEXT_TYPE)) {
+                    mediaType = MediaType.parse(mimeTypeOfExtension.toString());
+                    if (defaultCharset != null && mediaType.is(MediaType.ANY_TEXT_TYPE)) {
                         mediaType = mediaType.withCharset(defaultCharset);
                     }
                 }
-                catch ( IllegalArgumentException ignore ) {}
+                catch (IllegalArgumentException ignore) {}
             }
             
-            resp.setContentType( mediaType.type() + "/" + mediaType.subtype() );
+            resp.setContentType(mediaType.type() + "/" + mediaType.subtype());
 
             if (mediaType.charset().isPresent()) {
-                resp.setCharacterEncoding( mediaType.charset().get().toString() );
+                resp.setCharacterEncoding(mediaType.charset().get().toString());
             }
 
             final ServletOutputStream output = resp.getOutputStream();
