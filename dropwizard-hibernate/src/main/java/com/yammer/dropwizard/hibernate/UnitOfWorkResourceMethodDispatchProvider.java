@@ -15,6 +15,14 @@ public class UnitOfWorkResourceMethodDispatchProvider implements ResourceMethodD
         this.sessionFactory = sessionFactory;
     }
 
+    public ResourceMethodDispatchProvider getProvider() {
+        return provider;
+    }
+
+    public SessionFactory getSessionFactory() {
+        return sessionFactory;
+    }
+
     @Override
     public RequestDispatcher create(AbstractResourceMethod abstractResourceMethod) {
         final RequestDispatcher dispatcher = provider.create(abstractResourceMethod);
