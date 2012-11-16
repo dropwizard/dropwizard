@@ -4,19 +4,18 @@ import com.sun.jersey.core.spi.scanning.PackageNamesScanner;
 import com.yammer.dropwizard.jersey.DropwizardResourceConfig;
 import com.yammer.dropwizard.jersey.tests.dummy.DummyResource;
 import org.junit.Test;
+import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
 @SuppressWarnings("unchecked")
 public class DropwizardResourceConfigTest {
     static {
-        Logger.getLogger("com.sun.jersey").setLevel(Level.OFF);
+        SLF4JBridgeHandler.removeHandlersForRootLogger();
+        SLF4JBridgeHandler.install();
     }
 
     @Test

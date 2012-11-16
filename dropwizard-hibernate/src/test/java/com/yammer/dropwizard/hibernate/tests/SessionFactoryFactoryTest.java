@@ -1,7 +1,5 @@
 package com.yammer.dropwizard.hibernate.tests;
 
-import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.Logger;
 import com.google.common.collect.ImmutableList;
 import com.yammer.dropwizard.config.Environment;
 import com.yammer.dropwizard.db.DatabaseConfiguration;
@@ -12,14 +10,15 @@ import org.hibernate.SessionFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.LoggerFactory;
+import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 public class SessionFactoryFactoryTest {
     static {
-        ((Logger) LoggerFactory.getLogger("org")).setLevel(Level.OFF);
+        SLF4JBridgeHandler.removeHandlersForRootLogger();
+        SLF4JBridgeHandler.install();
     }
 
     private final SessionFactoryFactory factory = new SessionFactoryFactory();

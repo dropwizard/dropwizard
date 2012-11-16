@@ -8,22 +8,21 @@ import com.yammer.dropwizard.jersey.DropwizardResourceConfig;
 import com.yammer.dropwizard.jersey.caching.CacheControl;
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
-
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
 public class CacheControlledResourceMethodDispatchAdapterTest extends JerseyTest {
     static {
-        Logger.getLogger("com.sun.jersey").setLevel(Level.OFF);
+        SLF4JBridgeHandler.removeHandlersForRootLogger();
+        SLF4JBridgeHandler.install();
     }
 
     @Path("/test/")

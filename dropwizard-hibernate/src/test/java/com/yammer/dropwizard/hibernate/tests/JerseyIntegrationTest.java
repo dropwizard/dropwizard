@@ -1,7 +1,5 @@
 package com.yammer.dropwizard.hibernate.tests;
 
-import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.Logger;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.sun.jersey.api.client.UniformInterfaceException;
@@ -21,7 +19,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.junit.After;
 import org.junit.Test;
-import org.slf4j.LoggerFactory;
+import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -31,6 +29,11 @@ import static org.fest.assertions.api.Assertions.failBecauseExceptionWasNotThrow
 import static org.mockito.Mockito.mock;
 
 public class JerseyIntegrationTest extends JerseyTest {
+    static {
+        SLF4JBridgeHandler.removeHandlersForRootLogger();
+        SLF4JBridgeHandler.install();
+    }
+
     public static class PersonDAO extends AbstractDAO<Person> {
         public PersonDAO(SessionFactory sessionFactory) {
             super(sessionFactory);
@@ -82,8 +85,6 @@ public class JerseyIntegrationTest extends JerseyTest {
 
     @Override
     protected AppDescriptor configure() {
-        ((Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME)).setLevel(Level.OFF);
-
         final SessionFactoryFactory factory = new SessionFactoryFactory();
         final DatabaseConfiguration dbConfig = new DatabaseConfiguration();
         final ImmutableList<String> packages = ImmutableList.of("com.yammer.dropwizard.hibernate.tests");
@@ -102,11 +103,8 @@ public class JerseyIntegrationTest extends JerseyTest {
         final Session session = sessionFactory.openSession();
         try {
             session.createSQLQuery("DROP TABLE people IF EXISTS").executeUpdate();
-            session.createSQLQuery(
-                    "CREATE TABLE people (name varchar(100) primary key, email varchar(100), age int)")
-                   .executeUpdate();
-            session.createSQLQuery("INSERT INTO people VALUES ('Coda', 'coda@example.com', 300)")
-                   .executeUpdate();
+            session.createSQLQuery("CREATE TABLE people (name varchar(100) primary key, email varchar(100), age int)").executeUpdate();
+            session.createSQLQuery("INSERT INTO people VALUES ('Coda', 'coda@example.com', 300)").executeUpdate();
         } finally {
             session.close();
         }
