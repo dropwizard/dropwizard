@@ -7,10 +7,10 @@ import org.hibernate.SessionFactory;
 import javax.ws.rs.ext.Provider;
 
 @Provider
-public class TransactionalResourceMethodDispatchAdapter implements ResourceMethodDispatchAdapter {
+public class UnitOfWorkResourceMethodDispatchAdapter implements ResourceMethodDispatchAdapter {
     private final SessionFactory sessionFactory;
 
-    public TransactionalResourceMethodDispatchAdapter(SessionFactory sessionFactory) {
+    public UnitOfWorkResourceMethodDispatchAdapter(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
     }
 
@@ -20,6 +20,6 @@ public class TransactionalResourceMethodDispatchAdapter implements ResourceMetho
 
     @Override
     public ResourceMethodDispatchProvider adapt(ResourceMethodDispatchProvider provider) {
-        return new TransactionalResourceMethodDispatchProvider(provider, sessionFactory);
+        return new UnitOfWorkResourceMethodDispatchProvider(provider, sessionFactory);
     }
 }

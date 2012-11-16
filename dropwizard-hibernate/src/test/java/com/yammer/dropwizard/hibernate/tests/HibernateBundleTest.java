@@ -10,7 +10,7 @@ import com.yammer.dropwizard.db.DatabaseConfiguration;
 import com.yammer.dropwizard.hibernate.HibernateBundle;
 import com.yammer.dropwizard.hibernate.SessionFactoryFactory;
 import com.yammer.dropwizard.hibernate.SessionFactoryHealthCheck;
-import com.yammer.dropwizard.hibernate.TransactionalResourceMethodDispatchAdapter;
+import com.yammer.dropwizard.hibernate.UnitOfWorkResourceMethodDispatchAdapter;
 import com.yammer.dropwizard.json.ObjectMapperFactory;
 import org.hibernate.SessionFactory;
 import org.junit.Before;
@@ -68,8 +68,8 @@ public class HibernateBundleTest {
     public void registersATransactionalAdapter() throws Exception {
         bundle.run(configuration, environment);
 
-        final ArgumentCaptor<TransactionalResourceMethodDispatchAdapter> captor =
-                ArgumentCaptor.forClass(TransactionalResourceMethodDispatchAdapter.class);
+        final ArgumentCaptor<UnitOfWorkResourceMethodDispatchAdapter> captor =
+                ArgumentCaptor.forClass(UnitOfWorkResourceMethodDispatchAdapter.class);
         verify(environment).addProvider(captor.capture());
 
         assertThat(captor.getValue().getSessionFactory()).isEqualTo(sessionFactory);

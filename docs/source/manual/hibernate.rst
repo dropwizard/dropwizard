@@ -30,13 +30,13 @@ To create a :ref:`managed <man-core-managed>`, instrumented ``SessionFactory`` i
         }
     }
 
-Then, add a ``HibernateModule`` instance to your service class, specifying the packages which
+Then, add a ``HibernateBundle`` instance to your service class, specifying the packages which
 contain your entity classes and how to get a ``DatabaseConfiguration`` from your configuration
 subclass:
 
 .. code-block:: java
 
-    private final HibernateModule<ExampleConfiguration> hibernate = new HibernateModule<ExampleConfiguration>("com.example.service.entities") {
+    private final HibernateBundle<ExampleConfiguration> hibernate = new HibernateBundle<ExampleConfiguration>("com.example.service.entities") {
         @Override
         public DatabaseConfiguration getDatabaseConfiguration(ExampleConfiguration configuration) {
             return configuration.getDatabaseConfiguration();
@@ -45,7 +45,7 @@ subclass:
 
     @Override
     public void initialize(Bootstrap<ExampleConfiguration> bootstrap) {
-        bootstrap.addBundle(hibernateBundle);
+        bootstrap.addBundle(hibernate);
     }
 
     @Override
@@ -133,14 +133,14 @@ contains type-safe wrappers for most of ``SessionFactory``'s common operations:
 Transactional Resource Methods
 ------------------------------
 
-Dropwizard uses a session-per-request method of scoping transactional boundaries. Not all resource
-methods actually require database access, so the ``@Transactional`` annotation is provided:
+Dropwizard uses a declarative method of scoping transactional boundaries. Not all resource methods
+actually require database access, so the ``@UnitOfWork`` annotation is provided:
 
 .. code-block:: java
 
     @GET
     @Timed
-    @Transactional
+    @UnitOfWork
     public Person findPerson(@PathParam("id") LongParam id) {
         return dao.findById(id.get());
     }

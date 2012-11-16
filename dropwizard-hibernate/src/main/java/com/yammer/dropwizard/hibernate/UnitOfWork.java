@@ -11,23 +11,26 @@ import static java.lang.annotation.ElementType.METHOD;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * When annotating a Jersey resource method, wraps the method in a Hibernate session and
- * transaction. If the resource method returns without throwing an exception, the transaction is
- * committed and the session is closed. If the resource method throws an exception, the transaction
- * is rolled back and the session is closed.
+ * When annotating a Jersey resource method, wraps the method in a Hibernate session.
  *
- * @see TransactionalRequestDispatcher
+ * @see UnitOfWorkRequestDispatcher
  */
 @Target(METHOD)
 @Retention(RUNTIME)
 @Documented
-public @interface Transactional {
+public @interface UnitOfWork {
     /**
      * If {@code true}, the Hibernate session will default to loading read-only entities.
      *
      * @see org.hibernate.Session#setDefaultReadOnly(boolean)
      */
     boolean readOnly() default false;
+
+    /**
+     * If {@code true}, a transaction will be automatically started before the resource method is
+     * invoked, committed if the method returned, and rolled back if an exception was thrown.
+     */
+    boolean transactional() default true;
 
     /**
      * The {@link CacheMode} for the session.
