@@ -1,9 +1,8 @@
 package com.yammer.dropwizard.json.tests;
 
-import com.yammer.dropwizard.json.JsonBundle;
 import com.yammer.dropwizard.config.Environment;
 import com.yammer.dropwizard.jersey.JacksonMessageBodyProvider;
-import com.yammer.dropwizard.jersey.OptionalQueryParamInjectableProvider;
+import com.yammer.dropwizard.json.JsonBundle;
 import com.yammer.dropwizard.json.ObjectMapperFactory;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,12 +25,5 @@ public class JsonBundleTest {
         bundle.run(environment);
         
         verify(environment).addProvider(isA(JacksonMessageBodyProvider.class));
-    }
-
-    @Test
-    public void addsOptionalQueryParamSupport() throws Exception {
-        bundle.run(environment);
-
-        verify(environment).addProvider(eq(OptionalQueryParamInjectableProvider.class));
     }
 }
