@@ -18,8 +18,7 @@ public class UnitOfWorkResourceMethodDispatchProvider implements ResourceMethodD
     @Override
     public RequestDispatcher create(AbstractResourceMethod abstractResourceMethod) {
         final RequestDispatcher dispatcher = provider.create(abstractResourceMethod);
-        final UnitOfWork unitOfWork = abstractResourceMethod.getMethod()
-                                                                  .getAnnotation(UnitOfWork.class);
+        final UnitOfWork unitOfWork = abstractResourceMethod.getMethod().getAnnotation(UnitOfWork.class);
         if (unitOfWork != null) {
             return new UnitOfWorkRequestDispatcher(unitOfWork, dispatcher, sessionFactory);
         }

@@ -20,6 +20,18 @@ public class UnitOfWorkRequestDispatcher implements RequestDispatcher {
         this.sessionFactory = sessionFactory;
     }
 
+    public UnitOfWork getUnitOfWork() {
+        return unitOfWork;
+    }
+
+    public RequestDispatcher getDispatcher() {
+        return dispatcher;
+    }
+
+    public SessionFactory getSessionFactory() {
+        return sessionFactory;
+    }
+
     @Override
     public void dispatch(Object resource, HttpContext context) {
         final Session session = sessionFactory.openSession();
