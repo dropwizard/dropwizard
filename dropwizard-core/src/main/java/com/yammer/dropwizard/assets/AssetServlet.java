@@ -123,12 +123,12 @@ public class AssetServlet extends HttpServlet {
             resp.setDateHeader(HttpHeaders.LAST_MODIFIED, cachedAsset.getLastModifiedTime());
             resp.setHeader(HttpHeaders.ETAG, cachedAsset.getETag());
 
-            final Buffer mimeType = mimeTypes.getMimeByExtension(req.getRequestURI());
+            final Buffer mimeTypeOfExtension = mimeTypes.getMimeByExtension(req.getRequestURI());
             MediaType mediaType = DEFAULT_MEDIA_TYPE;
             
-            if (mimeType != null) {
+            if (mimeTypeOfExtension != null) {
                 try {
-                    mediaType = MediaType.parse( mimeType.toString() );
+                    mediaType = MediaType.parse( mimeTypeOfExtension.toString() );
                     if (defaultCharset != null && mediaType.is( MediaType.ANY_TEXT_TYPE)) {
                         mediaType = mediaType.withCharset(defaultCharset);
                     }
@@ -148,7 +148,7 @@ public class AssetServlet extends HttpServlet {
             } finally {
                 output.close();
             }
-        } catch (RuntimeException ignored) {ignored.printStackTrace();
+        } catch (RuntimeException ignored) {
             resp.sendError(HttpServletResponse.SC_NOT_FOUND);
         } catch (URISyntaxException ignored) {
             resp.sendError(HttpServletResponse.SC_NOT_FOUND);
