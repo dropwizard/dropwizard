@@ -32,7 +32,7 @@ public class Generics {
                 }
             }
         }
-        throw new IllegalStateException("Cannot figure out Configuration type parameterization for " +
+        throw new IllegalStateException("Cannot figure out type parameterization for " +
                                                 klass.getName());
     }
 
