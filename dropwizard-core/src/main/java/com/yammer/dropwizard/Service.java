@@ -14,7 +14,6 @@ import com.yammer.dropwizard.util.Generics;
  *
  * @param <T> the type of configuration class for this service
  */
-@SuppressWarnings("EmptyMethod")
 public abstract class Service<T extends Configuration> {
     static {
         // make sure spinning up Hibernate Validator doesn't yell at us
@@ -27,9 +26,8 @@ public abstract class Service<T extends Configuration> {
      * @return the configuration class
      * @see Generics#getTypeParameter(Class, Class)
      */
-    @SuppressWarnings("unchecked")
     public final Class<T> getConfigurationClass() {
-        return (Class<T>) Generics.getTypeParameter(getClass(), Configuration.class);
+        return Generics.getTypeParameter(getClass(), Configuration.class);
     }
 
     /**

@@ -21,7 +21,7 @@ public class Generics {
      * @return the class's type parameter
      */
     @SuppressWarnings("unchecked")
-    public static <T> Class<? extends T> getTypeParameter(Class<?> klass, Class<T> bound) {
+    public static <T> Class<T> getTypeParameter(Class<?> klass, Class<? super T> bound) {
         Type t = checkNotNull(klass);
         while (t instanceof Class<?>) {
             t = ((Class<?>) t).getGenericSuperclass();
@@ -37,7 +37,7 @@ public class Generics {
                 if (param instanceof Class<?>) {
                     final Class<?> cls = (Class<?>) param;
                     if (bound.isAssignableFrom(cls)) {
-                        return (Class<? extends T>) cls;
+                        return (Class<T>) cls;
                     }
                 }
             }
