@@ -5,9 +5,9 @@ import com.yammer.dropwizard.views.MyOtherView;
 import com.yammer.dropwizard.views.MyView;
 import com.yammer.dropwizard.views.ViewMessageBodyWriter;
 import com.yammer.dropwizard.views.ViewRenderException;
-import com.yammer.dropwizard.views.example.BadView;
-import com.yammer.dropwizard.views.example.MustacheView;
-import com.yammer.dropwizard.views.example.UnknownView;
+import com.yammer.dropwizard.views.BadView;
+import com.yammer.dropwizard.views.MustacheView;
+import com.yammer.dropwizard.views.UnknownView;
 import org.junit.Test;
 
 import javax.ws.rs.WebApplicationException;
@@ -54,7 +54,7 @@ public class ViewMessageBodyWriterTest {
                        output);
 
         assertThat(output.toString())
-                .isEqualTo(String.format("Woop woop. HONK\n"));
+                .isEqualTo("Woop woop. HONK\n");
     }
 
     @Test
@@ -90,7 +90,7 @@ public class ViewMessageBodyWriterTest {
                        output);
 
         assertThat(output.toString())
-                .isEqualTo(String.format("Ok.\n"));
+                .isEqualTo("Ok.\n");
     }
 
     @Test
@@ -133,7 +133,7 @@ public class ViewMessageBodyWriterTest {
             failBecauseExceptionWasNotThrown(WebApplicationException.class);
         } catch (ViewRenderException e) {
             assertThat(e.getMessage())
-                    .isEqualTo("Unable to find a renderer for /com/yammer/dropwizard/views/example/misterpoops.jjsjk");
+                    .isEqualTo("Unable to find a renderer for /com/yammer/dropwizard/views/misterpoops.jjsjk");
         }
     }
 }

@@ -8,7 +8,7 @@ import com.fasterxml.jackson.databind.deser.Deserializers;
 
 import java.io.IOException;
 
-class LogbackModule extends Module {
+public class LogbackModule extends Module {
     private static class LevelDeserializer extends JsonDeserializer<Level> {
         @Override
         public Level deserialize(JsonParser jp,
@@ -16,10 +16,12 @@ class LogbackModule extends Module {
 
             final String text = jp.getText();
 
+            // required because YAML maps "off" to a boolean false
             if ("false".equalsIgnoreCase(text)) {
                 return Level.OFF;
             }
 
+            // required because YAML maps "on" to a boolean true
             if ("true".equalsIgnoreCase(text)) {
                 return Level.ALL;
             }

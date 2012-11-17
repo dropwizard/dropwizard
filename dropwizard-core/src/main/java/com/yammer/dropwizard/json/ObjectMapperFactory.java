@@ -81,7 +81,7 @@ public class ObjectMapperFactory {
         this.factoryFeatures = Maps.newHashMap();
         this.visibilityRules = Maps.newLinkedHashMap();
 
-        this.propertyNamingStrategy = AnnotationSensitivePropertyNamingStrategy.INSTANCE;
+        this.propertyNamingStrategy = new AnnotationSensitivePropertyNamingStrategy();
 
         enable(JsonParser.Feature.ALLOW_COMMENTS);
         disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);

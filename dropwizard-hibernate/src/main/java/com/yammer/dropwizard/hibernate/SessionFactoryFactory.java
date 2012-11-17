@@ -33,10 +33,14 @@ public class SessionFactoryFactory {
                                 DatabaseConfiguration dbConfig,
                                 List<String> packages) throws ClassNotFoundException {
         final ManagedDataSource dataSource = dataSourceFactory.build(dbConfig);
-        environment.manage(dataSource);
-        return buildSessionFactory(buildConnectionProvider(dataSource, dbConfig.getProperties()),
-                                   dbConfig.getProperties(),
-                                   packages);
+        final ConnectionProvider provider = buildConnectionProvider(dataSource,
+                                                                    dbConfig.getProperties());
+        final SessionFactory factory = buildSessionFactory(provider,
+                                                           dbConfig.getProperties(),
+                                                           packages);
+        final ManagedSessionFactory managedFactory = new ManagedSessionFactory(factory, dataSource);
+        environment.manage(managedFactory);
+        return managedFactory;
     }
 
     private ConnectionProvider buildConnectionProvider(DataSource dataSource,

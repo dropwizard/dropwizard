@@ -11,21 +11,21 @@ import com.yammer.dropwizard.auth.Authenticator;
 import com.yammer.dropwizard.auth.oauth.OAuthProvider;
 import com.yammer.dropwizard.jersey.DropwizardResourceConfig;
 import org.junit.Test;
+import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.fest.assertions.api.Assertions.failBecauseExceptionWasNotThrown;
 
 public class OAuthProviderTest extends JerseyTest {
     static {
-        Logger.getLogger("com.sun.jersey").setLevel(Level.OFF);
+        SLF4JBridgeHandler.removeHandlersForRootLogger();
+        SLF4JBridgeHandler.install();
     }
 
     @Path("/test/")
@@ -47,7 +47,7 @@ public class OAuthProviderTest extends JerseyTest {
                     return Optional.of("good-guy");
                 }
                 if ("bad-guy".equals(credentials)) {
-                    throw new AuthenticationException("CRAP", new RuntimeException());
+                    throw new AuthenticationException("CRAP", new RuntimeException(""));
                 }
                 return Optional.absent();
             }

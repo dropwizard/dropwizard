@@ -67,17 +67,7 @@ public class JacksonMessageBodyProvider extends JacksonJaxbJsonProvider {
     }
 
     private Object validate(Annotation[] annotations, Object value) {
-        Class<?>[] classes = null;
-
-        for (Annotation annotation : annotations) {
-            if (annotation.annotationType() == Valid.class) {
-                classes = DEFAULT_GROUP_ARRAY;
-                break;
-            } else if (annotation.annotationType() == Validated.class) {
-                classes = ((Validated) annotation).value();
-                break;
-            }
-        }
+        final Class<?>[] classes = findValidationGroups(annotations);
 
         if (classes != null) {
             final ImmutableList<String> errors = VALIDATOR.validate(value, classes);
@@ -88,6 +78,17 @@ public class JacksonMessageBodyProvider extends JacksonJaxbJsonProvider {
         }
 
         return value;
+    }
+
+    private Class<?>[] findValidationGroups(Annotation[] annotations) {
+        for (Annotation annotation : annotations) {
+            if (annotation.annotationType() == Valid.class) {
+                return DEFAULT_GROUP_ARRAY;
+            } else if (annotation.annotationType() == Validated.class) {
+                return  ((Validated) annotation).value();
+            }
+        }
+        return null;
     }
 
     @Override

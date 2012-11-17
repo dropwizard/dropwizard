@@ -4,15 +4,14 @@ import com.yammer.dropwizard.config.Configuration;
 import com.yammer.dropwizard.config.Environment;
 import com.yammer.dropwizard.json.ObjectMapperFactory;
 import org.junit.Test;
-
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import static org.mockito.Mockito.mock;
 
 public class EnvironmentTest {
     static {
-        Logger.getLogger("com.sun.jersey").setLevel(Level.OFF);
+        SLF4JBridgeHandler.removeHandlersForRootLogger();
+        SLF4JBridgeHandler.install();
     }
 
     @Test
