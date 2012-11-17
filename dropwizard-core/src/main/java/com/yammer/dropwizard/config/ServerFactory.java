@@ -4,6 +4,7 @@ import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
+import com.sun.jersey.spi.container.servlet.ServletContainer;
 import com.yammer.dropwizard.jetty.BiDiGzipHandler;
 import com.yammer.dropwizard.jetty.InstrumentedSslSelectChannelConnector;
 import com.yammer.dropwizard.jetty.InstrumentedSslSocketConnector;
@@ -364,6 +365,13 @@ public class ServerFactory {
 
         for (ImmutableMap.Entry<String, ServletHolder> entry : env.getServlets().entrySet()) {
             handler.addServlet(entry.getValue(), entry.getKey());
+        }
+
+        final ServletContainer jerseyContainer = env.getJerseyServletContainer();
+        if (jerseyContainer != null) {
+            final ServletHolder jerseyHolder = new ServletHolder(jerseyContainer);
+            jerseyHolder.setInitOrder(Integer.MAX_VALUE);
+            handler.addServlet(jerseyHolder, config.getRootPath());
         }
 
         for (ImmutableMap.Entry<String, FilterHolder> entry : env.getFilters().entries()) {
