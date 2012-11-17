@@ -5,33 +5,32 @@ import com.yammer.dropwizard.assets.AssetServlet;
 import org.eclipse.jetty.http.MimeTypes;
 import org.eclipse.jetty.testing.HttpTester;
 import org.eclipse.jetty.testing.ServletTester;
+import org.junit.After;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
-@SuppressWarnings({ "serial", "StaticNonFinalField", "StaticVariableMayNotBeInitialized" })
 public class AssetServletTest {
-    private static ServletTester servletTester;
     private static final String DUMMY_SERVLET = "/dummy_servlet/";
     private static final String NOINDEX_SERVLET = "/noindex_servlet/";
     private static final String NOCHARSET_SERVLET = "/nocharset_servlet/";
     private static final String ROOT_SERVLET = "/";
     private static final String RESOURCE_PATH = "/assets";
 
-    private HttpTester request;
-    private HttpTester response;
-
     // ServletTester expects to be able to instantiate the servlet with zero arguments
 
     public static class DummyAssetServlet extends AssetServlet {
+        private static final long serialVersionUID = -1L;
+
         public DummyAssetServlet() {
             super(RESOURCE_PATH, DUMMY_SERVLET, "index.htm");
         }
     }
 
     public static class NoIndexAssetServlet extends AssetServlet {
+        private static final long serialVersionUID = -1L;
+
         public NoIndexAssetServlet() {
             super(RESOURCE_PATH, DUMMY_SERVLET, null);
         }
@@ -49,25 +48,28 @@ public class AssetServletTest {
         }
     }
 
-    @BeforeClass
-    public static void setup() throws Exception {
-        servletTester = new ServletTester();
+    private final ServletTester servletTester = new ServletTester();
+    private final HttpTester request = new HttpTester();
+    private final HttpTester response = new HttpTester();
+
+    @Before
+    public void setup() throws Exception {
         servletTester.addServlet(DummyAssetServlet.class, DUMMY_SERVLET + '*');
         servletTester.addServlet(NoIndexAssetServlet.class, NOINDEX_SERVLET + '*');
         servletTester.addServlet(NoCharsetAssetServlet.class, NOCHARSET_SERVLET + '*');
         servletTester.addServlet(RootAssetServlet.class, ROOT_SERVLET + '*');
         servletTester.start();
-    }
 
-    @Before
-    public void setupTester() throws Exception {
-        request = new HttpTester();
         request.setMethod("GET");
         request.setURI(DUMMY_SERVLET + "example.txt");
         request.setVersion("HTTP/1.0");
-        response = new HttpTester();
     }
-    
+
+    @After
+    public void tearDown() throws Exception {
+        servletTester.stop();
+    }
+
     @Test
     public void servesFilesMappedToRoot() throws Exception {
         request.setURI(ROOT_SERVLET + "assets/example.txt");
