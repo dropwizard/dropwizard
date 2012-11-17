@@ -2,6 +2,7 @@ package com.example.helloworld;
 
 import com.example.helloworld.auth.ExampleAuthenticator;
 import com.example.helloworld.cli.RenderCommand;
+import com.example.helloworld.core.Person;
 import com.example.helloworld.core.Template;
 import com.example.helloworld.core.User;
 import com.example.helloworld.db.PersonDAO;
@@ -11,8 +12,8 @@ import com.example.helloworld.resources.PeopleResource;
 import com.example.helloworld.resources.PersonResource;
 import com.example.helloworld.resources.ProtectedResource;
 import com.yammer.dropwizard.Service;
-import com.yammer.dropwizard.auth.basic.BasicAuthProvider;
 import com.yammer.dropwizard.assets.AssetsBundle;
+import com.yammer.dropwizard.auth.basic.BasicAuthProvider;
 import com.yammer.dropwizard.config.Bootstrap;
 import com.yammer.dropwizard.config.Environment;
 import com.yammer.dropwizard.db.DatabaseConfiguration;
@@ -25,7 +26,7 @@ public class HelloWorldService extends Service<HelloWorldConfiguration> {
     }
 
     private final HibernateBundle<HelloWorldConfiguration> hibernateBundle =
-            new HibernateBundle<HelloWorldConfiguration>("com.example.helloworld.core") {
+            new HibernateBundle<HelloWorldConfiguration>(Person.class) {
                 @Override
                 public DatabaseConfiguration getDatabaseConfiguration(HelloWorldConfiguration configuration) {
                     return configuration.getDatabaseConfiguration();

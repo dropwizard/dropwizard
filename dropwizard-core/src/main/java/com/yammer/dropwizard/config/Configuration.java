@@ -87,7 +87,9 @@ public class Configuration {
 
     @Override
     public String toString() {
-        return Objects.toStringHelper(this).add("http", httpConfiguration).add("logging",
-                                                                               loggingConfiguration).toString();
+        return Objects.toStringHelper(this)
+                      .add("http", httpConfiguration)
+                      .add("logging", loggingConfiguration)
+                      .toString();
     }
 }

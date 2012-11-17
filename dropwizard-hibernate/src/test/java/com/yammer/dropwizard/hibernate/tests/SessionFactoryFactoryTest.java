@@ -77,6 +77,8 @@ public class SessionFactoryFactoryTest {
     }
 
     private void build() throws ClassNotFoundException {
-        this.sessionFactory = factory.build(environment, config, packages);
+        this.sessionFactory = factory.build(environment,
+                                            config,
+                                            ImmutableList.<Class<?>>of(Person.class));
     }
 }

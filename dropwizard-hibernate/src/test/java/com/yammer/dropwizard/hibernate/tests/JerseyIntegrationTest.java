@@ -96,7 +96,9 @@ public class JerseyIntegrationTest extends JerseyTest {
         dbConfig.setValidationQuery("SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS");
 
         try {
-            this.sessionFactory = factory.build(environment, dbConfig, packages);
+            this.sessionFactory = factory.build(environment,
+                                                dbConfig,
+                                                ImmutableList.<Class<?>>of(Person.class));
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
