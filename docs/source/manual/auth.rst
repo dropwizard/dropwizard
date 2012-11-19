@@ -99,7 +99,7 @@ which takes an instance of ``String``.
     public void run(ExampleConfiguration configuration,
                     Environment environment) {
         environment.addProvider(new OAuthProvider<User>(new ExampleAuthenticator(),
-                                                            "SUPER SECRET STUFF"));
+                                                        "SUPER SECRET STUFF"));
     }
 
 .. _man-auth-resources:
