@@ -6,10 +6,11 @@ Dropwizard Views
 
 .. highlight:: text
 
-.. rubric:: The ``dropwizard-views`` module provides you with simple, fast HTML views using the
-            Freemarker_ templating library.
+.. rubric:: The ``dropwizard-views`` module provides you with simple, fast HTML views using either
+            Freemarker_ or Mustache_.
 
 .. _Freemarker: http://freemarker.sourceforge.net/
+.. _Mustache: http://mustache.github.com/mustache.5.html
 
 To enable views for your :ref:`service <man-core-service>`, add the ``ViewBundle``:
 
@@ -41,6 +42,9 @@ Then, in your :ref:`resource method <man-core-resources>`, add a ``View`` class:
 ``com.example.service.PersonView``, Dropwizard would then look for the file
 ``src/main/resources/com/example/service/person.ftl``.
 
+If your template ends with ``.ftl``, it'll be interpreted as a Freemarker_ template. If it ends with
+``.mustache``, it'll be interpreted as a Mustache template.
+
 .. tip::
 
     Dropwizard Views also support localized template files. It picks up the client's locale from
@@ -65,8 +69,7 @@ root object is a ``com.example.views.PersonView`` instance. If you attempt to ca
 doesn't exist on ``PersonView``--``getConnectionPool()``, for example--it will flag that line in
 your IDE.
 
-Once you have your view and Freemarker template, you can simply return an instance of your ``View``
-subclass:
+Once you have your view and template, you can simply return an instance of your ``View`` subclass:
 
 .. code-block:: java
 
@@ -91,3 +94,7 @@ subclass:
     ``application/json`` with a single representation class.
 
 For more information on how to use Freemarker, see the `Freemarker`_ documentation.
+
+For more information on how to use Mustache, see the `Mustache`_ and `Mustache.java`_ documentation.
+
+ .. _Mustache.java: https://github.com/spullara/mustache.java
