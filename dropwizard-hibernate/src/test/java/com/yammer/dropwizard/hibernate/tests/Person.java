@@ -1,6 +1,7 @@
 package com.yammer.dropwizard.hibernate.tests;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.joda.time.DateTime;
 
 import javax.persistence.*;
 
@@ -17,8 +18,7 @@ public class Person {
     private String email;
 
     @Column
-    @JsonProperty
-    private int age;
+    private DateTime birthday;
 
     public String getName() {
         return name;
@@ -36,11 +36,11 @@ public class Person {
         this.email = email;
     }
 
-    public int getAge() {
-        return age;
+    public DateTime getBirthday() {
+        return birthday;
     }
 
-    public void setAge(int age) {
-        this.age = age;
+    public void setBirthday(DateTime birthday) {
+        this.birthday = birthday;
     }
 }
