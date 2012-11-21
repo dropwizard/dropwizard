@@ -10,8 +10,7 @@ import com.yammer.dropwizard.util.Generics;
 public abstract class MigrationsBundle<T extends Configuration> implements Bundle, ConfigurationStrategy<T> {
     @Override
     public final void initialize(Bootstrap<?> bootstrap) {
-        @SuppressWarnings("unchecked")
-        final Class<T> klass = (Class<T>) Generics.getTypeParameter(getClass(), Configuration.class);
+        final Class<T> klass = Generics.getTypeParameter(getClass(), Configuration.class);
         bootstrap.addCommand(new DbCommand<T>(this, klass));
     }
 
