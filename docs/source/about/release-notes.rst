@@ -43,6 +43,7 @@ v0.6.0-SNAPSHOT: TBD
 * Upgraded to Logback 1.0.7 and SLF4J 1.7.2.
 * Upgraded to Guava 13.0.1.
 * Upgraded to Jackson 2.1.1.
+* Added support for Joda Time.
 
 .. _rel-0.5.1:
 

@@ -11,7 +11,11 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.net.HostAndPort;
 import com.yammer.dropwizard.json.AnnotationSensitivePropertyNamingStrategy;
 import com.yammer.dropwizard.json.ObjectMapperFactory;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.junit.Test;
+
+import java.util.Date;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
@@ -84,6 +88,30 @@ public class ObjectMapperFactoryTest {
 
         assertThat(mapper.readValue("\"ALL\"", Level.class))
                 .isEqualTo(Level.ALL);
+    }
+
+    @Test
+    public void serializesJodaTimeTypesAsTimestamps() throws Exception {
+        final DateTime dateTime = new DateTime(1963, 8, 28, 15, 0, DateTimeZone.forID("EST"));
+        final ObjectMapper mapper = factory.build();
+
+        assertThat(mapper.writeValueAsString(dateTime)).
+                isEqualTo("-200203200000");
+
+        assertThat(mapper.readValue("-200203200000", DateTime.class))
+                .isEqualTo(dateTime.toDateTime(DateTimeZone.UTC));
+    }
+
+    @Test
+    public void serializesDatesAsTimestamps() throws Exception {
+        final Date date = new Date(-200203200000L);
+        final ObjectMapper mapper = factory.build();
+
+        assertThat(mapper.writeValueAsString(date)).
+                isEqualTo("-200203200000");
+
+        assertThat(mapper.readValue("-200203200000", Date.class))
+                .isEqualTo(date);
     }
 }
 
