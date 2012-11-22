@@ -20,6 +20,7 @@
         <module>dropwizard-core</module>
         <module>dropwizard-client</module>
         <module>dropwizard-db</module>
+        <module>dropwizard-stop</module>
         <module>dropwizard-jdbi</module>
         <module>dropwizard-migrations</module>
         <module>dropwizard-hibernate</module>
