@@ -30,15 +30,15 @@ import java.lang.reflect.Type;
  */
 @Provider
 public class JacksonMessageBodyProvider extends JacksonJaxbJsonProvider {
-    private static final Validator VALIDATOR = new Validator();
-
     /**
      * The default group array used in case any of the validate methods is called without a group.
      */
     private static final Class<?>[] DEFAULT_GROUP_ARRAY = new Class<?>[]{ Default.class };
     private final ObjectMapper mapper;
+    private final Validator validator;
 
-    public JacksonMessageBodyProvider(ObjectMapper mapper) {
+    public JacksonMessageBodyProvider(ObjectMapper mapper, Validator validator) {
+        this.validator = validator;
         this.mapper = mapper;
         setMapper(mapper);
     }
@@ -70,7 +70,7 @@ public class JacksonMessageBodyProvider extends JacksonJaxbJsonProvider {
         final Class<?>[] classes = findValidationGroups(annotations);
 
         if (classes != null) {
-            final ImmutableList<String> errors = VALIDATOR.validate(value, classes);
+            final ImmutableList<String> errors = validator.validate(value, classes);
             if (!errors.isEmpty()) {
                 throw new InvalidEntityException("The request entity had the following errors:",
                                                  errors);

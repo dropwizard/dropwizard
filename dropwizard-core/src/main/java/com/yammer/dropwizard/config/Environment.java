@@ -16,6 +16,7 @@ import com.yammer.dropwizard.lifecycle.Managed;
 import com.yammer.dropwizard.lifecycle.ServerLifecycleListener;
 import com.yammer.dropwizard.tasks.GarbageCollectionTask;
 import com.yammer.dropwizard.tasks.Task;
+import com.yammer.dropwizard.validation.Validator;
 import com.yammer.metrics.core.HealthCheck;
 import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.servlet.FilterHolder;
@@ -66,6 +67,7 @@ public class Environment extends AbstractLifeCycle {
     private final ObjectMapperFactory objectMapperFactory;
     private SessionHandler sessionHandler;
     private ServletContainer jerseyServletContainer;
+    private Validator validator;
 
     private ServerLifecycleListener serverListener;
 
@@ -78,10 +80,12 @@ public class Environment extends AbstractLifeCycle {
      */
     public Environment(String name,
                        Configuration configuration,
-                       ObjectMapperFactory objectMapperFactory) {
+                       ObjectMapperFactory objectMapperFactory,
+                       Validator validator) {
         this.name = name;
         this.configuration = configuration;
         this.objectMapperFactory = objectMapperFactory;
+        this.validator = validator;
         this.config = new DropwizardResourceConfig(false) {
             @Override
             public void validate() {
@@ -381,9 +385,17 @@ public class Environment extends AbstractLifeCycle {
         return executor;
     }
 
+    public Validator getValidator() {
+        return validator;
+    }
+
+    public void setValidator(Validator validator) {
+        this.validator = checkNotNull(validator);
+    }
+
     /*
-     * Internal Accessors
-     */
+    * Internal Accessors
+    */
 
     ImmutableSet<HealthCheck> getHealthChecks() {
         return healthChecks.build();

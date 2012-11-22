@@ -16,6 +16,7 @@ public class JsonBundle implements Bundle {
 
     @Override
     public void run(Environment environment) {
-        environment.addProvider(new JacksonMessageBodyProvider(environment.getObjectMapperFactory().build()));
+        environment.addProvider(new JacksonMessageBodyProvider(environment.getObjectMapperFactory().build(),
+                                                               environment.getValidator()));
     }
 }

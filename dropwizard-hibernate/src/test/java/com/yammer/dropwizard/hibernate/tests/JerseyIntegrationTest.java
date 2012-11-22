@@ -15,6 +15,7 @@ import com.yammer.dropwizard.hibernate.UnitOfWorkResourceMethodDispatchAdapter;
 import com.yammer.dropwizard.jersey.DropwizardResourceConfig;
 import com.yammer.dropwizard.jersey.JacksonMessageBodyProvider;
 import com.yammer.dropwizard.json.ObjectMapperFactory;
+import com.yammer.dropwizard.validation.Validator;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.joda.time.DateTime;
@@ -116,7 +117,8 @@ public class JerseyIntegrationTest extends JerseyTest {
         final DropwizardResourceConfig config = new DropwizardResourceConfig(true);
         config.getSingletons().add(new UnitOfWorkResourceMethodDispatchAdapter(sessionFactory));
         config.getSingletons().add(new PersonResource(new PersonDAO(sessionFactory)));
-        config.getSingletons().add(new JacksonMessageBodyProvider(new ObjectMapperFactory().build()));
+        config.getSingletons().add(new JacksonMessageBodyProvider(new ObjectMapperFactory().build(),
+                                                                  new Validator()));
         return new LowLevelAppDescriptor.Builder(config).build();
     }
 

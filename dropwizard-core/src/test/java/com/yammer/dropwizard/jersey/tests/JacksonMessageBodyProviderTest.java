@@ -10,6 +10,7 @@ import com.yammer.dropwizard.jersey.JacksonMessageBodyProvider;
 import com.yammer.dropwizard.json.ObjectMapperFactory;
 import com.yammer.dropwizard.validation.InvalidEntityException;
 import com.yammer.dropwizard.validation.Validated;
+import com.yammer.dropwizard.validation.Validator;
 import org.junit.Test;
 
 import javax.validation.Valid;
@@ -59,7 +60,8 @@ public class JacksonMessageBodyProviderTest {
     }
 
     private final ObjectMapper mapper = spy(new ObjectMapperFactory().build());
-    private final JacksonMessageBodyProvider provider = new JacksonMessageBodyProvider(mapper);
+    private final JacksonMessageBodyProvider provider = new JacksonMessageBodyProvider(mapper,
+                                                                                       new Validator());
 
     @Test
     public void readsDeserializableTypes() throws Exception {

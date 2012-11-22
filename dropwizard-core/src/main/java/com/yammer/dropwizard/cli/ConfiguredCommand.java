@@ -74,9 +74,7 @@ public abstract class ConfiguredCommand<T extends Configuration> extends Command
                                  Class<T> configurationClass,
                                  ObjectMapperFactory objectMapperFactory) throws IOException, ConfigurationException {
         final ConfigurationFactory<T> configurationFactory =
-                ConfigurationFactory.forClass(configurationClass,
-                                              new Validator(),
-                                              objectMapperFactory);
+                ConfigurationFactory.forClass(configurationClass, new Validator(), objectMapperFactory);
         if (filename != null) {
             final File file = new File(filename);
             if (!file.exists()) {

@@ -7,6 +7,7 @@ import com.yammer.dropwizard.config.Configuration;
 import com.yammer.dropwizard.config.Environment;
 import com.yammer.dropwizard.config.ServerFactory;
 import com.yammer.dropwizard.lifecycle.ServerLifecycleListener;
+import com.yammer.dropwizard.validation.Validator;
 import net.sourceforge.argparse4j.inf.Namespace;
 import org.eclipse.jetty.server.Server;
 import org.slf4j.Logger;
