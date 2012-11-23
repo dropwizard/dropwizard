@@ -58,7 +58,9 @@ public class DBIFactory {
         dbi.setSQLLog(new LogbackLog(LOGGER, Level.TRACE));
         dbi.setTimingCollector(new InstrumentedTimingCollector(Metrics.defaultRegistry(),
                                                                new SanerNamingStrategy()));
-        dbi.setStatementRewriter(new NamePrependingStatementRewriter(new ColonPrefixNamedParamStatementRewriter()));
+        if (configuration.isAutoCommentsEnabled()) {
+            dbi.setStatementRewriter(new NamePrependingStatementRewriter(new ColonPrefixNamedParamStatementRewriter()));
+        }
         dbi.registerArgumentFactory(new OptionalArgumentFactory(configuration.getDriverClass()));
         dbi.registerContainerFactory(new ImmutableListContainerFactory());
         dbi.registerContainerFactory(new ImmutableSetContainerFactory());

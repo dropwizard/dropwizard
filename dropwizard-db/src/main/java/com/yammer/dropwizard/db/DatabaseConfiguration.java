@@ -69,6 +69,17 @@ public class DatabaseConfiguration {
     @JsonProperty
     private ImmutableList<String> connectionInitializationStatements = ImmutableList.of();
 
+    @JsonProperty
+    private boolean autoCommentsEnabled = true;
+
+    public boolean isAutoCommentsEnabled() {
+        return autoCommentsEnabled;
+    }
+
+    public void setAutoCommentsEnabled(boolean autoCommentsEnabled) {
+        this.autoCommentsEnabled = autoCommentsEnabled;
+    }
+
     public String getDriverClass() {
         return driverClass;
     }
