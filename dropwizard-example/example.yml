@@ -193,3 +193,9 @@ logging:
 
     # The syslog facility to which statements will be sent.
     facility: local0
+
+stop:
+    port: 8181
+    key:  server-stop
+    # seconds to wait for server to be stopped.
+    wait: 10s

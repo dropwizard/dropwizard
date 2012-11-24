@@ -1,6 +1,7 @@
 package com.example.helloworld;
 
 import com.example.helloworld.core.Template;
+import com.yammer.dropwizard.stop.StopConfiguration;
 import com.yammer.dropwizard.config.Configuration;
 import com.yammer.dropwizard.db.DatabaseConfiguration;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -20,6 +21,10 @@ public class HelloWorldConfiguration extends Configuration {
     @NotNull
     @JsonProperty("database")
     private DatabaseConfiguration databaseConfiguration = new DatabaseConfiguration();
+
+    @NotNull
+    @JsonProperty("stop")
+    private StopConfiguration stopConfiguration = new StopConfiguration();
 
     public String getTemplate() {
         return template;
@@ -47,5 +52,13 @@ public class HelloWorldConfiguration extends Configuration {
 
     public void setDatabaseConfiguration(DatabaseConfiguration databaseConfiguration) {
         this.databaseConfiguration = databaseConfiguration;
+    }
+
+    public StopConfiguration getStopConfiguration() {
+      return stopConfiguration;
+    }
+
+    public void setStopConfiguration(StopConfiguration stopConfiguration) {
+      this.stopConfiguration = stopConfiguration;
     }
 }
