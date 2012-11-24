@@ -334,6 +334,17 @@ public class Environment extends AbstractLifeCycle {
     }
 
     /**
+     * Gets the given Jersey property.
+     *
+     * @param name     the name of the Jersey property
+     * @see ResourceConfig
+     */
+    public Object getJerseyProperty(String name) {
+        return config.getProperties().get(name);
+    }
+
+
+    /**
      * Creates a new {@link ExecutorService} instance with the given parameters whose lifecycle is
      * managed by the service.
      *
