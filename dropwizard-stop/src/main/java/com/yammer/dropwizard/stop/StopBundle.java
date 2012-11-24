@@ -7,11 +7,27 @@ import com.yammer.dropwizard.config.Environment;
 import com.yammer.dropwizard.util.Generics;
 
 /**
- * The {@link StopBundle} groups functionality to stop the server via commands.
- * Without these commands the server must always be stopped with a SIGINT.
- * Simply add this bundle to your Service during initialization.  Additionally,
- * you must 'initialize' this bundle too, as currently dropwizard-core.Bootstrap does not
- * initialize 'configured bundles' but does on non-configured bundles.
+ * Optional functionality to coordinate a graceful stop of the service.<p/>
+ * To add this functionality, you should add this bundle during the Service initialization.
+ * And make sure that you 'initialize' the bundle too.<p/>
+ * Here is a code snippet:
+ * <pre>
+    public void initialize(Bootstrap{@code <YourAppConfiguration>} bootstrap) {
+        ....
+        StopBundle{@code <YourAppConfiguration>} stopBundle = new StopBundle{@code <YourAppConfiguration>}() {
+          {@literal @}Override
+          public StopConfiguration getStopConfiguration(YourAppConfiguration configuration) {
+            return configuration.getStopConfiguration();
+          }
+        };
+        bootstrap.addBundle(stopBundle);
+        // This seems like a bug to me.  I.e. some bundles are initialized and others are not.
+        stopBundle.initialize(bootstrap);
+        ....
+    }
+ * }
+ * </pre>
+ * <strong>Don't forget to add a {@link StopConfiguration} to YourAppConfiguration.</strong>
  *
  */
 public abstract class StopBundle <T extends Configuration> implements ConfiguredBundle<T>, ConfigurationStrategy<T> {

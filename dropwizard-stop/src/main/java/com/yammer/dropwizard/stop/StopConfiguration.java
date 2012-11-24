@@ -10,6 +10,8 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * The configuration for the Stop command.
+ * {@link StopMonitor} and {@link StopCommand} both use this configuration to communicate the sequence of
+ * events needed to gracefully stop the server.
  */
 public class StopConfiguration {
   @JsonProperty
@@ -50,9 +52,12 @@ public class StopConfiguration {
   }
 
   /**
+   * The {@link Duration} to wait during execution of the stop sequence.
    * The {@link Duration} that the {@link StopCommand} should wait before aborting the stop command.
-   * The {@link Duration} that the {@link StopMonitor} should wait before exiting the application.  This duration should be
-   * at least as large as {@link com.yammer.dropwizard.config.HttpConfiguration#getShutdownGracePeriod()}.
+   * The {@link Duration} that the {@link StopMonitor} should wait before exiting the application after receiving
+   * the stop command.  This duration should be at least as large as
+   * {@link com.yammer.dropwizard.config.HttpConfiguration#getShutdownGracePeriod()}.
+   * <p/>
    * Note this is something that could be improved so that this configuration was the exact same
    * as {@link com.yammer.dropwizard.config.HttpConfiguration#getShutdownGracePeriod()}.
    * @return {@link Duration}

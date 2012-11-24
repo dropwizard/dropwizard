@@ -22,7 +22,7 @@ import java.nio.charset.Charset;
  * Add a 'stop' command to the list of commands for the server.
  * This command will allow a fairly graceful shutdown of the service without using SIGINT.
  * Users would not use this class directly, but instead add {@link StopBundle} during the
- * service initialization.
+ * service initialization.  See {@link StopBundle} for an example of how to set this up.
  */
 public class StopCommand<T extends Configuration> extends ConfiguredCommand<T> {
   private static final Logger LOGGER = LoggerFactory.getLogger(StopCommand.class);
@@ -124,7 +124,10 @@ public class StopCommand<T extends Configuration> extends ConfiguredCommand<T> {
     exitNow(exitCode);
   }
 
-  // add a seam for testing.  I.e. wouldn't be good to actually exit.
+  /**
+   * Add a seam for testing.  I.e. wouldn't be good to actually exit the JVM during testing.
+   * @param exitCode that will be reported.
+   */
   protected void exitNow(int exitCode) {
     System.exit(exitCode);
   }

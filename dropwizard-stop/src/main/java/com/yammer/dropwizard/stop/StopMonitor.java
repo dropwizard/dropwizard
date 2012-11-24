@@ -15,11 +15,13 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.Charset;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
 /**
- * Establish a 'stop' monitor on the configured port.  When a stop is issued, and the 'key' is provided then
- * attempt to stop the server, waiting for the allocated wait time in milliseconds, at a minimum.
+ * Establish a Stop monitor on the configured port.
+ * When a stop command is issued, stop the server and wait
+ * for the allocated {@link Duration} before exiting the application.
+ *
+ * See {@link StopConfiguration}
  */
 public class StopMonitor extends Thread implements ServerLifecycleListener {
   private static final Logger LOGGER = LoggerFactory.getLogger(StopMonitor.class);
@@ -40,6 +42,11 @@ public class StopMonitor extends Thread implements ServerLifecycleListener {
     this.stopConfiguration = stopConfiguration;
   }
 
+  /**
+   * Hook into the ServerLifeCycle.
+   * @param server that was started for the service.  This will be the server that is stopped when when the
+   *               stop command is issued.
+   */
   @Override
   public void serverStarted(Server server) {
     if (server == null) {
@@ -100,6 +107,9 @@ public class StopMonitor extends Thread implements ServerLifecycleListener {
     this.server = server;
   }
 
+  /**
+   * The 'StopMonitor' thread will wait for a stop command by listening to the configured port.
+   */
   @Override
   public void run() {
     String cmd = "";
@@ -170,7 +180,9 @@ public class StopMonitor extends Thread implements ServerLifecycleListener {
     }
   }
 
-  // add a seam for testing.  I.e. wouldn't be good to actually exit.
+  /**
+   * Add a seam for testing.  I.e. wouldn't be good to actually exit the JVM during testing.
+   */
   protected void exitNow() {
     System.exit(0);
   }
