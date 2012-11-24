@@ -3,6 +3,7 @@ package com.yammer.dropwizard.stop;
 import com.yammer.dropwizard.cli.ConfiguredCommand;
 import com.yammer.dropwizard.config.Bootstrap;
 import com.yammer.dropwizard.config.Configuration;
+import com.yammer.dropwizard.util.Duration;
 import net.sourceforge.argparse4j.inf.Namespace;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,7 +62,7 @@ public class StopCommand<T extends Configuration> extends ConfiguredCommand<T> {
    * @param timeout in seconds for how long to wait for a response from the {@link StopMonitor} before exiting.
    *                if <= zero no waiting will occur.
    */
-  private void stop(int port, String key, int timeout) {
+  private void stop(int port, String key, Duration timeout) {
     stop(getSocket(port), key, timeout);
   }
 
@@ -77,18 +78,19 @@ public class StopCommand<T extends Configuration> extends ConfiguredCommand<T> {
     return s;
   }
 
-  private void stop(Socket s, String key, int timeout) {
+  private void stop(Socket s, String key, Duration timeout) {
     try {
-      if (timeout > 0) {
-        s.setSoTimeout(timeout * 1000);
+      long quantity = timeout.getQuantity();
+      if (quantity > 0) {
+        s.setSoTimeout((int) timeout.toMilliseconds());
       }
       try {
         OutputStream out = s.getOutputStream();
         out.write((key + "\r\nstop\r\n").getBytes(Charset.forName("UTF-8")));
         out.flush();
 
-        if (timeout > 0) {
-          LOGGER.info("Waiting " + (timeout > 0 ? ("up to " + timeout + " seconds") : "") + " for server to stop");
+        if (quantity > 0) {
+          LOGGER.info("Waiting " + (quantity > 0 ? ("up to " + timeout) : "") + " for server to stop");
           LineNumberReader lin = new LineNumberReader(new InputStreamReader(s.getInputStream(), Charset.forName("UTF-8")));
           String response = lin.readLine();
           if ("Stopped".equals(response)) {

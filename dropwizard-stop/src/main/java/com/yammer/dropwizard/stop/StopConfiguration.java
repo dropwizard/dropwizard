@@ -1,10 +1,12 @@
 package com.yammer.dropwizard.stop;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.yammer.dropwizard.util.Duration;
 import com.yammer.dropwizard.validation.DurationRange;
 import com.yammer.dropwizard.validation.ValidationMethod;
 
 import javax.validation.constraints.NotNull;
+import java.util.concurrent.TimeUnit;
 
 /**
  * The configuration for the Stop command.
@@ -19,8 +21,13 @@ public class StopConfiguration {
 
   @DurationRange
   @JsonProperty
-  private int wait = 0;
+  private Duration wait = Duration.seconds(2);
 
+  /**
+   * The port that the stop command is executed on.  The {@link StopMonitor} listens on this port
+   * and the {@link StopCommand} issues the stop command on to this port.
+   * @return port
+   */
   public int getPort() {
     return port;
   }
@@ -29,6 +36,11 @@ public class StopConfiguration {
     this.port = port;
   }
 
+  /**
+   * The key that is used to authorize the stop command.  If the {@link StopMonitor} is configured
+   * with a different key than what is used to issue the stop command the stop command is ignored.
+   * @return a String representing the key
+   */
   public String getKey() {
     return key;
   }
@@ -37,11 +49,19 @@ public class StopConfiguration {
     this.key = key;
   }
 
-  public int getWait() {
+  /**
+   * The {@link Duration} that the {@link StopCommand} should wait before aborting the stop command.
+   * The {@link Duration} that the {@link StopMonitor} should wait before exiting the application.  This duration should be
+   * at least as large as {@link com.yammer.dropwizard.config.HttpConfiguration#getShutdownGracePeriod()}.
+   * Note this is something that could be improved so that this configuration was the exact same
+   * as {@link com.yammer.dropwizard.config.HttpConfiguration#getShutdownGracePeriod()}.
+   * @return {@link Duration}
+   */
+  public Duration getWait() {
     return wait;
   }
 
-  public void setWait(int wait) {
+  public void setWait(Duration wait) {
     this.wait = wait;
   }
 

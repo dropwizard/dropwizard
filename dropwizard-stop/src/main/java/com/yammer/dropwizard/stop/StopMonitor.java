@@ -1,6 +1,7 @@
 package com.yammer.dropwizard.stop;
 
 import com.yammer.dropwizard.lifecycle.ServerLifecycleListener;
+import com.yammer.dropwizard.util.Duration;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.component.LifeCycle;
 import org.slf4j.Logger;
@@ -177,10 +178,7 @@ public class StopMonitor extends Thread implements ServerLifecycleListener {
   private void issueStop(final LifeCycle server1) throws Exception {
     if (server1 != null) {
       try {
-        int wait = stopConfiguration.getWait();
-        if (wait < 0) {
-          wait = 0;
-        }
+        Duration wait = stopConfiguration.getWait();
         final CountDownLatch countDownLatch = new CountDownLatch(1);
         //  Stop the server in another thread, so that the stop process can be monitored.
         Thread stopThread = new Thread("Stopping Server") {
@@ -201,7 +199,7 @@ public class StopMonitor extends Thread implements ServerLifecycleListener {
         };
         stopThread.start();
 
-        if (countDownLatch.await(wait, TimeUnit.SECONDS)) {
+        if (countDownLatch.await(wait.getQuantity(), wait.getUnit())) {
           LOGGER.info("Server should be stopped now.");
         }
       }

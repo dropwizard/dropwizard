@@ -3,6 +3,7 @@ package com.yammer.dropwizard.stop.tests;
 import com.yammer.dropwizard.lifecycle.ServerLifecycleListener;
 import com.yammer.dropwizard.stop.StopConfiguration;
 import com.yammer.dropwizard.stop.StopMonitor;
+import com.yammer.dropwizard.util.Duration;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.component.LifeCycle;
 import org.junit.Before;
@@ -118,7 +119,7 @@ public class StopMonitorTest extends AbstractStopTests implements ServerLifecycl
   @Test
   public void testRun() throws Exception {
     LifeCycle mockLifeCycle = mock(LifeCycle.class);
-    stopConfiguration.setWait(8);
+    stopConfiguration.setWait(Duration.seconds(8));
     byte[] badCommand = ("bad key\r\nstatus\r\n").getBytes();
     byte[] stopCommand = (stopConfiguration.getKey() + "\r\nstop\r\n").getBytes();
     byte[] statusCommand = (stopConfiguration.getKey() + "\r\nstatus\r\n").getBytes();
@@ -147,7 +148,8 @@ public class StopMonitorTest extends AbstractStopTests implements ServerLifecycl
 
     // Have to wait for some threading aspects.  Ugly!
     assertThat(runCountDown.await(2, TimeUnit.SECONDS)).isTrue();
-    assertThat(exitCountDown.await(stopConfiguration.getWait(), TimeUnit.SECONDS)).isTrue();
+    Duration stopConfigurationWait = stopConfiguration.getWait();
+    assertThat(exitCountDown.await(stopConfigurationWait.getQuantity(), stopConfigurationWait.getUnit())).isTrue();
 
     ArgumentCaptor<byte[]> captorWrite = ArgumentCaptor.forClass(byte[].class);
     verify(mockOut, new Times(3)).write(captorWrite.capture());

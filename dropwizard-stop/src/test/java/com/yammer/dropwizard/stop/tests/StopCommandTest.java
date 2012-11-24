@@ -4,6 +4,7 @@ import com.yammer.dropwizard.config.Bootstrap;
 import com.yammer.dropwizard.stop.ConfigurationStrategy;
 import com.yammer.dropwizard.stop.StopCommand;
 import com.yammer.dropwizard.stop.StopConfiguration;
+import com.yammer.dropwizard.util.Duration;
 import net.sourceforge.argparse4j.inf.Namespace;
 import org.junit.Before;
 import org.junit.Test;
@@ -44,7 +45,7 @@ public class StopCommandTest extends AbstractStopTests {
     mockOut = mock(OutputStream.class);
     when(mockSocket.getOutputStream()).thenReturn(mockOut);
     configuration = new TestMeConfiguration();
-    configuration.getStopConfiguration().setWait(0);
+    configuration.getStopConfiguration().setWait(Duration.seconds(0));
     bootstrap = new Bootstrap<TestMeConfiguration>(new TestMeService());
   }
 
@@ -68,7 +69,7 @@ public class StopCommandTest extends AbstractStopTests {
   @Test
   public void runWithTimeout() throws Exception {
     int waitTime = 1;
-    configuration.getStopConfiguration().setWait(waitTime);
+    configuration.getStopConfiguration().setWait(Duration.seconds(waitTime));
     InputStream mockInputStream = new ByteArrayInputStream("Stopped".getBytes());
     when(mockSocket.getInputStream()).thenReturn(mockInputStream);
 
@@ -90,7 +91,7 @@ public class StopCommandTest extends AbstractStopTests {
   @Test
   public void runWithTimeoutWaitingError() throws Exception {
     int waitTime = 1;
-    configuration.getStopConfiguration().setWait(waitTime);
+    configuration.getStopConfiguration().setWait(Duration.seconds(waitTime));
     when(mockSocket.getInputStream()).thenThrow(new SocketTimeoutException("Testing timeout"));
 
     fixture.run(bootstrap, null, configuration);
