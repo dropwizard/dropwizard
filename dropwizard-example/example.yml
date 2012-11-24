@@ -198,4 +198,4 @@ stop:
     port: 8181
     key:  server-stop
     # seconds to wait for server to be stopped.
-    wait: 10
+    wait: 10s
