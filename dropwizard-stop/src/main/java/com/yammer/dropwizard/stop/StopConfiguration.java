@@ -45,9 +45,9 @@ public class StopConfiguration {
     this.wait = wait;
   }
 
-  @ValidationMethod(message = "Port must be in the valid range. >1025 && < MAX_VALUE.  i.e. not zero.")
+  @ValidationMethod(message = "Port must be in the valid range. =>1025 && <= MAX_VALUE.  i.e. not zero.")
   public boolean isPortRangeCorrect() {
-    int maxValue = Integer.MAX_VALUE;
-    return port > 0 && port >= 1025 && port <= maxValue;
+    // @PortRange validation accepts 0 as a valid port.  For the Stop Port that is not a good idea.
+    return port > 0 && port >= 1025;
   }
 }

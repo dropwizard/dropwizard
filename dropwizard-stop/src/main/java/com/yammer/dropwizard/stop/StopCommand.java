@@ -15,6 +15,7 @@ import java.net.ConnectException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
+import java.nio.charset.Charset;
 
 /**
  * Add a 'stop' command to the list of commands for the server.
@@ -83,12 +84,12 @@ public class StopCommand<T extends Configuration> extends ConfiguredCommand<T> {
       }
       try {
         OutputStream out = s.getOutputStream();
-        out.write((key + "\r\nstop\r\n").getBytes());
+        out.write((key + "\r\nstop\r\n").getBytes(Charset.forName("UTF-8")));
         out.flush();
 
         if (timeout > 0) {
           LOGGER.info("Waiting " + (timeout > 0 ? ("up to " + timeout + " seconds") : "") + " for server to stop");
-          LineNumberReader lin = new LineNumberReader(new InputStreamReader(s.getInputStream()));
+          LineNumberReader lin = new LineNumberReader(new InputStreamReader(s.getInputStream(), Charset.forName("UTF-8")));
           String response = lin.readLine();
           if ("Stopped".equals(response)) {
             LOGGER.info("Stopped");

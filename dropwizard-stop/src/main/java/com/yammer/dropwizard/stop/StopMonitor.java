@@ -12,6 +12,7 @@ import java.io.LineNumberReader;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.charset.Charset;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -107,7 +108,7 @@ public class StopMonitor extends Thread implements ServerLifecycleListener {
         socket = this.serverSocket.accept();
 
         LineNumberReader line =
-          new LineNumberReader(new InputStreamReader(socket.getInputStream()));
+          new LineNumberReader(new InputStreamReader(socket.getInputStream(), Charset.forName("UTF-8")));
         String key = line.readLine();
         if (!this.stopConfiguration.getKey().equals(key)) {
           LOGGER.info("Ignoring stop command with incorrect key.  Check to make sure when the server was " +
@@ -119,7 +120,7 @@ public class StopMonitor extends Thread implements ServerLifecycleListener {
         if ("stop".equals(cmd)) {
           issueStop(getServer());
 
-          socket.getOutputStream().write("Stopped\r\n".getBytes());
+          socket.getOutputStream().write("Stopped\r\n".getBytes(Charset.forName("UTF-8")));
           socket.getOutputStream().flush();
           try {
             socket.close();
@@ -142,11 +143,11 @@ public class StopMonitor extends Thread implements ServerLifecycleListener {
         }
         else if ("status".equals(cmd)) {
           if (server.isRunning() || server.isStarting() || server.isStarted()) {
-            socket.getOutputStream().write("OK\r\n".getBytes());
+            socket.getOutputStream().write("OK\r\n".getBytes(Charset.forName("UTF-8")));
             socket.getOutputStream().flush();
           }
           else {
-            socket.getOutputStream().write("NOT OK\r\n".getBytes());
+            socket.getOutputStream().write("NOT OK\r\n".getBytes(Charset.forName("UTF-8")));
             socket.getOutputStream().flush();
           }
         }
@@ -200,7 +201,9 @@ public class StopMonitor extends Thread implements ServerLifecycleListener {
         };
         stopThread.start();
 
-        countDownLatch.await(wait, TimeUnit.SECONDS);
+        if (countDownLatch.await(wait, TimeUnit.SECONDS)) {
+          LOGGER.info("Server should be stopped now.");
+        }
       }
       catch (InterruptedException e) {
         LOGGER.info("Interrupted waiting for server to be terminated.  Will exit now.");
