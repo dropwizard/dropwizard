@@ -14,17 +14,17 @@ import static org.fest.assertions.api.Assertions.assertThat;
 import static org.fest.assertions.api.Assertions.failBecauseExceptionWasNotThrown;
 
 public class UUIDParamTest {
-	
-	@Test
-	public void aUUIDStringReturnsAUUIDObject() throws Exception {
-		final String uuidString = "067e6162-3b6f-4ae2-a171-2470b63dff00";
-		final UUID uuid = UUID.fromString(uuidString);
 
-		final UUIDParam param = new UUIDParam(uuidString);
-		assertThat(param.get())
-				.isEqualTo(uuid);
-	}
-	
+    @Test
+    public void aUUIDStringReturnsAUUIDObject() throws Exception {
+        final String uuidString = "067e6162-3b6f-4ae2-a171-2470b63dff00";
+        final UUID uuid = UUID.fromString(uuidString);
+
+        final UUIDParam param = new UUIDParam(uuidString);
+        assertThat(param.get())
+                .isEqualTo(uuid);
+    }
+
     @Test
     @SuppressWarnings("ResultOfObjectAllocationIgnored")
     public void aNonUUIDThrowsAnException() throws Exception {

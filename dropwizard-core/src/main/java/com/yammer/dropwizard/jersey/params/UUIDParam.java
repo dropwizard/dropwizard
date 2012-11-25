@@ -8,18 +8,18 @@ import java.util.UUID;
  */
 public class UUIDParam extends AbstractParam<UUID> {
 
-	public UUIDParam(String input) {
-		super(input);
-	}
-	
+    public UUIDParam(String input) {
+        super(input);
+    }
+
     @Override
     protected String errorMessage(String input, Exception e) {
         return '"' + input + "\" is not a UUID.";
     }
-	
-	@Override
-	protected UUID parse(String input) throws Exception {
-		return UUID.fromString(input);
-	}
+
+    @Override
+    protected UUID parse(String input) throws Exception {
+        return UUID.fromString(input);
+    }
 
 }
