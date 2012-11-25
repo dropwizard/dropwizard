@@ -339,8 +339,8 @@ public class Environment extends AbstractLifeCycle {
      * @param name     the name of the Jersey property
      * @see ResourceConfig
      */
-    public Object getJerseyProperty(String name) {
-        return config.getProperties().get(name);
+    public <T> T getJerseyProperty(String name) {
+        return (T) config.getProperties().get(name);
     }
 
 
