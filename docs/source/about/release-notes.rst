@@ -32,6 +32,7 @@ v0.6.0-SNAPSHOT: TBD
 * Dropped Jerkson in favor of Jackson's Scala module.
 * Added ``Optional`` support for JDBI.
 * Fixed bug in stopping ``AsyncRequestLog``.
+* Added ``UUIDParam``.
 * Upgraded to Metrics 2.2.0.
 * Upgraded to Jetty 8.1.8.
 * Upgraded to Mockito 1.9.5.
