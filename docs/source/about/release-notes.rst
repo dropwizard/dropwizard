@@ -52,6 +52,9 @@ v0.6.0: Nov 26 2012
           Second, your representation classes need to be migrated to Jackson 2. For the most part,
           this is just changing imports to ``com.fasterxml.jackson.annotation.*``, but there are
           `some subtler changes in functionality <http://wiki.fasterxml.com/JacksonUpgradeFrom19To20>`_.
+          Finally, references to 0.5.x's ``Json``, ``JerseyClient``, or ``JDBI`` classes should be
+          changed to Jackon's ``ObjectMapper``, Jersey's ``Client``, and JDBI's ``DBI``
+          respectively.
 
 .. _rel-0.5.1:
 
