@@ -46,6 +46,13 @@ v0.6.0-SNAPSHOT: TBD
 * Upgraded to Jackson 2.1.1.
 * Added support for Joda Time.
 
+.. note:: Upgrading to 0.6.0 will require changing your code. First, your ``Service`` subclass will
+          need to implement both ``#initialize(Bootstrap<T>)`` **and**
+          ``#run(T, Environment)``. What used to be in ``initialize`` should be moved to ``run``.
+          Second, your representation classes need to be migrated to Jackson 2. For the most part,
+          this is just changing imports to ``com.fasterxml.jackson.annotation.*``, but there are
+          `some subtler changes in functionality <http://wiki.fasterxml.com/JacksonUpgradeFrom19To20>`_.
+
 .. _rel-0.5.1:
 
 v0.5.1: Aug 06 2012
