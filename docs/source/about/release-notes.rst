@@ -6,8 +6,8 @@ Release Notes
 
 .. _rel-0.6.0:
 
-v0.6.0-SNAPSHOT: TBD
-====================
+v0.6.0: Nov 26 2012
+===================
 
 * Added Hibernate support in ``dropwizard-hibernate``.
 * Added Liquibase migrations in ``dropwizard-migrations``.
