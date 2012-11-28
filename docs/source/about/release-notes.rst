@@ -4,6 +4,14 @@
 Release Notes
 #############
 
+.. _rel-0.6.1:
+
+v0.6.1: Nov 28 2012
+===================
+
+* Fixed incorrect latencies in request logs on Linux.
+* Added ability to register multiple ``ServerLifecycleListener`` instances.
+
 .. _rel-0.6.0:
 
 v0.6.0: Nov 26 2012
