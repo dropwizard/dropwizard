@@ -4,8 +4,8 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.spi.AppenderAttachableImpl;
-import com.google.common.base.Ticker;
 import com.yammer.dropwizard.jetty.AsyncRequestLog;
+import com.yammer.metrics.core.Clock;
 import org.eclipse.jetty.http.HttpHeaders;
 import org.eclipse.jetty.http.HttpURI;
 import org.eclipse.jetty.server.*;
@@ -22,11 +22,11 @@ import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 public class AsyncRequestLogTest {
-    private final Ticker ticker = mock(Ticker.class);
+    private final Clock clock = mock(Clock.class);
     @SuppressWarnings("unchecked")
     private final Appender<ILoggingEvent> appender = mock(Appender.class);
     private final AppenderAttachableImpl<ILoggingEvent> appenders = new AppenderAttachableImpl<ILoggingEvent>();
-    private final AsyncRequestLog asyncRequestLog = new AsyncRequestLog(ticker, appenders, TimeZone.getTimeZone("UTC"));
+    private final AsyncRequestLog asyncRequestLog = new AsyncRequestLog(clock, appenders, TimeZone.getTimeZone("UTC"));
 
     private final Request request = mock(Request.class);
     private final Response response = mock(Response.class);
@@ -47,7 +47,7 @@ public class AsyncRequestLogTest {
         when(response.getStatus()).thenReturn(200);
         when(response.getContentCount()).thenReturn(8290L);
 
-        when(ticker.read()).thenReturn(TimeUnit.SECONDS.toNanos(1353042049));
+        when(clock.time()).thenReturn(TimeUnit.SECONDS.toMillis(1353042049));
 
         appenders.addAppender(appender);
 
