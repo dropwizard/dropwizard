@@ -12,6 +12,7 @@ v0.6.0: Nov 26 2012
 * Added Hibernate support in ``dropwizard-hibernate``.
 * Added Liquibase migrations in ``dropwizard-migrations``.
 * Renamed ``http.acceptorThreadCount`` to ``http.acceptorThreads``.
+* Renamed ``ssl.keyStorePath`` to ``ssl.keyStore``.
 * Dropped ``JerseyClient``. Use Jersey's ``Client`` class instead.
 * Moved JDBI support to ``dropwizard-jdbi``.
 * Dropped ``Database``. Use JDBI's ``DBI`` class instead.
