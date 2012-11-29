@@ -73,7 +73,7 @@ public class AsyncRequestLogTest {
         final ILoggingEvent event = logAndCapture();
 
         assertThat(event.getFormattedMessage())
-                .isEqualTo("10.0.0.1 - - [16/Nov/2012:05:00:47 +0000] \"GET /test/things?yay HTTP/1.1\" 200 8290 1000 2000");
+                .isEqualToIgnoringCase("10.0.0.1 - - [16/Nov/2012:05:00:47 +0000] \"GET /test/things?yay HTTP/1.1\" 200 8290 1000 2000");
 
         assertThat(event.getLevel())
                 .isEqualTo(Level.INFO);
@@ -85,7 +85,7 @@ public class AsyncRequestLogTest {
 
         final ILoggingEvent event = logAndCapture();
         assertThat(event.getFormattedMessage())
-                .isEqualTo("123.123.123.123 - - [16/Nov/2012:05:00:47 +0000] \"GET /test/things?yay HTTP/1.1\" 200 8290 1000 2000");
+                .isEqualToIgnoringCase("123.123.123.123 - - [16/Nov/2012:05:00:47 +0000] \"GET /test/things?yay HTTP/1.1\" 200 8290 1000 2000");
     }
 
     @Test
@@ -103,7 +103,7 @@ public class AsyncRequestLogTest {
 
         final ILoggingEvent event = logAndCapture();
         assertThat(event.getFormattedMessage())
-                .isEqualTo("10.0.0.1 - coda [16/Nov/2012:05:00:47 +0000] \"GET /test/things?yay HTTP/1.1\" 200 8290 1000 2000");
+                .isEqualToIgnoringCase("10.0.0.1 - coda [16/Nov/2012:05:00:47 +0000] \"GET /test/things?yay HTTP/1.1\" 200 8290 1000 2000");
     }
 
     @Test
@@ -113,7 +113,7 @@ public class AsyncRequestLogTest {
         final ILoggingEvent event = logAndCapture();
 
         assertThat(event.getFormattedMessage())
-                .isEqualTo("10.0.0.1 - - [16/Nov/2012:05:00:47 +0000] \"GET /test/things?yay HTTP/1.1\" Async 8290 1000 2000");
+                .isEqualToIgnoringCase("10.0.0.1 - - [16/Nov/2012:05:00:47 +0000] \"GET /test/things?yay HTTP/1.1\" Async 8290 1000 2000");
     }
 
     private ILoggingEvent logAndCapture() {
