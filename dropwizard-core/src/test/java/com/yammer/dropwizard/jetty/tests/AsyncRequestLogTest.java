@@ -15,6 +15,7 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
 import java.security.Principal;
+import java.util.Locale;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
@@ -31,9 +32,13 @@ public class AsyncRequestLogTest {
     private final Request request = mock(Request.class);
     private final Response response = mock(Response.class);
     private final AsyncContinuation continuation = mock(AsyncContinuation.class);
+    private Locale defaultLocale;
 
     @Before
     public void setUp() throws Exception {
+        defaultLocale = Locale.getDefault();
+        Locale.setDefault(Locale.US);
+
         when(continuation.isInitial()).thenReturn(true);
 
         when(request.getRemoteAddr()).thenReturn("10.0.0.1");
@@ -59,6 +64,7 @@ public class AsyncRequestLogTest {
         if (asyncRequestLog.isRunning()) {
             asyncRequestLog.stop();
         }
+        Locale.setDefault(defaultLocale);
     }
 
     @Test
