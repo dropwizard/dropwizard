@@ -28,6 +28,7 @@
         <module>dropwizard-views</module>
         <module>dropwizard-testing</module>
         <module>dropwizard-scala_2.9.1</module>
+        <module>dropwizard-guice</module>
     </modules>
 
     <properties>
