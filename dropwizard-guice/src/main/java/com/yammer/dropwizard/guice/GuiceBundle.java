@@ -7,7 +7,9 @@ import com.google.common.collect.Lists;
 import com.google.inject.Guice;
 import com.google.inject.Module;
 import com.google.inject.servlet.GuiceFilter;
+import com.google.inject.util.Modules;
 import com.sun.jersey.api.core.ResourceConfig;
+import com.sun.jersey.guice.JerseyServletModule;
 import com.sun.jersey.spi.container.servlet.WebConfig;
 import com.yammer.dropwizard.ConfiguredBundle;
 import com.yammer.dropwizard.config.Bootstrap;
@@ -37,7 +39,7 @@ public abstract class GuiceBundle<T extends Configuration> implements Configured
 		environment.addFilter(GuiceFilter.class, configuration.getHttpConfiguration().getRootPath());
 
 		Collection<Module> modules = Lists.newArrayList();
-		modules.add(new JerseyModule(container));
+		modules.add(Modules.override(new JerseyServletModule()).with(new JerseyContainerModule(container)));
 		modules.addAll(configureModules(configuration));
 		Guice.createInjector(modules);
 	}
