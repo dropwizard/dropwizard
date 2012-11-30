@@ -10,43 +10,43 @@ import static com.yammer.dropwizard.config.LoggingConfiguration.*;
 @SuppressWarnings("UnusedDeclaration")
 public class RequestLogConfiguration {
     @NotNull
-    @JsonProperty("console")
-    private ConsoleConfiguration consoleConfiguration = new ConsoleConfiguration();
+    @JsonProperty
+    private ConsoleConfiguration console = new ConsoleConfiguration();
 
     @NotNull
-    @JsonProperty("file")
-    private FileConfiguration fileConfiguration = new FileConfiguration();
+    @JsonProperty
+    private FileConfiguration file = new FileConfiguration();
 
     @NotNull
-    @JsonProperty("syslog")
-    private SyslogConfiguration syslogConfiguration = new SyslogConfiguration();
+    @JsonProperty
+    private SyslogConfiguration syslog = new SyslogConfiguration();
 
     @NotNull
     @JsonProperty
     private TimeZone timeZone = UTC;
 
     public ConsoleConfiguration getConsoleConfiguration() {
-        return consoleConfiguration;
+        return console;
     }
 
     public void setConsoleConfiguration(ConsoleConfiguration consoleConfiguration) {
-        this.consoleConfiguration = consoleConfiguration;
+        this.console = consoleConfiguration;
     }
 
     public FileConfiguration getFileConfiguration() {
-        return fileConfiguration;
+        return file;
     }
 
     public void setFileConfiguration(FileConfiguration fileConfiguration) {
-        this.fileConfiguration = fileConfiguration;
+        this.file = fileConfiguration;
     }
 
     public SyslogConfiguration getSyslogConfiguration() {
-        return syslogConfiguration;
+        return syslog;
     }
 
     public void setSyslogConfiguration(SyslogConfiguration syslogConfiguration) {
-        this.syslogConfiguration = syslogConfiguration;
+        this.syslog = syslogConfiguration;
     }
 
     public TimeZone getTimeZone() {

@@ -6,7 +6,6 @@ import com.yammer.dropwizard.config.Bootstrap;
 import com.yammer.dropwizard.config.Configuration;
 import com.yammer.dropwizard.config.Environment;
 import com.yammer.dropwizard.config.LoggingFactory;
-import com.yammer.dropwizard.json.JsonBundle;
 import com.yammer.dropwizard.util.Generics;
 
 /**
@@ -57,7 +56,6 @@ public abstract class Service<T extends Configuration> {
     public final void run(String[] arguments) throws Exception {
         final Bootstrap<T> bootstrap = new Bootstrap<T>(this);
         bootstrap.addCommand(new ServerCommand<T>(this));
-        bootstrap.addBundle(new JsonBundle());
         initialize(bootstrap);
         final Cli cli = new Cli(this.getClass(), bootstrap);
         cli.run(arguments);

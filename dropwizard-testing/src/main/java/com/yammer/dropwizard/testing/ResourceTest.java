@@ -10,6 +10,7 @@ import com.sun.jersey.test.framework.LowLevelAppDescriptor;
 import com.yammer.dropwizard.jersey.DropwizardResourceConfig;
 import com.yammer.dropwizard.jersey.JacksonMessageBodyProvider;
 import com.yammer.dropwizard.json.ObjectMapperFactory;
+import com.yammer.dropwizard.validation.Validator;
 import org.junit.After;
 import org.junit.Before;
 
@@ -27,8 +28,17 @@ public abstract class ResourceTest {
     private final Map<String, Object> properties = Maps.newHashMap();
 
     private JerseyTest test;
+    private Validator validator = new Validator();
 
     protected abstract void setUpResources() throws Exception;
+
+    public Validator getValidator() {
+        return validator;
+    }
+
+    public void setValidator(Validator validator) {
+        this.validator = validator;
+    }
 
     protected void addResource(Object resource) {
         singletons.add(resource);
@@ -79,7 +89,7 @@ public abstract class ResourceTest {
                     config.getProperties().put(property.getKey(), property.getValue());
                 }
                 final ObjectMapper mapper = getObjectMapperFactory().build();
-                config.getSingletons().add(new JacksonMessageBodyProvider(mapper));
+                config.getSingletons().add(new JacksonMessageBodyProvider(mapper, validator));
                 config.getSingletons().addAll(singletons);
                 return new LowLevelAppDescriptor.Builder(config).build();
             }

@@ -5,7 +5,7 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.spi.LoggingEvent;
 import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.spi.AppenderAttachableImpl;
-import com.google.common.base.Ticker;
+import com.yammer.metrics.core.Clock;
 import org.eclipse.jetty.http.HttpHeaders;
 import org.eclipse.jetty.server.Authentication;
 import org.eclipse.jetty.server.Request;
@@ -17,7 +17,6 @@ import org.eclipse.jetty.util.component.AbstractLifeCycle;
 import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -60,7 +59,7 @@ public class AsyncRequestLog extends AbstractLifeCycle implements RequestLog {
         }
     }
 
-    private final Ticker ticker;
+    private final Clock clock;
     @SuppressWarnings("ThreadLocalNotStaticFinal")
     private final ThreadLocal<DateCache> dateCache;
     private final BlockingQueue<String> queue;
@@ -68,10 +67,10 @@ public class AsyncRequestLog extends AbstractLifeCycle implements RequestLog {
     private final Thread dispatchThread;
     private final AppenderAttachableImpl<ILoggingEvent> appenders;
 
-    public AsyncRequestLog(Ticker ticker,
+    public AsyncRequestLog(Clock clock,
                            AppenderAttachableImpl<ILoggingEvent> appenders,
                            final TimeZone timeZone) {
-        this.ticker = ticker;
+        this.clock = clock;
         this.queue = new LinkedBlockingQueue<String>();
         this.dispatcher = new Dispatcher();
         this.dispatchThread = new Thread(dispatcher);
@@ -81,8 +80,7 @@ public class AsyncRequestLog extends AbstractLifeCycle implements RequestLog {
         this.dateCache = new ThreadLocal<DateCache>() {
             @Override
             protected DateCache initialValue() {
-                final DateCache cache = new DateCache("dd/MMM/yyyy:HH:mm:ss Z",
-                                                      Locale.getDefault());
+                final DateCache cache = new DateCache("dd/MMM/yyyy:HH:mm:ss Z", Locale.US);
                 cache.setTimeZoneID(timeZone.getID());
                 return cache;
             }
@@ -176,7 +174,7 @@ public class AsyncRequestLog extends AbstractLifeCycle implements RequestLog {
             buf.append(" -");
         }
 
-        final long now = TimeUnit.NANOSECONDS.toMillis(ticker.read());
+        final long now = clock.time();
         final long dispatchTime = request.getDispatchTime();
 
         buf.append(' ');

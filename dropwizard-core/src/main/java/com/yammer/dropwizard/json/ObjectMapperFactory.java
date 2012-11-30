@@ -17,6 +17,7 @@ import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.SerializerFactory;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.fasterxml.jackson.datatype.guava.GuavaModule;
+import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
@@ -89,6 +90,7 @@ public class ObjectMapperFactory {
         registerModule(new GuavaModule());
         registerModule(new LogbackModule());
         registerModule(new GuavaExtrasModule());
+        registerModule(new JodaModule());
     }
 
     public AnnotationIntrospector getAnnotationIntrospector() {

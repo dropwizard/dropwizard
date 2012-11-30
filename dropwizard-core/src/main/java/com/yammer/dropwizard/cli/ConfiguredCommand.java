@@ -29,9 +29,8 @@ public abstract class ConfiguredCommand<T extends Configuration> extends Command
      *
      * @return the {@link Class} of the configuration type
      */
-    @SuppressWarnings("unchecked")
     protected Class<T> getConfigurationClass() {
-        return (Class<T>) Generics.getTypeParameter(getClass(), Configuration.class);
+        return Generics.getTypeParameter(getClass(), Configuration.class);
     }
 
     /**
@@ -75,9 +74,7 @@ public abstract class ConfiguredCommand<T extends Configuration> extends Command
                                  Class<T> configurationClass,
                                  ObjectMapperFactory objectMapperFactory) throws IOException, ConfigurationException {
         final ConfigurationFactory<T> configurationFactory =
-                ConfigurationFactory.forClass(configurationClass,
-                                              new Validator(),
-                                              objectMapperFactory);
+                ConfigurationFactory.forClass(configurationClass, new Validator(), objectMapperFactory);
         if (filename != null) {
             final File file = new File(filename);
             if (!file.exists()) {

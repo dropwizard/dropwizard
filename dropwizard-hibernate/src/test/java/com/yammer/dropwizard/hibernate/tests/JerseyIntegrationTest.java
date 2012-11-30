@@ -15,8 +15,11 @@ import com.yammer.dropwizard.hibernate.UnitOfWorkResourceMethodDispatchAdapter;
 import com.yammer.dropwizard.jersey.DropwizardResourceConfig;
 import com.yammer.dropwizard.jersey.JacksonMessageBodyProvider;
 import com.yammer.dropwizard.json.ObjectMapperFactory;
+import com.yammer.dropwizard.validation.Validator;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.junit.After;
 import org.junit.Test;
 import org.slf4j.bridge.SLF4JBridgeHandler;
@@ -96,15 +99,17 @@ public class JerseyIntegrationTest extends JerseyTest {
         dbConfig.setValidationQuery("SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS");
 
         try {
-            this.sessionFactory = factory.build(environment, dbConfig, packages);
+            this.sessionFactory = factory.build(environment,
+                                                dbConfig,
+                                                ImmutableList.<Class<?>>of(Person.class));
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
         final Session session = sessionFactory.openSession();
         try {
             session.createSQLQuery("DROP TABLE people IF EXISTS").executeUpdate();
-            session.createSQLQuery("CREATE TABLE people (name varchar(100) primary key, email varchar(100), age int)").executeUpdate();
-            session.createSQLQuery("INSERT INTO people VALUES ('Coda', 'coda@example.com', 300)").executeUpdate();
+            session.createSQLQuery("CREATE TABLE people (name varchar(100) primary key, email varchar(100), birthday timestamp)").executeUpdate();
+            session.createSQLQuery("INSERT INTO people VALUES ('Coda', 'coda@example.com', '1979-01-02 00:22:00')").executeUpdate();
         } finally {
             session.close();
         }
@@ -112,7 +117,8 @@ public class JerseyIntegrationTest extends JerseyTest {
         final DropwizardResourceConfig config = new DropwizardResourceConfig(true);
         config.getSingletons().add(new UnitOfWorkResourceMethodDispatchAdapter(sessionFactory));
         config.getSingletons().add(new PersonResource(new PersonDAO(sessionFactory)));
-        config.getSingletons().add(new JacksonMessageBodyProvider(new ObjectMapperFactory().build()));
+        config.getSingletons().add(new JacksonMessageBodyProvider(new ObjectMapperFactory().build(),
+                                                                  new Validator()));
         return new LowLevelAppDescriptor.Builder(config).build();
     }
 
@@ -133,8 +139,8 @@ public class JerseyIntegrationTest extends JerseyTest {
         assertThat(coda.getEmail())
                 .isEqualTo("coda@example.com");
 
-        assertThat(coda.getAge())
-                .isEqualTo(300);
+        assertThat(coda.getBirthday())
+                .isEqualTo(new DateTime(1979, 1, 2, 0, 22, DateTimeZone.UTC));
     }
 
     @Test
@@ -155,7 +161,7 @@ public class JerseyIntegrationTest extends JerseyTest {
         final Person person = new Person();
         person.setName("Hank");
         person.setEmail("hank@example.com");
-        person.setAge(45);
+        person.setBirthday(new DateTime(1971, 3, 14, 19, 12, DateTimeZone.UTC));
 
         client().resource("/people/Hank").type(MediaType.APPLICATION_JSON).put(person);
 
@@ -169,7 +175,7 @@ public class JerseyIntegrationTest extends JerseyTest {
         assertThat(hank.getEmail())
                 .isEqualTo("hank@example.com");
 
-        assertThat(hank.getAge())
-                .isEqualTo(45);
+        assertThat(hank.getBirthday())
+                .isEqualTo(person.getBirthday());
     }
 }

@@ -5,7 +5,7 @@
     <parent>
         <groupId>com.yammer.dropwizard</groupId>
         <artifactId>dropwizard-parent</artifactId>
-        <version>0.6.0-SNAPSHOT</version>
+        <version>0.6.2-SNAPSHOT</version>
     </parent>
 
     <artifactId>dropwizard-core</artifactId>
@@ -140,6 +140,16 @@
             <version>4.3.0.Final</version>
         </dependency>
         <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>2.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-joda</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>test-jetty-servlet</artifactId>
             <version>${jetty.version}</version>
@@ -159,13 +169,13 @@
         </dependency>
     </dependencies>
     <build>
-	    <testResources>
-	       <testResource>
-	           <directory>src/test/more-resources</directory>
-	       </testResource>
-	       <testResource>
-               <directory>src/test/resources</directory>
-           </testResource>
-	    </testResources>
+        <testResources>
+            <testResource>
+                <directory>src/test/more-resources</directory>
+            </testResource>
+            <testResource>
+                <directory>src/test/resources</directory>
+            </testResource>
+        </testResources>
     </build>
 </project>

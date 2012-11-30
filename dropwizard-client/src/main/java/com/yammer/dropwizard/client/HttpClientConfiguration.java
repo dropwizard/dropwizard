@@ -9,78 +9,8 @@ import javax.validation.constraints.NotNull;
 
 /**
  * The configuration class used by {@link HttpClientBuilder}.
- * <h1>Properties</h1>
- * <table>
- *     <tr>
- *         <td>Property Name</td>
- *         <td>Required</td>
- *         <td>Description</td>
- *         <td>Default Value</td>
- *     </tr>
- *     <tr>
- *         <td>{@code timeout}</td>
- *         <td>No</td>
- *         <td>
- *             The socket timeout value. If a read or write to the underlying TCP/IP connection
- *             hasn't succeeded after this duration, a timeout exception is thrown.
- *         </td>
- *         <td>500ms</td>
- *     </tr>
- *     <tr>
- *         <td>{@code connectionTimeout}</td>
- *         <td>No</td>
- *         <td>
- *             The connection timeout value. If a TCP/IP connection cannot be established in this
- *             time, a timeout exception is thrown.
- *         </td>
- *         <td>500ms</td>
- *     </tr>
- *     <tr>
- *         <td>{@code timeToLive}</td>
- *         <td>No</td>
- *         <td>
- *             The time a TCP/IP connection to the server is allowed to persist before being
- *             explicitly closed.
- *         </td>
- *         <td>1 hour</td>
- *     </tr>
- *     <tr>
- *         <td>{@code cookiesEnabled}</td>
- *         <td>No</td>
- *         <td>
- *             If {@code true}, cookies will be persisted in memory for the duration of the client's
- *             lifetime. If {@code false}, cookies will be ignored entirely.
- *         </td>
- *         <td>{@code false}</td>
- *     </tr>
- *     <tr>
- *         <td>{@code maxConnections}</td>
- *         <td>No</td>
- *         <td>
- *             The maximum number of connections to be held in the client's connection pool.
- *         </td>
- *         <td>1024</td>
- *     </tr>
- *     <tr>
- *         <td>{@code maxConnectionsPerRoute}</td>
- *         <td>No</td>
- *         <td>
- *             The maximum number of connections per "route" to be held in the client's connection
- *             pool. A route is essentially a combination of hostname, port, configured proxies,
- *             etc.
- *         </td>
- *         <td>1024</td>
- *     </tr>
- *     <tr>
- *         <td>{@code keepAlive}</td>
- *         <td>No</td>
- *         <td>
- *             The default value for a persistent connection's keep-alive. A value of {@code 0} will
- *             result in connections being immediately closed after a response.
- *         </td>
- *         <td>0ms</td>
- *     </tr>
- * </table>
+ *
+  * @see <a href="http://dropwizard.codahale.com/manual/client.html#configuration-defaults">Http Client Configuration</a>
  */
 public class HttpClientConfiguration {
     @NotNull

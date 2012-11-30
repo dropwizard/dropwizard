@@ -64,11 +64,11 @@ public class SslConfiguration {
 
     @NotNull
     @JsonProperty
-    private Optional<Boolean> enableCRLDP = Optional.absent();
+    private Optional<Boolean> crldpEnabled = Optional.absent();
 
     @NotNull
     @JsonProperty
-    private Optional<Boolean> enableOCSP = Optional.absent();
+    private Optional<Boolean> ocspEnabled = Optional.absent();
 
     @NotNull
     @JsonProperty
@@ -197,20 +197,20 @@ public class SslConfiguration {
         this.crlPath = crlPath;
     }
 
-    public Optional<Boolean> getEnableCRLDP() {
-        return enableCRLDP;
+    public Optional<Boolean> getCrldpEnabled() {
+        return crldpEnabled;
     }
 
-    public void setEnableCRLDP(Optional<Boolean> enableCRLDP) {
-        this.enableCRLDP = enableCRLDP;
+    public void setCrldpEnabled(Optional<Boolean> crldpEnabled) {
+        this.crldpEnabled = crldpEnabled;
     }
 
-    public Optional<Boolean> getEnableOCSP() {
-        return enableOCSP;
+    public Optional<Boolean> getOcspEnabled() {
+        return ocspEnabled;
     }
 
-    public void setEnableOCSP(Optional<Boolean> enableOCSP) {
-        this.enableOCSP = enableOCSP;
+    public void setOcspEnabled(Optional<Boolean> ocspEnabled) {
+        this.ocspEnabled = ocspEnabled;
     }
 
     public Optional<Integer> getMaxCertPathLength() {

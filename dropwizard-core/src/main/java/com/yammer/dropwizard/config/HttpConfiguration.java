@@ -43,17 +43,17 @@ public class HttpConfiguration {
 
     @Valid
     @NotNull
-    @JsonProperty("requestLog")
-    private RequestLogConfiguration requestLogConfiguration = new RequestLogConfiguration();
+    @JsonProperty
+    private RequestLogConfiguration requestLog = new RequestLogConfiguration();
 
     @Valid
     @NotNull
-    @JsonProperty("gzip")
-    private GzipConfiguration gzipConfiguration = new GzipConfiguration();
+    @JsonProperty
+    private GzipConfiguration gzip = new GzipConfiguration();
 
     @Valid
-    @JsonProperty("ssl")
-    private SslConfiguration sslConfiguration = null;
+    @JsonProperty
+    private SslConfiguration ssl = null;
 
     @NotNull
     @JsonProperty
@@ -70,7 +70,7 @@ public class HttpConfiguration {
     @Min(2)
     @Max(1000000)
     @JsonProperty
-    private int maxThreads = 254;
+    private int maxThreads = 1024;
 
     @Min(1)
     @Max(1000000)
@@ -164,7 +164,7 @@ public class HttpConfiguration {
     @ValidationMethod(message = "must have an SSL configuration when using SSL connection")
     public boolean isSslConfigured() {
         final ConnectorType type = getConnectorType();
-        return !((sslConfiguration == null) && ((type == ConnectorType.LEGACY_SSL) ||
+        return !((ssl == null) && ((type == ConnectorType.LEGACY_SSL) ||
                                    (type == ConnectorType.NONBLOCKING_SSL)));
     }
 
@@ -179,27 +179,27 @@ public class HttpConfiguration {
     }
 
     public RequestLogConfiguration getRequestLogConfiguration() {
-        return requestLogConfiguration;
+        return requestLog;
     }
 
     public void setRequestLogConfiguration(RequestLogConfiguration config) {
-        this.requestLogConfiguration = config;
+        this.requestLog = config;
     }
 
     public GzipConfiguration getGzipConfiguration() {
-        return gzipConfiguration;
+        return gzip;
     }
 
     public void setGzipConfiguration(GzipConfiguration config) {
-        this.gzipConfiguration = config;
+        this.gzip = config;
     }
 
     public SslConfiguration getSslConfiguration() {
-        return sslConfiguration;
+        return ssl;
     }
 
     public void setSslConfiguration(SslConfiguration config) {
-        this.sslConfiguration = config;
+        this.ssl = config;
     }
 
     public ImmutableMap<String, String> getContextParameters() {

@@ -91,6 +91,7 @@ we've come to rely on:
 * Liquibase_ is a great way to keep your database schema in check throughout your development and
   release cycles, applying high-level database refactorings instead of one-off DDL scripts.
 * Freemarker_ is a simple template system for more user-facing services.
+* `Joda Time`_ is a very complete, sane library for handling dates and times.
 
 .. _Guava: http://code.google.com/p/guava-libraries/
 .. _Logback: http://logback.qos.ch/
@@ -101,6 +102,7 @@ we've come to rely on:
 .. _JDBI: http://www.jdbi.org
 .. _Freemarker: http://freemarker.sourceforge.net/
 .. _Liquibase: http://www.liquibase.org
+.. _Joda Time: http://joda-time.sourceforge.net/
 
 Now that you've gotten the lay of the land, let's dig in!
 
@@ -136,7 +138,7 @@ Add the ``dropwizard-core`` library as a dependency:
         <dependency>
             <groupId>com.yammer.dropwizard</groupId>
             <artifactId>dropwizard-core</artifactId>
-            <version>0.6.0</version>
+            <version>0.6.1</version>
         </dependency>
     </dependencies>
 
@@ -410,6 +412,8 @@ Once ``sayHello`` has returned, Jersey takes the ``Saying`` instance and looks f
 which can write ``Saying`` instances as ``application/json``. Dropwizard has one such provider built
 in which allows for producing and consuming Java objects as JSON objects. The provider writes out
 the JSON and the client receives a ``200 OK`` response with a content type of ``application/json``.
+
+.. note:: Your ``Service`` can have many resources.
 
 .. _gs-resource-register:
 

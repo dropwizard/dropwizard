@@ -157,7 +157,7 @@ SSL
 ---
 
 SSL support is built into Dropwizard. You will need to provide your own java
-key store, which is outside the scope of this document (``keytool`` is the
+keystore, which is outside the scope of this document (``keytool`` is the
 command you need). There is a test keystore you can use in the
 `Dropwizard example project`__.
 
@@ -167,7 +167,7 @@ command you need). There is a test keystore you can use in the
 
     http:
       ssl:
-        keyStorePath: ./example.keystore
+        keyStore: ./example.keystore
         keyStorePassword: example
 
         # optional, JKS is default. JCEKS is another likely candidate.
@@ -1135,3 +1135,392 @@ input and output formats by creating classes which implement Jersey's ``MessageB
 ``@Produces("text/gibberish")`` or ``@Consumes("text/gibberish")``.) Once you're done, just add
 instances of them (or their classes if they depend on Jersey's ``@Context`` injection) to your
 service's ``Environment`` on initialization.
+
+.. _man-core-config-defaults:
+
+Configuration Defaults
+======================
+
+Dropwizard has many configuration parameters, all of which come with good default values:
+
+.. code-block:: yaml
+
+    # HTTP-specific options.
+    http:
+
+      # The port on which the HTTP server listens for service requests.
+      # Because Java cannot drop privileges in a POSIX system, these
+      # ports cannot be in the range 1-1024. A port value of 0 will
+      # make the OS use an arbitrary unused port.
+      port: 8080
+
+      # The port on which the HTTP server listens for administrative
+      # requests. Subject to the same limitations as "port".
+      adminPort: 8081
+
+      # The minimum number of threads to keep running to process
+      # incoming HTTP requests.
+      minThreads: 8
+
+      # The maximum number of threads to keep running to process
+      # incoming HTTP requests.
+      maxThreads: 1024
+
+      # The type of connector to use.
+      #
+      # Possible values are:
+      #   * blocking: Good for low-latency services with short request
+      #               durations. Corresponds to Jetty's
+      #               BlockingChannelConnector.
+      #   * nonblocking: Good for services which use Servlet 3.0
+      #                  continuations or which maintain a large number
+      #                  of open connections. Corresponds to Jetty's
+      #                  SelectChannelConnector.
+      #   * legacy: Simple, java.io.Socket-based connector. Corresponds to
+      #             Jetty's SocketConnector.
+      #   * legacy+ssl: Corresponds to Jetty's SslSocketConnector.
+      #   * nonblocking+ssl: Corresponds to Jetty's
+      #                      SslSelectChannelConnector.
+      connectorType: blocking
+
+      # The root path for the Jersey servlet.
+      rootPath: "/"
+
+      # The maximum amount of time a connection is allowed to be idle
+      # before being closed.
+      maxIdleTime: 200s
+
+      # The number of threads dedicated to accepting connections.
+      acceptorThreads: 1
+
+      # The offset of the acceptor threads' priorities. Can be
+      # [-5...5], with -5 dropping the acceptor threads to the lowest
+      # possible priority and with 5 raising them to the highest priority.
+      acceptorThreadPriorityOffset: 0
+
+      # The number of unaccepted requests to keep in the accept queue
+      # before refusing connections. If set to -1 or omitted, the system
+      # default is used.
+      acceptQueueSize: -1
+
+      # The maximum number of buffers to keep in memory.
+      maxBufferCount: 1024
+
+      # The initial buffer size for reading requests.
+      requestBufferSize: 16KB
+
+      # The initial buffer size for reading request headers.
+      requestHeaderBufferSize: 6KB
+
+      # The initial buffer size for writing responses.
+      responseBufferSize: 32KB
+
+      # The initial buffer size for writing response headers.
+      responseHeaderBufferSize: 6KB
+
+      # Enables SO_REUSEADDR on the server socket.
+      reuseAddress: true
+
+      # Enables SO_LINGER on the server socket with the specified
+      # linger time. By default, uses the system default.
+      soLingerTime: null
+
+      # The number of open connections at which the server transitions
+      # to a "low-resources" mode. (Only valid if connectorType is
+      # "nonblocking".)
+      lowResourcesConnectionThreshold: 25000
+
+      # When in low-resources mode, the maximum amount of time a
+      # connection is allowed to be idle before being closed. Overrides
+      # maxIdleTime. (Only valid if connectorType is "nonblocking".)
+      lowResourcesMaxIdleTime: 5s
+
+      # If non-zero, the server will allow worker threads to finish
+      # processing requests after the server socket has been closed for
+      # the given amount of time.
+      shutdownGracePeriod: 2s
+
+      # If true, allows usage of the Server header in responses.
+      useServerHeader: false
+
+      # If true, allows usage of the Date header in responses.
+      useDateHeader: true
+
+      # If true, the HTTP server will prefer X-Forwarded headers over
+      # their non-forwarded equivalents.
+      useForwardedHeaders: true
+
+      # If true, forces the HTTP connector to use off-heap, direct
+      # buffers.
+      useDirectBuffers: true
+
+      # The hostname of the interface to which the HTTP server socket
+      # will be bound. If omitted, the socket will listen on all
+      # interfaces.
+      bindHost: null
+
+      # If specified, adds Basic Authentication to the admin port using
+      # this username.
+      adminUsername: null
+
+      # If specified, adds Basic Authentication to the admin port using
+      # this password. (Requires adminUsername to be specified).
+      adminPassword: null
+
+      # A map of servlet context parameter names to servlet context
+      # parameter values.
+      contextParameters: {}
+
+      # Configuration parameters for GZIP encoding of response entities.
+      gzip:
+
+        # If true, all requests with gzip in their
+        # Accept-Content-Encoding headers will have their response
+        # entities encoded with gzip.
+        enabled: true
+
+        # All response entities under this size are not compressed.
+        minimumEntitySize: 256 bytes
+
+        # The size of the buffer to use when compressing.
+        bufferSize: 8KiB
+
+        # The set of user agents to exclude from compression.
+        excludedUserAgents: []
+
+        # If specified, the set of mime types to compress.
+        compressedMimeTypes: []
+
+
+      # SSL configuration parameters. If omitted, all of these parameters
+      # will fall back to using JVM-specific defaults (except for
+      # supportedProtocols).
+      ssl:
+
+        # The path to the Java Keystore which contains the server's SSL
+        # certificate.
+        keyStore: /path/to/keystore
+
+        # The password for the keystore.
+        keyStorePassword: "password"
+
+        # The password for the key manager.
+        keyManagerPassword: "password"
+
+        # The keystore type.
+        keyStoreType: JKS
+
+        # If the trust store is a separate file, the path to the Java
+        # keystore which contains certificates for the validation of
+        # clients.
+        trustStore: /path/to/truststore
+
+        # The password for the trust store.
+        trustStorePassword: "password"
+
+        # The keystore type for the trust store.
+        trustStoreType: JKS
+
+        # Whether or not to require authentication by peer certificate.
+        needClientAuth: true
+
+        # Whether or not to prompt clients for their peer certificates.
+        wantClientAuth: true
+
+        # The alias of the certificate to use for SSL.
+        certAlias: "cert"
+
+        # If true, allows clients to renegotiate.
+        #
+        # ONLY ALLOW CLIENTS TO RENEGOTIATE IF YOUR JVM HAS A FIX FOR
+        # CVE-2009-3555. DOING OTHERWISE WILL MAKE YOUR SERVICE VULNERABLE
+        # TO SSL RENEGOTIATION ATTACKS.
+        allowRenegotiate: false
+
+        # The path to the Certificate Revocation List.
+        crlPath: /path/to/revocation-list
+
+        # Whether or not to enable Certificate Revocation List
+        # Distribution Points support.
+        crldpEnabled: true
+
+        # Whether or not to enable On-Line Certificate Status Protocol
+        # support.
+        ocspEnabled: true
+
+        # The OCSP Responder URL.
+        ocspResponderUrl: "http://blah"
+
+        # The maximum length of a valid certificate verification path.
+        maxCertPathLength: 1
+
+        # Whether or not peer certificates should be validated. Only
+        # valid for PKIX trust stores.
+        validatePeers: true
+
+        # The name of the JCE provider to use for SSL.
+        jceProvider: "SUN"
+
+        # The list of supported SSL/TLS protocols. Dropwizard
+        # intentionally disables SSLv2Hello for security reasons.
+        supportedProtocols: ["SSLv3", "TLSv1", "TLSv1.1", "TLSv1.2"]
+
+      # HTTP request log settings.
+      requestLog:
+
+        # Settings for logging to stdout.
+        console:
+
+          # If true, log requests to stdout.
+          enabled: true
+
+          # The time zone in which dates should be displayed.
+          timeZone: UTC
+
+          # A custom Logback format string.
+          logFormat: null
+
+        # Settings for logging to a file.
+        file:
+
+          # If true, log requests to a file.
+          enabled: false
+
+          # The time zone in which dates should be displayed.
+          timeZone: UTC
+
+          # A custom Logback format string.
+          logFormat: null
+
+          # The file to which statements will be logged.
+          #
+          # If enabled is true, this must be specified.
+          currentLogFilename: ./logs/requests.log
+
+          # If true, log files are rotated and archived.
+          archive: true
+
+          # When the log file rolls over, the file will be archived to
+          # example-2012-03-15.log.gz, example.log will be truncated,
+          # and new requests written to it.
+          #
+          # If archive is true, this must be specified.
+          archivedLogFilenamePattern: ./logs/requests-%d.log.gz
+
+          # The maximum number of log files to archive.
+          archivedFileCount: 5
+
+        # Settings for logging to syslog.
+        syslog:
+
+          # If true, log requests to syslog.
+          enabled: false
+
+          # The hostname of the syslog server to which statements will
+          # be sent.
+          #
+          # N.B.: If this is the local host, the local syslog instance
+          # will need to be configured to listen on an inet socket, not
+          # just a Unix socket.
+          host: localhost
+
+          # The syslog facility to which statements will be sent.
+          #
+          # Can be one of: {AUTH, AUTHPRIV, DAEMON, CRON, FTP, LPR,
+          # KERN, MAIL, NEWS, SYSLOG, USER, UUCP, LOCAL0, LOCAL1,
+          # LOCAL2, LOCAL3, LOCAL4, LOCAL5, LOCAL6, LOCAL7}.
+          facility: local0
+
+          # The time zone in which dates should be displayed.
+          timeZone: UTC
+
+          # A custom Logback format string.
+          logFormat: null
+
+    # Logging settings.
+    logging:
+
+      # The default level of all loggers. Can be OFF, ERROR, WARN, INFO,
+      # DEBUG, TRACE, or ALL.
+      level: INFO
+
+      # Logger-specific levels.
+      loggers:
+
+        # Sets the level for 'com.example.app' to DEBUG.
+        com.example.app: DEBUG
+
+      # Settings for logging to stdout.
+      console:
+
+        # If true, write log statements to stdout.
+        enabled: true
+
+        # Do not display log statements below this threshold to stdout.
+        threshold: ALL
+
+        # The time zone in which dates should be displayed.
+        timeZone: UTC
+
+        # A custom Logback format string.
+        logFormat: null
+
+      # Settings for logging to a file.
+      file:
+
+        # If true, write log statements to a file.
+        enabled: true
+
+        # Do not write log statements below this threshold to the file.
+        threshold: ALL
+
+        # The time zone in which dates should be displayed.
+        timeZone: UTC
+
+        # A custom Logback format string.
+        logFormat: null
+
+        # The file to which statements will be logged.
+        #
+        # If enabled is true, this must be specified.
+        currentLogFilename: ./logs/app.log
+
+        # If true, log files are rotated and archived.
+        archive: true
+
+        # When the log file rolls over, the file will be archived to
+        # app-2012-03-15.log.gz, example.log will be truncated,
+        # and new statements written to it.
+        #
+        # If archive is true, this must be specified.
+        archivedLogFilenamePattern: ./logs/app-%d.log.gz
+
+        # The maximum number of log files to archive.
+        archivedFileCount: 5
+
+      # Settings for logging to syslog.
+      syslog:
+
+        # If true, write log statements to syslog.
+        enabled: false
+
+        # The hostname of the syslog server to which statements will be
+        # sent.
+        #
+        # N.B.: If this is the local host, the local syslog instance
+        # will need to be configured to listen on an inet socket, not just
+        # a Unix socket.
+        host: localhost
+
+        # The syslog facility to which statements will be sent.
+        #
+        # Can be one of: {AUTH, AUTHPRIV, DAEMON, CRON, FTP, LPR, KERN,
+        # MAIL, NEWS, SYSLOG, USER, UUCP, LOCAL0, LOCAL1, LOCAL2, LOCAL3,
+        # LOCAL4, LOCAL5, LOCAL6, LOCAL7}.
+        facility: local0
+
+        # The time zone in which dates should be displayed.
+        timeZone: UTC
+
+        # A custom Logback format string.
+        logFormat: null

@@ -13,15 +13,16 @@ import org.hibernate.SessionFactory;
 public abstract class HibernateBundle<T extends Configuration> implements ConfiguredBundle<T>, ConfigurationStrategy<T> {
     private SessionFactory sessionFactory;
 
-    private final ImmutableList<String> packages;
+    private final ImmutableList<Class<?>> entities;
     private final SessionFactoryFactory sessionFactoryFactory;
 
-    protected HibernateBundle(String... packages) {
-        this(ImmutableList.copyOf(packages), new SessionFactoryFactory());
+    protected HibernateBundle(Class<?>... entities) {
+        this(ImmutableList.copyOf(entities), new SessionFactoryFactory());
     }
 
-    protected HibernateBundle(ImmutableList<String> packages, SessionFactoryFactory sessionFactoryFactory) {
-        this.packages = packages;
+    protected HibernateBundle(ImmutableList<Class<?>> entities,
+                              SessionFactoryFactory sessionFactoryFactory) {
+        this.entities = entities;
         this.sessionFactoryFactory = sessionFactoryFactory;
     }
 
@@ -33,7 +34,7 @@ public abstract class HibernateBundle<T extends Configuration> implements Config
     @Override
     public final void run(T configuration, Environment environment) throws Exception {
         final DatabaseConfiguration dbConfig = getDatabaseConfiguration(configuration);
-        this.sessionFactory = sessionFactoryFactory.build(environment, dbConfig, packages);
+        this.sessionFactory = sessionFactoryFactory.build(environment, dbConfig, entities);
         environment.addProvider(new UnitOfWorkResourceMethodDispatchAdapter(sessionFactory));
         environment.addHealthCheck(new SessionFactoryHealthCheck("hibernate",
                                                                  sessionFactory,

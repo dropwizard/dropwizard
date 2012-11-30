@@ -97,7 +97,7 @@ http:
   # bindHost: app1.example.com
 
 #  ssl:
-#    keyStorePath: ./example.keystore
+#    keyStore: ./example.keystore
 #    keyStorePassword: example
 #
 #    keyStoreType: JKS # (optional, JKS is default)

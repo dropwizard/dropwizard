@@ -9,6 +9,7 @@ Many, many thanks to:
 * `Adam Jordens <https://github.com/ajordens>`_
 * `Adam Marcus <https://github.com/marcua>`_
 * `Alex Heneveld <https://github.com/ahgittin>`_
+* `Anders Hedström <https://github.com/andershedstrom>`_
 * `Andrei Savu <https://github.com/andreisavu>`_
 * `Andrew Clay Shafer <https://github.com/littleidea>`_.
 * `Armando Singer <https://github.com/asinger>`_
@@ -29,8 +30,10 @@ Many, many thanks to:
 * `Dan Everton <https://github.com/deverton>`_
 * `David Morgantini <https://github.com/dmorgantini>`_
 * `David Stendardi <https://github.com/dstendardi>`_
+* `Derek Stainer <https://github.com/dstainer>`_
 * `Eric Tschetter <https://github.com/metamx>`_
 * `Fredrik Sundberg <https://github.com/KingBuzzer>`_
+* `Hal Hildebrand <https://github.com/Hellblazer>`_
 * `Ian Eure <https://github.com/ieure>`_
 * `James Ward <https://github.com/jamesward>`_
 * `Jared Stehler <https://github.com/cengageng>`_
@@ -41,6 +44,7 @@ Many, many thanks to:
 * `Michael Fairley <https://github.com/michaelfairley>`_
 * `Mårten Gustafson <https://github.com/chids>`_
 * `Nick Telford <https://github.com/nicktelford>`_
+* `Ori Schwartz <https://github.com/fleaflicker>`_
 * `Sam Perman <https://github.com/samperman>`_
 * `Sam Quigley <https://github.com/emerose>`_
 * `Scott Askew <https://github.com/scottfromsf>`_

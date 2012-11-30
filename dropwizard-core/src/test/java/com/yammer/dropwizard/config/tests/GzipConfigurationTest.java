@@ -1,6 +1,5 @@
 package com.yammer.dropwizard.config.tests;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.Resources;
 import com.yammer.dropwizard.config.ConfigurationFactory;
@@ -33,24 +32,24 @@ public class GzipConfigurationTest {
     @Test
     public void hasAMinimumEntitySize() throws Exception {
         assertThat(gzip.getMinimumEntitySize())
-                .isEqualTo(Optional.of(Size.kilobytes(12)));
+                .isEqualTo(Size.kilobytes(12));
     }
 
     @Test
     public void hasABufferSize() throws Exception {
         assertThat(gzip.getBufferSize())
-                .isEqualTo(Optional.of(Size.kilobytes(32)));
+                .isEqualTo(Size.kilobytes(32));
     }
 
     @Test
     public void hasExcludedUserAgents() throws Exception {
         assertThat(gzip.getExcludedUserAgents())
-                .isEqualTo(Optional.of(ImmutableSet.of("IE")));
+                .isEqualTo(ImmutableSet.of("IE"));
     }
 
     @Test
     public void hasCompressedMimeTypes() throws Exception {
         assertThat(gzip.getCompressedMimeTypes())
-                .isEqualTo(Optional.of(ImmutableSet.of("text/plain")));
+                .isEqualTo(ImmutableSet.of("text/plain"));
     }
 }

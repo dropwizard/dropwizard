@@ -18,7 +18,15 @@ import static java.lang.String.format;
  * A simple façade for Hibernate Validator.
  */
 public class Validator {
-    private final ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+    private final ValidatorFactory factory;
+
+    public Validator() {
+        this(Validation.buildDefaultValidatorFactory());
+    }
+
+    public Validator(ValidatorFactory factory) {
+        this.factory = factory;
+    }
 
     /**
      * Validates the given object, and returns a list of error messages, if any. If the returned

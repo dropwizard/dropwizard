@@ -4,9 +4,9 @@ import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
+import com.sun.jersey.spi.container.servlet.ServletContainer;
+import com.yammer.dropwizard.jersey.JacksonMessageBodyProvider;
 import com.yammer.dropwizard.jetty.BiDiGzipHandler;
-import com.yammer.dropwizard.jetty.InstrumentedSslSelectChannelConnector;
-import com.yammer.dropwizard.jetty.InstrumentedSslSocketConnector;
 import com.yammer.dropwizard.jetty.UnbrandedErrorHandler;
 import com.yammer.dropwizard.servlets.ThreadNameFilter;
 import com.yammer.dropwizard.tasks.TaskServlet;
@@ -267,11 +267,11 @@ public class ServerFactory {
             factory.setCrlPath(crlPath.getAbsolutePath());
         }
 
-        for (Boolean enable : sslConfig.getEnableCRLDP().asSet()) {
+        for (Boolean enable : sslConfig.getCrldpEnabled().asSet()) {
             factory.setEnableCRLDP(enable);
         }
 
-        for (Boolean enable : sslConfig.getEnableOCSP().asSet()) {
+        for (Boolean enable : sslConfig.getOcspEnabled().asSet()) {
             factory.setEnableOCSP(enable);
         }
 
@@ -366,6 +366,15 @@ public class ServerFactory {
             handler.addServlet(entry.getValue(), entry.getKey());
         }
 
+        final ServletContainer jerseyContainer = env.getJerseyServletContainer();
+        if (jerseyContainer != null) {
+            env.addProvider(new JacksonMessageBodyProvider(env.getObjectMapperFactory().build(),
+                                                           env.getValidator()));
+            final ServletHolder jerseyHolder = new ServletHolder(jerseyContainer);
+            jerseyHolder.setInitOrder(Integer.MAX_VALUE);
+            handler.addServlet(jerseyHolder, config.getRootPath());
+        }
+
         for (ImmutableMap.Entry<String, FilterHolder> entry : env.getFilters().entries()) {
             handler.addFilter(entry.getValue(), entry.getKey(), EnumSet.of(DispatcherType.REQUEST));
         }
@@ -391,24 +400,20 @@ public class ServerFactory {
         if (gzip.isEnabled()) {
             final BiDiGzipHandler gzipHandler = new BiDiGzipHandler(instrumented);
 
-            final Optional<Size> minEntitySize = gzip.getMinimumEntitySize();
-            if (minEntitySize.isPresent()) {
-                gzipHandler.setMinGzipSize((int) minEntitySize.get().toBytes());
+            final Size minEntitySize = gzip.getMinimumEntitySize();
+            gzipHandler.setMinGzipSize((int) minEntitySize.toBytes());
+
+            final Size bufferSize = gzip.getBufferSize();
+            gzipHandler.setBufferSize((int) bufferSize.toBytes());
+
+            final ImmutableSet<String> userAgents = gzip.getExcludedUserAgents();
+            if (!userAgents.isEmpty()) {
+                gzipHandler.setExcluded(userAgents);
             }
 
-            final Optional<Size> bufferSize = gzip.getBufferSize();
-            if (bufferSize.isPresent()) {
-                gzipHandler.setBufferSize((int) bufferSize.get().toBytes());
-            }
-
-            final Optional<ImmutableSet<String>> userAgents = gzip.getExcludedUserAgents();
-            if (userAgents.isPresent()) {
-                gzipHandler.setExcluded(userAgents.get());
-            }
-
-            final Optional<ImmutableSet<String>> mimeTypes = gzip.getCompressedMimeTypes();
-            if (mimeTypes.isPresent()) {
-                gzipHandler.setMimeTypes(mimeTypes.get());
+            final ImmutableSet<String> mimeTypes = gzip.getCompressedMimeTypes();
+            if (!mimeTypes.isEmpty()) {
+                gzipHandler.setMimeTypes(mimeTypes);
             }
 
             return gzipHandler;

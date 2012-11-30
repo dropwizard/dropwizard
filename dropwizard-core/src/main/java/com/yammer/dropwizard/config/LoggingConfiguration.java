@@ -266,18 +266,18 @@ public class LoggingConfiguration {
 
     @Valid
     @NotNull
-    @JsonProperty("console")
-    private ConsoleConfiguration consoleConfiguration = new ConsoleConfiguration();
+    @JsonProperty
+    private ConsoleConfiguration console = new ConsoleConfiguration();
 
     @Valid
     @NotNull
-    @JsonProperty("file")
-    private FileConfiguration fileConfiguration = new FileConfiguration();
+    @JsonProperty
+    private FileConfiguration file = new FileConfiguration();
 
     @Valid
     @NotNull
-    @JsonProperty("syslog")
-    private SyslogConfiguration syslogConfiguration = new SyslogConfiguration();
+    @JsonProperty
+    private SyslogConfiguration syslog = new SyslogConfiguration();
 
     public Level getLevel() {
         return level;
@@ -296,26 +296,26 @@ public class LoggingConfiguration {
     }
 
     public ConsoleConfiguration getConsoleConfiguration() {
-        return consoleConfiguration;
+        return console;
     }
 
     public void setConsoleConfiguration(ConsoleConfiguration config) {
-        this.consoleConfiguration = config;
+        this.console = config;
     }
 
     public FileConfiguration getFileConfiguration() {
-        return fileConfiguration;
+        return file;
     }
 
     public void setFileConfiguration(FileConfiguration config) {
-        this.fileConfiguration = config;
+        this.file = config;
     }
 
     public SyslogConfiguration getSyslogConfiguration() {
-        return syslogConfiguration;
+        return syslog;
     }
 
     public void setSyslogConfiguration(SyslogConfiguration config) {
-        this.syslogConfiguration = config;
+        this.syslog = config;
     }
 }

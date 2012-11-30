@@ -37,8 +37,8 @@ Then, in your service's ``run`` method, create a new ``DBIFactory``:
     @Override
     public void run(ExampleConfiguration config,
                     Environment environment) throws ClassNotFoundException {
-        final DBIFactory factory = new DBIFactory(environment);
-        final DBI jdbi = factory.build(config.getDatabaseConfiguration(), "postgresql");
+        final DBIFactory factory = new DBIFactory();
+        final DBI jdbi = factory.build(environment, config.getDatabaseConfiguration(), "postgresql");
         final UserDAO dao = jdbi.onDemand(UserDAO.class);
         environment.addResource(new UserResource(dao));
     }

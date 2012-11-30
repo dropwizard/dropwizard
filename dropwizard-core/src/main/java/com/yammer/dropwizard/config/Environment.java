@@ -16,8 +16,8 @@ import com.yammer.dropwizard.lifecycle.Managed;
 import com.yammer.dropwizard.lifecycle.ServerLifecycleListener;
 import com.yammer.dropwizard.tasks.GarbageCollectionTask;
 import com.yammer.dropwizard.tasks.Task;
+import com.yammer.dropwizard.validation.Validator;
 import com.yammer.metrics.core.HealthCheck;
-import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletHolder;
@@ -35,6 +35,7 @@ import javax.ws.rs.HttpMethod;
 import javax.ws.rs.Path;
 import javax.ws.rs.ext.Provider;
 import java.util.EventListener;
+import java.util.List;
 import java.util.concurrent.*;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -62,13 +63,13 @@ public class Environment extends AbstractLifeCycle {
     private final ImmutableSet.Builder<EventListener> servletListeners;
     private final ImmutableSet.Builder<Task> tasks;
     private final ImmutableSet.Builder<String> protectedTargets;
+    private final ImmutableList.Builder<ServerLifecycleListener> serverListeners;
     private Resource baseResource;
     private final AggregateLifeCycle lifeCycle;
     private final ObjectMapperFactory objectMapperFactory;
     private SessionHandler sessionHandler;
     private ServletContainer jerseyServletContainer;
-
-    private ServerLifecycleListener serverListener;
+    private Validator validator;
 
     /**
      * Creates a new environment.
@@ -79,10 +80,12 @@ public class Environment extends AbstractLifeCycle {
      */
     public Environment(String name,
                        Configuration configuration,
-                       ObjectMapperFactory objectMapperFactory) {
+                       ObjectMapperFactory objectMapperFactory,
+                       Validator validator) {
         this.name = name;
         this.configuration = configuration;
         this.objectMapperFactory = objectMapperFactory;
+        this.validator = validator;
         this.config = new DropwizardResourceConfig(false) {
             @Override
             public void validate() {
@@ -102,6 +105,7 @@ public class Environment extends AbstractLifeCycle {
         this.tasks = ImmutableSet.builder();
         this.baseResource = Resource.newClassPathResource(".");
         this.protectedTargets = ImmutableSet.builder();
+        this.serverListeners = ImmutableList.builder();
         this.lifeCycle = new AggregateLifeCycle();
         this.jerseyServletContainer = new ServletContainer(config);
         addTask(new GarbageCollectionTask());
@@ -331,6 +335,18 @@ public class Environment extends AbstractLifeCycle {
     }
 
     /**
+     * Gets the given Jersey property.
+     *
+     * @param name     the name of the Jersey property
+     * @see ResourceConfig
+     */
+    @SuppressWarnings("unchecked")
+    public <T> T getJerseyProperty(String name) {
+        return (T) config.getProperties().get(name);
+    }
+
+
+    /**
      * Creates a new {@link ExecutorService} instance with the given parameters whose lifecycle is
      * managed by the service.
      *
@@ -382,20 +398,23 @@ public class Environment extends AbstractLifeCycle {
         return executor;
     }
 
+    public Validator getValidator() {
+        return validator;
+    }
+
+    public void setValidator(Validator validator) {
+        this.validator = checkNotNull(validator);
+    }
+
     /*
-     * Internal Accessors
-     */
+    * Internal Accessors
+    */
 
     ImmutableSet<HealthCheck> getHealthChecks() {
         return healthChecks.build();
     }
 
     ImmutableMap<String, ServletHolder> getServlets() {
-        if (jerseyServletContainer != null) {
-            addServlet(jerseyServletContainer,
-                       configuration.getHttpConfiguration()
-                                    .getRootPath()).setInitOrder(Integer.MAX_VALUE);
-        }
         return servlets.build();
     }
 
@@ -568,11 +587,11 @@ public class Environment extends AbstractLifeCycle {
         return name;
     }
 
-    public ServerLifecycleListener getServerListener() {
-        return serverListener;
+    public List<ServerLifecycleListener> getServerListeners() {
+        return serverListeners.build();
     }
 
-    public void setServerLifecycleListener(ServerLifecycleListener listener) {
-        this.serverListener = listener;
+    public void addServerLifecycleListener(ServerLifecycleListener listener) {
+        serverListeners.add(listener);
     }
 }
