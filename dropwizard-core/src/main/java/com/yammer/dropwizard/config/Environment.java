@@ -25,6 +25,7 @@ import org.eclipse.jetty.util.component.AbstractLifeCycle;
 import org.eclipse.jetty.util.component.AggregateLifeCycle;
 import org.eclipse.jetty.util.component.LifeCycle;
 import org.eclipse.jetty.util.resource.Resource;
+import org.eclipse.jetty.webapp.WebAppContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,6 +63,7 @@ public class Environment extends AbstractLifeCycle {
     private final ImmutableMultimap.Builder<String, FilterHolder> filters;
     private final ImmutableSet.Builder<EventListener> servletListeners;
     private final ImmutableSet.Builder<Task> tasks;
+    private final ImmutableSet.Builder<WebAppContext> webapps;
     private final ImmutableSet.Builder<String> protectedTargets;
     private final ImmutableList.Builder<ServerLifecycleListener> serverListeners;
     private Resource baseResource;
@@ -103,6 +105,7 @@ public class Environment extends AbstractLifeCycle {
         this.filters = ImmutableMultimap.builder();
         this.servletListeners = ImmutableSet.builder();
         this.tasks = ImmutableSet.builder();
+        this.webapps = ImmutableSet.builder();
         this.baseResource = Resource.newClassPathResource(".");
         this.protectedTargets = ImmutableSet.builder();
         this.serverListeners = ImmutableList.builder();
@@ -287,6 +290,14 @@ public class Environment extends AbstractLifeCycle {
     }
 
     /**
+     * Adds webapp server handler context instance
+     * @param context
+     */
+    public void addWebApp(WebAppContext context) {
+        webapps.add(checkNotNull(context));
+    }
+
+    /**
      * Adds a protected Target (ie a target that 404s)
      *
      * @param target a protected target
@@ -424,6 +435,10 @@ public class Environment extends AbstractLifeCycle {
 
     ImmutableSet<Task> getTasks() {
         return tasks.build();
+    }
+
+    ImmutableSet<WebAppContext> getWebApps() {
+        return webapps.build();
     }
 
     ImmutableSet<String> getProtectedTargets() {
