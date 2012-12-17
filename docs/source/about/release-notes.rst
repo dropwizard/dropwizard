@@ -4,6 +4,14 @@
 Release Notes
 #############
 
+.. _rel-0.6.2:
+
+v0.6.2-SNAPSHOT: TBD
+====================
+
+* Upgraded to Jersey 1.16.
+
+
 .. _rel-0.6.1:
 
 v0.6.1: Nov 28 2012

@@ -34,7 +34,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <metrics.version>2.2.0</metrics.version>
-        <jersey.version>1.15</jersey.version>
+        <jersey.version>1.16</jersey.version>
     </properties>
 
     <developers>
