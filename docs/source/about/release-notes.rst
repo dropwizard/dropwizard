@@ -11,6 +11,7 @@ v0.6.2-SNAPSHOT: TBD
 
 * Upgraded to Jersey 1.16.
 * Upgraded to Jackson 2.1.2.
+* Upgraded to Logback 1.0.9.
 
 .. _rel-0.6.1:
 
