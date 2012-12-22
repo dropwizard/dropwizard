@@ -163,7 +163,7 @@ public class AssetServlet extends HttpServlet {
 
         if (ResourceURL.isDirectory(requestedResourceURL)) {
             if (indexFile != null) {
-                requestedResourceURL = Resources.getResource(absoluteRequestedResourcePath + '/' + indexFile);
+                requestedResourceURL = Resources.getResource(absoluteRequestedResourcePath.replaceAll("/+$", "") + '/' + indexFile);
             } else {
                 // directory requested but no index file defined
                 return null;
