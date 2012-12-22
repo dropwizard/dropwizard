@@ -7,18 +7,17 @@ Dropwizard Views
 .. highlight:: text
 
 .. rubric:: The ``dropwizard-views`` module provides you with simple, fast HTML views using either
-            Freemarker_ or Mustache_.
+            FreeMarker_ or Mustache_.
 
-.. _Freemarker: http://freemarker.sourceforge.net/
+.. _FreeMarker: http://FreeMarker.sourceforge.net/
 .. _Mustache: http://mustache.github.com/mustache.5.html
 
-To enable views for your :ref:`service <man-core-service>`, add the ``ViewBundle``:
+To enable views for your :ref:`service <man-core-service>`, add the ``ViewBundle`` in the ``initialize`` method of your Service class:
 
 .. code-block:: java
-
-    public MyService() {
-        super("my-service");
-        addBundle(new ViewBundle());
+    public void initialize(Bootstrap<MyConfiguration> bootstrap) {
+        bootstrap.setName("my-service");
+        bootstrap.addBundle(new ViewBundle());
     }
 
 Then, in your :ref:`resource method <man-core-resources>`, add a ``View`` class:
@@ -42,7 +41,7 @@ Then, in your :ref:`resource method <man-core-resources>`, add a ``View`` class:
 ``com.example.service.PersonView``, Dropwizard would then look for the file
 ``src/main/resources/com/example/service/person.ftl``.
 
-If your template ends with ``.ftl``, it'll be interpreted as a Freemarker_ template. If it ends with
+If your template ends with ``.ftl``, it'll be interpreted as a FreeMarker_ template. If it ends with
 ``.mustache``, it'll be interpreted as a Mustache template.
 
 .. tip::
@@ -54,7 +53,7 @@ If your template ends with ``.ftl``, it'll be interpreted as a Freemarker_ templ
 Your template file might look something like this:
 
 .. code-block:: html
-    :emphasize-lines: 1, 5
+    :emphasize-lines: 1,5
 
     <#-- @ftlvariable name="" type="com.example.views.PersonView" -->
     <html>
@@ -64,9 +63,9 @@ Your template file might look something like this:
         </body>
     </html>
 
-The ``@fltvariable`` lets Freemarker (and any Freemarker IDE plugins you may be using) know that the
+The ``@ftlvariable`` lets FreeMarker (and any FreeMarker IDE plugins you may be using) know that the
 root object is a ``com.example.views.PersonView`` instance. If you attempt to call a property which
-doesn't exist on ``PersonView``--``getConnectionPool()``, for example--it will flag that line in
+doesn't exist on ``PersonView`` -- ``getConnectionPool()``, for example -- it will flag that line in
 your IDE.
 
 Once you have your view and template, you can simply return an instance of your ``View`` subclass:
@@ -93,7 +92,7 @@ Once you have your view and template, you can simply return an instance of your 
     Jackson can also serialize your views, allowing you to serve both ``text/html`` and
     ``application/json`` with a single representation class.
 
-For more information on how to use Freemarker, see the `Freemarker`_ documentation.
+For more information on how to use FreeMarker, see the `FreeMarker`_ documentation.
 
 For more information on how to use Mustache, see the `Mustache`_ and `Mustache.java`_ documentation.
 
