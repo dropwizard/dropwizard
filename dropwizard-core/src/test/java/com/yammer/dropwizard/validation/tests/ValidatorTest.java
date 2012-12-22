@@ -39,6 +39,12 @@ public class ValidatorTest {
     }
 
     @Test
+    public void returnsASetOfErrorsForNull() throws Exception {
+        assertThat(validator.validate(null))
+                .containsOnly("request entity required");
+    }
+
+    @Test
     public void returnsAnEmptySetForAValidObject() throws Exception {
         final Example example = new Example();
         example.setNotNull("woo");
