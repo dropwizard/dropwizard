@@ -20,7 +20,7 @@
         <dependency>
             <groupId>org.apache.tomcat</groupId>
             <artifactId>tomcat-dbcp</artifactId>
-            <version>7.0.33</version>
+            <version>7.0.34</version>
         </dependency>
         <dependency>
             <groupId>hsqldb</groupId>

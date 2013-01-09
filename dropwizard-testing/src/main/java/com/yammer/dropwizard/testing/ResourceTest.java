@@ -13,6 +13,7 @@ import com.yammer.dropwizard.json.ObjectMapperFactory;
 import com.yammer.dropwizard.validation.Validator;
 import org.junit.After;
 import org.junit.Before;
+import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import java.util.Map;
 import java.util.Set;
@@ -21,6 +22,11 @@ import java.util.Set;
  * A base test class for testing Dropwizard resources.
  */
 public abstract class ResourceTest {
+    static {
+        SLF4JBridgeHandler.removeHandlersForRootLogger();
+        SLF4JBridgeHandler.install();
+    }
+
     private final Set<Object> singletons = Sets.newHashSet();
     private final Set<Class<?>> providers = Sets.newHashSet();
     private final ObjectMapperFactory objectMapperFactory = new ObjectMapperFactory();

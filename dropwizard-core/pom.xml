@@ -13,9 +13,8 @@
 
     <properties>
         <jetty.version>8.1.8.v20121106</jetty.version>
-        <jackson.version>2.1.1</jackson.version>
         <slf4j.version>1.7.2</slf4j.version>
-        <logback.version>1.0.7</logback.version>
+        <logback.version>1.0.9</logback.version>
     </properties>
 
     <dependencies>
@@ -137,7 +136,7 @@
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-validator</artifactId>
-            <version>4.3.0.Final</version>
+            <version>4.3.1.Final</version>
         </dependency>
         <dependency>
             <groupId>joda-time</groupId>

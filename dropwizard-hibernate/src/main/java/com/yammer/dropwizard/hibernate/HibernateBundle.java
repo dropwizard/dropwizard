@@ -16,8 +16,9 @@ public abstract class HibernateBundle<T extends Configuration> implements Config
     private final ImmutableList<Class<?>> entities;
     private final SessionFactoryFactory sessionFactoryFactory;
 
-    protected HibernateBundle(Class<?>... entities) {
-        this(ImmutableList.copyOf(entities), new SessionFactoryFactory());
+    protected HibernateBundle(Class<?> entity, Class<?>... entities) {
+        this(ImmutableList.<Class<?>>builder().add(entity).add(entities).build(),
+             new SessionFactoryFactory());
     }
 
     protected HibernateBundle(ImmutableList<Class<?>> entities,
