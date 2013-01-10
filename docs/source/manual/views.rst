@@ -15,6 +15,7 @@ Dropwizard Views
 To enable views for your :ref:`service <man-core-service>`, add the ``ViewBundle`` in the ``initialize`` method of your Service class:
 
 .. code-block:: java
+
     public void initialize(Bootstrap<MyConfiguration> bootstrap) {
         bootstrap.setName("my-service");
         bootstrap.addBundle(new ViewBundle());
