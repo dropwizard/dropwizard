@@ -35,7 +35,7 @@ public class MustacheViewRenderer implements ViewRenderer {
 
     @Override
     public void render(View view, Locale locale, OutputStream output) throws IOException, WebApplicationException {
-        final OutputStreamWriter writer = new OutputStreamWriter(output, Charsets.UTF_8);
+        final OutputStreamWriter writer = new OutputStreamWriter(output, view.getCharset().or(Charsets.UTF_8));
         try {
             final Mustache template = factories.getUnchecked(view.getClass())
                                                .compile(view.getTemplateName());
