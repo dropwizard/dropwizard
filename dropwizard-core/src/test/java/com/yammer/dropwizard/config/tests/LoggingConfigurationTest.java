@@ -1,8 +1,13 @@
 package com.yammer.dropwizard.config.tests;
 
 import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.Appender;
+import ch.qos.logback.core.ConsoleAppender;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.Resources;
+import com.yammer.dropwizard.config.AppenderConfiguration;
 import com.yammer.dropwizard.config.ConfigurationFactory;
 import com.yammer.dropwizard.config.LoggingConfiguration;
 import com.yammer.dropwizard.validation.Validator;
@@ -77,5 +82,32 @@ public class LoggingConfigurationTest {
 
         assertThat(file.isValidArchiveConfiguration())
                 .isTrue();
+    }
+
+    @Test
+    public void hasCustomConfiguration() throws Exception {
+        final AppenderConfiguration custom = config.getCustomConfiguration();
+
+        assertThat(custom.isEnabled())
+                .isFalse();
+
+        assertThat(custom.getThreshold())
+                .isEqualTo(Level.ALL);
+
+        assertThat(custom)
+                .isInstanceOf(TestCustomLogging.class);
+
+        assertThat(((TestCustomLogging)custom).customValue)
+                .isEqualTo(18);
+    }
+
+    public static class TestCustomLogging extends AppenderConfiguration {
+        @JsonProperty
+        public int customValue = 10;
+
+        @Override
+        protected Appender<ILoggingEvent> createAppender() {
+            return new ConsoleAppender<ILoggingEvent>();
+        }
     }
 }

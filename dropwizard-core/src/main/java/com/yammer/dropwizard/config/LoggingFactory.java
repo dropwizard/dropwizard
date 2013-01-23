@@ -71,6 +71,11 @@ public class LoggingFactory {
                                                                                    syslog.getLogFormat())));
         }
 
+        final AppenderConfiguration custom = config.getCustomConfiguration();
+        if (custom != null && custom.isEnabled()) {
+            root.addAppender(custom.buildAppender());
+        }
+
 
 
         final MBeanServer server = ManagementFactory.getPlatformMBeanServer();

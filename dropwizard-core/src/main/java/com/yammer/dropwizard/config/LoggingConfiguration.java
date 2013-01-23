@@ -279,6 +279,9 @@ public class LoggingConfiguration {
     @JsonProperty
     private SyslogConfiguration syslog = new SyslogConfiguration();
 
+    @JsonProperty
+    private AppenderConfiguration custom;
+
     public Level getLevel() {
         return level;
     }
@@ -317,5 +320,13 @@ public class LoggingConfiguration {
 
     public void setSyslogConfiguration(SyslogConfiguration config) {
         this.syslog = config;
+    }
+
+    public AppenderConfiguration getCustomConfiguration() {
+        return this.custom;
+    }
+
+    public void setCustomConfiguration(AppenderConfiguration config) {
+        this.custom = config;
     }
 }

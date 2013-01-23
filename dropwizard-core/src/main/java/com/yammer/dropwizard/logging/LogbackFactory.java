@@ -107,7 +107,7 @@ public class LogbackFactory {
         return appender;
     }
 
-    private static void addThresholdFilter(FilterAttachable<ILoggingEvent> appender, Level threshold) {
+    public static void addThresholdFilter(FilterAttachable<ILoggingEvent> appender, Level threshold) {
         final ThresholdFilter filter = new ThresholdFilter();
         filter.setLevel(threshold.toString());
         filter.start();
