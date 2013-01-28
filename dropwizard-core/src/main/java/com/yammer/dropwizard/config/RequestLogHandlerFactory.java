@@ -41,7 +41,8 @@ public class RequestLogHandlerFactory {
     public boolean isEnabled() {
         return config.getConsoleConfiguration().isEnabled() ||
                 config.getFileConfiguration().isEnabled() ||
-                config.getSyslogConfiguration().isEnabled();
+                config.getSyslogConfiguration().isEnabled() ||
+                (config.getCustomConfiguration() != null && config.getCustomConfiguration().isEnabled());
     }
 
     public RequestLogHandler build() {
