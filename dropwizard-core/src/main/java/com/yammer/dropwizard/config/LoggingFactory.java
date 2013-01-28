@@ -71,9 +71,10 @@ public class LoggingFactory {
                                                                                    syslog.getLogFormat())));
         }
 
-        final AppenderConfiguration custom = config.getCustomConfiguration();
-        if (custom != null && custom.isEnabled()) {
-            root.addAppender(custom.buildAppender(root.getLoggerContext(), name));
+        for (AppenderConfiguration appender : config.getAppenderConfigurations()) {
+            if (appender.isEnabled()) {
+                root.addAppender(appender.buildAppender(root.getLoggerContext(), name));
+            }
         }
 
 

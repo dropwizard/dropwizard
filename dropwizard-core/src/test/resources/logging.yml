@@ -14,7 +14,7 @@ syslog:
   enabled: false
   host: localhost
   facility: local0
-custom:
-  enabled: false
-  class: com.yammer.dropwizard.config.tests.LoggingConfigurationTest$TestCustomLogging
-  customValue: 18
+appenders:
+  - class: com.yammer.dropwizard.config.tests.LoggingConfigurationTest$TestCustomLogging
+    enabled: false
+    customValue: 18

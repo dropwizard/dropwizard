@@ -15,6 +15,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
+import java.util.List;
 import java.util.TimeZone;
 
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -43,18 +44,23 @@ public class RequestLogConfigurationTest {
 
     @Test
     public void hasCustomConfiguration() throws Exception {
-        final AppenderConfiguration custom = requestLog.getCustomConfiguration();
+        final List<AppenderConfiguration> appenders = requestLog.getAppenderConfigurations();
 
-        assertThat(custom.isEnabled())
+        assertThat(appenders.size())
+                .isEqualTo(1);
+
+        final AppenderConfiguration appender = appenders.get(0);
+
+        assertThat(appender.isEnabled())
                 .isFalse();
 
-        assertThat(custom.getThreshold())
+        assertThat(appender.getThreshold())
                 .isEqualTo(Level.ALL);
 
-        assertThat(custom)
+        assertThat(appender)
                 .isInstanceOf(TestCustomLogging.class);
 
-        assertThat(((TestCustomLogging)custom).customValue)
+        assertThat(((TestCustomLogging)appender).customValue)
                 .isEqualTo(18);
     }
 

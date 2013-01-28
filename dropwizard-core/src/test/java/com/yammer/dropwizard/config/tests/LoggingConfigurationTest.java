@@ -16,6 +16,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
+import java.util.List;
 
 import static com.yammer.dropwizard.config.LoggingConfiguration.ConsoleConfiguration;
 import static com.yammer.dropwizard.config.LoggingConfiguration.FileConfiguration;
@@ -87,18 +88,23 @@ public class LoggingConfigurationTest {
 
     @Test
     public void hasCustomConfiguration() throws Exception {
-        final AppenderConfiguration custom = config.getCustomConfiguration();
+        final List<AppenderConfiguration> appenders = config.getAppenderConfigurations();
 
-        assertThat(custom.isEnabled())
+        assertThat(appenders.size())
+                .isEqualTo(1);
+
+        final AppenderConfiguration appender = appenders.get(0);
+
+        assertThat(appender.isEnabled())
                 .isFalse();
 
-        assertThat(custom.getThreshold())
+        assertThat(appender.getThreshold())
                 .isEqualTo(Level.ALL);
 
-        assertThat(custom)
+        assertThat(appender)
                 .isInstanceOf(TestCustomLogging.class);
 
-        assertThat(((TestCustomLogging)custom).customValue)
+        assertThat(((TestCustomLogging)appender).customValue)
                 .isEqualTo(18);
     }
 

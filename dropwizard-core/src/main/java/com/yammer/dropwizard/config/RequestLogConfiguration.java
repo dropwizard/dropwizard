@@ -3,9 +3,11 @@ package com.yammer.dropwizard.config;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.validation.constraints.NotNull;
+import java.util.List;
 import java.util.TimeZone;
 
 import static com.yammer.dropwizard.config.LoggingConfiguration.*;
+import static java.util.Collections.emptyList;
 
 @SuppressWarnings("UnusedDeclaration")
 public class RequestLogConfiguration {
@@ -22,7 +24,7 @@ public class RequestLogConfiguration {
     private SyslogConfiguration syslog = new SyslogConfiguration();
 
     @JsonProperty
-    private AppenderConfiguration custom;
+    private List<AppenderConfiguration> appenders = emptyList();
 
     @NotNull
     @JsonProperty
@@ -52,12 +54,12 @@ public class RequestLogConfiguration {
         this.syslog = syslogConfiguration;
     }
 
-    public AppenderConfiguration getCustomConfiguration() {
-        return this.custom;
+    public List<AppenderConfiguration> getAppenderConfigurations() {
+        return this.appenders;
     }
 
-    public void setCustomConfiguration(AppenderConfiguration config) {
-        this.custom = config;
+    public void setAppenderConfigurations(List<AppenderConfiguration> appenderConfigurations) {
+        this.appenders = appenderConfigurations;
     }
 
     public TimeZone getTimeZone() {
