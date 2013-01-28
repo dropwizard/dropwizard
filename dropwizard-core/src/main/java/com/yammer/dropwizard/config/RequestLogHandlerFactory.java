@@ -90,6 +90,11 @@ public class RequestLogHandlerFactory {
             appenders.addAppender(appender);
         }
 
+        final AppenderConfiguration custom = config.getCustomConfiguration();
+        if (custom != null && custom.isEnabled()) {
+            appenders.addAppender(custom.buildAppender());
+        }
+
         final RequestLogHandler handler = new RequestLogHandler();
         handler.setRequestLog(new AsyncRequestLog(Clock.defaultClock(),
                                                   appenders,

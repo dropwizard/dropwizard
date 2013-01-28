@@ -3,3 +3,8 @@ file:
   currentLogFilename: "/var/log/dingo/dingo.log"
   archivedLogFilenamePattern: "/var/log/dingo/dingo-%d.log.zip"
   archivedFileCount: 5
+
+custom:
+  enabled: false
+  class: com.yammer.dropwizard.config.tests.RequestLogConfigurationTest$TestCustomLogging
+  customValue: 18

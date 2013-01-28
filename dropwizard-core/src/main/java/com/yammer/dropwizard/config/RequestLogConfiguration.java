@@ -21,6 +21,9 @@ public class RequestLogConfiguration {
     @JsonProperty
     private SyslogConfiguration syslog = new SyslogConfiguration();
 
+    @JsonProperty
+    private AppenderConfiguration custom;
+
     @NotNull
     @JsonProperty
     private TimeZone timeZone = UTC;
@@ -47,6 +50,14 @@ public class RequestLogConfiguration {
 
     public void setSyslogConfiguration(SyslogConfiguration syslogConfiguration) {
         this.syslog = syslogConfiguration;
+    }
+
+    public AppenderConfiguration getCustomConfiguration() {
+        return this.custom;
+    }
+
+    public void setCustomConfiguration(AppenderConfiguration config) {
+        this.custom = config;
     }
 
     public TimeZone getTimeZone() {
