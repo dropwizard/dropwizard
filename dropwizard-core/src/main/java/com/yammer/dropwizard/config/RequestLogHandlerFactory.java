@@ -93,7 +93,7 @@ public class RequestLogHandlerFactory {
 
         final AppenderConfiguration custom = config.getCustomConfiguration();
         if (custom != null && custom.isEnabled()) {
-            appenders.addAppender(custom.buildAppender());
+            appenders.addAppender(custom.buildAppender(context, name));
         }
 
         final RequestLogHandler handler = new RequestLogHandler();

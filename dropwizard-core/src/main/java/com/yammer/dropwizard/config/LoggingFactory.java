@@ -73,7 +73,7 @@ public class LoggingFactory {
 
         final AppenderConfiguration custom = config.getCustomConfiguration();
         if (custom != null && custom.isEnabled()) {
-            root.addAppender(custom.buildAppender());
+            root.addAppender(custom.buildAppender(root.getLoggerContext(), name));
         }
 
 

@@ -1,6 +1,7 @@
 package com.yammer.dropwizard.config.tests;
 
 import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.ConsoleAppender;
@@ -106,7 +107,7 @@ public class LoggingConfigurationTest {
         public int customValue = 10;
 
         @Override
-        protected Appender<ILoggingEvent> createAppender() {
+        protected Appender<ILoggingEvent> createAppender(LoggerContext context, String name) {
             return new ConsoleAppender<ILoggingEvent>();
         }
     }
