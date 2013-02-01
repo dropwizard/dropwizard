@@ -430,6 +430,7 @@ public class ServerFactory {
 
     private Connector createInternalConnector() {
         final SocketConnector connector = new SocketConnector();
+        connector.setHost(config.getBindHost().orNull());
         connector.setPort(config.getAdminPort());
         connector.setName("internal");
         connector.setThreadPool(new QueuedThreadPool(8));
