@@ -9,7 +9,7 @@ Release Notes
 v0.6.2-SNAPSHOT: TBD
 ====================
 
-* Upgraded to Jersey 1.16.
+* Upgraded to Jersey 1.17.
 * Upgraded to Jackson 2.1.2.
 * Upgraded to Logback 1.0.9.
 * Upgraded to Hibernate 4.1.9.
