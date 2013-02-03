@@ -18,6 +18,7 @@ v0.6.2-SNAPSHOT: TBD
 * Upgraded to Mustache.java 0.8.9.
 * Upgraded to Apache HttpClient 4.2.3.
 * Upgraded to Jackson 2.1.3.
+* Upgraded to argparse4j 0.3.1.
 
 .. _rel-0.6.1:
 
