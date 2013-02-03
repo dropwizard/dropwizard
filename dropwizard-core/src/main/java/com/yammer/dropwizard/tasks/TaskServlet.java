@@ -44,17 +44,18 @@ public class TaskServlet extends HttpServlet {
                           HttpServletResponse resp) throws ServletException, IOException {
         final Task task = tasks.get(req.getPathInfo());
         if (task != null) {
+            resp.setContentType(MediaType.TEXT_PLAIN);
+            final PrintWriter output = resp.getWriter();
             try {
-                resp.setContentType(MediaType.TEXT_PLAIN);
-                final PrintWriter output = resp.getWriter();
-                try {
-                    task.execute(getParams(req), output);
-                } finally {
-                    output.close();
-                }
+                task.execute(getParams(req), output);
             } catch (Exception e) {
                 LOGGER.error("Error running {}", task.getName(), e);
-                resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                output.println();
+                output.println(e.getMessage());
+                e.printStackTrace(output);
+            } finally {
+                output.close();
             }
         } else {
             resp.sendError(HttpServletResponse.SC_NOT_FOUND);
