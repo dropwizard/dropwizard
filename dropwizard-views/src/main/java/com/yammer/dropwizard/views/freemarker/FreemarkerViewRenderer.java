@@ -16,6 +16,7 @@ import javax.ws.rs.WebApplicationException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.nio.charset.Charset;
 import java.util.Locale;
 
 public class FreemarkerViewRenderer implements ViewRenderer {
@@ -50,7 +51,8 @@ public class FreemarkerViewRenderer implements ViewRenderer {
                        OutputStream output) throws IOException, WebApplicationException {
         try {
             final Configuration configuration = configurationCache.getUnchecked(view.getClass());
-            final Template template = configuration.getTemplate(view.getTemplateName(), locale);
+            final Charset charset = view.getCharset().or(Charset.forName(configuration.getEncoding(locale)));
+            final Template template = configuration.getTemplate(view.getTemplateName(), locale, charset.name());
             template.process(view, new OutputStreamWriter(output, template.getEncoding()));
         } catch (TemplateException e) {
             throw new ContainerException(e);
