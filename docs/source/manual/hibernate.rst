@@ -30,13 +30,12 @@ To create a :ref:`managed <man-core-managed>`, instrumented ``SessionFactory`` i
         }
     }
 
-Then, add a ``HibernateBundle`` instance to your service class, specifying the packages which
-contain your entity classes and how to get a ``DatabaseConfiguration`` from your configuration
-subclass:
+Then, add a ``HibernateBundle`` instance to your service class, specifying your entity classes
+and how to get a ``DatabaseConfiguration`` from your configuration subclass:
 
 .. code-block:: java
 
-    private final HibernateBundle<ExampleConfiguration> hibernate = new HibernateBundle<ExampleConfiguration>("com.example.service.entities") {
+    private final HibernateBundle<ExampleConfiguration> hibernate = new HibernateBundle<ExampleConfiguration>(Person.class) {
         @Override
         public DatabaseConfiguration getDatabaseConfiguration(ExampleConfiguration configuration) {
             return configuration.getDatabaseConfiguration();
