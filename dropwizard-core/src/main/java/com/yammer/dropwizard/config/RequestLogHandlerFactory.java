@@ -37,8 +37,14 @@ public class RequestLogHandlerFactory {
         this.config = config;
         this.name = name;
     }
-    
+
     public boolean isEnabled() {
+        for (AppenderConfiguration appender : config.getAppenderConfigurations()) {
+            if (appender.isEnabled()) {
+                return true;
+            }
+        }
+
         return config.getConsoleConfiguration().isEnabled() ||
                 config.getFileConfiguration().isEnabled() ||
                 config.getSyslogConfiguration().isEnabled();
@@ -88,6 +94,12 @@ public class RequestLogHandlerFactory {
             appender.setLayout(layout);
             appender.start();
             appenders.addAppender(appender);
+        }
+
+        for(AppenderConfiguration appender : config.getAppenderConfigurations()) {
+            if (appender.isEnabled()) {
+                appenders.addAppender(appender.buildAppender(context, name));
+            }
         }
 
         final RequestLogHandler handler = new RequestLogHandler();

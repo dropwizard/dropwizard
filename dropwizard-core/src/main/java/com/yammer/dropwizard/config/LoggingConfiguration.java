@@ -12,9 +12,12 @@ import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
+
+import static java.util.Collections.emptyList;
 
 @SuppressWarnings("UnusedDeclaration")
 public class LoggingConfiguration {
@@ -279,6 +282,9 @@ public class LoggingConfiguration {
     @JsonProperty
     private SyslogConfiguration syslog = new SyslogConfiguration();
 
+    @JsonProperty
+    private List<AppenderConfiguration> appenders = emptyList();
+
     public Level getLevel() {
         return level;
     }
@@ -317,5 +323,13 @@ public class LoggingConfiguration {
 
     public void setSyslogConfiguration(SyslogConfiguration config) {
         this.syslog = config;
+    }
+
+    public List<AppenderConfiguration> getAppenderConfigurations() {
+        return this.appenders;
+    }
+
+    public void setAppenderConfigurations(List<AppenderConfiguration> appenderConfigurations) {
+        this.appenders = appenderConfigurations;
     }
 }

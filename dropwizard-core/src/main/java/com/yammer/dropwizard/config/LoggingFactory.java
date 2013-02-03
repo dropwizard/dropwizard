@@ -71,6 +71,12 @@ public class LoggingFactory {
                                                                                    syslog.getLogFormat())));
         }
 
+        for (AppenderConfiguration appender : config.getAppenderConfigurations()) {
+            if (appender.isEnabled()) {
+                root.addAppender(appender.buildAppender(root.getLoggerContext(), name));
+            }
+        }
+
 
 
         final MBeanServer server = ManagementFactory.getPlatformMBeanServer();
