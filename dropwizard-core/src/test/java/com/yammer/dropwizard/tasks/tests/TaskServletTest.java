@@ -81,6 +81,6 @@ public class TaskServletTest {
         
         servlet.service(request, response);
 
-        verify(response).sendError(500);
+        verify(response).setStatus(500);
     }
 }
