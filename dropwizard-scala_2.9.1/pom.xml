@@ -29,7 +29,7 @@
         <dependency>
             <groupId>com.fasterxml.jackson.module</groupId>
             <artifactId>jackson-module-scala</artifactId>
-            <version>${jackson.version}</version>
+            <version>2.1.2</version>
         </dependency>
         <dependency>
             <groupId>com.yammer.metrics</groupId>
