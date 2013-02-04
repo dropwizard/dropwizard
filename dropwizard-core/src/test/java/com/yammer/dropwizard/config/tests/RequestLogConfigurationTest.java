@@ -27,11 +27,4 @@ public class RequestLogConfigurationTest {
         assertThat(requestLog.getTimeZone())
             .isEqualTo(TimeZone.getTimeZone("UTC"));
     }
-
-    @Test
-    public void fileConfigurationCanBeEnabled() throws Exception {
-        assertThat(requestLog.getFileConfiguration().isEnabled())
-            .isTrue();
-    }
-
 }

@@ -1,8 +1,10 @@
 package com.yammer.dropwizard.config.tests;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sun.jersey.spi.service.ServiceFinder;
 import com.yammer.dropwizard.config.Configuration;
 import com.yammer.dropwizard.json.ObjectMapperFactory;
+import com.yammer.dropwizard.logging.LoggingOutput;
 import org.junit.Test;
 
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -25,6 +27,8 @@ public class ConfigurationTest {
     @Test
     public void ensureConfigSerializable() throws Exception {
         final ObjectMapper mapper = new ObjectMapperFactory().build();
+        mapper.getSubtypeResolver()
+              .registerSubtypes(ServiceFinder.find(LoggingOutput.class).toClassArray());
 
         // Issue-96: some types were not serializable
         final String json = mapper.writeValueAsString(configuration);
