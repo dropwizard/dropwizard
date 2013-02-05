@@ -29,7 +29,7 @@ public class ViewResource {
     @Produces("text/html;charset=UTF-8")
     @Path("/utf8.mustache")
     public View mustacheUTF8() {
-        return new View("/views/ftl/utf8.ftl", Charsets.UTF_8) {
+        return new View("/views/mustache/utf8.mustache", Charsets.UTF_8) {
         };
     }
 
@@ -37,7 +37,7 @@ public class ViewResource {
     @Produces("text/html;charset=ISO-8859-1")
     @Path("/iso88591.mustache")
     public View mustacheISO88591() {
-        return new View("/views/ftl/iso88591.ftl", Charsets.ISO_8859_1) {
+        return new View("/views/mustache/iso88591.mustache", Charsets.ISO_8859_1) {
         };
     }
 }
