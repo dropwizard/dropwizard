@@ -16,10 +16,7 @@ import com.google.common.base.Optional;
 import static com.yammer.dropwizard.config.LoggingConfiguration.*;
 
 public class LogbackFactory {
-    private LogbackFactory() {
-        // singleton
-    }
-
+    private LogbackFactory() { /* singleton */ }
 
     public static SyslogAppender buildSyslogAppender(SyslogConfiguration syslog,
                                                      LoggerContext context,
@@ -37,7 +34,7 @@ public class LogbackFactory {
         appender.setContext(context);
         appender.setLayout(layout);
         appender.setSyslogHost(syslog.getHost());
-        appender.setFacility(syslog.getFacility());
+        appender.setFacility(syslog.getFacility().toString());
         addThresholdFilter(appender, syslog.getThreshold());
         appender.start();
 

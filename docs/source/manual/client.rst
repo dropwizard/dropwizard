@@ -36,38 +36,65 @@ To create a :ref:`managed <man-core-managed>`, instrumented ``HttpClient`` insta
         }
     }
 
-Then, in your service's ``run`` method, create a new ``HttpClientFactory``:
+Then, in your service's ``run`` method, create a new ``HttpClientBuilder``:
 
 .. code-block:: java
 
     @Override
     public void run(ExampleConfiguration config,
                     Environment environment) {
-        final HttpClientFactory factory = new HttpClientFactory(config.getHttpClientConfiguration());
-        final HttpClient httpClient = factory.build();
+        final HttpClient httpClient = new HttpClientBuilder().using(config.getHttpClientConfiguration())
+                                                             .build();
         environment.addResource(new ExternalServiceResource(httpClient));
     }
 
-Your service's configuration file will then look like this:
+.. _man-client-apache-config:
+
+Configuration Defaults
+----------------------
+
+The default configuration for ``HttpClientConfiguration`` is as follows:
 
 .. code-block:: yaml
 
-    httpClient:
-      # timeout after 1s while connecting, reading, or writing
-      timeout: 1s
+    # The socket timeout value. If a read or write to the underlying
+    # TCP/IP connection hasn't succeeded after this duration, a
+    # timeout exception is thrown.
+    timeout: 500ms
 
-      # keep connections open for 10 minutes
-      timeToLive: 10m
+    # The connection timeout value. If a TCP/IP connection cannot be
+    # established in this time, a timeout exception is thrown.
+    connectionTimeout: 500ms
 
-      # don't track cookies
-      cookiesEnabled: false
+    # The time a TCP/IP connection to the server is allowed to
+    # persist before being explicitly closed.
+    timeToLive: 1 hour
+
+    # If true, cookies will be persisted in memory for the duration
+    # of the client's lifetime. If false, cookies will be ignored
+    # entirely.
+    cookiesEnabled: false
+
+    # The maximum number of connections to be held in the client's
+    # connection pool.
+    maxConnections: 1024
+
+    # The maximum number of connections per "route" to be held in
+    # the client's connection pool. A route is essentially a
+    # combination of hostname, port, configured proxies, etc.
+    maxConnectionsPerRoute: 1024
+
+    # The default value for a persistent connection's keep-alive.
+    # A value of 0 will result in connections being immediately
+    # closed after a response.
+    keepAlive: 0s
 
 .. _man-client-apache-metrics:
 
 Metrics
 -------
 
-Dropwizard's ``HttpClientFactory`` actually gives you an instrumented subclass which tracks the
+Dropwizard's ``HttpClientBuilder`` actually gives you an instrumented subclass which tracks the
 following pieces of data:
 
 ``org.apache.http.conn.ClientConnectionManager.connections``
@@ -111,12 +138,12 @@ following pieces of data:
 
 .. _man-client-jersey:
 
-JerseyClient
-============
+Jersey Client
+=============
 
 If HttpClient_ is too low-level for you, Dropwizard also supports Jersey's `Client API`_.
-``JerseyClient`` allows you to use all of the server-side media type support that your service uses
-to, for example, deserialize ``application/json`` request entities as POJOs.
+Jersey's ``Client`` allows you to use all of the server-side media type support that your service
+uses to, for example, deserialize ``application/json`` request entities as POJOs.
 
 .. _Client API: http://jersey.java.net/nonav/documentation/latest/user-guide.html#client-api
 
@@ -136,35 +163,39 @@ To create a :ref:`managed <man-core-managed>`, instrumented ``JerseyClient`` ins
         }
     }
 
-Then, in your service's ``run`` method, create a new ``JerseyClientFactory``:
+Then, in your service's ``run`` method, create a new ``JerseyClientBuilder``:
 
 .. code-block:: java
 
     @Override
     public void run(ExampleConfiguration config,
                     Environment environment) {
-        final JerseyClientFactory factory = new JerseyClientFactory(config.getJerseyClientConfiguration());
-        final JerseyClient jerseyClient = factory.build(environment);
-        environment.addResource(new ExternalServiceResource(jerseyClient));
+        final Client client = new JerseyClientBuilder().using(config.getJerseyClientConfiguration())
+                                                       .using(environment)
+                                                       .build();
+        environment.addResource(new ExternalServiceResource(client));
     }
 
-Your service's configuration file will then look like this:
+.. _man-client-jersey-config:
+
+Configuration Defaults
+----------------------
+
+In addition to the properties in the :ref:`HttpClient configuration <man-client-apache-config>`,
+``JerseyClientConfiguration`` adds the following:
 
 .. code-block:: yaml
 
-    httpClient:
-      timeout: 1s # timeout after 1s while connecting, reading, or writing
-      timeToLive: 10m # keep connections open for 10 minutes
-      cookiesEnabled: false # don't track cookies
-      gzipEnabled: true # allow for gzipped request and response entities
-      minThreads: 1
-      maxThreads: 128 # thread pool for JerseyClient's async requests
+    # The minimum number of threads to use for asynchronous calls.
+    minThreads: 1
 
-.. tip::
+    # The maximum number of threads to use for asynchronous calls.
+    maxThreads: 128
 
-    As of Jersey 1.11, most of the classes ``JerseyClient`` returns are declared ``final`` and as
-    such aren't mockable using Mockito_. In place of Mockito, we recommend using `PowerMock`_'s
-    Mockito-compatible API.
+    # If true, the client will automatically decode response entities
+    # with gzip content encoding.
+    gzipEnabled: true
 
-.. _Mockito: http://code.google.com/p/mockito/
-.. _PowerMock: http://code.google.com/p/powermock/
+    # If true, the client will encode request entities with gzip
+    # content encoding. (Requires gzipEnabled to be true).
+    gzipEnabledForRequests: true

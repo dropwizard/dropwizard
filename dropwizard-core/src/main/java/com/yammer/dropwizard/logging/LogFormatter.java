@@ -13,7 +13,7 @@ public class LogFormatter extends PatternLayout {
         super();
         setOutputPatternAsHeader(false);
         getDefaultConverterMap().put("ex", PrefixedThrowableProxyConverter.class.getName());
-        setPattern("%-5p [%d{ISO8601," + timeZone.getID() + "}] %c: %m\n%ex");
+        setPattern("%-5p [%d{ISO8601," + timeZone.getID() + "}] %c: %m%n%ex");
         setContext(context);
     }
 }

@@ -5,13 +5,14 @@ import com.example.helloworld.core.Template;
 import com.google.common.base.Optional;
 import com.yammer.dropwizard.cli.ConfiguredCommand;
 import com.yammer.dropwizard.config.Bootstrap;
-import com.yammer.dropwizard.logging.Log;
 import net.sourceforge.argparse4j.impl.Arguments;
 import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RenderCommand extends ConfiguredCommand<HelloWorldConfiguration> {
-    private static final Log LOG = Log.forClass(RenderCommand.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RenderCommand.class);
 
     public RenderCommand() {
         super("render", "Render the template data to console");
@@ -34,12 +35,12 @@ public class RenderCommand extends ConfiguredCommand<HelloWorldConfiguration> {
         final Template template = configuration.buildTemplate();
 
         if (namespace.getBoolean("include-default")) {
-            LOG.info("DEFAULT => {}", template.render(Optional.<String>absent()));
+            LOGGER.info("DEFAULT => {}", template.render(Optional.<String>absent()));
         }
 
         for (String name : namespace.<String>getList("names")) {
             for (int i = 0; i < 1000; i++) {
-                LOG.info("{} => {}", name, template.render(Optional.of(name)));
+                LOGGER.info("{} => {}", name, template.render(Optional.of(name)));
                 Thread.sleep(1000);
             }
         }

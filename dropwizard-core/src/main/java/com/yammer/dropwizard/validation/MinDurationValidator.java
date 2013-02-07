@@ -16,13 +16,13 @@ public class MinDurationValidator implements ConstraintValidator<MinDuration, Du
     private TimeUnit minUnit;
 
     @Override
-    public void initialize(MinDuration minValue) {
-        this.minQty = minValue.value();
-        this.minUnit = minValue.unit();
+    public void initialize(MinDuration constraintAnnotation) {
+        this.minQty = constraintAnnotation.value();
+        this.minUnit = constraintAnnotation.unit();
     }
 
     @Override
-    public boolean isValid(Duration value, ConstraintValidatorContext constraintValidatorContext) {
-        return value == null || value.toNanoseconds() >= minUnit.toNanos(minQty);
+    public boolean isValid(Duration value, ConstraintValidatorContext context) {
+        return (value == null) || (value.toNanoseconds() >= minUnit.toNanos(minQty));
     }
 }

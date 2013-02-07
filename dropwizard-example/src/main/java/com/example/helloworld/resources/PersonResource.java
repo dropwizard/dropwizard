@@ -4,7 +4,7 @@ import com.example.helloworld.core.Person;
 import com.example.helloworld.db.PersonDAO;
 import com.google.common.base.Optional;
 import com.sun.jersey.api.NotFoundException;
-import com.yammer.dropwizard.hibernate.Transactional;
+import com.yammer.dropwizard.hibernate.UnitOfWork;
 import com.yammer.dropwizard.jersey.params.LongParam;
 
 import javax.ws.rs.GET;
@@ -24,7 +24,7 @@ public class PersonResource {
     }
 
     @GET
-    @Transactional
+    @UnitOfWork
     public Person getPerson(@PathParam("personId") LongParam personId) {
         final Optional<Person> person = peopleDAO.findById(personId.get());
         if (!person.isPresent()) {

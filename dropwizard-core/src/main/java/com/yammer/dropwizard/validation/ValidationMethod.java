@@ -1,6 +1,7 @@
 package com.yammer.dropwizard.validation;
 
 import javax.validation.Constraint;
+import javax.validation.Payload;
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
@@ -23,5 +24,5 @@ public @interface ValidationMethod {
 
     Class<?>[] groups() default {};
 
-    Class<?>[] payload() default {};
+    @SuppressWarnings("UnusedDeclaration") Class<? extends Payload>[] payload() default { };
 }

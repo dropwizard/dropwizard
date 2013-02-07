@@ -61,11 +61,10 @@ public class Cli {
         final String usage = "java -jar " + new JarLocation(serviceClass);
         final ArgumentParser p = ArgumentParsers.newArgumentParser(usage)
                                                 .defaultHelp(true);
-        String version = serviceClass.getPackage().getImplementationVersion();
-        if (version == null) {
-            version = "No service version detected. Add a Implementation-Version " +
-                    "entry to your JAR's manifest to enable this.";
-        }
+        final Package pkg = serviceClass.getPackage();
+        final String version = pkg != null ? pkg.getImplementationVersion() :
+                "No service version detected. Add a Implementation-Version " +
+                "entry to your JAR's manifest to enable this.";
         p.version(version);
         p.addArgument("-v", "--version")
          .action(new VersionArgumentAction())

@@ -2,14 +2,15 @@ package com.yammer.dropwizard.migrations;
 
 import com.yammer.dropwizard.config.Configuration;
 import com.yammer.dropwizard.db.ConfigurationStrategy;
-import com.yammer.dropwizard.logging.Log;
 import liquibase.Liquibase;
 import liquibase.change.CheckSum;
 import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DbCalculateChecksumCommand<T extends Configuration> extends AbstractLiquibaseCommand<T> {
-    private static final Log LOG = Log.named("liquibase");
+    private static final Logger LOGGER = LoggerFactory.getLogger("liquibase");
 
     public DbCalculateChecksumCommand(ConfigurationStrategy<T> strategy, Class<T> configurationClass) {
         super("calculate-checksum", "Calculates and prints a checksum for a change set", strategy, configurationClass);
@@ -29,6 +30,6 @@ public class DbCalculateChecksumCommand<T extends Configuration> extends Abstrac
         final CheckSum checkSum = liquibase.calculateCheckSum("migrations.xml",
                                                               namespace.<String>getList("id").get(0),
                                                               namespace.<String>getList("author").get(0));
-        LOG.info("checksum = {}", checkSum);
+        LOGGER.info("checksum = {}", checkSum);
     }
 }

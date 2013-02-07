@@ -1,33 +1,46 @@
 package com.yammer.dropwizard.client;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.yammer.dropwizard.util.Duration;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
+/**
+ * The configuration class used by {@link HttpClientBuilder}.
+ *
+  * @see <a href="http://dropwizard.codahale.com/manual/client.html#configuration-defaults">Http Client Configuration</a>
+ */
 public class HttpClientConfiguration {
     @NotNull
+    @JsonProperty
     private Duration timeout = Duration.milliseconds(500);
 
     @NotNull
+    @JsonProperty
     private Duration connectionTimeout = Duration.milliseconds(500);
 
     @NotNull
+    @JsonProperty
     private Duration timeToLive = Duration.hours(1);
 
+    @JsonProperty
     private boolean cookiesEnabled = false;
 
-    @Max(Integer.MAX_VALUE)
     @Min(1)
+    @Max(Integer.MAX_VALUE)
+    @JsonProperty
     private int maxConnections = 1024;
 
-    @NotNull
-    private Duration keepAlive = Duration.milliseconds(0l);
-
-    @Max(Integer.MAX_VALUE)
     @Min(1)
+    @Max(Integer.MAX_VALUE)
+    @JsonProperty
     private int maxConnectionsPerRoute = 1024;
+
+    @NotNull
+    @JsonProperty
+    private Duration keepAlive = Duration.milliseconds(0);
 
     public Duration getKeepAlive() {
         return keepAlive;
@@ -68,6 +81,7 @@ public class HttpClientConfiguration {
         this.connectionTimeout = duration;
     }
 
+    @SuppressWarnings("UnusedDeclaration") // sadly, no real way to test this
     public void setTimeToLive(Duration timeToLive) {
         this.timeToLive = timeToLive;
     }

@@ -7,12 +7,13 @@ import com.sun.jersey.api.client.Client;
 import com.sun.jersey.test.framework.AppDescriptor;
 import com.sun.jersey.test.framework.JerseyTest;
 import com.sun.jersey.test.framework.LowLevelAppDescriptor;
-import com.yammer.dropwizard.bundles.BasicBundle;
 import com.yammer.dropwizard.jersey.DropwizardResourceConfig;
 import com.yammer.dropwizard.jersey.JacksonMessageBodyProvider;
 import com.yammer.dropwizard.json.ObjectMapperFactory;
+import com.yammer.dropwizard.validation.Validator;
 import org.junit.After;
 import org.junit.Before;
+import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import java.util.Map;
 import java.util.Set;
@@ -21,6 +22,11 @@ import java.util.Set;
  * A base test class for testing Dropwizard resources.
  */
 public abstract class ResourceTest {
+    static {
+        SLF4JBridgeHandler.removeHandlersForRootLogger();
+        SLF4JBridgeHandler.install();
+    }
+
     private final Set<Object> singletons = Sets.newHashSet();
     private final Set<Class<?>> providers = Sets.newHashSet();
     private final ObjectMapperFactory objectMapperFactory = new ObjectMapperFactory();
@@ -28,8 +34,17 @@ public abstract class ResourceTest {
     private final Map<String, Object> properties = Maps.newHashMap();
 
     private JerseyTest test;
+    private Validator validator = new Validator();
 
     protected abstract void setUpResources() throws Exception;
+
+    public Validator getValidator() {
+        return validator;
+    }
+
+    public void setValidator(Validator validator) {
+        this.validator = validator;
+    }
 
     protected void addResource(Object resource) {
         singletons.add(resource);
@@ -64,26 +79,23 @@ public abstract class ResourceTest {
     }
 
     @Before
-    public void setUpJersey() throws Exception {
+    public final void setUpJersey() throws Exception {
         setUpResources();
         this.test = new JerseyTest() {
             @Override
             protected AppDescriptor configure() {
                 final DropwizardResourceConfig config = new DropwizardResourceConfig(true);
-                for (Class<?> provider : BasicBundle.DEFAULT_PROVIDERS) { // sorry, Scala folks
-                    config.getClasses().add(provider);
-                }
                 for (Class<?> provider : providers) {
                     config.getClasses().add(provider);
                 }
-                final ObjectMapper mapper = getObjectMapperFactory().build();
                 for (Map.Entry<String, Boolean> feature : features.entrySet()) {
                     config.getFeatures().put(feature.getKey(), feature.getValue());
                 }
                 for (Map.Entry<String, Object> property : properties.entrySet()) {
                     config.getProperties().put(property.getKey(), property.getValue());
                 }
-                config.getSingletons().add(new JacksonMessageBodyProvider(mapper));
+                final ObjectMapper mapper = getObjectMapperFactory().build();
+                config.getSingletons().add(new JacksonMessageBodyProvider(mapper, validator));
                 config.getSingletons().addAll(singletons);
                 return new LowLevelAppDescriptor.Builder(config).build();
             }
@@ -92,7 +104,7 @@ public abstract class ResourceTest {
     }
 
     @After
-    public void tearDownJersey() throws Exception {
+    public final void tearDownJersey() throws Exception {
         if (test != null) {
             test.tearDown();
         }

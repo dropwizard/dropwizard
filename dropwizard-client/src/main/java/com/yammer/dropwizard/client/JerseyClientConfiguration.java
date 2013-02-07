@@ -1,22 +1,34 @@
 package com.yammer.dropwizard.client;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.yammer.dropwizard.validation.ValidationMethod;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 
+/**
+ * The configuration class used by {@link JerseyClientBuilder}. Extends
+ * {@link HttpClientConfiguration}.
+ *
+ * @see HttpClientConfiguration
+ * @see <a href="http://dropwizard.codahale.com/manual/client.html#man-client-jersey-config">Jersey Client Configuration</a>
+ */
 public class JerseyClientConfiguration extends HttpClientConfiguration {
-    @Max(16 * 1024)
     @Min(1)
+    @Max(16 * 1024)
+    @JsonProperty
     private int minThreads = 1;
 
-    @Max(16 * 1024)
     @Min(1)
+    @Max(16 * 1024)
+    @JsonProperty
     private int maxThreads = 128;
 
+    @JsonProperty
     private boolean gzipEnabled = true;
 
-    private boolean compressRequestEntity = true;
+    @JsonProperty
+    private boolean gzipEnabledForRequests = true;
 
     public int getMinThreads() {
         return minThreads;
@@ -38,26 +50,25 @@ public class JerseyClientConfiguration extends HttpClientConfiguration {
         return gzipEnabled;
     }
 
-    public void setGzipEnabled(boolean enable) {
-        this.gzipEnabled = enable;
+    public void setGzipEnabled(boolean enabled) {
+        this.gzipEnabled = enabled;
     }
 
-    public boolean isCompressRequestEntity() {
-        return compressRequestEntity;
+    public boolean isGzipEnabledForRequests() {
+        return gzipEnabledForRequests;
     }
 
-    public void setCompressRequestEntity(boolean compressRequestEntity) {
-        this.compressRequestEntity = compressRequestEntity;
+    public void setGzipEnabledForRequests(boolean enabled) {
+        this.gzipEnabledForRequests = enabled;
     }
 
     @ValidationMethod(message = ".minThreads must be less than or equal to maxThreads")
     public boolean isThreadPoolSizedCorrectly() {
         return minThreads <= maxThreads;
     }
-    
-    @ValidationMethod(message = ".compressRequestEntity requires gzipEnabled set to true")
+
+    @ValidationMethod(message = ".gzipEnabledForRequests requires gzipEnabled set to true")
     public boolean isCompressionConfigurationValid() {
-        return compressRequestEntity ? gzipEnabled : true; 
+        return !gzipEnabledForRequests || gzipEnabled;
     }
-    
 }

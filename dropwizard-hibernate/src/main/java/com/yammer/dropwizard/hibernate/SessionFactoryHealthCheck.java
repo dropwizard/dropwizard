@@ -17,6 +17,14 @@ public class SessionFactoryHealthCheck extends HealthCheck {
         this.validationQuery = validationQuery;
     }
 
+    public SessionFactory getSessionFactory() {
+        return sessionFactory;
+    }
+
+    public String getValidationQuery() {
+        return validationQuery;
+    }
+
     @Override
     protected Result check() throws Exception {
         final Session session = sessionFactory.openSession();

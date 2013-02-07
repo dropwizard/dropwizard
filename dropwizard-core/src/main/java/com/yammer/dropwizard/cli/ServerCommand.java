@@ -6,9 +6,11 @@ import com.yammer.dropwizard.Service;
 import com.yammer.dropwizard.config.Configuration;
 import com.yammer.dropwizard.config.Environment;
 import com.yammer.dropwizard.config.ServerFactory;
-import com.yammer.dropwizard.logging.Log;
+import com.yammer.dropwizard.lifecycle.ServerLifecycleListener;
 import net.sourceforge.argparse4j.inf.Namespace;
 import org.eclipse.jetty.server.Server;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
@@ -40,27 +42,30 @@ public class ServerCommand<T extends Configuration> extends EnvironmentCommand<T
     protected void run(Environment environment, Namespace namespace, T configuration) throws Exception {
         final Server server = new ServerFactory(configuration.getHttpConfiguration(),
                                                 environment.getName()).buildServer(environment);
-        final Log log = Log.forClass(ServerCommand.class);
-        logBanner(environment.getName(), log);
+        final Logger logger = LoggerFactory.getLogger(ServerCommand.class);
+        logBanner(environment.getName(), logger);
         try {
             server.start();
+            for (ServerLifecycleListener listener : environment.getServerListeners()) {
+                listener.serverStarted(server);
+            }
             server.join();
         } catch (Exception e) {
-            log.error(e, "Unable to start server, shutting down");
+            logger.error("Unable to start server, shutting down", e);
             server.stop();
         }
     }
 
-    private void logBanner(String name, Log log) {
+    private void logBanner(String name, Logger logger) {
         try {
             final String banner = Resources.toString(Resources.getResource("banner.txt"),
                                                      Charsets.UTF_8);
-            log.info("Starting {}\n{}", name, banner);
+            logger.info("Starting {}\n{}", name, banner);
         } catch (IllegalArgumentException ignored) {
             // don't display the banner if there isn't one
-            log.info("Starting {}", name);
+            logger.info("Starting {}", name);
         } catch (IOException ignored) {
-            log.info("Starting {}", name);
+            logger.info("Starting {}", name);
         }
     }
 }

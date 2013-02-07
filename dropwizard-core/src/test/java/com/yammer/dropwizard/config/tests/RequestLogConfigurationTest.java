@@ -19,7 +19,7 @@ public class RequestLogConfigurationTest {
     public void setUp() throws Exception {
         this.requestLog = ConfigurationFactory
                 .forClass(RequestLogConfiguration.class, new Validator())
-                .build(new File(Resources.getResource("yaml/requestLog.yml").getFile()));
+                .build(new File(Resources.getResource("yaml/requestLog.yml").toURI()));
     }
 
     @Test

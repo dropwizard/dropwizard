@@ -20,28 +20,27 @@ import java.lang.reflect.Type;
 
 /**
  * A Jersey provider which enables using Jackson to parse request entities into objects and generate
- * response entities from objects. Any request entity method parameters annotated with
- * {@code @Valid} are validated, and an informative 422 Unprocessable Entity response is returned
- * should the entity be invalid.
+ * response entities from objects. Any request entity method parameters annotated with {@code
  *
- * (Essentially, extends {@link JacksonJaxbJsonProvider} with validation and support for
- * {@link JsonIgnoreType}.)
+ * @Valid} are validated, and an informative 422 Unprocessable Entity response is returned should
+ * the entity be invalid.
+ * <p/>
+ * (Essentially, extends {@link JacksonJaxbJsonProvider} with validation and support for {@link
+ * JsonIgnoreType}.)
  */
 @Provider
 public class JacksonMessageBodyProvider extends JacksonJaxbJsonProvider {
-    private static final Validator VALIDATOR = new Validator();
-
     /**
- 	 * The default group array used in case any of the validate methods is called without a group.
- 	 */
- 	 private static final Class<?>[] DEFAULT_GROUP_ARRAY = new Class<?>[] { Default.class };
+     * The default group array used in case any of the validate methods is called without a group.
+     */
+    private static final Class<?>[] DEFAULT_GROUP_ARRAY = new Class<?>[]{ Default.class };
+    private final ObjectMapper mapper;
+    private final Validator validator;
 
-    public JacksonMessageBodyProvider(ObjectMapper mapper) {
+    public JacksonMessageBodyProvider(ObjectMapper mapper, Validator validator) {
+        this.validator = validator;
+        this.mapper = mapper;
         setMapper(mapper);
-    }
-
-    public JacksonMessageBodyProvider() {
-        super();
     }
 
     @Override
@@ -49,7 +48,7 @@ public class JacksonMessageBodyProvider extends JacksonJaxbJsonProvider {
                               Type genericType,
                               Annotation[] annotations,
                               MediaType mediaType) {
-        return !isIgnored(type) && super.isReadable(type, genericType, annotations, mediaType);
+        return isProvidable(type) && super.isReadable(type, genericType, annotations, mediaType);
     }
 
     @Override
@@ -60,29 +59,19 @@ public class JacksonMessageBodyProvider extends JacksonJaxbJsonProvider {
                            MultivaluedMap<String, String> httpHeaders,
                            InputStream entityStream) throws IOException {
         return validate(annotations, super.readFrom(type,
-                                            genericType,
-                                            annotations,
-                                            mediaType,
-                                            httpHeaders,
-                                            entityStream));
+                                                    genericType,
+                                                    annotations,
+                                                    mediaType,
+                                                    httpHeaders,
+                                                    entityStream));
     }
 
     private Object validate(Annotation[] annotations, Object value) {
-        Class<?>[] classes = null;
+        final Class<?>[] classes = findValidationGroups(annotations);
 
-        for(Annotation annotation : annotations) {
-            if(annotation.annotationType() == Valid.class) {
-                classes = DEFAULT_GROUP_ARRAY;
-                break;
-            } else if(annotation.annotationType() == Validated.class) {
-                classes = ((Validated) annotation).value();
-                break;
-            }
-        }
-
-        if(classes != null) {
-            final ImmutableList<String> errors = VALIDATOR.validate(value, classes);
-            if(!errors.isEmpty()) {
+        if (classes != null) {
+            final ImmutableList<String> errors = validator.validate(value, classes);
+            if (!errors.isEmpty()) {
                 throw new InvalidEntityException("The request entity had the following errors:",
                                                  errors);
             }
@@ -91,16 +80,31 @@ public class JacksonMessageBodyProvider extends JacksonJaxbJsonProvider {
         return value;
     }
 
+    private Class<?>[] findValidationGroups(Annotation[] annotations) {
+        for (Annotation annotation : annotations) {
+            if (annotation.annotationType() == Valid.class) {
+                return DEFAULT_GROUP_ARRAY;
+            } else if (annotation.annotationType() == Validated.class) {
+                return  ((Validated) annotation).value();
+            }
+        }
+        return null;
+    }
+
     @Override
     public boolean isWriteable(Class<?> type,
                                Type genericType,
                                Annotation[] annotations,
                                MediaType mediaType) {
-        return !isIgnored(type) && super.isWriteable(type, genericType, annotations, mediaType);
+        return isProvidable(type) && super.isWriteable(type, genericType, annotations, mediaType);
     }
 
-    private boolean isIgnored(Class<?> type) {
+    private boolean isProvidable(Class<?> type) {
         final JsonIgnoreType ignore = type.getAnnotation(JsonIgnoreType.class);
-        return (ignore != null) && ignore.value();
+        return (ignore == null) || !ignore.value();
+    }
+
+    public ObjectMapper getObjectMapper() {
+        return mapper;
     }
 }

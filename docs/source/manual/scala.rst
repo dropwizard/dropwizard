@@ -12,13 +12,15 @@ Dropwizard & Scala
 
 .. _Scala: http://www.scala-lang.org
 
-Dropwizard :ref:`services <man-core-service>` should extend ``ScalaService`` instead of ``Service``:
+Dropwizard :ref:`services <man-core-service>` should extend ``ScalaService`` instead of ``Service``
+and add ``ScalaBundle``:
 
 .. code-block:: scala
 
     object ExampleService extends ScalaService[ExampleConfiguration]) {
       def initialize(bootstrap: Bootstrap[ExampleConfiguration]) {
         bootstrap.setName("example")
+        bootstrap.addBundle(new ScalaBundle)
       }
 
       def run(configuration: ExampleConfiguration, environment: Environment) {

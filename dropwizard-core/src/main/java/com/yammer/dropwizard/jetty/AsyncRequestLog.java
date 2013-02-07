@@ -1,13 +1,11 @@
 package com.yammer.dropwizard.jetty;
 
-// TODO: 10/12/11 <coda> -- write tests for AsyncRequestLog
-
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.spi.LoggingEvent;
 import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.spi.AppenderAttachableImpl;
-import com.yammer.dropwizard.logging.Log;
+import com.yammer.metrics.core.Clock;
 import org.eclipse.jetty.http.HttpHeaders;
 import org.eclipse.jetty.server.Authentication;
 import org.eclipse.jetty.server.Request;
@@ -29,7 +27,6 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class AsyncRequestLog extends AbstractLifeCycle implements RequestLog {
     private static final AtomicInteger THREAD_COUNTER = new AtomicInteger();
-    private static final Log LOG = Log.forClass(AsyncRequestLog.class);
     private static final int BATCH_SIZE = 10000;
 
     private class Dispatcher implements Runnable {
@@ -62,6 +59,7 @@ public class AsyncRequestLog extends AbstractLifeCycle implements RequestLog {
         }
     }
 
+    private final Clock clock;
     @SuppressWarnings("ThreadLocalNotStaticFinal")
     private final ThreadLocal<DateCache> dateCache;
     private final BlockingQueue<String> queue;
@@ -69,10 +67,10 @@ public class AsyncRequestLog extends AbstractLifeCycle implements RequestLog {
     private final Thread dispatchThread;
     private final AppenderAttachableImpl<ILoggingEvent> appenders;
 
-    public AsyncRequestLog(AppenderAttachableImpl<ILoggingEvent> appenders,
+    public AsyncRequestLog(Clock clock,
+                           AppenderAttachableImpl<ILoggingEvent> appenders,
                            final TimeZone timeZone) {
-
-
+        this.clock = clock;
         this.queue = new LinkedBlockingQueue<String>();
         this.dispatcher = new Dispatcher();
         this.dispatchThread = new Thread(dispatcher);
@@ -82,8 +80,7 @@ public class AsyncRequestLog extends AbstractLifeCycle implements RequestLog {
         this.dateCache = new ThreadLocal<DateCache>() {
             @Override
             protected DateCache initialValue() {
-                final DateCache cache = new DateCache("dd/MMM/yyyy:HH:mm:ss Z",
-                                                      Locale.getDefault());
+                final DateCache cache = new DateCache("dd/MMM/yyyy:HH:mm:ss Z", Locale.US);
                 cache.setTimeZoneID(timeZone.getID());
                 return cache;
             }
@@ -111,11 +108,6 @@ public class AsyncRequestLog extends AbstractLifeCycle implements RequestLog {
         }
     }
 
-    // for testing
-    public boolean isThreadAlive() {
-        return dispatchThread.isAlive();
-    }
-    
     @Override
     public void log(Request request, Response response) {
         // copied almost entirely from NCSARequestLog
@@ -133,7 +125,7 @@ public class AsyncRequestLog extends AbstractLifeCycle implements RequestLog {
                                                              .getUserPrincipal()
                                                              .getName());
         } else {
-            buf.append(" - ");
+            buf.append('-');
         }
 
         buf.append(" [");
@@ -178,12 +170,11 @@ public class AsyncRequestLog extends AbstractLifeCycle implements RequestLog {
                 }
                 buf.append((char) ('0' + (responseLength % 10)));
             }
-            buf.append(' ');
         } else {
-            buf.append(" - ");
+            buf.append(" -");
         }
 
-        final long now = System.currentTimeMillis();
+        final long now = clock.time();
         final long dispatchTime = request.getDispatchTime();
 
         buf.append(' ');

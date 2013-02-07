@@ -4,6 +4,88 @@
 Release Notes
 #############
 
+.. _rel-0.6.2:
+
+v0.6.2-SNAPSHOT: TBD
+====================
+
+* Added support for non-UTF8 views.
+* Fixed an NPE for services in the root package.
+* Fixed exception handling in ``TaskServlet``.
+* Upgraded to Jersey 1.17.
+* Upgraded to Jackson 2.1.2.
+* Upgraded to Logback 1.0.9.
+* Upgraded to Hibernate 4.1.9.
+* Upgraded to Hibernate Validator 4.3.1.
+* Upgraded to tomcat-dbcp 7.0.35.
+* Upgraded to Mustache.java 0.8.9.
+* Upgraded to Apache HttpClient 4.2.3.
+* Upgraded to Jackson 2.1.3.
+* Upgraded to argparse4j 0.3.1.
+* Upgraded to Guava 14.0-rc2.
+* Removed the Scala ``Logging`` trait. Use slf4s or grizzled-slf4j instead.
+
+.. _rel-0.6.1:
+
+v0.6.1: Nov 28 2012
+===================
+
+* Fixed incorrect latencies in request logs on Linux.
+* Added ability to register multiple ``ServerLifecycleListener`` instances.
+
+.. _rel-0.6.0:
+
+v0.6.0: Nov 26 2012
+===================
+
+* Added Hibernate support in ``dropwizard-hibernate``.
+* Added Liquibase migrations in ``dropwizard-migrations``.
+* Renamed ``http.acceptorThreadCount`` to ``http.acceptorThreads``.
+* Renamed ``ssl.keyStorePath`` to ``ssl.keyStore``.
+* Dropped ``JerseyClient``. Use Jersey's ``Client`` class instead.
+* Moved JDBI support to ``dropwizard-jdbi``.
+* Dropped ``Database``. Use JDBI's ``DBI`` class instead.
+* Dropped the ``Json`` class. Use ``ObjectMapperFactory`` and ``ObjectMapper`` instead.
+* Decoupled JDBI support from tomcat-dbcp.
+* Added group support to ``Validator``.
+* Moved CLI support to argparse4j.
+* Fixed testing support for ``Optional`` resource method parameters.
+* Fixed Freemarker support to use its internal encoding map.
+* Added property support to ``ResourceTest``.
+* Fixed JDBI metrics support for raw SQL queries.
+* Dropped Hamcrest matchers in favor of FEST assertions in ``dropwizard-testing``.
+* Split ``Environment`` into ``Bootstrap`` and ``Environment``, and broke configuration of each into
+  ``Service``'s ``#initialize(Bootstrap)`` and ``#run(Configuration, Environment)``.
+* Combined ``AbstractService`` and ``Service``.
+* Trimmed down ``ScalaService``, so be sure to add ``ScalaBundle``.
+* Added support for using ``JerseyClientFactory`` without an ``Environment``.
+* Dropped Jerkson in favor of Jackson's Scala module.
+* Added ``Optional`` support for JDBI.
+* Fixed bug in stopping ``AsyncRequestLog``.
+* Added ``UUIDParam``.
+* Upgraded to Metrics 2.2.0.
+* Upgraded to Jetty 8.1.8.
+* Upgraded to Mockito 1.9.5.
+* Upgraded to tomcat-dbcp 7.0.33.
+* Upgraded to Mustache 0.8.8.
+* Upgraded to Jersey 1.15.
+* Upgraded to Apache HttpClient 4.2.2.
+* Upgraded to JDBI 2.41.
+* Upgraded to Logback 1.0.7 and SLF4J 1.7.2.
+* Upgraded to Guava 13.0.1.
+* Upgraded to Jackson 2.1.1.
+* Added support for Joda Time.
+
+.. note:: Upgrading to 0.6.0 will require changing your code. First, your ``Service`` subclass will
+          need to implement both ``#initialize(Bootstrap<T>)`` **and**
+          ``#run(T, Environment)``. What used to be in ``initialize`` should be moved to ``run``.
+          Second, your representation classes need to be migrated to Jackson 2. For the most part,
+          this is just changing imports to ``com.fasterxml.jackson.annotation.*``, but there are
+          `some subtler changes in functionality <http://wiki.fasterxml.com/JacksonUpgradeFrom19To20>`_.
+          Finally, references to 0.5.x's ``Json``, ``JerseyClient``, or ``JDBI`` classes should be
+          changed to Jackon's ``ObjectMapper``, Jersey's ``Client``, and JDBI's ``DBI``
+          respectively.
+
 .. _rel-0.5.1:
 
 v0.5.1: Aug 06 2012

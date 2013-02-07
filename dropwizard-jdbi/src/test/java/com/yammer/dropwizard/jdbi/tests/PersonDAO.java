@@ -18,6 +18,6 @@ public interface PersonDAO {
     public ImmutableSet<String> findAllUniqueNames();
 
     @SqlQuery("SELECT name FROM people WHERE email = :email ")
-    @SingleValueResult(value = String.class)
+    @SingleValueResult(String.class)
     public Optional<String> findByEmail(@Bind("email")String email);
 }

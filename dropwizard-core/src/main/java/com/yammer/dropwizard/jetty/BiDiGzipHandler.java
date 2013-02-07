@@ -101,7 +101,7 @@ public class BiDiGzipHandler extends GzipHandler {
     }
 
     /**
-     * Creates a new {@link BiDiGzipHandler} which forwards requests to the given handler.
+     * Creates a new BiDiGzipHandler which forwards requests to the given handler.
      *
      * @param underlying    the underlying handler
      */

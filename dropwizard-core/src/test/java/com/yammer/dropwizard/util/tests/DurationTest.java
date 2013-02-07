@@ -3,6 +3,8 @@ package com.yammer.dropwizard.util.tests;
 import com.yammer.dropwizard.util.Duration;
 import org.junit.Test;
 
+import java.util.concurrent.TimeUnit;
+
 import static org.fest.assertions.api.Assertions.assertThat;
 
 public class DurationTest {
@@ -141,5 +143,17 @@ public class DurationTest {
 
         assertThat(Duration.microseconds(3).toString())
                 .isEqualTo("3 microseconds");
+    }
+
+    @Test
+    public void hasAQuantity() throws Exception {
+        assertThat(Duration.microseconds(12).getQuantity())
+                .isEqualTo(12);
+    }
+
+    @Test
+    public void hasAUnit() throws Exception {
+        assertThat(Duration.microseconds(1).getUnit())
+                .isEqualTo(TimeUnit.MICROSECONDS);
     }
 }

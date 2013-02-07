@@ -2,41 +2,43 @@ package com.yammer.dropwizard.hibernate;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
-import com.sun.jersey.core.spi.scanning.PackageNamesScanner;
-import com.sun.jersey.spi.scanning.AnnotationScannerListener;
+import com.yammer.dropwizard.config.Environment;
 import com.yammer.dropwizard.db.DatabaseConfiguration;
 import com.yammer.dropwizard.db.ManagedDataSource;
 import com.yammer.dropwizard.db.ManagedDataSourceFactory;
-import com.yammer.dropwizard.logging.Log;
 import org.hibernate.SessionFactory;
+import org.hibernate.cfg.AvailableSettings;
 import org.hibernate.cfg.Configuration;
-import org.hibernate.cfg.Environment;
 import org.hibernate.service.ServiceRegistry;
 import org.hibernate.service.ServiceRegistryBuilder;
 import org.hibernate.service.jdbc.connections.internal.DatasourceConnectionProviderImpl;
 import org.hibernate.service.jdbc.connections.spi.ConnectionProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import javax.persistence.Entity;
 import javax.sql.DataSource;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedSet;
 
 public class SessionFactoryFactory {
-    private static final Log LOG = Log.forClass(SessionFactoryFactory.class);
-    private final com.yammer.dropwizard.config.Environment environment;
+    private static final Logger LOGGER = LoggerFactory.getLogger(SessionFactoryFactory.class);
 
-    public SessionFactoryFactory(com.yammer.dropwizard.config.Environment environment) {
-        this.environment = environment;
-    }
+    private final ManagedDataSourceFactory dataSourceFactory = new ManagedDataSourceFactory();
 
-    public SessionFactory build(DatabaseConfiguration dbConfig, List<String> packages) throws ClassNotFoundException {
-        final ManagedDataSourceFactory dataSourceFactory = new ManagedDataSourceFactory(dbConfig);
-        final ManagedDataSource dataSource = dataSourceFactory.build();
-        environment.manage(dataSource);
-        return buildSessionFactory(buildConnectionProvider(dataSource, dbConfig.getProperties()),
-                                   dbConfig.getProperties(),
-                                   packages);
+    public SessionFactory build(Environment environment,
+                                DatabaseConfiguration dbConfig,
+                                List<Class<?>> entities) throws ClassNotFoundException {
+        final ManagedDataSource dataSource = dataSourceFactory.build(dbConfig);
+        final ConnectionProvider provider = buildConnectionProvider(dataSource,
+                                                                    dbConfig.getProperties());
+        final SessionFactory factory = buildSessionFactory(dbConfig,
+                                                           provider,
+                                                           dbConfig.getProperties(),
+                                                           entities);
+        final ManagedSessionFactory managedFactory = new ManagedSessionFactory(factory, dataSource);
+        environment.manage(managedFactory);
+        return managedFactory;
     }
 
     private ConnectionProvider buildConnectionProvider(DataSource dataSource,
@@ -47,23 +49,25 @@ public class SessionFactoryFactory {
         return connectionProvider;
     }
 
-    private SessionFactory buildSessionFactory(ConnectionProvider connectionProvider,
+    private SessionFactory buildSessionFactory(DatabaseConfiguration dbConfig,
+                                               ConnectionProvider connectionProvider,
                                                ImmutableMap<String, String> properties,
-                                               List<String> packages) {
+                                               List<Class<?>> entities) {
         final Configuration configuration = new Configuration();
-        configuration.setProperty(Environment.CURRENT_SESSION_CONTEXT_CLASS, "managed");
-        configuration.setProperty(Environment.USE_SQL_COMMENTS, "true");
-        configuration.setProperty(Environment.USE_GET_GENERATED_KEYS, "true");
-        configuration.setProperty(Environment.GENERATE_STATISTICS, "true");
-        configuration.setProperty(Environment.USE_REFLECTION_OPTIMIZER, "true");
-        configuration.setProperty(Environment.ORDER_UPDATES, "true");
-        configuration.setProperty(Environment.ORDER_INSERTS, "true");
-        configuration.setProperty(Environment.USE_NEW_ID_GENERATOR_MAPPINGS, "true");
+        configuration.setProperty(AvailableSettings.CURRENT_SESSION_CONTEXT_CLASS, "managed");
+        configuration.setProperty(AvailableSettings.USE_SQL_COMMENTS, Boolean.toString(dbConfig.isAutoCommentsEnabled()));
+        configuration.setProperty(AvailableSettings.USE_GET_GENERATED_KEYS, "true");
+        configuration.setProperty(AvailableSettings.GENERATE_STATISTICS, "true");
+        configuration.setProperty(AvailableSettings.USE_REFLECTION_OPTIMIZER, "true");
+        configuration.setProperty(AvailableSettings.ORDER_UPDATES, "true");
+        configuration.setProperty(AvailableSettings.ORDER_INSERTS, "true");
+        configuration.setProperty(AvailableSettings.USE_NEW_ID_GENERATOR_MAPPINGS, "true");
+        configuration.setProperty("jadira.usertype.autoRegisterUserTypes", "true");
         for (Map.Entry<String, String> property : properties.entrySet()) {
             configuration.setProperty(property.getKey(), property.getValue());
         }
 
-        addAnnotatedClasses(configuration, packages.toArray(new String[packages.size()]));
+        addAnnotatedClasses(configuration, entities);
 
         final ServiceRegistry registry = new ServiceRegistryBuilder()
                 .addService(ConnectionProvider.class, connectionProvider)
@@ -73,16 +77,13 @@ public class SessionFactoryFactory {
         return configuration.buildSessionFactory(registry);
     }
 
-    private void addAnnotatedClasses(Configuration configuration, String[] packages) {
-        @SuppressWarnings("unchecked")
-        final AnnotationScannerListener scannerListener = new AnnotationScannerListener(Entity.class);
-        final PackageNamesScanner scanner = new PackageNamesScanner(packages);
-        scanner.scan(scannerListener);
+    private void addAnnotatedClasses(Configuration configuration,
+                                     Iterable<Class<?>> entities) {
         final SortedSet<String> entityClasses = Sets.newTreeSet();
-        for (Class<?> klass : scannerListener.getAnnotatedClasses()) {
+        for (Class<?> klass : entities) {
             configuration.addAnnotatedClass(klass);
             entityClasses.add(klass.getCanonicalName());
         }
-        LOG.info("Entity classes: {}", entityClasses);
+        LOGGER.info("Entity classes: {}", entityClasses);
     }
 }

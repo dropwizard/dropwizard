@@ -11,8 +11,8 @@ import org.slf4j.LoggerFactory;
  */
 public class LogbackLog extends FormattedLog {
     private final Logger log;
-    private Level level;
-    private String fqcn;
+    private final Level level;
+    private final String fqcn;
 
     /**
      * Logs to org.skife.jdbi.v2 logger at the debug level

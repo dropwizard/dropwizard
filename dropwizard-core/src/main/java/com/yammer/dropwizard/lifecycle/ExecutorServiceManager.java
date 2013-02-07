@@ -29,7 +29,7 @@ public class ExecutorServiceManager implements Managed {
 
     @Override
     public String toString() {
-        return super.toString() + "(" + poolName + ")";
+        return super.toString() + '(' + poolName + ')';
     }
 
 }

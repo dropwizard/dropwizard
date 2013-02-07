@@ -7,37 +7,53 @@ import java.util.TimeZone;
 
 import static com.yammer.dropwizard.config.LoggingConfiguration.*;
 
-@SuppressWarnings({ "FieldMayBeFinal", "FieldCanBeLocal" })
+@SuppressWarnings("UnusedDeclaration")
 public class RequestLogConfiguration {
     @NotNull
     @JsonProperty
-    protected ConsoleConfiguration console = new ConsoleConfiguration();
+    private ConsoleConfiguration console = new ConsoleConfiguration();
 
     @NotNull
     @JsonProperty
-    protected FileConfiguration file = new FileConfiguration();
+    private FileConfiguration file = new FileConfiguration();
 
     @NotNull
     @JsonProperty
-    protected SyslogConfiguration syslog = new SyslogConfiguration();
+    private SyslogConfiguration syslog = new SyslogConfiguration();
 
     @NotNull
     @JsonProperty
-    protected TimeZone timeZone = UTC;
+    private TimeZone timeZone = UTC;
 
     public ConsoleConfiguration getConsoleConfiguration() {
         return console;
+    }
+
+    public void setConsoleConfiguration(ConsoleConfiguration consoleConfiguration) {
+        this.console = consoleConfiguration;
     }
 
     public FileConfiguration getFileConfiguration() {
         return file;
     }
 
+    public void setFileConfiguration(FileConfiguration fileConfiguration) {
+        this.file = fileConfiguration;
+    }
+
     public SyslogConfiguration getSyslogConfiguration() {
         return syslog;
     }
 
+    public void setSyslogConfiguration(SyslogConfiguration syslogConfiguration) {
+        this.syslog = syslogConfiguration;
+    }
+
     public TimeZone getTimeZone() {
         return timeZone;
+    }
+
+    public void setTimeZone(TimeZone timeZone) {
+        this.timeZone = timeZone;
     }
 }
