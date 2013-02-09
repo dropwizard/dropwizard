@@ -325,7 +325,7 @@ public class ServerFactory {
         handler.addServlet(new ServletHolder(new TaskServlet(env.getTasks())), "/tasks/*");
         handler.addServlet(new ServletHolder(new AdminServlet()), "/*");
 
-        if (config.getAdminPort() == config.getPort()) {
+        if (config.getAdminPort() != 0 && config.getAdminPort() == config.getPort()) {
             handler.setContextPath("/admin");
             handler.setConnectorNames(new String[]{"main"});
         } else {
