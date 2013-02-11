@@ -325,6 +325,11 @@ public class ServerFactory {
         handler.addServlet(new ServletHolder(new TaskServlet(env.getTasks())), "/tasks/*");
         handler.addServlet(new ServletHolder(new AdminServlet()), "/*");
 
+        // Add any additional internal servlets provided
+        for (final ImmutableMap.Entry<String, ServletHolder> entry : env.getInternalServlets().entrySet()) {
+            handler.addServlet(entry.getValue(), entry.getKey());
+        }
+
         if (config.getAdminPort() == config.getPort()) {
             handler.setContextPath("/admin");
             handler.setConnectorNames(new String[]{"main"});
