@@ -5,6 +5,6 @@ package com.yammer.dropwizard.util;
  */
 public final class SystemUtils {
 
-    public static final String LINE_SEPARATOR = java.lang.System.getProperty("line.separator", "\n");
+    public static final String LINE_SEPARATOR = String.format("%n");
 
 }
