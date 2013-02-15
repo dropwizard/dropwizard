@@ -91,6 +91,9 @@ Your service's configuration file will then look like this:
       # the maximum lifetime of an idle connection
       closeConnectionIfIdleFor: 1 minute
 
+      # if enabled, will set up gauges on number of active and idle connections in the connection pool
+      connectionGaugesEnabled: false
+
 Usage
 =====
 

@@ -72,6 +72,9 @@ public class DatabaseConfiguration {
     @JsonProperty
     private boolean autoCommentsEnabled = true;
 
+    @JsonProperty
+    private boolean connectionGaugesEnabled;
+
     public boolean isAutoCommentsEnabled() {
         return autoCommentsEnabled;
     }
@@ -192,6 +195,14 @@ public class DatabaseConfiguration {
         this.connectionInitializationStatements = ImmutableList.copyOf(statements);
     }
 
+    public boolean isConnectionGaugesEnabled() {
+        return connectionGaugesEnabled;
+    }
+
+    public void setConnectionGaugesEnabled(boolean connectionGaugesEnabled) {
+        this.connectionGaugesEnabled = connectionGaugesEnabled;
+    }
+
     @ValidationMethod(message = ".minSize must be less than or equal to maxSize")
     public boolean isPoolSizedCorrectly() {
         return minSize <= maxSize;
@@ -207,6 +218,7 @@ public class DatabaseConfiguration {
                 (minSize == that.minSize) &&
                 !((checkConnectionHealthWhenIdleFor != null) ? !checkConnectionHealthWhenIdleFor.equals(that.checkConnectionHealthWhenIdleFor) : (that.checkConnectionHealthWhenIdleFor != null)) &&
                 !((closeConnectionIfIdleFor != null) ? !closeConnectionIfIdleFor.equals(that.closeConnectionIfIdleFor) : (that.closeConnectionIfIdleFor != null)) &&
+                (connectionGaugesEnabled == that.connectionGaugesEnabled) &&
                 (defaultReadOnly == that.defaultReadOnly) &&
                 !((driverClass != null) ? !driverClass.equals(that.driverClass) : (that.driverClass != null)) &&
                 !((maxWaitForConnection != null) ? !maxWaitForConnection.equals(that.maxWaitForConnection) : (that.maxWaitForConnection != null)) &&
@@ -234,6 +246,7 @@ public class DatabaseConfiguration {
         result = (31 * result) + ((closeConnectionIfIdleFor != null) ? closeConnectionIfIdleFor.hashCode() : 0);
         result = (31 * result) + (defaultReadOnly ? 1 : 0);
         result = (31 * result) + ((connectionInitializationStatements != null) ? connectionInitializationStatements.hashCode() : 0);
+        result = (31 * result) + (connectionGaugesEnabled ? 1 : 0);
         return result;
     }
 
@@ -254,6 +267,7 @@ public class DatabaseConfiguration {
                       .add("closeConnectionIfIdleFor", closeConnectionIfIdleFor)
                       .add("defaultReadOnly", defaultReadOnly)
                       .add("connectionInitializationStatements", connectionInitializationStatements)
+                      .add("connectionGaugesEnabled", connectionGaugesEnabled)
                       .toString();
     }
 }

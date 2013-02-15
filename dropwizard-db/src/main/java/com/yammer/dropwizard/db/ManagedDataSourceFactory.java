@@ -7,6 +7,9 @@ import org.apache.tomcat.dbcp.pool.impl.GenericObjectPool;
 import java.util.Map;
 import java.util.Properties;
 
+import com.yammer.metrics.Metrics;
+import com.yammer.metrics.core.Gauge;
+
 public class ManagedDataSourceFactory {
     public ManagedDataSource build(DatabaseConfiguration configuration) throws ClassNotFoundException {
         Class.forName(configuration.getDriverClass());
@@ -33,6 +36,10 @@ public class ManagedDataSourceFactory {
                                                                                           true);
         connectionFactory.setPool(pool);
 
+        if (configuration.isConnectionGaugesEnabled()) {
+            setupGauges(pool);
+        }
+
         return new ManagedPooledDataSource(pool);
     }
 
@@ -49,5 +56,21 @@ public class ManagedDataSourceFactory {
                                                         .toMilliseconds());
         pool.setWhenExhaustedAction(GenericObjectPool.WHEN_EXHAUSTED_BLOCK);
         return pool;
+    }
+
+    private void setupGauges(final GenericObjectPool pool) {
+        Metrics.newGauge(ManagedPooledDataSource.class, "numActive", new Gauge<Integer>() {
+            @Override
+            public Integer value() {
+                return pool.getNumActive();
+            }
+        });
+
+        Metrics.newGauge(ManagedPooledDataSource.class, "numIdle", new Gauge<Integer>() {
+            @Override
+            public Integer value() {
+                return pool.getNumIdle();
+            }
+        });
     }
 }
