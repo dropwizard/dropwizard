@@ -6,7 +6,7 @@ present in drop wizard.
 # Overview
 
 Included with this application is an example of the optional db API module. The examples provided illustrate a few of
-the features available in (JDBI)[http://jdbi.org], along with demonstrating how these are used from within dropwizard.
+the features available in [JDBI](http://jdbi.org), along with demonstrating how these are used from within dropwizard.
 
 This database example is comprised of the following classes.
 
