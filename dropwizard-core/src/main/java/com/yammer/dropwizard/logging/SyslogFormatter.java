@@ -9,6 +9,7 @@ public class SyslogFormatter extends PatternLayout {
     public SyslogFormatter(LoggerContext context, TimeZone timeZone, String name) {
         super();
         getDefaultConverterMap().put("ex", PrefixedThrowableProxyConverter.class.getName());
+        getDefaultConverterMap().put("xEx", PrefixedExtendedThrowableProxyConverter.class.getName());
         setPattern(name + ": %d{ISO8601," + timeZone.getID() + "}] %-5p [%t] %c{2} %X - %m\n");
         setContext(context);
     }
