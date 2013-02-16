@@ -12,6 +12,7 @@ v0.6.2-SNAPSHOT: TBD
 * Added support for non-UTF8 views.
 * Fixed an NPE for services in the root package.
 * Fixed exception handling in ``TaskServlet``.
+* Upgraded to Jetty 8.1.9.
 * Upgraded to Jersey 1.17.
 * Upgraded to Jackson 2.1.2.
 * Upgraded to Logback 1.0.9.
