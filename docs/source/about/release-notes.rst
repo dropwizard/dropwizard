@@ -25,6 +25,8 @@ v0.6.2-SNAPSHOT: TBD
 * Upgraded to argparse4j 0.3.2.
 * Upgraded to Guava 14.0-rc2.
 * Added ``retries`` to ``HttpClientConfiguration``.
+* Fixed log formatting for extended stack traces, also now using extended stack traces as the
+  default.
 
 .. _rel-0.6.1:
 
