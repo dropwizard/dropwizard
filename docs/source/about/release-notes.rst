@@ -24,7 +24,7 @@ v0.6.2-SNAPSHOT: TBD
 * Upgraded to Jackson 2.1.3.
 * Upgraded to argparse4j 0.3.2.
 * Upgraded to Guava 14.0-rc2.
-* Removed the Scala ``Logging`` trait. Use slf4s or grizzled-slf4j instead.
+* Added ``retries`` to ``HttpClientConfiguration``.
 
 .. _rel-0.6.1:
 
