@@ -23,16 +23,22 @@ import java.io.IOException;
  */
 public class ServerCommand<T extends Configuration> extends EnvironmentCommand<T> {
     private final Class<T> configurationClass;
+    private final boolean blocking;
 
     public ServerCommand(Service<T> service) {
+        this(service, true);
+    }
+
+    public ServerCommand(Service<T> service, boolean blocking) {
         super(service, "server", "Runs the Dropwizard service as an HTTP server");
         this.configurationClass = service.getConfigurationClass();
+        this.blocking = blocking;
     }
 
     /*
-     * Since we don't subclass ServerCommand, we need a concrete reference to the configuration
-     * class.
-     */
+         * Since we don't subclass ServerCommand, we need a concrete reference to the configuration
+         * class.
+         */
     @Override
     protected Class<T> getConfigurationClass() {
         return configurationClass;
@@ -49,7 +55,10 @@ public class ServerCommand<T extends Configuration> extends EnvironmentCommand<T
             for (ServerLifecycleListener listener : environment.getServerListeners()) {
                 listener.serverStarted(server);
             }
-            server.join();
+
+            if (blocking) {
+                server.join();
+            }
         } catch (Exception e) {
             logger.error("Unable to start server, shutting down", e);
             server.stop();

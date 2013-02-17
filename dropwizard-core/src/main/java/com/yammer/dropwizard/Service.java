@@ -54,8 +54,12 @@ public abstract class Service<T extends Configuration> {
      * @throws Exception if something goes wrong
      */
     public final void run(String[] arguments) throws Exception {
+        run(arguments, true);
+    }
+
+    public final void run(String[] arguments, boolean blocking) throws Exception {
         final Bootstrap<T> bootstrap = new Bootstrap<T>(this);
-        bootstrap.addCommand(new ServerCommand<T>(this));
+        bootstrap.addCommand(new ServerCommand<T>(this, blocking));
         initialize(bootstrap);
         final Cli cli = new Cli(this.getClass(), bootstrap);
         cli.run(arguments);
