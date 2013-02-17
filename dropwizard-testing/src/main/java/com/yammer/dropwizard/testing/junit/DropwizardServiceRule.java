@@ -1,7 +1,6 @@
 package com.yammer.dropwizard.testing.junit;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 import com.yammer.dropwizard.Bundle;
 import com.yammer.dropwizard.Service;
 import com.yammer.dropwizard.cli.ServerCommand;
@@ -15,17 +14,15 @@ import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
-public class DropwizardServiceRule<S extends Service, C extends Configuration> implements TestRule {
+public class DropwizardServiceRule<C extends Configuration> implements TestRule {
 
-    private final Class<S> serviceClass;
-    private final Class<C> configClass;
+    private final Class<? extends Service> serviceClass;
     private final String configPath;
 
     private Server jettyServer;
 
-    public DropwizardServiceRule(Class<S> serviceClass, Class<C> configClass, String configPath) {
+    public DropwizardServiceRule(Class<? extends Service> serviceClass, Class<C> configClass, String configPath) {
         this.serviceClass = serviceClass;
-        this.configClass = configClass;
         this.configPath = configPath;
     }
 
