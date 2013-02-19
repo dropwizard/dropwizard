@@ -36,7 +36,7 @@ public class ManagedDataSourceFactory {
                                                                                           true);
         connectionFactory.setPool(pool);
 
-        setupGauges(pool);
+        setupGauges(pool, configuration.getUrl());
 
         return new ManagedPooledDataSource(pool);
     }
@@ -56,15 +56,15 @@ public class ManagedDataSourceFactory {
         return pool;
     }
 
-    private void setupGauges(final GenericObjectPool pool) {
-        Metrics.newGauge(ManagedPooledDataSource.class, "numActive", new Gauge<Integer>() {
+    private void setupGauges(final GenericObjectPool pool, String scope) {
+        Metrics.newGauge(ManagedPooledDataSource.class, "numActive", scope, new Gauge<Integer>() {
             @Override
             public Integer value() {
                 return pool.getNumActive();
             }
         });
 
-        Metrics.newGauge(ManagedPooledDataSource.class, "numIdle", new Gauge<Integer>() {
+        Metrics.newGauge(ManagedPooledDataSource.class, "numIdle", scope, new Gauge<Integer>() {
             @Override
             public Integer value() {
                 return pool.getNumIdle();

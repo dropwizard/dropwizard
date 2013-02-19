@@ -21,6 +21,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import static org.fest.assertions.api.Assertions.assertThat;
+import static org.fest.assertions.api.Assertions.extractProperty;
 import static org.junit.Assert.assertEquals;
 
 public class ManagedDataSourceFactoryTest {
@@ -78,11 +79,20 @@ public class ManagedDataSourceFactoryTest {
                 return metric instanceof Gauge && fullName.equals(className);
             }
         });
-        return gauges.containsKey(className) ? gauges.get(className) : new TreeMap<MetricName, Metric>();
+
+        //flatten the map
+        SortedMap<MetricName, Metric> results = new TreeMap<MetricName, Metric>();
+        for (SortedMap<MetricName, Metric> map : gauges.values()) {
+            results.putAll(map);
+        }
+        return results;
     }
 
     @Test
-    public void createGauges() throws Exception {
-        assertEquals(2, getDataSourceGauges().size());
+    public void createsGauges() throws Exception {
+        SortedMap<MetricName, Metric> gauges = getDataSourceGauges();
+        assertEquals(2, gauges.size());
+
+        assertThat(extractProperty("name").from(gauges.keySet())).contains("numActive", "numIdle");
     }
 }
