@@ -36,9 +36,7 @@ public class ManagedDataSourceFactory {
                                                                                           true);
         connectionFactory.setPool(pool);
 
-        if (configuration.isConnectionGaugesEnabled()) {
-            setupGauges(pool);
-        }
+        setupGauges(pool);
 
         return new ManagedPooledDataSource(pool);
     }

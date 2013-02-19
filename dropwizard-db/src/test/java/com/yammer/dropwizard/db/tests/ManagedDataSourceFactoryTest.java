@@ -17,11 +17,9 @@ import org.junit.Test;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.Collections;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import static java.util.Collections.emptyMap;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 
@@ -84,18 +82,7 @@ public class ManagedDataSourceFactoryTest {
     }
 
     @Test
-    public void doesNotCreateGaugesByDefault() throws Exception {
-        assertEquals(0, getDataSourceGauges().size());
-    }
-
-    @Test
-    public void createGaugesWhenConfigured() throws Exception {
-        //stop other datasource and create a new one
-        this.dataSource.stop();
-
-        config.setConnectionGaugesEnabled(true);
-        this.dataSource = factory.build(config);
-
+    public void createGauges() throws Exception {
         assertEquals(2, getDataSourceGauges().size());
     }
 }
