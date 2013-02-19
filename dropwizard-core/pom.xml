@@ -12,7 +12,7 @@
     <name>Dropwizard</name>
 
     <properties>
-        <jetty.version>8.1.8.v20121106</jetty.version>
+        <jetty.version>8.1.9.v20130131</jetty.version>
         <slf4j.version>1.7.2</slf4j.version>
         <logback.version>1.0.9</logback.version>
     </properties>
@@ -81,7 +81,7 @@
         <dependency>
             <groupId>net.sourceforge.argparse4j</groupId>
             <artifactId>argparse4j</artifactId>
-            <version>0.3.1</version>
+            <version>0.3.2</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -126,7 +126,7 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>14.0-rc2</version>
+            <version>14.0-rc3</version>
         </dependency>
         <dependency>
             <groupId>com.google.code.findbugs</groupId>

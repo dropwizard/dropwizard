@@ -42,6 +42,10 @@ public class HttpClientConfiguration {
     @JsonProperty
     private Duration keepAlive = Duration.milliseconds(0);
 
+    @Min(0)
+    @Max(1000)
+    private int retries = 0;
+
     public Duration getKeepAlive() {
         return keepAlive;
     }
@@ -96,5 +100,13 @@ public class HttpClientConfiguration {
 
     public void setMaxConnections(int maxConnections) {
         this.maxConnections = maxConnections;
+    }
+
+    public int getRetries() {
+        return retries;
+    }
+
+    public void setRetries(int retries) {
+        this.retries = retries;
     }
 }
