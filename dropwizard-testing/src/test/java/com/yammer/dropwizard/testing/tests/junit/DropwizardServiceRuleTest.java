@@ -22,10 +22,8 @@ import static org.junit.Assert.assertThat;
 public class DropwizardServiceRuleTest {
 
     @ClassRule
-    public static DropwizardServiceRule dropwizardServiceRule = new DropwizardServiceRule(
-            TestService.class,
-            TestConfiguration.class,
-            resourceFilePath("test-config.yaml"));
+    public static DropwizardServiceRule<TestConfiguration> dropwizardServiceRule =
+            new DropwizardServiceRule<TestConfiguration>(TestService.class, resourceFilePath("test-config.yaml"));
 
     @Test
     public void canGetExpectedResourceOverHttp() {
@@ -34,7 +32,12 @@ public class DropwizardServiceRuleTest {
         assertThat(content, is("Yes, it's here"));
     }
 
-
+    @Test
+    public void returnsConfiguration() {
+        TestConfiguration config = dropwizardServiceRule.getConfiguration();
+        assertThat(config.getMessage(), is("Yes, it's here"));
+        assertThat(config.getHttpConfiguration().getPort(), is(8080));
+    }
 
 
     public static class TestService extends Service<TestConfiguration> {

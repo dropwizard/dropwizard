@@ -1,7 +1,6 @@
 package com.yammer.dropwizard.testing.junit;
 
 import com.google.common.collect.ImmutableMap;
-import com.yammer.dropwizard.Bundle;
 import com.yammer.dropwizard.Service;
 import com.yammer.dropwizard.cli.ServerCommand;
 import com.yammer.dropwizard.config.Bootstrap;
@@ -16,12 +15,13 @@ import org.junit.runners.model.Statement;
 
 public class DropwizardServiceRule<C extends Configuration> implements TestRule {
 
-    private final Class<? extends Service> serviceClass;
+    private final Class<? extends Service<C>> serviceClass;
     private final String configPath;
 
+    private C configuration;
     private Server jettyServer;
 
-    public DropwizardServiceRule(Class<? extends Service> serviceClass, Class<C> configClass, String configPath) {
+    public DropwizardServiceRule(Class<? extends Service<C>> serviceClass, String configPath) {
         this.serviceClass = serviceClass;
         this.configPath = configPath;
     }
@@ -48,28 +48,32 @@ public class DropwizardServiceRule<C extends Configuration> implements TestRule 
 
         try {
             Service<C> service = serviceClass.newInstance();
-            final Bootstrap<C> bootstrap = new Bootstrap<C>(service);
-            bootstrap.addBundle(new Bundle() {
-                @Override
-                public void initialize(Bootstrap<?> bootstrap) {
-                }
 
+            final Bootstrap<C> bootstrap = new Bootstrap<C>(service) {
                 @Override
-                public void run(Environment environment) {
+                public void runWithBundles(C config, Environment environment) throws Exception {
                     environment.addServerLifecycleListener(new ServerLifecycleListener() {
                         @Override
                         public void serverStarted(Server server) {
                             jettyServer = server;
                         }
                     });
+                    configuration = config;
+                    super.runWithBundles(config, environment);
                 }
-            });
+            };
+
             service.initialize(bootstrap);
-            ServerCommand<C> command = new ServerCommand<C>(service, false);
+            ServerCommand<C> command = new ServerCommand<C>(service);
             Namespace namespace = new Namespace(ImmutableMap.<String, Object>of("file", configPath));
             command.run(bootstrap, namespace);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
+
+    public C getConfiguration() {
+        return configuration;
+    }
+
 }
