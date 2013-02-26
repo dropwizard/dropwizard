@@ -143,12 +143,12 @@ loads a given resource instance in an in-memory Jersey server:
 
     public class PersonResourceTest extends ResourceTest {
         private final Person person = new Person("blah", "blah@example.com");
-        private final PeopleStore store = mock(PeopleStore.class);
+        private final PersonDAO dao = mock(PersonDAO.class);
 
         @Override
         protected void setUpResources() {
             when(store.fetchPerson(anyString())).thenReturn(person);
-            addResource(new PersonResource(store));
+            addResource(new PersonResource(dao));
         }
 
         @Test
