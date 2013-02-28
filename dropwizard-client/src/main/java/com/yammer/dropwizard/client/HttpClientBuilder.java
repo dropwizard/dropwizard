@@ -42,7 +42,7 @@ public class HttpClientBuilder {
 
     private HttpClientConfiguration configuration = new HttpClientConfiguration();
     private DnsResolver resolver = new SystemDefaultDnsResolver();
-    private SchemeRegistry registry = SchemeRegistryFactory.createDefault();
+    private SchemeRegistry registry = SchemeRegistryFactory.createSystemDefault();
 
     /**
      * Use the given {@link HttpClientConfiguration} instance.

@@ -202,7 +202,7 @@ public class HttpClientBuilderTest {
         final AbstractHttpClient client = (AbstractHttpClient) builder.using(configuration).build();
 
         assertThat(client.getConnectionManager().getSchemeRegistry().getSchemeNames())
-                .isEqualTo(SchemeRegistryFactory.createDefault().getSchemeNames());
+                .isEqualTo(SchemeRegistryFactory.createSystemDefault().getSchemeNames());
     }
 
     @Test
