@@ -59,6 +59,7 @@ public class Environment extends AbstractLifeCycle {
     private final DropwizardResourceConfig config;
     private final ImmutableSet.Builder<HealthCheck> healthChecks;
     private final ImmutableMap.Builder<String, ServletHolder> servlets;
+    private final ImmutableMap.Builder<String, ServletHolder> internalServlets;
     private final ImmutableMultimap.Builder<String, FilterHolder> filters;
     private final ImmutableSet.Builder<EventListener> servletListeners;
     private final ImmutableSet.Builder<Task> tasks;
@@ -100,6 +101,7 @@ public class Environment extends AbstractLifeCycle {
         };
         this.healthChecks = ImmutableSet.builder();
         this.servlets = ImmutableMap.builder();
+        this.internalServlets = ImmutableMap.builder();
         this.filters = ImmutableMultimap.builder();
         this.servletListeners = ImmutableSet.builder();
         this.tasks = ImmutableSet.builder();
@@ -230,6 +232,37 @@ public class Environment extends AbstractLifeCycle {
                                      String urlPattern) {
         final ServletHolder holder = new ServletHolder(checkNotNull(klass));
         final ServletBuilder servletConfig = new ServletBuilder(holder, servlets);
+        servletConfig.addUrlPattern(checkNotNull(urlPattern));
+        return servletConfig;
+    }
+
+    /**
+     * Add a servlet instance to the internal (admin) connector.
+     *
+     * @param servlet    the servlet instance
+     * @param urlPattern the URL pattern for requests that should be handled by {@code servlet}
+     * @return a {@link ServletBuilder} instance allowing for further configuration
+     */
+    public ServletBuilder addInternalServlet(Servlet servlet,
+                                             String urlPattern) {
+        final ServletHolder holder = new NonblockingServletHolder(checkNotNull(servlet));
+        final ServletBuilder servletConfig = new ServletBuilder(holder, internalServlets);
+        servletConfig.addUrlPattern(checkNotNull(urlPattern));
+        return servletConfig;
+    }
+
+    /**
+     * Add a servlet class to the internal (admin) connector.
+     *
+     * @param klass      the servlet class
+     * @param urlPattern the URL pattern for requests that should be handled by instances of {@code
+     *                   klass}
+     * @return a {@link ServletBuilder} instance allowing for further configuration
+     */
+    public ServletBuilder addInternalServlet(Class<? extends Servlet> klass,
+                                             String urlPattern) {
+        final ServletHolder holder = new ServletHolder(checkNotNull(klass));
+        final ServletBuilder servletConfig = new ServletBuilder(holder, internalServlets);
         servletConfig.addUrlPattern(checkNotNull(urlPattern));
         return servletConfig;
     }
@@ -416,6 +449,10 @@ public class Environment extends AbstractLifeCycle {
 
     ImmutableMap<String, ServletHolder> getServlets() {
         return servlets.build();
+    }
+
+    ImmutableMap<String, ServletHolder> getInternalServlets() {
+        return internalServlets.build();
     }
 
     ImmutableMultimap<String, FilterHolder> getFilters() {
