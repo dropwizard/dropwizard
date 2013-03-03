@@ -126,7 +126,7 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>14.0-rc3</version>
+            <version>14.0</version>
         </dependency>
         <dependency>
             <groupId>com.google.code.findbugs</groupId>
