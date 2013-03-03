@@ -27,13 +27,13 @@ public class DropwizardServiceRule<C extends Configuration> implements TestRule 
     }
 
     @Override
-    public Statement apply(final Statement baseStatement, Description description) {
+    public Statement apply(final Statement base, Description description) {
         return new Statement() {
             @Override
             public void evaluate() throws Throwable {
                 startIfRequired();
                 try {
-                    baseStatement.evaluate();
+                    base.evaluate();
                 } finally {
                     jettyServer.stop();
                 }
@@ -47,25 +47,25 @@ public class DropwizardServiceRule<C extends Configuration> implements TestRule 
         }
 
         try {
-            Service<C> service = serviceClass.newInstance();
+            final Service<C> service = serviceClass.newInstance();
 
             final Bootstrap<C> bootstrap = new Bootstrap<C>(service) {
                 @Override
-                public void runWithBundles(C config, Environment environment) throws Exception {
+                public void runWithBundles(C configuration, Environment environment) throws Exception {
                     environment.addServerLifecycleListener(new ServerLifecycleListener() {
                         @Override
                         public void serverStarted(Server server) {
                             jettyServer = server;
                         }
                     });
-                    configuration = config;
-                    super.runWithBundles(config, environment);
+                    DropwizardServiceRule.this.configuration = configuration;
+                    super.runWithBundles(configuration, environment);
                 }
             };
 
             service.initialize(bootstrap);
-            ServerCommand<C> command = new ServerCommand<C>(service);
-            Namespace namespace = new Namespace(ImmutableMap.<String, Object>of("file", configPath));
+            final ServerCommand<C> command = new ServerCommand<C>(service);
+            final Namespace namespace = new Namespace(ImmutableMap.<String, Object>of("file", configPath));
             command.run(bootstrap, namespace);
         } catch (Exception e) {
             throw new RuntimeException(e);
