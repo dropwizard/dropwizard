@@ -27,6 +27,7 @@ v0.6.2-SNAPSHOT: TBD
 * Added ``retries`` to ``HttpClientConfiguration``.
 * Fixed log formatting for extended stack traces, also now using extended stack traces as the
   default.
+* Upgraded to FEST Assert 2.0M10.
 
 .. _rel-0.6.1:
 
