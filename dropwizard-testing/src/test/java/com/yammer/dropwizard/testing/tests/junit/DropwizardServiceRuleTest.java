@@ -22,27 +22,29 @@ import static org.junit.Assert.assertThat;
 public class DropwizardServiceRuleTest {
 
     @ClassRule
-    public static DropwizardServiceRule<TestConfiguration> dropwizardServiceRule =
+    public static final DropwizardServiceRule<TestConfiguration> RULE =
             new DropwizardServiceRule<TestConfiguration>(TestService.class, resourceFilePath("test-config.yaml"));
 
     @Test
     public void canGetExpectedResourceOverHttp() {
-        String content = new Client().resource("http://localhost:8080/test").get(String.class);
+        final String content = new Client().resource("http://localhost:" +
+                                                             RULE.getLocalPort()
+                                                             +"/test").get(String.class);
 
         assertThat(content, is("Yes, it's here"));
     }
 
     @Test
     public void returnsConfiguration() {
-        TestConfiguration config = dropwizardServiceRule.getConfiguration();
+        final TestConfiguration config = RULE.getConfiguration();
         assertThat(config.getMessage(), is("Yes, it's here"));
-        assertThat(config.getHttpConfiguration().getPort(), is(8080));
+        assertThat(config.getHttpConfiguration().getPort(), is(0));
     }
 
 
     public static class TestService extends Service<TestConfiguration> {
         @Override
-        public void initialize(Bootstrap bootstrap) {
+        public void initialize(Bootstrap<TestConfiguration> bootstrap) {
         }
 
         @Override

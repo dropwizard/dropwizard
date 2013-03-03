@@ -76,4 +76,7 @@ public class DropwizardServiceRule<C extends Configuration> implements TestRule 
         return configuration;
     }
 
+    public int getLocalPort() {
+        return jettyServer.getConnectors()[0].getLocalPort();
+    }
 }
