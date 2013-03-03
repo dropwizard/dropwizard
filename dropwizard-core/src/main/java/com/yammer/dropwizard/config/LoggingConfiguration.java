@@ -62,6 +62,10 @@ public class LoggingConfiguration {
         public Optional<String> getLogFormat() {
             return Optional.fromNullable(logFormat);
         }
+
+        public void setLogFormat(String logFormat) {
+            this.logFormat = logFormat;
+        }
     }
 
     public static class FileConfiguration {
