@@ -40,6 +40,7 @@ public abstract class AbstractLiquibaseCommand<T extends Configuration> extends 
             run(namespace, managedLiquibase);
         } catch (ValidationFailedException e) {
             e.printDescriptiveError(System.err);
+            System.exit(-1);
         } finally {
             if (managedLiquibase != null) {
                 managedLiquibase.stop();
