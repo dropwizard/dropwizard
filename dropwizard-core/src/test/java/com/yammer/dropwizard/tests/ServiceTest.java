@@ -21,10 +21,10 @@ public class ServiceTest {
 
     private static class PoserService extends FakeService {}
 
-    private static class WrapperService<C extends Configuration> extends Service<C> {
-        private Service<C> service;
+    private static class WrapperService<C extends FakeConfiguration> extends Service<C> {
+        private final Service<C> service;
 
-        public WrapperService(Service<C> service) {
+        private WrapperService(Service<C> service) {
             this.service = service;
         }
 
@@ -53,8 +53,8 @@ public class ServiceTest {
 
     @Test
     public void canDetermineWrappedConfiguration() throws Exception {
-        PoserService service = new PoserService();
-        assertThat(new WrapperService(service).getConfigurationClass())
-                .isSameAs(Configuration.class);
+        final PoserService service = new PoserService();
+        assertThat(new WrapperService<FakeConfiguration>(service).getConfigurationClass())
+                .isSameAs(FakeConfiguration.class);
     }
 }
