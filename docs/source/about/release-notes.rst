@@ -18,7 +18,7 @@ v0.6.2-SNAPSHOT: TBD
 * Upgraded to Logback 1.0.9.
 * Upgraded to Hibernate 4.1.9.
 * Upgraded to Hibernate Validator 4.3.1.
-* Upgraded to tomcat-dbcp 7.0.35.
+* Upgraded to tomcat-dbcp 7.0.37.
 * Upgraded to Mustache.java 0.8.9.
 * Upgraded to Apache HttpClient 4.2.3.
 * Upgraded to Jackson 2.1.3.
