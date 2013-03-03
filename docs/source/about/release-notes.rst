@@ -22,7 +22,7 @@ v0.6.2-SNAPSHOT: TBD
 * Upgraded to Mustache.java 0.8.9.
 * Upgraded to Apache HttpClient 4.2.3.
 * Upgraded to Jackson 2.1.3.
-* Upgraded to argparse4j 0.3.2.
+* Upgraded to argparse4j 0.4.0.
 * Upgraded to Guava 14.0-rc3.
 * Added ``retries`` to ``HttpClientConfiguration``.
 * Fixed log formatting for extended stack traces, also now using extended stack traces as the
