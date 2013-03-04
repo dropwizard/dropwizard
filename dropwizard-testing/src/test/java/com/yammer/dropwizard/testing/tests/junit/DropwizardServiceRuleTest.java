@@ -17,6 +17,7 @@ import javax.ws.rs.Path;
 import java.io.File;
 
 import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
 public class DropwizardServiceRuleTest {
@@ -39,6 +40,18 @@ public class DropwizardServiceRuleTest {
         final TestConfiguration config = RULE.getConfiguration();
         assertThat(config.getMessage(), is("Yes, it's here"));
         assertThat(config.getHttpConfiguration().getPort(), is(0));
+    }
+
+    @Test
+    public void returnsService() {
+        TestService service = RULE.getService();
+        assertNotNull(service);
+    }
+
+    @Test
+    public void returnsEnvironment() {
+        Environment environment = RULE.getEnvironment();
+        assertThat(environment.getName(), is("TestService"));
     }
 
 
