@@ -19,6 +19,8 @@ public class DropwizardServiceRule<C extends Configuration> implements TestRule 
     private final String configPath;
 
     private C configuration;
+    private Environment environment;
+    private Service<C> service;
     private Server jettyServer;
 
     public DropwizardServiceRule(Class<? extends Service<C>> serviceClass, String configPath) {
@@ -47,19 +49,20 @@ public class DropwizardServiceRule<C extends Configuration> implements TestRule 
         }
 
         try {
-            Service<C> service = serviceClass.newInstance();
+            service = serviceClass.newInstance();
 
             final Bootstrap<C> bootstrap = new Bootstrap<C>(service) {
                 @Override
-                public void runWithBundles(C config, Environment environment) throws Exception {
-                    environment.addServerLifecycleListener(new ServerLifecycleListener() {
+                public void runWithBundles(C config, Environment env) throws Exception {
+                    env.addServerLifecycleListener(new ServerLifecycleListener() {
                         @Override
                         public void serverStarted(Server server) {
                             jettyServer = server;
                         }
                     });
                     configuration = config;
-                    super.runWithBundles(config, environment);
+                    environment = env;
+                    super.runWithBundles(config, env);
                 }
             };
 
@@ -76,4 +79,11 @@ public class DropwizardServiceRule<C extends Configuration> implements TestRule 
         return configuration;
     }
 
+    public <S extends Service<C>> S getService() {
+        return (S) service;
+    }
+
+    public Environment getEnvironment() {
+        return environment;
+    }
 }
