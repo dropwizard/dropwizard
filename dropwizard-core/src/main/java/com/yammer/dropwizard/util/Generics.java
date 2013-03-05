@@ -50,7 +50,7 @@ public class Generics {
                     if (cls != null) { return cls; }
                 }
                 else if (param instanceof TypeVariable) {
-                    for (Type paramBound : ((TypeVariable) param).getBounds()) {
+                    for (Type paramBound : ((TypeVariable<?>) param).getBounds()) {
                         if (paramBound instanceof Class<?>) {
                             final Class<T> cls = determineClass(bound, paramBound);
                             if (cls != null) { return cls; }
@@ -62,6 +62,7 @@ public class Generics {
         throw new IllegalStateException("Cannot figure out type parameterization for " + klass.getName());
     }
 
+    @SuppressWarnings("unchecked")
     private static <T> Class<T> determineClass(Class<? super T> bound, Type candidate) {
         if (candidate instanceof Class<?>) {
             final Class<?> cls = (Class<?>) candidate;
