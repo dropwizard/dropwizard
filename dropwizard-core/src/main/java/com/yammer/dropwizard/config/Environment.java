@@ -498,7 +498,7 @@ public class Environment extends AbstractLifeCycle {
     }
 
     private void logEndpoints() {
-        final StringBuilder stringBuilder = new StringBuilder(1024).append("\n\n");
+        final StringBuilder stringBuilder = new StringBuilder(1024).append("The following paths were found for the configured resources:\n\n");
 
         final ImmutableList.Builder<Class<?>> builder = ImmutableList.builder();
         for (Object o : config.getSingletons()) {
