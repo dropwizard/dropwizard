@@ -7,12 +7,15 @@ import com.yammer.dropwizard.config.Configuration;
 import com.yammer.dropwizard.config.Environment;
 import com.yammer.dropwizard.config.ServerFactory;
 import com.yammer.dropwizard.lifecycle.ServerLifecycleListener;
+import com.yammer.dropwizard.util.SystemUtils;
 import net.sourceforge.argparse4j.inf.Namespace;
 import org.eclipse.jetty.server.Server;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+
+import static com.yammer.dropwizard.util.SystemUtils.LINE_SEPARATOR;
 
 // TODO: 10/12/11 <coda> -- write tests for ServerCommand
 
@@ -59,7 +62,7 @@ public class ServerCommand<T extends Configuration> extends EnvironmentCommand<T
         try {
             final String banner = Resources.toString(Resources.getResource("banner.txt"),
                                                      Charsets.UTF_8);
-            logger.info("Starting {}\n{}", name, banner);
+            logger.info("Starting {}{}{}", name, LINE_SEPARATOR, banner);
         } catch (IllegalArgumentException ignored) {
             // don't display the banner if there isn't one
             logger.info("Starting {}", name);

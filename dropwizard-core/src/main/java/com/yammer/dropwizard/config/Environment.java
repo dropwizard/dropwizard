@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.concurrent.*;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.yammer.dropwizard.util.SystemUtils.LINE_SEPARATOR;
 
 // TODO: 10/12/11 <coda> -- test Environment
 /*
@@ -498,7 +499,7 @@ public class Environment extends AbstractLifeCycle {
     }
 
     private void logEndpoints() {
-        final StringBuilder stringBuilder = new StringBuilder(1024).append("\n\n");
+        final StringBuilder stringBuilder = new StringBuilder(1024).append(LINE_SEPARATOR + LINE_SEPARATOR);
 
         final ImmutableList.Builder<Class<?>> builder = ImmutableList.builder();
         for (Object o : config.getSingletons()) {
@@ -539,7 +540,7 @@ public class Environment extends AbstractLifeCycle {
             }
 
             for (String line : Ordering.natural().sortedCopy(endpoints.build())) {
-                stringBuilder.append(line).append('\n');
+                stringBuilder.append(line).append(LINE_SEPARATOR);
             }
         }
 
@@ -547,10 +548,10 @@ public class Environment extends AbstractLifeCycle {
     }
 
     private void logTasks() {
-        final StringBuilder stringBuilder = new StringBuilder(1024).append("\n\n");
+        final StringBuilder stringBuilder = new StringBuilder(1024).append(LINE_SEPARATOR + LINE_SEPARATOR);
 
         for (Task task : tasks.build()) {
-            stringBuilder.append(String.format("    %-7s /tasks/%s (%s)\n",
+            stringBuilder.append(String.format("    %-7s /tasks/%s (%s)%n",
                                                "POST",
                                                task.getName(),
                                                task.getClass().getCanonicalName()));

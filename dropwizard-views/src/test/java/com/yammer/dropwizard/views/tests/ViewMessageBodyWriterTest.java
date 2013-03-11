@@ -1,6 +1,7 @@
 package com.yammer.dropwizard.views.tests;
 
 import com.sun.jersey.core.util.StringKeyIgnoreCaseMultivaluedMap;
+import com.yammer.dropwizard.util.SystemUtils;
 import com.yammer.dropwizard.views.MyOtherView;
 import com.yammer.dropwizard.views.MyView;
 import com.yammer.dropwizard.views.ViewMessageBodyWriter;
@@ -17,6 +18,7 @@ import javax.ws.rs.core.Response;
 import java.io.ByteArrayOutputStream;
 import java.lang.annotation.Annotation;
 
+import static com.yammer.dropwizard.util.SystemUtils.LINE_SEPARATOR;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.fest.assertions.api.Assertions.failBecauseExceptionWasNotThrown;
 import static org.mockito.Mockito.mock;
@@ -54,7 +56,7 @@ public class ViewMessageBodyWriterTest {
                        output);
 
         assertThat(output.toString())
-                .isEqualTo("Woop woop. HONK\n");
+                .isEqualTo("Woop woop. HONK" + LINE_SEPARATOR);
     }
 
     @Test
@@ -90,7 +92,7 @@ public class ViewMessageBodyWriterTest {
                        output);
 
         assertThat(output.toString())
-                .isEqualTo("Ok.\n");
+                .isEqualTo("Ok." + LINE_SEPARATOR);
     }
 
     @Test
