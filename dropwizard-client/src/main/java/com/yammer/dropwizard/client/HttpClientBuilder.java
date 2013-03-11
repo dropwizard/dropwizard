@@ -5,6 +5,7 @@ import com.yammer.metrics.httpclient.InstrumentedClientConnManager;
 import com.yammer.metrics.httpclient.InstrumentedHttpClient;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.HttpRequestRetryHandler;
 import org.apache.http.client.params.AllClientPNames;
 import org.apache.http.client.params.CookiePolicy;
 import org.apache.http.conn.DnsResolver;
@@ -12,11 +13,13 @@ import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.impl.DefaultConnectionReuseStrategy;
 import org.apache.http.impl.NoConnectionReuseStrategy;
 import org.apache.http.impl.client.DefaultConnectionKeepAliveStrategy;
+import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
 import org.apache.http.impl.conn.SchemeRegistryFactory;
 import org.apache.http.impl.conn.SystemDefaultDnsResolver;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.protocol.HttpContext;
 
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -30,9 +33,16 @@ import java.util.concurrent.TimeUnit;
  * </ul>
  */
 public class HttpClientBuilder {
+    private static final HttpRequestRetryHandler NO_RETRIES = new HttpRequestRetryHandler() {
+        @Override
+        public boolean retryRequest(IOException exception, int executionCount, HttpContext context) {
+            return false;
+        }
+    };
+
     private HttpClientConfiguration configuration = new HttpClientConfiguration();
     private DnsResolver resolver = new SystemDefaultDnsResolver();
-    private SchemeRegistry registry = SchemeRegistryFactory.createDefault();
+    private SchemeRegistry registry = SchemeRegistryFactory.createSystemDefault();
 
     /**
      * Use the given {@link HttpClientConfiguration} instance.
@@ -104,6 +114,13 @@ public class HttpClientBuilder {
                     return (duration == -1) ? keepAlive : duration;
                 }
             });
+        }
+
+        if (configuration.getRetries() == 0) {
+            client.setHttpRequestRetryHandler(NO_RETRIES);
+        } else {
+            client.setHttpRequestRetryHandler(new DefaultHttpRequestRetryHandler(configuration.getRetries(),
+                                                                                 false));
         }
     }
 

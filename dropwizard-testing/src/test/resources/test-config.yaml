@@ -1,0 +1,4 @@
+message: "Yes, it's here"
+http:
+  port: 0
+  adminPort: 0

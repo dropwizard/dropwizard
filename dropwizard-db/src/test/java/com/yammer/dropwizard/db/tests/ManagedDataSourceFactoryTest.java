@@ -3,6 +3,7 @@ package com.yammer.dropwizard.db.tests;
 import com.yammer.dropwizard.db.DatabaseConfiguration;
 import com.yammer.dropwizard.db.ManagedDataSource;
 import com.yammer.dropwizard.db.ManagedDataSourceFactory;
+import com.yammer.metrics.Metrics;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,6 +33,7 @@ public class ManagedDataSourceFactoryTest {
     @After
     public void tearDown() throws Exception {
         dataSource.stop();
+        Metrics.defaultRegistry().shutdown();
     }
 
     @Test

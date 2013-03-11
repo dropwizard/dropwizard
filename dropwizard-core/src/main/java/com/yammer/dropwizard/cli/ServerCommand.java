@@ -52,7 +52,6 @@ public class ServerCommand<T extends Configuration> extends EnvironmentCommand<T
             for (ServerLifecycleListener listener : environment.getServerListeners()) {
                 listener.serverStarted(server);
             }
-            server.join();
         } catch (Exception e) {
             logger.error("Unable to start server, shutting down", e);
             server.stop();
