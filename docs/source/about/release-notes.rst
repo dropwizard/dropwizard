@@ -23,7 +23,7 @@ v0.6.2-SNAPSHOT: TBD
 * Upgraded to Apache HttpClient 4.2.3.
 * Upgraded to Jackson 2.1.3.
 * Upgraded to argparse4j 0.4.0.
-* Upgraded to Guava 14.0.
+* Upgraded to Guava 14.0.1.
 * Added ``retries`` to ``HttpClientConfiguration``.
 * Fixed log formatting for extended stack traces, also now using extended stack traces as the
   default.
