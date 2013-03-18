@@ -6,7 +6,6 @@ import com.yammer.dropwizard.Bundle;
 import com.yammer.dropwizard.ConfiguredBundle;
 import com.yammer.dropwizard.Service;
 import com.yammer.dropwizard.cli.Command;
-import com.yammer.dropwizard.cli.ConfiguredCommand;
 import com.yammer.dropwizard.json.ObjectMapperFactory;
 
 import java.util.List;
@@ -45,10 +44,6 @@ public class Bootstrap<T extends Configuration> {
     }
 
     public void addCommand(Command command) {
-        commands.add(command);
-    }
-
-    public void addCommand(ConfiguredCommand<T> command) {
         commands.add(command);
     }
 
