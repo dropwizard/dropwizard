@@ -498,7 +498,7 @@ public class Environment extends AbstractLifeCycle {
     }
 
     private void logEndpoints() {
-        final StringBuilder stringBuilder = new StringBuilder(1024).append("\n\n");
+        final StringBuilder stringBuilder = new StringBuilder(1024).append("The following paths were found for the configured resources:\n\n");
 
         final ImmutableList.Builder<Class<?>> builder = ImmutableList.builder();
         for (Object o : config.getSingletons()) {
@@ -514,12 +514,13 @@ public class Environment extends AbstractLifeCycle {
 
         for (Class<?> klass : builder.build()) {
             final String path = klass.getAnnotation(Path.class).value();
+            String rootPath = configuration.getHttpConfiguration().getRootPath();
+            if (rootPath.endsWith("/*")) {
+                rootPath = rootPath.substring(0, rootPath.length() - (path.startsWith("/") ? 2 : 1));
+            }
+
             final ImmutableList.Builder<String> endpoints = ImmutableList.builder();
             for (AnnotatedMethod method : annotatedMethods(klass)) {
-                String rootPath = configuration.getHttpConfiguration().getRootPath();
-                if (rootPath.endsWith("/*")) {
-                    rootPath = rootPath.substring(0, rootPath.length() - 2);
-                }
                 final StringBuilder pathBuilder = new StringBuilder()
                         .append(rootPath)
                         .append(path);
