@@ -13,7 +13,7 @@ v0.6.2-SNAPSHOT: TBD
 * Fixed an NPE for services in the root package.
 * Fixed exception handling in ``TaskServlet``.
 * Upgraded to Slf4j 1.7.4.
-* Upgraded to Jetty 8.1.9.
+* Upgraded to Jetty 8.1.10.
 * Upgraded to Jersey 1.17.1.
 * Upgraded to Jackson 2.1.4.
 * Upgraded to Logback 1.0.9.
