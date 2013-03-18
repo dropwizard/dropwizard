@@ -16,7 +16,7 @@ v0.6.2-SNAPSHOT: TBD
 * Upgraded to Jetty 8.1.10.
 * Upgraded to Jersey 1.17.1.
 * Upgraded to Jackson 2.1.4.
-* Upgraded to Logback 1.0.9.
+* Upgraded to Logback 1.0.10.
 * Upgraded to Hibernate 4.1.9.
 * Upgraded to Hibernate Validator 4.3.1.
 * Upgraded to tomcat-dbcp 7.0.37.
