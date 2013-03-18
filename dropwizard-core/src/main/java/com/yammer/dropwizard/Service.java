@@ -54,10 +54,35 @@ public abstract class Service<T extends Configuration> {
      * @throws Exception if something goes wrong
      */
     public final void run(String[] arguments) throws Exception {
-        final Bootstrap<T> bootstrap = new Bootstrap<T>(this);
-        bootstrap.addCommand(new ServerCommand<T>(this));
+        final Bootstrap<T> bootstrap = createBootstrap();
+        bootstrap.addCommand(createServerCommand());
         initialize(bootstrap);
-        final Cli cli = new Cli(this.getClass(), bootstrap);
+        final Cli cli = createCli(bootstrap);
         cli.run(arguments);
+    }
+
+    /**
+     * Creates the {@link Bootstrap} object.
+     * @return A Bootstrap instance
+     */
+    protected Bootstrap<T> createBootstrap() {
+        return new Bootstrap<T>(this);
+    }
+
+    /**
+     * Creates the {@link Cli} object that will run the service.
+     * @param bootstrap The {@link Bootstrap} of the service.
+     * @return A Cli instance.
+     */
+    protected Cli createCli(Bootstrap<T> bootstrap) {
+        return new Cli(this.getClass(), bootstrap);
+    }
+
+    /**
+     * Creates the {@link ServerCommand} for the service.
+     * @return A ServerCommand instance.
+     */
+    protected ServerCommand<T> createServerCommand() {
+        return new ServerCommand<T>(this);
     }
 }
