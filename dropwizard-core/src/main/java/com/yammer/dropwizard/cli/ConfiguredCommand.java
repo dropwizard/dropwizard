@@ -4,6 +4,7 @@ import com.yammer.dropwizard.config.*;
 import com.yammer.dropwizard.json.ObjectMapperFactory;
 import com.yammer.dropwizard.util.Generics;
 import com.yammer.dropwizard.validation.Validator;
+import net.sourceforge.argparse4j.impl.Arguments;
 import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
 
@@ -43,6 +44,7 @@ public abstract class ConfiguredCommand<T extends Configuration> extends Command
     @Override
     public void configure(Subparser subparser) {
         subparser.addArgument("file").nargs("?").help("service configuration file");
+        subparser.addArgument("-T", "--configtest").action(Arguments.storeTrue()).help("validate configuration file and exit");
     }
 
     @Override
@@ -51,6 +53,11 @@ public abstract class ConfiguredCommand<T extends Configuration> extends Command
         final T configuration = parseConfiguration(namespace.getString("file"),
                                                    getConfigurationClass(),
                                                    bootstrap.getObjectMapperFactory().copy());
+
+        if(namespace.getBoolean("configtest")) {
+            return;
+        }
+
         if (configuration != null) {
             new LoggingFactory(configuration.getLoggingConfiguration(),
                                bootstrap.getName()).configure();
