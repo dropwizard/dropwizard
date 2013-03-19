@@ -57,6 +57,7 @@
             <groupId>com.yammer.dropwizard</groupId>
             <artifactId>dropwizard-testing</artifactId>
             <version>${project.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
