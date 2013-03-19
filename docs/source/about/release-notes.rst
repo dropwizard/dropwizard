@@ -4,6 +4,13 @@
 Release Notes
 #############
 
+.. _rel-0.7.0:
+
+v0.7.0: TBD
+===========
+
+* Dropped Scala support.
+
 .. _rel-0.6.2:
 
 v0.6.2: Mar 18 2013
