@@ -6,6 +6,7 @@ import ch.qos.logback.classic.filter.ThresholdFilter;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.FileAppender;
+import ch.qos.logback.core.Layout;
 import ch.qos.logback.core.rolling.DefaultTimeBasedFileNamingAndTriggeringPolicy;
 import ch.qos.logback.core.rolling.RollingFileAppender;
 import ch.qos.logback.core.rolling.TimeBasedRollingPolicy;
@@ -110,21 +111,25 @@ public class FileLoggingOutput implements LoggingOutput {
     }
 
     @Override
-    public Appender<ILoggingEvent> build(LoggerContext context, String serviceName) {
-        final LogFormatter formatter = new LogFormatter(context, timeZone);
-
-        if (!Strings.isNullOrEmpty(logFormat)) {
-            formatter.setPattern(logFormat);
-        }
-        formatter.start();
-
-        final FileAppender<ILoggingEvent> appender = archive ?
+    public Appender<ILoggingEvent> build(LoggerContext context, String serviceName, Layout<ILoggingEvent> layout) {
+                final FileAppender<ILoggingEvent> appender = archive ?
                 new RollingFileAppender<ILoggingEvent>() :
                 new FileAppender<ILoggingEvent>();
 
         appender.setAppend(true);
         appender.setContext(context);
-        appender.setLayout(formatter);
+
+        if (layout == null) {
+            final LogFormatter formatter = new LogFormatter(context, timeZone);
+            if (!Strings.isNullOrEmpty(logFormat)) {
+                formatter.setPattern(logFormat);
+            }
+            formatter.start();
+            appender.setLayout(formatter);
+        } else {
+            appender.setLayout(layout);
+        }
+
         appender.setFile(currentLogFilename);
         appender.setPrudent(false);
 

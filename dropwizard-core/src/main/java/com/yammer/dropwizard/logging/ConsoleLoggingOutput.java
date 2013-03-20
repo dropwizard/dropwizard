@@ -6,6 +6,7 @@ import ch.qos.logback.classic.filter.ThresholdFilter;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.ConsoleAppender;
+import ch.qos.logback.core.Layout;
 import ch.qos.logback.core.spi.FilterAttachable;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
@@ -52,16 +53,20 @@ public class ConsoleLoggingOutput implements LoggingOutput {
     }
 
     @Override
-    public Appender<ILoggingEvent> build(LoggerContext context, String serviceName) {
-        final LogFormatter formatter = new LogFormatter(context, timeZone);
-        if (!Strings.isNullOrEmpty(logFormat)) {
-            formatter.setPattern(logFormat);
-        }
-        formatter.start();
-
+    public Appender<ILoggingEvent> build(LoggerContext context, String serviceName, Layout<ILoggingEvent> layout) {
         final ConsoleAppender<ILoggingEvent> appender = new ConsoleAppender<ILoggingEvent>();
         appender.setContext(context);
-        appender.setLayout(formatter);
+        if (layout == null) {
+            final LogFormatter formatter = new LogFormatter(context, timeZone);
+            if (!Strings.isNullOrEmpty(logFormat)) {
+                formatter.setPattern(logFormat);
+            }
+            formatter.start();
+            appender.setLayout(formatter);
+        } else {
+            appender.setLayout(layout);
+        }
+
         addThresholdFilter(appender, threshold);
         appender.start();
 

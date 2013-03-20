@@ -58,7 +58,7 @@ public class LoggingFactory {
         final Logger root = configureLevels();
 
         for (LoggingOutput output : config.getOutputs()) {
-            root.addAppender(output.build(root.getLoggerContext(), name));
+            root.addAppender(output.build(root.getLoggerContext(), name, null));
         }
 
         final MBeanServer server = ManagementFactory.getPlatformMBeanServer();

@@ -6,6 +6,7 @@ import ch.qos.logback.classic.filter.ThresholdFilter;
 import ch.qos.logback.classic.net.SyslogAppender;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
+import ch.qos.logback.core.Layout;
 import ch.qos.logback.core.spi.FilterAttachable;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -94,7 +95,7 @@ public class SyslogLoggingOutput implements LoggingOutput {
     }
 
     @Override
-    public Appender<ILoggingEvent> build(LoggerContext context, String serviceName) {
+    public Appender<ILoggingEvent> build(LoggerContext context, String serviceName, Layout<ILoggingEvent> layout) {
         final SyslogAppender appender = new SyslogAppender();
         appender.setContext(context);
         appender.setSuffixPattern(logFormat);

@@ -46,7 +46,7 @@ public class RequestLogHandlerFactory {
         layout.start();
 
         for (LoggingOutput output : config.getOutputs()) {
-            appenders.addAppender(output.build(context, name));
+            appenders.addAppender(output.build(context, name, layout));
         }
 
         final RequestLogHandler handler = new RequestLogHandler();
