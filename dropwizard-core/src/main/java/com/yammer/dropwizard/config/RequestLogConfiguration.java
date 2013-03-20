@@ -1,52 +1,34 @@
 package com.yammer.dropwizard.config;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.collect.ImmutableList;
+import com.yammer.dropwizard.logging.ConsoleLoggingOutput;
+import com.yammer.dropwizard.logging.LoggingOutput;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.TimeZone;
 
 import static com.yammer.dropwizard.config.LoggingConfiguration.*;
 
-@SuppressWarnings("UnusedDeclaration")
 public class RequestLogConfiguration {
-    @NotNull
-    @JsonProperty
-    private ConsoleConfiguration console = new ConsoleConfiguration();
-
-    @NotNull
-    @JsonProperty
-    private FileConfiguration file = new FileConfiguration();
-
-    @NotNull
-    @JsonProperty
-    private SyslogConfiguration syslog = new SyslogConfiguration();
-
     @NotNull
     @JsonProperty
     private TimeZone timeZone = UTC;
 
-    public ConsoleConfiguration getConsoleConfiguration() {
-        return console;
+    @Valid
+    @NotNull
+    @JsonProperty
+    private ImmutableList<LoggingOutput> outputs = ImmutableList.<LoggingOutput>of(
+            new ConsoleLoggingOutput()
+    );
+
+    public ImmutableList<LoggingOutput> getOutputs() {
+        return outputs;
     }
 
-    public void setConsoleConfiguration(ConsoleConfiguration consoleConfiguration) {
-        this.console = consoleConfiguration;
-    }
-
-    public FileConfiguration getFileConfiguration() {
-        return file;
-    }
-
-    public void setFileConfiguration(FileConfiguration fileConfiguration) {
-        this.file = fileConfiguration;
-    }
-
-    public SyslogConfiguration getSyslogConfiguration() {
-        return syslog;
-    }
-
-    public void setSyslogConfiguration(SyslogConfiguration syslogConfiguration) {
-        this.syslog = syslogConfiguration;
+    public void setOutputs(ImmutableList<LoggingOutput> outputs) {
+        this.outputs = outputs;
     }
 
     public TimeZone getTimeZone() {

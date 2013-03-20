@@ -1,5 +1,6 @@
 package com.yammer.dropwizard.config;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Objects;
 
@@ -45,12 +46,12 @@ import javax.validation.constraints.NotNull;
 public class Configuration {
     @Valid
     @NotNull
-    @JsonProperty
+    @JsonProperty("http")
     private HttpConfiguration http = new HttpConfiguration();
 
     @Valid
     @NotNull
-    @JsonProperty
+    @JsonProperty("logging")
     private LoggingConfiguration logging = new LoggingConfiguration();
 
     /**
@@ -58,6 +59,7 @@ public class Configuration {
      *
      * @return HTTP-specific configuration parameters
      */
+    @JsonIgnore
     public HttpConfiguration getHttpConfiguration() {
         return http;
     }
@@ -74,6 +76,7 @@ public class Configuration {
      *
      * @return logging-specific configuration parameters
      */
+    @JsonIgnore
     public LoggingConfiguration getLoggingConfiguration() {
         return logging;
     }

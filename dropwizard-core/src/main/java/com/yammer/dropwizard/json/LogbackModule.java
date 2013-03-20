@@ -1,10 +1,12 @@
 package com.yammer.dropwizard.json;
 
 import ch.qos.logback.classic.Level;
+import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.deser.Deserializers;
+import com.fasterxml.jackson.databind.ser.Serializers;
 
 import java.io.IOException;
 
@@ -42,6 +44,23 @@ public class LogbackModule extends Module {
         }
     }
 
+    private static class LevelSerializer extends JsonSerializer<Level> {
+        @Override
+        public void serialize(Level value, JsonGenerator jgen, SerializerProvider provider) throws IOException {
+            jgen.writeString(value.toString());
+        }
+    }
+
+    private static class LogbackSerializers extends Serializers.Base {
+        @Override
+        public JsonSerializer<?> findSerializer(SerializationConfig config, JavaType type, BeanDescription beanDesc) {
+            if (Level.class.isAssignableFrom(type.getRawClass())) {
+                return new LevelSerializer();
+            }
+            return super.findSerializer(config, type, beanDesc);
+        }
+    }
+
     @Override
     public String getModuleName() {
         return "LogbackModule";
@@ -54,6 +73,7 @@ public class LogbackModule extends Module {
 
     @Override
     public void setupModule(SetupContext context) {
+        context.addSerializers(new LogbackSerializers());
         context.addDeserializers(new LogbackDeserializers());
     }
 }

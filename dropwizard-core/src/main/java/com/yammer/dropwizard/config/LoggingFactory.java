@@ -2,11 +2,13 @@ package com.yammer.dropwizard.config;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.filter.ThresholdFilter;
 import ch.qos.logback.classic.jmx.JMXConfigurator;
 import ch.qos.logback.classic.jul.LevelChangePropagator;
-import com.google.common.base.Optional;
-import com.yammer.dropwizard.logging.AsyncAppender;
-import com.yammer.dropwizard.logging.LogbackFactory;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.ConsoleAppender;
+import com.yammer.dropwizard.logging.LogFormatter;
+import com.yammer.dropwizard.logging.LoggingOutput;
 import com.yammer.metrics.logback.InstrumentedAppender;
 import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
@@ -17,23 +19,29 @@ import java.lang.management.ManagementFactory;
 import java.util.Map;
 import java.util.TimeZone;
 
-import static com.yammer.dropwizard.config.LoggingConfiguration.*;
-
 // TODO: 11/7/11 <coda> -- document LoggingFactory
 // TODO: 11/7/11 <coda> -- test LoggingFactory
 
 public class LoggingFactory {
+    // initially configure for WARN+ console logging
     public static void bootstrap() {
-        // initially configure for WARN+ console logging
-        final ConsoleConfiguration console = new ConsoleConfiguration();
-        console.setEnabled(true);
-        console.setTimeZone(TimeZone.getDefault());
-        console.setThreshold(Level.WARN);
-
         final Logger root = getCleanRoot();
-        root.addAppender(LogbackFactory.buildConsoleAppender(console,
-                                                             root.getLoggerContext(),
-                                                             Optional.<String>absent()));
+
+        final LogFormatter formatter = new LogFormatter(root.getLoggerContext(),
+                                                        TimeZone.getDefault());
+        formatter.start();
+
+        final ThresholdFilter filter = new ThresholdFilter();
+        filter.setLevel(Level.WARN.toString());
+        filter.start();
+
+        final ConsoleAppender<ILoggingEvent> appender = new ConsoleAppender<ILoggingEvent>();
+        appender.addFilter(filter);
+        appender.setContext(root.getLoggerContext());
+        appender.setLayout(formatter);
+        appender.start();
+
+        root.addAppender(appender);
     }
 
     private final LoggingConfiguration config;
@@ -49,29 +57,9 @@ public class LoggingFactory {
 
         final Logger root = configureLevels();
 
-        final ConsoleConfiguration console = config.getConsoleConfiguration();
-        if (console.isEnabled()) {
-            root.addAppender(AsyncAppender.wrap(LogbackFactory.buildConsoleAppender(console,
-                                                                                    root.getLoggerContext(),
-                                                                                    console.getLogFormat())));
+        for (LoggingOutput output : config.getOutputs()) {
+            root.addAppender(output.build(root.getLoggerContext(), name));
         }
-
-        final FileConfiguration file = config.getFileConfiguration();
-        if (file.isEnabled()) {
-            root.addAppender(AsyncAppender.wrap(LogbackFactory.buildFileAppender(file,
-                                                                                 root.getLoggerContext(),
-                                                                                 file.getLogFormat())));
-        }
-
-        final SyslogConfiguration syslog = config.getSyslogConfiguration();
-        if (syslog.isEnabled()) {
-            root.addAppender(AsyncAppender.wrap(LogbackFactory.buildSyslogAppender(syslog,
-                                                                                   root.getLoggerContext(),
-                                                                                   name,
-                                                                                   syslog.getLogFormat())));
-        }
-
-
 
         final MBeanServer server = ManagementFactory.getPlatformMBeanServer();
         try {

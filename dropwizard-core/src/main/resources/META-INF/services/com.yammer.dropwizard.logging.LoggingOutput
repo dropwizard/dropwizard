@@ -1,0 +1,3 @@
+com.yammer.dropwizard.logging.ConsoleLoggingOutput
+com.yammer.dropwizard.logging.FileLoggingOutput
+com.yammer.dropwizard.logging.SyslogLoggingOutput
