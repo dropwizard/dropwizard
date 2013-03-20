@@ -11,7 +11,7 @@ historically not sucked:
 * [Jackson](http://jackson.codehaus.org) for JSON parsin' and generatin'.
 * [Logback](http://logback.qos.ch/) for loggin'.
 * [Hibernate Validator](http://www.hibernate.org/subprojects/validator.html) for validatin'.
-* [Metrics](https://github.com/codahale/metrics) for figurin' out what your service is doing in
+* [Metrics](https://github.com/codahale/metrics) for figurin' out what your service is doin' in
   production.
 * [SnakeYAML](http://code.google.com/p/snakeyaml/) for YAML parsin' and configuratin'.
 
