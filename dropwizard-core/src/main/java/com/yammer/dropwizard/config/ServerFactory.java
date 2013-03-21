@@ -328,6 +328,12 @@ public class ServerFactory {
         if (config.getAdminPort() != 0 && config.getAdminPort() == config.getPort()) {
             handler.setContextPath("/admin");
             handler.setConnectorNames(new String[]{"main"});
+            /*
+             * if admin is going to live on the same port as the service, let's apply the same filters.
+             */
+            for (ImmutableMap.Entry<String, FilterHolder> entry : env.getFilters().entries()) {
+                handler.addFilter(entry.getValue(), entry.getKey(), EnumSet.of(DispatcherType.REQUEST));
+            }
         } else {
             handler.setConnectorNames(new String[]{"internal"});
         }
