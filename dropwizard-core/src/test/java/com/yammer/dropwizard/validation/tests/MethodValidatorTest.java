@@ -34,7 +34,7 @@ public class MethodValidatorTest {
 
     @Test
     public void complainsAboutMethodsWhichReturnFalse() throws Exception {
-        assertThat(new Validator().validate(new Example()))
+        assertThat(new Validator().validate(new Example()).getMessages())
                 .containsOnly("must have a false thing",
                               "subExample also needs something special");
     }

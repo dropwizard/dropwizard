@@ -36,7 +36,7 @@ public class Validator {
      * @param <T>    the type of object to validate
      * @return a list of error messages, if any, regarding {@code o}'s validity
      */
-    public <T> ImmutableList<String> validate(T o) {
+    public <T> ValidationResult<T> validate(T o) {
         return validate(o, Default.class);
     }
 
@@ -48,14 +48,15 @@ public class Validator {
     * @param <T> the type of object to validate
     * @return a list of error messages, if any, regarding {@code o}'s validity
     */
-    public <T> ImmutableList<String> validate(T o, Class<?>... groups) {
+    public <T> ValidationResult<T> validate(T o, Class<?>... groups) {
         final Set<String> errors = Sets.newHashSet();
+        final Set<ConstraintViolation<T>> violations = Sets.newHashSet();
 
         if (o == null) {
             errors.add("request entity required");
         }
         else {
-            final Set<ConstraintViolation<T>> violations = factory.getValidator().validate(o,groups);
+            violations.addAll(factory.getValidator().validate(o,groups));
             for (ConstraintViolation<T> v : violations) {
                 if (v.getConstraintDescriptor().getAnnotation() instanceof ValidationMethod) {
                     final ImmutableList<Path.Node> nodes = ImmutableList.copyOf(v.getPropertyPath());
@@ -70,6 +71,7 @@ public class Validator {
                 }
             }
         }
-        return ImmutableList.copyOf(Ordering.natural().sortedCopy(errors));
+        return new ValidationResult<T>(ImmutableList.copyOf(violations),
+                                       ImmutableList.copyOf(Ordering.natural().sortedCopy(errors)));
     }
 }

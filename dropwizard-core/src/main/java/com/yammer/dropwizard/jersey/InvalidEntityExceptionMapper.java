@@ -17,7 +17,7 @@ import java.io.StringWriter;
 @Provider
 public class InvalidEntityExceptionMapper implements ExceptionMapper<InvalidEntityException> {
     private static final Logger LOGGER = LoggerFactory.getLogger(InvalidEntityExceptionMapper.class);
-    private static final int UNPROCESSABLE_ENTITY = 422;
+    public static final int UNPROCESSABLE_ENTITY = 422;
 
     @Context
     private HttpServletRequest request;

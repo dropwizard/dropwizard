@@ -86,7 +86,7 @@ public class Environment extends AbstractLifeCycle {
         this.configuration = configuration;
         this.objectMapperFactory = objectMapperFactory;
         this.validator = validator;
-        this.config = new DropwizardResourceConfig(false) {
+        this.config = new DropwizardResourceConfig(false, configuration.getValidation()) {
             @Override
             public void validate() {
                 super.validate();

@@ -32,7 +32,7 @@ public class ValidatorTest {
     @Test
     public void returnsASetOfErrorsForAnObject() throws Exception {
         if ("en".equals(Locale.getDefault().getLanguage())) {
-            assertThat(validator.validate(new Example()))
+            assertThat(validator.validate(new Example()).getMessages())
                     .containsOnly("notNull may not be null (was null)",
                                   "tooBig must be less than or equal to 30 (was 50)");
         }
@@ -40,7 +40,7 @@ public class ValidatorTest {
 
     @Test
     public void returnsASetOfErrorsForNull() throws Exception {
-        assertThat(validator.validate(null))
+        assertThat(validator.validate(null).getMessages())
                 .containsOnly("request entity required");
     }
 
@@ -50,7 +50,7 @@ public class ValidatorTest {
         example.setNotNull("woo");
         example.setTooBig(20);
 
-        assertThat(validator.validate(example))
+        assertThat(validator.validate(example).getMessages())
                 .isEmpty();
     }
 }

@@ -40,7 +40,7 @@ public class SizeValidatorTest {
     @Test
     public void returnsASetOfErrorsForAnObject() throws Exception {
         if ("en".equals(Locale.getDefault().getLanguage())) {
-            assertThat(validator.validate(new Example()))
+            assertThat(validator.validate(new Example()).getMessages())
                     .containsOnly("outOfRange must be between 10 KILOBYTES and 100 KILOBYTES (was 2 megabytes)",
                                   "tooBig must be less than or equal to 30 KILOBYTES (was 2 gigabytes)",
                                   "tooSmall must be greater than or equal to 30 KILOBYTES (was 100 bytes)");
@@ -54,7 +54,7 @@ public class SizeValidatorTest {
         example.setTooSmall(Size.megabytes(10));
         example.setOutOfRange(Size.kilobytes(64));
 
-        assertThat(validator.validate(example))
+        assertThat(validator.validate(example).getMessages())
                 .isEmpty();
     }
 }

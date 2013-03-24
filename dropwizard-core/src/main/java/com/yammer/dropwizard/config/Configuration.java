@@ -54,6 +54,11 @@ public class Configuration {
     @JsonProperty("logging")
     private LoggingConfiguration logging = new LoggingConfiguration();
 
+    @Valid
+    @NotNull
+    @JsonProperty("validation")
+    private ValidatorConfiguration validation = new ValidatorConfiguration();
+
     /**
      * Returns the HTTP-specific section of the configuration file.
      *
@@ -88,11 +93,20 @@ public class Configuration {
         this.logging = config;
     }
 
+    public ValidatorConfiguration getValidation() {
+        return validation;
+    }
+
+    public void setValidation(ValidatorConfiguration validation) {
+        this.validation = validation;
+    }
+
     @Override
     public String toString() {
         return Objects.toStringHelper(this)
                       .add("http", http)
                       .add("logging", logging)
+                      .add("validation", validation)
                       .toString();
     }
 }

@@ -100,7 +100,7 @@ public class ConfigurationFactory<T> {
     }
 
     private void validate(String file, T config) throws ConfigurationException {
-        final ImmutableList<String> errors = validator.validate(config);
+        final ImmutableList<String> errors = validator.validate(config).getMessages();
         if (!errors.isEmpty()) {
             throw new ConfigurationException(file, errors);
         }
