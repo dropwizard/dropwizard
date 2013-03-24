@@ -26,7 +26,7 @@ public class InvalidEntityToJsonExceptionMapper implements ExceptionMapper<Inval
                 .build();
     }
 
-    private List mapViolationsToJson(InvalidEntityException exception) {
+    private List<ConstraintViolationJson> mapViolationsToJson(InvalidEntityException exception) {
 
         final ImmutableList<ConstraintViolation> violations = exception.getResult().getViolations();
         final List<ConstraintViolationJson> jsonList = new ArrayList<ConstraintViolationJson>(violations.size());
