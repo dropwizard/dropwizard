@@ -9,7 +9,7 @@ public class ValidationResult<T> {
     private ImmutableList<ConstraintViolation<T>> violations;
     private ImmutableList<String> messages;
 
-    ValidationResult (ImmutableList<ConstraintViolation<T>> violations, ImmutableList<String> messages) {
+    public ValidationResult (ImmutableList<ConstraintViolation<T>> violations, ImmutableList<String> messages) {
         this.violations = violations;
         this.messages = messages;
     }

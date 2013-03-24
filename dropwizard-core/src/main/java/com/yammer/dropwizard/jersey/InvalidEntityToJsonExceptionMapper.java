@@ -1,6 +1,5 @@
 package com.yammer.dropwizard.jersey;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableList;
 import com.yammer.dropwizard.validation.InvalidEntityException;
 import org.slf4j.Logger;
@@ -47,20 +46,4 @@ public class InvalidEntityToJsonExceptionMapper implements ExceptionMapper<Inval
         return new ConstraintViolationJson(violation.getMessageTemplate(), violation.getMessage(), invalidValue);
     }
 
-    private static class ConstraintViolationJson {
-
-        @JsonProperty private String messageTemplate;
-        @JsonProperty private String message;
-        @JsonProperty private String invalidValue;
-
-        public ConstraintViolationJson(String messageTemplate, String message, String invalidValue) {
-            this.messageTemplate = messageTemplate;
-            this.message = message;
-            this.invalidValue = invalidValue;
-        }
-
-        public String getMessageTemplate() { return messageTemplate; }
-        public String getMessage() { return message; }
-        public String getInvalidValue() { return invalidValue; }
-    }
 }
