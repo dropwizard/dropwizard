@@ -3,10 +3,12 @@ package com.yammer.dropwizard.hibernate.tests;
 import com.google.common.collect.ImmutableList;
 import com.yammer.dropwizard.config.Environment;
 import com.yammer.dropwizard.db.DatabaseConfiguration;
+import com.yammer.dropwizard.hibernate.HibernateBundle;
 import com.yammer.dropwizard.hibernate.ManagedSessionFactory;
 import com.yammer.dropwizard.hibernate.SessionFactoryFactory;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Configuration;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.junit.After;
@@ -25,6 +27,7 @@ public class SessionFactoryFactoryTest {
 
     private final SessionFactoryFactory factory = new SessionFactoryFactory();
 
+    private final HibernateBundle bundle = mock(HibernateBundle.class);
     private final Environment environment = mock(Environment.class);
     private final DatabaseConfiguration config = new DatabaseConfiguration();
 
@@ -53,6 +56,13 @@ public class SessionFactoryFactoryTest {
     }
 
     @Test
+    public void callsBundleToConfigure() throws Exception {
+      build();
+
+      verify(bundle).configure(any(Configuration.class));
+    }
+
+    @Test
     public void buildsAWorkingSessionFactory() throws Exception {
         build();
 
@@ -78,7 +88,8 @@ public class SessionFactoryFactoryTest {
     }
 
     private void build() throws ClassNotFoundException {
-        this.sessionFactory = factory.build(environment,
+        this.sessionFactory = factory.build(bundle,
+                                            environment,
                                             config,
                                             ImmutableList.<Class<?>>of(Person.class));
     }
