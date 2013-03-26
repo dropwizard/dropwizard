@@ -37,7 +37,8 @@ public class HibernateBundleTest {
     @Before
     @SuppressWarnings("unchecked")
     public void setUp() throws Exception {
-        when(factory.build(any(Environment.class),
+        when(factory.build(eq(bundle),
+                           any(Environment.class),
                            any(DatabaseConfiguration.class),
                            anyList())).thenReturn(sessionFactory);
     }
@@ -61,7 +62,7 @@ public class HibernateBundleTest {
     public void buildsASessionFactory() throws Exception {
         bundle.run(configuration, environment);
 
-        verify(factory).build(environment, dbConfig, entities);
+        verify(factory).build(bundle, environment, dbConfig, entities);
     }
 
     @Test

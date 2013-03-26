@@ -35,7 +35,7 @@ public abstract class HibernateBundle<T extends Configuration> implements Config
     @Override
     public final void run(T configuration, Environment environment) throws Exception {
         final DatabaseConfiguration dbConfig = getDatabaseConfiguration(configuration);
-        this.sessionFactory = sessionFactoryFactory.build(environment, dbConfig, entities);
+        this.sessionFactory = sessionFactoryFactory.build(this, environment, dbConfig, entities);
         environment.addProvider(new UnitOfWorkResourceMethodDispatchAdapter(sessionFactory));
         environment.addHealthCheck(new SessionFactoryHealthCheck("hibernate",
                                                                  sessionFactory,
@@ -44,5 +44,8 @@ public abstract class HibernateBundle<T extends Configuration> implements Config
 
     public SessionFactory getSessionFactory() {
         return sessionFactory;
+    }
+
+    public void configure(org.hibernate.cfg.Configuration configuration) {
     }
 }

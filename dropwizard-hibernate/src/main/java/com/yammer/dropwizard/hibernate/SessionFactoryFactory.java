@@ -26,13 +26,15 @@ public class SessionFactoryFactory {
 
     private final ManagedDataSourceFactory dataSourceFactory = new ManagedDataSourceFactory();
 
-    public SessionFactory build(Environment environment,
+    public SessionFactory build(HibernateBundle bundle,
+                                Environment environment,
                                 DatabaseConfiguration dbConfig,
                                 List<Class<?>> entities) throws ClassNotFoundException {
         final ManagedDataSource dataSource = dataSourceFactory.build(dbConfig);
         final ConnectionProvider provider = buildConnectionProvider(dataSource,
                                                                     dbConfig.getProperties());
-        final SessionFactory factory = buildSessionFactory(dbConfig,
+        final SessionFactory factory = buildSessionFactory(bundle,
+                                                           dbConfig,
                                                            provider,
                                                            dbConfig.getProperties(),
                                                            entities);
@@ -49,7 +51,8 @@ public class SessionFactoryFactory {
         return connectionProvider;
     }
 
-    private SessionFactory buildSessionFactory(DatabaseConfiguration dbConfig,
+    private SessionFactory buildSessionFactory(HibernateBundle bundle,
+                                               DatabaseConfiguration dbConfig,
                                                ConnectionProvider connectionProvider,
                                                ImmutableMap<String, String> properties,
                                                List<Class<?>> entities) {
@@ -68,6 +71,7 @@ public class SessionFactoryFactory {
         }
 
         addAnnotatedClasses(configuration, entities);
+        bundle.configure(configuration);
 
         final ServiceRegistry registry = new ServiceRegistryBuilder()
                 .addService(ConnectionProvider.class, connectionProvider)
