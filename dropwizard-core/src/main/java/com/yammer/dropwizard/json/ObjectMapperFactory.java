@@ -489,8 +489,26 @@ public class ObjectMapperFactory {
      * @return a configured {@link ObjectMapper} instance
      */
     public ObjectMapper build(JsonFactory factory) {
-        final ObjectMapper mapper = new ObjectMapper(factory);
+        return configure(new ObjectMapper(factory));
+    }
 
+    /**
+     * Builds a new {@link ObjectMapper} instance with a default {@link JsonFactory} instance.
+     *
+     * @return a configured {@link ObjectMapper} instance
+     */
+    public ObjectMapper build() {
+        return build(new JsonFactory());
+    }
+
+    /**
+     * Configures the given {@link ObjectMapper} instance according to the configuration of this
+     * {@code ObjectMapperFactory}.
+     *
+     * @param mapper the {@link ObjectMapper} to configure.
+     * @return the configured {@link ObjectMapper}
+     */
+    public ObjectMapper configure(ObjectMapper mapper) {
         for (Module module : modules) {
             mapper.registerModule(module);
         }
@@ -593,15 +611,6 @@ public class ObjectMapperFactory {
 
 
         return mapper;
-    }
-
-    /**
-     * Builds a new {@link ObjectMapper} instance with a default {@link JsonFactory} instance.
-     *
-     * @return a configured {@link ObjectMapper} instance
-     */
-    public ObjectMapper build() {
-        return build(new JsonFactory());
     }
 
     /**

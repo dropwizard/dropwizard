@@ -9,6 +9,7 @@ import com.sun.jersey.test.framework.LowLevelAppDescriptor;
 import com.yammer.dropwizard.config.Environment;
 import com.yammer.dropwizard.db.DatabaseConfiguration;
 import com.yammer.dropwizard.hibernate.AbstractDAO;
+import com.yammer.dropwizard.hibernate.HibernateBundle;
 import com.yammer.dropwizard.hibernate.SessionFactoryFactory;
 import com.yammer.dropwizard.hibernate.UnitOfWork;
 import com.yammer.dropwizard.hibernate.UnitOfWorkResourceMethodDispatchAdapter;
@@ -91,6 +92,7 @@ public class JerseyIntegrationTest extends JerseyTest {
         final SessionFactoryFactory factory = new SessionFactoryFactory();
         final DatabaseConfiguration dbConfig = new DatabaseConfiguration();
         final ImmutableList<String> packages = ImmutableList.of("com.yammer.dropwizard.hibernate.tests");
+        final HibernateBundle bundle = mock(HibernateBundle.class);
         final Environment environment = mock(Environment.class);
 
         dbConfig.setUrl("jdbc:hsqldb:mem:DbTest-" + System.nanoTime());
@@ -99,7 +101,8 @@ public class JerseyIntegrationTest extends JerseyTest {
         dbConfig.setValidationQuery("SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS");
 
         try {
-            this.sessionFactory = factory.build(environment,
+            this.sessionFactory = factory.build(bundle,
+                                                environment,
                                                 dbConfig,
                                                 ImmutableList.<Class<?>>of(Person.class));
         } catch (ClassNotFoundException e) {
