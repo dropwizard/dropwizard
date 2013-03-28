@@ -34,7 +34,6 @@ import javax.servlet.Servlet;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.Path;
 import javax.ws.rs.ext.Provider;
-import java.lang.reflect.ParameterizedType;
 import java.util.EventListener;
 import java.util.List;
 import java.util.concurrent.*;
