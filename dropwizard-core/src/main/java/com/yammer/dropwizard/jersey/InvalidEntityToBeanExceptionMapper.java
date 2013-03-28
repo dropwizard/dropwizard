@@ -14,9 +14,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Provider
-public class InvalidEntityToJsonExceptionMapper implements ExceptionMapper<InvalidEntityException> {
+public class InvalidEntityToBeanExceptionMapper implements ExceptionMapper<InvalidEntityException> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(InvalidEntityToJsonExceptionMapper.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(InvalidEntityToBeanExceptionMapper.class);
 
     @Override
     public Response toResponse(InvalidEntityException exception) {
@@ -26,24 +26,14 @@ public class InvalidEntityToJsonExceptionMapper implements ExceptionMapper<Inval
                 .build();
     }
 
-    private List<ConstraintViolationJson> mapViolationsToJson(InvalidEntityException exception) {
+    private List<ConstraintViolationBean> mapViolationsToJson(InvalidEntityException exception) {
 
         final ImmutableList<ConstraintViolation> violations = exception.getResult().getViolations();
-        final List<ConstraintViolationJson> jsonList = new ArrayList<ConstraintViolationJson>(violations.size());
+        final List<ConstraintViolationBean> jsonList = new ArrayList<ConstraintViolationBean>(violations.size());
         for (ConstraintViolation violation : violations) {
-            jsonList.add(translateViolationToJson(violation));
+            jsonList.add(new ConstraintViolationBean(violation));
         }
         return jsonList;
-    }
-
-    private ConstraintViolationJson translateViolationToJson(ConstraintViolation violation) {
-        String invalidValue;
-        try {
-            invalidValue = violation.getInvalidValue().toString();
-        } catch (Exception e) {
-            invalidValue = "Error converting invalid value to String: "+e;
-        }
-        return new ConstraintViolationJson(violation.getMessageTemplate(), violation.getMessage(), invalidValue);
     }
 
 }

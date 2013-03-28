@@ -4,6 +4,8 @@ import com.yammer.dropwizard.Service;
 import com.yammer.dropwizard.config.Bootstrap;
 import com.yammer.dropwizard.config.Configuration;
 import com.yammer.dropwizard.config.Environment;
+import com.yammer.dropwizard.jersey.InvalidEntityExceptionMapper;
+import com.yammer.dropwizard.validation.InvalidEntityException;
 import com.yammer.dropwizard.validation.Validator;
 import net.sourceforge.argparse4j.inf.Namespace;
 
@@ -36,6 +38,12 @@ public abstract class EnvironmentCommand<T extends Configuration> extends Config
                                                         new Validator());
         bootstrap.runWithBundles(configuration, environment);
         service.run(configuration, environment);
+
+        // Use default mapper for InvalidEntityException if client did not set one
+        if (!environment.exceptionMapperHasBeenRegistered(InvalidEntityException.class)) {
+            environment.addProvider(InvalidEntityExceptionMapper.class);
+        }
+
         run(environment, namespace, configuration);
     }
 

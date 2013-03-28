@@ -34,6 +34,7 @@ import javax.servlet.Servlet;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.Path;
 import javax.ws.rs.ext.Provider;
+import java.lang.reflect.ParameterizedType;
 import java.util.EventListener;
 import java.util.List;
 import java.util.concurrent.*;
@@ -86,7 +87,7 @@ public class Environment extends AbstractLifeCycle {
         this.configuration = configuration;
         this.objectMapperFactory = objectMapperFactory;
         this.validator = validator;
-        this.config = new DropwizardResourceConfig(false, configuration.getValidation()) {
+        this.config = new DropwizardResourceConfig(false) {
             @Override
             public void validate() {
                 super.validate();
@@ -114,6 +115,18 @@ public class Environment extends AbstractLifeCycle {
     @Override
     protected void doStart() throws Exception {
         lifeCycle.start();
+    }
+
+    public boolean exceptionMapperHasBeenRegistered(Class<? extends Exception> exceptionClass) {
+        for (Class c : config.getClasses()) {
+            if (c.getGenericInterfaces().length == 1
+                    && c.getGenericInterfaces()[0] instanceof ParameterizedType
+                    && ((ParameterizedType) c.getGenericInterfaces()[0]).getActualTypeArguments().length == 1
+                    && ((ParameterizedType) c.getGenericInterfaces()[0]).getActualTypeArguments()[0].equals(exceptionClass)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
