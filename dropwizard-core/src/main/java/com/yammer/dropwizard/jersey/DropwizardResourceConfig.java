@@ -24,6 +24,7 @@ public class DropwizardResourceConfig extends ScanningResourceConfig {
 
     @Override
     public void validate() {
+        super.validate();
         // Use default mapper for InvalidEntityException if client did not set one
         if (!exceptionMapperHasBeenRegistered(InvalidEntityException.class)) {
             getClasses().add(InvalidEntityExceptionMapper.class);
