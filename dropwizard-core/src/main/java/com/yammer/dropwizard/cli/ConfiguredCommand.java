@@ -70,19 +70,41 @@ public abstract class ConfiguredCommand<T extends Configuration> extends Command
                                 Namespace namespace,
                                 T configuration) throws Exception;
 
-    private T parseConfiguration(String filename,
-                                 Class<T> configurationClass,
-                                 ObjectMapperFactory objectMapperFactory) throws IOException, ConfigurationException {
-        final ConfigurationFactory<T> configurationFactory =
-                ConfigurationFactory.forClass(configurationClass, new Validator(), objectMapperFactory);
-        if (filename != null) {
-            final File file = new File(filename);
+    /**
+     * Returns the {@link Configuration} of type T at the specified configuration file path. The
+     * default behavior looks for the configuration file on the local file system.
+     * Subclasses can override this method as a means to provide a way to read the configuration
+     * from any source they choose.
+     *
+     * @param configurationPath the path to the configuration
+     * @param configurationFactory the configurationFactory
+     * @return the Configuration object
+     * @throws IOException throws an exception if there is an error reading the configuration
+     * from the configurationPath
+     * @throws ConfigurationException throws an exception in the case of an error with the
+     * configuration (i.e. validation)
+     */
+    protected T parseConfiguration(String configurationPath,
+                                    ConfigurationFactory<T> configurationFactory) throws IOException, ConfigurationException {
+        if (configurationPath != null) {
+            final File file = new File(configurationPath);
             if (!file.exists()) {
-                throw new FileNotFoundException("File " + file + " not found");
+                throw new FileNotFoundException("Configuration file " + file + " not found");
             }
+
             return configurationFactory.build(file);
         }
 
         return configurationFactory.build();
     }
+
+    private T parseConfiguration(String configurationPath,
+                                 Class<T> configurationClass,
+                                 ObjectMapperFactory objectMapperFactory) throws IOException, ConfigurationException {
+        final ConfigurationFactory<T> configurationFactory =
+                ConfigurationFactory.forClass(configurationClass, new Validator(), objectMapperFactory);
+
+        return parseConfiguration(configurationPath, configurationFactory);
+    }
+
 }

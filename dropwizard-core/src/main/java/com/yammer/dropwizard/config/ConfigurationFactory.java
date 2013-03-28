@@ -15,7 +15,9 @@ import com.yammer.dropwizard.logging.LoggingOutput;
 import com.yammer.dropwizard.validation.Validator;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -53,10 +55,14 @@ public class ConfigurationFactory<T> {
         this.validator = validator;
     }
 
+    public T build(String configurationPath, InputStream inputStream) throws IOException, ConfigurationException {
+        final JsonNode node = mapper.readTree(inputStream);
+        return build(node, configurationPath);
+    }
+
     public T build(File file) throws IOException, ConfigurationException {
-        final JsonNode node = mapper.readTree(file);
         final String filename = file.toString();
-        return build(node, filename);
+        return build(filename, new FileInputStream(file));
     }
 
     public T build() throws IOException, ConfigurationException {
@@ -99,10 +105,10 @@ public class ConfigurationFactory<T> {
         }
     }
 
-    private void validate(String file, T config) throws ConfigurationException {
+    private void validate(String configurationPath, T config) throws ConfigurationException {
         final ImmutableList<String> errors = validator.validate(config);
         if (!errors.isEmpty()) {
-            throw new ConfigurationException(file, errors);
+            throw new ConfigurationException(configurationPath, errors);
         }
     }
 }
