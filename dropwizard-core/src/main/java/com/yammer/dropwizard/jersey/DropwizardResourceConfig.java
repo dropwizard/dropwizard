@@ -10,6 +10,7 @@ import java.lang.reflect.ParameterizedType;
 public class DropwizardResourceConfig extends ScanningResourceConfig {
 
     public DropwizardResourceConfig(boolean testOnly) {
+        super();
         getFeatures().put(FEATURE_DISABLE_WADL, Boolean.TRUE);
         if (!testOnly) {
             // create a subclass to pin it to Throwable
