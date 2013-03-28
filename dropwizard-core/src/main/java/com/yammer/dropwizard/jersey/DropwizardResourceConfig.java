@@ -2,7 +2,10 @@ package com.yammer.dropwizard.jersey;
 
 import com.sun.jersey.api.core.ScanningResourceConfig;
 import com.yammer.dropwizard.jersey.caching.CacheControlledResourceMethodDispatchAdapter;
+import com.yammer.dropwizard.validation.InvalidEntityException;
 import com.yammer.metrics.jersey.InstrumentedResourceMethodDispatchAdapter;
+
+import java.lang.reflect.ParameterizedType;
 
 public class DropwizardResourceConfig extends ScanningResourceConfig {
 
@@ -17,6 +20,26 @@ public class DropwizardResourceConfig extends ScanningResourceConfig {
         getClasses().add(CacheControlledResourceMethodDispatchAdapter.class);
         getClasses().add(OptionalResourceMethodDispatchAdapter.class);
         getClasses().add(OptionalQueryParamInjectableProvider.class);
+    }
+
+    @Override
+    public void validate() {
+        // Use default mapper for InvalidEntityException if client did not set one
+        if (!exceptionMapperHasBeenRegistered(InvalidEntityException.class)) {
+            getClasses().add(InvalidEntityExceptionMapper.class);
+        }
+    }
+
+    public boolean exceptionMapperHasBeenRegistered(Class<? extends Exception> exceptionClass) {
+        for (Class c : getClasses()) {
+            if (c.getGenericInterfaces().length == 1
+                    && c.getGenericInterfaces()[0] instanceof ParameterizedType
+                    && ((ParameterizedType) c.getGenericInterfaces()[0]).getActualTypeArguments().length == 1
+                    && ((ParameterizedType) c.getGenericInterfaces()[0]).getActualTypeArguments()[0].equals(exceptionClass)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

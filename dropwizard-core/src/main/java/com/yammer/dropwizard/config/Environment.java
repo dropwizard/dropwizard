@@ -117,18 +117,6 @@ public class Environment extends AbstractLifeCycle {
         lifeCycle.start();
     }
 
-    public boolean exceptionMapperHasBeenRegistered(Class<? extends Exception> exceptionClass) {
-        for (Class c : config.getClasses()) {
-            if (c.getGenericInterfaces().length == 1
-                    && c.getGenericInterfaces()[0] instanceof ParameterizedType
-                    && ((ParameterizedType) c.getGenericInterfaces()[0]).getActualTypeArguments().length == 1
-                    && ((ParameterizedType) c.getGenericInterfaces()[0]).getActualTypeArguments()[0].equals(exceptionClass)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     @Override
     protected void doStop() throws Exception {
         lifeCycle.stop();
