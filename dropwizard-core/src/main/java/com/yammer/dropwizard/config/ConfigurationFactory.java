@@ -56,8 +56,15 @@ public class ConfigurationFactory<T> {
     }
 
     public T build(String configurationPath, InputStream inputStream) throws IOException, ConfigurationException {
-        final JsonNode node = mapper.readTree(inputStream);
-        return build(node, configurationPath != null ? configurationPath : "InputStream configuration");
+        T configuration = null;
+        try {
+            final JsonNode node = mapper.readTree(inputStream);
+            configuration = build(node, configurationPath != null ? configurationPath : "InputStream configuration");
+        } finally {
+            inputStream.close();
+        }
+
+        return configuration;
     }
 
     @Deprecated
