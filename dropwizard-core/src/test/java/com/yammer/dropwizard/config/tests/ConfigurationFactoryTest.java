@@ -11,7 +11,6 @@ import org.junit.Test;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Locale;
 
@@ -46,7 +45,7 @@ public class ConfigurationFactoryTest {
 
     @Test
     public void loadsValidConfigFiles() throws Exception {
-        final Example example = factory.build(validFile.toString(), new FileInputStream(validFile));
+        final Example example = factory.build(validFile);
         assertThat(example.getName())
                 .isEqualTo("Coda Hale");
     }
@@ -54,7 +53,7 @@ public class ConfigurationFactoryTest {
     @Test
     public void throwsAnExceptionOnMalformedFiles() throws Exception {
         try {
-            factory.build(malformedFile.toString(), new FileInputStream(malformedFile));
+            factory.build(malformedFile);
             failBecauseExceptionWasNotThrown(YAMLException.class);
         } catch (IOException e) {
             assertThat(e.getMessage())
@@ -65,7 +64,7 @@ public class ConfigurationFactoryTest {
     @Test
     public void throwsAnExceptionOnInvalidFiles() throws Exception {
         try {
-            factory.build(invalidFile.toString(), new FileInputStream(invalidFile));
+            factory.build(invalidFile);
         } catch (ConfigurationException e) {
             if ("en".equals(Locale.getDefault().getLanguage())) {
                 assertThat(e.getMessage())

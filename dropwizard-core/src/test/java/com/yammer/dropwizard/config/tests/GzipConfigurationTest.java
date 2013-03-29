@@ -10,7 +10,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
-import java.io.FileInputStream;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
@@ -19,10 +18,8 @@ public class GzipConfigurationTest {
 
     @Before
     public void setUp() throws Exception {
-        File gzipFile = new File(Resources.getResource("yaml/gzip.yml").toURI());
-        this.gzip = ConfigurationFactory.forClass(GzipConfiguration.class,
-                new Validator())
-                                        .build(gzipFile.toString(), new FileInputStream(gzipFile));
+        this.gzip = ConfigurationFactory.forClass(GzipConfiguration.class, new Validator())
+                                        .build(new File(Resources.getResource("yaml/gzip.yml").toURI()));
     }
 
     @Test

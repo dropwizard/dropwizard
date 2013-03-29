@@ -56,20 +56,17 @@ public class ConfigurationFactory<T> {
     }
 
     public T build(String configurationPath, InputStream inputStream) throws IOException, ConfigurationException {
-        T configuration = null;
-        try {
-            final JsonNode node = mapper.readTree(inputStream);
-            configuration = build(node, configurationPath != null ? configurationPath : "InputStream configuration");
-        } finally {
-            inputStream.close();
-        }
-
-        return configuration;
+        final JsonNode node = mapper.readTree(inputStream);
+        return build(node, configurationPath != null ? configurationPath : "InputStream configuration");
     }
 
-    @Deprecated
     public T build(File file) throws IOException, ConfigurationException {
-        return build(file.toString(), new FileInputStream(file));
+        final FileInputStream input = new FileInputStream(file);
+        try {
+            return build(file.toString(), input);
+        } finally {
+            input.close();
+        }
     }
 
     public T build() throws IOException, ConfigurationException {

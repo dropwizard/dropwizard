@@ -10,7 +10,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
-import java.io.FileInputStream;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
@@ -21,8 +20,7 @@ public class LoggingConfigurationTest {
 
     @Before
     public void setUp() throws Exception {
-        File loggingFile = new File(Resources.getResource("logging.yml").toURI());
-        this.config = factory.build(loggingFile.toString(), new FileInputStream(loggingFile));
+        this.config = factory.build(new File(Resources.getResource("logging.yml").toURI()));
     }
 
     @Test
