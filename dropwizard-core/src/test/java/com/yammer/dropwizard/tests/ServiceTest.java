@@ -1,10 +1,17 @@
 package com.yammer.dropwizard.tests;
 
 import com.yammer.dropwizard.Service;
+import com.yammer.dropwizard.cli.CheckCommand;
+import com.yammer.dropwizard.cli.Command;
+import com.yammer.dropwizard.cli.ServerCommand;
 import com.yammer.dropwizard.config.Bootstrap;
 import com.yammer.dropwizard.config.Configuration;
 import com.yammer.dropwizard.config.Environment;
 import org.junit.Test;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
@@ -56,5 +63,26 @@ public class ServiceTest {
         final PoserService service = new PoserService();
         assertThat(new WrapperService<FakeConfiguration>(service).getConfigurationClass())
                 .isSameAs(FakeConfiguration.class);
+    }
+
+    @Test
+    public void notNullServerCommand() {
+        final PoserService service = new PoserService();
+        ServerCommand<FakeConfiguration> serverCommand = service.getServerCommand();
+        assertThat(serverCommand).isNotNull().isInstanceOf(ServerCommand.class);
+    }
+
+    @Test
+    public void testDefaultCommands() {
+        final PoserService service = new PoserService();
+        List<Command> defaultCommands = service.getDefaultCommands();
+        assertThat(defaultCommands).isNotNull().isNotEmpty();
+
+        Set<Class> commandTypes = new HashSet<Class>();
+        for(Command command : defaultCommands) {
+            commandTypes.add(command.getClass());
+        }
+
+        assertThat(commandTypes).contains(ServerCommand.class, CheckCommand.class);
     }
 }

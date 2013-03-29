@@ -7,9 +7,7 @@ import com.yammer.dropwizard.validation.Validator;
 import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 
 /**
  * A command whose first parameter is the location of a YAML configuration file. That file is parsed
@@ -70,19 +68,42 @@ public abstract class ConfiguredCommand<T extends Configuration> extends Command
                                 Namespace namespace,
                                 T configuration) throws Exception;
 
-    private T parseConfiguration(String filename,
+    /**
+     * Returns the {@link InputStream) for the configuration associated with this command. By default
+     * the method will look for the configuration on the local file system. Subclasses should override
+     * this method if it wants to read the configuration from a location other than the local file system
+     * (i.e. a remote URL, create it programatically, etc).
+     *
+     * @param configurationPath the path to the configuration
+     * @return the {@link InputStream} that represents the configuration
+     */
+    protected InputStream getConfigurationInputStream(String configurationPath) throws IOException {
+        InputStream configurationInputStream = null;
+
+        if (configurationPath != null) {
+            final File file = new File(configurationPath);
+            if (!file.exists()) {
+                throw new FileNotFoundException("Configuration file " + file + " not found");
+            }
+
+            configurationInputStream = new FileInputStream(file);
+        }
+
+        return configurationInputStream;
+    }
+
+    private T parseConfiguration(String configurationPath,
                                  Class<T> configurationClass,
                                  ObjectMapperFactory objectMapperFactory) throws IOException, ConfigurationException {
         final ConfigurationFactory<T> configurationFactory =
                 ConfigurationFactory.forClass(configurationClass, new Validator(), objectMapperFactory);
-        if (filename != null) {
-            final File file = new File(filename);
-            if (!file.exists()) {
-                throw new FileNotFoundException("File " + file + " not found");
-            }
-            return configurationFactory.build(file);
+
+        InputStream configurationInputStream = getConfigurationInputStream(configurationPath);
+        if(configurationInputStream != null) {
+            return configurationFactory.build(configurationPath, configurationInputStream);
         }
 
         return configurationFactory.build();
     }
+
 }
