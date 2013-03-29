@@ -8,6 +8,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.util.TimeZone;
 
 import static org.fest.assertions.api.Assertions.*;
@@ -17,9 +18,10 @@ public class RequestLogConfigurationTest {
 
     @Before
     public void setUp() throws Exception {
+        File requestLogFile = new File(Resources.getResource("yaml/requestLog.yml").toURI());
         this.requestLog = ConfigurationFactory
                 .forClass(RequestLogConfiguration.class, new Validator())
-                .build(new File(Resources.getResource("yaml/requestLog.yml").toURI()));
+                .build(requestLogFile.toString(), new FileInputStream(requestLogFile));
     }
 
     @Test
