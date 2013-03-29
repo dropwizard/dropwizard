@@ -1,15 +1,15 @@
 package com.yammer.dropwizard.cli;
 
 import com.yammer.dropwizard.config.*;
+import com.yammer.dropwizard.config.provider.ConfigurationSourceProvider;
 import com.yammer.dropwizard.json.ObjectMapperFactory;
 import com.yammer.dropwizard.util.Generics;
 import com.yammer.dropwizard.validation.Validator;
 import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * A command whose first parameter is the location of a YAML configuration file. That file is parsed
@@ -48,7 +48,8 @@ public abstract class ConfiguredCommand<T extends Configuration> extends Command
     @Override
     @SuppressWarnings("unchecked")
     public final void run(Bootstrap<?> bootstrap, Namespace namespace) throws Exception {
-        final T configuration = parseConfiguration(namespace.getString("file"),
+        final T configuration = parseConfiguration(bootstrap.getConfigurationProvider(),
+                                                   namespace.getString("file"),
                                                    getConfigurationClass(),
                                                    bootstrap.getObjectMapperFactory().copy());
         if (configuration != null) {
@@ -70,17 +71,16 @@ public abstract class ConfiguredCommand<T extends Configuration> extends Command
                                 Namespace namespace,
                                 T configuration) throws Exception;
 
-    private T parseConfiguration(String filename,
+    private T parseConfiguration(ConfigurationSourceProvider configurationProvider,
+                                 String configurationPath,
                                  Class<T> configurationClass,
                                  ObjectMapperFactory objectMapperFactory) throws IOException, ConfigurationException {
         final ConfigurationFactory<T> configurationFactory =
                 ConfigurationFactory.forClass(configurationClass, new Validator(), objectMapperFactory);
-        if (filename != null) {
-            final File file = new File(filename);
-            if (!file.exists()) {
-                throw new FileNotFoundException("File " + file + " not found");
-            }
-            return configurationFactory.build(file);
+
+        InputStream configurationInputStream = configurationProvider.create(configurationPath);
+        if(configurationInputStream != null) {
+            return configurationFactory.build(configurationPath, configurationInputStream);
         }
 
         return configurationFactory.build();
