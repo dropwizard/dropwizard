@@ -7,9 +7,7 @@ import com.yammer.dropwizard.validation.Validator;
 import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 
 /**
  * A command whose first parameter is the location of a YAML configuration file. That file is parsed
@@ -71,31 +69,27 @@ public abstract class ConfiguredCommand<T extends Configuration> extends Command
                                 T configuration) throws Exception;
 
     /**
-     * Returns the {@link Configuration} of type T at the specified configuration file path. The
-     * default behavior looks for the configuration file on the local file system.
-     * Subclasses can override this method as a means to provide a way to read the configuration
-     * from any source they choose.
+     * Returns the {@link InputStream) for the configuration associated with this command. By default
+     * the method will look for the configuration on the local file system. Subclasses should override
+     * this method if it wants to read the configuration from a location other than the local file system
+     * (i.e. a remote URL, create it programatically, etc).
      *
      * @param configurationPath the path to the configuration
-     * @param configurationFactory the configurationFactory
-     * @return the Configuration object
-     * @throws IOException throws an exception if there is an error reading the configuration
-     * from the configurationPath
-     * @throws ConfigurationException throws an exception in the case of an error with the
-     * configuration (i.e. validation)
+     * @return the {@link InputStream} that represents the configuration
      */
-    protected T parseConfiguration(String configurationPath,
-                                    ConfigurationFactory<T> configurationFactory) throws IOException, ConfigurationException {
+    protected InputStream getConfigurationInputStream(String configurationPath) throws IOException {
+        InputStream configurationInputStream = null;
+
         if (configurationPath != null) {
             final File file = new File(configurationPath);
             if (!file.exists()) {
                 throw new FileNotFoundException("Configuration file " + file + " not found");
             }
 
-            return configurationFactory.build(file);
+            configurationInputStream = new FileInputStream(file);
         }
 
-        return configurationFactory.build();
+        return configurationInputStream;
     }
 
     private T parseConfiguration(String configurationPath,
@@ -104,7 +98,12 @@ public abstract class ConfiguredCommand<T extends Configuration> extends Command
         final ConfigurationFactory<T> configurationFactory =
                 ConfigurationFactory.forClass(configurationClass, new Validator(), objectMapperFactory);
 
-        return parseConfiguration(configurationPath, configurationFactory);
+        InputStream configurationInputStream = getConfigurationInputStream(configurationPath);
+        if(configurationInputStream != null) {
+            return configurationFactory.build(configurationPath, configurationInputStream);
+        }
+
+        return configurationFactory.build();
     }
 
 }
