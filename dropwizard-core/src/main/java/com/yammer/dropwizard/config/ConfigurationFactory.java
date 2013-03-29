@@ -15,7 +15,9 @@ import com.yammer.dropwizard.logging.LoggingOutput;
 import com.yammer.dropwizard.validation.Validator;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -53,10 +55,21 @@ public class ConfigurationFactory<T> {
         this.validator = validator;
     }
 
+    public T build(String configurationPath, InputStream inputStream) throws IOException, ConfigurationException {
+        T configuration = null;
+        try {
+            final JsonNode node = mapper.readTree(inputStream);
+            configuration = build(node, configurationPath != null ? configurationPath : "InputStream configuration");
+        } finally {
+            inputStream.close();
+        }
+
+        return configuration;
+    }
+
+    @Deprecated
     public T build(File file) throws IOException, ConfigurationException {
-        final JsonNode node = mapper.readTree(file);
-        final String filename = file.toString();
-        return build(node, filename);
+        return build(file.toString(), new FileInputStream(file));
     }
 
     public T build() throws IOException, ConfigurationException {

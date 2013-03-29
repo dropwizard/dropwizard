@@ -7,12 +7,15 @@ import com.yammer.dropwizard.ConfiguredBundle;
 import com.yammer.dropwizard.Service;
 import com.yammer.dropwizard.cli.Command;
 import com.yammer.dropwizard.cli.ConfiguredCommand;
+import com.yammer.dropwizard.config.provider.ConfigurationSourceProvider;
+import com.yammer.dropwizard.config.provider.FileConfigurationSourceProvider;
 import com.yammer.dropwizard.json.ObjectMapperFactory;
 
 import java.util.List;
 
 public class Bootstrap<T extends Configuration> {
     private String name;
+    private ConfigurationSourceProvider configurationProvider = new FileConfigurationSourceProvider();
     private final ObjectMapperFactory objectMapperFactory;
     private final List<Bundle> bundles;
     private final List<ConfiguredBundle<? super T>> configuredBundles;
@@ -32,6 +35,14 @@ public class Bootstrap<T extends Configuration> {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public ConfigurationSourceProvider getConfigurationProvider() {
+        return configurationProvider;
+    }
+
+    public void setConfigurationProvider(ConfigurationSourceProvider configurationProvider) {
+        this.configurationProvider = configurationProvider;
     }
 
     public void addBundle(Bundle bundle) {
