@@ -60,5 +60,8 @@ public class ManagedLiquibase extends Liquibase implements Managed {
         if (connection instanceof ManagedJdbcConnection) {
             ((ManagedJdbcConnection) connection).stop();
         }
+        if (connection != null) {
+            connection.close();
+        }
     }
 }
