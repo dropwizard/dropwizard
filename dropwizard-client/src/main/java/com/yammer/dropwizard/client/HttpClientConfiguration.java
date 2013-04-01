@@ -10,7 +10,7 @@ import javax.validation.constraints.NotNull;
 /**
  * The configuration class used by {@link HttpClientBuilder}.
  *
-  * @see <a href="http://dropwizard.codahale.com/manual/client.html#configuration-defaults">Http Client Configuration</a>
+ * @see <a href="http://dropwizard.codahale.com/manual/client/#configuration-defaults">Http Client Configuration</a>
  */
 public class HttpClientConfiguration {
     @NotNull
