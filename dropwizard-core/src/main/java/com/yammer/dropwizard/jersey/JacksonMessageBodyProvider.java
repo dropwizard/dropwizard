@@ -3,9 +3,9 @@ package com.yammer.dropwizard.jersey;
 import com.fasterxml.jackson.annotation.JsonIgnoreType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
-import com.google.common.collect.ImmutableList;
 import com.yammer.dropwizard.validation.InvalidEntityException;
 import com.yammer.dropwizard.validation.Validated;
+import com.yammer.dropwizard.validation.ValidationResult;
 import com.yammer.dropwizard.validation.Validator;
 
 import javax.validation.Valid;
@@ -70,7 +70,7 @@ public class JacksonMessageBodyProvider extends JacksonJaxbJsonProvider {
         final Class<?>[] classes = findValidationGroups(annotations);
 
         if (classes != null) {
-            final ImmutableList<String> errors = validator.validate(value, classes);
+            final ValidationResult errors = validator.validate(value, classes);
             if (!errors.isEmpty()) {
                 throw new InvalidEntityException("The request entity had the following errors:",
                                                  errors);

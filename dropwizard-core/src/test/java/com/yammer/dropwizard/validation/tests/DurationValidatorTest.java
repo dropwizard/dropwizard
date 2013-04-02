@@ -41,7 +41,7 @@ public class DurationValidatorTest {
     @Test
     public void returnsASetOfErrorsForAnObject() throws Exception {
         if ("en".equals(Locale.getDefault().getLanguage())) {
-            final ImmutableList<String> errors = validator.validate(new Example());
+            final ImmutableList<String> errors = validator.validate(new Example()).getMessages();
 
             assertThat(errors)
                     .containsOnly(
@@ -58,7 +58,7 @@ public class DurationValidatorTest {
         example.setTooSmall(Duration.seconds(100));
         example.setOutOfRange(Duration.minutes(15));
 
-        assertThat(validator.validate(example))
+        assertThat(validator.validate(example).getMessages())
                 .isEmpty();
     }
 }

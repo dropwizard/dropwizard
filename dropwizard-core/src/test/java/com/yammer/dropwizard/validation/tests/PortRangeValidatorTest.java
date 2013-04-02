@@ -24,7 +24,7 @@ public class PortRangeValidatorTest {
     public void acceptsNonPrivilegedPorts() throws Exception {
         example.port = 2048;
 
-        assertThat(validator.validate(example))
+        assertThat(validator.validate(example).getMessages())
                 .isEmpty();
     }
 
@@ -32,7 +32,7 @@ public class PortRangeValidatorTest {
     public void acceptsDynamicPorts() throws Exception {
         example.port = 0;
 
-        assertThat(validator.validate(example))
+        assertThat(validator.validate(example).getMessages())
                 .isEmpty();
     }
 
@@ -40,7 +40,7 @@ public class PortRangeValidatorTest {
     public void rejectsNegativePorts() throws Exception {
         example.port = -1;
 
-        assertThat(validator.validate(example))
+        assertThat(validator.validate(example).getMessages())
                 .containsOnly("port must be between 1025 and 65535 (was -1)");
     }
 
@@ -48,7 +48,7 @@ public class PortRangeValidatorTest {
     public void rejectsPrivilegedPorts() throws Exception {
         example.port = 80;
 
-        assertThat(validator.validate(example))
+        assertThat(validator.validate(example).getMessages())
                 .containsOnly("port must be between 1025 and 65535 (was 80)");
     }
 
@@ -56,7 +56,7 @@ public class PortRangeValidatorTest {
     public void allowsForCustomMinimumPorts() throws Exception {
         example.otherPort = 8080;
 
-        assertThat(validator.validate(example))
+        assertThat(validator.validate(example).getMessages())
                 .containsOnly("otherPort must be between 10000 and 15000 (was 8080)");
     }
 
@@ -64,7 +64,7 @@ public class PortRangeValidatorTest {
     public void allowsForCustomMaximumPorts() throws Exception {
         example.otherPort = 16000;
 
-        assertThat(validator.validate(example))
+        assertThat(validator.validate(example).getMessages())
                 .containsOnly("otherPort must be between 10000 and 15000 (was 16000)");
     }
 }
