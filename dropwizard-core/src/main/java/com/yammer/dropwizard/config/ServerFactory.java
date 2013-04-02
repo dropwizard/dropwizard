@@ -364,13 +364,6 @@ public class ServerFactory {
     private Handler createExternalServlet(Environment env) {
         final ServletContextHandler handler = env.getServletContextHandler();
         handler.addFilter(ThreadNameFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST));
-        // FIXME: 4/2/13 <coda> -- move base resource to ServletEnvironment
-        handler.setBaseResource(env.getBaseResource());
-
-        // FIXME: 4/2/13 <coda> -- move protected targets to ServletEnvironment
-        if(!env.getProtectedTargets().isEmpty()) {
-            handler.setProtectedTargets(env.getProtectedTargets().toArray(new String[env.getProtectedTargets().size()]));
-        }
 
         // FIXME: 4/2/13 <coda> -- move Jersey shit to JerseyEnvironment
         final ServletContainer jerseyContainer = env.getJerseyServletContainer();

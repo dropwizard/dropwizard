@@ -15,7 +15,6 @@ import com.yammer.dropwizard.json.ObjectMapperFactory;
 import com.yammer.dropwizard.lifecycle.ExecutorServiceManager;
 import com.yammer.dropwizard.lifecycle.Managed;
 import com.yammer.dropwizard.lifecycle.ServerLifecycleListener;
-import com.yammer.dropwizard.setup.ServletBuilder;
 import com.yammer.dropwizard.setup.ServletEnvironment;
 import com.yammer.dropwizard.tasks.GarbageCollectionTask;
 import com.yammer.dropwizard.tasks.Task;
@@ -26,12 +25,10 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.util.component.AbstractLifeCycle;
 import org.eclipse.jetty.util.component.AggregateLifeCycle;
 import org.eclipse.jetty.util.component.LifeCycle;
-import org.eclipse.jetty.util.resource.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
-import javax.servlet.Servlet;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.Path;
 import javax.ws.rs.ext.Provider;
@@ -60,9 +57,7 @@ public class Environment extends AbstractLifeCycle {
     private final ImmutableSet.Builder<HealthCheck> healthChecks;
     private final ServletContextHandler servletContext;
     private final ImmutableSet.Builder<Task> tasks;
-    private final ImmutableSet.Builder<String> protectedTargets;
     private final ImmutableList.Builder<ServerLifecycleListener> serverListeners;
-    private Resource baseResource;
     private final AggregateLifeCycle lifeCycle;
     private final ObjectMapperFactory objectMapperFactory;
     private SessionHandler sessionHandler;
@@ -102,8 +97,6 @@ public class Environment extends AbstractLifeCycle {
         this.servletContext = new ServletContextHandler();
         this.servletEnvironment = new ServletEnvironment(servletContext);
         this.tasks = ImmutableSet.builder();
-        this.baseResource = Resource.newClassPathResource(".");
-        this.protectedTargets = ImmutableSet.builder();
         this.serverListeners = ImmutableList.builder();
         this.lifeCycle = new AggregateLifeCycle();
         this.jerseyServletContainer = new ServletContainer(config);
@@ -218,19 +211,6 @@ public class Environment extends AbstractLifeCycle {
      */
     public void addTask(Task task) {
         tasks.add(checkNotNull(task));
-    }
-
-    /**
-     * Adds a protected Target (ie a target that 404s)
-     *
-     * @param target a protected target
-     */
-    public void addProtectedTarget(String target) {
-        protectedTargets.add(checkNotNull(target));
-    }
-
-    public void setBaseResource(Resource baseResource) {
-        this.baseResource = baseResource;
     }
 
     public void setSessionHandler(SessionHandler sessionHandler) {
@@ -354,14 +334,6 @@ public class Environment extends AbstractLifeCycle {
 
     ImmutableSet<Task> getTasks() {
         return tasks.build();
-    }
-
-    ImmutableSet<String> getProtectedTargets() {
-        return protectedTargets.build();
-    }
-
-    Resource getBaseResource() {
-        return baseResource;
     }
 
     private void logManagedObjects() {

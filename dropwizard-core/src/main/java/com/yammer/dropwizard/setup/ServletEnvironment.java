@@ -7,6 +7,7 @@ import org.eclipse.jetty.servlet.ServletHolder;
 
 import javax.servlet.Filter;
 import javax.servlet.Servlet;
+import java.util.Arrays;
 import java.util.EventListener;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -94,5 +95,18 @@ public class ServletEnvironment {
         for (EventListener listener : listeners) {
             handler.addEventListener(listener);
         }
+    }
+
+    /**
+     * Adds protected target URLs (ie targets that 404)
+     *
+     * @param targets protected targets
+     */
+    public void addProtectedTargets(String... targets) {
+        handler.setProtectedTargets(Arrays.copyOf(targets, targets.length));
+    }
+
+    public void setResourceBase(String resourceBase) {
+        handler.setResourceBase(resourceBase);
     }
 }
