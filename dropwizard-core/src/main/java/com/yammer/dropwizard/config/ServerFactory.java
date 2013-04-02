@@ -45,7 +45,6 @@ import java.io.File;
 import java.net.URI;
 import java.security.KeyStore;
 import java.util.EnumSet;
-import java.util.Map;
 
 /*
  * A factory for creating instances of {@link org.eclipse.jetty.server.Server} and configuring Servlets
@@ -371,11 +370,6 @@ public class ServerFactory {
             final ServletHolder jerseyHolder = new ServletHolder(jerseyContainer);
             jerseyHolder.setInitOrder(Integer.MAX_VALUE);
             handler.addServlet(jerseyHolder, env.getJerseyEnvironment().getUrlPattern());
-        }
-
-        // FIXME: 4/2/13 <coda> -- extract to ServletEnvironment
-        for (Map.Entry<String, String> entry : config.getContextParameters().entrySet()) {
-            handler.setInitParameter( entry.getKey(), entry.getValue() );
         }
 
         handler.setSessionHandler(env.getSessionHandler());

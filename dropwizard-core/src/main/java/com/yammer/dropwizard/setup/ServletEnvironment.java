@@ -109,4 +109,8 @@ public class ServletEnvironment {
     public void setResourceBase(String resourceBase) {
         handler.setResourceBase(resourceBase);
     }
+
+    public void setInitParameter(String name, String value) {
+        handler.setInitParameter(name, value);
+    }
 }

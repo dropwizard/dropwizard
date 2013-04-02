@@ -1,7 +1,6 @@
 package com.yammer.dropwizard.config.tests;
 
 import com.google.common.base.Optional;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.io.Resources;
 import com.yammer.dropwizard.config.ConfigurationFactory;
 import com.yammer.dropwizard.config.HttpConfiguration;
@@ -28,12 +27,6 @@ public class HttpConfigurationTest {
     public void loadsGzipConfig() throws Exception {
         assertThat(http.getGzipConfiguration().isEnabled())
                 .isFalse();
-    }
-
-    @Test
-    public void loadsContextParams() throws Exception {
-        assertThat(http.getContextParameters())
-                .isEqualTo(ImmutableMap.of("param", "value"));
     }
 
     @Test

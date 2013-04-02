@@ -31,7 +31,5 @@ useDateHeader: false
 useForwardedHeaders: false
 useDirectBuffers: false
 bindHost: "localhost"
-contextParameters:
-  param: value
 adminUsername: admin
 adminPassword: password

@@ -5,10 +5,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.google.common.base.Optional;
-import com.google.common.collect.ImmutableMap;
-import com.yammer.dropwizard.validation.PortRange;
 import com.yammer.dropwizard.util.Duration;
 import com.yammer.dropwizard.util.Size;
+import com.yammer.dropwizard.validation.PortRange;
 import com.yammer.dropwizard.validation.ValidationMethod;
 
 import javax.validation.Valid;
@@ -16,7 +15,6 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.Locale;
-import java.util.Map;
 
 /**
  * An object representation of the {@code http} section of the YAML configuration file.
@@ -55,10 +53,6 @@ public class HttpConfiguration {
     @Valid
     @JsonProperty("ssl")
     private SslConfiguration ssl = null;
-
-    @NotNull
-    @JsonProperty
-    private ImmutableMap<String, String> contextParameters = ImmutableMap.of();
 
     @PortRange
     @JsonProperty
@@ -200,14 +194,6 @@ public class HttpConfiguration {
 
     public void setSslConfiguration(SslConfiguration config) {
         this.ssl = config;
-    }
-
-    public ImmutableMap<String, String> getContextParameters() {
-        return contextParameters;
-    }
-
-    public void setContextParameters(Map<String, String> contextParameters) {
-        this.contextParameters = ImmutableMap.copyOf(contextParameters);
     }
 
     public ConnectorType getConnectorType() {
