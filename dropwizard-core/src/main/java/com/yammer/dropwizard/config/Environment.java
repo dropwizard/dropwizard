@@ -13,8 +13,6 @@ import com.yammer.dropwizard.validation.Validator;
 import com.yammer.metrics.core.HealthCheck;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
@@ -25,8 +23,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * A Dropwizard service's environment.
  */
 public class Environment {
-    private static final Logger LOGGER = LoggerFactory.getLogger(Environment.class);
-
     private final String name;
     private final Set<HealthCheck> healthChecks;
 
