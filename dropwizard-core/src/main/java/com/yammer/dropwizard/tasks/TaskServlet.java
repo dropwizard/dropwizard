@@ -1,7 +1,7 @@
 package com.yammer.dropwizard.tasks;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.Maps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,7 +12,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.MediaType;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Collection;
 import java.util.Enumeration;
+import java.util.concurrent.ConcurrentMap;
 
 /**
  * A servlet which provides access to administrative {@link Task}s. It only responds to {@code POST}
@@ -24,19 +26,17 @@ import java.util.Enumeration;
 public class TaskServlet extends HttpServlet {
     private static final long serialVersionUID = 7404713218661358124L;
     private static final Logger LOGGER = LoggerFactory.getLogger(TaskServlet.class);
-    private final ImmutableMap<String, Task> tasks;
+    private final ConcurrentMap<String, Task> tasks;
 
     /**
-     * Creates a new TaskServlet given the provided set of {@link Task} instances.
-     *
-     * @param tasks a series of tasks which the servlet will provide access to
+     * Creates a new TaskServlet.
      */
-    public TaskServlet(Iterable<Task> tasks) {
-        final ImmutableMap.Builder<String, Task> builder = ImmutableMap.builder();
-        for (Task task : tasks) {
-            builder.put('/' + task.getName(), task);
-        }
-        this.tasks = builder.build();
+    public TaskServlet() {
+        this.tasks = Maps.newConcurrentMap();
+    }
+
+    public void add(Task task) {
+        tasks.put('/' + task.getName(), task);
     }
 
     @Override
@@ -71,5 +71,9 @@ public class TaskServlet extends HttpServlet {
             results.putAll(name, values);
         }
         return results.build();
+    }
+
+    public Collection<Task> getTasks() {
+        return tasks.values();
     }
 }

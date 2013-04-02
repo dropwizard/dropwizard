@@ -8,7 +8,6 @@ import com.yammer.dropwizard.jersey.JacksonMessageBodyProvider;
 import com.yammer.dropwizard.jetty.BiDiGzipHandler;
 import com.yammer.dropwizard.jetty.UnbrandedErrorHandler;
 import com.yammer.dropwizard.servlets.ThreadNameFilter;
-import com.yammer.dropwizard.tasks.TaskServlet;
 import com.yammer.dropwizard.util.Duration;
 import com.yammer.dropwizard.util.Size;
 import com.yammer.metrics.HealthChecks;
@@ -77,21 +76,6 @@ public class ServerFactory {
         for (HealthCheck healthCheck : env.getHealthChecks()) {
             HealthChecks.defaultRegistry().register(healthCheck);
         }
-
-        if (env.getHealthChecks().isEmpty()) {
-            LOGGER.warn('\n' +
-                             "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" +
-                             "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" +
-                             "!    THIS SERVICE HAS NO HEALTHCHECKS. THIS MEANS YOU WILL NEVER KNOW IF IT    !\n" +
-                             "!    DIES IN PRODUCTION, WHICH MEANS YOU WILL NEVER KNOW IF YOU'RE LETTING     !\n" +
-                             "!     YOUR USERS DOWN. YOU SHOULD ADD A HEALTHCHECK FOR EACH DEPENDENCY OF     !\n" +
-                             "!     YOUR SERVICE WHICH FULLY (BUT LIGHTLY) TESTS YOUR SERVICE'S ABILITY TO   !\n" +
-                             "!      USE THAT SERVICE. THINK OF IT AS A CONTINUOUS INTEGRATION TEST.         !\n" +
-                             "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" +
-                             "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-            );
-        }
-
         final Server server = createServer(env);
         server.setHandler(createHandler(env));
         return server;
@@ -305,8 +289,8 @@ public class ServerFactory {
     private Handler createHandler(Environment env) {
         final HandlerCollection collection = new HandlerCollection();
 
-        collection.addHandler(createInternalServlet(env));
         collection.addHandler(createExternalServlet(env));
+        collection.addHandler(createInternalServlet(env));
 
         if (requestLogHandlerFactory.isEnabled()) {
             collection.addHandler(requestLogHandlerFactory.build());
@@ -316,8 +300,7 @@ public class ServerFactory {
     }
 
     private Handler createInternalServlet(Environment env) {
-        final ServletContextHandler handler = new ServletContextHandler();
-        handler.addServlet(new ServletHolder(new TaskServlet(env.getTasks())), "/tasks/*");
+        final ServletContextHandler handler = env.getAdminContext();
         handler.addServlet(new ServletHolder(new AdminServlet()), "/*");
 
         if (config.getAdminPort() != 0 && config.getAdminPort() == config.getPort()) {

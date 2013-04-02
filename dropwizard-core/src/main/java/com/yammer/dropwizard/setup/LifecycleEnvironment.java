@@ -1,5 +1,6 @@
 package com.yammer.dropwizard.setup;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.yammer.dropwizard.jetty.JettyManaged;
 import com.yammer.dropwizard.lifecycle.ExecutorServiceManager;
@@ -9,16 +10,26 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.component.AbstractLifeCycle;
 import org.eclipse.jetty.util.component.AggregateLifeCycle;
 import org.eclipse.jetty.util.component.LifeCycle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.*;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class LifecycleEnvironment {
+    private static final Logger LOGGER = LoggerFactory.getLogger(LifecycleEnvironment.class);
+
     private final AggregateLifeCycle lifeCycle;
 
     public LifecycleEnvironment(AggregateLifeCycle lifeCycle) {
         this.lifeCycle = lifeCycle;
+        lifeCycle.addLifeCycleListener(new AbstractLifeCycle.AbstractLifeCycleListener() {
+            @Override
+            public void lifeCycleStarting(LifeCycle event) {
+
+            }
+        });
     }
 
     /**
@@ -115,5 +126,13 @@ public class LifecycleEnvironment {
                 listener.serverStarted((Server) event);
             }
         }
+    }
+
+    private void logManagedObjects() {
+        final ImmutableSet.Builder<String> builder = ImmutableSet.builder();
+        for (Object bean : lifeCycle.getBeans()) {
+            builder.add(bean.toString());
+        }
+        LOGGER.debug("managed objects = {}", builder.build());
     }
 }

@@ -12,6 +12,7 @@ import com.yammer.dropwizard.hibernate.SessionFactoryFactory;
 import com.yammer.dropwizard.hibernate.SessionFactoryHealthCheck;
 import com.yammer.dropwizard.hibernate.UnitOfWorkResourceMethodDispatchAdapter;
 import com.yammer.dropwizard.json.ObjectMapperFactory;
+import com.yammer.dropwizard.setup.AdminEnvironment;
 import com.yammer.dropwizard.setup.JerseyEnvironment;
 import org.hibernate.SessionFactory;
 import org.junit.Before;
@@ -27,6 +28,7 @@ public class HibernateBundleTest {
     private final SessionFactoryFactory factory = mock(SessionFactoryFactory.class);
     private final SessionFactory sessionFactory = mock(SessionFactory.class);
     private final Configuration configuration = mock(Configuration.class);
+    private final AdminEnvironment adminEnvironment = mock(AdminEnvironment.class);
     private final JerseyEnvironment jerseyEnvironment = mock(JerseyEnvironment.class);
     private final Environment environment = mock(Environment.class);
     private final HibernateBundle<Configuration> bundle = new HibernateBundle<Configuration>(entities, factory) {
@@ -39,6 +41,7 @@ public class HibernateBundleTest {
     @Before
     @SuppressWarnings("unchecked")
     public void setUp() throws Exception {
+        when(environment.getAdminEnvironment()).thenReturn(adminEnvironment);
         when(environment.getJerseyEnvironment()).thenReturn(jerseyEnvironment);
 
         when(factory.build(eq(bundle),
@@ -88,7 +91,7 @@ public class HibernateBundleTest {
 
         final ArgumentCaptor<SessionFactoryHealthCheck> captor =
                 ArgumentCaptor.forClass(SessionFactoryHealthCheck.class);
-        verify(environment).addHealthCheck(captor.capture());
+        verify(adminEnvironment).addHealthCheck(captor.capture());
 
         assertThat(captor.getValue().getSessionFactory()).isEqualTo(sessionFactory);
 
