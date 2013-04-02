@@ -5,6 +5,8 @@ import com.yammer.dropwizard.assets.AssetServlet;
 import com.yammer.dropwizard.assets.AssetsBundle;
 import com.yammer.dropwizard.assets.ResourceURL;
 import com.yammer.dropwizard.config.Environment;
+import com.yammer.dropwizard.setup.ServletEnvironment;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
@@ -13,12 +15,19 @@ import java.net.URL;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class AssetsBundleTest {
+    private final ServletEnvironment servletEnvironment = mock(ServletEnvironment.class);
     private final Environment environment = mock(Environment.class);
 
     private AssetServlet servlet;
     private String servletPath;
+
+    @Before
+    public void setUp() throws Exception {
+        when(environment.getServletEnvironment()).thenReturn(servletEnvironment);
+    }
 
     @Test
     public void hasADefaultPath() throws Exception {
@@ -98,7 +107,7 @@ public class AssetsBundleTest {
         final ArgumentCaptor<AssetServlet> servletCaptor = ArgumentCaptor.forClass(AssetServlet.class);
         final ArgumentCaptor<String> pathCaptor = ArgumentCaptor.forClass(String.class);
 
-        verify(environment).addServlet(servletCaptor.capture(), pathCaptor.capture());
+        verify(servletEnvironment).addServlet(servletCaptor.capture(), pathCaptor.capture());
 
         this.servlet = servletCaptor.getValue();
         this.servletPath = pathCaptor.getValue();

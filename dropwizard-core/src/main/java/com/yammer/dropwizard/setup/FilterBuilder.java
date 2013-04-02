@@ -1,4 +1,4 @@
-package com.yammer.dropwizard.config;
+package com.yammer.dropwizard.setup;
 
 import com.google.common.collect.ImmutableMultimap;
 import org.eclipse.jetty.servlet.FilterHolder;

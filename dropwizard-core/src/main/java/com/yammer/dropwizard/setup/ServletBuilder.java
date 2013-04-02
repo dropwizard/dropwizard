@@ -1,6 +1,5 @@
-package com.yammer.dropwizard.config;
+package com.yammer.dropwizard.setup;
 
-import com.google.common.collect.ImmutableMap;
 import org.eclipse.jetty.servlet.ServletHolder;
 
 import java.util.Map;
@@ -14,7 +13,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
  */
 public class ServletBuilder {
     private final ServletHolder holder;
-    private final ImmutableMap.Builder<String, ServletHolder> mappings;
+    private final Map<String, ServletHolder> mappings;
 
     /**
      * Creates a new ServletBuilder.
@@ -23,7 +22,7 @@ public class ServletBuilder {
      * @param mappings the mappings of URL patterns to {@link javax.servlet.Servlet}s
      */
     public ServletBuilder(ServletHolder holder,
-                          ImmutableMap.Builder<String, ServletHolder> mappings) {
+                          Map<String, ServletHolder> mappings) {
         this.holder = holder;
         this.mappings = mappings;
     }

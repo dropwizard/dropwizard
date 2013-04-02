@@ -1,8 +1,8 @@
-package com.yammer.dropwizard.config.tests;
+package com.yammer.dropwizard.setup.tests;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMultimap;
-import com.yammer.dropwizard.config.FilterBuilder;
+import com.yammer.dropwizard.setup.FilterBuilder;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.junit.Test;
 
