@@ -8,14 +8,11 @@ import com.sun.jersey.test.framework.JerseyTest;
 import com.sun.jersey.test.framework.LowLevelAppDescriptor;
 import com.yammer.dropwizard.config.Environment;
 import com.yammer.dropwizard.db.DatabaseConfiguration;
-import com.yammer.dropwizard.hibernate.AbstractDAO;
-import com.yammer.dropwizard.hibernate.HibernateBundle;
-import com.yammer.dropwizard.hibernate.SessionFactoryFactory;
-import com.yammer.dropwizard.hibernate.UnitOfWork;
-import com.yammer.dropwizard.hibernate.UnitOfWorkResourceMethodDispatchAdapter;
+import com.yammer.dropwizard.hibernate.*;
 import com.yammer.dropwizard.jersey.DropwizardResourceConfig;
 import com.yammer.dropwizard.jersey.JacksonMessageBodyProvider;
 import com.yammer.dropwizard.json.ObjectMapperFactory;
+import com.yammer.dropwizard.setup.LifecycleEnvironment;
 import com.yammer.dropwizard.validation.Validator;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -31,6 +28,7 @@ import javax.ws.rs.core.MediaType;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.fest.assertions.api.Assertions.failBecauseExceptionWasNotThrown;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class JerseyIntegrationTest extends JerseyTest {
     static {
@@ -91,9 +89,10 @@ public class JerseyIntegrationTest extends JerseyTest {
     protected AppDescriptor configure() {
         final SessionFactoryFactory factory = new SessionFactoryFactory();
         final DatabaseConfiguration dbConfig = new DatabaseConfiguration();
-        final ImmutableList<String> packages = ImmutableList.of("com.yammer.dropwizard.hibernate.tests");
-        final HibernateBundle bundle = mock(HibernateBundle.class);
+        final HibernateBundle<?> bundle = mock(HibernateBundle.class);
         final Environment environment = mock(Environment.class);
+        final LifecycleEnvironment lifecycleEnvironment = mock(LifecycleEnvironment.class);
+        when(environment.getLifecycleEnvironment()).thenReturn(lifecycleEnvironment);
 
         dbConfig.setUrl("jdbc:hsqldb:mem:DbTest-" + System.nanoTime());
         dbConfig.setUser("sa");

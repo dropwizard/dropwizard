@@ -54,12 +54,12 @@ public class DropwizardServiceRule<C extends Configuration> implements TestRule 
             final Bootstrap<C> bootstrap = new Bootstrap<C>(service) {
                 @Override
                 public void runWithBundles(C configuration, Environment environment) throws Exception {
-                    environment.addServerLifecycleListener(new ServerLifecycleListener() {
-                        @Override
-                        public void serverStarted(Server server) {
-                            jettyServer = server;
-                        }
-                    });
+                    environment.getLifecycleEnvironment().addServerLifecycleListener(new ServerLifecycleListener() {
+                                    @Override
+                                    public void serverStarted(Server server) {
+                                        jettyServer = server;
+                                    }
+                                });
                     DropwizardServiceRule.this.configuration = configuration;
                     DropwizardServiceRule.this.environment = environment;
                     super.runWithBundles(configuration, environment);

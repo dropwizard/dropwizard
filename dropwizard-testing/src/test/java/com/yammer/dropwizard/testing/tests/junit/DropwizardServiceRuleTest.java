@@ -44,13 +44,13 @@ public class DropwizardServiceRuleTest {
 
     @Test
     public void returnsService() {
-        TestService service = RULE.getService();
+        final TestService service = RULE.getService();
         assertNotNull(service);
     }
 
     @Test
     public void returnsEnvironment() {
-        Environment environment = RULE.getEnvironment();
+        final Environment environment = RULE.getEnvironment();
         assertThat(environment.getName(), is("TestService"));
     }
 

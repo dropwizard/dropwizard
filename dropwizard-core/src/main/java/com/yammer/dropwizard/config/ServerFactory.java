@@ -93,14 +93,13 @@ public class ServerFactory {
             );
         }
 
-        final Server server = createServer();
+        final Server server = createServer(env);
         server.setHandler(createHandler(env));
-        server.addBean(env);
         return server;
     }
 
-    private Server createServer() {
-        final Server server = new Server();
+    private Server createServer(Environment env) {
+        final Server server = env.getServer();
 
         server.addConnector(createExternalConnector());
 

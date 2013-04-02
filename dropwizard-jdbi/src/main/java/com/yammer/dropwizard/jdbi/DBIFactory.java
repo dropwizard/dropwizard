@@ -53,7 +53,7 @@ public class DBIFactory {
                      String name) {
         final String validationQuery = configuration.getValidationQuery();
         final DBI dbi = new DBI(dataSource);
-        environment.manage(dataSource);
+        environment.getLifecycleEnvironment().manage(dataSource);
         environment.addHealthCheck(new DBIHealthCheck(dbi, name, validationQuery));
         dbi.setSQLLog(new LogbackLog(LOGGER, Level.TRACE));
         dbi.setTimingCollector(new InstrumentedTimingCollector(Metrics.defaultRegistry(),

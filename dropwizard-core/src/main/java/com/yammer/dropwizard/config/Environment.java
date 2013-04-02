@@ -3,67 +3,54 @@ package com.yammer.dropwizard.config;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Ordering;
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.sun.jersey.core.reflection.AnnotatedMethod;
 import com.sun.jersey.core.reflection.MethodList;
 import com.sun.jersey.spi.container.servlet.ServletContainer;
 import com.yammer.dropwizard.jersey.DropwizardResourceConfig;
-import com.yammer.dropwizard.jetty.JettyManaged;
 import com.yammer.dropwizard.json.ObjectMapperFactory;
-import com.yammer.dropwizard.lifecycle.ExecutorServiceManager;
-import com.yammer.dropwizard.lifecycle.Managed;
-import com.yammer.dropwizard.lifecycle.ServerLifecycleListener;
 import com.yammer.dropwizard.setup.JerseyEnvironment;
+import com.yammer.dropwizard.setup.LifecycleEnvironment;
 import com.yammer.dropwizard.setup.ServletEnvironment;
 import com.yammer.dropwizard.tasks.GarbageCollectionTask;
 import com.yammer.dropwizard.tasks.Task;
 import com.yammer.dropwizard.validation.Validator;
 import com.yammer.metrics.core.HealthCheck;
+import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
-import org.eclipse.jetty.util.component.AbstractLifeCycle;
-import org.eclipse.jetty.util.component.AggregateLifeCycle;
-import org.eclipse.jetty.util.component.LifeCycle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.Path;
 import javax.ws.rs.ext.Provider;
-import java.util.List;
-import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-// TODO: 10/12/11 <coda> -- test Environment
-/*
-    REVIEW: 11/12/11 <coda> -- Probably better to invert this code.
-    Instead of letting it collect intermediate results and then exposing those via package-private
-    getters, it might be better to pass this a ServletContextHandler, etc., and have it modify
-    those directly. That's easier to test.
-*/
-
 /**
  * A Dropwizard service's environment.
  */
-public class Environment extends AbstractLifeCycle {
+public class Environment {
     private static final Logger LOGGER = LoggerFactory.getLogger(Environment.class);
 
     private final String name;
-    private final DropwizardResourceConfig config;
     private final ImmutableSet.Builder<HealthCheck> healthChecks;
-    private final ServletContextHandler servletContext;
     private final ImmutableSet.Builder<Task> tasks;
-    private final ImmutableList.Builder<ServerLifecycleListener> serverListeners;
-    private final AggregateLifeCycle lifeCycle;
+
     private final ObjectMapperFactory objectMapperFactory;
     private SessionHandler sessionHandler;
     private Validator validator;
 
+    private final DropwizardResourceConfig jerseyConfig;
     private final AtomicReference<ServletContainer> jerseyServletContainer;
-    private final ServletEnvironment servletEnvironment;
     private final JerseyEnvironment jerseyEnvironment;
+
+    private final ServletContextHandler servletContext;
+    private final ServletEnvironment servletEnvironment;
+
+    private final Server server;
+    private final LifecycleEnvironment lifecycleEnvironment;
 
     /**
      * Creates a new environment.
@@ -77,7 +64,7 @@ public class Environment extends AbstractLifeCycle {
         this.name = name;
         this.objectMapperFactory = objectMapperFactory;
         this.validator = validator;
-        this.config = new DropwizardResourceConfig(false) {
+        this.jerseyConfig = new DropwizardResourceConfig(false) {
             @Override
             public void validate() {
                 super.validate();
@@ -90,24 +77,18 @@ public class Environment extends AbstractLifeCycle {
             }
         };
         this.healthChecks = ImmutableSet.builder();
+        this.tasks = ImmutableSet.builder();
+
         this.servletContext = new ServletContextHandler();
         this.servletEnvironment = new ServletEnvironment(servletContext);
-        this.tasks = ImmutableSet.builder();
-        this.serverListeners = ImmutableList.builder();
-        this.lifeCycle = new AggregateLifeCycle();
-        this.jerseyServletContainer = new AtomicReference<ServletContainer>(new ServletContainer(config));
-        this.jerseyEnvironment = new JerseyEnvironment(jerseyServletContainer, config);
+
+        this.server = new Server();
+        this.lifecycleEnvironment = new LifecycleEnvironment(server);
+
+        this.jerseyServletContainer = new AtomicReference<ServletContainer>(new ServletContainer(jerseyConfig));
+        this.jerseyEnvironment = new JerseyEnvironment(jerseyServletContainer, jerseyConfig);
+
         addTask(new GarbageCollectionTask());
-    }
-
-    @Override
-    protected void doStart() throws Exception {
-        lifeCycle.start();
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        lifeCycle.stop();
     }
 
     public JerseyEnvironment getJerseyEnvironment() {
@@ -123,24 +104,8 @@ public class Environment extends AbstractLifeCycle {
         healthChecks.add(checkNotNull(healthCheck));
     }
 
-    /**
-     * Adds the given {@link Managed} instance to the set of objects managed by the server's
-     * lifecycle. When the server starts, {@code managed} will be started. When the server stops,
-     * {@code managed} will be stopped.
-     *
-     * @param managed a managed object
-     */
-    public void manage(Managed managed) {
-        lifeCycle.addBean(new JettyManaged(checkNotNull(managed)));
-    }
-
-    /**
-     * Adds the given Jetty {@link LifeCycle} instances to the server's lifecycle.
-     *
-     * @param managed a Jetty-managed object
-     */
-    public void manage(LifeCycle managed) {
-        lifeCycle.addBean(checkNotNull(managed));
+    public LifecycleEnvironment getLifecycleEnvironment() {
+        return lifecycleEnvironment;
     }
 
     /**
@@ -165,57 +130,17 @@ public class Environment extends AbstractLifeCycle {
         this.sessionHandler = sessionHandler;
     }
 
-
-    /**
-     * Creates a new {@link ExecutorService} instance with the given parameters whose lifecycle is
-     * managed by the service.
-     *
-     * @param nameFormat      a {@link String#format(String, Object...)}-compatible format String,
-     *                        to which a unique integer (0, 1, etc.) will be supplied as the single
-     *                        parameter.
-     * @param corePoolSize    the number of threads to keep in the pool, even if they are idle.
-     * @param maximumPoolSize the maximum number of threads to allow in the pool.
-     * @param keepAliveTime   when the number of threads is greater than the core, this is the
-     *                        maximum time that excess idle threads will wait for new tasks before
-     *                        terminating.
-     * @param unit            the time unit for the keepAliveTime argument.
-     * @return a new {@link ExecutorService} instance
-     */
-    public ExecutorService managedExecutorService(String nameFormat,
-                                                  int corePoolSize,
-                                                  int maximumPoolSize,
-                                                  long keepAliveTime,
-                                                  TimeUnit unit) {
-        final ThreadFactory threadFactory = new ThreadFactoryBuilder().setNameFormat(nameFormat)
-                                                                      .build();
-        final ExecutorService executor = new ThreadPoolExecutor(corePoolSize,
-                                                                maximumPoolSize,
-                                                                keepAliveTime,
-                                                                unit,
-                                                                new LinkedBlockingQueue<Runnable>(),
-                                                                threadFactory);
-        manage(new ExecutorServiceManager(executor, 5, TimeUnit.SECONDS, nameFormat));
-        return executor;
+    public SessionHandler getSessionHandler() {
+        return sessionHandler;
     }
 
-    /**
-     * Creates a new {@link ScheduledExecutorService} instance with the given parameters whose
-     * lifecycle is managed by the service.
-     *
-     * @param nameFormat   a {@link String#format(String, Object...)}-compatible format String, to
-     *                     which a unique integer (0, 1, etc.) will be supplied as the single
-     *                     parameter.
-     * @param corePoolSize the number of threads to keep in the pool, even if they are idle.
-     * @return a new {@link ScheduledExecutorService} instance
-     */
-    public ScheduledExecutorService managedScheduledExecutorService(String nameFormat,
-                                                                    int corePoolSize) {
-        final ThreadFactory threadFactory = new ThreadFactoryBuilder().setNameFormat(nameFormat)
-                                                                      .build();
-        final ScheduledExecutorService executor = new ScheduledThreadPoolExecutor(corePoolSize,
-                                                                                  threadFactory);
-        manage(new ExecutorServiceManager(executor, 5, TimeUnit.SECONDS, nameFormat));
-        return executor;
+
+    public ObjectMapperFactory getObjectMapperFactory() {
+        return objectMapperFactory;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public Validator getValidator() {
@@ -246,9 +171,13 @@ public class Environment extends AbstractLifeCycle {
         return jerseyServletContainer.get();
     }
 
+    Server getServer() {
+        return server;
+    }
+
     private void logManagedObjects() {
         final ImmutableSet.Builder<String> builder = ImmutableSet.builder();
-        for (Object bean : lifeCycle.getBeans()) {
+        for (Object bean : server.getBeans()) {
             builder.add(bean.toString());
         }
         LOGGER.debug("managed objects = {}", builder.build());
@@ -272,13 +201,13 @@ public class Environment extends AbstractLifeCycle {
     private void logResources() {
         final ImmutableSet.Builder<String> builder = ImmutableSet.builder();
 
-        for (Class<?> klass : config.getClasses()) {
+        for (Class<?> klass : jerseyConfig.getClasses()) {
             if (klass.isAnnotationPresent(Path.class)) {
                 builder.add(klass.getCanonicalName());
             }
         }
 
-        for (Object o : config.getSingletons()) {
+        for (Object o : jerseyConfig.getSingletons()) {
             if (o.getClass().isAnnotationPresent(Path.class)) {
                 builder.add(o.getClass().getCanonicalName());
             }
@@ -290,13 +219,13 @@ public class Environment extends AbstractLifeCycle {
     private void logProviders() {
         final ImmutableSet.Builder<String> builder = ImmutableSet.builder();
 
-        for (Class<?> klass : config.getClasses()) {
+        for (Class<?> klass : jerseyConfig.getClasses()) {
             if (klass.isAnnotationPresent(Provider.class)) {
                 builder.add(klass.getCanonicalName());
             }
         }
 
-        for (Object o : config.getSingletons()) {
+        for (Object o : jerseyConfig.getSingletons()) {
             if (o.getClass().isAnnotationPresent(Provider.class)) {
                 builder.add(o.getClass().getCanonicalName());
             }
@@ -309,12 +238,12 @@ public class Environment extends AbstractLifeCycle {
         final StringBuilder stringBuilder = new StringBuilder(1024).append("The following paths were found for the configured resources:\n\n");
 
         final ImmutableList.Builder<Class<?>> builder = ImmutableList.builder();
-        for (Object o : config.getSingletons()) {
+        for (Object o : jerseyConfig.getSingletons()) {
             if (o.getClass().isAnnotationPresent(Path.class)) {
                 builder.add(o.getClass());
             }
         }
-        for (Class<?> klass : config.getClasses()) {
+        for (Class<?> klass : jerseyConfig.getClasses()) {
             if (klass.isAnnotationPresent(Path.class)) {
                 builder.add(klass);
             }
@@ -370,25 +299,5 @@ public class Environment extends AbstractLifeCycle {
 
     private MethodList annotatedMethods(Class<?> resource) {
         return new MethodList(resource, true).hasMetaAnnotation(HttpMethod.class);
-    }
-
-    public SessionHandler getSessionHandler() {
-        return sessionHandler;
-    }
-
-    public ObjectMapperFactory getObjectMapperFactory() {
-        return objectMapperFactory;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public List<ServerLifecycleListener> getServerListeners() {
-        return serverListeners.build();
-    }
-
-    public void addServerLifecycleListener(ServerLifecycleListener listener) {
-        serverListeners.add(listener);
     }
 }

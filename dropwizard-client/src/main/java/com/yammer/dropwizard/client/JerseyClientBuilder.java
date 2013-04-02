@@ -171,7 +171,8 @@ public class JerseyClientBuilder {
             return build(executorService, objectMapper);
         }
 
-        return build(environment.managedExecutorService("jersey-client-%d",
+        return build(environment.getLifecycleEnvironment()
+                                .managedExecutorService("jersey-client-%d",
                                                         configuration.getMinThreads(),
                                                         configuration.getMaxThreads(),
                                                         60,

@@ -9,6 +9,8 @@ import com.yammer.dropwizard.client.JerseyClientConfiguration;
 import com.yammer.dropwizard.config.Environment;
 import com.yammer.dropwizard.jersey.JacksonMessageBodyProvider;
 import com.yammer.dropwizard.json.ObjectMapperFactory;
+import com.yammer.dropwizard.setup.LifecycleEnvironment;
+import org.junit.Before;
 import org.junit.Test;
 
 import javax.ws.rs.Consumes;
@@ -47,9 +49,15 @@ public class JerseyClientBuilderTest {
     private static final Annotation[] NO_ANNOTATIONS = new Annotation[0];
 
     private final JerseyClientBuilder builder = new JerseyClientBuilder();
+    private final LifecycleEnvironment lifecycleEnvironment = mock(LifecycleEnvironment.class);
     private final Environment environment = mock(Environment.class);
     private final ExecutorService executorService = mock(ExecutorService.class);
     private final ObjectMapper objectMapper = mock(ObjectMapper.class);
+
+    @Before
+    public void setUp() throws Exception {
+        when(environment.getLifecycleEnvironment()).thenReturn(lifecycleEnvironment);
+    }
 
     @Test
     public void throwsAnExceptionWithoutAnEnvironmentOrAThreadPoolAndObjectMapper() throws Exception {
@@ -165,11 +173,11 @@ public class JerseyClientBuilderTest {
     public void usesAnObjectMapperFromTheEnvironment() throws Exception {
         final JerseyClientConfiguration configuration = new JerseyClientConfiguration();
 
-        when(environment.managedExecutorService("jersey-client-%d",
-                                                configuration.getMinThreads(),
-                                                configuration.getMaxThreads(),
-                                                60,
-                                                TimeUnit.SECONDS)).thenReturn(executorService);
+        when(lifecycleEnvironment.managedExecutorService("jersey-client-%d",
+                                                         configuration.getMinThreads(),
+                                                         configuration.getMaxThreads(),
+                                                         60,
+                                                         TimeUnit.SECONDS)).thenReturn(executorService);
         final ObjectMapperFactory factory = mock(ObjectMapperFactory.class);
         when(factory.build()).thenReturn(objectMapper);
 
@@ -195,7 +203,7 @@ public class JerseyClientBuilderTest {
         configuration.setMinThreads(7);
         configuration.setMaxThreads(532);
 
-        when(environment.managedExecutorService("jersey-client-%d", 7, 532, 60, TimeUnit.SECONDS)).thenReturn(executorService);
+        when(lifecycleEnvironment.managedExecutorService("jersey-client-%d", 7, 532, 60, TimeUnit.SECONDS)).thenReturn(executorService);
         final ObjectMapperFactory factory = mock(ObjectMapperFactory.class);
         when(factory.build()).thenReturn(objectMapper);
 

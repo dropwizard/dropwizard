@@ -6,6 +6,7 @@ import com.yammer.dropwizard.db.DatabaseConfiguration;
 import com.yammer.dropwizard.hibernate.HibernateBundle;
 import com.yammer.dropwizard.hibernate.ManagedSessionFactory;
 import com.yammer.dropwizard.hibernate.SessionFactoryFactory;
+import com.yammer.dropwizard.setup.LifecycleEnvironment;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
@@ -27,7 +28,8 @@ public class SessionFactoryFactoryTest {
 
     private final SessionFactoryFactory factory = new SessionFactoryFactory();
 
-    private final HibernateBundle bundle = mock(HibernateBundle.class);
+    private final HibernateBundle<?> bundle = mock(HibernateBundle.class);
+    private final LifecycleEnvironment lifecycleEnvironment = mock(LifecycleEnvironment.class);
     private final Environment environment = mock(Environment.class);
     private final DatabaseConfiguration config = new DatabaseConfiguration();
 
@@ -35,6 +37,8 @@ public class SessionFactoryFactoryTest {
 
     @Before
     public void setUp() throws Exception {
+        when(environment.getLifecycleEnvironment()).thenReturn(lifecycleEnvironment);
+
         config.setUrl("jdbc:hsqldb:mem:DbTest-" + System.currentTimeMillis());
         config.setUser("sa");
         config.setDriverClass("org.hsqldb.jdbcDriver");
@@ -52,7 +56,7 @@ public class SessionFactoryFactoryTest {
     public void managesTheSessionFactory() throws Exception {
         build();
 
-        verify(environment).manage(any(ManagedSessionFactory.class));
+        verify(lifecycleEnvironment).manage(any(ManagedSessionFactory.class));
     }
 
     @Test
