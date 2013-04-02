@@ -19,14 +19,12 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class AdminEnvironment extends ServletEnvironment {
     private static final Logger LOGGER = LoggerFactory.getLogger(AdminEnvironment.class);
 
-    private final ServletContextHandler handler;
     private final Set<HealthCheck> healthChecks;
     private final TaskServlet tasks;
 
     public AdminEnvironment(ServletContextHandler handler,
                             Set<HealthCheck> healthChecks) {
         super(handler);
-        this.handler = handler;
         this.healthChecks = healthChecks;
         this.tasks = new TaskServlet();
         tasks.add(new GarbageCollectionTask());
