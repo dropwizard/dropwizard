@@ -365,16 +365,16 @@ public class ServerFactory {
         final ServletContextHandler handler = env.getServletContextHandler();
         handler.addFilter(ThreadNameFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST));
 
-        // FIXME: 4/2/13 <coda> -- move Jersey shit to JerseyEnvironment
         final ServletContainer jerseyContainer = env.getJerseyServletContainer();
         if (jerseyContainer != null) {
-            env.addProvider(new JacksonMessageBodyProvider(env.getObjectMapperFactory().build(),
-                                                           env.getValidator()));
+            env.getJerseyEnvironment().addProvider(new JacksonMessageBodyProvider(env.getObjectMapperFactory().build(),
+                                                               env.getValidator()));
             final ServletHolder jerseyHolder = new ServletHolder(jerseyContainer);
             jerseyHolder.setInitOrder(Integer.MAX_VALUE);
-            handler.addServlet(jerseyHolder, config.getRootPath());
+            handler.addServlet(jerseyHolder, env.getJerseyEnvironment().getUrlPattern());
         }
 
+        // FIXME: 4/2/13 <coda> -- extract to ServletEnvironment
         for (Map.Entry<String, String> entry : config.getContextParameters().entrySet()) {
             handler.setInitParameter( entry.getKey(), entry.getValue() );
         }

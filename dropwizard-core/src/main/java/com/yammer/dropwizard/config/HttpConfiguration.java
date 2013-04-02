@@ -77,10 +77,6 @@ public class HttpConfiguration {
     @Max(1000000)
     @JsonProperty
     private int minThreads = 8;
-
-    @NotNull
-    @JsonProperty
-    private String rootPath = "/*";
     
     @NotNull
     @JsonProperty
@@ -404,14 +400,6 @@ public class HttpConfiguration {
 
     public void setUseServerHeader(boolean useServerHeader) {
         this.useServerHeader = useServerHeader;
-    }
-
-    public String getRootPath() {
-        return rootPath;
-    }
-
-    public void setRootPath(String path) {
-        this.rootPath = path;
     }
 
     public Optional<String> getAdminUsername() {

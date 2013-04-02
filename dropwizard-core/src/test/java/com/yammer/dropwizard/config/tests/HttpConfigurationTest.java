@@ -61,12 +61,6 @@ public class HttpConfigurationTest {
     }
 
     @Test
-    public void hasARootPath() throws Exception {
-        assertThat(http.getRootPath())
-                .isEqualTo("/services/*");
-    }
-
-    @Test
     public void hasAConnectorType() throws Exception {
         assertThat(http.getConnectorType())
                 .isEqualTo(HttpConfiguration.ConnectorType.LEGACY);

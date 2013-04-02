@@ -11,7 +11,6 @@ port: 9080
 adminPort: 9081
 maxThreads: 101
 minThreads: 89
-rootPath: "/services/*"
 connectorType: legacy
 maxIdleTime: 2s
 acceptorThreads: 2

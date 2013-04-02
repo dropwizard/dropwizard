@@ -4,10 +4,8 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Ordering;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import com.sun.jersey.api.core.ResourceConfig;
 import com.sun.jersey.core.reflection.AnnotatedMethod;
 import com.sun.jersey.core.reflection.MethodList;
-import com.sun.jersey.core.spi.scanning.PackageNamesScanner;
 import com.sun.jersey.spi.container.servlet.ServletContainer;
 import com.yammer.dropwizard.jersey.DropwizardResourceConfig;
 import com.yammer.dropwizard.jetty.JettyManaged;
@@ -15,6 +13,7 @@ import com.yammer.dropwizard.json.ObjectMapperFactory;
 import com.yammer.dropwizard.lifecycle.ExecutorServiceManager;
 import com.yammer.dropwizard.lifecycle.Managed;
 import com.yammer.dropwizard.lifecycle.ServerLifecycleListener;
+import com.yammer.dropwizard.setup.JerseyEnvironment;
 import com.yammer.dropwizard.setup.ServletEnvironment;
 import com.yammer.dropwizard.tasks.GarbageCollectionTask;
 import com.yammer.dropwizard.tasks.Task;
@@ -28,12 +27,12 @@ import org.eclipse.jetty.util.component.LifeCycle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nullable;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.Path;
 import javax.ws.rs.ext.Provider;
 import java.util.List;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -52,7 +51,6 @@ public class Environment extends AbstractLifeCycle {
     private static final Logger LOGGER = LoggerFactory.getLogger(Environment.class);
 
     private final String name;
-    private final Configuration configuration;
     private final DropwizardResourceConfig config;
     private final ImmutableSet.Builder<HealthCheck> healthChecks;
     private final ServletContextHandler servletContext;
@@ -61,24 +59,22 @@ public class Environment extends AbstractLifeCycle {
     private final AggregateLifeCycle lifeCycle;
     private final ObjectMapperFactory objectMapperFactory;
     private SessionHandler sessionHandler;
-    private ServletContainer jerseyServletContainer;
     private Validator validator;
 
+    private final AtomicReference<ServletContainer> jerseyServletContainer;
     private final ServletEnvironment servletEnvironment;
+    private final JerseyEnvironment jerseyEnvironment;
 
     /**
      * Creates a new environment.
      *
      * @param name                the name of the service
-     * @param configuration       the service's {@link Configuration}
      * @param objectMapperFactory the {@link ObjectMapperFactory} for the service
      */
     public Environment(String name,
-                       Configuration configuration,
                        ObjectMapperFactory objectMapperFactory,
                        Validator validator) {
         this.name = name;
-        this.configuration = configuration;
         this.objectMapperFactory = objectMapperFactory;
         this.validator = validator;
         this.config = new DropwizardResourceConfig(false) {
@@ -99,7 +95,8 @@ public class Environment extends AbstractLifeCycle {
         this.tasks = ImmutableSet.builder();
         this.serverListeners = ImmutableList.builder();
         this.lifeCycle = new AggregateLifeCycle();
-        this.jerseyServletContainer = new ServletContainer(config);
+        this.jerseyServletContainer = new AtomicReference<ServletContainer>(new ServletContainer(config));
+        this.jerseyEnvironment = new JerseyEnvironment(jerseyServletContainer, config);
         addTask(new GarbageCollectionTask());
     }
 
@@ -113,57 +110,8 @@ public class Environment extends AbstractLifeCycle {
         lifeCycle.stop();
     }
 
-    /**
-     * Adds the given object as a Jersey singleton resource.
-     *
-     * @param resource a Jersey singleton resource
-     */
-    public void addResource(Object resource) {
-        config.getSingletons().add(checkNotNull(resource));
-    }
-
-    /**
-     * Scans the packages and sub-packages of the given {@link Class} objects for resources and
-     * providers.
-     *
-     * @param classes the classes whose packages to scan
-     */
-    public void scanPackagesForResourcesAndProviders(Class<?>... classes) {
-        checkNotNull(classes);
-        final String[] names = new String[classes.length];
-        for (int i = 0; i < classes.length; i++) {
-            names[i] = classes[i].getPackage().getName();
-        }
-        config.init(new PackageNamesScanner(names));
-    }
-
-    /**
-     * Adds the given class as a Jersey resource. <p/><b>N.B.:</b> This class must either have a
-     * no-args constructor or use Jersey's built-in dependency injection.
-     *
-     * @param klass a Jersey resource class
-     */
-    public void addResource(Class<?> klass) {
-        config.getClasses().add(checkNotNull(klass));
-    }
-
-    /**
-     * Adds the given object as a Jersey provider.
-     *
-     * @param provider a Jersey provider
-     */
-    public void addProvider(Object provider) {
-        config.getSingletons().add(checkNotNull(provider));
-    }
-
-    /**
-     * Adds the given class as a Jersey provider. <p/><b>N.B.:</b> This class must either have a
-     * no-args constructor or use Jersey's built-in dependency injection.
-     *
-     * @param klass a Jersey provider class
-     */
-    public void addProvider(Class<?> klass) {
-        config.getClasses().add(checkNotNull(klass));
+    public JerseyEnvironment getJerseyEnvironment() {
+        return jerseyEnvironment;
     }
 
     /**
@@ -215,48 +163,6 @@ public class Environment extends AbstractLifeCycle {
 
     public void setSessionHandler(SessionHandler sessionHandler) {
         this.sessionHandler = sessionHandler;
-    }
-
-    /**
-     * Enables the Jersey feature with the given name.
-     *
-     * @param name the name of the feature to be enabled
-     * @see ResourceConfig
-     */
-    public void enableJerseyFeature(String name) {
-        config.getFeatures().put(checkNotNull(name), Boolean.TRUE);
-    }
-
-    /**
-     * Disables the Jersey feature with the given name.
-     *
-     * @param name the name of the feature to be disabled
-     * @see ResourceConfig
-     */
-    public void disableJerseyFeature(String name) {
-        config.getFeatures().put(checkNotNull(name), Boolean.FALSE);
-    }
-
-    /**
-     * Sets the given Jersey property.
-     *
-     * @param name  the name of the Jersey property
-     * @param value the value of the Jersey property
-     * @see ResourceConfig
-     */
-    public void setJerseyProperty(String name, @Nullable Object value) {
-        config.getProperties().put(checkNotNull(name), value);
-    }
-
-    /**
-     * Gets the given Jersey property.
-     *
-     * @param name     the name of the Jersey property
-     * @see ResourceConfig
-     */
-    @SuppressWarnings("unchecked")
-    public <T> T getJerseyProperty(String name) {
-        return (T) config.getProperties().get(name);
     }
 
 
@@ -336,6 +242,10 @@ public class Environment extends AbstractLifeCycle {
         return tasks.build();
     }
 
+    ServletContainer getJerseyServletContainer() {
+        return jerseyServletContainer.get();
+    }
+
     private void logManagedObjects() {
         final ImmutableSet.Builder<String> builder = ImmutableSet.builder();
         for (Object bean : lifeCycle.getBeans()) {
@@ -412,7 +322,7 @@ public class Environment extends AbstractLifeCycle {
 
         for (Class<?> klass : builder.build()) {
             final String path = klass.getAnnotation(Path.class).value();
-            String rootPath = configuration.getHttpConfiguration().getRootPath();
+            String rootPath = jerseyEnvironment.getUrlPattern();
             if (rootPath.endsWith("/*")) {
                 rootPath = rootPath.substring(0, rootPath.length() - (path.startsWith("/") ? 2 : 1));
             }
@@ -468,18 +378,6 @@ public class Environment extends AbstractLifeCycle {
 
     public ObjectMapperFactory getObjectMapperFactory() {
         return objectMapperFactory;
-    }
-
-    public ResourceConfig getJerseyResourceConfig() {
-        return config;
-    }
-
-    public ServletContainer getJerseyServletContainer() {
-        return jerseyServletContainer;
-    }
-
-    public void setJerseyServletContainer(ServletContainer jerseyServletContainer) {
-        this.jerseyServletContainer = jerseyServletContainer;
     }
 
     public String getName() {

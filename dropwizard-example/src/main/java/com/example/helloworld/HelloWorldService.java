@@ -51,17 +51,17 @@ public class HelloWorldService extends Service<HelloWorldConfiguration> {
                     Environment environment) throws ClassNotFoundException {
         final PersonDAO dao = new PersonDAO(hibernateBundle.getSessionFactory());
 
-        environment.addProvider(new BasicAuthProvider<User>(new ExampleAuthenticator(),
+        environment.getJerseyEnvironment().addProvider(new BasicAuthProvider<User>(new ExampleAuthenticator(),
                                                             "SUPER SECRET STUFF"));
 
         final Template template = configuration.buildTemplate();
 
         environment.addHealthCheck(new TemplateHealthCheck(template));
-        environment.addResource(new HelloWorldResource(template));
-        environment.addResource(new ViewResource());
-        environment.addResource(new ProtectedResource());
+        environment.getJerseyEnvironment().addResource(new HelloWorldResource(template));
+        environment.getJerseyEnvironment().addResource(new ViewResource());
+        environment.getJerseyEnvironment().addResource(new ProtectedResource());
 
-        environment.addResource(new PeopleResource(dao));
-        environment.addResource(new PersonResource(dao));
+        environment.getJerseyEnvironment().addResource(new PeopleResource(dao));
+        environment.getJerseyEnvironment().addResource(new PersonResource(dao));
     }
 }

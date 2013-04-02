@@ -62,7 +62,7 @@ public class DropwizardServiceRuleTest {
 
         @Override
         public void run(TestConfiguration configuration, Environment environment) throws Exception {
-            environment.addResource(new TestResource(configuration.getMessage()));
+            environment.getJerseyEnvironment().addResource(new TestResource(configuration.getMessage()));
         }
     }
 
