@@ -1,18 +1,20 @@
 package com.yammer.dropwizard.setup.tests;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMultimap;
 import com.yammer.dropwizard.setup.FilterBuilder;
 import org.eclipse.jetty.servlet.FilterHolder;
+import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.junit.Test;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import javax.servlet.DispatcherType;
+import java.util.EnumSet;
+
 import static org.mockito.Mockito.*;
 
 public class FilterBuilderTest {
     private final FilterHolder holder = mock(FilterHolder.class);
-    private final ImmutableMultimap.Builder<String, FilterHolder> mappings = ImmutableMultimap.builder();
-    private final FilterBuilder config = new FilterBuilder(holder, mappings);
+    private final ServletContextHandler handler = mock(ServletContextHandler.class);
+    private final FilterBuilder config = new FilterBuilder(holder, handler);
 
     @Test
     public void setsInitializationParameters() throws Exception {
@@ -34,17 +36,17 @@ public class FilterBuilderTest {
     public void mapsAUrlPatternToAFilter() throws Exception {
         config.addUrlPattern("/one");
 
-        assertThat(mappings.build())
-                .isEqualTo(ImmutableMultimap.of("/one", holder));
+        verify(handler).addFilter(holder, "/one", EnumSet.of(DispatcherType.REQUEST));
+        verifyNoMoreInteractions(handler);
     }
 
     @Test
     public void mapsUrlPatternsToAFilter() throws Exception {
         config.addUrlPatterns("/one", "/two");
 
-        assertThat(mappings.build())
-                .isEqualTo(ImmutableMultimap.of("/one", holder,
-                                                "/two", holder));
+        verify(handler).addFilter(holder, "/one", EnumSet.of(DispatcherType.REQUEST));
+        verify(handler).addFilter(holder, "/two", EnumSet.of(DispatcherType.REQUEST));
+        verifyNoMoreInteractions(handler);
     }
 
     @Test

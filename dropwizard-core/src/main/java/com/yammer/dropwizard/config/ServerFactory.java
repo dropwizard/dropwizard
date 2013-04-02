@@ -1,7 +1,6 @@
 package com.yammer.dropwizard.config;
 
 import com.google.common.base.Optional;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.sun.jersey.spi.container.servlet.ServletContainer;
@@ -31,7 +30,6 @@ import org.eclipse.jetty.server.handler.HandlerCollection;
 import org.eclipse.jetty.server.nio.AbstractNIOConnector;
 import org.eclipse.jetty.server.nio.SelectChannelConnector;
 import org.eclipse.jetty.server.ssl.SslConnector;
-import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.security.Constraint;
@@ -47,7 +45,6 @@ import java.io.File;
 import java.net.URI;
 import java.security.KeyStore;
 import java.util.EnumSet;
-import java.util.EventListener;
 import java.util.Map;
 
 /*
@@ -365,18 +362,17 @@ public class ServerFactory {
     }
 
     private Handler createExternalServlet(Environment env) {
-        final ServletContextHandler handler = new ServletContextHandler();
+        final ServletContextHandler handler = env.getServletContextHandler();
         handler.addFilter(ThreadNameFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST));
+        // FIXME: 4/2/13 <coda> -- move base resource to ServletEnvironment
         handler.setBaseResource(env.getBaseResource());
 
+        // FIXME: 4/2/13 <coda> -- move protected targets to ServletEnvironment
         if(!env.getProtectedTargets().isEmpty()) {
             handler.setProtectedTargets(env.getProtectedTargets().toArray(new String[env.getProtectedTargets().size()]));
         }
 
-        for (ImmutableMap.Entry<String, ServletHolder> entry : env.getServlets().entrySet()) {
-            handler.addServlet(entry.getValue(), entry.getKey());
-        }
-
+        // FIXME: 4/2/13 <coda> -- move Jersey shit to JerseyEnvironment
         final ServletContainer jerseyContainer = env.getJerseyServletContainer();
         if (jerseyContainer != null) {
             env.addProvider(new JacksonMessageBodyProvider(env.getObjectMapperFactory().build(),
@@ -384,14 +380,6 @@ public class ServerFactory {
             final ServletHolder jerseyHolder = new ServletHolder(jerseyContainer);
             jerseyHolder.setInitOrder(Integer.MAX_VALUE);
             handler.addServlet(jerseyHolder, config.getRootPath());
-        }
-
-        for (ImmutableMap.Entry<String, FilterHolder> entry : env.getFilters().entries()) {
-            handler.addFilter(entry.getValue(), entry.getKey(), EnumSet.of(DispatcherType.REQUEST));
-        }
-
-        for (EventListener listener : env.getServletListeners()) {
-            handler.addEventListener(listener);
         }
 
         for (Map.Entry<String, String> entry : config.getContextParameters().entrySet()) {

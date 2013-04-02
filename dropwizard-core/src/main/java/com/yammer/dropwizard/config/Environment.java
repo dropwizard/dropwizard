@@ -1,6 +1,8 @@
 package com.yammer.dropwizard.config;
 
-import com.google.common.collect.*;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Ordering;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.sun.jersey.api.core.ResourceConfig;
 import com.sun.jersey.core.reflection.AnnotatedMethod;
@@ -20,8 +22,7 @@ import com.yammer.dropwizard.tasks.Task;
 import com.yammer.dropwizard.validation.Validator;
 import com.yammer.metrics.core.HealthCheck;
 import org.eclipse.jetty.server.session.SessionHandler;
-import org.eclipse.jetty.servlet.FilterHolder;
-import org.eclipse.jetty.servlet.ServletHolder;
+import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.util.component.AbstractLifeCycle;
 import org.eclipse.jetty.util.component.AggregateLifeCycle;
 import org.eclipse.jetty.util.component.LifeCycle;
@@ -34,9 +35,7 @@ import javax.servlet.Servlet;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.Path;
 import javax.ws.rs.ext.Provider;
-import java.util.EventListener;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.*;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -59,9 +58,7 @@ public class Environment extends AbstractLifeCycle {
     private final Configuration configuration;
     private final DropwizardResourceConfig config;
     private final ImmutableSet.Builder<HealthCheck> healthChecks;
-    private final Map<String, ServletHolder> servlets;
-    private final ImmutableMultimap.Builder<String, FilterHolder> filters;
-    private final ImmutableSet.Builder<EventListener> servletListeners;
+    private final ServletContextHandler servletContext;
     private final ImmutableSet.Builder<Task> tasks;
     private final ImmutableSet.Builder<String> protectedTargets;
     private final ImmutableList.Builder<ServerLifecycleListener> serverListeners;
@@ -102,10 +99,8 @@ public class Environment extends AbstractLifeCycle {
             }
         };
         this.healthChecks = ImmutableSet.builder();
-        this.servlets = Maps.newLinkedHashMap();
-        this.filters = ImmutableMultimap.builder();
-        this.servletListeners = ImmutableSet.builder();
-        this.servletEnvironment = new ServletEnvironment(servlets, filters, servletListeners);
+        this.servletContext = new ServletContextHandler();
+        this.servletEnvironment = new ServletEnvironment(servletContext);
         this.tasks = ImmutableSet.builder();
         this.baseResource = Resource.newClassPathResource(".");
         this.protectedTargets = ImmutableSet.builder();
@@ -353,12 +348,8 @@ public class Environment extends AbstractLifeCycle {
         return healthChecks.build();
     }
 
-    ImmutableMap<String, ServletHolder> getServlets() {
-        return ImmutableMap.copyOf(servlets);
-    }
-
-    ImmutableMultimap<String, FilterHolder> getFilters() {
-        return filters.build();
+    ServletContextHandler getServletContextHandler() {
+        return servletContext;
     }
 
     ImmutableSet<Task> getTasks() {
@@ -371,10 +362,6 @@ public class Environment extends AbstractLifeCycle {
 
     Resource getBaseResource() {
         return baseResource;
-    }
-
-    ImmutableSet<EventListener> getServletListeners() {
-        return servletListeners.build();
     }
 
     private void logManagedObjects() {

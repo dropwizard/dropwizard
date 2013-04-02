@@ -1,29 +1,21 @@
 package com.yammer.dropwizard.setup;
 
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.ImmutableSet;
 import com.yammer.dropwizard.jetty.NonblockingServletHolder;
 import org.eclipse.jetty.servlet.FilterHolder;
+import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 
 import javax.servlet.Filter;
 import javax.servlet.Servlet;
 import java.util.EventListener;
-import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class ServletEnvironment {
-    private final Map<String, ServletHolder> servlets;
-    private final ImmutableMultimap.Builder<String, FilterHolder> filters;
-    private final ImmutableSet.Builder<EventListener> servletListeners;
+    private final ServletContextHandler handler;
 
-    public ServletEnvironment(Map<String, ServletHolder> servlets,
-                              ImmutableMultimap.Builder<String, FilterHolder> filters,
-                              ImmutableSet.Builder<EventListener> servletListeners) {
-        this.servlets = servlets;
-        this.filters = filters;
-        this.servletListeners = servletListeners;
+    public ServletEnvironment(ServletContextHandler handler) {
+        this.handler = handler;
     }
 
     /**
@@ -37,7 +29,7 @@ public class ServletEnvironment {
     public ServletBuilder addServlet(Servlet servlet,
                                      String urlPattern) {
         final ServletHolder holder = new NonblockingServletHolder(checkNotNull(servlet));
-        final ServletBuilder servletConfig = new ServletBuilder(holder, servlets);
+        final ServletBuilder servletConfig = new ServletBuilder(holder, handler);
         servletConfig.addUrlPattern(checkNotNull(urlPattern));
         return servletConfig;
     }
@@ -53,7 +45,7 @@ public class ServletEnvironment {
     public ServletBuilder addServlet(Class<? extends Servlet> klass,
                                      String urlPattern) {
         final ServletHolder holder = new ServletHolder(checkNotNull(klass));
-        final ServletBuilder servletConfig = new ServletBuilder(holder, servlets);
+        final ServletBuilder servletConfig = new ServletBuilder(holder, handler);
         servletConfig.addUrlPattern(checkNotNull(urlPattern));
         return servletConfig;
     }
@@ -69,7 +61,7 @@ public class ServletEnvironment {
     public FilterBuilder addFilter(Filter filter,
                                    String urlPattern) {
         final FilterHolder holder = new FilterHolder(checkNotNull(filter));
-        final FilterBuilder filterConfig = new FilterBuilder(holder, filters);
+        final FilterBuilder filterConfig = new FilterBuilder(holder, handler);
         filterConfig.addUrlPattern(checkNotNull(urlPattern));
         return filterConfig;
     }
@@ -85,7 +77,7 @@ public class ServletEnvironment {
     public FilterBuilder addFilter(Class<? extends Filter> klass,
                                    String urlPattern) {
         final FilterHolder holder = new FilterHolder(checkNotNull(klass));
-        final FilterBuilder filterConfig = new FilterBuilder(holder, filters);
+        final FilterBuilder filterConfig = new FilterBuilder(holder, handler);
         filterConfig.addUrlPattern(checkNotNull(urlPattern));
         return filterConfig;
     }
@@ -99,6 +91,8 @@ public class ServletEnvironment {
      *                  javax.servlet.ServletRequestAttributeListener}
      */
     public void addServletListeners(EventListener... listeners) {
-        this.servletListeners.add(listeners);
+        for (EventListener listener : listeners) {
+            handler.addEventListener(listener);
+        }
     }
 }

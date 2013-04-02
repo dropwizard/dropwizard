@@ -1,8 +1,10 @@
 package com.yammer.dropwizard.setup;
 
-import com.google.common.collect.ImmutableMultimap;
 import org.eclipse.jetty.servlet.FilterHolder;
+import org.eclipse.jetty.servlet.ServletContextHandler;
 
+import javax.servlet.DispatcherType;
+import java.util.EnumSet;
 import java.util.Map;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -14,18 +16,18 @@ import static com.google.common.base.Strings.isNullOrEmpty;
  */
 public class FilterBuilder {
     private final FilterHolder holder;
-    private final ImmutableMultimap.Builder<String, FilterHolder> mappings;
+    private final ServletContextHandler handler;
 
     /**
      * Creates a new FilterBuilder.
      *
      * @param holder   the {@link FilterHolder} containing the {@link javax.servlet.Filter}
-     * @param mappings the mappings of URL patterns to {@link javax.servlet.Filter}s
+     * @param handler  the {@link ServletContextHandler}
      */
     public FilterBuilder(FilterHolder holder,
-                         ImmutableMultimap.Builder<String, FilterHolder> mappings) {
+                         ServletContextHandler handler) {
         this.holder = holder;
-        this.mappings = mappings;
+        this.handler = handler;
     }
 
     /**
@@ -72,7 +74,7 @@ public class FilterBuilder {
      * @return {@code this}
      */
     public FilterBuilder addUrlPattern(String urlPattern) {
-        mappings.put(checkNotNull(urlPattern), holder);
+        handler.addFilter(holder, checkNotNull(urlPattern), EnumSet.of(DispatcherType.REQUEST));
         return this;
     }
 

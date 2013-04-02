@@ -1,20 +1,17 @@
 package com.yammer.dropwizard.setup.tests;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
 import com.yammer.dropwizard.setup.ServletBuilder;
+import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.junit.Test;
 
-import java.util.Map;
-
-import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 public class ServletBuilderTest {
     private final ServletHolder holder = mock(ServletHolder.class);
-    private final Map<String, ServletHolder> mappings = Maps.newLinkedHashMap();
-    private final ServletBuilder config = new ServletBuilder(holder, mappings);
+    private final ServletContextHandler handler = mock(ServletContextHandler.class);
+    private final ServletBuilder config = new ServletBuilder(holder, handler);
 
     @Test
     public void setsInitializationOrder() throws Exception {
@@ -43,17 +40,17 @@ public class ServletBuilderTest {
     public void mapsAUrlPatternToAServlet() throws Exception {
         config.addUrlPattern("/one");
 
-        assertThat(mappings)
-                .isEqualTo(ImmutableMap.of("/one", holder));
+        verify(handler).addServlet(holder, "/one");
+        verifyNoMoreInteractions(handler);
     }
 
     @Test
     public void mapsUrlPatternsToAServlet() throws Exception {
         config.addUrlPatterns("/one", "/two");
 
-        assertThat(mappings)
-                .isEqualTo(ImmutableMap.of("/one", holder,
-                                           "/two", holder));
+        verify(handler).addServlet(holder, "/one");
+        verify(handler).addServlet(holder, "/two");
+        verifyNoMoreInteractions(handler);
     }
 
     @Test
