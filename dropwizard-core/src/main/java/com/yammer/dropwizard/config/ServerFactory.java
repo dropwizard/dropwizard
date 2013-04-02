@@ -372,8 +372,6 @@ public class ServerFactory {
             handler.addServlet(jerseyHolder, env.getJerseyEnvironment().getUrlPattern());
         }
 
-        handler.setSessionHandler(env.getSessionHandler());
-
         handler.setConnectorNames(new String[]{"main"});
 
         return wrapHandler(handler);
