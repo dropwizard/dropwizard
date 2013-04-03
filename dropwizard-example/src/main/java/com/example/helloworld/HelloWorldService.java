@@ -32,8 +32,12 @@ public class HelloWorldService extends Service<HelloWorldConfiguration> {
             };
 
     @Override
+    public String getName() {
+        return "hello-world";
+    }
+
+    @Override
     public void initialize(Bootstrap<HelloWorldConfiguration> bootstrap) {
-        bootstrap.setName("hello-world");
         bootstrap.addCommand(new RenderCommand());
         bootstrap.addBundle(new AssetsBundle());
         bootstrap.addBundle(new MigrationsBundle<HelloWorldConfiguration>() {
