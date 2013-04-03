@@ -8,7 +8,7 @@ import com.yammer.dropwizard.client.JerseyClientBuilder;
 import com.yammer.dropwizard.client.JerseyClientConfiguration;
 import com.yammer.dropwizard.config.Environment;
 import com.yammer.dropwizard.jersey.JacksonMessageBodyProvider;
-import com.yammer.dropwizard.json.ObjectMapperFactory;
+import com.yammer.dropwizard.setup.JsonEnvironment;
 import com.yammer.dropwizard.setup.LifecycleEnvironment;
 import org.junit.Before;
 import org.junit.Test;
@@ -49,6 +49,7 @@ public class JerseyClientBuilderTest {
     private static final Annotation[] NO_ANNOTATIONS = new Annotation[0];
 
     private final JerseyClientBuilder builder = new JerseyClientBuilder();
+    private final JsonEnvironment jsonEnvironment = mock(JsonEnvironment.class);
     private final LifecycleEnvironment lifecycleEnvironment = mock(LifecycleEnvironment.class);
     private final Environment environment = mock(Environment.class);
     private final ExecutorService executorService = mock(ExecutorService.class);
@@ -57,6 +58,7 @@ public class JerseyClientBuilderTest {
     @Before
     public void setUp() throws Exception {
         when(environment.getLifecycleEnvironment()).thenReturn(lifecycleEnvironment);
+        when(environment.getJsonEnvironment()).thenReturn(jsonEnvironment);
     }
 
     @Test
@@ -178,10 +180,8 @@ public class JerseyClientBuilderTest {
                                                          configuration.getMaxThreads(),
                                                          60,
                                                          TimeUnit.SECONDS)).thenReturn(executorService);
-        final ObjectMapperFactory factory = mock(ObjectMapperFactory.class);
-        when(factory.build()).thenReturn(objectMapper);
 
-        when(environment.getObjectMapperFactory()).thenReturn(factory);
+        when(jsonEnvironment.buildObjectMapper()).thenReturn(objectMapper);
 
         final Client client = builder.using(environment).build();
 
@@ -203,11 +203,13 @@ public class JerseyClientBuilderTest {
         configuration.setMinThreads(7);
         configuration.setMaxThreads(532);
 
-        when(lifecycleEnvironment.managedExecutorService("jersey-client-%d", 7, 532, 60, TimeUnit.SECONDS)).thenReturn(executorService);
-        final ObjectMapperFactory factory = mock(ObjectMapperFactory.class);
-        when(factory.build()).thenReturn(objectMapper);
+        when(lifecycleEnvironment.managedExecutorService("jersey-client-%d",
+                                                         7,
+                                                         532,
+                                                         60,
+                                                         TimeUnit.SECONDS)).thenReturn(executorService);
 
-        when(environment.getObjectMapperFactory()).thenReturn(factory);
+        when(jsonEnvironment.buildObjectMapper()).thenReturn(objectMapper);
 
         final ApacheHttpClient4 client = (ApacheHttpClient4) builder.using(configuration)
                                                                     .using(environment).build();

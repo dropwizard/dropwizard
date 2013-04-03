@@ -343,13 +343,14 @@ public class ServerFactory {
     }
 
     private Handler createExternalServlet(Environment env) {
-        final ServletContextHandler handler = env.getServletContextHandler();
+        final ServletContextHandler handler = env.getServletContext();
         handler.addFilter(ThreadNameFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST));
 
         final ServletContainer jerseyContainer = env.getJerseyServletContainer();
         if (jerseyContainer != null) {
-            env.getJerseyEnvironment().addProvider(new JacksonMessageBodyProvider(env.getObjectMapperFactory().build(),
-                                                               env.getValidator()));
+            env.getJerseyEnvironment().addProvider(
+                    new JacksonMessageBodyProvider(env.buildObjectMapper(), env.getValidator())
+            );
             final ServletHolder jerseyHolder = new ServletHolder(jerseyContainer);
             jerseyHolder.setInitOrder(Integer.MAX_VALUE);
             handler.addServlet(jerseyHolder, env.getJerseyEnvironment().getUrlPattern());
