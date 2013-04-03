@@ -181,7 +181,7 @@ public class JerseyClientBuilderTest {
                                                          60,
                                                          TimeUnit.SECONDS)).thenReturn(executorService);
 
-        when(jsonEnvironment.buildObjectMapper()).thenReturn(objectMapper);
+        when(jsonEnvironment.build()).thenReturn(objectMapper);
 
         final Client client = builder.using(environment).build();
 
@@ -209,7 +209,7 @@ public class JerseyClientBuilderTest {
                                                          60,
                                                          TimeUnit.SECONDS)).thenReturn(executorService);
 
-        when(jsonEnvironment.buildObjectMapper()).thenReturn(objectMapper);
+        when(jsonEnvironment.build()).thenReturn(objectMapper);
 
         final ApacheHttpClient4 client = (ApacheHttpClient4) builder.using(configuration)
                                                                     .using(environment).build();

@@ -93,6 +93,40 @@ public class ObjectMapperFactory {
         registerModule(new JodaModule());
     }
 
+    /**
+     * Creates a new {@link ObjectMapperFactory} with the same properties as another.
+     *
+     * @param other another {@link ObjectMapperFactory}
+     */
+    public ObjectMapperFactory(ObjectMapperFactory other) {
+        this.modules = Lists.newArrayList(other.modules);
+
+        this.mapperFeatures = Maps.newHashMap(other.mapperFeatures);
+        this.deserializationFeatures = Maps.newHashMap(other.deserializationFeatures);
+        this.serializationFeatures = Maps.newHashMap(other.serializationFeatures);
+        this.generatorFeatures = Maps.newHashMap(other.generatorFeatures);
+        this.parserFeatures = Maps.newHashMap(other.parserFeatures);
+        this.factoryFeatures = Maps.newHashMap(other.factoryFeatures);
+        this.visibilityRules = Maps.newHashMap(other.visibilityRules);
+
+        this.annotationIntrospector = other.annotationIntrospector;
+        this.dateFormat = other.dateFormat;
+        this.defaultTyping = other.defaultTyping;
+        this.filters = other.filters;
+        this.handlerInstantiator = other.handlerInstantiator;
+        this.injectableValues = other.injectableValues;
+        this.locale = other.locale;
+        this.mixinAnnotations = other.mixinAnnotations;
+        this.nodeFactory = other.nodeFactory;
+        this.propertyNamingStrategy = other.propertyNamingStrategy;
+        this.serializationInclusion = other.serializationInclusion;
+        this.serializerFactory = other.serializerFactory;
+        this.serializerProvider = other.serializerProvider;
+        this.subtypeResolver = other.subtypeResolver;
+        this.timeZone = other.timeZone;
+        this.visibilityChecker = other.visibilityChecker;
+    }
+
     public AnnotationIntrospector getAnnotationIntrospector() {
         return annotationIntrospector;
     }
@@ -611,42 +645,5 @@ public class ObjectMapperFactory {
 
 
         return mapper;
-    }
-
-    /**
-     * Creates a copy of {@code this}.
-     *
-     * @return a copy of {@code this}
-     */
-    public ObjectMapperFactory copy() {
-        final ObjectMapperFactory factory = new ObjectMapperFactory();
-
-        factory.modules.addAll(modules);
-        factory.mapperFeatures.putAll(mapperFeatures);
-        factory.deserializationFeatures.putAll(deserializationFeatures);
-        factory.serializationFeatures.putAll(serializationFeatures);
-        factory.generatorFeatures.putAll(generatorFeatures);
-        factory.parserFeatures.putAll(parserFeatures);
-        factory.factoryFeatures.putAll(factoryFeatures);
-        factory.visibilityRules.putAll(visibilityRules);
-
-        factory.annotationIntrospector = annotationIntrospector;
-        factory.dateFormat = dateFormat;
-        factory.defaultTyping = defaultTyping;
-        factory.filters = filters;
-        factory.handlerInstantiator = handlerInstantiator;
-        factory.injectableValues = injectableValues;
-        factory.locale = locale;
-        factory.mixinAnnotations = mixinAnnotations;
-        factory.nodeFactory = nodeFactory;
-        factory.propertyNamingStrategy = propertyNamingStrategy;
-        factory.serializationInclusion = serializationInclusion;
-        factory.serializerFactory = serializerFactory;
-        factory.serializerProvider = serializerProvider;
-        factory.subtypeResolver = subtypeResolver;
-        factory.timeZone = timeZone;
-        factory.visibilityChecker = visibilityChecker;
-
-        return factory;
     }
 }
