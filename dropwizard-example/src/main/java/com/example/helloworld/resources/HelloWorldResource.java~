@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Path("/hello-world")
-@Produces(MediaType.APPLICATION_JSON)
+
 public class HelloWorldResource {
     private static final Logger LOGGER = LoggerFactory.getLogger(HelloWorldResource.class);
 
@@ -30,6 +30,7 @@ public class HelloWorldResource {
     @GET
     @Timed(name = "get-requests")
     @CacheControl(maxAge = 1, maxAgeUnit = TimeUnit.DAYS)
+    @Produces(MediaType.APPLICATION_JSON)
     public Saying sayHello(@QueryParam("name") Optional<String> name) {
         return new Saying(counter.incrementAndGet(), template.render(name));
     }
@@ -42,7 +43,7 @@ public class HelloWorldResource {
 	@PUT
 	@Consumes({ MediaType.APPLICATION_JSON})
 	@Produces({ MediaType.APPLICATION_XML })
-	public Saying update(@Valid Saying saying) {
+	public Saying update(Saying saying) {
 		LOGGER.info("Received a saying: {}", saying.getId());
 		LOGGER.info("Received a saying: {}", saying.getContent());
 		return saying;
