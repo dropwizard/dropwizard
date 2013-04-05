@@ -1,4 +1,4 @@
-Dropwizard
+Dropwizard ![Build Status](https://api.travis-ci.org/codahale/dropwizard.png)
 ==========
 
 *Dropwizard is a sneaky way of making fast Java or Scala web services.*
