@@ -13,7 +13,7 @@ public class Saying {
     private long id;
 
     @JsonProperty
-    @Length(max = 15)
+    @Length(max = 10)
     @XmlElement
     private String content;
 
