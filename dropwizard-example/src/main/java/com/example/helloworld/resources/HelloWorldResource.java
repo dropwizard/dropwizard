@@ -38,4 +38,13 @@ public class HelloWorldResource {
     public void receiveHello(@Valid Saying saying) {
         LOGGER.info("Received a saying: {}", saying);
     }
+
+	@PUT
+	@Consumes({ MediaType.APPLICATION_JSON})
+	@Produces({ MediaType.APPLICATION_XML })
+	public Saying update(@Valid Saying saying) {
+		LOGGER.info("Received a saying: {}", saying.getId());
+		LOGGER.info("Received a saying: {}", saying.getContent());
+		return saying;
+	}
 }
