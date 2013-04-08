@@ -8,7 +8,7 @@
   <parent>
     <groupId>com.yammer.dropwizard</groupId>
     <artifactId>dropwizard-parent</artifactId>
-    <version>0.6.0-SNAPSHOT</version>
+    <version>0.7.0-SNAPSHOT</version>
   </parent>
 
   <properties>
@@ -28,7 +28,6 @@
 
   <modules>
     <module>java-simple</module>
-    <module>scala-simple</module>
   </modules>
 
   <build>
