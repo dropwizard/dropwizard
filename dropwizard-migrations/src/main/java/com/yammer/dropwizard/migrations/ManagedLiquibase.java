@@ -30,6 +30,7 @@ public class ManagedLiquibase extends Liquibase implements Managed {
         @Override
         public void stop() throws Exception {
             dataSource.stop();
+            close();
         }
 
         @Override
