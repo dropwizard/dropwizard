@@ -11,8 +11,13 @@ public class ${name}Service extends Service<${name}Configuration> {
     }
 
     @Override
+    public String getName() {
+        return "${name}";
+    }
+
+    @Override
     public void initialize(final Bootstrap<${name}Configuration> bootstrap) {
-        bootstrap.setName("${name}");
+        // TODO: service initialization
     }
 
     @Override
