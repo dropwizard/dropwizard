@@ -11,6 +11,7 @@ import com.yammer.dropwizard.jdbi.DBIFactory;
 import com.yammer.dropwizard.lifecycle.Managed;
 import com.yammer.dropwizard.setup.AdminEnvironment;
 import com.yammer.dropwizard.setup.LifecycleEnvironment;
+import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,6 +21,7 @@ import org.skife.jdbi.v2.Handle;
 import org.skife.jdbi.v2.Query;
 import org.skife.jdbi.v2.util.StringMapper;
 
+import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.List;
 
@@ -64,22 +66,25 @@ public class JDBITest {
         try {
             handle.createCall("DROP TABLE people IF EXISTS").invoke();
             handle.createCall(
-                    "CREATE TABLE people (name varchar(100) primary key, email varchar(100), age int)")
+                    "CREATE TABLE people (name varchar(100) primary key, email varchar(100), age int, created_at timestamp)")
                   .invoke();
-            handle.createStatement("INSERT INTO people VALUES (?, ?, ?)")
+            handle.createStatement("INSERT INTO people VALUES (?, ?, ?, ?)")
                   .bind(0, "Coda Hale")
                   .bind(1, "chale@yammer-inc.com")
                   .bind(2, 30)
+                  .bind(3, new Timestamp(1365465078000L))
                   .execute();
-            handle.createStatement("INSERT INTO people VALUES (?, ?, ?)")
+            handle.createStatement("INSERT INTO people VALUES (?, ?, ?, ?)")
                   .bind(0, "Kris Gale")
                   .bind(1, "kgale@yammer-inc.com")
                   .bind(2, 32)
+                  .bind(3, new Timestamp(1365466078000L))
                   .execute();
-            handle.createStatement("INSERT INTO people VALUES (?, ?, ?)")
+            handle.createStatement("INSERT INTO people VALUES (?, ?, ?, ?)")
                   .bind(0, "Old Guy")
                   .bindNull(1, Types.VARCHAR)
                   .bind(2, 99)
+                  .bind(3, new Timestamp(1365467078000L))
                   .execute();
         } finally {
             handle.close();
@@ -148,5 +153,15 @@ public class JDBITest {
         assertThat(missing).isNotNull();
         assertThat(missing.isPresent()).isFalse();
         assertThat(missing.orNull()).isNull();
+    }
+
+    @Test
+    public void sqlObjectsCanReturnJodaDateTime() throws Exception {
+        final PersonDAO dao = dbi.open(PersonDAO.class);
+
+        final DateTime found = dao.getLatestCreatedAt(new DateTime(1365465078000L));
+        assertThat(found).isNotNull();
+        assertThat(found.getMillis()).isEqualTo(1365467078000L);
+        assertThat(found).isEqualTo(new DateTime(1365467078000L));
     }
 }

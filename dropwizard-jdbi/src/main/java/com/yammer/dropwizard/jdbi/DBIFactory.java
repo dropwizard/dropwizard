@@ -6,6 +6,8 @@ import com.yammer.dropwizard.config.Environment;
 import com.yammer.dropwizard.db.DatabaseConfiguration;
 import com.yammer.dropwizard.db.ManagedDataSource;
 import com.yammer.dropwizard.db.ManagedDataSourceFactory;
+import com.yammer.dropwizard.jdbi.args.JodaDateTimeArgumentFactory;
+import com.yammer.dropwizard.jdbi.args.JodaDateTimeMapper;
 import com.yammer.dropwizard.jdbi.args.OptionalArgumentFactory;
 import com.yammer.dropwizard.jdbi.logging.LogbackLog;
 import com.yammer.metrics.Metrics;
@@ -65,6 +67,8 @@ public class DBIFactory {
         dbi.registerContainerFactory(new ImmutableListContainerFactory());
         dbi.registerContainerFactory(new ImmutableSetContainerFactory());
         dbi.registerContainerFactory(new OptionalContainerFactory());
+        dbi.registerArgumentFactory(new JodaDateTimeArgumentFactory());
+        dbi.registerMapper(new JodaDateTimeMapper());
 
         return dbi;
     }
