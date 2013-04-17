@@ -152,6 +152,9 @@ public class HttpConfiguration {
     @JsonProperty
     private String adminPassword = null;
 
+    @JsonProperty
+    private int threadpoolQueueSize = -1;
+
     @ValidationMethod(message = "must have an SSL configuration when using SSL connection")
     public boolean isSslConfigured() {
         final ConnectorType type = getConnectorType();
@@ -402,5 +405,13 @@ public class HttpConfiguration {
 
     public void setAdminPassword(String password) {
         this.adminPassword = password;
+    }
+
+    public int getThreadpoolQueueSize() {
+        return threadpoolQueueSize;
+    }
+
+    public void setThreadpoolQueueSize(int threadpoolQueueSize) {
+        this.threadpoolQueueSize = threadpoolQueueSize;
     }
 }
