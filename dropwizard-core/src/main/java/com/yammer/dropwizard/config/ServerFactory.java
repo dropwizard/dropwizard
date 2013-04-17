@@ -394,6 +394,7 @@ public class ServerFactory {
         final InstrumentedQueuedThreadPool pool = new InstrumentedQueuedThreadPool();
         pool.setMinThreads(config.getMinThreads());
         pool.setMaxThreads(config.getMaxThreads());
+        pool.setMaxQueued(config.getThreadpoolQueueSize());
         return pool;
     }
 

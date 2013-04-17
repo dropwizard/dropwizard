@@ -2,6 +2,7 @@ package com.yammer.dropwizard.config.tests;
 
 import com.google.common.base.Optional;
 import com.google.common.io.Resources;
+import com.yammer.dropwizard.config.ConfigurationException;
 import com.yammer.dropwizard.config.ConfigurationFactory;
 import com.yammer.dropwizard.config.HttpConfiguration;
 import com.yammer.dropwizard.util.Duration;
@@ -11,16 +12,21 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
 public class HttpConfigurationTest {
     private HttpConfiguration http;
+    private HttpConfiguration defaultHttp;
 
     @Before
     public void setUp() throws Exception {
         this.http = ConfigurationFactory.forClass(HttpConfiguration.class, new Validator())
                                         .build(new File(Resources.getResource("yaml/http.yml").toURI()));
+        this.defaultHttp = ConfigurationFactory.forClass(HttpConfiguration.class, new Validator())
+                                        .build(new File(Resources.getResource("yaml/httpDefaults.yml").toURI()));
     }
 
     @Test
@@ -183,5 +189,15 @@ public class HttpConfigurationTest {
     public void hasAnAdminPassword() throws Exception {
         assertThat(http.getAdminPassword())
                 .isEqualTo(Optional.of("password"));
+    }
+
+    @Test
+    public void hasNonDefaultThreadpoolQueueSize(){
+        assertThat(http.getThreadpoolQueueSize()).isEqualTo(12);
+    }
+
+    @Test
+    public void defaultThreadpoolQueueSizeIsNegativeOne() throws URISyntaxException, IOException, ConfigurationException {
+        assertThat(defaultHttp.getThreadpoolQueueSize()).isEqualTo(-1);
     }
 }
