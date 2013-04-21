@@ -54,7 +54,7 @@ public class ViewMessageBodyWriterTest {
                        output);
 
         assertThat(output.toString())
-                .isEqualTo("Woop woop. HONK\n");
+                .isEqualTo(String.format("Woop woop. HONK%n"));
     }
 
     @Test
@@ -90,7 +90,7 @@ public class ViewMessageBodyWriterTest {
                        output);
 
         assertThat(output.toString())
-                .isEqualTo("Ok.\n");
+                .isEqualTo(String.format("Ok.%n"));
     }
 
     @Test
