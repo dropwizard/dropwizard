@@ -1,7 +1,7 @@
 package com.yammer.dropwizard.hibernate.tests;
 
+import com.codahale.metrics.health.HealthCheck;
 import com.yammer.dropwizard.hibernate.SessionFactoryHealthCheck;
-import com.yammer.metrics.core.HealthCheck;
 import org.hibernate.*;
 import org.junit.Test;
 import org.mockito.InOrder;
@@ -13,8 +13,7 @@ import static org.mockito.Mockito.*;
 @SuppressWarnings("HibernateResourceOpenedButNotSafelyClosed")
 public class SessionFactoryHealthCheckTest {
     private final SessionFactory factory = mock(SessionFactory.class);
-    private final SessionFactoryHealthCheck healthCheck = new SessionFactoryHealthCheck("hibernate",
-                                                                                        factory,
+    private final SessionFactoryHealthCheck healthCheck = new SessionFactoryHealthCheck(factory,
                                                                                         "SELECT 1");
 
     @Test

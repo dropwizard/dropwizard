@@ -4,8 +4,8 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.spi.AppenderAttachableImpl;
+import com.codahale.metrics.Clock;
 import com.yammer.dropwizard.jetty.AsyncRequestLog;
-import com.yammer.metrics.core.Clock;
 import org.eclipse.jetty.http.HttpHeaders;
 import org.eclipse.jetty.http.HttpURI;
 import org.eclipse.jetty.server.*;
@@ -47,7 +47,7 @@ public class AsyncRequestLogTest {
         when(response.getStatus()).thenReturn(200);
         when(response.getContentCount()).thenReturn(8290L);
 
-        when(clock.time()).thenReturn(TimeUnit.SECONDS.toMillis(1353042049));
+        when(clock.getTime()).thenReturn(TimeUnit.SECONDS.toMillis(1353042049));
 
         appenders.addAppender(appender);
 

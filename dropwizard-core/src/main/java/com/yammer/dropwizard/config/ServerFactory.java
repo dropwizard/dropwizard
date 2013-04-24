@@ -1,5 +1,12 @@
 package com.yammer.dropwizard.config;
 
+import com.codahale.metrics.Clock;
+import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.health.jvm.ThreadDeadlockHealthCheck;
+import com.codahale.metrics.jetty8.*;
+import com.codahale.metrics.servlets.AdminServlet;
+import com.codahale.metrics.servlets.HealthCheckServlet;
+import com.codahale.metrics.servlets.MetricsServlet;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
@@ -11,11 +18,6 @@ import com.yammer.dropwizard.jetty.UnbrandedErrorHandler;
 import com.yammer.dropwizard.servlets.ThreadNameFilter;
 import com.yammer.dropwizard.util.Duration;
 import com.yammer.dropwizard.util.Size;
-import com.yammer.metrics.HealthChecks;
-import com.yammer.metrics.core.HealthCheck;
-import com.yammer.metrics.jetty.*;
-import com.yammer.metrics.reporting.AdminServlet;
-import com.yammer.metrics.util.DeadlockHealthCheck;
 import org.eclipse.jetty.security.ConstraintMapping;
 import org.eclipse.jetty.security.ConstraintSecurityHandler;
 import org.eclipse.jetty.security.HashLoginService;
@@ -29,7 +31,6 @@ import org.eclipse.jetty.server.bio.SocketConnector;
 import org.eclipse.jetty.server.handler.HandlerCollection;
 import org.eclipse.jetty.server.nio.AbstractNIOConnector;
 import org.eclipse.jetty.server.nio.SelectChannelConnector;
-import org.eclipse.jetty.server.ssl.SslConnector;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.security.Constraint;
@@ -73,10 +74,7 @@ public class ServerFactory {
     }
 
     public Server buildServer(Environment env) throws ConfigurationException {
-        HealthChecks.defaultRegistry().register(new DeadlockHealthCheck());
-        for (HealthCheck healthCheck : env.getHealthChecks()) {
-            HealthChecks.defaultRegistry().register(healthCheck);
-        }
+        env.getHealthCheckRegistry().register("deadlocks", new ThreadDeadlockHealthCheck());
         final Server server = createServer(env);
         server.setHandler(createHandler(env));
         return server;
@@ -85,7 +83,7 @@ public class ServerFactory {
     private Server createServer(Environment env) {
         final Server server = env.getServer();
 
-        server.addConnector(createExternalConnector());
+        server.addConnector(createExternalConnector(env));
 
         // if we're dynamically allocating ports, no worries if they are the same (i.e. 0)
         if (config.getAdminPort() == 0 || (config.getAdminPort() != config.getPort()) ) {
@@ -97,7 +95,7 @@ public class ServerFactory {
         server.setSendDateHeader(config.isDateHeaderEnabled());
         server.setSendServerVersion(config.isServerHeaderEnabled());
 
-        server.setThreadPool(createThreadPool());
+        server.setThreadPool(createThreadPool(env.getMetricRegistry()));
 
         server.setStopAtShutdown(true);
 
@@ -106,8 +104,8 @@ public class ServerFactory {
         return server;
     }
 
-    private Connector createExternalConnector() {
-        final AbstractConnector connector = createConnector(config.getPort());
+    private Connector createExternalConnector(Environment env) {
+        final AbstractConnector connector = createConnector(env.getMetricRegistry(), config.getPort());
 
         connector.setHost(config.getBindHost().orNull());
 
@@ -148,30 +146,38 @@ public class ServerFactory {
         return connector;
     }
 
-    private AbstractConnector createConnector(int port) {
+    private AbstractConnector createConnector(MetricRegistry metricRegistry, int port) {
         final AbstractConnector connector;
         switch (config.getConnectorType()) {
             case BLOCKING:
-                connector = new InstrumentedBlockingChannelConnector(port);
+                connector = new InstrumentedBlockingChannelConnector(metricRegistry,
+                                                                     port,
+                                                                     Clock.defaultClock());
                 break;
             case LEGACY:
-                connector = new InstrumentedSocketConnector(port);
+                connector = new InstrumentedSocketConnector(metricRegistry,
+                                                            port,
+                                                            Clock.defaultClock());
                 break;
             case LEGACY_SSL:
-                connector = new InstrumentedSslSocketConnector(port);
+                connector = new InstrumentedSslSocketConnector(metricRegistry,
+                                                               port,
+                                                               configureSslContext(),
+                                                               Clock.defaultClock());
                 break;
             case NONBLOCKING:
-                connector = new InstrumentedSelectChannelConnector(port);
+                connector = new InstrumentedSelectChannelConnector(metricRegistry,
+                                                                   port,
+                                                                   Clock.defaultClock());
                 break;
             case NONBLOCKING_SSL:
-                connector = new InstrumentedSslSelectChannelConnector(port);
+                connector = new InstrumentedSslSelectChannelConnector(metricRegistry,
+                                                                      port,
+                                                                      configureSslContext(),
+                                                                      Clock.defaultClock());
                 break;
             default:
                 throw new IllegalStateException("Invalid connector type: " + config.getConnectorType());
-        }
-
-        if (connector instanceof SslConnector) {
-            configureSslContext(((SslConnector) connector).getSslContextFactory());
         }
 
         if (connector instanceof SelectChannelConnector) {
@@ -185,7 +191,9 @@ public class ServerFactory {
         return connector;
     }
 
-    private void configureSslContext(SslContextFactory factory) {
+    private SslContextFactory configureSslContext() {
+        final SslContextFactory factory = new SslContextFactory();
+
         final SslConfiguration sslConfig = config.getSslConfiguration();
 
         for (File keyStore : sslConfig.getKeyStore().asSet()) {
@@ -284,6 +292,8 @@ public class ServerFactory {
 
         factory.setIncludeProtocols(Iterables.toArray(sslConfig.getSupportedProtocols(),
                                                       String.class));
+
+        return factory;
     }
 
 
@@ -302,7 +312,11 @@ public class ServerFactory {
 
     private Handler createInternalServlet(Environment env) {
         final ServletContextHandler handler = env.getAdminContext();
-        handler.addServlet(new NonblockingServletHolder(new AdminServlet()), "/*");
+        handler.getServletContext().setAttribute(HealthCheckServlet.HEALTH_CHECK_REGISTRY,
+                                                 env.getHealthCheckRegistry());
+        handler.getServletContext().setAttribute(MetricsServlet.METRICS_REGISTRY,
+                                                 env.getMetricRegistry());
+        handler.addServlet(new ServletHolder(AdminServlet.class), "/*");
 
         if (config.getAdminPort() != 0 && config.getAdminPort() == config.getPort()) {
             handler.setContextPath("/admin");
@@ -360,11 +374,11 @@ public class ServerFactory {
 
         handler.setConnectorNames(new String[]{"main"});
 
-        return wrapHandler(handler);
+        return wrapHandler(env.getMetricRegistry(), handler);
     }
 
-    private Handler wrapHandler(ServletContextHandler handler) {
-        final InstrumentedHandler instrumented = new InstrumentedHandler(handler);
+    private Handler wrapHandler(MetricRegistry metricRegistry, ServletContextHandler handler) {
+        final InstrumentedHandler instrumented = new InstrumentedHandler(metricRegistry, handler);
         final GzipConfiguration gzip = config.getGzipConfiguration();
         if (gzip.isEnabled()) {
             final BiDiGzipHandler gzipHandler = new BiDiGzipHandler(instrumented);
@@ -390,8 +404,8 @@ public class ServerFactory {
         return instrumented;
     }
 
-    private ThreadPool createThreadPool() {
-        final InstrumentedQueuedThreadPool pool = new InstrumentedQueuedThreadPool();
+    private ThreadPool createThreadPool(MetricRegistry metricRegistry) {
+        final InstrumentedQueuedThreadPool pool = new InstrumentedQueuedThreadPool(metricRegistry);
         pool.setMinThreads(config.getMinThreads());
         pool.setMaxThreads(config.getMaxThreads());
         return pool;

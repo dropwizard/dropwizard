@@ -2,26 +2,26 @@ package com.yammer.dropwizard.jdbi;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
+import com.codahale.metrics.jdbi.InstrumentedTimingCollector;
+import com.codahale.metrics.jdbi.strategies.DelegatingStatementNameStrategy;
+import com.codahale.metrics.jdbi.strategies.NameStrategies;
+import com.codahale.metrics.jdbi.strategies.StatementNameStrategy;
 import com.yammer.dropwizard.config.Environment;
 import com.yammer.dropwizard.db.DatabaseConfiguration;
 import com.yammer.dropwizard.db.ManagedDataSource;
 import com.yammer.dropwizard.db.ManagedDataSourceFactory;
 import com.yammer.dropwizard.jdbi.args.OptionalArgumentFactory;
 import com.yammer.dropwizard.jdbi.logging.LogbackLog;
-import com.yammer.metrics.Metrics;
-import com.yammer.metrics.core.MetricName;
-import com.yammer.metrics.jdbi.InstrumentedTimingCollector;
-import com.yammer.metrics.jdbi.strategies.DelegatingStatementNameStrategy;
-import com.yammer.metrics.jdbi.strategies.NameStrategies;
-import com.yammer.metrics.jdbi.strategies.StatementNameStrategy;
 import org.skife.jdbi.v2.ColonPrefixNamedParamStatementRewriter;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.StatementContext;
 import org.slf4j.LoggerFactory;
 
+import static com.codahale.metrics.MetricRegistry.name;
+
 public class DBIFactory {
     private static final Logger LOGGER = (Logger) LoggerFactory.getLogger(DBI.class);
-    private static final MetricName RAW_SQL = new MetricName(DBI.class, "raw-sql");
+    private static final String RAW_SQL = name(DBI.class, "raw-sql");
 
     private static class SanerNamingStrategy extends DelegatingStatementNameStrategy {
         private SanerNamingStrategy() {
@@ -31,7 +31,7 @@ public class DBIFactory {
                   NameStrategies.SQL_OBJECT,
                   new StatementNameStrategy() {
                       @Override
-                      public MetricName getStatementName(StatementContext statementContext) {
+                      public String getStatementName(StatementContext statementContext) {
                           return RAW_SQL;
                       }
                   });
@@ -43,7 +43,8 @@ public class DBIFactory {
     public DBI build(Environment environment,
                      DatabaseConfiguration configuration,
                      String name) throws ClassNotFoundException {
-        final ManagedDataSource dataSource = dataSourceFactory.build(configuration);
+        final ManagedDataSource dataSource = dataSourceFactory.build(environment.getMetricRegistry(),
+                                                                     configuration);
         return build(environment, configuration, dataSource, name);
     }
 
@@ -54,9 +55,9 @@ public class DBIFactory {
         final String validationQuery = configuration.getValidationQuery();
         final DBI dbi = new DBI(dataSource);
         environment.getLifecycleEnvironment().manage(dataSource);
-        environment.getAdminEnvironment().addHealthCheck(new DBIHealthCheck(dbi, name, validationQuery));
+        environment.getAdminEnvironment().addHealthCheck(name, new DBIHealthCheck(dbi, validationQuery));
         dbi.setSQLLog(new LogbackLog(LOGGER, Level.TRACE));
-        dbi.setTimingCollector(new InstrumentedTimingCollector(Metrics.defaultRegistry(),
+        dbi.setTimingCollector(new InstrumentedTimingCollector(environment.getMetricRegistry(),
                                                                new SanerNamingStrategy()));
         if (configuration.isAutoCommentsEnabled()) {
             dbi.setStatementRewriter(new NamePrependingStatementRewriter(new ColonPrefixNamedParamStatementRewriter()));

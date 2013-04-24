@@ -1,6 +1,6 @@
 package com.yammer.dropwizard.hibernate;
 
-import com.yammer.metrics.core.HealthCheck;
+import com.codahale.metrics.health.HealthCheck;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -9,10 +9,8 @@ public class SessionFactoryHealthCheck extends HealthCheck {
     private final SessionFactory sessionFactory;
     private final String validationQuery;
 
-    public SessionFactoryHealthCheck(String name,
-                                     SessionFactory sessionFactory,
+    public SessionFactoryHealthCheck(SessionFactory sessionFactory,
                                      String validationQuery) {
-        super(name);
         this.sessionFactory = sessionFactory;
         this.validationQuery = validationQuery;
     }

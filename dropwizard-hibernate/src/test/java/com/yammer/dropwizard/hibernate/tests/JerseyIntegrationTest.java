@@ -1,5 +1,6 @@
 package com.yammer.dropwizard.hibernate.tests;
 
+import com.codahale.metrics.MetricRegistry;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.sun.jersey.api.client.UniformInterfaceException;
@@ -87,12 +88,14 @@ public class JerseyIntegrationTest extends JerseyTest {
 
     @Override
     protected AppDescriptor configure() {
+        final MetricRegistry metricRegistry = new MetricRegistry();
         final SessionFactoryFactory factory = new SessionFactoryFactory();
         final DatabaseConfiguration dbConfig = new DatabaseConfiguration();
         final HibernateBundle<?> bundle = mock(HibernateBundle.class);
         final Environment environment = mock(Environment.class);
         final LifecycleEnvironment lifecycleEnvironment = mock(LifecycleEnvironment.class);
         when(environment.getLifecycleEnvironment()).thenReturn(lifecycleEnvironment);
+        when(environment.getMetricRegistry()).thenReturn(metricRegistry);
 
         dbConfig.setUrl("jdbc:hsqldb:mem:DbTest-" + System.nanoTime());
         dbConfig.setUser("sa");
@@ -110,13 +113,18 @@ public class JerseyIntegrationTest extends JerseyTest {
         final Session session = sessionFactory.openSession();
         try {
             session.createSQLQuery("DROP TABLE people IF EXISTS").executeUpdate();
-            session.createSQLQuery("CREATE TABLE people (name varchar(100) primary key, email varchar(100), birthday timestamp)").executeUpdate();
-            session.createSQLQuery("INSERT INTO people VALUES ('Coda', 'coda@example.com', '1979-01-02 00:22:00')").executeUpdate();
+            session.createSQLQuery(
+                    "CREATE TABLE people (name varchar(100) primary key, email varchar(100), birthday timestamp)")
+                   .executeUpdate();
+            session.createSQLQuery(
+                    "INSERT INTO people VALUES ('Coda', 'coda@example.com', '1979-01-02 00:22:00')")
+                   .executeUpdate();
         } finally {
             session.close();
         }
 
-        final DropwizardResourceConfig config = new DropwizardResourceConfig(true);
+        final DropwizardResourceConfig config = new DropwizardResourceConfig(true,
+                                                                             new MetricRegistry());
         config.getSingletons().add(new UnitOfWorkResourceMethodDispatchAdapter(sessionFactory));
         config.getSingletons().add(new PersonResource(new PersonDAO(sessionFactory)));
         config.getSingletons().add(new JacksonMessageBodyProvider(new ObjectMapperFactory().build(),

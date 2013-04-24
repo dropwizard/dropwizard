@@ -1,5 +1,6 @@
 package com.yammer.dropwizard.client;
 
+import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -37,7 +38,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
  * @see HttpClientBuilder
  */
 public class JerseyClientBuilder {
-    private final HttpClientBuilder builder = new HttpClientBuilder();
+    private final HttpClientBuilder builder;
     private final List<Object> singletons = Lists.newArrayList();
     private final List<Class<?>> providers = Lists.newArrayList();
     private final Map<String, Boolean> features = Maps.newLinkedHashMap();
@@ -47,6 +48,15 @@ public class JerseyClientBuilder {
     private Environment environment;
     private ObjectMapper objectMapper;
     private ExecutorService executorService;
+
+    public JerseyClientBuilder(Environment environment) {
+        this.builder = new HttpClientBuilder(environment);
+        this.environment = environment;
+    }
+
+    public JerseyClientBuilder(MetricRegistry metricRegistry) {
+        this.builder = new HttpClientBuilder(metricRegistry);
+    }
 
     /**
      * Adds the given object as a Jersey provider.
@@ -161,14 +171,14 @@ public class JerseyClientBuilder {
      *
      * @return a fully-configured {@link Client}
      */
-    public Client build() {
+    public Client build(String name) {
         if ((environment == null) && (executorService == null) && (objectMapper == null)) {
             throw new IllegalStateException("Must have either an environment or both " +
                                                     "an executor service and an object mapper");
         }
 
         if (environment == null) {
-            return build(executorService, objectMapper);
+            return build(executorService, objectMapper, name);
         }
 
         return build(environment.getLifecycleEnvironment()
@@ -177,12 +187,14 @@ public class JerseyClientBuilder {
                                                         configuration.getMaxThreads(),
                                                         60,
                                                         TimeUnit.SECONDS),
-                     environment.getJsonEnvironment().build());
+                     environment.getJsonEnvironment().build(),
+                     name);
     }
 
     private Client build(ExecutorService threadPool,
-                         ObjectMapper objectMapper) {
-        final Client client = new ApacheHttpClient4(buildHandler(), buildConfig(objectMapper));
+                         ObjectMapper objectMapper,
+                         String name) {
+        final Client client = new ApacheHttpClient4(buildHandler(name), buildConfig(objectMapper));
         client.setExecutorService(threadPool);
 
         if (configuration.isGzipEnabled()) {
@@ -192,8 +204,8 @@ public class JerseyClientBuilder {
         return client;
     }
 
-    private ApacheHttpClient4Handler buildHandler() {
-        return new ApacheHttpClient4Handler(builder.build(), null, true);
+    private ApacheHttpClient4Handler buildHandler(String name) {
+        return new ApacheHttpClient4Handler(builder.build(name), null, true);
     }
 
     private ApacheHttpClient4Config buildConfig(ObjectMapper objectMapper) {

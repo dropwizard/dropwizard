@@ -1,8 +1,9 @@
 package com.yammer.dropwizard.client;
 
-import com.yammer.metrics.Metrics;
-import com.yammer.metrics.httpclient.InstrumentedClientConnManager;
-import com.yammer.metrics.httpclient.InstrumentedHttpClient;
+import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.httpclient.InstrumentedClientConnManager;
+import com.codahale.metrics.httpclient.InstrumentedHttpClient;
+import com.yammer.dropwizard.config.Environment;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.HttpRequestRetryHandler;
@@ -40,9 +41,18 @@ public class HttpClientBuilder {
         }
     };
 
+    private final MetricRegistry metricRegistry;
     private HttpClientConfiguration configuration = new HttpClientConfiguration();
     private DnsResolver resolver = new SystemDefaultDnsResolver();
     private SchemeRegistry registry = SchemeRegistryFactory.createSystemDefault();
+
+    public HttpClientBuilder(MetricRegistry metricRegistry) {
+        this.metricRegistry = metricRegistry;
+    }
+
+    public HttpClientBuilder(Environment environment) {
+        this.metricRegistry = environment.getMetricRegistry();
+    }
 
     /**
      * Use the given {@link HttpClientConfiguration} instance.
@@ -82,10 +92,10 @@ public class HttpClientBuilder {
      *
      * @return an {@link HttpClient}
      */
-    public HttpClient build() {
+    public HttpClient build(String name) {
         final BasicHttpParams params = createHttpParams();
-        final InstrumentedClientConnManager manager = createConnectionManager(registry);
-        final InstrumentedHttpClient client = new InstrumentedHttpClient(manager, params);
+        final InstrumentedClientConnManager manager = createConnectionManager(registry, name);
+        final InstrumentedHttpClient client = new InstrumentedHttpClient(metricRegistry, manager, params, name);
         setStrategiesForClient(client);
 
         return client;
@@ -159,14 +169,15 @@ public class HttpClientBuilder {
      * @param registry the SchemeRegistry
      * @return a InstrumentedClientConnManger instance
      */
-    protected InstrumentedClientConnManager createConnectionManager(SchemeRegistry registry) {
+    protected InstrumentedClientConnManager createConnectionManager(SchemeRegistry registry, String name) {
         final long ttl = configuration.getTimeToLive().toMilliseconds();
         final InstrumentedClientConnManager manager =
-                new InstrumentedClientConnManager(Metrics.defaultRegistry(),
+                new InstrumentedClientConnManager(metricRegistry,
                                                   registry,
                                                   ttl,
                                                   TimeUnit.MILLISECONDS,
-                                                  resolver);
+                                                  resolver,
+                                                  name);
         manager.setDefaultMaxPerRoute(configuration.getMaxConnectionsPerRoute());
         manager.setMaxTotal(configuration.getMaxConnections());
         return manager;

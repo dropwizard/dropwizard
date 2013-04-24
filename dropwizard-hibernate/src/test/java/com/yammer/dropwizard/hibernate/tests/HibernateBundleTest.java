@@ -91,7 +91,7 @@ public class HibernateBundleTest {
 
         final ArgumentCaptor<SessionFactoryHealthCheck> captor =
                 ArgumentCaptor.forClass(SessionFactoryHealthCheck.class);
-        verify(adminEnvironment).addHealthCheck(captor.capture());
+        verify(adminEnvironment).addHealthCheck(eq("hibernate"), captor.capture());
 
         assertThat(captor.getValue().getSessionFactory()).isEqualTo(sessionFactory);
 

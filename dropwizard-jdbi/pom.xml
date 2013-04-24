@@ -23,9 +23,9 @@
             <version>2.48.2</version>
         </dependency>
         <dependency>
-            <groupId>com.yammer.metrics</groupId>
+            <groupId>com.codahale.metrics</groupId>
             <artifactId>metrics-jdbi</artifactId>
-            <version>${metrics.version}</version>
+            <version>${metrics3.version}</version>
         </dependency>
         <dependency>
             <groupId>hsqldb</groupId>

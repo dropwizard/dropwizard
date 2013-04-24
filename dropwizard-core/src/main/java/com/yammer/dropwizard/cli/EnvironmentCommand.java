@@ -33,7 +33,8 @@ public abstract class EnvironmentCommand<T extends Configuration> extends Config
     protected final void run(Bootstrap<T> bootstrap, Namespace namespace, T configuration) throws Exception {
         final Environment environment = new Environment(bootstrap.getService().getName(),
                                                         new ObjectMapperFactory(bootstrap.getObjectMapperFactory()),
-                                                        new Validator());
+                                                        new Validator(),
+                                                        bootstrap.getMetricRegistry());
         bootstrap.runWithBundles(configuration, environment);
         service.run(configuration, environment);
         run(environment, namespace, configuration);

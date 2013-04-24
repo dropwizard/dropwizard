@@ -1,5 +1,6 @@
 package com.yammer.dropwizard.jdbi.tests;
 
+import com.codahale.metrics.MetricRegistry;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -45,12 +46,14 @@ public class JDBITest {
     private final Environment environment = mock(Environment.class);
     private final DBIFactory factory = new DBIFactory();
     private final List<Managed> managed = Lists.newArrayList();
+    private final MetricRegistry metricRegistry = new MetricRegistry();
     private DBI dbi;
 
     @Before
     public void setUp() throws Exception {
         when(environment.getAdminEnvironment()).thenReturn(adminEnvironment);
         when(environment.getLifecycleEnvironment()).thenReturn(lifecycleEnvironment);
+        when(environment.getMetricRegistry()).thenReturn(metricRegistry);
 
         this.dbi = factory.build(environment, hsqlConfig, "hsql");
         final ArgumentCaptor<Managed> managedCaptor = ArgumentCaptor.forClass(Managed.class);

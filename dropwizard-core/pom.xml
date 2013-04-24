@@ -33,8 +33,6 @@
             <artifactId>jersey-servlet</artifactId>
             <version>${jersey.version}</version>
         </dependency>
-
-        <!-- metrics 3 -->
         <dependency>
             <groupId>com.codahale.metrics</groupId>
             <artifactId>metrics-core</artifactId>
@@ -42,7 +40,17 @@
         </dependency>
         <dependency>
             <groupId>com.codahale.metrics</groupId>
-            <artifactId>metrics-servlet</artifactId>
+            <artifactId>metrics-jvm</artifactId>
+            <version>${metrics3.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.codahale.metrics</groupId>
+            <artifactId>metrics-servlets</artifactId>
+            <version>${metrics3.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.codahale.metrics</groupId>
+            <artifactId>metrics-healthchecks</artifactId>
             <version>${metrics3.version}</version>
         </dependency>
         <dependency>
@@ -59,33 +67,6 @@
             <groupId>com.codahale.metrics</groupId>
             <artifactId>metrics-jersey</artifactId>
             <version>${metrics3.version}</version>
-        </dependency>
-
-        <!-- metrics 2 -->
-        <dependency>
-            <groupId>com.yammer.metrics</groupId>
-            <artifactId>metrics-core</artifactId>
-            <version>${metrics.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.yammer.metrics</groupId>
-            <artifactId>metrics-servlet</artifactId>
-            <version>${metrics.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.yammer.metrics</groupId>
-            <artifactId>metrics-jetty</artifactId>
-            <version>${metrics.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.yammer.metrics</groupId>
-            <artifactId>metrics-logback</artifactId>
-            <version>${metrics.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.yammer.metrics</groupId>
-            <artifactId>metrics-jersey</artifactId>
-            <version>${metrics.version}</version>
         </dependency>
         
         <dependency>

@@ -1,5 +1,6 @@
 package com.yammer.dropwizard.testing;
 
+import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
@@ -84,7 +85,7 @@ public abstract class ResourceTest {
         this.test = new JerseyTest() {
             @Override
             protected AppDescriptor configure() {
-                final DropwizardResourceConfig config = new DropwizardResourceConfig(true);
+                final DropwizardResourceConfig config = new DropwizardResourceConfig(true, new MetricRegistry());
                 for (Class<?> provider : providers) {
                     config.getClasses().add(provider);
                 }

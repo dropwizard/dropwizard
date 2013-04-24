@@ -54,7 +54,7 @@ public abstract class ConfiguredCommand<T extends Configuration> extends Command
                                                    new ObjectMapperFactory(bootstrap.getObjectMapperFactory()));
         if (configuration != null) {
             new LoggingFactory(configuration.getLoggingConfiguration(),
-                               bootstrap.getService().getName()).configure();
+                               bootstrap.getService().getName()).configure(bootstrap.getMetricRegistry());
         }
         run((Bootstrap<T>) bootstrap, namespace, configuration);
     }

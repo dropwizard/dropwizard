@@ -1,10 +1,10 @@
 package com.yammer.dropwizard.setup;
 
-import com.google.common.collect.ImmutableSet;
+import com.codahale.metrics.health.HealthCheck;
+import com.codahale.metrics.health.HealthCheckRegistry;
 import com.yammer.dropwizard.tasks.GarbageCollectionTask;
 import com.yammer.dropwizard.tasks.Task;
 import com.yammer.dropwizard.tasks.TaskServlet;
-import com.yammer.metrics.core.HealthCheck;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.component.AbstractLifeCycle;
@@ -12,18 +12,16 @@ import org.eclipse.jetty.util.component.LifeCycle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Set;
-
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class AdminEnvironment extends ServletEnvironment {
     private static final Logger LOGGER = LoggerFactory.getLogger(AdminEnvironment.class);
 
-    private final Set<HealthCheck> healthChecks;
+    private final HealthCheckRegistry healthChecks;
     private final TaskServlet tasks;
 
     public AdminEnvironment(ServletContextHandler handler,
-                            Set<HealthCheck> healthChecks) {
+                            HealthCheckRegistry healthChecks) {
         super(handler);
         this.healthChecks = healthChecks;
         this.tasks = new TaskServlet();
@@ -47,8 +45,8 @@ public class AdminEnvironment extends ServletEnvironment {
      *
      * @param healthCheck a health check
      */
-    public void addHealthCheck(HealthCheck healthCheck) {
-        healthChecks.add(checkNotNull(healthCheck));
+    public void addHealthCheck(String name, HealthCheck healthCheck) {
+        healthChecks.register(checkNotNull(name), checkNotNull(healthCheck));
     }
 
     private void logTasks() {
@@ -65,7 +63,7 @@ public class AdminEnvironment extends ServletEnvironment {
     }
 
     private void logHealthChecks() {
-        if (healthChecks.isEmpty()) {
+        if (healthChecks.getNames().isEmpty()) {
             LOGGER.warn('\n' +
                                 "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" +
                                 "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!\n" +
@@ -78,18 +76,6 @@ public class AdminEnvironment extends ServletEnvironment {
                                 "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
             );
         }
-
-        final ImmutableSet.Builder<String> builder = ImmutableSet.builder();
-        for (HealthCheck healthCheck : healthChecks) {
-            final String canonicalName = healthCheck.getClass().getCanonicalName();
-            if (canonicalName == null) {
-                builder.add(String.format("%s(\"%s\")",
-                                          HealthCheck.class.getCanonicalName(),
-                                          healthCheck.getName()));
-            } else {
-                builder.add(canonicalName);
-            }
-        }
-        LOGGER.debug("health checks = {}", builder.build());
+        LOGGER.debug("health checks = {}", healthChecks.getNames());
     }
 }

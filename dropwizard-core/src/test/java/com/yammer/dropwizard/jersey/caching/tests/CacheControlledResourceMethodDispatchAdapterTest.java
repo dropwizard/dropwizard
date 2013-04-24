@@ -1,5 +1,6 @@
 package com.yammer.dropwizard.jersey.caching.tests;
 
+import com.codahale.metrics.MetricRegistry;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.test.framework.AppDescriptor;
 import com.sun.jersey.test.framework.JerseyTest;
@@ -100,7 +101,7 @@ public class CacheControlledResourceMethodDispatchAdapterTest extends JerseyTest
 
     @Override
     protected AppDescriptor configure() {
-        final DropwizardResourceConfig config = new DropwizardResourceConfig(true);
+        final DropwizardResourceConfig config = new DropwizardResourceConfig(true, new MetricRegistry());
         config.getSingletons().add(new ExampleResource());
         return new LowLevelAppDescriptor.Builder(config).build();
     }

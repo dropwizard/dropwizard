@@ -1,17 +1,15 @@
 package com.yammer.dropwizard.config;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
+import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.health.HealthCheckRegistry;
 import com.sun.jersey.spi.container.servlet.ServletContainer;
 import com.yammer.dropwizard.jersey.DropwizardResourceConfig;
 import com.yammer.dropwizard.json.ObjectMapperFactory;
 import com.yammer.dropwizard.setup.*;
 import com.yammer.dropwizard.validation.Validator;
-import com.yammer.metrics.core.HealthCheck;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -21,7 +19,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
  */
 public class Environment {
     private final String name;
-    private final Set<HealthCheck> healthChecks;
+    private final MetricRegistry metricRegistry;
+    private final HealthCheckRegistry healthCheckRegistry;
 
     private final JsonEnvironment jsonEnvironment;
     private Validator validator;
@@ -46,20 +45,23 @@ public class Environment {
      */
     public Environment(String name,
                        ObjectMapperFactory objectMapperFactory,
-                       Validator validator) {
+                       Validator validator,
+                       MetricRegistry metricRegistry) {
         this.name = name;
+        this.metricRegistry = metricRegistry;
+        this.healthCheckRegistry = new HealthCheckRegistry();
         this.jsonEnvironment = new JsonEnvironment(objectMapperFactory);
         this.validator = validator;
-        final DropwizardResourceConfig jerseyConfig = new DropwizardResourceConfig(false);
+        final DropwizardResourceConfig jerseyConfig = new DropwizardResourceConfig(false,
+                                                                                   metricRegistry);
 
         this.server = new Server();
 
         this.servletContext = new ServletContextHandler();
         this.servletEnvironment = new ServletEnvironment(servletContext);
 
-        this.healthChecks = Sets.newHashSet();
         this.adminContext = new ServletContextHandler();
-        this.adminEnvironment = new AdminEnvironment(adminContext, healthChecks);
+        this.adminEnvironment = new AdminEnvironment(adminContext, healthCheckRegistry);
 
         this.lifecycleEnvironment = new LifecycleEnvironment(server);
 
@@ -100,13 +102,17 @@ public class Environment {
         this.validator = checkNotNull(validator);
     }
 
+    public MetricRegistry getMetricRegistry() {
+        return metricRegistry;
+    }
+
+    public HealthCheckRegistry getHealthCheckRegistry() {
+        return healthCheckRegistry;
+    }
+
     /*
     * Internal Accessors
     */
-
-    ImmutableSet<HealthCheck> getHealthChecks() {
-        return ImmutableSet.copyOf(healthChecks);
-    }
 
     ServletContextHandler getServletContext() {
         return servletContext;

@@ -56,7 +56,7 @@ public class HelloWorldService extends Service<HelloWorldConfiguration> {
         final PersonDAO dao = new PersonDAO(hibernateBundle.getSessionFactory());
         final Template template = configuration.buildTemplate();
 
-        environment.getAdminEnvironment().addHealthCheck(new TemplateHealthCheck(template));
+        environment.getAdminEnvironment().addHealthCheck("tempate", new TemplateHealthCheck(template));
 
         environment.getJerseyEnvironment().addProvider(new BasicAuthProvider<User>(new ExampleAuthenticator(),
                                                                                    "SUPER SECRET STUFF"));

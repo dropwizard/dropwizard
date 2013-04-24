@@ -33,9 +33,9 @@
             <version>4.2.3</version>
         </dependency>
         <dependency>
-            <groupId>com.yammer.metrics</groupId>
+            <groupId>com.codahale.metrics</groupId>
             <artifactId>metrics-httpclient</artifactId>
-            <version>${metrics.version}</version>
+            <version>${metrics3.version}</version>
         </dependency>
     </dependencies>
 </project>

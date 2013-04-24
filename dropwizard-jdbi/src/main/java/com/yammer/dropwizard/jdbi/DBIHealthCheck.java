@@ -1,6 +1,6 @@
 package com.yammer.dropwizard.jdbi;
 
-import com.yammer.metrics.core.HealthCheck;
+import com.codahale.metrics.health.HealthCheck;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 
@@ -8,8 +8,7 @@ public class DBIHealthCheck extends HealthCheck {
     private final DBI dbi;
     private final String validationQuery;
 
-    public DBIHealthCheck(DBI dbi, String name, String validationQuery) {
-        super(name + "-db");
+    public DBIHealthCheck(DBI dbi, String validationQuery) {
         this.dbi = dbi;
         this.validationQuery = validationQuery;
     }

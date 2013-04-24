@@ -1,5 +1,6 @@
 package com.yammer.dropwizard.client.tests;
 
+import com.codahale.metrics.MetricRegistry;
 import com.google.common.collect.ImmutableList;
 import com.yammer.dropwizard.client.HttpClientBuilder;
 import com.yammer.dropwizard.client.HttpClientConfiguration;
@@ -34,14 +35,14 @@ import static org.mockito.Mockito.when;
 public class HttpClientBuilderTest {
     private final HttpClientConfiguration configuration = new HttpClientConfiguration();
     private final DnsResolver resolver = mock(DnsResolver.class);
-    private final HttpClientBuilder builder = new HttpClientBuilder();
+    private final HttpClientBuilder builder = new HttpClientBuilder(new MetricRegistry());
     private final SchemeRegistry registry = new SchemeRegistry();
 
     @Test
     public void setsTheMaximumConnectionPoolSize() throws Exception {
         configuration.setMaxConnections(412);
 
-        final AbstractHttpClient client = (AbstractHttpClient) builder.using(configuration).build();
+        final AbstractHttpClient client = (AbstractHttpClient) builder.using(configuration).build("test");
         final PoolingClientConnectionManager connectionManager = (PoolingClientConnectionManager) client.getConnectionManager();
 
         assertThat(connectionManager.getMaxTotal())
@@ -52,7 +53,7 @@ public class HttpClientBuilderTest {
     public void setsTheMaximumRoutePoolSize() throws Exception {
         configuration.setMaxConnectionsPerRoute(413);
 
-        final AbstractHttpClient client = (AbstractHttpClient) builder.using(configuration).build();
+        final AbstractHttpClient client = (AbstractHttpClient) builder.using(configuration).build("test");
         final PoolingClientConnectionManager connectionManager = (PoolingClientConnectionManager) client
                 .getConnectionManager();
 
@@ -63,7 +64,7 @@ public class HttpClientBuilderTest {
     @Test
     public void canUseACustomDnsResolver() throws Exception {
         // Yes, this is gross. Thanks, Apache!
-        final AbstractHttpClient client = (AbstractHttpClient) builder.using(resolver).build();
+        final AbstractHttpClient client = (AbstractHttpClient) builder.using(resolver).build("test");
         final Field field = PoolingClientConnectionManager.class.getDeclaredField("dnsResolver");
         field.setAccessible(true);
 
@@ -74,7 +75,7 @@ public class HttpClientBuilderTest {
     @Test
     public void usesASystemDnsResolverByDefault() throws Exception {
         // Yes, this is gross. Thanks, Apache!
-        final AbstractHttpClient client = (AbstractHttpClient) builder.build();
+        final AbstractHttpClient client = (AbstractHttpClient) builder.build("test");
         final Field field = PoolingClientConnectionManager.class.getDeclaredField("dnsResolver");
         field.setAccessible(true);
 
@@ -86,7 +87,7 @@ public class HttpClientBuilderTest {
     public void doesNotReuseConnectionsIfKeepAliveIsZero() throws Exception {
         configuration.setConnectionTimeout(Duration.seconds(0));
 
-        final AbstractHttpClient client = (AbstractHttpClient) builder.using(configuration).build();
+        final AbstractHttpClient client = (AbstractHttpClient) builder.using(configuration).build("test");
 
         assertThat(client.getConnectionReuseStrategy())
                 .isInstanceOf(NoConnectionReuseStrategy.class);
@@ -96,7 +97,7 @@ public class HttpClientBuilderTest {
     public void reusesConnectionsIfKeepAliveIsNonZero() throws Exception {
         configuration.setKeepAlive(Duration.seconds(1));
 
-        final AbstractHttpClient client = (AbstractHttpClient) builder.using(configuration).build();
+        final AbstractHttpClient client = (AbstractHttpClient) builder.using(configuration).build("test");
 
         assertThat(client.getConnectionReuseStrategy())
                 .isInstanceOf(DefaultConnectionReuseStrategy.class);
@@ -106,7 +107,7 @@ public class HttpClientBuilderTest {
     public void usesKeepAliveForPersistentConnections() throws Exception {
         configuration.setKeepAlive(Duration.seconds(1));
 
-        final AbstractHttpClient client = (AbstractHttpClient) builder.using(configuration).build();
+        final AbstractHttpClient client = (AbstractHttpClient) builder.using(configuration).build("test");
 
         final DefaultConnectionKeepAliveStrategy strategy = (DefaultConnectionKeepAliveStrategy) client.getConnectionKeepAliveStrategy();
 
@@ -123,7 +124,7 @@ public class HttpClientBuilderTest {
     public void usesDefaultForNonPersistentConnections() throws Exception {
         configuration.setKeepAlive(Duration.seconds(1));
 
-        final AbstractHttpClient client = (AbstractHttpClient) builder.using(configuration).build();
+        final AbstractHttpClient client = (AbstractHttpClient) builder.using(configuration).build("test");
 
         final DefaultConnectionKeepAliveStrategy strategy = (DefaultConnectionKeepAliveStrategy) client
                 .getConnectionKeepAliveStrategy();
@@ -145,7 +146,7 @@ public class HttpClientBuilderTest {
 
     @Test
     public void ignoresCookiesByDefault() throws Exception {
-        final AbstractHttpClient client = (AbstractHttpClient) builder.using(configuration).build();
+        final AbstractHttpClient client = (AbstractHttpClient) builder.using(configuration).build("test");
 
         assertThat(client.getParams().getParameter(AllClientPNames.COOKIE_POLICY))
                 .isEqualTo(CookiePolicy.IGNORE_COOKIES);
@@ -155,7 +156,7 @@ public class HttpClientBuilderTest {
     public void usesBestMatchCookiePolicyIfCookiesAreEnabled() throws Exception {
         configuration.setCookiesEnabled(true);
 
-        final AbstractHttpClient client = (AbstractHttpClient) builder.using(configuration).build();
+        final AbstractHttpClient client = (AbstractHttpClient) builder.using(configuration).build("test");
 
         assertThat(client.getParams().getParameter(AllClientPNames.COOKIE_POLICY))
                 .isEqualTo(CookiePolicy.BEST_MATCH);
@@ -165,7 +166,7 @@ public class HttpClientBuilderTest {
     public void setsTheSocketTimeout() throws Exception {
         configuration.setTimeout(Duration.milliseconds(500));
 
-        final AbstractHttpClient client = (AbstractHttpClient) builder.using(configuration).build();
+        final AbstractHttpClient client = (AbstractHttpClient) builder.using(configuration).build("test");
 
         assertThat(client.getParams().getIntParameter(AllClientPNames.SO_TIMEOUT, -1))
                 .isEqualTo(500);
@@ -175,7 +176,7 @@ public class HttpClientBuilderTest {
     public void setsTheConnectTimeout() throws Exception {
         configuration.setConnectionTimeout(Duration.milliseconds(500));
 
-        final AbstractHttpClient client = (AbstractHttpClient) builder.using(configuration).build();
+        final AbstractHttpClient client = (AbstractHttpClient) builder.using(configuration).build("test");
 
         assertThat(client.getParams().getIntParameter(AllClientPNames.CONNECTION_TIMEOUT, -1))
                 .isEqualTo(500);
@@ -183,7 +184,7 @@ public class HttpClientBuilderTest {
 
     @Test
     public void disablesNaglesAlgorithm() throws Exception {
-        final AbstractHttpClient client = (AbstractHttpClient) builder.using(configuration).build();
+        final AbstractHttpClient client = (AbstractHttpClient) builder.using(configuration).build("test");
 
         assertThat(client.getParams().getBooleanParameter(AllClientPNames.TCP_NODELAY, false))
                 .isTrue();
@@ -191,7 +192,7 @@ public class HttpClientBuilderTest {
 
     @Test
     public void disablesStaleConnectionCheck() throws Exception {
-        final AbstractHttpClient client = (AbstractHttpClient) builder.using(configuration).build();
+        final AbstractHttpClient client = (AbstractHttpClient) builder.using(configuration).build("test");
 
         assertThat(client.getParams().getBooleanParameter(AllClientPNames.STALE_CONNECTION_CHECK, true))
                 .isFalse();
@@ -199,7 +200,7 @@ public class HttpClientBuilderTest {
 
     @Test
     public void usesTheDefaultSchemeRegistry() throws Exception {
-        final AbstractHttpClient client = (AbstractHttpClient) builder.using(configuration).build();
+        final AbstractHttpClient client = (AbstractHttpClient) builder.using(configuration).build("test");
 
         assertThat(client.getConnectionManager().getSchemeRegistry().getSchemeNames())
                 .isEqualTo(SchemeRegistryFactory.createSystemDefault().getSchemeNames());
@@ -207,7 +208,7 @@ public class HttpClientBuilderTest {
 
     @Test
     public void usesACustomSchemeRegistry() throws Exception {
-        final AbstractHttpClient client = (AbstractHttpClient) builder.using(registry).build();
+        final AbstractHttpClient client = (AbstractHttpClient) builder.using(registry).build("test");
 
         assertThat(client.getConnectionManager().getSchemeRegistry())
                 .isEqualTo(registry);

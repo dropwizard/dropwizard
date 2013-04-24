@@ -1,5 +1,6 @@
 package com.yammer.dropwizard.hibernate.tests;
 
+import com.codahale.metrics.MetricRegistry;
 import com.google.common.collect.ImmutableList;
 import com.yammer.dropwizard.config.Environment;
 import com.yammer.dropwizard.db.DatabaseConfiguration;
@@ -32,11 +33,13 @@ public class SessionFactoryFactoryTest {
     private final LifecycleEnvironment lifecycleEnvironment = mock(LifecycleEnvironment.class);
     private final Environment environment = mock(Environment.class);
     private final DatabaseConfiguration config = new DatabaseConfiguration();
+    private final MetricRegistry metricRegistry = new MetricRegistry();
 
     private SessionFactory sessionFactory;
 
     @Before
     public void setUp() throws Exception {
+        when(environment.getMetricRegistry()).thenReturn(metricRegistry);
         when(environment.getLifecycleEnvironment()).thenReturn(lifecycleEnvironment);
 
         config.setUrl("jdbc:hsqldb:mem:DbTest-" + System.currentTimeMillis());

@@ -1,5 +1,6 @@
 package com.yammer.dropwizard.auth.tests;
 
+import com.codahale.metrics.MetricRegistry;
 import com.google.common.base.Optional;
 import com.google.common.cache.CacheBuilderSpec;
 import com.google.common.cache.CacheStats;
@@ -18,7 +19,9 @@ public class CachingAuthenticatorTest {
     private final Authenticator<String, String> underlying = mock(Authenticator.class);
 
     private final CachingAuthenticator<String, String> cached =
-            CachingAuthenticator.wrap(underlying, CacheBuilderSpec.parse("maximumSize=1"));
+            CachingAuthenticator.wrap(new MetricRegistry(),
+                                      underlying,
+                                      CacheBuilderSpec.parse("maximumSize=1"));
 
     @Before
     public void setUp() throws Exception {

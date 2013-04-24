@@ -1,7 +1,7 @@
 package com.yammer.dropwizard.testing.tests.service;
 
+import com.codahale.metrics.annotation.Timed;
 import com.yammer.dropwizard.testing.tests.Person;
-import com.yammer.metrics.annotation.Timed;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
