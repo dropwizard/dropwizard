@@ -14,12 +14,10 @@ It includes:
 * Jetty, a high-performance HTTP server.
 * Jersey, a full-featured RESTful web framework.
 * Jackson, the best JSON library for the JVM.
-* Metrics, `Yammer's`__ own library for application metrics.
+* Metrics, an excellent library for application metrics.
 * Guava, Google's excellent utility library.
 * Logback, the successor to Log4j, Java's most widely-used logging framework.
 * Hibernate Validator, the reference implementation of the Java Bean Validation standard.
-
-.. __: https://www.yammer.com
 
 Dropwizard consists mostly of glue code to automatically connect and configure these components.
 
@@ -600,9 +598,9 @@ We highly recommend Mockito_ for all your mocking needs.
 Banners
 =======
 
-At Yammer, each of our services prints out a big ASCII art banner on startup. Yours should, too.
-It's fun. Just add a ``banner.txt`` class to ``src/main/resources`` and it'll print it out when your
-service starts::
+We think services should print out a big ASCII art banner on startup. Yours should, too. It's fun.
+Just add a ``banner.txt`` class to ``src/main/resources`` and it'll print it out when your service
+starts::
 
     INFO  [2011-12-09 21:56:37,209] com.yammer.dropwizard.cli.ServerCommand: Starting hello-world
                                                      dP
