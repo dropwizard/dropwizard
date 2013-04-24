@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.yammer.dropwizard</groupId>
+        <groupId>com.codahale.dropwizard</groupId>
         <artifactId>dropwizard-parent</artifactId>
         <version>0.7.0-SNAPSHOT</version>
     </parent>
@@ -13,7 +13,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.yammer.dropwizard</groupId>
+            <groupId>com.codahale.dropwizard</groupId>
             <artifactId>dropwizard-core</artifactId>
             <version>${project.version}</version>
         </dependency>

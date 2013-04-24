@@ -1,0 +1,2 @@
+com.codahale.dropwizard.views.freemarker.FreemarkerViewRenderer
+com.codahale.dropwizard.views.mustache.MustacheViewRenderer

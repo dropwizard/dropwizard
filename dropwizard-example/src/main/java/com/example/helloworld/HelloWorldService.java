@@ -8,15 +8,15 @@ import com.example.helloworld.core.User;
 import com.example.helloworld.db.PersonDAO;
 import com.example.helloworld.health.TemplateHealthCheck;
 import com.example.helloworld.resources.*;
-import com.yammer.dropwizard.Service;
-import com.yammer.dropwizard.assets.AssetsBundle;
-import com.yammer.dropwizard.auth.basic.BasicAuthProvider;
-import com.yammer.dropwizard.config.Bootstrap;
-import com.yammer.dropwizard.config.Environment;
-import com.yammer.dropwizard.db.DatabaseConfiguration;
-import com.yammer.dropwizard.hibernate.HibernateBundle;
-import com.yammer.dropwizard.migrations.MigrationsBundle;
-import com.yammer.dropwizard.views.ViewBundle;
+import com.codahale.dropwizard.Service;
+import com.codahale.dropwizard.assets.AssetsBundle;
+import com.codahale.dropwizard.auth.basic.BasicAuthProvider;
+import com.codahale.dropwizard.config.Bootstrap;
+import com.codahale.dropwizard.config.Environment;
+import com.codahale.dropwizard.db.DatabaseConfiguration;
+import com.codahale.dropwizard.hibernate.HibernateBundle;
+import com.codahale.dropwizard.migrations.MigrationsBundle;
+import com.codahale.dropwizard.views.ViewBundle;
 
 public class HelloWorldService extends Service<HelloWorldConfiguration> {
     public static void main(String[] args) throws Exception {

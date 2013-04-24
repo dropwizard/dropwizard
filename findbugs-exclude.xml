@@ -2,14 +2,14 @@
 <FindBugsFilter>
     <!-- we're *supposed* to manually GC there -->
     <Match>
-        <Class name="com.yammer.dropwizard.tasks.GarbageCollectionTask"/>
+        <Class name="com.codahale.dropwizard.tasks.GarbageCollectionTask"/>
         <Method name="execute"/>
         <Bug pattern="DM_GC"/>
     </Match>
 
     <!-- given this is a console command, exit(-1) is right -->
     <Match>
-        <Class name="com.yammer.dropwizard.cli.Cli"/>
+        <Class name="com.codahale.dropwizard.cli.Cli"/>
         <Method name="run"/>
         <Bug pattern="DM_EXIT"/>
     </Match>
@@ -22,7 +22,7 @@
 
     <!-- haven't started caring about servlet serialization either -->
     <Match>
-        <Class name="com.yammer.dropwizard.servlets.AssetServlet"/>
+        <Class name="com.codahale.dropwizard.servlets.AssetServlet"/>
         <Bug pattern="SE_TRANSIENT_FIELD_NOT_RESTORED"/>
     </Match>
 
@@ -38,15 +38,15 @@
 
     <!-- false alarms -->
     <Match>
-        <Class name="com.yammer.dropwizard.jetty.AsyncRequestLog"/>
+        <Class name="com.codahale.dropwizard.jetty.AsyncRequestLog"/>
         <Bug pattern="DM_DEFAULT_ENCODING"/>
     </Match>
     <Match>
-        <Class name="com.yammer.dropwizard.jetty.BiDiGzipHandler$GzipServletRequest"/>
+        <Class name="com.codahale.dropwizard.jetty.BiDiGzipHandler$GzipServletRequest"/>
         <Bug pattern="DM_DEFAULT_ENCODING"/>
     </Match>
     <Match>
-        <Class name="com.yammer.dropwizard.json.YamlConverter"/>
+        <Class name="com.codahale.dropwizard.json.YamlConverter"/>
         <Bug pattern="DM_DEFAULT_ENCODING"/>
     </Match>
 
