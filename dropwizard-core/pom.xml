@@ -33,6 +33,35 @@
             <artifactId>jersey-servlet</artifactId>
             <version>${jersey.version}</version>
         </dependency>
+
+        <!-- metrics 3 -->
+        <dependency>
+            <groupId>com.codahale.metrics</groupId>
+            <artifactId>metrics-core</artifactId>
+            <version>${metrics3.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.codahale.metrics</groupId>
+            <artifactId>metrics-servlet</artifactId>
+            <version>${metrics3.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.codahale.metrics</groupId>
+            <artifactId>metrics-jetty8</artifactId>
+            <version>${metrics3.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.codahale.metrics</groupId>
+            <artifactId>metrics-logback</artifactId>
+            <version>${metrics3.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.codahale.metrics</groupId>
+            <artifactId>metrics-jersey</artifactId>
+            <version>${metrics3.version}</version>
+        </dependency>
+
+        <!-- metrics 2 -->
         <dependency>
             <groupId>com.yammer.metrics</groupId>
             <artifactId>metrics-core</artifactId>
@@ -58,6 +87,7 @@
             <artifactId>metrics-jersey</artifactId>
             <version>${metrics.version}</version>
         </dependency>
+        
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
