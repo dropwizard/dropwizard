@@ -1,14 +1,14 @@
 package com.codahale.dropwizard.setup;
 
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.codahale.dropwizard.jetty.JettyManaged;
 import com.codahale.dropwizard.lifecycle.ExecutorServiceManager;
-import org.eclipse.jetty.util.component.AggregateLifeCycle;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
+import java.util.List;
 import java.util.concurrent.*;
 
 public class ScheduledExecutorServiceBuilder {
-    private final AggregateLifeCycle lifeCycle;
+    private final List<Object> managedObjects;
     private final String nameFormat;
     private int poolSize;
     private ThreadFactory threadFactory;
@@ -16,8 +16,8 @@ public class ScheduledExecutorServiceBuilder {
     private TimeUnit shutdownUnit;
     private RejectedExecutionHandler handler;
 
-    public ScheduledExecutorServiceBuilder(AggregateLifeCycle lifeCycle, String nameFormat) {
-        this.lifeCycle = lifeCycle;
+    public ScheduledExecutorServiceBuilder(List<Object> managedObjects, String nameFormat) {
+        this.managedObjects = managedObjects;
         this.nameFormat = nameFormat;
         this.poolSize = 1;
         this.threadFactory = new ThreadFactoryBuilder().setNameFormat(nameFormat).build();
@@ -49,10 +49,10 @@ public class ScheduledExecutorServiceBuilder {
         final ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(poolSize,
                                                                                      threadFactory,
                                                                                      handler);
-        lifeCycle.addBean(new JettyManaged(new ExecutorServiceManager(executor,
-                                                                      shutdownTime,
-                                                                      shutdownUnit,
-                                                                      nameFormat)));
+        managedObjects.add(new JettyManaged(new ExecutorServiceManager(executor,
+                                                                       shutdownTime,
+                                                                       shutdownUnit,
+                                                                       nameFormat)));
         return executor;
     }
 }

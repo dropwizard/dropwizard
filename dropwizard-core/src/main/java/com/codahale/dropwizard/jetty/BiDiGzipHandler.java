@@ -1,10 +1,10 @@
 package com.codahale.dropwizard.jetty;
 
 import com.google.common.base.Charsets;
-import org.eclipse.jetty.http.HttpHeaders;
+import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Request;
-import org.eclipse.jetty.server.handler.GzipHandler;
+import org.eclipse.jetty.servlets.gzip.GzipHandler;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
@@ -124,7 +124,7 @@ public class BiDiGzipHandler extends GzipHandler {
                        Request baseRequest,
                        HttpServletRequest request,
                        HttpServletResponse response) throws IOException, ServletException {
-        if (GZIP_ENCODING.equalsIgnoreCase(request.getHeader(HttpHeaders.CONTENT_ENCODING))) {
+        if (GZIP_ENCODING.equalsIgnoreCase(request.getHeader(HttpHeader.CONTENT_ENCODING.toString()))) {
             super.handle(target,
                          baseRequest,
                          new GzipServletRequest(request, getBufferSize()),

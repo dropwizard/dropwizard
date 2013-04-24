@@ -1,12 +1,11 @@
 package com.codahale.dropwizard.config.tests;
 
+import com.codahale.dropwizard.config.ConfigurationFactory;
+import com.codahale.dropwizard.config.ServerConfiguration;
+import com.codahale.dropwizard.util.Duration;
+import com.codahale.dropwizard.validation.Validator;
 import com.google.common.base.Optional;
 import com.google.common.io.Resources;
-import com.codahale.dropwizard.config.ConfigurationFactory;
-import com.codahale.dropwizard.config.HttpConfiguration;
-import com.codahale.dropwizard.util.Duration;
-import com.codahale.dropwizard.util.Size;
-import com.codahale.dropwizard.validation.Validator;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -14,13 +13,13 @@ import java.io.File;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
-public class HttpConfigurationTest {
-    private HttpConfiguration http;
+public class ServerConfigurationTest {
+    private ServerConfiguration http;
 
     @Before
     public void setUp() throws Exception {
-        this.http = ConfigurationFactory.forClass(HttpConfiguration.class, new Validator())
-                                        .build(new File(Resources.getResource("yaml/http.yml").toURI()));
+        this.http = ConfigurationFactory.forClass(ServerConfiguration.class, new Validator())
+                                        .build(new File(Resources.getResource("yaml/server.yml").toURI()));
     }
 
     @Test
@@ -54,63 +53,16 @@ public class HttpConfigurationTest {
     }
 
     @Test
-    public void hasAConnectorType() throws Exception {
-        assertThat(http.getConnectorType())
-                .isEqualTo(HttpConfiguration.ConnectorType.LEGACY);
-    }
-
-    @Test
-    public void hasAMaxIdleTime() throws Exception {
-        assertThat(http.getMaxIdleTime())
-                .isEqualTo(Duration.seconds(2));
-    }
-
-    @Test
     public void hasAnAcceptorThreadCount() throws Exception {
         assertThat(http.getAcceptorThreads())
                 .isEqualTo(2);
     }
 
-    @Test
-    public void hasAnAcceptorThreadPriorityOffset() throws Exception {
-        assertThat(http.getAcceptorThreadPriorityOffset())
-                .isEqualTo(-3);
-    }
 
     @Test
     public void hasAnAcceptQueueSize() throws Exception {
         assertThat(http.getAcceptQueueSize())
                 .isEqualTo(100);
-    }
-
-    @Test
-    public void hasAMaxBufferCount() throws Exception {
-        assertThat(http.getMaxBufferCount())
-                .isEqualTo(512);
-    }
-
-    @Test
-    public void hasARequestBufferSize() throws Exception {
-        assertThat(http.getRequestBufferSize())
-                .isEqualTo(Size.kilobytes(16));
-    }
-
-    @Test
-    public void hasARequestHeaderBufferSize() throws Exception {
-        assertThat(http.getRequestHeaderBufferSize())
-                .isEqualTo(Size.kilobytes(17));
-    }
-
-    @Test
-    public void hasAResponseBufferSize() throws Exception {
-        assertThat(http.getResponseBufferSize())
-                .isEqualTo(Size.kilobytes(18));
-    }
-
-    @Test
-    public void hasAResponseHeaderBufferSize() throws Exception {
-        assertThat(http.getResponseHeaderBufferSize())
-                .isEqualTo(Size.kilobytes(19));
     }
 
     @Test
@@ -123,24 +75,6 @@ public class HttpConfigurationTest {
     public void hasAnSoLingerTime() throws Exception {
         assertThat(http.getSoLingerTime())
                 .isEqualTo(Optional.of(Duration.seconds(2)));
-    }
-
-    @Test
-    public void hasALowResourcesConnectionThreshold() throws Exception {
-        assertThat(http.getLowResourcesConnectionThreshold())
-                .isEqualTo(1000);
-    }
-
-    @Test
-    public void hasALowResourcesMaxIdleTime() throws Exception {
-        assertThat(http.getLowResourcesMaxIdleTime())
-                .isEqualTo(Duration.seconds(1));
-    }
-
-    @Test
-    public void hasAShutdownGracePeriod() throws Exception {
-        assertThat(http.getShutdownGracePeriod())
-                .isEqualTo(Duration.seconds(5));
     }
 
     @Test

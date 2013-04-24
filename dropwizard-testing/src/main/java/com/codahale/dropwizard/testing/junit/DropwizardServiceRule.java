@@ -1,14 +1,15 @@
 package com.codahale.dropwizard.testing.junit;
 
-import com.google.common.collect.ImmutableMap;
 import com.codahale.dropwizard.Service;
 import com.codahale.dropwizard.cli.ServerCommand;
 import com.codahale.dropwizard.config.Bootstrap;
 import com.codahale.dropwizard.config.Configuration;
 import com.codahale.dropwizard.config.Environment;
 import com.codahale.dropwizard.lifecycle.ServerLifecycleListener;
+import com.google.common.collect.ImmutableMap;
 import net.sourceforge.argparse4j.inf.Namespace;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.ServerConnector;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
@@ -80,7 +81,7 @@ public class DropwizardServiceRule<C extends Configuration> implements TestRule 
     }
 
     public int getLocalPort() {
-        return jettyServer.getConnectors()[0].getLocalPort();
+        return ((ServerConnector) jettyServer.getConnectors()[0]).getLocalPort();
     }
 
     @SuppressWarnings("unchecked")

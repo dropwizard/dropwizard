@@ -6,7 +6,7 @@ import ch.qos.logback.classic.spi.LoggingEvent;
 import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.spi.AppenderAttachableImpl;
 import com.codahale.metrics.Clock;
-import org.eclipse.jetty.http.HttpHeaders;
+import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.server.Authentication;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.RequestLog;
@@ -112,7 +112,7 @@ public class AsyncRequestLog extends AbstractLifeCycle implements RequestLog {
     public void log(Request request, Response response) {
         // copied almost entirely from NCSARequestLog
         final StringBuilder buf = new StringBuilder(256);
-        String address = request.getHeader(HttpHeaders.X_FORWARDED_FOR);
+        String address = request.getHeader(HttpHeader.X_FORWARDED_FOR.toString());
         if (address == null) {
             address = request.getRemoteAddr();
         }
@@ -138,7 +138,7 @@ public class AsyncRequestLog extends AbstractLifeCycle implements RequestLog {
         buf.append(' ');
         buf.append(request.getProtocol());
         buf.append("\" ");
-        if (request.getAsyncContinuation().isInitial()) {
+        if (request.getHttpChannelState().isInitial()) {
             int status = response.getStatus();
             if (status <= 0) {
                 status = 404;

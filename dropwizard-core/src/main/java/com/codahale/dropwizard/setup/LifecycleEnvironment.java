@@ -1,17 +1,17 @@
 package com.codahale.dropwizard.setup;
 
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.codahale.dropwizard.jetty.JettyManaged;
 import com.codahale.dropwizard.lifecycle.ExecutorServiceManager;
 import com.codahale.dropwizard.lifecycle.Managed;
 import com.codahale.dropwizard.lifecycle.ServerLifecycleListener;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.component.AbstractLifeCycle;
-import org.eclipse.jetty.util.component.AggregateLifeCycle;
 import org.eclipse.jetty.util.component.LifeCycle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
 import java.util.concurrent.*;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -19,16 +19,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
 public class LifecycleEnvironment {
     private static final Logger LOGGER = LoggerFactory.getLogger(LifecycleEnvironment.class);
 
-    private final AggregateLifeCycle lifeCycle;
+    private final List<Object> managedObjects;
+    private final List<LifeCycle.Listener> lifecycleListeners;
 
-    public LifecycleEnvironment(AggregateLifeCycle lifeCycle) {
-        this.lifeCycle = lifeCycle;
-        lifeCycle.addLifeCycleListener(new AbstractLifeCycle.AbstractLifeCycleListener() {
-            @Override
-            public void lifeCycleStarting(LifeCycle event) {
-                logManagedObjects();
-            }
-        });
+    public LifecycleEnvironment(List<Object> managedObjects,
+                                List<LifeCycle.Listener> lifecycleListeners) {
+        this.managedObjects = managedObjects;
+        this.lifecycleListeners = lifecycleListeners;
     }
 
     /**
@@ -39,7 +36,7 @@ public class LifecycleEnvironment {
      * @param managed a managed object
      */
     public void manage(Managed managed) {
-        lifeCycle.addBean(new JettyManaged(checkNotNull(managed)));
+        managedObjects.add(new JettyManaged(checkNotNull(managed)));
     }
 
     /**
@@ -49,15 +46,15 @@ public class LifecycleEnvironment {
      * @param managed a Jetty-managed object
      */
     public void manage(LifeCycle managed) {
-        lifeCycle.addBean(checkNotNull(managed));
+        managedObjects.add(checkNotNull(managed));
     }
 
     public ExecutorServiceBuilder executorService(String nameFormat) {
-        return new ExecutorServiceBuilder(lifeCycle, nameFormat);
+        return new ExecutorServiceBuilder(managedObjects, nameFormat);
     }
 
     public ScheduledExecutorServiceBuilder scheduledExecutorService(String nameFormat) {
-        return new ScheduledExecutorServiceBuilder(lifeCycle, nameFormat);
+        return new ScheduledExecutorServiceBuilder(managedObjects, nameFormat);
     }
 
     /**
@@ -88,7 +85,7 @@ public class LifecycleEnvironment {
                                                                 unit,
                                                                 new LinkedBlockingQueue<Runnable>(),
                                                                 threadFactory);
-        lifeCycle.manage(new ExecutorServiceManager(executor, 5, TimeUnit.SECONDS, nameFormat));
+        managedObjects.add(new ExecutorServiceManager(executor, 5, TimeUnit.SECONDS, nameFormat));
         return executor;
     }
 
@@ -108,16 +105,16 @@ public class LifecycleEnvironment {
                                                                       .build();
         final ScheduledExecutorService executor = new ScheduledThreadPoolExecutor(corePoolSize,
                                                                                   threadFactory);
-        lifeCycle.manage(new ExecutorServiceManager(executor, 5, TimeUnit.SECONDS, nameFormat));
+        managedObjects.add(new ExecutorServiceManager(executor, 5, TimeUnit.SECONDS, nameFormat));
         return executor;
     }
 
     public void addServerLifecycleListener(ServerLifecycleListener listener) {
-        lifeCycle.addLifeCycleListener(new ServerListener(listener));
+        lifecycleListeners.add(new ServerListener(listener));
     }
 
     public void addLifeCycleListener(LifeCycle.Listener listener) {
-        lifeCycle.addLifeCycleListener(listener);
+        lifecycleListeners.add(listener);
     }
 
     private static class ServerListener extends AbstractLifeCycle.AbstractLifeCycleListener {
@@ -133,9 +130,5 @@ public class LifecycleEnvironment {
                 listener.serverStarted((Server) event);
             }
         }
-    }
-
-    private void logManagedObjects() {
-        LOGGER.debug("managed objects = {}", lifeCycle.getBeans());
     }
 }

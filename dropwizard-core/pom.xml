@@ -12,7 +12,7 @@
     <name>Dropwizard</name>
 
     <properties>
-        <jetty.version>8.1.10.v20130312</jetty.version>
+        <jetty.version>9.0.2.v20130417</jetty.version>
         <slf4j.version>1.7.4</slf4j.version>
         <logback.version>1.0.10</logback.version>
     </properties>
@@ -55,7 +55,7 @@
         </dependency>
         <dependency>
             <groupId>com.codahale.metrics</groupId>
-            <artifactId>metrics-jetty8</artifactId>
+            <artifactId>metrics-jetty9</artifactId>
             <version>${metrics3.version}</version>
         </dependency>
         <dependency>
@@ -131,6 +131,11 @@
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-servlets</artifactId>
+            <version>${jetty.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-http</artifactId>
             <version>${jetty.version}</version>
         </dependency>
@@ -158,12 +163,6 @@
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-joda</artifactId>
             <version>2.1.2</version>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>test-jetty-servlet</artifactId>
-            <version>${jetty.version}</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.sun.jersey.jersey-test-framework</groupId>

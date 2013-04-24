@@ -14,7 +14,7 @@ public class ConfigurationTest {
 
     @Test
     public void hasAnHttpConfiguration() throws Exception {
-        assertThat(configuration.getHttpConfiguration())
+        assertThat(configuration.getServerConfiguration())
                 .isNotNull();
     }
 

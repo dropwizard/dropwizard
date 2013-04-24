@@ -3,25 +3,28 @@ package com.codahale.dropwizard.setup.tests;
 import com.codahale.dropwizard.jetty.JettyManaged;
 import com.codahale.dropwizard.lifecycle.Managed;
 import com.codahale.dropwizard.setup.LifecycleEnvironment;
-import org.eclipse.jetty.util.component.AggregateLifeCycle;
+import com.google.common.collect.Lists;
 import org.eclipse.jetty.util.component.LifeCycle;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
+
+import java.util.List;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 
 public class LifecycleEnvironmentTest {
-    private final AggregateLifeCycle aggregate = mock(AggregateLifeCycle.class);
-    private final LifecycleEnvironment environment = new LifecycleEnvironment(aggregate);
+    private final List<Object> managedObjects = Lists.newArrayList();
+    private final List<LifeCycle.Listener> listeners = Lists.newArrayList();
+    private final LifecycleEnvironment environment = new LifecycleEnvironment(managedObjects,
+                                                                              listeners);
 
     @Test
     public void managesLifeCycleObjects() throws Exception {
         final LifeCycle lifeCycle = mock(LifeCycle.class);
         environment.manage(lifeCycle);
 
-        verify(aggregate).addBean(lifeCycle);
+        assertThat(managedObjects)
+                .contains(lifeCycle);
     }
 
     @Test
@@ -29,10 +32,12 @@ public class LifecycleEnvironmentTest {
         final Managed managed = mock(Managed.class);
         environment.manage(managed);
 
-        final ArgumentCaptor<JettyManaged> wrapper = ArgumentCaptor.forClass(JettyManaged.class);
-        verify(aggregate).addBean(wrapper.capture());
+        assertThat(managedObjects.get(0))
+                .isInstanceOf(JettyManaged.class);
 
-        assertThat(wrapper.getValue().getManaged())
+        final JettyManaged jettyManaged = (JettyManaged) managedObjects.get(0);
+
+        assertThat(jettyManaged.getManaged())
                 .isEqualTo(managed);
     }
 }

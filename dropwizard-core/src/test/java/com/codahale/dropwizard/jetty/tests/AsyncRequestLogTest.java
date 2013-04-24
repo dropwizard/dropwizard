@@ -4,9 +4,9 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.spi.AppenderAttachableImpl;
-import com.codahale.metrics.Clock;
 import com.codahale.dropwizard.jetty.AsyncRequestLog;
-import org.eclipse.jetty.http.HttpHeaders;
+import com.codahale.metrics.Clock;
+import com.google.common.net.HttpHeaders;
 import org.eclipse.jetty.http.HttpURI;
 import org.eclipse.jetty.server.*;
 import org.junit.After;
@@ -30,18 +30,18 @@ public class AsyncRequestLogTest {
 
     private final Request request = mock(Request.class);
     private final Response response = mock(Response.class);
-    private final AsyncContinuation continuation = mock(AsyncContinuation.class);
+    private final HttpChannelState channelState = mock(HttpChannelState.class);
 
     @Before
     public void setUp() throws Exception {
-        when(continuation.isInitial()).thenReturn(true);
+        when(channelState.isInitial()).thenReturn(true);
 
         when(request.getRemoteAddr()).thenReturn("10.0.0.1");
         when(request.getTimeStamp()).thenReturn(TimeUnit.SECONDS.toMillis(1353042047));
         when(request.getMethod()).thenReturn("GET");
         when(request.getUri()).thenReturn(new HttpURI("/test/things?yay"));
         when(request.getProtocol()).thenReturn("HTTP/1.1");
-        when(request.getAsyncContinuation()).thenReturn(continuation);
+        when(request.getHttpChannelState()).thenReturn(channelState);
         when(request.getDispatchTime()).thenReturn(TimeUnit.SECONDS.toMillis(1353042048));
 
         when(response.getStatus()).thenReturn(200);
@@ -108,7 +108,7 @@ public class AsyncRequestLogTest {
 
     @Test
     public void logsAsyncContinuations() throws Exception {
-        when(continuation.isInitial()).thenReturn(false);
+        when(channelState.isInitial()).thenReturn(false);
 
         final ILoggingEvent event = logAndCapture();
 

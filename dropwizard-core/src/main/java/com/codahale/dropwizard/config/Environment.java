@@ -1,15 +1,17 @@
 package com.codahale.dropwizard.config;
 
-import com.codahale.metrics.MetricRegistry;
-import com.codahale.metrics.health.HealthCheckRegistry;
-import com.sun.jersey.spi.container.servlet.ServletContainer;
 import com.codahale.dropwizard.jersey.DropwizardResourceConfig;
 import com.codahale.dropwizard.json.ObjectMapperFactory;
 import com.codahale.dropwizard.setup.*;
 import com.codahale.dropwizard.validation.Validator;
-import org.eclipse.jetty.server.Server;
+import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.health.HealthCheckRegistry;
+import com.google.common.collect.Lists;
+import com.sun.jersey.spi.container.servlet.ServletContainer;
 import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.util.component.LifeCycle;
 
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -31,7 +33,8 @@ public class Environment {
     private final ServletContextHandler servletContext;
     private final ServletEnvironment servletEnvironment;
 
-    private final Server server;
+    private final List<Object> managedObjects;
+    private final List<LifeCycle.Listener> lifecycleListeners;
     private final LifecycleEnvironment lifecycleEnvironment;
 
     private final ServletContextHandler adminContext;
@@ -55,15 +58,15 @@ public class Environment {
         final DropwizardResourceConfig jerseyConfig = new DropwizardResourceConfig(false,
                                                                                    metricRegistry);
 
-        this.server = new Server();
-
         this.servletContext = new ServletContextHandler();
         this.servletEnvironment = new ServletEnvironment(servletContext);
 
         this.adminContext = new ServletContextHandler();
         this.adminEnvironment = new AdminEnvironment(adminContext, healthCheckRegistry);
 
-        this.lifecycleEnvironment = new LifecycleEnvironment(server);
+        this.managedObjects = Lists.newArrayList();
+        this.lifecycleListeners = Lists.newArrayList();
+        this.lifecycleEnvironment = new LifecycleEnvironment(managedObjects, lifecycleListeners);
 
         this.jerseyServletContainer = new AtomicReference<ServletContainer>(new ServletContainer(jerseyConfig));
         this.jerseyEnvironment = new JerseyEnvironment(servletContext, jerseyServletContainer,
@@ -122,11 +125,15 @@ public class Environment {
         return jerseyServletContainer.get();
     }
 
-    Server getServer() {
-        return server;
-    }
-
     ServletContextHandler getAdminContext() {
         return adminContext;
+    }
+
+    List<Object> getManagedObjects() {
+        return managedObjects;
+    }
+
+    List<LifeCycle.Listener> getLifecycleListeners() {
+        return lifecycleListeners;
     }
 }

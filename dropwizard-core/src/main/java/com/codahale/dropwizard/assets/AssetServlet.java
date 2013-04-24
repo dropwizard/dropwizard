@@ -8,9 +8,7 @@ import com.google.common.hash.Hashing;
 import com.google.common.io.Resources;
 import com.google.common.net.HttpHeaders;
 import com.google.common.net.MediaType;
-
 import org.eclipse.jetty.http.MimeTypes;
-import org.eclipse.jetty.io.Buffer;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -121,12 +119,12 @@ public class AssetServlet extends HttpServlet {
             resp.setDateHeader(HttpHeaders.LAST_MODIFIED, cachedAsset.getLastModifiedTime());
             resp.setHeader(HttpHeaders.ETAG, cachedAsset.getETag());
 
-            final Buffer mimeTypeOfExtension = mimeTypes.getMimeByExtension(req.getRequestURI());
+            final String mimeTypeOfExtension = mimeTypes.getMimeByExtension(req.getRequestURI());
             MediaType mediaType = DEFAULT_MEDIA_TYPE;
             
             if (mimeTypeOfExtension != null) {
                 try {
-                    mediaType = MediaType.parse(mimeTypeOfExtension.toString());
+                    mediaType = MediaType.parse(mimeTypeOfExtension);
                     if (defaultCharset != null && mediaType.is(MediaType.ANY_TEXT_TYPE)) {
                         mediaType = mediaType.withCharset(defaultCharset);
                     }

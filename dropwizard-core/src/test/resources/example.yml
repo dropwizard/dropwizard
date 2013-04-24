@@ -15,12 +15,6 @@ http:
   # Minimum number of thread to keep alive.
   minThreads: 10
 
-  # The type of connector to use. Other valid values are "nonblocking" or "legacy". In general, the
-  # blocking connector should be used for low-latency services with short request durations. The
-  # nonblocking connector should be used for services with long request durations or which
-  # specifically take advantage of Jetty's continuation support.
-  connectorType: blocking
-
   # The maximum amount of time a connection is allowed to be idle before being closed.
   maxIdleTime: 1s
 
