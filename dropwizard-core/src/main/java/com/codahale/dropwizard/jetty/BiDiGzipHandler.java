@@ -1,5 +1,6 @@
 package com.codahale.dropwizard.jetty;
 
+import com.google.common.base.Charsets;
 import org.eclipse.jetty.http.HttpHeaders;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Request;
@@ -13,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.util.zip.GZIPInputStream;
 
 // TODO: 10/12/11 <coda> -- write tests for BiDiGzipHandler
@@ -86,7 +88,15 @@ public class BiDiGzipHandler extends GzipHandler {
         private GzipServletRequest(HttpServletRequest request, int bufferSize) throws IOException {
             super(request);
             this.input = new GzipServletInputStream(request, bufferSize);
-            this.reader = new BufferedReader(new InputStreamReader(input));
+            this.reader = new BufferedReader(new InputStreamReader(input, getCharset()));
+        }
+
+        private Charset getCharset() {
+            final String encoding = getCharacterEncoding();
+            if (encoding == null || !Charset.isSupported(encoding)) {
+                return Charsets.ISO_8859_1;
+            }
+            return Charset.forName(encoding);
         }
 
         @Override

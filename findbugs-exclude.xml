@@ -14,45 +14,17 @@
         <Bug pattern="DM_EXIT"/>
     </Match>
 
-    <!-- ignore default null values in Configuration classes -->
-    <Match>
-        <Class name="~com\.yammer\.dropwizard\.config\..*Configuration.*"/>
-        <Bug pattern="UWF_NULL_FIELD"/>
-    </Match>
-
-    <!-- haven't started caring about servlet serialization either -->
-    <Match>
-        <Class name="com.codahale.dropwizard.servlets.AssetServlet"/>
-        <Bug pattern="SE_TRANSIENT_FIELD_NOT_RESTORED"/>
-    </Match>
-
-    <!-- I don't care about Windows, sorry. -->
-    <Match>
-        <Bug pattern="VA_FORMAT_STRING_USES_NEWLINE"/>
-    </Match>
-
-    <!-- blissfully unconcerned about serialization -->
+    <!-- serialization is boring -->
     <Match>
         <Bug code="Se"/>
-    </Match>
-
-    <!-- false alarms -->
-    <Match>
-        <Class name="com.codahale.dropwizard.jetty.AsyncRequestLog"/>
-        <Bug pattern="DM_DEFAULT_ENCODING"/>
+        <Class name="com.codahale.dropwizard.tasks.TaskServlet"/>
     </Match>
     <Match>
-        <Class name="com.codahale.dropwizard.jetty.BiDiGzipHandler$GzipServletRequest"/>
-        <Bug pattern="DM_DEFAULT_ENCODING"/>
+        <Bug code="Se"/>
+        <Class name="com.codahale.dropwizard.assets.AssetServlet"/>
     </Match>
     <Match>
-        <Class name="com.codahale.dropwizard.json.YamlConverter"/>
-        <Bug pattern="DM_DEFAULT_ENCODING"/>
+        <Bug code="Se"/>
+        <Class name="com.codahale.dropwizard.hibernate.ManagedSessionFactory"/>
     </Match>
-
-    <!-- Scala bytecode is weird. I know. -->
-    <Class name="~com\.yammer\.dropwizard\.providers\.OauthTokenInjectable.*"/>
-    <Class name="~com\.yammer\.dropwizard\.providers\.OauthTokenProvider.*"/>
-    <Class name="~com\.yammer\.dropwizard\.ScalaService.*"/>
-    <Class name="~com\.yammer\.dropwizard\.Logging.*" />
 </FindBugsFilter>

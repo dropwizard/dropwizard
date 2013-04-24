@@ -57,7 +57,7 @@ public class AssetServlet extends HttpServlet {
 
     private final transient MimeTypes mimeTypes;
     
-    private Charset defaultCharset = Charsets.UTF_8;
+    private transient Charset defaultCharset = Charsets.UTF_8;
 
     /**
      * Creates a new {@code AssetServlet} that serves static assets loaded from {@code resourceURL} (typically a file:
@@ -76,9 +76,9 @@ public class AssetServlet extends HttpServlet {
                         String uriPath,
                         String indexFile) {
         final String trimmedPath = CharMatcher.is('/').trimFrom(resourcePath);
-	this.resourcePath = trimmedPath.isEmpty() ? trimmedPath : trimmedPath + "/";
+	this.resourcePath = trimmedPath.isEmpty() ? trimmedPath : trimmedPath + '/';
         final String trimmedUri = CharMatcher.is('/').trimTrailingFrom(uriPath);
-        this.uriPath = trimmedUri.length() == 0 ? "/" : trimmedUri;
+        this.uriPath = trimmedUri.isEmpty() ? "/" : trimmedUri;
         this.indexFile = indexFile;
         this.mimeTypes = new MimeTypes();
     }
@@ -134,7 +134,7 @@ public class AssetServlet extends HttpServlet {
                 catch (IllegalArgumentException ignore) {}
             }
             
-            resp.setContentType(mediaType.type() + "/" + mediaType.subtype());
+            resp.setContentType(mediaType.type() + '/' + mediaType.subtype());
 
             if (mediaType.charset().isPresent()) {
                 resp.setCharacterEncoding(mediaType.charset().get().toString());
