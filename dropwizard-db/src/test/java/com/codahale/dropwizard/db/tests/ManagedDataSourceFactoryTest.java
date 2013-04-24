@@ -38,23 +38,15 @@ public class ManagedDataSourceFactoryTest {
 
     @Test
     public void buildsAConnectionPoolToTheDatabase() throws Exception {
-        final Connection connection = dataSource.getConnection();
-        try {
-            final PreparedStatement statement = connection.prepareStatement("select 1 from INFORMATION_SCHEMA.SYSTEM_USERS");
-            try {
-                final ResultSet set = statement.executeQuery();
-                try {
+        try (Connection connection = dataSource.getConnection()) {
+            try (PreparedStatement statement = connection.prepareStatement(
+                    "select 1 from INFORMATION_SCHEMA.SYSTEM_USERS")) {
+                try (ResultSet set = statement.executeQuery()) {
                     while (set.next()) {
                         assertThat(set.getInt(1)).isEqualTo(1);
                     }
-                } finally {
-                    set.close();
                 }
-            } finally {
-                statement.close();
             }
-        } finally {
-            connection.close();
         }
     }
 }

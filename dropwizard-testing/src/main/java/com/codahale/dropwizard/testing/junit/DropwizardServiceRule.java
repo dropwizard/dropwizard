@@ -68,7 +68,7 @@ public class DropwizardServiceRule<C extends Configuration> implements TestRule 
             };
 
             service.initialize(bootstrap);
-            final ServerCommand<C> command = new ServerCommand<C>(service);
+            final ServerCommand<C> command = new ServerCommand<>(service);
             final Namespace namespace = new Namespace(ImmutableMap.<String, Object>of("file", configPath));
             command.run(bootstrap, namespace);
         } catch (Exception e) {

@@ -54,7 +54,7 @@ public class ConsoleLoggingOutput implements LoggingOutput {
 
     @Override
     public Appender<ILoggingEvent> build(LoggerContext context, String serviceName, Layout<ILoggingEvent> layout) {
-        final ConsoleAppender<ILoggingEvent> appender = new ConsoleAppender<ILoggingEvent>();
+        final ConsoleAppender<ILoggingEvent> appender = new ConsoleAppender<>();
         appender.setContext(context);
         if (layout == null) {
             final LogFormatter formatter = new LogFormatter(context, timeZone);

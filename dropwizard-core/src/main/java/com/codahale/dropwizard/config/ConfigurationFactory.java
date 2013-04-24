@@ -28,11 +28,11 @@ public class ConfigurationFactory<T> {
     public static <T> ConfigurationFactory<T> forClass(Class<T> klass,
                                                        Validator validator,
                                                        ObjectMapperFactory objectMapperFactory) {
-        return new ConfigurationFactory<T>(klass, validator, objectMapperFactory);
+        return new ConfigurationFactory<>(klass, validator, objectMapperFactory);
     }
 
     public static <T> ConfigurationFactory<T> forClass(Class<T> klass, Validator validator) {
-        return new ConfigurationFactory<T>(klass, validator, new ObjectMapperFactory());
+        return new ConfigurationFactory<>(klass, validator, new ObjectMapperFactory());
     }
 
     private static final ImmutableList<Class<?>> EXTENSIBLE_CLASSES = ImmutableList.<Class<?>>of(
@@ -61,11 +61,8 @@ public class ConfigurationFactory<T> {
     }
 
     public T build(File file) throws IOException, ConfigurationException {
-        final FileInputStream input = new FileInputStream(file);
-        try {
+        try (FileInputStream input = new FileInputStream(file)) {
             return build(file.toString(), input);
-        } finally {
-            input.close();
         }
     }
 

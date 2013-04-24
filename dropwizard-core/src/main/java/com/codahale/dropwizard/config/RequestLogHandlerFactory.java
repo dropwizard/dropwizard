@@ -40,7 +40,7 @@ public class RequestLogHandlerFactory {
         logger.setAdditive(false);
         final LoggerContext context = logger.getLoggerContext();
 
-        final AppenderAttachableImpl<ILoggingEvent> appenders = new AppenderAttachableImpl<ILoggingEvent>();
+        final AppenderAttachableImpl<ILoggingEvent> appenders = new AppenderAttachableImpl<>();
 
         final RequestLogLayout layout = new RequestLogLayout();
         layout.start();

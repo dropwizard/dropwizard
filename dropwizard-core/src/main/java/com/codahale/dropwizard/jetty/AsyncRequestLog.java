@@ -31,7 +31,7 @@ public class AsyncRequestLog extends AbstractLifeCycle implements RequestLog {
 
     private class Dispatcher implements Runnable {
         private volatile boolean running = true;
-        private final List<String> statements = new ArrayList<String>(BATCH_SIZE);
+        private final List<String> statements = new ArrayList<>(BATCH_SIZE);
 
         @Override
         public void run() {
@@ -71,7 +71,7 @@ public class AsyncRequestLog extends AbstractLifeCycle implements RequestLog {
                            AppenderAttachableImpl<ILoggingEvent> appenders,
                            final TimeZone timeZone) {
         this.clock = clock;
-        this.queue = new LinkedBlockingQueue<String>();
+        this.queue = new LinkedBlockingQueue<>();
         this.dispatcher = new Dispatcher();
         this.dispatchThread = new Thread(dispatcher);
         dispatchThread.setName("async-request-log-dispatcher-" + THREAD_COUNTER.incrementAndGet());

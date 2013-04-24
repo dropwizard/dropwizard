@@ -18,7 +18,7 @@ public class ContextRoutingHandler extends AbstractHandler {
     private final Trie<ContextHandler> handlers;
 
     public ContextRoutingHandler(ContextHandler... handlers) {
-        this.handlers = new ArrayTernaryTrie<ContextHandler>(false, handlers.length);
+        this.handlers = new ArrayTernaryTrie<>(false, handlers.length);
         for (ContextHandler handler : handlers) {
             this.handlers.put(handler.getContextPath(), handler);
             addBean(handler);

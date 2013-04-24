@@ -23,35 +23,36 @@ public class ResourceURL {
      */
     public static boolean isDirectory(URL resourceURL) throws URISyntaxException {
         final String protocol = resourceURL.getProtocol();
-        if ("jar".equals(protocol)) {
-            try {
-                final JarURLConnection jarConnection = (JarURLConnection) resourceURL.openConnection();
-                final JarEntry entry = jarConnection.getJarEntry();
-                if (entry.isDirectory()) {
-                    return true;
+        switch (protocol) {
+            case "jar":
+                try {
+                    final JarURLConnection jarConnection = (JarURLConnection) resourceURL.openConnection();
+                    final JarEntry entry = jarConnection.getJarEntry();
+                    if (entry.isDirectory()) {
+                        return true;
+                    }
+
+                    // WARNING! Heuristics ahead.
+                    // It turns out that JarEntry#isDirectory() really just tests whether the filename ends in a '/'. If you try
+                    // to open the same URL without a trailing '/', it'll succeed — but the result won't be what you want.
+                    // We try to get around this by calling getInputStream() on the file inside the jar. This seems to return null
+                    // for directories (though that behavior is undocumented as far as I can tell). If you have a better idea,
+                    // please improve this.
+
+                    String filename = resourceURL.getFile();
+                    filename = filename.substring(filename.indexOf('!') + 2); // leaves just the relative file path inside the jar
+                    final JarFile jarFile = jarConnection.getJarFile();
+                    final ZipEntry zipEntry = jarFile.getEntry(filename);
+                    final InputStream inputStream = jarFile.getInputStream(zipEntry);
+
+                    return (inputStream == null);
+                } catch (IOException e) {
+                    throw new ResourceNotFoundException(e);
                 }
-
-                // WARNING! Heuristics ahead.
-                // It turns out that JarEntry#isDirectory() really just tests whether the filename ends in a '/'. If you try
-                // to open the same URL without a trailing '/', it'll succeed — but the result won't be what you want.
-                // We try to get around this by calling getInputStream() on the file inside the jar. This seems to return null
-                // for directories (though that behavior is undocumented as far as I can tell). If you have a better idea,
-                // please improve this.
-
-                String filename = resourceURL.getFile();
-                filename = filename.substring(filename.indexOf('!') + 2); // leaves just the relative file path inside the jar
-                final JarFile jarFile = jarConnection.getJarFile();
-                final ZipEntry zipEntry = jarFile.getEntry(filename);
-                final InputStream inputStream = jarFile.getInputStream(zipEntry);
-
-                return (inputStream == null);
-            } catch (IOException e) {
-                throw new ResourceNotFoundException(e);
-            }
-        } else if ("file".equals(protocol)) {
-            return new File(resourceURL.toURI()).isDirectory();
-        } else {
-            throw new IllegalArgumentException("Unsupported protocol " + resourceURL.getProtocol() + " for resource " + resourceURL);
+            case "file":
+                return new File(resourceURL.toURI()).isDirectory();
+            default:
+                throw new IllegalArgumentException("Unsupported protocol " + resourceURL.getProtocol() + " for resource " + resourceURL);
         }
     }
 
@@ -85,32 +86,33 @@ public class ResourceURL {
      */
     public static long getLastModified(URL resourceURL) {
         final String protocol = resourceURL.getProtocol();
-        if ("jar".equals(protocol)) {
-            try {
-                final JarURLConnection jarConnection = (JarURLConnection) resourceURL.openConnection();
-                final JarEntry entry = jarConnection.getJarEntry();
-                return entry.getTime();
-            } catch (IOException ignored) {
-                return 0;
-            }
-        } else if ("file".equals(protocol)) {
-            URLConnection connection = null;
-            try {
-                connection = resourceURL.openConnection();
-                return connection.getLastModified();
-            } catch (IOException ignored) {
-                return 0;
-            } finally {
-                if (connection != null) {
-                    try {
-                        connection.getInputStream().close();
-                    } catch (IOException ignored) {
-                        // do nothing.
+        switch (protocol) {
+            case "jar":
+                try {
+                    final JarURLConnection jarConnection = (JarURLConnection) resourceURL.openConnection();
+                    final JarEntry entry = jarConnection.getJarEntry();
+                    return entry.getTime();
+                } catch (IOException ignored) {
+                    return 0;
+                }
+            case "file":
+                URLConnection connection = null;
+                try {
+                    connection = resourceURL.openConnection();
+                    return connection.getLastModified();
+                } catch (IOException ignored) {
+                    return 0;
+                } finally {
+                    if (connection != null) {
+                        try {
+                            connection.getInputStream().close();
+                        } catch (IOException ignored) {
+                            // do nothing.
+                        }
                     }
                 }
-            }
-        } else {
-            throw new IllegalArgumentException("Unsupported protocol " + resourceURL.getProtocol() + " for resource " + resourceURL);
+            default:
+                throw new IllegalArgumentException("Unsupported protocol " + resourceURL.getProtocol() + " for resource " + resourceURL);
         }
     }
 }

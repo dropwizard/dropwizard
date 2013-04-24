@@ -29,7 +29,7 @@ public class ExecutorServiceBuilder {
         this.keepAliveUnit = TimeUnit.SECONDS;
         this.shutdownTime = 5;
         this.shutdownUnit = TimeUnit.SECONDS;
-        this.workQueue = new LinkedBlockingQueue<Runnable>();
+        this.workQueue = new LinkedBlockingQueue<>();
         this.threadFactory = new ThreadFactoryBuilder().setNameFormat(nameFormat).build();
         this.handler = new ThreadPoolExecutor.AbortPolicy();
     }

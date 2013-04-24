@@ -11,7 +11,7 @@ public abstract class MigrationsBundle<T extends Configuration> implements Bundl
     @Override
     public final void initialize(Bootstrap<?> bootstrap) {
         final Class<T> klass = Generics.getTypeParameter(getClass(), Configuration.class);
-        bootstrap.addCommand(new DbCommand<T>(this, klass));
+        bootstrap.addCommand(new DbCommand<>(this, klass));
     }
 
     @Override

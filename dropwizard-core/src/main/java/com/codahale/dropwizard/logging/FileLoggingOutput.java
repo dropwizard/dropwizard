@@ -137,10 +137,10 @@ public class FileLoggingOutput implements LoggingOutput {
 
         if (archive) {
             final DefaultTimeBasedFileNamingAndTriggeringPolicy<ILoggingEvent> triggeringPolicy =
-                    new DefaultTimeBasedFileNamingAndTriggeringPolicy<ILoggingEvent>();
+                    new DefaultTimeBasedFileNamingAndTriggeringPolicy<>();
             triggeringPolicy.setContext(context);
 
-            final TimeBasedRollingPolicy<ILoggingEvent> rollingPolicy = new TimeBasedRollingPolicy<ILoggingEvent>();
+            final TimeBasedRollingPolicy<ILoggingEvent> rollingPolicy = new TimeBasedRollingPolicy<>();
             rollingPolicy.setContext(context);
             rollingPolicy.setFileNamePattern(archivedLogFilenamePattern);
             rollingPolicy.setTimeBasedFileNamingAndTriggeringPolicy(

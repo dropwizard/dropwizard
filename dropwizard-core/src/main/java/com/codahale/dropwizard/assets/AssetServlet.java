@@ -138,15 +138,10 @@ public class AssetServlet extends HttpServlet {
                 resp.setCharacterEncoding(mediaType.charset().get().toString());
             }
 
-            final ServletOutputStream output = resp.getOutputStream();
-            try {
+            try (ServletOutputStream output = resp.getOutputStream()) {
                 output.write(cachedAsset.getResource());
-            } finally {
-                output.close();
             }
-        } catch (RuntimeException ignored) {
-            resp.sendError(HttpServletResponse.SC_NOT_FOUND);
-        } catch (URISyntaxException ignored) {
+        } catch (RuntimeException | URISyntaxException ignored) {
             resp.sendError(HttpServletResponse.SC_NOT_FOUND);
         }
     }

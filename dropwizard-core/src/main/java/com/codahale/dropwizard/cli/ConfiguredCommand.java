@@ -79,11 +79,8 @@ public abstract class ConfiguredCommand<T extends Configuration> extends Command
                 ConfigurationFactory.forClass(configurationClass, new Validator(), objectMapperFactory);
 
         if (configurationPath != null) {
-            final InputStream input = configurationProvider.create(configurationPath);
-            try {
+            try (InputStream input = configurationProvider.create(configurationPath)) {
                 return configurationFactory.build(configurationPath, input);
-            } finally {
-                input.close();
             }
         }
         return configurationFactory.build();

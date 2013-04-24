@@ -63,8 +63,7 @@ public class JDBITest {
             obj.start();
         }
 
-        final Handle handle = dbi.open();
-        try {
+        try (Handle handle = dbi.open()) {
             handle.createCall("DROP TABLE people IF EXISTS").invoke();
             handle.createCall(
                     "CREATE TABLE people (name varchar(100) primary key, email varchar(100), age int)")
@@ -84,8 +83,6 @@ public class JDBITest {
                   .bindNull(1, Types.VARCHAR)
                   .bind(2, 99)
                   .execute();
-        } finally {
-            handle.close();
         }
     }
 

@@ -68,7 +68,7 @@ public class Environment {
         this.lifecycleListeners = Lists.newArrayList();
         this.lifecycleEnvironment = new LifecycleEnvironment(managedObjects, lifecycleListeners);
 
-        this.jerseyServletContainer = new AtomicReference<ServletContainer>(new ServletContainer(jerseyConfig));
+        this.jerseyServletContainer = new AtomicReference<>(new ServletContainer(jerseyConfig));
         this.jerseyEnvironment = new JerseyEnvironment(servletContext, jerseyServletContainer,
                                                        jerseyConfig);
     }

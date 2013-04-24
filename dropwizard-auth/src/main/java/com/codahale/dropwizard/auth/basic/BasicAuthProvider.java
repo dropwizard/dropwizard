@@ -113,6 +113,6 @@ public class BasicAuthProvider<T> implements InjectableProvider<Auth, Parameter>
     public Injectable<?> getInjectable(ComponentContext ic,
                                        Auth a,
                                        Parameter c) {
-        return new BasicAuthInjectable<T>(authenticator, realm, a.required());
+        return new BasicAuthInjectable<>(authenticator, realm, a.required());
     }
 }

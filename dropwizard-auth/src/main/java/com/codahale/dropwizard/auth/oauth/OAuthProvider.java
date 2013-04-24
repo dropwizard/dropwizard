@@ -100,6 +100,6 @@ public class OAuthProvider<T> implements InjectableProvider<Auth, Parameter> {
     public Injectable<?> getInjectable(ComponentContext ic,
                                        Auth a,
                                        Parameter c) {
-        return new OAuthInjectable<T>(authenticator, realm, a.required());
+        return new OAuthInjectable<>(authenticator, realm, a.required());
     }
 }

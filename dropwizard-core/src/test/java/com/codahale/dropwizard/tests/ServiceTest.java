@@ -54,7 +54,7 @@ public class ServiceTest {
     @Test
     public void canDetermineWrappedConfiguration() throws Exception {
         final PoserService service = new PoserService();
-        assertThat(new WrapperService<FakeConfiguration>(service).getConfigurationClass())
+        assertThat(new WrapperService<>(service).getConfigurationClass())
                 .isSameAs(FakeConfiguration.class);
     }
 }

@@ -263,10 +263,10 @@ public class ServerFactory {
     }
 
     private ThreadPool createThreadPool() {
-        final BlockingQueue<Runnable> queue = new BlockingArrayQueue<Runnable>(config.getMinThreads(),
-                                                                               config.getMaxThreads(),
-                                                                               config.getMaxQueuedRequests()
-                                                                                     .or(Integer.MAX_VALUE));
+        final BlockingQueue<Runnable> queue = new BlockingArrayQueue<>(config.getMinThreads(),
+                                                                       config.getMaxThreads(),
+                                                                       config.getMaxQueuedRequests()
+                                                                             .or(Integer.MAX_VALUE));
         final QueuedThreadPool pool = new QueuedThreadPool(config.getMaxThreads(),
                                                            config.getMinThreads(),
                                                            60000,

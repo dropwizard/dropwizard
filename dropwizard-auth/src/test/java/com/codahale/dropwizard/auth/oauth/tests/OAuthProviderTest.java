@@ -53,7 +53,7 @@ public class OAuthProviderTest extends JerseyTest {
                 return Optional.absent();
             }
         };
-        config.getSingletons().add(new OAuthProvider<String>(authenticator, "realm"));
+        config.getSingletons().add(new OAuthProvider<>(authenticator, "realm"));
         config.getSingletons().add(new ExampleResource());
         return new LowLevelAppDescriptor.Builder(config).build();
     }

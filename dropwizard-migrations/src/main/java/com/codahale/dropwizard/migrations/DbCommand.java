@@ -16,19 +16,19 @@ public class DbCommand<T extends Configuration> extends AbstractLiquibaseCommand
     public DbCommand(ConfigurationStrategy<T> strategy, Class<T> configurationClass) {
         super("db", "Run database migration tasks", strategy, configurationClass);
         this.subcommands = Maps.newTreeMap();
-        addSubcommand(new DbCalculateChecksumCommand<T>(strategy, configurationClass));
-        addSubcommand(new DbClearChecksumsCommand<T>(strategy, configurationClass));
-        addSubcommand(new DbDropAllCommand<T>(strategy, configurationClass));
-        addSubcommand(new DbDumpCommand<T>(strategy, configurationClass));
-        addSubcommand(new DbFastForwardCommand<T>(strategy, configurationClass));
-        addSubcommand(new DbGenerateDocsCommand<T>(strategy, configurationClass));
-        addSubcommand(new DbLocksCommand<T>(strategy, configurationClass));
-        addSubcommand(new DbMigrateCommand<T>(strategy, configurationClass));
-        addSubcommand(new DbPrepareRollbackCommand<T>(strategy, configurationClass));
-        addSubcommand(new DbRollbackCommand<T>(strategy, configurationClass));
-        addSubcommand(new DbStatusCommand<T>(strategy, configurationClass));
-        addSubcommand(new DbTagCommand<T>(strategy, configurationClass));
-        addSubcommand(new DbTestCommand<T>(strategy, configurationClass));
+        addSubcommand(new DbCalculateChecksumCommand<>(strategy, configurationClass));
+        addSubcommand(new DbClearChecksumsCommand<>(strategy, configurationClass));
+        addSubcommand(new DbDropAllCommand<>(strategy, configurationClass));
+        addSubcommand(new DbDumpCommand<>(strategy, configurationClass));
+        addSubcommand(new DbFastForwardCommand<>(strategy, configurationClass));
+        addSubcommand(new DbGenerateDocsCommand<>(strategy, configurationClass));
+        addSubcommand(new DbLocksCommand<>(strategy, configurationClass));
+        addSubcommand(new DbMigrateCommand<>(strategy, configurationClass));
+        addSubcommand(new DbPrepareRollbackCommand<>(strategy, configurationClass));
+        addSubcommand(new DbRollbackCommand<>(strategy, configurationClass));
+        addSubcommand(new DbStatusCommand<>(strategy, configurationClass));
+        addSubcommand(new DbTagCommand<>(strategy, configurationClass));
+        addSubcommand(new DbTestCommand<>(strategy, configurationClass));
     }
 
     private void addSubcommand(AbstractLiquibaseCommand<T> subcommand) {

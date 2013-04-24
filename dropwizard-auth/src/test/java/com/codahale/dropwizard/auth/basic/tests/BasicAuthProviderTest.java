@@ -55,7 +55,7 @@ public class BasicAuthProviderTest extends JerseyTest {
                 return Optional.absent();
             }
         };
-        config.getSingletons().add(new BasicAuthProvider<String>(authenticator, "realm"));
+        config.getSingletons().add(new BasicAuthProvider<>(authenticator, "realm"));
         config.getSingletons().add(new ExampleResource());
         return new LowLevelAppDescriptor.Builder(config).build();
     }

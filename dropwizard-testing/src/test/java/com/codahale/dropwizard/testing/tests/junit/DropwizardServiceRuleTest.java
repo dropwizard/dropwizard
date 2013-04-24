@@ -24,7 +24,7 @@ public class DropwizardServiceRuleTest {
 
     @ClassRule
     public static final DropwizardServiceRule<TestConfiguration> RULE =
-            new DropwizardServiceRule<TestConfiguration>(TestService.class, resourceFilePath("test-config.yaml"));
+            new DropwizardServiceRule<>(TestService.class, resourceFilePath("test-config.yaml"));
 
     @Test
     public void canGetExpectedResourceOverHttp() {

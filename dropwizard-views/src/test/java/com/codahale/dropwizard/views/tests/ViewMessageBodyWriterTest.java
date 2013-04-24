@@ -52,7 +52,7 @@ public class ViewMessageBodyWriterTest {
                        null,
                        NONE,
                        MediaType.TEXT_HTML_TYPE,
-                       new StringKeyIgnoreCaseMultivaluedMap<Object>(),
+                       new StringKeyIgnoreCaseMultivaluedMap<>(),
                        output);
 
         assertThat(output.toString())
@@ -70,7 +70,7 @@ public class ViewMessageBodyWriterTest {
                        null,
                        NONE,
                        MediaType.TEXT_HTML_TYPE,
-                       new StringKeyIgnoreCaseMultivaluedMap<Object>(),
+                       new StringKeyIgnoreCaseMultivaluedMap<>(),
                        output);
 
         assertThat(output.toString())
@@ -88,7 +88,7 @@ public class ViewMessageBodyWriterTest {
                        null,
                        NONE,
                        MediaType.TEXT_HTML_TYPE,
-                       new StringKeyIgnoreCaseMultivaluedMap<Object>(),
+                       new StringKeyIgnoreCaseMultivaluedMap<>(),
                        output);
 
         assertThat(output.toString())
@@ -107,7 +107,7 @@ public class ViewMessageBodyWriterTest {
                            null,
                            NONE,
                            MediaType.TEXT_HTML_TYPE,
-                           new StringKeyIgnoreCaseMultivaluedMap<Object>(),
+                           new StringKeyIgnoreCaseMultivaluedMap<>(),
                            output);
         } catch (WebApplicationException e) {
             final Response response = e.getResponse();
@@ -130,7 +130,7 @@ public class ViewMessageBodyWriterTest {
                            null,
                            NONE,
                            MediaType.TEXT_HTML_TYPE,
-                           new StringKeyIgnoreCaseMultivaluedMap<Object>(),
+                           new StringKeyIgnoreCaseMultivaluedMap<>(),
                            output);
             failBecauseExceptionWasNotThrown(WebApplicationException.class);
         } catch (ViewRenderException e) {

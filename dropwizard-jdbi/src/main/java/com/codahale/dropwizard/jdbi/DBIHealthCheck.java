@@ -15,11 +15,8 @@ public class DBIHealthCheck extends HealthCheck {
 
     @Override
     protected Result check() throws Exception {
-        final Handle handle = dbi.open();
-        try {
+        try (Handle handle = dbi.open()) {
             handle.execute(validationQuery);
-        } finally {
-            handle.close();
         }
         return Result.healthy();
     }

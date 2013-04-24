@@ -146,11 +146,8 @@ public class DbDumpCommand<T extends Configuration> extends AbstractLiquibaseCom
         final DiffResult diffResult = diff.compare();
         final String filename = namespace.getString("output");
         if (filename != null) {
-            final PrintStream file = new PrintStream(filename, Charsets.UTF_8.name());
-            try {
+            try (PrintStream file = new PrintStream(filename, Charsets.UTF_8.name())) {
                 diffResult.printChangeLog(file, liquibase.getDatabase());
-            } finally {
-                file.close();
             }
         } else {
             diffResult.printChangeLog(System.out, liquibase.getDatabase());

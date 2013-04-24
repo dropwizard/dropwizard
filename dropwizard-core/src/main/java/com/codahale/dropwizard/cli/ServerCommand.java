@@ -56,10 +56,8 @@ public class ServerCommand<T extends Configuration> extends EnvironmentCommand<T
             final String banner = Resources.toString(Resources.getResource("banner.txt"),
                                                      Charsets.UTF_8);
             logger.info("Starting {}\n{}", name, banner);
-        } catch (IllegalArgumentException ignored) {
+        } catch (IllegalArgumentException | IOException ignored) {
             // don't display the banner if there isn't one
-            logger.info("Starting {}", name);
-        } catch (IOException ignored) {
             logger.info("Starting {}", name);
         }
     }

@@ -25,7 +25,7 @@ public class AsyncRequestLogTest {
     private final Clock clock = mock(Clock.class);
     @SuppressWarnings("unchecked")
     private final Appender<ILoggingEvent> appender = mock(Appender.class);
-    private final AppenderAttachableImpl<ILoggingEvent> appenders = new AppenderAttachableImpl<ILoggingEvent>();
+    private final AppenderAttachableImpl<ILoggingEvent> appenders = new AppenderAttachableImpl<>();
     private final AsyncRequestLog asyncRequestLog = new AsyncRequestLog(clock, appenders, TimeZone.getTimeZone("UTC"));
 
     private final Request request = mock(Request.class);

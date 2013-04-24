@@ -32,9 +32,9 @@ public class CachingAuthenticator<C, P> implements Authenticator<C, P> {
     public static <C, P> CachingAuthenticator<C, P> wrap(MetricRegistry metricRegistry,
                                                          Authenticator<C, P> authenticator,
                                                          CacheBuilderSpec cacheSpec) {
-        return new CachingAuthenticator<C, P>(metricRegistry,
-                                              authenticator,
-                                              CacheBuilder.from(cacheSpec));
+        return new CachingAuthenticator<>(metricRegistry,
+                                          authenticator,
+                                          CacheBuilder.from(cacheSpec));
     }
 
     private final Authenticator<C, P> underlying;
