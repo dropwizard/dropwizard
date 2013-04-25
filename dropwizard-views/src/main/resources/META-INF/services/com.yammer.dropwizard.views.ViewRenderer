@@ -1,2 +1,3 @@
 com.yammer.dropwizard.views.freemarker.FreemarkerViewRenderer
 com.yammer.dropwizard.views.mustache.MustacheViewRenderer
+com.yammer.dropwizard.views.handlebars.HandlebarViewRenderer
