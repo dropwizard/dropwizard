@@ -24,6 +24,8 @@ import java.util.TimeZone;
 public class LoggingFactory {
     // initially configure for WARN+ console logging
     public static void bootstrap() {
+        hijackJDKLogging();
+
         final Logger root = getCleanRoot();
 
         final LogFormatter formatter = new LogFormatter(root.getLoggerContext(),
@@ -41,6 +43,11 @@ public class LoggingFactory {
         appender.start();
 
         root.addAppender(appender);
+    }
+
+    private static void hijackJDKLogging() {
+        SLF4JBridgeHandler.removeHandlersForRootLogger();
+        SLF4JBridgeHandler.install();
     }
 
     private final String name;
@@ -88,11 +95,6 @@ public class LoggingFactory {
         appender.setContext(root.getLoggerContext());
         appender.start();
         root.addAppender(appender);
-    }
-
-    private void hijackJDKLogging() {
-        SLF4JBridgeHandler.removeHandlersForRootLogger();
-        SLF4JBridgeHandler.install();
     }
 
     private Logger configureLevels() {
