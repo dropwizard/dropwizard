@@ -20,7 +20,6 @@ import javax.validation.Validator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -195,11 +194,10 @@ public class JerseyClientBuilder {
         }
 
         return build(environment.getLifecycleEnvironment()
-                                .managedExecutorService("jersey-client-%d",
-                                                        configuration.getMinThreads(),
-                                                        configuration.getMaxThreads(),
-                                                        60,
-                                                        TimeUnit.SECONDS),
+                                .executorService("jersey-client-" + name + "-%d")
+                                .minThreads(configuration.getMinThreads())
+                                .maxThreads(configuration.getMaxThreads())
+                                .build(),
                      environment.getObjectMapper(),
                      environment.getValidator(),
                      name);

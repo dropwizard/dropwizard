@@ -1,14 +1,12 @@
 package com.codahale.dropwizard.setup;
 
-import com.codahale.dropwizard.jetty.JettyManaged;
 import com.codahale.dropwizard.lifecycle.ExecutorServiceManager;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
-import java.util.List;
 import java.util.concurrent.*;
 
 public class ExecutorServiceBuilder {
-    private final List<Object> managedObjects;
+    private final LifecycleEnvironment environment;
     private final String nameFormat;
     private int corePoolSize;
     private int maximumPoolSize;
@@ -20,8 +18,8 @@ public class ExecutorServiceBuilder {
     private ThreadFactory threadFactory;
     private RejectedExecutionHandler handler;
 
-    public ExecutorServiceBuilder(List<Object> managedObjects, String nameFormat) {
-        this.managedObjects = managedObjects;
+    public ExecutorServiceBuilder(LifecycleEnvironment environment, String nameFormat) {
+        this.environment = environment;
         this.nameFormat = nameFormat;
         this.corePoolSize = 0;
         this.maximumPoolSize = Integer.MAX_VALUE;
@@ -79,10 +77,10 @@ public class ExecutorServiceBuilder {
                                                                    workQueue,
                                                                    threadFactory,
                                                                    handler);
-        managedObjects.add(new JettyManaged(new ExecutorServiceManager(executor,
-                                                                       shutdownTime,
-                                                                       shutdownUnit,
-                                                                       nameFormat)));
+        environment.manage(new ExecutorServiceManager(executor,
+                                                      shutdownTime,
+                                                      shutdownUnit,
+                                                      nameFormat));
         return executor;
     }
 }

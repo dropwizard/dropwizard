@@ -34,8 +34,6 @@ import org.eclipse.jetty.server.handler.RequestLogHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.BlockingArrayQueue;
-import org.eclipse.jetty.util.component.AbstractLifeCycle;
-import org.eclipse.jetty.util.component.LifeCycle;
 import org.eclipse.jetty.util.security.Constraint;
 import org.eclipse.jetty.util.security.Credential;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
@@ -84,20 +82,7 @@ public class ServerFactory {
     private Server createServer(final Environment env) {
         final ThreadPool threadPool = createThreadPool(env.getMetricRegistry());
         final Server server = new Server(threadPool);
-        for (Object bean : env.getManagedObjects()) {
-            server.addBean(bean);
-        }
-
-        for (LifeCycle.Listener listener : env.getLifecycleListeners()) {
-            server.addLifeCycleListener(listener);
-        }
-
-        server.addLifeCycleListener(new AbstractLifeCycle.AbstractLifeCycleListener() {
-            @Override
-            public void lifeCycleStarting(LifeCycle event) {
-                LOGGER.debug("managed objects = {}", env.getManagedObjects());
-            }
-        });
+        env.getLifecycleEnvironment().attach(server);
 
         final ServletContextHandler applicationHandler = createExternalServlet(env);
         final ServletContextHandler adminHandler = createInternalServlet(env);

@@ -8,13 +8,10 @@ import com.codahale.dropwizard.setup.ServletEnvironment;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheckRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.Lists;
 import com.sun.jersey.spi.container.servlet.ServletContainer;
 import org.eclipse.jetty.servlet.ServletContextHandler;
-import org.eclipse.jetty.util.component.LifeCycle;
 
 import javax.validation.Validator;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -36,8 +33,6 @@ public class Environment {
     private final ServletContextHandler servletContext;
     private final ServletEnvironment servletEnvironment;
 
-    private final List<Object> managedObjects;
-    private final List<LifeCycle.Listener> lifecycleListeners;
     private final LifecycleEnvironment lifecycleEnvironment;
 
     private final ServletContextHandler adminContext;
@@ -67,9 +62,7 @@ public class Environment {
         this.adminContext = new ServletContextHandler();
         this.adminEnvironment = new AdminEnvironment(adminContext, healthCheckRegistry);
 
-        this.managedObjects = Lists.newArrayList();
-        this.lifecycleListeners = Lists.newArrayList();
-        this.lifecycleEnvironment = new LifecycleEnvironment(managedObjects, lifecycleListeners);
+        this.lifecycleEnvironment = new LifecycleEnvironment();
 
         this.jerseyServletContainer = new AtomicReference<>(new ServletContainer(jerseyConfig));
         this.jerseyEnvironment = new JerseyEnvironment(servletContext, jerseyServletContainer,
@@ -130,13 +123,5 @@ public class Environment {
 
     ServletContextHandler getAdminContext() {
         return adminContext;
-    }
-
-    List<Object> getManagedObjects() {
-        return managedObjects;
-    }
-
-    List<LifeCycle.Listener> getLifecycleListeners() {
-        return lifecycleListeners;
     }
 }
