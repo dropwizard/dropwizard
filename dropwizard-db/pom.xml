@@ -19,8 +19,8 @@
         </dependency>
         <dependency>
             <groupId>org.apache.tomcat</groupId>
-            <artifactId>tomcat-dbcp</artifactId>
-            <version>7.0.37</version>
+            <artifactId>tomcat-jdbc</artifactId>
+            <version>7.0.39</version>
         </dependency>
         <dependency>
             <groupId>hsqldb</groupId>

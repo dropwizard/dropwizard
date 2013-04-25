@@ -121,11 +121,11 @@ public class ServerFactory {
                                               adminConnector,
                                               adminHandler);
         if (requestLogHandlerFactory.isEnabled()) {
-            server.setHandler(handler);
-        } else {
             final RequestLogHandler requestLogHandler = requestLogHandlerFactory.build();
             requestLogHandler.setHandler(handler);
             server.setHandler(requestLogHandler);
+        } else {
+            server.setHandler(handler);
         }
 
         final ErrorHandler errorHandler = new ErrorHandler();

@@ -1,23 +1,74 @@
 package com.codahale.dropwizard.db;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.base.Objects;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import com.codahale.dropwizard.util.Duration;
+import com.codahale.dropwizard.validation.MinDuration;
 import com.codahale.dropwizard.validation.ValidationMethod;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonValue;
+import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableMap;
+import org.apache.tomcat.jdbc.pool.DataSourceFactory;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import java.util.List;
+import java.sql.Connection;
+import java.util.Locale;
 import java.util.Map;
 
 @SuppressWarnings("UnusedDeclaration")
 public class DatabaseConfiguration {
+    public enum TransactionIsolation {
+        NONE(Connection.TRANSACTION_NONE),
+        READ_UNCOMMITTED(Connection.TRANSACTION_READ_UNCOMMITTED),
+        READ_COMMITTED(Connection.TRANSACTION_READ_COMMITTED),
+        REPEATABLE_READ(Connection.TRANSACTION_REPEATABLE_READ),
+        SERIALIZABLE(Connection.TRANSACTION_SERIALIZABLE),
+        DEFAULT(DataSourceFactory.UNKNOWN_TRANSACTIONISOLATION);
+
+        private final int value;
+
+        TransactionIsolation(int value) {
+            this.value = value;
+        }
+
+        public int getValue() {
+            return value;
+        }
+
+        @Override
+        @JsonValue
+        public String toString() {
+            return super.toString().replace("_", "+").toLowerCase(Locale.ENGLISH);
+        }
+
+        @JsonCreator
+        public static TransactionIsolation parse(String type) {
+            return valueOf(type.toUpperCase(Locale.ENGLISH).replace("[^A-Za-z]", "_"));
+        }
+    }
+
     @NotNull
     @JsonProperty
     private String driverClass = null;
+
+    @Min(0)
+    @Max(100)
+    @JsonProperty
+    private int abandonWhenPercentageFull = 0;
+
+    @JsonProperty
+    private boolean alternateUsernameAllowed = false;
+
+    @JsonProperty
+    private boolean commitOnReturn = false;
+
+    @JsonProperty
+    private Boolean autoCommitByDefault;
+
+    @JsonProperty
+    private Boolean readOnlyByDefault;
 
     @NotNull
     @JsonProperty
@@ -34,43 +85,82 @@ public class DatabaseConfiguration {
     @JsonProperty
     private ImmutableMap<String, String> properties = ImmutableMap.of();
 
+    @JsonProperty
+    private String defaultCatalog;
+
     @NotNull
     @JsonProperty
-    private Duration maxWaitForConnection = Duration.seconds(1);
+    private TransactionIsolation defaultTransactionIsolation = TransactionIsolation.DEFAULT;
+
+    @JsonProperty
+    private boolean useFairQueue = true;
+
+    @Min(1)
+    @JsonProperty
+    private int initialSize = 10;
+
+    @Min(1)
+    @JsonProperty
+    private int minSize = 10;
+
+    @Min(1)
+    @JsonProperty
+    private int maxSize = 100;
+
+    @JsonProperty
+    private String initializationQuery;
+
+    @JsonProperty
+    private boolean logAbandonedQueries = false;
+
+    @JsonProperty
+    private boolean logValidationErrors = false;
+
+    @JsonProperty
+    @MinDuration(1)
+    private Duration maxConnectionAge;
+
+    @NotNull
+    @JsonProperty
+    @MinDuration(1)
+    private Duration maxWaitForConnection = Duration.seconds(30);
+
+    @NotNull
+    @JsonProperty
+    @MinDuration(1)
+    private Duration minIdleTime = Duration.minutes(1);
 
     @NotNull
     @JsonProperty
     private String validationQuery = "/* Health Check */ SELECT 1";
 
-    @Min(1)
-    @Max(1024)
     @JsonProperty
-    private int minSize = 1;
-
-    @Min(1)
-    @Max(1024)
-    @JsonProperty
-    private int maxSize = 8;
+    private boolean checkConnectionWhileIdle = true;
 
     @JsonProperty
-    private boolean checkConnectionWhileIdle;
+    private boolean checkConnectionOnBorrow = false;
 
-    @NotNull
     @JsonProperty
-    private Duration checkConnectionHealthWhenIdleFor = Duration.seconds(10);
+    private boolean checkConnectionOnConnect = false;
 
-    @NotNull
     @JsonProperty
-    private Duration closeConnectionIfIdleFor = Duration.minutes(1);
+    private boolean checkConnectionOnReturn = false;
 
     @JsonProperty
     private boolean defaultReadOnly = false;
 
     @JsonProperty
-    private ImmutableList<String> connectionInitializationStatements = ImmutableList.of();
-
-    @JsonProperty
     private boolean autoCommentsEnabled = true;
+
+    @NotNull
+    @JsonProperty
+    @MinDuration(1)
+    private Duration evictionInterval = Duration.seconds(5);
+
+    @NotNull
+    @JsonProperty
+    @MinDuration(1)
+    private Duration validationInterval = Duration.seconds(30);
 
     public boolean isAutoCommentsEnabled() {
         return autoCommentsEnabled;
@@ -152,28 +242,12 @@ public class DatabaseConfiguration {
         this.maxSize = maxSize;
     }
 
-    public boolean isCheckConnectionWhileIdle() {
+    public boolean getCheckConnectionWhileIdle() {
         return checkConnectionWhileIdle;
     }
 
     public void setCheckConnectionWhileIdle(boolean checkConnectionWhileIdle) {
         this.checkConnectionWhileIdle = checkConnectionWhileIdle;
-    }
-
-    public Duration getCheckConnectionHealthWhenIdleFor() {
-        return checkConnectionHealthWhenIdleFor;
-    }
-
-    public void setCheckConnectionHealthWhenIdleFor(Duration checkConnectionHealthWhenIdleFor) {
-        this.checkConnectionHealthWhenIdleFor = checkConnectionHealthWhenIdleFor;
-    }
-
-    public Duration getCloseConnectionIfIdleFor() {
-        return closeConnectionIfIdleFor;
-    }
-
-    public void setCloseConnectionIfIdleFor(Duration closeConnectionIfIdleFor) {
-        this.closeConnectionIfIdleFor = closeConnectionIfIdleFor;
     }
 
     public boolean isDefaultReadOnly() {
@@ -184,76 +258,170 @@ public class DatabaseConfiguration {
         this.defaultReadOnly = defaultReadOnly;
     }
 
-    public ImmutableList<String> getConnectionInitializationStatements() {
-        return connectionInitializationStatements;
-    }
-
-    public void setConnectionInitializationStatements(List<String> statements) {
-        this.connectionInitializationStatements = ImmutableList.copyOf(statements);
-    }
-
     @ValidationMethod(message = ".minSize must be less than or equal to maxSize")
-    public boolean isPoolSizedCorrectly() {
+    public boolean isMinSizeLessThanMaxSize() {
         return minSize <= maxSize;
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) { return true; }
-        if ((obj == null) || (getClass() != obj.getClass())) { return false; }
-        final DatabaseConfiguration that = (DatabaseConfiguration) obj;
-        return (checkConnectionWhileIdle == that.checkConnectionWhileIdle) &&
-                (maxSize == that.maxSize) &&
-                (minSize == that.minSize) &&
-                !((checkConnectionHealthWhenIdleFor != null) ? !checkConnectionHealthWhenIdleFor.equals(that.checkConnectionHealthWhenIdleFor) : (that.checkConnectionHealthWhenIdleFor != null)) &&
-                !((closeConnectionIfIdleFor != null) ? !closeConnectionIfIdleFor.equals(that.closeConnectionIfIdleFor) : (that.closeConnectionIfIdleFor != null)) &&
-                (defaultReadOnly == that.defaultReadOnly) &&
-                !((driverClass != null) ? !driverClass.equals(that.driverClass) : (that.driverClass != null)) &&
-                !((maxWaitForConnection != null) ? !maxWaitForConnection.equals(that.maxWaitForConnection) : (that.maxWaitForConnection != null)) &&
-                !((password != null) ? !password.equals(that.password) : (that.password != null)) &&
-                !((properties != null) ? !properties.equals(that.properties) : (that.properties != null)) &&
-                !((url != null) ? !url.equals(that.url) : (that.url != null)) &&
-                !((user != null) ? !user.equals(that.user) : (that.user != null)) &&
-                !((validationQuery != null) ? !validationQuery.equals(that.validationQuery) : (that.validationQuery != null)) &&
-                !((connectionInitializationStatements != null) ? !connectionInitializationStatements.equals(that.connectionInitializationStatements) : (that.connectionInitializationStatements != null));
+    @ValidationMethod(message = ".initialSize must be less than or equal to maxSize")
+    public boolean isInitialSizeLessThanMaxSize() {
+        return initialSize <= maxSize;
     }
 
-    @Override
-    public int hashCode() {
-        int result = (driverClass != null) ? driverClass.hashCode() : 0;
-        result = (31 * result) + ((user != null) ? user.hashCode() : 0);
-        result = (31 * result) + ((password != null) ? password.hashCode() : 0);
-        result = (31 * result) + ((url != null) ? url.hashCode() : 0);
-        result = (31 * result) + ((properties != null) ? properties.hashCode() : 0);
-        result = (31 * result) + ((maxWaitForConnection != null) ? maxWaitForConnection.hashCode() : 0);
-        result = (31 * result) + ((validationQuery != null) ? validationQuery.hashCode() : 0);
-        result = (31 * result) + minSize;
-        result = (31 * result) + maxSize;
-        result = (31 * result) + (checkConnectionWhileIdle ? 1 : 0);
-        result = (31 * result) + ((checkConnectionHealthWhenIdleFor != null) ? checkConnectionHealthWhenIdleFor.hashCode() : 0);
-        result = (31 * result) + ((closeConnectionIfIdleFor != null) ? closeConnectionIfIdleFor.hashCode() : 0);
-        result = (31 * result) + (defaultReadOnly ? 1 : 0);
-        result = (31 * result) + ((connectionInitializationStatements != null) ? connectionInitializationStatements.hashCode() : 0);
-        return result;
+    @ValidationMethod(message = ".initialSize must be greater than or equal to minSize")
+    public boolean isInitialSizeGreaterThanMinSize() {
+        return minSize <= initialSize;
     }
 
-    @Override
-    public String toString() {
-        return Objects.toStringHelper(this)
-                      .add("driverClass", driverClass)
-                      .add("user", user)
-                      .add("password", password)
-                      .add("url", url)
-                      .add("properties", properties)
-                      .add("maxWaitForConnection", maxWaitForConnection)
-                      .add("validationQuery", validationQuery)
-                      .add("minSize", minSize)
-                      .add("maxSize", maxSize)
-                      .add("checkConnectionWhileIdle", checkConnectionWhileIdle)
-                      .add("checkConnectionHealthWhenIdleFor", checkConnectionHealthWhenIdleFor)
-                      .add("closeConnectionIfIdleFor", closeConnectionIfIdleFor)
-                      .add("defaultReadOnly", defaultReadOnly)
-                      .add("connectionInitializationStatements", connectionInitializationStatements)
-                      .toString();
+    public int getAbandonWhenPercentageFull() {
+        return abandonWhenPercentageFull;
+    }
+
+    public void setAbandonWhenPercentageFull(int percentage) {
+        this.abandonWhenPercentageFull = percentage;
+    }
+
+    public boolean isAlternateUsernameAllowed() {
+        return alternateUsernameAllowed;
+    }
+
+    public void setAlternateUsernameAllowed(boolean allow) {
+        this.alternateUsernameAllowed = allow;
+    }
+
+    public boolean getCommitOnReturn() {
+        return commitOnReturn;
+    }
+
+    public void setCommitOnReturn(boolean commitOnReturn) {
+        this.commitOnReturn = commitOnReturn;
+    }
+
+    public Boolean getAutoCommitByDefault() {
+        return autoCommitByDefault;
+    }
+
+    public void setAutoCommitByDefault(Boolean autoCommit) {
+        this.autoCommitByDefault = autoCommit;
+    }
+
+    public String getDefaultCatalog() {
+        return defaultCatalog;
+    }
+
+    public void setDefaultCatalog(String defaultCatalog) {
+        this.defaultCatalog = defaultCatalog;
+    }
+
+    public Boolean getReadOnlyByDefault() {
+        return readOnlyByDefault;
+    }
+
+    public void setReadOnlyByDefault(Boolean readOnlyByDefault) {
+        this.readOnlyByDefault = readOnlyByDefault;
+    }
+
+    public TransactionIsolation getDefaultTransactionIsolation() {
+        return defaultTransactionIsolation;
+    }
+
+    public void setDefaultTransactionIsolation(TransactionIsolation defaultTransactionIsolation) {
+        this.defaultTransactionIsolation = defaultTransactionIsolation;
+    }
+
+    public boolean getUseFairQueue() {
+        return useFairQueue;
+    }
+
+    public void setUseFairQueue(boolean fair) {
+        this.useFairQueue = fair;
+    }
+
+    public int getInitialSize() {
+        return initialSize;
+    }
+
+    public void setInitialSize(int initialSize) {
+        this.initialSize = initialSize;
+    }
+
+    public String getInitializationQuery() {
+        return initializationQuery;
+    }
+
+    public void setInitializationQuery(String query) {
+        this.initializationQuery = query;
+    }
+
+    public boolean getLogAbandonedQueries() {
+        return logAbandonedQueries;
+    }
+
+    public void setLogAbandonedQueries(boolean log) {
+        this.logAbandonedQueries = log;
+    }
+
+    public boolean getLogValidationErrors() {
+        return logValidationErrors;
+    }
+
+    public void setLogValidationErrors(boolean log) {
+        this.logValidationErrors = log;
+    }
+
+    public Optional<Duration> getMaxConnectionAge() {
+        return Optional.fromNullable(maxConnectionAge);
+    }
+
+    public void setMaxConnectionAge(Duration age) {
+        this.maxConnectionAge = age;
+    }
+
+    public Duration getMinIdleTime() {
+        return minIdleTime;
+    }
+
+    public void setMinIdleTime(Duration time) {
+        this.minIdleTime = time;
+    }
+
+    public boolean getCheckConnectionOnBorrow() {
+        return checkConnectionOnBorrow;
+    }
+
+    public void setCheckConnectionOnBorrow(boolean checkConnectionOnBorrow) {
+        this.checkConnectionOnBorrow = checkConnectionOnBorrow;
+    }
+
+    public boolean getCheckConnectionOnConnect() {
+        return checkConnectionOnConnect;
+    }
+
+    public void setCheckConnectionOnConnect(boolean checkConnectionOnConnect) {
+        this.checkConnectionOnConnect = checkConnectionOnConnect;
+    }
+
+    public boolean getCheckConnectionOnReturn() {
+        return checkConnectionOnReturn;
+    }
+
+    public void setCheckConnectionOnReturn(boolean checkConnectionOnReturn) {
+        this.checkConnectionOnReturn = checkConnectionOnReturn;
+    }
+
+    public Duration getEvictionInterval() {
+        return evictionInterval;
+    }
+
+    public void setEvictionInterval(Duration interval) {
+        this.evictionInterval = interval;
+    }
+
+    public Duration getValidationInterval() {
+        return validationInterval;
+    }
+
+    public void setValidationInterval(Duration validationInterval) {
+        this.validationInterval = validationInterval;
     }
 }

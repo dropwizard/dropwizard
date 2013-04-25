@@ -1,32 +1,18 @@
 package com.codahale.dropwizard.db;
 
-import com.codahale.dropwizard.db.ManagedPooledDataSource;
-import org.apache.tomcat.dbcp.pool.ObjectPool;
+import com.codahale.metrics.MetricRegistry;
+import org.apache.tomcat.jdbc.pool.PoolProperties;
 import org.junit.Test;
 
 import java.sql.SQLFeatureNotSupportedException;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.fest.assertions.api.Assertions.failBecauseExceptionWasNotThrown;
-import static org.mockito.Mockito.*;
 
 public class ManagedPooledDataSourceTest {
-    private final ObjectPool pool = mock(ObjectPool.class);
-    private final ManagedPooledDataSource dataSource = new ManagedPooledDataSource(pool);
-
-    @Test
-    public void isAlreadyStarted() throws Exception {
-        dataSource.start();
-
-        verifyZeroInteractions(pool);
-    }
-
-    @Test
-    public void closesThePoolWhenStopped() throws Exception {
-        dataSource.stop();
-
-        verify(pool).close();
-    }
+    private final PoolProperties config = new PoolProperties();
+    private final MetricRegistry metricRegistry = new MetricRegistry();
+    private final ManagedPooledDataSource dataSource = new ManagedPooledDataSource(config, metricRegistry);
 
     @Test
     public void hasNoParentLogger() throws Exception {

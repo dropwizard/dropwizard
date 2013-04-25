@@ -49,7 +49,8 @@ public class ManagedLiquibase extends Liquibase implements Managed {
         super("migrations.xml",
               new ClassLoaderResourceAccessor(),
               new ManagedJdbcConnection(new ManagedDataSourceFactory().build(new MetricRegistry(),
-                                                                             configuration)));
+                                                                             configuration,
+                                                                             "liquibase")));
     }
 
     @Override

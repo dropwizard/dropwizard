@@ -17,6 +17,10 @@ database:
   # the JDBC URL
   url: jdbc:h2:target/example
 
+server:
+  requestLog:
+    outputs: []
+
 # Logging settings.
 logging:
 

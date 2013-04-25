@@ -1,9 +1,6 @@
 package com.codahale.dropwizard.db;
 
 import com.codahale.metrics.MetricRegistry;
-import com.codahale.dropwizard.db.DatabaseConfiguration;
-import com.codahale.dropwizard.db.ManagedDataSource;
-import com.codahale.dropwizard.db.ManagedDataSourceFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,7 +25,8 @@ public class ManagedDataSourceFactoryTest {
         config.setDriverClass("org.hsqldb.jdbcDriver");
         config.setValidationQuery("SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS");
 
-        this.dataSource = factory.build(metricRegistry, config);
+        this.dataSource = factory.build(metricRegistry, config, "test");
+        dataSource.start();
     }
 
     @After

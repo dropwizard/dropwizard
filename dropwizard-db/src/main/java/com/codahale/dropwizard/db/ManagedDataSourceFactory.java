@@ -1,80 +1,57 @@
 package com.codahale.dropwizard.db;
 
-import com.codahale.metrics.Gauge;
+import com.codahale.dropwizard.util.Duration;
 import com.codahale.metrics.MetricRegistry;
-import org.apache.tomcat.dbcp.dbcp.DriverManagerConnectionFactory;
-import org.apache.tomcat.dbcp.dbcp.PoolableConnectionFactory;
-import org.apache.tomcat.dbcp.pool.impl.GenericObjectPool;
+import org.apache.tomcat.jdbc.pool.PoolProperties;
 
 import java.util.Map;
 import java.util.Properties;
 
-import static com.codahale.metrics.MetricRegistry.name;
-
 public class ManagedDataSourceFactory {
     public ManagedDataSource build(MetricRegistry metricRegistry,
-                                   DatabaseConfiguration configuration) throws ClassNotFoundException {
-        Class.forName(configuration.getDriverClass());
-        final GenericObjectPool pool = buildPool(configuration);
-
+                                   DatabaseConfiguration configuration,
+                                   String name) throws ClassNotFoundException {
         final Properties properties = new Properties();
         for (Map.Entry<String, String> property : configuration.getProperties().entrySet()) {
             properties.setProperty(property.getKey(), property.getValue());
         }
-        properties.setProperty("user", configuration.getUser());
-        properties.setProperty("password", configuration.getPassword());
 
-        final DriverManagerConnectionFactory factory = new DriverManagerConnectionFactory(
-                configuration.getUrl(),
-                properties);
+        final PoolProperties poolConfig = new PoolProperties();
+        poolConfig.setAbandonWhenPercentageFull(configuration.getAbandonWhenPercentageFull());
+        poolConfig.setAlternateUsernameAllowed(configuration.isAlternateUsernameAllowed());
+        poolConfig.setCommitOnReturn(configuration.getCommitOnReturn());
+        poolConfig.setDbProperties(properties);
+        poolConfig.setDefaultAutoCommit(configuration.getAutoCommitByDefault());
+        poolConfig.setDefaultCatalog(configuration.getDefaultCatalog());
+        poolConfig.setDefaultReadOnly(configuration.getReadOnlyByDefault());
+        poolConfig.setDefaultTransactionIsolation(configuration.getDefaultTransactionIsolation()
+                                                               .getValue());
+        poolConfig.setDriverClassName(configuration.getDriverClass());
+        poolConfig.setFairQueue(configuration.getUseFairQueue());
+        poolConfig.setInitialSize(configuration.getInitialSize());
+        poolConfig.setInitSQL(configuration.getInitializationQuery());
+        poolConfig.setLogAbandoned(configuration.getLogAbandonedQueries());
+        poolConfig.setLogValidationErrors(configuration.getLogValidationErrors());
+        poolConfig.setMaxActive(configuration.getMaxSize());
+        poolConfig.setMaxIdle(configuration.getMaxSize());
+        poolConfig.setMinIdle(configuration.getMinSize());
+        for (Duration duration : configuration.getMaxConnectionAge().asSet()) {
+            poolConfig.setMaxAge(duration.toMilliseconds());
+        }
+        poolConfig.setMaxWait((int) configuration.getMaxWaitForConnection().toMilliseconds());
+        poolConfig.setMinEvictableIdleTimeMillis((int) configuration.getMinIdleTime().toMilliseconds());
+        poolConfig.setName(name);
+        poolConfig.setUrl(configuration.getUrl());
+        poolConfig.setUsername(configuration.getUser());
+        poolConfig.setPassword(configuration.getPassword());
+        poolConfig.setTestWhileIdle(configuration.getCheckConnectionWhileIdle());
+        poolConfig.setValidationQuery(configuration.getValidationQuery());
+        poolConfig.setTestOnBorrow(configuration.getCheckConnectionOnBorrow());
+        poolConfig.setTestOnConnect(configuration.getCheckConnectionOnConnect());
+        poolConfig.setTestOnReturn(configuration.getCheckConnectionOnReturn());
+        poolConfig.setTimeBetweenEvictionRunsMillis((int) configuration.getEvictionInterval().toMilliseconds());
+        poolConfig.setValidationInterval(1);
 
-
-        final PoolableConnectionFactory connectionFactory = new PoolableConnectionFactory(factory,
-                                                                                          pool,
-                                                                                          null,
-                                                                                          configuration.getValidationQuery(),
-                                                                                          configuration.getConnectionInitializationStatements(),
-                                                                                          configuration.isDefaultReadOnly(),
-                                                                                          true);
-        connectionFactory.setPool(pool);
-
-        setupGauges(metricRegistry, pool, configuration.getUrl());
-
-        return new ManagedPooledDataSource(pool);
-    }
-
-    private GenericObjectPool buildPool(DatabaseConfiguration configuration) {
-        final GenericObjectPool pool = new GenericObjectPool(null);
-        pool.setMaxWait(configuration.getMaxWaitForConnection().toMilliseconds());
-        pool.setMinIdle(configuration.getMinSize());
-        pool.setMaxActive(configuration.getMaxSize());
-        pool.setMaxIdle(configuration.getMaxSize());
-        pool.setTestWhileIdle(configuration.isCheckConnectionWhileIdle());
-        pool.setTimeBetweenEvictionRunsMillis(configuration.getCheckConnectionHealthWhenIdleFor()
-                                                           .toMilliseconds());
-        pool.setMinEvictableIdleTimeMillis(configuration.getCloseConnectionIfIdleFor()
-                                                        .toMilliseconds());
-        pool.setWhenExhaustedAction(GenericObjectPool.WHEN_EXHAUSTED_BLOCK);
-        return pool;
-    }
-
-    private void setupGauges(MetricRegistry metricRegistry, final GenericObjectPool pool, String scope) {
-
-        metricRegistry.register(name(ManagedPooledDataSource.class, scope, "numActive"),
-                                new Gauge<Integer>() {
-                                    @Override
-                                    public Integer getValue() {
-                                        return pool.getNumActive();
-                                    }
-                                });
-
-        metricRegistry.register(name(ManagedPooledDataSource.class, scope, "numIdle"),
-                                new Gauge<Integer>() {
-
-                                    @Override
-                                    public Integer getValue() {
-                                        return pool.getNumIdle();
-                                    }
-                                });
+        return new ManagedPooledDataSource(poolConfig, metricRegistry);
     }
 }

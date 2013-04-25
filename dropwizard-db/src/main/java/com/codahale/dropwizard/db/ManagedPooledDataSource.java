@@ -1,25 +1,30 @@
 package com.codahale.dropwizard.db;
 
-import org.apache.tomcat.dbcp.dbcp.PoolingDataSource;
-import org.apache.tomcat.dbcp.pool.ObjectPool;
+import com.codahale.metrics.Gauge;
+import com.codahale.metrics.MetricRegistry;
+import org.apache.tomcat.jdbc.pool.ConnectionPool;
+import org.apache.tomcat.jdbc.pool.DataSourceProxy;
+import org.apache.tomcat.jdbc.pool.PoolConfiguration;
 
 import java.sql.SQLFeatureNotSupportedException;
 import java.util.logging.Logger;
 
+import static com.codahale.metrics.MetricRegistry.name;
+
 /**
- * A {@link PoolingDataSource} which is also {@link ManagedDataSource}.
+ * A {@link ManagedDataSource} which is backed by a Tomcat pooled {@link javax.sql.DataSource}.
  */
-public class ManagedPooledDataSource extends PoolingDataSource implements ManagedDataSource {
-    private final ObjectPool pool;
+public class ManagedPooledDataSource extends DataSourceProxy implements ManagedDataSource {
+    private final MetricRegistry metricRegistry;
 
     /**
-     * Create a new data source with the given connection pool.
+     * Create a new data source with the given connection pool configuration.
      *
-     * @param pool    a connection pool
+     * @param config the connection pool configuration
      */
-    public ManagedPooledDataSource(ObjectPool pool) {
-        super(pool);
-        this.pool = pool;
+    public ManagedPooledDataSource(PoolConfiguration config, MetricRegistry metricRegistry) {
+        super(config);
+        this.metricRegistry = metricRegistry;
     }
 
     // JDK6 has JDBC 4.0 which doesn't have this -- don't add @Override
@@ -30,11 +35,27 @@ public class ManagedPooledDataSource extends PoolingDataSource implements Manage
 
     @Override
     public void start() throws Exception {
-        // already started
+        final ConnectionPool connectionPool = createPool();
+        metricRegistry.register(name(getClass(), connectionPool.getName(), "active"),
+                                new Gauge<Integer>() {
+                                    @Override
+                                    public Integer getValue() {
+                                        return connectionPool.getActive();
+                                    }
+                                });
+
+        metricRegistry.register(name(getClass(), connectionPool.getName(), "idle"),
+                                new Gauge<Integer>() {
+
+                                    @Override
+                                    public Integer getValue() {
+                                        return connectionPool.getIdle();
+                                    }
+                                });
     }
 
     @Override
     public void stop() throws Exception {
-        pool.close();
+        close();
     }
 }
