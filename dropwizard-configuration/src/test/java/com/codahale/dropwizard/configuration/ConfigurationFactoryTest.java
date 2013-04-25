@@ -1,7 +1,5 @@
-package com.codahale.dropwizard.config.tests;
+package com.codahale.dropwizard.configuration;
 
-import com.codahale.dropwizard.config.ConfigurationException;
-import com.codahale.dropwizard.config.ConfigurationFactory;
 import com.codahale.dropwizard.jackson.Jackson;
 import com.fasterxml.jackson.dataformat.yaml.snakeyaml.error.YAMLException;
 import com.google.common.io.Resources;

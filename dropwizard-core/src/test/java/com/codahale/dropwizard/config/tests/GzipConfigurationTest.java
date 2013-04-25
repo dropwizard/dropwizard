@@ -1,6 +1,6 @@
 package com.codahale.dropwizard.config.tests;
 
-import com.codahale.dropwizard.config.ConfigurationFactory;
+import com.codahale.dropwizard.configuration.ConfigurationFactory;
 import com.codahale.dropwizard.config.GzipConfiguration;
 import com.codahale.dropwizard.jackson.Jackson;
 import com.codahale.dropwizard.util.Size;

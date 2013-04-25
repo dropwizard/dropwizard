@@ -1,6 +1,5 @@
-package com.codahale.dropwizard.config.tests;
+package com.codahale.dropwizard.configuration;
 
-import com.codahale.dropwizard.config.ConfigurationException;
 import org.junit.Test;
 
 import javax.validation.ConstraintViolation;

@@ -3,7 +3,7 @@ package com.codahale.dropwizard.cli;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 import com.codahale.dropwizard.Service;
-import com.codahale.dropwizard.config.Configuration;
+import com.codahale.dropwizard.Configuration;
 import com.codahale.dropwizard.config.Environment;
 import com.codahale.dropwizard.config.ServerFactory;
 import net.sourceforge.argparse4j.inf.Namespace;

@@ -4,7 +4,6 @@ import com.codahale.dropwizard.cli.CheckCommand;
 import com.codahale.dropwizard.cli.Cli;
 import com.codahale.dropwizard.cli.ServerCommand;
 import com.codahale.dropwizard.config.Bootstrap;
-import com.codahale.dropwizard.config.Configuration;
 import com.codahale.dropwizard.config.Environment;
 import com.codahale.dropwizard.config.LoggingFactory;
 import com.codahale.dropwizard.util.Generics;

@@ -30,6 +30,7 @@
         <module>dropwizard-util</module>
         <module>dropwizard-jackson</module>
         <module>dropwizard-validation</module>
+        <module>dropwizard-configuration</module>
     </modules>
 
     <properties>

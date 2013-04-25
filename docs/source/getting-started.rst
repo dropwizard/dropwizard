@@ -169,7 +169,7 @@ Here's what our configuration class will look like:
 
     package com.example.helloworld;
     
-    import com.codahale.dropwizard.config.Configuration;
+    import com.codahale.dropwizard.Configuration;
     import com.fasterxml.jackson.annotation.JsonProperty;
     import org.hibernate.validator.constraints.NotEmpty;
     

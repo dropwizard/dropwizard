@@ -1,6 +1,6 @@
 package com.codahale.dropwizard.migrations;
 
-import com.codahale.dropwizard.config.Configuration;
+import com.codahale.dropwizard.Configuration;
 import com.codahale.dropwizard.db.ConfigurationStrategy;
 import liquibase.Liquibase;
 import liquibase.change.CheckSum;

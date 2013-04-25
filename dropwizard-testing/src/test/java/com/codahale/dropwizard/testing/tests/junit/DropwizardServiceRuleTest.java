@@ -5,7 +5,7 @@ import com.google.common.io.Resources;
 import com.sun.jersey.api.client.Client;
 import com.codahale.dropwizard.Service;
 import com.codahale.dropwizard.config.Bootstrap;
-import com.codahale.dropwizard.config.Configuration;
+import com.codahale.dropwizard.Configuration;
 import com.codahale.dropwizard.config.Environment;
 import com.codahale.dropwizard.testing.junit.DropwizardServiceRule;
 import org.hibernate.validator.constraints.NotEmpty;

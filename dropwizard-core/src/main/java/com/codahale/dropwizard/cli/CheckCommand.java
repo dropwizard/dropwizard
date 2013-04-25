@@ -2,7 +2,7 @@ package com.codahale.dropwizard.cli;
 
 import com.codahale.dropwizard.Service;
 import com.codahale.dropwizard.config.Bootstrap;
-import com.codahale.dropwizard.config.Configuration;
+import com.codahale.dropwizard.Configuration;
 import net.sourceforge.argparse4j.inf.Namespace;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,4 +1,4 @@
-package com.codahale.dropwizard.config;
+package com.codahale.dropwizard.configuration;
 
 import com.codahale.dropwizard.validation.ConstraintViolations;
 import com.google.common.collect.ImmutableSet;

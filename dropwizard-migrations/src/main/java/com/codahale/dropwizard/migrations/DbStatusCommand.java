@@ -2,7 +2,7 @@ package com.codahale.dropwizard.migrations;
 
 import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
-import com.codahale.dropwizard.config.Configuration;
+import com.codahale.dropwizard.Configuration;
 import com.codahale.dropwizard.db.ConfigurationStrategy;
 import liquibase.Liquibase;
 import net.sourceforge.argparse4j.impl.Arguments;

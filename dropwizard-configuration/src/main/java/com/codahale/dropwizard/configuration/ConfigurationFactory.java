@@ -1,6 +1,6 @@
-package com.codahale.dropwizard.config;
+package com.codahale.dropwizard.configuration;
 
-import com.codahale.dropwizard.logging.LoggingOutput;
+import com.codahale.dropwizard.configuration.ConfigurationException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -9,8 +9,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TreeTraversingParser;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.google.common.base.Splitter;
-import com.google.common.collect.ImmutableList;
-import com.sun.jersey.spi.service.ServiceFinder;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
@@ -24,10 +22,6 @@ import java.util.Set;
 
 public class ConfigurationFactory<T> {
     private static final String PROPERTY_PREFIX = "dw.";
-    private static final ImmutableList<Class<?>> EXTENSIBLE_CLASSES = ImmutableList.<Class<?>>of(
-            LoggingOutput.class
-    );
-
     private final Class<T> klass;
     private final ObjectMapper mapper;
     private final Validator validator;
@@ -36,11 +30,6 @@ public class ConfigurationFactory<T> {
         this.klass = klass;
         this.mapper = objectMapper.copy();
         mapper.enable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-        for (Class<?> extensibleClass : EXTENSIBLE_CLASSES) {
-            mapper.getSubtypeResolver()
-                  .registerSubtypes(ServiceFinder.find(extensibleClass)
-                                                 .toClassArray());
-        }
         this.validator = validator;
     }
 

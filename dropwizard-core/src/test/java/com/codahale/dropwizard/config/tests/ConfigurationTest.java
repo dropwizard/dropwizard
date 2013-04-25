@@ -1,6 +1,6 @@
 package com.codahale.dropwizard.config.tests;
 
-import com.codahale.dropwizard.config.Configuration;
+import com.codahale.dropwizard.Configuration;
 import com.codahale.dropwizard.jackson.Jackson;
 import com.codahale.dropwizard.logging.LoggingOutput;
 import com.fasterxml.jackson.databind.ObjectMapper;

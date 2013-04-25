@@ -1,7 +1,10 @@
 package com.codahale.dropwizard.cli;
 
+import com.codahale.dropwizard.Configuration;
 import com.codahale.dropwizard.config.*;
-import com.codahale.dropwizard.config.provider.ConfigurationSourceProvider;
+import com.codahale.dropwizard.configuration.ConfigurationSourceProvider;
+import com.codahale.dropwizard.configuration.ConfigurationException;
+import com.codahale.dropwizard.configuration.ConfigurationFactory;
 import com.codahale.dropwizard.util.Generics;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.sourceforge.argparse4j.inf.Namespace;
@@ -17,7 +20,7 @@ import java.io.InputStream;
  * into an instance of a {@link Configuration} subclass, which is then validated. If the
  * configuration is valid, the command is run.
  *
- * @param <T> the {@link Configuration} subclass which is loaded from the configuration file
+ * @param <T> the {@link com.codahale.dropwizard.Configuration} subclass which is loaded from the configuration file
  * @see Configuration
  */
 public abstract class ConfiguredCommand<T extends Configuration> extends Command {
@@ -61,7 +64,7 @@ public abstract class ConfiguredCommand<T extends Configuration> extends Command
     }
 
     /**
-     * Runs the command with the given {@link Bootstrap} and {@link Configuration}.
+     * Runs the command with the given {@link Bootstrap} and {@link com.codahale.dropwizard.Configuration}.
      *
      * @param bootstrap     the bootstrap bootstrap
      * @param namespace     the parsed command line namespace

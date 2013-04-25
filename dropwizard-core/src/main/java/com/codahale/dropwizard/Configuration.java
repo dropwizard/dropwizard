@@ -1,5 +1,7 @@
-package com.codahale.dropwizard.config;
+package com.codahale.dropwizard;
 
+import com.codahale.dropwizard.config.LoggingConfiguration;
+import com.codahale.dropwizard.config.ServerConfiguration;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Objects;

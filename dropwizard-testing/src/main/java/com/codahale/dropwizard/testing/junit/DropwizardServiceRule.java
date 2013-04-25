@@ -3,7 +3,7 @@ package com.codahale.dropwizard.testing.junit;
 import com.codahale.dropwizard.Service;
 import com.codahale.dropwizard.cli.ServerCommand;
 import com.codahale.dropwizard.config.Bootstrap;
-import com.codahale.dropwizard.config.Configuration;
+import com.codahale.dropwizard.Configuration;
 import com.codahale.dropwizard.config.Environment;
 import com.codahale.dropwizard.lifecycle.ServerLifecycleListener;
 import com.google.common.collect.ImmutableMap;

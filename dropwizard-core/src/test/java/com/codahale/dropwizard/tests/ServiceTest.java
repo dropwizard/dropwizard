@@ -2,7 +2,7 @@ package com.codahale.dropwizard.tests;
 
 import com.codahale.dropwizard.Service;
 import com.codahale.dropwizard.config.Bootstrap;
-import com.codahale.dropwizard.config.Configuration;
+import com.codahale.dropwizard.Configuration;
 import com.codahale.dropwizard.config.Environment;
 import org.junit.Test;
 

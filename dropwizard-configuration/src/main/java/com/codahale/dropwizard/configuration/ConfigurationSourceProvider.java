@@ -1,4 +1,4 @@
-package com.codahale.dropwizard.config.provider;
+package com.codahale.dropwizard.configuration;
 
 import java.io.IOException;
 import java.io.InputStream;

@@ -1,9 +1,13 @@
 package com.codahale.dropwizard.config.tests;
 
-import com.codahale.dropwizard.config.ConfigurationFactory;
+import com.codahale.dropwizard.configuration.ConfigurationFactory;
 import com.codahale.dropwizard.config.ServerConfiguration;
 import com.codahale.dropwizard.jackson.Jackson;
+import com.codahale.dropwizard.logging.ConsoleLoggingOutput;
+import com.codahale.dropwizard.logging.FileLoggingOutput;
+import com.codahale.dropwizard.logging.SyslogLoggingOutput;
 import com.codahale.dropwizard.util.Duration;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Optional;
 import com.google.common.io.Resources;
 import org.junit.Before;
@@ -19,10 +23,15 @@ public class ServerConfigurationTest {
 
     @Before
     public void setUp() throws Exception {
+        final ObjectMapper objectMapper = Jackson.newObjectMapper();
+        objectMapper.getSubtypeResolver().registerSubtypes(ConsoleLoggingOutput.class,
+                                                           FileLoggingOutput.class,
+                                                           SyslogLoggingOutput.class);
+
         this.http = new ConfigurationFactory<>(ServerConfiguration.class,
                                                Validation.buildDefaultValidatorFactory()
                                                          .getValidator(),
-                                               Jackson.newObjectMapper())
+                                               objectMapper)
                 .build(new File(Resources.getResource("yaml/server.yml").toURI()));
     }
 

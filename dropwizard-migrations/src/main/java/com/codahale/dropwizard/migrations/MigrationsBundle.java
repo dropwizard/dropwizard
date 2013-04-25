@@ -2,7 +2,7 @@ package com.codahale.dropwizard.migrations;
 
 import com.codahale.dropwizard.Bundle;
 import com.codahale.dropwizard.config.Bootstrap;
-import com.codahale.dropwizard.config.Configuration;
+import com.codahale.dropwizard.Configuration;
 import com.codahale.dropwizard.config.Environment;
 import com.codahale.dropwizard.db.ConfigurationStrategy;
 import com.codahale.dropwizard.util.Generics;
