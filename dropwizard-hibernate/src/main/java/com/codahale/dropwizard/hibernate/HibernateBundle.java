@@ -29,7 +29,7 @@ public abstract class HibernateBundle<T extends Configuration> implements Config
 
     @Override
     public final void initialize(Bootstrap<?> bootstrap) {
-        bootstrap.getObjectMapperFactory().registerModule(new Hibernate4Module());
+        bootstrap.getObjectMapper().registerModule(new Hibernate4Module());
     }
 
     @Override

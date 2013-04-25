@@ -1,16 +1,15 @@
 package com.codahale.dropwizard.client.tests;
 
+import com.codahale.dropwizard.client.JerseyClientBuilder;
+import com.codahale.dropwizard.client.JerseyClientConfiguration;
+import com.codahale.dropwizard.config.Environment;
+import com.codahale.dropwizard.jersey.JacksonMessageBodyProvider;
+import com.codahale.dropwizard.setup.LifecycleEnvironment;
 import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.filter.GZIPContentEncodingFilter;
 import com.sun.jersey.client.apache4.ApacheHttpClient4;
-import com.codahale.dropwizard.client.JerseyClientBuilder;
-import com.codahale.dropwizard.client.JerseyClientConfiguration;
-import com.codahale.dropwizard.config.Environment;
-import com.codahale.dropwizard.jersey.JacksonMessageBodyProvider;
-import com.codahale.dropwizard.setup.JsonEnvironment;
-import com.codahale.dropwizard.setup.LifecycleEnvironment;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -50,7 +49,6 @@ public class JerseyClientBuilderTest {
     private static final Annotation[] NO_ANNOTATIONS = new Annotation[0];
 
     private final JerseyClientBuilder builder = new JerseyClientBuilder(new MetricRegistry());
-    private final JsonEnvironment jsonEnvironment = mock(JsonEnvironment.class);
     private final LifecycleEnvironment lifecycleEnvironment = mock(LifecycleEnvironment.class);
     private final Environment environment = mock(Environment.class);
     private final ExecutorService executorService = mock(ExecutorService.class);
@@ -59,7 +57,7 @@ public class JerseyClientBuilderTest {
     @Before
     public void setUp() throws Exception {
         when(environment.getLifecycleEnvironment()).thenReturn(lifecycleEnvironment);
-        when(environment.getJsonEnvironment()).thenReturn(jsonEnvironment);
+        when(environment.getObjectMapper()).thenReturn(objectMapper);
     }
 
     @Test
@@ -182,8 +180,6 @@ public class JerseyClientBuilderTest {
                                                          60,
                                                          TimeUnit.SECONDS)).thenReturn(executorService);
 
-        when(jsonEnvironment.build()).thenReturn(objectMapper);
-
         final Client client = builder.using(environment).build("test");
 
         final MessageBodyReader<Object> reader = client.getProviders()
@@ -209,8 +205,6 @@ public class JerseyClientBuilderTest {
                                                          532,
                                                          60,
                                                          TimeUnit.SECONDS)).thenReturn(executorService);
-
-        when(jsonEnvironment.build()).thenReturn(objectMapper);
 
         final ApacheHttpClient4 client = (ApacheHttpClient4) builder.using(configuration)
                                                                     .using(environment).build("test");

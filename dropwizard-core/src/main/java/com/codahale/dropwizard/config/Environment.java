@@ -1,11 +1,14 @@
 package com.codahale.dropwizard.config;
 
 import com.codahale.dropwizard.jersey.DropwizardResourceConfig;
-import com.codahale.dropwizard.json.ObjectMapperFactory;
-import com.codahale.dropwizard.setup.*;
+import com.codahale.dropwizard.setup.AdminEnvironment;
+import com.codahale.dropwizard.setup.JerseyEnvironment;
+import com.codahale.dropwizard.setup.LifecycleEnvironment;
+import com.codahale.dropwizard.setup.ServletEnvironment;
 import com.codahale.dropwizard.validation.Validator;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheckRegistry;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import com.sun.jersey.spi.container.servlet.ServletContainer;
 import org.eclipse.jetty.servlet.ServletContextHandler;
@@ -24,7 +27,7 @@ public class Environment {
     private final MetricRegistry metricRegistry;
     private final HealthCheckRegistry healthCheckRegistry;
 
-    private final JsonEnvironment jsonEnvironment;
+    private final ObjectMapper objectMapper;
     private Validator validator;
 
     private final AtomicReference<ServletContainer> jerseyServletContainer;
@@ -44,16 +47,16 @@ public class Environment {
      * Creates a new environment.
      *
      * @param name                the name of the service
-     * @param objectMapperFactory the {@link ObjectMapperFactory} for the service
+     * @param objectMapper the {@link ObjectMapper} for the service
      */
     public Environment(String name,
-                       ObjectMapperFactory objectMapperFactory,
+                       ObjectMapper objectMapper,
                        Validator validator,
                        MetricRegistry metricRegistry) {
         this.name = name;
+        this.objectMapper = objectMapper;
         this.metricRegistry = metricRegistry;
         this.healthCheckRegistry = new HealthCheckRegistry();
-        this.jsonEnvironment = new JsonEnvironment(objectMapperFactory);
         this.validator = validator;
         final DropwizardResourceConfig jerseyConfig = new DropwizardResourceConfig(false,
                                                                                    metricRegistry);
@@ -89,8 +92,8 @@ public class Environment {
         return servletEnvironment;
     }
 
-    public JsonEnvironment getJsonEnvironment() {
-        return jsonEnvironment;
+    public ObjectMapper getObjectMapper() {
+        return objectMapper;
     }
 
     public String getName() {

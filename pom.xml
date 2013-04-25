@@ -28,6 +28,7 @@
         <module>dropwizard-views</module>
         <module>dropwizard-testing</module>
         <module>dropwizard-util</module>
+        <module>dropwizard-jackson</module>
     </modules>
 
     <properties>
@@ -36,6 +37,7 @@
         <metrics3.version>3.0.0-BETA2</metrics3.version>
         <jersey.version>1.17.1</jersey.version>
         <jackson.version>2.1.4</jackson.version>
+        <logback.version>1.0.10</logback.version>
     </properties>
 
     <developers>

@@ -7,7 +7,7 @@ import com.codahale.dropwizard.cli.Command;
 import com.codahale.dropwizard.cli.ConfiguredCommand;
 import com.codahale.dropwizard.config.provider.ConfigurationSourceProvider;
 import com.codahale.dropwizard.config.provider.FileConfigurationSourceProvider;
-import com.codahale.dropwizard.json.ObjectMapperFactory;
+import com.codahale.dropwizard.jackson.Jackson;
 import com.codahale.metrics.Metric;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.MetricSet;
@@ -15,6 +15,7 @@ import com.codahale.metrics.jvm.BufferPoolMetricSet;
 import com.codahale.metrics.jvm.GarbageCollectorMetricSet;
 import com.codahale.metrics.jvm.MemoryUsageGaugeSet;
 import com.codahale.metrics.jvm.ThreadStatesGaugeSet;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
@@ -26,7 +27,7 @@ import java.util.Map;
 public class Bootstrap<T extends Configuration> {
     private final Service<T> service;
     private ConfigurationSourceProvider configurationProvider = new FileConfigurationSourceProvider();
-    private final ObjectMapperFactory objectMapperFactory;
+    private final ObjectMapper objectMapper;
     private final List<Bundle> bundles;
     private final List<ConfiguredBundle<? super T>> configuredBundles;
     private final List<Command> commands;
@@ -34,7 +35,7 @@ public class Bootstrap<T extends Configuration> {
 
     public Bootstrap(Service<T> service) {
         this.service = service;
-        this.objectMapperFactory = new ObjectMapperFactory();
+        this.objectMapper = Jackson.newObjectMapper();
         this.bundles = Lists.newArrayList();
         this.configuredBundles = Lists.newArrayList();
         this.commands = Lists.newArrayList();
@@ -86,8 +87,8 @@ public class Bootstrap<T extends Configuration> {
         commands.add(command);
     }
 
-    public ObjectMapperFactory getObjectMapperFactory() {
-        return objectMapperFactory;
+    public ObjectMapper getObjectMapper() {
+        return objectMapper;
     }
 
     public void runWithBundles(T configuration, Environment environment) throws Exception {

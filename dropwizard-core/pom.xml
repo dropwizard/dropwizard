@@ -14,13 +14,17 @@
     <properties>
         <jetty.version>9.0.2.v20130417</jetty.version>
         <slf4j.version>1.7.4</slf4j.version>
-        <logback.version>1.0.10</logback.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>com.codahale.dropwizard</groupId>
             <artifactId>dropwizard-util</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.codahale.dropwizard</groupId>
+            <artifactId>dropwizard-jackson</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -74,11 +78,6 @@
             <version>${metrics3.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>${jackson.version}</version>
-        </dependency>
-        <dependency>
             <groupId>com.fasterxml.jackson.jaxrs</groupId>
             <artifactId>jackson-jaxrs-json-provider</artifactId>
             <version>${jackson.version}</version>
@@ -87,11 +86,6 @@
             <groupId>com.fasterxml.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-yaml</artifactId>
             <version>${jackson.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-guava</artifactId>
-            <version>2.1.2</version>
         </dependency>
         <dependency>
             <groupId>net.sourceforge.argparse4j</groupId>
@@ -152,11 +146,6 @@
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
             <version>2.2</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-joda</artifactId>
-            <version>2.1.2</version>
         </dependency>
         <dependency>
             <groupId>com.sun.jersey.jersey-test-framework</groupId>

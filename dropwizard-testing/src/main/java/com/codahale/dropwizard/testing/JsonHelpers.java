@@ -1,9 +1,9 @@
 package com.codahale.dropwizard.testing;
 
+import com.codahale.dropwizard.jackson.Jackson;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.codahale.dropwizard.json.ObjectMapperFactory;
 
 import java.io.IOException;
 
@@ -24,7 +24,7 @@ import static com.codahale.dropwizard.testing.FixtureHelpers.fixture;
  * </code></pre>
  */
 public class JsonHelpers {
-    private static final ObjectMapper MAPPER = new ObjectMapperFactory().build();
+    private static final ObjectMapper MAPPER = Jackson.newObjectMapper();
 
     private JsonHelpers() { /* singleton */ }
 

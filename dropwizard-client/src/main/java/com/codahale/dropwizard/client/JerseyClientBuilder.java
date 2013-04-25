@@ -187,7 +187,7 @@ public class JerseyClientBuilder {
                                                         configuration.getMaxThreads(),
                                                         60,
                                                         TimeUnit.SECONDS),
-                     environment.getJsonEnvironment().build(),
+                     environment.getObjectMapper(),
                      name);
     }
 

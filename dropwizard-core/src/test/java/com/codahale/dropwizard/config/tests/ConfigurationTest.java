@@ -1,10 +1,10 @@
 package com.codahale.dropwizard.config.tests;
 
+import com.codahale.dropwizard.config.Configuration;
+import com.codahale.dropwizard.jackson.Jackson;
+import com.codahale.dropwizard.logging.LoggingOutput;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.jersey.spi.service.ServiceFinder;
-import com.codahale.dropwizard.config.Configuration;
-import com.codahale.dropwizard.json.ObjectMapperFactory;
-import com.codahale.dropwizard.logging.LoggingOutput;
 import org.junit.Test;
 
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -26,7 +26,7 @@ public class ConfigurationTest {
 
     @Test
     public void ensureConfigSerializable() throws Exception {
-        final ObjectMapper mapper = new ObjectMapperFactory().build();
+        final ObjectMapper mapper = Jackson.newObjectMapper();
         mapper.getSubtypeResolver()
               .registerSubtypes(ServiceFinder.find(LoggingOutput.class).toClassArray());
 

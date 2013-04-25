@@ -4,7 +4,6 @@ import com.codahale.dropwizard.Service;
 import com.codahale.dropwizard.config.Bootstrap;
 import com.codahale.dropwizard.config.Configuration;
 import com.codahale.dropwizard.config.Environment;
-import com.codahale.dropwizard.json.ObjectMapperFactory;
 import com.codahale.dropwizard.validation.Validator;
 import net.sourceforge.argparse4j.inf.Namespace;
 
@@ -32,7 +31,7 @@ public abstract class EnvironmentCommand<T extends Configuration> extends Config
     @Override
     protected final void run(Bootstrap<T> bootstrap, Namespace namespace, T configuration) throws Exception {
         final Environment environment = new Environment(bootstrap.getService().getName(),
-                                                        new ObjectMapperFactory(bootstrap.getObjectMapperFactory()),
+                                                        bootstrap.getObjectMapper(),
                                                         new Validator(),
                                                         bootstrap.getMetricRegistry());
         bootstrap.runWithBundles(configuration, environment);

@@ -1,5 +1,9 @@
 package com.codahale.dropwizard.testing;
 
+import com.codahale.dropwizard.jackson.Jackson;
+import com.codahale.dropwizard.jersey.DropwizardResourceConfig;
+import com.codahale.dropwizard.jersey.JacksonMessageBodyProvider;
+import com.codahale.dropwizard.validation.Validator;
 import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Maps;
@@ -8,10 +12,6 @@ import com.sun.jersey.api.client.Client;
 import com.sun.jersey.test.framework.AppDescriptor;
 import com.sun.jersey.test.framework.JerseyTest;
 import com.sun.jersey.test.framework.LowLevelAppDescriptor;
-import com.codahale.dropwizard.jersey.DropwizardResourceConfig;
-import com.codahale.dropwizard.jersey.JacksonMessageBodyProvider;
-import com.codahale.dropwizard.json.ObjectMapperFactory;
-import com.codahale.dropwizard.validation.Validator;
 import org.junit.After;
 import org.junit.Before;
 import org.slf4j.bridge.SLF4JBridgeHandler;
@@ -30,7 +30,7 @@ public abstract class ResourceTest {
 
     private final Set<Object> singletons = Sets.newHashSet();
     private final Set<Class<?>> providers = Sets.newHashSet();
-    private final ObjectMapperFactory objectMapperFactory = new ObjectMapperFactory();
+    private final ObjectMapper objectMapper = Jackson.newObjectMapper();
     private final Map<String, Boolean> features = Maps.newHashMap();
     private final Map<String, Object> properties = Maps.newHashMap();
 
@@ -59,8 +59,8 @@ public abstract class ResourceTest {
         singletons.add(provider);
     }
 
-    protected ObjectMapperFactory getObjectMapperFactory() {
-        return objectMapperFactory;
+    protected ObjectMapper getObjectMapperFactory() {
+        return objectMapper;
     }
 
     protected void addFeature(String feature, Boolean value) {
@@ -95,8 +95,7 @@ public abstract class ResourceTest {
                 for (Map.Entry<String, Object> property : properties.entrySet()) {
                     config.getProperties().put(property.getKey(), property.getValue());
                 }
-                final ObjectMapper mapper = getObjectMapperFactory().build();
-                config.getSingletons().add(new JacksonMessageBodyProvider(mapper, validator));
+                config.getSingletons().add(new JacksonMessageBodyProvider(objectMapper, validator));
                 config.getSingletons().addAll(singletons);
                 return new LowLevelAppDescriptor.Builder(config).build();
             }

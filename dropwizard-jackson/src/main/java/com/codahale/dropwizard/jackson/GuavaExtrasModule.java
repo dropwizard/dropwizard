@@ -1,4 +1,4 @@
-package com.codahale.dropwizard.json;
+package com.codahale.dropwizard.jackson;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.Version;

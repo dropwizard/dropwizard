@@ -1,16 +1,16 @@
 package com.codahale.dropwizard.jersey.tests;
 
+import com.codahale.dropwizard.jackson.Jackson;
+import com.codahale.dropwizard.jersey.JacksonMessageBodyProvider;
+import com.codahale.dropwizard.validation.InvalidEntityException;
+import com.codahale.dropwizard.validation.Validated;
+import com.codahale.dropwizard.validation.Validator;
 import com.fasterxml.jackson.annotation.JsonIgnoreType;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 import com.sun.jersey.core.util.StringKeyObjectValueIgnoreCaseMultivaluedMap;
-import com.codahale.dropwizard.jersey.JacksonMessageBodyProvider;
-import com.codahale.dropwizard.json.ObjectMapperFactory;
-import com.codahale.dropwizard.validation.InvalidEntityException;
-import com.codahale.dropwizard.validation.Validated;
-import com.codahale.dropwizard.validation.Validator;
 import org.junit.Test;
 
 import javax.validation.Valid;
@@ -59,7 +59,7 @@ public class JacksonMessageBodyProviderTest {
 
     }
 
-    private final ObjectMapper mapper = spy(new ObjectMapperFactory().build());
+    private final ObjectMapper mapper = spy(Jackson.newObjectMapper());
     private final JacksonMessageBodyProvider provider = new JacksonMessageBodyProvider(mapper,
                                                                                        new Validator());
 

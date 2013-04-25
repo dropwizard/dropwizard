@@ -1,4 +1,4 @@
-package com.codahale.dropwizard.json;
+package com.codahale.dropwizard.jackson;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.cfg.MapperConfig;

@@ -7,7 +7,7 @@ import com.codahale.dropwizard.validation.MinDuration;
 import com.codahale.dropwizard.validation.MinSize;
 import com.codahale.dropwizard.validation.PortRange;
 import com.codahale.dropwizard.validation.ValidationMethod;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Optional;
 
@@ -19,6 +19,9 @@ import java.util.concurrent.TimeUnit;
 /**
  * An object representation of the {@code http} section of the YAML configuration file.
  */
+@JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE,
+                isGetterVisibility = JsonAutoDetect.Visibility.NONE,
+                setterVisibility = JsonAutoDetect.Visibility.NONE)
 @SuppressWarnings("UnusedDeclaration")
 public class ServerConfiguration {
     @Valid
@@ -145,7 +148,6 @@ public class ServerConfiguration {
         return (adminPassword == null) || (adminUsername != null);
     }
 
-    @JsonIgnore
     public RequestLogConfiguration getRequestLogConfiguration() {
         return requestLog;
     }
@@ -154,7 +156,6 @@ public class ServerConfiguration {
         this.requestLog = config;
     }
 
-    @JsonIgnore
     public GzipConfiguration getGzipConfiguration() {
         return gzip;
     }

@@ -1,10 +1,10 @@
-package com.codahale.dropwizard.json.tests;
+package com.codahale.dropwizard.jackson;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
-import com.codahale.dropwizard.json.AnnotationSensitivePropertyNamingStrategy;
-import com.codahale.dropwizard.json.JsonSnakeCase;
+import com.codahale.dropwizard.jackson.AnnotationSensitivePropertyNamingStrategy;
+import com.codahale.dropwizard.jackson.JsonSnakeCase;
 import org.junit.Before;
 import org.junit.Test;
 

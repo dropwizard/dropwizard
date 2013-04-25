@@ -1,8 +1,5 @@
 package com.codahale.dropwizard.hibernate.tests;
 
-import com.fasterxml.jackson.databind.Module;
-import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module;
-import com.google.common.collect.ImmutableList;
 import com.codahale.dropwizard.config.Bootstrap;
 import com.codahale.dropwizard.config.Configuration;
 import com.codahale.dropwizard.config.Environment;
@@ -11,9 +8,12 @@ import com.codahale.dropwizard.hibernate.HibernateBundle;
 import com.codahale.dropwizard.hibernate.SessionFactoryFactory;
 import com.codahale.dropwizard.hibernate.SessionFactoryHealthCheck;
 import com.codahale.dropwizard.hibernate.UnitOfWorkResourceMethodDispatchAdapter;
-import com.codahale.dropwizard.json.ObjectMapperFactory;
 import com.codahale.dropwizard.setup.AdminEnvironment;
 import com.codahale.dropwizard.setup.JerseyEnvironment;
+import com.fasterxml.jackson.databind.Module;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module;
+import com.google.common.collect.ImmutableList;
 import org.hibernate.SessionFactory;
 import org.junit.Before;
 import org.junit.Test;
@@ -52,10 +52,10 @@ public class HibernateBundleTest {
 
     @Test
     public void addsHibernateSupportToJackson() throws Exception {
-        final ObjectMapperFactory objectMapperFactory = mock(ObjectMapperFactory.class);
+        final ObjectMapper objectMapperFactory = mock(ObjectMapper.class);
 
         final Bootstrap<?> bootstrap = mock(Bootstrap.class);
-        when(bootstrap.getObjectMapperFactory()).thenReturn(objectMapperFactory);
+        when(bootstrap.getObjectMapper()).thenReturn(objectMapperFactory);
 
         bundle.initialize(bootstrap);
 

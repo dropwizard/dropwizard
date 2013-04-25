@@ -2,9 +2,9 @@ package com.codahale.dropwizard.cli;
 
 import com.codahale.dropwizard.config.*;
 import com.codahale.dropwizard.config.provider.ConfigurationSourceProvider;
-import com.codahale.dropwizard.json.ObjectMapperFactory;
 import com.codahale.dropwizard.util.Generics;
 import com.codahale.dropwizard.validation.Validator;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
 
@@ -51,7 +51,7 @@ public abstract class ConfiguredCommand<T extends Configuration> extends Command
         final T configuration = parseConfiguration(bootstrap.getConfigurationProvider(),
                                                    namespace.getString("file"),
                                                    getConfigurationClass(),
-                                                   new ObjectMapperFactory(bootstrap.getObjectMapperFactory()));
+                                                   bootstrap.getObjectMapper());
         if (configuration != null) {
             new LoggingFactory(configuration.getLoggingConfiguration(),
                                bootstrap.getService().getName()).configure(bootstrap.getMetricRegistry());
@@ -74,9 +74,9 @@ public abstract class ConfiguredCommand<T extends Configuration> extends Command
     private T parseConfiguration(ConfigurationSourceProvider configurationProvider,
                                  String configurationPath,
                                  Class<T> configurationClass,
-                                 ObjectMapperFactory objectMapperFactory) throws IOException, ConfigurationException {
+                                 ObjectMapper objectMapper) throws IOException, ConfigurationException {
         final ConfigurationFactory<T> configurationFactory =
-                ConfigurationFactory.forClass(configurationClass, new Validator(), objectMapperFactory);
+                ConfigurationFactory.forClass(configurationClass, new Validator(), objectMapper);
 
         if (configurationPath != null) {
             try (InputStream input = configurationProvider.create(configurationPath)) {

@@ -1,4 +1,4 @@
-package com.codahale.dropwizard.json.tests;
+package com.codahale.dropwizard.jackson;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -6,7 +6,7 @@ import com.fasterxml.jackson.datatype.guava.GuavaModule;
 import com.google.common.base.Optional;
 import com.google.common.cache.CacheBuilderSpec;
 import com.google.common.net.HostAndPort;
-import com.codahale.dropwizard.json.GuavaExtrasModule;
+import com.codahale.dropwizard.jackson.GuavaExtrasModule;
 import org.junit.Before;
 import org.junit.Test;
 

@@ -1,5 +1,8 @@
 package com.codahale.dropwizard.config;
 
+import com.codahale.dropwizard.jackson.Jackson;
+import com.codahale.dropwizard.logging.LoggingOutput;
+import com.codahale.dropwizard.validation.Validator;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -10,9 +13,6 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import com.sun.jersey.spi.service.ServiceFinder;
-import com.codahale.dropwizard.json.ObjectMapperFactory;
-import com.codahale.dropwizard.logging.LoggingOutput;
-import com.codahale.dropwizard.validation.Validator;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -27,12 +27,12 @@ public class ConfigurationFactory<T> {
 
     public static <T> ConfigurationFactory<T> forClass(Class<T> klass,
                                                        Validator validator,
-                                                       ObjectMapperFactory objectMapperFactory) {
-        return new ConfigurationFactory<>(klass, validator, objectMapperFactory);
+                                                       ObjectMapper objectMapper) {
+        return new ConfigurationFactory<>(klass, validator, objectMapper);
     }
 
     public static <T> ConfigurationFactory<T> forClass(Class<T> klass, Validator validator) {
-        return new ConfigurationFactory<>(klass, validator, new ObjectMapperFactory());
+        return new ConfigurationFactory<>(klass, validator, Jackson.newObjectMapper());
     }
 
     private static final ImmutableList<Class<?>> EXTENSIBLE_CLASSES = ImmutableList.<Class<?>>of(
@@ -43,10 +43,10 @@ public class ConfigurationFactory<T> {
     private final ObjectMapper mapper;
     private final Validator validator;
 
-    private ConfigurationFactory(Class<T> klass, Validator validator, ObjectMapperFactory objectMapperFactory) {
+    private ConfigurationFactory(Class<T> klass, Validator validator, ObjectMapper objectMapper) {
         this.klass = klass;
-        objectMapperFactory.enable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-        this.mapper = objectMapperFactory.build(new YAMLFactory());
+        this.mapper = objectMapper.copy();
+        mapper.enable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         for (Class<?> extensibleClass : EXTENSIBLE_CLASSES) {
             mapper.getSubtypeResolver()
                   .registerSubtypes(ServiceFinder.find(extensibleClass)
@@ -56,7 +56,7 @@ public class ConfigurationFactory<T> {
     }
 
     public T build(String configurationPath, InputStream inputStream) throws IOException, ConfigurationException {
-        final JsonNode node = mapper.readTree(inputStream);
+        final JsonNode node = mapper.readTree(new YAMLFactory().createJsonParser(inputStream));
         return build(node, configurationPath != null ? configurationPath : "InputStream configuration");
     }
 

@@ -179,7 +179,7 @@ public class ServerFactory {
         final ServletContainer jerseyContainer = env.getJerseyServletContainer();
         if (jerseyContainer != null) {
             env.getJerseyEnvironment().addProvider(
-                    new JacksonMessageBodyProvider(env.getJsonEnvironment().build(),
+                    new JacksonMessageBodyProvider(env.getObjectMapper(),
                                                    env.getValidator())
             );
             final ServletHolder jerseyHolder = new NonblockingServletHolder(jerseyContainer);
