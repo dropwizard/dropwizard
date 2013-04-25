@@ -56,7 +56,7 @@ public class SessionFactoryFactoryTest {
     public void managesTheSessionFactory() throws Exception {
         build();
 
-        verify(lifecycleEnvironment).manage(any(ManagedSessionFactory.class));
+        verify(lifecycleEnvironment).manage(any(SessionFactoryManager.class));
     }
 
     @Test

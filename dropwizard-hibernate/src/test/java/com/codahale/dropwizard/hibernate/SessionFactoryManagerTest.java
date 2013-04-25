@@ -1,29 +1,27 @@
 package com.codahale.dropwizard.hibernate;
 
 import com.codahale.dropwizard.db.ManagedDataSource;
-import com.codahale.dropwizard.hibernate.ManagedSessionFactory;
 import org.hibernate.SessionFactory;
 import org.junit.Test;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-public class ManagedSessionFactoryTest {
+public class SessionFactoryManagerTest {
     private final SessionFactory factory = mock(SessionFactory.class);
     private final ManagedDataSource dataSource = mock(ManagedDataSource.class);
-    private final ManagedSessionFactory managedFactory = new ManagedSessionFactory(factory,
-                                                                                   dataSource);
+    private final SessionFactoryManager manager = new SessionFactoryManager(factory, dataSource);
 
     @Test
-    public void stoppingTheFactoryClosesIt() throws Exception {
-        managedFactory.stop();
+    public void closesTheFactoryOnStopping() throws Exception {
+        manager.stop();
 
         verify(factory).close();
     }
 
     @Test
-    public void stoppingTheFactoryStopsTheDataSource() throws Exception {
-        managedFactory.stop();
+    public void stopsTheDataSourceOnStopping() throws Exception {
+        manager.stop();
 
         verify(dataSource).stop();
     }

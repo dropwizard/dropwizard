@@ -47,9 +47,9 @@ public class SessionFactoryFactory {
                                                            provider,
                                                            dbConfig.getProperties(),
                                                            entities);
-        final ManagedSessionFactory managedFactory = new ManagedSessionFactory(factory, dataSource);
+        final SessionFactoryManager managedFactory = new SessionFactoryManager(factory, dataSource);
         environment.getLifecycleEnvironment().manage(managedFactory);
-        return managedFactory;
+        return factory;
     }
 
     private ConnectionProvider buildConnectionProvider(DataSource dataSource,

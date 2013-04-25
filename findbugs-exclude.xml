@@ -23,8 +23,4 @@
         <Bug code="Se"/>
         <Class name="com.codahale.dropwizard.assets.AssetServlet"/>
     </Match>
-    <Match>
-        <Bug code="Se"/>
-        <Class name="com.codahale.dropwizard.hibernate.ManagedSessionFactory"/>
-    </Match>
 </FindBugsFilter>
