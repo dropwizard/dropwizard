@@ -13,6 +13,8 @@ import com.sun.jersey.client.apache4.ApacheHttpClient4;
 import org.junit.Before;
 import org.junit.Test;
 
+import javax.validation.Validation;
+import javax.validation.Validator;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
@@ -53,11 +55,13 @@ public class JerseyClientBuilderTest {
     private final Environment environment = mock(Environment.class);
     private final ExecutorService executorService = mock(ExecutorService.class);
     private final ObjectMapper objectMapper = mock(ObjectMapper.class);
+    private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
     @Before
     public void setUp() throws Exception {
         when(environment.getLifecycleEnvironment()).thenReturn(lifecycleEnvironment);
         when(environment.getObjectMapper()).thenReturn(objectMapper);
+        when(environment.getValidator()).thenReturn(validator);
     }
 
     @Test

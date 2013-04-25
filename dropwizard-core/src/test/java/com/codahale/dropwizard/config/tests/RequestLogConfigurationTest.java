@@ -1,12 +1,13 @@
 package com.codahale.dropwizard.config.tests;
 
-import com.google.common.io.Resources;
 import com.codahale.dropwizard.config.ConfigurationFactory;
 import com.codahale.dropwizard.config.RequestLogConfiguration;
-import com.codahale.dropwizard.validation.Validator;
+import com.codahale.dropwizard.jackson.Jackson;
+import com.google.common.io.Resources;
 import org.junit.Before;
 import org.junit.Test;
 
+import javax.validation.Validation;
 import java.io.File;
 import java.util.TimeZone;
 
@@ -17,8 +18,11 @@ public class RequestLogConfigurationTest {
 
     @Before
     public void setUp() throws Exception {
-        this.requestLog = ConfigurationFactory.forClass(RequestLogConfiguration.class, new Validator())
-                                              .build(new File(Resources.getResource("yaml/requestLog.yml").toURI()));
+        this.requestLog = new ConfigurationFactory<>(RequestLogConfiguration.class,
+                                                     Validation.buildDefaultValidatorFactory()
+                                                               .getValidator(),
+                                                     Jackson.newObjectMapper())
+                .build(new File(Resources.getResource("yaml/requestLog.yml").toURI()));
     }
 
     @Test

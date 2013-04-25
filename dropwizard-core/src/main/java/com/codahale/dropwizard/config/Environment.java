@@ -5,7 +5,6 @@ import com.codahale.dropwizard.setup.AdminEnvironment;
 import com.codahale.dropwizard.setup.JerseyEnvironment;
 import com.codahale.dropwizard.setup.LifecycleEnvironment;
 import com.codahale.dropwizard.setup.ServletEnvironment;
-import com.codahale.dropwizard.validation.Validator;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheckRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,6 +13,7 @@ import com.sun.jersey.spi.container.servlet.ServletContainer;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.util.component.LifeCycle;
 
+import javax.validation.Validator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 

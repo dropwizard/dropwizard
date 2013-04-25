@@ -3,11 +3,12 @@ package com.codahale.dropwizard.cli;
 import com.codahale.dropwizard.config.*;
 import com.codahale.dropwizard.config.provider.ConfigurationSourceProvider;
 import com.codahale.dropwizard.util.Generics;
-import com.codahale.dropwizard.validation.Validator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
 
+import javax.validation.Validation;
+import javax.validation.Validator;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -75,9 +76,9 @@ public abstract class ConfiguredCommand<T extends Configuration> extends Command
                                  String configurationPath,
                                  Class<T> configurationClass,
                                  ObjectMapper objectMapper) throws IOException, ConfigurationException {
+        final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
         final ConfigurationFactory<T> configurationFactory =
-                ConfigurationFactory.forClass(configurationClass, new Validator(), objectMapper);
-
+                new ConfigurationFactory<>(configurationClass, validator, objectMapper);
         if (configurationPath != null) {
             try (InputStream input = configurationProvider.create(configurationPath)) {
                 return configurationFactory.build(configurationPath, input);

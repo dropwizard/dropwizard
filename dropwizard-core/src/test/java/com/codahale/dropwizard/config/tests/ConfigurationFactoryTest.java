@@ -1,13 +1,15 @@
 package com.codahale.dropwizard.config.tests;
 
-import com.fasterxml.jackson.dataformat.yaml.snakeyaml.error.YAMLException;
-import com.google.common.io.Resources;
 import com.codahale.dropwizard.config.ConfigurationException;
 import com.codahale.dropwizard.config.ConfigurationFactory;
-import com.codahale.dropwizard.validation.Validator;
+import com.codahale.dropwizard.jackson.Jackson;
+import com.fasterxml.jackson.dataformat.yaml.snakeyaml.error.YAMLException;
+import com.google.common.io.Resources;
 import org.junit.Before;
 import org.junit.Test;
 
+import javax.validation.Validation;
+import javax.validation.Validator;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.io.File;
@@ -29,9 +31,9 @@ public class ConfigurationFactoryTest {
         }
     }
 
-    private final Validator validator = new Validator();
+    private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
     private final ConfigurationFactory<Example> factory =
-            ConfigurationFactory.forClass(Example.class, validator);
+            new ConfigurationFactory<>(Example.class, validator, Jackson.newObjectMapper());
     private File malformedFile;
     private File invalidFile;
     private File validFile;

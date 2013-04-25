@@ -1,13 +1,15 @@
-package com.codahale.dropwizard.validation.tests;
+package com.codahale.dropwizard.validation;
 
-import com.google.common.collect.ImmutableList;
 import com.codahale.dropwizard.util.Duration;
+import com.codahale.dropwizard.validation.ConstraintViolations;
 import com.codahale.dropwizard.validation.DurationRange;
 import com.codahale.dropwizard.validation.MaxDuration;
 import com.codahale.dropwizard.validation.MinDuration;
-import com.codahale.dropwizard.validation.Validator;
+import com.google.common.collect.ImmutableList;
 import org.junit.Test;
 
+import javax.validation.Validation;
+import javax.validation.Validator;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
@@ -36,12 +38,13 @@ public class DurationValidatorTest {
         }
     }
 
-    private final Validator validator = new Validator();
+    private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
     @Test
     public void returnsASetOfErrorsForAnObject() throws Exception {
         if ("en".equals(Locale.getDefault().getLanguage())) {
-            final ImmutableList<String> errors = validator.validate(new Example());
+            final ImmutableList<String> errors =
+                    ConstraintViolations.format(validator.validate(new Example()));
 
             assertThat(errors)
                     .containsOnly(

@@ -29,6 +29,7 @@
         <module>dropwizard-testing</module>
         <module>dropwizard-util</module>
         <module>dropwizard-jackson</module>
+        <module>dropwizard-validation</module>
     </modules>
 
     <properties>

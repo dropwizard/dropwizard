@@ -3,7 +3,6 @@ package com.codahale.dropwizard.testing;
 import com.codahale.dropwizard.jackson.Jackson;
 import com.codahale.dropwizard.jersey.DropwizardResourceConfig;
 import com.codahale.dropwizard.jersey.JacksonMessageBodyProvider;
-import com.codahale.dropwizard.validation.Validator;
 import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Maps;
@@ -16,6 +15,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
+import javax.validation.Validation;
+import javax.validation.Validator;
 import java.util.Map;
 import java.util.Set;
 
@@ -35,7 +36,7 @@ public abstract class ResourceTest {
     private final Map<String, Object> properties = Maps.newHashMap();
 
     private JerseyTest test;
-    private Validator validator = new Validator();
+    private Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
     protected abstract void setUpResources() throws Exception;
 

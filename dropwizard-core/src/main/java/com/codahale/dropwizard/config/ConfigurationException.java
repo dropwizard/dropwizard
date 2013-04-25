@@ -1,10 +1,18 @@
 package com.codahale.dropwizard.config;
 
+import com.codahale.dropwizard.validation.ConstraintViolations;
+import com.google.common.collect.ImmutableSet;
+
+import javax.validation.ConstraintViolation;
+import java.util.Set;
+
 /**
  * An exception thrown where there is an error parsing a configuration object.
  */
 public class ConfigurationException extends Exception {
     private static final long serialVersionUID = 5325162099634227047L;
+
+    private final ImmutableSet<ConstraintViolation<?>> constraintViolations;
 
     /**
      * Creates a new ConfigurationException for the given file with the given errors.
@@ -12,8 +20,13 @@ public class ConfigurationException extends Exception {
      * @param file      the bad configuration file
      * @param errors    the errors in the file
      */
-    public ConfigurationException(String file, Iterable<String> errors) {
-        super(formatMessage(file, errors));
+    public <T> ConfigurationException(String file, Set<ConstraintViolation<T>> errors) {
+        super(formatMessage(file, ConstraintViolations.format(errors)));
+        this.constraintViolations = ConstraintViolations.copyOf(errors);
+    }
+
+    public ImmutableSet<ConstraintViolation<?>> getConstraintViolations() {
+        return constraintViolations;
     }
 
     private static String formatMessage(String file, Iterable<String> errors) {

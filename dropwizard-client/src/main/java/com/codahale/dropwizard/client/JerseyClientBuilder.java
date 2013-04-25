@@ -1,5 +1,7 @@
 package com.codahale.dropwizard.client;
 
+import com.codahale.dropwizard.config.Environment;
+import com.codahale.dropwizard.jersey.JacksonMessageBodyProvider;
 import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
@@ -10,12 +12,11 @@ import com.sun.jersey.client.apache4.ApacheHttpClient4;
 import com.sun.jersey.client.apache4.ApacheHttpClient4Handler;
 import com.sun.jersey.client.apache4.config.ApacheHttpClient4Config;
 import com.sun.jersey.client.apache4.config.DefaultApacheHttpClient4Config;
-import com.codahale.dropwizard.config.Environment;
-import com.codahale.dropwizard.jersey.JacksonMessageBodyProvider;
-import com.codahale.dropwizard.validation.Validator;
 import org.apache.http.conn.DnsResolver;
 import org.apache.http.conn.scheme.SchemeRegistry;
 
+import javax.validation.Validation;
+import javax.validation.Validator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -45,6 +46,7 @@ public class JerseyClientBuilder {
     private final Map<String, Object> properties = Maps.newLinkedHashMap();
 
     private JerseyClientConfiguration configuration = new JerseyClientConfiguration();
+    private Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
     private Environment environment;
     private ObjectMapper objectMapper;
     private ExecutorService executorService;
@@ -153,6 +155,17 @@ public class JerseyClientBuilder {
     }
 
     /**
+     * Use the given {@link Validator} instance.
+     *
+     * @param validator a {@link Validator} instance
+     * @return {@code this}
+     */
+    public JerseyClientBuilder using(Validator validator) {
+        this.validator = validator;
+        return this;
+    }
+
+    /**
      * Uses the given {@link ExecutorService} and {@link ObjectMapper}.
      *
      * @param executorService a thread pool
@@ -178,7 +191,7 @@ public class JerseyClientBuilder {
         }
 
         if (environment == null) {
-            return build(executorService, objectMapper, name);
+            return build(executorService, objectMapper, validator, name);
         }
 
         return build(environment.getLifecycleEnvironment()
@@ -188,11 +201,13 @@ public class JerseyClientBuilder {
                                                         60,
                                                         TimeUnit.SECONDS),
                      environment.getObjectMapper(),
+                     environment.getValidator(),
                      name);
     }
 
     private Client build(ExecutorService threadPool,
                          ObjectMapper objectMapper,
+                         Validator validator,
                          String name) {
         final Client client = new ApacheHttpClient4(buildHandler(name), buildConfig(objectMapper));
         client.setExecutorService(threadPool);
@@ -211,7 +226,7 @@ public class JerseyClientBuilder {
     private ApacheHttpClient4Config buildConfig(ObjectMapper objectMapper) {
         final ApacheHttpClient4Config config = new DefaultApacheHttpClient4Config();
         config.getSingletons().addAll(singletons);
-        config.getSingletons().add(new JacksonMessageBodyProvider(objectMapper, new Validator()));
+        config.getSingletons().add(new JacksonMessageBodyProvider(objectMapper, validator));
         config.getClasses().addAll(providers);
         config.getFeatures().putAll(features);
         config.getProperties().putAll(properties);

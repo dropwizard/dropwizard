@@ -2,13 +2,14 @@ package com.codahale.dropwizard.config.tests;
 
 import com.codahale.dropwizard.config.ConfigurationFactory;
 import com.codahale.dropwizard.config.ServerConfiguration;
+import com.codahale.dropwizard.jackson.Jackson;
 import com.codahale.dropwizard.util.Duration;
-import com.codahale.dropwizard.validation.Validator;
 import com.google.common.base.Optional;
 import com.google.common.io.Resources;
 import org.junit.Before;
 import org.junit.Test;
 
+import javax.validation.Validation;
 import java.io.File;
 
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -18,8 +19,11 @@ public class ServerConfigurationTest {
 
     @Before
     public void setUp() throws Exception {
-        this.http = ConfigurationFactory.forClass(ServerConfiguration.class, new Validator())
-                                        .build(new File(Resources.getResource("yaml/server.yml").toURI()));
+        this.http = new ConfigurationFactory<>(ServerConfiguration.class,
+                                               Validation.buildDefaultValidatorFactory()
+                                                         .getValidator(),
+                                               Jackson.newObjectMapper())
+                .build(new File(Resources.getResource("yaml/server.yml").toURI()));
     }
 
     @Test

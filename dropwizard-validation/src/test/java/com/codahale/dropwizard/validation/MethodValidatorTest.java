@@ -1,10 +1,13 @@
-package com.codahale.dropwizard.validation.tests;
+package com.codahale.dropwizard.validation;
 
+import com.codahale.dropwizard.validation.ConstraintViolations;
 import com.codahale.dropwizard.validation.ValidationMethod;
-import com.codahale.dropwizard.validation.Validator;
+import com.google.common.collect.ImmutableList;
 import org.junit.Test;
 
 import javax.validation.Valid;
+import javax.validation.Validation;
+import javax.validation.Validator;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
@@ -32,9 +35,14 @@ public class MethodValidatorTest {
         }
     }
 
+    private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+
     @Test
     public void complainsAboutMethodsWhichReturnFalse() throws Exception {
-        assertThat(new Validator().validate(new Example()))
+        final ImmutableList<String> errors =
+                ConstraintViolations.format(validator.validate(new Example()));
+
+        assertThat(errors)
                 .containsOnly("must have a false thing",
                               "subExample also needs something special");
     }

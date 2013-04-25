@@ -1,11 +1,11 @@
 package com.codahale.dropwizard.jersey;
 
 import com.codahale.dropwizard.jetty.UnbrandedErrorHandler;
-import com.codahale.dropwizard.validation.InvalidEntityException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.ConstraintViolationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -15,8 +15,8 @@ import java.io.IOException;
 import java.io.StringWriter;
 
 @Provider
-public class InvalidEntityExceptionMapper implements ExceptionMapper<InvalidEntityException> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(InvalidEntityExceptionMapper.class);
+public class ConstraintViolationExceptionMapper implements ExceptionMapper<ConstraintViolationException> {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConstraintViolationExceptionMapper.class);
     private static final int UNPROCESSABLE_ENTITY = 422;
 
     @Context
@@ -25,7 +25,7 @@ public class InvalidEntityExceptionMapper implements ExceptionMapper<InvalidEnti
     private final UnbrandedErrorHandler errorHandler = new UnbrandedErrorHandler();
 
     @Override
-    public Response toResponse(InvalidEntityException exception) {
+    public Response toResponse(ConstraintViolationException exception) {
         final StringWriter writer = new StringWriter(4096);
         try {
             errorHandler.writeValidationErrorPage(request, writer, exception);

@@ -12,7 +12,7 @@ public class DropwizardResourceConfig extends ScanningResourceConfig {
         if (!testOnly) {
             // create a subclass to pin it to Throwable
             getSingletons().add(new LoggingExceptionMapper<Throwable>() {});
-            getSingletons().add(new InvalidEntityExceptionMapper());
+            getSingletons().add(new ConstraintViolationExceptionMapper());
             getSingletons().add(new JsonProcessingExceptionMapper());
         }
         getSingletons().add(new InstrumentedResourceMethodDispatchAdapter(metricRegistry));

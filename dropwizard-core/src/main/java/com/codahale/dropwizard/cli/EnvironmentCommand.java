@@ -4,8 +4,9 @@ import com.codahale.dropwizard.Service;
 import com.codahale.dropwizard.config.Bootstrap;
 import com.codahale.dropwizard.config.Configuration;
 import com.codahale.dropwizard.config.Environment;
-import com.codahale.dropwizard.validation.Validator;
 import net.sourceforge.argparse4j.inf.Namespace;
+
+import javax.validation.Validation;
 
 /**
  * A command which executes with a configured {@link Environment}.
@@ -32,7 +33,8 @@ public abstract class EnvironmentCommand<T extends Configuration> extends Config
     protected final void run(Bootstrap<T> bootstrap, Namespace namespace, T configuration) throws Exception {
         final Environment environment = new Environment(bootstrap.getService().getName(),
                                                         bootstrap.getObjectMapper(),
-                                                        new Validator(),
+                                                        Validation.buildDefaultValidatorFactory()
+                                                                  .getValidator(),
                                                         bootstrap.getMetricRegistry());
         bootstrap.runWithBundles(configuration, environment);
         service.run(configuration, environment);

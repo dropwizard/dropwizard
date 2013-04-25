@@ -1,8 +1,6 @@
 package com.codahale.dropwizard.config;
 
-import com.codahale.dropwizard.jackson.Jackson;
 import com.codahale.dropwizard.logging.LoggingOutput;
-import com.codahale.dropwizard.validation.Validator;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,27 +12,18 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import com.sun.jersey.spi.service.ServiceFinder;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.Validator;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 public class ConfigurationFactory<T> {
-
     private static final String PROPERTY_PREFIX = "dw.";
-
-    public static <T> ConfigurationFactory<T> forClass(Class<T> klass,
-                                                       Validator validator,
-                                                       ObjectMapper objectMapper) {
-        return new ConfigurationFactory<>(klass, validator, objectMapper);
-    }
-
-    public static <T> ConfigurationFactory<T> forClass(Class<T> klass, Validator validator) {
-        return new ConfigurationFactory<>(klass, validator, Jackson.newObjectMapper());
-    }
-
     private static final ImmutableList<Class<?>> EXTENSIBLE_CLASSES = ImmutableList.<Class<?>>of(
             LoggingOutput.class
     );
@@ -43,7 +32,7 @@ public class ConfigurationFactory<T> {
     private final ObjectMapper mapper;
     private final Validator validator;
 
-    private ConfigurationFactory(Class<T> klass, Validator validator, ObjectMapper objectMapper) {
+    public ConfigurationFactory(Class<T> klass, Validator validator, ObjectMapper objectMapper) {
         this.klass = klass;
         this.mapper = objectMapper.copy();
         mapper.enable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
@@ -107,9 +96,9 @@ public class ConfigurationFactory<T> {
     }
 
     private void validate(String file, T config) throws ConfigurationException {
-        final ImmutableList<String> errors = validator.validate(config);
-        if (!errors.isEmpty()) {
-            throw new ConfigurationException(file, errors);
+        final Set<ConstraintViolation<T>> violations = validator.validate(config);
+        if (!violations.isEmpty()) {
+            throw new ConfigurationException(file, violations);
         }
     }
 }

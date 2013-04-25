@@ -2,9 +2,8 @@ package com.codahale.dropwizard.jersey.tests;
 
 import com.codahale.dropwizard.jackson.Jackson;
 import com.codahale.dropwizard.jersey.JacksonMessageBodyProvider;
-import com.codahale.dropwizard.validation.InvalidEntityException;
+import com.codahale.dropwizard.validation.ConstraintViolations;
 import com.codahale.dropwizard.validation.Validated;
-import com.codahale.dropwizard.validation.Validator;
 import com.fasterxml.jackson.annotation.JsonIgnoreType;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -13,7 +12,9 @@ import com.sun.jersey.core.util.MultivaluedMapImpl;
 import com.sun.jersey.core.util.StringKeyObjectValueIgnoreCaseMultivaluedMap;
 import org.junit.Test;
 
+import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
+import javax.validation.Validation;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.WebApplicationException;
@@ -61,7 +62,8 @@ public class JacksonMessageBodyProviderTest {
 
     private final ObjectMapper mapper = spy(Jackson.newObjectMapper());
     private final JacksonMessageBodyProvider provider = new JacksonMessageBodyProvider(mapper,
-                                                                                       new Validator());
+                                                                                       Validation.buildDefaultValidatorFactory()
+                                                                                                 .getValidator());
 
     @Test
     public void readsDeserializableTypes() throws Exception {
@@ -186,9 +188,9 @@ public class JacksonMessageBodyProviderTest {
                               MediaType.APPLICATION_JSON_TYPE,
                               new MultivaluedMapImpl(),
                               entity);
-            failBecauseExceptionWasNotThrown(InvalidEntityException.class);
-        } catch(InvalidEntityException e) {
-            assertThat(e.getErrors())
+            failBecauseExceptionWasNotThrown(ConstraintViolationException.class);
+        } catch(ConstraintViolationException e) {
+            assertThat(ConstraintViolations.formatUntyped(e.getConstraintViolations()))
                 .containsOnly("text may not be null (was null)");
         }
     }
@@ -230,9 +232,9 @@ public class JacksonMessageBodyProviderTest {
                               MediaType.APPLICATION_JSON_TYPE,
                               new MultivaluedMapImpl(),
                               entity);
-            failBecauseExceptionWasNotThrown(WebApplicationException.class);
-        } catch (InvalidEntityException e) {
-            assertThat(e.getErrors())
+            failBecauseExceptionWasNotThrown(ConstraintViolationException.class);
+        } catch (ConstraintViolationException e) {
+            assertThat(ConstraintViolations.formatUntyped(e.getConstraintViolations()))
                     .containsOnly("id must be greater than or equal to 0 (was -1)");
         }
     }

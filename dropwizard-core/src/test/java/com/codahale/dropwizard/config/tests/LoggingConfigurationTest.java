@@ -1,21 +1,24 @@
 package com.codahale.dropwizard.config.tests;
 
 import ch.qos.logback.classic.Level;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.io.Resources;
 import com.codahale.dropwizard.config.ConfigurationFactory;
 import com.codahale.dropwizard.config.LoggingConfiguration;
-import com.codahale.dropwizard.validation.Validator;
+import com.codahale.dropwizard.jackson.Jackson;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.io.Resources;
 import org.junit.Before;
 import org.junit.Test;
 
+import javax.validation.Validation;
 import java.io.File;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
 public class LoggingConfigurationTest {
     private final ConfigurationFactory<LoggingConfiguration> factory =
-            ConfigurationFactory.forClass(LoggingConfiguration.class, new Validator());
+            new ConfigurationFactory<>(LoggingConfiguration.class,
+                                       Validation.buildDefaultValidatorFactory().getValidator(),
+                                       Jackson.newObjectMapper());
     private LoggingConfiguration config;
 
     @Before

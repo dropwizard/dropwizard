@@ -1,13 +1,15 @@
-package com.codahale.dropwizard.validation.tests;
+package com.codahale.dropwizard.validation;
 
 import com.codahale.dropwizard.util.Size;
 import com.codahale.dropwizard.util.SizeUnit;
+import com.codahale.dropwizard.validation.ConstraintViolations;
 import com.codahale.dropwizard.validation.MaxSize;
 import com.codahale.dropwizard.validation.MinSize;
 import com.codahale.dropwizard.validation.SizeRange;
-import com.codahale.dropwizard.validation.Validator;
 import org.junit.Test;
 
+import javax.validation.Validation;
+import javax.validation.Validator;
 import java.util.Locale;
 
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -35,12 +37,12 @@ public class SizeValidatorTest {
         }
     }
 
-    private final Validator validator = new Validator();
+    private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
     @Test
     public void returnsASetOfErrorsForAnObject() throws Exception {
         if ("en".equals(Locale.getDefault().getLanguage())) {
-            assertThat(validator.validate(new Example()))
+            assertThat(ConstraintViolations.format(validator.validate(new Example())))
                     .containsOnly("outOfRange must be between 10 KILOBYTES and 100 KILOBYTES (was 2 megabytes)",
                                   "tooBig must be less than or equal to 30 KILOBYTES (was 2 gigabytes)",
                                   "tooSmall must be greater than or equal to 30 KILOBYTES (was 100 bytes)");

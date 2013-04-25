@@ -7,7 +7,6 @@ import com.codahale.dropwizard.jackson.Jackson;
 import com.codahale.dropwizard.jersey.DropwizardResourceConfig;
 import com.codahale.dropwizard.jersey.JacksonMessageBodyProvider;
 import com.codahale.dropwizard.setup.LifecycleEnvironment;
-import com.codahale.dropwizard.validation.Validator;
 import com.codahale.metrics.MetricRegistry;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
@@ -23,6 +22,7 @@ import org.junit.After;
 import org.junit.Test;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
+import javax.validation.Validation;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
@@ -128,7 +128,7 @@ public class JerseyIntegrationTest extends JerseyTest {
         config.getSingletons().add(new UnitOfWorkResourceMethodDispatchAdapter(sessionFactory));
         config.getSingletons().add(new PersonResource(new PersonDAO(sessionFactory)));
         config.getSingletons().add(new JacksonMessageBodyProvider(Jackson.newObjectMapper(),
-                                                                  new Validator()));
+                                                                  Validation.buildDefaultValidatorFactory().getValidator()));
         return new LowLevelAppDescriptor.Builder(config).build();
     }
 
