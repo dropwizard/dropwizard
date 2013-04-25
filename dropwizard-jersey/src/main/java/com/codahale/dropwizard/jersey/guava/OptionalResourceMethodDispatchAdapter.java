@@ -1,4 +1,4 @@
-package com.codahale.dropwizard.jersey;
+package com.codahale.dropwizard.jersey.guava;
 
 import com.google.common.base.Optional;
 import com.sun.jersey.api.NotFoundException;

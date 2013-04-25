@@ -1,10 +1,10 @@
 package com.codahale.dropwizard.jersey;
 
+import com.codahale.dropwizard.jersey.dummy.DummyResource;
+import com.codahale.dropwizard.logging.LoggingFactory;
 import com.codahale.metrics.MetricRegistry;
 import com.sun.jersey.core.spi.scanning.PackageNamesScanner;
-import com.codahale.dropwizard.jersey.dummy.DummyResource;
 import org.junit.Test;
-import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -14,8 +14,7 @@ import static org.fest.assertions.api.Assertions.assertThat;
 @SuppressWarnings("unchecked")
 public class DropwizardResourceConfigTest {
     static {
-        SLF4JBridgeHandler.removeHandlersForRootLogger();
-        SLF4JBridgeHandler.install();
+        LoggingFactory.bootstrap();
     }
 
     @Test

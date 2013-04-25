@@ -1,6 +1,6 @@
 package com.codahale.dropwizard.jdbi.jersey;
 
-import com.codahale.dropwizard.jersey.LoggingExceptionMapper;
+import com.codahale.dropwizard.jersey.errors.LoggingExceptionMapper;
 import org.skife.jdbi.v2.exceptions.DBIException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

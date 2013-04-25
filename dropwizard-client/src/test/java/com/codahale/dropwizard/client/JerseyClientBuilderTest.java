@@ -1,7 +1,7 @@
 package com.codahale.dropwizard.client;
 
 import com.codahale.dropwizard.config.Environment;
-import com.codahale.dropwizard.jersey.JacksonMessageBodyProvider;
+import com.codahale.dropwizard.jersey.jackson.JacksonMessageBodyProvider;
 import com.codahale.dropwizard.setup.LifecycleEnvironment;
 import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;

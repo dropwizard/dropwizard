@@ -1,7 +1,6 @@
-package com.codahale.dropwizard.jersey;
+package com.codahale.dropwizard.jersey.jackson;
 
 import com.codahale.dropwizard.jackson.Jackson;
-import com.codahale.dropwizard.jersey.JacksonMessageBodyProvider;
 import com.codahale.dropwizard.validation.ConstraintViolations;
 import com.codahale.dropwizard.validation.Validated;
 import com.fasterxml.jackson.annotation.JsonIgnoreType;
@@ -26,6 +25,8 @@ import java.lang.annotation.Annotation;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.fest.assertions.api.Assertions.failBecauseExceptionWasNotThrown;
 import static org.mockito.Mockito.*;
+
+// TODO: 4/24/13 <coda> -- move JacksonMessageBodyProviderTest to JerseyTest
 
 @SuppressWarnings("unchecked")
 public class JacksonMessageBodyProviderTest {

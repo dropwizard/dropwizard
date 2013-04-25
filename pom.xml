@@ -32,6 +32,7 @@
         <module>dropwizard-validation</module>
         <module>dropwizard-configuration</module>
         <module>dropwizard-logging</module>
+        <module>dropwizard-jersey</module>
     </modules>
 
     <properties>

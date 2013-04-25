@@ -4,7 +4,7 @@ import com.codahale.dropwizard.config.Environment;
 import com.codahale.dropwizard.db.DatabaseConfiguration;
 import com.codahale.dropwizard.jackson.Jackson;
 import com.codahale.dropwizard.jersey.DropwizardResourceConfig;
-import com.codahale.dropwizard.jersey.JacksonMessageBodyProvider;
+import com.codahale.dropwizard.jersey.jackson.JacksonMessageBodyProvider;
 import com.codahale.dropwizard.setup.LifecycleEnvironment;
 import com.codahale.metrics.MetricRegistry;
 import com.google.common.base.Optional;

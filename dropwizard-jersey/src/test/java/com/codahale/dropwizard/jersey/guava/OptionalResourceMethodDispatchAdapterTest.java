@@ -1,14 +1,13 @@
-package com.codahale.dropwizard.jersey;
+package com.codahale.dropwizard.jersey.guava;
 
-import com.codahale.metrics.MetricRegistry;
+import com.codahale.dropwizard.logging.LoggingFactory;
 import com.google.common.base.Optional;
 import com.sun.jersey.api.client.UniformInterfaceException;
+import com.sun.jersey.api.core.DefaultResourceConfig;
 import com.sun.jersey.test.framework.AppDescriptor;
 import com.sun.jersey.test.framework.JerseyTest;
 import com.sun.jersey.test.framework.LowLevelAppDescriptor;
-import com.codahale.dropwizard.jersey.DropwizardResourceConfig;
 import org.junit.Test;
-import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -21,8 +20,7 @@ import static org.fest.assertions.api.Assertions.failBecauseExceptionWasNotThrow
 
 public class OptionalResourceMethodDispatchAdapterTest extends JerseyTest {
     static {
-        SLF4JBridgeHandler.removeHandlersForRootLogger();
-        SLF4JBridgeHandler.install();
+        LoggingFactory.bootstrap();
     }
 
     @Path("/test/")
@@ -36,7 +34,8 @@ public class OptionalResourceMethodDispatchAdapterTest extends JerseyTest {
 
     @Override
     protected AppDescriptor configure() {
-        final DropwizardResourceConfig config = new DropwizardResourceConfig(true, new MetricRegistry());
+        final DefaultResourceConfig config = new DefaultResourceConfig();
+        config.getSingletons().add(new OptionalResourceMethodDispatchAdapter());
         config.getSingletons().add(new ExampleResource());
         return new LowLevelAppDescriptor.Builder(config).build();
     }

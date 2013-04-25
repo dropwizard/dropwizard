@@ -42,19 +42,9 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.sun.jersey</groupId>
-            <artifactId>jersey-core</artifactId>
-            <version>${jersey.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.sun.jersey</groupId>
-            <artifactId>jersey-server</artifactId>
-            <version>${jersey.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.sun.jersey</groupId>
-            <artifactId>jersey-servlet</artifactId>
-            <version>${jersey.version}</version>
+            <groupId>com.codahale.dropwizard</groupId>
+            <artifactId>dropwizard-jersey</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.codahale.metrics</groupId>
@@ -80,16 +70,6 @@
             <groupId>com.codahale.metrics</groupId>
             <artifactId>metrics-jetty9</artifactId>
             <version>${metrics3.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.codahale.metrics</groupId>
-            <artifactId>metrics-jersey</artifactId>
-            <version>${metrics3.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.jaxrs</groupId>
-            <artifactId>jackson-jaxrs-json-provider</artifactId>
-            <version>${jackson.version}</version>
         </dependency>
         <dependency>
             <groupId>net.sourceforge.argparse4j</groupId>

@@ -1,4 +1,4 @@
-package com.codahale.dropwizard.jersey;
+package com.codahale.dropwizard.jersey.jackson;
 
 import com.codahale.dropwizard.validation.ConstraintViolations;
 import com.codahale.dropwizard.validation.Validated;

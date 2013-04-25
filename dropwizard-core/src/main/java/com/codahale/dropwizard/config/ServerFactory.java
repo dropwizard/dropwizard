@@ -1,7 +1,7 @@
 package com.codahale.dropwizard.config;
 
 import com.codahale.dropwizard.configuration.ConfigurationException;
-import com.codahale.dropwizard.jersey.JacksonMessageBodyProvider;
+import com.codahale.dropwizard.jersey.jackson.JacksonMessageBodyProvider;
 import com.codahale.dropwizard.jetty.*;
 import com.codahale.dropwizard.servlets.ThreadNameFilter;
 import com.codahale.dropwizard.util.Duration;

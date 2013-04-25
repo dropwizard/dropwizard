@@ -1,15 +1,13 @@
 package com.codahale.dropwizard.jersey.caching;
 
-import com.codahale.metrics.MetricRegistry;
+import com.codahale.dropwizard.logging.LoggingFactory;
 import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.core.DefaultResourceConfig;
 import com.sun.jersey.test.framework.AppDescriptor;
 import com.sun.jersey.test.framework.JerseyTest;
 import com.sun.jersey.test.framework.LowLevelAppDescriptor;
-import com.codahale.dropwizard.jersey.DropwizardResourceConfig;
-import com.codahale.dropwizard.jersey.caching.CacheControl;
 import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -22,8 +20,7 @@ import static org.fest.assertions.api.Assertions.assertThat;
 
 public class CacheControlledResourceMethodDispatchAdapterTest extends JerseyTest {
     static {
-        SLF4JBridgeHandler.removeHandlersForRootLogger();
-        SLF4JBridgeHandler.install();
+        LoggingFactory.bootstrap();
     }
 
     @Path("/test/")
@@ -101,7 +98,8 @@ public class CacheControlledResourceMethodDispatchAdapterTest extends JerseyTest
 
     @Override
     protected AppDescriptor configure() {
-        final DropwizardResourceConfig config = new DropwizardResourceConfig(true, new MetricRegistry());
+        final DefaultResourceConfig config = new DefaultResourceConfig();
+        config.getSingletons().add(new CacheControlledResourceMethodDispatchAdapter());
         config.getSingletons().add(new ExampleResource());
         return new LowLevelAppDescriptor.Builder(config).build();
     }
