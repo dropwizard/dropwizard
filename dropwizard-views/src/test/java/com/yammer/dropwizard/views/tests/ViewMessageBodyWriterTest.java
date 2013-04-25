@@ -1,13 +1,7 @@
 package com.yammer.dropwizard.views.tests;
 
 import com.sun.jersey.core.util.StringKeyIgnoreCaseMultivaluedMap;
-import com.yammer.dropwizard.views.MyOtherView;
-import com.yammer.dropwizard.views.MyView;
-import com.yammer.dropwizard.views.ViewMessageBodyWriter;
-import com.yammer.dropwizard.views.ViewRenderException;
-import com.yammer.dropwizard.views.BadView;
-import com.yammer.dropwizard.views.MustacheView;
-import com.yammer.dropwizard.views.UnknownView;
+import com.yammer.dropwizard.views.*;
 import org.junit.Test;
 
 import javax.ws.rs.WebApplicationException;
@@ -73,6 +67,24 @@ public class ViewMessageBodyWriterTest {
 
         assertThat(output.toString())
                 .isEqualTo("Hello Stranger!\nWoo!\n\n");
+    }
+
+    @Test
+    public void writesHandlebarsViews() throws Exception {
+        final ByteArrayOutputStream output = new ByteArrayOutputStream();
+        final HandlebarsView view = new HandlebarsView("Stranger");
+
+        writer.writeTo(view,
+                HandlebarsView.class,
+                null,
+                NONE,
+                MediaType.TEXT_HTML_TYPE,
+                new StringKeyIgnoreCaseMultivaluedMap<Object>(),
+                output);
+
+        assertThat(output.toString())
+                .isEqualTo("Hello Stranger!\nWoo!\n\n");
+
     }
 
     @Test
