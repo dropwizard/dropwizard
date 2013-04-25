@@ -39,8 +39,9 @@ public class ServerCommand<T extends Configuration> extends EnvironmentCommand<T
 
     @Override
     protected void run(Environment environment, Namespace namespace, T configuration) throws Exception {
-        final Server server = new ServerFactory(configuration.getServerConfiguration(),
-                                                environment.getName()).buildServer(environment);
+        final ServerFactory factory = new ServerFactory(configuration.getServerConfiguration(),
+                                                        environment.getName());
+        final Server server = factory.build(environment);
         final Logger logger = LoggerFactory.getLogger(ServerCommand.class);
         logBanner(environment.getName(), logger);
         try {

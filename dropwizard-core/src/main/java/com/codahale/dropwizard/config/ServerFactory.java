@@ -74,12 +74,12 @@ public class ServerFactory {
         this.requestLogHandlerFactory = new RequestLogHandlerFactory(config.getRequestLogConfiguration(), name);
     }
 
-    public Server buildServer(Environment env) throws ConfigurationException {
+    public Server build(Environment env) throws ConfigurationException {
         env.getHealthCheckRegistry().register("deadlocks", new ThreadDeadlockHealthCheck());
         return createServer(env);
     }
 
-    private Server createServer(final Environment env) {
+    private Server createServer(Environment env) {
         final ThreadPool threadPool = createThreadPool(env.getMetricRegistry());
         final Server server = new Server(threadPool);
         env.getLifecycleEnvironment().attach(server);
