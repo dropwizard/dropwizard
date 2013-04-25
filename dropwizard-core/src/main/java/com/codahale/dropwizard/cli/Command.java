@@ -1,6 +1,6 @@
 package com.codahale.dropwizard.cli;
 
-import com.codahale.dropwizard.config.Bootstrap;
+import com.codahale.dropwizard.setup.Bootstrap;
 import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
 

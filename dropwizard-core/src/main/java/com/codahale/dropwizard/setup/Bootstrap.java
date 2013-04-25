@@ -1,4 +1,4 @@
-package com.codahale.dropwizard.config;
+package com.codahale.dropwizard.setup;
 
 import com.codahale.dropwizard.Bundle;
 import com.codahale.dropwizard.Configuration;
@@ -6,6 +6,7 @@ import com.codahale.dropwizard.ConfiguredBundle;
 import com.codahale.dropwizard.Service;
 import com.codahale.dropwizard.cli.Command;
 import com.codahale.dropwizard.cli.ConfiguredCommand;
+import com.codahale.dropwizard.config.Environment;
 import com.codahale.dropwizard.configuration.ConfigurationSourceProvider;
 import com.codahale.dropwizard.configuration.FileConfigurationSourceProvider;
 import com.codahale.dropwizard.jackson.Jackson;

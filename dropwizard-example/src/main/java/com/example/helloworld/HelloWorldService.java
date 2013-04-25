@@ -3,7 +3,7 @@ package com.example.helloworld;
 import com.codahale.dropwizard.Service;
 import com.codahale.dropwizard.assets.AssetsBundle;
 import com.codahale.dropwizard.auth.basic.BasicAuthProvider;
-import com.codahale.dropwizard.config.Bootstrap;
+import com.codahale.dropwizard.setup.Bootstrap;
 import com.codahale.dropwizard.config.Environment;
 import com.codahale.dropwizard.db.DatabaseConfiguration;
 import com.codahale.dropwizard.hibernate.HibernateBundle;

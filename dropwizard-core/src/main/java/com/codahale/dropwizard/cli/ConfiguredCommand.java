@@ -1,7 +1,7 @@
 package com.codahale.dropwizard.cli;
 
 import com.codahale.dropwizard.Configuration;
-import com.codahale.dropwizard.config.Bootstrap;
+import com.codahale.dropwizard.setup.Bootstrap;
 import com.codahale.dropwizard.config.LoggingConfiguration;
 import com.codahale.dropwizard.configuration.ConfigurationException;
 import com.codahale.dropwizard.configuration.ConfigurationFactory;

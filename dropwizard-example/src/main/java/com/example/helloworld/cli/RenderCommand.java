@@ -1,7 +1,7 @@
 package com.example.helloworld.cli;
 
 import com.codahale.dropwizard.cli.ConfiguredCommand;
-import com.codahale.dropwizard.config.Bootstrap;
+import com.codahale.dropwizard.setup.Bootstrap;
 import com.example.helloworld.HelloWorldConfiguration;
 import com.example.helloworld.core.Template;
 import com.google.common.base.Optional;

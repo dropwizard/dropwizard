@@ -2,10 +2,7 @@ package com.codahale.dropwizard.config;
 
 import com.codahale.dropwizard.configuration.ConfigurationException;
 import com.codahale.dropwizard.jersey.jackson.JacksonMessageBodyProvider;
-import com.codahale.dropwizard.jetty.BiDiGzipHandler;
-import com.codahale.dropwizard.jetty.ContextRoutingHandler;
-import com.codahale.dropwizard.jetty.NonblockingServletHolder;
-import com.codahale.dropwizard.jetty.RoutingHandler;
+import com.codahale.dropwizard.jetty.*;
 import com.codahale.dropwizard.servlets.ThreadNameFilter;
 import com.codahale.dropwizard.util.Duration;
 import com.codahale.dropwizard.util.Size;

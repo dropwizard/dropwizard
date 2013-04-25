@@ -1,4 +1,4 @@
-package com.codahale.dropwizard.config;
+package com.codahale.dropwizard.jetty;
 
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
@@ -6,7 +6,7 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.CoreConstants;
 import ch.qos.logback.core.LayoutBase;
 import ch.qos.logback.core.spi.AppenderAttachableImpl;
-import com.codahale.dropwizard.jetty.AsyncRequestLog;
+import com.codahale.dropwizard.config.RequestLogConfiguration;
 import com.codahale.dropwizard.logging.LoggingOutput;
 import com.codahale.metrics.Clock;
 import org.eclipse.jetty.server.handler.RequestLogHandler;

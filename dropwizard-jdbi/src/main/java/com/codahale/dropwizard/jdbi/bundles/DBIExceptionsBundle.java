@@ -1,7 +1,7 @@
 package com.codahale.dropwizard.jdbi.bundles;
 
 import com.codahale.dropwizard.Bundle;
-import com.codahale.dropwizard.config.Bootstrap;
+import com.codahale.dropwizard.setup.Bootstrap;
 import com.codahale.dropwizard.config.Environment;
 import com.codahale.dropwizard.jdbi.jersey.LoggingDBIExceptionMapper;
 import com.codahale.dropwizard.jdbi.jersey.LoggingSQLExceptionMapper;

@@ -240,7 +240,7 @@ like this:
     package com.example.helloworld;
     
     import com.codahale.dropwizard.Service;
-    import com.codahale.dropwizard.config.Bootstrap;
+    import com.codahale.dropwizard.setup.Bootstrap;
     import com.codahale.dropwizard.config.Environment;
     
     public class HelloWorldService extends Service<HelloWorldConfiguration> {
