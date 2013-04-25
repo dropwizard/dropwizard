@@ -1,6 +1,5 @@
 package com.codahale.dropwizard.servlets;
 
-import com.codahale.dropwizard.servlets.Servlets;
 import org.junit.Before;
 import org.junit.Test;
 

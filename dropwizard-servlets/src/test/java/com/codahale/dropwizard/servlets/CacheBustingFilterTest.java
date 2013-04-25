@@ -1,6 +1,5 @@
 package com.codahale.dropwizard.servlets;
 
-import com.codahale.dropwizard.servlets.CacheBustingFilter;
 import org.junit.Test;
 import org.mockito.InOrder;
 

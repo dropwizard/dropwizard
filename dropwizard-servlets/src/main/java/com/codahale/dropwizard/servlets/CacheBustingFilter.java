@@ -1,6 +1,6 @@
 package com.codahale.dropwizard.servlets;
 
-import org.eclipse.jetty.http.HttpHeader;
+import com.google.common.net.HttpHeaders;
 
 import javax.servlet.*;
 import javax.servlet.http.HttpServletResponse;
@@ -18,7 +18,7 @@ public class CacheBustingFilter implements Filter {
                          FilterChain chain) throws IOException, ServletException {
         if (response instanceof HttpServletResponse) {
             final HttpServletResponse resp = (HttpServletResponse) response;
-            resp.setHeader(HttpHeader.CACHE_CONTROL.asString(), CACHE_SETTINGS);
+            resp.setHeader(HttpHeaders.CACHE_CONTROL, CACHE_SETTINGS);
         }
         chain.doFilter(request, response);
     }
