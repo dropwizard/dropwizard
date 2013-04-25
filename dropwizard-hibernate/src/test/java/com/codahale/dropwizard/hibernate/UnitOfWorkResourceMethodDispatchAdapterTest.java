@@ -1,8 +1,6 @@
 package com.codahale.dropwizard.hibernate;
 
 import com.sun.jersey.spi.container.ResourceMethodDispatchProvider;
-import com.codahale.dropwizard.hibernate.UnitOfWorkResourceMethodDispatchAdapter;
-import com.codahale.dropwizard.hibernate.UnitOfWorkResourceMethodDispatchProvider;
 import org.hibernate.SessionFactory;
 import org.junit.Test;
 

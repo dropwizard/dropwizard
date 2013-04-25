@@ -1,6 +1,5 @@
 package com.codahale.dropwizard.configuration;
 
-import com.codahale.dropwizard.configuration.ConfigurationException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;

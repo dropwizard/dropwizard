@@ -1,7 +1,5 @@
 package com.codahale.dropwizard.validation;
 
-import com.codahale.dropwizard.validation.ConstraintViolations;
-import com.codahale.dropwizard.validation.PortRange;
 import org.junit.Test;
 
 import javax.validation.Validation;

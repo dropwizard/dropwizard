@@ -1,11 +1,11 @@
 package com.codahale.dropwizard.hibernate;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Sets;
 import com.codahale.dropwizard.config.Environment;
 import com.codahale.dropwizard.db.DatabaseConfiguration;
 import com.codahale.dropwizard.db.ManagedDataSource;
 import com.codahale.dropwizard.db.ManagedDataSourceFactory;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Sets;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.AvailableSettings;
 import org.hibernate.cfg.Configuration;

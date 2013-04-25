@@ -2,10 +2,6 @@ package com.codahale.dropwizard.validation;
 
 import com.codahale.dropwizard.util.Size;
 import com.codahale.dropwizard.util.SizeUnit;
-import com.codahale.dropwizard.validation.ConstraintViolations;
-import com.codahale.dropwizard.validation.MaxSize;
-import com.codahale.dropwizard.validation.MinSize;
-import com.codahale.dropwizard.validation.SizeRange;
 import org.junit.Test;
 
 import javax.validation.Validation;

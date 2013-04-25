@@ -1,11 +1,8 @@
 package com.codahale.dropwizard.assets;
 
-import com.google.common.io.Resources;
-import com.codahale.dropwizard.assets.AssetServlet;
-import com.codahale.dropwizard.assets.AssetsBundle;
-import com.codahale.dropwizard.assets.ResourceURL;
 import com.codahale.dropwizard.config.Environment;
 import com.codahale.dropwizard.setup.ServletEnvironment;
+import com.google.common.io.Resources;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -13,9 +10,7 @@ import org.mockito.ArgumentCaptor;
 import java.net.URL;
 
 import static org.fest.assertions.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class AssetsBundleTest {
     private final ServletEnvironment servletEnvironment = mock(ServletEnvironment.class);

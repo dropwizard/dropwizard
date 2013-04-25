@@ -1,11 +1,11 @@
 package com.codahale.dropwizard.cli;
 
-import com.google.common.base.Charsets;
-import com.google.common.io.Resources;
-import com.codahale.dropwizard.Service;
 import com.codahale.dropwizard.Configuration;
+import com.codahale.dropwizard.Service;
 import com.codahale.dropwizard.config.Environment;
 import com.codahale.dropwizard.config.ServerFactory;
+import com.google.common.base.Charsets;
+import com.google.common.io.Resources;
 import net.sourceforge.argparse4j.inf.Namespace;
 import org.eclipse.jetty.server.Server;
 import org.slf4j.Logger;

@@ -1,6 +1,5 @@
 package com.codahale.dropwizard.auth.basic;
 
-import com.codahale.dropwizard.auth.basic.BasicCredentials;
 import org.junit.Test;
 
 import static org.fest.assertions.api.Assertions.assertThat;

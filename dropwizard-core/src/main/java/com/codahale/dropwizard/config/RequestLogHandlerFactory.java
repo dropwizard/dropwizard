@@ -6,9 +6,9 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.CoreConstants;
 import ch.qos.logback.core.LayoutBase;
 import ch.qos.logback.core.spi.AppenderAttachableImpl;
-import com.codahale.metrics.Clock;
 import com.codahale.dropwizard.jetty.AsyncRequestLog;
 import com.codahale.dropwizard.logging.LoggingOutput;
+import com.codahale.metrics.Clock;
 import org.eclipse.jetty.server.handler.RequestLogHandler;
 import org.slf4j.LoggerFactory;
 

@@ -1,10 +1,6 @@
 package com.codahale.dropwizard.validation;
 
 import com.codahale.dropwizard.util.Duration;
-import com.codahale.dropwizard.validation.ConstraintViolations;
-import com.codahale.dropwizard.validation.DurationRange;
-import com.codahale.dropwizard.validation.MaxDuration;
-import com.codahale.dropwizard.validation.MinDuration;
 import com.google.common.collect.ImmutableList;
 import org.junit.Test;
 

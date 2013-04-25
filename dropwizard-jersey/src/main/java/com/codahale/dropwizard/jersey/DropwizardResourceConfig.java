@@ -1,5 +1,6 @@
 package com.codahale.dropwizard.jersey;
 
+import com.codahale.dropwizard.jersey.caching.CacheControlledResourceMethodDispatchAdapter;
 import com.codahale.dropwizard.jersey.errors.LoggingExceptionMapper;
 import com.codahale.dropwizard.jersey.guava.OptionalQueryParamInjectableProvider;
 import com.codahale.dropwizard.jersey.guava.OptionalResourceMethodDispatchAdapter;
@@ -8,7 +9,6 @@ import com.codahale.dropwizard.jersey.validation.ConstraintViolationExceptionMap
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.jersey.InstrumentedResourceMethodDispatchAdapter;
 import com.sun.jersey.api.core.ScanningResourceConfig;
-import com.codahale.dropwizard.jersey.caching.CacheControlledResourceMethodDispatchAdapter;
 
 public class DropwizardResourceConfig extends ScanningResourceConfig {
     public DropwizardResourceConfig(boolean testOnly, MetricRegistry metricRegistry) {

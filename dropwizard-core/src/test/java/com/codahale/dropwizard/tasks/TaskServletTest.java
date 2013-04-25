@@ -2,8 +2,6 @@ package com.codahale.dropwizard.tasks;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMultimap;
-import com.codahale.dropwizard.tasks.Task;
-import com.codahale.dropwizard.tasks.TaskServlet;
 import org.junit.Before;
 import org.junit.Test;
 

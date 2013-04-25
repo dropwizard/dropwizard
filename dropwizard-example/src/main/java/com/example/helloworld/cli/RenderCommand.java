@@ -1,10 +1,10 @@
 package com.example.helloworld.cli;
 
+import com.codahale.dropwizard.cli.ConfiguredCommand;
+import com.codahale.dropwizard.config.Bootstrap;
 import com.example.helloworld.HelloWorldConfiguration;
 import com.example.helloworld.core.Template;
 import com.google.common.base.Optional;
-import com.codahale.dropwizard.cli.ConfiguredCommand;
-import com.codahale.dropwizard.config.Bootstrap;
 import net.sourceforge.argparse4j.impl.Arguments;
 import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;

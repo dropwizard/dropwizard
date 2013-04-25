@@ -1,6 +1,5 @@
 package com.codahale.dropwizard.jersey.params;
 
-import com.codahale.dropwizard.jersey.params.LongParam;
 import org.junit.Test;
 
 import javax.ws.rs.WebApplicationException;

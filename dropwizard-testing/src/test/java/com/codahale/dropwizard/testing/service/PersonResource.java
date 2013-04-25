@@ -1,7 +1,7 @@
 package com.codahale.dropwizard.testing.service;
 
-import com.codahale.metrics.annotation.Timed;
 import com.codahale.dropwizard.testing.Person;
+import com.codahale.metrics.annotation.Timed;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;

@@ -1,6 +1,5 @@
 package com.codahale.dropwizard.views;
 
-import com.codahale.dropwizard.views.MyView;
 import org.junit.Test;
 
 import static org.fest.assertions.api.Assertions.assertThat;

@@ -1,7 +1,7 @@
 package com.codahale.dropwizard.testing.service;
 
-import com.codahale.dropwizard.testing.ResourceTest;
 import com.codahale.dropwizard.testing.Person;
+import com.codahale.dropwizard.testing.ResourceTest;
 import org.junit.Test;
 
 import java.util.logging.Level;

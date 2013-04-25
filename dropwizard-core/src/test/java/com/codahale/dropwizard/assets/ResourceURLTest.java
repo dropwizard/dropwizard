@@ -2,8 +2,6 @@ package com.codahale.dropwizard.assets;
 
 import com.google.common.io.Files;
 import com.google.common.io.Resources;
-import com.codahale.dropwizard.assets.ResourceNotFoundException;
-import com.codahale.dropwizard.assets.ResourceURL;
 import org.junit.Before;
 import org.junit.Test;
 

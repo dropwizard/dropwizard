@@ -1,8 +1,8 @@
 package com.codahale.dropwizard.config;
 
+import com.codahale.dropwizard.util.Size;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableSet;
-import com.codahale.dropwizard.util.Size;
 
 import javax.validation.constraints.NotNull;
 import java.util.Set;

@@ -1,8 +1,8 @@
 package com.codahale.dropwizard.cli;
 
-import com.google.common.collect.Maps;
 import com.codahale.dropwizard.config.Bootstrap;
 import com.codahale.dropwizard.util.JarLocation;
+import com.google.common.collect.Maps;
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.impl.action.VersionArgumentAction;
 import net.sourceforge.argparse4j.inf.ArgumentParser;

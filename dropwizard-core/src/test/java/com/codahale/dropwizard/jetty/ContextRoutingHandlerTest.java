@@ -1,6 +1,5 @@
 package com.codahale.dropwizard.jetty;
 
-import com.codahale.dropwizard.jetty.ContextRoutingHandler;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.ContextHandler;
 import org.junit.Before;

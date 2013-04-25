@@ -1,6 +1,5 @@
 package com.codahale.dropwizard.hibernate;
 
-import com.codahale.dropwizard.hibernate.UnitOfWork;
 import org.hibernate.CacheMode;
 import org.hibernate.FlushMode;
 import org.junit.Before;

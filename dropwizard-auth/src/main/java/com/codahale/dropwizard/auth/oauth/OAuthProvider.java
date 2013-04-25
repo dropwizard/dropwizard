@@ -1,5 +1,8 @@
 package com.codahale.dropwizard.auth.oauth;
 
+import com.codahale.dropwizard.auth.Auth;
+import com.codahale.dropwizard.auth.AuthenticationException;
+import com.codahale.dropwizard.auth.Authenticator;
 import com.google.common.base.Optional;
 import com.sun.jersey.api.core.HttpContext;
 import com.sun.jersey.api.model.Parameter;
@@ -8,9 +11,6 @@ import com.sun.jersey.core.spi.component.ComponentScope;
 import com.sun.jersey.server.impl.inject.AbstractHttpContextInjectable;
 import com.sun.jersey.spi.inject.Injectable;
 import com.sun.jersey.spi.inject.InjectableProvider;
-import com.codahale.dropwizard.auth.Auth;
-import com.codahale.dropwizard.auth.AuthenticationException;
-import com.codahale.dropwizard.auth.Authenticator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

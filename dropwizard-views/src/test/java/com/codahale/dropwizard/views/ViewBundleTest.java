@@ -2,15 +2,11 @@ package com.codahale.dropwizard.views;
 
 import com.codahale.dropwizard.config.Environment;
 import com.codahale.dropwizard.setup.JerseyEnvironment;
-import com.codahale.dropwizard.views.ViewBundle;
-import com.codahale.dropwizard.views.ViewMessageBodyWriter;
 import org.junit.Before;
 import org.junit.Test;
 
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class ViewBundleTest {
     private final JerseyEnvironment jerseyEnvironment = mock(JerseyEnvironment.class);

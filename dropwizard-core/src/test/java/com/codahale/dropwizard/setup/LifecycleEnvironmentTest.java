@@ -2,7 +2,6 @@ package com.codahale.dropwizard.setup;
 
 import com.codahale.dropwizard.jetty.JettyManaged;
 import com.codahale.dropwizard.lifecycle.Managed;
-import com.codahale.dropwizard.setup.LifecycleEnvironment;
 import com.google.common.collect.Lists;
 import org.eclipse.jetty.util.component.LifeCycle;
 import org.junit.Test;

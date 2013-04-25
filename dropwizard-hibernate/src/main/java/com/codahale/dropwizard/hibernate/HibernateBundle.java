@@ -1,13 +1,13 @@
 package com.codahale.dropwizard.hibernate;
 
-import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module;
-import com.google.common.collect.ImmutableList;
+import com.codahale.dropwizard.Configuration;
 import com.codahale.dropwizard.ConfiguredBundle;
 import com.codahale.dropwizard.config.Bootstrap;
-import com.codahale.dropwizard.Configuration;
 import com.codahale.dropwizard.config.Environment;
 import com.codahale.dropwizard.db.ConfigurationStrategy;
 import com.codahale.dropwizard.db.DatabaseConfiguration;
+import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module;
+import com.google.common.collect.ImmutableList;
 import org.hibernate.SessionFactory;
 
 public abstract class HibernateBundle<T extends Configuration> implements ConfiguredBundle<T>, ConfigurationStrategy<T> {

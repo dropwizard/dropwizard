@@ -1,13 +1,18 @@
 package com.codahale.dropwizard.views.mustache;
 
-import com.github.mustachejava.*;
+import com.codahale.dropwizard.views.View;
+import com.github.mustachejava.DefaultMustacheFactory;
+import com.github.mustachejava.Mustache;
+import com.github.mustachejava.MustacheException;
 import com.google.common.base.Charsets;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import com.codahale.dropwizard.views.View;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 
 /**
  * A class-specific Mustache factory which caches the parsed/compiled templates.

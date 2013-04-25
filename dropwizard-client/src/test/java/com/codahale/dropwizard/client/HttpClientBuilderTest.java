@@ -1,10 +1,8 @@
 package com.codahale.dropwizard.client;
 
+import com.codahale.dropwizard.util.Duration;
 import com.codahale.metrics.MetricRegistry;
 import com.google.common.collect.ImmutableList;
-import com.codahale.dropwizard.client.HttpClientBuilder;
-import com.codahale.dropwizard.client.HttpClientConfiguration;
-import com.codahale.dropwizard.util.Duration;
 import org.apache.http.Header;
 import org.apache.http.HeaderIterator;
 import org.apache.http.HttpHeaders;

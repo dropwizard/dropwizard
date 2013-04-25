@@ -1,13 +1,13 @@
 package com.codahale.dropwizard.views.mustache;
 
+import com.codahale.dropwizard.views.View;
+import com.codahale.dropwizard.views.ViewRenderer;
 import com.github.mustachejava.Mustache;
 import com.github.mustachejava.MustacheFactory;
 import com.google.common.base.Charsets;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import com.codahale.dropwizard.views.View;
-import com.codahale.dropwizard.views.ViewRenderer;
 
 import javax.ws.rs.WebApplicationException;
 import java.io.IOException;

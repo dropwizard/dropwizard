@@ -1,6 +1,5 @@
 package com.codahale.dropwizard.jersey.params;
 
-import com.codahale.dropwizard.jersey.params.DateTimeParam;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.junit.Test;

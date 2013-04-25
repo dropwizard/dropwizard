@@ -1,6 +1,5 @@
 package com.codahale.dropwizard.jetty;
 
-import com.codahale.dropwizard.jetty.JettyManaged;
 import com.codahale.dropwizard.lifecycle.Managed;
 import org.junit.Test;
 import org.mockito.InOrder;

@@ -2,7 +2,6 @@ package com.codahale.dropwizard.config;
 
 import ch.qos.logback.classic.Level;
 import com.codahale.dropwizard.configuration.ConfigurationFactory;
-import com.codahale.dropwizard.config.LoggingConfiguration;
 import com.codahale.dropwizard.jackson.Jackson;
 import com.codahale.dropwizard.logging.ConsoleLoggingOutput;
 import com.codahale.dropwizard.logging.FileLoggingOutput;

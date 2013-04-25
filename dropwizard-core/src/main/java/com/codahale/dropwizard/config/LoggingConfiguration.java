@@ -1,11 +1,11 @@
 package com.codahale.dropwizard.config;
 
 import ch.qos.logback.classic.Level;
+import com.codahale.dropwizard.logging.ConsoleLoggingOutput;
+import com.codahale.dropwizard.logging.LoggingOutput;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.codahale.dropwizard.logging.ConsoleLoggingOutput;
-import com.codahale.dropwizard.logging.LoggingOutput;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;

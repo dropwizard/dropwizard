@@ -1,6 +1,5 @@
 package com.codahale.dropwizard.assets;
 
-import com.codahale.dropwizard.assets.AssetServlet;
 import com.google.common.net.HttpHeaders;
 import org.eclipse.jetty.http.*;
 import org.eclipse.jetty.servlet.ServletTester;

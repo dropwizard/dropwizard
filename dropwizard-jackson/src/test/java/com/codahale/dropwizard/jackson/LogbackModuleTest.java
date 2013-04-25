@@ -2,7 +2,6 @@ package com.codahale.dropwizard.jackson;
 
 import ch.qos.logback.classic.Level;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.codahale.dropwizard.jackson.LogbackModule;
 import org.junit.Before;
 import org.junit.Test;
 

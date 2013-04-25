@@ -1,8 +1,8 @@
 package com.codahale.dropwizard.migrations;
 
-import com.google.common.base.Charsets;
 import com.codahale.dropwizard.Configuration;
 import com.codahale.dropwizard.db.ConfigurationStrategy;
+import com.google.common.base.Charsets;
 import liquibase.Liquibase;
 import liquibase.diff.Diff;
 import liquibase.diff.DiffResult;

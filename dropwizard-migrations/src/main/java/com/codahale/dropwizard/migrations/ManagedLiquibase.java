@@ -1,10 +1,10 @@
 package com.codahale.dropwizard.migrations;
 
-import com.codahale.metrics.MetricRegistry;
 import com.codahale.dropwizard.db.DatabaseConfiguration;
 import com.codahale.dropwizard.db.ManagedDataSource;
 import com.codahale.dropwizard.db.ManagedDataSourceFactory;
 import com.codahale.dropwizard.lifecycle.Managed;
+import com.codahale.metrics.MetricRegistry;
 import liquibase.Liquibase;
 import liquibase.database.DatabaseConnection;
 import liquibase.database.jvm.JdbcConnection;

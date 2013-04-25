@@ -1,10 +1,11 @@
 package com.codahale.dropwizard.cli;
 
 import com.codahale.dropwizard.Configuration;
-import com.codahale.dropwizard.config.*;
-import com.codahale.dropwizard.configuration.ConfigurationSourceProvider;
+import com.codahale.dropwizard.config.Bootstrap;
+import com.codahale.dropwizard.config.LoggingConfiguration;
 import com.codahale.dropwizard.configuration.ConfigurationException;
 import com.codahale.dropwizard.configuration.ConfigurationFactory;
+import com.codahale.dropwizard.configuration.ConfigurationSourceProvider;
 import com.codahale.dropwizard.logging.LoggingFactory;
 import com.codahale.dropwizard.util.Generics;
 import com.fasterxml.jackson.databind.ObjectMapper;

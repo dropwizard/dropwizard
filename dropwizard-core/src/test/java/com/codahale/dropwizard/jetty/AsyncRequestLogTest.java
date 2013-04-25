@@ -4,7 +4,6 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.spi.AppenderAttachableImpl;
-import com.codahale.dropwizard.jetty.AsyncRequestLog;
 import com.codahale.metrics.Clock;
 import com.google.common.net.HttpHeaders;
 import org.eclipse.jetty.http.HttpURI;

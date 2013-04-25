@@ -1,6 +1,5 @@
 package com.codahale.dropwizard.jetty;
 
-import com.codahale.dropwizard.jetty.NonblockingServletHolder;
 import org.eclipse.jetty.server.Request;
 import org.junit.Test;
 import org.mockito.InOrder;

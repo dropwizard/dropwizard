@@ -5,8 +5,6 @@ import com.google.common.base.Optional;
 import com.google.common.cache.CacheBuilderSpec;
 import com.google.common.cache.CacheStats;
 import com.google.common.collect.ImmutableSet;
-import com.codahale.dropwizard.auth.Authenticator;
-import com.codahale.dropwizard.auth.CachingAuthenticator;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InOrder;

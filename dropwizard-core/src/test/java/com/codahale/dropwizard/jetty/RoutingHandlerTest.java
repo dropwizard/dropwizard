@@ -1,6 +1,5 @@
 package com.codahale.dropwizard.jetty;
 
-import com.codahale.dropwizard.jetty.RoutingHandler;
 import com.google.common.collect.ImmutableMap;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Handler;

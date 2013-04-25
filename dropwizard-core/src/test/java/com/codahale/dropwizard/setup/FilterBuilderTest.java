@@ -1,7 +1,6 @@
 package com.codahale.dropwizard.setup;
 
 import com.google.common.collect.ImmutableMap;
-import com.codahale.dropwizard.setup.FilterBuilder;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.junit.Test;

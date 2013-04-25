@@ -1,12 +1,12 @@
 package com.codahale.dropwizard.views.freemarker;
 
+import com.codahale.dropwizard.views.View;
+import com.codahale.dropwizard.views.ViewRenderer;
 import com.google.common.base.Charsets;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.sun.jersey.api.container.ContainerException;
-import com.codahale.dropwizard.views.View;
-import com.codahale.dropwizard.views.ViewRenderer;
 import freemarker.template.Configuration;
 import freemarker.template.DefaultObjectWrapper;
 import freemarker.template.Template;

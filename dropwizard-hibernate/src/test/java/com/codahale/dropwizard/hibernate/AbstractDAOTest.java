@@ -1,7 +1,6 @@
 package com.codahale.dropwizard.hibernate;
 
 import com.google.common.collect.ImmutableList;
-import com.codahale.dropwizard.hibernate.AbstractDAO;
 import org.hibernate.*;
 import org.hibernate.proxy.HibernateProxy;
 import org.hibernate.proxy.LazyInitializer;

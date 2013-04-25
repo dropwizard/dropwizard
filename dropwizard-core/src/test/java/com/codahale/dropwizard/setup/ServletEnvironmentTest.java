@@ -1,8 +1,5 @@
 package com.codahale.dropwizard.setup;
 
-import com.codahale.dropwizard.setup.FilterBuilder;
-import com.codahale.dropwizard.setup.ServletBuilder;
-import com.codahale.dropwizard.setup.ServletEnvironment;
 import org.eclipse.jetty.continuation.ContinuationFilter;
 import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.servlet.FilterHolder;
@@ -12,7 +9,6 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
 import javax.servlet.*;
-
 import java.util.EnumSet;
 
 import static org.fest.assertions.api.Assertions.assertThat;

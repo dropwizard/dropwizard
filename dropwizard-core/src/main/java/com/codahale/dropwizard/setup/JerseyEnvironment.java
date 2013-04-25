@@ -1,5 +1,6 @@
 package com.codahale.dropwizard.setup;
 
+import com.codahale.dropwizard.jersey.DropwizardResourceConfig;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -8,7 +9,6 @@ import com.sun.jersey.core.reflection.AnnotatedMethod;
 import com.sun.jersey.core.reflection.MethodList;
 import com.sun.jersey.core.spi.scanning.PackageNamesScanner;
 import com.sun.jersey.spi.container.servlet.ServletContainer;
-import com.codahale.dropwizard.jersey.DropwizardResourceConfig;
 import org.eclipse.jetty.util.component.AbstractLifeCycle;
 import org.eclipse.jetty.util.component.LifeCycle;
 import org.slf4j.Logger;

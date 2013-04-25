@@ -1,8 +1,6 @@
 package com.codahale.dropwizard;
 
-import com.codahale.dropwizard.Service;
 import com.codahale.dropwizard.config.Bootstrap;
-import com.codahale.dropwizard.Configuration;
 import com.codahale.dropwizard.config.Environment;
 import org.junit.Test;
 

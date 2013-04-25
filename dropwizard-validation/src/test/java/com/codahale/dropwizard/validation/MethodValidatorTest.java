@@ -1,7 +1,5 @@
 package com.codahale.dropwizard.validation;
 
-import com.codahale.dropwizard.validation.ConstraintViolations;
-import com.codahale.dropwizard.validation.ValidationMethod;
 import com.google.common.collect.ImmutableList;
 import org.junit.Test;
 

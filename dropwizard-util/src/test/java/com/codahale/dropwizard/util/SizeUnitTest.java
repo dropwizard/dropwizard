@@ -1,6 +1,5 @@
 package com.codahale.dropwizard.util;
 
-import com.codahale.dropwizard.util.SizeUnit;
 import org.junit.Test;
 
 import static org.fest.assertions.api.Assertions.assertThat;

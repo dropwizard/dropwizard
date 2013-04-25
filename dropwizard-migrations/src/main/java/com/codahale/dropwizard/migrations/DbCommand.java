@@ -1,8 +1,8 @@
 package com.codahale.dropwizard.migrations;
 
-import com.google.common.collect.Maps;
 import com.codahale.dropwizard.Configuration;
 import com.codahale.dropwizard.db.ConfigurationStrategy;
+import com.google.common.collect.Maps;
 import liquibase.Liquibase;
 import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;

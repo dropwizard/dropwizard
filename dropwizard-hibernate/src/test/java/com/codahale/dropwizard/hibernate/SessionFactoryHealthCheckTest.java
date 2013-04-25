@@ -1,7 +1,6 @@
 package com.codahale.dropwizard.hibernate;
 
 import com.codahale.metrics.health.HealthCheck;
-import com.codahale.dropwizard.hibernate.SessionFactoryHealthCheck;
 import org.hibernate.*;
 import org.junit.Test;
 import org.mockito.InOrder;

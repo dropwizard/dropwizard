@@ -1,12 +1,11 @@
 package com.codahale.dropwizard.tasks;
 
 import com.google.common.collect.ImmutableMultimap;
-import com.codahale.dropwizard.tasks.Task;
 import org.junit.Test;
 
 import java.io.PrintWriter;
 
-import static org.fest.assertions.api.Assertions.*;
+import static org.fest.assertions.api.Assertions.assertThat;
 
 public class TaskTest {
     private final Task task = new Task("test") {

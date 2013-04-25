@@ -11,10 +11,10 @@ import ch.qos.logback.core.rolling.DefaultTimeBasedFileNamingAndTriggeringPolicy
 import ch.qos.logback.core.rolling.RollingFileAppender;
 import ch.qos.logback.core.rolling.TimeBasedRollingPolicy;
 import ch.qos.logback.core.spi.FilterAttachable;
+import com.codahale.dropwizard.validation.ValidationMethod;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.google.common.base.Strings;
-import com.codahale.dropwizard.validation.ValidationMethod;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;

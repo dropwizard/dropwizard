@@ -2,8 +2,6 @@ package com.codahale.dropwizard.hibernate;
 
 import com.sun.jersey.api.core.HttpContext;
 import com.sun.jersey.spi.dispatch.RequestDispatcher;
-import com.codahale.dropwizard.hibernate.UnitOfWork;
-import com.codahale.dropwizard.hibernate.UnitOfWorkRequestDispatcher;
 import org.hibernate.*;
 import org.hibernate.context.internal.ManagedSessionContext;
 import org.junit.Before;

@@ -1,7 +1,6 @@
 package com.codahale.dropwizard.config;
 
 import com.codahale.dropwizard.configuration.ConfigurationFactory;
-import com.codahale.dropwizard.config.GzipConfiguration;
 import com.codahale.dropwizard.jackson.Jackson;
 import com.codahale.dropwizard.util.Size;
 import com.google.common.collect.ImmutableSet;

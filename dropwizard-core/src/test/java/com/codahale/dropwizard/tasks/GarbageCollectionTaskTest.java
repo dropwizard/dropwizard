@@ -1,8 +1,6 @@
 package com.codahale.dropwizard.tasks;
 
 import com.google.common.collect.ImmutableMultimap;
-import com.codahale.dropwizard.tasks.GarbageCollectionTask;
-import com.codahale.dropwizard.tasks.Task;
 import org.junit.Test;
 
 import java.io.PrintWriter;

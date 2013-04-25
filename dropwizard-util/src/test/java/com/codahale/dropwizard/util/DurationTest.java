@@ -1,6 +1,5 @@
 package com.codahale.dropwizard.util;
 
-import com.codahale.dropwizard.util.Duration;
 import org.junit.Test;
 
 import java.util.concurrent.TimeUnit;

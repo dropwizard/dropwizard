@@ -1,7 +1,7 @@
 package com.codahale.dropwizard.client;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.codahale.dropwizard.validation.ValidationMethod;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
