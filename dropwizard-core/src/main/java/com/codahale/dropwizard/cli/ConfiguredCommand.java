@@ -5,6 +5,7 @@ import com.codahale.dropwizard.config.*;
 import com.codahale.dropwizard.configuration.ConfigurationSourceProvider;
 import com.codahale.dropwizard.configuration.ConfigurationException;
 import com.codahale.dropwizard.configuration.ConfigurationFactory;
+import com.codahale.dropwizard.logging.LoggingFactory;
 import com.codahale.dropwizard.util.Generics;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.sourceforge.argparse4j.inf.Namespace;
@@ -57,8 +58,12 @@ public abstract class ConfiguredCommand<T extends Configuration> extends Command
                                                    getConfigurationClass(),
                                                    bootstrap.getObjectMapper());
         if (configuration != null) {
-            new LoggingFactory(configuration.getLoggingConfiguration(),
-                               bootstrap.getService().getName()).configure(bootstrap.getMetricRegistry());
+            final LoggingConfiguration logging = configuration.getLoggingConfiguration();
+            final LoggingFactory factory = new LoggingFactory(bootstrap.getService().getName(),
+                                                              logging.getOutputs(),
+                                                              logging.getLoggers(),
+                                                              logging.getLevel());
+            factory.configure(bootstrap.getMetricRegistry());
         }
         run((Bootstrap<T>) bootstrap, namespace, configuration);
     }

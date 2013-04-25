@@ -5,7 +5,7 @@ import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.codahale.dropwizard.config.Environment;
-import com.codahale.dropwizard.config.LoggingFactory;
+import com.codahale.dropwizard.logging.LoggingFactory;
 import com.codahale.dropwizard.db.DatabaseConfiguration;
 import com.codahale.dropwizard.db.ManagedDataSource;
 import com.codahale.dropwizard.jdbi.DBIFactory;

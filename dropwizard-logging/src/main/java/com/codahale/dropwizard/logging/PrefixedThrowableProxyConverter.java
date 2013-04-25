@@ -5,7 +5,7 @@ import ch.qos.logback.classic.spi.IThrowableProxy;
 import ch.qos.logback.classic.spi.StackTraceElementProxy;
 import ch.qos.logback.core.CoreConstants;
 
-public class PrefixedThrowableProxyConverter extends ThrowableProxyConverter {
+class PrefixedThrowableProxyConverter extends ThrowableProxyConverter {
     private static final String PREFIX = "! ";
 
     @Override

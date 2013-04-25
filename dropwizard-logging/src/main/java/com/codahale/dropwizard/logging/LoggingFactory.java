@@ -1,4 +1,4 @@
-package com.codahale.dropwizard.config;
+package com.codahale.dropwizard.logging;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
@@ -9,8 +9,6 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.ConsoleAppender;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.logback.InstrumentedAppender;
-import com.codahale.dropwizard.logging.LogFormatter;
-import com.codahale.dropwizard.logging.LoggingOutput;
 import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
@@ -45,12 +43,19 @@ public class LoggingFactory {
         root.addAppender(appender);
     }
 
-    private final LoggingConfiguration config;
     private final String name;
+    private final Iterable<LoggingOutput> outputs;
+    private final Map<String, Level> levels;
+    private final Level defaultLevel;
 
-    public LoggingFactory(LoggingConfiguration config, String name) {
-        this.config = config;
+    public LoggingFactory(String name,
+                          Iterable<LoggingOutput> outputs,
+                          Map<String, Level> levels,
+                          Level defaultLevel) {
         this.name = name;
+        this.outputs = outputs;
+        this.levels = levels;
+        this.defaultLevel = defaultLevel;
     }
 
     public void configure(MetricRegistry metricRegistry) {
@@ -58,7 +63,7 @@ public class LoggingFactory {
 
         final Logger root = configureLevels();
 
-        for (LoggingOutput output : config.getOutputs()) {
+        for (LoggingOutput output : outputs) {
             root.addAppender(output.build(root.getLoggerContext(), name, null));
         }
 
@@ -100,9 +105,9 @@ public class LoggingFactory {
 
         root.getLoggerContext().addListener(propagator);
 
-        root.setLevel(config.getLevel());
+        root.setLevel(defaultLevel);
 
-        for (Map.Entry<String, Level> entry : config.getLoggers().entrySet()) {
+        for (Map.Entry<String, Level> entry : levels.entrySet()) {
             ((Logger) LoggerFactory.getLogger(entry.getKey())).setLevel(entry.getValue());
         }
 
