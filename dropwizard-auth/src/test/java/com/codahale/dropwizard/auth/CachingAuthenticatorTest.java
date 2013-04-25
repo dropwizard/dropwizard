@@ -15,11 +15,9 @@ import static org.mockito.Mockito.*;
 public class CachingAuthenticatorTest {
     @SuppressWarnings("unchecked")
     private final Authenticator<String, String> underlying = mock(Authenticator.class);
-
     private final CachingAuthenticator<String, String> cached =
-            CachingAuthenticator.wrap(new MetricRegistry(),
-                                      underlying,
-                                      CacheBuilderSpec.parse("maximumSize=1"));
+            new CachingAuthenticator<>(new MetricRegistry(), underlying,
+                                       CacheBuilderSpec.parse("maximumSize=1"));
 
     @Before
     public void setUp() throws Exception {

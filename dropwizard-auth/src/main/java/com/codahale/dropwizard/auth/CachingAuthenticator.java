@@ -18,33 +18,34 @@ import static com.codahale.metrics.MetricRegistry.name;
  * @param <P> the type of principals the authenticator returns
  */
 public class CachingAuthenticator<C, P> implements Authenticator<C, P> {
-
-    /**
-     * Wraps an underlying authenticator with a cache.
-     *
-     * @param metricRegistry the service's registry of metrics
-     * @param authenticator  the underlying authenticator
-     * @param cacheSpec      a {@link CacheBuilderSpec}
-     * @param <C>            the type of credentials the authenticator can authenticate
-     * @param <P>            the type of principals the authenticator returns
-     * @return a cached version of {@code authenticator}
-     */
-    public static <C, P> CachingAuthenticator<C, P> wrap(MetricRegistry metricRegistry,
-                                                         Authenticator<C, P> authenticator,
-                                                         CacheBuilderSpec cacheSpec) {
-        return new CachingAuthenticator<>(metricRegistry,
-                                          authenticator,
-                                          CacheBuilder.from(cacheSpec));
-    }
-
     private final Authenticator<C, P> underlying;
     private final LoadingCache<C, Optional<P>> cache;
     private final Meter cacheMisses;
     private final Timer gets;
 
-    private CachingAuthenticator(MetricRegistry metricRegistry,
-                                 Authenticator<C, P> authenticator,
-                                 CacheBuilder<Object, Object> builder) {
+    /**
+     * Creates a new cached authenticator.
+     *
+     * @param metricRegistry the service's registry of metrics
+     * @param authenticator  the underlying authenticator
+     * @param cacheSpec      a {@link CacheBuilderSpec}
+     */
+    public CachingAuthenticator(MetricRegistry metricRegistry,
+                                Authenticator<C, P> authenticator,
+                                CacheBuilderSpec cacheSpec) {
+        this(metricRegistry, authenticator, CacheBuilder.from(cacheSpec));
+    }
+
+    /**
+     * Creates a new cached authenticator.
+     *
+     * @param metricRegistry the service's registry of metrics
+     * @param authenticator  the underlying authenticator
+     * @param builder        a {@link CacheBuilder}
+     */
+    public CachingAuthenticator(MetricRegistry metricRegistry,
+                                Authenticator<C, P> authenticator,
+                                CacheBuilder<Object, Object> builder) {
         this.underlying = authenticator;
         this.cacheMisses = metricRegistry.meter(name(authenticator.getClass(), "cache-misses"));
         this.gets = metricRegistry.timer(name(authenticator.getClass(), "gets"));

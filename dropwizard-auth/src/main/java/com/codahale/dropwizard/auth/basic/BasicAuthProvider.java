@@ -24,21 +24,22 @@ import javax.ws.rs.core.Response;
 /**
  * A Jersey provider for Basic HTTP authentication.
  *
- * @param <T>    the principal type.
+ * @param <T> the principal type.
  */
 public class BasicAuthProvider<T> implements InjectableProvider<Auth, Parameter> {
     private static final Logger LOGGER = LoggerFactory.getLogger(BasicAuthProvider.class);
 
     private static class BasicAuthInjectable<T> extends AbstractHttpContextInjectable<T> {
         private static final String PREFIX = "Basic";
-        private static final String HEADER_NAME = "WWW-Authenticate";
-        private static final String HEADER_VALUE = PREFIX + " realm=\"%s\"";
+        private static final String CHALLENGE_FORMAT = PREFIX + " realm=\"%s\"";
 
         private final Authenticator<BasicCredentials, T> authenticator;
         private final String realm;
         private final boolean required;
 
-        private BasicAuthInjectable(Authenticator<BasicCredentials, T> authenticator, String realm, boolean required) {
+        private BasicAuthInjectable(Authenticator<BasicCredentials, T> authenticator,
+                                    String realm,
+                                    boolean required) {
             this.authenticator = authenticator;
             this.realm = realm;
             this.required = required;
@@ -77,10 +78,10 @@ public class BasicAuthProvider<T> implements InjectableProvider<Auth, Parameter>
             }
 
             if (required) {
+                final String challenge = String.format(CHALLENGE_FORMAT, realm);
                 throw new WebApplicationException(Response.status(Response.Status.UNAUTHORIZED)
-                                                          .header(HEADER_NAME,
-                                                                  String.format(HEADER_VALUE,
-                                                                                realm))
+                                                          .header(HttpHeaders.WWW_AUTHENTICATE,
+                                                                  challenge)
                                                           .entity("Credentials are required to access this resource.")
                                                           .type(MediaType.TEXT_PLAIN_TYPE)
                                                           .build());
@@ -95,9 +96,9 @@ public class BasicAuthProvider<T> implements InjectableProvider<Auth, Parameter>
     /**
      * Creates a new BasicAuthProvider with the given {@link Authenticator} and realm.
      *
-     * @param authenticator    the authenticator which will take the {@link BasicCredentials} and
-     *                         convert them into instances of {@code T}
-     * @param realm            the name of the authentication realm
+     * @param authenticator the authenticator which will take the {@link BasicCredentials} and
+     *                      convert them into instances of {@code T}
+     * @param realm         the name of the authentication realm
      */
     public BasicAuthProvider(Authenticator<BasicCredentials, T> authenticator, String realm) {
         this.authenticator = authenticator;
@@ -110,9 +111,7 @@ public class BasicAuthProvider<T> implements InjectableProvider<Auth, Parameter>
     }
 
     @Override
-    public Injectable<?> getInjectable(ComponentContext ic,
-                                       Auth a,
-                                       Parameter c) {
+    public Injectable<?> getInjectable(ComponentContext ic, Auth a, Parameter c) {
         return new BasicAuthInjectable<>(authenticator, realm, a.required());
     }
 }

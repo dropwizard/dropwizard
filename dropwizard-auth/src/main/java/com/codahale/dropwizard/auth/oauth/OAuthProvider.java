@@ -27,15 +27,16 @@ import javax.ws.rs.core.Response;
 public class OAuthProvider<T> implements InjectableProvider<Auth, Parameter> {
     private static class OAuthInjectable<T> extends AbstractHttpContextInjectable<T> {
         private static final Logger LOGGER = LoggerFactory.getLogger(OAuthInjectable.class);
-        private static final String HEADER_NAME = "WWW-Authenticate";
-        private static final String HEADER_VALUE = "Bearer realm=\"%s\"";
+        private static final String CHALLENGE_FORMAT = "Bearer realm=\"%s\"";
         private static final String PREFIX = "bearer";
 
         private final Authenticator<String, T> authenticator;
         private final String realm;
         private final boolean required;
 
-        private OAuthInjectable(Authenticator<String, T> authenticator, String realm, boolean required) {
+        private OAuthInjectable(Authenticator<String, T> authenticator,
+                                String realm,
+                                boolean required) {
             this.authenticator = authenticator;
             this.realm = realm;
             this.required = required;
@@ -64,10 +65,10 @@ public class OAuthProvider<T> implements InjectableProvider<Auth, Parameter> {
             }
 
             if (required) {
+                final String challenge = String.format(CHALLENGE_FORMAT, realm);
                 throw new WebApplicationException(Response.status(Response.Status.UNAUTHORIZED)
-                                                          .header(HEADER_NAME,
-                                                                  String.format(HEADER_VALUE,
-                                                                                realm))
+                                                          .header(HttpHeaders.WWW_AUTHENTICATE,
+                                                                  challenge)
                                                           .entity("Credentials are required to access this resource.")
                                                           .type(MediaType.TEXT_PLAIN_TYPE)
                                                           .build());
@@ -82,9 +83,9 @@ public class OAuthProvider<T> implements InjectableProvider<Auth, Parameter> {
     /**
      * Creates a new OAuthProvider with the given {@link Authenticator} and realm.
      *
-     * @param authenticator    the authenticator which will take the OAuth2 bearer token and convert
-     *                         them into instances of {@code T}
-     * @param realm            the name of the authentication realm
+     * @param authenticator the authenticator which will take the OAuth2 bearer token and convert
+     *                      them into instances of {@code T}
+     * @param realm         the name of the authentication realm
      */
     public OAuthProvider(Authenticator<String, T> authenticator, String realm) {
         this.authenticator = authenticator;
@@ -97,9 +98,7 @@ public class OAuthProvider<T> implements InjectableProvider<Auth, Parameter> {
     }
 
     @Override
-    public Injectable<?> getInjectable(ComponentContext ic,
-                                       Auth a,
-                                       Parameter c) {
+    public Injectable<?> getInjectable(ComponentContext ic, Auth a, Parameter c) {
         return new OAuthInjectable<>(authenticator, realm, a.required());
     }
 }

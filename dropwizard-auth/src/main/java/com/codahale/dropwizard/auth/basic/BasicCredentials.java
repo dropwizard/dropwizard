@@ -8,7 +8,8 @@ import java.security.MessageDigest;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
- * A set of user-provided Basic Authentication credentials, consisting of a username and a password.
+ * A set of user-provided Basic Authentication credentials, consisting of a username and a
+ * password.
  */
 public class BasicCredentials {
     private final String username;
@@ -17,8 +18,8 @@ public class BasicCredentials {
     /**
      * Creates a new BasicCredentials with the given username and password.
      *
-     * @param username    the username
-     * @param password    the password
+     * @param username the username
+     * @param password the password
      */
     public BasicCredentials(String username, String password) {
         this.username = checkNotNull(username);

@@ -4,6 +4,7 @@ import com.codahale.dropwizard.auth.Auth;
 import com.codahale.dropwizard.auth.AuthenticationException;
 import com.codahale.dropwizard.auth.Authenticator;
 import com.codahale.dropwizard.jersey.DropwizardResourceConfig;
+import com.codahale.dropwizard.logging.LoggingFactory;
 import com.codahale.metrics.MetricRegistry;
 import com.google.common.base.Optional;
 import com.sun.jersey.api.client.UniformInterfaceException;
@@ -11,7 +12,6 @@ import com.sun.jersey.test.framework.AppDescriptor;
 import com.sun.jersey.test.framework.JerseyTest;
 import com.sun.jersey.test.framework.LowLevelAppDescriptor;
 import org.junit.Test;
-import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -24,8 +24,7 @@ import static org.fest.assertions.api.Assertions.failBecauseExceptionWasNotThrow
 
 public class OAuthProviderTest extends JerseyTest {
     static {
-        SLF4JBridgeHandler.removeHandlersForRootLogger();
-        SLF4JBridgeHandler.install();
+        LoggingFactory.bootstrap();
     }
 
     @Path("/test/")
