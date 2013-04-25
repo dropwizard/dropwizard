@@ -6,7 +6,9 @@ import com.codahale.dropwizard.servlets.ThreadNameFilter;
 import com.codahale.dropwizard.util.Duration;
 import com.codahale.dropwizard.util.Size;
 import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.Timer;
 import com.codahale.metrics.health.jvm.ThreadDeadlockHealthCheck;
+import com.codahale.metrics.jetty9.InstrumentedConnectionFactory;
 import com.codahale.metrics.jetty9.InstrumentedQueuedThreadPool;
 import com.codahale.metrics.servlets.AdminServlet;
 import com.codahale.metrics.servlets.HealthCheckServlet;
@@ -41,6 +43,8 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.DispatcherType;
 import java.util.EnumSet;
 import java.util.concurrent.BlockingQueue;
+
+import static com.codahale.metrics.MetricRegistry.name;
 
 /*
  * A factory for creating instances of {@link org.eclipse.jetty.server.Server} and configuring Servlets
@@ -93,7 +97,7 @@ public class ServerFactory {
         final ServletContextHandler applicationHandler = createExternalServlet(env);
         final ServletContextHandler adminHandler = createInternalServlet(env);
 
-        final Connector applicationConnector = createApplicationConnector(server);
+        final Connector applicationConnector = createApplicationConnector(server, env);
         server.addConnector(applicationConnector);
 
         final Connector adminConnector;
@@ -217,7 +221,7 @@ public class ServerFactory {
         return connector;
     }
 
-    private Connector createApplicationConnector(Server server) {
+    private Connector createApplicationConnector(Server server, Environment env) {
         // TODO: 4/24/13 <coda> -- add support for SSL, SPDY, etc.
 
         final HttpConfiguration httpConfig = new HttpConfiguration();
@@ -243,13 +247,20 @@ public class ServerFactory {
                                         (int) config.getBufferPoolIncrement().toBytes(),
                                         (int) config.getMaxBufferPoolSize().toBytes());
 
+        final Timer httpTimer = env.getMetricRegistry()
+                                   .timer(name(HttpConnectionFactory.class,
+                                               Integer.toString(config.getPort()),
+                                               "connections"));
+        final InstrumentedConnectionFactory instrumentedHttp = new InstrumentedConnectionFactory(
+                httpConnectionFactory,
+                httpTimer);
         final ServerConnector connector = new ServerConnector(server,
                                                               null,
                                                               scheduler,
                                                               bufferPool,
                                                               config.getAcceptorThreads(),
                                                               config.getSelectorThreads(),
-                                                              httpConnectionFactory);
+                                                              instrumentedHttp);
         connector.setPort(config.getPort());
         connector.setHost(config.getBindHost().orNull());
         connector.setAcceptQueueSize(config.getAcceptQueueSize());
