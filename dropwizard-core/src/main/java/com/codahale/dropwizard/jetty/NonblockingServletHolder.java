@@ -20,14 +20,12 @@ public class NonblockingServletHolder extends ServletHolder {
 
     @Override
     public boolean equals(Object o) {
-        return (o instanceof NonblockingServletHolder) && (this.compareTo((ServletHolder) o) == 0);
+        return super.equals(o);
     }
 
     @Override
     public int hashCode() {
-        int result = super.hashCode();
-        result = (31 * result) + ((servlet != null) ? servlet.hashCode() : 0);
-        return result;
+        return super.hashCode();
     }
 
     @Override

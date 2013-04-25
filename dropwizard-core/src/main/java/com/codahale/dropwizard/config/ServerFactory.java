@@ -274,19 +274,6 @@ public class ServerFactory {
         return connector;
     }
 
-    private ThreadPool createThreadPool() {
-        final BlockingQueue<Runnable> queue = new BlockingArrayQueue<>(config.getMinThreads(),
-                                                                       config.getMaxThreads(),
-                                                                       config.getMaxQueuedRequests()
-                                                                             .or(Integer.MAX_VALUE));
-        final QueuedThreadPool pool = new QueuedThreadPool(config.getMaxThreads(),
-                                                           config.getMinThreads(),
-                                                           60000,
-                                                           queue);
-        pool.setName("dw");
-        return pool;
-    }
-
     private Handler createHandler(Connector applicationConnector,
                                   ServletContextHandler applicationHandler,
                                   Connector adminConnector,
@@ -325,10 +312,15 @@ public class ServerFactory {
     }
 
     private ThreadPool createThreadPool(MetricRegistry metricRegistry) {
-        // TODO: 4/24/13 <coda> -- add support for idle time and max queue size
+        final BlockingQueue<Runnable> queue = new BlockingArrayQueue<>(config.getMinThreads(),
+                                                                       config.getMaxThreads(),
+                                                                       config.getMaxQueuedRequests()
+                                                                             .or(Integer.MAX_VALUE));
         return new InstrumentedQueuedThreadPool(metricRegistry,
                                                 "dw",
                                                 config.getMaxThreads(),
-                                                config.getMinThreads());
+                                                config.getMinThreads(),
+                                                60000,
+                                                queue);
     }
 }
