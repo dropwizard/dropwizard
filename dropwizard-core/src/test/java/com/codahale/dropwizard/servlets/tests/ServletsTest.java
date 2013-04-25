@@ -1,6 +1,6 @@
-package com.codahale.dropwizard.util.tests;
+package com.codahale.dropwizard.servlets.tests;
 
-import com.codahale.dropwizard.util.Servlets;
+import com.codahale.dropwizard.servlets.Servlets;
 import org.junit.Before;
 import org.junit.Test;
 

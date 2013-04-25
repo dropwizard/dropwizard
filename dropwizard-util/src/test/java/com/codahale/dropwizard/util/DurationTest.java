@@ -1,4 +1,4 @@
-package com.codahale.dropwizard.util.tests;
+package com.codahale.dropwizard.util;
 
 import com.codahale.dropwizard.util.Duration;
 import org.junit.Test;

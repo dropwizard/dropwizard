@@ -27,6 +27,7 @@
         <module>dropwizard-example</module>
         <module>dropwizard-views</module>
         <module>dropwizard-testing</module>
+        <module>dropwizard-util</module>
     </modules>
 
     <properties>

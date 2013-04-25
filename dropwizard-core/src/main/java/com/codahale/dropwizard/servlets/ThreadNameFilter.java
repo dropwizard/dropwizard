@@ -4,7 +4,7 @@ import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
-import static com.codahale.dropwizard.util.Servlets.getFullUrl;
+import static com.codahale.dropwizard.servlets.Servlets.getFullUrl;
 
 /**
  * A servlet filter which adds the request method and URI to the thread name processing the request

@@ -1,4 +1,4 @@
-package com.codahale.dropwizard.util;
+package com.codahale.dropwizard.servlets;
 
 import javax.servlet.http.HttpServletRequest;
 

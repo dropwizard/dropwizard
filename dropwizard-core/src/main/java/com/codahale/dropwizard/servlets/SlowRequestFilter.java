@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
-import static com.codahale.dropwizard.util.Servlets.getFullUrl;
+import static com.codahale.dropwizard.servlets.Servlets.getFullUrl;
 
 /**
  * A servlet filter which logs the methods and URIs of requests which take longer than a given
