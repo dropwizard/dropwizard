@@ -26,6 +26,7 @@ import org.eclipse.jetty.security.HashLoginService;
 import org.eclipse.jetty.security.SecurityHandler;
 import org.eclipse.jetty.security.authentication.BasicAuthenticator;
 import org.eclipse.jetty.server.*;
+import org.eclipse.jetty.server.handler.ErrorHandler;
 import org.eclipse.jetty.server.handler.RequestLogHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
@@ -127,7 +128,9 @@ public class ServerFactory {
             server.setHandler(requestLogHandler);
         }
 
-        server.addBean(new UnbrandedErrorHandler());
+        final ErrorHandler errorHandler = new ErrorHandler();
+        errorHandler.setShowStacks(false);
+        server.addBean(errorHandler);
 
         server.setStopAtShutdown(true);
 
