@@ -1,8 +1,5 @@
 package com.codahale.dropwizard.config;
 
-import com.codahale.metrics.MetricRegistry;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 import com.codahale.dropwizard.Bundle;
 import com.codahale.dropwizard.ConfiguredBundle;
 import com.codahale.dropwizard.Service;
@@ -11,8 +8,20 @@ import com.codahale.dropwizard.cli.ConfiguredCommand;
 import com.codahale.dropwizard.config.provider.ConfigurationSourceProvider;
 import com.codahale.dropwizard.config.provider.FileConfigurationSourceProvider;
 import com.codahale.dropwizard.json.ObjectMapperFactory;
+import com.codahale.metrics.Metric;
+import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.MetricSet;
+import com.codahale.metrics.jvm.BufferPoolMetricSet;
+import com.codahale.metrics.jvm.GarbageCollectorMetricSet;
+import com.codahale.metrics.jvm.MemoryUsageGaugeSet;
+import com.codahale.metrics.jvm.ThreadStatesGaugeSet;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 
+import java.lang.management.ManagementFactory;
 import java.util.List;
+import java.util.Map;
 
 public class Bootstrap<T extends Configuration> {
     private final Service<T> service;
@@ -30,6 +39,21 @@ public class Bootstrap<T extends Configuration> {
         this.configuredBundles = Lists.newArrayList();
         this.commands = Lists.newArrayList();
         this.metricRegistry = new MetricRegistry();
+        metricRegistry.registerAll(new MetricSet() {
+            @Override
+            public Map<String, Metric> getMetrics() {
+                return ImmutableMap.<String, Metric>of(
+                        "jvm.buffers",
+                        new BufferPoolMetricSet(ManagementFactory.getPlatformMBeanServer()),
+                        "jvm.gc",
+                        new GarbageCollectorMetricSet(),
+                        "jvm.memory",
+                        new MemoryUsageGaugeSet(),
+                        "jvm.threads",
+                        new ThreadStatesGaugeSet()
+                );
+            }
+        });
     }
 
     public Service<T> getService() {
