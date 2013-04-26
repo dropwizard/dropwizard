@@ -64,9 +64,7 @@ public class Environment {
         this.lifecycleEnvironment = new LifecycleEnvironment();
 
         this.jerseyServletContainer = new AtomicReference<>(new ServletContainer(jerseyConfig));
-        this.jerseyEnvironment = new JerseyEnvironment(
-                jerseyServletContainer,
-                                                       jerseyConfig);
+        this.jerseyEnvironment = new JerseyEnvironment(jerseyServletContainer, jerseyConfig);
     }
 
     public JerseyEnvironment getJerseyEnvironment() {
