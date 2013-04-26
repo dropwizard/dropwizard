@@ -2,7 +2,7 @@
 <FindBugsFilter>
     <!-- we're *supposed* to manually GC there -->
     <Match>
-        <Class name="com.codahale.dropwizard.tasks.GarbageCollectionTask"/>
+        <Class name="com.codahale.dropwizard.servlets.tasks.GarbageCollectionTask"/>
         <Method name="execute"/>
         <Bug pattern="DM_GC"/>
     </Match>
@@ -17,7 +17,7 @@
     <!-- serialization is boring -->
     <Match>
         <Bug code="Se"/>
-        <Class name="com.codahale.dropwizard.tasks.TaskServlet"/>
+        <Class name="com.codahale.dropwizard.servlets.tasks.TaskServlet"/>
     </Match>
     <Match>
         <Bug code="Se"/>

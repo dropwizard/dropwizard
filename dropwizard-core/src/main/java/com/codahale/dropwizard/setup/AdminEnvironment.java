@@ -1,8 +1,8 @@
 package com.codahale.dropwizard.setup;
 
-import com.codahale.dropwizard.tasks.GarbageCollectionTask;
-import com.codahale.dropwizard.tasks.Task;
-import com.codahale.dropwizard.tasks.TaskServlet;
+import com.codahale.dropwizard.servlets.tasks.GarbageCollectionTask;
+import com.codahale.dropwizard.servlets.tasks.Task;
+import com.codahale.dropwizard.servlets.tasks.TaskServlet;
 import com.codahale.metrics.health.HealthCheck;
 import com.codahale.metrics.health.HealthCheckRegistry;
 import org.eclipse.jetty.servlet.ServletContextHandler;

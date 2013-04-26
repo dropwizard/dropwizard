@@ -1,7 +1,8 @@
-package com.codahale.dropwizard.tasks;
+package com.codahale.dropwizard.servlets.tasks;
 
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Maps;
+import com.google.common.net.MediaType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -9,7 +10,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.core.MediaType;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Collection;
@@ -44,7 +44,7 @@ public class TaskServlet extends HttpServlet {
                           HttpServletResponse resp) throws ServletException, IOException {
         final Task task = tasks.get(req.getPathInfo());
         if (task != null) {
-            resp.setContentType(MediaType.TEXT_PLAIN);
+            resp.setContentType(MediaType.PLAIN_TEXT_UTF_8.toString());
             final PrintWriter output = resp.getWriter();
             try {
                 task.execute(getParams(req), output);

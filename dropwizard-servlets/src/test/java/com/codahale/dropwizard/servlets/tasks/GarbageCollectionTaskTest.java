@@ -1,4 +1,4 @@
-package com.codahale.dropwizard.tasks;
+package com.codahale.dropwizard.servlets.tasks;
 
 import com.google.common.collect.ImmutableMultimap;
 import org.junit.Test;

@@ -1,4 +1,4 @@
-package com.codahale.dropwizard.tasks;
+package com.codahale.dropwizard.servlets.tasks;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMultimap;
@@ -23,7 +23,7 @@ public class GarbageCollectionTask extends Task {
      * <p/>
      * <b>Use {@link GarbageCollectionTask#GarbageCollectionTask()} instead.</b>
      *
-     * @param runtime    a {@link Runtime} instance
+     * @param runtime a {@link Runtime} instance
      */
     public GarbageCollectionTask(Runtime runtime) {
         super("gc");
