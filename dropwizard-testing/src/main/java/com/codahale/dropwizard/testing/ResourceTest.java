@@ -86,7 +86,7 @@ public abstract class ResourceTest {
         this.test = new JerseyTest() {
             @Override
             protected AppDescriptor configure() {
-                final DropwizardResourceConfig config = new DropwizardResourceConfig(true, new MetricRegistry());
+                final DropwizardResourceConfig config = DropwizardResourceConfig.forTesting(new MetricRegistry());
                 for (Class<?> provider : providers) {
                     config.getClasses().add(provider);
                 }

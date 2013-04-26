@@ -25,7 +25,15 @@ public class DropwizardResourceConfig extends ScanningResourceConfig {
     private static final Logger LOGGER = LoggerFactory.getLogger(DropwizardResourceConfig.class);
     private String urlPattern;
 
-    public DropwizardResourceConfig(boolean testOnly, MetricRegistry metricRegistry) {
+    public static DropwizardResourceConfig forTesting(MetricRegistry metricRegistry) {
+        return new DropwizardResourceConfig(true, metricRegistry);
+    }
+
+    public DropwizardResourceConfig(MetricRegistry metricRegistry) {
+        this(false, metricRegistry);
+    }
+
+    private DropwizardResourceConfig(boolean testOnly, MetricRegistry metricRegistry) {
         super();
         urlPattern = "/*";
         getFeatures().put(FEATURE_DISABLE_WADL, Boolean.TRUE);

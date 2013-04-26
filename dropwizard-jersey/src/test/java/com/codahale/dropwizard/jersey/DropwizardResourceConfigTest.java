@@ -19,7 +19,7 @@ public class DropwizardResourceConfigTest {
 
     @Test
     public void findsResourceClassInPackage() {
-        final DropwizardResourceConfig rc = new DropwizardResourceConfig(true, new MetricRegistry());
+        final DropwizardResourceConfig rc = DropwizardResourceConfig.forTesting(new MetricRegistry());
         rc.init(new PackageNamesScanner(new String[] { DummyResource.class.getPackage().getName() }));
 
         assertThat(rc.getRootResourceClasses())
@@ -28,7 +28,7 @@ public class DropwizardResourceConfigTest {
 
     @Test
     public void findsResourceClassesInPackageAndSubpackage() {
-        final DropwizardResourceConfig rc = new DropwizardResourceConfig(true, new MetricRegistry());
+        final DropwizardResourceConfig rc = DropwizardResourceConfig.forTesting(new MetricRegistry());
         rc.init(new PackageNamesScanner(new String[] { getClass().getPackage().getName() }));
 
         assertThat(rc.getRootResourceClasses())
