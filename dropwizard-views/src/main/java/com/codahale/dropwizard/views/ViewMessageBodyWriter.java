@@ -23,7 +23,7 @@ import java.util.Locale;
 import static com.codahale.metrics.MetricRegistry.name;
 
 @Provider
-@Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_XHTML_XML})
+@Produces(MediaType.WILDCARD)
 public class ViewMessageBodyWriter implements MessageBodyWriter<View> {
     private static final String MISSING_TEMPLATE_MSG =
             "<html>" +

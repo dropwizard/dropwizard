@@ -33,6 +33,6 @@ public abstract class View {
 
     @JsonIgnore
     public Optional<Charset> getCharset() {
-        return charset != null ? Optional.of(charset) : Optional.<Charset>absent();
+        return Optional.fromNullable(charset);
     }
 }
