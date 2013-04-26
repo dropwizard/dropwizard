@@ -2,13 +2,10 @@ package com.codahale.dropwizard.assets;
 
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Charsets;
-import com.google.common.base.Preconditions;
-import com.google.common.cache.CacheBuilderSpec;
 import com.google.common.hash.Hashing;
 import com.google.common.io.Resources;
 import com.google.common.net.HttpHeaders;
 import com.google.common.net.MediaType;
-import org.eclipse.jetty.http.MimeTypes;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -20,8 +17,11 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 public class AssetServlet extends HttpServlet {
     private static final long serialVersionUID = 6393345594784987908L;
+    private static final CharMatcher SLASHES = CharMatcher.is('/');
 
     private static class CachedAsset {
         private final byte[] resource;
@@ -53,32 +53,31 @@ public class AssetServlet extends HttpServlet {
     private final String uriPath;
     private final String indexFile;
 
-    private final transient MimeTypes mimeTypes;
-    
     private transient Charset defaultCharset = Charsets.UTF_8;
 
     /**
-     * Creates a new {@code AssetServlet} that serves static assets loaded from {@code resourceURL} (typically a file:
-     * or jar: URL). The assets are served at URIs rooted at {@code uriPath}. For example, given a {@code resourceURL}
-     * of {@code "file:/data/assets"} and a {@code uriPath} of {@code "/js"}, an {@code AssetServlet} would serve the
-     * contents of {@code /data/assets/example.js} in response to a request for {@code /js/example.js}. If a directory
-     * is requested and {@code indexFile} is defined, then {@code AssetServlet} will attempt to serve a file with that
-     * name in that directory. If a directory is requested and {@code indexFile} is null, it will serve a 404.
+     * Creates a new {@code AssetServlet} that serves static assets loaded from {@code resourceURL}
+     * (typically a file: or jar: URL). The assets are served at URIs rooted at {@code uriPath}. For
+     * example, given a {@code resourceURL} of {@code "file:/data/assets"} and a {@code uriPath} of
+     * {@code "/js"}, an {@code AssetServlet} would serve the contents of {@code
+     * /data/assets/example.js} in response to a request for {@code /js/example.js}. If a directory
+     * is requested and {@code indexFile} is defined, then {@code AssetServlet} will attempt to
+     * serve a file with that name in that directory. If a directory is requested and {@code
+     * indexFile} is null, it will serve a 404.
      *
-     * @param resourcePath      the base URL from which assets are loaded
-     * @param uriPath          the URI path fragment in which all requests are rooted
-     * @param indexFile        the filename to use when directories are requested, or null to serve no indexes
-     * @see CacheBuilderSpec
+     * @param resourcePath the base URL from which assets are loaded
+     * @param uriPath      the URI path fragment in which all requests are rooted
+     * @param indexFile    the filename to use when directories are requested, or null to serve no
+     *                     indexes
      */
     public AssetServlet(String resourcePath,
                         String uriPath,
                         String indexFile) {
-        final String trimmedPath = CharMatcher.is('/').trimFrom(resourcePath);
-	this.resourcePath = trimmedPath.isEmpty() ? trimmedPath : trimmedPath + '/';
-        final String trimmedUri = CharMatcher.is('/').trimTrailingFrom(uriPath);
+        final String trimmedPath = SLASHES.trimFrom(resourcePath);
+        this.resourcePath = trimmedPath.isEmpty() ? trimmedPath : trimmedPath + '/';
+        final String trimmedUri = SLASHES.trimTrailingFrom(uriPath);
         this.uriPath = trimmedUri.isEmpty() ? "/" : trimmedUri;
         this.indexFile = indexFile;
-        this.mimeTypes = new MimeTypes();
     }
 
     public URL getResourceURL() {
@@ -88,7 +87,7 @@ public class AssetServlet extends HttpServlet {
     public String getUriPath() {
         return uriPath;
     }
-    
+
     public void setDefaultCharset(Charset defaultCharset) {
         this.defaultCharset = defaultCharset;
     }
@@ -119,19 +118,19 @@ public class AssetServlet extends HttpServlet {
             resp.setDateHeader(HttpHeaders.LAST_MODIFIED, cachedAsset.getLastModifiedTime());
             resp.setHeader(HttpHeaders.ETAG, cachedAsset.getETag());
 
-            final String mimeTypeOfExtension = mimeTypes.getMimeByExtension(req.getRequestURI());
+            final String mimeTypeOfExtension = req.getServletContext()
+                                                  .getMimeType(req.getRequestURI());
             MediaType mediaType = DEFAULT_MEDIA_TYPE;
-            
+
             if (mimeTypeOfExtension != null) {
                 try {
                     mediaType = MediaType.parse(mimeTypeOfExtension);
                     if (defaultCharset != null && mediaType.is(MediaType.ANY_TEXT_TYPE)) {
                         mediaType = mediaType.withCharset(defaultCharset);
                     }
-                }
-                catch (IllegalArgumentException ignore) {}
+                } catch (IllegalArgumentException ignore) {}
             }
-            
+
             resp.setContentType(mediaType.type() + '/' + mediaType.subtype());
 
             if (mediaType.charset().isPresent()) {
@@ -147,13 +146,11 @@ public class AssetServlet extends HttpServlet {
     }
 
     private CachedAsset loadAsset(String key) throws URISyntaxException, IOException {
-        Preconditions.checkArgument(key.startsWith(uriPath));
-        final String requestedResourcePath = CharMatcher.is('/').trimFrom(key.substring(uriPath.length()));
-        final String absoluteRequestedResourcePath = CharMatcher.is('/').trimFrom(
-        		this.resourcePath + requestedResourcePath);
-        
-        URL requestedResourceURL = Resources.getResource(absoluteRequestedResourcePath);
+        checkArgument(key.startsWith(uriPath));
+        final String requestedResourcePath = SLASHES.trimFrom(key.substring(uriPath.length()));
+        final String absoluteRequestedResourcePath = SLASHES.trimFrom(this.resourcePath + requestedResourcePath);
 
+        URL requestedResourceURL = Resources.getResource(absoluteRequestedResourcePath);
         if (ResourceURL.isDirectory(requestedResourceURL)) {
             if (indexFile != null) {
                 requestedResourceURL = Resources.getResource(absoluteRequestedResourcePath + '/' + indexFile);
