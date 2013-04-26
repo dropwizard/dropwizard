@@ -5,6 +5,7 @@ import com.codahale.dropwizard.db.DatabaseConfiguration;
 import com.codahale.dropwizard.jackson.Jackson;
 import com.codahale.dropwizard.jersey.DropwizardResourceConfig;
 import com.codahale.dropwizard.jersey.jackson.JacksonMessageBodyProvider;
+import com.codahale.dropwizard.logging.LoggingFactory;
 import com.codahale.dropwizard.setup.LifecycleEnvironment;
 import com.codahale.metrics.MetricRegistry;
 import com.google.common.base.Optional;
@@ -19,7 +20,6 @@ import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.junit.After;
 import org.junit.Test;
-import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import javax.validation.Validation;
 import javax.ws.rs.*;
@@ -32,8 +32,7 @@ import static org.mockito.Mockito.when;
 
 public class JerseyIntegrationTest extends JerseyTest {
     static {
-        SLF4JBridgeHandler.removeHandlersForRootLogger();
-        SLF4JBridgeHandler.install();
+        LoggingFactory.bootstrap();
     }
 
     public static class PersonDAO extends AbstractDAO<Person> {
