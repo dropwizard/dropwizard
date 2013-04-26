@@ -7,6 +7,7 @@ import com.codahale.dropwizard.setup.Bootstrap;
 import com.codahale.dropwizard.config.Environment;
 import com.codahale.dropwizard.logging.LoggingFactory;
 import com.codahale.dropwizard.util.Generics;
+import com.codahale.dropwizard.util.JarLocation;
 
 /**
  * The base class for Dropwizard services.
@@ -67,7 +68,7 @@ public abstract class Service<T extends Configuration> {
         bootstrap.addCommand(new ServerCommand<>(this));
         bootstrap.addCommand(new CheckCommand<>(this));
         initialize(bootstrap);
-        final Cli cli = new Cli(this.getClass(), bootstrap);
+        final Cli cli = new Cli(new JarLocation(getClass()), bootstrap);
         cli.run(arguments);
     }
 }

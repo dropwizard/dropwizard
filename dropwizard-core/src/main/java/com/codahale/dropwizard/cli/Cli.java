@@ -26,12 +26,12 @@ public class Cli {
     /**
      * Create a new CLI interface for a service and its bootstrapped environment.
      *
-     * @param serviceClass the service class
+     * @param location     the location of the service
      * @param bootstrap    the bootstrap for the service
      */
-    public Cli(Class<?> serviceClass, Bootstrap<?> bootstrap) {
+    public Cli(JarLocation location, Bootstrap<?> bootstrap) {
         this.commands = Maps.newTreeMap();
-        this.parser = buildParser(serviceClass);
+        this.parser = buildParser(location);
         this.bootstrap = bootstrap;
         for (Command command : bootstrap.getCommands()) {
             addCommand(command);
@@ -57,15 +57,13 @@ public class Cli {
         }
     }
 
-    private ArgumentParser buildParser(Class<?> serviceClass) {
-        final String usage = "java -jar " + new JarLocation(serviceClass);
+    private ArgumentParser buildParser(JarLocation location) {
+        final String usage = "java -jar " + location;
         final ArgumentParser p = ArgumentParsers.newArgumentParser(usage)
                                                 .defaultHelp(true);
-        final Package pkg = serviceClass.getPackage();
-        final String version = pkg != null ? pkg.getImplementationVersion() :
+        p.version(location.getVersion().or(
                 "No service version detected. Add a Implementation-Version " +
-                "entry to your JAR's manifest to enable this.";
-        p.version(version);
+                        "entry to your JAR's manifest to enable this."));
         p.addArgument("-v", "--version")
          .action(new VersionArgumentAction())
          .help("show the service version and exit");
