@@ -1,4 +1,4 @@
-package com.codahale.dropwizard.assets;
+package com.codahale.dropwizard.servlets.assets;
 
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Charsets;

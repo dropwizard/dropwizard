@@ -1,4 +1,4 @@
-package com.codahale.dropwizard.assets;
+package com.codahale.dropwizard.servlets.assets;
 
 import java.io.File;
 import java.io.IOException;

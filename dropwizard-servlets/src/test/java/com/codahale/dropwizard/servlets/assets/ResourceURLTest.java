@@ -1,5 +1,7 @@
-package com.codahale.dropwizard.assets;
+package com.codahale.dropwizard.servlets.assets;
 
+import com.codahale.dropwizard.servlets.assets.ResourceNotFoundException;
+import com.codahale.dropwizard.servlets.assets.ResourceURL;
 import com.google.common.io.Files;
 import com.google.common.io.Resources;
 import org.junit.Before;

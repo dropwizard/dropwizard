@@ -11,10 +11,6 @@
     <artifactId>dropwizard-core</artifactId>
     <name>Dropwizard</name>
 
-    <properties>
-        <jetty.version>9.0.2.v20130417</jetty.version>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>com.codahale.dropwizard</groupId>
@@ -82,6 +78,11 @@
             <version>0.4.0</version>
         </dependency>
         <dependency>
+            <groupId>org.eclipse.jetty.orbit</groupId>
+            <artifactId>javax.servlet</artifactId>
+            <version>${servlet.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-server</artifactId>
             <version>${jetty.version}</version>
@@ -114,14 +115,4 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-    <build>
-        <testResources>
-            <testResource>
-                <directory>src/test/more-resources</directory>
-            </testResource>
-            <testResource>
-                <directory>src/test/resources</directory>
-            </testResource>
-        </testResources>
-    </build>
 </project>
