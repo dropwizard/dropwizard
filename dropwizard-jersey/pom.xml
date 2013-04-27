@@ -11,6 +11,7 @@
     </parent>
 
     <artifactId>dropwizard-jersey</artifactId>
+    <name>Dropwizard Jersey Support</name>
 
     <dependencies>
         <dependency>

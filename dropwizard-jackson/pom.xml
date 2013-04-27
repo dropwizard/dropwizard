@@ -11,6 +11,7 @@
     </parent>
 
     <artifactId>dropwizard-jackson</artifactId>
+    <name>Dropwizard Jackson Support</name>
 
     <dependencies>
         <dependency>

@@ -11,6 +11,7 @@
     </parent>
 
     <artifactId>dropwizard-servlets</artifactId>
+    <name>Dropwizard Servlet Support</name>
 
     <dependencies>
         <dependency>

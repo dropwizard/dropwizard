@@ -11,6 +11,7 @@
     </parent>
 
     <artifactId>dropwizard-logging</artifactId>
+    <name>Dropwizard Logging Support</name>
 
     <dependencies>
         <dependency>

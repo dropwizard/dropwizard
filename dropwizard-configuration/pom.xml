@@ -11,6 +11,7 @@
     </parent>
 
     <artifactId>dropwizard-configuration</artifactId>
+    <name>Dropwizard Configuration Support</name>
 
     <dependencies>
         <dependency>

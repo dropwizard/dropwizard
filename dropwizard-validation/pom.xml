@@ -11,6 +11,7 @@
     </parent>
 
     <artifactId>dropwizard-validation</artifactId>
+    <name>Dropwizard Validation Support</name>
 
     <dependencies>
         <dependency>

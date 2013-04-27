@@ -11,6 +11,7 @@
     </parent>
 
     <artifactId>dropwizard-views-freemarker</artifactId>
+    <name>Dropwizard Freemarker Views</name>
 
     <dependencies>
         <dependency>

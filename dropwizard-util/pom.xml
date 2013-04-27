@@ -11,6 +11,7 @@
     </parent>
 
     <artifactId>dropwizard-util</artifactId>
+    <name>Dropwizard Utility Classes</name>
 
     <dependencies>
         <dependency>

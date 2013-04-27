@@ -11,6 +11,7 @@
     </parent>
 
     <artifactId>dropwizard-views-mustache</artifactId>
+    <name>Dropwizard Mustache Views</name>
 
     <dependencies>
         <dependency>
