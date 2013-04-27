@@ -160,6 +160,19 @@
                     <skipDeploy>true</skipDeploy>
                 </configuration>
             </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.1</version>
+                <configuration>
+                    <mainClass>com.example.helloworld.HelloWorldService</mainClass>
+                    <arguments>
+                        <argument>server</argument>
+                        <argument>example.yml</argument>
+                    </arguments>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 </project>

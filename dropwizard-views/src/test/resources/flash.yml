@@ -1,0 +1,8 @@
+flashScope:
+  cookieMaxAge: 20s
+
+jerseyClient:
+  cookiesEnabled: true
+  gzipEnabled: false
+
+

@@ -17,6 +17,7 @@ import com.yammer.dropwizard.db.DatabaseConfiguration;
 import com.yammer.dropwizard.hibernate.HibernateBundle;
 import com.yammer.dropwizard.migrations.MigrationsBundle;
 import com.yammer.dropwizard.views.ViewBundle;
+import com.yammer.dropwizard.views.flashscope.FlashScopeBundle;
 
 public class HelloWorldService extends Service<HelloWorldConfiguration> {
     public static void main(String[] args) throws Exception {
@@ -48,6 +49,7 @@ public class HelloWorldService extends Service<HelloWorldConfiguration> {
         });
         bootstrap.addBundle(hibernateBundle);
         bootstrap.addBundle(new ViewBundle());
+        bootstrap.addBundle(new FlashScopeBundle<HelloWorldConfiguration>());
     }
 
     @Override
@@ -65,5 +67,6 @@ public class HelloWorldService extends Service<HelloWorldConfiguration> {
         environment.getJerseyEnvironment().addResource(new ProtectedResource());
         environment.getJerseyEnvironment().addResource(new PeopleResource(dao));
         environment.getJerseyEnvironment().addResource(new PersonResource(dao));
+        environment.getJerseyEnvironment().addResource(new GuessMyNumberResource());
     }
 }
