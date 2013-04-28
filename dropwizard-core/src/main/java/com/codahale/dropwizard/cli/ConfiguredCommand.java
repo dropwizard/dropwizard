@@ -1,12 +1,12 @@
 package com.codahale.dropwizard.cli;
 
 import com.codahale.dropwizard.Configuration;
-import com.codahale.dropwizard.setup.Bootstrap;
 import com.codahale.dropwizard.config.LoggingConfiguration;
 import com.codahale.dropwizard.configuration.ConfigurationException;
 import com.codahale.dropwizard.configuration.ConfigurationFactory;
 import com.codahale.dropwizard.configuration.ConfigurationSourceProvider;
 import com.codahale.dropwizard.logging.LoggingFactory;
+import com.codahale.dropwizard.setup.Bootstrap;
 import com.codahale.dropwizard.util.Generics;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.sourceforge.argparse4j.inf.Namespace;
@@ -15,7 +15,6 @@ import net.sourceforge.argparse4j.inf.Subparser;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import java.io.IOException;
-import java.io.InputStream;
 
 /**
  * A command whose first parameter is the location of a YAML configuration file. That file is parsed
@@ -81,17 +80,15 @@ public abstract class ConfiguredCommand<T extends Configuration> extends Command
                                 Namespace namespace,
                                 T configuration) throws Exception;
 
-    private T parseConfiguration(ConfigurationSourceProvider configurationProvider,
-                                 String configurationPath,
-                                 Class<T> configurationClass,
+    private T parseConfiguration(ConfigurationSourceProvider provider,
+                                 String path,
+                                 Class<T> klass,
                                  ObjectMapper objectMapper) throws IOException, ConfigurationException {
         final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
         final ConfigurationFactory<T> configurationFactory =
-                new ConfigurationFactory<>(configurationClass, validator, objectMapper);
-        if (configurationPath != null) {
-            try (InputStream input = configurationProvider.open(configurationPath)) {
-                return configurationFactory.build(configurationPath, input);
-            }
+                new ConfigurationFactory<>(klass, validator, objectMapper, "dw");
+        if (path != null) {
+            return configurationFactory.build(provider, path);
         }
         return configurationFactory.build();
     }

@@ -27,8 +27,8 @@ public class RequestLogConfigurationTest {
                                                            SyslogLoggingOutput.class);
         this.requestLog = new ConfigurationFactory<>(RequestLogConfiguration.class,
                                                      Validation.buildDefaultValidatorFactory()
-                                                               .getValidator(),
-                                                     objectMapper)
+                                                                       .getValidator(),
+                                                     objectMapper, "dw")
                 .build(new File(Resources.getResource("yaml/requestLog.yml").toURI()));
     }
 

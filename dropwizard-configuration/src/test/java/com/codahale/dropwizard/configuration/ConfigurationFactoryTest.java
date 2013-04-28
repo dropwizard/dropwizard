@@ -31,7 +31,7 @@ public class ConfigurationFactoryTest {
 
     private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
     private final ConfigurationFactory<Example> factory =
-            new ConfigurationFactory<>(Example.class, validator, Jackson.newObjectMapper());
+            new ConfigurationFactory<>(Example.class, validator, Jackson.newObjectMapper(), "dw");
     private File malformedFile;
     private File invalidFile;
     private File validFile;

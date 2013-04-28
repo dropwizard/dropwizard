@@ -22,7 +22,7 @@ public class LoggingConfigurationTest {
     private final ConfigurationFactory<LoggingConfiguration> factory =
             new ConfigurationFactory<>(LoggingConfiguration.class,
                                        Validation.buildDefaultValidatorFactory().getValidator(),
-                                       objectMapper);
+                                       objectMapper, "dw");
     private LoggingConfiguration config;
 
     @Before

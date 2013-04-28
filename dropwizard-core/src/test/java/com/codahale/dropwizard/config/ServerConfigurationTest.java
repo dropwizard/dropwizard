@@ -29,8 +29,8 @@ public class ServerConfigurationTest {
 
         this.http = new ConfigurationFactory<>(ServerConfiguration.class,
                                                Validation.buildDefaultValidatorFactory()
-                                                         .getValidator(),
-                                               objectMapper)
+                                                                 .getValidator(),
+                                               objectMapper, "dw")
                 .build(new File(Resources.getResource("yaml/server.yml").toURI()));
     }
 

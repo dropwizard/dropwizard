@@ -20,8 +20,8 @@ public class GzipConfigurationTest {
     public void setUp() throws Exception {
         this.gzip = new ConfigurationFactory<>(GzipConfiguration.class,
                                                Validation.buildDefaultValidatorFactory()
-                                                         .getValidator(),
-                                               Jackson.newObjectMapper())
+                                                                 .getValidator(),
+                                               Jackson.newObjectMapper(), "dw")
                 .build(new File(Resources.getResource("yaml/gzip.yml").toURI()));
     }
 
