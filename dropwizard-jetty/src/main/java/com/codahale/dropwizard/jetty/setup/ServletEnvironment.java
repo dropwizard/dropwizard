@@ -1,4 +1,4 @@
-package com.codahale.dropwizard.setup;
+package com.codahale.dropwizard.jetty.setup;
 
 import com.codahale.dropwizard.jetty.NonblockingServletHolder;
 import org.eclipse.jetty.server.session.SessionHandler;

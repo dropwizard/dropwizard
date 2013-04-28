@@ -1,5 +1,6 @@
 package com.codahale.dropwizard.setup;
 
+import com.codahale.dropwizard.jetty.setup.ServletEnvironment;
 import com.codahale.dropwizard.servlets.tasks.GarbageCollectionTask;
 import com.codahale.dropwizard.servlets.tasks.Task;
 import com.codahale.dropwizard.servlets.tasks.TaskServlet;

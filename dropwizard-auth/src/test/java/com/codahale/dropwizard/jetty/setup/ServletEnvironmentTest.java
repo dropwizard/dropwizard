@@ -1,5 +1,8 @@
-package com.codahale.dropwizard.setup;
+package com.codahale.dropwizard.jetty.setup;
 
+import com.codahale.dropwizard.jetty.setup.FilterBuilder;
+import com.codahale.dropwizard.jetty.setup.ServletBuilder;
+import com.codahale.dropwizard.jetty.setup.ServletEnvironment;
 import org.eclipse.jetty.continuation.ContinuationFilter;
 import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.servlet.FilterHolder;

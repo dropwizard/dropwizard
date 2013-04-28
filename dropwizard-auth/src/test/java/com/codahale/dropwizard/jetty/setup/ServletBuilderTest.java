@@ -1,5 +1,6 @@
-package com.codahale.dropwizard.setup;
+package com.codahale.dropwizard.jetty.setup;
 
+import com.codahale.dropwizard.jetty.setup.ServletBuilder;
 import com.google.common.collect.ImmutableMap;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;

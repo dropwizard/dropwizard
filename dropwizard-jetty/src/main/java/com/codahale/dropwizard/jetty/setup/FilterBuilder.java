@@ -1,4 +1,4 @@
-package com.codahale.dropwizard.setup;
+package com.codahale.dropwizard.jetty.setup;
 
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
