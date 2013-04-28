@@ -19,6 +19,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+// TODO: 4/28/13 <coda> -- document ConfigurationFactory
+
 public class ConfigurationFactory<T> {
     private static final String PROPERTY_PREFIX = "dw.";
     private final Class<T> klass;
