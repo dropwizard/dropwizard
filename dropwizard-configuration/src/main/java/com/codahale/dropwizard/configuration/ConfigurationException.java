@@ -15,13 +15,13 @@ public class ConfigurationException extends Exception {
     private final ImmutableSet<ConstraintViolation<?>> constraintViolations;
 
     /**
-     * Creates a new ConfigurationException for the given file with the given errors.
+     * Creates a new ConfigurationException for the given path with the given errors.
      *
-     * @param file      the bad configuration file
-     * @param errors    the errors in the file
+     * @param path      the bad configuration path
+     * @param errors    the errors in the path
      */
-    public <T> ConfigurationException(String file, Set<ConstraintViolation<T>> errors) {
-        super(formatMessage(file, ConstraintViolations.format(errors)));
+    public <T> ConfigurationException(String path, Set<ConstraintViolation<T>> errors) {
+        super(formatMessage(path, ConstraintViolations.format(errors)));
         this.constraintViolations = ConstraintViolations.copyOf(errors);
     }
 

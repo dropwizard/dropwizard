@@ -23,4 +23,10 @@
         <Bug code="Se"/>
         <Class name="com.codahale.dropwizard.servlets.assets.AssetServlet"/>
     </Match>
+
+    <!-- pretty sure this is a bug in FindBugs -->
+    <Match>
+        <Bug pattern="RCN_REDUNDANT_NULLCHECK_OF_NULL_VALUE"/>
+        <Class name="com.codahale.dropwizard.configuration.ConfigurationFactory"/>
+    </Match>
 </FindBugsFilter>
