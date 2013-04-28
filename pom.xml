@@ -38,6 +38,7 @@
         <module>dropwizard-jetty</module>
         <module>dropwizard-servlets</module>
         <module>dropwizard-lifecycle</module>
+        <module>dropwizard-assets</module>
     </modules>
 
     <properties>
