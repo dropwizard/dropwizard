@@ -35,6 +35,7 @@
         <module>dropwizard-configuration</module>
         <module>dropwizard-logging</module>
         <module>dropwizard-jersey</module>
+        <module>dropwizard-jetty</module>
         <module>dropwizard-servlets</module>
     </modules>
 

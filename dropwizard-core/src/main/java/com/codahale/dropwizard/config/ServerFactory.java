@@ -68,7 +68,11 @@ public class ServerFactory {
 
     public ServerFactory(ServerConfiguration config, String name) {
         this.config = config;
-        this.requestLogHandlerFactory = new RequestLogHandlerFactory(config.getRequestLogConfiguration(), name);
+        this.requestLogHandlerFactory = new RequestLogHandlerFactory(name,
+                                                                     config.getRequestLogConfiguration()
+                                                                           .getOutputs(),
+                                                                     config.getRequestLogConfiguration()
+                                                                           .getTimeZone());
     }
 
     public Server build(Environment env) throws ConfigurationException {

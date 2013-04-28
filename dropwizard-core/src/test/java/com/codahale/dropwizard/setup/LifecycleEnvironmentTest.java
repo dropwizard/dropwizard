@@ -1,6 +1,6 @@
 package com.codahale.dropwizard.setup;
 
-import com.codahale.dropwizard.jetty.JettyManaged;
+import com.codahale.dropwizard.lifecycle.JettyManaged;
 import com.codahale.dropwizard.lifecycle.Managed;
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jetty.util.component.ContainerLifeCycle;

@@ -1,6 +1,6 @@
 package com.codahale.dropwizard.setup;
 
-import com.codahale.dropwizard.jetty.JettyManaged;
+import com.codahale.dropwizard.lifecycle.JettyManaged;
 import com.codahale.dropwizard.lifecycle.Managed;
 import com.codahale.dropwizard.lifecycle.ServerLifecycleListener;
 import com.google.common.collect.Lists;

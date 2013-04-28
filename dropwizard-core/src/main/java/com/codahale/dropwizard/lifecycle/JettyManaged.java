@@ -1,4 +1,4 @@
-package com.codahale.dropwizard.jetty;
+package com.codahale.dropwizard.lifecycle;
 
 import com.codahale.dropwizard.lifecycle.Managed;
 import org.eclipse.jetty.util.component.AbstractLifeCycle;

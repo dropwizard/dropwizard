@@ -6,10 +6,12 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.CoreConstants;
 import ch.qos.logback.core.LayoutBase;
 import ch.qos.logback.core.spi.AppenderAttachableImpl;
-import com.codahale.dropwizard.config.RequestLogConfiguration;
 import com.codahale.dropwizard.logging.LoggingOutput;
+import com.google.common.collect.ImmutableList;
 import org.eclipse.jetty.server.handler.RequestLogHandler;
 import org.slf4j.LoggerFactory;
+
+import java.util.TimeZone;
 
 // TODO: 11/7/11 <coda> -- document RequestLogHandlerFactory
 // TODO: 11/7/11 <coda> -- test RequestLogHandlerFactory
@@ -22,16 +24,20 @@ public class RequestLogHandlerFactory {
         }
     }
 
-    private final RequestLogConfiguration config;
+    private final TimeZone timeZone;
+    private final ImmutableList<LoggingOutput> outputs;
     private final String name;
 
-    public RequestLogHandlerFactory(RequestLogConfiguration config, String name) {
-        this.config = config;
+    public RequestLogHandlerFactory(String name,
+                                    Iterable<LoggingOutput> outputs,
+                                    TimeZone timeZone) {
         this.name = name;
+        this.outputs = ImmutableList.copyOf(outputs);
+        this.timeZone = timeZone;
     }
     
     public boolean isEnabled() {
-        return !config.getOutputs().isEmpty();
+        return !outputs.isEmpty();
     }
 
     public RequestLogHandler build() {
@@ -44,12 +50,12 @@ public class RequestLogHandlerFactory {
         final RequestLogLayout layout = new RequestLogLayout();
         layout.start();
 
-        for (LoggingOutput output : config.getOutputs()) {
+        for (LoggingOutput output : outputs) {
             appenders.addAppender(output.build(context, name, layout));
         }
 
         final RequestLogHandler handler = new RequestLogHandler();
-        handler.setRequestLog(new AsyncRequestLog(appenders, config.getTimeZone()));
+        handler.setRequestLog(new AsyncRequestLog(appenders, timeZone));
 
         return handler;
     }
