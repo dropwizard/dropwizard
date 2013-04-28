@@ -1,6 +1,6 @@
 package com.codahale.dropwizard.jdbi;
 
-import com.codahale.dropwizard.config.Environment;
+import com.codahale.dropwizard.setup.Environment;
 import com.codahale.dropwizard.db.DatabaseConfiguration;
 import com.codahale.dropwizard.db.ManagedDataSource;
 import com.codahale.dropwizard.lifecycle.Managed;

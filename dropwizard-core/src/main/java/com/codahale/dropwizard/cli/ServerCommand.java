@@ -2,8 +2,8 @@ package com.codahale.dropwizard.cli;
 
 import com.codahale.dropwizard.Configuration;
 import com.codahale.dropwizard.Service;
-import com.codahale.dropwizard.config.Environment;
-import com.codahale.dropwizard.config.ServerFactory;
+import com.codahale.dropwizard.setup.Environment;
+import com.codahale.dropwizard.setup.ServerFactory;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 import net.sourceforge.argparse4j.inf.Namespace;

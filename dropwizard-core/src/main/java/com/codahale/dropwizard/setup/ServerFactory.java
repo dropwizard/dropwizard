@@ -1,5 +1,7 @@
-package com.codahale.dropwizard.config;
+package com.codahale.dropwizard.setup;
 
+import com.codahale.dropwizard.config.GzipConfiguration;
+import com.codahale.dropwizard.config.ServerConfiguration;
 import com.codahale.dropwizard.configuration.ConfigurationException;
 import com.codahale.dropwizard.jersey.jackson.JacksonMessageBodyProvider;
 import com.codahale.dropwizard.jetty.*;

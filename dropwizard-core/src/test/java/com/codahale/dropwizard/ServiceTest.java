@@ -1,7 +1,7 @@
 package com.codahale.dropwizard;
 
 import com.codahale.dropwizard.setup.Bootstrap;
-import com.codahale.dropwizard.config.Environment;
+import com.codahale.dropwizard.setup.Environment;
 import org.junit.Test;
 
 import static org.fest.assertions.api.Assertions.assertThat;

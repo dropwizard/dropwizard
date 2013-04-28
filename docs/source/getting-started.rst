@@ -241,7 +241,7 @@ like this:
     
     import com.codahale.dropwizard.Service;
     import com.codahale.dropwizard.setup.Bootstrap;
-    import com.codahale.dropwizard.config.Environment;
+    import com.codahale.dropwizard.setup.Environment;
     
     public class HelloWorldService extends Service<HelloWorldConfiguration> {
         public static void main(String[] args) throws Exception {
@@ -684,7 +684,7 @@ You should see something like the following:
     INFO  [2011-12-03 00:38:32,931] org.eclipse.jetty.server.Server: jetty-7.x.y-SNAPSHOT
     INFO  [2011-12-03 00:38:32,936] org.eclipse.jetty.server.handler.ContextHandler: started o.e.j.s.ServletContextHandler{/,null}
     INFO  [2011-12-03 00:38:32,999] com.sun.jersey.server.impl.application.WebApplicationImpl: Initiating Jersey application, version 'Jersey: 1.10 11/02/2011 03:53 PM'
-    INFO  [2011-12-03 00:38:33,041] com.codahale.dropwizard.config.Environment:
+    INFO  [2011-12-03 00:38:33,041] com.codahale.dropwizard.setup.Environment:
 
         GET     /hello-world (com.example.helloworld.resources.HelloWorldResource)
 

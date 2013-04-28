@@ -1,6 +1,6 @@
 package com.codahale.dropwizard.client;
 
-import com.codahale.dropwizard.config.Environment;
+import com.codahale.dropwizard.setup.Environment;
 import com.codahale.dropwizard.jersey.jackson.JacksonMessageBodyProvider;
 import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -170,7 +170,7 @@ public class JerseyClientBuilder {
      * @param executorService a thread pool
      * @param objectMapper    an object mapper
      * @return {@code this}
-     * @see #using(com.codahale.dropwizard.config.Environment)
+     * @see #using(com.codahale.dropwizard.setup.Environment)
      */
     public JerseyClientBuilder using(ExecutorService executorService, ObjectMapper objectMapper) {
         this.executorService = executorService;

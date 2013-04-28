@@ -1,6 +1,6 @@
 package com.codahale.dropwizard.hibernate;
 
-import com.codahale.dropwizard.config.Environment;
+import com.codahale.dropwizard.setup.Environment;
 import com.codahale.dropwizard.db.DatabaseConfiguration;
 import com.codahale.dropwizard.jackson.Jackson;
 import com.codahale.dropwizard.jersey.DropwizardResourceConfig;

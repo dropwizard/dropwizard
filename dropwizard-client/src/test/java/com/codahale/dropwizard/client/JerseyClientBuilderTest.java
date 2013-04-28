@@ -1,6 +1,6 @@
 package com.codahale.dropwizard.client;
 
-import com.codahale.dropwizard.config.Environment;
+import com.codahale.dropwizard.setup.Environment;
 import com.codahale.dropwizard.jersey.jackson.JacksonMessageBodyProvider;
 import com.codahale.dropwizard.lifecycle.setup.LifecycleEnvironment;
 import com.codahale.metrics.MetricRegistry;

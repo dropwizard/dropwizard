@@ -4,7 +4,7 @@ import com.codahale.dropwizard.Service;
 import com.codahale.dropwizard.assets.AssetsBundle;
 import com.codahale.dropwizard.auth.basic.BasicAuthProvider;
 import com.codahale.dropwizard.setup.Bootstrap;
-import com.codahale.dropwizard.config.Environment;
+import com.codahale.dropwizard.setup.Environment;
 import com.codahale.dropwizard.db.DatabaseConfiguration;
 import com.codahale.dropwizard.hibernate.HibernateBundle;
 import com.codahale.dropwizard.migrations.MigrationsBundle;

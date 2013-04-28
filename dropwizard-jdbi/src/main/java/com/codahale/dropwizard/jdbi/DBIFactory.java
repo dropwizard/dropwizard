@@ -2,7 +2,7 @@ package com.codahale.dropwizard.jdbi;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
-import com.codahale.dropwizard.config.Environment;
+import com.codahale.dropwizard.setup.Environment;
 import com.codahale.dropwizard.db.DatabaseConfiguration;
 import com.codahale.dropwizard.db.ManagedDataSource;
 import com.codahale.dropwizard.db.ManagedDataSourceFactory;

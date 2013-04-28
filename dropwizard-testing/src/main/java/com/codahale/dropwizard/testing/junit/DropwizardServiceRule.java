@@ -4,7 +4,7 @@ import com.codahale.dropwizard.Configuration;
 import com.codahale.dropwizard.Service;
 import com.codahale.dropwizard.cli.ServerCommand;
 import com.codahale.dropwizard.setup.Bootstrap;
-import com.codahale.dropwizard.config.Environment;
+import com.codahale.dropwizard.setup.Environment;
 import com.codahale.dropwizard.lifecycle.ServerLifecycleListener;
 import com.google.common.collect.ImmutableMap;
 import net.sourceforge.argparse4j.inf.Namespace;

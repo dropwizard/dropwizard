@@ -1,10 +1,9 @@
-package com.codahale.dropwizard.config;
+package com.codahale.dropwizard.setup;
 
 import com.codahale.dropwizard.jersey.DropwizardResourceConfig;
 import com.codahale.dropwizard.jersey.setup.JerseyContainerHolder;
 import com.codahale.dropwizard.jersey.setup.JerseyEnvironment;
 import com.codahale.dropwizard.lifecycle.setup.LifecycleEnvironment;
-import com.codahale.dropwizard.setup.AdminEnvironment;
 import com.codahale.dropwizard.jetty.setup.ServletEnvironment;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheckRegistry;

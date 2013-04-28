@@ -1,6 +1,6 @@
 package com.codahale.dropwizard.views;
 
-import com.codahale.dropwizard.config.Environment;
+import com.codahale.dropwizard.setup.Environment;
 import com.codahale.dropwizard.jersey.setup.JerseyEnvironment;
 import org.junit.Before;
 import org.junit.Test;

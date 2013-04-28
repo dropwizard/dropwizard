@@ -1,7 +1,7 @@
 package com.codahale.dropwizard;
 
 import com.codahale.dropwizard.setup.Bootstrap;
-import com.codahale.dropwizard.config.Environment;
+import com.codahale.dropwizard.setup.Environment;
 
 /**
  * A reusable bundle of functionality, used to define blocks of service behavior.

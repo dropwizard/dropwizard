@@ -1,6 +1,6 @@
 package com.codahale.dropwizard.client;
 
-import com.codahale.dropwizard.config.Environment;
+import com.codahale.dropwizard.setup.Environment;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.httpclient.InstrumentedClientConnManager;
 import com.codahale.metrics.httpclient.InstrumentedHttpClient;

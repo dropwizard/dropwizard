@@ -3,7 +3,7 @@ package com.codahale.dropwizard.testing.junit;
 import com.codahale.dropwizard.Configuration;
 import com.codahale.dropwizard.Service;
 import com.codahale.dropwizard.setup.Bootstrap;
-import com.codahale.dropwizard.config.Environment;
+import com.codahale.dropwizard.setup.Environment;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.io.Resources;
 import com.sun.jersey.api.client.Client;
