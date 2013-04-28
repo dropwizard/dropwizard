@@ -4,16 +4,15 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.spi.AppenderAttachableImpl;
-import com.codahale.metrics.Clock;
-import com.google.common.net.HttpHeaders;
 import org.eclipse.jetty.http.HttpURI;
-import org.eclipse.jetty.server.*;
+import org.eclipse.jetty.server.HttpChannelState;
+import org.eclipse.jetty.server.Request;
+import org.eclipse.jetty.server.Response;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
-import java.security.Principal;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
@@ -21,11 +20,11 @@ import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 public class AsyncRequestLogTest {
-    private final Clock clock = mock(Clock.class);
     @SuppressWarnings("unchecked")
     private final Appender<ILoggingEvent> appender = mock(Appender.class);
     private final AppenderAttachableImpl<ILoggingEvent> appenders = new AppenderAttachableImpl<>();
-    private final AsyncRequestLog asyncRequestLog = new AsyncRequestLog(clock, appenders, TimeZone.getTimeZone("UTC"));
+    private final AsyncRequestLog asyncRequestLog = new AsyncRequestLog(appenders,
+                                                                        TimeZone.getTimeZone("UTC"));
 
     private final Request request = mock(Request.class);
     private final Response response = mock(Response.class);
@@ -45,8 +44,6 @@ public class AsyncRequestLogTest {
 
         when(response.getStatus()).thenReturn(200);
         when(response.getContentCount()).thenReturn(8290L);
-
-        when(clock.getTime()).thenReturn(TimeUnit.SECONDS.toMillis(1353042049));
 
         appenders.addAppender(appender);
 
@@ -68,51 +65,16 @@ public class AsyncRequestLogTest {
     }
 
     @Test
-    public void logsRequests() throws Exception {
+    public void logsRequestsToTheAppenders() throws Exception {
         final ILoggingEvent event = logAndCapture();
 
+        // It would be lovely if the clock could be injected so we could test this reliably, but
+        // I suppose we should just trust the Jetty folks.
         assertThat(event.getFormattedMessage())
-                .isEqualTo("10.0.0.1 - - [16/Nov/2012:05:00:47 +0000] \"GET /test/things?yay HTTP/1.1\" 200 8290 1000 2000");
+                .startsWith("10.0.0.1");
 
         assertThat(event.getLevel())
                 .isEqualTo(Level.INFO);
-    }
-
-    @Test
-    public void logsForwardedFor() throws Exception {
-        when(request.getHeader(HttpHeaders.X_FORWARDED_FOR)).thenReturn("123.123.123.123");
-
-        final ILoggingEvent event = logAndCapture();
-        assertThat(event.getFormattedMessage())
-                .isEqualTo("123.123.123.123 - - [16/Nov/2012:05:00:47 +0000] \"GET /test/things?yay HTTP/1.1\" 200 8290 1000 2000");
-    }
-
-    @Test
-    public void logsPrincipal() throws Exception {
-        final Principal principal = mock(Principal.class);
-        when(principal.getName()).thenReturn("coda");
-
-        final UserIdentity identity = mock(UserIdentity.class);
-        when(identity.getUserPrincipal()).thenReturn(principal);
-
-        final Authentication.User user = mock(Authentication.User.class);
-        when(user.getUserIdentity()).thenReturn(identity);
-
-        when(request.getAuthentication()).thenReturn(user);
-
-        final ILoggingEvent event = logAndCapture();
-        assertThat(event.getFormattedMessage())
-                .isEqualTo("10.0.0.1 - coda [16/Nov/2012:05:00:47 +0000] \"GET /test/things?yay HTTP/1.1\" 200 8290 1000 2000");
-    }
-
-    @Test
-    public void logsAsyncContinuations() throws Exception {
-        when(channelState.isInitial()).thenReturn(false);
-
-        final ILoggingEvent event = logAndCapture();
-
-        assertThat(event.getFormattedMessage())
-                .isEqualTo("10.0.0.1 - - [16/Nov/2012:05:00:47 +0000] \"GET /test/things?yay HTTP/1.1\" Async 8290 1000 2000");
     }
 
     private ILoggingEvent logAndCapture() {

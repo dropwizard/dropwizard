@@ -5,33 +5,32 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.spi.LoggingEvent;
 import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.spi.AppenderAttachableImpl;
-import com.codahale.metrics.Clock;
-import org.eclipse.jetty.http.HttpHeader;
-import org.eclipse.jetty.server.Authentication;
-import org.eclipse.jetty.server.Request;
+import org.eclipse.jetty.server.AbstractNCSARequestLog;
 import org.eclipse.jetty.server.RequestLog;
-import org.eclipse.jetty.server.Response;
-import org.eclipse.jetty.util.DateCache;
-import org.eclipse.jetty.util.component.AbstractLifeCycle;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * A non-blocking, asynchronous {@link RequestLog} implementation which implements a subset of the
- * functionality of {@link org.eclipse.jetty.server.NCSARequestLog}. Log entries are added to an
- * in-memory queue and an offline thread handles the responsibility of batching them to disk. The
- * date format is fixed, UTC time zone is fixed, and latency is always logged.
+ * A asynchronous {@link RequestLog} implementation of {@link AbstractNCSARequestLog}. Log entries
+ * are added to an in-memory queue and an offline thread handles the responsibility of batching them
+ * to disk.
  */
-public class AsyncRequestLog extends AbstractLifeCycle implements RequestLog {
+public class AsyncRequestLog extends AbstractNCSARequestLog {
     private static final AtomicInteger THREAD_COUNTER = new AtomicInteger();
     private static final int BATCH_SIZE = 10000;
 
-    private class Dispatcher implements Runnable {
+    private class Dispatcher extends Thread {
         private volatile boolean running = true;
         private final List<String> statements = new ArrayList<>(BATCH_SIZE);
+
+        private Dispatcher() {
+            super("async-request-log-dispatcher-" + THREAD_COUNTER.incrementAndGet());
+            setDaemon(true);
+        }
 
         @Override
         public void run() {
@@ -54,41 +53,26 @@ public class AsyncRequestLog extends AbstractLifeCycle implements RequestLog {
             }
         }
 
-        public void stop() {
+        public void shutdown() {
             this.running = false;
         }
     }
 
-    private final Clock clock;
-    @SuppressWarnings("ThreadLocalNotStaticFinal")
-    private final ThreadLocal<DateCache> dateCache;
     private final BlockingQueue<String> queue;
     private final Dispatcher dispatcher;
-    private final Thread dispatchThread;
     private final AppenderAttachableImpl<ILoggingEvent> appenders;
 
-    public AsyncRequestLog(Clock clock,
-                           AppenderAttachableImpl<ILoggingEvent> appenders,
-                           final TimeZone timeZone) {
-        this.clock = clock;
+    public AsyncRequestLog(AppenderAttachableImpl<ILoggingEvent> appenders, TimeZone timeZone) {
         this.queue = new LinkedBlockingQueue<>();
         this.dispatcher = new Dispatcher();
-        this.dispatchThread = new Thread(dispatcher);
-        dispatchThread.setName("async-request-log-dispatcher-" + THREAD_COUNTER.incrementAndGet());
-        dispatchThread.setDaemon(true);
-
-        this.dateCache = new ThreadLocal<DateCache>() {
-            @Override
-            protected DateCache initialValue() {
-                final DateCache cache = new DateCache("dd/MMM/yyyy:HH:mm:ss Z", Locale.US);
-                cache.setTimeZoneID(timeZone.getID());
-                return cache;
-            }
-        };
-
         this.appenders = appenders;
-    }
 
+        setLogDispatch(true);
+        setLogLatency(true);
+        setLogTimeZone(timeZone);
+        setExtended(true);
+        setPreferProxiedForAddress(true);
+    }
 
     @Override
     protected void doStart() throws Exception {
@@ -96,93 +80,28 @@ public class AsyncRequestLog extends AbstractLifeCycle implements RequestLog {
         while (iterator.hasNext()) {
             iterator.next().start();
         }
-        dispatchThread.start();
+        dispatcher.start();
+        super.doStart();
     }
 
     @Override
     protected void doStop() throws Exception {
-        dispatcher.stop();
-        final Iterator<Appender<ILoggingEvent>> iterator = appenders.iteratorForAppenders();
-        while (iterator.hasNext()) {
-            iterator.next().stop();
-        }
+        super.doStop();
+        dispatcher.shutdown();
+        appenders.detachAndStopAllAppenders();
     }
 
     @Override
-    public void log(Request request, Response response) {
-        // copied almost entirely from NCSARequestLog
-        final StringBuilder buf = new StringBuilder(256);
-        String address = request.getHeader(HttpHeader.X_FORWARDED_FOR.toString());
-        if (address == null) {
-            address = request.getRemoteAddr();
-        }
+    protected boolean isEnabled() {
+        return true;
+    }
 
-        buf.append(address);
-        buf.append(" - ");
-        final Authentication authentication = request.getAuthentication();
-        if (authentication instanceof Authentication.User) {
-            buf.append(((Authentication.User) authentication).getUserIdentity()
-                                                             .getUserPrincipal()
-                                                             .getName());
-        } else {
-            buf.append('-');
-        }
+    @Override
+    public void write(String requestEntry) throws IOException {
+        queue.add(requestEntry);
+    }
 
-        buf.append(" [");
-        buf.append(dateCache.get().format(request.getTimeStamp()));
-
-        buf.append("] \"");
-        buf.append(request.getMethod());
-        buf.append(' ');
-        buf.append(request.getUri().toString());
-        buf.append(' ');
-        buf.append(request.getProtocol());
-        buf.append("\" ");
-        if (request.getHttpChannelState().isInitial()) {
-            int status = response.getStatus();
-            if (status <= 0) {
-                status = 404;
-            }
-            buf.append((char) ('0' + ((status / 100) % 10)));
-            buf.append((char) ('0' + ((status / 10) % 10)));
-            buf.append((char) ('0' + (status % 10)));
-        } else {
-            buf.append("Async");
-        }
-
-        final long responseLength = response.getContentCount();
-        if (responseLength >= 0) {
-            buf.append(' ');
-            if (responseLength > 99999) {
-                buf.append(responseLength);
-            } else {
-                if (responseLength > 9999) {
-                    buf.append((char) ('0' + ((responseLength / 10000) % 10)));
-                }
-                if (responseLength > 999) {
-                    buf.append((char) ('0' + ((responseLength / 1000) % 10)));
-                }
-                if (responseLength > 99) {
-                    buf.append((char) ('0' + ((responseLength / 100) % 10)));
-                }
-                if (responseLength > 9) {
-                    buf.append((char) ('0' + ((responseLength / 10) % 10)));
-                }
-                buf.append((char) ('0' + (responseLength % 10)));
-            }
-        } else {
-            buf.append(" -");
-        }
-
-        final long now = clock.getTime();
-        final long dispatchTime = request.getDispatchTime();
-
-        buf.append(' ');
-        buf.append(now - ((dispatchTime == 0) ? request.getTimeStamp() : dispatchTime));
-
-        buf.append(' ');
-        buf.append(now - request.getTimeStamp());
-
-        queue.add(buf.toString());
+    public void setLogTimeZone(TimeZone tz) {
+        setLogTimeZone(tz.getID());
     }
 }

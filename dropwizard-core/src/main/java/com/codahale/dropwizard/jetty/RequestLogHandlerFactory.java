@@ -8,7 +8,6 @@ import ch.qos.logback.core.LayoutBase;
 import ch.qos.logback.core.spi.AppenderAttachableImpl;
 import com.codahale.dropwizard.config.RequestLogConfiguration;
 import com.codahale.dropwizard.logging.LoggingOutput;
-import com.codahale.metrics.Clock;
 import org.eclipse.jetty.server.handler.RequestLogHandler;
 import org.slf4j.LoggerFactory;
 
@@ -50,9 +49,7 @@ public class RequestLogHandlerFactory {
         }
 
         final RequestLogHandler handler = new RequestLogHandler();
-        handler.setRequestLog(new AsyncRequestLog(Clock.defaultClock(),
-                                                  appenders,
-                                                  config.getTimeZone()));
+        handler.setRequestLog(new AsyncRequestLog(appenders, config.getTimeZone()));
 
         return handler;
     }
