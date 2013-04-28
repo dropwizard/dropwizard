@@ -1,4 +1,4 @@
-package com.codahale.dropwizard.setup;
+package com.codahale.dropwizard.lifecycle.setup;
 
 import com.codahale.dropwizard.lifecycle.JettyManaged;
 import com.codahale.dropwizard.lifecycle.Managed;
