@@ -37,6 +37,7 @@
         <module>dropwizard-jersey</module>
         <module>dropwizard-jetty</module>
         <module>dropwizard-servlets</module>
+        <module>dropwizard-lifecycle</module>
     </modules>
 
     <properties>

@@ -1,11 +1,10 @@
 package com.codahale.dropwizard.lifecycle;
 
-import com.codahale.dropwizard.lifecycle.Managed;
 import org.eclipse.jetty.util.component.AbstractLifeCycle;
 
 /**
- * A wrapper for {@link Managed} instances which ties them to a Jetty
- * {@link org.eclipse.jetty.util.component.LifeCycle}.
+ * A wrapper for {@link Managed} instances which ties them to a Jetty {@link
+ * org.eclipse.jetty.util.component.LifeCycle}.
  */
 public class JettyManaged extends AbstractLifeCycle implements Managed {
     private final Managed managed;
@@ -22,7 +21,7 @@ public class JettyManaged extends AbstractLifeCycle implements Managed {
     public Managed getManaged() {
         return managed;
     }
-
+    
     @Override
     protected void doStart() throws Exception {
         managed.start();
@@ -35,7 +34,6 @@ public class JettyManaged extends AbstractLifeCycle implements Managed {
 
     @Override
     public String toString() {
-        //Delegate to the wrapped instance
         return managed.toString();
     }
 }

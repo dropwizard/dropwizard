@@ -3,7 +3,7 @@ package com.codahale.dropwizard.config;
 import com.codahale.dropwizard.jersey.DropwizardResourceConfig;
 import com.codahale.dropwizard.setup.AdminEnvironment;
 import com.codahale.dropwizard.setup.JerseyEnvironment;
-import com.codahale.dropwizard.setup.LifecycleEnvironment;
+import com.codahale.dropwizard.lifecycle.setup.LifecycleEnvironment;
 import com.codahale.dropwizard.setup.ServletEnvironment;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheckRegistry;
