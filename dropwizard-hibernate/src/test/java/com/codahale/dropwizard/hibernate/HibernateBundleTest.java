@@ -5,7 +5,7 @@ import com.codahale.dropwizard.setup.Bootstrap;
 import com.codahale.dropwizard.config.Environment;
 import com.codahale.dropwizard.db.DatabaseConfiguration;
 import com.codahale.dropwizard.setup.AdminEnvironment;
-import com.codahale.dropwizard.setup.JerseyEnvironment;
+import com.codahale.dropwizard.jersey.setup.JerseyEnvironment;
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module;

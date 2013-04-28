@@ -1,32 +1,31 @@
-package com.codahale.dropwizard.setup;
+package com.codahale.dropwizard.jersey.setup;
 
 import com.codahale.dropwizard.jersey.DropwizardResourceConfig;
 import com.google.common.base.Function;
+import com.sun.jersey.api.core.ResourceConfig;
 import com.sun.jersey.core.spi.scanning.PackageNamesScanner;
 import com.sun.jersey.spi.container.servlet.ServletContainer;
 
 import javax.annotation.Nullable;
-import javax.ws.rs.core.Application;
-import java.util.concurrent.atomic.AtomicReference;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class JerseyEnvironment {
-    private final AtomicReference<ServletContainer> container;
+    private final JerseyContainerHolder holder;
     private final DropwizardResourceConfig config;
 
-    public JerseyEnvironment(AtomicReference<ServletContainer> container,
+    public JerseyEnvironment(JerseyContainerHolder holder,
                              DropwizardResourceConfig config) {
-        this.container = container;
+        this.holder = holder;
         this.config = config;
     }
 
     public void disable() {
-        container.set(null);
+        holder.setContainer(null);
     }
 
-    public void replace(Function<Application, ServletContainer> replace) {
-        container.set(replace.apply(config));
+    public void replace(Function<ResourceConfig, ServletContainer> replace) {
+        holder.setContainer(replace.apply(config));
     }
 
     /**

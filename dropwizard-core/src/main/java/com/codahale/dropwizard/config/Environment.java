@@ -1,9 +1,10 @@
 package com.codahale.dropwizard.config;
 
 import com.codahale.dropwizard.jersey.DropwizardResourceConfig;
-import com.codahale.dropwizard.setup.AdminEnvironment;
-import com.codahale.dropwizard.setup.JerseyEnvironment;
+import com.codahale.dropwizard.jersey.setup.JerseyContainerHolder;
+import com.codahale.dropwizard.jersey.setup.JerseyEnvironment;
 import com.codahale.dropwizard.lifecycle.setup.LifecycleEnvironment;
+import com.codahale.dropwizard.setup.AdminEnvironment;
 import com.codahale.dropwizard.setup.ServletEnvironment;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheckRegistry;
@@ -12,7 +13,6 @@ import com.sun.jersey.spi.container.servlet.ServletContainer;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 
 import javax.validation.Validator;
-import java.util.concurrent.atomic.AtomicReference;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -27,7 +27,7 @@ public class Environment {
     private final ObjectMapper objectMapper;
     private Validator validator;
 
-    private final AtomicReference<ServletContainer> jerseyServletContainer;
+    private final JerseyContainerHolder jerseyServletContainer;
     private final JerseyEnvironment jerseyEnvironment;
 
     private final ServletContextHandler servletContext;
@@ -63,7 +63,7 @@ public class Environment {
 
         this.lifecycleEnvironment = new LifecycleEnvironment();
 
-        this.jerseyServletContainer = new AtomicReference<>(new ServletContainer(jerseyConfig));
+        this.jerseyServletContainer = new JerseyContainerHolder(new ServletContainer(jerseyConfig));
         this.jerseyEnvironment = new JerseyEnvironment(jerseyServletContainer, jerseyConfig);
     }
 
@@ -116,7 +116,7 @@ public class Environment {
     }
 
     ServletContainer getJerseyServletContainer() {
-        return jerseyServletContainer.get();
+        return jerseyServletContainer.getContainer();
     }
 
     ServletContextHandler getAdminContext() {

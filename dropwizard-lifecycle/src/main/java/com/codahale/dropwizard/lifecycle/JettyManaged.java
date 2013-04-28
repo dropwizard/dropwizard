@@ -21,7 +21,7 @@ public class JettyManaged extends AbstractLifeCycle implements Managed {
     public Managed getManaged() {
         return managed;
     }
-    
+
     @Override
     protected void doStart() throws Exception {
         managed.start();
