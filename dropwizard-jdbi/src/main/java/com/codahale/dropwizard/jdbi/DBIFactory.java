@@ -43,7 +43,7 @@ public class DBIFactory {
     public DBI build(Environment environment,
                      DatabaseConfiguration configuration,
                      String name) throws ClassNotFoundException {
-        final ManagedDataSource dataSource = dataSourceFactory.build(environment.getMetricRegistry(),
+        final ManagedDataSource dataSource = dataSourceFactory.build(environment.metrics(),
                                                                      configuration,
                                                                      name);
         return build(environment, configuration, dataSource, name);
@@ -55,10 +55,10 @@ public class DBIFactory {
                      String name) {
         final String validationQuery = configuration.getValidationQuery();
         final DBI dbi = new DBI(dataSource);
-        environment.getLifecycleEnvironment().manage(dataSource);
-        environment.getAdminEnvironment().addHealthCheck(name, new DBIHealthCheck(dbi, validationQuery));
+        environment.lifecycle().manage(dataSource);
+        environment.admin().addHealthCheck(name, new DBIHealthCheck(dbi, validationQuery));
         dbi.setSQLLog(new LogbackLog(LOGGER, Level.TRACE));
-        dbi.setTimingCollector(new InstrumentedTimingCollector(environment.getMetricRegistry(),
+        dbi.setTimingCollector(new InstrumentedTimingCollector(environment.metrics(),
                                                                new SanerNamingStrategy()));
         if (configuration.isAutoCommentsEnabled()) {
             dbi.setStatementRewriter(new NamePrependingStatementRewriter(new ColonPrefixNamedParamStatementRewriter()));

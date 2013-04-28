@@ -37,8 +37,8 @@ public class HibernateBundleTest {
     @Before
     @SuppressWarnings("unchecked")
     public void setUp() throws Exception {
-        when(environment.getAdminEnvironment()).thenReturn(adminEnvironment);
-        when(environment.getJerseyEnvironment()).thenReturn(jerseyEnvironment);
+        when(environment.admin()).thenReturn(adminEnvironment);
+        when(environment.jersey()).thenReturn(jerseyEnvironment);
 
         when(factory.build(eq(bundle),
                            any(Environment.class),

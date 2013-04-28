@@ -65,6 +65,6 @@ public class ViewBundle implements Bundle {
 
     @Override
     public void run(Environment environment) {
-        environment.getJerseyEnvironment().addProvider(new ViewMessageBodyWriter(environment.getMetricRegistry()));
+        environment.jersey().addProvider(new ViewMessageBodyWriter(environment.metrics()));
     }
 }

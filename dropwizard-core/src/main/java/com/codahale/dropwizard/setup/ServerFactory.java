@@ -78,14 +78,14 @@ public class ServerFactory {
     }
 
     public Server build(Environment env) throws ConfigurationException {
-        env.getHealthCheckRegistry().register("deadlocks", new ThreadDeadlockHealthCheck());
+        env.healthChecks().register("deadlocks", new ThreadDeadlockHealthCheck());
         return createServer(env);
     }
 
     private Server createServer(Environment env) {
-        final ThreadPool threadPool = createThreadPool(env.getMetricRegistry());
+        final ThreadPool threadPool = createThreadPool(env.metrics());
         final Server server = new Server(threadPool);
-        env.getLifecycleEnvironment().attach(server);
+        env.lifecycle().attach(server);
 
         final ServletContextHandler applicationHandler = createExternalServlet(env);
         final ServletContextHandler adminHandler = createInternalServlet(env);
@@ -154,9 +154,9 @@ public class ServerFactory {
     private ServletContextHandler createInternalServlet(Environment env) {
         final ServletContextHandler handler = env.getAdminContext();
         handler.getServletContext().setAttribute(HealthCheckServlet.HEALTH_CHECK_REGISTRY,
-                                                 env.getHealthCheckRegistry());
+                                                 env.healthChecks());
         handler.getServletContext().setAttribute(MetricsServlet.METRICS_REGISTRY,
-                                                 env.getMetricRegistry());
+                                                 env.metrics());
         handler.addServlet(new ServletHolder(AdminServlet.class), "/*");
 
         if (config.getAdminUsername().isPresent() || config.getAdminPassword().isPresent()) {
@@ -173,13 +173,13 @@ public class ServerFactory {
 
         final ServletContainer jerseyContainer = env.getJerseyServletContainer();
         if (jerseyContainer != null) {
-            env.getJerseyEnvironment().addProvider(
+            env.jersey().addProvider(
                     new JacksonMessageBodyProvider(env.getObjectMapper(),
                                                    env.getValidator())
             );
             final ServletHolder jerseyHolder = new NonblockingServletHolder(jerseyContainer);
             jerseyHolder.setInitOrder(Integer.MAX_VALUE);
-            handler.addServlet(jerseyHolder, env.getJerseyEnvironment().getUrlPattern());
+            handler.addServlet(jerseyHolder, env.jersey().getUrlPattern());
         }
 
         return handler;
@@ -242,7 +242,7 @@ public class ServerFactory {
                                         (int) config.getBufferPoolIncrement().toBytes(),
                                         (int) config.getMaxBufferPoolSize().toBytes());
 
-        final Timer httpTimer = env.getMetricRegistry()
+        final Timer httpTimer = env.metrics()
                                    .timer(name(HttpConnectionFactory.class,
                                                Integer.toString(config.getPort()),
                                                "connections"));

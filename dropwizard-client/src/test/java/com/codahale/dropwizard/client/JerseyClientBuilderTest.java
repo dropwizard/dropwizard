@@ -55,7 +55,7 @@ public class JerseyClientBuilderTest {
 
     @Before
     public void setUp() throws Exception {
-        when(environment.getLifecycleEnvironment()).thenReturn(lifecycleEnvironment);
+        when(environment.lifecycle()).thenReturn(lifecycleEnvironment);
         when(environment.getObjectMapper()).thenReturn(objectMapper);
         when(environment.getValidator()).thenReturn(validator);
     }

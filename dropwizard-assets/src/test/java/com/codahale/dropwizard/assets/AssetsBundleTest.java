@@ -23,7 +23,7 @@ public class AssetsBundleTest {
 
     @Before
     public void setUp() throws Exception {
-        when(environment.getServletEnvironment()).thenReturn(servletEnvironment);
+        when(environment.servlets()).thenReturn(servletEnvironment);
     }
 
     @Test

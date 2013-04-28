@@ -66,19 +66,19 @@ public class Environment {
         this.jerseyEnvironment = new JerseyEnvironment(jerseyServletContainer, jerseyConfig);
     }
 
-    public JerseyEnvironment getJerseyEnvironment() {
+    public JerseyEnvironment jersey() {
         return jerseyEnvironment;
     }
 
-    public AdminEnvironment getAdminEnvironment() {
+    public AdminEnvironment admin() {
         return adminEnvironment;
     }
 
-    public LifecycleEnvironment getLifecycleEnvironment() {
+    public LifecycleEnvironment lifecycle() {
         return lifecycleEnvironment;
     }
 
-    public ServletEnvironment getServletEnvironment() {
+    public ServletEnvironment servlets() {
         return servletEnvironment;
     }
 
@@ -98,11 +98,11 @@ public class Environment {
         this.validator = checkNotNull(validator);
     }
 
-    public MetricRegistry getMetricRegistry() {
+    public MetricRegistry metrics() {
         return metricRegistry;
     }
 
-    public HealthCheckRegistry getHealthCheckRegistry() {
+    public HealthCheckRegistry healthChecks() {
         return healthCheckRegistry;
     }
 

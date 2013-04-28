@@ -14,7 +14,7 @@ public class ViewBundleTest {
 
     @Before
     public void setUp() throws Exception {
-        when(environment.getJerseyEnvironment()).thenReturn(jerseyEnvironment);
+        when(environment.jersey()).thenReturn(jerseyEnvironment);
     }
 
     @Test

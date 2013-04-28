@@ -56,14 +56,14 @@ public class HelloWorldService extends Service<HelloWorldConfiguration> {
         final PersonDAO dao = new PersonDAO(hibernateBundle.getSessionFactory());
         final Template template = configuration.buildTemplate();
 
-        environment.getAdminEnvironment().addHealthCheck("tempate", new TemplateHealthCheck(template));
+        environment.admin().addHealthCheck("template", new TemplateHealthCheck(template));
 
-        environment.getJerseyEnvironment().addProvider(new BasicAuthProvider<User>(new ExampleAuthenticator(),
-                                                                                   "SUPER SECRET STUFF"));
-        environment.getJerseyEnvironment().addResource(new HelloWorldResource(template));
-        environment.getJerseyEnvironment().addResource(new ViewResource());
-        environment.getJerseyEnvironment().addResource(new ProtectedResource());
-        environment.getJerseyEnvironment().addResource(new PeopleResource(dao));
-        environment.getJerseyEnvironment().addResource(new PersonResource(dao));
+        environment.jersey().addProvider(new BasicAuthProvider<User>(new ExampleAuthenticator(),
+                                                                     "SUPER SECRET STUFF"));
+        environment.jersey().addResource(new HelloWorldResource(template));
+        environment.jersey().addResource(new ViewResource());
+        environment.jersey().addResource(new ProtectedResource());
+        environment.jersey().addResource(new PeopleResource(dao));
+        environment.jersey().addResource(new PersonResource(dao));
     }
 }

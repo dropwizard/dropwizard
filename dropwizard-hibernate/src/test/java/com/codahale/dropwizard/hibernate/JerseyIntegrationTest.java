@@ -92,8 +92,8 @@ public class JerseyIntegrationTest extends JerseyTest {
         final HibernateBundle<?> bundle = mock(HibernateBundle.class);
         final Environment environment = mock(Environment.class);
         final LifecycleEnvironment lifecycleEnvironment = mock(LifecycleEnvironment.class);
-        when(environment.getLifecycleEnvironment()).thenReturn(lifecycleEnvironment);
-        when(environment.getMetricRegistry()).thenReturn(metricRegistry);
+        when(environment.lifecycle()).thenReturn(lifecycleEnvironment);
+        when(environment.metrics()).thenReturn(metricRegistry);
 
         dbConfig.setUrl("jdbc:hsqldb:mem:DbTest-" + System.nanoTime());
         dbConfig.setUser("sa");

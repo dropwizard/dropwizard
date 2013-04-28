@@ -48,9 +48,9 @@ public class JDBITest {
 
     @Before
     public void setUp() throws Exception {
-        when(environment.getAdminEnvironment()).thenReturn(adminEnvironment);
-        when(environment.getLifecycleEnvironment()).thenReturn(lifecycleEnvironment);
-        when(environment.getMetricRegistry()).thenReturn(metricRegistry);
+        when(environment.admin()).thenReturn(adminEnvironment);
+        when(environment.lifecycle()).thenReturn(lifecycleEnvironment);
+        when(environment.metrics()).thenReturn(metricRegistry);
 
         this.dbi = factory.build(environment, hsqlConfig, "hsql");
         final ArgumentCaptor<Managed> managedCaptor = ArgumentCaptor.forClass(Managed.class);

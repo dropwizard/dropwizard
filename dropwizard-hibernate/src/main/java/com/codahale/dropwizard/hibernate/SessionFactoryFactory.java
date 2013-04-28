@@ -30,7 +30,7 @@ public class SessionFactoryFactory {
                                 Environment environment,
                                 DatabaseConfiguration dbConfig,
                                 List<Class<?>> entities) throws ClassNotFoundException {
-        final ManagedDataSource dataSource = dataSourceFactory.build(environment.getMetricRegistry(),
+        final ManagedDataSource dataSource = dataSourceFactory.build(environment.metrics(),
                                                                      dbConfig,
                                                                      "hibernate");
         return build(bundle, environment, dbConfig, dataSource, entities);
@@ -49,7 +49,7 @@ public class SessionFactoryFactory {
                                                            dbConfig.getProperties(),
                                                            entities);
         final SessionFactoryManager managedFactory = new SessionFactoryManager(factory, dataSource);
-        environment.getLifecycleEnvironment().manage(managedFactory);
+        environment.lifecycle().manage(managedFactory);
         return factory;
     }
 

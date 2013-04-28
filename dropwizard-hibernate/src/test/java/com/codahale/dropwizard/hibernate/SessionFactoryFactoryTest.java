@@ -35,8 +35,8 @@ public class SessionFactoryFactoryTest {
 
     @Before
     public void setUp() throws Exception {
-        when(environment.getMetricRegistry()).thenReturn(metricRegistry);
-        when(environment.getLifecycleEnvironment()).thenReturn(lifecycleEnvironment);
+        when(environment.metrics()).thenReturn(metricRegistry);
+        when(environment.lifecycle()).thenReturn(lifecycleEnvironment);
 
         config.setUrl("jdbc:hsqldb:mem:DbTest-" + System.currentTimeMillis());
         config.setUser("sa");

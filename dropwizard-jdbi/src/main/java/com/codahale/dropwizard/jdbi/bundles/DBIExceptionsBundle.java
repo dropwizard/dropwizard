@@ -17,7 +17,7 @@ public class DBIExceptionsBundle implements Bundle {
 
     @Override
     public void run(Environment environment) {
-        environment.getJerseyEnvironment().addProvider(new LoggingSQLExceptionMapper());
-        environment.getJerseyEnvironment().addProvider(new LoggingDBIExceptionMapper());
+        environment.jersey().addProvider(new LoggingSQLExceptionMapper());
+        environment.jersey().addProvider(new LoggingDBIExceptionMapper());
     }
 }

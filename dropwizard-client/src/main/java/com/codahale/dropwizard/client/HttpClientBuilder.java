@@ -51,7 +51,7 @@ public class HttpClientBuilder {
     }
 
     public HttpClientBuilder(Environment environment) {
-        this.metricRegistry = environment.getMetricRegistry();
+        this.metricRegistry = environment.metrics();
     }
 
     /**
