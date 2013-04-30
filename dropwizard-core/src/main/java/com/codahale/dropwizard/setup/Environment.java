@@ -46,7 +46,8 @@ public class Environment {
     public Environment(String name,
                        ObjectMapper objectMapper,
                        Validator validator,
-                       MetricRegistry metricRegistry) {
+                       MetricRegistry metricRegistry,
+                       ClassLoader classLoader) {
         this.name = name;
         this.objectMapper = objectMapper;
         this.metricRegistry = metricRegistry;
@@ -55,11 +56,11 @@ public class Environment {
         final DropwizardResourceConfig jerseyConfig = new DropwizardResourceConfig(metricRegistry);
 
         this.servletContext = new ServletContextHandler();
-        servletContext.setClassLoader(Thread.currentThread().getContextClassLoader());
+        servletContext.setClassLoader(classLoader);
         this.servletEnvironment = new ServletEnvironment(servletContext);
 
         this.adminContext = new ServletContextHandler();
-        adminContext.setClassLoader(Thread.currentThread().getContextClassLoader());
+        adminContext.setClassLoader(classLoader);
         this.adminEnvironment = new AdminEnvironment(adminContext, healthCheckRegistry);
 
         this.lifecycleEnvironment = new LifecycleEnvironment();

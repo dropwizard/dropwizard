@@ -35,7 +35,8 @@ public abstract class EnvironmentCommand<T extends Configuration> extends Config
                                                         bootstrap.getObjectMapper(),
                                                         Validation.buildDefaultValidatorFactory()
                                                                   .getValidator(),
-                                                        bootstrap.getMetricRegistry());
+                                                        bootstrap.getMetricRegistry(),
+                                                        bootstrap.getClassLoader());
         bootstrap.runWithBundles(configuration, environment);
         service.run(configuration, environment);
         run(environment, namespace, configuration);
