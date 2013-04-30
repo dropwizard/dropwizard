@@ -74,8 +74,8 @@
         <connection>scm:git:git://github.com/codahale/dropwizard.git</connection>
         <developerConnection>scm:git:git@github.com:codahale/dropwizard.git</developerConnection>
         <url>http://github.com/codahale/dropwizard/</url>
-      <tag>HEAD</tag>
-  </scm>
+        <tag>HEAD</tag>
+    </scm>
 
     <issueManagement>
         <system>github</system>
