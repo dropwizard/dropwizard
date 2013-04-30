@@ -115,7 +115,7 @@ Your main ``Configuration`` subclass can then include this as a member field:
     public class ExampleServiceConfiguration extends Configuration {
         @Valid
         @NotNull
-        @JsonProperty
+        @JsonProperty("messageQueue")
         private MessageQueueConfiguration messageQueue = new MessageQueueConfiguration();
 
         public MessageQueueConfiguration getMessageQueueConfiguration() {
