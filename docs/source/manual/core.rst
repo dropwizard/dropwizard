@@ -115,7 +115,7 @@ Your main ``Configuration`` subclass can then include this as a member field:
     public class ExampleServiceConfiguration extends Configuration {
         @Valid
         @NotNull
-        @JsonProperty
+        @JsonProperty("messageQueue")
         private MessageQueueConfiguration messageQueue = new MessageQueueConfiguration();
 
         public MessageQueueConfiguration getMessageQueueConfiguration() {
@@ -170,6 +170,10 @@ command you need). There is a test keystore you can use in the
 
         # optional, JKS is default. JCEKS is another likely candidate.
         keyStoreType: JKS
+
+.. note::
+
+    If using SSL you will also need to set ``connectorType`` to one of the ``+ssl`` options.
 
 Bootstrapping
 =============
