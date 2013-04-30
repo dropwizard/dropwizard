@@ -1,6 +1,5 @@
 package com.codahale.dropwizard.servlets.assets;
 
-import com.codahale.dropwizard.servlets.assets.AssetServlet;
 import com.google.common.net.HttpHeaders;
 import org.eclipse.jetty.http.*;
 import org.eclipse.jetty.servlet.ServletTester;
@@ -293,5 +292,13 @@ public class AssetServletTest {
         response = HttpTester.parseResponse(servletTester.getResponses(request.generate()));
         Assertions.assertThat(response.getStatus())
                   .isEqualTo(404);
+    }
+
+    @Test
+    public void allowsEncodedAssetNames() throws Exception {
+        request.setURI(DUMMY_SERVLET + "encoded%20example.txt");
+        response = HttpTester.parseResponse(servletTester.getResponses(request.generate()));
+        Assertions.assertThat(response.getStatus())
+                  .isEqualTo(200);
     }
 }

@@ -104,7 +104,11 @@ public class AssetServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req,
                          HttpServletResponse resp) throws ServletException, IOException {
         try {
-            final CachedAsset cachedAsset = loadAsset(req.getRequestURI());
+            final StringBuilder builder = new StringBuilder(req.getServletPath());
+            if (req.getPathInfo() != null) {
+                builder.append(req.getPathInfo());
+            }
+            final CachedAsset cachedAsset = loadAsset(builder.toString());
             if (cachedAsset == null) {
                 resp.sendError(HttpServletResponse.SC_NOT_FOUND);
                 return;
