@@ -10,9 +10,7 @@ import com.codahale.dropwizard.configuration.ConfigurationSourceProvider;
 import com.codahale.dropwizard.configuration.FileConfigurationSourceProvider;
 import com.codahale.dropwizard.jackson.Jackson;
 import com.codahale.dropwizard.logging.LoggingOutput;
-import com.codahale.metrics.Metric;
 import com.codahale.metrics.MetricRegistry;
-import com.codahale.metrics.MetricSet;
 import com.codahale.metrics.jvm.BufferPoolMetricSet;
 import com.codahale.metrics.jvm.GarbageCollectorMetricSet;
 import com.codahale.metrics.jvm.MemoryUsageGaugeSet;
@@ -20,13 +18,11 @@ import com.codahale.metrics.jvm.ThreadStatesGaugeSet;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.SubtypeResolver;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.sun.jersey.spi.service.ServiceFinder;
 
 import java.lang.management.ManagementFactory;
 import java.util.List;
-import java.util.Map;
 
 public class Bootstrap<T extends Configuration> {
     private static final ImmutableList<Class<?>> SPI_CLASSES = ImmutableList.<Class<?>>of(
@@ -52,21 +48,10 @@ public class Bootstrap<T extends Configuration> {
         this.configuredBundles = Lists.newArrayList();
         this.commands = Lists.newArrayList();
         this.metricRegistry = new MetricRegistry();
-        metricRegistry.registerAll(new MetricSet() {
-            @Override
-            public Map<String, Metric> getMetrics() {
-                return ImmutableMap.<String, Metric>of(
-                        "jvm.buffers",
-                        new BufferPoolMetricSet(ManagementFactory.getPlatformMBeanServer()),
-                        "jvm.gc",
-                        new GarbageCollectorMetricSet(),
-                        "jvm.memory",
-                        new MemoryUsageGaugeSet(),
-                        "jvm.threads",
-                        new ThreadStatesGaugeSet()
-                );
-            }
-        });
+        metricRegistry.register("jvm.buffers", new BufferPoolMetricSet(ManagementFactory.getPlatformMBeanServer()));
+        metricRegistry.register("jvm.gc", new GarbageCollectorMetricSet());
+        metricRegistry.register("jvm.memory", new MemoryUsageGaugeSet());
+        metricRegistry.register("jvm.threads", new ThreadStatesGaugeSet());
     }
 
     public Service<T> getService() {
