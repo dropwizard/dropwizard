@@ -10,6 +10,7 @@ import java.util.Set;
  * An exception thrown where there is an error parsing a configuration object.
  */
 public class ConfigurationException extends Exception {
+    private static final String NEWLINE = String.format("%n");
     private static final long serialVersionUID = 5325162099634227047L;
 
     private final ImmutableSet<ConstraintViolation<?>> constraintViolations;
@@ -30,10 +31,10 @@ public class ConfigurationException extends Exception {
     }
 
     private static String formatMessage(String file, Iterable<String> errors) {
-        final StringBuilder msg = new StringBuilder(file)
-                .append(" has the following errors:\n");
+        final StringBuilder msg = new StringBuilder(file);
+        msg.append(" has the following errors:").append(NEWLINE);
         for (String error : errors) {
-            msg.append("  * ").append(error).append('\n');
+            msg.append("  * ").append(error).append(NEWLINE);
         }
         return msg.toString();
     }

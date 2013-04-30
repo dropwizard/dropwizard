@@ -24,7 +24,9 @@ public class ConfigurationExceptionTest {
         final ConfigurationException e = new ConfigurationException("config.yml", violations);
 
         assertThat(e.getMessage())
-                .isEqualTo("config.yml has the following errors:\n" +
-                                   "  * woo may not be null (was null)\n");
+                .isEqualTo(String.format(
+                        "config.yml has the following errors:%n" +
+                                "  * woo may not be null (was null)%n"
+                ));
     }
 }
