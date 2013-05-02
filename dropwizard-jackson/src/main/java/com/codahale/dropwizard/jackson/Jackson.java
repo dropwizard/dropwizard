@@ -3,6 +3,7 @@ package com.codahale.dropwizard.jackson;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.guava.GuavaModule;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
+import com.fasterxml.jackson.module.afterburner.AfterburnerModule;
 
 /**
  * A utility class for Jackson.
@@ -21,6 +22,8 @@ public class Jackson {
         mapper.registerModule(new LogbackModule());
         mapper.registerModule(new GuavaExtrasModule());
         mapper.registerModule(new JodaModule());
+
+        mapper.registerModule(new AfterburnerModule());
 
         mapper.setPropertyNamingStrategy(new AnnotationSensitivePropertyNamingStrategy());
 
