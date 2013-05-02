@@ -1,5 +1,6 @@
 package com.codahale.dropwizard.setup;
 
+import com.codahale.dropwizard.jetty.NonblockingServletHolder;
 import com.codahale.dropwizard.jetty.setup.ServletEnvironment;
 import com.codahale.dropwizard.servlets.tasks.GarbageCollectionTask;
 import com.codahale.dropwizard.servlets.tasks.Task;
@@ -7,7 +8,6 @@ import com.codahale.dropwizard.servlets.tasks.TaskServlet;
 import com.codahale.metrics.health.HealthCheck;
 import com.codahale.metrics.health.HealthCheckRegistry;
 import org.eclipse.jetty.servlet.ServletContextHandler;
-import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.component.AbstractLifeCycle;
 import org.eclipse.jetty.util.component.LifeCycle;
 import org.slf4j.Logger;
@@ -27,7 +27,7 @@ public class AdminEnvironment extends ServletEnvironment {
         this.healthChecks = healthChecks;
         this.tasks = new TaskServlet();
         tasks.add(new GarbageCollectionTask());
-        handler.addServlet(new ServletHolder(tasks), "/tasks/*");
+        handler.addServlet(new NonblockingServletHolder(tasks), "/tasks/*");
         handler.addLifeCycleListener(new AbstractLifeCycle.AbstractLifeCycleListener() {
             @Override
             public void lifeCycleStarting(LifeCycle event) {
