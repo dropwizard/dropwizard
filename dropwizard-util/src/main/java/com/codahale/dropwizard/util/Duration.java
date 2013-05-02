@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import com.google.common.base.CharMatcher;
 import com.google.common.collect.ImmutableMap;
 
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
@@ -163,7 +164,7 @@ public class Duration {
     @Override
     @JsonValue
     public String toString() {
-        String units = unit.toString().toLowerCase();
+        String units = unit.toString().toLowerCase(Locale.ENGLISH);
         if (count == 1) {
             units = units.substring(0, units.length() - 1);
         }
