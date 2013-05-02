@@ -1,5 +1,6 @@
 package com.codahale.dropwizard.servlets.assets;
 
+import com.google.common.base.Charsets;
 import com.google.common.net.HttpHeaders;
 import org.eclipse.jetty.http.*;
 import org.eclipse.jetty.servlet.ServletTester;
@@ -21,7 +22,7 @@ public class AssetServletTest {
         private static final long serialVersionUID = -1L;
 
         public DummyAssetServlet() {
-            super(RESOURCE_PATH, DUMMY_SERVLET, "index.htm");
+            super(RESOURCE_PATH, DUMMY_SERVLET, "index.htm", Charsets.UTF_8);
         }
     }
 
@@ -29,20 +30,19 @@ public class AssetServletTest {
         private static final long serialVersionUID = -1L;
 
         public NoIndexAssetServlet() {
-            super(RESOURCE_PATH, DUMMY_SERVLET, null);
+            super(RESOURCE_PATH, DUMMY_SERVLET, null, Charsets.UTF_8);
         }
     }
 
     public static class RootAssetServlet extends AssetServlet {
         public RootAssetServlet() {
-            super("/", ROOT_SERVLET, null);
+            super("/", ROOT_SERVLET, null, Charsets.UTF_8);
         }
     }
 
     public static class NoCharsetAssetServlet extends AssetServlet {
         public NoCharsetAssetServlet() {
-            super(RESOURCE_PATH, NOCHARSET_SERVLET, null);
-            setDefaultCharset(null);
+            super(RESOURCE_PATH, NOCHARSET_SERVLET, null, null);
         }
     }
 

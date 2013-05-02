@@ -1,7 +1,6 @@
 package com.codahale.dropwizard.servlets.assets;
 
 import com.google.common.base.CharMatcher;
-import com.google.common.base.Charsets;
 import com.google.common.hash.Hashing;
 import com.google.common.io.Resources;
 import com.google.common.net.HttpHeaders;
@@ -52,8 +51,7 @@ public class AssetServlet extends HttpServlet {
     private final String resourcePath;
     private final String uriPath;
     private final String indexFile;
-
-    private transient Charset defaultCharset = Charsets.UTF_8;
+    private final Charset defaultCharset;
 
     /**
      * Creates a new {@code AssetServlet} that serves static assets loaded from {@code resourceURL}
@@ -65,19 +63,22 @@ public class AssetServlet extends HttpServlet {
      * serve a file with that name in that directory. If a directory is requested and {@code
      * indexFile} is null, it will serve a 404.
      *
-     * @param resourcePath the base URL from which assets are loaded
-     * @param uriPath      the URI path fragment in which all requests are rooted
-     * @param indexFile    the filename to use when directories are requested, or null to serve no
-     *                     indexes
+     * @param resourcePath   the base URL from which assets are loaded
+     * @param uriPath        the URI path fragment in which all requests are rooted
+     * @param indexFile      the filename to use when directories are requested, or null to serve no
+     *                       indexes
+     * @param defaultCharset the default character set
      */
     public AssetServlet(String resourcePath,
                         String uriPath,
-                        String indexFile) {
+                        String indexFile,
+                        Charset defaultCharset) {
         final String trimmedPath = SLASHES.trimFrom(resourcePath);
         this.resourcePath = trimmedPath.isEmpty() ? trimmedPath : trimmedPath + '/';
         final String trimmedUri = SLASHES.trimTrailingFrom(uriPath);
         this.uriPath = trimmedUri.isEmpty() ? "/" : trimmedUri;
         this.indexFile = indexFile;
+        this.defaultCharset = defaultCharset;
     }
 
     public URL getResourceURL() {
@@ -86,14 +87,6 @@ public class AssetServlet extends HttpServlet {
 
     public String getUriPath() {
         return uriPath;
-    }
-
-    public void setDefaultCharset(Charset defaultCharset) {
-        this.defaultCharset = defaultCharset;
-    }
-
-    public Charset getDefaultCharset() {
-        return this.defaultCharset;
     }
 
     public String getIndexFile() {

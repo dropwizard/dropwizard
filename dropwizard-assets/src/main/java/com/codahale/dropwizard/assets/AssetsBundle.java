@@ -4,6 +4,7 @@ import com.codahale.dropwizard.Bundle;
 import com.codahale.dropwizard.servlets.assets.AssetServlet;
 import com.codahale.dropwizard.setup.Bootstrap;
 import com.codahale.dropwizard.setup.Environment;
+import com.google.common.base.Charsets;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
@@ -85,6 +86,6 @@ public class AssetsBundle implements Bundle {
     }
 
     private AssetServlet createServlet() {
-        return new AssetServlet(resourcePath, uriPath, indexFile);
+        return new AssetServlet(resourcePath, uriPath, indexFile, Charsets.UTF_8);
     }
 }
