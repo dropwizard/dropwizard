@@ -25,6 +25,7 @@
         <module>dropwizard-hibernate</module>
         <module>dropwizard-auth</module>
         <module>dropwizard-example</module>
+        <module>dropwizard-forms</module>
         <module>dropwizard-views</module>
         <module>dropwizard-views-freemarker</module>
         <module>dropwizard-views-mustache</module>
