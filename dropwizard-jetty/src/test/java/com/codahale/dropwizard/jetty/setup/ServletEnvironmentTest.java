@@ -1,6 +1,7 @@
 package com.codahale.dropwizard.jetty.setup;
 
 import org.eclipse.jetty.continuation.ContinuationFilter;
+import org.eclipse.jetty.security.SecurityHandler;
 import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
@@ -118,5 +119,15 @@ public class ServletEnvironmentTest {
         environment.setSessionHandler(sessionHandler);
 
         verify(handler).setSessionHandler(sessionHandler);
+    }
+
+
+    @Test
+    public void setsSecurityHandlers() throws Exception {
+        final SecurityHandler securityHandler = mock(SecurityHandler.class);
+
+        environment.setSecurityHandler(securityHandler);
+
+        verify(handler).setSecurityHandler(securityHandler);
     }
 }

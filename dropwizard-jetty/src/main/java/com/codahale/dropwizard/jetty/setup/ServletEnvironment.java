@@ -1,6 +1,7 @@
 package com.codahale.dropwizard.jetty.setup;
 
 import com.codahale.dropwizard.jetty.NonblockingServletHolder;
+import org.eclipse.jetty.security.SecurityHandler;
 import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
@@ -112,5 +113,9 @@ public class ServletEnvironment {
 
     public void setSessionHandler(SessionHandler sessionHandler) {
         handler.setSessionHandler(sessionHandler);
+    }
+
+    public void setSecurityHandler(SecurityHandler securityHandler) {
+        handler.setSecurityHandler(securityHandler);
     }
 }
