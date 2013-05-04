@@ -1,9 +1,9 @@
 package com.codahale.dropwizard.hibernate;
 
-import com.codahale.dropwizard.setup.Environment;
 import com.codahale.dropwizard.db.DatabaseConfiguration;
-import com.codahale.dropwizard.logging.LoggingFactory;
 import com.codahale.dropwizard.lifecycle.setup.LifecycleEnvironment;
+import com.codahale.dropwizard.logging.LoggingFactory;
+import com.codahale.dropwizard.setup.Environment;
 import com.codahale.metrics.MetricRegistry;
 import com.google.common.collect.ImmutableList;
 import org.hibernate.Session;

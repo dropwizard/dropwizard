@@ -9,16 +9,19 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.ConsoleAppender;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.logback.InstrumentedAppender;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import javax.management.*;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.lang.management.ManagementFactory;
+import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
-
-// TODO: 11/7/11 <coda> -- document LoggingFactory
-// TODO: 11/7/11 <coda> -- test LoggingFactory
 
 public class LoggingFactory {
     // initially configure for WARN+ console logging
@@ -29,7 +32,8 @@ public class LoggingFactory {
     public static void bootstrap(Level level) {
         hijackJDKLogging();
 
-        final Logger root = getCleanRoot();
+        final Logger root = (Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
+        root.detachAndStopAllAppenders();
 
         final LogFormatter formatter = new LogFormatter(root.getLoggerContext(),
                                                         TimeZone.getDefault());
@@ -53,27 +57,54 @@ public class LoggingFactory {
         SLF4JBridgeHandler.install();
     }
 
-    private final String name;
-    private final Iterable<LoggingOutput> outputs;
-    private final Map<String, Level> levels;
-    private final Level defaultLevel;
+    @NotNull
+    private Level level = Level.INFO;
 
-    public LoggingFactory(String name,
-                          Iterable<LoggingOutput> outputs,
-                          Map<String, Level> levels,
-                          Level defaultLevel) {
-        this.name = name;
-        this.outputs = outputs;
-        this.levels = levels;
-        this.defaultLevel = defaultLevel;
+    @NotNull
+    private ImmutableMap<String, Level> loggers = ImmutableMap.of();
+
+    @Valid
+    @NotNull
+    private ImmutableList<AppenderFactory> appenders = ImmutableList.<AppenderFactory>of(
+            new ConsoleAppenderFactory()
+    );
+
+    @JsonProperty
+    public Level getLevel() {
+        return level;
     }
 
-    public void configure(MetricRegistry metricRegistry) {
+    @JsonProperty
+    public void setLevel(Level level) {
+        this.level = level;
+    }
+
+    @JsonProperty
+    public ImmutableMap<String, Level> getLoggers() {
+        return loggers;
+    }
+
+    @JsonProperty
+    public void setLoggers(Map<String, Level> loggers) {
+        this.loggers = ImmutableMap.copyOf(loggers);
+    }
+
+    @JsonProperty
+    public ImmutableList<AppenderFactory> getAppenders() {
+        return appenders;
+    }
+
+    @JsonProperty
+    public void setAppenders(List<AppenderFactory> appenders) {
+        this.appenders = ImmutableList.copyOf(appenders);
+    }
+
+    public void configure(MetricRegistry metricRegistry, String name) {
         hijackJDKLogging();
 
         final Logger root = configureLevels();
 
-        for (LoggingOutput output : outputs) {
+        for (AppenderFactory output : appenders) {
             root.addAppender(output.build(root.getLoggerContext(), name, null));
         }
 
@@ -87,7 +118,7 @@ public class LoggingFactory {
                                      objectName);
             }
         } catch (MalformedObjectNameException | InstanceAlreadyExistsException |
-                 NotCompliantMBeanException | MBeanRegistrationException e) {
+                NotCompliantMBeanException | MBeanRegistrationException e) {
             throw new RuntimeException(e);
         }
 
@@ -111,18 +142,12 @@ public class LoggingFactory {
 
         root.getLoggerContext().addListener(propagator);
 
-        root.setLevel(defaultLevel);
+        root.setLevel(level);
 
-        for (Map.Entry<String, Level> entry : levels.entrySet()) {
+        for (Map.Entry<String, Level> entry : loggers.entrySet()) {
             ((Logger) LoggerFactory.getLogger(entry.getKey())).setLevel(entry.getValue());
         }
 
-        return root;
-    }
-
-    private static Logger getCleanRoot() {
-        final Logger root = (Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
-        root.detachAndStopAllAppenders();
         return root;
     }
 }

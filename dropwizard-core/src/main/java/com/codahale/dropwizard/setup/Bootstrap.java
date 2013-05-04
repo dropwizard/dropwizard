@@ -9,7 +9,7 @@ import com.codahale.dropwizard.cli.ConfiguredCommand;
 import com.codahale.dropwizard.configuration.ConfigurationSourceProvider;
 import com.codahale.dropwizard.configuration.FileConfigurationSourceProvider;
 import com.codahale.dropwizard.jackson.Jackson;
-import com.codahale.dropwizard.logging.LoggingOutput;
+import com.codahale.dropwizard.logging.AppenderFactory;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.jvm.BufferPoolMetricSet;
 import com.codahale.metrics.jvm.GarbageCollectorMetricSet;
@@ -26,7 +26,7 @@ import java.util.List;
 
 public class Bootstrap<T extends Configuration> {
     private static final ImmutableList<Class<?>> SPI_CLASSES = ImmutableList.<Class<?>>of(
-            LoggingOutput.class
+            AppenderFactory.class
     );
 
     private final Service<T> service;

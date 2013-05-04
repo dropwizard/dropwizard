@@ -1,7 +1,7 @@
 level: INFO
 loggers:
   com.example.app: DEBUG
-outputs:
+appenders:
   - type: console
     threshold: ALL
   - type: file

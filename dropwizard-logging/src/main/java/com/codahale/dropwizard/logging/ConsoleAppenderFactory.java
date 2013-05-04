@@ -16,7 +16,7 @@ import javax.validation.constraints.NotNull;
 import java.util.TimeZone;
 
 @JsonTypeName("console")
-public class ConsoleLoggingOutput implements LoggingOutput {
+public class ConsoleAppenderFactory implements AppenderFactory {
     @NotNull
     @JsonProperty
     private Level threshold = Level.ALL;

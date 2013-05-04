@@ -35,5 +35,5 @@ logging:
 
     org.hibernate.SQL: ALL
 
-  outputs:
+  appenders:
     - type: console

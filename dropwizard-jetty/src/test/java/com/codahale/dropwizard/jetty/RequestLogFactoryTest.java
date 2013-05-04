@@ -2,10 +2,9 @@ package com.codahale.dropwizard.jetty;
 
 import com.codahale.dropwizard.configuration.ConfigurationFactory;
 import com.codahale.dropwizard.jackson.Jackson;
-import com.codahale.dropwizard.jetty.RequestLogFactory;
-import com.codahale.dropwizard.logging.ConsoleLoggingOutput;
-import com.codahale.dropwizard.logging.FileLoggingOutput;
-import com.codahale.dropwizard.logging.SyslogLoggingOutput;
+import com.codahale.dropwizard.logging.ConsoleAppenderFactory;
+import com.codahale.dropwizard.logging.FileAppenderFactory;
+import com.codahale.dropwizard.logging.SyslogAppenderFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.io.Resources;
 import org.junit.Before;
@@ -23,9 +22,9 @@ public class RequestLogFactoryTest {
     @Before
     public void setUp() throws Exception {
         final ObjectMapper objectMapper = Jackson.newObjectMapper();
-        objectMapper.getSubtypeResolver().registerSubtypes(ConsoleLoggingOutput.class,
-                                                           FileLoggingOutput.class,
-                                                           SyslogLoggingOutput.class);
+        objectMapper.getSubtypeResolver().registerSubtypes(ConsoleAppenderFactory.class,
+                                                           FileAppenderFactory.class,
+                                                           SyslogAppenderFactory.class);
         this.requestLog = new ConfigurationFactory<>(RequestLogFactory.class,
                                                      Validation.buildDefaultValidatorFactory()
                                                                        .getValidator(),

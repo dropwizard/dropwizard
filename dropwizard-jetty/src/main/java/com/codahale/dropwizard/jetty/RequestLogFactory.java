@@ -6,8 +6,8 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.CoreConstants;
 import ch.qos.logback.core.LayoutBase;
 import ch.qos.logback.core.spi.AppenderAttachableImpl;
-import com.codahale.dropwizard.logging.ConsoleLoggingOutput;
-import com.codahale.dropwizard.logging.LoggingOutput;
+import com.codahale.dropwizard.logging.ConsoleAppenderFactory;
+import com.codahale.dropwizard.logging.AppenderFactory;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableList;
@@ -31,18 +31,18 @@ public class RequestLogFactory {
 
     @Valid
     @NotNull
-    private ImmutableList<LoggingOutput> outputs = ImmutableList.<LoggingOutput>of(
-            new ConsoleLoggingOutput()
+    private ImmutableList<AppenderFactory> appenders = ImmutableList.<AppenderFactory>of(
+            new ConsoleAppenderFactory()
     );
 
     @JsonProperty
-    public ImmutableList<LoggingOutput> getOutputs() {
-        return outputs;
+    public ImmutableList<AppenderFactory> getAppenders() {
+        return appenders;
     }
 
     @JsonProperty
-    public void setOutputs(ImmutableList<LoggingOutput> outputs) {
-        this.outputs = outputs;
+    public void setAppenders(ImmutableList<AppenderFactory> appenders) {
+        this.appenders = appenders;
     }
 
     @JsonProperty
@@ -57,7 +57,7 @@ public class RequestLogFactory {
 
     @JsonIgnore
     public boolean isEnabled() {
-        return !outputs.isEmpty();
+        return !appenders.isEmpty();
     }
 
     public RequestLogHandler build(String name) {
@@ -70,7 +70,7 @@ public class RequestLogFactory {
         final RequestLogLayout layout = new RequestLogLayout();
         layout.start();
 
-        for (LoggingOutput output : outputs) {
+        for (AppenderFactory output : this.appenders) {
             appenders.addAppender(output.build(context, name, layout));
         }
 

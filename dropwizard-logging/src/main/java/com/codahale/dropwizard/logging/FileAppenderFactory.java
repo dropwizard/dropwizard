@@ -22,7 +22,7 @@ import javax.validation.constraints.NotNull;
 import java.util.TimeZone;
 
 @JsonTypeName("file")
-public class FileLoggingOutput implements LoggingOutput {
+public class FileAppenderFactory implements AppenderFactory {
     @NotNull
     @JsonProperty
     private Level threshold = Level.ALL;

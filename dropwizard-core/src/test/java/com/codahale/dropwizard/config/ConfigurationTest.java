@@ -2,7 +2,7 @@ package com.codahale.dropwizard.config;
 
 import com.codahale.dropwizard.Configuration;
 import com.codahale.dropwizard.jackson.Jackson;
-import com.codahale.dropwizard.logging.LoggingOutput;
+import com.codahale.dropwizard.logging.AppenderFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.jersey.spi.service.ServiceFinder;
 import org.junit.Test;
@@ -20,7 +20,7 @@ public class ConfigurationTest {
 
     @Test
     public void hasALoggingConfiguration() throws Exception {
-        assertThat(configuration.getLoggingConfiguration())
+        assertThat(configuration.getLoggingFactory())
                 .isNotNull();
     }
 
@@ -28,7 +28,7 @@ public class ConfigurationTest {
     public void ensureConfigSerializable() throws Exception {
         final ObjectMapper mapper = Jackson.newObjectMapper();
         mapper.getSubtypeResolver()
-              .registerSubtypes(ServiceFinder.find(LoggingOutput.class).toClassArray());
+              .registerSubtypes(ServiceFinder.find(AppenderFactory.class).toClassArray());
 
         // Issue-96: some types were not serializable
         final String json = mapper.writeValueAsString(configuration);

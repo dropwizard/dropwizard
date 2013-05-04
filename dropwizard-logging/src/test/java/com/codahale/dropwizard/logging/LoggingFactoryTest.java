@@ -1,11 +1,8 @@
-package com.codahale.dropwizard.config;
+package com.codahale.dropwizard.logging;
 
 import ch.qos.logback.classic.Level;
 import com.codahale.dropwizard.configuration.ConfigurationFactory;
 import com.codahale.dropwizard.jackson.Jackson;
-import com.codahale.dropwizard.logging.ConsoleLoggingOutput;
-import com.codahale.dropwizard.logging.FileLoggingOutput;
-import com.codahale.dropwizard.logging.SyslogLoggingOutput;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.Resources;
@@ -17,21 +14,21 @@ import java.io.File;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
-public class LoggingConfigurationTest {
+public class LoggingFactoryTest {
     private final ObjectMapper objectMapper = Jackson.newObjectMapper();
-    private final ConfigurationFactory<LoggingConfiguration> factory =
-            new ConfigurationFactory<>(LoggingConfiguration.class,
+    private final ConfigurationFactory<LoggingFactory> factory =
+            new ConfigurationFactory<>(LoggingFactory.class,
                                        Validation.buildDefaultValidatorFactory().getValidator(),
                                        objectMapper, "dw");
-    private LoggingConfiguration config;
+    private LoggingFactory config;
 
     @Before
     public void setUp() throws Exception {
-        objectMapper.getSubtypeResolver().registerSubtypes(ConsoleLoggingOutput.class,
-                                                           FileLoggingOutput.class,
-                                                           SyslogLoggingOutput.class);
+        objectMapper.getSubtypeResolver().registerSubtypes(ConsoleAppenderFactory.class,
+                                                           FileAppenderFactory.class,
+                                                           SyslogAppenderFactory.class);
 
-        this.config = factory.build(new File(Resources.getResource("logging.yml").toURI()));
+        this.config = factory.build(new File(Resources.getResource("yaml/logging.yml").toURI()));
     }
 
     @Test

@@ -7,6 +7,8 @@ import ch.qos.logback.core.Layout;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
-public interface LoggingOutput {
-    Appender<ILoggingEvent> build(LoggerContext context, String serviceName, Layout<ILoggingEvent> layout);
+public interface AppenderFactory {
+    Appender<ILoggingEvent> build(LoggerContext context,
+                                  String serviceName,
+                                  Layout<ILoggingEvent> layout);
 }

@@ -1,5 +1,5 @@
 requestLog:
-  outputs:
+  appenders:
     - type: console
     - type: file
       currentLogFilename: ./logs/requests.log

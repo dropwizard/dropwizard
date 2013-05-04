@@ -103,8 +103,7 @@ public class ServerFactory {
                                               adminConnector,
                                               adminHandler);
         if (config.getRequestLogFactory().isEnabled()) {
-            final RequestLogHandler requestLogHandler = config.getRequestLogFactory().build(
-                    name);
+            final RequestLogHandler requestLogHandler = config.getRequestLogFactory().build(name);
             requestLogHandler.setHandler(handler);
             server.setHandler(requestLogHandler);
         } else {

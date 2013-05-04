@@ -1,3 +1,0 @@
-com.codahale.dropwizard.logging.ConsoleLoggingOutput
-com.codahale.dropwizard.logging.FileLoggingOutput
-com.codahale.dropwizard.logging.SyslogLoggingOutput

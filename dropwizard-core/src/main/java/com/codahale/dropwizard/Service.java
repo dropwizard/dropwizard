@@ -3,9 +3,9 @@ package com.codahale.dropwizard;
 import com.codahale.dropwizard.cli.CheckCommand;
 import com.codahale.dropwizard.cli.Cli;
 import com.codahale.dropwizard.cli.ServerCommand;
+import com.codahale.dropwizard.logging.LoggingFactory;
 import com.codahale.dropwizard.setup.Bootstrap;
 import com.codahale.dropwizard.setup.Environment;
-import com.codahale.dropwizard.logging.LoggingFactory;
 import com.codahale.dropwizard.util.Generics;
 import com.codahale.dropwizard.util.JarLocation;
 

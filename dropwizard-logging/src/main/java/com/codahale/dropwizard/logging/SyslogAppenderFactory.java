@@ -18,7 +18,7 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 @JsonTypeName("syslog")
-public class SyslogLoggingOutput implements LoggingOutput {
+public class SyslogAppenderFactory implements AppenderFactory {
     public enum Facility {
         AUTH, AUTHPRIV, DAEMON, CRON, FTP, LPR, KERN, MAIL, NEWS, SYSLOG, USER, UUCP,
         LOCAL0, LOCAL1, LOCAL2, LOCAL3, LOCAL4, LOCAL5, LOCAL6, LOCAL7;
