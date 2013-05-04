@@ -36,7 +36,7 @@ public class ServerConfigurationTest {
 
     @Test
     public void loadsGzipConfig() throws Exception {
-        assertThat(http.getGzipConfiguration().isEnabled())
+        assertThat(http.getGzipHandlerFactory().isEnabled())
                 .isFalse();
     }
 

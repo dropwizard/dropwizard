@@ -9,7 +9,7 @@ import com.codahale.dropwizard.validation.MinDuration;
 import com.codahale.dropwizard.validation.MinSize;
 import com.codahale.dropwizard.validation.PortRange;
 import com.codahale.dropwizard.validation.ValidationMethod;
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Optional;
 
@@ -19,357 +19,375 @@ import javax.validation.constraints.NotNull;
 import java.util.concurrent.TimeUnit;
 
 /**
- * An object representation of the {@code http} section of the YAML configuration file.
+ * An object representation of the {@code server} section of the YAML configuration file.
  */
-@JsonAutoDetect(getterVisibility = JsonAutoDetect.Visibility.NONE,
-                isGetterVisibility = JsonAutoDetect.Visibility.NONE,
-                setterVisibility = JsonAutoDetect.Visibility.NONE)
-@SuppressWarnings("UnusedDeclaration")
 public class ServerConfiguration {
     @Valid
     @NotNull
-    @JsonProperty
     private RequestLogFactory requestLog = new RequestLogFactory();
 
     @Valid
     @NotNull
-    @JsonProperty
     private GzipHandlerFactory gzip = new GzipHandlerFactory();
 
     @PortRange
-    @JsonProperty
     private int port = 8080;
 
     @PortRange
-    @JsonProperty
     private int adminPort = 8081;
 
     @Min(2)
-    @JsonProperty
     private int maxThreads = 1024;
 
     @Min(1)
-    @JsonProperty
     private int minThreads = 8;
 
     @Min(1)
-    @JsonProperty
     private int acceptorThreads = Math.max(1, Runtime.getRuntime().availableProcessors() / 2);
 
     @Min(1)
-    @JsonProperty
     private int selectorThreads = Runtime.getRuntime().availableProcessors();
 
     @Min(-1)
-    @JsonProperty
     private int acceptQueueSize = -1;
 
-    @JsonProperty
     private boolean reuseAddress = true;
-
-    @JsonProperty
     private Duration soLingerTime = null;
-
-    @JsonProperty
     private boolean useServerHeader = false;
-
-    @JsonProperty
     private boolean useDateHeader = true;
-
-    @JsonProperty
     private boolean useForwardedHeaders = true;
-
-    @JsonProperty
     private boolean useDirectBuffers = false;
-
-    @JsonProperty
     private String bindHost = null;
-
-    @JsonProperty
     private String adminUsername = null;
-
-    @JsonProperty
     private String adminPassword = null;
 
     @NotNull
-    @JsonProperty
     @MinSize(128)
-    private com.codahale.dropwizard.util.Size headerCacheSize = Size.bytes(512);
+    private Size headerCacheSize = Size.bytes(512);
 
     @NotNull
-    @JsonProperty
     @MinSize(value = 8, unit = SizeUnit.KILOBYTES)
     private Size outputBufferSize = Size.kilobytes(32);
 
     @NotNull
-    @JsonProperty
     @MinSize(value = 1, unit = SizeUnit.KILOBYTES)
     private Size maxRequestHeaderSize = Size.kilobytes(8);
 
     @NotNull
-    @JsonProperty
     @MinSize(value = 1, unit = SizeUnit.KILOBYTES)
     private Size maxResponseHeaderSize = Size.kilobytes(8);
 
     @NotNull
-    @JsonProperty
     @MinSize(value = 1, unit = SizeUnit.KILOBYTES)
     private Size inputBufferSize = Size.kilobytes(8);
 
     @NotNull
-    @JsonProperty
     @MinDuration(value = 1, unit = TimeUnit.MILLISECONDS)
     private Duration idleTimeout = Duration.seconds(30);
 
     @NotNull
-    @JsonProperty
     @MinSize(value = 1, unit = SizeUnit.BYTES)
     private Size minBufferPoolSize = Size.bytes(64);
 
     @NotNull
-    @JsonProperty
     @MinSize(value = 1, unit = SizeUnit.BYTES)
     private Size bufferPoolIncrement = Size.bytes(1024);
 
     @NotNull
-    @JsonProperty
     @MinSize(value = 1, unit = SizeUnit.BYTES)
     private Size maxBufferPoolSize = Size.kilobytes(64);
 
     @NotNull
-    @JsonProperty
     private Optional<Integer> maxQueuedRequests = Optional.absent();
 
+    @JsonIgnore
     @ValidationMethod(message = "must have a smaller minThreads than maxThreads")
     public boolean isThreadPoolSizedCorrectly() {
         return minThreads <= maxThreads;
     }
 
+    @JsonIgnore
     @ValidationMethod(message = "must have adminUsername if adminPassword is defined")
     public boolean isAdminUsernameDefined() {
         return (adminPassword == null) || (adminUsername != null);
     }
 
-    public RequestLogFactory getRequestLogConfiguration() {
+    @JsonProperty("requestLog")
+    public RequestLogFactory getRequestLogFactory() {
         return requestLog;
     }
 
-    public void setRequestLogConfiguration(RequestLogFactory config) {
-        this.requestLog = config;
+    @JsonProperty("requestLog")
+    public void setRequestLogFactory(RequestLogFactory requestLog) {
+        this.requestLog = requestLog;
     }
 
-    public GzipHandlerFactory getGzipConfiguration() {
+    @JsonProperty("gzip")
+    public GzipHandlerFactory getGzipHandlerFactory() {
         return gzip;
     }
 
-    public void setGzipConfiguration(GzipHandlerFactory config) {
-        this.gzip = config;
+    @JsonProperty("gzip")
+    public void setGzipHandlerFactory(GzipHandlerFactory gzip) {
+        this.gzip = gzip;
     }
 
+    @JsonProperty
     public int getPort() {
         return port;
     }
 
+    @JsonProperty
     public void setPort(int port) {
         this.port = port;
     }
 
+    @JsonProperty
     public int getAdminPort() {
         return adminPort;
     }
 
+    @JsonProperty
     public void setAdminPort(int port) {
         this.adminPort = port;
     }
 
+    @JsonProperty
     public int getMaxThreads() {
         return maxThreads;
     }
 
+    @JsonProperty
     public void setMaxThreads(int count) {
         this.maxThreads = count;
     }
 
+    @JsonProperty
     public int getMinThreads() {
         return minThreads;
     }
 
+    @JsonProperty
     public void setMinThreads(int count) {
         this.minThreads = count;
     }
 
+    @JsonProperty
     public int getAcceptorThreads() {
         return acceptorThreads;
     }
 
+    @JsonProperty
     public void setAcceptorThreads(int count) {
         this.acceptorThreads = count;
     }
 
+    @JsonProperty
     public int getAcceptQueueSize() {
         return acceptQueueSize;
     }
 
+    @JsonProperty
     public void setAcceptQueueSize(int size) {
         this.acceptQueueSize = size;
     }
 
+    @JsonProperty("reuseAddress")
     public boolean isReuseAddressEnabled() {
         return reuseAddress;
     }
 
+    @JsonProperty
     public void setReuseAddress(boolean reuseAddress) {
         this.reuseAddress = reuseAddress;
     }
 
+    @JsonProperty
     public Optional<Duration> getSoLingerTime() {
         return Optional.fromNullable(soLingerTime);
     }
 
+    @JsonProperty
     public void setSoLingerTime(Duration duration) {
         this.soLingerTime = duration;
     }
 
+    @JsonProperty("useForwardedHeaders")
     public boolean useForwardedHeaders() {
         return useForwardedHeaders;
     }
 
+    @JsonProperty
     public void setUseForwardedHeaders(boolean useForwardedHeaders) {
         this.useForwardedHeaders = useForwardedHeaders;
     }
 
+    @JsonProperty("useDirectBuffers")
     public boolean useDirectBuffers() {
         return useDirectBuffers;
     }
 
+    @JsonProperty
     public void setUseDirectBuffers(boolean useDirectBuffers) {
         this.useDirectBuffers = useDirectBuffers;
     }
 
+    @JsonProperty
     public Optional<String> getBindHost() {
         return Optional.fromNullable(bindHost);
     }
 
+    @JsonProperty
     public void setBindHost(String host) {
         this.bindHost = host;
     }
 
+    @JsonProperty("useDateHeader")
     public boolean isDateHeaderEnabled() {
         return useDateHeader;
     }
 
+    @JsonProperty
     public void setUseDateHeader(boolean useDateHeader) {
         this.useDateHeader = useDateHeader;
     }
 
+    @JsonProperty("useServerHeader")
     public boolean isServerHeaderEnabled() {
         return useServerHeader;
     }
 
+    @JsonProperty
     public void setUseServerHeader(boolean useServerHeader) {
         this.useServerHeader = useServerHeader;
     }
 
+    @JsonProperty
     public Optional<String> getAdminUsername() {
         return Optional.fromNullable(adminUsername);
     }
 
+    @JsonProperty
     public void setAdminUsername(String username) {
         this.adminUsername = username;
     }
 
+    @JsonProperty
     public Optional<String> getAdminPassword() {
         return Optional.fromNullable(adminPassword);
     }
 
+    @JsonProperty
     public void setAdminPassword(String password) {
         this.adminPassword = password;
     }
 
+    @JsonProperty
     public Size getHeaderCacheSize() {
         return headerCacheSize;
     }
 
+    @JsonProperty
     public void setHeaderCacheSize(Size headerCacheSize) {
         this.headerCacheSize = headerCacheSize;
     }
 
+    @JsonProperty
     public Size getOutputBufferSize() {
         return outputBufferSize;
     }
 
+    @JsonProperty
     public void setOutputBufferSize(Size outputBufferSize) {
         this.outputBufferSize = outputBufferSize;
     }
 
+    @JsonProperty
     public Size getMaxRequestHeaderSize() {
         return maxRequestHeaderSize;
     }
 
+    @JsonProperty
     public void setMaxRequestHeaderSize(Size maxRequestHeaderSize) {
         this.maxRequestHeaderSize = maxRequestHeaderSize;
     }
 
+    @JsonProperty
     public Size getMaxResponseHeaderSize() {
         return maxResponseHeaderSize;
     }
 
+    @JsonProperty
     public void setMaxResponseHeaderSize(Size maxResponseHeaderSize) {
         this.maxResponseHeaderSize = maxResponseHeaderSize;
     }
 
+    @JsonProperty
     public Size getInputBufferSize() {
         return inputBufferSize;
     }
 
+    @JsonProperty
     public void setInputBufferSize(Size inputBufferSize) {
         this.inputBufferSize = inputBufferSize;
     }
 
+    @JsonProperty
     public int getSelectorThreads() {
         return selectorThreads;
     }
 
+    @JsonProperty
     public void setSelectorThreads(int selectorThreads) {
         this.selectorThreads = selectorThreads;
     }
 
+    @JsonProperty
     public Duration getIdleTimeout() {
         return idleTimeout;
     }
 
+    @JsonProperty
     public void setIdleTimeout(Duration idleTimeout) {
         this.idleTimeout = idleTimeout;
     }
 
+    @JsonProperty
     public Size getMinBufferPoolSize() {
         return minBufferPoolSize;
     }
 
+    @JsonProperty
     public void setMinBufferPoolSize(Size minBufferPoolSize) {
         this.minBufferPoolSize = minBufferPoolSize;
     }
 
+    @JsonProperty
     public Size getBufferPoolIncrement() {
         return bufferPoolIncrement;
     }
 
+    @JsonProperty
     public void setBufferPoolIncrement(Size bufferPoolIncrement) {
         this.bufferPoolIncrement = bufferPoolIncrement;
     }
 
+    @JsonProperty
     public Size getMaxBufferPoolSize() {
         return maxBufferPoolSize;
     }
 
+    @JsonProperty
     public void setMaxBufferPoolSize(Size maxBufferPoolSize) {
         this.maxBufferPoolSize = maxBufferPoolSize;
     }
 
+    @JsonProperty
     public Optional<Integer> getMaxQueuedRequests() {
         return maxQueuedRequests;
     }
 
+    @JsonProperty
     public void setMaxQueuedRequests(Optional<Integer> maxQueuedRequests) {
         this.maxQueuedRequests = maxQueuedRequests;
     }

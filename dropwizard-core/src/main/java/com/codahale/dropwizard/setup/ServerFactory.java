@@ -102,8 +102,9 @@ public class ServerFactory {
                                               applicationHandler,
                                               adminConnector,
                                               adminHandler);
-        if (config.getRequestLogConfiguration().isEnabled()) {
-            final RequestLogHandler requestLogHandler = config.getRequestLogConfiguration().build(name);
+        if (config.getRequestLogFactory().isEnabled()) {
+            final RequestLogHandler requestLogHandler = config.getRequestLogFactory().build(
+                    name);
             requestLogHandler.setHandler(handler);
             server.setHandler(requestLogHandler);
         } else {
@@ -270,7 +271,7 @@ public class ServerFactory {
 
         // TODO: 4/15/13 <coda> -- re-add instrumentation
 
-        return config.getGzipConfiguration().wrapHandler(handler);
+        return config.getGzipHandlerFactory().wrapHandler(handler);
     }
 
     private ThreadPool createThreadPool(MetricRegistry metricRegistry) {
