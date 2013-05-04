@@ -1,4 +1,4 @@
-package com.codahale.dropwizard.config;
+package com.codahale.dropwizard.jetty;
 
 import com.codahale.dropwizard.configuration.ConfigurationFactory;
 import com.codahale.dropwizard.jackson.Jackson;
@@ -13,12 +13,12 @@ import java.io.File;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
-public class GzipConfigurationTest {
-    private GzipConfiguration gzip;
+public class GzipHandlerFactoryTest {
+    private GzipHandlerFactory gzip;
 
     @Before
     public void setUp() throws Exception {
-        this.gzip = new ConfigurationFactory<>(GzipConfiguration.class,
+        this.gzip = new ConfigurationFactory<>(GzipHandlerFactory.class,
                                                Validation.buildDefaultValidatorFactory()
                                                                  .getValidator(),
                                                Jackson.newObjectMapper(), "dw")

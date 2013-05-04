@@ -1,13 +1,13 @@
 package com.codahale.dropwizard.setup;
 
-import com.codahale.dropwizard.config.GzipConfiguration;
 import com.codahale.dropwizard.config.ServerConfiguration;
 import com.codahale.dropwizard.configuration.ConfigurationException;
 import com.codahale.dropwizard.jersey.jackson.JacksonMessageBodyProvider;
-import com.codahale.dropwizard.jetty.*;
+import com.codahale.dropwizard.jetty.ContextRoutingHandler;
+import com.codahale.dropwizard.jetty.NonblockingServletHolder;
+import com.codahale.dropwizard.jetty.RoutingHandler;
 import com.codahale.dropwizard.servlets.ThreadNameFilter;
 import com.codahale.dropwizard.util.Duration;
-import com.codahale.dropwizard.util.Size;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
 import com.codahale.metrics.health.jvm.ThreadDeadlockHealthCheck;
@@ -17,7 +17,6 @@ import com.codahale.metrics.servlets.AdminServlet;
 import com.codahale.metrics.servlets.HealthCheckServlet;
 import com.codahale.metrics.servlets.MetricsServlet;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import com.sun.jersey.spi.container.servlet.ServletContainer;
 import org.eclipse.jetty.io.ArrayByteBufferPool;
 import org.eclipse.jetty.io.ByteBufferPool;
@@ -39,8 +38,6 @@ import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.util.thread.ScheduledExecutorScheduler;
 import org.eclipse.jetty.util.thread.Scheduler;
 import org.eclipse.jetty.util.thread.ThreadPool;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.servlet.DispatcherType;
 import java.util.EnumSet;
@@ -63,18 +60,12 @@ import static com.codahale.metrics.MetricRegistry.name;
  * 
  * */
 public class ServerFactory {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ServerFactory.class);
-
     private final ServerConfiguration config;
-    private final RequestLogHandlerFactory requestLogHandlerFactory;
+    private final String name;
 
     public ServerFactory(ServerConfiguration config, String name) {
         this.config = config;
-        this.requestLogHandlerFactory = new RequestLogHandlerFactory(name,
-                                                                     config.getRequestLogConfiguration()
-                                                                           .getOutputs(),
-                                                                     config.getRequestLogConfiguration()
-                                                                           .getTimeZone());
+        this.name = name;
     }
 
     public Server build(Environment env) throws ConfigurationException {
@@ -111,8 +102,8 @@ public class ServerFactory {
                                               applicationHandler,
                                               adminConnector,
                                               adminHandler);
-        if (requestLogHandlerFactory.isEnabled()) {
-            final RequestLogHandler requestLogHandler = requestLogHandlerFactory.build();
+        if (config.getRequestLogConfiguration().isEnabled()) {
+            final RequestLogHandler requestLogHandler = config.getRequestLogConfiguration().build(name);
             requestLogHandler.setHandler(handler);
             server.setHandler(requestLogHandler);
         } else {
@@ -278,31 +269,8 @@ public class ServerFactory {
                                                      adminHandler);
 
         // TODO: 4/15/13 <coda> -- re-add instrumentation
-//        final InstrumentedHandler instrumented = new InstrumentedHandler(handler);
-        final GzipConfiguration gzip = config.getGzipConfiguration();
-        if (gzip.isEnabled()) {
-            final BiDiGzipHandler gzipHandler = new BiDiGzipHandler(handler);
 
-            final Size minEntitySize = gzip.getMinimumEntitySize();
-            gzipHandler.setMinGzipSize((int) minEntitySize.toBytes());
-
-            final Size bufferSize = gzip.getBufferSize();
-            gzipHandler.setBufferSize((int) bufferSize.toBytes());
-
-            final ImmutableSet<String> userAgents = gzip.getExcludedUserAgents();
-            if (!userAgents.isEmpty()) {
-                gzipHandler.setExcluded(userAgents);
-            }
-
-            final ImmutableSet<String> mimeTypes = gzip.getCompressedMimeTypes();
-            if (!mimeTypes.isEmpty()) {
-                gzipHandler.setMimeTypes(mimeTypes);
-            }
-
-            return gzipHandler;
-        }
-
-        return handler;
+        return config.getGzipConfiguration().wrapHandler(handler);
     }
 
     private ThreadPool createThreadPool(MetricRegistry metricRegistry) {

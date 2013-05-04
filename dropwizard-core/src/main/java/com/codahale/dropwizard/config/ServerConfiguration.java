@@ -1,5 +1,7 @@
 package com.codahale.dropwizard.config;
 
+import com.codahale.dropwizard.jetty.GzipHandlerFactory;
+import com.codahale.dropwizard.jetty.RequestLogFactory;
 import com.codahale.dropwizard.util.Duration;
 import com.codahale.dropwizard.util.Size;
 import com.codahale.dropwizard.util.SizeUnit;
@@ -27,12 +29,12 @@ public class ServerConfiguration {
     @Valid
     @NotNull
     @JsonProperty
-    private RequestLogConfiguration requestLog = new RequestLogConfiguration();
+    private RequestLogFactory requestLog = new RequestLogFactory();
 
     @Valid
     @NotNull
     @JsonProperty
-    private GzipConfiguration gzip = new GzipConfiguration();
+    private GzipHandlerFactory gzip = new GzipHandlerFactory();
 
     @PortRange
     @JsonProperty
@@ -148,19 +150,19 @@ public class ServerConfiguration {
         return (adminPassword == null) || (adminUsername != null);
     }
 
-    public RequestLogConfiguration getRequestLogConfiguration() {
+    public RequestLogFactory getRequestLogConfiguration() {
         return requestLog;
     }
 
-    public void setRequestLogConfiguration(RequestLogConfiguration config) {
+    public void setRequestLogConfiguration(RequestLogFactory config) {
         this.requestLog = config;
     }
 
-    public GzipConfiguration getGzipConfiguration() {
+    public GzipHandlerFactory getGzipConfiguration() {
         return gzip;
     }
 
-    public void setGzipConfiguration(GzipConfiguration config) {
+    public void setGzipConfiguration(GzipHandlerFactory config) {
         this.gzip = config;
     }
 

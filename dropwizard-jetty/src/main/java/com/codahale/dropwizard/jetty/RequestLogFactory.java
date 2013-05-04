@@ -6,17 +6,19 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.CoreConstants;
 import ch.qos.logback.core.LayoutBase;
 import ch.qos.logback.core.spi.AppenderAttachableImpl;
+import com.codahale.dropwizard.logging.ConsoleLoggingOutput;
 import com.codahale.dropwizard.logging.LoggingOutput;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableList;
 import org.eclipse.jetty.server.handler.RequestLogHandler;
 import org.slf4j.LoggerFactory;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.util.TimeZone;
 
-// TODO: 11/7/11 <coda> -- document RequestLogHandlerFactory
-// TODO: 11/7/11 <coda> -- test RequestLogHandlerFactory
-
-public class RequestLogHandlerFactory {
+public class RequestLogFactory {
     private static class RequestLogLayout extends LayoutBase<ILoggingEvent> {
         @Override
         public String doLayout(ILoggingEvent event) {
@@ -24,23 +26,41 @@ public class RequestLogHandlerFactory {
         }
     }
 
-    private final TimeZone timeZone;
-    private final ImmutableList<LoggingOutput> outputs;
-    private final String name;
+    @NotNull
+    private TimeZone timeZone = TimeZone.getTimeZone("UTC");
 
-    public RequestLogHandlerFactory(String name,
-                                    Iterable<LoggingOutput> outputs,
-                                    TimeZone timeZone) {
-        this.name = name;
-        this.outputs = ImmutableList.copyOf(outputs);
+    @Valid
+    @NotNull
+    private ImmutableList<LoggingOutput> outputs = ImmutableList.<LoggingOutput>of(
+            new ConsoleLoggingOutput()
+    );
+
+    @JsonProperty
+    public ImmutableList<LoggingOutput> getOutputs() {
+        return outputs;
+    }
+
+    @JsonProperty
+    public void setOutputs(ImmutableList<LoggingOutput> outputs) {
+        this.outputs = outputs;
+    }
+
+    @JsonProperty
+    public TimeZone getTimeZone() {
+        return timeZone;
+    }
+
+    @JsonProperty
+    public void setTimeZone(TimeZone timeZone) {
         this.timeZone = timeZone;
     }
-    
+
+    @JsonIgnore
     public boolean isEnabled() {
         return !outputs.isEmpty();
     }
 
-    public RequestLogHandler build() {
+    public RequestLogHandler build(String name) {
         final Logger logger = (Logger) LoggerFactory.getLogger("http.request");
         logger.setAdditive(false);
         final LoggerContext context = logger.getLoggerContext();

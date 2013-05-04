@@ -1,7 +1,8 @@
-package com.codahale.dropwizard.config;
+package com.codahale.dropwizard.jetty;
 
 import com.codahale.dropwizard.configuration.ConfigurationFactory;
 import com.codahale.dropwizard.jackson.Jackson;
+import com.codahale.dropwizard.jetty.RequestLogFactory;
 import com.codahale.dropwizard.logging.ConsoleLoggingOutput;
 import com.codahale.dropwizard.logging.FileLoggingOutput;
 import com.codahale.dropwizard.logging.SyslogLoggingOutput;
@@ -16,8 +17,8 @@ import java.util.TimeZone;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
-public class RequestLogConfigurationTest {
-    private RequestLogConfiguration requestLog;
+public class RequestLogFactoryTest {
+    private RequestLogFactory requestLog;
 
     @Before
     public void setUp() throws Exception {
@@ -25,7 +26,7 @@ public class RequestLogConfigurationTest {
         objectMapper.getSubtypeResolver().registerSubtypes(ConsoleLoggingOutput.class,
                                                            FileLoggingOutput.class,
                                                            SyslogLoggingOutput.class);
-        this.requestLog = new ConfigurationFactory<>(RequestLogConfiguration.class,
+        this.requestLog = new ConfigurationFactory<>(RequestLogFactory.class,
                                                      Validation.buildDefaultValidatorFactory()
                                                                        .getValidator(),
                                                      objectMapper, "dw")
