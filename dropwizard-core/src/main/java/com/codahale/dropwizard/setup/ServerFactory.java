@@ -1,7 +1,6 @@
 package com.codahale.dropwizard.setup;
 
 import com.codahale.dropwizard.config.ServerConfiguration;
-import com.codahale.dropwizard.configuration.ConfigurationException;
 import com.codahale.dropwizard.jersey.jackson.JacksonMessageBodyProvider;
 import com.codahale.dropwizard.jetty.ContextRoutingHandler;
 import com.codahale.dropwizard.jetty.NonblockingServletHolder;
@@ -66,7 +65,7 @@ public class ServerFactory {
         this.config = config;
     }
 
-    public Server build(Environment env) throws ConfigurationException {
+    public Server build(Environment env) {
         env.healthChecks().register("deadlocks", new ThreadDeadlockHealthCheck());
         return createServer(env);
     }
