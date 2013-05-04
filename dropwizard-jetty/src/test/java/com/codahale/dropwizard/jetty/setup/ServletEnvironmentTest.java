@@ -1,8 +1,5 @@
 package com.codahale.dropwizard.jetty.setup;
 
-import com.codahale.dropwizard.jetty.setup.FilterBuilder;
-import com.codahale.dropwizard.jetty.setup.ServletBuilder;
-import com.codahale.dropwizard.jetty.setup.ServletEnvironment;
 import org.eclipse.jetty.continuation.ContinuationFilter;
 import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.servlet.FilterHolder;
@@ -20,7 +17,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 public class ServletEnvironmentTest {
-    private ServletContextHandler handler = mock(ServletContextHandler.class);
+    private final ServletContextHandler handler = mock(ServletContextHandler.class);
     private final ServletEnvironment environment = new ServletEnvironment(handler);
 
     @Test
