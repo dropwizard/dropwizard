@@ -61,11 +61,9 @@ import static com.codahale.metrics.MetricRegistry.name;
  * */
 public class ServerFactory {
     private final ServerConfiguration config;
-    private final String name;
 
-    public ServerFactory(ServerConfiguration config, String name) {
+    public ServerFactory(ServerConfiguration config) {
         this.config = config;
-        this.name = name;
     }
 
     public Server build(Environment env) throws ConfigurationException {
@@ -103,7 +101,8 @@ public class ServerFactory {
                                               adminConnector,
                                               adminHandler);
         if (config.getRequestLogFactory().isEnabled()) {
-            final RequestLogHandler requestLogHandler = config.getRequestLogFactory().build(name);
+            final RequestLogHandler requestLogHandler =
+                    config.getRequestLogFactory().build(env.getName());
             requestLogHandler.setHandler(handler);
             server.setHandler(requestLogHandler);
         } else {
