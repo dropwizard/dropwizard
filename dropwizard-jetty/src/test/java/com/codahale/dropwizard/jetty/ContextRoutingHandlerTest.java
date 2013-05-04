@@ -40,6 +40,16 @@ public class ContextRoutingHandlerTest {
     }
 
     @Test
+    public void routesToTheLongestPrefixMatch() throws Exception {
+        when(baseRequest.getRequestURI()).thenReturn("/admin/woo");
+
+        handler.handle("/admin/woo", baseRequest, request, response);
+
+        verify(handler1, never()).handle("/admin/woo", baseRequest, request, response);
+        verify(handler2).handle("/admin/woo", baseRequest, request, response);
+    }
+
+    @Test
     public void passesHandlingNonMatchingRequests() throws Exception {
         when(baseRequest.getRequestURI()).thenReturn("WAT");
 

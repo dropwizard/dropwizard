@@ -18,9 +18,11 @@ public class ContextRoutingHandler extends AbstractHandler {
     private final Trie<ContextHandler> handlers;
 
     public ContextRoutingHandler(ContextHandler... handlers) {
-        this.handlers = new ArrayTernaryTrie<>(false, handlers.length);
+        this.handlers = new ArrayTernaryTrie<>(false);
         for (ContextHandler handler : handlers) {
-            this.handlers.put(handler.getContextPath(), handler);
+            if (!this.handlers.put(handler.getContextPath(), handler)) {
+                throw new IllegalStateException("Too many handlers");
+            }
             addBean(handler);
         }
     }
