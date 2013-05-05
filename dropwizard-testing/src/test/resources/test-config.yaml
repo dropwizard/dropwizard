@@ -1,4 +1,8 @@
 message: "Yes, it's here"
-http:
+server:
   port: 0
   adminPort: 0
+  requestLog:
+    appenders: []
+logging:
+  appenders: []

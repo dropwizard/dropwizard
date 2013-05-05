@@ -1,0 +1,24 @@
+requestLog:
+  appenders:
+    - type: console
+    - type: file
+      currentLogFilename: ./logs/requests.log
+      archivedLogFilenamePattern: ./logs/requests-%d.log.gz
+      archivedFileCount: 5
+gzip:
+  enabled: false
+port: 9080
+adminPort: 9081
+maxThreads: 101
+minThreads: 89
+acceptorThreads: 2
+acceptQueueSize: 100
+reuseAddress: false
+soLingerTime: 2s
+useServerHeader: true
+useDateHeader: false
+useForwardedHeaders: false
+useDirectBuffers: false
+bindHost: "localhost"
+adminUsername: admin
+adminPassword: password

@@ -16,7 +16,7 @@ import javax.persistence.*;
 })
 public class Person {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @Column(name = "fullName", nullable = false)
