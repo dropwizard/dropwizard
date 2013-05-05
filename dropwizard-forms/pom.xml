@@ -12,6 +12,7 @@
 
     <artifactId>dropwizard-forms</artifactId>
     <packaging>pom</packaging>
+    <name>Dropwizard Multipart Form Support</name>
 
     <dependencies>
         <dependency>
