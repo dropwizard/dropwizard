@@ -5,10 +5,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
 
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME,
-              include = JsonTypeInfo.As.PROPERTY,
-              property = "type",
-              defaultImpl = HttpConnectorFactory.class)
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
 public interface ConnectorFactory {
     Connector build(Server server,
                     MetricRegistry metrics,
