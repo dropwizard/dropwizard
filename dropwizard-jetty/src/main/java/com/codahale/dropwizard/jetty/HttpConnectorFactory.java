@@ -7,7 +7,6 @@ import com.codahale.dropwizard.validation.MinDuration;
 import com.codahale.dropwizard.validation.MinSize;
 import com.codahale.dropwizard.validation.PortRange;
 import com.codahale.metrics.MetricRegistry;
-import com.codahale.metrics.Timer;
 import com.codahale.metrics.jetty9.InstrumentedConnectionFactory;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
@@ -292,38 +291,35 @@ public class HttpConnectorFactory implements ConnectorFactory {
     public Connector build(Server server,
                            MetricRegistry metrics,
                            String name) {
-        final HttpConfiguration httpConfig = new HttpConfiguration();
-        httpConfig.setHeaderCacheSize((int) headerCacheSize.toBytes());
-        httpConfig.setOutputBufferSize((int) outputBufferSize.toBytes());
-        httpConfig.setRequestHeaderSize((int) maxRequestHeaderSize.toBytes());
-        httpConfig.setResponseHeaderSize((int) maxResponseHeaderSize.toBytes());
-        httpConfig.setSendDateHeader(useDateHeader);
-        httpConfig.setSendServerVersion(useServerHeader);
+        final HttpConfiguration httpConfig = buildHttpConfiguration();
 
-        if (useForwardedHeaders) {
-            httpConfig.addCustomizer(new ForwardedRequestCustomizer());
-        }
-
-        final HttpConnectionFactory httpConnectionFactory = new HttpConnectionFactory(httpConfig);
-        httpConnectionFactory.setInputBufferSize((int) inputBufferSize.toBytes());
+        final HttpConnectionFactory httpConnectionFactory = buildHttpConnectionFactory(httpConfig);
 
         final Scheduler scheduler = new ScheduledExecutorScheduler();
 
         final ByteBufferPool bufferPool = buildBufferPool();
 
-        final Timer httpTimer = metrics.timer(name(HttpConnectionFactory.class,
-                                                   bindHost,
-                                                   Integer.toString(port),
-                                                   "connections"));
-        final InstrumentedConnectionFactory instrumentedHttp =
-                new InstrumentedConnectionFactory(httpConnectionFactory, httpTimer);
+        final String timerName = name(HttpConnectionFactory.class,
+                                      bindHost,
+                                      Integer.toString(port),
+                                      "connections");
+        return buildConnector(server, scheduler, bufferPool, name,
+                              new InstrumentedConnectionFactory(httpConnectionFactory,
+                                                                metrics.timer(timerName)));
+    }
+
+    protected ServerConnector buildConnector(Server server,
+                                             Scheduler scheduler,
+                                             ByteBufferPool bufferPool,
+                                             String name,
+                                             ConnectionFactory... factories) {
         final ServerConnector connector = new ServerConnector(server,
                                                               null,
                                                               scheduler,
                                                               bufferPool,
                                                               acceptorThreads,
                                                               selectorThreads,
-                                                              instrumentedHttp);
+                                                              factories);
         connector.setPort(port);
         connector.setHost(bindHost);
         connector.setAcceptQueueSize(acceptQueueSize);
@@ -335,6 +331,27 @@ public class HttpConnectorFactory implements ConnectorFactory {
         connector.setName(name);
 
         return connector;
+    }
+
+    protected HttpConnectionFactory buildHttpConnectionFactory(HttpConfiguration httpConfig) {
+        final HttpConnectionFactory httpConnectionFactory = new HttpConnectionFactory(httpConfig);
+        httpConnectionFactory.setInputBufferSize((int) inputBufferSize.toBytes());
+        return httpConnectionFactory;
+    }
+
+    protected HttpConfiguration buildHttpConfiguration() {
+        final HttpConfiguration httpConfig = new HttpConfiguration();
+        httpConfig.setHeaderCacheSize((int) headerCacheSize.toBytes());
+        httpConfig.setOutputBufferSize((int) outputBufferSize.toBytes());
+        httpConfig.setRequestHeaderSize((int) maxRequestHeaderSize.toBytes());
+        httpConfig.setResponseHeaderSize((int) maxResponseHeaderSize.toBytes());
+        httpConfig.setSendDateHeader(useDateHeader);
+        httpConfig.setSendServerVersion(useServerHeader);
+
+        if (useForwardedHeaders) {
+            httpConfig.addCustomizer(new ForwardedRequestCustomizer());
+        }
+        return httpConfig;
     }
 
     protected ByteBufferPool buildBufferPool() {
