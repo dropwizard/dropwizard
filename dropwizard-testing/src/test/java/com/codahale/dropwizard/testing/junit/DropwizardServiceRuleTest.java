@@ -41,7 +41,7 @@ public class DropwizardServiceRuleTest {
         final TestConfiguration config = RULE.getConfiguration();
         assertThat(config.getMessage(), is("Yes, it's here"));
         final DefaultServerFactory serverFactory = (DefaultServerFactory) config.getServerFactory();
-        final HttpConnectorFactory connectorFactory = (HttpConnectorFactory) serverFactory.getApplicationConnector();
+        final HttpConnectorFactory connectorFactory = (HttpConnectorFactory) serverFactory.getApplicationConnectors().get(0);
         assertThat(connectorFactory.getPort(), is(0));
     }
 

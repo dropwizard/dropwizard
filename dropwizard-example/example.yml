@@ -17,9 +17,13 @@ database:
   # the JDBC URL
   url: jdbc:h2:target/example
 
-#server:
-#  requestLog:
-#    outputs: []
+server:
+  applicationConnectors:
+    - type: http
+      port: 8080
+  adminConnectors:
+    - type: http
+      port: 8081
 
 # Logging settings.
 logging:

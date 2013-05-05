@@ -3,8 +3,6 @@ package com.codahale.dropwizard.server;
 import com.codahale.dropwizard.jersey.jackson.JacksonMessageBodyProvider;
 import com.codahale.dropwizard.jersey.setup.JerseyEnvironment;
 import com.codahale.dropwizard.jetty.*;
-import com.codahale.dropwizard.jetty.ConnectorFactory;
-import com.codahale.dropwizard.jetty.HttpConnectorFactory;
 import com.codahale.dropwizard.lifecycle.setup.LifecycleEnvironment;
 import com.codahale.dropwizard.servlets.ThreadNameFilter;
 import com.codahale.dropwizard.util.Size;
@@ -14,6 +12,7 @@ import com.codahale.dropwizard.validation.ValidationMethod;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheckRegistry;
 import com.codahale.metrics.health.jvm.ThreadDeadlockHealthCheck;
+import com.codahale.metrics.jetty9.InstrumentedHandler;
 import com.codahale.metrics.jetty9.InstrumentedQueuedThreadPool;
 import com.codahale.metrics.servlets.AdminServlet;
 import com.codahale.metrics.servlets.HealthCheckServlet;
@@ -23,7 +22,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Optional;
-import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.sun.jersey.spi.container.servlet.ServletContainer;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Handler;
@@ -41,6 +41,8 @@ import javax.validation.Validator;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.EnumSet;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 
 /**
@@ -58,11 +60,13 @@ public class DefaultServerFactory implements ServerFactory {
 
     @Valid
     @NotNull
-    private ConnectorFactory applicationConnector = HttpConnectorFactory.application();
+    private List<ConnectorFactory> applicationConnectors =
+            Lists.<ConnectorFactory>newArrayList(HttpConnectorFactory.application());
 
     @Valid
     @NotNull
-    private ConnectorFactory adminConnector = HttpConnectorFactory.admin();
+    private List<ConnectorFactory> adminConnectors =
+            Lists.<ConnectorFactory>newArrayList(HttpConnectorFactory.admin());
 
     @Min(2)
     private int maxThreads = 1024;
@@ -104,23 +108,23 @@ public class DefaultServerFactory implements ServerFactory {
     }
 
     @JsonProperty
-    public ConnectorFactory getApplicationConnector() {
-        return applicationConnector;
+    public List<ConnectorFactory> getApplicationConnectors() {
+        return applicationConnectors;
     }
 
     @JsonProperty
-    public void setApplicationConnector(ConnectorFactory applicationConnector) {
-        this.applicationConnector = applicationConnector;
+    public void setApplicationConnector(List<ConnectorFactory> connectors) {
+        this.applicationConnectors = connectors;
     }
 
     @JsonProperty
-    public ConnectorFactory getAdminConnector() {
-        return adminConnector;
+    public List<ConnectorFactory> getAdminConnectors() {
+        return adminConnectors;
     }
 
     @JsonProperty
-    public void setAdminConnector(ConnectorFactory adminConnector) {
-        this.adminConnector = adminConnector;
+    public void setAdminConnectors(List<ConnectorFactory> connectors) {
+        this.adminConnectors = connectors;
     }
 
     @JsonProperty
@@ -189,16 +193,31 @@ public class DefaultServerFactory implements ServerFactory {
                                                                          metricRegistry,
                                                                          healthChecks);
 
-        final Connector appConnector = applicationConnector.build(server, metricRegistry, "application");
-        server.addConnector(appConnector);
+        final List<Connector> builtApplicationConnectors = Lists.newArrayList();
+        for (ConnectorFactory factory : applicationConnectors) {
+            builtApplicationConnectors.add(factory.build(server, metricRegistry, "application"));
+        }
 
-        final Connector adConnector = adminConnector.build(server, metricRegistry, "admin");
-        server.addConnector(adConnector);
+        final List<Connector> builtAdminConnectors = Lists.newArrayList();
+        for (ConnectorFactory factory : adminConnectors) {
+            builtAdminConnectors.add(factory.build(server, metricRegistry, "admin"));
+        }
 
-        final Handler handler = createHandler(appConnector, applicationHandler,
-                                              adConnector, adminHandler);
+        final Map<Connector, Handler> handlerMap = Maps.newLinkedHashMap();
+        for (Connector connector : builtApplicationConnectors) {
+            server.addConnector(connector);
+            handlerMap.put(connector, applicationHandler);
+        }
+        for (Connector connector : builtAdminConnectors) {
+            server.addConnector(connector);
+            handlerMap.put(connector, adminHandler);
+        }
+
+        final Handler gzipHandler = gzip.wrapHandler(new RoutingHandler(handlerMap));
+        final Handler handler = new InstrumentedHandler(metricRegistry, gzipHandler);
+
         if (getRequestLogFactory().isEnabled()) {
-            final RequestLogHandler requestLogHandler = getRequestLogFactory().build(name);
+            final RequestLogHandler requestLogHandler = requestLog.build(name);
             requestLogHandler.setHandler(handler);
             server.setHandler(requestLogHandler);
         } else {
@@ -242,38 +261,6 @@ public class DefaultServerFactory implements ServerFactory {
         }
 
         return handler;
-    }
-
-    private Handler createRoutingHandler(Connector applicationConnector,
-                                         ServletContextHandler applicationHandler,
-                                         Connector adminConnector,
-                                         ServletContextHandler adminHandler) {
-
-
-        // if we're on the same connector, route by context path
-        if (applicationConnector == adminConnector) {
-            return new ContextRoutingHandler(applicationHandler, adminHandler);
-        }
-
-        // otherwise, route by connector
-        return new RoutingHandler(ImmutableMap.<Connector, Handler>of(
-                applicationConnector, applicationHandler,
-                adminConnector, adminHandler
-        ));
-    }
-
-    private Handler createHandler(Connector applicationConnector,
-                                  ServletContextHandler applicationHandler,
-                                  Connector adminConnector,
-                                  ServletContextHandler adminHandler) {
-        final Handler handler = createRoutingHandler(applicationConnector,
-                                                     applicationHandler,
-                                                     adminConnector,
-                                                     adminHandler);
-
-        // TODO: 4/15/13 <coda> -- re-add instrumentation
-
-        return getGzipHandlerFactory().wrapHandler(handler);
     }
 
     private ThreadPool createThreadPool(MetricRegistry metricRegistry) {
