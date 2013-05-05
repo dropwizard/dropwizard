@@ -25,6 +25,14 @@ public class Person {
     @Column(name = "jobTitle", nullable = false)
     private String jobTitle;
 
+    public Person() {
+    }
+
+    public Person(String fullName, String jobTitle) {
+        this.fullName = fullName;
+        this.jobTitle = jobTitle;
+    }
+
     public long getId() {
         return id;
     }
@@ -47,5 +55,27 @@ public class Person {
 
     public void setJobTitle(String jobTitle) {
         this.jobTitle = jobTitle;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Person person = (Person) o;
+
+        if (id != person.id) return false;
+        if (!fullName.equals(person.fullName)) return false;
+        if (!jobTitle.equals(person.jobTitle)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = (int) (id ^ (id >>> 32));
+        result = 31 * result + fullName.hashCode();
+        result = 31 * result + jobTitle.hashCode();
+        return result;
     }
 }
