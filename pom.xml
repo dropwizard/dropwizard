@@ -40,6 +40,7 @@
         <module>dropwizard-servlets</module>
         <module>dropwizard-lifecycle</module>
         <module>dropwizard-assets</module>
+        <module>dropwizard-spdy</module>
     </modules>
 
     <properties>

@@ -293,7 +293,16 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
                               httpConnectionFactory);
     }
 
-    private void logSupportedParameters() {
+    @Override
+    protected HttpConfiguration buildHttpConfiguration() {
+        final HttpConfiguration config = super.buildHttpConfiguration();
+        config.setSecureScheme("https");
+        config.setSecurePort(getPort());
+        config.addCustomizer(new SecureRequestCustomizer());
+        return config;
+    }
+
+    protected void logSupportedParameters() {
         if (LOGGED.compareAndSet(false, true)) {
             try {
                 final SSLContext context = SSLContext.getDefault();
