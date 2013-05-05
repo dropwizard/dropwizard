@@ -7,18 +7,15 @@ requestLog:
       archivedFileCount: 5
 gzip:
   enabled: false
-port: 9080
-adminPort: 9081
-maxThreads: 101
+applicationConnector:
+  port: 9080
+  bindHost: "localhost"
+  acceptorThreads: 2
+  acceptQueueSize: 100
+  reuseAddress: false
+  soLingerTime: 2s
+  useServerHeader: true
+  useDateHeader: false
+  useForwardedHeaders: false
 minThreads: 89
-acceptorThreads: 2
-acceptQueueSize: 100
-reuseAddress: false
-soLingerTime: 2s
-useServerHeader: true
-useDateHeader: false
-useForwardedHeaders: false
-useDirectBuffers: false
-bindHost: "localhost"
-adminUsername: admin
-adminPassword: password
+maxThreads: 101

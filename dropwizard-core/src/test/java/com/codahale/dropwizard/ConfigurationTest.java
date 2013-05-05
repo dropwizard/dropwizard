@@ -1,6 +1,7 @@
 package com.codahale.dropwizard;
 
 import com.codahale.dropwizard.jackson.Jackson;
+import com.codahale.dropwizard.jetty.ConnectorFactory;
 import com.codahale.dropwizard.logging.AppenderFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.jersey.spi.service.ServiceFinder;
@@ -28,6 +29,8 @@ public class ConfigurationTest {
         final ObjectMapper mapper = Jackson.newObjectMapper();
         mapper.getSubtypeResolver()
               .registerSubtypes(ServiceFinder.find(AppenderFactory.class).toClassArray());
+        mapper.getSubtypeResolver()
+              .registerSubtypes(ServiceFinder.find(ConnectorFactory.class).toClassArray());
 
         // Issue-96: some types were not serializable
         final String json = mapper.writeValueAsString(configuration);

@@ -2,12 +2,11 @@ package com.codahale.dropwizard.server;
 
 import com.codahale.dropwizard.configuration.ConfigurationFactory;
 import com.codahale.dropwizard.jackson.Jackson;
+import com.codahale.dropwizard.jetty.HttpConnectorFactory;
 import com.codahale.dropwizard.logging.ConsoleAppenderFactory;
 import com.codahale.dropwizard.logging.FileAppenderFactory;
 import com.codahale.dropwizard.logging.SyslogAppenderFactory;
-import com.codahale.dropwizard.util.Duration;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Optional;
 import com.google.common.io.Resources;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,7 +24,8 @@ public class DefaultServerFactoryTest {
         final ObjectMapper objectMapper = Jackson.newObjectMapper();
         objectMapper.getSubtypeResolver().registerSubtypes(ConsoleAppenderFactory.class,
                                                            FileAppenderFactory.class,
-                                                           SyslogAppenderFactory.class);
+                                                           SyslogAppenderFactory.class,
+                                                           HttpConnectorFactory.class);
 
         this.http = new ConfigurationFactory<>(DefaultServerFactory.class,
                                                Validation.buildDefaultValidatorFactory()
@@ -41,18 +41,6 @@ public class DefaultServerFactoryTest {
     }
 
     @Test
-    public void hasAServicePort() throws Exception {
-        assertThat(http.getPort())
-                .isEqualTo(9080);
-    }
-
-    @Test
-    public void hasAnAdminPort() throws Exception {
-        assertThat(http.getAdminPort())
-                .isEqualTo(9081);
-    }
-
-    @Test
     public void hasAMaximumNumberOfThreads() throws Exception {
         assertThat(http.getMaxThreads())
                 .isEqualTo(101);
@@ -62,72 +50,5 @@ public class DefaultServerFactoryTest {
     public void hasAMinimumNumberOfThreads() throws Exception {
         assertThat(http.getMinThreads())
                 .isEqualTo(89);
-    }
-
-    @Test
-    public void hasAnAcceptorThreadCount() throws Exception {
-        assertThat(http.getAcceptorThreads())
-                .isEqualTo(2);
-    }
-
-
-    @Test
-    public void hasAnAcceptQueueSize() throws Exception {
-        assertThat(http.getAcceptQueueSize())
-                .isEqualTo(100);
-    }
-
-    @Test
-    public void canReuseAddresses() throws Exception {
-        assertThat(http.isReuseAddressEnabled())
-                .isFalse();
-    }
-
-    @Test
-    public void hasAnSoLingerTime() throws Exception {
-        assertThat(http.getSoLingerTime())
-                .isEqualTo(Optional.of(Duration.seconds(2)));
-    }
-
-    @Test
-    public void canSendAServerHeader() throws Exception {
-        assertThat(http.isServerHeaderEnabled())
-                .isTrue();
-    }
-
-    @Test
-    public void canSendADateHeader() throws Exception {
-        assertThat(http.isDateHeaderEnabled())
-                .isFalse();
-    }
-
-    @Test
-    public void canForwardHeaders() throws Exception {
-        assertThat(http.useForwardedHeaders())
-                .isFalse();
-    }
-
-    @Test
-    public void canUseDirectBuffers() throws Exception {
-        assertThat(http.useDirectBuffers())
-                .isFalse();
-    }
-
-    @Test
-    public void hasABindHost() throws Exception {
-        assertThat(http.getBindHost())
-                .isEqualTo(Optional.of("localhost"));
-    }
-
-    @Test
-    public void hasAnAdminUsername() throws Exception {
-        assertThat(http.getAdminUsername())
-                .isEqualTo(Optional.of("admin"));
-    }
-
-    @Test
-    public void hasAnAdminPassword() throws Exception {
-        assertThat(http.getAdminPassword())
-                .isEqualTo(Optional.of("password"));
     }
 }
