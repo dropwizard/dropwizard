@@ -1,7 +1,8 @@
 package com.codahale.dropwizard;
 
-import com.codahale.dropwizard.server.ServerFactory;
 import com.codahale.dropwizard.logging.LoggingFactory;
+import com.codahale.dropwizard.server.DefaultServerFactory;
+import com.codahale.dropwizard.server.ServerFactory;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Objects;
 
@@ -46,7 +47,7 @@ import javax.validation.constraints.NotNull;
 public class Configuration {
     @Valid
     @NotNull
-    private ServerFactory server = new ServerFactory();
+    private ServerFactory server = new DefaultServerFactory();
 
     @Valid
     @NotNull
