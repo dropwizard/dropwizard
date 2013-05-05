@@ -1,6 +1,5 @@
-package com.codahale.dropwizard.config;
+package com.codahale.dropwizard;
 
-import com.codahale.dropwizard.Configuration;
 import com.codahale.dropwizard.jackson.Jackson;
 import com.codahale.dropwizard.logging.AppenderFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,7 +13,7 @@ public class ConfigurationTest {
 
     @Test
     public void hasAnHttpConfiguration() throws Exception {
-        assertThat(configuration.getServerConfiguration())
+        assertThat(configuration.getServerFactory())
                 .isNotNull();
     }
 

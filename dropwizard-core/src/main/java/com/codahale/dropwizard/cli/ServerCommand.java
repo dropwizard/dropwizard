@@ -3,7 +3,6 @@ package com.codahale.dropwizard.cli;
 import com.codahale.dropwizard.Configuration;
 import com.codahale.dropwizard.Service;
 import com.codahale.dropwizard.setup.Environment;
-import com.codahale.dropwizard.setup.ServerFactory;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 import net.sourceforge.argparse4j.inf.Namespace;
@@ -42,8 +41,16 @@ public class ServerCommand<T extends Configuration> extends EnvironmentCommand<T
 
     @Override
     protected void run(Environment environment, Namespace namespace, T configuration) throws Exception {
-        final ServerFactory factory = new ServerFactory(configuration.getServerConfiguration());
-        final Server server = factory.build(environment);
+        final Server server = configuration.getServerFactory().build(environment.getName(),
+                                                                     environment.metrics(),
+                                                                     environment.healthChecks(),
+                                                                     environment.lifecycle(),
+                                                                     environment.getServletContext(),
+                                                                     environment.getJerseyServletContainer(),
+                                                                     environment.getAdminContext(),
+                                                                     environment.jersey(),
+                                                                     environment.getObjectMapper(),
+                                                                     environment.getValidator());
         final Logger logger = LoggerFactory.getLogger(ServerCommand.class);
         logBanner(environment.getName(), logger);
         try {

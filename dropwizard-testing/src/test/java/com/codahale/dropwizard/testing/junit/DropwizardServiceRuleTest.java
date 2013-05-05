@@ -38,7 +38,7 @@ public class DropwizardServiceRuleTest {
     public void returnsConfiguration() {
         final TestConfiguration config = RULE.getConfiguration();
         assertThat(config.getMessage(), is("Yes, it's here"));
-        assertThat(config.getServerConfiguration().getPort(), is(0));
+        assertThat(config.getServerFactory().getPort(), is(0));
     }
 
     @Test

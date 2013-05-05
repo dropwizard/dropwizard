@@ -113,15 +113,17 @@ public class Environment {
     * Internal Accessors
     */
 
-    ServletContextHandler getServletContext() {
+    // TODO: 5/4/13 <coda> -- figure out how to make these accessors not a public API
+
+    public ServletContextHandler getServletContext() {
         return servletContext;
     }
 
-    ServletContainer getJerseyServletContainer() {
+    public ServletContainer getJerseyServletContainer() {
         return jerseyServletContainer.getContainer();
     }
 
-    ServletContextHandler getAdminContext() {
+    public ServletContextHandler getAdminContext() {
         return adminContext;
     }
 }

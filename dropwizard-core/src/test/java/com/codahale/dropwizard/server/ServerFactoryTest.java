@@ -1,7 +1,8 @@
-package com.codahale.dropwizard.config;
+package com.codahale.dropwizard.server;
 
 import com.codahale.dropwizard.configuration.ConfigurationFactory;
 import com.codahale.dropwizard.jackson.Jackson;
+import com.codahale.dropwizard.server.ServerFactory;
 import com.codahale.dropwizard.logging.ConsoleAppenderFactory;
 import com.codahale.dropwizard.logging.FileAppenderFactory;
 import com.codahale.dropwizard.logging.SyslogAppenderFactory;
@@ -17,8 +18,8 @@ import java.io.File;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
-public class ServerConfigurationTest {
-    private ServerConfiguration http;
+public class ServerFactoryTest {
+    private ServerFactory http;
 
     @Before
     public void setUp() throws Exception {
@@ -27,7 +28,7 @@ public class ServerConfigurationTest {
                                                            FileAppenderFactory.class,
                                                            SyslogAppenderFactory.class);
 
-        this.http = new ConfigurationFactory<>(ServerConfiguration.class,
+        this.http = new ConfigurationFactory<>(ServerFactory.class,
                                                Validation.buildDefaultValidatorFactory()
                                                                  .getValidator(),
                                                objectMapper, "dw")

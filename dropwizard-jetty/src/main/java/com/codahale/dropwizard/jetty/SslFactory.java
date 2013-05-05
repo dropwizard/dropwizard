@@ -1,8 +1,9 @@
-package com.codahale.dropwizard.config;
+package com.codahale.dropwizard.jetty;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
+import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.constraints.NotNull;
@@ -13,7 +14,7 @@ import java.util.List;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 @SuppressWarnings("UnusedDeclaration")
-public class SslConfiguration {
+public class SslFactory {
     @NotNull
     @JsonProperty
     private Optional<File> keyStore = Optional.absent();
@@ -243,5 +244,10 @@ public class SslConfiguration {
 
     public void setValidatePeers(Optional<Boolean> validatePeers) {
         this.validatePeers = validatePeers;
+    }
+
+    public SslContextFactory build() {
+        // TODO: 5/4/13 <coda> -- implement SSL
+        throw new UnsupportedOperationException();
     }
 }

@@ -1,7 +1,7 @@
 package com.codahale.dropwizard;
 
+import com.codahale.dropwizard.server.ServerFactory;
 import com.codahale.dropwizard.logging.LoggingFactory;
-import com.codahale.dropwizard.config.ServerConfiguration;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Objects;
 
@@ -46,7 +46,7 @@ import javax.validation.constraints.NotNull;
 public class Configuration {
     @Valid
     @NotNull
-    private ServerConfiguration server = new ServerConfiguration();
+    private ServerFactory server = new ServerFactory();
 
     @Valid
     @NotNull
@@ -58,7 +58,7 @@ public class Configuration {
      * @return server-specific configuration parameters
      */
     @JsonProperty("server")
-    public ServerConfiguration getServerConfiguration() {
+    public ServerFactory getServerFactory() {
         return server;
     }
 
@@ -66,8 +66,8 @@ public class Configuration {
      * Sets the HTTP-specific section of the configuration file.
      */
     @JsonProperty("server")
-    public void setHttpConfiguration(ServerConfiguration config) {
-        this.server = config;
+    public void setServerFactory(ServerFactory factory) {
+        this.server = factory;
     }
 
     /**
@@ -84,8 +84,8 @@ public class Configuration {
      * Sets the logging-specific section of the configuration file.
      */
     @JsonProperty("logging")
-    public void setLoggingFactory(LoggingFactory logging) {
-        this.logging = logging;
+    public void setLoggingFactory(LoggingFactory factory) {
+        this.logging = factory;
     }
 
     @Override
