@@ -19,6 +19,9 @@ import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.util.Locale;
 
+/**
+ * A {@link ViewRenderer} which renders Freemarker ({@code .ftl}) templates.
+ */
 public class FreemarkerViewRenderer implements ViewRenderer {
     private static class TemplateLoader extends CacheLoader<Class<?>, Configuration> {
         @Override
