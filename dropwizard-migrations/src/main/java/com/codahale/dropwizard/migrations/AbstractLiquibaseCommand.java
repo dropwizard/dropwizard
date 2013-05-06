@@ -33,6 +33,7 @@ public abstract class AbstractLiquibaseCommand<T extends Configuration> extends 
         final DatabaseConfiguration dbConfig = strategy.getDatabaseConfiguration(configuration);
         dbConfig.setMaxSize(1);
         dbConfig.setMinSize(1);
+        dbConfig.setInitialSize(1);
 
         ManagedLiquibase managedLiquibase = null;
         try {
