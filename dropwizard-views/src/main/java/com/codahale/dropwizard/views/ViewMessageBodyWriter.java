@@ -2,7 +2,6 @@ package com.codahale.dropwizard.views;
 
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
 import com.sun.jersey.spi.service.ServiceFinder;
 
@@ -32,21 +31,14 @@ public class ViewMessageBodyWriter implements MessageBodyWriter<View> {
             "</html>";
 
     @Context
-    @SuppressWarnings("FieldMayBeFinal")
+    @SuppressWarnings("UnusedDeclaration")
     private HttpHeaders headers;
 
     private final ImmutableList<ViewRenderer> renderers;
     private final MetricRegistry metricRegistry;
 
-    @SuppressWarnings("UnusedDeclaration")
     public ViewMessageBodyWriter(MetricRegistry metricRegistry) {
-        this(metricRegistry, null);
-    }
-
-    @VisibleForTesting
-    public ViewMessageBodyWriter(MetricRegistry metricRegistry, HttpHeaders headers) {
         this.metricRegistry = metricRegistry;
-        this.headers = headers;
         this.renderers = ImmutableList.copyOf(ServiceFinder.find(ViewRenderer.class));
     }
 
