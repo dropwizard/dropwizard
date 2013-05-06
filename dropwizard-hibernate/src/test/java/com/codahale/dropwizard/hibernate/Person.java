@@ -1,7 +1,7 @@
 package com.codahale.dropwizard.hibernate;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.joda.time.DateTime;
+import org.joda.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -18,7 +18,7 @@ public class Person {
     private String email;
 
     @Column
-    private DateTime birthday;
+    private LocalDateTime birthday;
 
     @JsonProperty
     public String getName() {
@@ -41,12 +41,12 @@ public class Person {
     }
 
     @JsonProperty
-    public DateTime getBirthday() {
+    public LocalDateTime getBirthday() {
         return birthday;
     }
 
     @JsonProperty
-    public void setBirthday(DateTime birthday) {
+    public void setBirthday(LocalDateTime birthday) {
         this.birthday = birthday;
     }
 }

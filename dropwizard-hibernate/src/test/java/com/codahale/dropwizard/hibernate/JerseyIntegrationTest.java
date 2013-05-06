@@ -16,8 +16,7 @@ import com.sun.jersey.test.framework.JerseyTest;
 import com.sun.jersey.test.framework.LowLevelAppDescriptor;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
+import org.joda.time.LocalDateTime;
 import org.junit.After;
 import org.junit.Test;
 
@@ -112,7 +111,7 @@ public class JerseyIntegrationTest extends JerseyTest {
         try {
             session.createSQLQuery("DROP TABLE people IF EXISTS").executeUpdate();
             session.createSQLQuery(
-                    "CREATE TABLE people (name varchar(100) primary key, email varchar(100), birthday timestamp with time zone)")
+                    "CREATE TABLE people (name varchar(100) primary key, email varchar(100), birthday timestamp)")
                    .executeUpdate();
             session.createSQLQuery(
                     "INSERT INTO people VALUES ('Coda', 'coda@example.com', '1979-01-02 00:22:00')")
@@ -147,7 +146,7 @@ public class JerseyIntegrationTest extends JerseyTest {
                 .isEqualTo("coda@example.com");
 
         assertThat(coda.getBirthday())
-                .isEqualTo(new DateTime(1979, 1, 2, 0, 22, DateTimeZone.UTC));
+                .isEqualTo(new LocalDateTime(1979, 1, 2, 0, 22));
     }
 
     @Test
@@ -168,7 +167,7 @@ public class JerseyIntegrationTest extends JerseyTest {
         final Person person = new Person();
         person.setName("Hank");
         person.setEmail("hank@example.com");
-        person.setBirthday(new DateTime(1971, 3, 14, 19, 12, DateTimeZone.UTC));
+        person.setBirthday(new LocalDateTime(1971, 3, 14, 19, 12));
 
         client().resource("/people/Hank").type(MediaType.APPLICATION_JSON).put(person);
 
