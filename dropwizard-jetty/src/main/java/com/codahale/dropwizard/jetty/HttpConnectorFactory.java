@@ -15,6 +15,7 @@ import org.eclipse.jetty.io.ByteBufferPool;
 import org.eclipse.jetty.server.*;
 import org.eclipse.jetty.util.thread.ScheduledExecutorScheduler;
 import org.eclipse.jetty.util.thread.Scheduler;
+import org.eclipse.jetty.util.thread.ThreadPool;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -24,13 +25,13 @@ import static com.codahale.metrics.MetricRegistry.name;
 
 @JsonTypeName("http")
 public class HttpConnectorFactory implements ConnectorFactory {
-    public static HttpConnectorFactory application() {
+    public static ConnectorFactory application() {
         final HttpConnectorFactory factory = new HttpConnectorFactory();
         factory.port = 8080;
         return factory;
     }
 
-    public static HttpConnectorFactory admin() {
+    public static ConnectorFactory admin() {
         final HttpConnectorFactory factory = new HttpConnectorFactory();
         factory.port = 8081;
         return factory;
@@ -285,7 +286,8 @@ public class HttpConnectorFactory implements ConnectorFactory {
     @Override
     public Connector build(Server server,
                            MetricRegistry metrics,
-                           String name) {
+                           String name,
+                           ThreadPool threadPool) {
         final HttpConfiguration httpConfig = buildHttpConfiguration();
 
         final HttpConnectionFactory httpConnectionFactory = buildHttpConnectionFactory(httpConfig);
@@ -298,7 +300,7 @@ public class HttpConnectorFactory implements ConnectorFactory {
                                       bindHost,
                                       Integer.toString(port),
                                       "connections");
-        return buildConnector(server, scheduler, bufferPool, name,
+        return buildConnector(server, scheduler, bufferPool, name, threadPool,
                               new InstrumentedConnectionFactory(httpConnectionFactory,
                                                                 metrics.timer(timerName)));
     }
@@ -307,9 +309,10 @@ public class HttpConnectorFactory implements ConnectorFactory {
                                              Scheduler scheduler,
                                              ByteBufferPool bufferPool,
                                              String name,
+                                             ThreadPool threadPool,
                                              ConnectionFactory... factories) {
         final ServerConnector connector = new ServerConnector(server,
-                                                              null,
+                                                              threadPool,
                                                               scheduler,
                                                               bufferPool,
                                                               acceptorThreads,

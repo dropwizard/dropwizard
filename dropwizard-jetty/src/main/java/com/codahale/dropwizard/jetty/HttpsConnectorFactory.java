@@ -11,6 +11,7 @@ import org.eclipse.jetty.server.*;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.util.thread.ScheduledExecutorScheduler;
 import org.eclipse.jetty.util.thread.Scheduler;
+import org.eclipse.jetty.util.thread.ThreadPool;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -265,7 +266,7 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
     }
 
     @Override
-    public Connector build(Server server, MetricRegistry metrics, String name) {
+    public Connector build(Server server, MetricRegistry metrics, String name, ThreadPool threadPool) {
         logSupportedParameters();
 
         final HttpConfiguration httpConfig = buildHttpConfiguration();
@@ -287,7 +288,7 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
                                       Integer.toString(getPort()),
                                       "connections");
 
-        return buildConnector(server, scheduler, bufferPool, name,
+        return buildConnector(server, scheduler, bufferPool, name, threadPool,
                               new InstrumentedConnectionFactory(sslConnectionFactory,
                                                                 metrics.timer(timerName)),
                               httpConnectionFactory);

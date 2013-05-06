@@ -11,6 +11,7 @@ import org.eclipse.jetty.spdy.server.http.HTTPSPDYServerConnectionFactory;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.util.thread.ScheduledExecutorScheduler;
 import org.eclipse.jetty.util.thread.Scheduler;
+import org.eclipse.jetty.util.thread.ThreadPool;
 
 import static com.codahale.metrics.MetricRegistry.name;
 
@@ -19,7 +20,7 @@ public class Spdy3ConnectorFactory extends HttpsConnectorFactory {
     // TODO: 5/5/13 <coda> -- add support for push strategies
 
     @Override
-    public Connector build(Server server, MetricRegistry metrics, String name) {
+    public Connector build(Server server, MetricRegistry metrics, String name, ThreadPool threadPool) {
         logSupportedParameters();
 
         final HttpConfiguration httpConfig = buildHttpConfiguration();
@@ -53,7 +54,7 @@ public class Spdy3ConnectorFactory extends HttpsConnectorFactory {
                                       Integer.toString(getPort()),
                                       "connections");
 
-        return buildConnector(server, scheduler, bufferPool, name,
+        return buildConnector(server, scheduler, bufferPool, name, threadPool,
                               new InstrumentedConnectionFactory(sslConnectionFactory,
                                                                 metrics.timer(timerName)),
                               npnFactory,

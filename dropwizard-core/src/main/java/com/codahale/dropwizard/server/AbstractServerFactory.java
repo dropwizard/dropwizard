@@ -13,6 +13,7 @@ import com.codahale.dropwizard.validation.MinSize;
 import com.codahale.dropwizard.validation.ValidationMethod;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheckRegistry;
+import com.codahale.metrics.jetty9.InstrumentedHandler;
 import com.codahale.metrics.jetty9.InstrumentedQueuedThreadPool;
 import com.codahale.metrics.servlets.AdminServlet;
 import com.codahale.metrics.servlets.HealthCheckServlet;
@@ -21,13 +22,16 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.jersey.spi.container.servlet.ServletContainer;
+import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ErrorHandler;
+import org.eclipse.jetty.server.handler.RequestLogHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.BlockingArrayQueue;
 import org.eclipse.jetty.util.thread.ThreadPool;
 
+import javax.annotation.Nullable;
 import javax.servlet.DispatcherType;
 import javax.validation.Valid;
 import javax.validation.Validator;
@@ -139,7 +143,7 @@ public abstract class AbstractServerFactory implements ServerFactory {
                                                           ObjectMapper objectMapper,
                                                           Validator validator,
                                                           ServletContextHandler handler,
-                                                          ServletContainer jerseyContainer) {
+                                                          @Nullable ServletContainer jerseyContainer) {
         handler.addFilter(ThreadNameFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST));
         if (jerseyContainer != null) {
             jersey.addProvider(new JacksonMessageBodyProvider(objectMapper, validator));
@@ -170,5 +174,16 @@ public abstract class AbstractServerFactory implements ServerFactory {
         server.addBean(errorHandler);
         server.setStopAtShutdown(true);
         return server;
+    }
+
+    protected Handler wrapAndInstrument(Handler handler, MetricRegistry metricRegistry, String name) {
+        final Handler gzipHandler = getGzipHandlerFactory().wrapHandler(handler);
+        final Handler instrumentedHandler = new InstrumentedHandler(metricRegistry, gzipHandler);
+        if (getRequestLogFactory().isEnabled()) {
+            final RequestLogHandler requestLogHandler = getRequestLogFactory().build(name);
+            requestLogHandler.setHandler(instrumentedHandler);
+            return requestLogHandler;
+        }
+        return instrumentedHandler;
     }
 }

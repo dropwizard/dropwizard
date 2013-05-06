@@ -7,23 +7,26 @@ import com.codahale.dropwizard.jetty.HttpConnectorFactory;
 import com.codahale.dropwizard.lifecycle.setup.LifecycleEnvironment;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheckRegistry;
-import com.codahale.metrics.jetty9.InstrumentedHandler;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.jersey.spi.container.servlet.ServletContainer;
 import org.eclipse.jetty.server.Connector;
-import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.handler.RequestLogHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.util.thread.ThreadPool;
 import org.hibernate.validator.constraints.NotEmpty;
 
+import javax.annotation.Nullable;
 import javax.validation.Valid;
 import javax.validation.Validator;
 import javax.validation.constraints.NotNull;
 
+/**
+ * A single-connector implementation of {@link ServerFactory}, suitable for PaaS deployments
+ * (e.g., Heroku) where services are limited to a single, runtime-defined port. A startup script
+ * can override the port via {@code -Ddw.server.connector.port=$PORT}.
+ */
 @JsonTypeName("simple")
 public class SimpleServerFactory extends AbstractServerFactory {
     @Valid
@@ -72,7 +75,7 @@ public class SimpleServerFactory extends AbstractServerFactory {
                         HealthCheckRegistry healthChecks,
                         LifecycleEnvironment lifecycle,
                         ServletContextHandler applicationContext,
-                        ServletContainer jerseyContainer,
+                        @Nullable ServletContainer jerseyContainer,
                         ServletContextHandler adminContext,
                         JerseyEnvironment jersey,
                         ObjectMapper objectMapper,
@@ -93,21 +96,12 @@ public class SimpleServerFactory extends AbstractServerFactory {
                                                                          healthChecks);
         adminHandler.setContextPath(adminRoot);
 
-        final Connector conn = connector.build(server, metricRegistry, name);
+        final Connector conn = connector.build(server, metricRegistry, name, server.getThreadPool());
         server.addConnector(conn);
 
         final ContextRoutingHandler routingHandler = new ContextRoutingHandler(applicationHandler,
                                                                                adminHandler);
-        final Handler gzipHandler = getGzipHandlerFactory().wrapHandler(routingHandler);
-        final Handler handler = new InstrumentedHandler(metricRegistry, gzipHandler);
-
-        if (getRequestLogFactory().isEnabled()) {
-            final RequestLogHandler requestLogHandler = getRequestLogFactory().build(name);
-            requestLogHandler.setHandler(handler);
-            server.setHandler(requestLogHandler);
-        } else {
-            server.setHandler(handler);
-        }
+        server.setHandler(wrapAndInstrument(routingHandler, metricRegistry, name));
 
         return server;
     }

@@ -7,7 +7,6 @@ import com.codahale.dropwizard.jetty.RoutingHandler;
 import com.codahale.dropwizard.lifecycle.setup.LifecycleEnvironment;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheckRegistry;
-import com.codahale.metrics.jetty9.InstrumentedHandler;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -17,31 +16,43 @@ import com.sun.jersey.spi.container.servlet.ServletContainer;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.handler.RequestLogHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
+import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.util.thread.ThreadPool;
 
+import javax.annotation.Nullable;
 import javax.validation.Valid;
 import javax.validation.Validator;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Map;
 
 /**
- * An object representation of the {@code server} section of the YAML configuration file.
+ * The default implementation of {@link ServerFactory}, which allows for multiple sets of
+ * application and admin connectors, all running on separate ports. Admin connectors use a separate
+ * thread pool to keep the control and data planes separate(ish).
+ *
+ * @see ServerFactory
+ * @see SimpleServerFactory
  */
 @JsonTypeName("default")
 public class DefaultServerFactory extends AbstractServerFactory {
-
     @Valid
     @NotNull
     private List<ConnectorFactory> applicationConnectors =
-            Lists.<ConnectorFactory>newArrayList(HttpConnectorFactory.application());
+            Lists.newArrayList(HttpConnectorFactory.application());
 
     @Valid
     @NotNull
     private List<ConnectorFactory> adminConnectors =
-            Lists.<ConnectorFactory>newArrayList(HttpConnectorFactory.admin());
+            Lists.newArrayList(HttpConnectorFactory.admin());
+
+    @Min(2)
+    private int adminMaxThreads = 64;
+
+    @Min(1)
+    private int adminMinThreads = 1;
 
     @JsonProperty
     public List<ConnectorFactory> getApplicationConnectors() {
@@ -49,7 +60,7 @@ public class DefaultServerFactory extends AbstractServerFactory {
     }
 
     @JsonProperty
-    public void setApplicationConnector(List<ConnectorFactory> connectors) {
+    public void setApplicationConnectors(List<ConnectorFactory> connectors) {
         this.applicationConnectors = connectors;
     }
 
@@ -63,13 +74,33 @@ public class DefaultServerFactory extends AbstractServerFactory {
         this.adminConnectors = connectors;
     }
 
+    @JsonProperty
+    public int getAdminMaxThreads() {
+        return adminMaxThreads;
+    }
+
+    @JsonProperty
+    public void setAdminMaxThreads(int adminMaxThreads) {
+        this.adminMaxThreads = adminMaxThreads;
+    }
+
+    @JsonProperty
+    public int getAdminMinThreads() {
+        return adminMinThreads;
+    }
+
+    @JsonProperty
+    public void setAdminMinThreads(int adminMinThreads) {
+        this.adminMinThreads = adminMinThreads;
+    }
+
     @Override
     public Server build(String name,
                         MetricRegistry metricRegistry,
                         HealthCheckRegistry healthChecks,
                         LifecycleEnvironment lifecycle,
                         ServletContextHandler applicationContext,
-                        ServletContainer jerseyContainer,
+                        @Nullable ServletContainer jerseyContainer,
                         ServletContextHandler adminContext,
                         JerseyEnvironment jersey,
                         ObjectMapper objectMapper,
@@ -86,40 +117,62 @@ public class DefaultServerFactory extends AbstractServerFactory {
                                                                          metricRegistry,
                                                                          healthChecks);
 
-        final List<Connector> builtApplicationConnectors = Lists.newArrayList();
-        for (ConnectorFactory factory : applicationConnectors) {
-            builtApplicationConnectors.add(factory.build(server, metricRegistry, "application"));
-        }
+        final RoutingHandler routingHandler = buildRoutingHandler(metricRegistry,
+                                                                  server,
+                                                                  applicationHandler,
+                                                                  adminHandler);
 
-        final List<Connector> builtAdminConnectors = Lists.newArrayList();
-        for (ConnectorFactory factory : adminConnectors) {
-            builtAdminConnectors.add(factory.build(server, metricRegistry, "admin"));
-        }
-
-        final Map<Connector, Handler> handlerMap = Maps.newLinkedHashMap();
-        for (Connector connector : builtApplicationConnectors) {
-            server.addConnector(connector);
-            handlerMap.put(connector, applicationHandler);
-        }
-        for (Connector connector : builtAdminConnectors) {
-            server.addConnector(connector);
-            handlerMap.put(connector, adminHandler);
-        }
-
-        final Handler gzipHandler = getGzipHandlerFactory().wrapHandler(new RoutingHandler(
-                handlerMap));
-        final Handler handler = new InstrumentedHandler(metricRegistry, gzipHandler);
-
-        if (getRequestLogFactory().isEnabled()) {
-            final RequestLogHandler requestLogHandler = getRequestLogFactory().build(name);
-            requestLogHandler.setHandler(handler);
-            server.setHandler(requestLogHandler);
-        } else {
-            server.setHandler(handler);
-        }
+        server.setHandler(wrapAndInstrument(routingHandler, metricRegistry, name));
 
         return server;
     }
 
+    private RoutingHandler buildRoutingHandler(MetricRegistry metricRegistry,
+                                               Server server,
+                                               ServletContextHandler applicationHandler,
+                                               ServletContextHandler adminHandler) {
+        final List<Connector> appConnectors = buildAppConnectors(metricRegistry, server);
 
+        final List<Connector> adConnectors = buildAdminConnectors(metricRegistry, server);
+
+        final Map<Connector, Handler> handlers = Maps.newLinkedHashMap();
+
+        for (Connector connector : appConnectors) {
+            server.addConnector(connector);
+            handlers.put(connector, applicationHandler);
+        }
+
+        for (Connector connector : adConnectors) {
+            server.addConnector(connector);
+            handlers.put(connector, adminHandler);
+        }
+
+        return new RoutingHandler(handlers);
+    }
+
+    private List<Connector> buildAdminConnectors(MetricRegistry metricRegistry, Server server) {
+        final QueuedThreadPool adminThreadPool =
+                new QueuedThreadPool(adminMaxThreads, adminMinThreads);
+        adminThreadPool.setName("dw-admin");
+
+        final List<Connector> builtAdminConnectors = Lists.newArrayList();
+        for (ConnectorFactory factory : adminConnectors) {
+            builtAdminConnectors.add(factory.build(server,
+                                                   metricRegistry,
+                                                   "admin",
+                                                   adminThreadPool));
+        }
+        return builtAdminConnectors;
+    }
+
+    private List<Connector> buildAppConnectors(MetricRegistry metricRegistry, Server server) {
+        final List<Connector> builtApplicationConnectors = Lists.newArrayList();
+        for (ConnectorFactory factory : applicationConnectors) {
+            builtApplicationConnectors.add(factory.build(server,
+                                                         metricRegistry,
+                                                         "application",
+                                                         server.getThreadPool()));
+        }
+        return builtApplicationConnectors;
+    }
 }
