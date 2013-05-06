@@ -15,8 +15,6 @@ import org.eclipse.jetty.io.ByteBufferPool;
 import org.eclipse.jetty.server.*;
 import org.eclipse.jetty.util.thread.ScheduledExecutorScheduler;
 import org.eclipse.jetty.util.thread.Scheduler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -26,8 +24,6 @@ import static com.codahale.metrics.MetricRegistry.name;
 
 @JsonTypeName("http")
 public class HttpConnectorFactory implements ConnectorFactory {
-    private static final Logger LOGGER = LoggerFactory.getLogger(HttpConnectorFactory.class);
-
     public static HttpConnectorFactory application() {
         final HttpConnectorFactory factory = new HttpConnectorFactory();
         factory.port = 8080;
@@ -35,7 +31,6 @@ public class HttpConnectorFactory implements ConnectorFactory {
     }
 
     public static HttpConnectorFactory admin() {
-        // TODO: 5/4/13 <coda> -- make admin connectors have their own thread pools
         final HttpConnectorFactory factory = new HttpConnectorFactory();
         factory.port = 8081;
         return factory;
