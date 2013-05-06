@@ -17,12 +17,14 @@ import com.sun.jersey.test.framework.LowLevelAppDescriptor;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.junit.After;
 import org.junit.Test;
 
 import javax.validation.Validation;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import java.util.TimeZone;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.fest.assertions.api.Assertions.failBecauseExceptionWasNotThrown;
@@ -72,15 +74,25 @@ public class JerseyIntegrationTest extends JerseyTest {
     }
 
     private SessionFactory sessionFactory;
+    private TimeZone defaultTZ;
 
     @Override
     @After
     public void tearDown() throws Exception {
+        TimeZone.setDefault(defaultTZ);
         super.tearDown();
 
         if (sessionFactory != null) {
             sessionFactory.close();
         }
+    }
+
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+
+        this.defaultTZ = TimeZone.getDefault();
+        TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
     }
 
     @Override
@@ -111,10 +123,10 @@ public class JerseyIntegrationTest extends JerseyTest {
         try {
             session.createSQLQuery("DROP TABLE people IF EXISTS").executeUpdate();
             session.createSQLQuery(
-                    "CREATE TABLE people (name varchar(100) primary key, email varchar(100), birthday timestamp)")
+                    "CREATE TABLE people (name varchar(100) primary key, email varchar(100), birthday timestamp with time zone)")
                    .executeUpdate();
             session.createSQLQuery(
-                    "INSERT INTO people VALUES ('Coda', 'coda@example.com', '1979-01-02 00:22:00')")
+                    "INSERT INTO people VALUES ('Coda', 'coda@example.com', '1979-01-02 00:22:00+0:00')")
                    .executeUpdate();
         } finally {
             session.close();
@@ -126,11 +138,6 @@ public class JerseyIntegrationTest extends JerseyTest {
         config.getSingletons().add(new JacksonMessageBodyProvider(Jackson.newObjectMapper(),
                                                                   Validation.buildDefaultValidatorFactory().getValidator()));
         return new LowLevelAppDescriptor.Builder(config).build();
-    }
-
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
     }
 
     @Test
@@ -146,7 +153,7 @@ public class JerseyIntegrationTest extends JerseyTest {
                 .isEqualTo("coda@example.com");
 
         assertThat(coda.getBirthday())
-                .isEqualTo(new DateTime(1979, 1, 2, 0, 22));
+                .isEqualTo(new DateTime(1979, 1, 2, 0, 22, DateTimeZone.UTC));
     }
 
     @Test
@@ -167,7 +174,7 @@ public class JerseyIntegrationTest extends JerseyTest {
         final Person person = new Person();
         person.setName("Hank");
         person.setEmail("hank@example.com");
-        person.setBirthday(new DateTime(1971, 3, 14, 19, 12));
+        person.setBirthday(new DateTime(1971, 3, 14, 19, 12, DateTimeZone.UTC));
 
         client().resource("/people/Hank").type(MediaType.APPLICATION_JSON).put(person);
 
