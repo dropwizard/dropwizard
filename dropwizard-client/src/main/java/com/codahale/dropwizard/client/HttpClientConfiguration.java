@@ -14,98 +14,107 @@ import javax.validation.constraints.NotNull;
  */
 public class HttpClientConfiguration {
     @NotNull
-    @JsonProperty
     private Duration timeout = Duration.milliseconds(500);
 
     @NotNull
-    @JsonProperty
     private Duration connectionTimeout = Duration.milliseconds(500);
 
     @NotNull
-    @JsonProperty
     private Duration timeToLive = Duration.hours(1);
 
-    @JsonProperty
     private boolean cookiesEnabled = false;
 
     @Min(1)
     @Max(Integer.MAX_VALUE)
-    @JsonProperty
     private int maxConnections = 1024;
 
     @Min(1)
     @Max(Integer.MAX_VALUE)
-    @JsonProperty
     private int maxConnectionsPerRoute = 1024;
 
     @NotNull
-    @JsonProperty
     private Duration keepAlive = Duration.milliseconds(0);
 
     @Min(0)
     @Max(1000)
     private int retries = 0;
 
+    @JsonProperty
     public Duration getKeepAlive() {
         return keepAlive;
     }
 
+    @JsonProperty
     public void setKeepAlive(Duration keepAlive) {
         this.keepAlive = keepAlive;
     }
 
+    @JsonProperty
     public int getMaxConnectionsPerRoute() {
         return maxConnectionsPerRoute;
     }
 
+    @JsonProperty
     public void setMaxConnectionsPerRoute(int maxConnectionsPerRoute) {
         this.maxConnectionsPerRoute = maxConnectionsPerRoute;
     }
+
+    @JsonProperty
     public Duration getTimeout() {
         return timeout;
     }
 
+    @JsonProperty
     public Duration getConnectionTimeout() {
         return connectionTimeout;
     }
 
+    @JsonProperty
     public Duration getTimeToLive() {
         return timeToLive;
     }
 
+    @JsonProperty
     public boolean isCookiesEnabled() {
         return cookiesEnabled;
     }
 
+    @JsonProperty
     public void setTimeout(Duration duration) {
         this.timeout = duration;
     }
 
+    @JsonProperty
     public void setConnectionTimeout(Duration duration) {
         this.connectionTimeout = duration;
     }
 
-    @SuppressWarnings("UnusedDeclaration") // sadly, no real way to test this
+    @JsonProperty
     public void setTimeToLive(Duration timeToLive) {
         this.timeToLive = timeToLive;
     }
 
+    @JsonProperty
     public void setCookiesEnabled(boolean enabled) {
         this.cookiesEnabled = enabled;
     }
 
+    @JsonProperty
     public int getMaxConnections() {
         return maxConnections;
     }
 
+    @JsonProperty
     public void setMaxConnections(int maxConnections) {
         this.maxConnections = maxConnections;
     }
 
+    @JsonProperty
     public int getRetries() {
         return retries;
     }
 
+    @JsonProperty
     public void setRetries(int retries) {
         this.retries = retries;
     }

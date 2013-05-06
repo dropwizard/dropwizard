@@ -1,10 +1,9 @@
 package com.codahale.dropwizard.hibernate;
 
-import com.codahale.dropwizard.setup.Environment;
 import com.codahale.dropwizard.db.DatabaseConfiguration;
 import com.codahale.dropwizard.db.ManagedDataSource;
 import com.codahale.dropwizard.db.ManagedDataSourceFactory;
-import com.google.common.collect.ImmutableMap;
+import com.codahale.dropwizard.setup.Environment;
 import com.google.common.collect.Sets;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.AvailableSettings;
@@ -54,7 +53,7 @@ public class SessionFactoryFactory {
     }
 
     private ConnectionProvider buildConnectionProvider(DataSource dataSource,
-                                                       ImmutableMap<String, String> properties) {
+                                                       Map<String, String> properties) {
         final DatasourceConnectionProviderImpl connectionProvider = new DatasourceConnectionProviderImpl();
         connectionProvider.setDataSource(dataSource);
         connectionProvider.configure(properties);
@@ -64,7 +63,7 @@ public class SessionFactoryFactory {
     private SessionFactory buildSessionFactory(HibernateBundle<?> bundle,
                                                DatabaseConfiguration dbConfig,
                                                ConnectionProvider connectionProvider,
-                                               ImmutableMap<String, String> properties,
+                                               Map<String, String> properties,
                                                List<Class<?>> entities) {
         final Configuration configuration = new Configuration();
         configuration.setProperty(AvailableSettings.CURRENT_SESSION_CONTEXT_CLASS, "managed");

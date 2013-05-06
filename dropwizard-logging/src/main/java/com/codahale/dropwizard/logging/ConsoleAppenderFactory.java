@@ -18,36 +18,39 @@ import java.util.TimeZone;
 @JsonTypeName("console")
 public class ConsoleAppenderFactory implements AppenderFactory {
     @NotNull
-    @JsonProperty
     private Level threshold = Level.ALL;
 
     @NotNull
-    @JsonProperty
     private TimeZone timeZone = TimeZone.getTimeZone("UTC");
 
-    @JsonProperty
     private String logFormat;
 
+    @JsonProperty
     public Level getThreshold() {
         return threshold;
     }
 
+    @JsonProperty
     public void setThreshold(Level threshold) {
         this.threshold = threshold;
     }
 
+    @JsonProperty
     public TimeZone getTimeZone() {
         return timeZone;
     }
 
+    @JsonProperty
     public void setTimeZone(TimeZone timeZone) {
         this.timeZone = timeZone;
     }
 
+    @JsonProperty
     public String getLogFormat() {
         return logFormat;
     }
 
+    @JsonProperty
     public void setLogFormat(String logFormat) {
         this.logFormat = logFormat;
     }

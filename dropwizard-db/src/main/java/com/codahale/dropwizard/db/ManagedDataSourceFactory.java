@@ -18,7 +18,7 @@ public class ManagedDataSourceFactory {
 
         final PoolProperties poolConfig = new PoolProperties();
         poolConfig.setAbandonWhenPercentageFull(configuration.getAbandonWhenPercentageFull());
-        poolConfig.setAlternateUsernameAllowed(configuration.isAlternateUsernameAllowed());
+        poolConfig.setAlternateUsernameAllowed(configuration.isAlternateUsernamesAllowed());
         poolConfig.setCommitOnReturn(configuration.getCommitOnReturn());
         poolConfig.setDbProperties(properties);
         poolConfig.setDefaultAutoCommit(configuration.getAutoCommitByDefault());

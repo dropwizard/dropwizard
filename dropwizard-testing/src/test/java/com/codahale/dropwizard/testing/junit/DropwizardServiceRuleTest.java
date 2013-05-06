@@ -86,9 +86,8 @@ public class DropwizardServiceRuleTest {
     }
 
     public static class TestConfiguration extends Configuration {
-
-        @JsonProperty
         @NotEmpty
+        @JsonProperty
         private String message;
 
         public String getMessage() {

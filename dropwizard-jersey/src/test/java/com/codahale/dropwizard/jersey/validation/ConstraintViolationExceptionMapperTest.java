@@ -30,12 +30,17 @@ public class ConstraintViolationExceptionMapperTest extends JerseyTest {
     }
 
     public static class ExampleRepresentation {
-        @JsonProperty
         @NotEmpty
         private String name;
 
+        @JsonProperty
         public String getName() {
             return name;
+        }
+
+        @JsonProperty
+        public void setName(String name) {
+            this.name = name;
         }
     }
 

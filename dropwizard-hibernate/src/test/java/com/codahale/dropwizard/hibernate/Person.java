@@ -10,39 +10,42 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "people")
-@SuppressWarnings("UnusedDeclaration")
 public class Person {
     @Id
-    @JsonProperty
     private String name;
 
     @Column
-    @JsonProperty
     private String email;
 
     @Column
     private DateTime birthday;
 
+    @JsonProperty
     public String getName() {
         return name;
     }
 
+    @JsonProperty
     public void setName(String name) {
         this.name = name;
     }
 
+    @JsonProperty
     public String getEmail() {
         return email;
     }
 
+    @JsonProperty
     public void setEmail(String email) {
         this.email = email;
     }
 
+    @JsonProperty
     public DateTime getBirthday() {
         return birthday;
     }
 
+    @JsonProperty
     public void setBirthday(DateTime birthday) {
         this.birthday = birthday;
     }

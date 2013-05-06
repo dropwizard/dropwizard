@@ -36,60 +36,65 @@ public class SyslogAppenderFactory implements AppenderFactory {
     }
 
     @NotNull
-    @JsonProperty
     private Level threshold = Level.ALL;
 
     @NotNull
-    @JsonProperty
     private String host = "localhost";
 
     @NotNull
-    @JsonProperty
     private Facility facility = Facility.LOCAL0;
 
     @NotNull
-    @JsonProperty
     private TimeZone timeZone = TimeZone.getTimeZone("UTC");
 
-    @JsonProperty
     private String logFormat;
 
+    @JsonProperty
     public Level getThreshold() {
         return threshold;
     }
 
+    @JsonProperty
     public void setThreshold(Level threshold) {
         this.threshold = threshold;
     }
 
+    @JsonProperty
     public String getHost() {
         return host;
     }
 
+    @JsonProperty
     public void setHost(String host) {
         this.host = host;
     }
 
+    @JsonProperty
     public Facility getFacility() {
         return facility;
     }
 
+    @JsonProperty
     public void setFacility(Facility facility) {
         this.facility = facility;
     }
 
+    @JsonProperty
     public TimeZone getTimeZone() {
         return timeZone;
     }
 
+    @JsonProperty
     public void setTimeZone(TimeZone timeZone) {
         this.timeZone = timeZone;
     }
 
+    @JsonProperty
     public String getLogFormat() {
         return logFormat;
     }
 
+    @JsonProperty
     public void setLogFormat(String logFormat) {
         this.logFormat = logFormat;
     }
