@@ -17,7 +17,6 @@ import com.sun.jersey.test.framework.LowLevelAppDescriptor;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 import org.junit.After;
 import org.junit.Test;
 
@@ -99,8 +98,6 @@ public class JerseyIntegrationTest extends JerseyTest {
         dbConfig.setUser("sa");
         dbConfig.setDriverClass("org.hsqldb.jdbcDriver");
         dbConfig.setValidationQuery("SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS");
-        dbConfig.getProperties().put("jadira.usertype.javaZone", "UTC");
-        dbConfig.getProperties().put("jadira.usertype.databaseZone", "UTC");
 
         try {
             this.sessionFactory = factory.build(bundle,
@@ -117,7 +114,7 @@ public class JerseyIntegrationTest extends JerseyTest {
                     "CREATE TABLE people (name varchar(100) primary key, email varchar(100), birthday timestamp)")
                    .executeUpdate();
             session.createSQLQuery(
-                    "INSERT INTO people VALUES ('Coda', 'coda@example.com', '1979-01-02 00:22:00+0:00')")
+                    "INSERT INTO people VALUES ('Coda', 'coda@example.com', '1979-01-02 00:22:00')")
                    .executeUpdate();
         } finally {
             session.close();
@@ -149,7 +146,7 @@ public class JerseyIntegrationTest extends JerseyTest {
                 .isEqualTo("coda@example.com");
 
         assertThat(coda.getBirthday())
-                .isEqualTo(new DateTime(1979, 1, 2, 0, 22, DateTimeZone.UTC));
+                .isEqualTo(new DateTime(1979, 1, 2, 0, 22));
     }
 
     @Test
@@ -170,7 +167,7 @@ public class JerseyIntegrationTest extends JerseyTest {
         final Person person = new Person();
         person.setName("Hank");
         person.setEmail("hank@example.com");
-        person.setBirthday(new DateTime(1971, 3, 14, 19, 12, DateTimeZone.UTC));
+        person.setBirthday(new DateTime(1971, 3, 14, 19, 12));
 
         client().resource("/people/Hank").type(MediaType.APPLICATION_JSON).put(person);
 
