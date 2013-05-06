@@ -6,7 +6,7 @@ defaultName: Stranger
 database:
 
   # the name of your JDBC driver
-  driverClass: org.h2.Driver
+  driverClass: org.hsqldb.jdbc.JDBCDriver
 
   # the username
   user: sa
@@ -15,7 +15,7 @@ database:
   password: sa
 
   # the JDBC URL
-  url: jdbc:h2:target/example
+  url: jdbc:hsqldb:target/example
 
 # use the simple server factory if you only want to run on a single port
 #server:
