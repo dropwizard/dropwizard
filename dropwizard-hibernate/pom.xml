@@ -47,9 +47,9 @@
             <version>4.1.9.Final</version>
         </dependency>
         <dependency>
-            <groupId>hsqldb</groupId>
+            <groupId>org.hsqldb</groupId>
             <artifactId>hsqldb</artifactId>
-            <version>1.8.0.10</version>
+            <version>2.2.9</version>
             <scope>test</scope>
         </dependency>
         <dependency>

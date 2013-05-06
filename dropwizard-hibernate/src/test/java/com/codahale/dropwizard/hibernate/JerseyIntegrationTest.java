@@ -112,7 +112,7 @@ public class JerseyIntegrationTest extends JerseyTest {
         try {
             session.createSQLQuery("DROP TABLE people IF EXISTS").executeUpdate();
             session.createSQLQuery(
-                    "CREATE TABLE people (name varchar(100) primary key, email varchar(100), birthday timestamp)")
+                    "CREATE TABLE people (name varchar(100) primary key, email varchar(100), birthday timestamp with time zone)")
                    .executeUpdate();
             session.createSQLQuery(
                     "INSERT INTO people VALUES ('Coda', 'coda@example.com', '1979-01-02 00:22:00')")
