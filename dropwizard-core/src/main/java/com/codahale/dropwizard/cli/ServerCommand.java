@@ -3,7 +3,6 @@ package com.codahale.dropwizard.cli;
 import com.codahale.dropwizard.Configuration;
 import com.codahale.dropwizard.Service;
 import com.codahale.dropwizard.setup.Environment;
-import com.codahale.metrics.health.jvm.ThreadDeadlockHealthCheck;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 import net.sourceforge.argparse4j.inf.Namespace;
@@ -42,7 +41,6 @@ public class ServerCommand<T extends Configuration> extends EnvironmentCommand<T
 
     @Override
     protected void run(Environment environment, Namespace namespace, T configuration) throws Exception {
-        environment.healthChecks().register("deadlocks", new ThreadDeadlockHealthCheck());
         final Server server = configuration.getServerFactory().build(environment.getName(),
                                                                      environment.metrics(),
                                                                      environment.healthChecks(),

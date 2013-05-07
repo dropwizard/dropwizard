@@ -7,6 +7,7 @@ import com.codahale.dropwizard.servlets.tasks.Task;
 import com.codahale.dropwizard.servlets.tasks.TaskServlet;
 import com.codahale.metrics.health.HealthCheck;
 import com.codahale.metrics.health.HealthCheckRegistry;
+import com.codahale.metrics.health.jvm.ThreadDeadlockHealthCheck;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.util.component.AbstractLifeCycle;
 import org.eclipse.jetty.util.component.LifeCycle;
@@ -25,6 +26,7 @@ public class AdminEnvironment extends ServletEnvironment {
                             HealthCheckRegistry healthChecks) {
         super(handler);
         this.healthChecks = healthChecks;
+        this.healthChecks.register("deadlocks", new ThreadDeadlockHealthCheck());
         this.tasks = new TaskServlet();
         tasks.add(new GarbageCollectionTask());
         handler.addServlet(new NonblockingServletHolder(tasks), "/tasks/*");
@@ -64,7 +66,7 @@ public class AdminEnvironment extends ServletEnvironment {
     }
 
     private void logHealthChecks() {
-        if (healthChecks.getNames().isEmpty()) {
+        if (healthChecks.getNames().size() <= 1) {
             LOGGER.warn(String.format("%n" +
                             "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!%n" +
                             "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!%n" +
