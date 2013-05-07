@@ -46,6 +46,6 @@ public abstract class HibernateBundle<T extends Configuration> implements Config
         return sessionFactory;
     }
 
-    public void configure(org.hibernate.cfg.Configuration configuration) {
+    protected void configure(org.hibernate.cfg.Configuration configuration) {
     }
 }

@@ -65,17 +65,17 @@ public class RequestLogFactory {
         logger.setAdditive(false);
         final LoggerContext context = logger.getLoggerContext();
 
-        final AppenderAttachableImpl<ILoggingEvent> appenders = new AppenderAttachableImpl<>();
+        final AppenderAttachableImpl<ILoggingEvent> attachable = new AppenderAttachableImpl<>();
 
         final RequestLogLayout layout = new RequestLogLayout();
         layout.start();
 
         for (AppenderFactory output : this.appenders) {
-            appenders.addAppender(output.build(context, name, layout));
+            attachable.addAppender(output.build(context, name, layout));
         }
 
         final RequestLogHandler handler = new RequestLogHandler();
-        handler.setRequestLog(new AsyncRequestLog(appenders, timeZone));
+        handler.setRequestLog(new AsyncRequestLog(attachable, timeZone));
 
         return handler;
     }

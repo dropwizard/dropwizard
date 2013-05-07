@@ -50,6 +50,6 @@ public class LogbackLog extends FormattedLog {
     @Override
     protected final void log(String msg)
     {
-        log.log(null, fqcn, level.toLocationAwareLoggerInteger(level), msg, null, null);
+        log.log(null, fqcn, Level.toLocationAwareLoggerInteger(level), msg, null, null);
     }
 }

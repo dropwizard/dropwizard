@@ -6,7 +6,6 @@ import com.sun.jersey.api.core.DefaultResourceConfig;
 import com.sun.jersey.test.framework.AppDescriptor;
 import com.sun.jersey.test.framework.JerseyTest;
 import com.sun.jersey.test.framework.LowLevelAppDescriptor;
-import org.junit.Before;
 import org.junit.Test;
 
 import javax.ws.rs.GET;
@@ -88,12 +87,6 @@ public class CacheControlledResourceMethodDispatchAdapterTest extends JerseyTest
         public String showSharedMaxAge() {
             return "shared-max-age";
         }
-    }
-
-    @Before
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
     }
 
     @Override
