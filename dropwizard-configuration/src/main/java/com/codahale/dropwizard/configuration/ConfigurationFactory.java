@@ -65,7 +65,7 @@ public class ConfigurationFactory<T> {
      */
     public T build(ConfigurationSourceProvider provider, String path) throws IOException, ConfigurationException {
         try (InputStream input = provider.open(checkNotNull(path))) {
-            final JsonNode node = mapper.readTree(yamlFactory.createJsonParser(input));
+            final JsonNode node = mapper.readTree(yamlFactory.createParser(input));
             return build(node, path);
         }
     }
