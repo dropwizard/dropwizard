@@ -1,6 +1,5 @@
 package com.codahale.dropwizard.setup;
 
-import com.codahale.dropwizard.jetty.NonblockingServletHolder;
 import com.codahale.dropwizard.jetty.setup.ServletEnvironment;
 import com.codahale.dropwizard.servlets.tasks.GarbageCollectionTask;
 import com.codahale.dropwizard.servlets.tasks.Task;
@@ -16,12 +15,21 @@ import org.slf4j.LoggerFactory;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+/**
+ * The administrative environment of a Dropwizard service.
+ */
 public class AdminEnvironment extends ServletEnvironment {
     private static final Logger LOGGER = LoggerFactory.getLogger(AdminEnvironment.class);
 
     private final HealthCheckRegistry healthChecks;
     private final TaskServlet tasks;
 
+    /**
+     * Creates a new {@link AdminEnvironment}.
+     *
+     * @param handler      a servlet context handler
+     * @param healthChecks a health check registry
+     */
     public AdminEnvironment(ServletContextHandler handler,
                             HealthCheckRegistry healthChecks) {
         super(handler);
@@ -29,7 +37,7 @@ public class AdminEnvironment extends ServletEnvironment {
         this.healthChecks.register("deadlocks", new ThreadDeadlockHealthCheck());
         this.tasks = new TaskServlet();
         tasks.add(new GarbageCollectionTask());
-        handler.addServlet(new NonblockingServletHolder(tasks), "/tasks/*");
+        addServlet(tasks, "/tasks/*");
         handler.addLifeCycleListener(new AbstractLifeCycle.AbstractLifeCycleListener() {
             @Override
             public void lifeCycleStarting(LifeCycle event) {
@@ -39,12 +47,17 @@ public class AdminEnvironment extends ServletEnvironment {
         });
     }
 
+    /**
+     * Adds the given task to the set of tasks exposed via the admin interface.
+     *
+     * @param task a task
+     */
     public void addTask(Task task) {
         tasks.add(checkNotNull(task));
     }
 
     /**
-     * Adds the given health check to the set of health checks exposed on the admin port.
+     * Adds the given health check to the set of health checks exposed via the admin interface.
      *
      * @param healthCheck a health check
      */
@@ -67,7 +80,8 @@ public class AdminEnvironment extends ServletEnvironment {
 
     private void logHealthChecks() {
         if (healthChecks.getNames().size() <= 1) {
-            LOGGER.warn(String.format("%n" +
+            LOGGER.warn(String.format(
+                    "%n" +
                             "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!%n" +
                             "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!%n" +
                             "!    THIS SERVICE HAS NO HEALTHCHECKS. THIS MEANS YOU WILL NEVER KNOW IF IT    !%n" +
@@ -77,7 +91,6 @@ public class AdminEnvironment extends ServletEnvironment {
                             "!      USE THAT SERVICE. THINK OF IT AS A CONTINUOUS INTEGRATION TEST.         !%n" +
                             "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!%n" +
                             "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-
             ));
         }
         LOGGER.debug("health checks = {}", healthChecks.getNames());
