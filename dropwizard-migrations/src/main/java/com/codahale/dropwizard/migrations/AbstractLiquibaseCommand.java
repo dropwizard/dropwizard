@@ -2,9 +2,9 @@ package com.codahale.dropwizard.migrations;
 
 import com.codahale.dropwizard.Configuration;
 import com.codahale.dropwizard.cli.ConfiguredCommand;
-import com.codahale.dropwizard.setup.Bootstrap;
 import com.codahale.dropwizard.db.ConfigurationStrategy;
 import com.codahale.dropwizard.db.DatabaseConfiguration;
+import com.codahale.dropwizard.setup.Bootstrap;
 import liquibase.Liquibase;
 import liquibase.exception.ValidationFailedException;
 import net.sourceforge.argparse4j.inf.Namespace;

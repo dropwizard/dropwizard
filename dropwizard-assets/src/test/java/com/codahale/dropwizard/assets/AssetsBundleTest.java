@@ -1,9 +1,9 @@
 package com.codahale.dropwizard.assets;
 
-import com.codahale.dropwizard.setup.Environment;
+import com.codahale.dropwizard.jetty.setup.ServletEnvironment;
 import com.codahale.dropwizard.servlets.assets.AssetServlet;
 import com.codahale.dropwizard.servlets.assets.ResourceURL;
-import com.codahale.dropwizard.jetty.setup.ServletEnvironment;
+import com.codahale.dropwizard.setup.Environment;
 import com.google.common.io.Resources;
 import org.junit.Before;
 import org.junit.Test;

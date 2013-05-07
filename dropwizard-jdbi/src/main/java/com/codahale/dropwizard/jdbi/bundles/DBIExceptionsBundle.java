@@ -1,10 +1,10 @@
 package com.codahale.dropwizard.jdbi.bundles;
 
 import com.codahale.dropwizard.Bundle;
-import com.codahale.dropwizard.setup.Bootstrap;
-import com.codahale.dropwizard.setup.Environment;
 import com.codahale.dropwizard.jdbi.jersey.LoggingDBIExceptionMapper;
 import com.codahale.dropwizard.jdbi.jersey.LoggingSQLExceptionMapper;
+import com.codahale.dropwizard.setup.Bootstrap;
+import com.codahale.dropwizard.setup.Environment;
 
 /**
  * A bundle for logging SQLExceptions and DBIExceptions so that their actual causes aren't overlooked.

@@ -1,6 +1,5 @@
 package com.codahale.dropwizard.jetty.setup;
 
-import com.codahale.dropwizard.jetty.setup.FilterBuilder;
 import com.google.common.collect.ImmutableMap;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;

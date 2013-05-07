@@ -2,12 +2,12 @@ package com.codahale.dropwizard.jdbi;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
-import com.codahale.dropwizard.setup.Environment;
 import com.codahale.dropwizard.db.DatabaseConfiguration;
 import com.codahale.dropwizard.db.ManagedDataSource;
 import com.codahale.dropwizard.db.ManagedDataSourceFactory;
 import com.codahale.dropwizard.jdbi.args.OptionalArgumentFactory;
 import com.codahale.dropwizard.jdbi.logging.LogbackLog;
+import com.codahale.dropwizard.setup.Environment;
 import com.codahale.metrics.jdbi.InstrumentedTimingCollector;
 import com.codahale.metrics.jdbi.strategies.DelegatingStatementNameStrategy;
 import com.codahale.metrics.jdbi.strategies.NameStrategies;

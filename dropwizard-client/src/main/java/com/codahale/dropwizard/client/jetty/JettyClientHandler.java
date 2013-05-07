@@ -1,6 +1,9 @@
 package com.codahale.dropwizard.client.jetty;
 
-import com.sun.jersey.api.client.*;
+import com.sun.jersey.api.client.ClientHandlerException;
+import com.sun.jersey.api.client.ClientRequest;
+import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.TerminatingClientHandler;
 import com.sun.jersey.core.header.InBoundHeaders;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.api.ContentResponse;
@@ -11,7 +14,10 @@ import org.eclipse.jetty.http.HttpField;
 import org.eclipse.jetty.http.HttpMethod;
 
 import javax.ws.rs.core.MultivaluedMap;
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
