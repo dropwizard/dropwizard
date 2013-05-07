@@ -29,15 +29,28 @@ import javax.validation.constraints.NotNull;
  *     \@Max(120)
  *     private int age;
  *
+ *     \@JsonProperty
  *     public String getName() {
  *         return name;
  *     }
  *
+ *     \@JsonProperty
+ *     public void setName(String name) {
+ *         this.name = name;
+ *     }
+ *
+ *     \@JsonProperty
  *     public int getAge() {
  *         return age;
  *     }
+ *
+ *     \@JsonProperty
+ *     public void setAge(int age) {
+ *         this.age = age;
+ *     }
  * }
  * </pre>
+ * <p/>
  * Dropwizard will parse the given YAML file and provide an {@code ExampleConfiguration} instance
  * to your service whose {@code getName()} method will return {@code "Random Person"} and whose
  * {@code getAge()} method will return {@code 43}.
