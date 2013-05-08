@@ -14,12 +14,10 @@ It includes:
 * Jetty, a high-performance HTTP server.
 * Jersey, a full-featured RESTful web framework.
 * Jackson, the best JSON library for the JVM.
-* Metrics, `Yammer's`__ own library for application metrics.
+* Metrics, an excellent library for application metrics.
 * Guava, Google's excellent utility library.
 * Logback, the successor to Log4j, Java's most widely-used logging framework.
 * Hibernate Validator, the reference implementation of the Java Bean Validation standard.
-
-.. __: https://www.yammer.com
 
 Dropwizard consists mostly of glue code to automatically connect and configure these components.
 
@@ -600,11 +598,11 @@ We highly recommend Mockito_ for all your mocking needs.
 Banners
 =======
 
-At Yammer, each of our services prints out a big ASCII art banner on startup. Yours should, too.
-It's fun. Just add a ``banner.txt`` class to ``src/main/resources`` and it'll print it out when your
-service starts::
+We think services should print out a big ASCII art banner on startup. Yours should, too. It's fun.
+Just add a ``banner.txt`` class to ``src/main/resources`` and it'll print it out when your service
+starts::
 
-    INFO  [2011-12-09 21:56:37,209] com.yammer.dropwizard.cli.ServerCommand: Starting hello-world
+    INFO  [2011-12-09 21:56:37,209] com.codahale.dropwizard.cli.ServerCommand: Starting hello-world
                                                      dP
                                                      88
       .d8888b. dP.  .dP .d8888b. 88d8b.d8b. 88d888b. 88 .d8888b.
@@ -738,7 +736,7 @@ For example:
   the matched URI template and passes it into the method as a ``String``.
 * A ``@QueryParam("count")``-annotated ``IntParam`` parameter takes the first ``count`` value from
   the request's query string and passes it as a ``String`` to ``IntParam``'s constructor.
-  ``IntParam`` (and all other ``com.yammer.dropwizard.jersey.params.*`` classes) parses the string
+  ``IntParam`` (and all other ``com.codahale.dropwizard.jersey.params.*`` classes) parses the string
   as an ``Integer``, returning a ``400 Bad Request`` if the value is malformed.
 * A ``@FormParam("name")``-annotated ``Set<String>`` parameter takes all the ``name`` values from a
   posted form and passes them to the method as a set of strings.
@@ -1085,8 +1083,8 @@ test that a ``Person`` instance generates the same JSON as the fixture with the 
 
 .. code-block:: java
 
-    import static com.yammer.dropwizard.testing.JsonHelpers.asJson;
-    import static com.yammer.dropwizard.testing.JsonHelpers.jsonFixture;
+    import static com.codahale.dropwizard.testing.JsonHelpers.asJson;
+    import static com.codahale.dropwizard.testing.JsonHelpers.jsonFixture;
 
     @Test
     public void producesTheExpectedJson() throws Exception {
@@ -1103,7 +1101,7 @@ Likewise, you can also test the parsing of the same JSON file to guarantee round
 
 .. code-block:: java
 
-    import static com.yammer.dropwizard.testing.JsonHelpers.fromJson;
+    import static com.codahale.dropwizard.testing.JsonHelpers.fromJson;
 
     @Test
     public void consumesTheExpectedJson() throws Exception {

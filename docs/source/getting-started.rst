@@ -136,7 +136,7 @@ Add the ``dropwizard-core`` library as a dependency:
 
     <dependencies>
         <dependency>
-            <groupId>com.yammer.dropwizard</groupId>
+            <groupId>com.codahale.dropwizard</groupId>
             <artifactId>dropwizard-core</artifactId>
             <version>0.6.2</version>
         </dependency>
@@ -169,7 +169,7 @@ Here's what our configuration class will look like:
 
     package com.example.helloworld;
     
-    import com.yammer.dropwizard.config.Configuration;
+    import com.codahale.dropwizard.Configuration;
     import com.fasterxml.jackson.annotation.JsonProperty;
     import org.hibernate.validator.constraints.NotEmpty;
     
@@ -239,9 +239,9 @@ like this:
 
     package com.example.helloworld;
     
-    import com.yammer.dropwizard.Service;
-    import com.yammer.dropwizard.config.Bootstrap;
-    import com.yammer.dropwizard.config.Environment;
+    import com.codahale.dropwizard.Service;
+    import com.codahale.dropwizard.setup.Bootstrap;
+    import com.codahale.dropwizard.setup.Environment;
     
     public class HelloWorldService extends Service<HelloWorldConfiguration> {
         public static void main(String[] args) throws Exception {
@@ -348,7 +348,7 @@ instances from the URI ``/hello-world``, so our resource class will look like th
     
     import com.example.helloworld.core.Saying;
     import com.google.common.base.Optional;
-    import com.yammer.metrics.annotation.Timed;
+    import com.codahale.metrics.annotation.Timed;
     
     import javax.ws.rs.GET;
     import javax.ws.rs.Path;
@@ -469,7 +469,7 @@ can actually format the provided template:
 
     package com.example.helloworld.health;
     
-    import com.yammer.metrics.core.HealthCheck;
+    import com.codahale.metrics.core.HealthCheck;
     
     public class TemplateHealthCheck extends HealthCheck {
         private final String template;
@@ -680,11 +680,11 @@ You should see something like the following:
 
 .. code-block:: text
 
-    INFO  [2011-12-03 00:38:32,927] com.yammer.dropwizard.cli.ServerCommand: Starting hello-world
+    INFO  [2011-12-03 00:38:32,927] com.codahale.dropwizard.cli.ServerCommand: Starting hello-world
     INFO  [2011-12-03 00:38:32,931] org.eclipse.jetty.server.Server: jetty-7.x.y-SNAPSHOT
     INFO  [2011-12-03 00:38:32,936] org.eclipse.jetty.server.handler.ContextHandler: started o.e.j.s.ServletContextHandler{/,null}
     INFO  [2011-12-03 00:38:32,999] com.sun.jersey.server.impl.application.WebApplicationImpl: Initiating Jersey application, version 'Jersey: 1.10 11/02/2011 03:53 PM'
-    INFO  [2011-12-03 00:38:33,041] com.yammer.dropwizard.config.Environment:
+    INFO  [2011-12-03 00:38:33,041] com.codahale.dropwizard.setup.Environment:
 
         GET     /hello-world (com.example.helloworld.resources.HelloWorldResource)
 

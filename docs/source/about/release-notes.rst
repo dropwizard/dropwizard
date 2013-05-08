@@ -9,7 +9,45 @@ Release Notes
 v0.7.0: TBD
 ===========
 
+* Upgraded to Java 7.
+* Moved to the ``com.codahale`` group ID and namespace.
+* Upgraded to Jetty 9.0.2.
+* Upgraded to Metrics 3.
 * Dropped Scala support.
+* Added ``AppenderFactory``, allowing for arbitrary logging appenders for application and request
+  logs.
+* Added ``ConnectorFactory``, allowing for arbitrary Jetty connectors.
+* Added ``ServerFactory``, with multi- and single-connector implementations.
+* Added ``dropwizard-spdy``.
+* Added builders for managed executors.
+* Added a default ``check`` command, which loads and validates the service configuration.
+* Extracted out a number of reusable libraries: ``dropwizard-configuration``,
+  ``dropwizard-jackson``, ``dropwizard-jersey``, ``dropwizard-jetty``, ``dropwizard-lifecycle``,
+  ``dropwizard-logging``, ``dropwizard-servlets``, ``dropwizard-util``, ``dropwizard-validation``.
+* Dropped ``ObjectMapperFactory``; use ``ObjectMapper`` instead.
+* Dropped ``Validator``; use ``javax.validation.Validator`` instead.
+* Changed error handling to depend more heavily on Jersey exception mapping.
+* Validation errors are now returned as ``application/json`` responses.
+* Added ``ConfigurationSourceProvider`` to allow loading configuration files from sources other than
+  the filesystem.
+* Added ``HibernateBundle#configure(Configuration)`` for customization of Hibernate configuration.
+* Simplified ``AsyncRequestLog``; now standardized on Jetty 9 NCSA format.
+* Fixed a shutdown bug in ``dropwizard-migrations``.
+* Extracted out various elements of ``Environment`` to separate classes: ``JerseyEnvironment``,
+  ``LifecycleEnvironment``, etc.
+* Upgraded to JDBI 2.49.
+* Upgraded to Logback 1.0.12.
+* Upgraded to SLF4J 1.7.5.
+* Upgraded to Hibernate Validator 5.0.1.
+* Removed ``ManagedSessionFactory``.
+* Moved ``dropwizard-db`` to use ``tomcat-jdbc`` instead of ``tomcat-dbcp``.
+* Extracted out ``dropwizard-views-freemarker`` and ``dropwizard-views-mustache``.
+  ``dropwizard-views`` just provides infrastructure now.
+* Upgraded to Jackson 2.2.0.
+* Upgraded to Mustache 0.8.12.
+* Added support for the Jetty HTTP client to ``dropwizard-client``.
+* Added Jackson Afterburner support.
+* Added ``dropwizard-forms``, which provides support for multipart MIME entities.
 
 .. _rel-0.6.2:
 

@@ -2,57 +2,31 @@
 <FindBugsFilter>
     <!-- we're *supposed* to manually GC there -->
     <Match>
-        <Class name="com.yammer.dropwizard.tasks.GarbageCollectionTask"/>
+        <Class name="com.codahale.dropwizard.servlets.tasks.GarbageCollectionTask"/>
         <Method name="execute"/>
         <Bug pattern="DM_GC"/>
     </Match>
 
     <!-- given this is a console command, exit(-1) is right -->
     <Match>
-        <Class name="com.yammer.dropwizard.cli.Cli"/>
+        <Class name="com.codahale.dropwizard.cli.Cli"/>
         <Method name="run"/>
         <Bug pattern="DM_EXIT"/>
     </Match>
 
-    <!-- ignore default null values in Configuration classes -->
-    <Match>
-        <Class name="~com\.yammer\.dropwizard\.config\..*Configuration.*"/>
-        <Bug pattern="UWF_NULL_FIELD"/>
-    </Match>
-
-    <!-- haven't started caring about servlet serialization either -->
-    <Match>
-        <Class name="com.yammer.dropwizard.servlets.AssetServlet"/>
-        <Bug pattern="SE_TRANSIENT_FIELD_NOT_RESTORED"/>
-    </Match>
-
-    <!-- I don't care about Windows, sorry. -->
-    <Match>
-        <Bug pattern="VA_FORMAT_STRING_USES_NEWLINE"/>
-    </Match>
-
-    <!-- blissfully unconcerned about serialization -->
+    <!-- serialization is boring -->
     <Match>
         <Bug code="Se"/>
+        <Class name="com.codahale.dropwizard.servlets.tasks.TaskServlet"/>
+    </Match>
+    <Match>
+        <Bug code="Se"/>
+        <Class name="com.codahale.dropwizard.servlets.assets.AssetServlet"/>
     </Match>
 
-    <!-- false alarms -->
+    <!-- pretty sure this is a bug in FindBugs -->
     <Match>
-        <Class name="com.yammer.dropwizard.jetty.AsyncRequestLog"/>
-        <Bug pattern="DM_DEFAULT_ENCODING"/>
+        <Bug pattern="RCN_REDUNDANT_NULLCHECK_OF_NULL_VALUE"/>
+        <Class name="com.codahale.dropwizard.configuration.ConfigurationFactory"/>
     </Match>
-    <Match>
-        <Class name="com.yammer.dropwizard.jetty.BiDiGzipHandler$GzipServletRequest"/>
-        <Bug pattern="DM_DEFAULT_ENCODING"/>
-    </Match>
-    <Match>
-        <Class name="com.yammer.dropwizard.json.YamlConverter"/>
-        <Bug pattern="DM_DEFAULT_ENCODING"/>
-    </Match>
-
-    <!-- Scala bytecode is weird. I know. -->
-    <Class name="~com\.yammer\.dropwizard\.providers\.OauthTokenInjectable.*"/>
-    <Class name="~com\.yammer\.dropwizard\.providers\.OauthTokenProvider.*"/>
-    <Class name="~com\.yammer\.dropwizard\.ScalaService.*"/>
-    <Class name="~com\.yammer\.dropwizard\.Logging.*" />
 </FindBugsFilter>
