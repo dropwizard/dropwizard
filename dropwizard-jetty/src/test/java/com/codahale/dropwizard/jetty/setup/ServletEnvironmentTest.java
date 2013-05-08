@@ -1,6 +1,7 @@
 package com.codahale.dropwizard.jetty.setup;
 
 import org.eclipse.jetty.continuation.ContinuationFilter;
+import org.eclipse.jetty.http.MimeTypes;
 import org.eclipse.jetty.security.SecurityHandler;
 import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.servlet.FilterHolder;
@@ -16,6 +17,7 @@ import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class ServletEnvironmentTest {
     private final ServletContextHandler handler = mock(ServletContextHandler.class);
@@ -129,5 +131,15 @@ public class ServletEnvironmentTest {
         environment.setSecurityHandler(securityHandler);
 
         verify(handler).setSecurityHandler(securityHandler);
+    }
+
+    @Test
+    public void addsMimeMapping() {
+        final MimeTypes mimeTypes = mock(MimeTypes.class);
+        when(handler.getMimeTypes()).thenReturn(mimeTypes);
+
+        environment.addMimeMapping("example/foo", "foo");
+
+        verify(mimeTypes).addMimeMapping("example/foo", "foo");
     }
 }
