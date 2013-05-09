@@ -9,17 +9,15 @@ import com.codahale.dropwizard.cli.ConfiguredCommand;
 import com.codahale.dropwizard.configuration.ConfigurationSourceProvider;
 import com.codahale.dropwizard.configuration.FileConfigurationSourceProvider;
 import com.codahale.dropwizard.jackson.Jackson;
-import com.codahale.dropwizard.spi.SpiFinder;
+import com.codahale.dropwizard.jackson.ServiceSubtypeResolver;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.jvm.BufferPoolMetricSet;
 import com.codahale.metrics.jvm.GarbageCollectorMetricSet;
 import com.codahale.metrics.jvm.MemoryUsageGaugeSet;
 import com.codahale.metrics.jvm.ThreadStatesGaugeSet;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.jsontype.SubtypeResolver;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import com.sun.jersey.spi.service.ServiceFinder;
 
 import java.lang.management.ManagementFactory;
 import java.util.List;
@@ -38,10 +36,7 @@ public class Bootstrap<T extends Configuration> {
     public Bootstrap(Application<T> application) {
         this.application = application;
         this.objectMapper = Jackson.newObjectMapper();
-        final SubtypeResolver resolver = objectMapper.getSubtypeResolver();
-        for (Class<?> klass : SpiFinder.locateSpiClasses()) {
-            resolver.registerSubtypes(ServiceFinder.find(klass).toClassArray());
-        }
+        objectMapper.setSubtypeResolver(new ServiceSubtypeResolver());
         this.bundles = Lists.newArrayList();
         this.configuredBundles = Lists.newArrayList();
         this.commands = Lists.newArrayList();

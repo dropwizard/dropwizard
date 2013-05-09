@@ -1,3 +1,0 @@
-com.codahale.dropwizard.logging.AppenderFactory
-com.codahale.dropwizard.server.ServerFactory
-com.codahale.dropwizard.jetty.ConnectorFactory

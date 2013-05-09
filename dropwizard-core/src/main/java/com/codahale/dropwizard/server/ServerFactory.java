@@ -2,6 +2,7 @@ package com.codahale.dropwizard.server;
 
 import com.codahale.dropwizard.jersey.setup.JerseyEnvironment;
 import com.codahale.dropwizard.lifecycle.setup.LifecycleEnvironment;
+import com.codahale.dropwizard.util.Subtyped;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheckRegistry;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -22,7 +23,7 @@ import javax.validation.Validator;
               include = JsonTypeInfo.As.PROPERTY,
               property = "type",
               defaultImpl = DefaultServerFactory.class)
-public interface ServerFactory {
+public interface ServerFactory extends Subtyped {
     /**
      * Build a server for the given Dropwizard application.
      *
