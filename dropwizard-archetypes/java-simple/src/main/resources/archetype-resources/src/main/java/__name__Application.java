@@ -1,13 +1,13 @@
 package ${package};
 
-import com.codahale.dropwizard.Service;
+import com.codahale.dropwizard.Application;
 import com.codahale.dropwizard.setup.Bootstrap;
 import com.codahale.dropwizard.setup.Environment;
 
-public class ${name}Service extends Service<${name}Configuration> {
+public class ${name}Application extends Application<${name}Configuration> {
 
     public static void main(final String[] args) throws Exception {
-        new ${name}Service().run(args);
+        new ${name}Application().run(args);
     }
 
     @Override
@@ -17,13 +17,13 @@ public class ${name}Service extends Service<${name}Configuration> {
 
     @Override
     public void initialize(final Bootstrap<${name}Configuration> bootstrap) {
-        // TODO: service initialization
+        // TODO: application initialization
     }
 
     @Override
     public void run(final ${name}Configuration configuration,
                     final Environment environment) {
-        // TODO: implement service
+        // TODO: implement application
     }
 
 }
