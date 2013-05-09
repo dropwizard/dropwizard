@@ -6,10 +6,10 @@ import org.junit.Test;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
-public class ServiceTest {
+public class ApplicationTest {
     private static class FakeConfiguration extends Configuration {}
 
-    private static class FakeService extends Service<FakeConfiguration> {
+    private static class FakeApplication extends Application<FakeConfiguration> {
         @Override
         public void initialize(Bootstrap<FakeConfiguration> bootstrap) {}
 
@@ -17,42 +17,42 @@ public class ServiceTest {
         public void run(FakeConfiguration configuration, Environment environment) {}
     }
 
-    private static class PoserService extends FakeService {}
+    private static class PoserApplication extends FakeApplication {}
 
-    private static class WrapperService<C extends FakeConfiguration> extends Service<C> {
-        private final Service<C> service;
+    private static class WrapperApplication<C extends FakeConfiguration> extends Application<C> {
+        private final Application<C> application;
 
-        private WrapperService(Service<C> service) {
-            this.service = service;
+        private WrapperApplication(Application<C> application) {
+            this.application = application;
         }
 
         @Override
         public void initialize(Bootstrap<C> bootstrap) {
-            this.service.initialize(bootstrap);
+            this.application.initialize(bootstrap);
         }
 
         @Override
         public void run(C configuration, Environment environment) throws Exception {
-            this.service.run(configuration, environment);
+            this.application.run(configuration, environment);
         }
     }
 
     @Test
     public void hasAReferenceToItsTypeParameter() throws Exception {
-        assertThat(new FakeService().getConfigurationClass())
+        assertThat(new FakeApplication().getConfigurationClass())
                 .isSameAs(FakeConfiguration.class);
     }
 
     @Test
     public void canDetermineConfiguration() throws Exception {
-        assertThat(new PoserService().getConfigurationClass())
+        assertThat(new PoserApplication().getConfigurationClass())
                 .isSameAs(FakeConfiguration.class);
     }
 
     @Test
     public void canDetermineWrappedConfiguration() throws Exception {
-        final PoserService service = new PoserService();
-        assertThat(new WrapperService<>(service).getConfigurationClass())
+        final PoserApplication application = new PoserApplication();
+        assertThat(new WrapperApplication<>(application).getConfigurationClass())
                 .isSameAs(FakeConfiguration.class);
     }
 }

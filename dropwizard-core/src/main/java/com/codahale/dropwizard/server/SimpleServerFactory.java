@@ -26,7 +26,7 @@ import javax.validation.constraints.NotNull;
 
 /**
  * A single-connector implementation of {@link ServerFactory}, suitable for PaaS deployments
- * (e.g., Heroku) where services are limited to a single, runtime-defined port. A startup script
+ * (e.g., Heroku) where applications are limited to a single, runtime-defined port. A startup script
  * can override the port via {@code -Ddw.server.connector.port=$PORT}.
  *
  * @see ServerFactory
@@ -39,7 +39,7 @@ public class SimpleServerFactory extends AbstractServerFactory {
     private ConnectorFactory connector = HttpConnectorFactory.application();
 
     @NotEmpty
-    private String serviceContextPath = "/service";
+    private String applicationContextPath = "/application";
 
     @NotEmpty
     private String adminContextPath = "/admin";
@@ -55,13 +55,13 @@ public class SimpleServerFactory extends AbstractServerFactory {
     }
 
     @JsonProperty
-    public String getServiceContextPath() {
-        return serviceContextPath;
+    public String getApplicationContextPath() {
+        return applicationContextPath;
     }
 
     @JsonProperty
-    public void setServiceContextPath(String contextPath) {
-        this.serviceContextPath = contextPath;
+    public void setApplicationContextPath(String contextPath) {
+        this.applicationContextPath = contextPath;
     }
 
     @JsonProperty
@@ -88,7 +88,7 @@ public class SimpleServerFactory extends AbstractServerFactory {
         final ThreadPool threadPool = createThreadPool(metricRegistry);
         final Server server = buildServer(lifecycle, threadPool);
 
-        applicationContext.setContextPath(serviceContextPath);
+        applicationContext.setContextPath(applicationContextPath);
         final Handler applicationHandler = createExternalServlet(jersey,
                                                                  objectMapper,
                                                                  validator,
@@ -103,7 +103,7 @@ public class SimpleServerFactory extends AbstractServerFactory {
         server.addConnector(conn);
 
         final ContextRoutingHandler routingHandler = new ContextRoutingHandler(ImmutableMap.of(
-                serviceContextPath, applicationHandler,
+                applicationContextPath, applicationHandler,
                 adminContextPath, adminHandler
         ));
         server.setHandler(addGzipAndRequestLog(routingHandler, name));

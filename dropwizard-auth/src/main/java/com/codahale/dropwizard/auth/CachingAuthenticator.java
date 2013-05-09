@@ -26,7 +26,7 @@ public class CachingAuthenticator<C, P> implements Authenticator<C, P> {
     /**
      * Creates a new cached authenticator.
      *
-     * @param metricRegistry the service's registry of metrics
+     * @param metricRegistry the application's registry of metrics
      * @param authenticator  the underlying authenticator
      * @param cacheSpec      a {@link CacheBuilderSpec}
      */
@@ -39,7 +39,7 @@ public class CachingAuthenticator<C, P> implements Authenticator<C, P> {
     /**
      * Creates a new cached authenticator.
      *
-     * @param metricRegistry the service's registry of metrics
+     * @param metricRegistry the application's registry of metrics
      * @param authenticator  the underlying authenticator
      * @param builder        a {@link CacheBuilder}
      */

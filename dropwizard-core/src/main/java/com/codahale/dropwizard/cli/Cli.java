@@ -13,7 +13,7 @@ import net.sourceforge.argparse4j.inf.Subparser;
 import java.util.SortedMap;
 
 /**
- * The command-line runner for Dropwizard services.
+ * The command-line runner for Dropwizard application.
  */
 public class Cli {
     private static final String COMMAND_NAME_ATTR = "command";
@@ -24,10 +24,10 @@ public class Cli {
     private final ArgumentParser parser;
 
     /**
-     * Create a new CLI interface for a service and its bootstrapped environment.
+     * Create a new CLI interface for a application and its bootstrapped environment.
      *
-     * @param location     the location of the service
-     * @param bootstrap    the bootstrap for the service
+     * @param location     the location of the application
+     * @param bootstrap    the bootstrap for the application
      */
     public Cli(JarLocation location, Bootstrap<?> bootstrap) {
         this.commands = Maps.newTreeMap();
@@ -62,11 +62,11 @@ public class Cli {
         final ArgumentParser p = ArgumentParsers.newArgumentParser(usage)
                                                 .defaultHelp(true);
         p.version(location.getVersion().or(
-                "No service version detected. Add a Implementation-Version " +
+                "No application version detected. Add a Implementation-Version " +
                         "entry to your JAR's manifest to enable this."));
         p.addArgument("-v", "--version")
          .action(new VersionArgumentAction())
-         .help("show the service version and exit");
+         .help("show the application version and exit");
         return p;
     }
 

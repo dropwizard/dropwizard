@@ -14,6 +14,7 @@ v0.7.0: TBD
 * Upgraded to Jetty 9.0.3.
 * Upgraded to Metrics 3.
 * Dropped Scala support.
+* Renamed ``Service`` to ``Application``.
 * Added ``AppenderFactory``, allowing for arbitrary logging appenders for application and request
   logs.
 * Added ``ConnectorFactory``, allowing for arbitrary Jetty connectors.

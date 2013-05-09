@@ -1,9 +1,9 @@
 package com.codahale.dropwizard.setup;
 
+import com.codahale.dropwizard.Application;
 import com.codahale.dropwizard.Bundle;
 import com.codahale.dropwizard.Configuration;
 import com.codahale.dropwizard.ConfiguredBundle;
-import com.codahale.dropwizard.Service;
 import com.codahale.dropwizard.cli.Command;
 import com.codahale.dropwizard.cli.ConfiguredCommand;
 import com.codahale.dropwizard.configuration.ConfigurationSourceProvider;
@@ -33,7 +33,7 @@ public class Bootstrap<T extends Configuration> {
             ConnectorFactory.class
     );
 
-    private final Service<T> service;
+    private final Application<T> application;
     private final ObjectMapper objectMapper;
     private final List<Bundle> bundles;
     private final List<ConfiguredBundle<? super T>> configuredBundles;
@@ -43,8 +43,8 @@ public class Bootstrap<T extends Configuration> {
     private ConfigurationSourceProvider configurationProvider;
     private ClassLoader classLoader;
 
-    public Bootstrap(Service<T> service) {
-        this.service = service;
+    public Bootstrap(Application<T> application) {
+        this.application = application;
         this.objectMapper = Jackson.newObjectMapper();
         final SubtypeResolver resolver = objectMapper.getSubtypeResolver();
         for (Class<?> klass : SPI_CLASSES) {
@@ -63,8 +63,8 @@ public class Bootstrap<T extends Configuration> {
         this.classLoader = Thread.currentThread().getContextClassLoader();
     }
 
-    public Service<T> getService() {
-        return service;
+    public Application<T> getApplication() {
+        return application;
     }
 
     public ConfigurationSourceProvider getConfigurationProvider() {

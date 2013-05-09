@@ -100,7 +100,7 @@ public class SyslogAppenderFactory implements AppenderFactory {
     }
 
     @Override
-    public Appender<ILoggingEvent> build(LoggerContext context, String serviceName, Layout<ILoggingEvent> layout) {
+    public Appender<ILoggingEvent> build(LoggerContext context, String applicationName, Layout<ILoggingEvent> layout) {
         final SyslogAppender appender = new SyslogAppender();
         appender.setContext(context);
         appender.setSuffixPattern(logFormat);

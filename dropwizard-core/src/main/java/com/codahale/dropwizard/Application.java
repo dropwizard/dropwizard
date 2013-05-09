@@ -10,11 +10,11 @@ import com.codahale.dropwizard.util.Generics;
 import com.codahale.dropwizard.util.JarLocation;
 
 /**
- * The base class for Dropwizard services.
+ * The base class for Dropwizard applications.
  *
- * @param <T> the type of configuration class for this service
+ * @param <T> the type of configuration class for this application
  */
-public abstract class Service<T extends Configuration> {
+public abstract class Application<T extends Configuration> {
     static {
         // make sure spinning up Hibernate Validator doesn't yell at us
         LoggingFactory.bootstrap();
@@ -31,33 +31,33 @@ public abstract class Service<T extends Configuration> {
     }
 
     /**
-     * Returns the name of the service.
+     * Returns the name of the application.
      *
-     * @return the service's name
+     * @return the application's name
      */
     public String getName() {
         return getClass().getSimpleName();
     }
 
     /**
-     * Initializes the service bootstrap.
+     * Initializes the application bootstrap.
      *
-     * @param bootstrap the service bootstrap
+     * @param bootstrap the application bootstrap
      */
     public abstract void initialize(Bootstrap<T> bootstrap);
 
     /**
-     * When the service runs, this is called after the {@link Bundle}s are run. Override it to add
-     * providers, resources, etc. for your service.
+     * When the application runs, this is called after the {@link Bundle}s are run. Override it to add
+     * providers, resources, etc. for your application.
      *
      * @param configuration the parsed {@link Configuration} object
-     * @param environment   the service's {@link Environment}
+     * @param environment   the application's {@link Environment}
      * @throws Exception if something goes wrong
      */
     public abstract void run(T configuration, Environment environment) throws Exception;
 
     /**
-     * Parses command-line arguments and runs the service. Call this method from a {@code public
+     * Parses command-line arguments and runs the application. Call this method from a {@code public
      * static void main} entry point in your application.
      *
      * @param arguments the command-line arguments

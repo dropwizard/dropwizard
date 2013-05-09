@@ -120,7 +120,7 @@ public class FileAppenderFactory implements AppenderFactory {
     }
 
     @Override
-    public Appender<ILoggingEvent> build(LoggerContext context, String serviceName, Layout<ILoggingEvent> layout) {
+    public Appender<ILoggingEvent> build(LoggerContext context, String applicationName, Layout<ILoggingEvent> layout) {
                 final FileAppender<ILoggingEvent> appender = archive ?
                 new RollingFileAppender<ILoggingEvent>() :
                 new FileAppender<ILoggingEvent>();

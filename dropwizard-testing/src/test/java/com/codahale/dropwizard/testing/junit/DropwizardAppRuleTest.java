@@ -1,7 +1,7 @@
 package com.codahale.dropwizard.testing.junit;
 
+import com.codahale.dropwizard.Application;
 import com.codahale.dropwizard.Configuration;
-import com.codahale.dropwizard.Service;
 import com.codahale.dropwizard.jetty.HttpConnectorFactory;
 import com.codahale.dropwizard.server.DefaultServerFactory;
 import com.codahale.dropwizard.setup.Bootstrap;
@@ -21,11 +21,11 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
-public class DropwizardServiceRuleTest {
+public class DropwizardAppRuleTest {
 
     @ClassRule
-    public static final DropwizardServiceRule<TestConfiguration> RULE =
-            new DropwizardServiceRule<>(TestService.class, resourceFilePath("test-config.yaml"));
+    public static final DropwizardAppRule<TestConfiguration> RULE =
+            new DropwizardAppRule<>(TestApplication.class, resourceFilePath("test-config.yaml"));
 
     @Test
     public void canGetExpectedResourceOverHttp() {
@@ -46,19 +46,19 @@ public class DropwizardServiceRuleTest {
     }
 
     @Test
-    public void returnsService() {
-        final TestService service = RULE.getService();
-        assertNotNull(service);
+    public void returnsApplication() {
+        final TestApplication application = RULE.getApplication();
+        assertNotNull(application);
     }
 
     @Test
     public void returnsEnvironment() {
         final Environment environment = RULE.getEnvironment();
-        assertThat(environment.getName(), is("TestService"));
+        assertThat(environment.getName(), is("TestApplication"));
     }
 
 
-    public static class TestService extends Service<TestConfiguration> {
+    public static class TestApplication extends Application<TestConfiguration> {
         @Override
         public void initialize(Bootstrap<TestConfiguration> bootstrap) {
         }

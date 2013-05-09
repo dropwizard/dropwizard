@@ -22,7 +22,7 @@ your application for the first time.
 * The `PersonResource` and `PeopleResource` are the REST resource which use the PersonDAO to retrieve data from the database, note the injection
 of the PersonDAO in their constructors.
 
-As with all the modules the db example is wired up in the `initialize` function of the `HelloWorldService`.
+As with all the modules the db example is wired up in the `initialize` function of the `HelloWorldApplication`.
 
 # Running The Application
 

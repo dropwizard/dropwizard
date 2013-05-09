@@ -1,7 +1,7 @@
 package com.codahale.dropwizard.cli;
 
 import com.codahale.dropwizard.Configuration;
-import com.codahale.dropwizard.Service;
+import com.codahale.dropwizard.Application;
 import com.codahale.dropwizard.setup.Bootstrap;
 import net.sourceforge.argparse4j.inf.Namespace;
 import org.slf4j.Logger;
@@ -12,9 +12,9 @@ public class CheckCommand<T extends Configuration> extends ConfiguredCommand<T> 
 
     private final Class<T> configurationClass;
 
-    public CheckCommand(Service<T> service) {
+    public CheckCommand(Application<T> application) {
         super("check", "Parses and validates the configuration file");
-        this.configurationClass = service.getConfigurationClass();
+        this.configurationClass = application.getConfigurationClass();
     }
 
     /*

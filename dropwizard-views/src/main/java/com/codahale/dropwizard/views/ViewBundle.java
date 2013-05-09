@@ -5,7 +5,7 @@ import com.codahale.dropwizard.setup.Bootstrap;
 import com.codahale.dropwizard.setup.Environment;
 
 /**
- * A {@link Bundle} which enables the rendering of FreeMarker views by your service.
+ * A {@link Bundle} which enables the rendering of FreeMarker views by your application.
  *
  * <p>A view combines a Freemarker template with a set of Java objects:</p>
  *
@@ -25,8 +25,8 @@ import com.codahale.dropwizard.setup.Environment;
  * </code></pre>
  *
  *<p>The {@code "profile.ftl"} is the path of the template relative to the class name. If this
- * class was {@code com.example.service.PersonView}, Freemarker would then look for the file
- * {@code src/main/resources/com/example/service/profile.ftl}. If the template path
+ * class was {@code com.example.application.PersonView}, Freemarker would then look for the file
+ * {@code src/main/resources/com/example/application/profile.ftl}. If the template path
  * starts with a slash (e.g., {@code "/hello.ftl"}), Freemarker will look for the file {@code
  * src/main/resources/hello.ftl}.
  *
@@ -42,7 +42,7 @@ import com.codahale.dropwizard.setup.Environment;
  * <p>Freemarker templates look something like this:</p>
  *
  * <pre>{@code
- * &lt;#-- @ftlvariable name="" type="com.example.service.PersonView" --&gt;
+ * &lt;#-- @ftlvariable name="" type="com.example.application.PersonView" --&gt;
  * <html>
  *     <body>
  *         <h1>Hello, ${person.name?html}!</h1>

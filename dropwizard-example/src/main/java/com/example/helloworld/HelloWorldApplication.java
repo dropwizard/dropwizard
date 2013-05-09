@@ -1,6 +1,6 @@
 package com.example.helloworld;
 
-import com.codahale.dropwizard.Service;
+import com.codahale.dropwizard.Application;
 import com.codahale.dropwizard.assets.AssetsBundle;
 import com.codahale.dropwizard.auth.basic.BasicAuthProvider;
 import com.codahale.dropwizard.db.DatabaseConfiguration;
@@ -17,9 +17,9 @@ import com.example.helloworld.db.PersonDAO;
 import com.example.helloworld.health.TemplateHealthCheck;
 import com.example.helloworld.resources.*;
 
-public class HelloWorldService extends Service<HelloWorldConfiguration> {
+public class HelloWorldApplication extends Application<HelloWorldConfiguration> {
     public static void main(String[] args) throws Exception {
-        new HelloWorldService().run(args);
+        new HelloWorldApplication().run(args);
     }
 
     private final HibernateBundle<HelloWorldConfiguration> hibernateBundle =

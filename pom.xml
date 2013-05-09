@@ -13,7 +13,7 @@
     <url>http://dropwizard.codahale.com/</url>
     <description>
         Dropwizard is a Java framework for developing ops-friendly, high-performance, RESTful web
-        services.
+        applications.
     </description>
 
     <modules>

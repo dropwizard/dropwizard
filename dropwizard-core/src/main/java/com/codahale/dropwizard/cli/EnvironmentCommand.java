@@ -1,7 +1,7 @@
 package com.codahale.dropwizard.cli;
 
+import com.codahale.dropwizard.Application;
 import com.codahale.dropwizard.Configuration;
-import com.codahale.dropwizard.Service;
 import com.codahale.dropwizard.setup.Bootstrap;
 import com.codahale.dropwizard.setup.Environment;
 import net.sourceforge.argparse4j.inf.Namespace;
@@ -15,30 +15,30 @@ import javax.validation.Validation;
  * @see Configuration
  */
 public abstract class EnvironmentCommand<T extends Configuration> extends ConfiguredCommand<T> {
-    private final Service<T> service;
+    private final Application<T> application;
 
     /**
      * Creates a new environment command.
      *
-     * @param service     the service providing this command
+     * @param application     the application providing this command
      * @param name        the name of the command, used for command line invocation
      * @param description a description of the command's purpose
      */
-    protected EnvironmentCommand(Service<T> service, String name, String description) {
+    protected EnvironmentCommand(Application<T> application, String name, String description) {
         super(name, description);
-        this.service = service;
+        this.application = application;
     }
 
     @Override
     protected final void run(Bootstrap<T> bootstrap, Namespace namespace, T configuration) throws Exception {
-        final Environment environment = new Environment(bootstrap.getService().getName(),
+        final Environment environment = new Environment(bootstrap.getApplication().getName(),
                                                         bootstrap.getObjectMapper(),
                                                         Validation.buildDefaultValidatorFactory()
                                                                   .getValidator(),
                                                         bootstrap.getMetricRegistry(),
                                                         bootstrap.getClassLoader());
         bootstrap.runWithBundles(configuration, environment);
-        service.run(configuration, environment);
+        application.run(configuration, environment);
         run(environment, namespace, configuration);
     }
 
