@@ -9,9 +9,7 @@ import com.codahale.dropwizard.cli.ConfiguredCommand;
 import com.codahale.dropwizard.configuration.ConfigurationSourceProvider;
 import com.codahale.dropwizard.configuration.FileConfigurationSourceProvider;
 import com.codahale.dropwizard.jackson.Jackson;
-import com.codahale.dropwizard.jetty.ConnectorFactory;
-import com.codahale.dropwizard.logging.AppenderFactory;
-import com.codahale.dropwizard.server.ServerFactory;
+import com.codahale.dropwizard.spi.SpiFinder;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.jvm.BufferPoolMetricSet;
 import com.codahale.metrics.jvm.GarbageCollectorMetricSet;
@@ -27,12 +25,6 @@ import java.lang.management.ManagementFactory;
 import java.util.List;
 
 public class Bootstrap<T extends Configuration> {
-    private static final ImmutableList<Class<?>> SPI_CLASSES = ImmutableList.of(
-            AppenderFactory.class,
-            ServerFactory.class,
-            ConnectorFactory.class
-    );
-
     private final Application<T> application;
     private final ObjectMapper objectMapper;
     private final List<Bundle> bundles;
@@ -47,7 +39,7 @@ public class Bootstrap<T extends Configuration> {
         this.application = application;
         this.objectMapper = Jackson.newObjectMapper();
         final SubtypeResolver resolver = objectMapper.getSubtypeResolver();
-        for (Class<?> klass : SPI_CLASSES) {
+        for (Class<?> klass : SpiFinder.locateSpiClasses()) {
             resolver.registerSubtypes(ServiceFinder.find(klass).toClassArray());
         }
         this.bundles = Lists.newArrayList();
