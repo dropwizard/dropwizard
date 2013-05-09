@@ -4,7 +4,7 @@ import com.codahale.dropwizard.setup.Bootstrap;
 import com.codahale.dropwizard.setup.Environment;
 
 /**
- * A reusable bundle of functionality, used to define blocks of service behavior that are
+ * A reusable bundle of functionality, used to define blocks of application behavior that are
  * conditional on configuration parameters.
  *
  * @param <T>    the required configuration interface
@@ -14,15 +14,15 @@ public interface ConfiguredBundle<T> {
      * Initializes the environment.
      *
      * @param configuration    the configuration object
-     * @param environment      the service's {@link Environment}
+     * @param environment      the application's {@link Environment}
      * @throws Exception if something goes wrong
      */
     void run(T configuration, Environment environment) throws Exception;
 
     /**
-     * Initializes the service bootstrap.
+     * Initializes the application bootstrap.
      *
-     * @param bootstrap the service bootstrap
+     * @param bootstrap the application bootstrap
      */
     void initialize(Bootstrap<?> bootstrap);
 }

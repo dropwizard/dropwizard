@@ -10,8 +10,10 @@ import com.codahale.metrics.health.HealthCheckRegistry;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.ImmutableMap;
 import com.sun.jersey.spi.container.servlet.ServletContainer;
 import org.eclipse.jetty.server.Connector;
+import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.util.thread.ThreadPool;
@@ -24,8 +26,11 @@ import javax.validation.constraints.NotNull;
 
 /**
  * A single-connector implementation of {@link ServerFactory}, suitable for PaaS deployments
- * (e.g., Heroku) where services are limited to a single, runtime-defined port. A startup script
+ * (e.g., Heroku) where applications are limited to a single, runtime-defined port. A startup script
  * can override the port via {@code -Ddw.server.connector.port=$PORT}.
+ *
+ * @see ServerFactory
+ * @see DefaultServerFactory
  */
 @JsonTypeName("simple")
 public class SimpleServerFactory extends AbstractServerFactory {
@@ -34,10 +39,10 @@ public class SimpleServerFactory extends AbstractServerFactory {
     private ConnectorFactory connector = HttpConnectorFactory.application();
 
     @NotEmpty
-    private String serviceRoot = "/service";
+    private String applicationContextPath = "/application";
 
     @NotEmpty
-    private String adminRoot = "/admin";
+    private String adminContextPath = "/admin";
 
     @JsonProperty
     public ConnectorFactory getConnector() {
@@ -50,23 +55,23 @@ public class SimpleServerFactory extends AbstractServerFactory {
     }
 
     @JsonProperty
-    public String getServiceRoot() {
-        return serviceRoot;
+    public String getApplicationContextPath() {
+        return applicationContextPath;
     }
 
     @JsonProperty
-    public void setServiceRoot(String root) {
-        this.serviceRoot = root;
+    public void setApplicationContextPath(String contextPath) {
+        this.applicationContextPath = contextPath;
     }
 
     @JsonProperty
-    public String getAdminRoot() {
-        return adminRoot;
+    public String getAdminContextPath() {
+        return adminContextPath;
     }
 
     @JsonProperty
-    public void setAdminRoot(String root) {
-        this.adminRoot = root;
+    public void setAdminContextPath(String contextPath) {
+        this.adminContextPath = contextPath;
     }
 
     @Override
@@ -80,28 +85,28 @@ public class SimpleServerFactory extends AbstractServerFactory {
                         JerseyEnvironment jersey,
                         ObjectMapper objectMapper,
                         Validator validator) {
-
         final ThreadPool threadPool = createThreadPool(metricRegistry);
         final Server server = buildServer(lifecycle, threadPool);
 
-        final ServletContextHandler applicationHandler = createExternalServlet(jersey,
-                                                                               objectMapper,
-                                                                               validator,
-                                                                               applicationContext,
-                                                                               jerseyContainer);
-        applicationHandler.setContextPath(serviceRoot);
+        applicationContext.setContextPath(applicationContextPath);
+        final Handler applicationHandler = createExternalServlet(jersey,
+                                                                 objectMapper,
+                                                                 validator,
+                                                                 applicationContext,
+                                                                 jerseyContainer,
+                                                                 metricRegistry);
 
-        final ServletContextHandler adminHandler = createInternalServlet(adminContext,
-                                                                         metricRegistry,
-                                                                         healthChecks);
-        adminHandler.setContextPath(adminRoot);
+        adminContext.setContextPath(adminContextPath);
+        final Handler adminHandler = createInternalServlet(adminContext, metricRegistry, healthChecks);
 
         final Connector conn = connector.build(server, metricRegistry, name, server.getThreadPool());
         server.addConnector(conn);
 
-        final ContextRoutingHandler routingHandler = new ContextRoutingHandler(applicationHandler,
-                                                                               adminHandler);
-        server.setHandler(wrapAndInstrument(routingHandler, metricRegistry, name));
+        final ContextRoutingHandler routingHandler = new ContextRoutingHandler(ImmutableMap.of(
+                applicationContextPath, applicationHandler,
+                adminContextPath, adminHandler
+        ));
+        server.setHandler(addGzipAndRequestLog(routingHandler, name));
 
         return server;
     }

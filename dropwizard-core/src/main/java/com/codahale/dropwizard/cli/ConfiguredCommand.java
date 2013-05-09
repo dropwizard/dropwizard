@@ -45,7 +45,7 @@ public abstract class ConfiguredCommand<T extends Configuration> extends Command
      */
     @Override
     public void configure(Subparser subparser) {
-        subparser.addArgument("file").nargs("?").help("service configuration file");
+        subparser.addArgument("file").nargs("?").help("application configuration file");
     }
 
     @Override
@@ -57,7 +57,7 @@ public abstract class ConfiguredCommand<T extends Configuration> extends Command
                                                    bootstrap.getObjectMapper());
         if (configuration != null) {
             configuration.getLoggingFactory().configure(bootstrap.getMetricRegistry(),
-                                                        bootstrap.getService().getName());
+                                                        bootstrap.getApplication().getName());
         }
         run((Bootstrap<T>) bootstrap, namespace, configuration);
     }
