@@ -1,6 +1,5 @@
 package com.codahale.dropwizard.jackson;
 
-import com.codahale.dropwizard.util.Subtyped;
 import com.fasterxml.jackson.databind.jsontype.impl.StdSubtypeResolver;
 import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
@@ -21,8 +20,8 @@ import java.util.List;
 public class ServiceSubtypeResolver extends StdSubtypeResolver {
     private static final Logger LOGGER = LoggerFactory.getLogger(ServiceSubtypeResolver.class);
 
-    public ServiceSubtypeResolver() {
-        for (Class<?> klass : discoverServices(Subtyped.class)) {
+    public ServiceSubtypeResolver(Class<?> rootKlass) {
+        for (Class<?> klass : discoverServices(rootKlass)) {
             for (Class<?> subtype : discoverServices(klass)) {
                 registerSubtypes(subtype);
             }

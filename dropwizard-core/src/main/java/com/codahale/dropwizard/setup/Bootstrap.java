@@ -9,7 +9,6 @@ import com.codahale.dropwizard.cli.ConfiguredCommand;
 import com.codahale.dropwizard.configuration.ConfigurationSourceProvider;
 import com.codahale.dropwizard.configuration.FileConfigurationSourceProvider;
 import com.codahale.dropwizard.jackson.Jackson;
-import com.codahale.dropwizard.jackson.ServiceSubtypeResolver;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.jvm.BufferPoolMetricSet;
 import com.codahale.metrics.jvm.GarbageCollectorMetricSet;
@@ -36,7 +35,6 @@ public class Bootstrap<T extends Configuration> {
     public Bootstrap(Application<T> application) {
         this.application = application;
         this.objectMapper = Jackson.newObjectMapper();
-        objectMapper.setSubtypeResolver(new ServiceSubtypeResolver());
         this.bundles = Lists.newArrayList();
         this.configuredBundles = Lists.newArrayList();
         this.commands = Lists.newArrayList();
