@@ -127,9 +127,9 @@ public abstract class AbstractServerFactory implements ServerFactory {
         this.maxQueuedRequests = maxQueuedRequests;
     }
 
-    protected ServletContextHandler createInternalServlet(ServletContextHandler handler,
-                                                          MetricRegistry metrics,
-                                                          HealthCheckRegistry healthChecks) {
+    protected Handler createInternalServlet(ServletContextHandler handler,
+                                            MetricRegistry metrics,
+                                            HealthCheckRegistry healthChecks) {
         handler.getServletContext().setAttribute(MetricsServlet.METRICS_REGISTRY,
                                                  metrics);
         handler.getServletContext().setAttribute(HealthCheckServlet.HEALTH_CHECK_REGISTRY,
@@ -139,11 +139,12 @@ public abstract class AbstractServerFactory implements ServerFactory {
         return handler;
     }
 
-    protected ServletContextHandler createExternalServlet(JerseyEnvironment jersey,
-                                                          ObjectMapper objectMapper,
-                                                          Validator validator,
-                                                          ServletContextHandler handler,
-                                                          @Nullable ServletContainer jerseyContainer) {
+    protected Handler createExternalServlet(JerseyEnvironment jersey,
+                                            ObjectMapper objectMapper,
+                                            Validator validator,
+                                            ServletContextHandler handler,
+                                            @Nullable ServletContainer jerseyContainer,
+                                            MetricRegistry metricRegistry) {
         handler.addFilter(ThreadNameFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST));
         if (jerseyContainer != null) {
             jersey.addProvider(new JacksonMessageBodyProvider(objectMapper, validator));
@@ -151,7 +152,7 @@ public abstract class AbstractServerFactory implements ServerFactory {
             jerseyHolder.setInitOrder(Integer.MAX_VALUE);
             handler.addServlet(jerseyHolder, jersey.getUrlPattern());
         }
-        return handler;
+        return new InstrumentedHandler(metricRegistry, handler);
     }
 
     protected ThreadPool createThreadPool(MetricRegistry metricRegistry) {
@@ -176,14 +177,13 @@ public abstract class AbstractServerFactory implements ServerFactory {
         return server;
     }
 
-    protected Handler wrapAndInstrument(Handler handler, MetricRegistry metricRegistry, String name) {
-        final Handler gzipHandler = getGzipHandlerFactory().wrapHandler(handler);
-        final Handler instrumentedHandler = new InstrumentedHandler(metricRegistry, gzipHandler);
+    protected Handler addGzipAndRequestLog(Handler handler, String name) {
+        final Handler gzipHandler = gzip.wrapHandler(handler);
         if (getRequestLogFactory().isEnabled()) {
             final RequestLogHandler requestLogHandler = getRequestLogFactory().build(name);
-            requestLogHandler.setHandler(instrumentedHandler);
+            requestLogHandler.setHandler(gzipHandler);
             return requestLogHandler;
         }
-        return instrumentedHandler;
+        return gzipHandler;
     }
 }

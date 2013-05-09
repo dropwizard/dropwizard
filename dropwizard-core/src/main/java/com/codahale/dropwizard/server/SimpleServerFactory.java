@@ -10,8 +10,10 @@ import com.codahale.metrics.health.HealthCheckRegistry;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.ImmutableMap;
 import com.sun.jersey.spi.container.servlet.ServletContainer;
 import org.eclipse.jetty.server.Connector;
+import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.util.thread.ThreadPool;
@@ -26,6 +28,9 @@ import javax.validation.constraints.NotNull;
  * A single-connector implementation of {@link ServerFactory}, suitable for PaaS deployments
  * (e.g., Heroku) where services are limited to a single, runtime-defined port. A startup script
  * can override the port via {@code -Ddw.server.connector.port=$PORT}.
+ *
+ * @see ServerFactory
+ * @see DefaultServerFactory
  */
 @JsonTypeName("simple")
 public class SimpleServerFactory extends AbstractServerFactory {
@@ -83,24 +88,25 @@ public class SimpleServerFactory extends AbstractServerFactory {
         final ThreadPool threadPool = createThreadPool(metricRegistry);
         final Server server = buildServer(lifecycle, threadPool);
 
-        final ServletContextHandler applicationHandler = createExternalServlet(jersey,
-                                                                               objectMapper,
-                                                                               validator,
-                                                                               applicationContext,
-                                                                               jerseyContainer);
-        applicationHandler.setContextPath(serviceContextPath);
+        applicationContext.setContextPath(serviceContextPath);
+        final Handler applicationHandler = createExternalServlet(jersey,
+                                                                 objectMapper,
+                                                                 validator,
+                                                                 applicationContext,
+                                                                 jerseyContainer,
+                                                                 metricRegistry);
 
-        final ServletContextHandler adminHandler = createInternalServlet(adminContext,
-                                                                         metricRegistry,
-                                                                         healthChecks);
-        adminHandler.setContextPath(adminContextPath);
+        adminContext.setContextPath(adminContextPath);
+        final Handler adminHandler = createInternalServlet(adminContext, metricRegistry, healthChecks);
 
         final Connector conn = connector.build(server, metricRegistry, name, server.getThreadPool());
         server.addConnector(conn);
 
-        final ContextRoutingHandler routingHandler = new ContextRoutingHandler(applicationHandler,
-                                                                               adminHandler);
-        server.setHandler(wrapAndInstrument(routingHandler, metricRegistry, name));
+        final ContextRoutingHandler routingHandler = new ContextRoutingHandler(ImmutableMap.of(
+                serviceContextPath, applicationHandler,
+                adminContextPath, adminHandler
+        ));
+        server.setHandler(addGzipAndRequestLog(routingHandler, name));
 
         return server;
     }
