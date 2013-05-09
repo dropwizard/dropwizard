@@ -1,6 +1,6 @@
 package ${package};
 
-import com.yammer.dropwizard.config.Configuration;
+import com.codahale.dropwizard.Configuration;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.validator.constraints.*;
 import javax.validation.constraints.*;

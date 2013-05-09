@@ -1,8 +1,8 @@
 package ${package};
 
-import com.yammer.dropwizard.Service;
-import com.yammer.dropwizard.config.Bootstrap;
-import com.yammer.dropwizard.config.Environment;
+import com.codahale.dropwizard.Service;
+import com.codahale.dropwizard.setup.Bootstrap;
+import com.codahale.dropwizard.setup.Environment;
 
 public class ${name}Service extends Service<${name}Configuration> {
 
