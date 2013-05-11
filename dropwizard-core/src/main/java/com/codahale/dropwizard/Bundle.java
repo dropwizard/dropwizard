@@ -4,20 +4,20 @@ import com.codahale.dropwizard.setup.Bootstrap;
 import com.codahale.dropwizard.setup.Environment;
 
 /**
- * A reusable bundle of functionality, used to define blocks of service behavior.
+ * A reusable bundle of functionality, used to define blocks of application behavior.
  */
 public interface Bundle {
     /**
-     * Initializes the service bootstrap.
+     * Initializes the application bootstrap.
      *
-     * @param bootstrap the service bootstrap
+     * @param bootstrap the application bootstrap
      */
     void initialize(Bootstrap<?> bootstrap);
 
     /**
-     * Initializes the service environment.
+     * Initializes the application environment.
      *
-     * @param environment the service environment
+     * @param environment the application environment
      */
     void run(Environment environment);
 }

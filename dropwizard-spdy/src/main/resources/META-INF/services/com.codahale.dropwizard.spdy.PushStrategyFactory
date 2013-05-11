@@ -1,0 +1,2 @@
+com.codahale.dropwizard.spdy.NonePushStrategyFactory
+com.codahale.dropwizard.spdy.ReferrerPushStrategyFactory

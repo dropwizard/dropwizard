@@ -118,4 +118,8 @@ public class ServletEnvironment {
     public void setSecurityHandler(SecurityHandler securityHandler) {
         handler.setSecurityHandler(securityHandler);
     }
+
+    public void addMimeMapping(String extension, String type) {
+        handler.getMimeTypes().addMimeMapping(extension, type);
+    }
 }

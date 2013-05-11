@@ -52,7 +52,7 @@ import javax.validation.constraints.NotNull;
  * </pre>
  * <p/>
  * Dropwizard will parse the given YAML file and provide an {@code ExampleConfiguration} instance
- * to your service whose {@code getName()} method will return {@code "Random Person"} and whose
+ * to your application whose {@code getName()} method will return {@code "Random Person"} and whose
  * {@code getAge()} method will return {@code 43}.
  *
  * @see <a href="http://www.yaml.org/YAML_for_ruby.html">YAML Cookbook</a>

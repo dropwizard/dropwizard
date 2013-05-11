@@ -1,10 +1,10 @@
 package com.codahale.dropwizard.testing.junit;
 
-import com.codahale.dropwizard.Service;
+import com.codahale.dropwizard.Application;
 import com.codahale.dropwizard.setup.Bootstrap;
 import com.codahale.dropwizard.setup.Environment;
 
-public class TestService extends Service<TestConfiguration> {
+public class TestApplication extends Application<TestConfiguration> {
 
     @Override
     public void initialize(Bootstrap<TestConfiguration> bootstrap) {

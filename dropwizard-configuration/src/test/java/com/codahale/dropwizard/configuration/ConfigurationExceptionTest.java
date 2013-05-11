@@ -1,9 +1,11 @@
 package com.codahale.dropwizard.configuration;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
+import javax.validation.Validator;
 import javax.validation.constraints.NotNull;
 import java.util.Set;
 
@@ -15,18 +17,27 @@ public class ConfigurationExceptionTest {
         String woo;
     }
 
+    private ConfigurationException e;
+
+    @Before
+    public void setUp() throws Exception {
+        final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+        final Set<ConstraintViolation<Example>> violations = validator.validate(new Example());
+        this.e = new ConfigurationException("config.yml", violations);
+    }
+
     @Test
     public void formatsTheViolationsIntoAHumanReadableMessage() throws Exception {
-        final Set<ConstraintViolation<Example>> violations = Validation.buildDefaultValidatorFactory()
-                                                                       .getValidator()
-                                                                       .validate(new Example());
-
-        final ConfigurationException e = new ConfigurationException("config.yml", violations);
-
         assertThat(e.getMessage())
                 .isEqualTo(String.format(
                         "config.yml has the following errors:%n" +
                                 "  * woo may not be null (was null)%n"
                 ));
+    }
+
+    @Test
+    public void retainsTheSetOfExceptions() throws Exception {
+        assertThat(e.getConstraintViolations())
+                .isNotEmpty();
     }
 }

@@ -1,7 +1,7 @@
 package com.codahale.dropwizard.cli;
 
+import com.codahale.dropwizard.Application;
 import com.codahale.dropwizard.Configuration;
-import com.codahale.dropwizard.Service;
 import com.codahale.dropwizard.setup.Environment;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
@@ -16,18 +16,18 @@ import java.util.regex.Pattern;
 // TODO: 10/12/11 <coda> -- write tests for ServerCommand
 
 /**
- * Runs a service as an HTTP server.
+ * Runs a application as an HTTP server.
  *
- * @param <T> the {@link com.codahale.dropwizard.Configuration} subclass which is loaded from the configuration file
+ * @param <T> the {@link Configuration} subclass which is loaded from the configuration file
  */
 public class ServerCommand<T extends Configuration> extends EnvironmentCommand<T> {
     private static final Pattern WINDOWS_NEWLINE = Pattern.compile("\\r\\n?");
 
     private final Class<T> configurationClass;
 
-    public ServerCommand(Service<T> service) {
-        super(service, "server", "Runs the Dropwizard service as an HTTP server");
-        this.configurationClass = service.getConfigurationClass();
+    public ServerCommand(Application<T> application) {
+        super(application, "server", "Runs the Dropwizard application as an HTTP server");
+        this.configurationClass = application.getConfigurationClass();
     }
 
     /*

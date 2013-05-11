@@ -1,7 +1,7 @@
 package com.codahale.dropwizard.testing.junit;
 
+import com.codahale.dropwizard.Application;
 import com.codahale.dropwizard.Configuration;
-import com.codahale.dropwizard.Service;
 import com.codahale.dropwizard.cli.ServerCommand;
 import com.codahale.dropwizard.lifecycle.ServerLifecycleListener;
 import com.codahale.dropwizard.setup.Bootstrap;
@@ -13,34 +13,26 @@ import org.eclipse.jetty.server.ServerConnector;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
-
 import java.util.Enumeration;
-import java.util.Set;
 
 /**
- * A JUnit rule for starting and stopping your service at the start and end of a test class.
+ * A JUnit rule for starting and stopping your application at the start and end of a test class.
  * @param <C> the configuration type
  */
-public class DropwizardServiceRule<C extends Configuration> implements TestRule {
+public class DropwizardAppRule<C extends Configuration> implements TestRule {
 
-    private final Class<? extends Service<C>> serviceClass;
+    private final Class<? extends Application<C>> applicationClass;
     private final String configPath;
 
     private C configuration;
-    private Service<C> service;
+    private Application<C> application;
     private Environment environment;
     private Server jettyServer;
 
-    /**
-     *
-     * @param serviceClass the class for your service
-     * @param configPath the file path to your YAML config
-     * @param configOverrides configuration value overrides (no need to prefix with dw.)
-     */
-    public DropwizardServiceRule(Class<? extends Service<C>> serviceClass,
-                                 String configPath,
-                                 ConfigOverride... configOverrides) {
-        this.serviceClass = serviceClass;
+    public DropwizardAppRule(Class<? extends Application<C>> applicationClass,
+                             String configPath,
+                             ConfigOverride... configOverrides) {
+        this.applicationClass = applicationClass;
         this.configPath = configPath;
         for (ConfigOverride configOverride: configOverrides) {
             configOverride.addToSystemProperties();
@@ -78,9 +70,9 @@ public class DropwizardServiceRule<C extends Configuration> implements TestRule 
         }
 
         try {
-            service = serviceClass.newInstance();
+            application = applicationClass.newInstance();
 
-            final Bootstrap<C> bootstrap = new Bootstrap<C>(service) {
+            final Bootstrap<C> bootstrap = new Bootstrap<C>(application) {
                 @Override
                 public void runWithBundles(C configuration, Environment environment) throws Exception {
                     environment.lifecycle().addServerLifecycleListener(new ServerLifecycleListener() {
@@ -89,14 +81,14 @@ public class DropwizardServiceRule<C extends Configuration> implements TestRule 
                                         jettyServer = server;
                                     }
                                 });
-                    DropwizardServiceRule.this.configuration = configuration;
-                    DropwizardServiceRule.this.environment = environment;
+                    DropwizardAppRule.this.configuration = configuration;
+                    DropwizardAppRule.this.environment = environment;
                     super.runWithBundles(configuration, environment);
                 }
             };
 
-            service.initialize(bootstrap);
-            final ServerCommand<C> command = new ServerCommand<>(service);
+            application.initialize(bootstrap);
+            final ServerCommand<C> command = new ServerCommand<>(application);
             final Namespace namespace = new Namespace(ImmutableMap.<String, Object>of("file", configPath));
             command.run(bootstrap, namespace);
         } catch (Exception e) {
@@ -113,8 +105,8 @@ public class DropwizardServiceRule<C extends Configuration> implements TestRule 
     }
 
     @SuppressWarnings("unchecked")
-    public <S extends Service<C>> S getService() {
-        return (S) service;
+    public <S extends Application<C>> S getApplication() {
+        return (S) application;
     }
 
     public Environment getEnvironment() {

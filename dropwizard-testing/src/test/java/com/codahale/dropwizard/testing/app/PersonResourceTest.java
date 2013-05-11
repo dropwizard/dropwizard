@@ -1,4 +1,4 @@
-package com.codahale.dropwizard.testing.service;
+package com.codahale.dropwizard.testing.app;
 
 import com.codahale.dropwizard.testing.Person;
 import com.codahale.dropwizard.testing.ResourceTest;

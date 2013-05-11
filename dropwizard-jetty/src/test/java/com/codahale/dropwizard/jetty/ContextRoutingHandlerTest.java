@@ -1,14 +1,15 @@
 package com.codahale.dropwizard.jetty;
 
+import com.google.common.collect.ImmutableMap;
+import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Request;
-import org.eclipse.jetty.server.handler.ContextHandler;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InOrder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 public class ContextRoutingHandlerTest {
@@ -16,17 +17,17 @@ public class ContextRoutingHandlerTest {
     private final HttpServletRequest request = mock(HttpServletRequest.class);
     private final HttpServletResponse response = mock(HttpServletResponse.class);
 
-    private final ContextHandler handler1 = spy(new ContextHandler());
-    private final ContextHandler handler2 = spy(new ContextHandler());
+    private final Handler handler1 = mock(Handler.class);
+    private final Handler handler2 = mock(Handler.class);
 
     private ContextRoutingHandler handler;
 
     @Before
     public void setUp() throws Exception {
-        handler1.setContextPath("/");
-        handler2.setContextPath("/admin");
-
-        this.handler = new ContextRoutingHandler(handler1, handler2);
+        this.handler = new ContextRoutingHandler(ImmutableMap.of(
+                "/", handler1,
+                "/admin", handler2
+        ));
     }
 
     @Test
@@ -62,18 +63,10 @@ public class ContextRoutingHandlerTest {
     @Test
     public void startsAndStopsAllHandlers() throws Exception {
         handler.start();
-        try {
-            assertThat(handler1.isStarted())
-                    .isTrue();
-            assertThat(handler2.isStarted())
-                    .isTrue();
-        } finally {
-            handler.stop();
-        }
+        handler.stop();
 
-        assertThat(handler1.isStopped())
-                .isTrue();
-        assertThat(handler2.isStopped())
-                .isTrue();
+        final InOrder inOrder = inOrder(handler1, handler2);
+        inOrder.verify(handler1).start();
+        inOrder.verify(handler2).start();
     }
 }

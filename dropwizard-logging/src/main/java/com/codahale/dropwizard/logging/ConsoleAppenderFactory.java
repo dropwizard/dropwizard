@@ -56,7 +56,7 @@ public class ConsoleAppenderFactory implements AppenderFactory {
     }
 
     @Override
-    public Appender<ILoggingEvent> build(LoggerContext context, String serviceName, Layout<ILoggingEvent> layout) {
+    public Appender<ILoggingEvent> build(LoggerContext context, String applicationName, Layout<ILoggingEvent> layout) {
         final ConsoleAppender<ILoggingEvent> appender = new ConsoleAppender<>();
         appender.setContext(context);
         if (layout == null) {

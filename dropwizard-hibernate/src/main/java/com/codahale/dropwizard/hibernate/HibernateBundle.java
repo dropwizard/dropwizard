@@ -37,9 +37,8 @@ public abstract class HibernateBundle<T extends Configuration> implements Config
         final DatabaseConfiguration dbConfig = getDatabaseConfiguration(configuration);
         this.sessionFactory = sessionFactoryFactory.build(this, environment, dbConfig, entities);
         environment.jersey().addProvider(new UnitOfWorkResourceMethodDispatchAdapter(sessionFactory));
-        environment.admin()
-                   .addHealthCheck("hibernate", new SessionFactoryHealthCheck(sessionFactory,
-                                                                              dbConfig.getValidationQuery()));
+        environment.admin().addHealthCheck("hibernate", new SessionFactoryHealthCheck(sessionFactory,
+                                                                                      dbConfig.getValidationQuery()));
     }
 
     public SessionFactory getSessionFactory() {
