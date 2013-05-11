@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.codahale.dropwizard</groupId>
+        <artifactId>dropwizard-parent</artifactId>
+        <version>0.7.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>dropwizard-spdy</artifactId>
+    <name>Dropwizard SPDY Support</name>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.codahale.dropwizard</groupId>
+            <artifactId>dropwizard-jetty</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty.spdy</groupId>
+            <artifactId>spdy-http-server</artifactId>
+            <version>${jetty.version}</version>
+        </dependency>
+        <!-- this needs to be on your JVM's bootpath for SPDY to work -->
+        <!-- -Xbootclasspath/p:/blah/npn-boot-1.1.5.v20130313.jar -->
+        <dependency>
+            <groupId>org.mortbay.jetty.npn</groupId>
+            <artifactId>npn-boot</artifactId>
+            <version>1.1.5.v20130313</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+</project>

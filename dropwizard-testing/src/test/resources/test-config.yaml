@@ -1,4 +1,12 @@
 message: "Yes, it's here"
-http:
-  port: 0
-  adminPort: 0
+server:
+  applicationConnectors:
+    - type: http
+      port: 0
+  adminConnectors:
+    - type: http
+      port: 0
+  requestLog:
+    appenders: []
+logging:
+  appenders: []

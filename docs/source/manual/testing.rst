@@ -87,7 +87,7 @@ Next, write a test for serializing a ``Person`` instance to JSON:
 
 .. code-block:: java
 
-    import static com.yammer.dropwizard.testing.JsonHelpers.*;
+    import static com.codahale.dropwizard.testing.JsonHelpers.*;
     import static org.hamcrest.Matchers.*;
 
     @Test
@@ -114,7 +114,7 @@ Next, write a test for deserializing a ``Person`` instance from JSON:
 
 .. code-block:: java
 
-    import static com.yammer.dropwizard.testing.JsonHelpers.*;
+    import static com.codahale.dropwizard.testing.JsonHelpers.*;
     import static org.hamcrest.Matchers.*;
 
     @Test

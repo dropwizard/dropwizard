@@ -1,8 +1,8 @@
 package com.example.helloworld.db;
 
+import com.codahale.dropwizard.hibernate.AbstractDAO;
 import com.example.helloworld.core.Person;
 import com.google.common.base.Optional;
-import com.yammer.dropwizard.hibernate.AbstractDAO;
 import org.hibernate.SessionFactory;
 
 import java.util.List;

@@ -1,7 +1,7 @@
 package com.example.helloworld.resources;
 
+import com.codahale.dropwizard.auth.Auth;
 import com.example.helloworld.core.User;
-import com.yammer.dropwizard.auth.Auth;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
