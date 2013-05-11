@@ -30,8 +30,8 @@ public class DropwizardAppRuleTest {
     @Test
     public void canGetExpectedResourceOverHttp() {
         final String content = new Client().resource("http://localhost:" +
-                                                             RULE.getLocalPort()
-                                                             +"/test").get(String.class);
+                                                     RULE.getLocalPort()
+                                                     +"/test").get(String.class);
 
         assertThat(content, is("Yes, it's here"));
     }
@@ -40,9 +40,6 @@ public class DropwizardAppRuleTest {
     public void returnsConfiguration() {
         final TestConfiguration config = RULE.getConfiguration();
         assertThat(config.getMessage(), is("Yes, it's here"));
-        final DefaultServerFactory serverFactory = (DefaultServerFactory) config.getServerFactory();
-        final HttpConnectorFactory connectorFactory = (HttpConnectorFactory) serverFactory.getApplicationConnectors().get(0);
-        assertThat(connectorFactory.getPort(), is(0));
     }
 
     @Test
@@ -95,9 +92,8 @@ public class DropwizardAppRuleTest {
         }
     }
 
-    private static String resourceFilePath(String resourceClassPathLocation) {
+    public static String resourceFilePath(String resourceClassPathLocation) {
         try {
-
             return new File(Resources.getResource(resourceClassPathLocation).toURI()).getAbsolutePath();
         } catch (Exception e) {
             throw new RuntimeException(e);

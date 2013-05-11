@@ -13,7 +13,12 @@ import org.eclipse.jetty.server.ServerConnector;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
+import java.util.Enumeration;
 
+/**
+ * A JUnit rule for starting and stopping your application at the start and end of a test class.
+ * @param <C> the configuration type
+ */
 public class DropwizardAppRule<C extends Configuration> implements TestRule {
 
     private final Class<? extends Application<C>> applicationClass;
@@ -24,9 +29,14 @@ public class DropwizardAppRule<C extends Configuration> implements TestRule {
     private Environment environment;
     private Server jettyServer;
 
-    public DropwizardAppRule(Class<? extends Application<C>> applicationClass, String configPath) {
+    public DropwizardAppRule(Class<? extends Application<C>> applicationClass,
+                             String configPath,
+                             ConfigOverride... configOverrides) {
         this.applicationClass = applicationClass;
         this.configPath = configPath;
+        for (ConfigOverride configOverride: configOverrides) {
+            configOverride.addToSystemProperties();
+        }
     }
 
     @Override
@@ -38,10 +48,20 @@ public class DropwizardAppRule<C extends Configuration> implements TestRule {
                 try {
                     base.evaluate();
                 } finally {
+                    resetConfigOverrides();
                     jettyServer.stop();
                 }
             }
         };
+    }
+
+    private void resetConfigOverrides() {
+        for (Enumeration<?> props = System.getProperties().propertyNames(); props.hasMoreElements();) {
+            String keyString = (String) props.nextElement();
+            if (keyString.startsWith("dw.")) {
+                System.clearProperty(keyString);
+            }
+        }
     }
 
     private void startIfRequired() {
