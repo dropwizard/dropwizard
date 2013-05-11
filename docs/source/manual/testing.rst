@@ -8,7 +8,8 @@ Testing Dropwizard
 
 .. rubric:: The ``dropwizard-testing`` module provides you with some handy classes for testing
             your :ref:`representation classes <man-core-representations>`
-            and :ref:`resource classes <man-core-resources>`.
+            and :ref:`resource classes <man-core-resources>`. It also provides a JUnit rule
+            for full-stack testing of your entire app.
 
 .. _man-testing-representations:
 
@@ -181,3 +182,32 @@ easily.
 
 Should you, at some point, grow tired of the near-infinite amount of debug logging produced by
 ``ResourceTest`` you can use the ``java.util.logging`` API to silence the ``com.sun.jersey`` logger.
+
+
+Integrated Testing
+==================
+It can be useful to start up your entire app and hit it with real HTTP requests during testing. This can be
+achieved by adding ``DropwizardAppRule`` to your JUnit test class, which will start the app prior to any tests
+running and stop it again when they've completed (roughly equivalent to having used ``@BeforeClass`` and ``@AfterClass``).
+``DropwizardAppRule`` also exposes the app's ``Configuration``,
+``Environment`` and the app object itself so that these can be queried by the tests.
+
+.. code-block:: java
+
+    public class LoginAcceptanceTest {
+
+        @ClassRule
+        public static final DropwizardAppRule<TestConfiguration> RULE =
+                new DropwizardAppRule<TestConfiguration>(MyApp.class, resourceFilePath("my-app-config.yaml"));
+
+        @Test
+        public void loginHandlerRedirectsAfterPost() {
+            Client client = new Client();
+
+            ClientResponse response = client.resource(
+                    String.format("http://localhost:%d/login", RULE.getLocalPort()))
+                    .post(ClientResponse.class, loginForm());
+
+            assertThat(response.getStatus(), is(302));
+        }
+    }
