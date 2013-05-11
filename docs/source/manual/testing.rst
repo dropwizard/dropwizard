@@ -9,7 +9,7 @@ Testing Dropwizard
 .. rubric:: The ``dropwizard-testing`` module provides you with some handy classes for testing
             your :ref:`representation classes <man-core-representations>`
             and :ref:`resource classes <man-core-resources>`. It also provides a JUnit rule
-            for full-stack testing of your entire service.
+            for full-stack testing of your entire app.
 
 .. _man-testing-representations:
 
@@ -186,19 +186,19 @@ Should you, at some point, grow tired of the near-infinite amount of debug loggi
 
 Integrated Testing
 ==================
-It can be useful to start up your entire service and hit it with real HTTP requests during testing. This can be
-achieved by adding ``DropwizardServiceRule`` to your JUnit test class, which will start the service prior to any tests
+It can be useful to start up your entire app and hit it with real HTTP requests during testing. This can be
+achieved by adding ``DropwizardAppRule`` to your JUnit test class, which will start the app prior to any tests
 running and stop it again when they've completed (roughly equivalent to having used ``@BeforeClass`` and ``@AfterClass``).
-``DropwizardServiceRule`` also exposes the service's ``Configuration``,
-``Environment`` and the service object itself so that these can be queried by the tests.
+``DropwizardAppRule`` also exposes the app's ``Configuration``,
+``Environment`` and the app object itself so that these can be queried by the tests.
 
 .. code-block:: java
 
     public class LoginAcceptanceTest {
 
         @ClassRule
-        public static final DropwizardServiceRule<TestConfiguration> RULE =
-                new DropwizardServiceRule<TestConfiguration>(MyService.class, resourceFilePath("my-service-config.yaml"));
+        public static final DropwizardAppRule<TestConfiguration> RULE =
+                new DropwizardAppRule<TestConfiguration>(MyApp.class, resourceFilePath("my-app-config.yaml"));
 
         @Test
         public void loginHandlerRedirectsAfterPost() {
