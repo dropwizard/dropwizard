@@ -1,6 +1,7 @@
 package com.codahale.dropwizard.server;
 
 import com.codahale.dropwizard.configuration.ConfigurationFactory;
+import com.codahale.dropwizard.jackson.DiscoverableSubtypeResolver;
 import com.codahale.dropwizard.jackson.Jackson;
 import com.codahale.dropwizard.jetty.HttpConnectorFactory;
 import com.codahale.dropwizard.logging.ConsoleAppenderFactory;
@@ -51,4 +52,11 @@ public class DefaultServerFactoryTest {
         assertThat(http.getMinThreads())
                 .isEqualTo(89);
     }
+
+    @Test
+    public void isDiscoverable() throws Exception {
+        assertThat(new DiscoverableSubtypeResolver().getDiscoveredSubtypes())
+                .contains(DefaultServerFactory.class);
+    }
+
 }

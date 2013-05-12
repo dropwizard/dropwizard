@@ -23,7 +23,7 @@ public class Jackson {
         mapper.registerModule(new JodaModule());
         mapper.registerModule(new AfterburnerModule());
         mapper.setPropertyNamingStrategy(new AnnotationSensitivePropertyNamingStrategy());
-        mapper.setSubtypeResolver(new DiscoverableSubtypeResolver(Discoverable.class));
+        mapper.setSubtypeResolver(new DiscoverableSubtypeResolver());
         return mapper;
     }
 }
