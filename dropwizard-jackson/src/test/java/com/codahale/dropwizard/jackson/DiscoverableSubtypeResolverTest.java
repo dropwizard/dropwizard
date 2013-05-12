@@ -6,9 +6,9 @@ import org.junit.Test;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
-public class ServiceSubtypeResolverTest {
+public class DiscoverableSubtypeResolverTest {
     private final ObjectMapper mapper = new ObjectMapper();
-    private final ServiceSubtypeResolver resolver = new ServiceSubtypeResolver(ExampleTag.class);
+    private final DiscoverableSubtypeResolver resolver = new DiscoverableSubtypeResolver(ExampleTag.class);
 
     @Before
     public void setUp() throws Exception {

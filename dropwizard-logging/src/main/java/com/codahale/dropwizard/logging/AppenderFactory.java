@@ -4,7 +4,7 @@ import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.Layout;
-import com.codahale.dropwizard.util.Subtyped;
+import com.codahale.dropwizard.jackson.Discoverable;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 /**
@@ -23,7 +23,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
  * @see SyslogAppenderFactory
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
-public interface AppenderFactory extends Subtyped {
+public interface AppenderFactory extends Discoverable {
     /**
      * Given a Logback context, an application name, and a layout, build a new appender.
      *

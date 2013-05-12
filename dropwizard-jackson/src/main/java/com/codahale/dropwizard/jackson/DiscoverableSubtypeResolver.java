@@ -15,12 +15,13 @@ import java.util.Enumeration;
 import java.util.List;
 
 /**
- * A subtype resolver which discovers subtypes via {@code META-INF/services/com.codahale.dropwizard.util.Subtyped}.
+ * A subtype resolver which discovers subtypes via
+ * {@code META-INF/services/com.codahale.dropwizard.jackson.Discoverable}.
  */
-public class ServiceSubtypeResolver extends StdSubtypeResolver {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ServiceSubtypeResolver.class);
+public class DiscoverableSubtypeResolver extends StdSubtypeResolver {
+    private static final Logger LOGGER = LoggerFactory.getLogger(DiscoverableSubtypeResolver.class);
 
-    public ServiceSubtypeResolver(Class<?> rootKlass) {
+    public DiscoverableSubtypeResolver(Class<?> rootKlass) {
         for (Class<?> klass : discoverServices(rootKlass)) {
             for (Class<?> subtype : discoverServices(klass)) {
                 registerSubtypes(subtype);

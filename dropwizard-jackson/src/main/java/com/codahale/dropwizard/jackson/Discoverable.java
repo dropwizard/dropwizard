@@ -1,8 +1,8 @@
-package com.codahale.dropwizard.util;
+package com.codahale.dropwizard.jackson;
 
 /**
  * A tag interface which allows Dropwizard to load Jackson subtypes at runtime, which enables polymorphic
  * configurations.
  */
-public interface Subtyped {
+public interface Discoverable {
 }
