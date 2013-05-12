@@ -49,7 +49,7 @@
         <metrics3.version>3.0.0-BETA2</metrics3.version>
         <jersey.version>1.17.1</jersey.version>
         <jackson.version>2.2.1</jackson.version>
-        <logback.version>1.0.12</logback.version>
+        <logback.version>1.0.13</logback.version>
         <slf4j.version>1.7.5</slf4j.version>
         <servlet.version>3.0.0.v201112011016</servlet.version>
         <jetty.version>9.0.3.v20130506</jetty.version>
