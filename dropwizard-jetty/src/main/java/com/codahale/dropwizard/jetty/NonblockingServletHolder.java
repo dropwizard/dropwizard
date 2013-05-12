@@ -18,6 +18,7 @@ public class NonblockingServletHolder extends ServletHolder {
 
     public NonblockingServletHolder(Servlet servlet) {
         super(servlet);
+        setInitOrder(1);
         this.servlet = servlet;
     }
 
