@@ -4,7 +4,7 @@ import com.codahale.dropwizard.jackson.Discoverable;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.eclipse.jetty.spdy.server.http.PushStrategy;
 
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
 public interface PushStrategyFactory extends Discoverable {
     PushStrategy build();
 }

@@ -22,7 +22,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
  * @see FileAppenderFactory
  * @see SyslogAppenderFactory
  */
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
 public interface AppenderFactory extends Discoverable {
     /**
      * Given a Logback context, an application name, and a layout, build a new appender.
