@@ -20,9 +20,35 @@ import javax.validation.constraints.NotNull;
  * A single-connector implementation of {@link ServerFactory}, suitable for PaaS deployments
  * (e.g., Heroku) where applications are limited to a single, runtime-defined port. A startup script
  * can override the port via {@code -Ddw.server.connector.port=$PORT}.
+ * <p/>
+ * <b>Configuration Parameters:</b>
+ * <table>
+ *     <tr>
+ *         <td>Name</td>
+ *         <td>Default</td>
+ *         <td>Description</td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code connector}</td>
+ *         <td>An {@link HttpConnectorFactory HTTP connector} listening on port {@code 8080}.</td>
+ *         <td>The {@link ConnectorFactory connector} which will handle both application and admin requests.</td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code applicationContextPath}</td>
+ *         <td>{@code /application}</td>
+ *         <td>The context path of the application servlets, including Jersey.</td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code adminContextPath}</td>
+ *         <td>{@code /admin}</td>
+ *         <td>The context path of the admin servlets, including metrics and tasks.</td>
+ *     </tr>
+ * </table>
+ * <p/>
+ * For more configuration parameters, see {@link AbstractServerFactory}.
  *
  * @see ServerFactory
- * @see DefaultServerFactory
+ * @see AbstractServerFactory
  */
 @JsonTypeName("simple")
 public class SimpleServerFactory extends AbstractServerFactory {

@@ -25,9 +25,40 @@ import java.util.Map;
  * The default implementation of {@link ServerFactory}, which allows for multiple sets of
  * application and admin connectors, all running on separate ports. Admin connectors use a separate
  * thread pool to keep the control and data planes separate(ish).
+ * <p/>
+ * <b>Configuration Parameters:</b>
+ * <table>
+ *     <tr>
+ *         <td>Name</td>
+ *         <td>Default</td>
+ *         <td>Description</td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code applicationConnectors}</td>
+ *         <td>An {@link HttpConnectorFactory HTTP connector} listening on port 8080.</td>
+ *         <td>A set of {@link ConnectorFactory connectors} which will handle application requests.</td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code adminConnectors}</td>
+ *         <td>An {@link HttpConnectorFactory HTTP connector} listening on port 8081.</td>
+ *         <td>A set of {@link ConnectorFactory connectors} which will handle admin requests.</td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code adminMaxThreads}</td>
+ *         <td>64</td>
+ *         <td>The maximum number of threads to use for admin requests.</td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code adminMinThreads}</td>
+ *         <td>1</td>
+ *         <td>The minimum number of threads to use for admin requests.</td>
+ *     </tr>
+ * </table>
+ * <p/>
+ * For more configuration parameters, see {@link AbstractServerFactory}.
  *
  * @see ServerFactory
- * @see SimpleServerFactory
+ * @see AbstractServerFactory
  */
 @JsonTypeName("default")
 public class DefaultServerFactory extends AbstractServerFactory {
