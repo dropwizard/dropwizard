@@ -1,15 +1,20 @@
 package com.codahale.dropwizard.logging;
 
-// TODO: 10/12/11 <coda> -- test LogFormatter
-// TODO: 10/12/11 <coda> -- document LogFormatter
-
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.PatternLayout;
 
 import java.util.TimeZone;
 
-public class LogFormatter extends PatternLayout {
-    public LogFormatter(LoggerContext context, TimeZone timeZone) {
+/**
+ * A base layout for Dropwizard.
+ * <ul>
+ *     <li>Disables pattern headers.</li>
+ *     <li>Prefixes logged exceptions with {@code !}.</li>
+ *     <li>Sets the pattern to the given timezine.</li>
+ * </ul>
+ */
+public class DropwizardLayout extends PatternLayout {
+    public DropwizardLayout(LoggerContext context, TimeZone timeZone) {
         super();
         setOutputPatternAsHeader(false);
         getDefaultConverterMap().put("ex", PrefixedThrowableProxyConverter.class.getName());

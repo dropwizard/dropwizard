@@ -1,118 +1,113 @@
 package com.codahale.dropwizard.logging;
 
-import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
-import ch.qos.logback.classic.filter.ThresholdFilter;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.ConsoleAppender;
 import ch.qos.logback.core.Layout;
-import ch.qos.logback.core.spi.FilterAttachable;
-import com.fasterxml.jackson.annotation.JsonCreator;
+import com.codahale.dropwizard.validation.OneOf;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import com.fasterxml.jackson.annotation.JsonValue;
-import com.google.common.base.Strings;
 
 import javax.validation.constraints.NotNull;
-import java.util.Locale;
 import java.util.TimeZone;
 
+/**
+ * An {@link AppenderFactory} implementation which provides an appender that writes events to the console.
+ * <p/>
+ * <b>Configuration Parameters:</b>
+ * <table>
+ *     <tr>
+ *         <td>Name</td>
+ *         <td>Default</td>
+ *         <td>Description</td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code type}</td>
+ *         <td><b>REQUIRED</b></td>
+ *         <td>The appender type. Must be {@code console}.</td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code threshold}</td>
+ *         <td>{@code ALL}</td>
+ *         <td>The lowest level of events to print to the console.</td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code timeZone}</td>
+ *         <td>{@code UTC}</td>
+ *         <td>The time zone to which event timestamps will be converted.</td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code target}</td>
+ *         <td>{@code stdout}</td>
+ *         <td>
+ *             The name of the standard stream to which events will be written.
+ *             Can be {@code stdout} or {@code stderr}.
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code logFormat}</td>
+ *         <td>the default format</td>
+ *         <td>
+ *             The Logback pattern with which events will be formatted. See
+ *             <a href="http://logback.qos.ch/manual/layouts.html#conversionWord">the Logback documentation</a>
+ *             for details.
+ *         </td>
+ *     </tr>
+ * </table>
+ */
 @JsonTypeName("console")
-public class ConsoleAppenderFactory implements AppenderFactory {
-    public enum OutputTarget {
-        STDERR("System.err"),
-        STDOUT("System.out");
-
-        private final String logbackName;
-
-        private OutputTarget(String logbackName) {
-            this.logbackName = logbackName;
-        }
-
-        @JsonCreator
-        public static OutputTarget parse(String s) {
-            return valueOf(s.toUpperCase(Locale.US));
-        }
-
-        @Override
-        @JsonValue
-        public String toString() {
-            return super.toString().toLowerCase(Locale.US);
-        }
-
-        public String getLogbackName() {
-            return logbackName;
-        }
-    }
-
-    @NotNull
-    private Level threshold = Level.ALL;
-
+public class ConsoleAppenderFactory extends AbstractAppenderFactory {
     @NotNull
     private TimeZone timeZone = TimeZone.getTimeZone("UTC");
 
     @NotNull
-    private OutputTarget target = OutputTarget.STDOUT;
+    @OneOf(value = {"stderr", "stdout"}, ignoreCase = true, ignoreWhitespace = true)
+    private String target = "stdout";
 
-    private String logFormat;
-
-    @JsonProperty
-    public Level getThreshold() {
-        return threshold;
-    }
-
-    @JsonProperty
-    public void setThreshold(Level threshold) {
-        this.threshold = threshold;
-    }
-
+    /**
+     * Returns the time zone to which event timestamps will be converted.
+     */
     @JsonProperty
     public TimeZone getTimeZone() {
         return timeZone;
     }
 
+    /**
+     * Sets the time zone to which event timestamps will be converted.
+     */
     @JsonProperty
     public void setTimeZone(TimeZone timeZone) {
         this.timeZone = timeZone;
     }
 
+    /**
+     * Returns the name of the standard stream to which events will be written.
+     */
     @JsonProperty
-    public String getLogFormat() {
-        return logFormat;
+    public String getTarget() {
+        return target;
     }
 
+    /**
+     * Sets the name of the standard stream to which events will be written. Can be {@code stdout} or {@code stderr}.
+     */
     @JsonProperty
-    public void setLogFormat(String logFormat) {
-        this.logFormat = logFormat;
+    public void setTarget(String target) {
+        this.target = target;
     }
 
     @Override
     public Appender<ILoggingEvent> build(LoggerContext context, String applicationName, Layout<ILoggingEvent> layout) {
         final ConsoleAppender<ILoggingEvent> appender = new ConsoleAppender<>();
         appender.setContext(context);
-        appender.setTarget(target.getLogbackName());
-        if (layout == null) {
-            final LogFormatter formatter = new LogFormatter(context, timeZone);
-            if (!Strings.isNullOrEmpty(logFormat)) {
-                formatter.setPattern(logFormat);
-            }
-            formatter.start();
-            appender.setLayout(formatter);
-        } else {
-            appender.setLayout(layout);
+        if ("stderr".equalsIgnoreCase(target)) {
+            appender.setTarget("System.err");
         }
-
+        appender.setLayout(layout == null ? buildLayout(context, timeZone) : layout);
         addThresholdFilter(appender, threshold);
         appender.start();
 
         return appender;
-    }
-
-    private void addThresholdFilter(FilterAttachable<ILoggingEvent> appender, Level threshold) {
-        final ThresholdFilter filter = new ThresholdFilter();
-        filter.setLevel(threshold.toString());
-        filter.start();
-        appender.addFilter(filter);
     }
 }
