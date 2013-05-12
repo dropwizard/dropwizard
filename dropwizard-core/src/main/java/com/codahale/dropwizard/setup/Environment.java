@@ -115,7 +115,7 @@ public class Environment {
 
     // TODO: 5/4/13 <coda> -- figure out how to make these accessors not a public API
 
-    public ServletContextHandler getServletContext() {
+    public ServletContextHandler getApplicationContext() {
         return servletContext;
     }
 

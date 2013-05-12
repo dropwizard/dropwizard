@@ -21,15 +21,18 @@ import com.codahale.metrics.servlets.MetricsServlet;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Charsets;
+import com.google.common.io.Resources;
 import com.sun.jersey.spi.container.servlet.ServletContainer;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ErrorHandler;
 import org.eclipse.jetty.server.handler.RequestLogHandler;
 import org.eclipse.jetty.servlet.ServletContextHandler;
-import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.BlockingArrayQueue;
 import org.eclipse.jetty.util.thread.ThreadPool;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
 import javax.servlet.DispatcherType;
@@ -37,10 +40,15 @@ import javax.validation.Valid;
 import javax.validation.Validator;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.io.IOException;
 import java.util.EnumSet;
 import java.util.concurrent.BlockingQueue;
+import java.util.regex.Pattern;
 
 public abstract class AbstractServerFactory implements ServerFactory {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ServerFactory.class);
+    private static final Pattern WINDOWS_NEWLINE = Pattern.compile("\\r\\n?");
+
     @Valid
     @NotNull
     private RequestLogFactory requestLog = new RequestLogFactory();
@@ -127,44 +135,32 @@ public abstract class AbstractServerFactory implements ServerFactory {
         this.maxQueuedRequests = maxQueuedRequests;
     }
 
-    protected Handler createInternalServlet(ServletContextHandler handler,
-                                            MetricRegistry metrics,
-                                            HealthCheckRegistry healthChecks) {
-        handler.getServletContext().setAttribute(MetricsServlet.METRICS_REGISTRY,
-                                                 metrics);
-        handler.getServletContext().setAttribute(HealthCheckServlet.HEALTH_CHECK_REGISTRY,
-                                                 healthChecks);
+    protected Handler createAdminServlet(ServletContextHandler handler,
+                                         MetricRegistry metrics,
+                                         HealthCheckRegistry healthChecks) {
+        handler.getServletContext().setAttribute(MetricsServlet.METRICS_REGISTRY, metrics);
+        handler.getServletContext().setAttribute(HealthCheckServlet.HEALTH_CHECK_REGISTRY, healthChecks);
         handler.addServlet(new NonblockingServletHolder(new AdminServlet()), "/*");
-
         return handler;
     }
 
-    protected Handler createExternalServlet(JerseyEnvironment jersey,
-                                            ObjectMapper objectMapper,
-                                            Validator validator,
-                                            ServletContextHandler handler,
-                                            @Nullable ServletContainer jerseyContainer,
-                                            MetricRegistry metricRegistry) {
+    protected Handler createAppServlet(JerseyEnvironment jersey,
+                                       ObjectMapper objectMapper,
+                                       Validator validator,
+                                       ServletContextHandler handler,
+                                       @Nullable ServletContainer jerseyContainer,
+                                       MetricRegistry metricRegistry) {
         handler.addFilter(ThreadNameFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST));
         if (jerseyContainer != null) {
             jersey.addProvider(new JacksonMessageBodyProvider(objectMapper, validator));
-            final ServletHolder jerseyHolder = new NonblockingServletHolder(jerseyContainer);
-            jerseyHolder.setInitOrder(Integer.MAX_VALUE);
-            handler.addServlet(jerseyHolder, jersey.getUrlPattern());
+            handler.addServlet(new NonblockingServletHolder(jerseyContainer), jersey.getUrlPattern());
         }
         return new InstrumentedHandler(metricRegistry, handler);
     }
 
     protected ThreadPool createThreadPool(MetricRegistry metricRegistry) {
-        final BlockingQueue<Runnable> queue = new BlockingArrayQueue<>(minThreads,
-                                                                       maxThreads,
-                                                                       maxQueuedRequests);
-        return new InstrumentedQueuedThreadPool(metricRegistry,
-                                                "dw",
-                                                maxThreads,
-                                                minThreads,
-                                                60000,
-                                                queue);
+        final BlockingQueue<Runnable> queue = new BlockingArrayQueue<>(minThreads, maxThreads, maxQueuedRequests);
+        return new InstrumentedQueuedThreadPool(metricRegistry, "dw", maxThreads, minThreads, 60000, queue);
     }
 
     protected Server buildServer(LifecycleEnvironment lifecycle, ThreadPool threadPool) {
@@ -179,11 +175,24 @@ public abstract class AbstractServerFactory implements ServerFactory {
 
     protected Handler addGzipAndRequestLog(Handler handler, String name) {
         final Handler gzipHandler = gzip.wrapHandler(handler);
-        if (getRequestLogFactory().isEnabled()) {
-            final RequestLogHandler requestLogHandler = getRequestLogFactory().build(name);
+        if (requestLog.isEnabled()) {
+            final RequestLogHandler requestLogHandler = requestLog.build(name);
             requestLogHandler.setHandler(gzipHandler);
             return requestLogHandler;
         }
         return gzipHandler;
+    }
+
+    protected void printBanner(String name) {
+        try {
+            final String banner = WINDOWS_NEWLINE.matcher(Resources.toString(Resources.getResource("banner.txt"),
+                                                                             Charsets.UTF_8))
+                                                 .replaceAll("\n")
+                                                 .replace("\n", String.format("%n"));
+            LOGGER.info(String.format("Starting {}%n{}"), name, banner);
+        } catch (IllegalArgumentException | IOException ignored) {
+            // don't display the banner if there isn't one
+            LOGGER.info("Starting {}", name);
+        }
     }
 }

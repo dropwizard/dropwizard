@@ -1,27 +1,19 @@
 package com.codahale.dropwizard.server;
 
-import com.codahale.dropwizard.jersey.setup.JerseyEnvironment;
 import com.codahale.dropwizard.jetty.ConnectorFactory;
 import com.codahale.dropwizard.jetty.ContextRoutingHandler;
 import com.codahale.dropwizard.jetty.HttpConnectorFactory;
-import com.codahale.dropwizard.lifecycle.setup.LifecycleEnvironment;
-import com.codahale.metrics.MetricRegistry;
-import com.codahale.metrics.health.HealthCheckRegistry;
+import com.codahale.dropwizard.setup.Environment;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
-import com.sun.jersey.spi.container.servlet.ServletContainer;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.util.thread.ThreadPool;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import javax.annotation.Nullable;
 import javax.validation.Valid;
-import javax.validation.Validator;
 import javax.validation.constraints.NotNull;
 
 /**
@@ -75,38 +67,33 @@ public class SimpleServerFactory extends AbstractServerFactory {
     }
 
     @Override
-    public Server build(String name,
-                        MetricRegistry metricRegistry,
-                        HealthCheckRegistry healthChecks,
-                        LifecycleEnvironment lifecycle,
-                        ServletContextHandler applicationContext,
-                        @Nullable ServletContainer jerseyContainer,
-                        ServletContextHandler adminContext,
-                        JerseyEnvironment jersey,
-                        ObjectMapper objectMapper,
-                        Validator validator) {
-        final ThreadPool threadPool = createThreadPool(metricRegistry);
-        final Server server = buildServer(lifecycle, threadPool);
+    public Server build(Environment environment) {
+        printBanner(environment.getName());
+        final ThreadPool threadPool = createThreadPool(environment.metrics());
+        final Server server = buildServer(environment.lifecycle(), threadPool);
 
-        applicationContext.setContextPath(applicationContextPath);
-        final Handler applicationHandler = createExternalServlet(jersey,
-                                                                 objectMapper,
-                                                                 validator,
-                                                                 applicationContext,
-                                                                 jerseyContainer,
-                                                                 metricRegistry);
+        environment.getApplicationContext().setContextPath(applicationContextPath);
+        final Handler applicationHandler = createAppServlet(environment.jersey(),
+                                                            environment.getObjectMapper(),
+                                                            environment.getValidator(),
+                                                            environment.getApplicationContext(),
+                                                            environment.getJerseyServletContainer(),
+                                                            environment.metrics());
 
-        adminContext.setContextPath(adminContextPath);
-        final Handler adminHandler = createInternalServlet(adminContext, metricRegistry, healthChecks);
+        environment.getAdminContext().setContextPath(adminContextPath);
+        final Handler adminHandler = createAdminServlet(environment.getAdminContext(),
+                                                        environment.metrics(),
+                                                        environment.healthChecks());
 
-        final Connector conn = connector.build(server, metricRegistry, name, server.getThreadPool());
+        final Connector conn = connector.build(server, environment.metrics(), environment.getName(), server.getThreadPool());
+
         server.addConnector(conn);
 
         final ContextRoutingHandler routingHandler = new ContextRoutingHandler(ImmutableMap.of(
                 applicationContextPath, applicationHandler,
                 adminContextPath, adminHandler
         ));
-        server.setHandler(addGzipAndRequestLog(routingHandler, name));
+        server.setHandler(addGzipAndRequestLog(routingHandler, environment.getName()));
 
         return server;
     }
