@@ -19,6 +19,8 @@ public class ScheduledExecutorServiceBuilder {
         this.nameFormat = nameFormat;
         this.poolSize = 1;
         this.threadFactory = new ThreadFactoryBuilder().setNameFormat(nameFormat).build();
+        this.shutdownTime = 5;
+        this.shutdownUnit = TimeUnit.SECONDS;
         this.handler = new ThreadPoolExecutor.AbortPolicy();
     }
 
