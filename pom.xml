@@ -173,6 +173,15 @@
                     <target>1.7</target>
                 </configuration>
             </plugin>
+            <!-- we can't run tests in parallel until http://bugzilla.slf4j.org/show_bug.cgi?id=176 is fixed -->
+            <!--<plugin>-->
+                <!--<groupId>org.apache.maven.plugins</groupId>-->
+                <!--<artifactId>maven-surefire-plugin</artifactId>-->
+                <!--<version>2.14.1</version>-->
+                <!--<configuration>-->
+                    <!--<parallel>classes</parallel>-->
+                <!--</configuration>-->
+            <!--</plugin>-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
