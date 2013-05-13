@@ -33,12 +33,17 @@ import com.yammer.dropwizard.util.Generics;
  *                               })
  *                               .build()
  *              )
- *     ));
+ *     ){});
  * }
  * </pre>
+ *
+ * Note: MultiDbMigrationsBundle is intentionally declared abstract, which forces a class body,
+ * as shown above. This is needed for the time being because Generics.getTypeParameter will
+ * otherwise fail to determine the type bound of the MultiDbMigrationsBundle instance.
+ *
  * @param <T>
  */
-public class MultiDbMigrationsBundle<T extends Configuration> implements Bundle {
+public abstract class MultiDbMigrationsBundle<T extends Configuration> implements Bundle {
     private final MultiDbConfigurationStrategy configurationStrategy;
 
     public MultiDbMigrationsBundle(MultiDbConfigurationStrategy configurationStrategy) {
