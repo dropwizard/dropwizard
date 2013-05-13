@@ -106,8 +106,7 @@ html_theme_options = {
     'landing_logo': u'dropwizard-hat.png',
     'landing_logo_width': u'150px',
     'github_page': u'https://github.com/codahale/dropwizard',
-    'mailing_list': u'https://groups.google.com/forum/#!forum/dropwizard-user',
-    'maven_site': u'http://dropwizard.codahale.com/maven/'
+    'mailing_list': u'https://groups.google.com/forum/#!forum/dropwizard-user'
 }
 
 # Add any paths that contain custom themes here, relative to this directory.
