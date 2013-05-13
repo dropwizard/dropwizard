@@ -11,8 +11,7 @@ public class ScheduledExecutorServiceBuilder {
     private final String nameFormat;
     private int poolSize;
     private ThreadFactory threadFactory;
-    private long shutdownTime;
-    private TimeUnit shutdownUnit;
+    private Duration shutdownTime;
     private RejectedExecutionHandler handler;
 
     public ScheduledExecutorServiceBuilder(LifecycleEnvironment environment, String nameFormat) {
@@ -20,8 +19,7 @@ public class ScheduledExecutorServiceBuilder {
         this.nameFormat = nameFormat;
         this.poolSize = 1;
         this.threadFactory = new ThreadFactoryBuilder().setNameFormat(nameFormat).build();
-        this.shutdownTime = 5;
-        this.shutdownUnit = TimeUnit.SECONDS;
+        this.shutdownTime = Duration.seconds(5);
         this.handler = new ThreadPoolExecutor.AbortPolicy();
     }
 
@@ -31,12 +29,7 @@ public class ScheduledExecutorServiceBuilder {
     }
 
     public ScheduledExecutorServiceBuilder shutdownTime(Duration time) {
-        return shutdownTime(time.getQuantity(), time.getUnit());
-    }
-
-    public ScheduledExecutorServiceBuilder shutdownTime(long time, TimeUnit unit) {
         this.shutdownTime = time;
-        this.shutdownUnit = unit;
         return this;
     }
 
@@ -51,13 +44,8 @@ public class ScheduledExecutorServiceBuilder {
     }
 
     public ScheduledExecutorService build() {
-        final ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(poolSize,
-                                                                                     threadFactory,
-                                                                                     handler);
-        environment.manage(new ExecutorServiceManager(executor,
-                                                      shutdownTime,
-                                                      shutdownUnit,
-                                                      nameFormat));
+        final ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(poolSize, threadFactory, handler);
+        environment.manage(new ExecutorServiceManager(executor, shutdownTime, nameFormat));
         return executor;
     }
 }

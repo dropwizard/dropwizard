@@ -11,10 +11,8 @@ public class ExecutorServiceBuilder {
     private final String nameFormat;
     private int corePoolSize;
     private int maximumPoolSize;
-    private long keepAliveTime;
-    private TimeUnit keepAliveUnit;
-    private long shutdownTime;
-    private TimeUnit shutdownUnit;
+    private Duration keepAliveTime;
+    private Duration shutdownTime;
     private BlockingQueue<Runnable> workQueue;
     private ThreadFactory threadFactory;
     private RejectedExecutionHandler handler;
@@ -24,10 +22,8 @@ public class ExecutorServiceBuilder {
         this.nameFormat = nameFormat;
         this.corePoolSize = 0;
         this.maximumPoolSize = Integer.MAX_VALUE;
-        this.keepAliveTime = 60;
-        this.keepAliveUnit = TimeUnit.SECONDS;
-        this.shutdownTime = 5;
-        this.shutdownUnit = TimeUnit.SECONDS;
+        this.keepAliveTime = Duration.seconds(60);
+        this.shutdownTime = Duration.seconds(5);
         this.workQueue = new LinkedBlockingQueue<>();
         this.threadFactory = new ThreadFactoryBuilder().setNameFormat(nameFormat).build();
         this.handler = new ThreadPoolExecutor.AbortPolicy();
@@ -44,22 +40,12 @@ public class ExecutorServiceBuilder {
     }
 
     public ExecutorServiceBuilder keepAliveTime(Duration time) {
-        return keepAliveTime(time.getQuantity(), time.getUnit());
-    }
-
-    public ExecutorServiceBuilder keepAliveTime(long time, TimeUnit unit) {
         this.keepAliveTime = time;
-        this.keepAliveUnit = unit;
         return this;
     }
 
     public ExecutorServiceBuilder shutdownTime(Duration time) {
-        return shutdownTime(time.getQuantity(), time.getUnit());
-    }
-
-    public ExecutorServiceBuilder shutdownTime(long time, TimeUnit unit) {
         this.shutdownTime = time;
-        this.shutdownUnit = unit;
         return this;
     }
 
@@ -81,15 +67,12 @@ public class ExecutorServiceBuilder {
     public ExecutorService build() {
         final ThreadPoolExecutor executor = new ThreadPoolExecutor(corePoolSize,
                                                                    maximumPoolSize,
-                                                                   keepAliveTime,
-                                                                   keepAliveUnit,
+                                                                   keepAliveTime.getQuantity(),
+                                                                   keepAliveTime.getUnit(),
                                                                    workQueue,
                                                                    threadFactory,
                                                                    handler);
-        environment.manage(new ExecutorServiceManager(executor,
-                                                      shutdownTime,
-                                                      shutdownUnit,
-                                                      nameFormat));
+        environment.manage(new ExecutorServiceManager(executor, shutdownTime, nameFormat));
         return executor;
     }
 }
