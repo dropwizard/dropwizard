@@ -198,13 +198,18 @@ public abstract class AbstractServerFactory implements ServerFactory {
             jersey.addProvider(new JacksonMessageBodyProvider(objectMapper, validator));
             handler.addServlet(new NonblockingServletHolder(jerseyContainer), jersey.getUrlPattern());
         }
-        return new InstrumentedHandler(metricRegistry, handler);
+        final InstrumentedHandler instrumented = new InstrumentedHandler(metricRegistry);
+        instrumented.setHandler(handler);
+        return instrumented;
     }
 
     protected ThreadPool createThreadPool(MetricRegistry metricRegistry) {
         final BlockingQueue<Runnable> queue = new BlockingArrayQueue<>(minThreads, maxThreads, maxQueuedRequests);
-        return new InstrumentedQueuedThreadPool(metricRegistry, "dw", maxThreads, minThreads,
-                                                (int) idleThreadTimeout.toMilliseconds(), queue);
+        final InstrumentedQueuedThreadPool threadPool =
+                new InstrumentedQueuedThreadPool(metricRegistry, maxThreads, minThreads,
+                                                 (int) idleThreadTimeout.toMilliseconds(), queue);
+        threadPool.setName("dw");
+        return threadPool;
     }
 
     protected Server buildServer(LifecycleEnvironment lifecycle, ThreadPool threadPool) {
