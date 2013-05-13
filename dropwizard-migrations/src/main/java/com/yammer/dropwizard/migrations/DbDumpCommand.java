@@ -2,7 +2,7 @@ package com.yammer.dropwizard.migrations;
 
 import com.google.common.base.Charsets;
 import com.yammer.dropwizard.config.Configuration;
-import com.yammer.dropwizard.db.ConfigurationStrategy;
+import com.yammer.dropwizard.db.MultiDbConfigurationStrategy;
 import liquibase.Liquibase;
 import liquibase.diff.Diff;
 import liquibase.diff.DiffResult;
@@ -15,7 +15,7 @@ import net.sourceforge.argparse4j.inf.Subparser;
 import java.io.PrintStream;
 
 public class DbDumpCommand<T extends Configuration> extends AbstractLiquibaseCommand<T> {
-    public DbDumpCommand(ConfigurationStrategy<T> strategy, Class<T> configurationClass) {
+    public DbDumpCommand(MultiDbConfigurationStrategy<T> strategy, Class<T> configurationClass) {
         super("dump",
               "Generate a dump of the existing database state.",
               strategy,

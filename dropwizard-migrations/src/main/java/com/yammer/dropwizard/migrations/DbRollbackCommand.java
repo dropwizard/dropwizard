@@ -3,7 +3,7 @@ package com.yammer.dropwizard.migrations;
 import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
 import com.yammer.dropwizard.config.Configuration;
-import com.yammer.dropwizard.db.ConfigurationStrategy;
+import com.yammer.dropwizard.db.MultiDbConfigurationStrategy;
 import liquibase.Liquibase;
 import net.sourceforge.argparse4j.impl.Arguments;
 import net.sourceforge.argparse4j.inf.Namespace;
@@ -14,7 +14,7 @@ import java.util.Date;
 import java.util.List;
 
 public class DbRollbackCommand<T extends Configuration> extends AbstractLiquibaseCommand<T> {
-    public DbRollbackCommand(ConfigurationStrategy<T> strategy, Class<T> configurationClass) {
+    public DbRollbackCommand(MultiDbConfigurationStrategy<T> strategy, Class<T> configurationClass) {
         super("rollback",
               "Rollback the database schema to a previous version.",
               strategy,

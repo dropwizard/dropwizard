@@ -3,7 +3,7 @@ package com.yammer.dropwizard.migrations;
 import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
 import com.yammer.dropwizard.config.Configuration;
-import com.yammer.dropwizard.db.ConfigurationStrategy;
+import com.yammer.dropwizard.db.MultiDbConfigurationStrategy;
 import liquibase.Liquibase;
 import net.sourceforge.argparse4j.impl.Arguments;
 import net.sourceforge.argparse4j.inf.Namespace;
@@ -13,7 +13,7 @@ import java.io.OutputStreamWriter;
 import java.util.List;
 
 public class DbPrepareRollbackCommand<T extends Configuration> extends AbstractLiquibaseCommand<T> {
-    public DbPrepareRollbackCommand(ConfigurationStrategy<T> strategy, Class<T> configurationClass) {
+    public DbPrepareRollbackCommand(MultiDbConfigurationStrategy<T> strategy, Class<T> configurationClass) {
         super("prepare-rollback", "Generate rollback DDL scripts for pending change sets.", strategy, configurationClass);
     }
 

@@ -2,7 +2,7 @@ package com.yammer.dropwizard.migrations;
 
 import com.google.common.base.Joiner;
 import com.yammer.dropwizard.config.Configuration;
-import com.yammer.dropwizard.db.ConfigurationStrategy;
+import com.yammer.dropwizard.db.MultiDbConfigurationStrategy;
 import liquibase.Liquibase;
 import net.sourceforge.argparse4j.impl.Arguments;
 import net.sourceforge.argparse4j.inf.Namespace;
@@ -11,7 +11,7 @@ import net.sourceforge.argparse4j.inf.Subparser;
 import java.util.List;
 
 public class DbTestCommand<T extends Configuration> extends AbstractLiquibaseCommand<T> {
-    public DbTestCommand(ConfigurationStrategy<T> strategy, Class<T> configurationClass) {
+    public DbTestCommand(MultiDbConfigurationStrategy<T> strategy, Class<T> configurationClass) {
         super("test", "Apply and rollback pending change sets.", strategy, configurationClass);
     }
 

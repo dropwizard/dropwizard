@@ -72,6 +72,9 @@ public class DatabaseConfiguration {
     @JsonProperty
     private boolean autoCommentsEnabled = true;
 
+    @JsonProperty
+    private String schemaResourcePath = "migrations.xml";
+
     public boolean isAutoCommentsEnabled() {
         return autoCommentsEnabled;
     }
@@ -192,6 +195,14 @@ public class DatabaseConfiguration {
         this.connectionInitializationStatements = ImmutableList.copyOf(statements);
     }
 
+    public String getSchemaResourcePath() {
+        return schemaResourcePath;
+    }
+
+    public void setSchemaResourcePath(String schemaResourcePath) {
+        this.schemaResourcePath = schemaResourcePath;
+    }
+
     @ValidationMethod(message = ".minSize must be less than or equal to maxSize")
     public boolean isPoolSizedCorrectly() {
         return minSize <= maxSize;
@@ -215,7 +226,8 @@ public class DatabaseConfiguration {
                 !((url != null) ? !url.equals(that.url) : (that.url != null)) &&
                 !((user != null) ? !user.equals(that.user) : (that.user != null)) &&
                 !((validationQuery != null) ? !validationQuery.equals(that.validationQuery) : (that.validationQuery != null)) &&
-                !((connectionInitializationStatements != null) ? !connectionInitializationStatements.equals(that.connectionInitializationStatements) : (that.connectionInitializationStatements != null));
+                !((connectionInitializationStatements != null) ? !connectionInitializationStatements.equals(that.connectionInitializationStatements) : (that.connectionInitializationStatements != null)) &&
+                !((schemaResourcePath != null) ? !schemaResourcePath.equals(that.schemaResourcePath) : (that.schemaResourcePath != null));
     }
 
     @Override
@@ -234,6 +246,7 @@ public class DatabaseConfiguration {
         result = (31 * result) + ((closeConnectionIfIdleFor != null) ? closeConnectionIfIdleFor.hashCode() : 0);
         result = (31 * result) + (defaultReadOnly ? 1 : 0);
         result = (31 * result) + ((connectionInitializationStatements != null) ? connectionInitializationStatements.hashCode() : 0);
+        result = (31 * result) + ((schemaResourcePath != null) ? schemaResourcePath.hashCode() : 0);
         return result;
     }
 
@@ -254,6 +267,7 @@ public class DatabaseConfiguration {
                       .add("closeConnectionIfIdleFor", closeConnectionIfIdleFor)
                       .add("defaultReadOnly", defaultReadOnly)
                       .add("connectionInitializationStatements", connectionInitializationStatements)
+                      .add("schemaResourcePath", schemaResourcePath)
                       .toString();
     }
 }

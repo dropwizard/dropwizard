@@ -2,7 +2,7 @@ package com.yammer.dropwizard.migrations;
 
 import com.google.common.collect.Maps;
 import com.yammer.dropwizard.config.Configuration;
-import com.yammer.dropwizard.db.ConfigurationStrategy;
+import com.yammer.dropwizard.db.MultiDbConfigurationStrategy;
 import liquibase.Liquibase;
 import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
@@ -13,7 +13,7 @@ public class DbCommand<T extends Configuration> extends AbstractLiquibaseCommand
     private static final String COMMAND_NAME_ATTR = "subcommand";
     private final SortedMap<String, AbstractLiquibaseCommand<T>> subcommands;
 
-    public DbCommand(ConfigurationStrategy<T> strategy, Class<T> configurationClass) {
+    public DbCommand(MultiDbConfigurationStrategy<T> strategy, Class<T> configurationClass) {
         super("db", "Run database migration tasks", strategy, configurationClass);
         this.subcommands = Maps.newTreeMap();
         addSubcommand(new DbCalculateChecksumCommand<T>(strategy, configurationClass));

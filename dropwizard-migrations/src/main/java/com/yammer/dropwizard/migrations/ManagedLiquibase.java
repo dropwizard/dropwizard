@@ -44,7 +44,7 @@ public class ManagedLiquibase extends Liquibase implements Managed {
     }
 
     public ManagedLiquibase(DatabaseConfiguration configuration) throws LiquibaseException, ClassNotFoundException, SQLException {
-        super("migrations.xml",
+        super(configuration.getSchemaResourcePath(),
               new ClassLoaderResourceAccessor(),
               new ManagedJdbcConnection(new ManagedDataSourceFactory().build(configuration)));
     }

@@ -4,6 +4,7 @@ import com.yammer.dropwizard.Bundle;
 import com.yammer.dropwizard.config.Bootstrap;
 import com.yammer.dropwizard.config.Configuration;
 import com.yammer.dropwizard.config.Environment;
+import com.yammer.dropwizard.db.ConfigurationStrategies;
 import com.yammer.dropwizard.db.ConfigurationStrategy;
 import com.yammer.dropwizard.util.Generics;
 
@@ -11,7 +12,7 @@ public abstract class MigrationsBundle<T extends Configuration> implements Bundl
     @Override
     public final void initialize(Bootstrap<?> bootstrap) {
         final Class<T> klass = Generics.getTypeParameter(getClass(), Configuration.class);
-        bootstrap.addCommand(new DbCommand<T>(this, klass));
+        bootstrap.addCommand(new DbCommand<T>(ConfigurationStrategies.asMultiDbConfigurationStrategy(this), klass));
     }
 
     @Override

@@ -1,13 +1,13 @@
 package com.yammer.dropwizard.migrations;
 
 import com.yammer.dropwizard.config.Configuration;
-import com.yammer.dropwizard.db.ConfigurationStrategy;
+import com.yammer.dropwizard.db.MultiDbConfigurationStrategy;
 import liquibase.Liquibase;
 import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
 
 public class DbTagCommand<T extends Configuration> extends AbstractLiquibaseCommand<T> {
-    public DbTagCommand(ConfigurationStrategy<T> strategy, Class<T> configurationClass) {
+    public DbTagCommand(MultiDbConfigurationStrategy<T> strategy, Class<T> configurationClass) {
         super("tag", "Tag the database schema.", strategy, configurationClass);
     }
 

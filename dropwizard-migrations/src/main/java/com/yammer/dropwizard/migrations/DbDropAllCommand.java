@@ -1,14 +1,14 @@
 package com.yammer.dropwizard.migrations;
 
 import com.yammer.dropwizard.config.Configuration;
-import com.yammer.dropwizard.db.ConfigurationStrategy;
+import com.yammer.dropwizard.db.MultiDbConfigurationStrategy;
 import liquibase.Liquibase;
 import net.sourceforge.argparse4j.impl.Arguments;
 import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
 
 public class DbDropAllCommand<T extends Configuration> extends AbstractLiquibaseCommand<T> {
-    public DbDropAllCommand(ConfigurationStrategy<T> strategy, Class<T> configurationClass) {
+    public DbDropAllCommand(MultiDbConfigurationStrategy<T> strategy, Class<T> configurationClass) {
         super("drop-all", "Delete all user-owned objects from the database.", strategy, configurationClass);
     }
 
