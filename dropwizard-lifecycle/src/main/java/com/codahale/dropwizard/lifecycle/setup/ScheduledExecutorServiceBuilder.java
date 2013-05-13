@@ -1,6 +1,7 @@
 package com.codahale.dropwizard.lifecycle.setup;
 
 import com.codahale.dropwizard.lifecycle.ExecutorServiceManager;
+import com.codahale.dropwizard.util.Duration;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import java.util.concurrent.*;
@@ -25,6 +26,10 @@ public class ScheduledExecutorServiceBuilder {
     public ScheduledExecutorServiceBuilder threads(int threads) {
         this.poolSize = threads;
         return this;
+    }
+
+    public ScheduledExecutorServiceBuilder shutdownTime(Duration time) {
+        return shutdownTime(time.getQuantity(), time.getUnit());
     }
 
     public ScheduledExecutorServiceBuilder shutdownTime(long time, TimeUnit unit) {
