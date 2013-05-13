@@ -6,7 +6,7 @@
 
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>com.yammer.dropwizard</groupId>
+    <groupId>com.codahale.dropwizard</groupId>
     <artifactId>dropwizard-parent</artifactId>
     <version>0.7.0-SNAPSHOT</version>
   </parent>
@@ -17,7 +17,7 @@
     <project.build.itOutputDirectory>${project.build.itDirectory}/projects</project.build.itOutputDirectory>
   </properties>
 
-  <groupId>com.yammer.dropwizard.archetypes</groupId>
+  <groupId>com.codahale.dropwizard.archetypes</groupId>
   <artifactId>dropwizard-archetypes</artifactId>
   <packaging>pom</packaging>
 
