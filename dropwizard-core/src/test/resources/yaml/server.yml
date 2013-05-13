@@ -1,0 +1,22 @@
+requestLog:
+  appenders:
+    - type: console
+    - type: file
+      currentLogFilename: ./logs/requests.log
+      archivedLogFilenamePattern: ./logs/requests-%d.log.gz
+      archivedFileCount: 5
+gzip:
+  enabled: false
+applicationConnectors:
+  - type: http
+    port: 9080
+    bindHost: "localhost"
+    acceptorThreads: 2
+    acceptQueueSize: 100
+    reuseAddress: false
+    soLingerTime: 2s
+    useServerHeader: true
+    useDateHeader: false
+    useForwardedHeaders: false
+minThreads: 89
+maxThreads: 101

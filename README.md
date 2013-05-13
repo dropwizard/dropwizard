@@ -1,7 +1,7 @@
-Dropwizard
+Dropwizard ![Build Status](https://api.travis-ci.org/codahale/dropwizard.png)
 ==========
 
-*Dropwizard is a sneaky way of making fast Java or Scala web services.*
+*Dropwizard is a sneaky way of making fast Java web applications.*
 
 It's a little bit of opinionated glue code which bangs together a set of libraries which have
 historically not sucked:
@@ -11,12 +11,9 @@ historically not sucked:
 * [Jackson](http://jackson.codehaus.org) for JSON parsin' and generatin'.
 * [Logback](http://logback.qos.ch/) for loggin'.
 * [Hibernate Validator](http://www.hibernate.org/subprojects/validator.html) for validatin'.
-* [Metrics](https://github.com/codahale/metrics) for figurin' out what your service is doing in
-  production.
+* [Metrics](http://metrics.codahale.com) for figurin' out what your application is doin' in production.
 * [SnakeYAML](http://code.google.com/p/snakeyaml/) for YAML parsin' and configuratin'.
-
-[Yammer](https://www.yammer.com)'s high-performance, low-latency, Java and Scala services all use
-Dropwizard. In fact, Dropwizard is really just a simple extraction of
-[Yammer](https://www.yammer.com)'s glue code.
+* [JDBI](http://www.jdbi.org) and [Hibernate](http://www.hibernate.org/) for databasin'.
+* [Liquibase](http://www.liquibase.org/) for migratin'.
 
 Read more at [dropwizard.codahale.com](http://dropwizard.codahale.com).

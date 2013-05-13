@@ -86,7 +86,7 @@ Next, write a test for serializing a ``Person`` instance to JSON:
 
 .. code-block:: java
 
-    import static com.yammer.dropwizard.testing.JsonHelpers.*;
+    import static com.codahale.dropwizard.testing.JsonHelpers.*;
     import static org.hamcrest.Matchers.*;
 
     @Test
@@ -113,7 +113,7 @@ Next, write a test for deserializing a ``Person`` instance from JSON:
 
 .. code-block:: java
 
-    import static com.yammer.dropwizard.testing.JsonHelpers.*;
+    import static com.codahale.dropwizard.testing.JsonHelpers.*;
     import static org.hamcrest.Matchers.*;
 
     @Test
@@ -141,21 +141,22 @@ loads a given resource instance in an in-memory Jersey server:
 
 .. code-block:: java
 
+    import static org.fest.assertions.api.Assertions.assertThat;
+
     public class PersonResourceTest extends ResourceTest {
         private final Person person = new Person("blah", "blah@example.com");
-        private final PeopleStore store = mock(PeopleStore.class);
+        private final PersonDAO dao = mock(PersonDAO.class);
 
         @Override
         protected void setUpResources() {
             when(store.fetchPerson(anyString())).thenReturn(person);
-            addResource(new PersonResource(store));
+            addResource(new PersonResource(dao));
         }
 
         @Test
         public void simpleResourceTest() throws Exception {
-            assertThat("GET requests fetch the Person by ID",
-                       client().resource("/person/blah").get(Person.class),
-                       is(person));
+            assertThat(client().resource("/person/blah").get(Person.class))
+                       .isEqualTo(person);
 
             verify(store).fetchPerson("blah");
         }

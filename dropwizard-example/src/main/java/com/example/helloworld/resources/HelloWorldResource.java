@@ -1,10 +1,10 @@
 package com.example.helloworld.resources;
 
+import com.codahale.dropwizard.jersey.caching.CacheControl;
+import com.codahale.metrics.annotation.Timed;
 import com.example.helloworld.core.Saying;
 import com.example.helloworld.core.Template;
 import com.google.common.base.Optional;
-import com.yammer.dropwizard.jersey.caching.CacheControl;
-import com.yammer.metrics.annotation.Timed;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

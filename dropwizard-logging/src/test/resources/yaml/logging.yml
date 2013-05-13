@@ -1,0 +1,14 @@
+level: INFO
+loggers:
+  com.example.app: DEBUG
+appenders:
+  - type: console
+    threshold: ALL
+  - type: file
+    threshold: ALL
+    currentLogFilename: ./logs/example.log
+    archivedLogFilenamePattern: ./logs/example-%d.log.gz
+    archivedFileCount: 5
+  - type: syslog
+    host: localhost
+    facility: local0

@@ -5,7 +5,6 @@
 
 # defaults
 DW_VERSION="${project.version}"
-LANGUAGE="java"
 SHADED="false"
 PACKAGE=
 NAME=
@@ -32,12 +31,6 @@ created as a sub-module of the current project.
 
 When executed inside an existing project, the current project will be 
 transformed to a Dropwizard project.
-
-  -j, --java            Create a Java project. 
-                        Default, may not be used with -s or --scala.
-
-  -s, --scala           Create a Scala project.
-                        May not be used with -j or --java.
 
   --artifact=ARTIFACTID Apply the specified Maven artifact label.
                         Formatted as follows:
@@ -111,12 +104,6 @@ function error()
 while [ $# -gt 0 ]
 do
   case "$1" in
-    "--java" | "-j")
-      LANGUAGE="java"
-      shift;;
-    "--scala" | "-s")
-      LANGUAGE="scala"
-      shift;;
     "--shaded")
       SHADED="true"
       shift;;
@@ -201,9 +188,9 @@ PACKAGING_TYPE=
 if [ "true" == $SHADED ]; then
   PACKAGING_TYPE="shaded "
 fi
-echo "Creating $PACKAGING_TYPE$LANGUAGE project $NAME with root package $PACKAGE using Dropwizard $DW_VERSION and ID $GROUP:$ARTIFACT:$VERSION ..."
+echo "Creating ${PACKAGING_TYPE}project $NAME with root package $PACKAGE using Dropwizard $DW_VERSION and ID $GROUP:$ARTIFACT:$VERSION ..."
 echo
 
 # create from archetype
-$MAVEN "archetype:generate" "-DinteractiveMode=false" "-DarchetypeGroupId=com.yammer.dropwizard.archetypes" "-DarchetypeArtifactId=$LANGUAGE-simple" "-DarchetypeVersion=$DW_VERSION" "-DgroupId=$GROUP" "-DartifactId=$ARTIFACT" "-Dpackage=$PACKAGE" "-Dname=$NAME" "-Dversion=$VERSION" "-Dshaded=$SHADED" "-Ddescription=$DESCRIPTION"
+$MAVEN "archetype:generate" "-DinteractiveMode=false" "-DarchetypeGroupId=com.yammer.dropwizard.archetypes" "-DarchetypeArtifactId=java-simple" "-DarchetypeVersion=$DW_VERSION" "-DgroupId=$GROUP" "-DartifactId=$ARTIFACT" "-Dpackage=$PACKAGE" "-Dname=$NAME" "-Dversion=$VERSION" "-Dshaded=$SHADED" "-Ddescription=$DESCRIPTION"
 

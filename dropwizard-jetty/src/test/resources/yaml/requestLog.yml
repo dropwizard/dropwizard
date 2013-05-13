@@ -1,0 +1,5 @@
+appenders:
+  - type: file
+    currentLogFilename: "/var/log/dingo/dingo.log"
+    archivedLogFilenamePattern: "/var/log/dingo/dingo-%d.log.zip"
+    archivedFileCount: 5
