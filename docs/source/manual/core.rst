@@ -1180,7 +1180,7 @@ Dropwizard has many configuration parameters, all of which come with good defaul
       connectorType: blocking
 
       # The root path for the Jersey servlet.
-      rootPath: "/"
+      rootPath: "/*"
 
       # The maximum amount of time a connection is allowed to be idle
       # before being closed.
