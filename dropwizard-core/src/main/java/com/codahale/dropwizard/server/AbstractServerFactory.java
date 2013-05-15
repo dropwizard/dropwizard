@@ -225,7 +225,8 @@ public abstract class AbstractServerFactory implements ServerFactory {
     protected Handler addGzipAndRequestLog(Handler handler, String name) {
         final Handler gzipHandler = gzip.wrapHandler(handler);
         if (requestLog.isEnabled()) {
-            final RequestLogHandler requestLogHandler = requestLog.build(name);
+            final RequestLogHandler requestLogHandler = new RequestLogHandler();
+            requestLogHandler.setRequestLog(requestLog.build(name));
             requestLogHandler.setHandler(gzipHandler);
             return requestLogHandler;
         }

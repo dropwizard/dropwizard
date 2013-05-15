@@ -4,6 +4,7 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.spi.AppenderAttachableImpl;
+import com.codahale.dropwizard.util.Duration;
 import org.eclipse.jetty.http.HttpURI;
 import org.eclipse.jetty.server.HttpChannelState;
 import org.eclipse.jetty.server.Request;
@@ -24,7 +25,9 @@ public class AsyncRequestLogTest {
     private final Appender<ILoggingEvent> appender = mock(Appender.class);
     private final AppenderAttachableImpl<ILoggingEvent> appenders = new AppenderAttachableImpl<>();
     private final AsyncRequestLog asyncRequestLog = new AsyncRequestLog(appenders,
-                                                                        TimeZone.getTimeZone("UTC"));
+                                                                        TimeZone.getTimeZone("UTC"),
+                                                                        1_000,
+                                                                        Duration.milliseconds(100));
 
     private final Request request = mock(Request.class);
     private final Response response = mock(Response.class);
