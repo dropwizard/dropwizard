@@ -29,7 +29,7 @@ public class AssetServlet extends HttpServlet {
 
         private CachedAsset(byte[] resource, long lastModifiedTime) {
             this.resource = resource;
-            this.eTag = Hashing.murmur3_128().hashBytes(resource).toString();
+            this.eTag = '"' + Hashing.murmur3_128().hashBytes(resource).toString() + '"';
             this.lastModifiedTime = lastModifiedTime;
         }
 
