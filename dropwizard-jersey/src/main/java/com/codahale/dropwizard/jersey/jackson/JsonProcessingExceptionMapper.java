@@ -9,8 +9,6 @@ import org.slf4j.LoggerFactory;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 
-// TODO: 4/24/13 <coda> -- write tests for JsonProcessingExceptionMapper
-
 public class JsonProcessingExceptionMapper implements ExceptionMapper<JsonProcessingException> {
     private static final Logger LOGGER = LoggerFactory.getLogger(JsonProcessingExceptionMapper.class);
 
