@@ -1,8 +1,7 @@
 package com.codahale.dropwizard.hibernate;
 
-import com.codahale.dropwizard.db.DatabaseConfiguration;
+import com.codahale.dropwizard.db.DataSourceFactory;
 import com.codahale.dropwizard.db.ManagedDataSource;
-import com.codahale.dropwizard.db.ManagedDataSourceFactory;
 import com.codahale.dropwizard.setup.Environment;
 import com.google.common.collect.Sets;
 import org.hibernate.SessionFactory;
@@ -23,21 +22,17 @@ import java.util.SortedSet;
 public class SessionFactoryFactory {
     private static final Logger LOGGER = LoggerFactory.getLogger(SessionFactoryFactory.class);
 
-    private final ManagedDataSourceFactory dataSourceFactory = new ManagedDataSourceFactory();
-
     public SessionFactory build(HibernateBundle<?> bundle,
                                 Environment environment,
-                                DatabaseConfiguration dbConfig,
+                                DataSourceFactory dbConfig,
                                 List<Class<?>> entities) throws ClassNotFoundException {
-        final ManagedDataSource dataSource = dataSourceFactory.build(environment.metrics(),
-                                                                     dbConfig,
-                                                                     "hibernate");
+        final ManagedDataSource dataSource = dbConfig.build(environment.metrics(), "hibernate");
         return build(bundle, environment, dbConfig, dataSource, entities);
     }
 
     public SessionFactory build(HibernateBundle<?> bundle,
                                 Environment environment,
-                                DatabaseConfiguration dbConfig,
+                                DataSourceFactory dbConfig,
                                 ManagedDataSource dataSource,
                                 List<Class<?>> entities) throws ClassNotFoundException {
         final ConnectionProvider provider = buildConnectionProvider(dataSource,
@@ -61,7 +56,7 @@ public class SessionFactoryFactory {
     }
 
     private SessionFactory buildSessionFactory(HibernateBundle<?> bundle,
-                                               DatabaseConfiguration dbConfig,
+                                               DataSourceFactory dbConfig,
                                                ConnectionProvider connectionProvider,
                                                Map<String, String> properties,
                                                List<Class<?>> entities) {

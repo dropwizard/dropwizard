@@ -11,21 +11,20 @@ import java.sql.ResultSet;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
-public class ManagedDataSourceFactoryTest {
+public class DataSourceFactoryTest {
     private final MetricRegistry metricRegistry = new MetricRegistry();
-    private final ManagedDataSourceFactory factory = new ManagedDataSourceFactory();
+    private final DataSourceFactory factory = new DataSourceFactory();
 
     private ManagedDataSource dataSource;
 
     @Before
     public void setUp() throws Exception {
-        final DatabaseConfiguration config = new DatabaseConfiguration();
-        config.setUrl("jdbc:hsqldb:mem:DbTest-" + System.currentTimeMillis());
-        config.setUser("sa");
-        config.setDriverClass("org.hsqldb.jdbcDriver");
-        config.setValidationQuery("SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS");
+        factory.setUrl("jdbc:hsqldb:mem:DbTest-" + System.currentTimeMillis());
+        factory.setUser("sa");
+        factory.setDriverClass("org.hsqldb.jdbcDriver");
+        factory.setValidationQuery("SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS");
 
-        this.dataSource = factory.build(metricRegistry, config, "test");
+        this.dataSource = factory.build(metricRegistry, "test");
         dataSource.start();
     }
 

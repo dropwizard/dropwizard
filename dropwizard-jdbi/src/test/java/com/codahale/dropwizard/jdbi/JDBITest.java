@@ -1,6 +1,6 @@
 package com.codahale.dropwizard.jdbi;
 
-import com.codahale.dropwizard.db.DatabaseConfiguration;
+import com.codahale.dropwizard.db.DataSourceFactory;
 import com.codahale.dropwizard.db.ManagedDataSource;
 import com.codahale.dropwizard.lifecycle.Managed;
 import com.codahale.dropwizard.lifecycle.setup.LifecycleEnvironment;
@@ -28,7 +28,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
 public class JDBITest {
-    private final DatabaseConfiguration hsqlConfig = new DatabaseConfiguration();
+    private final DataSourceFactory hsqlConfig = new DataSourceFactory();
 
     {
         LoggingFactory.bootstrap();

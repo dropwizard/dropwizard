@@ -1,7 +1,7 @@
 package com.example.helloworld;
 
 import com.codahale.dropwizard.Configuration;
-import com.codahale.dropwizard.db.DatabaseConfiguration;
+import com.codahale.dropwizard.db.DataSourceFactory;
 import com.example.helloworld.core.Template;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -12,13 +12,13 @@ import javax.validation.constraints.NotNull;
 public class HelloWorldConfiguration extends Configuration {
     @NotEmpty
     private String template;
-    
+
     @NotEmpty
     private String defaultName = "Stranger";
 
     @Valid
     @NotNull
-    private DatabaseConfiguration database = new DatabaseConfiguration();
+    private DataSourceFactory database = new DataSourceFactory();
 
     @JsonProperty
     public String getTemplate() {
@@ -44,13 +44,13 @@ public class HelloWorldConfiguration extends Configuration {
         return new Template(template, defaultName);
     }
 
-    @JsonProperty
-    public DatabaseConfiguration getDatabaseConfiguration() {
+    @JsonProperty("database")
+    public DataSourceFactory getDatabaseFactory() {
         return database;
     }
 
     @JsonProperty("database")
-    public void setDatabaseConfiguration(DatabaseConfiguration databaseConfiguration) {
-        this.database = databaseConfiguration;
+    public void setDatabaseFactory(DataSourceFactory dataSourceFactory) {
+        this.database = dataSourceFactory;
     }
 }

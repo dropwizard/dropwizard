@@ -1,7 +1,7 @@
 package com.codahale.dropwizard.hibernate;
 
 import com.codahale.dropwizard.Configuration;
-import com.codahale.dropwizard.db.DatabaseConfiguration;
+import com.codahale.dropwizard.db.DataSourceFactory;
 import com.codahale.dropwizard.jersey.setup.JerseyEnvironment;
 import com.codahale.dropwizard.setup.AdminEnvironment;
 import com.codahale.dropwizard.setup.Bootstrap;
@@ -19,7 +19,7 @@ import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 public class HibernateBundleTest {
-    private final DatabaseConfiguration dbConfig = new DatabaseConfiguration();
+    private final DataSourceFactory dbConfig = new DataSourceFactory();
     private final ImmutableList<Class<?>> entities = ImmutableList.<Class<?>>of(Person.class);
     private final SessionFactoryFactory factory = mock(SessionFactoryFactory.class);
     private final SessionFactory sessionFactory = mock(SessionFactory.class);
@@ -29,7 +29,7 @@ public class HibernateBundleTest {
     private final Environment environment = mock(Environment.class);
     private final HibernateBundle<Configuration> bundle = new HibernateBundle<Configuration>(entities, factory) {
         @Override
-        public DatabaseConfiguration getDatabaseConfiguration(Configuration configuration) {
+        public DataSourceFactory getDatabaseFactory(Configuration configuration) {
             return dbConfig;
         }
     };
@@ -42,7 +42,7 @@ public class HibernateBundleTest {
 
         when(factory.build(eq(bundle),
                            any(Environment.class),
-                           any(DatabaseConfiguration.class),
+                           any(DataSourceFactory.class),
                            anyList())).thenReturn(sessionFactory);
     }
 

@@ -3,7 +3,7 @@ package com.example.helloworld;
 import com.codahale.dropwizard.Application;
 import com.codahale.dropwizard.assets.AssetsBundle;
 import com.codahale.dropwizard.auth.basic.BasicAuthProvider;
-import com.codahale.dropwizard.db.DatabaseConfiguration;
+import com.codahale.dropwizard.db.DataSourceFactory;
 import com.codahale.dropwizard.hibernate.HibernateBundle;
 import com.codahale.dropwizard.migrations.MigrationsBundle;
 import com.codahale.dropwizard.setup.Bootstrap;
@@ -25,8 +25,8 @@ public class HelloWorldApplication extends Application<HelloWorldConfiguration> 
     private final HibernateBundle<HelloWorldConfiguration> hibernateBundle =
             new HibernateBundle<HelloWorldConfiguration>(Person.class) {
                 @Override
-                public DatabaseConfiguration getDatabaseConfiguration(HelloWorldConfiguration configuration) {
-                    return configuration.getDatabaseConfiguration();
+                public DataSourceFactory getDatabaseFactory(HelloWorldConfiguration configuration) {
+                    return configuration.getDatabaseFactory();
                 }
             };
 
@@ -41,8 +41,8 @@ public class HelloWorldApplication extends Application<HelloWorldConfiguration> 
         bootstrap.addBundle(new AssetsBundle());
         bootstrap.addBundle(new MigrationsBundle<HelloWorldConfiguration>() {
             @Override
-            public DatabaseConfiguration getDatabaseConfiguration(HelloWorldConfiguration configuration) {
-                return configuration.getDatabaseConfiguration();
+            public DataSourceFactory getDatabaseFactory(HelloWorldConfiguration configuration) {
+                return configuration.getDatabaseFactory();
             }
         });
         bootstrap.addBundle(hibernateBundle);

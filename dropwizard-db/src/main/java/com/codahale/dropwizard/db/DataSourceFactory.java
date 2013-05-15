@@ -3,13 +3,14 @@ package com.codahale.dropwizard.db;
 import com.codahale.dropwizard.util.Duration;
 import com.codahale.dropwizard.validation.MinDuration;
 import com.codahale.dropwizard.validation.ValidationMethod;
+import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
-import org.apache.tomcat.jdbc.pool.DataSourceFactory;
+import org.apache.tomcat.jdbc.pool.PoolProperties;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -17,19 +18,20 @@ import javax.validation.constraints.NotNull;
 import java.sql.Connection;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Properties;
 
-// TODO: 5/15/13 <coda> -- add tests for DatabaseConfiguration
-// TODO: 5/15/13 <coda> -- add docs for DatabaseConfiguration
+// TODO: 5/15/13 <coda> -- add tests for DataSourceFactory
+// TODO: 5/15/13 <coda> -- add docs for DataSourceFactory
 
 @SuppressWarnings("UnusedDeclaration")
-public class DatabaseConfiguration {
+public class DataSourceFactory {
     public enum TransactionIsolation {
         NONE(Connection.TRANSACTION_NONE),
         READ_UNCOMMITTED(Connection.TRANSACTION_READ_UNCOMMITTED),
         READ_COMMITTED(Connection.TRANSACTION_READ_COMMITTED),
         REPEATABLE_READ(Connection.TRANSACTION_REPEATABLE_READ),
         SERIALIZABLE(Connection.TRANSACTION_SERIALIZABLE),
-        DEFAULT(DataSourceFactory.UNKNOWN_TRANSACTIONISOLATION);
+        DEFAULT(org.apache.tomcat.jdbc.pool.DataSourceFactory.UNKNOWN_TRANSACTIONISOLATION);
 
         private final int value;
 
@@ -461,5 +463,52 @@ public class DatabaseConfiguration {
     @JsonProperty
     public void setValidationInterval(Duration validationInterval) {
         this.validationInterval = validationInterval;
+    }
+
+    public ManagedDataSource build(MetricRegistry metricRegistry,
+                                   String name) throws ClassNotFoundException {
+        final Properties properties = new Properties();
+        for (Map.Entry<String, String> property : this.properties.entrySet()) {
+            properties.setProperty(property.getKey(), property.getValue());
+        }
+
+        final PoolProperties poolConfig = new PoolProperties();
+        poolConfig.setAbandonWhenPercentageFull(abandonWhenPercentageFull);
+        poolConfig.setAlternateUsernameAllowed(alternateUsernamesAllowed);
+        poolConfig.setCommitOnReturn(commitOnReturn);
+        poolConfig.setDbProperties(properties);
+        poolConfig.setDefaultAutoCommit(autoCommitByDefault);
+        poolConfig.setDefaultCatalog(defaultCatalog);
+        poolConfig.setDefaultReadOnly(readOnlyByDefault);
+        poolConfig.setDefaultTransactionIsolation(defaultTransactionIsolation.getValue());
+        poolConfig.setDriverClassName(driverClass);
+        poolConfig.setFairQueue(useFairQueue);
+        poolConfig.setInitialSize(initialSize);
+        poolConfig.setInitSQL(initializationQuery);
+        poolConfig.setLogAbandoned(logAbandonedQueries);
+        poolConfig.setLogValidationErrors(logValidationErrors);
+        poolConfig.setMaxActive(maxSize);
+        poolConfig.setMaxIdle(maxSize);
+        poolConfig.setMinIdle(minSize);
+
+        if (maxConnectionAge != null) {
+            poolConfig.setMaxAge(maxConnectionAge.toMilliseconds());
+        }
+
+        poolConfig.setMaxWait((int) maxWaitForConnection.toMilliseconds());
+        poolConfig.setMinEvictableIdleTimeMillis((int) minIdleTime.toMilliseconds());
+        poolConfig.setName(name);
+        poolConfig.setUrl(url);
+        poolConfig.setUsername(user);
+        poolConfig.setPassword(password);
+        poolConfig.setTestWhileIdle(checkConnectionWhileIdle);
+        poolConfig.setValidationQuery(validationQuery);
+        poolConfig.setTestOnBorrow(checkConnectionOnBorrow);
+        poolConfig.setTestOnConnect(checkConnectionOnConnect);
+        poolConfig.setTestOnReturn(checkConnectionOnReturn);
+        poolConfig.setTimeBetweenEvictionRunsMillis((int) evictionInterval.toMilliseconds());
+        poolConfig.setValidationInterval(1);
+
+        return new ManagedPooledDataSource(poolConfig, metricRegistry);
     }
 }

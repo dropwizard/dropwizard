@@ -1,6 +1,6 @@
 package com.codahale.dropwizard.hibernate;
 
-import com.codahale.dropwizard.db.DatabaseConfiguration;
+import com.codahale.dropwizard.db.DataSourceFactory;
 import com.codahale.dropwizard.jackson.Jackson;
 import com.codahale.dropwizard.jersey.DropwizardResourceConfig;
 import com.codahale.dropwizard.jersey.jackson.JacksonMessageBodyProvider;
@@ -99,7 +99,7 @@ public class JerseyIntegrationTest extends JerseyTest {
     protected AppDescriptor configure() {
         final MetricRegistry metricRegistry = new MetricRegistry();
         final SessionFactoryFactory factory = new SessionFactoryFactory();
-        final DatabaseConfiguration dbConfig = new DatabaseConfiguration();
+        final DataSourceFactory dbConfig = new DataSourceFactory();
         final HibernateBundle<?> bundle = mock(HibernateBundle.class);
         final Environment environment = mock(Environment.class);
         final LifecycleEnvironment lifecycleEnvironment = mock(LifecycleEnvironment.class);

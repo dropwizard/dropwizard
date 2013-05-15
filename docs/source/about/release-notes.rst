@@ -6,8 +6,8 @@ Release Notes
 
 .. _rel-0.7.0:
 
-v0.7.0: TBD
-===========
+v0.7.0-SNAPSHOT
+===============
 
 * Upgraded to Java 7.
 * Moved to the ``com.codahale`` group ID and namespace.
@@ -36,6 +36,7 @@ v0.7.0: TBD
 * Fixed a shutdown bug in ``dropwizard-migrations``.
 * Extracted out various elements of ``Environment`` to separate classes: ``JerseyEnvironment``,
   ``LifecycleEnvironment``, etc.
+* Renamed ``DatabaseConfiguration`` to ``DataSourceFactory``.
 * Upgraded to JDBI 2.49.
 * Upgraded to Logback 1.0.13.
 * Upgraded to SLF4J 1.7.5.

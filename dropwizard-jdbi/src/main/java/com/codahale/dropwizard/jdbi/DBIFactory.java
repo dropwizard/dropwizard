@@ -2,9 +2,8 @@ package com.codahale.dropwizard.jdbi;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
-import com.codahale.dropwizard.db.DatabaseConfiguration;
+import com.codahale.dropwizard.db.DataSourceFactory;
 import com.codahale.dropwizard.db.ManagedDataSource;
-import com.codahale.dropwizard.db.ManagedDataSourceFactory;
 import com.codahale.dropwizard.jdbi.args.OptionalArgumentFactory;
 import com.codahale.dropwizard.jdbi.logging.LogbackLog;
 import com.codahale.dropwizard.setup.Environment;
@@ -38,19 +37,15 @@ public class DBIFactory {
         }
     }
 
-    private final ManagedDataSourceFactory dataSourceFactory = new ManagedDataSourceFactory();
-
     public DBI build(Environment environment,
-                     DatabaseConfiguration configuration,
+                     DataSourceFactory configuration,
                      String name) throws ClassNotFoundException {
-        final ManagedDataSource dataSource = dataSourceFactory.build(environment.metrics(),
-                                                                     configuration,
-                                                                     name);
+        final ManagedDataSource dataSource = configuration.build(environment.metrics(), name);
         return build(environment, configuration, dataSource, name);
     }
 
     public DBI build(Environment environment,
-                     DatabaseConfiguration configuration,
+                     DataSourceFactory configuration,
                      ManagedDataSource dataSource,
                      String name) {
         final String validationQuery = configuration.getValidationQuery();
