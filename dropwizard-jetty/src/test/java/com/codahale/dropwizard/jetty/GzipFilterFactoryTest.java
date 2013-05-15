@@ -13,12 +13,12 @@ import java.io.File;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
-public class GzipHandlerFactoryTest {
-    private GzipHandlerFactory gzip;
+public class GzipFilterFactoryTest {
+    private GzipFilterFactory gzip;
 
     @Before
     public void setUp() throws Exception {
-        this.gzip = new ConfigurationFactory<>(GzipHandlerFactory.class,
+        this.gzip = new ConfigurationFactory<>(GzipFilterFactory.class,
                                                Validation.buildDefaultValidatorFactory()
                                                                  .getValidator(),
                                                Jackson.newObjectMapper(), "dw")

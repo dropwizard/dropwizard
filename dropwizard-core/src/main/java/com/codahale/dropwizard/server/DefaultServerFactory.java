@@ -136,7 +136,7 @@ public class DefaultServerFactory extends AbstractServerFactory {
                                                                   server,
                                                                   applicationHandler,
                                                                   adminHandler);
-        server.setHandler(addGzipAndRequestLog(routingHandler, environment.getName()));
+        server.setHandler(addRequestLog(routingHandler, environment.getName()));
         return server;
     }
 

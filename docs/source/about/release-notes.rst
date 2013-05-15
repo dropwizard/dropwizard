@@ -49,6 +49,7 @@ v0.7.0: TBD
 * Added support for the Jetty HTTP client to ``dropwizard-client``.
 * Added Jackson Afterburner support.
 * Added ``dropwizard-forms``, which provides support for multipart MIME entities.
+* Added support for ``deflate``-encoded requests and responses.
 
 .. _rel-0.6.2:
 

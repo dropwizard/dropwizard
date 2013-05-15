@@ -37,7 +37,7 @@ public class DefaultServerFactoryTest {
 
     @Test
     public void loadsGzipConfig() throws Exception {
-        assertThat(http.getGzipHandlerFactory().isEnabled())
+        assertThat(http.getGzipFilterFactory().isEnabled())
                 .isFalse();
     }
 
