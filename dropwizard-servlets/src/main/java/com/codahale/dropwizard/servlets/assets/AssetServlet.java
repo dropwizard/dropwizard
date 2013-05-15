@@ -5,6 +5,7 @@ import com.google.common.hash.Hashing;
 import com.google.common.io.Resources;
 import com.google.common.net.HttpHeaders;
 import com.google.common.net.MediaType;
+import org.eclipse.jetty.util.QuotedStringTokenizer;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -113,7 +114,7 @@ public class AssetServlet extends HttpServlet {
             }
 
             resp.setDateHeader(HttpHeaders.LAST_MODIFIED, cachedAsset.getLastModifiedTime());
-            resp.setHeader(HttpHeaders.ETAG, cachedAsset.getETag());
+            resp.setHeader(HttpHeaders.ETAG, QuotedStringTokenizer.quote(cachedAsset.getETag()));
 
             final String mimeTypeOfExtension = req.getServletContext()
                                                   .getMimeType(req.getRequestURI());
@@ -169,7 +170,7 @@ public class AssetServlet extends HttpServlet {
     }
 
     private boolean isCachedClientSide(HttpServletRequest req, CachedAsset cachedAsset) {
-        return cachedAsset.getETag().equals(req.getHeader(HttpHeaders.IF_NONE_MATCH)) ||
+        return cachedAsset.getETag().equals(QuotedStringTokenizer.unquote(req.getHeader(HttpHeaders.IF_NONE_MATCH))) ||
                 (req.getDateHeader(HttpHeaders.IF_MODIFIED_SINCE) >= cachedAsset.getLastModifiedTime());
     }
 }

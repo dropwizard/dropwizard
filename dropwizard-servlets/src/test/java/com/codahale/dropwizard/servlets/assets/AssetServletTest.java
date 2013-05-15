@@ -4,6 +4,7 @@ import com.google.common.base.Charsets;
 import com.google.common.net.HttpHeaders;
 import org.eclipse.jetty.http.*;
 import org.eclipse.jetty.servlet.ServletTester;
+import org.eclipse.jetty.util.QuotedStringTokenizer;
 import org.fest.assertions.api.Assertions;
 import org.junit.After;
 import org.junit.Before;
@@ -126,10 +127,10 @@ public class AssetServletTest {
     @Test
     public void consistentlyAssignsETags() throws Exception {
         response = HttpTester.parseResponse(servletTester.getResponses(request.generate()));
-        final String firstEtag = response.get(HttpHeaders.ETAG);
+        final String firstEtag = QuotedStringTokenizer.unquote(response.get(HttpHeaders.ETAG));
 
         response = HttpTester.parseResponse(servletTester.getResponses(request.generate()));
-        final String secondEtag = response.get(HttpHeaders.ETAG);
+        final String secondEtag = QuotedStringTokenizer.unquote(response.get(HttpHeaders.ETAG));
 
         Assertions.assertThat(firstEtag)
                   .isNotNull();
@@ -142,11 +143,11 @@ public class AssetServletTest {
     @Test
     public void assignsDifferentETagsForDifferentFiles() throws Exception {
         response = HttpTester.parseResponse(servletTester.getResponses(request.generate()));
-        final String firstEtag = response.get(HttpHeaders.ETAG);
+        final String firstEtag = QuotedStringTokenizer.unquote(response.get(HttpHeaders.ETAG));
 
         request.setURI(DUMMY_SERVLET + "foo.bar");
         response = HttpTester.parseResponse(servletTester.getResponses(request.generate()));
-        final String secondEtag = response.get(HttpHeaders.ETAG);
+        final String secondEtag = QuotedStringTokenizer.unquote(response.get(HttpHeaders.ETAG));
 
         Assertions.assertThat(firstEtag)
                   .isNotEqualTo(secondEtag);
@@ -155,13 +156,13 @@ public class AssetServletTest {
     @Test
     public void supportsIfNoneMatchRequests() throws Exception {
         response = HttpTester.parseResponse(servletTester.getResponses(request.generate()));
-        final String correctEtag = response.get(HttpHeaders.ETAG);
+        final String correctEtag = QuotedStringTokenizer.unquote(response.get(HttpHeaders.ETAG));
 
-        request.setHeader(HttpHeaders.IF_NONE_MATCH, correctEtag);
+        request.setHeader(HttpHeaders.IF_NONE_MATCH, QuotedStringTokenizer.quote(correctEtag));
         response = HttpTester.parseResponse(servletTester.getResponses(request.generate()));
         final int statusWithMatchingEtag = response.getStatus();
 
-        request.setHeader(HttpHeaders.IF_NONE_MATCH, correctEtag + "FOO");
+        request.setHeader(HttpHeaders.IF_NONE_MATCH, QuotedStringTokenizer.quote(correctEtag + "FOO"));
         response = HttpTester.parseResponse(servletTester.getResponses(request.generate()));
         final int statusWithNonMatchingEtag = response.getStatus();
 
