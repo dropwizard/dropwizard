@@ -12,6 +12,8 @@ import net.sourceforge.argparse4j.inf.Subparser;
 
 import java.util.SortedMap;
 
+// TODO: 5/15/13 <coda> -- add tests for Cli
+
 /**
  * The command-line runner for Dropwizard application.
  */

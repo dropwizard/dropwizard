@@ -7,6 +7,8 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
+// TODO: 5/15/13 <coda> -- write tests for HttpClientConfiguration
+
 /**
  * The configuration class used by {@link HttpClientBuilder}.
  *

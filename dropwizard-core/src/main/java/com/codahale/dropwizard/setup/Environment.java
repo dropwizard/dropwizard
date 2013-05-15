@@ -15,6 +15,9 @@ import javax.validation.Validator;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+// TODO: 5/15/13 <coda> -- add tests for Environment
+// TODO: 5/15/13 <coda> -- add docs for Environment
+
 /**
  * A Dropwizard application's environment.
  */

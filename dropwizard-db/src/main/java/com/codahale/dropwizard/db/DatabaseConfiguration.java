@@ -18,6 +18,9 @@ import java.sql.Connection;
 import java.util.Locale;
 import java.util.Map;
 
+// TODO: 5/15/13 <coda> -- add tests for DatabaseConfiguration
+// TODO: 5/15/13 <coda> -- add docs for DatabaseConfiguration
+
 @SuppressWarnings("UnusedDeclaration")
 public class DatabaseConfiguration {
     public enum TransactionIsolation {

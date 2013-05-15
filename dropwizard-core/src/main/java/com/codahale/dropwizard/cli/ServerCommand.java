@@ -8,8 +8,6 @@ import org.eclipse.jetty.server.Server;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-// TODO: 10/12/11 <coda> -- write tests for ServerCommand
-
 /**
  * Runs a application as an HTTP server.
  *

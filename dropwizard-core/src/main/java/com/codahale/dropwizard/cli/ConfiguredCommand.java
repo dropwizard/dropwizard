@@ -19,7 +19,7 @@ import java.io.IOException;
  * into an instance of a {@link Configuration} subclass, which is then validated. If the
  * configuration is valid, the command is run.
  *
- * @param <T> the {@link com.codahale.dropwizard.Configuration} subclass which is loaded from the configuration file
+ * @param <T> the {@link Configuration} subclass which is loaded from the configuration file
  * @see Configuration
  */
 public abstract class ConfiguredCommand<T extends Configuration> extends Command {
@@ -63,7 +63,7 @@ public abstract class ConfiguredCommand<T extends Configuration> extends Command
     }
 
     /**
-     * Runs the command with the given {@link Bootstrap} and {@link com.codahale.dropwizard.Configuration}.
+     * Runs the command with the given {@link Bootstrap} and {@link Configuration}.
      *
      * @param bootstrap     the bootstrap bootstrap
      * @param namespace     the parsed command line namespace

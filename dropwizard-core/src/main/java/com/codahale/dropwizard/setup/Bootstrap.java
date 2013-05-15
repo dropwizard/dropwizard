@@ -21,6 +21,9 @@ import com.google.common.collect.Lists;
 import java.lang.management.ManagementFactory;
 import java.util.List;
 
+// TODO: 5/15/13 <coda> -- add tests for Bootstrap
+// TODO: 5/15/13 <coda> -- add docs for Bootstrap
+
 public class Bootstrap<T extends Configuration> {
     private final Application<T> application;
     private final ObjectMapper objectMapper;

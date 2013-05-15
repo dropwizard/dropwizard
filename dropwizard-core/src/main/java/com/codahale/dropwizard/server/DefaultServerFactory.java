@@ -21,6 +21,8 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Map;
 
+// TODO: 5/15/13 <coda> -- add tests for DefaultServerFactory
+
 /**
  * The default implementation of {@link ServerFactory}, which allows for multiple sets of
  * application and admin connectors, all running on separate ports. Admin connectors use a separate
