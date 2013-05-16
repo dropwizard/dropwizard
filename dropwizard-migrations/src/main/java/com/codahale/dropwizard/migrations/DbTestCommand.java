@@ -1,7 +1,7 @@
 package com.codahale.dropwizard.migrations;
 
 import com.codahale.dropwizard.Configuration;
-import com.codahale.dropwizard.db.ConfigurationStrategy;
+import com.codahale.dropwizard.db.DatabaseConfiguration;
 import com.google.common.base.Joiner;
 import liquibase.Liquibase;
 import net.sourceforge.argparse4j.impl.Arguments;
@@ -11,7 +11,7 @@ import net.sourceforge.argparse4j.inf.Subparser;
 import java.util.List;
 
 public class DbTestCommand<T extends Configuration> extends AbstractLiquibaseCommand<T> {
-    public DbTestCommand(ConfigurationStrategy<T> strategy, Class<T> configurationClass) {
+    public DbTestCommand(DatabaseConfiguration<T> strategy, Class<T> configurationClass) {
         super("test", "Apply and rollback pending change sets.", strategy, configurationClass);
     }
 

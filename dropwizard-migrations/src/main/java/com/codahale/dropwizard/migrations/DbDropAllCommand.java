@@ -1,14 +1,14 @@
 package com.codahale.dropwizard.migrations;
 
 import com.codahale.dropwizard.Configuration;
-import com.codahale.dropwizard.db.ConfigurationStrategy;
+import com.codahale.dropwizard.db.DatabaseConfiguration;
 import liquibase.Liquibase;
 import net.sourceforge.argparse4j.impl.Arguments;
 import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
 
 public class DbDropAllCommand<T extends Configuration> extends AbstractLiquibaseCommand<T> {
-    public DbDropAllCommand(ConfigurationStrategy<T> strategy, Class<T> configurationClass) {
+    public DbDropAllCommand(DatabaseConfiguration<T> strategy, Class<T> configurationClass) {
         super("drop-all", "Delete all user-owned objects from the database.", strategy, configurationClass);
     }
 

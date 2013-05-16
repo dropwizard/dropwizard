@@ -1,7 +1,7 @@
 package com.codahale.dropwizard.migrations;
 
 import com.codahale.dropwizard.Configuration;
-import com.codahale.dropwizard.db.ConfigurationStrategy;
+import com.codahale.dropwizard.db.DatabaseConfiguration;
 import com.google.common.base.Charsets;
 import liquibase.Liquibase;
 import liquibase.diff.Diff;
@@ -15,7 +15,7 @@ import net.sourceforge.argparse4j.inf.Subparser;
 import java.io.PrintStream;
 
 public class DbDumpCommand<T extends Configuration> extends AbstractLiquibaseCommand<T> {
-    public DbDumpCommand(ConfigurationStrategy<T> strategy, Class<T> configurationClass) {
+    public DbDumpCommand(DatabaseConfiguration<T> strategy, Class<T> configurationClass) {
         super("dump",
               "Generate a dump of the existing database state.",
               strategy,

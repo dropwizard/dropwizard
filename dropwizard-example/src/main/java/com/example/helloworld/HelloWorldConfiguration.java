@@ -45,12 +45,12 @@ public class HelloWorldConfiguration extends Configuration {
     }
 
     @JsonProperty("database")
-    public DataSourceFactory getDatabaseFactory() {
+    public DataSourceFactory getDataSourceFactory() {
         return database;
     }
 
     @JsonProperty("database")
-    public void setDatabaseFactory(DataSourceFactory dataSourceFactory) {
+    public void setDataSourceFactory(DataSourceFactory dataSourceFactory) {
         this.database = dataSourceFactory;
     }
 }

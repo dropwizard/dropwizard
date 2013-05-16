@@ -29,7 +29,7 @@ public class HibernateBundleTest {
     private final Environment environment = mock(Environment.class);
     private final HibernateBundle<Configuration> bundle = new HibernateBundle<Configuration>(entities, factory) {
         @Override
-        public DataSourceFactory getDatabaseFactory(Configuration configuration) {
+        public DataSourceFactory getDataSourceFactory(Configuration configuration) {
             return dbConfig;
         }
     };

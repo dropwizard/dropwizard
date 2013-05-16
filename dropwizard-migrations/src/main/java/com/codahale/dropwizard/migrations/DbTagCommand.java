@@ -1,13 +1,13 @@
 package com.codahale.dropwizard.migrations;
 
 import com.codahale.dropwizard.Configuration;
-import com.codahale.dropwizard.db.ConfigurationStrategy;
+import com.codahale.dropwizard.db.DatabaseConfiguration;
 import liquibase.Liquibase;
 import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
 
 public class DbTagCommand<T extends Configuration> extends AbstractLiquibaseCommand<T> {
-    public DbTagCommand(ConfigurationStrategy<T> strategy, Class<T> configurationClass) {
+    public DbTagCommand(DatabaseConfiguration<T> strategy, Class<T> configurationClass) {
         super("tag", "Tag the database schema.", strategy, configurationClass);
     }
 

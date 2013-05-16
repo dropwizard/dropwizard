@@ -1,7 +1,7 @@
 package com.codahale.dropwizard.migrations;
 
 import com.codahale.dropwizard.Configuration;
-import com.codahale.dropwizard.db.ConfigurationStrategy;
+import com.codahale.dropwizard.db.DatabaseConfiguration;
 import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
 import liquibase.Liquibase;
@@ -14,7 +14,7 @@ import java.util.Date;
 import java.util.List;
 
 public class DbRollbackCommand<T extends Configuration> extends AbstractLiquibaseCommand<T> {
-    public DbRollbackCommand(ConfigurationStrategy<T> strategy, Class<T> configurationClass) {
+    public DbRollbackCommand(DatabaseConfiguration<T> strategy, Class<T> configurationClass) {
         super("rollback",
               "Rollback the database schema to a previous version.",
               strategy,

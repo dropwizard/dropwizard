@@ -2,7 +2,7 @@ package com.codahale.dropwizard.migrations;
 
 import com.codahale.dropwizard.Configuration;
 import com.codahale.dropwizard.cli.ConfiguredCommand;
-import com.codahale.dropwizard.db.ConfigurationStrategy;
+import com.codahale.dropwizard.db.DatabaseConfiguration;
 import com.codahale.dropwizard.db.DataSourceFactory;
 import com.codahale.dropwizard.setup.Bootstrap;
 import liquibase.Liquibase;
@@ -10,12 +10,12 @@ import liquibase.exception.ValidationFailedException;
 import net.sourceforge.argparse4j.inf.Namespace;
 
 public abstract class AbstractLiquibaseCommand<T extends Configuration> extends ConfiguredCommand<T> {
-    private final ConfigurationStrategy<T> strategy;
+    private final DatabaseConfiguration<T> strategy;
     private final Class<T> configurationClass;
 
     protected AbstractLiquibaseCommand(String name,
                                        String description,
-                                       ConfigurationStrategy<T> strategy,
+                                       DatabaseConfiguration<T> strategy,
                                        Class<T> configurationClass) {
         super(name, description);
         this.strategy = strategy;
@@ -30,7 +30,7 @@ public abstract class AbstractLiquibaseCommand<T extends Configuration> extends 
     @Override
     @SuppressWarnings("UseOfSystemOutOrSystemErr")
     protected void run(Bootstrap<T> bootstrap, Namespace namespace, T configuration) throws Exception {
-        final DataSourceFactory dbConfig = strategy.getDatabaseFactory(configuration);
+        final DataSourceFactory dbConfig = strategy.getDataSourceFactory(configuration);
         dbConfig.setMaxSize(1);
         dbConfig.setMinSize(1);
         dbConfig.setInitialSize(1);

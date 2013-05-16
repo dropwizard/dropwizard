@@ -36,7 +36,8 @@ v0.7.0-SNAPSHOT
 * Fixed a shutdown bug in ``dropwizard-migrations``.
 * Extracted out various elements of ``Environment`` to separate classes: ``JerseyEnvironment``,
   ``LifecycleEnvironment``, etc.
-* Renamed ``DatabaseConfiguration`` to ``DataSourceFactory``.
+* Renamed ``DatabaseConfiguration`` to ``DataSourceFactory``, and ``ConfigurationStrategy`` to
+  ``DatabaseConfiguration``.
 * Upgraded to JDBI 2.49.
 * Upgraded to Logback 1.0.13.
 * Upgraded to SLF4J 1.7.5.

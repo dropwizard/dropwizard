@@ -25,8 +25,8 @@ public class HelloWorldApplication extends Application<HelloWorldConfiguration> 
     private final HibernateBundle<HelloWorldConfiguration> hibernateBundle =
             new HibernateBundle<HelloWorldConfiguration>(Person.class) {
                 @Override
-                public DataSourceFactory getDatabaseFactory(HelloWorldConfiguration configuration) {
-                    return configuration.getDatabaseFactory();
+                public DataSourceFactory getDataSourceFactory(HelloWorldConfiguration configuration) {
+                    return configuration.getDataSourceFactory();
                 }
             };
 
@@ -41,8 +41,8 @@ public class HelloWorldApplication extends Application<HelloWorldConfiguration> 
         bootstrap.addBundle(new AssetsBundle());
         bootstrap.addBundle(new MigrationsBundle<HelloWorldConfiguration>() {
             @Override
-            public DataSourceFactory getDatabaseFactory(HelloWorldConfiguration configuration) {
-                return configuration.getDatabaseFactory();
+            public DataSourceFactory getDataSourceFactory(HelloWorldConfiguration configuration) {
+                return configuration.getDataSourceFactory();
             }
         });
         bootstrap.addBundle(hibernateBundle);

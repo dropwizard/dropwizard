@@ -2,7 +2,7 @@ package com.codahale.dropwizard.hibernate;
 
 import com.codahale.dropwizard.Configuration;
 import com.codahale.dropwizard.ConfiguredBundle;
-import com.codahale.dropwizard.db.ConfigurationStrategy;
+import com.codahale.dropwizard.db.DatabaseConfiguration;
 import com.codahale.dropwizard.db.DataSourceFactory;
 import com.codahale.dropwizard.setup.Bootstrap;
 import com.codahale.dropwizard.setup.Environment;
@@ -10,7 +10,7 @@ import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module;
 import com.google.common.collect.ImmutableList;
 import org.hibernate.SessionFactory;
 
-public abstract class HibernateBundle<T extends Configuration> implements ConfiguredBundle<T>, ConfigurationStrategy<T> {
+public abstract class HibernateBundle<T extends Configuration> implements ConfiguredBundle<T>, DatabaseConfiguration<T> {
     private SessionFactory sessionFactory;
 
     private final ImmutableList<Class<?>> entities;
@@ -34,7 +34,7 @@ public abstract class HibernateBundle<T extends Configuration> implements Config
 
     @Override
     public final void run(T configuration, Environment environment) throws Exception {
-        final DataSourceFactory dbConfig = getDatabaseFactory(configuration);
+        final DataSourceFactory dbConfig = getDataSourceFactory(configuration);
         this.sessionFactory = sessionFactoryFactory.build(this, environment, dbConfig, entities);
         environment.jersey().addProvider(new UnitOfWorkResourceMethodDispatchAdapter(sessionFactory));
         environment.admin().addHealthCheck("hibernate", new SessionFactoryHealthCheck(sessionFactory,

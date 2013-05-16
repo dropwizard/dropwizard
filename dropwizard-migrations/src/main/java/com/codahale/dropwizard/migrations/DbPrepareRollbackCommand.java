@@ -1,7 +1,7 @@
 package com.codahale.dropwizard.migrations;
 
 import com.codahale.dropwizard.Configuration;
-import com.codahale.dropwizard.db.ConfigurationStrategy;
+import com.codahale.dropwizard.db.DatabaseConfiguration;
 import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
 import liquibase.Liquibase;
@@ -13,7 +13,7 @@ import java.io.OutputStreamWriter;
 import java.util.List;
 
 public class DbPrepareRollbackCommand<T extends Configuration> extends AbstractLiquibaseCommand<T> {
-    public DbPrepareRollbackCommand(ConfigurationStrategy<T> strategy, Class<T> configurationClass) {
+    public DbPrepareRollbackCommand(DatabaseConfiguration<T> strategy, Class<T> configurationClass) {
         super("prepare-rollback", "Generate rollback DDL scripts for pending change sets.", strategy, configurationClass);
     }
 

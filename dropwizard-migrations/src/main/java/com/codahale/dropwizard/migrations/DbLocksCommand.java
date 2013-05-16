@@ -1,14 +1,14 @@
 package com.codahale.dropwizard.migrations;
 
 import com.codahale.dropwizard.Configuration;
-import com.codahale.dropwizard.db.ConfigurationStrategy;
+import com.codahale.dropwizard.db.DatabaseConfiguration;
 import liquibase.Liquibase;
 import net.sourceforge.argparse4j.impl.Arguments;
 import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
 
 public class DbLocksCommand<T extends Configuration> extends AbstractLiquibaseCommand<T> {
-    public DbLocksCommand(ConfigurationStrategy<T> strategy, Class<T> configurationClass) {
+    public DbLocksCommand(DatabaseConfiguration<T> strategy, Class<T> configurationClass) {
         super("locks", "Manage database migration locks", strategy, configurationClass);
     }
 
