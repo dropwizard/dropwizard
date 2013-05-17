@@ -1,10 +1,10 @@
 package com.codahale.dropwizard.jetty.setup;
 
+import com.codahale.dropwizard.jetty.MutableServletContextHandler;
 import com.codahale.dropwizard.jetty.NonblockingServletHolder;
 import org.eclipse.jetty.security.SecurityHandler;
 import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.servlet.FilterHolder;
-import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 
 import javax.servlet.Filter;
@@ -15,9 +15,9 @@ import java.util.EventListener;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class ServletEnvironment {
-    private final ServletContextHandler handler;
+    private final MutableServletContextHandler handler;
 
-    public ServletEnvironment(ServletContextHandler handler) {
+    public ServletEnvironment(MutableServletContextHandler handler) {
         this.handler = handler;
     }
 
@@ -112,10 +112,12 @@ public class ServletEnvironment {
     }
 
     public void setSessionHandler(SessionHandler sessionHandler) {
+        handler.setSessionsEnabled(sessionHandler != null);
         handler.setSessionHandler(sessionHandler);
     }
 
     public void setSecurityHandler(SecurityHandler securityHandler) {
+        handler.setSecurityEnabled(securityHandler != null);
         handler.setSecurityHandler(securityHandler);
     }
 

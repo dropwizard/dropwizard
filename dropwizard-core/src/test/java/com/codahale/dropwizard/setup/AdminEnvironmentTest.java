@@ -1,11 +1,11 @@
 package com.codahale.dropwizard.setup;
 
+import com.codahale.dropwizard.jetty.MutableServletContextHandler;
 import com.codahale.dropwizard.jetty.NonblockingServletHolder;
 import com.codahale.dropwizard.servlets.tasks.Task;
 import com.codahale.dropwizard.servlets.tasks.TaskServlet;
 import com.codahale.metrics.health.HealthCheckRegistry;
 import com.google.common.collect.ImmutableMultimap;
-import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
@@ -17,7 +17,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 public class AdminEnvironmentTest {
-    private final ServletContextHandler handler = mock(ServletContextHandler.class);
+    private final MutableServletContextHandler handler = mock(MutableServletContextHandler.class);
     private final HealthCheckRegistry healthCheckRegistry = mock(HealthCheckRegistry.class);
 
     private final AdminEnvironment env = new AdminEnvironment(handler, healthCheckRegistry);

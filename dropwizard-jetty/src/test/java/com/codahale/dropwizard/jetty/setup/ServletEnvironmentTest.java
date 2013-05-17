@@ -1,11 +1,11 @@
 package com.codahale.dropwizard.jetty.setup;
 
+import com.codahale.dropwizard.jetty.MutableServletContextHandler;
 import org.eclipse.jetty.continuation.ContinuationFilter;
 import org.eclipse.jetty.http.MimeTypes;
 import org.eclipse.jetty.security.SecurityHandler;
 import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.servlet.FilterHolder;
-import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -15,12 +15,10 @@ import java.util.EnumSet;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class ServletEnvironmentTest {
-    private final ServletContextHandler handler = mock(ServletContextHandler.class);
+    private final MutableServletContextHandler handler = mock(MutableServletContextHandler.class);
     private final ServletEnvironment environment = new ServletEnvironment(handler);
 
     @Test
@@ -121,6 +119,7 @@ public class ServletEnvironmentTest {
         environment.setSessionHandler(sessionHandler);
 
         verify(handler).setSessionHandler(sessionHandler);
+        verify(handler).setSessionsEnabled(true);
     }
 
 
@@ -131,6 +130,7 @@ public class ServletEnvironmentTest {
         environment.setSecurityHandler(securityHandler);
 
         verify(handler).setSecurityHandler(securityHandler);
+        verify(handler).setSecurityEnabled(true);
     }
 
     @Test

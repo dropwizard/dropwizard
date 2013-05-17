@@ -3,13 +3,13 @@ package com.codahale.dropwizard.setup;
 import com.codahale.dropwizard.jersey.DropwizardResourceConfig;
 import com.codahale.dropwizard.jersey.setup.JerseyContainerHolder;
 import com.codahale.dropwizard.jersey.setup.JerseyEnvironment;
+import com.codahale.dropwizard.jetty.MutableServletContextHandler;
 import com.codahale.dropwizard.jetty.setup.ServletEnvironment;
 import com.codahale.dropwizard.lifecycle.setup.LifecycleEnvironment;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheckRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.jersey.spi.container.servlet.ServletContainer;
-import org.eclipse.jetty.servlet.ServletContextHandler;
 
 import javax.validation.Validator;
 
@@ -32,12 +32,12 @@ public class Environment {
     private final JerseyContainerHolder jerseyServletContainer;
     private final JerseyEnvironment jerseyEnvironment;
 
-    private final ServletContextHandler servletContext;
+    private final MutableServletContextHandler servletContext;
     private final ServletEnvironment servletEnvironment;
 
     private final LifecycleEnvironment lifecycleEnvironment;
 
-    private final ServletContextHandler adminContext;
+    private final MutableServletContextHandler adminContext;
     private final AdminEnvironment adminEnvironment;
 
     /**
@@ -57,11 +57,11 @@ public class Environment {
         this.healthCheckRegistry = new HealthCheckRegistry();
         this.validator = validator;
 
-        this.servletContext = new ServletContextHandler();
+        this.servletContext = new MutableServletContextHandler();
         servletContext.setClassLoader(classLoader);
         this.servletEnvironment = new ServletEnvironment(servletContext);
 
-        this.adminContext = new ServletContextHandler();
+        this.adminContext = new MutableServletContextHandler();
         adminContext.setClassLoader(classLoader);
         this.adminEnvironment = new AdminEnvironment(adminContext, healthCheckRegistry);
 
@@ -118,7 +118,7 @@ public class Environment {
 
     // TODO: 5/4/13 <coda> -- figure out how to make these accessors not a public API
 
-    public ServletContextHandler getApplicationContext() {
+    public MutableServletContextHandler getApplicationContext() {
         return servletContext;
     }
 
@@ -126,7 +126,7 @@ public class Environment {
         return jerseyServletContainer.getContainer();
     }
 
-    public ServletContextHandler getAdminContext() {
+    public MutableServletContextHandler getAdminContext() {
         return adminContext;
     }
 }
