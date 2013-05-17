@@ -3,6 +3,7 @@ package com.codahale.dropwizard.server;
 import com.codahale.dropwizard.jersey.jackson.JacksonMessageBodyProvider;
 import com.codahale.dropwizard.jersey.setup.JerseyEnvironment;
 import com.codahale.dropwizard.jetty.GzipFilterFactory;
+import com.codahale.dropwizard.jetty.MutableServletContextHandler;
 import com.codahale.dropwizard.jetty.NonblockingServletHolder;
 import com.codahale.dropwizard.jetty.RequestLogFactory;
 import com.codahale.dropwizard.lifecycle.setup.LifecycleEnvironment;
@@ -28,7 +29,6 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ErrorHandler;
 import org.eclipse.jetty.server.handler.RequestLogHandler;
 import org.eclipse.jetty.servlet.FilterHolder;
-import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.util.BlockingArrayQueue;
 import org.eclipse.jetty.util.thread.ThreadPool;
 import org.slf4j.Logger;
@@ -181,21 +181,34 @@ public abstract class AbstractServerFactory implements ServerFactory {
         this.idleThreadTimeout = idleThreadTimeout;
     }
 
-    protected Handler createAdminServlet(ServletContextHandler handler,
+    protected Handler createAdminServlet(Server server,
+                                         MutableServletContextHandler handler,
                                          MetricRegistry metrics,
                                          HealthCheckRegistry healthChecks) {
+        configureSessionsAndSecurity(handler, server);
         handler.getServletContext().setAttribute(MetricsServlet.METRICS_REGISTRY, metrics);
         handler.getServletContext().setAttribute(HealthCheckServlet.HEALTH_CHECK_REGISTRY, healthChecks);
         handler.addServlet(new NonblockingServletHolder(new AdminServlet()), "/*");
         return handler;
     }
 
-    protected Handler createAppServlet(JerseyEnvironment jersey,
+    private void configureSessionsAndSecurity(MutableServletContextHandler handler, Server server) {
+        if (handler.isSecurityEnabled()) {
+            handler.getSecurityHandler().setServer(server);
+        }
+        if (handler.isSessionsEnabled()) {
+            handler.getSessionHandler().setServer(server);
+        }
+    }
+
+    protected Handler createAppServlet(Server server,
+                                       JerseyEnvironment jersey,
                                        ObjectMapper objectMapper,
                                        Validator validator,
-                                       ServletContextHandler handler,
+                                       MutableServletContextHandler handler,
                                        @Nullable ServletContainer jerseyContainer,
                                        MetricRegistry metricRegistry) {
+        configureSessionsAndSecurity(handler, server);
         handler.addFilter(ThreadNameFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST));
         if (gzip.isEnabled()) {
             final FilterHolder holder = new FilterHolder(gzip.build());
@@ -219,7 +232,8 @@ public abstract class AbstractServerFactory implements ServerFactory {
         return threadPool;
     }
 
-    protected Server buildServer(LifecycleEnvironment lifecycle, ThreadPool threadPool) {
+    protected Server buildServer(LifecycleEnvironment lifecycle,
+                                 ThreadPool threadPool) {
         final Server server = new Server(threadPool);
         lifecycle.attach(server);
         final ErrorHandler errorHandler = new ErrorHandler();

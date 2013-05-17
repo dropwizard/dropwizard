@@ -125,13 +125,15 @@ public class DefaultServerFactory extends AbstractServerFactory {
         printBanner(environment.getName());
         final ThreadPool threadPool = createThreadPool(environment.metrics());
         final Server server = buildServer(environment.lifecycle(), threadPool);
-        final Handler applicationHandler = createAppServlet(environment.jersey(),
+        final Handler applicationHandler = createAppServlet(server,
+                                                            environment.jersey(),
                                                             environment.getObjectMapper(),
                                                             environment.getValidator(),
                                                             environment.getApplicationContext(),
                                                             environment.getJerseyServletContainer(),
                                                             environment.metrics());
-        final Handler adminHandler = createAdminServlet(environment.getAdminContext(),
+        final Handler adminHandler = createAdminServlet(server,
+                                                        environment.getAdminContext(),
                                                         environment.metrics(),
                                                         environment.healthChecks());
         final RoutingHandler routingHandler = buildRoutingHandler(environment.metrics(),

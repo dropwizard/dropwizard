@@ -101,7 +101,8 @@ public class SimpleServerFactory extends AbstractServerFactory {
         final Server server = buildServer(environment.lifecycle(), threadPool);
 
         environment.getApplicationContext().setContextPath(applicationContextPath);
-        final Handler applicationHandler = createAppServlet(environment.jersey(),
+        final Handler applicationHandler = createAppServlet(server,
+                                                            environment.jersey(),
                                                             environment.getObjectMapper(),
                                                             environment.getValidator(),
                                                             environment.getApplicationContext(),
@@ -109,11 +110,15 @@ public class SimpleServerFactory extends AbstractServerFactory {
                                                             environment.metrics());
 
         environment.getAdminContext().setContextPath(adminContextPath);
-        final Handler adminHandler = createAdminServlet(environment.getAdminContext(),
+        final Handler adminHandler = createAdminServlet(server,
+                                                        environment.getAdminContext(),
                                                         environment.metrics(),
                                                         environment.healthChecks());
 
-        final Connector conn = connector.build(server, environment.metrics(), environment.getName(), server.getThreadPool());
+        final Connector conn = connector.build(server,
+                                               environment.metrics(),
+                                               environment.getName(),
+                                               server.getThreadPool());
 
         server.addConnector(conn);
 
