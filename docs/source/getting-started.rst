@@ -218,7 +218,7 @@ Here's what our configuration class will look like:
         }
 
         @JsonProperty
-        public String setDefaultName(String name) {
+        public void setDefaultName(String name) {
             this.defaultName = name;
         }
     }
