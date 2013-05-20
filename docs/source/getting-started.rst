@@ -218,7 +218,7 @@ Here's what our configuration class will look like:
         }
 
         @JsonProperty
-        public String setDefaultName(String name) {
+        public void setDefaultName(String name) {
             this.defaultName = name;
         }
     }
@@ -637,7 +637,7 @@ section of your ``pom.xml`` file, add this:
                     <transformers>
                         <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
                         <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                            <mainClass>com.example.helloworld.HelloWorldService</mainClass>
+                            <mainClass>com.example.helloworld.HelloWorldApplication</mainClass>
                         </transformer>
                     </transformers>
                 </configuration>
@@ -653,7 +653,7 @@ This configures Maven to do a couple of things during its ``package`` phase:
   considers the signature invalid and won't load or run your JAR file.
 * Collate the various ``META-INF/services`` entries in the JARs instead of
   overwriting them. (Neither Dropwizard nor Jersey works without those.)
-* Set ``com.example.helloworld.HelloWorldService`` as the JAR's ``MainClass``.
+* Set ``com.example.helloworld.HelloWorldApplication`` as the JAR's ``MainClass``.
   This will allow you to run the JAR using ``java -jar``.
 
 .. warning::
