@@ -26,6 +26,12 @@
             <groupId>com.codahale.metrics</groupId>
             <artifactId>metrics-jdbi</artifactId>
             <version>${metrics3.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.jdbi</groupId>
+                    <artifactId>jdbi</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.hsqldb</groupId>
