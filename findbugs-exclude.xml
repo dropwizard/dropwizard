@@ -7,9 +7,9 @@
         <Bug pattern="DM_GC"/>
     </Match>
 
-    <!-- given this is a console command, exit(-1) is right -->
+    <!-- kind of hard to use exit codes without System.exit -->
     <Match>
-        <Class name="com.codahale.dropwizard.cli.Cli"/>
+        <Class name="com.codahale.dropwizard.Application"/>
         <Method name="run"/>
         <Bug pattern="DM_EXIT"/>
     </Match>
