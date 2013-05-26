@@ -68,7 +68,7 @@ public abstract class Application<T extends Configuration> {
         bootstrap.addCommand(new ServerCommand<>(this));
         bootstrap.addCommand(new CheckCommand<>(this));
         initialize(bootstrap);
-        final Cli cli = new Cli(new JarLocation(getClass()), bootstrap);
-        cli.run(arguments);
+        final Cli cli = new Cli(new JarLocation(getClass()), bootstrap, System.out, System.err);
+        System.exit(cli.run(arguments));
     }
 }
