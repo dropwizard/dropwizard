@@ -162,15 +162,6 @@
                     <skip>true</skip>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-site-plugin</artifactId>
-                <version>3.3</version>
-                <configuration>
-                    <skip>true</skip>
-                    <skipDeploy>true</skipDeploy>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
 </project>
