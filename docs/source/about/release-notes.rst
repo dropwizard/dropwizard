@@ -42,6 +42,7 @@ v0.7.0-SNAPSHOT
 * Upgraded to Logback 1.0.13.
 * Upgraded to SLF4J 1.7.5.
 * Upgraded to Hibernate Validator 5.0.1.
+* Upgraded to argparse4j 0.4.1.
 * Removed ``ManagedSessionFactory``.
 * Moved ``dropwizard-db`` to use ``tomcat-jdbc`` instead of ``tomcat-dbcp``.
 * Extracted out ``dropwizard-views-freemarker`` and ``dropwizard-views-mustache``.
