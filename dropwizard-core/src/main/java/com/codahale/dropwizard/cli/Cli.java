@@ -2,12 +2,14 @@ package com.codahale.dropwizard.cli;
 
 import com.codahale.dropwizard.setup.Bootstrap;
 import com.codahale.dropwizard.util.JarLocation;
+import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.impl.Arguments;
 import net.sourceforge.argparse4j.inf.*;
 
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Map;
@@ -37,8 +39,8 @@ public class Cli {
      * @param stdErr       standard err
      */
     public Cli(JarLocation location, Bootstrap<?> bootstrap, OutputStream stdOut, OutputStream stdErr) {
-        this.stdOut = new PrintWriter(stdOut);
-        this.stdErr = new PrintWriter(stdErr);
+        this.stdOut = new PrintWriter(new OutputStreamWriter(stdOut, Charsets.UTF_8), true);
+        this.stdErr = new PrintWriter(new OutputStreamWriter(stdErr, Charsets.UTF_8), true);
         this.commands = Maps.newTreeMap();
         this.parser = buildParser(location);
         this.bootstrap = bootstrap;
