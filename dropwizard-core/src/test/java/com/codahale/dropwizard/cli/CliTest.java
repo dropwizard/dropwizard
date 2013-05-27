@@ -48,7 +48,7 @@ public class CliTest {
     @Test
     public void handlesShortVersionCommands() throws Exception {
         assertThat(cli.run("-v"))
-                .isZero();
+                .isTrue();
 
         assertThat(stdOut.toString())
                 .isEqualTo(String.format("1.0.0%n"));
@@ -60,7 +60,7 @@ public class CliTest {
     @Test
     public void handlesLongVersionCommands() throws Exception {
         assertThat(cli.run("--version"))
-                .isZero();
+                .isTrue();
 
         assertThat(stdOut.toString())
                 .isEqualTo(String.format("1.0.0%n"));
@@ -75,7 +75,7 @@ public class CliTest {
         final Cli newCli = new Cli(location, bootstrap, stdOut, stdErr);
 
         assertThat(newCli.run("--version"))
-                .isZero();
+                .isTrue();
 
         assertThat(stdOut.toString())
                 .isEqualTo(String.format("No application version detected. Add a Implementation-Version entry to your JAR's manifest to enable this.%n"));
@@ -87,7 +87,7 @@ public class CliTest {
     @Test
     public void handlesZeroArgumentsAsHelpCommand() throws Exception {
         assertThat(cli.run())
-                .isZero();
+                .isTrue();
 
         assertThat(stdOut.toString())
                 .isEqualTo(String.format(
@@ -108,7 +108,7 @@ public class CliTest {
     @Test
     public void handlesShortHelpCommands() throws Exception {
         assertThat(cli.run("-h"))
-                .isZero();
+                .isTrue();
 
         assertThat(stdOut.toString())
                 .isEqualTo(String.format(
@@ -129,7 +129,7 @@ public class CliTest {
     @Test
     public void handlesLongHelpCommands() throws Exception {
         assertThat(cli.run("--help"))
-                .isZero();
+                .isTrue();
 
         assertThat(stdOut.toString())
                 .isEqualTo(String.format(
@@ -151,7 +151,7 @@ public class CliTest {
     @SuppressWarnings("unchecked")
     public void handlesShortHelpSubcommands() throws Exception {
         assertThat(cli.run("check", "-h"))
-                .isZero();
+                .isTrue();
 
         assertThat(stdOut.toString())
                 .isEqualTo(String.format(
@@ -176,7 +176,7 @@ public class CliTest {
     @SuppressWarnings("unchecked")
     public void handlesLongHelpSubcommands() throws Exception {
         assertThat(cli.run("check", "--help"))
-                .isZero();
+                .isTrue();
 
         assertThat(stdOut.toString())
                 .isEqualTo(String.format(
@@ -200,7 +200,7 @@ public class CliTest {
     @Test
     public void rejectsBadCommandFlags() throws Exception {
         assertThat(cli.run("--yes"))
-                .isEqualTo(1);
+                .isFalse();
 
         assertThat(stdOut.toString())
                 .isEmpty();
@@ -222,7 +222,7 @@ public class CliTest {
     @Test
     public void rejectsBadSubcommandFlags() throws Exception {
         assertThat(cli.run("check", "--yes"))
-                .isEqualTo(1);
+                .isFalse();
 
         assertThat(stdOut.toString())
                 .isEmpty();
@@ -245,7 +245,7 @@ public class CliTest {
     @Test
     public void rejectsBadSubcommands() throws Exception {
         assertThat(cli.run("plop"))
-                .isEqualTo(1);
+                .isFalse();
 
         assertThat(stdOut.toString())
                 .isEmpty();
@@ -267,7 +267,7 @@ public class CliTest {
     @Test
     public void runsCommands() throws Exception {
         assertThat(cli.run("check"))
-                .isEqualTo(0);
+                .isTrue();
 
         assertThat(stdOut.toString())
                 .isEmpty();

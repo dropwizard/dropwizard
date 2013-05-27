@@ -69,6 +69,9 @@ public abstract class Application<T extends Configuration> {
         bootstrap.addCommand(new CheckCommand<>(this));
         initialize(bootstrap);
         final Cli cli = new Cli(new JarLocation(getClass()), bootstrap, System.out, System.err);
-        System.exit(cli.run(arguments));
+        if (!cli.run(arguments)) {
+            // only exit if there's an error running the command
+            System.exit(1);
+        }
     }
 }
