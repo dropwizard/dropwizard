@@ -9,6 +9,7 @@ import java.sql.ClientInfoStatus;
 import java.util.concurrent.TimeUnit;
 
 import static org.fest.assertions.api.Assertions.assertThat;
+import static org.fest.assertions.api.Assertions.failBecauseExceptionWasNotThrown;
 
 public class FuzzyEnumModuleTest {
     private final ObjectMapper mapper = new ObjectMapper();
@@ -48,8 +49,14 @@ public class FuzzyEnumModuleTest {
                 .isEqualTo(ClientInfoStatus.REASON_UNKNOWN);
     }
 
-    @Test(expected = JsonMappingException.class)
+    @Test
     public void failsOnIncorrectValue() throws Exception {
-        mapper.readValue("\"wrong\"", TimeUnit.class);
+        try {
+            mapper.readValue("\"wrong\"", TimeUnit.class);
+            failBecauseExceptionWasNotThrown(JsonMappingException.class);
+        } catch (JsonMappingException e) {
+            assertThat(e.getOriginalMessage())
+                    .isEqualTo("WRONG was not one of [NANOSECONDS, MICROSECONDS, MILLISECONDS, SECONDS, MINUTES, HOURS, DAYS]");
+        }
     }
 }
