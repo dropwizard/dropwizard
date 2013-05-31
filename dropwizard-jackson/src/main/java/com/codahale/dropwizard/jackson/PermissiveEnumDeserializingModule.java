@@ -45,7 +45,7 @@ public class PermissiveEnumDeserializingModule extends Module {
                 }
             }
 
-            return null;
+            throw ctxt.mappingException(getValueClass());
         }
     }
 

@@ -1,5 +1,6 @@
 package com.codahale.dropwizard.jackson;
 
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
@@ -49,5 +50,10 @@ public class PermissiveEnumDeserializingModuleTest {
     public void mapsDashedEnums() throws Exception {
         assertThat(mapper.readValue("\"REASON-UNKNOWN\"", ClientInfoStatus.class))
                 .isEqualTo(ClientInfoStatus.REASON_UNKNOWN);
+    }
+
+    @Test(expected = JsonMappingException.class)
+    public void failsOnIncorrectValue() throws Exception {
+        mapper.readValue("\"wrong\"", TimeUnit.class);
     }
 }
