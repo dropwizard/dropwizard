@@ -35,6 +35,7 @@
         <module>dropwizard-validation</module>
         <module>dropwizard-configuration</module>
         <module>dropwizard-logging</module>
+        <module>dropwizard-metrics</module>
         <module>dropwizard-jersey</module>
         <module>dropwizard-jetty</module>
         <module>dropwizard-servlets</module>
