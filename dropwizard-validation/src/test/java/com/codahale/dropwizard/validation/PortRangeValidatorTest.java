@@ -1,5 +1,7 @@
 package com.codahale.dropwizard.validation;
 
+import java.util.Locale;
+
 import org.junit.Test;
 
 import javax.validation.Validation;
@@ -8,6 +10,11 @@ import javax.validation.Validator;
 import static org.fest.assertions.api.Assertions.assertThat;
 
 public class PortRangeValidatorTest {
+    static {
+        // hibernate-validator is localized, the assertions aren't ...
+        Locale.setDefault(Locale.ENGLISH);
+    }
+
     @SuppressWarnings("PublicField")
     public static class Example {
         @PortRange
