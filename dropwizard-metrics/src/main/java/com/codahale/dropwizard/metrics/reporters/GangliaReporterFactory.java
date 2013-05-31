@@ -90,6 +90,9 @@ public class GangliaReporterFactory extends BaseReporterFactory {
     @Range(min = 0, max = 255)
     private int ttl = 1;
 
+    @NotNull
+    private String prefix = "";
+
     private Optional<UUID> uuid;
 
     private Optional<String> spoof;
@@ -154,6 +157,14 @@ public class GangliaReporterFactory extends BaseReporterFactory {
         this.ttl = ttl;
     }
 
+    public String getPrefix() {
+        return prefix;
+    }
+
+    public void setPrefix(String prefix) {
+        this.prefix = prefix;
+    }
+
     @JsonProperty
     public Optional<UUID> getUuid() {
         return uuid;
@@ -191,6 +202,7 @@ public class GangliaReporterFactory extends BaseReporterFactory {
                     .convertDurationsTo(getDurationUnit())
                     .convertRatesTo(getRateUnit())
                     .filter(getFilter())
+                    .prefixedWith(getPrefix())
                     .withDMax(getDMax())
                     .withTMax(getTMax())
                     .build(ganglia);
