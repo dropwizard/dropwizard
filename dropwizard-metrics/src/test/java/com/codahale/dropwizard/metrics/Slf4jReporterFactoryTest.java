@@ -1,17 +1,15 @@
-package com.codahale.dropwizard.metrics.reporters;
+package com.codahale.dropwizard.metrics;
 
 import com.codahale.dropwizard.jackson.DiscoverableSubtypeResolver;
+import com.codahale.dropwizard.metrics.Slf4jReporterFactory;
 import org.junit.Test;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
-/**
- * Tests {@link CsvReporterFactory}.
- */
-public class CsvReporterFactoryTest {
+public class Slf4jReporterFactoryTest {
     @Test
     public void isDiscoverable() throws Exception {
         assertThat(new DiscoverableSubtypeResolver().getDiscoveredSubtypes())
-                .contains(CsvReporterFactory.class);
+                .contains(Slf4jReporterFactory.class);
     }
 }

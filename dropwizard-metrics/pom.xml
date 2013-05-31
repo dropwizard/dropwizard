@@ -41,21 +41,15 @@
         </dependency>
         <dependency>
             <groupId>com.codahale.dropwizard</groupId>
-            <artifactId>dropwizard-configuration</artifactId>
+            <artifactId>dropwizard-logging</artifactId>
             <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
-
-        <!-- Optional dependencies for optional reporters -->
         <dependency>
-            <groupId>com.codahale.metrics</groupId>
-            <artifactId>metrics-ganglia</artifactId>
-            <version>${metrics3.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.codahale.metrics</groupId>
-            <artifactId>metrics-graphite</artifactId>
-            <version>${metrics3.version}</version>
+            <groupId>com.codahale.dropwizard</groupId>
+            <artifactId>dropwizard-configuration</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>

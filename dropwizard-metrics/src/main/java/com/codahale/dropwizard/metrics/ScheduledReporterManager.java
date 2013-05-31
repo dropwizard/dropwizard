@@ -1,4 +1,4 @@
-package com.codahale.dropwizard.metrics.reporters;
+package com.codahale.dropwizard.metrics;
 
 import com.codahale.dropwizard.lifecycle.Managed;
 import com.codahale.dropwizard.util.Duration;
@@ -7,8 +7,7 @@ import com.codahale.metrics.ScheduledReporter;
 /**
  * Manages a {@link ScheduledReporter} lifecycle.
  */
-public class ManagedScheduledReporter implements Managed {
-
+public class ScheduledReporterManager implements Managed {
     private final ScheduledReporter reporter;
     private final Duration period;
 
@@ -18,7 +17,7 @@ public class ManagedScheduledReporter implements Managed {
      * @param reporter the reporter to manage.
      * @param period the frequency to report metrics at.
      */
-    public ManagedScheduledReporter(ScheduledReporter reporter, Duration period) {
+    public ScheduledReporterManager(ScheduledReporter reporter, Duration period) {
         this.reporter = reporter;
         this.period = period;
     }

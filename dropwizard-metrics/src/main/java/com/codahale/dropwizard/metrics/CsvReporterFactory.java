@@ -1,4 +1,4 @@
-package com.codahale.dropwizard.metrics.reporters;
+package com.codahale.dropwizard.metrics;
 
 import com.codahale.metrics.CsvReporter;
 import com.codahale.metrics.MetricRegistry;
@@ -34,7 +34,6 @@ import java.io.File;
  */
 @JsonTypeName("csv")
 public class CsvReporterFactory extends BaseFormattedReporterFactory {
-
     @NotNull
     private File file;
 
@@ -50,12 +49,11 @@ public class CsvReporterFactory extends BaseFormattedReporterFactory {
 
     @Override
     public ScheduledReporter build(MetricRegistry registry) {
-        return CsvReporter
-                .forRegistry(registry)
-                .convertDurationsTo(getDurationUnit())
-                .convertDurationsTo(getRateUnit())
-                .filter(getFilter())
-                .formatFor(getLocale())
-                .build(getFile());
+        return CsvReporter.forRegistry(registry)
+                          .convertDurationsTo(getDurationUnit())
+                          .convertDurationsTo(getRateUnit())
+                          .filter(getFilter())
+                          .formatFor(getLocale())
+                          .build(getFile());
     }
 }

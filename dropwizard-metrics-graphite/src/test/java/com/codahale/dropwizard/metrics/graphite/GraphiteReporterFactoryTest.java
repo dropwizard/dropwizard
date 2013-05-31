@@ -1,17 +1,14 @@
-package com.codahale.dropwizard.metrics.reporters;
+package com.codahale.dropwizard.metrics.graphite;
 
 import com.codahale.dropwizard.jackson.DiscoverableSubtypeResolver;
 import org.junit.Test;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
-/**
- * Tests {@link Slf4jReporterFactory}.
- */
-public class Slf4jReporterFactoryTest {
+public class GraphiteReporterFactoryTest {
     @Test
     public void isDiscoverable() throws Exception {
         assertThat(new DiscoverableSubtypeResolver().getDiscoveredSubtypes())
-                .contains(Slf4jReporterFactory.class);
+                .contains(GraphiteReporterFactory.class);
     }
 }

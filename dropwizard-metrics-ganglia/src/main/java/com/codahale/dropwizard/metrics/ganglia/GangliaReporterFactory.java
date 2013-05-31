@@ -1,5 +1,8 @@
-package com.codahale.dropwizard.metrics.reporters;
+package com.codahale.dropwizard.metrics.ganglia;
 
+import com.codahale.dropwizard.metrics.BaseReporterFactory;
+import com.codahale.dropwizard.util.Duration;
+import com.codahale.dropwizard.validation.MinDuration;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.ScheduledReporter;
 import com.codahale.metrics.ganglia.GangliaReporter;
@@ -10,7 +13,6 @@ import info.ganglia.gmetric4j.gmetric.GMetric;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.hibernate.validator.constraints.Range;
 
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.util.UUID;
@@ -65,18 +67,19 @@ import java.util.UUID;
  *     <tr>
  *         <td>dmax</td>
  *         <td>0</td>
- *         <td>The dmax value to annouce metrics with.</td>
+ *         <td>The dmax value to announce metrics with.</td>
  *     </tr>
  * </table>
  */
 @JsonTypeName("ganglia")
 public class GangliaReporterFactory extends BaseReporterFactory {
+    @NotNull
+    @MinDuration(0)
+    private Duration tmax = Duration.seconds(1);
 
-    @Min(0)
-    private int tmax = 60;
-
-    @Min(0)
-    private int dmax = 0;
+    @NotNull
+    @MinDuration(0)
+    private Duration dmax = Duration.seconds(0);
 
     @NotEmpty
     private String host = "localhost";
@@ -90,31 +93,28 @@ public class GangliaReporterFactory extends BaseReporterFactory {
     @Range(min = 0, max = 255)
     private int ttl = 1;
 
-    @NotNull
-    private String prefix = "";
-
-    private Optional<UUID> uuid;
-
-    private Optional<String> spoof;
+    private String prefix;
+    private UUID uuid;
+    private String spoof;
 
     @JsonProperty
-    public int getTMax() {
+    public Duration getTmax() {
         return tmax;
     }
 
     @JsonProperty
-    public void setMax(int tMax) {
-        this.tmax = tMax;
+    public void setTmax(Duration tmax) {
+        this.tmax = tmax;
     }
 
     @JsonProperty
-    public int getDMax() {
+    public Duration getDmax() {
         return dmax;
     }
 
     @JsonProperty
-    public void setDMax(int dMax) {
-        this.dmax = dMax;
+    public void setDmax(Duration dmax) {
+        this.dmax = dmax;
     }
 
     @JsonProperty
@@ -167,45 +167,43 @@ public class GangliaReporterFactory extends BaseReporterFactory {
 
     @JsonProperty
     public Optional<UUID> getUuid() {
-        return uuid;
+        return Optional.fromNullable(uuid);
     }
 
     @JsonProperty
-    public void setUuid(Optional<UUID> uuid) {
+    public void setUuid(UUID uuid) {
         this.uuid = uuid;
     }
 
     @JsonProperty
     public Optional<String> getSpoof() {
-        return spoof;
+        return Optional.fromNullable(spoof);
     }
 
     @JsonProperty
-    public void setSpoof(Optional<String> spoof) {
+    public void setSpoof(String spoof) {
         this.spoof = spoof;
     }
 
     @Override
     public ScheduledReporter build(MetricRegistry registry) {
         try {
-            GMetric ganglia = new GMetric(
-                    getHost(),
-                    getPort(),
-                    getMode(),
-                    getTtl(),
-                    getUuid().isPresent() || getSpoof().isPresent(),
-                    getUuid().orNull(),
-                    getSpoof().orNull());
+            GMetric ganglia = new GMetric(host,
+                                          port,
+                                          mode,
+                                          ttl,
+                                          uuid != null || spoof != null,
+                                          uuid,
+                                          spoof);
 
-            return GangliaReporter
-                    .forRegistry(registry)
-                    .convertDurationsTo(getDurationUnit())
-                    .convertRatesTo(getRateUnit())
-                    .filter(getFilter())
-                    .prefixedWith(getPrefix())
-                    .withDMax(getDMax())
-                    .withTMax(getTMax())
-                    .build(ganglia);
+            return GangliaReporter.forRegistry(registry)
+                                  .convertDurationsTo(getDurationUnit())
+                                  .convertRatesTo(getRateUnit())
+                                  .filter(getFilter())
+                                  .prefixedWith(getPrefix())
+                                  .withDMax((int) dmax.toSeconds())
+                                  .withTMax((int) tmax.toSeconds())
+                                  .build(ganglia);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

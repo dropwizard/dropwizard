@@ -1,4 +1,4 @@
-package com.codahale.dropwizard.metrics.reporters;
+package com.codahale.dropwizard.metrics;
 
 import com.codahale.dropwizard.util.Duration;
 import com.codahale.metrics.*;
@@ -52,8 +52,7 @@ import java.util.concurrent.TimeUnit;
  *     </tr>
  * </table>
  */
-abstract public class BaseReporterFactory implements ReporterFactory {
-
+public abstract class BaseReporterFactory implements ReporterFactory {
     @NotNull
     private TimeUnit durationUnit = TimeUnit.MILLISECONDS;
 

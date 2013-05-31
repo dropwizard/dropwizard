@@ -1,4 +1,4 @@
-package com.codahale.dropwizard.metrics.reporters;
+package com.codahale.dropwizard.metrics;
 
 import com.codahale.metrics.*;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -38,7 +38,6 @@ import java.util.TimeZone;
  */
 @JsonTypeName("console")
 public class ConsoleReporterFactory extends BaseFormattedReporterFactory {
-
     public static enum ConsoleStream {
         STDOUT(System.out),
         STDERR(System.err);
@@ -59,7 +58,6 @@ public class ConsoleReporterFactory extends BaseFormattedReporterFactory {
 
     @NotNull
     private ConsoleStream output = ConsoleStream.STDOUT;
-
 
     @JsonProperty
     public TimeZone getTimeZone() {
@@ -82,14 +80,13 @@ public class ConsoleReporterFactory extends BaseFormattedReporterFactory {
     }
 
     public ScheduledReporter build(MetricRegistry registry) {
-        return ConsoleReporter
-                .forRegistry(registry)
-                .convertDurationsTo(getDurationUnit())
-                .convertRatesTo(getRateUnit())
-                .filter(getFilter())
-                .formattedFor(getLocale())
-                .formattedFor(getTimeZone())
-                .outputTo(getOutput().get())
-                .build();
+        return ConsoleReporter.forRegistry(registry)
+                              .convertDurationsTo(getDurationUnit())
+                              .convertRatesTo(getRateUnit())
+                              .filter(getFilter())
+                              .formattedFor(getLocale())
+                              .formattedFor(getTimeZone())
+                              .outputTo(getOutput().get())
+                              .build();
     }
 }

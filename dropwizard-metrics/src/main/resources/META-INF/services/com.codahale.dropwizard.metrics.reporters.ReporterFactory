@@ -1,5 +1,0 @@
-com.codahale.dropwizard.metrics.reporters.ConsoleReporterFactory
-com.codahale.dropwizard.metrics.reporters.CsvReporterFactory
-com.codahale.dropwizard.metrics.reporters.Slf4jReporterFactory
-com.codahale.dropwizard.metrics.reporters.GraphiteReporterFactory
-com.codahale.dropwizard.metrics.reporters.GangliaReporterFactory

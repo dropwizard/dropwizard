@@ -1,4 +1,4 @@
-package com.codahale.dropwizard.metrics.reporters;
+package com.codahale.dropwizard.metrics;
 
 import com.codahale.dropwizard.jackson.Discoverable;
 import com.codahale.dropwizard.util.Duration;
@@ -14,7 +14,7 @@ import com.google.common.base.Optional;
  * <ol>
  *     <li>Create a class which implements {@link ReporterFactory}.</li>
  *     <li>Annotate it with {@code @JsonTypeName} and give it a unique type name.</li>
- *     <li>Add a {@code META-INF/services/com.codahale.dropwizard.metrics.reporters.ReporterFactory}
+ *     <li>Add a {@code META-INF/services/com.codahale.dropwizard.metrics.ReporterFactory}
  *     file with your implementation's full class name to the class path.</li>
  * </ol>
  *
@@ -24,7 +24,6 @@ import com.google.common.base.Optional;
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
 public interface ReporterFactory extends Discoverable {
-
     /**
      * Returns the frequency for reporting metrics.
      *

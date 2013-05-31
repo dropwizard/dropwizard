@@ -1,5 +1,6 @@
-package com.codahale.dropwizard.metrics.reporters;
+package com.codahale.dropwizard.metrics.graphite;
 
+import com.codahale.dropwizard.metrics.BaseReporterFactory;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.ScheduledReporter;
 import com.codahale.metrics.graphite.Graphite;
@@ -41,7 +42,6 @@ import java.net.InetSocketAddress;
  */
 @JsonTypeName("graphite")
 public class GraphiteReporterFactory extends BaseReporterFactory {
-
     @NotEmpty
     private String host = "localhost";
 
@@ -83,14 +83,12 @@ public class GraphiteReporterFactory extends BaseReporterFactory {
 
     @Override
     public ScheduledReporter build(MetricRegistry registry) {
-        Graphite graphite = new Graphite(new InetSocketAddress(getHost(), getPort()));
-
-        return GraphiteReporter
-                .forRegistry(registry)
-                .convertDurationsTo(getDurationUnit())
-                .convertRatesTo(getRateUnit())
-                .filter(getFilter())
-                .prefixedWith(getPrefix())
-                .build(graphite);
+        final Graphite graphite = new Graphite(new InetSocketAddress(host, port));
+        return GraphiteReporter.forRegistry(registry)
+                               .convertDurationsTo(getDurationUnit())
+                               .convertRatesTo(getRateUnit())
+                               .filter(getFilter())
+                               .prefixedWith(getPrefix())
+                               .build(graphite);
     }
 }

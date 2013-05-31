@@ -1,4 +1,4 @@
-package com.codahale.dropwizard.metrics.reporters;
+package com.codahale.dropwizard.metrics;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -28,7 +28,6 @@ import java.util.Locale;
  * </table>
  */
 public abstract class BaseFormattedReporterFactory extends BaseReporterFactory {
-
     @NotNull
     private Locale locale = Locale.getDefault();
 

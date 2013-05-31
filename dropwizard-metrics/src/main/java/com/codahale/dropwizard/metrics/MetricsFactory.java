@@ -1,8 +1,8 @@
 package com.codahale.dropwizard.metrics;
 
 import com.codahale.dropwizard.lifecycle.setup.LifecycleEnvironment;
-import com.codahale.dropwizard.metrics.reporters.ManagedScheduledReporter;
-import com.codahale.dropwizard.metrics.reporters.ReporterFactory;
+import com.codahale.dropwizard.metrics.ScheduledReporterManager;
+import com.codahale.dropwizard.metrics.ReporterFactory;
 import com.codahale.dropwizard.util.Duration;
 import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -39,12 +39,11 @@ import javax.validation.constraints.NotNull;
  * </table>
  */
 public class MetricsFactory {
-
-    private static final Logger logger = LoggerFactory.getLogger(MetricsFactory.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MetricsFactory.class);
 
     @Valid
     @NotNull
-    private Duration frequency = Duration.seconds(1);
+    private Duration frequency = Duration.minutes(1);
 
     @Valid
     @NotNull
@@ -85,11 +84,12 @@ public class MetricsFactory {
     public void configure(LifecycleEnvironment environment, MetricRegistry registry) {
         for (ReporterFactory reporter : reporters) {
             try {
-                environment.manage(new ManagedScheduledReporter(
-                        reporter.build(registry),
-                        reporter.getFrequency().or(getFrequency())));
+                final ScheduledReporterManager manager =
+                        new ScheduledReporterManager(reporter.build(registry),
+                                                     reporter.getFrequency().or(getFrequency()));
+                environment.manage(manager);
             } catch (Exception e) {
-                logger.warn("Failed to create Reporter, metrics may not be properly reported.", e);
+                LOGGER.warn("Failed to create reporter, metrics may not be properly reported.", e);
             }
         }
     }
