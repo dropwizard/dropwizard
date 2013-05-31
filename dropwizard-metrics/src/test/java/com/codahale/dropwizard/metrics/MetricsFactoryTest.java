@@ -7,7 +7,6 @@ import com.codahale.dropwizard.metrics.reporters.CsvReporterFactory;
 import com.codahale.dropwizard.metrics.reporters.Slf4jReporterFactory;
 import com.codahale.dropwizard.util.Duration;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.ImmutableList;
 import com.google.common.io.Resources;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,6 +16,9 @@ import java.io.File;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
+/**
+ * Tests {@link MetricsFactory}.
+ */
 public class MetricsFactoryTest {
     private final ObjectMapper objectMapper = Jackson.newObjectMapper();
     private final ConfigurationFactory<MetricsFactory> factory =
@@ -41,7 +43,9 @@ public class MetricsFactoryTest {
     }
 
     @Test
-    public void hasReporters() throws Exception {
-        assertThat(config.getReporters()).isNotEmpty();
+    public void hasAReporters() throws Exception {
+        CsvReporterFactory csvReporter = new CsvReporterFactory();
+        csvReporter.setFile(new File("metrics.csv"));
+        assertThat(config.getReporters()).hasSize(3);
     }
 }
