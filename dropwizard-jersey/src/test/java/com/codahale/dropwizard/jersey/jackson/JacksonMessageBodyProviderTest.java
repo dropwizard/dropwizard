@@ -9,6 +9,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 import com.sun.jersey.core.util.StringKeyObjectValueIgnoreCaseMultivaluedMap;
+import org.junit.Before;
 import org.junit.Test;
 
 import javax.validation.ConstraintViolationException;
@@ -21,9 +22,12 @@ import javax.ws.rs.core.MediaType;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.lang.annotation.Annotation;
+import java.util.Locale;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.fest.assertions.api.Assertions.failBecauseExceptionWasNotThrown;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assume.assumeThat;
 import static org.mockito.Mockito.*;
 
 // TODO: 4/24/13 <coda> -- move JacksonMessageBodyProviderTest to JerseyTest
@@ -65,6 +69,11 @@ public class JacksonMessageBodyProviderTest {
     private final JacksonMessageBodyProvider provider = new JacksonMessageBodyProvider(mapper,
                                                                                        Validation.buildDefaultValidatorFactory()
                                                                                                  .getValidator());
+
+    @Before
+    public void setUp() throws Exception {
+        assumeThat(Locale.getDefault().getLanguage(), is("en"));
+    }
 
     @Test
     public void readsDeserializableTypes() throws Exception {
