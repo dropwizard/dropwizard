@@ -39,6 +39,11 @@
         </dependency>
         <dependency>
             <groupId>com.codahale.dropwizard</groupId>
+            <artifactId>dropwizard-metrics</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.codahale.dropwizard</groupId>
             <artifactId>dropwizard-jersey</artifactId>
             <version>${project.version}</version>
         </dependency>

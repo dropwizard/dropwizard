@@ -1,5 +1,6 @@
 package com.codahale.dropwizard;
 
+import com.codahale.dropwizard.metrics.MetricsFactory;
 import com.codahale.dropwizard.logging.LoggingFactory;
 import com.codahale.dropwizard.server.DefaultServerFactory;
 import com.codahale.dropwizard.server.ServerFactory;
@@ -66,6 +67,10 @@ public class Configuration {
     @NotNull
     private LoggingFactory logging = new LoggingFactory();
 
+    @Valid
+    @NotNull
+    private MetricsFactory metrics = new MetricsFactory();
+
     /**
      * Returns the server-specific section of the configuration file.
      *
@@ -100,6 +105,16 @@ public class Configuration {
     @JsonProperty("logging")
     public void setLoggingFactory(LoggingFactory factory) {
         this.logging = factory;
+    }
+
+    @JsonProperty("metrics")
+    public MetricsFactory getMetricsFactory() {
+        return metrics;
+    }
+
+    @JsonProperty("metrics")
+    public void setMetricsFactory(MetricsFactory metrics) {
+        this.metrics = metrics;
     }
 
     @Override
