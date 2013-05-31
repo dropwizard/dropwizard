@@ -7,6 +7,8 @@ import com.codahale.dropwizard.util.Duration;
 import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -37,6 +39,8 @@ import javax.validation.constraints.NotNull;
  * </table>
  */
 public class MetricsFactory {
+
+    private static final Logger logger = LoggerFactory.getLogger(MetricsFactory.class);
 
     @Valid
     @NotNull
@@ -80,9 +84,13 @@ public class MetricsFactory {
      */
     public void configure(LifecycleEnvironment environment, MetricRegistry registry) {
         for (ReporterFactory reporter : reporters) {
-            environment.manage(new ManagedScheduledReporter(
-                    reporter.build(registry),
-                    reporter.getFrequency().or(getFrequency())));
+            try {
+                environment.manage(new ManagedScheduledReporter(
+                        reporter.build(registry),
+                        reporter.getFrequency().or(getFrequency())));
+            } catch (Exception e) {
+                logger.warn("Failed to create Reporter, metrics may not be properly reported.", e);
+            }
         }
     }
 }
