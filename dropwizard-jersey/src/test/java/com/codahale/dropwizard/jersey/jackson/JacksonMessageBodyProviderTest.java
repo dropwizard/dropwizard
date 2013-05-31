@@ -21,6 +21,7 @@ import javax.ws.rs.core.MediaType;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.lang.annotation.Annotation;
+import java.util.Locale;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.fest.assertions.api.Assertions.failBecauseExceptionWasNotThrown;
@@ -30,6 +31,11 @@ import static org.mockito.Mockito.*;
 
 @SuppressWarnings("unchecked")
 public class JacksonMessageBodyProviderTest {
+    static {
+        // hibernate-validator is localized, the assertions aren't ...
+        Locale.setDefault(Locale.ENGLISH);
+    }
+
     private static final Annotation[] NONE = new Annotation[0];
 
     public static class Example {

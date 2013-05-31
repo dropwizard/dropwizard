@@ -7,11 +7,18 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.constraints.NotNull;
+
+import java.util.Locale;
 import java.util.Set;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
 public class ConfigurationExceptionTest {
+    static {
+        // hibernate-validator is localized, the assertions aren't ...
+        Locale.setDefault(Locale.ENGLISH);
+    }
+
     private static class Example {
         @NotNull
         String woo;
