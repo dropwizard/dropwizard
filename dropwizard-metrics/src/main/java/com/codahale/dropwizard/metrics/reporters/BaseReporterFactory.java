@@ -1,6 +1,5 @@
 package com.codahale.dropwizard.metrics.reporters;
 
-import com.codahale.dropwizard.lifecycle.setup.LifecycleEnvironment;
 import com.codahale.dropwizard.util.Duration;
 import com.codahale.metrics.*;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -12,7 +11,46 @@ import javax.validation.constraints.NotNull;
 import java.util.concurrent.TimeUnit;
 
 /**
- * TODO (30/05/13): Document
+ * A base {@link ReporterFactory} for configuring metric reporters.
+ * <p/>
+ * Configures options common to all {@link ScheduledReporter}s.
+ * <p/>
+ * <b>Configuration Parameters:</b>
+ * <table>
+ *     <tr>
+ *         <td>Name</td>
+ *         <td>Default</td>
+ *         <td>Description</td>
+ *     </tr>
+ *     <tr>
+ *         <td>durationUnit</td>
+ *         <td>milliseconds</td>
+ *         <td>The unit to report durations as. Overrides per-metric duration units.</td>
+ *     </tr>
+ *     <tr>
+ *         <td>rateUnit</td>
+ *         <td>seconds</td>
+ *         <td>The unit to report rates as. Overrides per-metric rate units.</td>
+ *     </tr>
+ *     <tr>
+ *         <td>excludes</td>
+ *         <td>No excluded metrics.</td>
+ *         <td>Metrics to exclude from reports, by name. When defined, matching metrics will not be
+ *         reported. See {@link #getFilter()}.</td>
+ *     </tr>
+ *     <tr>
+ *         <td>includes</td>
+ *         <td>All metrics included.</td>
+ *         <td>Metrics to include in reports, by name. When defined, only these metrics will be
+ *         reported. See {@link #getFilter()}.</td>
+ *     </tr>
+ *     <tr>
+ *         <td>frequency</td>
+ *         <td>1 second</td>
+ *         <td>The frequency to report metrics. Overrides the {@link
+ *         com.codahale.dropwizard.metrics.MetricsFactory#getFrequency() default}.</td>
+ *     </tr>
+ * </table>
  */
 abstract public class BaseReporterFactory implements ReporterFactory {
 
@@ -84,8 +122,16 @@ abstract public class BaseReporterFactory implements ReporterFactory {
     /**
      * Gets a {@link MetricFilter} that specifically includes and excludes configured metrics.
      * <p/>
-     * <i>Included</i> metrics take precedence over <i>excluded</i> metrics; allowing you to include
-     * previously excluded metrics.
+     * Filtering works in 3 ways:
+     * <dl>
+     *     <dt><i>excludes</i>-only</dt>
+     *     <dd>All metrics are reported, except those with a name listed in <i>excludes</i>.</dd>
+     *     <dt><i>includes</i>-only</dt>
+     *     <dd>No metrics are reported, except those with a name listed in <i>includes</i>.</dd>
+     *     <dt>mixed (both <i>includes</i> and <i>excludes</i></dt>
+     *     <dd>All metrics are reported, except those with a name listed in <i>excludes</i>, unless
+     *     they're also listed in <i>includes</i> (<i>includes</i> takes precedence).</dd>
+     * </dl>
      *
      * @return the filter for selecting metrics based on the configured excludes/includes.
      * @see #getIncludes()
@@ -95,9 +141,8 @@ abstract public class BaseReporterFactory implements ReporterFactory {
         return new MetricFilter() {
             @Override
             public boolean matches(final String name, final Metric metric) {
-                return getIncludes().isEmpty()
-                        ? !getExcludes().contains(name)
-                        : getIncludes().contains(name);
+                return (!getIncludes().isEmpty() && getIncludes().contains(name))
+                        || !getExcludes().contains(name);
             }
         };
     }

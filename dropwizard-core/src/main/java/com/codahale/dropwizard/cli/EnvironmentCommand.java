@@ -38,8 +38,7 @@ public abstract class EnvironmentCommand<T extends Configuration> extends Config
                                                         bootstrap.getMetricRegistry(),
                                                         bootstrap.getClassLoader());
         configuration.getMetricsFactory().configure(environment.lifecycle(),
-                                                    bootstrap.getMetricRegistry(),
-                                                    bootstrap.getApplication().getName());
+                                                    bootstrap.getMetricRegistry());
         bootstrap.runWithBundles(configuration, environment);
         application.run(configuration, environment);
         run(environment, namespace, configuration);

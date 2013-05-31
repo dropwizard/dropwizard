@@ -10,7 +10,27 @@ import javax.validation.constraints.NotNull;
 import java.io.File;
 
 /**
- * TODO (30/05/13): Document
+ * A factory for configuring and building {@link CsvReporter} instances.
+ * <p/>
+ * <b>Configuration Parameters:</b>
+ * <table>
+ *     <tr>
+ *         <td>Name</td>
+ *         <td>Default</td>
+ *         <td>Description</td>
+ *     </tr>
+ *     <tr>
+ *         <td>file</td>
+ *         <td>No default. You must define a file.</td>
+ *         <td>The CSV file to write metrics to.</td>
+ *     </tr>
+ *     <tr>
+ *         <td colspan="3">See {@link BaseFormattedReporterFactory} for more options.</td>
+ *     </tr>
+ *     <tr>
+ *         <td colspan="3">See {@link BaseReporterFactory} for more options.</td>
+ *     </tr>
+ * </table>
  */
 @JsonTypeName("csv")
 public class CsvReporterFactory extends BaseFormattedReporterFactory {

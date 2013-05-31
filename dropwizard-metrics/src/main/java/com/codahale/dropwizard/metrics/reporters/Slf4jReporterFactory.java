@@ -10,11 +10,29 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A {@link ReporterFactory} for the {@link Slf4jReporter}.
- *
- * Configures and builds {@link Slf4jReporter}s for regularly reporting metrics via SLF4J.
- *
- * TODO: add configurable Marker support
+ * A {@link ReporterFactory} for {@link Slf4jReporter} instances.
+ * <p/>
+ * <b>Configuration Parameters:</b>
+ * <table>
+ *     <tr>
+ *         <td>Name</td>
+ *         <td>Default</td>
+ *         <td>Description</td>
+ *     </tr>
+ *     <tr>
+ *         <td>logger</td>
+ *         <td>metrics</td>
+ *         <td>The name of the logger to write metrics to.</td>
+ *     </tr>
+ *     <tr>
+ *         <td colspan="3">See {@link BaseFormattedReporterFactory} for more options.</td>
+ *     </tr>
+ *     <tr>
+ *         <td colspan="3">See {@link BaseReporterFactory} for more options.</td>
+ *     </tr>
+ * </table>
+ * 
+ * @todo add configurable Marker support
  */
 @JsonTypeName("log")
 public class Slf4jReporterFactory extends BaseReporterFactory {

@@ -9,7 +9,32 @@ import java.io.PrintStream;
 import java.util.TimeZone;
 
 /**
- * A factory for configuring and building {@link ConsoleReporter}s.
+ * A factory for configuring and building {@link ConsoleReporter} instances.
+ * <p/>
+ * <b>Configuration Parameters:</b>
+ * <table>
+ *     <tr>
+ *         <td>Name</td>
+ *         <td>Default</td>
+ *         <td>Description</td>
+ *     </tr>
+ *     <tr>
+ *         <td>timeZone</td>
+ *         <td>UTC</td>
+ *         <td>The timezone to display dates/times for.</td>
+ *     </tr>
+ *     <tr>
+ *         <td>output</td>
+ *         <td>stdout</td>
+ *         <td>The stream to write to. One of {@code stdout} or {@code stderr}.</td>
+ *     </tr>
+ *     <tr>
+ *         <td colspan="3">See {@link BaseFormattedReporterFactory} for more options.</td>
+ *     </tr>
+ *     <tr>
+ *         <td colspan="3">See {@link BaseReporterFactory} for more options.</td>
+ *     </tr>
+ * </table>
  */
 @JsonTypeName("console")
 public class ConsoleReporterFactory extends BaseFormattedReporterFactory {
@@ -33,7 +58,7 @@ public class ConsoleReporterFactory extends BaseFormattedReporterFactory {
     private TimeZone timeZone = TimeZone.getTimeZone("UTC");
 
     @NotNull
-    private ConsoleStream consoleStream = ConsoleStream.STDOUT;
+    private ConsoleStream output = ConsoleStream.STDOUT;
 
 
     @JsonProperty
@@ -47,13 +72,13 @@ public class ConsoleReporterFactory extends BaseFormattedReporterFactory {
     }
 
     @JsonProperty
-    public ConsoleStream getConsoleStream() {
-        return consoleStream;
+    public ConsoleStream getOutput() {
+        return output;
     }
 
     @JsonProperty
-    public void setConsoleStream(ConsoleStream stream) {
-        this.consoleStream = stream;
+    public void setOutput(ConsoleStream stream) {
+        this.output = stream;
     }
 
     public ScheduledReporter build(MetricRegistry registry) {
@@ -64,7 +89,7 @@ public class ConsoleReporterFactory extends BaseFormattedReporterFactory {
                 .filter(getFilter())
                 .formattedFor(getLocale())
                 .formattedFor(getTimeZone())
-                .outputTo(getConsoleStream().get())
+                .outputTo(getOutput().get())
                 .withClock(getClock().get())
                 .build();
     }
