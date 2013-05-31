@@ -1,7 +1,6 @@
 package com.codahale.dropwizard.jackson;
 
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.deser.Deserializers;
@@ -9,8 +8,6 @@ import com.fasterxml.jackson.databind.deser.std.StdScalarDeserializer;
 import com.google.common.base.CharMatcher;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.Locale;
 
 /**
@@ -18,20 +15,19 @@ import java.util.Locale;
  * <p/>
  * This deserializer is more permissive in the following ways:
  * <ul>
- *     <li>Whitespace is permitted but stripped from the input.</li>
- *     <li>Lower-case characters are permitted and automatically translated to upper-case.</li>
- *     <li>Dashes in the value are converted to underscores.</li>
+ * <li>Whitespace is permitted but stripped from the input.</li>
+ * <li>Lower-case characters are permitted and automatically translated to upper-case.</li>
+ * <li>Dashes in the value are converted to underscores.</li>
  * </ul>
  */
-public class PermissiveEnumDeserializingModule extends Module {
-
+public class FuzzyEnumModule extends Module {
     private static class PermissiveEnumDeserializer extends StdScalarDeserializer<Enum<?>> {
-
         protected PermissiveEnumDeserializer(Class<Enum<?>> clazz) {
             super(clazz);
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         public Enum<?> deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
             Enum<?>[] constants = ((Class<Enum<?>>) getValueClass()).getEnumConstants();
             String text = CharMatcher
@@ -50,8 +46,8 @@ public class PermissiveEnumDeserializingModule extends Module {
     }
 
     private static class PermissiveEnumDeserializers extends Deserializers.Base {
-
         @Override
+        @SuppressWarnings("unchecked")
         public JsonDeserializer<?> findEnumDeserializer(Class<?> type,
                                                         DeserializationConfig config,
                                                         BeanDescription desc) throws JsonMappingException {

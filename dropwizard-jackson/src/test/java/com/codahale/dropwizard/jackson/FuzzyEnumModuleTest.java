@@ -10,16 +10,12 @@ import java.util.concurrent.TimeUnit;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
-/**
- * Tests {@link PermissiveEnumDeserializingModule}.
- */
-public class PermissiveEnumDeserializingModuleTest {
-
+public class FuzzyEnumModuleTest {
     private final ObjectMapper mapper = new ObjectMapper();
 
     @Before
     public void setUp() throws Exception {
-        mapper.registerModule(new PermissiveEnumDeserializingModule());
+        mapper.registerModule(new FuzzyEnumModule());
     }
 
     @Test

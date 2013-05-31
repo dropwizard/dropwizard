@@ -53,6 +53,8 @@ v0.7.0-SNAPSHOT
 * Added Jackson Afterburner support.
 * Added ``dropwizard-forms``, which provides support for multipart MIME entities.
 * Added support for ``deflate``-encoded requests and responses.
+* Added support for deserializing Java ``enums`` with fuzzy matching rules (i.e., whitespace
+  stripping, ``-``/``_`` equivalence, case insensitivity, etc.).
 
 .. _rel-0.6.2:
 
