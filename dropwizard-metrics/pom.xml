@@ -49,6 +49,11 @@
         <!-- Optional dependencies for optional reporters -->
         <dependency>
             <groupId>com.codahale.metrics</groupId>
+            <artifactId>metrics-ganglia</artifactId>
+            <version>${metrics3.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.codahale.metrics</groupId>
             <artifactId>metrics-graphite</artifactId>
             <version>${metrics3.version}</version>
         </dependency>
