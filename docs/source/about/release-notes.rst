@@ -47,7 +47,7 @@ v0.7.0-SNAPSHOT
 * Moved ``dropwizard-db`` to use ``tomcat-jdbc`` instead of ``tomcat-dbcp``.
 * Extracted out ``dropwizard-views-freemarker`` and ``dropwizard-views-mustache``.
   ``dropwizard-views`` just provides infrastructure now.
-* Upgraded to Jackson 2.2.0.
+* Upgraded to Jackson 2.2.2.
 * Upgraded to Mustache 0.8.12.
 * Added support for the Jetty HTTP client to ``dropwizard-client``.
 * Added Jackson Afterburner support.
