@@ -1,4 +1,4 @@
-package com.codahale.dropwizard.sessions.jersey;
+package com.codahale.dropwizard.sessions;
 
 import com.codahale.dropwizard.logging.LoggingFactory;
 import com.sun.jersey.api.client.ClientResponse;
@@ -21,7 +21,7 @@ public class HttpSessionProviderTest extends JerseyTest {
 
     @Override
     protected AppDescriptor configure() {
-        return new WebAppDescriptor.Builder("com.codahale.dropwizard.sessions.jersey").build();
+        return new WebAppDescriptor.Builder("com.codahale.dropwizard.sessions").build();
     }
 
     @Test

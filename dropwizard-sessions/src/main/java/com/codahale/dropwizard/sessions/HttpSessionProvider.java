@@ -1,4 +1,4 @@
-package com.codahale.dropwizard.sessions.jersey;
+package com.codahale.dropwizard.sessions;
 
 import com.codahale.dropwizard.sessions.Session;
 import com.sun.jersey.api.model.Parameter;
