@@ -1,4 +1,4 @@
-package com.codahale.dropwizard.sessions;
+package com.codahale.dropwizard.jersey.sessions;
 
 import java.lang.annotation.*;
 

@@ -1,4 +1,4 @@
-package com.codahale.dropwizard.sessions;
+package com.codahale.dropwizard.jersey.sessions;
 
 import com.codahale.dropwizard.logging.LoggingFactory;
 import com.sun.jersey.api.client.ClientResponse;
@@ -21,14 +21,14 @@ public class FlashProviderTest extends JerseyTest {
 
     @Override
     protected AppDescriptor configure() {
-        return new WebAppDescriptor.Builder("com.codahale.dropwizard.sessions").build();
+        return new WebAppDescriptor.Builder("com.codahale.dropwizard.jersey.sessions").build();
     }
 
     @Test
     public void passesInHttpSessions() throws Exception {
         final ClientResponse firstResponse = resource().path("/flash/")
-                .type(MediaType.TEXT_PLAIN)
-                .post(ClientResponse.class, "Mr. Peeps");
+                                                       .type(MediaType.TEXT_PLAIN)
+                                                       .post(ClientResponse.class, "Mr. Peeps");
 
         final List<NewCookie> cookies = firstResponse.getCookies();
         firstResponse.close();

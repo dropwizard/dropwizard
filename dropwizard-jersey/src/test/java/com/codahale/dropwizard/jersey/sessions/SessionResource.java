@@ -1,6 +1,6 @@
-package com.codahale.dropwizard.sessions;
+package com.codahale.dropwizard.jersey.sessions;
 
-import com.codahale.dropwizard.sessions.Session;
+import com.codahale.dropwizard.jersey.sessions.Session;
 
 import javax.servlet.http.HttpSession;
 import javax.ws.rs.*;

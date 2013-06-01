@@ -1,4 +1,4 @@
-package com.codahale.dropwizard.sessions;
+package com.codahale.dropwizard.jersey.sessions;
 
 import com.codahale.dropwizard.logging.LoggingFactory;
 import com.sun.jersey.api.client.ClientResponse;
@@ -21,23 +21,19 @@ public class HttpSessionProviderTest extends JerseyTest {
 
     @Override
     protected AppDescriptor configure() {
-        return new WebAppDescriptor.Builder("com.codahale.dropwizard.sessions").build();
+        return new WebAppDescriptor.Builder("com.codahale.dropwizard.jersey.sessions").build();
     }
 
     @Test
     public void passesInHttpSessions() throws Exception {
-        final ClientResponse firstResponse =
-                client().resource(getBaseURI())
-                        .path("/session/")
-                        .type(MediaType.TEXT_PLAIN)
-                        .post(ClientResponse.class, "Mr. Peeps");
+        final ClientResponse firstResponse = resource().path("/session/")
+                                                       .type(MediaType.TEXT_PLAIN)
+                                                       .post(ClientResponse.class, "Mr. Peeps");
         final List<NewCookie> cookies = firstResponse.getCookies();
         firstResponse.close();
 
-        final WebResource.Builder builder =
-                client().resource(getBaseURI())
-                        .path("/session/")
-                        .accept(MediaType.TEXT_PLAIN);
+        final WebResource.Builder builder = resource().path("/session/")
+                                                      .accept(MediaType.TEXT_PLAIN);
 
         for (NewCookie cookie : cookies) {
             builder.cookie(cookie);

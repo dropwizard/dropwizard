@@ -1,4 +1,4 @@
-package com.codahale.dropwizard.sessions;
+package com.codahale.dropwizard.jersey.sessions;
 
 import com.sun.jersey.api.model.Parameter;
 import com.sun.jersey.core.spi.component.ComponentContext;
@@ -12,10 +12,10 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.ext.Provider;
 
 @Provider
-public class FlashProvider implements InjectableProvider<Session, Parameter> {
+public class HttpSessionProvider implements InjectableProvider<Session, Parameter> {
     private final ThreadLocal<HttpServletRequest> request;
 
-    public FlashProvider(@Context ThreadLocal<HttpServletRequest> request) {
+    public HttpSessionProvider(@Context ThreadLocal<HttpServletRequest> request) {
         this.request = request;
     }
 
@@ -25,18 +25,14 @@ public class FlashProvider implements InjectableProvider<Session, Parameter> {
     }
 
     @Override
-    public Injectable<?> getInjectable(ComponentContext ic, final Session annotation, Parameter parameter) {
-        if (parameter.getParameterClass().isAssignableFrom(Flash.class)) {
-            return new Injectable<Flash<?>>() {
+    public Injectable<?> getInjectable(ComponentContext ic, final Session session, Parameter parameter) {
+        if (parameter.getParameterClass().isAssignableFrom(HttpSession.class)) {
+            return new Injectable<HttpSession>() {
                 @Override
-                public Flash<?> getValue() {
+                public HttpSession getValue() {
                     final HttpServletRequest req = request.get();
                     if (req != null) {
-                        final HttpSession session = req.getSession(!annotation.doNotCreate());
-                        if (session != null) {
-                            return new Flash<>(session);
-                        }
-                        return null;
+                        return req.getSession(!session.doNotCreate());
                     }
                     return null;
                 }
