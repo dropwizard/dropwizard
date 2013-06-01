@@ -11,6 +11,7 @@
     </parent>
 
     <artifactId>dropwizard-metrics-ganglia</artifactId>
+    <name>Dropwizard Metrics Support for Ganglia</name>
 
     <dependencies>
         <dependency>

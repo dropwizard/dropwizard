@@ -11,6 +11,7 @@
     </parent>
 
     <artifactId>dropwizard-metrics-graphite</artifactId>
+    <name>Dropwizard Metrics Support for Graphite</name>
 
     <dependencies>
         <dependency>
