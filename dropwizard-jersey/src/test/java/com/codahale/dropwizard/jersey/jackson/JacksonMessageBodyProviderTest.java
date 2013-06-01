@@ -66,9 +66,9 @@ public class JacksonMessageBodyProviderTest {
     }
 
     private final ObjectMapper mapper = spy(Jackson.newObjectMapper());
-    private final JacksonMessageBodyProvider provider = new JacksonMessageBodyProvider(mapper,
-                                                                                       Validation.buildDefaultValidatorFactory()
-                                                                                                 .getValidator());
+    private final JacksonMessageBodyProvider provider =
+            new JacksonMessageBodyProvider(mapper,
+                                           Validation.buildDefaultValidatorFactory().getValidator());
 
     @Before
     public void setUp() throws Exception {

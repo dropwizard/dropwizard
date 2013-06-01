@@ -1,6 +1,5 @@
 package com.codahale.dropwizard.sessions;
 
-import com.codahale.dropwizard.sessions.Session;
 import com.sun.jersey.api.model.Parameter;
 import com.sun.jersey.core.spi.component.ComponentContext;
 import com.sun.jersey.core.spi.component.ComponentScope;
