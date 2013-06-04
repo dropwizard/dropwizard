@@ -12,3 +12,4 @@ appenders:
   - type: syslog
     host: localhost
     facility: local0
+    appenderPolicy: ASYNC

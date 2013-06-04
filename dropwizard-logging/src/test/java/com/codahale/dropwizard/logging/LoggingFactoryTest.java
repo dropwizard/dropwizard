@@ -12,6 +12,8 @@ import org.junit.Test;
 import javax.validation.Validation;
 import java.io.File;
 
+import static com.google.common.base.Predicates.instanceOf;
+import static com.google.common.collect.Iterables.find;
 import static org.fest.assertions.api.Assertions.assertThat;
 
 public class LoggingFactoryTest {
@@ -41,5 +43,12 @@ public class LoggingFactoryTest {
     public void hasASetOfOverriddenLevels() throws Exception {
         assertThat(config.getLoggers())
                 .isEqualTo(ImmutableMap.of("com.example.app", Level.DEBUG));
+    }
+
+    @Test
+    public void thatSyslogAppenderIsAsync() throws Exception {
+        SyslogAppenderFactory factory =
+            (SyslogAppenderFactory) find(config.getAppenders(), instanceOf(SyslogAppenderFactory.class));
+        assertThat(factory.getAppenderPolicy()).isEqualTo(AppenderPolicy.ASYNC);
     }
 }
