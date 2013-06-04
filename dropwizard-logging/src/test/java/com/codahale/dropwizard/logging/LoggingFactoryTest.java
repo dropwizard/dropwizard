@@ -1,6 +1,7 @@
 package com.codahale.dropwizard.logging;
 
 import ch.qos.logback.classic.Level;
+import com.codahale.dropwizard.configuration.ConfigurationException;
 import com.codahale.dropwizard.configuration.ConfigurationFactory;
 import com.codahale.dropwizard.jackson.Jackson;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -49,6 +50,11 @@ public class LoggingFactoryTest {
     public void thatSyslogAppenderIsAsync() throws Exception {
         SyslogAppenderFactory factory =
             (SyslogAppenderFactory) find(config.getAppenders(), instanceOf(SyslogAppenderFactory.class));
-        assertThat(factory.getAppenderPolicy()).isEqualTo(AppenderPolicy.ASYNC);
+        assertThat(factory.isAsync()).isTrue();
+    }
+
+    @Test(expected = ConfigurationException.class)
+    public void testBrokenAsyncConfiguration() throws Exception {
+        factory.build(new File(Resources.getResource("yaml/broken-logging.yml").toURI()));
     }
 }

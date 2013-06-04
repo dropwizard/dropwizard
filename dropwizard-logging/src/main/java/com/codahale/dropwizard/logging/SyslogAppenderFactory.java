@@ -140,6 +140,6 @@ public class SyslogAppenderFactory extends AbstractAppenderFactory {
         addThresholdFilter(appender, threshold);
         appender.start();
 
-        return getAppenderPolicy().wrapAppenderIfNecessary(appender, getAsyncQueueLength());
+        return wrapAppenderAsAsyncIfNecessary(appender);
     }
 }
