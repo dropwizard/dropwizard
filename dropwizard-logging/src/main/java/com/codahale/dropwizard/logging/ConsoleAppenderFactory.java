@@ -108,6 +108,6 @@ public class ConsoleAppenderFactory extends AbstractAppenderFactory {
         addThresholdFilter(appender, threshold);
         appender.start();
 
-        return appender;
+        return wrapAppenderAsAsyncIfNecessary(appender);
     }
 }
