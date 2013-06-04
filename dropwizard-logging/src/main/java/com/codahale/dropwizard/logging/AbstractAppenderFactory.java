@@ -20,6 +20,14 @@ import java.util.TimeZone;
  * A base implementation of {@link AppenderFactory}.
  */
 public abstract class AbstractAppenderFactory implements AppenderFactory {
+
+    // The ratio in logback at which a discarding appender starts dropping messages
+    // in essence it aims to keep 20% of the queue for growth for WARN and ERROR messages
+    private static final int DISCARD_20_PCT_HEADROOM = 5;
+
+    // Dont discard any messages ever
+    private static final int DONT_DISCARD = 0;
+
     @NotNull
     protected Level threshold = Level.ALL;
 
@@ -72,6 +80,7 @@ public abstract class AbstractAppenderFactory implements AppenderFactory {
     /**
      * Returns true if the appender is asynchronous
      */
+    @JsonProperty
     public boolean isAsync() {
         return async;
     }
@@ -87,6 +96,7 @@ public abstract class AbstractAppenderFactory implements AppenderFactory {
     /**
      * Returns true if the async appender retains full callee data
      */
+    @JsonProperty
     public boolean isCalleeData() {
         return calleeData;
     }
@@ -105,6 +115,7 @@ public abstract class AbstractAppenderFactory implements AppenderFactory {
      * Returns true if the appender is asynchronous and, in cases where the log queue is overflowing starts dropping new
      * events of level TRACE, DEBUG and INFO
      */
+    @JsonProperty
     public boolean isDiscarding() {
         return discarding;
     }
@@ -121,6 +132,7 @@ public abstract class AbstractAppenderFactory implements AppenderFactory {
     /**
      * If the appender is an async appender, return the queue length, if not return -1
      */
+    @JsonProperty
     public int getAsyncQueueLength() {
         return this.async ? asyncQueueLength : -1;
     }
@@ -138,7 +150,7 @@ public abstract class AbstractAppenderFactory implements AppenderFactory {
             AsyncAppender asyncAppender = new AsyncAppender();
             asyncAppender.addAppender(delegate);
             asyncAppender.setQueueSize(this.asyncQueueLength);
-            asyncAppender.setDiscardingThreshold(this.discarding ? 5 : 0);
+            asyncAppender.setDiscardingThreshold(this.discarding ? DISCARD_20_PCT_HEADROOM : DONT_DISCARD);
             asyncAppender.setIncludeCallerData(this.calleeData);
             return asyncAppender;
         } else {
@@ -165,11 +177,7 @@ public abstract class AbstractAppenderFactory implements AppenderFactory {
     @ValidationMethod(message="Async logging parameters specified for appender, but appender not configured to be async!")
     @SuppressWarnings("UnusedDeclaration")
     private boolean isValidConfiguration() {
-        if (isDiscarding() || isCalleeData()) {
-            return isAsync();
-        } else {
-            return true;
-        }
+        return !(isDiscarding() || isCalleeData()) || isAsync();
     }
 
 }
