@@ -145,6 +145,6 @@ public class RequestLogFactory {
             attachable.addAppender(output.build(context, name, layout));
         }
 
-        return new AsyncRequestLog(attachable, timeZone, batchSize, batchDuration);
+        return new Slf4jRequestLog(attachable, timeZone);
     }
 }
