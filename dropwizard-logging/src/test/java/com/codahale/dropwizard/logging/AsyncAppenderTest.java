@@ -14,7 +14,7 @@ import static org.mockito.Mockito.verify;
 public class AsyncAppenderTest {
     @SuppressWarnings("unchecked")
     private final Appender<ILoggingEvent> delegate = mock(Appender.class);
-    private final AsyncAppender appender = new AsyncAppender(delegate, 100, Duration.milliseconds(100));
+    private final AsyncAppender appender = new AsyncAppender(delegate, 100, Duration.milliseconds(100), true);
 
     @Before
     public void setUp() throws Exception {

@@ -38,10 +38,15 @@ import java.util.concurrent.TimeUnit;
  *         <td>An appender-specific log format.</td>
  *     </tr>
  *     <tr>
+ *         <td>{@code bounded}</td>
+ *         <td>true</td>
+ *         <td>Whether or not the appender should block when its queue is full.</td>
+ *     </tr>
+ *     <tr>
  *         <td>{@code batchSize}</td>
  *         <td>128</td>
  *         <td>
- *             The maximum number of requests to write in a single batch.
+ *             The maximum number of events to write in a single batch.
  *         </td>
  *     </tr>
  *     <tr>
@@ -54,6 +59,8 @@ import java.util.concurrent.TimeUnit;
  * </table>
  */
 public abstract class AbstractAppenderFactory implements AppenderFactory {
+    private boolean bounded;
+
     @NotNull
     protected Level threshold = Level.ALL;
 
@@ -66,6 +73,16 @@ public abstract class AbstractAppenderFactory implements AppenderFactory {
     @NotNull
     @MinDuration(value = 1, unit = TimeUnit.MILLISECONDS)
     private Duration batchDuration = Duration.milliseconds(100);
+
+    @JsonProperty
+    public boolean isBounded() {
+        return bounded;
+    }
+
+    @JsonProperty
+    public void setBounded(boolean bounded) {
+        this.bounded = bounded;
+    }
 
     @JsonProperty
     public int getBatchSize() {
@@ -108,7 +125,7 @@ public abstract class AbstractAppenderFactory implements AppenderFactory {
     }
 
     protected Appender<ILoggingEvent> wrapAsync(Appender<ILoggingEvent> appender) {
-        final AsyncAppender asyncAppender = new AsyncAppender(appender, batchSize, batchDuration);
+        final AsyncAppender asyncAppender = new AsyncAppender(appender, batchSize, batchDuration, bounded);
         asyncAppender.start();
         return asyncAppender;
     }
