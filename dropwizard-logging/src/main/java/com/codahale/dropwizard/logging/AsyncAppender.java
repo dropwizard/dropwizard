@@ -98,6 +98,10 @@ public class AsyncAppender extends AppenderBase<ILoggingEvent> {
     @Override
     protected void append(ILoggingEvent event) {
         event.prepareForDeferredProcessing();
-        queue.offer(event);
+        try {
+            queue.put(event);
+        } catch (InterruptedException ignored) {
+            // ruh-roh
+        }
     }
 }
