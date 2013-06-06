@@ -51,16 +51,7 @@ public class Slf4jRequestLogTest {
 
     @After
     public void tearDown() throws Exception {
-        if (slf4jRequestLog.isRunning()) {
-            slf4jRequestLog.stop();
-        }
-    }
-
-    @Test
-    public void startsAndStops() throws Exception {
         slf4jRequestLog.stop();
-
-        verify(appender, timeout(1000)).stop();
     }
 
     @Test

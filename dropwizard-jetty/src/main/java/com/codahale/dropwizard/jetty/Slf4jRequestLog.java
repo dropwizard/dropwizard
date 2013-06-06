@@ -3,13 +3,11 @@ package com.codahale.dropwizard.jetty;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.classic.spi.LoggingEvent;
-import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.spi.AppenderAttachableImpl;
 import org.eclipse.jetty.server.AbstractNCSARequestLog;
 import org.eclipse.jetty.server.RequestLog;
 
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.TimeZone;
 
 /**
@@ -32,21 +30,6 @@ public class Slf4jRequestLog extends AbstractNCSARequestLog {
         setLogTimeZone(timeZone);
         setExtended(true);
         setPreferProxiedForAddress(true);
-    }
-
-    @Override
-    protected void doStart() throws Exception {
-        final Iterator<Appender<ILoggingEvent>> iterator = appenders.iteratorForAppenders();
-        while (iterator.hasNext()) {
-            iterator.next().start();
-        }
-        super.doStart();
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        super.doStop();
-        appenders.detachAndStopAllAppenders();
     }
 
     @Override
