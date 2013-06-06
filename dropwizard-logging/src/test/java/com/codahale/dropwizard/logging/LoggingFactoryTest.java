@@ -1,7 +1,6 @@
 package com.codahale.dropwizard.logging;
 
 import ch.qos.logback.classic.Level;
-import com.codahale.dropwizard.configuration.ConfigurationException;
 import com.codahale.dropwizard.configuration.ConfigurationFactory;
 import com.codahale.dropwizard.jackson.Jackson;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -13,8 +12,6 @@ import org.junit.Test;
 import javax.validation.Validation;
 import java.io.File;
 
-import static com.google.common.base.Predicates.instanceOf;
-import static com.google.common.collect.Iterables.find;
 import static org.fest.assertions.api.Assertions.assertThat;
 
 public class LoggingFactoryTest {
@@ -44,17 +41,5 @@ public class LoggingFactoryTest {
     public void hasASetOfOverriddenLevels() throws Exception {
         assertThat(config.getLoggers())
                 .isEqualTo(ImmutableMap.of("com.example.app", Level.DEBUG));
-    }
-
-    @Test
-    public void thatSyslogAppenderIsAsync() throws Exception {
-        SyslogAppenderFactory factory =
-            (SyslogAppenderFactory) find(config.getAppenders(), instanceOf(SyslogAppenderFactory.class));
-        assertThat(factory.isAsync()).isTrue();
-    }
-
-    @Test(expected = ConfigurationException.class)
-    public void testBrokenAsyncConfiguration() throws Exception {
-        factory.build(new File(Resources.getResource("yaml/broken-logging.yml").toURI()));
     }
 }

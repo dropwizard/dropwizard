@@ -199,7 +199,7 @@ public class FileAppenderFactory extends AbstractAppenderFactory {
         appender.stop();
         appender.start();
 
-        return wrapAppenderAsAsyncIfNecessary(appender);
+        return appender;
     }
 
     private FileAppender<ILoggingEvent> buildAppender(LoggerContext context) {
