@@ -1,9 +1,11 @@
 package com.codahale.dropwizard.logging;
 
+import ch.qos.logback.classic.AsyncAppender;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.net.SyslogAppender;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
+import ch.qos.logback.core.AsyncAppenderBase;
 import ch.qos.logback.core.Layout;
 import ch.qos.logback.core.net.SyslogConstants;
 import com.codahale.dropwizard.validation.OneOf;
@@ -137,6 +139,7 @@ public class SyslogAppenderFactory extends AbstractAppenderFactory {
         appender.setFacility(facility);
         addThresholdFilter(appender, threshold);
         appender.start();
-        return appender;
+
+        return wrapAppenderAsAsyncIfNecessary(appender);
     }
 }
