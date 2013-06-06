@@ -80,6 +80,8 @@ import java.util.TimeZone;
  *         </td>
  *     </tr>
  * </table>
+ *
+ * @see AbstractAppenderFactory
  */
 @JsonTypeName("file")
 public class FileAppenderFactory extends AbstractAppenderFactory {
@@ -97,89 +99,56 @@ public class FileAppenderFactory extends AbstractAppenderFactory {
     @NotNull
     private TimeZone timeZone = TimeZone.getTimeZone("UTC");
 
-    /**
-     * Returns the filename where current events are logged.
-     */
     @JsonProperty
     public String getCurrentLogFilename() {
         return currentLogFilename;
     }
 
-    /**
-     * Sets the filename where current events are logged.
-     */
     @JsonProperty
     public void setCurrentLogFilename(String currentLogFilename) {
         this.currentLogFilename = currentLogFilename;
     }
 
-    /**
-     * Returns whether or not to archive old events in separate files.
-     */
     @JsonProperty
     public boolean isArchive() {
         return archive;
     }
 
-    /**
-     * Sets whether or not to archive old events in separate files.
-     */
     @JsonProperty
     public void setArchive(boolean archive) {
         this.archive = archive;
     }
 
-    /**
-     * Returns the filename pattern for archived files.
-     */
     @JsonProperty
     public String getArchivedLogFilenamePattern() {
         return archivedLogFilenamePattern;
     }
 
-    /**
-     * Sets the filename pattern for archived files.
-     */
     @JsonProperty
     public void setArchivedLogFilenamePattern(String archivedLogFilenamePattern) {
         this.archivedLogFilenamePattern = archivedLogFilenamePattern;
     }
 
-    /**
-     * Returns the number of archived files to keep.
-     */
     @JsonProperty
     public int getArchivedFileCount() {
         return archivedFileCount;
     }
 
-    /**
-     * Sets the number of archived files to keep.
-     */
     @JsonProperty
     public void setArchivedFileCount(int archivedFileCount) {
         this.archivedFileCount = archivedFileCount;
     }
 
-    /**
-     * Returns the time zone to which event timestamps will be converted.
-     */
     @JsonProperty
     public TimeZone getTimeZone() {
         return timeZone;
     }
 
-    /**
-     * Sets the time zone to which event timestamps will be converted.
-     */
     @JsonProperty
     public void setTimeZone(TimeZone timeZone) {
         this.timeZone = timeZone;
     }
 
-    /**
-     * Returns {@code true} if the archive configuration is valid.
-     */
     @JsonIgnore
     @ValidationMethod(message = "must have archivedLogFilenamePattern if archive is true")
     public boolean isValidArchiveConfiguration() {
@@ -189,6 +158,7 @@ public class FileAppenderFactory extends AbstractAppenderFactory {
     @Override
     public Appender<ILoggingEvent> build(LoggerContext context, String applicationName, Layout<ILoggingEvent> layout) {
         final FileAppender<ILoggingEvent> appender = buildAppender(context);
+        appender.setName("file-appender");
 
         appender.setAppend(true);
         appender.setContext(context);
@@ -199,7 +169,7 @@ public class FileAppenderFactory extends AbstractAppenderFactory {
         appender.stop();
         appender.start();
 
-        return appender;
+        return wrapAsync(appender);
     }
 
     private FileAppender<ILoggingEvent> buildAppender(LoggerContext context) {

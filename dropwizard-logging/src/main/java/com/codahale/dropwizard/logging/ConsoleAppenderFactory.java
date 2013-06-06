@@ -55,6 +55,8 @@ import java.util.TimeZone;
  *         </td>
  *     </tr>
  * </table>
+ *
+ * @see AbstractAppenderFactory
  */
 @JsonTypeName("console")
 public class ConsoleAppenderFactory extends AbstractAppenderFactory {
@@ -65,33 +67,21 @@ public class ConsoleAppenderFactory extends AbstractAppenderFactory {
     @OneOf(value = {"stderr", "stdout"}, ignoreCase = true, ignoreWhitespace = true)
     private String target = "stdout";
 
-    /**
-     * Returns the time zone to which event timestamps will be converted.
-     */
     @JsonProperty
     public TimeZone getTimeZone() {
         return timeZone;
     }
 
-    /**
-     * Sets the time zone to which event timestamps will be converted.
-     */
     @JsonProperty
     public void setTimeZone(TimeZone timeZone) {
         this.timeZone = timeZone;
     }
 
-    /**
-     * Returns the name of the standard stream to which events will be written.
-     */
     @JsonProperty
     public String getTarget() {
         return target;
     }
 
-    /**
-     * Sets the name of the standard stream to which events will be written. Can be {@code stdout} or {@code stderr}.
-     */
     @JsonProperty
     public void setTarget(String target) {
         this.target = target;
@@ -100,6 +90,7 @@ public class ConsoleAppenderFactory extends AbstractAppenderFactory {
     @Override
     public Appender<ILoggingEvent> build(LoggerContext context, String applicationName, Layout<ILoggingEvent> layout) {
         final ConsoleAppender<ILoggingEvent> appender = new ConsoleAppender<>();
+        appender.setName("console-appender");
         appender.setContext(context);
         if ("stderr".equalsIgnoreCase(target)) {
             appender.setTarget("System.err");
@@ -108,6 +99,6 @@ public class ConsoleAppenderFactory extends AbstractAppenderFactory {
         addThresholdFilter(appender, threshold);
         appender.start();
 
-        return appender;
+        return wrapAsync(appender);
     }
 }

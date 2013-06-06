@@ -59,6 +59,8 @@ import javax.validation.constraints.NotNull;
  *         </td>
  *     </tr>
  * </table>
+ *
+ * @see AbstractAppenderFactory
  */
 @JsonTypeName("syslog")
 public class SyslogAppenderFactory extends AbstractAppenderFactory {
@@ -79,49 +81,31 @@ public class SyslogAppenderFactory extends AbstractAppenderFactory {
     )
     private String facility = "local0";
 
-    /**
-     * Returns the hostname of the syslog server.
-     */
     @JsonProperty
     public String getHost() {
         return host;
     }
 
-    /**
-     * Sets the hostname of the syslog server.
-     */
     @JsonProperty
     public void setHost(String host) {
         this.host = host;
     }
 
-    /**
-     * Returns the syslog facility to use.
-     */
     @JsonProperty
     public String getFacility() {
         return facility;
     }
 
-    /**
-     * Sets the syslog facility to use.
-     */
     @JsonProperty
     public void setFacility(String facility) {
         this.facility = facility;
     }
 
-    /**
-     * Returns the hostname of the syslog port.
-     */
     @JsonProperty
     public int getPort() {
         return port;
     }
 
-    /**
-     * Sets the hostname of the syslog port.
-     */
     @JsonProperty
     public void setPort(int port) {
         this.port = port;
@@ -130,6 +114,7 @@ public class SyslogAppenderFactory extends AbstractAppenderFactory {
     @Override
     public Appender<ILoggingEvent> build(LoggerContext context, String applicationName, Layout<ILoggingEvent> layout) {
         final SyslogAppender appender = new SyslogAppender();
+        appender.setName("syslog-appender");
         appender.setContext(context);
         appender.setSuffixPattern(logFormat);
         appender.setSyslogHost(host);
@@ -137,6 +122,6 @@ public class SyslogAppenderFactory extends AbstractAppenderFactory {
         appender.setFacility(facility);
         addThresholdFilter(appender, threshold);
         appender.start();
-        return appender;
+        return wrapAsync(appender);
     }
 }
