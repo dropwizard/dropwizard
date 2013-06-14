@@ -1,6 +1,14 @@
 package com.example.helloworld.core;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "people")
@@ -20,9 +28,11 @@ public class Person {
     private long id;
 
     @Column(name = "fullName", nullable = false)
+    @NotNull
     private String fullName;
 
     @Column(name = "jobTitle", nullable = false)
+    @NotNull
     private String jobTitle;
 
     public long getId() {
