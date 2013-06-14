@@ -6,7 +6,6 @@ import ch.qos.logback.core.AppenderBase;
 import com.codahale.dropwizard.util.Duration;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Queues;
-import org.eclipse.jetty.util.ConcurrentArrayBlockingQueue;
 
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
@@ -75,11 +74,11 @@ public class AsyncAppender extends AppenderBase<ILoggingEvent> {
         setName("async-" + delegate.getName());
     }
 
-    private ConcurrentArrayBlockingQueue<ILoggingEvent> buildQueue(int batchSize, boolean bounded) {
+    private BlockingQueue<ILoggingEvent> buildQueue(int batchSize, boolean bounded) {
         if (bounded) {
-            return new ConcurrentArrayBlockingQueue.Bounded<>(batchSize * 2);
+            return Queues.newArrayBlockingQueue(batchSize * 2);
         }
-        return new ConcurrentArrayBlockingQueue.Unbounded<>();
+        return Queues.newLinkedBlockingDeque();
     }
 
     @Override
