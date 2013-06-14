@@ -37,17 +37,17 @@
         <dependency>
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-core</artifactId>
-            <version>${jersey.version}</version>
+            <version>${jersey.sun.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.sun.jersey</groupId>
+            <groupId>org.glassfish.jersey.core</groupId>
             <artifactId>jersey-server</artifactId>
-            <version>${jersey.version}</version>
+            <version>${jersey.glassfish.version}</version>
         </dependency>
         <dependency>
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-servlet</artifactId>
-            <version>${jersey.version}</version>
+            <version>${jersey.sun.version}</version>
         </dependency>
         <dependency>
             <groupId>com.codahale.metrics</groupId>
@@ -72,7 +72,7 @@
         <dependency>
             <groupId>com.sun.jersey.jersey-test-framework</groupId>
             <artifactId>jersey-test-framework-grizzly2</artifactId>
-            <version>${jersey.version}</version>
+            <version>${jersey.sun.version}</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>

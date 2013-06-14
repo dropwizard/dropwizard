@@ -18,9 +18,9 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.sun.jersey.jersey-test-framework</groupId>
+            <groupId>org.glassfish.jersey.test-framework</groupId>
             <artifactId>jersey-test-framework-core</artifactId>
-            <version>${jersey.version}</version>
+            <version>${jersey.glassfish.version}</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
@@ -32,7 +32,7 @@
         <dependency>
             <groupId>com.sun.jersey.jersey-test-framework</groupId>
             <artifactId>jersey-test-framework-inmemory</artifactId>
-            <version>${jersey.version}</version>
+            <version>${jersey.sun.version}</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
