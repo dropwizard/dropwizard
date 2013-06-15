@@ -482,13 +482,15 @@ editing the ``logging`` section of your YAML configuration file:
 
       # ...
       # Settings for logging to stdout.
-      console:
 
-        # If true, write log statements to stdout.
-        enabled: true
+      appenders:
+        - type: console
 
-        # Do not display log statements below this threshold to stdout.
-        threshold: ALL
+          # If true, write log statements to stdout.
+          enabled: true
+
+          # Do not display log statements below this threshold to stdout.
+          threshold: ALL
 
 .. _man-core-logging-file:
 
@@ -504,27 +506,27 @@ configuration for your production environment:
 
       # ...
       # Settings for logging to a file.
-      file:
 
-        # If true, write log statements to a file.
-        enabled: false
+      appenders:
+        - type: file
+          enabled: false
 
-        # Do not write log statements below this threshold to the file.
-        threshold: ALL
+          # Do not write log statements below this threshold to the file.
+          threshold: ALL
 
-        # The file to which current statements will be logged.
-        currentLogFilename: ./logs/example.log
+          # The file to which current statements will be logged.
+          currentLogFilename: ./logs/example.log
 
-        # When the log file rotates, the archived log will be renamed to this and gzipped. The
-        # %d is replaced with the previous day (yyyy-MM-dd). Custom rolling windows can be created
-        # by passing a SimpleDateFormat-compatible format as an argument: "%d{yyyy-MM-dd-hh}".
-        archivedLogFilenamePattern: ./logs/example-%d.log.gz
+          # When the log file rotates, the archived log will be renamed to this and gzipped. The
+          # %d is replaced with the previous day (yyyy-MM-dd). Custom rolling windows can be created
+          # by passing a SimpleDateFormat-compatible format as an argument: "%d{yyyy-MM-dd-hh}".
+          archivedLogFilenamePattern: ./logs/example-%d.log.gz
 
-        # The number of archived files to keep.
-        archivedFileCount: 5
+          # The number of archived files to keep.
+          archivedFileCount: 5
 
-        # The timezone used to format dates. HINT: USE THE DEFAULT, UTC.
-        timeZone: UTC
+          # The timezone used to format dates. HINT: USE THE DEFAULT, UTC.
+          timeZone: UTC
 
 .. _man-core-logging-syslog:
 
@@ -544,21 +546,60 @@ Finally, Dropwizard can also log statements to syslog.
 
       # ...
       # Settings for logging to syslog.
-      syslog:
 
-        # If true, write log statements to syslog.
-        enabled: false
+      appenders:
+        - type: syslog
 
-        # Do not write log statements below this threshold to syslog.
-        threshold: ALL
+          # If true, write log statements to syslog.
+          enabled: false
 
-        # The hostname of the syslog server to which statements will be sent.
-        # N.B.: If this is the local host, the local syslog instance will need to be configured to
-        # listen on an inet socket, not just a Unix socket.
-        host: localhost
+          # Do not write log statements below this threshold to syslog.
+          threshold: ALL
 
-        # The syslog facility to which statements will be sent.
-        facility: local0
+          # The hostname of the syslog server to which statements will be sent.
+          # N.B.: If this is the local host, the local syslog instance will need to be configured to
+          # listen on an inet socket, not just a Unix socket.
+          host: localhost
+
+          # The syslog facility to which statements will be sent.
+          facility: local0
+
+.. _man-core-logging-aync:
+
+Asyncronous Logging
+-------------------
+
+In some situations it can be preferable to make logging asynchronous to the main application, there
+are a few configuration options that allow appenders to be made asynchronous :
+
+.. code-block:: yaml
+
+    logging:
+
+      # ...
+      appenders:
+        # An appender like console, file etc
+        - type: file
+
+          # If true the logger will be made asynchronous 
+          async: false
+
+          # The length of the queue where log messages buffer before being written by the appender
+          asyncQueueLength: 10000
+
+          # If callee data (full thread information) is retained on log messages
+          # see http://logback.qos.ch/manual/appenders.html#asyncIncludeCallerData for specifics
+          calleeData: false
+
+          # If the logger blocks if the queue is full or if it drops messages of level TRACE, DEBUG, INFO
+          discarding: false
+
+.. note::
+
+    Asynchronous logging is *not* magic source, it is recommended for applications where auditing is
+    not a hard requirement, and where logging is actually a performance issue.
+
+    Measure first, tune second !
 
 .. _man-core-testing-services:
 
