@@ -1,7 +1,6 @@
-package com.codahale.dropwizard.metrics.reporters.ganglia;
+package com.codahale.dropwizard.metrics.ganglia;
 
 import com.codahale.dropwizard.jackson.DiscoverableSubtypeResolver;
-import com.codahale.dropwizard.metrics.ganglia.GangliaReporterFactory;
 import org.fest.assertions.api.Assertions;
 import org.junit.Test;
 
