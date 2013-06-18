@@ -29,6 +29,8 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ErrorHandler;
 import org.eclipse.jetty.server.handler.RequestLogHandler;
 import org.eclipse.jetty.servlet.FilterHolder;
+import org.eclipse.jetty.setuid.RLimit;
+import org.eclipse.jetty.setuid.SetUIDListener;
 import org.eclipse.jetty.util.BlockingArrayQueue;
 import org.eclipse.jetty.util.thread.ThreadPool;
 import org.slf4j.Logger;
@@ -115,6 +117,24 @@ public abstract class AbstractServerFactory implements ServerFactory {
     @MinDuration(1)
     private Duration idleThreadTimeout = Duration.minutes(1);
 
+    @Min(1)
+    private Integer softNofileLimit;
+
+    @Min(1)
+    private Integer hardNofileLimit;
+
+    private Integer gid;
+
+    private Integer uid;
+
+    private String user;
+
+    private String group;
+
+    private String umask;
+
+    private Boolean startsAsRoot;
+
     @JsonIgnore
     @ValidationMethod(message = "must have a smaller minThreads than maxThreads")
     public boolean isThreadPoolSizedCorrectly() {
@@ -181,6 +201,86 @@ public abstract class AbstractServerFactory implements ServerFactory {
         this.idleThreadTimeout = idleThreadTimeout;
     }
 
+    @JsonProperty
+    public Integer getSoftNofileLimit() {
+        return softNofileLimit;
+    }
+
+    @JsonProperty
+    public void setSoftNofileLimit(Integer softNofileLimit) {
+        this.softNofileLimit = softNofileLimit;
+    }
+
+    @JsonProperty
+    public Integer getHardNofileLimit() {
+        return hardNofileLimit;
+    }
+
+    @JsonProperty
+    public void setHardNofileLimit(Integer hardNofileLimit) {
+        this.hardNofileLimit = hardNofileLimit;
+    }
+
+    @JsonProperty
+    public Integer getGid() {
+        return gid;
+    }
+
+    @JsonProperty
+    public void setGid(Integer gid) {
+        this.gid = gid;
+    }
+
+    @JsonProperty
+    public Integer getUid() {
+        return uid;
+    }
+
+    @JsonProperty
+    public void setUid(Integer uid) {
+        this.uid = uid;
+    }
+
+    @JsonProperty
+    public String getUser() {
+        return user;
+    }
+
+    @JsonProperty
+    public void setUser(String user) {
+        this.user = user;
+    }
+
+    @JsonProperty
+    public String getGroup() {
+        return group;
+    }
+
+    @JsonProperty
+    public void setGroup(String group) {
+        this.group = group;
+    }
+
+    @JsonProperty
+    public String getUmask() {
+        return umask;
+    }
+
+    @JsonProperty
+    public void setUmask(String umask) {
+        this.umask = umask;
+    }
+
+    @JsonProperty
+    public Boolean getStartsAsRoot() {
+        return startsAsRoot;
+    }
+
+    @JsonProperty
+    public void setStartsAsRoot(Boolean startsAsRoot) {
+        this.startsAsRoot = startsAsRoot;
+    }
+
     protected Handler createAdminServlet(Server server,
                                          MutableServletContextHandler handler,
                                          MetricRegistry metrics,
@@ -236,11 +336,55 @@ public abstract class AbstractServerFactory implements ServerFactory {
                                  ThreadPool threadPool) {
         final Server server = new Server(threadPool);
         lifecycle.attach(server);
+        server.addLifeCycleListener(buildSetUIDListener());
         final ErrorHandler errorHandler = new ErrorHandler();
         errorHandler.setShowStacks(false);
         server.addBean(errorHandler);
         server.setStopAtShutdown(true);
         return server;
+    }
+
+    protected SetUIDListener buildSetUIDListener() {
+        final SetUIDListener listener = new SetUIDListener();
+
+        if (startsAsRoot != null) {
+            listener.setStartServerAsPrivileged(startsAsRoot);
+        }
+
+        if (gid != null) {
+            listener.setGid(gid);
+        }
+
+        if (uid != null) {
+            listener.setUid(uid);
+        }
+
+        if (user != null) {
+            listener.setUsername(user);
+        }
+
+        if (group != null) {
+            listener.setGroupname(group);
+        }
+
+        if (hardNofileLimit != null || softNofileLimit != null) {
+            final RLimit rlimit = new RLimit();
+            if (hardNofileLimit != null) {
+                rlimit.setHard(hardNofileLimit);
+            }
+
+            if (softNofileLimit != null) {
+                rlimit.setSoft(softNofileLimit);
+            }
+
+            listener.setRLimitNoFiles(rlimit);
+        }
+
+        if (umask != null) {
+            listener.setUmaskOctal(umask);
+        }
+
+        return listener;
     }
 
     protected Handler addRequestLog(Handler handler, String name) {

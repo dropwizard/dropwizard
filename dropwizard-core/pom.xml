@@ -99,6 +99,21 @@
             <version>${servlet.version}</version>
         </dependency>
         <dependency>
+            <groupId>org.eclipse.jetty.toolchain.setuid</groupId>
+            <artifactId>jetty-setuid-java</artifactId>
+            <version>1.0.1</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.eclipse.jetty</groupId>
+                    <artifactId>jetty-util</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.eclipse.jetty</groupId>
+                    <artifactId>jetty-server</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
             <groupId>com.sun.jersey.jersey-test-framework</groupId>
             <artifactId>jersey-test-framework-core</artifactId>
             <version>${jersey.version}</version>

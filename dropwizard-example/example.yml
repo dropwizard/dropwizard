@@ -29,6 +29,8 @@ database:
 #    port: 8080
 
 server:
+#  softNofileLimit: 1000
+#  hardNofileLimit: 1000
   applicationConnectors:
     - type: http
       port: 8080
