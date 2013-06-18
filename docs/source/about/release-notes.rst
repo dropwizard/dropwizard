@@ -42,16 +42,19 @@ v0.7.0-SNAPSHOT
 * Upgraded to Logback 1.0.13.
 * Upgraded to SLF4J 1.7.5.
 * Upgraded to Hibernate Validator 5.0.1.
+* Upgraded to argparse4j 0.4.1.
 * Removed ``ManagedSessionFactory``.
 * Moved ``dropwizard-db`` to use ``tomcat-jdbc`` instead of ``tomcat-dbcp``.
 * Extracted out ``dropwizard-views-freemarker`` and ``dropwizard-views-mustache``.
   ``dropwizard-views`` just provides infrastructure now.
-* Upgraded to Jackson 2.2.0.
+* Upgraded to Jackson 2.2.2.
 * Upgraded to Mustache 0.8.12.
 * Added support for the Jetty HTTP client to ``dropwizard-client``.
 * Added Jackson Afterburner support.
 * Added ``dropwizard-forms``, which provides support for multipart MIME entities.
 * Added support for ``deflate``-encoded requests and responses.
+* Added support for deserializing Java ``enums`` with fuzzy matching rules (i.e., whitespace
+  stripping, ``-``/``_`` equivalence, case insensitivity, etc.).
 
 .. _rel-0.6.2:
 

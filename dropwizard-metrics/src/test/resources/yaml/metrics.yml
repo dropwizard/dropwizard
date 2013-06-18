@@ -1,0 +1,11 @@
+frequency: 10 seconds
+reporters:
+  - type: console
+    output: stdout
+    timeZone: PST
+    durationUnit: milliseconds
+    rateUnit: seconds
+  - type: csv
+    file: metrics.csv
+  - type: log
+    logger: metrics

@@ -4,7 +4,6 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.spi.AppenderAttachableImpl;
-import com.codahale.dropwizard.util.Duration;
 import org.eclipse.jetty.http.HttpURI;
 import org.eclipse.jetty.server.HttpChannelState;
 import org.eclipse.jetty.server.Request;
@@ -20,14 +19,11 @@ import java.util.concurrent.TimeUnit;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
-public class AsyncRequestLogTest {
+public class Slf4jRequestLogTest {
     @SuppressWarnings("unchecked")
     private final Appender<ILoggingEvent> appender = mock(Appender.class);
     private final AppenderAttachableImpl<ILoggingEvent> appenders = new AppenderAttachableImpl<>();
-    private final AsyncRequestLog asyncRequestLog = new AsyncRequestLog(appenders,
-                                                                        TimeZone.getTimeZone("UTC"),
-                                                                        1_000,
-                                                                        Duration.milliseconds(100));
+    private final Slf4jRequestLog slf4jRequestLog = new Slf4jRequestLog(appenders, TimeZone.getTimeZone("UTC"));
 
     private final Request request = mock(Request.class);
     private final Response response = mock(Response.class);
@@ -50,21 +46,12 @@ public class AsyncRequestLogTest {
 
         appenders.addAppender(appender);
 
-        asyncRequestLog.start();
+        slf4jRequestLog.start();
     }
 
     @After
     public void tearDown() throws Exception {
-        if (asyncRequestLog.isRunning()) {
-            asyncRequestLog.stop();
-        }
-    }
-
-    @Test
-    public void startsAndStops() throws Exception {
-        asyncRequestLog.stop();
-
-        verify(appender, timeout(1000)).stop();
+        slf4jRequestLog.stop();
     }
 
     @Test
@@ -81,7 +68,7 @@ public class AsyncRequestLogTest {
     }
 
     private ILoggingEvent logAndCapture() {
-        asyncRequestLog.log(request, response);
+        slf4jRequestLog.log(request, response);
 
         final ArgumentCaptor<ILoggingEvent> captor = ArgumentCaptor.forClass(ILoggingEvent.class);
         verify(appender, timeout(1000)).doAppend(captor.capture());

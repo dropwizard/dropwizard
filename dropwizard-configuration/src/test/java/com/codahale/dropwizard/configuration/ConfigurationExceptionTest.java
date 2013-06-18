@@ -7,9 +7,12 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.constraints.NotNull;
+import java.util.Locale;
 import java.util.Set;
 
 import static org.fest.assertions.api.Assertions.assertThat;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assume.assumeThat;
 
 public class ConfigurationExceptionTest {
     private static class Example {
@@ -21,6 +24,8 @@ public class ConfigurationExceptionTest {
 
     @Before
     public void setUp() throws Exception {
+        assumeThat(Locale.getDefault().getLanguage(), is("en"));
+
         final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
         final Set<ConstraintViolation<Example>> violations = validator.validate(new Example());
         this.e = new ConfigurationException("config.yml", violations);

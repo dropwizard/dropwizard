@@ -6,11 +6,9 @@ import org.slf4j.LoggerFactory;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
-import javax.ws.rs.ext.Provider;
 import java.util.concurrent.ThreadLocalRandom;
 
-@Provider
-public class LoggingExceptionMapper<E extends Throwable> implements ExceptionMapper<E> {
+public abstract class LoggingExceptionMapper<E extends Throwable> implements ExceptionMapper<E> {
     private static final Logger LOGGER = LoggerFactory.getLogger(LoggingExceptionMapper.class);
 
     @Override

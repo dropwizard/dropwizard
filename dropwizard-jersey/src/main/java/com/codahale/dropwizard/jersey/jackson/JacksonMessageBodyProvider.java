@@ -13,7 +13,6 @@ import javax.validation.Validator;
 import javax.validation.groups.Default;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.ext.Provider;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
@@ -29,7 +28,6 @@ import java.util.Set;
  * (Essentially, extends {@link JacksonJaxbJsonProvider} with validation and support for
  * {@link JsonIgnoreType}.)
  */
-@Provider
 public class JacksonMessageBodyProvider extends JacksonJaxbJsonProvider {
     /**
      * The default group array used in case any of the validate methods is called without a group.

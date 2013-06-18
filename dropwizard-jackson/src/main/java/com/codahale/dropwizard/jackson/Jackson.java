@@ -22,6 +22,7 @@ public class Jackson {
         mapper.registerModule(new GuavaExtrasModule());
         mapper.registerModule(new JodaModule());
         mapper.registerModule(new AfterburnerModule());
+        mapper.registerModule(new FuzzyEnumModule());
         mapper.setPropertyNamingStrategy(new AnnotationSensitivePropertyNamingStrategy());
         mapper.setSubtypeResolver(new DiscoverableSubtypeResolver());
         return mapper;

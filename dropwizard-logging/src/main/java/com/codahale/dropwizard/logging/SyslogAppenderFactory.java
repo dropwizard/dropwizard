@@ -63,6 +63,8 @@ import java.util.regex.Pattern;
  *         </td>
  *     </tr>
  * </table>
+ *
+ * @see AbstractAppenderFactory
  */
 @JsonTypeName("syslog")
 public class SyslogAppenderFactory extends AbstractAppenderFactory {
@@ -104,7 +106,7 @@ public class SyslogAppenderFactory extends AbstractAppenderFactory {
             SyslogAppender.DEFAULT_SUFFIX_PATTERN;
 
     /**
-     * Sets the lowest level of events to print to the console.
+     * Returns the Logback pattern with which events will be formatted.
      */
     @Override
     @JsonProperty
@@ -113,7 +115,7 @@ public class SyslogAppenderFactory extends AbstractAppenderFactory {
     }
 
     /**
-     * Returns the Logback pattern with which events will be formatted.
+     * Sets the Logback pattern with which events will be formatted.
      */
     @Override
     @JsonProperty
@@ -129,41 +131,26 @@ public class SyslogAppenderFactory extends AbstractAppenderFactory {
         return host;
     }
 
-    /**
-     * Sets the hostname of the syslog server.
-     */
     @JsonProperty
     public void setHost(String host) {
         this.host = host;
     }
 
-    /**
-     * Returns the syslog facility to use.
-     */
     @JsonProperty
     public String getFacility() {
         return facility;
     }
 
-    /**
-     * Sets the syslog facility to use.
-     */
     @JsonProperty
     public void setFacility(String facility) {
         this.facility = facility;
     }
 
-    /**
-     * Returns the hostname of the syslog port.
-     */
     @JsonProperty
     public int getPort() {
         return port;
     }
 
-    /**
-     * Sets the hostname of the syslog port.
-     */
     @JsonProperty
     public void setPort(int port) {
         this.port = port;
@@ -172,6 +159,7 @@ public class SyslogAppenderFactory extends AbstractAppenderFactory {
     @Override
     public Appender<ILoggingEvent> build(LoggerContext context, String applicationName, Layout<ILoggingEvent> layout) {
         final SyslogAppender appender = new SyslogAppender();
+        appender.setName("syslog-appender");
         appender.setContext(context);
         appender.setSuffixPattern(logFormat.replaceAll(LOG_TOKEN_PID, PID).replaceAll(LOG_TOKEN_NAME, applicationName));
         appender.setSyslogHost(host);
@@ -179,6 +167,6 @@ public class SyslogAppenderFactory extends AbstractAppenderFactory {
         appender.setFacility(facility);
         addThresholdFilter(appender, threshold);
         appender.start();
-        return appender;
+        return wrapAsync(appender);
     }
 }

@@ -130,4 +130,8 @@ public class JerseyEnvironment {
     public void setUrlPattern(String urlPattern) {
         config.setUrlPattern(urlPattern);
     }
+
+    public ResourceConfig getResourceConfig() {
+        return config;
+    }
 }

@@ -8,8 +8,6 @@ import ch.qos.logback.core.LayoutBase;
 import ch.qos.logback.core.spi.AppenderAttachableImpl;
 import com.codahale.dropwizard.logging.AppenderFactory;
 import com.codahale.dropwizard.logging.ConsoleAppenderFactory;
-import com.codahale.dropwizard.util.Duration;
-import com.codahale.dropwizard.validation.MinDuration;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableList;
@@ -17,11 +15,8 @@ import org.eclipse.jetty.server.RequestLog;
 import org.slf4j.LoggerFactory;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.TimeZone;
-import java.util.concurrent.TimeUnit;
 
 /**
  * A factory for creating {@link RequestLog} instances.
@@ -37,20 +32,6 @@ import java.util.concurrent.TimeUnit;
  *         <td>{@code timeZone}</td>
  *         <td>UTC</td>
  *         <td>The time zone to which request timestamps will be converted.</td>
- *     </tr>
- *     <tr>
- *         <td>{@code batchSize}</td>
- *         <td>10,000</td>
- *         <td>
- *             The maximum number of requests to write in a single batch.
- *         </td>
- *     </tr>
- *     <tr>
- *         <td>{@code batchDuration}</td>
- *         <td>100ms</td>
- *         <td>
- *             The maximum amount of time to wait for a full batch before writing a partial batch.
- *         </td>
  *     </tr>
  *     <tr>
  *         <td>{@code appenders}</td>
@@ -71,14 +52,6 @@ public class RequestLogFactory {
 
     @NotNull
     private TimeZone timeZone = TimeZone.getTimeZone("UTC");
-
-    @Min(1)
-    @Max(Integer.MAX_VALUE)
-    private int batchSize = 10_000;
-
-    @NotNull
-    @MinDuration(value = 1, unit = TimeUnit.MILLISECONDS)
-    private Duration batchDuration = Duration.milliseconds(100);
 
     @Valid
     @NotNull
@@ -106,26 +79,6 @@ public class RequestLogFactory {
         this.timeZone = timeZone;
     }
 
-    @JsonProperty
-    public int getBatchSize() {
-        return batchSize;
-    }
-
-    @JsonProperty
-    public void setBatchSize(int batchSize) {
-        this.batchSize = batchSize;
-    }
-
-    @JsonProperty
-    public Duration getBatchDuration() {
-        return batchDuration;
-    }
-
-    @JsonProperty
-    public void setBatchDuration(Duration batchDuration) {
-        this.batchDuration = batchDuration;
-    }
-
     @JsonIgnore
     public boolean isEnabled() {
         return !appenders.isEmpty();
@@ -145,6 +98,6 @@ public class RequestLogFactory {
             attachable.addAppender(output.build(context, name, layout));
         }
 
-        return new AsyncRequestLog(attachable, timeZone, batchSize, batchDuration);
+        return new Slf4jRequestLog(attachable, timeZone);
     }
 }
