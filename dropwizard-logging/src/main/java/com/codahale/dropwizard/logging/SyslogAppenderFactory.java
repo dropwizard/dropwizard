@@ -9,10 +9,14 @@ import ch.qos.logback.core.net.SyslogConstants;
 import com.codahale.dropwizard.validation.OneOf;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import com.google.common.base.CharMatcher;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.lang.management.ManagementFactory;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * An {@link AppenderFactory} implementation which provides an appender that sends events to a syslog server.
@@ -64,6 +68,22 @@ import javax.validation.constraints.NotNull;
  */
 @JsonTypeName("syslog")
 public class SyslogAppenderFactory extends AbstractAppenderFactory {
+
+    private static String LOG_TOKEN_NAME = "%app";
+    private static String LOG_TOKEN_PID = "%pid";
+
+    private static Pattern PID_PATTERN = Pattern.compile("(\\d+)@");
+    private static String PID = "";
+
+    // make an attempt to get the PID of the process
+    // this will only work on UNIX platforms; for others, the PID will be "unknown"
+    static {
+        Matcher matcher = PID_PATTERN.matcher(ManagementFactory.getRuntimeMXBean().getName());
+        if (matcher.find()) {
+            PID = "[" + matcher.group(1) + "]";
+        }
+    }
+
     @NotNull
     private String host = "localhost";
 
@@ -81,6 +101,31 @@ public class SyslogAppenderFactory extends AbstractAppenderFactory {
     )
     private String facility = "local0";
 
+    // prefix the logFormat with the application name and PID (if available)
+    private String logFormat = LOG_TOKEN_NAME + LOG_TOKEN_PID + ": " +
+            SyslogAppender.DEFAULT_SUFFIX_PATTERN;
+
+    /**
+     * Returns the Logback pattern with which events will be formatted.
+     */
+    @Override
+    @JsonProperty
+    public String getLogFormat() {
+        return logFormat;
+    }
+
+    /**
+     * Sets the Logback pattern with which events will be formatted.
+     */
+    @Override
+    @JsonProperty
+    public void setLogFormat(String logFormat) {
+        this.logFormat = logFormat;
+    }
+
+    /**
+     * Returns the hostname of the syslog server.
+     */
     @JsonProperty
     public String getHost() {
         return host;
@@ -116,7 +161,7 @@ public class SyslogAppenderFactory extends AbstractAppenderFactory {
         final SyslogAppender appender = new SyslogAppender();
         appender.setName("syslog-appender");
         appender.setContext(context);
-        appender.setSuffixPattern(logFormat);
+        appender.setSuffixPattern(logFormat.replaceAll(LOG_TOKEN_PID, PID).replaceAll(LOG_TOKEN_NAME, applicationName));
         appender.setSyslogHost(host);
         appender.setPort(port);
         appender.setFacility(facility);
