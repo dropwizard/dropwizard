@@ -8,6 +8,7 @@ import com.codahale.dropwizard.setup.Bootstrap;
 import liquibase.Liquibase;
 import liquibase.exception.ValidationFailedException;
 import net.sourceforge.argparse4j.inf.Namespace;
+import net.sourceforge.argparse4j.inf.Subparser;
 
 public abstract class AbstractLiquibaseCommand<T extends Configuration> extends ConfiguredCommand<T> {
     private final DatabaseConfiguration<T> strategy;
@@ -28,6 +29,15 @@ public abstract class AbstractLiquibaseCommand<T extends Configuration> extends 
     }
 
     @Override
+    public void configure(Subparser subparser) {
+        super.configure(subparser);
+
+        subparser.addArgument("--migrations")
+                .dest("migrations-file")
+                .help("the file containing the Liquibase migrations for the application");
+    }
+
+    @Override
     @SuppressWarnings("UseOfSystemOutOrSystemErr")
     protected void run(Bootstrap<T> bootstrap, Namespace namespace, T configuration) throws Exception {
         final DataSourceFactory dbConfig = strategy.getDataSourceFactory(configuration);
@@ -37,7 +47,10 @@ public abstract class AbstractLiquibaseCommand<T extends Configuration> extends 
 
         ManagedLiquibase managedLiquibase = null;
         try {
-            managedLiquibase = new ManagedLiquibase(dbConfig);
+            String migrationsFile = (String) namespace.get("migrations-file");
+            managedLiquibase = migrationsFile == null
+                    ? new ManagedLiquibase(dbConfig)
+                    : new ManagedLiquibase(dbConfig, migrationsFile);
             run(namespace, managedLiquibase);
         } catch (ValidationFailedException e) {
             e.printDescriptiveError(System.err);
