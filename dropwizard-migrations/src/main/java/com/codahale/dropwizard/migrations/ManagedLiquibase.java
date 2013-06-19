@@ -9,6 +9,7 @@ import liquibase.database.DatabaseConnection;
 import liquibase.database.jvm.JdbcConnection;
 import liquibase.exception.LiquibaseException;
 import liquibase.resource.ClassLoaderResourceAccessor;
+import liquibase.resource.FileSystemResourceAccessor;
 
 import java.sql.SQLException;
 
@@ -47,6 +48,12 @@ public class ManagedLiquibase extends Liquibase implements Managed {
     public ManagedLiquibase(DataSourceFactory configuration) throws LiquibaseException, ClassNotFoundException, SQLException {
         super("migrations.xml",
               new ClassLoaderResourceAccessor(),
+              new ManagedJdbcConnection(configuration.build(new MetricRegistry(), "liquibase")));
+    }
+
+    public ManagedLiquibase(DataSourceFactory configuration, String file) throws LiquibaseException, ClassNotFoundException, SQLException {
+        super(file,
+              new FileSystemResourceAccessor(),
               new ManagedJdbcConnection(configuration.build(new MetricRegistry(), "liquibase")));
     }
 
