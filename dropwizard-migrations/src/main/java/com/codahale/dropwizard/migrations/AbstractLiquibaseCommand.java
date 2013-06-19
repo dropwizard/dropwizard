@@ -7,11 +7,8 @@ import com.codahale.dropwizard.db.DataSourceFactory;
 import com.codahale.dropwizard.setup.Bootstrap;
 import liquibase.Liquibase;
 import liquibase.exception.ValidationFailedException;
-import net.sourceforge.argparse4j.impl.Arguments;
 import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
-
-import java.io.File;
 
 public abstract class AbstractLiquibaseCommand<T extends Configuration> extends ConfiguredCommand<T> {
     private final DatabaseConfiguration<T> strategy;
