@@ -89,6 +89,70 @@ import java.util.regex.Pattern;
  *         <td>1 minute</td>
  *         <td>The amount of time a worker thread can be idle before being stopped.</td>
  *     </tr>
+ *     <tr>
+ *         <td>{@code nofileSoftLimit}</td>
+ *         <td>(none)</td>
+ *         <td>
+ *             The number of open file descriptors before a soft error is issued. <b>Requires Jetty's
+ *             {@code libsetuid.so} on {@code java.library.path}.</b>
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code nofileHardLimit}</td>
+ *         <td>(none)</td>
+ *         <td>
+ *             The number of open file descriptors before a hard error is issued. <b>Requires Jetty's
+ *             {@code libsetuid.so} on {@code java.library.path}.</b>
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code gid}</td>
+ *         <td>(none)</td>
+ *         <td>
+ *             The group ID to switch to once the connectors have started. <b>Requires Jetty's
+ *             {@code libsetuid.so} on {@code java.library.path}.</b>
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code uid}</td>
+ *         <td>(none)</td>
+ *         <td>
+ *             The user ID to switch to once the connectors have started. <b>Requires Jetty's
+ *             {@code libsetuid.so} on {@code java.library.path}.</b>
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code user}</td>
+ *         <td>(none)</td>
+ *         <td>
+ *             The username to switch to once the connectors have started. <b>Requires Jetty's
+ *             {@code libsetuid.so} on {@code java.library.path}.</b>
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code group}</td>
+ *         <td>(none)</td>
+ *         <td>
+ *             The group to switch to once the connectors have started. <b>Requires Jetty's
+ *             {@code libsetuid.so} on {@code java.library.path}.</b>
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code umask}</td>
+ *         <td>(none)</td>
+ *         <td>
+ *             The umask to switch to once the connectors have started. <b>Requires Jetty's
+ *             {@code libsetuid.so} on {@code java.library.path}.</b>
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code startsAsRoot}</td>
+ *         <td>(none)</td>
+ *         <td>
+ *             Whether or not the Dropwizard application is started as a root user. <b>Requires
+ *             Jetty's {@code libsetuid.so} on {@code java.library.path}.</b>
+ *         </td>
+ *     </tr>
  * </table>
  *
  * @see DefaultServerFactory
@@ -118,10 +182,10 @@ public abstract class AbstractServerFactory implements ServerFactory {
     private Duration idleThreadTimeout = Duration.minutes(1);
 
     @Min(1)
-    private Integer softNofileLimit;
+    private Integer nofileSoftLimit;
 
     @Min(1)
-    private Integer hardNofileLimit;
+    private Integer nofileHardLimit;
 
     private Integer gid;
 
@@ -202,23 +266,23 @@ public abstract class AbstractServerFactory implements ServerFactory {
     }
 
     @JsonProperty
-    public Integer getSoftNofileLimit() {
-        return softNofileLimit;
+    public Integer getNofileSoftLimit() {
+        return nofileSoftLimit;
     }
 
     @JsonProperty
-    public void setSoftNofileLimit(Integer softNofileLimit) {
-        this.softNofileLimit = softNofileLimit;
+    public void setNofileSoftLimit(Integer nofileSoftLimit) {
+        this.nofileSoftLimit = nofileSoftLimit;
     }
 
     @JsonProperty
-    public Integer getHardNofileLimit() {
-        return hardNofileLimit;
+    public Integer getNofileHardLimit() {
+        return nofileHardLimit;
     }
 
     @JsonProperty
-    public void setHardNofileLimit(Integer hardNofileLimit) {
-        this.hardNofileLimit = hardNofileLimit;
+    public void setNofileHardLimit(Integer nofileHardLimit) {
+        this.nofileHardLimit = nofileHardLimit;
     }
 
     @JsonProperty
@@ -367,14 +431,14 @@ public abstract class AbstractServerFactory implements ServerFactory {
             listener.setGroupname(group);
         }
 
-        if (hardNofileLimit != null || softNofileLimit != null) {
+        if (nofileHardLimit != null || nofileSoftLimit != null) {
             final RLimit rlimit = new RLimit();
-            if (hardNofileLimit != null) {
-                rlimit.setHard(hardNofileLimit);
+            if (nofileHardLimit != null) {
+                rlimit.setHard(nofileHardLimit);
             }
 
-            if (softNofileLimit != null) {
-                rlimit.setSoft(softNofileLimit);
+            if (nofileSoftLimit != null) {
+                rlimit.setSoft(nofileSoftLimit);
             }
 
             listener.setRLimitNoFiles(rlimit);
