@@ -28,13 +28,151 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import static com.codahale.metrics.MetricRegistry.name;
 
+/**
+ * Builds HTTPS connectors (HTTP over TLS/SSL).
+ * <p/>
+ * <b>Configuration Parameters:</b>
+ * <table>
+ *     <tr>
+ *         <td>Name</td>
+ *         <td>Default</td>
+ *         <td>Description</td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code keyStore}</td>
+ *         <td><b>REQUIRED</b></td>
+ *         <td>
+ *             The path to the Java key store which contains the host certificate and private key.
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code keyStorePassword}</td>
+ *         <td><b>REQUIRED</b></td>
+ *         <td>
+ *             The password used to access the key store.
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code keyStoreType}</td>
+ *         <td>{@code JKS}</td>
+ *         <td>
+ *             The type of key store (usually {@code JKS}, {@code PKCS12}, {@code JCEKS},
+ *             {@code Windows-MY}, or {@code Windows-ROOT}).
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code trustStore}</td>
+ *         <td>(none)</td>
+ *         <td>
+ *             The path to the Java key store which contains the CA certificates used to establish
+ *             trust.
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code trustStorePassword}</td>
+ *         <td>(none)</td>
+ *         <td>The password used to access the trust store.</td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code trustStoreType}</td>
+ *         <td>{@code JKS}</td>
+ *         <td>
+ *             The type of trust store (usually {@code JKS}, {@code PKCS12}, {@code JCEKS},
+ *             {@code Windows-MY}, or {@code Windows-ROOT}).
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code keyManagerPassword}</td>
+ *         <td>(none)</td>
+ *         <td>The password, if any, for the key manager.</td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code needClientAuth}</td>
+ *         <td>(none)</td>
+ *         <td>Whether or not client authentication is required.</td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code wantClientAuth}</td>
+ *         <td>(none)</td>
+ *         <td>Whether or not client authentication is requested.</td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code certAlias}</td>
+ *         <td>(none)</td>
+ *         <td>The alias of the certificate to use.</td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code crlPath}</td>
+ *         <td>(none)</td>
+ *         <td>The path to the file which contains the Certificate Revocation List.</td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code enableCRLDP}</td>
+ *         <td>false</td>
+ *         <td>Whether or not CRL Distribution Points (CRLDP) support is enabled.</td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code enableOCSP}</td>
+ *         <td>false</td>
+ *         <td>Whether or not On-Line Certificate Status Protocol (OCSP) support is enabled.</td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code maxCertPathLength}</td>
+ *         <td>(unlimited)</td>
+ *         <td>The maximum certification path length.</td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code ocspResponderUrl}</td>
+ *         <td>(none)</td>
+ *         <td>The location of the OCSP responder.</td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code jceProvider}</td>
+ *         <td>(none)</td>
+ *         <td>The name of the JCE provider to use for cryptographic support.</td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code validateCerts}</td>
+ *         <td>true</td>
+ *         <td>
+ *             Whether or not to validate TLS certificates before starting. If enabled, Dropwizard
+ *             will refuse to start with expired or otherwise invalid certificates.
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code validatePeers}</td>
+ *         <td>true</td>
+ *         <td>Whether or not to validate TLS peer certificates.</td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code supportedProtocols}</td>
+ *         <td>(none)</td>
+ *         <td>
+ *             A list of protocols (e.g., {@code SSLv3}, {@code TLSv1}) which are supported. All
+ *             other protocols will be refused.
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code supportedCipherSuites}</td>
+ *         <td>(none)</td>
+ *         <td>
+ *             A list of cipher suites (e.g., {@code TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256}) which
+ *             are supported. All other cipher suites will be refused
+ *         </td>
+ *     </tr>
+ * </table>
+ * <p/>
+ * For more configuration parameters, see {@link HttpConnectorFactory}.
+ *
+ * @see HttpConnectorFactory
+ */
 @JsonTypeName("https")
 public class HttpsConnectorFactory extends HttpConnectorFactory {
     private static final Logger LOGGER = LoggerFactory.getLogger(HttpsConnectorFactory.class);
     private static final AtomicBoolean LOGGED = new AtomicBoolean(false);
 
     @NotNull
-    private File keyStore;
+    private String keyStore;
 
     @NotNull
     private String keyStorePassword;
@@ -42,7 +180,7 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
     @NotEmpty
     private String keyStoreType = "JKS";
 
-    private File trustStore;
+    private String trustStore;
 
     private String trustStorePassword;
 
@@ -61,17 +199,17 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
     private URI ocspResponderUrl;
     private String jceProvider;
     private boolean validateCerts = true;
-    private Boolean validatePeers;
+    private boolean validatePeers = true;
     private List<String> supportedProtocols;
     private List<String> supportedCipherSuites;
 
     @JsonProperty
-    public File getKeyStore() {
+    public String getKeyStore() {
         return keyStore;
     }
 
     @JsonProperty
-    public void setKeyStore(File keyStore) {
+    public void setKeyStore(String keyStore) {
         this.keyStore = keyStore;
     }
 
@@ -116,12 +254,12 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
     }
 
     @JsonProperty
-    public File getTrustStore() {
+    public String getTrustStore() {
         return trustStore;
     }
 
     @JsonProperty
-    public void setTrustStore(File trustStore) {
+    public void setTrustStore(String trustStore) {
         this.trustStore = trustStore;
     }
 
@@ -319,12 +457,12 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
     }
 
     protected SslContextFactory buildSslContextFactory() {
-        final SslContextFactory factory = new SslContextFactory(keyStore.getAbsolutePath());
+        final SslContextFactory factory = new SslContextFactory(keyStore);
         factory.setKeyStorePassword(keyStorePassword);
         factory.setKeyStoreType(keyStoreType);
 
         if (trustStore != null) {
-            factory.setTrustStorePath(trustStore.getAbsolutePath());
+            factory.setTrustStorePath(trustStore);
         }
         if (trustStorePassword != null) {
             factory.setTrustStorePassword(trustStorePassword);
@@ -372,10 +510,7 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
         }
 
         factory.setValidateCerts(validateCerts);
-
-        if (validatePeers != null) {
-            factory.setValidatePeerCerts(validatePeers);
-        }
+        factory.setValidatePeerCerts(validatePeers);
 
         if (supportedProtocols != null) {
             factory.setIncludeProtocols(Iterables.toArray(supportedProtocols, String.class));
