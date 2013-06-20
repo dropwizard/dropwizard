@@ -39,7 +39,7 @@ import static com.codahale.metrics.MetricRegistry.name;
  *         <td>Description</td>
  *     </tr>
  *     <tr>
- *         <td>{@code keyStore}</td>
+ *         <td>{@code keyStorePath}</td>
  *         <td><b>REQUIRED</b></td>
  *         <td>
  *             The path to the Java key store which contains the host certificate and private key.
@@ -61,7 +61,14 @@ import static com.codahale.metrics.MetricRegistry.name;
  *         </td>
  *     </tr>
  *     <tr>
- *         <td>{@code trustStore}</td>
+ *         <td>{@code keyStoreProvider}</td>
+ *         <td>(none)</td>
+ *         <td>
+ *             The JCE provider to use to access the key store.
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code trustStorePath}</td>
  *         <td>(none)</td>
  *         <td>
  *             The path to the Java key store which contains the CA certificates used to establish
@@ -79,6 +86,13 @@ import static com.codahale.metrics.MetricRegistry.name;
  *         <td>
  *             The type of trust store (usually {@code JKS}, {@code PKCS12}, {@code JCEKS},
  *             {@code Windows-MY}, or {@code Windows-ROOT}).
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code trustStoreProvider}</td>
+ *         <td>(none)</td>
+ *         <td>
+ *             The JCE provider to use to access the trust store.
  *         </td>
  *     </tr>
  *     <tr>
@@ -160,6 +174,18 @@ import static com.codahale.metrics.MetricRegistry.name;
  *             are supported. All other cipher suites will be refused
  *         </td>
  *     </tr>
+ *     <tr>
+ *         <td>{@code allowRenegotiation}</td>
+ *         <td>true</td>
+ *         <td>Whether or not TLS renegotiation is allowed.</td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code endpointIdentificationAlgorithm}</td>
+ *         <td>(none)</td>
+ *         <td>
+ *             Which endpoint identification algorithm, if any, to use during the TLS handshake.
+ *         </td>
+ *     </tr>
  * </table>
  * <p/>
  * For more configuration parameters, see {@link HttpConnectorFactory}.
@@ -172,7 +198,7 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
     private static final AtomicBoolean LOGGED = new AtomicBoolean(false);
 
     @NotNull
-    private String keyStore;
+    private String keyStorePath;
 
     @NotNull
     private String keyStorePassword;
@@ -180,12 +206,16 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
     @NotEmpty
     private String keyStoreType = "JKS";
 
-    private String trustStore;
+    private String keyStoreProvider;
+
+    private String trustStorePath;
 
     private String trustStorePassword;
 
     @NotEmpty
     private String trustStoreType = "JKS";
+
+    private String trustStoreProvider;
 
     private String keyManagerPassword;
 
@@ -202,15 +232,37 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
     private boolean validatePeers = true;
     private List<String> supportedProtocols;
     private List<String> supportedCipherSuites;
+    private boolean allowRenegotiation = true;
+    private String endpointIdentificationAlgorithm;
 
     @JsonProperty
-    public String getKeyStore() {
-        return keyStore;
+    public boolean getAllowRenegotiation() {
+        return allowRenegotiation;
     }
 
     @JsonProperty
-    public void setKeyStore(String keyStore) {
-        this.keyStore = keyStore;
+    public void setAllowRenegotiation(boolean allowRenegotiation) {
+        this.allowRenegotiation = allowRenegotiation;
+    }
+
+    @JsonProperty
+    public String getEndpointIdentificationAlgorithm() {
+        return endpointIdentificationAlgorithm;
+    }
+
+    @JsonProperty
+    public void setEndpointIdentificationAlgorithm(String endpointIdentificationAlgorithm) {
+        this.endpointIdentificationAlgorithm = endpointIdentificationAlgorithm;
+    }
+
+    @JsonProperty
+    public String getKeyStorePath() {
+        return keyStorePath;
+    }
+
+    @JsonProperty
+    public void setKeyStorePath(String keyStorePath) {
+        this.keyStorePath = keyStorePath;
     }
 
     @JsonProperty
@@ -234,6 +286,16 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
     }
 
     @JsonProperty
+    public String getKeyStoreProvider() {
+        return keyStoreProvider;
+    }
+
+    @JsonProperty
+    public void setKeyStoreProvider(String keyStoreProvider) {
+        this.keyStoreProvider = keyStoreProvider;
+    }
+
+    @JsonProperty
     public String getTrustStoreType() {
         return trustStoreType;
     }
@@ -241,6 +303,16 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
     @JsonProperty
     public void setTrustStoreType(String trustStoreType) {
         this.trustStoreType = trustStoreType;
+    }
+
+    @JsonProperty
+    public String getTrustStoreProvider() {
+        return trustStoreProvider;
+    }
+
+    @JsonProperty
+    public void setTrustStoreProvider(String trustStoreProvider) {
+        this.trustStoreProvider = trustStoreProvider;
     }
 
     @JsonProperty
@@ -254,13 +326,13 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
     }
 
     @JsonProperty
-    public String getTrustStore() {
-        return trustStore;
+    public String getTrustStorePath() {
+        return trustStorePath;
     }
 
     @JsonProperty
-    public void setTrustStore(String trustStore) {
-        this.trustStore = trustStore;
+    public void setTrustStorePath(String trustStorePath) {
+        this.trustStorePath = trustStorePath;
     }
 
     @JsonProperty
@@ -364,12 +436,12 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
     }
 
     @JsonProperty
-    public Boolean getValidatePeers() {
+    public boolean getValidatePeers() {
         return validatePeers;
     }
 
     @JsonProperty
-    public void setValidatePeers(Boolean validatePeers) {
+    public void setValidatePeers(boolean validatePeers) {
         this.validatePeers = validatePeers;
     }
 
@@ -457,17 +529,25 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
     }
 
     protected SslContextFactory buildSslContextFactory() {
-        final SslContextFactory factory = new SslContextFactory(keyStore);
+        final SslContextFactory factory = new SslContextFactory(keyStorePath);
         factory.setKeyStorePassword(keyStorePassword);
         factory.setKeyStoreType(keyStoreType);
 
-        if (trustStore != null) {
-            factory.setTrustStorePath(trustStore);
+        if (keyStoreProvider != null) {
+            factory.setKeyStoreProvider(keyStoreProvider);
+        }
+
+        if (trustStorePath != null) {
+            factory.setTrustStorePath(trustStorePath);
         }
         if (trustStorePassword != null) {
             factory.setTrustStorePassword(trustStorePassword);
         }
         factory.setTrustStoreType(trustStoreType);
+
+        if (trustStoreProvider != null) {
+            factory.setTrustStoreProvider(trustStoreProvider);
+        }
 
         if (keyManagerPassword != null) {
             factory.setKeyManagerPassword(keyManagerPassword);
@@ -508,6 +588,15 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
         if (jceProvider != null) {
             factory.setProvider(jceProvider);
         }
+
+        factory.setRenegotiationAllowed(allowRenegotiation);
+        factory.setEndpointIdentificationAlgorithm(endpointIdentificationAlgorithm);
+
+        // TODO: 6/20/13 <coda> -- figure out SSL session caching
+        // This doesn't seem to be hooked up to anything yet in Jetty.
+        // factory.setSessionCachingEnabled(false);
+        // factory.setSslSessionCacheSize(10);
+        // factory.setSslSessionTimeout(10);
 
         factory.setValidateCerts(validateCerts);
         factory.setValidatePeerCerts(validatePeers);
