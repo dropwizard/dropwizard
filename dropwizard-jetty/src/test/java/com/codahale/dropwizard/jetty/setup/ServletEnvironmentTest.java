@@ -25,7 +25,7 @@ public class ServletEnvironmentTest {
     public void addsServletInstances() throws Exception {
         final Servlet servlet = mock(Servlet.class);
 
-        final ServletBuilder builder = environment.addServlet(servlet, "/things/*");
+        final ServletRegistration.Dynamic builder = environment.addServlet(servlet, "/things/*");
         assertThat(builder)
                 .isNotNull();
 
@@ -38,7 +38,7 @@ public class ServletEnvironmentTest {
 
     @Test
     public void addsServletClasses() throws Exception {
-        final ServletBuilder builder = environment.addServlet(GenericServlet.class, "/things/*");
+        final ServletRegistration.Dynamic builder = environment.addServlet(GenericServlet.class, "/things/*");
         assertThat(builder)
                 .isNotNull();
 
@@ -54,7 +54,7 @@ public class ServletEnvironmentTest {
     public void addsFilterInstances() throws Exception {
         final Filter filter = mock(Filter.class);
 
-        final FilterBuilder builder = environment.addFilter(filter, "/things/*");
+        final FilterRegistration.Dynamic builder = environment.addFilter(filter, "/things/*");
         assertThat(builder)
                 .isNotNull();
 
@@ -69,7 +69,7 @@ public class ServletEnvironmentTest {
 
     @Test
     public void addsFilterClasses() throws Exception {
-        final FilterBuilder builder = environment.addFilter(ContinuationFilter.class, "/things/*");
+        final FilterRegistration.Dynamic builder = environment.addFilter(ContinuationFilter.class, "/things/*");
         assertThat(builder)
                 .isNotNull();
 
