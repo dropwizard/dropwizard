@@ -29,76 +29,52 @@ public class JerseyEnvironment {
     }
 
     /**
-     * Adds the given object as a Jersey singleton resource.
+     * Adds the given object as a Jersey singleton component.
      *
-     * @param resource a Jersey singleton resource
+     * @param component a Jersey singleton component
      */
-    public void addResource(Object resource) {
-        config.getSingletons().add(checkNotNull(resource));
+    public void register(Object component) {
+        config.getSingletons().add(checkNotNull(component));
     }
 
     /**
-     * Scans the packages and sub-packages of the given {@link Class} objects for resources and
-     * providers.
-     *
-     * @param classes the classes whose packages to scan
-     */
-    public void scanPackagesForResourcesAndProviders(Class<?>... classes) {
-        checkNotNull(classes);
-        final String[] names = new String[classes.length];
-        for (int i = 0; i < classes.length; i++) {
-            names[i] = classes[i].getPackage().getName();
-        }
-        config.init(new PackageNamesScanner(names));
-    }
-
-    /**
-     * Adds the given class as a Jersey resource. <p/><b>N.B.:</b> This class must either have a
+     * Adds the given class as a Jersey component. <p/><b>N.B.:</b> This class must either have a
      * no-args constructor or use Jersey's built-in dependency injection.
      *
-     * @param klass a Jersey resource class
+     * @param componentClass a Jersey component class
      */
-    public void addResource(Class<?> klass) {
-        config.getClasses().add(checkNotNull(klass));
+    public void register(Class<?> componentClass) {
+        config.getClasses().add(checkNotNull(componentClass));
     }
 
     /**
-     * Adds the given object as a Jersey provider.
+     * Adds array of package names which will be used to scan for components. Packages will be
+     * scanned recursively, including all nested packages.
      *
-     * @param provider a Jersey provider
+     * @param packages array of package names
      */
-    public void addProvider(Object provider) {
-        config.getSingletons().add(checkNotNull(provider));
-    }
-
-    /**
-     * Adds the given class as a Jersey provider. <p/><b>N.B.:</b> This class must either have a
-     * no-args constructor or use Jersey's built-in dependency injection.
-     *
-     * @param klass a Jersey provider class
-     */
-    public void addProvider(Class<?> klass) {
-        config.getClasses().add(checkNotNull(klass));
+    public void packages(String... packages) {
+        config.init(new PackageNamesScanner(checkNotNull(packages)));
     }
 
     /**
      * Enables the Jersey feature with the given name.
      *
-     * @param name the name of the feature to be enabled
+     * @param featureName the name of the feature to be enabled
      * @see com.sun.jersey.api.core.ResourceConfig
      */
-    public void enableJerseyFeature(String name) {
-        config.getFeatures().put(checkNotNull(name), Boolean.TRUE);
+    public void enable(String featureName) {
+        config.getFeatures().put(checkNotNull(featureName), Boolean.TRUE);
     }
 
     /**
      * Disables the Jersey feature with the given name.
      *
-     * @param name the name of the feature to be disabled
+     * @param featureName the name of the feature to be disabled
      * @see com.sun.jersey.api.core.ResourceConfig
      */
-    public void disableJerseyFeature(String name) {
-        config.getFeatures().put(checkNotNull(name), Boolean.FALSE);
+    public void disable(String featureName) {
+        config.getFeatures().put(checkNotNull(featureName), Boolean.FALSE);
     }
 
     /**
@@ -108,7 +84,7 @@ public class JerseyEnvironment {
      * @param value the value of the Jersey property
      * @see com.sun.jersey.api.core.ResourceConfig
      */
-    public void setJerseyProperty(String name, @Nullable Object value) {
+    public void property(String name, @Nullable Object value) {
         config.getProperties().put(checkNotNull(name), value);
     }
 
@@ -119,7 +95,7 @@ public class JerseyEnvironment {
      * @see com.sun.jersey.api.core.ResourceConfig
      */
     @SuppressWarnings("unchecked")
-    public <T> T getJerseyProperty(String name) {
+    public <T> T getProperty(String name) {
         return (T) config.getProperties().get(name);
     }
 

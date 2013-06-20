@@ -74,7 +74,7 @@ public class HibernateBundleTest {
 
         final ArgumentCaptor<UnitOfWorkResourceMethodDispatchAdapter> captor =
                 ArgumentCaptor.forClass(UnitOfWorkResourceMethodDispatchAdapter.class);
-        verify(jerseyEnvironment).addProvider(captor.capture());
+        verify(jerseyEnvironment).register(captor.capture());
 
         assertThat(captor.getValue().getSessionFactory()).isEqualTo(sessionFactory);
     }

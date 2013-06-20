@@ -379,7 +379,7 @@ public abstract class AbstractServerFactory implements ServerFactory {
             handler.addFilter(holder, "/*", EnumSet.allOf(DispatcherType.class));
         }
         if (jerseyContainer != null) {
-            jersey.addProvider(new JacksonMessageBodyProvider(objectMapper, validator));
+            jersey.register(new JacksonMessageBodyProvider(objectMapper, validator));
             handler.addServlet(new NonblockingServletHolder(jerseyContainer), jersey.getUrlPattern());
         }
         final InstrumentedHandler instrumented = new InstrumentedHandler(metricRegistry);
@@ -399,8 +399,8 @@ public abstract class AbstractServerFactory implements ServerFactory {
     protected Server buildServer(LifecycleEnvironment lifecycle,
                                  ThreadPool threadPool) {
         final Server server = new Server(threadPool);
-        lifecycle.attach(server);
         server.addLifeCycleListener(buildSetUIDListener());
+        lifecycle.attach(server);
         final ErrorHandler errorHandler = new ErrorHandler();
         errorHandler.setShowStacks(false);
         server.addBean(errorHandler);
