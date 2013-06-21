@@ -5,9 +5,9 @@ import com.codahale.dropwizard.db.ManagedDataSource;
 import com.codahale.dropwizard.lifecycle.Managed;
 import com.codahale.dropwizard.lifecycle.setup.LifecycleEnvironment;
 import com.codahale.dropwizard.logging.LoggingFactory;
-import com.codahale.dropwizard.setup.AdminEnvironment;
 import com.codahale.dropwizard.setup.Environment;
 import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.health.HealthCheckRegistry;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
@@ -38,7 +38,7 @@ public class JDBITest {
         hsqlConfig.setValidationQuery("SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS");
     }
 
-    private final AdminEnvironment adminEnvironment = mock(AdminEnvironment.class);
+    private final HealthCheckRegistry healthChecks = mock(HealthCheckRegistry.class);
     private final LifecycleEnvironment lifecycleEnvironment = mock(LifecycleEnvironment.class);
     private final Environment environment = mock(Environment.class);
     private final DBIFactory factory = new DBIFactory();
@@ -48,7 +48,7 @@ public class JDBITest {
 
     @Before
     public void setUp() throws Exception {
-        when(environment.admin()).thenReturn(adminEnvironment);
+        when(environment.healthChecks()).thenReturn(healthChecks);
         when(environment.lifecycle()).thenReturn(lifecycleEnvironment);
         when(environment.metrics()).thenReturn(metricRegistry);
 
