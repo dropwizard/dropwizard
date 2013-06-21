@@ -3,9 +3,9 @@ package com.codahale.dropwizard.hibernate;
 import com.codahale.dropwizard.Configuration;
 import com.codahale.dropwizard.db.DataSourceFactory;
 import com.codahale.dropwizard.jersey.setup.JerseyEnvironment;
-import com.codahale.dropwizard.setup.AdminEnvironment;
 import com.codahale.dropwizard.setup.Bootstrap;
 import com.codahale.dropwizard.setup.Environment;
+import com.codahale.metrics.health.HealthCheckRegistry;
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module;
@@ -24,7 +24,7 @@ public class HibernateBundleTest {
     private final SessionFactoryFactory factory = mock(SessionFactoryFactory.class);
     private final SessionFactory sessionFactory = mock(SessionFactory.class);
     private final Configuration configuration = mock(Configuration.class);
-    private final AdminEnvironment adminEnvironment = mock(AdminEnvironment.class);
+    private final HealthCheckRegistry healthChecks = mock(HealthCheckRegistry.class);
     private final JerseyEnvironment jerseyEnvironment = mock(JerseyEnvironment.class);
     private final Environment environment = mock(Environment.class);
     private final HibernateBundle<Configuration> bundle = new HibernateBundle<Configuration>(entities, factory) {
@@ -37,7 +37,7 @@ public class HibernateBundleTest {
     @Before
     @SuppressWarnings("unchecked")
     public void setUp() throws Exception {
-        when(environment.admin()).thenReturn(adminEnvironment);
+        when(environment.healthChecks()).thenReturn(healthChecks);
         when(environment.jersey()).thenReturn(jerseyEnvironment);
 
         when(factory.build(eq(bundle),
@@ -87,7 +87,7 @@ public class HibernateBundleTest {
 
         final ArgumentCaptor<SessionFactoryHealthCheck> captor =
                 ArgumentCaptor.forClass(SessionFactoryHealthCheck.class);
-        verify(adminEnvironment).addHealthCheck(eq("hibernate"), captor.capture());
+        verify(healthChecks).register(eq("hibernate"), captor.capture());
 
         assertThat(captor.getValue().getSessionFactory()).isEqualTo(sessionFactory);
 

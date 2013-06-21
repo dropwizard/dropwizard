@@ -74,7 +74,7 @@ public class DropwizardAppRule<C extends Configuration> implements TestRule {
 
             final Bootstrap<C> bootstrap = new Bootstrap<C>(application) {
                 @Override
-                public void runWithBundles(C configuration, Environment environment) throws Exception {
+                public void run(C configuration, Environment environment) throws Exception {
                     environment.lifecycle().addServerLifecycleListener(new ServerLifecycleListener() {
                                     @Override
                                     public void serverStarted(Server server) {
@@ -83,7 +83,7 @@ public class DropwizardAppRule<C extends Configuration> implements TestRule {
                                 });
                     DropwizardAppRule.this.configuration = configuration;
                     DropwizardAppRule.this.environment = environment;
-                    super.runWithBundles(configuration, environment);
+                    super.run(configuration, environment);
                 }
             };
 

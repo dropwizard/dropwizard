@@ -55,7 +55,7 @@ public class HelloWorldApplication extends Application<HelloWorldConfiguration> 
         final PersonDAO dao = new PersonDAO(hibernateBundle.getSessionFactory());
         final Template template = configuration.buildTemplate();
 
-        environment.admin().addHealthCheck("template", new TemplateHealthCheck(template));
+        environment.healthChecks().register("template", new TemplateHealthCheck(template));
 
         environment.jersey().register(new BasicAuthProvider<>(new ExampleAuthenticator(),
                                                               "SUPER SECRET STUFF"));
