@@ -38,7 +38,8 @@ import java.util.TimeZone;
  */
 @JsonTypeName("console")
 public class ConsoleReporterFactory extends BaseFormattedReporterFactory {
-    public static enum ConsoleStream {
+    @SuppressWarnings("UnusedDeclaration")
+    public enum ConsoleStream {
         STDOUT(System.out),
         STDERR(System.err);
 

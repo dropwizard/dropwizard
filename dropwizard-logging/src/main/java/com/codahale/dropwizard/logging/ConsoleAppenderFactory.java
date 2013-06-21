@@ -5,7 +5,6 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.ConsoleAppender;
 import ch.qos.logback.core.Layout;
-import com.codahale.dropwizard.validation.OneOf;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
@@ -60,12 +59,27 @@ import java.util.TimeZone;
  */
 @JsonTypeName("console")
 public class ConsoleAppenderFactory extends AbstractAppenderFactory {
+    @SuppressWarnings("UnusedDeclaration")
+    public enum ConsoleStream {
+        STDOUT("System.out"),
+        STDERR("System.err");
+
+        private final String value;
+
+        ConsoleStream(String value) {
+            this.value = value;
+        }
+
+        public String get() {
+            return value;
+        }
+    }
+
     @NotNull
     private TimeZone timeZone = TimeZone.getTimeZone("UTC");
 
     @NotNull
-    @OneOf(value = {"stderr", "stdout"}, ignoreCase = true, ignoreWhitespace = true)
-    private String target = "stdout";
+    private ConsoleStream target = ConsoleStream.STDOUT;
 
     @JsonProperty
     public TimeZone getTimeZone() {
@@ -78,12 +92,12 @@ public class ConsoleAppenderFactory extends AbstractAppenderFactory {
     }
 
     @JsonProperty
-    public String getTarget() {
+    public ConsoleStream getTarget() {
         return target;
     }
 
     @JsonProperty
-    public void setTarget(String target) {
+    public void setTarget(ConsoleStream target) {
         this.target = target;
     }
 
@@ -92,9 +106,7 @@ public class ConsoleAppenderFactory extends AbstractAppenderFactory {
         final ConsoleAppender<ILoggingEvent> appender = new ConsoleAppender<>();
         appender.setName("console-appender");
         appender.setContext(context);
-        if ("stderr".equalsIgnoreCase(target)) {
-            appender.setTarget("System.err");
-        }
+        appender.setTarget(target.get());
         appender.setLayout(layout == null ? buildLayout(context, timeZone) : layout);
         addThresholdFilter(appender, threshold);
         appender.start();
