@@ -36,7 +36,7 @@ public class AdminEnvironment extends ServletEnvironment {
         this.healthChecks.register("deadlocks", new ThreadDeadlockHealthCheck());
         this.tasks = new TaskServlet();
         tasks.add(new GarbageCollectionTask());
-        addServlet(tasks, "/tasks/*");
+        addServlet("tasks", tasks).addMapping("/tasks/*");
         handler.addLifeCycleListener(new AbstractLifeCycle.AbstractLifeCycleListener() {
             @Override
             public void lifeCycleStarting(LifeCycle event) {

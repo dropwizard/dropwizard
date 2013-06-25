@@ -82,7 +82,7 @@ public class AssetsBundle implements Bundle {
 
     @Override
     public void run(Environment environment) {
-        environment.servlets().addServlet(createServlet(), uriPath + '*');
+        environment.servlets().addServlet("assets", createServlet()).addMapping(uriPath + '*');
     }
 
     private AssetServlet createServlet() {
