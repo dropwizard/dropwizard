@@ -70,7 +70,8 @@ public class BiDiGzipFilter extends IncludableGzipFilter {
     }
 
     public void setMimeTypes(Set<String> mimeTypes) {
-        this._mimeTypes = mimeTypes;
+        _mimeTypes.clear();
+        _mimeTypes.addAll(mimeTypes);
     }
 
     public void setBufferSize(int bufferSize) {
