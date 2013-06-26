@@ -19,7 +19,6 @@ public class DbCommand<T extends Configuration> extends AbstractLiquibaseCommand
         addSubcommand(new DbCalculateChecksumCommand<>(strategy, configurationClass));
         addSubcommand(new DbClearChecksumsCommand<>(strategy, configurationClass));
         addSubcommand(new DbDropAllCommand<>(strategy, configurationClass));
-        addSubcommand(new DbDumpCommand<>(strategy, configurationClass));
         addSubcommand(new DbFastForwardCommand<>(strategy, configurationClass));
         addSubcommand(new DbGenerateDocsCommand<>(strategy, configurationClass));
         addSubcommand(new DbLocksCommand<>(strategy, configurationClass));
