@@ -36,7 +36,7 @@ server:
       port: 8080
     - type: https
       port: 8443
-      keyStore: example.keystore
+      keyStorePath: example.keystore
       keyStorePassword: example
       validateCerts: false
 # this requires the npn-boot library on the JVM's boot classpath
@@ -50,7 +50,7 @@ server:
       port: 8081
     - type: https
       port: 8444
-      keyStore: example.keystore
+      keyStorePath: example.keystore
       keyStorePassword: example
       validateCerts: false
 
