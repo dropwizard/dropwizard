@@ -3,6 +3,7 @@ package com.codahale.dropwizard.views.mustache;
 import com.codahale.dropwizard.views.View;
 import com.codahale.dropwizard.views.ViewRenderer;
 import com.github.mustachejava.Mustache;
+import com.github.mustachejava.MustacheException;
 import com.github.mustachejava.MustacheFactory;
 import com.google.common.base.Charsets;
 import com.google.common.cache.CacheBuilder;
@@ -49,7 +50,7 @@ public class MustacheViewRenderer implements ViewRenderer {
             try (OutputStreamWriter writer = new OutputStreamWriter(output, charset)) {
                 template.execute(writer, view);
             }
-        } catch (ExecutionException | UncheckedExecutionException ignored) {
+        } catch (ExecutionException | UncheckedExecutionException | MustacheException ignored) {
             throw new FileNotFoundException("Template " + view.getTemplateName() + " not found.");
         }
     }
