@@ -13,7 +13,7 @@ import java.util.TimeZone;
 /**
  * A SLF4J-backed {@link RequestLog} implementation of {@link AbstractNCSARequestLog}.
  */
-public class Slf4jRequestLog extends AbstractNCSARequestLog {
+public class Slf4jRequestLog extends AbstractRequestLog {
     private final AppenderAttachableImpl<ILoggingEvent> appenders;
 
     /**
@@ -23,6 +23,7 @@ public class Slf4jRequestLog extends AbstractNCSARequestLog {
      * @param timeZone      the timezone to which timestamps will be converted
      */
     public Slf4jRequestLog(AppenderAttachableImpl<ILoggingEvent> appenders, TimeZone timeZone) {
+        super(appenders, timeZone);
         this.appenders = appenders;
 
         setLogDispatch(true);

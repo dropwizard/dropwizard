@@ -1,0 +1,1 @@
+alternateLogClass: com.codahale.dropwizard.jetty.AlternateRequestLog

@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.lang.reflect.Constructor;
 import java.util.TimeZone;
 
 /**
@@ -43,6 +44,8 @@ import java.util.TimeZone;
  * </table>
  */
 public class RequestLogFactory {
+    private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(RequestLogFactory.class);
+
     private static class RequestLogLayout extends LayoutBase<ILoggingEvent> {
         @Override
         public String doLayout(ILoggingEvent event) {
@@ -52,6 +55,8 @@ public class RequestLogFactory {
 
     @NotNull
     private TimeZone timeZone = TimeZone.getTimeZone("UTC");
+
+    private String alternateLogClass = null;
 
     @Valid
     @NotNull
@@ -79,6 +84,16 @@ public class RequestLogFactory {
         this.timeZone = timeZone;
     }
 
+    @JsonProperty
+    public String getAlternateLogClass() {
+      return alternateLogClass;
+    }
+
+    @JsonProperty
+    public void setAlternateLogClass( String alternateLogClass ) {
+      this.alternateLogClass = alternateLogClass;
+    }
+
     @JsonIgnore
     public boolean isEnabled() {
         return !appenders.isEmpty();
@@ -98,6 +113,40 @@ public class RequestLogFactory {
             attachable.addAppender(output.build(context, name, layout));
         }
 
-        return new Slf4jRequestLog(attachable, timeZone);
+        return constructRequestLog( attachable, timeZone );
     }
+
+    /**
+     * Constructs the appropriate request log.
+     *
+     * If @{code alternateLogClass} is set, will load class and use reflection to instantiate the class. This assumes the alternate class
+     * extends @{code AbstractRequestLog} and has the same constructor signature.
+     *
+     * If @{code alternateLogClass} is <em>NOT</em> set, it will instantiate a @{code Slf4jRequestLog} through normal means.
+     *
+     * @param appenders log appenders
+     * @param timeZone log timezone
+     * @return an AbstractRequestLog based on the configuration provided
+     */
+    @SuppressWarnings("unchecked" )
+    private AbstractRequestLog constructRequestLog( AppenderAttachableImpl<ILoggingEvent> appenders, TimeZone timeZone ) {
+        if ( getAlternateLogClass() == null ) {
+            return constructSlf4jRequestLog( appenders, timeZone );
+        }
+        try {
+            Class alternateClass = Class.forName( getAlternateLogClass() );
+            Constructor constructor = alternateClass.getDeclaredConstructor( AppenderAttachableImpl.class, TimeZone.class );
+            AbstractRequestLog requestLog = (AbstractRequestLog) constructor.newInstance( appenders, timeZone );
+            return requestLog;
+        }
+        catch (Exception ex ) {
+            LOGGER.warn( "Error constructing {}. Falling back to default {}.", getAlternateLogClass(), Slf4jRequestLog.class.getName(), ex );
+            return constructSlf4jRequestLog( appenders, timeZone );
+        }
+    }
+
+    private AbstractRequestLog constructSlf4jRequestLog(AppenderAttachableImpl<ILoggingEvent> appenders, TimeZone timeZone) {
+       return new Slf4jRequestLog( appenders, timeZone );
+    }
+
 }
