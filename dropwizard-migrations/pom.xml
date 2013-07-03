@@ -20,7 +20,7 @@
         <dependency>
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
-            <version>3.0.1</version>
+            <version>2.0.5</version>
         </dependency>
         <dependency>
             <groupId>com.mattbertolini</groupId>
