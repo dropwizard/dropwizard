@@ -15,6 +15,7 @@ import freemarker.template.DefaultObjectWrapper;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 
+import freemarker.template.TemplateModel;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -100,16 +101,32 @@ public class FreemarkerViewRenderer implements ViewRenderer {
      * functions for each request.
      *
      * @param env Freemarker environment to extend
+     *
+     * @throws TemplateException  if an error occurs
      */
-    protected void extendEnvironment(Environment env) {}
+    protected void extendEnvironment(Environment env)
+            throws TemplateException {
+    }
+
+    /**
+     * Helper method to simplify object wrapping in derived classes.
+     *
+     * @param obj  object to wrap
+     *
+     * @return template model for the specified object
+     *
+     * @throws TemplateException  if an error occurs
+     */
+    protected TemplateModel wrap(Object obj)
+            throws TemplateException {
+        return configuration.getObjectWrapper().wrap(obj);
+    }
 
     /**
      * Default template loader. Loads templates as classpath resources using the classloader
      * that loaded this class.
      */
-    private static class DefaultTemplateLoader
-            implements TemplateLoader {
-
+    private static class DefaultTemplateLoader implements TemplateLoader {
         @Override
         public Object findTemplateSource(String name) throws IOException {
             return getClass().getClassLoader().getResourceAsStream(name);
