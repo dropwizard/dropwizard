@@ -37,9 +37,11 @@ public class ViewMessageBodyWriter implements MessageBodyWriter<View> {
     private final ImmutableList<ViewRenderer> renderers;
     private final MetricRegistry metricRegistry;
 
-    public ViewMessageBodyWriter(MetricRegistry metricRegistry) {
+    public ViewMessageBodyWriter(MetricRegistry metricRegistry, List<ViewRenderer> renderers) {
         this.metricRegistry = metricRegistry;
-        this.renderers = ImmutableList.copyOf(ServiceFinder.find(ViewRenderer.class));
+        this.renderers = renderers == null
+                         ? ImmutableList.copyOf(ServiceFinder.find(ViewRenderer.class))
+                         : ImmutableList.copyOf(renderers);
     }
 
     @Override

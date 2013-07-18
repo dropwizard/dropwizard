@@ -3,6 +3,9 @@ package com.codahale.dropwizard.views;
 import com.codahale.dropwizard.Bundle;
 import com.codahale.dropwizard.setup.Bootstrap;
 import com.codahale.dropwizard.setup.Environment;
+import java.util.ArrayList;
+import java.util.List;
+
 
 /**
  * A {@link Bundle} which enables the rendering of FreeMarker views by your application.
@@ -58,6 +61,16 @@ import com.codahale.dropwizard.setup.Environment;
  * @see <a href="http://freemarker.sourceforge.net/docs/index.html">FreeMarker Manual</a>
  */
 public class ViewBundle implements Bundle {
+    private List<ViewRenderer> renderers;
+
+    public ViewBundle addViewRenderer(ViewRenderer renderer) {
+        if (renderers == null) {
+            renderers = new ArrayList<>();
+        }
+        renderers.add(renderer);
+        return this;
+    }
+
     @Override
     public void initialize(Bootstrap<?> bootstrap) {
         // nothing doing
@@ -65,6 +78,6 @@ public class ViewBundle implements Bundle {
 
     @Override
     public void run(Environment environment) {
-        environment.jersey().register(new ViewMessageBodyWriter(environment.metrics()));
+        environment.jersey().register(new ViewMessageBodyWriter(environment.metrics(), renderers));
     }
 }
