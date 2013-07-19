@@ -1,5 +1,7 @@
 package com.codahale.dropwizard.jetty;
 
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.spi.AppenderAttachableImpl;
 import com.codahale.dropwizard.configuration.ConfigurationFactory;
 import com.codahale.dropwizard.jackson.Jackson;
 import com.codahale.dropwizard.logging.ConsoleAppenderFactory;
@@ -32,9 +34,36 @@ public class RequestLogFactoryTest {
                 .build(new File(Resources.getResource("yaml/requestLog.yml").toURI()));
     }
 
-    @Test
-    public void defaultTimeZoneIsUTC() {
-        assertThat(requestLog.getTimeZone())
-            .isEqualTo(TimeZone.getTimeZone("UTC"));
-    }
+  @Test
+  public void defaultTimeZoneIsUTC() {
+    assertThat(requestLog.getTimeZone())
+        .isEqualTo(TimeZone.getTimeZone("UTC"));
+  }
+
+  @Test
+  public void logClassIsDefault() {
+    assertThat(requestLog.build("test").getClass().getName())
+        .isEqualTo( Slf4jRequestLog.class.getName() );
+  }
+
+  @Test
+  public void alternateLogClass() throws Exception {
+    RequestLogFactory customRequestLog = new ConfigurationFactory<>(
+        RequestLogFactory.class,
+        Validation.buildDefaultValidatorFactory().getValidator(),
+        Jackson.newObjectMapper(), "dw" )
+        .build( new File( Resources.getResource( "yaml/requestLog-alternateLogClass.yml" ).toURI() ) );
+
+    assertThat( customRequestLog.build( "test" ).getClass().getName() )
+        .isEqualTo( AlternateRequestLog.class.getName() );
+  }
+
+}
+
+class AlternateRequestLog extends Slf4jRequestLog {
+
+  AlternateRequestLog( AppenderAttachableImpl<ILoggingEvent> appenders, TimeZone timeZone ) {
+    super( appenders, timeZone );
+  }
+
 }
