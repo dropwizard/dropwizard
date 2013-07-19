@@ -57,6 +57,7 @@
         <servlet.version>3.0.0.v201112011016</servlet.version>
         <jetty.version>9.0.4.v20130625</jetty.version>
         <guava.version>14.0.1</guava.version>
+        <hsqldb.version>2.3.0</hsqldb.version>
     </properties>
 
     <developers>
