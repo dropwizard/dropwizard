@@ -2,8 +2,6 @@ package com.codahale.dropwizard.testing.junit;
 
 import com.codahale.dropwizard.Application;
 import com.codahale.dropwizard.Configuration;
-import com.codahale.dropwizard.jetty.HttpConnectorFactory;
-import com.codahale.dropwizard.server.DefaultServerFactory;
 import com.codahale.dropwizard.setup.Bootstrap;
 import com.codahale.dropwizard.setup.Environment;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -62,7 +60,7 @@ public class DropwizardAppRuleTest {
 
         @Override
         public void run(TestConfiguration configuration, Environment environment) throws Exception {
-            environment.jersey().addResource(new TestResource(configuration.getMessage()));
+            environment.jersey().register(new TestResource(configuration.getMessage()));
         }
     }
 

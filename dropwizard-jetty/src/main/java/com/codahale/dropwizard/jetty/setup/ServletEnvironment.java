@@ -8,7 +8,9 @@ import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletHolder;
 
 import javax.servlet.Filter;
+import javax.servlet.FilterRegistration;
 import javax.servlet.Servlet;
+import javax.servlet.ServletRegistration;
 import java.util.Arrays;
 import java.util.EventListener;
 
@@ -24,65 +26,59 @@ public class ServletEnvironment {
     /**
      * Add a servlet instance.
      *
-     * @param servlet    the servlet instance
-     * @param urlPattern the URL pattern for requests that should be handled by {@code servlet}
-     * @return a {@link ServletBuilder} instance allowing for further
+     * @param name    the servlet's name
+     * @param servlet the servlet instance
+     * @return a {@link javax.servlet.ServletRegistration.Dynamic} instance allowing for further
      *         configuration
      */
-    public ServletBuilder addServlet(Servlet servlet,
-                                     String urlPattern) {
+    public ServletRegistration.Dynamic addServlet(String name, Servlet servlet) {
         final ServletHolder holder = new NonblockingServletHolder(checkNotNull(servlet));
-        final ServletBuilder builder = new ServletBuilder(holder, handler);
-        builder.addUrlPattern(checkNotNull(urlPattern));
-        return builder;
+        holder.setName(name);
+        handler.getServletHandler().addServlet(holder);
+        return holder.getRegistration();
     }
 
     /**
      * Add a servlet class.
      *
-     * @param klass      the servlet class
-     * @param urlPattern the URL pattern for requests that should be handled by instances of {@code
-     *                   klass}
-     * @return a {@link ServletBuilder} instance allowing for further configuration
+     * @param name  the servlet's name
+     * @param klass the servlet class
+     * @return a {@link javax.servlet.ServletRegistration.Dynamic} instance allowing for further configuration
      */
-    public ServletBuilder addServlet(Class<? extends Servlet> klass,
-                                     String urlPattern) {
+    public ServletRegistration.Dynamic addServlet(String name, Class<? extends Servlet> klass) {
         final ServletHolder holder = new ServletHolder(checkNotNull(klass));
-        final ServletBuilder builder = new ServletBuilder(holder, handler);
-        builder.addUrlPattern(checkNotNull(urlPattern));
-        return builder;
+        holder.setName(name);
+        handler.getServletHandler().addServlet(holder);
+        return holder.getRegistration();
     }
 
     /**
      * Add a filter instance.
      *
-     * @param filter     the filter instance
-     * @param urlPattern the URL pattern for requests that should be handled by {@code filter}
-     * @return a {@link FilterBuilder} instance allowing for further
+     * @param name   the filter's name
+     * @param filter the filter instance
+     * @return a {@link FilterRegistration.Dynamic} instance allowing for further
      *         configuration
      */
-    public FilterBuilder addFilter(Filter filter,
-                                   String urlPattern) {
+    public FilterRegistration.Dynamic addFilter(String name, Filter filter) {
         final FilterHolder holder = new FilterHolder(checkNotNull(filter));
-        final FilterBuilder builder = new FilterBuilder(holder, handler);
-        builder.addUrlPattern(checkNotNull(urlPattern));
-        return builder;
+        holder.setName(name);
+        handler.getServletHandler().addFilter(holder);
+        return holder.getRegistration();
     }
 
     /**
      * Add a filter class.
      *
-     * @param klass      the filter class
-     * @param urlPattern the URL pattern for requests that should be handled by instances of {@code
-     *                   klass}
-     * @return a {@link FilterBuilder} instance allowing for further configuration
+     * @param name  the filter's name
+     * @param klass the filter class
+     * @return a {@link FilterRegistration.Dynamic} instance allowing for further configuration
      */
-    public FilterBuilder addFilter(Class<? extends Filter> klass,
-                                   String urlPattern) {
+    public FilterRegistration.Dynamic addFilter(String name, Class<? extends Filter> klass) {
         final FilterHolder holder = new FilterHolder(checkNotNull(klass));
-        final FilterBuilder filterConfig = new FilterBuilder(holder, handler);
-        filterConfig.addUrlPattern(checkNotNull(urlPattern));
-        return filterConfig;
+        holder.setName(name);
+        handler.getServletHandler().addFilter(holder);
+        return holder.getRegistration();
     }
 
     /**

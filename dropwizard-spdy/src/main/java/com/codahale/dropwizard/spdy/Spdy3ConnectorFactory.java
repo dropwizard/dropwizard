@@ -21,20 +21,44 @@ import javax.validation.constraints.NotNull;
 
 import static com.codahale.metrics.MetricRegistry.name;
 
+/**
+ * Builds SPDY v3 connectors.
+ * <p/>
+ * <b>Configuration Parameters:</b>
+ * <table>
+ *     <tr>
+ *         <td>Name</td>
+ *         <td>Default</td>
+ *         <td>Description</td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code pushStrategy}</td>
+ *         <td>(none)</td>
+ *         <td>
+ *             The {@link PushStrategyFactory push strategy} to use for server-initiated SPDY
+ *             pushes.
+ *         </td>
+ *     </tr>
+ * </table>
+ * <p/>
+ * For more configuration parameters, see {@link HttpsConnectorFactory}.
+ *
+ * @see HttpsConnectorFactory
+ */
 @JsonTypeName("spdy3")
 public class Spdy3ConnectorFactory extends HttpsConnectorFactory {
     @Valid
     @NotNull
-    private PushStrategyFactory pushStrategyFactory = new NonePushStrategyFactory();
+    private PushStrategyFactory pushStrategy = new NonePushStrategyFactory();
 
-    @JsonProperty("pushStrategy")
-    public PushStrategyFactory getPushStrategyFactory() {
-        return pushStrategyFactory;
+    @JsonProperty
+    public PushStrategyFactory getPushStrategy() {
+        return pushStrategy;
     }
 
-    @JsonProperty("pushStrategy")
-    public void setPushStrategyFactory(PushStrategyFactory pushStrategyFactory) {
-        this.pushStrategyFactory = pushStrategyFactory;
+    @JsonProperty
+    public void setPushStrategy(PushStrategyFactory pushStrategy) {
+        this.pushStrategy = pushStrategy;
     }
 
     @Override
@@ -48,7 +72,7 @@ public class Spdy3ConnectorFactory extends HttpsConnectorFactory {
         final SslContextFactory sslContextFactory = buildSslContextFactory();
         server.addBean(sslContextFactory);
 
-        final PushStrategy pushStrategy = pushStrategyFactory.build();
+        final PushStrategy pushStrategy = this.pushStrategy.build();
         final HTTPSPDYServerConnectionFactory spdy3Factory =
                 new HTTPSPDYServerConnectionFactory(SPDY.V3, httpConfig, pushStrategy);
 

@@ -29,6 +29,8 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ErrorHandler;
 import org.eclipse.jetty.server.handler.RequestLogHandler;
 import org.eclipse.jetty.servlet.FilterHolder;
+import org.eclipse.jetty.setuid.RLimit;
+import org.eclipse.jetty.setuid.SetUIDListener;
 import org.eclipse.jetty.util.BlockingArrayQueue;
 import org.eclipse.jetty.util.thread.ThreadPool;
 import org.slf4j.Logger;
@@ -87,6 +89,70 @@ import java.util.regex.Pattern;
  *         <td>1 minute</td>
  *         <td>The amount of time a worker thread can be idle before being stopped.</td>
  *     </tr>
+ *     <tr>
+ *         <td>{@code nofileSoftLimit}</td>
+ *         <td>(none)</td>
+ *         <td>
+ *             The number of open file descriptors before a soft error is issued. <b>Requires Jetty's
+ *             {@code libsetuid.so} on {@code java.library.path}.</b>
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code nofileHardLimit}</td>
+ *         <td>(none)</td>
+ *         <td>
+ *             The number of open file descriptors before a hard error is issued. <b>Requires Jetty's
+ *             {@code libsetuid.so} on {@code java.library.path}.</b>
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code gid}</td>
+ *         <td>(none)</td>
+ *         <td>
+ *             The group ID to switch to once the connectors have started. <b>Requires Jetty's
+ *             {@code libsetuid.so} on {@code java.library.path}.</b>
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code uid}</td>
+ *         <td>(none)</td>
+ *         <td>
+ *             The user ID to switch to once the connectors have started. <b>Requires Jetty's
+ *             {@code libsetuid.so} on {@code java.library.path}.</b>
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code user}</td>
+ *         <td>(none)</td>
+ *         <td>
+ *             The username to switch to once the connectors have started. <b>Requires Jetty's
+ *             {@code libsetuid.so} on {@code java.library.path}.</b>
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code group}</td>
+ *         <td>(none)</td>
+ *         <td>
+ *             The group to switch to once the connectors have started. <b>Requires Jetty's
+ *             {@code libsetuid.so} on {@code java.library.path}.</b>
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code umask}</td>
+ *         <td>(none)</td>
+ *         <td>
+ *             The umask to switch to once the connectors have started. <b>Requires Jetty's
+ *             {@code libsetuid.so} on {@code java.library.path}.</b>
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code startsAsRoot}</td>
+ *         <td>(none)</td>
+ *         <td>
+ *             Whether or not the Dropwizard application is started as a root user. <b>Requires
+ *             Jetty's {@code libsetuid.so} on {@code java.library.path}.</b>
+ *         </td>
+ *     </tr>
  * </table>
  *
  * @see DefaultServerFactory
@@ -114,6 +180,24 @@ public abstract class AbstractServerFactory implements ServerFactory {
 
     @MinDuration(1)
     private Duration idleThreadTimeout = Duration.minutes(1);
+
+    @Min(1)
+    private Integer nofileSoftLimit;
+
+    @Min(1)
+    private Integer nofileHardLimit;
+
+    private Integer gid;
+
+    private Integer uid;
+
+    private String user;
+
+    private String group;
+
+    private String umask;
+
+    private Boolean startsAsRoot;
 
     @JsonIgnore
     @ValidationMethod(message = "must have a smaller minThreads than maxThreads")
@@ -181,6 +265,86 @@ public abstract class AbstractServerFactory implements ServerFactory {
         this.idleThreadTimeout = idleThreadTimeout;
     }
 
+    @JsonProperty
+    public Integer getNofileSoftLimit() {
+        return nofileSoftLimit;
+    }
+
+    @JsonProperty
+    public void setNofileSoftLimit(Integer nofileSoftLimit) {
+        this.nofileSoftLimit = nofileSoftLimit;
+    }
+
+    @JsonProperty
+    public Integer getNofileHardLimit() {
+        return nofileHardLimit;
+    }
+
+    @JsonProperty
+    public void setNofileHardLimit(Integer nofileHardLimit) {
+        this.nofileHardLimit = nofileHardLimit;
+    }
+
+    @JsonProperty
+    public Integer getGid() {
+        return gid;
+    }
+
+    @JsonProperty
+    public void setGid(Integer gid) {
+        this.gid = gid;
+    }
+
+    @JsonProperty
+    public Integer getUid() {
+        return uid;
+    }
+
+    @JsonProperty
+    public void setUid(Integer uid) {
+        this.uid = uid;
+    }
+
+    @JsonProperty
+    public String getUser() {
+        return user;
+    }
+
+    @JsonProperty
+    public void setUser(String user) {
+        this.user = user;
+    }
+
+    @JsonProperty
+    public String getGroup() {
+        return group;
+    }
+
+    @JsonProperty
+    public void setGroup(String group) {
+        this.group = group;
+    }
+
+    @JsonProperty
+    public String getUmask() {
+        return umask;
+    }
+
+    @JsonProperty
+    public void setUmask(String umask) {
+        this.umask = umask;
+    }
+
+    @JsonProperty
+    public Boolean getStartsAsRoot() {
+        return startsAsRoot;
+    }
+
+    @JsonProperty
+    public void setStartsAsRoot(Boolean startsAsRoot) {
+        this.startsAsRoot = startsAsRoot;
+    }
+
     protected Handler createAdminServlet(Server server,
                                          MutableServletContextHandler handler,
                                          MetricRegistry metrics,
@@ -215,7 +379,7 @@ public abstract class AbstractServerFactory implements ServerFactory {
             handler.addFilter(holder, "/*", EnumSet.allOf(DispatcherType.class));
         }
         if (jerseyContainer != null) {
-            jersey.addProvider(new JacksonMessageBodyProvider(objectMapper, validator));
+            jersey.register(new JacksonMessageBodyProvider(objectMapper, validator));
             handler.addServlet(new NonblockingServletHolder(jerseyContainer), jersey.getUrlPattern());
         }
         final InstrumentedHandler instrumented = new InstrumentedHandler(metricRegistry);
@@ -235,12 +399,56 @@ public abstract class AbstractServerFactory implements ServerFactory {
     protected Server buildServer(LifecycleEnvironment lifecycle,
                                  ThreadPool threadPool) {
         final Server server = new Server(threadPool);
+        server.addLifeCycleListener(buildSetUIDListener());
         lifecycle.attach(server);
         final ErrorHandler errorHandler = new ErrorHandler();
         errorHandler.setShowStacks(false);
         server.addBean(errorHandler);
         server.setStopAtShutdown(true);
         return server;
+    }
+
+    protected SetUIDListener buildSetUIDListener() {
+        final SetUIDListener listener = new SetUIDListener();
+
+        if (startsAsRoot != null) {
+            listener.setStartServerAsPrivileged(startsAsRoot);
+        }
+
+        if (gid != null) {
+            listener.setGid(gid);
+        }
+
+        if (uid != null) {
+            listener.setUid(uid);
+        }
+
+        if (user != null) {
+            listener.setUsername(user);
+        }
+
+        if (group != null) {
+            listener.setGroupname(group);
+        }
+
+        if (nofileHardLimit != null || nofileSoftLimit != null) {
+            final RLimit rlimit = new RLimit();
+            if (nofileHardLimit != null) {
+                rlimit.setHard(nofileHardLimit);
+            }
+
+            if (nofileSoftLimit != null) {
+                rlimit.setSoft(nofileSoftLimit);
+            }
+
+            listener.setRLimitNoFiles(rlimit);
+        }
+
+        if (umask != null) {
+            listener.setUmaskOctal(umask);
+        }
+
+        return listener;
     }
 
     protected Handler addRequestLog(Handler handler, String name) {

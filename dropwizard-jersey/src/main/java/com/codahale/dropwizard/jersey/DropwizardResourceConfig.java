@@ -64,6 +64,14 @@ public class DropwizardResourceConfig extends ScanningResourceConfig {
         logEndpoints();
     }
 
+    public String getUrlPattern() {
+        return urlPattern;
+    }
+
+    public void setUrlPattern(String urlPattern) {
+        this.urlPattern = urlPattern;
+    }
+
     private void logResources() {
         final ImmutableSet.Builder<String> builder = ImmutableSet.builder();
 
@@ -131,7 +139,7 @@ public class DropwizardResourceConfig extends ScanningResourceConfig {
         }
 
         for (Class<?> klass : builder.build()) {
-            List<String> endpoints = Lists.newArrayList();
+            final List<String> endpoints = Lists.newArrayList();
             populateEndpoints(endpoints, rootPath, klass, false);
 
             for (String line : Ordering.natural().sortedCopy(endpoints)) {
@@ -139,15 +147,14 @@ public class DropwizardResourceConfig extends ScanningResourceConfig {
             }
         }
         for (Map.Entry<String, Object> entry : getExplicitRootResources().entrySet()) {
-            Class<?> klass;
-            if (entry.getValue() instanceof Class) {
-                klass = (Class<?>)entry.getValue();
-            } else {
-                klass = entry.getValue().getClass();
-            }
-            AbstractResource resource = new AbstractResource(entry.getKey(), IntrospectionModeller.createResource(klass));
+            final Class<?> klass  = entry.getValue() instanceof Class ?
+                    (Class<?>) entry.getValue() :
+                    entry.getValue().getClass();
+            final AbstractResource resource =
+                    new AbstractResource(entry.getKey(),
+                                         IntrospectionModeller.createResource(klass));
 
-            List<String> endpoints = Lists.newArrayList();
+            final List<String> endpoints = Lists.newArrayList();
             populateEndpoints(endpoints, rootPath, klass, false, resource);
 
             for (String line : Ordering.natural().sortedCopy(endpoints)) {
@@ -174,12 +181,12 @@ public class DropwizardResourceConfig extends ScanningResourceConfig {
         }
 
         for (AbstractSubResourceMethod method : resource.getSubResourceMethods()) {
-            String path = normalizePath(basePath, method.getPath().getValue());
+            final String path = normalizePath(basePath, method.getPath().getValue());
             endpoints.add(formatEndpoint(method.getHttpMethod(), path, klass));
         }
 
         for (AbstractSubResourceLocator locator : resource.getSubResourceLocators()) {
-            String path = normalizePath(basePath, locator.getPath().getValue());
+            final String path = normalizePath(basePath, locator.getPath().getValue());
             populateEndpoints(endpoints, path, locator.getMethod().getReturnType(), true);
         }
     }
@@ -189,28 +196,9 @@ public class DropwizardResourceConfig extends ScanningResourceConfig {
     }
 
     private String normalizePath(String basePath, String path) {
-        final String result;
         if (basePath.endsWith("/")) {
-            if (path.startsWith("/")) {
-                result = basePath + path.substring(1);
-            } else {
-                result = basePath + path;
-            }
-        } else {
-            if (path.startsWith("/")) {
-                result = basePath + path;
-            } else {
-                result = basePath + "/" + path;
-            }
+            return path.startsWith("/") ? basePath + path.substring(1) : basePath + path;
         }
-        return result;
-    }
-
-    public String getUrlPattern() {
-        return urlPattern;
-    }
-
-    public void setUrlPattern(String urlPattern) {
-        this.urlPattern = urlPattern;
+        return path.startsWith("/") ? basePath + path : basePath + "/" + path;
     }
 }

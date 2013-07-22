@@ -9,6 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
+import javax.servlet.ServletRegistration;
 import java.net.URL;
 
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -99,12 +100,16 @@ public class AssetsBundleTest {
     }
 
     private void runBundle(AssetsBundle bundle) {
+        final ServletRegistration.Dynamic registration = mock(ServletRegistration.Dynamic.class);
+        when(servletEnvironment.addServlet(anyString(), any(AssetServlet.class))).thenReturn(registration);
+
         bundle.run(environment);
 
         final ArgumentCaptor<AssetServlet> servletCaptor = ArgumentCaptor.forClass(AssetServlet.class);
         final ArgumentCaptor<String> pathCaptor = ArgumentCaptor.forClass(String.class);
 
-        verify(servletEnvironment).addServlet(servletCaptor.capture(), pathCaptor.capture());
+        verify(servletEnvironment).addServlet(eq("assets"), servletCaptor.capture());
+        verify(registration).addMapping(pathCaptor.capture());
 
         this.servlet = servletCaptor.getValue();
         this.servletPath = pathCaptor.getValue();

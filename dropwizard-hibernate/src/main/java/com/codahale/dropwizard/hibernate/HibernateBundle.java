@@ -36,9 +36,10 @@ public abstract class HibernateBundle<T extends Configuration> implements Config
     public final void run(T configuration, Environment environment) throws Exception {
         final DataSourceFactory dbConfig = getDataSourceFactory(configuration);
         this.sessionFactory = sessionFactoryFactory.build(this, environment, dbConfig, entities);
-        environment.jersey().addProvider(new UnitOfWorkResourceMethodDispatchAdapter(sessionFactory));
-        environment.admin().addHealthCheck("hibernate", new SessionFactoryHealthCheck(sessionFactory,
-                                                                                      dbConfig.getValidationQuery()));
+        environment.jersey().register(new UnitOfWorkResourceMethodDispatchAdapter(sessionFactory));
+        environment.healthChecks().register("hibernate",
+                                            new SessionFactoryHealthCheck(sessionFactory,
+                                                                          dbConfig.getValidationQuery()));
     }
 
     public SessionFactory getSessionFactory() {

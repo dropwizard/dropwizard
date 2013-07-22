@@ -5,7 +5,6 @@ import com.codahale.dropwizard.jetty.setup.ServletEnvironment;
 import com.codahale.dropwizard.servlets.tasks.GarbageCollectionTask;
 import com.codahale.dropwizard.servlets.tasks.Task;
 import com.codahale.dropwizard.servlets.tasks.TaskServlet;
-import com.codahale.metrics.health.HealthCheck;
 import com.codahale.metrics.health.HealthCheckRegistry;
 import com.codahale.metrics.health.jvm.ThreadDeadlockHealthCheck;
 import org.eclipse.jetty.util.component.AbstractLifeCycle;
@@ -37,7 +36,7 @@ public class AdminEnvironment extends ServletEnvironment {
         this.healthChecks.register("deadlocks", new ThreadDeadlockHealthCheck());
         this.tasks = new TaskServlet();
         tasks.add(new GarbageCollectionTask());
-        addServlet(tasks, "/tasks/*");
+        addServlet("tasks", tasks).addMapping("/tasks/*");
         handler.addLifeCycleListener(new AbstractLifeCycle.AbstractLifeCycleListener() {
             @Override
             public void lifeCycleStarting(LifeCycle event) {
@@ -54,15 +53,6 @@ public class AdminEnvironment extends ServletEnvironment {
      */
     public void addTask(Task task) {
         tasks.add(checkNotNull(task));
-    }
-
-    /**
-     * Adds the given health check to the set of health checks exposed via the admin interface.
-     *
-     * @param healthCheck a health check
-     */
-    public void addHealthCheck(String name, HealthCheck healthCheck) {
-        healthChecks.register(checkNotNull(name), checkNotNull(healthCheck));
     }
 
     private void logTasks() {

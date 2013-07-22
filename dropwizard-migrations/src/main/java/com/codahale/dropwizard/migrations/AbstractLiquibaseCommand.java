@@ -2,12 +2,18 @@ package com.codahale.dropwizard.migrations;
 
 import com.codahale.dropwizard.Configuration;
 import com.codahale.dropwizard.cli.ConfiguredCommand;
-import com.codahale.dropwizard.db.DatabaseConfiguration;
 import com.codahale.dropwizard.db.DataSourceFactory;
+import com.codahale.dropwizard.db.DatabaseConfiguration;
+import com.codahale.dropwizard.db.ManagedDataSource;
 import com.codahale.dropwizard.setup.Bootstrap;
+import com.codahale.metrics.MetricRegistry;
 import liquibase.Liquibase;
+import liquibase.exception.LiquibaseException;
 import liquibase.exception.ValidationFailedException;
 import net.sourceforge.argparse4j.inf.Namespace;
+import net.sourceforge.argparse4j.inf.Subparser;
+
+import java.sql.SQLException;
 
 public abstract class AbstractLiquibaseCommand<T extends Configuration> extends ConfiguredCommand<T> {
     private final DatabaseConfiguration<T> strategy;
@@ -28,6 +34,15 @@ public abstract class AbstractLiquibaseCommand<T extends Configuration> extends 
     }
 
     @Override
+    public void configure(Subparser subparser) {
+        super.configure(subparser);
+
+        subparser.addArgument("--migrations")
+                 .dest("migrations-file")
+                 .help("the file containing the Liquibase migrations for the application");
+    }
+
+    @Override
     @SuppressWarnings("UseOfSystemOutOrSystemErr")
     protected void run(Bootstrap<T> bootstrap, Namespace namespace, T configuration) throws Exception {
         final DataSourceFactory dbConfig = strategy.getDataSourceFactory(configuration);
@@ -35,18 +50,22 @@ public abstract class AbstractLiquibaseCommand<T extends Configuration> extends 
         dbConfig.setMinSize(1);
         dbConfig.setInitialSize(1);
 
-        ManagedLiquibase managedLiquibase = null;
-        try {
-            managedLiquibase = new ManagedLiquibase(dbConfig);
-            run(namespace, managedLiquibase);
+        try (CloseableLiquibase liquibase = openLiquibase(dbConfig, namespace)) {
+            run(namespace, liquibase);
         } catch (ValidationFailedException e) {
             e.printDescriptiveError(System.err);
             throw e;
-        } finally {
-            if (managedLiquibase != null) {
-                managedLiquibase.stop();
-            }
         }
+    }
+
+    private CloseableLiquibase openLiquibase(DataSourceFactory dataSourceFactory,
+                                           Namespace namespace) throws ClassNotFoundException, SQLException, LiquibaseException {
+        final ManagedDataSource dataSource = dataSourceFactory.build(new MetricRegistry(), "liquibase");
+        final String migrationsFile = (String) namespace.get("migrations-file");
+        if (migrationsFile == null) {
+            return new CloseableLiquibase(dataSource);
+        }
+        return new CloseableLiquibase(dataSource, migrationsFile);
     }
 
     protected abstract void run(Namespace namespace, Liquibase liquibase) throws Exception;
