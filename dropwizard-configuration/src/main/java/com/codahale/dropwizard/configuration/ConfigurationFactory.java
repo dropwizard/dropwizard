@@ -1,12 +1,17 @@
 package com.codahale.dropwizard.configuration;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
+import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TreeTraversingParser;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.fasterxml.jackson.dataformat.yaml.snakeyaml.error.MarkedYAMLException;
+import com.fasterxml.jackson.dataformat.yaml.snakeyaml.error.YAMLException;
 import com.google.common.base.Splitter;
 
 import javax.validation.ConstraintViolation;
@@ -14,9 +19,12 @@ import javax.validation.Validator;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.Collection;
+import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -61,12 +69,23 @@ public class ConfigurationFactory<T> {
      * @param path     the path of the configuration file
      * @return a validated configuration object
      * @throws IOException            if there is an error reading the file
-     * @throws ConfigurationException if there is an error validating the file
+     * @throws ConfigurationException if there is an error parsing or validating the file
      */
     public T build(ConfigurationSourceProvider provider, String path) throws IOException, ConfigurationException {
         try (InputStream input = provider.open(checkNotNull(path))) {
             final JsonNode node = mapper.readTree(yamlFactory.createParser(input));
             return build(node, path);
+        } catch (YAMLException e) {
+            ConfigurationParsingException.Builder builder = ConfigurationParsingException
+                    .builder("Malformed YAML")
+                    .setCause(e)
+                    .setDetail(e.getMessage());
+
+            if (e instanceof MarkedYAMLException) {
+                builder.setLocation(((MarkedYAMLException) e).getProblemMark());
+            }
+
+            throw builder.build(path);
         }
     }
 
@@ -76,7 +95,7 @@ public class ConfigurationFactory<T> {
      * @param file the path of the configuration file
      * @return a validated configuration object
      * @throws IOException            if there is an error reading the file
-     * @throws ConfigurationException if there is an error validating the file
+     * @throws ConfigurationException if there is an error parsing or validating the file
      */
     public T build(File file) throws IOException, ConfigurationException {
         return build(new FileConfigurationSourceProvider(), file.toString());
@@ -87,7 +106,7 @@ public class ConfigurationFactory<T> {
      *
      * @return a validated configuration object
      * @throws IOException            if there is an error reading the file
-     * @throws ConfigurationException if there is an error validating the file
+     * @throws ConfigurationException if there is an error parsing or validating the file
      */
     public T build() throws IOException, ConfigurationException {
         return build(JsonNodeFactory.instance.objectNode(), "default configuration");
@@ -101,9 +120,41 @@ public class ConfigurationFactory<T> {
                 addOverride(node, configName, System.getProperty(prefName));
             }
         }
-        final T config = mapper.readValue(new TreeTraversingParser(node), klass);
-        validate(path, config);
-        return config;
+
+        try {
+            final T config = mapper.readValue(new TreeTraversingParser(node), klass);
+            validate(path, config);
+            return config;
+        } catch (UnrecognizedPropertyException e) {
+            Collection<Object> knownProperties = e.getKnownPropertyIds();
+            List<String> properties = new ArrayList<>(knownProperties.size());
+            for (Object property : knownProperties) {
+                properties.add(property.toString());
+            }
+            throw ConfigurationParsingException.builder("Unrecognized field")
+                    .setFieldPath(e.getPath())
+                    .setLocation(e.getLocation())
+                    .addSuggestions(properties)
+                    .setSuggestionBase(e.getUnrecognizedPropertyName())
+                    .setCause(e)
+                    .build(path);
+        } catch (InvalidFormatException e) {
+            String sourceType = e.getValue().getClass().getSimpleName();
+            String targetType = e.getTargetType().getSimpleName();
+            throw ConfigurationParsingException.builder("Incorrect type of value")
+                    .setDetail("is of type: " + sourceType + ", expected: " + targetType)
+                    .setLocation(e.getLocation())
+                    .setFieldPath(e.getPath())
+                    .setCause(e)
+                    .build(path);
+        } catch (JsonMappingException e) {
+            throw ConfigurationParsingException.builder("Failed to parse configuration")
+                    .setDetail(e.getMessage())
+                    .setFieldPath(e.getPath())
+                    .setLocation(e.getLocation())
+                    .setCause(e)
+                    .build(path);
+        }
     }
 
     private void addOverride(JsonNode root, String name, String value) {
@@ -129,10 +180,10 @@ public class ConfigurationFactory<T> {
         }
     }
 
-    private void validate(String path, T config) throws ConfigurationException {
+    private void validate(String path, T config) throws ConfigurationValidationException {
         final Set<ConstraintViolation<T>> violations = validator.validate(config);
         if (!violations.isEmpty()) {
-            throw new ConfigurationException(path, violations);
+            throw new ConfigurationValidationException(path, violations);
         }
     }
 }
