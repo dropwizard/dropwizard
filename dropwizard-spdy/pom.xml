@@ -22,7 +22,6 @@
         <dependency>
             <groupId>org.eclipse.jetty.spdy</groupId>
             <artifactId>spdy-http-server</artifactId>
-            <version>${jetty.version}</version>
         </dependency>
         <!-- this needs to be on your JVM's bootpath for SPDY to work -->
         <!-- -Xbootclasspath/p:/blah/npn-boot-1.1.5.v20130313.jar -->

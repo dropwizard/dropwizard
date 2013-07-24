@@ -22,7 +22,6 @@
         <dependency>
             <groupId>com.codahale.metrics</groupId>
             <artifactId>metrics-ganglia</artifactId>
-            <version>${metrics3.version}</version>
         </dependency>
     </dependencies>
 </project>
