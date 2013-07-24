@@ -1,11 +1,14 @@
 package com.codahale.dropwizard.cli;
  
+import com.codahale.dropwizard.lifecycle.setup.LifecycleEnvironment;
 import com.codahale.dropwizard.server.ServerApplication;
 import com.codahale.dropwizard.server.ServerCommand;
 import com.codahale.dropwizard.server.ServerConfiguration;
 import com.codahale.dropwizard.server.ServerEnvironment;
 import com.codahale.dropwizard.server.ServerFactory;
 import com.codahale.dropwizard.setup.Bootstrap;
+import com.codahale.dropwizard.setup.Environment;
+
 import net.sourceforge.argparse4j.inf.Namespace;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.component.AbstractLifeCycle;
@@ -34,7 +37,7 @@ public class ServerCommandTest {
     private final ServiceCommand<ServerConfiguration> command = new ServerCommand<ServerConfiguration>(application);
     private final Server server = new Server(0);
 
-    private final ServerEnvironment environment = mock(ServerEnvironment.class);
+    private final Environment environment = mock(Environment.class);
     private final Namespace namespace = mock(Namespace.class);
     private final ServerFactory serverFactory = mock(ServerFactory.class);
     private final ServerConfiguration configuration = mock(ServerConfiguration.class);
@@ -42,6 +45,7 @@ public class ServerCommandTest {
     @Before
     public void setUp() throws Exception {
         when(serverFactory.build(environment)).thenReturn(server);
+        when(environment.lifecycle()).thenReturn(new LifecycleEnvironment());
         when(configuration.getServerFactory()).thenReturn(serverFactory);
     }
 
