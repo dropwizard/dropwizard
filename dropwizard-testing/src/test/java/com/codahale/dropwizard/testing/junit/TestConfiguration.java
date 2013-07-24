@@ -1,6 +1,6 @@
 package com.codahale.dropwizard.testing.junit;
 
-import com.codahale.dropwizard.ServerConfiguration;
+import com.codahale.dropwizard.server.ServerConfiguration;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.validator.constraints.NotEmpty;
 

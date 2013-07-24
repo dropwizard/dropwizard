@@ -1,6 +1,5 @@
 package com.codahale.dropwizard.server;
 
-import com.codahale.dropwizard.ServerFactory;
 import com.codahale.dropwizard.jersey.jackson.JacksonMessageBodyProvider;
 import com.codahale.dropwizard.jersey.setup.JerseyEnvironment;
 import com.codahale.dropwizard.jetty.GzipFilterFactory;
@@ -25,9 +24,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
-import com.google.common.util.concurrent.AbstractIdleService;
-import com.google.common.util.concurrent.MoreExecutors;
-import com.google.common.util.concurrent.Service;
 import com.sun.jersey.spi.container.servlet.ServletContainer;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
@@ -50,7 +46,6 @@ import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.util.EnumSet;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.Executor;
 import java.util.regex.Pattern;
 
 // TODO: 5/15/13 <coda> -- add tests for AbstractServerFactory
@@ -402,12 +397,9 @@ public abstract class AbstractServerFactory implements ServerFactory {
         return threadPool;
     }
     
-    public Service build(Environment environment)
+    public Server build(Environment environment)
     {
-        final ServerEnvironment serverEnv = (ServerEnvironment)environment;
-        final Service service = serviceFromServer(build(serverEnv));
-        serverEnv.lifecycle().attach(service);
-        return service;
+        return build((ServerEnvironment)environment);
     }
     
     protected abstract Server build(ServerEnvironment environment);
@@ -487,48 +479,5 @@ public abstract class AbstractServerFactory implements ServerFactory {
             // don't display the banner if there isn't one
             LOGGER.info("Starting {}", name);
         }
-    }
-
-    public static interface JettyService extends Service
-    {
-        public Server getServer();
-    }
-    
-    private static final class JettyServiceImpl extends AbstractIdleService implements JettyService
-    {
-        private final Server server;
-
-        private JettyServiceImpl(Server server)
-        {
-            this.server = server;
-        }
-        
-        @Override
-        protected Executor executor()
-        {
-            return MoreExecutors.sameThreadExecutor();
-        }
-        
-        @Override
-        protected void startUp() throws Exception
-        {
-            this.server.start();
-        }
-
-        @Override
-        protected void shutDown() throws Exception
-        {
-            this.server.stop();
-        }
-        
-        public Server getServer()
-        {
-            return server;
-        }
-    }
-    
-    public static JettyService serviceFromServer(final Server server)
-    {
-        return new JettyServiceImpl(server);
     }
 }

@@ -1,9 +1,11 @@
-package com.codahale.dropwizard;
+package com.codahale.dropwizard.server;
 
+import com.codahale.dropwizard.Configuration;
 import com.codahale.dropwizard.jackson.Jackson; 
 import com.codahale.dropwizard.logging.ConsoleAppenderFactory;
 import com.codahale.dropwizard.logging.FileAppenderFactory;
 import com.codahale.dropwizard.logging.SyslogAppenderFactory;
+import com.codahale.dropwizard.server.ServerConfiguration;
 import com.fasterxml.jackson.databind.ObjectMapper; 
 import org.junit.Test;
 

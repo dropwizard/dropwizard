@@ -31,17 +31,22 @@ public abstract class EnvironmentCommand<T extends Configuration> extends Config
 
     @Override
     protected final void run(Bootstrap<T> bootstrap, Namespace namespace, T configuration) throws Exception {
-        final Environment environment = new Environment(bootstrap.getApplication().getName(),
-                                                        bootstrap.getObjectMapper(),
-                                                        Validation.buildDefaultValidatorFactory()
-                                                                  .getValidator(),
-                                                        bootstrap.getMetricRegistry(),
-                                                        bootstrap.getClassLoader());
+        final Environment environment = createEnvironment(bootstrap);
         configuration.getMetricsFactory().configure(environment.lifecycle(),
                                                     bootstrap.getMetricRegistry());
         bootstrap.run(configuration, environment);
         application.run(configuration, environment);
         run(environment, namespace, configuration);
+    }
+
+    protected Environment createEnvironment( Bootstrap<T> bootstrap )
+    {
+        return new Environment(bootstrap.getApplication().getName(),
+                                                        bootstrap.getObjectMapper(),
+                                                        Validation.buildDefaultValidatorFactory()
+                                                                  .getValidator(),
+                                                        bootstrap.getMetricRegistry(),
+                                                        bootstrap.getClassLoader());
     }
 
     /**

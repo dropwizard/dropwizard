@@ -1,15 +1,15 @@
-package com.codahale.dropwizard;
+package com.codahale.dropwizard.server;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-
+import com.codahale.dropwizard.Configuration;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ServerConfiguration extends Configuration
 {
     @Valid
     @NotNull
-    private ServerFactory server = new NopServerFactory();
+    private ServerFactory server = new DefaultServerFactory();
 
     /**
      * Returns the server-specific section of the configuration file.

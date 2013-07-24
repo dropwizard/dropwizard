@@ -1,7 +1,6 @@
 package com.codahale.dropwizard.server;
 
 import com.codahale.dropwizard.Application;
-import com.codahale.dropwizard.ServerConfiguration;
 import com.codahale.dropwizard.setup.Bootstrap;
 import com.codahale.dropwizard.setup.Environment;
 

@@ -1,7 +1,7 @@
 package com.example.helloworld;
 
-import com.codahale.dropwizard.ServerConfiguration;
 import com.codahale.dropwizard.db.DataSourceFactory;
+import com.codahale.dropwizard.server.ServerConfiguration;
 import com.example.helloworld.core.Template;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.validator.constraints.NotEmpty;

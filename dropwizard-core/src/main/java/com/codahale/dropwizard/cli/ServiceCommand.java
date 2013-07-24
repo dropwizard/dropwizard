@@ -43,6 +43,7 @@ public abstract class ServiceCommand<T extends Configuration> extends Environmen
     @Override
     protected final void run(Environment environment, Namespace namespace, T configuration) throws Exception {        
         final Service service = buildService(environment, configuration);
+        environment.lifecycle().attach(service);
         
         try {
             service.startAndWait();

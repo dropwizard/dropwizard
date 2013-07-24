@@ -1,6 +1,7 @@
 package com.codahale.dropwizard;
 
 import com.codahale.dropwizard.metrics.MetricsFactory;
+import com.codahale.dropwizard.setup.Environment;
 import com.codahale.dropwizard.logging.LoggingFactory;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Objects;

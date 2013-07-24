@@ -1,11 +1,10 @@
 package com.codahale.dropwizard.cli;
-
-import com.codahale.dropwizard.ServerConfiguration;
-import com.codahale.dropwizard.ServerFactory;
-import com.codahale.dropwizard.server.AbstractServerFactory;
+ 
 import com.codahale.dropwizard.server.ServerApplication;
 import com.codahale.dropwizard.server.ServerCommand;
+import com.codahale.dropwizard.server.ServerConfiguration;
 import com.codahale.dropwizard.server.ServerEnvironment;
+import com.codahale.dropwizard.server.ServerFactory;
 import com.codahale.dropwizard.setup.Bootstrap;
 import net.sourceforge.argparse4j.inf.Namespace;
 import org.eclipse.jetty.server.Server;
@@ -42,7 +41,7 @@ public class ServerCommandTest {
 
     @Before
     public void setUp() throws Exception {
-        when(serverFactory.build(environment)).thenReturn(AbstractServerFactory.serviceFromServer(server));
+        when(serverFactory.build(environment)).thenReturn(server);
         when(configuration.getServerFactory()).thenReturn(serverFactory);
     }
 

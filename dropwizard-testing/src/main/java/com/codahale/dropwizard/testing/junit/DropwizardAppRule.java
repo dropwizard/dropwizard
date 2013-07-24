@@ -11,11 +11,11 @@ import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
 import com.codahale.dropwizard.Application;
-import com.codahale.dropwizard.ServerConfiguration;
 import com.codahale.dropwizard.cli.ServiceCommand;
 import com.codahale.dropwizard.lifecycle.ServerLifecycleListener;
 import com.codahale.dropwizard.server.ServerCommand;
-import com.codahale.dropwizard.server.AbstractServerFactory.JettyService;
+import com.codahale.dropwizard.server.ServerCommand.JettyService;
+import com.codahale.dropwizard.server.ServerConfiguration;
 import com.codahale.dropwizard.setup.Bootstrap;
 import com.codahale.dropwizard.setup.Environment;
 import com.google.common.collect.ImmutableMap;

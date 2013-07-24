@@ -1,7 +1,7 @@
 package com.codahale.dropwizard.testing.junit;
 
-import com.codahale.dropwizard.ServerConfiguration;
 import com.codahale.dropwizard.server.ServerApplication;
+import com.codahale.dropwizard.server.ServerConfiguration;
 import com.codahale.dropwizard.server.ServerEnvironment;
 import com.codahale.dropwizard.setup.Bootstrap;
 import com.codahale.dropwizard.setup.Environment;
