@@ -1,0 +1,3 @@
+com.codahale.dropwizard.server.DefaultServerFactory
+com.codahale.dropwizard.server.SimpleServerFactory
+com.codahale.dropwizard.NopServerFactory
