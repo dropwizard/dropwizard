@@ -1,10 +1,10 @@
 package com.codahale.dropwizard.testing.junit;
 
-import com.codahale.dropwizard.Configuration;
+import com.codahale.dropwizard.ServerConfiguration;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.validator.constraints.NotEmpty;
 
-public class TestConfiguration extends Configuration {
+public class TestConfiguration extends ServerConfiguration {
 
     @JsonProperty
     @NotEmpty

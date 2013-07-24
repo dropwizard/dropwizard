@@ -1,6 +1,7 @@
 package com.codahale.dropwizard.setup;
 
 import com.codahale.dropwizard.jetty.MutableServletContextHandler;
+import com.codahale.dropwizard.server.AdminEnvironment;
 import com.codahale.dropwizard.servlets.tasks.Task;
 import com.codahale.metrics.health.HealthCheckRegistry;
 import com.google.common.collect.ImmutableMultimap;

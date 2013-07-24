@@ -1,9 +1,9 @@
 package com.codahale.dropwizard.assets;
 
-import com.codahale.dropwizard.Bundle;
+import com.codahale.dropwizard.server.ServerBundle;
+import com.codahale.dropwizard.server.ServerEnvironment;
 import com.codahale.dropwizard.servlets.assets.AssetServlet;
 import com.codahale.dropwizard.setup.Bootstrap;
-import com.codahale.dropwizard.setup.Environment;
 import com.google.common.base.Charsets;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -11,7 +11,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 /**
  * A bundle for serving static asset files from the classpath.
  */
-public class AssetsBundle implements Bundle {
+public class AssetsBundle extends ServerBundle {
     private static final String DEFAULT_INDEX_FILE = "index.htm";
     private static final String DEFAULT_PATH = "/assets";
 
@@ -81,7 +81,7 @@ public class AssetsBundle implements Bundle {
     }
 
     @Override
-    public void run(Environment environment) {
+    public void run(ServerEnvironment environment) {
         environment.servlets().addServlet("assets", createServlet()).addMapping(uriPath + '*');
     }
 

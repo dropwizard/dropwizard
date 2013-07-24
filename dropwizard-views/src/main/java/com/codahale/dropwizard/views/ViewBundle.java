@@ -1,8 +1,9 @@
 package com.codahale.dropwizard.views;
 
 import com.codahale.dropwizard.Bundle;
+import com.codahale.dropwizard.server.ServerBundle;
+import com.codahale.dropwizard.server.ServerEnvironment;
 import com.codahale.dropwizard.setup.Bootstrap;
-import com.codahale.dropwizard.setup.Environment;
 
 /**
  * A {@link Bundle} which enables the rendering of FreeMarker views by your application.
@@ -57,14 +58,14 @@ import com.codahale.dropwizard.setup.Environment;
  *
  * @see <a href="http://freemarker.sourceforge.net/docs/index.html">FreeMarker Manual</a>
  */
-public class ViewBundle implements Bundle {
+public class ViewBundle extends ServerBundle {
     @Override
     public void initialize(Bootstrap<?> bootstrap) {
         // nothing doing
     }
 
     @Override
-    public void run(Environment environment) {
+    public void run(ServerEnvironment environment) {
         environment.jersey().register(new ViewMessageBodyWriter(environment.metrics()));
     }
 }

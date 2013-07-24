@@ -1,7 +1,7 @@
 package com.codahale.dropwizard.views;
 
 import com.codahale.dropwizard.jersey.setup.JerseyEnvironment;
-import com.codahale.dropwizard.setup.Environment;
+import com.codahale.dropwizard.server.ServerEnvironment;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -10,7 +10,7 @@ import static org.mockito.Mockito.*;
 
 public class ViewBundleTest {
     private final JerseyEnvironment jerseyEnvironment = mock(JerseyEnvironment.class);
-    private final Environment environment = mock(Environment.class);
+    private final ServerEnvironment environment = mock(ServerEnvironment.class);
 
     @Before
     public void setUp() throws Exception {

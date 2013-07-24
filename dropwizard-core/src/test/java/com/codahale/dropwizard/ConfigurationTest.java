@@ -10,7 +10,7 @@ import org.junit.Test;
 import static org.fest.assertions.api.Assertions.assertThat;
 
 public class ConfigurationTest {
-    private final Configuration configuration = new Configuration();
+    private final ServerConfiguration configuration = new ServerConfiguration();
 
     @Test
     public void hasAnHttpConfiguration() throws Exception {
@@ -38,7 +38,7 @@ public class ConfigurationTest {
                 .isNotNull();
 
         // and as an added bonus, let's see we can also read it back:
-        final Configuration cfg = mapper.readValue(json, Configuration.class);
+        final Configuration cfg = mapper.readValue(json, ServerConfiguration.class);
         assertThat(cfg)
                 .isNotNull();
     }

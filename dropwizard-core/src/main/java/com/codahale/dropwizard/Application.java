@@ -2,7 +2,6 @@ package com.codahale.dropwizard;
 
 import com.codahale.dropwizard.cli.CheckCommand;
 import com.codahale.dropwizard.cli.Cli;
-import com.codahale.dropwizard.cli.ServerCommand;
 import com.codahale.dropwizard.logging.LoggingFactory;
 import com.codahale.dropwizard.setup.Bootstrap;
 import com.codahale.dropwizard.setup.Environment;
@@ -65,7 +64,6 @@ public abstract class Application<T extends Configuration> {
      */
     public final void run(String[] arguments) throws Exception {
         final Bootstrap<T> bootstrap = new Bootstrap<>(this);
-        bootstrap.addCommand(new ServerCommand<>(this));
         bootstrap.addCommand(new CheckCommand<>(this));
         initialize(bootstrap);
         final Cli cli = new Cli(new JarLocation(getClass()), bootstrap, System.out, System.err);

@@ -1,10 +1,12 @@
 package com.codahale.dropwizard.cli;
 
-import com.codahale.dropwizard.Application;
-import com.codahale.dropwizard.Configuration;
-import com.codahale.dropwizard.server.ServerFactory;
+import com.codahale.dropwizard.ServerConfiguration;
+import com.codahale.dropwizard.ServerFactory;
+import com.codahale.dropwizard.server.AbstractServerFactory;
+import com.codahale.dropwizard.server.ServerApplication;
+import com.codahale.dropwizard.server.ServerCommand;
+import com.codahale.dropwizard.server.ServerEnvironment;
 import com.codahale.dropwizard.setup.Bootstrap;
-import com.codahale.dropwizard.setup.Environment;
 import net.sourceforge.argparse4j.inf.Namespace;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.component.AbstractLifeCycle;
@@ -19,28 +21,28 @@ import static org.fest.assertions.api.Assertions.failBecauseExceptionWasNotThrow
 import static org.mockito.Mockito.*;
 
 public class ServerCommandTest {
-    private static class MyApplication extends Application<Configuration> {
+    private static class MyApplication extends ServerApplication<ServerConfiguration> {
         @Override
-        public void initialize(Bootstrap<Configuration> bootstrap) {
+        public void initializeServer(Bootstrap<ServerConfiguration> bootstrap) {
         }
 
         @Override
-        public void run(Configuration configuration, Environment environment) throws Exception {
+        public void run(ServerConfiguration configuration, ServerEnvironment environment) throws Exception {
         }
     }
 
     private final MyApplication application = new MyApplication();
-    private final ServerCommand<Configuration> command = new ServerCommand<>(application);
+    private final ServiceCommand<ServerConfiguration> command = new ServerCommand<ServerConfiguration>(application);
     private final Server server = new Server(0);
 
-    private final Environment environment = mock(Environment.class);
+    private final ServerEnvironment environment = mock(ServerEnvironment.class);
     private final Namespace namespace = mock(Namespace.class);
     private final ServerFactory serverFactory = mock(ServerFactory.class);
-    private final Configuration configuration = mock(Configuration.class);
+    private final ServerConfiguration configuration = mock(ServerConfiguration.class);
 
     @Before
     public void setUp() throws Exception {
-        when(serverFactory.build(environment)).thenReturn(server);
+        when(serverFactory.build(environment)).thenReturn(AbstractServerFactory.serviceFromServer(server));
         when(configuration.getServerFactory()).thenReturn(serverFactory);
     }
 

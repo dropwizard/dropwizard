@@ -1,3 +1,4 @@
+type: default
 requestLog:
   appenders:
     - type: console

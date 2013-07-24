@@ -6,7 +6,7 @@ import com.codahale.dropwizard.db.DataSourceFactory;
 import com.codahale.dropwizard.db.ManagedDataSource;
 import com.codahale.dropwizard.jdbi.args.OptionalArgumentFactory;
 import com.codahale.dropwizard.jdbi.logging.LogbackLog;
-import com.codahale.dropwizard.setup.Environment;
+import com.codahale.dropwizard.server.ServerEnvironment;
 import com.codahale.metrics.jdbi.InstrumentedTimingCollector;
 import com.codahale.metrics.jdbi.strategies.DelegatingStatementNameStrategy;
 import com.codahale.metrics.jdbi.strategies.NameStrategies;
@@ -37,14 +37,14 @@ public class DBIFactory {
         }
     }
 
-    public DBI build(Environment environment,
+    public DBI build(ServerEnvironment environment,
                      DataSourceFactory configuration,
                      String name) throws ClassNotFoundException {
         final ManagedDataSource dataSource = configuration.build(environment.metrics(), name);
         return build(environment, configuration, dataSource, name);
     }
 
-    public DBI build(Environment environment,
+    public DBI build(ServerEnvironment environment,
                      DataSourceFactory configuration,
                      ManagedDataSource dataSource,
                      String name) {

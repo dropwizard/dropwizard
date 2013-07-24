@@ -2,8 +2,6 @@ package com.codahale.dropwizard;
 
 import com.codahale.dropwizard.metrics.MetricsFactory;
 import com.codahale.dropwizard.logging.LoggingFactory;
-import com.codahale.dropwizard.server.DefaultServerFactory;
-import com.codahale.dropwizard.server.ServerFactory;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Objects;
 
@@ -59,9 +57,6 @@ import javax.validation.constraints.NotNull;
  * @see <a href="http://www.yaml.org/YAML_for_ruby.html">YAML Cookbook</a>
  */
 public class Configuration {
-    @Valid
-    @NotNull
-    private ServerFactory server = new DefaultServerFactory();
 
     @Valid
     @NotNull
@@ -70,24 +65,6 @@ public class Configuration {
     @Valid
     @NotNull
     private MetricsFactory metrics = new MetricsFactory();
-
-    /**
-     * Returns the server-specific section of the configuration file.
-     *
-     * @return server-specific configuration parameters
-     */
-    @JsonProperty("server")
-    public ServerFactory getServerFactory() {
-        return server;
-    }
-
-    /**
-     * Sets the HTTP-specific section of the configuration file.
-     */
-    @JsonProperty("server")
-    public void setServerFactory(ServerFactory factory) {
-        this.server = factory;
-    }
 
     /**
      * Returns the logging-specific section of the configuration file.
@@ -120,7 +97,6 @@ public class Configuration {
     @Override
     public String toString() {
         return Objects.toStringHelper(this)
-                      .add("server", server)
                       .add("logging", logging)
                       .toString();
     }
