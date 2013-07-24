@@ -10,6 +10,9 @@ public abstract class ServerApplication<T extends ServerConfiguration> extends A
     public final void run(T configuration, Environment environment)
         throws Exception
     {
+        if (!(environment instanceof ServerEnvironment)) {
+            throw new AssertionError();
+        }
         run(configuration, (ServerEnvironment) environment);
     }
     

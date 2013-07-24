@@ -7,6 +7,9 @@ public abstract class ServerBundle implements Bundle
 {
     public final void run(Environment environment)
     {
+        if (!(environment instanceof ServerEnvironment)) {
+            throw new AssertionError();
+        }
         run((ServerEnvironment) environment);
     }
 

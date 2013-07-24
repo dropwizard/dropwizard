@@ -399,6 +399,9 @@ public abstract class AbstractServerFactory implements ServerFactory {
     
     public Server build(Environment environment)
     {
+        if (!(environment instanceof ServerEnvironment)) {
+            throw new AssertionError();
+        }
         return build((ServerEnvironment)environment);
     }
     

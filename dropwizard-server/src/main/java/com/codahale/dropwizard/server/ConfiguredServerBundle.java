@@ -7,6 +7,9 @@ public abstract class ConfiguredServerBundle<T> implements ConfiguredBundle<T>
 {
     public final void run(T configuration, Environment environment) throws Exception
     {
+        if (!(environment instanceof ServerEnvironment)) {
+            throw new AssertionError();
+        }
         run(configuration, (ServerEnvironment) environment);
     }
 
