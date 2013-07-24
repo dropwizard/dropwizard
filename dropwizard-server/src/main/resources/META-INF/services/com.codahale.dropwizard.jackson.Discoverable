@@ -1,1 +1,1 @@
-com.codahale.dropwizard.ServerFactory
+com.codahale.dropwizard.server.ServerFactory
