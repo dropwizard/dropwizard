@@ -2,10 +2,13 @@ package com.codahale.dropwizard.lifecycle.setup;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
+import java.util.concurrent.Executor;
+
 import org.junit.Test;
 
 import com.codahale.dropwizard.lifecycle.Managed;
 import com.google.common.util.concurrent.AbstractIdleService;
+import com.google.common.util.concurrent.MoreExecutors;
 import com.google.common.util.concurrent.Service;
 import com.google.common.util.concurrent.Service.State;
 
@@ -95,6 +98,12 @@ public class LifecycleEnvironmentTest
             @Override
             protected void shutDown() throws Exception
             {
+            }
+            
+            @Override
+            protected Executor executor()
+            {
+                return MoreExecutors.sameThreadExecutor();
             }
 
             @Override
