@@ -16,6 +16,7 @@ public abstract class ServerApplication<T extends ServerConfiguration> extends A
     @Override
     public final void initialize(Bootstrap<T> bootstrap)    {
         bootstrap.addCommand(new ServerCommand(this));
+        initializeServer(bootstrap);
     }
     
     protected abstract void initializeServer(Bootstrap<T> bootstrap);
