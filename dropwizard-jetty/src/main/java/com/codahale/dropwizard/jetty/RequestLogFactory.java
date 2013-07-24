@@ -1,11 +1,9 @@
 package com.codahale.dropwizard.jetty;
 
+import ch.qos.logback.access.PatternLayoutEncoder;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
-import ch.qos.logback.classic.spi.ILoggingEvent;
-import ch.qos.logback.core.CoreConstants;
-import ch.qos.logback.core.LayoutBase;
-import ch.qos.logback.core.spi.AppenderAttachableImpl;
+import com.codahale.dropwizard.logging.AccessAppenderFactory;
 import com.codahale.dropwizard.logging.AppenderFactory;
 import com.codahale.dropwizard.logging.ConsoleAppenderFactory;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -34,6 +32,11 @@ import java.util.TimeZone;
  *         <td>The time zone to which request timestamps will be converted.</td>
  *     </tr>
  *     <tr>
+ *         <td>{@code pattern}</td>
+ *         <td>common</td>
+ *         <td>The string defining the <a href="http://logback.qos.ch/manual/layouts.html#AccessPatternLayout">conversion pattern</a> to log access requests..</td>
+ *     </tr>*
+ *     <tr>
  *         <td>{@code appenders}</td>
  *         <td>a default {@link ConsoleAppenderFactory console} appender</td>
  *         <td>
@@ -43,29 +46,26 @@ import java.util.TimeZone;
  * </table>
  */
 public class RequestLogFactory {
-    private static class RequestLogLayout extends LayoutBase<ILoggingEvent> {
-        @Override
-        public String doLayout(ILoggingEvent event) {
-            return event.getFormattedMessage() + CoreConstants.LINE_SEPARATOR;
-        }
-    }
 
     @NotNull
     private TimeZone timeZone = TimeZone.getTimeZone("UTC");
 
     @Valid
     @NotNull
-    private ImmutableList<AppenderFactory> appenders = ImmutableList.<AppenderFactory>of(
+    private ImmutableList<AccessAppenderFactory> appenders = ImmutableList.<AccessAppenderFactory>of(
             new ConsoleAppenderFactory()
     );
 
+    @NotNull
+    private String pattern = "common";
+
     @JsonProperty
-    public ImmutableList<AppenderFactory> getAppenders() {
+    public ImmutableList<AccessAppenderFactory> getAppenders() {
         return appenders;
     }
 
     @JsonProperty
-    public void setAppenders(ImmutableList<AppenderFactory> appenders) {
+    public void setAppenders(ImmutableList<AccessAppenderFactory> appenders) {
         this.appenders = appenders;
     }
 
@@ -84,20 +84,34 @@ public class RequestLogFactory {
         return !appenders.isEmpty();
     }
 
+    @JsonProperty
+    public String getPattern() {
+        return pattern;
+    }
+
+    @JsonProperty
+    public void setPattern(String pattern) {
+        this.pattern = pattern;
+    }
+
     public RequestLog build(String name) {
         final Logger logger = (Logger) LoggerFactory.getLogger("http.request");
         logger.setAdditive(false);
 
         final LoggerContext context = logger.getLoggerContext();
+        context.reset();
 
-        final RequestLogLayout layout = new RequestLogLayout();
-        layout.start();
+        DropwizardRequestLog log = new DropwizardRequestLog();
 
-        final AppenderAttachableImpl<ILoggingEvent> attachable = new AppenderAttachableImpl<>();
-        for (AppenderFactory output : this.appenders) {
-            attachable.addAppender(output.build(context, name, layout));
+        for (AccessAppenderFactory output : this.appenders) {
+            PatternLayoutEncoder encoder = new PatternLayoutEncoder();
+            encoder.setContext(context);
+            encoder.setPattern(pattern);
+            encoder.start();
+
+            log.addAppender(output.build(context, encoder));
         }
 
-        return new Slf4jRequestLog(attachable, timeZone);
+        return log;
     }
 }

@@ -31,6 +31,14 @@ database:
 server:
 #  softNofileLimit: 1000
 #  hardNofileLimit: 1000
+  requestLog:
+    pattern: "%h %l %u %t \"%r\" %s %b \"%i{Referer}\" \"%i{User-Agent}\""
+    appenders:
+      - type: file
+        currentLogFilename: access.log
+        archive: false
+        archivedLogFilenamePattern: access.%d{yyyy-MM-dd_HH-mm}.log.zip
+
   applicationConnectors:
     - type: http
       port: 8080

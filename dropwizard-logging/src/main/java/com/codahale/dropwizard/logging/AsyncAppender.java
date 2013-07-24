@@ -1,8 +1,8 @@
 package com.codahale.dropwizard.logging;
 
-import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.AppenderBase;
+import ch.qos.logback.core.spi.DeferredProcessingAware;
 import com.codahale.dropwizard.util.Duration;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Queues;
@@ -18,14 +18,14 @@ import java.util.concurrent.atomic.AtomicInteger;
  * wait for either a specific number of events or a specific amount of time to have passed before
  * processing events.
  */
-public class AsyncAppender extends AppenderBase<ILoggingEvent> {
+public class AsyncAppender<E extends DeferredProcessingAware> extends AppenderBase<E> {
     private static final AtomicInteger THREAD_COUNTER = new AtomicInteger();
 
     private class Worker extends Thread {
         private final int batchSize;
         private final Duration batchDuration;
         private volatile boolean running = true;
-        private final List<ILoggingEvent> events;
+        private final List<E> events;
 
         private Worker(int batchSize, Duration batchDuration) {
             this.batchSize = batchSize;
@@ -45,7 +45,7 @@ public class AsyncAppender extends AppenderBase<ILoggingEvent> {
                                  batchSize,
                                  batchDuration.getQuantity(),
                                  batchDuration.getUnit());
-                    for (ILoggingEvent event : events) {
+                    for (E event : events) {
                         delegate.doAppend(event);
                     }
 
@@ -61,11 +61,11 @@ public class AsyncAppender extends AppenderBase<ILoggingEvent> {
         }
     }
 
-    private final BlockingQueue<ILoggingEvent> queue;
+    private final BlockingQueue<E> queue;
     private final Worker worker;
-    private final Appender<ILoggingEvent> delegate;
+    private final Appender<E> delegate;
 
-    public AsyncAppender(Appender<ILoggingEvent> delegate,
+    public AsyncAppender(Appender<E> delegate,
                          int batchSize,
                          Duration batchDuration,
                          boolean bounded) {
@@ -75,7 +75,7 @@ public class AsyncAppender extends AppenderBase<ILoggingEvent> {
         setName("async-" + delegate.getName());
     }
 
-    private ConcurrentArrayBlockingQueue<ILoggingEvent> buildQueue(int batchSize, boolean bounded) {
+    private ConcurrentArrayBlockingQueue<E> buildQueue(int batchSize, boolean bounded) {
         if (bounded) {
             return new ConcurrentArrayBlockingQueue.Bounded<>(batchSize * 2);
         }
@@ -96,7 +96,7 @@ public class AsyncAppender extends AppenderBase<ILoggingEvent> {
     }
 
     @Override
-    protected void append(ILoggingEvent event) {
+    protected void append(E event) {
         event.prepareForDeferredProcessing();
         try {
             queue.put(event);
