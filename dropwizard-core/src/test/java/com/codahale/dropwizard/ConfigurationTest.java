@@ -1,10 +1,10 @@
 package com.codahale.dropwizard;
 
-import com.codahale.dropwizard.jackson.Jackson;
-import com.codahale.dropwizard.jetty.ConnectorFactory;
-import com.codahale.dropwizard.logging.AppenderFactory;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sun.jersey.spi.service.ServiceFinder;
+import com.codahale.dropwizard.jackson.Jackson; 
+import com.codahale.dropwizard.logging.ConsoleAppenderFactory;
+import com.codahale.dropwizard.logging.FileAppenderFactory;
+import com.codahale.dropwizard.logging.SyslogAppenderFactory;
+import com.fasterxml.jackson.databind.ObjectMapper; 
 import org.junit.Test;
 
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -28,9 +28,9 @@ public class ConfigurationTest {
     public void ensureConfigSerializable() throws Exception {
         final ObjectMapper mapper = Jackson.newObjectMapper();
         mapper.getSubtypeResolver()
-              .registerSubtypes(ServiceFinder.find(AppenderFactory.class).toClassArray());
-        mapper.getSubtypeResolver()
-              .registerSubtypes(ServiceFinder.find(ConnectorFactory.class).toClassArray());
+              .registerSubtypes(new Class[]{SyslogAppenderFactory.class,
+                  ConsoleAppenderFactory.class,
+                  FileAppenderFactory.class});
 
         // Issue-96: some types were not serializable
         final String json = mapper.writeValueAsString(configuration);

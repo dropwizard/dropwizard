@@ -1,7 +1,6 @@
 package com.codahale.dropwizard;
 
 import com.codahale.dropwizard.jackson.Discoverable;
-import com.codahale.dropwizard.server.DefaultServerFactory;
 import com.codahale.dropwizard.setup.Environment;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.google.common.util.concurrent.Service;
