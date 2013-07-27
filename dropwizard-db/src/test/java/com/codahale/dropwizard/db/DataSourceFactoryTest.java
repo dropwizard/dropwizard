@@ -19,10 +19,10 @@ public class DataSourceFactoryTest {
 
     @Before
     public void setUp() throws Exception {
-        factory.setUrl("jdbc:hsqldb:mem:DbTest-" + System.currentTimeMillis());
+        factory.setUrl("jdbc:h2:mem:DbTest-" + System.currentTimeMillis());
         factory.setUser("sa");
-        factory.setDriverClass("org.hsqldb.jdbcDriver");
-        factory.setValidationQuery("SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS");
+        factory.setDriverClass("org.h2.Driver");
+        factory.setValidationQuery("SELECT 1");
 
         this.dataSource = factory.build(metricRegistry, "test");
         dataSource.start();
@@ -37,7 +37,7 @@ public class DataSourceFactoryTest {
     public void buildsAConnectionPoolToTheDatabase() throws Exception {
         try (Connection connection = dataSource.getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement(
-                    "select 1 from INFORMATION_SCHEMA.SYSTEM_USERS")) {
+                    "select 1")) {
                 try (ResultSet set = statement.executeQuery()) {
                     while (set.next()) {
                         assertThat(set.getInt(1)).isEqualTo(1);

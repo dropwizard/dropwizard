@@ -32,10 +32,10 @@ public class JDBITest {
 
     {
         LoggingFactory.bootstrap();
-        hsqlConfig.setUrl("jdbc:hsqldb:mem:DbTest-" + System.currentTimeMillis());
+        hsqlConfig.setUrl("jdbc:h2:mem:DbTest-" + System.currentTimeMillis());
         hsqlConfig.setUser("sa");
-        hsqlConfig.setDriverClass("org.hsqldb.jdbcDriver");
-        hsqlConfig.setValidationQuery("SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS");
+        hsqlConfig.setDriverClass("org.h2.Driver");
+        hsqlConfig.setValidationQuery("SELECT 1");
     }
 
     private final HealthCheckRegistry healthChecks = mock(HealthCheckRegistry.class);
