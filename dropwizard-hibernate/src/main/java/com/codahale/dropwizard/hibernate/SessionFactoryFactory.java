@@ -31,6 +31,14 @@ public class SessionFactoryFactory {
     }
 
     public SessionFactory build(HibernateBundle<?> bundle,
+            Environment environment, DataSourceFactory dbConfig,
+            List<Class<?>> entities, String name) throws ClassNotFoundException {
+        final ManagedDataSource dataSource = dbConfig.build(
+                environment.metrics(), name);
+        return build(bundle, environment, dbConfig, dataSource, entities);
+    }
+
+    public SessionFactory build(HibernateBundle<?> bundle,
                                 Environment environment,
                                 DataSourceFactory dbConfig,
                                 ManagedDataSource dataSource,
