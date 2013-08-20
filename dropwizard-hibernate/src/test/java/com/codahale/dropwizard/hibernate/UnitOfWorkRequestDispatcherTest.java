@@ -1,6 +1,10 @@
 package com.codahale.dropwizard.hibernate;
 
+import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableMap;
+import com.sun.jersey.api.NotFoundException;
 import com.sun.jersey.api.core.HttpContext;
+import com.sun.jersey.api.core.HttpRequestContext;
 import com.sun.jersey.spi.dispatch.RequestDispatcher;
 import org.hibernate.*;
 import org.hibernate.context.internal.ManagedSessionContext;
@@ -24,6 +28,7 @@ public class UnitOfWorkRequestDispatcherTest {
 
     private final Object resource = mock(Object.class);
     private final HttpContext context = mock(HttpContext.class);
+    private final HttpRequestContext requestContext = mock(HttpRequestContext.class);
     private final Session session = mock(Session.class);
     private final Transaction transaction = mock(Transaction.class);
 
@@ -38,6 +43,8 @@ public class UnitOfWorkRequestDispatcherTest {
         when(session.getSessionFactory()).thenReturn(sessionFactory);
         when(session.beginTransaction()).thenReturn(transaction);
         when(session.getTransaction()).thenReturn(transaction);
+
+        when(context.getRequest()).thenReturn(requestContext);
 
         when(transaction.isActive()).thenReturn(true);
     }
@@ -56,7 +63,7 @@ public class UnitOfWorkRequestDispatcherTest {
 
     @Test
     public void hasASessionFactory() throws Exception {
-        assertThat(dispatcher.getSessionFactory())
+        assertThat(dispatcher.getDefaultSessionFactory())
                 .isEqualTo(sessionFactory);
     }
 
@@ -205,5 +212,42 @@ public class UnitOfWorkRequestDispatcherTest {
         }
 
         verify(transaction, never()).rollback();
+    }
+
+    @Test
+    public void routable() {
+        final SessionFactory shouldNotBeUsed = mock(SessionFactory.class);
+
+        final ImmutableMap.Builder<Optional<String>, SessionFactory> bldr = new ImmutableMap.Builder<>();
+        bldr.put(Optional.<String> absent(), shouldNotBeUsed);
+        bldr.put(Optional.of("route"), sessionFactory);
+        final UnitOfWorkRequestDispatcher routableRequestDispatcher = new UnitOfWorkRequestDispatcher(unitOfWork,
+                underlying, bldr.build());
+
+        when(requestContext.getHeaderValue(UnitOfWorkRequestDispatcher.ROUTE_KEY_HEADER_NAME)).thenReturn("route");
+
+        routableRequestDispatcher.dispatch(resource, context);
+
+        final InOrder inOrder = inOrder(sessionFactory, session, underlying);
+        inOrder.verify(sessionFactory).openSession();
+        inOrder.verify(underlying).dispatch(resource, context);
+        inOrder.verify(session).close();
+
+        verifyZeroInteractions(shouldNotBeUsed);
+    }
+
+    @Test(expected = NotFoundException.class)
+    public void invalidRoute() {
+        final SessionFactory shouldNotBeUsed = mock(SessionFactory.class);
+
+        final ImmutableMap.Builder<Optional<String>, SessionFactory> bldr = new ImmutableMap.Builder<>();
+        bldr.put(Optional.<String> absent(), shouldNotBeUsed);
+        bldr.put(Optional.of("route"), sessionFactory);
+        final UnitOfWorkRequestDispatcher routableRequestDispatcher = new UnitOfWorkRequestDispatcher(unitOfWork,
+                underlying, bldr.build());
+
+        when(requestContext.getHeaderValue(UnitOfWorkRequestDispatcher.ROUTE_KEY_HEADER_NAME)).thenReturn("invalid");
+
+        routableRequestDispatcher.dispatch(resource, context);
     }
 }

@@ -13,8 +13,8 @@ import org.hibernate.SessionFactory;
 public abstract class HibernateBundle<T extends Configuration> implements ConfiguredBundle<T>, DatabaseConfiguration<T> {
     private SessionFactory sessionFactory;
 
-    private final ImmutableList<Class<?>> entities;
-    private final SessionFactoryFactory sessionFactoryFactory;
+    protected final ImmutableList<Class<?>> entities;
+    protected final SessionFactoryFactory sessionFactoryFactory;
 
     protected HibernateBundle(Class<?> entity, Class<?>... entities) {
         this(ImmutableList.<Class<?>>builder().add(entity).add(entities).build(),
@@ -33,7 +33,7 @@ public abstract class HibernateBundle<T extends Configuration> implements Config
     }
 
     @Override
-    public final void run(T configuration, Environment environment) throws Exception {
+    public void run(T configuration, Environment environment) throws Exception {
         final DataSourceFactory dbConfig = getDataSourceFactory(configuration);
         this.sessionFactory = sessionFactoryFactory.build(this, environment, dbConfig, entities);
         environment.jersey().register(new UnitOfWorkResourceMethodDispatchAdapter(sessionFactory));

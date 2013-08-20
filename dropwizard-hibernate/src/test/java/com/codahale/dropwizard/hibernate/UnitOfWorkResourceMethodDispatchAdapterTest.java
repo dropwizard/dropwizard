@@ -14,7 +14,7 @@ public class UnitOfWorkResourceMethodDispatchAdapterTest {
 
     @Test
     public void hasASessionFactory() throws Exception {
-        assertThat(adapter.getSessionFactory())
+        assertThat(adapter.getDefaultSessionFactory())
                 .isEqualTo(sessionFactory);
     }
 
@@ -28,7 +28,7 @@ public class UnitOfWorkResourceMethodDispatchAdapterTest {
         assertThat(decorator.getProvider())
                 .isEqualTo(provider);
 
-        assertThat(decorator.getSessionFactory())
+        assertThat(decorator.getDefaultSessionFactory())
                 .isEqualTo(sessionFactory);
     }
 }

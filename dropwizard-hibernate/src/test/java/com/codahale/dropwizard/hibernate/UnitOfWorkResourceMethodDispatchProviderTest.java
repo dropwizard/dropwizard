@@ -1,5 +1,7 @@
 package com.codahale.dropwizard.hibernate;
 
+import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableMap;
 import com.sun.jersey.api.model.AbstractResourceMethod;
 import com.sun.jersey.spi.container.ResourceMethodDispatchProvider;
 import com.sun.jersey.spi.dispatch.RequestDispatcher;
@@ -27,8 +29,13 @@ public class UnitOfWorkResourceMethodDispatchProviderTest {
     private final ResourceMethodDispatchProvider underlying =
             mock(ResourceMethodDispatchProvider.class);
     private final SessionFactory sessionFactory = mock(SessionFactory.class);
-    private final UnitOfWorkResourceMethodDispatchProvider provider =
-            new UnitOfWorkResourceMethodDispatchProvider(underlying, sessionFactory);
+    private final UnitOfWorkResourceMethodDispatchProvider provider;
+    
+    public UnitOfWorkResourceMethodDispatchProviderTest() {
+        final ImmutableMap.Builder<Optional<String>, SessionFactory> bldr = new ImmutableMap.Builder<>();
+        bldr.put(Optional.<String> absent(), sessionFactory);
+        provider = new UnitOfWorkResourceMethodDispatchProvider(underlying, bldr.build());
+    }
 
     @Test
     public void ignoresNonAnnotatedMethods() throws Exception {
@@ -53,7 +60,7 @@ public class UnitOfWorkResourceMethodDispatchProviderTest {
 
         final UnitOfWorkRequestDispatcher decorator = (UnitOfWorkRequestDispatcher) provider.create(resourceMethod);
 
-        assertThat(decorator.getSessionFactory())
+        assertThat(decorator.getDefaultSessionFactory())
                 .isEqualTo(sessionFactory);
 
         assertThat(decorator.getDispatcher())
