@@ -1,7 +1,7 @@
 package com.codahale.dropwizard.server;
 
 import com.codahale.dropwizard.jetty.ConnectorFactory;
-import com.codahale.dropwizard.jetty.DefaultServletHandlerFactory;
+import com.codahale.dropwizard.server.DefaultServletHandlerFactory;
 import com.codahale.dropwizard.jetty.HttpConnectorFactory;
 import com.codahale.dropwizard.jetty.RoutingHandler;
 import com.codahale.dropwizard.setup.Environment;

@@ -1,10 +1,12 @@
-package com.codahale.dropwizard.jetty;
+package com.codahale.dropwizard.server;
 
 import com.codahale.dropwizard.configuration.ConfigurationFactory;
 import com.codahale.dropwizard.jackson.Jackson;
+import com.codahale.dropwizard.jetty.HttpConnectorFactory;
 import com.codahale.dropwizard.logging.ConsoleAppenderFactory;
 import com.codahale.dropwizard.logging.FileAppenderFactory;
 import com.codahale.dropwizard.logging.SyslogAppenderFactory;
+import com.codahale.dropwizard.server.DefaultServletHandlerFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.io.Resources;
 import org.junit.Before;

@@ -1,10 +1,8 @@
 package com.codahale.dropwizard.server;
 
 import com.codahale.dropwizard.jackson.Discoverable;
-import com.codahale.dropwizard.jetty.ServletHandlerFactory;
 import com.codahale.dropwizard.setup.Environment;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 
 /**

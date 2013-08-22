@@ -1,5 +1,6 @@
-package com.codahale.dropwizard.jetty;
+package com.codahale.dropwizard.server;
 
+import com.codahale.dropwizard.jetty.MutableServletContextHandler;
 import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.eclipse.jetty.server.Handler;

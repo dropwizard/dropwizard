@@ -1,5 +1,9 @@
-package com.codahale.dropwizard.jetty;
+package com.codahale.dropwizard.server;
 
+import com.codahale.dropwizard.jetty.GzipFilterFactory;
+import com.codahale.dropwizard.jetty.MutableServletContextHandler;
+import com.codahale.dropwizard.jetty.RequestLogFactory;
+import com.codahale.dropwizard.servlets.ThreadNameFilter;
 import com.codahale.dropwizard.util.Duration;
 import com.codahale.dropwizard.validation.MinDuration;
 import com.codahale.dropwizard.validation.ValidationMethod;
@@ -14,7 +18,6 @@ import org.eclipse.jetty.server.handler.RequestLogHandler;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.util.BlockingArrayQueue;
-import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.util.thread.ThreadPool;
 
 import javax.servlet.DispatcherType;
@@ -167,7 +170,8 @@ public abstract class AbstractServletHandlerFactory
                 metricRegistry,
                 addRequestLog(
                         name,
-                        configureSessionsAndSecurity(handler, server)));
+                        addFilters(
+                                configureSessionsAndSecurity(server, handler))));
     }
 
     public ThreadPool buildThreadPool(MetricRegistry metricRegistry, String name) {
@@ -196,7 +200,7 @@ public abstract class AbstractServletHandlerFactory
     }
 
     protected ServletContextHandler addFilters(ServletContextHandler handler) {
-        // todo: add ThreadNameFilter somehow??
+        handler.addFilter(ThreadNameFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST));
         if (getGzip().isEnabled()) {
             final FilterHolder holder = new FilterHolder(getGzip().build());
             handler.addFilter(holder, "/*", EnumSet.allOf(DispatcherType.class));
@@ -204,7 +208,7 @@ public abstract class AbstractServletHandlerFactory
         return handler;
     }
 
-    protected Handler configureSessionsAndSecurity(MutableServletContextHandler handler, Server server) {
+    protected MutableServletContextHandler configureSessionsAndSecurity(Server server, MutableServletContextHandler handler) {
         if (handler.isSecurityEnabled()) {
             handler.getSecurityHandler().setServer(server);
         }

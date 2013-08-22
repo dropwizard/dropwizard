@@ -1,5 +1,7 @@
-package com.codahale.dropwizard.jetty;
+package com.codahale.dropwizard.server;
 
+import com.codahale.dropwizard.jetty.ConnectorFactory;
+import com.codahale.dropwizard.jetty.HttpConnectorFactory;
 import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.Lists;
