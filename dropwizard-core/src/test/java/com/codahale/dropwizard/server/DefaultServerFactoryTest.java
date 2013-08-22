@@ -36,24 +36,6 @@ public class DefaultServerFactoryTest {
     }
 
     @Test
-    public void loadsGzipConfig() throws Exception {
-        assertThat(http.getGzipFilterFactory().isEnabled())
-                .isFalse();
-    }
-
-    @Test
-    public void hasAMaximumNumberOfThreads() throws Exception {
-        assertThat(http.getMaxThreads())
-                .isEqualTo(101);
-    }
-
-    @Test
-    public void hasAMinimumNumberOfThreads() throws Exception {
-        assertThat(http.getMinThreads())
-                .isEqualTo(89);
-    }
-
-    @Test
     public void isDiscoverable() throws Exception {
         assertThat(new DiscoverableSubtypeResolver().getDiscoveredSubtypes())
                 .contains(DefaultServerFactory.class);

@@ -1,8 +1,10 @@
 package com.codahale.dropwizard.server;
 
 import com.codahale.dropwizard.jackson.Discoverable;
+import com.codahale.dropwizard.jetty.ServletHandlerFactory;
 import com.codahale.dropwizard.setup.Environment;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 
 /**
@@ -12,6 +14,11 @@ import org.eclipse.jetty.server.Server;
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", defaultImpl = DefaultServerFactory.class)
 public interface ServerFactory extends Discoverable {
+
+    ServletHandlerFactory getAppHandlerFactory();
+
+    ServletHandlerFactory getAdminHandlerFactory();
+
     /**
      * Build a server for the given Dropwizard application.
      *
