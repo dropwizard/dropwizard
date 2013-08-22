@@ -33,14 +33,14 @@ import javax.validation.constraints.NotNull;
  *         <td>The {@link ConnectorFactory connector} which will handle both application and admin requests.</td>
  *     </tr>
  *     <tr>
- *         <td>{@code applicationContextPath}</td>
- *         <td>{@code /application}</td>
- *         <td>The context path of the application servlets, including Jersey.</td>
+ *         <td>{@code application}</td>
+ *         <td>A {@link ContextServletHandlerFactory context handler} for /application.</td>
+ *         <td>The context handler for the application.</td>
  *     </tr>
  *     <tr>
- *         <td>{@code adminContextPath}</td>
- *         <td>{@code /admin}</td>
- *         <td>The context path of the admin servlets, including metrics and tasks.</td>
+ *         <td>{@code admin}</td>
+ *         <td>A {@link ContextServletHandlerFactory context handler} for /admin.</td>
+ *         <td>The context handler for the admin servlets, including metrics and tasks.</td>
  *     </tr>
  * </table>
  * <p/>
@@ -74,23 +74,23 @@ public class SimpleServerFactory extends AbstractServerFactory {
     }
 
     @Override
-    @JsonProperty
-    public ContextServletHandlerFactory getAppHandlerFactory() {
+    @JsonProperty("application")
+    public ContextServletHandlerFactory getApplicationHandlerFactory() {
         return appHandlerFactory;
     }
 
-    @JsonProperty
+    @JsonProperty("application")
     public void setApplicationHandler(ContextServletHandlerFactory factory) {
         this.appHandlerFactory = factory;
     }
 
     @Override
-    @JsonProperty
+    @JsonProperty("admin")
     public ContextServletHandlerFactory getAdminHandlerFactory() {
         return adminHandlerFactory;
     }
 
-    @JsonProperty
+    @JsonProperty("admin")
     public void setAdminHandler(ContextServletHandlerFactory factory) {
         this.adminHandlerFactory = factory;
     }

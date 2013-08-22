@@ -26,6 +26,48 @@ import java.util.concurrent.BlockingQueue;
 
 /**
  * A base class for {@link ServletHandlerFactory} implementations.
+ * <p/>
+ * <b>Configuration Parameters:</b>
+ * <table>
+ *     <tr>
+ *         <td>Name</td>
+ *         <td>Default</td>
+ *         <td>Description</td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code requestLog}</td>
+ *         <td></td>
+ *         <td>The {@link RequestLogFactory request log} configuration.</td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code gzip}</td>
+ *         <td></td>
+ *         <td>The {@link GzipFilterFactory GZIP} configuration.</td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code maxThreads}</td>
+ *         <td>1024</td>
+ *         <td>The maximum number of threads to use for requests.</td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code minThreads}</td>
+ *         <td>8</td>
+ *         <td>The minimum number of threads to use for requests.</td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code maxQueuedRequests}</td>
+ *         <td>1024</td>
+ *         <td>The maximum number of requests to queue before blocking the acceptors.</td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code idleThreadTimeout}</td>
+ *         <td>1 minute</td>
+ *         <td>The amount of time a worker thread can be idle before being stopped.</td>
+ *     </tr>
+ * </table>
+ *
+ * @see DefaultServletHandlerFactory
+ * @see ContextServletHandlerFactory
  */
 public abstract class AbstractServletHandlerFactory
         implements ServletHandlerFactory {

@@ -11,8 +11,40 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
-/** TODO: Document */
+/**
+ * The default implementation of {@link ServletHandlerFactory}, which allows for
+ * multiple {@link Connector}s, all running on separate ports.
+ * <p/>
+ * <b>Configuration Parameters:</b>
+ * <table>
+ *     <tr>
+ *         <td>Name</td>
+ *         <td>Default</td>
+ *         <td>Description</td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code connectors}</td>
+ *         <td>An {@link HttpConnectorFactory HTTP connector}.</td>
+ *         <td>A set of {@link ConnectorFactory connectors} to listen for application requests.</td>
+ *     </tr>
+ * </table>
+ * <p/>
+ * For more configuration parameters, see {@link AbstractServletHandlerFactory}.
+ *
+ * @see ServletHandlerFactory
+ * @see AbstractServletHandlerFactory
+ */
 public class DefaultServletHandlerFactory extends AbstractServletHandlerFactory {
+
+    public static DefaultServletHandlerFactory forConnectors(ConnectorFactory... connectors) {
+        return forConnectors(Lists.newArrayList(connectors));
+    }
+
+    public static DefaultServletHandlerFactory forConnectors(List<ConnectorFactory> connectors) {
+        final DefaultServletHandlerFactory factory = new DefaultServletHandlerFactory();
+        factory.connectors = connectors;
+        return factory;
+    }
 
     @Valid
     @NotNull

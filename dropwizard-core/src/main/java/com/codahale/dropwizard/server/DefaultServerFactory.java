@@ -36,24 +36,14 @@ import java.util.Map;
  *         <td>Description</td>
  *     </tr>
  *     <tr>
- *         <td>{@code applicationConnectors}</td>
- *         <td>An {@link HttpConnectorFactory HTTP connector} listening on port 8080.</td>
- *         <td>A set of {@link ConnectorFactory connectors} which will handle application requests.</td>
+ *         <td>{@code application}</td>
+ *         <td>A {@link DefaultServletHandlerFactory handler} for port 8080.</td>
+ *         <td>The handler for the application.</td>
  *     </tr>
  *     <tr>
- *         <td>{@code adminConnectors}</td>
- *         <td>An {@link HttpConnectorFactory HTTP connector} listening on port 8081.</td>
- *         <td>A set of {@link ConnectorFactory connectors} which will handle admin requests.</td>
- *     </tr>
- *     <tr>
- *         <td>{@code adminMaxThreads}</td>
- *         <td>64</td>
- *         <td>The maximum number of threads to use for admin requests.</td>
- *     </tr>
- *     <tr>
- *         <td>{@code adminMinThreads}</td>
- *         <td>1</td>
- *         <td>The minimum number of threads to use for admin requests.</td>
+ *         <td>{@code admin}</td>
+ *         <td>A {@link DefaultServletHandlerFactory handler} for port 8081.</td>
+ *         <td>The handler for the admin servlets, including metrics and tasks.</td>
  *     </tr>
  * </table>
  * <p/>
@@ -67,15 +57,17 @@ public class DefaultServerFactory extends AbstractServerFactory {
 
     @Valid
     @NotNull
-    private DefaultServletHandlerFactory appHandlerFactory = new DefaultServletHandlerFactory();
+    private DefaultServletHandlerFactory appHandlerFactory
+            = DefaultServletHandlerFactory.forConnectors(HttpConnectorFactory.application());
 
     @Valid
     @NotNull
-    private DefaultServletHandlerFactory adminHandlerFactory = new DefaultServletHandlerFactory();
+    private DefaultServletHandlerFactory adminHandlerFactory
+            = DefaultServletHandlerFactory.forConnectors(HttpConnectorFactory.admin());
 
     @Override
     @JsonProperty("application")
-    public DefaultServletHandlerFactory getAppHandlerFactory() {
+    public DefaultServletHandlerFactory getApplicationHandlerFactory() {
         return appHandlerFactory;
     }
 

@@ -15,7 +15,7 @@ import org.eclipse.jetty.server.Server;
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", defaultImpl = DefaultServerFactory.class)
 public interface ServerFactory extends Discoverable {
 
-    ServletHandlerFactory getAppHandlerFactory();
+    ServletHandlerFactory getApplicationHandlerFactory();
 
     ServletHandlerFactory getAdminHandlerFactory();
 

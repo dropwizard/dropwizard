@@ -6,7 +6,27 @@ import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.hibernate.validator.constraints.NotEmpty;
 
-/** TODO: Document */
+/**
+ * An implementation of {@link ServletHandlerFactory} that is dependent context path.
+ * <p/>
+ * <b>Configuration Parameters:</b>
+ * <table>
+ *     <tr>
+ *         <td>Name</td>
+ *         <td>Default</td>
+ *         <td>Description</td>
+ *     </tr>
+ *     <tr>
+ *         <td>path</td>
+ *         <td>/</td>
+ *         <td>The context path of the servlets for this handler.</td>
+ *     </tr>
+ * </table>
+ * For more configuration parameters, see {@link AbstractServletHandlerFactory}.
+ *
+ * @see ServletHandlerFactory
+ * @see AbstractServletHandlerFactory
+ */
 public class ContextServletHandlerFactory extends AbstractServletHandlerFactory {
 
     @NotEmpty
