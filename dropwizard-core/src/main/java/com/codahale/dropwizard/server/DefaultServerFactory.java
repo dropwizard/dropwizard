@@ -1,7 +1,5 @@
 package com.codahale.dropwizard.server;
 
-import com.codahale.dropwizard.jetty.ConnectorFactory;
-import com.codahale.dropwizard.server.DefaultHandlerFactory;
 import com.codahale.dropwizard.jetty.HttpConnectorFactory;
 import com.codahale.dropwizard.jetty.RoutingHandler;
 import com.codahale.dropwizard.setup.Environment;
@@ -12,11 +10,9 @@ import com.google.common.collect.Maps;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.util.thread.ThreadPool;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Map;
