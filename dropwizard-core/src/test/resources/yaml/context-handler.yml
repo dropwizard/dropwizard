@@ -1,0 +1,12 @@
+path: /dw-app
+requestLog:
+  appenders:
+    - type: console
+    - type: file
+      currentLogFilename: ./logs/requests.log
+      archivedLogFilenamePattern: ./logs/requests-%d.log.gz
+      archivedFileCount: 5
+gzip:
+  enabled: false
+minThreads: 89
+maxThreads: 101
