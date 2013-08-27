@@ -90,6 +90,11 @@ public abstract class AbstractHandlerFactory
     @NotNull
     private RequestLogFactory requestLog = new RequestLogFactory();
 
+    // todo: generalize for all Filters
+    @Valid
+    @NotNull
+    private GzipFilterFactory gzip = new GzipFilterFactory();
+
     @JsonIgnore
     @ValidationMethod(message = "must have a smaller minThreads than maxThreads")
     public boolean isThreadPoolSizedCorrectly() {
@@ -135,11 +140,6 @@ public abstract class AbstractHandlerFactory
     public void setIdleThreadTimeout(Duration idleThreadTimeout) {
         this.idleThreadTimeout = idleThreadTimeout;
     }
-
-    // todo: generalize for all Filters
-    @Valid
-    @NotNull
-    private GzipFilterFactory gzip = new GzipFilterFactory();
 
     @JsonProperty("requestLog")
     public RequestLogFactory getRequestLog() {
