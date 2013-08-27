@@ -18,7 +18,7 @@ import java.io.File;
 import static org.fest.assertions.api.Assertions.assertThat;
 
 /** TODO: Document */
-public class DefaultServletHandlerFactoryTest {
+public class DefaultHandlerFactoryTest {
 
     private DefaultHandlerFactory handler;
 
