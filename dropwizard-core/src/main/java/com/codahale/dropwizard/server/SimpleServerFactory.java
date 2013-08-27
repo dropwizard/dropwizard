@@ -34,12 +34,12 @@ import javax.validation.constraints.NotNull;
  *     </tr>
  *     <tr>
  *         <td>{@code application}</td>
- *         <td>A {@link ContextServletHandlerFactory context handler} for /application.</td>
+ *         <td>A {@link ContextHandlerFactory context handler} for /application.</td>
  *         <td>The context handler for the application.</td>
  *     </tr>
  *     <tr>
  *         <td>{@code admin}</td>
- *         <td>A {@link ContextServletHandlerFactory context handler} for /admin.</td>
+ *         <td>A {@link ContextHandlerFactory context handler} for /admin.</td>
  *         <td>The context handler for the admin servlets, including metrics and tasks.</td>
  *     </tr>
  * </table>
@@ -57,11 +57,11 @@ public class SimpleServerFactory extends AbstractServerFactory {
 
     @Valid
     @NotNull
-    private ContextServletHandlerFactory appHandlerFactory = new ContextServletHandlerFactory("/application");
+    private ContextHandlerFactory appHandlerFactory = new ContextHandlerFactory("/application");
 
     @Valid
     @NotNull
-    private ContextServletHandlerFactory adminHandlerFactory = new ContextServletHandlerFactory("/admin");
+    private ContextHandlerFactory adminHandlerFactory = new ContextHandlerFactory("/admin");
 
     @JsonProperty
     public ConnectorFactory getConnector() {
@@ -75,23 +75,23 @@ public class SimpleServerFactory extends AbstractServerFactory {
 
     @Override
     @JsonProperty("application")
-    public ContextServletHandlerFactory getApplicationHandlerFactory() {
+    public ContextHandlerFactory getApplicationHandlerFactory() {
         return appHandlerFactory;
     }
 
     @JsonProperty("application")
-    public void setApplicationHandler(ContextServletHandlerFactory factory) {
+    public void setApplicationHandler(ContextHandlerFactory factory) {
         this.appHandlerFactory = factory;
     }
 
     @Override
     @JsonProperty("admin")
-    public ContextServletHandlerFactory getAdminHandlerFactory() {
+    public ContextHandlerFactory getAdminHandlerFactory() {
         return adminHandlerFactory;
     }
 
     @JsonProperty("admin")
-    public void setAdminHandler(ContextServletHandlerFactory factory) {
+    public void setAdminHandler(ContextHandlerFactory factory) {
         this.adminHandlerFactory = factory;
     }
 

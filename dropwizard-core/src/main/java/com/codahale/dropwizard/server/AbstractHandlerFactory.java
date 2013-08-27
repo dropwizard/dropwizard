@@ -28,7 +28,7 @@ import java.util.EnumSet;
 import java.util.concurrent.BlockingQueue;
 
 /**
- * A base class for {@link ServletHandlerFactory} implementations.
+ * A base class for {@link HandlerFactory} implementations.
  * <p/>
  * <b>Configuration Parameters:</b>
  * <table>
@@ -69,11 +69,11 @@ import java.util.concurrent.BlockingQueue;
  *     </tr>
  * </table>
  *
- * @see DefaultServletHandlerFactory
- * @see ContextServletHandlerFactory
+ * @see DefaultHandlerFactory
+ * @see ContextHandlerFactory
  */
-public abstract class AbstractServletHandlerFactory
-        implements ServletHandlerFactory {
+public abstract class AbstractHandlerFactory
+        implements HandlerFactory {
 
     @Min(2)
     private int maxThreads = 1024;

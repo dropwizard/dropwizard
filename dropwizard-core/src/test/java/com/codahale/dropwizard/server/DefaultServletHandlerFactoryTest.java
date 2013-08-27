@@ -6,7 +6,7 @@ import com.codahale.dropwizard.jetty.HttpConnectorFactory;
 import com.codahale.dropwizard.logging.ConsoleAppenderFactory;
 import com.codahale.dropwizard.logging.FileAppenderFactory;
 import com.codahale.dropwizard.logging.SyslogAppenderFactory;
-import com.codahale.dropwizard.server.DefaultServletHandlerFactory;
+import com.codahale.dropwizard.server.DefaultHandlerFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.io.Resources;
 import org.junit.Before;
@@ -20,7 +20,7 @@ import static org.fest.assertions.api.Assertions.assertThat;
 /** TODO: Document */
 public class DefaultServletHandlerFactoryTest {
 
-    private DefaultServletHandlerFactory handler;
+    private DefaultHandlerFactory handler;
 
     @Before
     public void setUp() throws Exception {
@@ -32,7 +32,7 @@ public class DefaultServletHandlerFactoryTest {
                 HttpConnectorFactory.class);
 
         this.handler = new ConfigurationFactory<>(
-                DefaultServletHandlerFactory.class,
+                DefaultHandlerFactory.class,
                 Validation.buildDefaultValidatorFactory().getValidator(),
                 objectMapper, "dw")
                 .build(new File(Resources.getResource("yaml/handler.yml").toURI()));

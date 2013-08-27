@@ -1,7 +1,7 @@
 package com.codahale.dropwizard.server;
 
 import com.codahale.dropwizard.jetty.ConnectorFactory;
-import com.codahale.dropwizard.server.DefaultServletHandlerFactory;
+import com.codahale.dropwizard.server.DefaultHandlerFactory;
 import com.codahale.dropwizard.jetty.HttpConnectorFactory;
 import com.codahale.dropwizard.jetty.RoutingHandler;
 import com.codahale.dropwizard.setup.Environment;
@@ -37,12 +37,12 @@ import java.util.Map;
  *     </tr>
  *     <tr>
  *         <td>{@code application}</td>
- *         <td>A {@link DefaultServletHandlerFactory handler} for port 8080.</td>
+ *         <td>A {@link DefaultHandlerFactory handler} for port 8080.</td>
  *         <td>The handler for the application.</td>
  *     </tr>
  *     <tr>
  *         <td>{@code admin}</td>
- *         <td>A {@link DefaultServletHandlerFactory handler} for port 8081.</td>
+ *         <td>A {@link DefaultHandlerFactory handler} for port 8081.</td>
  *         <td>The handler for the admin servlets, including metrics and tasks.</td>
  *     </tr>
  * </table>
@@ -57,33 +57,33 @@ public class DefaultServerFactory extends AbstractServerFactory {
 
     @Valid
     @NotNull
-    private DefaultServletHandlerFactory appHandlerFactory
-            = DefaultServletHandlerFactory.forConnectors(HttpConnectorFactory.application());
+    private DefaultHandlerFactory appHandlerFactory
+            = DefaultHandlerFactory.forConnectors(HttpConnectorFactory.application());
 
     @Valid
     @NotNull
-    private DefaultServletHandlerFactory adminHandlerFactory
-            = DefaultServletHandlerFactory.forConnectors(HttpConnectorFactory.admin());
+    private DefaultHandlerFactory adminHandlerFactory
+            = DefaultHandlerFactory.forConnectors(HttpConnectorFactory.admin());
 
     @Override
     @JsonProperty("application")
-    public DefaultServletHandlerFactory getApplicationHandlerFactory() {
+    public DefaultHandlerFactory getApplicationHandlerFactory() {
         return appHandlerFactory;
     }
 
     @JsonProperty("application")
-    public void setAppHandlerFactory(DefaultServletHandlerFactory factory) {
+    public void setAppHandlerFactory(DefaultHandlerFactory factory) {
         this.appHandlerFactory = factory;
     }
 
     @Override
     @JsonProperty("admin")
-    public DefaultServletHandlerFactory getAdminHandlerFactory() {
+    public DefaultHandlerFactory getAdminHandlerFactory() {
         return adminHandlerFactory;
     }
 
     @JsonProperty("admin")
-    public void setAdminHandlerFactory(DefaultServletHandlerFactory factory) {
+    public void setAdminHandlerFactory(DefaultHandlerFactory factory) {
         this.adminHandlerFactory = factory;
     }
 

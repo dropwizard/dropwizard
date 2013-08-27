@@ -8,7 +8,7 @@ import org.eclipse.jetty.server.Server;
 import org.hibernate.validator.constraints.NotEmpty;
 
 /**
- * An implementation of {@link ServletHandlerFactory} that is dependent context path.
+ * An implementation of {@link HandlerFactory} that is dependent context path.
  * <p/>
  * <b>Configuration Parameters:</b>
  * <table>
@@ -23,17 +23,17 @@ import org.hibernate.validator.constraints.NotEmpty;
  *         <td>The context path of the servlets for this handler.</td>
  *     </tr>
  * </table>
- * For more configuration parameters, see {@link AbstractServletHandlerFactory}.
+ * For more configuration parameters, see {@link AbstractHandlerFactory}.
  *
- * @see ServletHandlerFactory
- * @see AbstractServletHandlerFactory
+ * @see HandlerFactory
+ * @see AbstractHandlerFactory
  */
-public class ContextServletHandlerFactory extends AbstractServletHandlerFactory {
+public class ContextHandlerFactory extends AbstractHandlerFactory {
 
     @NotEmpty
     private String contextPath = "/";
 
-    public ContextServletHandlerFactory(String contextPath) {
+    public ContextHandlerFactory(String contextPath) {
         this.contextPath = contextPath;
     }
 

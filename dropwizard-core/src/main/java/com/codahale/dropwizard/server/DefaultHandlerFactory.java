@@ -14,7 +14,7 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
- * The default implementation of {@link ServletHandlerFactory}, which allows for
+ * The default implementation of {@link HandlerFactory}, which allows for
  * multiple {@link Connector}s, all running on separate ports.
  * <p/>
  * <b>Configuration Parameters:</b>
@@ -31,19 +31,19 @@ import java.util.List;
  *     </tr>
  * </table>
  * <p/>
- * For more configuration parameters, see {@link AbstractServletHandlerFactory}.
+ * For more configuration parameters, see {@link AbstractHandlerFactory}.
  *
- * @see ServletHandlerFactory
- * @see AbstractServletHandlerFactory
+ * @see HandlerFactory
+ * @see AbstractHandlerFactory
  */
-public class DefaultServletHandlerFactory extends AbstractServletHandlerFactory {
+public class DefaultHandlerFactory extends AbstractHandlerFactory {
 
-    public static DefaultServletHandlerFactory forConnectors(ConnectorFactory... connectors) {
+    public static DefaultHandlerFactory forConnectors(ConnectorFactory... connectors) {
         return forConnectors(Lists.newArrayList(connectors));
     }
 
-    public static DefaultServletHandlerFactory forConnectors(List<ConnectorFactory> connectors) {
-        final DefaultServletHandlerFactory factory = new DefaultServletHandlerFactory();
+    public static DefaultHandlerFactory forConnectors(List<ConnectorFactory> connectors) {
+        final DefaultHandlerFactory factory = new DefaultHandlerFactory();
         factory.connectors = connectors;
         return factory;
     }
