@@ -57,11 +57,11 @@ public class SimpleServerFactory extends AbstractServerFactory {
 
     @Valid
     @NotNull
-    private ContextHandlerFactory appHandlerFactory = new ContextHandlerFactory("/application");
+    private ContextHandlerFactory appHandlerFactory = ContextHandlerFactory.application();
 
     @Valid
     @NotNull
-    private ContextHandlerFactory adminHandlerFactory = new ContextHandlerFactory("/admin");
+    private ContextHandlerFactory adminHandlerFactory = ContextHandlerFactory.admin();
 
     @JsonProperty
     public ConnectorFactory getConnector() {

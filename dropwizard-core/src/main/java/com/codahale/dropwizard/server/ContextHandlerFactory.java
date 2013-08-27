@@ -7,6 +7,8 @@ import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.hibernate.validator.constraints.NotEmpty;
 
+import javax.validation.constraints.Pattern;
+
 /**
  * An implementation of {@link HandlerFactory} that is dependent context path.
  * <p/>
@@ -30,12 +32,23 @@ import org.hibernate.validator.constraints.NotEmpty;
  */
 public class ContextHandlerFactory extends AbstractHandlerFactory {
 
-    @NotEmpty
-    private String contextPath = "/";
-
-    public ContextHandlerFactory(String contextPath) {
-        this.contextPath = contextPath;
+    public static ContextHandlerFactory application() {
+        return forPath("/application");
     }
+
+    public static ContextHandlerFactory admin() {
+        return forPath("/admin");
+    }
+
+    public static ContextHandlerFactory forPath(String path) {
+        final ContextHandlerFactory factory = new ContextHandlerFactory();
+        factory.contextPath = path;
+        return factory;
+    }
+
+    @NotEmpty
+    @Pattern(regexp = "^\\/.*")
+    private String contextPath = "/";
 
     @JsonProperty("path")
     public String getContextPath() {
