@@ -4,6 +4,7 @@ import com.codahale.dropwizard.jetty.ConnectorFactory;
 import com.codahale.dropwizard.jetty.HttpConnectorFactory;
 import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
@@ -39,10 +40,10 @@ import java.util.List;
 public class DefaultHandlerFactory extends AbstractHandlerFactory {
 
     public static DefaultHandlerFactory forConnectors(ConnectorFactory... connectors) {
-        return forConnectors(Lists.newArrayList(connectors));
+        return forConnectors(ImmutableList.copyOf(connectors));
     }
 
-    public static DefaultHandlerFactory forConnectors(List<ConnectorFactory> connectors) {
+    public static DefaultHandlerFactory forConnectors(ImmutableList<ConnectorFactory> connectors) {
         final DefaultHandlerFactory factory = new DefaultHandlerFactory();
         factory.connectors = connectors;
         return factory;
@@ -50,16 +51,16 @@ public class DefaultHandlerFactory extends AbstractHandlerFactory {
 
     @Valid
     @NotNull
-    private List<ConnectorFactory> connectors =
-            Lists.newArrayList(HttpConnectorFactory.application());
+    private ImmutableList<ConnectorFactory> connectors =
+            ImmutableList.of(HttpConnectorFactory.application());
 
     @JsonProperty("connectors")
-    public List<ConnectorFactory> getConnectors() {
+    public ImmutableList<ConnectorFactory> getConnectors() {
         return connectors;
     }
 
     @JsonProperty("connectors")
-    public void setConnectors(List<ConnectorFactory> factories) {
+    public void setConnectors(ImmutableList<ConnectorFactory> factories) {
         this.connectors = factories;
     }
 
