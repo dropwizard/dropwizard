@@ -4,15 +4,29 @@ import com.codahale.dropwizard.Configuration;
 import com.codahale.dropwizard.db.DatabaseConfiguration;
 import com.google.common.base.Charsets;
 import liquibase.Liquibase;
-import liquibase.diff.Diff;
+import liquibase.diff.DiffGeneratorFactory;
 import liquibase.diff.DiffResult;
-import liquibase.diff.DiffStatusListener;
+import liquibase.diff.compare.CompareControl;
+import liquibase.diff.output.DiffOutputControl;
+import liquibase.diff.output.changelog.DiffToChangeLog;
+import liquibase.structure.DatabaseObject;
+import liquibase.structure.core.Column;
+import liquibase.structure.core.Data;
+import liquibase.structure.core.ForeignKey;
+import liquibase.structure.core.Index;
+import liquibase.structure.core.PrimaryKey;
+import liquibase.structure.core.Sequence;
+import liquibase.structure.core.Table;
+import liquibase.structure.core.UniqueConstraint;
+import liquibase.structure.core.View;
 import net.sourceforge.argparse4j.impl.Arguments;
 import net.sourceforge.argparse4j.inf.ArgumentGroup;
 import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
 
 import java.io.PrintStream;
+import java.util.HashSet;
+import java.util.Set;
 
 public class DbDumpCommand<T extends Configuration> extends AbstractLiquibaseCommand<T> {
     public DbDumpCommand(DatabaseConfiguration<T> strategy, Class<T> configurationClass) {
@@ -126,31 +140,47 @@ public class DbDumpCommand<T extends Configuration> extends AbstractLiquibaseCom
     @Override
     @SuppressWarnings("UseOfSystemOutOrSystemErr")
     public void run(Namespace namespace, Liquibase liquibase) throws Exception {
-        final Diff diff = new Diff(liquibase.getDatabase(), (String) null);
-        diff.addStatusListener(new DiffStatusListener() {
-            @Override
-            public void statusUpdate(String message) {
-                System.err.println(message);
-            }
-        });
-        diff.setDiffColumns(namespace.getBoolean("columns"));
-        diff.setDiffData(namespace.getBoolean("data"));
-        diff.setDiffForeignKeys(namespace.getBoolean("foreign-keys"));
-        diff.setDiffIndexes(namespace.getBoolean("indexes"));
-        diff.setDiffPrimaryKeys(namespace.getBoolean("primary-keys"));
-        diff.setDiffSequences(namespace.getBoolean("sequences"));
-        diff.setDiffTables(namespace.getBoolean("tables"));
-        diff.setDiffUniqueConstraints(namespace.getBoolean("unique-constraints"));
-        diff.setDiffViews(namespace.getBoolean("views"));
+        final Set<Class<? extends DatabaseObject>> compareTypes = new HashSet<>();
 
-        final DiffResult diffResult = diff.compare();
+        if (namespace.getBoolean("columns")) {
+            compareTypes.add(Column.class);
+        }
+        if (namespace.getBoolean("data")) {
+            compareTypes.add(Data.class);
+        }
+        if (namespace.getBoolean("foreign-keys")) {
+            compareTypes.add(ForeignKey.class);
+        }
+        if (namespace.getBoolean("indexes")) {
+            compareTypes.add(Index.class);
+        }
+        if (namespace.getBoolean("primary-keys")) {
+            compareTypes.add(PrimaryKey.class);
+        }
+        if (namespace.getBoolean("sequences")) {
+            compareTypes.add(Sequence.class);
+        }
+        if (namespace.getBoolean("tables")) {
+            compareTypes.add(Table.class);
+        }
+        if (namespace.getBoolean("unique-constraints")) {
+            compareTypes.add(UniqueConstraint.class);
+        }
+        if (namespace.getBoolean("views")) {
+            compareTypes.add(View.class);
+        }
+
+        final DiffResult diffResult = DiffGeneratorFactory.getInstance().compare(
+                liquibase.getDatabase(), null, new CompareControl(compareTypes));
+        final DiffToChangeLog diffToChangeLog = new DiffToChangeLog(diffResult, new DiffOutputControl());
         final String filename = namespace.getString("output");
+
         if (filename != null) {
             try (PrintStream file = new PrintStream(filename, Charsets.UTF_8.name())) {
-                diffResult.printChangeLog(file, liquibase.getDatabase());
+                diffToChangeLog.print(file);
             }
         } else {
-            diffResult.printChangeLog(System.out, liquibase.getDatabase());
+            diffToChangeLog.print(System.out);
         }
     }
 }
