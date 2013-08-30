@@ -52,10 +52,11 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <!-- we need HSQL because it handles time zones, H2 totally doesn't -->
         <dependency>
             <groupId>org.hsqldb</groupId>
             <artifactId>hsqldb</artifactId>
-            <version>${hsqldb.version}</version>
+            <version>2.3.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
