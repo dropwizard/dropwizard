@@ -1,5 +1,6 @@
 package io.dropwizard.setup;
 
+import com.codahale.dropwizard.server.errors.EarlyEOFExceptionMapper;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheckRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -67,6 +68,9 @@ public class Environment {
         this.lifecycleEnvironment = new LifecycleEnvironment();
 
         final DropwizardResourceConfig jerseyConfig = new DropwizardResourceConfig(metricRegistry);
+        //Add the Early EOF Exception Mapper for when the client disconnects whilst reading the input stream.
+        jerseyConfig.getSingletons().add(new EarlyEOFExceptionMapper());
+
         this.jerseyServletContainer = new JerseyContainerHolder(new ServletContainer(jerseyConfig));
         this.jerseyEnvironment = new JerseyEnvironment(jerseyServletContainer, jerseyConfig);
     }
