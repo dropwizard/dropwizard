@@ -3,6 +3,7 @@ package com.codahale.dropwizard.hibernate;
 import com.codahale.dropwizard.Configuration;
 import com.codahale.dropwizard.db.DataSourceFactory;
 import com.codahale.dropwizard.jersey.setup.JerseyEnvironment;
+import com.codahale.dropwizard.server.ServerEnvironment;
 import com.codahale.dropwizard.setup.Bootstrap;
 import com.codahale.dropwizard.setup.Environment;
 import com.codahale.metrics.health.HealthCheckRegistry;
@@ -26,7 +27,7 @@ public class HibernateBundleTest {
     private final Configuration configuration = mock(Configuration.class);
     private final HealthCheckRegistry healthChecks = mock(HealthCheckRegistry.class);
     private final JerseyEnvironment jerseyEnvironment = mock(JerseyEnvironment.class);
-    private final Environment environment = mock(Environment.class);
+    private final ServerEnvironment environment = mock(ServerEnvironment.class);
     private final HibernateBundle<Configuration> bundle = new HibernateBundle<Configuration>(entities, factory) {
         @Override
         public DataSourceFactory getDataSourceFactory(Configuration configuration) {

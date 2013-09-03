@@ -1,9 +1,9 @@
 package com.codahale.dropwizard.assets;
 
 import com.codahale.dropwizard.jetty.setup.ServletEnvironment;
+import com.codahale.dropwizard.server.ServerEnvironment;
 import com.codahale.dropwizard.servlets.assets.AssetServlet;
 import com.codahale.dropwizard.servlets.assets.ResourceURL;
-import com.codahale.dropwizard.setup.Environment;
 import com.google.common.io.Resources;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,7 +17,7 @@ import static org.mockito.Mockito.*;
 
 public class AssetsBundleTest {
     private final ServletEnvironment servletEnvironment = mock(ServletEnvironment.class);
-    private final Environment environment = mock(Environment.class);
+    private final ServerEnvironment environment = mock(ServerEnvironment.class);
 
     private AssetServlet servlet;
     private String servletPath;

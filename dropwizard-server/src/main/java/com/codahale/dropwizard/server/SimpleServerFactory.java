@@ -3,7 +3,6 @@ package com.codahale.dropwizard.server;
 import com.codahale.dropwizard.jetty.ConnectorFactory;
 import com.codahale.dropwizard.jetty.ContextRoutingHandler;
 import com.codahale.dropwizard.jetty.HttpConnectorFactory;
-import com.codahale.dropwizard.setup.Environment;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.google.common.collect.ImmutableMap;
@@ -95,7 +94,7 @@ public class SimpleServerFactory extends AbstractServerFactory {
     }
 
     @Override
-    public Server build(Environment environment) {
+    protected Server build(ServerEnvironment environment) {
         printBanner(environment.getName());
         final ThreadPool threadPool = createThreadPool(environment.metrics());
         final Server server = buildServer(environment.lifecycle(), threadPool);

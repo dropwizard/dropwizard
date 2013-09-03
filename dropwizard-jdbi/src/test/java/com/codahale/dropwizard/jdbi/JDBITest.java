@@ -5,7 +5,7 @@ import com.codahale.dropwizard.db.ManagedDataSource;
 import com.codahale.dropwizard.lifecycle.Managed;
 import com.codahale.dropwizard.lifecycle.setup.LifecycleEnvironment;
 import com.codahale.dropwizard.logging.LoggingFactory;
-import com.codahale.dropwizard.setup.Environment;
+import com.codahale.dropwizard.server.ServerEnvironment;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheckRegistry;
 import com.google.common.base.Optional;
@@ -40,7 +40,7 @@ public class JDBITest {
 
     private final HealthCheckRegistry healthChecks = mock(HealthCheckRegistry.class);
     private final LifecycleEnvironment lifecycleEnvironment = mock(LifecycleEnvironment.class);
-    private final Environment environment = mock(Environment.class);
+    private final ServerEnvironment environment = mock(ServerEnvironment.class);
     private final DBIFactory factory = new DBIFactory();
     private final List<Managed> managed = Lists.newArrayList();
     private final MetricRegistry metricRegistry = new MetricRegistry();

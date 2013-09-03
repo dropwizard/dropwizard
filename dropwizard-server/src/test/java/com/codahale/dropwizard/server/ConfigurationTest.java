@@ -1,16 +1,18 @@
-package com.codahale.dropwizard;
+package com.codahale.dropwizard.server;
 
-import com.codahale.dropwizard.jackson.Jackson;
-import com.codahale.dropwizard.jetty.ConnectorFactory;
-import com.codahale.dropwizard.logging.AppenderFactory;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sun.jersey.spi.service.ServiceFinder;
+import com.codahale.dropwizard.Configuration;
+import com.codahale.dropwizard.jackson.Jackson; 
+import com.codahale.dropwizard.logging.ConsoleAppenderFactory;
+import com.codahale.dropwizard.logging.FileAppenderFactory;
+import com.codahale.dropwizard.logging.SyslogAppenderFactory;
+import com.codahale.dropwizard.server.ServerConfiguration;
+import com.fasterxml.jackson.databind.ObjectMapper; 
 import org.junit.Test;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
 public class ConfigurationTest {
-    private final Configuration configuration = new Configuration();
+    private final ServerConfiguration configuration = new ServerConfiguration();
 
     @Test
     public void hasAnHttpConfiguration() throws Exception {
@@ -28,9 +30,9 @@ public class ConfigurationTest {
     public void ensureConfigSerializable() throws Exception {
         final ObjectMapper mapper = Jackson.newObjectMapper();
         mapper.getSubtypeResolver()
-              .registerSubtypes(ServiceFinder.find(AppenderFactory.class).toClassArray());
-        mapper.getSubtypeResolver()
-              .registerSubtypes(ServiceFinder.find(ConnectorFactory.class).toClassArray());
+              .registerSubtypes(new Class[]{SyslogAppenderFactory.class,
+                  ConsoleAppenderFactory.class,
+                  FileAppenderFactory.class});
 
         // Issue-96: some types were not serializable
         final String json = mapper.writeValueAsString(configuration);
@@ -38,7 +40,7 @@ public class ConfigurationTest {
                 .isNotNull();
 
         // and as an added bonus, let's see we can also read it back:
-        final Configuration cfg = mapper.readValue(json, Configuration.class);
+        final Configuration cfg = mapper.readValue(json, ServerConfiguration.class);
         assertThat(cfg)
                 .isNotNull();
     }

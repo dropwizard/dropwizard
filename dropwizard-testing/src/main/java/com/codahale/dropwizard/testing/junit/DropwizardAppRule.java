@@ -1,20 +1,25 @@
 package com.codahale.dropwizard.testing.junit;
 
-import com.codahale.dropwizard.Application;
-import com.codahale.dropwizard.Configuration;
-import com.codahale.dropwizard.cli.ServerCommand;
-import com.codahale.dropwizard.lifecycle.ServerLifecycleListener;
-import com.codahale.dropwizard.setup.Bootstrap;
-import com.codahale.dropwizard.setup.Environment;
-import com.google.common.collect.ImmutableMap;
+import java.util.Enumeration;
+
 import net.sourceforge.argparse4j.inf.Namespace;
+
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
-import java.util.Enumeration;
+import com.codahale.dropwizard.Application;
+import com.codahale.dropwizard.cli.ServiceCommand;
+import com.codahale.dropwizard.lifecycle.ServerLifecycleListener;
+import com.codahale.dropwizard.server.ServerCommand;
+import com.codahale.dropwizard.server.ServerCommand.JettyService;
+import com.codahale.dropwizard.server.ServerConfiguration;
+import com.codahale.dropwizard.setup.Bootstrap;
+import com.codahale.dropwizard.setup.Environment;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.util.concurrent.Service;
 
 /**
  * A JUnit rule for starting and stopping your application at the start and end of a test class.
@@ -25,7 +30,7 @@ import java.util.Enumeration;
  *
  * @param <C> the configuration type
  */
-public class DropwizardAppRule<C extends Configuration> implements TestRule {
+public class DropwizardAppRule<C extends ServerConfiguration> implements TestRule {
 
     private final Class<? extends Application<C>> applicationClass;
     private final String configPath;
@@ -83,8 +88,10 @@ public class DropwizardAppRule<C extends Configuration> implements TestRule {
                 public void run(C configuration, Environment environment) throws Exception {
                     environment.lifecycle().addServerLifecycleListener(new ServerLifecycleListener() {
                                     @Override
-                                    public void serverStarted(Server server) {
-                                        jettyServer = server;
+                                    public void serverStarted(Service server) {
+                                        if (server instanceof JettyService){
+                                            jettyServer=((JettyService)server).getServer();
+                                        }
                                     }
                                 });
                     DropwizardAppRule.this.configuration = configuration;
@@ -94,7 +101,7 @@ public class DropwizardAppRule<C extends Configuration> implements TestRule {
             };
 
             application.initialize(bootstrap);
-            final ServerCommand<C> command = new ServerCommand<>(application);
+            final ServiceCommand<C> command = new ServerCommand<>(application);
             final Namespace namespace = new Namespace(ImmutableMap.<String, Object>of("file", configPath));
             command.run(bootstrap, namespace);
         } catch (Exception e) {

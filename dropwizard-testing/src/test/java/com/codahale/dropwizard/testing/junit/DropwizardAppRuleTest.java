@@ -1,7 +1,8 @@
 package com.codahale.dropwizard.testing.junit;
 
-import com.codahale.dropwizard.Application;
-import com.codahale.dropwizard.Configuration;
+import com.codahale.dropwizard.server.ServerApplication;
+import com.codahale.dropwizard.server.ServerConfiguration;
+import com.codahale.dropwizard.server.ServerEnvironment;
 import com.codahale.dropwizard.setup.Bootstrap;
 import com.codahale.dropwizard.setup.Environment;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -53,13 +54,13 @@ public class DropwizardAppRuleTest {
     }
 
 
-    public static class TestApplication extends Application<TestConfiguration> {
+    public static class TestApplication extends ServerApplication<TestConfiguration> {
         @Override
-        public void initialize(Bootstrap<TestConfiguration> bootstrap) {
+        public void initializeServer(Bootstrap<TestConfiguration> bootstrap) {
         }
 
         @Override
-        public void run(TestConfiguration configuration, Environment environment) throws Exception {
+        public void run(TestConfiguration configuration, ServerEnvironment environment) throws Exception {
             environment.jersey().register(new TestResource(configuration.getMessage()));
         }
     }
@@ -80,7 +81,7 @@ public class DropwizardAppRuleTest {
         }
     }
 
-    public static class TestConfiguration extends Configuration {
+    public static class TestConfiguration extends ServerConfiguration {
         @NotEmpty
         @JsonProperty
         private String message;

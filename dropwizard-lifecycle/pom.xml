@@ -25,11 +25,6 @@
             <version>${guava.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-server</artifactId>
-            <version>${jetty.version}</version>
-        </dependency>
-        <dependency>
             <groupId>com.codahale.dropwizard</groupId>
             <artifactId>dropwizard-util</artifactId>
             <version>${project.version}</version>

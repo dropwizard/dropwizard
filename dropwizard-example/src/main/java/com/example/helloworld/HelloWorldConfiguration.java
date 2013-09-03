@@ -1,7 +1,7 @@
 package com.example.helloworld;
 
-import com.codahale.dropwizard.Configuration;
 import com.codahale.dropwizard.db.DataSourceFactory;
+import com.codahale.dropwizard.server.ServerConfiguration;
 import com.example.helloworld.core.Template;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -9,7 +9,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-public class HelloWorldConfiguration extends Configuration {
+public class HelloWorldConfiguration extends ServerConfiguration {
     @NotEmpty
     private String template;
 

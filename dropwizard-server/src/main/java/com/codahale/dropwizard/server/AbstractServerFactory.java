@@ -8,6 +8,7 @@ import com.codahale.dropwizard.jetty.NonblockingServletHolder;
 import com.codahale.dropwizard.jetty.RequestLogFactory;
 import com.codahale.dropwizard.lifecycle.setup.LifecycleEnvironment;
 import com.codahale.dropwizard.servlets.ThreadNameFilter;
+import com.codahale.dropwizard.setup.Environment;
 import com.codahale.dropwizard.util.Duration;
 import com.codahale.dropwizard.validation.MinDuration;
 import com.codahale.dropwizard.validation.ValidationMethod;
@@ -395,12 +396,21 @@ public abstract class AbstractServerFactory implements ServerFactory {
         threadPool.setName("dw");
         return threadPool;
     }
+    
+    public Server build(Environment environment)
+    {
+        if (!(environment instanceof ServerEnvironment)) {
+            throw new AssertionError();
+        }
+        return build((ServerEnvironment)environment);
+    }
+    
+    protected abstract Server build(ServerEnvironment environment);
 
     protected Server buildServer(LifecycleEnvironment lifecycle,
                                  ThreadPool threadPool) {
         final Server server = new Server(threadPool);
         server.addLifeCycleListener(buildSetUIDListener());
-        lifecycle.attach(server);
         final ErrorHandler errorHandler = new ErrorHandler();
         errorHandler.setShowStacks(false);
         server.addBean(errorHandler);
