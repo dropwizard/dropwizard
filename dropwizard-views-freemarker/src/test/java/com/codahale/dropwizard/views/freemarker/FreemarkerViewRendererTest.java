@@ -47,7 +47,7 @@ public class FreemarkerViewRendererTest extends JerseyTest {
     @Override
     protected AppDescriptor configure() {
         final DefaultResourceConfig config = new DefaultResourceConfig();
-        config.getSingletons().add(new ViewMessageBodyWriter(new MetricRegistry()));
+        config.getSingletons().add(new ViewMessageBodyWriter(new MetricRegistry(), null));
         config.getSingletons().add(new ExampleResource());
         return new LowLevelAppDescriptor.Builder(config).build();
     }

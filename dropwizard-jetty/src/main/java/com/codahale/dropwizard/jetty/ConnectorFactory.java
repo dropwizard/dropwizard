@@ -2,7 +2,10 @@ package com.codahale.dropwizard.jetty;
 
 import com.codahale.dropwizard.jackson.Discoverable;
 import com.codahale.metrics.MetricRegistry;
+
+import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.thread.ThreadPool;
@@ -10,7 +13,11 @@ import org.eclipse.jetty.util.thread.ThreadPool;
 /**
  * A factory for creating Jetty {@link Connector}s.
  */
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
+@JsonSubTypes({
+    @JsonSubTypes.Type(value=HttpConnectorFactory.class),
+    @JsonSubTypes.Type(value=HttpsConnectorFactory.class)
+})
 public interface ConnectorFactory extends Discoverable {
     /**
      * Create a new connector.

@@ -1,5 +1,6 @@
 package com.codahale.dropwizard.views.mustache;
 
+import com.codahale.dropwizard.views.ModelContainer;
 import com.codahale.dropwizard.views.View;
 import com.codahale.dropwizard.views.ViewRenderer;
 import com.github.mustachejava.Mustache;
@@ -47,8 +48,12 @@ public class MustacheViewRenderer implements ViewRenderer {
             final Mustache template = factories.get(view.getClass())
                                                .compile(view.getTemplateName());
             final Charset charset = view.getCharset().or(Charsets.UTF_8);
+            final Object model = view instanceof ModelContainer
+                                 ? ((ModelContainer) view).getModel()
+                                 : view;
+
             try (OutputStreamWriter writer = new OutputStreamWriter(output, charset)) {
-                template.execute(writer, view);
+                template.execute(writer, model);
             }
         } catch (ExecutionException | UncheckedExecutionException | MustacheException ignored) {
             throw new FileNotFoundException("Template " + view.getTemplateName() + " not found.");

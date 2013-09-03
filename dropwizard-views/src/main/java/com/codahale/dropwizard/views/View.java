@@ -52,7 +52,14 @@ public abstract class View {
         return Optional.fromNullable(charset);
     }
 
-    private String resolveName(String templateName) {
+    /**
+     * Resolve template name.
+     *
+     * @param templateName template name to resolve
+     *
+     * @return resolved template name
+     */
+    protected String resolveName(String templateName) {
         if (templateName.startsWith("/")) {
             return templateName;
         }
