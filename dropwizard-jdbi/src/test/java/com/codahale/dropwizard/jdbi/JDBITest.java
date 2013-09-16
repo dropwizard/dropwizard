@@ -156,9 +156,9 @@ public class JDBITest {
     public void sqlObjectsCanReturnJodaDateTime() throws Exception {
         final PersonDAO dao = dbi.open(PersonDAO.class);
 
-        final DateTime found = dao.getLatestCreatedAt(new DateTime(1365465078000L));
+        final DateTime found = dao.getLatestCreatedAt(new DateTime(1365465077000L));
         assertThat(found).isNotNull();
-        assertThat(found.getMillis()).isEqualTo(1365467078000L);
-        assertThat(found).isEqualTo(new DateTime(1365467078000L));
+        assertThat(found.getMillis()).isEqualTo(1365465078000L);
+        assertThat(found).isEqualTo(new DateTime(1365465078000L));
     }
 }
