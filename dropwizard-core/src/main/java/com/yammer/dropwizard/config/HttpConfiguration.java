@@ -58,7 +58,7 @@ public class HttpConfiguration {
     @JsonProperty
     private int port = 8080;
 
-    @PortRange
+//    @PortRange
     @JsonProperty
     private int adminPort = 8081;
 

@@ -69,7 +69,7 @@ public class ServerFactory {
     public ServerFactory(HttpConfiguration config, String name) {
         this.config = config;
         this.requestLogHandlerFactory = new RequestLogHandlerFactory(config.getRequestLogConfiguration(),
-                                                                     name);
+                name);
     }
 
     public Server buildServer(Environment env) throws ConfigurationException {
@@ -88,7 +88,7 @@ public class ServerFactory {
         server.addConnector(createExternalConnector());
 
         // if we're dynamically allocating ports, no worries if they are the same (i.e. 0)
-        if (config.getAdminPort() == 0 || (config.getAdminPort() != config.getPort()) ) {
+        if (config.getAdminPort() != -1 && (config.getAdminPort() == 0 || (config.getAdminPort() != config.getPort()))) {
             server.addConnector(createInternalConnector());
         }
 
@@ -118,7 +118,7 @@ public class ServerFactory {
         connector.setMaxIdleTime((int) config.getMaxIdleTime().toMilliseconds());
 
         connector.setLowResourcesMaxIdleTime((int) config.getLowResourcesMaxIdleTime()
-                                                         .toMilliseconds());
+                .toMilliseconds());
 
         connector.setAcceptorPriorityOffset(config.getAcceptorThreadPriorityOffset());
 
@@ -135,7 +135,7 @@ public class ServerFactory {
         connector.setResponseHeaderSize((int) config.getResponseHeaderBufferSize().toBytes());
 
         connector.setReuseAddress(config.isReuseAddressEnabled());
-        
+
         final Optional<Duration> lingerTime = config.getSoLingerTime();
 
         if (lingerTime.isPresent()) {
@@ -283,7 +283,7 @@ public class ServerFactory {
         }
 
         factory.setIncludeProtocols(Iterables.toArray(sslConfig.getSupportedProtocols(),
-                                                      String.class));
+                String.class));
     }
 
 
@@ -321,7 +321,7 @@ public class ServerFactory {
     private SecurityHandler basicAuthHandler(String username, String password) {
 
         final HashLoginService loginService = new HashLoginService();
-        loginService.putUser(username, Credential.getCredential(password), new String[] {"user"});
+        loginService.putUser(username, Credential.getCredential(password), new String[]{"user"});
         loginService.setName("admin");
 
         final Constraint constraint = new Constraint();
@@ -351,7 +351,7 @@ public class ServerFactory {
         if (jerseyContainer != null) {
             env.getJerseyEnvironment().addProvider(
                     new JacksonMessageBodyProvider(env.getJsonEnvironment().build(),
-                                                   env.getValidator())
+                            env.getValidator())
             );
             final ServletHolder jerseyHolder = new NonblockingServletHolder(jerseyContainer);
             jerseyHolder.setInitOrder(Integer.MAX_VALUE);
