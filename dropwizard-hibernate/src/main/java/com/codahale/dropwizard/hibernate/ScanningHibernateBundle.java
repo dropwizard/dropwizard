@@ -10,8 +10,6 @@ import com.sun.jersey.spi.scanning.AnnotationScannerListener;
 
 /**
  * Extension of HibernateBundle that scans given package for entites instead of giving them by hand.
- * 
- * @author spacanowski
  *
  */
 public abstract class ScanningHibernateBundle<T extends Configuration> extends HibernateBundle<T> {
