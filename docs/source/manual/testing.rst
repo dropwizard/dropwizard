@@ -150,7 +150,7 @@ loads a given resource instance in an in-memory Jersey server:
 
         @Override
         protected void setUpResources() {
-            when(store.fetchPerson(anyString())).thenReturn(person);
+            when(dao.fetchPerson(anyString())).thenReturn(person);
             addResource(new PersonResource(dao));
         }
 
@@ -159,7 +159,7 @@ loads a given resource instance in an in-memory Jersey server:
             assertThat(client().resource("/person/blah").get(Person.class))
                        .isEqualTo(person);
 
-            verify(store).fetchPerson("blah");
+            verify(dao).fetchPerson("blah");
         }
     }
 
