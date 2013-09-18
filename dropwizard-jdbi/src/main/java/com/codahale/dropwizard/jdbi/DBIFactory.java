@@ -4,6 +4,8 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import com.codahale.dropwizard.db.DataSourceFactory;
 import com.codahale.dropwizard.db.ManagedDataSource;
+import com.codahale.dropwizard.jdbi.args.JodaDateTimeArgumentFactory;
+import com.codahale.dropwizard.jdbi.args.JodaDateTimeMapper;
 import com.codahale.dropwizard.jdbi.args.OptionalArgumentFactory;
 import com.codahale.dropwizard.jdbi.logging.LogbackLog;
 import com.codahale.dropwizard.setup.Environment;
@@ -62,6 +64,8 @@ public class DBIFactory {
         dbi.registerContainerFactory(new ImmutableListContainerFactory());
         dbi.registerContainerFactory(new ImmutableSetContainerFactory());
         dbi.registerContainerFactory(new OptionalContainerFactory());
+        dbi.registerArgumentFactory(new JodaDateTimeArgumentFactory());
+        dbi.registerMapper(new JodaDateTimeMapper());
 
         return dbi;
     }
