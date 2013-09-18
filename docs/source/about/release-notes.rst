@@ -11,8 +11,9 @@ v0.7.0-SNAPSHOT
 
 * Upgraded to Java 7.
 * Moved to the ``com.codahale`` group ID and namespace.
-* Upgraded to Jetty 9.0.3.
+* Upgraded to Jetty 9.0.5.
 * Upgraded to Metrics 3.
+* Upgraded to Guava 15.
 * Dropped Scala support.
 * Renamed ``Service`` to ``Application``.
 * Added ``AppenderFactory``, allowing for arbitrary logging appenders for application and request
@@ -47,7 +48,7 @@ v0.7.0-SNAPSHOT
 * Moved ``dropwizard-db`` to use ``tomcat-jdbc`` instead of ``tomcat-dbcp``.
 * Extracted out ``dropwizard-views-freemarker`` and ``dropwizard-views-mustache``.
   ``dropwizard-views`` just provides infrastructure now.
-* Upgraded to Jackson 2.2.2.
+* Upgraded to Jackson 2.2.3.
 * Upgraded to Mustache 0.8.12.
 * Added support for the Jetty HTTP client to ``dropwizard-client``.
 * Added Jackson Afterburner support.
