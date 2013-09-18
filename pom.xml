@@ -49,7 +49,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <metrics3.version>3.0.0</metrics3.version>
+        <metrics3.version>3.0.1</metrics3.version>
         <jersey.version>1.17.1</jersey.version>
         <jackson.version>2.2.2</jackson.version>
         <logback.version>1.0.13</logback.version>
