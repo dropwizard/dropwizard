@@ -2,14 +2,14 @@
 <FindBugsFilter>
     <!-- we're *supposed* to manually GC there -->
     <Match>
-        <Class name="com.codahale.dropwizard.servlets.tasks.GarbageCollectionTask"/>
+        <Class name="io.dropwizard.servlets.tasks.GarbageCollectionTask"/>
         <Method name="execute"/>
         <Bug pattern="DM_GC"/>
     </Match>
 
     <!-- kind of hard to use exit codes without System.exit -->
     <Match>
-        <Class name="com.codahale.dropwizard.Application"/>
+        <Class name="io.dropwizard.Application"/>
         <Method name="run"/>
         <Bug pattern="DM_EXIT"/>
     </Match>
@@ -17,16 +17,16 @@
     <!-- serialization is boring -->
     <Match>
         <Bug code="Se"/>
-        <Class name="com.codahale.dropwizard.servlets.tasks.TaskServlet"/>
+        <Class name="io.dropwizard.servlets.tasks.TaskServlet"/>
     </Match>
     <Match>
         <Bug code="Se"/>
-        <Class name="com.codahale.dropwizard.servlets.assets.AssetServlet"/>
+        <Class name="io.dropwizard.servlets.assets.AssetServlet"/>
     </Match>
 
     <!-- pretty sure this is a bug in FindBugs -->
     <Match>
         <Bug pattern="RCN_REDUNDANT_NULLCHECK_OF_NULL_VALUE"/>
-        <Class name="com.codahale.dropwizard.configuration.ConfigurationFactory"/>
+        <Class name="io.dropwizard.configuration.ConfigurationFactory"/>
     </Match>
 </FindBugsFilter>

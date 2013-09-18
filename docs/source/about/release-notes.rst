@@ -10,7 +10,7 @@ v0.7.0-SNAPSHOT
 ===============
 
 * Upgraded to Java 7.
-* Moved to the ``com.codahale`` group ID and namespace.
+* Moved to the ``io.dropwizard`` group ID and namespace.
 * Upgraded to Jetty 9.0.5.
 * Upgraded to Metrics 3.
 * Upgraded to Guava 15.

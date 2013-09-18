@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.codahale.dropwizard</groupId>
+        <groupId>io.dropwizard</groupId>
         <artifactId>dropwizard-parent</artifactId>
         <version>0.7.0-SNAPSHOT</version>
     </parent>
@@ -20,7 +20,7 @@
             <version>${guava.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.codahale.dropwizard</groupId>
+            <groupId>io.dropwizard</groupId>
             <artifactId>dropwizard-util</artifactId>
             <version>${project.version}</version>
         </dependency>
