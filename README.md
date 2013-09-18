@@ -12,8 +12,7 @@ historically not sucked:
 * [Logback](http://logback.qos.ch/) for loggin'.
 * [Hibernate Validator](http://www.hibernate.org/subprojects/validator.html) for validatin'.
 * [Metrics](http://metrics.codahale.com) for figurin' out what your application is doin' in production.
-* [SnakeYAML](http://code.google.com/p/snakeyaml/) for YAML parsin' and configuratin'.
 * [JDBI](http://www.jdbi.org) and [Hibernate](http://www.hibernate.org/) for databasin'.
 * [Liquibase](http://www.liquibase.org/) for migratin'.
 
-Read more at [dropwizard.codahale.com](http://dropwizard.codahale.com).
+Read more at [dropwizard.io](http://www.dropwizard.io).
