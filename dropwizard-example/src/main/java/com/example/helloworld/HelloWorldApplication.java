@@ -3,7 +3,7 @@ package com.example.helloworld;
 import com.codahale.dropwizard.Application;
 import com.codahale.dropwizard.assets.AssetsBundle;
 import com.codahale.dropwizard.auth.basic.BasicAuthProvider;
-import com.codahale.dropwizard.db.DatabaseConfiguration;
+import com.codahale.dropwizard.db.DataSourceFactory;
 import com.codahale.dropwizard.hibernate.HibernateBundle;
 import com.codahale.dropwizard.migrations.MigrationsBundle;
 import com.codahale.dropwizard.setup.Bootstrap;
@@ -25,8 +25,8 @@ public class HelloWorldApplication extends Application<HelloWorldConfiguration> 
     private final HibernateBundle<HelloWorldConfiguration> hibernateBundle =
             new HibernateBundle<HelloWorldConfiguration>(Person.class) {
                 @Override
-                public DatabaseConfiguration getDatabaseConfiguration(HelloWorldConfiguration configuration) {
-                    return configuration.getDatabaseConfiguration();
+                public DataSourceFactory getDataSourceFactory(HelloWorldConfiguration configuration) {
+                    return configuration.getDataSourceFactory();
                 }
             };
 
@@ -41,8 +41,8 @@ public class HelloWorldApplication extends Application<HelloWorldConfiguration> 
         bootstrap.addBundle(new AssetsBundle());
         bootstrap.addBundle(new MigrationsBundle<HelloWorldConfiguration>() {
             @Override
-            public DatabaseConfiguration getDatabaseConfiguration(HelloWorldConfiguration configuration) {
-                return configuration.getDatabaseConfiguration();
+            public DataSourceFactory getDataSourceFactory(HelloWorldConfiguration configuration) {
+                return configuration.getDataSourceFactory();
             }
         });
         bootstrap.addBundle(hibernateBundle);
@@ -55,14 +55,14 @@ public class HelloWorldApplication extends Application<HelloWorldConfiguration> 
         final PersonDAO dao = new PersonDAO(hibernateBundle.getSessionFactory());
         final Template template = configuration.buildTemplate();
 
-        environment.admin().addHealthCheck("template", new TemplateHealthCheck(template));
+        environment.healthChecks().register("template", new TemplateHealthCheck(template));
 
-        environment.jersey().addProvider(new BasicAuthProvider<>(new ExampleAuthenticator(),
-                                                                 "SUPER SECRET STUFF"));
-        environment.jersey().addResource(new HelloWorldResource(template));
-        environment.jersey().addResource(new ViewResource());
-        environment.jersey().addResource(new ProtectedResource());
-        environment.jersey().addResource(new PeopleResource(dao));
-        environment.jersey().addResource(new PersonResource(dao));
+        environment.jersey().register(new BasicAuthProvider<>(new ExampleAuthenticator(),
+                                                              "SUPER SECRET STUFF"));
+        environment.jersey().register(new HelloWorldResource(template));
+        environment.jersey().register(new ViewResource());
+        environment.jersey().register(new ProtectedResource());
+        environment.jersey().register(new PeopleResource(dao));
+        environment.jersey().register(new PersonResource(dao));
     }
 }

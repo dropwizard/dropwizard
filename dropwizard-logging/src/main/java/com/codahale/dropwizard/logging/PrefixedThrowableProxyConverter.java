@@ -5,6 +5,9 @@ import ch.qos.logback.classic.spi.IThrowableProxy;
 import ch.qos.logback.classic.spi.StackTraceElementProxy;
 import ch.qos.logback.core.CoreConstants;
 
+/**
+ * A {@link ThrowableProxyConverter} which prefixes stack traces with {@code !}.
+ */
 public class PrefixedThrowableProxyConverter extends ThrowableProxyConverter {
     private static final String PREFIX = "! ";
 

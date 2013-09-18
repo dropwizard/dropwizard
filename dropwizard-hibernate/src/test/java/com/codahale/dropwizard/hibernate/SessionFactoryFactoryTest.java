@@ -1,6 +1,6 @@
 package com.codahale.dropwizard.hibernate;
 
-import com.codahale.dropwizard.db.DatabaseConfiguration;
+import com.codahale.dropwizard.db.DataSourceFactory;
 import com.codahale.dropwizard.lifecycle.setup.LifecycleEnvironment;
 import com.codahale.dropwizard.logging.LoggingFactory;
 import com.codahale.dropwizard.setup.Environment;
@@ -28,7 +28,7 @@ public class SessionFactoryFactoryTest {
     private final HibernateBundle<?> bundle = mock(HibernateBundle.class);
     private final LifecycleEnvironment lifecycleEnvironment = mock(LifecycleEnvironment.class);
     private final Environment environment = mock(Environment.class);
-    private final DatabaseConfiguration config = new DatabaseConfiguration();
+    private final DataSourceFactory config = new DataSourceFactory();
     private final MetricRegistry metricRegistry = new MetricRegistry();
 
     private SessionFactory sessionFactory;

@@ -1,7 +1,7 @@
 package com.codahale.dropwizard.migrations;
 
 import com.codahale.dropwizard.Configuration;
-import com.codahale.dropwizard.db.ConfigurationStrategy;
+import com.codahale.dropwizard.db.DatabaseConfiguration;
 import liquibase.Liquibase;
 import liquibase.change.CheckSum;
 import net.sourceforge.argparse4j.inf.Namespace;
@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 public class DbCalculateChecksumCommand<T extends Configuration> extends AbstractLiquibaseCommand<T> {
     private static final Logger LOGGER = LoggerFactory.getLogger("liquibase");
 
-    public DbCalculateChecksumCommand(ConfigurationStrategy<T> strategy, Class<T> configurationClass) {
+    public DbCalculateChecksumCommand(DatabaseConfiguration<T> strategy, Class<T> configurationClass) {
         super("calculate-checksum", "Calculates and prints a checksum for a change set", strategy, configurationClass);
     }
 

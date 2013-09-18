@@ -36,6 +36,9 @@
         <module>dropwizard-validation</module>
         <module>dropwizard-configuration</module>
         <module>dropwizard-logging</module>
+        <module>dropwizard-metrics</module>
+        <module>dropwizard-metrics-ganglia</module>
+        <module>dropwizard-metrics-graphite</module>
         <module>dropwizard-jersey</module>
         <module>dropwizard-jetty</module>
         <module>dropwizard-servlets</module>
@@ -47,14 +50,15 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <metrics3.version>3.0.0-BETA2</metrics3.version>
+        <metrics3.version>3.0.0</metrics3.version>
         <jersey.version>1.17.1</jersey.version>
-        <jackson.version>2.2.1</jackson.version>
-        <logback.version>1.0.12</logback.version>
+        <jackson.version>2.2.2</jackson.version>
+        <logback.version>1.0.13</logback.version>
         <slf4j.version>1.7.5</slf4j.version>
         <servlet.version>3.0.0.v201112011016</servlet.version>
-        <jetty.version>9.0.3.v20130506</jetty.version>
+        <jetty.version>9.0.4.v20130625</jetty.version>
         <guava.version>14.0.1</guava.version>
+        <h2.version>1.3.172</h2.version>
     </properties>
 
     <developers>
@@ -110,10 +114,6 @@
             <name>Nexus Release Repository</name>
             <url>http://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
-        <site>
-            <id>repo.codahale.com</id>
-            <url>scp://codahale.com/home/codahale/dropwizard.codahale.com/maven/</url>
-        </site>
     </distributionManagement>
 
     <profiles>
@@ -140,6 +140,9 @@
                                 </goals>
                             </execution>
                         </executions>
+                        <configuration>
+                            <keyname>840C3C96</keyname>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>
@@ -172,11 +175,38 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.0</version>
+                <version>3.1</version>
                 <configuration>
                     <source>1.7</source>
                     <target>1.7</target>
                 </configuration>
+            </plugin>
+            <!-- we can't run tests in parallel until http://bugzilla.slf4j.org/show_bug.cgi?id=176 is fixed -->
+            <!--<plugin>-->
+                <!--<groupId>org.apache.maven.plugins</groupId>-->
+                <!--<artifactId>maven-surefire-plugin</artifactId>-->
+                <!--<version>2.14.1</version>-->
+                <!--<configuration>-->
+                    <!--<parallel>classes</parallel>-->
+                <!--</configuration>-->
+            <!--</plugin>-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>1.2</version>
+                <executions>
+                    <execution>
+                        <id>enforce</id>
+                        <configuration>
+                            <rules>
+                                <DependencyConvergence/>
+                            </rules>
+                        </configuration>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -235,39 +265,16 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-site-plugin</artifactId>
-                <version>3.2</version>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.4</version>
                 <configuration>
-                    <reportPlugins>
-                        <plugin>
-                            <groupId>org.apache.maven.plugins</groupId>
-                            <artifactId>maven-project-info-reports-plugin</artifactId>
-                            <version>2.6</version>
-                            <configuration>
-                                <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
-                                <dependencyDetailsEnabled>false</dependencyDetailsEnabled>
-                            </configuration>
-                        </plugin>
-                        <plugin>
-                            <groupId>org.apache.maven.plugins</groupId>
-                            <artifactId>maven-javadoc-plugin</artifactId>
-                            <version>2.9</version>
-                        </plugin>
-                        <plugin>
-                            <groupId>org.codehaus.mojo</groupId>
-                            <artifactId>findbugs-maven-plugin</artifactId>
-                            <version>2.5.2</version>
-                        </plugin>
-                    </reportPlugins>
+                    <archive>
+                        <manifest>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                        </manifest>
+                    </archive>
                 </configuration>
             </plugin>
         </plugins>
-        <extensions>
-            <extension>
-                <groupId>org.apache.maven.wagon</groupId>
-                <artifactId>wagon-ssh</artifactId>
-                <version>2.4</version>
-            </extension>
-        </extensions>
     </build>
 </project>

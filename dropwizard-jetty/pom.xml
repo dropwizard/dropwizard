@@ -23,6 +23,12 @@
             <groupId>com.codahale.metrics</groupId>
             <artifactId>metrics-jetty9</artifactId>
             <version>${metrics3.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.eclipse.jetty</groupId>
+                    <artifactId>jetty-server</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>

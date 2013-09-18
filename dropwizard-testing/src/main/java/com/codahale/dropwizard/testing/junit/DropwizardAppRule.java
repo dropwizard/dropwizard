@@ -14,6 +14,17 @@ import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
+import java.util.Enumeration;
+
+/**
+ * A JUnit rule for starting and stopping your application at the start and end of a test class.
+ * <p/>
+ * By default, the {@link Application} will be constructed using reflection to invoke the nullary
+ * constructor. If your application does not provide a public nullary constructor, you will need to
+ * override the {@link #newApplication()} method to provide your application instance(s).
+ *
+ * @param <C> the configuration type
+ */
 public class DropwizardAppRule<C extends Configuration> implements TestRule {
 
     private final Class<? extends Application<C>> applicationClass;
@@ -24,9 +35,14 @@ public class DropwizardAppRule<C extends Configuration> implements TestRule {
     private Environment environment;
     private Server jettyServer;
 
-    public DropwizardAppRule(Class<? extends Application<C>> applicationClass, String configPath) {
+    public DropwizardAppRule(Class<? extends Application<C>> applicationClass,
+                             String configPath,
+                             ConfigOverride... configOverrides) {
         this.applicationClass = applicationClass;
         this.configPath = configPath;
+        for (ConfigOverride configOverride: configOverrides) {
+            configOverride.addToSystemProperties();
+        }
     }
 
     @Override
@@ -38,10 +54,20 @@ public class DropwizardAppRule<C extends Configuration> implements TestRule {
                 try {
                     base.evaluate();
                 } finally {
+                    resetConfigOverrides();
                     jettyServer.stop();
                 }
             }
         };
+    }
+
+    private void resetConfigOverrides() {
+        for (Enumeration<?> props = System.getProperties().propertyNames(); props.hasMoreElements();) {
+            String keyString = (String) props.nextElement();
+            if (keyString.startsWith("dw.")) {
+                System.clearProperty(keyString);
+            }
+        }
     }
 
     private void startIfRequired() {
@@ -50,11 +76,11 @@ public class DropwizardAppRule<C extends Configuration> implements TestRule {
         }
 
         try {
-            application = applicationClass.newInstance();
+            application = newApplication();
 
             final Bootstrap<C> bootstrap = new Bootstrap<C>(application) {
                 @Override
-                public void runWithBundles(C configuration, Environment environment) throws Exception {
+                public void run(C configuration, Environment environment) throws Exception {
                     environment.lifecycle().addServerLifecycleListener(new ServerLifecycleListener() {
                                     @Override
                                     public void serverStarted(Server server) {
@@ -63,7 +89,7 @@ public class DropwizardAppRule<C extends Configuration> implements TestRule {
                                 });
                     DropwizardAppRule.this.configuration = configuration;
                     DropwizardAppRule.this.environment = environment;
-                    super.runWithBundles(configuration, environment);
+                    super.run(configuration, environment);
                 }
             };
 
@@ -84,9 +110,17 @@ public class DropwizardAppRule<C extends Configuration> implements TestRule {
         return ((ServerConnector) jettyServer.getConnectors()[0]).getLocalPort();
     }
 
+    public Application<C> newApplication() {
+        try {
+            return applicationClass.newInstance();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @SuppressWarnings("unchecked")
-    public <S extends Application<C>> S getApplication() {
-        return (S) application;
+    public <A extends Application<C>> A getApplication() {
+        return (A) application;
     }
 
     public Environment getEnvironment() {

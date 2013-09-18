@@ -75,7 +75,7 @@ public class FreemarkerViewRendererTest extends JerseyTest {
                     .isEqualTo(500);
 
             assertThat(e.getResponse().getEntity(String.class))
-                    .isEqualTo("<html><head><title>Missing Template</title></head><body><h1>Missing Template</h1><p>Template /woo-oo-ahh.txt.ftl not found.</p></body></html>");
+                    .isEqualTo("<html><head><title>Missing Template</title></head><body><h1>Missing Template</h1><p>Template \"/woo-oo-ahh.txt.ftl\" not found.</p></body></html>");
         }
     }
 }

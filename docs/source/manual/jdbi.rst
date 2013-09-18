@@ -145,3 +145,7 @@ Guava Support
 
 ``dropwizard-jdbi`` supports ``Optional<T>`` arguments and ``ImmutableList<T>`` and
 ``ImmutableSet<T>`` query results.
+
+JDBI Support
+============
+``dropwizard-jdbi`` supports joda-time ``DateTime`` arguments and ``DateTime`` fields in query results.

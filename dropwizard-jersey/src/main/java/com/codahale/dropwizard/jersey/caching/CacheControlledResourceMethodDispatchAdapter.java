@@ -7,8 +7,10 @@ import com.sun.jersey.spi.container.ResourceMethodDispatchProvider;
 import com.sun.jersey.spi.dispatch.RequestDispatcher;
 
 import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.ext.Provider;
 import java.util.concurrent.TimeUnit;
 
+@Provider
 public class CacheControlledResourceMethodDispatchAdapter implements ResourceMethodDispatchAdapter {
     private static class CacheControlledResourceMethodDispatchProvider implements ResourceMethodDispatchProvider {
         private static final int ONE_YEAR_IN_SECONDS = (int) TimeUnit.DAYS.toSeconds(365);

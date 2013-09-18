@@ -1,7 +1,7 @@
 package com.codahale.dropwizard.migrations;
 
 import com.codahale.dropwizard.Configuration;
-import com.codahale.dropwizard.db.ConfigurationStrategy;
+import com.codahale.dropwizard.db.DatabaseConfiguration;
 import com.google.common.collect.Maps;
 import liquibase.Liquibase;
 import net.sourceforge.argparse4j.inf.Namespace;
@@ -13,7 +13,7 @@ public class DbCommand<T extends Configuration> extends AbstractLiquibaseCommand
     private static final String COMMAND_NAME_ATTR = "subcommand";
     private final SortedMap<String, AbstractLiquibaseCommand<T>> subcommands;
 
-    public DbCommand(ConfigurationStrategy<T> strategy, Class<T> configurationClass) {
+    public DbCommand(DatabaseConfiguration<T> strategy, Class<T> configurationClass) {
         super("db", "Run database migration tasks", strategy, configurationClass);
         this.subcommands = Maps.newTreeMap();
         addSubcommand(new DbCalculateChecksumCommand<>(strategy, configurationClass));

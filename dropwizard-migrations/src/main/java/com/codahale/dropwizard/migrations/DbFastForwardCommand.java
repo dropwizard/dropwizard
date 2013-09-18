@@ -1,7 +1,7 @@
 package com.codahale.dropwizard.migrations;
 
 import com.codahale.dropwizard.Configuration;
-import com.codahale.dropwizard.db.ConfigurationStrategy;
+import com.codahale.dropwizard.db.DatabaseConfiguration;
 import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
 import liquibase.Liquibase;
@@ -13,7 +13,7 @@ import java.io.OutputStreamWriter;
 import java.util.List;
 
 public class DbFastForwardCommand<T extends Configuration> extends AbstractLiquibaseCommand<T> {
-    protected DbFastForwardCommand(ConfigurationStrategy<T> strategy, Class<T> configurationClass) {
+    protected DbFastForwardCommand(DatabaseConfiguration<T> strategy, Class<T> configurationClass) {
         super("fast-forward",
               "Mark the next pending change set as applied without running it",
               strategy,

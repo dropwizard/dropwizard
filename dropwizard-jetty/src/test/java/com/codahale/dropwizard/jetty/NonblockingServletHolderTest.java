@@ -42,4 +42,10 @@ public class NonblockingServletHolderTest {
         inOrder.verify(baseRequest).setAsyncSupported(false);
         inOrder.verify(servlet).service(request, response);
     }
+
+    @Test
+    public void isEagerlyInitialized() throws Exception {
+        assertThat(holder.getInitOrder())
+                .isEqualTo(1);
+    }
 }

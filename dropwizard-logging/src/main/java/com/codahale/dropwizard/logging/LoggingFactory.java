@@ -35,7 +35,7 @@ public class LoggingFactory {
         final Logger root = (Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
         root.detachAndStopAllAppenders();
 
-        final LogFormatter formatter = new LogFormatter(root.getLoggerContext(),
+        final DropwizardLayout formatter = new DropwizardLayout(root.getLoggerContext(),
                                                         TimeZone.getDefault());
         formatter.start();
 

@@ -1,18 +1,17 @@
 package com.codahale.dropwizard.lifecycle;
 
+import com.codahale.dropwizard.util.Duration;
+
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.TimeUnit;
 
 public class ExecutorServiceManager implements Managed {
     private final ExecutorService executor;
-    private final long shutdownPeriod;
-    private final TimeUnit unit;
+    private final Duration shutdownPeriod;
     private final String poolName;
 
-    public ExecutorServiceManager(ExecutorService executor, long shutdownPeriod, TimeUnit unit, String poolName) {
+    public ExecutorServiceManager(ExecutorService executor, Duration shutdownPeriod, String poolName) {
         this.executor = executor;
         this.shutdownPeriod = shutdownPeriod;
-        this.unit = unit;
         this.poolName = poolName;
     }
 
@@ -24,7 +23,7 @@ public class ExecutorServiceManager implements Managed {
     @Override
     public void stop() throws Exception {
         executor.shutdown();
-        executor.awaitTermination(shutdownPeriod, unit);
+        executor.awaitTermination(shutdownPeriod.getQuantity(), shutdownPeriod.getUnit());
     }
 
     @Override

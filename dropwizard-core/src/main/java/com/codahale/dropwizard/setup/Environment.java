@@ -3,17 +3,19 @@ package com.codahale.dropwizard.setup;
 import com.codahale.dropwizard.jersey.DropwizardResourceConfig;
 import com.codahale.dropwizard.jersey.setup.JerseyContainerHolder;
 import com.codahale.dropwizard.jersey.setup.JerseyEnvironment;
+import com.codahale.dropwizard.jetty.MutableServletContextHandler;
 import com.codahale.dropwizard.jetty.setup.ServletEnvironment;
 import com.codahale.dropwizard.lifecycle.setup.LifecycleEnvironment;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheckRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.jersey.spi.container.servlet.ServletContainer;
-import org.eclipse.jetty.servlet.ServletContextHandler;
 
 import javax.validation.Validator;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+
+// TODO: 5/15/13 <coda> -- add tests for Environment
 
 /**
  * A Dropwizard application's environment.
@@ -29,12 +31,12 @@ public class Environment {
     private final JerseyContainerHolder jerseyServletContainer;
     private final JerseyEnvironment jerseyEnvironment;
 
-    private final ServletContextHandler servletContext;
+    private final MutableServletContextHandler servletContext;
     private final ServletEnvironment servletEnvironment;
 
     private final LifecycleEnvironment lifecycleEnvironment;
 
-    private final ServletContextHandler adminContext;
+    private final MutableServletContextHandler adminContext;
     private final AdminEnvironment adminEnvironment;
 
     /**
@@ -54,11 +56,11 @@ public class Environment {
         this.healthCheckRegistry = new HealthCheckRegistry();
         this.validator = validator;
 
-        this.servletContext = new ServletContextHandler();
+        this.servletContext = new MutableServletContextHandler();
         servletContext.setClassLoader(classLoader);
         this.servletEnvironment = new ServletEnvironment(servletContext);
 
-        this.adminContext = new ServletContextHandler();
+        this.adminContext = new MutableServletContextHandler();
         adminContext.setClassLoader(classLoader);
         this.adminEnvironment = new AdminEnvironment(adminContext, healthCheckRegistry);
 
@@ -69,42 +71,72 @@ public class Environment {
         this.jerseyEnvironment = new JerseyEnvironment(jerseyServletContainer, jerseyConfig);
     }
 
+    /**
+     * Returns the application's {@link JerseyEnvironment}.
+     */
     public JerseyEnvironment jersey() {
         return jerseyEnvironment;
     }
 
+    /**
+     * Returns the application's {@link AdminEnvironment}.
+     */
     public AdminEnvironment admin() {
         return adminEnvironment;
     }
 
+    /**
+     * Returns the application's {@link LifecycleEnvironment}.
+     */
     public LifecycleEnvironment lifecycle() {
         return lifecycleEnvironment;
     }
 
+    /**
+     * Returns the application's {@link ServletEnvironment}.
+     */
     public ServletEnvironment servlets() {
         return servletEnvironment;
     }
 
+    /**
+     * Returns the application's {@link ObjectMapper}.
+     */
     public ObjectMapper getObjectMapper() {
         return objectMapper;
     }
 
+    /**
+     * Returns the application's name.
+     */
     public String getName() {
         return name;
     }
 
+    /**
+     * Returns the application's {@link Validator}.
+     */
     public Validator getValidator() {
         return validator;
     }
 
+    /**
+     * Sets the application's {@link Validator}.
+     */
     public void setValidator(Validator validator) {
         this.validator = checkNotNull(validator);
     }
 
+    /**
+     * Returns the application's {@link MetricRegistry}.
+     */
     public MetricRegistry metrics() {
         return metricRegistry;
     }
 
+    /**
+     * Returns the application's {@link HealthCheckRegistry}.
+     */
     public HealthCheckRegistry healthChecks() {
         return healthCheckRegistry;
     }
@@ -115,7 +147,7 @@ public class Environment {
 
     // TODO: 5/4/13 <coda> -- figure out how to make these accessors not a public API
 
-    public ServletContextHandler getServletContext() {
+    public MutableServletContextHandler getApplicationContext() {
         return servletContext;
     }
 
@@ -123,7 +155,7 @@ public class Environment {
         return jerseyServletContainer.getContainer();
     }
 
-    public ServletContextHandler getAdminContext() {
+    public MutableServletContextHandler getAdminContext() {
         return adminContext;
     }
 }

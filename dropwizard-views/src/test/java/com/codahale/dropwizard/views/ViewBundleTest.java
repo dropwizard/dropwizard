@@ -21,6 +21,6 @@ public class ViewBundleTest {
     public void addsTheViewMessageBodyWriterToTheEnvironment() throws Exception {
         new ViewBundle().run(environment);
 
-        verify(jerseyEnvironment).addProvider(any(ViewMessageBodyWriter.class));
+        verify(jerseyEnvironment).register(any(ViewMessageBodyWriter.class));
     }
 }

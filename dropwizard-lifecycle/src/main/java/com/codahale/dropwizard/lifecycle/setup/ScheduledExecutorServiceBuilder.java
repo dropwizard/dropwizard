@@ -1,6 +1,7 @@
 package com.codahale.dropwizard.lifecycle.setup;
 
 import com.codahale.dropwizard.lifecycle.ExecutorServiceManager;
+import com.codahale.dropwizard.util.Duration;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import java.util.concurrent.*;
@@ -10,8 +11,7 @@ public class ScheduledExecutorServiceBuilder {
     private final String nameFormat;
     private int poolSize;
     private ThreadFactory threadFactory;
-    private long shutdownTime;
-    private TimeUnit shutdownUnit;
+    private Duration shutdownTime;
     private RejectedExecutionHandler handler;
 
     public ScheduledExecutorServiceBuilder(LifecycleEnvironment environment, String nameFormat) {
@@ -19,6 +19,7 @@ public class ScheduledExecutorServiceBuilder {
         this.nameFormat = nameFormat;
         this.poolSize = 1;
         this.threadFactory = new ThreadFactoryBuilder().setNameFormat(nameFormat).build();
+        this.shutdownTime = Duration.seconds(5);
         this.handler = new ThreadPoolExecutor.AbortPolicy();
     }
 
@@ -27,9 +28,8 @@ public class ScheduledExecutorServiceBuilder {
         return this;
     }
 
-    public ScheduledExecutorServiceBuilder shutdownTime(long time, TimeUnit unit) {
+    public ScheduledExecutorServiceBuilder shutdownTime(Duration time) {
         this.shutdownTime = time;
-        this.shutdownUnit = unit;
         return this;
     }
 
@@ -44,13 +44,8 @@ public class ScheduledExecutorServiceBuilder {
     }
 
     public ScheduledExecutorService build() {
-        final ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(poolSize,
-                                                                                     threadFactory,
-                                                                                     handler);
-        environment.manage(new ExecutorServiceManager(executor,
-                                                      shutdownTime,
-                                                      shutdownUnit,
-                                                      nameFormat));
+        final ScheduledThreadPoolExecutor executor = new ScheduledThreadPoolExecutor(poolSize, threadFactory, handler);
+        environment.manage(new ExecutorServiceManager(executor, shutdownTime, nameFormat));
         return executor;
     }
 }

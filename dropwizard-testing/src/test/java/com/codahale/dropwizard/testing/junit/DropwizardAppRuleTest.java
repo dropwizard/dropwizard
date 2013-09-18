@@ -2,8 +2,6 @@ package com.codahale.dropwizard.testing.junit;
 
 import com.codahale.dropwizard.Application;
 import com.codahale.dropwizard.Configuration;
-import com.codahale.dropwizard.jetty.HttpConnectorFactory;
-import com.codahale.dropwizard.server.DefaultServerFactory;
 import com.codahale.dropwizard.setup.Bootstrap;
 import com.codahale.dropwizard.setup.Environment;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -30,8 +28,8 @@ public class DropwizardAppRuleTest {
     @Test
     public void canGetExpectedResourceOverHttp() {
         final String content = new Client().resource("http://localhost:" +
-                                                             RULE.getLocalPort()
-                                                             +"/test").get(String.class);
+                                                     RULE.getLocalPort()
+                                                     +"/test").get(String.class);
 
         assertThat(content, is("Yes, it's here"));
     }
@@ -40,9 +38,6 @@ public class DropwizardAppRuleTest {
     public void returnsConfiguration() {
         final TestConfiguration config = RULE.getConfiguration();
         assertThat(config.getMessage(), is("Yes, it's here"));
-        final DefaultServerFactory serverFactory = (DefaultServerFactory) config.getServerFactory();
-        final HttpConnectorFactory connectorFactory = (HttpConnectorFactory) serverFactory.getApplicationConnectors().get(0);
-        assertThat(connectorFactory.getPort(), is(0));
     }
 
     @Test
@@ -65,7 +60,7 @@ public class DropwizardAppRuleTest {
 
         @Override
         public void run(TestConfiguration configuration, Environment environment) throws Exception {
-            environment.jersey().addResource(new TestResource(configuration.getMessage()));
+            environment.jersey().register(new TestResource(configuration.getMessage()));
         }
     }
 
@@ -95,9 +90,8 @@ public class DropwizardAppRuleTest {
         }
     }
 
-    private static String resourceFilePath(String resourceClassPathLocation) {
+    public static String resourceFilePath(String resourceClassPathLocation) {
         try {
-
             return new File(Resources.getResource(resourceClassPathLocation).toURI()).getAbsolutePath();
         } catch (Exception e) {
             throw new RuntimeException(e);

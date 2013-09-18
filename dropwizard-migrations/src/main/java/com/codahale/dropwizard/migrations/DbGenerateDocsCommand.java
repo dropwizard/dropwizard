@@ -1,13 +1,13 @@
 package com.codahale.dropwizard.migrations;
 
 import com.codahale.dropwizard.Configuration;
-import com.codahale.dropwizard.db.ConfigurationStrategy;
+import com.codahale.dropwizard.db.DatabaseConfiguration;
 import liquibase.Liquibase;
 import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
 
 public class DbGenerateDocsCommand<T extends Configuration> extends AbstractLiquibaseCommand<T> {
-    public DbGenerateDocsCommand(ConfigurationStrategy<T> strategy, Class<T> configurationClass) {
+    public DbGenerateDocsCommand(DatabaseConfiguration<T> strategy, Class<T> configurationClass) {
         super("generate-docs", "Generate documentation about the database state.", strategy, configurationClass);
     }
 

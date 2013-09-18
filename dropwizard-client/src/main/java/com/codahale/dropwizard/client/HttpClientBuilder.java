@@ -1,6 +1,7 @@
 package com.codahale.dropwizard.client;
 
 import com.codahale.dropwizard.setup.Environment;
+import com.codahale.dropwizard.util.Duration;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.httpclient.InstrumentedClientConnManager;
 import com.codahale.metrics.httpclient.InstrumentedHttpClient;
@@ -170,12 +171,12 @@ public class HttpClientBuilder {
      * @return a InstrumentedClientConnManger instance
      */
     protected InstrumentedClientConnManager createConnectionManager(SchemeRegistry registry, String name) {
-        final long ttl = configuration.getTimeToLive().toMilliseconds();
+        final Duration ttl = configuration.getTimeToLive();
         final InstrumentedClientConnManager manager =
                 new InstrumentedClientConnManager(metricRegistry,
                                                   registry,
-                                                  ttl,
-                                                  TimeUnit.MILLISECONDS,
+                                                  ttl.getQuantity(),
+                                                  ttl.getUnit(),
                                                   resolver,
                                                   name);
         manager.setDefaultMaxPerRoute(configuration.getMaxConnectionsPerRoute());

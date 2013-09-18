@@ -1,11 +1,16 @@
 package com.codahale.dropwizard.validation;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import javax.validation.Validation;
 import javax.validation.Validator;
 
+import java.util.Locale;
+
 import static org.fest.assertions.api.Assertions.assertThat;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assume.assumeThat;
 
 public class PortRangeValidatorTest {
     @SuppressWarnings("PublicField")
@@ -20,6 +25,11 @@ public class PortRangeValidatorTest {
 
     private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
     private final Example example = new Example();
+
+    @Before
+    public void setUp() throws Exception {
+        assumeThat(Locale.getDefault().getLanguage(), is("en"));
+    }
 
     @Test
     public void acceptsNonPrivilegedPorts() throws Exception {
@@ -42,15 +52,7 @@ public class PortRangeValidatorTest {
         example.port = -1;
 
         assertThat(ConstraintViolations.format(validator.validate(example)))
-                .containsOnly("port must be between 1025 and 65535 (was -1)");
-    }
-
-    @Test
-    public void rejectsPrivilegedPorts() throws Exception {
-        example.port = 80;
-
-        assertThat(ConstraintViolations.format(validator.validate(example)))
-                .containsOnly("port must be between 1025 and 65535 (was 80)");
+                .containsOnly("port must be between 1 and 65535 (was -1)");
     }
 
     @Test
