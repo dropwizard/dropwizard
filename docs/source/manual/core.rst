@@ -154,7 +154,8 @@ Dropwizard then calls your ``Service`` subclass to initialize your service's ``E
 SSL
 ---
 
-SSL support is built into Dropwizard. You will need to provide your own java
+SSL support is built into Dropwizard. You will need to specify an alternative connector
+type, as shown below. You will also need to provide your own java
 keystore, which is outside the scope of this document (``keytool`` is the
 command you need). There is a test keystore you can use in the
 `Dropwizard example project`__.
@@ -164,6 +165,8 @@ command you need). There is a test keystore you can use in the
 .. code-block:: yaml
 
     http:
+      connectorType: nonblocking+ssl
+      port: 8443
       ssl:
         keyStore: ./example.keystore
         keyStorePassword: example
