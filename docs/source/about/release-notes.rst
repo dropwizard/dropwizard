@@ -55,6 +55,7 @@ v0.7.0-SNAPSHOT
 * Added support for ``deflate``-encoded requests and responses.
 * Added support for deserializing Java ``enums`` with fuzzy matching rules (i.e., whitespace
   stripping, ``-``/``_`` equivalence, case insensitivity, etc.).
+* Upgraded to Liquibase 3.0.2.
 
 .. _rel-0.6.2:
 
