@@ -14,13 +14,13 @@ import static org.fest.assertions.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assume.assumeThat;
 
-public class ConfigurationExceptionTest {
+public class ConfigurationValidationExceptionTest {
     private static class Example {
         @NotNull
         String woo;
     }
 
-    private ConfigurationException e;
+    private ConfigurationValidationException e;
 
     @Before
     public void setUp() throws Exception {
@@ -28,14 +28,14 @@ public class ConfigurationExceptionTest {
 
         final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
         final Set<ConstraintViolation<Example>> violations = validator.validate(new Example());
-        this.e = new ConfigurationException("config.yml", violations);
+        this.e = new ConfigurationValidationException("config.yml", violations);
     }
 
     @Test
     public void formatsTheViolationsIntoAHumanReadableMessage() throws Exception {
         assertThat(e.getMessage())
                 .isEqualTo(String.format(
-                        "config.yml has the following errors:%n" +
+                        "config.yml has an error:%n" +
                                 "  * woo may not be null (was null)%n"
                 ));
     }
