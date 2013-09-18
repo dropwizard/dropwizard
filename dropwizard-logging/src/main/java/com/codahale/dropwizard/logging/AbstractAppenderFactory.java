@@ -5,6 +5,7 @@ import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.filter.ThresholdFilter;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
+import ch.qos.logback.core.spi.DeferredProcessingAware;
 import ch.qos.logback.core.spi.FilterAttachable;
 import com.codahale.dropwizard.util.Duration;
 import com.codahale.dropwizard.validation.MinDuration;
@@ -124,7 +125,7 @@ public abstract class AbstractAppenderFactory implements AppenderFactory {
         this.logFormat = logFormat;
     }
 
-    protected Appender<ILoggingEvent> wrapAsync(Appender<ILoggingEvent> appender) {
+    protected <E extends DeferredProcessingAware> Appender<E> wrapAsync(Appender<E> appender) {
         final AsyncAppender asyncAppender = new AsyncAppender(appender, batchSize, batchDuration, bounded);
         asyncAppender.start();
         return asyncAppender;

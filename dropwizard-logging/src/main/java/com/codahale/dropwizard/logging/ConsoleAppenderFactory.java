@@ -1,10 +1,12 @@
 package com.codahale.dropwizard.logging;
 
+import ch.qos.logback.access.spi.IAccessEvent;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.ConsoleAppender;
 import ch.qos.logback.core.Layout;
+import ch.qos.logback.core.encoder.Encoder;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
@@ -58,7 +60,7 @@ import java.util.TimeZone;
  * @see AbstractAppenderFactory
  */
 @JsonTypeName("console")
-public class ConsoleAppenderFactory extends AbstractAppenderFactory {
+public class ConsoleAppenderFactory extends AbstractAppenderFactory implements AccessAppenderFactory {
     @SuppressWarnings("UnusedDeclaration")
     public enum ConsoleStream {
         STDOUT("System.out"),
@@ -109,6 +111,18 @@ public class ConsoleAppenderFactory extends AbstractAppenderFactory {
         appender.setTarget(target.get());
         appender.setLayout(layout == null ? buildLayout(context, timeZone) : layout);
         addThresholdFilter(appender, threshold);
+        appender.start();
+
+        return wrapAsync(appender);
+    }
+
+    @Override
+    public Appender<IAccessEvent> build(LoggerContext context, Encoder<IAccessEvent> encoder) {
+        ConsoleAppender<IAccessEvent> appender = new ConsoleAppender<IAccessEvent>();
+        appender.setName("console-appender");
+        appender.setEncoder(encoder);
+        appender.setTarget(target.get());
+        appender.setContext(context);
         appender.start();
 
         return wrapAsync(appender);
