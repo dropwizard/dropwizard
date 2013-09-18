@@ -12,6 +12,11 @@ import org.eclipse.jetty.server.Server;
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", defaultImpl = DefaultServerFactory.class)
 public interface ServerFactory extends Discoverable {
+
+    HandlerFactory getApplicationHandlerFactory();
+
+    HandlerFactory getAdminHandlerFactory();
+
     /**
      * Build a server for the given Dropwizard application.
      *

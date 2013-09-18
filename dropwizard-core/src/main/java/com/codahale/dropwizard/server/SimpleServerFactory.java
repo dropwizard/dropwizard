@@ -1,8 +1,6 @@
 package com.codahale.dropwizard.server;
 
-import com.codahale.dropwizard.jetty.ConnectorFactory;
-import com.codahale.dropwizard.jetty.ContextRoutingHandler;
-import com.codahale.dropwizard.jetty.HttpConnectorFactory;
+import com.codahale.dropwizard.jetty.*;
 import com.codahale.dropwizard.setup.Environment;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
@@ -11,7 +9,6 @@ import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.thread.ThreadPool;
-import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -36,14 +33,14 @@ import javax.validation.constraints.NotNull;
  *         <td>The {@link ConnectorFactory connector} which will handle both application and admin requests.</td>
  *     </tr>
  *     <tr>
- *         <td>{@code applicationContextPath}</td>
- *         <td>{@code /application}</td>
- *         <td>The context path of the application servlets, including Jersey.</td>
+ *         <td>{@code application}</td>
+ *         <td>A {@link ContextHandlerFactory context handler} for /application.</td>
+ *         <td>The context handler for the application.</td>
  *     </tr>
  *     <tr>
- *         <td>{@code adminContextPath}</td>
- *         <td>{@code /admin}</td>
- *         <td>The context path of the admin servlets, including metrics and tasks.</td>
+ *         <td>{@code admin}</td>
+ *         <td>A {@link ContextHandlerFactory context handler} for /admin.</td>
+ *         <td>The context handler for the admin servlets, including metrics and tasks.</td>
  *     </tr>
  * </table>
  * <p/>
@@ -58,11 +55,13 @@ public class SimpleServerFactory extends AbstractServerFactory {
     @NotNull
     private ConnectorFactory connector = HttpConnectorFactory.application();
 
-    @NotEmpty
-    private String applicationContextPath = "/application";
+    @Valid
+    @NotNull
+    private ContextHandlerFactory appHandlerFactory = ContextHandlerFactory.application();
 
-    @NotEmpty
-    private String adminContextPath = "/admin";
+    @Valid
+    @NotNull
+    private ContextHandlerFactory adminHandlerFactory = ContextHandlerFactory.admin();
 
     @JsonProperty
     public ConnectorFactory getConnector() {
@@ -74,46 +73,53 @@ public class SimpleServerFactory extends AbstractServerFactory {
         this.connector = factory;
     }
 
-    @JsonProperty
-    public String getApplicationContextPath() {
-        return applicationContextPath;
+    @Override
+    @JsonProperty("application")
+    public ContextHandlerFactory getApplicationHandlerFactory() {
+        return appHandlerFactory;
     }
 
-    @JsonProperty
-    public void setApplicationContextPath(String contextPath) {
-        this.applicationContextPath = contextPath;
+    @JsonProperty("application")
+    public void setApplicationHandler(ContextHandlerFactory factory) {
+        this.appHandlerFactory = factory;
     }
 
-    @JsonProperty
-    public String getAdminContextPath() {
-        return adminContextPath;
+    @Override
+    @JsonProperty("admin")
+    public ContextHandlerFactory getAdminHandlerFactory() {
+        return adminHandlerFactory;
     }
 
-    @JsonProperty
-    public void setAdminContextPath(String contextPath) {
-        this.adminContextPath = contextPath;
+    @JsonProperty("admin")
+    public void setAdminHandler(ContextHandlerFactory factory) {
+        this.adminHandlerFactory = factory;
     }
 
     @Override
     public Server build(Environment environment) {
         printBanner(environment.getName());
-        final ThreadPool threadPool = createThreadPool(environment.metrics());
+        final ThreadPool threadPool = appHandlerFactory.buildThreadPool(environment.metrics(), "dw");
         final Server server = buildServer(environment.lifecycle(), threadPool);
 
-        environment.getApplicationContext().setContextPath(applicationContextPath);
-        final Handler applicationHandler = createAppServlet(server,
-                                                            environment.jersey(),
-                                                            environment.getObjectMapper(),
-                                                            environment.getValidator(),
-                                                            environment.getApplicationContext(),
-                                                            environment.getJerseyServletContainer(),
-                                                            environment.metrics());
+        final Handler applicationHandler = appHandlerFactory.build(server,
+                                                                   environment.getApplicationContext(),
+                                                                   environment.metrics(),
+                                                                   environment.getName());
 
-        environment.getAdminContext().setContextPath(adminContextPath);
-        final Handler adminHandler = createAdminServlet(server,
-                                                        environment.getAdminContext(),
-                                                        environment.metrics(),
-                                                        environment.healthChecks());
+        addJerseyServlet(environment.getApplicationContext(),
+                         environment.getJerseyServletContainer(),
+                         environment.jersey(),
+                         environment.getObjectMapper(),
+                         environment.getValidator());
+
+        final Handler adminHandler = adminHandlerFactory.build(server,
+                                                               environment.getAdminContext(),
+                                                               environment.metrics(),
+                                                               environment.getName());
+
+        addAdminServlets(environment.getAdminContext(),
+                         environment.metrics(),
+                         environment.healthChecks());
 
         final Connector conn = connector.build(server,
                                                environment.metrics(),
@@ -123,10 +129,10 @@ public class SimpleServerFactory extends AbstractServerFactory {
         server.addConnector(conn);
 
         final ContextRoutingHandler routingHandler = new ContextRoutingHandler(ImmutableMap.of(
-                applicationContextPath, applicationHandler,
-                adminContextPath, adminHandler
+                appHandlerFactory.getContextPath(), applicationHandler,
+                adminHandlerFactory.getContextPath(), adminHandler
         ));
-        server.setHandler(addRequestLog(routingHandler, environment.getName()));
+        server.setHandler(routingHandler);
 
         return server;
     }
