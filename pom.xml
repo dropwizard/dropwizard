@@ -77,15 +77,15 @@
     </licenses>
 
     <scm>
-        <connection>scm:git:git://github.com/codahale/dropwizard.git</connection>
-        <developerConnection>scm:git:git@github.com:codahale/dropwizard.git</developerConnection>
-        <url>http://github.com/codahale/dropwizard/</url>
+        <connection>scm:git:git://github.com/dropwizard/dropwizard.git</connection>
+        <developerConnection>scm:git:git@github.com:dropwizard/dropwizard.git</developerConnection>
+        <url>http://github.com/dropwizard/dropwizard/</url>
         <tag>HEAD</tag>
     </scm>
 
     <issueManagement>
         <system>github</system>
-        <url>http://github.com/codahale/dropwizard/issues#issue/</url>
+        <url>http://github.com/dropwizard/dropwizard/issues#issue/</url>
     </issueManagement>
 
     <repositories>

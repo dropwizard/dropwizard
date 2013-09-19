@@ -1,4 +1,4 @@
-Dropwizard [![Build Status](https://travis-ci.org/codahale/dropwizard.png?branch=master)](https://travis-ci.org/codahale/dropwizard)
+Dropwizard [![Build Status](https://travis-ci.org/dropwizard/dropwizard.png?branch=master)](https://travis-ci.org/dropwizard/dropwizard)
 ==========
 
 *Dropwizard is a sneaky way of making fast Java web applications.*
