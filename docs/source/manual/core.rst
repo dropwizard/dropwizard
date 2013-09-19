@@ -66,7 +66,7 @@ Configuration
 Dropwizard provides a number of built-in configuration parameters. They are
 well documented in the `example project's configuration`__.
 
-.. __: https://github.com/codahale/dropwizard/blob/master/dropwizard-example/example.yml
+.. __: https://github.com/dropwizard/dropwizard/blob/master/dropwizard-example/example.yml
 
 Each ``Service`` subclass has a single type parameter: that of its matching ``Configuration``
 subclass. These are usually at the root of your service's main package. For example, your User
@@ -159,7 +159,7 @@ keystore, which is outside the scope of this document (``keytool`` is the
 command you need). There is a test keystore you can use in the
 `Dropwizard example project`__.
 
-.. __: https://github.com/codahale/dropwizard/tree/master/dropwizard-example
+.. __: https://github.com/dropwizard/dropwizard/tree/master/dropwizard-example
 
 .. code-block:: yaml
 
@@ -602,7 +602,7 @@ We think services should print out a big ASCII art banner on startup. Yours shou
 Just add a ``banner.txt`` class to ``src/main/resources`` and it'll print it out when your service
 starts::
 
-    INFO  [2011-12-09 21:56:37,209] com.codahale.dropwizard.cli.ServerCommand: Starting hello-world
+    INFO  [2011-12-09 21:56:37,209] io.dropwizard.cli.ServerCommand: Starting hello-world
                                                      dP
                                                      88
       .d8888b. dP.  .dP .d8888b. 88d8b.d8b. 88d888b. 88 .d8888b.
@@ -736,7 +736,7 @@ For example:
   the matched URI template and passes it into the method as a ``String``.
 * A ``@QueryParam("count")``-annotated ``IntParam`` parameter takes the first ``count`` value from
   the request's query string and passes it as a ``String`` to ``IntParam``'s constructor.
-  ``IntParam`` (and all other ``com.codahale.dropwizard.jersey.params.*`` classes) parses the string
+  ``IntParam`` (and all other ``io.dropwizard.jersey.params.*`` classes) parses the string
   as an ``Integer``, returning a ``400 Bad Request`` if the value is malformed.
 * A ``@FormParam("name")``-annotated ``Set<String>`` parameter takes all the ``name`` values from a
   posted form and passes them to the method as a set of strings.
@@ -1083,8 +1083,8 @@ test that a ``Person`` instance generates the same JSON as the fixture with the 
 
 .. code-block:: java
 
-    import static com.codahale.dropwizard.testing.JsonHelpers.asJson;
-    import static com.codahale.dropwizard.testing.JsonHelpers.jsonFixture;
+    import static io.dropwizard.testing.JsonHelpers.asJson;
+    import static io.dropwizard.testing.JsonHelpers.jsonFixture;
 
     @Test
     public void producesTheExpectedJson() throws Exception {
@@ -1101,7 +1101,7 @@ Likewise, you can also test the parsing of the same JSON file to guarantee round
 
 .. code-block:: java
 
-    import static com.codahale.dropwizard.testing.JsonHelpers.fromJson;
+    import static io.dropwizard.testing.JsonHelpers.fromJson;
 
     @Test
     public void consumesTheExpectedJson() throws Exception {

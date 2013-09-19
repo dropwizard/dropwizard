@@ -1,3 +1,0 @@
-com.codahale.dropwizard.logging.ConsoleAppenderFactory
-com.codahale.dropwizard.logging.FileAppenderFactory
-com.codahale.dropwizard.logging.SyslogAppenderFactory
