@@ -121,6 +121,8 @@ public class SyslogAppenderFactory extends AbstractAppenderFactory {
     private String logFormat = LOG_TOKEN_NAME + LOG_TOKEN_PID + ": " +
             SyslogAppender.DEFAULT_SUFFIX_PATTERN;
 
+    private boolean includeStackTrace = true;
+
     /**
      * Returns the Logback pattern with which events will be formatted.
      */
@@ -172,6 +174,16 @@ public class SyslogAppenderFactory extends AbstractAppenderFactory {
         this.port = port;
     }
 
+    @JsonProperty
+    public boolean getIncludeStackTrace() {
+        return includeStackTrace;
+    }
+
+    @JsonProperty
+    public void setIncludeStackTrace(boolean includeStackTrace) {
+        this.includeStackTrace = includeStackTrace;
+    }
+
     @Override
     public Appender<ILoggingEvent> build(LoggerContext context, String applicationName, Layout<ILoggingEvent> layout) {
         final SyslogAppender appender = new SyslogAppender();
@@ -181,6 +193,7 @@ public class SyslogAppenderFactory extends AbstractAppenderFactory {
         appender.setSyslogHost(host);
         appender.setPort(port);
         appender.setFacility(facility.toString().toLowerCase(Locale.ENGLISH));
+        appender.setThrowableExcluded(!includeStackTrace);
         addThresholdFilter(appender, threshold);
         appender.start();
         return wrapAsync(appender);
