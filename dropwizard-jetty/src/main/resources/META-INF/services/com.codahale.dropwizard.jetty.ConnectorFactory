@@ -1,2 +1,0 @@
-com.codahale.dropwizard.jetty.HttpConnectorFactory
-com.codahale.dropwizard.jetty.HttpsConnectorFactory

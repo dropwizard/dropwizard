@@ -105,7 +105,7 @@ html_theme_options = {
     'gradient_bg': u'#363F45',
     'landing_logo': u'dropwizard-hat.png',
     'landing_logo_width': u'150px',
-    'github_page': u'https://github.com/codahale/dropwizard',
+    'github_page': u'https://github.com/dropwizard/dropwizard',
     'mailing_list': u'https://groups.google.com/forum/#!forum/dropwizard-user'
 }
 

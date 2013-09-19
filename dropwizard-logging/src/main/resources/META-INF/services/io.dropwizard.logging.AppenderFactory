@@ -1,0 +1,3 @@
+io.dropwizard.logging.ConsoleAppenderFactory
+io.dropwizard.logging.FileAppenderFactory
+io.dropwizard.logging.SyslogAppenderFactory
