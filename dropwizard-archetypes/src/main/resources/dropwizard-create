@@ -192,5 +192,5 @@ echo "Creating ${PACKAGING_TYPE}project $NAME with root package $PACKAGE using D
 echo
 
 # create from archetype
-$MAVEN "archetype:generate" "-DinteractiveMode=false" "-DarchetypeGroupId=com.codahale.dropwizard.archetypes" "-DarchetypeArtifactId=java-simple" "-DarchetypeVersion=$DW_VERSION" "-DgroupId=$GROUP" "-DartifactId=$ARTIFACT" "-Dpackage=$PACKAGE" "-Dname=$NAME" "-Dversion=$VERSION" "-Dshaded=$SHADED" "-Ddescription=$DESCRIPTION"
+$MAVEN "archetype:generate" "-DinteractiveMode=false" "-DarchetypeGroupId=io.dropwizard.archetypes" "-DarchetypeArtifactId=java-simple" "-DarchetypeVersion=$DW_VERSION" "-DgroupId=$GROUP" "-DartifactId=$ARTIFACT" "-Dpackage=$PACKAGE" "-Dname=$NAME" "-Dversion=$VERSION" "-Dshaded=$SHADED" "-Ddescription=$DESCRIPTION"
 

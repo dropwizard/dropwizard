@@ -6,13 +6,13 @@
   </prerequisites>
 
   <parent>
-    <groupId>com.codahale.dropwizard.archetypes</groupId>
+    <groupId>io.dropwizard.archetypes</groupId>
     <artifactId>dropwizard-archetypes</artifactId>
     <version>0.7.0-SNAPSHOT</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
-  <groupId>com.codahale.dropwizard.archetypes</groupId>
+  <groupId>io.dropwizard.archetypes</groupId>
   <artifactId>java-simple</artifactId>
   <packaging>maven-archetype</packaging>
 
@@ -20,7 +20,7 @@
 
   <dependencies>
     <dependency>
-      <groupId>com.codahale.dropwizard</groupId>
+      <groupId>io.dropwizard</groupId>
       <artifactId>dropwizard-core</artifactId>
       <version>${project.version}</version>
     </dependency>

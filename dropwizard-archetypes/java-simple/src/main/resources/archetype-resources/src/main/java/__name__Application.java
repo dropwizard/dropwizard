@@ -1,8 +1,8 @@
 package ${package};
 
-import com.codahale.dropwizard.Application;
-import com.codahale.dropwizard.setup.Bootstrap;
-import com.codahale.dropwizard.setup.Environment;
+import io.dropwizard.Application;
+import io.dropwizard.setup.Bootstrap;
+import io.dropwizard.setup.Environment;
 
 public class ${name}Application extends Application<${name}Configuration> {
 
