@@ -25,7 +25,6 @@ public class Slf4jRequestLog extends AbstractNCSARequestLog {
     public Slf4jRequestLog(AppenderAttachableImpl<ILoggingEvent> appenders, TimeZone timeZone) {
         this.appenders = appenders;
 
-        setLogDispatch(true);
         setLogLatency(true);
         setLogTimeZone(timeZone);
         setExtended(true);
