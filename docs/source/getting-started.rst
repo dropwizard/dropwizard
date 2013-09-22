@@ -146,7 +146,7 @@ Add the ``dropwizard-core`` library as a dependency:
 
     <dependencies>
         <dependency>
-            <groupId>com.codahale.dropwizard</groupId>
+            <groupId>io.dropwizard</groupId>
             <artifactId>dropwizard-core</artifactId>
             <version>${dropwizard.version}</version>
         </dependency>
@@ -179,7 +179,7 @@ Here's what our configuration class will look like:
 
     package com.example.helloworld;
     
-    import com.codahale.dropwizard.Configuration;
+    import io.dropwizard.Configuration;
     import com.fasterxml.jackson.annotation.JsonProperty;
     import org.hibernate.validator.constraints.NotEmpty;
     
@@ -263,9 +263,9 @@ commands which provide basic functionality. (More on that later.) For now, thoug
 
     package com.example.helloworld;
     
-    import com.codahale.dropwizard.Application;
-    import com.codahale.dropwizard.setup.Bootstrap;
-    import com.codahale.dropwizard.setup.Environment;
+    import io.dropwizard.Application;
+    import io.dropwizard.setup.Bootstrap;
+    import io.dropwizard.setup.Environment;
     
     public class HelloWorldApplication extends Application<HelloWorldConfiguration> {
         public static void main(String[] args) throws Exception {
@@ -715,11 +715,11 @@ You should see something like the following:
 
 .. code-block:: text
 
-    INFO  [2011-12-03 00:38:32,927] com.codahale.dropwizard.cli.ServerCommand: Starting hello-world
+    INFO  [2011-12-03 00:38:32,927] io.dropwizard.cli.ServerCommand: Starting hello-world
     INFO  [2011-12-03 00:38:32,931] org.eclipse.jetty.server.Server: jetty-7.x.y-SNAPSHOT
     INFO  [2011-12-03 00:38:32,936] org.eclipse.jetty.server.handler.ContextHandler: started o.e.j.s.ServletContextHandler{/,null}
     INFO  [2011-12-03 00:38:32,999] com.sun.jersey.server.impl.application.WebApplicationImpl: Initiating Jersey application, version 'Jersey: 1.10 11/02/2011 03:53 PM'
-    INFO  [2011-12-03 00:38:33,041] com.codahale.dropwizard.setup.Environment:
+    INFO  [2011-12-03 00:38:33,041] io.dropwizard.setup.Environment:
 
         GET     /hello-world (com.example.helloworld.resources.HelloWorldResource)
 
