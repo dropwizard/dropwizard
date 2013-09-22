@@ -96,33 +96,33 @@ public class AssetsBundleTest {
 
         runBundle(new AssetsBundle("/json", "/what/old", "index.txt", "customAsset2"), "customAsset2");
         assertThat(servletPath)
-        .isEqualTo("/what/old/*");
+                .isEqualTo("/what/old/*");
 
         assertThat(servlet.getIndexFile())
-        .isEqualTo("index.txt");
+                .isEqualTo("index.txt");
 
         assertThat(servlet.getResourceURL())
-        .isEqualTo(normalize("json"));
+                .isEqualTo(normalize("json"));
 
         assertThat(servlet.getUriPath())
-        .isEqualTo("/what/old");
+                .isEqualTo("/what/old");
     }
 
     @Test
     public void canHaveDifferentUriAndResourcePathsAndIndexFilename() throws Exception {
-    	runBundle(new AssetsBundle("/json", "/what", "index.txt"));
+        runBundle(new AssetsBundle("/json", "/what", "index.txt"));
 
-    	assertThat(servletPath)
-    	.isEqualTo("/what/*");
+        assertThat(servletPath)
+                .isEqualTo("/what/*");
 
-    	assertThat(servlet.getIndexFile())
-    	.isEqualTo("index.txt");
+        assertThat(servlet.getIndexFile())
+                .isEqualTo("index.txt");
 
-    	assertThat(servlet.getResourceURL())
-    	.isEqualTo(normalize("json"));
+        assertThat(servlet.getResourceURL())
+                .isEqualTo(normalize("json"));
 
-    	assertThat(servlet.getUriPath())
-    	.isEqualTo("/what");
+        assertThat(servlet.getUriPath())
+                .isEqualTo("/what");
     }
 
     private URL normalize(String path) {
@@ -130,8 +130,9 @@ public class AssetsBundleTest {
     }
 
     private void runBundle(AssetsBundle bundle) {
-    	runBundle(bundle, "assets");
+        runBundle(bundle, "assets");
     }
+
     private void runBundle(AssetsBundle bundle, String assetName) {
         final ServletRegistration.Dynamic registration = mock(ServletRegistration.Dynamic.class);
         when(servletEnvironment.addServlet(anyString(), any(AssetServlet.class))).thenReturn(registration);

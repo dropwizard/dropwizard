@@ -1,11 +1,11 @@
 package io.dropwizard.assets;
 
 import com.google.common.base.Charsets;
-
 import io.dropwizard.Bundle;
 import io.dropwizard.servlets.assets.AssetServlet;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+
 import static com.google.common.base.Preconditions.checkArgument;
 
 /**
@@ -13,14 +13,13 @@ import static com.google.common.base.Preconditions.checkArgument;
  */
 public class AssetsBundle implements Bundle {
     private static final String DEFAULT_ASSETS_NAME = "assets";
-	private static final String DEFAULT_INDEX_FILE = "index.htm";
+    private static final String DEFAULT_INDEX_FILE = "index.htm";
     private static final String DEFAULT_PATH = "/assets";
 
     private final String resourcePath;
     private final String uriPath;
     private final String indexFile;
     private final String assetsName;
-
 
     /**
      * Creates a new AssetsBundle which serves up static assets from
@@ -71,7 +70,7 @@ public class AssetsBundle implements Bundle {
      * @param indexFile           the name of the index file to use
      */
     public AssetsBundle(String resourcePath, String uriPath, String indexFile) {
-    	this(resourcePath, uriPath, indexFile, DEFAULT_ASSETS_NAME);
+        this(resourcePath, uriPath, indexFile, DEFAULT_ASSETS_NAME);
     }
 
     /**
