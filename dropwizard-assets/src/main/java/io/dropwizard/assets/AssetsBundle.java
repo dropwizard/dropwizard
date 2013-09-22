@@ -84,9 +84,10 @@ public class AssetsBundle implements Bundle {
      * @param resourcePath        the resource path (in the classpath) of the static asset files
      * @param uriPath             the uri path for the static asset files
      * @param indexFile           the name of the index file to use
+     * @param assetsName          the name of servlet mapping used for this assets bundle
      */
     public AssetsBundle(String resourcePath, String uriPath, String indexFile, String assetsName) {
-		checkArgument(resourcePath.startsWith("/"), "%s is not an absolute path", resourcePath);
+        checkArgument(resourcePath.startsWith("/"), "%s is not an absolute path", resourcePath);
         checkArgument(!"/".equals(resourcePath), "%s is the classpath root", resourcePath);
         this.resourcePath = resourcePath.endsWith("/") ? resourcePath : (resourcePath + '/');
         this.uriPath = uriPath.endsWith("/") ? uriPath : (uriPath + '/');
