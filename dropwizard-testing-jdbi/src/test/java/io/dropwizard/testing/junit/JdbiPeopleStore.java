@@ -1,6 +1,5 @@
-package com.codahale.dropwizard.testing.jdbi;
+package io.dropwizard.testing.junit;
 
-import com.codahale.dropwizard.testing.Person;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.BindBean;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
