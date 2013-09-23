@@ -1,6 +1,8 @@
 package io.dropwizard.logging;
 
 import ch.qos.logback.classic.spi.ThrowableProxy;
+import com.google.common.collect.Lists;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -48,20 +50,26 @@ public class PrefixedRootCauseFirstThrowableProxyConverterTest {
         }
     }
 
+    @Before
+    public void setup() {
+        converter.setOptionList(Lists.newArrayList("full"));
+        converter.start();
+    }
+
     @Test
     public void prefixesExceptionsWithExclamationMarks() throws Exception {
         assertThat(converter.throwableProxyToString(proxy))
                 .startsWith(String.format(
                         "! java.net.SocketTimeoutException: Timed-out reading from socket%n" +
-                        "! at io.dropwizard.logging.PrefixedRootCauseFirstThrowableProxyConverterTest.throwRoot(PrefixedRootCauseFirstThrowableProxyConverterTest.java:32)%n" +
-                        "! at io.dropwizard.logging.PrefixedRootCauseFirstThrowableProxyConverterTest.throwInnerWrapper(PrefixedRootCauseFirstThrowableProxyConverterTest.java:37)%n" +
-                        "! Causing: java.io.IOException: Fairly general error doing some IO%n" +
+                        "! at io.dropwizard.logging.PrefixedRootCauseFirstThrowableProxyConverterTest.throwRoot(PrefixedRootCauseFirstThrowableProxyConverterTest.java:34)%n" +
                         "! at io.dropwizard.logging.PrefixedRootCauseFirstThrowableProxyConverterTest.throwInnerWrapper(PrefixedRootCauseFirstThrowableProxyConverterTest.java:39)%n" +
-                        "! at io.dropwizard.logging.PrefixedRootCauseFirstThrowableProxyConverterTest.throwOuterWrapper(PrefixedRootCauseFirstThrowableProxyConverterTest.java:45)%n" +
-                        "! Causing: java.lang.RuntimeException: Very general error doing something%n" +
+                        "! Causing: java.io.IOException: Fairly general error doing some IO%n" +
+                        "! at io.dropwizard.logging.PrefixedRootCauseFirstThrowableProxyConverterTest.throwInnerWrapper(PrefixedRootCauseFirstThrowableProxyConverterTest.java:41)%n" +
                         "! at io.dropwizard.logging.PrefixedRootCauseFirstThrowableProxyConverterTest.throwOuterWrapper(PrefixedRootCauseFirstThrowableProxyConverterTest.java:47)%n" +
-                        "! at io.dropwizard.logging.PrefixedRootCauseFirstThrowableProxyConverterTest.getException(PrefixedRootCauseFirstThrowableProxyConverterTest.java:23)%n" +
-                        "! at io.dropwizard.logging.PrefixedRootCauseFirstThrowableProxyConverterTest.<init>(PrefixedRootCauseFirstThrowableProxyConverterTest.java:19)%n"));
+                        "! Causing: java.lang.RuntimeException: Very general error doing something%n" +
+                        "! at io.dropwizard.logging.PrefixedRootCauseFirstThrowableProxyConverterTest.throwOuterWrapper(PrefixedRootCauseFirstThrowableProxyConverterTest.java:49)%n" +
+                        "! at io.dropwizard.logging.PrefixedRootCauseFirstThrowableProxyConverterTest.getException(PrefixedRootCauseFirstThrowableProxyConverterTest.java:25)%n" +
+                        "! at io.dropwizard.logging.PrefixedRootCauseFirstThrowableProxyConverterTest.<init>(PrefixedRootCauseFirstThrowableProxyConverterTest.java:21)%n"));
     }
 
     /**
