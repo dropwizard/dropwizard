@@ -34,6 +34,6 @@ public class DropwizardLayoutTest {
     @Test
     public void hasAPatternWithATimeZoneAndExtendedThrowables() throws Exception {
         assertThat(layout.getPattern())
-                .isEqualTo("%-5p [%d{ISO8601,UTC}] %c: %m%n%xEx");
+                .isEqualTo("%-5p [%d{ISO8601,UTC}] %c: %m%n%rEx");
     }
 }
