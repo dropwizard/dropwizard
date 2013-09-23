@@ -1,10 +1,11 @@
 package io.dropwizard.logging;
 
+import ch.qos.logback.classic.pattern.ExtendedThrowableProxyConverter;
 import ch.qos.logback.classic.spi.StackTraceElementProxy;
 import ch.qos.logback.classic.spi.ThrowableProxyUtil;
 
 /**
- * A {@link PrefixedThrowableProxyConverter} which prefixes stack traces with {@code !}.
+ * An {@link ExtendedThrowableProxyConverter} which prefixes stack traces with {@code !}.
  */
 public class PrefixedExtendedThrowableProxyConverter extends PrefixedThrowableProxyConverter {
     @Override
