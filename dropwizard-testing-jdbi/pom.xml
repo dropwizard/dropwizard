@@ -10,6 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>dropwizard-testing-jdbi</artifactId>
+    <name>Dropwizard JDBI Test Support</name>
 
     <dependencies>
         <dependency>
