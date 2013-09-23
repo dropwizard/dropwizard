@@ -13,7 +13,7 @@ import java.sql.DriverManager;
 
 public class DatabaseMigrationRule extends ExternalResource {
 
-    public static final String DEFAULT_CHANGELOG_FILENAME = "migrations.xml";
+    private static final String DEFAULT_CHANGELOG_FILENAME = "migrations.xml";
     private final String url;
     private final String username;
     private final String password;
