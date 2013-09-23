@@ -14,9 +14,7 @@ public class PrefixedRootCauseFirstThrowableProxyConverter
         extends RootCauseFirstThrowableProxyConverter {
 
     private static final String CAUSING = PREFIX + "Causing:";
-    private static final Pattern CAUSING_PATTERN = Pattern.compile(
-            "^" + Pattern.quote(PrefixedThrowableProxyConverter.PREFIX) + "Wrapped by:",
-            Pattern.MULTILINE);
+    private static final Pattern CAUSING_PATTERN = Pattern.compile("^" + Pattern.quote(PREFIX) + "Wrapped by:", Pattern.MULTILINE);
 
     @Override
     protected String throwableProxyToString(IThrowableProxy tp) {
