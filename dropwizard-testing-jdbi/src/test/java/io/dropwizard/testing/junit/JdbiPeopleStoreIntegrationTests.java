@@ -1,7 +1,6 @@
 package io.dropwizard.testing.junit;
 
 import com.codahale.dropwizard.db.DataSourceFactory;
-import liquibase.exception.LiquibaseException;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -42,7 +41,7 @@ public class JdbiPeopleStoreIntegrationTests {
     };
 
     @Before
-    public void migrateDatabase() throws LiquibaseException {
+    public void migrateDatabase() {
         Handle handle = jdbiIntegrationRule.getHandle();
         handle.createCall("DROP TABLE People IF EXISTS").invoke();
         handle.createCall("CREATE TABLE People (name VARCHAR(100) PRIMARY KEY, email VARCHAR(100))").invoke();
