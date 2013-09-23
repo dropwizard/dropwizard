@@ -19,7 +19,8 @@ public class DropwizardLayout extends PatternLayout {
         setOutputPatternAsHeader(false);
         getDefaultConverterMap().put("ex", PrefixedThrowableProxyConverter.class.getName());
         getDefaultConverterMap().put("xEx", PrefixedExtendedThrowableProxyConverter.class.getName());
-        setPattern("%-5p [%d{ISO8601," + timeZone.getID() + "}] %c: %m%n%xEx");
+        getDefaultConverterMap().put("rEx", PrefixedRootCauseFirstThrowableProxyConverter.class.getName());
+        setPattern("%-5p [%d{ISO8601," + timeZone.getID() + "}] %c: %m%n%rEx");
         setContext(context);
     }
 }
