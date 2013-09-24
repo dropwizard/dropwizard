@@ -1,6 +1,6 @@
 package io.dropwizard.testing.junit;
 
-import com.codahale.dropwizard.db.DataSourceFactory;
+import io.dropwizard.db.DataSourceFactory;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;

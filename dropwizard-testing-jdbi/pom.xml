@@ -14,7 +14,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.codahale.dropwizard</groupId>
+            <groupId>io.dropwizard</groupId>
             <artifactId>dropwizard-jdbi</artifactId>
             <version>${project.version}</version>
         </dependency>

@@ -1,6 +1,6 @@
 package io.dropwizard.testing.junit;
 
-import com.codahale.dropwizard.db.DataSourceFactory;
+import io.dropwizard.db.DataSourceFactory;
 import org.h2.jdbcx.JdbcDataSource;
 import org.junit.rules.ExternalResource;
 import org.skife.jdbi.v2.DBI;
