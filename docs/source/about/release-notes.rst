@@ -11,52 +11,75 @@ v0.7.0-SNAPSHOT
 
 * Upgraded to Java 7.
 * Moved to the ``io.dropwizard`` group ID and namespace.
-* Upgraded to Jetty 9.0.5.
-* Upgraded to Metrics 3.
-* Upgraded to Guava 15.
-* Dropped Scala support.
+* Extracted out a number of reusable libraries: ``dropwizard-configuration``,
+  ``dropwizard-jackson``, ``dropwizard-jersey``, ``dropwizard-jetty``, ``dropwizard-lifecycle``,
+  ``dropwizard-logging``, ``dropwizard-servlets``, ``dropwizard-util``, ``dropwizard-validation``.
+* Extracted out various elements of ``Environment`` to separate classes: ``JerseyEnvironment``,
+  ``LifecycleEnvironment``, etc.
+* Extracted out ``dropwizard-views-freemarker`` and ``dropwizard-views-mustache``.
+  ``dropwizard-views`` just provides infrastructure now.
 * Renamed ``Service`` to ``Application``.
+* Added ``dropwizard-forms``, which provides support for multipart MIME entities.
+* Added ``dropwizard-spdy``.
 * Added ``AppenderFactory``, allowing for arbitrary logging appenders for application and request
   logs.
 * Added ``ConnectorFactory``, allowing for arbitrary Jetty connectors.
 * Added ``ServerFactory``, with multi- and single-connector implementations.
-* Added ``dropwizard-spdy``.
-* Added builders for managed executors.
-* Added a default ``check`` command, which loads and validates the service configuration.
-* Extracted out a number of reusable libraries: ``dropwizard-configuration``,
-  ``dropwizard-jackson``, ``dropwizard-jersey``, ``dropwizard-jetty``, ``dropwizard-lifecycle``,
-  ``dropwizard-logging``, ``dropwizard-servlets``, ``dropwizard-util``, ``dropwizard-validation``.
-* Dropped ``ObjectMapperFactory``; use ``ObjectMapper`` instead.
-* Dropped ``Validator``; use ``javax.validation.Validator`` instead.
-* Changed error handling to depend more heavily on Jersey exception mapping.
-* Validation errors are now returned as ``application/json`` responses.
+* Added ``ReporterFactory``, for metrics reporters, with Graphite and Ganglia implementations.
 * Added ``ConfigurationSourceProvider`` to allow loading configuration files from sources other than
   the filesystem.
-* Added ``HibernateBundle#configure(Configuration)`` for customization of Hibernate configuration.
-* Simplified ``AsyncRequestLog``; now standardized on Jetty 9 NCSA format.
-* Fixed a shutdown bug in ``dropwizard-migrations``.
-* Extracted out various elements of ``Environment`` to separate classes: ``JerseyEnvironment``,
-  ``LifecycleEnvironment``, etc.
-* Renamed ``DatabaseConfiguration`` to ``DataSourceFactory``, and ``ConfigurationStrategy`` to
-  ``DatabaseConfiguration``.
-* Upgraded to JDBI 2.49.
-* Upgraded to Logback 1.0.13.
-* Upgraded to SLF4J 1.7.5.
-* Upgraded to Hibernate Validator 5.0.1.
-* Upgraded to argparse4j 0.4.1.
-* Removed ``ManagedSessionFactory``.
-* Moved ``dropwizard-db`` to use ``tomcat-jdbc`` instead of ``tomcat-dbcp``.
-* Extracted out ``dropwizard-views-freemarker`` and ``dropwizard-views-mustache``.
-  ``dropwizard-views`` just provides infrastructure now.
-* Upgraded to Jackson 2.2.3.
-* Upgraded to Mustache 0.8.12.
+* Added setuid support. Configure the user/group to run as and soft/hard open file limits in the
+  ``ServerFactory``. To bind to privileged ports (e.g. 80), enable ``startAsRoot`` and set ``user``
+  and ``group``, then start your application as the root user.
+* Added builders for managed executors.
+* Added a default ``check`` command, which loads and validates the service configuration.
 * Added support for the Jetty HTTP client to ``dropwizard-client``.
 * Added Jackson Afterburner support.
-* Added ``dropwizard-forms``, which provides support for multipart MIME entities.
 * Added support for ``deflate``-encoded requests and responses.
+* Added support for HTTP Sessions. Add the annotated parameter to your resource method:
+  ``@Session HttpSession session`` to have the session context injected.
+* Added support for a "flash" message to be propagated across requests. Add the annotated parameter
+  to your resource method: ``@Session Flash message`` to have any existing flash message injected.
 * Added support for deserializing Java ``enums`` with fuzzy matching rules (i.e., whitespace
   stripping, ``-``/``_`` equivalence, case insensitivity, etc.).
+* Added ``HibernateBundle#configure(Configuration)`` for customization of Hibernate configuration.
+* Added support for Joda Time ``DateTime`` arguments and results when using JDBI.
+* Added configuration option to include Exception stack-traces when logging to syslog. Stack traces
+  are now excluded by default.
+* Added the application name and PID (if detectable) to the beginning of syslog messages, as is the
+  convention.
+* Added ``--migrations-file`` command-line option to ``migrate`` command to supply the migrations
+  file explicitly.
+* Validation errors are now returned as ``application/json`` responses.
+* Simplified ``AsyncRequestLog``; now standardized on Jetty 9 NCSA format.
+* Renamed ``DatabaseConfiguration`` to ``DataSourceFactory``, and ``ConfigurationStrategy`` to
+  ``DatabaseConfiguration``.
+* Changed logging to be asynchronous. Messages are now buffered and batched in-memory before being
+  delivered to the configured appender(s).
+* Changed handling of runtime configuration errors. Will no longer display an Exception stack-trace
+  and will present a more useful description of the problem, including suggestions when appropriate.
+* Changed error handling to depend more heavily on Jersey exception mapping.
+* Changed ``dropwizard-db`` to use ``tomcat-jdbc`` instead of ``tomcat-dbcp``.
+* Changed default formatting when logging nested Exceptions to display the root-cause first.
+* Replaced ``ResourceTest`` with ``ResourceTestRule``, a JUnit ``TestRule``.
+* Dropped Scala support.
+* Dropped ``ManagedSessionFactory``.
+* Dropped ``ObjectMapperFactory``; use ``ObjectMapper`` instead.
+* Dropped ``Validator``; use ``javax.validation.Validator`` instead.
+* Fixed a shutdown bug in ``dropwizard-migrations``.
+* Fixed formatting of "Caused by" lines not being prefixed when logging nested Exceptions.
+* Fixed not all available Jersey endpoints were being logged at startup.
+* Upgraded to argparse4j 0.4.1.
+* Upgraded to Guava 15.
+* Upgraded to Hibernate Validator 5.0.1.
+* Upgraded to Jackson 2.2.3.
+* Upgraded to JDBI 2.50.
+* Upgraded to Jetty 9.0.5.
 * Upgraded to Liquibase 3.0.4.
+* Upgraded to Logback 1.0.13.
+* Upgraded to Metrics 3.0.1.
+* Upgraded to Mustache 0.8.13.
+* Upgraded to SLF4J 1.7.5.
 
 .. _rel-0.6.2:
 
