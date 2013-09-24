@@ -4,7 +4,6 @@ import io.dropwizard.db.DataSourceFactory;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.skife.jdbi.v2.Handle;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
@@ -36,9 +35,8 @@ public class JdbiPeopleStoreIntegrationTests {
 
     @Before
     public void setUp() {
-        Handle handle = dbiRule.getHandle();
-        handle.createCall("DROP TABLE People IF EXISTS").invoke();
-        handle.createCall("CREATE TABLE People (name VARCHAR(100) PRIMARY KEY, email VARCHAR(100))").invoke();
+        dbiRule.getHandle().createCall("DROP TABLE People IF EXISTS").invoke();
+        dbiRule.getHandle().createCall("CREATE TABLE People (name VARCHAR(100) PRIMARY KEY, email VARCHAR(100))").invoke();
         personStore = dbiRule.onDemand(JdbiPeopleStore.class);
     }
 
