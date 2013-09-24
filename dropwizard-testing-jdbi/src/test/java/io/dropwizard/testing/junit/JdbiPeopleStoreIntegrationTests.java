@@ -22,8 +22,7 @@ public class JdbiPeopleStoreIntegrationTests {
     private final Person person = new Person("blah", "blah@example.com");
 
     @Rule
-    public DBIRule jdbiIntegrationRule = new DBIRule() {
-
+    public DBIRule dbiRule = new DBIRule() {
         @Override
         protected DataSourceFactory getDatabaseConfiguration() {
             DataSourceFactory databaseConfig = new DataSourceFactory();
@@ -33,18 +32,14 @@ public class JdbiPeopleStoreIntegrationTests {
             databaseConfig.setDriverClass("org.h2.Driver");
             return databaseConfig;
         }
-
-        @Override
-        protected void setUpDataAccessObjects() {
-            personStore = onDemandDao(JdbiPeopleStore.class);
-        }
     };
 
     @Before
-    public void migrateDatabase() {
-        Handle handle = jdbiIntegrationRule.getHandle();
+    public void setUp() {
+        Handle handle = dbiRule.getHandle();
         handle.createCall("DROP TABLE People IF EXISTS").invoke();
         handle.createCall("CREATE TABLE People (name VARCHAR(100) PRIMARY KEY, email VARCHAR(100))").invoke();
+        personStore = dbiRule.onDemand(JdbiPeopleStore.class);
     }
 
     @Test

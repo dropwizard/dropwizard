@@ -13,8 +13,6 @@ public abstract class DBIRule extends ExternalResource {
 
     protected abstract DataSourceFactory getDatabaseConfiguration();
 
-    protected abstract void setUpDataAccessObjects();
-
     public Handle getHandle() {
         return handle;
     }
@@ -23,7 +21,6 @@ public abstract class DBIRule extends ExternalResource {
     protected void before() throws Throwable {
         dbi = new DBI(getDataSource());
         handle = dbi.open();
-        setUpDataAccessObjects();
     }
 
     @Override
@@ -31,7 +28,7 @@ public abstract class DBIRule extends ExternalResource {
         handle.close();
     }
 
-    protected <SqlObjectType> SqlObjectType onDemandDao(Class<SqlObjectType> sqlObjectType) {
+    public <SqlObjectType> SqlObjectType onDemand(Class<SqlObjectType> sqlObjectType) {
         return dbi.onDemand(sqlObjectType);
     }
 
