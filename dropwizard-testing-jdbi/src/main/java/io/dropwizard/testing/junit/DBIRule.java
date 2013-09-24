@@ -6,7 +6,7 @@ import org.junit.rules.ExternalResource;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 
-public abstract class JdbiIntegrationRule extends ExternalResource {
+public abstract class DBIRule extends ExternalResource {
     private DBI dbi;
 
     private Handle handle;

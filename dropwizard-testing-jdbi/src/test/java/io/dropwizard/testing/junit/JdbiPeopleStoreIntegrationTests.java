@@ -22,7 +22,7 @@ public class JdbiPeopleStoreIntegrationTests {
     private final Person person = new Person("blah", "blah@example.com");
 
     @Rule
-    public JdbiIntegrationRule jdbiIntegrationRule = new JdbiIntegrationRule() {
+    public DBIRule jdbiIntegrationRule = new DBIRule() {
 
         @Override
         protected DataSourceFactory getDatabaseConfiguration() {
