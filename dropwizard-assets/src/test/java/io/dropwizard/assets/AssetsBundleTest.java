@@ -79,6 +79,36 @@ public class AssetsBundleTest {
     }
 
     @Test
+    public void canSupportDiffrentAssetsBundleName() throws Exception {
+        runBundle(new AssetsBundle("/json", "/what/new", "index.txt", "customAsset1"), "customAsset1");
+
+        assertThat(servletPath)
+                .isEqualTo("/what/new/*");
+
+        assertThat(servlet.getIndexFile())
+                .isEqualTo("index.txt");
+
+        assertThat(servlet.getResourceURL())
+                .isEqualTo(normalize("json"));
+
+        assertThat(servlet.getUriPath())
+                .isEqualTo("/what/new");
+
+        runBundle(new AssetsBundle("/json", "/what/old", "index.txt", "customAsset2"), "customAsset2");
+        assertThat(servletPath)
+                .isEqualTo("/what/old/*");
+
+        assertThat(servlet.getIndexFile())
+                .isEqualTo("index.txt");
+
+        assertThat(servlet.getResourceURL())
+                .isEqualTo(normalize("json"));
+
+        assertThat(servlet.getUriPath())
+                .isEqualTo("/what/old");
+    }
+
+    @Test
     public void canHaveDifferentUriAndResourcePathsAndIndexFilename() throws Exception {
         runBundle(new AssetsBundle("/json", "/what", "index.txt"));
 
@@ -100,6 +130,10 @@ public class AssetsBundleTest {
     }
 
     private void runBundle(AssetsBundle bundle) {
+        runBundle(bundle, "assets");
+    }
+
+    private void runBundle(AssetsBundle bundle, String assetName) {
         final ServletRegistration.Dynamic registration = mock(ServletRegistration.Dynamic.class);
         when(servletEnvironment.addServlet(anyString(), any(AssetServlet.class))).thenReturn(registration);
 
@@ -108,7 +142,7 @@ public class AssetsBundleTest {
         final ArgumentCaptor<AssetServlet> servletCaptor = ArgumentCaptor.forClass(AssetServlet.class);
         final ArgumentCaptor<String> pathCaptor = ArgumentCaptor.forClass(String.class);
 
-        verify(servletEnvironment).addServlet(eq("assets"), servletCaptor.capture());
+        verify(servletEnvironment).addServlet(eq(assetName), servletCaptor.capture());
         verify(registration).addMapping(pathCaptor.capture());
 
         this.servlet = servletCaptor.getValue();
