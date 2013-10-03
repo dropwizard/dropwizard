@@ -261,7 +261,7 @@ Java's built-in thread deadlock detection to determine if any threads are deadlo
 Managed Objects
 ===============
 
-Most application involve objects which need to be started and stopped: thread pools, database
+Most applications involve objects which need to be started and stopped: thread pools, database
 connections, etc. Dropwizard provides the ``Managed`` interface for this. You can either have the
 class in question implement the ``#start()`` and ``#stop()`` methods, or write a wrapper class which
 does so. Adding a ``Managed`` instance to your service's ``Environment`` ties that object's
@@ -824,7 +824,9 @@ If at all possible, prefer throwing ``Exception`` instances to returning
 
 If you throw a subclass of ``WebApplicationException`` jersey will map that to a defined response.
 
-If you want more control, you can also delcare JerseyProviders in your Environment to map Exceptions to certain responses by calling addProvider with an implementation of javax.ws.rs.ext.ExceptionMapper. e.g. Your resource throws an InvalidArgumentException, but the response would be 400, bad request.
+If you want more control, you can also delcare JerseyProviders in your Environment to map Exceptions
+to certain responses by calling addProvider with an implementation of javax.ws.rs.ext.ExceptionMapper.
+e.g. Your resource throws an InvalidArgumentException, but the response would be 400, bad request.
 
 
 .. _man-core-resources-uris:
@@ -1531,15 +1533,24 @@ Dropwizard has many configuration parameters, all of which come with good defaul
 How it's glued together
 =======================
 
-When your application starts up, it will spin up a Jetty HTTP server, see ``DefaultServerFactory``. This server will have two handlers, one for your application port and the other for your admin port. The admin handler creates and registers the ``AdminServlet``. This has a handle to all of the application healthchecks and metrics via the ServletContext.
+When your application starts up, it will spin up a Jetty HTTP server, see ``DefaultServerFactory``.
+This server will have two handlers, one for your application port and the other for your admin port.
+The admin handler creates and registers the ``AdminServlet``. This has a handle to all of the
+application healthchecks and metrics via the ServletContext.
 
-The application port has a HttpServlet as well, this is composed of ``DropwizardResourceConfig``, which is an extension of Jersey's resource configuration that performs scanning to find root resource and provider classes. Ultimately when you call env.jersey().register(new SomeResource()), you are adding to the ``DropwizardResourceConfig``. This is config, is a jersey ``Application``, so all of your application resources are served from one ``Servlet``
+The application port has a HttpServlet as well, this is composed of ``DropwizardResourceConfig``,
+which is an extension of Jersey's resource configuration that performs scanning to
+find root resource and provider classes. Ultimately when you call
+``env.jersey().register(new SomeResource())``,
+you are adding to the ``DropwizardResourceConfig``. This is config, is a jersey ``Application``, so all of
+your application resources are served from one ``Servlet``
 
-``DropwizardResourceConfig`` is where the various ResourceMethodDispatchAdapter are registered to enable the following functionality:
+``DropwizardResourceConfig`` is where the various ResourceMethodDispatchAdapter are registered to
+enable the following functionality:
 
-    * Resource method requests with @Timed, @Metered, @ExceptionMetered are delegated to special dispatchers which decorate the metric telemetry
+    * Resource method requests with ``@Timed``, ``@Metered``, ``@ExceptionMetered`` are delegated to special dispatchers which decorate the metric telemetry
     * Resources that return Guava Optional are unboxed. Present returns underlying type, and non present 404s
-    * Resource methods that are annotated with @CacheControl are delegated to a special dispatcher that decorates on the cache control headers
+    * Resource methods that are annotated with ``@CacheControl`` are delegated to a special dispatcher that decorates on the cache control headers
     * Enables using Jackson to parse request entities into objects and generate response entities from objects, all while performing validation
 
 
