@@ -50,13 +50,13 @@ Our services tend to look like this:
 
 .. _man-core-service:
 
-Service
-=======
+Application
+============
 
-The main entry point into a Dropwizard service is, unsurprisingly, the ``Service`` class. Each
-``Service`` has a **name**, which is mostly used to render the command-line interface. In the
-constructor of your ``Service`` you can add :ref:`man-core-bundles` and :ref:`man-core-commands` to
-your service.
+The main entry point into a Dropwizard Application is, unsurprisingly, the ``Application`` class. Each
+``Application`` has a **name**, which is mostly used to render the command-line interface. In the
+constructor of your ``Application`` you can add :ref:`man-core-bundles` and :ref:`man-core-commands` to
+your Application.
 
 .. _man-core-configuration:
 
@@ -68,13 +68,13 @@ well documented in the `example project's configuration`__.
 
 .. __: https://github.com/dropwizard/dropwizard/blob/master/dropwizard-example/example.yml
 
-Each ``Service`` subclass has a single type parameter: that of its matching ``Configuration``
-subclass. These are usually at the root of your service's main package. For example, your User
+Each ``Application`` subclass has a single type parameter: that of its matching ``Configuration``
+subclass. These are usually at the root of your application's main package. For example, your User
 service would have two classes: ``UserServiceConfiguration``, extending ``Configuration``, and
-``UserService``, extending ``Service<UserServiceConfiguration>``.
+``UserApplication``, extending ``Application<UserServiceConfiguration>``.
 
-When your service runs :ref:`man-core-commands-configured` like the ``server`` command, Dropwizard
-parses the provided YAML configuration file and builds an instance of your service's configuration
+When your Application runs :ref:`man-core-commands-configured` like the ``server`` command, Dropwizard
+parses the provided YAML configuration file and builds an instance of your application's configuration
 class by mapping YAML field names to object field names.
 
 .. note::
@@ -137,7 +137,7 @@ The ``@NotNull``, ``@NotEmpty``, ``@Min``, ``@Max``, and ``@Valid`` annotations 
 and would output an error message describing the issues.
 
 Once your service has parsed the YAML file and constructed its ``Configuration`` instance,
-Dropwizard then calls your ``Service`` subclass to initialize your service's ``Environment``.
+Dropwizard then calls your ``Application`` subclass to initialize your application's ``Environment``.
 
 .. note::
 
@@ -174,9 +174,9 @@ command you need). There is a test keystore you can use in the
 Bootstrapping
 =============
 
-Before a Dropwizard service can provide the command-line interface, parse a configuration file, or
-run as a server, it must first go through a bootstrapping phase. This phase corresponds to your
-``Service`` subclass's ``initialize`` method. You can add :ref:`man-core-bundles`,
+Before a Dropwizard application can provide the command-line interface, parse a configuration file, or
+run as a application, it must first go through a bootstrapping phase. This phase corresponds to your
+``Application`` subclass's ``initialize`` method. You can add :ref:`man-core-bundles`,
 :ref:`man-core-commands`, or register Jackson modules to allow you to include custom types as part
 of your configuration class.
 
@@ -187,7 +187,7 @@ A Dropwizard ``Environment`` consists of all the :ref:`man-core-resources`, serv
 :ref:`man-core-healthchecks`, Jersey providers, :ref:`man-core-managed`, :ref:`man-core-tasks`, and
 Jersey properties which your service provides.
 
-Each ``Service`` subclass implements a ``run`` method. This is where you should be creating new
+Each ``Application`` subclass implements a ``run`` method. This is where you should be creating new
 resource instances, etc., and adding them to the given ``Environment`` class:
 
 .. code-block:: java
@@ -212,7 +212,7 @@ complicated, like the ``Thingy`` class above, extract that logic into a factory.
 Health Checks
 =============
 
-A health check is a runtime test which you can use to verify your service's behavior in its
+A health check is a runtime test which you can use to verify your application's behavior in its
 production environment. For example, you may want to ensure that your database client is connected
 to the database:
 
@@ -236,7 +236,7 @@ to the database:
         }
     }
 
-You can then add this health check to your service's environment:
+You can then add this health check to your application's environment:
 
 .. code-block:: java
 
@@ -254,18 +254,18 @@ If all health checks report success, a ``200 OK`` is returned. If any fail, a
 exception was thrown).
 
 All Dropwizard services ship with the ``deadlocks`` health check installed by default, which uses
-Java 1.6's built-in thread deadlock detection to determine if any threads are deadlocked.
+Java's built-in thread deadlock detection to determine if any threads are deadlocked.
 
 .. _man-core-managed:
 
 Managed Objects
 ===============
 
-Most services involve objects which need to be started and stopped: thread pools, database
+Most application involve objects which need to be started and stopped: thread pools, database
 connections, etc. Dropwizard provides the ``Managed`` interface for this. You can either have the
 class in question implement the ``#start()`` and ``#stop()`` methods, or write a wrapper class which
 does so. Adding a ``Managed`` instance to your service's ``Environment`` ties that object's
-lifecycle to that of the service's HTTP server. Before the server starts, the ``#start()`` method is
+lifecycle to that of the application's HTTP server. Before the server starts, the ``#start()`` method is
 called. After the server has stopped (and after its graceful shutdown period) the ``#stop()`` method
 is called.
 
@@ -295,7 +295,7 @@ For example, given a theoretical Riak__ client which needs to be started and sto
 
 
 If ``RiakClientManager#start()`` throws an exception--e.g., an error connecting to the server--your
-service will not start and a full exception will be logged. If ``RiakClientManager#stop()`` throws
+application will not start and a full exception will be logged. If ``RiakClientManager#stop()`` throws
 an exception, the exception will be logged but your service will still be able to shut down.
 
 It should be noted that ``Environment`` has built-in factory methods for ``ExecutorService`` and
@@ -307,7 +307,7 @@ and ``Environment#managedScheduledExecutorService`` for details.
 Bundles
 =======
 
-A Dropwizard bundle is a reusable group of functionality, used to define blocks of a service's
+A Dropwizard bundle is a reusable group of functionality, used to define blocks of a application's
 behavior. For example, ``AssetBundle`` provides a simple way to serve static assets from your
 service's ``src/main/resources/assets`` directory as files available from ``/assets/*`` in your
 service.
@@ -562,8 +562,8 @@ Finally, Dropwizard can also log statements to syslog.
 
 .. _man-core-testing-services:
 
-Testing Services
-================
+Testing Applications
+=====================
 
 All of Dropwizard's APIs are designed with testability in mind, so even your services can have unit
 tests:
@@ -816,11 +816,16 @@ If your resource class unintentionally throws an exception, Dropwizard will log 
 response.
 
 If your resource class needs to return an error to the client (e.g., the requested record doesn't
-exist), you have two options: throw a ``WebApplicationException`` or restructure your method to
+exist), you have two options: throw a sublcass of ``Exception`` or restructure your method to
 return a ``Response``.
 
-If at all possible, prefer throwing ``WebApplicationException`` instances to returning
+If at all possible, prefer throwing ``Exception`` instances to returning
 ``Response`` objects.
+
+If you throw a subclass of ``WebApplicationException`` jersey will map that to a defined response.
+
+If you want more control, you can also delcare JerseyProviders in your Environment to map Exceptions to certain responses by calling addProvider with an implementation of javax.ws.rs.ext.ExceptionMapper. e.g. Your resource throws an InvalidArgumentException, but the response would be 400, bad request.
+
 
 .. _man-core-resources-uris:
 
@@ -1520,3 +1525,21 @@ Dropwizard has many configuration parameters, all of which come with good defaul
 
         # A custom Logback format string.
         logFormat: null
+
+.. _man-glue-detail:
+
+How it's glued together
+=======================
+
+When your application starts up, it will spin up a Jetty HTTP server, see ``DefaultServerFactory``. This server will have two handlers, one for your application port and the other for your admin port. The admin handler creates and registers the ``AdminServlet``. This has a handle to all of the application healthchecks and metrics via the ServletContext.
+
+The application port has a HttpServlet as well, this is composed of ``DropwizardResourceConfig``, which is an extension of Jersey's resource configuration that performs scanning to find root resource and provider classes. Ultimately when you call env.jersey().register(new SomeResource()), you are adding to the ``DropwizardResourceConfig``. This is config, is a jersey ``Application``, so all of your application resources are served from one ``Servlet``
+
+``DropwizardResourceConfig`` is where the various ResourceMethodDispatchAdapter are registered to enable the following functionality:
+
+    * Resource method requests with @Timed, @Metered, @ExceptionMetered are delegated to special dispatchers which decorate the metric telemetry
+    * Resources that return Guava Optional are unboxed. Present returns underlying type, and non present 404s
+    * Resource methods that are annotated with @CacheControl are delegated to a special dispatcher that decorates on the cache control headers
+    * Enables using Jackson to parse request entities into objects and generate response entities from objects, all while performing validation
+
+

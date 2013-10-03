@@ -171,22 +171,24 @@ requirements is that we need to be able to vary how it says hello from environme
 We'll need to specify at least two things to begin with: a template for saying hello and a default
 name to use in case the user doesn't specify their name.
 
-Here's what our configuration class will look like:
+.. _example conf here: https://github.com/dropwizard/dropwizard/blob/master/dropwizard-example/src/main/java/com/example/helloworld/HelloWorldConfiguration.java
+
+Here's what our configuration class will looks like, full `example conf here`_ :
 
 .. _gs-configuration-class:
 
 .. code-block:: java
 
     package com.example.helloworld;
-    
+
     import io.dropwizard.Configuration;
     import com.fasterxml.jackson.annotation.JsonProperty;
     import org.hibernate.validator.constraints.NotEmpty;
-    
+
     public class HelloWorldConfiguration extends Configuration {
         @NotEmpty
         private String template;
-    
+
         @NotEmpty
         private String defaultName = "Stranger";
 
@@ -234,7 +236,9 @@ to serialize it.
 .. __: http://wiki.fasterxml.com/JacksonAnnotations
 .. __: http://docs.jboss.org/hibernate/validator/4.2/reference/en-US/html_single/#validator-defineconstraints-builtin
 
-Our YAML file, then, will look like this:
+.. _example yml here: https://github.com/dropwizard/dropwizard/blob/master/dropwizard-example/example.yml
+
+Our YAML file, will then look like the below, full `example yml here`_ :
 
 .. _gs-yaml-file:
 
@@ -262,11 +266,11 @@ commands which provide basic functionality. (More on that later.) For now, thoug
 .. code-block:: java
 
     package com.example.helloworld;
-    
+
     import io.dropwizard.Application;
     import io.dropwizard.setup.Bootstrap;
     import io.dropwizard.setup.Environment;
-    
+
     public class HelloWorldApplication extends Application<HelloWorldConfiguration> {
         public static void main(String[] args) throws Exception {
             new HelloWorldApplication().run(args);
@@ -287,7 +291,7 @@ commands which provide basic functionality. (More on that later.) For now, thoug
                         Environment environment) {
             // nothing to do yet
         }
-    
+
     }
 
 As you can see, ``HelloWorldApplication`` is parameterized with the application's configuration
@@ -309,10 +313,10 @@ which specifies the following JSON representation of a Hello World saying:
 .. __: http://www.ietf.org/rfc/rfc1149.txt
 
 .. code-block:: javascript
-    
+
     {
       "id": 1,
-      "content": "Hello, stranger!"
+      "content": "Hi!"
     }
 
 
@@ -326,11 +330,18 @@ To model this representation, we'll create a representation class:
     package com.example.helloworld.core;
 
     import com.fasterxml.jackson.annotation.JsonProperty;
-    
+    import org.hibernate.validator.constraints.Length;
+
     public class Saying {
-        private final long id;
-        private final String content;
-    
+        private long id;
+
+        @Length(max = 3)
+        private String content;
+
+        public Saying() {
+            // Jackson deserialization
+        }
+
         public Saying(long id, String content) {
             this.id = id;
             this.content = content;
@@ -353,10 +364,10 @@ First, it's immutable. This makes ``Saying`` instances *very* easy to reason abo
 environments as well as single-threaded environments. Second, it uses the Java Bean standard for the
 ``id`` and ``content`` properties. This allows Jackson_ to serialize it to the JSON we need. The
 Jackson object mapping code will populate the ``id`` field of the JSON object with the return value
-of ``#getId()``, likewise with ``content`` and ``#getContent()``.
+of ``#getId()``, likewise with ``content`` and ``#getContent()``. Lastly, the bean leverages validation to ensure the content size is no greater than 3.
 
 .. note::
-    
+
     The JSON serialization here is done by Jackson, which supports far more than simple JavaBean
     objects like this one. In addition to the sophisticated set of `annotations`__, you can even
     write your own custom serializers and deserializers.
@@ -378,31 +389,31 @@ instances from the URI ``/hello-world``, so our resource class will look like th
 .. code-block:: java
 
     package com.example.helloworld.resources;
-    
+
     import com.example.helloworld.core.Saying;
     import com.google.common.base.Optional;
     import com.codahale.metrics.annotation.Timed;
-    
+
     import javax.ws.rs.GET;
     import javax.ws.rs.Path;
     import javax.ws.rs.Produces;
     import javax.ws.rs.QueryParam;
     import javax.ws.rs.core.MediaType;
     import java.util.concurrent.atomic.AtomicLong;
-    
+
     @Path("/hello-world")
     @Produces(MediaType.APPLICATION_JSON)
     public class HelloWorldResource {
         private final String template;
         private final String defaultName;
         private final AtomicLong counter;
-    
+
         public HelloWorldResource(String template, String defaultName) {
             this.template = template;
             this.defaultName = defaultName;
             this.counter = new AtomicLong();
         }
-    
+
         @GET
         @Timed
         public Saying sayHello(@QueryParam("name") Optional<String> name) {
@@ -455,7 +466,7 @@ Before that will actually work, though, we need to go back to ``HelloWorldApplic
 new resource class. In its ``run`` method we can read the template and default name from the
 ``HelloWorldConfiguration`` instance, create a new ``HelloWorldApplication`` instance, and then add
 it to the application's Jersey environment:
-    
+
 .. code-block:: java
 
     @Override
@@ -501,16 +512,16 @@ make sure we can actually format the provided template:
 .. code-block:: java
 
     package com.example.helloworld.health;
-    
+
     import com.codahale.metrics.health.HealthCheck;
-    
+
     public class TemplateHealthCheck extends HealthCheck {
         private final String template;
-    
+
         public TemplateHealthCheck(String template) {
             this.template = template;
         }
-    
+
         @Override
         protected Result check() throws Exception {
             final String saying = String.format(template, "TEST");
