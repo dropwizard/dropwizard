@@ -145,9 +145,9 @@ Dropwizard then calls your ``Application`` subclass to initialize your applicati
     your application. Overrides must start with prefix ``dw.``, followed by the path to the
     configuration value being overridden.
 
-    For example, to override the HTTP port to use, you could start your application like this:
-// TODO graham
-    ``java -Ddw.server.applicationConnectors.port=9090 server my-config.json``
+    For example, to override the Logging level, you could start your application like this:
+
+    ``java -Ddw.logging.level=DEBUG server my-config.json``
 
 .. _man-core-environments:
 
@@ -162,14 +162,13 @@ command you need). There is a test keystore you can use in the
 .. __: https://github.com/dropwizard/dropwizard/tree/master/dropwizard-example
 
 .. code-block:: yaml
-// TODO graham
-    http:
-      ssl:
-        keyStore: ./example.keystore
-        keyStorePassword: example
-
-        # optional, JKS is default. JCEKS is another likely candidate.
-        keyStoreType: JKS
+    server:
+      applicationConnectors:
+        - type: https
+          port: 8443
+          keyStorePath: example.keystore
+          keyStorePassword: example
+          validateCerts: false
 
 Bootstrapping
 =============
@@ -217,7 +216,7 @@ production environment. For example, you may want to ensure that your database c
 to the database:
 
 .. code-block:: java
-// TODO graham
+
     public class DatabaseHealthCheck extends HealthCheck {
         private final Database database;
 
@@ -239,7 +238,7 @@ to the database:
 You can then add this health check to your application's environment:
 
 .. code-block:: java
-// TODO graham
+
     environment.healthChecks().register(new DatabaseHealthCheck(database));
 
 By sending a ``GET`` request to ``/healthcheck`` on the admin port you can run these tests and view
@@ -293,14 +292,24 @@ For example, given a theoretical Riak__ client which needs to be started and sto
         }
     }
 
+.. code-block:: java
+
+    public class MyApplication extends Application<MyConfiguration>{
+        @Override
+        public void run(MyApplicationConfiguration configuration, Environment environment) {
+            RiakClient client = ...;
+            RiakClientManager riakClientManager = new RiakClientManager(client);
+            environment.lifecycle().manage(riakClientManager);
+        }
+    }
 
 If ``RiakClientManager#start()`` throws an exception--e.g., an error connecting to the server--your
 application will not start and a full exception will be logged. If ``RiakClientManager#stop()`` throws
 an exception, the exception will be logged but your application will still be able to shut down.
 
-It should be noted that ``Environment`` has built-in factory methods for ``ExecutorService`` and
-``ScheduledExecutorService`` instances which are managed. See ``Environment#managedExecutorService``
-and ``Environment#managedScheduledExecutorService`` for details.
+It should be noted that ``LifeCycleEnvironment`` has built-in factory methods for ``ExecutorService`` and
+``ScheduledExecutorService`` instances which are managed. See ``LifeCycleEnvironment#executorService``
+and ``LifeCycleEnvironment#scheduledExecutorService`` for details.
 
 .. _man-core-bundles:
 
@@ -324,8 +333,9 @@ application. To enable it, move your application to a sub-URL.
 
 .. code-block:: yaml
 
-    http:
-      rootPath: /application/*  # Default is /*
+    server:
+      type: simple
+      applicationContextPath: /application/*  # Default value*
 
 Then use an extended ``AssetsBundle`` constructor to serve resources in the
 ``assets`` folder from the root path. ``index.htm`` is served as the default
@@ -347,6 +357,15 @@ Commands are basic actions which Dropwizard runs based on the arguments provided
 line. The built-in ``server`` command, for example, spins up an HTTP server and runs your application.
 Each ``Command`` subclass has a name and a set of command line options which Dropwizard will use to
 parse the given command line arguments.
+
+.. code-block:: java
+	
+    public class MyApplication extends Application<MyConfiguration>{
+        @Override
+        public void initialize(Bootstrap<DropwizardConfiguration> bootstrap) {
+            bootstrap.addCommand(new MyCommand());
+        }
+    }
 
 .. _man-core-commands-configured:
 
@@ -453,7 +472,7 @@ You can specify a default logger level and even override the levels of
 other loggers in your YAML configuration file:
 
 .. code-block:: yaml
-// TODO graham
+
     # Logging settings.
     logging:
 
@@ -475,18 +494,15 @@ By default, Dropwizard applications log ``INFO`` and higher to ``STDOUT``. You c
 editing the ``logging`` section of your YAML configuration file:
 
 .. code-block:: yaml
-// TODO graham
+
     logging:
+
+      level: INFO
 
       # ...
       # Settings for logging to stdout.
-      console:
-
-        # If true, write log statements to stdout.
-        enabled: true
-
-        # Do not display log statements below this threshold to stdout.
-        threshold: ALL
+      appenders:
+	    - type: console
 
 .. _man-core-logging-file:
 
@@ -497,15 +513,14 @@ Dropwizard can also log to an automatically rotated set of log files. This is th
 configuration for your production environment:
 
 .. code-block:: yaml
-// TODO graham
+
     logging:
+
+      level: INFO
 
       # ...
       # Settings for logging to a file.
       file:
-
-        # If true, write log statements to a file.
-        enabled: false
 
         # Do not write log statements below this threshold to the file.
         threshold: ALL
@@ -537,15 +552,12 @@ Finally, Dropwizard can also log statements to syslog.
     network socket.
 
 .. code-block:: yaml
-// TODO graham
+
     logging:
 
       # ...
       # Settings for logging to syslog.
       syslog:
-
-        # If true, write log statements to syslog.
-        enabled: false
 
         # Do not write log statements below this threshold to syslog.
         threshold: ALL
@@ -848,7 +860,7 @@ Testing, then, consists of creating an instance of your resource class and passi
 (Again: Mockito_.)
 
 .. code-block:: java
-// TODO graham
+
     public class NotificationsResourceTest {
         private final NotificationStore store = mock(NotificationStore.class);
         private final NotificationsResource resource = new NotificationsResource(store);
