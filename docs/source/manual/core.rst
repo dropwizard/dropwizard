@@ -1149,8 +1149,23 @@ Dropwizard has many configuration parameters, all of which come with good defaul
 
 .. code-block:: yaml
 
-    # HTTP-specific options.
-    http:
+
+server:
+
+  #  softNofileLimit: 1000
+  #  hardNofileLimit: 1000
+
+  # use the simple server factory if you only want to run on a single port
+  #  type: simple
+  #  connector:
+  #    type: http
+  #    port: 8080
+  #    applicationContextPath = "/application"
+  #    adminContextPath = "/admin"
+  
+  applicationConnectors:
+    
+    - type: http
 
       # The port on which the HTTP server listens for application requests.
       # Because Java cannot drop privileges in a POSIX system, these
@@ -1158,43 +1173,70 @@ Dropwizard has many configuration parameters, all of which come with good defaul
       # make the OS use an arbitrary unused port.
       port: 8080
 
-      # The port on which the HTTP server listens for administrative
-      # requests. Subject to the same limitations as "port". If this is
-      # set to the same value as port, the admin routes will be mounted
-      # under /admin.
-      adminPort: 8081
+    - type: https
+      port: 8443
 
-      # The minimum number of threads to keep running to process
-      # incoming HTTP requests.
-      minThreads: 8
+  adminConnectors:
+    - type: http
+      port: 8081
+    - type: https
+      port: 8444
+      
+      # from HttpConnectorFactory
+      acceptorThreads : int
+      acceptQueueSize : Integer
+      bindHost : String
+      bufferPoolIncrement : Size
+      headerCacheSize : Size
+      idleTimeout : Duration
+      inputBufferSize : Size
+      maxBufferPoolSize : Size
+      maxRequestHeaderSize : Size
+      maxResponseHeaderSize : Size
+      minBufferPoolSize : Size
+      outputBufferSize : Size
+      reuseAddress : boolean
+      selectorThreads : int
+      soLingerTime : Duration
+      useDateHeader : boolean
+      useForwardedHeaders : boolean
+      useServerHeader : boolean
 
-      # The maximum number of threads to keep running to process
-      # incoming HTTP requests.
-      maxThreads: 1024
+      # from HttpsConnectorFactory
+      allowRenegotiation : boolean
+      certAlias : String
+      crlPath : File
+      enableCRLDP : Boolean
+      enableOCSP : Boolean
+      endpointIdentificationAlgorithm : String
+      jceProvider : String
+      keyManagerPassword : String
+      keyStorePassword : String
+      keyStorePath : String
+      keyStoreProvider : String
+      keyStoreType : String
+      maxCertPathLength : Integer
+      needClientAuth : Boolean
+      ocspResponderUrl : URI
+      supportedCipherSuites : List<String>
+      supportedProtocols : List<String>
+      trustStorePassword : String
+      trustStorePath : String
+      trustStoreProvider : String
+      trustStoreType : String
+      validateCerts : boolean
+      validatePeers : boolean
+      wantClientAuth : Boolean    
+      
 
-      # The type of connector to use.
-      #
-      # Possible values are:
-      #   * blocking: Good for low-latency applications with short request
-      #               durations. Corresponds to Jetty's
-      #               BlockingChannelConnector.
-      #   * nonblocking: Good for applications which use Servlet 3.0
-      #                  continuations or which maintain a large number
-      #                  of open connections. Corresponds to Jetty's
-      #                  SelectChannelConnector.
-      #   * legacy: Simple, java.io.Socket-based connector. Corresponds to
-      #             Jetty's SocketConnector.
-      #   * legacy+ssl: Corresponds to Jetty's SslSocketConnector.
-      #   * nonblocking+ssl: Corresponds to Jetty's
-      #                      SslSelectChannelConnector.
-      connectorType: blocking
+    # The minimum number of threads to keep running to process
+    # incoming HTTP requests.
+    minThreads: 8
 
-      # The root path for the Jersey servlet.
-      rootPath: "/"
+    # The maximum number of threads to keep running to process
+    # incoming HTTP requests.
+    maxThreads: 1024
 
-      # The maximum amount of time a connection is allowed to be idle
-      # before being closed.
-      maxIdleTime: 200s
 
       # The number of threads dedicated to accepting connections.
       acceptorThreads: 1
@@ -1506,9 +1548,6 @@ Dropwizard has many configuration parameters, all of which come with good defaul
 
       # Settings for logging to syslog.
       syslog:
-
-        # If true, write log statements to syslog.
-        enabled: false
 
         # The hostname of the syslog server to which statements will be
         # sent.
