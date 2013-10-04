@@ -12,13 +12,13 @@ Dropwizard Client
 
 .. _man-client-apache:
 
-Apache HttpClient
-=================
+Apache HttpClient, version 4.3
+===============================
 
 The underlying library for ``dropwizard-client`` is  Apache's HttpClient_, a full-featured,
 well-tested HTTP client library.
 
-.. _HttpClient: http://hc.apache.org/httpcomponents-client-ga/
+.. _HttpClient: http://hc.apache.org/httpcomponents-core-4.3.x/index.html
 
 To create a :ref:`managed <man-core-managed>`, instrumented ``HttpClient`` instance, your
 :ref:`configuration class <man-core-configuration>` needs an ``HttpClientConfiguration`` instance:
@@ -36,7 +36,7 @@ To create a :ref:`managed <man-core-managed>`, instrumented ``HttpClient`` insta
         }
     }
 
-Then, in your service's ``run`` method, create a new ``HttpClientBuilder``:
+Then, in your application's ``run`` method, create a new ``HttpClientBuilder``:
 
 .. code-block:: java
 
@@ -89,6 +89,10 @@ The default configuration for ``HttpClientConfiguration`` is as follows:
     # closed after a response.
     keepAlive: 0s
 
+    # The number of times an HttpRequest should be retried after a
+    # recoverable exception during execution.
+    retries: 0
+
 .. _man-client-apache-metrics:
 
 Metrics
@@ -97,11 +101,17 @@ Metrics
 Dropwizard's ``HttpClientBuilder`` actually gives you an instrumented subclass which tracks the
 following pieces of data:
 
-``org.apache.http.conn.ClientConnectionManager.connections``
-    The number of open connections currently in the connection pool.
+``org.apache.http.conn.ClientConnectionManager.available-connections``
+    The number the number idle connections ready to be used to execute requests.
 
-``org.apache.http.impl.conn.tsccm.ConnPoolByRoute.new-connections``
-    The rate at which new connections are being created.
+``org.apache.http.conn.ClientConnectionManager.leased-connections``
+    The number of persistent connections currently being used to execut requests.
+
+``org.apache.http.conn.ClientConnectionManager.max-connections``
+    The maximum number of allowed connections.
+
+``org.apache.http.conn.ClientConnectionManager.pending-connections``
+    The number of connection requests being blocked awaiting a free connection
 
 ``org.apache.http.client.HttpClient.get-requests``
     The rate at which ``GET`` requests are being sent.
@@ -136,16 +146,25 @@ following pieces of data:
 ``org.apache.http.client.HttpClient.other-requests``
     The rate at which requests with none of the above methods are being sent.
 
+.. note::
+
+    The naming strategy for the metrics associated requests is configurable.
+    Specifically, the last part e.g. get-requests.
+    What is displayed is ``HttpClientMetricNameStrategies.METHOD_ONLY``, you can
+    also include the host via ``HttpClientMetricNameStrategies.HOST_AND_METHOD``
+    or a url without query string via ``HttpClientMetricNameStrategies.QUERYLESS_URL_AND_METHOD``
+
+
 .. _man-client-jersey:
 
-Jersey Client
-=============
+Jersey Client, version 1.17.1
+=============================
 
 If HttpClient_ is too low-level for you, Dropwizard also supports Jersey's `Client API`_.
 Jersey's ``Client`` allows you to use all of the server-side media type support that your service
 uses to, for example, deserialize ``application/json`` request entities as POJOs.
 
-.. _Client API: http://jersey.java.net/nonav/documentation/latest/user-guide.html#client-api
+.. _Client API: https://jersey.java.net/documentation/1.17/client-api.html
 
 To create a :ref:`managed <man-core-managed>`, instrumented ``JerseyClient`` instance, your
 :ref:`configuration class <man-core-configuration>` needs an ``JerseyClientConfiguration`` instance:

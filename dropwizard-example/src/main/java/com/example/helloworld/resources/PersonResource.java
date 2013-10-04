@@ -41,6 +41,7 @@ public class PersonResource {
     @GET
     @Path("/view_freemarker")
     @UnitOfWork
+    @Produces(MediaType.TEXT_HTML)
     public PersonView getPersonViewFreemarker(@PathParam("personId") LongParam personId) {
         return new PersonView(PersonView.Template.FREEMARKER, findSafely(personId.get()));
     }
@@ -48,6 +49,7 @@ public class PersonResource {
     @GET
     @Path("/view_mustache")
     @UnitOfWork
+    @Produces(MediaType.TEXT_HTML)
     public PersonView getPersonViewMustache(@PathParam("personId") LongParam personId) {
     	return new PersonView(PersonView.Template.MUSTACHE, findSafely(personId.get()));    
     }
