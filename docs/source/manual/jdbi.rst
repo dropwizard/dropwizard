@@ -120,7 +120,7 @@ code (e.g., ``ResultSet`` -> domain objects) into testable, reusable classes.
 Exception Handling
 ==================
 
-By adding the ``DBIExceptionsBundle`` to your :ref:`service <man-core-service>`, your Dropwizard
+By adding the ``DBIExceptionsBundle`` to your :ref:`service <man-core-application>`, your Dropwizard
 application will automatically unwrap any thrown ``SQLException`` or ``DBIException`` instances.
 This is critical for debugging, since otherwise only the common wrapper exception's stack trace is
 logged.

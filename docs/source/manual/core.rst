@@ -7,7 +7,7 @@ Dropwizard Core
 .. highlight:: text
 
 .. rubric:: The ``dropwizard-core`` module provides you with everything you'll need for most of your
-            services.
+            applications.
 
 It includes:
 
@@ -27,36 +27,36 @@ Organizing Your Project
 =======================
 
 In general, we recommend you separate your projects into three Maven modules: ``project-api``,
-``project-client``, and ``project-service``.
+``project-client``, and ``project-application``.
 
 ``project-api`` should contain your :ref:`man-core-representations`; ``project-client`` should use
 those classes and an :ref:`HTTP client <man-client>` to implement a full-fledged client for your
-service, and ``project-service`` should provide the actual service implementation, including
+application, and ``project-application`` should provide the actual application implementation, including
 :ref:`man-core-resources`.
 
-Our services tend to look like this:
+Our applications tend to look like this:
 
-* ``com.example.myservice``:
+* ``com.example.myapplication``:
 
   * ``api``: :ref:`man-core-representations`.
   * ``cli``: :ref:`man-core-commands`
-  * ``client``: :ref:`Client <man-client>` implementation for your service
+  * ``client``: :ref:`Client <man-client>` implementation for your application
   * ``core``: Domain implementation
   * ``jdbi``: :ref:`Database <man-jdbi>` access classes
   * ``health``: :ref:`man-core-healthchecks`
   * ``resources``: :ref:`man-core-resources`
-  * ``MyService``: The :ref:`service <man-core-service>` class
-  * ``MyServiceConfiguration``: :ref:`configuration <man-core-configuration>` class
+  * ``MyApplication``: The :ref:`application <man-core-application>` class
+  * ``MyApplicationConfiguration``: :ref:`configuration <man-core-configuration>` class
 
-.. _man-core-service:
+.. _man-core-application:
 
-Service
+Application
 =======
 
-The main entry point into a Dropwizard service is, unsurprisingly, the ``Service`` class. Each
-``Service`` has a **name**, which is mostly used to render the command-line interface. In the
-constructor of your ``Service`` you can add :ref:`man-core-bundles` and :ref:`man-core-commands` to
-your service.
+The main entry point into a Dropwizard application is, unsurprisingly, the ``Application`` class. Each
+``Application`` has a **name**, which is mostly used to render the command-line interface. In the
+constructor of your ``Application`` you can add :ref:`man-core-bundles` and :ref:`man-core-commands` to
+your application.
 
 .. _man-core-configuration:
 
@@ -68,13 +68,13 @@ well documented in the `example project's configuration`__.
 
 .. __: https://github.com/dropwizard/dropwizard/blob/master/dropwizard-example/example.yml
 
-Each ``Service`` subclass has a single type parameter: that of its matching ``Configuration``
-subclass. These are usually at the root of your service's main package. For example, your User
-service would have two classes: ``UserServiceConfiguration``, extending ``Configuration``, and
-``UserService``, extending ``Service<UserServiceConfiguration>``.
+Each ``Application`` subclass has a single type parameter: that of its matching ``Configuration``
+subclass. These are usually at the root of your application's main package. For example, your User
+application would have two classes: ``UserApplicationConfiguration``, extending ``Configuration``, and
+``UserApplication``, extending ``Application<UserApplicationConfiguration>``.
 
-When your service runs :ref:`man-core-commands-configured` like the ``server`` command, Dropwizard
-parses the provided YAML configuration file and builds an instance of your service's configuration
+When your application runs :ref:`man-core-commands-configured` like the ``server`` command, Dropwizard
+parses the provided YAML configuration file and builds an instance of your application's configuration
 class by mapping YAML field names to object field names.
 
 .. note::
@@ -83,7 +83,7 @@ class by mapping YAML field names to object field names.
     as a JSON file.
 
 In order to keep your configuration file and class manageable, we recommend grouping related
-configuration parameters into independent configuration classes. If your service requires a set of
+configuration parameters into independent configuration classes. If your application requires a set of
 configuration parameters in order to connect to a message queue, for example, we recommend that you
 create a new ``MessageQueueConfiguration`` class:
 
@@ -112,7 +112,7 @@ Your main ``Configuration`` subclass can then include this as a member field:
 
 .. code-block:: java
 
-    public class ExampleServiceConfiguration extends Configuration {
+    public class ExampleApplicationConfiguration extends Configuration {
         @Valid
         @NotNull
         @JsonProperty
@@ -123,7 +123,7 @@ Your main ``Configuration`` subclass can then include this as a member field:
         }
     }
 
-Then, in your service's YAML file, you can use a nested ``messageQueue`` field:
+Then, in your application's YAML file, you can use a nested ``messageQueue`` field:
 
 .. code-block:: java
 
@@ -136,18 +136,18 @@ The ``@NotNull``, ``@NotEmpty``, ``@Min``, ``@Max``, and ``@Valid`` annotations 
 ``messageQueue.host`` field was missing (or was a blank string), Dropwizard would refuse to start
 and would output an error message describing the issues.
 
-Once your service has parsed the YAML file and constructed its ``Configuration`` instance,
-Dropwizard then calls your ``Service`` subclass to initialize your service's ``Environment``.
+Once your application has parsed the YAML file and constructed its ``Configuration`` instance,
+Dropwizard then calls your ``Application`` subclass to initialize your application's ``Environment``.
 
 .. note::
 
     You can override configuration settings by passing special Java system properties when starting
-    your service. Overrides must start with prefix ``dw.``, followed by the path to the
+    your application. Overrides must start with prefix ``dw.``, followed by the path to the
     configuration value being overridden.
 
-    For example, to override the HTTP port to use, you could start your service like this:
-
-    ``java -Ddw.http.port=9090 server my-config.json``
+    For example, to override the HTTP port to use, you could start your application like this:
+// TODO graham
+    ``java -Ddw.server.applicationConnectors.port=9090 server my-config.json``
 
 .. _man-core-environments:
 
@@ -162,7 +162,7 @@ command you need). There is a test keystore you can use in the
 .. __: https://github.com/dropwizard/dropwizard/tree/master/dropwizard-example
 
 .. code-block:: yaml
-
+// TODO graham
     http:
       ssl:
         keyStore: ./example.keystore
@@ -174,9 +174,9 @@ command you need). There is a test keystore you can use in the
 Bootstrapping
 =============
 
-Before a Dropwizard service can provide the command-line interface, parse a configuration file, or
+Before a Dropwizard application can provide the command-line interface, parse a configuration file, or
 run as a server, it must first go through a bootstrapping phase. This phase corresponds to your
-``Service`` subclass's ``initialize`` method. You can add :ref:`man-core-bundles`,
+``Application`` subclass's ``initialize`` method. You can add :ref:`man-core-bundles`,
 :ref:`man-core-commands`, or register Jackson modules to allow you to include custom types as part
 of your configuration class.
 
@@ -185,9 +185,9 @@ Environments
 
 A Dropwizard ``Environment`` consists of all the :ref:`man-core-resources`, servlets, filters,
 :ref:`man-core-healthchecks`, Jersey providers, :ref:`man-core-managed`, :ref:`man-core-tasks`, and
-Jersey properties which your service provides.
+Jersey properties which your application provides.
 
-Each ``Service`` subclass implements a ``run`` method. This is where you should be creating new
+Each ``Application`` subclass implements a ``run`` method. This is where you should be creating new
 resource instances, etc., and adding them to the given ``Environment`` class:
 
 .. code-block:: java
@@ -200,8 +200,8 @@ resource instances, etc., and adding them to the given ``Environment`` class:
 
         final Thingy thingy = thingyFactory.build();
 
-        environment.addResource(new ThingyResource(thingy));
-        environment.addHealthCheck(new ThingyHealthCheck(thingy));
+        environment.jerysey().register(new ThingyResource(thingy));
+        environment.healthChecks().register(new ThingyHealthCheck(thingy));
     }
 
 It's important to keep the ``run`` method clean, so if creating an instance of something is
@@ -212,12 +212,12 @@ complicated, like the ``Thingy`` class above, extract that logic into a factory.
 Health Checks
 =============
 
-A health check is a runtime test which you can use to verify your service's behavior in its
+A health check is a runtime test which you can use to verify your application's behavior in its
 production environment. For example, you may want to ensure that your database client is connected
 to the database:
 
 .. code-block:: java
-
+// TODO graham
     public class DatabaseHealthCheck extends HealthCheck {
         private final Database database;
 
@@ -236,11 +236,11 @@ to the database:
         }
     }
 
-You can then add this health check to your service's environment:
+You can then add this health check to your application's environment:
 
 .. code-block:: java
-
-    environment.addHealthCheck(new DatabaseHealthCheck(database));
+// TODO graham
+    environment.healthChecks().register(new DatabaseHealthCheck(database));
 
 By sending a ``GET`` request to ``/healthcheck`` on the admin port you can run these tests and view
 the results::
@@ -253,7 +253,7 @@ If all health checks report success, a ``200 OK`` is returned. If any fail, a
 ``500 Internal Server Error`` is returned with the error messages and exception stack traces (if an
 exception was thrown).
 
-All Dropwizard services ship with the ``deadlocks`` health check installed by default, which uses
+All Dropwizard applications ship with the ``deadlocks`` health check installed by default, which uses
 Java 1.6's built-in thread deadlock detection to determine if any threads are deadlocked.
 
 .. _man-core-managed:
@@ -261,11 +261,11 @@ Java 1.6's built-in thread deadlock detection to determine if any threads are de
 Managed Objects
 ===============
 
-Most services involve objects which need to be started and stopped: thread pools, database
+Most applications involve objects which need to be started and stopped: thread pools, database
 connections, etc. Dropwizard provides the ``Managed`` interface for this. You can either have the
 class in question implement the ``#start()`` and ``#stop()`` methods, or write a wrapper class which
-does so. Adding a ``Managed`` instance to your service's ``Environment`` ties that object's
-lifecycle to that of the service's HTTP server. Before the server starts, the ``#start()`` method is
+does so. Adding a ``Managed`` instance to your application's ``Environment`` ties that object's
+lifecycle to that of the application's HTTP server. Before the server starts, the ``#start()`` method is
 called. After the server has stopped (and after its graceful shutdown period) the ``#stop()`` method
 is called.
 
@@ -295,8 +295,8 @@ For example, given a theoretical Riak__ client which needs to be started and sto
 
 
 If ``RiakClientManager#start()`` throws an exception--e.g., an error connecting to the server--your
-service will not start and a full exception will be logged. If ``RiakClientManager#stop()`` throws
-an exception, the exception will be logged but your service will still be able to shut down.
+application will not start and a full exception will be logged. If ``RiakClientManager#stop()`` throws
+an exception, the exception will be logged but your application will still be able to shut down.
 
 It should be noted that ``Environment`` has built-in factory methods for ``ExecutorService`` and
 ``ScheduledExecutorService`` instances which are managed. See ``Environment#managedExecutorService``
@@ -307,25 +307,25 @@ and ``Environment#managedScheduledExecutorService`` for details.
 Bundles
 =======
 
-A Dropwizard bundle is a reusable group of functionality, used to define blocks of a service's
+A Dropwizard bundle is a reusable group of functionality, used to define blocks of an application's
 behavior. For example, ``AssetBundle`` provides a simple way to serve static assets from your
-service's ``src/main/resources/assets`` directory as files available from ``/assets/*`` in your
-service.
+application's ``src/main/resources/assets`` directory as files available from ``/assets/*`` in your
+application.
 
 Some bundles require configuration parameters. These bundles implement ``ConfiguredBundle`` and will
-require your service's ``Configuration`` subclass to implement a specific interface.
+require your application's ``Configuration`` subclass to implement a specific interface.
 
 Serving Assets
 --------------
 
-Either your service or your static assets can be served from the root path, but
+Either your application or your static assets can be served from the root path, but
 not both. The latter is useful when using Dropwizard to back a Javascript
-application. To enable it, move your service to a sub-URL.
+application. To enable it, move your application to a sub-URL.
 
 .. code-block:: yaml
 
     http:
-      rootPath: /service/*  # Default is /*
+      rootPath: /application/*  # Default is /*
 
 Then use an extended ``AssetsBundle`` constructor to serve resources in the
 ``assets`` folder from the root path. ``index.htm`` is served as the default
@@ -335,8 +335,6 @@ page.
 
     @Override
     public void initialize(Bootstrap<HelloWorldConfiguration> bootstrap) {
-        bootstrap.setName("hello-world");
-
         bootstrap.addBundle(new AssetsBundle("/assets/", "/"));
     }
 
@@ -346,7 +344,7 @@ Commands
 ========
 
 Commands are basic actions which Dropwizard runs based on the arguments provided on the command
-line. The built-in ``server`` command, for example, spins up an HTTP server and runs your service.
+line. The built-in ``server`` command, for example, spins up an HTTP server and runs your application.
 Each ``Command`` subclass has a name and a set of command line options which Dropwizard will use to
 parse the given command line arguments.
 
@@ -356,7 +354,7 @@ Configured Commands
 -------------------
 
 Some commands require access to configuration parameters and should extend the ``ConfiguredCommand``
-class, using your service's ``Configuration`` class as its type parameter. Dropwizard will treat the
+class, using your application's ``Configuration`` class as its type parameter. Dropwizard will treat the
 first argument on the command line as the path to a YAML configuration file, parse and validate it,
 and provide your command with an instance of the configuration class.
 
@@ -366,7 +364,7 @@ Managed Commands
 ----------------
 
 Managed commands further extend configured commands by creating a lifecycle process for your
-service's :ref:`man-core-managed`. All ``Managed`` instances registered with your service's
+application's :ref:`man-core-managed`. All ``Managed`` instances registered with your application's
 ``Environment`` will be started before your command is run, and will be stopped afterward.
 
 .. _man-core-tasks:
@@ -374,10 +372,10 @@ service's :ref:`man-core-managed`. All ``Managed`` instances registered with you
 Tasks
 =====
 
-A ``Task`` is a run-time action your service provides access to on the administrative port via HTTP.
-All Dropwizard services start with the ``gc`` task, which explicitly triggers the JVM's garbage
+A ``Task`` is a run-time action your application provides access to on the administrative port via HTTP.
+All Dropwizard applications start with the ``gc`` task, which explicitly triggers the JVM's garbage
 collection. (This is useful, for example, for running full garbage collections during off-peak times
-or while the given service is out of rotation.)
+or while the given application is out of rotation.)
 
 Running a task can be done by sending a ``POST`` request to ``/tasks/{task-name}`` on the admin
 port. For example::
@@ -455,7 +453,7 @@ You can specify a default logger level and even override the levels of
 other loggers in your YAML configuration file:
 
 .. code-block:: yaml
-
+// TODO graham
     # Logging settings.
     logging:
 
@@ -473,11 +471,11 @@ other loggers in your YAML configuration file:
 Console Logging
 ---------------
 
-By default, Dropwizard services log ``INFO`` and higher to ``STDOUT``. You can configure this by
+By default, Dropwizard applications log ``INFO`` and higher to ``STDOUT``. You can configure this by
 editing the ``logging`` section of your YAML configuration file:
 
 .. code-block:: yaml
-
+// TODO graham
     logging:
 
       # ...
@@ -499,7 +497,7 @@ Dropwizard can also log to an automatically rotated set of log files. This is th
 configuration for your production environment:
 
 .. code-block:: yaml
-
+// TODO graham
     logging:
 
       # ...
@@ -539,7 +537,7 @@ Finally, Dropwizard can also log statements to syslog.
     network socket.
 
 .. code-block:: yaml
-
+// TODO graham
     logging:
 
       # ...
@@ -560,19 +558,19 @@ Finally, Dropwizard can also log statements to syslog.
         # The syslog facility to which statements will be sent.
         facility: local0
 
-.. _man-core-testing-services:
+.. _man-core-testing-applications:
 
-Testing Services
+Testing Applications
 ================
 
-All of Dropwizard's APIs are designed with testability in mind, so even your services can have unit
+All of Dropwizard's APIs are designed with testability in mind, so even your applications can have unit
 tests:
 
 .. code-block:: java
 
-    public class MyServiceTest {
+    public class MyApplicationTest {
         private final Environment environment = mock(Environment.class);
-        private final MyService service = new MyService();
+        private final MyApplication application = new MyApplication();
         private final MyConfiguration config = new MyConfiguration();
 
         @Before
@@ -582,9 +580,9 @@ tests:
 
         @Test
         public void buildsAThingResource() throws Exception {
-            service.run(config, environment);
+            application.run(config, environment);
 
-            verify(environment).addResource(any(ThingResource.class));
+            verify(environment).jersey().register(any(ThingResource.class));
         }
     }
 
@@ -598,8 +596,8 @@ We highly recommend Mockito_ for all your mocking needs.
 Banners
 =======
 
-We think services should print out a big ASCII art banner on startup. Yours should, too. It's fun.
-Just add a ``banner.txt`` class to ``src/main/resources`` and it'll print it out when your service
+We think application should print out a big ASCII art banner on startup. Yours should, too. It's fun.
+Just add a ``banner.txt`` class to ``src/main/resources`` and it'll print it out when your application
 starts::
 
     INFO  [2011-12-09 21:56:37,209] io.dropwizard.cli.ServerCommand: Starting hello-world
@@ -627,7 +625,7 @@ We recommend you use TAAG_ for all your ASCII art banner needs.
 Resources
 =========
 
-Unsurprisingly, most of your day-to-day work with a Dropwizard service will be in the resource
+Unsurprisingly, most of your day-to-day work with a Dropwizard application will be in the resource
 classes, which model the resources exposed in your RESTful API. Dropwizard uses Jersey__ for this,
 so most of this section is just re-hashing or collecting various bits of Jersey documentation.
 
@@ -673,7 +671,7 @@ mapping various aspects of POJOs to outgoing HTTP responses. Here's a basic reso
 This class provides a resource (a user's list of notifications) which responds to ``GET`` and
 ``POST`` requests to ``/{user}/notifications``, providing and consuming ``application/json``
 representations. There's quite a lot of functionality on display here, and this section will
-explain in detail what's in play and how to use these features in your service.
+explain in detail what's in play and how to use these features in your application.
 
 .. _man-core-resources-paths:
 
@@ -693,7 +691,7 @@ accessible via ``@PathParam``-annotated method parameters.
 For example, an incoming request for ``/1001/notifications`` would match the URI template, and the
 value ``"1001"`` would be available as the path parameter named ``user``.
 
-If your service doesn't have a resource class whose ``@Path`` URI template matches the URI of an
+If your application doesn't have a resource class whose ``@Path`` URI template matches the URI of an
 incoming request, Jersey will automatically return a ``404 Not Found`` to the client.
 
 .. _man-core-resources-methods:
@@ -827,7 +825,7 @@ If at all possible, prefer throwing ``WebApplicationException`` instances to ret
 URIs
 ----
 
-While Jersey doesn't quite have first-class support for hyperlink-driven services, the provided
+While Jersey doesn't quite have first-class support for hyperlink-driven applications, the provided
 ``UriBuilder`` functionality does quite well.
 
 Rather than duplicate resource URIs, it's possible (and recommended!) to initialize a ``UriBuilder``
@@ -850,7 +848,7 @@ Testing, then, consists of creating an instance of your resource class and passi
 (Again: Mockito_.)
 
 .. code-block:: java
-
+// TODO graham
     public class NotificationsResourceTest {
         private final NotificationStore store = mock(NotificationStore.class);
         private final NotificationsResource resource = new NotificationsResource(store);
@@ -891,7 +889,7 @@ Representations
 ===============
 
 Representation classes are classes which, when handled to various Jersey ``MessageBodyReader`` and
-``MessageBodyWriter`` providers, become the entities in your service's API. Dropwizard heavily
+``MessageBodyWriter`` providers, become the entities in your application's API. Dropwizard heavily
 favors JSON, but it's possible to map from any POJO to custom formats and back.
 
 .. _man-core-representations-basic:
@@ -953,7 +951,7 @@ If you prefer immutable objects rather than JavaBeans, that's also doable:
 Advanced JSON
 -------------
 
-Not all JSON representations map nicely to the objects your service deals with, so it's sometimes
+Not all JSON representations map nicely to the objects your application deals with, so it's sometimes
 necessary to use custom serializers and deserializers. Just annotate your object like this:
 
 .. code-block:: java
@@ -1067,7 +1065,7 @@ declarative annotations. As an emergency maneuver, add the ``@ValidationMethod``
 Streaming Output
 ----------------
 
-If your service happens to return lots of information, you may get a big performance and efficiency
+If your application happens to return lots of information, you may get a big performance and efficiency
 bump by using streaming output. By returning an object which implements Jersey's ``StreamingOutput``
 interface, your method can stream the response entity in a chunk-encoded output stream. Otherwise,
 you'll need to fully construct your return value and *then* hand it off to be sent to the client.
@@ -1128,7 +1126,7 @@ input and output formats by creating classes which implement Jersey's ``MessageB
 ``MessageBodyWriter<T>`` interfaces. (Make sure they're annotated with ``@Provider`` and
 ``@Produces("text/gibberish")`` or ``@Consumes("text/gibberish")``.) Once you're done, just add
 instances of them (or their classes if they depend on Jersey's ``@Context`` injection) to your
-service's ``Environment`` on initialization.
+application's ``Environment`` on initialization.
 
 .. _man-core-config-defaults:
 
@@ -1142,7 +1140,7 @@ Dropwizard has many configuration parameters, all of which come with good defaul
     # HTTP-specific options.
     http:
 
-      # The port on which the HTTP server listens for service requests.
+      # The port on which the HTTP server listens for application requests.
       # Because Java cannot drop privileges in a POSIX system, these
       # ports cannot be in the range 1-1024. A port value of 0 will
       # make the OS use an arbitrary unused port.
@@ -1165,10 +1163,10 @@ Dropwizard has many configuration parameters, all of which come with good defaul
       # The type of connector to use.
       #
       # Possible values are:
-      #   * blocking: Good for low-latency services with short request
+      #   * blocking: Good for low-latency applications with short request
       #               durations. Corresponds to Jetty's
       #               BlockingChannelConnector.
-      #   * nonblocking: Good for services which use Servlet 3.0
+      #   * nonblocking: Good for applications which use Servlet 3.0
       #                  continuations or which maintain a large number
       #                  of open connections. Corresponds to Jetty's
       #                  SelectChannelConnector.
@@ -1329,7 +1327,7 @@ Dropwizard has many configuration parameters, all of which come with good defaul
         # If true, allows clients to renegotiate.
         #
         # ONLY ALLOW CLIENTS TO RENEGOTIATE IF YOUR JVM HAS A FIX FOR
-        # CVE-2009-3555. DOING OTHERWISE WILL MAKE YOUR SERVICE VULNERABLE
+        # CVE-2009-3555. DOING OTHERWISE WILL MAKE YOUR APPLICATION VULNERABLE
         # TO SSL RENEGOTIATION ATTACKS.
         allowRenegotiate: false
 
