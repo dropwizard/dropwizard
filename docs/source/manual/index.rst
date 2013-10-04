@@ -12,6 +12,7 @@ User Manual
     :maxdepth: 1
 
     core
+    configuration
     client
     jdbi
     migrations
