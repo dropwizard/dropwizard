@@ -28,6 +28,8 @@ Servers
       maxThreads: 1024
 
 
+.. _man-configuration-all:
+
 All
 ,,,
 
@@ -111,6 +113,8 @@ timeZone               UTC          The time zone to which request timestamps wi
 Simple
 ,,,,,,
 
+Extends the attributes that are available to :ref:`all servers <man-configuration-all>`
+
 ====================== ===========  ===========
 Name                   Default      Description
 ====================== ===========  ===========
@@ -122,6 +126,8 @@ example                 xxx         Sample description
 
 Default
 ,,,,,,,
+
+Extends the attributes that are available to :ref:`all servers <man-configuration-all>`
 
 ====================== ===========  ===========
 Name                   Default      Description
@@ -152,6 +158,8 @@ example                 xxx         Sample description
 HTTPS
 ------
 
+Extends the attributes that are available to the :ref:`HTTP connector <man-configuration-http>`
+
 ====================== ===========  ===========
 Name                   Default      Description
 ====================== ===========  ===========
@@ -163,6 +171,8 @@ example                 xxx         Sample description
 
 SPDY
 ------
+
+Extends the attributes that are available to the :ref:`HTTPS connector <man-configuration-https>`
 
 ====================== ===========  ===========
 Name                   Default      Description
