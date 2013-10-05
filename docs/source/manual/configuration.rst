@@ -496,12 +496,7 @@ Metrics
     metrics:
       frequency: 1 second
       reporters:
-        - type: syslog
-          host: localhost
-          port: 514
-          facility: local0
-          threshold: ALL
-          logFormat: # TODO
+        - type: <type>
 
 
 ====================== ===========  ===========
@@ -530,13 +525,13 @@ All
           frequency: 1 second
 
 
-====================== ===========  ===========
-Name                   Default      Description
-====================== ===========  ===========
-durationUnit           milliseconds The unit to report durations as. Overrides per-metric duration units.
-rateUnit               seconds      The unit to report rates as. Overrides per-metric rate units.
-excludes               (none)       Metrics to exclude from reports, by name. When defined, matching metrics will not be reported.
-includes               (all)        Metrics to include in reports, by name. When defined, only these metrics will be reported.
-frequency              1 second     The frequency to report metrics. Overrides the default.
-====================== ===========  ===========
+====================== =============  ===========
+Name                   Default        Description
+====================== =============  ===========
+durationUnit           milliseconds   The unit to report durations as. Overrides per-metric duration units.
+rateUnit               seconds        The unit to report rates as. Overrides per-metric rate units.
+excludes               (none)         Metrics to exclude from reports, by name. When defined, matching metrics will not be reported.
+includes               (all)          Metrics to include in reports, by name. When defined, only these metrics will be reported.
+frequency              1 second       The frequency to report metrics. Overrides the default.
+====================== =============  ===========
 
