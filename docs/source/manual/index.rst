@@ -12,7 +12,6 @@ User Manual
     :maxdepth: 1
 
     core
-    configuration
     client
     jdbi
     migrations
@@ -21,3 +20,5 @@ User Manual
     views
     scala
     testing
+    configuration
+
