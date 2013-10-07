@@ -535,3 +535,165 @@ includes               (all)          Metrics to include in reports, by name. Wh
 frequency              1 second       The frequency to report metrics. Overrides the default.
 ====================== =============  ===========
 
+
+.. _man-configuration-metrics-formatted:
+
+Formatted
+..........
+
+Extends the attributes that are available to :ref:`All metrics <man-configuration-metrics-all>`
+
+.. code-block:: yaml
+
+    metrics:
+      frequency: 1 second
+      reporters:
+        - type: <type>
+          locale: <system default>
+
+
+====================== ===============  ===========
+Name                   Default          Description
+====================== ===============  ===========
+locale                 System default   The {@link Locale} for formatting numbers, dates and times.
+====================== ===============  ===========
+
+
+.. _man-configuration-metrics-console:
+
+Console
+,,,,,,,,,,
+
+Extends the attributes that are available to :ref:`Formatted metrics <man-configuration-metrics-formatted>`
+
+.. code-block:: yaml
+
+    metrics:
+      frequency: 1 second
+      reporters:
+        - type: console
+          timeZone: UTC
+          output: stdout
+
+
+====================== ===============  ===========
+Name                   Default          Description
+====================== ===============  ===========
+timeZone               UTC              The timezone to display dates/times for.
+output                 stdout           The stream to write to. One of {@code stdout} or {@code stderr}.
+====================== ===============  ===========
+
+
+.. _man-configuration-metrics-csv:
+
+CSV
+,,,,,,,,,,
+
+Extends the attributes that are available to :ref:`Formatted metrics <man-configuration-metrics-formatted>`
+
+.. code-block:: yaml
+
+    metrics:
+      frequency: 1 second
+      reporters:
+        - type: csv
+          file: /path/to/file
+
+
+====================== ===============  ===========
+Name                   Default          Description
+====================== ===============  ===========
+file                   No default       The CSV file to write metrics to.
+====================== ===============  ===========
+
+
+.. _man-configuration-metrics-ganglia:
+
+Ganglia
+........
+
+Extends the attributes that are available to :ref:`All metrics <man-configuration-metrics-all>`
+
+.. code-block:: yaml
+
+    metrics:
+      reporters:
+        - type: ganglia
+          host: localhost
+          port: 8649
+          mode: unicast
+          ttl: 1
+          uuid: (none)
+          spoof: localhost:8649
+          tmax: 60
+          dmax: 0
+
+
+====================== ===============  ====================================================================================================
+Name                   Default          Description
+====================== ===============  ====================================================================================================
+host                   localhost        The hostname (or group) of the Ganglia server(s) to report to.
+port                   8649             The port of the Ganglia server(s) to report to.
+mode                   unicast          The UDP addressing mode to announce the metrics with. One of {@code unicast} 
+                                        or {@code multicast}.
+ttl                    1                The time-to-live of the UDP packets for the announced metrics.
+uuid                   (none)           The UUID to tag announced metrics with.
+spoof                  (none)           The hostname and port to use instead of this nodes for the announced metrics. 
+                                        In the format {@code hostname:port}.
+tmax                   60               The tmax value to annouce metrics with.
+dmax                   0                The dmax value to announce metrics with.
+====================== ===============  ====================================================================================================
+
+
+.. _man-configuration-metrics-graphite:
+
+Graphite
+.........
+
+Extends the attributes that are available to :ref:`All metrics <man-configuration-metrics-all>`
+
+.. code-block:: yaml
+
+    metrics:
+      reporters:
+        - type: graphite
+          host: localhost
+          port: 8080
+          prefix: <prefix>
+
+
+====================== ===============  ====================================================================================================
+Name                   Default          Description
+====================== ===============  ====================================================================================================
+host                   localhost        The hostname of the Graphite server to report to.
+port                   8080             The port of the Graphite server to report to.
+prefix                 (none)           The prefix for Metric key names to report to Graphite.
+====================== ===============  ====================================================================================================
+
+
+.. _man-configuration-metrics-slf4j:
+
+SLF4J
+.........
+
+Extends the attributes that are available to :ref:`All metrics <man-configuration-metrics-all>`
+
+See {@link BaseFormattedReporterFactory} and {@link BaseReporterFactory} for more options.
+
+.. code-block:: yaml
+
+    metrics:
+      reporters:
+        - type: log
+          logger: metrics
+          markerName: <marker name>
+
+
+====================== ===============  ====================================================================================================
+Name                   Default          Description
+====================== ===============  ====================================================================================================
+logger                 metrics          The name of the logger to write metrics to.
+markerName             (none)           The name of the marker to mark logged metrics with.
+====================== ===============  ====================================================================================================
+
+
