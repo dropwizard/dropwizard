@@ -250,8 +250,8 @@ selectorThreads          # of CPUs           The number of worker threads dedica
 acceptQueueSize          (OS default)        The size of the TCP/IP accept queue for the listening socket.
 reuseAddress             true                Whether or not ``SO_REUSEADDR`` is enabled on the listening socket.
 soLingerTime             (disabled)          Enable/disable ``SO_LINGER`` with the specified linger time.
-useServerHeader          false               Whether or not to add the {@code Server} header to each response.
-useDateHeader            true                Whether or not to add the {@code Date} header to each response.
+useServerHeader          false               Whether or not to add the ``Server`` header to each response.
+useDateHeader            true                Whether or not to add the ``Date`` header to each response.
 useForwardedHeaders      true                Whether or not to look at ``X-Forwarded-*`` headers added by proxies. See
                                              ``ForwardedRequestCustomize`` for details.
 ======================== ==================  ======================================================================================
@@ -302,14 +302,14 @@ Name                             Default             Description
 ================================ ==================  ======================================================================================
 keyStorePath                     REQUIRED            The path to the Java key store which contains the host certificate and private key.
 keyStorePassword                 REQUIRED            The password used to access the key store.
-keyStoreType                     JKS                 The type of key store (usually {@code JKS}, {@code PKCS12}, {@code JCEKS},
+keyStoreType                     JKS                 The type of key store (usually ``JKS``, ``PKCS12``, JCEKS``,
                                                      ``Windows-M``}, or ``Windows-ROOT``).
 keyStoreProvider                 (none)              The JCE provider to use to access the key store.
 trustStorePath                   (none)              The path to the Java key store which contains the CA certificates used to establish
                                                      trust.
 trustStorePassword               (none)              The password used to access the trust store.
-trustStoreType                   JKS                 The type of trust store (usually {@code JKS}, {@code PKCS12}, {@code JCEKS},
-                                                     {@code Windows-MY}, or {@code Windows-ROOT}).
+trustStoreType                   JKS                 The type of trust store (usually ``JKS``, ``PKCS12``, ``JCEKS``,
+                                                     ``Windows-MY``, or ``Windows-ROOT``).
 trustStoreProvider               (none)              The JCE provider to use to access the trust store.
 keyManagerPassword               (none)              The password, if any, for the key manager.
 needClientAuth                   (none)              Whether or not client authentication is required.
@@ -324,9 +324,9 @@ jceProvider                      (none)              The name of the JCE provide
 validateCerts                    true                Whether or not to validate TLS certificates before starting. If enabled, Dropwizard
                                                      will refuse to start with expired or otherwise invalid certificates.
 validatePeers                    true                Whether or not to validate TLS peer certificates.
-supportedProtocols               (none)              A list of protocols (e.g., {@code SSLv3}, {@code TLSv1}) which are supported. All
+supportedProtocols               (none)              A list of protocols (e.g., ``SSLv3``, ``TLSv1``) which are supported. All
                                                      other protocols will be refused.
-supportedCipherSuites            (none)              A list of cipher suites (e.g., {@code TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256}) which
+supportedCipherSuites            (none)              A list of cipher suites (e.g., ``TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256``) which
                                                      are supported. All other cipher suites will be refused
 allowRenegotiation               true                Whether or not TLS renegotiation is allowed.
 endpointIdentificationAlgorithm  (none)              Which endpoint identification algorithm, if any, to use during the TLS handshake.
@@ -580,7 +580,7 @@ Extends the attributes that are available to :ref:`Formatted metrics <man-config
 Name                   Default          Description
 ====================== ===============  ===========
 timeZone               UTC              The timezone to display dates/times for.
-output                 stdout           The stream to write to. One of {@code stdout} or {@code stderr}.
+output                 stdout           The stream to write to. One of ``stdout`` or ``stderr``.
 ====================== ===============  ===========
 
 
@@ -634,12 +634,12 @@ Name                   Default          Description
 ====================== ===============  ====================================================================================================
 host                   localhost        The hostname (or group) of the Ganglia server(s) to report to.
 port                   8649             The port of the Ganglia server(s) to report to.
-mode                   unicast          The UDP addressing mode to announce the metrics with. One of {@code unicast} 
-                                        or {@code multicast}.
+mode                   unicast          The UDP addressing mode to announce the metrics with. One of ``unicast`` 
+                                        or ``multicast``.
 ttl                    1                The time-to-live of the UDP packets for the announced metrics.
 uuid                   (none)           The UUID to tag announced metrics with.
 spoof                  (none)           The hostname and port to use instead of this nodes for the announced metrics. 
-                                        In the format {@code hostname:port}.
+                                        In the format ``hostname:port``.
 tmax                   60               The tmax value to annouce metrics with.
 dmax                   0                The dmax value to announce metrics with.
 ====================== ===============  ====================================================================================================
