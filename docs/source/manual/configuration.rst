@@ -164,20 +164,19 @@ Extends the attributes that are available to :ref:`all servers <man-configuratio
           validateCerts: false
 
 
-========================  ==============   =====================================================================
-Name                      Default          Description
-========================  ==============   =====================================================================
-applicationConnectors     http connector   An {@link HttpConnectorFactory HTTP connector} listening on port 8080.
-                                           A set of {@link ConnectorFactory connectors} which will handle 
-                                           application requests. TODO link to connectors below
-adminConnectors           http connector   An {@link HttpConnectorFactory HTTP connector} listening on port 8081.
-                                           A set of {@link ConnectorFactory connectors} which will handle admin 
-                                           requests.  TODO link to connectors below.
-adminMinThreads           1                The minimum number of threads to use for admin requests.
-adminMaxThreads           64               The maximum number of threads to use for admin requests.
-========================  ==============   =====================================================================
+========================  =======================   =====================================================================
+Name                      Default                   Description
+========================  =======================   =====================================================================
+applicationConnectors     An `HTTP connector`_      A set of :ref:`connectors <man-configuration-connectors>` which will
+                          listening on port 8080.   handle application requests.
+adminConnectors           An `HTTP connector`_      An `HTTP connector`_ listening on port 8081.
+                          listening on port 8081.   A set of :ref:`connectors <man-configuration-connectors>` which will 
+                                                    handle admin requests.
+adminMinThreads           1                         The minimum number of threads to use for admin requests.
+adminMaxThreads           64                        The maximum number of threads to use for admin requests.
+========================  =======================   =====================================================================
 
-
+.. _`HTTP connector`:  https://github.com/dropwizard/dropwizard/blob/master/dropwizard-jetty/src/main/java/io/dropwizard/jetty/HttpConnectorFactory.java
 
 .. _man-configuration-connectors:
 
@@ -236,7 +235,7 @@ maxResponseHeaderSize    8KiB                The maximum size of a response head
                                              will also consume more memory.
 inputBufferSize          8KiB                The size of the per-connection input buffer.
 idleTimeout              30 seconds          The maximum idle time for a connection, which roughly translates to the
-                                             {@link java.net.Socket#setSoTimeout(int)} call, although with NIO implementations
+                                             `java.net.Socket#setSoTimeout(int)`_ call, although with NIO implementations
                                              other mechanisms may be used to implement the timeout.
                                              The max idle time is applied when waiting for a new message to be received on a connection
                                              or when waiting for a new message to be sent on a connection.
@@ -256,6 +255,7 @@ useForwardedHeaders      true                Whether or not to look at ``X-Forwa
                                              ``ForwardedRequestCustomize`` for details.
 ======================== ==================  ======================================================================================
 
+.. _`java.net.Socket#setSoTimeout(int)`: http://docs.oracle.com/javase/7/docs/api/java/net/Socket.html#setSoTimeout(int)
 
 .. _man-configuration-https:
 
@@ -354,8 +354,10 @@ Extends the attributes that are available to the :ref:`HTTPS connector <man-conf
 ====================== ===========  ===========
 Name                   Default      Description
 ====================== ===========  ===========
-pushStrategy           (none)       The {@link PushStrategyFactory push strategy} to use for server-initiated SPDY pushes.
+pushStrategy           (none)       The `push strategy`_ to use for server-initiated SPDY pushes.
 ====================== ===========  ===========
+
+.. _`push strategy`: https://github.com/dropwizard/dropwizard/blob/master/dropwizard-spdy/src/main/java/io/dropwizard/spdy/PushStrategyFactory.java
 
 
 .. _man-configuration-logging:
@@ -555,9 +557,10 @@ Extends the attributes that are available to :ref:`All metrics <man-configuratio
 ====================== ===============  ===========
 Name                   Default          Description
 ====================== ===============  ===========
-locale                 System default   The {@link Locale} for formatting numbers, dates and times.
+locale                 System default   The Locale_ for formatting numbers, dates and times.
 ====================== ===============  ===========
 
+.. _Locale: http://docs.oracle.com/javase/7/docs/api/java/util/Locale.html
 
 .. _man-configuration-metrics-console:
 
@@ -676,7 +679,11 @@ SLF4J
 
 Extends the attributes that are available to :ref:`All metrics <man-configuration-metrics-all>`
 
-See {@link BaseFormattedReporterFactory} and {@link BaseReporterFactory} for more options.
+See BaseReporterFactory_  and BaseFormattedReporterFactory_ for more options.
+
+.. _BaseReporterFactory:  https://github.com/dropwizard/dropwizard/blob/master/dropwizard-metrics/src/main/java/io/dropwizard/metrics/BaseReporterFactory.java
+.. _BaseFormattedReporterFactory: https://github.com/dropwizard/dropwizard/blob/master/dropwizard-metrics/src/main/java/io/dropwizard/metrics/BaseFormattedReporterFactory.java
+
 
 .. code-block:: yaml
 
