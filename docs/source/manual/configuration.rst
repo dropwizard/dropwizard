@@ -476,7 +476,7 @@ Name                         Default      Description
 host                         localhost    The hostname of the syslog server.
 port                         514          The port on which the syslog server is listening.
 facility                     local0       The syslog facility to use. Can be either ``auth``, ``authpriv``,
-                                          ``daemon``, ``cron``, ``ftp``, ``lpr``, ``kern``, ``mail,
+                                          ``daemon``, ``cron``, ``ftp``, ``lpr``, ``kern``, ``mail``,
                                           ``news``, ``syslog``, ``user``, ``uucp``, ``local0``,
                                           ``local1``, ``local2``, ``local3``, ``local4``, ``local5``,
                                           ``local6``, or ``local7``.
@@ -490,6 +490,8 @@ logFormat                    defaultThe   Logback pattern with which events will
 
 Metrics
 =========
+
+The metrics configuration has two fields; frequency and reporters.
 
 .. code-block:: yaml
 
@@ -515,7 +517,6 @@ All
 .. code-block:: yaml
 
     metrics:
-      frequency: 1 second
       reporters:
         - type: <type>
           durationUnit: milliseconds
@@ -546,7 +547,6 @@ Extends the attributes that are available to :ref:`All metrics <man-configuratio
 .. code-block:: yaml
 
     metrics:
-      frequency: 1 second
       reporters:
         - type: <type>
           locale: <system default>
@@ -569,7 +569,6 @@ Extends the attributes that are available to :ref:`Formatted metrics <man-config
 .. code-block:: yaml
 
     metrics:
-      frequency: 1 second
       reporters:
         - type: console
           timeZone: UTC
@@ -594,7 +593,6 @@ Extends the attributes that are available to :ref:`Formatted metrics <man-config
 .. code-block:: yaml
 
     metrics:
-      frequency: 1 second
       reporters:
         - type: csv
           file: /path/to/file
