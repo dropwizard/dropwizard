@@ -5,12 +5,12 @@
         <maven>3.0.0</maven>
     </prerequisites>
 
-    <groupId>com.codahale.dropwizard</groupId>
+    <groupId>io.dropwizard</groupId>
     <artifactId>dropwizard-parent</artifactId>
     <version>0.7.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Dropwizard Project</name>
-    <url>http://dropwizard.codahale.com/</url>
+    <url>http://www.dropwizard.io/</url>
     <description>
         Dropwizard is a Java framework for developing ops-friendly, high-performance, RESTful web
         applications.
@@ -49,15 +49,15 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <metrics3.version>3.0.0</metrics3.version>
+        <metrics3.version>3.0.1</metrics3.version>
         <jersey.version>1.17.1</jersey.version>
-        <jackson.version>2.2.2</jackson.version>
+        <jackson.version>2.2.3</jackson.version>
         <logback.version>1.0.13</logback.version>
         <slf4j.version>1.7.5</slf4j.version>
         <servlet.version>3.0.0.v201112011016</servlet.version>
-        <jetty.version>9.0.4.v20130625</jetty.version>
-        <guava.version>14.0.1</guava.version>
-        <h2.version>1.3.172</h2.version>
+        <jetty.version>9.0.5.v20130815</jetty.version>
+        <guava.version>15.0</guava.version>
+        <h2.version>1.3.173</h2.version>
     </properties>
 
     <developers>
@@ -77,15 +77,15 @@
     </licenses>
 
     <scm>
-        <connection>scm:git:git://github.com/codahale/dropwizard.git</connection>
-        <developerConnection>scm:git:git@github.com:codahale/dropwizard.git</developerConnection>
-        <url>http://github.com/codahale/dropwizard/</url>
+        <connection>scm:git:git://github.com/dropwizard/dropwizard.git</connection>
+        <developerConnection>scm:git:git@github.com:dropwizard/dropwizard.git</developerConnection>
+        <url>http://github.com/dropwizard/dropwizard/</url>
         <tag>HEAD</tag>
     </scm>
 
     <issueManagement>
         <system>github</system>
-        <url>http://github.com/codahale/dropwizard/issues#issue/</url>
+        <url>http://github.com/dropwizard/dropwizard/issues#issue/</url>
     </issueManagement>
 
     <repositories>

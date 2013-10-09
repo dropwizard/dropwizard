@@ -87,7 +87,7 @@ Next, write a test for serializing a ``Person`` instance to JSON:
 
 .. code-block:: java
 
-    import static com.codahale.dropwizard.testing.JsonHelpers.*;
+    import static io.dropwizard.testing.JsonHelpers.*;
     import static org.hamcrest.Matchers.*;
 
     @Test
@@ -114,7 +114,7 @@ Next, write a test for deserializing a ``Person`` instance from JSON:
 
 .. code-block:: java
 
-    import static com.codahale.dropwizard.testing.JsonHelpers.*;
+    import static io.dropwizard.testing.JsonHelpers.*;
     import static org.hamcrest.Matchers.*;
 
     @Test
@@ -135,7 +135,7 @@ Testing Resources
 =================
 
 While many resource classes can be tested just by calling the methods on the class in a test, some
-resources lend themselves to a more full-stack approach. For these, use ``ResourceTest``, which
+resources lend themselves to a more full-stack approach. For these, use ``ResourceTestRule``, which
 loads a given resource instance in an in-memory Jersey server:
 
 .. _man-testing-resources-example:
@@ -144,45 +144,53 @@ loads a given resource instance in an in-memory Jersey server:
 
     import static org.fest.assertions.api.Assertions.assertThat;
 
-    public class PersonResourceTest extends ResourceTest {
-        private final Person person = new Person("blah", "blah@example.com");
-        private final PersonDAO dao = mock(PersonDAO.class);
+    public class PersonResourceTest {
 
-        @Override
-        protected void setUpResources() {
-            when(store.fetchPerson(anyString())).thenReturn(person);
-            addResource(new PersonResource(dao));
+        private static final PeopleStore dao = mock(PeopleStore.class);
+
+        @ClassRule
+        public static final ResourceTestRule resources = ResourceTestRule.builder()
+                .addResource(new PersonResource(dao))
+                .build();
+
+        private final Person person = new Person("blah", "blah@example.com");
+
+        @Before
+        public void setup() {
+            when(dao.fetchPerson(eq("blah"))).thenReturn(person);
         }
 
         @Test
-        public void simpleResourceTest() throws Exception {
-            assertThat(client().resource("/person/blah").get(Person.class))
-                       .isEqualTo(person);
-
-            verify(store).fetchPerson("blah");
+        public void testGetPerson() {
+            assertThat(resources.client().resource("/person/blah").get(Person.class))
+                    .isEqualTo(person);
+            verify(dao).fetchPerson("blah");
         }
     }
 
-In your ``#setUpResources()`` method, instantiate the various resource instances you want to test
-and add them to the test context via ``#addResource(Object)``. In your actual test methods, use
-``#client()`` which returns a Jersey ``Client`` instance which will talk to your resource instances.
+Instansiate a ``ResourceTestRule`` using its ``Builder`` and add the various resource instances you
+want to test via ``ResourceTestRule.Builder#addResource(Object)``. Use a ``@ClassRule`` annotation 
+to have the rule wrap the entire test class or the ``@TestRule`` annotation to have the rule wrap 
+each test individually.
 
-This doesn't require opening a port, but ``ResourceTest`` tests will perform all the serialization,
+In your tests, use ``#client()``, which returns a Jersey ``Client`` instance to talk to and test 
+your instances.
+
+This doesn't require opening a port, but ``ResourceTestRule`` tests will perform all the serialization,
 deserialization, and validation that happens inside of the HTTP process.
 
 This also doesn't require a full integration test. In the above
-:ref:`example <man-testing-resources-example>`, a mocked ``PersonDAO`` is passed to the
+:ref:`example <man-testing-resources-example>`, a mocked ``PeopleStore`` is passed to the
 ``PersonResource`` instance to isolate it from the database. Not only does this make the test much
 faster, but it allows your resource unit tests to test error conditions and edge cases much more
 easily.
 
 .. hint::
 
-    You can trust ``PersonDAO`` works because you've got working unit tests for it, right?
+    You can trust ``PeopleStore`` works because you've got working unit tests for it, right?
 
 Should you, at some point, grow tired of the near-infinite amount of debug logging produced by
-``ResourceTest`` you can use the ``java.util.logging`` API to silence the ``com.sun.jersey`` logger.
-
+``ResourceTestRule`` you can use the ``java.util.logging`` API to silence the ``com.sun.jersey`` logger.
 
 Integrated Testing
 ==================
@@ -211,3 +219,4 @@ running and stop it again when they've completed (roughly equivalent to having u
             assertThat(response.getStatus(), is(302));
         }
     }
+

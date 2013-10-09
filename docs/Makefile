@@ -156,4 +156,4 @@ less:
 	lessc --compress source/_themes/dropwizard/less/dropwizard.less > source/_themes/dropwizard/static/dropwizard.css
 
 upload: clean dirhtml
-	rsync -avz --delete --exclude=maven $(BUILDDIR)/dirhtml/ codahale.com:/home/codahale/dropwizard.codahale.com/
+	rsync -avz --delete --exclude=maven $(BUILDDIR)/dirhtml/ codahale.com:/home/codahale/dropwizard.io/
