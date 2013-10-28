@@ -5,6 +5,8 @@ import io.dropwizard.Configuration;
 import io.dropwizard.setup.Environment;
 import net.sourceforge.argparse4j.inf.Namespace;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.util.component.AbstractLifeCycle;
+import org.eclipse.jetty.util.component.LifeCycle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,11 +38,21 @@ public class ServerCommand<T extends Configuration> extends EnvironmentCommand<T
     protected void run(Environment environment, Namespace namespace, T configuration) throws Exception {
         final Server server = configuration.getServerFactory().build(environment);
         try {
+            server.addLifeCycleListener(new LifeCycleListener());
+            cleanupAsynchronously();
             server.start();
         } catch (Exception e) {
             LOGGER.error("Unable to start server, shutting down", e);
             server.stop();
+            cleanup();
             throw e;
+        }
+    }
+
+    private class LifeCycleListener extends AbstractLifeCycle.AbstractLifeCycleListener {
+        @Override
+        public void lifeCycleStopped(LifeCycle event) {
+            cleanup();
         }
     }
 }

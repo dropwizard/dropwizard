@@ -30,9 +30,7 @@ public class AsyncAppender extends AppenderBase<ILoggingEvent> {
         private Worker(int batchSize, Duration batchDuration) {
             this.batchSize = batchSize;
             this.batchDuration = batchDuration;
-            this.running = true;
             this.events = Lists.newArrayListWithCapacity(batchSize);
-            setDaemon(true);
         }
 
         @Override
@@ -45,19 +43,27 @@ public class AsyncAppender extends AppenderBase<ILoggingEvent> {
                                  batchSize,
                                  batchDuration.getQuantity(),
                                  batchDuration.getUnit());
-                    for (ILoggingEvent event : events) {
-                        delegate.doAppend(event);
-                    }
-
-                    events.clear();
-                } catch (InterruptedException ignored) {
+                } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                 }
+
+                for (ILoggingEvent event : events) {
+                    delegate.doAppend(event);
+                }
+
+                events.clear();
             }
+
+            // flush any remaining events to the delegate and stop it
+            for (ILoggingEvent event : queue) {
+                delegate.doAppend(event);
+            }
+            delegate.stop();
         }
 
         public void shutdown() {
             this.running = false;
+            this.interrupt();
         }
     }
 
@@ -100,8 +106,8 @@ public class AsyncAppender extends AppenderBase<ILoggingEvent> {
         event.prepareForDeferredProcessing();
         try {
             queue.put(event);
-        } catch (InterruptedException ignored) {
-            // ruh-roh
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         }
     }
 }

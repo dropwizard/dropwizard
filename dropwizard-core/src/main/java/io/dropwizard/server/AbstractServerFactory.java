@@ -451,10 +451,14 @@ public abstract class AbstractServerFactory implements ServerFactory {
         return listener;
     }
 
-    protected Handler addRequestLog(Handler handler, String name) {
+    protected Handler addRequestLog(Server server, Handler handler, String name) {
         if (requestLog.isEnabled()) {
             final RequestLogHandler requestLogHandler = new RequestLogHandler();
             requestLogHandler.setRequestLog(requestLog.build(name));
+            // server should own the request log's lifecycle since it's already started,
+            // the handler might not become managed in case of an error which would leave
+            // the request log stranded
+            server.addBean(requestLogHandler.getRequestLog(), true);
             requestLogHandler.setHandler(handler);
             return requestLogHandler;
         }
