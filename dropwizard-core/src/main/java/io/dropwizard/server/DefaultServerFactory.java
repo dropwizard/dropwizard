@@ -12,6 +12,7 @@ import io.dropwizard.setup.Environment;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.util.component.ContainerLifeCycle;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.util.thread.ThreadPool;
 
@@ -168,12 +169,19 @@ public class DefaultServerFactory extends AbstractServerFactory {
     }
 
     private List<Connector> buildAdminConnectors(MetricRegistry metricRegistry, Server server) {
+        // threadpool is shared between all the connectors, so it should be managed by the server instead of the
+        // individual connectors
         final QueuedThreadPool threadPool = new QueuedThreadPool(adminMaxThreads, adminMinThreads);
         threadPool.setName("dw-admin");
+        server.addBean(threadPool);
 
         final List<Connector> connectors = Lists.newArrayList();
         for (ConnectorFactory factory : adminConnectors) {
-            connectors.add(factory.build(server, metricRegistry, "admin", threadPool));
+            Connector connector = factory.build(server, metricRegistry, "admin", threadPool);
+            if (connector instanceof ContainerLifeCycle) {
+                ((ContainerLifeCycle) connector).unmanage(threadPool);
+            }
+            connectors.add(connector);
         }
         return connectors;
     }
@@ -181,7 +189,7 @@ public class DefaultServerFactory extends AbstractServerFactory {
     private List<Connector> buildAppConnectors(MetricRegistry metricRegistry, Server server) {
         final List<Connector> connectors = Lists.newArrayList();
         for (ConnectorFactory factory : applicationConnectors) {
-            connectors.add(factory.build(server, metricRegistry, "application", server.getThreadPool()));
+            connectors.add(factory.build(server, metricRegistry, "application", null));
         }
         return connectors;
     }
