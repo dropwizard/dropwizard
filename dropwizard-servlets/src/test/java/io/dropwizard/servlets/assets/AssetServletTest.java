@@ -59,6 +59,9 @@ public class AssetServletTest {
         servletTester.addServlet(RootAssetServlet.class, ROOT_SERVLET + '*');
         servletTester.start();
 
+        servletTester.getContext().getMimeTypes().addMimeMapping("mp4", "video/mp4");
+        servletTester.getContext().getMimeTypes().addMimeMapping("m4a", "audio/mp4");
+        
         request.setMethod("GET");
         request.setURI(DUMMY_SERVLET + "example.txt");
         request.setVersion(HttpVersion.HTTP_1_0);
@@ -184,6 +187,115 @@ public class AssetServletTest {
         assertThat(firstLastModifiedTime)
                 .isEqualTo(secondLastModifiedTime);
     }
+
+	@Test
+	public void supportsByteRangeForMedia() throws Exception {
+		request.setURI(ROOT_SERVLET + "assets/foo.mp4");
+		response = HttpTester.parseResponse(servletTester.getResponses(request
+				.generate()));
+		assertThat(response.getStatus())
+				.isEqualTo(200);
+		assertThat(response.get(HttpHeaders.ACCEPT_RANGES))
+				.isEqualTo("bytes");
+
+		request.setURI(ROOT_SERVLET + "assets/foo.m4a");
+		response = HttpTester.parseResponse(servletTester.getResponses(request
+				.generate()));
+		assertThat(response.getStatus())
+				.isEqualTo(200);
+		assertThat(response.get(HttpHeaders.ACCEPT_RANGES))
+				.isEqualTo("bytes");
+	}
+
+	@Test
+	public void supportsFullByteRange() throws Exception {
+		request.setURI(ROOT_SERVLET + "assets/example.txt");
+		request.setHeader(HttpHeaders.RANGE, "bytes=0-");
+		response = HttpTester.parseResponse(servletTester.getResponses(request
+				.generate()));
+		assertThat(response.getStatus())
+				.isEqualTo(206);
+		assertThat(response.getContent())
+				.isEqualTo("HELLO THERE");
+		assertThat(response.get(HttpHeaders.ACCEPT_RANGES))
+				.isEqualTo("bytes");
+		assertThat(response.get(HttpHeaders.CONTENT_RANGE))
+				.isEqualTo("bytes 0-10/11");
+	}
+
+	@Test
+	public void supportsCentralByteRange() throws Exception {
+		request.setURI(ROOT_SERVLET + "assets/example.txt");
+		request.setHeader(HttpHeaders.RANGE, "bytes=4-8");
+		response = HttpTester.parseResponse(servletTester.getResponses(request
+				.generate()));
+		assertThat(response.getStatus())
+				.isEqualTo(206);
+		assertThat(response.getContent())
+				.isEqualTo("O THE");
+		assertThat(response.get(HttpHeaders.ACCEPT_RANGES))
+				.isEqualTo("bytes");
+		assertThat(response.get(HttpHeaders.CONTENT_RANGE))
+				.isEqualTo("bytes 4-8/11");
+		assertThat(response.get(HttpHeaders.CONTENT_LENGTH))
+				.isEqualTo("5");
+	}
+
+	@Test
+	public void supportsFinalByteRange() throws Exception {
+		request.setURI(ROOT_SERVLET + "assets/example.txt");
+		request.setHeader(HttpHeaders.RANGE, "bytes=10-10");
+		response = HttpTester.parseResponse(servletTester.getResponses(request
+				.generate()));
+		assertThat(response.getStatus())
+				.isEqualTo(206);
+		assertThat(response.getContent())
+				.isEqualTo("E");
+		assertThat(response.get(HttpHeaders.ACCEPT_RANGES))
+				.isEqualTo("bytes");
+		assertThat(response.get(HttpHeaders.CONTENT_RANGE))
+				.isEqualTo("bytes 10-10/11");
+		assertThat(response.get(HttpHeaders.CONTENT_LENGTH))
+				.isEqualTo("1");
+
+		response = HttpTester.parseResponse(servletTester.getResponses(request
+				.generate()));
+		request.setHeader(HttpHeaders.RANGE, "bytes=-1");
+		assertThat(response.getStatus())
+				.isEqualTo(206);
+		assertThat(response.getContent())
+				.isEqualTo("E");
+		assertThat(response.get(HttpHeaders.ACCEPT_RANGES))
+				.isEqualTo("bytes");
+		assertThat(response.get(HttpHeaders.CONTENT_RANGE))
+				.isEqualTo("bytes 10-10/11");
+		assertThat(response.get(HttpHeaders.CONTENT_LENGTH))
+				.isEqualTo("1");
+	}
+
+	@Test
+	public void supportsIfRangeMatchRequests() throws Exception {
+		response = HttpTester.parseResponse(servletTester.getResponses(request
+				.generate()));
+		final String correctEtag = response.get(HttpHeaders.ETAG);
+
+		request.setHeader(HttpHeaders.RANGE, "bytes=10-10");
+
+		request.setHeader(HttpHeaders.IF_RANGE, correctEtag);
+		response = HttpTester.parseResponse(servletTester.getResponses(request
+				.generate()));
+		final int statusWithMatchingEtag = response.getStatus();
+
+		request.setHeader(HttpHeaders.IF_RANGE, correctEtag + "FOO");
+		response = HttpTester.parseResponse(servletTester.getResponses(request
+				.generate()));
+		final int statusWithNonMatchingEtag = response.getStatus();
+
+		assertThat(statusWithMatchingEtag)
+				.isEqualTo(206);
+		assertThat(statusWithNonMatchingEtag)
+				.isEqualTo(200);
+	}
 
     @Test
     public void supportsIfModifiedSinceRequests() throws Exception {

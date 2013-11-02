@@ -112,6 +112,45 @@ public class AssetServlet extends HttpServlet {
                 return;
             }
 
+            String range = req.getHeader(HttpHeaders.RANGE);
+
+            int resourceLength = cachedAsset.getResource().length;
+            int from = 0;
+            int to = resourceLength - 1;
+
+            boolean usingRanges = false;
+            // Support for HTTP Byte Ranges
+            // http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html
+            if (range != null) {
+
+                String ifRange = req.getHeader(HttpHeaders.IF_RANGE);
+
+                if (ifRange == null || cachedAsset.getETag().equals(ifRange)) {
+
+                    String part = range.split("=")[1];
+                    String[] elements = part.split("-");
+
+                    if (elements.length == 2) {
+                        if ("".equals(elements[0])) {
+                            to = resourceLength - 1;
+                            from = to - Integer.parseInt(elements[1]);
+                        } else {
+                            from = Integer.parseInt(elements[0]);
+                            to = Integer.parseInt(elements[1]);
+                        }
+                    } else {
+                        to = resourceLength - 1;
+                        from = Integer.parseInt(elements[0]);
+                    }
+
+                    resp.setStatus(HttpServletResponse.SC_PARTIAL_CONTENT);
+                    usingRanges = true;
+
+                    resp.addHeader(HttpHeaders.CONTENT_RANGE, "bytes " + from
+                            + "-" + to + "/" + cachedAsset.getResource().length);
+                }
+            }
+
             resp.setDateHeader(HttpHeaders.LAST_MODIFIED, cachedAsset.getLastModifiedTime());
             resp.setHeader(HttpHeaders.ETAG, cachedAsset.getETag());
 
@@ -128,6 +167,11 @@ public class AssetServlet extends HttpServlet {
                 } catch (IllegalArgumentException ignore) {}
             }
 
+            if (mediaType.is(MediaType.ANY_VIDEO_TYPE)
+                    || mediaType.is(MediaType.ANY_AUDIO_TYPE) || usingRanges) {
+                resp.addHeader(HttpHeaders.ACCEPT_RANGES, "bytes");
+            }
+
             resp.setContentType(mediaType.type() + '/' + mediaType.subtype());
 
             if (mediaType.charset().isPresent()) {
@@ -135,7 +179,9 @@ public class AssetServlet extends HttpServlet {
             }
 
             try (ServletOutputStream output = resp.getOutputStream()) {
-                output.write(cachedAsset.getResource());
+                if (resourceLength > 0) {
+                    output.write(cachedAsset.getResource(), from, to - from + 1);
+                }
             }
         } catch (RuntimeException | URISyntaxException ignored) {
             resp.sendError(HttpServletResponse.SC_NOT_FOUND);
