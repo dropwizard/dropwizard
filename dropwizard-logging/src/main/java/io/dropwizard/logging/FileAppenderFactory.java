@@ -192,6 +192,7 @@ public class FileAppenderFactory extends AbstractAppenderFactory {
 
             rollingPolicy.setParent(appender);
             rollingPolicy.start();
+            return appender;
         }
         return new FileAppender<>();
     }
