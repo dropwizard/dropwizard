@@ -85,6 +85,12 @@ public class JDBITest {
                   .bind(2, 99)
                   .bind(3, new Timestamp(1365465078000L))
                   .execute();
+            handle.createStatement("INSERT INTO people VALUES (?, ?, ?, ?)")
+                  .bind(0, "Alice Example")
+                  .bind(1, "alice@example.org")
+                  .bind(2, 99)
+                  .bindNull(3, Types.TIMESTAMP)
+                  .execute();
         }
     }
 
@@ -125,7 +131,7 @@ public class JDBITest {
         final PersonDAO dao = dbi.open(PersonDAO.class);
 
         assertThat(dao.findAllNames())
-                .containsOnly("Coda Hale", "Kris Gale", "Old Guy");
+                .containsOnly("Coda Hale", "Kris Gale", "Old Guy", "Alice Example");
     }
 
     @Test
@@ -133,7 +139,7 @@ public class JDBITest {
         final PersonDAO dao = dbi.open(PersonDAO.class);
 
         assertThat(dao.findAllUniqueNames())
-                .containsOnly("Coda Hale", "Kris Gale", "Old Guy");
+                .containsOnly("Coda Hale", "Kris Gale", "Old Guy", "Alice Example");
     }
 
     @Test
@@ -160,5 +166,16 @@ public class JDBITest {
         assertThat(found).isNotNull();
         assertThat(found.getMillis()).isEqualTo(1365465078000L);
         assertThat(found).isEqualTo(new DateTime(1365465078000L));
+
+        final DateTime notFound = dao.getCreatedAtByEmail("alice@example.org");
+        assertThat(notFound).isNull();
+
+        final Optional<DateTime> absentDateTime = dao.getCreatedAtByName("Alice Example");
+        assertThat(absentDateTime).isNotNull();
+        assertThat(absentDateTime.isPresent()).isFalse();
+
+        final Optional<DateTime> presentDateTime = dao.getCreatedAtByName("Coda Hale");
+        assertThat(presentDateTime).isNotNull();
+        assertThat(presentDateTime.isPresent()).isTrue();
     }
 }
