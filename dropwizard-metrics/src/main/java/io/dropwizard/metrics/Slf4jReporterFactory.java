@@ -30,6 +30,7 @@ import org.slf4j.MarkerFactory;
  *         <td>(none)</td>
  *         <td>The name of the marker to mark logged metrics with.</td>
  *     </tr>
+ *     TODO - this isn't right?
  *     <tr>
  *         <td colspan="3">See {@link BaseFormattedReporterFactory} for more options.</td>
  *     </tr>

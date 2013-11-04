@@ -20,3 +20,5 @@ User Manual
     views
     scala
     testing
+    configuration
+
