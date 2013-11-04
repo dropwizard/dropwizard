@@ -48,51 +48,6 @@ Then, in your application's ``run`` method, create a new ``HttpClientBuilder``:
         environment.addResource(new ExternalServiceResource(httpClient));
     }
 
-.. _man-client-apache-config:
-
-Configuration Defaults
-----------------------
-
-The default configuration for ``HttpClientConfiguration`` is as follows:
-
-.. code-block:: yaml
-
-    # The socket timeout value. If a read or write to the underlying
-    # TCP/IP connection hasn't succeeded after this duration, a
-    # timeout exception is thrown.
-    timeout: 500ms
-
-    # The connection timeout value. If a TCP/IP connection cannot be
-    # established in this time, a timeout exception is thrown.
-    connectionTimeout: 500ms
-
-    # The time a TCP/IP connection to the server is allowed to
-    # persist before being explicitly closed.
-    timeToLive: 1 hour
-
-    # If true, cookies will be persisted in memory for the duration
-    # of the client's lifetime. If false, cookies will be ignored
-    # entirely.
-    cookiesEnabled: false
-
-    # The maximum number of connections to be held in the client's
-    # connection pool.
-    maxConnections: 1024
-
-    # The maximum number of connections per "route" to be held in
-    # the client's connection pool. A route is essentially a
-    # combination of hostname, port, configured proxies, etc.
-    maxConnectionsPerRoute: 1024
-
-    # The default value for a persistent connection's keep-alive.
-    # A value of 0 will result in connections being immediately
-    # closed after a response.
-    keepAlive: 0s
-
-    # The number of times an HttpRequest should be retried after a
-    # recoverable exception during execution.
-    retries: 0
-
 .. _man-client-apache-metrics:
 
 Metrics
@@ -195,26 +150,3 @@ Then, in your service's ``run`` method, create a new ``JerseyClientBuilder``:
         environment.addResource(new ExternalServiceResource(client));
     }
 
-.. _man-client-jersey-config:
-
-Configuration Defaults
-----------------------
-
-In addition to the properties in the :ref:`HttpClient configuration <man-client-apache-config>`,
-``JerseyClientConfiguration`` adds the following:
-
-.. code-block:: yaml
-
-    # The minimum number of threads to use for asynchronous calls.
-    minThreads: 1
-
-    # The maximum number of threads to use for asynchronous calls.
-    maxThreads: 128
-
-    # If true, the client will automatically decode response entities
-    # with gzip content encoding.
-    gzipEnabled: true
-
-    # If true, the client will encode request entities with gzip
-    # content encoding. (Requires gzipEnabled to be true).
-    gzipEnabledForRequests: true
