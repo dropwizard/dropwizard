@@ -15,7 +15,7 @@ Configuration
 =============
 
 Like :ref:`man-jdbi`, your :ref:`configuration class <man-core-configuration>` needs a
-``DatabaseConfiguration`` instance:
+``DataSourceFactory`` instance:
 
 .. code-block:: java
 
