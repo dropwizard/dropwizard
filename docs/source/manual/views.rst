@@ -6,13 +6,12 @@ Dropwizard Views
 
 .. highlight:: text
 
-.. rubric:: The ``dropwizard-views`` module provides you with simple, fast HTML views using either
-            FreeMarker_ or Mustache_.
+.. rubric:: The ``dropwizard-views-mustache`` & ``dropwizard-views-freemarker`` modules provides you with simple, fast HTML views using either FreeMarker_ or Mustache_.
 
 .. _FreeMarker: http://FreeMarker.sourceforge.net/
 .. _Mustache: http://mustache.github.com/mustache.5.html
 
-To enable views for your :ref:`service <man-core-service>`, add the ``ViewBundle`` in the ``initialize`` method of your Service class:
+To enable views for your :ref:`Application <man-core-application>`, add the ``ViewBundle`` in the ``initialize`` method of your Service class:
 
 .. code-block:: java
 
