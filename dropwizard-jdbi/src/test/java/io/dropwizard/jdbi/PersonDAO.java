@@ -24,4 +24,11 @@ public interface PersonDAO {
 
     @SqlQuery("SELECT created_at FROM people WHERE created_at > :from ORDER BY created_at DESC LIMIT 1")
     public DateTime getLatestCreatedAt(@Bind("from") DateTime from);
+
+    @SqlQuery("SELECT created_at FROM people WHERE name = :name")
+    @SingleValueResult(DateTime.class)
+    public Optional<DateTime> getCreatedAtByName(@Bind("name") String name);
+
+    @SqlQuery("SELECT created_at FROM people WHERE email = :email")
+    public DateTime getCreatedAtByEmail(@Bind("email") String email);
 }
