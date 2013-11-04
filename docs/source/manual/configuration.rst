@@ -513,8 +513,10 @@ reporters              (none)       A list of reporters to report metrics.
 
 .. _man-configuration-metrics-all:
 
-All
-----
+All Reporters
+-------------
+
+The following options are available for all metrics reporters.
 
 .. code-block:: yaml
 
@@ -541,10 +543,10 @@ frequency              1 second       The frequency to report metrics. Overrides
 
 .. _man-configuration-metrics-formatted:
 
-Formatted
-..........
+Formatted Reporters
+...................
 
-Extends the attributes that are available to :ref:`All metrics <man-configuration-metrics-all>`
+These options are available only to "formatted" reporters and extend the options available to :ref:`all reporters <man-configuration-metrics-all>`
 
 .. code-block:: yaml
 
@@ -564,10 +566,12 @@ locale                 System default   The Locale_ for formatting numbers, date
 
 .. _man-configuration-metrics-console:
 
-Console
-,,,,,,,,,,
+Console Reporter
+----------------
 
-Extends the attributes that are available to :ref:`Formatted metrics <man-configuration-metrics-formatted>`
+Reports metrics periodically to the console.
+
+Extends the attributes that are available to :ref:`formatted reporters <man-configuration-metrics-formatted>`
 
 .. code-block:: yaml
 
@@ -588,10 +592,12 @@ output                 stdout           The stream to write to. One of ``stdout`
 
 .. _man-configuration-metrics-csv:
 
-CSV
-,,,,,,,,,,
+CSV Reporter
+------------
 
-Extends the attributes that are available to :ref:`Formatted metrics <man-configuration-metrics-formatted>`
+Reports metrics periodically to a CSV file.
+
+Extends the attributes that are available to :ref:`formatted reporters <man-configuration-metrics-formatted>`
 
 .. code-block:: yaml
 
@@ -610,10 +616,12 @@ file                   No default       The CSV file to write metrics to.
 
 .. _man-configuration-metrics-ganglia:
 
-Ganglia
-........
+Ganglia Reporter
+----------------
 
-Extends the attributes that are available to :ref:`All metrics <man-configuration-metrics-all>`
+Reports metrics periodically to Ganglia.
+
+Extends the attributes that are available to :ref:`all reporters <man-configuration-metrics-all>`
 
 .. code-block:: yaml
 
@@ -648,10 +656,12 @@ dmax                   0                The dmax value to announce metrics with.
 
 .. _man-configuration-metrics-graphite:
 
-Graphite
-.........
+Graphite Reporter
+-----------------
 
-Extends the attributes that are available to :ref:`All metrics <man-configuration-metrics-all>`
+Reports metrics periodically to Graphite.
+
+Extends the attributes that are available to :ref:`all reporters <man-configuration-metrics-all>`
 
 .. code-block:: yaml
 
@@ -675,9 +685,11 @@ prefix                 (none)           The prefix for Metric key names to repor
 .. _man-configuration-metrics-slf4j:
 
 SLF4J
-.........
+-----
 
-Extends the attributes that are available to :ref:`All metrics <man-configuration-metrics-all>`
+Reports metrics periodically by logging via SLF4J.
+
+Extends the attributes that are available to :ref:`all reporters <man-configuration-metrics-all>`
 
 See BaseReporterFactory_  and BaseFormattedReporterFactory_ for more options.
 
