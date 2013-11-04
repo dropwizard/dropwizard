@@ -20,3 +20,4 @@ User Manual
     views
     scala
     testing
+    example
