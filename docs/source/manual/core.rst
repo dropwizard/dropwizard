@@ -27,16 +27,16 @@ Organizing Your Project
 =======================
 
 In general, we recommend you separate your projects into three Maven modules: ``project-api``,
-``project-client``, and ``project-app``.
+``project-client``, and ``project-application``.
 
 ``project-api`` should contain your :ref:`man-core-representations`; ``project-client`` should use
 those classes and an :ref:`HTTP client <man-client>` to implement a full-fledged client for your
-application, and ``project-app`` should provide the actual application implementation, including
+application, and ``project-application`` should provide the actual application implementation, including
 :ref:`man-core-resources`.
 
 Our applications tend to look like this:
 
-* ``com.example.myapp``:
+* ``com.example.myapplication``:
 
   * ``api``: :ref:`man-core-representations`.
   * ``cli``: :ref:`man-core-commands`
@@ -53,10 +53,10 @@ Our applications tend to look like this:
 Application
 ============
 
-The main entry point into a Dropwizard Application is, unsurprisingly, the ``Application`` class. Each
+The main entry point into a Dropwizard application is, unsurprisingly, the ``Application`` class. Each
 ``Application`` has a **name**, which is mostly used to render the command-line interface. In the
 constructor of your ``Application`` you can add :ref:`man-core-bundles` and :ref:`man-core-commands` to
-your Application.
+your application.
 
 .. _man-core-configuration:
 
@@ -69,11 +69,11 @@ well documented in the `example project's configuration`__.
 .. __: https://github.com/dropwizard/dropwizard/blob/master/dropwizard-example/example.yml
 
 Each ``Application`` subclass has a single type parameter: that of its matching ``Configuration``
-subclass. These are usually at the root of your application's main package. For example, your Users
-application would have two classes: ``UsersConfiguration``, extending ``Configuration``, and
-``UsersApplication``, extending ``Application<UsersConfiguration>``.
+subclass. These are usually at the root of your application's main package. For example, your User
+application would have two classes: ``UserApplicationConfiguration``, extending ``Configuration``, and
+``UserApplication``, extending ``Application<UserApplicationConfiguration>``.
 
-When your Application runs :ref:`man-core-commands-configured` like the ``server`` command, Dropwizard
+When your application runs :ref:`man-core-commands-configured` like the ``server`` command, Dropwizard
 parses the provided YAML configuration file and builds an instance of your application's configuration
 class by mapping YAML field names to object field names.
 
@@ -140,7 +140,7 @@ Your main ``Configuration`` subclass can then include this as a member field:
 
 .. code-block:: java
 
-    public class ExampleServiceConfiguration extends Configuration {
+    public class ExampleApplicationConfiguration extends Configuration {
         @Valid
         @NotNull
         private MessageQueueFactory messageQueue = new MessageQueueFactory();
@@ -188,9 +188,9 @@ Dropwizard then calls your ``Application`` subclass to initialize your applicati
     your application. Overrides must start with prefix ``dw.``, followed by the path to the
     configuration value being overridden.
 
-    For example, to override the HTTP port to use, you could start your application like this:
+    For example, to override the Logging level, you could start your application like this:
 
-    ``java -Ddw.http.port=9090 server my-config.json``
+    ``java -Ddw.logging.level=DEBUG server my-config.json``
 
 .. _man-core-environments:
 
@@ -206,19 +206,19 @@ command you need). There is a test keystore you can use in the
 
 .. code-block:: yaml
 
-    http:
-      ssl:
-        keyStore: ./example.keystore
-        keyStorePassword: example
-
-        # optional, JKS is default. JCEKS is another likely candidate.
-        keyStoreType: JKS
+    server:
+      applicationConnectors:
+        - type: https
+          port: 8443
+          keyStorePath: example.keystore
+          keyStorePassword: example
+          validateCerts: false
 
 Bootstrapping
 =============
 
 Before a Dropwizard application can provide the command-line interface, parse a configuration file, or
-run as an application, it must first go through a bootstrapping phase. This phase corresponds to your
+run as a server, it must first go through a bootstrapping phase. This phase corresponds to your
 ``Application`` subclass's ``initialize`` method. You can add :ref:`man-core-bundles`,
 :ref:`man-core-commands`, or register Jackson modules to allow you to include custom types as part
 of your configuration class.
@@ -295,7 +295,7 @@ If all health checks report success, a ``200 OK`` is returned. If any fail, a
 exception was thrown).
 
 All Dropwizard applications ship with the ``deadlocks`` health check installed by default, which uses
-Java's built-in thread deadlock detection to determine if any threads are deadlocked.
+Java 1.6's built-in thread deadlock detection to determine if any threads are deadlocked.
 
 .. _man-core-managed:
 
@@ -334,6 +334,16 @@ For example, given a theoretical Riak__ client which needs to be started and sto
         }
     }
 
+.. code-block:: java
+
+    public class MyApplication extends Application<MyConfiguration>{
+        @Override
+        public void run(MyApplicationConfiguration configuration, Environment environment) {
+            RiakClient client = ...;
+            RiakClientManager riakClientManager = new RiakClientManager(client);
+            environment.lifecycle().manage(riakClientManager);
+        }
+    }
 
 If ``RiakClientManager#start()`` throws an exception--e.g., an error connecting to the server--your
 application will not start and a full exception will be logged. If ``RiakClientManager#stop()`` throws
@@ -348,7 +358,7 @@ and ``LifecycleEnvironment#scheduledExecutorService`` for details.
 Bundles
 =======
 
-A Dropwizard bundle is a reusable group of functionality, used to define blocks of a application's
+A Dropwizard bundle is a reusable group of functionality, used to define blocks of an application's
 behavior. For example, ``AssetBundle`` provides a simple way to serve static assets from your
 application's ``src/main/resources/assets`` directory as files available from ``/assets/*`` in your
 application.
@@ -365,8 +375,9 @@ application. To enable it, move your application to a sub-URL.
 
 .. code-block:: yaml
 
-    http:
-      rootPath: /app/*  # Default is /*
+    server:
+      type: simple
+      applicationContextPath: /application/*  # Default value*
 
 Then use an extended ``AssetsBundle`` constructor to serve resources in the
 ``assets`` folder from the root path. ``index.htm`` is served as the default
@@ -388,6 +399,15 @@ Commands are basic actions which Dropwizard runs based on the arguments provided
 line. The built-in ``server`` command, for example, spins up an HTTP server and runs your application.
 Each ``Command`` subclass has a name and a set of command line options which Dropwizard will use to
 parse the given command line arguments.
+
+.. code-block:: java
+	
+    public class MyApplication extends Application<MyConfiguration>{
+        @Override
+        public void initialize(Bootstrap<DropwizardConfiguration> bootstrap) {
+            bootstrap.addCommand(new MyCommand());
+        }
+    }
 
 .. _man-core-commands-configured:
 
@@ -602,10 +622,10 @@ appender with different configurations:
           archivedLogFilenamePattern: ./logs/debug-%d{yyyy-MM-dd-hh}.log.gz
           archivedFileCount: 6
 
-.. _man-core-testing-apps:
+.. _man-core-testing-applications:
 
 Testing Applications
-=====================
+====================
 
 All of Dropwizard's APIs are designed with testability in mind, so even your applications can have unit
 tests:
@@ -614,7 +634,7 @@ tests:
 
     public class MyApplicationTest {
         private final Environment environment = mock(Environment.class);
-        private final MyApplication app = new MyApplication();
+        private final MyApplication application = new MyApplication();
         private final MyConfiguration config = new MyConfiguration();
 
         @Before
@@ -624,9 +644,9 @@ tests:
 
         @Test
         public void buildsAThingResource() throws Exception {
-            app.run(config, environment);
+            application.run(config, environment);
 
-            verify(environment).addResource(any(ThingResource.class));
+            verify(environment).jersey().register(any(ThingResource.class));
         }
     }
 

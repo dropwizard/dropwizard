@@ -15,32 +15,32 @@ Configuration
 =============
 
 To create a :ref:`managed <man-core-managed>`, instrumented ``SessionFactory`` instance, your
-:ref:`configuration class <man-core-configuration>` needs a ``DatabaseConfiguration`` instance:
+:ref:`configuration class <man-core-configuration>` needs a ``DataSourceFactory`` instance:
 
 .. code-block:: java
 
     public class ExampleConfiguration extends Configuration {
         @Valid
         @NotNull
-        @JsonProperty
-        private DatabaseConfiguration database = new DatabaseConfiguration();
+        @JsonProperty("database")
+        private DataSourceFactory database = new DataSourceFactory();
 
-        public DatabaseConfiguration getDatabaseConfiguration() {
+        public DataSourceFactory getDataSourceFactory() {
             return database;
         }
     }
 
-Then, add a ``HibernateBundle`` instance to your service class, specifying your entity classes
-and how to get a ``DatabaseConfiguration`` from your configuration subclass:
+Then, add a ``HibernateBundle`` instance to your application class, specifying your entity classes
+and how to get a ``DataSourceFactory`` from your configuration subclass:
 
 .. code-block:: java
 
     private final HibernateBundle<ExampleConfiguration> hibernate = new HibernateBundle<ExampleConfiguration>(Person.class) {
         @Override
-        public DatabaseConfiguration getDatabaseConfiguration(ExampleConfiguration configuration) {
-            return configuration.getDatabaseConfiguration();
+        public DataSourceFactory getDataSourceFactory(ExampleConfiguration configuration) {
+            return configuration.getDataSourceFactory();
         }
-    }
+    };
 
     @Override
     public void initialize(Bootstrap<ExampleConfiguration> bootstrap) {
@@ -51,14 +51,14 @@ and how to get a ``DatabaseConfiguration`` from your configuration subclass:
     public void run(ExampleConfiguration config,
                     Environment environment) throws ClassNotFoundException {
         final UserDAO dao = new UserDAO(hibernate.getSessionFactory());
-        environment.addResource(new UserResource(dao));
+        environment.jersey().register(new UserResource(dao));
     }
 
 This will create a new :ref:`managed <man-core-managed>` connection pool to the database, a
 :ref:`health check <man-core-healthchecks>` for connectivity to the database, and a new
 ``SessionFactory`` instance for you to use in your DAO classes.
 
-Your service's configuration file will then look like this:
+Your application's configuration file will then look like this:
 
 .. code-block:: yaml
 
@@ -78,12 +78,13 @@ Your service's configuration file will then look like this:
       # any properties specific to your JDBC driver:
       properties:
         charSet: UTF-8
+        hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
 
       # the maximum amount of time to wait on an empty pool before throwing an exception
       maxWaitForConnection: 1s
 
       # the SQL query to run when validating a connection's liveness
-      validationQuery: "/* MyService Health Check */ SELECT 1"
+      validationQuery: "/* MyApplication Health Check */ SELECT 1"
 
       # the minimum number of connections to keep open
       minSize: 8
@@ -93,12 +94,6 @@ Your service's configuration file will then look like this:
 
       # whether or not idle connections should be validated
       checkConnectionWhileIdle: false
-
-      # how long a connection must be held before it can be validated
-      checkConnectionHealthWhenIdleFor: 10s
-
-      # the maximum lifetime of an idle connection
-      closeConnectionIfIdleFor: 1 minute
 
 Usage
 =====

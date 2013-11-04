@@ -43,7 +43,7 @@ you to use all of the existing Unix process management tools instead.
 Jersey for REST
 ---------------
 
-For building RESTful web applicationss, we've found nothing beats Jersey_ (the `JAX-RS`_ reference
+For building RESTful web applications, we've found nothing beats Jersey_ (the `JAX-RS`_ reference
 implementation) in terms of features or performance. It allows you to write clean, testable classes
 which gracefully map HTTP requests to simple Java objects. It supports streaming output, matrix URI
 parameters, conditional ``GET`` requests, and much, much more.

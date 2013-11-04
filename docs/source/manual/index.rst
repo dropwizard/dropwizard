@@ -21,3 +21,5 @@ User Manual
     scala
     testing
     example
+    configuration
+
