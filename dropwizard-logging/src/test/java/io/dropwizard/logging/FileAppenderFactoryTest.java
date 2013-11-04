@@ -1,7 +1,8 @@
 package io.dropwizard.logging;
 
-import java.lang.reflect.Method;
 import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.FileAppender;
 import ch.qos.logback.core.rolling.RollingFileAppender;
 import io.dropwizard.jackson.DiscoverableSubtypeResolver;
 import org.junit.Test;
@@ -17,12 +18,17 @@ public class FileAppenderFactoryTest {
 
     @Test
     public void isRolling() throws Exception {
-        FileAppenderFactory fileAppenderFactory = new FileAppenderFactory ();
+        // the method we want to test is protected, so we need to override it so we can see it
+        FileAppenderFactory fileAppenderFactory = new FileAppenderFactory() {
+            @Override
+            public FileAppender<ILoggingEvent> buildAppender(LoggerContext context) {
+                return super.buildAppender(context);
+            }
+        };
+
         fileAppenderFactory.setCurrentLogFilename("logfile.log");
         fileAppenderFactory.setArchive(true);
         fileAppenderFactory.setArchivedLogFilenamePattern("example-%d.log.gz");
-        Method method = FileAppenderFactory.class.getDeclaredMethod("buildAppender", LoggerContext.class);
-        method.setAccessible (true);
-        assertThat (RollingFileAppender.class.isAssignableFrom (method.invoke (fileAppenderFactory, new LoggerContext ()).getClass ()));
+        assertThat(fileAppenderFactory.buildAppender(new LoggerContext())).isInstanceOf(RollingFileAppender.class);
     }
 }
