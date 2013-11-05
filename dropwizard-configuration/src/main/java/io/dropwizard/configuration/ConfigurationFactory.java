@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TreeTraversingParser;
@@ -160,8 +161,8 @@ public class ConfigurationFactory<T> {
             if (!(node instanceof ObjectNode)) {
                 throw new IllegalArgumentException("Unable to override " + name + "; it's not a valid path.");
             }
-
             final ObjectNode obj = (ObjectNode) node;
+            
             if (keys.hasNext()) {
                 JsonNode child = obj.get(key);
                 if (child == null) {
@@ -170,7 +171,18 @@ public class ConfigurationFactory<T> {
                 }
                 node = child;
             } else {
-                obj.put(key, value);
+                if (obj.get(key) != null && obj.get(key).isArray())
+                {
+                    final Iterator<String> values = Splitter.on('|').trimResults().split(value).iterator();
+                    ArrayNode arrayNode = (ArrayNode) obj.get(key);
+                    arrayNode.removeAll();
+                    while (values.hasNext())
+                        arrayNode.add (values.next()); 
+                }
+                else
+                {
+                    obj.put(key, value);
+                }
             }
         }
     }
