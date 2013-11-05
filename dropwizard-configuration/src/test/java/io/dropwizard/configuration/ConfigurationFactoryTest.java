@@ -91,6 +91,7 @@ public class ConfigurationFactoryTest {
             System.clearProperty("dw.type");
         }
     }
+    
     @Test
     public void handlesSingleElementArrayOverride() throws Exception {
         try

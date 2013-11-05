@@ -171,16 +171,14 @@ public class ConfigurationFactory<T> {
                 }
                 node = child;
             } else {
-                if (obj.get(key) != null && obj.get(key).isArray())
-                {
+                if (obj.get(key) != null && obj.get(key).isArray()) {
                     final Iterator<String> values = Splitter.on('|').trimResults().split(value).iterator();
                     ArrayNode arrayNode = (ArrayNode) obj.get(key);
                     arrayNode.removeAll();
                     while (values.hasNext())
                         arrayNode.add (values.next()); 
                 }
-                else
-                {
+                else {
                     obj.put(key, value);
                 }
             }
