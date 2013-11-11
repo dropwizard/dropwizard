@@ -66,8 +66,7 @@ public class ConfigurationFactoryTest {
     
     @Test
     public void handlesSimpleOverride() throws Exception {
-        try
-        {
+        try {
             System.setProperty("dw.name", "Coda Hale Overridden");
             final Example example = factory.build(validFile);
             assertThat(example.getName())
@@ -79,8 +78,7 @@ public class ConfigurationFactoryTest {
     
     @Test
     public void handlesArrayOverride() throws Exception {
-        try
-        {
+        try {
             System.setProperty("dw.type", "coder|wizard|overridden");
             final Example example = factory.build(validFile);
             assertThat(example.getType().get(2))
@@ -94,8 +92,7 @@ public class ConfigurationFactoryTest {
     
     @Test
     public void handlesSingleElementArrayOverride() throws Exception {
-        try
-        {
+        try {
             System.setProperty("dw.type", "overridden");
             final Example example = factory.build(validFile);
             assertThat(example.getType().get(0))
