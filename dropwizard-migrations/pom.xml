@@ -25,7 +25,7 @@
         <dependency>
             <groupId>com.mattbertolini</groupId>
             <artifactId>liquibase-slf4j</artifactId>
-            <version>1.1.0</version>
+            <version>1.2.1</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
