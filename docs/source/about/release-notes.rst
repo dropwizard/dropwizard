@@ -83,6 +83,7 @@ v0.7.0-SNAPSHOT
 * Upgraded to Jersey 1.18.
 * Upgraded to Apache HttpClient 4.3.1.
 * Upgraded to tomcat-jdbc 7.0.47.
+* Upgraded to Hibernate 4.3.0.Final.
 
 .. _rel-0.6.2:
 
