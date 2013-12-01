@@ -74,7 +74,7 @@ v0.7.0-SNAPSHOT
 * Upgraded to Hibernate Validator 5.0.1.
 * Upgraded to Jackson 2.3.0.
 * Upgraded to JDBI 2.50.
-* Upgraded to Jetty 9.0.5.
+* Upgraded to Jetty 9.0.7.
 * Upgraded to Liquibase 3.0.4.
 * Upgraded to Logback 1.0.13.
 * Upgraded to Metrics 3.0.1.
