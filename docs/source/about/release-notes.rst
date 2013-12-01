@@ -80,6 +80,7 @@ v0.7.0-SNAPSHOT
 * Upgraded to Metrics 3.0.1.
 * Upgraded to Mustache 0.8.13.
 * Upgraded to SLF4J 1.7.5.
+* Upgraded to Jersey 1.18.
 
 .. _rel-0.6.2:
 
