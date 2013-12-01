@@ -82,6 +82,7 @@ v0.7.0-SNAPSHOT
 * Upgraded to SLF4J 1.7.5.
 * Upgraded to Jersey 1.18.
 * Upgraded to Apache HttpClient 4.3.1.
+* Upgraded to tomcat-jdbc 7.0.47.
 
 .. _rel-0.6.2:
 
