@@ -4,12 +4,17 @@ import io.dropwizard.util.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.*;
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
-import java.util.concurrent.TimeUnit;
 
 import static io.dropwizard.servlets.Servlets.getFullUrl;
+import static java.util.concurrent.TimeUnit.NANOSECONDS;
 
 /**
  * A servlet filter which logs the methods and URIs of requests which take longer than a given
@@ -51,8 +56,9 @@ public class SlowRequestFilter implements Filter {
         try {
             chain.doFilter(request, response);
         } finally {
-            final long elapsedMS = TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startTime);
-            if (elapsedMS >= threshold) {
+            final long elapsedNS = System.nanoTime() - startTime;
+            final long elapsedMS = NANOSECONDS.toMillis(elapsedNS);
+            if (elapsedNS >= threshold) {
                 LOGGER.warn("Slow request: {} {} ({}ms)",
                             req.getMethod(),
                             getFullUrl(req), elapsedMS);
