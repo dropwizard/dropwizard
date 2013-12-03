@@ -360,15 +360,6 @@ class, using your service's ``Configuration`` class as its type parameter. Dropw
 first argument on the command line as the path to a YAML configuration file, parse and validate it,
 and provide your command with an instance of the configuration class.
 
-.. _man-core-commands-managed:
-
-Managed Commands
-----------------
-
-Managed commands further extend configured commands by creating a lifecycle process for your
-service's :ref:`man-core-managed`. All ``Managed`` instances registered with your service's
-``Environment`` will be started before your command is run, and will be stopped afterward.
-
 .. _man-core-tasks:
 
 Tasks
