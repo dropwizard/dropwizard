@@ -28,7 +28,10 @@ import static org.fest.assertions.api.Assertions.assertThat;
 import static org.fest.assertions.api.Assertions.failBecauseExceptionWasNotThrown;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assume.assumeThat;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 
 // TODO: 4/24/13 <coda> -- move JacksonMessageBodyProviderTest to JerseyTest
 
@@ -286,5 +289,19 @@ public class JacksonMessageBodyProviderTest {
 
         assertThat(output.toString())
                 .isEqualTo("{\"id\":500}");
+    }
+
+    @Test(expected = ConstraintViolationException.class)
+    public void throwsAConstraintViolationExceptionForEmptyRequestEntities() throws Exception {
+        final Annotation valid = mock(Annotation.class);
+        doReturn(Valid.class).when(valid).annotationType();
+
+        final Class<?> klass = Example.class;
+        provider.readFrom((Class<Object>) klass,
+                Example.class,
+                new Annotation[]{valid},
+                MediaType.APPLICATION_JSON_TYPE,
+                new MultivaluedMapImpl(),
+                null);
     }
 }
