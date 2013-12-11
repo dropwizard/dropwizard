@@ -47,4 +47,5 @@ To test the example application run the following commands.
 * To post data into the application.
 
 	curl -H "Content-Type: application/json" -X POST -d '{"fullName":"Other Person","jobTitle":"Other Title"}' http://localhost:8080/people
+	
 	open http://localhost:8080/people
