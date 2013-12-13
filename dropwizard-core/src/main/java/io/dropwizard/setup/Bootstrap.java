@@ -1,5 +1,21 @@
 package io.dropwizard.setup;
 
+import static com.google.common.base.Preconditions.checkNotNull;
+import io.dropwizard.Application;
+import io.dropwizard.Bundle;
+import io.dropwizard.Configuration;
+import io.dropwizard.ConfiguredBundle;
+import io.dropwizard.cli.Command;
+import io.dropwizard.cli.ConfiguredCommand;
+import io.dropwizard.configuration.ConfigurationFactoryFactory;
+import io.dropwizard.configuration.ConfigurationSourceProvider;
+import io.dropwizard.configuration.DefaultConfigurationFactoryFactory;
+import io.dropwizard.configuration.FileConfigurationSourceProvider;
+import io.dropwizard.jackson.Jackson;
+
+import java.lang.management.ManagementFactory;
+import java.util.List;
+
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.jvm.BufferPoolMetricSet;
 import com.codahale.metrics.jvm.GarbageCollectorMetricSet;
@@ -8,20 +24,6 @@ import com.codahale.metrics.jvm.ThreadStatesGaugeSet;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import io.dropwizard.Application;
-import io.dropwizard.Bundle;
-import io.dropwizard.Configuration;
-import io.dropwizard.ConfiguredBundle;
-import io.dropwizard.cli.Command;
-import io.dropwizard.cli.ConfiguredCommand;
-import io.dropwizard.configuration.ConfigurationSourceProvider;
-import io.dropwizard.configuration.FileConfigurationSourceProvider;
-import io.dropwizard.jackson.Jackson;
-
-import java.lang.management.ManagementFactory;
-import java.util.List;
-
-import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * The pre-start application environment, containing everything required to bootstrap a Dropwizard
@@ -39,6 +41,7 @@ public class Bootstrap<T extends Configuration> {
 
     private ConfigurationSourceProvider configurationSourceProvider;
     private ClassLoader classLoader;
+    private ConfigurationFactoryFactory<T> configurationFactoryFactory;
 
     /**
      * Creates a new {@link Bootstrap} for the given application.
@@ -60,6 +63,7 @@ public class Bootstrap<T extends Configuration> {
 
         this.configurationSourceProvider = new FileConfigurationSourceProvider();
         this.classLoader = Thread.currentThread().getContextClassLoader();
+        this.configurationFactoryFactory = new DefaultConfigurationFactoryFactory<T>();
     }
 
     /**
@@ -171,4 +175,12 @@ public class Bootstrap<T extends Configuration> {
     public MetricRegistry getMetricRegistry() {
         return metricRegistry;
     }
+
+    public ConfigurationFactoryFactory<T> getConfigurationFactoryFactory() {
+        return configurationFactoryFactory;
+    }
+
+    public void setConfigurationFactoryFactory(ConfigurationFactoryFactory<T> configurationFactoryFactory) {
+        this.configurationFactoryFactory = configurationFactoryFactory;
+    }   
 }
