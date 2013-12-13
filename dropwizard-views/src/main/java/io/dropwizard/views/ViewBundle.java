@@ -1,11 +1,12 @@
 package io.dropwizard.views;
 
+import com.sun.jersey.spi.service.ServiceFinder;
 import io.dropwizard.Bundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 
 /**
- * A {@link Bundle} which enables the rendering of FreeMarker views by your application.
+ * A {@link Bundle} which enables the rendering of FreeMarker & Mustache views by your application.
  *
  * <p>A view combines a Freemarker template with a set of Java objects:</p>
  *
@@ -58,6 +59,16 @@ import io.dropwizard.setup.Environment;
  * @see <a href="http://freemarker.sourceforge.net/docs/index.html">FreeMarker Manual</a>
  */
 public class ViewBundle implements Bundle {
+    private final Iterable<ViewRenderer> viewRenderers;
+
+    public ViewBundle() {
+        this(ServiceFinder.find(ViewRenderer.class));
+    }
+
+    public ViewBundle(Iterable<ViewRenderer> viewRenderers) {
+        this.viewRenderers = viewRenderers;
+    }
+
     @Override
     public void initialize(Bootstrap<?> bootstrap) {
         // nothing doing
@@ -65,6 +76,6 @@ public class ViewBundle implements Bundle {
 
     @Override
     public void run(Environment environment) {
-        environment.jersey().register(new ViewMessageBodyWriter(environment.metrics()));
+        environment.jersey().register(new ViewMessageBodyWriter(environment.metrics(), viewRenderers));
     }
 }
