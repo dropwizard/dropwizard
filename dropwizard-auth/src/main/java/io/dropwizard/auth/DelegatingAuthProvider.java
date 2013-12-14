@@ -21,10 +21,10 @@ import javax.ws.rs.core.Response;
 
 /**
  * Dispatching Jersey authentication provider that inspects the Authorization header for the presence of
- * an OAuth 2 bearer token, delegating the authentication to the {@link io.dropwizard.auth.oauth.OAuthProvider} or
- * if none present, delegating the authentication to the {@link io.dropwizard.auth.basic.BasicAuthProvider}.
+ * an OAuth 2 bearer token, delegating the authentication to an OAuth 2 {@link io.dropwizard.auth.Authenticator} or,
+ * , if no bearer token is present, delegating the authentication to an HTTP Basic {@link io.dropwizard.auth.Authenticator}.
  * <p/>
- * The primary benefit for this provider is to support multiple types of authentication at a single REST endpoint.
+ * The primary benefit for this provider is to support multiple authentication types concurrently at a single endpoint.
  *
  * @param <T> the principal type.
  */
