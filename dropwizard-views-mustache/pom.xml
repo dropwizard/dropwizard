@@ -22,7 +22,7 @@
         <dependency>
             <groupId>com.github.spullara.mustache.java</groupId>
             <artifactId>compiler</artifactId>
-            <version>0.8.13</version>
+            <version>0.8.14</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.google.guava</groupId>

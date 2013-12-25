@@ -78,7 +78,7 @@ v0.7.0-SNAPSHOT
 * Upgraded to Liquibase 3.0.8.
 * Upgraded to Logback 1.0.13.
 * Upgraded to Metrics 3.0.1.
-* Upgraded to Mustache 0.8.13.
+* Upgraded to Mustache 0.8.14.
 * Upgraded to SLF4J 1.7.5.
 * Upgraded to Jersey 1.18.
 * Upgraded to Apache HttpClient 4.3.1.
