@@ -71,7 +71,7 @@ v0.7.0-SNAPSHOT
 * Fixed not all available Jersey endpoints were being logged at startup.
 * Upgraded to argparse4j 0.4.2.
 * Upgraded to Guava 15.
-* Upgraded to Hibernate Validator 5.0.1.
+* Upgraded to Hibernate Validator 5.0.2.
 * Upgraded to Jackson 2.3.0.
 * Upgraded to JDBI 2.50.
 * Upgraded to Jetty 9.0.7.
