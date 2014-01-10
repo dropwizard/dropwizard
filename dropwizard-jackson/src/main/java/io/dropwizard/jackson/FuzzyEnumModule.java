@@ -42,9 +42,10 @@ public class FuzzyEnumModule extends Module {
         public Enum<?> deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
             final String text = CharMatcher.WHITESPACE
                                            .removeFrom(jp.getText())
-                                           .replace('-', '_');
+                                           .replace('-', '_')
+                                           .toUpperCase(Locale.ENGLISH);
             for (Enum<?> constant : constants) {
-                if (constant.name().equalsIgnoreCase(text)) {
+                if (constant.name().equals(text)) {
                     return constant;
                 }
             }
