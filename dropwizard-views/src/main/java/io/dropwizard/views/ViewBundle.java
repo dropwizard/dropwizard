@@ -6,16 +6,23 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 
 /**
- * A {@link Bundle} which enables the rendering of FreeMarker & Mustache views by your application.
+ * A {@link Bundle}, which by default, enables the rendering of FreeMarker & Mustache views by your application.
  *
- * <p>A view combines a Freemarker template with a set of Java objects:</p>
+ * <p>Other instances of {@Link ViewRenderer} can be used by initializing your {@Link ViewBundle} with a
+ * {@Link Iterable} of the {@Link ViewRenderer} instances to be used when configuring your {@link Bundle}:</p>
+ *
+ * <pre><code>
+ * new ViewBundle(ImmutableList.of(myViewRenderer))
+ * </code></pre>
+ *
+ * <p>A view combines a Freemarker or Mustache template with a set of Java objects:</p>
  *
  * <pre><code>
  * public class PersonView extends View {
  *     private final Person person;
  *
  *     public PersonView(Person person) {
- *         super("profile.ftl");
+ *         super("profile.ftl"); // or super("profile.mustache"); for a Mustache template
  *         this.person = person;
  *     }
  *
@@ -25,11 +32,12 @@ import io.dropwizard.setup.Environment;
  * }
  * </code></pre>
  *
- *<p>The {@code "profile.ftl"} is the path of the template relative to the class name. If this
- * class was {@code com.example.application.PersonView}, Freemarker would then look for the file
- * {@code src/main/resources/com/example/application/profile.ftl}. If the template path
- * starts with a slash (e.g., {@code "/hello.ftl"}), Freemarker will look for the file {@code
- * src/main/resources/hello.ftl}.
+ *<p>The {@code "profile.ftl"} or {@code "profile.mustache"} is the path of the template relative to the class name. If
+ * this class was {@code com.example.application.PersonView}, Freemarker or Mustache would then look for the file
+ * {@code src/main/resources/com/example/application/profile.ftl} or {@code
+ * src/main/resources/com/example/application/profile.mustache} respectively. If the template path
+ * starts with a slash (e.g., {@code "/hello.ftl"} or {@code "/hello.mustache"}), Freemarker or Mustache will look for
+ * the file {@code src/main/resources/hello.ftl} or {@code src/main/resources/hello.mustache} respectively.
  *
  * <p>A resource method with a view would looks something like this:</p>
  *
@@ -57,6 +65,20 @@ import io.dropwizard.setup.Environment;
  * allowing for better typesafety in your templates.</p>
  *
  * @see <a href="http://freemarker.sourceforge.net/docs/index.html">FreeMarker Manual</a>
+ *
+ * <p>Mustache templates look something like this:</p>
+ *
+ * <pre>{@code
+ * <html>
+ *     <body>
+ *         <h1>Hello, {{person.name}}!</h1>
+ *     </body>
+ * </html>
+ * }</pre>
+ *
+ * <p>In this template, {@code {{person.name}}} calls {@code getPerson().getName()}.</p>
+ *
+ * @see <a href="http://mustache.github.io/mustache.5.html">Mustache Manual</a>
  */
 public class ViewBundle implements Bundle {
     private final Iterable<ViewRenderer> viewRenderers;
