@@ -50,14 +50,14 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <metrics3.version>3.0.1</metrics3.version>
-        <jersey.version>1.17.1</jersey.version>
-        <jackson.version>2.2.3</jackson.version>
+        <jersey.version>1.18</jersey.version>
+        <jackson.version>2.3.0</jackson.version>
         <logback.version>1.0.13</logback.version>
         <slf4j.version>1.7.5</slf4j.version>
         <servlet.version>3.0.0.v201112011016</servlet.version>
-        <jetty.version>9.0.5.v20130815</jetty.version>
+        <jetty.version>9.0.7.v20131107</jetty.version>
         <guava.version>15.0</guava.version>
-        <h2.version>1.3.173</h2.version>
+        <h2.version>1.3.174</h2.version>
     </properties>
 
     <developers>
@@ -192,7 +192,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-enforcer-plugin</artifactId>
-                <version>1.2</version>
+                <version>1.3.1</version>
                 <executions>
                     <execution>
                         <id>enforce</id>
@@ -223,7 +223,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.9</version>
+                <version>2.9.1</version>
                 <executions>
                     <execution>
                         <id>attach-javadocs</id>
@@ -247,7 +247,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>findbugs-maven-plugin</artifactId>
-                <version>2.5.2</version>
+                <version>2.5.3</version>
                 <configuration>
                     <effort>Max</effort>
                     <threshold>Default</threshold>
