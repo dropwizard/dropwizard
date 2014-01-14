@@ -13,6 +13,8 @@ import static org.fest.assertions.api.Assertions.failBecauseExceptionWasNotThrow
 
 public class FuzzyEnumModuleTest {
     private final ObjectMapper mapper = new ObjectMapper();
+    
+    private enum EnumWithLowercase {lower_case_enum, mixedCaseEnum};
 
     @Before
     public void setUp() throws Exception {
@@ -56,7 +58,20 @@ public class FuzzyEnumModuleTest {
             failBecauseExceptionWasNotThrown(JsonMappingException.class);
         } catch (JsonMappingException e) {
             assertThat(e.getOriginalMessage())
-                    .isEqualTo("WRONG was not one of [NANOSECONDS, MICROSECONDS, MILLISECONDS, SECONDS, MINUTES, HOURS, DAYS]");
+                    .isEqualTo("wrong was not one of [NANOSECONDS, MICROSECONDS, MILLISECONDS, SECONDS, MINUTES, HOURS, DAYS]");
         }
     }
+ 
+    @Test
+    public void mapsToLowerCaseEnums() throws Exception {
+        assertThat(mapper.readValue("\"lower_case_enum\"", EnumWithLowercase.class))
+                .isEqualTo(EnumWithLowercase.lower_case_enum);
+    }
+    
+    @Test
+    public void mapsMixedCaseEnums() throws Exception {
+        assertThat(mapper.readValue("\"mixedCaseEnum\"", EnumWithLowercase.class))
+                .isEqualTo(EnumWithLowercase.mixedCaseEnum);
+    }
+   
 }
