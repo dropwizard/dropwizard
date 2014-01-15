@@ -118,7 +118,7 @@ public class SimpleServerFactory extends AbstractServerFactory {
         final Connector conn = connector.build(server,
                                                environment.metrics(),
                                                environment.getName(),
-                                               server.getThreadPool());
+                                               null);
 
         server.addConnector(conn);
 

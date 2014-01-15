@@ -25,11 +25,11 @@
             <version>${jetty.version}</version>
         </dependency>
         <!-- this needs to be on your JVM's bootpath for SPDY to work -->
-        <!-- -Xbootclasspath/p:/blah/npn-boot-1.1.5.v20130313.jar -->
+        <!-- -Xbootclasspath/p:/blah/npn-boot-1.1.6.v20130911.jar -->
         <dependency>
             <groupId>org.mortbay.jetty.npn</groupId>
             <artifactId>npn-boot</artifactId>
-            <version>1.1.5.v20130313</version>
+            <version>1.1.6.v20130911</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

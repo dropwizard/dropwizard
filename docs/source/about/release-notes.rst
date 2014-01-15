@@ -69,17 +69,21 @@ v0.7.0-SNAPSHOT
 * Fixed a shutdown bug in ``dropwizard-migrations``.
 * Fixed formatting of "Caused by" lines not being prefixed when logging nested Exceptions.
 * Fixed not all available Jersey endpoints were being logged at startup.
-* Upgraded to argparse4j 0.4.1.
+* Upgraded to argparse4j 0.4.2.
 * Upgraded to Guava 15.
-* Upgraded to Hibernate Validator 5.0.1.
-* Upgraded to Jackson 2.2.3.
-* Upgraded to JDBI 2.50.
-* Upgraded to Jetty 9.0.5.
-* Upgraded to Liquibase 3.0.4.
+* Upgraded to Hibernate Validator 5.0.2.
+* Upgraded to Jackson 2.3.0.
+* Upgraded to JDBI 2.53.
+* Upgraded to Jetty 9.0.7.
+* Upgraded to Liquibase 3.0.8.
 * Upgraded to Logback 1.0.13.
 * Upgraded to Metrics 3.0.1.
-* Upgraded to Mustache 0.8.13.
+* Upgraded to Mustache 0.8.14.
 * Upgraded to SLF4J 1.7.5.
+* Upgraded to Jersey 1.18.
+* Upgraded to Apache HttpClient 4.3.1.
+* Upgraded to tomcat-jdbc 7.0.47.
+* Upgraded to Hibernate 4.3.0.Final.
 
 .. _rel-0.6.2:
 

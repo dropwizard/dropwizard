@@ -2,7 +2,9 @@ package io.dropwizard.setup;
 
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
+import io.dropwizard.configuration.DefaultConfigurationFactoryFactory;
 import io.dropwizard.configuration.FileConfigurationSourceProvider;
+
 import org.junit.Test;
 
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -47,5 +49,11 @@ public class BootstrapTest {
     public void comesWithJvmInstrumentation() throws Exception {
         assertThat(bootstrap.getMetricRegistry().getNames())
                 .contains("jvm.buffers.mapped.capacity", "jvm.threads.count", "jvm.memory.heap.usage");
+    }
+    
+    @Test
+    public void defaultsToDefaultConfigurationFactoryFactory() throws Exception {
+        assertThat(bootstrap.getConfigurationFactoryFactory())
+                .isInstanceOf(DefaultConfigurationFactoryFactory.class);
     }
 }

@@ -34,12 +34,17 @@ public class ViewMessageBodyWriter implements MessageBodyWriter<View> {
     @SuppressWarnings("UnusedDeclaration")
     private HttpHeaders headers;
 
-    private final ImmutableList<ViewRenderer> renderers;
+    private final Iterable<ViewRenderer> renderers;
     private final MetricRegistry metricRegistry;
 
+    @Deprecated
     public ViewMessageBodyWriter(MetricRegistry metricRegistry) {
+        this(metricRegistry, ServiceFinder.find(ViewRenderer.class));
+    }
+
+    public ViewMessageBodyWriter(MetricRegistry metricRegistry, Iterable<ViewRenderer> viewRenderers) {
         this.metricRegistry = metricRegistry;
-        this.renderers = ImmutableList.copyOf(ServiceFinder.find(ViewRenderer.class));
+        this.renderers = viewRenderers;
     }
 
     @Override

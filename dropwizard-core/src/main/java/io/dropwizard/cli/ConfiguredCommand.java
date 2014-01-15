@@ -1,18 +1,22 @@
 package io.dropwizard.cli;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.Configuration;
 import io.dropwizard.configuration.ConfigurationException;
 import io.dropwizard.configuration.ConfigurationFactory;
+import io.dropwizard.configuration.ConfigurationFactoryFactory;
 import io.dropwizard.configuration.ConfigurationSourceProvider;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.util.Generics;
-import net.sourceforge.argparse4j.inf.Namespace;
-import net.sourceforge.argparse4j.inf.Subparser;
+
+import java.io.IOException;
 
 import javax.validation.Validation;
 import javax.validation.Validator;
-import java.io.IOException;
+
+import net.sourceforge.argparse4j.inf.Namespace;
+import net.sourceforge.argparse4j.inf.Subparser;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * A command whose first parameter is the location of a YAML configuration file. That file is parsed
@@ -51,7 +55,8 @@ public abstract class ConfiguredCommand<T extends Configuration> extends Command
     @Override
     @SuppressWarnings("unchecked")
     public final void run(Bootstrap<?> bootstrap, Namespace namespace) throws Exception {
-        final T configuration = parseConfiguration(bootstrap.getConfigurationSourceProvider(),
+        final T configuration = parseConfiguration(((Bootstrap<T>)bootstrap).getConfigurationFactoryFactory(),
+                                                   bootstrap.getConfigurationSourceProvider(),
                                                    namespace.getString("file"),
                                                    getConfigurationClass(),
                                                    bootstrap.getObjectMapper());
@@ -74,13 +79,13 @@ public abstract class ConfiguredCommand<T extends Configuration> extends Command
                                 Namespace namespace,
                                 T configuration) throws Exception;
 
-    private T parseConfiguration(ConfigurationSourceProvider provider,
+    private T parseConfiguration(ConfigurationFactoryFactory<T> configurationFactoryFactory,
+                                 ConfigurationSourceProvider provider,
                                  String path,
                                  Class<T> klass,
                                  ObjectMapper objectMapper) throws IOException, ConfigurationException {
         final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
-        final ConfigurationFactory<T> configurationFactory =
-                new ConfigurationFactory<>(klass, validator, objectMapper, "dw");
+        final ConfigurationFactory<T> configurationFactory = configurationFactoryFactory.create(klass, validator, objectMapper, "dw");
         if (path != null) {
             return configurationFactory.build(provider, path);
         }
