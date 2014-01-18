@@ -51,7 +51,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <metrics3.version>3.0.1</metrics3.version>
         <jersey.version>1.18</jersey.version>
-        <jackson.version>2.3.0</jackson.version>
+        <jackson.version>2.3.1</jackson.version>
         <logback.version>1.0.13</logback.version>
         <slf4j.version>1.7.5</slf4j.version>
         <servlet.version>3.0.0.v201112011016</servlet.version>

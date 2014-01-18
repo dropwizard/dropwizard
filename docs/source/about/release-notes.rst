@@ -72,7 +72,7 @@ v0.7.0-SNAPSHOT
 * Upgraded to argparse4j 0.4.2.
 * Upgraded to Guava 16.0.1.
 * Upgraded to Hibernate Validator 5.0.2.
-* Upgraded to Jackson 2.3.0.
+* Upgraded to Jackson 2.3.1.
 * Upgraded to JDBI 2.53.
 * Upgraded to Jetty 9.0.7.
 * Upgraded to Liquibase 3.0.8.
