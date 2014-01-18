@@ -130,7 +130,7 @@ public class ConfigurationFactory<T> {
                     .setFieldPath(e.getPath())
                     .setLocation(e.getLocation())
                     .addSuggestions(properties)
-                    .setSuggestionBase(e.getUnrecognizedPropertyName())
+                    .setSuggestionBase(e.getPropertyName())
                     .setCause(e)
                     .build(path);
         } catch (InvalidFormatException e) {

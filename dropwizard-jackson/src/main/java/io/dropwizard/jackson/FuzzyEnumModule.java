@@ -30,7 +30,7 @@ public class FuzzyEnumModule extends Module {
         @SuppressWarnings("unchecked")
         protected PermissiveEnumDeserializer(Class<Enum<?>> clazz) {
             super(clazz);
-            this.constants = ((Class<Enum<?>>) getValueClass()).getEnumConstants();
+            this.constants = ((Class<Enum<?>>) handledType()).getEnumConstants();
             this.acceptedValues = Lists.newArrayList();
             for (Enum<?> constant : constants) {
                 acceptedValues.add(constant.name());
