@@ -33,7 +33,7 @@ v0.7.0-SNAPSHOT
   and ``group``, then start your application as the root user.
 * Added builders for managed executors.
 * Added a default ``check`` command, which loads and validates the service configuration.
-* Added support for the Jetty HTTP client to ``dropwizard-client``.
+* Added support for the Jersey HTTP client to ``dropwizard-client``.
 * Added Jackson Afterburner support.
 * Added support for ``deflate``-encoded requests and responses.
 * Added support for HTTP Sessions. Add the annotated parameter to your resource method:
