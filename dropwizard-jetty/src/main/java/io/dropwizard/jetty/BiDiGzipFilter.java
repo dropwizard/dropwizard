@@ -234,5 +234,26 @@ public class BiDiGzipFilter extends IncludableGzipFilter {
         public int read(byte[] b) throws IOException {
             return input.read(b);
         }
+
+        @Override
+        public boolean isFinished() {
+            try {
+                return input.available() == 0;
+            } catch (IOException ignored) {}
+            return true;
+        }
+
+        @Override
+        public boolean isReady() {
+            try {
+                return input.available() > 0;
+            } catch (IOException ignored) {}
+            return false;
+        }
+
+        @Override
+        public void setReadListener(ReadListener readListener) {
+            throw new IllegalStateException("not supported");
+        }
     }
 }

@@ -357,6 +357,7 @@ public abstract class AbstractServerFactory implements ServerFactory {
     }
 
     private void configureSessionsAndSecurity(MutableServletContextHandler handler, Server server) {
+        handler.setServer(server);
         if (handler.isSecurityEnabled()) {
             handler.getSecurityHandler().setServer(server);
         }
@@ -383,6 +384,7 @@ public abstract class AbstractServerFactory implements ServerFactory {
             handler.addServlet(new NonblockingServletHolder(jerseyContainer), jersey.getUrlPattern());
         }
         final InstrumentedHandler instrumented = new InstrumentedHandler(metricRegistry);
+        instrumented.setServer(server);
         instrumented.setHandler(handler);
         return instrumented;
     }

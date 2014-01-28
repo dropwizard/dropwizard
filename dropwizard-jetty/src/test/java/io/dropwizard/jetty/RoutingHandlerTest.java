@@ -1,10 +1,7 @@
 package io.dropwizard.jetty;
 
 import com.google.common.collect.ImmutableMap;
-import org.eclipse.jetty.server.Connector;
-import org.eclipse.jetty.server.Handler;
-import org.eclipse.jetty.server.HttpChannel;
-import org.eclipse.jetty.server.Request;
+import org.eclipse.jetty.server.*;
 import org.eclipse.jetty.server.handler.ContextHandler;
 import org.junit.Test;
 
@@ -27,6 +24,8 @@ public class RoutingHandlerTest {
 
     @Test
     public void startsAndStopsAllHandlers() throws Exception {
+        handler1.setServer(mock(Server.class));
+        handler2.setServer(mock(Server.class));
         handler.start();
         try {
             assertThat(handler1.isStarted())
