@@ -5,12 +5,12 @@ import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.db.ManagedDataSource;
 import io.dropwizard.setup.Environment;
 import org.hibernate.SessionFactory;
+import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.AvailableSettings;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.engine.jdbc.connections.internal.DatasourceConnectionProviderImpl;
 import org.hibernate.engine.jdbc.connections.spi.ConnectionProvider;
 import org.hibernate.service.ServiceRegistry;
-import org.hibernate.service.ServiceRegistryBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -77,7 +77,7 @@ public class SessionFactoryFactory {
         addAnnotatedClasses(configuration, entities);
         bundle.configure(configuration);
 
-        final ServiceRegistry registry = new ServiceRegistryBuilder()
+        final ServiceRegistry registry = new StandardServiceRegistryBuilder()
                 .addService(ConnectionProvider.class, connectionProvider)
                 .applySettings(properties)
                 .build();
