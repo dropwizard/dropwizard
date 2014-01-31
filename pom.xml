@@ -139,9 +139,6 @@
                                 </goals>
                             </execution>
                         </executions>
-                        <configuration>
-                            <keyname>840C3C96</keyname>
-                        </configuration>
                     </plugin>
                 </plugins>
             </build>
