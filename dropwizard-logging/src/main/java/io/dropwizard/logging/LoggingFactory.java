@@ -2,6 +2,7 @@ package io.dropwizard.logging;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.filter.ThresholdFilter;
 import ch.qos.logback.classic.jmx.JMXConfigurator;
 import ch.qos.logback.classic.jul.LevelChangePropagator;
@@ -12,6 +13,7 @@ import com.codahale.metrics.logback.InstrumentedAppender;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import org.slf4j.ILoggerFactory;
 import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
@@ -123,6 +125,14 @@ public class LoggingFactory {
         }
 
         configureInstrumentation(root, metricRegistry);
+    }
+
+    public void stop() {
+        ILoggerFactory loggerFactory = LoggerFactory.getILoggerFactory();
+        if (loggerFactory instanceof LoggerContext) {
+            LoggerContext context = (LoggerContext) loggerFactory;
+            context.stop();
+        }
     }
 
     private void configureInstrumentation(Logger root, MetricRegistry metricRegistry) {
