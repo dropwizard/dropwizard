@@ -153,6 +153,14 @@ import java.util.regex.Pattern;
  *             Jetty's {@code libsetuid.so} on {@code java.library.path}.</b>
  *         </td>
  *     </tr>
+ *     <tr>
+ *         <td>{@code shutdownGracePeriod}</td>
+ *         <td>30 seconds</td>
+ *         <td>
+ *             The maximum time to wait for Jetty, and all Managed instances, to cleanly shutdown
+ *             before forcibly terminating them.
+ *         </td>
+ *     </tr>
  * </table>
  *
  * @see DefaultServerFactory
@@ -198,6 +206,8 @@ public abstract class AbstractServerFactory implements ServerFactory {
     private String umask;
 
     private Boolean startsAsRoot;
+
+    private Duration shutdownGracePeriod = Duration.seconds(30);
 
     @JsonIgnore
     @ValidationMethod(message = "must have a smaller minThreads than maxThreads")
@@ -345,6 +355,16 @@ public abstract class AbstractServerFactory implements ServerFactory {
         this.startsAsRoot = startsAsRoot;
     }
 
+    @JsonProperty
+    public Duration getShutdownGracePeriod() {
+        return shutdownGracePeriod;
+    }
+
+    @JsonProperty
+    public void setShutdownGracePeriod(Duration shutdownGracePeriod) {
+        this.shutdownGracePeriod = shutdownGracePeriod;
+    }
+
     protected Handler createAdminServlet(Server server,
                                          MutableServletContextHandler handler,
                                          MetricRegistry metrics,
@@ -405,6 +425,7 @@ public abstract class AbstractServerFactory implements ServerFactory {
         errorHandler.setShowStacks(false);
         server.addBean(errorHandler);
         server.setStopAtShutdown(true);
+        server.setStopTimeout(shutdownGracePeriod.toMilliseconds());
         return server;
     }
 
