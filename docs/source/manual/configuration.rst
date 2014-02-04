@@ -344,9 +344,9 @@ Extends the attributes that are available to the :ref:`HTTPS connector <man-conf
 
     server:
       applicationConnectors:
-        - type: spdy
+        - type: spdy3
           port: 8445
-          keyStore: example.keystore
+          keyStorePath: example.keystore
           keyStorePassword: example
           validateCerts: false
 
