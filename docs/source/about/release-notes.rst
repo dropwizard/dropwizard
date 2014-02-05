@@ -70,7 +70,7 @@ v0.7.0-SNAPSHOT
 * Fixed formatting of "Caused by" lines not being prefixed when logging nested Exceptions.
 * Fixed not all available Jersey endpoints were being logged at startup.
 * Upgraded to argparse4j 0.4.2.
-* Upgraded to Guava 15.
+* Upgraded to Guava 16.0.1.
 * Upgraded to Hibernate Validator 5.0.2.
 * Upgraded to Jackson 2.3.0.
 * Upgraded to JDBI 2.53.
