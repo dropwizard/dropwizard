@@ -206,7 +206,7 @@ Dropwizard then calls your ``Application`` subclass to initialize your applicati
     Also, the setting in question must already exist in your configuration file as an array; 
     this mechanism will not work if the configuration key being overridden does not exist in your configuration 
     file. If it does not exist or is not an array setting, it will get added as a simple string setting, including 
-    the '|' characters as part of the string.
+    the ',' characters as part of the string.
 
 .. _man-core-environments:
 
