@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
+import java.util.regex.Pattern;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -172,11 +173,12 @@ public class ConfigurationFactory<T> {
                 node = child;
             } else {
                 if (obj.get(key) != null && obj.get(key).isArray()) {
-                    final Iterator<String> values = Splitter.on('|').trimResults().split(value).iterator();
                     ArrayNode arrayNode = (ArrayNode) obj.get(key);
                     arrayNode.removeAll();
-                    while (values.hasNext())
-                        arrayNode.add (values.next()); 
+                    
+                    Pattern escapedComma = Pattern.compile("\\\\,");
+                    for (String val : Splitter.on(Pattern.compile("(?<!\\\\),")).trimResults().split(value))
+                        arrayNode.add (escapedComma.matcher(val).replaceAll(",")); 
                 }
                 else {
                     obj.put(key, value);

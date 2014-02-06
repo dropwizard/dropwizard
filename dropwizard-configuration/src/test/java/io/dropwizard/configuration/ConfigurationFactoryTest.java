@@ -79,10 +79,24 @@ public class ConfigurationFactoryTest {
     @Test
     public void handlesArrayOverride() throws Exception {
         try {
-            System.setProperty("dw.type", "coder|wizard|overridden");
+            System.setProperty("dw.type", "coder,wizard,overridden");
             final Example example = factory.build(validFile);
             assertThat(example.getType().get(2))
             .isEqualTo("overridden");
+            assertThat(example.getType().size())
+            .isEqualTo(3);
+        } finally {
+            System.clearProperty("dw.type");
+        }
+    }
+    
+    @Test
+    public void handlesArrayOverrideEscaped() throws Exception {
+        try {
+            System.setProperty("dw.type", "coder,wizard,overr\\,idden");
+            final Example example = factory.build(validFile);
+            assertThat(example.getType().get(2))
+            .isEqualTo("overr,idden");
             assertThat(example.getType().size())
             .isEqualTo(3);
         } finally {
