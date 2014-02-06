@@ -79,7 +79,7 @@ v0.7.0-SNAPSHOT
 * Upgraded to Logback 1.1.1.
 * Upgraded to Metrics 3.0.1.
 * Upgraded to Mustache 0.8.14.
-* Upgraded to SLF4J 1.7.5.
+* Upgraded to SLF4J 1.7.6.
 * Upgraded to Jersey 1.18.
 * Upgraded to Apache HttpClient 4.3.2.
 * Upgraded to tomcat-jdbc 7.0.50.
