@@ -22,4 +22,5 @@ User Manual
     testing
     example
     configuration
+    upgrading
 
