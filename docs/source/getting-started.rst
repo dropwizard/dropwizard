@@ -270,6 +270,8 @@ commands which provide basic functionality. (More on that later.) For now, thoug
     import io.dropwizard.Application;
     import io.dropwizard.setup.Bootstrap;
     import io.dropwizard.setup.Environment;
+    import com.example.helloworld.resources.HelloWorldResource;
+    import com.example.helloworld.health.TemplateHealthCheck;
 
     public class HelloWorldApplication extends Application<HelloWorldConfiguration> {
         public static void main(String[] args) throws Exception {
