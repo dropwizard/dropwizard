@@ -1,6 +1,7 @@
 .idea
 target
 atlassian-ide-plugin.xml
+dependency-reduced-pom.xml
 logs
 *.iml
 *.ipr
@@ -8,3 +9,4 @@ logs
 .settings/
 .classpath
 .project
+
