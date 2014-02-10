@@ -8,3 +8,5 @@ logs
 .settings/
 .classpath
 .project
+#Maven shade plugin
+dependency-reduced-pom.xml
