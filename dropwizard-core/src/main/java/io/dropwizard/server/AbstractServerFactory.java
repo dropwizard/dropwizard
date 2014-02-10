@@ -28,6 +28,7 @@ import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ErrorHandler;
 import org.eclipse.jetty.server.handler.RequestLogHandler;
+import org.eclipse.jetty.server.handler.StatisticsHandler;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.setuid.RLimit;
 import org.eclipse.jetty.setuid.SetUIDListener;
@@ -484,6 +485,14 @@ public abstract class AbstractServerFactory implements ServerFactory {
             return requestLogHandler;
         }
         return handler;
+    }
+
+    protected Handler addStatsHandler(Handler handler) {
+        // Graceful shutdown is implemented via the statistics handler,
+        // see https://bugs.eclipse.org/bugs/show_bug.cgi?id=420142
+        StatisticsHandler statisticsHandler = new StatisticsHandler();
+        statisticsHandler.setHandler(handler);
+        return statisticsHandler;
     }
 
     protected void printBanner(String name) {
