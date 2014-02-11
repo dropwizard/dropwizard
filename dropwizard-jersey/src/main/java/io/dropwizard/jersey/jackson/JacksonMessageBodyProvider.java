@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
+import java.util.Collections;
 import java.util.Set;
 
 /**
@@ -66,6 +67,11 @@ public class JacksonMessageBodyProvider extends JacksonJaxbJsonProvider {
     }
 
     private Object validate(Annotation[] annotations, Object value) {
+        if(null == value) {
+            throw new ConstraintViolationException("The request entity was empty",
+                    Collections.<ConstraintViolation<Object>>emptySet());
+        }
+
         final Class<?>[] classes = findValidationGroups(annotations);
 
         if (classes != null) {
