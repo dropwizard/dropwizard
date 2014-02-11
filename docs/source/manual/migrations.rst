@@ -15,17 +15,17 @@ Configuration
 =============
 
 Like :ref:`man-jdbi`, your :ref:`configuration class <man-core-configuration>` needs a
-``DatabaseConfiguration`` instance:
+``DataSourceFactory`` instance:
 
 .. code-block:: java
 
     public class ExampleConfiguration extends Configuration {
         @Valid
         @NotNull
-        @JsonProperty
-        private DatabaseConfiguration database = new DatabaseConfiguration();
+        @JsonProperty("database")
+        private DataSourceFactory database = new DataSourceFactory();
 
-        public DatabaseConfiguration getDatabaseConfiguration() {
+        public DataSourceFactory getDataSourceFactory() {
             return database;
         }
     }
@@ -33,17 +33,17 @@ Like :ref:`man-jdbi`, your :ref:`configuration class <man-core-configuration>` n
 Adding The Bundle
 =================
 
-Then, in your service's ``initialize`` method, add a new ``MigrationsBundle`` subclass:
+Then, in your application's ``initialize`` method, add a new ``MigrationsBundle`` subclass:
 
 .. code-block:: java
 
     @Override
-    public void initialize(Bootstrap<MyConfiguration> bootstrap) {
-        bootstrap.addBundle(new MigrationsBundle<MyConfiguration>() {
+    public void initialize(Bootstrap<ExampleConfiguration> bootstrap) {
+        bootstrap.addBundle(new MigrationsBundle<ExampleConfiguration>() {
             @Override
-            public DatabaseConfiguration getDatabaseConfiguration(MyConfiguration configuration) {
-                return configuration.getDatabaseConfiguration();
-            }
+	        public DataSourceFactory getDataSourceFactory(ExampleConfiguration configuration) {
+	            return configuration.getDataSourceFactory();
+	        }
         });
     }
 
@@ -51,8 +51,8 @@ Defining Migrations
 ===================
 
 Your database migrations are stored in your Dropwizard project, in
-``src/main/resources/migrations.xml``. This file will be packaged with your service, allowing you to
-run migrations using your service's command-line interface.
+``src/main/resources/migrations.xml``. This file will be packaged with your application, allowing you to
+run migrations using your application's command-line interface.
 
 For example, to create a new ``people`` table, I might create an initial ``migrations.xml`` like
 this:
@@ -116,7 +116,7 @@ To tag your schema at a particular point in time (e.g., to make rolling back eas
 Migrating Your Schema
 =====================
 
-To apply pending change sets to your database schema, run the ``db migrate`` comnand:
+To apply pending change sets to your database schema, run the ``db migrate`` command:
 
 .. code-block:: text
 

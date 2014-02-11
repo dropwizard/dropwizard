@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TreeTraversingParser;
@@ -20,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
+import java.util.regex.Pattern;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -130,7 +132,7 @@ public class ConfigurationFactory<T> {
                     .setFieldPath(e.getPath())
                     .setLocation(e.getLocation())
                     .addSuggestions(properties)
-                    .setSuggestionBase(e.getUnrecognizedPropertyName())
+                    .setSuggestionBase(e.getPropertyName())
                     .setCause(e)
                     .build(path);
         } catch (InvalidFormatException e) {
@@ -160,8 +162,8 @@ public class ConfigurationFactory<T> {
             if (!(node instanceof ObjectNode)) {
                 throw new IllegalArgumentException("Unable to override " + name + "; it's not a valid path.");
             }
-
             final ObjectNode obj = (ObjectNode) node;
+            
             if (keys.hasNext()) {
                 JsonNode child = obj.get(key);
                 if (child == null) {
@@ -170,7 +172,17 @@ public class ConfigurationFactory<T> {
                 }
                 node = child;
             } else {
-                obj.put(key, value);
+                if (obj.get(key) != null && obj.get(key).isArray()) {
+                    ArrayNode arrayNode = (ArrayNode) obj.get(key);
+                    arrayNode.removeAll();
+                    
+                    Pattern escapedComma = Pattern.compile("\\\\,");
+                    for (String val : Splitter.on(Pattern.compile("(?<!\\\\),")).trimResults().split(value))
+                        arrayNode.add (escapedComma.matcher(val).replaceAll(",")); 
+                }
+                else {
+                    obj.put(key, value);
+                }
             }
         }
     }

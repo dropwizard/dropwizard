@@ -15,7 +15,7 @@ Configuration
 =============
 
 To create a :ref:`managed <man-core-managed>`, instrumented ``DBI`` instance, your
-:ref:`configuration class <man-core-configuration>` needs a ``DatabaseConfiguration`` instance:
+:ref:`configuration class <man-core-configuration>` needs a ``DataSourceFactory`` instance:
 
 .. code-block:: java
 
@@ -23,9 +23,9 @@ To create a :ref:`managed <man-core-managed>`, instrumented ``DBI`` instance, yo
         @Valid
         @NotNull
         @JsonProperty
-        private DatabaseConfiguration database = new DatabaseConfiguration();
+        private DataSourceFactory database = new DataSourceFactory();
 
-        public DatabaseConfiguration getDatabaseConfiguration() {
+        public DataSourceFactory getDataSourceFactory() {
             return database;
         }
     }
@@ -38,9 +38,9 @@ Then, in your service's ``run`` method, create a new ``DBIFactory``:
     public void run(ExampleConfiguration config,
                     Environment environment) throws ClassNotFoundException {
         final DBIFactory factory = new DBIFactory();
-        final DBI jdbi = factory.build(environment, config.getDatabaseConfiguration(), "postgresql");
+        final DBI jdbi = factory.build(environment, config.getDataSourceFactory(), "postgresql");
         final UserDAO dao = jdbi.onDemand(UserDAO.class);
-        environment.addResource(new UserResource(dao));
+        environment.jersey().register(new UserResource(dao));
     }
 
 This will create a new :ref:`managed <man-core-managed>` connection pool to the database, a
@@ -120,8 +120,8 @@ code (e.g., ``ResultSet`` -> domain objects) into testable, reusable classes.
 Exception Handling
 ==================
 
-By adding the ``DBIExceptionsBundle`` to your :ref:`service <man-core-service>`, your Dropwizard
-application will automatically unwrap any thrown ``SQLException`` or ``DBIException`` instances.
+By adding the ``DBIExceptionsBundle`` to your :ref:`application <man-core-application>`, Dropwizard
+will automatically unwrap any thrown ``SQLException`` or ``DBIException`` instances.
 This is critical for debugging, since otherwise only the common wrapper exception's stack trace is
 logged.
 
@@ -146,6 +146,7 @@ Guava Support
 ``dropwizard-jdbi`` supports ``Optional<T>`` arguments and ``ImmutableList<T>`` and
 ``ImmutableSet<T>`` query results.
 
-JDBI Support
-============
+Joda Time Support
+=================
 ``dropwizard-jdbi`` supports joda-time ``DateTime`` arguments and ``DateTime`` fields in query results.
+

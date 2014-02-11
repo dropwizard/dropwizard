@@ -51,7 +51,7 @@ public class CsvReporterFactory extends BaseFormattedReporterFactory {
     public ScheduledReporter build(MetricRegistry registry) {
         return CsvReporter.forRegistry(registry)
                           .convertDurationsTo(getDurationUnit())
-                          .convertDurationsTo(getRateUnit())
+                          .convertRatesTo(getRateUnit())
                           .filter(getFilter())
                           .formatFor(getLocale())
                           .build(getFile());

@@ -31,9 +31,6 @@ import org.slf4j.MarkerFactory;
  *         <td>The name of the marker to mark logged metrics with.</td>
  *     </tr>
  *     <tr>
- *         <td colspan="3">See {@link BaseFormattedReporterFactory} for more options.</td>
- *     </tr>
- *     <tr>
  *         <td colspan="3">See {@link BaseReporterFactory} for more options.</td>
  *     </tr>
  * </table>

@@ -33,7 +33,7 @@ v0.7.0-SNAPSHOT
   and ``group``, then start your application as the root user.
 * Added builders for managed executors.
 * Added a default ``check`` command, which loads and validates the service configuration.
-* Added support for the Jetty HTTP client to ``dropwizard-client``.
+* Added support for the Jersey HTTP client to ``dropwizard-client``.
 * Added Jackson Afterburner support.
 * Added support for ``deflate``-encoded requests and responses.
 * Added support for HTTP Sessions. Add the annotated parameter to your resource method:
@@ -69,17 +69,21 @@ v0.7.0-SNAPSHOT
 * Fixed a shutdown bug in ``dropwizard-migrations``.
 * Fixed formatting of "Caused by" lines not being prefixed when logging nested Exceptions.
 * Fixed not all available Jersey endpoints were being logged at startup.
-* Upgraded to argparse4j 0.4.1.
-* Upgraded to Guava 15.
-* Upgraded to Hibernate Validator 5.0.1.
-* Upgraded to Jackson 2.2.3.
-* Upgraded to JDBI 2.50.
-* Upgraded to Jetty 9.0.5.
-* Upgraded to Liquibase 3.0.4.
-* Upgraded to Logback 1.0.13.
+* Upgraded to argparse4j 0.4.3.
+* Upgraded to Guava 16.0.1.
+* Upgraded to Hibernate Validator 5.0.2.
+* Upgraded to Jackson 2.3.1.
+* Upgraded to JDBI 2.53.
+* Upgraded to Jetty 9.0.7.
+* Upgraded to Liquibase 3.1.1.
+* Upgraded to Logback 1.1.1.
 * Upgraded to Metrics 3.0.1.
-* Upgraded to Mustache 0.8.13.
-* Upgraded to SLF4J 1.7.5.
+* Upgraded to Mustache 0.8.14.
+* Upgraded to SLF4J 1.7.6.
+* Upgraded to Jersey 1.18.
+* Upgraded to Apache HttpClient 4.3.2.
+* Upgraded to tomcat-jdbc 7.0.50.
+* Upgraded to Hibernate 4.3.1.Final.
 
 .. _rel-0.6.2:
 

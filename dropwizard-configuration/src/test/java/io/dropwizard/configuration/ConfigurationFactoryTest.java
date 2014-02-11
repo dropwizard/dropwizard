@@ -11,6 +11,7 @@ import javax.validation.Validator;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.io.File;
+import java.util.List;
 import java.util.Locale;
 
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -21,14 +22,20 @@ public class ConfigurationFactoryTest {
     public static class Example {
 
         @NotNull
-        @Pattern(regexp = "[\\w]+[\\s]+[\\w]+")
+        @Pattern(regexp = "[\\w]+[\\s]+[\\w]+([\\s][\\w]+)?")
         private String name;
 
         @JsonProperty
         private int age = 1;
+        
+        List<String> type;
 
         public String getName() {
             return name;
+        }
+        
+        public List<String> getType() {
+            return type;
         }
     }
 
@@ -51,7 +58,66 @@ public class ConfigurationFactoryTest {
         final Example example = factory.build(validFile);
         assertThat(example.getName())
                 .isEqualTo("Coda Hale");
+        assertThat(example.getType().get(0))
+        .isEqualTo("coder");
+        assertThat(example.getType().get(1))
+        .isEqualTo("wizard");
     }
+    
+    @Test
+    public void handlesSimpleOverride() throws Exception {
+        try {
+            System.setProperty("dw.name", "Coda Hale Overridden");
+            final Example example = factory.build(validFile);
+            assertThat(example.getName())
+                .isEqualTo("Coda Hale Overridden");
+        } finally {
+            System.clearProperty("dw.name");
+        }
+    }
+    
+    @Test
+    public void handlesArrayOverride() throws Exception {
+        try {
+            System.setProperty("dw.type", "coder,wizard,overridden");
+            final Example example = factory.build(validFile);
+            assertThat(example.getType().get(2))
+            .isEqualTo("overridden");
+            assertThat(example.getType().size())
+            .isEqualTo(3);
+        } finally {
+            System.clearProperty("dw.type");
+        }
+    }
+    
+    @Test
+    public void handlesArrayOverrideEscaped() throws Exception {
+        try {
+            System.setProperty("dw.type", "coder,wizard,overr\\,idden");
+            final Example example = factory.build(validFile);
+            assertThat(example.getType().get(2))
+            .isEqualTo("overr,idden");
+            assertThat(example.getType().size())
+            .isEqualTo(3);
+        } finally {
+            System.clearProperty("dw.type");
+        }
+    }
+    
+    @Test
+    public void handlesSingleElementArrayOverride() throws Exception {
+        try {
+            System.setProperty("dw.type", "overridden");
+            final Example example = factory.build(validFile);
+            assertThat(example.getType().get(0))
+            .isEqualTo("overridden");
+            assertThat(example.getType().size())
+            .isEqualTo(1);
+        } finally {
+            System.clearProperty("dw.type");
+        }
+    }
+
 
     @Test
     public void throwsAnExceptionOnMalformedFiles() throws Exception {
@@ -73,7 +139,7 @@ public class ConfigurationFactoryTest {
                 assertThat(e.getMessage())
                         .endsWith(String.format(
                                 "factory-test-invalid.yml has an error:%n" +
-                                        "  * name must match \"[\\w]+[\\s]+[\\w]+\" (was Boop)%n"));
+                                        "  * name must match \"[\\w]+[\\s]+[\\w]+([\\s][\\w]+)?\" (was Boop)%n"));
             }
         }
     }
