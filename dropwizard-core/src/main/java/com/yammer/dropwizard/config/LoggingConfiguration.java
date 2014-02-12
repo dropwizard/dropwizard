@@ -1,20 +1,24 @@
 package com.yammer.dropwizard.config;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.TimeZone;
+
+import javax.validation.Valid;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+
 import ch.qos.logback.classic.Level;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import com.yammer.dropwizard.validation.ValidationMethod;
-
-import javax.validation.Valid;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-import java.util.Locale;
-import java.util.Map;
-import java.util.TimeZone;
 
 @SuppressWarnings("UnusedDeclaration")
 public class LoggingConfiguration {
@@ -276,7 +280,37 @@ public class LoggingConfiguration {
     @Valid
     @NotNull
     @JsonProperty
-    private FileConfiguration file = new FileConfiguration();
+    private ImmutableMap<String, FileConfiguration> fileLoggers = ImmutableMap.of();
+    
+    @ValidationMethod(message = "must have unique files for different file loggers")
+    public boolean areLogFilenamesUnique() {
+    	List<String> currentLogFilenames = new ArrayList<String>();
+    	if (fileLoggers.size() != 0) {
+    		for(FileConfiguration file : fileLoggers.values()) {
+    			String fileName = file.getCurrentLogFilename();
+    			if(currentLogFilenames.contains(fileName)) {
+    				return false;
+    			}
+    			currentLogFilenames.add(fileName);
+    		}
+    	}
+    	return true;
+    }
+    
+    @ValidationMethod(message = "must have unique files for different file loggers")
+    public boolean areArchiveLogFilenamesUnique() {
+    	List<String> archiveLogFilenamePatterns = new ArrayList<String>();
+    	if (fileLoggers.size() != 0) {
+    		for(FileConfiguration file : fileLoggers.values()) {
+    			String pattern = file.getArchivedLogFilenamePattern();
+    			if(archiveLogFilenamePatterns.contains(pattern)) {
+    				return false;
+    			}
+    			archiveLogFilenamePatterns.add(pattern);
+    		}
+    	}
+    	return true;
+    }
 
     @Valid
     @NotNull
@@ -306,16 +340,16 @@ public class LoggingConfiguration {
     public void setConsoleConfiguration(ConsoleConfiguration config) {
         this.console = config;
     }
+    
+	public ImmutableMap<String, FileConfiguration> getFileLoggers() {
+		return fileLoggers;
+	}
 
-    public FileConfiguration getFileConfiguration() {
-        return file;
-    }
+	public void setFileLoggers(ImmutableMap<String, FileConfiguration> fileLoggers) {
+		this.fileLoggers = fileLoggers;
+	}
 
-    public void setFileConfiguration(FileConfiguration config) {
-        this.file = config;
-    }
-
-    public SyslogConfiguration getSyslogConfiguration() {
+	public SyslogConfiguration getSyslogConfiguration() {
         return syslog;
     }
 

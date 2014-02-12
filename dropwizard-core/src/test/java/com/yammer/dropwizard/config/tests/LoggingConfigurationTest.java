@@ -1,19 +1,22 @@
 package com.yammer.dropwizard.config.tests;
 
+import static org.fest.assertions.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
+
+import java.io.File;
+
+import org.junit.Before;
+import org.junit.Test;
+
 import ch.qos.logback.classic.Level;
+
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.Resources;
 import com.yammer.dropwizard.config.ConfigurationFactory;
 import com.yammer.dropwizard.config.LoggingConfiguration;
+import com.yammer.dropwizard.config.LoggingConfiguration.ConsoleConfiguration;
+import com.yammer.dropwizard.config.LoggingConfiguration.FileConfiguration;
 import com.yammer.dropwizard.validation.Validator;
-import org.junit.Before;
-import org.junit.Test;
-
-import java.io.File;
-
-import static com.yammer.dropwizard.config.LoggingConfiguration.ConsoleConfiguration;
-import static com.yammer.dropwizard.config.LoggingConfiguration.FileConfiguration;
-import static org.fest.assertions.api.Assertions.assertThat;
 
 public class LoggingConfigurationTest {
     private final ConfigurationFactory<LoggingConfiguration> factory =
@@ -48,28 +51,27 @@ public class LoggingConfigurationTest {
                 .isEqualTo(Level.ALL);
     }
 
-    @Test
-    public void hasFileConfiguration() throws Exception {
-        final FileConfiguration file = config.getFileConfiguration();
+	@Test
+	public void hasFileConfiguration() throws Exception {
+		
+		assertEquals(2, config.getFileLoggers().size());
+		
+		for (FileConfiguration file : config.getFileLoggers().values()) {
+			assertThat(file.isEnabled()).isFalse();
 
-        assertThat(file.isEnabled())
-                .isFalse();
+			assertThat(file.getThreshold()).isEqualTo(Level.ALL);
 
-        assertThat(file.getThreshold())
-                .isEqualTo(Level.ALL);
+			assertThat(file.isArchive()).isTrue();
 
-        assertThat(file.isArchive())
-                .isTrue();
+			assertThat(file.getCurrentLogFilename()).isEqualTo(
+					"./logs/example.log");
 
-        assertThat(file.getCurrentLogFilename())
-                .isEqualTo("./logs/example.log");
+			assertThat(file.getArchivedLogFilenamePattern()).isEqualTo(
+					"./logs/example-%d.log.gz");
 
-        assertThat(file.getArchivedLogFilenamePattern())
-                .isEqualTo("./logs/example-%d.log.gz");
-
-        assertThat(file.getArchivedFileCount())
-                .isEqualTo(5);
-    }
+			assertThat(file.getArchivedFileCount()).isEqualTo(5);
+		}
+	}
 
     @Test
     public void defaultFileConfigurationIsValid() throws Exception {

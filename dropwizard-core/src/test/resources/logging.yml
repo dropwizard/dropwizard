@@ -4,12 +4,19 @@ loggers:
 console:
   enabled: true
   threshold: ALL
-file:
-  enabled: false
-  threshold: ALL
-  currentLogFilename: ./logs/example.log
-  archivedLogFilenamePattern: ./logs/example-%d.log.gz
-  archivedFileCount: 5
+fileLoggers:
+  output:
+      threshold: ALL
+      archivedLogFilenamePattern: ./logs/example-%d.log.gz
+      archivedFileCount: 5
+      currentLogFilename: ./logs/example.log
+      timeZone: UTC
+  error:
+      threshold: ALL
+      archivedLogFilenamePattern: ./logs/example-%d.log.gz
+      archivedFileCount: 5
+      currentLogFilename: ./logs/example.log
+      timeZone: UTC
 syslog:
   enabled: false
   host: localhost
