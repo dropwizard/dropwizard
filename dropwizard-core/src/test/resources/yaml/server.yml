@@ -9,7 +9,7 @@ gzip:
   enabled: false
 applicationConnectors:
   - type: http
-    port: 9080
+    port: 0
     bindHost: "localhost"
     acceptorThreads: 2
     acceptQueueSize: 100

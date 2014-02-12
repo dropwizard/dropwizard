@@ -15,6 +15,7 @@ import io.dropwizard.setup.Environment;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.NetworkConnector;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.AbstractNetworkConnector;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -103,10 +104,12 @@ public class DefaultServerFactoryTest {
 
         server.start();
 
+        final int port = ((AbstractNetworkConnector) server.getConnectors()[0]).getLocalPort();
+
         Future<String> futureResult = executor.submit(new Callable<String>() {
             @Override
             public String call() throws Exception {
-                URL url = new URL("http://localhost:9080/test");
+                URL url = new URL("http://localhost:" + port + "/test");
                 URLConnection connection = url.openConnection();
                 connection.connect();
                 return CharStreams.toString(new InputStreamReader(connection.getInputStream()));
