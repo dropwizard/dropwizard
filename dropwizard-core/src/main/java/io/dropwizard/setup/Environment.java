@@ -62,7 +62,7 @@ public class Environment {
 
         this.adminContext = new MutableServletContextHandler();
         adminContext.setClassLoader(classLoader);
-        this.adminEnvironment = new AdminEnvironment(adminContext, healthCheckRegistry);
+        this.adminEnvironment = new AdminEnvironment(adminContext, healthCheckRegistry, metricRegistry);
 
         this.lifecycleEnvironment = new LifecycleEnvironment();
 

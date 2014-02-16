@@ -1,5 +1,6 @@
 package io.dropwizard.setup;
 
+import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheckRegistry;
 import com.google.common.collect.ImmutableMultimap;
 import io.dropwizard.jetty.MutableServletContextHandler;
@@ -14,7 +15,8 @@ import static org.fest.assertions.api.Assertions.assertThat;
 public class AdminEnvironmentTest {
     private final MutableServletContextHandler handler = new MutableServletContextHandler();
     private final HealthCheckRegistry healthCheckRegistry = new HealthCheckRegistry();
-    private final AdminEnvironment env = new AdminEnvironment(handler, healthCheckRegistry);
+    private final MetricRegistry metricRegistry = new MetricRegistry();
+    private final AdminEnvironment env = new AdminEnvironment(handler, healthCheckRegistry, metricRegistry);
 
     @Test
     public void addsATaskServlet() throws Exception {

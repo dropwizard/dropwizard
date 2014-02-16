@@ -1,5 +1,7 @@
 package io.dropwizard.servlets.tasks;
 
+import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.Timer;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Maps;
 import com.google.common.net.MediaType;
@@ -28,10 +30,13 @@ public class TaskServlet extends HttpServlet {
     private static final Logger LOGGER = LoggerFactory.getLogger(TaskServlet.class);
     private final ConcurrentMap<String, Task> tasks;
 
+    private final MetricRegistry metricRegistry;
+
     /**
      * Creates a new TaskServlet.
      */
-    public TaskServlet() {
+    public TaskServlet(MetricRegistry metricRegistry) {
+        this.metricRegistry = metricRegistry;
         this.tasks = Maps.newConcurrentMap();
     }
 
@@ -44,6 +49,8 @@ public class TaskServlet extends HttpServlet {
                           HttpServletResponse resp) throws ServletException, IOException {
         final Task task = tasks.get(req.getPathInfo());
         if (task != null) {
+            Timer.Context timerContext = metricRegistry.timer("task." + task.getName()).time();
+
             resp.setContentType(MediaType.PLAIN_TEXT_UTF_8.toString());
             final PrintWriter output = resp.getWriter();
             try {
@@ -55,6 +62,12 @@ public class TaskServlet extends HttpServlet {
                 output.println(e.getMessage());
                 e.printStackTrace(output);
             } finally {
+                try {
+                    timerContext.close();
+                } catch(Exception e) {
+                    LOGGER.warn("Error closing timer context: " + e.getMessage());
+                }
+
                 output.close();
             }
         } else {

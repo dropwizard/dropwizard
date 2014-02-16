@@ -1,5 +1,6 @@
 package io.dropwizard.servlets.tasks;
 
+import com.codahale.metrics.MetricRegistry;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMultimap;
 import org.junit.Before;
@@ -21,7 +22,7 @@ public class TaskServletTest {
         when(clearCache.getName()).thenReturn("clear-cache");
     }
 
-    private final TaskServlet servlet = new TaskServlet();
+    private final TaskServlet servlet = new TaskServlet(new MetricRegistry());
     private final HttpServletRequest request = mock(HttpServletRequest.class);
     private final HttpServletResponse response = mock(HttpServletResponse.class);
 

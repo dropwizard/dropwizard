@@ -443,7 +443,8 @@ Tasks
 A ``Task`` is a run-time action your application provides access to on the administrative port via HTTP.
 All Dropwizard applications start with the ``gc`` task, which explicitly triggers the JVM's garbage
 collection. (This is useful, for example, for running full garbage collections during off-peak times
-or while the given application is out of rotation.)
+or while the given application is out of rotation.) Each task is instrumented with a ``Timer`` and can be
+found in the metrics registry with the name ``task.{task-name}``.
 
 Running a task can be done by sending a ``POST`` request to ``/tasks/{task-name}`` on the admin
 port. For example::
