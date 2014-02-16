@@ -170,8 +170,8 @@ loads a given resource instance in an in-memory Jersey server:
 
 Instansiate a ``ResourceTestRule`` using its ``Builder`` and add the various resource instances you
 want to test via ``ResourceTestRule.Builder#addResource(Object)``. Use a ``@ClassRule`` annotation 
-to have the rule wrap the entire test class or the ``@TestRule`` annotation to have the rule wrap 
-each test individually.
+to have the rule wrap the entire test class or the ``@Rule`` annotation to have the rule wrap 
+each test individually (make sure to remove static final modifier from ``resources``).
 
 In your tests, use ``#client()``, which returns a Jersey ``Client`` instance to talk to and test 
 your instances.
