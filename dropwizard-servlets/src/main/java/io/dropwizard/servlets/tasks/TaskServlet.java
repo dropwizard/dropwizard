@@ -53,26 +53,35 @@ public class TaskServlet extends HttpServlet {
 
         TaskExecutor taskExecutor = new TaskExecutor(task);
         try {
-            Method executeMethod = task.getClass().getMethod("execute", ImmutableMultimap.class, PrintWriter.class);
-
-            if(executeMethod.isAnnotationPresent(Metered.class)) {
-                Metered annotation = executeMethod.getAnnotation(Metered.class);
-                String name = chooseName(annotation.name(), annotation.absolute(), task);
-                Meter meter = metricRegistry.meter(name);
-                taskExecutor = new MeteredTask(task, meter);
-            }
+            Method executeMethod = task.getClass().getMethod("execute",
+                    ImmutableMultimap.class, PrintWriter.class);
 
             if(executeMethod.isAnnotationPresent(Timed.class)) {
                 Timed annotation = executeMethod.getAnnotation(Timed.class);
-                String name = chooseName(annotation.name(), annotation.absolute(), task);
+                String name = chooseName(annotation.name(),
+                        annotation.absolute(),
+                        task);
                 Timer timer = metricRegistry.timer(name);
-                taskExecutor = new TimedTask(task, timer);
+                taskExecutor = new TimedTask(taskExecutor, timer);
+            }
+
+            if(executeMethod.isAnnotationPresent(Metered.class)) {
+                Metered annotation = executeMethod.getAnnotation(Metered.class);
+                String name = chooseName(annotation.name(),
+                                        annotation.absolute(),
+                                        task);
+                Meter meter = metricRegistry.meter(name);
+                taskExecutor = new MeteredTask(taskExecutor, meter);
             }
 
             if(executeMethod.isAnnotationPresent(ExceptionMetered.class)) {
                 ExceptionMetered annotation = executeMethod.getAnnotation(ExceptionMetered.class);
-                String name = chooseName(annotation.name(), annotation.absolute(), task, ExceptionMetered.DEFAULT_NAME_SUFFIX);
-                taskExecutor.setExceptionMeter(metricRegistry.meter(name), annotation.cause());
+                String name = chooseName(annotation.name(),
+                                        annotation.absolute(),
+                                        task,
+                                        ExceptionMetered.DEFAULT_NAME_SUFFIX);
+                Meter exceptionMeter = metricRegistry.meter(name);
+                taskExecutor = new ExceptionMeteredTask(taskExecutor, exceptionMeter, annotation.cause());
             }
         } catch (NoSuchMethodException e) {
         }
@@ -132,8 +141,6 @@ public class TaskServlet extends HttpServlet {
 
     private static class TaskExecutor {
         private final Task task;
-        private Meter exceptionMeter;
-        private Class<?> exceptionClass = Exception.class;
 
         private TaskExecutor(Task task) {
             this.task = task;
@@ -143,55 +150,74 @@ public class TaskServlet extends HttpServlet {
             try {
                 task.execute(params, output);
             } catch (Exception e) {
-                if (exceptionMeter != null && exceptionClass.isAssignableFrom(e.getClass()) ||
-                        (e.getCause() != null && exceptionClass.isAssignableFrom(e.getCause().getClass()))) {
-                    exceptionMeter.mark();
-                }
                 throw e;
-            } finally {
-                try {
-                    close();
-                } catch(Exception e) {
-                    LOGGER.warn("Error closing task executor: " + e.getMessage());
-                }
             }
-        }
-
-        public void close() {
-        }
-
-        public void setExceptionMeter(Meter meter, Class<?> exceptionClass) {
-            this.exceptionMeter = meter;
-            this.exceptionClass = exceptionClass;
         }
     }
 
     private static class TimedTask extends TaskExecutor {
-        private final Timer.Context timer;
+        private TaskExecutor underlying;
+        private final Timer timer;
 
-        private TimedTask(Task task, Timer timer) {
-            super(task);
-            this.timer = timer.time();
+        private TimedTask(TaskExecutor underlying, Timer timer) {
+            super(underlying.task);
+            this.underlying = underlying;
+            this.timer = timer;
         }
 
         @Override
-        public void close() {
-            timer.close();
+        public void executeTask(ImmutableMultimap<String, String> params, PrintWriter output) throws Exception {
+            final Timer.Context context = timer.time();
+            try {
+                underlying.executeTask(params, output);
+            } finally {
+                context.stop();
+            }
         }
     }
 
     private static class MeteredTask extends TaskExecutor {
+        private TaskExecutor underlying;
         private final Meter meter;
 
-        private MeteredTask(Task task, Meter meter) {
-            super(task);
+        private MeteredTask(TaskExecutor underlying, Meter meter) {
+            super(underlying.task);
             this.meter = meter;
+            this.underlying = underlying;
         }
 
         @Override
         public void executeTask(ImmutableMultimap<String, String> params, PrintWriter output) throws Exception {
             meter.mark();
-            super.executeTask(params, output);
+            underlying.executeTask(params, output);
+        }
+    }
+
+    private static class ExceptionMeteredTask extends TaskExecutor {
+        private TaskExecutor underlying;
+        private final Meter exceptionMeter;
+        private final Class<?> exceptionClass;
+
+        private ExceptionMeteredTask(TaskExecutor underlying,
+                                     Meter exceptionMeter, Class<? extends Throwable> exceptionClass) {
+            super(underlying.task);
+            this.underlying = underlying;
+            this.exceptionMeter = exceptionMeter;
+            this.exceptionClass = exceptionClass;
+        }
+
+        @Override
+        public void executeTask(ImmutableMultimap<String, String> params, PrintWriter output) throws Exception {
+            try {
+                underlying.executeTask(params, output);
+            } catch(Exception e) {
+                if (exceptionMeter != null && exceptionClass.isAssignableFrom(e.getClass()) ||
+                        (e.getCause() != null && exceptionClass.isAssignableFrom(e.getCause().getClass()))) {
+                    exceptionMeter.mark();
+                }
+
+                throw e;
+            }
         }
     }
 
