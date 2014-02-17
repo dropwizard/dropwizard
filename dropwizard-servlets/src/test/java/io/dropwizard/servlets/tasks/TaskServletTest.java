@@ -3,6 +3,7 @@ package io.dropwizard.servlets.tasks;
 import com.codahale.metrics.MetricRegistry;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMultimap;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -88,5 +89,18 @@ public class TaskServletTest {
         servlet.service(request, response);
 
         verify(response).setStatus(500);
+    }
+
+    /**
+     * Add a test to make sure the signature of the Task class does not change as the TaskServlet
+     * depends on this to perform record metrics on Tasks
+     */
+    @Test
+    public void verifyTaskExecuteMethod() {
+        try {
+            Task.class.getMethod("execute", ImmutableMultimap.class, PrintWriter.class);
+        } catch (NoSuchMethodException e) {
+            Assert.fail("Execute method for " + Task.class.getName() + " not found");
+        }
     }
 }
