@@ -212,7 +212,6 @@ public class ConfigurationFactoryTest {
         }
     }
 
-
     @Test
     public void throwsAnExceptionOnArrayOverrideWithInvalidType() throws Exception {
         System.setProperty("dw.servers", "one,two");
