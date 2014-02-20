@@ -13,7 +13,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import io.dropwizard.validation.ValidationMethod;
 
-import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.TimeZone;
@@ -62,7 +61,7 @@ import java.util.TimeZone;
  *         <td>{@code archivedFileCount}</td>
  *         <td>{@code 5}</td>
  *         <td>
- *             The number of archived files to keep. Must be between {@code 1} and {@code 50}.
+ *             The number of archived files to keep. Must be greater than {@code 0}.
  *         </td>
  *     </tr>
  *     <tr>
@@ -93,7 +92,6 @@ public class FileAppenderFactory extends AbstractAppenderFactory {
     private String archivedLogFilenamePattern;
 
     @Min(1)
-    @Max(50)
     private int archivedFileCount = 5;
 
     @NotNull
