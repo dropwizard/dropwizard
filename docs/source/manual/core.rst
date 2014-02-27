@@ -145,12 +145,12 @@ Your main ``Configuration`` subclass can then include this as a member field:
         @NotNull
         private MessageQueueFactory messageQueue = new MessageQueueFactory();
 
-        @JsonProperty
+        @JsonProperty("messageQueue")
         public MessageQueueFactory getMessageQueueFactory() {
             return messageQueue;
         }
 
-        @JsonProperty
+        @JsonProperty("messageQueue")
         public void setMessageQueueFactory(MessageQueueFactory factory) {
             this.messageQueue = factory;
         }
