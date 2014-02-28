@@ -25,6 +25,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 
+import javax.validation.Validation;
+import javax.validation.ValidatorFactory;
+
 /**
  * The pre-start application environment, containing everything required to bootstrap a Dropwizard
  * command.
@@ -38,6 +41,7 @@ public class Bootstrap<T extends Configuration> {
     private final List<ConfiguredBundle<? super T>> configuredBundles;
     private final List<Command> commands;
     private final MetricRegistry metricRegistry;
+    private final ValidatorFactory validatorFactory;
 
     private ConfigurationSourceProvider configurationSourceProvider;
     private ClassLoader classLoader;
@@ -55,6 +59,7 @@ public class Bootstrap<T extends Configuration> {
         this.configuredBundles = Lists.newArrayList();
         this.commands = Lists.newArrayList();
         this.metricRegistry = new MetricRegistry();
+        this.validatorFactory = Validation.buildDefaultValidatorFactory();
         metricRegistry.register("jvm.buffers", new BufferPoolMetricSet(ManagementFactory
                                                                                .getPlatformMBeanServer()));
         metricRegistry.register("jvm.gc", new GarbageCollectorMetricSet());
@@ -174,6 +179,13 @@ public class Bootstrap<T extends Configuration> {
      */
     public MetricRegistry getMetricRegistry() {
         return metricRegistry;
+    }
+
+    /**
+     * Returns the application's validator factory.
+     */
+    public ValidatorFactory getValidatorFactory() {
+        return validatorFactory;
     }
 
     public ConfigurationFactoryFactory<T> getConfigurationFactoryFactory() {
