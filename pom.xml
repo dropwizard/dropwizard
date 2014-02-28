@@ -7,7 +7,7 @@
 
     <groupId>io.dropwizard</groupId>
     <artifactId>dropwizard-parent</artifactId>
-    <version>0.7.0-SNAPSHOT</version>
+    <version>0.7.0-rc2</version>
     <packaging>pom</packaging>
     <name>Dropwizard Project</name>
     <url>http://www.dropwizard.io/</url>
@@ -80,7 +80,7 @@
         <connection>scm:git:git://github.com/dropwizard/dropwizard.git</connection>
         <developerConnection>scm:git:git@github.com:dropwizard/dropwizard.git</developerConnection>
         <url>http://github.com/dropwizard/dropwizard/</url>
-        <tag>HEAD</tag>
+        <tag>v0.7.0-rc2</tag>
     </scm>
 
     <issueManagement>
