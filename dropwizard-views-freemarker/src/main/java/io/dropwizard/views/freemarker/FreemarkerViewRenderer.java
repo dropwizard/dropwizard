@@ -4,7 +4,6 @@ import com.google.common.base.Charsets;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import com.sun.jersey.api.container.MappableContainerException;
 import freemarker.template.Configuration;
 import freemarker.template.DefaultObjectWrapper;
 import freemarker.template.Template;
@@ -58,7 +57,7 @@ public class FreemarkerViewRenderer implements ViewRenderer {
             final Template template = configuration.getTemplate(view.getTemplateName(), locale, charset.name());
             template.process(view, new OutputStreamWriter(output, template.getEncoding()));
         } catch (TemplateException e) {
-            throw new MappableContainerException(e);
+            throw new WebApplicationException(e);
         }
     }
 

@@ -69,14 +69,12 @@ public class HibernateBundleTest {
     }
 
     @Test
-    public void registersATransactionalAdapter() throws Exception {
+    public void registersATransactionalListener() throws Exception {
         bundle.run(configuration, environment);
 
-        final ArgumentCaptor<UnitOfWorkResourceMethodDispatchAdapter> captor =
-                ArgumentCaptor.forClass(UnitOfWorkResourceMethodDispatchAdapter.class);
+        final ArgumentCaptor<UnitOfWorkApplicationListener> captor =
+                ArgumentCaptor.forClass(UnitOfWorkApplicationListener.class);
         verify(jerseyEnvironment).register(captor.capture());
-
-        assertThat(captor.getValue().getSessionFactory()).isEqualTo(sessionFactory);
     }
 
     @Test

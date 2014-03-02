@@ -3,10 +3,7 @@ package io.dropwizard.hibernate;
 import com.codahale.metrics.MetricRegistry;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
-import com.sun.jersey.api.client.UniformInterfaceException;
-import com.sun.jersey.test.framework.AppDescriptor;
-import com.sun.jersey.test.framework.JerseyTest;
-import com.sun.jersey.test.framework.LowLevelAppDescriptor;
+
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.DropwizardResourceConfig;
@@ -14,6 +11,9 @@ import io.dropwizard.jersey.jackson.JacksonMessageBodyProvider;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
 import io.dropwizard.logging.LoggingFactory;
 import io.dropwizard.setup.Environment;
+
+import org.glassfish.jersey.client.ClientConfig;
+import org.glassfish.jersey.test.JerseyTest;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.joda.time.DateTime;
@@ -23,7 +23,10 @@ import org.junit.Test;
 
 import javax.validation.Validation;
 import javax.ws.rs.*;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
+
 import java.util.TimeZone;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -96,7 +99,7 @@ public class JerseyIntegrationTest extends JerseyTest {
     }
 
     @Override
-    protected AppDescriptor configure() {
+    protected Application configure() {
         final MetricRegistry metricRegistry = new MetricRegistry();
         final SessionFactoryFactory factory = new SessionFactoryFactory();
         final DataSourceFactory dbConfig = new DataSourceFactory();
@@ -106,7 +109,7 @@ public class JerseyIntegrationTest extends JerseyTest {
         when(environment.lifecycle()).thenReturn(lifecycleEnvironment);
         when(environment.metrics()).thenReturn(metricRegistry);
 
-        dbConfig.setUrl("jdbc:hsqldb:mem:DbTest-" + System.nanoTime());
+        dbConfig.setUrl("jdbc:hsqldb:mem:DbTest-" + System.nanoTime()+"?hsqldb.translate_dti_types=false");
         dbConfig.setUser("sa");
         dbConfig.setDriverClass("org.hsqldb.jdbcDriver");
         dbConfig.setValidationQuery("SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS");
@@ -133,18 +136,22 @@ public class JerseyIntegrationTest extends JerseyTest {
         }
 
         final DropwizardResourceConfig config = DropwizardResourceConfig.forTesting(new MetricRegistry());
-        config.getSingletons().add(new UnitOfWorkResourceMethodDispatchAdapter(sessionFactory));
-        config.getSingletons().add(new PersonResource(new PersonDAO(sessionFactory)));
-        config.getSingletons().add(new JacksonMessageBodyProvider(Jackson.newObjectMapper(),
-                                                                  Validation.buildDefaultValidatorFactory().getValidator()));
-        return new LowLevelAppDescriptor.Builder(config).build();
+        config.register(new UnitOfWorkApplicationListener(sessionFactory));
+        config.register(new PersonResource(new PersonDAO(sessionFactory)));
+        config.register(new JacksonMessageBodyProvider(Jackson.newObjectMapper(),
+                                                       Validation.buildDefaultValidatorFactory().getValidator()));
+        return config;
+    }
+
+    @Override
+    protected void configureClient(ClientConfig config) {
+        config.register(new JacksonMessageBodyProvider(Jackson.newObjectMapper(),
+                Validation.buildDefaultValidatorFactory().getValidator()));
     }
 
     @Test
     public void findsExistingData() throws Exception {
-        final Person coda = client().resource("/people/Coda")
-                .accept(MediaType.APPLICATION_JSON)
-                .get(Person.class);
+        final Person coda = target("/people/Coda").request(MediaType.APPLICATION_JSON).get(Person.class);
 
         assertThat(coda.getName())
                 .isEqualTo("Coda");
@@ -159,11 +166,10 @@ public class JerseyIntegrationTest extends JerseyTest {
     @Test
     public void doesNotFindMissingData() throws Exception {
         try {
-            client().resource("/people/Poof")
-                    .accept(MediaType.APPLICATION_JSON)
+            target("/people/Poof").request(MediaType.APPLICATION_JSON)
                     .get(Person.class);
-            failBecauseExceptionWasNotThrown(UniformInterfaceException.class);
-        } catch (UniformInterfaceException e) {
+            failBecauseExceptionWasNotThrown(WebApplicationException.class);
+        } catch (WebApplicationException e) {
             assertThat(e.getResponse().getStatus())
                     .isEqualTo(404);
         }
@@ -176,10 +182,10 @@ public class JerseyIntegrationTest extends JerseyTest {
         person.setEmail("hank@example.com");
         person.setBirthday(new DateTime(1971, 3, 14, 19, 12, DateTimeZone.UTC));
 
-        client().resource("/people/Hank").type(MediaType.APPLICATION_JSON).put(person);
+        target("/people/Hank").request().put(Entity.entity(person, MediaType.APPLICATION_JSON));
 
-        final Person hank = client().resource("/people/Hank")
-                .accept(MediaType.APPLICATION_JSON)
+        final Person hank = target("/people/Hank")
+                .request(MediaType.APPLICATION_JSON)
                 .get(Person.class);
 
         assertThat(hank.getName())

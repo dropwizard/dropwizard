@@ -1,28 +1,34 @@
 package io.dropwizard.client;
 
 import com.codahale.metrics.MetricRegistry;
-import com.codahale.metrics.httpclient.InstrumentedClientConnManager;
-import com.codahale.metrics.httpclient.InstrumentedHttpClient;
+import com.codahale.metrics.httpclient.HttpClientMetricNameStrategies;
+import com.codahale.metrics.httpclient.InstrumentedHttpClientConnectionManager;
+import com.codahale.metrics.httpclient.InstrumentedHttpRequestExecutor;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.util.Duration;
+import java.io.IOException;
+
+import org.apache.http.ConnectionReuseStrategy;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.HttpRequestRetryHandler;
-import org.apache.http.client.params.AllClientPNames;
-import org.apache.http.client.params.CookiePolicy;
+import org.apache.http.client.config.CookieSpecs;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.config.Registry;
+import org.apache.http.config.RegistryBuilder;
+import org.apache.http.config.SocketConfig;
 import org.apache.http.conn.DnsResolver;
-import org.apache.http.conn.scheme.SchemeRegistry;
+import org.apache.http.conn.socket.ConnectionSocketFactory;
+import org.apache.http.conn.socket.PlainConnectionSocketFactory;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.DefaultConnectionReuseStrategy;
 import org.apache.http.impl.NoConnectionReuseStrategy;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.DefaultConnectionKeepAliveStrategy;
 import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
-import org.apache.http.impl.conn.SchemeRegistryFactory;
 import org.apache.http.impl.conn.SystemDefaultDnsResolver;
-import org.apache.http.params.BasicHttpParams;
 import org.apache.http.protocol.HttpContext;
-
-import java.io.IOException;
 
 /**
  * A convenience class for building {@link HttpClient} instances.
@@ -47,7 +53,11 @@ public class HttpClientBuilder {
     private HttpClientConfiguration configuration = new HttpClientConfiguration();
     private DnsResolver resolver = new SystemDefaultDnsResolver();
     private HttpRequestRetryHandler httpRequestRetryHandler;
-    private SchemeRegistry registry = SchemeRegistryFactory.createSystemDefault();
+    private Registry<ConnectionSocketFactory> registry
+          = RegistryBuilder.<ConnectionSocketFactory>create()
+          .register("http", PlainConnectionSocketFactory.getSocketFactory())
+          .register("https", SSLConnectionSocketFactory.getSocketFactory())
+          .build();
     private CredentialsProvider credentialsProvider = null;
 
     public HttpClientBuilder(MetricRegistry metricRegistry) {
@@ -102,14 +112,14 @@ public class HttpClientBuilder {
         this.httpRequestRetryHandler = httpRequestRetryHandler;
         return this;
     }
-    
+
     /**
-     * Use the given {@link SchemeRegistry} instance.
+     * Use the given {@link Registry} instance.
      *
-     * @param registry    a {@link SchemeRegistry} instance
+     * @param registry
      * @return {@code this}
      */
-    public HttpClientBuilder using(SchemeRegistry registry) {
+    public HttpClientBuilder using(Registry<ConnectionSocketFactory> registry) {
         this.registry = registry;
         return this;
     }
@@ -128,34 +138,67 @@ public class HttpClientBuilder {
     /**
      * Builds the {@link HttpClient}.
      *
-     * @return an {@link HttpClient}
+     * @param name
+     * @return an {@link CloseableHttpClient}
      */
-    public HttpClient build(String name) {
-        final BasicHttpParams params = createHttpParams(name);
-        final InstrumentedClientConnManager manager = createConnectionManager(registry, name);
-        final InstrumentedHttpClient client = new InstrumentedHttpClient(metricRegistry, manager, params, name);
-        setStrategiesForClient(client);
+    public CloseableHttpClient build(String name) {
+        final InstrumentedHttpClientConnectionManager manager = createConnectionManager(registry, name);
+        final CloseableHttpClient client = createClient(manager, name);
 
         return client;
     }
 
     /**
-     * Add strategies to client such as ConnectionReuseStrategy and KeepAliveStrategy Note that this
-     * method mutates the client object by setting the strategies
+     * Map the parameters in HttpClientConfiguration to configuration on a
+     * org.apache.http.impl.client.HttpClientBuilder instance
      *
-     * @param client The InstrumentedHttpClient that should be configured with strategies
+     * @param manager
+     * @param name
+     * @return the configured org.apache.http.impl.client.CloseableClient object
      */
-    protected void setStrategiesForClient(InstrumentedHttpClient client) {
+    protected CloseableHttpClient createClient(final InstrumentedHttpClientConnectionManager manager, final String name) {
+        final String cookiePolicy = configuration.isCookiesEnabled()
+                ? CookieSpecs.BEST_MATCH : CookieSpecs.IGNORE_COOKIES;
+        final Integer timeout = (int) configuration.getTimeout().toMilliseconds();
+        final Integer connectionTimeout = (int) configuration.getConnectionTimeout()
+                .toMilliseconds();
         final long keepAlive = configuration.getKeepAlive().toMilliseconds();
+        final ConnectionReuseStrategy reuseStrategy
+                = keepAlive == 0
+                ? new NoConnectionReuseStrategy()
+                : new DefaultConnectionReuseStrategy();
+        final HttpRequestRetryHandler retryHandler
+                = configuration.getRetries() == 0
+                ? NO_RETRIES
+            : (httpRequestRetryHandler == null ? new DefaultHttpRequestRetryHandler(configuration.getRetries(),
+                                                                                    false) : httpRequestRetryHandler);
 
-        // don't keep alive the HTTP connection and thus don't reuse the TCP socket
-        if (keepAlive == 0) {
-            client.setReuseStrategy(new NoConnectionReuseStrategy());
-        } else {
-            client.setReuseStrategy(new DefaultConnectionReuseStrategy());
-            // either keep alive based on response header Keep-Alive,
+        final RequestConfig requestConfig
+                = RequestConfig.custom().setCookieSpec(cookiePolicy)
+                .setSocketTimeout(timeout)
+                .setConnectTimeout(connectionTimeout)
+                .setStaleConnectionCheckEnabled(false)
+                .build();
+        final SocketConfig socketConfig = SocketConfig.custom()
+                .setTcpNoDelay(true)
+                .setSoTimeout(timeout)
+                .build();
+
+        org.apache.http.impl.client.HttpClientBuilder builder
+                = org.apache.http.impl.client.HttpClientBuilder.create()
+                .setRequestExecutor(new InstrumentedHttpRequestExecutor(metricRegistry,
+                                HttpClientMetricNameStrategies.METHOD_ONLY))
+                .setConnectionManager(manager)
+                .setDefaultRequestConfig(requestConfig)
+                .setDefaultSocketConfig(socketConfig)
+                .setConnectionReuseStrategy(reuseStrategy)
+                .setRetryHandler(retryHandler)
+                .setUserAgent(createUserAgent(name));
+
+        if (keepAlive != 0) {
+        // either keep alive based on response header Keep-Alive,
             // or if the server can keep a persistent connection (-1), then override based on client's configuration
-            client.setKeepAliveStrategy(new DefaultConnectionKeepAliveStrategy() {
+            builder = builder.setKeepAliveStrategy(new DefaultConnectionKeepAliveStrategy() {
                 @Override
                 public long getKeepAliveDuration(HttpResponse response, HttpContext context) {
                     final long duration = super.getKeepAliveDuration(response, context);
@@ -164,47 +207,11 @@ public class HttpClientBuilder {
             });
         }
 
-        if (configuration.getRetries() == 0) {
-            client.setHttpRequestRetryHandler(NO_RETRIES);
-        } else if (httpRequestRetryHandler != null) {
-            client.setHttpRequestRetryHandler(httpRequestRetryHandler);
-        } else {
-            client.setHttpRequestRetryHandler(new DefaultHttpRequestRetryHandler(configuration.getRetries(),
-                                                                                 false));
-        }
-
         if (credentialsProvider != null) {
-            client.setCredentialsProvider(credentialsProvider);
-        }
-    }
-
-    /**
-     * Map the parameters in HttpClientConfiguration to a BasicHttpParams object
-     *
-     * @return a BasicHttpParams object from the HttpClientConfiguration
-     */
-    protected BasicHttpParams createHttpParams(String name) {
-        final BasicHttpParams params = new BasicHttpParams();
-
-        if (configuration.isCookiesEnabled()) {
-            params.setParameter(AllClientPNames.COOKIE_POLICY, CookiePolicy.BEST_MATCH);
-        } else {
-            params.setParameter(AllClientPNames.COOKIE_POLICY, CookiePolicy.IGNORE_COOKIES);
+            builder.setDefaultCredentialsProvider(credentialsProvider);
         }
 
-        params.setParameter(AllClientPNames.USER_AGENT, createUserAgent(name));
-
-        final Integer timeout = (int) configuration.getTimeout().toMilliseconds();
-        params.setParameter(AllClientPNames.SO_TIMEOUT, timeout);
-
-        final Integer connectionTimeout = (int) configuration.getConnectionTimeout()
-                                                             .toMilliseconds();
-        params.setParameter(AllClientPNames.CONNECTION_TIMEOUT, connectionTimeout);
-
-        params.setParameter(AllClientPNames.TCP_NODELAY, Boolean.TRUE);
-        params.setParameter(AllClientPNames.STALE_CONNECTION_CHECK, Boolean.FALSE);
-
-        return params;
+        return builder.build();
     }
 
     /**
@@ -219,23 +226,27 @@ public class HttpClientBuilder {
         return configuration.getUserAgent().or(defaultUserAgent);
     }
 
+
     /**
-     * Create a InstrumentedClientConnManager based on the HttpClientConfiguration. It sets the
-     * maximum connections per route and the maximum total connections that the connection manager
-     * can create
+     * Create a InstrumentedHttpClientConnectionManager based on the
+     * HttpClientConfiguration. It sets the maximum connections per route and
+     * the maximum total connections that the connection manager can create
      *
-     * @param registry the SchemeRegistry
-     * @return a InstrumentedClientConnManger instance
+     * @param registry
+     * @param name
+     * @return a InstrumentedHttpClientConnectionManger instance
      */
-    protected InstrumentedClientConnManager createConnectionManager(SchemeRegistry registry, String name) {
+    protected InstrumentedHttpClientConnectionManager createConnectionManager(Registry<ConnectionSocketFactory> registry,
+            String name) {
         final Duration ttl = configuration.getTimeToLive();
-        final InstrumentedClientConnManager manager =
-                new InstrumentedClientConnManager(metricRegistry,
-                                                  registry,
-                                                  ttl.getQuantity(),
-                                                  ttl.getUnit(),
-                                                  resolver,
-                                                  name);
+        final InstrumentedHttpClientConnectionManager manager
+                = new InstrumentedHttpClientConnectionManager(metricRegistry,
+                        registry,
+                        null, null,
+                        resolver,
+                        ttl.getQuantity(),
+                        ttl.getUnit(),
+                        name);
         manager.setDefaultMaxPerRoute(configuration.getMaxConnectionsPerRoute());
         manager.setMaxTotal(configuration.getMaxConnections());
         return manager;

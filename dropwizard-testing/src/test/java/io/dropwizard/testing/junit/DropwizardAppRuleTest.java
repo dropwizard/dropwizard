@@ -4,24 +4,24 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.io.Resources;
-import com.sun.jersey.api.client.Client;
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
 import io.dropwizard.servlets.tasks.Task;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import org.hibernate.validator.constraints.NotEmpty;
-import org.junit.ClassRule;
-import org.junit.Test;
-
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
 import java.io.File;
 import java.io.PrintWriter;
-
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.MediaType;
 import static org.hamcrest.core.Is.is;
+import org.hibernate.validator.constraints.NotEmpty;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
+import org.junit.ClassRule;
+import org.junit.Test;
 
 public class DropwizardAppRuleTest {
 
@@ -31,9 +31,10 @@ public class DropwizardAppRuleTest {
 
     @Test
     public void canGetExpectedResourceOverHttp() {
-        final String content = new Client().resource("http://localhost:" +
-                                                     RULE.getLocalPort()
-                                                     +"/test").get(String.class);
+        final String content = ClientBuilder.newClient().target("http://localhost:" +
+                                         RULE.getLocalPort()
+                                         +"/test")
+                                         .request().get(String.class);
 
         assertThat(content, is("Yes, it's here"));
     }
@@ -58,9 +59,12 @@ public class DropwizardAppRuleTest {
 
     @Test
     public void canPerformAdminTask() {
-        final String response = new Client().resource("http://localhost:" +
-                RULE.getAdminPort() + "/tasks/hello?name=test_user")
-                .post(String.class);
+        final String response
+                = ClientBuilder.newClient().target("http://localhost:"
+                        + RULE.getAdminPort() + "/tasks/hello?name=test_user")
+                .request()
+                .post(Entity.entity("", MediaType.TEXT_PLAIN), String.class);
+
         assertThat(response, is("Hello has been said to test_user"));
     }
 
