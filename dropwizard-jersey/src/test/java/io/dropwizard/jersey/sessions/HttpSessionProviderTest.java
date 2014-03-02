@@ -1,46 +1,65 @@
 package io.dropwizard.jersey.sessions;
 
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.test.framework.AppDescriptor;
-import com.sun.jersey.test.framework.JerseyTest;
-import com.sun.jersey.test.framework.WebAppDescriptor;
+import static org.fest.assertions.api.Assertions.assertThat;
+import io.dropwizard.jersey.DropwizardResourceConfig;
+import io.dropwizard.jersey.testing.JerseyServletTest;
 import io.dropwizard.logging.LoggingFactory;
-import org.junit.Test;
 
+import java.util.Collections;
+import java.util.Map;
+
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.Invocation;
+import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.NewCookie;
-import java.util.List;
+import javax.ws.rs.core.Response;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class HttpSessionProviderTest extends JerseyTest {
+import org.glassfish.jersey.server.ResourceConfig;
+import org.junit.Test;
+
+import com.codahale.metrics.MetricRegistry;
+
+public class HttpSessionProviderTest extends JerseyServletTest {
     static {
         LoggingFactory.bootstrap();
     }
-
-    @Override
-    protected AppDescriptor configure() {
-        return new WebAppDescriptor.Builder("io.dropwizard.jersey.sessions").build();
+    
+    public HttpSessionProviderTest()
+    {
+        super("io.dropwizard.jersey.DropwizardResourceConfig",
+                Collections.singletonList("io.dropwizard.jersey.sessions.SessionResource"));
     }
 
+    @Override
+    protected Application configure() {
+        ResourceConfig rc = DropwizardResourceConfig.forTesting(new MetricRegistry());
+        rc = rc.register(SessionResource.class);
+        return rc;
+    }
+    
     @Test
     public void passesInHttpSessions() throws Exception {
-        final ClientResponse firstResponse = resource().path("/session/")
-                                                       .type(MediaType.TEXT_PLAIN)
-                                                       .post(ClientResponse.class, "Mr. Peeps");
-        final List<NewCookie> cookies = firstResponse.getCookies();
+        Response firstResponse = target("/session/")
+                .request(MediaType.TEXT_PLAIN)
+                .post(Entity.entity(new String("Mr. Peeps"), MediaType.TEXT_PLAIN));
+
+        final Map<String,NewCookie> cookies = firstResponse.getCookies();
         firstResponse.close();
 
-        final WebResource.Builder builder = resource().path("/session/")
-                                                      .accept(MediaType.TEXT_PLAIN);
+        Invocation.Builder builder =
+                target("/session/")
+                .request()
+                .accept(MediaType.TEXT_PLAIN);
 
-        for (NewCookie cookie : cookies) {
+        for (NewCookie cookie : cookies.values()) {
             builder.cookie(cookie);
         }
 
         final String secondResponse = builder.get(String.class);
         assertThat(secondResponse)
-                .isEqualTo("Mr. Peeps");
+        .isEqualTo("Mr. Peeps");
     }
 }

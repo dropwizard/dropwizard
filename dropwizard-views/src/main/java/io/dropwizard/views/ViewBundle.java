@@ -1,7 +1,8 @@
 package io.dropwizard.views;
 
 import com.google.common.collect.ImmutableSet;
-import com.sun.jersey.spi.service.ServiceFinder;
+import java.util.ServiceLoader;
+
 import io.dropwizard.Bundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
@@ -85,7 +86,7 @@ public class ViewBundle implements Bundle {
     private final Iterable<ViewRenderer> viewRenderers;
 
     public ViewBundle() {
-        this(ServiceFinder.find(ViewRenderer.class));
+        this(ServiceLoader.load(ViewRenderer.class));
     }
 
     public ViewBundle(Iterable<ViewRenderer> viewRenderers) {

@@ -1,28 +1,28 @@
 package io.dropwizard.auth.oauth;
 
-import com.codahale.metrics.MetricRegistry;
-import com.google.common.base.Optional;
-import com.sun.jersey.api.client.UniformInterfaceException;
-import com.sun.jersey.test.framework.AppDescriptor;
-import com.sun.jersey.test.framework.JerseyTest;
-import com.sun.jersey.test.framework.LowLevelAppDescriptor;
+import java.util.Collections;
+
 import io.dropwizard.auth.Auth;
-import io.dropwizard.auth.AuthenticationException;
-import io.dropwizard.auth.Authenticator;
-import io.dropwizard.jersey.DropwizardResourceConfig;
+import io.dropwizard.auth.basic.BasicAuthFactory;
+import io.dropwizard.auth.basic.BasicCredentials;
+import io.dropwizard.auth.basic.BasicAuthProviderTest.ExampleResource;
+import io.dropwizard.jersey.testing.JerseyServletTest;
 import io.dropwizard.logging.LoggingFactory;
+
 import org.junit.Test;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Application;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
 
-public class OAuthProviderTest extends JerseyTest {
+public class OAuthProviderTest extends JerseyServletTest {
     static {
         LoggingFactory.bootstrap();
     }
@@ -35,33 +35,24 @@ public class OAuthProviderTest extends JerseyTest {
             return principal;
         }
     }
+    
+    public OAuthProviderTest()
+    {
+        super("io.dropwizard.auth.oauth.OAuthTestResourceConfig",
+                Collections.<String>emptyList());
+    }
 
     @Override
-    protected AppDescriptor configure() {
-        final DropwizardResourceConfig config = DropwizardResourceConfig.forTesting(new MetricRegistry());
-        final Authenticator<String, String> authenticator = new Authenticator<String, String>() {
-            @Override
-            public Optional<String> authenticate(String credentials) throws AuthenticationException {
-                if ("good-guy".equals(credentials)) {
-                    return Optional.of("good-guy");
-                }
-                if ("bad-guy".equals(credentials)) {
-                    throw new AuthenticationException("CRAP", new RuntimeException(""));
-                }
-                return Optional.absent();
-            }
-        };
-        config.getSingletons().add(new OAuthProvider<>(authenticator, "realm"));
-        config.getSingletons().add(new ExampleResource());
-        return new LowLevelAppDescriptor.Builder(config).build();
+    protected Application configure() {
+        return new OAuthTestResourceConfig();
     }
 
     @Test
     public void respondsToMissingCredentialsWith401() throws Exception {
         try {
-            client().resource("/test").get(String.class);
-            failBecauseExceptionWasNotThrown(UniformInterfaceException.class);
-        } catch (UniformInterfaceException e) {
+            target("/test").request().get(String.class);
+            failBecauseExceptionWasNotThrown(WebApplicationException.class);
+        } catch (WebApplicationException e) {
             assertThat(e.getResponse().getStatus())
                     .isEqualTo(401);
 
@@ -72,20 +63,20 @@ public class OAuthProviderTest extends JerseyTest {
 
     @Test
     public void transformsCredentialsToPrincipals() throws Exception {
-        assertThat(client().resource("/test")
-                           .header(HttpHeaders.AUTHORIZATION, "Bearer good-guy")
-                           .get(String.class))
+        assertThat(target("/test").request()
+                .header(HttpHeaders.AUTHORIZATION, "Bearer good-guy")
+                .get(String.class))
                 .isEqualTo("good-guy");
     }
 
     @Test
     public void respondsToNonBasicCredentialsWith401() throws Exception {
         try {
-            client().resource("/test")
-                    .header(HttpHeaders.AUTHORIZATION, "Derp WHEE")
-                    .get(String.class);
-            failBecauseExceptionWasNotThrown(UniformInterfaceException.class);
-        } catch (UniformInterfaceException e) {
+            target("/test").request()
+            .header(HttpHeaders.AUTHORIZATION, "Derp WHEE")
+            .get(String.class);
+            failBecauseExceptionWasNotThrown(WebApplicationException.class);
+        } catch (WebApplicationException e) {
             assertThat(e.getResponse().getStatus())
                     .isEqualTo(401);
 
@@ -97,11 +88,11 @@ public class OAuthProviderTest extends JerseyTest {
     @Test
     public void respondsToExceptionsWith500() throws Exception {
         try {
-            client().resource("/test")
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer bad-guy")
-                    .get(String.class);
-            failBecauseExceptionWasNotThrown(UniformInterfaceException.class);
-        } catch (UniformInterfaceException e) {
+            target("/test").request()
+            .header(HttpHeaders.AUTHORIZATION, "Bearer bad-guy")
+            .get(String.class);
+            failBecauseExceptionWasNotThrown(WebApplicationException.class);
+        } catch (WebApplicationException e) {
             assertThat(e.getResponse().getStatus())
                     .isEqualTo(500);
         }

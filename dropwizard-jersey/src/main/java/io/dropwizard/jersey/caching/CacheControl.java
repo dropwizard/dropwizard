@@ -3,12 +3,14 @@ package io.dropwizard.jersey.caching;
 import java.lang.annotation.*;
 import java.util.concurrent.TimeUnit;
 
+import javax.ws.rs.NameBinding;
+
 /**
  * An annotation which adds a constant {@code Cache-Control} header to the response produced by
  * the annotated method.
  */
 @Documented
-@Target(ElementType.METHOD)
+@Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface CacheControl {
     /**

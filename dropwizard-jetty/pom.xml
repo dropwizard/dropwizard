@@ -18,7 +18,7 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.codahale.metrics</groupId>
+            <groupId>io.dropwizard.metrics</groupId>
             <artifactId>metrics-jetty9</artifactId>
             <version>${metrics3.version}</version>
             <exclusions>

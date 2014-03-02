@@ -6,8 +6,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Objects;
 import com.google.common.reflect.TypeToken;
-import com.sun.jersey.core.util.MultivaluedMapImpl;
-import com.sun.jersey.core.util.StringKeyObjectValueIgnoreCaseMultivaluedMap;
+import javax.ws.rs.core.MultivaluedHashMap;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.validation.ConstraintViolations;
 import io.dropwizard.validation.Validated;
@@ -151,7 +150,7 @@ public class JacksonMessageBodyProviderTest {
                                              Example.class,
                                              NONE,
                                              MediaType.APPLICATION_JSON_TYPE,
-                                             new MultivaluedMapImpl(),
+                                             new MultivaluedHashMap<String,String>(),
                                              entity);
 
         assertThat(obj)
@@ -174,7 +173,7 @@ public class JacksonMessageBodyProviderTest {
             PartialExample.class,
             new Annotation[]{valid},
             MediaType.APPLICATION_JSON_TYPE,
-            new MultivaluedMapImpl(),
+            new MultivaluedHashMap<String,String>(),
             entity);
 
         assertThat(obj)
@@ -197,7 +196,7 @@ public class JacksonMessageBodyProviderTest {
             PartialExample.class,
             new Annotation[]{valid},
             MediaType.APPLICATION_JSON_TYPE,
-            new MultivaluedMapImpl(),
+            new MultivaluedHashMap<String,String>(),
             entity);
 
         assertThat(obj)
@@ -221,7 +220,7 @@ public class JacksonMessageBodyProviderTest {
                               PartialExample.class,
                               new Annotation[]{ valid },
                               MediaType.APPLICATION_JSON_TYPE,
-                              new MultivaluedMapImpl(),
+                              new MultivaluedHashMap<String,String>(),
                               entity);
             failBecauseExceptionWasNotThrown(ConstraintViolationException.class);
         } catch(ConstraintViolationException e) {
@@ -242,7 +241,7 @@ public class JacksonMessageBodyProviderTest {
                                              Example.class,
                                              new Annotation[]{ valid },
                                              MediaType.APPLICATION_JSON_TYPE,
-                                             new MultivaluedMapImpl(),
+                                             new MultivaluedHashMap<String,String>(),
                                              entity);
 
         assertThat(obj)
@@ -265,7 +264,7 @@ public class JacksonMessageBodyProviderTest {
                               Example.class,
                               new Annotation[]{ valid },
                               MediaType.APPLICATION_JSON_TYPE,
-                              new MultivaluedMapImpl(),
+                              new MultivaluedHashMap<String,String>(),
                               entity);
             failBecauseExceptionWasNotThrown(ConstraintViolationException.class);
         } catch (ConstraintViolationException e) {
@@ -284,7 +283,7 @@ public class JacksonMessageBodyProviderTest {
                               Example.class,
                               NONE,
                               MediaType.APPLICATION_JSON_TYPE,
-                              new MultivaluedMapImpl(),
+                              new MultivaluedHashMap<String,String>(),
                               entity);
             failBecauseExceptionWasNotThrown(WebApplicationException.class);
         } catch (JsonProcessingException e) {
@@ -306,7 +305,7 @@ public class JacksonMessageBodyProviderTest {
                          Example.class,
                          NONE,
                          MediaType.APPLICATION_JSON_TYPE,
-                         new StringKeyObjectValueIgnoreCaseMultivaluedMap(),
+                         new MultivaluedHashMap<String,Object>(),
                          output);
 
         assertThat(output.toString())
@@ -323,7 +322,7 @@ public class JacksonMessageBodyProviderTest {
                 Example.class,
                 new Annotation[]{valid},
                 MediaType.APPLICATION_JSON_TYPE,
-                new MultivaluedMapImpl(),
+                new MultivaluedHashMap<String,String>(),
                 null);
     }
 

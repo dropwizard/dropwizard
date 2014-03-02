@@ -1,9 +1,10 @@
 package io.dropwizard.jersey;
 
 import com.codahale.metrics.MetricRegistry;
-import com.sun.jersey.core.spi.scanning.PackageNamesScanner;
 import io.dropwizard.jersey.dummy.DummyResource;
 import io.dropwizard.logging.LoggingFactory;
+
+import org.glassfish.jersey.server.ResourceConfig;
 import org.junit.Test;
 
 import javax.ws.rs.GET;
@@ -19,19 +20,18 @@ public class DropwizardResourceConfigTest {
 
     @Test
     public void findsResourceClassInPackage() {
-        final DropwizardResourceConfig rc = DropwizardResourceConfig.forTesting(new MetricRegistry());
-        rc.init(new PackageNamesScanner(new String[] { DummyResource.class.getPackage().getName() }));
+        ResourceConfig rc = DropwizardResourceConfig.forTesting(new MetricRegistry());
+        rc = rc.packages(DummyResource.class.getPackage().getName());
 
-        assertThat(rc.getRootResourceClasses())
-                .containsOnly(DummyResource.class);
+        assertThat(rc.getClasses()).contains(DummyResource.class);
     }
 
     @Test
     public void findsResourceClassesInPackageAndSubpackage() {
-        final DropwizardResourceConfig rc = DropwizardResourceConfig.forTesting(new MetricRegistry());
-        rc.init(new PackageNamesScanner(new String[] { getClass().getPackage().getName() }));
+        ResourceConfig rc = DropwizardResourceConfig.forTesting(new MetricRegistry());
+        rc = rc.packages(getClass().getPackage().getName());
 
-        assertThat(rc.getRootResourceClasses())
+        assertThat(rc.getClasses())
                 .contains
                         (DummyResource.class, TestResource.class);
     }

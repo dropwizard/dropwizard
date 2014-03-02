@@ -1,29 +1,27 @@
 package io.dropwizard.auth.basic;
 
-import com.codahale.metrics.MetricRegistry;
-import com.google.common.base.Optional;
-import com.sun.jersey.api.client.UniformInterfaceException;
-import com.sun.jersey.test.framework.AppDescriptor;
-import com.sun.jersey.test.framework.JerseyTest;
-import com.sun.jersey.test.framework.LowLevelAppDescriptor;
+import static org.fest.assertions.api.Assertions.assertThat;
+import static org.fest.assertions.api.Assertions.failBecauseExceptionWasNotThrown;
 import io.dropwizard.auth.Auth;
-import io.dropwizard.auth.AuthenticationException;
-import io.dropwizard.auth.Authenticator;
-import io.dropwizard.jersey.DropwizardResourceConfig;
+import io.dropwizard.jersey.testing.JerseyServletTest;
 import io.dropwizard.logging.LoggingFactory;
-import org.junit.Test;
+
+import java.util.Collections;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Application;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
+import org.junit.Test;
 
-
-public class BasicAuthProviderTest extends JerseyTest {
+public class BasicAuthProviderTest extends JerseyServletTest {
     static {
         LoggingFactory.bootstrap();
     }
@@ -36,34 +34,24 @@ public class BasicAuthProviderTest extends JerseyTest {
             return principal;
         }
     }
+    
+    public BasicAuthProviderTest()
+    {
+        super("io.dropwizard.auth.basic.BasicAuthTestResourceConfig",
+                Collections.<String>emptyList());
+    }
 
     @Override
-    protected AppDescriptor configure() {
-        final DropwizardResourceConfig config = DropwizardResourceConfig.forTesting(new MetricRegistry());
-        final Authenticator<BasicCredentials, String> authenticator = new Authenticator<BasicCredentials, String>() {
-            @Override
-            public Optional<String> authenticate(BasicCredentials credentials) throws AuthenticationException {
-                if ("good-guy".equals(credentials.getUsername()) &&
-                        "secret".equals(credentials.getPassword())) {
-                    return Optional.of("good-guy");
-                }
-                if ("bad-guy".equals(credentials.getUsername())) {
-                    throw new AuthenticationException("CRAP");
-                }
-                return Optional.absent();
-            }
-        };
-        config.getSingletons().add(new BasicAuthProvider<>(authenticator, "realm"));
-        config.getSingletons().add(new ExampleResource());
-        return new LowLevelAppDescriptor.Builder(config).build();
+    protected Application configure() {
+        return new BasicAuthTestResourceConfig();
     }
 
     @Test
     public void respondsToMissingCredentialsWith401() throws Exception {
         try {
-            client().resource("/test").get(String.class);
-            failBecauseExceptionWasNotThrown(UniformInterfaceException.class);
-        } catch (UniformInterfaceException e) {
+            target("/test").request().get(String.class);
+            failBecauseExceptionWasNotThrown(WebApplicationException.class);
+        } catch (WebApplicationException e) {
             assertThat(e.getResponse().getStatus())
                     .isEqualTo(401);
 
@@ -74,20 +62,20 @@ public class BasicAuthProviderTest extends JerseyTest {
 
     @Test
     public void transformsCredentialsToPrincipals() throws Exception {
-        assertThat(client().resource("/test")
-                           .header(HttpHeaders.AUTHORIZATION, "Basic Z29vZC1ndXk6c2VjcmV0")
-                           .get(String.class))
+        assertThat(target("/test").request()
+                .header(HttpHeaders.AUTHORIZATION, "Basic Z29vZC1ndXk6c2VjcmV0")
+                .get(String.class))
                 .isEqualTo("good-guy");
     }
 
     @Test
-    public void respondsToNonBasicCredentialsWith401() throws Exception {
+    public void respondsToNonBasicCredentialsWith401() throws Exception {        
         try {
-            client().resource("/test")
-                    .header(HttpHeaders.AUTHORIZATION, "Derp Z29vZC1ndXk6c2VjcmV0")
-                    .get(String.class);
-            failBecauseExceptionWasNotThrown(UniformInterfaceException.class);
-        } catch (UniformInterfaceException e) {
+            target("/test").request()
+                .header(HttpHeaders.AUTHORIZATION, "Derp Z29vZC1ndXk6c2VjcmV0")
+                .get(String.class);
+            failBecauseExceptionWasNotThrown(WebApplicationException.class);
+        } catch (WebApplicationException e) {
             assertThat(e.getResponse().getStatus())
                     .isEqualTo(401);
 
@@ -99,11 +87,12 @@ public class BasicAuthProviderTest extends JerseyTest {
     @Test
     public void respondsToExceptionsWith500() throws Exception {
         try {
-            client().resource("/test")
-                    .header(HttpHeaders.AUTHORIZATION, "Basic YmFkLWd1eTpzZWNyZXQ=")
-                    .get(String.class);
-            failBecauseExceptionWasNotThrown(UniformInterfaceException.class);
-        } catch (UniformInterfaceException e) {
+            target("/test").request()
+                .header(HttpHeaders.AUTHORIZATION, "Basic YmFkLWd1eTpzZWNyZXQ=")
+                .get(String.class);
+            
+            failBecauseExceptionWasNotThrown(WebApplicationException.class);
+        } catch (WebApplicationException e) {
             assertThat(e.getResponse().getStatus())
                     .isEqualTo(500);
         }

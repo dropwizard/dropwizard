@@ -4,18 +4,21 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.io.Resources;
-import com.sun.jersey.api.client.Client;
+
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
 import io.dropwizard.servlets.tasks.Task;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+
 import org.hibernate.validator.constraints.NotEmpty;
 import org.junit.ClassRule;
 import org.junit.Test;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.client.ClientBuilder;
+
 import java.io.File;
 import java.io.PrintWriter;
 
@@ -31,9 +34,10 @@ public class DropwizardAppRuleTest {
 
     @Test
     public void canGetExpectedResourceOverHttp() {
-        final String content = new Client().resource("http://localhost:" +
-                                                     RULE.getLocalPort()
-                                                     +"/test").get(String.class);
+        final String content = ClientBuilder.newClient().target("http://localhost:" +
+                                         RULE.getLocalPort()
+                                         +"/test")
+                                         .request().get(String.class);
 
         assertThat(content, is("Yes, it's here"));
     }

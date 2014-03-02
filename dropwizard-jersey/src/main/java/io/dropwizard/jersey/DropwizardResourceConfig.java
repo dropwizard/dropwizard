@@ -1,34 +1,34 @@
 package io.dropwizard.jersey;
 
+import io.dropwizard.jersey.caching.CacheControlledResponseFeature;
+import io.dropwizard.jersey.errors.LoggingExceptionMapper;
+import io.dropwizard.jersey.guava.OptionalResourceMethodResponseWriter;
+import io.dropwizard.jersey.jackson.JsonProcessingExceptionMapper;
+import io.dropwizard.jersey.sessions.SessionFactoryProvider;
+import io.dropwizard.jersey.validation.ConstraintViolationExceptionMapper;
+
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import java.util.List;
+
+import javax.ws.rs.Path;
+import javax.ws.rs.ext.Provider;
+
+import org.glassfish.jersey.server.ResourceConfig;
+import org.glassfish.jersey.server.ServerProperties;
+import org.glassfish.jersey.server.model.Resource;
+import org.glassfish.jersey.server.model.ResourceMethod;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.codahale.metrics.MetricRegistry;
-import com.codahale.metrics.jersey.InstrumentedResourceMethodDispatchAdapter;
+import com.codahale.metrics.jersey2.InstrumentedResourceMethodApplicationListener;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
-import com.sun.jersey.api.core.ResourceConfig;
-import com.sun.jersey.api.core.ScanningResourceConfig;
-import com.sun.jersey.api.model.AbstractResource;
-import com.sun.jersey.api.model.AbstractResourceMethod;
-import com.sun.jersey.api.model.AbstractSubResourceLocator;
-import com.sun.jersey.api.model.AbstractSubResourceMethod;
-import com.sun.jersey.server.impl.modelapi.annotation.IntrospectionModeller;
-import io.dropwizard.jersey.caching.CacheControlledResourceMethodDispatchAdapter;
-import io.dropwizard.jersey.errors.LoggingExceptionMapper;
-import io.dropwizard.jersey.guava.OptionalQueryParamInjectableProvider;
-import io.dropwizard.jersey.guava.OptionalResourceMethodDispatchAdapter;
-import io.dropwizard.jersey.jackson.JsonProcessingExceptionMapper;
-import io.dropwizard.jersey.validation.ConstraintViolationExceptionMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import javax.ws.rs.Path;
-import javax.ws.rs.ext.Provider;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-public class DropwizardResourceConfig extends ScanningResourceConfig {
+public class DropwizardResourceConfig extends ResourceConfig {
     private static final String NEWLINE = String.format("%n");
     private static final Logger LOGGER = LoggerFactory.getLogger(DropwizardResourceConfig.class);
     private String urlPattern;
@@ -40,30 +40,39 @@ public class DropwizardResourceConfig extends ScanningResourceConfig {
     public DropwizardResourceConfig(MetricRegistry metricRegistry) {
         this(false, metricRegistry);
     }
+    
+    public DropwizardResourceConfig() {
+        this(true, null);
+    }
 
     private DropwizardResourceConfig(boolean testOnly, MetricRegistry metricRegistry) {
         super();
+        
+        if (metricRegistry == null)
+            metricRegistry = new MetricRegistry();
+        
         urlPattern = "/*";
-        getFeatures().put(FEATURE_DISABLE_WADL, Boolean.TRUE);
+        
+        property(ServerProperties.WADL_FEATURE_DISABLE, Boolean.TRUE);
         if (!testOnly) {
             // create a subclass to pin it to Throwable
-            getSingletons().add(new LoggingExceptionMapper<Throwable>() {});
-            getSingletons().add(new ConstraintViolationExceptionMapper());
-            getSingletons().add(new JsonProcessingExceptionMapper());
+            register(new LoggingExceptionMapper<Throwable>() {});
+            register(new ConstraintViolationExceptionMapper());
+            register(new JsonProcessingExceptionMapper());
         }
-        getSingletons().add(new InstrumentedResourceMethodDispatchAdapter(metricRegistry));
-        getClasses().add(CacheControlledResourceMethodDispatchAdapter.class);
-        getClasses().add(OptionalResourceMethodDispatchAdapter.class);
-        getClasses().add(OptionalQueryParamInjectableProvider.class);
+        register(new InstrumentedResourceMethodApplicationListener(metricRegistry));
+        register(CacheControlledResponseFeature.class);
+        register(OptionalResourceMethodResponseWriter.class);
+        register (new SessionFactoryProvider.Binder());
     }
 
-    @Override
-    public void validate() {
-        super.validate();
-
-        LOGGER.debug("resources = {}", getResources());
-        LOGGER.debug("providers = {}", getProviders());
-        LOGGER.info(getEndpointsInfo());;
+    // TODO - figure out if we need to have this special method or can instead just override 
+    // some base class method like the previous version of Dropwizard, which overrode 
+    // ResourceConfig.validate which doesn't exists in Jersey 2.x
+    public void logComponents() {
+        logResources();
+        logProviders();
+        logEndpoints();
     }
 
     public String getUrlPattern() {
@@ -89,15 +98,7 @@ public class DropwizardResourceConfig extends ScanningResourceConfig {
             }
         }
 
-        for (Object o : getExplicitRootResources().values()) {
-            if (o instanceof Class) {
-                builder.add(((Class<?>)o).getCanonicalName());
-            } else {
-                builder.add(o.getClass().getCanonicalName());
-            }
-        }
-
-        return builder.build();
+        LOGGER.debug("resources = {}", builder.build());
     }
 
     private Set<String> getProviders() {
@@ -148,59 +149,83 @@ public class DropwizardResourceConfig extends ScanningResourceConfig {
                 msg.append(line).append(NEWLINE);
             }
         }
-        for (Map.Entry<String, Object> entry : getExplicitRootResources().entrySet()) {
-            final Class<?> klass  = entry.getValue() instanceof Class ?
-                    (Class<?>) entry.getValue() :
-                    entry.getValue().getClass();
-            final AbstractResource resource =
-                    new AbstractResource(entry.getKey(),
-                                         IntrospectionModeller.createResource(klass));
-
-            final List<String> endpoints = Lists.newArrayList();
-            populateEndpoints(endpoints, rootPath, klass, false, resource);
-
-            for (String line : Ordering.natural().sortedCopy(endpoints)) {
-                msg.append(line).append(NEWLINE);
-            }
-        }
 
         return msg.toString();
     }
 
     private void populateEndpoints(List<String> endpoints, String basePath, Class<?> klass,
                                    boolean isLocator) {
-        populateEndpoints(endpoints, basePath, klass, isLocator, IntrospectionModeller.createResource(klass));
+        populateEndpoints(endpoints, basePath, klass, isLocator, buildResource(klass));
     }
 
     private void populateEndpoints(List<String> endpoints, String basePath, Class<?> klass,
-                                   boolean isLocator, AbstractResource resource) {
+                                   boolean isLocator, Resource resource) {
         if (!isLocator) {
-            basePath = normalizePath(basePath, resource.getPath().getValue());
+            basePath = normalizePath(basePath, resource.getPath());
         }
 
-        for (AbstractResourceMethod method : resource.getResourceMethods()) {
+        for (ResourceMethod method : resource.getResourceMethods()) {
             endpoints.add(formatEndpoint(method.getHttpMethod(), basePath, klass));
         }
-
-        for (AbstractSubResourceMethod method : resource.getSubResourceMethods()) {
-            final String path = normalizePath(basePath, method.getPath().getValue());
-            endpoints.add(formatEndpoint(method.getHttpMethod(), path, klass));
-        }
-
-        for (AbstractSubResourceLocator locator : resource.getSubResourceLocators()) {
-            final String path = normalizePath(basePath, locator.getPath().getValue());
-            populateEndpoints(endpoints, path, locator.getMethod().getReturnType(), true);
+        
+        for (Resource childResource : resource.getChildResources())
+        {
+            for (ResourceMethod method : childResource.getResourceMethods())
+            {
+                if (method.getType() == ResourceMethod.JaxrsType.RESOURCE_METHOD)
+                {
+                    final String path = normalizePath(basePath, childResource.getPath());
+                    endpoints.add(formatEndpoint(method.getHttpMethod(), path, klass));
+                }
+                else if (method.getType() == ResourceMethod.JaxrsType.SUB_RESOURCE_LOCATOR) {
+                    final String path = normalizePath(basePath, childResource.getPath());
+                    populateEndpoints(endpoints, path, method.getInvocable().getRawResponseType(), true);
+                }
+            }
         }
     }
 
-    private String formatEndpoint(String method, String path, Class<?> klass) {
+    private static String formatEndpoint(String method, String path, Class<?> klass) {
         return String.format("    %-7s %s (%s)", method, path, klass.getCanonicalName());
     }
 
-    private String normalizePath(String basePath, String path) {
+    private static String normalizePath(String basePath, String path) {
         if (basePath.endsWith("/")) {
             return path.startsWith("/") ? basePath + path.substring(1) : basePath + path;
         }
         return path.startsWith("/") ? basePath + path : basePath + "/" + path;
+    }
+    
+    // TODO - we only had to do this because the nice Jersey folks made IntrospectionModeller 
+    // package private. Would be nice to not have to rely on reflection
+    static private Resource buildResource (Class<?> klass)
+    {
+        try
+        {
+            Class<?> modellerClass = null;
+            modellerClass = Class.forName("org.glassfish.jersey.server.model.IntrospectionModeller");
+ 
+            Constructor<?> modellerConstructor = null;
+            modellerConstructor = modellerClass.getDeclaredConstructor(Class.class, Boolean.TYPE);
+            // ugh - forcibly set the constructor to be accessible
+            modellerConstructor.setAccessible(true);
+        
+            Object modeller = null;
+            modeller = modellerConstructor.newInstance(klass, Boolean.FALSE);
+
+            Method builderMethod = null;
+            builderMethod = modellerClass.getDeclaredMethod("createResourceBuilder");
+            // ugh - forcibly set the method to be accessible
+            builderMethod.setAccessible(true);
+        
+            Resource.Builder builder = null;
+            builder = (Resource.Builder) builderMethod.invoke(modeller);
+            
+            return builder.build();
+        }
+        catch (Exception e)
+        {
+            throw new RuntimeException("Error trying to use class org.glassfish.jersey.server.model.IntrospectionModeller via reflection", e);
+        }
     }
 }
