@@ -24,6 +24,14 @@ public class CachingAuthenticator<C, P> implements Authenticator<C, P> {
     private final LoadingCache<C, Optional<P>> cache;
     private final Meter cacheMisses;
     private final Timer gets;
+    
+    public static <C1, P1> 
+        CachingAuthenticator<C1, P1> wrap(MetricRegistry metricRegistry,
+                                          Authenticator<C1, P1> authenticator,
+                                          CacheBuilderSpec cacheSpec)
+    {
+        return new CachingAuthenticator<> (metricRegistry, authenticator, cacheSpec);
+    }
 
     /**
      * Creates a new cached authenticator.
