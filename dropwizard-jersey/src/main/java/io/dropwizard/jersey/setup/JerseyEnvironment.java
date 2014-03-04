@@ -107,7 +107,7 @@ public class JerseyEnvironment {
         config.setUrlPattern(urlPattern);
     }
 
-    public DropwizardResourceConfig getResourceConfig() {
+    public ResourceConfig getResourceConfig() {
         return config;
     }
 }

@@ -18,6 +18,10 @@ import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.ServerProperties;
 import org.glassfish.jersey.server.model.Resource;
 import org.glassfish.jersey.server.model.ResourceMethod;
+import org.glassfish.jersey.server.monitoring.ApplicationEvent;
+import org.glassfish.jersey.server.monitoring.ApplicationEventListener;
+import org.glassfish.jersey.server.monitoring.RequestEvent;
+import org.glassfish.jersey.server.monitoring.RequestEventListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,6 +36,29 @@ public class DropwizardResourceConfig extends ResourceConfig {
     private static final String NEWLINE = String.format("%n");
     private static final Logger LOGGER = LoggerFactory.getLogger(DropwizardResourceConfig.class);
     private String urlPattern;
+    
+    private static class ComponentLoggingListener implements ApplicationEventListener
+    {
+        final DropwizardResourceConfig config;
+        
+        public ComponentLoggingListener(DropwizardResourceConfig config)
+        {
+            this.config = config;
+        }
+
+        @Override
+        public void onEvent(ApplicationEvent event) {
+           if (event.getType() == ApplicationEvent.Type.INITIALIZATION_APP_FINISHED)
+               this.config.logComponents();
+            
+        }
+
+        @Override
+        public RequestEventListener onRequest(RequestEvent requestEvent) {
+            return null;
+        }
+        
+    }
 
     public static DropwizardResourceConfig forTesting(MetricRegistry metricRegistry) {
         return new DropwizardResourceConfig(true, metricRegistry);
@@ -59,6 +86,7 @@ public class DropwizardResourceConfig extends ResourceConfig {
             register(new LoggingExceptionMapper<Throwable>() {});
             register(new ConstraintViolationExceptionMapper());
             register(new JsonProcessingExceptionMapper());
+            register(new ComponentLoggingListener(this));
         }
         register(new InstrumentedResourceMethodApplicationListener(metricRegistry));
         register(CacheControlledResponseFeature.class);
@@ -66,9 +94,6 @@ public class DropwizardResourceConfig extends ResourceConfig {
         register (new SessionFactoryProvider.Binder());
     }
 
-    // TODO - figure out if we need to have this special method or can instead just override 
-    // some base class method like the previous version of Dropwizard, which overrode 
-    // ResourceConfig.validate which doesn't exists in Jersey 2.x
     public void logComponents() {
         logResources();
         logProviders();

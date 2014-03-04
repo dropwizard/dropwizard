@@ -41,12 +41,6 @@ public class ServerCommand<T extends Configuration> extends EnvironmentCommand<T
             server.addLifeCycleListener(new LifeCycleListener());
             cleanupAsynchronously();
             server.start();
-            // TODO - figure out if we need to have this special method we call here or can instead 
-            // just override some base class method like the previous version of Dropwizard, which 
-            // overrode ResourceConfig.validate in DropwizadResourceConfig which doesn't exists in 
-            // Jersey 2.x
-            if (environment.jersey() != null)
-                environment.jersey().getResourceConfig().logComponents ();
         } catch (Exception e) {
             LOGGER.error("Unable to start server, shutting down", e);
             server.stop();
