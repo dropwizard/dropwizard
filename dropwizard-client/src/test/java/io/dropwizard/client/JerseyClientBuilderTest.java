@@ -6,6 +6,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import io.dropwizard.jersey.gzip.ConfiguredGZipEncoder;
+import io.dropwizard.jersey.gzip.GZipDecoder;
 import io.dropwizard.jersey.jackson.JacksonMessageBodyProvider;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
 import io.dropwizard.setup.Environment;
@@ -29,6 +31,7 @@ import javax.ws.rs.ext.Provider;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
+import jersey.repackaged.com.google.common.collect.Iterables;
 
 import org.glassfish.jersey.apache.connector.ApacheConnectorProvider;
 import org.glassfish.jersey.client.ClientConfig;
@@ -190,8 +193,12 @@ public class JerseyClientBuilderTest {
         final Client client = builder.using(configuration)
                 .using(executorService,
                         objectMapper).build("test");
-        assertThat(client.getConfiguration().getClasses())
-                .contains(GZipEncoder.class);
+        assertThat(Iterables.filter(client.getConfiguration()
+                .getInstances(), GZipDecoder.class)
+                .iterator().hasNext()).isTrue();
+        assertThat(Iterables.filter(client.getConfiguration()
+                .getInstances(), ConfiguredGZipEncoder.class)
+                .iterator().hasNext()).isTrue();
     }
 
     @Test
@@ -203,8 +210,12 @@ public class JerseyClientBuilderTest {
                 .using(executorService,
                         objectMapper).build("test");
 
-        assertThat(client.getConfiguration().getClasses())
-                .doesNotContain(GZipEncoder.class);
+        assertThat(Iterables.filter(client.getConfiguration()
+                .getInstances(), GZipDecoder.class)
+                .iterator().hasNext()).isFalse();
+        assertThat(Iterables.filter(client.getConfiguration()
+                .getInstances(), ConfiguredGZipEncoder.class)
+                .iterator().hasNext()).isFalse();
     }
 
     @Test

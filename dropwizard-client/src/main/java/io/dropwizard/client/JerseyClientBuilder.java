@@ -20,6 +20,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import io.dropwizard.jersey.gzip.ConfiguredGZipEncoder;
+import io.dropwizard.jersey.gzip.GZipDecoder;
 import io.dropwizard.jersey.jackson.JacksonMessageBodyProvider;
 import io.dropwizard.setup.Environment;
 
@@ -226,7 +228,8 @@ public class JerseyClientBuilder {
         final Client client = ClientBuilder.newClient(buildConfig(threadPool, objectMapper));
 
         if (configuration.isGzipEnabled()) {
-            client.register(GZipEncoder.class);
+            client.register(new GZipDecoder());
+            client.register(new ConfiguredGZipEncoder(configuration.isGzipEnabledForRequests()));
         }
 
         return client;
