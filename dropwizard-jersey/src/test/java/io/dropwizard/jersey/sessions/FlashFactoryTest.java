@@ -22,44 +22,58 @@ import org.junit.Test;
 
 import com.codahale.metrics.MetricRegistry;
 
-public class HttpSessionProviderTest extends JerseyServletTest {
+public class FlashFactoryTest extends JerseyServletTest {
     static {
         LoggingFactory.bootstrap();
     }
     
-    public HttpSessionProviderTest()
+    public FlashFactoryTest()
     {
         super("io.dropwizard.jersey.DropwizardResourceConfig",
-                Collections.singletonList("io.dropwizard.jersey.sessions.SessionResource"));
+                Collections.singletonList("io.dropwizard.jersey.sessions.FlashResource"));
     }
 
     @Override
     protected Application configure() {
         ResourceConfig rc = DropwizardResourceConfig.forTesting(new MetricRegistry());
-        rc = rc.register(SessionResource.class);
+        rc = rc.register(FlashResource.class);
         return rc;
     }
-    
+
     @Test
     public void passesInHttpSessions() throws Exception {
-        Response firstResponse = target("/session/")
-                .request(MediaType.TEXT_PLAIN)
-                .post(Entity.entity(new String("Mr. Peeps"), MediaType.TEXT_PLAIN));
+        Response firstResponse = target("/flash")
+        .request(MediaType.TEXT_PLAIN)
+        .post(Entity.entity(new String("Mr. Peeps"), MediaType.TEXT_PLAIN));
 
         final Map<String,NewCookie> cookies = firstResponse.getCookies();
         firstResponse.close();
 
         Invocation.Builder builder =
-                target("/session/")
+                target("/flash")
                 .request()
                 .accept(MediaType.TEXT_PLAIN);
 
         for (NewCookie cookie : cookies.values()) {
-            builder.cookie(cookie);
+            builder = builder.cookie(cookie);
         }
 
         final String secondResponse = builder.get(String.class);
         assertThat(secondResponse)
-        .isEqualTo("Mr. Peeps");
+                .isEqualTo("Mr. Peeps");
+
+        Invocation.Builder anotherBuilder =
+                target("/flash")
+                .request()
+                .accept(MediaType.TEXT_PLAIN);
+
+        for (NewCookie cookie : cookies.values()) {
+            anotherBuilder = anotherBuilder.cookie(cookie);
+        }
+
+        final String thirdResponse = anotherBuilder.get(String.class);
+        assertThat(thirdResponse)
+                .isEqualTo("null");
     }
 }
+

@@ -15,7 +15,7 @@ import com.codahale.metrics.MetricRegistry;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
 
-public class OptionalResourceMethodDispatchAdapterTest extends JerseyTest {
+public class OptionalResourceMethodResponseWriterTest extends JerseyTest {
     static {
         LoggingFactory.bootstrap();
     }

@@ -16,7 +16,7 @@ import org.junit.Test;
 
 import com.codahale.metrics.MetricRegistry;
 
-public class CacheControlledResourceMethodDispatchAdapterTest extends JerseyTest {
+public class CacheControlledResponseFeatureTest extends JerseyTest {
     static {
         LoggingFactory.bootstrap();
     }
