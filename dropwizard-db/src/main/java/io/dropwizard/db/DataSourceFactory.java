@@ -334,8 +334,6 @@ public class DataSourceFactory {
 
     private boolean checkConnectionOnReturn = false;
 
-    private boolean defaultReadOnly = false;
-
     private boolean autoCommentsEnabled = true;
 
     @NotNull
@@ -456,14 +454,16 @@ public class DataSourceFactory {
         this.checkConnectionWhileIdle = checkConnectionWhileIdle;
     }
 
+    @Deprecated
     @JsonProperty
     public boolean isDefaultReadOnly() {
-        return defaultReadOnly;
+        return Boolean.TRUE.equals(readOnlyByDefault);
     }
 
+    @Deprecated
     @JsonProperty
     public void setDefaultReadOnly(boolean defaultReadOnly) {
-        this.defaultReadOnly = defaultReadOnly;
+        readOnlyByDefault = Boolean.valueOf(defaultReadOnly);
     }
 
     @JsonIgnore

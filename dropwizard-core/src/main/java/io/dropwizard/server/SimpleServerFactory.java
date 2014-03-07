@@ -126,7 +126,7 @@ public class SimpleServerFactory extends AbstractServerFactory {
                 applicationContextPath, applicationHandler,
                 adminContextPath, adminHandler
         ));
-        server.setHandler(addRequestLog(server, routingHandler, environment.getName()));
+        server.setHandler(addStatsHandler(addRequestLog(server, routingHandler, environment.getName())));
 
         return server;
     }

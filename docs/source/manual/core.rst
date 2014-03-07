@@ -145,12 +145,12 @@ Your main ``Configuration`` subclass can then include this as a member field:
         @NotNull
         private MessageQueueFactory messageQueue = new MessageQueueFactory();
 
-        @JsonProperty
+        @JsonProperty("messageQueue")
         public MessageQueueFactory getMessageQueueFactory() {
             return messageQueue;
         }
 
-        @JsonProperty
+        @JsonProperty("messageQueue")
         public void setMessageQueueFactory(MessageQueueFactory factory) {
             this.messageQueue = factory;
         }
@@ -194,9 +194,17 @@ Dropwizard then calls your ``Application`` subclass to initialize your applicati
 
     This will work even if the configuration setting in question does not exist in your config file, in 
     which case it will get added.
-    
+
+    You can override configuration settings in arrays of objects like this:
+
+    ``java -Ddw.server.applicationConnectors[0].port=9090 server my-config.json``
+
+    You can override configuration settings in maps like this:
+
+    ``java -Ddw.database.properties.hibernate.hbm2ddl.auto=none server my-config.json``
+
     You can also override a configuration setting that is an array of strings by using the ',' character
-    as an array element separtor. For example, to override a configuration setting myapp.myserver.hosts
+    as an array element separator. For example, to override a configuration setting myapp.myserver.hosts
     that is an array of strings in the configuration, you could start your service like this:
     ``java -Ddw.myapp.myserver.hosts=server1,server2,server3 server my-config.json``
 

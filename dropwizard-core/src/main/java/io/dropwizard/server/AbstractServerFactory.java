@@ -28,6 +28,7 @@ import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ErrorHandler;
 import org.eclipse.jetty.server.handler.RequestLogHandler;
+import org.eclipse.jetty.server.handler.StatisticsHandler;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.setuid.RLimit;
 import org.eclipse.jetty.setuid.SetUIDListener;
@@ -370,6 +371,7 @@ public abstract class AbstractServerFactory implements ServerFactory {
                                          MetricRegistry metrics,
                                          HealthCheckRegistry healthChecks) {
         configureSessionsAndSecurity(handler, server);
+        handler.setServer(server);  
         handler.getServletContext().setAttribute(MetricsServlet.METRICS_REGISTRY, metrics);
         handler.getServletContext().setAttribute(HealthCheckServlet.HEALTH_CHECK_REGISTRY, healthChecks);
         handler.addServlet(new NonblockingServletHolder(new AdminServlet()), "/*");
@@ -403,6 +405,7 @@ public abstract class AbstractServerFactory implements ServerFactory {
             handler.addServlet(new NonblockingServletHolder(jerseyContainer), jersey.getUrlPattern());
         }
         final InstrumentedHandler instrumented = new InstrumentedHandler(metricRegistry);
+        instrumented.setServer(server);
         instrumented.setHandler(handler);
         return instrumented;
     }
@@ -422,6 +425,7 @@ public abstract class AbstractServerFactory implements ServerFactory {
         server.addLifeCycleListener(buildSetUIDListener());
         lifecycle.attach(server);
         final ErrorHandler errorHandler = new ErrorHandler();
+        errorHandler.setServer(server);
         errorHandler.setShowStacks(false);
         server.addBean(errorHandler);
         server.setStopAtShutdown(true);
@@ -484,6 +488,14 @@ public abstract class AbstractServerFactory implements ServerFactory {
             return requestLogHandler;
         }
         return handler;
+    }
+
+    protected Handler addStatsHandler(Handler handler) {
+        // Graceful shutdown is implemented via the statistics handler,
+        // see https://bugs.eclipse.org/bugs/show_bug.cgi?id=420142
+        StatisticsHandler statisticsHandler = new StatisticsHandler();
+        statisticsHandler.setHandler(handler);
+        return statisticsHandler;
     }
 
     protected void printBanner(String name) {

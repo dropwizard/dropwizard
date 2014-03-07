@@ -9,11 +9,14 @@ import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.TextNode;
 import com.fasterxml.jackson.databind.node.TreeTraversingParser;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.dataformat.yaml.snakeyaml.error.MarkedYAMLException;
 import com.fasterxml.jackson.dataformat.yaml.snakeyaml.error.YAMLException;
+import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
+import com.google.common.collect.Iterables;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
@@ -156,29 +159,72 @@ public class ConfigurationFactory<T> {
 
     private void addOverride(JsonNode root, String name, String value) {
         JsonNode node = root;
-        final Iterator<String> keys = Splitter.on('.').trimResults().split(name).iterator();
-        while (keys.hasNext()) {
-            final String key = keys.next();
+        final Iterable<String> split = Splitter.on('.').trimResults().split(name);
+        final String[] parts = Iterables.toArray(split, String.class);
+
+        for(int i = 0; i < parts.length; i++) {
+            String key = parts[i];
+
             if (!(node instanceof ObjectNode)) {
                 throw new IllegalArgumentException("Unable to override " + name + "; it's not a valid path.");
             }
             final ObjectNode obj = (ObjectNode) node;
-            
-            if (keys.hasNext()) {
-                JsonNode child = obj.get(key);
+
+            final String remainingPath = Joiner.on('.').join(Arrays.copyOfRange(parts, i, parts.length));
+            if (obj.has(remainingPath) && !remainingPath.equals(key)) {
+                if (obj.get(remainingPath).isValueNode()) {
+                    obj.put(remainingPath, value);
+                    return;
+                }
+            }
+
+            JsonNode child;
+            final boolean moreParts = i < parts.length - 1;
+
+            if (key.matches(".+\\[\\d+\\]$")) {
+                final int s = key.indexOf('[');
+                final int index = Integer.parseInt(key.substring(s + 1, key.length() - 1));
+                key = key.substring(0, s);
+                child = obj.get(key);
+                if (child == null) {
+                    throw new IllegalArgumentException("Unable to override " + name + "; node with index not found.");
+                }
+                if (!child.isArray()) {
+                    throw new IllegalArgumentException("Unable to override " + name + "; node with index is not an array.");
+                }
+                else if (index >= child.size()) {
+                    throw new ArrayIndexOutOfBoundsException("Unable to override " + name + "; index is greater than size of array.");
+                }
+                if (moreParts) {
+                    child = child.get(index);
+                    node = child;
+                }
+                else {
+                    ArrayNode array = (ArrayNode)child;
+                    array.set(index, TextNode.valueOf(value));
+                    return;
+                }
+            }
+            else if (moreParts) {
+                child = obj.get(key);
                 if (child == null) {
                     child = obj.objectNode();
                     obj.put(key, child);
                 }
+                if (child.isArray()) {
+                    throw new IllegalArgumentException("Unable to override " + name + "; target is an array but no index specified");
+                }
                 node = child;
-            } else {
-                if (obj.get(key) != null && obj.get(key).isArray()) {
+            }
+
+            if (!moreParts) {
+                if (node.get(key) != null && node.get(key).isArray()) {
                     ArrayNode arrayNode = (ArrayNode) obj.get(key);
                     arrayNode.removeAll();
-                    
                     Pattern escapedComma = Pattern.compile("\\\\,");
-                    for (String val : Splitter.on(Pattern.compile("(?<!\\\\),")).trimResults().split(value))
-                        arrayNode.add (escapedComma.matcher(val).replaceAll(",")); 
+                    for (String val : Splitter.on(Pattern.compile("(?<!\\\\),")).trimResults().split(value)) {
+                        arrayNode.add(escapedComma.matcher(val).replaceAll(","));
+                    }
                 }
                 else {
                     obj.put(key, value);

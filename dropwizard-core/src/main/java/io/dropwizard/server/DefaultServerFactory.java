@@ -141,7 +141,7 @@ public class DefaultServerFactory extends AbstractServerFactory {
                                                                   server,
                                                                   applicationHandler,
                                                                   adminHandler);
-        server.setHandler(addRequestLog(server, routingHandler, environment.getName()));
+        server.setHandler(addStatsHandler(addRequestLog(server, routingHandler, environment.getName())));
         return server;
     }
 
