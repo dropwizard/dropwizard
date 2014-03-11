@@ -2,6 +2,7 @@ package io.dropwizard.jersey;
 
 import io.dropwizard.jersey.caching.CacheControlledResponseFeature;
 import io.dropwizard.jersey.errors.LoggingExceptionMapper;
+import io.dropwizard.jersey.guava.OptionalQueryParamValueFactoryProvider;
 import io.dropwizard.jersey.guava.OptionalResourceMethodResponseWriter;
 import io.dropwizard.jersey.jackson.JsonProcessingExceptionMapper;
 import io.dropwizard.jersey.sessions.SessionFactoryProvider;
@@ -91,7 +92,8 @@ public class DropwizardResourceConfig extends ResourceConfig {
         register(new InstrumentedResourceMethodApplicationListener(metricRegistry));
         register(CacheControlledResponseFeature.class);
         register(OptionalResourceMethodResponseWriter.class);
-        register (new SessionFactoryProvider.Binder());
+        register(new OptionalQueryParamValueFactoryProvider.Binder());
+        register(new SessionFactoryProvider.Binder());
     }
 
     public void logComponents() {
