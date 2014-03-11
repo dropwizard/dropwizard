@@ -6,6 +6,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
+import com.sun.jersey.api.core.ResourceConfig;
 import com.sun.jersey.api.core.ScanningResourceConfig;
 import com.sun.jersey.api.model.AbstractResource;
 import com.sun.jersey.api.model.AbstractResourceMethod;
@@ -76,13 +77,13 @@ public class DropwizardResourceConfig extends ScanningResourceConfig {
         final ImmutableSet.Builder<String> builder = ImmutableSet.builder();
 
         for (Class<?> klass : getClasses()) {
-            if (klass.isAnnotationPresent(Path.class)) {
+            if (ResourceConfig.isRootResourceClass(klass)) {
                 builder.add(klass.getCanonicalName());
             }
         }
 
         for (Object o : getSingletons()) {
-            if (o.getClass().isAnnotationPresent(Path.class)) {
+            if (ResourceConfig.isRootResourceClass(o.getClass())) {
                 builder.add(o.getClass().getCanonicalName());
             }
         }
@@ -102,13 +103,13 @@ public class DropwizardResourceConfig extends ScanningResourceConfig {
         final ImmutableSet.Builder<String> builder = ImmutableSet.builder();
 
         for (Class<?> klass : getClasses()) {
-            if (klass.isAnnotationPresent(Provider.class)) {
+            if (ResourceConfig.isProviderClass(klass)) {
                 builder.add(klass.getCanonicalName());
             }
         }
 
         for (Object o : getSingletons()) {
-            if (o.getClass().isAnnotationPresent(Provider.class)) {
+            if (ResourceConfig.isProviderClass(o.getClass())) {
                 builder.add(o.getClass().getCanonicalName());
             }
         }
@@ -123,12 +124,12 @@ public class DropwizardResourceConfig extends ScanningResourceConfig {
 
         final ImmutableList.Builder<Class<?>> builder = ImmutableList.builder();
         for (Object o : getSingletons()) {
-            if (o.getClass().isAnnotationPresent(Path.class)) {
+            if (ResourceConfig.isRootResourceClass(o.getClass())) {
                 builder.add(o.getClass());
             }
         }
         for (Class<?> klass : getClasses()) {
-            if (klass.isAnnotationPresent(Path.class)) {
+            if (ResourceConfig.isRootResourceClass(klass)) {
                 builder.add(klass);
             }
         }
