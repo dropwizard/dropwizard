@@ -1,7 +1,6 @@
 package io.dropwizard.hibernate;
 
 import static org.fest.assertions.api.Assertions.assertThat;
-import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
@@ -10,8 +9,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
 import java.util.Collections;
 
 import org.glassfish.jersey.server.ExtendedUriInfo;
@@ -34,9 +31,9 @@ import org.junit.runner.RunWith;
 import org.mockito.InOrder;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
+import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.powermock.api.mockito.PowerMockito;
 
 @PrepareForTest({Resource.class,ResourceMethod.class,Invocable.class})
 @RunWith(PowerMockRunner.class)
