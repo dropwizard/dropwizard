@@ -54,4 +54,10 @@ public class GzipFilterFactoryTest {
         assertThat(gzip.getCompressedMimeTypes())
                 .isEqualTo(ImmutableSet.of("text/plain"));
     }
+
+    @Test
+    public void varyIsOnlyForAcceptEncoding() throws Exception {
+        assertThat(gzip.getVary())
+                .isEqualTo("Accept-Encoding");
+    }
 }
