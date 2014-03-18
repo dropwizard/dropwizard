@@ -85,11 +85,11 @@ Your service's configuration file will then look like this:
       # whether or not idle connections should be validated
       checkConnectionWhileIdle: false
 
-      # how long a connection must be held before it can be validated
-      checkConnectionHealthWhenIdleFor: 10s
+      # the amount of time to sleep between runs of the idle connection validation, abandoned cleaner and idle pool resizing
+      evictionInterval: 10s
 
-      # the maximum lifetime of an idle connection
-      closeConnectionIfIdleFor: 1 minute
+      # the minimum amount of time an connection must sit idle in the pool before it is eligible for eviction
+      minIdleTime: 1 minute
 
 Usage
 =====
