@@ -298,6 +298,26 @@
                     </archive>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>com.github.github</groupId>
+                <artifactId>site-maven-plugin</artifactId>
+                <version>0.9</version>
+                <configuration>
+                    <!-- Make sure that each sub-module gets its own site -->
+                    <path>${project.version}/${project.artifactId}</path>
+                    <message>Create site for ${project.name} ${project.version}</message>
+                    <noJekyll>true</noJekyll>
+                    <merge>true</merge>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>site</goal>
+                        </goals>
+                        <phase>site</phase>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
         <pluginManagement>
             <plugins>
