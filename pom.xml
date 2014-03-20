@@ -10,7 +10,7 @@
     <version>0.7.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Dropwizard Project</name>
-    <url>http://www.dropwizard.io/</url>
+    <url>${dropwizard.url}</url>
     <description>
         Dropwizard is a Java framework for developing ops-friendly, high-performance, RESTful web
         applications.
@@ -48,6 +48,7 @@
     </modules>
 
     <properties>
+        <dropwizard.url>http://www.dropwizard.io/${project.version}</dropwizard.url>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <metrics3.version>3.0.1</metrics3.version>
@@ -137,6 +138,10 @@
             <name>Nexus Release Repository</name>
             <url>http://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
+        <site>
+            <id>dropwizard.io</id>
+            <url>${dropwizard.url}</url>
+        </site>
     </distributionManagement>
 
     <profiles>
@@ -321,22 +326,32 @@
                 </configuration>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <version>3.3</version>
+                <configuration>
+                    <skipDeploy>true</skipDeploy>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>com.github.github</groupId>
                 <artifactId>site-maven-plugin</artifactId>
                 <version>0.9</version>
+                <inherited>false</inherited>
                 <configuration>
                     <!-- Make sure that each sub-module gets its own site -->
-                    <path>${project.version}/${project.artifactId}</path>
+                    <path>${project.version}</path>
                     <message>Create site for ${project.name} ${project.version}</message>
                     <noJekyll>true</noJekyll>
                     <merge>true</merge>
+                    <outputDirectory>${project.build.directory}/staging</outputDirectory>
                 </configuration>
                 <executions>
                     <execution>
                         <goals>
                             <goal>site</goal>
                         </goals>
-                        <phase>site</phase>
+                        <phase>site-deploy</phase>
                     </execution>
                 </executions>
             </plugin>
