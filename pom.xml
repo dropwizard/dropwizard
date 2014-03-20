@@ -86,8 +86,8 @@
     </scm>
 
     <issueManagement>
-        <system>github</system>
-        <url>http://github.com/dropwizard/dropwizard/issues#issue/</url>
+        <system>GitHub</system>
+        <url>https://github.com/dropwizard/dropwizard/issues</url>
     </issueManagement>
 
     <repositories>
