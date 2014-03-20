@@ -90,6 +90,11 @@
         <url>https://github.com/dropwizard/dropwizard/issues</url>
     </issueManagement>
 
+    <ciManagement>
+        <system>Travis CI</system>
+        <url>https://travis-ci.org/dropwizard/dropwizard</url>
+    </ciManagement>
+
     <repositories>
         <repository>
             <id>sonatype-nexus-snapshots</id>
