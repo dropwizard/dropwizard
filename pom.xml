@@ -95,6 +95,23 @@
         <url>https://travis-ci.org/dropwizard/dropwizard</url>
     </ciManagement>
 
+    <mailingLists>
+        <mailingList>
+            <name>dropwizard-user</name>
+            <subscribe>dropwizard-user+subscribe@googlegroups.com</subscribe>
+            <unsubscribe>dropwizard-user+unsubscribe@googlegroups.com</unsubscribe>
+            <post>dropwizard-user@googlegroups.com</post>
+            <archive>https://groups.google.com/forum/#!forum/dropwizard-user</archive>
+        </mailingList>
+        <mailingList>
+            <name>dropwizard-dev</name>
+            <subscribe>dropwizard-dev+subscribe@googlegroups.com</subscribe>
+            <unsubscribe>dropwizard-dev+unsubscribe@googlegroups.com</unsubscribe>
+            <post>dropwizard-dev@googlegroups.com</post>
+            <archive>https://groups.google.com/forum/#!forum/dropwizard-dev</archive>
+        </mailingList>
+    </mailingLists>
+
     <repositories>
         <repository>
             <id>sonatype-nexus-snapshots</id>
