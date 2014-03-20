@@ -81,7 +81,7 @@
     <scm>
         <connection>scm:git:git://github.com/dropwizard/dropwizard.git</connection>
         <developerConnection>scm:git:git@github.com:dropwizard/dropwizard.git</developerConnection>
-        <url>http://github.com/dropwizard/dropwizard/</url>
+        <url>https://github.com/dropwizard/dropwizard</url>
         <tag>HEAD</tag>
     </scm>
 
