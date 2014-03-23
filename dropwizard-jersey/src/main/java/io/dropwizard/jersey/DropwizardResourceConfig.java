@@ -8,8 +8,6 @@ import io.dropwizard.jersey.jackson.JsonProcessingExceptionMapper;
 import io.dropwizard.jersey.sessions.SessionFactoryProvider;
 import io.dropwizard.jersey.validation.ConstraintViolationExceptionMapper;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
 import java.util.List;
 
 import javax.ws.rs.Path;
@@ -182,7 +180,7 @@ public class DropwizardResourceConfig extends ResourceConfig {
 
     private void populateEndpoints(List<String> endpoints, String basePath, Class<?> klass,
                                    boolean isLocator) {
-        populateEndpoints(endpoints, basePath, klass, isLocator, buildResource(klass));
+        populateEndpoints(endpoints, basePath, klass, isLocator, Resource.from(klass));
     }
 
     private void populateEndpoints(List<String> endpoints, String basePath, Class<?> klass,
@@ -221,38 +219,5 @@ public class DropwizardResourceConfig extends ResourceConfig {
             return path.startsWith("/") ? basePath + path.substring(1) : basePath + path;
         }
         return path.startsWith("/") ? basePath + path : basePath + "/" + path;
-    }
-    
-    // TODO - we only had to do this because the nice Jersey folks made IntrospectionModeller 
-    // package private. Would be nice to not have to rely on reflection
-    static private Resource buildResource (Class<?> klass)
-    {
-        try
-        {
-            Class<?> modellerClass = null;
-            modellerClass = Class.forName("org.glassfish.jersey.server.model.IntrospectionModeller");
- 
-            Constructor<?> modellerConstructor = null;
-            modellerConstructor = modellerClass.getDeclaredConstructor(Class.class, Boolean.TYPE);
-            // ugh - forcibly set the constructor to be accessible
-            modellerConstructor.setAccessible(true);
-        
-            Object modeller = null;
-            modeller = modellerConstructor.newInstance(klass, Boolean.FALSE);
-
-            Method builderMethod = null;
-            builderMethod = modellerClass.getDeclaredMethod("createResourceBuilder");
-            // ugh - forcibly set the method to be accessible
-            builderMethod.setAccessible(true);
-        
-            Resource.Builder builder = null;
-            builder = (Resource.Builder) builderMethod.invoke(modeller);
-            
-            return builder.build();
-        }
-        catch (Exception e)
-        {
-            throw new RuntimeException("Error trying to use class org.glassfish.jersey.server.model.IntrospectionModeller via reflection", e);
-        }
     }
 }

@@ -17,7 +17,6 @@ public class OptionalQueryParamResourceTest extends JerseyTest {
     protected Application configure() {
         ResourceConfig config = DropwizardResourceConfig.forTesting(new MetricRegistry());
         config.register(new OptionalQueryParamResource());
-        config.register(new OptionalQueryParamValueFactoryProvider.Binder());
         config.register(new MyMessageParamConveterProvider());
         return config;
     }
