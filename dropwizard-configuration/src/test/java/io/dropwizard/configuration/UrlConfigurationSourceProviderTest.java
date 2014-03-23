@@ -7,7 +7,7 @@ import org.junit.Test;
 
 import java.io.InputStream;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class UrlConfigurationSourceProviderTest {
     private final ConfigurationSourceProvider provider = new UrlConfigurationSourceProvider();

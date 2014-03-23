@@ -9,8 +9,8 @@ import org.junit.Test;
 import java.sql.ClientInfoStatus;
 import java.util.concurrent.TimeUnit;
 
-import static org.fest.assertions.api.Assertions.assertThat;
-import static org.fest.assertions.api.Assertions.failBecauseExceptionWasNotThrown;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
 
 public class FuzzyEnumModuleTest {
     private final ObjectMapper mapper = new ObjectMapper();

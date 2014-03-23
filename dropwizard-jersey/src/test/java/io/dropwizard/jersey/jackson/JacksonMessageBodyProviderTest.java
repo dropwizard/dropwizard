@@ -29,8 +29,8 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.*;
 
-import static org.fest.assertions.api.Assertions.assertThat;
-import static org.fest.assertions.api.Assertions.failBecauseExceptionWasNotThrown;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assume.assumeThat;
 import static org.mockito.Mockito.doReturn;

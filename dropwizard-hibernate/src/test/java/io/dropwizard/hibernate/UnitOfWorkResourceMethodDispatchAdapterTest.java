@@ -4,7 +4,7 @@ import com.sun.jersey.spi.container.ResourceMethodDispatchProvider;
 import org.hibernate.SessionFactory;
 import org.junit.Test;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
 public class UnitOfWorkResourceMethodDispatchAdapterTest {

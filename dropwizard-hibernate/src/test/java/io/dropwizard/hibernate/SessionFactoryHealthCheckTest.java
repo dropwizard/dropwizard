@@ -5,7 +5,7 @@ import org.hibernate.*;
 import org.junit.Test;
 import org.mockito.InOrder;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
 

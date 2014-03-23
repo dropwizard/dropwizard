@@ -10,8 +10,8 @@ import java.net.JarURLConnection;
 import java.net.URL;
 import java.util.jar.JarEntry;
 
-import static org.fest.assertions.api.Assertions.assertThat;
-import static org.fest.assertions.api.Assertions.fail;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 public class ResourceURLTest {
     private File directory;

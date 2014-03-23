@@ -16,7 +16,7 @@ import org.mockito.ArgumentCaptor;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 public class Slf4jRequestLogTest {

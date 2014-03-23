@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class AnnotationSensitivePropertyNamingStrategyTest {
     public static class RegularExample {

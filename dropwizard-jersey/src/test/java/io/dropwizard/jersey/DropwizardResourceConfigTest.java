@@ -9,7 +9,7 @@ import org.junit.Test;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @SuppressWarnings("unchecked")
 public class DropwizardResourceConfigTest {

@@ -1,6 +1,6 @@
 package io.dropwizard.configuration;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import io.dropwizard.configuration.ConfigurationFactoryTest.Example;
 import io.dropwizard.jackson.Jackson;
 

@@ -25,8 +25,8 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.concurrent.ExecutorService;
 
-import static org.fest.assertions.api.Assertions.assertThat;
-import static org.fest.assertions.api.Assertions.failBecauseExceptionWasNotThrown;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
 import static org.mockito.Mockito.*;
 
 public class JerseyClientBuilderTest {

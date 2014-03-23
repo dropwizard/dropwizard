@@ -1,6 +1,6 @@
 package io.dropwizard.server;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import io.dropwizard.configuration.ConfigurationFactory;
 import io.dropwizard.jackson.DiscoverableSubtypeResolver;
 import io.dropwizard.jackson.Jackson;

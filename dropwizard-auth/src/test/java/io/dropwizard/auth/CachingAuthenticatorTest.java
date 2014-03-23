@@ -11,7 +11,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InOrder;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 public class CachingAuthenticatorTest {
