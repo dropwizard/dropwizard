@@ -466,7 +466,7 @@ Registering A Resource
 
 Before that will actually work, though, we need to go back to ``HelloWorldApplication`` and add this
 new resource class. In its ``run`` method we can read the template and default name from the
-``HelloWorldConfiguration`` instance, create a new ``HelloWorldApplication`` instance, and then add
+``HelloWorldConfiguration`` instance, create a new ``HelloWorldResource`` instance, and then add
 it to the application's Jersey environment:
 
 .. code-block:: java
