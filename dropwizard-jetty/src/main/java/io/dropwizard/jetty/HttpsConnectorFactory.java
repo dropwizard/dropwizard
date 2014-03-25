@@ -21,6 +21,7 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.validation.constraints.NotNull;
 import java.io.File;
 import java.net.URI;
+import java.security.KeyStore;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.List;
@@ -531,7 +532,19 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
     protected SslContextFactory buildSslContextFactory() {
         final SslContextFactory factory = new SslContextFactory(keyStorePath);
         factory.setKeyStorePassword(keyStorePassword);
-        factory.setKeyStoreType(keyStoreType);
+        final String keyStoreType = getKeyStoreType();
+        if (keyStoreType.startsWith("Windows-")) {
+            try {
+                final KeyStore keyStore = KeyStore.getInstance(keyStoreType);
+
+                keyStore.load(null, null);
+                factory.setKeyStore(keyStore);
+            } catch (Exception e) {
+                throw new IllegalStateException("Windows key store not supported", e);
+            }
+        } else {
+            factory.setKeyStoreType(keyStoreType);
+        }
 
         if (keyStoreProvider != null) {
             factory.setKeyStoreProvider(keyStoreProvider);
