@@ -77,7 +77,7 @@ takes instances of ``BasicCredentials``:
     @Override
     public void run(ExampleConfiguration configuration,
                     Environment environment) {
-        environment.addProvider(new BasicAuthProvider<User>(new ExampleAuthenticator(),
+        environment.jersey().register(new BasicAuthProvider<User>(new ExampleAuthenticator(),
                                                             "SUPER SECRET STUFF"));
     }
 
@@ -98,7 +98,7 @@ which takes an instance of ``String``.
     @Override
     public void run(ExampleConfiguration configuration,
                     Environment environment) {
-        environment.addProvider(new OAuthProvider<User>(new ExampleAuthenticator(),
+        environment.jersey().register(new OAuthProvider<User>(new ExampleAuthenticator(),
                                                         "SUPER SECRET STUFF"));
     }
 
