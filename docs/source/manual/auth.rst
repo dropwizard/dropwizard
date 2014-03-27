@@ -89,10 +89,6 @@ OAuth2
 The ``OAuthProvider`` enables OAuth2 bearer-token authentication, and requires an authenticator
 which takes an instance of ``String``.
 
-.. note:: Because OAuth2 is not finalized, this implementation may change in the future. The
-          expectation is that tokens are passed in via the ``Authorization`` header using the
-          ``Bearer`` scheme.
-
 .. code-block:: java
 
     @Override
