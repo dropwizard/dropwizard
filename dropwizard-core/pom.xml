@@ -66,11 +66,23 @@
             <groupId>com.codahale.metrics</groupId>
             <artifactId>metrics-core</artifactId>
             <version>${metrics3.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.codahale.metrics</groupId>
             <artifactId>metrics-jvm</artifactId>
             <version>${metrics3.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.codahale.metrics</groupId>
@@ -81,12 +93,22 @@
                     <groupId>com.fasterxml.jackson.core</groupId>
                     <artifactId>jackson-databind</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
             <groupId>com.codahale.metrics</groupId>
             <artifactId>metrics-healthchecks</artifactId>
             <version>${metrics3.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>net.sourceforge.argparse4j</groupId>

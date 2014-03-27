@@ -21,6 +21,12 @@
             <groupId>com.codahale.metrics</groupId>
             <artifactId>metrics-graphite</artifactId>
             <version>${metrics3.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 </project>
