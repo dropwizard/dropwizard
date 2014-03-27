@@ -4,7 +4,9 @@ import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.jetty9.InstrumentedConnectionFactory;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import com.google.common.base.Strings;
 import com.google.common.collect.Iterables;
+
 import org.eclipse.jetty.http.HttpVersion;
 import org.eclipse.jetty.io.ByteBufferPool;
 import org.eclipse.jetty.server.*;
@@ -16,9 +18,12 @@ import org.hibernate.validator.constraints.NotEmpty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.dropwizard.validation.ValidationMethod;
+
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
 import javax.validation.constraints.NotNull;
+
 import java.io.File;
 import java.net.URI;
 import java.security.KeyStore;
@@ -198,10 +203,8 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
     private static final Logger LOGGER = LoggerFactory.getLogger(HttpsConnectorFactory.class);
     private static final AtomicBoolean LOGGED = new AtomicBoolean(false);
 
-    @NotNull
     private String keyStorePath;
 
-    @NotNull
     private String keyStorePassword;
 
     @NotEmpty
@@ -474,6 +477,17 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
     @JsonProperty
     public void setValidateCerts(boolean validateCerts) {
         this.validateCerts = validateCerts;
+    }
+
+    @ValidationMethod(message="keyStorePath should not be null")
+    public boolean isValidKeyStorePath() {
+        return keyStoreType.startsWith("Windows-") || keyStorePath != null;
+    }
+
+    @ValidationMethod(message="keyStorePassword should not be null or empty")
+    public boolean isValidKeyStorePassword() {
+        return keyStoreType.startsWith("Windows-") ||
+                !Strings.isNullOrEmpty(keyStorePassword);
     }
 
     @Override
