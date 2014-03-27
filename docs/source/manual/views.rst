@@ -16,7 +16,6 @@ To enable views for your :ref:`Application <man-core-application>`, add the ``Vi
 .. code-block:: java
 
     public void initialize(Bootstrap<MyConfiguration> bootstrap) {
-        bootstrap.setName("my-service");
         bootstrap.addBundle(new ViewBundle());
     }
 
