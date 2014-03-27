@@ -27,7 +27,7 @@ public class GzipFilterFactory {
     private Set<String> compressedMimeTypes = Sets.newHashSet();
     private Set<String> includedMethods = Sets.newHashSet();
     private boolean gzipCompatibleDeflation = true;
-    private String vary;
+    private String vary = "Accept-Encoding";
 
     @Min(Deflater.DEFAULT_COMPRESSION)
     @Max(Deflater.BEST_COMPRESSION)
