@@ -15,7 +15,7 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
-            <version>${jackson.version}</version>
+            <version>${jackson.api.version}</version>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
