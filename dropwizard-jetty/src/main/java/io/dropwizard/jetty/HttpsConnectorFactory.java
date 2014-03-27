@@ -550,13 +550,25 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
             factory.setKeyStoreProvider(keyStoreProvider);
         }
 
-        if (trustStorePath != null) {
-            factory.setTrustStorePath(trustStorePath);
+        final String trustStoreType = getTrustStoreType();
+        if (trustStoreType.startsWith("Windows-")) {
+          try {
+            final KeyStore keyStore = KeyStore.getInstance(trustStoreType);
+
+            keyStore.load(null, null);
+            factory.setTrustStore(keyStore);
+          } catch (Exception e) {
+            throw new IllegalStateException("Windows key store not supported", e);
+          }
+        } else {
+            if (trustStorePath != null) {
+                factory.setTrustStorePath(trustStorePath);
+            }
+            if (trustStorePassword != null) {
+                factory.setTrustStorePassword(trustStorePassword);
+            }
+            factory.setTrustStoreType(trustStoreType);
         }
-        if (trustStorePassword != null) {
-            factory.setTrustStorePassword(trustStorePassword);
-        }
-        factory.setTrustStoreType(trustStoreType);
 
         if (trustStoreProvider != null) {
             factory.setTrustStoreProvider(trustStoreProvider);
