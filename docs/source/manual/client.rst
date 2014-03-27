@@ -43,8 +43,8 @@ Then, in your application's ``run`` method, create a new ``HttpClientBuilder``:
     @Override
     public void run(ExampleConfiguration config,
                     Environment environment) {
-        final HttpClient httpClient = new HttpClientBuilder().using(config.getHttpClientConfiguration())
-                                                             .build();
+        final HttpClient httpClient = new HttpClientBuilder(environment).using(config.getHttpClientConfiguration())
+                                                                        .build();
         environment.addResource(new ExternalServiceResource(httpClient));
     }
 
@@ -144,9 +144,9 @@ Then, in your service's ``run`` method, create a new ``JerseyClientBuilder``:
     @Override
     public void run(ExampleConfiguration config,
                     Environment environment) {
-        final Client client = new JerseyClientBuilder().using(config.getJerseyClientConfiguration())
-                                                       .using(environment)
-                                                       .build();
+
+        final Client client = new JerseyClientBuilder(environment).using(config.getJerseyClientConfiguration())
+                                                                  .build(getName());                                                       
         environment.addResource(new ExternalServiceResource(client));
     }
 
