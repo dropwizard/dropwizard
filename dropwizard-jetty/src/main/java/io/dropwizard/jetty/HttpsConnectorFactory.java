@@ -22,7 +22,6 @@ import io.dropwizard.validation.ValidationMethod;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
-import javax.validation.constraints.NotNull;
 
 import java.io.File;
 import java.net.URI;
