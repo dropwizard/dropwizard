@@ -22,8 +22,8 @@ import static org.junit.Assert.fail;
 
 public class HttpsConnectorFactoryTest {
     private static final String WINDOWS_MY_KEYSTORE_NAME = "Windows-MY";
-	private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
-    
+    private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+
     @Test
     public void isDiscoverable() throws Exception {
         assertThat(new DiscoverableSubtypeResolver().getDiscoveredSubtypes())
@@ -37,6 +37,7 @@ public class HttpsConnectorFactoryTest {
         assertThat(properties.contains("validKeyStorePassword")).isEqualTo(true);
         assertThat(properties.contains("validKeyStorePath")).isEqualTo(true);
     }
+
     @Test
     public void windowsKeyStoreValidation() throws Exception {
         HttpsConnectorFactory factory = new HttpsConnectorFactory();
@@ -45,7 +46,7 @@ public class HttpsConnectorFactoryTest {
         assertThat(properties.contains("validKeyStorePassword")).isEqualTo(false);
         assertThat(properties.contains("validKeyStorePath")).isEqualTo(false);
     }
-    
+
     @Test
     public void windowsKeyStore() throws Exception {
         HttpsConnectorFactory factory = new HttpsConnectorFactory();
@@ -62,7 +63,7 @@ public class HttpsConnectorFactoryTest {
             }
         }
     }
-    
+
     private boolean canAccessWindowsKeyStore() {
         if (SystemUtils.IS_OS_WINDOWS) {
             try {
@@ -76,12 +77,11 @@ public class HttpsConnectorFactoryTest {
     }
 
     private <T> Collection<String> getViolationProperties(Set<ConstraintViolation<T>> violations) {
-    	System.out.println(violations);
         return Collections2.transform(violations, new Function<ConstraintViolation<T>, String>() {
             @Override
             public String apply(ConstraintViolation<T> input) {
                 return input.getPropertyPath().toString();
             }
-		});
+        });
     }
 }
