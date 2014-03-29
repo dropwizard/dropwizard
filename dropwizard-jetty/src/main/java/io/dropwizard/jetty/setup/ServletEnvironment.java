@@ -6,18 +6,24 @@ import org.eclipse.jetty.security.SecurityHandler;
 import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterRegistration;
 import javax.servlet.Servlet;
 import javax.servlet.ServletRegistration;
-import java.util.Arrays;
-import java.util.EventListener;
+import java.util.*;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class ServletEnvironment {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ServletEnvironment.class);
+
     private final MutableServletContextHandler handler;
+
+    private final Set<String> servlets = new HashSet<>();
+    private final Set<String> filters = new HashSet<>();
 
     public ServletEnvironment(MutableServletContextHandler handler) {
         this.handler = handler;
@@ -35,7 +41,13 @@ public class ServletEnvironment {
         final ServletHolder holder = new NonblockingServletHolder(checkNotNull(servlet));
         holder.setName(name);
         handler.getServletHandler().addServlet(holder);
-        return holder.getRegistration();
+
+        ServletRegistration.Dynamic registration = holder.getRegistration();
+        if(servlets.contains(name)) {
+            LOGGER.warn("Overriding the existing servlet registered with name: {}", name);
+        }
+        servlets.add(name);
+        return registration;
     }
 
     /**
@@ -49,7 +61,13 @@ public class ServletEnvironment {
         final ServletHolder holder = new ServletHolder(checkNotNull(klass));
         holder.setName(name);
         handler.getServletHandler().addServlet(holder);
-        return holder.getRegistration();
+
+        ServletRegistration.Dynamic registration = holder.getRegistration();
+        if(servlets.contains(name)) {
+            LOGGER.warn("Overriding the existing servlet registered with name: {}", name);
+        }
+        servlets.add(name);
+        return registration;
     }
 
     /**
@@ -64,7 +82,13 @@ public class ServletEnvironment {
         final FilterHolder holder = new FilterHolder(checkNotNull(filter));
         holder.setName(name);
         handler.getServletHandler().addFilter(holder);
-        return holder.getRegistration();
+
+        FilterRegistration.Dynamic registration = holder.getRegistration();
+        if(filters.contains(name)) {
+            LOGGER.warn("Overriding the existing filter registered with name: {}", name);
+        }
+        filters.add(name);
+        return registration;
     }
 
     /**
@@ -78,7 +102,13 @@ public class ServletEnvironment {
         final FilterHolder holder = new FilterHolder(checkNotNull(klass));
         holder.setName(name);
         handler.getServletHandler().addFilter(holder);
-        return holder.getRegistration();
+
+        FilterRegistration.Dynamic registration = holder.getRegistration();
+        if(filters.contains(name)) {
+            LOGGER.warn("Overriding the existing filter registered with name: {}", name);
+        }
+        filters.add(name);
+        return registration;
     }
 
     /**

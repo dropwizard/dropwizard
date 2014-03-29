@@ -414,6 +414,19 @@ page.
         bootstrap.addBundle(new AssetsBundle("/assets/", "/"));
     }
 
+When an ``AssetBundle`` is added to the application, it is registered as a servlet
+using a default name of ``assets``. If the application needs to have multiple ``AssetBundle``
+instances, the extended constructor should be used to specify a unique name for the ``AssetBundle``.
+
+.. code-block:: java
+
+    @Override
+    public void initialize(Bootstrap<HelloWorldConfiguration> bootstrap) {
+        bootstrap.addBundle(new AssetsBundle("/assets/css", "/css", null, "css"));
+        bootstrap.addBundle(new AssetsBundle("/assets/js", "/js", null, "js"));
+        bootstrap.addBundle(new AssetsBundle("/assets/fonts", "/fonts", null, "fonts"));
+    }
+
 .. _man-core-commands:
 
 Commands
