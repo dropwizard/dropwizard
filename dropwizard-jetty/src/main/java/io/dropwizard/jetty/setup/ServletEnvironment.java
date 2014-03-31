@@ -43,10 +43,8 @@ public class ServletEnvironment {
         handler.getServletHandler().addServlet(holder);
 
         ServletRegistration.Dynamic registration = holder.getRegistration();
-        if(servlets.contains(name)) {
-            LOGGER.warn("Overriding the existing servlet registered with name: {}", name);
-        }
-        servlets.add(name);
+        checkDuplicateRegistration(name, servlets, "servlet");
+
         return registration;
     }
 
@@ -63,10 +61,8 @@ public class ServletEnvironment {
         handler.getServletHandler().addServlet(holder);
 
         ServletRegistration.Dynamic registration = holder.getRegistration();
-        if(servlets.contains(name)) {
-            LOGGER.warn("Overriding the existing servlet registered with name: {}", name);
-        }
-        servlets.add(name);
+        checkDuplicateRegistration(name, servlets, "servlet");
+
         return registration;
     }
 
@@ -84,10 +80,8 @@ public class ServletEnvironment {
         handler.getServletHandler().addFilter(holder);
 
         FilterRegistration.Dynamic registration = holder.getRegistration();
-        if(filters.contains(name)) {
-            LOGGER.warn("Overriding the existing filter registered with name: {}", name);
-        }
-        filters.add(name);
+        checkDuplicateRegistration(name, filters, "filter");
+
         return registration;
     }
 
@@ -104,10 +98,8 @@ public class ServletEnvironment {
         handler.getServletHandler().addFilter(holder);
 
         FilterRegistration.Dynamic registration = holder.getRegistration();
-        if(filters.contains(name)) {
-            LOGGER.warn("Overriding the existing filter registered with name: {}", name);
-        }
-        filters.add(name);
+        checkDuplicateRegistration(name, filters, "filter");
+
         return registration;
     }
 
@@ -149,5 +141,12 @@ public class ServletEnvironment {
 
     public void addMimeMapping(String extension, String type) {
         handler.getMimeTypes().addMimeMapping(extension, type);
+    }
+
+    private void checkDuplicateRegistration(String name, Set<String> items, String type) {
+        if(items.contains(name)) {
+            LOGGER.warn("Overriding the existing {} registered with the name: {}", type, name);
+        }
+        items.add(name);
     }
 }
