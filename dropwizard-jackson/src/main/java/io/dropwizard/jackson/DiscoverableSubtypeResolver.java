@@ -46,7 +46,10 @@ public class DiscoverableSubtypeResolver extends StdSubtypeResolver {
     protected List<Class<?>> discoverServices(Class<?> klass) {
         final List<Class<?>> serviceClasses = Lists.newArrayList();
         try {
-            final Enumeration<URL> resources = ClassLoader.getSystemResources("META-INF/services/" + klass.getName());
+            // use classloader that loaded this class to find the service descriptors on the classpath
+            // better than ClassLoader.getSystemResources() which may not be the same classloader if ths app
+            // is running in a container (e.g. via maven exec:java)
+            final Enumeration<URL> resources = this.getClass().getClassLoader().getResources("META-INF/services/" + klass.getName());
             while (resources.hasMoreElements()) {
                 final URL url = resources.nextElement();
                 try (InputStream input = url.openStream();
