@@ -10,13 +10,14 @@
     <version>0.7.0-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Dropwizard Project</name>
-    <url>http://www.dropwizard.io/</url>
+    <url>${dropwizard.url}</url>
     <description>
         Dropwizard is a Java framework for developing ops-friendly, high-performance, RESTful web
         applications.
     </description>
 
     <modules>
+        <module>docs</module>
         <module>dropwizard-core</module>
         <module>dropwizard-client</module>
         <module>dropwizard-db</module>
@@ -47,6 +48,7 @@
     </modules>
 
     <properties>
+        <dropwizard.url>http://www.dropwizard.io/${project.version}</dropwizard.url>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <metrics3.version>3.0.1</metrics3.version>
@@ -80,14 +82,36 @@
     <scm>
         <connection>scm:git:git://github.com/dropwizard/dropwizard.git</connection>
         <developerConnection>scm:git:git@github.com:dropwizard/dropwizard.git</developerConnection>
-        <url>http://github.com/dropwizard/dropwizard/</url>
+        <url>https://github.com/dropwizard/dropwizard</url>
         <tag>HEAD</tag>
     </scm>
 
     <issueManagement>
-        <system>github</system>
-        <url>http://github.com/dropwizard/dropwizard/issues#issue/</url>
+        <system>GitHub</system>
+        <url>https://github.com/dropwizard/dropwizard/issues</url>
     </issueManagement>
+
+    <ciManagement>
+        <system>Travis CI</system>
+        <url>https://travis-ci.org/dropwizard/dropwizard</url>
+    </ciManagement>
+
+    <mailingLists>
+        <mailingList>
+            <name>dropwizard-user</name>
+            <subscribe>dropwizard-user+subscribe@googlegroups.com</subscribe>
+            <unsubscribe>dropwizard-user+unsubscribe@googlegroups.com</unsubscribe>
+            <post>dropwizard-user@googlegroups.com</post>
+            <archive>https://groups.google.com/forum/#!forum/dropwizard-user</archive>
+        </mailingList>
+        <mailingList>
+            <name>dropwizard-dev</name>
+            <subscribe>dropwizard-dev+subscribe@googlegroups.com</subscribe>
+            <unsubscribe>dropwizard-dev+unsubscribe@googlegroups.com</unsubscribe>
+            <post>dropwizard-dev@googlegroups.com</post>
+            <archive>https://groups.google.com/forum/#!forum/dropwizard-dev</archive>
+        </mailingList>
+    </mailingLists>
 
     <repositories>
         <repository>
@@ -114,6 +138,10 @@
             <name>Nexus Release Repository</name>
             <url>http://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
+        <site>
+            <id>dropwizard.io</id>
+            <url>${dropwizard.url}</url>
+        </site>
     </distributionManagement>
 
     <profiles>
@@ -297,6 +325,72 @@
                     </archive>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <version>3.3</version>
+                <configuration>
+                    <skipDeploy>true</skipDeploy>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.github.github</groupId>
+                <artifactId>site-maven-plugin</artifactId>
+                <version>0.9</version>
+                <inherited>false</inherited>
+                <configuration>
+                    <!-- Make sure that each sub-module gets its own site -->
+                    <path>${project.version}</path>
+                    <message>Create site for ${project.name} ${project.version}</message>
+                    <noJekyll>true</noJekyll>
+                    <merge>true</merge>
+                    <outputDirectory>${project.build.directory}/staging</outputDirectory>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>site</goal>
+                        </goals>
+                        <phase>site-deploy</phase>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-project-info-reports-plugin</artifactId>
+                    <version>2.7</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
     </build>
+
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <version>2.7</version>
+                <configuration>
+                    <dependencyDetailsEnabled>true</dependencyDetailsEnabled>
+                    <dependencyLocationsEnabled>true</dependencyLocationsEnabled>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.9.1</version>
+                <reportSets>
+                    <reportSet>
+                        <id>html</id>
+                        <reports>
+                            <report>javadoc</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
+            </plugin>
+        </plugins>
+    </reporting>
 </project>

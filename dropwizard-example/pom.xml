@@ -176,6 +176,17 @@
                     <skip>true</skip>
                 </configuration>
             </plugin>
+            <plugin>
+                <!-- You'll probably want to remove this for your project. I'm just using it here
+                     so that dropwizard-example site doesn't get staged and deployed. -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-site-plugin</artifactId>
+                <version>3.3</version>
+                <configuration>
+                    <skip>true</skip>
+                    <skipDeploy>true</skipDeploy>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 </project>
