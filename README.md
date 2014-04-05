@@ -34,5 +34,5 @@ mailing list, please use the following guidelines:
 * A short description of the issue you are experiencing and the expected outcome
 * Description of how someone else can reproduce the problem
 * Paste error output or logs in your issue or in a Gist. If pasting them in the GitHub
-issue, wrap it in three backticks: `` ``` `` so that it renders nicely
+issue, wrap it in three backticks: ```  so that it renders nicely
 * Write a unit test to show the issue!
