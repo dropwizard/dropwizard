@@ -658,19 +658,21 @@ tests:
 
     public class MyApplicationTest {
         private final Environment environment = mock(Environment.class);
+        private final JerseyEnvironment jersey = mock(JerseyEnvironment.class);
         private final MyApplication application = new MyApplication();
         private final MyConfiguration config = new MyConfiguration();
 
         @Before
         public void setup() throws Exception {
             config.setMyParam("yay");
+            when(environment.jersey()).thenReturn(jersey);
         }
 
         @Test
         public void buildsAThingResource() throws Exception {
             application.run(config, environment);
 
-            verify(environment).jersey().register(any(ThingResource.class));
+            verify(jersey).register(any(ThingResource.class));
         }
     }
 
