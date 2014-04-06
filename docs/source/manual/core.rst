@@ -266,7 +266,7 @@ resource instances, etc., and adding them to the given ``Environment`` class:
         final Thingy thingy = config.getThingyFactory().build();
 
         environment.jersey().register(new ThingyResource(thingy));
-        environment.healthChecks().register(new ThingyHealthCheck(thingy));
+        environment.healthChecks().register("thingy", new ThingyHealthCheck(thingy));
     }
 
 It's important to keep the ``run`` method clean, so if creating an instance of something is
@@ -287,7 +287,6 @@ to the database:
         private final Database database;
 
         public DatabaseHealthCheck(Database database) {
-            super("database");
             this.database = database;
         }
 
@@ -305,7 +304,7 @@ You can then add this health check to your application's environment:
 
 .. code-block:: java
 
-    environment.healthChecks().register(new DatabaseHealthCheck(database));
+    environment.healthChecks().register("database", new DatabaseHealthCheck(database));
 
 By sending a ``GET`` request to ``/healthcheck`` on the admin port you can run these tests and view
 the results::
