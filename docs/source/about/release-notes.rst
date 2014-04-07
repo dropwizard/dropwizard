@@ -6,7 +6,7 @@ Release Notes
 
 .. _rel-0.7.0:
 
-v0.7.0-SNAPSHOT
+v0.7.0
 ===============
 
 * Upgraded to Java 7.
