@@ -1,0 +1,3 @@
+com.yammer.dropwizard.auth
+com.yammer.dropwizard.auth.basic
+com.yammer.dropwizard.auth.oauth

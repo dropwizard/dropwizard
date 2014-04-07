@@ -1,0 +1,13 @@
+com.yammer.dropwizard.assets.tests
+com.yammer.dropwizard.config.tests
+com.yammer.dropwizard.jersey.caching.tests
+com.yammer.dropwizard.jersey.params.tests
+com.yammer.dropwizard.jersey.tests
+com.yammer.dropwizard.jersey.tests.dummy
+com.yammer.dropwizard.jetty.tests
+com.yammer.dropwizard.json.tests
+com.yammer.dropwizard.servlets.tests
+com.yammer.dropwizard.tasks.tests
+com.yammer.dropwizard.tests
+com.yammer.dropwizard.util.tests
+com.yammer.dropwizard.validation.tests

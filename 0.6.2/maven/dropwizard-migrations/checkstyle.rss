@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<rss version="0.91">
+  <channel>
+    <title>Dropwizard Migrations - Checkstyle report</title>
+    <link>http://dropwizard.github.io/dropwizard/0.6.2/dropwizard-migrations/</link>
+    <description>Dropwizard Migrations - Checkstyle report</description>
+    <language>en-us</language>
+    <copyright>&#169;2014</copyright>
+    <item>
+      <title>File: 17,
+             Errors: 34,
+             Warnings: 0,
+             Infos: 0
+      </title>
+            <link>http://dropwizard.github.io/dropwizard/0.6.2/dropwizard-migrations//checkstyle.html</link>
+      <description>
+        <p>Click <a href="http://dropwizard.github.io/dropwizard/0.6.2/dropwizard-migrations//checkstyle.html">here</a> for the full Checkstyle report.</p>
+
+        <table summary="Files" boder="1">
+          <thead>
+            <tr>
+              <th>Files</th>
+              <th style="width:30px;"><abbr title="Info">I</abbr></th>
+              <th style="width:30px;"><abbr title="Warning">W</abbr></th>
+              <th style="width:30px;"><abbr title="Error">E</abbr></th>
+            </tr>
+          </thead>
+          <tbody>
+                          <tr>
+                <td>
+                  <a href="http://dropwizard.github.io/dropwizard/0.6.2/dropwizard-migrations//checkstyle.html#com.yammer.dropwizard.migrations.DbLocksCommand.java">com/yammer/dropwizard/migrations/DbLocksCommand.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  2
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://dropwizard.github.io/dropwizard/0.6.2/dropwizard-migrations//checkstyle.html#com.yammer.dropwizard.migrations.DbFastForwardCommand.java">com/yammer/dropwizard/migrations/DbFastForwardCommand.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  2
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://dropwizard.github.io/dropwizard/0.6.2/dropwizard-migrations//checkstyle.html#com.yammer.dropwizard.migrations.AbstractLiquibaseCommand.java">com/yammer/dropwizard/migrations/AbstractLiquibaseCommand.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  3
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://dropwizard.github.io/dropwizard/0.6.2/dropwizard-migrations//checkstyle.html#com.yammer.dropwizard.migrations.DbTestCommand.java">com/yammer/dropwizard/migrations/DbTestCommand.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  2
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://dropwizard.github.io/dropwizard/0.6.2/dropwizard-migrations//checkstyle.html#com.yammer.dropwizard.migrations.DbDropAllCommand.java">com/yammer/dropwizard/migrations/DbDropAllCommand.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  2
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://dropwizard.github.io/dropwizard/0.6.2/dropwizard-migrations//checkstyle.html#com.yammer.dropwizard.migrations.DbPrepareRollbackCommand.java">com/yammer/dropwizard/migrations/DbPrepareRollbackCommand.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  2
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://dropwizard.github.io/dropwizard/0.6.2/dropwizard-migrations//checkstyle.html#com.yammer.dropwizard.migrations.DbRollbackCommand.java">com/yammer/dropwizard/migrations/DbRollbackCommand.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  2
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://dropwizard.github.io/dropwizard/0.6.2/dropwizard-migrations//checkstyle.html#com.yammer.dropwizard.migrations.DbClearChecksumsCommand.java">com/yammer/dropwizard/migrations/DbClearChecksumsCommand.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  2
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://dropwizard.github.io/dropwizard/0.6.2/dropwizard-migrations//checkstyle.html#com.yammer.dropwizard.migrations.ManagedLiquibase.java">com/yammer/dropwizard/migrations/ManagedLiquibase.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  2
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://dropwizard.github.io/dropwizard/0.6.2/dropwizard-migrations//checkstyle.html#com.yammer.dropwizard.migrations.MigrationsBundle.java">com/yammer/dropwizard/migrations/MigrationsBundle.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  1
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://dropwizard.github.io/dropwizard/0.6.2/dropwizard-migrations//checkstyle.html#com.yammer.dropwizard.migrations.DbCommand.java">com/yammer/dropwizard/migrations/DbCommand.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  2
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://dropwizard.github.io/dropwizard/0.6.2/dropwizard-migrations//checkstyle.html#com.yammer.dropwizard.migrations.DbTagCommand.java">com/yammer/dropwizard/migrations/DbTagCommand.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  2
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://dropwizard.github.io/dropwizard/0.6.2/dropwizard-migrations//checkstyle.html#com.yammer.dropwizard.migrations.DbStatusCommand.java">com/yammer/dropwizard/migrations/DbStatusCommand.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  2
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://dropwizard.github.io/dropwizard/0.6.2/dropwizard-migrations//checkstyle.html#com.yammer.dropwizard.migrations.DbMigrateCommand.java">com/yammer/dropwizard/migrations/DbMigrateCommand.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  2
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://dropwizard.github.io/dropwizard/0.6.2/dropwizard-migrations//checkstyle.html#com.yammer.dropwizard.migrations.DbCalculateChecksumCommand.java">com/yammer/dropwizard/migrations/DbCalculateChecksumCommand.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  2
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://dropwizard.github.io/dropwizard/0.6.2/dropwizard-migrations//checkstyle.html#com.yammer.dropwizard.migrations.DbGenerateDocsCommand.java">com/yammer/dropwizard/migrations/DbGenerateDocsCommand.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  2
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://dropwizard.github.io/dropwizard/0.6.2/dropwizard-migrations//checkstyle.html#com.yammer.dropwizard.migrations.DbDumpCommand.java">com/yammer/dropwizard/migrations/DbDumpCommand.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  2
+                </td>
+              </tr>
+                      </tbody>
+        </table>
+        
+      </description>
+    </item>
+  </channel>
+</rss>
+

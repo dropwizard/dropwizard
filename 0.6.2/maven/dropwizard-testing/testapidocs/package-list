@@ -1,0 +1,3 @@
+com.yammer.dropwizard.testing.tests
+com.yammer.dropwizard.testing.tests.junit
+com.yammer.dropwizard.testing.tests.service

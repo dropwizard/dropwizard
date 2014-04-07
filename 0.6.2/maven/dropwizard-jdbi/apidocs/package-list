@@ -1,0 +1,5 @@
+com.yammer.dropwizard.jdbi
+com.yammer.dropwizard.jdbi.args
+com.yammer.dropwizard.jdbi.bundles
+com.yammer.dropwizard.jdbi.jersey
+com.yammer.dropwizard.jdbi.logging

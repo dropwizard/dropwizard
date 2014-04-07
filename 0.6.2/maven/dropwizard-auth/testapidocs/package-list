@@ -1,0 +1,3 @@
+com.yammer.dropwizard.auth.basic.tests
+com.yammer.dropwizard.auth.oauth.tests
+com.yammer.dropwizard.auth.tests

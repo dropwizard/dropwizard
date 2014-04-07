@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<rss version="0.91">
+  <channel>
+    <title>Dropwizard for Scala 2.9.1 - Checkstyle report</title>
+    <link>http://dropwizard.github.io/dropwizard/0.6.2/dropwizard-scala_2.9.1/</link>
+    <description>Dropwizard for Scala 2.9.1 - Checkstyle report</description>
+    <language>en-us</language>
+    <copyright>&#169;2014</copyright>
+    <item>
+      <title>File: 1,
+             Errors: 1,
+             Warnings: 0,
+             Infos: 0
+      </title>
+            <link>http://dropwizard.github.io/dropwizard/0.6.2/dropwizard-scala_2.9.1//checkstyle.html</link>
+      <description>
+        <p>Click <a href="http://dropwizard.github.io/dropwizard/0.6.2/dropwizard-scala_2.9.1//checkstyle.html">here</a> for the full Checkstyle report.</p>
+
+        <table summary="Files" boder="1">
+          <thead>
+            <tr>
+              <th>Files</th>
+              <th style="width:30px;"><abbr title="Info">I</abbr></th>
+              <th style="width:30px;"><abbr title="Warning">W</abbr></th>
+              <th style="width:30px;"><abbr title="Error">E</abbr></th>
+            </tr>
+          </thead>
+          <tbody>
+                          <tr>
+                <td>
+                  <a href="http://dropwizard.github.io/dropwizard/0.6.2/dropwizard-scala_2.9.1//checkstyle.html#com.yammer.dropwizard.bundles.ScalaBundle.java">com/yammer/dropwizard/bundles/ScalaBundle.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  1
+                </td>
+              </tr>
+                      </tbody>
+        </table>
+        
+      </description>
+    </item>
+  </channel>
+</rss>
+

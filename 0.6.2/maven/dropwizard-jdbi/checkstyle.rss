@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<rss version="0.91">
+  <channel>
+    <title>Dropwizard JDBI Support - Checkstyle report</title>
+    <link>http://dropwizard.github.io/dropwizard/0.6.2/dropwizard-jdbi/</link>
+    <description>Dropwizard JDBI Support - Checkstyle report</description>
+    <language>en-us</language>
+    <copyright>&#169;2014</copyright>
+    <item>
+      <title>File: 11,
+             Errors: 24,
+             Warnings: 0,
+             Infos: 0
+      </title>
+            <link>http://dropwizard.github.io/dropwizard/0.6.2/dropwizard-jdbi//checkstyle.html</link>
+      <description>
+        <p>Click <a href="http://dropwizard.github.io/dropwizard/0.6.2/dropwizard-jdbi//checkstyle.html">here</a> for the full Checkstyle report.</p>
+
+        <table summary="Files" boder="1">
+          <thead>
+            <tr>
+              <th>Files</th>
+              <th style="width:30px;"><abbr title="Info">I</abbr></th>
+              <th style="width:30px;"><abbr title="Warning">W</abbr></th>
+              <th style="width:30px;"><abbr title="Error">E</abbr></th>
+            </tr>
+          </thead>
+          <tbody>
+                          <tr>
+                <td>
+                  <a href="http://dropwizard.github.io/dropwizard/0.6.2/dropwizard-jdbi//checkstyle.html#com.yammer.dropwizard.jdbi.jersey.LoggingDBIExceptionMapper.java">com/yammer/dropwizard/jdbi/jersey/LoggingDBIExceptionMapper.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  1
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://dropwizard.github.io/dropwizard/0.6.2/dropwizard-jdbi//checkstyle.html#com.yammer.dropwizard.jdbi.args.OptionalArgumentFactory.java">com/yammer/dropwizard/jdbi/args/OptionalArgumentFactory.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  2
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://dropwizard.github.io/dropwizard/0.6.2/dropwizard-jdbi//checkstyle.html#com.yammer.dropwizard.jdbi.jersey.LoggingSQLExceptionMapper.java">com/yammer/dropwizard/jdbi/jersey/LoggingSQLExceptionMapper.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  1
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://dropwizard.github.io/dropwizard/0.6.2/dropwizard-jdbi//checkstyle.html#com.yammer.dropwizard.jdbi.ImmutableListContainerFactory.java">com/yammer/dropwizard/jdbi/ImmutableListContainerFactory.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  1
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://dropwizard.github.io/dropwizard/0.6.2/dropwizard-jdbi//checkstyle.html#com.yammer.dropwizard.jdbi.NamePrependingStatementRewriter.java">com/yammer/dropwizard/jdbi/NamePrependingStatementRewriter.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  2
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://dropwizard.github.io/dropwizard/0.6.2/dropwizard-jdbi//checkstyle.html#com.yammer.dropwizard.jdbi.bundles.DBIExceptionsBundle.java">com/yammer/dropwizard/jdbi/bundles/DBIExceptionsBundle.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://dropwizard.github.io/dropwizard/0.6.2/dropwizard-jdbi//checkstyle.html#com.yammer.dropwizard.jdbi.ImmutableSetContainerFactory.java">com/yammer/dropwizard/jdbi/ImmutableSetContainerFactory.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  1
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://dropwizard.github.io/dropwizard/0.6.2/dropwizard-jdbi//checkstyle.html#com.yammer.dropwizard.jdbi.DBIFactory.java">com/yammer/dropwizard/jdbi/DBIFactory.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  3
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://dropwizard.github.io/dropwizard/0.6.2/dropwizard-jdbi//checkstyle.html#com.yammer.dropwizard.jdbi.logging.LogbackLog.java">com/yammer/dropwizard/jdbi/logging/LogbackLog.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  9
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://dropwizard.github.io/dropwizard/0.6.2/dropwizard-jdbi//checkstyle.html#com.yammer.dropwizard.jdbi.DBIHealthCheck.java">com/yammer/dropwizard/jdbi/DBIHealthCheck.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  2
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://dropwizard.github.io/dropwizard/0.6.2/dropwizard-jdbi//checkstyle.html#com.yammer.dropwizard.jdbi.OptionalContainerFactory.java">com/yammer/dropwizard/jdbi/OptionalContainerFactory.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  2
+                </td>
+              </tr>
+                      </tbody>
+        </table>
+        
+      </description>
+    </item>
+  </channel>
+</rss>
+
