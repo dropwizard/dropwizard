@@ -144,9 +144,8 @@ public class ServletEnvironment {
     }
 
     private void checkDuplicateRegistration(String name, Set<String> items, String type) {
-        if(items.contains(name)) {
+        if(!items.add(name)) {
             LOGGER.warn("Overriding the existing {} registered with the name: {}", type, name);
         }
-        items.add(name);
     }
 }
