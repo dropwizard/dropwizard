@@ -100,7 +100,8 @@ Next, write a test for serializing a ``Person`` instance to JSON:
         @Test
         public void serializesToJSON() throws Exception {
             final Person person = new Person("Luther Blissett", "lb@example.com");
-            assertThat(MAPPER.writeValueAsString(person)).isEqualTo(fixture("fixtures/person.json"));
+            assertThat(MAPPER.writeValueAsString(person))
+                    .isEqualTo(fixture("fixtures/person.json"));
         }
     }
 
@@ -133,8 +134,8 @@ Next, write a test for deserializing a ``Person`` instance from JSON:
         @Test
         public void deserializesFromJSON() throws Exception {
             final Person person = new Person("Luther Blissett", "lb@example.com");
-            assertThat(MAPPER.readValue("fixtures/person.json"), Person.class))
-                       .isEqualTo(person);
+            assertThat(MAPPER.readValue(fixture("fixtures/person.json"), Person.class))
+                    .isEqualTo(person);
         }
     }
 
@@ -172,6 +173,8 @@ loads a given resource instance in an in-memory Jersey server:
         @Before
         public void setup() {
             when(dao.fetchPerson(eq("blah"))).thenReturn(person);
+            // we have to reset the mock after each test because of the
+            // @ClassRule, or use a @Rule as mentioned below.
             reset(dao);
         }
 
@@ -184,11 +187,11 @@ loads a given resource instance in an in-memory Jersey server:
     }
 
 Instansiate a ``ResourceTestRule`` using its ``Builder`` and add the various resource instances you
-want to test via ``ResourceTestRule.Builder#addResource(Object)``. Use a ``@ClassRule`` annotation 
-to have the rule wrap the entire test class or the ``@Rule`` annotation to have the rule wrap 
+want to test via ``ResourceTestRule.Builder#addResource(Object)``. Use a ``@ClassRule`` annotation
+to have the rule wrap the entire test class or the ``@Rule`` annotation to have the rule wrap
 each test individually (make sure to remove static final modifier from ``resources``).
 
-In your tests, use ``#client()``, which returns a Jersey ``Client`` instance to talk to and test 
+In your tests, use ``#client()``, which returns a Jersey ``Client`` instance to talk to and test
 your instances.
 
 This doesn't require opening a port, but ``ResourceTestRule`` tests will perform all the serialization,
@@ -231,7 +234,6 @@ running and stop it again when they've completed (roughly equivalent to having u
                     String.format("http://localhost:%d/login", RULE.getLocalPort()))
                     .post(ClientResponse.class, loginForm());
 
-            assertThat(response.getStatus(), is(302));
+            assertThat(response.getStatus()).isEqualTo(302);
         }
     }
-
