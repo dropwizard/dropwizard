@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<rss version="0.91">
+  <channel>
+    <title>Dropwizard Hibernate Support - Checkstyle report</title>
+    <link>http://dropwizard.github.io/dropwizard/0.6.2/dropwizard-hibernate/</link>
+    <description>Dropwizard Hibernate Support - Checkstyle report</description>
+    <language>en-us</language>
+    <copyright>&#169;2014</copyright>
+    <item>
+      <title>File: 9,
+             Errors: 50,
+             Warnings: 0,
+             Infos: 0
+      </title>
+            <link>http://dropwizard.github.io/dropwizard/0.6.2/dropwizard-hibernate//checkstyle.html</link>
+      <description>
+        <p>Click <a href="http://dropwizard.github.io/dropwizard/0.6.2/dropwizard-hibernate//checkstyle.html">here</a> for the full Checkstyle report.</p>
+
+        <table summary="Files" boder="1">
+          <thead>
+            <tr>
+              <th>Files</th>
+              <th style="width:30px;"><abbr title="Info">I</abbr></th>
+              <th style="width:30px;"><abbr title="Warning">W</abbr></th>
+              <th style="width:30px;"><abbr title="Error">E</abbr></th>
+            </tr>
+          </thead>
+          <tbody>
+                          <tr>
+                <td>
+                  <a href="http://dropwizard.github.io/dropwizard/0.6.2/dropwizard-hibernate//checkstyle.html#com.yammer.dropwizard.hibernate.UnitOfWorkResourceMethodDispatchProvider.java">com/yammer/dropwizard/hibernate/UnitOfWorkResourceMethodDispatchProvider.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  4
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://dropwizard.github.io/dropwizard/0.6.2/dropwizard-hibernate//checkstyle.html#com.yammer.dropwizard.hibernate.UnitOfWorkRequestDispatcher.java">com/yammer/dropwizard/hibernate/UnitOfWorkRequestDispatcher.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  5
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://dropwizard.github.io/dropwizard/0.6.2/dropwizard-hibernate//checkstyle.html#com.yammer.dropwizard.hibernate.UnitOfWork.java">com/yammer/dropwizard/hibernate/UnitOfWork.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://dropwizard.github.io/dropwizard/0.6.2/dropwizard-hibernate//checkstyle.html#com.yammer.dropwizard.hibernate.ManagedSessionFactory.java">com/yammer/dropwizard/hibernate/ManagedSessionFactory.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  14
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://dropwizard.github.io/dropwizard/0.6.2/dropwizard-hibernate//checkstyle.html#com.yammer.dropwizard.hibernate.SessionFactoryHealthCheck.java">com/yammer/dropwizard/hibernate/SessionFactoryHealthCheck.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  4
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://dropwizard.github.io/dropwizard/0.6.2/dropwizard-hibernate//checkstyle.html#com.yammer.dropwizard.hibernate.AbstractDAO.java">com/yammer/dropwizard/hibernate/AbstractDAO.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  14
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://dropwizard.github.io/dropwizard/0.6.2/dropwizard-hibernate//checkstyle.html#com.yammer.dropwizard.hibernate.HibernateBundle.java">com/yammer/dropwizard/hibernate/HibernateBundle.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  4
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://dropwizard.github.io/dropwizard/0.6.2/dropwizard-hibernate//checkstyle.html#com.yammer.dropwizard.hibernate.UnitOfWorkResourceMethodDispatchAdapter.java">com/yammer/dropwizard/hibernate/UnitOfWorkResourceMethodDispatchAdapter.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  3
+                </td>
+              </tr>
+                          <tr>
+                <td>
+                  <a href="http://dropwizard.github.io/dropwizard/0.6.2/dropwizard-hibernate//checkstyle.html#com.yammer.dropwizard.hibernate.SessionFactoryFactory.java">com/yammer/dropwizard/hibernate/SessionFactoryFactory.java</a>
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  0
+                </td>
+                <td>
+                  2
+                </td>
+              </tr>
+                      </tbody>
+        </table>
+        
+      </description>
+    </item>
+  </channel>
+</rss>
+

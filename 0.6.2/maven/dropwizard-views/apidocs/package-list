@@ -1,0 +1,3 @@
+com.yammer.dropwizard.views
+com.yammer.dropwizard.views.freemarker
+com.yammer.dropwizard.views.mustache

@@ -1,0 +1,15 @@
+com.yammer.dropwizard
+com.yammer.dropwizard.assets
+com.yammer.dropwizard.cli
+com.yammer.dropwizard.config
+com.yammer.dropwizard.jersey
+com.yammer.dropwizard.jersey.caching
+com.yammer.dropwizard.jersey.params
+com.yammer.dropwizard.jetty
+com.yammer.dropwizard.json
+com.yammer.dropwizard.lifecycle
+com.yammer.dropwizard.logging
+com.yammer.dropwizard.servlets
+com.yammer.dropwizard.tasks
+com.yammer.dropwizard.util
+com.yammer.dropwizard.validation
