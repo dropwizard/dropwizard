@@ -1,5 +1,6 @@
 package io.dropwizard.setup;
 
+import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheckRegistry;
 import com.codahale.metrics.health.jvm.ThreadDeadlockHealthCheck;
 import io.dropwizard.jetty.MutableServletContextHandler;
@@ -30,11 +31,11 @@ public class AdminEnvironment extends ServletEnvironment {
      * @param healthChecks a health check registry
      */
     public AdminEnvironment(MutableServletContextHandler handler,
-                            HealthCheckRegistry healthChecks) {
+                            HealthCheckRegistry healthChecks, MetricRegistry metricRegistry) {
         super(handler);
         this.healthChecks = healthChecks;
         this.healthChecks.register("deadlocks", new ThreadDeadlockHealthCheck());
-        this.tasks = new TaskServlet();
+        this.tasks = new TaskServlet(metricRegistry);
         tasks.add(new GarbageCollectionTask());
         addServlet("tasks", tasks).addMapping("/tasks/*");
         handler.addLifeCycleListener(new AbstractLifeCycle.AbstractLifeCycleListener() {
