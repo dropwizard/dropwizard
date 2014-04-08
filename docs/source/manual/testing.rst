@@ -18,7 +18,7 @@ Testing Representations
 
 While Jackson's JSON support is powerful and fairly easy-to-use, you shouldn't just rely on
 eyeballing your representation classes to ensure you're actually producing the API you think you
-are. By using the helper methods in `JsonHelpers` you can add unit tests for serializing and
+are. By using the helper methods in `FixtureHelpers` you can add unit tests for serializing and
 deserializing your representation classes to and from JSON.
 
 Let's assume we have a ``Person`` class which your API uses as both a request entity (e.g., when
@@ -87,22 +87,28 @@ Next, write a test for serializing a ``Person`` instance to JSON:
 
 .. code-block:: java
 
-    import static io.dropwizard.testing.JsonHelpers.*;
-    import static org.hamcrest.Matchers.*;
+    import static io.dropwizard.testing.FixtureHelpers.*;
+    import static org.fest.assertions.api.Assertions.assertThat;
+    import io.dropwizard.jackson.Jackson;
+    import org.junit.Test;
+    import com.fasterxml.jackson.databind.ObjectMapper;
 
-    @Test
-    public void serializesToJSON() throws Exception {
-        final Person person = new Person("Luther Blissett", "lb@example.com");
-        assertThat("a Person can be serialized to JSON",
-                   asJson(person),
-                   is(equalTo(jsonFixture("fixtures/person.json"))));
+    public class PersonTest {
+
+        private static final ObjectMapper MAPPER = Jackson.newObjectMapper();
+
+        @Test
+        public void serializesToJSON() throws Exception {
+            final Person person = new Person("Luther Blissett", "lb@example.com");
+            assertThat(MAPPER.writeValueAsString(person)).isEqualTo(fixture("fixtures/person.json"));
+        }
     }
 
-This test uses `Hamcrest matchers`_ and JUnit_ to test that when a ``Person`` instance is serialized
+This test uses `FEST matchers`_ and JUnit_ to test that when a ``Person`` instance is serialized
 via Jackson it matches the JSON in the fixture file. (The comparison is done via a normalized JSON
 string representation, so whitespace doesn't affect the results.)
 
-.. _Hamcrest matchers: http://code.google.com/p/hamcrest/
+.. _FEST matchers: https://code.google.com/p/fest/
 .. _JUnit: http://www.junit.org/
 
 .. _man-testing-representations-deserialization:
@@ -114,19 +120,26 @@ Next, write a test for deserializing a ``Person`` instance from JSON:
 
 .. code-block:: java
 
-    import static io.dropwizard.testing.JsonHelpers.*;
-    import static org.hamcrest.Matchers.*;
+    import static io.dropwizard.testing.FixtureHelpers.*;
+    import static org.fest.assertions.api.Assertions.assertThat;
+    import io.dropwizard.jackson.Jackson;
+    import org.junit.Test;
+    import com.fasterxml.jackson.databind.ObjectMapper;
 
-    @Test
-    public void deserializesFromJSON() throws Exception {
-        final Person person = new Person("Luther Blissett", "lb@example.com");
-        assertThat("a Person can be deserialized from JSON",
-                   fromJson(jsonFixture("fixtures/person.json"), Person.class),
-                   is(person));
+    public class PersonTest {
+
+        private static final ObjectMapper MAPPER = Jackson.newObjectMapper();
+
+        @Test
+        public void deserializesFromJSON() throws Exception {
+            final Person person = new Person("Luther Blissett", "lb@example.com");
+            assertThat(MAPPER.readValue("fixtures/person.json"), Person.class))
+                       .isEqualTo(person);
+        }
     }
 
 
-This test uses `Hamcrest matchers`_ and JUnit_ to test that when a ``Person`` instance is
+This test uses `FEST matchers`_ and JUnit_ to test that when a ``Person`` instance is
 deserialized via Jackson from the specified JSON fixture it matches the given object.
 
 .. _man-testing-resources:
@@ -143,6 +156,7 @@ loads a given resource instance in an in-memory Jersey server:
 .. code-block:: java
 
     import static org.fest.assertions.api.Assertions.assertThat;
+    import static org.mockito.Mockito.*;
 
     public class PersonResourceTest {
 
@@ -158,6 +172,7 @@ loads a given resource instance in an in-memory Jersey server:
         @Before
         public void setup() {
             when(dao.fetchPerson(eq("blah"))).thenReturn(person);
+            reset(dao);
         }
 
         @Test
