@@ -266,7 +266,7 @@ resource instances, etc., and adding them to the given ``Environment`` class:
         final Thingy thingy = config.getThingyFactory().build();
 
         environment.jersey().register(new ThingyResource(thingy));
-        environment.healthChecks().register(new ThingyHealthCheck(thingy));
+        environment.healthChecks().register("thingy", new ThingyHealthCheck(thingy));
     }
 
 It's important to keep the ``run`` method clean, so if creating an instance of something is
@@ -287,7 +287,6 @@ to the database:
         private final Database database;
 
         public DatabaseHealthCheck(Database database) {
-            super("database");
             this.database = database;
         }
 
@@ -305,7 +304,7 @@ You can then add this health check to your application's environment:
 
 .. code-block:: java
 
-    environment.healthChecks().register(new DatabaseHealthCheck(database));
+    environment.healthChecks().register("database", new DatabaseHealthCheck(database));
 
 By sending a ``GET`` request to ``/healthcheck`` on the admin port you can run these tests and view
 the results::
@@ -414,6 +413,19 @@ page.
         bootstrap.addBundle(new AssetsBundle("/assets/", "/"));
     }
 
+When an ``AssetBundle`` is added to the application, it is registered as a servlet
+using a default name of ``assets``. If the application needs to have multiple ``AssetBundle``
+instances, the extended constructor should be used to specify a unique name for the ``AssetBundle``.
+
+.. code-block:: java
+
+    @Override
+    public void initialize(Bootstrap<HelloWorldConfiguration> bootstrap) {
+        bootstrap.addBundle(new AssetsBundle("/assets/css", "/css", null, "css"));
+        bootstrap.addBundle(new AssetsBundle("/assets/js", "/js", null, "js"));
+        bootstrap.addBundle(new AssetsBundle("/assets/fonts", "/fonts", null, "fonts"));
+    }
+
 .. _man-core-commands:
 
 Commands
@@ -451,7 +463,9 @@ Tasks
 A ``Task`` is a run-time action your application provides access to on the administrative port via HTTP.
 All Dropwizard applications start with the ``gc`` task, which explicitly triggers the JVM's garbage
 collection. (This is useful, for example, for running full garbage collections during off-peak times
-or while the given application is out of rotation.)
+or while the given application is out of rotation.) The execute method of a ``Task`` can be annotated
+with ``@Timed``, ``@Metered``, and ``@ExceptionMetered``. Dropwizard will automatically
+record runtime information about your tasks.
 
 Running a task can be done by sending a ``POST`` request to ``/tasks/{task-name}`` on the admin
 port. For example::
@@ -658,19 +672,21 @@ tests:
 
     public class MyApplicationTest {
         private final Environment environment = mock(Environment.class);
+        private final JerseyEnvironment jersey = mock(JerseyEnvironment.class);
         private final MyApplication application = new MyApplication();
         private final MyConfiguration config = new MyConfiguration();
 
         @Before
         public void setup() throws Exception {
             config.setMyParam("yay");
+            when(environment.jersey()).thenReturn(jersey);
         }
 
         @Test
         public void buildsAThingResource() throws Exception {
             application.run(config, environment);
 
-            verify(environment).jersey().register(any(ThingResource.class));
+            verify(jersey).register(any(ThingResource.class));
         }
     }
 

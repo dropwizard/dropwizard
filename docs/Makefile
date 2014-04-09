@@ -14,7 +14,7 @@ ALLSPHINXOPTS   = -d $(BUILDDIR)/doctrees $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) sou
 # the i18n builder cannot share the environment and doctrees with the others
 I18NSPHINXOPTS  = $(PAPEROPT_$(PAPER)) $(SPHINXOPTS) source
 
-.PHONY: help clean html dirhtml singlehtml pickle json htmlhelp qthelp devhelp epub latex latexpdf text man changes linkcheck doctest gettext
+.PHONY: help clean html dirhtml singlehtml pickle json htmlhelp qthelp devhelp epub latex latexpdf text man changes linkcheck doctest gettext livehtml
 
 help:
 	@echo "Please use \`make <target>' where <target> is one of"
@@ -37,6 +37,7 @@ help:
 	@echo "  changes    to make an overview of all changed/added/deprecated items"
 	@echo "  linkcheck  to check all external links for integrity"
 	@echo "  doctest    to run all doctests embedded in the documentation (if enabled)"
+	@echo "  livehtml   build html and point livereload server at them"
 
 clean:
 	-rm -rf $(BUILDDIR)/*
@@ -151,6 +152,12 @@ doctest:
 	$(SPHINXBUILD) -b doctest $(ALLSPHINXOPTS) $(BUILDDIR)/doctest
 	@echo "Testing of doctests in the sources finished, look at the " \
 	      "results in $(BUILDDIR)/doctest/output.txt."
+
+# And now the target; depends on 'make html', since livereload will only build if things change.
+# We need to make sure the docs are current with any existing changes
+# See http://serialized.net/2013/01/live-sphinx-documentation-preview/ for more details
+livehtml: html
+	livereload -b $(BUILDDIR)/html	      	   
 
 less:
 	lessc --compress source/_themes/dropwizard/less/dropwizard.less > source/_themes/dropwizard/static/dropwizard.css

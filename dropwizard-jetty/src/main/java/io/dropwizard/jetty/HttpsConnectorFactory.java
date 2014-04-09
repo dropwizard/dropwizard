@@ -179,6 +179,14 @@ import static com.codahale.metrics.MetricRegistry.name;
  *             are supported. All other cipher suites will be refused
  *         </td>
  *     </tr>
+ *    <tr>
+ *         <td>{@code excludedCipherSuites}</td>
+ *         <td>(none)</td>
+ *         <td>
+ *             A list of cipher suites (e.g., {@code TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256}) which
+ *             are excluded. These cipher suites will be refused.
+ *         </td>
+ *     </tr>
  *     <tr>
  *         <td>{@code allowRenegotiation}</td>
  *         <td>true</td>
@@ -235,6 +243,7 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
     private boolean validatePeers = true;
     private List<String> supportedProtocols;
     private List<String> supportedCipherSuites;
+    private List<String> excludedCipherSuites;
     private boolean allowRenegotiation = true;
     private String endpointIdentificationAlgorithm;
 
@@ -462,6 +471,16 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
     public List<String> getSupportedCipherSuites() {
         return supportedCipherSuites;
     }
+    
+    @JsonProperty
+    public List<String> getExcludedCipherSuites() {
+        return excludedCipherSuites;
+    }
+
+    @JsonProperty
+    public void setExcludedCipherSuites(List<String> excludedCipherSuites) {
+        this.excludedCipherSuites = excludedCipherSuites;
+    }
 
     @JsonProperty
     public void setSupportedCipherSuites(List<String> supportedCipherSuites) {
@@ -645,6 +664,10 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
 
         if (supportedCipherSuites != null) {
             factory.setIncludeCipherSuites(Iterables.toArray(supportedCipherSuites, String.class));
+        }
+        
+        if (excludedCipherSuites != null) {
+            factory.setExcludeCipherSuites(Iterables.toArray(excludedCipherSuites, String.class));
         }
 
         return factory;

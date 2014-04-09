@@ -328,10 +328,17 @@ supportedProtocols               (none)              A list of protocols (e.g., 
                                                      other protocols will be refused.
 supportedCipherSuites            (none)              A list of cipher suites (e.g., ``TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256``) which
                                                      are supported. All other cipher suites will be refused
+excludedCipherSuites             (none)              A list of cipher suites (e.g., ``TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256``) which
+                                                     are excluded. These cipher suites will be refused and exclusion takes higher 
+                                                     precedence than inclusion, such that if a cipher suite is listed in 
+                                                     ``supportedCipherSuites`` and ``excludedCipherSuitse``, the cipher suite will be
+                                                     excluded. To verify that the proper cipher suites are being whitelisted and
+                                                     blacklisted, it is recommended to use the tool `sslyze`_.
 allowRenegotiation               true                Whether or not TLS renegotiation is allowed.
 endpointIdentificationAlgorithm  (none)              Which endpoint identification algorithm, if any, to use during the TLS handshake.
 ================================ ==================  ======================================================================================
 
+.. _sslyze: https://github.com/iSECPartners/sslyze
 
 .. _man-configuration-spdy:
 
