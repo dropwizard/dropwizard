@@ -68,26 +68,41 @@
             <name>Coda Hale</name>
             <email>coda.hale@gmail.com</email>
             <timezone>-8</timezone>
+            <roles>
+                <role>architect</role>
+            </roles>
         </developer>
         <developer>
             <name>Nick Telford</name>
             <email>nick.telford@gmail.com</email>
             <timezone>0</timezone>
+            <roles>
+                <role>committer</role>
+            </roles>
         </developer>
         <developer>
             <name>Ryan Kennedy</name>
             <email>rckenned@gmail.com</email>
             <timezone>-8</timezone>
+            <roles>
+                <role>committer</role>
+            </roles>
         </developer>
         <developer>
             <name>Camille Fournier</name>
             <email>camille@apache.org</email>
             <timezone>-5</timezone>
+            <roles>
+                <role>committer</role>
+            </roles>
         </developer>
         <developer>
             <name>Carlo Barbara</name>
             <email>carlo.barbara@gmail.com</email>
             <timezone>-5</timezone>
+            <roles>
+                <role>committer</role>
+            </roles>
         </developer>
     </developers>
 
