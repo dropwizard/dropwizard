@@ -10,5 +10,5 @@ located in the parent directory.
 Committer Rules
 ================
 
-* Big changes need to be approved by 2 other committers.
-* If multiple committers disagree with a commit, it can be reverted.
+* Committers aren't allowed to merge their own changes, the exception being bug fixes
+* A commit may be reverted, but it requires 2+ committer's approval. The goal is to keep it democratic
