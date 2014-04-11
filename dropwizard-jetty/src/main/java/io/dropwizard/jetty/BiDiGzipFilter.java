@@ -72,6 +72,7 @@ public class BiDiGzipFilter extends IncludableGzipFilter {
     public void setMimeTypes(Set<String> mimeTypes) {
         _mimeTypes.clear();
         _mimeTypes.addAll(mimeTypes);
+        _excludeMimeTypes = false;
     }
 
     public void setBufferSize(int bufferSize) {
