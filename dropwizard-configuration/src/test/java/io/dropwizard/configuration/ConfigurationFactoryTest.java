@@ -212,16 +212,12 @@ public class ConfigurationFactoryTest {
         }
     }
 
-    @Test
+    @Test(expected = ConfigurationParsingException.class)
     public void throwsAnExceptionOnArrayOverrideWithInvalidType() throws Exception {
         System.setProperty("dw.servers", "one,two");
-        try {
-            factory.build(validFile);
-            failBecauseExceptionWasNotThrown(ConfigurationParsingException.class);
-        } catch (ConfigurationParsingException e) {
-            assertThat(e.getMessage())
-                    .containsOnlyOnce("Can not instantiate value of type java.lang.String");
-        }
+
+        factory.build(validFile);
+        failBecauseExceptionWasNotThrown(ConfigurationParsingException.class);
     }
 
     @Test
