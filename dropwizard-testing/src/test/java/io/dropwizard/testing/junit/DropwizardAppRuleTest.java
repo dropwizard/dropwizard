@@ -1,10 +1,13 @@
 package io.dropwizard.testing.junit;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.collect.ImmutableCollection;
+import com.google.common.collect.ImmutableMultimap;
 import com.google.common.io.Resources;
 import com.sun.jersey.api.client.Client;
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
+import io.dropwizard.servlets.tasks.Task;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -14,6 +17,7 @@ import org.junit.Test;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import java.io.File;
+import java.io.PrintWriter;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertNotNull;
@@ -52,6 +56,13 @@ public class DropwizardAppRuleTest {
         assertThat(environment.getName(), is("TestApplication"));
     }
 
+    @Test
+    public void canPerformAdminTask() {
+        final String response = new Client().resource("http://localhost:" +
+                RULE.getAdminPort() + "/tasks/hello?name=test_user")
+                .post(String.class);
+        assertThat(response, is("Hello has been said to test_user"));
+    }
 
     public static class TestApplication extends Application<TestConfiguration> {
         @Override
@@ -61,6 +72,7 @@ public class DropwizardAppRuleTest {
         @Override
         public void run(TestConfiguration configuration, Environment environment) throws Exception {
             environment.jersey().register(new TestResource(configuration.getMessage()));
+            environment.admin().addTask(new HelloTask());
         }
     }
 
@@ -95,6 +107,21 @@ public class DropwizardAppRuleTest {
             return new File(Resources.getResource(resourceClassPathLocation).toURI()).getAbsolutePath();
         } catch (Exception e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    public static class HelloTask extends Task {
+
+        public HelloTask() {
+            super("hello");
+        }
+
+        @Override
+        public void execute(ImmutableMultimap<String, String> parameters, PrintWriter output) throws Exception {
+            ImmutableCollection<String> names = parameters.get("name");
+            String name = !names.isEmpty() ? names.asList().get(0) : "Anonymous";
+            output.print("Hello has been said to " + name);
+            output.flush();
         }
     }
 }
