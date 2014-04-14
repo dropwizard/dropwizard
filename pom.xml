@@ -61,6 +61,7 @@
         <jetty.version>9.0.7.v20131107</jetty.version>
         <guava.version>16.0.1</guava.version>
         <h2.version>1.3.175</h2.version>
+        <jsr250-api.version>1.0</jsr250-api.version>
     </properties>
 
     <developers>
