@@ -13,6 +13,8 @@ import java.util.List;
 import javax.ws.rs.Path;
 import javax.ws.rs.ext.Provider;
 
+import org.glassfish.jersey.message.GZipEncoder;
+import org.glassfish.jersey.server.filter.EncodingFilter;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.ServerProperties;
 import org.glassfish.jersey.server.model.Resource;
@@ -92,6 +94,7 @@ public class DropwizardResourceConfig extends ResourceConfig {
         register(OptionalResourceMethodResponseWriter.class);
         register(new OptionalQueryParamValueFactoryProvider.Binder());
         register(new SessionFactoryProvider.Binder());
+        EncodingFilter.enableFor(this, GZipEncoder.class);
     }
 
     public void logComponents() {
@@ -112,13 +115,13 @@ public class DropwizardResourceConfig extends ResourceConfig {
         final ImmutableSet.Builder<String> builder = ImmutableSet.builder();
 
         for (Class<?> klass : getClasses()) {
-            if (ResourceConfig.isRootResourceClass(klass)) {
+            if (klass.isAnnotationPresent(Path.class)) {
                 builder.add(klass.getCanonicalName());
             }
         }
 
         for (Object o : getSingletons()) {
-            if (ResourceConfig.isRootResourceClass(o.getClass())) {
+            if (o.getClass().isAnnotationPresent(Path.class)) {
                 builder.add(o.getClass().getCanonicalName());
             }
         }
@@ -130,13 +133,13 @@ public class DropwizardResourceConfig extends ResourceConfig {
         final ImmutableSet.Builder<String> builder = ImmutableSet.builder();
 
         for (Class<?> klass : getClasses()) {
-            if (ResourceConfig.isProviderClass(klass)) {
+            if (klass.isAnnotationPresent(Provider.class)) {
                 builder.add(klass.getCanonicalName());
             }
         }
 
         for (Object o : getSingletons()) {
-            if (ResourceConfig.isProviderClass(o.getClass())) {
+            if (o.getClass().isAnnotationPresent(Provider.class)) {
                 builder.add(o.getClass().getCanonicalName());
             }
         }
@@ -151,12 +154,12 @@ public class DropwizardResourceConfig extends ResourceConfig {
 
         final ImmutableList.Builder<Class<?>> builder = ImmutableList.builder();
         for (Object o : getSingletons()) {
-            if (ResourceConfig.isRootResourceClass(o.getClass())) {
+            if (o.getClass().isAnnotationPresent(Path.class)) {
                 builder.add(o.getClass());
             }
         }
         for (Class<?> klass : getClasses()) {
-            if (ResourceConfig.isRootResourceClass(klass)) {
+            if (klass.isAnnotationPresent(Path.class)) {
                 builder.add(klass);
             }
         }
