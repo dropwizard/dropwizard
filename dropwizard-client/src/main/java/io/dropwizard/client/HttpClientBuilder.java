@@ -3,8 +3,10 @@ package io.dropwizard.client;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.httpclient.InstrumentedClientConnManager;
 import com.codahale.metrics.httpclient.InstrumentedHttpClient;
+
 import io.dropwizard.setup.Environment;
 import io.dropwizard.util.Duration;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.HttpRequestRetryHandler;
@@ -44,6 +46,7 @@ public class HttpClientBuilder {
     private final MetricRegistry metricRegistry;
     private HttpClientConfiguration configuration = new HttpClientConfiguration();
     private DnsResolver resolver = new SystemDefaultDnsResolver();
+    private HttpRequestRetryHandler httpRequestRetryHandler;
     private SchemeRegistry registry = SchemeRegistryFactory.createSystemDefault();
 
     public HttpClientBuilder(MetricRegistry metricRegistry) {
@@ -76,6 +79,17 @@ public class HttpClientBuilder {
         return this;
     }
 
+    /**
+     * Uses the {@link httpRequestRetryHandler} for handling request retries.
+     *
+     * @param httpRequestRetryHandler an httpRequestRetryHandler
+     * @return {@code this}
+     */
+    public HttpClientBuilder using(HttpRequestRetryHandler httpRequestRetryHandler) {
+        this.httpRequestRetryHandler = httpRequestRetryHandler;
+        return this;
+    }
+    
     /**
      * Use the given {@link SchemeRegistry} instance.
      *
@@ -128,6 +142,8 @@ public class HttpClientBuilder {
 
         if (configuration.getRetries() == 0) {
             client.setHttpRequestRetryHandler(NO_RETRIES);
+        } else if (httpRequestRetryHandler != null) {
+            client.setHttpRequestRetryHandler(httpRequestRetryHandler);
         } else {
             client.setHttpRequestRetryHandler(new DefaultHttpRequestRetryHandler(configuration.getRetries(),
                                                                                  false));
