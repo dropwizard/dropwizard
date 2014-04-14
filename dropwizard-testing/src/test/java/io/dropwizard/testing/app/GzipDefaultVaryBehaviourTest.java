@@ -1,7 +1,5 @@
 package io.dropwizard.testing.app;
 
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import io.dropwizard.testing.junit.DropwizardAppRuleTest;
 import io.dropwizard.testing.junit.TestApplication;
@@ -13,6 +11,8 @@ import static java.util.Arrays.asList;
 import static javax.ws.rs.core.HttpHeaders.ACCEPT_ENCODING;
 import static javax.ws.rs.core.HttpHeaders.CONTENT_ENCODING;
 import static javax.ws.rs.core.HttpHeaders.VARY;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.core.Response;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class GzipDefaultVaryBehaviourTest {
@@ -23,13 +23,16 @@ public class GzipDefaultVaryBehaviourTest {
 
     @Test
     public void testDefaultVaryHeader() {
-        final ClientResponse clientResponse = new Client().resource("http://localhost:" +
+        final Response clientResponse = ClientBuilder.newClient().target("http://localhost:" +
                 RULE.getLocalPort()
                 +"/test")
+                .request()
                 .header(ACCEPT_ENCODING, "gzip")
-                .get(ClientResponse.class);
+                .get();
 
-        assertThat(clientResponse.getHeaders().get(VARY)).isEqualTo(asList(ACCEPT_ENCODING));
-        assertThat(clientResponse.getHeaders().get(CONTENT_ENCODING)).isEqualTo(asList("gzip"));
+        System.out.println("RESPONSE=" + clientResponse);
+        System.out.println("HEADERS=" + clientResponse.getHeaders());
+        assertThat(clientResponse.getHeaders().get(VARY)).isEqualTo(asList((Object)ACCEPT_ENCODING));
+        assertThat(clientResponse.getHeaders().get(CONTENT_ENCODING)).isEqualTo(asList((Object) "gzip"));
     }
 }
