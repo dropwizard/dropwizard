@@ -1,21 +1,20 @@
 package io.dropwizard.logging;
 
+import ch.qos.logback.classic.AsyncAppender;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.filter.ThresholdFilter;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
+import ch.qos.logback.core.AsyncAppenderBase;
 import ch.qos.logback.core.spi.FilterAttachable;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Strings;
-import io.dropwizard.util.Duration;
-import io.dropwizard.validation.MinDuration;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.TimeZone;
-import java.util.concurrent.TimeUnit;
 
 /**
  * A base implementation of {@link AppenderFactory}.
@@ -38,29 +37,22 @@ import java.util.concurrent.TimeUnit;
  *         <td>An appender-specific log format.</td>
  *     </tr>
  *     <tr>
- *         <td>{@code bounded}</td>
- *         <td>true</td>
- *         <td>Whether or not the appender should block when its queue is full.</td>
+ *         <td>{@code queueSize}</td>
+ *         <td>{@link AsyncAppenderBase}</td>
+ *         <td>The maximum capacity of the blocking queue.</td>
  *     </tr>
  *     <tr>
- *         <td>{@code batchSize}</td>
- *         <td>128</td>
+ *         <td>{@code discardingThreshold}</td>
+ *         <td>{@link AsyncAppenderBase}</td>
  *         <td>
- *             The maximum number of events to write in a single batch.
- *         </td>
- *     </tr>
- *     <tr>
- *         <td>{@code batchDuration}</td>
- *         <td>100ms</td>
- *         <td>
- *             The maximum amount of time to wait for a full batch before writing a partial batch.
+ *             By default, when the blocking queue has 20% capacity remaining,
+ *             it will drop events of level TRACE, DEBUG and INFO, keeping only
+ *             events of level WARN and ERROR. To keep all events, set discardingThreshold to 0.
  *         </td>
  *     </tr>
  * </table>
  */
 public abstract class AbstractAppenderFactory implements AppenderFactory {
-    private boolean bounded;
-
     @NotNull
     protected Level threshold = Level.ALL;
 
@@ -68,40 +60,28 @@ public abstract class AbstractAppenderFactory implements AppenderFactory {
 
     @Min(1)
     @Max(Integer.MAX_VALUE)
-    private int batchSize = 128;
+    private int queueSize = AsyncAppenderBase.DEFAULT_QUEUE_SIZE;
 
-    @NotNull
-    @MinDuration(value = 1, unit = TimeUnit.MILLISECONDS)
-    private Duration batchDuration = Duration.milliseconds(100);
+    private int discardingThreshold = -1;
 
     @JsonProperty
-    public boolean isBounded() {
-        return bounded;
+    public int getQueueSize() {
+        return queueSize;
     }
 
     @JsonProperty
-    public void setBounded(boolean bounded) {
-        this.bounded = bounded;
+    public void setQueueSize(int queueSize) {
+        this.queueSize = queueSize;
     }
 
     @JsonProperty
-    public int getBatchSize() {
-        return batchSize;
+    public int getDiscardingThreshold() {
+        return discardingThreshold;
     }
 
     @JsonProperty
-    public void setBatchSize(int batchSize) {
-        this.batchSize = batchSize;
-    }
-
-    @JsonProperty
-    public Duration getBatchDuration() {
-        return batchDuration;
-    }
-
-    @JsonProperty
-    public void setBatchDuration(Duration batchDuration) {
-        this.batchDuration = batchDuration;
+    public void setDiscardingThreshold(int discardingThreshold) {
+        this.discardingThreshold = discardingThreshold;
     }
 
     @JsonProperty
@@ -125,7 +105,10 @@ public abstract class AbstractAppenderFactory implements AppenderFactory {
     }
 
     protected Appender<ILoggingEvent> wrapAsync(Appender<ILoggingEvent> appender) {
-        final AsyncAppender asyncAppender = new AsyncAppender(appender, batchSize, batchDuration, bounded);
+        final AsyncAppender asyncAppender = new AsyncAppender();
+        asyncAppender.setQueueSize(queueSize);
+        asyncAppender.setDiscardingThreshold(discardingThreshold);
+        asyncAppender.addAppender(appender);
         asyncAppender.start();
         return asyncAppender;
     }
