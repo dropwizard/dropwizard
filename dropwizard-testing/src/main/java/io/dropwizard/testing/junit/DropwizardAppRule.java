@@ -1,5 +1,6 @@
 package io.dropwizard.testing.junit;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
@@ -14,6 +15,7 @@ import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
+import javax.annotation.Nullable;
 import java.util.Enumeration;
 
 /**
@@ -36,7 +38,7 @@ public class DropwizardAppRule<C extends Configuration> implements TestRule {
     private Server jettyServer;
 
     public DropwizardAppRule(Class<? extends Application<C>> applicationClass,
-                             String configPath,
+                             @Nullable String configPath,
                              ConfigOverride... configOverrides) {
         this.applicationClass = applicationClass;
         this.configPath = configPath;
@@ -95,7 +97,13 @@ public class DropwizardAppRule<C extends Configuration> implements TestRule {
 
             application.initialize(bootstrap);
             final ServerCommand<C> command = new ServerCommand<>(application);
-            final Namespace namespace = new Namespace(ImmutableMap.<String, Object>of("file", configPath));
+
+            ImmutableMap.Builder<String, Object> file = ImmutableMap.builder();
+            if (!Strings.isNullOrEmpty(configPath)) {
+                file.put("file", configPath);
+            }
+            final Namespace namespace = new Namespace(file.build());
+
             command.run(bootstrap, namespace);
         } catch (Exception e) {
             throw new RuntimeException(e);
