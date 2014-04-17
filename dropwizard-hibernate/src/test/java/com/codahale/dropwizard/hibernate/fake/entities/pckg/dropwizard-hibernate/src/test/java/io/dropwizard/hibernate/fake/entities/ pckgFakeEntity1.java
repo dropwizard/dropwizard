@@ -1,4 +1,4 @@
-package com.codahale.dropwizard.hibernate.fake.entities.pckg;
+package io.dropwizard.hibernate.fake.entities.pckg;
 
 import javax.persistence.Entity;
 
