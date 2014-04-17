@@ -12,7 +12,7 @@ public class ScanningHibernateBundleTest {
 	@Test
 	public void testFindEntityClassesFromDirectory() {
 		//given
-		String packageWithEntities = "com.codahale.dropwizard.hibernate.fake.entities.pckg";
+		String packageWithEntities = "io.dropwizard.hibernate.fake.entities.pckg";
 		//when
 		ImmutableList<Class<?>> findEntityClassesFromDirectory = ScanningHibernateBundle.findEntityClassesFromDirectory(packageWithEntities);
 		
