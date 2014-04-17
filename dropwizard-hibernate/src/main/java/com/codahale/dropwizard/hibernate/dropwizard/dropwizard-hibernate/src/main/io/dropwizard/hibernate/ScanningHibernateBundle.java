@@ -1,8 +1,8 @@
-package com.codahale.dropwizard.hibernate;
+package io.dropwizard.hibernate;
 
 import javax.persistence.Entity;
 
-import com.codahale.dropwizard.Configuration;
+import io.dropwizard.Configuration;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 import com.sun.jersey.core.spi.scanning.PackageNamesScanner;
