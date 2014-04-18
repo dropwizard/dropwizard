@@ -1,0 +1,3 @@
+io.dropwizard.auth
+io.dropwizard.auth.basic
+io.dropwizard.auth.oauth
