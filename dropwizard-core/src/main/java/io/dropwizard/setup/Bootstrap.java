@@ -68,7 +68,7 @@ public class Bootstrap<T extends Configuration> {
         getMetricRegistry().register("jvm.memory", new MemoryUsageGaugeSet());
         getMetricRegistry().register("jvm.threads", new ThreadStatesGaugeSet());
 
-        JmxReporter.forRegistry(metricRegistry).build().start();
+        JmxReporter.forRegistry(getMetricRegistry()).build().start();
 
         this.configurationSourceProvider = new FileConfigurationSourceProvider();
         this.classLoader = Thread.currentThread().getContextClassLoader();
