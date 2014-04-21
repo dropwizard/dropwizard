@@ -22,5 +22,4 @@ User Manual
     testing
     example
     configuration
-    committers
 
