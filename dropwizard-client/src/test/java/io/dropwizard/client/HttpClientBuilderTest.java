@@ -2,11 +2,14 @@ package io.dropwizard.client;
 
 import com.codahale.metrics.MetricRegistry;
 import com.google.common.collect.ImmutableList;
+
 import io.dropwizard.util.Duration;
+
 import org.apache.http.Header;
 import org.apache.http.HeaderIterator;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpRequestRetryHandler;
 import org.apache.http.client.params.AllClientPNames;
 import org.apache.http.client.params.CookiePolicy;
 import org.apache.http.conn.DnsResolver;
@@ -24,6 +27,7 @@ import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 
 import static org.fest.assertions.api.Assertions.assertThat;
@@ -210,5 +214,20 @@ public class HttpClientBuilderTest {
 
         assertThat(client.getConnectionManager().getSchemeRegistry())
                 .isEqualTo(registry);
+    }
+    
+    @Test
+    public void usesACustomHttpRequestRetryHandler() throws Exception {
+        HttpRequestRetryHandler customHandler = new HttpRequestRetryHandler() {
+            @Override
+            public boolean retryRequest(IOException exception, int executionCount, HttpContext context) {
+                return false;
+            }
+        };
+        HttpClientConfiguration config = new HttpClientConfiguration();
+        config.setRetries(1);
+        AbstractHttpClient client = (AbstractHttpClient) builder.using(config).using(customHandler).build("test");
+        
+        assertThat(client.getHttpRequestRetryHandler()).isEqualTo(customHandler);
     }
 }

@@ -110,6 +110,10 @@ public class DropwizardAppRule<C extends Configuration> implements TestRule {
         return ((ServerConnector) jettyServer.getConnectors()[0]).getLocalPort();
     }
 
+    public int getAdminPort() {
+        return ((ServerConnector) jettyServer.getConnectors()[1]).getLocalPort();
+    }
+
     public Application<C> newApplication() {
         try {
             return applicationClass.newInstance();
