@@ -16,3 +16,23 @@ historically not sucked:
 * [Liquibase](http://www.liquibase.org/) for migratin'.
 
 Read more at [dropwizard.io](http://www.dropwizard.io).
+
+Want to contribute to Dropwizard?
+---
+Before working on the code, if you plan to contribute changes, please read the following.
+the [CONTRIBUTING](CONTRIBUTING.md) document.
+
+Need help or found an issue?
+---
+When reporting an issue through the [issue tracker](https://github.com/dropwizard/dropwizard/issues?state=open)
+on GitHub or sending an email to the
+[Dropwizard User Google Group](https://groups.google.com/forum/#!forum/dropwizard-user)
+mailing list, please use the following guidelines:
+
+* Check existing issues to see if it has been addressed already
+* The version of Dropwizard you are using
+* A short description of the issue you are experiencing and the expected outcome
+* Description of how someone else can reproduce the problem
+* Paste error output or logs in your issue or in a Gist. If pasting them in the GitHub
+issue, wrap it in three backticks: ```  so that it renders nicely
+* Write a unit test to show the issue!
