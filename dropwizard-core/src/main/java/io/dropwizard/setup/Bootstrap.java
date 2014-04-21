@@ -62,11 +62,11 @@ public class Bootstrap<T extends Configuration> {
         this.commands = Lists.newArrayList();
         this.metricRegistry = new MetricRegistry();
         this.validatorFactory = Validation.buildDefaultValidatorFactory();
-        metricRegistry.register("jvm.buffers", new BufferPoolMetricSet(ManagementFactory
+        getMetricRegistry().register("jvm.buffers", new BufferPoolMetricSet(ManagementFactory
                                                                                .getPlatformMBeanServer()));
-        metricRegistry.register("jvm.gc", new GarbageCollectorMetricSet());
-        metricRegistry.register("jvm.memory", new MemoryUsageGaugeSet());
-        metricRegistry.register("jvm.threads", new ThreadStatesGaugeSet());
+        getMetricRegistry().register("jvm.gc", new GarbageCollectorMetricSet());
+        getMetricRegistry().register("jvm.memory", new MemoryUsageGaugeSet());
+        getMetricRegistry().register("jvm.threads", new ThreadStatesGaugeSet());
 
         JmxReporter.forRegistry(metricRegistry).build().start();
 
