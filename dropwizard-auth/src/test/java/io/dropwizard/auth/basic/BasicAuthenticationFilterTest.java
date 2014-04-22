@@ -15,13 +15,13 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.SecurityContext;
 
-public class AuthenticationFilterTest {
+public class BasicAuthenticationFilterTest {
     private Authenticator<BasicCredentials, UserIdentity> authenticatorMock;
     private UserIdentity userIdentityMock;
     private ContainerRequest containerRequestMock;
     private boolean requireAuthorization;
     private String realm;
-    private AuthenticationFilter authenticationFilter;
+    private BasicAuthenticationFilter basicAuthenticationFilter;
 
     @Before
     public void setup() {
@@ -31,7 +31,7 @@ public class AuthenticationFilterTest {
 
         requireAuthorization = true;
         realm = "REALM";
-        authenticationFilter = new AuthenticationFilter(authenticatorMock, requireAuthorization, realm);
+        basicAuthenticationFilter = new BasicAuthenticationFilter(authenticatorMock, requireAuthorization, realm);
     }
 
     @After
@@ -44,7 +44,7 @@ public class AuthenticationFilterTest {
     @Test(expected = WebApplicationException.class)
     public void noAuthHeaderRequireAuth_filter_shouldThrowWebApplicationException() {
         try {
-            authenticationFilter.filter(containerRequestMock);
+            basicAuthenticationFilter.filter(containerRequestMock);
         } finally {
             Mockito.verify(containerRequestMock).getHeaderValue(HttpHeaders.AUTHORIZATION);
         }
@@ -53,8 +53,8 @@ public class AuthenticationFilterTest {
     @Test
     public void noAuthHeader_filter_shouldThrowWebApplicationException() {
         requireAuthorization = false;
-        authenticationFilter = new AuthenticationFilter(authenticatorMock, requireAuthorization, realm);
-        final ContainerRequest filter = authenticationFilter.filter(containerRequestMock);
+        basicAuthenticationFilter = new BasicAuthenticationFilter(authenticatorMock, requireAuthorization, realm);
+        final ContainerRequest filter = basicAuthenticationFilter.filter(containerRequestMock);
 
         Assert.assertEquals(containerRequestMock, filter);
 
@@ -65,7 +65,7 @@ public class AuthenticationFilterTest {
     public void withAuthHeader_filter_shouldThrowWebApplicationException() throws AuthenticationException {
         Mockito.when(authenticatorMock.authenticate(Mockito.any(BasicCredentials.class))).thenReturn(Optional.of(userIdentityMock));
         Mockito.when(containerRequestMock.getHeaderValue(HttpHeaders.AUTHORIZATION)).thenReturn("Basic dXNlcm5hbWU6cGFzc3dvcmQ=");
-        final ContainerRequest filter = authenticationFilter.filter(containerRequestMock);
+        final ContainerRequest filter = basicAuthenticationFilter.filter(containerRequestMock);
 
         Assert.assertEquals(containerRequestMock, filter);
 
@@ -78,7 +78,7 @@ public class AuthenticationFilterTest {
     public void authenticate() throws AuthenticationException {
         Mockito.when(authenticatorMock.authenticate(Mockito.any(BasicCredentials.class))).thenReturn(Optional.of(userIdentityMock));
 
-        final Optional<UserIdentity> authenticate = authenticationFilter.authenticate(Optional.of(new BasicCredentials("username", "password")));
+        final Optional<UserIdentity> authenticate = basicAuthenticationFilter.authenticate(Optional.of(new BasicCredentials("username", "password")));
 
         Assert.assertTrue(authenticate.isPresent());
 

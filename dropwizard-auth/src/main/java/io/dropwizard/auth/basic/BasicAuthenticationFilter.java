@@ -18,16 +18,23 @@ import java.security.Principal;
 import static io.dropwizard.auth.basic.BasicAuthHelper.createUnauthorizedResponse;
 import static io.dropwizard.auth.basic.BasicAuthHelper.getBasicCredentialsFromHeader;
 
-;
-
-public class AuthenticationFilter implements ContainerRequestFilter {
-    private static final Logger logger = LoggerFactory.getLogger(AuthenticationFilter.class);
+/**
+ * BasicAuthenticationFilter sets {@link javax.ws.rs.core.SecurityContext} if
+ * Authenticator<BasicCredentials, UserIdentity> return an UserIdentity object.
+ */
+public class BasicAuthenticationFilter implements ContainerRequestFilter {
+    private static final Logger LOGGER = LoggerFactory.getLogger(BasicAuthenticationFilter.class);
 
     private final boolean requireAuthorizationHeader;
     private final String realm;
     private final Authenticator<BasicCredentials, UserIdentity> authenticator;
 
-    public AuthenticationFilter(final Authenticator<BasicCredentials, UserIdentity> authenticator, final boolean requireAuthorizationHeader, final String realm) {
+    /**
+     * @param authenticator              - Implementation that will authenticate user and list roles that user are authorized to use.
+     * @param requireAuthorizationHeader - if set to true, all request without HTTP header 'Authorization' will return HTTP Status 401/UNAUTHORIZED.
+     * @param realm                      - Name to be displayed then browser prompts for username and password.
+     */
+    public BasicAuthenticationFilter(final Authenticator<BasicCredentials, UserIdentity> authenticator, final boolean requireAuthorizationHeader, final String realm) {
         this.authenticator = authenticator;
         this.requireAuthorizationHeader = requireAuthorizationHeader;
         this.realm = realm;
@@ -87,7 +94,7 @@ public class AuthenticationFilter implements ContainerRequestFilter {
         try {
             return authenticator.authenticate(basicCredentials.get());
         } catch (AuthenticationException e) {
-            logger.warn("Error authenticating credentials", e);
+            LOGGER.warn("Error authenticating credentials", e);
             throw new WebApplicationException(Status.INTERNAL_SERVER_ERROR);
         }
     }

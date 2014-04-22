@@ -1,6 +1,7 @@
 package io.dropwizard.auth.basic;
 
-import com.google.common.collect.Maps;
+import com.google.common.collect.Lists;
+import com.sun.jersey.api.container.filter.RolesAllowedResourceFilterFactory;
 import com.sun.jersey.api.core.ResourceConfig;
 import io.dropwizard.auth.Authenticator;
 import io.dropwizard.jersey.setup.JerseyEnvironment;
@@ -12,16 +13,17 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import java.util.Map;
+import java.util.List;
 
-public class AuthenticationBundleTest {
+public class BasicAuthenticationBundleTest {
     private Authenticator<BasicCredentials, UserIdentity> authenticatorMock;
     private Environment environmentMock;
     private JerseyEnvironment jerseyEnvironmentMock;
     private ResourceConfig resourceConfigMock;
     private boolean requireAuthorization;
     private String realm;
-    private Map<String, Object> properties;
+    private List resourceFilters;
+    private List containerRequestFilters;
 
 
     @Before
@@ -32,7 +34,8 @@ public class AuthenticationBundleTest {
         resourceConfigMock = Mockito.mock(ResourceConfig.class);
         requireAuthorization = true;
         realm = "REALM";
-        properties = Maps.newHashMap();
+        resourceFilters = Lists.newArrayList();
+        containerRequestFilters = Lists.newArrayList();
     }
 
     @After
@@ -47,16 +50,18 @@ public class AuthenticationBundleTest {
     public void test() {
         Mockito.when(environmentMock.jersey()).thenReturn(jerseyEnvironmentMock);
         Mockito.when(jerseyEnvironmentMock.getResourceConfig()).thenReturn(resourceConfigMock);
-        Mockito.when(resourceConfigMock.getProperties()).thenReturn(properties);
+        Mockito.when(resourceConfigMock.getResourceFilterFactories()).thenReturn(resourceFilters);
+        Mockito.when(resourceConfigMock.getContainerRequestFilters()).thenReturn(containerRequestFilters);
 
-        AuthenticationBundle authenticationBundle = new AuthenticationBundle(authenticatorMock, requireAuthorization, realm);
-        authenticationBundle.run(environmentMock);
+        BasicAuthenticationBundle basicAuthenticationBundle = new BasicAuthenticationBundle(authenticatorMock, requireAuthorization, realm);
+        basicAuthenticationBundle.run(environmentMock);
 
-        Assert.assertEquals("com.sun.jersey.api.container.filter.RolesAllowedResourceFilterFactory", properties.get(AuthenticationBundle.RESOURCE_FILTERS));
-        Assert.assertEquals("io.dropwizard.auth.basic.AuthenticationFilter", properties.get(AuthenticationBundle.CONTAINER_REQUEST_FILTERS).toString().split("@")[0]);
+        Assert.assertEquals(RolesAllowedResourceFilterFactory.class.getName(), resourceFilters.get(0));
+        Assert.assertEquals(BasicAuthenticationFilter.class, containerRequestFilters.get(0).getClass());
 
         Mockito.verify(environmentMock).jersey();
         Mockito.verify(jerseyEnvironmentMock).getResourceConfig();
-        Mockito.verify(resourceConfigMock, Mockito.times(2)).getProperties();
+        Mockito.verify(resourceConfigMock).getResourceFilterFactories();
+        Mockito.verify(resourceConfigMock).getContainerRequestFilters();
     }
 }

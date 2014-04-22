@@ -27,7 +27,7 @@ import java.util.Arrays;
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.fest.assertions.api.Assertions.failBecauseExceptionWasNotThrown;
 
-public class AuthenticationBundleExampleTest extends JerseyTest {
+public class BasicAuthenticationBundleExampleTest extends JerseyTest {
     private static final String AUTHORIZATION_ADMIN = "Basic YWRtaW4tZ3V5OnNlY3JldA=="; //username=admin-guy
     private static final String AUTHORIZATION_USER = "Basic Z29vZC1ndXk6c2VjcmV0"; //username=good-guy
     private static final String AUTHORIZATION_UNKNOWN = "Basic dW5rbm93bi1ndXk6c2VjcmV0"; //username=unknown-guy
@@ -100,8 +100,8 @@ public class AuthenticationBundleExampleTest extends JerseyTest {
             }
         };
         final DropwizardResourceConfig config = DropwizardResourceConfig.forTesting(new MetricRegistry());
-        AuthenticationBundle authenticationBundle = new AuthenticationBundle(authenticator, true, "realm");
-        authenticationBundle.setupResourceConfig(config);
+        BasicAuthenticationBundle basicAuthenticationBundle = new BasicAuthenticationBundle(authenticator, true, "realm");
+        basicAuthenticationBundle.setupResourceConfig(config);
 
         config.getSingletons().add(new ExampleResource());
         return new LowLevelAppDescriptor.Builder(config).build();
