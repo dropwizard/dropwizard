@@ -9,4 +9,4 @@ logs
 .settings/
 .classpath
 .project
-
+nb-configuration.xml
