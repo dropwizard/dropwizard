@@ -14,6 +14,7 @@ import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
 import javax.validation.Validator;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import javax.servlet.Servlet;
 
 // TODO: 5/15/13 <coda> -- add tests for Environment
 
@@ -151,7 +152,7 @@ public class Environment {
         return servletContext;
     }
 
-    public ServletContainer getJerseyServletContainer() {
+    public Servlet getJerseyServletContainer() {
         return jerseyServletContainer.getContainer();
     }
 

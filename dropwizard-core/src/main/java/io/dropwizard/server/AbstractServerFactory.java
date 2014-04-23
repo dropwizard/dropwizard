@@ -12,7 +12,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
-import com.sun.jersey.spi.container.servlet.ServletContainer;
+import javax.servlet.Servlet;
 import io.dropwizard.jersey.jackson.JacksonMessageBodyProvider;
 import io.dropwizard.jersey.setup.JerseyEnvironment;
 import io.dropwizard.jetty.GzipFilterFactory;
@@ -392,7 +392,7 @@ public abstract class AbstractServerFactory implements ServerFactory {
                                        ObjectMapper objectMapper,
                                        Validator validator,
                                        MutableServletContextHandler handler,
-                                       @Nullable ServletContainer jerseyContainer,
+                                       @Nullable Servlet jerseyContainer,
                                        MetricRegistry metricRegistry) {
         configureSessionsAndSecurity(handler, server);
         handler.addFilter(ThreadNameFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST));
