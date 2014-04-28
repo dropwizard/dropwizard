@@ -1185,6 +1185,7 @@ If your application happens to return lots of information, you may get a big per
 bump by using streaming output. By returning an object which implements Jersey's ``StreamingOutput``
 interface, your method can stream the response entity in a chunk-encoded output stream. Otherwise,
 you'll need to fully construct your return value and *then* hand it off to be sent to the client.
+
 .. _man-core-representations-html:
 
 HTML Representations
