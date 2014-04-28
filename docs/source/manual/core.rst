@@ -1219,10 +1219,14 @@ provides you with the means to do so. If you want to stop the request from reach
 
     public class DateNotSpecifiedFilter implements ContainerRequestFilter {
 
+        @Context ExtendedUriInfo extendedUriInfo;
+
         @Override
         public ContainerRequest filter(ContainerRequest request) {
+            boolean methodNeedsDateHeader = extendedUriInfo.getMatchedMethod().isAnnotationPresent(DateRequired.class);
             String dateHeader = request.getHeaderValue(HttpHeaders.DATE);
-            if (dateHeader == null || "".equals(dateHeader)) {
+
+            if (methodNeedsDateHeader && dateHeader == null) {
                 Exception cause = new IllegalArgumentException("Date Header was not specified");
                 throw new WebApplicationException(cause, Response.Status.BAD_REQUEST);
             } else {
@@ -1231,12 +1235,12 @@ provides you with the means to do so. If you want to stop the request from reach
         }
     }
 
+This example checks the request for the "Date" header, and denies the request if was ommitted and the method this request would call has a certain annotation present.
 You can then register this filter in your Application class, like so:
 
 .. code-block:: java
 
     environment.jersey().getResourceConfig().getContainerRequestFilters().add(new DateNotSpecifiedFilter());
-
 
 .. _man-glue-detail:
 
