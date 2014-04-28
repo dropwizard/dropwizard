@@ -1206,6 +1206,38 @@ input and output formats by creating classes which implement Jersey's ``MessageB
 instances of them (or their classes if they depend on Jersey's ``@Context`` injection) to your
 application's ``Environment`` on initialization.
 
+.. _man-core-filters:
+
+Filters
+-------
+
+There might be cases when you want to filter out requests or modify them before they reach your Resources. Jersey
+provides you with the means to do so. If you want to stop the request from reaching your resources, throw a web-application
+``WebApplicationException``, if you want to modify the request or let it pass through the filter, return it.
+
+.. code-block:: java
+
+    public class DateNotSpecifiedFilter implements ContainerRequestFilter {
+
+        @Override
+        public ContainerRequest filter(ContainerRequest request) {
+            String dateHeader = request.getHeaderValue(HttpHeaders.DATE);
+            if (dateHeader == null || "".equals(dateHeader)) {
+                Exception cause = new IllegalArgumentException("Date Header was not specified");
+                throw new WebApplicationException(cause, Response.Status.BAD_REQUEST);
+            } else {
+                return request;
+            }
+        }
+    }
+
+You can then register this filter in your Application class, like so:
+
+.. code-block:: java
+
+    environment.jersey().getResourceConfig().getContainerRequestFilters().add(new DateNotSpecifiedFilter());
+
+
 .. _man-glue-detail:
 
 How it's glued together
