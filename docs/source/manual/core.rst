@@ -1206,10 +1206,10 @@ input and output formats by creating classes which implement Jersey's ``MessageB
 instances of them (or their classes if they depend on Jersey's ``@Context`` injection) to your
 application's ``Environment`` on initialization.
 
-.. _man-core-filters:
+.. _man-core-jersey-filters:
 
-Filters
--------
+Jersey filters
+--------------
 
 There might be cases when you want to filter out requests or modify them before they reach your Resources. Jersey
 provides you with the means to do so. If you want to stop the request from reaching your resources, throw a web-application
@@ -1241,6 +1241,52 @@ You can then register this filter in your Application class, like so:
 .. code-block:: java
 
     environment.jersey().getResourceConfig().getContainerRequestFilters().add(new DateNotSpecifiedFilter());
+
+
+.. _man-core-servlet-filters:
+
+Servlet filters
+---------------
+
+Sometimes you will need to implement filters for your registered servlets. Of course, this is possible as well. This is the above example implemented as a servlet filter:
+
+.. code-block:: java
+
+    public class DateNotSpecifiedServletFilter implements javax.servlet.Filter {
+        @Override
+        public void init(FilterConfig filterConfig) throws ServletException {
+            // Nothing to do here
+        }
+
+        @Override
+        public void destroy() {
+            // Nothing to do here
+        }
+
+        @Override
+        public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+            if (request instanceof HttpServletRequest) {
+                String dateHeader = ((HttpServletRequest) request).getHeader(HttpHeaders.DATE);
+
+                if (dateHeader == null) {
+                    chain.doFilter(request, response); // This signals that the request should pass this filter
+                } else {
+                    HttpServletResponse httpResponse = (HttpServletResponse) response;
+                    httpResponse.setStatus(HttpStatus.BAD_REQUEST_400);
+                    httpResponse.getWriter().print("Date Header was not specified");
+                }
+            }
+        }
+    }
+
+
+This servlet filter can then be registered in your Application class by wrapping it in ``FilterHolder`` and adding it to the application context together with a
+specification for which paths this filter should active. Here's an example:
+
+.. code-block:: java
+
+    FilterHolder filterHolder = new FilterHolder(new DateHeaderServletFilter());
+    environment.getApplicationContext().addFilter(filterHolder, "/*", EnumSet.of(DispatcherType.REQUEST));
 
 .. _man-glue-detail:
 
