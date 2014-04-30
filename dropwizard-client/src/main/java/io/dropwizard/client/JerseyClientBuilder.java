@@ -1,18 +1,33 @@
 package io.dropwizard.client;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+
+import com.sun.jersey.api.client.ClientHandlerException;
+import com.sun.jersey.api.client.config.ClientConfig;
 import io.dropwizard.jersey.jackson.JacksonMessageBodyProvider;
 import io.dropwizard.setup.Environment;
 
+import java.net.URI;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.validation.Validation;
 import javax.validation.Validator;
 
+import org.apache.http.HttpHost;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.CookieStore;
+import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.HttpRequestRetryHandler;
+import org.apache.http.client.params.ClientPNames;
+import org.apache.http.client.params.CookiePolicy;
+import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.conn.DnsResolver;
+import org.apache.http.conn.params.ConnRoutePNames;
 import org.apache.http.conn.scheme.SchemeRegistry;
 
 import com.codahale.metrics.MetricRegistry;
@@ -25,6 +40,9 @@ import com.sun.jersey.client.apache4.ApacheHttpClient4;
 import com.sun.jersey.client.apache4.ApacheHttpClient4Handler;
 import com.sun.jersey.client.apache4.config.ApacheHttpClient4Config;
 import com.sun.jersey.client.apache4.config.DefaultApacheHttpClient4Config;
+import org.apache.http.impl.client.BasicCookieStore;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.HttpParams;
 
 /**
  * A convenience class for building {@link Client} instances.
@@ -111,7 +129,7 @@ public class JerseyClientBuilder {
     }
     
     /**
-     * Uses the {@link httpRequestRetryHandler} for handling request retries.
+     * Uses the {@link HttpRequestRetryHandler} for handling request retries.
      *
      * @param httpRequestRetryHandler an httpRequestRetryHandler
      * @return {@code this}
@@ -231,8 +249,10 @@ public class JerseyClientBuilder {
         return client;
     }
 
+    //CHANGED
     private ApacheHttpClient4Handler buildHandler(String name) {
-        return new ApacheHttpClient4Handler(builder.build(name), null, true);
+//        return new ApacheHttpClient4Handler(builder.build(name), null, true);
+        return createDefaultClientHandler(buildConfig(objectMapper), name);
     }
 
     private ApacheHttpClient4Config buildConfig(ObjectMapper objectMapper) {
@@ -243,5 +263,90 @@ public class JerseyClientBuilder {
         config.getFeatures().putAll(features);
         config.getProperties().putAll(properties);
         return config;
+    }
+
+    //ADDED (from ApacheHttpClient4)
+    private ApacheHttpClient4Handler createDefaultClientHandler(ClientConfig cc, String name) {
+        //these warnings are changed slightly from the original; we warn on any value instead of checking class
+        if(cc != null) {
+            Object connectionManager = cc.getProperties().get(ApacheHttpClient4Config.PROPERTY_CONNECTION_MANAGER);
+            if(connectionManager != null) {
+                Logger.getLogger(ApacheHttpClient4.class.getName()).log(
+                        Level.WARNING,
+                        "Ignoring value of property " + ApacheHttpClient4Config.PROPERTY_CONNECTION_MANAGER +
+                                " (" + connectionManager.getClass().getName() +
+                                ") - client only uses InstrumentedConnectionManager."
+                );
+            }
+
+            Object httpParams = cc.getProperties().get(ApacheHttpClient4Config.PROPERTY_HTTP_PARAMS);
+            if(httpParams != null) {
+                Logger.getLogger(ApacheHttpClient4.class.getName()).log(
+                        Level.WARNING,
+                        "Ignoring value of property " + ApacheHttpClient4Config.PROPERTY_HTTP_PARAMS +
+                                " (" + httpParams.getClass().getName() +
+                                ") - params are built by HttpClientBuilder from client config."
+                );
+            }
+        }
+
+        //TODO: may want to allow builder to take a different InstrumentedConnectionManager or custom HttpParams
+        final DefaultHttpClient client = (DefaultHttpClient)builder.build(name);
+
+        CookieStore cookieStore = null;
+        boolean preemptiveBasicAuth = false;
+
+        if(cc != null) {
+            for(Map.Entry<String, Object> entry : cc.getProperties().entrySet())
+                client.getParams().setParameter(entry.getKey(), entry.getValue());
+
+            if (cc.getPropertyAsFeature(ApacheHttpClient4Config.PROPERTY_DISABLE_COOKIES))
+                client.getParams().setParameter(ClientPNames.COOKIE_POLICY, CookiePolicy.IGNORE_COOKIES);
+
+            Object credentialsProvider = cc.getProperty(ApacheHttpClient4Config.PROPERTY_CREDENTIALS_PROVIDER);
+            if(credentialsProvider != null && (credentialsProvider instanceof CredentialsProvider)) {
+                client.setCredentialsProvider((CredentialsProvider)credentialsProvider);
+            }
+
+            final Object proxyUri = cc.getProperties().get(ApacheHttpClient4Config.PROPERTY_PROXY_URI);
+            if(proxyUri != null) {
+                final URI u = getProxyUri(proxyUri);
+                final HttpHost proxy = new HttpHost(u.getHost(), u.getPort(), u.getScheme());
+
+                if(cc.getProperties().containsKey(ApacheHttpClient4Config.PROPERTY_PROXY_USERNAME) &&
+                        cc.getProperties().containsKey(ApacheHttpClient4Config.PROPERTY_PROXY_PASSWORD)) {
+
+                    client.getCredentialsProvider().setCredentials(
+                            new AuthScope(u.getHost(), u.getPort()),
+                            new UsernamePasswordCredentials(
+                                    cc.getProperty(ApacheHttpClient4Config.PROPERTY_PROXY_USERNAME).toString(),
+                                    cc.getProperty(ApacheHttpClient4Config.PROPERTY_PROXY_PASSWORD).toString())
+                    );
+
+                }
+                client.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
+            }
+
+            preemptiveBasicAuth = cc.getPropertyAsFeature(ApacheHttpClient4Config.PROPERTY_PREEMPTIVE_BASIC_AUTHENTICATION);
+        }
+
+        if(client.getParams().getParameter(ClientPNames.COOKIE_POLICY) == null || !client.getParams().getParameter(ClientPNames.COOKIE_POLICY).equals(CookiePolicy.IGNORE_COOKIES)) {
+            cookieStore = new BasicCookieStore();
+            client.setCookieStore(cookieStore);
+        }
+
+        return new ApacheHttpClient4Handler(client, cookieStore, preemptiveBasicAuth);
+    }
+
+    //ADDED (from ApacheHttpClient4)
+    private static URI getProxyUri(final Object proxy) {
+        if (proxy instanceof URI) {
+            return (URI) proxy;
+        } else if (proxy instanceof String) {
+            return URI.create((String) proxy);
+        } else {
+            throw new ClientHandlerException("The proxy URI (" + ApacheHttpClient4Config.PROPERTY_PROXY_URI +
+                    ") property MUST be an instance of String or URI");
+        }
     }
 }
