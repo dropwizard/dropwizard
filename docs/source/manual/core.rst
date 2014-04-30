@@ -1281,9 +1281,8 @@ specification for which paths this filter should active. Here's an example:
 
 .. code-block:: java
 
-    FilterHolder filterHolder = new FilterHolder(new DateHeaderServletFilter());
-    environment.getApplicationContext().addFilter(filterHolder, "/*", EnumSet.of(DispatcherType.REQUEST));
-
+        environment.servlets().addFilter("DateHeaderServletFilter", new DateHeaderServletFilter())
+                              .addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/*");
 .. _man-glue-detail:
 
 How it's glued together
