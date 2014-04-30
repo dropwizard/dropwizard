@@ -310,8 +310,7 @@ By sending a ``GET`` request to ``/healthcheck`` on the admin port you can run t
 the results::
 
     $ curl http://dw.example.com:8081/healthcheck
-    * deadlocks: OK
-    * database: OK
+    {"deadlocks":{"healthy":true},"database":{"healthy":true}}
 
 If all health checks report success, a ``200 OK`` is returned. If any fail, a
 ``500 Internal Server Error`` is returned with the error messages and exception stack traces (if an
