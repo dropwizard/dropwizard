@@ -1248,7 +1248,11 @@ You can then register this filter in your Application class, like so:
 Servlet filters
 ---------------
 
-Sometimes you will need to implement filters for your registered servlets. Of course, this is possible as well. This is the above example implemented as a servlet filter:
+Another way to create filters is by creating servlet filters. They offer a way to to register filters that apply both to servlet requests as well as resource requests.
+Jetty comes with a few `bundled`_  filters which may already suit your needs. If you want to create your own filter,
+this example demonstrates a servlet filter analogous to the previous example:
+
+.. _bundled: http://www.eclipse.org/jetty/documentation/current/advanced-extras.html
 
 .. code-block:: java
 
