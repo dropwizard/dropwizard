@@ -81,6 +81,14 @@
             </roles>
         </developer>
         <developer>
+            <name>Graham O'Regan</name>
+            <email>graham.oregan@ellisonbrookes.com</email>
+            <timezone>0</timezone>
+            <roles>
+                <role>committer</role>
+            </roles>
+        </developer>
+        <developer>
             <name>Ryan Kennedy</name>
             <email>rckenned@gmail.com</email>
             <timezone>-8</timezone>
@@ -99,6 +107,22 @@
         <developer>
             <name>Carlo Barbara</name>
             <email>carlo.barbara@gmail.com</email>
+            <timezone>-5</timezone>
+            <roles>
+                <role>committer</role>
+            </roles>
+        </developer>
+        <developer>
+            <name>Matt Veitas</name>
+            <email>mveitas@gmail.com</email>
+            <timezone>-5</timezone>
+            <roles>
+                <role>committer</role>
+            </roles>
+        </developer>
+        <developer>
+            <name>Ryan Tenney</name>
+            <email>ryan@10e.us</email>
             <timezone>-5</timezone>
             <roles>
                 <role>committer</role>
