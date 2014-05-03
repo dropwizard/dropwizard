@@ -51,11 +51,11 @@
         <dropwizard.url>http://www.dropwizard.io/${project.version}</dropwizard.url>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <metrics3.version>3.0.1</metrics3.version>
+        <metrics3.version>3.0.2</metrics3.version>
         <jersey.version>1.18.1</jersey.version>
         <jackson.api.version>2.3.0</jackson.api.version>
         <jackson.version>2.3.3</jackson.version>
-        <logback.version>1.1.1</logback.version>
+        <logback.version>1.1.2</logback.version>
         <slf4j.version>1.7.6</slf4j.version>
         <servlet.version>3.0.0.v201112011016</servlet.version>
         <jetty.version>9.0.7.v20131107</jetty.version>
