@@ -5,7 +5,7 @@
     <parent>
         <groupId>io.dropwizard</groupId>
         <artifactId>dropwizard-parent</artifactId>
-        <version>0.7.0</version>
+        <version>0.7.0.1</version>
     </parent>
 
     <artifactId>dropwizard-jetty</artifactId>
@@ -60,4 +60,7 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+    <scm>
+        <tag>v0.7.0.1</tag>
+    </scm>
 </project>
