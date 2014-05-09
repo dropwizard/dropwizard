@@ -51,11 +51,11 @@
         <dropwizard.url>http://www.dropwizard.io/${project.version}</dropwizard.url>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <metrics3.version>3.0.1</metrics3.version>
+        <metrics3.version>3.0.2</metrics3.version>
         <jersey.version>1.18.1</jersey.version>
         <jackson.api.version>2.3.0</jackson.api.version>
         <jackson.version>2.3.3</jackson.version>
-        <logback.version>1.1.1</logback.version>
+        <logback.version>1.1.2</logback.version>
         <slf4j.version>1.7.6</slf4j.version>
         <servlet.version>3.0.0.v201112011016</servlet.version>
         <jetty.version>9.0.7.v20131107</jetty.version>
@@ -68,6 +68,65 @@
             <name>Coda Hale</name>
             <email>coda.hale@gmail.com</email>
             <timezone>-8</timezone>
+            <roles>
+                <role>architect</role>
+            </roles>
+        </developer>
+        <developer>
+            <name>Nick Telford</name>
+            <email>nick.telford@gmail.com</email>
+            <timezone>0</timezone>
+            <roles>
+                <role>committer</role>
+            </roles>
+        </developer>
+        <developer>
+            <name>Graham O'Regan</name>
+            <email>graham.oregan@ellisonbrookes.com</email>
+            <timezone>0</timezone>
+            <roles>
+                <role>committer</role>
+            </roles>
+        </developer>
+        <developer>
+            <name>Ryan Kennedy</name>
+            <email>rckenned@gmail.com</email>
+            <timezone>-8</timezone>
+            <roles>
+                <role>committer</role>
+            </roles>
+        </developer>
+        <developer>
+            <name>Camille Fournier</name>
+            <email>camille@apache.org</email>
+            <timezone>-5</timezone>
+            <roles>
+                <role>committer</role>
+            </roles>
+        </developer>
+        <developer>
+            <name>Carlo Barbara</name>
+            <email>carlo.barbara@gmail.com</email>
+            <timezone>-5</timezone>
+            <roles>
+                <role>committer</role>
+            </roles>
+        </developer>
+        <developer>
+            <name>Matt Veitas</name>
+            <email>mveitas@gmail.com</email>
+            <timezone>-5</timezone>
+            <roles>
+                <role>committer</role>
+            </roles>
+        </developer>
+        <developer>
+            <name>Ryan Tenney</name>
+            <email>ryan@10e.us</email>
+            <timezone>-5</timezone>
+            <roles>
+                <role>committer</role>
+            </roles>
         </developer>
     </developers>
 

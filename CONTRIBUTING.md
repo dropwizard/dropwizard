@@ -44,3 +44,10 @@ If you would like to implement a new feature, please raise an issue before sendi
 pull request so the feature can be discussed. **We appreciate the effort and want
 to avoid a situation where a contribution requires extensive rework on either side,
 it sits in the queue for a long time, or cannot be accepted at all.**
+
+Committers
+===
+The list of people with committer access is kept in the developer section of the pom.xml located in the parent directory.
+
+* Committers aren't allowed to merge their own changes, the exception being bug fixes
+* A commit may be reverted, but it requires 2+ committer's approval. The goal is to keep it democratic
