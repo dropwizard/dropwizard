@@ -15,10 +15,6 @@ import io.dropwizard.util.JarLocation;
  * @param <T> the type of configuration class for this application
  */
 public abstract class Application<T extends Configuration> {
-    static {
-        // make sure spinning up Hibernate Validator doesn't yell at us
-        LoggingFactory.bootstrap();
-    }
 
     /**
      * Returns the {@link Class} of the configuration class type parameter.
@@ -72,6 +68,16 @@ public abstract class Application<T extends Configuration> {
         if (!cli.run(arguments)) {
             // only exit if there's an error running the command
             System.exit(1);
+        }
+    }
+
+    protected Application() {
+        this(true);
+    }
+
+    protected Application(final boolean bootstrapLogging) {
+        if (bootstrapLogging) {
+            LoggingFactory.bootstrap();
         }
     }
 }
