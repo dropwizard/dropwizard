@@ -34,24 +34,24 @@ public class LoggingFactory {
     public static void bootstrap(Level level) {
         hijackJDKLogging();
 
-        final Logger root = (Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
-        root.detachAndStopAllAppenders();
+//        final Logger root = (Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
+//        root.detachAndStopAllAppenders();
 
-        final DropwizardLayout formatter = new DropwizardLayout(root.getLoggerContext(),
-                                                        TimeZone.getDefault());
-        formatter.start();
+//        final DropwizardLayout formatter = new DropwizardLayout(root.getLoggerContext(),
+//                                                        TimeZone.getDefault());
+//        formatter.start();
 
-        final ThresholdFilter filter = new ThresholdFilter();
-        filter.setLevel(level.toString());
-        filter.start();
+//        final ThresholdFilter filter = new ThresholdFilter();
+//        filter.setLevel(level.toString());
+//        filter.start();
 
-        final ConsoleAppender<ILoggingEvent> appender = new ConsoleAppender<>();
-        appender.addFilter(filter);
-        appender.setContext(root.getLoggerContext());
-        appender.setLayout(formatter);
-        appender.start();
+//        final ConsoleAppender<ILoggingEvent> appender = new ConsoleAppender<>();
+//        appender.addFilter(filter);
+//        appender.setContext(root.getLoggerContext());
+//        appender.setLayout(formatter);
+//        appender.start();
 
-        root.addAppender(appender);
+//        root.addAppender(appender);
     }
 
     private static void hijackJDKLogging() {
@@ -104,27 +104,27 @@ public class LoggingFactory {
     public void configure(MetricRegistry metricRegistry, String name) {
         hijackJDKLogging();
 
-        final Logger root = configureLevels();
+//        final Logger root = configureLevels();
 
-        for (AppenderFactory output : appenders) {
-            root.addAppender(output.build(root.getLoggerContext(), name, null));
-        }
+//        for (AppenderFactory output : appenders) {
+//            root.addAppender(output.build(root.getLoggerContext(), name, null));
+//        }
 
-        final MBeanServer server = ManagementFactory.getPlatformMBeanServer();
-        try {
-            final ObjectName objectName = new ObjectName("io.dropwizard:type=Logging");
-            if (!server.isRegistered(objectName)) {
-                server.registerMBean(new JMXConfigurator(root.getLoggerContext(),
-                                                         server,
-                                                         objectName),
-                                     objectName);
-            }
-        } catch (MalformedObjectNameException | InstanceAlreadyExistsException |
-                NotCompliantMBeanException | MBeanRegistrationException e) {
-            throw new RuntimeException(e);
-        }
+//        final MBeanServer server = ManagementFactory.getPlatformMBeanServer();
+//        try {
+//            final ObjectName objectName = new ObjectName("io.dropwizard:type=Logging");
+//            if (!server.isRegistered(objectName)) {
+//                server.registerMBean(new JMXConfigurator(root.getLoggerContext(),
+//                                                         server,
+//                                                         objectName),
+//                                     objectName);
+//            }
+//        } catch (MalformedObjectNameException | InstanceAlreadyExistsException |
+//                NotCompliantMBeanException | MBeanRegistrationException e) {
+//            throw new RuntimeException(e);
+//        }
 
-        configureInstrumentation(root, metricRegistry);
+//        configureInstrumentation(root, metricRegistry);
     }
 
     public void stop() {
@@ -135,29 +135,29 @@ public class LoggingFactory {
         }
     }
 
-    private void configureInstrumentation(Logger root, MetricRegistry metricRegistry) {
-        final InstrumentedAppender appender = new InstrumentedAppender(metricRegistry);
-        appender.setContext(root.getLoggerContext());
-        appender.start();
-        root.addAppender(appender);
-    }
+//    private void configureInstrumentation(Logger root, MetricRegistry metricRegistry) {
+//        final InstrumentedAppender appender = new InstrumentedAppender(metricRegistry);
+//        appender.setContext(root.getLoggerContext());
+//        appender.start();
+//        root.addAppender(appender);
+//    }
 
-    private Logger configureLevels() {
-        final Logger root = (Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
-        root.getLoggerContext().reset();
+//    private Logger configureLevels() {
+//        final Logger root = (Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
+//        root.getLoggerContext().reset();
 
-        final LevelChangePropagator propagator = new LevelChangePropagator();
-        propagator.setContext(root.getLoggerContext());
-        propagator.setResetJUL(true);
+//        final LevelChangePropagator propagator = new LevelChangePropagator();
+//        propagator.setContext(root.getLoggerContext());
+//        propagator.setResetJUL(true);
 
-        root.getLoggerContext().addListener(propagator);
+//        root.getLoggerContext().addListener(propagator);
 
-        root.setLevel(level);
+//        root.setLevel(level);
 
-        for (Map.Entry<String, Level> entry : loggers.entrySet()) {
-            ((Logger) LoggerFactory.getLogger(entry.getKey())).setLevel(entry.getValue());
-        }
+//        for (Map.Entry<String, Level> entry : loggers.entrySet()) {
+//            ((Logger) LoggerFactory.getLogger(entry.getKey())).setLevel(entry.getValue());
+//        }
 
-        return root;
-    }
+//        return root;
+//    }
 }

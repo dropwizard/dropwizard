@@ -31,15 +31,15 @@ public class LoggingFactoryTest {
         this.config = factory.build(new File(Resources.getResource("yaml/logging.yml").toURI()));
     }
 
-    @Test
-    public void hasADefaultLevel() throws Exception {
-        assertThat(config.getLevel())
-                .isEqualTo(Level.INFO);
-    }
+//    @Test
+//    public void hasADefaultLevel() throws Exception {
+//        assertThat(config.getLevel())
+//                .isEqualTo(Level.INFO);
+//    }
 
-    @Test
-    public void hasASetOfOverriddenLevels() throws Exception {
-        assertThat(config.getLoggers())
-                .isEqualTo(ImmutableMap.of("com.example.app", Level.DEBUG));
-    }
+//    @Test
+//    public void hasASetOfOverriddenLevels() throws Exception {
+//        assertThat(config.getLoggers())
+//                .isEqualTo(ImmutableMap.of("com.example.app", Level.DEBUG));
+//    }
 }
