@@ -11,6 +11,7 @@ import ch.qos.logback.core.ConsoleAppender;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.logback.InstrumentedAppender;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import org.slf4j.ILoggerFactory;
@@ -25,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
+@JsonTypeName("default")
 public class DefaultLoggingFactory implements LoggingFactory {
     // initially configure for WARN+ console logging
     public static void bootstrap() {
@@ -102,13 +104,13 @@ public class DefaultLoggingFactory implements LoggingFactory {
     }
 
     @Override
-    public void configure(MetricRegistry metricRegistry, String name) {
+    public void configure(MetricRegistry metricRegistry, String applicationName) {
         hijackJDKLogging();
 
         final Logger root = configureLevels();
 
         for (AppenderFactory output : appenders) {
-            root.addAppender(output.build(root.getLoggerContext(), name, null));
+            root.addAppender(output.build(root.getLoggerContext(), applicationName, null));
         }
 
         final MBeanServer server = ManagementFactory.getPlatformMBeanServer();
