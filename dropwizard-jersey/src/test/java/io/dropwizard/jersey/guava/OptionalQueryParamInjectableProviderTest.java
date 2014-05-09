@@ -3,14 +3,14 @@ package io.dropwizard.jersey.guava;
 import com.sun.jersey.test.framework.AppDescriptor;
 import com.sun.jersey.test.framework.JerseyTest;
 import com.sun.jersey.test.framework.WebAppDescriptor;
-import io.dropwizard.logging.LoggingFactory;
+import io.dropwizard.logging.DefaultLoggingFactory;
 import org.junit.Test;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 
 public class OptionalQueryParamInjectableProviderTest extends JerseyTest {
     static {
-        LoggingFactory.bootstrap();
+        DefaultLoggingFactory.bootstrap();
     }
 
     @Override

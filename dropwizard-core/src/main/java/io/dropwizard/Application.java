@@ -3,7 +3,7 @@ package io.dropwizard;
 import io.dropwizard.cli.CheckCommand;
 import io.dropwizard.cli.Cli;
 import io.dropwizard.cli.ServerCommand;
-import io.dropwizard.logging.LoggingFactory;
+import io.dropwizard.logging.DefaultLoggingFactory;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.util.Generics;
@@ -77,7 +77,7 @@ public abstract class Application<T extends Configuration> {
 
     protected Application(final boolean bootstrapLogging) {
         if (bootstrapLogging) {
-            LoggingFactory.bootstrap();
+            DefaultLoggingFactory.bootstrap();
         }
     }
 }

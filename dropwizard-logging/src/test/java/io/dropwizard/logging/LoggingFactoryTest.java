@@ -17,10 +17,10 @@ import static org.fest.assertions.api.Assertions.assertThat;
 public class LoggingFactoryTest {
     private final ObjectMapper objectMapper = Jackson.newObjectMapper();
     private final ConfigurationFactory<LoggingFactory> factory =
-            new ConfigurationFactory<>(LoggingFactory.class,
+            new ConfigurationFactory<>(DefaultLoggingFactory.class,
                                        Validation.buildDefaultValidatorFactory().getValidator(),
                                        objectMapper, "dw");
-    private LoggingFactory config;
+    private DefaultLoggingFactory config;
 
     @Before
     public void setUp() throws Exception {
