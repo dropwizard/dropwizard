@@ -13,6 +13,7 @@ import com.sun.jersey.api.model.AbstractResourceMethod;
 import com.sun.jersey.api.model.AbstractSubResourceLocator;
 import com.sun.jersey.api.model.AbstractSubResourceMethod;
 import com.sun.jersey.server.impl.modelapi.annotation.IntrospectionModeller;
+import io.dropwizard.jersey.UnhandledExceptionToJsonMapper;
 import io.dropwizard.jersey.caching.CacheControlledResourceMethodDispatchAdapter;
 import io.dropwizard.jersey.errors.LoggingExceptionMapper;
 import io.dropwizard.jersey.guava.OptionalQueryParamInjectableProvider;
@@ -49,6 +50,7 @@ public class DropwizardResourceConfig extends ScanningResourceConfig {
             getSingletons().add(new LoggingExceptionMapper<Throwable>() {});
             getSingletons().add(new ConstraintViolationExceptionMapper());
             getSingletons().add(new JsonProcessingExceptionMapper());
+            getSingletons().add(new UnhandledExceptionToJsonMapper());
         }
         getSingletons().add(new InstrumentedResourceMethodDispatchAdapter(metricRegistry));
         getClasses().add(CacheControlledResourceMethodDispatchAdapter.class);
