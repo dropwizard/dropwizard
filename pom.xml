@@ -67,7 +67,7 @@
         <developer>
             <name>Coda Hale</name>
             <email>coda.hale@gmail.com</email>
-            <timezone>-8</timezone>
+            <timezone>America/Los_Angeles</timezone>
             <roles>
                 <role>architect</role>
             </roles>
@@ -75,7 +75,7 @@
         <developer>
             <name>Nick Telford</name>
             <email>nick.telford@gmail.com</email>
-            <timezone>0</timezone>
+            <timezone>Europe/London</timezone>
             <roles>
                 <role>committer</role>
             </roles>
@@ -83,7 +83,7 @@
         <developer>
             <name>Graham O'Regan</name>
             <email>graham.oregan@ellisonbrookes.com</email>
-            <timezone>0</timezone>
+            <timezone>Europe/London</timezone>
             <roles>
                 <role>committer</role>
             </roles>
@@ -91,7 +91,7 @@
         <developer>
             <name>Ryan Kennedy</name>
             <email>rckenned@gmail.com</email>
-            <timezone>-8</timezone>
+            <timezone>America/Los_Angeles</timezone>
             <roles>
                 <role>committer</role>
             </roles>
@@ -99,7 +99,7 @@
         <developer>
             <name>Camille Fournier</name>
             <email>camille@apache.org</email>
-            <timezone>-5</timezone>
+            <timezone>America/New_York</timezone>
             <roles>
                 <role>committer</role>
             </roles>
@@ -107,7 +107,7 @@
         <developer>
             <name>Carlo Barbara</name>
             <email>carlo.barbara@gmail.com</email>
-            <timezone>-5</timezone>
+            <timezone>America/New_York</timezone>
             <roles>
                 <role>committer</role>
             </roles>
@@ -115,7 +115,7 @@
         <developer>
             <name>Matt Veitas</name>
             <email>mveitas@gmail.com</email>
-            <timezone>-5</timezone>
+            <timezone>America/New_York</timezone>
             <roles>
                 <role>committer</role>
             </roles>
@@ -123,7 +123,7 @@
         <developer>
             <name>Ryan Tenney</name>
             <email>ryan@10e.us</email>
-            <timezone>-5</timezone>
+            <timezone>America/New_York</timezone>
             <roles>
                 <role>committer</role>
             </roles>
