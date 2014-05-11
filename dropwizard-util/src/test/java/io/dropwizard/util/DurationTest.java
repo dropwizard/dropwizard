@@ -136,6 +136,27 @@ public class DurationTest {
     }
 
     @Test
+    public void parseDurationWithWhiteSpaces() {
+        assertThat(Duration.parse("5   seconds"))
+                .isEqualTo(Duration.seconds(5));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void unableParseWrongDurationCount() {
+        Duration.parse("five seconds");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void unableParseWrongDurationTimeUnit() {
+        Duration.parse("1gs");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void unableParseWrongDurationFormat() {
+        Duration.parse("1 milli second");
+    }
+
+    @Test
     public void isHumanReadable() throws Exception {
         assertThat(Duration.microseconds(1).toString())
                 .isEqualTo("1 microsecond");
