@@ -69,7 +69,6 @@ public class Environment {
 
         final DropwizardResourceConfig jerseyConfig = new DropwizardResourceConfig(metricRegistry);
 
-        //Add the Early EOF Exception Mapper for when the client disconnects whilst reading the input stream.
         jerseyConfig.getSingletons().add(new EarlyEofExceptionMapper());
 
         this.jerseyServletContainer = new JerseyContainerHolder(new ServletContainer(jerseyConfig));
