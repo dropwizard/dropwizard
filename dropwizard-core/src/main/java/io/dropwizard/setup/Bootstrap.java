@@ -1,6 +1,8 @@
 package io.dropwizard.setup;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+
+import com.codahale.metrics.JmxReporter;
 import io.dropwizard.Application;
 import io.dropwizard.Bundle;
 import io.dropwizard.Configuration;
@@ -65,6 +67,8 @@ public class Bootstrap<T extends Configuration> {
         metricRegistry.register("jvm.gc", new GarbageCollectorMetricSet());
         metricRegistry.register("jvm.memory", new MemoryUsageGaugeSet());
         metricRegistry.register("jvm.threads", new ThreadStatesGaugeSet());
+
+        JmxReporter.forRegistry(metricRegistry).build().start();
 
         this.configurationSourceProvider = new FileConfigurationSourceProvider();
         this.classLoader = Thread.currentThread().getContextClassLoader();
