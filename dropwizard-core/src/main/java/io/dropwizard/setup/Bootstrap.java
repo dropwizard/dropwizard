@@ -1,6 +1,8 @@
 package io.dropwizard.setup;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+
+import com.codahale.metrics.JmxReporter;
 import io.dropwizard.Application;
 import io.dropwizard.Bundle;
 import io.dropwizard.Configuration;
@@ -58,17 +60,22 @@ public class Bootstrap<T extends Configuration> {
         this.bundles = Lists.newArrayList();
         this.configuredBundles = Lists.newArrayList();
         this.commands = Lists.newArrayList();
-        this.metricRegistry = new MetricRegistry();
+        this.metricRegistry = buildDefaultMetricRegistry();
         this.validatorFactory = Validation.buildDefaultValidatorFactory();
-        metricRegistry.register("jvm.buffers", new BufferPoolMetricSet(ManagementFactory
-                                                                               .getPlatformMBeanServer()));
-        metricRegistry.register("jvm.gc", new GarbageCollectorMetricSet());
-        metricRegistry.register("jvm.memory", new MemoryUsageGaugeSet());
-        metricRegistry.register("jvm.threads", new ThreadStatesGaugeSet());
-
         this.configurationSourceProvider = new FileConfigurationSourceProvider();
         this.classLoader = Thread.currentThread().getContextClassLoader();
         this.configurationFactoryFactory = new DefaultConfigurationFactoryFactory<T>();
+    }
+
+    private static MetricRegistry buildDefaultMetricRegistry() {
+        MetricRegistry metricRegistry = new MetricRegistry();
+        JmxReporter.forRegistry(metricRegistry).build().start();
+        metricRegistry.register("jvm.buffers", new BufferPoolMetricSet(ManagementFactory
+            .getPlatformMBeanServer()));
+        metricRegistry.register("jvm.gc", new GarbageCollectorMetricSet());
+        metricRegistry.register("jvm.memory", new MemoryUsageGaugeSet());
+        metricRegistry.register("jvm.threads", new ThreadStatesGaugeSet());
+        return metricRegistry;
     }
 
     /**
