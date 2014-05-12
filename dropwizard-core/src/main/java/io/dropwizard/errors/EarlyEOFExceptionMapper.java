@@ -1,4 +1,4 @@
-package com.codahale.dropwizard.server.errors;
+package io.dropwizard.errors;
 
 import org.eclipse.jetty.io.EofException;
 import org.slf4j.Logger;
@@ -16,14 +16,14 @@ import javax.ws.rs.ext.Provider;
 * only catching jetty server based errors where the client disconnects, as specified by {@link EofException}.
 */
 @Provider
-public class EarlyEOFExceptionMapper implements ExceptionMapper<EofException> {
+public class EarlyEofExceptionMapper implements ExceptionMapper<EofException> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(EarlyEOFExceptionMapper.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(EarlyEofExceptionMapper.class);
 
     @Override
     public Response toResponse(EofException e) {
         LOGGER.debug("EOF Exception encountered - client disconnected during stream processing.", e);
 
-        return Response.noContent().build();
+        return Response.status(Response.Status.BAD_REQUEST).build();
     }
 }
