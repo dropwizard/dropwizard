@@ -2,9 +2,11 @@ package io.dropwizard.auth;
 
 import com.codahale.metrics.MetricRegistry;
 import com.google.common.base.Optional;
+import com.google.common.base.Predicate;
 import com.google.common.cache.CacheBuilderSpec;
 import com.google.common.cache.CacheStats;
 import com.google.common.collect.ImmutableSet;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InOrder;
@@ -65,6 +67,22 @@ public class CachingAuthenticatorTest {
         verify(underlying, times(2)).authenticate("credentials");
     }
 
+    @Test
+    public void invalidatesCredentialsMatchingGivenPredicate() throws Exception {
+    	Predicate<String> predicate = new Predicate<String>() {
+			@Override
+			public boolean apply(String c) {
+				return c.equals("credentials");
+			}
+		}; 
+    	
+    	cached.authenticate("credentials");
+    	cached.invalidateAll(predicate);
+    	cached.authenticate("credentials");
+    	
+    	verify(underlying, times(2)).authenticate("credentials");
+    }
+    
     @Test
     public void invalidatesAllCredentials() throws Exception {
         cached.authenticate("credentials");
