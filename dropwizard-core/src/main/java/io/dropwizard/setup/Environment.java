@@ -4,6 +4,7 @@ import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheckRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.jersey.spi.container.servlet.ServletContainer;
+import io.dropwizard.errors.EarlyEofExceptionMapper;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.jersey.setup.JerseyContainerHolder;
 import io.dropwizard.jersey.setup.JerseyEnvironment;
@@ -67,6 +68,9 @@ public class Environment {
         this.lifecycleEnvironment = new LifecycleEnvironment();
 
         final DropwizardResourceConfig jerseyConfig = new DropwizardResourceConfig(metricRegistry);
+
+        jerseyConfig.getSingletons().add(new EarlyEofExceptionMapper());
+
         this.jerseyServletContainer = new JerseyContainerHolder(new ServletContainer(jerseyConfig));
         this.jerseyEnvironment = new JerseyEnvironment(jerseyServletContainer, jerseyConfig);
     }
