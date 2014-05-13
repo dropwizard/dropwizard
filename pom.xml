@@ -324,6 +324,18 @@
                         <configuration>
                             <rules>
                                 <DependencyConvergence />
+                                <bannedDependencies>
+                                    <excludes>
+                                        <!-- This should not exist as it will force SLF4J calls to be delegated to log4j -->
+                                        <exclude>org.slf4j:slf4j-log4j12</exclude>
+                                        <!-- This should not exist as it will force SLF4J calls to be delegated to jul -->
+                                        <exclude>org.slf4j:slf4j-jdk14</exclude>
+                                        <!-- Ensure only the slf4j binding for logback is on the classpath -->
+                                        <exclude>log4j:log4j</exclude>
+                                        <!-- As recommended from the slf4j guide, exclude commons-logging -->
+                                        <exclude>commons-logging:commons-logging</exclude>
+                                    </excludes>
+                                </bannedDependencies>
                             </rules>
                         </configuration>
                         <goals>
