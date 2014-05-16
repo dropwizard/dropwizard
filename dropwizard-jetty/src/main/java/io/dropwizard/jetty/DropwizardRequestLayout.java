@@ -1,4 +1,4 @@
-package io.dropwizard.jetty.logging;
+package io.dropwizard.jetty;
 
 import ch.qos.logback.access.PatternLayout;
 import ch.qos.logback.core.Context;

@@ -1,4 +1,4 @@
-package io.dropwizard.jetty.logging;
+package io.dropwizard.jetty;
 
 import ch.qos.logback.access.spi.IAccessEvent;
 import ch.qos.logback.classic.Logger;
