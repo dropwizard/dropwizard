@@ -1,11 +1,9 @@
-package io.dropwizard.jetty;
+package io.dropwizard.jetty.logging;
 
+import ch.qos.logback.access.spi.IAccessEvent;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
-import ch.qos.logback.classic.spi.ILoggingEvent;
-import ch.qos.logback.core.CoreConstants;
-import ch.qos.logback.core.LayoutBase;
-import ch.qos.logback.core.spi.AppenderAttachableImpl;
+import ch.qos.logback.core.Layout;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableList;
@@ -43,29 +41,23 @@ import java.util.TimeZone;
  * </table>
  */
 public class RequestLogFactory {
-    private static class RequestLogLayout extends LayoutBase<ILoggingEvent> {
-        @Override
-        public String doLayout(ILoggingEvent event) {
-            return event.getFormattedMessage() + CoreConstants.LINE_SEPARATOR;
-        }
-    }
 
     @NotNull
     private TimeZone timeZone = TimeZone.getTimeZone("UTC");
 
     @Valid
     @NotNull
-    private ImmutableList<AppenderFactory> appenders = ImmutableList.<AppenderFactory>of(
-            new ConsoleAppenderFactory()
+    private ImmutableList<AppenderFactory<IAccessEvent>> appenders = ImmutableList.<AppenderFactory<IAccessEvent>>of(
+            new ConsoleAppenderFactory<IAccessEvent>()
     );
 
     @JsonProperty
-    public ImmutableList<AppenderFactory> getAppenders() {
+    public ImmutableList<AppenderFactory<IAccessEvent>> getAppenders() {
         return appenders;
     }
 
     @JsonProperty
-    public void setAppenders(ImmutableList<AppenderFactory> appenders) {
+    public void setAppenders(ImmutableList<AppenderFactory<IAccessEvent>> appenders) {
         this.appenders = appenders;
     }
 
@@ -90,14 +82,14 @@ public class RequestLogFactory {
 
         final LoggerContext context = logger.getLoggerContext();
 
-        final RequestLogLayout layout = new RequestLogLayout();
-        layout.start();
+        final DropwizardRequestLog requestLog = new DropwizardRequestLog();
 
-        final AppenderAttachableImpl<ILoggingEvent> attachable = new AppenderAttachableImpl<>();
-        for (AppenderFactory output : this.appenders) {
-            attachable.addAppender(output.build(context, name, layout));
+        for (AppenderFactory<IAccessEvent> output : appenders) {
+            final Layout<IAccessEvent> layout = new DropwizardRequestLayout(context, timeZone);
+            layout.start();
+            requestLog.addAppender(output.build(context, name, layout));
         }
 
-        return new Slf4jRequestLog(attachable, timeZone);
+        return requestLog;
     }
 }

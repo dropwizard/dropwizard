@@ -15,7 +15,6 @@ import java.util.TimeZone;
  */
 public class DropwizardLayout extends PatternLayout {
     public DropwizardLayout(LoggerContext context, TimeZone timeZone) {
-        super();
         setOutputPatternAsHeader(false);
         getDefaultConverterMap().put("ex", PrefixedThrowableProxyConverter.class.getName());
         getDefaultConverterMap().put("xEx", PrefixedExtendedThrowableProxyConverter.class.getName());

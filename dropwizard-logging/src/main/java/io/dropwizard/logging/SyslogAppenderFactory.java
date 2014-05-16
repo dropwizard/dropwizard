@@ -68,7 +68,7 @@ import java.util.regex.Pattern;
  * @see AbstractAppenderFactory
  */
 @JsonTypeName("syslog")
-public class SyslogAppenderFactory extends AbstractAppenderFactory {
+public class SyslogAppenderFactory extends AbstractAppenderFactory<ILoggingEvent> {
     public enum Facility {
         AUTH,
         AUTHPRIV,

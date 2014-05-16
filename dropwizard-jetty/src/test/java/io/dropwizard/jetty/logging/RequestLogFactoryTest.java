@@ -1,9 +1,10 @@
-package io.dropwizard.jetty;
+package io.dropwizard.jetty.logging;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.io.Resources;
 import io.dropwizard.configuration.ConfigurationFactory;
 import io.dropwizard.jackson.Jackson;
+import io.dropwizard.jetty.logging.RequestLogFactory;
 import io.dropwizard.logging.ConsoleAppenderFactory;
 import io.dropwizard.logging.FileAppenderFactory;
 import io.dropwizard.logging.SyslogAppenderFactory;

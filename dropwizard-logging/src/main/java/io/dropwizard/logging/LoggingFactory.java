@@ -8,6 +8,7 @@ import ch.qos.logback.classic.jmx.JMXConfigurator;
 import ch.qos.logback.classic.jul.LevelChangePropagator;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.ConsoleAppender;
+import ch.qos.logback.core.Layout;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.logback.InstrumentedAppender;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -63,12 +64,15 @@ public class LoggingFactory {
     private Level level = Level.INFO;
 
     @NotNull
+    private TimeZone timeZone = TimeZone.getTimeZone("UTC");
+
+    @NotNull
     private ImmutableMap<String, Level> loggers = ImmutableMap.of();
 
     @Valid
     @NotNull
-    private ImmutableList<AppenderFactory> appenders = ImmutableList.<AppenderFactory>of(
-            new ConsoleAppenderFactory()
+    private ImmutableList<AppenderFactory<ILoggingEvent>> appenders = ImmutableList.<AppenderFactory<ILoggingEvent>>of(
+            new ConsoleAppenderFactory<ILoggingEvent>()
     );
 
     @JsonProperty
@@ -82,6 +86,16 @@ public class LoggingFactory {
     }
 
     @JsonProperty
+    public TimeZone getTimeZone() {
+        return timeZone;
+    }
+
+    @JsonProperty
+    public void setTimeZone(TimeZone timeZone) {
+        this.timeZone = timeZone;
+    }
+
+    @JsonProperty
     public ImmutableMap<String, Level> getLoggers() {
         return loggers;
     }
@@ -92,12 +106,12 @@ public class LoggingFactory {
     }
 
     @JsonProperty
-    public ImmutableList<AppenderFactory> getAppenders() {
+    public ImmutableList<AppenderFactory<ILoggingEvent>> getAppenders() {
         return appenders;
     }
 
     @JsonProperty
-    public void setAppenders(List<AppenderFactory> appenders) {
+    public void setAppenders(List<AppenderFactory<ILoggingEvent>> appenders) {
         this.appenders = ImmutableList.copyOf(appenders);
     }
 
@@ -105,9 +119,12 @@ public class LoggingFactory {
         hijackJDKLogging();
 
         final Logger root = configureLevels();
+        final LoggerContext context = root.getLoggerContext();
 
-        for (AppenderFactory output : appenders) {
-            root.addAppender(output.build(root.getLoggerContext(), name, null));
+        for (AppenderFactory<ILoggingEvent> output : appenders) {
+            final Layout<ILoggingEvent> layout = new DropwizardLayout(context, timeZone);
+            layout.start();
+            root.addAppender(output.build(context, name, layout));
         }
 
         final MBeanServer server = ManagementFactory.getPlatformMBeanServer();

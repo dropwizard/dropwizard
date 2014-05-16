@@ -1,20 +1,15 @@
 package io.dropwizard.logging;
 
-import ch.qos.logback.classic.AsyncAppender;
 import ch.qos.logback.classic.Level;
-import ch.qos.logback.classic.LoggerContext;
-import ch.qos.logback.classic.filter.ThresholdFilter;
-import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.AsyncAppenderBase;
+import ch.qos.logback.core.spi.DeferredProcessingAware;
 import ch.qos.logback.core.spi.FilterAttachable;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.base.Strings;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import java.util.TimeZone;
 
 /**
  * A base implementation of {@link AppenderFactory}.
@@ -52,7 +47,7 @@ import java.util.TimeZone;
  *     </tr>
  * </table>
  */
-public abstract class AbstractAppenderFactory implements AppenderFactory {
+public abstract class AbstractAppenderFactory<E extends DeferredProcessingAware> implements AppenderFactory<E> {
     @NotNull
     protected Level threshold = Level.ALL;
 
@@ -104,8 +99,9 @@ public abstract class AbstractAppenderFactory implements AppenderFactory {
         this.logFormat = logFormat;
     }
 
-    protected Appender<ILoggingEvent> wrapAsync(Appender<ILoggingEvent> appender) {
-        final AsyncAppender asyncAppender = new AsyncAppender();
+    // TODO: isDiscardable
+    protected Appender<E> wrapAsync(Appender<E> appender) {
+        final AsyncAppenderBase<E> asyncAppender = new DeferredProcessingAsyncAppender<>(appender.getContext());
         asyncAppender.setQueueSize(queueSize);
         asyncAppender.setDiscardingThreshold(discardingThreshold);
         asyncAppender.addAppender(appender);
@@ -113,19 +109,11 @@ public abstract class AbstractAppenderFactory implements AppenderFactory {
         return asyncAppender;
     }
 
-    protected void addThresholdFilter(FilterAttachable<ILoggingEvent> appender, Level threshold) {
-        final ThresholdFilter filter = new ThresholdFilter();
-        filter.setLevel(threshold.toString());
-        filter.start();
-        appender.addFilter(filter);
-    }
-
-    protected DropwizardLayout buildLayout(LoggerContext context, TimeZone timeZone) {
-        final DropwizardLayout formatter = new DropwizardLayout(context, timeZone);
-        if (!Strings.isNullOrEmpty(logFormat)) {
-            formatter.setPattern(logFormat);
-        }
-        formatter.start();
-        return formatter;
+    // TODO: addThresholdFilter
+    protected void addThresholdFilter(FilterAttachable<E> appender, Level threshold) {
+//        final ThresholdFilter filter = new ThresholdFilter();
+//        filter.setLevel(threshold.toString());
+//        filter.start();
+//        appender.addFilter(filter);
     }
 }
