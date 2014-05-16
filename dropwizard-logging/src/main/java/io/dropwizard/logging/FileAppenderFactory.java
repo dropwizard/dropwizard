@@ -11,6 +11,7 @@ import ch.qos.logback.core.spi.DeferredProcessingAware;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import io.dropwizard.logging.filter.FilterFactory;
 import io.dropwizard.validation.ValidationMethod;
 
 import javax.validation.constraints.Min;
@@ -126,7 +127,8 @@ public class FileAppenderFactory<E extends DeferredProcessingAware> extends Abst
     }
 
     @Override
-    public Appender<E> build(LoggerContext context, String applicationName, Layout<E> layout) {
+    public Appender<E> build(LoggerContext context, String applicationName, Layout<E> layout,
+                             FilterFactory<E> thresholdFilterFactory, AsyncAppenderFactory<E> asyncAppenderFactory) {
         final FileAppender<E> appender = buildAppender(context);
         appender.setName("file-appender");
 
@@ -135,11 +137,11 @@ public class FileAppenderFactory<E extends DeferredProcessingAware> extends Abst
         appender.setLayout(layout);
         appender.setFile(currentLogFilename);
         appender.setPrudent(false);
-        addThresholdFilter(appender, threshold);
+        appender.addFilter(thresholdFilterFactory.build(threshold));
         appender.stop();
         appender.start();
 
-        return wrapAsync(appender);
+        return wrapAsync(appender, asyncAppenderFactory);
     }
 
     protected FileAppender<E> buildAppender(LoggerContext context) {

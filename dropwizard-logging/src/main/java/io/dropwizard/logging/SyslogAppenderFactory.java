@@ -8,6 +8,7 @@ import ch.qos.logback.core.Layout;
 import ch.qos.logback.core.net.SyslogConstants;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import io.dropwizard.logging.filter.FilterFactory;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -183,17 +184,20 @@ public class SyslogAppenderFactory extends AbstractAppenderFactory<ILoggingEvent
     }
 
     @Override
-    public Appender<ILoggingEvent> build(LoggerContext context, String applicationName, Layout<ILoggingEvent> layout) {
+    public Appender<ILoggingEvent> build(LoggerContext context, String applicationName, Layout<ILoggingEvent> layout,
+                                         FilterFactory<ILoggingEvent> filterFactory, AsyncAppenderFactory<ILoggingEvent> asyncAppenderFactory) {
         final SyslogAppender appender = new SyslogAppender();
         appender.setName("syslog-appender");
+
         appender.setContext(context);
         appender.setSuffixPattern(logFormat.replaceAll(LOG_TOKEN_PID, PID).replaceAll(LOG_TOKEN_NAME, Matcher.quoteReplacement(applicationName)));
         appender.setSyslogHost(host);
         appender.setPort(port);
         appender.setFacility(facility.toString().toLowerCase(Locale.ENGLISH));
         appender.setThrowableExcluded(!includeStackTrace);
-        addThresholdFilter(appender, threshold);
+        appender.addFilter(filterFactory.build(threshold));
         appender.start();
-        return wrapAsync(appender);
+
+        return wrapAsync(appender, asyncAppenderFactory);
     }
 }

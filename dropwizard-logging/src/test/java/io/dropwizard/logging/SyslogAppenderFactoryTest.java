@@ -8,6 +8,7 @@ import ch.qos.logback.core.AsyncAppenderBase;
 import ch.qos.logback.core.Layout;
 import ch.qos.logback.core.spi.AppenderAttachableImpl;
 import io.dropwizard.jackson.DiscoverableSubtypeResolver;
+import io.dropwizard.logging.filter.NullFilterFactory;
 import org.junit.Test;
 
 import java.lang.reflect.Field;
@@ -40,7 +41,8 @@ public class SyslogAppenderFactoryTest {
         layout.start();
 
         Appender<ILoggingEvent> wrapper = new SyslogAppenderFactory()
-                .build(context, "MyApplication", layout);
+                .build(context, "MyApplication", layout,
+                        new NullFilterFactory<ILoggingEvent>(), new AsyncLoggingEventAppenderFactory());
 
         // hack to get at the SyslogAppender beneath the AsyncAppender
         // todo: find a nicer way to do all this

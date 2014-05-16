@@ -8,7 +8,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableList;
 import io.dropwizard.logging.AppenderFactory;
+import io.dropwizard.logging.AsyncAppenderFactory;
 import io.dropwizard.logging.ConsoleAppenderFactory;
+import io.dropwizard.logging.filter.FilterFactory;
+import io.dropwizard.logging.filter.NullFilterFactory;
 import org.eclipse.jetty.server.RequestLog;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.slf4j.LoggerFactory;
@@ -86,10 +89,13 @@ public class RequestLogFactory {
 
         final DropwizardRequestLog requestLog = new DropwizardRequestLog();
 
+        final FilterFactory<IAccessEvent> thresholdFilterFactory = new NullFilterFactory<>();
+        final AsyncAppenderFactory<IAccessEvent> asyncAppenderFactory = new AsyncAccessEventAppenderFactory();
+
         for (AppenderFactory<IAccessEvent> output : appenders) {
             final Layout<IAccessEvent> layout = new DropwizardRequestLayout(context, logFormat);
             layout.start();
-            requestLog.addAppender(output.build(context, name, layout));
+            requestLog.addAppender(output.build(context, name, layout, thresholdFilterFactory, asyncAppenderFactory));
         }
 
         return requestLog;

@@ -5,6 +5,7 @@ import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.Layout;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import io.dropwizard.jackson.Discoverable;
+import io.dropwizard.logging.filter.FilterFactory;
 
 /**
  * A service provider interface for creating Logback {@link Appender} instances.
@@ -33,5 +34,7 @@ public interface AppenderFactory<E> extends Discoverable {
      */
     Appender<E> build(LoggerContext context,
                                   String applicationName,
-                                  Layout<E> layout);
+                                  Layout<E> layout,
+                                  FilterFactory<E> thresholdFilterFactory,
+                                  AsyncAppenderFactory<E> asyncAppenderFactory);
 }

@@ -14,6 +14,8 @@ import com.codahale.metrics.logback.InstrumentedAppender;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import io.dropwizard.logging.filter.FilterFactory;
+import io.dropwizard.logging.filter.ThresholdFilterFactory;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.LoggerFactory;
@@ -163,10 +165,13 @@ public class LoggingFactory {
         final Logger root = configureLevels();
         final LoggerContext context = root.getLoggerContext();
 
+        final FilterFactory<ILoggingEvent> thresholdFilterFactory = new ThresholdFilterFactory();
+        final AsyncAppenderFactory<ILoggingEvent> asyncAppenderFactory = new AsyncLoggingEventAppenderFactory();
+
         for (AppenderFactory<ILoggingEvent> output : appenders) {
             final Layout<ILoggingEvent> layout = new DropwizardLayout(context, logFormat);
             layout.start();
-            root.addAppender(output.build(context, name, layout));
+            root.addAppender(output.build(context, name, layout, thresholdFilterFactory, asyncAppenderFactory));
         }
 
         final MBeanServer server = ManagementFactory.getPlatformMBeanServer();

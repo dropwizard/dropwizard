@@ -4,7 +4,6 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.AsyncAppenderBase;
 import ch.qos.logback.core.spi.DeferredProcessingAware;
-import ch.qos.logback.core.spi.FilterAttachable;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.validation.constraints.Max;
@@ -82,21 +81,15 @@ public abstract class AbstractAppenderFactory<E extends DeferredProcessingAware>
         this.threshold = threshold;
     }
 
-    // TODO: isDiscardable
-    protected Appender<E> wrapAsync(Appender<E> appender) {
-        final AsyncAppenderBase<E> asyncAppender = new DeferredProcessingAsyncAppender<>(appender.getContext());
+    protected Appender<E> wrapAsync(Appender<E> appender, AsyncAppenderFactory<E> asyncAppenderFactory) {
+        final AsyncAppenderBase<E> asyncAppender = asyncAppenderFactory.build();
+
+        asyncAppender.setContext(appender.getContext());
         asyncAppender.setQueueSize(queueSize);
         asyncAppender.setDiscardingThreshold(discardingThreshold);
         asyncAppender.addAppender(appender);
         asyncAppender.start();
-        return asyncAppender;
-    }
 
-    // TODO: addThresholdFilter
-    protected void addThresholdFilter(FilterAttachable<E> appender, Level threshold) {
-//        final ThresholdFilter filter = new ThresholdFilter();
-//        filter.setLevel(threshold.toString());
-//        filter.start();
-//        appender.addFilter(filter);
+        return asyncAppender;
     }
 }
