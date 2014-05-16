@@ -27,11 +27,6 @@ import javax.validation.constraints.NotNull;
  *         <td>The minimum event level the appender will handle.</td>
  *     </tr>
  *     <tr>
- *         <td>{@code logFormat}</td>
- *         <td>(none)</td>
- *         <td>An appender-specific log format.</td>
- *     </tr>
- *     <tr>
  *         <td>{@code queueSize}</td>
  *         <td>{@link AsyncAppenderBase}</td>
  *         <td>The maximum capacity of the blocking queue.</td>
@@ -50,8 +45,6 @@ import javax.validation.constraints.NotNull;
 public abstract class AbstractAppenderFactory<E extends DeferredProcessingAware> implements AppenderFactory<E> {
     @NotNull
     protected Level threshold = Level.ALL;
-
-    protected String logFormat;
 
     @Min(1)
     @Max(Integer.MAX_VALUE)
@@ -87,16 +80,6 @@ public abstract class AbstractAppenderFactory<E extends DeferredProcessingAware>
     @JsonProperty
     public void setThreshold(Level threshold) {
         this.threshold = threshold;
-    }
-
-    @JsonProperty
-    public String getLogFormat() {
-        return logFormat;
-    }
-
-    @JsonProperty
-    public void setLogFormat(String logFormat) {
-        this.logFormat = logFormat;
     }
 
     // TODO: isDiscardable

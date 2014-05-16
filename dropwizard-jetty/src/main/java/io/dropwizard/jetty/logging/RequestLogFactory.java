@@ -10,11 +10,11 @@ import com.google.common.collect.ImmutableList;
 import io.dropwizard.logging.AppenderFactory;
 import io.dropwizard.logging.ConsoleAppenderFactory;
 import org.eclipse.jetty.server.RequestLog;
+import org.hibernate.validator.constraints.NotEmpty;
 import org.slf4j.LoggerFactory;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.util.TimeZone;
 
 /**
  * A factory for creating {@link RequestLog} instances.
@@ -27,29 +27,41 @@ import java.util.TimeZone;
  *         <td>Description</td>
  *     </tr>
  *     <tr>
- *         <td>{@code timeZone}</td>
- *         <td>UTC</td>
- *         <td>The time zone to which request timestamps will be converted.</td>
+ *         <td>{@code logFormat}</td>
+ *         <td>HTTP  [%t{ISO8601,UTC}] %h %l %u "%r" %s %b "%i{Referer}" "%i{User-Agent}"</td>
+ *             The Logback pattern with which events will be formatted. See
+ *             <a href="http://logback.qos.ch/manual/layouts.html#logback-access">the Logback documentation</a>
+ *             for details.
+ *         </td>
  *     </tr>
  *     <tr>
  *         <td>{@code appenders}</td>
  *         <td>a default {@link ConsoleAppenderFactory console} appender</td>
- *         <td>
- *             The set of {@link AppenderFactory appenders} to which requests will be logged.
- *         </td>
+ *         <td>The set of {@link AppenderFactory appenders} to which requests will be logged.</td>
  *     </tr>
  * </table>
  */
+// TODO: Write tests
 public class RequestLogFactory {
 
-    @NotNull
-    private TimeZone timeZone = TimeZone.getTimeZone("UTC");
+    @NotEmpty
+    private String logFormat = "HTTP  [%t{ISO8601,UTC}] %h %l %u \"%r\" %s %b \"%i{Referer}\" \"%i{User-Agent}\"";
 
     @Valid
     @NotNull
     private ImmutableList<AppenderFactory<IAccessEvent>> appenders = ImmutableList.<AppenderFactory<IAccessEvent>>of(
             new ConsoleAppenderFactory<IAccessEvent>()
     );
+
+    @JsonProperty
+    public String getLogFormat() {
+        return logFormat;
+    }
+
+    @JsonProperty
+    public void setLogFormat(String logFormat) {
+        this.logFormat = logFormat;
+    }
 
     @JsonProperty
     public ImmutableList<AppenderFactory<IAccessEvent>> getAppenders() {
@@ -59,16 +71,6 @@ public class RequestLogFactory {
     @JsonProperty
     public void setAppenders(ImmutableList<AppenderFactory<IAccessEvent>> appenders) {
         this.appenders = appenders;
-    }
-
-    @JsonProperty
-    public TimeZone getTimeZone() {
-        return timeZone;
-    }
-
-    @JsonProperty
-    public void setTimeZone(TimeZone timeZone) {
-        this.timeZone = timeZone;
     }
 
     @JsonIgnore
@@ -85,7 +87,7 @@ public class RequestLogFactory {
         final DropwizardRequestLog requestLog = new DropwizardRequestLog();
 
         for (AppenderFactory<IAccessEvent> output : appenders) {
-            final Layout<IAccessEvent> layout = new DropwizardRequestLayout(context, timeZone);
+            final Layout<IAccessEvent> layout = new DropwizardRequestLayout(context, logFormat);
             layout.start();
             requestLog.addAppender(output.build(context, name, layout));
         }

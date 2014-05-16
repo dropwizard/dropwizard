@@ -5,6 +5,7 @@ import ch.qos.logback.classic.net.SyslogAppender;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.AsyncAppenderBase;
+import ch.qos.logback.core.Layout;
 import ch.qos.logback.core.spi.AppenderAttachableImpl;
 import io.dropwizard.jackson.DiscoverableSubtypeResolver;
 import org.junit.Test;
@@ -34,8 +35,12 @@ public class SyslogAppenderFactoryTest {
 
     @Test
     public void patternIncludesAppNameAndPid() throws Exception {
+        final LoggerContext context = new LoggerContext();
+        final Layout<ILoggingEvent> layout = new DropwizardLayout(context, "%-5p [%d{ISO8601,UTC}] %c: %m%n%rEx");
+        layout.start();
+
         Appender<ILoggingEvent> wrapper = new SyslogAppenderFactory()
-                .build(new LoggerContext(), "MyApplication", null);
+                .build(context, "MyApplication", layout);
 
         // hack to get at the SyslogAppender beneath the AsyncAppender
         // todo: find a nicer way to do all this

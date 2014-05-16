@@ -14,6 +14,7 @@ import com.codahale.metrics.logback.InstrumentedAppender;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import org.hibernate.validator.constraints.NotEmpty;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
@@ -24,22 +25,63 @@ import javax.validation.constraints.NotNull;
 import java.lang.management.ManagementFactory;
 import java.util.List;
 import java.util.Map;
-import java.util.TimeZone;
 
+/**
+ * A factory for configuring logging.
+ * <p/>
+ * <b>Configuration Parameters:</b>
+ * <table>
+ *     <tr>
+ *         <td>Name</td>
+ *         <td>Default</td>
+ *         <td>Description</td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code level}</td>
+ *         <td>INFO</td>
+ *         <td>The threshold below which logs will be discarded.</td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code logFormat}</td>
+ *         <td>%-5p [%d{ISO8601,UTC}] %c: %m%n%rEx</td>
+ *         <td>
+ *             The Logback pattern with which events will be formatted. See
+ *             <a href="http://logback.qos.ch/manual/layouts.html#conversionWord">the Logback documentation</a>
+ *             for details.
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code loggers}</td>
+ *         <td></td>
+ *         <td>A map of logger names to the log threshold for that logger.</td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code appenders}</td>
+ *         <td>a default {@link ConsoleAppenderFactory console} appender</td>
+ *         <td>The set of {@link AppenderFactory appenders} to which requests will be logged.</td>
+ *     </tr>
+ * </table>
+ */
 public class LoggingFactory {
+
+    private static final String DEFAULT_LOG_FORMAT = "%-5p [%d{ISO8601,UTC}] %c: %m%n%rEx";
+
     // initially configure for WARN+ console logging
     public static void bootstrap() {
         bootstrap(Level.WARN);
     }
 
     public static void bootstrap(Level level) {
+        bootstrap(level, DEFAULT_LOG_FORMAT);
+    }
+
+    public static void bootstrap(Level level, String logFormat) {
         hijackJDKLogging();
 
         final Logger root = (Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
         root.detachAndStopAllAppenders();
 
-        final DropwizardLayout formatter = new DropwizardLayout(root.getLoggerContext(),
-                                                        TimeZone.getDefault());
+        final DropwizardLayout formatter = new DropwizardLayout(root.getLoggerContext(), logFormat);
         formatter.start();
 
         final ThresholdFilter filter = new ThresholdFilter();
@@ -63,8 +105,8 @@ public class LoggingFactory {
     @NotNull
     private Level level = Level.INFO;
 
-    @NotNull
-    private TimeZone timeZone = TimeZone.getTimeZone("UTC");
+    @NotEmpty
+    private String logFormat = DEFAULT_LOG_FORMAT;
 
     @NotNull
     private ImmutableMap<String, Level> loggers = ImmutableMap.of();
@@ -86,13 +128,13 @@ public class LoggingFactory {
     }
 
     @JsonProperty
-    public TimeZone getTimeZone() {
-        return timeZone;
+    public String getLogFormat() {
+        return logFormat;
     }
 
     @JsonProperty
-    public void setTimeZone(TimeZone timeZone) {
-        this.timeZone = timeZone;
+    public void setLogFormat(String logFormat) {
+        this.logFormat = logFormat;
     }
 
     @JsonProperty
@@ -122,7 +164,7 @@ public class LoggingFactory {
         final LoggerContext context = root.getLoggerContext();
 
         for (AppenderFactory<ILoggingEvent> output : appenders) {
-            final Layout<ILoggingEvent> layout = new DropwizardLayout(context, timeZone);
+            final Layout<ILoggingEvent> layout = new DropwizardLayout(context, logFormat);
             layout.start();
             root.addAppender(output.build(context, name, layout));
         }

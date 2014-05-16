@@ -63,15 +63,6 @@ import javax.validation.constraints.NotNull;
  *             The number of archived files to keep. Must be greater than {@code 0}.
  *         </td>
  *     </tr>
- *     <tr>
- *         <td>{@code logFormat}</td>
- *         <td>the default format</td>
- *         <td>
- *             The Logback pattern with which events will be formatted. See
- *             <a href="http://logback.qos.ch/manual/layouts.html#conversionWord">the Logback documentation</a>
- *             for details.
- *         </td>
- *     </tr>
  * </table>
  *
  * @see AbstractAppenderFactory
