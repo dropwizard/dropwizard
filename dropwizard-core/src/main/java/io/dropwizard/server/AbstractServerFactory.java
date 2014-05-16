@@ -11,8 +11,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Charsets;
+import com.google.common.base.Joiner;
 import com.google.common.io.Resources;
 import com.sun.jersey.spi.container.servlet.ServletContainer;
+import io.dropwizard.jersey.filter.AllowedMethodsFilter;
 import io.dropwizard.jersey.jackson.JacksonMessageBodyProvider;
 import io.dropwizard.jersey.setup.JerseyEnvironment;
 import io.dropwizard.jetty.GzipFilterFactory;
@@ -39,12 +41,14 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
 import javax.servlet.DispatcherType;
+import javax.servlet.Servlet;
 import javax.validation.Valid;
 import javax.validation.Validator;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.util.EnumSet;
+import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.regex.Pattern;
 
@@ -162,6 +166,14 @@ import java.util.regex.Pattern;
  *             before forcibly terminating them.
  *         </td>
  *     </tr>
+ *     <tr>
+ *         <td>{@code allowedMethods}</td>
+ *         <td>GET, POST, PUT, DELETE, HEAD, OPTIONS, PATCH</td>
+ *         <td>
+ *             The set of allowed HTTP methods. Others will be rejected with a
+ *             405 Method Not Allowed response.
+ *         </td>
+ *     </tr>
  * </table>
  *
  * @see DefaultServerFactory
@@ -209,6 +221,9 @@ public abstract class AbstractServerFactory implements ServerFactory {
     private Boolean startsAsRoot;
 
     private Duration shutdownGracePeriod = Duration.seconds(30);
+
+    @NotNull
+    private Set<String> allowedMethods = AllowedMethodsFilter.DEFAULT_ALLOWED_METHODS;
 
     @JsonIgnore
     @ValidationMethod(message = "must have a smaller minThreads than maxThreads")
@@ -366,6 +381,16 @@ public abstract class AbstractServerFactory implements ServerFactory {
         this.shutdownGracePeriod = shutdownGracePeriod;
     }
 
+    @JsonProperty
+    public Set<String> getAllowedMethods() {
+        return allowedMethods;
+    }
+
+    @JsonProperty
+    public void setAllowedMethods(Set<String> allowedMethods) {
+        this.allowedMethods = allowedMethods;
+    }
+
     protected Handler createAdminServlet(Server server,
                                          MutableServletContextHandler handler,
                                          MetricRegistry metrics,
@@ -375,6 +400,8 @@ public abstract class AbstractServerFactory implements ServerFactory {
         handler.getServletContext().setAttribute(MetricsServlet.METRICS_REGISTRY, metrics);
         handler.getServletContext().setAttribute(HealthCheckServlet.HEALTH_CHECK_REGISTRY, healthChecks);
         handler.addServlet(new NonblockingServletHolder(new AdminServlet()), "/*");
+        handler.addFilter(AllowedMethodsFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST))
+                .setInitParameter(AllowedMethodsFilter.ALLOWED_METHODS_PARAM, Joiner.on(',').join(allowedMethods));
         return handler;
     }
 
@@ -395,6 +422,8 @@ public abstract class AbstractServerFactory implements ServerFactory {
                                        @Nullable ServletContainer jerseyContainer,
                                        MetricRegistry metricRegistry) {
         configureSessionsAndSecurity(handler, server);
+        handler.addFilter(AllowedMethodsFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST))
+                .setInitParameter(AllowedMethodsFilter.ALLOWED_METHODS_PARAM, Joiner.on(',').join(allowedMethods));
         handler.addFilter(ThreadNameFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST));
         if (gzip.isEnabled()) {
             final FilterHolder holder = new FilterHolder(gzip.build());
