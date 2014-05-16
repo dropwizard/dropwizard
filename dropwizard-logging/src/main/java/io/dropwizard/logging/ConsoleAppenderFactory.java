@@ -90,14 +90,14 @@ public class ConsoleAppenderFactory<E extends DeferredProcessingAware> extends A
 
     @Override
     public Appender<E> build(LoggerContext context, String applicationName, Layout<E> layout,
-                             FilterFactory<E> filterFactory, AsyncAppenderFactory<E> asyncAppenderFactory) {
+                             FilterFactory<E> thresholdFilterFactory, AsyncAppenderFactory<E> asyncAppenderFactory) {
         final ConsoleAppender<E> appender = new ConsoleAppender<>();
         appender.setName("console-appender");
 
         appender.setContext(context);
         appender.setTarget(target.get());
         appender.setLayout(layout);
-        appender.addFilter(filterFactory.build(threshold));
+        appender.addFilter(thresholdFilterFactory.build(threshold));
         appender.start();
 
         return wrapAsync(appender, asyncAppenderFactory);

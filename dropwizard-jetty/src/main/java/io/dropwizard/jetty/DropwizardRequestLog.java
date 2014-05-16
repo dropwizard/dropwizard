@@ -2,9 +2,13 @@ package io.dropwizard.jetty;
 
 import ch.qos.logback.access.jetty.RequestLogImpl;
 
+/**
+ * The Dropwizard request log uses logback-access, but we override it to remove
+ * the requirement for logback-access.xml based configuration.
+ */
 public class DropwizardRequestLog extends RequestLogImpl {
     @Override
     public void configure() {
-        // Override configure to skip configuration from logback-access.xml
+        setName("DropwizardRequestLog");
     }
 }

@@ -185,7 +185,7 @@ public class SyslogAppenderFactory extends AbstractAppenderFactory<ILoggingEvent
 
     @Override
     public Appender<ILoggingEvent> build(LoggerContext context, String applicationName, Layout<ILoggingEvent> layout,
-                                         FilterFactory<ILoggingEvent> filterFactory, AsyncAppenderFactory<ILoggingEvent> asyncAppenderFactory) {
+                                         FilterFactory<ILoggingEvent> thresholdFilterFactory, AsyncAppenderFactory<ILoggingEvent> asyncAppenderFactory) {
         final SyslogAppender appender = new SyslogAppender();
         appender.setName("syslog-appender");
 
@@ -195,7 +195,7 @@ public class SyslogAppenderFactory extends AbstractAppenderFactory<ILoggingEvent
         appender.setPort(port);
         appender.setFacility(facility.toString().toLowerCase(Locale.ENGLISH));
         appender.setThrowableExcluded(!includeStackTrace);
-        appender.addFilter(filterFactory.build(threshold));
+        appender.addFilter(thresholdFilterFactory.build(threshold));
         appender.start();
 
         return wrapAsync(appender, asyncAppenderFactory);

@@ -32,6 +32,7 @@ import javax.validation.constraints.NotNull;
  *     <tr>
  *         <td>{@code logFormat}</td>
  *         <td>HTTP  [%t{ISO8601,UTC}] %h %l %u "%r" %s %b "%i{Referer}" "%i{User-Agent}"</td>
+ *         <td>
  *             The Logback pattern with which events will be formatted. See
  *             <a href="http://logback.qos.ch/manual/layouts.html#logback-access">the Logback documentation</a>
  *             for details.
@@ -40,7 +41,9 @@ import javax.validation.constraints.NotNull;
  *     <tr>
  *         <td>{@code appenders}</td>
  *         <td>a default {@link ConsoleAppenderFactory console} appender</td>
- *         <td>The set of {@link AppenderFactory appenders} to which requests will be logged.</td>
+ *         <td>
+ *             The set of {@link AppenderFactory appenders} to which requests will be logged.
+ *         </td>
  *     </tr>
  * </table>
  */
@@ -57,16 +60,6 @@ public class RequestLogFactory {
     );
 
     @JsonProperty
-    public String getLogFormat() {
-        return logFormat;
-    }
-
-    @JsonProperty
-    public void setLogFormat(String logFormat) {
-        this.logFormat = logFormat;
-    }
-
-    @JsonProperty
     public ImmutableList<AppenderFactory<IAccessEvent>> getAppenders() {
         return appenders;
     }
@@ -74,6 +67,16 @@ public class RequestLogFactory {
     @JsonProperty
     public void setAppenders(ImmutableList<AppenderFactory<IAccessEvent>> appenders) {
         this.appenders = appenders;
+    }
+
+    @JsonProperty
+    public String getLogFormat() {
+        return logFormat;
+    }
+
+    @JsonProperty
+    public void setLogFormat(String logFormat) {
+        this.logFormat = logFormat;
     }
 
     @JsonIgnore
