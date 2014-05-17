@@ -6,6 +6,6 @@ reporters:
     durationUnit: milliseconds
     rateUnit: seconds
   - type: csv
-    file: metrics.csv
+    file: metrics
   - type: log
     logger: metrics
