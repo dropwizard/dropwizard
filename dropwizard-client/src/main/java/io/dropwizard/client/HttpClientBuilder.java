@@ -21,6 +21,7 @@ import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
 import org.apache.http.impl.conn.SchemeRegistryFactory;
 import org.apache.http.impl.conn.SystemDefaultDnsResolver;
 import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.CoreProtocolPNames;
 import org.apache.http.protocol.HttpContext;
 
 import java.io.IOException;
@@ -44,6 +45,7 @@ public class HttpClientBuilder {
     };
 
     private final MetricRegistry metricRegistry;
+    private String environmentName;
     private HttpClientConfiguration configuration = new HttpClientConfiguration();
     private DnsResolver resolver = new SystemDefaultDnsResolver();
     private HttpRequestRetryHandler httpRequestRetryHandler;
@@ -54,7 +56,19 @@ public class HttpClientBuilder {
     }
 
     public HttpClientBuilder(Environment environment) {
-        this.metricRegistry = environment.metrics();
+        this (environment.metrics());
+        name(environment.getName());
+    }
+
+    /**
+     * Use the given environment name. This is used in the user agent.
+     *
+     * @param environmentName  an environment name to use in the user agent.
+     * @return {@code this}
+     */
+    public HttpClientBuilder name(String environmentName) {
+        this.environmentName = environmentName;
+        return this;
     }
 
     /**
@@ -107,7 +121,7 @@ public class HttpClientBuilder {
      * @return an {@link HttpClient}
      */
     public HttpClient build(String name) {
-        final BasicHttpParams params = createHttpParams();
+        final BasicHttpParams params = createHttpParams(name);
         final InstrumentedClientConnManager manager = createConnectionManager(registry, name);
         final InstrumentedHttpClient client = new InstrumentedHttpClient(metricRegistry, manager, params, name);
         setStrategiesForClient(client);
@@ -155,7 +169,7 @@ public class HttpClientBuilder {
      *
      * @return a BasicHttpParams object from the HttpClientConfiguration
      */
-    protected BasicHttpParams createHttpParams() {
+    protected BasicHttpParams createHttpParams(String name) {
         final BasicHttpParams params = new BasicHttpParams();
 
         if (configuration.isCookiesEnabled()) {
@@ -163,6 +177,8 @@ public class HttpClientBuilder {
         } else {
             params.setParameter(AllClientPNames.COOKIE_POLICY, CookiePolicy.IGNORE_COOKIES);
         }
+
+        params.setParameter(AllClientPNames.USER_AGENT, createUserAgent(name));
 
         final Integer timeout = (int) configuration.getTimeout().toMilliseconds();
         params.setParameter(AllClientPNames.SO_TIMEOUT, timeout);
@@ -175,6 +191,18 @@ public class HttpClientBuilder {
         params.setParameter(AllClientPNames.STALE_CONNECTION_CHECK, Boolean.FALSE);
 
         return params;
+    }
+
+    /**
+     * Create a user agent string using the configured user agent if defined, otherwise
+     * using a combination of the environment name and this client name
+     *
+     * @param name the name of this client
+     * @return the user agent string to be used by this client
+     */
+    protected String createUserAgent(String name) {
+        final String defaultUserAgent = environmentName == null ? name : String.format("%s (%s)", environmentName, name);
+        return configuration.getUserAgent().or(defaultUserAgent);
     }
 
     /**
