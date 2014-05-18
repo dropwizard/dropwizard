@@ -12,11 +12,11 @@ import ch.qos.logback.core.Layout;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.logback.InstrumentedAppender;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import io.dropwizard.logging.filter.FilterFactory;
 import io.dropwizard.logging.filter.ThresholdFilterFactory;
-import org.hibernate.validator.constraints.NotEmpty;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
@@ -27,6 +27,7 @@ import javax.validation.constraints.NotNull;
 import java.lang.management.ManagementFactory;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 
 /**
  * A factory for configuring logging.
@@ -43,6 +44,11 @@ import java.util.Map;
  *         <td>INFO</td>
  *         <td>The threshold below which logs will be discarded.</td>
  *     </tr>
+ *     <td>
+ *         <td>{@code timeZone}</td>
+ *         <td>UTC</td>
+ *         <td>The time zone to which timestamps will be converted if using the default {@code logFormat}.</td>
+ *     </td>
  *     <tr>
  *         <td>{@code logFormat}</td>
  *         <td>%-5p [%d{ISO8601,UTC}] %c: %m%n%rEx</td>
@@ -66,15 +72,13 @@ import java.util.Map;
  */
 public class LoggingFactory {
 
-    private static final String DEFAULT_LOG_FORMAT = "%-5p [%d{ISO8601,UTC}] %c: %m%n%rEx";
-
     // initially configure for WARN+ console logging
     public static void bootstrap() {
         bootstrap(Level.WARN);
     }
 
     public static void bootstrap(Level level) {
-        bootstrap(level, DEFAULT_LOG_FORMAT);
+        bootstrap(level, getDefaultLogFormat(TimeZone.getDefault()));
     }
 
     public static void bootstrap(Level level, String logFormat) {
@@ -104,11 +108,18 @@ public class LoggingFactory {
         SLF4JBridgeHandler.install();
     }
 
+    private static String getDefaultLogFormat(TimeZone timeZone) {
+        return "%-5p [%d{ISO8601," + timeZone.getID() + "}] %c: %m%n%rEx";
+    }
+
     @NotNull
     private Level level = Level.INFO;
 
-    @NotEmpty
-    private String logFormat = DEFAULT_LOG_FORMAT;
+    @NotNull
+    private TimeZone timeZone = TimeZone.getTimeZone("UTC");
+
+    @NotNull
+    private Optional<String> logFormat = Optional.absent();
 
     @NotNull
     private ImmutableMap<String, Level> loggers = ImmutableMap.of();
@@ -130,13 +141,23 @@ public class LoggingFactory {
     }
 
     @JsonProperty
+    public TimeZone getTimeZone() {
+        return timeZone;
+    }
+
+    @JsonProperty
+    public void setTimeZone(TimeZone timeZone) {
+        this.timeZone = timeZone;
+    }
+
+    @JsonProperty
     public String getLogFormat() {
-        return logFormat;
+        return logFormat.or(getDefaultLogFormat(timeZone));
     }
 
     @JsonProperty
     public void setLogFormat(String logFormat) {
-        this.logFormat = logFormat;
+        this.logFormat = Optional.fromNullable(logFormat);
     }
 
     @JsonProperty
@@ -169,7 +190,7 @@ public class LoggingFactory {
         final AsyncAppenderFactory<ILoggingEvent> asyncAppenderFactory = new AsyncLoggingEventAppenderFactory();
 
         for (AppenderFactory<ILoggingEvent> output : appenders) {
-            final Layout<ILoggingEvent> layout = new DropwizardLayout(context, logFormat);
+            final Layout<ILoggingEvent> layout = new DropwizardLayout(context, getLogFormat());
             layout.start();
             root.addAppender(output.build(context, name, layout, thresholdFilterFactory, asyncAppenderFactory));
         }

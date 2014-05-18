@@ -6,6 +6,7 @@ import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.core.Layout;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import io.dropwizard.logging.AppenderFactory;
 import io.dropwizard.logging.AsyncAppenderFactory;
@@ -13,11 +14,11 @@ import io.dropwizard.logging.ConsoleAppenderFactory;
 import io.dropwizard.logging.filter.FilterFactory;
 import io.dropwizard.logging.filter.NullFilterFactory;
 import org.eclipse.jetty.server.RequestLog;
-import org.hibernate.validator.constraints.NotEmpty;
 import org.slf4j.LoggerFactory;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.TimeZone;
 
 /**
  * A factory for creating {@link RequestLog} instances.
@@ -29,6 +30,11 @@ import javax.validation.constraints.NotNull;
  *         <td>Default</td>
  *         <td>Description</td>
  *     </tr>
+ *     <td>
+ *         <td>{@code timeZone}</td>
+ *         <td>UTC</td>
+ *         <td>The time zone to which request timestamps will be converted if using the default {@code logFormat}.</td>
+ *     </td>
  *     <tr>
  *         <td>{@code logFormat}</td>
  *         <td>HTTP  [%t{ISO8601,UTC}] %h %l %u "%r" %s %b "%i{Referer}" "%i{User-Agent}"</td>
@@ -50,8 +56,15 @@ import javax.validation.constraints.NotNull;
 // TODO: Write tests
 public class RequestLogFactory {
 
-    @NotEmpty
-    private String logFormat = "HTTP  [%t{ISO8601,UTC}] %h %l %u \"%r\" %s %b \"%i{Referer}\" \"%i{User-Agent}\"";
+    private static String getDefaultLogFormat(TimeZone timeZone) {
+        return "HTTP  [%t{ISO8601," + timeZone.getID() + "}] %h %l %u \"%r\" %s %b \"%i{Referer}\" \"%i{User-Agent}\"";
+    }
+
+    @NotNull
+    private TimeZone timeZone = TimeZone.getTimeZone("UTC");
+
+    @NotNull
+    private Optional<String> logFormat = Optional.absent();
 
     @Valid
     @NotNull
@@ -70,13 +83,23 @@ public class RequestLogFactory {
     }
 
     @JsonProperty
+    public TimeZone getTimeZone() {
+        return timeZone;
+    }
+
+    @JsonProperty
+    public void setTimeZone(TimeZone timeZone) {
+        this.timeZone = timeZone;
+    }
+
+    @JsonProperty
     public String getLogFormat() {
-        return logFormat;
+        return logFormat.or(getDefaultLogFormat(timeZone));
     }
 
     @JsonProperty
     public void setLogFormat(String logFormat) {
-        this.logFormat = logFormat;
+        this.logFormat = Optional.fromNullable(logFormat);
     }
 
     @JsonIgnore
@@ -96,7 +119,7 @@ public class RequestLogFactory {
         final AsyncAppenderFactory<IAccessEvent> asyncAppenderFactory = new AsyncAccessEventAppenderFactory();
 
         for (AppenderFactory<IAccessEvent> output : appenders) {
-            final Layout<IAccessEvent> layout = new DropwizardRequestLayout(context, logFormat);
+            final Layout<IAccessEvent> layout = new DropwizardRequestLayout(context, getLogFormat());
             layout.start();
             requestLog.addAppender(output.build(context, name, layout, thresholdFilterFactory, asyncAppenderFactory));
         }
