@@ -57,7 +57,7 @@ import java.util.TimeZone;
 public class RequestLogFactory {
 
     private static String getDefaultLogFormat(TimeZone timeZone) {
-        return "HTTP  [%t{ISO8601," + timeZone.getID() + "}] %h %l %u \"%r\" %s %b \"%i{Referer}\" \"%i{User-Agent}\"";
+        return "%h %l %u [%t{dd/MMM/yyyy:HH:mm:ss Z," + timeZone.getID() + "}] \"%r\" %s %b \"%i{Referer}\" \"%i{User-Agent}\" %D";
     }
 
     @NotNull
