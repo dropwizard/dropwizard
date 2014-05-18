@@ -37,7 +37,7 @@ import java.util.TimeZone;
  *     </tr>
  *     <tr>
  *         <td>{@code logFormat}</td>
- *         <td>HTTP  [%t{ISO8601,UTC}] %h %l %u "%r" %s %b "%i{Referer}" "%i{User-Agent}"</td>
+ *         <td>HTTP  [%t{dd/MMM/yyyy:HH:mm:ss Z,UTC}] %h %l %u "%r" %s %b "%i{Referer}" "%i{User-Agent}"</td>
  *         <td>
  *             The Logback pattern with which events will be formatted. See
  *             <a href="http://logback.qos.ch/manual/layouts.html#logback-access">the Logback documentation</a>
