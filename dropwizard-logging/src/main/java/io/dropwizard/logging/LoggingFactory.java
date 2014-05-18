@@ -44,11 +44,11 @@ import java.util.TimeZone;
  *         <td>INFO</td>
  *         <td>The threshold below which logs will be discarded.</td>
  *     </tr>
- *     <td>
+ *     <tr>
  *         <td>{@code timeZone}</td>
  *         <td>UTC</td>
- *         <td>The time zone to which timestamps will be converted if using the default {@code logFormat}.</td>
- *     </td>
+ *         <td>The time zone to which timestamps will be converted, if using the default {@code logFormat}.</td>
+ *     </tr>
  *     <tr>
  *         <td>{@code logFormat}</td>
  *         <td>%-5p [%d{ISO8601,UTC}] %c: %m%n%rEx</td>

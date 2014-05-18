@@ -30,11 +30,11 @@ import java.util.TimeZone;
  *         <td>Default</td>
  *         <td>Description</td>
  *     </tr>
- *     <td>
+ *     <tr>
  *         <td>{@code timeZone}</td>
  *         <td>UTC</td>
- *         <td>The time zone to which request timestamps will be converted if using the default {@code logFormat}.</td>
- *     </td>
+ *         <td>The time zone to which request timestamps will be converted, if using the default {@code logFormat}.</td>
+ *     </tr>
  *     <tr>
  *         <td>{@code logFormat}</td>
  *         <td>HTTP  [%t{ISO8601,UTC}] %h %l %u "%r" %s %b "%i{Referer}" "%i{User-Agent}"</td>
