@@ -117,6 +117,9 @@ public class SyslogAppenderFactory extends AbstractAppenderFactory {
     @NotNull
     private Facility facility = Facility.LOCAL0;
 
+    @NotNull
+    private String stackTracePattern = SyslogAppender.DEFAULT_STACKTRACE_PATTERN;
+
     // prefix the logFormat with the application name and PID (if available)
     private String logFormat = LOG_TOKEN_NAME + LOG_TOKEN_PID + ": " +
             SyslogAppender.DEFAULT_SUFFIX_PATTERN;
@@ -184,6 +187,16 @@ public class SyslogAppenderFactory extends AbstractAppenderFactory {
         this.includeStackTrace = includeStackTrace;
     }
 
+    @JsonProperty
+    public String getStackTracePattern() {
+        return stackTracePattern;
+    }
+
+    @JsonProperty
+    public void setStackTracePattern(String stackTracePattern) {
+        this.stackTracePattern = stackTracePattern;
+    }
+
     @Override
     public Appender<ILoggingEvent> build(LoggerContext context, String applicationName, Layout<ILoggingEvent> layout) {
         final SyslogAppender appender = new SyslogAppender();
@@ -194,6 +207,7 @@ public class SyslogAppenderFactory extends AbstractAppenderFactory {
         appender.setPort(port);
         appender.setFacility(facility.toString().toLowerCase(Locale.ENGLISH));
         appender.setThrowableExcluded(!includeStackTrace);
+        appender.setStackTracePattern(stackTracePattern);
         addThresholdFilter(appender, threshold);
         appender.start();
         return wrapAsync(appender);
