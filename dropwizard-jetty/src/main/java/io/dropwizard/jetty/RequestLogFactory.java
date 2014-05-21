@@ -53,7 +53,6 @@ import java.util.TimeZone;
  *     </tr>
  * </table>
  */
-// TODO: Write tests
 public class RequestLogFactory {
 
     private static String getDefaultLogFormat(TimeZone timeZone) {
