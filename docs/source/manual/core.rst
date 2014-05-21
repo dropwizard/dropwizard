@@ -535,6 +535,10 @@ A few items of note:
 
     tail -f dw.log | grep -B 1 '^\!'
 
+* The `!` prefix does *not* apply to syslog appenders, as stack traces are sent separately from the main message.
+  Instead, `\t` is used (this is the default value of the `SyslogAppender` that comes with Logback). This can be
+  configured with the `stackTracePrefix` option when defining your appender.
+
 Configuration
 -------------
 
