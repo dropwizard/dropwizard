@@ -117,6 +117,8 @@ public class SyslogAppenderFactory extends AbstractAppenderFactory {
     @NotNull
     private Facility facility = Facility.LOCAL0;
 
+    // PrefixedThrowableProxyConverter does not apply to syslog appenders, as stack traces are sent separately from
+    // the main message. This means that the standard prefix of `!` is not used for syslog
     @NotNull
     private String stackTracePrefix = SyslogAppender.DEFAULT_STACKTRACE_PATTERN;
 
