@@ -50,7 +50,7 @@ public class SyslogAppenderFactoryTest {
     @Test
     public void stackTracePatternCanBeSet() throws Exception {
         SyslogAppenderFactory syslogAppenderFactory = new SyslogAppenderFactory();
-        syslogAppenderFactory.setStackTracePattern("--->");
+        syslogAppenderFactory.setStackTracePrefix("--->");
         Appender<ILoggingEvent> wrapper = syslogAppenderFactory.build(new LoggerContext(), "MyApplication", null);
 
         // hack to get at the SyslogAppender beneath the AsyncAppender

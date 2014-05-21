@@ -476,7 +476,7 @@ Syslog
           port: 514
           facility: local0
           threshold: ALL
-          stackTracePattern: \t
+          stackTracePrefix: \t
           logFormat: # TODO
 
 
@@ -493,7 +493,7 @@ facility                     local0       The syslog facility to use. Can be eit
 threshold                    ALL          The lowest level of events to write to the file.
 logFormat                    defaultThe   Logback pattern with which events will be formatted. See
                                           the Logback_ documentation for details.
-stackTracePattern            \t           The prefix to use when writing stack trace lines (these are sent
+stackTracePrefix             \t           The prefix to use when writing stack trace lines (these are sent
                                           to the syslog server separately from the main message)
 ============================ ===========  ==================================================================================================
 
