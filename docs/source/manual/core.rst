@@ -464,7 +464,29 @@ All Dropwizard applications start with the ``gc`` task, which explicitly trigger
 collection. (This is useful, for example, for running full garbage collections during off-peak times
 or while the given application is out of rotation.) The execute method of a ``Task`` can be annotated
 with ``@Timed``, ``@Metered``, and ``@ExceptionMetered``. Dropwizard will automatically
-record runtime information about your tasks.
+record runtime information about your tasks. Here's a basic task class:
+
+.. code-block:: java
+
+    public class TruncateDatabaseTask extends Task {
+        private final Database database;
+
+        public TruncateDatabaseTask(Database database) {
+            super('truncate');
+            this.database = database;
+        }
+
+          @Override
+        public void execute(ImmutableMultimap<String, String> parameters, PrintWriter output) throws Exception {
+            this.database.truncate();
+        }
+    }
+
+You can then add this task to your application's environment:
+
+.. code-block:: java
+
+    environment.admin().addTask(new TruncateDatabaseTask(database));
 
 Running a task can be done by sending a ``POST`` request to ``/tasks/{task-name}`` on the admin
 port. For example::
