@@ -1,21 +1,21 @@
 package io.dropwizard.logging;
 
 import ch.qos.logback.classic.LoggerContext;
-import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.FileAppender;
 import ch.qos.logback.core.Layout;
 import ch.qos.logback.core.rolling.DefaultTimeBasedFileNamingAndTriggeringPolicy;
 import ch.qos.logback.core.rolling.RollingFileAppender;
 import ch.qos.logback.core.rolling.TimeBasedRollingPolicy;
+import ch.qos.logback.core.spi.DeferredProcessingAware;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import io.dropwizard.logging.filter.FilterFactory;
 import io.dropwizard.validation.ValidationMethod;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import java.util.TimeZone;
 
 /**
  * An {@link AppenderFactory} implementation which provides an appender that writes events to a file, archiving older
@@ -64,26 +64,12 @@ import java.util.TimeZone;
  *             The number of archived files to keep. Must be greater than {@code 0}.
  *         </td>
  *     </tr>
- *     <tr>
- *         <td>{@code timeZone}</td>
- *         <td>{@code UTC}</td>
- *         <td>The time zone to which event timestamps will be converted.</td>
- *     </tr>
- *     <tr>
- *         <td>{@code logFormat}</td>
- *         <td>the default format</td>
- *         <td>
- *             The Logback pattern with which events will be formatted. See
- *             <a href="http://logback.qos.ch/manual/layouts.html#conversionWord">the Logback documentation</a>
- *             for details.
- *         </td>
- *     </tr>
  * </table>
  *
  * @see AbstractAppenderFactory
  */
 @JsonTypeName("file")
-public class FileAppenderFactory extends AbstractAppenderFactory {
+public class FileAppenderFactory<E extends DeferredProcessingAware> extends AbstractAppenderFactory<E> {
     @NotNull
     private String currentLogFilename;
 
@@ -93,9 +79,6 @@ public class FileAppenderFactory extends AbstractAppenderFactory {
 
     @Min(1)
     private int archivedFileCount = 5;
-
-    @NotNull
-    private TimeZone timeZone = TimeZone.getTimeZone("UTC");
 
     @JsonProperty
     public String getCurrentLogFilename() {
@@ -137,16 +120,6 @@ public class FileAppenderFactory extends AbstractAppenderFactory {
         this.archivedFileCount = archivedFileCount;
     }
 
-    @JsonProperty
-    public TimeZone getTimeZone() {
-        return timeZone;
-    }
-
-    @JsonProperty
-    public void setTimeZone(TimeZone timeZone) {
-        this.timeZone = timeZone;
-    }
-
     @JsonIgnore
     @ValidationMethod(message = "must have archivedLogFilenamePattern if archive is true")
     public boolean isValidArchiveConfiguration() {
@@ -154,30 +127,31 @@ public class FileAppenderFactory extends AbstractAppenderFactory {
     }
 
     @Override
-    public Appender<ILoggingEvent> build(LoggerContext context, String applicationName, Layout<ILoggingEvent> layout) {
-        final FileAppender<ILoggingEvent> appender = buildAppender(context);
+    public Appender<E> build(LoggerContext context, String applicationName, Layout<E> layout,
+                             FilterFactory<E> thresholdFilterFactory, AsyncAppenderFactory<E> asyncAppenderFactory) {
+        final FileAppender<E> appender = buildAppender(context);
         appender.setName("file-appender");
 
         appender.setAppend(true);
         appender.setContext(context);
-        appender.setLayout(layout == null ? buildLayout(context, timeZone) : layout);
+        appender.setLayout(layout);
         appender.setFile(currentLogFilename);
         appender.setPrudent(false);
-        addThresholdFilter(appender, threshold);
+        appender.addFilter(thresholdFilterFactory.build(threshold));
         appender.stop();
         appender.start();
 
-        return wrapAsync(appender);
+        return wrapAsync(appender, asyncAppenderFactory);
     }
 
-    protected FileAppender<ILoggingEvent> buildAppender(LoggerContext context) {
+    protected FileAppender<E> buildAppender(LoggerContext context) {
         if (archive) {
-            final RollingFileAppender<ILoggingEvent> appender = new RollingFileAppender<>();
-            final DefaultTimeBasedFileNamingAndTriggeringPolicy<ILoggingEvent> triggeringPolicy =
+            final RollingFileAppender<E> appender = new RollingFileAppender<>();
+            final DefaultTimeBasedFileNamingAndTriggeringPolicy<E> triggeringPolicy =
                     new DefaultTimeBasedFileNamingAndTriggeringPolicy<>();
             triggeringPolicy.setContext(context);
 
-            final TimeBasedRollingPolicy<ILoggingEvent> rollingPolicy = new TimeBasedRollingPolicy<>();
+            final TimeBasedRollingPolicy<E> rollingPolicy = new TimeBasedRollingPolicy<>();
             rollingPolicy.setContext(context);
             rollingPolicy.setFileNamePattern(archivedLogFilenamePattern);
             rollingPolicy.setTimeBasedFileNamingAndTriggeringPolicy(

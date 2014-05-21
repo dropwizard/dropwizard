@@ -1,11 +1,11 @@
 package io.dropwizard.logging;
 
 import ch.qos.logback.classic.LoggerContext;
-import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.Layout;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import io.dropwizard.jackson.Discoverable;
+import io.dropwizard.logging.filter.FilterFactory;
 
 /**
  * A service provider interface for creating Logback {@link Appender} instances.
@@ -23,7 +23,7 @@ import io.dropwizard.jackson.Discoverable;
  * @see SyslogAppenderFactory
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
-public interface AppenderFactory extends Discoverable {
+public interface AppenderFactory<E> extends Discoverable {
     /**
      * Given a Logback context, an application name, and a layout, build a new appender.
      *
@@ -32,7 +32,9 @@ public interface AppenderFactory extends Discoverable {
      * @param layout          the layout for logging
      * @return a new, started {@link Appender}
      */
-    Appender<ILoggingEvent> build(LoggerContext context,
+    Appender<E> build(LoggerContext context,
                                   String applicationName,
-                                  Layout<ILoggingEvent> layout);
+                                  Layout<E> layout,
+                                  FilterFactory<E> thresholdFilterFactory,
+                                  AsyncAppenderFactory<E> asyncAppenderFactory);
 }
