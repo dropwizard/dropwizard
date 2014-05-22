@@ -8,6 +8,7 @@ import io.dropwizard.db.DatabaseConfiguration;
 import io.dropwizard.db.ManagedDataSource;
 import io.dropwizard.setup.Bootstrap;
 import liquibase.Liquibase;
+import liquibase.database.Database;
 import liquibase.exception.LiquibaseException;
 import liquibase.exception.ValidationFailedException;
 import net.sourceforge.argparse4j.inf.Namespace;
@@ -38,8 +39,16 @@ public abstract class AbstractLiquibaseCommand<T extends Configuration> extends 
         super.configure(subparser);
 
         subparser.addArgument("--migrations")
-                 .dest("migrations-file")
-                 .help("the file containing the Liquibase migrations for the application");
+                .dest("migrations-file")
+                .help("the file containing the Liquibase migrations for the application");
+
+        subparser.addArgument("--catalog")
+                .dest("catalog")
+                .help("Specify the database catalog (use database default if omitted)");
+
+        subparser.addArgument("--schema")
+                .dest("schema")
+                .help("Specify the database schema (use database default if omitted)");
     }
 
     @Override
@@ -50,7 +59,7 @@ public abstract class AbstractLiquibaseCommand<T extends Configuration> extends 
         dbConfig.setMinSize(1);
         dbConfig.setInitialSize(1);
 
-        try (CloseableLiquibase liquibase = openLiquibase(dbConfig, namespace)) {
+        try (final CloseableLiquibase liquibase = openLiquibase(dbConfig, namespace)) {
             run(namespace, liquibase);
         } catch (ValidationFailedException e) {
             e.printDescriptiveError(System.err);
@@ -58,14 +67,32 @@ public abstract class AbstractLiquibaseCommand<T extends Configuration> extends 
         }
     }
 
-    private CloseableLiquibase openLiquibase(DataSourceFactory dataSourceFactory,
-                                           Namespace namespace) throws ClassNotFoundException, SQLException, LiquibaseException {
+    private CloseableLiquibase openLiquibase(final DataSourceFactory dataSourceFactory, final Namespace namespace)
+            throws ClassNotFoundException, SQLException, LiquibaseException {
+        final CloseableLiquibase liquibase;
         final ManagedDataSource dataSource = dataSourceFactory.build(new MetricRegistry(), "liquibase");
-        final String migrationsFile = (String) namespace.get("migrations-file");
+
+        final String migrationsFile = namespace.getString("migrations-file");
         if (migrationsFile == null) {
-            return new CloseableLiquibase(dataSource);
+            liquibase = new CloseableLiquibase(dataSource);
+        } else {
+            liquibase = new CloseableLiquibase(dataSource, migrationsFile);
         }
-        return new CloseableLiquibase(dataSource, migrationsFile);
+
+        final Database database = liquibase.getDatabase();
+        final String catalogName = namespace.getString("catalog");
+        final String schemaName = namespace.getString("schema");
+
+        if(database.supportsCatalogs() && catalogName != null) {
+            database.setDefaultCatalogName(catalogName);
+            database.setOutputDefaultCatalog(true);
+        }
+        if(database.supportsSchemas() && schemaName != null) {
+            database.setDefaultSchemaName(schemaName);
+            database.setOutputDefaultSchema(true);
+        }
+
+        return liquibase;
     }
 
     protected abstract void run(Namespace namespace, Liquibase liquibase) throws Exception;
