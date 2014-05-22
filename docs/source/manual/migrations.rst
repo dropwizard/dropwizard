@@ -212,8 +212,9 @@ all pending change sets as applied.
 More Information
 ================
 
-If you are using databases which support multiple schemas like postgresql, you can use ``--schema`` arguement or ``--catalog`` arguement 
-for using specific schema or catalog for different database migration commands.
+If you are using databases supporting multiple schemas like PostgreSQL, Oracle, or H2, you can use the
+optional ``--catalog`` and ``--schema`` arguments to specify the database catalog and schema used for the
+Liquibase commands.
 
 For more information on available commands, either use the ``db --help`` command, or for more
 detailed help on a specific command, use ``db <cmd> --help``.
