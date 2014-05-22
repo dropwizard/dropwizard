@@ -6,7 +6,6 @@ import com.google.common.base.Predicate;
 import com.google.common.cache.CacheBuilderSpec;
 import com.google.common.cache.CacheStats;
 import com.google.common.collect.ImmutableSet;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InOrder;

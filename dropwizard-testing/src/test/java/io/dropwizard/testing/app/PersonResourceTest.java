@@ -9,8 +9,8 @@ import org.junit.Test;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static org.mockito.Mockito.*;
 import static org.fest.assertions.api.Assertions.assertThat;
+import static org.mockito.Mockito.*;
 
 /**
  * Tests {@link ResourceTestRule}.

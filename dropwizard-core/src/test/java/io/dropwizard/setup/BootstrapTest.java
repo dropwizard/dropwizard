@@ -5,7 +5,6 @@ import io.dropwizard.Application;
 import io.dropwizard.Configuration;
 import io.dropwizard.configuration.DefaultConfigurationFactoryFactory;
 import io.dropwizard.configuration.FileConfigurationSourceProvider;
-
 import org.junit.Test;
 
 import static org.fest.assertions.api.Assertions.assertThat;
