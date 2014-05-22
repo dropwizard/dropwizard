@@ -1,22 +1,40 @@
 package io.dropwizard.migrations;
 
-import com.google.common.base.Charsets;
 import io.dropwizard.Configuration;
 import io.dropwizard.db.DatabaseConfiguration;
+import liquibase.CatalogAndSchema;
 import liquibase.Liquibase;
+import liquibase.database.Database;
 import liquibase.diff.DiffGeneratorFactory;
 import liquibase.diff.DiffResult;
 import liquibase.diff.compare.CompareControl;
 import liquibase.diff.output.DiffOutputControl;
 import liquibase.diff.output.changelog.DiffToChangeLog;
+import liquibase.exception.DatabaseException;
+import liquibase.exception.UnexpectedLiquibaseException;
+import liquibase.snapshot.DatabaseSnapshot;
+import liquibase.snapshot.InvalidExampleException;
+import liquibase.snapshot.SnapshotControl;
+import liquibase.snapshot.SnapshotGeneratorFactory;
 import liquibase.structure.DatabaseObject;
-import liquibase.structure.core.*;
+import liquibase.structure.core.Column;
+import liquibase.structure.core.Data;
+import liquibase.structure.core.ForeignKey;
+import liquibase.structure.core.Index;
+import liquibase.structure.core.PrimaryKey;
+import liquibase.structure.core.Sequence;
+import liquibase.structure.core.Table;
+import liquibase.structure.core.UniqueConstraint;
+import liquibase.structure.core.View;
 import net.sourceforge.argparse4j.impl.Arguments;
 import net.sourceforge.argparse4j.inf.ArgumentGroup;
 import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
 
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
 import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -162,17 +180,36 @@ public class DbDumpCommand<T extends Configuration> extends AbstractLiquibaseCom
             compareTypes.add(View.class);
         }
 
-        final DiffResult diffResult = DiffGeneratorFactory.getInstance().compare(
-                liquibase.getDatabase(), null, new CompareControl(compareTypes));
-        final DiffToChangeLog diffToChangeLog = new DiffToChangeLog(diffResult, new DiffOutputControl());
-        final String filename = namespace.getString("output");
+        final DiffToChangeLog diffToChangeLog = new DiffToChangeLog(new DiffOutputControl());
+        final Database database = liquibase.getDatabase();
 
+        final String filename = namespace.getString("output");
         if (filename != null) {
-            try (PrintStream file = new PrintStream(filename, Charsets.UTF_8.name())) {
-                diffToChangeLog.print(file);
+            try (PrintStream file = new PrintStream(filename, StandardCharsets.UTF_8.name())) {
+                generateChangeLog(database, database.getDefaultSchema(), diffToChangeLog, file, compareTypes);
             }
         } else {
-            diffToChangeLog.print(System.out);
+            generateChangeLog(database, database.getDefaultSchema(), diffToChangeLog, System.out, compareTypes);
+        }
+    }
+
+    private void generateChangeLog(final Database database, final CatalogAndSchema catalogAndSchema,
+                                   final DiffToChangeLog changeLogWriter, PrintStream outputStream,
+                                   final Set<Class<? extends DatabaseObject>> compareTypes) throws DatabaseException, IOException, ParserConfigurationException {
+        @SuppressWarnings("unchecked")
+        final SnapshotControl snapshotControl = new SnapshotControl(database, compareTypes.toArray(new Class[compareTypes.size()]));
+        final CompareControl compareControl = new CompareControl(new CompareControl.SchemaComparison[]{new CompareControl.SchemaComparison(catalogAndSchema, catalogAndSchema)}, compareTypes);
+        final CatalogAndSchema[] compareControlSchemas = compareControl.getSchemas(CompareControl.DatabaseRole.REFERENCE);
+
+        try {
+            final DatabaseSnapshot referenceSnapshot = SnapshotGeneratorFactory.getInstance().createSnapshot(compareControlSchemas, database, snapshotControl);
+            final DatabaseSnapshot comparisonSnapshot = SnapshotGeneratorFactory.getInstance().createSnapshot(compareControlSchemas, null, snapshotControl);
+            final DiffResult diffResult = DiffGeneratorFactory.getInstance().compare(referenceSnapshot, comparisonSnapshot, compareControl);
+
+            changeLogWriter.setDiffResult(diffResult);
+            changeLogWriter.print(outputStream);
+        } catch (InvalidExampleException e) {
+            throw new UnexpectedLiquibaseException(e);
         }
     }
 }
