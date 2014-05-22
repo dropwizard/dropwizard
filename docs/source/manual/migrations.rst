@@ -212,5 +212,8 @@ all pending change sets as applied.
 More Information
 ================
 
+If you are using databases which support multiple schemas like postgresql, you can use ``--schema`` arguement or ``--catalog`` arguement 
+for using specific schema or catalog for different database migration commands.
+
 For more information on available commands, either use the ``db --help`` command, or for more
 detailed help on a specific command, use ``db <cmd> --help``.
