@@ -117,6 +117,11 @@ public class SyslogAppenderFactory extends AbstractAppenderFactory {
     @NotNull
     private Facility facility = Facility.LOCAL0;
 
+    // PrefixedThrowableProxyConverter does not apply to syslog appenders, as stack traces are sent separately from
+    // the main message. This means that the standard prefix of `!` is not used for syslog
+    @NotNull
+    private String stackTracePrefix = SyslogAppender.DEFAULT_STACKTRACE_PATTERN;
+
     // prefix the logFormat with the application name and PID (if available)
     private String logFormat = LOG_TOKEN_NAME + LOG_TOKEN_PID + ": " +
             SyslogAppender.DEFAULT_SUFFIX_PATTERN;
@@ -184,6 +189,16 @@ public class SyslogAppenderFactory extends AbstractAppenderFactory {
         this.includeStackTrace = includeStackTrace;
     }
 
+    @JsonProperty
+    public String getStackTracePrefix() {
+        return stackTracePrefix;
+    }
+
+    @JsonProperty
+    public void setStackTracePrefix(String stackTracePrefix) {
+        this.stackTracePrefix = stackTracePrefix;
+    }
+
     @Override
     public Appender<ILoggingEvent> build(LoggerContext context, String applicationName, Layout<ILoggingEvent> layout) {
         final SyslogAppender appender = new SyslogAppender();
@@ -194,6 +209,7 @@ public class SyslogAppenderFactory extends AbstractAppenderFactory {
         appender.setPort(port);
         appender.setFacility(facility.toString().toLowerCase(Locale.ENGLISH));
         appender.setThrowableExcluded(!includeStackTrace);
+        appender.setStackTracePattern(stackTracePrefix);
         addThresholdFilter(appender, threshold);
         appender.start();
         return wrapAsync(appender);
