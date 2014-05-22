@@ -1,18 +1,16 @@
 package io.dropwizard.configuration;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import com.google.common.io.Resources;
 import io.dropwizard.configuration.ConfigurationFactoryTest.Example;
 import io.dropwizard.jackson.Jackson;
-
-import java.io.File;
-
-import javax.validation.Validation;
-import javax.validation.Validator;
-
 import org.junit.Before;
 import org.junit.Test;
 
-import com.google.common.io.Resources;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import java.io.File;
+
+import static org.fest.assertions.api.Assertions.assertThat;
 
 
 public class ConfigurationFactoryFactoryTest {

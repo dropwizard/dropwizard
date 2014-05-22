@@ -1,12 +1,12 @@
 package io.dropwizard.hibernate;
 
-import javax.persistence.Entity;
-
-import io.dropwizard.Configuration;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 import com.sun.jersey.core.spi.scanning.PackageNamesScanner;
 import com.sun.jersey.spi.scanning.AnnotationScannerListener;
+import io.dropwizard.Configuration;
+
+import javax.persistence.Entity;
 
 /**
  * Extension of HibernateBundle that scans given package for entites instead of giving them by hand.

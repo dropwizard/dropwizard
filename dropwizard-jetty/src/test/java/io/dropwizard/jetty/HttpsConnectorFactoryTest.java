@@ -1,21 +1,18 @@
 package io.dropwizard.jetty;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Collections2;
 import io.dropwizard.jackson.DiscoverableSubtypeResolver;
-
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.util.Collection;
-import java.util.Set;
+import org.apache.commons.lang.SystemUtils;
+import org.junit.Test;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
-
-import org.apache.commons.lang.SystemUtils;
-import org.junit.Test;
-
-import com.google.common.base.Function;
-import com.google.common.collect.Collections2;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.util.Collection;
+import java.util.Set;
 
 import static org.fest.assertions.api.Assertions.assertThat;
 import static org.junit.Assert.fail;

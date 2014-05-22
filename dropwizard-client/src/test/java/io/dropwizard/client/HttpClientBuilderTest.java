@@ -2,9 +2,7 @@ package io.dropwizard.client;
 
 import com.codahale.metrics.MetricRegistry;
 import com.google.common.collect.ImmutableList;
-
 import io.dropwizard.util.Duration;
-
 import org.apache.http.Header;
 import org.apache.http.HeaderIterator;
 import org.apache.http.HttpHeaders;

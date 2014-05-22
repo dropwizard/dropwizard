@@ -10,7 +10,6 @@ import com.google.common.collect.Lists;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Locale;
 
 /**
  * A module for deserializing enums that is more permissive than the default.

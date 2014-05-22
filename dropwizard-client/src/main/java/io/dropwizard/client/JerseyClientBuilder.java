@@ -1,20 +1,5 @@
 package io.dropwizard.client;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import io.dropwizard.jersey.jackson.JacksonMessageBodyProvider;
-import io.dropwizard.setup.Environment;
-
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ExecutorService;
-
-import javax.validation.Validation;
-import javax.validation.Validator;
-
-import org.apache.http.client.HttpRequestRetryHandler;
-import org.apache.http.conn.DnsResolver;
-import org.apache.http.conn.scheme.SchemeRegistry;
-
 import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
@@ -25,6 +10,19 @@ import com.sun.jersey.client.apache4.ApacheHttpClient4;
 import com.sun.jersey.client.apache4.ApacheHttpClient4Handler;
 import com.sun.jersey.client.apache4.config.ApacheHttpClient4Config;
 import com.sun.jersey.client.apache4.config.DefaultApacheHttpClient4Config;
+import io.dropwizard.jersey.jackson.JacksonMessageBodyProvider;
+import io.dropwizard.setup.Environment;
+import org.apache.http.client.HttpRequestRetryHandler;
+import org.apache.http.conn.DnsResolver;
+import org.apache.http.conn.scheme.SchemeRegistry;
+
+import javax.validation.Validation;
+import javax.validation.Validator;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * A convenience class for building {@link Client} instances.

@@ -3,10 +3,8 @@ package io.dropwizard.client;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.httpclient.InstrumentedClientConnManager;
 import com.codahale.metrics.httpclient.InstrumentedHttpClient;
-
 import io.dropwizard.setup.Environment;
 import io.dropwizard.util.Duration;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.HttpRequestRetryHandler;

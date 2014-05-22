@@ -33,10 +33,7 @@ import static org.fest.assertions.api.Assertions.assertThat;
 import static org.fest.assertions.api.Assertions.failBecauseExceptionWasNotThrown;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assume.assumeThat;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 // TODO: 4/24/13 <coda> -- move JacksonMessageBodyProviderTest to JerseyTest
 

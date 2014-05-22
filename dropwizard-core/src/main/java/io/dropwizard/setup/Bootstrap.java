@@ -1,8 +1,14 @@
 package io.dropwizard.setup;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import com.codahale.metrics.JmxReporter;
+import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.jvm.BufferPoolMetricSet;
+import com.codahale.metrics.jvm.GarbageCollectorMetricSet;
+import com.codahale.metrics.jvm.MemoryUsageGaugeSet;
+import com.codahale.metrics.jvm.ThreadStatesGaugeSet;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 import io.dropwizard.Application;
 import io.dropwizard.Bundle;
 import io.dropwizard.Configuration;
@@ -15,20 +21,12 @@ import io.dropwizard.configuration.DefaultConfigurationFactoryFactory;
 import io.dropwizard.configuration.FileConfigurationSourceProvider;
 import io.dropwizard.jackson.Jackson;
 
+import javax.validation.Validation;
+import javax.validation.ValidatorFactory;
 import java.lang.management.ManagementFactory;
 import java.util.List;
 
-import com.codahale.metrics.MetricRegistry;
-import com.codahale.metrics.jvm.BufferPoolMetricSet;
-import com.codahale.metrics.jvm.GarbageCollectorMetricSet;
-import com.codahale.metrics.jvm.MemoryUsageGaugeSet;
-import com.codahale.metrics.jvm.ThreadStatesGaugeSet;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-
-import javax.validation.Validation;
-import javax.validation.ValidatorFactory;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * The pre-start application environment, containing everything required to bootstrap a Dropwizard

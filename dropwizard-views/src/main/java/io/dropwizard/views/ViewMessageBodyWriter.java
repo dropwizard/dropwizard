@@ -2,7 +2,6 @@ package io.dropwizard.views;
 
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
-import com.google.common.collect.ImmutableList;
 import com.sun.jersey.spi.service.ServiceFinder;
 
 import javax.ws.rs.Produces;

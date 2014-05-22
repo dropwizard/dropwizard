@@ -10,9 +10,7 @@ import org.junit.ClassRule;
 import org.junit.Test;
 
 import static java.util.Arrays.asList;
-import static javax.ws.rs.core.HttpHeaders.ACCEPT_ENCODING;
-import static javax.ws.rs.core.HttpHeaders.CONTENT_ENCODING;
-import static javax.ws.rs.core.HttpHeaders.VARY;
+import static javax.ws.rs.core.HttpHeaders.*;
 import static org.fest.assertions.api.Assertions.assertThat;
 
 public class GzipDefaultVaryBehaviourTest {

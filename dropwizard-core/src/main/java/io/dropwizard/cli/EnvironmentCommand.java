@@ -6,8 +6,6 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import net.sourceforge.argparse4j.inf.Namespace;
 
-import javax.validation.Validation;
-
 /**
  * A command which executes with a configured {@link Environment}.
  *
