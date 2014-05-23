@@ -131,7 +131,7 @@ public class HttpClientConfiguration {
     }
 
     @JsonProperty
-    public void setUserAgent(String userAgent) {
-        this.userAgent = Optional.fromNullable(userAgent);
+    public void setUserAgent(Optional<String> userAgent) {
+        this.userAgent = userAgent;
     }
 }
