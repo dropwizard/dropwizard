@@ -106,7 +106,7 @@ public class SimpleServerFactory extends AbstractServerFactory {
                                                             environment.getObjectMapper(),
                                                             environment.getValidator(),
                                                             environment.getApplicationContext(),
-                                                            environment.getJerseyServlet(),
+                                                            environment.getJerseyServletContainer(),
                                                             environment.metrics());
 
         environment.getAdminContext().setContextPath(adminContextPath);

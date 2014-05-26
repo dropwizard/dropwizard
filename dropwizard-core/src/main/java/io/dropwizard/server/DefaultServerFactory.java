@@ -131,7 +131,7 @@ public class DefaultServerFactory extends AbstractServerFactory {
                                                             environment.getObjectMapper(),
                                                             environment.getValidator(),
                                                             environment.getApplicationContext(),
-                                                            environment.getJerseyServlet(),
+                                                            environment.getJerseyServletContainer(),
                                                             environment.metrics());
         final Handler adminHandler = createAdminServlet(server,
                                                         environment.getAdminContext(),

@@ -152,12 +152,8 @@ public class Environment {
         return servletContext;
     }
 
-    public ServletContainer getJerseyServletContainer() {
+    public Servlet getJerseyServletContainer() {
         return jerseyServletContainer.getContainer();
-    }
-
-    public Servlet getJerseyServlet() {
-        return jerseyServletContainer.getServlet();
     }
 
     public MutableServletContextHandler getAdminContext() {
