@@ -44,7 +44,7 @@ public class MetricsFactoryTest {
     @Test
     public void hasReporters() throws Exception {
         CsvReporterFactory csvReporter = new CsvReporterFactory();
-        csvReporter.setFile(new File("metrics.csv"));
+        csvReporter.setFile(new File("metrics"));
         assertThat(config.getReporters()).hasSize(3);
     }
 }
