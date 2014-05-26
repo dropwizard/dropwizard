@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 import com.sun.jersey.spi.container.servlet.ServletContainer;
+
 import io.dropwizard.jersey.jackson.JacksonMessageBodyProvider;
 import io.dropwizard.jersey.setup.JerseyEnvironment;
 import io.dropwizard.jetty.GzipFilterFactory;
@@ -24,6 +25,7 @@ import io.dropwizard.servlets.ThreadNameFilter;
 import io.dropwizard.util.Duration;
 import io.dropwizard.validation.MinDuration;
 import io.dropwizard.validation.ValidationMethod;
+
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ErrorHandler;
@@ -43,8 +45,10 @@ import javax.validation.Valid;
 import javax.validation.Validator;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+
 import java.io.IOException;
 import java.util.EnumSet;
+import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.regex.Pattern;
 
@@ -398,6 +402,13 @@ public abstract class AbstractServerFactory implements ServerFactory {
         handler.addFilter(ThreadNameFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST));
         if (gzip.isEnabled()) {
             final FilterHolder holder = new FilterHolder(gzip.build());
+            
+            // GzipFilter#init() will overwrite our Compressed MIME types if we don't do this.
+            Set<String> compressedMimeTypes = gzip.getCompressedMimeTypes();
+            if (compressedMimeTypes != null) {
+                holder.setInitParameter("mimeTypes", "");
+            }
+            
             handler.addFilter(holder, "/*", EnumSet.allOf(DispatcherType.class));
         }
         if (jerseyContainer != null) {
