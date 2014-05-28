@@ -829,8 +829,12 @@ Methods
 -------
 
 Methods on a resource class which accept incoming requests are annotated with the HTTP methods they
-handle: ``@GET``, ``@POST``, ``@PUT``, ``@DELETE``, ``@HEAD``, ``@OPTIONS``, and even
-``@HttpMethod`` for arbitrary new methods.
+handle: ``@GET``, ``@POST``, ``@PUT``, ``@DELETE``, ``@HEAD``, ``@OPTIONS``, ``@PATCH``.
+
+Support for arbitrary new methods can be added via the ``@HttpMethod`` annotation. They also must
+to be added to the :ref:`list of allowed methods <man-configuration-all>`. This means, by default,
+methods such as ``CONNECT`` and ``TRACE`` are blocked, and will return a ``405 Method Not Allowed``
+response.
 
 If a request comes in which matches a resource class's path but has a method which the class doesn't
 support, Jersey will automatically return a ``405 Method Not Allowed`` to the client.
