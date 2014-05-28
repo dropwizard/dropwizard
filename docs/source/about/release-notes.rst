@@ -4,6 +4,41 @@
 Release Notes
 #############
 
+.. _rel-0.7.1:
+
+v0.7.1
+==============
+
+* Added instrumentation to ``Task``, using metrics annotations.
+* Added ability to blacklist SSL cipher suites.
+* Added ``@PATCH`` annotation for Jersey resource methods to indicate use of the HTTP ``PATCH`` method.
+* Added support for configurble request retry behavior for ``HttpClientBuilder`` and ``JerseyClientBuilder``.
+* Added facility to get the admin HTTP port in ``DropwizardAppTestRule``.
+* Added ``ScanningHibernateBundle``, which scans packages for entities, instead of requiring you to add them individually.
+* Added facility to invalidate credentials from the ``CachingAuthenticator`` that match a specified ``Predicate``.
+* Added a CI build profile for JDK 8 to ensure that Dropwizard builds against the latest version of the JDK.
+* Added ``--catalog`` and ``--schema`` options to Liquibase.
+* Added ``stackTracePrefix`` configuration option to ``SyslogAppenderFactory`` to configure the pattern prepended to each line in the stack-trace sent to syslog. Defaults to the TAB character, "\t". Note: this is different from the bang prepended to text logs (such as "console", and "file"), as syslog has different conventions for multi-line messages.
+* Added ability to validate ``Optional`` values using validation annotations. Such values require the ``@UnwrapValidatedValue`` annotation, in addition to the validations you wish to use.
+* Added facility to configure the ``User-Agent`` for ``HttpClient``. Configurable via the ``userAgent`` configuration option.
+* Fixed silently overriding Servlets or ServletFilters; registering a duplicate will now emit a warning.
+* Fixed ``SyslogAppenderFactory`` failing when the application name contains a PCRE reserved character (e.g. ``/`` or ``$``).
+* Fixed regression causing JMX reporting of metrics to not be enabled by default.
+* Fixed transitive dependencies on log4j and extraneous sl4j backends bleeding in to projects. Dropwizard will now enforce that only Logback and slf4j-logback are used everywhere.
+* Fixed clients disconnecting before the request has been fully received causing a "500 Internal Server Error" to be generated for the request log. Such situations will now correctly generate a "400 Bad Request", as the request is malformed. Clients will never see these responses, but they matter for logging and metrics that were previously considering this situation as a server error.
+* Fixed ``DiscoverableSubtypeResolver`` using the system ``ClassLoader``, instead of the local one.
+* Fixed regression causing Liquibase ``--dump`` to fail to dump the database.
+* Fixed the CSV metrics reporter failing when the output directory doesn't exist. It will now attempt to create the directory on startup.
+* Fixed global frequency for metrics reporters being permenantly overridden by the default frequency for individual reporters.
+* Changed ``DropwizardAppTestRule`` so that it no longer requires a configuration path to operate. When no path is specified, it will now use the applications' default configuration.
+* Changed ``Bootstrap`` so that ``getMetricsFactory()`` may now be overridden to provide a custom instance to the framework to use. 
+* Upgraded to Jackson 2.3.3
+* Upgraded to Apache HttpClient 4.3.3
+* Upgraded to Metrics 3.0.2
+* Upgraded to Logback 1.1.2
+* Upgraded to Hibernate Validator 5.1.1
+* Upgraded to Mustache 0.8.15
+
 .. _rel-0.7.0:
 
 v0.7.0
