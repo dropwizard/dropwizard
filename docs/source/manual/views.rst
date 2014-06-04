@@ -11,7 +11,7 @@ Dropwizard Views
 .. _FreeMarker: http://FreeMarker.sourceforge.net/
 .. _Mustache: http://mustache.github.com/mustache.5.html
 
-To enable views for your :ref:`Application <man-core-application>`, add the ``ViewBundle`` in the ``initialize`` method of your Service class:
+To enable views for your :ref:`Application <man-core-application>`, add the ``ViewBundle`` in the ``initialize`` method of your Application class:
 
 .. code-block:: java
 
