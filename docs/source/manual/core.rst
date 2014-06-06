@@ -947,7 +947,7 @@ If your resource class unintentionally throws an exception, Dropwizard will log 
 response.
 
 If your resource class needs to return an error to the client (e.g., the requested record doesn't
-exist), you have two options: throw a sublcass of ``Exception`` or restructure your method to
+exist), you have two options: throw a subclass of ``Exception`` or restructure your method to
 return a ``Response``.
 
 If at all possible, prefer throwing ``Exception`` instances to returning
@@ -955,7 +955,7 @@ If at all possible, prefer throwing ``Exception`` instances to returning
 
 If you throw a subclass of ``WebApplicationException`` jersey will map that to a defined response.
 
-If you want more control, you can also delcare JerseyProviders in your Environment to map Exceptions
+If you want more control, you can also declare JerseyProviders in your Environment to map Exceptions
 to certain responses by calling ``JerseyEnvironment#register(Object)`` with an implementation of 
 javax.ws.rs.ext.ExceptionMapper.
 e.g. Your resource throws an InvalidArgumentException, but the response would be 400, bad request.
@@ -1215,6 +1215,7 @@ If your application happens to return lots of information, you may get a big per
 bump by using streaming output. By returning an object which implements Jersey's ``StreamingOutput``
 interface, your method can stream the response entity in a chunk-encoded output stream. Otherwise,
 you'll need to fully construct your return value and *then* hand it off to be sent to the client.
+
 
 .. _man-core-representations-html:
 
