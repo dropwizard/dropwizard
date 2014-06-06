@@ -4,15 +4,13 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import jersey.repackaged.com.google.common.base.Joiner;
-
 import org.eclipse.jetty.server.Server;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.jetty.servlet.JettyWebContainerFactory;
-import org.glassfish.jersey.server.ApplicationHandler;
 import org.glassfish.jersey.server.ServerProperties;
 import org.glassfish.jersey.servlet.ServletProperties;
+import org.glassfish.jersey.test.DeploymentContext;
 import org.glassfish.jersey.test.JerseyTest;
 import org.glassfish.jersey.test.spi.TestContainer;
 import org.glassfish.jersey.test.spi.TestContainerException;
@@ -44,7 +42,8 @@ public abstract class JerseyServletTest extends JerseyTest {
      * Jersey singletons. If you need those, the ResourceConfig class you're specifying needs
      * to do that in its nullary constructor
      *
-     * @param packages array of package names
+   * @param resourceConfigClassName
+   * @param providerClassNames
      */
     public JerseyServletTest(final String resourceConfigClassName,
                             final List<String> providerClassNames) throws TestContainerException {
@@ -58,7 +57,7 @@ public abstract class JerseyServletTest extends JerseyTest {
       
         return new TestContainerFactory() {
             @Override
-            public TestContainer create(final URI baseUri, final ApplicationHandler application) throws IllegalArgumentException {
+            public TestContainer create(final URI baseUri, final DeploymentContext context) throws IllegalArgumentException {
                 return new TestContainer() {
                     private Server server;
 
@@ -75,7 +74,7 @@ public abstract class JerseyServletTest extends JerseyTest {
                     @Override
                     public void start() {
                         try {
-                            Map<String,String> propertyMap = new HashMap<String,String>();
+                            Map<String,String> propertyMap = new HashMap<>();
                             propertyMap.put(ServletProperties.JAXRS_APPLICATION_CLASS, 
                                             resourceConfigClassName);
                             final String providerClassNamesStr =

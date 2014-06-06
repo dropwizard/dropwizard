@@ -142,7 +142,7 @@
         	<artifactId>
         		jersey-test-framework-provider-inmemory
         	</artifactId>
-        	<version>2.6</version>
+        	<version>${jersey.version}</version>
         	<scope>test</scope>
         </dependency>
     </dependencies>

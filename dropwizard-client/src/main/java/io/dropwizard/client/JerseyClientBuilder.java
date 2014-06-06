@@ -17,31 +17,26 @@ import org.apache.http.conn.scheme.SchemeRegistry;
 
 import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import static com.google.common.base.Preconditions.checkNotNull;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-
 import io.dropwizard.jersey.gzip.ConfiguredGZipEncoder;
 import io.dropwizard.jersey.gzip.GZipDecoder;
 import io.dropwizard.jersey.jackson.JacksonMessageBodyProvider;
 import io.dropwizard.setup.Environment;
-
-import org.apache.http.conn.DnsResolver;
-import org.apache.http.conn.scheme.SchemeRegistry;
-import org.glassfish.jersey.apache.connector.ApacheConnectorProvider;
-import org.glassfish.jersey.client.ClientConfig;
-import org.glassfish.jersey.message.GZipEncoder;
-
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.Configuration;
-
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ExecutorService;
-
-import static com.google.common.base.Preconditions.checkNotNull;
+import org.apache.http.config.Registry;
+import org.apache.http.conn.DnsResolver;
+import org.apache.http.conn.socket.ConnectionSocketFactory;
+import org.glassfish.jersey.apache.connector.ApacheConnectorProvider;
+import org.glassfish.jersey.client.ClientConfig;
 
 
 /**
@@ -161,12 +156,12 @@ public class JerseyClientBuilder {
     }
 
     /**
-     * Use the given {@link SchemeRegistry} instance.
+     * Use the given {@link Registry} instance.
      *
-     * @param registry a {@link SchemeRegistry} instance
+     * @param registry a {@link Registry} instance
      * @return {@code this}
      */
-    public JerseyClientBuilder using(SchemeRegistry registry) {
+    public JerseyClientBuilder using(Registry<ConnectionSocketFactory> registry) {
         builder.using(registry);
         return this;
     }
