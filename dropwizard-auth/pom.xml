@@ -41,5 +41,10 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <dependency>
+            <groupId>javax.annotation</groupId>
+            <artifactId>jsr250-api</artifactId>
+            <version>${jsr250-api.version}</version>
+        </dependency>
     </dependencies>
 </project>

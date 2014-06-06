@@ -11,15 +11,13 @@ import com.sun.jersey.spi.inject.InjectableProvider;
 import io.dropwizard.auth.Auth;
 import io.dropwizard.auth.AuthenticationException;
 import io.dropwizard.auth.Authenticator;
-import org.eclipse.jetty.util.B64Code;
-import org.eclipse.jetty.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
+import static io.dropwizard.auth.basic.BasicAuthHelper.*;
 
 /**
  * A Jersey provider for Basic HTTP authentication.
@@ -30,8 +28,7 @@ public class BasicAuthProvider<T> implements InjectableProvider<Auth, Parameter>
     private static final Logger LOGGER = LoggerFactory.getLogger(BasicAuthProvider.class);
 
     private static class BasicAuthInjectable<T> extends AbstractHttpContextInjectable<T> {
-        private static final String PREFIX = "Basic";
-        private static final String CHALLENGE_FORMAT = PREFIX + " realm=\"%s\"";
+
 
         private final Authenticator<BasicCredentials, T> authenticator;
         private final String realm;
@@ -47,27 +44,12 @@ public class BasicAuthProvider<T> implements InjectableProvider<Auth, Parameter>
 
         @Override
         public T getValue(HttpContext c) {
-            final String header = c.getRequest().getHeaderValue(HttpHeaders.AUTHORIZATION);
+            Optional<BasicCredentials> basicCredentials = getBasicCredentialsFromHeader(c.getRequest());
             try {
-                if (header != null) {
-                    final int space = header.indexOf(' ');
-                    if (space > 0) {
-                        final String method = header.substring(0, space);
-                        if (PREFIX.equalsIgnoreCase(method)) {
-                            final String decoded = B64Code.decode(header.substring(space + 1),
-                                                                  StringUtil.__ISO_8859_1);
-                            final int i = decoded.indexOf(':');
-                            if (i > 0) {
-                                final String username = decoded.substring(0, i);
-                                final String password = decoded.substring(i + 1);
-                                final BasicCredentials credentials = new BasicCredentials(username,
-                                                                                          password);
-                                final Optional<T> result = authenticator.authenticate(credentials);
-                                if (result.isPresent()) {
-                                    return result.get();
-                                }
-                            }
-                        }
+                if (basicCredentials.isPresent()) {
+                    Optional<T> result = authenticator.authenticate(basicCredentials.get());
+                    if (result.isPresent()) {
+                        return result.get();
                     }
                 }
             } catch (IllegalArgumentException e) {
@@ -78,13 +60,7 @@ public class BasicAuthProvider<T> implements InjectableProvider<Auth, Parameter>
             }
 
             if (required) {
-                final String challenge = String.format(CHALLENGE_FORMAT, realm);
-                throw new WebApplicationException(Response.status(Response.Status.UNAUTHORIZED)
-                                                          .header(HttpHeaders.WWW_AUTHENTICATE,
-                                                                  challenge)
-                                                          .entity("Credentials are required to access this resource.")
-                                                          .type(MediaType.TEXT_PLAIN_TYPE)
-                                                          .build());
+			  throw new WebApplicationException(createUnauthorizedResponse(realm));
             }
             return null;
         }

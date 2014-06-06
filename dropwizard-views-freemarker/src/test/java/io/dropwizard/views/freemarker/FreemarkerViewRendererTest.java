@@ -59,14 +59,14 @@ public class FreemarkerViewRendererTest extends JerseyTest {
     public void rendersViewsWithAbsoluteTemplatePaths() throws Exception {
         final String response = client().resource(getBaseURI() + "test/absolute").get(String.class);
         assertThat(response)
-                .isEqualToIgnoringCase("Woop woop. yay\n");
+                .isEqualToIgnoringCase("Woop woop. yay" + System.lineSeparator());
     }
 
     @Test
     public void rendersViewsWithRelativeTemplatePaths() throws Exception {
         final String response = client().resource(getBaseURI() + "test/relative").get(String.class);
         assertThat(response)
-                .isEqualToIgnoringCase("Ok.\n");
+                .isEqualToIgnoringCase("Ok." + System.lineSeparator());
     }
 
     @Test
