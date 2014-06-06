@@ -59,14 +59,14 @@ public class MustacheViewRendererTest extends JerseyTest {
     public void rendersViewsWithAbsoluteTemplatePaths() throws Exception {
         final String response = client().resource(getBaseURI() + "test/absolute").get(String.class);
         assertThat(response)
-                .isEqualTo("Woop woop. yay\n");
+                .isEqualTo("Woop woop. yay" + System.lineSeparator());
     }
 
     @Test
     public void rendersViewsWithRelativeTemplatePaths() throws Exception {
         final String response = client().resource(getBaseURI() + "test/relative").get(String.class);
         assertThat(response)
-                .isEqualTo("Ok.\n");
+                .isEqualTo("Ok." + System.lineSeparator());
     }
 
     @Test
