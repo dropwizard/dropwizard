@@ -69,7 +69,7 @@ public abstract class BaseReporterFactory implements ReporterFactory {
 
     @NotNull
     @Valid
-    private Optional<Duration> frequency = Optional.of(Duration.seconds(1));
+    private Optional<Duration> frequency = Optional.absent();
 
     public TimeUnit getDurationUnit() {
         return durationUnit;

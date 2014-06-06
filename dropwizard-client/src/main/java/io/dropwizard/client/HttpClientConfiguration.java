@@ -1,6 +1,7 @@
 package io.dropwizard.client;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.base.Optional;
 import io.dropwizard.util.Duration;
 
 import javax.validation.constraints.Max;
@@ -40,6 +41,9 @@ public class HttpClientConfiguration {
     @Min(0)
     @Max(1000)
     private int retries = 0;
+
+    @NotNull
+    private Optional<String> userAgent = Optional.absent();
 
     @JsonProperty
     public Duration getKeepAlive() {
@@ -119,5 +123,15 @@ public class HttpClientConfiguration {
     @JsonProperty
     public void setRetries(int retries) {
         this.retries = retries;
+    }
+
+    @JsonProperty
+    public Optional<String> getUserAgent() {
+        return userAgent;
+    }
+
+    @JsonProperty
+    public void setUserAgent(Optional<String> userAgent) {
+        this.userAgent = userAgent;
     }
 }

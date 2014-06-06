@@ -1,6 +1,8 @@
 package io.dropwizard.setup;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+
+import com.codahale.metrics.JmxReporter;
 import io.dropwizard.Application;
 import io.dropwizard.Bundle;
 import io.dropwizard.Configuration;
@@ -24,6 +26,8 @@ import com.codahale.metrics.jvm.ThreadStatesGaugeSet;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import io.dropwizard.validation.valuehandling.OptionalValidatedValueUnwrapper;
+import org.hibernate.validator.HibernateValidator;
 
 import javax.validation.Validation;
 import javax.validation.ValidatorFactory;
@@ -59,12 +63,18 @@ public class Bootstrap<T extends Configuration> {
         this.configuredBundles = Lists.newArrayList();
         this.commands = Lists.newArrayList();
         this.metricRegistry = new MetricRegistry();
-        this.validatorFactory = Validation.buildDefaultValidatorFactory();
-        metricRegistry.register("jvm.buffers", new BufferPoolMetricSet(ManagementFactory
+        this.validatorFactory = Validation
+                .byProvider(HibernateValidator.class)
+                .configure()
+                .addValidatedValueHandler(new OptionalValidatedValueUnwrapper())
+                .buildValidatorFactory();
+        getMetricRegistry().register("jvm.buffers", new BufferPoolMetricSet(ManagementFactory
                                                                                .getPlatformMBeanServer()));
-        metricRegistry.register("jvm.gc", new GarbageCollectorMetricSet());
-        metricRegistry.register("jvm.memory", new MemoryUsageGaugeSet());
-        metricRegistry.register("jvm.threads", new ThreadStatesGaugeSet());
+        getMetricRegistry().register("jvm.gc", new GarbageCollectorMetricSet());
+        getMetricRegistry().register("jvm.memory", new MemoryUsageGaugeSet());
+        getMetricRegistry().register("jvm.threads", new ThreadStatesGaugeSet());
+
+        JmxReporter.forRegistry(metricRegistry).build().start();
 
         this.configurationSourceProvider = new FileConfigurationSourceProvider();
         this.classLoader = Thread.currentThread().getContextClassLoader();

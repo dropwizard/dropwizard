@@ -27,32 +27,38 @@ Servers
 All
 ----
 
-====================== ===========  ===========
-Name                   Default      Description
-====================== ===========  ===========
-type                   default      - default
-                                    - simple	
-maxThreads             1024         The maximum number of threads to use for requests.
-minThreads             8            The minimum number of threads to use for requests.
-maxQueuedRequests      1024         The maximum number of requests to queue before blocking the acceptors.
-idleThreadTimeout      1 minute     The amount of time a worker thread can be idle before being stopped.
-nofileSoftLimit        (none)       The number of open file descriptors before a soft error is issued.
-                                    Requires Jetty's ``libsetuid.so`` on ``java.library.path``.
-nofileHardLimit        (none)       The number of open file descriptors before a hard error is issued.
-                                    Requires Jetty's ``libsetuid.so`` on ``java.library.path``.
-gid                    (none)       The group ID to switch to once the connectors have started.
-                                    Requires Jetty's ``libsetuid.so`` on ``java.library.path``.
-uid                    (none)       The user ID to switch to once the connectors have started.
-                                    Requires Jetty's ``libsetuid.so`` on ``java.library.path``.
-user                   (none)       The username to switch to once the connectors have started.
-                                    Requires Jetty's ``libsetuid.so`` on ``java.library.path``.
-group                  (none)       The group to switch to once the connectors have started.
-                                    Requires Jetty's ``libsetuid.so`` on ``java.library.path``.
-umask                  (none)       The umask to switch to once the connectors have started.
-                                    Requires Jetty's ``libsetuid.so`` on ``java.library.path``.
-startsAsRoot           (none)       Whether or not the Dropwizard application is started as a root user.
-                                    Requires Jetty's ``libsetuid.so`` on ``java.library.path``.
-====================== ===========  ===========
+====================== ===============================================  =============================================================================
+Name                   Default                                          Description
+====================== ===============================================  =============================================================================
+type                   default                                          - default
+                                                                        - simple
+maxThreads             1024                                             The maximum number of threads to use for requests.
+minThreads             8                                                The minimum number of threads to use for requests.
+maxQueuedRequests      1024                                             The maximum number of requests to queue before blocking
+                                                                        the acceptors.
+idleThreadTimeout      1 minute                                         The amount of time a worker thread can be idle before
+                                                                        being stopped.
+nofileSoftLimit        (none)                                           The number of open file descriptors before a soft error is issued.
+                                                                        Requires Jetty's ``libsetuid.so`` on ``java.library.path``.
+nofileHardLimit        (none)                                           The number of open file descriptors before a hard error is issued.
+                                                                        Requires Jetty's ``libsetuid.so`` on ``java.library.path``.
+gid                    (none)                                           The group ID to switch to once the connectors have started.
+                                                                        Requires Jetty's ``libsetuid.so`` on ``java.library.path``.
+uid                    (none)                                           The user ID to switch to once the connectors have started.
+                                                                        Requires Jetty's ``libsetuid.so`` on ``java.library.path``.
+user                   (none)                                           The username to switch to once the connectors have started.
+                                                                        Requires Jetty's ``libsetuid.so`` on ``java.library.path``.
+group                  (none)                                           The group to switch to once the connectors have started.
+                                                                        Requires Jetty's ``libsetuid.so`` on ``java.library.path``.
+umask                  (none)                                           The umask to switch to once the connectors have started.
+                                                                        Requires Jetty's ``libsetuid.so`` on ``java.library.path``.
+startsAsRoot           (none)                                           Whether or not the Dropwizard application is started as a root user.
+                                                                        Requires Jetty's ``libsetuid.so`` on ``java.library.path``.
+shutdownGracePeriod    30 seconds                                       The maximum time to wait for Jetty, and all Managed instances,
+                                                                        to cleanly shutdown before forcibly terminating them.
+allowedMethods         ``GET``, ``POST``, ``PUT``, ``DELETE``,          The set of allowed HTTP methods. Others will be rejected with a
+                       ``HEAD``, ``OPTIONS``, ``PATCH``                 405 Method Not Allowed response.
+====================== ===============================================  =============================================================================
 
 
 .. _man-configuration-gzip:
@@ -476,6 +482,7 @@ Syslog
           port: 514
           facility: local0
           threshold: ALL
+          stackTracePrefix: \t
           logFormat: # TODO
 
 
@@ -492,6 +499,8 @@ facility                     local0       The syslog facility to use. Can be eit
 threshold                    ALL          The lowest level of events to write to the file.
 logFormat                    defaultThe   Logback pattern with which events will be formatted. See
                                           the Logback_ documentation for details.
+stackTracePrefix             \t           The prefix to use when writing stack trace lines (these are sent
+                                          to the syslog server separately from the main message)
 ============================ ===========  ==================================================================================================
 
 
@@ -544,7 +553,7 @@ durationUnit           milliseconds   The unit to report durations as. Overrides
 rateUnit               seconds        The unit to report rates as. Overrides per-metric rate units.
 excludes               (none)         Metrics to exclude from reports, by name. When defined, matching metrics will not be reported.
 includes               (all)          Metrics to include in reports, by name. When defined, only these metrics will be reported.
-frequency              1 second       The frequency to report metrics. Overrides the default.
+frequency              (none)         The frequency to report metrics. Overrides the default.
 ====================== =============  ===========
 
 

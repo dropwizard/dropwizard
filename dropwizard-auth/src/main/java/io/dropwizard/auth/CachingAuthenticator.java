@@ -4,7 +4,9 @@ import com.codahale.metrics.Meter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
 import com.google.common.base.Optional;
+import com.google.common.base.Predicate;
 import com.google.common.cache.*;
+import com.google.common.collect.Sets;
 
 import java.util.concurrent.ExecutionException;
 
@@ -88,6 +90,15 @@ public class CachingAuthenticator<C, P> implements Authenticator<C, P> {
         cache.invalidateAll(credentials);
     }
 
+    /**
+     * Discards any cached principal for the collection of credentials satisfying the given predicate.
+     *
+     * @param predicate a predicate to filter credentials
+     */
+    public void invalidateAll(Predicate<? super C> predicate) {
+    	cache.invalidateAll(Sets.filter(cache.asMap().keySet(), predicate));
+    }
+    
     /**
      * Discards all cached principals.
      */

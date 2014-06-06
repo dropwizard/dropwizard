@@ -46,4 +46,20 @@ public class SyslogAppenderFactoryTest {
         assertThat(appender.getSuffixPattern())
                 .matches("^MyApplication\\[\\d+\\].+");
     }
+
+    @Test
+    public void stackTracePatternCanBeSet() throws Exception {
+        SyslogAppenderFactory syslogAppenderFactory = new SyslogAppenderFactory();
+        syslogAppenderFactory.setStackTracePrefix("--->");
+        Appender<ILoggingEvent> wrapper = syslogAppenderFactory.build(new LoggerContext(), "MyApplication", null);
+
+        // hack to get at the SyslogAppender beneath the AsyncAppender
+        // todo: find a nicer way to do all this
+        Field delegate = AsyncAppenderBase.class.getDeclaredField("aai");
+        delegate.setAccessible(true);
+        SyslogAppender appender = (SyslogAppender) ((AppenderAttachableImpl) delegate.get(wrapper)).iteratorForAppenders().next();
+
+        assertThat(appender.getStackTracePattern())
+                .isEqualTo("--->");
+    }
 }

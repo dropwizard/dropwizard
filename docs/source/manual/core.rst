@@ -310,8 +310,7 @@ By sending a ``GET`` request to ``/healthcheck`` on the admin port you can run t
 the results::
 
     $ curl http://dw.example.com:8081/healthcheck
-    * deadlocks: OK
-    * database: OK
+    {"deadlocks":{"healthy":true},"database":{"healthy":true}}
 
 If all health checks report success, a ``200 OK`` is returned. If any fail, a
 ``500 Internal Server Error`` is returned with the error messages and exception stack traces (if an
@@ -465,7 +464,29 @@ All Dropwizard applications start with the ``gc`` task, which explicitly trigger
 collection. (This is useful, for example, for running full garbage collections during off-peak times
 or while the given application is out of rotation.) The execute method of a ``Task`` can be annotated
 with ``@Timed``, ``@Metered``, and ``@ExceptionMetered``. Dropwizard will automatically
-record runtime information about your tasks.
+record runtime information about your tasks. Here's a basic task class:
+
+.. code-block:: java
+
+    public class TruncateDatabaseTask extends Task {
+        private final Database database;
+
+        public TruncateDatabaseTask(Database database) {
+            super('truncate');
+            this.database = database;
+        }
+
+          @Override
+        public void execute(ImmutableMultimap<String, String> parameters, PrintWriter output) throws Exception {
+            this.database.truncate();
+        }
+    }
+
+You can then add this task to your application's environment:
+
+.. code-block:: java
+
+    environment.admin().addTask(new TruncateDatabaseTask(database));
 
 Running a task can be done by sending a ``POST`` request to ``/tasks/{task-name}`` on the admin
 port. For example::
@@ -535,6 +556,10 @@ A few items of note:
 * You can even pull out full exception stack traces, plus the accompanying log message::
 
     tail -f dw.log | grep -B 1 '^\!'
+
+* The `!` prefix does *not* apply to syslog appenders, as stack traces are sent separately from the main message.
+  Instead, `\t` is used (this is the default value of the `SyslogAppender` that comes with Logback). This can be
+  configured with the `stackTracePrefix` option when defining your appender.
 
 Configuration
 -------------
@@ -804,8 +829,12 @@ Methods
 -------
 
 Methods on a resource class which accept incoming requests are annotated with the HTTP methods they
-handle: ``@GET``, ``@POST``, ``@PUT``, ``@DELETE``, ``@HEAD``, ``@OPTIONS``, and even
-``@HttpMethod`` for arbitrary new methods.
+handle: ``@GET``, ``@POST``, ``@PUT``, ``@DELETE``, ``@HEAD``, ``@OPTIONS``, ``@PATCH``.
+
+Support for arbitrary new methods can be added via the ``@HttpMethod`` annotation. They also must
+to be added to the :ref:`list of allowed methods <man-configuration-all>`. This means, by default,
+methods such as ``CONNECT`` and ``TRACE`` are blocked, and will return a ``405 Method Not Allowed``
+response.
 
 If a request comes in which matches a resource class's path but has a method which the class doesn't
 support, Jersey will automatically return a ``405 Method Not Allowed`` to the client.
@@ -1186,6 +1215,7 @@ If your application happens to return lots of information, you may get a big per
 bump by using streaming output. By returning an object which implements Jersey's ``StreamingOutput``
 interface, your method can stream the response entity in a chunk-encoded output stream. Otherwise,
 you'll need to fully construct your return value and *then* hand it off to be sent to the client.
+
 .. _man-core-representations-html:
 
 HTML Representations
@@ -1206,6 +1236,83 @@ input and output formats by creating classes which implement Jersey's ``MessageB
 instances of them (or their classes if they depend on Jersey's ``@Context`` injection) to your
 application's ``Environment`` on initialization.
 
+.. _man-core-jersey-filters:
+
+Jersey filters
+--------------
+
+There might be cases when you want to filter out requests or modify them before they reach your Resources. Jersey
+provides you with the means to do so. If you want to stop the request from reaching your resources, throw a web-application
+``WebApplicationException``, if you want to modify the request or let it pass through the filter, return it.
+
+.. code-block:: java
+
+    public class DateNotSpecifiedFilter implements ContainerRequestFilter {
+
+        @Context ExtendedUriInfo extendedUriInfo;
+
+        @Override
+        public ContainerRequest filter(ContainerRequest request) {
+            boolean methodNeedsDateHeader = extendedUriInfo.getMatchedMethod().isAnnotationPresent(DateRequired.class);
+            String dateHeader = request.getHeaderValue(HttpHeaders.DATE);
+
+            if (methodNeedsDateHeader && dateHeader == null) {
+                Exception cause = new IllegalArgumentException("Date Header was not specified");
+                throw new WebApplicationException(cause, Response.Status.BAD_REQUEST);
+            } else {
+                return request;
+            }
+        }
+    }
+
+This example checks the request for the "Date" header, and denies the request if was ommitted and the method this request would call has a certain annotation present.
+You can then register this filter in your Application class, like so:
+
+.. code-block:: java
+
+    environment.jersey().getResourceConfig().getContainerRequestFilters().add(new DateNotSpecifiedFilter());
+
+
+.. _man-core-servlet-filters:
+
+Servlet filters
+---------------
+
+Another way to create filters is by creating servlet filters. They offer a way to to register filters that apply both to servlet requests as well as resource requests.
+Jetty comes with a few `bundled`_  filters which may already suit your needs. If you want to create your own filter,
+this example demonstrates a servlet filter analogous to the previous example:
+
+.. _bundled: http://www.eclipse.org/jetty/documentation/current/advanced-extras.html
+
+.. code-block:: java
+
+    public class DateNotSpecifiedServletFilter implements javax.servlet.Filter {
+        // Other methods in interface ommited for brevity
+
+        @Override
+        public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+            if (request instanceof HttpServletRequest) {
+                String dateHeader = ((HttpServletRequest) request).getHeader(HttpHeaders.DATE);
+
+                if (dateHeader == null) {
+                    chain.doFilter(request, response); // This signals that the request should pass this filter
+                } else {
+                    HttpServletResponse httpResponse = (HttpServletResponse) response;
+                    httpResponse.setStatus(HttpStatus.BAD_REQUEST_400);
+                    httpResponse.getWriter().print("Date Header was not specified");
+                }
+            }
+        }
+    }
+
+
+This servlet filter can then be registered in your Application class by wrapping it in ``FilterHolder`` and adding it to the application context together with a
+specification for which paths this filter should active. Here's an example:
+
+.. code-block:: java
+
+        environment.servlets().addFilter("DateHeaderServletFilter", new DateHeaderServletFilter())
+                              .addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/*");
 .. _man-glue-detail:
 
 How it's glued together

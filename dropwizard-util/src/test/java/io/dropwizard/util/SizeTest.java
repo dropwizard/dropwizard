@@ -108,6 +108,27 @@ public class SizeTest {
     }
 
     @Test
+    public void parseSizeWithWhiteSpaces() {
+        assertThat(Size.parse("64   kilobytes"))
+                .isEqualTo(Size.kilobytes(64));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void unableParseWrongSizeCount() {
+        Size.parse("three bytes");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void unableParseWrongSizeUnit() {
+        Size.parse("1EB");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void unableParseWrongSizeFormat() {
+        Size.parse("1 mega byte");
+    }
+
+    @Test
     public void isHumanReadable() throws Exception {
         assertThat(Size.gigabytes(3).toString())
                 .isEqualTo("3 gigabytes");

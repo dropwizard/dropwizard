@@ -2,62 +2,44 @@ package io.dropwizard.util;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-import com.google.common.base.CharMatcher;
 import com.google.common.collect.ImmutableMap;
 
 import java.util.Locale;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class Duration {
-    private static final Pattern PATTERN = Pattern.compile("[\\d]+[\\s]*(" +
-            "ns|nanosecond(s)?|" +
-            "us|microsecond(s)?|" +
-            "ms|millisecond(s)?|" +
-            "s|second(s)?|" +
-            "m|minute(s)?|" +
-            "h|hour(s)?|" +
-            "d|day(s)?" +
-            ')');
-    private static final ImmutableMap<String, TimeUnit> SUFFIXES;
+    private static final Pattern DURATION_PATTERN = Pattern.compile("(\\d+)\\s*(\\S+)");
 
-    static {
-        final ImmutableMap.Builder<String, TimeUnit> suffixes = ImmutableMap.builder();
+    private static final Map<String, TimeUnit> SUFFIXES = new ImmutableMap.Builder<String, TimeUnit>()
+            .put("ns", TimeUnit.NANOSECONDS)
+            .put("nanosecond", TimeUnit.NANOSECONDS)
+            .put("nanoseconds", TimeUnit.NANOSECONDS)
+            .put("us", TimeUnit.MICROSECONDS)
+            .put("microsecond", TimeUnit.MICROSECONDS)
+            .put("microseconds", TimeUnit.MICROSECONDS)
+            .put("ms", TimeUnit.MILLISECONDS)
+            .put("millisecond", TimeUnit.MILLISECONDS)
+            .put("milliseconds", TimeUnit.MILLISECONDS)
+            .put("s", TimeUnit.SECONDS)
+            .put("second", TimeUnit.SECONDS)
+            .put("seconds", TimeUnit.SECONDS)
+            .put("m", TimeUnit.MINUTES)
+            .put("minute", TimeUnit.MINUTES)
+            .put("minutes", TimeUnit.MINUTES)
+            .put("h", TimeUnit.HOURS)
+            .put("hour", TimeUnit.HOURS)
+            .put("hours", TimeUnit.HOURS)
+            .put("d", TimeUnit.DAYS)
+            .put("day", TimeUnit.DAYS)
+            .put("days", TimeUnit.DAYS)
+            .build();
 
-        suffixes.put("ns", TimeUnit.NANOSECONDS);
-        suffixes.put("nanosecond", TimeUnit.NANOSECONDS);
-        suffixes.put("nanoseconds", TimeUnit.NANOSECONDS);
-
-        suffixes.put("us", TimeUnit.MICROSECONDS);
-        suffixes.put("microsecond", TimeUnit.MICROSECONDS);
-        suffixes.put("microseconds", TimeUnit.MICROSECONDS);
-
-        suffixes.put("ms", TimeUnit.MILLISECONDS);
-        suffixes.put("millisecond", TimeUnit.MILLISECONDS);
-        suffixes.put("milliseconds", TimeUnit.MILLISECONDS);
-
-        suffixes.put("s", TimeUnit.SECONDS);
-        suffixes.put("second", TimeUnit.SECONDS);
-        suffixes.put("seconds", TimeUnit.SECONDS);
-
-        suffixes.put("m", TimeUnit.MINUTES);
-        suffixes.put("minute", TimeUnit.MINUTES);
-        suffixes.put("minutes", TimeUnit.MINUTES);
-
-        suffixes.put("h", TimeUnit.HOURS);
-        suffixes.put("hour", TimeUnit.HOURS);
-        suffixes.put("hours", TimeUnit.HOURS);
-
-        suffixes.put("d", TimeUnit.DAYS);
-        suffixes.put("day", TimeUnit.DAYS);
-        suffixes.put("days", TimeUnit.DAYS);
-
-        SUFFIXES = suffixes.build();
-    }
-    
     public static Duration nanoseconds(long count) {
         return new Duration(count, TimeUnit.NANOSECONDS);
     }
@@ -85,22 +67,19 @@ public class Duration {
     public static Duration days(long count) {
         return new Duration(count, TimeUnit.DAYS);
     }
-    
-    private static long parseCount(String s) {
-        checkArgument(PATTERN.matcher(s).matches(), "Invalid duration: %s", s);
-        final String value = CharMatcher.WHITESPACE.removeFrom(s);
-        return Long.parseLong(CharMatcher.JAVA_LETTER.trimTrailingFrom(value));
-    }
-    
-    private static TimeUnit parseUnit(String s) {
-        final String value = CharMatcher.WHITESPACE.removeFrom(s);
-        final String suffix = CharMatcher.DIGIT.trimLeadingFrom(value);
-        return SUFFIXES.get(suffix);
-    }
 
     @JsonCreator
     public static Duration parse(String duration) {
-        return new Duration(parseCount(duration), parseUnit(duration));
+        final Matcher matcher = DURATION_PATTERN.matcher(duration);
+        checkArgument(matcher.matches(), "Invalid duration: " + duration);
+
+        final long count = Long.valueOf(matcher.group(1));
+        final TimeUnit unit = SUFFIXES.get(matcher.group(2));
+        if (unit == null) {
+            throw new IllegalArgumentException("Invalid duration: " + duration + ". Wrong time unit");
+        }
+
+        return new Duration(count, unit);
     }
 
     private final long count;
