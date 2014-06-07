@@ -73,7 +73,7 @@ public class DropwizardResourceConfig extends ResourceConfig {
         this(true, null);
     }
 
-    private DropwizardResourceConfig(boolean testOnly, MetricRegistry metricRegistry) {
+    public DropwizardResourceConfig(boolean testOnly, MetricRegistry metricRegistry) {
         super();
         
         if (metricRegistry == null)

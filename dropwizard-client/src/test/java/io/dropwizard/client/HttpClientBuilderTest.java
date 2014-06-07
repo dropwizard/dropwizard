@@ -1,10 +1,11 @@
 package io.dropwizard.client;
 
 import com.codahale.metrics.MetricRegistry;
-import com.google.common.base.Optional;
 import com.codahale.metrics.httpclient.InstrumentedHttpClientConnectionManager;
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import io.dropwizard.util.Duration;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import org.apache.http.ConnectionReuseStrategy;
 import org.apache.http.Header;
@@ -30,7 +31,6 @@ import org.apache.http.impl.DefaultConnectionReuseStrategy;
 import org.apache.http.impl.NoConnectionReuseStrategy;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.DefaultConnectionKeepAliveStrategy;
-import org.apache.http.impl.conn.PoolingClientConnectionManager;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.impl.conn.SystemDefaultDnsResolver;
 import org.apache.http.message.BasicHeader;
@@ -39,20 +39,15 @@ import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpRequestExecutor;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
-import static org.mockito.Matchers.eq;
-import org.mockito.Mockito;
-import static org.mockito.Mockito.any;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.same;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.same;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.powermock.api.mockito.PowerMockito;
-import org.powermock.api.mockito.mockpolicies.Slf4jMockPolicy;
-import org.powermock.core.classloader.annotations.MockPolicy;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -89,6 +84,7 @@ public class HttpClientBuilderTest {
         when(apacheBuilder.setDefaultSocketConfig(any(SocketConfig.class))).thenReturn(apacheBuilder);
         when(apacheBuilder.setConnectionReuseStrategy(any(ConnectionReuseStrategy.class))).thenReturn(apacheBuilder);
         when(apacheBuilder.setRetryHandler(any(HttpRequestRetryHandler.class))).thenReturn(apacheBuilder);
+        when(apacheBuilder.setUserAgent(any(String.class))).thenReturn(apacheBuilder);
         when(apacheBuilder.build()).thenReturn(client);
 
         final CloseableHttpClient returnClient = builder.using(configuration).build("test");
@@ -114,6 +110,7 @@ public class HttpClientBuilderTest {
         when(apacheBuilder.setDefaultSocketConfig(any(SocketConfig.class))).thenReturn(apacheBuilder);
         when(apacheBuilder.setConnectionReuseStrategy(any(ConnectionReuseStrategy.class))).thenReturn(apacheBuilder);
         when(apacheBuilder.setRetryHandler(any(HttpRequestRetryHandler.class))).thenReturn(apacheBuilder);
+        when(apacheBuilder.setUserAgent(any(String.class))).thenReturn(apacheBuilder);
         when(apacheBuilder.build()).thenReturn(client);
 
         final CloseableHttpClient returnClient = builder.using(configuration).build("test"); 
@@ -125,9 +122,27 @@ public class HttpClientBuilderTest {
     @Test
     public void setsTheUserAgent() {
         configuration.setUserAgent(Optional.of("qwerty"));
+        
+        final org.apache.http.impl.client.HttpClientBuilder apacheBuilder = PowerMockito.mock(org.apache.http.impl.client.HttpClientBuilder.class);
+        final CloseableHttpClient client = mock(CloseableHttpClient.class);
+        
+        PowerMockito.mockStatic(org.apache.http.impl.client.HttpClientBuilder.class);
+        when(org.apache.http.impl.client.HttpClientBuilder.create()).thenReturn(apacheBuilder);
+        when(apacheBuilder.setRequestExecutor(any(HttpRequestExecutor.class))).thenReturn(apacheBuilder);
+        when(apacheBuilder.setConnectionManager(any(HttpClientConnectionManager.class))).thenReturn(apacheBuilder).thenReturn(apacheBuilder);
+        when(apacheBuilder.setDefaultRequestConfig(any(RequestConfig.class))).thenReturn(apacheBuilder);
+        when(apacheBuilder.setDefaultSocketConfig(any(SocketConfig.class))).thenReturn(apacheBuilder);
+        when(apacheBuilder.setConnectionReuseStrategy(any(ConnectionReuseStrategy.class))).thenReturn(apacheBuilder);
+        when(apacheBuilder.setRetryHandler(any(HttpRequestRetryHandler.class))).thenReturn(apacheBuilder);
+        when(apacheBuilder.setKeepAliveStrategy(any(ConnectionKeepAliveStrategy.class))).thenReturn(apacheBuilder);
+        when(apacheBuilder.setUserAgent(any(String.class))).thenReturn(apacheBuilder);
+        when(apacheBuilder.build()).thenReturn(client);
+        
+        final CloseableHttpClient returnClient = builder.using(configuration).build("test"); 
+        final ArgumentCaptor<String> argument = ArgumentCaptor.forClass(String.class);
+        verify(apacheBuilder).setUserAgent(argument.capture());
 
-        final AbstractHttpClient client = (AbstractHttpClient) builder.using(configuration).build("test");
-        assertThat(client.getParams().getParameter(AllClientPNames.USER_AGENT))
+        assertThat(argument.getValue())
                 .isEqualTo("qwerty");
     }
 
@@ -144,6 +159,7 @@ public class HttpClientBuilderTest {
         when(apacheBuilder.setDefaultSocketConfig(any(SocketConfig.class))).thenReturn(apacheBuilder);
         when(apacheBuilder.setConnectionReuseStrategy(any(ConnectionReuseStrategy.class))).thenReturn(apacheBuilder);
         when(apacheBuilder.setRetryHandler(any(HttpRequestRetryHandler.class))).thenReturn(apacheBuilder);
+        when(apacheBuilder.setUserAgent(any(String.class))).thenReturn(apacheBuilder);
         when(apacheBuilder.build()).thenReturn(client);
         
         final CloseableHttpClient returnClient = builder.using(resolver).build("test"); 
@@ -174,6 +190,7 @@ public class HttpClientBuilderTest {
         when(apacheBuilder.setDefaultSocketConfig(any(SocketConfig.class))).thenReturn(apacheBuilder);
         when(apacheBuilder.setConnectionReuseStrategy(any(ConnectionReuseStrategy.class))).thenReturn(apacheBuilder);
         when(apacheBuilder.setRetryHandler(any(HttpRequestRetryHandler.class))).thenReturn(apacheBuilder);
+        when(apacheBuilder.setUserAgent(any(String.class))).thenReturn(apacheBuilder);
         when(apacheBuilder.build()).thenReturn(client);
         
         final CloseableHttpClient returnClient = builder.build("test"); 
@@ -206,6 +223,7 @@ public class HttpClientBuilderTest {
         when(apacheBuilder.setDefaultSocketConfig(any(SocketConfig.class))).thenReturn(apacheBuilder);
         when(apacheBuilder.setConnectionReuseStrategy(any(ConnectionReuseStrategy.class))).thenReturn(apacheBuilder);
         when(apacheBuilder.setRetryHandler(any(HttpRequestRetryHandler.class))).thenReturn(apacheBuilder);
+        when(apacheBuilder.setUserAgent(any(String.class))).thenReturn(apacheBuilder);
         when(apacheBuilder.build()).thenReturn(client);
         
         final CloseableHttpClient returnClient = builder.using(configuration).build("test"); 
@@ -232,6 +250,7 @@ public class HttpClientBuilderTest {
         when(apacheBuilder.setConnectionReuseStrategy(any(ConnectionReuseStrategy.class))).thenReturn(apacheBuilder);
         when(apacheBuilder.setRetryHandler(any(HttpRequestRetryHandler.class))).thenReturn(apacheBuilder);
         when(apacheBuilder.setKeepAliveStrategy(any(ConnectionKeepAliveStrategy.class))).thenReturn(apacheBuilder);
+        when(apacheBuilder.setUserAgent(any(String.class))).thenReturn(apacheBuilder);
         when(apacheBuilder.build()).thenReturn(client);
         
         final CloseableHttpClient returnClient = builder.using(configuration).build("test"); 
@@ -258,6 +277,7 @@ public class HttpClientBuilderTest {
         when(apacheBuilder.setConnectionReuseStrategy(any(ConnectionReuseStrategy.class))).thenReturn(apacheBuilder);
         when(apacheBuilder.setRetryHandler(any(HttpRequestRetryHandler.class))).thenReturn(apacheBuilder);
         when(apacheBuilder.setKeepAliveStrategy(any(ConnectionKeepAliveStrategy.class))).thenReturn(apacheBuilder);
+        when(apacheBuilder.setUserAgent(any(String.class))).thenReturn(apacheBuilder);
         when(apacheBuilder.build()).thenReturn(client);
         
         final CloseableHttpClient returnClient = builder.using(configuration).build("test"); 
@@ -294,6 +314,7 @@ public class HttpClientBuilderTest {
         when(apacheBuilder.setConnectionReuseStrategy(any(ConnectionReuseStrategy.class))).thenReturn(apacheBuilder);
         when(apacheBuilder.setRetryHandler(any(HttpRequestRetryHandler.class))).thenReturn(apacheBuilder);
         when(apacheBuilder.setKeepAliveStrategy(any(ConnectionKeepAliveStrategy.class))).thenReturn(apacheBuilder);
+        when(apacheBuilder.setUserAgent(any(String.class))).thenReturn(apacheBuilder);
         when(apacheBuilder.build()).thenReturn(client);
         
         final CloseableHttpClient returnClient = builder.using(configuration).build("test"); 
@@ -333,6 +354,7 @@ public class HttpClientBuilderTest {
         when(apacheBuilder.setConnectionReuseStrategy(any(ConnectionReuseStrategy.class))).thenReturn(apacheBuilder);
         when(apacheBuilder.setRetryHandler(any(HttpRequestRetryHandler.class))).thenReturn(apacheBuilder);
         when(apacheBuilder.setKeepAliveStrategy(any(ConnectionKeepAliveStrategy.class))).thenReturn(apacheBuilder);
+        when(apacheBuilder.setUserAgent(any(String.class))).thenReturn(apacheBuilder);
         when(apacheBuilder.build()).thenReturn(client);
         
         final CloseableHttpClient returnClient = builder.using(configuration).build("test"); 
@@ -360,6 +382,7 @@ public class HttpClientBuilderTest {
         when(apacheBuilder.setConnectionReuseStrategy(any(ConnectionReuseStrategy.class))).thenReturn(apacheBuilder);
         when(apacheBuilder.setRetryHandler(any(HttpRequestRetryHandler.class))).thenReturn(apacheBuilder);
         when(apacheBuilder.setKeepAliveStrategy(any(ConnectionKeepAliveStrategy.class))).thenReturn(apacheBuilder);
+        when(apacheBuilder.setUserAgent(any(String.class))).thenReturn(apacheBuilder);
         when(apacheBuilder.build()).thenReturn(client);
         
         final CloseableHttpClient returnClient = builder.using(configuration).build("test"); 
@@ -387,6 +410,7 @@ public class HttpClientBuilderTest {
         when(apacheBuilder.setConnectionReuseStrategy(any(ConnectionReuseStrategy.class))).thenReturn(apacheBuilder);
         when(apacheBuilder.setRetryHandler(any(HttpRequestRetryHandler.class))).thenReturn(apacheBuilder);
         when(apacheBuilder.setKeepAliveStrategy(any(ConnectionKeepAliveStrategy.class))).thenReturn(apacheBuilder);
+        when(apacheBuilder.setUserAgent(any(String.class))).thenReturn(apacheBuilder);
         when(apacheBuilder.build()).thenReturn(client);
         
         final CloseableHttpClient returnClient = builder.using(configuration).build("test"); 
@@ -414,6 +438,7 @@ public class HttpClientBuilderTest {
         when(apacheBuilder.setConnectionReuseStrategy(any(ConnectionReuseStrategy.class))).thenReturn(apacheBuilder);
         when(apacheBuilder.setRetryHandler(any(HttpRequestRetryHandler.class))).thenReturn(apacheBuilder);
         when(apacheBuilder.setKeepAliveStrategy(any(ConnectionKeepAliveStrategy.class))).thenReturn(apacheBuilder);
+        when(apacheBuilder.setUserAgent(any(String.class))).thenReturn(apacheBuilder);
         when(apacheBuilder.build()).thenReturn(client);
         
         final CloseableHttpClient returnClient = builder.using(configuration).build("test"); 
@@ -439,6 +464,7 @@ public class HttpClientBuilderTest {
         when(apacheBuilder.setConnectionReuseStrategy(any(ConnectionReuseStrategy.class))).thenReturn(apacheBuilder);
         when(apacheBuilder.setRetryHandler(any(HttpRequestRetryHandler.class))).thenReturn(apacheBuilder);
         when(apacheBuilder.setKeepAliveStrategy(any(ConnectionKeepAliveStrategy.class))).thenReturn(apacheBuilder);
+        when(apacheBuilder.setUserAgent(any(String.class))).thenReturn(apacheBuilder);
         when(apacheBuilder.build()).thenReturn(client);
         
         final CloseableHttpClient returnClient = builder.using(configuration).build("test"); 
@@ -464,6 +490,7 @@ public class HttpClientBuilderTest {
         when(apacheBuilder.setConnectionReuseStrategy(any(ConnectionReuseStrategy.class))).thenReturn(apacheBuilder);
         when(apacheBuilder.setRetryHandler(any(HttpRequestRetryHandler.class))).thenReturn(apacheBuilder);
         when(apacheBuilder.setKeepAliveStrategy(any(ConnectionKeepAliveStrategy.class))).thenReturn(apacheBuilder);
+        when(apacheBuilder.setUserAgent(any(String.class))).thenReturn(apacheBuilder);
         when(apacheBuilder.build()).thenReturn(client);
         
         final CloseableHttpClient returnClient = builder.using(configuration).build("test"); 
@@ -498,6 +525,7 @@ public class HttpClientBuilderTest {
         when(apacheBuilder.setConnectionReuseStrategy(any(ConnectionReuseStrategy.class))).thenReturn(apacheBuilder);
         when(apacheBuilder.setRetryHandler(any(HttpRequestRetryHandler.class))).thenReturn(apacheBuilder);
         when(apacheBuilder.setKeepAliveStrategy(any(ConnectionKeepAliveStrategy.class))).thenReturn(apacheBuilder);
+        when(apacheBuilder.setUserAgent(any(String.class))).thenReturn(apacheBuilder);
         when(apacheBuilder.build()).thenReturn(client);
         
         final CloseableHttpClient returnClient = builder.using(config).using(customHandler).build("test"); 

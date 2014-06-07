@@ -70,7 +70,7 @@ public class Environment {
 
         final DropwizardResourceConfig jerseyConfig = new DropwizardResourceConfig(metricRegistry);
 
-        jerseyConfig.getSingletons().add(new EarlyEofExceptionMapper());
+        jerseyConfig.register(new EarlyEofExceptionMapper());
 
         this.jerseyServletContainer = new JerseyContainerHolder(new ServletContainer(jerseyConfig));
         this.jerseyEnvironment = new JerseyEnvironment(jerseyServletContainer, jerseyConfig);

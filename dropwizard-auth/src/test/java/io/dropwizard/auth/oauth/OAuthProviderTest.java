@@ -1,28 +1,27 @@
 package io.dropwizard.auth.oauth;
 
-import java.util.Collections;
-
 import io.dropwizard.auth.Auth;
-import io.dropwizard.auth.basic.BasicAuthFactory;
-import io.dropwizard.auth.basic.BasicCredentials;
-import io.dropwizard.auth.basic.BasicAuthProviderTest.ExampleResource;
-import io.dropwizard.jersey.testing.JerseyServletTest;
 import io.dropwizard.logging.LoggingFactory;
-
-import org.junit.Test;
-
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Application;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
+import org.glassfish.jersey.server.ResourceConfig;
+import org.glassfish.jersey.servlet.ServletProperties;
+import org.glassfish.jersey.test.DeploymentContext;
+import org.glassfish.jersey.test.JerseyTest;
+import org.glassfish.jersey.test.ServletDeploymentContext;
+import org.glassfish.jersey.test.grizzly.GrizzlyWebTestContainerFactory;
+import org.glassfish.jersey.test.spi.TestContainerException;
+import org.glassfish.jersey.test.spi.TestContainerFactory;
+import org.junit.Test;
 
-public class OAuthProviderTest extends JerseyServletTest {
+public class OAuthProviderTest extends JerseyTest {
     static {
         LoggingFactory.bootstrap();
     }
@@ -36,15 +35,23 @@ public class OAuthProviderTest extends JerseyServletTest {
         }
     }
     
-    public OAuthProviderTest()
-    {
-        super("io.dropwizard.auth.oauth.OAuthTestResourceConfig",
-                Collections.<String>emptyList());
-    }
-
     @Override
-    protected Application configure() {
-        return new OAuthTestResourceConfig();
+    protected TestContainerFactory getTestContainerFactory()
+                                                throws TestContainerException {
+        return new GrizzlyWebTestContainerFactory();    
+    }
+    
+    
+    @Override
+    protected DeploymentContext configureDeployment() {
+        ResourceConfig rc = new OAuthTestResourceConfig();
+        
+        ServletDeploymentContext context = ServletDeploymentContext.builder(rc)
+                .initParam(ServletProperties.JAXRS_APPLICATION_CLASS, 
+                        OAuthTestResourceConfig.class.getName())
+                .build();
+  
+        return context;
     }
 
     @Test

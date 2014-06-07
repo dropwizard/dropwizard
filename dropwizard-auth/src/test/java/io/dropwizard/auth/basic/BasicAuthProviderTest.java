@@ -1,13 +1,7 @@
 package io.dropwizard.auth.basic;
 
-import static org.fest.assertions.api.Assertions.assertThat;
-import static org.fest.assertions.api.Assertions.failBecauseExceptionWasNotThrown;
 import io.dropwizard.auth.Auth;
-import io.dropwizard.jersey.testing.JerseyServletTest;
 import io.dropwizard.logging.LoggingFactory;
-
-import java.util.Collections;
-
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -15,13 +9,21 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
+import org.glassfish.jersey.server.ResourceConfig;
+import org.glassfish.jersey.servlet.ServletProperties;
+import org.glassfish.jersey.test.DeploymentContext;
+import org.glassfish.jersey.test.JerseyTest;
+import org.glassfish.jersey.test.ServletDeploymentContext;
+import org.glassfish.jersey.test.grizzly.GrizzlyWebTestContainerFactory;
+import org.glassfish.jersey.test.spi.TestContainerException;
+import org.glassfish.jersey.test.spi.TestContainerFactory;
 import org.junit.Test;
 
-public class BasicAuthProviderTest extends JerseyServletTest {
+
+public class BasicAuthProviderTest extends JerseyTest {
     static {
         LoggingFactory.bootstrap();
     }
@@ -35,15 +37,23 @@ public class BasicAuthProviderTest extends JerseyServletTest {
         }
     }
     
-    public BasicAuthProviderTest()
-    {
-        super("io.dropwizard.auth.basic.BasicAuthTestResourceConfig",
-                Collections.<String>emptyList());
-    }
-
     @Override
-    protected Application configure() {
-        return new BasicAuthTestResourceConfig();
+    protected TestContainerFactory getTestContainerFactory()
+                                                throws TestContainerException {
+        return new GrizzlyWebTestContainerFactory();    
+    }
+    
+    
+    @Override
+    protected DeploymentContext configureDeployment() {
+        ResourceConfig rc = new BasicAuthTestResourceConfig();
+        
+        ServletDeploymentContext context = ServletDeploymentContext.builder(rc)
+                .initParam(ServletProperties.JAXRS_APPLICATION_CLASS, 
+                        BasicAuthTestResourceConfig.class.getName())
+                .build();
+  
+        return context;
     }
 
     @Test

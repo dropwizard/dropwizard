@@ -1,11 +1,6 @@
 package io.dropwizard.client;
 
 import com.codahale.metrics.MetricRegistry;
-import com.codahale.metrics.httpclient.InstrumentedClientConnManager;
-import com.codahale.metrics.httpclient.InstrumentedHttpClient;
-import io.dropwizard.setup.Environment;
-import io.dropwizard.util.Duration;
-
 import com.codahale.metrics.httpclient.HttpClientMetricNameStrategies;
 import com.codahale.metrics.httpclient.InstrumentedHttpClientConnectionManager;
 import com.codahale.metrics.httpclient.InstrumentedHttpRequestExecutor;
@@ -144,7 +139,7 @@ public class HttpClientBuilder {
      * Builds the {@link HttpClient}.
      *
      * @param name
-     * @return an {@link CloeableHttpClient}
+     * @return an {@link CloseableHttpClient}
      */
     public CloseableHttpClient build(String name) {
         final InstrumentedHttpClientConnectionManager manager = createConnectionManager(registry, name);
@@ -158,7 +153,8 @@ public class HttpClientBuilder {
      * org.apache.http.impl.client.HttpClientBuilder instance
      *
      * @param manager
-     * @return the configured org.apache.http.impl.client.HttpClientBuilder object
+     * @param name
+     * @return the configured org.apache.http.impl.client.CloseableClient object
      */
     protected CloseableHttpClient createClient(final InstrumentedHttpClientConnectionManager manager, final String name) {
         final String cookiePolicy = configuration.isCookiesEnabled()
