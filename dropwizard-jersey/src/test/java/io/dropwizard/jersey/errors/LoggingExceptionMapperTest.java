@@ -1,15 +1,8 @@
 package io.dropwizard.jersey.errors;
 
-import static org.fest.assertions.api.Assertions.assertThat;
-import static org.fest.assertions.api.Assertions.failBecauseExceptionWasNotThrown;
-
-import java.io.ByteArrayInputStream;
-import java.io.InputStreamReader;
-import java.nio.CharBuffer;
-
+import com.codahale.metrics.MetricRegistry;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.logging.LoggingFactory;
-
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
@@ -17,12 +10,9 @@ import javax.ws.rs.core.Response;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
-
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
 import org.junit.Test;
-
-import com.codahale.metrics.MetricRegistry;
 
 public class LoggingExceptionMapperTest extends JerseyTest {
     static {
@@ -47,18 +37,9 @@ public class LoggingExceptionMapperTest extends JerseyTest {
             Response response = e.getResponse();
             assertThat(response.getStatus())
                     .isEqualTo(500);
+            
+            final String responseStr = response.readEntity(String.class);
 
-            ByteArrayInputStream entity = (ByteArrayInputStream) response.getEntity();
-            InputStreamReader reader = new InputStreamReader(entity);
-            CharBuffer chars = CharBuffer.allocate(1024);
-            String responseStr = "";
-            while (reader.read(chars) != -1)
-            {
-                chars.limit(chars.position());
-                chars.rewind();
-                responseStr += chars.toString();
-                chars.clear();
-            }
             assertThat(responseStr)
                     .startsWith("{\"message\":\"There was an error processing your request. It has been logged (ID ");
         }
