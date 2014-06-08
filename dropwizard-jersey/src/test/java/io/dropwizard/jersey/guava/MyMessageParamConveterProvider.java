@@ -10,6 +10,7 @@ import java.lang.reflect.Type;
 public class MyMessageParamConveterProvider implements ParamConverterProvider {
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T> ParamConverter<T> getConverter(Class<T> rawType, Type genericType, Annotation[] annotations) {
         if (genericType.equals(MyMessage.class)) {
             return (ParamConverter<T>) new MyMessageParamConverter();

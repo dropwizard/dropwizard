@@ -73,6 +73,7 @@ public class DropwizardResourceConfig extends ResourceConfig {
         this(true, null);
     }
 
+    @SuppressWarnings("unchecked")
     public DropwizardResourceConfig(boolean testOnly, MetricRegistry metricRegistry) {
         super();
         
