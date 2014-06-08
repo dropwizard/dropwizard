@@ -1,0 +1,9 @@
+package dropwizard;
+
+option java_package = "io.dropwizard.jersey.protobuf.protos";
+option java_outer_classname = "DropwizardProtosTest";
+option optimize_for = SPEED;
+
+message Example {
+  required int64 id = 1;
+};

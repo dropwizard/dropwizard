@@ -1,0 +1,9 @@
+package dropwizard;
+
+option java_package = "io.dropwizard.jersey.protobuf.protos";
+option java_outer_classname = "DropwizardProtos";
+option optimize_for = SPEED;
+
+message ErrorMessage {
+  required string message = 1;
+};
