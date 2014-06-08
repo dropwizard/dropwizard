@@ -1,20 +1,5 @@
 package io.dropwizard.client;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import io.dropwizard.jersey.jackson.JacksonMessageBodyProvider;
-import io.dropwizard.setup.Environment;
-
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ExecutorService;
-
-import javax.validation.Validation;
-import javax.validation.Validator;
-
-import org.apache.http.client.HttpRequestRetryHandler;
-import org.apache.http.conn.DnsResolver;
-import org.apache.http.conn.scheme.SchemeRegistry;
-
 import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -32,6 +17,7 @@ import javax.validation.Validator;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.Configuration;
+import org.apache.http.client.HttpRequestRetryHandler;
 import org.apache.http.config.Registry;
 import org.apache.http.conn.DnsResolver;
 import org.apache.http.conn.socket.ConnectionSocketFactory;
