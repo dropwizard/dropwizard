@@ -3,10 +3,8 @@ package io.dropwizard.client;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.httpclient.InstrumentedClientConnManager;
 import com.codahale.metrics.httpclient.InstrumentedHttpClient;
-
 import io.dropwizard.setup.Environment;
 import io.dropwizard.util.Duration;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.HttpRequestRetryHandler;
@@ -21,7 +19,6 @@ import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
 import org.apache.http.impl.conn.SchemeRegistryFactory;
 import org.apache.http.impl.conn.SystemDefaultDnsResolver;
 import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.CoreProtocolPNames;
 import org.apache.http.protocol.HttpContext;
 
 import java.io.IOException;
@@ -94,7 +91,7 @@ public class HttpClientBuilder {
     }
 
     /**
-     * Uses the {@link httpRequestRetryHandler} for handling request retries.
+     * Uses the {@link HttpRequestRetryHandler} for handling request retries.
      *
      * @param httpRequestRetryHandler an httpRequestRetryHandler
      * @return {@code this}
