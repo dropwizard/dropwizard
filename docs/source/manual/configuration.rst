@@ -497,7 +497,7 @@ facility                     local0       The syslog facility to use. Can be eit
                                           ``local1``, ``local2``, ``local3``, ``local4``, ``local5``,
                                           ``local6``, or ``local7``.
 threshold                    ALL          The lowest level of events to write to the file.
-logFormat                    defaultThe   Logback pattern with which events will be formatted. See
+logFormat                    default      The Logback pattern with which events will be formatted. See
                                           the Logback_ documentation for details.
 stackTracePrefix             \t           The prefix to use when writing stack trace lines (these are sent
                                           to the syslog server separately from the main message)
@@ -729,4 +729,80 @@ logger                 metrics          The name of the logger to write metrics 
 markerName             (none)           The name of the marker to mark logged metrics with.
 ====================== ===============  ====================================================================================================
 
+
+.. _man-configuration-clients:
+
+Clients
+=========
+
+.. _man-configuration-clients-http:
+
+HttpClient
+-----
+
+See HttpClientConfiguration_  for more options.
+
+.. _HttpClientConfiguration:  https://github.com/dropwizard/dropwizard/blob/master/dropwizard-client/src/main/java/io/dropwizard/client/HttpClientConfiguration.java
+
+.. code-block:: yaml
+
+    httpClient:
+      timeout: 500ms
+      connectionTimeout: 500ms
+      timeToLive: 1h
+      cookiesEnabled: false
+      maxConnections: 1024
+      maxConnectionsPerRoute: 1024
+      keepAlive: 0ms
+      retries: 0
+      userAgent: <application name> (<client name>)
+
+
+======================= ======================================  =============================================================================
+Name                    Default                                 Description
+======================= ======================================  =============================================================================
+timeout                 500 milliseconds                        The maximum idle time for a connection, once established.
+connectionTimeout       500 milliseconds                        The maximum time to wait for a connection to open.
+timeToLive              1 hour                                  The maximum time a pooled connection can stay idle (not leased to any thread)
+                                                                before it is shut down.
+cookiesEnabled          false                                   Whether or not to enable cookies.
+maxConnections          1024                                    The maximum number of concurrent open connections.
+maxConnectionsPerRoute  1024                                    The maximum number of concurrent open connections per route.
+keepAlive               0 milliseconds                          The maximum time a connection will be kept alive before it is reconnected. If set
+                                                                to 0, connections will be immediately closed after every request/response.
+retries                 0                                       The number of times to retry failed requests. Requests are only
+                                                                retried if they throw an exception other than ``InterruptedIOException``,
+                                                                ``UnknownHostException``, ``ConnectException``, or ``SSLException``.
+userAgent               ``applicationName`` (``clientName``)    The User-Agent to send with requests.
+======================= ======================================  =============================================================================
+
+
+.. _man-configuration-clients-jersey:
+
+JerseyClient
+-----
+
+Extends the attributes that are available to :ref:`http clients <man-configuration-clients-http>`
+
+See JerseyClientConfiguration_ and HttpClientConfiguration_ for more options.
+
+.. _JerseyClientConfiguration:  https://github.com/dropwizard/dropwizard/blob/master/dropwizard-client/src/main/java/io/dropwizard/client/JerseyClientConfiguration.java
+
+.. code-block:: yaml
+
+    jerseyClient:
+      minThreads: 1
+      maxThreads: 128
+      gzipEnabled: true
+      gzipEnabledForRequests: true
+
+
+======================= ==================  ===================================================================================================
+Name                    Default             Description
+======================= ==================  ===================================================================================================
+minThreads              1                   The minimum number of threads in the pool used for asynchronous requests.
+maxThreads              128                 The maximum number of threads in the pool used for asynchronous requests.
+gzipEnabled             true                Adds an Accept-Encoding: gzip header to all requests, and enables automatic gzip decoding of responses.
+gzipEnabledForRequests  true                Adds a Content-Encoding: gzip header to all requests, and enables automatic gzip encoding of requests.
+======================= ==================  ===================================================================================================
 

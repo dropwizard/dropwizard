@@ -21,7 +21,7 @@ well-tested HTTP client library.
 .. _HttpClient: http://hc.apache.org/httpcomponents-core-4.3.x/index.html
 
 To create a :ref:`managed <man-core-managed>`, instrumented ``HttpClient`` instance, your
-:ref:`configuration class <man-core-configuration>` needs an ``HttpClientConfiguration`` instance:
+:ref:`configuration class <man-core-configuration>` needs an :ref:`http client configuration <man-configuration-clients-http>` instance:
 
 .. code-block:: java
 
@@ -122,7 +122,7 @@ uses to, for example, deserialize ``application/json`` request entities as POJOs
 .. _Client API: https://jersey.java.net/documentation/1.18/client-api.html
 
 To create a :ref:`managed <man-core-managed>`, instrumented ``JerseyClient`` instance, your
-:ref:`configuration class <man-core-configuration>` needs an ``JerseyClientConfiguration`` instance:
+:ref:`configuration class <man-core-configuration>` needs an :ref:`jersey client configuration <man-configuration-clients-jersey>` instance:
 
 .. code-block:: java
 
