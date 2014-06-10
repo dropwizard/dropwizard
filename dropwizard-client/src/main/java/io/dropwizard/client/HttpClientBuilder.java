@@ -134,7 +134,6 @@ public class HttpClientBuilder {
         final BasicHttpParams params = createHttpParams(name);
         final InstrumentedClientConnManager manager = createConnectionManager(registry, name);
         final InstrumentedHttpClient client = new InstrumentedHttpClient(metricRegistry, manager, params, name);
-        client.setCredentialsProvider(credentialsProvider);
         setStrategiesForClient(client);
 
         return client;
@@ -172,6 +171,10 @@ public class HttpClientBuilder {
         } else {
             client.setHttpRequestRetryHandler(new DefaultHttpRequestRetryHandler(configuration.getRetries(),
                                                                                  false));
+        }
+
+        if (credentialsProvider != null) {
+            client.setCredentialsProvider(credentialsProvider);
         }
     }
 
