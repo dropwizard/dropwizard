@@ -6,6 +6,7 @@ import com.codahale.metrics.httpclient.InstrumentedHttpClient;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.util.Duration;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.HttpRequestRetryHandler;
 import org.apache.http.client.params.AllClientPNames;
@@ -47,6 +48,7 @@ public class HttpClientBuilder {
     private DnsResolver resolver = new SystemDefaultDnsResolver();
     private HttpRequestRetryHandler httpRequestRetryHandler;
     private SchemeRegistry registry = SchemeRegistryFactory.createSystemDefault();
+    private CredentialsProvider credentialsProvider = null;
 
     public HttpClientBuilder(MetricRegistry metricRegistry) {
         this.metricRegistry = metricRegistry;
@@ -113,6 +115,17 @@ public class HttpClientBuilder {
     }
 
     /**
+     * Use the given {@link CredentialsProvider} instance.
+     *
+     * @param credentialsProvider    a {@link CredentialsProvider} instance
+     * @return {@code this}
+     */
+    public HttpClientBuilder using(CredentialsProvider credentialsProvider) {
+        this.credentialsProvider = credentialsProvider;
+        return this;
+    }
+
+    /**
      * Builds the {@link HttpClient}.
      *
      * @return an {@link HttpClient}
@@ -158,6 +171,10 @@ public class HttpClientBuilder {
         } else {
             client.setHttpRequestRetryHandler(new DefaultHttpRequestRetryHandler(configuration.getRetries(),
                                                                                  false));
+        }
+
+        if (credentialsProvider != null) {
+            client.setCredentialsProvider(credentialsProvider);
         }
     }
 

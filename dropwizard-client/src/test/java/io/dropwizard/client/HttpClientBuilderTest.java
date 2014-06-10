@@ -8,6 +8,9 @@ import org.apache.http.Header;
 import org.apache.http.HeaderIterator;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.Credentials;
+import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.HttpRequestRetryHandler;
 import org.apache.http.client.params.AllClientPNames;
 import org.apache.http.client.params.CookiePolicy;
@@ -237,5 +240,30 @@ public class HttpClientBuilderTest {
         AbstractHttpClient client = (AbstractHttpClient) builder.using(config).using(customHandler).build("test");
         
         assertThat(client.getHttpRequestRetryHandler()).isEqualTo(customHandler);
+    }
+
+    @Test
+    public void usesCredentialsProvider() throws Exception {
+        CredentialsProvider credentialsProvider = new CredentialsProvider() {
+            @Override
+            public void setCredentials(AuthScope authscope, Credentials credentials) {
+
+            }
+
+            @Override
+            public Credentials getCredentials(AuthScope authscope) {
+                return null;
+            }
+
+            @Override
+            public void clear() {
+
+            }
+        };
+        HttpClientConfiguration config = new HttpClientConfiguration();
+        config.setRetries(1);
+        AbstractHttpClient client = (AbstractHttpClient) builder.using(config).using(credentialsProvider).build("test");
+
+        assertThat(client.getCredentialsProvider()).isEqualTo(credentialsProvider);
     }
 }
