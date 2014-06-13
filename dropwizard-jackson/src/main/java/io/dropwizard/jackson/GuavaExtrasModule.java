@@ -5,19 +5,10 @@ import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.deser.Deserializers;
 import com.google.common.cache.CacheBuilderSpec;
-import com.google.common.net.HostAndPort;
 
 import java.io.IOException;
 
 public class GuavaExtrasModule extends Module {
-    private static class HostAndPortDeserializer extends JsonDeserializer<HostAndPort> {
-        @Override
-        public HostAndPort deserialize(JsonParser jp,
-                                       DeserializationContext ctxt) throws IOException {
-            return HostAndPort.fromString(jp.getText());
-        }
-    }
-
     private static class CacheBuilderSpecDeserializer extends JsonDeserializer<CacheBuilderSpec> {
         @Override
         public CacheBuilderSpec deserialize(JsonParser jp,
@@ -37,10 +28,6 @@ public class GuavaExtrasModule extends Module {
                                                         BeanDescription beanDesc) throws JsonMappingException {
             if (CacheBuilderSpec.class.isAssignableFrom(type.getRawClass())) {
                 return new CacheBuilderSpecDeserializer();
-            }
-
-            if (HostAndPort.class.isAssignableFrom(type.getRawClass())) {
-                return new HostAndPortDeserializer();
             }
 
             return super.findBeanDeserializer(type, config, beanDesc);
