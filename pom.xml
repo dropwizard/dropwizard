@@ -56,7 +56,7 @@
         <jackson.api.version>2.3.0</jackson.api.version>
         <jackson.version>2.3.3</jackson.version>
         <logback.version>1.1.2</logback.version>
-        <slf4j.version>1.7.6</slf4j.version>
+        <slf4j.version>1.7.7</slf4j.version>
         <servlet.version>3.0.0.v201112011016</servlet.version>
         <jetty.version>9.0.7.v20131107</jetty.version>
         <guava.version>16.0.1</guava.version>
