@@ -15,7 +15,7 @@ database:
   password: sa
 
   # the JDBC URL
-  url: jdbc:h2:target/example
+  url: jdbc:h2:./target/example
 
 # use the simple server factory if you only want to run on a single port
 #server:
