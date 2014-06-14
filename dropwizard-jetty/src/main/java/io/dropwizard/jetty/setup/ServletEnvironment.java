@@ -71,7 +71,7 @@ public class ServletEnvironment {
      *
      * @param name   the filter's name
      * @param filter the filter instance
-     * @return a {@link FilterRegistration.Dynamic} instance allowing for further
+     * @return a {@link javax.servlet.FilterRegistration.Dynamic} instance allowing for further
      *         configuration
      */
     public FilterRegistration.Dynamic addFilter(String name, Filter filter) {
@@ -90,7 +90,7 @@ public class ServletEnvironment {
      *
      * @param name  the filter's name
      * @param klass the filter class
-     * @return a {@link FilterRegistration.Dynamic} instance allowing for further configuration
+     * @return a {@link javax.servlet.FilterRegistration.Dynamic} instance allowing for further configuration
      */
     public FilterRegistration.Dynamic addFilter(String name, Class<? extends Filter> klass) {
         final FilterHolder holder = new FilterHolder(checkNotNull(klass));
