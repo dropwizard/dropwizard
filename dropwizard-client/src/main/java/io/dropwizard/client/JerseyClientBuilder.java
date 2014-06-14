@@ -111,9 +111,9 @@ public class JerseyClientBuilder {
     }
     
     /**
-     * Uses the {@link httpRequestRetryHandler} for handling request retries.
+     * Uses the {@link org.apache.http.client.HttpRequestRetryHandler} for handling request retries.
      *
-     * @param httpRequestRetryHandler an httpRequestRetryHandler
+     * @param httpRequestRetryHandler a HttpRequestRetryHandler
      * @return {@code this}
      */
     public JerseyClientBuilder using(HttpRequestRetryHandler httpRequestRetryHandler) {
