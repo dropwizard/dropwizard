@@ -8,7 +8,8 @@ import com.fasterxml.jackson.databind.introspect.AnnotatedParameter;
 
 /**
  * A {@link PropertyNamingStrategy} implementation which, if the declaring class of a property is
- * annotated with {@link JsonSnakeCase}, uses a {@link LowerCaseWithUnderscoresStrategy}, and uses
+ * annotated with {@link JsonSnakeCase}, uses a
+ * {@link com.fasterxml.jackson.databind.PropertyNamingStrategy.LowerCaseWithUnderscoresStrategy}, and uses
  * the default {@link PropertyNamingStrategy} otherwise.
  */
 public class AnnotationSensitivePropertyNamingStrategy extends PropertyNamingStrategy {

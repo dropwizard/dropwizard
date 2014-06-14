@@ -8,8 +8,8 @@ import io.dropwizard.setup.Environment;
 /**
  * A {@link Bundle}, which by default, enables the rendering of FreeMarker & Mustache views by your application.
  *
- * <p>Other instances of {@Link ViewRenderer} can be used by initializing your {@Link ViewBundle} with a
- * {@Link Iterable} of the {@Link ViewRenderer} instances to be used when configuring your {@link Bundle}:</p>
+ * <p>Other instances of {@link ViewRenderer} can be used by initializing your {@link ViewBundle} with a
+ * {@link Iterable} of the {@link ViewRenderer} instances to be used when configuring your {@link Bundle}:</p>
  *
  * <pre><code>
  * new ViewBundle(ImmutableList.of(myViewRenderer))
