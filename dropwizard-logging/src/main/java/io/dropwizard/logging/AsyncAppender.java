@@ -81,6 +81,10 @@ public class AsyncAppender extends AppenderBase<ILoggingEvent> {
         setName("async-" + delegate.getName());
     }
 
+    public Appender<ILoggingEvent> getDelegate() {
+        return delegate;
+    }
+
     private ConcurrentArrayBlockingQueue<ILoggingEvent> buildQueue(int batchSize, boolean bounded) {
         if (bounded) {
             return new ConcurrentArrayBlockingQueue.Bounded<>(batchSize * 2);
