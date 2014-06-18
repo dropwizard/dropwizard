@@ -209,7 +209,7 @@ public class ConfigurationFactory<T> {
                 child = obj.get(key);
                 if (child == null) {
                     child = obj.objectNode();
-                    obj.put(key, child);
+                    obj.set(key, child);
                 }
                 if (child.isArray()) {
                     throw new IllegalArgumentException("Unable to override " + name + "; target is an array but no index specified");
