@@ -26,13 +26,13 @@
                 <version>2.6</version>
                 <configuration>
                     <check>
-                        <haltOnFailure>false</haltOnFailure><!-- optional -->
+                        <haltOnFailure>true</haltOnFailure><!-- optional -->
                         <!-- Per-class thresholds -->
-                        <lineRate>40</lineRate>
+                        <lineRate>80</lineRate>
                         <branchRate>80</branchRate>
                         <!-- Project-wide thresholds -->
-                        <totalLineRate>40</totalLineRate>
-                        <totalBranchRate>40</totalBranchRate>
+                        <totalLineRate>80</totalLineRate>
+                        <totalBranchRate>80</totalBranchRate>
                     </check>
                 </configuration>
                 <executions>

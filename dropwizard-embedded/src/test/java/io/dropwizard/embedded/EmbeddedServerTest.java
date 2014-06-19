@@ -4,8 +4,6 @@ import com.codahale.metrics.Metric;
 import com.codahale.metrics.MetricRegistry;
 import com.google.common.io.Resources;
 import io.dropwizard.Configuration;
-import io.dropwizard.configuration.DefaultConfigurationFactoryFactory;
-import io.dropwizard.configuration.FileConfigurationSourceProvider;
 import io.dropwizard.jetty.HttpConnectorFactory;
 import io.dropwizard.metrics.MetricsFactory;
 import io.dropwizard.server.DefaultServerFactory;
@@ -98,7 +96,7 @@ public class EmbeddedServerTest {
         embeddedServer.stop();
         embeddedServer.stop();
 
-        verify(spyServer, times(1)).stop();
+        verify(spyServer, times(3)).isStopped();
     }
 
     @Test
