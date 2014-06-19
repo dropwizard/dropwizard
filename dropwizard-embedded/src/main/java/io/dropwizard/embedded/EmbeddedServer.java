@@ -1,8 +1,6 @@
 package io.dropwizard.embedded;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Charsets;
-import com.google.common.io.Resources;
 import io.dropwizard.Configuration;
 
 import io.dropwizard.configuration.ConfigurationException;
