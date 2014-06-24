@@ -1,5 +1,7 @@
-Dropwizard [![Build Status](https://travis-ci.org/dropwizard/dropwizard.png?branch=master)](https://travis-ci.org/dropwizard/dropwizard)
+Dropwizard
 ==========
+[![Build Status](https://travis-ci.org/dropwizard/dropwizard.png?branch=master)](https://travis-ci.org/dropwizard/dropwizard)
+[![Coverage Status](https://img.shields.io/coveralls/dropwizard/dropwizard.svg)](https://coveralls.io/r/dropwizard/dropwizard)
 
 *Dropwizard is a sneaky way of making fast Java web applications.*
 
