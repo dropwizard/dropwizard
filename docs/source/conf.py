@@ -106,7 +106,9 @@ html_theme_options = {
     'landing_logo': u'dropwizard-hat.png',
     'landing_logo_width': u'150px',
     'github_page': u'https://github.com/dropwizard/dropwizard',
-    'mailing_list': u'https://groups.google.com/forum/#!forum/dropwizard-user'
+    'maven_site': u'https://dropwizard.github.io/dropwizard/' + release,
+    'mailing_list_user': u'https://groups.google.com/forum/#!forum/dropwizard-user',
+    'mailing_list_dev': u'https://groups.google.com/forum/#!forum/dropwizard-dev'
 }
 
 # Add any paths that contain custom themes here, relative to this directory.
