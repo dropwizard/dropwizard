@@ -50,7 +50,7 @@ v0.7.1: Jun 18 2014
 .. _rel-0.7.0:
 
 v0.7.0: Apr 04 2014
-===============
+===================
 
 * Upgraded to Java 7.
 * Moved to the ``io.dropwizard`` group ID and namespace.
