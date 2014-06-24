@@ -6,8 +6,8 @@ Release Notes
 
 .. _rel-0.7.1:
 
-v0.7.1
-==============
+v0.7.1: Jun 18 2014
+===================
 
 * Added instrumentation to ``Task``, using metrics annotations.
 * Added ability to blacklist SSL cipher suites.
