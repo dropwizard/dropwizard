@@ -66,14 +66,14 @@ public class JacksonMessageBodyProvider extends JacksonJaxbJsonProvider {
     }
 
     private Object validate(Annotation[] annotations, Object value) {
-        if(null == value) {
-            throw new ConstraintViolationException("The request entity was empty",
-                    Collections.<ConstraintViolation<Object>>emptySet());
-        }
-
         final Class<?>[] classes = findValidationGroups(annotations);
 
         if (classes != null) {
+            if(null == value) {
+                throw new ConstraintViolationException("The request entity was empty",
+                        Collections.<ConstraintViolation<Object>>emptySet());
+            }
+
             Set<ConstraintViolation<Object>> violations = null;
 
             if(value instanceof Map) {
