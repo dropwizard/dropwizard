@@ -58,6 +58,7 @@ public class DropwizardAppRule<C extends Configuration> implements TestRule {
                 } finally {
                     resetConfigOverrides();
                     jettyServer.stop();
+                    jettyServer = null;
                 }
             }
         };
