@@ -18,9 +18,9 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-        	<groupId>org.glassfish.jersey.test-framework</groupId>
-        	<artifactId>jersey-test-framework-core</artifactId>
-        	<version>${jersey.version}</version>
+            <groupId>org.glassfish.jersey.test-framework</groupId>
+            <artifactId>jersey-test-framework-core</artifactId>
+            <version>${jersey.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
