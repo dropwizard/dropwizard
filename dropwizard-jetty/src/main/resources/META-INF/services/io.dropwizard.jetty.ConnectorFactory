@@ -1,2 +1,0 @@
-io.dropwizard.jetty.HttpConnectorFactory
-io.dropwizard.jetty.HttpsConnectorFactory
