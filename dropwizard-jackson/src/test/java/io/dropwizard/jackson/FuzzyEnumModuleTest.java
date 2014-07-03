@@ -1,5 +1,6 @@
 package io.dropwizard.jackson;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
@@ -14,7 +15,16 @@ import static org.fest.assertions.api.Assertions.failBecauseExceptionWasNotThrow
 public class FuzzyEnumModuleTest {
     private final ObjectMapper mapper = new ObjectMapper();
     
-    private enum EnumWithLowercase {lower_case_enum, mixedCaseEnum};
+    private enum EnumWithLowercase { lower_case_enum, mixedCaseEnum }
+
+    private enum EnumWithCreator {
+        TEST;
+
+        @JsonCreator
+        public static EnumWithCreator fromString(String value) {
+            return EnumWithCreator.TEST;
+        }
+    }
 
     @Before
     public void setUp() throws Exception {
@@ -49,6 +59,18 @@ public class FuzzyEnumModuleTest {
     public void mapsDashedEnums() throws Exception {
         assertThat(mapper.readValue("\"REASON-UNKNOWN\"", ClientInfoStatus.class))
                 .isEqualTo(ClientInfoStatus.REASON_UNKNOWN);
+    }
+
+    @Test
+    public void mapsDottedEnums() throws Exception {
+        assertThat(mapper.readValue("\"REASON.UNKNOWN\"", ClientInfoStatus.class))
+                .isEqualTo(ClientInfoStatus.REASON_UNKNOWN);
+    }
+
+    @Test
+    public void mapsWhenEnumHasCreator() throws Exception {
+        assertThat(mapper.readValue("\"BLA\"", EnumWithCreator.class))
+                .isEqualTo(EnumWithCreator.TEST);
     }
 
     @Test
