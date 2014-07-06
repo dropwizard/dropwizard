@@ -733,12 +733,12 @@ markerName             (none)           The name of the marker to mark logged me
 .. _man-configuration-clients:
 
 Clients
-=========
+=======
 
 .. _man-configuration-clients-http:
 
 HttpClient
------
+----------
 
 See HttpClientConfiguration_  for more options.
 
@@ -780,7 +780,7 @@ userAgent               ``applicationName`` (``clientName``)    The User-Agent t
 .. _man-configuration-clients-jersey:
 
 JerseyClient
------
+------------
 
 Extends the attributes that are available to :ref:`http clients <man-configuration-clients-http>`
 
