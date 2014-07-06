@@ -55,6 +55,7 @@
         <jersey.version>1.18.1</jersey.version>
         <jackson.api.version>2.4.0</jackson.api.version><!-- internally Jackson doesn't do bug fix releases for its API modules -->
         <jackson.version>2.4.1</jackson.version>
+        <jackson.databind.version>2.4.1.1</jackson.databind.version>
         <logback.version>1.1.2</logback.version>
         <slf4j.version>1.7.6</slf4j.version>
         <servlet.version>3.0.0.v201112011016</servlet.version>
