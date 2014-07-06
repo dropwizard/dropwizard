@@ -4,7 +4,11 @@ import com.google.common.base.Charsets;
 import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.servlets.IncludableGzipFilter;
 
-import javax.servlet.*;
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.ServletInputStream;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import java.io.BufferedReader;
@@ -12,6 +16,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
+import java.util.Collections;
+import java.util.Enumeration;
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.zip.Deflater;
@@ -120,9 +126,9 @@ public class BiDiGzipFilter extends IncludableGzipFilter {
         final HttpServletRequest request = (HttpServletRequest) req;
         final String encoding = request.getHeader(HttpHeader.CONTENT_ENCODING.asString());
         if (GZIP.equalsIgnoreCase(encoding)) {
-            super.doFilter(wrapGzippedRequest(request), res, chain);
+            super.doFilter(wrapGzippedRequest(removeContentEncodingHeader(request)), res, chain);
         } else if (DEFLATE.equalsIgnoreCase(encoding)) {
-            super.doFilter(wrapDeflatedRequest(request), res, chain);
+            super.doFilter(wrapDeflatedRequest(removeContentEncodingHeader(request)), res, chain);
         } else {
             super.doFilter(req, res, chain);
         }
@@ -151,6 +157,10 @@ public class BiDiGzipFilter extends IncludableGzipFilter {
 
     private ServletRequest wrapGzippedRequest(HttpServletRequest request) throws IOException {
         return new WrappedServletRequest(request, new GZIPInputStream(request.getInputStream(), _bufferSize));
+    }
+
+    private HttpServletRequest removeContentEncodingHeader(final HttpServletRequest request) {
+        return new RemoveHttpHeaderWrapper(request, HttpHeader.CONTENT_ENCODING.asString());
     }
 
     private static class WrappedServletRequest extends HttpServletRequestWrapper {
@@ -233,6 +243,75 @@ public class BiDiGzipFilter extends IncludableGzipFilter {
         @Override
         public int read(byte[] b) throws IOException {
             return input.read(b);
+        }
+    }
+
+    private static class RemoveHttpHeaderWrapper extends HttpServletRequestWrapper {
+        private final String headerName;
+
+        public RemoveHttpHeaderWrapper(final HttpServletRequest request, final String headerName) {
+            super(request);
+            this.headerName = headerName;
+        }
+
+        /**
+         * The default behavior of this method is to return
+         * getIntHeader(String name) on the wrapped request object.
+         *
+         * @param name a <code>String</code> specifying the name of a request header
+         */
+        @Override
+        public int getIntHeader(final String name) {
+            if (headerName.equalsIgnoreCase(name)) {
+                return -1;
+            } else {
+                return super.getIntHeader(name);
+            }
+        }
+
+        /**
+         * The default behavior of this method is to return getHeaders(String name)
+         * on the wrapped request object.
+         *
+         * @param name a <code>String</code> specifying the name of a request header
+         */
+        @Override
+        public Enumeration<String> getHeaders(final String name) {
+            if (headerName.equalsIgnoreCase(name)) {
+                return Collections.emptyEnumeration();
+            } else {
+                return super.getHeaders(name);
+            }
+        }
+
+        /**
+         * The default behavior of this method is to return getHeader(String name)
+         * on the wrapped request object.
+         *
+         * @param name a <code>String</code> specifying the name of a request header
+         */
+        @Override
+        public String getHeader(final String name) {
+            if (headerName.equalsIgnoreCase(name)) {
+                return null;
+            } else {
+                return super.getHeader(name);
+            }
+        }
+
+        /**
+         * The default behavior of this method is to return getDateHeader(String name)
+         * on the wrapped request object.
+         *
+         * @param name a <code>String</code> specifying the name of a request header
+         */
+        @Override
+        public long getDateHeader(final String name) {
+            if (headerName.equalsIgnoreCase(name)) {
+                return -1L;
+            } else {
+                return super.getDateHeader(name);
+            }
         }
     }
 }
