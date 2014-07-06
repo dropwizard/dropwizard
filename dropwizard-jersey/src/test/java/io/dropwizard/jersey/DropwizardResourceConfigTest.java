@@ -36,6 +36,17 @@ public class DropwizardResourceConfigTest {
                         (DummyResource.class, TestResource.class);
     }
 
+    @Test
+    public void testGetEndpointsInfo() {
+        final DropwizardResourceConfig rc = DropwizardResourceConfig.forTesting(new MetricRegistry());
+        rc.init(new PackageNamesScanner(new String[]{DummyResource.class.getPackage().getName()}));
+
+        assertThat(rc.getEndpointsInfo()).isEqualTo("The following paths were found for the configured resources:\n" +
+                "\n" +
+                "    GET     / (io.dropwizard.jersey.dummy.DummyResource)" +
+                "\n");
+    }
+
     @Path("/dummy")
     public static class TestResource {
         @GET
