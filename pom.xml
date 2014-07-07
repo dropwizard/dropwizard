@@ -45,6 +45,8 @@
         <module>dropwizard-lifecycle</module>
         <module>dropwizard-assets</module>
         <module>dropwizard-spdy</module>
+        <module>dropwizard-testing-jdbi</module>
+        <module>dropwizard-testing-migrations</module>
     </modules>
 
     <properties>
