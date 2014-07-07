@@ -381,9 +381,9 @@ Bundles
 =======
 
 A Dropwizard bundle is a reusable group of functionality, used to define blocks of an application's
-behavior. For example, ``AssetBundle`` provides a simple way to serve static assets from your
-application's ``src/main/resources/assets`` directory as files available from ``/assets/*`` in your
-application.
+behavior. For example, ``AssetBundle`` from the ``dropwizard-assets`` module provides a simple way
+to serve static assets from your application's ``src/main/resources/assets`` directory as files
+available from ``/assets/*`` (or any other path) in your application.
 
 Some bundles require configuration parameters. These bundles implement ``ConfiguredBundle`` and will
 require your application's ``Configuration`` subclass to implement a specific interface.
