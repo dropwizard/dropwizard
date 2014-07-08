@@ -210,8 +210,8 @@ easily.
 Should you, at some point, grow tired of the near-infinite amount of debug logging produced by
 ``ResourceTestRule`` you can use the ``java.util.logging`` API to silence the ``com.sun.jersey`` logger.
 
-Integrated Testing
-==================
+Integration Testing
+===================
 It can be useful to start up your entire app and hit it with real HTTP requests during testing. This can be
 achieved by adding ``DropwizardAppRule`` to your JUnit test class, which will start the app prior to any tests
 running and stop it again when they've completed (roughly equivalent to having used ``@BeforeClass`` and ``@AfterClass``).
