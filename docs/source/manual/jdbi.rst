@@ -22,9 +22,9 @@ To create a :ref:`managed <man-core-managed>`, instrumented ``DBI`` instance, yo
     public class ExampleConfiguration extends Configuration {
         @Valid
         @NotNull
-        @JsonProperty
         private DataSourceFactory database = new DataSourceFactory();
 
+        @JsonProperty
         public DataSourceFactory getDataSourceFactory() {
             return database;
         }

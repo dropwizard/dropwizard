@@ -22,9 +22,9 @@ Like :ref:`man-jdbi`, your :ref:`configuration class <man-core-configuration>` n
     public class ExampleConfiguration extends Configuration {
         @Valid
         @NotNull
-        @JsonProperty("database")
         private DataSourceFactory database = new DataSourceFactory();
 
+        @JsonProperty("database")
         public DataSourceFactory getDataSourceFactory() {
             return database;
         }

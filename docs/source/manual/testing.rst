@@ -27,10 +27,7 @@ writing via a ``PUT`` request) and a response entity (e.g., when reading via a `
 .. code-block:: java
 
     public class Person {
-        @JsonProperty
         private String name;
-
-        @JsonProperty
         private String email;
 
         private Person() {
@@ -42,18 +39,22 @@ writing via a ``PUT`` request) and a response entity (e.g., when reading via a `
             this.email = email;
         }
 
+        @JsonProperty
         public String getName() {
             return name;
         }
 
+        @JsonProperty
         public void setName(String name) {
             this.name = name;
         }
 
+        @JsonProperty
         public String getEmail() {
             return email;
         }
 
+        @JsonProperty
         public void setEmail(String email) {
             this.email = email;
         }
