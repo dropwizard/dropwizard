@@ -28,9 +28,9 @@ To create a :ref:`managed <man-core-managed>`, instrumented ``HttpClient`` insta
     public class ExampleConfiguration extends Configuration {
         @Valid
         @NotNull
-        @JsonProperty
         private HttpClientConfiguration httpClient = new HttpClientConfiguration();
 
+        @JsonProperty("httpClient")
         public HttpClientConfiguration getHttpClientConfiguration() {
             return httpClient;
         }
@@ -129,9 +129,9 @@ To create a :ref:`managed <man-core-managed>`, instrumented ``JerseyClient`` ins
     public class ExampleConfiguration extends Configuration {
         @Valid
         @NotNull
-        @JsonProperty
         private JerseyClientConfiguration httpClient = new JerseyClientConfiguration();
 
+        @JsonProperty("httpClient")
         public JerseyClientConfiguration getJerseyClientConfiguration() {
             return httpClient;
         }
