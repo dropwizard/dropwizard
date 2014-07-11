@@ -24,7 +24,7 @@ To create a :ref:`managed <man-core-managed>`, instrumented ``DBI`` instance, yo
         @NotNull
         private DataSourceFactory database = new DataSourceFactory();
 
-        @JsonProperty
+        @JsonProperty("database")
         public DataSourceFactory getDataSourceFactory() {
             return database;
         }
