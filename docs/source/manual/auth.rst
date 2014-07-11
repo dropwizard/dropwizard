@@ -129,3 +129,12 @@ name but not require login), set the ``required`` attribute of the annotation to
 
 If there is no authenticated principal, ``null`` is used instead, and your resource method is still
 called.
+
+Protecting Admin
+====================
+
+To protect admin with basic auth use:
+
+.. code-block:: java
+
+    environment.admin().setSecurityHandler(new AdminConstraintSecurityHandler(...))
