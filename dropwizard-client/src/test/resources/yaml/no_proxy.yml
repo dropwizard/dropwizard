@@ -1,0 +1,3 @@
+timeout : 1000 ms
+connectionTimeout : 5000 ms
+timeToLive: 2 h

@@ -2,8 +2,11 @@ package io.dropwizard.client;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Optional;
+import io.dropwizard.client.proxy.ProxyConfiguration;
 import io.dropwizard.util.Duration;
 
+import javax.annotation.Nullable;
+import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -45,6 +48,10 @@ public class HttpClientConfiguration {
 
     @NotNull
     private Optional<String> userAgent = Optional.absent();
+
+    @Valid
+    @Nullable
+    private ProxyConfiguration proxyConfiguration;
 
     @JsonProperty
     public Duration getKeepAlive() {
@@ -144,5 +151,15 @@ public class HttpClientConfiguration {
     @JsonProperty
     public void setUserAgent(Optional<String> userAgent) {
         this.userAgent = userAgent;
+    }
+
+    @JsonProperty("proxy")
+    public ProxyConfiguration getProxyConfiguration() {
+        return proxyConfiguration;
+    }
+
+    @JsonProperty("proxy")
+    public void setProxyConfiguration(ProxyConfiguration proxyConfiguration) {
+        this.proxyConfiguration = proxyConfiguration;
     }
 }

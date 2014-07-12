@@ -1,0 +1,4 @@
+proxy:
+  host: '192.168.52.11'
+  port: 8080
+  schema : 'tcp'

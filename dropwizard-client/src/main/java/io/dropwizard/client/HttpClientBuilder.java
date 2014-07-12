@@ -6,10 +6,15 @@ import com.codahale.metrics.httpclient.HttpClientMetricNameStrategy;
 import com.codahale.metrics.httpclient.InstrumentedHttpClientConnectionManager;
 import com.codahale.metrics.httpclient.InstrumentedHttpRequestExecutor;
 import com.google.common.annotations.VisibleForTesting;
+import io.dropwizard.client.proxy.AuthConfiguration;
+import io.dropwizard.client.proxy.ProxyConfiguration;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.util.Duration;
 import org.apache.http.ConnectionReuseStrategy;
+import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.HttpRequestRetryHandler;
@@ -25,9 +30,11 @@ import org.apache.http.conn.socket.PlainConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.DefaultConnectionReuseStrategy;
 import org.apache.http.impl.NoConnectionReuseStrategy;
+import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.DefaultConnectionKeepAliveStrategy;
 import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
+import org.apache.http.impl.conn.DefaultProxyRoutePlanner;
 import org.apache.http.impl.conn.SystemDefaultDnsResolver;
 import org.apache.http.protocol.HttpContext;
 
@@ -240,6 +247,22 @@ public class HttpClientBuilder {
                     return (duration == -1) ? keepAlive : duration;
                 }
             });
+        }
+
+        // create a tunnel through a proxy host if it's specified in the config
+        ProxyConfiguration proxy = configuration.getProxyConfiguration();
+        if (proxy != null) {
+            HttpHost httpHost = new HttpHost(proxy.getHost(), proxy.getPresentPort(), proxy.getPresentScheme());
+            builder.setRoutePlanner(new DefaultProxyRoutePlanner(httpHost));
+            // if the proxy host requires authentication then add the host credentials to the credentials provider
+            AuthConfiguration auth = proxy.getAuth();
+            if (auth != null) {
+                if (credentialsProvider == null) {
+                    credentialsProvider = new BasicCredentialsProvider();
+                }
+                credentialsProvider.setCredentials(new AuthScope(httpHost),
+                        new UsernamePasswordCredentials(auth.getUsername(), auth.getPassword()));
+            }
         }
 
         if (credentialsProvider != null) {
