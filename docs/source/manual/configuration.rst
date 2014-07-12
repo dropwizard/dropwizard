@@ -872,6 +872,38 @@ userAgent                 ``applicationName`` (``clientName``)    The User-Agent
 ========================= ======================================  =============================================================================
 
 
+.. _man-configuration-clients-http-proxy:
+
+Proxy
+......
+
+.. code-block:: yaml
+
+    httpClient:
+      proxy:
+        host: 192.168.52.11
+        port: 8080
+        scheme : http
+        auth:
+          username: secret
+          password: stuff
+
+
+========= =================  ======================================================================
+Name      Default            Description
+========= =================  ======================================================================
+host      REQUIRED           The proxy server host name or ip address.
+port      (scheme default)   The proxy server port.
+                             If the port is not set then the scheme default port is used.
+scheme    http               The proxy server URI scheme. HTTP and HTTPS schemas are permitted.
+                             By default HTTP scheme is used.
+auth      (none)             The proxy server BASIC authentication credentials.
+                             If they are not set then no credentials will be passed to the server.
+username  REQUIRED           The username used to connect to the server.
+password  REQUIRED           The password used to connect to the server.
+========= =================  ======================================================================
+
+
 .. _man-configuration-clients-jersey:
 
 JerseyClient
