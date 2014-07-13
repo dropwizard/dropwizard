@@ -252,7 +252,7 @@ public class HttpClientBuilder {
         // create a tunnel through a proxy host if it's specified in the config
         ProxyConfiguration proxy = configuration.getProxyConfiguration();
         if (proxy != null) {
-            HttpHost httpHost = new HttpHost(proxy.getHost(), proxy.getPresentPort(), proxy.getPresentScheme());
+            HttpHost httpHost = new HttpHost(proxy.getHost(), proxy.getPort(), proxy.getScheme());
             builder.setRoutePlanner(new DefaultProxyRoutePlanner(httpHost));
             // if the proxy host requires authentication then add the host credentials to the credentials provider
             AuthConfiguration auth = proxy.getAuth();

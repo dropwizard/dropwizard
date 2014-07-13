@@ -328,7 +328,7 @@ public class HttpClientBuilderTest {
     @Test
     public void usesProxy() throws Exception {
         HttpClientConfiguration config = new HttpClientConfiguration();
-        ProxyConfiguration proxy = new ProxyConfiguration("192.168.52.11", Optional.of(8080));
+        ProxyConfiguration proxy = new ProxyConfiguration("192.168.52.11", 8080);
         config.setProxyConfiguration(proxy);
 
         checkProxy(config, new HttpHost("192.168.52.11", 8080, "http"));
@@ -337,7 +337,7 @@ public class HttpClientBuilderTest {
     @Test
     public void usesProxyWithoutPort() throws Exception {
         HttpClientConfiguration config = new HttpClientConfiguration();
-        ProxyConfiguration proxy = new ProxyConfiguration("192.168.52.11", Optional.<Integer>absent());
+        ProxyConfiguration proxy = new ProxyConfiguration("192.168.52.11");
         config.setProxyConfiguration(proxy);
 
         checkProxy(config, new HttpHost("192.168.52.11"));
@@ -347,8 +347,7 @@ public class HttpClientBuilderTest {
     public void usesProxyWithAuth() throws Exception {
         HttpClientConfiguration config = new HttpClientConfiguration();
         AuthConfiguration auth = new AuthConfiguration("secret", "stuff");
-        ProxyConfiguration proxy = new ProxyConfiguration("192.168.52.11", Optional.of(8080), Optional.of("http"),
-                Optional.of(auth));
+        ProxyConfiguration proxy = new ProxyConfiguration("192.168.52.11", 8080, "http", auth);
         config.setProxyConfiguration(proxy);
 
         DefaultHttpClient httpClient = checkProxy(config, new HttpHost("192.168.52.11", 8080, "http"));

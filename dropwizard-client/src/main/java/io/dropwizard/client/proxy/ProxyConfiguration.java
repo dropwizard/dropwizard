@@ -1,11 +1,9 @@
 package io.dropwizard.client.proxy;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.base.Objects;
-import com.google.common.base.Optional;
 import io.dropwizard.validation.OneOf;
+import io.dropwizard.validation.PortRange;
 import org.hibernate.validator.constraints.NotEmpty;
-import org.hibernate.validator.constraints.Range;
 
 import javax.annotation.Nullable;
 import javax.validation.Valid;
@@ -48,19 +46,14 @@ import javax.validation.constraints.NotNull;
  */
 public class ProxyConfiguration {
 
-    private static final String DEFAULT_SCHEME = "http";
-    private static final int DEFAULT_PORT = -1;
-
     @NotEmpty
     private String host;
 
-    @Range(min = 1, max = 65535)
-    @Nullable
-    private Integer port;
+    @PortRange(min = -1)
+    private Integer port = -1;
 
-    @OneOf({"http", "https", "HTTP", "HTTPS"})
-    @Nullable
-    private String scheme;
+    @OneOf(value = {"http", "https"}, ignoreCase = true)
+    private String scheme = "http";
 
     @Valid
     @Nullable
@@ -69,16 +62,19 @@ public class ProxyConfiguration {
     public ProxyConfiguration() {
     }
 
-    public ProxyConfiguration(@NotNull String host, Optional<Integer> port, Optional<String> scheme, Optional<AuthConfiguration> auth) {
+    public ProxyConfiguration(@NotNull String host) {
         this.host = host;
-        this.port = port.or(DEFAULT_PORT);
-        this.scheme = scheme.or(DEFAULT_SCHEME);
-        this.auth = auth.orNull();
     }
 
-    public ProxyConfiguration(@NotNull String host, Optional<Integer> port) {
-        this.host = host;
-        this.port = port.or(DEFAULT_PORT);
+    public ProxyConfiguration(@NotNull String host, int port) {
+        this(host);
+        this.port = port;
+    }
+
+    public ProxyConfiguration(@NotNull String host, int port, String scheme, AuthConfiguration auth) {
+        this(host, port);
+        this.scheme = scheme;
+        this.auth = auth;
     }
 
     @JsonProperty
@@ -101,10 +97,6 @@ public class ProxyConfiguration {
         this.port = port;
     }
 
-    public int getPresentPort() {
-        return Objects.firstNonNull(port, DEFAULT_PORT);
-    }
-
     @JsonProperty
     public String getScheme() {
         return scheme;
@@ -113,11 +105,6 @@ public class ProxyConfiguration {
     @JsonProperty
     public void setScheme(String scheme) {
         this.scheme = scheme;
-    }
-
-    @NotNull
-    public String getPresentScheme() {
-        return Objects.firstNonNull(scheme, DEFAULT_SCHEME);
     }
 
     public AuthConfiguration getAuth() {
