@@ -45,8 +45,8 @@ If your template ends with ``.ftl``, it'll be interpreted as a FreeMarker_ templ
 
 .. tip::
 
-    Dropwizard Views also support localized template files. It picks up the client's locale from
-    their ``Accept-Language``, so you can add a French template in ``person_fr.ftl`` or a Canadian
+    Dropwizard Freemarker_ Views also support localized template files. It picks up the client's locale
+    from their ``Accept-Language``, so you can add a French template in ``person_fr.ftl`` or a Canadian
     template in ``person_en_CA.ftl``.
 
 Your template file might look something like this:
