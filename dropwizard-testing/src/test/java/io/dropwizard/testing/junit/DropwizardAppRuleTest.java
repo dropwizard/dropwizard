@@ -13,15 +13,11 @@ import java.io.File;
 import java.io.PrintWriter;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import static org.hamcrest.core.Is.is;
-
-import static org.hamcrest.core.Is.is;
 import org.hibernate.validator.constraints.NotEmpty;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import org.junit.ClassRule;

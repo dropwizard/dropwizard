@@ -13,6 +13,7 @@ import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
 import org.junit.Test;
@@ -71,15 +72,12 @@ public class MustacheViewRendererTest extends JerseyTest {
     public void returnsA500ForViewsWithBadTemplatePaths() throws Exception {
         try {
             target("/test/bad").request().get(String.class);
-            // force failure, should never get here
-            assertThat(1 == 0).isTrue();
+            failBecauseExceptionWasNotThrown(WebApplicationException.class);
         } catch (WebApplicationException e) {
             assertThat(e.getResponse().getStatus())
                     .isEqualTo(500);
-            
-            final String responseStr = e.getResponse().readEntity(String.class);
 
-            assertThat(responseStr)
+            assertThat(e.getResponse().readEntity(String.class))
                     .isEqualTo("<html><head><title>Missing Template</title></head><body><h1>Missing Template</h1><p>Template /woo-oo-ahh.txt.mustache not found.</p></body></html>");
         }
     }

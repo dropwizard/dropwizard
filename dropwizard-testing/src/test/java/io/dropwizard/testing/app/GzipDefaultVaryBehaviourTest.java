@@ -30,8 +30,6 @@ public class GzipDefaultVaryBehaviourTest {
                 .header(ACCEPT_ENCODING, "gzip")
                 .get();
 
-        System.out.println("RESPONSE=" + clientResponse);
-        System.out.println("HEADERS=" + clientResponse.getHeaders());
         assertThat(clientResponse.getHeaders().get(VARY)).isEqualTo(asList((Object)ACCEPT_ENCODING));
         assertThat(clientResponse.getHeaders().get(CONTENT_ENCODING)).isEqualTo(asList((Object) "gzip"));
     }
