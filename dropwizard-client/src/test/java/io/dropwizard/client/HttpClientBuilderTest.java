@@ -552,10 +552,28 @@ public class HttpClientBuilderTest {
 
             }
         };
+
         HttpClientConfiguration config = new HttpClientConfiguration();
         config.setRetries(1);
-        AbstractHttpClient client = (AbstractHttpClient) builder.using(config).using(credentialsProvider).build("test");
 
-        assertThat(client.getCredentialsProvider()).isEqualTo(credentialsProvider);
+        final org.apache.http.impl.client.HttpClientBuilder apacheBuilder = PowerMockito.mock(org.apache.http.impl.client.HttpClientBuilder.class);
+        final CloseableHttpClient client = mock(CloseableHttpClient.class);
+        
+        PowerMockito.mockStatic(org.apache.http.impl.client.HttpClientBuilder.class);
+        when(org.apache.http.impl.client.HttpClientBuilder.create()).thenReturn(apacheBuilder);
+        when(apacheBuilder.setRequestExecutor(any(HttpRequestExecutor.class))).thenReturn(apacheBuilder);
+        when(apacheBuilder.setConnectionManager(any(HttpClientConnectionManager.class))).thenReturn(apacheBuilder).thenReturn(apacheBuilder);
+        when(apacheBuilder.setDefaultRequestConfig(any(RequestConfig.class))).thenReturn(apacheBuilder);
+        when(apacheBuilder.setDefaultSocketConfig(any(SocketConfig.class))).thenReturn(apacheBuilder);
+        when(apacheBuilder.setConnectionReuseStrategy(any(ConnectionReuseStrategy.class))).thenReturn(apacheBuilder);
+        when(apacheBuilder.setRetryHandler(any(HttpRequestRetryHandler.class))).thenReturn(apacheBuilder);
+        when(apacheBuilder.setKeepAliveStrategy(any(ConnectionKeepAliveStrategy.class))).thenReturn(apacheBuilder);
+        when(apacheBuilder.setUserAgent(any(String.class))).thenReturn(apacheBuilder);
+        when(apacheBuilder.build()).thenReturn(client);
+        
+        final CloseableHttpClient returnClient = builder.using(config).using(credentialsProvider).build("test"); 
+        final ArgumentCaptor<CredentialsProvider> argument = ArgumentCaptor.forClass(CredentialsProvider.class);
+        verify(apacheBuilder).setDefaultCredentialsProvider(argument.capture());        
+        assertThat(argument.getValue()).isEqualTo(credentialsProvider);
     }
 }

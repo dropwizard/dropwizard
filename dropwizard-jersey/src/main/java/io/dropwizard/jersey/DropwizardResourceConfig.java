@@ -9,6 +9,7 @@ import io.dropwizard.jersey.sessions.SessionFactoryProvider;
 import io.dropwizard.jersey.validation.ConstraintViolationExceptionMapper;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.ws.rs.Path;
 import javax.ws.rs.ext.Provider;
@@ -112,7 +113,7 @@ public class DropwizardResourceConfig extends ResourceConfig {
         this.urlPattern = urlPattern;
     }
 
-    private Set<String> getResources() {
+    private void logResources() {
         final ImmutableSet.Builder<String> builder = ImmutableSet.builder();
 
         for (Class<?> klass : getClasses()) {
@@ -130,7 +131,7 @@ public class DropwizardResourceConfig extends ResourceConfig {
         LOGGER.debug("resources = {}", builder.build());
     }
 
-    private Set<String> getProviders() {
+    private void logProviders() {
         final ImmutableSet.Builder<String> builder = ImmutableSet.builder();
 
         for (Class<?> klass : getClasses()) {
@@ -145,10 +146,10 @@ public class DropwizardResourceConfig extends ResourceConfig {
             }
         }
 
-        return builder.build();
+        LOGGER.debug("providers = {}", builder.build());
     }
 
-    public String getEndpointsInfo() {
+    private void logEndpoints() {
         final StringBuilder msg = new StringBuilder(1024);
         msg.append("The following paths were found for the configured resources:");
         msg.append(NEWLINE).append(NEWLINE);
@@ -179,7 +180,7 @@ public class DropwizardResourceConfig extends ResourceConfig {
             }
         }
 
-        return msg.toString();
+        LOGGER.info(msg.toString());
     }
 
     private void populateEndpoints(List<String> endpoints, String basePath, Class<?> klass,
