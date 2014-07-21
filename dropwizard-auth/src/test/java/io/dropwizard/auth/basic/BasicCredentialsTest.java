@@ -2,7 +2,7 @@ package io.dropwizard.auth.basic;
 
 import org.junit.Test;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class BasicCredentialsTest {
     private final BasicCredentials credentials = new BasicCredentials("u", "p");

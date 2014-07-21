@@ -14,7 +14,7 @@ import org.mockito.ArgumentCaptor;
 
 import javax.servlet.*;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 public class ServletEnvironmentTest {

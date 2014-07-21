@@ -12,7 +12,7 @@ import org.mockito.ArgumentCaptor;
 import javax.servlet.ServletRegistration;
 import java.net.URL;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 public class AssetsBundleTest {

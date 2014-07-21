@@ -7,7 +7,7 @@ import javax.validation.Validator;
 import java.util.Locale;
 
 import static io.dropwizard.validation.ConstraintViolations.format;
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assume.assumeTrue;
 
 public class OneOfValidatorTest {

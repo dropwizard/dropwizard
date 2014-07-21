@@ -6,8 +6,8 @@ import org.junit.Test;
 
 import java.sql.SQLFeatureNotSupportedException;
 
-import static org.fest.assertions.api.Assertions.assertThat;
-import static org.fest.assertions.api.Assertions.failBecauseExceptionWasNotThrown;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
 
 public class ManagedPooledDataSourceTest {
     private final PoolProperties config = new PoolProperties();

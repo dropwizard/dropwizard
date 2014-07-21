@@ -9,7 +9,7 @@ import javax.validation.Validator;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class DurationValidatorTest {
     @SuppressWarnings("unused")

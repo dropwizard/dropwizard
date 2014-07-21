@@ -8,7 +8,7 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import java.util.Locale;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class SizeValidatorTest {
     @SuppressWarnings("unused")

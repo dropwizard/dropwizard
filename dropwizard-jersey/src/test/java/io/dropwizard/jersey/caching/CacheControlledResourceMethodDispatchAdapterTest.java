@@ -9,7 +9,7 @@ import org.junit.Test;
 
 import javax.ws.rs.core.HttpHeaders;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class CacheControlledResourceMethodDispatchAdapterTest extends JerseyTest {
     static {

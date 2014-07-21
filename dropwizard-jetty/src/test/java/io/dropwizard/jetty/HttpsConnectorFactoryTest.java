@@ -17,7 +17,7 @@ import org.junit.Test;
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.fail;
 
 public class HttpsConnectorFactoryTest {

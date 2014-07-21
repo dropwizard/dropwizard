@@ -5,7 +5,7 @@ import org.junit.Test;
 
 import java.io.PrintWriter;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class TaskTest {
     private final Task task = new Task("test") {

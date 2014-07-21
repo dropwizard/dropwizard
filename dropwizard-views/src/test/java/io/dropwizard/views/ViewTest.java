@@ -2,7 +2,7 @@ package io.dropwizard.views;
 
 import org.junit.Test;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class ViewTest {
     private final View view = new View("/blah.tmp") {};

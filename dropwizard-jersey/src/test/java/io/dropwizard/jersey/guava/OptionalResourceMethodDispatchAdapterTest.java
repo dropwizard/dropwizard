@@ -7,8 +7,8 @@ import com.sun.jersey.test.framework.WebAppDescriptor;
 import io.dropwizard.logging.LoggingFactory;
 import org.junit.Test;
 
-import static org.fest.assertions.api.Assertions.assertThat;
-import static org.fest.assertions.api.Assertions.failBecauseExceptionWasNotThrown;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
 
 public class OptionalResourceMethodDispatchAdapterTest extends JerseyTest {
     static {

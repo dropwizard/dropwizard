@@ -10,8 +10,8 @@ import org.junit.Test;
 
 import javax.ws.rs.core.MediaType;
 
-import static org.fest.assertions.api.Assertions.assertThat;
-import static org.fest.assertions.api.Fail.failBecauseExceptionWasNotThrown;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Fail.failBecauseExceptionWasNotThrown;
 
 public class JsonProcessingExceptionMapperTest extends JerseyTest {
     static {

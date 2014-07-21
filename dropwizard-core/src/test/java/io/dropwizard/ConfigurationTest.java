@@ -7,7 +7,7 @@ import io.dropwizard.jetty.ConnectorFactory;
 import io.dropwizard.logging.AppenderFactory;
 import org.junit.Test;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class ConfigurationTest {
     private final Configuration configuration = new Configuration();

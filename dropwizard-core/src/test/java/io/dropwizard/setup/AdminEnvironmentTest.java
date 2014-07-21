@@ -10,7 +10,7 @@ import org.junit.Test;
 import javax.servlet.ServletRegistration;
 import java.io.PrintWriter;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class AdminEnvironmentTest {
     private final MutableServletContextHandler handler = new MutableServletContextHandler();

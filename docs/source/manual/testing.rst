@@ -89,7 +89,7 @@ Next, write a test for serializing a ``Person`` instance to JSON:
 .. code-block:: java
 
     import static io.dropwizard.testing.FixtureHelpers.*;
-    import static org.fest.assertions.api.Assertions.assertThat;
+    import static org.assertj.core.api.Assertions.assertThat;
     import io.dropwizard.jackson.Jackson;
     import org.junit.Test;
     import com.fasterxml.jackson.databind.ObjectMapper;
@@ -106,11 +106,11 @@ Next, write a test for serializing a ``Person`` instance to JSON:
         }
     }
 
-This test uses `FEST matchers`_ and JUnit_ to test that when a ``Person`` instance is serialized
+This test uses `AssertJ assertions`_ and JUnit_ to test that when a ``Person`` instance is serialized
 via Jackson it matches the JSON in the fixture file. (The comparison is done via a normalized JSON
 string representation, so whitespace doesn't affect the results.)
 
-.. _FEST matchers: https://code.google.com/p/fest/
+.. _AssertJ assertions: http://assertj.org/assertj-core-conditions.html
 .. _JUnit: http://www.junit.org/
 
 .. _man-testing-representations-deserialization:
@@ -123,7 +123,7 @@ Next, write a test for deserializing a ``Person`` instance from JSON:
 .. code-block:: java
 
     import static io.dropwizard.testing.FixtureHelpers.*;
-    import static org.fest.assertions.api.Assertions.assertThat;
+    import static org.assertj.core.api.Assertions.assertThat;
     import io.dropwizard.jackson.Jackson;
     import org.junit.Test;
     import com.fasterxml.jackson.databind.ObjectMapper;
@@ -141,7 +141,7 @@ Next, write a test for deserializing a ``Person`` instance from JSON:
     }
 
 
-This test uses `FEST matchers`_ and JUnit_ to test that when a ``Person`` instance is
+This test uses `AssertJ assertions`_ and JUnit_ to test that when a ``Person`` instance is
 deserialized via Jackson from the specified JSON fixture it matches the given object.
 
 .. _man-testing-resources:
@@ -157,7 +157,7 @@ loads a given resource instance in an in-memory Jersey server:
 
 .. code-block:: java
 
-    import static org.fest.assertions.api.Assertions.assertThat;
+    import static org.assertj.core.api.Assertions.assertThat;
     import static org.mockito.Mockito.*;
 
     public class PersonResourceTest {

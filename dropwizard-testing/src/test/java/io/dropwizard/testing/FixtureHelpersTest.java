@@ -3,7 +3,7 @@ package io.dropwizard.testing;
 import org.junit.Test;
 
 import static io.dropwizard.testing.FixtureHelpers.fixture;
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class FixtureHelpersTest {
     @Test

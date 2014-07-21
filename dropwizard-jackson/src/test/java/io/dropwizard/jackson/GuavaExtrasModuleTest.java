@@ -9,7 +9,7 @@ import com.google.common.net.HostAndPort;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class GuavaExtrasModuleTest {
     private final ObjectMapper mapper = new ObjectMapper();

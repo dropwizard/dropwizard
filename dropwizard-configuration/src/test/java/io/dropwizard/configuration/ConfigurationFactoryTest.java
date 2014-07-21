@@ -5,7 +5,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.io.Resources;
 import io.dropwizard.jackson.Jackson;
-import org.fest.assertions.data.MapEntry;
+import org.assertj.core.data.MapEntry;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -17,8 +17,8 @@ import javax.validation.constraints.Pattern;
 import java.io.File;
 import java.util.*;
 
-import static org.fest.assertions.api.Assertions.assertThat;
-import static org.fest.assertions.api.Assertions.failBecauseExceptionWasNotThrown;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
 
 public class ConfigurationFactoryTest {
 

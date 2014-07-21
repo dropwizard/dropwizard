@@ -7,7 +7,7 @@ import javax.validation.Valid;
 import javax.validation.Validation;
 import javax.validation.Validator;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @SuppressWarnings({"FieldMayBeFinal","MethodMayBeStatic","UnusedDeclaration"})
 public class MethodValidatorTest {

@@ -9,8 +9,8 @@ import org.junit.Test;
 
 import javax.ws.rs.core.MediaType;
 
-import static org.fest.assertions.api.Assertions.assertThat;
-import static org.fest.assertions.api.Assertions.failBecauseExceptionWasNotThrown;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
 
 public class LoggingExceptionMapperTest extends JerseyTest {
     static {
