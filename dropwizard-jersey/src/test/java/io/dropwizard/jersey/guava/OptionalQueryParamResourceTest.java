@@ -9,7 +9,7 @@ import org.junit.Test;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.core.Application;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class OptionalQueryParamResourceTest extends JerseyTest {
 

@@ -1,6 +1,5 @@
 package io.dropwizard.jersey.caching;
 
-import static org.fest.assertions.api.Assertions.assertThat;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.logging.LoggingFactory;
 
