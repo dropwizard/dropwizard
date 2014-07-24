@@ -152,6 +152,8 @@ Extends the attributes that are available to :ref:`all servers <man-configuratio
     server:
       adminMinThreads: 1
       adminMaxThreads: 64
+      adminContextPath: /
+      applicationContextPath: /
       applicationConnectors:
         - type: http
           port: 8080
@@ -180,6 +182,8 @@ adminConnectors           An `HTTP connector`_      An `HTTP connector`_ listeni
                                                     handle admin requests.
 adminMinThreads           1                         The minimum number of threads to use for admin requests.
 adminMaxThreads           64                        The maximum number of threads to use for admin requests.
+adminContextPath          /                         The context path of the admin servlets, including metrics and tasks.
+applicationContextPath    /                         The context path of the application servlets, including Jersey.
 ========================  =======================   =====================================================================
 
 .. _`HTTP connector`:  https://github.com/dropwizard/dropwizard/blob/master/dropwizard-jetty/src/main/java/io/dropwizard/jetty/HttpConnectorFactory.java
