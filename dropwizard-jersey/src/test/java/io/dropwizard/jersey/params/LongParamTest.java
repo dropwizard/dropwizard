@@ -1,5 +1,6 @@
 package io.dropwizard.jersey.params;
 
+import io.dropwizard.jersey.errors.ErrorMessage;
 import org.junit.Test;
 
 import javax.ws.rs.WebApplicationException;
@@ -29,7 +30,8 @@ public class LongParamTest {
             assertThat(response.getStatus())
                     .isEqualTo(400);
 
-            assertThat((String) response.getEntity())
+            ErrorMessage entity = (ErrorMessage) response.getEntity();
+            assertThat(entity.getMessage())
                     .isEqualTo("\"foo\" is not a number.");
         }
     }

@@ -1,5 +1,6 @@
 package io.dropwizard.jersey.params;
 
+import io.dropwizard.jersey.errors.ErrorMessage;
 import org.junit.Test;
 
 import javax.ws.rs.WebApplicationException;
@@ -53,7 +54,8 @@ public class BooleanParamTest {
             assertThat(response.getStatus())
                     .isEqualTo(400);
 
-            assertThat((String) response.getEntity())
+            ErrorMessage entity = (ErrorMessage) response.getEntity();
+            assertThat(entity.getMessage())
                     .isEqualTo("\"null\" must be \"true\" or \"false\".");
         }
     }
@@ -70,7 +72,8 @@ public class BooleanParamTest {
             assertThat(response.getStatus())
                     .isEqualTo(400);
 
-            assertThat(response.getEntity())
+            ErrorMessage entity = (ErrorMessage) response.getEntity();
+            assertThat(entity.getMessage())
                     .isEqualTo("\"foo\" must be \"true\" or \"false\".");
         }
     }
