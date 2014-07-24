@@ -58,6 +58,7 @@ shutdownGracePeriod    30 seconds                                       The maxi
                                                                         to cleanly shutdown before forcibly terminating them.
 allowedMethods         ``GET``, ``POST``, ``PUT``, ``DELETE``,          The set of allowed HTTP methods. Others will be rejected with a
                        ``HEAD``, ``OPTIONS``, ``PATCH``                 405 Method Not Allowed response.
+rootPath               /*                                               The URL pattern from which the JAX-RS resources will be served.
 ====================== ===============================================  =============================================================================
 
 
