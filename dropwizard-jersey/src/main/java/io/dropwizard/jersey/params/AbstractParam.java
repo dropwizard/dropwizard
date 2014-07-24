@@ -5,6 +5,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import io.dropwizard.jersey.errors.ErrorMessage;
+
 /**
  * An abstract base class from which to build Jersey parameter classes.
  *
@@ -40,7 +42,7 @@ public abstract class AbstractParam<T> {
      */
     protected Response error(String input, Exception e) {
         return Response.status(getErrorStatus())
-                       .entity(errorMessage(input, e))
+                       .entity(new ErrorMessage(errorMessage(input, e)))
                        .type(mediaType())
                        .build();
     }
@@ -51,7 +53,7 @@ public abstract class AbstractParam<T> {
      * @return the media type of the error message entity
      */
     protected MediaType mediaType() {
-        return MediaType.TEXT_PLAIN_TYPE;
+        return MediaType.APPLICATION_JSON_TYPE;
     }
 
     /**
