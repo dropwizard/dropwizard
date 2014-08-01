@@ -45,7 +45,7 @@ Then, in your application's ``run`` method, create a new ``HttpClientBuilder``:
                     Environment environment) {
         final HttpClient httpClient = new HttpClientBuilder(environment).using(config.getHttpClientConfiguration())
                                                                         .build();
-        environment.addResource(new ExternalServiceResource(httpClient));
+        environment.jersey().register(new ExternalServiceResource(httpClient));
     }
 
 .. _man-client-apache-metrics:
@@ -147,6 +147,6 @@ Then, in your service's ``run`` method, create a new ``JerseyClientBuilder``:
 
         final Client client = new JerseyClientBuilder(environment).using(config.getJerseyClientConfiguration())
                                                                   .build(getName());                                                       
-        environment.addResource(new ExternalServiceResource(client));
+        environment.jersey().register(new ExternalServiceResource(client));
     }
 
