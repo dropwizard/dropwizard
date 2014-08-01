@@ -4,20 +4,22 @@ import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.test.framework.AppDescriptor;
-import com.sun.jersey.test.framework.JerseyTest;
-import com.sun.jersey.test.framework.LowLevelAppDescriptor;
+
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.jersey.jackson.JacksonMessageBodyProvider;
 import io.dropwizard.logging.LoggingFactory;
+
+import org.glassfish.jersey.test.JerseyTest;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
 import javax.validation.Validation;
 import javax.validation.Validator;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.core.Application;
+
 import java.util.Map;
 import java.util.Set;
 
@@ -34,7 +36,6 @@ public class ResourceTestRule implements TestRule {
 
         private final Set<Object> singletons = Sets.newHashSet();
         private final Set<Class<?>> providers = Sets.newHashSet();
-        private final Map<String, Boolean> features = Maps.newHashMap();
         private final Map<String, Object> properties = Maps.newHashMap();
         private ObjectMapper mapper = Jackson.newObjectMapper();
         private Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
@@ -64,18 +65,13 @@ public class ResourceTestRule implements TestRule {
             return this;
         }
 
-        public Builder addFeature(String feature, Boolean value) {
-            features.put(feature, value);
-            return this;
-        }
-
         public Builder addProperty(String property, Object value) {
             properties.put(property, value);
             return this;
         }
 
         public ResourceTestRule build() {
-            return new ResourceTestRule(singletons, providers, features, properties, mapper, validator);
+            return new ResourceTestRule(singletons, providers, properties, mapper, validator);
         }
     }
 
@@ -85,7 +81,6 @@ public class ResourceTestRule implements TestRule {
 
     private final Set<Object> singletons;
     private final Set<Class<?>> providers;
-    private final Map<String, Boolean> features;
     private final Map<String, Object> properties;
     private final ObjectMapper mapper;
     private final Validator validator;
@@ -94,13 +89,11 @@ public class ResourceTestRule implements TestRule {
 
     private ResourceTestRule(Set<Object> singletons,
                              Set<Class<?>> providers,
-                             Map<String, Boolean> features,
                              Map<String, Object> properties,
                              ObjectMapper mapper,
                              Validator validator) {
         this.singletons = singletons;
         this.providers = providers;
-        this.features = features;
         this.properties = properties;
         this.mapper = mapper;
         this.validator = validator;
@@ -130,20 +123,18 @@ public class ResourceTestRule implements TestRule {
                 try {
                     test = new JerseyTest() {
                         @Override
-                        protected AppDescriptor configure() {
-                            final DropwizardResourceConfig config = DropwizardResourceConfig.forTesting(new MetricRegistry());
+                        protected Application configure() {
+                            DropwizardResourceConfig config = DropwizardResourceConfig.forTesting(new MetricRegistry());
                             for (Class<?> provider : providers) {
-                                config.getClasses().add(provider);
-                            }
-                            for (Map.Entry<String, Boolean> feature : features.entrySet()) {
-                                config.getFeatures().put(feature.getKey(), feature.getValue());
+                                config.register(provider);
                             }
                             for (Map.Entry<String, Object> property : properties.entrySet()) {
-                                config.getProperties().put(property.getKey(), property.getValue());
+                                config.property(property.getKey(), property.getValue());
                             }
-                            config.getSingletons().add(new JacksonMessageBodyProvider(mapper, validator));
-                            config.getSingletons().addAll(singletons);
-                            return new LowLevelAppDescriptor.Builder(config).build();
+                            config.register(new JacksonMessageBodyProvider(mapper, validator));
+                            for (Object singleton : singletons)
+                                config.register(singleton);
+                            return config;
                         }
                     };
                     test.setUp();

@@ -1,6 +1,7 @@
 package io.dropwizard.testing.junit;
 
-import com.sun.jersey.api.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+
 import org.junit.ClassRule;
 import org.junit.Test;
 
@@ -19,8 +20,10 @@ public class DropwizardServiceRuleConfigOverrideTest {
 
     @Test
     public void supportsConfigAttributeOverrides() {
-        final String content = new Client().resource("http://localhost:" + RULE.getLocalPort() + "/test")
-                                           .get(String.class);
+        final String content = ClientBuilder.newClient().target("http://localhost:" +
+                RULE.getLocalPort()
+                +"/test")
+                .request().get(String.class);
 
         assertThat(content, is("A new way to say Hooray!"));
     }

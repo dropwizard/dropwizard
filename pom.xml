@@ -51,9 +51,9 @@
         <dropwizard.url>http://www.dropwizard.io/${project.version}</dropwizard.url>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <metrics3.version>3.0.2</metrics3.version>
-        <jersey.version>1.18.1</jersey.version>
-        <jackson.api.version>2.4.0</jackson.api.version><!-- internally Jackson doesn't do bug fix releases for its API modules -->
+        <metrics3.version>3.1.0-SNAPSHOT</metrics3.version>
+        <jersey.version>2.9</jersey.version>
+        <jackson.api.version>2.4.0</jackson.api.version>
         <jackson.version>2.4.1</jackson.version>
         <jackson.databind.version>2.4.1.1</jackson.databind.version>
         <logback.version>1.1.2</logback.version>

@@ -26,7 +26,7 @@ public class JerseyClientConfiguration extends HttpClientConfiguration {
     private int maxThreads = 128;
 
     private boolean gzipEnabled = true;
-
+    
     private boolean gzipEnabledForRequests = true;
 
     @JsonProperty
@@ -58,7 +58,7 @@ public class JerseyClientConfiguration extends HttpClientConfiguration {
     public void setGzipEnabled(boolean enabled) {
         this.gzipEnabled = enabled;
     }
-
+    
     @JsonProperty
     public boolean isGzipEnabledForRequests() {
         return gzipEnabledForRequests;
@@ -74,7 +74,7 @@ public class JerseyClientConfiguration extends HttpClientConfiguration {
     public boolean isThreadPoolSizedCorrectly() {
         return minThreads <= maxThreads;
     }
-
+    
     @JsonIgnore
     @ValidationMethod(message = ".gzipEnabledForRequests requires gzipEnabled set to true")
     public boolean isCompressionConfigurationValid() {

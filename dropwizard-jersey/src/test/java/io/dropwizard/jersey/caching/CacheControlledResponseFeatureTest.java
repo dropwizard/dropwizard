@@ -1,29 +1,35 @@
 package io.dropwizard.jersey.caching;
 
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.test.framework.AppDescriptor;
-import com.sun.jersey.test.framework.JerseyTest;
-import com.sun.jersey.test.framework.WebAppDescriptor;
+import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.logging.LoggingFactory;
-import org.junit.Test;
 
+import javax.ws.rs.core.Application;
 import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.Response;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class CacheControlledResourceMethodDispatchAdapterTest extends JerseyTest {
+import org.glassfish.jersey.server.ResourceConfig;
+import org.glassfish.jersey.test.JerseyTest;
+import org.junit.Test;
+
+import com.codahale.metrics.MetricRegistry;
+
+public class CacheControlledResponseFeatureTest extends JerseyTest {
     static {
         LoggingFactory.bootstrap();
     }
 
     @Override
-    protected AppDescriptor configure() {
-        return new WebAppDescriptor.Builder("io.dropwizard.jersey.caching").build();
+    protected Application configure() {
+        ResourceConfig rc = DropwizardResourceConfig.forTesting(new MetricRegistry());
+        rc = rc.register(CachingResource.class);
+        return rc;
     }
 
     @Test
     public void immutableResponsesHaveCacheControlHeaders() throws Exception {
-        final ClientResponse response = resource().path("/caching/immutable").get(ClientResponse.class);
+        final Response response = target("/caching/immutable").request().get();
 
         assertThat(response.getHeaders().get(HttpHeaders.CACHE_CONTROL))
                 .containsOnly("no-transform, max-age=31536000");
@@ -31,15 +37,15 @@ public class CacheControlledResourceMethodDispatchAdapterTest extends JerseyTest
 
     @Test
     public void privateResponsesHaveCacheControlHeaders() throws Exception {
-        final ClientResponse response = resource().path("/caching/private").get(ClientResponse.class);
-
+        final Response response = target("/caching/private").request().get();
+        
         assertThat(response.getHeaders().get(HttpHeaders.CACHE_CONTROL))
                 .containsOnly("private, no-transform");
     }
 
     @Test
     public void maxAgeResponsesHaveCacheControlHeaders() throws Exception {
-        final ClientResponse response = resource().path("/caching/max-age").get(ClientResponse.class);
+        final Response response = target("/caching/max-age").request().get();
 
         assertThat(response.getHeaders().get(HttpHeaders.CACHE_CONTROL))
                 .containsOnly("no-transform, max-age=1123200");
@@ -47,7 +53,7 @@ public class CacheControlledResourceMethodDispatchAdapterTest extends JerseyTest
 
     @Test
     public void noCacheResponsesHaveCacheControlHeaders() throws Exception {
-        final ClientResponse response = resource().path("/caching/no-cache").get(ClientResponse.class);
+        final Response response = target("/caching/no-cache").request().get();
 
         assertThat(response.getHeaders().get(HttpHeaders.CACHE_CONTROL))
                 .containsOnly("no-cache, no-transform");
@@ -55,7 +61,7 @@ public class CacheControlledResourceMethodDispatchAdapterTest extends JerseyTest
 
     @Test
     public void noStoreResponsesHaveCacheControlHeaders() throws Exception {
-        final ClientResponse response = resource().path("/caching/no-store").get(ClientResponse.class);
+        final Response response = target("/caching/no-store").request().get();
 
         assertThat(response.getHeaders().get(HttpHeaders.CACHE_CONTROL))
                 .containsOnly("no-store, no-transform");
@@ -63,7 +69,7 @@ public class CacheControlledResourceMethodDispatchAdapterTest extends JerseyTest
 
     @Test
     public void noTransformResponsesHaveCacheControlHeaders() throws Exception {
-        final ClientResponse response = resource().path("/caching/no-transform").get(ClientResponse.class);
+        final Response response = target("/caching/no-transform").request().get();
 
         assertThat(response.getHeaders().get(HttpHeaders.CACHE_CONTROL))
                 .isNull();
@@ -71,7 +77,7 @@ public class CacheControlledResourceMethodDispatchAdapterTest extends JerseyTest
 
     @Test
     public void mustRevalidateResponsesHaveCacheControlHeaders() throws Exception {
-        final ClientResponse response = resource().path("/caching/must-revalidate").get(ClientResponse.class);
+        final Response response = target("/caching/must-revalidate").request().get();
 
         assertThat(response.getHeaders().get(HttpHeaders.CACHE_CONTROL))
                 .containsOnly("no-transform, must-revalidate");
@@ -79,7 +85,7 @@ public class CacheControlledResourceMethodDispatchAdapterTest extends JerseyTest
 
     @Test
     public void proxyRevalidateResponsesHaveCacheControlHeaders() throws Exception {
-        final ClientResponse response = resource().path("/caching/proxy-revalidate").get(ClientResponse.class);
+        final Response response = target("/caching/proxy-revalidate").request().get();
 
         assertThat(response.getHeaders().get(HttpHeaders.CACHE_CONTROL))
                 .containsOnly("no-transform, proxy-revalidate");
@@ -87,7 +93,7 @@ public class CacheControlledResourceMethodDispatchAdapterTest extends JerseyTest
 
     @Test
     public void sharedMaxAgeResponsesHaveCacheControlHeaders() throws Exception {
-        final ClientResponse response = resource().path("/caching/shared-max-age").get(ClientResponse.class);
+        final Response response = target("/caching/shared-max-age").request().get();
 
         assertThat(response.getHeaders().get(HttpHeaders.CACHE_CONTROL))
                 .containsOnly("no-transform, s-maxage=46800");

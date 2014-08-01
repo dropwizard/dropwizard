@@ -5,8 +5,10 @@ import javax.persistence.Entity;
 import io.dropwizard.Configuration;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
-import com.sun.jersey.core.spi.scanning.PackageNamesScanner;
-import com.sun.jersey.spi.scanning.AnnotationScannerListener;
+import java.io.IOException;
+import java.io.InputStream;
+import org.glassfish.jersey.server.internal.scanning.PackageNamesScanner;
+import org.glassfish.jersey.server.internal.scanning.AnnotationAcceptingListener;
 
 /**
  * Extension of HibernateBundle that scans given package for entites instead of giving them by hand.
@@ -37,11 +39,28 @@ public abstract class ScanningHibernateBundle<T extends Configuration> extends H
     public static ImmutableList<Class<?>> findEntityClassesFromDirectory(String pckg) {
         Builder<Class<?>> builder = ImmutableList.<Class<?>>builder();
 
-        PackageNamesScanner scanner = new PackageNamesScanner(new String[] {pckg});
+        PackageNamesScanner scanner = new PackageNamesScanner(new String[] {pckg}, true);
 
         @SuppressWarnings("unchecked")
-        final AnnotationScannerListener asl = new AnnotationScannerListener(Entity.class);
-        scanner.scan(asl);
+        final AnnotationAcceptingListener asl = new AnnotationAcceptingListener(Entity.class);
+        
+        while (scanner.hasNext()) {
+          final String next = scanner.next();
+                if (asl.accept(next)) {
+                    final InputStream in = scanner.open();
+                    try {
+                        asl.process(next, in);
+                    } catch (IOException e) {
+                      throw new RuntimeException("AnnotationAcceptingListener failed to process scanned resource: " + next);
+                    } finally {
+                        try {
+                            in.close();
+                        } catch (IOException ex) {
+                            throw new RuntimeException("Error closing resource stream", ex);
+                        }
+                    }
+                }
+            }
 
         for (Class<?> clazz : asl.getAnnotatedClasses()) {
             builder.add(clazz);

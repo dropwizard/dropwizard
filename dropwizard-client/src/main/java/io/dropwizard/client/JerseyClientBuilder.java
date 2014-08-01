@@ -1,30 +1,29 @@
 package io.dropwizard.client;
 
+import com.codahale.metrics.MetricRegistry;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import static com.google.common.base.Preconditions.checkNotNull;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import io.dropwizard.jersey.gzip.ConfiguredGZipEncoder;
+import io.dropwizard.jersey.gzip.GZipDecoder;
 import io.dropwizard.jersey.jackson.JacksonMessageBodyProvider;
 import io.dropwizard.setup.Environment;
-
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
-
 import javax.validation.Validation;
 import javax.validation.Validator;
-
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.core.Configuration;
 import org.apache.http.client.HttpRequestRetryHandler;
+import org.apache.http.config.Registry;
 import org.apache.http.conn.DnsResolver;
-import org.apache.http.conn.scheme.SchemeRegistry;
+import org.apache.http.conn.socket.ConnectionSocketFactory;
+import org.glassfish.jersey.apache.connector.ApacheConnectorProvider;
+import org.glassfish.jersey.client.ClientConfig;
 
-import com.codahale.metrics.MetricRegistry;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.filter.GZIPContentEncodingFilter;
-import com.sun.jersey.client.apache4.ApacheHttpClient4;
-import com.sun.jersey.client.apache4.ApacheHttpClient4Handler;
-import com.sun.jersey.client.apache4.config.ApacheHttpClient4Config;
-import com.sun.jersey.client.apache4.config.DefaultApacheHttpClient4Config;
 
 /**
  * A convenience class for building {@link Client} instances.
@@ -44,7 +43,6 @@ public class JerseyClientBuilder {
     private final HttpClientBuilder builder;
     private final List<Object> singletons = Lists.newArrayList();
     private final List<Class<?>> providers = Lists.newArrayList();
-    private final Map<String, Boolean> features = Maps.newLinkedHashMap();
     private final Map<String, Object> properties = Maps.newLinkedHashMap();
 
     private JerseyClientConfiguration configuration = new JerseyClientConfiguration();
@@ -82,19 +80,6 @@ public class JerseyClientBuilder {
      */
     public JerseyClientBuilder withProvider(Class<?> klass) {
         providers.add(checkNotNull(klass));
-        return this;
-    }
-
-    /**
-     * Sets the state of the given Jersey feature.
-     *
-     * @param featureName  the name of the Jersey feature
-     * @param featureState the state of the Jersey feature
-     * @return {@code this}
-     */
-    @SuppressWarnings("UnusedDeclaration") // basically impossible to test
-    public JerseyClientBuilder withFeature(String featureName, boolean featureState) {
-        features.put(featureName, featureState);
         return this;
     }
 
@@ -157,12 +142,12 @@ public class JerseyClientBuilder {
     }
 
     /**
-     * Use the given {@link SchemeRegistry} instance.
+     * Use the given {@link Registry} instance.
      *
-     * @param registry a {@link SchemeRegistry} instance
+     * @param registry a {@link Registry} instance
      * @return {@code this}
      */
-    public JerseyClientBuilder using(SchemeRegistry registry) {
+    public JerseyClientBuilder using(Registry<ConnectionSocketFactory> registry) {
         builder.using(registry);
         return this;
     }
@@ -221,27 +206,29 @@ public class JerseyClientBuilder {
                          ObjectMapper objectMapper,
                          Validator validator,
                          String name) {
-        final Client client = new ApacheHttpClient4(buildHandler(name), buildConfig(objectMapper));
-        client.setExecutorService(threadPool);
+        final Client client = ClientBuilder.newClient(buildConfig(threadPool, objectMapper));
 
         if (configuration.isGzipEnabled()) {
-            client.addFilter(new GZIPContentEncodingFilter(configuration.isGzipEnabledForRequests()));
+            client.register(new GZipDecoder());
+            client.register(new ConfiguredGZipEncoder(configuration.isGzipEnabledForRequests()));
         }
 
         return client;
     }
 
-    private ApacheHttpClient4Handler buildHandler(String name) {
-        return new ApacheHttpClient4Handler(builder.build(name), null, true);
-    }
-
-    private ApacheHttpClient4Config buildConfig(ObjectMapper objectMapper) {
-        final ApacheHttpClient4Config config = new DefaultApacheHttpClient4Config();
-        config.getSingletons().addAll(singletons);
-        config.getSingletons().add(new JacksonMessageBodyProvider(objectMapper, validator));
-        config.getClasses().addAll(providers);
-        config.getFeatures().putAll(features);
-        config.getProperties().putAll(properties);
+    private Configuration buildConfig(ExecutorService threadPool,
+            ObjectMapper objectMapper) {
+        ClientConfig config = new ClientConfig();
+        for (Object singleton : this.singletons)
+            config = config.register(singleton);
+        for (Class<?> provider : this.providers)
+            config = config.register(provider);
+        config = config.register(new JacksonMessageBodyProvider(objectMapper, validator));
+        for (Map.Entry<String, Object> property : this.properties.entrySet())
+            config = config.property(property.getKey(), property.getValue());
+        config.register(new DropwizardExecutorProvider (threadPool));
+        config = config.connectorProvider(new ApacheConnectorProvider());
+        
         return config;
     }
 }

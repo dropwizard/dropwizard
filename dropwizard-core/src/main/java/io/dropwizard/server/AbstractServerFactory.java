@@ -14,6 +14,7 @@ import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
 import com.google.common.io.Resources;
 import io.dropwizard.jersey.filter.AllowedMethodsFilter;
+import org.glassfish.jersey.servlet.ServletContainer;
 import io.dropwizard.jersey.jackson.JacksonMessageBodyProvider;
 import io.dropwizard.jersey.setup.JerseyEnvironment;
 import io.dropwizard.jetty.GzipFilterFactory;
