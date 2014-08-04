@@ -139,6 +139,14 @@
                 <role>committer</role>
             </roles>
         </developer>
+        <developer>
+            <name>Glenn McAllister</name>
+            <email>glenn.mcallister@gmail.com</email>
+            <timezone>America/Toronto</timezone>
+            <roles>
+                <role>committer</role>
+            </roles>
+        </developer>
     </developers>
 
     <licenses>
