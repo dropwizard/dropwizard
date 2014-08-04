@@ -29,4 +29,9 @@
         <Bug pattern="RCN_REDUNDANT_NULLCHECK_OF_NULL_VALUE"/>
         <Class name="io.dropwizard.configuration.ConfigurationFactory"/>
     </Match>
+
+    <!-- Ignore generated protocol buffers files -->
+    <Match>
+        <Package name="io.dropwizard.jersey.protobuf.protos"/>
+    </Match>
 </FindBugsFilter>
