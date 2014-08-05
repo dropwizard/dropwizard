@@ -32,7 +32,7 @@ public class LoggingExceptionMapperTest extends JerseyTest {
                     .isEqualTo(500);
 
             assertThat(e.getResponse().getEntity(String.class))
-                    .startsWith("{\"message\":\"There was an error processing your request. It has been logged (ID ");
+                    .startsWith("{\"code\":500,\"message\":\"There was an error processing your request. It has been logged (ID ");
         }
     }
 }
