@@ -2,6 +2,7 @@ package io.dropwizard.testing.junit;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
 import io.dropwizard.cli.ServerCommand;
@@ -16,7 +17,7 @@ import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
 import javax.annotation.Nullable;
-import java.util.Enumeration;
+import java.util.List;
 
 /**
  * A JUnit rule for starting and stopping your application at the start and end of a test class.
@@ -31,6 +32,7 @@ public class DropwizardAppRule<C extends Configuration> implements TestRule {
 
     private final Class<? extends Application<C>> applicationClass;
     private final String configPath;
+    private final List<ConfigOverride> configOverrides;
 
     private C configuration;
     private Application<C> application;
@@ -42,9 +44,7 @@ public class DropwizardAppRule<C extends Configuration> implements TestRule {
                              ConfigOverride... configOverrides) {
         this.applicationClass = applicationClass;
         this.configPath = configPath;
-        for (ConfigOverride configOverride: configOverrides) {
-            configOverride.addToSystemProperties();
-        }
+        this.configOverrides = Lists.newArrayList(configOverrides);
     }
 
     @Override
@@ -52,6 +52,7 @@ public class DropwizardAppRule<C extends Configuration> implements TestRule {
         return new Statement() {
             @Override
             public void evaluate() throws Throwable {
+                applyConfigOverrides();
                 startIfRequired();
                 try {
                     base.evaluate();
@@ -64,12 +65,15 @@ public class DropwizardAppRule<C extends Configuration> implements TestRule {
         };
     }
 
+    private void applyConfigOverrides() {
+        for (ConfigOverride configOverride: configOverrides) {
+            configOverride.addToSystemProperties();
+        }
+    }
+
     private void resetConfigOverrides() {
-        for (Enumeration<?> props = System.getProperties().propertyNames(); props.hasMoreElements();) {
-            String keyString = (String) props.nextElement();
-            if (keyString.startsWith("dw.")) {
-                System.clearProperty(keyString);
-            }
+        for (ConfigOverride configOverride: configOverrides) {
+            configOverride.removeFromSystemProperties();
         }
     }
 
@@ -85,11 +89,11 @@ public class DropwizardAppRule<C extends Configuration> implements TestRule {
                 @Override
                 public void run(C configuration, Environment environment) throws Exception {
                     environment.lifecycle().addServerLifecycleListener(new ServerLifecycleListener() {
-                                    @Override
-                                    public void serverStarted(Server server) {
-                                        jettyServer = server;
-                                    }
-                                });
+                        @Override
+                        public void serverStarted(Server server) {
+                            jettyServer = server;
+                        }
+                    });
                     DropwizardAppRule.this.configuration = configuration;
                     DropwizardAppRule.this.environment = environment;
                     super.run(configuration, environment);

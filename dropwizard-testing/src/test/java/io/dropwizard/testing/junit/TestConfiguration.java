@@ -10,7 +10,15 @@ public class TestConfiguration extends Configuration {
     @NotEmpty
     private String message;
 
+    @JsonProperty
+    @NotEmpty
+    private String extra;
+
     public String getMessage() {
         return message;
+    }
+
+    public String getExtra() {
+        return extra;
     }
 }

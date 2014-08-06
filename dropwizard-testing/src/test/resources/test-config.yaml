@@ -1,4 +1,5 @@
 message: "Yes, it's here"
+extra: "Something extra"
 server:
   applicationConnectors:
     - type: http
