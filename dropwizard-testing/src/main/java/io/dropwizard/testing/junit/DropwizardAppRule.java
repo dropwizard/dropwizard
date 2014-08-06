@@ -44,7 +44,9 @@ public class DropwizardAppRule<C extends Configuration> implements TestRule {
                              ConfigOverride... configOverrides) {
         this.applicationClass = applicationClass;
         this.configPath = configPath;
-        this.configOverrides = ImmutableList.copyOf(configOverrides);
+        this.configOverrides = (configOverrides == null)
+                ? ImmutableList.<ConfigOverride>of()
+                : ImmutableList.copyOf(configOverrides);
     }
 
     @Override
@@ -66,13 +68,13 @@ public class DropwizardAppRule<C extends Configuration> implements TestRule {
     }
 
     private void applyConfigOverrides() {
-        for (ConfigOverride configOverride: configOverrides) {
+        for (ConfigOverride configOverride : configOverrides) {
             configOverride.addToSystemProperties();
         }
     }
 
     private void resetConfigOverrides() {
-        for (ConfigOverride configOverride: configOverrides) {
+        for (ConfigOverride configOverride : configOverrides) {
             configOverride.removeFromSystemProperties();
         }
     }
