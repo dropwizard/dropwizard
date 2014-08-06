@@ -1,8 +1,8 @@
 package io.dropwizard.testing.junit;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
 import io.dropwizard.cli.ServerCommand;
@@ -44,7 +44,7 @@ public class DropwizardAppRule<C extends Configuration> implements TestRule {
                              ConfigOverride... configOverrides) {
         this.applicationClass = applicationClass;
         this.configPath = configPath;
-        this.configOverrides = Lists.newArrayList(configOverrides);
+        this.configOverrides = ImmutableList.copyOf(configOverrides);
     }
 
     @Override
