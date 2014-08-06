@@ -13,8 +13,7 @@ This database example is comprised of the following classes.
 * The `PersonDAO` illustrates using the [SQL Object Queries](http://jdbi.org/sql_object_api_queries/) and string template
 features in JDBI.
 
-* The `PeopleDAO.sql.stg` stores all the SQL statements for use in the `PersonDAO`, note this is located in the
-src/resources under the same path as the `PersonDAO` class file.
+* All the SQL statements for use in the `PersonDAO` are located in the `Person` class.
 
 * `migrations.xml` illustrates the usage of `dropwizard-migrations` which can create your database prior to running
 your application for the first time.
