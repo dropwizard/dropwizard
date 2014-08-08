@@ -36,4 +36,24 @@ public class DropwizardLayoutTest {
         assertThat(layout.getPattern())
                 .isEqualTo("%-5p [%d{ISO8601,UTC}] %c: %m%n%rEx");
     }
+
+    @Test
+    public void canOverrideDefaultPattern() throws Exception {
+        DropwizardLayout.PatternFactory oldDefault = DropwizardLayout.getDefaultPattern();
+        try {
+            final String format = "DropwizardLayoutTest - overridden default format";
+            DropwizardLayout.setDefaultPattern(
+                new DropwizardLayout.PatternFactory() {
+                    @Override public String build(TimeZone timeZone) {
+                        return format;
+                    }
+                }
+            );
+            DropwizardLayout layout2 = new DropwizardLayout(context, timeZone);
+            assertThat(layout2.getPattern())
+                    .isEqualTo(format);
+        } finally {
+            DropwizardLayout.setDefaultPattern(oldDefault);
+        }
+    }
 }
