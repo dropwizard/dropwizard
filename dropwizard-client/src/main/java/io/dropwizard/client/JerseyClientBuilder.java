@@ -198,7 +198,7 @@ public class JerseyClientBuilder {
      * @return a fully-configured {@link Client}
      */
     public Client build(String name) {
-        if ((environment == null) && (executorService == null) && (objectMapper == null)) {
+        if ((environment == null) && ((executorService == null) || (objectMapper == null))) {
             throw new IllegalStateException("Must have either an environment or both " +
                                                     "an executor service and an object mapper");
         }
