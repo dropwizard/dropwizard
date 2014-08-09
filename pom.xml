@@ -63,7 +63,6 @@
         <guava.version>17.0</guava.version>
         <h2.version>1.4.178</h2.version>
         <assertj.version>1.6.1</assertj.version>
-        <findbugs.skip>false</findbugs.skip>
     </properties>
 
     <developers>
@@ -247,13 +246,12 @@
             </build>
         </profile>
         <profile>
-            <id>java8-disable-strict-javadoc-and-findbugs</id>
+            <id>java8-disable-strict-javadoc</id>
             <activation>
                 <jdk>[1.8,)</jdk>
             </activation>
             <properties>
                 <javadoc.doclint.none>-Xdoclint:none</javadoc.doclint.none>
-                <findbugs.skip>true</findbugs.skip>
             </properties>
         </profile>
     </profiles>
@@ -397,7 +395,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>findbugs-maven-plugin</artifactId>
-                <version>2.5.3</version>
+                <version>3.0.0</version>
                 <configuration>
                     <effort>Max</effort>
                     <threshold>Default</threshold>
