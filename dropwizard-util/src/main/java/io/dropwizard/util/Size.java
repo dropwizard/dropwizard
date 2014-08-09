@@ -62,7 +62,7 @@ public class Size {
         final Matcher matcher = SIZE_PATTERN.matcher(size);
         checkArgument(matcher.matches(), "Invalid size: " + size);
 
-        final long count = Long.valueOf(matcher.group(1));
+        final long count = Long.parseLong(matcher.group(1));
         final SizeUnit unit = SUFFIXES.get(matcher.group(2));
         if (unit == null) {
             throw new IllegalArgumentException("Invalid size: " + size + ". Wrong size unit");

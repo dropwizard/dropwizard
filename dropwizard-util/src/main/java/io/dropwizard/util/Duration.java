@@ -73,7 +73,7 @@ public class Duration {
         final Matcher matcher = DURATION_PATTERN.matcher(duration);
         checkArgument(matcher.matches(), "Invalid duration: " + duration);
 
-        final long count = Long.valueOf(matcher.group(1));
+        final long count = Long.parseLong(matcher.group(1));
         final TimeUnit unit = SUFFIXES.get(matcher.group(2));
         if (unit == null) {
             throw new IllegalArgumentException("Invalid duration: " + duration + ". Wrong time unit");
