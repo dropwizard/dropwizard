@@ -5,7 +5,7 @@ install: echo "I trust Maven."
 # don't just run the tests, also run Findbugs and friends
 script: mvn verify
 
-after_success: mvn jacoco:report coveralls:jacoco
+after_success: mvn cobertura:cobertura coveralls:cobertura
 
 jdk:
   - oraclejdk7
