@@ -12,11 +12,15 @@ import org.apache.http.client.HttpRequestRetryHandler;
 import org.apache.http.client.params.AllClientPNames;
 import org.apache.http.client.params.CookiePolicy;
 import org.apache.http.conn.DnsResolver;
+import org.apache.http.conn.routing.HttpRoutePlanner;
 import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.impl.DefaultConnectionReuseStrategy;
 import org.apache.http.impl.NoConnectionReuseStrategy;
 import org.apache.http.impl.client.DefaultConnectionKeepAliveStrategy;
 import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
+import org.apache.http.impl.conn.DefaultProxyRoutePlanner;
+import org.apache.http.impl.conn.DefaultRoutePlanner;
+import org.apache.http.impl.conn.DefaultSchemePortResolver;
 import org.apache.http.impl.conn.SchemeRegistryFactory;
 import org.apache.http.impl.conn.SystemDefaultDnsResolver;
 import org.apache.http.params.BasicHttpParams;
@@ -49,6 +53,7 @@ public class HttpClientBuilder {
     private HttpRequestRetryHandler httpRequestRetryHandler;
     private SchemeRegistry registry = SchemeRegistryFactory.createSystemDefault();
     private CredentialsProvider credentialsProvider = null;
+    private HttpRoutePlanner routePlanner = null;
 
     public HttpClientBuilder(MetricRegistry metricRegistry) {
         this.metricRegistry = metricRegistry;
@@ -115,6 +120,17 @@ public class HttpClientBuilder {
     }
 
     /**
+     * Use the given {@link HttpRoutePlanner} instance.
+     *
+     * @param routePlanner    a {@link HttpRoutePlanner} instance
+     * @return {@code this}
+     */
+    public HttpClientBuilder using(HttpRoutePlanner routePlanner) {
+        this.routePlanner = routePlanner;
+        return this;
+    }
+
+    /**
      * Use the given {@link CredentialsProvider} instance.
      *
      * @param credentialsProvider    a {@link CredentialsProvider} instance
@@ -175,6 +191,10 @@ public class HttpClientBuilder {
 
         if (credentialsProvider != null) {
             client.setCredentialsProvider(credentialsProvider);
+        }
+
+        if (routePlanner != null) {
+            client.setRoutePlanner(routePlanner);
         }
     }
 
