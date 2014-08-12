@@ -16,13 +16,22 @@ public abstract class HibernateBundle<T extends Configuration> implements Config
     private final ImmutableList<Class<?>> entities;
     private final SessionFactoryFactory sessionFactoryFactory;
 
-    protected HibernateBundle(Class<?> entity, Class<?>... entities) {
-        this(ImmutableList.<Class<?>>builder().add(entity).add(entities).build(),
+    protected HibernateBundle(Class<?>... entities) {
+        this(ImmutableList.<Class<?>>builder().add(entities).build(),
              new SessionFactoryFactory());
     }
 
     protected HibernateBundle(ImmutableList<Class<?>> entities,
                               SessionFactoryFactory sessionFactoryFactory) {
+        if (entities.isEmpty()) {
+            throw new RuntimeException("Must have at least one entity");
+        }
+        for (Class entity : entities) {
+            if (entity.getAnnotation(javax.persistence.Entity.class) == null) {
+                throw new RuntimeException("Class " + entity + " was expected to be annotated with javax.persistence.Entity, but wasn't.");
+            }
+        }
+
         this.entities = entities;
         this.sessionFactoryFactory = sessionFactoryFactory;
     }
