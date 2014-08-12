@@ -20,14 +20,18 @@ import org.apache.http.impl.DefaultConnectionReuseStrategy;
 import org.apache.http.impl.NoConnectionReuseStrategy;
 import org.apache.http.impl.client.AbstractHttpClient;
 import org.apache.http.impl.client.DefaultConnectionKeepAliveStrategy;
+import org.apache.http.impl.conn.DefaultHttpRoutePlanner;
+import org.apache.http.impl.conn.DefaultRoutePlanner;
 import org.apache.http.impl.conn.PoolingClientConnectionManager;
 import org.apache.http.impl.conn.SchemeRegistryFactory;
 import org.apache.http.impl.conn.SystemDefaultDnsResolver;
+import org.apache.http.impl.conn.SystemDefaultRoutePlanner;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicListHeaderIterator;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
 import org.junit.Test;
+import sun.net.spi.DefaultProxySelector;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -41,6 +45,7 @@ public class HttpClientBuilderTest {
     private final DnsResolver resolver = mock(DnsResolver.class);
     private final HttpClientBuilder builder = new HttpClientBuilder(new MetricRegistry());
     private final SchemeRegistry registry = new SchemeRegistry();
+    private final SystemDefaultRoutePlanner routePlanner = new SystemDefaultRoutePlanner(new DefaultProxySelector());
 
     @Test
     public void setsTheMaximumConnectionPoolSize() throws Exception {
@@ -225,6 +230,22 @@ public class HttpClientBuilderTest {
 
         assertThat(client.getConnectionManager().getSchemeRegistry())
                 .isEqualTo(registry);
+    }
+
+    @Test
+    public void usesTheDefaultRoutePlanner() throws Exception {
+        final AbstractHttpClient client = (AbstractHttpClient) builder.using(configuration).build("test");
+
+        assertThat(client.getRoutePlanner())
+                .isOfAnyClassIn(DefaultHttpRoutePlanner.class, DefaultRoutePlanner.class);
+    }
+    
+    @Test
+    public void usesACustomRoutePlanner() throws Exception {
+        final AbstractHttpClient client = (AbstractHttpClient) builder.using(routePlanner).build("test");
+
+        assertThat(client.getRoutePlanner())
+                .isEqualTo(routePlanner);
     }
     
     @Test
