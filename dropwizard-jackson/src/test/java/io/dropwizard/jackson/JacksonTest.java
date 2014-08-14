@@ -18,4 +18,11 @@ public class JacksonTest
         assertThat(mapper.getFactory()).isSameAs(factory);
     }
 
+    @Test
+    public void objectMapperCanHandleNullInsteadOfCustomJsonFactory() {
+        ObjectMapper mapper = Jackson.newObjectMapper(null);
+
+        assertThat(mapper.getFactory()).isNotNull();
+    }
+
 }
