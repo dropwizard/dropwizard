@@ -25,12 +25,11 @@ public class Jackson {
 
     /**
      * Creates a new {@link ObjectMapper} with a custom {@link com.fasterxml.jackson.core.JsonFactory}
-     * and with support for Guava, Logback, and Joda Time support, as well as
-     * support for {@link JsonSnakeCase}. Also includes all {@link Discoverable} interface implementations.
+     * with Guava, Logback, and Joda Time support, as well as support for {@link JsonSnakeCase}.
+     * Also includes all {@link Discoverable} interface implementations.
      *
      * @param jsonFactory instance of {@link com.fasterxml.jackson.core.JsonFactory} to use
      *                    for the created {@link com.fasterxml.jackson.databind.ObjectMapper} instance.
-     *                    Must not be {@code null}
      */
     public static ObjectMapper newObjectMapper(JsonFactory jsonFactory) {
         final ObjectMapper mapper = new ObjectMapper(jsonFactory);
