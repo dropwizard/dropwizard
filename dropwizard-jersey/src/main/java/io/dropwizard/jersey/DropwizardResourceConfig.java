@@ -15,6 +15,7 @@ import com.sun.jersey.api.model.AbstractSubResourceMethod;
 import com.sun.jersey.server.impl.modelapi.annotation.IntrospectionModeller;
 import io.dropwizard.jersey.caching.CacheControlledResourceMethodDispatchAdapter;
 import io.dropwizard.jersey.errors.LoggingExceptionMapper;
+import io.dropwizard.jersey.guava.OptionalFormParamInjectableProvider;
 import io.dropwizard.jersey.guava.OptionalQueryParamInjectableProvider;
 import io.dropwizard.jersey.guava.OptionalResourceMethodDispatchAdapter;
 import io.dropwizard.jersey.jackson.JsonProcessingExceptionMapper;
@@ -22,8 +23,6 @@ import io.dropwizard.jersey.validation.ConstraintViolationExceptionMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ws.rs.Path;
-import javax.ws.rs.ext.Provider;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -55,6 +54,7 @@ public class DropwizardResourceConfig extends ScanningResourceConfig {
         getClasses().add(CacheControlledResourceMethodDispatchAdapter.class);
         getClasses().add(OptionalResourceMethodDispatchAdapter.class);
         getClasses().add(OptionalQueryParamInjectableProvider.class);
+        getClasses().add(OptionalFormParamInjectableProvider.class);
     }
 
     @Override
@@ -63,7 +63,7 @@ public class DropwizardResourceConfig extends ScanningResourceConfig {
 
         LOGGER.debug("resources = {}", getResources());
         LOGGER.debug("providers = {}", getProviders());
-        LOGGER.info(getEndpointsInfo());;
+        LOGGER.info(getEndpointsInfo());
     }
 
     public String getUrlPattern() {
