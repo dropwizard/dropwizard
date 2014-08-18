@@ -44,7 +44,7 @@ public class PersonResourceTest {
         Person found = resources.client().resource("/people/1").get(Person.class);
         assertThat(found.getId()).isEqualTo(person.getId());
 
-        verify(dao.findById(1L));
+        verify(dao).findById(1L);
     }
 
     @Test(expected = UniformInterfaceException.class)
@@ -52,6 +52,6 @@ public class PersonResourceTest {
         when(dao.findById(2L)).thenReturn(Optional.<Person>absent());
         resources.client().resource("/people/2").get(Person.class);
 
-        verify(dao.findById(2L));
+        verify(dao).findById(2L);
     }
 }
