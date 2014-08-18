@@ -14,7 +14,7 @@ import static org.fest.assertions.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 /**
- * Unit tests for {@link PersonResource}
+ * Unit tests for {@link PersonResource}.
  */
 public class PersonResourceTest {
     private static final PersonDAO dao = mock(PersonDAO.class);

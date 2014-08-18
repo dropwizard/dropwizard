@@ -41,7 +41,7 @@ public class PeopleResourceTest {
         MockitoAnnotations.initMocks(this);
         person = new Person();
         person.setFullName("Full Name");
-        person.setJobTitle("Boss");
+        person.setJobTitle("job title");
     }
 
     @After
