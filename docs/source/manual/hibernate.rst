@@ -139,7 +139,7 @@ actually require database access, so the ``@UnitOfWork`` annotation is provided:
         return dao.findById(id.get());
     }
 
-This will automatically open a session, begin a transaction, call ``findByPerson``, commit the
+This will automatically open a session, begin a transaction, call ``findById``, commit the
 transaction, and finally close the session. If an exception is thrown, the transaction is rolled
 back.
 
