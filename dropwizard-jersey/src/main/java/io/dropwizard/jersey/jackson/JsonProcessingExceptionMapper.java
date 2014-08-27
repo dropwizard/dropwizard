@@ -41,7 +41,7 @@ public class JsonProcessingExceptionMapper implements ExceptionMapper<JsonProces
         LOGGER.debug("Unable to process JSON", exception);
         return Response.status(Response.Status.BAD_REQUEST)
                        .entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(),
-                               message))
+                               "Unable to process JSON"))
                        .build();
     }
 }
