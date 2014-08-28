@@ -43,7 +43,7 @@ v0.7.1: Jun 18 2014
 * Upgraded to Logback 1.1.2
 * Upgraded to h2 1.4.178
 * Upgraded to jDBI 2.55
-* Upgraded to Hibernate 5.3.5 Final
+* Upgraded to Hibernate 4.3.5 Final
 * Upgraded to Hibernate Validator 5.1.1 Final
 * Upgraded to Mustache 0.8.15
 
