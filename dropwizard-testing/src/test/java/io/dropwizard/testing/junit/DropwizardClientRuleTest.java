@@ -1,11 +1,14 @@
 package io.dropwizard.testing.junit;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URL;
 
-import org.junit.*;
+import org.junit.ClassRule;
+import org.junit.Test;
 
 public class DropwizardClientRuleTest {
     @ClassRule
