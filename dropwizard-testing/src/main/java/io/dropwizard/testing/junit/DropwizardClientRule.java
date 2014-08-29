@@ -26,7 +26,7 @@ import com.codahale.metrics.health.HealthCheck;
     }
 
     {@literal @}ClassRule
-    public static DropwizardRule dropwizard = new DropwizardRule(new PingResource());
+    public static DropwizardClientRule dropwizard = new DropwizardClientRule(new PingResource());
 
     {@literal @}Test
     public void shouldPing() throws IOException {
