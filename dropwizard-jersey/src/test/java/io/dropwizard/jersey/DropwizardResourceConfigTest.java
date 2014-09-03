@@ -3,7 +3,7 @@ package io.dropwizard.jersey;
 import com.codahale.metrics.MetricRegistry;
 import com.sun.jersey.core.spi.scanning.PackageNamesScanner;
 import io.dropwizard.jersey.dummy.DummyResource;
-import io.dropwizard.logging.LoggingFactory;
+import io.dropwizard.logging.DefaultLoggingFactory;
 import org.junit.Test;
 
 import javax.ws.rs.GET;
@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SuppressWarnings("unchecked")
 public class DropwizardResourceConfigTest {
     static {
-        LoggingFactory.bootstrap();
+        DefaultLoggingFactory.bootstrap();
     }
 
     @Test

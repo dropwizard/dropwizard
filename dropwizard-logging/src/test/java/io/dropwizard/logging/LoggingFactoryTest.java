@@ -16,11 +16,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class LoggingFactoryTest {
     private final ObjectMapper objectMapper = Jackson.newObjectMapper();
-    private final ConfigurationFactory<LoggingFactory> factory =
-            new ConfigurationFactory<>(LoggingFactory.class,
+    private final ConfigurationFactory<DefaultLoggingFactory> factory =
+            new ConfigurationFactory<>(DefaultLoggingFactory.class,
                                        Validation.buildDefaultValidatorFactory().getValidator(),
                                        objectMapper, "dw");
-    private LoggingFactory config;
+    private DefaultLoggingFactory config;
 
     @Before
     public void setUp() throws Exception {

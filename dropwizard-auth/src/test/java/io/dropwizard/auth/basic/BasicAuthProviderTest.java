@@ -10,7 +10,7 @@ import io.dropwizard.auth.Auth;
 import io.dropwizard.auth.AuthenticationException;
 import io.dropwizard.auth.Authenticator;
 import io.dropwizard.jersey.DropwizardResourceConfig;
-import io.dropwizard.logging.LoggingFactory;
+import io.dropwizard.logging.DefaultLoggingFactory;
 import org.junit.Test;
 
 import javax.ws.rs.GET;
@@ -25,7 +25,7 @@ import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
 
 public class BasicAuthProviderTest extends JerseyTest {
     static {
-        LoggingFactory.bootstrap();
+        DefaultLoggingFactory.bootstrap();
     }
 
     @Path("/test/")

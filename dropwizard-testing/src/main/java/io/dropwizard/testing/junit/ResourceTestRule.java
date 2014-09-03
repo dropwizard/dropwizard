@@ -11,7 +11,7 @@ import com.sun.jersey.test.framework.LowLevelAppDescriptor;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.jersey.jackson.JacksonMessageBodyProvider;
-import io.dropwizard.logging.LoggingFactory;
+import io.dropwizard.logging.DefaultLoggingFactory;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
@@ -27,7 +27,7 @@ import java.util.Set;
 public class ResourceTestRule implements TestRule {
 
     static {
-        LoggingFactory.bootstrap();
+        DefaultLoggingFactory.bootstrap();
     }
 
     public static class Builder {

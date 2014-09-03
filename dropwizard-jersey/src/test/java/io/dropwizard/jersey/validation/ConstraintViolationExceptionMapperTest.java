@@ -4,7 +4,7 @@ import com.sun.jersey.api.client.UniformInterfaceException;
 import com.sun.jersey.test.framework.AppDescriptor;
 import com.sun.jersey.test.framework.JerseyTest;
 import com.sun.jersey.test.framework.WebAppDescriptor;
-import io.dropwizard.logging.LoggingFactory;
+import io.dropwizard.logging.DefaultLoggingFactory;
 import org.junit.Test;
 
 import javax.ws.rs.core.MediaType;
@@ -17,7 +17,7 @@ import static org.junit.Assume.assumeThat;
 
 public class ConstraintViolationExceptionMapperTest extends JerseyTest {
     static {
-        LoggingFactory.bootstrap();
+        DefaultLoggingFactory.bootstrap();
     }
 
     @Override

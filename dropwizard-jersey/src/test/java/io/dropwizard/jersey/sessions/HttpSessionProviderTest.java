@@ -5,7 +5,7 @@ import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.test.framework.AppDescriptor;
 import com.sun.jersey.test.framework.JerseyTest;
 import com.sun.jersey.test.framework.WebAppDescriptor;
-import io.dropwizard.logging.LoggingFactory;
+import io.dropwizard.logging.DefaultLoggingFactory;
 import org.junit.Test;
 
 import javax.ws.rs.core.MediaType;
@@ -16,7 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class HttpSessionProviderTest extends JerseyTest {
     static {
-        LoggingFactory.bootstrap();
+        DefaultLoggingFactory.bootstrap();
     }
 
     @Override
