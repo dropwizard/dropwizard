@@ -5,6 +5,7 @@ import com.example.helloworld.cli.RenderCommand;
 import com.example.helloworld.core.Person;
 import com.example.helloworld.core.Template;
 import com.example.helloworld.db.PersonDAO;
+import com.example.helloworld.filter.DateNotSpecifiedFilterFactory;
 import com.example.helloworld.health.TemplateHealthCheck;
 import com.example.helloworld.resources.*;
 import io.dropwizard.Application;
@@ -56,6 +57,7 @@ public class HelloWorldApplication extends Application<HelloWorldConfiguration> 
         final Template template = configuration.buildTemplate();
 
         environment.healthChecks().register("template", new TemplateHealthCheck(template));
+        environment.jersey().getResourceConfig().getResourceFilterFactories().add(new DateNotSpecifiedFilterFactory());
 
         environment.jersey().register(new BasicAuthProvider<>(new ExampleAuthenticator(),
                                                               "SUPER SECRET STUFF"));
@@ -64,5 +66,6 @@ public class HelloWorldApplication extends Application<HelloWorldConfiguration> 
         environment.jersey().register(new ProtectedResource());
         environment.jersey().register(new PeopleResource(dao));
         environment.jersey().register(new PersonResource(dao));
+        environment.jersey().register(new FilteredResource());
     }
 }
