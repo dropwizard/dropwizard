@@ -1,7 +1,9 @@
 package io.dropwizard.jersey.errors;
 
+import io.dropwizard.util.RequestId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
@@ -17,11 +19,11 @@ public abstract class LoggingExceptionMapper<E extends Throwable> implements Exc
             return ((WebApplicationException) exception).getResponse();
         }
 
-        final long id = ThreadLocalRandom.current().nextLong();
+        final long id = getServiceRequestId();
         logException(id, exception);
         return Response.serverError()
-                       .entity(new ErrorMessage(formatErrorMessage(id, exception)))
-                       .build();
+            .entity(new ErrorMessage(formatErrorMessage(id, exception)))
+            .build();
     }
 
     @SuppressWarnings("UnusedParameters")
@@ -36,5 +38,17 @@ public abstract class LoggingExceptionMapper<E extends Throwable> implements Exc
     @SuppressWarnings("UnusedParameters")
     protected String formatLogMessage(long id, Throwable exception) {
         return String.format("Error handling a request: %016x", id);
+    }
+
+    /**
+     * @return service request id from the underlying logger MDC, or a random number if not available.
+     */
+    long getServiceRequestId() {
+        String requestId = MDC.get(RequestId.SERVICE_REQUEST_ID);
+        if (requestId != null) {
+            return Long.valueOf(requestId);
+        }
+
+        return ThreadLocalRandom.current().nextLong();
     }
 }
