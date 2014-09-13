@@ -14,18 +14,18 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
-public class OptionalQueryParamValueFactoryProvider extends AbstractValueFactoryProvider {
+public class OptionalHeaderParamValueFactoryProvider extends AbstractValueFactoryProvider {
 
     @Inject
-    protected OptionalQueryParamValueFactoryProvider(MultivaluedParameterExtractorProvider mpep, ServiceLocator locator) {
-        super(mpep, locator, Parameter.Source.QUERY);
+    protected OptionalHeaderParamValueFactoryProvider(MultivaluedParameterExtractorProvider mpep, ServiceLocator locator) {
+        super(mpep, locator, Parameter.Source.HEADER);
     }
 
     @Override
     protected Factory<?> createValueFactory(Parameter parameter) {
         if (parameter.getRawType().equals(Optional.class)) {
             MultivaluedParameterExtractor extractor = get(unpack(parameter));
-            return new OptionalQueryParamValueFactory(extractor, !parameter.isEncoded());
+            return new OptionalHeaderParamValueFactory(extractor);
         }
         return null;
     }

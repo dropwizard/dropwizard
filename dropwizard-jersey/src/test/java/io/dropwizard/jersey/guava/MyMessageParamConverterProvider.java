@@ -7,7 +7,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 
 @Provider
-public class MyMessageParamConveterProvider implements ParamConverterProvider {
+public class MyMessageParamConverterProvider implements ParamConverterProvider {
 
     @Override
     @SuppressWarnings("unchecked")

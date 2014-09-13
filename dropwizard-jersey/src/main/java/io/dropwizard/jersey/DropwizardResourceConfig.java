@@ -1,5 +1,11 @@
 package io.dropwizard.jersey;
 
+import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.jersey2.InstrumentedResourceMethodApplicationListener;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Ordering;
 import io.dropwizard.jersey.caching.CacheControlledResponseFeature;
 import io.dropwizard.jersey.errors.LoggingExceptionMapper;
 import io.dropwizard.jersey.guava.OptionalMessageBodyWriter;
@@ -7,20 +13,10 @@ import io.dropwizard.jersey.guava.OptionalParameterInjectionBinder;
 import io.dropwizard.jersey.jackson.JsonProcessingExceptionMapper;
 import io.dropwizard.jersey.sessions.SessionFactoryProvider;
 import io.dropwizard.jersey.validation.ConstraintViolationExceptionMapper;
-
-import java.util.List;
-import java.util.Set;
-
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import javax.ws.rs.Path;
-import javax.ws.rs.ext.Provider;
-
 import org.glassfish.jersey.message.GZipEncoder;
-import org.glassfish.jersey.server.filter.EncodingFilter;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.ServerProperties;
+import org.glassfish.jersey.server.filter.EncodingFilter;
 import org.glassfish.jersey.server.model.Resource;
 import org.glassfish.jersey.server.model.ResourceMethod;
 import org.glassfish.jersey.server.monitoring.ApplicationEvent;
@@ -38,6 +34,7 @@ import java.util.Set;
 public class DropwizardResourceConfig extends ResourceConfig {
     private static final String NEWLINE = String.format("%n");
     private static final Logger LOGGER = LoggerFactory.getLogger(DropwizardResourceConfig.class);
+
     private String urlPattern;
 
     public DropwizardResourceConfig(MetricRegistry metricRegistry) {
@@ -52,8 +49,9 @@ public class DropwizardResourceConfig extends ResourceConfig {
     public DropwizardResourceConfig(boolean testOnly, MetricRegistry metricRegistry) {
         super();
 
-        if (metricRegistry == null)
+        if (metricRegistry == null) {
             metricRegistry = new MetricRegistry();
+        }
 
         urlPattern = "/*";
 
@@ -68,8 +66,8 @@ public class DropwizardResourceConfig extends ResourceConfig {
         }
         register(new InstrumentedResourceMethodApplicationListener(metricRegistry));
         register(CacheControlledResponseFeature.class);
-        register(OptionalResourceMethodResponseWriter.class);
-        register(new OptionalQueryParamValueFactoryProvider.Binder());
+        register(OptionalMessageBodyWriter.class);
+        register(new OptionalParameterInjectionBinder());
         register(new SessionFactoryProvider.Binder());
         EncodingFilter.enableFor(this, GZipEncoder.class);
     }

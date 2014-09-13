@@ -1,30 +1,34 @@
 package io.dropwizard.jersey.guava;
 
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Application;
-
+import com.codahale.metrics.MetricRegistry;
+import com.google.common.base.Optional;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.logging.LoggingFactory;
-
-import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
 import org.junit.Test;
 
-import com.codahale.metrics.MetricRegistry;
+import javax.ws.rs.FormParam;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Application;
+import javax.ws.rs.core.MediaType;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
 
-public class OptionalResourceMethodResponseWriterTest extends JerseyTest {
+public class OptionalMessageBodyWriterTest extends JerseyTest {
     static {
         LoggingFactory.bootstrap();
     }
 
     @Override
     protected Application configure() {
-        ResourceConfig rc = DropwizardResourceConfig.forTesting(new MetricRegistry());
-        rc = rc.packages("io.dropwizard.jersey.guava");
-        return rc;
+        return DropwizardResourceConfig.forTesting(new MetricRegistry())
+                .register(OptionalReturnResource.class);
     }
 
     @Test
@@ -43,6 +47,20 @@ public class OptionalResourceMethodResponseWriterTest extends JerseyTest {
         } catch (WebApplicationException e) {
             assertThat(e.getResponse().getStatus())
                     .isEqualTo(404);
+        }
+    }
+
+    @Path("/optional-return/")
+    @Produces(MediaType.TEXT_PLAIN)
+    public static class OptionalReturnResource {
+        @GET
+        public Optional<String> showWithQueryParam(@QueryParam("id") String id) {
+            return Optional.fromNullable(id);
+        }
+
+        @POST
+        public Optional<String> showWithFormParam(@FormParam("id") String id) {
+            return Optional.fromNullable(id);
         }
     }
 }

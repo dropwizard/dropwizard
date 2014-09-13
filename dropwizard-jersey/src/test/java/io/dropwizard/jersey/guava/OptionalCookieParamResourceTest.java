@@ -9,14 +9,14 @@ import org.glassfish.jersey.test.JerseyTest;
 import org.junit.Test;
 
 import javax.ws.rs.BadRequestException;
+import javax.ws.rs.CookieParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class OptionalQueryParamResourceTest extends JerseyTest {
+public class OptionalCookieParamResourceTest extends JerseyTest {
     static {
         LoggingFactory.bootstrap();
     }
@@ -24,7 +24,7 @@ public class OptionalQueryParamResourceTest extends JerseyTest {
     @Override
     protected Application configure() {
         return DropwizardResourceConfig.forTesting(new MetricRegistry())
-                .register(OptionalQueryParamResource.class)
+                .register(OptionalCookieParamResource.class)
                 .register(MyMessageParamConverterProvider.class);
     }
 
@@ -38,16 +38,8 @@ public class OptionalQueryParamResourceTest extends JerseyTest {
     @Test
     public void shouldReturnMessageWhenMessageIsPresent() {
         String customMessage = "Custom Message";
-        String response = target("/optional/message").queryParam("message", customMessage).request().get(String.class);
+        String response = target("/optional/message").request().cookie("message", customMessage).get(String.class);
         assertThat(response).isEqualTo(customMessage);
-    }
-
-    @Test
-    public void shouldReturnDecodedMessageWhenEncodedMessageIsPresent() {
-        String encodedMessage = "Custom%20Message";
-        String decodedMessage = "Custom Message";
-        String response = target("/optional/message").queryParam("message", encodedMessage).request().get(String.class);
-        assertThat(response).isEqualTo(decodedMessage);
     }
 
     @Test
@@ -60,14 +52,14 @@ public class OptionalQueryParamResourceTest extends JerseyTest {
     @Test
     public void shouldReturnMyMessageWhenMyMessageIsPresent() {
         String myMessage = "My Message";
-        String response = target("/optional/my-message").queryParam("mymessage", myMessage).request().get(String.class);
+        String response = target("/optional/my-message").request().cookie("mymessage", myMessage).get(String.class);
         assertThat(response).isEqualTo(myMessage);
     }
 
     @Test(expected = BadRequestException.class)
     public void shouldThrowBadRequestExceptionWhenInvalidUUIDIsPresent() {
         String invalidUUID = "invalid-uuid";
-        target("/optional/uuid").queryParam("uuid", invalidUUID).request().get(String.class);
+        target("/optional/uuid").request().cookie("uuid", invalidUUID).get(String.class);
     }
 
     @Test
@@ -80,28 +72,27 @@ public class OptionalQueryParamResourceTest extends JerseyTest {
     @Test
     public void shouldReturnUUIDWhenValidUUIDIsPresent() {
         String uuid = "fd94b00d-bd50-46b3-b42f-905a9c9e7d78";
-        String response = target("/optional/uuid").queryParam("uuid", uuid).request().get(String.class);
+        String response = target("/optional/uuid").request().cookie("uuid", uuid).get(String.class);
         assertThat(response).isEqualTo(uuid);
     }
 
     @Path("/optional")
-    public static class OptionalQueryParamResource {
-
+    public static class OptionalCookieParamResource {
         @GET
         @Path("/message")
-        public String getMessage(@QueryParam("message") Optional<String> message) {
+        public String getMessage(@CookieParam("message") Optional<String> message) {
             return message.or("Default Message");
         }
 
         @GET
         @Path("/my-message")
-        public String getMyMessage(@QueryParam("mymessage") Optional<MyMessage> myMessage) {
+        public String getMyMessage(@CookieParam("mymessage") Optional<MyMessage> myMessage) {
             return myMessage.or(new MyMessage("My Default Message")).getMessage();
         }
 
         @GET
         @Path("/uuid")
-        public String getUUID(@QueryParam("uuid") Optional<UUIDParam> uuid) {
+        public String getUUID(@CookieParam("uuid") Optional<UUIDParam> uuid) {
             return uuid.or(new UUIDParam("d5672fa8-326b-40f6-bf71-d9dacf44bcdc")).get().toString();
         }
     }

@@ -13,20 +13,31 @@ import org.glassfish.jersey.server.model.Parameter;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
+
 @Singleton
-public class OptionalQueryParamValueFactoryProvider extends AbstractValueFactoryProvider {
+public class OptionalFormParamValueFactoryProvider extends AbstractValueFactoryProvider {
 
     @Inject
-    protected OptionalQueryParamValueFactoryProvider(MultivaluedParameterExtractorProvider mpep, ServiceLocator locator) {
-        super(mpep, locator, Parameter.Source.QUERY);
+    protected OptionalFormParamValueFactoryProvider(MultivaluedParameterExtractorProvider mpep, ServiceLocator locator) {
+        super(mpep, locator, Parameter.Source.FORM);
     }
 
     @Override
     protected Factory<?> createValueFactory(Parameter parameter) {
         if (parameter.getRawType().equals(Optional.class)) {
-            MultivaluedParameterExtractor extractor = get(unpack(parameter));
-            return new OptionalQueryParamValueFactory(extractor, !parameter.isEncoded());
+            if (isNullOrEmpty(parameter.getSourceName())) {
+                return null;
+            }
+
+            final MultivaluedParameterExtractor extractor = get(unpack(parameter));
+            if (extractor == null) {
+                return null;
+            }
+
+            return new OptionalFormParamValueFactory(extractor, !parameter.isEncoded());
         }
+
         return null;
     }
 
