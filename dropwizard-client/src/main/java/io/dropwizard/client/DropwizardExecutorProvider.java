@@ -7,7 +7,7 @@ import java.util.concurrent.ExecutorService;
 class DropwizardExecutorProvider implements RequestExecutorProvider {
     private ExecutorService threadPool;
 
-    public DropwizardExecutorProvider (ExecutorService threadPool) {
+    public DropwizardExecutorProvider(ExecutorService threadPool) {
         this.threadPool = threadPool;
     }
 

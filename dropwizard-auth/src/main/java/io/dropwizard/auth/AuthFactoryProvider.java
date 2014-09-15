@@ -16,7 +16,7 @@ import javax.inject.Singleton;
 
 @Singleton
 class AuthFactoryProvider<C, P> extends AbstractValueFactoryProvider {
-    private AuthFactory<C, P> factory;
+    private final AuthFactory<C, P> factory;
 
     @Inject
     public AuthFactoryProvider(final MultivaluedParameterExtractorProvider extractorProvider,
@@ -29,14 +29,10 @@ class AuthFactoryProvider<C, P> extends AbstractValueFactoryProvider {
     @Override
     protected Factory<?> createValueFactory(final Parameter parameter) {
         final Class<?> classType = parameter.getRawType();
+        final Auth auth = parameter.getAnnotation(Auth.class);
 
-        Auth auth = parameter.getAnnotation(Auth.class);
-        if (auth == null) {
-            return null;
-        }
-
-        if (classType.isAssignableFrom(this.factory.getGeneratedClass())) {
-            return this.factory.clone(auth.required());
+        if (auth != null && classType.isAssignableFrom(factory.getGeneratedClass())) {
+            return factory.clone(auth.required());
         } else {
             return null;
         }
