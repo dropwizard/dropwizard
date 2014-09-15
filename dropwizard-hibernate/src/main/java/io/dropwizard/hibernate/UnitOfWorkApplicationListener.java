@@ -28,10 +28,8 @@ import org.hibernate.context.internal.ManagedSessionContext;
  * request events indicating that the method is about to be invoked, or just got done
  * being invoked.
  */
-
 @Provider
-public class UnitOfWorkApplicationListener implements
-        ApplicationEventListener {
+public class UnitOfWorkApplicationListener implements ApplicationEventListener {
 
     private final SessionFactory sessionFactory;
 
@@ -149,19 +147,14 @@ public class UnitOfWorkApplicationListener implements
 
     @Override
     public void onEvent(ApplicationEvent event) {
-        if (event.getType() == ApplicationEvent.Type.INITIALIZATION_APP_FINISHED)
-        {
-            for (Resource resource : event.getResourceModel().getResources())
-            {
-                for (ResourceMethod method : resource.getAllMethods())
-                {
+        if (event.getType() == ApplicationEvent.Type.INITIALIZATION_APP_FINISHED) {
+            for (Resource resource : event.getResourceModel().getResources()) {
+                for (ResourceMethod method : resource.getAllMethods()) {
                     registerUnitOfWorkAnnotations (method);
                 }
 
-                for (Resource childResource : resource.getChildResources())
-                {
-                    for (ResourceMethod method : childResource.getAllMethods())
-                    {
+                for (Resource childResource : resource.getChildResources()) {
+                    for (ResourceMethod method : childResource.getAllMethods()) {
                         registerUnitOfWorkAnnotations (method);
                     }
                 }
@@ -171,8 +164,7 @@ public class UnitOfWorkApplicationListener implements
 
     @Override
     public RequestEventListener onRequest(RequestEvent event) {
-        RequestEventListener listener = new UnitOfWorkEventListener (this.methodMap,
-                                                                     this.sessionFactory);
+        RequestEventListener listener = new UnitOfWorkEventListener (methodMap, sessionFactory);
 
         return listener;
     }
@@ -180,10 +172,8 @@ public class UnitOfWorkApplicationListener implements
     private void registerUnitOfWorkAnnotations (ResourceMethod method) {
         UnitOfWork annotation = method.getInvocable().getDefinitionMethod().getAnnotation(UnitOfWork.class);
 
-        if (annotation != null)
-        {
-            this.methodMap.put(method.getInvocable().getDefinitionMethod(),
-                               annotation);
+        if (annotation != null) {
+            this.methodMap.put(method.getInvocable().getDefinitionMethod(), annotation);
         }
 
     }

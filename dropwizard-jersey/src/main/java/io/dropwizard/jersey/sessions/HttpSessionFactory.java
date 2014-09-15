@@ -11,14 +11,14 @@ public final class HttpSessionFactory extends AbstractContainerRequestValueFacto
     private HttpServletRequest request;
     private boolean doNotCreate;
 
-    public HttpSessionFactory(boolean doNotCreate)
-    {
+    public HttpSessionFactory(boolean doNotCreate) {
         this.doNotCreate = doNotCreate;
     }
 
     public HttpSession provide() {
-        if (request == null)
+        if (request == null) {
             return null;
+        }
 
         return request.getSession(!doNotCreate);
     }

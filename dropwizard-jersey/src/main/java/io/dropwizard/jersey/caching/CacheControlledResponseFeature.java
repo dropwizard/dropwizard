@@ -30,13 +30,11 @@ public class CacheControlledResponseFeature implements DynamicFeature {
 
     }
 
-    private static class CacheControlledResponseFilter implements ContainerResponseFilter
-    {
+    private static class CacheControlledResponseFilter implements ContainerResponseFilter {
         private static final int ONE_YEAR_IN_SECONDS = (int) TimeUnit.DAYS.toSeconds(365);
         private String cacheResponseHeader;
 
-        public CacheControlledResponseFilter (CacheControl control)
-        {
+        public CacheControlledResponseFilter (CacheControl control) {
             final javax.ws.rs.core.CacheControl cacheControl = new javax.ws.rs.core.CacheControl();
             cacheControl.setPrivate(control.isPrivate());
             cacheControl.setNoCache(control.noCache());
@@ -64,5 +62,4 @@ public class CacheControlledResponseFeature implements DynamicFeature {
         }
 
     }
-
 }

@@ -5,8 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class UnknownRepresentation {
     private int bork;
 
-    public UnknownRepresentation(int bork)
-    {
+    public UnknownRepresentation(int bork) {
         this.bork = bork;
     }
 

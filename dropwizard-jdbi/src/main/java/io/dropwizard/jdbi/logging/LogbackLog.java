@@ -17,16 +17,14 @@ public class LogbackLog extends FormattedLog {
     /**
      * Logs to org.skife.jdbi.v2 logger at the debug level
      */
-    public LogbackLog()
-    {
+    public LogbackLog() {
         this((Logger) LoggerFactory.getLogger(DBI.class.getPackage().getName()));
     }
 
     /**
      * Use an arbitrary logger to log to at the debug level
      */
-    public LogbackLog(Logger log)
-    {
+    public LogbackLog(Logger log) {
         this(log, Level.DEBUG);
     }
 
@@ -42,14 +40,12 @@ public class LogbackLog extends FormattedLog {
     }
 
     @Override
-    protected final boolean isEnabled()
-    {
+    protected final boolean isEnabled() {
         return log.isEnabledFor(level);
     }
 
     @Override
-    protected final void log(String msg)
-    {
+    protected final void log(String msg) {
         log.log(null, fqcn, Level.toLocationAwareLoggerInteger(level), msg, null, null);
     }
 }

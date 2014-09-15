@@ -11,20 +11,21 @@ public final class FlashFactory extends AbstractContainerRequestValueFactory<Fla
     private HttpServletRequest request;
     private boolean doNotCreate;
 
-    public FlashFactory(boolean doNotCreate)
-    {
+    public FlashFactory(boolean doNotCreate) {
         this.doNotCreate = doNotCreate;
     }
 
     @SuppressWarnings("rawtypes")
     public Flash<?> provide() {
-        if (request == null)
+        if (request == null) {
             return null;
+        }
 
         HttpSession session = request.getSession(!this.doNotCreate);
 
-        if (session != null)
+        if (session != null) {
             return new Flash(session);
+        }
 
         return null;
     }

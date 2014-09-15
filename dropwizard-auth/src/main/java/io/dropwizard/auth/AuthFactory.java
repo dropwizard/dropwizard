@@ -19,8 +19,7 @@ public abstract class AuthFactory<C,P> extends AbstractContainerRequestValueFact
         return authenticator;
     }
 
-    public static <T,U> Binder binder (AuthFactory<T,U> factory)
-    {
+    public static <T,U> Binder binder (AuthFactory<T,U> factory) {
         return new AuthFactoryProvider.Binder<>(factory);
     }
 }
