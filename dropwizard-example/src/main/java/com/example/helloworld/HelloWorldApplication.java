@@ -6,10 +6,14 @@ import com.example.helloworld.core.Person;
 import com.example.helloworld.core.Template;
 import com.example.helloworld.core.User;
 import com.example.helloworld.db.PersonDAO;
-import com.example.helloworld.filter.DateNotSpecifiedFilterFactory;
+import com.example.helloworld.filter.DateRequiredFeature;
 import com.example.helloworld.health.TemplateHealthCheck;
-import com.example.helloworld.resources.*;
-
+import com.example.helloworld.resources.FilteredResource;
+import com.example.helloworld.resources.HelloWorldResource;
+import com.example.helloworld.resources.PeopleResource;
+import com.example.helloworld.resources.PersonResource;
+import com.example.helloworld.resources.ProtectedResource;
+import com.example.helloworld.resources.ViewResource;
 import io.dropwizard.Application;
 import io.dropwizard.assets.AssetsBundle;
 import io.dropwizard.auth.AuthFactory;
@@ -60,7 +64,7 @@ public class HelloWorldApplication extends Application<HelloWorldConfiguration> 
         final Template template = configuration.buildTemplate();
 
         environment.healthChecks().register("template", new TemplateHealthCheck(template));
-        environment.jersey().getResourceConfig().getResourceFilterFactories().add(new DateNotSpecifiedFilterFactory());
+        environment.jersey().register(DateRequiredFeature.class);
 
         environment.jersey().register(AuthFactory.binder(new BasicAuthFactory<>(new ExampleAuthenticator(),
                                                                  "SUPER SECRET STUFF",
