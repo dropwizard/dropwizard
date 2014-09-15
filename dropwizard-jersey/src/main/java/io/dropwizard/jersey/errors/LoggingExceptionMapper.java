@@ -4,10 +4,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
-
 import java.util.concurrent.ThreadLocalRandom;
 
 @Provider
@@ -23,8 +23,9 @@ public abstract class LoggingExceptionMapper<E extends Throwable> implements Exc
         final long id = ThreadLocalRandom.current().nextLong();
         logException(id, exception);
         return Response.serverError()
-                       .entity(new ErrorMessage(formatErrorMessage(id, exception)))
-                       .build();
+                .type(MediaType.APPLICATION_JSON_TYPE)
+                .entity(new ErrorMessage(formatErrorMessage(id, exception)))
+                .build();
     }
 
     @SuppressWarnings("UnusedParameters")
