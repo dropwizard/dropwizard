@@ -1,9 +1,11 @@
 package io.dropwizard.client;
 
 import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.httpclient.InstrumentedHttpClientConnectionManager;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import io.dropwizard.util.Duration;
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.http.Header;
 import org.apache.http.HeaderIterator;
 import org.apache.http.HttpHeaders;
@@ -12,21 +14,26 @@ import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.Credentials;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.HttpRequestRetryHandler;
-import org.apache.http.client.params.AllClientPNames;
-import org.apache.http.client.params.CookiePolicy;
+import org.apache.http.client.config.CookieSpecs;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.config.Registry;
+import org.apache.http.config.RegistryBuilder;
+import org.apache.http.config.SocketConfig;
 import org.apache.http.conn.DnsResolver;
-import org.apache.http.conn.scheme.SchemeRegistry;
+import org.apache.http.conn.socket.ConnectionSocketFactory;
+import org.apache.http.conn.socket.PlainConnectionSocketFactory;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.DefaultConnectionReuseStrategy;
 import org.apache.http.impl.NoConnectionReuseStrategy;
-import org.apache.http.impl.client.AbstractHttpClient;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.DefaultConnectionKeepAliveStrategy;
-import org.apache.http.impl.conn.PoolingClientConnectionManager;
-import org.apache.http.impl.conn.SchemeRegistryFactory;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.impl.conn.SystemDefaultDnsResolver;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicListHeaderIterator;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -34,220 +41,218 @@ import java.lang.reflect.Field;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.initMocks;
 
 public class HttpClientBuilderTest {
-    private final HttpClientConfiguration configuration = new HttpClientConfiguration();
-    private final DnsResolver resolver = mock(DnsResolver.class);
-    private final HttpClientBuilder builder = new HttpClientBuilder(new MetricRegistry());
-    private final SchemeRegistry registry = new SchemeRegistry();
+    private final Class<?> httpClientBuilderClass;
+    private final Registry<ConnectionSocketFactory> registry = RegistryBuilder.<ConnectionSocketFactory>create()
+            .register("http", PlainConnectionSocketFactory.getSocketFactory())
+            .register("https", SSLConnectionSocketFactory.getSocketFactory())
+            .build();
+    private HttpClientConfiguration configuration;
+    private HttpClientBuilder builder;
+    private InstrumentedHttpClientConnectionManager connectionManager;
+    private org.apache.http.impl.client.HttpClientBuilder apacheBuilder;
+
+    public HttpClientBuilderTest() throws ClassNotFoundException {
+        this.httpClientBuilderClass = Class.forName("org.apache.http.impl.client.HttpClientBuilder");
+    }
+
+    @Before
+    public void setUp() {
+        final MetricRegistry metricRegistry = new MetricRegistry();
+        configuration = new HttpClientConfiguration();
+        builder = new HttpClientBuilder(metricRegistry);
+        connectionManager = spy(new InstrumentedHttpClientConnectionManager(metricRegistry, registry));
+        apacheBuilder = org.apache.http.impl.client.HttpClientBuilder.create();
+
+        initMocks(this);
+    }
 
     @Test
     public void setsTheMaximumConnectionPoolSize() throws Exception {
         configuration.setMaxConnections(412);
+        final CloseableHttpClient client = builder.using(configuration)
+                .createClient(apacheBuilder, builder.configureConnectionManager(connectionManager), "test");
 
-        final AbstractHttpClient client = (AbstractHttpClient) builder.using(configuration).build("test");
-        final PoolingClientConnectionManager connectionManager = (PoolingClientConnectionManager) client.getConnectionManager();
-
-        assertThat(connectionManager.getMaxTotal())
-                .isEqualTo(412);
+        assertThat(client).isNotNull();
+        assertThat(spyHttpClientBuilderField("connManager", apacheBuilder)).isSameAs(connectionManager);
+        verify(connectionManager).setMaxTotal(412);
     }
+
 
     @Test
     public void setsTheMaximumRoutePoolSize() throws Exception {
         configuration.setMaxConnectionsPerRoute(413);
+        final CloseableHttpClient client = builder.using(configuration)
+                .createClient(apacheBuilder, builder.configureConnectionManager(connectionManager), "test");
 
-        final AbstractHttpClient client = (AbstractHttpClient) builder.using(configuration).build("test");
-        final PoolingClientConnectionManager connectionManager = (PoolingClientConnectionManager) client
-                .getConnectionManager();
-
-        assertThat(connectionManager.getDefaultMaxPerRoute())
-                .isEqualTo(413);
+        assertThat(client).isNotNull();
+        assertThat(spyHttpClientBuilderField("connManager", apacheBuilder)).isSameAs(connectionManager);
+        verify(connectionManager).setDefaultMaxPerRoute(413);
     }
 
     @Test
-    public void setsTheUserAgent() {
+    public void setsTheUserAgent() throws Exception {
         configuration.setUserAgent(Optional.of("qwerty"));
+        assertThat(builder.using(configuration).createClient(apacheBuilder, connectionManager, "test")).isNotNull();
 
-        final AbstractHttpClient client = (AbstractHttpClient) builder.using(configuration).build("test");
-        assertThat(client.getParams().getParameter(AllClientPNames.USER_AGENT))
-                .isEqualTo("qwerty");
+        assertThat(spyHttpClientBuilderField("userAgent", apacheBuilder)).isEqualTo("qwerty");
     }
 
     @Test
     public void canUseACustomDnsResolver() throws Exception {
-        // Yes, this is gross. Thanks, Apache!
-        final AbstractHttpClient client = (AbstractHttpClient) builder.using(resolver).build("test");
-        final Field field = PoolingClientConnectionManager.class.getDeclaredField("dnsResolver");
-        field.setAccessible(true);
+        final DnsResolver resolver = mock(DnsResolver.class);
+        final InstrumentedHttpClientConnectionManager manager =
+                builder.using(resolver).createConnectionManager(registry, "test");
 
-        assertThat(field.get(client.getConnectionManager()))
-                .isEqualTo(resolver);
+        // Yes, this is gross. Thanks, Apache!
+        final Field connectionOperatorField =
+                FieldUtils.getField(PoolingHttpClientConnectionManager.class, "connectionOperator", true);
+        final Object connectOperator = connectionOperatorField.get(manager);
+        final Field dnsResolverField = FieldUtils.getField(connectOperator.getClass(), "dnsResolver", true);
+        assertThat(dnsResolverField.get(connectOperator)).isEqualTo(resolver);
     }
+
 
     @Test
     public void usesASystemDnsResolverByDefault() throws Exception {
-        // Yes, this is gross. Thanks, Apache!
-        final AbstractHttpClient client = (AbstractHttpClient) builder.build("test");
-        final Field field = PoolingClientConnectionManager.class.getDeclaredField("dnsResolver");
-        field.setAccessible(true);
+        final InstrumentedHttpClientConnectionManager manager = builder.createConnectionManager(registry, "test");
 
-        assertThat(field.get(client.getConnectionManager()))
-                .isInstanceOf(SystemDefaultDnsResolver.class);
+        // Yes, this is gross. Thanks, Apache!
+        final Field connectionOperatorField =
+                FieldUtils.getField(PoolingHttpClientConnectionManager.class, "connectionOperator", true);
+        final Object connectOperator = connectionOperatorField.get(manager);
+        final Field dnsResolverField = FieldUtils.getField(connectOperator.getClass(), "dnsResolver", true);
+        assertThat(dnsResolverField.get(connectOperator)).isInstanceOf(SystemDefaultDnsResolver.class);
     }
+
 
     @Test
     public void doesNotReuseConnectionsIfKeepAliveIsZero() throws Exception {
-        configuration.setConnectionTimeout(Duration.seconds(0));
+        configuration.setKeepAlive(Duration.seconds(0));
+        assertThat(builder.using(configuration).createClient(apacheBuilder, connectionManager, "test")).isNotNull();
 
-        final AbstractHttpClient client = (AbstractHttpClient) builder.using(configuration).build("test");
-
-        assertThat(client.getConnectionReuseStrategy())
+        assertThat(spyHttpClientBuilderField("reuseStrategy", apacheBuilder))
                 .isInstanceOf(NoConnectionReuseStrategy.class);
     }
+
 
     @Test
     public void reusesConnectionsIfKeepAliveIsNonZero() throws Exception {
         configuration.setKeepAlive(Duration.seconds(1));
+        assertThat(builder.using(configuration).createClient(apacheBuilder, connectionManager, "test")).isNotNull();
 
-        final AbstractHttpClient client = (AbstractHttpClient) builder.using(configuration).build("test");
-
-        assertThat(client.getConnectionReuseStrategy())
+        assertThat(spyHttpClientBuilderField("reuseStrategy", apacheBuilder))
                 .isInstanceOf(DefaultConnectionReuseStrategy.class);
     }
 
     @Test
     public void usesKeepAliveForPersistentConnections() throws Exception {
         configuration.setKeepAlive(Duration.seconds(1));
+        assertThat(builder.using(configuration).createClient(apacheBuilder, connectionManager, "test")).isNotNull();
 
-        final AbstractHttpClient client = (AbstractHttpClient) builder.using(configuration).build("test");
-
-        final DefaultConnectionKeepAliveStrategy strategy = (DefaultConnectionKeepAliveStrategy) client.getConnectionKeepAliveStrategy();
-
+        final DefaultConnectionKeepAliveStrategy strategy =
+                (DefaultConnectionKeepAliveStrategy) spyHttpClientBuilderField("keepAliveStrategy", apacheBuilder);
+        final HttpContext context = mock(HttpContext.class);
         final HttpResponse response = mock(HttpResponse.class);
         when(response.headerIterator(HTTP.CONN_KEEP_ALIVE)).thenReturn(mock(HeaderIterator.class));
 
-        final HttpContext context = mock(HttpContext.class);
-
-        assertThat(strategy.getKeepAliveDuration(response, context))
-                .isEqualTo(1000);
+        assertThat(strategy.getKeepAliveDuration(response, context)).isEqualTo(1000);
     }
 
     @Test
     public void usesDefaultForNonPersistentConnections() throws Exception {
         configuration.setKeepAlive(Duration.seconds(1));
+        assertThat(builder.using(configuration).createClient(apacheBuilder, connectionManager, "test")).isNotNull();
 
-        final AbstractHttpClient client = (AbstractHttpClient) builder.using(configuration).build("test");
-
-        final DefaultConnectionKeepAliveStrategy strategy = (DefaultConnectionKeepAliveStrategy) client
-                .getConnectionKeepAliveStrategy();
-
+        final Field field = FieldUtils.getField(httpClientBuilderClass, "keepAliveStrategy", true);
+        final DefaultConnectionKeepAliveStrategy strategy = (DefaultConnectionKeepAliveStrategy) field.get(apacheBuilder);
+        final HttpContext context = mock(HttpContext.class);
         final HttpResponse response = mock(HttpResponse.class);
-
         final HeaderIterator iterator = new BasicListHeaderIterator(
                 ImmutableList.<Header>of(new BasicHeader(HttpHeaders.CONNECTION, "timeout=50")),
                 HttpHeaders.CONNECTION
         );
-
         when(response.headerIterator(HTTP.CONN_KEEP_ALIVE)).thenReturn(iterator);
 
-        final HttpContext context = mock(HttpContext.class);
-
-        assertThat(strategy.getKeepAliveDuration(response, context))
-                .isEqualTo(50000);
+        assertThat(strategy.getKeepAliveDuration(response, context)).isEqualTo(50000);
     }
 
     @Test
     public void ignoresCookiesByDefault() throws Exception {
-        final AbstractHttpClient client = (AbstractHttpClient) builder.using(configuration).build("test");
+        assertThat(builder.using(configuration).createClient(apacheBuilder, connectionManager, "test")).isNotNull();
 
-        assertThat(client.getParams().getParameter(AllClientPNames.COOKIE_POLICY))
-                .isEqualTo(CookiePolicy.IGNORE_COOKIES);
+        assertThat(((RequestConfig) spyHttpClientBuilderField("defaultRequestConfig", apacheBuilder)).getCookieSpec())
+                .isEqualTo(CookieSpecs.IGNORE_COOKIES);
     }
 
     @Test
     public void usesBestMatchCookiePolicyIfCookiesAreEnabled() throws Exception {
         configuration.setCookiesEnabled(true);
+        assertThat(builder.using(configuration).createClient(apacheBuilder, connectionManager, "test")).isNotNull();
 
-        final AbstractHttpClient client = (AbstractHttpClient) builder.using(configuration).build("test");
-
-        assertThat(client.getParams().getParameter(AllClientPNames.COOKIE_POLICY))
-                .isEqualTo(CookiePolicy.BEST_MATCH);
+        assertThat(((RequestConfig) spyHttpClientBuilderField("defaultRequestConfig", apacheBuilder)).getCookieSpec())
+                .isEqualTo(CookieSpecs.BEST_MATCH);
     }
 
     @Test
     public void setsTheSocketTimeout() throws Exception {
         configuration.setTimeout(Duration.milliseconds(500));
+        assertThat(builder.using(configuration).createClient(apacheBuilder, connectionManager, "test")).isNotNull();
 
-        final AbstractHttpClient client = (AbstractHttpClient) builder.using(configuration).build("test");
-
-        assertThat(client.getParams().getIntParameter(AllClientPNames.SO_TIMEOUT, -1))
+        assertThat(((RequestConfig) spyHttpClientBuilderField("defaultRequestConfig", apacheBuilder)).getSocketTimeout())
                 .isEqualTo(500);
     }
 
     @Test
     public void setsTheConnectTimeout() throws Exception {
         configuration.setConnectionTimeout(Duration.milliseconds(500));
+        assertThat(builder.using(configuration).createClient(apacheBuilder, connectionManager, "test")).isNotNull();
 
-        final AbstractHttpClient client = (AbstractHttpClient) builder.using(configuration).build("test");
-
-        assertThat(client.getParams().getIntParameter(AllClientPNames.CONNECTION_TIMEOUT, -1))
+        assertThat(((RequestConfig) spyHttpClientBuilderField("defaultRequestConfig", apacheBuilder)).getConnectTimeout())
                 .isEqualTo(500);
     }
 
     @Test
     public void disablesNaglesAlgorithm() throws Exception {
-        final AbstractHttpClient client = (AbstractHttpClient) builder.using(configuration).build("test");
+        assertThat(builder.using(configuration).createClient(apacheBuilder, connectionManager, "test")).isNotNull();
 
-        assertThat(client.getParams().getBooleanParameter(AllClientPNames.TCP_NODELAY, false))
-                .isTrue();
+        assertThat(((SocketConfig) spyHttpClientBuilderField("defaultSocketConfig", apacheBuilder)).isTcpNoDelay()).isTrue();
     }
 
     @Test
     public void disablesStaleConnectionCheck() throws Exception {
-        final AbstractHttpClient client = (AbstractHttpClient) builder.using(configuration).build("test");
+        assertThat(builder.using(configuration).createClient(apacheBuilder, connectionManager, "test")).isNotNull();
 
-        assertThat(client.getParams().getBooleanParameter(AllClientPNames.STALE_CONNECTION_CHECK, true))
-                .isFalse();
+        assertThat(((RequestConfig) spyHttpClientBuilderField("defaultRequestConfig", apacheBuilder))
+                .isStaleConnectionCheckEnabled()).isFalse();
     }
 
-    @Test
-    public void usesTheDefaultSchemeRegistry() throws Exception {
-        final AbstractHttpClient client = (AbstractHttpClient) builder.using(configuration).build("test");
-
-        assertThat(client.getConnectionManager().getSchemeRegistry().getSchemeNames())
-                .isEqualTo(SchemeRegistryFactory.createSystemDefault().getSchemeNames());
-    }
-
-    @Test
-    public void usesACustomSchemeRegistry() throws Exception {
-        final AbstractHttpClient client = (AbstractHttpClient) builder.using(registry).build("test");
-
-        assertThat(client.getConnectionManager().getSchemeRegistry())
-                .isEqualTo(registry);
-    }
-    
     @Test
     public void usesACustomHttpRequestRetryHandler() throws Exception {
-        HttpRequestRetryHandler customHandler = new HttpRequestRetryHandler() {
+        final HttpRequestRetryHandler customHandler = new HttpRequestRetryHandler() {
             @Override
             public boolean retryRequest(IOException exception, int executionCount, HttpContext context) {
                 return false;
             }
         };
-        HttpClientConfiguration config = new HttpClientConfiguration();
-        config.setRetries(1);
-        AbstractHttpClient client = (AbstractHttpClient) builder.using(config).using(customHandler).build("test");
-        
-        assertThat(client.getHttpRequestRetryHandler()).isEqualTo(customHandler);
+
+        configuration.setRetries(1);
+        assertThat(builder.using(configuration).using(customHandler)
+                .createClient(apacheBuilder, connectionManager, "test")).isNotNull();
+
+        assertThat(spyHttpClientBuilderField("retryHandler", apacheBuilder)).isSameAs(customHandler);
     }
 
     @Test
     public void usesCredentialsProvider() throws Exception {
-        CredentialsProvider credentialsProvider = new CredentialsProvider() {
+        final CredentialsProvider credentialsProvider = new CredentialsProvider() {
             @Override
             public void setCredentials(AuthScope authscope, Credentials credentials) {
-
             }
 
             @Override
@@ -257,13 +262,17 @@ public class HttpClientBuilderTest {
 
             @Override
             public void clear() {
-
             }
         };
-        HttpClientConfiguration config = new HttpClientConfiguration();
-        config.setRetries(1);
-        AbstractHttpClient client = (AbstractHttpClient) builder.using(config).using(credentialsProvider).build("test");
 
-        assertThat(client.getCredentialsProvider()).isEqualTo(credentialsProvider);
+        assertThat(builder.using(configuration).using(credentialsProvider)
+                .createClient(apacheBuilder, connectionManager, "test")).isNotNull();
+
+        assertThat(spyHttpClientBuilderField("credentialsProvider", apacheBuilder)).isSameAs(credentialsProvider);
+    }
+
+    private Object spyHttpClientBuilderField(final String fieldName, final Object obj) throws Exception {
+        final Field field = FieldUtils.getField(httpClientBuilderClass, fieldName, true);
+        return field.get(obj);
     }
 }

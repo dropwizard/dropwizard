@@ -1,42 +1,43 @@
 package io.dropwizard.client;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-import io.dropwizard.jersey.jackson.JacksonMessageBodyProvider;
-import io.dropwizard.setup.Environment;
-
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ExecutorService;
-
-import javax.validation.Validation;
-import javax.validation.Validator;
-
-import org.apache.http.client.HttpRequestRetryHandler;
-import org.apache.http.conn.DnsResolver;
-import org.apache.http.conn.scheme.SchemeRegistry;
-
 import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.filter.GZIPContentEncodingFilter;
-import com.sun.jersey.client.apache4.ApacheHttpClient4;
-import com.sun.jersey.client.apache4.ApacheHttpClient4Handler;
-import com.sun.jersey.client.apache4.config.ApacheHttpClient4Config;
-import com.sun.jersey.client.apache4.config.DefaultApacheHttpClient4Config;
+import io.dropwizard.jersey.gzip.ConfiguredGZipEncoder;
+import io.dropwizard.jersey.gzip.GZipDecoder;
+import io.dropwizard.jersey.jackson.JacksonMessageBodyProvider;
+import io.dropwizard.setup.Environment;
+import org.apache.http.client.HttpRequestRetryHandler;
+import org.apache.http.config.Registry;
+import org.apache.http.conn.DnsResolver;
+import org.apache.http.conn.socket.ConnectionSocketFactory;
+import org.glassfish.jersey.apache.connector.ApacheConnectorProvider;
+import org.glassfish.jersey.client.ClientConfig;
+
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.core.Configuration;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
+
+import static com.google.common.base.Preconditions.checkNotNull;
+
 
 /**
  * A convenience class for building {@link Client} instances.
- * <p/>
+ * <p>
  * Among other things,
- *
  * <ul>
- *     <li>Backed by Apache HttpClient</li>
- *     <li>Disables stale connection checks</li>
- *     <li>Disables Nagle's algorithm</li>
- *     <li>Disables cookie management by default</li>
+ * <li>Backed by Apache HttpClient</li>
+ * <li>Disables stale connection checks</li>
+ * <li>Disables Nagle's algorithm</li>
+ * <li>Disables cookie management by default</li>
  * </ul>
+ * </p>
  *
  * @see HttpClientBuilder
  */
@@ -44,7 +45,6 @@ public class JerseyClientBuilder {
     private final HttpClientBuilder builder;
     private final List<Object> singletons = Lists.newArrayList();
     private final List<Class<?>> providers = Lists.newArrayList();
-    private final Map<String, Boolean> features = Maps.newLinkedHashMap();
     private final Map<String, Object> properties = Maps.newLinkedHashMap();
 
     private JerseyClientConfiguration configuration = new JerseyClientConfiguration();
@@ -86,19 +86,6 @@ public class JerseyClientBuilder {
     }
 
     /**
-     * Sets the state of the given Jersey feature.
-     *
-     * @param featureName  the name of the Jersey feature
-     * @param featureState the state of the Jersey feature
-     * @return {@code this}
-     */
-    @SuppressWarnings("UnusedDeclaration") // basically impossible to test
-    public JerseyClientBuilder withFeature(String featureName, boolean featureState) {
-        features.put(featureName, featureState);
-        return this;
-    }
-
-    /**
      * Sets the state of the given Jersey property.
      *
      * @param propertyName  the name of the Jersey property
@@ -109,7 +96,7 @@ public class JerseyClientBuilder {
         properties.put(propertyName, propertyValue);
         return this;
     }
-    
+
     /**
      * Uses the {@link org.apache.http.client.HttpRequestRetryHandler} for handling request retries.
      *
@@ -157,12 +144,12 @@ public class JerseyClientBuilder {
     }
 
     /**
-     * Use the given {@link SchemeRegistry} instance.
+     * Use the given {@link Registry} instance.
      *
-     * @param registry a {@link SchemeRegistry} instance
+     * @param registry a {@link Registry} instance
      * @return {@code this}
      */
-    public JerseyClientBuilder using(SchemeRegistry registry) {
+    public JerseyClientBuilder using(Registry<ConnectionSocketFactory> registry) {
         builder.using(registry);
         return this;
     }
@@ -200,48 +187,57 @@ public class JerseyClientBuilder {
     public Client build(String name) {
         if ((environment == null) && ((executorService == null) || (objectMapper == null))) {
             throw new IllegalStateException("Must have either an environment or both " +
-                                                    "an executor service and an object mapper");
+                    "an executor service and an object mapper");
         }
 
         if (environment == null) {
-            return build(executorService, objectMapper, validator, name);
+            return build(executorService, objectMapper, validator);
         }
 
         return build(environment.lifecycle()
-                                .executorService("jersey-client-" + name + "-%d")
-                                .minThreads(configuration.getMinThreads())
-                                .maxThreads(configuration.getMaxThreads())
-                                .build(),
-                     environment.getObjectMapper(),
-                     environment.getValidator(),
-                     name);
+                        .executorService("jersey-client-" + name + "-%d")
+                        .minThreads(configuration.getMinThreads())
+                        .maxThreads(configuration.getMaxThreads())
+                        .build(),
+                environment.getObjectMapper(),
+                environment.getValidator());
     }
 
     private Client build(ExecutorService threadPool,
                          ObjectMapper objectMapper,
-                         Validator validator,
-                         String name) {
-        final Client client = new ApacheHttpClient4(buildHandler(name), buildConfig(objectMapper));
-        client.setExecutorService(threadPool);
+                         Validator validator) {
+        final Client client = ClientBuilder.newClient(buildConfig(threadPool, objectMapper, validator));
 
         if (configuration.isGzipEnabled()) {
-            client.addFilter(new GZIPContentEncodingFilter(configuration.isGzipEnabledForRequests()));
+            client.register(new GZipDecoder());
+            client.register(new ConfiguredGZipEncoder(configuration.isGzipEnabledForRequests()));
         }
 
         return client;
     }
 
-    private ApacheHttpClient4Handler buildHandler(String name) {
-        return new ApacheHttpClient4Handler(builder.build(name), null, true);
-    }
+    private Configuration buildConfig(final ExecutorService threadPool,
+                                      final ObjectMapper objectMapper,
+                                      final Validator validator) {
+        final ClientConfig config = new ClientConfig();
 
-    private ApacheHttpClient4Config buildConfig(ObjectMapper objectMapper) {
-        final ApacheHttpClient4Config config = new DefaultApacheHttpClient4Config();
-        config.getSingletons().addAll(singletons);
-        config.getSingletons().add(new JacksonMessageBodyProvider(objectMapper, validator));
-        config.getClasses().addAll(providers);
-        config.getFeatures().putAll(features);
-        config.getProperties().putAll(properties);
+        for (Object singleton : this.singletons) {
+            config.register(singleton);
+        }
+
+        for (Class<?> provider : this.providers) {
+            config.register(provider);
+        }
+
+        config.register(new JacksonMessageBodyProvider(objectMapper, validator));
+
+        for (Map.Entry<String, Object> property : this.properties.entrySet()) {
+            config.property(property.getKey(), property.getValue());
+        }
+
+        config.register(new DropwizardExecutorProvider(threadPool));
+        config.connectorProvider(new ApacheConnectorProvider());
+
         return config;
     }
 }

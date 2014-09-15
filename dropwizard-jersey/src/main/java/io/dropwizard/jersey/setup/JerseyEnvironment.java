@@ -1,9 +1,9 @@
 package io.dropwizard.jersey.setup;
 
 import com.google.common.base.Function;
-import com.sun.jersey.api.core.ResourceConfig;
-import com.sun.jersey.core.spi.scanning.PackageNamesScanner;
 import javax.servlet.Servlet;
+import org.glassfish.jersey.server.ResourceConfig;
+import org.glassfish.jersey.servlet.ServletContainer;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 
 import javax.annotation.Nullable;
@@ -34,7 +34,7 @@ public class JerseyEnvironment {
      * @param component a Jersey singleton component
      */
     public void register(Object component) {
-        config.getSingletons().add(checkNotNull(component));
+        config.register(checkNotNull(component));
     }
 
     /**
@@ -44,7 +44,7 @@ public class JerseyEnvironment {
      * @param componentClass a Jersey component class
      */
     public void register(Class<?> componentClass) {
-        config.getClasses().add(checkNotNull(componentClass));
+        config.register(checkNotNull(componentClass));
     }
 
     /**
@@ -54,27 +54,27 @@ public class JerseyEnvironment {
      * @param packages array of package names
      */
     public void packages(String... packages) {
-        config.init(new PackageNamesScanner(checkNotNull(packages)));
+        config.packages(checkNotNull(packages));
     }
 
     /**
      * Enables the Jersey feature with the given name.
      *
      * @param featureName the name of the feature to be enabled
-     * @see com.sun.jersey.api.core.ResourceConfig
+     * @see org.glassfish.jersey.server.ResourceConfig
      */
     public void enable(String featureName) {
-        config.getFeatures().put(checkNotNull(featureName), Boolean.TRUE);
+        config.property(checkNotNull(featureName), Boolean.TRUE);
     }
 
     /**
      * Disables the Jersey feature with the given name.
      *
      * @param featureName the name of the feature to be disabled
-     * @see com.sun.jersey.api.core.ResourceConfig
+     * @see org.glassfish.jersey.server.ResourceConfig
      */
     public void disable(String featureName) {
-        config.getFeatures().put(checkNotNull(featureName), Boolean.FALSE);
+        config.property(checkNotNull(featureName), Boolean.FALSE);
     }
 
     /**
@@ -82,17 +82,17 @@ public class JerseyEnvironment {
      *
      * @param name  the name of the Jersey property
      * @param value the value of the Jersey property
-     * @see com.sun.jersey.api.core.ResourceConfig
+     * @see org.glassfish.jersey.server.ResourceConfig
      */
     public void property(String name, @Nullable Object value) {
-        config.getProperties().put(checkNotNull(name), value);
+        config.property(checkNotNull(name), value);
     }
 
     /**
      * Gets the given Jersey property.
      *
      * @param name the name of the Jersey property
-     * @see com.sun.jersey.api.core.ResourceConfig
+     * @see org.glassfish.jersey.server.ResourceConfig
      */
     @SuppressWarnings("unchecked")
     public <T> T getProperty(String name) {
@@ -107,7 +107,7 @@ public class JerseyEnvironment {
         config.setUrlPattern(urlPattern);
     }
 
-    public DropwizardResourceConfig getResourceConfig() {
+    public ResourceConfig getResourceConfig() {
         return config;
     }
 }

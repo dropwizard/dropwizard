@@ -14,6 +14,7 @@ import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
 import com.google.common.io.Resources;
 import io.dropwizard.jersey.filter.AllowedMethodsFilter;
+import org.glassfish.jersey.servlet.ServletContainer;
 import io.dropwizard.jersey.jackson.JacksonMessageBodyProvider;
 import io.dropwizard.jersey.setup.JerseyEnvironment;
 import io.dropwizard.jetty.GzipFilterFactory;
@@ -395,7 +396,7 @@ public abstract class AbstractServerFactory implements ServerFactory {
                                          MetricRegistry metrics,
                                          HealthCheckRegistry healthChecks) {
         configureSessionsAndSecurity(handler, server);
-        handler.setServer(server);  
+        handler.setServer(server);
         handler.getServletContext().setAttribute(MetricsServlet.METRICS_REGISTRY, metrics);
         handler.getServletContext().setAttribute(HealthCheckServlet.HEALTH_CHECK_REGISTRY, healthChecks);
         handler.addServlet(new NonblockingServletHolder(new AdminServlet()), "/*");

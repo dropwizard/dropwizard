@@ -52,7 +52,7 @@ server, for example), Dropwizard provides a decorator class which provides cachi
 
 .. code-block:: java
 
-    CachingAuthenticator.wrap(ldapAuthenticator,
+    CachingAuthenticator.wrap(metricRegistry, ldapAuthenticator,
                               config.getAuthenticationCachePolicy());
 
 Dropwizard can parse Guava's ``CacheBuilderSpec`` from the configuration policy, allowing your
@@ -69,16 +69,18 @@ This caches up to 10,000 principals with an LRU policy, evicting stale entries a
 Basic Authentication
 ====================
 
-The ``BasicAuthProvider`` enables HTTP Basic authentication, and requires an authenticator which
-takes instances of ``BasicCredentials``:
+The ``BasicAuthFactory`` enables HTTP Basic authentication, and requires an authenticator which
+takes instances of ``BasicCredentials`` . Also the ``BasicAuthFactory`` needs to be parameterized
+with the type of the principal the authenticator produces, here ``String``:
 
 .. code-block:: java
 
     @Override
     public void run(ExampleConfiguration configuration,
                     Environment environment) {
-        environment.jersey().register(new BasicAuthProvider<User>(new ExampleAuthenticator(),
-                                                            "SUPER SECRET STUFF"));
+        environment.jersey().register(AuthFactory.binder(new BasicAuthFactory<String>(new ExampleAuthenticator(),
+                                                                                      "SUPER SECRET STUFF",
+                                                                                      String.class)));
     }
 
 .. _man-auth-oauth2:
@@ -86,16 +88,18 @@ takes instances of ``BasicCredentials``:
 OAuth2
 ======
 
-The ``OAuthProvider`` enables OAuth2 bearer-token authentication, and requires an authenticator
-which takes an instance of ``String``.
+The ``OAuthFactory`` enables OAuth2 bearer-token authentication, and requires an authenticator
+which takes an instance of ``String``. Also the ``OAuthFactory`` needs to be parameterized
+with the type of the principal the authenticator produces, here ``User``:
 
 .. code-block:: java
 
     @Override
     public void run(ExampleConfiguration configuration,
                     Environment environment) {
-        environment.jersey().register(new OAuthProvider<User>(new ExampleAuthenticator(),
-                                                        "SUPER SECRET STUFF"));
+       environment.jersey().register(AuthFactory.binder(new OAuthFactory<User>(new ExampleAuthenticator(),
+                                                                               "SUPER SECRET STUFF",
+                                                                               User.class)));
     }
 
 .. _man-auth-resources:

@@ -23,7 +23,7 @@
             <version>2.55</version>
         </dependency>
         <dependency>
-            <groupId>com.codahale.metrics</groupId>
+            <groupId>io.dropwizard.metrics</groupId>
             <artifactId>metrics-jdbi</artifactId>
             <version>${metrics3.version}</version>
             <exclusions>

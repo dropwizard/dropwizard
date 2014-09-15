@@ -1,69 +1,85 @@
 package io.dropwizard.jersey;
 
 import com.codahale.metrics.MetricRegistry;
-import com.codahale.metrics.jersey.InstrumentedResourceMethodDispatchAdapter;
+import com.codahale.metrics.jersey2.InstrumentedResourceMethodApplicationListener;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
-import com.sun.jersey.api.core.ResourceConfig;
-import com.sun.jersey.api.core.ScanningResourceConfig;
-import com.sun.jersey.api.model.AbstractResource;
-import com.sun.jersey.api.model.AbstractResourceMethod;
-import com.sun.jersey.api.model.AbstractSubResourceLocator;
-import com.sun.jersey.api.model.AbstractSubResourceMethod;
-import com.sun.jersey.server.impl.modelapi.annotation.IntrospectionModeller;
-import io.dropwizard.jersey.caching.CacheControlledResourceMethodDispatchAdapter;
+import io.dropwizard.jersey.caching.CacheControlledResponseFeature;
 import io.dropwizard.jersey.errors.LoggingExceptionMapper;
-import io.dropwizard.jersey.guava.OptionalFormParamInjectableProvider;
-import io.dropwizard.jersey.guava.OptionalQueryParamInjectableProvider;
-import io.dropwizard.jersey.guava.OptionalResourceMethodDispatchAdapter;
+import io.dropwizard.jersey.guava.OptionalMessageBodyWriter;
+import io.dropwizard.jersey.guava.OptionalParameterInjectionBinder;
 import io.dropwizard.jersey.jackson.JsonProcessingExceptionMapper;
+import io.dropwizard.jersey.sessions.SessionFactoryProvider;
 import io.dropwizard.jersey.validation.ConstraintViolationExceptionMapper;
+import org.glassfish.jersey.message.GZipEncoder;
+import org.glassfish.jersey.server.ResourceConfig;
+import org.glassfish.jersey.server.ServerProperties;
+import org.glassfish.jersey.server.filter.EncodingFilter;
+import org.glassfish.jersey.server.model.Resource;
+import org.glassfish.jersey.server.model.ResourceMethod;
+import org.glassfish.jersey.server.monitoring.ApplicationEvent;
+import org.glassfish.jersey.server.monitoring.ApplicationEventListener;
+import org.glassfish.jersey.server.monitoring.RequestEvent;
+import org.glassfish.jersey.server.monitoring.RequestEventListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.ws.rs.Path;
+import javax.ws.rs.ext.Provider;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
-public class DropwizardResourceConfig extends ScanningResourceConfig {
+public class DropwizardResourceConfig extends ResourceConfig {
     private static final String NEWLINE = String.format("%n");
     private static final Logger LOGGER = LoggerFactory.getLogger(DropwizardResourceConfig.class);
-    private String urlPattern;
 
-    public static DropwizardResourceConfig forTesting(MetricRegistry metricRegistry) {
-        return new DropwizardResourceConfig(true, metricRegistry);
-    }
+    private String urlPattern;
 
     public DropwizardResourceConfig(MetricRegistry metricRegistry) {
         this(false, metricRegistry);
     }
 
-    private DropwizardResourceConfig(boolean testOnly, MetricRegistry metricRegistry) {
-        super();
-        urlPattern = "/*";
-        getFeatures().put(FEATURE_DISABLE_WADL, Boolean.TRUE);
-        if (!testOnly) {
-            // create a subclass to pin it to Throwable
-            getSingletons().add(new LoggingExceptionMapper<Throwable>() {});
-            getSingletons().add(new ConstraintViolationExceptionMapper());
-            getSingletons().add(new JsonProcessingExceptionMapper());
-        }
-        getSingletons().add(new InstrumentedResourceMethodDispatchAdapter(metricRegistry));
-        getClasses().add(CacheControlledResourceMethodDispatchAdapter.class);
-        getClasses().add(OptionalResourceMethodDispatchAdapter.class);
-        getClasses().add(OptionalQueryParamInjectableProvider.class);
-        getClasses().add(OptionalFormParamInjectableProvider.class);
+    public DropwizardResourceConfig() {
+        this(true, null);
     }
 
-    @Override
-    public void validate() {
-        super.validate();
+    @SuppressWarnings("unchecked")
+    public DropwizardResourceConfig(boolean testOnly, MetricRegistry metricRegistry) {
+        super();
 
-        LOGGER.debug("resources = {}", getResources());
-        LOGGER.debug("providers = {}", getProviders());
-        LOGGER.info(getEndpointsInfo());
+        if (metricRegistry == null) {
+            metricRegistry = new MetricRegistry();
+        }
+
+        urlPattern = "/*";
+
+        property(ServerProperties.WADL_FEATURE_DISABLE, Boolean.TRUE);
+        if (!testOnly) {
+            // create a subclass to pin it to Throwable
+            register(new LoggingExceptionMapper<Throwable>() {
+            });
+            register(new ConstraintViolationExceptionMapper());
+            register(new JsonProcessingExceptionMapper());
+            register(new ComponentLoggingListener(this));
+        }
+        register(new InstrumentedResourceMethodApplicationListener(metricRegistry));
+        register(CacheControlledResponseFeature.class);
+        register(OptionalMessageBodyWriter.class);
+        register(new OptionalParameterInjectionBinder());
+        register(new SessionFactoryProvider.Binder());
+        EncodingFilter.enableFor(this, GZipEncoder.class);
+    }
+
+    public static DropwizardResourceConfig forTesting(MetricRegistry metricRegistry) {
+        return new DropwizardResourceConfig(true, metricRegistry);
+    }
+
+    public void logComponents() {
+        LOGGER.debug("resources = {}", logResources());
+        LOGGER.debug("providers = {}", logProviders());
+        LOGGER.info(logEndpoints());
     }
 
     public String getUrlPattern() {
@@ -74,25 +90,17 @@ public class DropwizardResourceConfig extends ScanningResourceConfig {
         this.urlPattern = urlPattern;
     }
 
-    private Set<String> getResources() {
+    private Set<String> logResources() {
         final ImmutableSet.Builder<String> builder = ImmutableSet.builder();
 
         for (Class<?> klass : getClasses()) {
-            if (ResourceConfig.isRootResourceClass(klass)) {
+            if (klass.isAnnotationPresent(Path.class)) {
                 builder.add(klass.getCanonicalName());
             }
         }
 
         for (Object o : getSingletons()) {
-            if (ResourceConfig.isRootResourceClass(o.getClass())) {
-                builder.add(o.getClass().getCanonicalName());
-            }
-        }
-
-        for (Object o : getExplicitRootResources().values()) {
-            if (o instanceof Class) {
-                builder.add(((Class<?>)o).getCanonicalName());
-            } else {
+            if (o.getClass().isAnnotationPresent(Path.class)) {
                 builder.add(o.getClass().getCanonicalName());
             }
         }
@@ -100,17 +108,17 @@ public class DropwizardResourceConfig extends ScanningResourceConfig {
         return builder.build();
     }
 
-    private Set<String> getProviders() {
+    private Set<String> logProviders() {
         final ImmutableSet.Builder<String> builder = ImmutableSet.builder();
 
         for (Class<?> klass : getClasses()) {
-            if (ResourceConfig.isProviderClass(klass)) {
+            if (klass.isAnnotationPresent(Provider.class)) {
                 builder.add(klass.getCanonicalName());
             }
         }
 
         for (Object o : getSingletons()) {
-            if (ResourceConfig.isProviderClass(o.getClass())) {
+            if (o.getClass().isAnnotationPresent(Provider.class)) {
                 builder.add(o.getClass().getCanonicalName());
             }
         }
@@ -118,19 +126,19 @@ public class DropwizardResourceConfig extends ScanningResourceConfig {
         return builder.build();
     }
 
-    public String getEndpointsInfo() {
+    private String logEndpoints() {
         final StringBuilder msg = new StringBuilder(1024);
         msg.append("The following paths were found for the configured resources:");
         msg.append(NEWLINE).append(NEWLINE);
 
         final ImmutableList.Builder<Class<?>> builder = ImmutableList.builder();
         for (Object o : getSingletons()) {
-            if (ResourceConfig.isRootResourceClass(o.getClass())) {
+            if (o.getClass().isAnnotationPresent(Path.class)) {
                 builder.add(o.getClass());
             }
         }
         for (Class<?> klass : getClasses()) {
-            if (ResourceConfig.isRootResourceClass(klass)) {
+            if (klass.isAnnotationPresent(Path.class)) {
                 builder.add(klass);
             }
         }
@@ -148,48 +156,35 @@ public class DropwizardResourceConfig extends ScanningResourceConfig {
                 msg.append(line).append(NEWLINE);
             }
         }
-        for (Map.Entry<String, Object> entry : getExplicitRootResources().entrySet()) {
-            final Class<?> klass  = entry.getValue() instanceof Class ?
-                    (Class<?>) entry.getValue() :
-                    entry.getValue().getClass();
-            final AbstractResource resource =
-                    new AbstractResource(entry.getKey(),
-                                         IntrospectionModeller.createResource(klass));
-
-            final List<String> endpoints = Lists.newArrayList();
-            populateEndpoints(endpoints, rootPath, klass, false, resource);
-
-            for (String line : Ordering.natural().sortedCopy(endpoints)) {
-                msg.append(line).append(NEWLINE);
-            }
-        }
 
         return msg.toString();
     }
 
     private void populateEndpoints(List<String> endpoints, String basePath, Class<?> klass,
                                    boolean isLocator) {
-        populateEndpoints(endpoints, basePath, klass, isLocator, IntrospectionModeller.createResource(klass));
+        populateEndpoints(endpoints, basePath, klass, isLocator, Resource.from(klass));
     }
 
     private void populateEndpoints(List<String> endpoints, String basePath, Class<?> klass,
-                                   boolean isLocator, AbstractResource resource) {
+                                   boolean isLocator, Resource resource) {
         if (!isLocator) {
-            basePath = normalizePath(basePath, resource.getPath().getValue());
+            basePath = normalizePath(basePath, resource.getPath());
         }
 
-        for (AbstractResourceMethod method : resource.getResourceMethods()) {
+        for (ResourceMethod method : resource.getResourceMethods()) {
             endpoints.add(formatEndpoint(method.getHttpMethod(), basePath, klass));
         }
 
-        for (AbstractSubResourceMethod method : resource.getSubResourceMethods()) {
-            final String path = normalizePath(basePath, method.getPath().getValue());
-            endpoints.add(formatEndpoint(method.getHttpMethod(), path, klass));
-        }
-
-        for (AbstractSubResourceLocator locator : resource.getSubResourceLocators()) {
-            final String path = normalizePath(basePath, locator.getPath().getValue());
-            populateEndpoints(endpoints, path, locator.getMethod().getReturnType(), true);
+        for (Resource childResource : resource.getChildResources()) {
+            for (ResourceMethod method : childResource.getResourceMethods()) {
+                if (method.getType() == ResourceMethod.JaxrsType.RESOURCE_METHOD) {
+                    final String path = normalizePath(basePath, childResource.getPath());
+                    endpoints.add(formatEndpoint(method.getHttpMethod(), path, klass));
+                } else if (method.getType() == ResourceMethod.JaxrsType.SUB_RESOURCE_LOCATOR) {
+                    final String path = normalizePath(basePath, childResource.getPath());
+                    populateEndpoints(endpoints, path, method.getInvocable().getRawResponseType(), true);
+                }
+            }
         }
     }
 
@@ -202,5 +197,26 @@ public class DropwizardResourceConfig extends ScanningResourceConfig {
             return path.startsWith("/") ? basePath + path.substring(1) : basePath + path;
         }
         return path.startsWith("/") ? basePath + path : basePath + "/" + path;
+    }
+
+    private static class ComponentLoggingListener implements ApplicationEventListener {
+        final DropwizardResourceConfig config;
+
+        public ComponentLoggingListener(DropwizardResourceConfig config) {
+            this.config = config;
+        }
+
+        @Override
+        public void onEvent(ApplicationEvent event) {
+            if (event.getType() == ApplicationEvent.Type.INITIALIZATION_APP_FINISHED)
+                this.config.logComponents();
+
+        }
+
+        @Override
+        public RequestEventListener onRequest(RequestEvent requestEvent) {
+            return null;
+        }
+
     }
 }

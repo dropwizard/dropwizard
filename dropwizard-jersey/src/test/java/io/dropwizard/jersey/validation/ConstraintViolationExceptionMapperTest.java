@@ -1,17 +1,18 @@
 package io.dropwizard.jersey.validation;
 
-import com.sun.jersey.api.client.UniformInterfaceException;
-import com.sun.jersey.test.framework.AppDescriptor;
-import com.sun.jersey.test.framework.JerseyTest;
-import com.sun.jersey.test.framework.WebAppDescriptor;
+import com.codahale.metrics.MetricRegistry;
+import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.logging.LoggingFactory;
+import org.glassfish.jersey.test.JerseyTest;
 import org.junit.Test;
 
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.util.Locale;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assume.assumeThat;
 
@@ -21,23 +22,18 @@ public class ConstraintViolationExceptionMapperTest extends JerseyTest {
     }
 
     @Override
-    protected AppDescriptor configure() {
-        return new WebAppDescriptor.Builder("io.dropwizard.jersey.validation").build();
+    protected Application configure() {
+        return DropwizardResourceConfig.forTesting(new MetricRegistry())
+                .packages("io.dropwizard.jersey.validation");
     }
 
     @Test
     public void returnsAnErrorMessage() throws Exception {
         assumeThat(Locale.getDefault().getLanguage(), is("en"));
 
-        try {
-            resource().path("/valid/").type(MediaType.APPLICATION_JSON).post("{}");
-            failBecauseExceptionWasNotThrown(UniformInterfaceException.class);
-        } catch (UniformInterfaceException e) {
-            assertThat(e.getResponse().getStatus())
-                    .isEqualTo(422);
-
-            assertThat(e.getResponse().getEntity(String.class))
-                    .isEqualTo("{\"errors\":[\"name may not be empty (was null)\"]}");
-        }
+        final Response response = target("/valid/").request(MediaType.APPLICATION_JSON)
+                .post(Entity.entity("{}", MediaType.APPLICATION_JSON));
+        assertThat(response.getStatus()).isEqualTo(422);
+        assertThat(response.readEntity(String.class)).isEqualTo("{\"errors\":[\"name may not be empty (was null)\"]}");
     }
 }

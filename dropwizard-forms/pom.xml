@@ -14,8 +14,8 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.sun.jersey.contribs</groupId>
-            <artifactId>jersey-multipart</artifactId>
+            <groupId>org.glassfish.jersey.media</groupId>
+            <artifactId>jersey-media-multipart</artifactId>
             <version>${jersey.version}</version>
         </dependency>
     </dependencies>

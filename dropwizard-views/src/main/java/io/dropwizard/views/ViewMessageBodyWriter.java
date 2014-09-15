@@ -3,13 +3,13 @@ package io.dropwizard.views;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
 import com.google.common.collect.ImmutableList;
-import com.sun.jersey.spi.service.ServiceFinder;
 
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.*;
 import javax.ws.rs.ext.MessageBodyWriter;
 import javax.ws.rs.ext.Provider;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -18,6 +18,7 @@ import java.lang.reflect.Type;
 import java.text.MessageFormat;
 import java.util.List;
 import java.util.Locale;
+import java.util.ServiceLoader;
 
 import static com.codahale.metrics.MetricRegistry.name;
 
@@ -39,7 +40,7 @@ public class ViewMessageBodyWriter implements MessageBodyWriter<View> {
 
     @Deprecated
     public ViewMessageBodyWriter(MetricRegistry metricRegistry) {
-        this(metricRegistry, ServiceFinder.find(ViewRenderer.class));
+        this(metricRegistry, ServiceLoader.load(ViewRenderer.class));
     }
 
     public ViewMessageBodyWriter(MetricRegistry metricRegistry, Iterable<ViewRenderer> viewRenderers) {

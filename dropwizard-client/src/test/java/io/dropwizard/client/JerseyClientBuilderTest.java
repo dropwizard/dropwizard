@@ -2,12 +2,14 @@ package io.dropwizard.client;
 
 import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.filter.GZIPContentEncodingFilter;
-import com.sun.jersey.client.apache4.ApacheHttpClient4;
+import com.google.common.collect.Iterables;
+import io.dropwizard.jersey.gzip.ConfiguredGZipEncoder;
+import io.dropwizard.jersey.gzip.GZipDecoder;
 import io.dropwizard.jersey.jackson.JacksonMessageBodyProvider;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
 import io.dropwizard.setup.Environment;
+import org.glassfish.jersey.apache.connector.ApacheConnectorProvider;
+import org.glassfish.jersey.client.ClientConfig;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -15,6 +17,7 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.client.Client;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.ext.MessageBodyReader;
@@ -24,32 +27,20 @@ import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class JerseyClientBuilderTest {
-    @Provider
-    @Consumes(MediaType.APPLICATION_SVG_XML)
-    public static class FakeMessageBodyReader implements MessageBodyReader<JerseyClientBuilderTest> {
-        @Override
-        public boolean isReadable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
-            return JerseyClientBuilderTest.class.isAssignableFrom(type);
-        }
-
-        @Override
-        public JerseyClientBuilderTest readFrom(Class<JerseyClientBuilderTest> type, Type genericType, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, String> httpHeaders, InputStream entityStream) throws IOException, WebApplicationException {
-            return null;
-        }
-    }
-
-    private static final Annotation[] NO_ANNOTATIONS = new Annotation[0];
-
     private final JerseyClientBuilder builder = new JerseyClientBuilder(new MetricRegistry());
     private final LifecycleEnvironment lifecycleEnvironment = spy(new LifecycleEnvironment());
     private final Environment environment = mock(Environment.class);
-    private final ExecutorService executorService = mock(ExecutorService.class);
+    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
     private final ObjectMapper objectMapper = mock(ObjectMapper.class);
     private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
@@ -74,75 +65,57 @@ public class JerseyClientBuilderTest {
     @Test
     public void buildsAnApache4BasedClient() throws Exception {
         final Client client = builder.using(executorService, objectMapper).build("test");
+        final ClientConfig jerseyConfig = (ClientConfig) client.getConfiguration();
 
-        assertThat(client)
-                .isInstanceOf(ApacheHttpClient4.class);
+        assertThat(jerseyConfig.getConnectorProvider()).isInstanceOf(ApacheConnectorProvider.class);
     }
 
     @Test
     public void includesJerseyProperties() throws Exception {
-        final ApacheHttpClient4 client = (ApacheHttpClient4) builder.withProperty("poop", true)
-                                                                    .using(executorService,
-                                                                           objectMapper)
-                                                                    .build("test");
+        final Client client = builder.withProperty("poop", true)
+                .using(executorService, objectMapper)
+                .build("test");
 
-        assertThat(client.getProperties().get("poop"))
-                .isEqualTo(Boolean.TRUE);
+        assertThat(client.getConfiguration().getProperty("poop")).isEqualTo(Boolean.TRUE);
     }
 
     @Test
     public void includesJerseyProviderSingletons() throws Exception {
         final FakeMessageBodyReader provider = new FakeMessageBodyReader();
-        final ApacheHttpClient4 client = (ApacheHttpClient4) builder.withProvider(provider)
-                                                                    .using(executorService,
-                                                                           objectMapper)
-                                                                    .build("test");
+        final Client client = builder.withProvider(provider)
+                .using(executorService, objectMapper)
+                .build("test");
 
-        assertThat(client.getProviders()
-                         .getMessageBodyReader(JerseyClientBuilderTest.class,
-                                               null,
-                                               NO_ANNOTATIONS,
-                                               MediaType.APPLICATION_SVG_XML_TYPE))
-                .isSameAs(provider);
+        assertThat(client.getConfiguration().isRegistered(provider)).isTrue();
     }
 
     @Test
     public void includesJerseyProviderClasses() throws Exception {
-        final ApacheHttpClient4 client = (ApacheHttpClient4) builder.withProvider(FakeMessageBodyReader.class)
-                                                                    .using(executorService,
-                                                                           objectMapper)
-                                                                    .build("test");
+        @SuppressWarnings("unused")
+        final Client client = builder.withProvider(FakeMessageBodyReader.class)
+                .using(executorService, objectMapper)
+                .build("test");
 
-        assertThat(client.getProviders()
-                         .getMessageBodyReader(JerseyClientBuilderTest.class,
-                                               null,
-                                               NO_ANNOTATIONS,
-                                               MediaType.APPLICATION_SVG_XML_TYPE))
-                .isInstanceOf(FakeMessageBodyReader.class);
+        assertThat(client.getConfiguration().isRegistered(FakeMessageBodyReader.class)).isTrue();
     }
 
     @Test
     public void usesTheObjectMapperForJson() throws Exception {
         final Client client = builder.using(executorService, objectMapper).build("test");
-
-        final MessageBodyReader<Object> reader = client.getProviders()
-                                                       .getMessageBodyReader(Object.class,
-                                                                             null,
-                                                                             NO_ANNOTATIONS,
-                                                                             MediaType.APPLICATION_JSON_TYPE);
-
-        assertThat(reader)
-                .isInstanceOf(JacksonMessageBodyProvider.class);
-        assertThat(((JacksonMessageBodyProvider) reader).getObjectMapper())
-                .isEqualTo(objectMapper);
+        assertThat(client.getConfiguration().isRegistered(JacksonMessageBodyProvider.class)).isTrue();
     }
 
     @Test
     public void usesTheGivenThreadPool() throws Exception {
-        final ApacheHttpClient4 client = (ApacheHttpClient4) builder.using(executorService, objectMapper).build("test");
+        final Client client = builder.using(executorService, objectMapper).build("test");
 
-        assertThat(client.getExecutorService())
-                .isEqualTo(executorService);
+        for (Object o : client.getConfiguration().getInstances()) {
+            if (o instanceof DropwizardExecutorProvider) {
+                final DropwizardExecutorProvider provider = (DropwizardExecutorProvider) o;
+                assertThat(provider.getRequestingExecutor()).isSameAs(executorService);
+            }
+        }
+
     }
 
     @Test
@@ -150,11 +123,12 @@ public class JerseyClientBuilderTest {
         final JerseyClientConfiguration configuration = new JerseyClientConfiguration();
         configuration.setGzipEnabled(true);
 
-        final ApacheHttpClient4 client = (ApacheHttpClient4) builder.using(configuration)
-                                                                    .using(executorService,
-                                                                           objectMapper).build("test");
-        assertThat(client.getHeadHandler())
-                .isInstanceOf(GZIPContentEncodingFilter.class);
+        final Client client = builder.using(configuration)
+                .using(executorService, objectMapper).build("test");
+        assertThat(Iterables.filter(client.getConfiguration().getInstances(), GZipDecoder.class)
+                .iterator().hasNext()).isTrue();
+        assertThat(Iterables.filter(client.getConfiguration().getInstances(), ConfiguredGZipEncoder.class)
+                .iterator().hasNext()).isTrue();
     }
 
     @Test
@@ -162,28 +136,20 @@ public class JerseyClientBuilderTest {
         final JerseyClientConfiguration configuration = new JerseyClientConfiguration();
         configuration.setGzipEnabled(false);
 
-        final ApacheHttpClient4 client = (ApacheHttpClient4) builder.using(configuration)
-                                                                    .using(executorService,
-                                                                           objectMapper).build("test");
+        final Client client = builder.using(configuration)
+                .using(executorService, objectMapper).build("test");
 
-        assertThat(client.getHeadHandler())
-                .isNotInstanceOf(GZIPContentEncodingFilter.class);
+        assertThat(Iterables.filter(client.getConfiguration().getInstances(), GZipDecoder.class)
+                .iterator().hasNext()).isFalse();
+        assertThat(Iterables.filter(client.getConfiguration().getInstances(), ConfiguredGZipEncoder.class)
+                .iterator().hasNext()).isFalse();
     }
 
     @Test
     public void usesAnObjectMapperFromTheEnvironment() throws Exception {
         final Client client = builder.using(environment).build("test");
 
-        final MessageBodyReader<Object> reader = client.getProviders()
-                                                       .getMessageBodyReader(Object.class,
-                                                                             null,
-                                                                             NO_ANNOTATIONS,
-                                                                             MediaType.APPLICATION_JSON_TYPE);
-
-        assertThat(reader)
-                .isInstanceOf(JacksonMessageBodyProvider.class);
-        assertThat(((JacksonMessageBodyProvider) reader).getObjectMapper())
-                .isEqualTo(objectMapper);
+        assertThat(client.getConfiguration().isRegistered(JacksonMessageBodyProvider.class)).isTrue();
     }
 
     @Test
@@ -192,9 +158,22 @@ public class JerseyClientBuilderTest {
         configuration.setMinThreads(7);
         configuration.setMaxThreads(532);
 
-        builder.using(configuration)
-               .using(environment).build("test");
+        builder.using(configuration).using(environment).build("test");
 
         verify(lifecycleEnvironment).executorService("jersey-client-test-%d");
+    }
+
+    @Provider
+    @Consumes(MediaType.APPLICATION_SVG_XML)
+    public static class FakeMessageBodyReader implements MessageBodyReader<JerseyClientBuilderTest> {
+        @Override
+        public boolean isReadable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
+            return JerseyClientBuilderTest.class.isAssignableFrom(type);
+        }
+
+        @Override
+        public JerseyClientBuilderTest readFrom(Class<JerseyClientBuilderTest> type, Type genericType, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, String> httpHeaders, InputStream entityStream) throws IOException, WebApplicationException {
+            return null;
+        }
     }
 }

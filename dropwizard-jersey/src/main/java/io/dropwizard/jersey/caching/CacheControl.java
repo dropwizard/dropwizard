@@ -1,6 +1,10 @@
 package io.dropwizard.jersey.caching;
 
-import java.lang.annotation.*;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -8,7 +12,7 @@ import java.util.concurrent.TimeUnit;
  * the annotated method.
  */
 @Documented
-@Target(ElementType.METHOD)
+@Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface CacheControl {
     /**
@@ -152,7 +156,7 @@ public @interface CacheControl {
      *     The max-age response directive indicates that the response is to be considered stale
      *     after its age is greater than the specified number of seconds.
      * </blockquote>
-     * 
+     *
      * @see #maxAgeUnit()
      * @return the number of {@link #maxAgeUnit()}s for which the response should be considered
      *         fresh
