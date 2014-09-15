@@ -1,6 +1,7 @@
 package com.example.helloworld.core;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.base.Objects;
 import org.hibernate.validator.constraints.Length;
 
 public class Saying {
@@ -26,5 +27,14 @@ public class Saying {
     @JsonProperty
     public String getContent() {
         return content;
+    }
+
+
+    @Override
+    public String toString() {
+        return Objects.toStringHelper(this)
+                .add("id", id)
+                .add("content", content)
+                .toString();
     }
 }
