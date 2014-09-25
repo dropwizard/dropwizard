@@ -142,8 +142,9 @@ public abstract class BaseReporterFactory implements ReporterFactory {
         return new MetricFilter() {
             @Override
             public boolean matches(final String name, final Metric metric) {
-                return (!getIncludes().isEmpty() && getIncludes().contains(name))
-                        || !getExcludes().contains(name);
+                return (getIncludes().isEmpty() && getExcludes().isEmpty())
+                       || (!getIncludes().isEmpty() && getIncludes().contains(name))
+                       || (!getExcludes().isEmpty() && !getExcludes().contains(name));
             }
         };
     }
