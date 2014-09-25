@@ -52,7 +52,7 @@ server, for example), Dropwizard provides a decorator class which provides cachi
 
 .. code-block:: java
 
-    CachingAuthenticator.wrap(metricRegistry, ldapAuthenticator,
+    CachingAuthenticator cachingAuth = new CachingAuthenticator(metricRegistry, ldapAuthenticator,
                               config.getAuthenticationCachePolicy());
 
 Dropwizard can parse Guava's ``CacheBuilderSpec`` from the configuration policy, allowing your
