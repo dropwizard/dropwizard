@@ -711,7 +711,7 @@ tests:
         public void buildsAThingResource() throws Exception {
             application.run(config, environment);
 
-            verify(jersey).register(any(ThingResource.class));
+            verify(jersey).register(isA(ThingResource.class));
         }
     }
 
