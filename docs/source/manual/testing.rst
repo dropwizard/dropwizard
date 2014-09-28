@@ -225,7 +225,7 @@ running and stop it again when they've completed (roughly equivalent to having u
 
         @ClassRule
         public static final DropwizardAppRule<TestConfiguration> RULE =
-                new DropwizardAppRule<TestConfiguration>(MyApp.class, resourceFilePath("my-app-config.yaml"));
+                new DropwizardAppRule<TestConfiguration>(MyApp.class, ResourceHelpers.resourceFilePath("my-app-config.yaml"));
 
         @Test
         public void loginHandlerRedirectsAfterPost() {

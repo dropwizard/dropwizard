@@ -3,25 +3,25 @@ package io.dropwizard.testing.junit;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableMultimap;
-import com.google.common.io.Resources;
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
 import io.dropwizard.servlets.tasks.Task;
-import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import java.io.File;
-import java.io.PrintWriter;
+import org.hibernate.validator.constraints.NotEmpty;
+import org.junit.ClassRule;
+import org.junit.Test;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
+import java.io.PrintWriter;
+
+import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static org.hamcrest.core.Is.is;
-import org.hibernate.validator.constraints.NotEmpty;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
-import org.junit.ClassRule;
-import org.junit.Test;
 
 public class DropwizardAppRuleTest {
 
@@ -99,14 +99,6 @@ public class DropwizardAppRuleTest {
 
         public String getMessage() {
             return message;
-        }
-    }
-
-    public static String resourceFilePath(String resourceClassPathLocation) {
-        try {
-            return new File(Resources.getResource(resourceClassPathLocation).toURI()).getAbsolutePath();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
         }
     }
 
