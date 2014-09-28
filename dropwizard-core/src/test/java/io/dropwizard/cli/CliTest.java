@@ -20,10 +20,6 @@ public class CliTest {
     @SuppressWarnings("unchecked")
     private final Application<Configuration> app = new Application<Configuration>() {
         @Override
-        public void initialize(Bootstrap<Configuration> bootstrap) {
-        }
-
-        @Override
         public void run(Configuration configuration, Environment environment) throws Exception {
         }
     };
