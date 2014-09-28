@@ -1,9 +1,8 @@
 package io.dropwizard.auth.basic;
 
-import com.google.common.base.Charsets;
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
 
-import java.security.MessageDigest;
+import java.util.Objects;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -45,26 +44,27 @@ public class BasicCredentials {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) { return true; }
-        if ((obj == null) || (getClass() != obj.getClass())) { return false; }
-        final BasicCredentials that = (BasicCredentials) obj;
-        // N.B.: Doing a constant-time comparison here to prevent timing attacks.
-        final byte[] thisBytes = password.getBytes(Charsets.UTF_8);
-        final byte[] thatBytes = that.password.getBytes(Charsets.UTF_8);
-        return username.equals(that.username) && MessageDigest.isEqual(thisBytes, thatBytes);
+    public int hashCode() {
+        return Objects.hash(username, password);
     }
 
     @Override
-    public int hashCode() {
-        return (31 * username.hashCode()) + password.hashCode();
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        final BasicCredentials other = (BasicCredentials) obj;
+        return Objects.equals(this.username, other.username) && Objects.equals(this.password, other.password);
     }
 
     @Override
     public String toString() {
-        return Objects.toStringHelper(this)
-                      .add("username", username)
-                      .add("password", "**********")
-                      .toString();
+        return MoreObjects.toStringHelper(this)
+                .add("username", username)
+                .add("password", "**********")
+                .toString();
     }
 }

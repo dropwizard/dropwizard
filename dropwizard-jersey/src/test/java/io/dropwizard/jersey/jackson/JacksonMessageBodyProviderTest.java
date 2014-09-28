@@ -4,9 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreType;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Objects;
 import com.google.common.reflect.TypeToken;
-import javax.ws.rs.core.MultivaluedHashMap;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.validation.ConstraintViolations;
 import io.dropwizard.validation.Validated;
@@ -21,12 +19,19 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedHashMap;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
-import java.util.*;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
@@ -36,8 +41,6 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
-
-// TODO: 4/24/13 <coda> -- move JacksonMessageBodyProviderTest to JerseyTest
 
 @SuppressWarnings("unchecked")
 public class JacksonMessageBodyProviderTest {
@@ -50,12 +53,19 @@ public class JacksonMessageBodyProviderTest {
 
         @Override
         public int hashCode() {
-            return id;
+            return Objects.hash(id);
         }
 
         @Override
         public boolean equals(Object obj) {
-            return Objects.equal(this.id, obj);
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null || getClass() != obj.getClass()) {
+                return false;
+            }
+            final Example other = (Example) obj;
+            return Objects.equals(this.id, other.id);
         }
     }
 
