@@ -5,6 +5,7 @@ import com.codahale.metrics.health.HealthCheckRegistry;
 import com.google.common.collect.ImmutableMultimap;
 import io.dropwizard.jetty.MutableServletContextHandler;
 import io.dropwizard.servlets.tasks.Task;
+import org.eclipse.jetty.server.Server;
 import org.junit.Test;
 
 import javax.servlet.ServletRegistration;
@@ -27,6 +28,7 @@ public class AdminEnvironmentTest {
         };
         env.addTask(task);
 
+        handler.setServer(new Server());
         handler.start();
 
         final ServletRegistration registration = handler.getServletHandler()

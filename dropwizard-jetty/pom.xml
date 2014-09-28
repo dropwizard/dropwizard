@@ -18,6 +18,17 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <!-- this is required because jetty-server pom
+            put servlet-api into default scope when it should
+            always be provided scope so it doesn't get compiled.
+            without this there are security exceptions because
+            javax.servlet-api jar is not signed -->
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>3.1.0</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>io.dropwizard.metrics</groupId>
             <artifactId>metrics-jetty9</artifactId>
             <version>${metrics3.version}</version>
