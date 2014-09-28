@@ -406,6 +406,7 @@ public abstract class AbstractServerFactory implements ServerFactory {
     }
 
     private void configureSessionsAndSecurity(MutableServletContextHandler handler, Server server) {
+        handler.setServer(server);
         if (handler.isSecurityEnabled()) {
             handler.getSecurityHandler().setServer(server);
         }

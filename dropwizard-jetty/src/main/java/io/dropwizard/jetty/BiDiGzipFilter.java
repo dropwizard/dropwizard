@@ -1,10 +1,10 @@
 package io.dropwizard.jetty;
 
-import com.google.common.base.Charsets;
 import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.servlets.IncludableGzipFilter;
 
 import javax.servlet.FilterChain;
+import javax.servlet.ReadListener;
 import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
 import javax.servlet.ServletRequest;
@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Set;
@@ -35,65 +36,45 @@ public class BiDiGzipFilter extends IncludableGzipFilter {
         return _mimeTypes;
     }
 
-    public int getBufferSize() {
-        return _bufferSize;
-    }
-
-    public int getMinGzipSize() {
-        return _minGzipSize;
-    }
-
-    public int getDeflateCompressionLevel() {
-        return _deflateCompressionLevel;
-    }
-
-    public boolean isDeflateNoWrap() {
-        return _deflateNoWrap;
-    }
-
-    public Set<String> getMethods() {
-        return _methods;
-    }
-
-    public Set<String> getExcludedAgents() {
-        return _excludedAgents;
-    }
-
-    public Set<Pattern> getExcludedAgentPatterns() {
-        return _excludedAgentPatterns;
-    }
-
-    public Set<String> getExcludedPaths() {
-        return _excludedPaths;
-    }
-
-    public Set<Pattern> getExcludedPathPatterns() {
-        return _excludedPathPatterns;
-    }
-
-    public String getVary() {
-        return _vary;
-    }
-
     public void setMimeTypes(Set<String> mimeTypes) {
         _mimeTypes.clear();
         _mimeTypes.addAll(mimeTypes);
+    }
+
+    public int getBufferSize() {
+        return _bufferSize;
     }
 
     public void setBufferSize(int bufferSize) {
         this._bufferSize = bufferSize;
     }
 
+    public int getMinGzipSize() {
+        return _minGzipSize;
+    }
+
     public void setMinGzipSize(int minGzipSize) {
         this._minGzipSize = minGzipSize;
+    }
+
+    public int getDeflateCompressionLevel() {
+        return _deflateCompressionLevel;
     }
 
     public void setDeflateCompressionLevel(int level) {
         this._deflateCompressionLevel = level;
     }
 
+    public boolean isDeflateNoWrap() {
+        return _deflateNoWrap;
+    }
+
     public void setDeflateNoWrap(boolean noWrap) {
         this._deflateNoWrap = noWrap;
+    }
+
+    public Set<String> getMethods() {
+        return _methods;
     }
 
     public void setMethods(Set<String> methods) {
@@ -101,20 +82,40 @@ public class BiDiGzipFilter extends IncludableGzipFilter {
         this._methods.addAll(methods);
     }
 
+    public Set<String> getExcludedAgents() {
+        return _excludedAgents;
+    }
+
     public void setExcludedAgents(Set<String> userAgents) {
         this._excludedAgents = userAgents;
+    }
+
+    public Set<Pattern> getExcludedAgentPatterns() {
+        return _excludedAgentPatterns;
     }
 
     public void setExcludedAgentPatterns(Set<Pattern> userAgentPatterns) {
         this._excludedAgentPatterns = userAgentPatterns;
     }
 
+    public Set<String> getExcludedPaths() {
+        return _excludedPaths;
+    }
+
     public void setExcludedPaths(Set<String> paths) {
         this._excludedPaths = paths;
     }
 
+    public Set<Pattern> getExcludedPathPatterns() {
+        return _excludedPathPatterns;
+    }
+
     public void setExcludedPathPatterns(Set<Pattern> patterns) {
         this._excludedPathPatterns = patterns;
+    }
+
+    public String getVary() {
+        return _vary;
     }
 
     public void setVary(String vary) {
@@ -177,7 +178,7 @@ public class BiDiGzipFilter extends IncludableGzipFilter {
         private Charset getCharset() {
             final String encoding = getCharacterEncoding();
             if (encoding == null || !Charset.isSupported(encoding)) {
-                return Charsets.ISO_8859_1;
+                return StandardCharsets.ISO_8859_1;
             }
             return Charset.forName(encoding);
         }
@@ -243,6 +244,27 @@ public class BiDiGzipFilter extends IncludableGzipFilter {
         @Override
         public int read(byte[] b) throws IOException {
             return input.read(b);
+        }
+
+        @Override
+        public boolean isFinished() {
+            try {
+                return input.available() == 0;
+            } catch (IOException ignored) {}
+            return true;
+        }
+
+        @Override
+        public boolean isReady() {
+            try {
+                return input.available() > 0;
+            } catch (IOException ignored) {}
+            return false;
+        }
+
+        @Override
+        public void setReadListener(ReadListener readListener) {
+            throw new UnsupportedOperationException();
         }
     }
 
