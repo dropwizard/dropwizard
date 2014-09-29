@@ -11,7 +11,6 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.CacheStats;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Sets;
-import io.dropwizard.setup.Bootstrap;
 
 import java.util.concurrent.ExecutionException;
 
@@ -63,18 +62,6 @@ public class CachingAuthenticator<C, P> implements Authenticator<C, P> {
                 return underlying.authenticate(key);
             }
         });
-    }
-
-    public static <C1, P1> CachingAuthenticator<C1, P1> wrap(final MetricRegistry metricRegistry,
-                                                             final Authenticator<C1, P1> authenticator,
-                                                             final CacheBuilderSpec cacheSpec) {
-        return new CachingAuthenticator<>(metricRegistry, authenticator, cacheSpec);
-    }
-
-    public static <C1, P1> CachingAuthenticator<C1, P1> wrap(final Bootstrap bootstrap,
-                                                             final Authenticator<C1, P1> authenticator,
-                                                             final CacheBuilderSpec cacheSpec) {
-        return wrap(bootstrap.getMetricRegistry(), authenticator, cacheSpec);
     }
 
     @Override

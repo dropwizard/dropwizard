@@ -211,8 +211,58 @@ easily.
 Should you, at some point, grow tired of the near-infinite amount of debug logging produced by
 ``ResourceTestRule`` you can use the ``java.util.logging`` API to silence the ``com.sun.jersey`` logger.
 
+
+.. _man-testing-clients:
+
+Testing Client Implementations
+==============================
+
+In order to avoid circular dependencies in your projects or to speed up test runs, you can test your HTTP client code
+by writing a JAX-RS resource as test double and let the ``DropwizardClientRule`` start and stop a simple Dropwizard
+application containing your test doubles.
+
+.. _man-testing-clients-example:
+
+.. code-block:: java
+
+    public class CustomClientTest {
+        @Path("/ping")
+        public static class PingResource {
+            @GET
+            public String ping() {
+                return "pong";
+            }
+        }
+
+        @ClassRule
+        public final static DropwizardClientRule dropwizard = new DropwizardClientRule(new PingResource());
+
+        @Test
+        public void shouldPing() throws IOException {
+            final URL url = new URL(dropwizard.baseUri() + "/ping");
+            final String response = new BufferedReader(new InputStreamReader(url.openStream())).readLine();
+            assertEquals("pong", response);
+        }
+    }
+
+.. hint::
+
+    Of course you would use your HTTP client in the ``@Test`` method and not ``java.net.URL#openStream()``.
+
+The ``DropwizardClientRule`` takes care of:
+
+* Creating a simple default configuration.
+* Creating a simplistic application.
+* Adding a dummy health check to the application to suppress the startup warning.
+* Adding your JAX-RS resources (test doubles) to the Dropwizard application.
+* Choosing a free random port number (important for running tests in parallel).
+* Starting the Dropwizard application containing the test doubles.
+* Stopping the Dropwizard application containing the test doubles.
+
+
 Integration Testing
 ===================
+
 It can be useful to start up your entire app and hit it with real HTTP requests during testing. This can be
 achieved by adding ``DropwizardAppRule`` to your JUnit test class, which will start the app prior to any tests
 running and stop it again when they've completed (roughly equivalent to having used ``@BeforeClass`` and ``@AfterClass``).
@@ -225,7 +275,7 @@ running and stop it again when they've completed (roughly equivalent to having u
 
         @ClassRule
         public static final DropwizardAppRule<TestConfiguration> RULE =
-                new DropwizardAppRule<TestConfiguration>(MyApp.class, resourceFilePath("my-app-config.yaml"));
+                new DropwizardAppRule<TestConfiguration>(MyApp.class, ResourceHelpers.resourceFilePath("my-app-config.yaml"));
 
         @Test
         public void loginHandlerRedirectsAfterPost() {

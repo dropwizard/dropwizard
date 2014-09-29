@@ -34,10 +34,6 @@ public class DropwizardAppRuleWithoutConfigTest {
 
     static class TestApplication extends Application<Configuration> {
         @Override
-        public void initialize(Bootstrap<Configuration> bootstrap) {
-        }
-
-        @Override
         public void run(Configuration configuration, Environment environment) throws Exception {
             environment.jersey().register(new TestResource());
         }

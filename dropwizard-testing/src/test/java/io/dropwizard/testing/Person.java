@@ -1,6 +1,8 @@
 package io.dropwizard.testing;
 
-import com.google.common.base.Objects;
+import com.google.common.base.MoreObjects;
+
+import java.util.Objects;
 
 public class Person {
     private String name;
@@ -30,24 +32,27 @@ public class Person {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) { return true; }
-        if ((obj == null) || (getClass() != obj.getClass())) { return false; }
-
-        final Person person = (Person) obj;
-        return !((email != null) ? !email.equals(person.email) : (person.email != null)) &&
-                !((name != null) ? !name.equals(person.name) : (person.name != null));
+    public int hashCode() {
+        return Objects.hash(name, email);
     }
 
     @Override
-    public int hashCode() {
-        int result = (name != null) ? name.hashCode() : 0;
-        result = (31 * result) + ((email != null) ? email.hashCode() : 0);
-        return result;
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        final Person other = (Person) obj;
+        return Objects.equals(this.name, other.name) && Objects.equals(this.email, other.email);
     }
 
     @Override
     public String toString() {
-        return Objects.toStringHelper(this).add("name", name).add("email", email).toString();
+        return MoreObjects.toStringHelper(this)
+                .add("name", name)
+                .add("email", email)
+                .toString();
     }
 }

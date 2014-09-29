@@ -44,7 +44,8 @@ public abstract class Application<T extends Configuration> {
      *
      * @param bootstrap the application bootstrap
      */
-    public abstract void initialize(Bootstrap<T> bootstrap);
+    public void initialize(Bootstrap<T> bootstrap) {
+    }
 
     /**
      * When the application runs, this is called after the {@link Bundle}s are run. Override it to add

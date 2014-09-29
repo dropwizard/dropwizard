@@ -11,9 +11,6 @@ public class ApplicationTest {
 
     private static class FakeApplication extends Application<FakeConfiguration> {
         @Override
-        public void initialize(Bootstrap<FakeConfiguration> bootstrap) {}
-
-        @Override
         public void run(FakeConfiguration configuration, Environment environment) {}
     }
 
