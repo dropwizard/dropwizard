@@ -14,7 +14,8 @@ import org.junit.Test;
 import javax.validation.Validation;
 import java.io.File;
 
-import static org.fest.assertions.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
+
 
 public class HttpClientConfigurationTest {
 

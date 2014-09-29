@@ -350,9 +350,11 @@ public class HttpClientBuilderTest {
         ProxyConfiguration proxy = new ProxyConfiguration("192.168.52.11", 8080, "http", auth);
         config.setProxyConfiguration(proxy);
 
-        DefaultHttpClient httpClient = checkProxy(config, new HttpHost("192.168.52.11", 8080, "http"));
+        CloseableHttpClient httpClient = checkProxy(config, new HttpHost("192.168.52.11", 8080, "http"));
 
-        assertThat(httpClient.getCredentialsProvider().getCredentials(new AuthScope("192.168.52.11", 8080)))
+        CredentialsProvider credentialsProvider = (CredentialsProvider)
+                FieldUtils.getField(httpClient.getClass(), "credentialsProvider", true).get(httpClient);
+        assertThat(credentialsProvider.getCredentials(new AuthScope("192.168.52.11", 8080)))
                 .isEqualTo(new UsernamePasswordCredentials("secret", "stuff"));
     }
 
@@ -361,11 +363,14 @@ public class HttpClientBuilderTest {
         checkProxy(new HttpClientConfiguration(), null);
     }
 
-    private DefaultHttpClient checkProxy(HttpClientConfiguration config, HttpHost proxyHost) throws HttpException {
-        DefaultHttpClient httpClient = (DefaultHttpClient) builder.using(config).build("test");
+    private CloseableHttpClient checkProxy(HttpClientConfiguration config, HttpHost proxyHost) throws Exception {
+        CloseableHttpClient httpClient = builder.using(config).build("test");
+
+        HttpRoutePlanner routePlanner = (HttpRoutePlanner)
+                FieldUtils.getField(httpClient.getClass(), "routePlanner", true).get(httpClient);
 
         HttpHost target = new HttpHost("dropwizard.io", 80);
-        HttpRoute route = httpClient.getRoutePlanner().determineRoute(target, new HttpGet(target.toURI()),
+        HttpRoute route = routePlanner.determineRoute(target, new HttpGet(target.toURI()),
                 new BasicHttpContext());
         assertThat(route.getProxyHost()).isEqualTo(proxyHost);
         assertThat(route.getTargetHost()).isEqualTo(new HttpHost("dropwizard.io", 80, "http"));
