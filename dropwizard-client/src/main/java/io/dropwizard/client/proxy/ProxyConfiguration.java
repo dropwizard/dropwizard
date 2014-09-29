@@ -8,6 +8,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 import javax.annotation.Nullable;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 /**
  * Configuration of access to a remote host through a proxy server
@@ -42,6 +43,15 @@ import javax.validation.constraints.NotNull;
  *             If they are not set then no credentials will be passed to the server.
  *         </td>
  *     </tr>
+ *     <tr>
+ *         <td>{@code nonProxyHosts}</td>
+ *         <td>(none)</td>
+ *         <td>
+ *             List of patterns of hosts that should be reached without proxy.
+ *             The patterns may contain symbol '*' as a wildcard.
+ *             If a host matches one of the patterns it will be reached through a direct connection.
+ *         </td>
+ *     </tr>
  * </table>
  */
 public class ProxyConfiguration {
@@ -58,6 +68,9 @@ public class ProxyConfiguration {
     @Valid
     @Nullable
     private AuthConfiguration auth;
+
+    @Nullable
+    private List<String> nonProxyHosts;
 
     public ProxyConfiguration() {
     }
@@ -105,6 +118,16 @@ public class ProxyConfiguration {
     @JsonProperty
     public void setScheme(String scheme) {
         this.scheme = scheme;
+    }
+
+    @JsonProperty
+    public List<String> getNonProxyHosts() {
+        return nonProxyHosts;
+    }
+
+    @JsonProperty
+    public void setNonProxyHosts(List<String> nonProxyHosts) {
+        this.nonProxyHosts = nonProxyHosts;
     }
 
     public AuthConfiguration getAuth() {

@@ -5,3 +5,7 @@ proxy:
   auth:
     username: 'secret'
     password: 'stuff'
+  nonProxyHosts:
+    - 'localhost'
+    - '192.168.52.*'
+    - '*.example.com'

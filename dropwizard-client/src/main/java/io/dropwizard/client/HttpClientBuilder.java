@@ -7,6 +7,7 @@ import com.codahale.metrics.httpclient.InstrumentedHttpClientConnectionManager;
 import com.codahale.metrics.httpclient.InstrumentedHttpRequestExecutor;
 import com.google.common.annotations.VisibleForTesting;
 import io.dropwizard.client.proxy.AuthConfiguration;
+import io.dropwizard.client.proxy.NonProxyListProxyRoutePlanner;
 import io.dropwizard.client.proxy.ProxyConfiguration;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.util.Duration;
@@ -34,7 +35,6 @@ import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.DefaultConnectionKeepAliveStrategy;
 import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
-import org.apache.http.impl.conn.DefaultProxyRoutePlanner;
 import org.apache.http.impl.conn.SystemDefaultDnsResolver;
 import org.apache.http.protocol.HttpContext;
 
@@ -253,7 +253,7 @@ public class HttpClientBuilder {
         ProxyConfiguration proxy = configuration.getProxyConfiguration();
         if (proxy != null) {
             HttpHost httpHost = new HttpHost(proxy.getHost(), proxy.getPort(), proxy.getScheme());
-            builder.setRoutePlanner(new DefaultProxyRoutePlanner(httpHost));
+            builder.setRoutePlanner(new NonProxyListProxyRoutePlanner(httpHost, proxy.getNonProxyHosts()));
             // if the proxy host requires authentication then add the host credentials to the credentials provider
             AuthConfiguration auth = proxy.getAuth();
             if (auth != null) {

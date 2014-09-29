@@ -1,10 +1,9 @@
-package io.dropwizard.client;
+package io.dropwizard.client.proxy;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.io.Resources;
-import io.dropwizard.client.proxy.AuthConfiguration;
-import io.dropwizard.client.proxy.ProxyConfiguration;
+import io.dropwizard.client.HttpClientConfiguration;
 import io.dropwizard.configuration.ConfigurationFactory;
 import io.dropwizard.configuration.ConfigurationParsingException;
 import io.dropwizard.configuration.ConfigurationValidationException;
@@ -13,6 +12,7 @@ import org.junit.Test;
 
 import javax.validation.Validation;
 import java.io.File;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -50,6 +50,9 @@ public class HttpClientConfigurationTest {
         assertThat(auth).isNotNull();
         assertThat(auth.getUsername()).isEqualTo("secret");
         assertThat(auth.getPassword()).isEqualTo("stuff");
+
+        List<String> nonProxyHosts = proxy.getNonProxyHosts();
+        assertThat(nonProxyHosts).contains("localhost", "192.168.52.*", "*.example.com");
     }
 
     @Test
@@ -81,6 +84,14 @@ public class HttpClientConfigurationTest {
         assertThat(proxy).isNotNull();
         assertThat(proxy.getHost()).isNotNull();
         assertThat(proxy.getPort()).isEqualTo(-1);
+    }
+
+    @Test
+    public void testNoNonProxy() throws Exception {
+        load("./yaml/no_port.yml");
+
+        ProxyConfiguration proxy = configuration.getProxyConfiguration();
+        assertThat(proxy.getNonProxyHosts()).isNull();
     }
 
     @Test(expected = ConfigurationValidationException.class)
