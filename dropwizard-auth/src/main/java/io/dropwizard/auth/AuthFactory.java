@@ -3,6 +3,8 @@ package io.dropwizard.auth;
 import org.glassfish.jersey.server.internal.inject.AbstractContainerRequestValueFactory;
 import org.glassfish.hk2.utilities.Binder;
 
+import javax.servlet.http.HttpServletRequest;
+
 public abstract class AuthFactory<C,P> extends AbstractContainerRequestValueFactory<P> {
 
     private Authenticator<C, P> authenticator;
@@ -10,6 +12,8 @@ public abstract class AuthFactory<C,P> extends AbstractContainerRequestValueFact
     public AuthFactory(Authenticator<C, P> authenticator) {
         this.authenticator = authenticator;
     }
+
+    public abstract void setRequest(HttpServletRequest request);
 
     public abstract AuthFactory<C,P> clone (boolean required);
 

@@ -52,10 +52,16 @@ public final class OAuthFactory<T> extends AuthFactory<String, T> {
     }
 
     @Override
+    public void setRequest(HttpServletRequest request) {
+        this.request = request;
+    }
+
+    @Override
     public AuthFactory<String, T> clone(boolean required) {
         return new OAuthFactory<>(required, authenticator(), this.realm, this.generatedClass);
     }
 
+    @Override
     public T provide() {
         try {
             final String header = request.getHeader(HttpHeaders.AUTHORIZATION);
