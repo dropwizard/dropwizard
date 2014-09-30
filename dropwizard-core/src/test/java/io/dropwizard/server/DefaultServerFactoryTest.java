@@ -83,7 +83,6 @@ public class DefaultServerFactoryTest {
                 .contains(DefaultServerFactory.class);
     }
 
-    @Ignore("Issue #648: Test is flaky and should be re-activated after upgrade to Jetty 9.1 or higher.")
     @Test
     public void testGracefulShutdown() throws Exception {
         ObjectMapper objectMapper = Jackson.newObjectMapper();
