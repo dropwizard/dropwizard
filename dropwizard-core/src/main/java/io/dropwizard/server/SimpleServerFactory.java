@@ -16,8 +16,6 @@ import org.hibernate.validator.constraints.NotEmpty;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-// TODO: 5/15/13 <coda> -- add tests for SimpleServerFactory
-
 /**
  * A single-connector implementation of {@link ServerFactory}, suitable for PaaS deployments
  * (e.g., Heroku) where applications are limited to a single, runtime-defined port. A startup script
