@@ -49,6 +49,7 @@ public class DataSourceConfigurationTest {
         assertThat(ds.getCheckConnectionOnBorrow()).isEqualTo(true);
         assertThat(ds.getCheckConnectionOnConnect()).isEqualTo(false);
         assertThat(ds.getCheckConnectionOnReturn()).isEqualTo(true);
+        assertThat(ds.getValidationQueryTimeout()).isEqualTo(Optional.of(Duration.seconds(3)));
     }
 
     @Test
@@ -86,6 +87,7 @@ public class DataSourceConfigurationTest {
         assertThat(ds.getCheckConnectionOnBorrow()).isEqualTo(false);
         assertThat(ds.getCheckConnectionOnConnect()).isEqualTo(true);
         assertThat(ds.getCheckConnectionOnReturn()).isEqualTo(false);
+        assertThat(ds.getValidationQueryTimeout()).isEqualTo(Optional.absent());
     }
 
     private DataSourceFactory getDataSourceFactory(String resourceName) throws Exception {

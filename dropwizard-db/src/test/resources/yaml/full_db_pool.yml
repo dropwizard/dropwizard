@@ -10,6 +10,7 @@ minIdleTime: 1 minute
 
 validationQuery: "/* MyService Health Check */ SELECT 1"
 initializationQuery: "insert into connections_log(ts) values (now())"
+validationQueryTimeout: 3s
 
 minSize: 8
 maxSize: 32
