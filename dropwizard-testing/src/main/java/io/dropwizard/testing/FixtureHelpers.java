@@ -18,9 +18,9 @@ public class FixtureHelpers {
      *
      * @param filename    the filename of the fixture file
      * @return the contents of {@code src/test/resources/{filename}}
-     * @throws IOException if {@code filename} doesn't exist or can't be opened
+     * @throws IllegalStateException if {@code filename} doesn't exist or can't be opened
      */
-    public static String fixture(String filename) throws IOException {
+    public static String fixture(String filename) {
         return fixture(filename, Charsets.UTF_8);
     }
 
@@ -31,9 +31,13 @@ public class FixtureHelpers {
      * @param filename    the filename of the fixture file
      * @param charset     the character set of {@code filename}
      * @return the contents of {@code src/test/resources/{filename}}
-     * @throws IOException if {@code filename} doesn't exist or can't be opened
+     * @throws IllegalStateException if {@code filename} doesn't exist or can't be opened
      */
-    private static String fixture(String filename, Charset charset) throws IOException {
-        return Resources.toString(Resources.getResource(filename), charset).trim();
+    private static String fixture(String filename, Charset charset) {
+        try {
+            return Resources.toString(Resources.getResource(filename), charset).trim();
+        } catch (IllegalArgumentException | IOException e) {
+            throw new IllegalStateException(e);
+        }
     }
 }
