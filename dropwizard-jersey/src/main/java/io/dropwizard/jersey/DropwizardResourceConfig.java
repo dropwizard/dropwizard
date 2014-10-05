@@ -7,6 +7,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Ordering;
 import io.dropwizard.jersey.caching.CacheControlledResponseFeature;
+import io.dropwizard.jersey.errors.EarlyEofExceptionMapper;
 import io.dropwizard.jersey.errors.LoggingExceptionMapper;
 import io.dropwizard.jersey.guava.OptionalMessageBodyWriter;
 import io.dropwizard.jersey.guava.OptionalParameterInjectionBinder;
@@ -62,6 +63,7 @@ public class DropwizardResourceConfig extends ResourceConfig {
             });
             register(new ConstraintViolationExceptionMapper());
             register(new JsonProcessingExceptionMapper());
+            register(new EarlyEofExceptionMapper());
             register(new ComponentLoggingListener(this));
         }
         register(new InstrumentedResourceMethodApplicationListener(metricRegistry));

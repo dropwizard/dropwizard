@@ -3,19 +3,18 @@ package io.dropwizard.setup;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheckRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.dropwizard.errors.EarlyEofExceptionMapper;
-import org.glassfish.jersey.servlet.ServletContainer;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.jersey.setup.JerseyContainerHolder;
 import io.dropwizard.jersey.setup.JerseyEnvironment;
 import io.dropwizard.jetty.MutableServletContextHandler;
 import io.dropwizard.jetty.setup.ServletEnvironment;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
+import org.glassfish.jersey.servlet.ServletContainer;
 
+import javax.servlet.Servlet;
 import javax.validation.Validator;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import javax.servlet.Servlet;
 
 // TODO: 5/15/13 <coda> -- add tests for Environment
 
@@ -69,8 +68,6 @@ public class Environment {
         this.lifecycleEnvironment = new LifecycleEnvironment();
 
         final DropwizardResourceConfig jerseyConfig = new DropwizardResourceConfig(metricRegistry);
-
-        jerseyConfig.register(new EarlyEofExceptionMapper());
 
         this.jerseyServletContainer = new JerseyContainerHolder(new ServletContainer(jerseyConfig));
         this.jerseyEnvironment = new JerseyEnvironment(jerseyServletContainer, jerseyConfig);
