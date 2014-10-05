@@ -645,6 +645,10 @@ Reports metrics periodically to Ganglia.
 
 Extends the attributes that are available to :ref:`all reporters <man-configuration-metrics-all>`
 
+.. note::
+
+    You will need to add ``dropwizard-metrics-ganglia`` to your POM.
+
 .. code-block:: yaml
 
     metrics:
@@ -684,6 +688,10 @@ Graphite Reporter
 Reports metrics periodically to Graphite.
 
 Extends the attributes that are available to :ref:`all reporters <man-configuration-metrics-all>`
+
+.. note::
+
+    You will need to add ``dropwizard-metrics-graphite`` to your POM.
 
 .. code-block:: yaml
 
