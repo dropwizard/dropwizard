@@ -104,6 +104,32 @@ with the type of the principal the authenticator produces, here ``User``:
                                                                                User.class)));
     }
 
+.. _man-auth-chained:
+
+Chained Factories
+=================
+
+The ``ChainedAuthFactory`` enables usage of various authentication factories at the same time.
+
+.. code-block:: java
+
+    @Override
+    public void run(ExampleConfiguration configuration,
+                    Environment environment) {
+        ChainedAuthFactory chainedFactory = new ChainedAuthFactory(
+                new BasicAuthProvider<User>(new BasicAuthFactory<User>(new ExampleBasicAuthenticator(),
+                                                                                      "SUPER SECRET STUFF",
+                                                                                      User.class))),
+                new OAuthProvider<User>(new OAuthFactory<User>(new ExampleOAuthAuthenticator(),
+                                                                               "SUPER SECRET STUFF",
+                                                                               User.class)))
+        );
+        environment.jersey().register(AuthFactory.binder(chainedFactory));
+    }
+
+For this to work properly, all chained factories must produce the same type of principal, here ``User``.
+
+
 .. _man-auth-resources:
 
 Protecting Resources
