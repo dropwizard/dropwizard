@@ -264,10 +264,11 @@ soLingerTime             (disabled)          Enable/disable ``SO_LINGER`` with t
 useServerHeader          false               Whether or not to add the ``Server`` header to each response.
 useDateHeader            true                Whether or not to add the ``Date`` header to each response.
 useForwardedHeaders      true                Whether or not to look at ``X-Forwarded-*`` headers added by proxies. See
-                                             ``ForwardedRequestCustomize`` for details.
+                                             `ForwardedRequestCustomizer`_ for details.
 ======================== ==================  ======================================================================================
 
 .. _`java.net.Socket#setSoTimeout(int)`: http://docs.oracle.com/javase/7/docs/api/java/net/Socket.html#setSoTimeout(int)
+.. _`ForwardedRequestCustomizer`: http://download.eclipse.org/jetty/stable-9/apidocs/org/eclipse/jetty/server/ForwardedRequestCustomizer.html
 
 .. _man-configuration-https:
 
