@@ -76,6 +76,9 @@ Your service's configuration file will then look like this:
       # the SQL query to run when validating a connection's liveness
       validationQuery: "/* MyService Health Check */ SELECT 1"
 
+      # the timeout before a connection validation queries fail
+      validationQueryTimeout: 3s
+
       # the minimum number of connections to keep open
       minSize: 8
 

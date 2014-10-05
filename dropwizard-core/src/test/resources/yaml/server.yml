@@ -20,3 +20,5 @@ applicationConnectors:
     useForwardedHeaders: false
 minThreads: 89
 maxThreads: 101
+applicationContextPath: /app
+adminContextPath: /admin

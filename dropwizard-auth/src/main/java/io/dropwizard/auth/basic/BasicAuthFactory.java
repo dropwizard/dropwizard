@@ -58,6 +58,12 @@ public final class BasicAuthFactory<T> extends AuthFactory<BasicCredentials, T> 
         return new BasicAuthFactory<>(required, authenticator(), this.realm, this.generatedClass);
     }
 
+    @Override
+    public void setRequest(HttpServletRequest request) {
+        this.request = request;
+    }
+
+    @Override
     public T provide() {
         if (request != null) {
             final String header = request.getHeader(HttpHeaders.AUTHORIZATION);
