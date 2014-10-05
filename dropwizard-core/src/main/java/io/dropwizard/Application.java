@@ -64,7 +64,7 @@ public abstract class Application<T extends Configuration> {
      * @param arguments the command-line arguments
      * @throws Exception if something goes wrong
      */
-    public final void run(String[] arguments) throws Exception {
+    public final void run(String... arguments) throws Exception {
         final Bootstrap<T> bootstrap = new Bootstrap<>(this);
         bootstrap.addCommand(new ServerCommand<>(this));
         bootstrap.addCommand(new CheckCommand<>(this));
