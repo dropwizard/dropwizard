@@ -633,12 +633,19 @@ This configures Maven to do a couple of things during its ``package`` phase:
 
 .. warning::
 
-    If your application has a dependency which *must* be signed (e.g., a `JCA/JCE`__ provider or
-    other trusted library), you have to add an exclusion__ to the ``maven-shade-plugin``
+    If your application has a dependency which *must* be signed (e.g., a `JCA/JCE`_ provider or
+    other trusted library), you have to add an `exclusion`_ to the ``maven-shade-plugin``
     configuration for that library and include that JAR in the classpath.
 
-.. __: http://docs.oracle.com/javase/7/docs/technotes/guides/security/crypto/CryptoSpec.html
-.. __: http://maven.apache.org/plugins/maven-shade-plugin/examples/includes-excludes.html
+.. warning::
+
+    Since Dropwizard is using the Java `ServiceLoader`_ functionality to register and load extensions,
+    the `minimizeJar`_ option of the `maven-shade-plugin` will lead to non-working application JARs.
+
+.. _`JCA/JCE`: http://docs.oracle.com/javase/7/docs/technotes/guides/security/crypto/CryptoSpec.html
+.. _`exclusion`: http://maven.apache.org/plugins/maven-shade-plugin/examples/includes-excludes.html
+.. _`minimizeJar`: https://maven.apache.org/plugins/maven-shade-plugin/shade-mojo.html#minimizeJar
+.. _`ServiceLoader`: http://docs.oracle.com/javase/7/docs/api/java/util/ServiceLoader.html
 
 .. _gs-versions:
 
