@@ -28,6 +28,7 @@ Then create subtypes of the top-level type corresponding to each alternative, an
 
 .. code-block:: java
 
+    @JsonTypeName("hammer")
     public class HammerFactory implements WidgetFactory {
         @JsonProperty
         private int weight = 10;
@@ -38,6 +39,7 @@ Then create subtypes of the top-level type corresponding to each alternative, an
         }
     }
 
+    @JsonTypeName("chisel")
     public class ChiselFactory implements WidgetFactory {
         @JsonProperty
         private float radius = 1;
