@@ -1,0 +1,41 @@
+driverClass: org.postgresql.Driver
+user: pg-user
+password: iAMs00perSecrEET
+url: jdbc:postgresql://db.example.com/db-prod
+properties:
+  charSet: UTF-8
+maxWaitForConnection: 1s
+maxConnectionAge: 1h
+minIdleTime: 1 minute
+
+validationQuery: "/* MyService Health Check */ SELECT 1"
+initializationQuery: "insert into connections_log(ts) values (now())"
+validationQueryTimeout: 3s
+
+minSize: 8
+maxSize: 32
+initialSize: 15
+
+evictionInterval: 10s
+validationInterval: 1m
+
+readOnlyByDefault: false
+# deprecated in favour readOnlyByDefault
+defaultReadOnly: false
+
+autoCommentsEnabled: false
+abandonWhenPercentageFull: 75
+alternateUsernamesAllowed: true
+commitOnReturn: true
+autoCommitByDefault: false
+defaultCatalog: test_catalog
+defaultTransactionIsolation: read-committed
+useFairQueue: false
+
+logAbandonedConnections: true
+logValidationErrors: true
+
+checkConnectionWhileIdle: false
+checkConnectionOnBorrow: true
+checkConnectionOnConnect: false
+checkConnectionOnReturn: true

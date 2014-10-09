@@ -1,4 +1,4 @@
-package io.dropwizard.errors;
+package io.dropwizard.jersey.errors;
 
 import org.eclipse.jetty.io.EofException;
 import org.junit.Assert;

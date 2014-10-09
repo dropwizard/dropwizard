@@ -36,6 +36,7 @@ import org.eclipse.jetty.setuid.RLimit;
 import org.eclipse.jetty.setuid.SetUIDListener;
 import org.eclipse.jetty.util.BlockingArrayQueue;
 import org.eclipse.jetty.util.thread.ThreadPool;
+import org.hibernate.validator.constraints.NotEmpty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -225,6 +226,9 @@ public abstract class AbstractServerFactory implements ServerFactory {
     @NotNull
     private Set<String> allowedMethods = AllowedMethodsFilter.DEFAULT_ALLOWED_METHODS;
 
+    @NotEmpty
+    private String jerseyRootPath = "/*";
+
     @JsonIgnore
     @ValidationMethod(message = "must have a smaller minThreads than maxThreads")
     public boolean isThreadPoolSizedCorrectly() {
@@ -391,6 +395,16 @@ public abstract class AbstractServerFactory implements ServerFactory {
         this.allowedMethods = allowedMethods;
     }
 
+    @JsonProperty("rootPath")
+    public String getJerseyRootPath() {
+        return jerseyRootPath;
+    }
+
+    @JsonProperty("rootPath")
+    public void setJerseyRootPath(String jerseyRootPath) {
+        this.jerseyRootPath = jerseyRootPath;
+    }
+
     protected Handler createAdminServlet(Server server,
                                          MutableServletContextHandler handler,
                                          MetricRegistry metrics,
@@ -431,6 +445,7 @@ public abstract class AbstractServerFactory implements ServerFactory {
             handler.addFilter(holder, "/*", EnumSet.allOf(DispatcherType.class));
         }
         if (jerseyContainer != null) {
+            jersey.setUrlPattern(jerseyRootPath);
             jersey.register(new JacksonMessageBodyProvider(objectMapper, validator));
             handler.addServlet(new NonblockingServletHolder(jerseyContainer), jersey.getUrlPattern());
         }

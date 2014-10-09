@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <prerequisites>
-        <maven>3.0.0</maven>
+        <maven>3.0.1</maven>
     </prerequisites>
 
     <groupId>io.dropwizard</groupId>
@@ -52,17 +52,16 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <metrics3.version>3.1.0</metrics3.version>
-        <jersey.version>2.11</jersey.version>
+        <jersey.version>2.13</jersey.version>
         <jackson.api.version>2.4.0</jackson.api.version>
-        <jackson.version>2.4.1</jackson.version>
-        <jackson.databind.version>2.4.1.1</jackson.databind.version>
+        <jackson.version>2.4.3</jackson.version>
         <logback.version>1.1.2</logback.version>
         <slf4j.version>1.7.7</slf4j.version>
         <servlet.version>3.0.0.v201112011016</servlet.version>
         <jetty.version>9.2.3.v20140905</jetty.version>
         <guava.version>18.0</guava.version>
         <h2.version>1.4.178</h2.version>
-        <assertj.version>1.6.1</assertj.version>
+        <assertj.version>1.7.0</assertj.version>
     </properties>
 
     <developers>
@@ -231,7 +230,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-gpg-plugin</artifactId>
-                        <version>1.4</version>
+                        <version>1.5</version>
                         <executions>
                             <execution>
                                 <id>sign-artifacts</id>
@@ -355,7 +354,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>2.2.1</version>
+                <version>2.3</version>
                 <executions>
                     <execution>
                         <id>attach-sources</id>
@@ -413,7 +412,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>2.4</version>
+                <version>2.5</version>
                 <configuration>
                     <archive>
                         <manifest>

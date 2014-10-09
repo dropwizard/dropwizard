@@ -7,8 +7,67 @@ Dropwizard Configuration Reference
 .. highlight:: text
 
 .. rubric:: The ``dropwizard-configuration`` module provides you with a polymorphic configuration
-            mechanism.
+            mechanism, meaning that a particular section of your configuration file can be implemented
+            using one or more configuration classes.
 
+To use this capability for your own configuration classes, create a top-level configuration interface or class that
+implements ``Discoverable`` and add the name of that class to ``META-INF/services/io.dropwizard.jackson.Discoverable``.
+Make sure to use `Jackson polymorphic deserialization`_ annotations appropriately.
+
+.. _Jackson polymorphic deserialization: http://wiki.fasterxml.com/JacksonPolymorphicDeserialization
+
+.. code-block:: java
+
+    @JsonTypeInfo(use = Id.NAME, include = As.PROPERTY, property = "type")
+    interface WidgetFactory extends Discoverable {
+        Widget createWidget();
+    }
+
+Then create subtypes of the top-level type corresponding to each alternative, and add their names to
+``META-INF/services/WidgetFactory``.
+
+.. code-block:: java
+
+    @JsonTypeName("hammer")
+    public class HammerFactory implements WidgetFactory {
+        @JsonProperty
+        private int weight = 10;
+
+        @Override
+        public Hammer createWidget() {
+            return new Hammer(weight);
+        }
+    }
+
+    @JsonTypeName("chisel")
+    public class ChiselFactory implements WidgetFactory {
+        @JsonProperty
+        private float radius = 1;
+
+        @Override
+        public Chisel createWidget() {
+            return new Chisel(weight);
+        }
+    }
+
+Now you can use ``WidgetFactory`` objects in your application's configuration.
+
+.. code-block:: java
+
+    public class MyConfiguration extends Configuration {
+        @JsonProperty
+        @NotNull
+        @Valid
+        private List<WidgetFactory> widgets;
+    }
+
+.. code-block:: yaml
+
+    widgets:
+      - type: hammer
+        weight: 20
+      - type: chisel
+        radius: 0.4
 
 .. _man-configuration-servers:
 
@@ -58,6 +117,8 @@ shutdownGracePeriod    30 seconds                                       The maxi
                                                                         to cleanly shutdown before forcibly terminating them.
 allowedMethods         ``GET``, ``POST``, ``PUT``, ``DELETE``,          The set of allowed HTTP methods. Others will be rejected with a
                        ``HEAD``, ``OPTIONS``, ``PATCH``                 405 Method Not Allowed response.
+rootPath               ``/``                                            The URL pattern relative to ``applicationContextPath`` from which
+                                                                        the JAX-RS resources will be served.
 ====================== ===============================================  =============================================================================
 
 
@@ -152,6 +213,8 @@ Extends the attributes that are available to :ref:`all servers <man-configuratio
     server:
       adminMinThreads: 1
       adminMaxThreads: 64
+      adminContextPath: /
+      applicationContextPath: /
       applicationConnectors:
         - type: http
           port: 8080
@@ -180,6 +243,8 @@ adminConnectors           An `HTTP connector`_      An `HTTP connector`_ listeni
                                                     handle admin requests.
 adminMinThreads           1                         The minimum number of threads to use for admin requests.
 adminMaxThreads           64                        The maximum number of threads to use for admin requests.
+adminContextPath          /                         The context path of the admin servlets, including metrics and tasks.
+applicationContextPath    /                         The context path of the application servlets, including Jersey.
 ========================  =======================   =====================================================================
 
 .. _`HTTP connector`:  https://github.com/dropwizard/dropwizard/blob/master/dropwizard-jetty/src/main/java/io/dropwizard/jetty/HttpConnectorFactory.java
@@ -258,10 +323,11 @@ soLingerTime             (disabled)          Enable/disable ``SO_LINGER`` with t
 useServerHeader          false               Whether or not to add the ``Server`` header to each response.
 useDateHeader            true                Whether or not to add the ``Date`` header to each response.
 useForwardedHeaders      true                Whether or not to look at ``X-Forwarded-*`` headers added by proxies. See
-                                             ``ForwardedRequestCustomize`` for details.
+                                             `ForwardedRequestCustomizer`_ for details.
 ======================== ==================  ======================================================================================
 
 .. _`java.net.Socket#setSoTimeout(int)`: http://docs.oracle.com/javase/7/docs/api/java/net/Socket.html#setSoTimeout(int)
+.. _`ForwardedRequestCustomizer`: http://download.eclipse.org/jetty/stable-9/apidocs/org/eclipse/jetty/server/ForwardedRequestCustomizer.html
 
 .. _man-configuration-https:
 
@@ -639,6 +705,10 @@ Reports metrics periodically to Ganglia.
 
 Extends the attributes that are available to :ref:`all reporters <man-configuration-metrics-all>`
 
+.. note::
+
+    You will need to add ``dropwizard-metrics-ganglia`` to your POM.
+
 .. code-block:: yaml
 
     metrics:
@@ -678,6 +748,10 @@ Graphite Reporter
 Reports metrics periodically to Graphite.
 
 Extends the attributes that are available to :ref:`all reporters <man-configuration-metrics-all>`
+
+.. note::
+
+    You will need to add ``dropwizard-metrics-graphite`` to your POM.
 
 .. code-block:: yaml
 

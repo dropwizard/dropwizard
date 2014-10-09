@@ -113,7 +113,7 @@
         <dependency>
             <groupId>net.sourceforge.argparse4j</groupId>
             <artifactId>argparse4j</artifactId>
-            <version>0.4.3</version>
+            <version>0.4.4</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty.toolchain.setuid</groupId>

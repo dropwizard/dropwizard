@@ -399,7 +399,7 @@ application. To enable it, move your application to a sub-URL.
 
     server:
       type: simple
-      applicationContextPath: /application/*  # Default value*
+      rootPath: /application/*
 
 Then use an extended ``AssetsBundle`` constructor to serve resources in the
 ``assets`` folder from the root path. ``index.htm`` is served as the default
