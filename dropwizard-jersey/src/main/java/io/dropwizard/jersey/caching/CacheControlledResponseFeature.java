@@ -19,15 +19,13 @@ public class CacheControlledResponseFeature implements DynamicFeature {
 
     @Override
     public void configure(final ResourceInfo resourceInfo, final FeatureContext configuration) {
-        AnnotatedMethod am = new AnnotatedMethod(resourceInfo.getResourceMethod());
+        final AnnotatedMethod am = new AnnotatedMethod(resourceInfo.getResourceMethod());
 
-        // check to ee if it has cache control annotation
-        CacheControl cc = am.getAnnotation(CacheControl.class);
+        // check to see if it has cache control annotation
+        final CacheControl cc = am.getAnnotation(CacheControl.class);
         if (cc != null) {
             configuration.register(new CacheControlledResponseFilter(cc));
-            return;
         }
-
     }
 
     private static class CacheControlledResponseFilter implements ContainerResponseFilter {
