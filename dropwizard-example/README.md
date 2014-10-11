@@ -33,11 +33,11 @@ To test the example application run the following commands.
 
 * To setup the h2 database run.
 
-        java -jar target/dropwizard-example-0.8.0-20140929.jar db migrate example.yml
+        java -jar target/dropwizard-example-0.8.0-20141009.jar db migrate example.yml
 
 * To run the server run.
 
-        java -jar target/dropwizard-example-0.8.0-20140929.jar server example.yml
+        java -jar target/dropwizard-example-0.8.0-20141009.jar server example.yml
 
 * To hit the Hello World example (hit refresh a few times).
 

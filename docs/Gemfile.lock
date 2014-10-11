@@ -12,6 +12,7 @@ GEM
       faraday (~> 0.8, < 0.10)
 
 PLATFORMS
+  java
   ruby
 
 DEPENDENCIES
