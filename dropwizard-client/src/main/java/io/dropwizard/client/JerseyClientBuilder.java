@@ -1,6 +1,7 @@
 package io.dropwizard.client;
 
 import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.httpclient.HttpClientMetricNameStrategy;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -176,6 +177,17 @@ public class JerseyClientBuilder {
     public JerseyClientBuilder using(ExecutorService executorService, ObjectMapper objectMapper) {
         this.executorService = executorService;
         this.objectMapper = objectMapper;
+        return this;
+    }
+
+    /**
+     * Use the given {@link HttpClientMetricNameStrategy} instance.
+     *
+     * @param metricNameStrategy    a {@link HttpClientMetricNameStrategy} instance
+     * @return {@code this}
+     */
+    public JerseyClientBuilder using(HttpClientMetricNameStrategy metricNameStrategy) {
+        builder.using(metricNameStrategy);
         return this;
     }
 
