@@ -1,5 +1,6 @@
 package io.dropwizard.logging;
 
+import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.net.SyslogAppender;
 import ch.qos.logback.classic.spi.ILoggingEvent;
@@ -8,6 +9,7 @@ import ch.qos.logback.core.AsyncAppenderBase;
 import ch.qos.logback.core.spi.AppenderAttachableImpl;
 import io.dropwizard.jackson.DiscoverableSubtypeResolver;
 import org.junit.Test;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 
@@ -61,5 +63,23 @@ public class SyslogAppenderFactoryTest {
 
         assertThat(appender.getStackTracePattern())
                 .isEqualTo("--->");
+    }
+
+    @Test
+    public void appenderContextIsSet() throws Exception {
+        final Logger root = (Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
+        final SyslogAppenderFactory appenderFactory = new SyslogAppenderFactory();
+        final Appender<ILoggingEvent> appender = appenderFactory.build(root.getLoggerContext(), "test", null);
+
+        assertThat(appender.getContext()).isEqualTo(root.getLoggerContext());
+    }
+
+    @Test
+    public void appenderNameIsSet() throws Exception {
+        final Logger root = (Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
+        final SyslogAppenderFactory appenderFactory = new SyslogAppenderFactory();
+        final Appender<ILoggingEvent> appender = appenderFactory.build(root.getLoggerContext(), "test", null);
+
+        assertThat(appender.getName()).isEqualTo("async-syslog-appender");
     }
 }

@@ -7,6 +7,7 @@ import ch.qos.logback.classic.filter.ThresholdFilter;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.AsyncAppenderBase;
+import ch.qos.logback.core.Context;
 import ch.qos.logback.core.spi.FilterAttachable;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Strings;
@@ -105,9 +106,15 @@ public abstract class AbstractAppenderFactory implements AppenderFactory {
     }
 
     protected Appender<ILoggingEvent> wrapAsync(Appender<ILoggingEvent> appender) {
+        return wrapAsync(appender, appender.getContext());
+    }
+
+    protected Appender<ILoggingEvent> wrapAsync(Appender<ILoggingEvent> appender, Context context) {
         final AsyncAppender asyncAppender = new AsyncAppender();
         asyncAppender.setQueueSize(queueSize);
         asyncAppender.setDiscardingThreshold(discardingThreshold);
+        asyncAppender.setContext(context);
+        asyncAppender.setName("async-" + appender.getName());
         asyncAppender.addAppender(appender);
         asyncAppender.start();
         return asyncAppender;
