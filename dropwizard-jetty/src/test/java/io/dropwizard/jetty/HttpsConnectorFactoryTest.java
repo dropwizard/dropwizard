@@ -5,6 +5,7 @@ import io.dropwizard.jackson.DiscoverableSubtypeResolver;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 import javax.validation.ConstraintViolation;
@@ -12,10 +13,12 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 
 import org.apache.commons.lang3.SystemUtils;
+import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.junit.Test;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
+import com.google.common.collect.ImmutableList;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.fail;
@@ -28,6 +31,30 @@ public class HttpsConnectorFactoryTest {
     public void isDiscoverable() throws Exception {
         assertThat(new DiscoverableSubtypeResolver().getDiscoveredSubtypes())
                 .contains(HttpsConnectorFactory.class);
+    }
+
+    @Test
+    public void testSupportedProtocols() {
+    	List<String> supportedProtocols = ImmutableList.of("SSLv3", "TLS1");
+
+    	HttpsConnectorFactory factory = new HttpsConnectorFactory();
+    	factory.setKeyStorePassword("password"); // necessary to avoid a prompt for a password
+    	factory.setSupportedProtocols(supportedProtocols);
+
+    	SslContextFactory sslContextFactory = factory.buildSslContextFactory();
+    	assertThat(ImmutableList.copyOf(sslContextFactory.getIncludeProtocols())).isEqualTo(supportedProtocols);
+    }
+
+    @Test
+    public void testExcludedProtocols() {
+    	List<String> excludedProtocols = ImmutableList.of("SSLv3", "TLS1");
+
+    	HttpsConnectorFactory factory = new HttpsConnectorFactory();
+    	factory.setKeyStorePassword("password"); // necessary to avoid a prompt for a password
+    	factory.setExcludedProtocols(excludedProtocols);
+
+    	SslContextFactory sslContextFactory = factory.buildSslContextFactory();
+    	assertThat(ImmutableList.copyOf(sslContextFactory.getExcludeProtocols())).isEqualTo(excludedProtocols);
     }
 
     @Test
