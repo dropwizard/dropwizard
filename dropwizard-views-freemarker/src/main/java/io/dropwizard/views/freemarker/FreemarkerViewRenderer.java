@@ -5,9 +5,10 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import freemarker.template.Configuration;
-import freemarker.template.DefaultObjectWrapper;
+import freemarker.template.DefaultObjectWrapperBuilder;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
+import freemarker.template.Version;
 import io.dropwizard.views.View;
 import io.dropwizard.views.ViewRenderer;
 
@@ -22,11 +23,14 @@ import java.util.Locale;
  * A {@link ViewRenderer} which renders Freemarker ({@code .ftl}) templates.
  */
 public class FreemarkerViewRenderer implements ViewRenderer {
+
+    private static final Version FREEMARKER_VERSION = Configuration.getVersion();
+
     private static class TemplateLoader extends CacheLoader<Class<?>, Configuration> {
         @Override
         public Configuration load(Class<?> key) throws Exception {
-            final Configuration configuration = new Configuration();
-            configuration.setObjectWrapper(new DefaultObjectWrapper());
+            final Configuration configuration = new Configuration(FREEMARKER_VERSION);
+            configuration.setObjectWrapper(new DefaultObjectWrapperBuilder(FREEMARKER_VERSION).build());
             configuration.loadBuiltInEncodingMap();
             configuration.setDefaultEncoding(Charsets.UTF_8.name());
             configuration.setClassForTemplateLoading(key, "/");
