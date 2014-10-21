@@ -6,6 +6,7 @@ import org.eclipse.jetty.security.SecurityHandler;
 import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.eclipse.jetty.util.resource.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,6 +28,15 @@ public class ServletEnvironment {
 
     public ServletEnvironment(MutableServletContextHandler handler) {
         this.handler = handler;
+    }
+
+    /**
+     * Set the base servlet resource.
+     *
+     * @param resource base resource to use
+     */
+    public void setBaseResource(Resource resource) {
+        handler.setBaseResource(resource);
     }
 
     /**
