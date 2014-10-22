@@ -176,4 +176,629 @@ public class DurationTest {
         assertThat(Duration.microseconds(1).getUnit())
                 .isEqualTo(TimeUnit.MICROSECONDS);
     }
+
+    @Test
+    public void isComparable() throws Exception {
+        // both zero
+        assertThat(Duration.nanoseconds(0).compareTo(Duration.nanoseconds(0))).isEqualTo(0);
+        assertThat(Duration.nanoseconds(0).compareTo(Duration.microseconds(0))).isEqualTo(0);
+        assertThat(Duration.nanoseconds(0).compareTo(Duration.milliseconds(0))).isEqualTo(0);
+        assertThat(Duration.nanoseconds(0).compareTo(Duration.seconds(0))).isEqualTo(0);
+        assertThat(Duration.nanoseconds(0).compareTo(Duration.minutes(0))).isEqualTo(0);
+        assertThat(Duration.nanoseconds(0).compareTo(Duration.hours(0))).isEqualTo(0);
+        assertThat(Duration.nanoseconds(0).compareTo(Duration.days(0))).isEqualTo(0);
+
+        assertThat(Duration.microseconds(0).compareTo(Duration.nanoseconds(0))).isEqualTo(0);
+        assertThat(Duration.microseconds(0).compareTo(Duration.microseconds(0))).isEqualTo(0);
+        assertThat(Duration.microseconds(0).compareTo(Duration.milliseconds(0))).isEqualTo(0);
+        assertThat(Duration.microseconds(0).compareTo(Duration.seconds(0))).isEqualTo(0);
+        assertThat(Duration.microseconds(0).compareTo(Duration.minutes(0))).isEqualTo(0);
+        assertThat(Duration.microseconds(0).compareTo(Duration.hours(0))).isEqualTo(0);
+        assertThat(Duration.microseconds(0).compareTo(Duration.days(0))).isEqualTo(0);
+
+        assertThat(Duration.milliseconds(0).compareTo(Duration.nanoseconds(0))).isEqualTo(0);
+        assertThat(Duration.milliseconds(0).compareTo(Duration.microseconds(0))).isEqualTo(0);
+        assertThat(Duration.milliseconds(0).compareTo(Duration.milliseconds(0))).isEqualTo(0);
+        assertThat(Duration.milliseconds(0).compareTo(Duration.seconds(0))).isEqualTo(0);
+        assertThat(Duration.milliseconds(0).compareTo(Duration.minutes(0))).isEqualTo(0);
+        assertThat(Duration.milliseconds(0).compareTo(Duration.hours(0))).isEqualTo(0);
+        assertThat(Duration.milliseconds(0).compareTo(Duration.days(0))).isEqualTo(0);
+
+        assertThat(Duration.seconds(0).compareTo(Duration.nanoseconds(0))).isEqualTo(0);
+        assertThat(Duration.seconds(0).compareTo(Duration.microseconds(0))).isEqualTo(0);
+        assertThat(Duration.seconds(0).compareTo(Duration.milliseconds(0))).isEqualTo(0);
+        assertThat(Duration.seconds(0).compareTo(Duration.seconds(0))).isEqualTo(0);
+        assertThat(Duration.seconds(0).compareTo(Duration.minutes(0))).isEqualTo(0);
+        assertThat(Duration.seconds(0).compareTo(Duration.hours(0))).isEqualTo(0);
+        assertThat(Duration.seconds(0).compareTo(Duration.days(0))).isEqualTo(0);
+
+        assertThat(Duration.minutes(0).compareTo(Duration.nanoseconds(0))).isEqualTo(0);
+        assertThat(Duration.minutes(0).compareTo(Duration.microseconds(0))).isEqualTo(0);
+        assertThat(Duration.minutes(0).compareTo(Duration.milliseconds(0))).isEqualTo(0);
+        assertThat(Duration.minutes(0).compareTo(Duration.seconds(0))).isEqualTo(0);
+        assertThat(Duration.minutes(0).compareTo(Duration.minutes(0))).isEqualTo(0);
+        assertThat(Duration.minutes(0).compareTo(Duration.hours(0))).isEqualTo(0);
+        assertThat(Duration.minutes(0).compareTo(Duration.days(0))).isEqualTo(0);
+
+        assertThat(Duration.hours(0).compareTo(Duration.nanoseconds(0))).isEqualTo(0);
+        assertThat(Duration.hours(0).compareTo(Duration.microseconds(0))).isEqualTo(0);
+        assertThat(Duration.hours(0).compareTo(Duration.milliseconds(0))).isEqualTo(0);
+        assertThat(Duration.hours(0).compareTo(Duration.seconds(0))).isEqualTo(0);
+        assertThat(Duration.hours(0).compareTo(Duration.minutes(0))).isEqualTo(0);
+        assertThat(Duration.hours(0).compareTo(Duration.hours(0))).isEqualTo(0);
+        assertThat(Duration.hours(0).compareTo(Duration.days(0))).isEqualTo(0);
+
+        assertThat(Duration.days(0).compareTo(Duration.nanoseconds(0))).isEqualTo(0);
+        assertThat(Duration.days(0).compareTo(Duration.microseconds(0))).isEqualTo(0);
+        assertThat(Duration.days(0).compareTo(Duration.milliseconds(0))).isEqualTo(0);
+        assertThat(Duration.days(0).compareTo(Duration.seconds(0))).isEqualTo(0);
+        assertThat(Duration.days(0).compareTo(Duration.minutes(0))).isEqualTo(0);
+        assertThat(Duration.days(0).compareTo(Duration.hours(0))).isEqualTo(0);
+        assertThat(Duration.days(0).compareTo(Duration.days(0))).isEqualTo(0);
+
+        // one zero, one negative
+        assertThat(Duration.nanoseconds(0)).isGreaterThan(Duration.nanoseconds(-1));
+        assertThat(Duration.nanoseconds(0)).isGreaterThan(Duration.microseconds(-1));
+        assertThat(Duration.nanoseconds(0)).isGreaterThan(Duration.milliseconds(-1));
+        assertThat(Duration.nanoseconds(0)).isGreaterThan(Duration.seconds(-1));
+        assertThat(Duration.nanoseconds(0)).isGreaterThan(Duration.minutes(-1));
+        assertThat(Duration.nanoseconds(0)).isGreaterThan(Duration.hours(-1));
+        assertThat(Duration.nanoseconds(0)).isGreaterThan(Duration.days(-1));
+
+        assertThat(Duration.microseconds(0)).isGreaterThan(Duration.nanoseconds(-1));
+        assertThat(Duration.microseconds(0)).isGreaterThan(Duration.microseconds(-1));
+        assertThat(Duration.microseconds(0)).isGreaterThan(Duration.milliseconds(-1));
+        assertThat(Duration.microseconds(0)).isGreaterThan(Duration.seconds(-1));
+        assertThat(Duration.microseconds(0)).isGreaterThan(Duration.minutes(-1));
+        assertThat(Duration.microseconds(0)).isGreaterThan(Duration.hours(-1));
+        assertThat(Duration.microseconds(0)).isGreaterThan(Duration.days(-1));
+
+        assertThat(Duration.milliseconds(0)).isGreaterThan(Duration.nanoseconds(-1));
+        assertThat(Duration.milliseconds(0)).isGreaterThan(Duration.microseconds(-1));
+        assertThat(Duration.milliseconds(0)).isGreaterThan(Duration.milliseconds(-1));
+        assertThat(Duration.milliseconds(0)).isGreaterThan(Duration.seconds(-1));
+        assertThat(Duration.milliseconds(0)).isGreaterThan(Duration.minutes(-1));
+        assertThat(Duration.milliseconds(0)).isGreaterThan(Duration.hours(-1));
+        assertThat(Duration.milliseconds(0)).isGreaterThan(Duration.days(-1));
+
+        assertThat(Duration.seconds(0)).isGreaterThan(Duration.nanoseconds(-1));
+        assertThat(Duration.seconds(0)).isGreaterThan(Duration.microseconds(-1));
+        assertThat(Duration.seconds(0)).isGreaterThan(Duration.milliseconds(-1));
+        assertThat(Duration.seconds(0)).isGreaterThan(Duration.seconds(-1));
+        assertThat(Duration.seconds(0)).isGreaterThan(Duration.minutes(-1));
+        assertThat(Duration.seconds(0)).isGreaterThan(Duration.hours(-1));
+        assertThat(Duration.seconds(0)).isGreaterThan(Duration.days(-1));
+
+        assertThat(Duration.minutes(0)).isGreaterThan(Duration.nanoseconds(-1));
+        assertThat(Duration.minutes(0)).isGreaterThan(Duration.microseconds(-1));
+        assertThat(Duration.minutes(0)).isGreaterThan(Duration.milliseconds(-1));
+        assertThat(Duration.minutes(0)).isGreaterThan(Duration.seconds(-1));
+        assertThat(Duration.minutes(0)).isGreaterThan(Duration.minutes(-1));
+        assertThat(Duration.minutes(0)).isGreaterThan(Duration.hours(-1));
+        assertThat(Duration.minutes(0)).isGreaterThan(Duration.days(-1));
+
+        assertThat(Duration.hours(0)).isGreaterThan(Duration.nanoseconds(-1));
+        assertThat(Duration.hours(0)).isGreaterThan(Duration.microseconds(-1));
+        assertThat(Duration.hours(0)).isGreaterThan(Duration.milliseconds(-1));
+        assertThat(Duration.hours(0)).isGreaterThan(Duration.seconds(-1));
+        assertThat(Duration.hours(0)).isGreaterThan(Duration.minutes(-1));
+        assertThat(Duration.hours(0)).isGreaterThan(Duration.hours(-1));
+        assertThat(Duration.hours(0)).isGreaterThan(Duration.days(-1));
+
+        assertThat(Duration.days(0)).isGreaterThan(Duration.nanoseconds(-1));
+        assertThat(Duration.days(0)).isGreaterThan(Duration.microseconds(-1));
+        assertThat(Duration.days(0)).isGreaterThan(Duration.milliseconds(-1));
+        assertThat(Duration.days(0)).isGreaterThan(Duration.seconds(-1));
+        assertThat(Duration.days(0)).isGreaterThan(Duration.minutes(-1));
+        assertThat(Duration.days(0)).isGreaterThan(Duration.hours(-1));
+        assertThat(Duration.days(0)).isGreaterThan(Duration.days(-1));
+
+        assertThat(Duration.nanoseconds(-1)).isLessThan(Duration.nanoseconds(0));
+        assertThat(Duration.nanoseconds(-1)).isLessThan(Duration.microseconds(0));
+        assertThat(Duration.nanoseconds(-1)).isLessThan(Duration.milliseconds(0));
+        assertThat(Duration.nanoseconds(-1)).isLessThan(Duration.seconds(0));
+        assertThat(Duration.nanoseconds(-1)).isLessThan(Duration.minutes(0));
+        assertThat(Duration.nanoseconds(-1)).isLessThan(Duration.hours(0));
+        assertThat(Duration.nanoseconds(-1)).isLessThan(Duration.days(0));
+
+        assertThat(Duration.microseconds(-1)).isLessThan(Duration.nanoseconds(0));
+        assertThat(Duration.microseconds(-1)).isLessThan(Duration.microseconds(0));
+        assertThat(Duration.microseconds(-1)).isLessThan(Duration.milliseconds(0));
+        assertThat(Duration.microseconds(-1)).isLessThan(Duration.seconds(0));
+        assertThat(Duration.microseconds(-1)).isLessThan(Duration.minutes(0));
+        assertThat(Duration.microseconds(-1)).isLessThan(Duration.hours(0));
+        assertThat(Duration.microseconds(-1)).isLessThan(Duration.days(0));
+
+        assertThat(Duration.milliseconds(-1)).isLessThan(Duration.nanoseconds(0));
+        assertThat(Duration.milliseconds(-1)).isLessThan(Duration.microseconds(0));
+        assertThat(Duration.milliseconds(-1)).isLessThan(Duration.milliseconds(0));
+        assertThat(Duration.milliseconds(-1)).isLessThan(Duration.seconds(0));
+        assertThat(Duration.milliseconds(-1)).isLessThan(Duration.minutes(0));
+        assertThat(Duration.milliseconds(-1)).isLessThan(Duration.hours(0));
+        assertThat(Duration.milliseconds(-1)).isLessThan(Duration.days(0));
+
+        assertThat(Duration.seconds(-1)).isLessThan(Duration.nanoseconds(0));
+        assertThat(Duration.seconds(-1)).isLessThan(Duration.microseconds(0));
+        assertThat(Duration.seconds(-1)).isLessThan(Duration.milliseconds(0));
+        assertThat(Duration.seconds(-1)).isLessThan(Duration.seconds(0));
+        assertThat(Duration.seconds(-1)).isLessThan(Duration.minutes(0));
+        assertThat(Duration.seconds(-1)).isLessThan(Duration.hours(0));
+        assertThat(Duration.seconds(-1)).isLessThan(Duration.days(0));
+
+        assertThat(Duration.minutes(-1)).isLessThan(Duration.nanoseconds(0));
+        assertThat(Duration.minutes(-1)).isLessThan(Duration.microseconds(0));
+        assertThat(Duration.minutes(-1)).isLessThan(Duration.milliseconds(0));
+        assertThat(Duration.minutes(-1)).isLessThan(Duration.seconds(0));
+        assertThat(Duration.minutes(-1)).isLessThan(Duration.minutes(0));
+        assertThat(Duration.minutes(-1)).isLessThan(Duration.hours(0));
+        assertThat(Duration.minutes(-1)).isLessThan(Duration.days(0));
+
+        assertThat(Duration.hours(-1)).isLessThan(Duration.nanoseconds(0));
+        assertThat(Duration.hours(-1)).isLessThan(Duration.microseconds(0));
+        assertThat(Duration.hours(-1)).isLessThan(Duration.milliseconds(0));
+        assertThat(Duration.hours(-1)).isLessThan(Duration.seconds(0));
+        assertThat(Duration.hours(-1)).isLessThan(Duration.minutes(0));
+        assertThat(Duration.hours(-1)).isLessThan(Duration.hours(0));
+        assertThat(Duration.hours(-1)).isLessThan(Duration.days(0));
+
+        assertThat(Duration.days(-1)).isLessThan(Duration.nanoseconds(0));
+        assertThat(Duration.days(-1)).isLessThan(Duration.microseconds(0));
+        assertThat(Duration.days(-1)).isLessThan(Duration.milliseconds(0));
+        assertThat(Duration.days(-1)).isLessThan(Duration.seconds(0));
+        assertThat(Duration.days(-1)).isLessThan(Duration.minutes(0));
+        assertThat(Duration.days(-1)).isLessThan(Duration.hours(0));
+        assertThat(Duration.days(-1)).isLessThan(Duration.days(0));
+
+        // one zero, one positive
+        assertThat(Duration.nanoseconds(0)).isLessThan(Duration.nanoseconds(1));
+        assertThat(Duration.nanoseconds(0)).isLessThan(Duration.microseconds(1));
+        assertThat(Duration.nanoseconds(0)).isLessThan(Duration.milliseconds(1));
+        assertThat(Duration.nanoseconds(0)).isLessThan(Duration.seconds(1));
+        assertThat(Duration.nanoseconds(0)).isLessThan(Duration.minutes(1));
+        assertThat(Duration.nanoseconds(0)).isLessThan(Duration.hours(1));
+        assertThat(Duration.nanoseconds(0)).isLessThan(Duration.days(1));
+
+        assertThat(Duration.microseconds(0)).isLessThan(Duration.nanoseconds(1));
+        assertThat(Duration.microseconds(0)).isLessThan(Duration.microseconds(1));
+        assertThat(Duration.microseconds(0)).isLessThan(Duration.milliseconds(1));
+        assertThat(Duration.microseconds(0)).isLessThan(Duration.seconds(1));
+        assertThat(Duration.microseconds(0)).isLessThan(Duration.minutes(1));
+        assertThat(Duration.microseconds(0)).isLessThan(Duration.hours(1));
+        assertThat(Duration.microseconds(0)).isLessThan(Duration.days(1));
+
+        assertThat(Duration.milliseconds(0)).isLessThan(Duration.nanoseconds(1));
+        assertThat(Duration.milliseconds(0)).isLessThan(Duration.microseconds(1));
+        assertThat(Duration.milliseconds(0)).isLessThan(Duration.milliseconds(1));
+        assertThat(Duration.milliseconds(0)).isLessThan(Duration.seconds(1));
+        assertThat(Duration.milliseconds(0)).isLessThan(Duration.minutes(1));
+        assertThat(Duration.milliseconds(0)).isLessThan(Duration.hours(1));
+        assertThat(Duration.milliseconds(0)).isLessThan(Duration.days(1));
+
+        assertThat(Duration.seconds(0)).isLessThan(Duration.nanoseconds(1));
+        assertThat(Duration.seconds(0)).isLessThan(Duration.microseconds(1));
+        assertThat(Duration.seconds(0)).isLessThan(Duration.milliseconds(1));
+        assertThat(Duration.seconds(0)).isLessThan(Duration.seconds(1));
+        assertThat(Duration.seconds(0)).isLessThan(Duration.minutes(1));
+        assertThat(Duration.seconds(0)).isLessThan(Duration.hours(1));
+        assertThat(Duration.seconds(0)).isLessThan(Duration.days(1));
+
+        assertThat(Duration.minutes(0)).isLessThan(Duration.nanoseconds(1));
+        assertThat(Duration.minutes(0)).isLessThan(Duration.microseconds(1));
+        assertThat(Duration.minutes(0)).isLessThan(Duration.milliseconds(1));
+        assertThat(Duration.minutes(0)).isLessThan(Duration.seconds(1));
+        assertThat(Duration.minutes(0)).isLessThan(Duration.minutes(1));
+        assertThat(Duration.minutes(0)).isLessThan(Duration.hours(1));
+        assertThat(Duration.minutes(0)).isLessThan(Duration.days(1));
+
+        assertThat(Duration.hours(0)).isLessThan(Duration.nanoseconds(1));
+        assertThat(Duration.hours(0)).isLessThan(Duration.microseconds(1));
+        assertThat(Duration.hours(0)).isLessThan(Duration.milliseconds(1));
+        assertThat(Duration.hours(0)).isLessThan(Duration.seconds(1));
+        assertThat(Duration.hours(0)).isLessThan(Duration.minutes(1));
+        assertThat(Duration.hours(0)).isLessThan(Duration.hours(1));
+        assertThat(Duration.hours(0)).isLessThan(Duration.days(1));
+
+        assertThat(Duration.days(0)).isLessThan(Duration.nanoseconds(1));
+        assertThat(Duration.days(0)).isLessThan(Duration.microseconds(1));
+        assertThat(Duration.days(0)).isLessThan(Duration.milliseconds(1));
+        assertThat(Duration.days(0)).isLessThan(Duration.seconds(1));
+        assertThat(Duration.days(0)).isLessThan(Duration.minutes(1));
+        assertThat(Duration.days(0)).isLessThan(Duration.hours(1));
+        assertThat(Duration.days(0)).isLessThan(Duration.days(1));
+
+        assertThat(Duration.nanoseconds(1)).isGreaterThan(Duration.nanoseconds(0));
+        assertThat(Duration.nanoseconds(1)).isGreaterThan(Duration.microseconds(0));
+        assertThat(Duration.nanoseconds(1)).isGreaterThan(Duration.milliseconds(0));
+        assertThat(Duration.nanoseconds(1)).isGreaterThan(Duration.seconds(0));
+        assertThat(Duration.nanoseconds(1)).isGreaterThan(Duration.minutes(0));
+        assertThat(Duration.nanoseconds(1)).isGreaterThan(Duration.hours(0));
+        assertThat(Duration.nanoseconds(1)).isGreaterThan(Duration.days(0));
+
+        assertThat(Duration.microseconds(1)).isGreaterThan(Duration.nanoseconds(0));
+        assertThat(Duration.microseconds(1)).isGreaterThan(Duration.microseconds(0));
+        assertThat(Duration.microseconds(1)).isGreaterThan(Duration.milliseconds(0));
+        assertThat(Duration.microseconds(1)).isGreaterThan(Duration.seconds(0));
+        assertThat(Duration.microseconds(1)).isGreaterThan(Duration.minutes(0));
+        assertThat(Duration.microseconds(1)).isGreaterThan(Duration.hours(0));
+        assertThat(Duration.microseconds(1)).isGreaterThan(Duration.days(0));
+
+        assertThat(Duration.milliseconds(1)).isGreaterThan(Duration.nanoseconds(0));
+        assertThat(Duration.milliseconds(1)).isGreaterThan(Duration.microseconds(0));
+        assertThat(Duration.milliseconds(1)).isGreaterThan(Duration.milliseconds(0));
+        assertThat(Duration.milliseconds(1)).isGreaterThan(Duration.seconds(0));
+        assertThat(Duration.milliseconds(1)).isGreaterThan(Duration.minutes(0));
+        assertThat(Duration.milliseconds(1)).isGreaterThan(Duration.hours(0));
+        assertThat(Duration.milliseconds(1)).isGreaterThan(Duration.days(0));
+
+        assertThat(Duration.seconds(1)).isGreaterThan(Duration.nanoseconds(0));
+        assertThat(Duration.seconds(1)).isGreaterThan(Duration.microseconds(0));
+        assertThat(Duration.seconds(1)).isGreaterThan(Duration.milliseconds(0));
+        assertThat(Duration.seconds(1)).isGreaterThan(Duration.seconds(0));
+        assertThat(Duration.seconds(1)).isGreaterThan(Duration.minutes(0));
+        assertThat(Duration.seconds(1)).isGreaterThan(Duration.hours(0));
+        assertThat(Duration.seconds(1)).isGreaterThan(Duration.days(0));
+
+        assertThat(Duration.minutes(1)).isGreaterThan(Duration.nanoseconds(0));
+        assertThat(Duration.minutes(1)).isGreaterThan(Duration.microseconds(0));
+        assertThat(Duration.minutes(1)).isGreaterThan(Duration.milliseconds(0));
+        assertThat(Duration.minutes(1)).isGreaterThan(Duration.seconds(0));
+        assertThat(Duration.minutes(1)).isGreaterThan(Duration.minutes(0));
+        assertThat(Duration.minutes(1)).isGreaterThan(Duration.hours(0));
+        assertThat(Duration.minutes(1)).isGreaterThan(Duration.days(0));
+
+        assertThat(Duration.hours(1)).isGreaterThan(Duration.nanoseconds(0));
+        assertThat(Duration.hours(1)).isGreaterThan(Duration.microseconds(0));
+        assertThat(Duration.hours(1)).isGreaterThan(Duration.milliseconds(0));
+        assertThat(Duration.hours(1)).isGreaterThan(Duration.seconds(0));
+        assertThat(Duration.hours(1)).isGreaterThan(Duration.minutes(0));
+        assertThat(Duration.hours(1)).isGreaterThan(Duration.hours(0));
+        assertThat(Duration.hours(1)).isGreaterThan(Duration.days(0));
+
+        assertThat(Duration.days(1)).isGreaterThan(Duration.nanoseconds(0));
+        assertThat(Duration.days(1)).isGreaterThan(Duration.microseconds(0));
+        assertThat(Duration.days(1)).isGreaterThan(Duration.milliseconds(0));
+        assertThat(Duration.days(1)).isGreaterThan(Duration.seconds(0));
+        assertThat(Duration.days(1)).isGreaterThan(Duration.minutes(0));
+        assertThat(Duration.days(1)).isGreaterThan(Duration.hours(0));
+        assertThat(Duration.days(1)).isGreaterThan(Duration.days(0));
+
+        // both negative
+        assertThat(Duration.nanoseconds(-2)).isLessThan(Duration.nanoseconds(-1));
+        assertThat(Duration.nanoseconds(-2)).isGreaterThan(Duration.microseconds(-1));
+        assertThat(Duration.nanoseconds(-2)).isGreaterThan(Duration.milliseconds(-1));
+        assertThat(Duration.nanoseconds(-2)).isGreaterThan(Duration.seconds(-1));
+        assertThat(Duration.nanoseconds(-2)).isGreaterThan(Duration.minutes(-1));
+        assertThat(Duration.nanoseconds(-2)).isGreaterThan(Duration.hours(-1));
+        assertThat(Duration.nanoseconds(-2)).isGreaterThan(Duration.days(-1));
+
+        assertThat(Duration.microseconds(-2)).isLessThan(Duration.nanoseconds(-1));
+        assertThat(Duration.microseconds(-2)).isLessThan(Duration.microseconds(-1));
+        assertThat(Duration.microseconds(-2)).isGreaterThan(Duration.milliseconds(-1));
+        assertThat(Duration.microseconds(-2)).isGreaterThan(Duration.seconds(-1));
+        assertThat(Duration.microseconds(-2)).isGreaterThan(Duration.minutes(-1));
+        assertThat(Duration.microseconds(-2)).isGreaterThan(Duration.hours(-1));
+        assertThat(Duration.microseconds(-2)).isGreaterThan(Duration.days(-1));
+
+        assertThat(Duration.milliseconds(-2)).isLessThan(Duration.nanoseconds(-1));
+        assertThat(Duration.milliseconds(-2)).isLessThan(Duration.microseconds(-1));
+        assertThat(Duration.milliseconds(-2)).isLessThan(Duration.milliseconds(-1));
+        assertThat(Duration.milliseconds(-2)).isGreaterThan(Duration.seconds(-1));
+        assertThat(Duration.milliseconds(-2)).isGreaterThan(Duration.minutes(-1));
+        assertThat(Duration.milliseconds(-2)).isGreaterThan(Duration.hours(-1));
+        assertThat(Duration.milliseconds(-2)).isGreaterThan(Duration.days(-1));
+
+        assertThat(Duration.seconds(-2)).isLessThan(Duration.nanoseconds(-1));
+        assertThat(Duration.seconds(-2)).isLessThan(Duration.microseconds(-1));
+        assertThat(Duration.seconds(-2)).isLessThan(Duration.milliseconds(-1));
+        assertThat(Duration.seconds(-2)).isLessThan(Duration.seconds(-1));
+        assertThat(Duration.seconds(-2)).isGreaterThan(Duration.minutes(-1));
+        assertThat(Duration.seconds(-2)).isGreaterThan(Duration.hours(-1));
+        assertThat(Duration.seconds(-2)).isGreaterThan(Duration.days(-1));
+
+        assertThat(Duration.minutes(-2)).isLessThan(Duration.nanoseconds(-1));
+        assertThat(Duration.minutes(-2)).isLessThan(Duration.microseconds(-1));
+        assertThat(Duration.minutes(-2)).isLessThan(Duration.milliseconds(-1));
+        assertThat(Duration.minutes(-2)).isLessThan(Duration.seconds(-1));
+        assertThat(Duration.minutes(-2)).isLessThan(Duration.minutes(-1));
+        assertThat(Duration.minutes(-2)).isGreaterThan(Duration.hours(-1));
+        assertThat(Duration.minutes(-2)).isGreaterThan(Duration.days(-1));
+
+        assertThat(Duration.hours(-2)).isLessThan(Duration.nanoseconds(-1));
+        assertThat(Duration.hours(-2)).isLessThan(Duration.microseconds(-1));
+        assertThat(Duration.hours(-2)).isLessThan(Duration.milliseconds(-1));
+        assertThat(Duration.hours(-2)).isLessThan(Duration.seconds(-1));
+        assertThat(Duration.hours(-2)).isLessThan(Duration.minutes(-1));
+        assertThat(Duration.hours(-2)).isLessThan(Duration.hours(-1));
+        assertThat(Duration.hours(-2)).isGreaterThan(Duration.days(-1));
+
+        assertThat(Duration.days(-2)).isLessThan(Duration.nanoseconds(-1));
+        assertThat(Duration.days(-2)).isLessThan(Duration.microseconds(-1));
+        assertThat(Duration.days(-2)).isLessThan(Duration.milliseconds(-1));
+        assertThat(Duration.days(-2)).isLessThan(Duration.seconds(-1));
+        assertThat(Duration.days(-2)).isLessThan(Duration.minutes(-1));
+        assertThat(Duration.days(-2)).isLessThan(Duration.hours(-1));
+        assertThat(Duration.days(-2)).isLessThan(Duration.days(-1));
+
+        assertThat(Duration.nanoseconds(-1)).isGreaterThan(Duration.nanoseconds(-2));
+        assertThat(Duration.nanoseconds(-1)).isGreaterThan(Duration.microseconds(-2));
+        assertThat(Duration.nanoseconds(-1)).isGreaterThan(Duration.milliseconds(-2));
+        assertThat(Duration.nanoseconds(-1)).isGreaterThan(Duration.seconds(-2));
+        assertThat(Duration.nanoseconds(-1)).isGreaterThan(Duration.minutes(-2));
+        assertThat(Duration.nanoseconds(-1)).isGreaterThan(Duration.hours(-2));
+        assertThat(Duration.nanoseconds(-1)).isGreaterThan(Duration.days(-2));
+
+        assertThat(Duration.microseconds(-1)).isLessThan(Duration.nanoseconds(-2));
+        assertThat(Duration.microseconds(-1)).isGreaterThan(Duration.microseconds(-2));
+        assertThat(Duration.microseconds(-1)).isGreaterThan(Duration.milliseconds(-2));
+        assertThat(Duration.microseconds(-1)).isGreaterThan(Duration.seconds(-2));
+        assertThat(Duration.microseconds(-1)).isGreaterThan(Duration.minutes(-2));
+        assertThat(Duration.microseconds(-1)).isGreaterThan(Duration.hours(-2));
+        assertThat(Duration.microseconds(-1)).isGreaterThan(Duration.days(-2));
+
+        assertThat(Duration.milliseconds(-1)).isLessThan(Duration.nanoseconds(-2));
+        assertThat(Duration.milliseconds(-1)).isLessThan(Duration.microseconds(-2));
+        assertThat(Duration.milliseconds(-1)).isGreaterThan(Duration.milliseconds(-2));
+        assertThat(Duration.milliseconds(-1)).isGreaterThan(Duration.seconds(-2));
+        assertThat(Duration.milliseconds(-1)).isGreaterThan(Duration.minutes(-2));
+        assertThat(Duration.milliseconds(-1)).isGreaterThan(Duration.hours(-2));
+        assertThat(Duration.milliseconds(-1)).isGreaterThan(Duration.days(-2));
+
+        assertThat(Duration.seconds(-1)).isLessThan(Duration.nanoseconds(-2));
+        assertThat(Duration.seconds(-1)).isLessThan(Duration.microseconds(-2));
+        assertThat(Duration.seconds(-1)).isLessThan(Duration.milliseconds(-2));
+        assertThat(Duration.seconds(-1)).isGreaterThan(Duration.seconds(-2));
+        assertThat(Duration.seconds(-1)).isGreaterThan(Duration.minutes(-2));
+        assertThat(Duration.seconds(-1)).isGreaterThan(Duration.hours(-2));
+        assertThat(Duration.seconds(-1)).isGreaterThan(Duration.days(-2));
+
+        assertThat(Duration.minutes(-1)).isLessThan(Duration.nanoseconds(-2));
+        assertThat(Duration.minutes(-1)).isLessThan(Duration.microseconds(-2));
+        assertThat(Duration.minutes(-1)).isLessThan(Duration.milliseconds(-2));
+        assertThat(Duration.minutes(-1)).isLessThan(Duration.seconds(-2));
+        assertThat(Duration.minutes(-1)).isGreaterThan(Duration.minutes(-2));
+        assertThat(Duration.minutes(-1)).isGreaterThan(Duration.hours(-2));
+        assertThat(Duration.minutes(-1)).isGreaterThan(Duration.days(-2));
+
+        assertThat(Duration.hours(-1)).isLessThan(Duration.nanoseconds(-2));
+        assertThat(Duration.hours(-1)).isLessThan(Duration.microseconds(-2));
+        assertThat(Duration.hours(-1)).isLessThan(Duration.milliseconds(-2));
+        assertThat(Duration.hours(-1)).isLessThan(Duration.seconds(-2));
+        assertThat(Duration.hours(-1)).isLessThan(Duration.minutes(-2));
+        assertThat(Duration.hours(-1)).isGreaterThan(Duration.hours(-2));
+        assertThat(Duration.hours(-1)).isGreaterThan(Duration.days(-2));
+
+        assertThat(Duration.days(-1)).isLessThan(Duration.nanoseconds(-2));
+        assertThat(Duration.days(-1)).isLessThan(Duration.microseconds(-2));
+        assertThat(Duration.days(-1)).isLessThan(Duration.milliseconds(-2));
+        assertThat(Duration.days(-1)).isLessThan(Duration.seconds(-2));
+        assertThat(Duration.days(-1)).isLessThan(Duration.minutes(-2));
+        assertThat(Duration.days(-1)).isLessThan(Duration.hours(-2));
+        assertThat(Duration.days(-1)).isGreaterThan(Duration.days(-2));
+
+        // both positive
+        assertThat(Duration.nanoseconds(1)).isLessThan(Duration.nanoseconds((2)));
+        assertThat(Duration.nanoseconds(1)).isLessThan(Duration.microseconds((2)));
+        assertThat(Duration.nanoseconds(1)).isLessThan(Duration.milliseconds((2)));
+        assertThat(Duration.nanoseconds(1)).isLessThan(Duration.seconds((2)));
+        assertThat(Duration.nanoseconds(1)).isLessThan(Duration.minutes((2)));
+        assertThat(Duration.nanoseconds(1)).isLessThan(Duration.hours((2)));
+        assertThat(Duration.nanoseconds(1)).isLessThan(Duration.days((2)));
+
+        assertThat(Duration.microseconds(1)).isGreaterThan(Duration.nanoseconds((2)));
+        assertThat(Duration.microseconds(1)).isLessThan(Duration.microseconds((2)));
+        assertThat(Duration.microseconds(1)).isLessThan(Duration.milliseconds((2)));
+        assertThat(Duration.microseconds(1)).isLessThan(Duration.seconds((2)));
+        assertThat(Duration.microseconds(1)).isLessThan(Duration.minutes((2)));
+        assertThat(Duration.microseconds(1)).isLessThan(Duration.hours((2)));
+        assertThat(Duration.microseconds(1)).isLessThan(Duration.days((2)));
+
+        assertThat(Duration.milliseconds(1)).isGreaterThan(Duration.nanoseconds((2)));
+        assertThat(Duration.milliseconds(1)).isGreaterThan(Duration.microseconds((2)));
+        assertThat(Duration.milliseconds(1)).isLessThan(Duration.milliseconds((2)));
+        assertThat(Duration.milliseconds(1)).isLessThan(Duration.seconds((2)));
+        assertThat(Duration.milliseconds(1)).isLessThan(Duration.minutes((2)));
+        assertThat(Duration.milliseconds(1)).isLessThan(Duration.hours((2)));
+        assertThat(Duration.milliseconds(1)).isLessThan(Duration.days((2)));
+
+        assertThat(Duration.seconds(1)).isGreaterThan(Duration.nanoseconds((2)));
+        assertThat(Duration.seconds(1)).isGreaterThan(Duration.microseconds((2)));
+        assertThat(Duration.seconds(1)).isGreaterThan(Duration.milliseconds((2)));
+        assertThat(Duration.seconds(1)).isLessThan(Duration.seconds((2)));
+        assertThat(Duration.seconds(1)).isLessThan(Duration.minutes((2)));
+        assertThat(Duration.seconds(1)).isLessThan(Duration.hours((2)));
+        assertThat(Duration.seconds(1)).isLessThan(Duration.days((2)));
+
+        assertThat(Duration.minutes(1)).isGreaterThan(Duration.nanoseconds((2)));
+        assertThat(Duration.minutes(1)).isGreaterThan(Duration.microseconds((2)));
+        assertThat(Duration.minutes(1)).isGreaterThan(Duration.milliseconds((2)));
+        assertThat(Duration.minutes(1)).isGreaterThan(Duration.seconds((2)));
+        assertThat(Duration.minutes(1)).isLessThan(Duration.minutes((2)));
+        assertThat(Duration.minutes(1)).isLessThan(Duration.hours((2)));
+        assertThat(Duration.minutes(1)).isLessThan(Duration.days((2)));
+
+        assertThat(Duration.hours(1)).isGreaterThan(Duration.nanoseconds((2)));
+        assertThat(Duration.hours(1)).isGreaterThan(Duration.microseconds((2)));
+        assertThat(Duration.hours(1)).isGreaterThan(Duration.milliseconds((2)));
+        assertThat(Duration.hours(1)).isGreaterThan(Duration.seconds((2)));
+        assertThat(Duration.hours(1)).isGreaterThan(Duration.minutes((2)));
+        assertThat(Duration.hours(1)).isLessThan(Duration.hours((2)));
+        assertThat(Duration.hours(1)).isLessThan(Duration.days((2)));
+
+        assertThat(Duration.days(1)).isGreaterThan(Duration.nanoseconds((2)));
+        assertThat(Duration.days(1)).isGreaterThan(Duration.microseconds((2)));
+        assertThat(Duration.days(1)).isGreaterThan(Duration.milliseconds((2)));
+        assertThat(Duration.days(1)).isGreaterThan(Duration.seconds((2)));
+        assertThat(Duration.days(1)).isGreaterThan(Duration.minutes((2)));
+        assertThat(Duration.days(1)).isGreaterThan(Duration.hours((2)));
+        assertThat(Duration.days(1)).isLessThan(Duration.days((2)));
+
+        assertThat(Duration.nanoseconds(2)).isGreaterThan(Duration.nanoseconds((1)));
+        assertThat(Duration.nanoseconds(2)).isLessThan(Duration.microseconds((1)));
+        assertThat(Duration.nanoseconds(2)).isLessThan(Duration.milliseconds((1)));
+        assertThat(Duration.nanoseconds(2)).isLessThan(Duration.seconds((1)));
+        assertThat(Duration.nanoseconds(2)).isLessThan(Duration.minutes((1)));
+        assertThat(Duration.nanoseconds(2)).isLessThan(Duration.hours((1)));
+        assertThat(Duration.nanoseconds(2)).isLessThan(Duration.days((1)));
+
+        assertThat(Duration.microseconds(2)).isGreaterThan(Duration.nanoseconds((1)));
+        assertThat(Duration.microseconds(2)).isGreaterThan(Duration.microseconds((1)));
+        assertThat(Duration.microseconds(2)).isLessThan(Duration.milliseconds((1)));
+        assertThat(Duration.microseconds(2)).isLessThan(Duration.seconds((1)));
+        assertThat(Duration.microseconds(2)).isLessThan(Duration.minutes((1)));
+        assertThat(Duration.microseconds(2)).isLessThan(Duration.hours((1)));
+        assertThat(Duration.microseconds(2)).isLessThan(Duration.days((1)));
+
+        assertThat(Duration.milliseconds(2)).isGreaterThan(Duration.nanoseconds((1)));
+        assertThat(Duration.milliseconds(2)).isGreaterThan(Duration.microseconds((1)));
+        assertThat(Duration.milliseconds(2)).isGreaterThan(Duration.milliseconds((1)));
+        assertThat(Duration.milliseconds(2)).isLessThan(Duration.seconds((1)));
+        assertThat(Duration.milliseconds(2)).isLessThan(Duration.minutes((1)));
+        assertThat(Duration.milliseconds(2)).isLessThan(Duration.hours((1)));
+        assertThat(Duration.milliseconds(2)).isLessThan(Duration.days((1)));
+
+        assertThat(Duration.seconds(2)).isGreaterThan(Duration.nanoseconds((1)));
+        assertThat(Duration.seconds(2)).isGreaterThan(Duration.microseconds((1)));
+        assertThat(Duration.seconds(2)).isGreaterThan(Duration.milliseconds((1)));
+        assertThat(Duration.seconds(2)).isGreaterThan(Duration.seconds((1)));
+        assertThat(Duration.seconds(2)).isLessThan(Duration.minutes((1)));
+        assertThat(Duration.seconds(2)).isLessThan(Duration.hours((1)));
+        assertThat(Duration.seconds(2)).isLessThan(Duration.days((1)));
+
+        assertThat(Duration.minutes(2)).isGreaterThan(Duration.nanoseconds((1)));
+        assertThat(Duration.minutes(2)).isGreaterThan(Duration.microseconds((1)));
+        assertThat(Duration.minutes(2)).isGreaterThan(Duration.milliseconds((1)));
+        assertThat(Duration.minutes(2)).isGreaterThan(Duration.seconds((1)));
+        assertThat(Duration.minutes(2)).isGreaterThan(Duration.minutes((1)));
+        assertThat(Duration.minutes(2)).isLessThan(Duration.hours((1)));
+        assertThat(Duration.minutes(2)).isLessThan(Duration.days((1)));
+
+        assertThat(Duration.hours(2)).isGreaterThan(Duration.nanoseconds((1)));
+        assertThat(Duration.hours(2)).isGreaterThan(Duration.microseconds((1)));
+        assertThat(Duration.hours(2)).isGreaterThan(Duration.milliseconds((1)));
+        assertThat(Duration.hours(2)).isGreaterThan(Duration.seconds((1)));
+        assertThat(Duration.hours(2)).isGreaterThan(Duration.minutes((1)));
+        assertThat(Duration.hours(2)).isGreaterThan(Duration.hours((1)));
+        assertThat(Duration.hours(2)).isLessThan(Duration.days((1)));
+
+        assertThat(Duration.days(2)).isGreaterThan(Duration.nanoseconds((1)));
+        assertThat(Duration.days(2)).isGreaterThan(Duration.microseconds((1)));
+        assertThat(Duration.days(2)).isGreaterThan(Duration.milliseconds((1)));
+        assertThat(Duration.days(2)).isGreaterThan(Duration.seconds((1)));
+        assertThat(Duration.days(2)).isGreaterThan(Duration.minutes((1)));
+        assertThat(Duration.days(2)).isGreaterThan(Duration.hours((1)));
+        assertThat(Duration.days(2)).isGreaterThan(Duration.days((1)));
+
+        // one negative, one positive
+        assertThat(Duration.nanoseconds(-1)).isLessThan(Duration.nanoseconds(1));
+        assertThat(Duration.nanoseconds(-1)).isLessThan(Duration.microseconds(1));
+        assertThat(Duration.nanoseconds(-1)).isLessThan(Duration.milliseconds(1));
+        assertThat(Duration.nanoseconds(-1)).isLessThan(Duration.seconds(1));
+        assertThat(Duration.nanoseconds(-1)).isLessThan(Duration.minutes(1));
+        assertThat(Duration.nanoseconds(-1)).isLessThan(Duration.hours(1));
+        assertThat(Duration.nanoseconds(-1)).isLessThan(Duration.days(1));
+
+        assertThat(Duration.microseconds(-1)).isLessThan(Duration.nanoseconds(1));
+        assertThat(Duration.microseconds(-1)).isLessThan(Duration.microseconds(1));
+        assertThat(Duration.microseconds(-1)).isLessThan(Duration.milliseconds(1));
+        assertThat(Duration.microseconds(-1)).isLessThan(Duration.seconds(1));
+        assertThat(Duration.microseconds(-1)).isLessThan(Duration.minutes(1));
+        assertThat(Duration.microseconds(-1)).isLessThan(Duration.hours(1));
+        assertThat(Duration.microseconds(-1)).isLessThan(Duration.days(1));
+
+        assertThat(Duration.milliseconds(-1)).isLessThan(Duration.nanoseconds(1));
+        assertThat(Duration.milliseconds(-1)).isLessThan(Duration.microseconds(1));
+        assertThat(Duration.milliseconds(-1)).isLessThan(Duration.milliseconds(1));
+        assertThat(Duration.milliseconds(-1)).isLessThan(Duration.seconds(1));
+        assertThat(Duration.milliseconds(-1)).isLessThan(Duration.minutes(1));
+        assertThat(Duration.milliseconds(-1)).isLessThan(Duration.hours(1));
+        assertThat(Duration.milliseconds(-1)).isLessThan(Duration.days(1));
+
+        assertThat(Duration.seconds(-1)).isLessThan(Duration.nanoseconds(1));
+        assertThat(Duration.seconds(-1)).isLessThan(Duration.microseconds(1));
+        assertThat(Duration.seconds(-1)).isLessThan(Duration.milliseconds(1));
+        assertThat(Duration.seconds(-1)).isLessThan(Duration.seconds(1));
+        assertThat(Duration.seconds(-1)).isLessThan(Duration.minutes(1));
+        assertThat(Duration.seconds(-1)).isLessThan(Duration.hours(1));
+        assertThat(Duration.seconds(-1)).isLessThan(Duration.days(1));
+
+        assertThat(Duration.minutes(-1)).isLessThan(Duration.nanoseconds(1));
+        assertThat(Duration.minutes(-1)).isLessThan(Duration.microseconds(1));
+        assertThat(Duration.minutes(-1)).isLessThan(Duration.milliseconds(1));
+        assertThat(Duration.minutes(-1)).isLessThan(Duration.seconds(1));
+        assertThat(Duration.minutes(-1)).isLessThan(Duration.minutes(1));
+        assertThat(Duration.minutes(-1)).isLessThan(Duration.hours(1));
+        assertThat(Duration.minutes(-1)).isLessThan(Duration.days(1));
+
+        assertThat(Duration.hours(-1)).isLessThan(Duration.nanoseconds(1));
+        assertThat(Duration.hours(-1)).isLessThan(Duration.microseconds(1));
+        assertThat(Duration.hours(-1)).isLessThan(Duration.milliseconds(1));
+        assertThat(Duration.hours(-1)).isLessThan(Duration.seconds(1));
+        assertThat(Duration.hours(-1)).isLessThan(Duration.minutes(1));
+        assertThat(Duration.hours(-1)).isLessThan(Duration.hours(1));
+        assertThat(Duration.hours(-1)).isLessThan(Duration.days(1));
+
+        assertThat(Duration.days(-1)).isLessThan(Duration.nanoseconds(1));
+        assertThat(Duration.days(-1)).isLessThan(Duration.microseconds(1));
+        assertThat(Duration.days(-1)).isLessThan(Duration.milliseconds(1));
+        assertThat(Duration.days(-1)).isLessThan(Duration.seconds(1));
+        assertThat(Duration.days(-1)).isLessThan(Duration.minutes(1));
+        assertThat(Duration.days(-1)).isLessThan(Duration.hours(1));
+        assertThat(Duration.days(-1)).isLessThan(Duration.days(1));
+
+        assertThat(Duration.nanoseconds(1)).isGreaterThan(Duration.nanoseconds(-1));
+        assertThat(Duration.nanoseconds(1)).isGreaterThan(Duration.microseconds(-1));
+        assertThat(Duration.nanoseconds(1)).isGreaterThan(Duration.milliseconds(-1));
+        assertThat(Duration.nanoseconds(1)).isGreaterThan(Duration.seconds(-1));
+        assertThat(Duration.nanoseconds(1)).isGreaterThan(Duration.minutes(-1));
+        assertThat(Duration.nanoseconds(1)).isGreaterThan(Duration.hours(-1));
+        assertThat(Duration.nanoseconds(1)).isGreaterThan(Duration.days(-1));
+
+        assertThat(Duration.microseconds(1)).isGreaterThan(Duration.nanoseconds(-1));
+        assertThat(Duration.microseconds(1)).isGreaterThan(Duration.microseconds(-1));
+        assertThat(Duration.microseconds(1)).isGreaterThan(Duration.milliseconds(-1));
+        assertThat(Duration.microseconds(1)).isGreaterThan(Duration.seconds(-1));
+        assertThat(Duration.microseconds(1)).isGreaterThan(Duration.minutes(-1));
+        assertThat(Duration.microseconds(1)).isGreaterThan(Duration.hours(-1));
+        assertThat(Duration.microseconds(1)).isGreaterThan(Duration.days(-1));
+
+        assertThat(Duration.milliseconds(1)).isGreaterThan(Duration.nanoseconds(-1));
+        assertThat(Duration.milliseconds(1)).isGreaterThan(Duration.microseconds(-1));
+        assertThat(Duration.milliseconds(1)).isGreaterThan(Duration.milliseconds(-1));
+        assertThat(Duration.milliseconds(1)).isGreaterThan(Duration.seconds(-1));
+        assertThat(Duration.milliseconds(1)).isGreaterThan(Duration.minutes(-1));
+        assertThat(Duration.milliseconds(1)).isGreaterThan(Duration.hours(-1));
+        assertThat(Duration.milliseconds(1)).isGreaterThan(Duration.days(-1));
+
+        assertThat(Duration.seconds(1)).isGreaterThan(Duration.nanoseconds(-1));
+        assertThat(Duration.seconds(1)).isGreaterThan(Duration.microseconds(-1));
+        assertThat(Duration.seconds(1)).isGreaterThan(Duration.milliseconds(-1));
+        assertThat(Duration.seconds(1)).isGreaterThan(Duration.seconds(-1));
+        assertThat(Duration.seconds(1)).isGreaterThan(Duration.minutes(-1));
+        assertThat(Duration.seconds(1)).isGreaterThan(Duration.hours(-1));
+        assertThat(Duration.seconds(1)).isGreaterThan(Duration.days(-1));
+
+        assertThat(Duration.minutes(1)).isGreaterThan(Duration.nanoseconds(-1));
+        assertThat(Duration.minutes(1)).isGreaterThan(Duration.microseconds(-1));
+        assertThat(Duration.minutes(1)).isGreaterThan(Duration.milliseconds(-1));
+        assertThat(Duration.minutes(1)).isGreaterThan(Duration.seconds(-1));
+        assertThat(Duration.minutes(1)).isGreaterThan(Duration.minutes(-1));
+        assertThat(Duration.minutes(1)).isGreaterThan(Duration.hours(-1));
+        assertThat(Duration.minutes(1)).isGreaterThan(Duration.days(-1));
+
+        assertThat(Duration.hours(1)).isGreaterThan(Duration.nanoseconds(-1));
+        assertThat(Duration.hours(1)).isGreaterThan(Duration.microseconds(-1));
+        assertThat(Duration.hours(1)).isGreaterThan(Duration.milliseconds(-1));
+        assertThat(Duration.hours(1)).isGreaterThan(Duration.seconds(-1));
+        assertThat(Duration.hours(1)).isGreaterThan(Duration.minutes(-1));
+        assertThat(Duration.hours(1)).isGreaterThan(Duration.hours(-1));
+        assertThat(Duration.hours(1)).isGreaterThan(Duration.days(-1));
+
+        assertThat(Duration.days(1)).isGreaterThan(Duration.nanoseconds(-1));
+        assertThat(Duration.days(1)).isGreaterThan(Duration.microseconds(-1));
+        assertThat(Duration.days(1)).isGreaterThan(Duration.milliseconds(-1));
+        assertThat(Duration.days(1)).isGreaterThan(Duration.seconds(-1));
+        assertThat(Duration.days(1)).isGreaterThan(Duration.minutes(-1));
+        assertThat(Duration.days(1)).isGreaterThan(Duration.hours(-1));
+        assertThat(Duration.days(1)).isGreaterThan(Duration.days(-1));
+    }
 }
