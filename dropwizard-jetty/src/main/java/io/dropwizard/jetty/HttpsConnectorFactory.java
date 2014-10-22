@@ -172,6 +172,14 @@ import static com.codahale.metrics.MetricRegistry.name;
  *         </td>
  *     </tr>
  *     <tr>
+ *         <td>{@code excludedProtocols}</td>
+ *         <td>(none)</td>
+ *         <td>
+ *             A list of protocols (e.g., {@code SSLv3}, {@code TLSv1}) which are excluded. These
+ *             protocols will be refused.
+ *         </td>
+ *     </tr>
+ *     <tr>
  *         <td>{@code supportedCipherSuites}</td>
  *         <td>(none)</td>
  *         <td>
@@ -242,6 +250,7 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
     private boolean validateCerts = true;
     private boolean validatePeers = true;
     private List<String> supportedProtocols;
+    private List<String> excludedProtocols;
     private List<String> supportedCipherSuites;
     private List<String> excludedCipherSuites;
     private boolean allowRenegotiation = true;
@@ -468,10 +477,20 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
     }
 
     @JsonProperty
+    public List<String> getExcludedProtocols() {
+        return excludedProtocols;
+    }
+
+    @JsonProperty
+    public void setExcludedProtocols(List<String> excludedProtocols) {
+        this.excludedProtocols = excludedProtocols;
+    }
+
+    @JsonProperty
     public List<String> getSupportedCipherSuites() {
         return supportedCipherSuites;
     }
-    
+
     @JsonProperty
     public List<String> getExcludedCipherSuites() {
         return excludedCipherSuites;
@@ -662,10 +681,14 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
             factory.setIncludeProtocols(Iterables.toArray(supportedProtocols, String.class));
         }
 
+        if (excludedProtocols != null) {
+            factory.setExcludeProtocols(Iterables.toArray(excludedProtocols, String.class));
+        }
+
         if (supportedCipherSuites != null) {
             factory.setIncludeCipherSuites(Iterables.toArray(supportedCipherSuites, String.class));
         }
-        
+
         if (excludedCipherSuites != null) {
             factory.setExcludeCipherSuites(Iterables.toArray(excludedCipherSuites, String.class));
         }

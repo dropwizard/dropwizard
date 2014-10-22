@@ -365,7 +365,9 @@ Extends the attributes that are available to the :ref:`HTTP connector <man-confi
           validateCerts: true
           validatePeers: true
           supportedProtocols: SSLv3
+          excludedProtocols: (none)
           supportedCipherSuites: TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256
+          excludedCipherSuites: (none)
           allowRenegotiation: true
           endpointIdentificationAlgorithm: (none)
 
@@ -398,6 +400,8 @@ validateCerts                    true                Whether or not to validate 
 validatePeers                    true                Whether or not to validate TLS peer certificates.
 supportedProtocols               (none)              A list of protocols (e.g., ``SSLv3``, ``TLSv1``) which are supported. All
                                                      other protocols will be refused.
+excludedProtocols                (none)              A list of protocols (e.g., ``SSLv3``, ``TLSv1``) which are excluded. These
+                                                     protocols will be refused.
 supportedCipherSuites            (none)              A list of cipher suites (e.g., ``TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256``) which
                                                      are supported. All other cipher suites will be refused
 excludedCipherSuites             (none)              A list of cipher suites (e.g., ``TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256``) which
