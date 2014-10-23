@@ -6,6 +6,7 @@ import org.eclipse.jetty.security.SecurityHandler;
 import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.eclipse.jetty.util.resource.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -117,28 +118,74 @@ public class ServletEnvironment {
         }
     }
 
+    /**
+     * Set protected targets.
+     *
+     * @param targets Array of URL prefix. Each prefix is in the form /path and
+     *                will match either /path exactly or /path/anything
+     */
     public void setProtectedTargets(String... targets) {
         handler.setProtectedTargets(Arrays.copyOf(targets, targets.length));
     }
 
+    /**
+     * Sets the base resource for this context.
+     *
+     * @param baseResource The resource used as the base for all static content
+     *                     of this context.
+     */
+    public void setBaseResource(Resource baseResource) {
+        handler.setBaseResource(baseResource);
+    }
+
+    /**
+     * Sets the base resource for this context.
+     *
+     * @param resourceBase A string representing the base resource for the
+     *                     context. Any string accepted by Resource.newResource(String)
+     *                     may be passed and the call is equivalent to
+     *                     {@link setBaseResource(newResource(resourceBase))}
+     */
     public void setResourceBase(String resourceBase) {
         handler.setResourceBase(resourceBase);
     }
 
+    /**
+     * Set an initialization parameter.
+     *
+     * @param name  Parameter name
+     * @param value Parameter value
+     */
     public void setInitParameter(String name, String value) {
         handler.setInitParameter(name, value);
     }
 
+    /**
+     * Set the session handler.
+     *
+     * @param sessionHandler The sessionHandler to set.
+     */
     public void setSessionHandler(SessionHandler sessionHandler) {
         handler.setSessionsEnabled(sessionHandler != null);
         handler.setSessionHandler(sessionHandler);
     }
 
+    /**
+     * Set the security handler.
+     *
+     * @param securityHandler The securityHandler to set.
+     */
     public void setSecurityHandler(SecurityHandler securityHandler) {
         handler.setSecurityEnabled(securityHandler != null);
         handler.setSecurityHandler(securityHandler);
     }
 
+    /**
+     * Set a mime mapping.
+     *
+     * @param extension Extension
+     * @param type      Mime type
+     */
     public void addMimeMapping(String extension, String type) {
         handler.getMimeTypes().addMimeMapping(extension, type);
     }
