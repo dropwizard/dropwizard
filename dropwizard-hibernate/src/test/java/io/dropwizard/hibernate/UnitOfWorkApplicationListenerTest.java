@@ -43,7 +43,6 @@ public class UnitOfWorkApplicationListenerTest {
     private final RequestEvent requestMethodExceptionEvent = mock(RequestEvent.class);
     private final Session session = mock(Session.class);
     private final Transaction transaction = mock(Transaction.class);
-    private final MockResource mockResource = new MockResource();
 
     @SuppressWarnings("unchecked")
     @Before
@@ -68,10 +67,7 @@ public class UnitOfWorkApplicationListenerTest {
 
     @Test
     public void opensAndClosesASession() throws Exception {
-        listener.onEvent(appEvent);
-        RequestEventListener requestListener = listener.onRequest(requestStartEvent);
-        requestListener.onEvent(requestMethodStartEvent);
-        requestListener.onEvent(requestMethodFinishEvent);
+        execute();
 
         final InOrder inOrder = inOrder(sessionFactory, session);
         inOrder.verify(sessionFactory).openSession();
@@ -89,24 +85,16 @@ public class UnitOfWorkApplicationListenerTest {
             }
         }).when(session).beginTransaction();
 
-        listener.onEvent(appEvent);
-        RequestEventListener requestListener = listener.onRequest(requestStartEvent);
-        requestListener.onEvent(requestMethodStartEvent);
-        requestListener.onEvent(requestMethodFinishEvent);
+        execute();
 
-
-        assertThat(ManagedSessionContext.hasBind(sessionFactory))
-                .isFalse();
+        assertThat(ManagedSessionContext.hasBind(sessionFactory)).isFalse();
     }
 
     @Test
     public void configuresTheSessionsReadOnlyDefault() throws Exception {
         prepareAppEvent("methodWithReadOnlyAnnotation");
 
-        listener.onEvent(appEvent);
-        RequestEventListener requestListener = listener.onRequest(requestStartEvent);
-        requestListener.onEvent(requestMethodStartEvent);
-        requestListener.onEvent(requestMethodFinishEvent);
+        execute();
 
         verify(session).setDefaultReadOnly(true);
     }
@@ -115,10 +103,7 @@ public class UnitOfWorkApplicationListenerTest {
     public void configuresTheSessionsCacheMode() throws Exception {
         prepareAppEvent("methodWithCacheModeIgnoreAnnotation");
 
-        listener.onEvent(appEvent);
-        RequestEventListener requestListener = listener.onRequest(requestStartEvent);
-        requestListener.onEvent(requestMethodStartEvent);
-        requestListener.onEvent(requestMethodFinishEvent);
+        execute();
 
         verify(session).setCacheMode(CacheMode.IGNORE);
     }
@@ -127,10 +112,7 @@ public class UnitOfWorkApplicationListenerTest {
     public void configuresTheSessionsFlushMode() throws Exception {
         prepareAppEvent("methodWithFlushModeAlwaysAnnotation");
 
-        listener.onEvent(appEvent);
-        RequestEventListener requestListener = listener.onRequest(requestStartEvent);
-        requestListener.onEvent(requestMethodStartEvent);
-        requestListener.onEvent(requestMethodFinishEvent);
+        execute();
 
         verify(session).setFlushMode(FlushMode.ALWAYS);
     }
@@ -142,13 +124,66 @@ public class UnitOfWorkApplicationListenerTest {
 
         when(session.getTransaction()).thenReturn(null);
 
-        listener.onEvent(appEvent);
-        RequestEventListener requestListener = listener.onRequest(requestStartEvent);
-        requestListener.onEvent(requestMethodStartEvent);
-        requestListener.onEvent(requestMethodFinishEvent);
+        execute();
 
         verify(session, never()).beginTransaction();
         verifyZeroInteractions(transaction);
+    }
+
+    @Test
+    public void beginsAndCommitsATransactionIfTransactional() throws Exception {
+        execute();
+
+        final InOrder inOrder = inOrder(session, transaction);
+        inOrder.verify(session).beginTransaction();
+        inOrder.verify(transaction).commit();
+        inOrder.verify(session).close();
+    }
+
+    @Test
+    public void rollsBackTheTransactionOnException() throws Exception {
+        executeWithException();
+
+        final InOrder inOrder = inOrder(session, transaction);
+        inOrder.verify(session).beginTransaction();
+        inOrder.verify(transaction).rollback();
+        inOrder.verify(session).close();
+    }
+
+    @Test
+    public void doesNotCommitAnInactiveTransaction() throws Exception {
+        when(transaction.isActive()).thenReturn(false);
+
+        execute();
+
+        verify(transaction, never()).commit();
+    }
+
+    @Test
+    public void doesNotCommitANullTransaction() throws Exception {
+        when(session.getTransaction()).thenReturn(null);
+
+        execute();
+
+        verify(transaction, never()).commit();
+    }
+
+    @Test
+    public void doesNotRollbackAnInactiveTransaction() throws Exception {
+        when(transaction.isActive()).thenReturn(false);
+
+        executeWithException();
+
+        verify(transaction, never()).rollback();
+    }
+
+    @Test
+    public void doesNotRollbackANullTransaction() throws Exception {
+        when(session.getTransaction()).thenReturn(null);
+
+        executeWithException();
+
+        verify(transaction, never()).rollback();
     }
 
     private void prepareAppEvent(String resourceMethodName) throws NoSuchMethodException {
@@ -165,85 +200,25 @@ public class UnitOfWorkApplicationListenerTest {
         when(uriInfo.getMatchedResourceMethod()).thenReturn(resourceMethod);
     }
 
-    @Test
-    public void beginsAndCommitsATransactionIfTransactional() throws Exception {
+    private void execute() {
         listener.onEvent(appEvent);
         RequestEventListener requestListener = listener.onRequest(requestStartEvent);
         requestListener.onEvent(requestMethodStartEvent);
         requestListener.onEvent(requestMethodFinishEvent);
-
-        final InOrder inOrder = inOrder(session, transaction);
-        inOrder.verify(session).beginTransaction();
-        inOrder.verify(transaction).commit();
-        inOrder.verify(session).close();
     }
 
-    @Test
-    public void rollsBackTheTransactionOnException() throws Exception {
+    private void executeWithException() {
         listener.onEvent(appEvent);
         RequestEventListener requestListener = listener.onRequest(requestStartEvent);
         requestListener.onEvent(requestMethodStartEvent);
         requestListener.onEvent(requestMethodExceptionEvent);
-
-        final InOrder inOrder = inOrder(session, transaction);
-        inOrder.verify(session).beginTransaction();
-        inOrder.verify(transaction).rollback();
-        inOrder.verify(session).close();
-    }
-
-    @Test
-    public void doesNotCommitAnInactiveTransaction() throws Exception {
-        when(transaction.isActive()).thenReturn(false);
-
-        listener.onEvent(appEvent);
-        RequestEventListener requestListener = listener.onRequest(requestStartEvent);
-        requestListener.onEvent(requestMethodStartEvent);
-        requestListener.onEvent(requestMethodFinishEvent);
-
-        verify(transaction, never()).commit();
-    }
-
-    @Test
-    public void doesNotCommitANullTransaction() throws Exception {
-        when(session.getTransaction()).thenReturn(null);
-
-        listener.onEvent(appEvent);
-        RequestEventListener requestListener = listener.onRequest(requestStartEvent);
-        requestListener.onEvent(requestMethodStartEvent);
-        requestListener.onEvent(requestMethodFinishEvent);
-
-        verify(transaction, never()).commit();
-    }
-
-    @Test
-    public void doesNotRollbackAnInactiveTransaction() throws Exception {
-        when(transaction.isActive()).thenReturn(false);
-
-        listener.onEvent(appEvent);
-        RequestEventListener requestListener = listener.onRequest(requestStartEvent);
-        requestListener.onEvent(requestMethodStartEvent);
-        requestListener.onEvent(requestMethodExceptionEvent);
-
-        verify(transaction, never()).rollback();
-    }
-
-    @Test
-    public void doesNotRollbackANullTransaction() throws Exception {
-        when(session.getTransaction()).thenReturn(null);
-
-        listener.onEvent(appEvent);
-        RequestEventListener requestListener = listener.onRequest(requestStartEvent);
-        requestListener.onEvent(requestMethodStartEvent);
-        requestListener.onEvent(requestMethodExceptionEvent);
-
-        verify(transaction, never()).rollback();
     }
 
     public static class MockResource {
+
         @UnitOfWork(readOnly = false, cacheMode = CacheMode.NORMAL, transactional = true, flushMode = FlushMode.AUTO)
         public void methodWithDefaultAnnotation() {
         }
-
         @UnitOfWork(readOnly = true, cacheMode = CacheMode.NORMAL, transactional = true, flushMode = FlushMode.AUTO)
         public void methodWithReadOnlyAnnotation() {
         }

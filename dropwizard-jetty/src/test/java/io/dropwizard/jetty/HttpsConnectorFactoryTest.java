@@ -21,7 +21,9 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assume.assumeFalse;
+import static org.junit.Assume.assumeTrue;
 
 public class HttpsConnectorFactoryTest {
     private static final String WINDOWS_MY_KEYSTORE_NAME = "Windows-MY";
@@ -75,20 +77,23 @@ public class HttpsConnectorFactoryTest {
     }
 
     @Test
-    public void windowsKeyStore() throws Exception {
-        HttpsConnectorFactory factory = new HttpsConnectorFactory();
+    public void canBuildContextFactoryWhenWindowsKeyStoreAvailable() throws Exception {
+        // ignore test when Windows Keystore unavailable
+        assumeTrue(canAccessWindowsKeyStore());
+
+        final HttpsConnectorFactory factory = new HttpsConnectorFactory();
         factory.setKeyStoreType(WINDOWS_MY_KEYSTORE_NAME);
-        if (canAccessWindowsKeyStore()) {
-            factory.buildSslContextFactory();
-            return;
-        } else {
-            try {
-                factory.buildSslContextFactory();
-                fail("Windows key store should not be supported here");
-            } catch (IllegalStateException ex) {
-                assertThat(ex.getMessage()).containsIgnoringCase("not supported");
-            }
-        }
+
+        assertNotNull(factory.buildSslContextFactory());
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void windowsKeyStoreUnavailableThrowsException() throws Exception {
+        assumeFalse(canAccessWindowsKeyStore());
+
+        final HttpsConnectorFactory factory = new HttpsConnectorFactory();
+        factory.setKeyStoreType(WINDOWS_MY_KEYSTORE_NAME);
+        factory.buildSslContextFactory();
     }
 
     private boolean canAccessWindowsKeyStore() {
