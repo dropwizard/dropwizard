@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public class Duration {
+public class Duration implements Comparable<Duration> {
     private static final Pattern DURATION_PATTERN = Pattern.compile("(\\d+)\\s*(\\S+)");
 
     private static final Map<String, TimeUnit> SUFFIXES = new ImmutableMap.Builder<String, TimeUnit>()
@@ -148,5 +148,14 @@ public class Duration {
             units = units.substring(0, units.length() - 1);
         }
         return Long.toString(count) + ' ' + units;
+    }
+
+    @Override
+    public int compareTo(Duration other) {
+        if (unit == other.unit) {
+            return Long.compare(count, other.count);
+        }
+
+        return Long.compare(toNanoseconds(), other.toNanoseconds());
     }
 }
