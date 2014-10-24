@@ -2,11 +2,16 @@ language: java
 
 install: echo "I trust Maven."
 
-# don't just run the tests, also run Findbugs and friends
-script: mvn verify
+# build, verify, and deploy the snapshot artifacts
+script: "mvn deploy --settings maven_deploy_settings.xml"
 
 after_success: mvn cobertura:cobertura coveralls:cobertura
 
 jdk:
   - oraclejdk7
   - oraclejdk8
+
+env:
+  global:
+    - secure: "Mj0wPRY4NGx0BgRh2usNwIK1ike8c1YpsYX4hS5BBEo7vin7NN0sykeg8fgSpvbjvrkSA41pCixLZ70UjxpT/im1e+eI8RMsvlROM9KOSnXW4wvr2h951WayXw8CtTXcLnK+KevWHS59bnDvVJl7dQnojmS5GoCslKSQ6HIOtwk="
+    - secure: "P8NrapbKzOLX34IdCgwW1d+/0bEFyzCwVGbqmcG1nnVBdpLITgj7UGFt/jqV0jdjUiNpFwq3hqW+GAYuEimOfuRO/V4C2dHvpEm1jUU3ZbK1XmomMCJ5scTsCeA0LmjzlNU+QlftMpcTTMFftAVa6xq64EkHDVs9t8HyWkbT67g="
