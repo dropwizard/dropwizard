@@ -132,20 +132,6 @@ public class Size implements Comparable<Size> {
 
     @Override
     public int compareTo(Size other) {
-        if (count == 0 && other.count == 0) {
-            return 0;
-        }
-
-        // this is negative, other is non-negative
-        if (count < 0 && other.count >= 0) {
-            return -1;
-        }
-
-        // this is non-negative, other is negative
-        if (count >= 0 && other.count < 0) {
-            return 1;
-        }
-
         if (unit == other.unit) {
             return Long.compare(count, other.count);
         }
