@@ -1,6 +1,7 @@
 package io.dropwizard.testing.junit;
 
 import com.google.common.base.Strings;
+import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
@@ -11,12 +12,15 @@ import io.dropwizard.setup.Environment;
 import net.sourceforge.argparse4j.inf.Namespace;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
+import org.junit.rules.ExternalResource;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
 import javax.annotation.Nullable;
 import java.util.Enumeration;
+
+import static com.google.common.base.Throwables.propagate;
 
 /**
  * A JUnit rule for starting and stopping your application at the start and end of a test class.
@@ -27,7 +31,7 @@ import java.util.Enumeration;
  *
  * @param <C> the configuration type
  */
-public class DropwizardAppRule<C extends Configuration> implements TestRule {
+public class DropwizardAppRule<C extends Configuration> extends ExternalResource {
 
     private final Class<? extends Application<C>> applicationClass;
     private final String configPath;
@@ -48,20 +52,19 @@ public class DropwizardAppRule<C extends Configuration> implements TestRule {
     }
 
     @Override
-    public Statement apply(final Statement base, Description description) {
-        return new Statement() {
-            @Override
-            public void evaluate() throws Throwable {
-                startIfRequired();
-                try {
-                    base.evaluate();
-                } finally {
-                    resetConfigOverrides();
-                    jettyServer.stop();
-                    jettyServer = null;
-                }
-            }
-        };
+    protected void before()  {
+        startIfRequired();
+    }
+
+    @Override
+    protected void after() {
+        resetConfigOverrides();
+        try {
+            jettyServer.stop();
+        } catch (Exception e) {
+            propagate(e);
+        }
+        jettyServer = null;
     }
 
     private void resetConfigOverrides() {
