@@ -1,0 +1,20 @@
+type: http
+port: 9090
+bindHost: 127.0.0.1
+headerCacheSize: 256B
+outputBufferSize: 128KiB
+maxRequestHeaderSize: 4KiB
+maxResponseHeaderSize: 4KiB
+inputBufferSize: 4KiB
+idleTimeout: 10 seconds
+minBufferPoolSize: 128B
+bufferPoolIncrement: 500B
+maxBufferPoolSize: 32KiB
+acceptorThreads: 1
+selectorThreads: 4
+acceptQueueSize: 1024
+reuseAddress: false
+soLingerTime: 30s
+useServerHeader: true
+useDateHeader: false
+useForwardedHeaders: false

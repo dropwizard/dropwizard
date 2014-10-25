@@ -14,17 +14,17 @@ import java.util.List;
  * @param <T> the principal type
  */
 public class ChainedAuthFactory<T> extends AuthFactory<Object, T> {
-    private List<AuthFactory<? extends Object, T>> factories = null;
+    private List<AuthFactory<?, T>> factories = null;
 
     public ChainedAuthFactory() {
-        this(new ArrayList<AuthFactory<? extends Object, T>>());
+        this(new ArrayList<AuthFactory<?, T>>());
     }
 
-    public ChainedAuthFactory(AuthFactory<? extends Object, T>... providers) {
+    public ChainedAuthFactory(AuthFactory<?, T>... providers) {
         this(Arrays.asList(providers));
     }
 
-    public ChainedAuthFactory(List<AuthFactory<? extends Object, T>> factories) {
+    public ChainedAuthFactory(List<AuthFactory<?, T>> factories) {
         super(null);
         this.factories = factories;
     }
@@ -40,7 +40,7 @@ public class ChainedAuthFactory<T> extends AuthFactory<Object, T> {
      * @param provider
      * @return true if the provider was added.
      */
-    public boolean addChainedProvider(AuthFactory<? extends Object, T> provider) {
+    public boolean addChainedProvider(AuthFactory<?, T> provider) {
         return this.factories.add(provider);
     }
 
@@ -50,14 +50,14 @@ public class ChainedAuthFactory<T> extends AuthFactory<Object, T> {
      * @param provider
      * @return true if the provider was removed.
      */
-    public boolean removeChainedProvider(AuthFactory<? extends Object, T> provider) {
+    public boolean removeChainedProvider(AuthFactory<?, T> provider) {
         return this.factories.remove(provider);
     }
 
     @Override
     public AuthFactory<Object, T> clone(boolean required) {
         ChainedAuthFactory<T> clone = new ChainedAuthFactory<>();
-        for (AuthFactory<? extends Object, T> factory : factories) {
+        for (AuthFactory<?, T> factory : factories) {
             clone.addChainedProvider(factory.clone(true));
         }
         return clone;
@@ -66,7 +66,7 @@ public class ChainedAuthFactory<T> extends AuthFactory<Object, T> {
     @Override
     public Class<T> getGeneratedClass() {
         Class<T> generatedClass = null;
-        for (AuthFactory<? extends Object, T> factory : factories) {
+        for (AuthFactory<?, T> factory : factories) {
             if (generatedClass == null || generatedClass == factory.getGeneratedClass()) {
                 generatedClass = factory.getGeneratedClass();
             } else {
@@ -80,7 +80,7 @@ public class ChainedAuthFactory<T> extends AuthFactory<Object, T> {
     @Context
     @Override
     public void setRequest(HttpServletRequest request) {
-        for (AuthFactory<? extends Object, T> factory : factories) {
+        for (AuthFactory<?, T> factory : factories) {
             factory.setRequest(request);
         }
     }
@@ -88,7 +88,7 @@ public class ChainedAuthFactory<T> extends AuthFactory<Object, T> {
     @Override
     public T provide() {
         WebApplicationException firstException = null;
-        for (AuthFactory<? extends Object, T> factory : factories) {
+        for (AuthFactory<?, T> factory : factories) {
             try {
                 T value = factory.provide();
                 if (value != null) {

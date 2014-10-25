@@ -2,14 +2,12 @@ package io.dropwizard.views;
 
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
-import com.google.common.collect.ImmutableList;
 
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.*;
 import javax.ws.rs.ext.MessageBodyWriter;
 import javax.ws.rs.ext.Provider;
-
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -28,7 +26,7 @@ public class ViewMessageBodyWriter implements MessageBodyWriter<View> {
     private static final String MISSING_TEMPLATE_MSG =
             "<html>" +
                 "<head><title>Missing Template</title></head>" +
-                "<body><h1>Missing Template</h1><p>{0}</p></body>" +
+                "<body><h1>Missing Template</h1><p>Template \"{0}\" not found.</p></body>" +
             "</html>";
 
     @Context
@@ -80,7 +78,7 @@ public class ViewMessageBodyWriter implements MessageBodyWriter<View> {
             }
             throw new ViewRenderException("Unable to find a renderer for " + t.getTemplateName());
         } catch (FileNotFoundException e) {
-            final String msg = MessageFormat.format(MISSING_TEMPLATE_MSG, e.getMessage());
+            final String msg = MessageFormat.format(MISSING_TEMPLATE_MSG, t.getTemplateName());
             throw new WebApplicationException(Response.serverError()
                                                       .type(MediaType.TEXT_HTML_TYPE)
                                                       .entity(msg)
