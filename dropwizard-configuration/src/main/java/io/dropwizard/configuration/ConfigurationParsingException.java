@@ -294,7 +294,7 @@ public class ConfigurationParsingException extends ConfigurationException {
             return sb.toString();
         }
 
-        private static class LevenshteinComparator implements Comparator<String>, Serializable {
+        protected static class LevenshteinComparator implements Comparator<String>, Serializable {
 
             private String base;
 
