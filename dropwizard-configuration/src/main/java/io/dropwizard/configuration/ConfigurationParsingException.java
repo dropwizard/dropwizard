@@ -327,9 +327,7 @@ public class ConfigurationParsingException extends ConfigurationException {
                 }
 
                 // determine which of the two is closer to the base and order it first
-                return StringUtils.getLevenshteinDistance(a, base) < StringUtils.getLevenshteinDistance(b, base)
-                        ? -1
-                        : 1;
+                return Integer.compare(StringUtils.getLevenshteinDistance(a, base), StringUtils.getLevenshteinDistance(b, base));
             }
 
             private void writeObject(ObjectOutputStream stream) throws IOException {
