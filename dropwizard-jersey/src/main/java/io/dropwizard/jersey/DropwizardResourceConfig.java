@@ -2,6 +2,7 @@ package io.dropwizard.jersey;
 
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.jersey.InstrumentedResourceMethodDispatchAdapter;
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
@@ -22,8 +23,6 @@ import io.dropwizard.jersey.validation.ConstraintViolationExceptionMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ws.rs.Path;
-import javax.ws.rs.ext.Provider;
 import java.util.List;
 import java.util.Map;
 
@@ -166,7 +165,8 @@ public class DropwizardResourceConfig extends ScanningResourceConfig {
         LOGGER.info(msg.toString());
     }
 
-    private void populateEndpoints(List<String> endpoints, String basePath, Class<?> klass,
+    @VisibleForTesting
+    protected void populateEndpoints(List<String> endpoints, String basePath, Class<?> klass,
                                    boolean isLocator) {
         populateEndpoints(endpoints, basePath, klass, isLocator, IntrospectionModeller.createResource(klass));
     }
@@ -188,9 +188,22 @@ public class DropwizardResourceConfig extends ScanningResourceConfig {
 
         for (AbstractSubResourceLocator locator : resource.getSubResourceLocators()) {
             final String path = normalizePath(basePath, locator.getPath().getValue());
-            populateEndpoints(endpoints, path, locator.getMethod().getReturnType(), true);
+            if (shouldRecurse(isLocator, resource, locator)) {
+                populateEndpoints(endpoints, path, locator.getMethod().getReturnType(), true);
+            } else {
+                endpoints.add(formatEndpoint("*", path, klass));
+            }
         }
     }
+
+    private boolean shouldRecurse(boolean isLocator, AbstractResource resource, AbstractSubResourceLocator locator) {
+        return !(isLocator && isRecursiveSubResourceLocator(resource, locator));
+    }
+
+    private boolean isRecursiveSubResourceLocator(AbstractResource resource, AbstractSubResourceLocator locator) {
+        return resource.getResourceClass().equals(locator.getResource().getResourceClass());
+    }
+
 
     private String formatEndpoint(String method, String path, Class<?> klass) {
         return String.format("    %-7s %s (%s)", method, path, klass.getCanonicalName());
