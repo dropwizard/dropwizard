@@ -11,13 +11,14 @@ Many, many thanks to:
 * `Adam Jordens <https://github.com/adamjordens>`_
 * `Adam Marcus <https://github.com/marcua>`_
 * `Alex Heneveld <https://github.com/ahgittin>`_
+* `Alice Chen <https://github.com/chena>`_
 * `Anders Hedström <https://github.com/andershedstrom>`_
 * `Andreas Stührk <https://github.com/Trundle>`_
 * `Andrei Savu <https://github.com/andreisavu>`_
 * `Andrew Clay Shafer <https://github.com/littleidea>`_
 * `anikiej <https://github.com/anikiej>`_
 * `Armando Singer <https://github.com/asinger>`_
-* `arteam <https://github.com/arteam>`_
+* `Artem Prigoda <https://github.com/arteam>`_
 * `arunh <https://github.com/arunh>`_
 * `Arun Horne <https://github.com/arunh>`_
 * `Basil James Whitehouse III <https://github.com/basil3whitehouse>`_
@@ -41,6 +42,7 @@ Many, many thanks to:
 * `chena <https://github.com/chena>`_
 * `Chris Gray <https://github.com/chrisgray>`_
 * `Chris Micali <https://github.com/cmicali>`_
+* `Chris Pimlott <https://github.com/pimlottc>`_
 * `Chris Tierney <https://github.com/christierney>`_
 * `Christopher Currie <https://github.com/christophercurrie>`_
 * `Christopher Elkins <https://github.com/celkins>`_
@@ -48,6 +50,7 @@ Many, many thanks to:
 * `Christoph Kutzinski <https://github.com/kutzi>`_
 * `Coda Hale <https://github.com/codahale>`_
 * `Collin VanDyck <https://github.com/collinvandyck>`_
+* `Jan Galinski <https://github.com/jangalinski>`_
 * `Collin Van Dyck <https://github.com/collinvandyck>`_
 * `Dale Wijnand <https://github.com/dwijnand>`_
 * `Dan Everton <https://github.com/deverton>`_
@@ -55,8 +58,10 @@ Many, many thanks to:
 * `David Illsley <https://github.com/davidillsley>`_
 * `David Morgantini <https://github.com/dmorgantini>`_
 * `David Stendardi <https://github.com/dstendardi>`_
+* `Derek Cicerone <https://github.com/derekcicerone>`_
 * `Derek Stainer <https://github.com/dstainer>`_
 * `Devin Breen <https://github.com/ometa>`_
+* `Devin Smith <https://github.com/devinrsmith>`_
 * `Dheerendra Rathor <https://github.com/DheerendraRathor>`_
 * `Dietrich Featherston <https://github.com/d2fn>`_
 * `Dimitris Zavaliadis <https://github.com/dimzava>`_
@@ -68,6 +73,8 @@ Many, many thanks to:
 * `Gary Dusbabek <https://github.com/gdusbabek>`_
 * `Glenn McAllister <https://github.com/glennmcallister>`_
 * `Graham O'Regan <https://github.com/grahamoregan>`_
+* `Greg Bowyer <https://github.com/GregBowyer>`_
+* `hawkan <https://github.com/hawkan>`_
 * `Hal Hildebrand <https://github.com/Hellblazer>`_
 * `Hrvoje Slaviček <https://github.com/slavus>`_
 * `Ian Eure <https://github.com/ieure>`_
@@ -75,6 +82,7 @@ Many, many thanks to:
 * `Jacek Jackowiak <https://github.com/airborn>`_
 * `James Ward <https://github.com/jamesward>`_
 * `Jamie Furness <https://github.com/reines>`_
+* `Jan Galinski <https://github.com/jangalinski>`_
 * `Jared Stehler <https://github.com/jaredstehler-cengage>`_
 * `Jason Clawson <https://github.com/jclawson>`_
 * `Jason Dunkelberger <https://github.com/dirkraft>`_
@@ -116,6 +124,7 @@ Many, many thanks to:
 * `Ori Schwartz <https://github.com/fleaflicker>`_
 * `Patrick Stegmann <https://github.com/wonderb0lt>`_
 * `Paul Tomlin <https://github.com/ptomli>`_
+* `Punyashloka Biswal <https://github.com/punya>`_
 * `Quoc-Viet Nguyen <https://github.com/vietnq>`_
 * `rayokota <https://github.com/rayokota>`_
 * `Rémi Alvergnat <https://github.com/Toilal>`_
