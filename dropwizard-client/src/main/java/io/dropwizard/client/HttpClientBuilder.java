@@ -2,6 +2,7 @@ package io.dropwizard.client;
 
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.httpclient.HttpClientMetricNameStrategies;
+import com.codahale.metrics.httpclient.HttpClientMetricNameStrategy;
 import com.codahale.metrics.httpclient.InstrumentedHttpClientConnectionManager;
 import com.codahale.metrics.httpclient.InstrumentedHttpRequestExecutor;
 import com.google.common.annotations.VisibleForTesting;
@@ -60,6 +61,7 @@ public class HttpClientBuilder {
             .register("https", SSLConnectionSocketFactory.getSocketFactory())
             .build();
     private CredentialsProvider credentialsProvider = null;
+    private HttpClientMetricNameStrategy metricNameStrategy = HttpClientMetricNameStrategies.METHOD_ONLY;
 
     public HttpClientBuilder(MetricRegistry metricRegistry) {
         this.metricRegistry = metricRegistry;
@@ -137,6 +139,17 @@ public class HttpClientBuilder {
     }
 
     /**
+     * Use the given {@link HttpClientMetricNameStrategy} instance.
+     *
+     * @param metricNameStrategy    a {@link HttpClientMetricNameStrategy} instance
+     * @return {@code this}
+     */
+    public HttpClientBuilder using(HttpClientMetricNameStrategy metricNameStrategy) {
+        this.metricNameStrategy = metricNameStrategy;
+        return this;
+    }
+
+    /**
      * Builds the {@link HttpClient}.
      *
      * @param name
@@ -184,7 +197,7 @@ public class HttpClientBuilder {
                 .setSoTimeout(timeout)
                 .build();
 
-        builder.setRequestExecutor(new InstrumentedHttpRequestExecutor(metricRegistry, HttpClientMetricNameStrategies.METHOD_ONLY))
+        builder.setRequestExecutor(new InstrumentedHttpRequestExecutor(metricRegistry, metricNameStrategy))
                 .setConnectionManager(manager)
                 .setDefaultRequestConfig(requestConfig)
                 .setDefaultSocketConfig(socketConfig)
