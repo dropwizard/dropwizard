@@ -15,6 +15,7 @@ public class SessionFactoryManager implements Managed {
 
     @Override
     public void start() throws Exception {
+        dataSource.start();
     }
 
     @Override
