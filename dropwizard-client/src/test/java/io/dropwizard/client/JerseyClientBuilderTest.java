@@ -10,6 +10,8 @@ import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
 import io.dropwizard.setup.Environment;
 import org.glassfish.jersey.apache.connector.ApacheConnectorProvider;
 import org.glassfish.jersey.client.ClientConfig;
+import org.glassfish.jersey.client.ClientProperties;
+import org.glassfish.jersey.client.RequestEntityProcessing;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -161,6 +163,26 @@ public class JerseyClientBuilderTest {
         builder.using(configuration).using(environment).build("test");
 
         verify(lifecycleEnvironment).executorService("jersey-client-test-%d");
+    }
+
+    @Test
+    public void usesChunkedEncodingIfChunkedEncodingIsEnabled() throws Exception {
+        final JerseyClientConfiguration configuration = new JerseyClientConfiguration();
+        configuration.setChunkedEncodingEnabled(true);
+
+        final Client client = builder.using(configuration)
+                .using(executorService, objectMapper).build("test");
+        assertThat(client.getConfiguration().getProperty(ClientProperties.REQUEST_ENTITY_PROCESSING)).isEqualTo(RequestEntityProcessing.CHUNKED);
+    }
+
+    @Test
+    public void usesBufferedEncodingIfChunkedEncodingIsDisabled() throws Exception {
+        final JerseyClientConfiguration configuration = new JerseyClientConfiguration();
+        configuration.setChunkedEncodingEnabled(false);
+
+        final Client client = builder.using(configuration)
+                .using(executorService, objectMapper).build("test");
+        assertThat(client.getConfiguration().getProperty(ClientProperties.REQUEST_ENTITY_PROCESSING)).isEqualTo(RequestEntityProcessing.BUFFERED);
     }
 
     @Provider

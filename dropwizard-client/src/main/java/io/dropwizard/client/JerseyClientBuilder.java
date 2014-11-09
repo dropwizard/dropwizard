@@ -14,6 +14,8 @@ import org.apache.http.conn.DnsResolver;
 import org.apache.http.conn.socket.ConnectionSocketFactory;
 import org.glassfish.jersey.apache.connector.ApacheConnectorProvider;
 import org.glassfish.jersey.client.ClientConfig;
+import org.glassfish.jersey.client.ClientProperties;
+import org.glassfish.jersey.client.RequestEntityProcessing;
 
 import javax.validation.Validation;
 import javax.validation.Validator;
@@ -234,6 +236,9 @@ public class JerseyClientBuilder {
         for (Map.Entry<String, Object> property : this.properties.entrySet()) {
             config.property(property.getKey(), property.getValue());
         }
+
+        final RequestEntityProcessing requestEntityProcessing = configuration.isChunkedEncodingEnabled() ? RequestEntityProcessing.CHUNKED : RequestEntityProcessing.BUFFERED;
+        config.property(ClientProperties.REQUEST_ENTITY_PROCESSING, requestEntityProcessing);
 
         config.register(new DropwizardExecutorProvider(threadPool));
         config.connectorProvider(new ApacheConnectorProvider());
