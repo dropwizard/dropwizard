@@ -140,7 +140,7 @@ Your main ``Configuration`` subclass can then include this as a member field:
 
 .. code-block:: java
 
-    public class ExampleApplicationConfiguration extends Configuration {
+    public class ExampleConfiguration extends Configuration {
         @Valid
         @NotNull
         private MessageQueueFactory messageQueue = new MessageQueueFactory();
