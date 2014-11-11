@@ -115,7 +115,7 @@ v0.7.0: Apr 04 2014
   are now excluded by default.
 * Added the application name and PID (if detectable) to the beginning of syslog messages, as is the
   convention.
-* Added ``--migrations-file`` command-line option to ``migrate`` command to supply the migrations
+* Added ``--migrations`` command-line option to ``migrate`` command to supply the migrations
   file explicitly.
 * Validation errors are now returned as ``application/json`` responses.
 * Simplified ``AsyncRequestLog``; now standardized on Jetty 9 NCSA format.
