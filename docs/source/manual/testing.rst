@@ -181,7 +181,7 @@ loads a given resource instance in an in-memory Jersey server:
 
         @Test
         public void testGetPerson() {
-            assertThat(resources.client().resource("/person/blah").get(Person.class))
+            assertThat(resources.client().target("/person/blah").request().get(Person.class))
                     .isEqualTo(person);
             verify(dao).fetchPerson("blah");
         }
