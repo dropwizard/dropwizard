@@ -694,8 +694,7 @@ public class DataSourceFactory {
         this.validationQueryTimeout = validationQueryTimeout;
     }
 
-    public ManagedDataSource build(MetricRegistry metricRegistry,
-                                   String name) throws ClassNotFoundException {
+    public ManagedDataSource build(MetricRegistry metricRegistry, String name) {
         final Properties properties = new Properties();
         for (Map.Entry<String, String> property : this.properties.entrySet()) {
             properties.setProperty(property.getKey(), property.getValue());
