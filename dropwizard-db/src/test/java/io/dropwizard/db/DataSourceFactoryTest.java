@@ -9,17 +9,19 @@ import org.junit.Test;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class DataSourceFactoryTest {
     private final MetricRegistry metricRegistry = new MetricRegistry();
-    private final DataSourceFactory factory = new DataSourceFactory();
 
+    private DataSourceFactory factory;
     private ManagedDataSource dataSource;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
+        factory = new DataSourceFactory();
         factory.setUrl("jdbc:h2:mem:DbTest-" + System.currentTimeMillis());
         factory.setUser("sa");
         factory.setDriverClass("org.h2.Driver");
@@ -28,7 +30,9 @@ public class DataSourceFactoryTest {
 
     @After
     public void tearDown() throws Exception {
-        dataSource.stop();
+        if (null != dataSource) {
+            dataSource.stop();
+        }
     }
 
     private ManagedDataSource dataSource() throws Exception {
@@ -40,8 +44,7 @@ public class DataSourceFactoryTest {
     @Test
     public void buildsAConnectionPoolToTheDatabase() throws Exception {
         try (Connection connection = dataSource().getConnection()) {
-            try (PreparedStatement statement = connection.prepareStatement(
-                    "select 1")) {
+            try (PreparedStatement statement = connection.prepareStatement("select 1")) {
                 try (ResultSet set = statement.executeQuery()) {
                     while (set.next()) {
                         assertThat(set.getInt(1)).isEqualTo(1);
@@ -54,8 +57,7 @@ public class DataSourceFactoryTest {
     @Test
     public void testNoValidationQueryTimeout() throws Exception {
         try (Connection connection = dataSource().getConnection()) {
-            try (PreparedStatement statement = connection.prepareStatement(
-                    "select 1")) {
+            try (PreparedStatement statement = connection.prepareStatement("select 1")) {
                 assertThat(statement.getQueryTimeout()).isEqualTo(0);
             }
         }
@@ -66,11 +68,17 @@ public class DataSourceFactoryTest {
         factory.setValidationQueryTimeout(Duration.seconds(3));
 
         try (Connection connection = dataSource().getConnection()) {
-            try (PreparedStatement statement = connection.prepareStatement(
-                    "select 1")) {
+            try (PreparedStatement statement = connection.prepareStatement("select 1")) {
                 assertThat(statement.getQueryTimeout()).isEqualTo(3);
             }
         }
     }
 
+    @Test(expected = SQLException.class)
+    public void invalidJDBCDriverClassThrowsSQLException() throws SQLException {
+        final DataSourceFactory factory = new DataSourceFactory();
+        factory.setDriverClass("org.example.no.driver.here");
+
+        factory.build(metricRegistry, "test").getConnection();
+    }
 }
