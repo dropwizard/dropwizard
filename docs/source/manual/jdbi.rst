@@ -35,8 +35,7 @@ Then, in your service's ``run`` method, create a new ``DBIFactory``:
 .. code-block:: java
 
     @Override
-    public void run(ExampleConfiguration config,
-                    Environment environment) throws ClassNotFoundException {
+    public void run(ExampleConfiguration config, Environment environment) {
         final DBIFactory factory = new DBIFactory();
         final DBI jdbi = factory.build(environment, config.getDataSourceFactory(), "postgresql");
         final UserDAO dao = jdbi.onDemand(UserDAO.class);
@@ -45,9 +44,7 @@ Then, in your service's ``run`` method, create a new ``DBIFactory``:
 
 This will create a new :ref:`managed <man-core-managed>` connection pool to the database, a
 :ref:`health check <man-core-healthchecks>` for connectivity to the database, and a new ``DBI``
-instance for you to use. Note the ``ClassNotFoundException`` is thrown by the ``DBIFactory`` class
-when the ``build`` method is unable to locate the JDBC driver class. This will cause the service to
-exit displaying the output of the exception.
+instance for you to use.
 
 Your service's configuration file will then look like this:
 

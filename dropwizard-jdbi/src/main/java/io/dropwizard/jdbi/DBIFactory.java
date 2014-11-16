@@ -41,7 +41,7 @@ public class DBIFactory {
 
     public DBI build(Environment environment,
                      DataSourceFactory configuration,
-                     String name) throws ClassNotFoundException {
+                     String name) {
         final ManagedDataSource dataSource = configuration.build(environment.metrics(), name);
         return build(environment, configuration, dataSource, name);
     }

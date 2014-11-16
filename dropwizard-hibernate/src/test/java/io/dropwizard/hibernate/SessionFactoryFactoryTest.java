@@ -90,7 +90,7 @@ public class SessionFactoryFactoryTest {
         }
     }
 
-    private void build() throws ClassNotFoundException {
+    private void build() {
         this.sessionFactory = factory.build(bundle,
                                             environment,
                                             config,
