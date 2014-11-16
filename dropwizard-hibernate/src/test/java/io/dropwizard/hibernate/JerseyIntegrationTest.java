@@ -114,14 +114,11 @@ public class JerseyIntegrationTest extends JerseyTest {
         dbConfig.setDriverClass("org.hsqldb.jdbcDriver");
         dbConfig.setValidationQuery("SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS");
 
-        try {
-            this.sessionFactory = factory.build(bundle,
-                                                environment,
-                                                dbConfig,
-                                                ImmutableList.<Class<?>>of(Person.class));
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
+        this.sessionFactory = factory.build(bundle,
+                                            environment,
+                                            dbConfig,
+                                            ImmutableList.<Class<?>>of(Person.class));
+
         final Session session = sessionFactory.openSession();
         try {
             session.createSQLQuery("DROP TABLE people IF EXISTS").executeUpdate();
