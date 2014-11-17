@@ -34,7 +34,7 @@ public class ConfiguredGZipEncoder implements WriterInterceptor, ClientRequestFi
 
     @Override
     public void filter(ClientRequestContext context) throws IOException {
-        if (context.getHeaders().getFirst(HttpHeaders.CONTENT_ENCODING) == null && this.forceEncoding) {
+        if (context.hasEntity() && context.getHeaders().getFirst(HttpHeaders.CONTENT_ENCODING) == null && this.forceEncoding) {
             context.getHeaders().add(HttpHeaders.CONTENT_ENCODING, "gzip");
         }
     }
