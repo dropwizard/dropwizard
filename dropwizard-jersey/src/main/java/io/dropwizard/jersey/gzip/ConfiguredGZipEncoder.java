@@ -1,5 +1,8 @@
 package io.dropwizard.jersey.gzip;
 
+import java.io.IOException;
+import java.util.zip.GZIPOutputStream;
+
 import javax.annotation.Priority;
 import javax.ws.rs.Priorities;
 import javax.ws.rs.WebApplicationException;
@@ -9,8 +12,6 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.ext.Provider;
 import javax.ws.rs.ext.WriterInterceptor;
 import javax.ws.rs.ext.WriterInterceptorContext;
-import java.io.IOException;
-import java.util.zip.GZIPOutputStream;
 
 /**
  * GZIP encoding support. Writer interceptor that encodes the output  if
@@ -32,6 +33,13 @@ public class ConfiguredGZipEncoder implements WriterInterceptor, ClientRequestFi
     }
 
     @Override
+    public void filter(ClientRequestContext context) throws IOException {
+        if (context.getHeaders().getFirst(HttpHeaders.CONTENT_ENCODING) == null && this.forceEncoding) {
+            context.getHeaders().add(HttpHeaders.CONTENT_ENCODING, "gzip");
+        }
+    }
+
+    @Override
     public final void aroundWriteTo(WriterInterceptorContext context) throws IOException, WebApplicationException {
         // must remove Content-Length header since the encoded message will have a different length
         String contentEncoding = (String) context.getHeaders().getFirst(HttpHeaders.CONTENT_ENCODING);
@@ -40,13 +48,6 @@ public class ConfiguredGZipEncoder implements WriterInterceptor, ClientRequestFi
             context.setOutputStream(new GZIPOutputStream(context.getOutputStream()));
         }
         context.proceed();
-    }
-
-    @Override
-    public void filter(ClientRequestContext context) throws IOException {
-        if (context.getHeaders().getFirst(HttpHeaders.CONTENT_ENCODING) == null && this.forceEncoding) {
-            context.getHeaders().add(HttpHeaders.CONTENT_ENCODING, "gzip");
-        }
     }
 
 }
