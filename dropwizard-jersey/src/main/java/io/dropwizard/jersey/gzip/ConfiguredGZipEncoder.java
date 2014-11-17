@@ -6,6 +6,8 @@ import java.util.zip.GZIPOutputStream;
 import javax.annotation.Priority;
 import javax.ws.rs.Priorities;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.client.ClientRequestContext;
+import javax.ws.rs.client.ClientRequestFilter;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.ext.Provider;
 import javax.ws.rs.ext.WriterInterceptor;
@@ -23,7 +25,7 @@ import javax.ws.rs.ext.WriterInterceptorContext;
  */
 @Provider
 @Priority(Priorities.ENTITY_CODER)
-public class ConfiguredGZipEncoder implements WriterInterceptor {
+public class ConfiguredGZipEncoder implements WriterInterceptor, ClientRequestFilter {
     private boolean forceEncoding = false;
 
     public ConfiguredGZipEncoder(boolean forceEncoding) {
@@ -31,19 +33,21 @@ public class ConfiguredGZipEncoder implements WriterInterceptor {
     }
 
     @Override
+    public void filter(ClientRequestContext context) throws IOException {
+        if (context.hasEntity() && context.getHeaders().getFirst(HttpHeaders.CONTENT_ENCODING) == null && this.forceEncoding) {
+            context.getHeaders().add(HttpHeaders.CONTENT_ENCODING, "gzip");
+        }
+    }
+
+    @Override
     public final void aroundWriteTo(WriterInterceptorContext context) throws IOException, WebApplicationException {
         // must remove Content-Length header since the encoded message will have a different length
-
         String contentEncoding = (String) context.getHeaders().getFirst(HttpHeaders.CONTENT_ENCODING);
-        if (contentEncoding == null && this.forceEncoding) {
-            context.getHeaders().add(HttpHeaders.CONTENT_ENCODING, "gzip");
-            contentEncoding = "gzip";
-        }
-
         if ((contentEncoding != null) &&
                 (contentEncoding.equals("gzip") || contentEncoding.equals("x-gzip"))) {
             context.setOutputStream(new GZIPOutputStream(context.getOutputStream()));
         }
         context.proceed();
     }
+
 }
