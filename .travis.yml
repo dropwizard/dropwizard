@@ -18,7 +18,7 @@ jdk:
 # values for maven deploy. these have been encrypted
 # with the public key from https://github.com/dropwizard/dropwizard
 # and won't work in any other repository. if you want
-# to run CI in your local fork you'll need to run `travis encrypt …`
+# to run CI in your local fork you'll need to run `travis encrypt ...`
 # accordingly (http://docs.travis-ci.com/user/encryption-keys/)
 #
 # NOTE: CI_DEPLOY_USERNAME is set to dropwizardci, the username
