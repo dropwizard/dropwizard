@@ -1,6 +1,6 @@
 language: java
 
-install: echo "I trust Maven completely."
+install: echo "I trust Maven."
 
 # build and verify the snapshot artifacts, but only deploy
 # if this isn't a pull request
