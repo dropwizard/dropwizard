@@ -5,7 +5,7 @@ install: echo "I trust Maven completely."
 # build, verify, and deploy the snapshot artifacts
 script:
 - mvn verify
-- 'if [[ $TRAVIS_PULL_REQUEST = "false" ]]; then mvn deploy --settings maven_deploy_settings.xml; fi'
+- 'if [[ $TRAVIS_PULL_REQUEST = "false" ]]; then mvn deploy --settings maven_deploy_settings.xml; else echo "Pull request, skipping deploy."; fi'
 
 after_success: mvn cobertura:cobertura coveralls:cobertura
 
