@@ -35,7 +35,7 @@ public class DropwizardResourceConfig extends ResourceConfig {
     private static final Logger LOGGER = LoggerFactory.getLogger(DropwizardResourceConfig.class);
     private static final String NEWLINE = String.format("%n");
 
-    private String urlPattern;
+    private String urlPattern = "/*";
 
     public DropwizardResourceConfig(MetricRegistry metricRegistry) {
         this(false, metricRegistry);
@@ -52,8 +52,6 @@ public class DropwizardResourceConfig extends ResourceConfig {
         if (metricRegistry == null) {
             metricRegistry = new MetricRegistry();
         }
-
-        urlPattern = "/*";
 
         property(ServerProperties.WADL_FEATURE_DISABLE, Boolean.TRUE);
         if (!testOnly) {
