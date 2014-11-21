@@ -21,7 +21,6 @@ public class IntegrationTest {
 	
 	@Test
 	public void testHelloWorld() throws Exception {
-		/*
 		Client client = ClientBuilder.newClient();
 		WebTarget target = client.target("http://localhost:" + RULE.getLocalPort() + "/hello-world");
 		
@@ -30,6 +29,5 @@ public class IntegrationTest {
 		Saying saying = target.queryParam("name", NAME.get()).request().get(Saying.class);
 		
 		assertThat(saying.getContent()).isEqualTo(RULE.getConfiguration().buildTemplate().render(NAME));
-		*/
 	}
 }
