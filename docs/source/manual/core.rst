@@ -1242,10 +1242,10 @@ application's ``Environment`` on initialization.
 Jersey filters
 --------------
 
-There might be cases when you want to filter out requests or modify them before they reach your Resources. Jersey provides
-you with a rich api for `filters and interceptors`_ that can be used directly in Dropwizard.
-provides you with the means to do so. If you want to stop the request from reaching your resources, throw a web-application
-``WebApplicationException``, if you want to modify the request or let it pass through the filter, return it.
+There might be cases when you want to filter out requests or modify them before they reach your Resources. Jersey
+has a rich api for `filters and interceptors`_ that can be used directly in Dropwizard.
+You can stop the request from reaching your resources by throwing a ``WebApplicationException``. Alternatively,
+you can use filters to modify inbound requests or outbound responses.
 
 .. _filters and interceptors: http://jersey.java.net/documentation/latest/filters-and-interceptors.html
 
@@ -1264,7 +1264,8 @@ provides you with the means to do so. If you want to stop the request from reach
         }
     }
 
-This example filter checks the request for the "Date" header, and denies the request if was missing.
+This example filter checks the request for the "Date" header, and denies the request if was missing. Otherwise,
+the request is passed through.
 
 Filters can be dynamically bound to resource methods using `DynamicFeature`_:
 
@@ -1283,9 +1284,9 @@ Filters can be dynamically bound to resource methods using `DynamicFeature`_:
     }
 
 The DynamicFeature is invoked by the Jersey runtime when the application is started. In this example, the feature checks
-for methods that are annotated with @DateRequired and registers the DateNotSpecified filter on those methods only.
+for methods that are annotated with ``@DateRequired`` and registers the ``DateNotSpecified`` filter on those methods only.
 
-You register the feature in your Application class, like so:
+You typically register the feature in your Application class, like so:
 
 .. code-block:: java
 
