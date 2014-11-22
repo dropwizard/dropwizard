@@ -128,7 +128,7 @@ import java.util.concurrent.TimeUnit;
  *     </tr>
  *     <tr>
  *         <td>{@code maxSize}</td>
- *         <td>10</td>
+ *         <td>100</td>
  *         <td>
  *             The maximum size of the connection pool.
  *         </td>
