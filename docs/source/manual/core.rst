@@ -1243,35 +1243,54 @@ Jersey filters
 --------------
 
 There might be cases when you want to filter out requests or modify them before they reach your Resources. Jersey
-provides you with the means to do so. If you want to stop the request from reaching your resources, throw a web-application
-``WebApplicationException``, if you want to modify the request or let it pass through the filter, return it.
+has a rich api for `filters and interceptors`_ that can be used directly in Dropwizard.
+You can stop the request from reaching your resources by throwing a ``WebApplicationException``. Alternatively,
+you can use filters to modify inbound requests or outbound responses.
+
+.. _filters and interceptors: http://jersey.java.net/documentation/latest/filters-and-interceptors.html
 
 .. code-block:: java
 
+    @Provider
     public class DateNotSpecifiedFilter implements ContainerRequestFilter {
-
-        @Context ExtendedUriInfo extendedUriInfo;
-
         @Override
-        public ContainerRequest filter(ContainerRequest request) {
-            boolean methodNeedsDateHeader = extendedUriInfo.getMatchedMethod().isAnnotationPresent(DateRequired.class);
-            String dateHeader = request.getHeaderValue(HttpHeaders.DATE);
+        public void filter(ContainerRequestContext requestContext) throws IOException {
+            String dateHeader = requestContext.getHeaderString(HttpHeaders.DATE);
 
-            if (methodNeedsDateHeader && dateHeader == null) {
+            if (dateHeader == null) {
                 Exception cause = new IllegalArgumentException("Date Header was not specified");
                 throw new WebApplicationException(cause, Response.Status.BAD_REQUEST);
-            } else {
-                return request;
             }
         }
     }
 
-This example checks the request for the "Date" header, and denies the request if was ommitted and the method this request would call has a certain annotation present.
-You can then register this filter in your Application class, like so:
+This example filter checks the request for the "Date" header, and denies the request if was missing. Otherwise,
+the request is passed through.
+
+Filters can be dynamically bound to resource methods using `DynamicFeature`_:
+
+.. _DynamicFeature: http://jax-rs-spec.java.net/nonav/2.0-rev-a/apidocs/index.html
 
 .. code-block:: java
 
-    environment.jersey().getResourceConfig().getContainerRequestFilters().add(new DateNotSpecifiedFilter());
+    @Provider
+    public class DateRequiredFeature implements DynamicFeature {
+        @Override
+        public void configure(ResourceInfo resourceInfo, FeatureContext context) {
+            if (resourceInfo.getResourceMethod().getAnnotation(DateRequired.class) != null) {
+                context.register(DateNotSpecifiedFilter.class);
+            }
+        }
+    }
+
+The DynamicFeature is invoked by the Jersey runtime when the application is started. In this example, the feature checks
+for methods that are annotated with ``@DateRequired`` and registers the ``DateNotSpecified`` filter on those methods only.
+
+You typically register the feature in your Application class, like so:
+
+.. code-block:: java
+
+    environment.jersey().register(DateRequiredFeature.class);
 
 
 .. _man-core-servlet-filters:
