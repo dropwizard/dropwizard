@@ -7,6 +7,10 @@ import com.google.common.io.Resources;
 import io.dropwizard.configuration.ConfigurationFactory;
 import io.dropwizard.jackson.DiscoverableSubtypeResolver;
 import io.dropwizard.jackson.Jackson;
+import io.dropwizard.jersey.errors.EarlyEofExceptionMapper;
+import io.dropwizard.jersey.errors.LoggingExceptionMapper;
+import io.dropwizard.jersey.jackson.JsonProcessingExceptionMapper;
+import io.dropwizard.jersey.validation.ConstraintViolationExceptionMapper;
 import io.dropwizard.jetty.HttpConnectorFactory;
 import io.dropwizard.logging.ConsoleAppenderFactory;
 import io.dropwizard.logging.FileAppenderFactory;
@@ -17,7 +21,6 @@ import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.NetworkConnector;
 import org.eclipse.jetty.server.Server;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.validation.Validation;
@@ -25,6 +28,7 @@ import javax.validation.Validator;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.ext.ExceptionMapper;
 import java.io.File;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -36,6 +40,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -89,6 +94,34 @@ public class DefaultServerFactoryTest {
     public void isDiscoverable() throws Exception {
         assertThat(new DiscoverableSubtypeResolver().getDiscoveredSubtypes())
                 .contains(DefaultServerFactory.class);
+    }
+
+    @Test
+    public void registersDefaultExceptionMappers() throws Exception {
+        assertThat(http.getRegisterDefaultExceptionMappers()).isTrue();
+        Environment environment = new Environment("test", Jackson.newObjectMapper(),
+                Validation.buildDefaultValidatorFactory().getValidator(), new MetricRegistry(),
+                ClassLoader.getSystemClassLoader());
+        http.build(environment);
+        Set<Object> singletons = environment.jersey().getResourceConfig().getSingletons();
+        assertThat(singletons).hasAtLeastOneElementOfType(LoggingExceptionMapper.class);
+        assertThat(singletons).hasAtLeastOneElementOfType(ConstraintViolationExceptionMapper.class);
+        assertThat(singletons).hasAtLeastOneElementOfType(JsonProcessingExceptionMapper.class);
+        assertThat(singletons).hasAtLeastOneElementOfType(EarlyEofExceptionMapper.class);
+
+    }
+
+    @Test
+    public void doesNotDefaultExceptionMappers() throws Exception {
+        http.setRegisterDefaultExceptionMappers(false);
+        assertThat(http.getRegisterDefaultExceptionMappers()).isFalse();
+        Environment environment = new Environment("test", Jackson.newObjectMapper(),
+                Validation.buildDefaultValidatorFactory().getValidator(), new MetricRegistry(),
+                ClassLoader.getSystemClassLoader());
+        http.build(environment);
+        for (Object singleton : environment.jersey().getResourceConfig().getSingletons()) {
+            assertThat(singleton).isNotInstanceOf(ExceptionMapper.class);
+        }
     }
 
     @Test
