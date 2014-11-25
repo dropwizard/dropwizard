@@ -16,6 +16,7 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Fail.fail;
 import static org.mockito.Mockito.*;
 
 public class HibernateBundleTest {
@@ -97,5 +98,48 @@ public class HibernateBundleTest {
         bundle.run(configuration, environment);
 
         assertThat(bundle.getSessionFactory()).isEqualTo(sessionFactory);
+    }
+
+    @Test
+    public void shouldFailIfEntityIsNotAnEntity() {
+        Class[] entities = {};
+
+        try {
+            new HibernateBundle<Configuration>(entities) {
+                @Override
+                public DataSourceFactory getDataSourceFactory(Configuration configuration) {
+                    return null;
+                }
+            };
+        } catch (RuntimeException rte) {
+            // Expected
+        }
+
+        entities = new Class[]{Person.class, String.class};
+        try {
+            new HibernateBundle<Configuration>(entities) {
+                @Override
+                public DataSourceFactory getDataSourceFactory(Configuration configuration) {
+                    return null;
+                }
+            };
+        } catch (RuntimeException rte) {
+            // Expected
+            return;
+        }
+
+        entities = new Class[]{Person.class};
+        try {
+            new HibernateBundle<Configuration>(entities) {
+                @Override
+                public DataSourceFactory getDataSourceFactory(Configuration configuration) {
+                    return null;
+                }
+            };
+        } catch (RuntimeException rte) {
+            fail("Unexpected RuntimeException");
+        }
+
+        fail("Expected RuntimeException but didn't get one.");
     }
 }
