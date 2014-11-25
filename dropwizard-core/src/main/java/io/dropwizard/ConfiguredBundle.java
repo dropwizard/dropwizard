@@ -24,5 +24,5 @@ public interface ConfiguredBundle<T> {
      *
      * @param bootstrap the application bootstrap
      */
-    void initialize(Bootstrap<?> bootstrap);
+    void initialize(Bootstrap<T> bootstrap);
 }
