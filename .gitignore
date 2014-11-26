@@ -10,3 +10,5 @@ logs
 .classpath
 .project
 nb-configuration.xml
+
+*.iws
