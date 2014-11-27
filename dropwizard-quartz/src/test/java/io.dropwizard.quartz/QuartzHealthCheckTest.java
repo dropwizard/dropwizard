@@ -3,6 +3,7 @@ package io.dropwizard.quartz;
 import com.codahale.metrics.health.HealthCheckRegistry;
 import io.dropwizard.Configuration;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
+import io.dropwizard.setup.AdminEnvironment;
 import io.dropwizard.setup.Environment;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,6 +22,8 @@ public class QuartzHealthCheckTest
 
     private final LifecycleEnvironment mockLifecycleEnvironment = mock(LifecycleEnvironment.class);
 
+    private final AdminEnvironment adminEnvironment = mock(AdminEnvironment.class);
+
     private final HealthCheckRegistry healthChecks = mock(HealthCheckRegistry.class);
 
     @Before
@@ -29,6 +32,7 @@ public class QuartzHealthCheckTest
     {
         when(environment.healthChecks()).thenReturn(healthChecks);
         when(environment.lifecycle()).thenReturn(mockLifecycleEnvironment);
+        when(environment.admin()).thenReturn(adminEnvironment);
     }
 
     @Test

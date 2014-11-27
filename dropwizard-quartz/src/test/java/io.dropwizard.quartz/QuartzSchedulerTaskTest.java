@@ -60,7 +60,7 @@ public class QuartzSchedulerTaskTest
         bundle.run(configuration, environment);
 
         JobDetail job = JobBuilder.newJob(NoOpJob.class)
-                .withIdentity("foo", "bar")
+                .withIdentity("apple", "pear")
                 .storeDurably()
                 .build();
 
@@ -80,7 +80,7 @@ public class QuartzSchedulerTaskTest
     @Test
     public void testStateTransitions() throws Exception
     {
-        QuartzSchedulerTask task = new QuartzSchedulerTask(bundle.getSchedulerFactory(), environment.getObjectMapper());
+        QuartzSchedulerTask task = new QuartzSchedulerTask(bundle.getSchedulerFactory());
 
         StringWriter stringWriter = new StringWriter();
         PrintWriter printWriter = new PrintWriter(stringWriter);

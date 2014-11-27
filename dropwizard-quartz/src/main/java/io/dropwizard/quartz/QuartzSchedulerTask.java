@@ -90,6 +90,9 @@ public class QuartzSchedulerTask extends Task
                 scheduler.resumeAll();
                 output.println(String.format(RESULT_TEMPLATE, 1));
                 break;
+            default:
+                output.println(String.format(RESULT_TEMPLATE, 0));
+                break;
         }
 
         output.flush();
