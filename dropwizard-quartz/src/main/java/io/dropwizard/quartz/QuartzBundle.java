@@ -18,25 +18,26 @@ import java.util.Properties;
  * the <b>jdbcjobStoreTX</b> definition in the yml file.
  * <p/>
  * <pre>
-        quartzFactory:
-          # Quartz Job Scheduler Logical Instance Name
-          instanceName: MyQuartzScheduler
-
-          threadPool:
-            # Number of threads to allocate in the Quartz thread pool
-            threadCount: 5
-
-          jdbcjobStoreTX:
-            driverDelegate: StdJDBC
-            dataSource: MyQuartzDataSource
-
-            # Quartz properties specific to your JDBC Data Source:
-            properties:
-              org.quartz.dataSource.MyQuartzDataSource.driver : com.mysql.jdbc.Driver
-              org.quartz.dataSource.MyQuartzDataSource.URL : jdbc:mysql://localhost/mydb?autoReconnect=true
-              org.quartz.dataSource.MyQuartzDataSource.user : quartzuser
-              org.quartz.dataSource.MyQuartzDataSource.password : secret
+ * quartzFactory:
+ *   # Quartz Job Scheduler Logical Instance Name
+ *   instanceName: MyQuartzScheduler
+ *
+ *   threadPool:
+ *     # Number of threads to allocate in the Quartz thread pool
+ *     threadCount: 5
+ *
+ *   jdbcjobStoreTX:
+ *     driverDelegate: StdJDBC
+ *     dataSource: MyQuartzDataSource
+ *
+ *     # Quartz properties specific to your JDBC Data Source:
+ *     properties:
+ *       org.quartz.dataSource.MyQuartzDataSource.driver : com.mysql.jdbc.Driver
+ *       org.quartz.dataSource.MyQuartzDataSource.URL : jdbc:mysql://localhost/mydb?autoReconnect=true
+ *       org.quartz.dataSource.MyQuartzDataSource.user : quartzuser
+ *       org.quartz.dataSource.MyQuartzDataSource.password : secret
  * </pre>
+ *
  * @param <T>
  */
 public abstract class QuartzBundle<T extends Configuration> implements ConfiguredBundle<T>, QuartzConfiguration<T>
@@ -62,29 +63,33 @@ public abstract class QuartzBundle<T extends Configuration> implements Configure
         Properties properties = new Properties();
 
         // Main Scheduler Configuration
-        properties.setProperty("org.quartz.scheduler.instanceName", quartzConfig.getInstanceName());
-        addOptionalProperty("org.quartz.scheduler.instanceId", quartzConfig.getInstanceId(), properties);
-        addOptionalProperty("org.quartz.scheduler.instanceIdGenerator.class", quartzConfig.getInstanceIdGenerator(), properties);
-        addOptionalProperty("org.quartz.scheduler.threadName", quartzConfig.getThreadName(), properties);
-        addOptionalProperty("org.quartz.scheduler.makeSchedulerThreadDaemon", quartzConfig.isMakeSchedulerThreadDaemon(), properties);
-        addOptionalProperty("org.quartz.scheduler.threadsInheritContextClassLoaderOfInitializer", quartzConfig.isThreadsInheritContextClassLoaderOfInitializer(), properties);
-        addOptionalProperty("org.quartz.scheduler.classLoadHelper.class", quartzConfig.getClassLoadHelperClass(), properties);
-        properties.setProperty("org.quartz.scheduler.idleWaitTime", quartzConfig.getIdleWaitTime().toString());
-        properties.setProperty("org.quartz.scheduler.dbFailureRetryInterval", quartzConfig.getDbFailureRetryInterval().toString());
+        properties.setProperty(StdSchedulerFactory.PROP_SCHED_INSTANCE_NAME, quartzConfig.getInstanceName());
+        addOptionalProperty(StdSchedulerFactory.PROP_SCHED_INSTANCE_ID, quartzConfig.getInstanceId(), properties);
+        addOptionalProperty(StdSchedulerFactory.PROP_SCHED_INSTANCE_ID_GENERATOR_CLASS, quartzConfig.getInstanceIdGenerator(), properties);
+        addOptionalProperty(StdSchedulerFactory.PROP_SCHED_THREAD_NAME, quartzConfig.getThreadName(), properties);
+        addOptionalProperty(StdSchedulerFactory.PROP_SCHED_MAKE_SCHEDULER_THREAD_DAEMON, quartzConfig.isMakeSchedulerThreadDaemon(), properties);
+        addOptionalProperty(StdSchedulerFactory.PROP_SCHED_SCHEDULER_THREADS_INHERIT_CONTEXT_CLASS_LOADER_OF_INITIALIZING_THREAD, quartzConfig.isThreadsInheritContextClassLoaderOfInitializer(), properties);
+        addOptionalProperty(StdSchedulerFactory.PROP_SCHED_CLASS_LOAD_HELPER_CLASS, quartzConfig.getClassLoadHelperClass(), properties);
+        properties.setProperty(StdSchedulerFactory.PROP_SCHED_IDLE_WAIT_TIME, quartzConfig.getIdleWaitTime().toString());
+        properties.setProperty(StdSchedulerFactory.PROP_SCHED_DB_FAILURE_RETRY_INTERVAL, quartzConfig.getDbFailureRetryInterval().toString());
 
-        addOptionalProperty("org.quartz.scheduler.jobFactory.class", quartzConfig.getJobFactoryClass(), properties);
+        addOptionalProperty(StdSchedulerFactory.PROP_SCHED_JOB_FACTORY_CLASS, quartzConfig.getJobFactoryClass(), properties);
 
-        addOptionalProperty("org.quartz.scheduler.userTransactionURL", quartzConfig.getUserTransactionURL(), properties);
-        addOptionalProperty("org.quartz.scheduler.wrapJobExecutionInUserTransaction", quartzConfig.isWrapJobExecutionInUserTransaction(), properties);
-        addOptionalProperty("org.quartz.scheduler.skipUpdateCheck", quartzConfig.isSkipUpdateCheck(), properties);
-        addOptionalProperty("org.quartz.scheduler.batchTriggerAcquisitionMaxCount", quartzConfig.getBatchTriggerAcquisitionMaxCount(), properties);
-        addOptionalProperty("org.quartz.scheduler.batchTriggerAcquisitionFireAheadTimeWindow", quartzConfig.getBatchTriggerAcquisitionFireAheadTimeWindow(), properties);
+        addOptionalProperty(StdSchedulerFactory.PROP_SCHED_USER_TX_URL, quartzConfig.getUserTransactionURL(), properties);
+        addOptionalProperty(StdSchedulerFactory.PROP_SCHED_WRAP_JOB_IN_USER_TX, quartzConfig.isWrapJobExecutionInUserTransaction(), properties);
+        addOptionalProperty(StdSchedulerFactory.PROP_SCHED_SKIP_UPDATE_CHECK, quartzConfig.isSkipUpdateCheck(), properties);
+        addOptionalProperty(StdSchedulerFactory.PROP_SCHED_MAX_BATCH_SIZE, quartzConfig.getBatchTriggerAcquisitionMaxCount(), properties);
+        addOptionalProperty(StdSchedulerFactory.PROP_SCHED_BATCH_TIME_WINDOW, quartzConfig.getBatchTriggerAcquisitionFireAheadTimeWindow(), properties);
 
         //
         // THREAD POOL CONFIGURATION SETTINGS
         //
 
-        properties.setProperty("org.quartz.threadPool.class", quartzConfig.getThreadPool().getThreadPoolClass());
+        properties.setProperty(StdSchedulerFactory.PROP_THREAD_POOL_CLASS, quartzConfig.getThreadPool().getThreadPoolClass());
+
+        //
+        // SimpleThreadPool specific configuration properties
+        //
         properties.setProperty("org.quartz.threadPool.threadCount", quartzConfig.getThreadPool().getThreadCount().toString());
         properties.setProperty("org.quartz.threadPool.threadPriority", quartzConfig.getThreadPool().getThreadPriority().toString());
         properties.setProperty("org.quartz.threadPool.makeThreadsDaemons", quartzConfig.getThreadPool().getMakeThreadsDaemons().toString());
@@ -101,7 +106,7 @@ public abstract class QuartzBundle<T extends Configuration> implements Configure
 
         if (quartzConfig.getJDBCJobStoreTX() != null)
         {
-            properties.setProperty("org.quartz.jobStore.class", quartzConfig.getJDBCJobStoreTX().getJobStoreClass());
+            properties.setProperty(StdSchedulerFactory.PROP_JOB_STORE_CLASS, quartzConfig.getJDBCJobStoreTX().getJobStoreClass());
             properties.setProperty("org.quartz.jobStore.misfireThreshold", quartzConfig.getJDBCJobStoreTX().getMisfireThreshold().toString());
             addOptionalProperty("org.quartz.jobStore.driverDelegateClass", quartzConfig.getJDBCJobStoreTX().getDriverDelegate().getDialect(), properties);
 
@@ -121,14 +126,14 @@ public abstract class QuartzBundle<T extends Configuration> implements Configure
             addOptionalProperty("org.quartz.jobStore.dataSource", dataSourceName, properties);
 
             Map<String, String> dataSourceConfigProperties = quartzConfig.getJDBCJobStoreTX().getProperties();
-            for (String key : dataSourceConfigProperties.keySet())
+            for (Map.Entry<String, String> entry : dataSourceConfigProperties.entrySet())
             {
-                properties.setProperty(key, dataSourceConfigProperties.get(key));
+                properties.setProperty(entry.getKey(), entry.getValue());
             }
 
         } else
         {
-            properties.setProperty("org.quartz.jobStore.class", quartzConfig.getRamJobStore().getJobStoreClass());
+            properties.setProperty(StdSchedulerFactory.PROP_JOB_STORE_CLASS, quartzConfig.getRamJobStore().getJobStoreClass());
             properties.setProperty("org.quartz.jobStore.misfireThreshold", quartzConfig.getRamJobStore().getMisfireThreshold().toString());
         }
 
@@ -142,6 +147,8 @@ public abstract class QuartzBundle<T extends Configuration> implements Configure
         LOG.debug("Registering the Quartz Manager...");
         final QuartzManager managedQuartz = new QuartzManager(schedulerFactory.getScheduler());
         environment.lifecycle().manage(managedQuartz);
+
+        environment.healthChecks().register("quartz", new QuartzHealthCheck(schedulerFactory));
     }
 
     /**
