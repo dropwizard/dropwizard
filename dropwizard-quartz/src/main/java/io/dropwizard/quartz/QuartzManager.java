@@ -19,7 +19,8 @@ public class QuartzManager implements Managed
     @Override
     public void start() throws Exception
     {
-
+        LOG.info("Starting Quartz scheduler...");
+        scheduler.start();
     }
 
     @Override
