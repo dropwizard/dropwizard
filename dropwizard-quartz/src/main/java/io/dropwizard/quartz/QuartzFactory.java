@@ -178,7 +178,7 @@ public class QuartzFactory
     private Long batchTriggerAcquisitionFireAheadTimeWindow = 0l;
 
     @NotNull
-    private QuartzThreadPool threadPool;
+    private QuartzThreadPool threadPool = new QuartzThreadPool();
 
     private QuartzRAMJobStore ramJobStore = new QuartzRAMJobStore();
 
