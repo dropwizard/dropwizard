@@ -4,6 +4,7 @@ import io.dropwizard.Configuration;
 import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import org.quartz.Scheduler;
 import org.quartz.SchedulerFactory;
 import org.quartz.impl.StdSchedulerFactory;
 import org.slf4j.Logger;
@@ -144,11 +145,18 @@ public abstract class QuartzBundle<T extends Configuration> implements Configure
         LOG.debug("Instantiating a new Quartz StdSchedulerFactory...");
         schedulerFactory = new StdSchedulerFactory(properties);
 
-        LOG.debug("Registering the Quartz Manager...");
-        final QuartzManager managedQuartz = new QuartzManager(schedulerFactory.getScheduler());
+        Scheduler scheduler = schedulerFactory.getScheduler();
+
+        LOG.debug("Registering the Dropwizard Quartz Manager...");
+        final QuartzManager managedQuartz = new QuartzManager(scheduler);
         environment.lifecycle().manage(managedQuartz);
 
+        LOG.debug("Registering Quartz Health Checks...");
         environment.healthChecks().register("quartz", new QuartzHealthCheck(schedulerFactory));
+
+        LOG.debug("Registering Quartz Tasks...");
+        environment.admin().addTask(new QuartzListJobsTask(schedulerFactory, environment.getObjectMapper()));
+        environment.admin().addTask(new QuartzSchedulerTask(schedulerFactory));
     }
 
     /**
