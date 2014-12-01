@@ -5,11 +5,13 @@ import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
 import org.quartz.SchedulerFactory;
 import org.quartz.impl.StdSchedulerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Properties;
 
@@ -41,7 +43,7 @@ import java.util.Properties;
  *
  * @param <T>
  */
-public abstract class QuartzBundle<T extends Configuration> implements ConfiguredBundle<T>, QuartzConfiguration<T>
+public abstract class QuartzBundle<T extends Configuration> implements ConfiguredBundle<T>, QuartzConfiguration<T>, SchedulerFactory
 {
     private static final Logger LOG = LoggerFactory.getLogger(QuartzBundle.class);
 
@@ -142,8 +144,8 @@ public abstract class QuartzBundle<T extends Configuration> implements Configure
         // CUSTOM CONFIGURATION SETTINGS
         addCustomProperties(properties);
 
-        LOG.debug("Instantiating a new Quartz StdSchedulerFactory...");
-        schedulerFactory = new StdSchedulerFactory(properties);
+        LOG.debug("Instantiating a new Quartz SchedulerFactory...");
+        schedulerFactory = createSchedulerFactory(properties);
 
         Scheduler scheduler = schedulerFactory.getScheduler();
 
@@ -157,6 +159,20 @@ public abstract class QuartzBundle<T extends Configuration> implements Configure
         LOG.debug("Registering Quartz Tasks...");
         environment.admin().addTask(new QuartzListJobsTask(schedulerFactory, environment.getObjectMapper()));
         environment.admin().addTask(new QuartzSchedulerTask(schedulerFactory));
+    }
+
+    /**
+     * Default implementation creates an instance of {@link org.quartz.impl.StdSchedulerFactory}. If your unique
+     * implementation requires a {@link org.quartz.impl.DirectSchedulerFactory} or a truly custom
+     * implementation of {@link org.quartz.SchedulerFactory}, then override this method.
+     *
+     * @param properties Configuration parameters are extracted from Dropwizard configuration
+     * @return Non-null instance of a {@link org.quartz.SchedulerFactory} implementation
+     * @throws SchedulerException
+     */
+    protected SchedulerFactory createSchedulerFactory(Properties properties) throws SchedulerException
+    {
+        return new StdSchedulerFactory(properties);
     }
 
     /**
@@ -181,12 +197,29 @@ public abstract class QuartzBundle<T extends Configuration> implements Configure
     }
 
     /**
-     * Access the scheduler factory configured by the bundle.
-     *
-     * @return Scheduler factory instance
+     * {@inheritDoc}
      */
-    public final SchedulerFactory getSchedulerFactory()
+    @Override
+    public Scheduler getScheduler() throws SchedulerException
     {
-        return schedulerFactory;
+        return schedulerFactory.getScheduler();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Scheduler getScheduler(String schedName) throws SchedulerException
+    {
+        return schedulerFactory.getScheduler(schedName);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Collection<Scheduler> getAllSchedulers() throws SchedulerException
+    {
+        return schedulerFactory.getAllSchedulers();
     }
 }
