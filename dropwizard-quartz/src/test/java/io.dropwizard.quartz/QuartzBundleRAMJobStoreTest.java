@@ -47,7 +47,7 @@ public class QuartzBundleRAMJobStoreTest
         };
 
         bundle.run(configuration, environment);
-        assertThat(bundle.getSchedulerFactory()).isNotNull();
+        assertThat(bundle.getScheduler()).isNotNull();
     }
 }
 

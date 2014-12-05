@@ -70,7 +70,7 @@ public class QuartzSchedulerTaskTest
                         .repeatForever())
                 .build();
 
-        Scheduler scheduler = bundle.getSchedulerFactory().getScheduler();
+        Scheduler scheduler = bundle.getScheduler();
         scheduler.scheduleJob(job, trigger);
 
         scheduler.start();
@@ -80,7 +80,7 @@ public class QuartzSchedulerTaskTest
     @Test
     public void testStateTransitions() throws Exception
     {
-        QuartzSchedulerTask task = new QuartzSchedulerTask(bundle.getSchedulerFactory());
+        QuartzSchedulerTask task = new QuartzSchedulerTask(bundle);
 
         StringWriter stringWriter = new StringWriter();
         PrintWriter printWriter = new PrintWriter(stringWriter);
@@ -89,24 +89,24 @@ public class QuartzSchedulerTaskTest
                 .put("action", "standby")
                 .build(), printWriter);
 
-        assertThat(bundle.getSchedulerFactory().getScheduler().isInStandbyMode()).isEqualTo(true);
+        assertThat(bundle.getScheduler().isInStandbyMode()).isEqualTo(true);
 
         task.execute(new ImmutableMultimap.Builder<String, String>()
                 .put("action", "start")
                 .build(), printWriter);
 
-        assertThat(bundle.getSchedulerFactory().getScheduler().isStarted()).isEqualTo(true);
+        assertThat(bundle.getScheduler().isStarted()).isEqualTo(true);
 
         task.execute(new ImmutableMultimap.Builder<String, String>()
                 .put("action", "pauseAll")
                 .build(), printWriter);
 
-        assertThat(bundle.getSchedulerFactory().getScheduler().getPausedTriggerGroups().size()).isGreaterThan(0);
+        assertThat(bundle.getScheduler().getPausedTriggerGroups().size()).isGreaterThan(0);
 
         task.execute(new ImmutableMultimap.Builder<String, String>()
                 .put("action", "resumeAll")
                 .build(), printWriter);
 
-        assertThat(bundle.getSchedulerFactory().getScheduler().getPausedTriggerGroups().size()).isEqualTo(0);
+        assertThat(bundle.getScheduler().getPausedTriggerGroups().size()).isEqualTo(0);
     }
 }

@@ -66,7 +66,7 @@ public class QuartzListJobsTaskTest
                 .storeDurably()
                 .build();
 
-        Scheduler scheduler = bundle.getSchedulerFactory().getScheduler();
+        Scheduler scheduler = bundle.getScheduler();
         scheduler.addJob(job1, true);
         scheduler.addJob(job2, true);
     }
@@ -74,7 +74,7 @@ public class QuartzListJobsTaskTest
     @Test
     public void testEnumAll() throws Exception
     {
-        QuartzListJobsTask task = new QuartzListJobsTask(bundle.getSchedulerFactory(), environment.getObjectMapper());
+        QuartzListJobsTask task = new QuartzListJobsTask(bundle, environment.getObjectMapper());
 
         StringWriter stringWriter = new StringWriter();
         PrintWriter printWriter = new PrintWriter(stringWriter);
@@ -86,7 +86,7 @@ public class QuartzListJobsTaskTest
     @Test
     public void testEnumSpecificGroup() throws Exception
     {
-        QuartzListJobsTask task = new QuartzListJobsTask(bundle.getSchedulerFactory(), environment.getObjectMapper());
+        QuartzListJobsTask task = new QuartzListJobsTask(bundle, environment.getObjectMapper());
 
         StringWriter stringWriter = new StringWriter();
         PrintWriter printWriter = new PrintWriter(stringWriter);

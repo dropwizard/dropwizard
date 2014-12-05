@@ -51,7 +51,7 @@ public class QuartzBundleJDBCJobStoreTXTest
         };
 
         bundle.run(configuration, environment);
-        assertThat(bundle.getSchedulerFactory()).isNotNull();
+        assertThat(bundle.getScheduler()).isNotNull();
     }
 }
 
