@@ -17,6 +17,7 @@ import org.glassfish.jersey.apache.connector.ApacheConnectorProvider;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.ClientProperties;
 import org.glassfish.jersey.client.RequestEntityProcessing;
+import org.glassfish.jersey.client.spi.ConnectorProvider;
 
 import javax.validation.Validation;
 import javax.validation.Validator;
@@ -55,6 +56,7 @@ public class JerseyClientBuilder {
     private Environment environment;
     private ObjectMapper objectMapper;
     private ExecutorService executorService;
+    private ConnectorProvider connectorProvider = new ApacheConnectorProvider();
 
     public JerseyClientBuilder(Environment environment) {
         this.builder = new HttpClientBuilder(environment);
@@ -194,6 +196,17 @@ public class JerseyClientBuilder {
     }
 
     /**
+     * Use the given {@link ConnectorProvider} instance.
+     *
+     * @param connectorProvider    a {@link ConnectorProvider} instance
+     * @return {@code this}
+     */
+    public JerseyClientBuilder using(ConnectorProvider connectorProvider) {
+        this.connectorProvider = connectorProvider;
+        return this;
+    }
+
+    /**
      * Builds the {@link Client} instance.
      *
      * @return a fully-configured {@link Client}
@@ -253,7 +266,7 @@ public class JerseyClientBuilder {
         config.property(ClientProperties.REQUEST_ENTITY_PROCESSING, requestEntityProcessing);
 
         config.register(new DropwizardExecutorProvider(threadPool));
-        config.connectorProvider(new ApacheConnectorProvider());
+        config.connectorProvider(connectorProvider);
 
         return config;
     }
