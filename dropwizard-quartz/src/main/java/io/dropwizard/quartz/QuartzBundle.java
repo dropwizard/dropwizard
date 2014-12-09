@@ -5,6 +5,7 @@ import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import org.quartz.Scheduler;
+import org.quartz.SchedulerConfigException;
 import org.quartz.SchedulerException;
 import org.quartz.SchedulerFactory;
 import org.quartz.impl.StdSchedulerFactory;
@@ -126,7 +127,13 @@ public abstract class QuartzBundle<T extends Configuration> implements Configure
             addOptionalProperty("org.quartz.jobStore.driverDelegateInitString", quartzConfig.getJDBCJobStoreTX().getDriverDelegateInitString(), properties);
 
             String dataSourceName = quartzConfig.getJDBCJobStoreTX().getDataSource();
-            addOptionalProperty("org.quartz.jobStore.dataSource", dataSourceName, properties);
+            if (dataSourceName == null)
+            {
+                throw new SchedulerConfigException("JDBC Job Store must define a non-null org.quartz.jobStore.dataSource");
+            } else
+            {
+                properties.setProperty("org.quartz.jobStore.dataSource", dataSourceName);
+            }
 
             Map<String, String> dataSourceConfigProperties = quartzConfig.getJDBCJobStoreTX().getProperties();
             for (Map.Entry<String, String> entry : dataSourceConfigProperties.entrySet())
