@@ -51,7 +51,11 @@ public class LifecycleEnvironment {
     }
 
     public ScheduledExecutorServiceBuilder scheduledExecutorService(String nameFormat) {
-        return new ScheduledExecutorServiceBuilder(this, nameFormat);
+        return scheduledExecutorService(nameFormat, false);
+    }
+
+    public ScheduledExecutorServiceBuilder scheduledExecutorService(String nameFormat, boolean useDaemonThreads) {
+        return new ScheduledExecutorServiceBuilder(this, nameFormat, useDaemonThreads);
     }
 
     public void addServerLifecycleListener(ServerLifecycleListener listener) {

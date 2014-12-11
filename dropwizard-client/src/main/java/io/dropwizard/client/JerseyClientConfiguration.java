@@ -29,6 +29,8 @@ public class JerseyClientConfiguration extends HttpClientConfiguration {
 
     private boolean gzipEnabledForRequests = true;
 
+    private boolean chunkedEncodingEnabled = true;
+
     @JsonProperty
     public int getMinThreads() {
         return minThreads;
@@ -67,6 +69,16 @@ public class JerseyClientConfiguration extends HttpClientConfiguration {
     @JsonProperty
     public void setGzipEnabledForRequests(boolean enabled) {
         this.gzipEnabledForRequests = enabled;
+    }
+
+    @JsonProperty
+    public boolean isChunkedEncodingEnabled() {
+        return chunkedEncodingEnabled;
+    }
+
+    @JsonProperty
+    public void setChunkedEncodingEnabled(final boolean chunkedEncodingEnabled) {
+        this.chunkedEncodingEnabled = chunkedEncodingEnabled;
     }
 
     @JsonIgnore

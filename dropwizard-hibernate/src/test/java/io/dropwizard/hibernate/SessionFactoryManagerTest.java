@@ -25,4 +25,11 @@ public class SessionFactoryManagerTest {
 
         verify(dataSource).stop();
     }
+
+    @Test
+    public void startsTheDataSourceOnStarting() throws Exception {
+        manager.start();
+
+        verify(dataSource).start();
+    }
 }

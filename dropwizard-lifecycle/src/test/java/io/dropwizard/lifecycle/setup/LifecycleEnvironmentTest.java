@@ -7,6 +7,11 @@ import org.eclipse.jetty.util.component.ContainerLifeCycle;
 import org.eclipse.jetty.util.component.LifeCycle;
 import org.junit.Test;
 
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledExecutorService;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
@@ -41,5 +46,31 @@ public class LifecycleEnvironmentTest {
 
         assertThat(jettyManaged.getManaged())
                 .isEqualTo(managed);
+    }
+
+    @Test
+    public void scheduledExecutorServiceBuildsDaemonThreads() throws ExecutionException, InterruptedException {
+        final ScheduledExecutorService executorService = environment.scheduledExecutorService("daemon-%d", true).build();
+        final Future<Boolean> isDaemon = executorService.submit(new Callable<Boolean>() {
+            @Override
+            public Boolean call() throws Exception {
+                return Thread.currentThread().isDaemon();
+            }
+        });
+
+        assertThat(isDaemon.get()).isTrue();
+    }
+
+    @Test
+    public void scheduledExecutorServiceBuildsUserThreadsByDefault() throws ExecutionException, InterruptedException {
+        final ScheduledExecutorService executorService = environment.scheduledExecutorService("user-%d").build();
+        final Future<Boolean> isDaemon = executorService.submit(new Callable<Boolean>() {
+            @Override
+            public Boolean call() throws Exception {
+                return Thread.currentThread().isDaemon();
+            }
+        });
+
+        assertThat(isDaemon.get()).isFalse();
     }
 }

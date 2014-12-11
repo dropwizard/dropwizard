@@ -873,6 +873,7 @@ See JerseyClientConfiguration_ and HttpClientConfiguration_ for more options.
       maxThreads: 128
       gzipEnabled: true
       gzipEnabledForRequests: true
+      chunkedEncodingEnabled: true
 
 
 ======================= ==================  ===================================================================================================
@@ -882,5 +883,6 @@ minThreads              1                   The minimum number of threads in the
 maxThreads              128                 The maximum number of threads in the pool used for asynchronous requests.
 gzipEnabled             true                Adds an Accept-Encoding: gzip header to all requests, and enables automatic gzip decoding of responses.
 gzipEnabledForRequests  true                Adds a Content-Encoding: gzip header to all requests, and enables automatic gzip encoding of requests.
+chunkedEncodingEnabled  true                Enables the use of chunked encoding for requests.
 ======================= ==================  ===================================================================================================
 

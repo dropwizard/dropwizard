@@ -128,7 +128,7 @@ import java.util.concurrent.TimeUnit;
  *     </tr>
  *     <tr>
  *         <td>{@code maxSize}</td>
- *         <td>10</td>
+ *         <td>100</td>
  *         <td>
  *             The maximum size of the connection pool.
  *         </td>
@@ -694,8 +694,7 @@ public class DataSourceFactory {
         this.validationQueryTimeout = validationQueryTimeout;
     }
 
-    public ManagedDataSource build(MetricRegistry metricRegistry,
-                                   String name) throws ClassNotFoundException {
+    public ManagedDataSource build(MetricRegistry metricRegistry, String name) {
         final Properties properties = new Properties();
         for (Map.Entry<String, String> property : this.properties.entrySet()) {
             properties.setProperty(property.getKey(), property.getValue());

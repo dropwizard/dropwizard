@@ -2,11 +2,29 @@ language: java
 
 install: echo "I trust Maven."
 
-# don't just run the tests, also run Findbugs and friends
-script: mvn verify
+# build and verify the snapshot artifacts, but only deploy
+# if this isn't a pull request
+script:
+- mvn verify
+- 'if [[ $TRAVIS_PULL_REQUEST = "false" ]]; then mvn deploy --settings maven_deploy_settings.xml; else echo "Pull request, skipping deploy."; fi'
 
 after_success: mvn cobertura:cobertura coveralls:cobertura
 
 jdk:
   - oraclejdk7
   - oraclejdk8
+
+# encrypted CI_DEPLOY_USERNAME and CI_DEPLOY_PASSWORD
+# values for maven deploy. these have been encrypted
+# with the public key from https://github.com/dropwizard/dropwizard
+# and won't work in any other repository. if you want
+# to run CI in your local fork you'll need to run `travis encrypt ...`
+# accordingly (http://docs.travis-ci.com/user/encryption-keys/)
+#
+# NOTE: CI_DEPLOY_USERNAME is set to dropwizardci, the username
+# we've set up with Sonatype, which only has permission to push
+# to the snapshot repo.
+env:
+  global:
+    - secure: "EAuz7bCKj4r438IEC2y73WVrFwXirflbXA4HhpwVmAFWNqC9LIIpkWcO5GVp773HsZvJBcJjJriP+aKRkImV8AyMgjCeEUv2dlezvbkIIz38vKyw9MWaPIyZ3uS9RCuL7OwGf5BeJ1DvHFYdMBaspZd+EmCYr7abnHdqs+Tm/W8="
+    - secure: "RI0QcuKMsij3sgRm+Bjhu3X217U6UslvSzcRv13iLLwrTj73zhGi5PF/+kj8Qh1HMQw0oQRR6M8qPqGy82KcjiGbpgPgSy1rVAvkYg+Yw1k7v4l7Vgyj7TNsAM3pqHyojx2jgRjpQsgw/WXQmiahWV6OCOUzdbhEUwVzIXI+vtk="

@@ -5,7 +5,7 @@
     <parent>
         <groupId>io.dropwizard</groupId>
         <artifactId>dropwizard-parent</artifactId>
-        <version>0.8.0-SNAPSHOT</version>
+        <version>0.8.0-rc2-SNAPSHOT</version>
     </parent>
 
     <artifactId>dropwizard-migrations</artifactId>
@@ -20,7 +20,7 @@
         <dependency>
             <groupId>org.liquibase</groupId>
             <artifactId>liquibase-core</artifactId>
-            <version>3.2.2</version>
+            <version>3.3.0</version>
         </dependency>
         <dependency>
             <groupId>com.mattbertolini</groupId>

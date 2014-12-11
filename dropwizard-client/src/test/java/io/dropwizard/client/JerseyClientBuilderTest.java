@@ -1,6 +1,8 @@
 package io.dropwizard.client;
 
 import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.httpclient.HttpClientMetricNameStrategies;
+import com.codahale.metrics.httpclient.HttpClientMetricNameStrategy;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Iterables;
 import io.dropwizard.jersey.gzip.ConfiguredGZipEncoder;
@@ -8,8 +10,11 @@ import io.dropwizard.jersey.gzip.GZipDecoder;
 import io.dropwizard.jersey.jackson.JacksonMessageBodyProvider;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
 import io.dropwizard.setup.Environment;
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.glassfish.jersey.apache.connector.ApacheConnectorProvider;
 import org.glassfish.jersey.client.ClientConfig;
+import org.glassfish.jersey.client.ClientProperties;
+import org.glassfish.jersey.client.RequestEntityProcessing;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -25,6 +30,7 @@ import javax.ws.rs.ext.Provider;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -161,6 +167,39 @@ public class JerseyClientBuilderTest {
         builder.using(configuration).using(environment).build("test");
 
         verify(lifecycleEnvironment).executorService("jersey-client-test-%d");
+    }
+
+    @Test
+    public void usesChunkedEncodingIfChunkedEncodingIsEnabled() throws Exception {
+        final JerseyClientConfiguration configuration = new JerseyClientConfiguration();
+        configuration.setChunkedEncodingEnabled(true);
+
+        final Client client = builder.using(configuration)
+                .using(executorService, objectMapper).build("test");
+        assertThat(client.getConfiguration().getProperty(ClientProperties.REQUEST_ENTITY_PROCESSING)).isEqualTo(RequestEntityProcessing.CHUNKED);
+    }
+
+    @Test
+    public void usesBufferedEncodingIfChunkedEncodingIsDisabled() throws Exception {
+        final JerseyClientConfiguration configuration = new JerseyClientConfiguration();
+        configuration.setChunkedEncodingEnabled(false);
+
+        final Client client = builder.using(configuration)
+                .using(executorService, objectMapper).build("test");
+        assertThat(client.getConfiguration().getProperty(ClientProperties.REQUEST_ENTITY_PROCESSING)).isEqualTo(RequestEntityProcessing.BUFFERED);
+    }
+
+    @Test
+    public void usesACustomHttpClientMetricNameStrategy() throws Exception {
+        final HttpClientBuilder httpClientBuilder = (HttpClientBuilder) FieldUtils
+                .getField(JerseyClientBuilder.class, "builder", true).get(builder);
+        final Field metricNameStrategyField = FieldUtils.getField(
+                HttpClientBuilder.class, "metricNameStrategy", true);
+
+        HttpClientMetricNameStrategy custom = HttpClientMetricNameStrategies.HOST_AND_METHOD;
+        assertThat(metricNameStrategyField.get(httpClientBuilder)).isNotSameAs(custom);
+        builder.using(custom);
+        assertThat(metricNameStrategyField.get(httpClientBuilder)).isSameAs(custom);
     }
 
     @Provider

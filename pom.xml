@@ -7,7 +7,7 @@
 
     <groupId>io.dropwizard</groupId>
     <artifactId>dropwizard-parent</artifactId>
-    <version>0.8.0-SNAPSHOT</version>
+    <version>0.8.0-rc2-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Dropwizard Project</name>
     <url>${dropwizard.url}</url>
@@ -58,9 +58,9 @@
         <logback.version>1.1.2</logback.version>
         <slf4j.version>1.7.7</slf4j.version>
         <servlet.version>3.0.0.v201112011016</servlet.version>
-        <jetty.version>9.2.3.v20140905</jetty.version>
+        <jetty.version>9.2.4.v20141103</jetty.version>
         <guava.version>18.0</guava.version>
-        <h2.version>1.4.178</h2.version>
+        <h2.version>1.4.182</h2.version>
         <assertj.version>1.7.0</assertj.version>
     </properties>
 
@@ -265,7 +265,7 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>1.9.5</version>
+            <version>1.10.8</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -383,7 +383,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-release-plugin</artifactId>
-                <version>2.5</version>
+                <version>2.5.1</version>
                 <configuration>
                     <autoVersionSubmodules>true</autoVersionSubmodules>
                     <mavenExecutorId>forked-path</mavenExecutorId>

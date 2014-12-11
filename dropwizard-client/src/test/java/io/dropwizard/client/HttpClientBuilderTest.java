@@ -1,7 +1,9 @@
 package io.dropwizard.client;
 
 import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.httpclient.HttpClientMetricNameStrategies;
 import com.codahale.metrics.httpclient.InstrumentedHttpClientConnectionManager;
+import com.codahale.metrics.httpclient.InstrumentedHttpRequestExecutor;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import io.dropwizard.util.Duration;
@@ -269,6 +271,27 @@ public class HttpClientBuilderTest {
                 .createClient(apacheBuilder, connectionManager, "test")).isNotNull();
 
         assertThat(spyHttpClientBuilderField("credentialsProvider", apacheBuilder)).isSameAs(credentialsProvider);
+    }
+
+    @Test
+    public void usesACustomHttpClientMetricNameStrategy() throws Exception {
+        assertThat(builder.using(HttpClientMetricNameStrategies.HOST_AND_METHOD)
+                .createClient(apacheBuilder, connectionManager, "test"))
+                .isNotNull();
+        assertThat(FieldUtils.getField(InstrumentedHttpRequestExecutor.class, 
+                "metricNameStrategy", true)
+                .get(spyHttpClientBuilderField("requestExec", apacheBuilder)))
+                .isSameAs(HttpClientMetricNameStrategies.HOST_AND_METHOD);
+    }
+
+    @Test
+    public void usesMethodOnlyHttpClientMetricNameStrategyByDefault() throws Exception {
+        assertThat(builder.createClient(apacheBuilder, connectionManager, "test"))
+                .isNotNull();
+        assertThat(FieldUtils.getField(InstrumentedHttpRequestExecutor.class, 
+                "metricNameStrategy", true)
+                .get(spyHttpClientBuilderField("requestExec", apacheBuilder)))
+                .isSameAs(HttpClientMetricNameStrategies.METHOD_ONLY);
     }
 
     private Object spyHttpClientBuilderField(final String fieldName, final Object obj) throws Exception {
