@@ -21,7 +21,7 @@ import java.util.ServiceLoader;
 import static com.codahale.metrics.MetricRegistry.name;
 
 @Provider
-@Produces(MediaType.WILDCARD)
+@Produces({ MediaType.TEXT_HTML, MediaType.APPLICATION_XHTML_XML })
 public class ViewMessageBodyWriter implements MessageBodyWriter<View> {
     private static final String MISSING_TEMPLATE_MSG =
             "<html>" +
