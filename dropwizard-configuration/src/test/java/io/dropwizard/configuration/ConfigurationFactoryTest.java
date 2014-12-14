@@ -264,7 +264,7 @@ public class ConfigurationFactoryTest {
             failBecauseExceptionWasNotThrown(ConfigurationParsingException.class);
         } catch (ConfigurationParsingException e) {
             assertThat(e.getMessage())
-                    .containsOnlyOnce(" * Configuration file must not be empty");
+                    .containsOnlyOnce(" * Configuration at " + emptyFile.toString() + " must not be empty");
         }
     }
 

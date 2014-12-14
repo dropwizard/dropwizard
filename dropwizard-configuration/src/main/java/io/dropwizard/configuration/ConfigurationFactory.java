@@ -77,7 +77,7 @@ public class ConfigurationFactory<T> {
 
             if (node == null){
                 throw ConfigurationParsingException
-                        .builder("Configuration file must not be empty")
+                        .builder("Configuration at " + path + " must not be empty")
                         .build(path);
             }
 
