@@ -1,0 +1,180 @@
+#!/usr/bin/env bash
+#
+# Bootstrap a new Dropwizard project
+#
+
+# defaults
+DW_VERSION="${project.version}"
+SHADED="true"
+PACKAGE=
+NAME=
+DESCRIPTION="null"
+GROUP=
+ARTIFACT=
+VERSION="0.1.0-SNAPSHOT"
+MAVEN=`which mvn`
+
+# display usage message
+function usage()
+{
+  cat << EOF
+Usage: dropwizard-create [OPTIONS] PACKAGE NAME [DESCRIPTION]
+
+Creates a new Dropwizard project, NAME, under the specified PACKAGE with an 
+optional DESCRIPTION.
+
+If the project is new, it will be generated in a directory corresponding to 
+the artifact ID (or NAME, if no explicit artifact ID was given).
+
+When executed inside a multi-module Maven project, a new project will be 
+created as a sub-module of the current project.
+
+When executed inside an existing project, the current project will be 
+transformed to a Dropwizard project.
+
+  --artifact=ARTIFACTID Apply the specified Maven artifact label.
+                        Formatted as follows:
+
+                                [GROUPID]:[ARTIFACTID]:[VERSION]
+
+                        If a component is omitted, the default will be used:
+
+                                GROUPID    = PACKAGE
+                                ARTIFACTID = NAME
+                                VERSION    = 0.1.0-SNAPSHOT
+
+                        Examples:
+
+                                ::1.0.0-SNAPSHOT
+
+                                :example-project:
+
+                                com.acme::1.0-SNAPSHOT
+
+  --version             Display this programs' version information and exit.
+
+  --version=VERSION     Use the specified Dropwizard version.
+                        Defaults to the version this program came from.
+
+  --maven=/path/to/mvn  Explicitly provide path to Maven binary.
+
+  --help                Print this usage message.
+
+EOF
+}
+
+function warn()
+{
+  echo "WARNING: $1"
+
+  if [ $2 ]; then
+    echo "Press ENTER to continue anyway, or Ctrl+C to stop..."
+    read
+  fi
+}
+
+# display an error message, usage information then exit
+function error()
+{
+  if [ $# -gt 0 ]; then
+    echo "ERROR: $1"
+  else
+    echo "ERROR: An unknwon error occurred."
+  fi
+
+  usage
+
+  exit 1
+}
+
+# parse options
+while [ $# -gt 0 ]
+do
+  case "$1" in
+    "--shaded="*)
+      SHADED="${1:9}"
+      shift;;
+    "--artifact="*":"*":"*)
+      IFS=":" read -ra TAG <<< "${1:11}"
+      GROUP=${TAG[0]}
+      ARTIFACT=${TAG[1]}
+      VERSION=${TAG[2]}
+      shift;;
+    "--artifact="*)
+      error "Invalid artifact tag format, must be: [GROUPID]:[ARTIFACTID]:[VERSION]";;
+    "--version="[0-9]"."[0-9]"."[0-9])
+      DW_VERSION="${1:10}"
+      shift;;
+    "--version="[0-9]"."[0-9]"."[0-9]"-SNAPSHOT")
+      DW_VERSION="${1:10}"
+      warn "Selected Dropwizard version is a SNAPSHOT. It is recommended that you use a stable release." true
+      shift;;
+    "--version="*)
+      error "Invalid version number for Dropwizard version: ${1:10}";;
+    "--help" | "-h")
+      usage
+      exit 0;;
+    "--maven="*)
+      MAVEN="${1:8}"
+      shift;;
+    "--"*)
+      error "Unknown option $1";;
+    "-"*)
+      error "Unknown option $1";;
+    *)
+      if [ $# -lt 2 ]; then
+        error "You must specify both the package and name for the project."
+      fi
+      
+      PACKAGE=$1
+      NAME=$2
+
+      if [ $# -gt 2 ]; then
+        DESCRIPTION=$3
+        shift
+      fi
+
+      shift 2
+
+  esac
+done
+
+# ensure we have a path to Maven
+if [ -z $MAVEN ]; then
+  error "Unable to locate Maven, please provide path with --maven=/path/to/mvn"
+fi
+
+# ensure maven's binary is executable
+if [ ! -x $MAVEN ]; then
+  error "Unable to execute Maven, please ensure $MAVEN is executable by $USER"
+fi
+
+# verify package/name
+if [ -z $PACKAGE ]; then
+  error "You must specify a package for the project."
+elif [ -z $NAME ]; then
+  error "You must specify a name for the project."
+fi
+
+# assign defaults for groupId, artifactId and target
+if [ -z $GROUP ]; then
+  GROUP="$PACKAGE"
+fi
+
+if [ -z $ARTIFACT ]; then
+  ARTIFACT=`echo "$NAME" | tr A-Z a-z`
+fi
+
+# capitalize first character of NAME
+NAME="`echo ${NAME:0:1} | tr a-z A-Z`${NAME:1}"
+
+PACKAGING_TYPE=
+if [ "true" == $SHADED ]; then
+  PACKAGING_TYPE="shaded "
+fi
+echo "Creating ${PACKAGING_TYPE}project $NAME with root package $PACKAGE using Dropwizard $DW_VERSION and ID $GROUP:$ARTIFACT:$VERSION ..."
+echo
+
+# create from archetype
+$MAVEN "archetype:generate" "-DinteractiveMode=false" "-DarchetypeGroupId=io.dropwizard.archetypes" "-DarchetypeArtifactId=java-simple" "-DarchetypeVersion=$DW_VERSION" "-DgroupId=$GROUP" "-DartifactId=$ARTIFACT" "-Dpackage=$PACKAGE" "-Dname=$NAME" "-Dversion=$VERSION" "-Dshaded=$SHADED" "-Ddescription=$DESCRIPTION"
+
