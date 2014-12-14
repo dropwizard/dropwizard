@@ -24,6 +24,7 @@ v0.8.0:
 * Upgrade to SLF4J 1.7.7
 * Upgrade to tomcat-jdbc 8.0.15
 * Upgrade to JSR305 annotations 3.0.0
+* Upgrade to Junit 4.12
 * Upgrade to AssertJ 1.7.0
 * Upgrade to Mockito 1.10.8
 
