@@ -74,6 +74,13 @@ public class ConfigurationFactory<T> {
     public T build(ConfigurationSourceProvider provider, String path) throws IOException, ConfigurationException {
         try (InputStream input = provider.open(checkNotNull(path))) {
             final JsonNode node = mapper.readTree(yamlFactory.createParser(input));
+
+            if (node == null){
+                throw ConfigurationParsingException
+                        .builder("Configuration at " + path + " must not be empty")
+                        .build(path);
+            }
+
             return build(node, path);
         } catch (YAMLException e) {
             ConfigurationParsingException.Builder builder = ConfigurationParsingException
