@@ -101,14 +101,18 @@ Next, write a test for serializing a ``Person`` instance to JSON:
         @Test
         public void serializesToJSON() throws Exception {
             final Person person = new Person("Luther Blissett", "lb@example.com");
-            assertThat(MAPPER.writeValueAsString(person))
-                    .isEqualTo(fixture("fixtures/person.json"));
+
+            final String expected = MAPPER.writeValueAsString(
+                   MAPPER.readValue(fixture("fixtures/person.json"),
+                           new TypeReference<HashMap<String, Object>>() {}));
+
+            assertThat(MAPPER.writeValueAsString(person)).isEqualTo(expected);
         }
     }
 
 This test uses `AssertJ assertions`_ and JUnit_ to test that when a ``Person`` instance is serialized
-via Jackson it matches the JSON in the fixture file. (The comparison is done via a normalized JSON
-string representation, so whitespace doesn't affect the results.)
+via Jackson it matches the JSON in the fixture file. (The comparison is done on a normalized JSON
+string representation, so formatting doesn't affect the results.)
 
 .. _AssertJ assertions: http://assertj.org/assertj-core-conditions.html
 .. _JUnit: http://www.junit.org/
