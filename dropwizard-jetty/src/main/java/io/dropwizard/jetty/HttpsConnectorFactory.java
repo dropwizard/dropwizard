@@ -574,6 +574,22 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
                 final String[] cipherSuites = factory.getSupportedCipherSuites();
                 LOGGER.info("Supported protocols: {}", Arrays.toString(protocols));
                 LOGGER.info("Supported cipher suites: {}", Arrays.toString(cipherSuites));
+
+                if (getSupportedProtocols() != null) {
+                    LOGGER.info("Configured protocols: {}", getSupportedProtocols());
+                }
+
+                if (getExcludedProtocols() != null) {
+                    LOGGER.info("Excluded protocols: {}", getExcludedProtocols());
+                }
+
+                if (getSupportedCipherSuites() != null) {
+                    LOGGER.info("Configured cipher suites: {}", getSupportedCipherSuites());
+                }
+
+                if (getExcludedCipherSuites() != null) {
+                    LOGGER.info("Excluded cipher suites: {}", getExcludedCipherSuites());
+                }
             } catch (NoSuchAlgorithmException ignored) {
 
             }
