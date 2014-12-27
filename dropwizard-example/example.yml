@@ -35,7 +35,7 @@ server:
       keyStorePath: example.keystore
       keyStorePassword: example
       validateCerts: false
-# this requires the npn-boot library on the JVM's boot classpath
+# this requires the alpn-boot library on the JVM's boot classpath
 #    - type: spdy3
 #      port: 8445
 #      keyStorePath: example.keystore

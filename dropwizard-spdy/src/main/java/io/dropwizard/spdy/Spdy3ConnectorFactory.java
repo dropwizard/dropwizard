@@ -5,6 +5,7 @@ import com.codahale.metrics.jetty9.InstrumentedConnectionFactory;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import io.dropwizard.jetty.HttpsConnectorFactory;
+import org.eclipse.jetty.alpn.server.ALPNServerConnectionFactory;
 import org.eclipse.jetty.io.ByteBufferPool;
 import org.eclipse.jetty.server.*;
 import org.eclipse.jetty.spdy.api.SPDY;
@@ -47,6 +48,12 @@ import static com.codahale.metrics.MetricRegistry.name;
  */
 @JsonTypeName("spdy3")
 public class Spdy3ConnectorFactory extends HttpsConnectorFactory {
+
+    private static final String SPDY_2 = "spdy/2";
+    private static final String SPDY_3 = "spdy/3";
+    private static final String HTTP_1_1 = "http/1.1";
+    private static final String ALPN = "alpn";
+
     @Valid
     @NotNull
     private PushStrategyFactory pushStrategy = new NonePushStrategyFactory();
@@ -76,27 +83,28 @@ public class Spdy3ConnectorFactory extends HttpsConnectorFactory {
         final HTTPSPDYServerConnectionFactory spdy3Factory =
                 new HTTPSPDYServerConnectionFactory(SPDY.V3, httpConfig, pushStrategy);
 
-        final NPNServerConnectionFactory npnFactory =
-                new NPNServerConnectionFactory("spdy/3", "spdy/2", "http/1.1");
-        npnFactory.setDefaultProtocol("http/1.1");
+        final NegotiatingServerConnectionFactory negotiatingFactory =
+                new ALPNServerConnectionFactory(SPDY_3, SPDY_2, HTTP_1_1);
+        negotiatingFactory.setDefaultProtocol(HTTP_1_1);
 
         final HTTPSPDYServerConnectionFactory spdy2Factory =
                 new HTTPSPDYServerConnectionFactory(SPDY.V2, httpConfig, pushStrategy);
 
         final SslConnectionFactory sslConnectionFactory =
-                new SslConnectionFactory(sslContextFactory, "npn");
+                new SslConnectionFactory(sslContextFactory, ALPN);
 
         final Scheduler scheduler = new ScheduledExecutorScheduler();
 
         final ByteBufferPool bufferPool = buildBufferPool();
 
-        final String timerName = name(HttpConnectionFactory.class, getBindHost(), Integer.toString(getPort()), "connections");
+        final String timerName = name(HttpConnectionFactory.class, getBindHost(), Integer.toString(getPort()),
+                "connections");
 
         return buildConnector(server, scheduler, bufferPool, name, threadPool,
-                              new InstrumentedConnectionFactory(sslConnectionFactory, metrics.timer(timerName)),
-                              npnFactory,
-                              spdy3Factory,
-                              spdy2Factory,
-                              httpConnectionFactory);
+                new InstrumentedConnectionFactory(sslConnectionFactory, metrics.timer(timerName)),
+                negotiatingFactory,
+                spdy3Factory,
+                spdy2Factory,
+                httpConnectionFactory);
     }
 }
