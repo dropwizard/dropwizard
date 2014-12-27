@@ -13,7 +13,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
 import com.google.common.io.Resources;
+import io.dropwizard.jersey.errors.EarlyEofExceptionMapper;
+import io.dropwizard.jersey.errors.LoggingExceptionMapper;
 import io.dropwizard.jersey.filter.AllowedMethodsFilter;
+import io.dropwizard.jersey.jackson.JsonProcessingExceptionMapper;
+import io.dropwizard.jersey.validation.ConstraintViolationExceptionMapper;
 import org.glassfish.jersey.servlet.ServletContainer;
 import io.dropwizard.jersey.jackson.JacksonMessageBodyProvider;
 import io.dropwizard.jersey.setup.JerseyEnvironment;
@@ -221,6 +225,8 @@ public abstract class AbstractServerFactory implements ServerFactory {
 
     private Boolean startsAsRoot;
 
+    private Boolean registerDefaultExceptionMappers = Boolean.TRUE;
+
     private Duration shutdownGracePeriod = Duration.seconds(30);
 
     @NotNull
@@ -375,6 +381,14 @@ public abstract class AbstractServerFactory implements ServerFactory {
         this.startsAsRoot = startsAsRoot;
     }
 
+    public Boolean getRegisterDefaultExceptionMappers() {
+        return registerDefaultExceptionMappers;
+    }
+
+    public void setRegisterDefaultExceptionMappers(Boolean registerDefaultExceptionMappers) {
+        this.registerDefaultExceptionMappers = registerDefaultExceptionMappers;
+    }
+
     @JsonProperty
     public Duration getShutdownGracePeriod() {
         return shutdownGracePeriod;
@@ -447,6 +461,13 @@ public abstract class AbstractServerFactory implements ServerFactory {
         if (jerseyContainer != null) {
             jersey.setUrlPattern(jerseyRootPath);
             jersey.register(new JacksonMessageBodyProvider(objectMapper, validator));
+            if (registerDefaultExceptionMappers == null || registerDefaultExceptionMappers) {
+                jersey.register(new LoggingExceptionMapper<Throwable>() {
+                });
+                jersey.register(new ConstraintViolationExceptionMapper());
+                jersey.register(new JsonProcessingExceptionMapper());
+                jersey.register(new EarlyEofExceptionMapper());
+            }
             handler.addServlet(new NonblockingServletHolder(jerseyContainer), jersey.getUrlPattern());
         }
         final InstrumentedHandler instrumented = new InstrumentedHandler(metricRegistry);

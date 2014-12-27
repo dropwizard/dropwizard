@@ -59,11 +59,6 @@ public class DropwizardResourceConfig extends ResourceConfig {
         property(ServerProperties.WADL_FEATURE_DISABLE, Boolean.TRUE);
         if (!testOnly) {
             // create a subclass to pin it to Throwable
-            register(new LoggingExceptionMapper<Throwable>() {
-            });
-            register(new ConstraintViolationExceptionMapper());
-            register(new JsonProcessingExceptionMapper());
-            register(new EarlyEofExceptionMapper());
             register(new ComponentLoggingListener(this));
         }
         register(new InstrumentedResourceMethodApplicationListener(metricRegistry));
