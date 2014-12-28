@@ -13,27 +13,31 @@ public class FixtureHelpers {
     private FixtureHelpers() { /* singleton */ }
 
     /**
-     * Reads the given fixture file from {@code src/test/resources} and returns its contents as a
-     * UTF-8 string.
+     * Reads the given fixture file from the classpath (e. g. {@code src/test/resources})
+     * and returns its contents as a UTF-8 string.
      *
-     * @param filename    the filename of the fixture file
+     * @param filename the filename of the fixture file
      * @return the contents of {@code src/test/resources/{filename}}
-     * @throws IOException if {@code filename} doesn't exist or can't be opened
+     * @throws IllegalArgumentException if an I/O error occurs.
      */
-    public static String fixture(String filename) throws IOException {
+    public static String fixture(String filename) {
         return fixture(filename, Charsets.UTF_8);
     }
 
     /**
-     * Reads the given fixture file from {@code src/test/resources} and returns its contents as a
-     * string.
+     * Reads the given fixture file from the classpath (e. g. {@code src/test/resources})
+     * and returns its contents as a string.
      *
-     * @param filename    the filename of the fixture file
-     * @param charset     the character set of {@code filename}
+     * @param filename the filename of the fixture file
+     * @param charset  the character set of {@code filename}
      * @return the contents of {@code src/test/resources/{filename}}
-     * @throws IOException if {@code filename} doesn't exist or can't be opened
+     * @throws IllegalArgumentException if an I/O error occurs.
      */
-    private static String fixture(String filename, Charset charset) throws IOException {
-        return Resources.toString(Resources.getResource(filename), charset).trim();
+    private static String fixture(String filename, Charset charset) {
+        try {
+            return Resources.toString(Resources.getResource(filename), charset).trim();
+        } catch (IOException e) {
+            throw new IllegalArgumentException(e);
+        }
     }
 }
