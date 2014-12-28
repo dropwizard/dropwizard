@@ -545,14 +545,9 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
 
         final ByteBufferPool bufferPool = buildBufferPool();
 
-        final String timerName = name(HttpConnectionFactory.class,
-                                      getBindHost(),
-                                      Integer.toString(getPort()),
-                                      "connections");
-
         return buildConnector(server, scheduler, bufferPool, name, threadPool,
                               new InstrumentedConnectionFactory(sslConnectionFactory,
-                                                                metrics.timer(timerName)),
+                                                                metrics.timer(httpConnections())),
                               httpConnectionFactory);
     }
 
