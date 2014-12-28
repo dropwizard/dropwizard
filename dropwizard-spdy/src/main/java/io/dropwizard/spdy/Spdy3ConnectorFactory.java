@@ -49,7 +49,6 @@ import static com.codahale.metrics.MetricRegistry.name;
 @JsonTypeName("spdy3")
 public class Spdy3ConnectorFactory extends HttpsConnectorFactory {
 
-    private static final String SPDY_2 = "spdy/2";
     private static final String SPDY_3 = "spdy/3";
     private static final String HTTP_1_1 = "http/1.1";
     private static final String ALPN = "alpn";
@@ -80,15 +79,12 @@ public class Spdy3ConnectorFactory extends HttpsConnectorFactory {
         server.addBean(sslContextFactory);
 
         final PushStrategy pushStrategy = this.pushStrategy.build();
-        final HTTPSPDYServerConnectionFactory spdy3Factory =
+        final HTTPSPDYServerConnectionFactory spdyFactory =
                 new HTTPSPDYServerConnectionFactory(SPDY.V3, httpConfig, pushStrategy);
 
         final NegotiatingServerConnectionFactory negotiatingFactory =
-                new ALPNServerConnectionFactory(SPDY_3, SPDY_2, HTTP_1_1);
+                new ALPNServerConnectionFactory(SPDY_3, HTTP_1_1);
         negotiatingFactory.setDefaultProtocol(HTTP_1_1);
-
-        final HTTPSPDYServerConnectionFactory spdy2Factory =
-                new HTTPSPDYServerConnectionFactory(SPDY.V2, httpConfig, pushStrategy);
 
         final SslConnectionFactory sslConnectionFactory =
                 new SslConnectionFactory(sslContextFactory, ALPN);
@@ -103,8 +99,7 @@ public class Spdy3ConnectorFactory extends HttpsConnectorFactory {
         return buildConnector(server, scheduler, bufferPool, name, threadPool,
                 new InstrumentedConnectionFactory(sslConnectionFactory, metrics.timer(timerName)),
                 negotiatingFactory,
-                spdy3Factory,
-                spdy2Factory,
+                spdyFactory,
                 httpConnectionFactory);
     }
 }
