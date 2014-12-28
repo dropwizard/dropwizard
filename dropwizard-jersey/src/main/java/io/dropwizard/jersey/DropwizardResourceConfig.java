@@ -9,7 +9,7 @@ import com.google.common.collect.Ordering;
 import com.google.common.collect.Sets;
 import io.dropwizard.jersey.caching.CacheControlledResponseFeature;
 import io.dropwizard.jersey.guava.OptionalMessageBodyWriter;
-import io.dropwizard.jersey.guava.OptionalParameterInjectionBinder;
+import io.dropwizard.jersey.guava.OptionalParamFeature;
 import io.dropwizard.jersey.sessions.SessionFactoryProvider;
 import org.glassfish.jersey.message.GZipEncoder;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -62,7 +62,7 @@ public class DropwizardResourceConfig extends ResourceConfig {
         register(new InstrumentedResourceMethodApplicationListener(metricRegistry));
         register(CacheControlledResponseFeature.class);
         register(OptionalMessageBodyWriter.class);
-        register(new OptionalParameterInjectionBinder());
+        register(OptionalParamFeature.class);
         register(new SessionFactoryProvider.Binder());
         EncodingFilter.enableFor(this, GZipEncoder.class);
     }
