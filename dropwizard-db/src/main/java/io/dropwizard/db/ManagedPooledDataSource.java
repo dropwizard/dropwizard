@@ -37,21 +37,37 @@ public class ManagedPooledDataSource extends DataSourceProxy implements ManagedD
     public void start() throws Exception {
         final ConnectionPool connectionPool = createPool();
         metricRegistry.register(name(getClass(), connectionPool.getName(), "active"),
-                                new Gauge<Integer>() {
-                                    @Override
-                                    public Integer getValue() {
-                                        return connectionPool.getActive();
-                                    }
-                                });
+                new Gauge<Integer>() {
+                    @Override
+                    public Integer getValue() {
+                        return connectionPool.getActive();
+                    }
+                });
 
         metricRegistry.register(name(getClass(), connectionPool.getName(), "idle"),
-                                new Gauge<Integer>() {
+                new Gauge<Integer>() {
 
-                                    @Override
-                                    public Integer getValue() {
-                                        return connectionPool.getIdle();
-                                    }
-                                });
+                    @Override
+                    public Integer getValue() {
+                        return connectionPool.getIdle();
+                    }
+                });
+
+        metricRegistry.register(name(getClass(), connectionPool.getName(), "waiting"),
+                new Gauge<Integer>() {
+                    @Override
+                    public Integer getValue() {
+                        return connectionPool.getWaitCount();
+                    }
+                });
+
+        metricRegistry.register(name(getClass(), connectionPool.getName(), "size"),
+                new Gauge<Integer>() {
+                    @Override
+                    public Integer getValue() {
+                        return connectionPool.getSize();
+                    }
+                });
     }
 
     @Override
