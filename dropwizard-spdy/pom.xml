@@ -29,9 +29,10 @@
             <version>${jetty.version}</version>
         </dependency>
 
-        <!-- this needs to be on your JVM's bootpath for SPDY to work with ALPN protocol -->
-        <!-- -Xbootclasspath/p:/<path_to_alpn_boot_jar>/alpn-boot-7.1.2.v20141202.jar for JRE7-->
-        <!-- -Xbootclasspath/p:/<path_to_alpn_boot_jar>/alpn-boot-8.1.2.v20141202.jar for JRE8-->
+        <!-- This needs to be on your JVM's bootpath for SPDY to work with ALPN protocol
+            -Xbootclasspath/p:/<path_to_alpn_boot_jar>/alpn-boot-7.1.2.v20141202.jar
+             The correct version depends on the specific JVM version.
+             Consult http://www.eclipse.org/jetty/documentation/current/alpn-chapter.html for the reference -->
         <dependency>
             <groupId>org.mortbay.jetty.alpn</groupId>
             <artifactId>alpn-boot</artifactId>

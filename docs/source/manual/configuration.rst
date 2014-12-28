@@ -425,6 +425,11 @@ SPDY
 
 Extends the attributes that are available to the :ref:`HTTPS connector <man-configuration-https>`
 
+For this connector to work with ALPN protocol you need to provide alpn-boot library to JVM's bootpath.
+The correct library version depends on the JVM version. Consult Jetty ALPN guide__ for the reference.
+
+.. __: http://www.eclipse.org/jetty/documentation/current/alpn-chapter.html
+
 .. code-block:: yaml
 
     server:
