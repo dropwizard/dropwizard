@@ -9,6 +9,7 @@ Release Notes
 v0.8.0:
 =======
 
+* Migrated dropwizard-spdy from NPN to ALPN
 * Upgrade to argparse4j 0.4.4
 * Upgrade to commons-lang3 3.3.2
 * Upgrade to Guava 18.0
