@@ -9,7 +9,6 @@ import org.eclipse.jetty.alpn.server.ALPNServerConnectionFactory;
 import org.eclipse.jetty.io.ByteBufferPool;
 import org.eclipse.jetty.server.*;
 import org.eclipse.jetty.spdy.api.SPDY;
-import org.eclipse.jetty.spdy.server.NPNServerConnectionFactory;
 import org.eclipse.jetty.spdy.server.http.HTTPSPDYServerConnectionFactory;
 import org.eclipse.jetty.spdy.server.http.PushStrategy;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
@@ -93,11 +92,8 @@ public class Spdy3ConnectorFactory extends HttpsConnectorFactory {
 
         final ByteBufferPool bufferPool = buildBufferPool();
 
-        final String timerName = name(HttpConnectionFactory.class, getBindHost(), Integer.toString(getPort()),
-                "connections");
-
         return buildConnector(server, scheduler, bufferPool, name, threadPool,
-                new InstrumentedConnectionFactory(sslConnectionFactory, metrics.timer(timerName)),
+                new InstrumentedConnectionFactory(sslConnectionFactory, metrics.timer(httpConnections())),
                 negotiatingFactory,
                 spdyFactory,
                 httpConnectionFactory);

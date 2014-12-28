@@ -434,13 +434,16 @@ public class HttpConnectorFactory implements ConnectorFactory {
 
         final ByteBufferPool bufferPool = buildBufferPool();
 
-        final String timerName = name(HttpConnectionFactory.class,
-                                      bindHost,
-                                      Integer.toString(port),
-                                      "connections");
         return buildConnector(server, scheduler, bufferPool, name, threadPool,
                               new InstrumentedConnectionFactory(httpConnectionFactory,
-                                                                metrics.timer(timerName)));
+                                                                metrics.timer(httpConnections())));
+    }
+
+    /**
+     * Get name of the timer that tracks incoming HTTP connections
+     */
+    protected String httpConnections() {
+        return name(HttpConnectionFactory.class,  bindHost, Integer.toString(port), "connections");
     }
 
     protected ServerConnector buildConnector(Server server,
