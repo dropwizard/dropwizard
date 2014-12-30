@@ -122,6 +122,7 @@ public class DropwizardAppRule<C extends Configuration> extends ExternalResource
                     });
                     DropwizardAppRule.this.configuration = configuration;
                     DropwizardAppRule.this.environment = environment;
+                    super.run(configuration, environment);
                     for (ServiceListener listener : listeners) {
                         try {
                             listener.onRun(configuration, environment, DropwizardAppRule.this);
@@ -129,7 +130,6 @@ public class DropwizardAppRule<C extends Configuration> extends ExternalResource
                             throw new RuntimeException("Error running app rule start listener", ex);
                         }
                     }
-                    super.run(configuration, environment);
                 }
             };
 
