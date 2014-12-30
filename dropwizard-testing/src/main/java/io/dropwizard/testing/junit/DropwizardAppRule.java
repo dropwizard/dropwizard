@@ -63,7 +63,7 @@ public class DropwizardAppRule<C extends Configuration> extends ExternalResource
         return this;
     }
 
-    public DropwizardAppRule<C> addManaged(final Managed managed) {
+    public DropwizardAppRule<C> manage(final Managed managed) {
         return addListener(new ServiceListener<C>() {
             @Override
             public void onRun(C configuration, Environment environment, DropwizardAppRule<C> rule) throws Exception {
