@@ -15,8 +15,6 @@ import org.eclipse.jetty.util.component.LifeCycle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nullable;
-
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -30,7 +28,6 @@ public class AdminEnvironment extends ServletEnvironment {
 
     @VisibleForTesting
     final Function<Task,String> getTaskClassName = new Function<Task, String>() {
-        @Nullable
         @Override
         public String apply(final Task task) {
             // canonicalName is null for anonymous classes
