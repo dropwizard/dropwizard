@@ -3,6 +3,8 @@ package io.dropwizard.setup;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheckRegistry;
 import com.codahale.metrics.health.jvm.ThreadDeadlockHealthCheck;
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Function;
 import io.dropwizard.jetty.MutableServletContextHandler;
 import io.dropwizard.jetty.setup.ServletEnvironment;
 import io.dropwizard.servlets.tasks.GarbageCollectionTask;
@@ -23,6 +25,17 @@ public class AdminEnvironment extends ServletEnvironment {
 
     private final HealthCheckRegistry healthChecks;
     private final TaskServlet tasks;
+
+    @VisibleForTesting
+    final Function<Task,String> getTaskClassName = new Function<Task, String>() {
+        @Override
+        public String apply(final Task task) {
+            // canonicalName is null for anonymous classes
+            return task.getClass().getCanonicalName() != null
+                    ? task.getClass().getCanonicalName()
+                    : task.getClass().getName();
+        }
+    };
 
     /**
      * Creates a new {@link AdminEnvironment}.
@@ -59,11 +72,13 @@ public class AdminEnvironment extends ServletEnvironment {
     private void logTasks() {
         final StringBuilder stringBuilder = new StringBuilder(1024).append(String.format("%n%n"));
 
+
         for (Task task : tasks.getTasks()) {
+
             stringBuilder.append(String.format("    %-7s /tasks/%s (%s)%n",
                                                "POST",
                                                task.getName(),
-                                               task.getClass().getCanonicalName()));
+                                               getTaskClassName.apply(task)));
         }
 
         LOGGER.info("tasks = {}", stringBuilder.toString());
@@ -85,4 +100,6 @@ public class AdminEnvironment extends ServletEnvironment {
         }
         LOGGER.debug("health checks = {}", healthChecks.getNames());
     }
+
+
 }
