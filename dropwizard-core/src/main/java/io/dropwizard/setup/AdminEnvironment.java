@@ -13,6 +13,7 @@ import org.eclipse.jetty.util.component.LifeCycle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static com.google.common.base.MoreObjects.firstNonNull;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
@@ -60,10 +61,11 @@ public class AdminEnvironment extends ServletEnvironment {
         final StringBuilder stringBuilder = new StringBuilder(1024).append(String.format("%n%n"));
 
         for (Task task : tasks.getTasks()) {
+            final String taskClassName = firstNonNull(task.getClass().getCanonicalName(), task.getClass().getName());
             stringBuilder.append(String.format("    %-7s /tasks/%s (%s)%n",
                                                "POST",
                                                task.getName(),
-                                               task.getClass().getCanonicalName()));
+                                               taskClassName));
         }
 
         LOGGER.info("tasks = {}", stringBuilder.toString());
