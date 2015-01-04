@@ -9,10 +9,9 @@ import io.dropwizard.jersey.gzip.ConfiguredGZipEncoder;
 import io.dropwizard.jersey.gzip.GZipDecoder;
 import io.dropwizard.jersey.jackson.JacksonMessageBodyProvider;
 import io.dropwizard.setup.Environment;
-import org.apache.http.client.HttpRequestRetryHandler;
-import org.apache.http.config.Registry;
-import org.apache.http.conn.DnsResolver;
-import org.apache.http.conn.socket.ConnectionSocketFactory;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.conn.HttpClientConnectionManager;
+import org.glassfish.jersey.apache.connector.ApacheClientProperties;
 import org.glassfish.jersey.apache.connector.ApacheConnectorProvider;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.ClientProperties;
@@ -45,26 +44,23 @@ import static com.google.common.base.Preconditions.checkNotNull;
  *
  * @see HttpClientBuilder
  */
-public class JerseyClientBuilder {
-    private final HttpClientBuilder builder;
+public class JerseyClientBuilder extends ApacheClientBuilderBase<JerseyClientBuilder, JerseyClientConfiguration> {
+
     private final List<Object> singletons = Lists.newArrayList();
     private final List<Class<?>> providers = Lists.newArrayList();
     private final Map<String, Object> properties = Maps.newLinkedHashMap();
 
-    private JerseyClientConfiguration configuration = new JerseyClientConfiguration();
     private Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
-    private Environment environment;
     private ObjectMapper objectMapper;
     private ExecutorService executorService;
     private ConnectorProvider connectorProvider = new ApacheConnectorProvider();
 
     public JerseyClientBuilder(Environment environment) {
-        this.builder = new HttpClientBuilder(environment);
-        this.environment = environment;
+        super(environment, new JerseyClientConfiguration());
     }
 
     public JerseyClientBuilder(MetricRegistry metricRegistry) {
-        this.builder = new HttpClientBuilder(metricRegistry);
+        super(metricRegistry, new JerseyClientConfiguration());
     }
 
     /**
@@ -103,63 +99,6 @@ public class JerseyClientBuilder {
     }
 
     /**
-     * Uses the {@link org.apache.http.client.HttpRequestRetryHandler} for handling request retries.
-     *
-     * @param httpRequestRetryHandler a HttpRequestRetryHandler
-     * @return {@code this}
-     */
-    public JerseyClientBuilder using(HttpRequestRetryHandler httpRequestRetryHandler) {
-        builder.using(httpRequestRetryHandler);
-        return this;
-    }
-
-    /**
-     * Uses the given {@link JerseyClientConfiguration}.
-     *
-     * @param configuration a configuration object
-     * @return {@code this}
-     */
-    public JerseyClientBuilder using(JerseyClientConfiguration configuration) {
-        this.configuration = configuration;
-        builder.using(configuration);
-        return this;
-    }
-
-    /**
-     * Uses the given {@link Environment}.
-     *
-     * @param environment a Dropwizard {@link Environment}
-     * @return {@code this}
-     * @see #using(java.util.concurrent.ExecutorService, com.fasterxml.jackson.databind.ObjectMapper)
-     */
-    public JerseyClientBuilder using(Environment environment) {
-        this.environment = environment;
-        return this;
-    }
-
-    /**
-     * Use the given {@link DnsResolver} instance.
-     *
-     * @param resolver a {@link DnsResolver} instance
-     * @return {@code this}
-     */
-    public JerseyClientBuilder using(DnsResolver resolver) {
-        builder.using(resolver);
-        return this;
-    }
-
-    /**
-     * Use the given {@link Registry} instance.
-     *
-     * @param registry a {@link Registry} instance
-     * @return {@code this}
-     */
-    public JerseyClientBuilder using(Registry<ConnectionSocketFactory> registry) {
-        builder.using(registry);
-        return this;
-    }
-
-    /**
      * Use the given {@link Validator} instance.
      *
      * @param validator a {@link Validator} instance
@@ -181,17 +120,6 @@ public class JerseyClientBuilder {
     public JerseyClientBuilder using(ExecutorService executorService, ObjectMapper objectMapper) {
         this.executorService = executorService;
         this.objectMapper = objectMapper;
-        return this;
-    }
-
-    /**
-     * Use the given {@link HttpClientMetricNameStrategy} instance.
-     *
-     * @param metricNameStrategy    a {@link HttpClientMetricNameStrategy} instance
-     * @return {@code this}
-     */
-    public JerseyClientBuilder using(HttpClientMetricNameStrategy metricNameStrategy) {
-        builder.using(metricNameStrategy);
         return this;
     }
 
@@ -218,10 +146,10 @@ public class JerseyClientBuilder {
         }
 
         if (environment == null) {
-            return build(executorService, objectMapper, validator);
+            return build(name, executorService, objectMapper, validator);
         }
 
-        return build(environment.lifecycle()
+        return build(name, environment.lifecycle()
                         .executorService("jersey-client-" + name + "-%d")
                         .minThreads(configuration.getMinThreads())
                         .maxThreads(configuration.getMaxThreads())
@@ -230,10 +158,12 @@ public class JerseyClientBuilder {
                 environment.getValidator());
     }
 
-    private Client build(ExecutorService threadPool,
+    private Client build(String name,
+                         ExecutorService threadPool,
                          ObjectMapper objectMapper,
                          Validator validator) {
-        final Client client = ClientBuilder.newClient(buildConfig(threadPool, objectMapper, validator));
+
+        final Client client = ClientBuilder.newClient(buildConfig(name, threadPool, objectMapper, validator));
 
         if (configuration.isGzipEnabled()) {
             client.register(new GZipDecoder());
@@ -243,10 +173,28 @@ public class JerseyClientBuilder {
         return client;
     }
 
-    private Configuration buildConfig(final ExecutorService threadPool,
+    private Configuration buildConfig(final String name,
+                                      final ExecutorService threadPool,
                                       final ObjectMapper objectMapper,
                                       final Validator validator) {
+
+
+        final Integer timeout = (int) configuration.getTimeout().toMilliseconds();
+        final Integer connectionTimeout = (int) configuration.getConnectionTimeout().toMilliseconds();
+
+        final HttpClientConnectionManager connectionManager = createConnectionManager(registry, name);
         final ClientConfig config = new ClientConfig();
+        final RequestConfig requestConfig = createRequestConfig();
+
+        config.property(ApacheClientProperties.CONNECTION_MANAGER, connectionManager);
+        config.property(ApacheClientProperties.DISABLE_COOKIES, !configuration.isCookiesEnabled());
+        config.property(ClientProperties.CONNECT_TIMEOUT, connectionTimeout);
+        config.property(ClientProperties.READ_TIMEOUT, timeout);
+        config.property(ApacheClientProperties.REQUEST_CONFIG, requestConfig);
+
+        if (credentialsProvider != null) {
+            config.property(ApacheClientProperties.CREDENTIALS_PROVIDER, credentialsProvider);
+        }
 
         for (Object singleton : this.singletons) {
             config.register(singleton);
@@ -270,4 +218,5 @@ public class JerseyClientBuilder {
 
         return config;
     }
+
 }
