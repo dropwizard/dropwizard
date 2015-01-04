@@ -97,6 +97,10 @@ public class DropwizardAppRuleTest {
         @JsonProperty
         private String message;
 
+        @NotEmpty
+        @JsonProperty
+        private String extra;
+
         public String getMessage() {
             return message;
         }
