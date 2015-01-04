@@ -3,6 +3,7 @@ package io.dropwizard.testing.junit;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
@@ -17,9 +18,10 @@ import org.eclipse.jetty.server.ServerConnector;
 import org.junit.rules.ExternalResource;
 
 import javax.annotation.Nullable;
-import java.util.Enumeration;
 import java.util.List;
+import java.util.Set;
 
+import static com.google.common.base.MoreObjects.firstNonNull;
 import static com.google.common.base.Throwables.propagate;
 
 /**
@@ -33,14 +35,9 @@ import static com.google.common.base.Throwables.propagate;
  * @param <C> the configuration type
  */
 public class DropwizardAppRule<C extends Configuration> extends ExternalResource {
-
     private final Class<? extends Application<C>> applicationClass;
     private final String configPath;
-
-    public static class ServiceListener<T extends Configuration> {
-        public void onRun(T configuration, Environment environment, DropwizardAppRule<T> rule) throws Exception { }
-        public void onStop(DropwizardAppRule<T> rule) throws Exception { }
-    }
+    private final Set<ConfigOverride> configOverrides;
 
     private C configuration;
     private Application<C> application;
@@ -53,9 +50,7 @@ public class DropwizardAppRule<C extends Configuration> extends ExternalResource
                              ConfigOverride... configOverrides) {
         this.applicationClass = applicationClass;
         this.configPath = configPath;
-        for (ConfigOverride configOverride : configOverrides) {
-            configOverride.addToSystemProperties();
-        }
+        this.configOverrides = ImmutableSet.copyOf(firstNonNull(configOverrides, new ConfigOverride[0]));
     }
 
     public DropwizardAppRule<C> addListener(ServiceListener<C> listener) {
@@ -74,6 +69,7 @@ public class DropwizardAppRule<C extends Configuration> extends ExternalResource
 
     @Override
     protected void before() {
+        applyConfigOverrides();
         startIfRequired();
     }
 
@@ -81,24 +77,30 @@ public class DropwizardAppRule<C extends Configuration> extends ExternalResource
     @SuppressWarnings("unchecked")
     protected void after() {
         for (ServiceListener listener : listeners) {
-            try { listener.onStop(this); } catch(Exception ignored) { }
+            try {
+                listener.onStop(this);
+            } catch (Exception ignored) {
+            }
         }
         resetConfigOverrides();
         try {
             jettyServer.stop();
         } catch (Exception e) {
-            propagate(e);
+            throw propagate(e);
         } finally {
             jettyServer = null;
         }
     }
 
+    private void applyConfigOverrides() {
+        for (ConfigOverride configOverride : configOverrides) {
+            configOverride.addToSystemProperties();
+        }
+    }
+
     private void resetConfigOverrides() {
-        for (Enumeration<?> props = System.getProperties().propertyNames(); props.hasMoreElements(); ) {
-            String keyString = (String) props.nextElement();
-            if (keyString.startsWith("dw.")) {
-                System.clearProperty(keyString);
-            }
+        for (ConfigOverride configOverride : configOverrides) {
+            configOverride.removeFromSystemProperties();
         }
     }
 
@@ -126,7 +128,7 @@ public class DropwizardAppRule<C extends Configuration> extends ExternalResource
                     for (ServiceListener listener : listeners) {
                         try {
                             listener.onRun(configuration, environment, DropwizardAppRule.this);
-                        } catch(Exception ex) {
+                        } catch (Exception ex) {
                             throw new RuntimeException("Error running app rule start listener", ex);
                         }
                     }
@@ -144,7 +146,7 @@ public class DropwizardAppRule<C extends Configuration> extends ExternalResource
 
             command.run(bootstrap, namespace);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw propagate(e);
         }
     }
 
@@ -164,7 +166,7 @@ public class DropwizardAppRule<C extends Configuration> extends ExternalResource
         try {
             return applicationClass.newInstance();
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw propagate(e);
         }
     }
 
@@ -181,4 +183,13 @@ public class DropwizardAppRule<C extends Configuration> extends ExternalResource
         return getEnvironment().getObjectMapper();
     }
 
+    public abstract static class ServiceListener<T extends Configuration> {
+        public void onRun(T configuration, Environment environment, DropwizardAppRule<T> rule) throws Exception {
+            // Default NOP
+        }
+
+        public void onStop(DropwizardAppRule<T> rule) throws Exception {
+            // Default NOP
+        }
+    }
 }
