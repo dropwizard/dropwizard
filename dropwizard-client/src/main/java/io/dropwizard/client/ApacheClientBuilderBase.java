@@ -14,19 +14,20 @@ import org.apache.http.client.config.RequestConfig;
 import org.apache.http.config.Registry;
 import org.apache.http.config.RegistryBuilder;
 import org.apache.http.conn.DnsResolver;
+import org.apache.http.conn.routing.HttpRoutePlanner;
 import org.apache.http.conn.socket.ConnectionSocketFactory;
 import org.apache.http.conn.socket.PlainConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.conn.SystemDefaultDnsResolver;
 
 abstract class ApacheClientBuilderBase<T extends ApacheClientBuilderBase, C extends HttpClientConfiguration> {
-
     protected C configuration;
     protected CredentialsProvider credentialsProvider = null;
     protected final MetricRegistry metricRegistry;
     protected String name;
     protected Environment environment;
     protected HttpRequestRetryHandler httpRequestRetryHandler;
+    protected HttpRoutePlanner routePlanner = null;
     protected HttpClientMetricNameStrategy metricNameStrategy = HttpClientMetricNameStrategies.METHOD_ONLY;
     protected DnsResolver resolver = new SystemDefaultDnsResolver();
     protected Registry<ConnectionSocketFactory> registry
@@ -47,7 +48,7 @@ abstract class ApacheClientBuilderBase<T extends ApacheClientBuilderBase, C exte
 
     @SuppressWarnings("unchecked")
     private T self() {
-        return (T)this;
+        return (T) this;
     }
 
     /**
@@ -131,11 +132,22 @@ abstract class ApacheClientBuilderBase<T extends ApacheClientBuilderBase, C exte
     /**
      * Use the given {@link HttpClientMetricNameStrategy} instance.
      *
-     * @param metricNameStrategy    a {@link HttpClientMetricNameStrategy} instance
+     * @param metricNameStrategy a {@link HttpClientMetricNameStrategy} instance
      * @return {@code this}
      */
     public T using(HttpClientMetricNameStrategy metricNameStrategy) {
         this.metricNameStrategy = metricNameStrategy;
+        return self();
+    }
+
+    /**
+     * Use the given {@link org.apache.http.conn.routing.HttpRoutePlanner} instance.
+     *
+     * @param routePlanner a {@link org.apache.http.conn.routing.HttpRoutePlanner} instance
+     * @return {@code this}
+     */
+    public T using(HttpRoutePlanner routePlanner) {
+        this.routePlanner = routePlanner;
         return self();
     }
 
@@ -167,7 +179,7 @@ abstract class ApacheClientBuilderBase<T extends ApacheClientBuilderBase, C exte
      * @return a InstrumentedHttpClientConnectionManger instance
      */
     protected InstrumentedHttpClientConnectionManager createConnectionManager(Registry<ConnectionSocketFactory> registry,
-                                                                    String name) {
+                                                                              String name) {
         final Duration ttl = configuration.getTimeToLive();
         final InstrumentedHttpClientConnectionManager manager = new InstrumentedHttpClientConnectionManager(
                 metricRegistry,

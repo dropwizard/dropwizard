@@ -22,16 +22,16 @@ import java.io.IOException;
 
 /**
  * A convenience class for building {@link HttpClient} instances.
- * <p/>
+ * <p>
  * Among other things,
  * <ul>
  * <li>Disables stale connection checks</li>
  * <li>Disables Nagle's algorithm</li>
  * <li>Disables cookie management by default</li>
  * </ul>
+ * </p>
  */
 public class HttpClientBuilder extends ApacheClientBuilderBase<HttpClientBuilder, HttpClientConfiguration> {
-
     private static final HttpRequestRetryHandler NO_RETRIES = new HttpRequestRetryHandler() {
         @Override
         public boolean retryRequest(IOException exception, int executionCount, HttpContext context) {
@@ -110,6 +110,10 @@ public class HttpClientBuilder extends ApacheClientBuilderBase<HttpClientBuilder
 
         if (credentialsProvider != null) {
             builder.setDefaultCredentialsProvider(credentialsProvider);
+        }
+
+        if (routePlanner != null) {
+            builder.setRoutePlanner(routePlanner);
         }
 
         return builder.build();
