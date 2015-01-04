@@ -1,10 +1,13 @@
 package io.dropwizard.testing.junit;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
 import io.dropwizard.cli.ServerCommand;
+import io.dropwizard.lifecycle.Managed;
 import io.dropwizard.lifecycle.ServerLifecycleListener;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
@@ -15,6 +18,7 @@ import org.junit.rules.ExternalResource;
 
 import javax.annotation.Nullable;
 import java.util.Enumeration;
+import java.util.List;
 
 import static com.google.common.base.Throwables.propagate;
 
@@ -33,10 +37,16 @@ public class DropwizardAppRule<C extends Configuration> extends ExternalResource
     private final Class<? extends Application<C>> applicationClass;
     private final String configPath;
 
+    public static class ServiceListener<T extends Configuration> {
+        public void onRun(T configuration, Environment environment, DropwizardAppRule<T> rule) throws Exception { }
+        public void onStop(DropwizardAppRule<T> rule) throws Exception { }
+    }
+
     private C configuration;
     private Application<C> application;
     private Environment environment;
     private Server jettyServer;
+    private List<ServiceListener> listeners = Lists.newArrayList();
 
     public DropwizardAppRule(Class<? extends Application<C>> applicationClass,
                              @Nullable String configPath,
@@ -48,13 +58,31 @@ public class DropwizardAppRule<C extends Configuration> extends ExternalResource
         }
     }
 
+    public DropwizardAppRule<C> addListener(ServiceListener<C> listener) {
+        this.listeners.add(listener);
+        return this;
+    }
+
+    public DropwizardAppRule<C> manage(final Managed managed) {
+        return addListener(new ServiceListener<C>() {
+            @Override
+            public void onRun(C configuration, Environment environment, DropwizardAppRule<C> rule) throws Exception {
+                environment.lifecycle().manage(managed);
+            }
+        });
+    }
+
     @Override
     protected void before() {
         startIfRequired();
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected void after() {
+        for (ServiceListener listener : listeners) {
+            try { listener.onStop(this); } catch(Exception ignored) { }
+        }
         resetConfigOverrides();
         try {
             jettyServer.stop();
@@ -74,6 +102,7 @@ public class DropwizardAppRule<C extends Configuration> extends ExternalResource
         }
     }
 
+    @SuppressWarnings("unchecked")
     private void startIfRequired() {
         if (jettyServer != null) {
             return;
@@ -94,6 +123,13 @@ public class DropwizardAppRule<C extends Configuration> extends ExternalResource
                     DropwizardAppRule.this.configuration = configuration;
                     DropwizardAppRule.this.environment = environment;
                     super.run(configuration, environment);
+                    for (ServiceListener listener : listeners) {
+                        try {
+                            listener.onRun(configuration, environment, DropwizardAppRule.this);
+                        } catch(Exception ex) {
+                            throw new RuntimeException("Error running app rule start listener", ex);
+                        }
+                    }
                 }
             };
 
@@ -140,4 +176,9 @@ public class DropwizardAppRule<C extends Configuration> extends ExternalResource
     public Environment getEnvironment() {
         return environment;
     }
+
+    public ObjectMapper getObjectMapper() {
+        return getEnvironment().getObjectMapper();
+    }
+
 }
