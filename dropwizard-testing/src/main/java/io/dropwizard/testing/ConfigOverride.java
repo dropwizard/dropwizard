@@ -1,4 +1,4 @@
-package io.dropwizard.testing.junit;
+package io.dropwizard.testing;
 
 public class ConfigOverride {
 

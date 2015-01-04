@@ -6,6 +6,7 @@ import io.dropwizard.Configuration;
 import io.dropwizard.jetty.HttpConnectorFactory;
 import io.dropwizard.server.SimpleServerFactory;
 import io.dropwizard.setup.Environment;
+import io.dropwizard.testing.DropwizardTestSupport;
 import org.junit.rules.ExternalResource;
 
 import java.net.URI;
@@ -52,10 +53,10 @@ import java.net.URL;
  */
 public class DropwizardClientRule extends ExternalResource {
     private final Object[] resources;
-    private final DropwizardAppRule<Configuration> appRule;
+    private final DropwizardTestSupport<Configuration> testSupport;
 
     public DropwizardClientRule(Object... resources) {
-        appRule = new DropwizardAppRule<Configuration>(null, null) {
+        testSupport = new DropwizardTestSupport<Configuration>(null, null) {
             @Override
             public Application<Configuration> newApplication() {
                 return new FakeApplication();
@@ -65,17 +66,17 @@ public class DropwizardClientRule extends ExternalResource {
     }
 
     public URI baseUri() {
-        return URI.create("http://localhost:" + appRule.getLocalPort() + "/application");
+        return URI.create("http://localhost:" + testSupport.getLocalPort() + "/application");
     }
 
     @Override
     protected void before() throws Throwable {
-        appRule.before();
+        testSupport.before();
     }
 
     @Override
     protected void after() {
-        appRule.after();
+        testSupport.after();
     }
 
     private static class DummyHealthCheck extends HealthCheck {
