@@ -7,7 +7,7 @@ import static io.dropwizard.testing.ConfigOverride.config;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class DropwizardAppRuleResetConfigOverrideTest {
-    public final DropwizardAppRule<TestConfiguration> dropwizardAppRule = new DropwizardAppRule<>(
+    private final DropwizardAppRule<TestConfiguration> dropwizardAppRule = new DropwizardAppRule<>(
             TestApplication.class,
             resourceFilePath("test-config.yaml"),
             config("message", "A new way to say Hooray!"));
@@ -27,5 +27,6 @@ public class DropwizardAppRuleResetConfigOverrideTest {
 
         assertThat(System.getProperty("dw.message")).isNull();
         assertThat(System.getProperty("dw.extra")).isEqualTo("Some extra system property");
+        System.clearProperty("dw.extra");
     }
 }
