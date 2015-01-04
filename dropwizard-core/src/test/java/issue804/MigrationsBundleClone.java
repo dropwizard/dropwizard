@@ -14,8 +14,8 @@ public abstract class MigrationsBundleClone<T extends Configuration> implements 
 
     @Override
     public final void initialize(Bootstrap<?> bootstrap) {
-        Assert.assertEquals(SampleApplication.class, this.getClass());
-        final Class<T> klass = Generics.getTypeParameter(getClass(), Configuration.class);
+        Assert.assertEquals(SampleApplication.class, bootstrap.getApplication().getClass());
+        final Class<T> klass = Generics.getTypeParameter(bootstrap.getApplication().getClass(), Configuration.class);
         Assert.assertEquals(SampleConfiguration.class, klass);
     }
 
