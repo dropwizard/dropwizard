@@ -3,6 +3,7 @@ package io.dropwizard.client;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.httpclient.HttpClientMetricNameStrategies;
 import com.codahale.metrics.httpclient.HttpClientMetricNameStrategy;
+import com.codahale.metrics.httpclient.InstrumentedHttpClientConnectionManager;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Iterables;
 import io.dropwizard.jersey.gzip.ConfiguredGZipEncoder;
@@ -10,7 +11,11 @@ import io.dropwizard.jersey.gzip.GZipDecoder;
 import io.dropwizard.jersey.jackson.JacksonMessageBodyProvider;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
 import io.dropwizard.setup.Environment;
+import io.dropwizard.util.Duration;
 import org.apache.commons.lang3.reflect.FieldUtils;
+import org.apache.http.client.HttpClient;
+import org.apache.http.conn.HttpClientConnectionManager;
+import org.glassfish.jersey.apache.connector.ApacheClientProperties;
 import org.glassfish.jersey.apache.connector.ApacheConnectorProvider;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.ClientProperties;
@@ -37,6 +42,7 @@ import java.util.concurrent.Executors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
@@ -112,9 +118,26 @@ public class JerseyClientBuilderTest {
     }
 
     @Test
+    public void usesTheInstrumentedConnectionManager() throws Exception {
+        final Client client = builder.using(executorService, objectMapper).build("test");
+        assertThat(client.getConfiguration().getProperties()).containsKey(ApacheClientProperties.CONNECTION_MANAGER);
+        assertThat(client.getConfiguration().getProperty(ApacheClientProperties.CONNECTION_MANAGER)).isInstanceOf(InstrumentedHttpClientConnectionManager.class);
+    }
+
+    @Test
+    public void configuresTheInstrumentedConnectionManager() throws Exception {
+        final JerseyClientConfiguration configuration = new JerseyClientConfiguration();
+        configuration.setMaxConnections(32);
+        configuration.setMaxConnectionsPerRoute(16);
+        final Client client = builder.using(configuration).using(executorService, objectMapper).build("test");
+        InstrumentedHttpClientConnectionManager manager = (InstrumentedHttpClientConnectionManager) client.getConfiguration().getProperty(ApacheClientProperties.CONNECTION_MANAGER);
+        assertThat(manager.getMaxTotal()).isEqualTo(32);
+        assertThat(manager.getDefaultMaxPerRoute()).isEqualTo(16);
+    }
+
+    @Test
     public void usesTheGivenThreadPool() throws Exception {
         final Client client = builder.using(executorService, objectMapper).build("test");
-
         for (Object o : client.getConfiguration().getInstances()) {
             if (o instanceof DropwizardExecutorProvider) {
                 final DropwizardExecutorProvider provider = (DropwizardExecutorProvider) o;
@@ -122,6 +145,26 @@ public class JerseyClientBuilderTest {
             }
         }
 
+    }
+
+    @Test
+    public void usesTimeoutConfigurations() throws Exception {
+        final JerseyClientConfiguration configuration = new JerseyClientConfiguration();
+        configuration.setConnectionTimeout(Duration.hours(1));
+        configuration.setTimeout(Duration.hours(2));
+        final Client client = builder.using(configuration)
+                .using(executorService, objectMapper).build("test");
+        assertThat(client.getConfiguration().getProperty(ClientProperties.CONNECT_TIMEOUT)).isEqualTo((int)Duration.hours(1).toMilliseconds());
+        assertThat(client.getConfiguration().getProperty(ClientProperties.READ_TIMEOUT)).isEqualTo((int)Duration.hours(2).toMilliseconds());
+    }
+
+    @Test
+    public void disablesCookiesIfDisabled() throws Exception {
+        final JerseyClientConfiguration configuration = new JerseyClientConfiguration();
+        configuration.setCookiesEnabled(false);
+        final Client client = builder.using(configuration)
+                .using(executorService, objectMapper).build("test");
+        assertThat(client.getConfiguration().getProperty(ApacheClientProperties.DISABLE_COOKIES)).isEqualTo(true);
     }
 
     @Test
@@ -188,7 +231,7 @@ public class JerseyClientBuilderTest {
                 .using(executorService, objectMapper).build("test");
         assertThat(client.getConfiguration().getProperty(ClientProperties.REQUEST_ENTITY_PROCESSING)).isEqualTo(RequestEntityProcessing.BUFFERED);
     }
-
+/*
     @Test
     public void usesACustomHttpClientMetricNameStrategy() throws Exception {
         final HttpClientBuilder httpClientBuilder = (HttpClientBuilder) FieldUtils
@@ -201,7 +244,7 @@ public class JerseyClientBuilderTest {
         builder.using(custom);
         assertThat(metricNameStrategyField.get(httpClientBuilder)).isSameAs(custom);
     }
-
+*/
     @Provider
     @Consumes(MediaType.APPLICATION_SVG_XML)
     public static class FakeMessageBodyReader implements MessageBodyReader<JerseyClientBuilderTest> {
