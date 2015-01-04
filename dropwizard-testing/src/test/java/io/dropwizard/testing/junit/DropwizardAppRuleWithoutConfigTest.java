@@ -3,7 +3,6 @@ package io.dropwizard.testing.junit;
 import com.google.common.collect.ImmutableMap;
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
-import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import java.util.Map;
 import javax.ws.rs.GET;
@@ -32,7 +31,7 @@ public class DropwizardAppRuleWithoutConfigTest {
         Assert.assertEquals(ImmutableMap.of("color", "orange"), response);
     }
 
-    static class TestApplication extends Application<Configuration> {
+    public static class TestApplication extends Application<Configuration> {
         @Override
         public void run(Configuration configuration, Environment environment) throws Exception {
             environment.jersey().register(new TestResource());

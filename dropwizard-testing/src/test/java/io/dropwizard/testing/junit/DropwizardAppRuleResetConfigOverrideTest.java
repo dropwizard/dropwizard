@@ -3,10 +3,10 @@ package io.dropwizard.testing.junit;
 import org.junit.Test;
 
 import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
-import static io.dropwizard.testing.junit.ConfigOverride.config;
+import static io.dropwizard.testing.ConfigOverride.config;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class DropwizardServiceRuleResetConfigOverrideTest {
+public class DropwizardAppRuleResetConfigOverrideTest {
     public final DropwizardAppRule<TestConfiguration> dropwizardAppRule = new DropwizardAppRule<>(
             TestApplication.class,
             resourceFilePath("test-config.yaml"),

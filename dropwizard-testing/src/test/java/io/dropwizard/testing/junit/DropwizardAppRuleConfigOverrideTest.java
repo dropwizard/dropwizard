@@ -6,15 +6,15 @@ import org.junit.Test;
 import javax.ws.rs.client.ClientBuilder;
 
 import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
-import static io.dropwizard.testing.junit.ConfigOverride.config;
+import static io.dropwizard.testing.ConfigOverride.config;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-public class DropwizardServiceRuleConfigOverrideTest {
+public class DropwizardAppRuleConfigOverrideTest {
 
     @ClassRule
     public static final DropwizardAppRule<TestConfiguration> RULE =
-            new DropwizardAppRule<TestConfiguration>(TestApplication.class, resourceFilePath("test-config.yaml"),
+            new DropwizardAppRule<>(TestApplication.class, resourceFilePath("test-config.yaml"),
                     config("message", "A new way to say Hooray!"));
 
     @Test
