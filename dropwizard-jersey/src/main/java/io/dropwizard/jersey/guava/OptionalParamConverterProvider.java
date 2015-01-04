@@ -18,7 +18,6 @@ import java.util.Set;
 
 @Singleton
 public class OptionalParamConverterProvider implements ParamConverterProvider {
-
     private final ServiceLocator locator;
 
     @Inject
@@ -30,6 +29,7 @@ public class OptionalParamConverterProvider implements ParamConverterProvider {
     public <T> ParamConverter<T> getConverter(final Class<T> rawType, final Type genericType, final Annotation[] annotations) {
         final List<ClassTypePair> ctps = ReflectionHelper.getTypeArgumentAndClass(genericType);
         final ClassTypePair ctp = (ctps.size() == 1) ? ctps.get(0) : null;
+
         if (ctp == null || ctp.rawClass() == String.class) {
             return new ParamConverter<T>() {
                 @Override
@@ -45,7 +45,6 @@ public class OptionalParamConverterProvider implements ParamConverterProvider {
         }
         final Set<ParamConverterProvider> converterProviders = Providers.getProviders(locator, ParamConverterProvider.class);
         for (ParamConverterProvider provider : converterProviders) {
-            @SuppressWarnings("unchecked")
             final ParamConverter<?> converter = provider.getConverter(ctp.rawClass(), ctp.type(), annotations);
             if (converter != null) {
                 return new ParamConverter<T>() {
