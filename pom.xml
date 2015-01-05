@@ -53,7 +53,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <metrics3.version>3.1.0</metrics3.version>
-        <jersey.version>2.13</jersey.version>
+        <jersey.version>2.14</jersey.version>
         <jackson.api.version>2.5.0</jackson.api.version>
         <jackson.version>2.5.0</jackson.version>
         <logback.version>1.1.2</logback.version>
