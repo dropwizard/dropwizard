@@ -62,7 +62,7 @@
         <jetty.version>9.2.6.v20141205</jetty.version>
         <guava.version>18.0</guava.version>
         <h2.version>1.4.182</h2.version>
-        <assertj.version>1.7.0</assertj.version>
+        <assertj.version>1.7.1</assertj.version>
         <mockito.version>1.10.17</mockito.version>
     </properties>
 
