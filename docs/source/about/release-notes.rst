@@ -23,7 +23,7 @@ v0.8.0:
 * Upgrade to Joda-Time 2.6
 * Upgrade to Liquibase 3.3.2
 * Upgrade to Mustache 0.8.16
-* Upgrade to SLF4J 1.7.9
+* Upgrade to SLF4J 1.7.10
 * Upgrade to tomcat-jdbc 8.0.15
 * Upgrade to JSR305 annotations 3.0.0
 * Upgrade to Junit 4.12
