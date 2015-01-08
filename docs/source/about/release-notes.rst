@@ -15,7 +15,7 @@ v0.8.0:
 * Upgrade to commons-lang3 3.3.2
 * Upgrade to Guava 18.0
 * Upgrade to H2 1.4.182
-* Upgrade to Hibernate 4.3.7.Final
+* Upgrade to Hibernate 4.3.8.Final
 * Upgrade to Hibernate Validator 5.1.3.Final
 * Upgrade to Jackson 2.5.0
 * Upgrade to Jersey 2.14
