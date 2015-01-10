@@ -36,7 +36,7 @@ abstract class ApacheClientBuilderBase<T extends ApacheClientBuilderBase, C exte
             .register("https", SSLConnectionSocketFactory.getSocketFactory())
             .build();
 
-    public ApacheClientBuilderBase(MetricRegistry metricRegistry, C configuration) {
+    protected ApacheClientBuilderBase(MetricRegistry metricRegistry, C configuration) {
         this.metricRegistry = metricRegistry;
         using(configuration);
     }

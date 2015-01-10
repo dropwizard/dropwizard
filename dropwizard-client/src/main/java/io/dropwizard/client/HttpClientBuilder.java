@@ -39,7 +39,8 @@ public class HttpClientBuilder extends ApacheClientBuilderBase<HttpClientBuilder
         }
     };
 
-    public HttpClientBuilder(MetricRegistry metricRegistry) {
+    @VisibleForTesting
+    HttpClientBuilder(MetricRegistry metricRegistry) {
         super(metricRegistry, new HttpClientConfiguration());
     }
 

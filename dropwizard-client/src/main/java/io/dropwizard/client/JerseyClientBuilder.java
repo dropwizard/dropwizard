@@ -3,6 +3,7 @@ package io.dropwizard.client;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.httpclient.HttpClientMetricNameStrategy;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import io.dropwizard.jersey.gzip.ConfiguredGZipEncoder;
@@ -59,7 +60,8 @@ public class JerseyClientBuilder extends ApacheClientBuilderBase<JerseyClientBui
         super(environment, new JerseyClientConfiguration());
     }
 
-    public JerseyClientBuilder(MetricRegistry metricRegistry) {
+    @VisibleForTesting
+    JerseyClientBuilder(MetricRegistry metricRegistry) {
         super(metricRegistry, new JerseyClientConfiguration());
     }
 
