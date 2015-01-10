@@ -74,7 +74,7 @@ public class DropwizardResourceConfig extends ResourceConfig {
     public void logComponents() {
         LOGGER.debug("resources = {}", canonicalNamesByAnnotation(Path.class));
         LOGGER.debug("providers = {}", canonicalNamesByAnnotation(Provider.class));
-        LOGGER.info(logEndpoints());
+        LOGGER.info(getEndpointsInfo());
     }
 
     public String getUrlPattern() {
@@ -109,8 +109,7 @@ public class DropwizardResourceConfig extends ResourceConfig {
         return result;
     }
 
-    @VisibleForTesting
-    String logEndpoints() {
+    public String getEndpointsInfo() {
         final StringBuilder msg = new StringBuilder(1024);
         msg.append("The following paths were found for the configured resources:");
         msg.append(NEWLINE).append(NEWLINE);
