@@ -17,6 +17,7 @@ User Manual
     migrations
     hibernate
     auth
+    forms
     views
     scala
     testing
