@@ -56,12 +56,12 @@ public class DropwizardResourceConfigTest {
     public void logsNoInterfaces() {
         rc.packages(getClass().getPackage().getName());
 
-        assertThat(rc.logEndpoints()).doesNotContain("io.dropwizard.jersey.DropwizardResourceConfigTest.ResourceInterface");
+        assertThat(rc.getEndpointsInfo()).doesNotContain("io.dropwizard.jersey.DropwizardResourceConfigTest.ResourceInterface");
     }
 
     @Test
     public void logsNoEndpointsWhenNoResourcesAreRegistered() {
-        assertThat(rc.logEndpoints()).contains("    NONE");
+        assertThat(rc.getEndpointsInfo()).contains("    NONE");
     }
 
     @Test
@@ -69,7 +69,7 @@ public class DropwizardResourceConfigTest {
         rc.register(TestResource.class);
         rc.register(ImplementingResource.class);
 
-        assertThat(rc.logEndpoints())
+        assertThat(rc.getEndpointsInfo())
                 .contains("GET     /dummy (io.dropwizard.jersey.DropwizardResourceConfigTest.TestResource)")
                 .contains("GET     /another (io.dropwizard.jersey.DropwizardResourceConfigTest.ImplementingResource)");
     }
