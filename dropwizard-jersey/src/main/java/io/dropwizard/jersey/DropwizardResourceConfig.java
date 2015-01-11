@@ -64,7 +64,6 @@ public class DropwizardResourceConfig extends ResourceConfig {
         register(OptionalMessageBodyWriter.class);
         register(OptionalParamFeature.class);
         register(new SessionFactoryProvider.Binder());
-        EncodingFilter.enableFor(this, GZipEncoder.class);
     }
 
     public static DropwizardResourceConfig forTesting(MetricRegistry metricRegistry) {

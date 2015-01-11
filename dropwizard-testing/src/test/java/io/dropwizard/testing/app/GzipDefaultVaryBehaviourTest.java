@@ -20,7 +20,7 @@ public class GzipDefaultVaryBehaviourTest {
 
     @ClassRule
     public static final DropwizardAppRule<TestConfiguration> RULE =
-            new DropwizardAppRule<>(TestApplication.class, resourceFilePath("test-config.yaml"));
+            new DropwizardAppRule<>(TestApplication.class, resourceFilePath("gzip-vary-test-config.yaml"));
 
     @Test
     public void testDefaultVaryHeader() {
