@@ -1,16 +1,22 @@
 package io.dropwizard.jersey.errors;
 
 public class ErrorMessage {
-    private final Integer code;
+    private final int code;
     private final String message;
+    private final String details;
 
     public ErrorMessage(String message) {
         this(500, message);
     }
-    
-    public ErrorMessage(Integer code, String message) {
+
+    public ErrorMessage(int code, String message) {
+        this(code, message, null);
+    }
+
+    public ErrorMessage(int code, String message, String details) {
         this.code = code;
         this.message = message;
+        this.details = details;
     }
 
     public Integer getCode() {
@@ -19,5 +25,9 @@ public class ErrorMessage {
 
     public String getMessage() {
         return message;
+    }
+
+    public String getDetails() {
+        return details;
     }
 }

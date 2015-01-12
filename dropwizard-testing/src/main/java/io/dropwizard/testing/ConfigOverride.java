@@ -1,4 +1,4 @@
-package io.dropwizard.testing.junit;
+package io.dropwizard.testing;
 
 public class ConfigOverride {
 
@@ -16,5 +16,9 @@ public class ConfigOverride {
 
     public void addToSystemProperties() {
         System.setProperty("dw." + key, value);
+    }
+
+    public void removeFromSystemProperties() {
+        System.clearProperty("dw." + key);
     }
 }

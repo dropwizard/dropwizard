@@ -545,14 +545,9 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
 
         final ByteBufferPool bufferPool = buildBufferPool();
 
-        final String timerName = name(HttpConnectionFactory.class,
-                                      getBindHost(),
-                                      Integer.toString(getPort()),
-                                      "connections");
-
         return buildConnector(server, scheduler, bufferPool, name, threadPool,
                               new InstrumentedConnectionFactory(sslConnectionFactory,
-                                                                metrics.timer(timerName)),
+                                                                metrics.timer(httpConnections())),
                               httpConnectionFactory);
     }
 
@@ -574,6 +569,22 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
                 final String[] cipherSuites = factory.getSupportedCipherSuites();
                 LOGGER.info("Supported protocols: {}", Arrays.toString(protocols));
                 LOGGER.info("Supported cipher suites: {}", Arrays.toString(cipherSuites));
+
+                if (getSupportedProtocols() != null) {
+                    LOGGER.info("Configured protocols: {}", getSupportedProtocols());
+                }
+
+                if (getExcludedProtocols() != null) {
+                    LOGGER.info("Excluded protocols: {}", getExcludedProtocols());
+                }
+
+                if (getSupportedCipherSuites() != null) {
+                    LOGGER.info("Configured cipher suites: {}", getSupportedCipherSuites());
+                }
+
+                if (getExcludedCipherSuites() != null) {
+                    LOGGER.info("Excluded cipher suites: {}", getExcludedCipherSuites());
+                }
             } catch (NoSuchAlgorithmException ignored) {
 
             }

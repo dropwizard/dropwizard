@@ -22,12 +22,21 @@
             <artifactId>spdy-http-server</artifactId>
             <version>${jetty.version}</version>
         </dependency>
-        <!-- this needs to be on your JVM's bootpath for SPDY to work -->
-        <!-- -Xbootclasspath/p:/blah/npn-boot-1.1.6.v20130911.jar -->
+
         <dependency>
-            <groupId>org.mortbay.jetty.npn</groupId>
-            <artifactId>npn-boot</artifactId>
-            <version>1.1.6.v20130911</version>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-alpn-server</artifactId>
+            <version>${jetty.version}</version>
+        </dependency>
+
+        <!-- This needs to be on your JVM's bootpath for SPDY to work with ALPN protocol
+            -Xbootclasspath/p:/<path_to_alpn_boot_jar>/alpn-boot-7.1.2.v20141202.jar
+             The correct version depends on the specific JVM version.
+             Consult http://www.eclipse.org/jetty/documentation/current/alpn-chapter.html for the reference -->
+        <dependency>
+            <groupId>org.mortbay.jetty.alpn</groupId>
+            <artifactId>alpn-boot</artifactId>
+            <version>7.1.2.v20141202</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

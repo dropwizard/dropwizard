@@ -43,7 +43,7 @@ public class ConfigurationFactoryTest {
 
         @JsonProperty
         private int age = 1;
-        
+
         List<String> type;
 
         @JsonProperty
@@ -74,6 +74,7 @@ public class ConfigurationFactoryTest {
     private final ConfigurationFactory<Example> factory =
             new ConfigurationFactory<>(Example.class, validator, Jackson.newObjectMapper(), "dw");
     private File malformedFile;
+    private File emptyFile;
     private File invalidFile;
     private File validFile;
 
@@ -90,6 +91,7 @@ public class ConfigurationFactoryTest {
     @Before
     public void setUp() throws Exception {
         this.malformedFile = new File(Resources.getResource("factory-test-malformed.yml").toURI());
+        this.emptyFile = new File(Resources.getResource("factory-test-empty.yml").toURI());
         this.invalidFile = new File(Resources.getResource("factory-test-invalid.yml").toURI());
         this.validFile = new File(Resources.getResource("factory-test-valid.yml").toURI());
     }
@@ -116,7 +118,7 @@ public class ConfigurationFactoryTest {
                 .isEqualTo(8080);
 
     }
-    
+
     @Test
     public void handlesSimpleOverride() throws Exception {
         System.setProperty("dw.name", "Coda Hale Overridden");
@@ -124,7 +126,7 @@ public class ConfigurationFactoryTest {
         assertThat(example.getName())
             .isEqualTo("Coda Hale Overridden");
     }
-    
+
     @Test
     public void handlesArrayOverride() throws Exception {
         System.setProperty("dw.type", "coder,wizard,overridden");
@@ -252,6 +254,17 @@ public class ConfigurationFactoryTest {
         } catch (ConfigurationParsingException e) {
             assertThat(e.getMessage())
                     .containsOnlyOnce(" * Failed to parse configuration; Can not instantiate");
+        }
+    }
+
+    @Test
+    public void throwsAnExceptionOnEmptyFiles() throws Exception {
+        try {
+            factory.build(emptyFile);
+            failBecauseExceptionWasNotThrown(ConfigurationParsingException.class);
+        } catch (ConfigurationParsingException e) {
+            assertThat(e.getMessage())
+                    .containsOnlyOnce(" * Configuration at " + emptyFile.toString() + " must not be empty");
         }
     }
 

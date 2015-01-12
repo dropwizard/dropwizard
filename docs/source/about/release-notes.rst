@@ -9,23 +9,26 @@ Release Notes
 v0.8.0:
 =======
 
+* Migrated ``dropwizard-spdy`` from NPN to ALPN
+* Dropped support for deprecated SPDY/2 in ``dropwizard-spdy``
 * Upgrade to argparse4j 0.4.4
 * Upgrade to commons-lang3 3.3.2
 * Upgrade to Guava 18.0
 * Upgrade to H2 1.4.182
-* Upgrade to Hibernate 4.3.7.Final
+* Upgrade to Hibernate 4.3.8.Final
 * Upgrade to Hibernate Validator 5.1.3.Final
-* Upgrade to Jackson 2.4.3
-* Upgrade to Jersey 2.13
-* Upgrade to Jetty 9.2.4.v20141103
-* Upgrade to Joda-Time 2.5
-* Upgrade to Liquibase 3.3.0
+* Upgrade to Jackson 2.5.0
+* Upgrade to Jersey 2.14
+* Upgrade to Jetty 9.2.6.v20141205
+* Upgrade to Joda-Time 2.6
+* Upgrade to Liquibase 3.3.2
 * Upgrade to Mustache 0.8.16
-* Upgrade to SLF4J 1.7.7
+* Upgrade to SLF4J 1.7.10
 * Upgrade to tomcat-jdbc 8.0.15
 * Upgrade to JSR305 annotations 3.0.0
-* Upgrade to AssertJ 1.7.0
-* Upgrade to Mockito 1.10.8
+* Upgrade to Junit 4.12
+* Upgrade to AssertJ 1.7.1
+* Upgrade to Mockito 1.10.17
 
 
 .. _rel-0.7.1:

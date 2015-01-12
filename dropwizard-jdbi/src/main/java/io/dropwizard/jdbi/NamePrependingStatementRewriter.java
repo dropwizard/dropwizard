@@ -8,7 +8,7 @@ import org.skife.jdbi.v2.tweak.StatementRewriter;
 public class NamePrependingStatementRewriter implements StatementRewriter {
     private final StatementRewriter rewriter;
 
-    NamePrependingStatementRewriter(StatementRewriter rewriter) {
+    public NamePrependingStatementRewriter(StatementRewriter rewriter) {
         this.rewriter = rewriter;
     }
 

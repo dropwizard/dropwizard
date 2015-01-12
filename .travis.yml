@@ -1,3 +1,4 @@
+sudo: false
 language: java
 
 install: echo "I trust Maven."

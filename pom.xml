@@ -18,6 +18,7 @@
 
     <modules>
         <module>docs</module>
+        <module>dropwizard-archetypes</module>
         <module>dropwizard-core</module>
         <module>dropwizard-client</module>
         <module>dropwizard-db</module>
@@ -52,16 +53,17 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <metrics3.version>3.1.0</metrics3.version>
-        <jersey.version>2.13</jersey.version>
-        <jackson.api.version>2.4.0</jackson.api.version>
-        <jackson.version>2.4.3</jackson.version>
+        <jersey.version>2.14</jersey.version>
+        <jackson.api.version>2.5.0</jackson.api.version>
+        <jackson.version>2.5.0</jackson.version>
         <logback.version>1.1.2</logback.version>
-        <slf4j.version>1.7.7</slf4j.version>
+        <slf4j.version>1.7.10</slf4j.version>
         <servlet.version>3.0.0.v201112011016</servlet.version>
-        <jetty.version>9.2.4.v20141103</jetty.version>
+        <jetty.version>9.2.6.v20141205</jetty.version>
         <guava.version>18.0</guava.version>
         <h2.version>1.4.182</h2.version>
-        <assertj.version>1.7.0</assertj.version>
+        <assertj.version>1.7.1</assertj.version>
+        <mockito.version>1.10.17</mockito.version>
     </properties>
 
     <developers>
@@ -259,13 +261,12 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.11</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>1.10.8</version>
+            <version>${mockito.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -297,6 +298,11 @@
                 <groupId>org.objenesis</groupId>
                 <artifactId>objenesis</artifactId>
                 <version>2.1</version>
+            </dependency>
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>4.12</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
