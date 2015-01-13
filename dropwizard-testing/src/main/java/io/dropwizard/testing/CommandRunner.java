@@ -39,7 +39,7 @@ public class CommandRunner<C extends Configuration> extends CommandHelper<C> {
     protected Command getCommand(String name) {
         if(bootstrap == null) throw new RuntimeException("Must be initialized before getCommand is called.");
         for(Command command : bootstrap.getCommands()) {
-            if(command.getName() == name) return command;
+            if(command.getName().equals(name)) return command;
         }
         return null;
     }
