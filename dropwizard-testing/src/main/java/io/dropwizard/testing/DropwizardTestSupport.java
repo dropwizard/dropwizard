@@ -33,13 +33,9 @@ import static com.google.common.base.Throwables.propagate;
  *
  * @param <C> the configuration type
  */
-public class DropwizardTestSupport<C extends Configuration> {
-    private final Class<? extends Application<C>> applicationClass;
-    private final String configPath;
-    private final Set<ConfigOverride> configOverrides;
+public class DropwizardTestSupport<C extends Configuration> extends CommandHelper<C> {
 
     private C configuration;
-    private Application<C> application;
     private Environment environment;
     private Server jettyServer;
     private List<ServiceListener> listeners = Lists.newArrayList();
@@ -47,9 +43,7 @@ public class DropwizardTestSupport<C extends Configuration> {
     public DropwizardTestSupport(Class<? extends Application<C>> applicationClass,
                              @Nullable String configPath,
                              ConfigOverride... configOverrides) {
-        this.applicationClass = applicationClass;
-        this.configPath = configPath;
-        this.configOverrides = ImmutableSet.copyOf(firstNonNull(configOverrides, new ConfigOverride[0]));
+        super(applicationClass, configPath, configOverrides);
     }
 
     public DropwizardTestSupport<C> addListener(ServiceListener<C> listener) {
@@ -89,18 +83,6 @@ public class DropwizardTestSupport<C extends Configuration> {
         }
     }
 
-    private void applyConfigOverrides() {
-        for (ConfigOverride configOverride : configOverrides) {
-            configOverride.addToSystemProperties();
-        }
-    }
-
-    private void resetConfigOverrides() {
-        for (ConfigOverride configOverride : configOverrides) {
-            configOverride.removeFromSystemProperties();
-        }
-    }
-
     @SuppressWarnings("unchecked")
     private void startIfRequired() {
         if (jettyServer != null) {
@@ -108,43 +90,38 @@ public class DropwizardTestSupport<C extends Configuration> {
         }
 
         try {
-            application = newApplication();
+            initialize();
 
-            final Bootstrap<C> bootstrap = new Bootstrap<C>(application) {
-                @Override
-                public void run(C configuration, Environment environment) throws Exception {
-                    environment.lifecycle().addServerLifecycleListener(new ServerLifecycleListener() {
-                        @Override
-                        public void serverStarted(Server server) {
-                            jettyServer = server;
-                        }
-                    });
-                    DropwizardTestSupport.this.configuration = configuration;
-                    DropwizardTestSupport.this.environment = environment;
-                    super.run(configuration, environment);
-                    for (ServiceListener listener : listeners) {
-                        try {
-                            listener.onRun(configuration, environment, DropwizardTestSupport.this);
-                        } catch (Exception ex) {
-                            throw new RuntimeException("Error running app rule start listener", ex);
-                        }
-                    }
-                }
-            };
-
-            application.initialize(bootstrap);
             final ServerCommand<C> command = new ServerCommand<>(application);
-
-            ImmutableMap.Builder<String, Object> file = ImmutableMap.builder();
-            if (!Strings.isNullOrEmpty(configPath)) {
-                file.put("file", configPath);
-            }
-            final Namespace namespace = new Namespace(file.build());
-
             command.run(bootstrap, namespace);
         } catch (Exception e) {
             throw propagate(e);
         }
+    }
+
+    @Override
+    public Bootstrap<C> newBootStrap(Application<C> app) {
+        return new Bootstrap<C>(app) {
+            @Override
+            public void run(C configuration, Environment environment) throws Exception {
+                environment.lifecycle().addServerLifecycleListener(new ServerLifecycleListener() {
+                    @Override
+                    public void serverStarted(Server server) {
+                        jettyServer = server;
+                    }
+                });
+                DropwizardTestSupport.this.configuration = configuration;
+                DropwizardTestSupport.this.environment = environment;
+                super.run(configuration, environment);
+                for (ServiceListener listener : listeners) {
+                    try {
+                        listener.onRun(configuration, environment, DropwizardTestSupport.this);
+                    } catch (Exception ex) {
+                        throw new RuntimeException("Error running app rule start listener", ex);
+                    }
+                }
+            }
+        };
     }
 
     public C getConfiguration() {
@@ -157,19 +134,6 @@ public class DropwizardTestSupport<C extends Configuration> {
 
     public int getAdminPort() {
         return ((ServerConnector) jettyServer.getConnectors()[1]).getLocalPort();
-    }
-
-    public Application<C> newApplication() {
-        try {
-            return applicationClass.newInstance();
-        } catch (Exception e) {
-            throw propagate(e);
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    public <A extends Application<C>> A getApplication() {
-        return (A) application;
     }
 
     public Environment getEnvironment() {
