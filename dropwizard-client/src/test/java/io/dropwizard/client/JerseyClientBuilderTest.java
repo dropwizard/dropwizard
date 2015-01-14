@@ -1,6 +1,8 @@
 package io.dropwizard.client;
 
 import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.httpclient.HttpClientMetricNameStrategies;
+import com.codahale.metrics.httpclient.HttpClientMetricNameStrategy;
 import com.codahale.metrics.httpclient.InstrumentedHttpClientConnectionManager;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Iterables;
@@ -10,6 +12,7 @@ import io.dropwizard.jersey.jackson.JacksonMessageBodyProvider;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.util.Duration;
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.http.client.config.RequestConfig;
 import org.glassfish.jersey.apache.connector.ApacheClientProperties;
 import org.glassfish.jersey.apache.connector.ApacheConnectorProvider;
@@ -31,6 +34,7 @@ import javax.ws.rs.ext.Provider;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -230,20 +234,17 @@ public class JerseyClientBuilderTest {
         assertThat(client.getConfiguration().getProperty(ClientProperties.REQUEST_ENTITY_PROCESSING)).isEqualTo(RequestEntityProcessing.BUFFERED);
     }
 
-    /*
-        @Test
-        public void usesACustomHttpClientMetricNameStrategy() throws Exception {
-            final HttpClientBuilder httpClientBuilder = (HttpClientBuilder) FieldUtils
-                    .getField(JerseyClientBuilder.class, "builder", true).get(builder);
-            final Field metricNameStrategyField = FieldUtils.getField(
-                    HttpClientBuilder.class, "metricNameStrategy", true);
+    @Test
+    public void usesACustomHttpClientMetricNameStrategy() throws Exception {
+        final Field metricNameStrategyField = FieldUtils.getField(JerseyClientBuilder.class, "metricNameStrategy", true);
 
-            HttpClientMetricNameStrategy custom = HttpClientMetricNameStrategies.HOST_AND_METHOD;
-            assertThat(metricNameStrategyField.get(httpClientBuilder)).isNotSameAs(custom);
-            builder.using(custom);
-            assertThat(metricNameStrategyField.get(httpClientBuilder)).isSameAs(custom);
-        }
-    */
+        final HttpClientMetricNameStrategy customStrategy = HttpClientMetricNameStrategies.HOST_AND_METHOD;
+        assertThat(metricNameStrategyField.get(builder)).isNotSameAs(customStrategy);
+
+        builder.using(customStrategy);
+        assertThat(metricNameStrategyField.get(builder)).isSameAs(customStrategy);
+    }
+
     @Provider
     @Consumes(MediaType.APPLICATION_SVG_XML)
     public static class FakeMessageBodyReader implements MessageBodyReader<JerseyClientBuilderTest> {
