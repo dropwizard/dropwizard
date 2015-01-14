@@ -161,10 +161,12 @@ abstract class ApacheClientBuilderBase<T extends ApacheClientBuilderBase, C exte
         final String cookiePolicy = configuration.isCookiesEnabled() ? CookieSpecs.BEST_MATCH : CookieSpecs.IGNORE_COOKIES;
         final Integer timeout = (int) configuration.getTimeout().toMilliseconds();
         final Integer connectionTimeout = (int) configuration.getConnectionTimeout().toMilliseconds();
+        final Integer connectionRequestTimeout = (int) configuration.getConnectionRequestTimeout().toMilliseconds();
         return RequestConfig.custom()
                 .setCookieSpec(cookiePolicy)
                 .setSocketTimeout(timeout)
                 .setConnectTimeout(connectionTimeout)
+                .setConnectionRequestTimeout(connectionRequestTimeout)
                 .setStaleConnectionCheckEnabled(false)
                 .build();
     }
