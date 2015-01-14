@@ -13,7 +13,7 @@ import javax.validation.constraints.NotNull;
 /**
  * The configuration class used by {@link HttpClientBuilder}.
  *
- * @see <a href="http://www.dropwizard.io/manual/client/#configuration-defaults">Http Client Configuration</a>
+ * @see <a href="http://dropwizard.io/manual/configuration.html#httpclient">Http Client Configuration</a>
  */
 public class HttpClientConfiguration {
     @NotNull
@@ -21,6 +21,9 @@ public class HttpClientConfiguration {
 
     @NotNull
     private Duration connectionTimeout = Duration.milliseconds(500);
+    
+    @NotNull
+    private Duration connectionRequestTimeout = Duration.milliseconds(500);
 
     @NotNull
     private Duration timeToLive = Duration.hours(1);
@@ -94,8 +97,18 @@ public class HttpClientConfiguration {
     public void setConnectionTimeout(Duration duration) {
         this.connectionTimeout = duration;
     }
+    
+    @JsonProperty
+    public Duration getConnectionRequestTimeout() {
+		return connectionRequestTimeout;
+	}
 
     @JsonProperty
+	public void setConnectionRequestTimeout(Duration connectionRequestTimeout) {
+		this.connectionRequestTimeout = connectionRequestTimeout;
+	}
+    
+	@JsonProperty
     public void setTimeToLive(Duration timeToLive) {
         this.timeToLive = timeToLive;
     }

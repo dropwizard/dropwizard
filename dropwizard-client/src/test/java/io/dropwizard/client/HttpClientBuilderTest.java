@@ -224,6 +224,15 @@ public class HttpClientBuilderTest {
         assertThat(((RequestConfig) spyHttpClientBuilderField("defaultRequestConfig", apacheBuilder)).getConnectTimeout())
                 .isEqualTo(500);
     }
+    
+    @Test
+    public void setsTheConnectionRequestTimeout() throws Exception {
+    	configuration.setConnectionRequestTimeout(Duration.milliseconds(123));
+    	
+    	assertThat(builder.using(configuration).createClient(apacheBuilder, connectionManager, "test")).isNotNull();
+    	assertThat(((RequestConfig) spyHttpClientBuilderField("defaultRequestConfig", apacheBuilder)).getConnectionRequestTimeout())
+        		.isEqualTo(123);
+    }
 
     @Test
     public void disablesNaglesAlgorithm() throws Exception {

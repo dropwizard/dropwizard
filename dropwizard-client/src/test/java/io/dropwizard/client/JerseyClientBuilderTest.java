@@ -1,27 +1,24 @@
 package io.dropwizard.client;
 
-import com.codahale.metrics.MetricRegistry;
-import com.codahale.metrics.httpclient.HttpClientMetricNameStrategies;
-import com.codahale.metrics.httpclient.HttpClientMetricNameStrategy;
-import com.codahale.metrics.httpclient.InstrumentedHttpClientConnectionManager;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.Iterables;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import io.dropwizard.jersey.gzip.ConfiguredGZipEncoder;
 import io.dropwizard.jersey.gzip.GZipDecoder;
 import io.dropwizard.jersey.jackson.JacksonMessageBodyProvider;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.util.Duration;
-import org.apache.commons.lang3.reflect.FieldUtils;
-import org.apache.http.client.HttpClient;
-import org.apache.http.conn.HttpClientConnectionManager;
-import org.glassfish.jersey.apache.connector.ApacheClientProperties;
-import org.glassfish.jersey.apache.connector.ApacheConnectorProvider;
-import org.glassfish.jersey.client.ClientConfig;
-import org.glassfish.jersey.client.ClientProperties;
-import org.glassfish.jersey.client.RequestEntityProcessing;
-import org.junit.Before;
-import org.junit.Test;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Type;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.validation.Validation;
 import javax.validation.Validator;
@@ -32,21 +29,20 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.ext.MessageBodyReader;
 import javax.ws.rs.ext.Provider;
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.lang.reflect.Type;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import org.apache.http.client.config.RequestConfig;
+import org.glassfish.jersey.apache.connector.ApacheClientProperties;
+import org.glassfish.jersey.apache.connector.ApacheConnectorProvider;
+import org.glassfish.jersey.client.ClientConfig;
+import org.glassfish.jersey.client.ClientProperties;
+import org.glassfish.jersey.client.RequestEntityProcessing;
+import org.junit.Before;
+import org.junit.Test;
+
+import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.httpclient.InstrumentedHttpClientConnectionManager;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Iterables;
 
 public class JerseyClientBuilderTest {
     private final JerseyClientBuilder builder = new JerseyClientBuilder(new MetricRegistry());
@@ -152,10 +148,14 @@ public class JerseyClientBuilderTest {
         final JerseyClientConfiguration configuration = new JerseyClientConfiguration();
         configuration.setConnectionTimeout(Duration.hours(1));
         configuration.setTimeout(Duration.hours(2));
+        configuration.setConnectionRequestTimeout(Duration.hours(3));
         final Client client = builder.using(configuration)
                 .using(executorService, objectMapper).build("test");
         assertThat(client.getConfiguration().getProperty(ClientProperties.CONNECT_TIMEOUT)).isEqualTo((int)Duration.hours(1).toMilliseconds());
         assertThat(client.getConfiguration().getProperty(ClientProperties.READ_TIMEOUT)).isEqualTo((int)Duration.hours(2).toMilliseconds());
+        
+        RequestConfig requestConfig = (RequestConfig) client.getConfiguration().getProperty(ApacheClientProperties.REQUEST_CONFIG);
+        assertThat(requestConfig.getConnectionRequestTimeout()).isEqualTo((int)Duration.hours(3).toMilliseconds());
     }
 
     @Test
