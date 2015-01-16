@@ -88,7 +88,7 @@ public class HttpClientBuilder extends ApacheClientBuilderBase<HttpClientBuilder
                 .setSoTimeout(timeout)
                 .build();
 
-        builder.setRequestExecutor(new InstrumentedHttpRequestExecutor(metricRegistry, metricNameStrategy))
+        builder.setRequestExecutor(new InstrumentedHttpRequestExecutor(metricRegistry, metricNameStrategy, name))
                 .setConnectionManager(manager)
                 .setDefaultRequestConfig(requestConfig)
                 .setDefaultSocketConfig(socketConfig)
