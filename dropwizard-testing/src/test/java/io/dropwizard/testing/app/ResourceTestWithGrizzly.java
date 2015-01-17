@@ -16,10 +16,6 @@ import static org.assertj.core.api.Assertions.assertThat;
  * test container factory.
  */
 public class ResourceTestWithGrizzly {
-    static {
-        Logger.getLogger("com.sun.jersey").setLevel(Level.OFF);
-    }
-
     @ClassRule
     public static final ResourceTestRule resources = ResourceTestRule.builder()
             .addResource(new ContextInjectionResource())

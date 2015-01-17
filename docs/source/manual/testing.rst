@@ -208,9 +208,6 @@ easily.
 
     You can trust ``PeopleStore`` works because you've got working unit tests for it, right?
 
-Should you, at some point, grow tired of the near-infinite amount of debug logging produced by
-``ResourceTestRule`` you can use the ``java.util.logging`` API to silence the ``com.sun.jersey`` logger.
-
 Note that the in-memory Jersey test container does not support all features, such as the ``@Context`` injection used by
 ``BasicAuthFactory`` and ``OAuthFactory``. A different `test container`__ can be used via
 ``ResourceTestRule.Builder#setTestContainerFactory(TestContainerFactory)``.
