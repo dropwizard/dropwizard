@@ -16,11 +16,6 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Tests {@link ResourceTestRule}.
  */
 public class PersonResourceTest {
-
-    static {
-        Logger.getLogger("com.sun.jersey").setLevel(Level.OFF);
-    }
-
     private static final PeopleStore dao = mock(PeopleStore.class);
 
     @ClassRule

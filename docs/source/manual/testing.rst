@@ -187,7 +187,7 @@ loads a given resource instance in an in-memory Jersey server:
         }
     }
 
-Instansiate a ``ResourceTestRule`` using its ``Builder`` and add the various resource instances you
+Instantiate a ``ResourceTestRule`` using its ``Builder`` and add the various resource instances you
 want to test via ``ResourceTestRule.Builder#addResource(Object)``. Use a ``@ClassRule`` annotation
 to have the rule wrap the entire test class or the ``@Rule`` annotation to have the rule wrap
 each test individually (make sure to remove static final modifier from ``resources``).
@@ -208,9 +208,53 @@ easily.
 
     You can trust ``PeopleStore`` works because you've got working unit tests for it, right?
 
-Should you, at some point, grow tired of the near-infinite amount of debug logging produced by
-``ResourceTestRule`` you can use the ``java.util.logging`` API to silence the ``com.sun.jersey`` logger.
+Note that the in-memory Jersey test container does not support all features, such as the ``@Context`` injection used by
+``BasicAuthFactory`` and ``OAuthFactory``. A different `test container`__ can be used via
+``ResourceTestRule.Builder#setTestContainerFactory(TestContainerFactory)``.
 
+For example if you want to use the `Grizzly`_ HTTP server (which supports ``@Context`` injections) you need to add the
+dependency for the Jersey Test Framework providers to your Maven POM and set `GrizzlyTestContainerFactory`` as
+``TestContainerFactory`` in your test classes.
+
+.. code-block:: xml
+
+    <dependency>
+        <groupId>org.glassfish.jersey.test-framework.providers</groupId>
+        <artifactId>jersey-test-framework-provider-grizzly2</artifactId>
+        <version>${jersey.version}</version>
+        <scope>test</scope>
+        <exclusions>
+            <exclusion>
+                <groupId>javax.servlet</groupId>
+                <artifactId>javax.servlet-api</artifactId>
+            </exclusion>
+            <exclusion>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+            </exclusion>
+        </exclusions>
+    </dependency>
+
+
+.. code-block:: java
+
+    public class ResourceTestWithGrizzly {
+        @ClassRule
+        public static final ResourceTestRule RULE = ResourceTestRule.builder()
+            .setTestContainerFactory(new GrizzlyTestContainerFactory())
+            .addResource(new ExampleResource())
+            .build();
+
+        @Test
+        public void testResource() {
+            assertThat(RULE.getJerseyTest().target("/example").request()
+                .get(String.class))
+                .isEqualTo("example");
+        }
+    }
+
+.. __: https://jersey.java.net/documentation/latest/test-framework.html
+.. _Grizzly: https://grizzly.java.net/
 
 .. _man-testing-clients:
 
