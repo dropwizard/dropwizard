@@ -1,4 +1,4 @@
-package io.dropwizard.logging.tasks;
+package io.dropwizard.servlets.tasks;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
@@ -79,8 +79,7 @@ public class LogConfigurationTaskTest {
         assertThat(logger1.getLevel()).isEqualTo(Level.INFO);
         assertThat(logger2.getLevel()).isEqualTo(Level.INFO);
 
-        assertThat(stringWriter.toString()).isEqualTo(
-                "Configured logging level for logger.one to INFO\n" +
-                        "Configured logging level for logger.two to INFO\n");
+        assertThat(stringWriter.toString())
+                .isEqualTo("Configured logging level for logger.one to INFO\nConfigured logging level for logger.two to INFO\n");
     }
 }
