@@ -1,0 +1,228 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Dropwizard Client | Dropwizard</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="../_static/dropwizard.css" type="text/css"/>
+    <link rel="top" title="Dropwizard" href="../index.html"/>
+    <link rel="up" title="User Manual" href="index.html"/>
+    <link rel="next" title="Dropwizard JDBI" href="jdbi.html"/>
+    <link rel="prev" title="Dropwizard Core" href="core.html"/>
+    <style lang="text/css">
+        #top-bar, #top-bar small, #top-bar a {
+            text-shadow: 0px -1px 0px #182127;
+            color: #ffffff;
+        }
+        
+        #top-bar {
+            background-color: #363F45;
+            background-image: -moz-linear-gradient(top, #545d63, #182127);
+            background-image: -ms-linear-gradient(top, #545d63, #182127);
+            background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#545d63), to(#182127));
+            background-image: -webkit-linear-gradient(top, #545d63, #182127);
+            background-image: -o-linear-gradient(top, #545d63, #182127);
+            background-image: linear-gradient(top, #545d63, #182127);
+            filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#545d63', endColorstr = '#182127', GradientType = 0);
+            -webkit-border-radius: 0;
+            -moz-border-radius: 0;
+            border-radius: 0;
+        }
+
+
+        .hero-unit {
+            background-image: url("../_static/dropwizard-hat.png") !important;
+            background-repeat: no-repeat !important;
+            background-position: 30px 50px;
+        }
+
+        .hero-unit div.section {
+            padding-left: 150px !important;
+        }
+    </style>
+</head>
+<body>
+    <a href="https://github.com/dropwizard/dropwizard">
+        <img style="position: absolute; top: 0; right: 0; border: 0;"
+             src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_ff7600.png"
+             alt="Fork me on GitHub"></a>
+    <div class="navbar">
+        <div class="navbar-inner container-fluid" id="top-bar">
+            <header class="row-fluid">
+                <h1 class="span12" id="title"><img class="logo" src="../_static/dropwizard-logo.png" alt="Logo"/>
+                    <a href="../index.html">Dropwizard</a>
+                    <small>Production-ready, out of the box.</small>
+                </h1>
+            </header>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <div class="span3" id="sidebar">
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../getting-started.html">Getting Started</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">User Manual</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="core.html">Dropwizard Core</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">Dropwizard Client</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#apache-httpclient-version-4-3">Apache HttpClient, version 4.3</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#metrics">Metrics</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#jersey-client-version-1-18">Jersey Client, version 1.18</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="jdbi.html">Dropwizard JDBI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="migrations.html">Dropwizard Migrations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hibernate.html">Dropwizard Hibernate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="auth.html">Dropwizard Authentication</a></li>
+<li class="toctree-l2"><a class="reference internal" href="forms.html">Dropwizard Forms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="views.html">Dropwizard Views</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scala.html">Dropwizard &amp; Scala</a></li>
+<li class="toctree-l2"><a class="reference internal" href="testing.html">Testing Dropwizard</a></li>
+<li class="toctree-l2"><a class="reference internal" href="example.html">Dropwizard Example, Step by Step</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html">Dropwizard Configuration Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../about/index.html">About Dropwizard</a></li>
+</ul>
+
+                <hr/>
+                <ul>
+                    <li><a href="https://dropwizard.github.io/dropwizard/0.8.0">Maven Site</a></li>
+                    <li><a href="https://groups.google.com/forum/#!forum/dropwizard-user">User Mailing List</a></li>
+                    <li><a href="https://groups.google.com/forum/#!forum/dropwizard-dev">Developer Mailing List</a></li>
+                </ul>
+            </div>
+            <div class="span9" id="body">
+                
+  <div class="section" id="dropwizard-client">
+<span id="man-client"></span><h1>Dropwizard Client</h1>
+<p class="rubric">The <tt class="docutils literal"><span class="pre">dropwizard-client</span></tt> module provides you with two different performant,
+instrumented HTTP clients so you can integrate your service with other web
+services: <a class="reference internal" href="#man-client-apache"><em>Apache HttpClient, version 4.3</em></a> and <a class="reference internal" href="#man-client-jersey"><em>Jersey Client, version 1.18</em></a>.</p>
+<div class="section" id="apache-httpclient-version-4-3">
+<span id="man-client-apache"></span><h2>Apache HttpClient, version 4.3</h2>
+<p>The underlying library for <tt class="docutils literal"><span class="pre">dropwizard-client</span></tt> is  Apache&#8217;s <a class="reference external" href="http://hc.apache.org/httpcomponents-core-4.3.x/index.html">HttpClient</a>, a full-featured,
+well-tested HTTP client library.</p>
+<p>To create a <a class="reference internal" href="core.html#man-core-managed"><em>managed</em></a>, instrumented <tt class="docutils literal"><span class="pre">HttpClient</span></tt> instance, your
+<a class="reference internal" href="core.html#man-core-configuration"><em>configuration class</em></a> needs an <a class="reference internal" href="configuration.html#man-configuration-clients-http"><em>http client configuration</em></a> instance:</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ExampleConfiguration</span> <span class="kd">extends</span> <span class="n">Configuration</span> <span class="o">{</span>
+    <span class="nd">@Valid</span>
+    <span class="nd">@NotNull</span>
+    <span class="kd">private</span> <span class="n">HttpClientConfiguration</span> <span class="n">httpClient</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HttpClientConfiguration</span><span class="o">();</span>
+
+    <span class="nd">@JsonProperty</span><span class="o">(</span><span class="s">&quot;httpClient&quot;</span><span class="o">)</span>
+    <span class="kd">public</span> <span class="n">HttpClientConfiguration</span> <span class="nf">getHttpClientConfiguration</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">httpClient</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>Then, in your application&#8217;s <tt class="docutils literal"><span class="pre">run</span></tt> method, create a new <tt class="docutils literal"><span class="pre">HttpClientBuilder</span></tt>:</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="nd">@Override</span>
+<span class="kd">public</span> <span class="kt">void</span> <span class="nf">run</span><span class="o">(</span><span class="n">ExampleConfiguration</span> <span class="n">config</span><span class="o">,</span>
+                <span class="n">Environment</span> <span class="n">environment</span><span class="o">)</span> <span class="o">{</span>
+    <span class="kd">final</span> <span class="n">HttpClient</span> <span class="n">httpClient</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HttpClientBuilder</span><span class="o">(</span><span class="n">environment</span><span class="o">).</span><span class="na">using</span><span class="o">(</span><span class="n">config</span><span class="o">.</span><span class="na">getHttpClientConfiguration</span><span class="o">())</span>
+                                                                    <span class="o">.</span><span class="na">build</span><span class="o">();</span>
+    <span class="n">environment</span><span class="o">.</span><span class="na">jersey</span><span class="o">().</span><span class="na">register</span><span class="o">(</span><span class="k">new</span> <span class="n">ExternalServiceResource</span><span class="o">(</span><span class="n">httpClient</span><span class="o">));</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<div class="section" id="metrics">
+<span id="man-client-apache-metrics"></span><h3>Metrics</h3>
+<p>Dropwizard&#8217;s <tt class="docutils literal"><span class="pre">HttpClientBuilder</span></tt> actually gives you an instrumented subclass which tracks the
+following pieces of data:</p>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">org.apache.http.conn.ClientConnectionManager.available-connections</span></tt></dt>
+<dd>The number the number idle connections ready to be used to execute requests.</dd>
+<dt><tt class="docutils literal"><span class="pre">org.apache.http.conn.ClientConnectionManager.leased-connections</span></tt></dt>
+<dd>The number of persistent connections currently being used to execut requests.</dd>
+<dt><tt class="docutils literal"><span class="pre">org.apache.http.conn.ClientConnectionManager.max-connections</span></tt></dt>
+<dd>The maximum number of allowed connections.</dd>
+<dt><tt class="docutils literal"><span class="pre">org.apache.http.conn.ClientConnectionManager.pending-connections</span></tt></dt>
+<dd>The number of connection requests being blocked awaiting a free connection</dd>
+<dt><tt class="docutils literal"><span class="pre">org.apache.http.client.HttpClient.get-requests</span></tt></dt>
+<dd>The rate at which <tt class="docutils literal"><span class="pre">GET</span></tt> requests are being sent.</dd>
+<dt><tt class="docutils literal"><span class="pre">org.apache.http.client.HttpClient.post-requests</span></tt></dt>
+<dd>The rate at which <tt class="docutils literal"><span class="pre">POST</span></tt> requests are being sent.</dd>
+<dt><tt class="docutils literal"><span class="pre">org.apache.http.client.HttpClient.head-requests</span></tt></dt>
+<dd>The rate at which <tt class="docutils literal"><span class="pre">HEAD</span></tt> requests are being sent.</dd>
+<dt><tt class="docutils literal"><span class="pre">org.apache.http.client.HttpClient.put-requests</span></tt></dt>
+<dd>The rate at which <tt class="docutils literal"><span class="pre">PUT</span></tt> requests are being sent.</dd>
+<dt><tt class="docutils literal"><span class="pre">org.apache.http.client.HttpClient.delete-requests</span></tt></dt>
+<dd>The rate at which <tt class="docutils literal"><span class="pre">DELETE</span></tt> requests are being sent.</dd>
+<dt><tt class="docutils literal"><span class="pre">org.apache.http.client.HttpClient.options-requests</span></tt></dt>
+<dd>The rate at which <tt class="docutils literal"><span class="pre">OPTIONS</span></tt> requests are being sent.</dd>
+<dt><tt class="docutils literal"><span class="pre">org.apache.http.client.HttpClient.trace-requests</span></tt></dt>
+<dd>The rate at which <tt class="docutils literal"><span class="pre">TRACE</span></tt> requests are being sent.</dd>
+<dt><tt class="docutils literal"><span class="pre">org.apache.http.client.HttpClient.connect-requests</span></tt></dt>
+<dd>The rate at which <tt class="docutils literal"><span class="pre">CONNECT</span></tt> requests are being sent.</dd>
+<dt><tt class="docutils literal"><span class="pre">org.apache.http.client.HttpClient.move-requests</span></tt></dt>
+<dd>The rate at which <tt class="docutils literal"><span class="pre">MOVE</span></tt> requests are being sent.</dd>
+<dt><tt class="docutils literal"><span class="pre">org.apache.http.client.HttpClient.patch-requests</span></tt></dt>
+<dd>The rate at which <tt class="docutils literal"><span class="pre">PATCH</span></tt> requests are being sent.</dd>
+<dt><tt class="docutils literal"><span class="pre">org.apache.http.client.HttpClient.other-requests</span></tt></dt>
+<dd>The rate at which requests with none of the above methods are being sent.</dd>
+</dl>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The naming strategy for the metrics associated requests is configurable.
+Specifically, the last part e.g. get-requests.
+What is displayed is <tt class="docutils literal"><span class="pre">HttpClientMetricNameStrategies.METHOD_ONLY</span></tt>, you can
+also include the host via <tt class="docutils literal"><span class="pre">HttpClientMetricNameStrategies.HOST_AND_METHOD</span></tt>
+or a url without query string via <tt class="docutils literal"><span class="pre">HttpClientMetricNameStrategies.QUERYLESS_URL_AND_METHOD</span></tt></p>
+</div>
+</div>
+</div>
+<div class="section" id="jersey-client-version-1-18">
+<span id="man-client-jersey"></span><h2>Jersey Client, version 1.18</h2>
+<p>If <a class="reference external" href="http://hc.apache.org/httpcomponents-core-4.3.x/index.html">HttpClient</a> is too low-level for you, Dropwizard also supports Jersey&#8217;s <a class="reference external" href="https://jersey.java.net/documentation/1.18/client-api.html">Client API</a>.
+Jersey&#8217;s <tt class="docutils literal"><span class="pre">Client</span></tt> allows you to use all of the server-side media type support that your service
+uses to, for example, deserialize <tt class="docutils literal"><span class="pre">application/json</span></tt> request entities as POJOs.</p>
+<p>To create a <a class="reference internal" href="core.html#man-core-managed"><em>managed</em></a>, instrumented <tt class="docutils literal"><span class="pre">JerseyClient</span></tt> instance, your
+<a class="reference internal" href="core.html#man-core-configuration"><em>configuration class</em></a> needs an <a class="reference internal" href="configuration.html#man-configuration-clients-jersey"><em>jersey client configuration</em></a> instance:</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ExampleConfiguration</span> <span class="kd">extends</span> <span class="n">Configuration</span> <span class="o">{</span>
+    <span class="nd">@Valid</span>
+    <span class="nd">@NotNull</span>
+    <span class="kd">private</span> <span class="n">JerseyClientConfiguration</span> <span class="n">httpClient</span> <span class="o">=</span> <span class="k">new</span> <span class="n">JerseyClientConfiguration</span><span class="o">();</span>
+
+    <span class="nd">@JsonProperty</span><span class="o">(</span><span class="s">&quot;httpClient&quot;</span><span class="o">)</span>
+    <span class="kd">public</span> <span class="n">JerseyClientConfiguration</span> <span class="nf">getJerseyClientConfiguration</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">httpClient</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>Then, in your service&#8217;s <tt class="docutils literal"><span class="pre">run</span></tt> method, create a new <tt class="docutils literal"><span class="pre">JerseyClientBuilder</span></tt>:</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="nd">@Override</span>
+<span class="kd">public</span> <span class="kt">void</span> <span class="nf">run</span><span class="o">(</span><span class="n">ExampleConfiguration</span> <span class="n">config</span><span class="o">,</span>
+                <span class="n">Environment</span> <span class="n">environment</span><span class="o">)</span> <span class="o">{</span>
+
+    <span class="kd">final</span> <span class="n">Client</span> <span class="n">client</span> <span class="o">=</span> <span class="k">new</span> <span class="n">JerseyClientBuilder</span><span class="o">(</span><span class="n">environment</span><span class="o">).</span><span class="na">using</span><span class="o">(</span><span class="n">config</span><span class="o">.</span><span class="na">getJerseyClientConfiguration</span><span class="o">())</span>
+                                                              <span class="o">.</span><span class="na">build</span><span class="o">(</span><span class="n">getName</span><span class="o">());</span>
+    <span class="n">environment</span><span class="o">.</span><span class="na">jersey</span><span class="o">().</span><span class="na">register</span><span class="o">(</span><span class="k">new</span> <span class="n">ExternalServiceResource</span><span class="o">(</span><span class="n">client</span><span class="o">));</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+            </div>
+        </div>
+        <hr/>
+        <footer>
+            <p style="float: left">
+            &copy; Copyright 2010-2013, Coda Hale, Yammer Inc..
+            Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>
+            1.1.3.
+            </p>
+            <p style="float: right">Dropwizard v0.8.0</p>
+        </footer>
+    </div>
+</body>
+</html>
+
+

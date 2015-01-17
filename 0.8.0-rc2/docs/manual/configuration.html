@@ -1,0 +1,1415 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Dropwizard Configuration Reference | Dropwizard</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="../_static/dropwizard.css" type="text/css"/>
+    <link rel="top" title="Dropwizard" href="../index.html"/>
+    <link rel="up" title="User Manual" href="index.html"/>
+    <link rel="next" title="About Dropwizard" href="../about/index.html"/>
+    <link rel="prev" title="Dropwizard Example, Step by Step" href="example.html"/>
+    <style lang="text/css">
+        #top-bar, #top-bar small, #top-bar a {
+            text-shadow: 0px -1px 0px #182127;
+            color: #ffffff;
+        }
+        
+        #top-bar {
+            background-color: #363F45;
+            background-image: -moz-linear-gradient(top, #545d63, #182127);
+            background-image: -ms-linear-gradient(top, #545d63, #182127);
+            background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#545d63), to(#182127));
+            background-image: -webkit-linear-gradient(top, #545d63, #182127);
+            background-image: -o-linear-gradient(top, #545d63, #182127);
+            background-image: linear-gradient(top, #545d63, #182127);
+            filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#545d63', endColorstr = '#182127', GradientType = 0);
+            -webkit-border-radius: 0;
+            -moz-border-radius: 0;
+            border-radius: 0;
+        }
+
+
+        .hero-unit {
+            background-image: url("../_static/dropwizard-hat.png") !important;
+            background-repeat: no-repeat !important;
+            background-position: 30px 50px;
+        }
+
+        .hero-unit div.section {
+            padding-left: 150px !important;
+        }
+    </style>
+</head>
+<body>
+    <a href="https://github.com/dropwizard/dropwizard">
+        <img style="position: absolute; top: 0; right: 0; border: 0;"
+             src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_ff7600.png"
+             alt="Fork me on GitHub"></a>
+    <div class="navbar">
+        <div class="navbar-inner container-fluid" id="top-bar">
+            <header class="row-fluid">
+                <h1 class="span12" id="title"><img class="logo" src="../_static/dropwizard-logo.png" alt="Logo"/>
+                    <a href="../index.html">Dropwizard</a>
+                    <small>Production-ready, out of the box.</small>
+                </h1>
+            </header>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <div class="span3" id="sidebar">
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../getting-started.html">Getting Started</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">User Manual</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="core.html">Dropwizard Core</a></li>
+<li class="toctree-l2"><a class="reference internal" href="client.html">Dropwizard Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jdbi.html">Dropwizard JDBI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="migrations.html">Dropwizard Migrations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hibernate.html">Dropwizard Hibernate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="auth.html">Dropwizard Authentication</a></li>
+<li class="toctree-l2"><a class="reference internal" href="forms.html">Dropwizard Forms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="views.html">Dropwizard Views</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scala.html">Dropwizard &amp; Scala</a></li>
+<li class="toctree-l2"><a class="reference internal" href="testing.html">Testing Dropwizard</a></li>
+<li class="toctree-l2"><a class="reference internal" href="example.html">Dropwizard Example, Step by Step</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">Dropwizard Configuration Reference</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#servers">Servers</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#all">All</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#gzip">GZip</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#request-log">Request Log</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#simple">Simple</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#default">Default</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#connectors">Connectors</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#http">HTTP</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#https">HTTPS</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#spdy">SPDY</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#logging">Logging</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#console">Console</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#file">File</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#syslog">Syslog</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#metrics">Metrics</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#all-reporters">All Reporters</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#formatted-reporters">Formatted Reporters</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#console-reporter">Console Reporter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#csv-reporter">CSV Reporter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ganglia-reporter">Ganglia Reporter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#graphite-reporter">Graphite Reporter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#slf4j">SLF4J</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#clients">Clients</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#httpclient">HttpClient</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#jerseyclient">JerseyClient</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../about/index.html">About Dropwizard</a></li>
+</ul>
+
+                <hr/>
+                <ul>
+                    <li><a href="https://dropwizard.github.io/dropwizard/0.8.0">Maven Site</a></li>
+                    <li><a href="https://groups.google.com/forum/#!forum/dropwizard-user">User Mailing List</a></li>
+                    <li><a href="https://groups.google.com/forum/#!forum/dropwizard-dev">Developer Mailing List</a></li>
+                </ul>
+            </div>
+            <div class="span9" id="body">
+                
+  <div class="section" id="dropwizard-configuration-reference">
+<span id="man-configuration"></span><h1>Dropwizard Configuration Reference</h1>
+<p class="rubric">The <tt class="docutils literal"><span class="pre">dropwizard-configuration</span></tt> module provides you with a polymorphic configuration
+mechanism, meaning that a particular section of your configuration file can be implemented
+using one or more configuration classes.</p>
+<p>To use this capability for your own configuration classes, create a top-level configuration interface or class that
+implements <tt class="docutils literal"><span class="pre">Discoverable</span></tt> and add the name of that class to <tt class="docutils literal"><span class="pre">META-INF/services/io.dropwizard.jackson.Discoverable</span></tt>.
+Make sure to use <a class="reference external" href="http://wiki.fasterxml.com/JacksonPolymorphicDeserialization">Jackson polymorphic deserialization</a> annotations appropriately.</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="nd">@JsonTypeInfo</span><span class="o">(</span><span class="n">use</span> <span class="o">=</span> <span class="n">Id</span><span class="o">.</span><span class="na">NAME</span><span class="o">,</span> <span class="n">include</span> <span class="o">=</span> <span class="n">As</span><span class="o">.</span><span class="na">PROPERTY</span><span class="o">,</span> <span class="n">property</span> <span class="o">=</span> <span class="s">&quot;type&quot;</span><span class="o">)</span>
+<span class="kd">interface</span> <span class="nc">WidgetFactory</span> <span class="kd">extends</span> <span class="n">Discoverable</span> <span class="o">{</span>
+    <span class="n">Widget</span> <span class="nf">createWidget</span><span class="o">();</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>Then create subtypes of the top-level type corresponding to each alternative, and add their names to
+<tt class="docutils literal"><span class="pre">META-INF/services/WidgetFactory</span></tt>.</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="nd">@JsonTypeName</span><span class="o">(</span><span class="s">&quot;hammer&quot;</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">HammerFactory</span> <span class="kd">implements</span> <span class="n">WidgetFactory</span> <span class="o">{</span>
+    <span class="nd">@JsonProperty</span>
+    <span class="kd">private</span> <span class="kt">int</span> <span class="n">weight</span> <span class="o">=</span> <span class="mi">10</span><span class="o">;</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="n">Hammer</span> <span class="nf">createWidget</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">Hammer</span><span class="o">(</span><span class="n">weight</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="nd">@JsonTypeName</span><span class="o">(</span><span class="s">&quot;chisel&quot;</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">ChiselFactory</span> <span class="kd">implements</span> <span class="n">WidgetFactory</span> <span class="o">{</span>
+    <span class="nd">@JsonProperty</span>
+    <span class="kd">private</span> <span class="kt">float</span> <span class="n">radius</span> <span class="o">=</span> <span class="mi">1</span><span class="o">;</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="n">Chisel</span> <span class="nf">createWidget</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">Chisel</span><span class="o">(</span><span class="n">weight</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>Now you can use <tt class="docutils literal"><span class="pre">WidgetFactory</span></tt> objects in your application&#8217;s configuration.</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="kd">public</span> <span class="kd">class</span> <span class="nc">MyConfiguration</span> <span class="kd">extends</span> <span class="n">Configuration</span> <span class="o">{</span>
+    <span class="nd">@JsonProperty</span>
+    <span class="nd">@NotNull</span>
+    <span class="nd">@Valid</span>
+    <span class="kd">private</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">WidgetFactory</span><span class="o">&gt;</span> <span class="n">widgets</span><span class="o">;</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">widgets</span><span class="p-Indicator">:</span>
+  <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">type</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">hammer</span>
+    <span class="l-Scalar-Plain">weight</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">20</span>
+  <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">type</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">chisel</span>
+    <span class="l-Scalar-Plain">radius</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">0.4</span>
+</pre></div>
+</div>
+<div class="section" id="servers">
+<span id="man-configuration-servers"></span><h2>Servers</h2>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">server</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">type</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">default</span>
+  <span class="l-Scalar-Plain">maxThreads</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">1024</span>
+</pre></div>
+</div>
+<div class="section" id="all">
+<span id="man-configuration-all"></span><h3>All</h3>
+<div class="section" id="gzip">
+<span id="man-configuration-gzip"></span><h4>GZip</h4>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">server</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">gzip</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">bufferSize</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">8KiB</span>
+</pre></div>
+</div>
+<table border="1" class="docutils">
+<colgroup>
+<col width="17%" />
+<col width="9%" />
+<col width="74%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Name</th>
+<th class="head">Default</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>enabled</td>
+<td>true</td>
+<td>If true, all requests with gzip in their Accept-Content-Encoding
+headers will have their response entities encoded with gzip.</td>
+</tr>
+<tr class="row-odd"><td>minimumEntitySize</td>
+<td>256 bytes</td>
+<td>All response entities under this size are not compressed.</td>
+</tr>
+<tr class="row-even"><td>bufferSize</td>
+<td>8KiB</td>
+<td>The size of the buffer to use when compressing.</td>
+</tr>
+<tr class="row-odd"><td>excludedUserAgents</td>
+<td>[]</td>
+<td>The set of user agents to exclude from compression.</td>
+</tr>
+<tr class="row-even"><td>compressedMimeTypes</td>
+<td>[]</td>
+<td>If specified, the set of mime types to compress.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="request-log">
+<span id="man-configuration-requestlog"></span><h4>Request Log</h4>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">server</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">requestLog</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">timeZone</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">UTC</span>
+</pre></div>
+</div>
+<table border="1" class="docutils">
+<colgroup>
+<col width="20%" />
+<col width="15%" />
+<col width="65%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Name</th>
+<th class="head">Default</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>timeZone</td>
+<td>UTC</td>
+<td>The time zone to which request timestamps will be converted.</td>
+</tr>
+<tr class="row-odd"><td>appenders</td>
+<td>console appender</td>
+<td>The set of AppenderFactory appenders to which requests will be logged.
+<em>TODO</em> See logging/appender refs for more info</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="simple">
+<span id="man-configuration-simple"></span><h3>Simple</h3>
+<p>Extends the attributes that are available to <a class="reference internal" href="#man-configuration-all"><em>all servers</em></a></p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">server</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">type</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">simple</span>
+  <span class="l-Scalar-Plain">applicationContextPath</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">/application</span>
+  <span class="l-Scalar-Plain">adminContextPath</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">/admin</span>
+  <span class="l-Scalar-Plain">connector</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">type</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">http</span>
+    <span class="l-Scalar-Plain">port</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">8080</span>
+</pre></div>
+</div>
+<table border="1" class="docutils">
+<colgroup>
+<col width="22%" />
+<col width="14%" />
+<col width="64%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Name</th>
+<th class="head">Default</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>connector</td>
+<td>http connector</td>
+<td>HttpConnectorFactory HTTP connector listening on port 8080.
+The ConnectorFactory connector which will handle both application
+and admin requests. TODO link to connector below.</td>
+</tr>
+<tr class="row-odd"><td>applicationContextPath</td>
+<td>/application</td>
+<td>The context path of the application servlets, including Jersey.</td>
+</tr>
+<tr class="row-even"><td>adminContextPath</td>
+<td>/admin</td>
+<td>The context path of the admin servlets, including metrics and tasks.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="default">
+<span id="man-configuration-default"></span><h3>Default</h3>
+<p>Extends the attributes that are available to <a class="reference internal" href="#man-configuration-all"><em>all servers</em></a></p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">server</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">adminMinThreads</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">1</span>
+  <span class="l-Scalar-Plain">adminMaxThreads</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">64</span>
+  <span class="l-Scalar-Plain">adminContextPath</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">/</span>
+  <span class="l-Scalar-Plain">applicationContextPath</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">/</span>
+  <span class="l-Scalar-Plain">applicationConnectors</span><span class="p-Indicator">:</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">type</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">http</span>
+      <span class="l-Scalar-Plain">port</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">8080</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">type</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">https</span>
+      <span class="l-Scalar-Plain">port</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">8443</span>
+      <span class="l-Scalar-Plain">keyStorePath</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">example.keystore</span>
+      <span class="l-Scalar-Plain">keyStorePassword</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">example</span>
+      <span class="l-Scalar-Plain">validateCerts</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">false</span>
+  <span class="l-Scalar-Plain">adminConnectors</span><span class="p-Indicator">:</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">type</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">http</span>
+      <span class="l-Scalar-Plain">port</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">8081</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">type</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">https</span>
+      <span class="l-Scalar-Plain">port</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">8444</span>
+      <span class="l-Scalar-Plain">keyStorePath</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">example.keystore</span>
+      <span class="l-Scalar-Plain">keyStorePassword</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">example</span>
+      <span class="l-Scalar-Plain">validateCerts</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">false</span>
+</pre></div>
+</div>
+<table border="1" class="docutils">
+<colgroup>
+<col width="21%" />
+<col width="20%" />
+<col width="59%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Name</th>
+<th class="head">Default</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>applicationConnectors</td>
+<td>An <a class="reference external" href="https://github.com/dropwizard/dropwizard/blob/master/dropwizard-jetty/src/main/java/io/dropwizard/jetty/HttpConnectorFactory.java">HTTP connector</a>
+listening on port 8080.</td>
+<td>A set of <a class="reference internal" href="#man-configuration-connectors"><em>connectors</em></a> which will
+handle application requests.</td>
+</tr>
+<tr class="row-odd"><td>adminConnectors</td>
+<td>An <a class="reference external" href="https://github.com/dropwizard/dropwizard/blob/master/dropwizard-jetty/src/main/java/io/dropwizard/jetty/HttpConnectorFactory.java">HTTP connector</a>
+listening on port 8081.</td>
+<td>An <a class="reference external" href="https://github.com/dropwizard/dropwizard/blob/master/dropwizard-jetty/src/main/java/io/dropwizard/jetty/HttpConnectorFactory.java">HTTP connector</a> listening on port 8081.
+A set of <a class="reference internal" href="#man-configuration-connectors"><em>connectors</em></a> which will
+handle admin requests.</td>
+</tr>
+<tr class="row-even"><td>adminMinThreads</td>
+<td>1</td>
+<td>The minimum number of threads to use for admin requests.</td>
+</tr>
+<tr class="row-odd"><td>adminMaxThreads</td>
+<td>64</td>
+<td>The maximum number of threads to use for admin requests.</td>
+</tr>
+<tr class="row-even"><td>adminContextPath</td>
+<td>/</td>
+<td>The context path of the admin servlets, including metrics and tasks.</td>
+</tr>
+<tr class="row-odd"><td>applicationContextPath</td>
+<td>/</td>
+<td>The context path of the application servlets, including Jersey.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="connectors">
+<span id="man-configuration-connectors"></span><h2>Connectors</h2>
+<div class="section" id="http">
+<span id="man-configuration-http"></span><h3>HTTP</h3>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="c1"># Extending from the default server configuration</span>
+<span class="l-Scalar-Plain">server</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">applicationConnectors</span><span class="p-Indicator">:</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">type</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">http</span>
+      <span class="l-Scalar-Plain">port</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">8080</span>
+      <span class="l-Scalar-Plain">bindHost</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">127.0.0.1</span> <span class="c1"># only bind to loopback</span>
+      <span class="l-Scalar-Plain">headerCacheSize</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">512 bytes</span>
+      <span class="l-Scalar-Plain">outputBufferSize</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">32KiB</span>
+      <span class="l-Scalar-Plain">maxRequestHeaderSize</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">8KiB</span>
+      <span class="l-Scalar-Plain">maxResponseHeaderSize</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">8KiB</span>
+      <span class="l-Scalar-Plain">inputBufferSize</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">8KiB</span>
+      <span class="l-Scalar-Plain">idleTimeout</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">30 seconds</span>
+      <span class="l-Scalar-Plain">minBufferPoolSize</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">64 bytes</span>
+      <span class="l-Scalar-Plain">bufferPoolIncrement</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">1KiB</span>
+      <span class="l-Scalar-Plain">maxBufferPoolSize</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">64KiB</span>
+      <span class="l-Scalar-Plain">acceptorThreads</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">1</span>
+      <span class="l-Scalar-Plain">selectorThreads</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">2</span>
+      <span class="l-Scalar-Plain">acceptQueueSize</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">1024</span>
+      <span class="l-Scalar-Plain">reuseAddress</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">true</span>
+      <span class="l-Scalar-Plain">soLingerTime</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">345s</span>
+      <span class="l-Scalar-Plain">useServerHeader</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">false</span>
+      <span class="l-Scalar-Plain">useDateHeader</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">true</span>
+      <span class="l-Scalar-Plain">useForwardedHeaders</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">true</span>
+</pre></div>
+</div>
+<table border="1" class="docutils">
+<colgroup>
+<col width="18%" />
+<col width="14%" />
+<col width="68%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Name</th>
+<th class="head">Default</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>port</td>
+<td>8080</td>
+<td>The TCP/IP port on which to listen for incoming connections.</td>
+</tr>
+<tr class="row-odd"><td>bindHost</td>
+<td>(none)</td>
+<td>The hostname to bind to.</td>
+</tr>
+<tr class="row-even"><td>headerCacheSize</td>
+<td>512 bytes</td>
+<td>The size of the header field cache.</td>
+</tr>
+<tr class="row-odd"><td>outputBufferSize</td>
+<td>32KiB</td>
+<td>The size of the buffer into which response content is aggregated before being sent to
+the client. A larger buffer can improve performance by allowing a content producer
+to run without blocking, however larger buffers consume more memory and may induce
+some latency before a client starts processing the content.</td>
+</tr>
+<tr class="row-even"><td>maxRequestHeaderSize</td>
+<td>8KiB</td>
+<td>The maximum size of a request header. Larger headers will allow for more and/or
+larger cookies plus larger form content encoded  in a URL. However, larger headers
+consume more memory and can make a server more vulnerable to denial of service
+attacks.</td>
+</tr>
+<tr class="row-odd"><td>maxResponseHeaderSize</td>
+<td>8KiB</td>
+<td>The maximum size of a response header. Larger headers will allow for more and/or
+larger cookies and longer HTTP headers (eg for redirection).  However, larger headers
+will also consume more memory.</td>
+</tr>
+<tr class="row-even"><td>inputBufferSize</td>
+<td>8KiB</td>
+<td>The size of the per-connection input buffer.</td>
+</tr>
+<tr class="row-odd"><td>idleTimeout</td>
+<td>30 seconds</td>
+<td>The maximum idle time for a connection, which roughly translates to the
+<a class="reference external" href="http://docs.oracle.com/javase/7/docs/api/java/net/Socket.html#setSoTimeout(int)">java.net.Socket#setSoTimeout(int)</a> call, although with NIO implementations
+other mechanisms may be used to implement the timeout.
+The max idle time is applied when waiting for a new message to be received on a connection
+or when waiting for a new message to be sent on a connection.
+This value is interpreted as the maximum time between some progress being made on the
+connection. So if a single byte is read or written, then the timeout is reset.</td>
+</tr>
+<tr class="row-even"><td>minBufferPoolSize</td>
+<td>64 bytes</td>
+<td>The minimum size of the buffer pool.</td>
+</tr>
+<tr class="row-odd"><td>bufferPoolIncrement</td>
+<td>1KiB</td>
+<td>The increment by which the buffer pool should be increased.</td>
+</tr>
+<tr class="row-even"><td>maxBufferPoolSize</td>
+<td>64KiB</td>
+<td>The maximum size of the buffer pool.</td>
+</tr>
+<tr class="row-odd"><td>acceptorThreads</td>
+<td># of CPUs/2</td>
+<td>The number of worker threads dedicated to accepting connections.</td>
+</tr>
+<tr class="row-even"><td>selectorThreads</td>
+<td># of CPUs</td>
+<td>The number of worker threads dedicated to sending and receiving data.</td>
+</tr>
+<tr class="row-odd"><td>acceptQueueSize</td>
+<td>(OS default)</td>
+<td>The size of the TCP/IP accept queue for the listening socket.</td>
+</tr>
+<tr class="row-even"><td>reuseAddress</td>
+<td>true</td>
+<td>Whether or not <tt class="docutils literal"><span class="pre">SO_REUSEADDR</span></tt> is enabled on the listening socket.</td>
+</tr>
+<tr class="row-odd"><td>soLingerTime</td>
+<td>(disabled)</td>
+<td>Enable/disable <tt class="docutils literal"><span class="pre">SO_LINGER</span></tt> with the specified linger time.</td>
+</tr>
+<tr class="row-even"><td>useServerHeader</td>
+<td>false</td>
+<td>Whether or not to add the <tt class="docutils literal"><span class="pre">Server</span></tt> header to each response.</td>
+</tr>
+<tr class="row-odd"><td>useDateHeader</td>
+<td>true</td>
+<td>Whether or not to add the <tt class="docutils literal"><span class="pre">Date</span></tt> header to each response.</td>
+</tr>
+<tr class="row-even"><td>useForwardedHeaders</td>
+<td>true</td>
+<td>Whether or not to look at <tt class="docutils literal"><span class="pre">X-Forwarded-*</span></tt> headers added by proxies. See
+<a class="reference external" href="http://download.eclipse.org/jetty/stable-9/apidocs/org/eclipse/jetty/server/ForwardedRequestCustomizer.html">ForwardedRequestCustomizer</a> for details.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="https">
+<span id="man-configuration-https"></span><h3>HTTPS</h3>
+<p>Extends the attributes that are available to the <a class="reference internal" href="#man-configuration-http"><em>HTTP connector</em></a></p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="c1"># Extending from the default server configuration</span>
+<span class="l-Scalar-Plain">server</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">applicationConnectors</span><span class="p-Indicator">:</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">type</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">https</span>
+      <span class="l-Scalar-Plain">port</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">8443</span>
+      <span class="l-Scalar-Plain">....</span>
+      <span class="l-Scalar-Plain">keyStorePath</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">/path/to/file</span>
+      <span class="l-Scalar-Plain">keyStorePassword</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">changeit</span>
+      <span class="l-Scalar-Plain">keyStoreType</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">JKS</span>
+      <span class="l-Scalar-Plain">keyStoreProvider</span><span class="p-Indicator">:</span>
+      <span class="l-Scalar-Plain">trustStorePath</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">/path/to/file</span>
+      <span class="l-Scalar-Plain">trustStorePassword</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">changeit</span>
+      <span class="l-Scalar-Plain">trustStoreType</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">JKS</span>
+      <span class="l-Scalar-Plain">trustStoreProvider</span><span class="p-Indicator">:</span>
+      <span class="l-Scalar-Plain">keyManagerPassword</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">changeit</span>
+      <span class="l-Scalar-Plain">needClientAuth</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">false</span>
+      <span class="l-Scalar-Plain">wantClientAuth</span><span class="p-Indicator">:</span>
+      <span class="l-Scalar-Plain">certAlias</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">&lt;alias&gt;</span>
+      <span class="l-Scalar-Plain">crlPath</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">/path/to/file</span>
+      <span class="l-Scalar-Plain">enableCRLDP</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">false</span>
+      <span class="l-Scalar-Plain">enableOCSP</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">false</span>
+      <span class="l-Scalar-Plain">maxCertPathLength</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">(unlimited)</span>
+      <span class="l-Scalar-Plain">ocspResponderUrl</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">(none)</span>
+      <span class="l-Scalar-Plain">jceProvider</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">(none)</span>
+      <span class="l-Scalar-Plain">validateCerts</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">true</span>
+      <span class="l-Scalar-Plain">validatePeers</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">true</span>
+      <span class="l-Scalar-Plain">supportedProtocols</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">SSLv3</span>
+      <span class="l-Scalar-Plain">excludedProtocols</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">(none)</span>
+      <span class="l-Scalar-Plain">supportedCipherSuites</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256</span>
+      <span class="l-Scalar-Plain">excludedCipherSuites</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">(none)</span>
+      <span class="l-Scalar-Plain">allowRenegotiation</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">true</span>
+      <span class="l-Scalar-Plain">endpointIdentificationAlgorithm</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">(none)</span>
+</pre></div>
+</div>
+<table border="1" class="docutils">
+<colgroup>
+<col width="24%" />
+<col width="13%" />
+<col width="63%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Name</th>
+<th class="head">Default</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>keyStorePath</td>
+<td>REQUIRED</td>
+<td>The path to the Java key store which contains the host certificate and private key.</td>
+</tr>
+<tr class="row-odd"><td>keyStorePassword</td>
+<td>REQUIRED</td>
+<td>The password used to access the key store.</td>
+</tr>
+<tr class="row-even"><td>keyStoreType</td>
+<td>JKS</td>
+<td>The type of key store (usually <tt class="docutils literal"><span class="pre">JKS</span></tt>, <tt class="docutils literal"><span class="pre">PKCS12</span></tt>, JCEKS``,
+<tt class="docutils literal"><span class="pre">Windows-MY</span></tt>}, or <tt class="docutils literal"><span class="pre">Windows-ROOT</span></tt>).</td>
+</tr>
+<tr class="row-odd"><td>keyStoreProvider</td>
+<td>(none)</td>
+<td>The JCE provider to use to access the key store.</td>
+</tr>
+<tr class="row-even"><td>trustStorePath</td>
+<td>(none)</td>
+<td>The path to the Java key store which contains the CA certificates used to establish
+trust.</td>
+</tr>
+<tr class="row-odd"><td>trustStorePassword</td>
+<td>(none)</td>
+<td>The password used to access the trust store.</td>
+</tr>
+<tr class="row-even"><td>trustStoreType</td>
+<td>JKS</td>
+<td>The type of trust store (usually <tt class="docutils literal"><span class="pre">JKS</span></tt>, <tt class="docutils literal"><span class="pre">PKCS12</span></tt>, <tt class="docutils literal"><span class="pre">JCEKS</span></tt>,
+<tt class="docutils literal"><span class="pre">Windows-MY</span></tt>, or <tt class="docutils literal"><span class="pre">Windows-ROOT</span></tt>).</td>
+</tr>
+<tr class="row-odd"><td>trustStoreProvider</td>
+<td>(none)</td>
+<td>The JCE provider to use to access the trust store.</td>
+</tr>
+<tr class="row-even"><td>keyManagerPassword</td>
+<td>(none)</td>
+<td>The password, if any, for the key manager.</td>
+</tr>
+<tr class="row-odd"><td>needClientAuth</td>
+<td>(none)</td>
+<td>Whether or not client authentication is required.</td>
+</tr>
+<tr class="row-even"><td>wantClientAuth</td>
+<td>(none)</td>
+<td>Whether or not client authentication is requested.</td>
+</tr>
+<tr class="row-odd"><td>certAlias</td>
+<td>(none)</td>
+<td>The alias of the certificate to use.</td>
+</tr>
+<tr class="row-even"><td>crlPath</td>
+<td>(none)</td>
+<td>The path to the file which contains the Certificate Revocation List.</td>
+</tr>
+<tr class="row-odd"><td>enableCRLDP</td>
+<td>false</td>
+<td>Whether or not CRL Distribution Points (CRLDP) support is enabled.</td>
+</tr>
+<tr class="row-even"><td>enableOCSP</td>
+<td>false</td>
+<td>Whether or not On-Line Certificate Status Protocol (OCSP) support is enabled.</td>
+</tr>
+<tr class="row-odd"><td>maxCertPathLength</td>
+<td>(unlimited)</td>
+<td>The maximum certification path length.</td>
+</tr>
+<tr class="row-even"><td>ocspResponderUrl</td>
+<td>(none)</td>
+<td>The location of the OCSP responder.</td>
+</tr>
+<tr class="row-odd"><td>jceProvider</td>
+<td>(none)</td>
+<td>The name of the JCE provider to use for cryptographic support.</td>
+</tr>
+<tr class="row-even"><td>validateCerts</td>
+<td>true</td>
+<td>Whether or not to validate TLS certificates before starting. If enabled, Dropwizard
+will refuse to start with expired or otherwise invalid certificates.</td>
+</tr>
+<tr class="row-odd"><td>validatePeers</td>
+<td>true</td>
+<td>Whether or not to validate TLS peer certificates.</td>
+</tr>
+<tr class="row-even"><td>supportedProtocols</td>
+<td>(none)</td>
+<td>A list of protocols (e.g., <tt class="docutils literal"><span class="pre">SSLv3</span></tt>, <tt class="docutils literal"><span class="pre">TLSv1</span></tt>) which are supported. All
+other protocols will be refused.</td>
+</tr>
+<tr class="row-odd"><td>excludedProtocols</td>
+<td>(none)</td>
+<td>A list of protocols (e.g., <tt class="docutils literal"><span class="pre">SSLv3</span></tt>, <tt class="docutils literal"><span class="pre">TLSv1</span></tt>) which are excluded. These
+protocols will be refused.</td>
+</tr>
+<tr class="row-even"><td>supportedCipherSuites</td>
+<td>(none)</td>
+<td>A list of cipher suites (e.g., <tt class="docutils literal"><span class="pre">TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256</span></tt>) which
+are supported. All other cipher suites will be refused</td>
+</tr>
+<tr class="row-odd"><td>excludedCipherSuites</td>
+<td>(none)</td>
+<td>A list of cipher suites (e.g., <tt class="docutils literal"><span class="pre">TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256</span></tt>) which
+are excluded. These cipher suites will be refused and exclusion takes higher
+precedence than inclusion, such that if a cipher suite is listed in
+<tt class="docutils literal"><span class="pre">supportedCipherSuites</span></tt> and <tt class="docutils literal"><span class="pre">excludedCipherSuitse</span></tt>, the cipher suite will be
+excluded. To verify that the proper cipher suites are being whitelisted and
+blacklisted, it is recommended to use the tool <a class="reference external" href="https://github.com/iSECPartners/sslyze">sslyze</a>.</td>
+</tr>
+<tr class="row-even"><td>allowRenegotiation</td>
+<td>true</td>
+<td>Whether or not TLS renegotiation is allowed.</td>
+</tr>
+<tr class="row-odd"><td>endpointIdentificationAlgorithm</td>
+<td>(none)</td>
+<td>Which endpoint identification algorithm, if any, to use during the TLS handshake.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="spdy">
+<span id="man-configuration-spdy"></span><h3>SPDY</h3>
+<p>Extends the attributes that are available to the <a class="reference internal" href="#man-configuration-https"><em>HTTPS connector</em></a></p>
+<p>For this connector to work with ALPN protocol you need to provide alpn-boot library to JVM&#8217;s bootpath.
+The correct library version depends on the JVM version. Consult Jetty ALPN <a class="reference external" href="http://www.eclipse.org/jetty/documentation/current/alpn-chapter.html">guide</a> for the reference.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">server</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">applicationConnectors</span><span class="p-Indicator">:</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">type</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">spdy3</span>
+      <span class="l-Scalar-Plain">port</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">8445</span>
+      <span class="l-Scalar-Plain">keyStorePath</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">example.keystore</span>
+      <span class="l-Scalar-Plain">keyStorePassword</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">example</span>
+      <span class="l-Scalar-Plain">validateCerts</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">false</span>
+</pre></div>
+</div>
+<table border="1" class="docutils">
+<colgroup>
+<col width="23%" />
+<col width="12%" />
+<col width="65%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Name</th>
+<th class="head">Default</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>pushStrategy</td>
+<td>(none)</td>
+<td>The <a class="reference external" href="https://github.com/dropwizard/dropwizard/blob/master/dropwizard-spdy/src/main/java/io/dropwizard/spdy/PushStrategyFactory.java">push strategy</a> to use for server-initiated SPDY pushes.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="logging">
+<span id="man-configuration-logging"></span><h2>Logging</h2>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">logging</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">level</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">INFO</span>
+  <span class="l-Scalar-Plain">loggers</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">io.dropwizard</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">INFO</span>
+  <span class="l-Scalar-Plain">appenders</span><span class="p-Indicator">:</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">type</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">console</span>
+</pre></div>
+</div>
+<table border="1" class="docutils">
+<colgroup>
+<col width="35%" />
+<col width="17%" />
+<col width="48%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Name</th>
+<th class="head">Default</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>level</td>
+<td>Level.INFO</td>
+<td>Logback logging level</td>
+</tr>
+<tr class="row-odd"><td>loggers</td>
+<td>(none)</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>appenders</td>
+<td>(none)</td>
+<td>one of console, file or syslog</td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="console">
+<span id="man-configuration-logging-console"></span><h3>Console</h3>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">logging</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">level</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">INFO</span>
+  <span class="l-Scalar-Plain">appenders</span><span class="p-Indicator">:</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">type</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">console</span>
+      <span class="l-Scalar-Plain">threshold</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">ALL</span>
+      <span class="l-Scalar-Plain">timeZone</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">UTC</span>
+      <span class="l-Scalar-Plain">target</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">stdout</span>
+      <span class="l-Scalar-Plain">logFormat</span><span class="p-Indicator">:</span> <span class="c1"># TODO</span>
+</pre></div>
+</div>
+<table border="1" class="docutils">
+<colgroup>
+<col width="23%" />
+<col width="11%" />
+<col width="66%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Name</th>
+<th class="head">Default</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>type</td>
+<td>REQUIRED</td>
+<td>The appender type. Must be <tt class="docutils literal"><span class="pre">console</span></tt>.</td>
+</tr>
+<tr class="row-odd"><td>threshold</td>
+<td>ALL</td>
+<td>The lowest level of events to print to the console.</td>
+</tr>
+<tr class="row-even"><td>timeZone</td>
+<td>UTC</td>
+<td>The time zone to which event timestamps will be converted.</td>
+</tr>
+<tr class="row-odd"><td>target</td>
+<td>stdout</td>
+<td>The name of the standard stream to which events will be written.
+Can be <tt class="docutils literal"><span class="pre">stdout</span></tt> or <tt class="docutils literal"><span class="pre">stderr</span></tt>.</td>
+</tr>
+<tr class="row-even"><td>logFormat</td>
+<td>default</td>
+<td>The Logback pattern with which events will be formatted. See
+the <a class="reference external" href="http://logback.qos.ch/manual/layouts.html#conversionWord">Logback</a> documentation for details.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="file">
+<span id="man-configuration-logging-file"></span><h3>File</h3>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">logging</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">level</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">INFO</span>
+  <span class="l-Scalar-Plain">appenders</span><span class="p-Indicator">:</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">type</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">file</span>
+      <span class="l-Scalar-Plain">currentLogFilename</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">/var/log/myapplication.log</span>
+      <span class="l-Scalar-Plain">threshold</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">ALL</span>
+      <span class="l-Scalar-Plain">archive</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">true</span>
+      <span class="l-Scalar-Plain">archivedLogFilenamePattern</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">/var/log/myapplication-%d.log</span>
+      <span class="l-Scalar-Plain">archivedFileCount</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">5</span>
+      <span class="l-Scalar-Plain">timeZone</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">UTC</span>
+      <span class="l-Scalar-Plain">logFormat</span><span class="p-Indicator">:</span> <span class="c1"># TODO</span>
+</pre></div>
+</div>
+<table border="1" class="docutils">
+<colgroup>
+<col width="20%" />
+<col width="8%" />
+<col width="72%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Name</th>
+<th class="head">Default</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>type</td>
+<td>REQUIRED</td>
+<td>The appender type. Must be <tt class="docutils literal"><span class="pre">file</span></tt>.</td>
+</tr>
+<tr class="row-odd"><td>currentLogFilename</td>
+<td>REQUIRED</td>
+<td>The filename where current events are logged.</td>
+</tr>
+<tr class="row-even"><td>threshold</td>
+<td>ALL</td>
+<td>The lowest level of events to write to the file.</td>
+</tr>
+<tr class="row-odd"><td>archive</td>
+<td>true</td>
+<td>Whether or not to archive old events in separate files.</td>
+</tr>
+<tr class="row-even"><td>archivedLogFilenamePattern</td>
+<td>(none)</td>
+<td>Required if <tt class="docutils literal"><span class="pre">archive</span></tt> is <tt class="docutils literal"><span class="pre">true</span></tt>.
+The filename pattern for archived files. <tt class="docutils literal"><span class="pre">%d</span></tt> is replaced with the date in <tt class="docutils literal"><span class="pre">yyyy-MM-dd</span></tt> form,
+and the fact that it ends with <tt class="docutils literal"><span class="pre">.gz</span></tt> indicates the file will be gzipped as it&#8217;s archived.
+Likewise, filename patterns which end in <tt class="docutils literal"><span class="pre">.zip</span></tt> will be filled as they are archived.</td>
+</tr>
+<tr class="row-odd"><td>archivedFileCount</td>
+<td>5</td>
+<td>The number of archived files to keep. Must be between <tt class="docutils literal"><span class="pre">1</span></tt> and <tt class="docutils literal"><span class="pre">50</span></tt>.</td>
+</tr>
+<tr class="row-even"><td>timeZone</td>
+<td>UTC</td>
+<td>The time zone to which event timestamps will be converted.</td>
+</tr>
+<tr class="row-odd"><td>logFormat</td>
+<td>default</td>
+<td>The Logback pattern with which events will be formatted. See
+the <a class="reference external" href="http://logback.qos.ch/manual/layouts.html#conversionWord">Logback</a> documentation for details.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="syslog">
+<span id="man-configuration-logging-syslog"></span><h3>Syslog</h3>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">logging</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">level</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">INFO</span>
+  <span class="l-Scalar-Plain">appenders</span><span class="p-Indicator">:</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">type</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">syslog</span>
+      <span class="l-Scalar-Plain">host</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">localhost</span>
+      <span class="l-Scalar-Plain">port</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">514</span>
+      <span class="l-Scalar-Plain">facility</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">local0</span>
+      <span class="l-Scalar-Plain">threshold</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">ALL</span>
+      <span class="l-Scalar-Plain">stackTracePrefix</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">\t</span>
+      <span class="l-Scalar-Plain">logFormat</span><span class="p-Indicator">:</span> <span class="c1"># TODO</span>
+</pre></div>
+</div>
+<table border="1" class="docutils">
+<colgroup>
+<col width="20%" />
+<col width="8%" />
+<col width="72%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Name</th>
+<th class="head">Default</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>host</td>
+<td>localhost</td>
+<td>The hostname of the syslog server.</td>
+</tr>
+<tr class="row-odd"><td>port</td>
+<td>514</td>
+<td>The port on which the syslog server is listening.</td>
+</tr>
+<tr class="row-even"><td>facility</td>
+<td>local0</td>
+<td>The syslog facility to use. Can be either <tt class="docutils literal"><span class="pre">auth</span></tt>, <tt class="docutils literal"><span class="pre">authpriv</span></tt>,
+<tt class="docutils literal"><span class="pre">daemon</span></tt>, <tt class="docutils literal"><span class="pre">cron</span></tt>, <tt class="docutils literal"><span class="pre">ftp</span></tt>, <tt class="docutils literal"><span class="pre">lpr</span></tt>, <tt class="docutils literal"><span class="pre">kern</span></tt>, <tt class="docutils literal"><span class="pre">mail</span></tt>,
+<tt class="docutils literal"><span class="pre">news</span></tt>, <tt class="docutils literal"><span class="pre">syslog</span></tt>, <tt class="docutils literal"><span class="pre">user</span></tt>, <tt class="docutils literal"><span class="pre">uucp</span></tt>, <tt class="docutils literal"><span class="pre">local0</span></tt>,
+<tt class="docutils literal"><span class="pre">local1</span></tt>, <tt class="docutils literal"><span class="pre">local2</span></tt>, <tt class="docutils literal"><span class="pre">local3</span></tt>, <tt class="docutils literal"><span class="pre">local4</span></tt>, <tt class="docutils literal"><span class="pre">local5</span></tt>,
+<tt class="docutils literal"><span class="pre">local6</span></tt>, or <tt class="docutils literal"><span class="pre">local7</span></tt>.</td>
+</tr>
+<tr class="row-odd"><td>threshold</td>
+<td>ALL</td>
+<td>The lowest level of events to write to the file.</td>
+</tr>
+<tr class="row-even"><td>logFormat</td>
+<td>default</td>
+<td>The Logback pattern with which events will be formatted. See
+the <a class="reference external" href="http://logback.qos.ch/manual/layouts.html#conversionWord">Logback</a> documentation for details.</td>
+</tr>
+<tr class="row-odd"><td>stackTracePrefix</td>
+<td>t</td>
+<td>The prefix to use when writing stack trace lines (these are sent
+to the syslog server separately from the main message)</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="metrics">
+<span id="man-configuration-metrics"></span><h2>Metrics</h2>
+<p>The metrics configuration has two fields; frequency and reporters.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">metrics</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">frequency</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">1 second</span>
+  <span class="l-Scalar-Plain">reporters</span><span class="p-Indicator">:</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">type</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">&lt;type&gt;</span>
+</pre></div>
+</div>
+<table border="1" class="docutils">
+<colgroup>
+<col width="24%" />
+<col width="12%" />
+<col width="64%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Name</th>
+<th class="head">Default</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>frequency</td>
+<td>1 second</td>
+<td>The frequency to report metrics. Overridable per-reporter.</td>
+</tr>
+<tr class="row-odd"><td>reporters</td>
+<td>(none)</td>
+<td>A list of reporters to report metrics.</td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="all-reporters">
+<span id="man-configuration-metrics-all"></span><h3>All Reporters</h3>
+<p>The following options are available for all metrics reporters.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">metrics</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">reporters</span><span class="p-Indicator">:</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">type</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">&lt;type&gt;</span>
+      <span class="l-Scalar-Plain">durationUnit</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">milliseconds</span>
+      <span class="l-Scalar-Plain">rateUnit</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">seconds</span>
+      <span class="l-Scalar-Plain">excludes</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">(none)</span>
+      <span class="l-Scalar-Plain">includes</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">(all)</span>
+      <span class="l-Scalar-Plain">frequency</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">1 second</span>
+</pre></div>
+</div>
+<table border="1" class="docutils">
+<colgroup>
+<col width="17%" />
+<col width="10%" />
+<col width="73%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Name</th>
+<th class="head">Default</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>durationUnit</td>
+<td>milliseconds</td>
+<td>The unit to report durations as. Overrides per-metric duration units.</td>
+</tr>
+<tr class="row-odd"><td>rateUnit</td>
+<td>seconds</td>
+<td>The unit to report rates as. Overrides per-metric rate units.</td>
+</tr>
+<tr class="row-even"><td>excludes</td>
+<td>(none)</td>
+<td>Metrics to exclude from reports, by name. When defined, matching metrics will not be reported.</td>
+</tr>
+<tr class="row-odd"><td>includes</td>
+<td>(all)</td>
+<td>Metrics to include in reports, by name. When defined, only these metrics will be reported.</td>
+</tr>
+<tr class="row-even"><td>frequency</td>
+<td>(none)</td>
+<td>The frequency to report metrics. Overrides the default.</td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="formatted-reporters">
+<span id="man-configuration-metrics-formatted"></span><h4>Formatted Reporters</h4>
+<p>These options are available only to &#8220;formatted&#8221; reporters and extend the options available to <a class="reference internal" href="#man-configuration-metrics-all"><em>all reporters</em></a></p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">metrics</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">reporters</span><span class="p-Indicator">:</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">type</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">&lt;type&gt;</span>
+      <span class="l-Scalar-Plain">locale</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">&lt;system default&gt;</span>
+</pre></div>
+</div>
+<table border="1" class="docutils">
+<colgroup>
+<col width="25%" />
+<col width="17%" />
+<col width="58%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Name</th>
+<th class="head">Default</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>locale</td>
+<td>System default</td>
+<td>The <a class="reference external" href="http://docs.oracle.com/javase/7/docs/api/java/util/Locale.html">Locale</a> for formatting numbers, dates and times.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="console-reporter">
+<span id="man-configuration-metrics-console"></span><h3>Console Reporter</h3>
+<p>Reports metrics periodically to the console.</p>
+<p>Extends the attributes that are available to <a class="reference internal" href="#man-configuration-metrics-formatted"><em>formatted reporters</em></a></p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">metrics</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">reporters</span><span class="p-Indicator">:</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">type</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">console</span>
+      <span class="l-Scalar-Plain">timeZone</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">UTC</span>
+      <span class="l-Scalar-Plain">output</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">stdout</span>
+</pre></div>
+</div>
+<table border="1" class="docutils">
+<colgroup>
+<col width="24%" />
+<col width="16%" />
+<col width="60%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Name</th>
+<th class="head">Default</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>timeZone</td>
+<td>UTC</td>
+<td>The timezone to display dates/times for.</td>
+</tr>
+<tr class="row-odd"><td>output</td>
+<td>stdout</td>
+<td>The stream to write to. One of <tt class="docutils literal"><span class="pre">stdout</span></tt> or <tt class="docutils literal"><span class="pre">stderr</span></tt>.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="csv-reporter">
+<span id="man-configuration-metrics-csv"></span><h3>CSV Reporter</h3>
+<p>Reports metrics periodically to a CSV file.</p>
+<p>Extends the attributes that are available to <a class="reference internal" href="#man-configuration-metrics-formatted"><em>formatted reporters</em></a></p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">metrics</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">reporters</span><span class="p-Indicator">:</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">type</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">csv</span>
+      <span class="l-Scalar-Plain">file</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">/path/to/file</span>
+</pre></div>
+</div>
+<table border="1" class="docutils">
+<colgroup>
+<col width="31%" />
+<col width="21%" />
+<col width="47%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Name</th>
+<th class="head">Default</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>file</td>
+<td>No default</td>
+<td>The CSV file to write metrics to.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="ganglia-reporter">
+<span id="man-configuration-metrics-ganglia"></span><h3>Ganglia Reporter</h3>
+<p>Reports metrics periodically to Ganglia.</p>
+<p>Extends the attributes that are available to <a class="reference internal" href="#man-configuration-metrics-all"><em>all reporters</em></a></p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">You will need to add <tt class="docutils literal"><span class="pre">dropwizard-metrics-ganglia</span></tt> to your POM.</p>
+</div>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">metrics</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">reporters</span><span class="p-Indicator">:</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">type</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">ganglia</span>
+      <span class="l-Scalar-Plain">host</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">localhost</span>
+      <span class="l-Scalar-Plain">port</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">8649</span>
+      <span class="l-Scalar-Plain">mode</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">unicast</span>
+      <span class="l-Scalar-Plain">ttl</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">1</span>
+      <span class="l-Scalar-Plain">uuid</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">(none)</span>
+      <span class="l-Scalar-Plain">spoof</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">localhost:8649</span>
+      <span class="l-Scalar-Plain">tmax</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">60</span>
+      <span class="l-Scalar-Plain">dmax</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">0</span>
+</pre></div>
+</div>
+<table border="1" class="docutils">
+<colgroup>
+<col width="16%" />
+<col width="11%" />
+<col width="73%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Name</th>
+<th class="head">Default</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>host</td>
+<td>localhost</td>
+<td>The hostname (or group) of the Ganglia server(s) to report to.</td>
+</tr>
+<tr class="row-odd"><td>port</td>
+<td>8649</td>
+<td>The port of the Ganglia server(s) to report to.</td>
+</tr>
+<tr class="row-even"><td>mode</td>
+<td>unicast</td>
+<td>The UDP addressing mode to announce the metrics with. One of <tt class="docutils literal"><span class="pre">unicast</span></tt>
+or <tt class="docutils literal"><span class="pre">multicast</span></tt>.</td>
+</tr>
+<tr class="row-odd"><td>ttl</td>
+<td>1</td>
+<td>The time-to-live of the UDP packets for the announced metrics.</td>
+</tr>
+<tr class="row-even"><td>uuid</td>
+<td>(none)</td>
+<td>The UUID to tag announced metrics with.</td>
+</tr>
+<tr class="row-odd"><td>spoof</td>
+<td>(none)</td>
+<td>The hostname and port to use instead of this nodes for the announced metrics.
+In the format <tt class="docutils literal"><span class="pre">hostname:port</span></tt>.</td>
+</tr>
+<tr class="row-even"><td>tmax</td>
+<td>60</td>
+<td>The tmax value to annouce metrics with.</td>
+</tr>
+<tr class="row-odd"><td>dmax</td>
+<td>0</td>
+<td>The dmax value to announce metrics with.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="graphite-reporter">
+<span id="man-configuration-metrics-graphite"></span><h3>Graphite Reporter</h3>
+<p>Reports metrics periodically to Graphite.</p>
+<p>Extends the attributes that are available to <a class="reference internal" href="#man-configuration-metrics-all"><em>all reporters</em></a></p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">You will need to add <tt class="docutils literal"><span class="pre">dropwizard-metrics-graphite</span></tt> to your POM.</p>
+</div>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">metrics</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">reporters</span><span class="p-Indicator">:</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">type</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">graphite</span>
+      <span class="l-Scalar-Plain">host</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">localhost</span>
+      <span class="l-Scalar-Plain">port</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">8080</span>
+      <span class="l-Scalar-Plain">prefix</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">&lt;prefix&gt;</span>
+</pre></div>
+</div>
+<table border="1" class="docutils">
+<colgroup>
+<col width="16%" />
+<col width="11%" />
+<col width="73%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Name</th>
+<th class="head">Default</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>host</td>
+<td>localhost</td>
+<td>The hostname of the Graphite server to report to.</td>
+</tr>
+<tr class="row-odd"><td>port</td>
+<td>8080</td>
+<td>The port of the Graphite server to report to.</td>
+</tr>
+<tr class="row-even"><td>prefix</td>
+<td>(none)</td>
+<td>The prefix for Metric key names to report to Graphite.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="slf4j">
+<span id="man-configuration-metrics-slf4j"></span><h3>SLF4J</h3>
+<p>Reports metrics periodically by logging via SLF4J.</p>
+<p>Extends the attributes that are available to <a class="reference internal" href="#man-configuration-metrics-all"><em>all reporters</em></a></p>
+<p>See <a class="reference external" href="https://github.com/dropwizard/dropwizard/blob/master/dropwizard-metrics/src/main/java/io/dropwizard/metrics/BaseReporterFactory.java">BaseReporterFactory</a>  and <a class="reference external" href="https://github.com/dropwizard/dropwizard/blob/master/dropwizard-metrics/src/main/java/io/dropwizard/metrics/BaseFormattedReporterFactory.java">BaseFormattedReporterFactory</a> for more options.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">metrics</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">reporters</span><span class="p-Indicator">:</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">type</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">log</span>
+      <span class="l-Scalar-Plain">logger</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">metrics</span>
+      <span class="l-Scalar-Plain">markerName</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">&lt;marker name&gt;</span>
+</pre></div>
+</div>
+<table border="1" class="docutils">
+<colgroup>
+<col width="16%" />
+<col width="11%" />
+<col width="73%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Name</th>
+<th class="head">Default</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>logger</td>
+<td>metrics</td>
+<td>The name of the logger to write metrics to.</td>
+</tr>
+<tr class="row-odd"><td>markerName</td>
+<td>(none)</td>
+<td>The name of the marker to mark logged metrics with.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="clients">
+<span id="man-configuration-clients"></span><h2>Clients</h2>
+<div class="section" id="httpclient">
+<span id="man-configuration-clients-http"></span><h3>HttpClient</h3>
+<p>See <a class="reference external" href="https://github.com/dropwizard/dropwizard/blob/master/dropwizard-client/src/main/java/io/dropwizard/client/HttpClientConfiguration.java">HttpClientConfiguration</a>  for more options.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">httpClient</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">timeout</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">500ms</span>
+  <span class="l-Scalar-Plain">connectionTimeout</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">500ms</span>
+  <span class="l-Scalar-Plain">timeToLive</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">1h</span>
+  <span class="l-Scalar-Plain">cookiesEnabled</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">false</span>
+  <span class="l-Scalar-Plain">maxConnections</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">1024</span>
+  <span class="l-Scalar-Plain">maxConnectionsPerRoute</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">1024</span>
+  <span class="l-Scalar-Plain">keepAlive</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">0ms</span>
+  <span class="l-Scalar-Plain">retries</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">0</span>
+  <span class="l-Scalar-Plain">userAgent</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">&lt;application name&gt; (&lt;client name&gt;)</span>
+</pre></div>
+</div>
+<table border="1" class="docutils">
+<colgroup>
+<col width="17%" />
+<col width="26%" />
+<col width="57%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Name</th>
+<th class="head">Default</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>timeout</td>
+<td>500 milliseconds</td>
+<td>The maximum idle time for a connection, once established.</td>
+</tr>
+<tr class="row-odd"><td>connectionTimeout</td>
+<td>500 milliseconds</td>
+<td>The maximum time to wait for a connection to open.</td>
+</tr>
+<tr class="row-even"><td>connectionRequestTimeout</td>
+<td>500 milliseconds</td>
+<td>The maximum time to wait for a connection to be returned from the connection pool.</td>
+</tr>
+<tr class="row-odd"><td>timeToLive</td>
+<td>1 hour</td>
+<td>The maximum time a pooled connection can stay idle (not leased to any thread)
+before it is shut down.</td>
+</tr>
+<tr class="row-even"><td>cookiesEnabled</td>
+<td>false</td>
+<td>Whether or not to enable cookies.</td>
+</tr>
+<tr class="row-odd"><td>maxConnections</td>
+<td>1024</td>
+<td>The maximum number of concurrent open connections.</td>
+</tr>
+<tr class="row-even"><td>maxConnectionsPerRoute</td>
+<td>1024</td>
+<td>The maximum number of concurrent open connections per route.</td>
+</tr>
+<tr class="row-odd"><td>keepAlive</td>
+<td>0 milliseconds</td>
+<td>The maximum time a connection will be kept alive before it is reconnected. If set
+to 0, connections will be immediately closed after every request/response.</td>
+</tr>
+<tr class="row-even"><td>retries</td>
+<td>0</td>
+<td>The number of times to retry failed requests. Requests are only
+retried if they throw an exception other than <tt class="docutils literal"><span class="pre">InterruptedIOException</span></tt>,
+<tt class="docutils literal"><span class="pre">UnknownHostException</span></tt>, <tt class="docutils literal"><span class="pre">ConnectException</span></tt>, or <tt class="docutils literal"><span class="pre">SSLException</span></tt>.</td>
+</tr>
+<tr class="row-odd"><td>userAgent</td>
+<td><tt class="docutils literal"><span class="pre">applicationName</span></tt> (<tt class="docutils literal"><span class="pre">clientName</span></tt>)</td>
+<td>The User-Agent to send with requests.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="jerseyclient">
+<span id="man-configuration-clients-jersey"></span><h3>JerseyClient</h3>
+<p>Extends the attributes that are available to <a class="reference internal" href="#man-configuration-clients-http"><em>http clients</em></a></p>
+<p>See <a class="reference external" href="https://github.com/dropwizard/dropwizard/blob/master/dropwizard-client/src/main/java/io/dropwizard/client/JerseyClientConfiguration.java">JerseyClientConfiguration</a> and <a class="reference external" href="https://github.com/dropwizard/dropwizard/blob/master/dropwizard-client/src/main/java/io/dropwizard/client/HttpClientConfiguration.java">HttpClientConfiguration</a> for more options.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">jerseyClient</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">minThreads</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">1</span>
+  <span class="l-Scalar-Plain">maxThreads</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">128</span>
+  <span class="l-Scalar-Plain">gzipEnabled</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">true</span>
+  <span class="l-Scalar-Plain">gzipEnabledForRequests</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">true</span>
+  <span class="l-Scalar-Plain">chunkedEncodingEnabled</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">true</span>
+</pre></div>
+</div>
+<table border="1" class="docutils">
+<colgroup>
+<col width="16%" />
+<col width="13%" />
+<col width="72%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Name</th>
+<th class="head">Default</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>minThreads</td>
+<td>1</td>
+<td>The minimum number of threads in the pool used for asynchronous requests.</td>
+</tr>
+<tr class="row-odd"><td>maxThreads</td>
+<td>128</td>
+<td>The maximum number of threads in the pool used for asynchronous requests.</td>
+</tr>
+<tr class="row-even"><td>gzipEnabled</td>
+<td>true</td>
+<td>Adds an Accept-Encoding: gzip header to all requests, and enables automatic gzip decoding of responses.</td>
+</tr>
+<tr class="row-odd"><td>gzipEnabledForRequests</td>
+<td>true</td>
+<td>Adds a Content-Encoding: gzip header to all requests, and enables automatic gzip encoding of requests.</td>
+</tr>
+<tr class="row-even"><td>chunkedEncodingEnabled</td>
+<td>true</td>
+<td>Enables the use of chunked encoding for requests.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+
+            </div>
+        </div>
+        <hr/>
+        <footer>
+            <p style="float: left">
+            &copy; Copyright 2010-2013, Coda Hale, Yammer Inc..
+            Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>
+            1.1.3.
+            </p>
+            <p style="float: right">Dropwizard v0.8.0</p>
+        </footer>
+    </div>
+</body>
+</html>
+
+

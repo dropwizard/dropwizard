@@ -1,0 +1,742 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Getting Started | Dropwizard</title>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="_static/dropwizard.css" type="text/css"/>
+    <link rel="top" title="Dropwizard" href="index.html"/>
+    <link rel="next" title="User Manual" href="manual/index.html"/>
+    <link rel="prev" title="Dropwizard is a Java framework for developing ops-friendly, high-performance, RESTful web services." href="index.html"/>
+    <style lang="text/css">
+        #top-bar, #top-bar small, #top-bar a {
+            text-shadow: 0px -1px 0px #182127;
+            color: #ffffff;
+        }
+        
+        #top-bar {
+            background-color: #363F45;
+            background-image: -moz-linear-gradient(top, #545d63, #182127);
+            background-image: -ms-linear-gradient(top, #545d63, #182127);
+            background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#545d63), to(#182127));
+            background-image: -webkit-linear-gradient(top, #545d63, #182127);
+            background-image: -o-linear-gradient(top, #545d63, #182127);
+            background-image: linear-gradient(top, #545d63, #182127);
+            filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#545d63', endColorstr = '#182127', GradientType = 0);
+            -webkit-border-radius: 0;
+            -moz-border-radius: 0;
+            border-radius: 0;
+        }
+
+
+        .hero-unit {
+            background-image: url("_static/dropwizard-hat.png") !important;
+            background-repeat: no-repeat !important;
+            background-position: 30px 50px;
+        }
+
+        .hero-unit div.section {
+            padding-left: 150px !important;
+        }
+    </style>
+</head>
+<body>
+    <a href="https://github.com/dropwizard/dropwizard">
+        <img style="position: absolute; top: 0; right: 0; border: 0;"
+             src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_ff7600.png"
+             alt="Fork me on GitHub"></a>
+    <div class="navbar">
+        <div class="navbar-inner container-fluid" id="top-bar">
+            <header class="row-fluid">
+                <h1 class="span12" id="title"><img class="logo" src="_static/dropwizard-logo.png" alt="Logo"/>
+                    <a href="index.html">Dropwizard</a>
+                    <small>Production-ready, out of the box.</small>
+                </h1>
+            </header>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <div class="span3" id="sidebar">
+                <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="">Getting Started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#jetty-for-http">Jetty for HTTP</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#jersey-for-rest">Jersey for REST</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#jackson-for-json">Jackson for JSON</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#metrics-for-metrics">Metrics for metrics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#and-friends">And Friends</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#setting-up-maven">Setting Up Maven</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#creating-a-configuration-class">Creating A Configuration Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#creating-an-application-class">Creating An Application Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#creating-a-representation-class">Creating A Representation Class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#creating-a-resource-class">Creating A Resource Class</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#registering-a-resource">Registering A Resource</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#creating-a-health-check">Creating A Health Check</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#adding-a-health-check">Adding A Health Check</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#building-fat-jars">Building Fat JARs</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#versioning-your-jars">Versioning Your JARs</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#running-your-application">Running Your Application</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#next-steps">Next Steps</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="manual/index.html">User Manual</a></li>
+<li class="toctree-l1"><a class="reference internal" href="about/index.html">About Dropwizard</a></li>
+</ul>
+
+                <hr/>
+                <ul>
+                    <li><a href="https://dropwizard.github.io/dropwizard/0.8.0">Maven Site</a></li>
+                    <li><a href="https://groups.google.com/forum/#!forum/dropwizard-user">User Mailing List</a></li>
+                    <li><a href="https://groups.google.com/forum/#!forum/dropwizard-dev">Developer Mailing List</a></li>
+                </ul>
+            </div>
+            <div class="span9" id="body">
+                
+  <div class="section" id="getting-started">
+<span id="id1"></span><h1>Getting Started</h1>
+<p class="rubric"><em>Getting Started</em> will guide you through the process of creating a simple Dropwizard
+project: Hello World. Along the way, we&#8217;ll explain the various underlying libraries and
+their roles, important concepts in Dropwizard, and suggest some organizational
+techniques to help you as your project grows. (Or you can just skip to the
+<a class="reference internal" href="#gs-maven-setup"><em>fun part</em></a>.)</p>
+<div class="section" id="overview">
+<span id="gs-overview"></span><h2>Overview</h2>
+<p>Dropwizard straddles the line between being a library and a framework. Its goal is to provide
+performant, reliable implementations of everything a production-ready web application needs. Because
+this functionality is extracted into a reusable library, your application remains lean and focused,
+reducing both time-to-market and maintenance burdens.</p>
+<div class="section" id="jetty-for-http">
+<span id="gs-jetty"></span><h3>Jetty for HTTP</h3>
+<p>Because you can&#8217;t be a web application without HTTP, Dropwizard uses the <a class="reference external" href="http://www.eclipse.org/jetty/">Jetty</a> HTTP library to
+embed an incredibly tuned HTTP server directly into your project. Instead of handing your
+application off to a complicated application server, Dropwizard projects have a <tt class="docutils literal"><span class="pre">main</span></tt> method
+which spins up an HTTP server. Running your application as a simple process eliminates a number of
+unsavory aspects of Java in production (no PermGen issues, no application server configuration and
+maintenance, no arcane deployment tools, no class loader troubles, no hidden application logs, no
+trying to tune a single garbage collector to work with multiple application workloads) and allows
+you to use all of the existing Unix process management tools instead.</p>
+</div>
+<div class="section" id="jersey-for-rest">
+<span id="gs-jersey"></span><h3>Jersey for REST</h3>
+<p>For building RESTful web applications, we&#8217;ve found nothing beats <a class="reference external" href="http://jersey.java.net">Jersey</a> (the <a class="reference external" href="http://jcp.org/en/jsr/detail?id=311">JAX-RS</a> reference
+implementation) in terms of features or performance. It allows you to write clean, testable classes
+which gracefully map HTTP requests to simple Java objects. It supports streaming output, matrix URI
+parameters, conditional <tt class="docutils literal"><span class="pre">GET</span></tt> requests, and much, much more.</p>
+</div>
+<div class="section" id="jackson-for-json">
+<span id="gs-jackson"></span><h3>Jackson for JSON</h3>
+<p>In terms of data formats, JSON has become the web&#8217;s <em>lingua franca</em>, and <a class="reference external" href="http://wiki.fasterxml.com/JacksonHome">Jackson</a> is the king of
+JSON on the JVM. In addition to being lightning fast, it has a sophisticated object mapper, allowing
+you to export your domain models directly.</p>
+</div>
+<div class="section" id="metrics-for-metrics">
+<span id="gs-metrics"></span><h3>Metrics for metrics</h3>
+<p>The <a class="reference external" href="http://metrics.codahale.com">Metrics</a> library rounds things out, providing you with unparalleled insight into your code&#8217;s
+behavior in your production environment.</p>
+</div>
+<div class="section" id="and-friends">
+<span id="gs-and-friends"></span><h3>And Friends</h3>
+<p>In addition to <a class="reference external" href="http://www.eclipse.org/jetty/">Jetty</a>, <a class="reference external" href="http://jersey.java.net">Jersey</a>, and <a class="reference external" href="http://wiki.fasterxml.com/JacksonHome">Jackson</a>, Dropwizard also includes a number of libraries to help
+you ship more quickly and with less regrets.</p>
+<ul class="simple">
+<li><a class="reference external" href="http://code.google.com/p/guava-libraries/">Guava</a>, which, in addition to highly optimized immutable data structures, provides a growing
+number of classes to speed up development in Java.</li>
+<li><a class="reference external" href="http://logback.qos.ch/">Logback</a> and <a class="reference external" href="http://www.slf4j.org/">slf4j</a> for performant and flexible logging.</li>
+<li><a class="reference external" href="http://www.hibernate.org/subprojects/validator.html">Hibernate Validator</a>, the <a class="reference external" href="http://jcp.org/en/jsr/detail?id=303">JSR-303</a> reference implementation, provides an easy, declarative
+framework for validating user input and generating helpful, i18n-friendly error messages.</li>
+<li>The <a class="reference external" href="http://hc.apache.org/httpcomponents-client-ga/index.html">Apache HttpClient</a> and <a class="reference external" href="http://jersey.java.net">Jersey</a> client libraries allow for both low- and high-level
+interaction with other web services.</li>
+<li><a class="reference external" href="http://www.jdbi.org">JDBI</a> is the most straight-forward way to use a relational database with Java.</li>
+<li><a class="reference external" href="http://www.liquibase.org">Liquibase</a> is a great way to keep your database schema in check throughout your development and
+release cycles, applying high-level database refactorings instead of one-off DDL scripts.</li>
+<li><a class="reference external" href="http://freemarker.sourceforge.net/">Freemarker</a> and <a class="reference external" href="http://mustache.github.io/">Mustache</a> are simple templating systems for more user-facing applications.</li>
+<li><a class="reference external" href="http://joda-time.sourceforge.net/">Joda Time</a> is a very complete, sane library for handling dates and times.</li>
+</ul>
+<p>Now that you&#8217;ve gotten the lay of the land, let&#8217;s dig in!</p>
+</div>
+</div>
+<div class="section" id="setting-up-maven">
+<span id="gs-maven-setup"></span><h2>Setting Up Maven</h2>
+<p>We recommend you use <a class="reference external" href="http://maven.apache.org">Maven</a> for new Dropwizard applications. If you&#8217;re a big <a class="reference external" href="http://ant.apache.org/">Ant</a> / <a class="reference external" href="http://ant.apache.org/ivy/">Ivy</a>, <a class="reference external" href="http://buildr.apache.org/">Buildr</a>,
+<a class="reference external" href="http://www.gradle.org/">Gradle</a>, <a class="reference external" href="https://github.com/harrah/xsbt/wiki">SBT</a>, <a class="reference external" href="https://github.com/technomancy/leiningen">Leiningen</a>, or <a class="reference external" href="http://gant.codehaus.org/">Gant</a> fan, that&#8217;s cool, but we use Maven and we&#8217;ll be using Maven as
+we go through this example application. If you have any questions about how Maven works,
+<a class="reference external" href="http://www.sonatype.com/books/mvnref-book/reference/">Maven: The Complete Reference</a> should have what you&#8217;re looking for. (We&#8217;re assuming you know how
+to create a new Maven project. If not, you can use <a class="reference external" href="https://gist.github.com/2019732">this</a> to get
+started.)</p>
+<p>First, add a <tt class="docutils literal"><span class="pre">dropwizard.version</span></tt> property to your POM with the current version of Dropwizard
+(which is 0.8.0):</p>
+<div class="highlight-xml"><div class="highlight"><pre><span class="nt">&lt;properties&gt;</span>
+    <span class="nt">&lt;dropwizard.version&gt;</span>INSERT VERSION HERE<span class="nt">&lt;/dropwizard.version&gt;</span>
+<span class="nt">&lt;/properties&gt;</span>
+</pre></div>
+</div>
+<p>Add the <tt class="docutils literal"><span class="pre">dropwizard-core</span></tt> library as a dependency:</p>
+<div class="highlight-xml" id="gs-pom-dependencies"><div class="highlight"><pre><span class="nt">&lt;dependencies&gt;</span>
+    <span class="nt">&lt;dependency&gt;</span>
+        <span class="nt">&lt;groupId&gt;</span>io.dropwizard<span class="nt">&lt;/groupId&gt;</span>
+        <span class="nt">&lt;artifactId&gt;</span>dropwizard-core<span class="nt">&lt;/artifactId&gt;</span>
+        <span class="nt">&lt;version&gt;</span>${dropwizard.version}<span class="nt">&lt;/version&gt;</span>
+    <span class="nt">&lt;/dependency&gt;</span>
+<span class="nt">&lt;/dependencies&gt;</span>
+</pre></div>
+</div>
+<p>Alright, that&#8217;s enough XML. We&#8217;ve got a Maven project set up now, and it&#8217;s time to start writing
+real code.</p>
+</div>
+<div class="section" id="creating-a-configuration-class">
+<span id="gs-configuration"></span><h2>Creating A Configuration Class</h2>
+<p>Each Dropwizard application has its own subclass of the <tt class="docutils literal"><span class="pre">Configuration</span></tt> class which specifies
+environment-specific parameters. These parameters are specified in a <a class="reference external" href="http://www.yaml.org/">YAML</a> configuration file which
+is deserialized to an instance of your application&#8217;s configuration class and validated.</p>
+<p>The application we&#8217;ll be building is a high-performance Hello World service, and one of our
+requirements is that we need to be able to vary how it says hello from environment to environment.
+We&#8217;ll need to specify at least two things to begin with: a template for saying hello and a default
+name to use in case the user doesn&#8217;t specify their name.</p>
+<p>Here&#8217;s what our configuration class will looks like, full <a class="reference external" href="https://github.com/dropwizard/dropwizard/blob/master/dropwizard-example/src/main/java/com/example/helloworld/HelloWorldConfiguration.java">example conf here</a> :</p>
+<div class="highlight-java" id="gs-configuration-class"><div class="highlight"><pre><span class="kn">package</span> <span class="n">com</span><span class="o">.</span><span class="na">example</span><span class="o">.</span><span class="na">helloworld</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">io.dropwizard.Configuration</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">com.fasterxml.jackson.annotation.JsonProperty</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.hibernate.validator.constraints.NotEmpty</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">HelloWorldConfiguration</span> <span class="kd">extends</span> <span class="n">Configuration</span> <span class="o">{</span>
+    <span class="nd">@NotEmpty</span>
+    <span class="kd">private</span> <span class="n">String</span> <span class="n">template</span><span class="o">;</span>
+
+    <span class="nd">@NotEmpty</span>
+    <span class="kd">private</span> <span class="n">String</span> <span class="n">defaultName</span> <span class="o">=</span> <span class="s">&quot;Stranger&quot;</span><span class="o">;</span>
+
+    <span class="nd">@JsonProperty</span>
+    <span class="kd">public</span> <span class="n">String</span> <span class="nf">getTemplate</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">template</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="nd">@JsonProperty</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setTemplate</span><span class="o">(</span><span class="n">String</span> <span class="n">template</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">template</span> <span class="o">=</span> <span class="n">template</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="nd">@JsonProperty</span>
+    <span class="kd">public</span> <span class="n">String</span> <span class="nf">getDefaultName</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">defaultName</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="nd">@JsonProperty</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setDefaultName</span><span class="o">(</span><span class="n">String</span> <span class="n">name</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">defaultName</span> <span class="o">=</span> <span class="n">name</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>There&#8217;s a lot going on here, so let&#8217;s unpack a bit of it.</p>
+<p>When this class is deserialized from the YAML file, it will pull two root-level fields from the YAML
+object: <tt class="docutils literal"><span class="pre">template</span></tt>, the template for our Hello World saying, and <tt class="docutils literal"><span class="pre">defaultName</span></tt>, the default name
+to use. Both <tt class="docutils literal"><span class="pre">template</span></tt> and <tt class="docutils literal"><span class="pre">defaultName</span></tt> are annotated with <tt class="docutils literal"><span class="pre">&#64;NotEmpty</span></tt>, so if the YAML
+configuration file has blank values for either or is missing <tt class="docutils literal"><span class="pre">template</span></tt> entirely an informative
+exception will be thrown and your application won&#8217;t start.</p>
+<p>Both the getters and setters for <tt class="docutils literal"><span class="pre">template</span></tt> and <tt class="docutils literal"><span class="pre">defaultName</span></tt> are annotated with
+<tt class="docutils literal"><span class="pre">&#64;JsonProperty</span></tt>, which allows Jackson to both deserialize the properties from a YAML file but also
+to serialize it.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The mapping from YAML to your application&#8217;s <tt class="docutils literal"><span class="pre">Configuration</span></tt> instance is done
+by <a class="reference external" href="http://wiki.fasterxml.com/JacksonHome">Jackson</a>. This means your <tt class="docutils literal"><span class="pre">Configuration</span></tt> class can use all of
+Jackson&#8217;s <a class="reference external" href="http://wiki.fasterxml.com/JacksonAnnotations">object-mapping annotations</a>. The validation of <tt class="docutils literal"><span class="pre">&#64;NotEmpty</span></tt> is
+handled by Hibernate Validator, which has a
+<a class="reference external" href="http://docs.jboss.org/hibernate/validator/4.2/reference/en-US/html_single/#validator-defineconstraints-builtin">wide range of built-in constraints</a> for you to use.</p>
+</div>
+<p>Our YAML file, will then look like the below, full <a class="reference external" href="https://github.com/dropwizard/dropwizard/blob/master/dropwizard-example/example.yml">example yml here</a> :</p>
+<div class="highlight-yaml" id="gs-yaml-file"><div class="highlight"><pre><span class="l-Scalar-Plain">template</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">Hello, %s!</span>
+<span class="l-Scalar-Plain">defaultName</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">Stranger</span>
+</pre></div>
+</div>
+<p>Dropwizard has <em>many</em> more configuration parameters than that, but they all have sane defaults so
+you can keep your configuration files small and focused.</p>
+<p>So save that YAML file as <tt class="docutils literal"><span class="pre">hello-world.yml</span></tt>, because we&#8217;ll be getting up and running pretty soon
+and we&#8217;ll need it. Next up, we&#8217;re creating our application class!</p>
+</div>
+<div class="section" id="creating-an-application-class">
+<span id="gs-application"></span><h2>Creating An Application Class</h2>
+<p>Combined with your project&#8217;s <tt class="docutils literal"><span class="pre">Configuration</span></tt> subclass, its <tt class="docutils literal"><span class="pre">Application</span></tt> subclass forms the core
+of your Dropwizard application. The <tt class="docutils literal"><span class="pre">Application</span></tt> class pulls together the various bundles and
+commands which provide basic functionality. (More on that later.) For now, though, our
+<tt class="docutils literal"><span class="pre">HelloWorldApplication</span></tt> looks like this:</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="kn">package</span> <span class="n">com</span><span class="o">.</span><span class="na">example</span><span class="o">.</span><span class="na">helloworld</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">io.dropwizard.Application</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">io.dropwizard.setup.Bootstrap</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">io.dropwizard.setup.Environment</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">com.example.helloworld.resources.HelloWorldResource</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">com.example.helloworld.health.TemplateHealthCheck</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">HelloWorldApplication</span> <span class="kd">extends</span> <span class="n">Application</span><span class="o">&lt;</span><span class="n">HelloWorldConfiguration</span><span class="o">&gt;</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="n">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+        <span class="k">new</span> <span class="nf">HelloWorldApplication</span><span class="o">().</span><span class="na">run</span><span class="o">(</span><span class="n">args</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="n">String</span> <span class="nf">getName</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="s">&quot;hello-world&quot;</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">initialize</span><span class="o">(</span><span class="n">Bootstrap</span><span class="o">&lt;</span><span class="n">HelloWorldConfiguration</span><span class="o">&gt;</span> <span class="n">bootstrap</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// nothing to do yet</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">run</span><span class="o">(</span><span class="n">HelloWorldConfiguration</span> <span class="n">configuration</span><span class="o">,</span>
+                    <span class="n">Environment</span> <span class="n">environment</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// nothing to do yet</span>
+    <span class="o">}</span>
+
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>As you can see, <tt class="docutils literal"><span class="pre">HelloWorldApplication</span></tt> is parameterized with the application&#8217;s configuration
+type, <tt class="docutils literal"><span class="pre">HelloWorldConfiguration</span></tt>. An <tt class="docutils literal"><span class="pre">initialize</span></tt> method is used to configure aspects of the
+application required before the application is run, like bundles, configuration source providers,
+etc. Also, we&#8217;ve added a <tt class="docutils literal"><span class="pre">static</span></tt> <tt class="docutils literal"><span class="pre">main</span></tt> method, which will be our application&#8217;s entry point.
+Right now, we don&#8217;t have any functionality implemented, so our <tt class="docutils literal"><span class="pre">run</span></tt> method is a little boring.
+Let&#8217;s fix that!</p>
+</div>
+<div class="section" id="creating-a-representation-class">
+<span id="gs-representation"></span><h2>Creating A Representation Class</h2>
+<p>Before we can get into the nuts-and-bolts of our Hello World application, we need to stop and think
+about our API. Luckily, our application needs to conform to an industry standard, <a class="reference external" href="http://www.ietf.org/rfc/rfc1149.txt">RFC 1149</a>,
+which specifies the following JSON representation of a Hello World saying:</p>
+<div class="highlight-javascript"><div class="highlight"><pre><span class="p">{</span>
+  <span class="s2">&quot;id&quot;</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
+  <span class="s2">&quot;content&quot;</span><span class="o">:</span> <span class="s2">&quot;Hi!&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The <tt class="docutils literal"><span class="pre">id</span></tt> field is a unique identifier for the saying, and <tt class="docutils literal"><span class="pre">content</span></tt> is the textual
+representation of the saying. (Thankfully, this is a fairly straight-forward industry standard.)</p>
+<p>To model this representation, we&#8217;ll create a representation class:</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="kn">package</span> <span class="n">com</span><span class="o">.</span><span class="na">example</span><span class="o">.</span><span class="na">helloworld</span><span class="o">.</span><span class="na">core</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">com.fasterxml.jackson.annotation.JsonProperty</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.hibernate.validator.constraints.Length</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Saying</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kt">long</span> <span class="n">id</span><span class="o">;</span>
+
+    <span class="nd">@Length</span><span class="o">(</span><span class="n">max</span> <span class="o">=</span> <span class="mi">3</span><span class="o">)</span>
+    <span class="kd">private</span> <span class="n">String</span> <span class="n">content</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="nf">Saying</span><span class="o">()</span> <span class="o">{</span>
+        <span class="c1">// Jackson deserialization</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="nf">Saying</span><span class="o">(</span><span class="kt">long</span> <span class="n">id</span><span class="o">,</span> <span class="n">String</span> <span class="n">content</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">id</span> <span class="o">=</span> <span class="n">id</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">content</span> <span class="o">=</span> <span class="n">content</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="nd">@JsonProperty</span>
+    <span class="kd">public</span> <span class="kt">long</span> <span class="nf">getId</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">id</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="nd">@JsonProperty</span>
+    <span class="kd">public</span> <span class="n">String</span> <span class="nf">getContent</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">content</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>This is a pretty simple POJO, but there are a few things worth noting here.</p>
+<p>First, it&#8217;s immutable. This makes <tt class="docutils literal"><span class="pre">Saying</span></tt> instances <em>very</em> easy to reason about in multi-threaded
+environments as well as single-threaded environments. Second, it uses the Java Bean standard for the
+<tt class="docutils literal"><span class="pre">id</span></tt> and <tt class="docutils literal"><span class="pre">content</span></tt> properties. This allows <a class="reference external" href="http://wiki.fasterxml.com/JacksonHome">Jackson</a> to serialize it to the JSON we need. The
+Jackson object mapping code will populate the <tt class="docutils literal"><span class="pre">id</span></tt> field of the JSON object with the return value
+of <tt class="docutils literal"><span class="pre">#getId()</span></tt>, likewise with <tt class="docutils literal"><span class="pre">content</span></tt> and <tt class="docutils literal"><span class="pre">#getContent()</span></tt>. Lastly, the bean leverages validation to ensure the content size is no greater than 3.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The JSON serialization here is done by Jackson, which supports far more than simple JavaBean
+objects like this one. In addition to the sophisticated set of <a class="reference external" href="http://wiki.fasterxml.com/JacksonAnnotations">annotations</a>, you can even
+write your own custom serializers and deserializers.</p>
+</div>
+<p>Now that we&#8217;ve got our representation class, it makes sense to start in on the resource it
+represents.</p>
+</div>
+<div class="section" id="creating-a-resource-class">
+<span id="gs-resource"></span><h2>Creating A Resource Class</h2>
+<p>Jersey resources are the meat-and-potatoes of a Dropwizard application. Each resource class is
+associated with a URI template. For our application, we need a resource which returns new <tt class="docutils literal"><span class="pre">Saying</span></tt>
+instances from the URI <tt class="docutils literal"><span class="pre">/hello-world</span></tt>, so our resource class will look like this:</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="kn">package</span> <span class="n">com</span><span class="o">.</span><span class="na">example</span><span class="o">.</span><span class="na">helloworld</span><span class="o">.</span><span class="na">resources</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">com.example.helloworld.core.Saying</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">com.google.common.base.Optional</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">com.codahale.metrics.annotation.Timed</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">javax.ws.rs.GET</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">javax.ws.rs.Path</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">javax.ws.rs.Produces</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">javax.ws.rs.QueryParam</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">javax.ws.rs.core.MediaType</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.util.concurrent.atomic.AtomicLong</span><span class="o">;</span>
+
+<span class="nd">@Path</span><span class="o">(</span><span class="s">&quot;/hello-world&quot;</span><span class="o">)</span>
+<span class="nd">@Produces</span><span class="o">(</span><span class="n">MediaType</span><span class="o">.</span><span class="na">APPLICATION_JSON</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">HelloWorldResource</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">template</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">defaultName</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">AtomicLong</span> <span class="n">counter</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="nf">HelloWorldResource</span><span class="o">(</span><span class="n">String</span> <span class="n">template</span><span class="o">,</span> <span class="n">String</span> <span class="n">defaultName</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">template</span> <span class="o">=</span> <span class="n">template</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">defaultName</span> <span class="o">=</span> <span class="n">defaultName</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">counter</span> <span class="o">=</span> <span class="k">new</span> <span class="n">AtomicLong</span><span class="o">();</span>
+    <span class="o">}</span>
+
+    <span class="nd">@GET</span>
+    <span class="nd">@Timed</span>
+    <span class="kd">public</span> <span class="n">Saying</span> <span class="nf">sayHello</span><span class="o">(</span><span class="nd">@QueryParam</span><span class="o">(</span><span class="s">&quot;name&quot;</span><span class="o">)</span> <span class="n">Optional</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span> <span class="n">name</span><span class="o">)</span> <span class="o">{</span>
+        <span class="kd">final</span> <span class="n">String</span> <span class="n">value</span> <span class="o">=</span> <span class="n">String</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="n">template</span><span class="o">,</span> <span class="n">name</span><span class="o">.</span><span class="na">or</span><span class="o">(</span><span class="n">defaultName</span><span class="o">));</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">Saying</span><span class="o">(</span><span class="n">counter</span><span class="o">.</span><span class="na">incrementAndGet</span><span class="o">(),</span> <span class="n">value</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>Finally, we&#8217;re in the thick of it! Let&#8217;s start from the top and work our way down.</p>
+<p><tt class="docutils literal"><span class="pre">HelloWorldResource</span></tt> has two annotations: <tt class="docutils literal"><span class="pre">&#64;Path</span></tt> and <tt class="docutils literal"><span class="pre">&#64;Produces</span></tt>. <tt class="docutils literal"><span class="pre">&#64;Path(&quot;/hello-world&quot;)</span></tt>
+tells Jersey that this resource is accessible at the URI <tt class="docutils literal"><span class="pre">/hello-world</span></tt>, and
+<tt class="docutils literal"><span class="pre">&#64;Produces(MediaType.APPLICATION_JSON)</span></tt> lets Jersey&#8217;s content negotiation code know that this
+resource produces representations which are <tt class="docutils literal"><span class="pre">application/json</span></tt>.</p>
+<p><tt class="docutils literal"><span class="pre">HelloWorldResource</span></tt> takes two parameters for construction: the <tt class="docutils literal"><span class="pre">template</span></tt> it uses to produce
+the saying and the <tt class="docutils literal"><span class="pre">defaultName</span></tt> used when the user declines to tell us their name. An
+<tt class="docutils literal"><span class="pre">AtomicLong</span></tt> provides us with a cheap, thread-safe way of generating unique(ish) IDs.</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Resource classes are used by multiple threads concurrently. In general, we recommend that
+resources be stateless/immutable, but it&#8217;s important to keep the context in mind.</p>
+</div>
+<p><tt class="docutils literal"><span class="pre">#sayHello(Optional&lt;String&gt;)</span></tt> is the meat of this class, and it&#8217;s a fairly simple method. The
+<tt class="docutils literal"><span class="pre">&#64;QueryParam(&quot;name&quot;)</span></tt> annotation tells Jersey to map the <tt class="docutils literal"><span class="pre">name</span></tt> parameter from the query string
+to the <tt class="docutils literal"><span class="pre">name</span></tt> parameter in the method. If the client sends a request to
+<tt class="docutils literal"><span class="pre">/hello-world?name=Dougie</span></tt>, <tt class="docutils literal"><span class="pre">sayHello</span></tt> will be called with <tt class="docutils literal"><span class="pre">Optional.of(&quot;Dougie&quot;)</span></tt>; if there
+is no <tt class="docutils literal"><span class="pre">name</span></tt> parameter in the query string, <tt class="docutils literal"><span class="pre">sayHello</span></tt> will be called with
+<tt class="docutils literal"><span class="pre">Optional.absent()</span></tt>. (Support for Guava&#8217;s <tt class="docutils literal"><span class="pre">Optional</span></tt> is a little extra sauce that Dropwizard
+adds to Jersey&#8217;s existing functionality.)</p>
+<p>Inside the <tt class="docutils literal"><span class="pre">sayHello</span></tt> method, we increment the counter, format the template using
+<tt class="docutils literal"><span class="pre">String.format(String,</span> <span class="pre">Object...)</span></tt>, and return a new <tt class="docutils literal"><span class="pre">Saying</span></tt> instance.</p>
+<p>Because <tt class="docutils literal"><span class="pre">sayHello</span></tt> is annotated with <tt class="docutils literal"><span class="pre">&#64;Timed</span></tt>, Dropwizard automatically records the duration and
+rate of its invocations as a Metrics Timer.</p>
+<p>Once <tt class="docutils literal"><span class="pre">sayHello</span></tt> has returned, Jersey takes the <tt class="docutils literal"><span class="pre">Saying</span></tt> instance and looks for a provider class
+which can write <tt class="docutils literal"><span class="pre">Saying</span></tt> instances as <tt class="docutils literal"><span class="pre">application/json</span></tt>. Dropwizard has one such provider built
+in which allows for producing and consuming Java objects as JSON objects. The provider writes out
+the JSON and the client receives a <tt class="docutils literal"><span class="pre">200</span> <span class="pre">OK</span></tt> response with a content type of <tt class="docutils literal"><span class="pre">application/json</span></tt>.</p>
+<div class="section" id="registering-a-resource">
+<span id="gs-resource-register"></span><h3>Registering A Resource</h3>
+<p>Before that will actually work, though, we need to go back to <tt class="docutils literal"><span class="pre">HelloWorldApplication</span></tt> and add this
+new resource class. In its <tt class="docutils literal"><span class="pre">run</span></tt> method we can read the template and default name from the
+<tt class="docutils literal"><span class="pre">HelloWorldConfiguration</span></tt> instance, create a new <tt class="docutils literal"><span class="pre">HelloWorldResource</span></tt> instance, and then add
+it to the application&#8217;s Jersey environment:</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="nd">@Override</span>
+<span class="kd">public</span> <span class="kt">void</span> <span class="nf">run</span><span class="o">(</span><span class="n">HelloWorldConfiguration</span> <span class="n">configuration</span><span class="o">,</span>
+                <span class="n">Environment</span> <span class="n">environment</span><span class="o">)</span> <span class="o">{</span>
+    <span class="kd">final</span> <span class="n">HelloWorldResource</span> <span class="n">resource</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HelloWorldResource</span><span class="o">(</span>
+        <span class="n">configuration</span><span class="o">.</span><span class="na">getTemplate</span><span class="o">(),</span>
+        <span class="n">configuration</span><span class="o">.</span><span class="na">getDefaultName</span><span class="o">()</span>
+    <span class="o">);</span>
+    <span class="n">environment</span><span class="o">.</span><span class="na">jersey</span><span class="o">().</span><span class="na">register</span><span class="o">(</span><span class="n">resource</span><span class="o">);</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>When our application starts, we create a new instance of our resource class with the parameters from
+the configuration file and hand it off to the <tt class="docutils literal"><span class="pre">Environment</span></tt>, which acts like a registry of all the
+things your application can do.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">A Dropwizard application can contain <em>many</em> resource classes, each corresponding to its own URI
+pattern. Just add another <tt class="docutils literal"><span class="pre">&#64;Path</span></tt>-annotated resource class and call <tt class="docutils literal"><span class="pre">register</span></tt> with an
+instance of the new class.</p>
+</div>
+<p>Before we go too far, we should add a health check for our application.</p>
+</div>
+</div>
+<div class="section" id="creating-a-health-check">
+<span id="gs-healthcheck"></span><h2>Creating A Health Check</h2>
+<p>Health checks give you a way of adding small tests to your application to allow you to verify that
+your application is functioning correctly in production. We <strong>strongly</strong> recommend that all of your
+applications have at least a minimal set of health checks.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">We recommend this so strongly, in fact, that Dropwizard will nag you should you neglect to add a
+health check to your project.</p>
+</div>
+<p>Since formatting strings is not likely to fail while an application is running (unlike, say, a
+database connection pool), we&#8217;ll have to get a little creative here. We&#8217;ll add a health check to
+make sure we can actually format the provided template:</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="kn">package</span> <span class="n">com</span><span class="o">.</span><span class="na">example</span><span class="o">.</span><span class="na">helloworld</span><span class="o">.</span><span class="na">health</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">com.codahale.metrics.health.HealthCheck</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">TemplateHealthCheck</span> <span class="kd">extends</span> <span class="n">HealthCheck</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">template</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="nf">TemplateHealthCheck</span><span class="o">(</span><span class="n">String</span> <span class="n">template</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">template</span> <span class="o">=</span> <span class="n">template</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">protected</span> <span class="n">Result</span> <span class="nf">check</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+        <span class="kd">final</span> <span class="n">String</span> <span class="n">saying</span> <span class="o">=</span> <span class="n">String</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="n">template</span><span class="o">,</span> <span class="s">&quot;TEST&quot;</span><span class="o">);</span>
+        <span class="k">if</span> <span class="o">(!</span><span class="n">saying</span><span class="o">.</span><span class="na">contains</span><span class="o">(</span><span class="s">&quot;TEST&quot;</span><span class="o">))</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="n">Result</span><span class="o">.</span><span class="na">unhealthy</span><span class="o">(</span><span class="s">&quot;template doesn&#39;t include a name&quot;</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="k">return</span> <span class="n">Result</span><span class="o">.</span><span class="na">healthy</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p><tt class="docutils literal"><span class="pre">TemplateHealthCheck</span></tt> checks for two things: that the provided template is actually a well-formed
+format string, and that the template actually produces output with the given name.</p>
+<p>If the string is not a well-formed format string (for example, someone accidentally put
+<tt class="docutils literal"><span class="pre">Hello,</span> <span class="pre">%s%</span></tt> in the configuration file), then <tt class="docutils literal"><span class="pre">String.format(String,</span> <span class="pre">Object...)</span></tt> will throw an
+<tt class="docutils literal"><span class="pre">IllegalFormatException</span></tt> and the health check will implicitly fail. If the rendered saying doesn&#8217;t
+include the test string, the health check will explicitly fail by returning an unhealthy <tt class="docutils literal"><span class="pre">Result</span></tt>.</p>
+<div class="section" id="adding-a-health-check">
+<span id="gs-healthcheck-add"></span><h3>Adding A Health Check</h3>
+<p>As with most things in Dropwizard, we create a new instance with the appropriate parameters and add
+it to the <tt class="docutils literal"><span class="pre">Environment</span></tt>:</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="nd">@Override</span>
+<span class="kd">public</span> <span class="kt">void</span> <span class="nf">run</span><span class="o">(</span><span class="n">HelloWorldConfiguration</span> <span class="n">configuration</span><span class="o">,</span>
+                <span class="n">Environment</span> <span class="n">environment</span><span class="o">)</span> <span class="o">{</span>
+    <span class="kd">final</span> <span class="n">HelloWorldResource</span> <span class="n">resource</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HelloWorldResource</span><span class="o">(</span>
+        <span class="n">configuration</span><span class="o">.</span><span class="na">getTemplate</span><span class="o">(),</span>
+        <span class="n">configuration</span><span class="o">.</span><span class="na">getDefaultName</span><span class="o">()</span>
+    <span class="o">);</span>
+    <span class="kd">final</span> <span class="n">TemplateHealthCheck</span> <span class="n">healthCheck</span> <span class="o">=</span>
+        <span class="k">new</span> <span class="nf">TemplateHealthCheck</span><span class="o">(</span><span class="n">configuration</span><span class="o">.</span><span class="na">getTemplate</span><span class="o">());</span>
+    <span class="n">environment</span><span class="o">.</span><span class="na">healthChecks</span><span class="o">().</span><span class="na">register</span><span class="o">(</span><span class="s">&quot;template&quot;</span><span class="o">,</span> <span class="n">healthCheck</span><span class="o">);</span>
+    <span class="n">environment</span><span class="o">.</span><span class="na">jersey</span><span class="o">().</span><span class="na">register</span><span class="o">(</span><span class="n">resource</span><span class="o">);</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>Now we&#8217;re almost ready to go!</p>
+</div>
+</div>
+<div class="section" id="building-fat-jars">
+<span id="gs-building"></span><h2>Building Fat JARs</h2>
+<p>We recommend that you build your Dropwizard applications as &#8220;fat&#8221; JAR files — single <tt class="docutils literal"><span class="pre">.jar</span></tt> files
+which contain <em>all</em> of the <tt class="docutils literal"><span class="pre">.class</span></tt> files required to run your application. This allows you to
+build a single deployable artifact which you can promote from your staging environment to your QA
+environment to your production environment without worrying about differences in installed
+libraries. To start building our Hello World application as a fat JAR, we need to configure a Maven
+plugin called <tt class="docutils literal"><span class="pre">maven-shade</span></tt>. In the <tt class="docutils literal"><span class="pre">&lt;build&gt;&lt;plugins&gt;</span></tt> section of your <tt class="docutils literal"><span class="pre">pom.xml</span></tt> file, add
+this:</p>
+<div class="highlight-xml"><div class="highlight"><pre><span class="nt">&lt;plugin&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>org.apache.maven.plugins<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>maven-shade-plugin<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>1.6<span class="nt">&lt;/version&gt;</span>
+    <span class="nt">&lt;configuration&gt;</span>
+<span class="hll">        <span class="nt">&lt;createDependencyReducedPom&gt;</span>true<span class="nt">&lt;/createDependencyReducedPom&gt;</span>
+</span>        <span class="nt">&lt;filters&gt;</span>
+<span class="hll">            <span class="nt">&lt;filter&gt;</span>
+</span><span class="hll">                <span class="nt">&lt;artifact&gt;</span>*:*<span class="nt">&lt;/artifact&gt;</span>
+</span><span class="hll">                <span class="nt">&lt;excludes&gt;</span>
+</span><span class="hll">                    <span class="nt">&lt;exclude&gt;</span>META-INF/*.SF<span class="nt">&lt;/exclude&gt;</span>
+</span><span class="hll">                    <span class="nt">&lt;exclude&gt;</span>META-INF/*.DSA<span class="nt">&lt;/exclude&gt;</span>
+</span><span class="hll">                    <span class="nt">&lt;exclude&gt;</span>META-INF/*.RSA<span class="nt">&lt;/exclude&gt;</span>
+</span><span class="hll">                <span class="nt">&lt;/excludes&gt;</span>
+</span><span class="hll">            <span class="nt">&lt;/filter&gt;</span>
+</span>        <span class="nt">&lt;/filters&gt;</span>
+    <span class="nt">&lt;/configuration&gt;</span>
+    <span class="nt">&lt;executions&gt;</span>
+        <span class="nt">&lt;execution&gt;</span>
+            <span class="nt">&lt;phase&gt;</span>package<span class="nt">&lt;/phase&gt;</span>
+            <span class="nt">&lt;goals&gt;</span>
+                <span class="nt">&lt;goal&gt;</span>shade<span class="nt">&lt;/goal&gt;</span>
+            <span class="nt">&lt;/goals&gt;</span>
+            <span class="nt">&lt;configuration&gt;</span>
+                <span class="nt">&lt;transformers&gt;</span>
+<span class="hll">                    <span class="nt">&lt;transformer</span> <span class="na">implementation=</span><span class="s">&quot;org.apache.maven.plugins.shade.resource.ServicesResourceTransformer&quot;</span><span class="nt">/&gt;</span>
+</span><span class="hll">                    <span class="nt">&lt;transformer</span> <span class="na">implementation=</span><span class="s">&quot;org.apache.maven.plugins.shade.resource.ManifestResourceTransformer&quot;</span><span class="nt">&gt;</span>
+</span><span class="hll">                        <span class="nt">&lt;mainClass&gt;</span>com.example.helloworld.HelloWorldApplication<span class="nt">&lt;/mainClass&gt;</span>
+</span><span class="hll">                    <span class="nt">&lt;/transformer&gt;</span>
+</span>                <span class="nt">&lt;/transformers&gt;</span>
+            <span class="nt">&lt;/configuration&gt;</span>
+        <span class="nt">&lt;/execution&gt;</span>
+    <span class="nt">&lt;/executions&gt;</span>
+<span class="nt">&lt;/plugin&gt;</span>
+</pre></div>
+</div>
+<p>This configures Maven to do a couple of things during its <tt class="docutils literal"><span class="pre">package</span></tt> phase:</p>
+<ul class="simple">
+<li>Produce a <tt class="docutils literal"><span class="pre">pom.xml</span></tt> file which doesn&#8217;t include dependencies for the libraries whose contents are
+included in the fat JAR.</li>
+<li>Exclude all digital signatures from signed JARs. If you don&#8217;t, then Java considers the signature
+invalid and won&#8217;t load or run your JAR file.</li>
+<li>Collate the various <tt class="docutils literal"><span class="pre">META-INF/services</span></tt> entries in the JARs instead of overwriting them.
+(Neither Dropwizard nor Jersey works without those.)</li>
+<li>Set <tt class="docutils literal"><span class="pre">com.example.helloworld.HelloWorldApplication</span></tt> as the JAR&#8217;s <tt class="docutils literal"><span class="pre">MainClass</span></tt>. This will allow
+you to run the JAR using <tt class="docutils literal"><span class="pre">java</span> <span class="pre">-jar</span></tt>.</li>
+</ul>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">If your application has a dependency which <em>must</em> be signed (e.g., a <a class="reference external" href="http://docs.oracle.com/javase/7/docs/technotes/guides/security/crypto/CryptoSpec.html">JCA/JCE</a> provider or
+other trusted library), you have to add an <a class="reference external" href="http://maven.apache.org/plugins/maven-shade-plugin/examples/includes-excludes.html">exclusion</a> to the <tt class="docutils literal"><span class="pre">maven-shade-plugin</span></tt>
+configuration for that library and include that JAR in the classpath.</p>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Since Dropwizard is using the Java <a class="reference external" href="http://docs.oracle.com/javase/7/docs/api/java/util/ServiceLoader.html">ServiceLoader</a> functionality to register and load extensions,
+the <a class="reference external" href="https://maven.apache.org/plugins/maven-shade-plugin/shade-mojo.html#minimizeJar">minimizeJar</a> option of the <cite>maven-shade-plugin</cite> will lead to non-working application JARs.</p>
+</div>
+<div class="section" id="versioning-your-jars">
+<span id="gs-versions"></span><h3>Versioning Your JARs</h3>
+<p>Dropwizard can also use the project version if it&#8217;s embedded in the JAR&#8217;s manifest as the
+<tt class="docutils literal"><span class="pre">Implementation-Version</span></tt>. To embed this information using Maven, add the following to the
+<tt class="docutils literal"><span class="pre">&lt;build&gt;&lt;plugins&gt;</span></tt> section of your <tt class="docutils literal"><span class="pre">pom.xml</span></tt> file:</p>
+<div class="highlight-xml"><div class="highlight"><pre><span class="nt">&lt;plugin&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>org.apache.maven.plugins<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>maven-jar-plugin<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>2.4<span class="nt">&lt;/version&gt;</span>
+    <span class="nt">&lt;configuration&gt;</span>
+        <span class="nt">&lt;archive&gt;</span>
+            <span class="nt">&lt;manifest&gt;</span>
+                <span class="nt">&lt;addDefaultImplementationEntries&gt;</span>true<span class="nt">&lt;/addDefaultImplementationEntries&gt;</span>
+            <span class="nt">&lt;/manifest&gt;</span>
+        <span class="nt">&lt;/archive&gt;</span>
+    <span class="nt">&lt;/configuration&gt;</span>
+<span class="nt">&lt;/plugin&gt;</span>
+</pre></div>
+</div>
+<p>This can be handy when trying to figure out what version of your application you have deployed on a
+machine.</p>
+<p>Once you&#8217;ve got that configured, go into your project directory and run <tt class="docutils literal"><span class="pre">mvn</span> <span class="pre">package</span></tt> (or run the
+<tt class="docutils literal"><span class="pre">package</span></tt> goal from your IDE). You should see something like this:</p>
+<div class="highlight-text"><div class="highlight"><pre>[INFO] Including org.eclipse.jetty:jetty-util:jar:7.6.0.RC0 in the shaded jar.
+[INFO] Including com.google.guava:guava:jar:10.0.1 in the shaded jar.
+[INFO] Including com.google.code.findbugs:jsr305:jar:1.3.9 in the shaded jar.
+[INFO] Including org.hibernate:hibernate-validator:jar:4.2.0.Final in the shaded jar.
+[INFO] Including javax.validation:validation-api:jar:1.0.0.GA in the shaded jar.
+[INFO] Including org.yaml:snakeyaml:jar:1.9 in the shaded jar.
+[INFO] Replacing original artifact with shaded artifact.
+[INFO] Replacing /Users/yourname/Projects/hello-world/target/hello-world-0.0.1-SNAPSHOT.jar with /Users/yourname/Projects/hello-world/target/hello-world-0.0.1-SNAPSHOT-shaded.jar
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 8.415s
+[INFO] Finished at: Fri Dec 02 16:26:42 PST 2011
+[INFO] Final Memory: 11M/81M
+[INFO] ------------------------------------------------------------------------
+</pre></div>
+</div>
+<p><strong>Congratulations!</strong> You&#8217;ve built your first Dropwizard project! Now it&#8217;s time to run it!</p>
+</div>
+</div>
+<div class="section" id="running-your-application">
+<span id="gs-running"></span><h2>Running Your Application</h2>
+<p>Now that you&#8217;ve built a JAR file, it&#8217;s time to run it.</p>
+<p>In your project directory, run this:</p>
+<div class="highlight-text"><div class="highlight"><pre>java -jar target/hello-world-0.0.1-SNAPSHOT.jar
+</pre></div>
+</div>
+<p>You should see something like the following:</p>
+<div class="highlight-text"><div class="highlight"><pre>usage: java -jar hello-world-0.0.1-SNAPSHOT.jar
+       [-h] [-v] {server} ...
+
+positional arguments:
+  {server}               available commands
+
+optional arguments:
+  -h, --help             show this help message and exit
+  -v, --version          show the service version and exit
+</pre></div>
+</div>
+<p>Dropwizard takes the first command line argument and dispatches it to a matching command. In this
+case, the only command available is <tt class="docutils literal"><span class="pre">server</span></tt>, which runs your application as an HTTP server. The
+<tt class="docutils literal"><span class="pre">server</span></tt> command requires a configuration file, so let&#8217;s go ahead and give it
+<a class="reference internal" href="#gs-yaml-file"><em>the YAML file we previously saved</em></a>:</p>
+<div class="highlight-text"><div class="highlight"><pre>java -jar target/hello-world-0.0.1-SNAPSHOT.jar server hello-world.yml
+</pre></div>
+</div>
+<p>You should see something like the following:</p>
+<div class="highlight-text"><div class="highlight"><pre>INFO  [2011-12-03 00:38:32,927] io.dropwizard.cli.ServerCommand: Starting hello-world
+INFO  [2011-12-03 00:38:32,931] org.eclipse.jetty.server.Server: jetty-7.x.y-SNAPSHOT
+INFO  [2011-12-03 00:38:32,936] org.eclipse.jetty.server.handler.ContextHandler: started o.e.j.s.ServletContextHandler{/,null}
+INFO  [2011-12-03 00:38:32,999] com.sun.jersey.server.impl.application.WebApplicationImpl: Initiating Jersey application, version &#39;Jersey: 1.10 11/02/2011 03:53 PM&#39;
+INFO  [2011-12-03 00:38:33,041] io.dropwizard.setup.Environment:
+
+    GET     /hello-world (com.example.helloworld.resources.HelloWorldResource)
+
+INFO  [2011-12-03 00:38:33,215] org.eclipse.jetty.server.handler.ContextHandler: started o.e.j.s.ServletContextHandler{/,null}
+INFO  [2011-12-03 00:38:33,235] org.eclipse.jetty.server.AbstractConnector: Started BlockingChannelConnector@0.0.0.0:8080 STARTING
+INFO  [2011-12-03 00:38:33,238] org.eclipse.jetty.server.AbstractConnector: Started SocketConnector@0.0.0.0:8081 STARTING
+</pre></div>
+</div>
+<p>Your Dropwizard application is now listening on ports <tt class="docutils literal"><span class="pre">8080</span></tt> for application requests and <tt class="docutils literal"><span class="pre">8081</span></tt>
+for administration requests. If you press <tt class="docutils literal"><span class="pre">^C</span></tt>, the application will shut down gracefully, first
+closing the server socket, then waiting for in-flight requests to be processed, then shutting down
+the process itself.</p>
+<p>But while it&#8217;s up, let&#8217;s give it a whirl!
+<a class="reference external" href="http://localhost:8080/hello-world">Click here to say hello!</a>
+<a class="reference external" href="http://localhost:8080/hello-world?name=Successful+Dropwizard+User">Click here to get even friendlier!</a></p>
+<p>So, we&#8217;re generating sayings. Awesome. But that&#8217;s not all your application can do. One of the main
+reasons for using Dropwizard is the out-of-the-box operational tools it provides, all of which can
+be found <a class="reference external" href="http://localhost:8081/">on the admin port</a>.</p>
+<p>If you click through to the <a class="reference external" href="http://localhost:8081/metrics">metrics resource</a>, you can see all of
+your application&#8217;s metrics represented as a JSON object.</p>
+<p>The <a class="reference external" href="http://localhost:8081/threads">threads resource</a> allows you to quickly get a thread dump of
+all the threads running in that process.</p>
+<div class="admonition hint">
+<p class="first admonition-title">Hint</p>
+<p class="last">When a Jetty worker thread is handling an incoming HTTP request, the thread name is set to
+the method and URI of the request. This can be <em>very</em> helpful when debugging a
+poorly-behaving request.</p>
+</div>
+<p>The <a class="reference external" href="http://localhost:8081/healthcheck">healthcheck resource</a> runs the
+<a class="reference internal" href="#gs-healthcheck"><em>health check class we wrote</em></a>. You should see something like this:</p>
+<div class="highlight-text"><div class="highlight"><pre>* deadlocks: OK
+* template: OK
+</pre></div>
+</div>
+<p><tt class="docutils literal"><span class="pre">template</span></tt> here is the result of your <tt class="docutils literal"><span class="pre">TemplateHealthCheck</span></tt>, which unsurprisingly passed.
+<tt class="docutils literal"><span class="pre">deadlocks</span></tt> is a built-in health check which looks for deadlocked JVM threads and prints out a
+listing if any are found.</p>
+</div>
+<div class="section" id="next-steps">
+<span id="gs-next"></span><h2>Next Steps</h2>
+<p>Well, congratulations. You&#8217;ve got a Hello World application ready for production (except for the
+lack of tests) that&#8217;s capable of doing 30,000-50,000 requests per second. Hopefully you&#8217;ve gotten a
+feel for how Dropwizard combines Jetty, Jersey, Jackson, and other stable, mature libraries to
+provide a phenomenal platform for developing RESTful web applications.</p>
+<p>There&#8217;s a lot more to Dropwizard than is covered here (commands, bundles, servlets, advanced
+configuration, validation, HTTP clients, database clients, views, etc.), all of which is covered by
+the <a class="reference internal" href="manual/index.html#manual-index"><em>User Manual</em></a>.</p>
+</div>
+</div>
+
+
+            </div>
+        </div>
+        <hr/>
+        <footer>
+            <p style="float: left">
+            &copy; Copyright 2010-2013, Coda Hale, Yammer Inc..
+            Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>
+            1.1.3.
+            </p>
+            <p style="float: right">Dropwizard v0.8.0</p>
+        </footer>
+    </div>
+</body>
+</html>
+
+

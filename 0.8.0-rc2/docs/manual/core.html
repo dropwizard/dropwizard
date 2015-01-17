@@ -1,0 +1,1270 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Dropwizard Core | Dropwizard</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="../_static/dropwizard.css" type="text/css"/>
+    <link rel="top" title="Dropwizard" href="../index.html"/>
+    <link rel="up" title="User Manual" href="index.html"/>
+    <link rel="next" title="Dropwizard Client" href="client.html"/>
+    <link rel="prev" title="User Manual" href="index.html"/>
+    <style lang="text/css">
+        #top-bar, #top-bar small, #top-bar a {
+            text-shadow: 0px -1px 0px #182127;
+            color: #ffffff;
+        }
+        
+        #top-bar {
+            background-color: #363F45;
+            background-image: -moz-linear-gradient(top, #545d63, #182127);
+            background-image: -ms-linear-gradient(top, #545d63, #182127);
+            background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#545d63), to(#182127));
+            background-image: -webkit-linear-gradient(top, #545d63, #182127);
+            background-image: -o-linear-gradient(top, #545d63, #182127);
+            background-image: linear-gradient(top, #545d63, #182127);
+            filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#545d63', endColorstr = '#182127', GradientType = 0);
+            -webkit-border-radius: 0;
+            -moz-border-radius: 0;
+            border-radius: 0;
+        }
+
+
+        .hero-unit {
+            background-image: url("../_static/dropwizard-hat.png") !important;
+            background-repeat: no-repeat !important;
+            background-position: 30px 50px;
+        }
+
+        .hero-unit div.section {
+            padding-left: 150px !important;
+        }
+    </style>
+</head>
+<body>
+    <a href="https://github.com/dropwizard/dropwizard">
+        <img style="position: absolute; top: 0; right: 0; border: 0;"
+             src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_ff7600.png"
+             alt="Fork me on GitHub"></a>
+    <div class="navbar">
+        <div class="navbar-inner container-fluid" id="top-bar">
+            <header class="row-fluid">
+                <h1 class="span12" id="title"><img class="logo" src="../_static/dropwizard-logo.png" alt="Logo"/>
+                    <a href="../index.html">Dropwizard</a>
+                    <small>Production-ready, out of the box.</small>
+                </h1>
+            </header>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <div class="span3" id="sidebar">
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../getting-started.html">Getting Started</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">User Manual</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="">Dropwizard Core</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#organizing-your-project">Organizing Your Project</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#application">Application</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#configuration">Configuration</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#ssl">SSL</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#bootstrapping">Bootstrapping</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#environments">Environments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#health-checks">Health Checks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#managed-objects">Managed Objects</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#bundles">Bundles</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#serving-assets">Serving Assets</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#commands">Commands</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#configured-commands">Configured Commands</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#tasks">Tasks</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#logging">Logging</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#log-format">Log Format</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#id4">Configuration</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#console-logging">Console Logging</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#file-logging">File Logging</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#syslog-logging">Syslog Logging</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#testing-applications">Testing Applications</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#banners">Banners</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#resources">Resources</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#paths">Paths</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#methods">Methods</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#metrics">Metrics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#parameters">Parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#request-entities">Request Entities</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#media-types">Media Types</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#responses">Responses</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#error-handling">Error Handling</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#uris">URIs</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#testing">Testing</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#caching">Caching</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#representations">Representations</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#basic-json">Basic JSON</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#advanced-json">Advanced JSON</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#snake-case"><tt class="docutils literal"><span class="pre">snake_case</span></tt></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#validation">Validation</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#advanced">Advanced</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#streaming-output">Streaming Output</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#html-representations">HTML Representations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#custom-representations">Custom Representations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#jersey-filters">Jersey filters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#servlet-filters">Servlet filters</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#how-it-s-glued-together">How it&#8217;s glued together</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="client.html">Dropwizard Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jdbi.html">Dropwizard JDBI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="migrations.html">Dropwizard Migrations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hibernate.html">Dropwizard Hibernate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="auth.html">Dropwizard Authentication</a></li>
+<li class="toctree-l2"><a class="reference internal" href="forms.html">Dropwizard Forms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="views.html">Dropwizard Views</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scala.html">Dropwizard &amp; Scala</a></li>
+<li class="toctree-l2"><a class="reference internal" href="testing.html">Testing Dropwizard</a></li>
+<li class="toctree-l2"><a class="reference internal" href="example.html">Dropwizard Example, Step by Step</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html">Dropwizard Configuration Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../about/index.html">About Dropwizard</a></li>
+</ul>
+
+                <hr/>
+                <ul>
+                    <li><a href="https://dropwizard.github.io/dropwizard/0.8.0">Maven Site</a></li>
+                    <li><a href="https://groups.google.com/forum/#!forum/dropwizard-user">User Mailing List</a></li>
+                    <li><a href="https://groups.google.com/forum/#!forum/dropwizard-dev">Developer Mailing List</a></li>
+                </ul>
+            </div>
+            <div class="span9" id="body">
+                
+  <div class="section" id="dropwizard-core">
+<span id="man-core"></span><h1>Dropwizard Core</h1>
+<p class="rubric">The <tt class="docutils literal"><span class="pre">dropwizard-core</span></tt> module provides you with everything you&#8217;ll need for most of your
+applications.</p>
+<p>It includes:</p>
+<ul class="simple">
+<li>Jetty, a high-performance HTTP server.</li>
+<li>Jersey, a full-featured RESTful web framework.</li>
+<li>Jackson, the best JSON library for the JVM.</li>
+<li>Metrics, an excellent library for application metrics.</li>
+<li>Guava, Google&#8217;s excellent utility library.</li>
+<li>Logback, the successor to Log4j, Java&#8217;s most widely-used logging framework.</li>
+<li>Hibernate Validator, the reference implementation of the Java Bean Validation standard.</li>
+</ul>
+<p>Dropwizard consists mostly of glue code to automatically connect and configure these components.</p>
+<div class="section" id="organizing-your-project">
+<span id="man-core-organization"></span><h2>Organizing Your Project</h2>
+<p>In general, we recommend you separate your projects into three Maven modules: <tt class="docutils literal"><span class="pre">project-api</span></tt>,
+<tt class="docutils literal"><span class="pre">project-client</span></tt>, and <tt class="docutils literal"><span class="pre">project-application</span></tt>.</p>
+<p><tt class="docutils literal"><span class="pre">project-api</span></tt> should contain your <a class="reference internal" href="#man-core-representations"><em>Representations</em></a>; <tt class="docutils literal"><span class="pre">project-client</span></tt> should use
+those classes and an <a class="reference internal" href="client.html#man-client"><em>HTTP client</em></a> to implement a full-fledged client for your
+application, and <tt class="docutils literal"><span class="pre">project-application</span></tt> should provide the actual application implementation, including
+<a class="reference internal" href="#man-core-resources"><em>Resources</em></a>.</p>
+<p>Our applications tend to look like this:</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">com.example.myapplication</span></tt>:<ul>
+<li><tt class="docutils literal"><span class="pre">api</span></tt>: <a class="reference internal" href="#man-core-representations"><em>Representations</em></a>.</li>
+<li><tt class="docutils literal"><span class="pre">cli</span></tt>: <a class="reference internal" href="#man-core-commands"><em>Commands</em></a></li>
+<li><tt class="docutils literal"><span class="pre">client</span></tt>: <a class="reference internal" href="client.html#man-client"><em>Client</em></a> implementation for your application</li>
+<li><tt class="docutils literal"><span class="pre">core</span></tt>: Domain implementation</li>
+<li><tt class="docutils literal"><span class="pre">jdbi</span></tt>: <a class="reference internal" href="jdbi.html#man-jdbi"><em>Database</em></a> access classes</li>
+<li><tt class="docutils literal"><span class="pre">health</span></tt>: <a class="reference internal" href="#man-core-healthchecks"><em>Health Checks</em></a></li>
+<li><tt class="docutils literal"><span class="pre">resources</span></tt>: <a class="reference internal" href="#man-core-resources"><em>Resources</em></a></li>
+<li><tt class="docutils literal"><span class="pre">MyApplication</span></tt>: The <a class="reference internal" href="#man-core-application"><em>application</em></a> class</li>
+<li><tt class="docutils literal"><span class="pre">MyApplicationConfiguration</span></tt>: <a class="reference internal" href="#man-core-configuration"><em>configuration</em></a> class</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="application">
+<span id="man-core-application"></span><h2>Application</h2>
+<p>The main entry point into a Dropwizard application is, unsurprisingly, the <tt class="docutils literal"><span class="pre">Application</span></tt> class. Each
+<tt class="docutils literal"><span class="pre">Application</span></tt> has a <strong>name</strong>, which is mostly used to render the command-line interface. In the
+constructor of your <tt class="docutils literal"><span class="pre">Application</span></tt> you can add <a class="reference internal" href="#man-core-bundles"><em>Bundles</em></a> and <a class="reference internal" href="#man-core-commands"><em>Commands</em></a> to
+your application.</p>
+</div>
+<div class="section" id="configuration">
+<span id="man-core-configuration"></span><h2>Configuration</h2>
+<p>Dropwizard provides a number of built-in configuration parameters. They are
+well documented in the <a class="reference external" href="https://github.com/dropwizard/dropwizard/blob/master/dropwizard-example/example.yml">example project&#8217;s configuration</a>.</p>
+<p>Each <tt class="docutils literal"><span class="pre">Application</span></tt> subclass has a single type parameter: that of its matching <tt class="docutils literal"><span class="pre">Configuration</span></tt>
+subclass. These are usually at the root of your application&#8217;s main package. For example, your User
+application would have two classes: <tt class="docutils literal"><span class="pre">UserApplicationConfiguration</span></tt>, extending <tt class="docutils literal"><span class="pre">Configuration</span></tt>, and
+<tt class="docutils literal"><span class="pre">UserApplication</span></tt>, extending <tt class="docutils literal"><span class="pre">Application&lt;UserApplicationConfiguration&gt;</span></tt>.</p>
+<p>When your application runs <a class="reference internal" href="#man-core-commands-configured"><em>Configured Commands</em></a> like the <tt class="docutils literal"><span class="pre">server</span></tt> command, Dropwizard
+parses the provided YAML configuration file and builds an instance of your application&#8217;s configuration
+class by mapping YAML field names to object field names.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If your configuration file doesn&#8217;t end in <tt class="docutils literal"><span class="pre">.yml</span></tt> or <tt class="docutils literal"><span class="pre">.yaml</span></tt>, Dropwizard tries to parse it
+as a JSON file.</p>
+</div>
+<p>In order to keep your configuration file and class manageable, we recommend grouping related
+configuration parameters into independent configuration classes. If your application requires a set of
+configuration parameters in order to connect to a message queue, for example, we recommend that you
+create a new <tt class="docutils literal"><span class="pre">MessageQueueFactory</span></tt> class:</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="kd">public</span> <span class="kd">class</span> <span class="nc">MessageQueueFactory</span> <span class="o">{</span>
+    <span class="nd">@NotEmpty</span>
+    <span class="kd">private</span> <span class="n">String</span> <span class="n">host</span><span class="o">;</span>
+
+    <span class="nd">@Min</span><span class="o">(</span><span class="mi">1</span><span class="o">)</span>
+    <span class="nd">@Max</span><span class="o">(</span><span class="mi">65535</span><span class="o">)</span>
+    <span class="kd">private</span> <span class="kt">int</span> <span class="n">port</span> <span class="o">=</span> <span class="mi">5672</span><span class="o">;</span>
+
+    <span class="nd">@JsonProperty</span>
+    <span class="kd">public</span> <span class="n">String</span> <span class="nf">getHost</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">host</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="nd">@JsonProperty</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setHost</span><span class="o">(</span><span class="n">String</span> <span class="n">host</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">host</span> <span class="o">=</span> <span class="n">host</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="nd">@JsonProperty</span>
+    <span class="kd">public</span> <span class="kt">int</span> <span class="nf">getPort</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">port</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="nd">@JsonProperty</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setPort</span><span class="o">(</span><span class="kt">int</span> <span class="n">port</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">port</span> <span class="o">=</span> <span class="n">port</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="n">MessageQueueClient</span> <span class="nf">build</span><span class="o">(</span><span class="n">Environment</span> <span class="n">environment</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">MessageQueueClient</span> <span class="n">client</span> <span class="o">=</span> <span class="k">new</span> <span class="n">MessageQueueClient</span><span class="o">(</span><span class="n">getHost</span><span class="o">(),</span> <span class="n">getPort</span><span class="o">());</span>
+        <span class="n">environment</span><span class="o">.</span><span class="na">lifecycle</span><span class="o">().</span><span class="na">manage</span><span class="o">(</span><span class="k">new</span> <span class="n">Managed</span><span class="o">()</span> <span class="o">{</span>
+            <span class="nd">@Override</span>
+            <span class="kd">public</span> <span class="kt">void</span> <span class="nf">start</span><span class="o">()</span> <span class="o">{</span>
+            <span class="o">}</span>
+
+            <span class="nd">@Override</span>
+            <span class="kd">public</span> <span class="kt">void</span> <span class="nf">stop</span><span class="o">()</span> <span class="o">{</span>
+                <span class="n">client</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+            <span class="o">}</span>
+        <span class="o">};</span>
+        <span class="k">return</span> <span class="n">client</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>In this example our factory will automatically tie our <tt class="docutils literal"><span class="pre">MessageQueueClient</span></tt> connection to the
+lifecycle of our application&#8217;s <tt class="docutils literal"><span class="pre">Environment</span></tt>.</p>
+<p>Your main <tt class="docutils literal"><span class="pre">Configuration</span></tt> subclass can then include this as a member field:</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ExampleConfiguration</span> <span class="kd">extends</span> <span class="n">Configuration</span> <span class="o">{</span>
+    <span class="nd">@Valid</span>
+    <span class="nd">@NotNull</span>
+    <span class="kd">private</span> <span class="n">MessageQueueFactory</span> <span class="n">messageQueue</span> <span class="o">=</span> <span class="k">new</span> <span class="n">MessageQueueFactory</span><span class="o">();</span>
+
+    <span class="nd">@JsonProperty</span><span class="o">(</span><span class="s">&quot;messageQueue&quot;</span><span class="o">)</span>
+    <span class="kd">public</span> <span class="n">MessageQueueFactory</span> <span class="nf">getMessageQueueFactory</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">messageQueue</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="nd">@JsonProperty</span><span class="o">(</span><span class="s">&quot;messageQueue&quot;</span><span class="o">)</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setMessageQueueFactory</span><span class="o">(</span><span class="n">MessageQueueFactory</span> <span class="n">factory</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">messageQueue</span> <span class="o">=</span> <span class="n">factory</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>And your <tt class="docutils literal"><span class="pre">Application</span></tt> subclass can then use your factory to directly construct a client for the
+message queue:</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="kd">public</span> <span class="kt">void</span> <span class="nf">run</span><span class="o">(</span><span class="n">ExampleConfiguration</span> <span class="n">configuration</span><span class="o">,</span>
+                <span class="n">Environment</span> <span class="n">environment</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">MessageQueueClient</span> <span class="n">messageQueue</span> <span class="o">=</span> <span class="n">configuration</span><span class="o">.</span><span class="na">getMessageQueueFactory</span><span class="o">().</span><span class="na">build</span><span class="o">(</span><span class="n">environment</span><span class="o">);</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>Then, in your application&#8217;s YAML file, you can use a nested <tt class="docutils literal"><span class="pre">messageQueue</span></tt> field:</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="nl">messageQueue:</span>
+  <span class="nl">host:</span> <span class="n">mq</span><span class="o">.</span><span class="na">example</span><span class="o">.</span><span class="na">com</span>
+  <span class="nl">port:</span> <span class="mi">5673</span>
+</pre></div>
+</div>
+<p>The <tt class="docutils literal"><span class="pre">&#64;NotNull</span></tt>, <tt class="docutils literal"><span class="pre">&#64;NotEmpty</span></tt>, <tt class="docutils literal"><span class="pre">&#64;Min</span></tt>, <tt class="docutils literal"><span class="pre">&#64;Max</span></tt>, and <tt class="docutils literal"><span class="pre">&#64;Valid</span></tt> annotations are part of Dropwizard&#8217;s
+<a class="reference internal" href="#man-core-representations-validation"><em>Validation</em></a> functionality. If your YAML configuration file&#8217;s
+<tt class="docutils literal"><span class="pre">messageQueue.host</span></tt> field was missing (or was a blank string), Dropwizard would refuse to start
+and would output an error message describing the issues.</p>
+<p>Once your application has parsed the YAML file and constructed its <tt class="docutils literal"><span class="pre">Configuration</span></tt> instance,
+Dropwizard then calls your <tt class="docutils literal"><span class="pre">Application</span></tt> subclass to initialize your application&#8217;s <tt class="docutils literal"><span class="pre">Environment</span></tt>.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>You can override configuration settings by passing special Java system properties when starting
+your application. Overrides must start with prefix <tt class="docutils literal"><span class="pre">dw.</span></tt>, followed by the path to the
+configuration value being overridden.</p>
+<p>For example, to override the Logging level, you could start your application like this:</p>
+<p><tt class="docutils literal"><span class="pre">java</span> <span class="pre">-Ddw.logging.level=DEBUG</span> <span class="pre">server</span> <span class="pre">my-config.json</span></tt></p>
+<p>This will work even if the configuration setting in question does not exist in your config file, in
+which case it will get added.</p>
+<p>You can override configuration settings in arrays of objects like this:</p>
+<p><tt class="docutils literal"><span class="pre">java</span> <span class="pre">-Ddw.server.applicationConnectors[0].port=9090</span> <span class="pre">server</span> <span class="pre">my-config.json</span></tt></p>
+<p>You can override configuration settings in maps like this:</p>
+<p><tt class="docutils literal"><span class="pre">java</span> <span class="pre">-Ddw.database.properties.hibernate.hbm2ddl.auto=none</span> <span class="pre">server</span> <span class="pre">my-config.json</span></tt></p>
+<p>You can also override a configuration setting that is an array of strings by using the &#8216;,&#8217; character
+as an array element separator. For example, to override a configuration setting myapp.myserver.hosts
+that is an array of strings in the configuration, you could start your service like this:
+<tt class="docutils literal"><span class="pre">java</span> <span class="pre">-Ddw.myapp.myserver.hosts=server1,server2,server3</span> <span class="pre">server</span> <span class="pre">my-config.json</span></tt></p>
+<p>If you need to use the &#8216;,&#8217; character in one of the values, you can escape it by using &#8216;,&#8217; instead.</p>
+<p class="last">The array override facility only handles configuration elements that are arrays of simple strings.
+Also, the setting in question must already exist in your configuration file as an array;
+this mechanism will not work if the configuration key being overridden does not exist in your configuration
+file. If it does not exist or is not an array setting, it will get added as a simple string setting, including
+the &#8216;,&#8217; characters as part of the string.</p>
+</div>
+<div class="section" id="ssl">
+<span id="man-core-environments"></span><h3>SSL</h3>
+<p>SSL support is built into Dropwizard. You will need to provide your own java
+keystore, which is outside the scope of this document (<tt class="docutils literal"><span class="pre">keytool</span></tt> is the
+command you need). There is a test keystore you can use in the
+<a class="reference external" href="https://github.com/dropwizard/dropwizard/tree/master/dropwizard-example">Dropwizard example project</a>.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">server</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">applicationConnectors</span><span class="p-Indicator">:</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">type</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">https</span>
+      <span class="l-Scalar-Plain">port</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">8443</span>
+      <span class="l-Scalar-Plain">keyStorePath</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">example.keystore</span>
+      <span class="l-Scalar-Plain">keyStorePassword</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">example</span>
+      <span class="l-Scalar-Plain">validateCerts</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">false</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="bootstrapping">
+<h2>Bootstrapping</h2>
+<p>Before a Dropwizard application can provide the command-line interface, parse a configuration file, or
+run as a server, it must first go through a bootstrapping phase. This phase corresponds to your
+<tt class="docutils literal"><span class="pre">Application</span></tt> subclass&#8217;s <tt class="docutils literal"><span class="pre">initialize</span></tt> method. You can add <a class="reference internal" href="#man-core-bundles"><em>Bundles</em></a>,
+<a class="reference internal" href="#man-core-commands"><em>Commands</em></a>, or register Jackson modules to allow you to include custom types as part
+of your configuration class.</p>
+</div>
+<div class="section" id="environments">
+<h2>Environments</h2>
+<p>A Dropwizard <tt class="docutils literal"><span class="pre">Environment</span></tt> consists of all the <a class="reference internal" href="#man-core-resources"><em>Resources</em></a>, servlets, filters,
+<a class="reference internal" href="#man-core-healthchecks"><em>Health Checks</em></a>, Jersey providers, <a class="reference internal" href="#man-core-managed"><em>Managed Objects</em></a>, <a class="reference internal" href="#man-core-tasks"><em>Tasks</em></a>, and
+Jersey properties which your application provides.</p>
+<p>Each <tt class="docutils literal"><span class="pre">Application</span></tt> subclass implements a <tt class="docutils literal"><span class="pre">run</span></tt> method. This is where you should be creating new
+resource instances, etc., and adding them to the given <tt class="docutils literal"><span class="pre">Environment</span></tt> class:</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="nd">@Override</span>
+<span class="kd">public</span> <span class="kt">void</span> <span class="nf">run</span><span class="o">(</span><span class="n">ExampleConfiguration</span> <span class="n">config</span><span class="o">,</span>
+                <span class="n">Environment</span> <span class="n">environment</span><span class="o">)</span> <span class="o">{</span>
+    <span class="c1">// encapsulate complicated setup logic in factories</span>
+    <span class="kd">final</span> <span class="n">Thingy</span> <span class="n">thingy</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="na">getThingyFactory</span><span class="o">().</span><span class="na">build</span><span class="o">();</span>
+
+    <span class="n">environment</span><span class="o">.</span><span class="na">jersey</span><span class="o">().</span><span class="na">register</span><span class="o">(</span><span class="k">new</span> <span class="n">ThingyResource</span><span class="o">(</span><span class="n">thingy</span><span class="o">));</span>
+    <span class="n">environment</span><span class="o">.</span><span class="na">healthChecks</span><span class="o">().</span><span class="na">register</span><span class="o">(</span><span class="s">&quot;thingy&quot;</span><span class="o">,</span> <span class="k">new</span> <span class="n">ThingyHealthCheck</span><span class="o">(</span><span class="n">thingy</span><span class="o">));</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>It&#8217;s important to keep the <tt class="docutils literal"><span class="pre">run</span></tt> method clean, so if creating an instance of something is
+complicated, like the <tt class="docutils literal"><span class="pre">Thingy</span></tt> class above, extract that logic into a factory.</p>
+</div>
+<div class="section" id="health-checks">
+<span id="man-core-healthchecks"></span><h2>Health Checks</h2>
+<p>A health check is a runtime test which you can use to verify your application&#8217;s behavior in its
+production environment. For example, you may want to ensure that your database client is connected
+to the database:</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="kd">public</span> <span class="kd">class</span> <span class="nc">DatabaseHealthCheck</span> <span class="kd">extends</span> <span class="n">HealthCheck</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">Database</span> <span class="n">database</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="nf">DatabaseHealthCheck</span><span class="o">(</span><span class="n">Database</span> <span class="n">database</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">database</span> <span class="o">=</span> <span class="n">database</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">protected</span> <span class="n">Result</span> <span class="nf">check</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">database</span><span class="o">.</span><span class="na">isConnected</span><span class="o">())</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="n">Result</span><span class="o">.</span><span class="na">healthy</span><span class="o">();</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="n">Result</span><span class="o">.</span><span class="na">unhealthy</span><span class="o">(</span><span class="s">&quot;Cannot connect to &quot;</span> <span class="o">+</span> <span class="n">database</span><span class="o">.</span><span class="na">getUrl</span><span class="o">());</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>You can then add this health check to your application&#8217;s environment:</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="n">environment</span><span class="o">.</span><span class="na">healthChecks</span><span class="o">().</span><span class="na">register</span><span class="o">(</span><span class="s">&quot;database&quot;</span><span class="o">,</span> <span class="k">new</span> <span class="n">DatabaseHealthCheck</span><span class="o">(</span><span class="n">database</span><span class="o">));</span>
+</pre></div>
+</div>
+<p>By sending a <tt class="docutils literal"><span class="pre">GET</span></tt> request to <tt class="docutils literal"><span class="pre">/healthcheck</span></tt> on the admin port you can run these tests and view
+the results:</p>
+<div class="highlight-text"><div class="highlight"><pre>$ curl http://dw.example.com:8081/healthcheck
+{&quot;deadlocks&quot;:{&quot;healthy&quot;:true},&quot;database&quot;:{&quot;healthy&quot;:true}}
+</pre></div>
+</div>
+<p>If all health checks report success, a <tt class="docutils literal"><span class="pre">200</span> <span class="pre">OK</span></tt> is returned. If any fail, a
+<tt class="docutils literal"><span class="pre">500</span> <span class="pre">Internal</span> <span class="pre">Server</span> <span class="pre">Error</span></tt> is returned with the error messages and exception stack traces (if an
+exception was thrown).</p>
+<p>All Dropwizard applications ship with the <tt class="docutils literal"><span class="pre">deadlocks</span></tt> health check installed by default, which uses
+Java 1.6&#8217;s built-in thread deadlock detection to determine if any threads are deadlocked.</p>
+</div>
+<div class="section" id="managed-objects">
+<span id="man-core-managed"></span><h2>Managed Objects</h2>
+<p>Most applications involve objects which need to be started and stopped: thread pools, database
+connections, etc. Dropwizard provides the <tt class="docutils literal"><span class="pre">Managed</span></tt> interface for this. You can either have the
+class in question implement the <tt class="docutils literal"><span class="pre">#start()</span></tt> and <tt class="docutils literal"><span class="pre">#stop()</span></tt> methods, or write a wrapper class which
+does so. Adding a <tt class="docutils literal"><span class="pre">Managed</span></tt> instance to your application&#8217;s <tt class="docutils literal"><span class="pre">Environment</span></tt> ties that object&#8217;s
+lifecycle to that of the application&#8217;s HTTP server. Before the server starts, the <tt class="docutils literal"><span class="pre">#start()</span></tt> method is
+called. After the server has stopped (and after its graceful shutdown period) the <tt class="docutils literal"><span class="pre">#stop()</span></tt> method
+is called.</p>
+<p>For example, given a theoretical <a class="reference external" href="http://riak.basho.com">Riak</a> client which needs to be started and stopped:</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="kd">public</span> <span class="kd">class</span> <span class="nc">RiakClientManager</span> <span class="kd">implements</span> <span class="n">Managed</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">RiakClient</span> <span class="n">client</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="nf">RiakClientManager</span><span class="o">(</span><span class="n">RiakClient</span> <span class="n">client</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">client</span> <span class="o">=</span> <span class="n">client</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">start</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+        <span class="n">client</span><span class="o">.</span><span class="na">start</span><span class="o">();</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">stop</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+        <span class="n">client</span><span class="o">.</span><span class="na">stop</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<div class="highlight-java"><div class="highlight"><pre><span class="kd">public</span> <span class="kd">class</span> <span class="nc">MyApplication</span> <span class="kd">extends</span> <span class="n">Application</span><span class="o">&lt;</span><span class="n">MyConfiguration</span><span class="o">&gt;{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">run</span><span class="o">(</span><span class="n">MyApplicationConfiguration</span> <span class="n">configuration</span><span class="o">,</span> <span class="n">Environment</span> <span class="n">environment</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">RiakClient</span> <span class="n">client</span> <span class="o">=</span> <span class="o">...;</span>
+        <span class="n">RiakClientManager</span> <span class="n">riakClientManager</span> <span class="o">=</span> <span class="k">new</span> <span class="n">RiakClientManager</span><span class="o">(</span><span class="n">client</span><span class="o">);</span>
+        <span class="n">environment</span><span class="o">.</span><span class="na">lifecycle</span><span class="o">().</span><span class="na">manage</span><span class="o">(</span><span class="n">riakClientManager</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>If <tt class="docutils literal"><span class="pre">RiakClientManager#start()</span></tt> throws an exception&#8211;e.g., an error connecting to the server&#8211;your
+application will not start and a full exception will be logged. If <tt class="docutils literal"><span class="pre">RiakClientManager#stop()</span></tt> throws
+an exception, the exception will be logged but your application will still be able to shut down.</p>
+<p>It should be noted that <tt class="docutils literal"><span class="pre">Environment</span></tt> has built-in factory methods for <tt class="docutils literal"><span class="pre">ExecutorService</span></tt> and
+<tt class="docutils literal"><span class="pre">ScheduledExecutorService</span></tt> instances which are managed. See <tt class="docutils literal"><span class="pre">LifecycleEnvironment#executorService</span></tt>
+and <tt class="docutils literal"><span class="pre">LifecycleEnvironment#scheduledExecutorService</span></tt> for details.</p>
+</div>
+<div class="section" id="bundles">
+<span id="man-core-bundles"></span><h2>Bundles</h2>
+<p>A Dropwizard bundle is a reusable group of functionality, used to define blocks of an application&#8217;s
+behavior. For example, <tt class="docutils literal"><span class="pre">AssetBundle</span></tt> from the <tt class="docutils literal"><span class="pre">dropwizard-assets</span></tt> module provides a simple way
+to serve static assets from your application&#8217;s <tt class="docutils literal"><span class="pre">src/main/resources/assets</span></tt> directory as files
+available from <tt class="docutils literal"><span class="pre">/assets/*</span></tt> (or any other path) in your application.</p>
+<p>Some bundles require configuration parameters. These bundles implement <tt class="docutils literal"><span class="pre">ConfiguredBundle</span></tt> and will
+require your application&#8217;s <tt class="docutils literal"><span class="pre">Configuration</span></tt> subclass to implement a specific interface.</p>
+<div class="section" id="serving-assets">
+<h3>Serving Assets</h3>
+<p>Either your application or your static assets can be served from the root path, but
+not both. The latter is useful when using Dropwizard to back a Javascript
+application. To enable it, move your application to a sub-URL.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">server</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">type</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">simple</span>
+  <span class="l-Scalar-Plain">rootPath</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">/application/*</span>
+</pre></div>
+</div>
+<p>Then use an extended <tt class="docutils literal"><span class="pre">AssetsBundle</span></tt> constructor to serve resources in the
+<tt class="docutils literal"><span class="pre">assets</span></tt> folder from the root path. <tt class="docutils literal"><span class="pre">index.htm</span></tt> is served as the default
+page.</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="nd">@Override</span>
+<span class="kd">public</span> <span class="kt">void</span> <span class="nf">initialize</span><span class="o">(</span><span class="n">Bootstrap</span><span class="o">&lt;</span><span class="n">HelloWorldConfiguration</span><span class="o">&gt;</span> <span class="n">bootstrap</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">bootstrap</span><span class="o">.</span><span class="na">addBundle</span><span class="o">(</span><span class="k">new</span> <span class="n">AssetsBundle</span><span class="o">(</span><span class="s">&quot;/assets/&quot;</span><span class="o">,</span> <span class="s">&quot;/&quot;</span><span class="o">));</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>When an <tt class="docutils literal"><span class="pre">AssetBundle</span></tt> is added to the application, it is registered as a servlet
+using a default name of <tt class="docutils literal"><span class="pre">assets</span></tt>. If the application needs to have multiple <tt class="docutils literal"><span class="pre">AssetBundle</span></tt>
+instances, the extended constructor should be used to specify a unique name for the <tt class="docutils literal"><span class="pre">AssetBundle</span></tt>.</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="nd">@Override</span>
+<span class="kd">public</span> <span class="kt">void</span> <span class="nf">initialize</span><span class="o">(</span><span class="n">Bootstrap</span><span class="o">&lt;</span><span class="n">HelloWorldConfiguration</span><span class="o">&gt;</span> <span class="n">bootstrap</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">bootstrap</span><span class="o">.</span><span class="na">addBundle</span><span class="o">(</span><span class="k">new</span> <span class="n">AssetsBundle</span><span class="o">(</span><span class="s">&quot;/assets/css&quot;</span><span class="o">,</span> <span class="s">&quot;/css&quot;</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="s">&quot;css&quot;</span><span class="o">));</span>
+    <span class="n">bootstrap</span><span class="o">.</span><span class="na">addBundle</span><span class="o">(</span><span class="k">new</span> <span class="n">AssetsBundle</span><span class="o">(</span><span class="s">&quot;/assets/js&quot;</span><span class="o">,</span> <span class="s">&quot;/js&quot;</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="s">&quot;js&quot;</span><span class="o">));</span>
+    <span class="n">bootstrap</span><span class="o">.</span><span class="na">addBundle</span><span class="o">(</span><span class="k">new</span> <span class="n">AssetsBundle</span><span class="o">(</span><span class="s">&quot;/assets/fonts&quot;</span><span class="o">,</span> <span class="s">&quot;/fonts&quot;</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="s">&quot;fonts&quot;</span><span class="o">));</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="commands">
+<span id="man-core-commands"></span><h2>Commands</h2>
+<p>Commands are basic actions which Dropwizard runs based on the arguments provided on the command
+line. The built-in <tt class="docutils literal"><span class="pre">server</span></tt> command, for example, spins up an HTTP server and runs your application.
+Each <tt class="docutils literal"><span class="pre">Command</span></tt> subclass has a name and a set of command line options which Dropwizard will use to
+parse the given command line arguments.</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="kd">public</span> <span class="kd">class</span> <span class="nc">MyApplication</span> <span class="kd">extends</span> <span class="n">Application</span><span class="o">&lt;</span><span class="n">MyConfiguration</span><span class="o">&gt;{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">initialize</span><span class="o">(</span><span class="n">Bootstrap</span><span class="o">&lt;</span><span class="n">DropwizardConfiguration</span><span class="o">&gt;</span> <span class="n">bootstrap</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">bootstrap</span><span class="o">.</span><span class="na">addCommand</span><span class="o">(</span><span class="k">new</span> <span class="n">MyCommand</span><span class="o">());</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<div class="section" id="configured-commands">
+<span id="man-core-commands-configured"></span><h3>Configured Commands</h3>
+<p>Some commands require access to configuration parameters and should extend the <tt class="docutils literal"><span class="pre">ConfiguredCommand</span></tt>
+class, using your application&#8217;s <tt class="docutils literal"><span class="pre">Configuration</span></tt> class as its type parameter. Dropwizard will treat
+the first argument on the command line as the path to a YAML configuration file, parse and validate it,
+and provide your command with an instance of the configuration class.</p>
+</div>
+</div>
+<div class="section" id="tasks">
+<span id="man-core-tasks"></span><h2>Tasks</h2>
+<p>A <tt class="docutils literal"><span class="pre">Task</span></tt> is a run-time action your application provides access to on the administrative port via HTTP.
+All Dropwizard applications start with: the <tt class="docutils literal"><span class="pre">gc</span></tt> task, which explicitly triggers the JVM&#8217;s garbage
+collection (This is useful, for example, for running full garbage collections during off-peak times
+or while the given application is out of rotation.); and the <tt class="docutils literal"><span class="pre">log-level</span></tt> task, which configures the level
+of any number of loggers at runtime (akin to Logback&#8217;s <tt class="docutils literal"><span class="pre">JmxConfigurator</span></tt>). The execute method of a <tt class="docutils literal"><span class="pre">Task</span></tt>
+can be annotated with <tt class="docutils literal"><span class="pre">&#64;Timed</span></tt>, <tt class="docutils literal"><span class="pre">&#64;Metered</span></tt>, and <tt class="docutils literal"><span class="pre">&#64;ExceptionMetered</span></tt>. Dropwizard will automatically
+record runtime information about your tasks. Here&#8217;s a basic task class:</p>
+<div class="highlight-java"><pre>public class TruncateDatabaseTask extends Task {
+    private final Database database;
+
+    public TruncateDatabaseTask(Database database) {
+        super('truncate');
+        this.database = database;
+    }
+
+      @Override
+    public void execute(ImmutableMultimap&lt;String, String&gt; parameters, PrintWriter output) throws Exception {
+        this.database.truncate();
+    }
+}</pre>
+</div>
+<p>You can then add this task to your application&#8217;s environment:</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="n">environment</span><span class="o">.</span><span class="na">admin</span><span class="o">().</span><span class="na">addTask</span><span class="o">(</span><span class="k">new</span> <span class="n">TruncateDatabaseTask</span><span class="o">(</span><span class="n">database</span><span class="o">));</span>
+</pre></div>
+</div>
+<p>Running a task can be done by sending a <tt class="docutils literal"><span class="pre">POST</span></tt> request to <tt class="docutils literal"><span class="pre">/tasks/{task-name}</span></tt> on the admin
+port. For example:</p>
+<div class="highlight-text"><div class="highlight"><pre>$ curl -X POST http://dw.example.com:8081/tasks/gc
+Running GC...
+Done!
+</pre></div>
+</div>
+</div>
+<div class="section" id="logging">
+<span id="man-core-logging"></span><h2>Logging</h2>
+<p>Dropwizard uses <a class="reference external" href="http://logback.qos.ch/">Logback</a> for its logging backend. It provides an <a class="reference external" href="http://www.slf4j.org/">slf4j</a> implementation, and even
+routes all <tt class="docutils literal"><span class="pre">java.util.logging</span></tt>, Log4j, and Apache Commons Logging usage through Logback.</p>
+<p>slf4j provides the following logging levels:</p>
+<dl class="docutils">
+<dt><tt class="docutils literal"><span class="pre">ERROR</span></tt></dt>
+<dd>Error events that might still allow the application to continue running.</dd>
+<dt><tt class="docutils literal"><span class="pre">WARN</span></tt></dt>
+<dd>Potentially harmful situations.</dd>
+<dt><tt class="docutils literal"><span class="pre">INFO</span></tt></dt>
+<dd>Informational messages that highlight the progress of the application at coarse-grained level.</dd>
+<dt><tt class="docutils literal"><span class="pre">DEBUG</span></tt></dt>
+<dd>Fine-grained informational events that are most useful to debug an application.</dd>
+<dt><tt class="docutils literal"><span class="pre">TRACE</span></tt></dt>
+<dd>Finer-grained informational events than the <tt class="docutils literal"><span class="pre">DEBUG</span></tt> level.</dd>
+</dl>
+<div class="section" id="log-format">
+<span id="man-core-logging-format"></span><h3>Log Format</h3>
+<p>Dropwizard&#8217;s log format has a few specific goals:</p>
+<ul class="simple">
+<li>Be human readable.</li>
+<li>Be machine parsable.</li>
+<li>Be easy for sleepy ops folks to figure out why things are pear-shaped at 3:30AM using standard
+UNIXy tools like <tt class="docutils literal"><span class="pre">tail</span></tt> and <tt class="docutils literal"><span class="pre">grep</span></tt>.</li>
+</ul>
+<p>The logging output looks like this:</p>
+<div class="highlight-text"><div class="highlight"><pre>TRACE [2010-04-06 06:42:35,271] com.example.dw.Thing: Contemplating doing a thing.
+DEBUG [2010-04-06 06:42:35,274] com.example.dw.Thing: About to do a thing.
+INFO  [2010-04-06 06:42:35,274] com.example.dw.Thing: Doing a thing
+WARN  [2010-04-06 06:42:35,275] com.example.dw.Thing: Doing a thing
+ERROR [2010-04-06 06:42:35,275] com.example.dw.Thing: This may get ugly.
+! java.lang.RuntimeException: oh noes!
+! at com.example.dw.Thing.run(Thing.java:16)
+!
+</pre></div>
+</div>
+<p>A few items of note:</p>
+<ul>
+<li><p class="first">All timestamps are in UTC and ISO 8601 format.</p>
+</li>
+<li><p class="first">You can grep for messages of a specific level really easily:</p>
+<div class="highlight-text"><div class="highlight"><pre>tail -f dw.log | grep &#39;^WARN&#39;
+</pre></div>
+</div>
+</li>
+<li><p class="first">You can grep for messages from a specific class or package really easily:</p>
+<div class="highlight-text"><div class="highlight"><pre>tail -f dw.log | grep &#39;com.example.dw.Thing&#39;
+</pre></div>
+</div>
+</li>
+<li><p class="first">You can even pull out full exception stack traces, plus the accompanying log message:</p>
+<div class="highlight-text"><div class="highlight"><pre>tail -f dw.log | grep -B 1 &#39;^\!&#39;
+</pre></div>
+</div>
+</li>
+<li><p class="first">The <cite>!</cite> prefix does <em>not</em> apply to syslog appenders, as stack traces are sent separately from the main message.
+Instead, <cite>t</cite> is used (this is the default value of the <cite>SyslogAppender</cite> that comes with Logback). This can be
+configured with the <cite>stackTracePrefix</cite> option when defining your appender.</p>
+</li>
+</ul>
+</div>
+<div class="section" id="id4">
+<h3>Configuration</h3>
+<p>You can specify a default logger level and even override the levels of
+other loggers in your YAML configuration file:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="c1"># Logging settings.</span>
+<span class="l-Scalar-Plain">logging</span><span class="p-Indicator">:</span>
+
+  <span class="c1"># The default level of all loggers. Can be OFF, ERROR, WARN, INFO, DEBUG, TRACE, or ALL.</span>
+  <span class="l-Scalar-Plain">level</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">INFO</span>
+
+  <span class="c1"># Logger-specific levels.</span>
+  <span class="l-Scalar-Plain">loggers</span><span class="p-Indicator">:</span>
+
+    <span class="c1"># Overrides the level of com.example.dw.Thing and sets it to DEBUG.</span>
+    <span class="s">&quot;com.example.dw.Thing&quot;</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">DEBUG</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="console-logging">
+<span id="man-core-logging-console"></span><h3>Console Logging</h3>
+<p>By default, Dropwizard applications log <tt class="docutils literal"><span class="pre">INFO</span></tt> and higher to <tt class="docutils literal"><span class="pre">STDOUT</span></tt>. You can configure this by
+editing the <tt class="docutils literal"><span class="pre">logging</span></tt> section of your YAML configuration file:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">logging</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">appenders</span><span class="p-Indicator">:</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">type</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">console</span>
+      <span class="l-Scalar-Plain">threshold</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">WARN</span>
+      <span class="l-Scalar-Plain">target</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">stderr</span>
+</pre></div>
+</div>
+<p>In the above, we&#8217;re instead logging only <tt class="docutils literal"><span class="pre">WARN</span></tt> and <tt class="docutils literal"><span class="pre">ERROR</span></tt> messages to the <tt class="docutils literal"><span class="pre">STDERR</span></tt> device.</p>
+</div>
+<div class="section" id="file-logging">
+<span id="man-core-logging-file"></span><h3>File Logging</h3>
+<p>Dropwizard can also log to an automatically rotated set of log files. This is the recommended
+configuration for your production environment:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">logging</span><span class="p-Indicator">:</span>
+
+  <span class="l-Scalar-Plain">appenders</span><span class="p-Indicator">:</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">type</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">file</span>
+      <span class="c1"># The file to which current statements will be logged.</span>
+      <span class="l-Scalar-Plain">currentLogFilename</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">./logs/example.log</span>
+
+      <span class="c1"># When the log file rotates, the archived log will be renamed to this and gzipped. The</span>
+      <span class="c1"># %d is replaced with the previous day (yyyy-MM-dd). Custom rolling windows can be created</span>
+      <span class="c1"># by passing a SimpleDateFormat-compatible format as an argument: &quot;%d{yyyy-MM-dd-hh}&quot;.</span>
+      <span class="l-Scalar-Plain">archivedLogFilenamePattern</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">./logs/example-%d.log.gz</span>
+
+      <span class="c1"># The number of archived files to keep.</span>
+      <span class="l-Scalar-Plain">archivedFileCount</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">5</span>
+
+      <span class="c1"># The timezone used to format dates. HINT: USE THE DEFAULT, UTC.</span>
+      <span class="l-Scalar-Plain">timeZone</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">UTC</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="syslog-logging">
+<span id="man-core-logging-syslog"></span><h3>Syslog Logging</h3>
+<p>Finally, Dropwizard can also log statements to syslog.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Because Java doesn&#8217;t use the native syslog bindings, your syslog server <strong>must</strong> have an open
+network socket.</p>
+</div>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">logging</span><span class="p-Indicator">:</span>
+
+  <span class="l-Scalar-Plain">appenders</span><span class="p-Indicator">:</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">type</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">syslog</span>
+      <span class="c1"># The hostname of the syslog server to which statements will be sent.</span>
+      <span class="c1"># N.B.: If this is the local host, the local syslog instance will need to be configured to</span>
+      <span class="c1"># listen on an inet socket, not just a Unix socket.</span>
+      <span class="l-Scalar-Plain">host</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">localhost</span>
+
+      <span class="c1"># The syslog facility to which statements will be sent.</span>
+      <span class="l-Scalar-Plain">facility</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">local0</span>
+</pre></div>
+</div>
+<p>You can combine any number of different <tt class="docutils literal"><span class="pre">appenders</span></tt>, including multiple instances of the same
+appender with different configurations:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">logging</span><span class="p-Indicator">:</span>
+
+  <span class="c1"># Permit DEBUG, INFO, WARN and ERROR messages to be logged by appenders.</span>
+  <span class="l-Scalar-Plain">level</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">DEBUG</span>
+
+  <span class="l-Scalar-Plain">appenders</span><span class="p-Indicator">:</span>
+    <span class="c1"># Log warnings and errors to stderr</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">type</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">console</span>
+      <span class="l-Scalar-Plain">threshold</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">WARN</span>
+      <span class="l-Scalar-Plain">target</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">stderr</span>
+
+    <span class="c1"># Log info, warnings and errors to our apps&#39; main log.</span>
+    <span class="c1"># Rolled over daily and retained for 5 days.</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">type</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">file</span>
+      <span class="l-Scalar-Plain">threshold</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">INFO</span>
+      <span class="l-Scalar-Plain">currentLogFilename</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">./logs/example.log</span>
+      <span class="l-Scalar-Plain">archivedLogFilenamePattern</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">./logs/example-%d.log.gz</span>
+      <span class="l-Scalar-Plain">archivedFileCount</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">5</span>
+
+    <span class="c1"># Log debug messages, info, warnings and errors to our apps&#39; debug log.</span>
+    <span class="c1"># Rolled over hourly and retained for 6 hours</span>
+    <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">type</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">file</span>
+      <span class="l-Scalar-Plain">threshold</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">DEBUG</span>
+      <span class="l-Scalar-Plain">currentLogFilename</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">./logs/debug.log</span>
+      <span class="l-Scalar-Plain">archivedLogFilenamePattern</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">./logs/debug-%d{yyyy-MM-dd-hh}.log.gz</span>
+      <span class="l-Scalar-Plain">archivedFileCount</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">6</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="testing-applications">
+<span id="man-core-testing-applications"></span><h2>Testing Applications</h2>
+<p>All of Dropwizard&#8217;s APIs are designed with testability in mind, so even your applications can have unit
+tests:</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="kd">public</span> <span class="kd">class</span> <span class="nc">MyApplicationTest</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">Environment</span> <span class="n">environment</span> <span class="o">=</span> <span class="n">mock</span><span class="o">(</span><span class="n">Environment</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">JerseyEnvironment</span> <span class="n">jersey</span> <span class="o">=</span> <span class="n">mock</span><span class="o">(</span><span class="n">JerseyEnvironment</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">MyApplication</span> <span class="n">application</span> <span class="o">=</span> <span class="k">new</span> <span class="n">MyApplication</span><span class="o">();</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">MyConfiguration</span> <span class="n">config</span> <span class="o">=</span> <span class="k">new</span> <span class="n">MyConfiguration</span><span class="o">();</span>
+
+    <span class="nd">@Before</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setup</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+        <span class="n">config</span><span class="o">.</span><span class="na">setMyParam</span><span class="o">(</span><span class="s">&quot;yay&quot;</span><span class="o">);</span>
+        <span class="n">when</span><span class="o">(</span><span class="n">environment</span><span class="o">.</span><span class="na">jersey</span><span class="o">()).</span><span class="na">thenReturn</span><span class="o">(</span><span class="n">jersey</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Test</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">buildsAThingResource</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+        <span class="n">application</span><span class="o">.</span><span class="na">run</span><span class="o">(</span><span class="n">config</span><span class="o">,</span> <span class="n">environment</span><span class="o">);</span>
+
+        <span class="n">verify</span><span class="o">(</span><span class="n">jersey</span><span class="o">).</span><span class="na">register</span><span class="o">(</span><span class="n">isA</span><span class="o">(</span><span class="n">ThingResource</span><span class="o">.</span><span class="na">class</span><span class="o">));</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>We highly recommend <a class="reference external" href="http://code.google.com/p/mockito/">Mockito</a> for all your mocking needs.</p>
+</div>
+<div class="section" id="banners">
+<span id="man-core-banners"></span><h2>Banners</h2>
+<p>We think applications should print out a big ASCII art banner on startup. Yours should, too. It&#8217;s fun.
+Just add a <tt class="docutils literal"><span class="pre">banner.txt</span></tt> class to <tt class="docutils literal"><span class="pre">src/main/resources</span></tt> and it&#8217;ll print it out when your application
+starts:</p>
+<div class="highlight-text"><div class="highlight"><pre>INFO  [2011-12-09 21:56:37,209] io.dropwizard.cli.ServerCommand: Starting hello-world
+                                                 dP
+                                                 88
+  .d8888b. dP.  .dP .d8888b. 88d8b.d8b. 88d888b. 88 .d8888b.
+  88ooood8  `8bd8&#39;  88&#39;  `88 88&#39;`88&#39;`88 88&#39;  `88 88 88ooood8
+  88.  ...  .d88b.  88.  .88 88  88  88 88.  .88 88 88.  ...
+  `88888P&#39; dP&#39;  `dP `88888P8 dP  dP  dP 88Y888P&#39; dP `88888P&#39;
+                                        88
+                                        dP
+
+INFO  [2011-12-09 21:56:37,214] org.eclipse.jetty.server.Server: jetty-7.6.0
+...
+</pre></div>
+</div>
+<p>We could probably make up an argument about why this is a serious devops best practice with high ROI
+and an Agile Tool, but honestly we just enjoy this.</p>
+<p>We recommend you use <a class="reference external" href="http://patorjk.com/software/taag/">TAAG</a> for all your ASCII art banner needs.</p>
+</div>
+<div class="section" id="resources">
+<span id="man-core-resources"></span><h2>Resources</h2>
+<p>Unsurprisingly, most of your day-to-day work with a Dropwizard application will be in the resource
+classes, which model the resources exposed in your RESTful API. Dropwizard uses <a class="reference external" href="http://jersey.java.net/">Jersey</a> for this,
+so most of this section is just re-hashing or collecting various bits of Jersey documentation.</p>
+<p>Jersey is a framework for mapping various aspects of incoming HTTP requests to POJOs and then
+mapping various aspects of POJOs to outgoing HTTP responses. Here&#8217;s a basic resource class:</p>
+<div class="highlight-java" id="man-core-resources-example"><div class="highlight"><pre><span class="nd">@Path</span><span class="o">(</span><span class="s">&quot;/{user}/notifications&quot;</span><span class="o">)</span>
+<span class="nd">@Produces</span><span class="o">(</span><span class="n">MediaType</span><span class="o">.</span><span class="na">APPLICATION_JSON</span><span class="o">)</span>
+<span class="nd">@Consumes</span><span class="o">(</span><span class="n">MediaType</span><span class="o">.</span><span class="na">APPLICATION_JSON</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">NotificationsResource</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">NotificationStore</span> <span class="n">store</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="nf">NotificationsResource</span><span class="o">(</span><span class="n">NotificationStore</span> <span class="n">store</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">store</span> <span class="o">=</span> <span class="n">store</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="nd">@GET</span>
+    <span class="kd">public</span> <span class="n">NotificationList</span> <span class="nf">fetch</span><span class="o">(</span><span class="nd">@PathParam</span><span class="o">(</span><span class="s">&quot;user&quot;</span><span class="o">)</span> <span class="n">LongParam</span> <span class="n">userId</span><span class="o">,</span>
+                                  <span class="nd">@QueryParam</span><span class="o">(</span><span class="s">&quot;count&quot;</span><span class="o">)</span> <span class="nd">@DefaultValue</span><span class="o">(</span><span class="s">&quot;20&quot;</span><span class="o">)</span> <span class="n">IntParam</span> <span class="n">count</span><span class="o">)</span> <span class="o">{</span>
+        <span class="kd">final</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Notification</span><span class="o">&gt;</span> <span class="n">notifications</span> <span class="o">=</span> <span class="n">store</span><span class="o">.</span><span class="na">fetch</span><span class="o">(</span><span class="n">userId</span><span class="o">.</span><span class="na">get</span><span class="o">(),</span> <span class="n">count</span><span class="o">.</span><span class="na">get</span><span class="o">());</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">notifications</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="k">new</span> <span class="nf">NotificationList</span><span class="o">(</span><span class="n">userId</span><span class="o">,</span> <span class="n">notifications</span><span class="o">);</span>
+        <span class="o">}</span>
+        <span class="k">throw</span> <span class="k">new</span> <span class="nf">WebApplicationException</span><span class="o">(</span><span class="n">Status</span><span class="o">.</span><span class="na">NOT_FOUND</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="nd">@POST</span>
+    <span class="kd">public</span> <span class="n">Response</span> <span class="nf">add</span><span class="o">(</span><span class="nd">@PathParam</span><span class="o">(</span><span class="s">&quot;user&quot;</span><span class="o">)</span> <span class="n">LongParam</span> <span class="n">userId</span><span class="o">,</span>
+                        <span class="nd">@Valid</span> <span class="n">Notification</span> <span class="n">notification</span><span class="o">)</span> <span class="o">{</span>
+        <span class="kd">final</span> <span class="kt">long</span> <span class="n">id</span> <span class="o">=</span> <span class="n">store</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">userId</span><span class="o">.</span><span class="na">get</span><span class="o">(),</span> <span class="n">notification</span><span class="o">);</span>
+        <span class="k">return</span> <span class="n">Response</span><span class="o">.</span><span class="na">created</span><span class="o">(</span><span class="n">UriBuilder</span><span class="o">.</span><span class="na">fromResource</span><span class="o">(</span><span class="n">NotificationResource</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
+                                          <span class="o">.</span><span class="na">build</span><span class="o">(</span><span class="n">userId</span><span class="o">.</span><span class="na">get</span><span class="o">(),</span> <span class="n">id</span><span class="o">))</span>
+                       <span class="o">.</span><span class="na">build</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>This class provides a resource (a user&#8217;s list of notifications) which responds to <tt class="docutils literal"><span class="pre">GET</span></tt> and
+<tt class="docutils literal"><span class="pre">POST</span></tt> requests to <tt class="docutils literal"><span class="pre">/{user}/notifications</span></tt>, providing and consuming <tt class="docutils literal"><span class="pre">application/json</span></tt>
+representations. There&#8217;s quite a lot of functionality on display here, and this section will
+explain in detail what&#8217;s in play and how to use these features in your application.</p>
+<div class="section" id="paths">
+<span id="man-core-resources-paths"></span><h3>Paths</h3>
+<div class="admonition important">
+<p class="first admonition-title">Important</p>
+<p class="last">Every resource class must have a <tt class="docutils literal"><span class="pre">&#64;Path</span></tt> annotation.</p>
+</div>
+<p>The <tt class="docutils literal"><span class="pre">&#64;Path</span></tt> annotation isn&#8217;t just a static string, it&#8217;s a <a class="reference external" href="http://tools.ietf.org/html/draft-gregorio-uritemplate-07">URI Template</a>. The <tt class="docutils literal"><span class="pre">{user}</span></tt> part
+denotes a named variable, and when the template matches a URI the value of that variable will be
+accessible via <tt class="docutils literal"><span class="pre">&#64;PathParam</span></tt>-annotated method parameters.</p>
+<p>For example, an incoming request for <tt class="docutils literal"><span class="pre">/1001/notifications</span></tt> would match the URI template, and the
+value <tt class="docutils literal"><span class="pre">&quot;1001&quot;</span></tt> would be available as the path parameter named <tt class="docutils literal"><span class="pre">user</span></tt>.</p>
+<p>If your application doesn&#8217;t have a resource class whose <tt class="docutils literal"><span class="pre">&#64;Path</span></tt> URI template matches the URI of an
+incoming request, Jersey will automatically return a <tt class="docutils literal"><span class="pre">404</span> <span class="pre">Not</span> <span class="pre">Found</span></tt> to the client.</p>
+</div>
+<div class="section" id="methods">
+<span id="man-core-resources-methods"></span><h3>Methods</h3>
+<p>Methods on a resource class which accept incoming requests are annotated with the HTTP methods they
+handle: <tt class="docutils literal"><span class="pre">&#64;GET</span></tt>, <tt class="docutils literal"><span class="pre">&#64;POST</span></tt>, <tt class="docutils literal"><span class="pre">&#64;PUT</span></tt>, <tt class="docutils literal"><span class="pre">&#64;DELETE</span></tt>, <tt class="docutils literal"><span class="pre">&#64;HEAD</span></tt>, <tt class="docutils literal"><span class="pre">&#64;OPTIONS</span></tt>, <tt class="docutils literal"><span class="pre">&#64;PATCH</span></tt>.</p>
+<p>Support for arbitrary new methods can be added via the <tt class="docutils literal"><span class="pre">&#64;HttpMethod</span></tt> annotation. They also must
+to be added to the <a class="reference internal" href="configuration.html#man-configuration-all"><em>list of allowed methods</em></a>. This means, by default,
+methods such as <tt class="docutils literal"><span class="pre">CONNECT</span></tt> and <tt class="docutils literal"><span class="pre">TRACE</span></tt> are blocked, and will return a <tt class="docutils literal"><span class="pre">405</span> <span class="pre">Method</span> <span class="pre">Not</span> <span class="pre">Allowed</span></tt>
+response.</p>
+<p>If a request comes in which matches a resource class&#8217;s path but has a method which the class doesn&#8217;t
+support, Jersey will automatically return a <tt class="docutils literal"><span class="pre">405</span> <span class="pre">Method</span> <span class="pre">Not</span> <span class="pre">Allowed</span></tt> to the client.</p>
+<p>The return value of the method (in this case, a <tt class="docutils literal"><span class="pre">NotificationList</span></tt> instance) is then mapped to the
+<a class="reference internal" href="#man-core-resources-media-types"><em>negotiated media type</em></a> this case, our resource only supports
+JSON, and so the <tt class="docutils literal"><span class="pre">NotificationList</span></tt> is serialized to JSON using Jackson.</p>
+</div>
+<div class="section" id="metrics">
+<span id="man-core-resources-metrics"></span><h3>Metrics</h3>
+<p>Every resource method can be annotated with <tt class="docutils literal"><span class="pre">&#64;Timed</span></tt>, <tt class="docutils literal"><span class="pre">&#64;Metered</span></tt>, and <tt class="docutils literal"><span class="pre">&#64;ExceptionMetered</span></tt>.
+Dropwizard augments Jersey to automatically record runtime information about your resource methods.</p>
+</div>
+<div class="section" id="parameters">
+<span id="man-core-resources-parameters"></span><h3>Parameters</h3>
+<p>The annotated methods on a resource class can accept parameters which are mapped to from aspects of
+the incoming request. The <tt class="docutils literal"><span class="pre">*Param</span></tt> annotations determine which part of the request the data is
+mapped, and the parameter <em>type</em> determines how the data is mapped.</p>
+<p>For example:</p>
+<ul class="simple">
+<li>A <tt class="docutils literal"><span class="pre">&#64;PathParam(&quot;user&quot;)</span></tt>-annotated <tt class="docutils literal"><span class="pre">String</span></tt> takes the raw value from the <tt class="docutils literal"><span class="pre">user</span></tt> variable in
+the matched URI template and passes it into the method as a <tt class="docutils literal"><span class="pre">String</span></tt>.</li>
+<li>A <tt class="docutils literal"><span class="pre">&#64;QueryParam(&quot;count&quot;)</span></tt>-annotated <tt class="docutils literal"><span class="pre">IntParam</span></tt> parameter takes the first <tt class="docutils literal"><span class="pre">count</span></tt> value from
+the request&#8217;s query string and passes it as a <tt class="docutils literal"><span class="pre">String</span></tt> to <tt class="docutils literal"><span class="pre">IntParam</span></tt>&#8216;s constructor.
+<tt class="docutils literal"><span class="pre">IntParam</span></tt> (and all other <tt class="docutils literal"><span class="pre">io.dropwizard.jersey.params.*</span></tt> classes) parses the string
+as an <tt class="docutils literal"><span class="pre">Integer</span></tt>, returning a <tt class="docutils literal"><span class="pre">400</span> <span class="pre">Bad</span> <span class="pre">Request</span></tt> if the value is malformed.</li>
+<li>A <tt class="docutils literal"><span class="pre">&#64;FormParam(&quot;name&quot;)</span></tt>-annotated <tt class="docutils literal"><span class="pre">Set&lt;String&gt;</span></tt> parameter takes all the <tt class="docutils literal"><span class="pre">name</span></tt> values from a
+posted form and passes them to the method as a set of strings.</li>
+</ul>
+<p>What&#8217;s noteworthy here is that you can actually encapsulate the vast majority of your validation
+logic using specialized parameter objects. See <tt class="docutils literal"><span class="pre">AbstractParam</span></tt> for details.</p>
+</div>
+<div class="section" id="request-entities">
+<span id="man-core-resources-request-entities"></span><h3>Request Entities</h3>
+<p>If you&#8217;re handling request entities (e.g., an <tt class="docutils literal"><span class="pre">application/json</span></tt> object on a <tt class="docutils literal"><span class="pre">PUT</span></tt> request), you
+can model this as a parameter without a <tt class="docutils literal"><span class="pre">*Param</span></tt> annotation. In the
+<a class="reference internal" href="#man-core-resources-example"><em>example code</em></a>, the <tt class="docutils literal"><span class="pre">add</span></tt> method provides a good example of
+this:</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="nd">@POST</span>
+<span class="kd">public</span> <span class="n">Response</span> <span class="nf">add</span><span class="o">(</span><span class="nd">@PathParam</span><span class="o">(</span><span class="s">&quot;user&quot;</span><span class="o">)</span> <span class="n">LongParam</span> <span class="n">userId</span><span class="o">,</span>
+<span class="hll">                    <span class="nd">@Valid</span> <span class="n">Notification</span> <span class="n">notification</span><span class="o">)</span> <span class="o">{</span>
+</span>    <span class="kd">final</span> <span class="kt">long</span> <span class="n">id</span> <span class="o">=</span> <span class="n">store</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">userId</span><span class="o">.</span><span class="na">get</span><span class="o">(),</span> <span class="n">notification</span><span class="o">);</span>
+    <span class="k">return</span> <span class="n">Response</span><span class="o">.</span><span class="na">created</span><span class="o">(</span><span class="n">UriBuilder</span><span class="o">.</span><span class="na">fromResource</span><span class="o">(</span><span class="n">NotificationResource</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
+                                      <span class="o">.</span><span class="na">build</span><span class="o">(</span><span class="n">userId</span><span class="o">.</span><span class="na">get</span><span class="o">(),</span> <span class="n">id</span><span class="o">)</span>
+                   <span class="o">.</span><span class="na">build</span><span class="o">();</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>Jersey maps the request entity to any single, unbound parameter. In this case, because the resource
+is annotated with <tt class="docutils literal"><span class="pre">&#64;Consumes(MediaType.APPLICATION_JSON)</span></tt>, it uses the Dropwizard-provided Jackson
+support which, in addition to parsing the JSON and mapping it to an instance of <tt class="docutils literal"><span class="pre">Notification</span></tt>,
+also runs that instance through Dropwizard&#8217;s <a class="reference internal" href="#man-core-representations-validation"><em>Validation</em></a>.</p>
+<p>If the deserialized <tt class="docutils literal"><span class="pre">Notification</span></tt> isn&#8217;t valid, Dropwizard returns a <tt class="docutils literal"><span class="pre">422</span> <span class="pre">Unprocessable</span> <span class="pre">Entity</span></tt>
+response to the client.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If your request entity parameter isn&#8217;t annotated with <tt class="docutils literal"><span class="pre">&#64;Valid</span></tt>, it won&#8217;t be validated.</p>
+</div>
+</div>
+<div class="section" id="media-types">
+<span id="man-core-resources-media-types"></span><h3>Media Types</h3>
+<p>Jersey also provides full content negotiation, so if your resource class consumes
+<tt class="docutils literal"><span class="pre">application/json</span></tt> but the client sends a <tt class="docutils literal"><span class="pre">text/plain</span></tt> entity, Jersey will automatically reply
+with a <tt class="docutils literal"><span class="pre">406</span> <span class="pre">Not</span> <span class="pre">Acceptable</span></tt>. Jersey&#8217;s even smart enough to use client-provided <tt class="docutils literal"><span class="pre">q</span></tt>-values in
+their <tt class="docutils literal"><span class="pre">Accept</span></tt> headers to pick the best response content type based on what both the client and
+server will support.</p>
+</div>
+<div class="section" id="responses">
+<span id="man-core-resources-responses"></span><h3>Responses</h3>
+<p>If your clients are expecting custom headers or additional information (or, if you simply desire an
+additional degree of control over your responses), you can return explicitly-built <tt class="docutils literal"><span class="pre">Response</span></tt>
+objects:</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="k">return</span> <span class="n">Response</span><span class="o">.</span><span class="na">noContent</span><span class="o">().</span><span class="na">language</span><span class="o">(</span><span class="n">Locale</span><span class="o">.</span><span class="na">GERMAN</span><span class="o">).</span><span class="na">build</span><span class="o">();</span>
+</pre></div>
+</div>
+<p>In general, though, we recommend you return actual domain objects if at all possible. It makes
+<a class="reference internal" href="#man-core-resources-testing"><em>testing resources</em></a> much easier.</p>
+</div>
+<div class="section" id="error-handling">
+<span id="man-core-resource-error-handling"></span><h3>Error Handling</h3>
+<p>If your resource class unintentionally throws an exception, Dropwizard will log that exception
+(including stack traces) and return a terse, safe <tt class="docutils literal"><span class="pre">text/plain</span></tt> <tt class="docutils literal"><span class="pre">500</span> <span class="pre">Internal</span> <span class="pre">Server</span> <span class="pre">Error</span></tt>
+response.</p>
+<p>If your resource class needs to return an error to the client (e.g., the requested record doesn&#8217;t
+exist), you have two options: throw a subclass of <tt class="docutils literal"><span class="pre">Exception</span></tt> or restructure your method to
+return a <tt class="docutils literal"><span class="pre">Response</span></tt>.</p>
+<p>If at all possible, prefer throwing <tt class="docutils literal"><span class="pre">Exception</span></tt> instances to returning
+<tt class="docutils literal"><span class="pre">Response</span></tt> objects.</p>
+<p>If you throw a subclass of <tt class="docutils literal"><span class="pre">WebApplicationException</span></tt> jersey will map that to a defined response.</p>
+<p>If you want more control, you can also declare JerseyProviders in your Environment to map Exceptions
+to certain responses by calling <tt class="docutils literal"><span class="pre">JerseyEnvironment#register(Object)</span></tt> with an implementation of
+javax.ws.rs.ext.ExceptionMapper.
+e.g. Your resource throws an InvalidArgumentException, but the response would be 400, bad request.</p>
+</div>
+<div class="section" id="uris">
+<span id="man-core-resources-uris"></span><h3>URIs</h3>
+<p>While Jersey doesn&#8217;t quite have first-class support for hyperlink-driven applications, the provided
+<tt class="docutils literal"><span class="pre">UriBuilder</span></tt> functionality does quite well.</p>
+<p>Rather than duplicate resource URIs, it&#8217;s possible (and recommended!) to initialize a <tt class="docutils literal"><span class="pre">UriBuilder</span></tt>
+with the path from the resource class itself:</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="n">UriBuilder</span><span class="o">.</span><span class="na">fromResource</span><span class="o">(</span><span class="n">UserResource</span><span class="o">.</span><span class="na">class</span><span class="o">).</span><span class="na">build</span><span class="o">(</span><span class="n">user</span><span class="o">.</span><span class="na">getId</span><span class="o">());</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="testing">
+<span id="man-core-resources-testing"></span><h3>Testing</h3>
+<p>As with just about everything in Dropwizard, we recommend you design your resources to be testable.
+Dependencies which aren&#8217;t request-injected should be passed in via the constructor and assigned to
+<tt class="docutils literal"><span class="pre">final</span></tt> fields.</p>
+<p>Testing, then, consists of creating an instance of your resource class and passing it a mock.
+(Again: <a class="reference external" href="http://code.google.com/p/mockito/">Mockito</a>.)</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="kd">public</span> <span class="kd">class</span> <span class="nc">NotificationsResourceTest</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">NotificationStore</span> <span class="n">store</span> <span class="o">=</span> <span class="n">mock</span><span class="o">(</span><span class="n">NotificationStore</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">NotificationsResource</span> <span class="n">resource</span> <span class="o">=</span> <span class="k">new</span> <span class="n">NotificationsResource</span><span class="o">(</span><span class="n">store</span><span class="o">);</span>
+
+    <span class="nd">@Test</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">getsReturnNotifications</span><span class="o">()</span> <span class="o">{</span>
+        <span class="kd">final</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Notification</span><span class="o">&gt;</span> <span class="n">notifications</span> <span class="o">=</span> <span class="n">mock</span><span class="o">(</span><span class="n">List</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+        <span class="n">when</span><span class="o">(</span><span class="n">store</span><span class="o">.</span><span class="na">fetch</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="mi">20</span><span class="o">)).</span><span class="na">thenReturn</span><span class="o">(</span><span class="n">notifications</span><span class="o">);</span>
+
+        <span class="kd">final</span> <span class="n">NotificationList</span> <span class="n">list</span> <span class="o">=</span> <span class="n">resource</span><span class="o">.</span><span class="na">fetch</span><span class="o">(</span><span class="k">new</span> <span class="n">LongParam</span><span class="o">(</span><span class="s">&quot;1&quot;</span><span class="o">),</span> <span class="k">new</span> <span class="n">IntParam</span><span class="o">(</span><span class="s">&quot;20&quot;</span><span class="o">));</span>
+
+        <span class="n">assertThat</span><span class="o">(</span><span class="n">list</span><span class="o">.</span><span class="na">getUserId</span><span class="o">(),</span>
+                  <span class="n">is</span><span class="o">(</span><span class="mi">1L</span><span class="o">));</span>
+
+        <span class="n">assertThat</span><span class="o">(</span><span class="n">list</span><span class="o">.</span><span class="na">getNotifications</span><span class="o">(),</span>
+                   <span class="n">is</span><span class="o">(</span><span class="n">notifications</span><span class="o">));</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="caching">
+<h3>Caching</h3>
+<p>Adding a <tt class="docutils literal"><span class="pre">Cache-Control</span></tt> statement to your resource class is simple with Dropwizard:</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="nd">@GET</span>
+<span class="nd">@CacheControl</span><span class="o">(</span><span class="n">maxAge</span> <span class="o">=</span> <span class="mi">6</span><span class="o">,</span> <span class="n">maxAgeUnit</span> <span class="o">=</span> <span class="n">TimeUnit</span><span class="o">.</span><span class="na">HOURS</span><span class="o">)</span>
+<span class="kd">public</span> <span class="n">String</span> <span class="nf">getCachableValue</span><span class="o">()</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="s">&quot;yay&quot;</span><span class="o">;</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>The <tt class="docutils literal"><span class="pre">&#64;CacheControl</span></tt> annotation will take all of the parameters of the <tt class="docutils literal"><span class="pre">Cache-Control</span></tt> header.</p>
+</div>
+</div>
+<div class="section" id="representations">
+<span id="man-core-representations"></span><h2>Representations</h2>
+<p>Representation classes are classes which, when handled to various Jersey <tt class="docutils literal"><span class="pre">MessageBodyReader</span></tt> and
+<tt class="docutils literal"><span class="pre">MessageBodyWriter</span></tt> providers, become the entities in your application&#8217;s API. Dropwizard heavily
+favors JSON, but it&#8217;s possible to map from any POJO to custom formats and back.</p>
+<div class="section" id="basic-json">
+<span id="man-core-representations-basic"></span><h3>Basic JSON</h3>
+<p>Jackson is awesome at converting regular POJOs to JSON and back. This file:</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Notification</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="n">String</span> <span class="n">text</span><span class="o">;</span>
+
+    <span class="kd">public</span> <span class="nf">Notification</span><span class="o">(</span><span class="n">String</span> <span class="n">text</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">text</span> <span class="o">=</span> <span class="n">text</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="nd">@JsonProperty</span>
+    <span class="kd">public</span> <span class="n">String</span> <span class="nf">getText</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">text</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="nd">@JsonProperty</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setText</span><span class="o">(</span><span class="n">String</span> <span class="n">text</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">text</span> <span class="o">=</span> <span class="n">text</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>gets converted into this JSON:</p>
+<div class="highlight-javascript"><div class="highlight"><pre><span class="p">{</span>
+    <span class="s2">&quot;text&quot;</span><span class="o">:</span> <span class="s2">&quot;hey it&#39;s the value of the text field&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>If, at some point, you need to change the JSON field name or the Java field without affecting the
+other, you can add an explicit field name to the <tt class="docutils literal"><span class="pre">&#64;JsonProperty</span></tt> annotation.</p>
+<p>If you prefer immutable objects rather than JavaBeans, that&#8217;s also doable:</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Notification</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">text</span><span class="o">;</span>
+
+    <span class="nd">@JsonCreator</span>
+    <span class="kd">public</span> <span class="nf">Notification</span><span class="o">(</span><span class="nd">@JsonProperty</span><span class="o">(</span><span class="s">&quot;text&quot;</span><span class="o">)</span> <span class="n">String</span> <span class="n">text</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">text</span> <span class="o">=</span> <span class="n">text</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="nd">@JsonProperty</span><span class="o">(</span><span class="s">&quot;text&quot;</span><span class="o">)</span>
+    <span class="kd">public</span> <span class="n">String</span> <span class="nf">getText</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">text</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="advanced-json">
+<span id="man-core-representations-advanced"></span><h3>Advanced JSON</h3>
+<p>Not all JSON representations map nicely to the objects your application deals with, so it&#8217;s sometimes
+necessary to use custom serializers and deserializers. Just annotate your object like this:</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="nd">@JsonSerialize</span><span class="o">(</span><span class="n">using</span><span class="o">=</span><span class="n">FunkySerializer</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
+<span class="nd">@JsonDeserialize</span><span class="o">(</span><span class="n">using</span><span class="o">=</span><span class="n">FunkyDeserializer</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Funky</span> <span class="o">{</span>
+    <span class="c1">// ...</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>Then make a <tt class="docutils literal"><span class="pre">FunkySerializer</span></tt> class which implements <tt class="docutils literal"><span class="pre">JsonSerializer&lt;Funky&gt;</span></tt> and a
+<tt class="docutils literal"><span class="pre">FunkyDeserializer</span></tt> class which implements <tt class="docutils literal"><span class="pre">JsonDeserializer&lt;Funky&gt;</span></tt>.</p>
+<div class="section" id="snake-case">
+<span id="man-core-representations-advanced-snake-case"></span><h4><tt class="docutils literal"><span class="pre">snake_case</span></tt></h4>
+<p>A common issue with JSON is the disagreement between <tt class="docutils literal"><span class="pre">camelCase</span></tt> and <tt class="docutils literal"><span class="pre">snake_case</span></tt> field names.
+Java and Javascript folks tend to like <tt class="docutils literal"><span class="pre">camelCase</span></tt>; Ruby, Python, and Perl folks insist on
+<tt class="docutils literal"><span class="pre">snake_case</span></tt>. To make Dropwizard automatically convert field names to <tt class="docutils literal"><span class="pre">snake_case</span></tt> (and back),
+just annotate the class with <tt class="docutils literal"><span class="pre">&#64;JsonSnakeCase</span></tt>:</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="nd">@JsonSnakeCase</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">Person</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">firstName</span><span class="o">;</span>
+
+    <span class="nd">@JsonCreator</span>
+    <span class="kd">public</span> <span class="nf">Person</span><span class="o">(</span><span class="nd">@JsonProperty</span> <span class="n">String</span> <span class="n">firstName</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">firstName</span> <span class="o">=</span> <span class="n">firstName</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="nd">@JsonProperty</span>
+    <span class="kd">public</span> <span class="n">String</span> <span class="nf">getFirstName</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">firstName</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>This gets converted into this JSON:</p>
+<div class="highlight-javascript"><div class="highlight"><pre><span class="p">{</span>
+    <span class="s2">&quot;first_name&quot;</span><span class="o">:</span> <span class="s2">&quot;Coda&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="validation">
+<span id="man-core-representations-validation"></span><h3>Validation</h3>
+<p>Like <a class="reference internal" href="#man-core-configuration"><em>Configuration</em></a>, you can add validation annotations to fields of your
+representation classes and validate them. If we&#8217;re accepting client-provided <tt class="docutils literal"><span class="pre">Person</span></tt> objects, we
+probably want to ensure that the <tt class="docutils literal"><span class="pre">name</span></tt> field of the object isn&#8217;t <tt class="docutils literal"><span class="pre">null</span></tt> or blank. We can do
+this as follows:</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Person</span> <span class="o">{</span>
+
+    <span class="nd">@NotEmpty</span> <span class="c1">// ensure that name isn&#39;t null or blank</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">name</span><span class="o">;</span>
+
+    <span class="nd">@JsonCreator</span>
+    <span class="kd">public</span> <span class="nf">Person</span><span class="o">(</span><span class="nd">@JsonProperty</span><span class="o">(</span><span class="s">&quot;name&quot;</span><span class="o">)</span> <span class="n">String</span> <span class="n">name</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">name</span> <span class="o">=</span> <span class="n">name</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="nd">@JsonProperty</span><span class="o">(</span><span class="s">&quot;name&quot;</span><span class="o">)</span>
+    <span class="kd">public</span> <span class="n">String</span> <span class="nf">getName</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">name</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>Then, in our resource class, we can add the <tt class="docutils literal"><span class="pre">&#64;Valid</span></tt> annotation to the <tt class="docutils literal"><span class="pre">Person</span></tt> annotation:</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="nd">@PUT</span>
+<span class="kd">public</span> <span class="n">Response</span> <span class="nf">replace</span><span class="o">(</span><span class="nd">@Valid</span> <span class="n">Person</span> <span class="n">person</span><span class="o">)</span> <span class="o">{</span>
+    <span class="c1">// ...</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>If the <tt class="docutils literal"><span class="pre">name</span></tt> field is missing, Dropwizard will return a <tt class="docutils literal"><span class="pre">text/plain</span></tt>
+<tt class="docutils literal"><span class="pre">422</span> <span class="pre">Unprocessable</span> <span class="pre">Entity</span></tt> response detailing the validation errors:</p>
+<div class="highlight-text"><div class="highlight"><pre>* name may not be empty
+</pre></div>
+</div>
+<div class="section" id="advanced">
+<span id="man-core-resources-validation-advanced"></span><h4>Advanced</h4>
+<p>More complex validations (for example, cross-field comparisons) are often hard to do using
+declarative annotations. As an emergency maneuver, add the <tt class="docutils literal"><span class="pre">&#64;ValidationMethod</span></tt> to any
+<tt class="docutils literal"><span class="pre">boolean</span></tt>-returning method which begins with <tt class="docutils literal"><span class="pre">is</span></tt>:</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="nd">@ValidationMethod</span><span class="o">(</span><span class="n">message</span><span class="o">=</span><span class="s">&quot;may not be Coda&quot;</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">isNotCoda</span><span class="o">()</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="o">!(</span><span class="s">&quot;Coda&quot;</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">name</span><span class="o">));</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Due to the rather daft JavaBeans conventions, the method must begin with <tt class="docutils literal"><span class="pre">is</span></tt> (e.g.,
+<tt class="docutils literal"><span class="pre">#isValidPortRange()</span></tt>. This is a limitation of Hibernate Validator, not Dropwizard.</p>
+</div>
+</div>
+</div>
+<div class="section" id="streaming-output">
+<span id="man-core-representations-streaming"></span><h3>Streaming Output</h3>
+<p>If your application happens to return lots of information, you may get a big performance and efficiency
+bump by using streaming output. By returning an object which implements Jersey&#8217;s <tt class="docutils literal"><span class="pre">StreamingOutput</span></tt>
+interface, your method can stream the response entity in a chunk-encoded output stream. Otherwise,
+you&#8217;ll need to fully construct your return value and <em>then</em> hand it off to be sent to the client.</p>
+</div>
+<div class="section" id="html-representations">
+<span id="man-core-representations-html"></span><h3>HTML Representations</h3>
+<p>For generating HTML pages, check out Dropwizard&#8217;s <a class="reference internal" href="views.html#manual-views"><em>views support</em></a>.</p>
+</div>
+<div class="section" id="custom-representations">
+<span id="man-core-representations-custom"></span><h3>Custom Representations</h3>
+<p>Sometimes, though, you&#8217;ve got some wacky output format you need to produce or consume and no amount
+of arguing will make JSON acceptable. That&#8217;s unfortunate but OK. You can add support for arbitrary
+input and output formats by creating classes which implement Jersey&#8217;s <tt class="docutils literal"><span class="pre">MessageBodyReader&lt;T&gt;</span></tt> and
+<tt class="docutils literal"><span class="pre">MessageBodyWriter&lt;T&gt;</span></tt> interfaces. (Make sure they&#8217;re annotated with <tt class="docutils literal"><span class="pre">&#64;Provider</span></tt> and
+<tt class="docutils literal"><span class="pre">&#64;Produces(&quot;text/gibberish&quot;)</span></tt> or <tt class="docutils literal"><span class="pre">&#64;Consumes(&quot;text/gibberish&quot;)</span></tt>.) Once you&#8217;re done, just add
+instances of them (or their classes if they depend on Jersey&#8217;s <tt class="docutils literal"><span class="pre">&#64;Context</span></tt> injection) to your
+application&#8217;s <tt class="docutils literal"><span class="pre">Environment</span></tt> on initialization.</p>
+</div>
+<div class="section" id="jersey-filters">
+<span id="man-core-jersey-filters"></span><h3>Jersey filters</h3>
+<p>There might be cases when you want to filter out requests or modify them before they reach your Resources. Jersey
+has a rich api for <a class="reference external" href="http://jersey.java.net/documentation/latest/filters-and-interceptors.html">filters and interceptors</a> that can be used directly in Dropwizard.
+You can stop the request from reaching your resources by throwing a <tt class="docutils literal"><span class="pre">WebApplicationException</span></tt>. Alternatively,
+you can use filters to modify inbound requests or outbound responses.</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="nd">@Provider</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">DateNotSpecifiedFilter</span> <span class="kd">implements</span> <span class="n">ContainerRequestFilter</span> <span class="o">{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">filter</span><span class="o">(</span><span class="n">ContainerRequestContext</span> <span class="n">requestContext</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">IOException</span> <span class="o">{</span>
+        <span class="n">String</span> <span class="n">dateHeader</span> <span class="o">=</span> <span class="n">requestContext</span><span class="o">.</span><span class="na">getHeaderString</span><span class="o">(</span><span class="n">HttpHeaders</span><span class="o">.</span><span class="na">DATE</span><span class="o">);</span>
+
+        <span class="k">if</span> <span class="o">(</span><span class="n">dateHeader</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">Exception</span> <span class="n">cause</span> <span class="o">=</span> <span class="k">new</span> <span class="n">IllegalArgumentException</span><span class="o">(</span><span class="s">&quot;Date Header was not specified&quot;</span><span class="o">);</span>
+            <span class="k">throw</span> <span class="k">new</span> <span class="nf">WebApplicationException</span><span class="o">(</span><span class="n">cause</span><span class="o">,</span> <span class="n">Response</span><span class="o">.</span><span class="na">Status</span><span class="o">.</span><span class="na">BAD_REQUEST</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>This example filter checks the request for the &#8220;Date&#8221; header, and denies the request if was missing. Otherwise,
+the request is passed through.</p>
+<p>Filters can be dynamically bound to resource methods using <a class="reference external" href="http://jax-rs-spec.java.net/nonav/2.0-rev-a/apidocs/index.html">DynamicFeature</a>:</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="nd">@Provider</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">DateRequiredFeature</span> <span class="kd">implements</span> <span class="n">DynamicFeature</span> <span class="o">{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">configure</span><span class="o">(</span><span class="n">ResourceInfo</span> <span class="n">resourceInfo</span><span class="o">,</span> <span class="n">FeatureContext</span> <span class="n">context</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">resourceInfo</span><span class="o">.</span><span class="na">getResourceMethod</span><span class="o">().</span><span class="na">getAnnotation</span><span class="o">(</span><span class="n">DateRequired</span><span class="o">.</span><span class="na">class</span><span class="o">)</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">context</span><span class="o">.</span><span class="na">register</span><span class="o">(</span><span class="n">DateNotSpecifiedFilter</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>The DynamicFeature is invoked by the Jersey runtime when the application is started. In this example, the feature checks
+for methods that are annotated with <tt class="docutils literal"><span class="pre">&#64;DateRequired</span></tt> and registers the <tt class="docutils literal"><span class="pre">DateNotSpecified</span></tt> filter on those methods only.</p>
+<p>You typically register the feature in your Application class, like so:</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="n">environment</span><span class="o">.</span><span class="na">jersey</span><span class="o">().</span><span class="na">register</span><span class="o">(</span><span class="n">DateRequiredFeature</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="servlet-filters">
+<span id="man-core-servlet-filters"></span><h3>Servlet filters</h3>
+<p>Another way to create filters is by creating servlet filters. They offer a way to to register filters that apply both to servlet requests as well as resource requests.
+Jetty comes with a few <a class="reference external" href="http://www.eclipse.org/jetty/documentation/current/advanced-extras.html">bundled</a>  filters which may already suit your needs. If you want to create your own filter,
+this example demonstrates a servlet filter analogous to the previous example:</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="kd">public</span> <span class="kd">class</span> <span class="nc">DateNotSpecifiedServletFilter</span> <span class="kd">implements</span> <span class="n">javax</span><span class="o">.</span><span class="na">servlet</span><span class="o">.</span><span class="na">Filter</span> <span class="o">{</span>
+    <span class="c1">// Other methods in interface ommited for brevity</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">doFilter</span><span class="o">(</span><span class="n">ServletRequest</span> <span class="n">request</span><span class="o">,</span> <span class="n">ServletResponse</span> <span class="n">response</span><span class="o">,</span> <span class="n">FilterChain</span> <span class="n">chain</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">IOException</span><span class="o">,</span> <span class="n">ServletException</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">request</span> <span class="k">instanceof</span> <span class="n">HttpServletRequest</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">String</span> <span class="n">dateHeader</span> <span class="o">=</span> <span class="o">((</span><span class="n">HttpServletRequest</span><span class="o">)</span> <span class="n">request</span><span class="o">).</span><span class="na">getHeader</span><span class="o">(</span><span class="n">HttpHeaders</span><span class="o">.</span><span class="na">DATE</span><span class="o">);</span>
+
+            <span class="k">if</span> <span class="o">(</span><span class="n">dateHeader</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">chain</span><span class="o">.</span><span class="na">doFilter</span><span class="o">(</span><span class="n">request</span><span class="o">,</span> <span class="n">response</span><span class="o">);</span> <span class="c1">// This signals that the request should pass this filter</span>
+            <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+                <span class="n">HttpServletResponse</span> <span class="n">httpResponse</span> <span class="o">=</span> <span class="o">(</span><span class="n">HttpServletResponse</span><span class="o">)</span> <span class="n">response</span><span class="o">;</span>
+                <span class="n">httpResponse</span><span class="o">.</span><span class="na">setStatus</span><span class="o">(</span><span class="n">HttpStatus</span><span class="o">.</span><span class="na">BAD_REQUEST_400</span><span class="o">);</span>
+                <span class="n">httpResponse</span><span class="o">.</span><span class="na">getWriter</span><span class="o">().</span><span class="na">print</span><span class="o">(</span><span class="s">&quot;Date Header was not specified&quot;</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>This servlet filter can then be registered in your Application class by wrapping it in <tt class="docutils literal"><span class="pre">FilterHolder</span></tt> and adding it to the application context together with a
+specification for which paths this filter should active. Here&#8217;s an example:</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="n">environment</span><span class="o">.</span><span class="na">servlets</span><span class="o">().</span><span class="na">addFilter</span><span class="o">(</span><span class="s">&quot;DateHeaderServletFilter&quot;</span><span class="o">,</span> <span class="k">new</span> <span class="n">DateHeaderServletFilter</span><span class="o">())</span>
+                      <span class="o">.</span><span class="na">addMappingForUrlPatterns</span><span class="o">(</span><span class="n">EnumSet</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="n">DispatcherType</span><span class="o">.</span><span class="na">REQUEST</span><span class="o">),</span> <span class="kc">true</span><span class="o">,</span> <span class="s">&quot;/*&quot;</span><span class="o">);</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="how-it-s-glued-together">
+<span id="man-glue-detail"></span><h2>How it&#8217;s glued together</h2>
+<p>When your application starts up, it will spin up a Jetty HTTP server, see <tt class="docutils literal"><span class="pre">DefaultServerFactory</span></tt>.
+This server will have two handlers, one for your application port and the other for your admin port.
+The admin handler creates and registers the <tt class="docutils literal"><span class="pre">AdminServlet</span></tt>. This has a handle to all of the
+application healthchecks and metrics via the ServletContext.</p>
+<p>The application port has an HttpServlet as well, this is composed of <tt class="docutils literal"><span class="pre">DropwizardResourceConfig</span></tt>,
+which is an extension of Jersey&#8217;s resource configuration that performs scanning to
+find root resource and provider classes. Ultimately when you call
+<tt class="docutils literal"><span class="pre">env.jersey().register(new</span> <span class="pre">SomeResource())</span></tt>,
+you are adding to the <tt class="docutils literal"><span class="pre">DropwizardResourceConfig</span></tt>. This config is a jersey <tt class="docutils literal"><span class="pre">Application</span></tt>, so all of
+your application resources are served from one <tt class="docutils literal"><span class="pre">Servlet</span></tt></p>
+<p><tt class="docutils literal"><span class="pre">DropwizardResourceConfig</span></tt> is where the various ResourceMethodDispatchAdapter are registered to
+enable the following functionality:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Resource method requests with <tt class="docutils literal"><span class="pre">&#64;Timed</span></tt>, <tt class="docutils literal"><span class="pre">&#64;Metered</span></tt>, <tt class="docutils literal"><span class="pre">&#64;ExceptionMetered</span></tt> are delegated to special dispatchers which decorate the metric telemetry</li>
+<li>Resources that return Guava Optional are unboxed. Present returns underlying type, and non present 404s</li>
+<li>Resource methods that are annotated with <tt class="docutils literal"><span class="pre">&#64;CacheControl</span></tt> are delegated to a special dispatcher that decorates on the cache control headers</li>
+<li>Enables using Jackson to parse request entities into objects and generate response entities from objects, all while performing validation</li>
+</ul>
+</div></blockquote>
+</div>
+</div>
+
+
+            </div>
+        </div>
+        <hr/>
+        <footer>
+            <p style="float: left">
+            &copy; Copyright 2010-2013, Coda Hale, Yammer Inc..
+            Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>
+            1.1.3.
+            </p>
+            <p style="float: right">Dropwizard v0.8.0</p>
+        </footer>
+    </div>
+</body>
+</html>
+
+
