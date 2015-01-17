@@ -212,7 +212,49 @@ Note that the in-memory Jersey test container does not support all features, suc
 ``BasicAuthFactory`` and ``OAuthFactory``. A different `test container`__ can be used via
 ``ResourceTestRule.Builder#setTestContainerFactory(TestContainerFactory)``.
 
+For example if you want to use the `Grizzly`_ HTTP server (which supports ``@Context`` injections) you need to add the
+dependency for the Jersey Test Framework providers to your Maven POM and set `GrizzlyTestContainerFactory`` as
+``TestContainerFactory`` in your test classes.
+
+.. code-block:: xml
+
+    <dependency>
+        <groupId>org.glassfish.jersey.test-framework.providers</groupId>
+        <artifactId>jersey-test-framework-provider-grizzly2</artifactId>
+        <version>${jersey.version}</version>
+        <scope>test</scope>
+        <exclusions>
+            <exclusion>
+                <groupId>javax.servlet</groupId>
+                <artifactId>javax.servlet-api</artifactId>
+            </exclusion>
+            <exclusion>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+            </exclusion>
+        </exclusions>
+    </dependency>
+
+
+.. code-block:: java
+
+    public class ResourceTestWithGrizzly {
+        @ClassRule
+        public static final ResourceTestRule RULE = ResourceTestRule.builder()
+            .setTestContainerFactory(new GrizzlyTestContainerFactory())
+            .addResource(new ExampleResource())
+            .build();
+
+        @Test
+        public void testResource() {
+            assertThat(RULE.getJerseyTest().target("/example").request()
+                .get(String.class))
+                .isEqualTo("example");
+        }
+    }
+
 .. __: https://jersey.java.net/documentation/latest/test-framework.html
+.. _Grizzly: https://grizzly.java.net/
 
 .. _man-testing-clients:
 
