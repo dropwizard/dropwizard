@@ -187,7 +187,7 @@ loads a given resource instance in an in-memory Jersey server:
         }
     }
 
-Instansiate a ``ResourceTestRule`` using its ``Builder`` and add the various resource instances you
+Instantiate a ``ResourceTestRule`` using its ``Builder`` and add the various resource instances you
 want to test via ``ResourceTestRule.Builder#addResource(Object)``. Use a ``@ClassRule`` annotation
 to have the rule wrap the entire test class or the ``@Rule`` annotation to have the rule wrap
 each test individually (make sure to remove static final modifier from ``resources``).
@@ -211,6 +211,11 @@ easily.
 Should you, at some point, grow tired of the near-infinite amount of debug logging produced by
 ``ResourceTestRule`` you can use the ``java.util.logging`` API to silence the ``com.sun.jersey`` logger.
 
+Note that the in-memory Jersey test container does not support all features, such as the ``@Context`` injection used by
+``BasicAuthFactory`` and ``OAuthFactory``. A different `test container`__ can be used via
+``ResourceTestRule.Builder#setTestContainerFactory(TestContainerFactory)``.
+
+.. __: https://jersey.java.net/documentation/latest/test-framework.html
 
 .. _man-testing-clients:
 
