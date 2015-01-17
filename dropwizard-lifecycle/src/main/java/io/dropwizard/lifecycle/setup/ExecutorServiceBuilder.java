@@ -1,12 +1,17 @@
 package io.dropwizard.lifecycle.setup;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import io.dropwizard.lifecycle.ExecutorServiceManager;
 import io.dropwizard.util.Duration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.*;
 
 public class ExecutorServiceBuilder {
+    private static Logger log = LoggerFactory.getLogger(ExecutorServiceBuilder.class);
+
     private final LifecycleEnvironment environment;
     private final String nameFormat;
     private int corePoolSize;
@@ -65,6 +70,9 @@ public class ExecutorServiceBuilder {
     }
 
     public ExecutorService build() {
+        if (maximumPoolSize != Integer.MAX_VALUE && !isBoundedQueue()) {
+            log.warn("Parameter 'maximumPoolSize' is conflicting with unbounded work queues");
+        }
         final ThreadPoolExecutor executor = new ThreadPoolExecutor(corePoolSize,
                                                                    maximumPoolSize,
                                                                    keepAliveTime.getQuantity(),
@@ -74,5 +82,14 @@ public class ExecutorServiceBuilder {
                                                                    handler);
         environment.manage(new ExecutorServiceManager(executor, shutdownTime, nameFormat));
         return executor;
+    }
+
+    private boolean isBoundedQueue() {
+        return workQueue.remainingCapacity() != Integer.MAX_VALUE;
+    }
+
+    @VisibleForTesting
+    static void setLog(Logger newLog){
+       log = newLog;
     }
 }
