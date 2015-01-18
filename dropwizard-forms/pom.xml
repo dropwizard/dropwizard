@@ -9,7 +9,7 @@
     </parent>
 
     <artifactId>dropwizard-forms</artifactId>
-    <packaging>pom</packaging>
+    <packaging>jar</packaging>
     <name>Dropwizard Multipart Form Support</name>
 
     <dependencies>
