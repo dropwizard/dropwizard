@@ -25,6 +25,10 @@ public class JerseyClientConfiguration extends HttpClientConfiguration {
     @Max(16 * 1024)
     private int maxThreads = 128;
 
+    @Min(1)
+    @Max(16 * 1024)
+    private int workQueueSize = 8;
+
     private boolean gzipEnabled = true;
 
     private boolean gzipEnabledForRequests = true;
@@ -79,6 +83,16 @@ public class JerseyClientConfiguration extends HttpClientConfiguration {
     @JsonProperty
     public void setChunkedEncodingEnabled(final boolean chunkedEncodingEnabled) {
         this.chunkedEncodingEnabled = chunkedEncodingEnabled;
+    }
+
+    @JsonProperty
+    public int getWorkQueueSize() {
+        return workQueueSize;
+    }
+
+    @JsonProperty
+    public void setWorkQueueSize(int workQueueSize) {
+        this.workQueueSize = workQueueSize;
     }
 
     @JsonIgnore
