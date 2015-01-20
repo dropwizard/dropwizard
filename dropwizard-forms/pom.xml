@@ -5,11 +5,11 @@
     <parent>
         <groupId>io.dropwizard</groupId>
         <artifactId>dropwizard-parent</artifactId>
-        <version>0.8.0-rc2-SNAPSHOT</version>
+        <version>0.8.0-rc3-SNAPSHOT</version>
     </parent>
 
     <artifactId>dropwizard-forms</artifactId>
-    <packaging>pom</packaging>
+    <packaging>jar</packaging>
     <name>Dropwizard Multipart Form Support</name>
 
     <dependencies>

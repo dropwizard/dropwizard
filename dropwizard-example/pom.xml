@@ -7,7 +7,7 @@
 
     <groupId>io.dropwizard</groupId>
     <artifactId>dropwizard-example</artifactId>
-    <version>0.8.0-rc2-SNAPSHOT</version>
+    <version>0.8.0-rc3-SNAPSHOT</version>
     <name>Dropwizard Example Application</name>
 
     <properties>

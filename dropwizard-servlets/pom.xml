@@ -5,7 +5,7 @@
     <parent>
         <groupId>io.dropwizard</groupId>
         <artifactId>dropwizard-parent</artifactId>
-        <version>0.8.0-rc2-SNAPSHOT</version>
+        <version>0.8.0-rc3-SNAPSHOT</version>
     </parent>
 
     <artifactId>dropwizard-servlets</artifactId>
@@ -45,6 +45,11 @@
             </exclusions>
         </dependency>
         <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback.version}</version>
+        </dependency>
+        <dependency>
             <!-- this is required because jetty-server pom
             put servlet-api into default scope when it should
             always be provided scope so it doesn't get compiled.
@@ -59,12 +64,6 @@
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-servlet</artifactId>
             <version>${jetty.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <version>${logback.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

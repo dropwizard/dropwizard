@@ -843,23 +843,24 @@ See HttpClientConfiguration_  for more options.
       userAgent: <application name> (<client name>)
 
 
-======================= ======================================  =============================================================================
-Name                    Default                                 Description
-======================= ======================================  =============================================================================
-timeout                 500 milliseconds                        The maximum idle time for a connection, once established.
-connectionTimeout       500 milliseconds                        The maximum time to wait for a connection to open.
-timeToLive              1 hour                                  The maximum time a pooled connection can stay idle (not leased to any thread)
-                                                                before it is shut down.
-cookiesEnabled          false                                   Whether or not to enable cookies.
-maxConnections          1024                                    The maximum number of concurrent open connections.
-maxConnectionsPerRoute  1024                                    The maximum number of concurrent open connections per route.
-keepAlive               0 milliseconds                          The maximum time a connection will be kept alive before it is reconnected. If set
-                                                                to 0, connections will be immediately closed after every request/response.
-retries                 0                                       The number of times to retry failed requests. Requests are only
-                                                                retried if they throw an exception other than ``InterruptedIOException``,
-                                                                ``UnknownHostException``, ``ConnectException``, or ``SSLException``.
-userAgent               ``applicationName`` (``clientName``)    The User-Agent to send with requests.
-======================= ======================================  =============================================================================
+========================= ======================================  =============================================================================
+Name                      Default                                 Description
+========================= ======================================  =============================================================================
+timeout                   500 milliseconds                        The maximum idle time for a connection, once established.
+connectionTimeout         500 milliseconds                        The maximum time to wait for a connection to open.
+connectionRequestTimeout  500 milliseconds                        The maximum time to wait for a connection to be returned from the connection pool.
+timeToLive                1 hour                                  The maximum time a pooled connection can stay idle (not leased to any thread)
+                                                                  before it is shut down.
+cookiesEnabled            false                                   Whether or not to enable cookies.
+maxConnections            1024                                    The maximum number of concurrent open connections.
+maxConnectionsPerRoute    1024                                    The maximum number of concurrent open connections per route.
+keepAlive                 0 milliseconds                          The maximum time a connection will be kept alive before it is reconnected. If set
+                                                                  to 0, connections will be immediately closed after every request/response.
+retries                   0                                       The number of times to retry failed requests. Requests are only
+                                                                  retried if they throw an exception other than ``InterruptedIOException``,
+                                                                  ``UnknownHostException``, ``ConnectException``, or ``SSLException``.
+userAgent                 ``applicationName`` (``clientName``)    The User-Agent to send with requests.
+========================= ======================================  =============================================================================
 
 
 .. _man-configuration-clients-jersey:

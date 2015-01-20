@@ -14,17 +14,18 @@ v0.8.0:
 * Upgrade to argparse4j 0.4.4
 * Upgrade to commons-lang3 3.3.2
 * Upgrade to Guava 18.0
-* Upgrade to H2 1.4.182
+* Upgrade to H2 1.4.185
 * Upgrade to Hibernate 4.3.8.Final
 * Upgrade to Hibernate Validator 5.1.3.Final
 * Upgrade to Jackson 2.5.0
-* Upgrade to Jersey 2.14
+* Upgrade to JDBI 2.57
+* Upgrade to Jersey 2.15
 * Upgrade to Jetty 9.2.6.v20141205
-* Upgrade to Joda-Time 2.6
+* Upgrade to Joda-Time 2.7
 * Upgrade to Liquibase 3.3.2
 * Upgrade to Mustache 0.8.16
 * Upgrade to SLF4J 1.7.10
-* Upgrade to tomcat-jdbc 8.0.15
+* Upgrade to tomcat-jdbc 8.0.17
 * Upgrade to JSR305 annotations 3.0.0
 * Upgrade to Junit 4.12
 * Upgrade to AssertJ 1.7.1

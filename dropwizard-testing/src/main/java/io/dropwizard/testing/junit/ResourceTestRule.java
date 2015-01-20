@@ -11,6 +11,9 @@ import io.dropwizard.jersey.jackson.JacksonMessageBodyProvider;
 import io.dropwizard.logging.LoggingFactory;
 
 import org.glassfish.jersey.test.JerseyTest;
+import org.glassfish.jersey.test.inmemory.InMemoryTestContainerFactory;
+import org.glassfish.jersey.test.spi.TestContainerException;
+import org.glassfish.jersey.test.spi.TestContainerFactory;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
@@ -39,6 +42,7 @@ public class ResourceTestRule implements TestRule {
         private final Map<String, Object> properties = Maps.newHashMap();
         private ObjectMapper mapper = Jackson.newObjectMapper();
         private Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+        private TestContainerFactory testContainerFactory = new InMemoryTestContainerFactory();
 
         public Builder setMapper(ObjectMapper mapper) {
             this.mapper = mapper;
@@ -70,8 +74,13 @@ public class ResourceTestRule implements TestRule {
             return this;
         }
 
+        public Builder setTestContainerFactory(TestContainerFactory factory) {
+            this.testContainerFactory = factory;
+            return this;
+        }
+
         public ResourceTestRule build() {
-            return new ResourceTestRule(singletons, providers, properties, mapper, validator);
+            return new ResourceTestRule(singletons, providers, properties, mapper, validator, testContainerFactory);
         }
     }
 
@@ -84,6 +93,7 @@ public class ResourceTestRule implements TestRule {
     private final Map<String, Object> properties;
     private final ObjectMapper mapper;
     private final Validator validator;
+    private final TestContainerFactory testContainerFactory;
 
     private JerseyTest test;
 
@@ -91,12 +101,14 @@ public class ResourceTestRule implements TestRule {
                              Set<Class<?>> providers,
                              Map<String, Object> properties,
                              ObjectMapper mapper,
-                             Validator validator) {
+                             Validator validator,
+                             TestContainerFactory testContainerFactory) {
         this.singletons = singletons;
         this.providers = providers;
         this.properties = properties;
         this.mapper = mapper;
         this.validator = validator;
+        this.testContainerFactory = testContainerFactory;
     }
 
     public Validator getValidator() {
@@ -135,6 +147,11 @@ public class ResourceTestRule implements TestRule {
                             for (Object singleton : singletons)
                                 config.register(singleton);
                             return config;
+                        }
+
+                        @Override
+                        protected TestContainerFactory getTestContainerFactory() throws TestContainerException {
+                            return testContainerFactory;
                         }
                     };
                     test.setUp();

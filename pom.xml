@@ -7,7 +7,7 @@
 
     <groupId>io.dropwizard</groupId>
     <artifactId>dropwizard-parent</artifactId>
-    <version>0.8.0-rc2-SNAPSHOT</version>
+    <version>0.8.0-rc3-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Dropwizard Project</name>
     <url>${dropwizard.url}</url>
@@ -53,7 +53,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <metrics3.version>3.1.0</metrics3.version>
-        <jersey.version>2.14</jersey.version>
+        <jersey.version>2.15</jersey.version>
         <jackson.api.version>2.5.0</jackson.api.version>
         <jackson.version>2.5.0</jackson.version>
         <logback.version>1.1.2</logback.version>
@@ -61,7 +61,7 @@
         <servlet.version>3.0.0.v201112011016</servlet.version>
         <jetty.version>9.2.6.v20141205</jetty.version>
         <guava.version>18.0</guava.version>
-        <h2.version>1.4.182</h2.version>
+        <h2.version>1.4.185</h2.version>
         <assertj.version>1.7.1</assertj.version>
         <mockito.version>1.10.17</mockito.version>
     </properties>

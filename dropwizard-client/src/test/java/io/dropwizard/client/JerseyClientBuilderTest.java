@@ -13,8 +13,7 @@ import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.util.Duration;
 import org.apache.commons.lang3.reflect.FieldUtils;
-import org.apache.http.client.HttpClient;
-import org.apache.http.conn.HttpClientConnectionManager;
+import org.apache.http.client.config.RequestConfig;
 import org.glassfish.jersey.apache.connector.ApacheClientProperties;
 import org.glassfish.jersey.apache.connector.ApacheConnectorProvider;
 import org.glassfish.jersey.client.ClientConfig;
@@ -42,7 +41,6 @@ import java.util.concurrent.Executors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
@@ -152,10 +150,14 @@ public class JerseyClientBuilderTest {
         final JerseyClientConfiguration configuration = new JerseyClientConfiguration();
         configuration.setConnectionTimeout(Duration.hours(1));
         configuration.setTimeout(Duration.hours(2));
+        configuration.setConnectionRequestTimeout(Duration.hours(3));
         final Client client = builder.using(configuration)
                 .using(executorService, objectMapper).build("test");
-        assertThat(client.getConfiguration().getProperty(ClientProperties.CONNECT_TIMEOUT)).isEqualTo((int)Duration.hours(1).toMilliseconds());
-        assertThat(client.getConfiguration().getProperty(ClientProperties.READ_TIMEOUT)).isEqualTo((int)Duration.hours(2).toMilliseconds());
+        assertThat(client.getConfiguration().getProperty(ClientProperties.CONNECT_TIMEOUT)).isEqualTo((int) Duration.hours(1).toMilliseconds());
+        assertThat(client.getConfiguration().getProperty(ClientProperties.READ_TIMEOUT)).isEqualTo((int) Duration.hours(2).toMilliseconds());
+
+        RequestConfig requestConfig = (RequestConfig) client.getConfiguration().getProperty(ApacheClientProperties.REQUEST_CONFIG);
+        assertThat(requestConfig.getConnectionRequestTimeout()).isEqualTo((int) Duration.hours(3).toMilliseconds());
     }
 
     @Test
@@ -231,20 +233,18 @@ public class JerseyClientBuilderTest {
                 .using(executorService, objectMapper).build("test");
         assertThat(client.getConfiguration().getProperty(ClientProperties.REQUEST_ENTITY_PROCESSING)).isEqualTo(RequestEntityProcessing.BUFFERED);
     }
-/*
+
     @Test
     public void usesACustomHttpClientMetricNameStrategy() throws Exception {
-        final HttpClientBuilder httpClientBuilder = (HttpClientBuilder) FieldUtils
-                .getField(JerseyClientBuilder.class, "builder", true).get(builder);
-        final Field metricNameStrategyField = FieldUtils.getField(
-                HttpClientBuilder.class, "metricNameStrategy", true);
+        final Field metricNameStrategyField = FieldUtils.getField(JerseyClientBuilder.class, "metricNameStrategy", true);
 
-        HttpClientMetricNameStrategy custom = HttpClientMetricNameStrategies.HOST_AND_METHOD;
-        assertThat(metricNameStrategyField.get(httpClientBuilder)).isNotSameAs(custom);
-        builder.using(custom);
-        assertThat(metricNameStrategyField.get(httpClientBuilder)).isSameAs(custom);
+        final HttpClientMetricNameStrategy customStrategy = HttpClientMetricNameStrategies.HOST_AND_METHOD;
+        assertThat(metricNameStrategyField.get(builder)).isNotSameAs(customStrategy);
+
+        builder.using(customStrategy);
+        assertThat(metricNameStrategyField.get(builder)).isSameAs(customStrategy);
     }
-*/
+
     @Provider
     @Consumes(MediaType.APPLICATION_SVG_XML)
     public static class FakeMessageBodyReader implements MessageBodyReader<JerseyClientBuilderTest> {

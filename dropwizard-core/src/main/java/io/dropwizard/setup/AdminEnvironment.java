@@ -5,6 +5,7 @@ import com.codahale.metrics.health.HealthCheckRegistry;
 import com.codahale.metrics.health.jvm.ThreadDeadlockHealthCheck;
 import io.dropwizard.jetty.MutableServletContextHandler;
 import io.dropwizard.jetty.setup.ServletEnvironment;
+import io.dropwizard.servlets.tasks.LogConfigurationTask;
 import io.dropwizard.servlets.tasks.GarbageCollectionTask;
 import io.dropwizard.servlets.tasks.Task;
 import io.dropwizard.servlets.tasks.TaskServlet;
@@ -38,6 +39,7 @@ public class AdminEnvironment extends ServletEnvironment {
         this.healthChecks.register("deadlocks", new ThreadDeadlockHealthCheck());
         this.tasks = new TaskServlet(metricRegistry);
         tasks.add(new GarbageCollectionTask());
+        tasks.add(new LogConfigurationTask());
         addServlet("tasks", tasks).addMapping("/tasks/*");
         handler.addLifeCycleListener(new AbstractLifeCycle.AbstractLifeCycleListener() {
             @Override
