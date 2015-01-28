@@ -20,7 +20,7 @@ Then, in your application's ``initialize`` method, add a new ``MultiPartBundle``
 
     @Override
     public void initialize(Bootstrap<ExampleConfiguration> bootstrap) {
-        bootstrap.addBundle(new MultiPartBundle<ExampleConfiguration>();
+        bootstrap.addBundle(new MultiPartBundle<ExampleConfiguration>());
     }
 
 More Information
