@@ -23,7 +23,7 @@ public class MultiPartBundleTest {
                 getClass().getClassLoader()
         );
 
-        new MultiPartBundle<Configuration>().run(environment);
+        new MultiPartBundle<Configuration>().run(configuration, environment);
 
         assertThat(environment.jersey().getResourceConfig().getClasses()).contains(MultiPartFeature.class);
     }
