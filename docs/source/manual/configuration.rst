@@ -121,7 +121,7 @@ rootPath                            ``/``                                       
                                                                                      the JAX-RS resources will be served.
 registerDefaultExceptionMappers     true                                             Whether or not the default Jersey ExceptionMappers should be registered.
                                                                                      Set this to false if you want to register your own.
-======================              ===============================================  =============================================================================
+=================================== ===============================================  =============================================================================
 
 
 .. _man-configuration-gzip:
@@ -894,3 +894,109 @@ gzipEnabledForRequests  true                Adds a Content-Encoding: gzip header
 chunkedEncodingEnabled  true                Enables the use of chunked encoding for requests.
 ======================= ==================  ===================================================================================================
 
+
+.. _man-configuration-database:
+
+Database
+========
+
+.. code-block:: yaml
+
+    database:
+      driverClass : org.postgresql.Driver
+      url: 'jdbc:postgresql://db.example.com/db-prod'
+      user: pg-user
+      password: iAMs00perSecrEET
+
+
+============================    =====================    ===============================================================
+Name                            Default                  Description
+============================    =====================    ===============================================================
+driverClass                     REQUIRED                 The full name of the JDBC driver class.
+
+url                             REQUIRED                 The URL of the server.
+
+user                            REQUIRED                 The username used to connect to the server.
+
+password                        none                     The password used to connect to the server.
+
+abandonWhenPercentageFull       0                        Connections that have been abandoned (timed out) won't get
+                                                         closed and reported up unless the number of connections in use
+                                                         are above the percentage defined by abandonWhenPercentageFull.
+                                                         The value should be between 0-100.
+
+alternateUsernamesAllowed       false                    Set to true if the call getConnection(username,password) is
+                                                         allowed. This is used for when the pool is used by an
+                                                         application  accessing multiple schemas. There is a
+                                                         performance impact turning this option on, even when not used.
+
+commitOnReturn                  false                    Set to true if you want the connection pool to commit any
+                                                         pending transaction when a connection is returned.
+
+autoCommitByDefault             JDBC driver's default    The default auto-commit state of the connections.
+
+readOnlyByDefault               JDBC driver's default    The default read-only state of the connections.
+
+properties                      none                     Any additional JDBC driver parameters.
+
+defaultCatalog                  none                     The default catalog to use for the connections.
+
+defaultTransactionIsolation     JDBC driver's default    The default transaction isolation to use for the connections.
+                                                         Can be one of none, default, read-uncommitted, read-committed,
+                                                         repeatable-read, or serializable.
+
+useFairQueue                    true                     If true, calls to getConnection are handled in a FIFO manner.
+
+initialSize                     10                       The initial size of the connection pool.
+
+minSize                         10                       The minimum size of the connection pool.
+
+maxSize                         100                      The maximum size of the connection pool.
+
+initializationQuery             none                     A custom query to be run when a connection is first created.
+
+logAbandonedConnections         false                    If true, logs stack traces of abandoned connections.
+
+logValidationErrors             false                    If true, logs errors when connections fail validation.
+
+maxConnectionAge                none                     If set, connections which have been open for longer than
+                                                         maxConnectionAge are closed when returned.
+
+maxWaitForConnection            30 seconds               If a request for a connection is blocked for longer than this
+                                                         period, an exception will be thrown.
+
+minIdleTime                     1 minute                 The minimum amount of time an connection must sit idle in the
+                                                         pool before it is eligible for eviction.
+
+validationQuery                 SELECT 1                 The SQL query that will be used to validate connections from
+                                                         this pool before returning them to the caller or pool.
+                                                         If specified, this query does not have to return any data, it
+                                                         just can't throw a SQLException.
+
+validationQueryTimeout          none                     The timeout before a connection validation queries fail.
+
+checkConnectionWhileIdle        true                     Set to true if query validation should take place while the
+                                                         connection is idle.
+
+checkConnectionOnBorrow         false                    Whether or not connections will be validated before being
+                                                         borrowed from the pool. If the connection fails to validate,
+                                                         it will be dropped from the pool, and another will be
+                                                         borrowed.
+
+checkConnectionOnConnect        false                    Whether or not connections will be validated before being
+                                                         added to the pool. If the connection fails to validate,
+                                                         it won't be added to the pool.
+
+checkConnectionOnReturn         false                    Whether or not connections will be validated after being
+                                                         returned to the pool. If the connection fails to validate, it
+                                                         will be dropped from the pool.
+
+autoCommentsEnabled             true                     Whether or not ORMs should automatically add comments.
+
+evictionInterval                5 seconds                The amount of time to sleep between runs of the idle
+                                                         connection validation, abandoned cleaner and idle pool
+                                                         resizing.
+
+validationInterval              30 seconds               To avoid excess validation, only run validation once every
+                                                         interval.
+============================    =====================    ===============================================================
