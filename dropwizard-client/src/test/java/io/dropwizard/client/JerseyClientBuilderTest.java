@@ -179,26 +179,6 @@ public class JerseyClientBuilderTest {
     }
 
     @Test
-    public void usesChunkedEncodingIfChunkedEncodingIsEnabled() throws Exception {
-        final JerseyClientConfiguration configuration = new JerseyClientConfiguration();
-        configuration.setChunkedEncodingEnabled(true);
-
-        final Client client = builder.using(configuration)
-                .using(executorService, objectMapper).build("test");
-        assertThat(client.getConfiguration().getProperty(ClientProperties.REQUEST_ENTITY_PROCESSING)).isEqualTo(RequestEntityProcessing.CHUNKED);
-    }
-
-    @Test
-    public void usesBufferedEncodingIfChunkedEncodingIsDisabled() throws Exception {
-        final JerseyClientConfiguration configuration = new JerseyClientConfiguration();
-        configuration.setChunkedEncodingEnabled(false);
-
-        final Client client = builder.using(configuration)
-                .using(executorService, objectMapper).build("test");
-        assertThat(client.getConfiguration().getProperty(ClientProperties.REQUEST_ENTITY_PROCESSING)).isEqualTo(RequestEntityProcessing.BUFFERED);
-    }
-
-    @Test
     public void usesACustomHttpClientMetricNameStrategy() {
         final HttpClientMetricNameStrategy customStrategy = HttpClientMetricNameStrategies.HOST_AND_METHOD;
         builder.using(customStrategy);
