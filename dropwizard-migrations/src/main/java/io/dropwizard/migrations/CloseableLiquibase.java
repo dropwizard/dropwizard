@@ -6,10 +6,14 @@ import liquibase.database.jvm.JdbcConnection;
 import liquibase.exception.LiquibaseException;
 import liquibase.resource.ClassLoaderResourceAccessor;
 import liquibase.resource.FileSystemResourceAccessor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.SQLException;
 
 public class CloseableLiquibase extends Liquibase implements AutoCloseable {
+    private static final Logger LOGGER = LoggerFactory.getLogger("liquibase");
+
     private static final String DEFAULT_MIGRATIONS_FILE = "migrations.xml";
     private final ManagedDataSource dataSource;
 
@@ -29,6 +33,12 @@ public class CloseableLiquibase extends Liquibase implements AutoCloseable {
 
     @Override
     public void close() throws Exception {
+        try {
+            database.close();
+        } catch (LiquibaseException e){
+            LOGGER.warn("Failed to close liquibase", e);
+        }
+
         dataSource.stop();
     }
 }
