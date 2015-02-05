@@ -1,19 +1,11 @@
 sudo: false
 language: java
-
-install: echo "I trust Maven."
-
-# build and verify the snapshot artifacts, but only deploy
-# if this isn't a pull request
-script:
-- mvn verify
-- 'if [[ $TRAVIS_PULL_REQUEST = "false" ]]; then mvn deploy --settings maven_deploy_settings.xml; else echo "Pull request, skipping deploy."; fi'
-
-after_success: mvn cobertura:cobertura coveralls:cobertura
-
 jdk:
   - oraclejdk7
   - oraclejdk8
+after_success:
+- mvn cobertura:cobertura coveralls:cobertura
+- if [[ "$TRAVIS_PULL_REQUEST" = "false" ]]; then mvn deploy --settings maven_deploy_settings.xml; else echo 'Pull request, skipping deploy.'; fi
 
 # encrypted CI_DEPLOY_USERNAME and CI_DEPLOY_PASSWORD
 # values for maven deploy. these have been encrypted
