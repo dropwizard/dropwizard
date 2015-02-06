@@ -20,13 +20,7 @@
         <dependency>
             <groupId>org.jdbi</groupId>
             <artifactId>jdbi</artifactId>
-            <version>2.57</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.fasterxml</groupId>
-                    <artifactId>classmate</artifactId>
-                </exclusion>
-            </exclusions>
+            <version>2.59</version>
         </dependency>
         <dependency>
             <groupId>io.dropwizard.metrics</groupId>
