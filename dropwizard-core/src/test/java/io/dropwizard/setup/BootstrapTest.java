@@ -45,7 +45,7 @@ public class BootstrapTest {
     @Test
     public void comesWithJvmInstrumentation() throws Exception {
         assertThat(bootstrap.getMetricRegistry().getNames())
-                .contains("jvm.buffers.mapped.capacity", "jvm.threads.count", "jvm.memory.heap.usage");
+                .contains("jvm.buffers.mapped.capacity", "jvm.threads.count", "jvm.memory.heap.usage", "jvm.attribute.vendor", "jvm.classloader.loaded", "jvm.filedescriptor");
     }
     
     @Test
@@ -65,6 +65,6 @@ public class BootstrapTest {
         };
         
         assertThat(newBootstrap.getMetricRegistry().getNames())
-                .contains("jvm.buffers.mapped.capacity", "jvm.threads.count", "jvm.memory.heap.usage");
+                .contains("jvm.buffers.mapped.capacity", "jvm.threads.count", "jvm.memory.heap.usage", "jvm.attribute.vendor", "jvm.classloader.loaded", "jvm.filedescriptor");
     }
 }

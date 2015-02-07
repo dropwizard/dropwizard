@@ -19,7 +19,10 @@ import java.lang.management.ManagementFactory;
 import java.util.List;
 
 import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.JvmAttributeGaugeSet;
 import com.codahale.metrics.jvm.BufferPoolMetricSet;
+import com.codahale.metrics.jvm.ClassLoadingGaugeSet;
+import com.codahale.metrics.jvm.FileDescriptorRatioGauge;
 import com.codahale.metrics.jvm.GarbageCollectorMetricSet;
 import com.codahale.metrics.jvm.MemoryUsageGaugeSet;
 import com.codahale.metrics.jvm.ThreadStatesGaugeSet;
@@ -68,8 +71,12 @@ public class Bootstrap<T extends Configuration> {
                 .configure()
                 .addValidatedValueHandler(new OptionalValidatedValueUnwrapper())
                 .buildValidatorFactory();
+
+        getMetricRegistry().register("jvm.attribute", new JvmAttributeGaugeSet());
         getMetricRegistry().register("jvm.buffers", new BufferPoolMetricSet(ManagementFactory
                                                                                .getPlatformMBeanServer()));
+        getMetricRegistry().register("jvm.classloader", new ClassLoadingGaugeSet());
+        getMetricRegistry().register("jvm.filedescriptor", new FileDescriptorRatioGauge());
         getMetricRegistry().register("jvm.gc", new GarbageCollectorMetricSet());
         getMetricRegistry().register("jvm.memory", new MemoryUsageGaugeSet());
         getMetricRegistry().register("jvm.threads", new ThreadStatesGaugeSet());
