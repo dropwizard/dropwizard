@@ -19,7 +19,7 @@ v0.8.0:
 * Upgrade to Hibernate Validator 5.1.3.Final
 * Upgrade to Jackson 2.5.1
 * Upgrade to JDBI 2.59
-* Upgrade to Jersey 2.15
+* Upgrade to Jersey 2.16
 * Upgrade to Jetty 9.2.7.v20150116
 * Upgrade to Joda-Time 2.7
 * Upgrade to Liquibase 3.3.2
