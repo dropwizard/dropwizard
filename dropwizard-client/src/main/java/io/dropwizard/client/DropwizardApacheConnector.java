@@ -34,17 +34,20 @@ import static com.google.common.base.MoreObjects.firstNonNull;
 
 /**
  * Dropwizard Apache Connector.
- * <p/>
+ * <p>
  * It's a custom version of Jersey's {@link org.glassfish.jersey.client.spi.Connector}
  * that uses Apache's {@link org.apache.http.client.HttpClient}
  * as an HTTP transport implementation.
- * <p/>
+ * </p>
+ * <p>
  * It uses a pre-configured HTTP client by {@link io.dropwizard.client.HttpClientBuilder}
  * rather then creates a client from the Jersey configuration.
- * <p/>
+ * </p>
+ * <p>
  * This approach affords to use the extended configuration of
  * the Apache HttpClient in Dropwizard with a fluent interface
  * of JerseyClient.
+ * </p>
  */
 public class DropwizardApacheConnector implements Connector {
 
@@ -67,6 +70,9 @@ public class DropwizardApacheConnector implements Connector {
         this.chunkedEncodingEnabled = chunkedEncodingEnabled;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ClientResponse apply(ClientRequest jerseyRequest) throws ProcessingException {
         try {
@@ -100,8 +106,9 @@ public class DropwizardApacheConnector implements Connector {
     /**
      * Build a new Apache's {@link org.apache.http.client.methods.HttpUriRequest}
      * from Jersey's {@link org.glassfish.jersey.client.ClientRequest}
-     * <p/>
+     * <p>
      * Convert a method, URI, body, headers and override a user-agent if necessary
+     * </p>
      *
      * @param jerseyRequest representation of an HTTP request in Jersey
      * @return a new {@link org.apache.http.client.methods.HttpUriRequest}
@@ -124,9 +131,10 @@ public class DropwizardApacheConnector implements Connector {
     /**
      * Get an Apache's {@link org.apache.http.HttpEntity}
      * from Jersey's {@link org.glassfish.jersey.client.ClientRequest}
-     * <p/>
+     * <p>
      * Create a custom HTTP entity, because Jersey doesn't provide
      * a request stream or a byte buffer.
+     * </p>
      *
      * @param jerseyRequest representation of an HTTP request in Jersey
      * @return a correct {@link org.apache.http.HttpEntity} implementation
@@ -140,6 +148,9 @@ public class DropwizardApacheConnector implements Connector {
                 new BufferedJerseyRequestHttpEntity(jerseyRequest);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Future<?> apply(final ClientRequest request, final AsyncConnectorCallback callback) {
         // Simulate an asynchronous execution
@@ -155,11 +166,17 @@ public class DropwizardApacheConnector implements Connector {
         });
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getName() {
         return "Apache-HttpClient/" + APACHE_HTTP_CLIENT_VERSION;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void close() {
         try {
@@ -183,22 +200,38 @@ public class DropwizardApacheConnector implements Connector {
             setChunked(true);
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public boolean isRepeatable() {
             return false;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public long getContentLength() {
             return -1;
         }
 
+        /**
+         * {@inheritDoc}
+         * <p>
+         * This method isn't supported at will throw an {@link java.lang.UnsupportedOperationException}
+         * if invoked.
+         * </p>
+         */
         @Override
         public InputStream getContent() throws IOException, IllegalStateException {
             // Shouldn't be called
             throw new UnsupportedOperationException("Reading from the entity is not supported");
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public void writeTo(final OutputStream outputStream) throws IOException {
             clientRequest.setStreamProvider(new OutboundMessageContext.StreamProvider() {
@@ -210,6 +243,9 @@ public class DropwizardApacheConnector implements Connector {
             clientRequest.writeEntity();
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public boolean isStreaming() {
             return false;
@@ -220,9 +256,10 @@ public class DropwizardApacheConnector implements Connector {
     /**
      * A custom {@link org.apache.http.entity.AbstractHttpEntity} that uses
      * a Jersey request as a content source.
-     * <p/>
-     * In contrast with {@link io.dropwizard.client.DropwizardApacheConnector.JerseyRequestHttpEntity},
-     * it's buffered. We preliminarily dump the content to a buffer before processing.
+     * <p>
+     * In contrast to {@link io.dropwizard.client.DropwizardApacheConnector.JerseyRequestHttpEntity}
+     * its contents are buffered on initialization.
+     * </p>
      */
     private static class BufferedJerseyRequestHttpEntity extends AbstractHttpEntity {
 
@@ -246,28 +283,47 @@ public class DropwizardApacheConnector implements Connector {
             setChunked(false);
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public boolean isRepeatable() {
             return true;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public long getContentLength() {
             return buffer.length;
         }
 
+        /**
+         * {@inheritDoc}
+         * <p>
+         * This method isn't supported at will throw an {@link java.lang.UnsupportedOperationException}
+         * if invoked.
+         * </p>
+         */
         @Override
         public InputStream getContent() throws IOException, IllegalStateException {
             // Shouldn't be called
             throw new UnsupportedOperationException("Reading from the entity is not supported");
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public void writeTo(OutputStream outstream) throws IOException {
             outstream.write(buffer);
             outstream.flush();
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public boolean isStreaming() {
             return false;
