@@ -7,8 +7,6 @@ import net.sourceforge.argparse4j.inf.Namespace;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.component.AbstractLifeCycle;
 import org.eclipse.jetty.util.component.LifeCycle;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Runs a application as an HTTP server.
@@ -16,7 +14,6 @@ import org.slf4j.LoggerFactory;
  * @param <T> the {@link Configuration} subclass which is loaded from the configuration file
  */
 public class ServerCommand<T extends Configuration> extends EnvironmentCommand<T> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ServerCommand.class);
 
     private final Class<T> configurationClass;
 
@@ -42,7 +39,6 @@ public class ServerCommand<T extends Configuration> extends EnvironmentCommand<T
             cleanupAsynchronously();
             server.start();
         } catch (Exception e) {
-            LOGGER.error("Unable to start server, shutting down", e);
             server.stop();
             cleanup();
             throw e;
