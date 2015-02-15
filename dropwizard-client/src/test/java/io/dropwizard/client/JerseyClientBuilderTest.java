@@ -3,25 +3,34 @@ package io.dropwizard.client;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.httpclient.HttpClientMetricNameStrategies;
 import com.codahale.metrics.httpclient.HttpClientMetricNameStrategy;
-import com.codahale.metrics.httpclient.InstrumentedHttpClientConnectionManager;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import io.dropwizard.jersey.gzip.ConfiguredGZipEncoder;
 import io.dropwizard.jersey.gzip.GZipDecoder;
 import io.dropwizard.jersey.jackson.JacksonMessageBodyProvider;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
 import io.dropwizard.setup.Environment;
-import io.dropwizard.util.Duration;
-import org.apache.commons.lang3.reflect.FieldUtils;
-import org.apache.http.client.config.RequestConfig;
-import org.glassfish.jersey.apache.connector.ApacheClientProperties;
-import org.glassfish.jersey.apache.connector.ApacheConnectorProvider;
-import org.glassfish.jersey.client.ClientConfig;
+import org.apache.http.client.CredentialsProvider;
+import org.apache.http.config.Registry;
+import org.apache.http.config.RegistryBuilder;
+import org.apache.http.conn.DnsResolver;
+import org.apache.http.conn.routing.HttpRoutePlanner;
+import org.apache.http.conn.socket.ConnectionSocketFactory;
+import org.apache.http.conn.socket.PlainConnectionSocketFactory;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
+import org.apache.http.impl.client.SystemDefaultCredentialsProvider;
+import org.apache.http.impl.conn.SystemDefaultDnsResolver;
+import org.apache.http.impl.conn.SystemDefaultRoutePlanner;
 import org.glassfish.jersey.client.ClientProperties;
 import org.glassfish.jersey.client.RequestEntityProcessing;
 import org.junit.Before;
 import org.junit.Test;
 
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.ws.rs.Consumes;
@@ -34,8 +43,11 @@ import javax.ws.rs.ext.Provider;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
 import java.lang.reflect.Type;
+import java.net.*;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -53,12 +65,14 @@ public class JerseyClientBuilderTest {
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
     private final ObjectMapper objectMapper = mock(ObjectMapper.class);
     private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+    private final HttpClientBuilder apacheHttpClientBuilder = mock(HttpClientBuilder.class);
 
     @Before
     public void setUp() throws Exception {
         when(environment.lifecycle()).thenReturn(lifecycleEnvironment);
         when(environment.getObjectMapper()).thenReturn(objectMapper);
         when(environment.getValidator()).thenReturn(validator);
+        builder.setApacheHttpClientBuilder(apacheHttpClientBuilder);
     }
 
     @Test
@@ -70,14 +84,6 @@ public class JerseyClientBuilderTest {
             assertThat(e.getMessage())
                     .isEqualTo("Must have either an environment or both an executor service and an object mapper");
         }
-    }
-
-    @Test
-    public void buildsAnApache4BasedClient() throws Exception {
-        final Client client = builder.using(executorService, objectMapper).build("test");
-        final ClientConfig jerseyConfig = (ClientConfig) client.getConfiguration();
-
-        assertThat(jerseyConfig.getConnectorProvider()).isInstanceOf(ApacheConnectorProvider.class);
     }
 
     @Test
@@ -116,24 +122,6 @@ public class JerseyClientBuilderTest {
     }
 
     @Test
-    public void usesTheInstrumentedConnectionManager() throws Exception {
-        final Client client = builder.using(executorService, objectMapper).build("test");
-        assertThat(client.getConfiguration().getProperties()).containsKey(ApacheClientProperties.CONNECTION_MANAGER);
-        assertThat(client.getConfiguration().getProperty(ApacheClientProperties.CONNECTION_MANAGER)).isInstanceOf(InstrumentedHttpClientConnectionManager.class);
-    }
-
-    @Test
-    public void configuresTheInstrumentedConnectionManager() throws Exception {
-        final JerseyClientConfiguration configuration = new JerseyClientConfiguration();
-        configuration.setMaxConnections(32);
-        configuration.setMaxConnectionsPerRoute(16);
-        final Client client = builder.using(configuration).using(executorService, objectMapper).build("test");
-        InstrumentedHttpClientConnectionManager manager = (InstrumentedHttpClientConnectionManager) client.getConfiguration().getProperty(ApacheClientProperties.CONNECTION_MANAGER);
-        assertThat(manager.getMaxTotal()).isEqualTo(32);
-        assertThat(manager.getDefaultMaxPerRoute()).isEqualTo(16);
-    }
-
-    @Test
     public void usesTheGivenThreadPool() throws Exception {
         final Client client = builder.using(executorService, objectMapper).build("test");
         for (Object o : client.getConfiguration().getInstances()) {
@@ -143,30 +131,6 @@ public class JerseyClientBuilderTest {
             }
         }
 
-    }
-
-    @Test
-    public void usesTimeoutConfigurations() throws Exception {
-        final JerseyClientConfiguration configuration = new JerseyClientConfiguration();
-        configuration.setConnectionTimeout(Duration.hours(1));
-        configuration.setTimeout(Duration.hours(2));
-        configuration.setConnectionRequestTimeout(Duration.hours(3));
-        final Client client = builder.using(configuration)
-                .using(executorService, objectMapper).build("test");
-        assertThat(client.getConfiguration().getProperty(ClientProperties.CONNECT_TIMEOUT)).isEqualTo((int) Duration.hours(1).toMilliseconds());
-        assertThat(client.getConfiguration().getProperty(ClientProperties.READ_TIMEOUT)).isEqualTo((int) Duration.hours(2).toMilliseconds());
-
-        RequestConfig requestConfig = (RequestConfig) client.getConfiguration().getProperty(ApacheClientProperties.REQUEST_CONFIG);
-        assertThat(requestConfig.getConnectionRequestTimeout()).isEqualTo((int) Duration.hours(3).toMilliseconds());
-    }
-
-    @Test
-    public void disablesCookiesIfDisabled() throws Exception {
-        final JerseyClientConfiguration configuration = new JerseyClientConfiguration();
-        configuration.setCookiesEnabled(false);
-        final Client client = builder.using(configuration)
-                .using(executorService, objectMapper).build("test");
-        assertThat(client.getConfiguration().getProperty(ApacheClientProperties.DISABLE_COOKIES)).isEqualTo(true);
     }
 
     @Test
@@ -215,34 +179,82 @@ public class JerseyClientBuilderTest {
     }
 
     @Test
-    public void usesChunkedEncodingIfChunkedEncodingIsEnabled() throws Exception {
-        final JerseyClientConfiguration configuration = new JerseyClientConfiguration();
-        configuration.setChunkedEncodingEnabled(true);
-
-        final Client client = builder.using(configuration)
-                .using(executorService, objectMapper).build("test");
-        assertThat(client.getConfiguration().getProperty(ClientProperties.REQUEST_ENTITY_PROCESSING)).isEqualTo(RequestEntityProcessing.CHUNKED);
-    }
-
-    @Test
-    public void usesBufferedEncodingIfChunkedEncodingIsDisabled() throws Exception {
-        final JerseyClientConfiguration configuration = new JerseyClientConfiguration();
-        configuration.setChunkedEncodingEnabled(false);
-
-        final Client client = builder.using(configuration)
-                .using(executorService, objectMapper).build("test");
-        assertThat(client.getConfiguration().getProperty(ClientProperties.REQUEST_ENTITY_PROCESSING)).isEqualTo(RequestEntityProcessing.BUFFERED);
-    }
-
-    @Test
-    public void usesACustomHttpClientMetricNameStrategy() throws Exception {
-        final Field metricNameStrategyField = FieldUtils.getField(JerseyClientBuilder.class, "metricNameStrategy", true);
-
+    public void usesACustomHttpClientMetricNameStrategy() {
         final HttpClientMetricNameStrategy customStrategy = HttpClientMetricNameStrategies.HOST_AND_METHOD;
-        assertThat(metricNameStrategyField.get(builder)).isNotSameAs(customStrategy);
-
         builder.using(customStrategy);
-        assertThat(metricNameStrategyField.get(builder)).isSameAs(customStrategy);
+        verify(apacheHttpClientBuilder).using(customStrategy);
+    }
+
+    @Test
+    public void usesACustomHttpRequestRetryHandler() {
+        final DefaultHttpRequestRetryHandler customRetryHandler = new DefaultHttpRequestRetryHandler(2, true);
+        builder.using(customRetryHandler);
+        verify(apacheHttpClientBuilder).using(customRetryHandler);
+    }
+
+    @Test
+    public void usesACustomDnsResolver() {
+        final DnsResolver customDnsResolver = new SystemDefaultDnsResolver();
+        builder.using(customDnsResolver);
+        verify(apacheHttpClientBuilder).using(customDnsResolver);
+    }
+
+    @Test
+    public void usesACustomConnectionFactoryRegistry() throws Exception {
+        final SSLContext ctx = SSLContext.getInstance(SSLConnectionSocketFactory.TLS);
+        ctx.init(null, new TrustManager[]{new X509TrustManager() {
+
+            @Override
+            public void checkClientTrusted(X509Certificate[] xcs, String string) throws CertificateException {
+            }
+
+            @Override
+            public void checkServerTrusted(X509Certificate[] xcs, String string) throws CertificateException {
+            }
+
+            @Override
+            public X509Certificate[] getAcceptedIssuers() {
+                return null;
+            }
+        }}, null);
+        final Registry<ConnectionSocketFactory> customRegistry = RegistryBuilder.<ConnectionSocketFactory>create()
+                .register("http", PlainConnectionSocketFactory.getSocketFactory())
+                .register("https", new SSLConnectionSocketFactory(ctx,
+                        SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER))
+                .build();
+        builder.using(customRegistry);
+        verify(apacheHttpClientBuilder).using(customRegistry);
+    }
+
+    @Test
+    public void usesACustomEnvironmentName() {
+        final String userAgent = "Dropwizard Jersey Client";
+        builder.name(userAgent);
+        verify(apacheHttpClientBuilder).name(userAgent);
+    }
+
+    @Test
+    public void usesACustomHttpRoutePlanner() {
+       final HttpRoutePlanner customHttpRoutePlanner = new SystemDefaultRoutePlanner(new ProxySelector() {
+           @Override
+           public List<Proxy> select(URI uri) {
+               return ImmutableList.of(new Proxy(Proxy.Type.HTTP, new InetSocketAddress("192.168.53.12", 8080)));
+           }
+
+           @Override
+           public void connectFailed(URI uri, SocketAddress sa, IOException ioe) {
+               
+           }
+       });
+        builder.using(customHttpRoutePlanner);
+        verify(apacheHttpClientBuilder).using(customHttpRoutePlanner);
+    }
+    
+    @Test
+    public void usesACustomCredentialsProvider(){
+        CredentialsProvider customCredentialsProvider = new SystemDefaultCredentialsProvider();
+        builder.using(customCredentialsProvider);
+        verify(apacheHttpClientBuilder).using(customCredentialsProvider);
     }
 
     @Provider
