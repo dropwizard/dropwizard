@@ -1,12 +1,15 @@
 package io.dropwizard.configuration;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.io.Resources;
 import io.dropwizard.jackson.Jackson;
 import org.assertj.core.data.MapEntry;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -15,7 +18,10 @@ import javax.validation.Validator;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.io.File;
-import java.util.*;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
@@ -30,6 +36,12 @@ public class ConfigurationFactoryTest {
 
         public int getPort() {
             return port;
+        }
+
+        public static ExampleServer create(int port) {
+            ExampleServer server = new ExampleServer();
+            server.port = port;
+            return server;
         }
 
     }
@@ -68,6 +80,34 @@ public class ConfigurationFactoryTest {
             return servers;
         }
 
+    }
+
+    static class ExampleWithDefaults {
+
+        @NotNull
+        @Pattern(regexp = "[\\w]+[\\s]+[\\w]+([\\s][\\w]+)?")
+        @JsonProperty
+        String name = "Coda Hale";
+
+        @JsonProperty
+        List<String> type = ImmutableList.of("coder", "wizard");
+
+        @JsonProperty
+        Map<String, String> properties = ImmutableMap.of("debug", "true", "settings.enabled", "false");
+
+        @JsonProperty
+        List<ExampleServer> servers = ImmutableList.of(
+                ExampleServer.create(8080), ExampleServer.create(8081), ExampleServer.create(8082));
+    }
+
+    static class NonInsatiableExample {
+
+        @JsonProperty
+        String name = "Code Hale";
+
+        NonInsatiableExample(@JsonProperty("name") String name) {
+            this.name = name;
+        }
     }
 
     private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
@@ -281,5 +321,52 @@ public class ConfigurationFactoryTest {
                                         "  * name must match \"[\\w]+[\\s]+[\\w]+([\\s][\\w]+)?\" (was Boop)%n"));
             }
         }
+    }
+
+    @Test
+    public void handleOverrideDefaultConfiguration() throws Exception {
+        System.setProperty("dw.name", "Coda Hale Overridden");
+        System.setProperty("dw.type", "coder,wizard,overridden");
+        System.setProperty("dw.properties.settings.enabled", "true");
+        System.setProperty("dw.servers[0].port", "8090");
+        System.setProperty("dw.servers[2].port", "8092");
+
+        final ExampleWithDefaults example =
+                new ConfigurationFactory<>(ExampleWithDefaults.class, validator, Jackson.newObjectMapper(), "dw")
+                        .build();
+
+        assertThat(example.name).isEqualTo("Coda Hale Overridden");
+        assertThat(example.type.get(2)).isEqualTo("overridden");
+        assertThat(example.type.size()).isEqualTo(3);
+        assertThat(example.properties).containsEntry("settings.enabled", "true");
+        assertThat(example.servers.get(0).getPort()).isEqualTo(8090);
+        assertThat(example.servers.get(2).getPort()).isEqualTo(8092);
+    }
+
+    @Test
+    public void handleDefaultConfigurationWithoutOverriding() throws Exception {
+        final ExampleWithDefaults example =
+                new ConfigurationFactory<>(ExampleWithDefaults.class, validator, Jackson.newObjectMapper(), "dw")
+                        .build();
+
+        assertThat(example.name).isEqualTo("Coda Hale");
+        assertThat(example.type).isEqualTo(ImmutableList.of("coder", "wizard"));
+        assertThat(example.properties).isEqualTo(ImmutableMap.of("debug", "true", "settings.enabled", "false"));
+        assertThat(example.servers.get(0).getPort()).isEqualTo(8080);
+        assertThat(example.servers.get(1).getPort()).isEqualTo(8081);
+        assertThat(example.servers.get(2).getPort()).isEqualTo(8082);
+    }
+
+    @Test
+    public void throwsAnExceptionIfDefaultConfigurationCantBeInstantiated() throws Exception {
+        System.setProperty("dw.name", "Coda Hale Overridden");
+        try {
+            new ConfigurationFactory<>(NonInsatiableExample.class, validator, Jackson.newObjectMapper(), "dw").build();
+            Assert.fail("Configuration is parsed, but shouldn't be");
+        } catch (IllegalArgumentException e){
+            assertThat(e).hasMessage("Unable create an instance of the configuration class: " +
+                    "'io.dropwizard.configuration.ConfigurationFactoryTest.NonInsatiableExample'");
+        }
+
     }
 }
