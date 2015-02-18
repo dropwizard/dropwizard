@@ -11,6 +11,7 @@ import io.dropwizard.util.Duration;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 
 /**
  * A base {@link ReporterFactory} for configuring metric reporters.
@@ -47,6 +48,12 @@ import java.util.concurrent.TimeUnit;
  *         reported. See {@link #getFilter()}.</td>
  *     </tr>
  *     <tr>
+ *         <td>useRegexFilters</td>
+ *         <td>false</td>
+ *         <td>Indicates whether the values of the 'includes' and 'excludes' fields should be
+ *         treated as regular expressions or not.</td>
+ *     </tr>
+ *     <tr>
  *         <td>frequency</td>
  *         <td>1 second</td>
  *         <td>The frequency to report metrics. Overrides the {@link
@@ -55,6 +62,13 @@ import java.util.concurrent.TimeUnit;
  * </table>
  */
 public abstract class BaseReporterFactory implements ReporterFactory {
+
+    private static final DefaultStringMatchingStrategy DEFAULT_STRING_MATCHING_STRATEGY =
+            new DefaultStringMatchingStrategy();
+
+    private static final RegexStringMatchingStrategy REGEX_STRING_MATCHING_STRATEGY =
+            new RegexStringMatchingStrategy();
+
     @NotNull
     private TimeUnit durationUnit = TimeUnit.MILLISECONDS;
 
@@ -70,6 +84,8 @@ public abstract class BaseReporterFactory implements ReporterFactory {
     @NotNull
     @Valid
     private Optional<Duration> frequency = Optional.absent();
+
+    private boolean useRegexFilters = false;
 
     public TimeUnit getDurationUnit() {
         return durationUnit;
@@ -120,6 +136,16 @@ public abstract class BaseReporterFactory implements ReporterFactory {
         this.frequency = frequency;
     }
 
+    @JsonProperty
+    public boolean getUseRegexFilters() {
+        return useRegexFilters;
+    }
+
+    @JsonProperty
+    public void setUseRegexFilters(boolean useRegexFilters) {
+        this.useRegexFilters = useRegexFilters;
+    }
+
     /**
      * Gets a {@link MetricFilter} that specifically includes and excludes configured metrics.
      * <p/>
@@ -139,6 +165,9 @@ public abstract class BaseReporterFactory implements ReporterFactory {
      * @see #getExcludes()
      */
     public MetricFilter getFilter() {
+        final StringMatchingStrategy stringMatchingStrategy = getUseRegexFilters() ?
+                REGEX_STRING_MATCHING_STRATEGY : DEFAULT_STRING_MATCHING_STRATEGY;
+
         return new MetricFilter() {
             @Override
             public boolean matches(final String name, final Metric metric) {
@@ -146,18 +175,44 @@ public abstract class BaseReporterFactory implements ReporterFactory {
                 boolean useExcl = !getExcludes().isEmpty();
 
                 if (useIncl && useExcl) {
-                    return getIncludes().contains(name) || !getExcludes().contains(name);
+                    return stringMatchingStrategy.containsMatch(getIncludes(), name) ||
+                            !stringMatchingStrategy.containsMatch(getExcludes(), name);
                 }
                 else if (useIncl && !useExcl) {
-                    return getIncludes().contains(name);
+                    return stringMatchingStrategy.containsMatch(getIncludes(), name);
                 }
                 else if (!useIncl && useExcl) {
-                    return !getExcludes().contains(name);
+                    return !stringMatchingStrategy.containsMatch(getExcludes(), name);
                 }
                 else {
                     return true;
                 }
             }
         };
+    }
+
+    private interface StringMatchingStrategy {
+        boolean containsMatch(ImmutableSet<String> matchExpressions, String metricName);
+    }
+
+    private static class DefaultStringMatchingStrategy implements StringMatchingStrategy {
+        @Override
+        public boolean containsMatch(ImmutableSet<String> matchExpressions, String metricName) {
+            return matchExpressions.contains(metricName);
+        }
+    }
+
+    private static class RegexStringMatchingStrategy implements StringMatchingStrategy {
+        @Override
+        public boolean containsMatch(ImmutableSet<String> matchExpressions, String metricName) {
+            for (String regexExpression : matchExpressions) {
+                if (Pattern.matches(regexExpression, metricName)) {
+                    // just need to match on a single value - return as soon as we do
+                    return true;
+                }
+            }
+
+            return false;
+        }
     }
 }
