@@ -123,16 +123,16 @@ public class LoggingFactory {
         final Logger root = configureLevels();
 
         for (AppenderFactory output : appenders) {
-            root.addAppender(output.build(root.getLoggerContext(), name, null));
+            root.addAppender(output.build(loggerContext, name, null));
         }
 
-        printIfErrorsOccured(root.getLoggerContext());
+        printIfErrorsOccured(loggerContext);
 
         final MBeanServer server = ManagementFactory.getPlatformMBeanServer();
         try {
             final ObjectName objectName = new ObjectName("io.dropwizard:type=Logging");
             if (!server.isRegistered(objectName)) {
-                server.registerMBean(new JMXConfigurator(root.getLoggerContext(),
+                server.registerMBean(new JMXConfigurator(loggerContext,
                                                          server,
                                                          objectName),
                                      objectName);
@@ -151,20 +151,20 @@ public class LoggingFactory {
 
     private void configureInstrumentation(Logger root, MetricRegistry metricRegistry) {
         final InstrumentedAppender appender = new InstrumentedAppender(metricRegistry);
-        appender.setContext(root.getLoggerContext());
+        appender.setContext(loggerContext);
         appender.start();
         root.addAppender(appender);
     }
 
     private Logger configureLevels() {
         final Logger root = loggerContext.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
-        root.getLoggerContext().reset();
+        loggerContext.reset();
 
         final LevelChangePropagator propagator = new LevelChangePropagator();
-        propagator.setContext(root.getLoggerContext());
+        propagator.setContext(loggerContext);
         propagator.setResetJUL(true);
 
-        root.getLoggerContext().addListener(propagator);
+        loggerContext.addListener(propagator);
 
         root.setLevel(level);
 
