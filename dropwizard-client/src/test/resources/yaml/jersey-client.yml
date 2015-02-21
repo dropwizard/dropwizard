@@ -1,0 +1,6 @@
+minThreads: 8
+maxThreads: 64
+gzipEnabled: false
+workQueueSize: 16
+gzipEnabledForRequests: false
+chunkedEncodingEnabled : false
