@@ -8,6 +8,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -63,6 +64,20 @@ public class LoggingFactoryPrintErrorMessagesTest {
         factory.configure(new MetricRegistry(), "logger-test");
 
         return output.toString(StandardCharsets.UTF_8.name());
+    }
+
+    @Test
+    public void testWhenUsingDefaultConstructor_SystemErrIsSet() throws Exception {
+        PrintStream configurationErrorsStream = new LoggingFactory().configurationErrorsStream;
+
+        assertThat(configurationErrorsStream).isSameAs(System.err);
+    }
+
+    @Test
+    public void testWhenUsingDefaultConstructor_StaticILoggerFactoryIsSet() throws Exception {
+        LoggerContext loggerContext = new LoggingFactory().loggerContext;
+
+        assertThat(loggerContext).isSameAs(LoggerFactory.getILoggerFactory());
     }
 
     @Test

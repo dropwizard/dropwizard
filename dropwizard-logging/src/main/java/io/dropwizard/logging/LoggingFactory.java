@@ -77,10 +77,10 @@ public class LoggingFactory {
     );
 
     @JsonIgnore
-    private final LoggerContext loggerContext;
+    final LoggerContext loggerContext;
 
     @JsonIgnore
-    private final PrintStream configurationErrorsStream;
+    final PrintStream configurationErrorsStream;
 
     public LoggingFactory() {
         this((LoggerContext) LoggerFactory.getILoggerFactory(), System.err);
