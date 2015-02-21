@@ -8,6 +8,7 @@ import ch.qos.logback.classic.jmx.JMXConfigurator;
 import ch.qos.logback.classic.jul.LevelChangePropagator;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.ConsoleAppender;
+import ch.qos.logback.core.util.StatusPrinter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.logback.InstrumentedAppender;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -21,12 +22,12 @@ import org.slf4j.bridge.SLF4JBridgeHandler;
 import javax.management.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.io.PrintStream;
 import java.lang.management.ManagementFactory;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
-import static ch.qos.logback.core.util.StatusPrinter.printIfErrorsOccured;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class LoggingFactory {
@@ -78,13 +79,17 @@ public class LoggingFactory {
     @JsonIgnore
     private final LoggerContext loggerContext;
 
+    @JsonIgnore
+    private final PrintStream configurationErrorsStream;
+
     public LoggingFactory() {
-        this((LoggerContext) LoggerFactory.getILoggerFactory());
+        this((LoggerContext) LoggerFactory.getILoggerFactory(), System.err);
     }
 
     @VisibleForTesting
-    LoggingFactory(LoggerContext loggerContext) {
+    LoggingFactory(LoggerContext loggerContext, PrintStream configurationErrorsStream) {
         this.loggerContext = checkNotNull(loggerContext);
+        this.configurationErrorsStream = checkNotNull(configurationErrorsStream);
     }
 
     @JsonProperty
@@ -126,7 +131,12 @@ public class LoggingFactory {
             root.addAppender(output.build(loggerContext, name, null));
         }
 
-        printIfErrorsOccured(loggerContext);
+        StatusPrinter.setPrintStream(configurationErrorsStream);
+        try {
+            StatusPrinter.printIfErrorsOccured(loggerContext);
+        }finally {
+            StatusPrinter.setPrintStream(System.out);
+        }
 
         final MBeanServer server = ManagementFactory.getPlatformMBeanServer();
         try {

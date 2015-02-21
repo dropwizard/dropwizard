@@ -13,6 +13,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 
 import static java.util.Collections.singletonList;
@@ -27,6 +28,7 @@ public class LoggingFactoryPrintErrorMessagesTest {
     File folderWithWritePermission;
 
     LoggingFactory factory;
+    ByteArrayOutputStream output;
 
     @Before
     public void setUp() throws Exception {
@@ -35,7 +37,8 @@ public class LoggingFactoryPrintErrorMessagesTest {
 
         folderWithWritePermission = tempDir.newFolder("folder-with-write-permission");
 
-        factory = new LoggingFactory(new LoggerContext());
+        output = new ByteArrayOutputStream();
+        factory = new LoggingFactory(new LoggerContext(), new PrintStream(output));
     }
 
     @After
@@ -56,17 +59,10 @@ public class LoggingFactoryPrintErrorMessagesTest {
         return fileAppenderFactory;
     }
 
-    private String configureAndCaptureSystemOut() throws UnsupportedEncodingException {
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
+    private String configureAndGetOutputWrittenToErrorStream() throws UnsupportedEncodingException {
+        factory.configure(new MetricRegistry(), "logger-test");
 
-        try {
-            StatusPrinter.setPrintStream(new PrintStream(out));
-            factory.configure(new MetricRegistry(), "logger-test");
-        }finally {
-            StatusPrinter.setPrintStream(System.out);
-        }
-
-        return out.toString(StandardCharsets.UTF_8.name());
+        return output.toString(StandardCharsets.UTF_8.name());
     }
 
     @Test
@@ -76,7 +72,7 @@ public class LoggingFactoryPrintErrorMessagesTest {
         configureLoggingFactoryWithFileAppender(file);
 
         assertThat(file.canWrite()).isFalse();
-        assertThat(configureAndCaptureSystemOut()).contains(file.toString());
+        assertThat(configureAndGetOutputWrittenToErrorStream()).contains(file.toString());
     }
 
     @Test
@@ -86,6 +82,15 @@ public class LoggingFactoryPrintErrorMessagesTest {
         configureLoggingFactoryWithFileAppender(file);
 
         assertThat(file.canWrite()).isTrue();
-        assertThat(configureAndCaptureSystemOut()).isEmpty();
+        assertThat(configureAndGetOutputWrittenToErrorStream()).isEmpty();
+    }
+
+    @Test
+    public void testLogbackStatusPrinterPrintStreamIsRestoredToSystemOut() throws Exception {
+        Field field = StatusPrinter.class.getDeclaredField("ps");
+        field.setAccessible(true);
+
+        PrintStream out = (PrintStream) field.get(null);
+        assertThat(out).isSameAs(System.out);
     }
 }
