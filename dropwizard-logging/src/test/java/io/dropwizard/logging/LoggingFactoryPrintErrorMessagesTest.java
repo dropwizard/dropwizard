@@ -25,19 +25,11 @@ public class LoggingFactoryPrintErrorMessagesTest {
     @Rule
     public final TemporaryFolder tempDir = new TemporaryFolder();
 
-    File folderWithoutWritePermission;
-    File folderWithWritePermission;
-
     LoggingFactory factory;
     ByteArrayOutputStream output;
 
     @Before
     public void setUp() throws Exception {
-        folderWithoutWritePermission = tempDir.newFolder("folder-without-write-permission");
-        folderWithoutWritePermission.setWritable(false);
-
-        folderWithWritePermission = tempDir.newFolder("folder-with-write-permission");
-
         output = new ByteArrayOutputStream();
         factory = new LoggingFactory(new LoggerContext(), new PrintStream(output));
     }
@@ -82,21 +74,22 @@ public class LoggingFactoryPrintErrorMessagesTest {
 
     @Test
     public void testWhenFileAppenderDoesNotHaveWritePermissionToFolder_PrintsErrorMessageToConsole() throws Exception {
-        File file = folderWithoutWritePermission;
+        File folderWithoutWritePermission = tempDir.newFolder("folder-without-write-permission");
+        folderWithoutWritePermission.setWritable(false);
 
-        configureLoggingFactoryWithFileAppender(file);
+        configureLoggingFactoryWithFileAppender(folderWithoutWritePermission);
 
-        assertThat(file.canWrite()).isFalse();
-        assertThat(configureAndGetOutputWrittenToErrorStream()).contains(file.toString());
+        assertThat(folderWithoutWritePermission.canWrite()).isFalse();
+        assertThat(configureAndGetOutputWrittenToErrorStream()).contains(folderWithoutWritePermission.toString());
     }
 
     @Test
     public void testWhenSettingUpLoggingWithValidConfiguration_NoErrorMessageIsPrintedToConsole() throws Exception {
-        File file = folderWithWritePermission;
+        File folderWithWritePermission = tempDir.newFolder("folder-with-write-permission");
 
-        configureLoggingFactoryWithFileAppender(file);
+        configureLoggingFactoryWithFileAppender(folderWithWritePermission);
 
-        assertThat(file.canWrite()).isTrue();
+        assertThat(folderWithWritePermission.canWrite()).isTrue();
         assertThat(configureAndGetOutputWrittenToErrorStream()).isEmpty();
     }
 
