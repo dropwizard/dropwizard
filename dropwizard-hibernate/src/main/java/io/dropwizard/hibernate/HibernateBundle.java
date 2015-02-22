@@ -11,6 +11,8 @@ import io.dropwizard.setup.Environment;
 import org.hibernate.SessionFactory;
 
 public abstract class HibernateBundle<T extends Configuration> implements ConfiguredBundle<T>, DatabaseConfiguration<T> {
+    private static final String DEFAULT_NAME = "hibernate";
+
     private SessionFactory sessionFactory;
 
     private final ImmutableList<Class<?>> entities;
@@ -39,12 +41,20 @@ public abstract class HibernateBundle<T extends Configuration> implements Config
         return new Hibernate4Module();
     }
 
+    /**
+     * Override to configure the name of the bundle
+     * (It's used for the bundle health check and database pool metrics)
+     */
+    protected String name() {
+        return DEFAULT_NAME;
+    }
+
     @Override
     public final void run(T configuration, Environment environment) throws Exception {
         final DataSourceFactory dbConfig = getDataSourceFactory(configuration);
-        this.sessionFactory = sessionFactoryFactory.build(this, environment, dbConfig, entities);
+        this.sessionFactory = sessionFactoryFactory.build(this, environment, dbConfig, entities, name());
         environment.jersey().register(new UnitOfWorkApplicationListener(sessionFactory));
-        environment.healthChecks().register("hibernate",
+        environment.healthChecks().register(name(),
                                             new SessionFactoryHealthCheck(sessionFactory,
                                                                           dbConfig.getValidationQuery()));
     }
