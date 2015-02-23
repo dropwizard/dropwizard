@@ -103,7 +103,7 @@ public class BaseReporterFactoryTest {
     private final Metric metric = mock(Metric.class);
 
     @Test
-    public void matches() {
+    public void testDefaultMatching() {
         factory.setIncludes(includes);
         factory.setExcludes(excludes);
 
@@ -111,6 +111,12 @@ public class BaseReporterFactoryTest {
         assertThat(factory.getFilter().matches(name, metric))
                 .overridingErrorMessage(msg + ": expected 'matches(%s)=%s' for default matcher", name, expectedDefaultResult)
                 .isEqualTo(expectedDefaultResult);
+    }
+
+    @Test
+    public void testRegexMatching() {
+        factory.setIncludes(includes);
+        factory.setExcludes(excludes);
 
         factory.setUseRegexFilters(true);
         assertThat(factory.getFilter().matches(name, metric))
