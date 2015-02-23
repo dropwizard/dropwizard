@@ -232,27 +232,12 @@ public class AssetServlet extends HttpServlet {
     private ImmutableList<ByteRange> parseRangeHeader(final String rangeHeader,
             final int resourceLength) {
         final ImmutableList.Builder<ByteRange> builder = ImmutableList.builder();
-
         if (rangeHeader.indexOf("=") != -1) {
             final String[] parts = rangeHeader.split("=");
             if (parts.length > 1) {
                 final List<String> ranges = Splitter.on(",").trimResults().splitToList(parts[1]);
-
                 for (final String range : ranges) {
-                    final ByteRange byteRange = ByteRange.parse(range);
-                    if (!byteRange.hasEnd()) {
-                        if (byteRange.getStart() < 0) {
-                            builder.add(new ByteRange(resourceLength+byteRange.getStart(),
-                                    resourceLength-1));
-                        }
-                        else {
-                            builder.add(new ByteRange(byteRange.getStart(),
-                                    resourceLength-1));
-                        }
-                    }
-                    else {
-                        builder.add(byteRange);
-                    }
+                    builder.add(ByteRange.parse(range, resourceLength));
                 }
             }
         }

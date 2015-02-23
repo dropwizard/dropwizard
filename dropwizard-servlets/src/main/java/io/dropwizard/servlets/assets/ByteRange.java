@@ -8,18 +8,10 @@ public final class ByteRange {
 
     private final int start;
     private final int end;
-    private final boolean hasEnd;
-    
-    public ByteRange(final int start) {
-        this.start = start;
-        this.end = -1;
-        this.hasEnd = false;
-    }
-    
+
     public ByteRange(final int start, final int end) {
         this.start = start;
         this.end = end;
-        this.hasEnd = true;
     }
 
     public int getStart() {
@@ -30,25 +22,30 @@ public final class ByteRange {
         return end;
     }
 
-    public boolean hasEnd() {
-        return hasEnd;
-    }
-
-    public static ByteRange parse(final String byteRange) throws NumberFormatException {
-        // negative range or missing separator
-        if (byteRange.indexOf("-") < 1) {
+    public static ByteRange parse(final String byteRange,
+            final int resourceLength) throws NumberFormatException {
+        // missing separator
+        if (byteRange.indexOf("-") == -1) {
             final int start = Integer.parseInt(byteRange);
-            return new ByteRange(start);
+            return new ByteRange(start, resourceLength-1);
+        }
+        // negative range
+        if (byteRange.indexOf("-") == 0) {
+            final int start = Integer.parseInt(byteRange);
+            return new ByteRange(resourceLength+start, resourceLength-1);
         }
         final String[] parts = byteRange.split("-");
         if (parts.length == 2) {
             final int start = Integer.parseInt(parts[0]);
-            final int end = Integer.parseInt(parts[1]);
+            int end = Integer.parseInt(parts[1]);
+            if (end > resourceLength) {
+                end = resourceLength-1;
+            }
             return new ByteRange(start, end);
         }
         else {
             final int start = Integer.parseInt(parts[0]);
-            return new ByteRange(start);
+            return new ByteRange(start, resourceLength-1);
         }
     }
 
@@ -62,22 +59,16 @@ public final class ByteRange {
         }
 
         final ByteRange other = (ByteRange) obj;
-        return Objects.equal(start, other.start) && Objects.equal(end, other.end)
-                && Objects.equal(hasEnd, other.hasEnd);
+        return Objects.equal(start, other.start) && Objects.equal(end, other.end);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(start, end, hasEnd);
+        return Objects.hashCode(start, end);
     }
 
     @Override
     public String toString() {
-        if (hasEnd) {
-            return String.format("%d-%d", start, end);
-        }
-        else {
-            return String.valueOf(start);
-        }
+        return String.format("%d-%d", start, end);
     }
 }
