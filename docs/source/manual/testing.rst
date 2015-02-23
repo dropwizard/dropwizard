@@ -103,8 +103,7 @@ Next, write a test for serializing a ``Person`` instance to JSON:
             final Person person = new Person("Luther Blissett", "lb@example.com");
 
             final String expected = MAPPER.writeValueAsString(
-                   MAPPER.readValue(fixture("fixtures/person.json"),
-                           new TypeReference<HashMap<String, Object>>() {}));
+                    MAPPER.readValue(fixture("fixtures/person.json"), Person.class));
 
             assertThat(MAPPER.writeValueAsString(person)).isEqualTo(expected);
         }
