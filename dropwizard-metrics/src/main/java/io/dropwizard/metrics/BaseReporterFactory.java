@@ -48,7 +48,7 @@ import java.util.regex.Pattern;
  *         <td>includes</td>
  *         <td>All metrics included.</td>
  *         <td>Metrics to include in reports, by name. When defined, only these metrics will be
- *         reported. See {@link #getFilter()}.  Exclusion rules (excludes and excludesRegex) take precedence,
+ *         reported. See {@link #getFilter()}.  Exclusion rules (excludes) take precedence,
  *         so if a name matches both exclusion rules and inclusion rules, it is excluded.</td>
  *     </tr>
  *     <tr>
