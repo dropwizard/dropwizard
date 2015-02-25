@@ -5,6 +5,9 @@ import com.codahale.metrics.MetricFilter;
 import com.codahale.metrics.ScheduledReporter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Optional;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
 import io.dropwizard.util.Duration;
 
@@ -64,6 +67,12 @@ import java.util.regex.Pattern;
  *         it is excluded.</td>
  *     </tr>
  *     <tr>
+ *         <td>useRegexFilters</td>
+ *         <td>false</td>
+ *         <td>Indicates whether the values of the 'includes' and 'excludes' fields should be
+ *         treated as regular expressions or not.</td>
+ *     </tr>
+ *     <tr>
  *         <td>frequency</td>
  *         <td>1 second</td>
  *         <td>The frequency to report metrics. Overrides the {@link
@@ -72,6 +81,13 @@ import java.util.regex.Pattern;
  * </table>
  */
 public abstract class BaseReporterFactory implements ReporterFactory {
+
+    private static final DefaultStringMatchingStrategy DEFAULT_STRING_MATCHING_STRATEGY =
+            new DefaultStringMatchingStrategy();
+
+    private static final RegexStringMatchingStrategy REGEX_STRING_MATCHING_STRATEGY =
+            new RegexStringMatchingStrategy();
+
     @NotNull
     private TimeUnit durationUnit = TimeUnit.MILLISECONDS;
 
@@ -84,20 +100,11 @@ public abstract class BaseReporterFactory implements ReporterFactory {
     @NotNull
     private ImmutableSet<String> includes = ImmutableSet.of();
 
-    // Defines the excludesRegex
-    private String excludesRegex = null;
-    // Cache of the regex Pattern that implements the excludesRegex.
-    private Pattern excludesPattern = null;
-
-    // Defines the includesRegex
-    private String includesRegex = null;
-    // Cache of the regex Pattern that implements the includesRegex.
-    private Pattern includesPattern = null;
-
-
     @NotNull
     @Valid
     private Optional<Duration> frequency = Optional.absent();
+
+    private boolean useRegexFilters = false;
 
     public TimeUnit getDurationUnit() {
         return durationUnit;
@@ -132,30 +139,6 @@ public abstract class BaseReporterFactory implements ReporterFactory {
         this.includes = includes;
     }
 
-    /**
-     * Augments {@link #includes} so that any name which matches this regex pattern is also included in reports.
-     * @return rhe string representation of a regex pattern
-     */
-    @JsonProperty
-    public String getIncludesRegex() { return includesRegex; }
-
-    @JsonProperty
-    public void setIncludesRegex(String includesRegex) {
-        this.includesRegex = includesRegex;
-        this.includesPattern = null;
-    }
-
-    /**
-     * Accessor for the internal regex Pattern that does inclusion matching.
-     * @return the includesPattern, creating it from the includesRegex String if needed; null if includesRegex is unset
-     */
-    private Pattern getIncludesPattern() {
-        if (includesPattern == null && includesRegex != null) {
-            includesPattern = Pattern.compile(includesRegex);
-        }
-        return includesPattern;
-    }
-
     @JsonProperty
     public ImmutableSet<String> getExcludes() {
         return excludes;
@@ -167,25 +150,6 @@ public abstract class BaseReporterFactory implements ReporterFactory {
     }
 
     @JsonProperty
-    public String getExcludesRegex() { return excludesRegex; }
-
-    @JsonProperty
-    public void setExcludesRegex(String excludesRegex) {
-        this.excludesRegex = excludesRegex;
-        // Reset the associated regex Pattern, causing it to be recreated on next use.
-        this.excludesPattern = null;
-    }
-
-    private Pattern getExcludesPattern() {
-        // create the excludes pattern if needed.
-        if (excludesPattern == null && excludesRegex != null) {
-            excludesPattern = Pattern.compile(excludesRegex);
-        }
-        return excludesPattern;
-    }
-
-
-    @JsonProperty
     public Optional<Duration> getFrequency() {
         return frequency;
     }
@@ -195,52 +159,14 @@ public abstract class BaseReporterFactory implements ReporterFactory {
         this.frequency = frequency;
     }
 
-    /**
-     * Implement the exclusion rules.
-     * <p>
-     *     If a name matches either the {@link #excludes} list or the {@link #excludesRegex} it is excluded.
-     * </p>
-     * <p>
-     *     By default - if neither {@link #excludes} nor {@link #excludesRegex} is defined, no metric is excluded.
-     * </p>
-     * @param name the name of the metric to check against the rules.
-     * @return true if the name matches the exclusion rules, false otherwise.
-     */
-    private boolean metricNameIsExcluded(String name) {
-        boolean exclude = getExcludes().contains(name);
-        if (!exclude) {
-            Pattern p = getExcludesPattern();
-            if (p != null) {
-                exclude = p.matcher(name).matches();
-            }
-        }
-        return exclude;
+    @JsonProperty
+    public boolean getUseRegexFilters() {
+        return useRegexFilters;
     }
 
-    /**
-     * Implement the inclusion rules.
-     * <p>
-     *     If a name matches either the {@link #includes} list or the {@link #includesRegex} it is included.
-     * </p>
-     * <p>
-     *     By default - if neither {@link #includes} nor {@link #includesRegex} is defined, all metrics are included.
-     * </p>
-     * @param name the name of the metric to check against the rules.
-     * @return true if the name matches the inclusion rules, false otherwise.
-     */
-    private boolean metricNameIsIncluded(String name) {
-        boolean include = getIncludes().contains(name);
-        if (!include) {
-            Pattern p = getIncludesPattern();
-            if (p != null) {
-                include = p.matcher(name).matches();
-            } else {
-                // We only do this step AFTER checking the regex, since this default setting of "include all"
-                // only applies when there is no inclusion rule defined.
-                include = getIncludes().isEmpty();  // no regex, empty includes list means: include all.
-            }
-        }
-        return include;
+    @JsonProperty
+    public void setUseRegexFilters(boolean useRegexFilters) {
+        this.useRegexFilters = useRegexFilters;
     }
 
     /**
@@ -263,17 +189,58 @@ public abstract class BaseReporterFactory implements ReporterFactory {
      *
      * @return the filter for selecting metrics based on the configured excludes/includes.
      * @see #getIncludes()
-     * @see #getIncludesRegex()
      * @see #getExcludes()
-     * @see #getExcludesRegex()
      */
     public MetricFilter getFilter() {
+        final StringMatchingStrategy stringMatchingStrategy = getUseRegexFilters() ?
+                REGEX_STRING_MATCHING_STRATEGY : DEFAULT_STRING_MATCHING_STRATEGY;
+
         return new MetricFilter() {
             @Override
             public boolean matches(final String name, final Metric metric) {
-                return !metricNameIsExcluded(name) && metricNameIsIncluded(name);
+                // Include the metric if its name is not excluded and its name is included
+                // Where, by default, with no includes setting, all names are included.
+                return !stringMatchingStrategy.containsMatch(getExcludes(), name) &&
+                        (getIncludes().isEmpty() || stringMatchingStrategy.containsMatch(getIncludes(), name));
             }
         };
     }
 
+    private interface StringMatchingStrategy {
+        boolean containsMatch(ImmutableSet<String> matchExpressions, String metricName);
+    }
+
+    private static class DefaultStringMatchingStrategy implements StringMatchingStrategy {
+        @Override
+        public boolean containsMatch(ImmutableSet<String> matchExpressions, String metricName) {
+            return matchExpressions.contains(metricName);
+        }
+    }
+
+    private static class RegexStringMatchingStrategy implements StringMatchingStrategy {
+        private final LoadingCache<String, Pattern> patternCache;
+
+        private RegexStringMatchingStrategy() {
+            patternCache = CacheBuilder.newBuilder()
+                    .expireAfterWrite(1, TimeUnit.HOURS)
+                    .build(new CacheLoader<String, Pattern>() {
+                        @Override
+                        public Pattern load(String regex) throws Exception {
+                            return Pattern.compile(regex);
+                        }
+                    });
+        }
+
+        @Override
+        public boolean containsMatch(ImmutableSet<String> matchExpressions, String metricName) {
+            for (String regexExpression : matchExpressions) {
+                if (patternCache.getUnchecked(regexExpression).matcher(metricName).matches()) {
+                    // just need to match on a single value - return as soon as we do
+                    return true;
+                }
+            }
+
+            return false;
+        }
+    }
 }

@@ -619,9 +619,8 @@ The following options are available for all metrics reporters.
           durationUnit: milliseconds
           rateUnit: seconds
           excludes: (none)
-          excludesRegex: (none)
           includes: (all)
-          includesRegex: (all)
+          useRegexFilters: false
           frequency: 1 second
 
 
@@ -631,17 +630,18 @@ Name                   Default        Description
 durationUnit           milliseconds   The unit to report durations as. Overrides per-metric duration units.
 rateUnit               seconds        The unit to report rates as. Overrides per-metric rate units.
 excludes               (none)         Metrics to exclude from reports, by name. When defined, matching metrics will not be reported.
-excludesRegex          (none)         Regex pattern of metrics to exclude from reports.  Can be defined alone, or in addition to the excludes list which this augments.
 includes               (all)          Metrics to include in reports, by name. When defined, only these metrics will be reported.
-includesRegex          (all)          Regex pattern of metrics to include in reports.  Can be defined alone, or in addition to the includes list which this augments.
+useRegexFilters        false          Indicates whether the values of the 'includes' and 'excludes' fields should be treated as regular expressions or not.
 frequency              (none)         The frequency to report metrics. Overrides the default.
 ====================== =============  ===========
 
-The exclusion rules are defined as: any name either in the excludes list OR matching the excludesRegex pattern.  If neither is defined then no metrics are excluded.
+The exclusion rules are defined as: if useRegexFilters is false, any name in the excludes list; if useRegexFilters is true, any name matching the excludes regex pattern.  If excludes is empty, no metrics are excluded.
 
-The inclusion rules are defined as: any name either in the includes list OR matching the includesRegex pattern.  If neither is defined, then any metric not excluded is included.  If only one is defined then the name must match the one that is defined to be included.
+The inclusion rules are defined as: if useRegexFilters is false, any name in the includes list; if useRegexFilters is true, any name matching the includes regex pattern.
 
 Exclusion rules take precedence over inclusion rules.  Thus if a name matches the exclusion rules it will not be included in reports even if it also matches the inclusion rules.
+
+If there are no rules, then all metrics are included.
 
 
 .. _man-configuration-metrics-formatted:

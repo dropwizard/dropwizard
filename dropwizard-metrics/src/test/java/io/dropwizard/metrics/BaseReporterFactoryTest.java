@@ -18,9 +18,8 @@ import static org.mockito.Mockito.mock;
 public class BaseReporterFactoryTest {
 
 
-    private static final String INCLUDES_REGEX = "inc2|all|regx|excregx";
-    private static final ImmutableSet<String> INCLUDES = ImmutableSet.of("inc", "both", "inc2", "all");
-    private static final ImmutableSet<String> EXCLUDES = ImmutableSet.of("both", "exc", "excregx", "all");
+    private static final ImmutableSet<String> INCLUDES = ImmutableSet.of("inc", "both", "inc.+");
+    private static final ImmutableSet<String> EXCLUDES = ImmutableSet.of("both", "exc", "exc.+");
     private static final ImmutableSet<String> EMPTY = ImmutableSet.of();
 
 
@@ -32,109 +31,45 @@ public class BaseReporterFactoryTest {
                  * case1: If include list is empty and exclude list is empty, everything should be
                  * included.
                  */
-                new Object[]{EMPTY, null, EMPTY, "inc", true, "case1"},
-                new Object[]{EMPTY, null, EMPTY, "both", true, "case1"},
-                new Object[]{EMPTY, null, EMPTY, "exc", true, "case1"},
-                new Object[]{EMPTY, null, EMPTY, "any", true, "case1"},
-                new Object[]{EMPTY, null, EMPTY, "all", true, "case1"},
-                new Object[]{EMPTY, null, EMPTY, "inc2", true, "case1"},
-                new Object[]{EMPTY, null, EMPTY, "regx", true, "case1"},
-                new Object[]{EMPTY, null, EMPTY, "excregx", true, "case1"},
+                new Object[]{EMPTY, EMPTY, "inc", true, true, "case1"},
+                new Object[]{EMPTY, EMPTY, "both", true, true, "case1"},
+                new Object[]{EMPTY, EMPTY, "exc", true, true, "case1"},
+                new Object[]{EMPTY, EMPTY, "any", true, true, "case1"},
+                new Object[]{EMPTY, EMPTY, "incWithSuffix", true, true, "case1"},
+                new Object[]{EMPTY, EMPTY, "excWithSuffix", true, true, "case1"},
 
                 /**
                  * case2: If include list is NOT empty and exclude list is empty, only the ones
                  * specified in the include list should be included.
                  */
-                new Object[]{INCLUDES, null, EMPTY, "inc", true, "case2"},
-                new Object[]{INCLUDES, null, EMPTY, "both", true, "case2"},
-                new Object[]{INCLUDES, null, EMPTY, "exc", false, "case2"},
-                new Object[]{INCLUDES, null, EMPTY, "any", false, "case2"},
-                new Object[]{INCLUDES, null, EMPTY, "all", true, "case2"},
-                new Object[]{INCLUDES, null, EMPTY, "inc2", true, "case2"},
-                new Object[]{INCLUDES, null, EMPTY, "regx", false, "case2"},
-                new Object[]{INCLUDES, null, EMPTY, "excregx", false, "case2"},
+                new Object[]{INCLUDES, EMPTY, "inc", true, true, "case2"},
+                new Object[]{INCLUDES, EMPTY, "both", true, true, "case2"},
+                new Object[]{INCLUDES, EMPTY, "exc", false, false, "case2"},
+                new Object[]{INCLUDES, EMPTY, "any", false, false, "case2"},
+                new Object[]{INCLUDES, EMPTY, "incWithSuffix", false, true, "case2"},
+                new Object[]{INCLUDES, EMPTY, "excWithSuffix", false, false, "case2"},
 
                 /**
                  * case3: If include list is empty and exclude list is NOT empty, everything should be
                  * included except the ones in the exclude list.
                  */
-                new Object[]{EMPTY, null, EXCLUDES, "inc", true, "case3"},
-                new Object[]{EMPTY, null, EXCLUDES, "both", false, "case3"},
-                new Object[]{EMPTY, null, EXCLUDES, "exc", false, "case3"},
-                new Object[]{EMPTY, null, EXCLUDES, "any", true, "case3"},
-                new Object[]{EMPTY, null, EXCLUDES, "all", false, "case3"},
-                new Object[]{EMPTY, null, EXCLUDES, "inc2", true, "case3"},
-                new Object[]{EMPTY, null, EXCLUDES, "regx", true, "case3"},
-                new Object[]{EMPTY, null, EXCLUDES, "excregx", false, "case3"},
+                new Object[]{EMPTY, EXCLUDES, "inc", true, true, "case3"},
+                new Object[]{EMPTY, EXCLUDES, "both", false, false, "case3"},
+                new Object[]{EMPTY, EXCLUDES, "exc", false, false, "case3"},
+                new Object[]{EMPTY, EXCLUDES, "any", true, true, "case3"},
+                new Object[]{EMPTY, EXCLUDES, "incWithSuffix", true, true, "case3"},
+                new Object[]{EMPTY, EXCLUDES, "excWithSuffix", true, false, "case3"},
 
                 /**
                  * case4: If include list is NOT empty and exclude list is NOT empty, only things not excluded
-                 * and specifically included should show up.
+                 * and specifically included should show up. Excludes takes precedence.
                  */
-                new Object[]{INCLUDES, "", EXCLUDES, "inc", true, "case4"},
-                new Object[]{INCLUDES, "", EXCLUDES, "both", false, "case4"},
-                new Object[]{INCLUDES, "", EXCLUDES, "exc", false, "case4"},
-                new Object[]{INCLUDES, "", EXCLUDES, "any", false, "case4"},
-                new Object[]{INCLUDES, "", EXCLUDES, "all", false, "case4"},
-                new Object[]{INCLUDES, "", EXCLUDES, "inc2", true, "case4"},
-                new Object[]{INCLUDES, "", EXCLUDES, "regx", false, "case4"},
-                new Object[]{INCLUDES, "", EXCLUDES, "excregx", false, "case4"},
-
-                /**
-                 * case5: Similar to case 2; if include list is empty and includesRegex is not null and exclude list
-                 * is empty, then items matching includes_regex should be included.
-                 */
-                new Object[]{EMPTY, INCLUDES_REGEX, EMPTY, "inc", false, "case5"},
-                new Object[]{EMPTY, INCLUDES_REGEX, EMPTY, "both", false, "case5"},
-                new Object[]{EMPTY, INCLUDES_REGEX, EMPTY, "exc", false, "case5"},
-                new Object[]{EMPTY, INCLUDES_REGEX, EMPTY, "any", false, "case5"},
-                new Object[]{EMPTY, INCLUDES_REGEX, EMPTY, "all", true, "case5"},
-                new Object[]{EMPTY, INCLUDES_REGEX, EMPTY, "inc2", true, "case5"},
-                new Object[]{EMPTY, INCLUDES_REGEX, EMPTY, "regx", true, "case5"},
-                new Object[]{EMPTY, INCLUDES_REGEX, EMPTY, "excregx", true, "case5"},
-
-                /**
-                 * case6: Also similar to case 2; if include list is NOT empty and includesRegex is not null and
-                 * exclude list is empty, only the ones specified in the include list or matching the regex should
-                 * be included.
-                 */
-                new Object[]{INCLUDES, INCLUDES_REGEX, EMPTY, "inc", true, "case6"},
-                new Object[]{INCLUDES, INCLUDES_REGEX, EMPTY, "both", true, "case6"},
-                new Object[]{INCLUDES, INCLUDES_REGEX, EMPTY, "exc", false, "case6"},
-                new Object[]{INCLUDES, INCLUDES_REGEX, EMPTY, "any", false, "case6"},
-                new Object[]{INCLUDES, INCLUDES_REGEX, EMPTY, "all", true, "case6"},
-                new Object[]{INCLUDES, INCLUDES_REGEX, EMPTY, "inc2", true, "case6"},
-                new Object[]{INCLUDES, INCLUDES_REGEX, EMPTY, "regx", true, "case6"},
-                new Object[]{INCLUDES, INCLUDES_REGEX, EMPTY, "excregx", true, "case6"},
-
-                /**
-                 * case7: Similar to case 4; if include list is NOT empty and includesRegex is not null and
-                 * exclude list is empty, only the ones specified in the include list or matching the regex should
-                 * be included.
-                 */
-                new Object[]{EMPTY, INCLUDES_REGEX, EXCLUDES, "inc", false, "case7"},
-                new Object[]{EMPTY, INCLUDES_REGEX, EXCLUDES, "both", false, "case7"},
-                new Object[]{EMPTY, INCLUDES_REGEX, EXCLUDES, "exc", false, "case7"},
-                new Object[]{EMPTY, INCLUDES_REGEX, EXCLUDES, "any", false, "case7"},
-                new Object[]{EMPTY, INCLUDES_REGEX, EXCLUDES, "all", false, "case7"},
-                new Object[]{EMPTY, INCLUDES_REGEX, EXCLUDES, "inc2", true, "case7"},
-                new Object[]{EMPTY, INCLUDES_REGEX, EXCLUDES, "regx", true, "case7"},
-                new Object[]{EMPTY, INCLUDES_REGEX, EXCLUDES, "excregx", false, "case7"},
-
-                /**
-                 * case8: Also similar to case 4; if include list is NOT empty and includesRegex is not null and
-                 * exclude list is specified, only the ones not excluded and also specified in the include list or
-                 * matching the regex should be included.
-                 */
-                new Object[]{INCLUDES, INCLUDES_REGEX, EXCLUDES, "inc", true, "case8"},
-                new Object[]{INCLUDES, INCLUDES_REGEX, EXCLUDES, "both", false, "case8"},
-                new Object[]{INCLUDES, INCLUDES_REGEX, EXCLUDES, "exc", false, "case8"},
-                new Object[]{INCLUDES, INCLUDES_REGEX, EXCLUDES, "any", false, "case8"},
-                new Object[]{INCLUDES, INCLUDES_REGEX, EXCLUDES, "all", false, "case8"},
-                new Object[]{INCLUDES, INCLUDES_REGEX, EXCLUDES, "inc2", true, "case8"},
-                new Object[]{INCLUDES, INCLUDES_REGEX, EXCLUDES, "regx", true, "case8"},
-                new Object[]{INCLUDES, INCLUDES_REGEX, EXCLUDES, "excregx", false, "case8"}
-
+                new Object[]{INCLUDES, EXCLUDES, "inc", true, true, "case4"},
+                new Object[]{INCLUDES, EXCLUDES, "both", false, false, "case4"},
+                new Object[]{INCLUDES, EXCLUDES, "exc", false, false, "case4"},
+                new Object[]{INCLUDES, EXCLUDES, "any", false, false, "case4"},
+                new Object[]{INCLUDES, EXCLUDES, "incWithSuffix", false, true, "case4"},
+                new Object[]{INCLUDES, EXCLUDES, "excWithSuffix", false, false, "case4"}
         );
     }
 
@@ -149,17 +84,16 @@ public class BaseReporterFactoryTest {
     public ImmutableSet<String> includes;
 
     @Parameterized.Parameter(1)
-    public String includesRegex;
-
-    @Parameterized.Parameter(2)
     public ImmutableSet<String> excludes;
 
-
-    @Parameterized.Parameter(3)
+    @Parameterized.Parameter(2)
     public String name;
 
+    @Parameterized.Parameter(3)
+    public boolean expectedDefaultResult;
+
     @Parameterized.Parameter(4)
-    public boolean expected;
+    public boolean expectedRegexResult;
 
     @Parameterized.Parameter(5)
     public String msg;
@@ -167,14 +101,25 @@ public class BaseReporterFactoryTest {
     private final Metric metric = mock(Metric.class);
 
     @Test
-    public void matches() {
+    public void testDefaultMatching() {
         factory.setIncludes(includes);
         factory.setExcludes(excludes);
-        factory.setIncludesRegex(includesRegex);
 
+        factory.setUseRegexFilters(false);
         assertThat(factory.getFilter().matches(name, metric))
-                .overridingErrorMessage(msg + ": expected 'matches(%s)=%s'", name, expected)
-                .isEqualTo(expected);
+                .overridingErrorMessage(msg + ": expected 'matches(%s)=%s' for default matcher", name, expectedDefaultResult)
+                .isEqualTo(expectedDefaultResult);
+    }
+
+    @Test
+    public void testRegexMatching() {
+        factory.setIncludes(includes);
+        factory.setExcludes(excludes);
+
+        factory.setUseRegexFilters(true);
+        assertThat(factory.getFilter().matches(name, metric))
+                .overridingErrorMessage(msg + ": expected 'matches(%s)=%s' for regex matcher", name, expectedRegexResult)
+                .isEqualTo(expectedRegexResult);
     }
 
 }
