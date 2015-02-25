@@ -1,8 +1,8 @@
 .. _man-configuration:
 
-###################################
+##################################
 Dropwizard Configuration Reference
-###################################
+##################################
 
 .. highlight:: text
 
@@ -72,7 +72,7 @@ Now you can use ``WidgetFactory`` objects in your application's configuration.
 .. _man-configuration-servers:
 
 Servers
-========
+=======
 
 .. code-block:: yaml
 
@@ -84,7 +84,7 @@ Servers
 .. _man-configuration-all:
 
 All
-----
+---
 
 =================================== ===============================================  =============================================================================
 Name                                Default                                          Description
@@ -127,7 +127,7 @@ registerDefaultExceptionMappers     true                                        
 .. _man-configuration-gzip:
 
 GZip
-.....
+....
 
 .. code-block:: yaml
 
@@ -176,7 +176,7 @@ appenders              console appender The set of AppenderFactory appenders to 
 .. _man-configuration-simple:
 
 Simple
--------
+------
 
 Extends the attributes that are available to :ref:`all servers <man-configuration-all>`
 
@@ -206,7 +206,7 @@ adminContextPath          /admin            The context path of the admin servle
 .. _man-configuration-default:
 
 Default
---------
+-------
 
 Extends the attributes that are available to :ref:`all servers <man-configuration-all>`
 
@@ -260,7 +260,7 @@ Connectors
 .. _man-configuration-http:
 
 HTTP
-------
+----
 
 .. code-block:: yaml
     
@@ -334,7 +334,7 @@ useForwardedHeaders      true                Whether or not to look at ``X-Forwa
 .. _man-configuration-https:
 
 HTTPS
-------
+-----
 
 Extends the attributes that are available to the :ref:`HTTP connector <man-configuration-http>`
 
@@ -421,7 +421,7 @@ endpointIdentificationAlgorithm  (none)              Which endpoint identificati
 .. _man-configuration-spdy:
 
 SPDY
-------
+----
 
 Extends the attributes that are available to the :ref:`HTTPS connector <man-configuration-https>`
 
@@ -453,7 +453,7 @@ pushStrategy           (none)       The `push strategy`_ to use for server-initi
 .. _man-configuration-logging:
 
 Logging
-=========
+=======
 
 .. code-block:: yaml
 
@@ -509,7 +509,7 @@ logFormat              default      The Logback pattern with which events will b
 .. _man-configuration-logging-file:
 
 File
--------
+----
 
 .. code-block:: yaml
 
@@ -547,7 +547,7 @@ logFormat                    default      The Logback pattern with which events 
 .. _man-configuration-logging-syslog:
 
 Syslog
--------
+------
 
 .. code-block:: yaml
 
@@ -584,7 +584,7 @@ stackTracePrefix             \t           The prefix to use when writing stack t
 .. _man-configuration-metrics:
 
 Metrics
-=========
+=======
 
 The metrics configuration has two fields; frequency and reporters.
 
@@ -620,6 +620,7 @@ The following options are available for all metrics reporters.
           rateUnit: seconds
           excludes: (none)
           includes: (all)
+          useRegexFilters: false
           frequency: 1 second
 
 
@@ -633,6 +634,14 @@ includes               (all)          Metrics to include in reports, by name. Wh
 useRegexFilters        false          Indicates whether the values of the 'includes' and 'excludes' fields should be treated as regular expressions or not.
 frequency              (none)         The frequency to report metrics. Overrides the default.
 ====================== =============  ===========
+
+The exclusion rules are defined as: if useRegexFilters is false, any name in the excludes list; if useRegexFilters is true, any name matching the excludes regex pattern.  If excludes is empty, no metrics are excluded.
+
+The inclusion rules are defined as: if useRegexFilters is false, any name in the includes list; if useRegexFilters is true, any name matching the includes regex pattern.
+
+Exclusion rules take precedence over inclusion rules.  Thus if a name matches the exclusion rules it will not be included in reports even if it also matches the inclusion rules.
+
+If there are no rules, then all metrics are included.
 
 
 .. _man-configuration-metrics-formatted:
