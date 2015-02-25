@@ -620,6 +620,7 @@ The following options are available for all metrics reporters.
           rateUnit: seconds
           excludes: (none)
           includes: (all)
+          useRegexFilters: false
           frequency: 1 second
 
 
@@ -634,6 +635,13 @@ useRegexFilters        false          Indicates whether the values of the 'inclu
 frequency              (none)         The frequency to report metrics. Overrides the default.
 ====================== =============  ===========
 
+The inclusion and exclusion rules are defined as:
+
+* If **includes** is empty, then all metrics are included;
+* If **includes** is not empty, only metrics from this list are included;
+* If **excludes** is empty, no metrics are excluded;
+* If **excludes** is not empty, then exclusion rules take precedence over inclusion rules. Thus if a name matches
+the exclusion rules it will not be included in reports even if it also matches the inclusion rules.
 
 .. _man-configuration-metrics-formatted:
 

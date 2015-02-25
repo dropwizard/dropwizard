@@ -61,16 +61,15 @@ public class BaseReporterFactoryTest {
                 new Object[]{EMPTY, EXCLUDES, "excWithSuffix", true, false, "case3"},
 
                 /**
-                 * case4: If include list is NOT empty and exclude list is NOT empty, everything
-                 * should be included except the
-                 * ones that are not in the include list AND are in the exclude list
+                 * case4: If include list is NOT empty and exclude list is NOT empty, only things not excluded
+                 * and specifically included should show up. Excludes takes precedence.
                  */
                 new Object[]{INCLUDES, EXCLUDES, "inc", true, true, "case4"},
-                new Object[]{INCLUDES, EXCLUDES, "both", true, true, "case4"},
+                new Object[]{INCLUDES, EXCLUDES, "both", false, false, "case4"},
                 new Object[]{INCLUDES, EXCLUDES, "exc", false, false, "case4"},
-                new Object[]{INCLUDES, EXCLUDES, "any", true, true, "case4"},
-                new Object[]{INCLUDES, EXCLUDES, "incWithSuffix", true, true, "case4"},
-                new Object[]{INCLUDES, EXCLUDES, "excWithSuffix", true, false, "case4"}
+                new Object[]{INCLUDES, EXCLUDES, "any", false, false, "case4"},
+                new Object[]{INCLUDES, EXCLUDES, "incWithSuffix", false, true, "case4"},
+                new Object[]{INCLUDES, EXCLUDES, "excWithSuffix", false, false, "case4"}
         );
     }
 
@@ -86,7 +85,6 @@ public class BaseReporterFactoryTest {
 
     @Parameterized.Parameter(1)
     public ImmutableSet<String> excludes;
-
 
     @Parameterized.Parameter(2)
     public String name;
