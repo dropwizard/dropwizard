@@ -45,26 +45,11 @@ import java.util.regex.Pattern;
  *         reported. See {@link #getFilter()}.</td>
  *     </tr>
  *     <tr>
- *         <td>excludesRegex</td>
- *         <td>No excluded metrics.</td>
- *         <td>Regex pattern of metrics to exclude from reports.  When defined, matching metrics will not be
- *         reported. See {@link #getFilter()}. Augments excludes setting.  If a metric matches either a name
- *         listed in excludes or matches this regex it is excluded.</td>
- *     </tr>
- *     <tr>
  *         <td>includes</td>
  *         <td>All metrics included.</td>
  *         <td>Metrics to include in reports, by name. When defined, only these metrics will be
  *         reported. See {@link #getFilter()}.  Exclusion rules (excludes and excludesRegex) take precedence,
  *         so if a name matches both exclusion rules and inclusion rules, it is excluded.</td>
- *     </tr>
- *     <tr>
- *         <td>includesRegex</td>
- *         <td>All metrics included.</td>
- *         <td>Regex pattern of metrics to include in reports. When defined, only metrics with names matching
- *         this regex OR in the includes list will be reported. See {@link #getFilter()}.  Exclusion rules
- *         (excludes and excludesRegex) take precedence, so if a name matches both exclusion rules and inclusion rules,
- *         it is excluded.</td>
  *     </tr>
  *     <tr>
  *         <td>useRegexFilters</td>
@@ -125,10 +110,6 @@ public abstract class BaseReporterFactory implements ReporterFactory {
         this.rateUnit = rateUnit;
     }
 
-    /**
-     * List of names to include in reports.
-     * @return the configured list of names
-     */
     @JsonProperty
     public ImmutableSet<String> getIncludes() {
         return includes;
@@ -176,15 +157,14 @@ public abstract class BaseReporterFactory implements ReporterFactory {
      * <dl>
      *     <dt><i>unfiltered</i></dt>
      *     <dd>All metrics are reported</dd>
-     *     <dt><i>excludes</i>-only or <i>excludesRegex</i></dt>
-     *     <dd>All metrics are reported, except those whose name is listed in <i>excludes</i> or matching
-     *     <i>excludesRegex</i>.</dd>
-     *     <dt><i>includes</i>-only or <i>includesRegex</i></dt>
-     *     <dd>Only metrics whose a name is listed in <i>includes</i> or matching <i>includesRegex</i> are reported.</dd>
-     *     <dt>mixed (both <i>includes</i> (and/or includesRegex) and <i>excludes</i></dt>
-     *     <dd>Only metrics whose a name is listed in <i>includes</i> or matching <i>includesRegex</i> and are
-     *     <em>not</em> listed in <i>excludes</i> or matching <i>includesRegex</i>, are reported;
-     *     exclusion rules (<i>excludes</i> and/or <i>excludesRegex</i>) take precedence.</dd>
+     *     <dt><i>excludes</i>-only</dt>
+     *     <dd>All metrics are reported, except those whose name is listed in <i>excludes</i>.</dd>
+     *     <dt><i>includes</i>-only</dt>
+     *     <dd>Only metrics whose a name is listed in <i>includes</i> are reported.</dd>
+     *     <dt>mixed (both <i>includes</i> and <i>excludes</i></dt>
+     *     <dd>Only metrics whose a name is listed in <i>includes</i> and are
+     *     <em>not</em> listed in <i>excludes</i> are reported;
+     *     <i>excludes</i> takes precedence over <i>includes</i>.</dd>
      * </dl>
      *
      * @return the filter for selecting metrics based on the configured excludes/includes.
