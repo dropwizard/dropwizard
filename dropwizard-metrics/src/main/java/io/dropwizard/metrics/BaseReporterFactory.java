@@ -49,7 +49,7 @@ import java.util.regex.Pattern;
  *         <td>All metrics included.</td>
  *         <td>Metrics to include in reports, by name. When defined, only these metrics will be
  *         reported. See {@link #getFilter()}.  Exclusion rules (excludes) take precedence,
- *         so if a name matches both exclusion rules and inclusion rules, it is excluded.</td>
+ *         so if a name matches both <i>excludes</i> and <i>includes</i>, it is excluded.</td>
  *     </tr>
  *     <tr>
  *         <td>useRegexFilters</td>
@@ -160,9 +160,9 @@ public abstract class BaseReporterFactory implements ReporterFactory {
      *     <dt><i>excludes</i>-only</dt>
      *     <dd>All metrics are reported, except those whose name is listed in <i>excludes</i>.</dd>
      *     <dt><i>includes</i>-only</dt>
-     *     <dd>Only metrics whose a name is listed in <i>includes</i> are reported.</dd>
+     *     <dd>Only metrics whose name is listed in <i>includes</i> are reported.</dd>
      *     <dt>mixed (both <i>includes</i> and <i>excludes</i></dt>
-     *     <dd>Only metrics whose a name is listed in <i>includes</i> and are
+     *     <dd>Only metrics whose name is listed in <i>includes</i> and
      *     <em>not</em> listed in <i>excludes</i> are reported;
      *     <i>excludes</i> takes precedence over <i>includes</i>.</dd>
      * </dl>
