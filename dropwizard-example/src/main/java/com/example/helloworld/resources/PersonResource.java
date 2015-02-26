@@ -9,6 +9,7 @@ import io.dropwizard.jersey.params.LongParam;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.NotFoundException;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -22,6 +23,15 @@ public class PersonResource {
 
     public PersonResource(PersonDAO peopleDAO) {
         this.peopleDAO = peopleDAO;
+    }
+
+    @PUT
+    @UnitOfWork
+    public Person setName(@PathParam("personId") LongParam personId, String name) {
+        Person person = findSafely(personId.get());
+        person.setFullName(name);
+        peopleDAO.create(person);
+        return person;
     }
 
     @GET
