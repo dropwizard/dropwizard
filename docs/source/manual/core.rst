@@ -216,7 +216,46 @@ Dropwizard then calls your ``Application`` subclass to initialize your applicati
     file. If it does not exist or is not an array setting, it will get added as a simple string setting, including 
     the ',' characters as part of the string.
 
-.. _man-core-environments:
+.. _man-core-environment-variables:
+
+Environment variables
+---------------------
+
+The ``dropwizard-configuration`` module also provides the capabilities to substitute configuration settings with the
+value of environment variables using a ``SubstitutingSourceProvider`` and ``EnvironmentVariableSubstitutor``.
+
+.. code-block:: java
+
+    public class MyApplication extends Application<MyConfiguration> {
+        // [...]
+        @Override
+        public void initialize(Bootstrap<MyConfiguration> bootstrap) {
+            // Enable variable substitution with environment variables
+            bootstrap.setConfigurationSourceProvider(
+                    new SubstitutingSourceProvider(bootstrap.getConfigurationSourceProvider(),
+                                                       new EnvironmentVariableSubstitutor()
+                    )
+            );
+
+        }
+
+        // [...]
+    }
+
+The configuration settings which should be substituted need to be explicitly written in the configuration file and
+follow the substitution rules of StrSubstitutor_ from the Apache Commons Lang library.
+
+.. code-block:: yaml
+
+    mySetting: ${DW_MY_SETTING}
+    defaultSetting: ${DW_DEFAULT_SETTING:-default value}
+
+In general ``SubstitutingSourceProvider`` isn't restricted to substitute environment variables but can be used to replace
+variables in the configuration source with arbitrary values by passing a custom ``StrSubstitutor`` implementation.
+
+.. _StrSubstitutor: https://commons.apache.org/proper/commons-lang/javadocs/api-release/org/apache/commons/lang3/text/StrSubstitutor.html
+
+.. _man-core-ssl:
 
 SSL
 ---
@@ -238,6 +277,9 @@ command you need). There is a test keystore you can use in the
           keyStorePassword: example
           validateCerts: false
 
+
+.. _man-core-bootstrapping:
+
 Bootstrapping
 =============
 
@@ -246,6 +288,9 @@ run as a server, it must first go through a bootstrapping phase. This phase corr
 ``Application`` subclass's ``initialize`` method. You can add :ref:`man-core-bundles`,
 :ref:`man-core-commands`, or register Jackson modules to allow you to include custom types as part
 of your configuration class.
+
+
+.. _man-core-environments:
 
 Environments
 ============
