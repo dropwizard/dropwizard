@@ -11,4 +11,5 @@ About Dropwizard
     contributors
     faq
     release-notes
+    security
     todos

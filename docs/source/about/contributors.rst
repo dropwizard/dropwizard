@@ -34,7 +34,7 @@ Many, many thanks to:
 * `Cameron Fieber <https://github.com/cfieber>`_
 * `Camille Fournier <https://github.com/skamille>`_
 * `Carl Lerche <https://github.com/carllerche>`_
-* `carlo-rtr <https://github.com/carlo-rtr>`_
+* `Carlo Barbara <https://github.com/carlo-rtr>`_
 * `Cemalettin Koc <https://github.com/cemo>`_
 * `Chad Selph <https://github.com/chadselph>`_
 * `Charlie La Mothe <https://github.com/clamothe>`_
