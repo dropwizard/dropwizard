@@ -30,6 +30,19 @@ v0.8.0:
 * Upgrade to Junit 4.12
 * Upgrade to AssertJ 1.7.1
 * Upgrade to Mockito 1.10.17
+* Support for range headers
+* Ability to use Apache client configuration for Jersey client
+* Warning when maximum pool size and unbounded queues are combined
+* Fixed connection leak in CloseableLiquibase
+* Support ScheduleExecutorService with deamon thread
+* Improved DropwizardAppRule
+* Better connection pool metrics
+* Removed final modifier from Application#run
+* Fixed gzip endcoding to support Jersey 2.x
+* Configuration to toggle regex [in/ex]clusion for Metrics
+* Configuration to disable default exception mappers
+* Configuration support for disabling chunked encoding
+* Documentation fixes and upgrades
 
 
 .. _rel-0.7.1:
