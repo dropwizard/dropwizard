@@ -34,11 +34,11 @@ v0.8.0:
 * Ability to use Apache client configuration for Jersey client
 * Warning when maximum pool size and unbounded queues are combined
 * Fixed connection leak in CloseableLiquibase
-* Support ScheduleExecutorService with deamon thread
+* Support ScheduledExecutorService with daemon thread
 * Improved DropwizardAppRule
 * Better connection pool metrics
 * Removed final modifier from Application#run
-* Fixed gzip endcoding to support Jersey 2.x
+* Fixed gzip encoding to support Jersey 2.x
 * Configuration to toggle regex [in/ex]clusion for Metrics
 * Configuration to disable default exception mappers
 * Configuration support for disabling chunked encoding
