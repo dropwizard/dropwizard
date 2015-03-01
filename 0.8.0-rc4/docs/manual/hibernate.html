@@ -1,0 +1,266 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Dropwizard Hibernate | Dropwizard</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="../_static/dropwizard.css" type="text/css"/>
+    <link rel="top" title="Dropwizard" href="../index.html"/>
+    <link rel="up" title="User Manual" href="index.html"/>
+    <link rel="next" title="Dropwizard Authentication" href="auth.html"/>
+    <link rel="prev" title="Dropwizard Migrations" href="migrations.html"/>
+    <style lang="text/css">
+        #top-bar, #top-bar small, #top-bar a {
+            text-shadow: 0px -1px 0px #182127;
+            color: #ffffff;
+        }
+        
+        #top-bar {
+            background-color: #363F45;
+            background-image: -moz-linear-gradient(top, #545d63, #182127);
+            background-image: -ms-linear-gradient(top, #545d63, #182127);
+            background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#545d63), to(#182127));
+            background-image: -webkit-linear-gradient(top, #545d63, #182127);
+            background-image: -o-linear-gradient(top, #545d63, #182127);
+            background-image: linear-gradient(top, #545d63, #182127);
+            filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#545d63', endColorstr = '#182127', GradientType = 0);
+            -webkit-border-radius: 0;
+            -moz-border-radius: 0;
+            border-radius: 0;
+        }
+
+
+        .hero-unit {
+            background-image: url("../_static/dropwizard-hat.png") !important;
+            background-repeat: no-repeat !important;
+            background-position: 30px 50px;
+        }
+
+        .hero-unit div.section {
+            padding-left: 150px !important;
+        }
+    </style>
+</head>
+<body>
+    <a href="https://github.com/dropwizard/dropwizard">
+        <img style="position: absolute; top: 0; right: 0; border: 0;"
+             src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_ff7600.png"
+             alt="Fork me on GitHub"></a>
+    <div class="navbar">
+        <div class="navbar-inner container-fluid" id="top-bar">
+            <header class="row-fluid">
+                <h1 class="span12" id="title"><img class="logo" src="../_static/dropwizard-logo.png" alt="Logo"/>
+                    <a href="../index.html">Dropwizard</a>
+                    <small>Production-ready, out of the box.</small>
+                </h1>
+            </header>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <div class="span3" id="sidebar">
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../getting-started.html">Getting Started</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">User Manual</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="core.html">Dropwizard Core</a></li>
+<li class="toctree-l2"><a class="reference internal" href="client.html">Dropwizard Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jdbi.html">Dropwizard JDBI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="migrations.html">Dropwizard Migrations</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">Dropwizard Hibernate</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#configuration">Configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#usage">Usage</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#data-access-objects">Data Access Objects</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#transactional-resource-methods">Transactional Resource Methods</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#prepended-comments">Prepended Comments</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="auth.html">Dropwizard Authentication</a></li>
+<li class="toctree-l2"><a class="reference internal" href="forms.html">Dropwizard Forms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="views.html">Dropwizard Views</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scala.html">Dropwizard &amp; Scala</a></li>
+<li class="toctree-l2"><a class="reference internal" href="testing.html">Testing Dropwizard</a></li>
+<li class="toctree-l2"><a class="reference internal" href="example.html">Dropwizard Example, Step by Step</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html">Dropwizard Configuration Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../about/index.html">About Dropwizard</a></li>
+</ul>
+
+                <hr/>
+                <ul>
+                    <li><a href="https://dropwizard.github.io/dropwizard/0.8.0">Maven Site</a></li>
+                    <li><a href="https://groups.google.com/forum/#!forum/dropwizard-user">User Mailing List</a></li>
+                    <li><a href="https://groups.google.com/forum/#!forum/dropwizard-dev">Developer Mailing List</a></li>
+                </ul>
+            </div>
+            <div class="span9" id="body">
+                
+  <div class="section" id="dropwizard-hibernate">
+<span id="man-hibernate"></span><h1>Dropwizard Hibernate</h1>
+<p class="rubric">The <tt class="docutils literal"><span class="pre">dropwizard-hibernate</span></tt> module provides you with managed access to <a class="reference external" href="http://www.hibernate.org/">Hibernate</a>, a
+powerful, industry-standard object-relation mapper (ORM).</p>
+<div class="section" id="configuration">
+<h2>Configuration</h2>
+<p>To create a <a class="reference internal" href="core.html#man-core-managed"><em>managed</em></a>, instrumented <tt class="docutils literal"><span class="pre">SessionFactory</span></tt> instance, your
+<a class="reference internal" href="core.html#man-core-configuration"><em>configuration class</em></a> needs a <tt class="docutils literal"><span class="pre">DataSourceFactory</span></tt> instance:</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ExampleConfiguration</span> <span class="kd">extends</span> <span class="n">Configuration</span> <span class="o">{</span>
+    <span class="nd">@Valid</span>
+    <span class="nd">@NotNull</span>
+    <span class="kd">private</span> <span class="n">DataSourceFactory</span> <span class="n">database</span> <span class="o">=</span> <span class="k">new</span> <span class="n">DataSourceFactory</span><span class="o">();</span>
+
+    <span class="nd">@JsonProperty</span><span class="o">(</span><span class="s">&quot;database&quot;</span><span class="o">)</span>
+    <span class="kd">public</span> <span class="n">DataSourceFactory</span> <span class="nf">getDataSourceFactory</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">database</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>Then, add a <tt class="docutils literal"><span class="pre">HibernateBundle</span></tt> instance to your application class, specifying your entity classes
+and how to get a <tt class="docutils literal"><span class="pre">DataSourceFactory</span></tt> from your configuration subclass:</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="kd">private</span> <span class="kd">final</span> <span class="n">HibernateBundle</span><span class="o">&lt;</span><span class="n">ExampleConfiguration</span><span class="o">&gt;</span> <span class="n">hibernate</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HibernateBundle</span><span class="o">&lt;</span><span class="n">ExampleConfiguration</span><span class="o">&gt;(</span><span class="n">Person</span><span class="o">.</span><span class="na">class</span><span class="o">)</span> <span class="o">{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="n">DataSourceFactory</span> <span class="nf">getDataSourceFactory</span><span class="o">(</span><span class="n">ExampleConfiguration</span> <span class="n">configuration</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">configuration</span><span class="o">.</span><span class="na">getDataSourceFactory</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">};</span>
+
+<span class="nd">@Override</span>
+<span class="kd">public</span> <span class="kt">void</span> <span class="nf">initialize</span><span class="o">(</span><span class="n">Bootstrap</span><span class="o">&lt;</span><span class="n">ExampleConfiguration</span><span class="o">&gt;</span> <span class="n">bootstrap</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">bootstrap</span><span class="o">.</span><span class="na">addBundle</span><span class="o">(</span><span class="n">hibernate</span><span class="o">);</span>
+<span class="o">}</span>
+
+<span class="nd">@Override</span>
+<span class="kd">public</span> <span class="kt">void</span> <span class="nf">run</span><span class="o">(</span><span class="n">ExampleConfiguration</span> <span class="n">config</span><span class="o">,</span> <span class="n">Environment</span> <span class="n">environment</span><span class="o">)</span> <span class="o">{</span>
+    <span class="kd">final</span> <span class="n">UserDAO</span> <span class="n">dao</span> <span class="o">=</span> <span class="k">new</span> <span class="n">UserDAO</span><span class="o">(</span><span class="n">hibernate</span><span class="o">.</span><span class="na">getSessionFactory</span><span class="o">());</span>
+    <span class="n">environment</span><span class="o">.</span><span class="na">jersey</span><span class="o">().</span><span class="na">register</span><span class="o">(</span><span class="k">new</span> <span class="n">UserResource</span><span class="o">(</span><span class="n">dao</span><span class="o">));</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>This will create a new <a class="reference internal" href="core.html#man-core-managed"><em>managed</em></a> connection pool to the database, a
+<a class="reference internal" href="core.html#man-core-healthchecks"><em>health check</em></a> for connectivity to the database, and a new
+<tt class="docutils literal"><span class="pre">SessionFactory</span></tt> instance for you to use in your DAO classes.</p>
+<p>Your application&#8217;s configuration file will then look like this:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">database</span><span class="p-Indicator">:</span>
+  <span class="c1"># the name of your JDBC driver</span>
+  <span class="l-Scalar-Plain">driverClass</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">org.postgresql.Driver</span>
+
+  <span class="c1"># the username</span>
+  <span class="l-Scalar-Plain">user</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">pg-user</span>
+
+  <span class="c1"># the password</span>
+  <span class="l-Scalar-Plain">password</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">iAMs00perSecrEET</span>
+
+  <span class="c1"># the JDBC URL</span>
+  <span class="l-Scalar-Plain">url</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">jdbc:postgresql://db.example.com/db-prod</span>
+
+  <span class="c1"># any properties specific to your JDBC driver:</span>
+  <span class="l-Scalar-Plain">properties</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">charSet</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">UTF-8</span>
+    <span class="l-Scalar-Plain">hibernate.dialect</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">org.hibernate.dialect.PostgreSQLDialect</span>
+
+  <span class="c1"># the maximum amount of time to wait on an empty pool before throwing an exception</span>
+  <span class="l-Scalar-Plain">maxWaitForConnection</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">1s</span>
+
+  <span class="c1"># the SQL query to run when validating a connection&#39;s liveness</span>
+  <span class="l-Scalar-Plain">validationQuery</span><span class="p-Indicator">:</span> <span class="s">&quot;/*</span><span class="nv"> </span><span class="s">MyApplication</span><span class="nv"> </span><span class="s">Health</span><span class="nv"> </span><span class="s">Check</span><span class="nv"> </span><span class="s">*/</span><span class="nv"> </span><span class="s">SELECT</span><span class="nv"> </span><span class="s">1&quot;</span>
+
+  <span class="c1"># the minimum number of connections to keep open</span>
+  <span class="l-Scalar-Plain">minSize</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">8</span>
+
+  <span class="c1"># the maximum number of connections to keep open</span>
+  <span class="l-Scalar-Plain">maxSize</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">32</span>
+
+  <span class="c1"># whether or not idle connections should be validated</span>
+  <span class="l-Scalar-Plain">checkConnectionWhileIdle</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">false</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="usage">
+<h2>Usage</h2>
+<div class="section" id="data-access-objects">
+<h3>Data Access Objects</h3>
+<p>Dropwizard comes with <tt class="docutils literal"><span class="pre">AbstractDAO</span></tt>, a minimal template for entity-specific DAO classes. It
+contains type-safe wrappers for most of <tt class="docutils literal"><span class="pre">SessionFactory</span></tt>&#8216;s common operations:</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="kd">public</span> <span class="kd">class</span> <span class="nc">PersonDAO</span> <span class="kd">extends</span> <span class="n">AbstractDAO</span><span class="o">&lt;</span><span class="n">Person</span><span class="o">&gt;</span> <span class="o">{</span>
+    <span class="kd">public</span> <span class="nf">PersonDAO</span><span class="o">(</span><span class="n">SessionFactory</span> <span class="n">factory</span><span class="o">)</span> <span class="o">{</span>
+        <span class="kd">super</span><span class="o">(</span><span class="n">factory</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="n">Person</span> <span class="nf">findById</span><span class="o">(</span><span class="n">Long</span> <span class="n">id</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nf">get</span><span class="o">(</span><span class="n">id</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="kt">long</span> <span class="nf">create</span><span class="o">(</span><span class="n">Person</span> <span class="n">person</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nf">persist</span><span class="o">(</span><span class="n">person</span><span class="o">).</span><span class="na">getId</span><span class="o">();</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">Person</span><span class="o">&gt;</span> <span class="n">findAll</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="nf">list</span><span class="o">(</span><span class="n">namedQuery</span><span class="o">(</span><span class="s">&quot;com.example.helloworld.core.Person.findAll&quot;</span><span class="o">));</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="transactional-resource-methods">
+<h3>Transactional Resource Methods</h3>
+<p>Dropwizard uses a declarative method of scoping transactional boundaries. Not all resource methods
+actually require database access, so the <tt class="docutils literal"><span class="pre">&#64;UnitOfWork</span></tt> annotation is provided:</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="nd">@GET</span>
+<span class="nd">@Timed</span>
+<span class="nd">@UnitOfWork</span>
+<span class="kd">public</span> <span class="n">Person</span> <span class="nf">findPerson</span><span class="o">(</span><span class="nd">@PathParam</span><span class="o">(</span><span class="s">&quot;id&quot;</span><span class="o">)</span> <span class="n">LongParam</span> <span class="n">id</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="n">dao</span><span class="o">.</span><span class="na">findById</span><span class="o">(</span><span class="n">id</span><span class="o">.</span><span class="na">get</span><span class="o">());</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>This will automatically open a session, begin a transaction, call <tt class="docutils literal"><span class="pre">findById</span></tt>, commit the
+transaction, and finally close the session. If an exception is thrown, the transaction is rolled
+back.</p>
+<div class="admonition important">
+<p class="first admonition-title">Important</p>
+<p class="last">The Hibernate session is closed <strong>before</strong> your resource method&#8217;s return value (e.g.,
+the <tt class="docutils literal"><span class="pre">Person</span></tt> from the database), which means your resource method (or DAO) is
+responsible for initializing all lazily-loaded collections, etc., before returning.
+Otherwise, you&#8217;ll get a <tt class="docutils literal"><span class="pre">LazyInitializationException</span></tt> thrown in your template (or
+<tt class="docutils literal"><span class="pre">null</span></tt> values produced by Jackson).</p>
+</div>
+</div>
+</div>
+<div class="section" id="prepended-comments">
+<h2>Prepended Comments</h2>
+<p>Dropwizard automatically configures Hibernate to prepend a comment describing the context of all
+queries:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="cm">/* load com.example.helloworld.core.Person */</span>
+<span class="k">select</span>
+    <span class="n">person0_</span><span class="p">.</span><span class="n">id</span> <span class="k">as</span> <span class="n">id0_0_</span><span class="p">,</span>
+    <span class="n">person0_</span><span class="p">.</span><span class="n">fullName</span> <span class="k">as</span> <span class="n">fullName0_0_</span><span class="p">,</span>
+    <span class="n">person0_</span><span class="p">.</span><span class="n">jobTitle</span> <span class="k">as</span> <span class="n">jobTitle0_0_</span>
+<span class="k">from</span> <span class="n">people</span> <span class="n">person0_</span>
+<span class="k">where</span> <span class="n">person0_</span><span class="p">.</span><span class="n">id</span><span class="o">=?</span>
+</pre></div>
+</div>
+<p>This will allow you to quickly determine the origin of any slow or misbehaving queries.</p>
+</div>
+</div>
+
+
+            </div>
+        </div>
+        <hr/>
+        <footer>
+            <p style="float: left">
+            &copy; Copyright 2010-2013, Coda Hale, Yammer Inc..
+            Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>
+            1.1.3.
+            </p>
+            <p style="float: right">Dropwizard v0.8.0</p>
+        </footer>
+    </div>
+</body>
+</html>
+
+
