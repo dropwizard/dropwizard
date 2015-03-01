@@ -216,6 +216,11 @@
             <name>Nexus Release Repository</name>
             <url>http://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
+        <site>
+            <id>dropwizard-site</id>
+            <name>Dropwizard</name>
+            <url>http://dropwizard.io/${project.version}</url>
+        </site>
     </distributionManagement>
 
     <profiles>
@@ -376,6 +381,7 @@
                 <version>2.10.1</version>
                 <configuration>
                     <additionalparam>${javadoc.doclint.none}</additionalparam>
+                    <quiet>true</quiet>
                 </configuration>
                 <executions>
                     <execution>
@@ -433,11 +439,17 @@
                 <version>2.6</version>
                 <configuration>
                     <formats>
-                    <format>xml</format>
-                    <format>html</format>
+                        <format>xml</format>
                     </formats>
                     <aggregate>true</aggregate>
                 </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>net.sourceforge.cobertura</groupId>
+                        <artifactId>cobertura</artifactId>
+                        <version>2.1.1</version>
+                    </dependency>
+                </dependencies>
             </plugin>
             <plugin>
                 <groupId>org.eluder.coveralls</groupId>
@@ -454,9 +466,27 @@
                 <artifactId>maven-project-info-reports-plugin</artifactId>
                 <version>2.7</version>
                 <configuration>
-                    <dependencyDetailsEnabled>true</dependencyDetailsEnabled>
-                    <dependencyLocationsEnabled>true</dependencyLocationsEnabled>
+                    <dependencyDetailsEnabled>false</dependencyDetailsEnabled>
+                    <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
                 </configuration>
+                <reportSets>
+                    <reportSet>
+                        <reports>
+                            <report>index</report>
+                            <report>summary</report>
+                            <report>dependency-info</report>
+                            <report>license</report>
+                            <report>scm</report>
+                            <report>issue-tracking</report>
+                            <report>mailing-list</report>
+                            <report>cim</report>
+                            <report>project-team</report>
+                            <report>dependencies</report>
+                            <report>dependency-convergence</report>
+                            <report>modules</report>
+                        </reports>
+                    </reportSet>
+                </reportSets>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -464,6 +494,7 @@
                 <version>2.10.1</version>
                 <configuration>
                     <additionalparam>${javadoc.doclint.none}</additionalparam>
+                    <quiet>true</quiet>
                 </configuration>
                 <reportSets>
                     <reportSet>
