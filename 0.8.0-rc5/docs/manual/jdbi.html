@@ -1,0 +1,245 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Dropwizard JDBI | Dropwizard</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="../_static/dropwizard.css" type="text/css"/>
+    <link rel="top" title="Dropwizard" href="../index.html"/>
+    <link rel="up" title="User Manual" href="index.html"/>
+    <link rel="next" title="Dropwizard Migrations" href="migrations.html"/>
+    <link rel="prev" title="Dropwizard Client" href="client.html"/>
+    <style lang="text/css">
+        #top-bar, #top-bar small, #top-bar a {
+            text-shadow: 0px -1px 0px #182127;
+            color: #ffffff;
+        }
+        
+        #top-bar {
+            background-color: #363F45;
+            background-image: -moz-linear-gradient(top, #545d63, #182127);
+            background-image: -ms-linear-gradient(top, #545d63, #182127);
+            background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#545d63), to(#182127));
+            background-image: -webkit-linear-gradient(top, #545d63, #182127);
+            background-image: -o-linear-gradient(top, #545d63, #182127);
+            background-image: linear-gradient(top, #545d63, #182127);
+            filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#545d63', endColorstr = '#182127', GradientType = 0);
+            -webkit-border-radius: 0;
+            -moz-border-radius: 0;
+            border-radius: 0;
+        }
+
+
+        .hero-unit {
+            background-image: url("../_static/dropwizard-hat.png") !important;
+            background-repeat: no-repeat !important;
+            background-position: 30px 50px;
+        }
+
+        .hero-unit div.section {
+            padding-left: 150px !important;
+        }
+    </style>
+</head>
+<body>
+    <a href="https://github.com/dropwizard/dropwizard">
+        <img style="position: absolute; top: 0; right: 0; border: 0;"
+             src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_ff7600.png"
+             alt="Fork me on GitHub"></a>
+    <div class="navbar">
+        <div class="navbar-inner container-fluid" id="top-bar">
+            <header class="row-fluid">
+                <h1 class="span12" id="title"><img class="logo" src="../_static/dropwizard-logo.png" alt="Logo"/>
+                    <a href="../index.html">Dropwizard</a>
+                    <small>Production-ready, out of the box.</small>
+                </h1>
+            </header>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <div class="span3" id="sidebar">
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../getting-started.html">Getting Started</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">User Manual</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="core.html">Dropwizard Core</a></li>
+<li class="toctree-l2"><a class="reference internal" href="client.html">Dropwizard Client</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">Dropwizard JDBI</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#configuration">Configuration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#usage">Usage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#exception-handling">Exception Handling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#prepended-comments">Prepended Comments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#guava-support">Guava Support</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#joda-time-support">Joda Time Support</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="migrations.html">Dropwizard Migrations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hibernate.html">Dropwizard Hibernate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="auth.html">Dropwizard Authentication</a></li>
+<li class="toctree-l2"><a class="reference internal" href="forms.html">Dropwizard Forms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="views.html">Dropwizard Views</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scala.html">Dropwizard &amp; Scala</a></li>
+<li class="toctree-l2"><a class="reference internal" href="testing.html">Testing Dropwizard</a></li>
+<li class="toctree-l2"><a class="reference internal" href="example.html">Dropwizard Example, Step by Step</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html">Dropwizard Configuration Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../about/index.html">About Dropwizard</a></li>
+</ul>
+
+                <hr/>
+                <ul>
+                    <li><a href="https://dropwizard.github.io/dropwizard/0.8.0">Maven Site</a></li>
+                    <li><a href="https://groups.google.com/forum/#!forum/dropwizard-user">User Mailing List</a></li>
+                    <li><a href="https://groups.google.com/forum/#!forum/dropwizard-dev">Developer Mailing List</a></li>
+                </ul>
+            </div>
+            <div class="span9" id="body">
+                
+  <div class="section" id="dropwizard-jdbi">
+<span id="man-jdbi"></span><h1>Dropwizard JDBI</h1>
+<p class="rubric">The <tt class="docutils literal"><span class="pre">dropwizard-jdbi</span></tt> module provides you with managed access to <a class="reference external" href="http://jdbi.org/">JDBI</a>, a flexible and
+modular library for interacting with relational databases via SQL.</p>
+<div class="section" id="configuration">
+<h2>Configuration</h2>
+<p>To create a <a class="reference internal" href="core.html#man-core-managed"><em>managed</em></a>, instrumented <tt class="docutils literal"><span class="pre">DBI</span></tt> instance, your
+<a class="reference internal" href="core.html#man-core-configuration"><em>configuration class</em></a> needs a <tt class="docutils literal"><span class="pre">DataSourceFactory</span></tt> instance:</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ExampleConfiguration</span> <span class="kd">extends</span> <span class="n">Configuration</span> <span class="o">{</span>
+    <span class="nd">@Valid</span>
+    <span class="nd">@NotNull</span>
+    <span class="kd">private</span> <span class="n">DataSourceFactory</span> <span class="n">database</span> <span class="o">=</span> <span class="k">new</span> <span class="n">DataSourceFactory</span><span class="o">();</span>
+
+    <span class="nd">@JsonProperty</span><span class="o">(</span><span class="s">&quot;database&quot;</span><span class="o">)</span>
+    <span class="kd">public</span> <span class="n">DataSourceFactory</span> <span class="nf">getDataSourceFactory</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">database</span><span class="o">;</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>Then, in your service&#8217;s <tt class="docutils literal"><span class="pre">run</span></tt> method, create a new <tt class="docutils literal"><span class="pre">DBIFactory</span></tt>:</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="nd">@Override</span>
+<span class="kd">public</span> <span class="kt">void</span> <span class="nf">run</span><span class="o">(</span><span class="n">ExampleConfiguration</span> <span class="n">config</span><span class="o">,</span> <span class="n">Environment</span> <span class="n">environment</span><span class="o">)</span> <span class="o">{</span>
+    <span class="kd">final</span> <span class="n">DBIFactory</span> <span class="n">factory</span> <span class="o">=</span> <span class="k">new</span> <span class="n">DBIFactory</span><span class="o">();</span>
+    <span class="kd">final</span> <span class="n">DBI</span> <span class="n">jdbi</span> <span class="o">=</span> <span class="n">factory</span><span class="o">.</span><span class="na">build</span><span class="o">(</span><span class="n">environment</span><span class="o">,</span> <span class="n">config</span><span class="o">.</span><span class="na">getDataSourceFactory</span><span class="o">(),</span> <span class="s">&quot;postgresql&quot;</span><span class="o">);</span>
+    <span class="kd">final</span> <span class="n">UserDAO</span> <span class="n">dao</span> <span class="o">=</span> <span class="n">jdbi</span><span class="o">.</span><span class="na">onDemand</span><span class="o">(</span><span class="n">UserDAO</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+    <span class="n">environment</span><span class="o">.</span><span class="na">jersey</span><span class="o">().</span><span class="na">register</span><span class="o">(</span><span class="k">new</span> <span class="n">UserResource</span><span class="o">(</span><span class="n">dao</span><span class="o">));</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>This will create a new <a class="reference internal" href="core.html#man-core-managed"><em>managed</em></a> connection pool to the database, a
+<a class="reference internal" href="core.html#man-core-healthchecks"><em>health check</em></a> for connectivity to the database, and a new <tt class="docutils literal"><span class="pre">DBI</span></tt>
+instance for you to use.</p>
+<p>Your service&#8217;s configuration file will then look like this:</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">database</span><span class="p-Indicator">:</span>
+  <span class="c1"># the name of your JDBC driver</span>
+  <span class="l-Scalar-Plain">driverClass</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">org.postgresql.Driver</span>
+
+  <span class="c1"># the username</span>
+  <span class="l-Scalar-Plain">user</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">pg-user</span>
+
+  <span class="c1"># the password</span>
+  <span class="l-Scalar-Plain">password</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">iAMs00perSecrEET</span>
+
+  <span class="c1"># the JDBC URL</span>
+  <span class="l-Scalar-Plain">url</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">jdbc:postgresql://db.example.com/db-prod</span>
+
+  <span class="c1"># any properties specific to your JDBC driver:</span>
+  <span class="l-Scalar-Plain">properties</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">charSet</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">UTF-8</span>
+
+  <span class="c1"># the maximum amount of time to wait on an empty pool before throwing an exception</span>
+  <span class="l-Scalar-Plain">maxWaitForConnection</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">1s</span>
+
+  <span class="c1"># the SQL query to run when validating a connection&#39;s liveness</span>
+  <span class="l-Scalar-Plain">validationQuery</span><span class="p-Indicator">:</span> <span class="s">&quot;/*</span><span class="nv"> </span><span class="s">MyService</span><span class="nv"> </span><span class="s">Health</span><span class="nv"> </span><span class="s">Check</span><span class="nv"> </span><span class="s">*/</span><span class="nv"> </span><span class="s">SELECT</span><span class="nv"> </span><span class="s">1&quot;</span>
+
+  <span class="c1"># the timeout before a connection validation queries fail</span>
+  <span class="l-Scalar-Plain">validationQueryTimeout</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">3s</span>
+
+  <span class="c1"># the minimum number of connections to keep open</span>
+  <span class="l-Scalar-Plain">minSize</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">8</span>
+
+  <span class="c1"># the maximum number of connections to keep open</span>
+  <span class="l-Scalar-Plain">maxSize</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">32</span>
+
+  <span class="c1"># whether or not idle connections should be validated</span>
+  <span class="l-Scalar-Plain">checkConnectionWhileIdle</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">false</span>
+
+  <span class="c1"># the amount of time to sleep between runs of the idle connection validation, abandoned cleaner and idle pool resizing</span>
+  <span class="l-Scalar-Plain">evictionInterval</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">10s</span>
+
+  <span class="c1"># the minimum amount of time an connection must sit idle in the pool before it is eligible for eviction</span>
+  <span class="l-Scalar-Plain">minIdleTime</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">1 minute</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="usage">
+<h2>Usage</h2>
+<p>We highly recommend you use JDBI&#8217;s <a class="reference external" href="http://jdbi.org/sql_object_overview/">SQL Objects API</a>, which allows you to write DAO classes as
+interfaces:</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="kd">public</span> <span class="kd">interface</span> <span class="nc">MyDAO</span> <span class="o">{</span>
+  <span class="nd">@SqlUpdate</span><span class="o">(</span><span class="s">&quot;create table something (id int primary key, name varchar(100))&quot;</span><span class="o">)</span>
+  <span class="kt">void</span> <span class="nf">createSomethingTable</span><span class="o">();</span>
+
+  <span class="nd">@SqlUpdate</span><span class="o">(</span><span class="s">&quot;insert into something (id, name) values (:id, :name)&quot;</span><span class="o">)</span>
+  <span class="kt">void</span> <span class="nf">insert</span><span class="o">(</span><span class="nd">@Bind</span><span class="o">(</span><span class="s">&quot;id&quot;</span><span class="o">)</span> <span class="kt">int</span> <span class="n">id</span><span class="o">,</span> <span class="nd">@Bind</span><span class="o">(</span><span class="s">&quot;name&quot;</span><span class="o">)</span> <span class="n">String</span> <span class="n">name</span><span class="o">);</span>
+
+  <span class="nd">@SqlQuery</span><span class="o">(</span><span class="s">&quot;select name from something where id = :id&quot;</span><span class="o">)</span>
+  <span class="n">String</span> <span class="nf">findNameById</span><span class="o">(</span><span class="nd">@Bind</span><span class="o">(</span><span class="s">&quot;id&quot;</span><span class="o">)</span> <span class="kt">int</span> <span class="n">id</span><span class="o">);</span>
+<span class="o">}</span>
+
+<span class="kd">final</span> <span class="n">MyDAO</span> <span class="n">dao</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="na">onDemand</span><span class="o">(</span><span class="n">MyDAO</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+</pre></div>
+</div>
+<p>This ensures your DAO classes are trivially mockable, as well as encouraging you to extract mapping
+code (e.g., <tt class="docutils literal"><span class="pre">ResultSet</span></tt> -&gt; domain objects) into testable, reusable classes.</p>
+</div>
+<div class="section" id="exception-handling">
+<h2>Exception Handling</h2>
+<p>By adding the <tt class="docutils literal"><span class="pre">DBIExceptionsBundle</span></tt> to your <a class="reference internal" href="core.html#man-core-application"><em>application</em></a>, Dropwizard
+will automatically unwrap any thrown <tt class="docutils literal"><span class="pre">SQLException</span></tt> or <tt class="docutils literal"><span class="pre">DBIException</span></tt> instances.
+This is critical for debugging, since otherwise only the common wrapper exception&#8217;s stack trace is
+logged.</p>
+</div>
+<div class="section" id="prepended-comments">
+<h2>Prepended Comments</h2>
+<p>If you&#8217;re using JDBI&#8217;s <a class="reference external" href="http://jdbi.org/sql_object_overview/">SQL Objects API</a> (and you should be), <tt class="docutils literal"><span class="pre">dropwizard-jdbi</span></tt> will
+automatically prepend the SQL object&#8217;s class and method name to the SQL query as an SQL comment:</p>
+<div class="highlight-sql"><div class="highlight"><pre><span class="cm">/* com.example.service.dao.UserDAO.findByName */</span>
+<span class="k">SELECT</span> <span class="n">id</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">email</span>
+<span class="k">FROM</span> <span class="n">users</span>
+<span class="k">WHERE</span> <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Coda&#39;</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>This will allow you to quickly determine the origin of any slow or misbehaving queries.</p>
+</div>
+<div class="section" id="guava-support">
+<h2>Guava Support</h2>
+<p><tt class="docutils literal"><span class="pre">dropwizard-jdbi</span></tt> supports <tt class="docutils literal"><span class="pre">Optional&lt;T&gt;</span></tt> arguments and <tt class="docutils literal"><span class="pre">ImmutableList&lt;T&gt;</span></tt> and
+<tt class="docutils literal"><span class="pre">ImmutableSet&lt;T&gt;</span></tt> query results.</p>
+</div>
+<div class="section" id="joda-time-support">
+<h2>Joda Time Support</h2>
+<p><tt class="docutils literal"><span class="pre">dropwizard-jdbi</span></tt> supports joda-time <tt class="docutils literal"><span class="pre">DateTime</span></tt> arguments and <tt class="docutils literal"><span class="pre">DateTime</span></tt> fields in query results.</p>
+</div>
+</div>
+
+
+            </div>
+        </div>
+        <hr/>
+        <footer>
+            <p style="float: left">
+            &copy; Copyright 2010-2013, Coda Hale, Yammer Inc..
+            Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>
+            1.1.3.
+            </p>
+            <p style="float: right">Dropwizard v0.8.0</p>
+        </footer>
+    </div>
+</body>
+</html>
+
+

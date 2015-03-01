@@ -1,0 +1,133 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Dropwizard Example, Step by Step | Dropwizard</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="../_static/dropwizard.css" type="text/css"/>
+    <link rel="top" title="Dropwizard" href="../index.html"/>
+    <link rel="up" title="User Manual" href="index.html"/>
+    <link rel="next" title="Dropwizard Configuration Reference" href="configuration.html"/>
+    <link rel="prev" title="Testing Dropwizard" href="testing.html"/>
+    <style lang="text/css">
+        #top-bar, #top-bar small, #top-bar a {
+            text-shadow: 0px -1px 0px #182127;
+            color: #ffffff;
+        }
+        
+        #top-bar {
+            background-color: #363F45;
+            background-image: -moz-linear-gradient(top, #545d63, #182127);
+            background-image: -ms-linear-gradient(top, #545d63, #182127);
+            background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#545d63), to(#182127));
+            background-image: -webkit-linear-gradient(top, #545d63, #182127);
+            background-image: -o-linear-gradient(top, #545d63, #182127);
+            background-image: linear-gradient(top, #545d63, #182127);
+            filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#545d63', endColorstr = '#182127', GradientType = 0);
+            -webkit-border-radius: 0;
+            -moz-border-radius: 0;
+            border-radius: 0;
+        }
+
+
+        .hero-unit {
+            background-image: url("../_static/dropwizard-hat.png") !important;
+            background-repeat: no-repeat !important;
+            background-position: 30px 50px;
+        }
+
+        .hero-unit div.section {
+            padding-left: 150px !important;
+        }
+    </style>
+</head>
+<body>
+    <a href="https://github.com/dropwizard/dropwizard">
+        <img style="position: absolute; top: 0; right: 0; border: 0;"
+             src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_ff7600.png"
+             alt="Fork me on GitHub"></a>
+    <div class="navbar">
+        <div class="navbar-inner container-fluid" id="top-bar">
+            <header class="row-fluid">
+                <h1 class="span12" id="title"><img class="logo" src="../_static/dropwizard-logo.png" alt="Logo"/>
+                    <a href="../index.html">Dropwizard</a>
+                    <small>Production-ready, out of the box.</small>
+                </h1>
+            </header>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <div class="span3" id="sidebar">
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../getting-started.html">Getting Started</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">User Manual</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="core.html">Dropwizard Core</a></li>
+<li class="toctree-l2"><a class="reference internal" href="client.html">Dropwizard Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jdbi.html">Dropwizard JDBI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="migrations.html">Dropwizard Migrations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hibernate.html">Dropwizard Hibernate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="auth.html">Dropwizard Authentication</a></li>
+<li class="toctree-l2"><a class="reference internal" href="forms.html">Dropwizard Forms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="views.html">Dropwizard Views</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scala.html">Dropwizard &amp; Scala</a></li>
+<li class="toctree-l2"><a class="reference internal" href="testing.html">Testing Dropwizard</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">Dropwizard Example, Step by Step</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html">Dropwizard Configuration Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../about/index.html">About Dropwizard</a></li>
+</ul>
+
+                <hr/>
+                <ul>
+                    <li><a href="https://dropwizard.github.io/dropwizard/0.8.0">Maven Site</a></li>
+                    <li><a href="https://groups.google.com/forum/#!forum/dropwizard-user">User Mailing List</a></li>
+                    <li><a href="https://groups.google.com/forum/#!forum/dropwizard-dev">Developer Mailing List</a></li>
+                </ul>
+            </div>
+            <div class="span9" id="body">
+                
+  <div class="section" id="dropwizard-example-step-by-step">
+<span id="man-example"></span><h1>Dropwizard Example, Step by Step</h1>
+<p class="rubric">The <tt class="docutils literal"><span class="pre">dropwizard-example</span></tt> module provides you with a working example
+of a dropwizard app</p>
+<ul class="simple">
+<li>Open a terminal</li>
+<li>Make sure you have maven installed</li>
+<li>Make sure java home points at JDK 7</li>
+<li>Make sure you have curl</li>
+<li>mvn dependency:resolve</li>
+<li>mvn clean compile install</li>
+<li>mvn eclipse:eclipse -DdownloadSources=true</li>
+<li>From eclipse, File &#8211;&gt; Import &#8211;&gt; Existing Project into workspace</li>
+<li><tt class="docutils literal"><span class="pre">java</span> <span class="pre">-jar</span> <span class="pre">~/git/dropwizard/dropwizard-example/target/dropwizard-example-0.8.0-SNAPSHOT.jar</span> <span class="pre">db</span> <span class="pre">migrate</span> <span class="pre">example.yml</span></tt></li>
+<li>The above ran the liquibase migration in /src/main/resources/migrations.xml, creating the table schema</li>
+<li>You can now start the app in your IDE by running <tt class="docutils literal"><span class="pre">java</span> <span class="pre">-jar</span> <span class="pre">~/git/dropwizard/dropwizard-example/target/dropwizard-example-0.8.0-SNAPSHOT.jar</span> <span class="pre">db</span> <span class="pre">migrate</span> <span class="pre">example.yml</span></tt></li>
+<li>Alternatively you can run this file in your IDE: <tt class="docutils literal"><span class="pre">com.example.helloworld.HelloWorldApplication</span> <span class="pre">server</span> <span class="pre">example.yml</span></tt></li>
+<li>Insert a new person: <tt class="docutils literal"><span class="pre">curl</span> <span class="pre">-H</span> <span class="pre">&quot;Content-Type:</span> <span class="pre">application/json&quot;</span> <span class="pre">-X</span> <span class="pre">POST</span> <span class="pre">-d</span> <span class="pre">'{&quot;fullName&quot;:&quot;Coda</span> <span class="pre">Hale&quot;,</span> <span class="pre">&quot;jobTitle&quot;</span> <span class="pre">:</span> <span class="pre">&quot;Chief</span> <span class="pre">Wizard&quot;</span> <span class="pre">}'</span> <span class="pre">http://localhost:8080/people</span></tt></li>
+<li>Retrieve that person: <tt class="docutils literal"><span class="pre">curl</span> <span class="pre">http://localhost:8080/people/1</span></tt></li>
+<li>View the freemarker template: <tt class="docutils literal"><span class="pre">curl</span> <span class="pre">http://localhost:8080/people/1/view_freemarker</span></tt></li>
+<li>View the mustache template: <tt class="docutils literal"><span class="pre">curl</span> <span class="pre">http://localhost:8080/people/1/view_mustache</span></tt></li>
+</ul>
+</div>
+
+
+            </div>
+        </div>
+        <hr/>
+        <footer>
+            <p style="float: left">
+            &copy; Copyright 2010-2013, Coda Hale, Yammer Inc..
+            Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>
+            1.1.3.
+            </p>
+            <p style="float: right">Dropwizard v0.8.0</p>
+        </footer>
+    </div>
+</body>
+</html>
+
+
