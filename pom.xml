@@ -373,7 +373,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.9.1</version>
+                <version>2.10.1</version>
                 <configuration>
                     <additionalparam>${javadoc.doclint.none}</additionalparam>
                 </configuration>
@@ -461,7 +461,10 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.9.1</version>
+                <version>2.10.1</version>
+                <configuration>
+                    <additionalparam>${javadoc.doclint.none}</additionalparam>
+                </configuration>
                 <reportSets>
                     <reportSet>
                         <id>html</id>
