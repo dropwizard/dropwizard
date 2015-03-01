@@ -5,6 +5,7 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.ConsoleAppender;
 import ch.qos.logback.core.Layout;
+import ch.qos.logback.core.encoder.LayoutWrappingEncoder;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
@@ -107,7 +108,11 @@ public class ConsoleAppenderFactory extends AbstractAppenderFactory {
         appender.setName("console-appender");
         appender.setContext(context);
         appender.setTarget(target.get());
-        appender.setLayout(layout == null ? buildLayout(context, timeZone) : layout);
+
+        LayoutWrappingEncoder<ILoggingEvent> layoutEncoder = new LayoutWrappingEncoder<>();
+        layoutEncoder.setLayout(layout == null ? buildLayout(context, timeZone) : layout);
+        appender.setEncoder(layoutEncoder);
+
         addThresholdFilter(appender, threshold);
         appender.start();
 
