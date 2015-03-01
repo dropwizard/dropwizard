@@ -1,0 +1,11 @@
+io.dropwizard.jersey
+io.dropwizard.jersey.caching
+io.dropwizard.jersey.errors
+io.dropwizard.jersey.filter
+io.dropwizard.jersey.guava
+io.dropwizard.jersey.gzip
+io.dropwizard.jersey.jackson
+io.dropwizard.jersey.params
+io.dropwizard.jersey.sessions
+io.dropwizard.jersey.setup
+io.dropwizard.jersey.validation
