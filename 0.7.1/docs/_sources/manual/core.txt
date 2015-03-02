@@ -391,6 +391,27 @@ require your application's ``Configuration`` subclass to implement a specific in
 Serving Assets
 --------------
 
+Either your application or your static assets can be served from the root path, but
+not both. The latter is useful when using Dropwizard to back a Javascript
+application. To enable it, move your application to a sub-URL.
+
+.. code-block:: yaml
+
+    server:
+      type: simple
+      applicationContextPath: /application/*  # Default value*
+
+Then use an extended ``AssetsBundle`` constructor to serve resources in the
+``assets`` folder from the root path. ``index.htm`` is served as the default
+page.
+
+.. code-block:: java
+
+    @Override
+    public void initialize(Bootstrap<HelloWorldConfiguration> bootstrap) {
+        bootstrap.addBundle(new AssetsBundle("/assets/", "/"));
+    }
+
 When an ``AssetBundle`` is added to the application, it is registered as a servlet
 using a default name of ``assets``. If the application needs to have multiple ``AssetBundle``
 instances, the extended constructor should be used to specify a unique name for the ``AssetBundle``.
