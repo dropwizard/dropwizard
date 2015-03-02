@@ -21,6 +21,7 @@ team to ship a *production-quality* web service in the shortest time possible.
    getting-started
    manual/index
    about/index
+   about/docs-index.rst
 
 .. raw:: html
 
