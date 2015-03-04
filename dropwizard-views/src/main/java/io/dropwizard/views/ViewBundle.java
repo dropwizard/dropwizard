@@ -1,9 +1,11 @@
 package io.dropwizard.views;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import java.util.ServiceLoader;
-
 import io.dropwizard.Bundle;
+import io.dropwizard.Configuration;
+import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 
@@ -82,7 +84,7 @@ import io.dropwizard.setup.Environment;
  *
  * @see <a href="http://mustache.github.io/mustache.5.html">Mustache Manual</a>
  */
-public class ViewBundle implements Bundle {
+public abstract class ViewBundle<T extends Configuration> implements ConfiguredBundle<T>, ViewConfigurable<T> {
     private final Iterable<ViewRenderer> viewRenderers;
 
     public ViewBundle() {
@@ -94,12 +96,19 @@ public class ViewBundle implements Bundle {
     }
 
     @Override
-    public void initialize(Bootstrap<?> bootstrap) {
-        // nothing doing
+    public void run(T configuration, Environment environment) throws Exception {
+        ImmutableMap<String, String> empty = ImmutableMap.of();
+        
+        ImmutableMap<String, ImmutableMap<String, String>> options = getViewConfiguration(configuration);
+        for(ViewRenderer viewRenderer : viewRenderers) {
+            ImmutableMap<String, String> viewOptions = options.get(viewRenderer.getSuffix());
+            viewRenderer.configure(viewOptions == null ? empty : viewOptions);
+        }
+        environment.jersey().register(new ViewMessageBodyWriter(environment.metrics(), viewRenderers));
     }
 
     @Override
-    public void run(Environment environment) {
-        environment.jersey().register(new ViewMessageBodyWriter(environment.metrics(), viewRenderers));
+    public void initialize(Bootstrap<?> bootstrap) {
+        // nothing doing
     }
 }

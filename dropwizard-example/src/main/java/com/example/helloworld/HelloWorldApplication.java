@@ -14,6 +14,7 @@ import com.example.helloworld.resources.PeopleResource;
 import com.example.helloworld.resources.PersonResource;
 import com.example.helloworld.resources.ProtectedResource;
 import com.example.helloworld.resources.ViewResource;
+import com.google.common.collect.ImmutableMap;
 import io.dropwizard.Application;
 import io.dropwizard.assets.AssetsBundle;
 import io.dropwizard.auth.AuthFactory;
@@ -64,7 +65,12 @@ public class HelloWorldApplication extends Application<HelloWorldConfiguration> 
             }
         });
         bootstrap.addBundle(hibernateBundle);
-        bootstrap.addBundle(new ViewBundle());
+        bootstrap.addBundle(new ViewBundle<HelloWorldConfiguration>() {
+            @Override
+            public ImmutableMap<String, ImmutableMap<String, String>> getViewConfiguration(HelloWorldConfiguration configuration) {
+                return configuration.getViewRendererConfiguration();
+            }
+        });
     }
 
     @Override
