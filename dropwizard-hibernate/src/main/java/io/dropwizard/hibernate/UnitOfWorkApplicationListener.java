@@ -78,7 +78,7 @@ public class UnitOfWorkApplicationListener implements ApplicationEventListener {
                     }
                 }
             }
-            else if (event.getType() == RequestEvent.Type.RESOURCE_METHOD_FINISHED) {
+            else if (event.getType() == RequestEvent.Type.RESP_FILTERS_START) {
                 if (this.session != null) {
                     try {
                         commitTransaction();
