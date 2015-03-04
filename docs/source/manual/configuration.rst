@@ -591,7 +591,7 @@ The metrics configuration has two fields; frequency and reporters.
 .. code-block:: yaml
 
     metrics:
-      frequency: 1 second
+      frequency: 1 minute
       reporters:
         - type: <type>
 
@@ -599,7 +599,7 @@ The metrics configuration has two fields; frequency and reporters.
 ====================== ===========  ===========
 Name                   Default      Description
 ====================== ===========  ===========
-frequency              1 second     The frequency to report metrics. Overridable per-reporter.
+frequency              1 minute     The frequency to report metrics. Overridable per-reporter.
 reporters              (none)       A list of reporters to report metrics.
 ====================== ===========  ===========
 
@@ -621,7 +621,7 @@ The following options are available for all metrics reporters.
           excludes: (none)
           includes: (all)
           useRegexFilters: false
-          frequency: 1 second
+          frequency: 1 minute
 
 
 ====================== =============  ===========

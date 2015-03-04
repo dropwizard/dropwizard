@@ -59,7 +59,7 @@ import java.util.regex.Pattern;
  *     </tr>
  *     <tr>
  *         <td>frequency</td>
- *         <td>1 second</td>
+ *         <td>none</td>
  *         <td>The frequency to report metrics. Overrides the {@link
  *         MetricsFactory#getFrequency() default}.</td>
  *     </tr>
