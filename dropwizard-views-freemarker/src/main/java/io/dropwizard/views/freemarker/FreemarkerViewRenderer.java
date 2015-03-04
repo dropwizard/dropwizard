@@ -26,9 +26,10 @@ import java.util.Map;
 public class FreemarkerViewRenderer implements ViewRenderer {
 
     private static final Version FREEMARKER_VERSION = Configuration.getVersion();
-    private static Map<String, String> BASE_CONFIG = ImmutableMap.of();
-
+    private final TemplateLoader loader;
+    
     private static class TemplateLoader extends CacheLoader<Class<?>, Configuration> {
+        private Map<String, String> baseConfig = ImmutableMap.of();
         @Override
         public Configuration load(Class<?> key) throws Exception {
             final Configuration configuration = new Configuration(FREEMARKER_VERSION);
@@ -36,19 +37,24 @@ public class FreemarkerViewRenderer implements ViewRenderer {
             configuration.loadBuiltInEncodingMap();
             configuration.setDefaultEncoding(Charsets.UTF_8.name());
             configuration.setClassForTemplateLoading(key, "/");
-            for(Map.Entry<String, String> entry : BASE_CONFIG.entrySet()) {
+            for(Map.Entry<String, String> entry : baseConfig.entrySet()) {
                 configuration.setSetting(entry.getKey(), entry.getValue());
             }
             return configuration;
+        }
+
+        void setBaseConfig(Map<String, String> baseConfig) {
+            this.baseConfig = baseConfig;
         }
     }
 
     private final LoadingCache<Class<?>, Configuration> configurationCache;
 
     public FreemarkerViewRenderer() {
+        this.loader = new TemplateLoader();
         this.configurationCache = CacheBuilder.newBuilder()
                                               .concurrencyLevel(128)
-                                              .build(new TemplateLoader());
+                                              .build(loader);
     }
 
     @Override
@@ -71,7 +77,7 @@ public class FreemarkerViewRenderer implements ViewRenderer {
     }
 
     public void configure(ImmutableMap<String, String> baseConfig) {
-        BASE_CONFIG = baseConfig;
+        this.loader.setBaseConfig(baseConfig);
     }
 
     @Override
