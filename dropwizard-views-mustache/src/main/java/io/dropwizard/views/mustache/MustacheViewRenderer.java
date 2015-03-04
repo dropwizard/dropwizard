@@ -7,10 +7,10 @@ import com.google.common.base.Charsets;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.util.concurrent.UncheckedExecutionException;
 import io.dropwizard.views.View;
 import io.dropwizard.views.ViewRenderer;
-
 import javax.ws.rs.WebApplicationException;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -38,7 +38,7 @@ public class MustacheViewRenderer implements ViewRenderer {
 
     @Override
     public boolean isRenderable(View view) {
-        return view.getTemplateName().endsWith(".mustache");
+        return view.getTemplateName().endsWith(getSuffix());
     }
 
     @Override
@@ -53,5 +53,13 @@ public class MustacheViewRenderer implements ViewRenderer {
         } catch (ExecutionException | UncheckedExecutionException | MustacheException ignored) {
             throw new FileNotFoundException("Template " + view.getTemplateName() + " not found.");
         }
+    }
+
+    @Override
+    public void configure(ImmutableMap<String, String> options) {}
+
+    @Override
+    public String getSuffix() {
+        return ".mustache";
     }
 }
