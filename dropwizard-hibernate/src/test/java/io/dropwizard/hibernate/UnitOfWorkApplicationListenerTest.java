@@ -39,7 +39,7 @@ public class UnitOfWorkApplicationListenerTest {
 
     private final RequestEvent requestStartEvent = mock(RequestEvent.class);
     private final RequestEvent requestMethodStartEvent = mock(RequestEvent.class);
-    private final RequestEvent requestMethodFinishEvent = mock(RequestEvent.class);
+    private final RequestEvent responseFiltersStartEvent = mock(RequestEvent.class);
     private final RequestEvent requestMethodExceptionEvent = mock(RequestEvent.class);
     private final Session session = mock(Session.class);
     private final Transaction transaction = mock(Transaction.class);
@@ -56,10 +56,10 @@ public class UnitOfWorkApplicationListenerTest {
 
         when(appEvent.getType()).thenReturn(ApplicationEvent.Type.INITIALIZATION_APP_FINISHED);
         when(requestMethodStartEvent.getType()).thenReturn(RequestEvent.Type.RESOURCE_METHOD_START);
-        when(requestMethodFinishEvent.getType()).thenReturn(RequestEvent.Type.RESOURCE_METHOD_FINISHED);
+        when(responseFiltersStartEvent.getType()).thenReturn(RequestEvent.Type.RESP_FILTERS_START);
         when(requestMethodExceptionEvent.getType()).thenReturn(RequestEvent.Type.ON_EXCEPTION);
         when(requestMethodStartEvent.getUriInfo()).thenReturn(uriInfo);
-        when(requestMethodFinishEvent.getUriInfo()).thenReturn(uriInfo);
+        when(responseFiltersStartEvent.getUriInfo()).thenReturn(uriInfo);
         when(requestMethodExceptionEvent.getUriInfo()).thenReturn(uriInfo);
 
         prepareAppEvent("methodWithDefaultAnnotation");
@@ -204,7 +204,7 @@ public class UnitOfWorkApplicationListenerTest {
         listener.onEvent(appEvent);
         RequestEventListener requestListener = listener.onRequest(requestStartEvent);
         requestListener.onEvent(requestMethodStartEvent);
-        requestListener.onEvent(requestMethodFinishEvent);
+        requestListener.onEvent(responseFiltersStartEvent);
     }
 
     private void executeWithException() {
