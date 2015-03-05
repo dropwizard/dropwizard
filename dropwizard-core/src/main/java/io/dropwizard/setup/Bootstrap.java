@@ -48,11 +48,11 @@ public class Bootstrap<T extends Configuration> {
     private final List<ConfiguredBundle<? super T>> configuredBundles;
     private final List<Command> commands;
     private final MetricRegistry metricRegistry;
-    private final ValidatorFactory validatorFactory;
 
     private ConfigurationSourceProvider configurationSourceProvider;
     private ClassLoader classLoader;
     private ConfigurationFactoryFactory<T> configurationFactoryFactory;
+    private ValidatorFactory validatorFactory;
 
     /**
      * Creates a new {@link Bootstrap} for the given application.
@@ -203,6 +203,10 @@ public class Bootstrap<T extends Configuration> {
      */
     public ValidatorFactory getValidatorFactory() {
         return validatorFactory;
+    }
+
+    public void setValidatorFactory(ValidatorFactory validatorFactory) {
+        this.validatorFactory = validatorFactory;
     }
 
     public ConfigurationFactoryFactory<T> getConfigurationFactoryFactory() {
