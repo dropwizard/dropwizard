@@ -7,8 +7,67 @@ Dropwizard Configuration Reference
 .. highlight:: text
 
 .. rubric:: The ``dropwizard-configuration`` module provides you with a polymorphic configuration
-            mechanism.
+            mechanism, meaning that a particular section of your configuration file can be implemented
+            using one or more configuration classes.
 
+To use this capability for your own configuration classes, create a top-level configuration interface or class that
+implements ``Discoverable`` and add the name of that class to ``META-INF/services/io.dropwizard.jackson.Discoverable``.
+Make sure to use `Jackson polymorphic deserialization`_ annotations appropriately.
+
+.. _Jackson polymorphic deserialization: http://wiki.fasterxml.com/JacksonPolymorphicDeserialization
+
+.. code-block:: java
+
+    @JsonTypeInfo(use = Id.NAME, include = As.PROPERTY, property = "type")
+    interface WidgetFactory extends Discoverable {
+        Widget createWidget();
+    }
+
+Then create subtypes of the top-level type corresponding to each alternative, and add their names to
+``META-INF/services/WidgetFactory``.
+
+.. code-block:: java
+
+    @JsonTypeName("hammer")
+    public class HammerFactory implements WidgetFactory {
+        @JsonProperty
+        private int weight = 10;
+
+        @Override
+        public Hammer createWidget() {
+            return new Hammer(weight);
+        }
+    }
+
+    @JsonTypeName("chisel")
+    public class ChiselFactory implements WidgetFactory {
+        @JsonProperty
+        private float radius = 1;
+
+        @Override
+        public Chisel createWidget() {
+            return new Chisel(weight);
+        }
+    }
+
+Now you can use ``WidgetFactory`` objects in your application's configuration.
+
+.. code-block:: java
+
+    public class MyConfiguration extends Configuration {
+        @JsonProperty
+        @NotNull
+        @Valid
+        private List<WidgetFactory> widgets;
+    }
+
+.. code-block:: yaml
+
+    widgets:
+      - type: hammer
+        weight: 20
+      - type: chisel
+        radius: 0.4
 
 .. _man-configuration-servers:
 
@@ -27,38 +86,42 @@ Servers
 All
 ----
 
-====================== ===============================================  =============================================================================
-Name                   Default                                          Description
-====================== ===============================================  =============================================================================
-type                   default                                          - default
-                                                                        - simple
-maxThreads             1024                                             The maximum number of threads to use for requests.
-minThreads             8                                                The minimum number of threads to use for requests.
-maxQueuedRequests      1024                                             The maximum number of requests to queue before blocking
-                                                                        the acceptors.
-idleThreadTimeout      1 minute                                         The amount of time a worker thread can be idle before
-                                                                        being stopped.
-nofileSoftLimit        (none)                                           The number of open file descriptors before a soft error is issued.
-                                                                        Requires Jetty's ``libsetuid.so`` on ``java.library.path``.
-nofileHardLimit        (none)                                           The number of open file descriptors before a hard error is issued.
-                                                                        Requires Jetty's ``libsetuid.so`` on ``java.library.path``.
-gid                    (none)                                           The group ID to switch to once the connectors have started.
-                                                                        Requires Jetty's ``libsetuid.so`` on ``java.library.path``.
-uid                    (none)                                           The user ID to switch to once the connectors have started.
-                                                                        Requires Jetty's ``libsetuid.so`` on ``java.library.path``.
-user                   (none)                                           The username to switch to once the connectors have started.
-                                                                        Requires Jetty's ``libsetuid.so`` on ``java.library.path``.
-group                  (none)                                           The group to switch to once the connectors have started.
-                                                                        Requires Jetty's ``libsetuid.so`` on ``java.library.path``.
-umask                  (none)                                           The umask to switch to once the connectors have started.
-                                                                        Requires Jetty's ``libsetuid.so`` on ``java.library.path``.
-startsAsRoot           (none)                                           Whether or not the Dropwizard application is started as a root user.
-                                                                        Requires Jetty's ``libsetuid.so`` on ``java.library.path``.
-shutdownGracePeriod    30 seconds                                       The maximum time to wait for Jetty, and all Managed instances,
-                                                                        to cleanly shutdown before forcibly terminating them.
-allowedMethods         ``GET``, ``POST``, ``PUT``, ``DELETE``,          The set of allowed HTTP methods. Others will be rejected with a
-                       ``HEAD``, ``OPTIONS``, ``PATCH``                 405 Method Not Allowed response.
-====================== ===============================================  =============================================================================
+=================================== ===============================================  =============================================================================
+Name                                Default                                          Description
+=================================== ===============================================  =============================================================================
+type                                default                                          - default
+                                                                                     - simple
+maxThreads                          1024                                             The maximum number of threads to use for requests.
+minThreads                          8                                                The minimum number of threads to use for requests.
+maxQueuedRequests                   1024                                             The maximum number of requests to queue before blocking
+                                                                                     the acceptors.
+idleThreadTimeout                   1 minute                                         The amount of time a worker thread can be idle before
+                                                                                     being stopped.
+nofileSoftLimit                     (none)                                           The number of open file descriptors before a soft error is issued.
+                                                                                     Requires Jetty's ``libsetuid.so`` on ``java.library.path``.
+nofileHardLimit                     (none)                                           The number of open file descriptors before a hard error is issued.
+                                                                                     Requires Jetty's ``libsetuid.so`` on ``java.library.path``.
+gid                                 (none)                                           The group ID to switch to once the connectors have started.
+                                                                                     Requires Jetty's ``libsetuid.so`` on ``java.library.path``.
+uid                                 (none)                                           The user ID to switch to once the connectors have started.
+                                                                                     Requires Jetty's ``libsetuid.so`` on ``java.library.path``.
+user                                (none)                                           The username to switch to once the connectors have started.
+                                                                                     Requires Jetty's ``libsetuid.so`` on ``java.library.path``.
+group                               (none)                                           The group to switch to once the connectors have started.
+                                                                                     Requires Jetty's ``libsetuid.so`` on ``java.library.path``.
+umask                               (none)                                           The umask to switch to once the connectors have started.
+                                                                                     Requires Jetty's ``libsetuid.so`` on ``java.library.path``.
+startsAsRoot                        (none)                                           Whether or not the Dropwizard application is started as a root user.
+                                                                                     Requires Jetty's ``libsetuid.so`` on ``java.library.path``.
+shutdownGracePeriod                 30 seconds                                       The maximum time to wait for Jetty, and all Managed instances,
+                                                                                     to cleanly shutdown before forcibly terminating them.
+allowedMethods                      ``GET``, ``POST``, ``PUT``, ``DELETE``,          The set of allowed HTTP methods. Others will be rejected with a
+                                    ``HEAD``, ``OPTIONS``, ``PATCH``                 405 Method Not Allowed response.
+rootPath                            ``/``                                            The URL pattern relative to ``applicationContextPath`` from which
+                                                                                     the JAX-RS resources will be served.
+registerDefaultExceptionMappers     true                                             Whether or not the default Jersey ExceptionMappers should be registered.
+                                                                                     Set this to false if you want to register your own.
+=================================== ===============================================  =============================================================================
 
 
 .. _man-configuration-gzip:
@@ -152,6 +215,8 @@ Extends the attributes that are available to :ref:`all servers <man-configuratio
     server:
       adminMinThreads: 1
       adminMaxThreads: 64
+      adminContextPath: /
+      applicationContextPath: /
       applicationConnectors:
         - type: http
           port: 8080
@@ -180,6 +245,8 @@ adminConnectors           An `HTTP connector`_      An `HTTP connector`_ listeni
                                                     handle admin requests.
 adminMinThreads           1                         The minimum number of threads to use for admin requests.
 adminMaxThreads           64                        The maximum number of threads to use for admin requests.
+adminContextPath          /                         The context path of the admin servlets, including metrics and tasks.
+applicationContextPath    /                         The context path of the application servlets, including Jersey.
 ========================  =======================   =====================================================================
 
 .. _`HTTP connector`:  https://github.com/dropwizard/dropwizard/blob/master/dropwizard-jetty/src/main/java/io/dropwizard/jetty/HttpConnectorFactory.java
@@ -258,10 +325,11 @@ soLingerTime             (disabled)          Enable/disable ``SO_LINGER`` with t
 useServerHeader          false               Whether or not to add the ``Server`` header to each response.
 useDateHeader            true                Whether or not to add the ``Date`` header to each response.
 useForwardedHeaders      true                Whether or not to look at ``X-Forwarded-*`` headers added by proxies. See
-                                             ``ForwardedRequestCustomize`` for details.
+                                             `ForwardedRequestCustomizer`_ for details.
 ======================== ==================  ======================================================================================
 
 .. _`java.net.Socket#setSoTimeout(int)`: http://docs.oracle.com/javase/7/docs/api/java/net/Socket.html#setSoTimeout(int)
+.. _`ForwardedRequestCustomizer`: http://download.eclipse.org/jetty/stable-9/apidocs/org/eclipse/jetty/server/ForwardedRequestCustomizer.html
 
 .. _man-configuration-https:
 
@@ -299,7 +367,9 @@ Extends the attributes that are available to the :ref:`HTTP connector <man-confi
           validateCerts: true
           validatePeers: true
           supportedProtocols: SSLv3
+          excludedProtocols: (none)
           supportedCipherSuites: TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256
+          excludedCipherSuites: (none)
           allowRenegotiation: true
           endpointIdentificationAlgorithm: (none)
 
@@ -332,6 +402,8 @@ validateCerts                    true                Whether or not to validate 
 validatePeers                    true                Whether or not to validate TLS peer certificates.
 supportedProtocols               (none)              A list of protocols (e.g., ``SSLv3``, ``TLSv1``) which are supported. All
                                                      other protocols will be refused.
+excludedProtocols                (none)              A list of protocols (e.g., ``SSLv3``, ``TLSv1``) which are excluded. These
+                                                     protocols will be refused.
 supportedCipherSuites            (none)              A list of cipher suites (e.g., ``TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256``) which
                                                      are supported. All other cipher suites will be refused
 excludedCipherSuites             (none)              A list of cipher suites (e.g., ``TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256``) which
@@ -352,6 +424,11 @@ SPDY
 ------
 
 Extends the attributes that are available to the :ref:`HTTPS connector <man-configuration-https>`
+
+For this connector to work with ALPN protocol you need to provide alpn-boot library to JVM's bootpath.
+The correct library version depends on the JVM version. Consult Jetty ALPN guide__ for the reference.
+
+.. __: http://www.eclipse.org/jetty/documentation/current/alpn-chapter.html
 
 .. code-block:: yaml
 
@@ -514,7 +591,7 @@ The metrics configuration has two fields; frequency and reporters.
 .. code-block:: yaml
 
     metrics:
-      frequency: 1 second
+      frequency: 1 minute
       reporters:
         - type: <type>
 
@@ -522,7 +599,7 @@ The metrics configuration has two fields; frequency and reporters.
 ====================== ===========  ===========
 Name                   Default      Description
 ====================== ===========  ===========
-frequency              1 second     The frequency to report metrics. Overridable per-reporter.
+frequency              1 minute     The frequency to report metrics. Overridable per-reporter.
 reporters              (none)       A list of reporters to report metrics.
 ====================== ===========  ===========
 
@@ -543,7 +620,8 @@ The following options are available for all metrics reporters.
           rateUnit: seconds
           excludes: (none)
           includes: (all)
-          frequency: 1 second
+          useRegexFilters: false
+          frequency: 1 minute
 
 
 ====================== =============  ===========
@@ -553,9 +631,17 @@ durationUnit           milliseconds   The unit to report durations as. Overrides
 rateUnit               seconds        The unit to report rates as. Overrides per-metric rate units.
 excludes               (none)         Metrics to exclude from reports, by name. When defined, matching metrics will not be reported.
 includes               (all)          Metrics to include in reports, by name. When defined, only these metrics will be reported.
+useRegexFilters        false          Indicates whether the values of the 'includes' and 'excludes' fields should be treated as regular expressions or not.
 frequency              (none)         The frequency to report metrics. Overrides the default.
 ====================== =============  ===========
 
+The inclusion and exclusion rules are defined as:
+
+* If **includes** is empty, then all metrics are included;
+* If **includes** is not empty, only metrics from this list are included;
+* If **excludes** is empty, no metrics are excluded;
+* If **excludes** is not empty, then exclusion rules take precedence over inclusion rules. Thus if a name matches
+the exclusion rules it will not be included in reports even if it also matches the inclusion rules.
 
 .. _man-configuration-metrics-formatted:
 
@@ -639,6 +725,10 @@ Reports metrics periodically to Ganglia.
 
 Extends the attributes that are available to :ref:`all reporters <man-configuration-metrics-all>`
 
+.. note::
+
+    You will need to add ``dropwizard-metrics-ganglia`` to your POM.
+
 .. code-block:: yaml
 
     metrics:
@@ -678,6 +768,10 @@ Graphite Reporter
 Reports metrics periodically to Graphite.
 
 Extends the attributes that are available to :ref:`all reporters <man-configuration-metrics-all>`
+
+.. note::
+
+    You will need to add ``dropwizard-metrics-graphite`` to your POM.
 
 .. code-block:: yaml
 
@@ -733,12 +827,12 @@ markerName             (none)           The name of the marker to mark logged me
 .. _man-configuration-clients:
 
 Clients
-=========
+=======
 
 .. _man-configuration-clients-http:
 
 HttpClient
------
+----------
 
 See HttpClientConfiguration_  for more options.
 
@@ -758,29 +852,30 @@ See HttpClientConfiguration_  for more options.
       userAgent: <application name> (<client name>)
 
 
-======================= ======================================  =============================================================================
-Name                    Default                                 Description
-======================= ======================================  =============================================================================
-timeout                 500 milliseconds                        The maximum idle time for a connection, once established.
-connectionTimeout       500 milliseconds                        The maximum time to wait for a connection to open.
-timeToLive              1 hour                                  The maximum time a pooled connection can stay idle (not leased to any thread)
-                                                                before it is shut down.
-cookiesEnabled          false                                   Whether or not to enable cookies.
-maxConnections          1024                                    The maximum number of concurrent open connections.
-maxConnectionsPerRoute  1024                                    The maximum number of concurrent open connections per route.
-keepAlive               0 milliseconds                          The maximum time a connection will be kept alive before it is reconnected. If set
-                                                                to 0, connections will be immediately closed after every request/response.
-retries                 0                                       The number of times to retry failed requests. Requests are only
-                                                                retried if they throw an exception other than ``InterruptedIOException``,
-                                                                ``UnknownHostException``, ``ConnectException``, or ``SSLException``.
-userAgent               ``applicationName`` (``clientName``)    The User-Agent to send with requests.
-======================= ======================================  =============================================================================
+========================= ======================================  =============================================================================
+Name                      Default                                 Description
+========================= ======================================  =============================================================================
+timeout                   500 milliseconds                        The maximum idle time for a connection, once established.
+connectionTimeout         500 milliseconds                        The maximum time to wait for a connection to open.
+connectionRequestTimeout  500 milliseconds                        The maximum time to wait for a connection to be returned from the connection pool.
+timeToLive                1 hour                                  The maximum time a pooled connection can stay idle (not leased to any thread)
+                                                                  before it is shut down.
+cookiesEnabled            false                                   Whether or not to enable cookies.
+maxConnections            1024                                    The maximum number of concurrent open connections.
+maxConnectionsPerRoute    1024                                    The maximum number of concurrent open connections per route.
+keepAlive                 0 milliseconds                          The maximum time a connection will be kept alive before it is reconnected. If set
+                                                                  to 0, connections will be immediately closed after every request/response.
+retries                   0                                       The number of times to retry failed requests. Requests are only
+                                                                  retried if they throw an exception other than ``InterruptedIOException``,
+                                                                  ``UnknownHostException``, ``ConnectException``, or ``SSLException``.
+userAgent                 ``applicationName`` (``clientName``)    The User-Agent to send with requests.
+========================= ======================================  =============================================================================
 
 
 .. _man-configuration-clients-jersey:
 
 JerseyClient
------
+------------
 
 Extends the attributes that are available to :ref:`http clients <man-configuration-clients-http>`
 
@@ -793,8 +888,10 @@ See JerseyClientConfiguration_ and HttpClientConfiguration_ for more options.
     jerseyClient:
       minThreads: 1
       maxThreads: 128
+      workQueueSize: 8
       gzipEnabled: true
       gzipEnabledForRequests: true
+      chunkedEncodingEnabled: true
 
 
 ======================= ==================  ===================================================================================================
@@ -802,7 +899,116 @@ Name                    Default             Description
 ======================= ==================  ===================================================================================================
 minThreads              1                   The minimum number of threads in the pool used for asynchronous requests.
 maxThreads              128                 The maximum number of threads in the pool used for asynchronous requests.
+workQueueSize           8                   The size of the work queue of the pool used for asynchronous requests.
+                                            Additional threads will be spawn only if the queue is reached its maximum size.
 gzipEnabled             true                Adds an Accept-Encoding: gzip header to all requests, and enables automatic gzip decoding of responses.
 gzipEnabledForRequests  true                Adds a Content-Encoding: gzip header to all requests, and enables automatic gzip encoding of requests.
+chunkedEncodingEnabled  true                Enables the use of chunked encoding for requests.
 ======================= ==================  ===================================================================================================
 
+
+.. _man-configuration-database:
+
+Database
+========
+
+.. code-block:: yaml
+
+    database:
+      driverClass : org.postgresql.Driver
+      url: 'jdbc:postgresql://db.example.com/db-prod'
+      user: pg-user
+      password: iAMs00perSecrEET
+
+
+============================    =====================    ===============================================================
+Name                            Default                  Description
+============================    =====================    ===============================================================
+driverClass                     REQUIRED                 The full name of the JDBC driver class.
+
+url                             REQUIRED                 The URL of the server.
+
+user                            REQUIRED                 The username used to connect to the server.
+
+password                        none                     The password used to connect to the server.
+
+abandonWhenPercentageFull       0                        Connections that have been abandoned (timed out) won't get
+                                                         closed and reported up unless the number of connections in use
+                                                         are above the percentage defined by abandonWhenPercentageFull.
+                                                         The value should be between 0-100.
+
+alternateUsernamesAllowed       false                    Set to true if the call getConnection(username,password) is
+                                                         allowed. This is used for when the pool is used by an
+                                                         application  accessing multiple schemas. There is a
+                                                         performance impact turning this option on, even when not used.
+
+commitOnReturn                  false                    Set to true if you want the connection pool to commit any
+                                                         pending transaction when a connection is returned.
+
+autoCommitByDefault             JDBC driver's default    The default auto-commit state of the connections.
+
+readOnlyByDefault               JDBC driver's default    The default read-only state of the connections.
+
+properties                      none                     Any additional JDBC driver parameters.
+
+defaultCatalog                  none                     The default catalog to use for the connections.
+
+defaultTransactionIsolation     JDBC driver's default    The default transaction isolation to use for the connections.
+                                                         Can be one of none, default, read-uncommitted, read-committed,
+                                                         repeatable-read, or serializable.
+
+useFairQueue                    true                     If true, calls to getConnection are handled in a FIFO manner.
+
+initialSize                     10                       The initial size of the connection pool.
+
+minSize                         10                       The minimum size of the connection pool.
+
+maxSize                         100                      The maximum size of the connection pool.
+
+initializationQuery             none                     A custom query to be run when a connection is first created.
+
+logAbandonedConnections         false                    If true, logs stack traces of abandoned connections.
+
+logValidationErrors             false                    If true, logs errors when connections fail validation.
+
+maxConnectionAge                none                     If set, connections which have been open for longer than
+                                                         maxConnectionAge are closed when returned.
+
+maxWaitForConnection            30 seconds               If a request for a connection is blocked for longer than this
+                                                         period, an exception will be thrown.
+
+minIdleTime                     1 minute                 The minimum amount of time an connection must sit idle in the
+                                                         pool before it is eligible for eviction.
+
+validationQuery                 SELECT 1                 The SQL query that will be used to validate connections from
+                                                         this pool before returning them to the caller or pool.
+                                                         If specified, this query does not have to return any data, it
+                                                         just can't throw a SQLException.
+
+validationQueryTimeout          none                     The timeout before a connection validation queries fail.
+
+checkConnectionWhileIdle        true                     Set to true if query validation should take place while the
+                                                         connection is idle.
+
+checkConnectionOnBorrow         false                    Whether or not connections will be validated before being
+                                                         borrowed from the pool. If the connection fails to validate,
+                                                         it will be dropped from the pool, and another will be
+                                                         borrowed.
+
+checkConnectionOnConnect        false                    Whether or not connections will be validated before being
+                                                         added to the pool. If the connection fails to validate,
+                                                         it won't be added to the pool.
+
+checkConnectionOnReturn         false                    Whether or not connections will be validated after being
+                                                         returned to the pool. If the connection fails to validate, it
+                                                         will be dropped from the pool.
+
+autoCommentsEnabled             true                     Whether or not ORMs should automatically add comments.
+
+evictionInterval                5 seconds                The amount of time to sleep between runs of the idle
+                                                         connection validation, abandoned cleaner and idle pool
+                                                         resizing.
+
+validationInterval              30 seconds               To avoid excess validation, only run validation once every
+                                                         interval.
+============================    =====================    ===============================================================

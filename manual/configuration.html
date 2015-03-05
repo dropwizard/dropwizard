@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="../_static/dropwizard.css" type="text/css"/>
     <link rel="top" title="Dropwizard" href="../index.html"/>
     <link rel="up" title="User Manual" href="index.html"/>
-    <link rel="next" title="About Dropwizard" href="../about/index.html"/>
+    <link rel="next" title="Dropwizard Internals" href="internals.html"/>
     <link rel="prev" title="Dropwizard Example, Step by Step" href="example.html"/>
     <style lang="text/css">
         #top-bar, #top-bar small, #top-bar a {
@@ -70,6 +70,7 @@
 <li class="toctree-l2"><a class="reference internal" href="migrations.html">Dropwizard Migrations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="hibernate.html">Dropwizard Hibernate</a></li>
 <li class="toctree-l2"><a class="reference internal" href="auth.html">Dropwizard Authentication</a></li>
+<li class="toctree-l2"><a class="reference internal" href="forms.html">Dropwizard Forms</a></li>
 <li class="toctree-l2"><a class="reference internal" href="views.html">Dropwizard Views</a></li>
 <li class="toctree-l2"><a class="reference internal" href="scala.html">Dropwizard &amp; Scala</a></li>
 <li class="toctree-l2"><a class="reference internal" href="testing.html">Testing Dropwizard</a></li>
@@ -114,8 +115,10 @@
 <li class="toctree-l4"><a class="reference internal" href="#jerseyclient">JerseyClient</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="#database">Database</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="internals.html">Dropwizard Internals</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../about/index.html">About Dropwizard</a></li>
@@ -124,7 +127,9 @@
 
                 <hr/>
                 <ul>
-                    <li><a href="https://groups.google.com/forum/#!forum/dropwizard-user">Mailing List</a></li>
+                    <li><a href="https://dropwizard.github.io/dropwizard/0.8.0">Maven Site</a></li>
+                    <li><a href="https://groups.google.com/forum/#!forum/dropwizard-user">User Mailing List</a></li>
+                    <li><a href="https://groups.google.com/forum/#!forum/dropwizard-dev">Developer Mailing List</a></li>
                 </ul>
             </div>
             <div class="span9" id="body">
@@ -132,7 +137,58 @@
   <div class="section" id="dropwizard-configuration-reference">
 <span id="man-configuration"></span><h1>Dropwizard Configuration Reference</h1>
 <p class="rubric">The <tt class="docutils literal"><span class="pre">dropwizard-configuration</span></tt> module provides you with a polymorphic configuration
-mechanism.</p>
+mechanism, meaning that a particular section of your configuration file can be implemented
+using one or more configuration classes.</p>
+<p>To use this capability for your own configuration classes, create a top-level configuration interface or class that
+implements <tt class="docutils literal"><span class="pre">Discoverable</span></tt> and add the name of that class to <tt class="docutils literal"><span class="pre">META-INF/services/io.dropwizard.jackson.Discoverable</span></tt>.
+Make sure to use <a class="reference external" href="http://wiki.fasterxml.com/JacksonPolymorphicDeserialization">Jackson polymorphic deserialization</a> annotations appropriately.</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="nd">@JsonTypeInfo</span><span class="o">(</span><span class="n">use</span> <span class="o">=</span> <span class="n">Id</span><span class="o">.</span><span class="na">NAME</span><span class="o">,</span> <span class="n">include</span> <span class="o">=</span> <span class="n">As</span><span class="o">.</span><span class="na">PROPERTY</span><span class="o">,</span> <span class="n">property</span> <span class="o">=</span> <span class="s">&quot;type&quot;</span><span class="o">)</span>
+<span class="kd">interface</span> <span class="nc">WidgetFactory</span> <span class="kd">extends</span> <span class="n">Discoverable</span> <span class="o">{</span>
+    <span class="n">Widget</span> <span class="nf">createWidget</span><span class="o">();</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>Then create subtypes of the top-level type corresponding to each alternative, and add their names to
+<tt class="docutils literal"><span class="pre">META-INF/services/WidgetFactory</span></tt>.</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="nd">@JsonTypeName</span><span class="o">(</span><span class="s">&quot;hammer&quot;</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">HammerFactory</span> <span class="kd">implements</span> <span class="n">WidgetFactory</span> <span class="o">{</span>
+    <span class="nd">@JsonProperty</span>
+    <span class="kd">private</span> <span class="kt">int</span> <span class="n">weight</span> <span class="o">=</span> <span class="mi">10</span><span class="o">;</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="n">Hammer</span> <span class="nf">createWidget</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">Hammer</span><span class="o">(</span><span class="n">weight</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="nd">@JsonTypeName</span><span class="o">(</span><span class="s">&quot;chisel&quot;</span><span class="o">)</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">ChiselFactory</span> <span class="kd">implements</span> <span class="n">WidgetFactory</span> <span class="o">{</span>
+    <span class="nd">@JsonProperty</span>
+    <span class="kd">private</span> <span class="kt">float</span> <span class="n">radius</span> <span class="o">=</span> <span class="mi">1</span><span class="o">;</span>
+
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="n">Chisel</span> <span class="nf">createWidget</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">Chisel</span><span class="o">(</span><span class="n">weight</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>Now you can use <tt class="docutils literal"><span class="pre">WidgetFactory</span></tt> objects in your application&#8217;s configuration.</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="kd">public</span> <span class="kd">class</span> <span class="nc">MyConfiguration</span> <span class="kd">extends</span> <span class="n">Configuration</span> <span class="o">{</span>
+    <span class="nd">@JsonProperty</span>
+    <span class="nd">@NotNull</span>
+    <span class="nd">@Valid</span>
+    <span class="kd">private</span> <span class="n">List</span><span class="o">&lt;</span><span class="n">WidgetFactory</span><span class="o">&gt;</span> <span class="n">widgets</span><span class="o">;</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">widgets</span><span class="p-Indicator">:</span>
+  <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">type</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">hammer</span>
+    <span class="l-Scalar-Plain">weight</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">20</span>
+  <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">type</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">chisel</span>
+    <span class="l-Scalar-Plain">radius</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">0.4</span>
+</pre></div>
+</div>
 <div class="section" id="servers">
 <span id="man-configuration-servers"></span><h2>Servers</h2>
 <div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">server</span><span class="p-Indicator">:</span>
@@ -144,9 +200,9 @@ mechanism.</p>
 <span id="man-configuration-all"></span><h3>All</h3>
 <table border="1" class="docutils">
 <colgroup>
-<col width="15%" />
-<col width="32%" />
-<col width="53%" />
+<col width="22%" />
+<col width="30%" />
+<col width="48%" />
 </colgroup>
 <thead valign="bottom">
 <tr class="row-odd"><th class="head">Name</th>
@@ -231,6 +287,16 @@ to cleanly shutdown before forcibly terminating them.</td>
 <tt class="docutils literal"><span class="pre">HEAD</span></tt>, <tt class="docutils literal"><span class="pre">OPTIONS</span></tt>, <tt class="docutils literal"><span class="pre">PATCH</span></tt></td>
 <td>The set of allowed HTTP methods. Others will be rejected with a
 405 Method Not Allowed response.</td>
+</tr>
+<tr class="row-odd"><td>rootPath</td>
+<td><tt class="docutils literal"><span class="pre">/</span></tt></td>
+<td>The URL pattern relative to <tt class="docutils literal"><span class="pre">applicationContextPath</span></tt> from which
+the JAX-RS resources will be served.</td>
+</tr>
+<tr class="row-even"><td>registerDefaultExceptionMappers</td>
+<td>true</td>
+<td>Whether or not the default Jersey ExceptionMappers should be registered.
+Set this to false if you want to register your own.</td>
 </tr>
 </tbody>
 </table>
@@ -359,6 +425,8 @@ and admin requests. TODO link to connector below.</td>
 <div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">server</span><span class="p-Indicator">:</span>
   <span class="l-Scalar-Plain">adminMinThreads</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">1</span>
   <span class="l-Scalar-Plain">adminMaxThreads</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">64</span>
+  <span class="l-Scalar-Plain">adminContextPath</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">/</span>
+  <span class="l-Scalar-Plain">applicationContextPath</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">/</span>
   <span class="l-Scalar-Plain">applicationConnectors</span><span class="p-Indicator">:</span>
     <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">type</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">http</span>
       <span class="l-Scalar-Plain">port</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">8080</span>
@@ -410,6 +478,14 @@ handle admin requests.</td>
 <tr class="row-odd"><td>adminMaxThreads</td>
 <td>64</td>
 <td>The maximum number of threads to use for admin requests.</td>
+</tr>
+<tr class="row-even"><td>adminContextPath</td>
+<td>/</td>
+<td>The context path of the admin servlets, including metrics and tasks.</td>
+</tr>
+<tr class="row-odd"><td>applicationContextPath</td>
+<td>/</td>
+<td>The context path of the application servlets, including Jersey.</td>
 </tr>
 </tbody>
 </table>
@@ -546,7 +622,7 @@ connection. So if a single byte is read or written, then the timeout is reset.</
 <tr class="row-even"><td>useForwardedHeaders</td>
 <td>true</td>
 <td>Whether or not to look at <tt class="docutils literal"><span class="pre">X-Forwarded-*</span></tt> headers added by proxies. See
-<tt class="docutils literal"><span class="pre">ForwardedRequestCustomize</span></tt> for details.</td>
+<a class="reference external" href="http://download.eclipse.org/jetty/stable-9/apidocs/org/eclipse/jetty/server/ForwardedRequestCustomizer.html">ForwardedRequestCustomizer</a> for details.</td>
 </tr>
 </tbody>
 </table>
@@ -581,7 +657,9 @@ connection. So if a single byte is read or written, then the timeout is reset.</
       <span class="l-Scalar-Plain">validateCerts</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">true</span>
       <span class="l-Scalar-Plain">validatePeers</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">true</span>
       <span class="l-Scalar-Plain">supportedProtocols</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">SSLv3</span>
+      <span class="l-Scalar-Plain">excludedProtocols</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">(none)</span>
       <span class="l-Scalar-Plain">supportedCipherSuites</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256</span>
+      <span class="l-Scalar-Plain">excludedCipherSuites</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">(none)</span>
       <span class="l-Scalar-Plain">allowRenegotiation</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">true</span>
       <span class="l-Scalar-Plain">endpointIdentificationAlgorithm</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">(none)</span>
 </pre></div>
@@ -688,12 +766,17 @@ will refuse to start with expired or otherwise invalid certificates.</td>
 <td>A list of protocols (e.g., <tt class="docutils literal"><span class="pre">SSLv3</span></tt>, <tt class="docutils literal"><span class="pre">TLSv1</span></tt>) which are supported. All
 other protocols will be refused.</td>
 </tr>
-<tr class="row-odd"><td>supportedCipherSuites</td>
+<tr class="row-odd"><td>excludedProtocols</td>
+<td>(none)</td>
+<td>A list of protocols (e.g., <tt class="docutils literal"><span class="pre">SSLv3</span></tt>, <tt class="docutils literal"><span class="pre">TLSv1</span></tt>) which are excluded. These
+protocols will be refused.</td>
+</tr>
+<tr class="row-even"><td>supportedCipherSuites</td>
 <td>(none)</td>
 <td>A list of cipher suites (e.g., <tt class="docutils literal"><span class="pre">TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256</span></tt>) which
 are supported. All other cipher suites will be refused</td>
 </tr>
-<tr class="row-even"><td>excludedCipherSuites</td>
+<tr class="row-odd"><td>excludedCipherSuites</td>
 <td>(none)</td>
 <td>A list of cipher suites (e.g., <tt class="docutils literal"><span class="pre">TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256</span></tt>) which
 are excluded. These cipher suites will be refused and exclusion takes higher
@@ -702,11 +785,11 @@ precedence than inclusion, such that if a cipher suite is listed in
 excluded. To verify that the proper cipher suites are being whitelisted and
 blacklisted, it is recommended to use the tool <a class="reference external" href="https://github.com/iSECPartners/sslyze">sslyze</a>.</td>
 </tr>
-<tr class="row-odd"><td>allowRenegotiation</td>
+<tr class="row-even"><td>allowRenegotiation</td>
 <td>true</td>
 <td>Whether or not TLS renegotiation is allowed.</td>
 </tr>
-<tr class="row-even"><td>endpointIdentificationAlgorithm</td>
+<tr class="row-odd"><td>endpointIdentificationAlgorithm</td>
 <td>(none)</td>
 <td>Which endpoint identification algorithm, if any, to use during the TLS handshake.</td>
 </tr>
@@ -716,6 +799,8 @@ blacklisted, it is recommended to use the tool <a class="reference external" hre
 <div class="section" id="spdy">
 <span id="man-configuration-spdy"></span><h3>SPDY</h3>
 <p>Extends the attributes that are available to the <a class="reference internal" href="#man-configuration-https"><em>HTTPS connector</em></a></p>
+<p>For this connector to work with ALPN protocol you need to provide alpn-boot library to JVM&#8217;s bootpath.
+The correct library version depends on the JVM version. Consult Jetty ALPN <a class="reference external" href="http://www.eclipse.org/jetty/documentation/current/alpn-chapter.html">guide</a> for the reference.</p>
 <div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">server</span><span class="p-Indicator">:</span>
   <span class="l-Scalar-Plain">applicationConnectors</span><span class="p-Indicator">:</span>
     <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">type</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">spdy3</span>
@@ -965,7 +1050,7 @@ to the syslog server separately from the main message)</td>
 <span id="man-configuration-metrics"></span><h2>Metrics</h2>
 <p>The metrics configuration has two fields; frequency and reporters.</p>
 <div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">metrics</span><span class="p-Indicator">:</span>
-  <span class="l-Scalar-Plain">frequency</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">1 second</span>
+  <span class="l-Scalar-Plain">frequency</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">1 minute</span>
   <span class="l-Scalar-Plain">reporters</span><span class="p-Indicator">:</span>
     <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">type</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">&lt;type&gt;</span>
 </pre></div>
@@ -984,7 +1069,7 @@ to the syslog server separately from the main message)</td>
 </thead>
 <tbody valign="top">
 <tr class="row-even"><td>frequency</td>
-<td>1 second</td>
+<td>1 minute</td>
 <td>The frequency to report metrics. Overridable per-reporter.</td>
 </tr>
 <tr class="row-odd"><td>reporters</td>
@@ -1003,14 +1088,15 @@ to the syslog server separately from the main message)</td>
       <span class="l-Scalar-Plain">rateUnit</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">seconds</span>
       <span class="l-Scalar-Plain">excludes</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">(none)</span>
       <span class="l-Scalar-Plain">includes</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">(all)</span>
-      <span class="l-Scalar-Plain">frequency</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">1 second</span>
+      <span class="l-Scalar-Plain">useRegexFilters</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">false</span>
+      <span class="l-Scalar-Plain">frequency</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">1 minute</span>
 </pre></div>
 </div>
 <table border="1" class="docutils">
 <colgroup>
-<col width="17%" />
-<col width="10%" />
-<col width="73%" />
+<col width="14%" />
+<col width="9%" />
+<col width="77%" />
 </colgroup>
 <thead valign="bottom">
 <tr class="row-odd"><th class="head">Name</th>
@@ -1035,12 +1121,24 @@ to the syslog server separately from the main message)</td>
 <td>(all)</td>
 <td>Metrics to include in reports, by name. When defined, only these metrics will be reported.</td>
 </tr>
-<tr class="row-even"><td>frequency</td>
+<tr class="row-even"><td>useRegexFilters</td>
+<td>false</td>
+<td>Indicates whether the values of the &#8216;includes&#8217; and &#8216;excludes&#8217; fields should be treated as regular expressions or not.</td>
+</tr>
+<tr class="row-odd"><td>frequency</td>
 <td>(none)</td>
 <td>The frequency to report metrics. Overrides the default.</td>
 </tr>
 </tbody>
 </table>
+<p>The inclusion and exclusion rules are defined as:</p>
+<ul class="simple">
+<li>If <strong>includes</strong> is empty, then all metrics are included;</li>
+<li>If <strong>includes</strong> is not empty, only metrics from this list are included;</li>
+<li>If <strong>excludes</strong> is empty, no metrics are excluded;</li>
+<li>If <strong>excludes</strong> is not empty, then exclusion rules take precedence over inclusion rules. Thus if a name matches</li>
+</ul>
+<p>the exclusion rules it will not be included in reports even if it also matches the inclusion rules.</p>
 <div class="section" id="formatted-reporters">
 <span id="man-configuration-metrics-formatted"></span><h4>Formatted Reporters</h4>
 <p>These options are available only to &#8220;formatted&#8221; reporters and extend the options available to <a class="reference internal" href="#man-configuration-metrics-all"><em>all reporters</em></a></p>
@@ -1140,6 +1238,10 @@ to the syslog server separately from the main message)</td>
 <span id="man-configuration-metrics-ganglia"></span><h3>Ganglia Reporter</h3>
 <p>Reports metrics periodically to Ganglia.</p>
 <p>Extends the attributes that are available to <a class="reference internal" href="#man-configuration-metrics-all"><em>all reporters</em></a></p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">You will need to add <tt class="docutils literal"><span class="pre">dropwizard-metrics-ganglia</span></tt> to your POM.</p>
+</div>
 <div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">metrics</span><span class="p-Indicator">:</span>
   <span class="l-Scalar-Plain">reporters</span><span class="p-Indicator">:</span>
     <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">type</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">ganglia</span>
@@ -1207,6 +1309,10 @@ In the format <tt class="docutils literal"><span class="pre">hostname:port</span
 <span id="man-configuration-metrics-graphite"></span><h3>Graphite Reporter</h3>
 <p>Reports metrics periodically to Graphite.</p>
 <p>Extends the attributes that are available to <a class="reference internal" href="#man-configuration-metrics-all"><em>all reporters</em></a></p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">You will need to add <tt class="docutils literal"><span class="pre">dropwizard-metrics-graphite</span></tt> to your POM.</p>
+</div>
 <div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">metrics</span><span class="p-Indicator">:</span>
   <span class="l-Scalar-Plain">reporters</span><span class="p-Indicator">:</span>
     <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">type</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">graphite</span>
@@ -1299,8 +1405,8 @@ In the format <tt class="docutils literal"><span class="pre">hostname:port</span
 </div>
 <table border="1" class="docutils">
 <colgroup>
-<col width="16%" />
-<col width="27%" />
+<col width="17%" />
+<col width="26%" />
 <col width="57%" />
 </colgroup>
 <thead valign="bottom">
@@ -1318,35 +1424,39 @@ In the format <tt class="docutils literal"><span class="pre">hostname:port</span
 <td>500 milliseconds</td>
 <td>The maximum time to wait for a connection to open.</td>
 </tr>
-<tr class="row-even"><td>timeToLive</td>
+<tr class="row-even"><td>connectionRequestTimeout</td>
+<td>500 milliseconds</td>
+<td>The maximum time to wait for a connection to be returned from the connection pool.</td>
+</tr>
+<tr class="row-odd"><td>timeToLive</td>
 <td>1 hour</td>
 <td>The maximum time a pooled connection can stay idle (not leased to any thread)
 before it is shut down.</td>
 </tr>
-<tr class="row-odd"><td>cookiesEnabled</td>
+<tr class="row-even"><td>cookiesEnabled</td>
 <td>false</td>
 <td>Whether or not to enable cookies.</td>
 </tr>
-<tr class="row-even"><td>maxConnections</td>
+<tr class="row-odd"><td>maxConnections</td>
 <td>1024</td>
 <td>The maximum number of concurrent open connections.</td>
 </tr>
-<tr class="row-odd"><td>maxConnectionsPerRoute</td>
+<tr class="row-even"><td>maxConnectionsPerRoute</td>
 <td>1024</td>
 <td>The maximum number of concurrent open connections per route.</td>
 </tr>
-<tr class="row-even"><td>keepAlive</td>
+<tr class="row-odd"><td>keepAlive</td>
 <td>0 milliseconds</td>
 <td>The maximum time a connection will be kept alive before it is reconnected. If set
 to 0, connections will be immediately closed after every request/response.</td>
 </tr>
-<tr class="row-odd"><td>retries</td>
+<tr class="row-even"><td>retries</td>
 <td>0</td>
 <td>The number of times to retry failed requests. Requests are only
 retried if they throw an exception other than <tt class="docutils literal"><span class="pre">InterruptedIOException</span></tt>,
 <tt class="docutils literal"><span class="pre">UnknownHostException</span></tt>, <tt class="docutils literal"><span class="pre">ConnectException</span></tt>, or <tt class="docutils literal"><span class="pre">SSLException</span></tt>.</td>
 </tr>
-<tr class="row-even"><td>userAgent</td>
+<tr class="row-odd"><td>userAgent</td>
 <td><tt class="docutils literal"><span class="pre">applicationName</span></tt> (<tt class="docutils literal"><span class="pre">clientName</span></tt>)</td>
 <td>The User-Agent to send with requests.</td>
 </tr>
@@ -1360,8 +1470,10 @@ retried if they throw an exception other than <tt class="docutils literal"><span
 <div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">jerseyClient</span><span class="p-Indicator">:</span>
   <span class="l-Scalar-Plain">minThreads</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">1</span>
   <span class="l-Scalar-Plain">maxThreads</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">128</span>
+  <span class="l-Scalar-Plain">workQueueSize</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">8</span>
   <span class="l-Scalar-Plain">gzipEnabled</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">true</span>
   <span class="l-Scalar-Plain">gzipEnabledForRequests</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">true</span>
+  <span class="l-Scalar-Plain">chunkedEncodingEnabled</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">true</span>
 </pre></div>
 </div>
 <table border="1" class="docutils">
@@ -1385,17 +1497,201 @@ retried if they throw an exception other than <tt class="docutils literal"><span
 <td>128</td>
 <td>The maximum number of threads in the pool used for asynchronous requests.</td>
 </tr>
-<tr class="row-even"><td>gzipEnabled</td>
+<tr class="row-even"><td>workQueueSize</td>
+<td>8</td>
+<td>The size of the work queue of the pool used for asynchronous requests.
+Additional threads will be spawn only if the queue is reached its maximum size.</td>
+</tr>
+<tr class="row-odd"><td>gzipEnabled</td>
 <td>true</td>
 <td>Adds an Accept-Encoding: gzip header to all requests, and enables automatic gzip decoding of responses.</td>
 </tr>
-<tr class="row-odd"><td>gzipEnabledForRequests</td>
+<tr class="row-even"><td>gzipEnabledForRequests</td>
 <td>true</td>
 <td>Adds a Content-Encoding: gzip header to all requests, and enables automatic gzip encoding of requests.</td>
+</tr>
+<tr class="row-odd"><td>chunkedEncodingEnabled</td>
+<td>true</td>
+<td>Enables the use of chunked encoding for requests.</td>
 </tr>
 </tbody>
 </table>
 </div>
+</div>
+<div class="section" id="database">
+<span id="man-configuration-database"></span><h2>Database</h2>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">database</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">driverClass</span> <span class="p-Indicator">:</span> <span class="l-Scalar-Plain">org.postgresql.Driver</span>
+  <span class="l-Scalar-Plain">url</span><span class="p-Indicator">:</span> <span class="s">&#39;jdbc:postgresql://db.example.com/db-prod&#39;</span>
+  <span class="l-Scalar-Plain">user</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">pg-user</span>
+  <span class="l-Scalar-Plain">password</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">iAMs00perSecrEET</span>
+</pre></div>
+</div>
+<table border="1" class="docutils">
+<colgroup>
+<col width="25%" />
+<col width="19%" />
+<col width="56%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Name</th>
+<th class="head">Default</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>driverClass</td>
+<td>REQUIRED</td>
+<td>The full name of the JDBC driver class.</td>
+</tr>
+<tr class="row-odd"><td>url</td>
+<td>REQUIRED</td>
+<td>The URL of the server.</td>
+</tr>
+<tr class="row-even"><td>user</td>
+<td>REQUIRED</td>
+<td>The username used to connect to the server.</td>
+</tr>
+<tr class="row-odd"><td>password</td>
+<td>none</td>
+<td>The password used to connect to the server.</td>
+</tr>
+<tr class="row-even"><td>abandonWhenPercentageFull</td>
+<td>0</td>
+<td>Connections that have been abandoned (timed out) won&#8217;t get
+closed and reported up unless the number of connections in use
+are above the percentage defined by abandonWhenPercentageFull.
+The value should be between 0-100.</td>
+</tr>
+<tr class="row-odd"><td>alternateUsernamesAllowed</td>
+<td>false</td>
+<td>Set to true if the call getConnection(username,password) is
+allowed. This is used for when the pool is used by an
+application  accessing multiple schemas. There is a
+performance impact turning this option on, even when not used.</td>
+</tr>
+<tr class="row-even"><td>commitOnReturn</td>
+<td>false</td>
+<td>Set to true if you want the connection pool to commit any
+pending transaction when a connection is returned.</td>
+</tr>
+<tr class="row-odd"><td>autoCommitByDefault</td>
+<td>JDBC driver&#8217;s default</td>
+<td>The default auto-commit state of the connections.</td>
+</tr>
+<tr class="row-even"><td>readOnlyByDefault</td>
+<td>JDBC driver&#8217;s default</td>
+<td>The default read-only state of the connections.</td>
+</tr>
+<tr class="row-odd"><td>properties</td>
+<td>none</td>
+<td>Any additional JDBC driver parameters.</td>
+</tr>
+<tr class="row-even"><td>defaultCatalog</td>
+<td>none</td>
+<td>The default catalog to use for the connections.</td>
+</tr>
+<tr class="row-odd"><td>defaultTransactionIsolation</td>
+<td>JDBC driver&#8217;s default</td>
+<td>The default transaction isolation to use for the connections.
+Can be one of none, default, read-uncommitted, read-committed,
+repeatable-read, or serializable.</td>
+</tr>
+<tr class="row-even"><td>useFairQueue</td>
+<td>true</td>
+<td>If true, calls to getConnection are handled in a FIFO manner.</td>
+</tr>
+<tr class="row-odd"><td>initialSize</td>
+<td>10</td>
+<td>The initial size of the connection pool.</td>
+</tr>
+<tr class="row-even"><td>minSize</td>
+<td>10</td>
+<td>The minimum size of the connection pool.</td>
+</tr>
+<tr class="row-odd"><td>maxSize</td>
+<td>100</td>
+<td>The maximum size of the connection pool.</td>
+</tr>
+<tr class="row-even"><td>initializationQuery</td>
+<td>none</td>
+<td>A custom query to be run when a connection is first created.</td>
+</tr>
+<tr class="row-odd"><td>logAbandonedConnections</td>
+<td>false</td>
+<td>If true, logs stack traces of abandoned connections.</td>
+</tr>
+<tr class="row-even"><td>logValidationErrors</td>
+<td>false</td>
+<td>If true, logs errors when connections fail validation.</td>
+</tr>
+<tr class="row-odd"><td>maxConnectionAge</td>
+<td>none</td>
+<td>If set, connections which have been open for longer than
+maxConnectionAge are closed when returned.</td>
+</tr>
+<tr class="row-even"><td>maxWaitForConnection</td>
+<td>30 seconds</td>
+<td>If a request for a connection is blocked for longer than this
+period, an exception will be thrown.</td>
+</tr>
+<tr class="row-odd"><td>minIdleTime</td>
+<td>1 minute</td>
+<td>The minimum amount of time an connection must sit idle in the
+pool before it is eligible for eviction.</td>
+</tr>
+<tr class="row-even"><td>validationQuery</td>
+<td>SELECT 1</td>
+<td>The SQL query that will be used to validate connections from
+this pool before returning them to the caller or pool.
+If specified, this query does not have to return any data, it
+just can&#8217;t throw a SQLException.</td>
+</tr>
+<tr class="row-odd"><td>validationQueryTimeout</td>
+<td>none</td>
+<td>The timeout before a connection validation queries fail.</td>
+</tr>
+<tr class="row-even"><td>checkConnectionWhileIdle</td>
+<td>true</td>
+<td>Set to true if query validation should take place while the
+connection is idle.</td>
+</tr>
+<tr class="row-odd"><td>checkConnectionOnBorrow</td>
+<td>false</td>
+<td>Whether or not connections will be validated before being
+borrowed from the pool. If the connection fails to validate,
+it will be dropped from the pool, and another will be
+borrowed.</td>
+</tr>
+<tr class="row-even"><td>checkConnectionOnConnect</td>
+<td>false</td>
+<td>Whether or not connections will be validated before being
+added to the pool. If the connection fails to validate,
+it won&#8217;t be added to the pool.</td>
+</tr>
+<tr class="row-odd"><td>checkConnectionOnReturn</td>
+<td>false</td>
+<td>Whether or not connections will be validated after being
+returned to the pool. If the connection fails to validate, it
+will be dropped from the pool.</td>
+</tr>
+<tr class="row-even"><td>autoCommentsEnabled</td>
+<td>true</td>
+<td>Whether or not ORMs should automatically add comments.</td>
+</tr>
+<tr class="row-odd"><td>evictionInterval</td>
+<td>5 seconds</td>
+<td>The amount of time to sleep between runs of the idle
+connection validation, abandoned cleaner and idle pool
+resizing.</td>
+</tr>
+<tr class="row-even"><td>validationInterval</td>
+<td>30 seconds</td>
+<td>To avoid excess validation, only run validation once every
+interval.</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 
@@ -1409,7 +1705,7 @@ retried if they throw an exception other than <tt class="docutils literal"><span
             Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>
             1.1.3.
             </p>
-            <p style="float: right">Dropwizard v0.7.0</p>
+            <p style="float: right">Dropwizard v0.8.0</p>
         </footer>
     </div>
 </body>

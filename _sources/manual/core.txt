@@ -140,7 +140,7 @@ Your main ``Configuration`` subclass can then include this as a member field:
 
 .. code-block:: java
 
-    public class ExampleApplicationConfiguration extends Configuration {
+    public class ExampleConfiguration extends Configuration {
         @Valid
         @NotNull
         private MessageQueueFactory messageQueue = new MessageQueueFactory();
@@ -216,7 +216,46 @@ Dropwizard then calls your ``Application`` subclass to initialize your applicati
     file. If it does not exist or is not an array setting, it will get added as a simple string setting, including 
     the ',' characters as part of the string.
 
-.. _man-core-environments:
+.. _man-core-environment-variables:
+
+Environment variables
+---------------------
+
+The ``dropwizard-configuration`` module also provides the capabilities to substitute configuration settings with the
+value of environment variables using a ``SubstitutingSourceProvider`` and ``EnvironmentVariableSubstitutor``.
+
+.. code-block:: java
+
+    public class MyApplication extends Application<MyConfiguration> {
+        // [...]
+        @Override
+        public void initialize(Bootstrap<MyConfiguration> bootstrap) {
+            // Enable variable substitution with environment variables
+            bootstrap.setConfigurationSourceProvider(
+                    new SubstitutingSourceProvider(bootstrap.getConfigurationSourceProvider(),
+                                                       new EnvironmentVariableSubstitutor()
+                    )
+            );
+
+        }
+
+        // [...]
+    }
+
+The configuration settings which should be substituted need to be explicitly written in the configuration file and
+follow the substitution rules of StrSubstitutor_ from the Apache Commons Lang library.
+
+.. code-block:: yaml
+
+    mySetting: ${DW_MY_SETTING}
+    defaultSetting: ${DW_DEFAULT_SETTING:-default value}
+
+In general ``SubstitutingSourceProvider`` isn't restricted to substitute environment variables but can be used to replace
+variables in the configuration source with arbitrary values by passing a custom ``StrSubstitutor`` implementation.
+
+.. _StrSubstitutor: https://commons.apache.org/proper/commons-lang/javadocs/api-release/org/apache/commons/lang3/text/StrSubstitutor.html
+
+.. _man-core-ssl:
 
 SSL
 ---
@@ -238,6 +277,9 @@ command you need). There is a test keystore you can use in the
           keyStorePassword: example
           validateCerts: false
 
+
+.. _man-core-bootstrapping:
+
 Bootstrapping
 =============
 
@@ -246,6 +288,9 @@ run as a server, it must first go through a bootstrapping phase. This phase corr
 ``Application`` subclass's ``initialize`` method. You can add :ref:`man-core-bundles`,
 :ref:`man-core-commands`, or register Jackson modules to allow you to include custom types as part
 of your configuration class.
+
+
+.. _man-core-environments:
 
 Environments
 ============
@@ -381,9 +426,9 @@ Bundles
 =======
 
 A Dropwizard bundle is a reusable group of functionality, used to define blocks of an application's
-behavior. For example, ``AssetBundle`` provides a simple way to serve static assets from your
-application's ``src/main/resources/assets`` directory as files available from ``/assets/*`` in your
-application.
+behavior. For example, ``AssetBundle`` from the ``dropwizard-assets`` module provides a simple way
+to serve static assets from your application's ``src/main/resources/assets`` directory as files
+available from ``/assets/*`` (or any other path) in your application.
 
 Some bundles require configuration parameters. These bundles implement ``ConfiguredBundle`` and will
 require your application's ``Configuration`` subclass to implement a specific interface.
@@ -399,7 +444,7 @@ application. To enable it, move your application to a sub-URL.
 
     server:
       type: simple
-      applicationContextPath: /application/*  # Default value*
+      rootPath: /application/*
 
 Then use an extended ``AssetsBundle`` constructor to serve resources in the
 ``assets`` folder from the root path. ``index.htm`` is served as the default
@@ -460,10 +505,11 @@ Tasks
 =====
 
 A ``Task`` is a run-time action your application provides access to on the administrative port via HTTP.
-All Dropwizard applications start with the ``gc`` task, which explicitly triggers the JVM's garbage
-collection. (This is useful, for example, for running full garbage collections during off-peak times
-or while the given application is out of rotation.) The execute method of a ``Task`` can be annotated
-with ``@Timed``, ``@Metered``, and ``@ExceptionMetered``. Dropwizard will automatically
+All Dropwizard applications start with: the ``gc`` task, which explicitly triggers the JVM's garbage
+collection (This is useful, for example, for running full garbage collections during off-peak times
+or while the given application is out of rotation.); and the ``log-level`` task, which configures the level
+of any number of loggers at runtime (akin to Logback's ``JmxConfigurator``). The execute method of a ``Task``
+can be annotated with ``@Timed``, ``@Metered``, and ``@ExceptionMetered``. Dropwizard will automatically
 record runtime information about your tasks. Here's a basic task class:
 
 .. code-block:: java
@@ -711,7 +757,7 @@ tests:
         public void buildsAThingResource() throws Exception {
             application.run(config, environment);
 
-            verify(jersey).register(any(ThingResource.class));
+            verify(jersey).register(isA(ThingResource.class));
         }
     }
 
@@ -1243,35 +1289,54 @@ Jersey filters
 --------------
 
 There might be cases when you want to filter out requests or modify them before they reach your Resources. Jersey
-provides you with the means to do so. If you want to stop the request from reaching your resources, throw a web-application
-``WebApplicationException``, if you want to modify the request or let it pass through the filter, return it.
+has a rich api for `filters and interceptors`_ that can be used directly in Dropwizard.
+You can stop the request from reaching your resources by throwing a ``WebApplicationException``. Alternatively,
+you can use filters to modify inbound requests or outbound responses.
+
+.. _filters and interceptors: http://jersey.java.net/documentation/latest/filters-and-interceptors.html
 
 .. code-block:: java
 
+    @Provider
     public class DateNotSpecifiedFilter implements ContainerRequestFilter {
-
-        @Context ExtendedUriInfo extendedUriInfo;
-
         @Override
-        public ContainerRequest filter(ContainerRequest request) {
-            boolean methodNeedsDateHeader = extendedUriInfo.getMatchedMethod().isAnnotationPresent(DateRequired.class);
-            String dateHeader = request.getHeaderValue(HttpHeaders.DATE);
+        public void filter(ContainerRequestContext requestContext) throws IOException {
+            String dateHeader = requestContext.getHeaderString(HttpHeaders.DATE);
 
-            if (methodNeedsDateHeader && dateHeader == null) {
+            if (dateHeader == null) {
                 Exception cause = new IllegalArgumentException("Date Header was not specified");
                 throw new WebApplicationException(cause, Response.Status.BAD_REQUEST);
-            } else {
-                return request;
             }
         }
     }
 
-This example checks the request for the "Date" header, and denies the request if was ommitted and the method this request would call has a certain annotation present.
-You can then register this filter in your Application class, like so:
+This example filter checks the request for the "Date" header, and denies the request if was missing. Otherwise,
+the request is passed through.
+
+Filters can be dynamically bound to resource methods using `DynamicFeature`_:
+
+.. _DynamicFeature: http://jax-rs-spec.java.net/nonav/2.0-rev-a/apidocs/index.html
 
 .. code-block:: java
 
-    environment.jersey().getResourceConfig().getContainerRequestFilters().add(new DateNotSpecifiedFilter());
+    @Provider
+    public class DateRequiredFeature implements DynamicFeature {
+        @Override
+        public void configure(ResourceInfo resourceInfo, FeatureContext context) {
+            if (resourceInfo.getResourceMethod().getAnnotation(DateRequired.class) != null) {
+                context.register(DateNotSpecifiedFilter.class);
+            }
+        }
+    }
+
+The DynamicFeature is invoked by the Jersey runtime when the application is started. In this example, the feature checks
+for methods that are annotated with ``@DateRequired`` and registers the ``DateNotSpecified`` filter on those methods only.
+
+You typically register the feature in your Application class, like so:
+
+.. code-block:: java
+
+    environment.jersey().register(DateRequiredFeature.class);
 
 
 .. _man-core-servlet-filters:

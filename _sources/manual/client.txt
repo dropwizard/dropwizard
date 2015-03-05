@@ -12,8 +12,8 @@ Dropwizard Client
 
 .. _man-client-apache:
 
-Apache HttpClient, version 4.3
-===============================
+Apache HttpClient
+=================
 
 The underlying library for ``dropwizard-client`` is  Apache's HttpClient_, a full-featured,
 well-tested HTTP client library.
@@ -28,9 +28,9 @@ To create a :ref:`managed <man-core-managed>`, instrumented ``HttpClient`` insta
     public class ExampleConfiguration extends Configuration {
         @Valid
         @NotNull
-        @JsonProperty
         private HttpClientConfiguration httpClient = new HttpClientConfiguration();
 
+        @JsonProperty("httpClient")
         public HttpClientConfiguration getHttpClientConfiguration() {
             return httpClient;
         }
@@ -45,7 +45,7 @@ Then, in your application's ``run`` method, create a new ``HttpClientBuilder``:
                     Environment environment) {
         final HttpClient httpClient = new HttpClientBuilder(environment).using(config.getHttpClientConfiguration())
                                                                         .build();
-        environment.addResource(new ExternalServiceResource(httpClient));
+        environment.jersey().register(new ExternalServiceResource(httpClient));
     }
 
 .. _man-client-apache-metrics:
@@ -112,8 +112,8 @@ following pieces of data:
 
 .. _man-client-jersey:
 
-Jersey Client, version 1.18
-===========================
+Jersey Client
+=============
 
 If HttpClient_ is too low-level for you, Dropwizard also supports Jersey's `Client API`_.
 Jersey's ``Client`` allows you to use all of the server-side media type support that your service
@@ -129,9 +129,9 @@ To create a :ref:`managed <man-core-managed>`, instrumented ``JerseyClient`` ins
     public class ExampleConfiguration extends Configuration {
         @Valid
         @NotNull
-        @JsonProperty
         private JerseyClientConfiguration httpClient = new JerseyClientConfiguration();
 
+        @JsonProperty("httpClient")
         public JerseyClientConfiguration getJerseyClientConfiguration() {
             return httpClient;
         }
@@ -147,6 +147,6 @@ Then, in your service's ``run`` method, create a new ``JerseyClientBuilder``:
 
         final Client client = new JerseyClientBuilder(environment).using(config.getJerseyClientConfiguration())
                                                                   .build(getName());                                                       
-        environment.addResource(new ExternalServiceResource(client));
+        environment.jersey().register(new ExternalServiceResource(client));
     }
 

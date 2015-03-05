@@ -22,9 +22,9 @@ To create a :ref:`managed <man-core-managed>`, instrumented ``SessionFactory`` i
     public class ExampleConfiguration extends Configuration {
         @Valid
         @NotNull
-        @JsonProperty("database")
         private DataSourceFactory database = new DataSourceFactory();
 
+        @JsonProperty("database")
         public DataSourceFactory getDataSourceFactory() {
             return database;
         }
@@ -48,8 +48,7 @@ and how to get a ``DataSourceFactory`` from your configuration subclass:
     }
 
     @Override
-    public void run(ExampleConfiguration config,
-                    Environment environment) throws ClassNotFoundException {
+    public void run(ExampleConfiguration config, Environment environment) {
         final UserDAO dao = new UserDAO(hibernate.getSessionFactory());
         environment.jersey().register(new UserResource(dao));
     }
@@ -139,7 +138,7 @@ actually require database access, so the ``@UnitOfWork`` annotation is provided:
         return dao.findById(id.get());
     }
 
-This will automatically open a session, begin a transaction, call ``findByPerson``, commit the
+This will automatically open a session, begin a transaction, call ``findById``, commit the
 transaction, and finally close the session. If an exception is thrown, the transaction is rolled
 back.
 

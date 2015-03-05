@@ -4,13 +4,13 @@
 
 <head>
     <meta charset="utf-8">
-    <title>Dropwizard Example, Step by Step | Dropwizard</title>
+    <title>Dropwizard Forms | Dropwizard</title>
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css"/>
     <link rel="stylesheet" href="../_static/dropwizard.css" type="text/css"/>
     <link rel="top" title="Dropwizard" href="../index.html"/>
     <link rel="up" title="User Manual" href="index.html"/>
-    <link rel="next" title="Dropwizard Configuration Reference" href="configuration.html"/>
-    <link rel="prev" title="Testing Dropwizard" href="testing.html"/>
+    <link rel="next" title="Dropwizard Views" href="views.html"/>
+    <link rel="prev" title="Dropwizard Authentication" href="auth.html"/>
     <style lang="text/css">
         #top-bar, #top-bar small, #top-bar a {
             text-shadow: 0px -1px 0px #182127;
@@ -70,11 +70,15 @@
 <li class="toctree-l2"><a class="reference internal" href="migrations.html">Dropwizard Migrations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="hibernate.html">Dropwizard Hibernate</a></li>
 <li class="toctree-l2"><a class="reference internal" href="auth.html">Dropwizard Authentication</a></li>
-<li class="toctree-l2"><a class="reference internal" href="forms.html">Dropwizard Forms</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">Dropwizard Forms</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#adding-the-bundle">Adding The Bundle</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#more-information">More Information</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="views.html">Dropwizard Views</a></li>
 <li class="toctree-l2"><a class="reference internal" href="scala.html">Dropwizard &amp; Scala</a></li>
 <li class="toctree-l2"><a class="reference internal" href="testing.html">Testing Dropwizard</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="">Dropwizard Example, Step by Step</a></li>
+<li class="toctree-l2"><a class="reference internal" href="example.html">Dropwizard Example, Step by Step</a></li>
 <li class="toctree-l2"><a class="reference internal" href="configuration.html">Dropwizard Configuration Reference</a></li>
 <li class="toctree-l2"><a class="reference internal" href="internals.html">Dropwizard Internals</a></li>
 </ul>
@@ -92,28 +96,25 @@
             </div>
             <div class="span9" id="body">
                 
-  <div class="section" id="dropwizard-example-step-by-step">
-<span id="man-example"></span><h1>Dropwizard Example, Step by Step</h1>
-<p class="rubric">The <tt class="docutils literal"><span class="pre">dropwizard-example</span></tt> module provides you with a working example
-of a dropwizard app</p>
-<ul class="simple">
-<li>Open a terminal</li>
-<li>Make sure you have maven installed</li>
-<li>Make sure java home points at JDK 7</li>
-<li>Make sure you have curl</li>
-<li>mvn dependency:resolve</li>
-<li>mvn clean compile install</li>
-<li>mvn eclipse:eclipse -DdownloadSources=true</li>
-<li>From eclipse, File &#8211;&gt; Import &#8211;&gt; Existing Project into workspace</li>
-<li><tt class="docutils literal"><span class="pre">java</span> <span class="pre">-jar</span> <span class="pre">~/git/dropwizard/dropwizard-example/target/dropwizard-example-0.8.0-SNAPSHOT.jar</span> <span class="pre">db</span> <span class="pre">migrate</span> <span class="pre">example.yml</span></tt></li>
-<li>The above ran the liquibase migration in /src/main/resources/migrations.xml, creating the table schema</li>
-<li>You can now start the app in your IDE by running <tt class="docutils literal"><span class="pre">java</span> <span class="pre">-jar</span> <span class="pre">~/git/dropwizard/dropwizard-example/target/dropwizard-example-0.8.0-SNAPSHOT.jar</span> <span class="pre">db</span> <span class="pre">migrate</span> <span class="pre">example.yml</span></tt></li>
-<li>Alternatively you can run this file in your IDE: <tt class="docutils literal"><span class="pre">com.example.helloworld.HelloWorldApplication</span> <span class="pre">server</span> <span class="pre">example.yml</span></tt></li>
-<li>Insert a new person: <tt class="docutils literal"><span class="pre">curl</span> <span class="pre">-H</span> <span class="pre">&quot;Content-Type:</span> <span class="pre">application/json&quot;</span> <span class="pre">-X</span> <span class="pre">POST</span> <span class="pre">-d</span> <span class="pre">'{&quot;fullName&quot;:&quot;Coda</span> <span class="pre">Hale&quot;,</span> <span class="pre">&quot;jobTitle&quot;</span> <span class="pre">:</span> <span class="pre">&quot;Chief</span> <span class="pre">Wizard&quot;</span> <span class="pre">}'</span> <span class="pre">http://localhost:8080/people</span></tt></li>
-<li>Retrieve that person: <tt class="docutils literal"><span class="pre">curl</span> <span class="pre">http://localhost:8080/people/1</span></tt></li>
-<li>View the freemarker template: <tt class="docutils literal"><span class="pre">curl</span> <span class="pre">http://localhost:8080/people/1/view_freemarker</span></tt></li>
-<li>View the mustache template: <tt class="docutils literal"><span class="pre">curl</span> <span class="pre">http://localhost:8080/people/1/view_mustache</span></tt></li>
-</ul>
+  <div class="section" id="dropwizard-forms">
+<span id="man-forms"></span><h1>Dropwizard Forms</h1>
+<p class="rubric">The <tt class="docutils literal"><span class="pre">dropwizard-forms</span></tt> module provides you with a support for multi-part forms
+via <a class="reference external" href="https://jersey.java.net/">Jersey</a>.</p>
+<div class="section" id="adding-the-bundle">
+<h2>Adding The Bundle</h2>
+<p>Then, in your application&#8217;s <tt class="docutils literal"><span class="pre">initialize</span></tt> method, add a new <tt class="docutils literal"><span class="pre">MultiPartBundle</span></tt> subclass:</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="nd">@Override</span>
+<span class="kd">public</span> <span class="kt">void</span> <span class="nf">initialize</span><span class="o">(</span><span class="n">Bootstrap</span><span class="o">&lt;</span><span class="n">ExampleConfiguration</span><span class="o">&gt;</span> <span class="n">bootstrap</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">bootstrap</span><span class="o">.</span><span class="na">addBundle</span><span class="o">(</span><span class="k">new</span> <span class="n">MultiPartBundle</span><span class="o">());</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="more-information">
+<h2>More Information</h2>
+<p>For additional and more detailed documentation about the Jersey multi-part support, please refer to the
+documentation in the <a class="reference external" href="https://jersey.java.net/documentation/latest/media.html#multipart">Jersey User Guide</a> and <a class="reference external" href="https://jersey.java.net/apidocs/latest/jersey/org/glassfish/jersey/media/multipart/package-summary.html">Javadoc</a>.</p>
+</div>
 </div>
 
 

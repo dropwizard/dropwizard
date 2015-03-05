@@ -68,6 +68,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#organizing-your-project">Organizing Your Project</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#application">Application</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#configuration">Configuration</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#environment-variables">Environment variables</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#ssl">SSL</a></li>
 </ul>
 </li>
@@ -133,11 +134,13 @@
 <li class="toctree-l2"><a class="reference internal" href="migrations.html">Dropwizard Migrations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="hibernate.html">Dropwizard Hibernate</a></li>
 <li class="toctree-l2"><a class="reference internal" href="auth.html">Dropwizard Authentication</a></li>
+<li class="toctree-l2"><a class="reference internal" href="forms.html">Dropwizard Forms</a></li>
 <li class="toctree-l2"><a class="reference internal" href="views.html">Dropwizard Views</a></li>
 <li class="toctree-l2"><a class="reference internal" href="scala.html">Dropwizard &amp; Scala</a></li>
 <li class="toctree-l2"><a class="reference internal" href="testing.html">Testing Dropwizard</a></li>
 <li class="toctree-l2"><a class="reference internal" href="example.html">Dropwizard Example, Step by Step</a></li>
 <li class="toctree-l2"><a class="reference internal" href="configuration.html">Dropwizard Configuration Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="internals.html">Dropwizard Internals</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="../about/index.html">About Dropwizard</a></li>
@@ -146,7 +149,9 @@
 
                 <hr/>
                 <ul>
-                    <li><a href="https://groups.google.com/forum/#!forum/dropwizard-user">Mailing List</a></li>
+                    <li><a href="https://dropwizard.github.io/dropwizard/0.8.0">Maven Site</a></li>
+                    <li><a href="https://groups.google.com/forum/#!forum/dropwizard-user">User Mailing List</a></li>
+                    <li><a href="https://groups.google.com/forum/#!forum/dropwizard-dev">Developer Mailing List</a></li>
                 </ul>
             </div>
             <div class="span9" id="body">
@@ -265,7 +270,7 @@ create a new <tt class="docutils literal"><span class="pre">MessageQueueFactory<
 <p>In this example our factory will automatically tie our <tt class="docutils literal"><span class="pre">MessageQueueClient</span></tt> connection to the
 lifecycle of our application&#8217;s <tt class="docutils literal"><span class="pre">Environment</span></tt>.</p>
 <p>Your main <tt class="docutils literal"><span class="pre">Configuration</span></tt> subclass can then include this as a member field:</p>
-<div class="highlight-java"><div class="highlight"><pre><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ExampleApplicationConfiguration</span> <span class="kd">extends</span> <span class="n">Configuration</span> <span class="o">{</span>
+<div class="highlight-java"><div class="highlight"><pre><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ExampleConfiguration</span> <span class="kd">extends</span> <span class="n">Configuration</span> <span class="o">{</span>
     <span class="nd">@Valid</span>
     <span class="nd">@NotNull</span>
     <span class="kd">private</span> <span class="n">MessageQueueFactory</span> <span class="n">messageQueue</span> <span class="o">=</span> <span class="k">new</span> <span class="n">MessageQueueFactory</span><span class="o">();</span>
@@ -326,8 +331,38 @@ this mechanism will not work if the configuration key being overridden does not 
 file. If it does not exist or is not an array setting, it will get added as a simple string setting, including
 the &#8216;,&#8217; characters as part of the string.</p>
 </div>
+<div class="section" id="environment-variables">
+<span id="man-core-environment-variables"></span><h3>Environment variables</h3>
+<p>The <tt class="docutils literal"><span class="pre">dropwizard-configuration</span></tt> module also provides the capabilities to substitute configuration settings with the
+value of environment variables using a <tt class="docutils literal"><span class="pre">SubstitutingSourceProvider</span></tt> and <tt class="docutils literal"><span class="pre">EnvironmentVariableSubstitutor</span></tt>.</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="kd">public</span> <span class="kd">class</span> <span class="nc">MyApplication</span> <span class="kd">extends</span> <span class="n">Application</span><span class="o">&lt;</span><span class="n">MyConfiguration</span><span class="o">&gt;</span> <span class="o">{</span>
+    <span class="c1">// [...]</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">initialize</span><span class="o">(</span><span class="n">Bootstrap</span><span class="o">&lt;</span><span class="n">MyConfiguration</span><span class="o">&gt;</span> <span class="n">bootstrap</span><span class="o">)</span> <span class="o">{</span>
+        <span class="c1">// Enable variable substitution with environment variables</span>
+        <span class="n">bootstrap</span><span class="o">.</span><span class="na">setConfigurationSourceProvider</span><span class="o">(</span>
+                <span class="k">new</span> <span class="nf">SubstitutingSourceProvider</span><span class="o">(</span><span class="n">bootstrap</span><span class="o">.</span><span class="na">getConfigurationSourceProvider</span><span class="o">(),</span>
+                                                   <span class="k">new</span> <span class="nf">EnvironmentVariableSubstitutor</span><span class="o">()</span>
+                <span class="o">)</span>
+        <span class="o">);</span>
+
+    <span class="o">}</span>
+
+    <span class="c1">// [...]</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>The configuration settings which should be substituted need to be explicitly written in the configuration file and
+follow the substitution rules of <a class="reference external" href="https://commons.apache.org/proper/commons-lang/javadocs/api-release/org/apache/commons/lang3/text/StrSubstitutor.html">StrSubstitutor</a> from the Apache Commons Lang library.</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">mySetting</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">${DW_MY_SETTING}</span>
+<span class="l-Scalar-Plain">defaultSetting</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">${DW_DEFAULT_SETTING:-default value}</span>
+</pre></div>
+</div>
+<p>In general <tt class="docutils literal"><span class="pre">SubstitutingSourceProvider</span></tt> isn&#8217;t restricted to substitute environment variables but can be used to replace
+variables in the configuration source with arbitrary values by passing a custom <tt class="docutils literal"><span class="pre">StrSubstitutor</span></tt> implementation.</p>
+</div>
 <div class="section" id="ssl">
-<span id="man-core-environments"></span><h3>SSL</h3>
+<span id="man-core-ssl"></span><h3>SSL</h3>
 <p>SSL support is built into Dropwizard. You will need to provide your own java
 keystore, which is outside the scope of this document (<tt class="docutils literal"><span class="pre">keytool</span></tt> is the
 command you need). There is a test keystore you can use in the
@@ -344,7 +379,7 @@ command you need). There is a test keystore you can use in the
 </div>
 </div>
 <div class="section" id="bootstrapping">
-<h2>Bootstrapping</h2>
+<span id="man-core-bootstrapping"></span><h2>Bootstrapping</h2>
 <p>Before a Dropwizard application can provide the command-line interface, parse a configuration file, or
 run as a server, it must first go through a bootstrapping phase. This phase corresponds to your
 <tt class="docutils literal"><span class="pre">Application</span></tt> subclass&#8217;s <tt class="docutils literal"><span class="pre">initialize</span></tt> method. You can add <a class="reference internal" href="#man-core-bundles"><em>Bundles</em></a>,
@@ -352,7 +387,7 @@ run as a server, it must first go through a bootstrapping phase. This phase corr
 of your configuration class.</p>
 </div>
 <div class="section" id="environments">
-<h2>Environments</h2>
+<span id="man-core-environments"></span><h2>Environments</h2>
 <p>A Dropwizard <tt class="docutils literal"><span class="pre">Environment</span></tt> consists of all the <a class="reference internal" href="#man-core-resources"><em>Resources</em></a>, servlets, filters,
 <a class="reference internal" href="#man-core-healthchecks"><em>Health Checks</em></a>, Jersey providers, <a class="reference internal" href="#man-core-managed"><em>Managed Objects</em></a>, <a class="reference internal" href="#man-core-tasks"><em>Tasks</em></a>, and
 Jersey properties which your application provides.</p>
@@ -460,9 +495,9 @@ and <tt class="docutils literal"><span class="pre">LifecycleEnvironment#schedule
 <div class="section" id="bundles">
 <span id="man-core-bundles"></span><h2>Bundles</h2>
 <p>A Dropwizard bundle is a reusable group of functionality, used to define blocks of an application&#8217;s
-behavior. For example, <tt class="docutils literal"><span class="pre">AssetBundle</span></tt> provides a simple way to serve static assets from your
-application&#8217;s <tt class="docutils literal"><span class="pre">src/main/resources/assets</span></tt> directory as files available from <tt class="docutils literal"><span class="pre">/assets/*</span></tt> in your
-application.</p>
+behavior. For example, <tt class="docutils literal"><span class="pre">AssetBundle</span></tt> from the <tt class="docutils literal"><span class="pre">dropwizard-assets</span></tt> module provides a simple way
+to serve static assets from your application&#8217;s <tt class="docutils literal"><span class="pre">src/main/resources/assets</span></tt> directory as files
+available from <tt class="docutils literal"><span class="pre">/assets/*</span></tt> (or any other path) in your application.</p>
 <p>Some bundles require configuration parameters. These bundles implement <tt class="docutils literal"><span class="pre">ConfiguredBundle</span></tt> and will
 require your application&#8217;s <tt class="docutils literal"><span class="pre">Configuration</span></tt> subclass to implement a specific interface.</p>
 <div class="section" id="serving-assets">
@@ -472,7 +507,7 @@ not both. The latter is useful when using Dropwizard to back a Javascript
 application. To enable it, move your application to a sub-URL.</p>
 <div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">server</span><span class="p-Indicator">:</span>
   <span class="l-Scalar-Plain">type</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">simple</span>
-  <span class="l-Scalar-Plain">applicationContextPath</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">/application/*</span>  <span class="c1"># Default value*</span>
+  <span class="l-Scalar-Plain">rootPath</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">/application/*</span>
 </pre></div>
 </div>
 <p>Then use an extended <tt class="docutils literal"><span class="pre">AssetsBundle</span></tt> constructor to serve resources in the
@@ -522,10 +557,11 @@ and provide your command with an instance of the configuration class.</p>
 <div class="section" id="tasks">
 <span id="man-core-tasks"></span><h2>Tasks</h2>
 <p>A <tt class="docutils literal"><span class="pre">Task</span></tt> is a run-time action your application provides access to on the administrative port via HTTP.
-All Dropwizard applications start with the <tt class="docutils literal"><span class="pre">gc</span></tt> task, which explicitly triggers the JVM&#8217;s garbage
-collection. (This is useful, for example, for running full garbage collections during off-peak times
-or while the given application is out of rotation.) The execute method of a <tt class="docutils literal"><span class="pre">Task</span></tt> can be annotated
-with <tt class="docutils literal"><span class="pre">&#64;Timed</span></tt>, <tt class="docutils literal"><span class="pre">&#64;Metered</span></tt>, and <tt class="docutils literal"><span class="pre">&#64;ExceptionMetered</span></tt>. Dropwizard will automatically
+All Dropwizard applications start with: the <tt class="docutils literal"><span class="pre">gc</span></tt> task, which explicitly triggers the JVM&#8217;s garbage
+collection (This is useful, for example, for running full garbage collections during off-peak times
+or while the given application is out of rotation.); and the <tt class="docutils literal"><span class="pre">log-level</span></tt> task, which configures the level
+of any number of loggers at runtime (akin to Logback&#8217;s <tt class="docutils literal"><span class="pre">JmxConfigurator</span></tt>). The execute method of a <tt class="docutils literal"><span class="pre">Task</span></tt>
+can be annotated with <tt class="docutils literal"><span class="pre">&#64;Timed</span></tt>, <tt class="docutils literal"><span class="pre">&#64;Metered</span></tt>, and <tt class="docutils literal"><span class="pre">&#64;ExceptionMetered</span></tt>. Dropwizard will automatically
 record runtime information about your tasks. Here&#8217;s a basic task class:</p>
 <div class="highlight-java"><pre>public class TruncateDatabaseTask extends Task {
     private final Database database;
@@ -743,7 +779,7 @@ tests:</p>
     <span class="kd">public</span> <span class="kt">void</span> <span class="nf">buildsAThingResource</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
         <span class="n">application</span><span class="o">.</span><span class="na">run</span><span class="o">(</span><span class="n">config</span><span class="o">,</span> <span class="n">environment</span><span class="o">);</span>
 
-        <span class="n">verify</span><span class="o">(</span><span class="n">jersey</span><span class="o">).</span><span class="na">register</span><span class="o">(</span><span class="n">any</span><span class="o">(</span><span class="n">ThingResource</span><span class="o">.</span><span class="na">class</span><span class="o">));</span>
+        <span class="n">verify</span><span class="o">(</span><span class="n">jersey</span><span class="o">).</span><span class="na">register</span><span class="o">(</span><span class="n">isA</span><span class="o">(</span><span class="n">ThingResource</span><span class="o">.</span><span class="na">class</span><span class="o">));</span>
     <span class="o">}</span>
 <span class="o">}</span>
 </pre></div>
@@ -1152,30 +1188,41 @@ application&#8217;s <tt class="docutils literal"><span class="pre">Environment</
 <div class="section" id="jersey-filters">
 <span id="man-core-jersey-filters"></span><h3>Jersey filters</h3>
 <p>There might be cases when you want to filter out requests or modify them before they reach your Resources. Jersey
-provides you with the means to do so. If you want to stop the request from reaching your resources, throw a web-application
-<tt class="docutils literal"><span class="pre">WebApplicationException</span></tt>, if you want to modify the request or let it pass through the filter, return it.</p>
-<div class="highlight-java"><div class="highlight"><pre><span class="kd">public</span> <span class="kd">class</span> <span class="nc">DateNotSpecifiedFilter</span> <span class="kd">implements</span> <span class="n">ContainerRequestFilter</span> <span class="o">{</span>
-
-    <span class="nd">@Context</span> <span class="n">ExtendedUriInfo</span> <span class="n">extendedUriInfo</span><span class="o">;</span>
-
+has a rich api for <a class="reference external" href="http://jersey.java.net/documentation/latest/filters-and-interceptors.html">filters and interceptors</a> that can be used directly in Dropwizard.
+You can stop the request from reaching your resources by throwing a <tt class="docutils literal"><span class="pre">WebApplicationException</span></tt>. Alternatively,
+you can use filters to modify inbound requests or outbound responses.</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="nd">@Provider</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">DateNotSpecifiedFilter</span> <span class="kd">implements</span> <span class="n">ContainerRequestFilter</span> <span class="o">{</span>
     <span class="nd">@Override</span>
-    <span class="kd">public</span> <span class="n">ContainerRequest</span> <span class="nf">filter</span><span class="o">(</span><span class="n">ContainerRequest</span> <span class="n">request</span><span class="o">)</span> <span class="o">{</span>
-        <span class="kt">boolean</span> <span class="n">methodNeedsDateHeader</span> <span class="o">=</span> <span class="n">extendedUriInfo</span><span class="o">.</span><span class="na">getMatchedMethod</span><span class="o">().</span><span class="na">isAnnotationPresent</span><span class="o">(</span><span class="n">DateRequired</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
-        <span class="n">String</span> <span class="n">dateHeader</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="na">getHeaderValue</span><span class="o">(</span><span class="n">HttpHeaders</span><span class="o">.</span><span class="na">DATE</span><span class="o">);</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">filter</span><span class="o">(</span><span class="n">ContainerRequestContext</span> <span class="n">requestContext</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">IOException</span> <span class="o">{</span>
+        <span class="n">String</span> <span class="n">dateHeader</span> <span class="o">=</span> <span class="n">requestContext</span><span class="o">.</span><span class="na">getHeaderString</span><span class="o">(</span><span class="n">HttpHeaders</span><span class="o">.</span><span class="na">DATE</span><span class="o">);</span>
 
-        <span class="k">if</span> <span class="o">(</span><span class="n">methodNeedsDateHeader</span> <span class="o">&amp;&amp;</span> <span class="n">dateHeader</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">dateHeader</span> <span class="o">==</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
             <span class="n">Exception</span> <span class="n">cause</span> <span class="o">=</span> <span class="k">new</span> <span class="n">IllegalArgumentException</span><span class="o">(</span><span class="s">&quot;Date Header was not specified&quot;</span><span class="o">);</span>
             <span class="k">throw</span> <span class="k">new</span> <span class="nf">WebApplicationException</span><span class="o">(</span><span class="n">cause</span><span class="o">,</span> <span class="n">Response</span><span class="o">.</span><span class="na">Status</span><span class="o">.</span><span class="na">BAD_REQUEST</span><span class="o">);</span>
-        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-            <span class="k">return</span> <span class="n">request</span><span class="o">;</span>
         <span class="o">}</span>
     <span class="o">}</span>
 <span class="o">}</span>
 </pre></div>
 </div>
-<p>This example checks the request for the &#8220;Date&#8221; header, and denies the request if was ommitted and the method this request would call has a certain annotation present.
-You can then register this filter in your Application class, like so:</p>
-<div class="highlight-java"><div class="highlight"><pre><span class="n">environment</span><span class="o">.</span><span class="na">jersey</span><span class="o">().</span><span class="na">getResourceConfig</span><span class="o">().</span><span class="na">getContainerRequestFilters</span><span class="o">().</span><span class="na">add</span><span class="o">(</span><span class="k">new</span> <span class="n">DateNotSpecifiedFilter</span><span class="o">());</span>
+<p>This example filter checks the request for the &#8220;Date&#8221; header, and denies the request if was missing. Otherwise,
+the request is passed through.</p>
+<p>Filters can be dynamically bound to resource methods using <a class="reference external" href="http://jax-rs-spec.java.net/nonav/2.0-rev-a/apidocs/index.html">DynamicFeature</a>:</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="nd">@Provider</span>
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">DateRequiredFeature</span> <span class="kd">implements</span> <span class="n">DynamicFeature</span> <span class="o">{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">configure</span><span class="o">(</span><span class="n">ResourceInfo</span> <span class="n">resourceInfo</span><span class="o">,</span> <span class="n">FeatureContext</span> <span class="n">context</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">resourceInfo</span><span class="o">.</span><span class="na">getResourceMethod</span><span class="o">().</span><span class="na">getAnnotation</span><span class="o">(</span><span class="n">DateRequired</span><span class="o">.</span><span class="na">class</span><span class="o">)</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">context</span><span class="o">.</span><span class="na">register</span><span class="o">(</span><span class="n">DateNotSpecifiedFilter</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>The DynamicFeature is invoked by the Jersey runtime when the application is started. In this example, the feature checks
+for methods that are annotated with <tt class="docutils literal"><span class="pre">&#64;DateRequired</span></tt> and registers the <tt class="docutils literal"><span class="pre">DateNotSpecified</span></tt> filter on those methods only.</p>
+<p>You typically register the feature in your Application class, like so:</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="n">environment</span><span class="o">.</span><span class="na">jersey</span><span class="o">().</span><span class="na">register</span><span class="o">(</span><span class="n">DateRequiredFeature</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
 </pre></div>
 </div>
 </div>
@@ -1247,7 +1294,7 @@ enable the following functionality:</p>
             Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>
             1.1.3.
             </p>
-            <p style="float: right">Dropwizard v0.7.0</p>
+            <p style="float: right">Dropwizard v0.8.0</p>
         </footer>
     </div>
 </body>
