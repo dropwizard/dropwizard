@@ -11,12 +11,14 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 import io.dropwizard.jackson.Jackson;
+import org.glassfish.jersey.filter.LoggingFilter;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
@@ -28,6 +30,7 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import static javax.ws.rs.core.MediaType.TEXT_PLAIN;
 import static org.assertj.core.api.Assertions.assertThat;
 
 /**
@@ -239,6 +242,46 @@ public class JerseyClientIntegrationTest {
                 .invoke()
                 .readEntity(String.class);
         assertThat(text).isEqualTo("Hello World!");
+    }
+
+    /**
+     * Test for ConnectorProvider idempotency
+     */
+    @Test
+    public void testFilterOnAWebTarget() {
+        httpServer.createContext("/test", new HttpHandler() {
+            @Override
+            public void handle(HttpExchange httpExchange) throws IOException {
+                try {
+                    httpExchange.getResponseHeaders().add(HttpHeaders.CONTENT_TYPE, TEXT_PLAIN);
+                    httpExchange.sendResponseHeaders(200, 0);
+                    httpExchange.getResponseBody().write("Hello World!".getBytes(Charsets.UTF_8));
+                } finally {
+                    httpExchange.close();
+                }
+            }
+        });
+        httpServer.start();
+
+        Client jersey = new JerseyClientBuilder(new MetricRegistry())
+                .using(Executors.newSingleThreadExecutor(), JSON_MAPPER)
+                .build("test-jersey-client");
+        String uri = "http://127.0.0.1:" + httpServer.getAddress().getPort() + "/test";
+
+        WebTarget target = jersey.target(uri);
+        target.register(new LoggingFilter());
+        String firstResponse = target.request()
+                .buildGet()
+                .invoke()
+                .readEntity(String.class);
+        assertThat(firstResponse).isEqualTo("Hello World!");
+
+        String secondResponse = jersey.target(uri)
+                .request()
+                .buildGet()
+                .invoke()
+                .readEntity(String.class);
+        assertThat(secondResponse).isEqualTo("Hello World!");
     }
 
     static class Person {
