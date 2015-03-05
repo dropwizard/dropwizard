@@ -23,4 +23,5 @@ User Manual
     testing
     example
     configuration
+    internals
 
