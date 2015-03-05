@@ -6,7 +6,14 @@ import io.dropwizard.Configuration;
 import io.dropwizard.configuration.DefaultConfigurationFactoryFactory;
 import io.dropwizard.configuration.FileConfigurationSourceProvider;
 
+import io.dropwizard.validation.valuehandling.OptionalValidatedValueUnwrapper;
+import org.hibernate.validator.HibernateValidator;
+import org.hibernate.validator.internal.engine.ValidatorFactoryImpl;
+import org.junit.Before;
 import org.junit.Test;
+
+import javax.validation.Validation;
+import javax.validation.ValidatorFactory;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -16,7 +23,12 @@ public class BootstrapTest {
         public void run(Configuration configuration, Environment environment) throws Exception {
         }
     };
-    private final Bootstrap<Configuration> bootstrap = new Bootstrap<Configuration>(application);
+    private Bootstrap<Configuration> bootstrap;
+
+    @Before
+    public void setUp() {
+        bootstrap = new Bootstrap<>(application);
+    }
 
     @Test
     public void hasAnApplication() throws Exception {
@@ -66,5 +78,26 @@ public class BootstrapTest {
         
         assertThat(newBootstrap.getMetricRegistry().getNames())
                 .contains("jvm.buffers.mapped.capacity", "jvm.threads.count", "jvm.memory.heap.usage", "jvm.attribute.vendor", "jvm.classloader.loaded", "jvm.filedescriptor");
+    }
+
+    @Test
+    public void defaultsToDefaultValidatorFactory() throws Exception {
+        assertThat(bootstrap.getValidatorFactory()).isInstanceOf(ValidatorFactoryImpl.class);
+
+        ValidatorFactoryImpl validatorFactory = (ValidatorFactoryImpl)bootstrap.getValidatorFactory();
+        assertThat(validatorFactory.getValidatedValueHandlers()).hasSize(1);
+        assertThat(validatorFactory.getValidatedValueHandlers().get(0))
+                .isInstanceOf(OptionalValidatedValueUnwrapper.class);
+    }
+
+    @Test
+    public void canUseCustomValidatorFactory() throws Exception {
+        ValidatorFactory factory = Validation
+                .byProvider(HibernateValidator.class)
+                .configure()
+                .buildValidatorFactory();
+        bootstrap.setValidatorFactory(factory);
+
+        assertThat(bootstrap.getValidatorFactory()).isSameAs(factory);
     }
 }
