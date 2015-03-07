@@ -166,7 +166,6 @@ public class FileAppenderFactory extends AbstractAppenderFactory {
         layoutEncoder.setLayout(layout == null ? buildLayout(context, timeZone) : layout);
         appender.setEncoder(layoutEncoder);
 
-        appender.setFile(currentLogFilename);
         appender.setPrudent(false);
         addThresholdFilter(appender, threshold);
         appender.stop();
@@ -178,6 +177,7 @@ public class FileAppenderFactory extends AbstractAppenderFactory {
     protected FileAppender<ILoggingEvent> buildAppender(LoggerContext context) {
         if (archive) {
             final RollingFileAppender<ILoggingEvent> appender = new RollingFileAppender<>();
+            appender.setFile(currentLogFilename);
             final DefaultTimeBasedFileNamingAndTriggeringPolicy<ILoggingEvent> triggeringPolicy =
                     new DefaultTimeBasedFileNamingAndTriggeringPolicy<>();
             triggeringPolicy.setContext(context);
@@ -197,6 +197,9 @@ public class FileAppenderFactory extends AbstractAppenderFactory {
             rollingPolicy.start();
             return appender;
         }
-        return new FileAppender<>();
+
+        final FileAppender<ILoggingEvent> appender = new FileAppender<>();
+        appender.setFile(currentLogFilename);
+        return appender;
     }
 }
