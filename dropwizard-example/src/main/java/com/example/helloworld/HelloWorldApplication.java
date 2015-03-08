@@ -28,6 +28,8 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.views.ViewBundle;
 
+import java.util.Map;
+
 public class HelloWorldApplication extends Application<HelloWorldConfiguration> {
     public static void main(String[] args) throws Exception {
         new HelloWorldApplication().run(args);
@@ -67,7 +69,7 @@ public class HelloWorldApplication extends Application<HelloWorldConfiguration> 
         bootstrap.addBundle(hibernateBundle);
         bootstrap.addBundle(new ViewBundle<HelloWorldConfiguration>() {
             @Override
-            public ImmutableMap<String, ImmutableMap<String, String>> getViewConfiguration(HelloWorldConfiguration configuration) {
+            public Map<String, Map<String, String>> getViewConfiguration(HelloWorldConfiguration configuration) {
                 return configuration.getViewRendererConfiguration();
             }
         });

@@ -6,8 +6,10 @@ import com.google.common.collect.ImmutableMap;
 import io.dropwizard.Configuration;
 import io.dropwizard.db.DataSourceFactory;
 import org.hibernate.validator.constraints.NotEmpty;
+
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.Collections;
 import java.util.Map;
 
 public class HelloWorldConfiguration extends Configuration {
@@ -22,7 +24,7 @@ public class HelloWorldConfiguration extends Configuration {
     private DataSourceFactory database = new DataSourceFactory();
     
     @NotNull
-    private ImmutableMap<String, ImmutableMap<String, String>> viewRendererConfiguration = ImmutableMap.of();
+    private Map<String, Map<String, String>> viewRendererConfiguration = Collections.emptyMap();
 
     @JsonProperty
     public String getTemplate() {
@@ -59,13 +61,13 @@ public class HelloWorldConfiguration extends Configuration {
     }
 
     @JsonProperty("viewRendererConfiguration")
-    public ImmutableMap<String, ImmutableMap<String, String>> getViewRendererConfiguration() {
+    public Map<String, Map<String, String>> getViewRendererConfiguration() {
         return viewRendererConfiguration;
     }
 
     @JsonProperty("viewRendererConfiguration")
     public void setViewRendererConfiguration(Map<String, Map<String, String>> viewRendererConfiguration) {
-        ImmutableMap.Builder<String, ImmutableMap<String, String>> builder = ImmutableMap.builder();
+        ImmutableMap.Builder<String, Map<String, String>> builder = ImmutableMap.builder();
         for (Map.Entry<String, Map<String, String>> entry : viewRendererConfiguration.entrySet()) {
             builder.put(entry.getKey(), ImmutableMap.copyOf(entry.getValue()));
         }

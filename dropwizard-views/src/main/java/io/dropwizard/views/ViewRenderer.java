@@ -1,7 +1,5 @@
 package io.dropwizard.views;
 
-import com.google.common.collect.ImmutableMap;
-
 import javax.ws.rs.WebApplicationException;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -38,7 +36,7 @@ public interface ViewRenderer {
       * options for configuring the view renderer
       * @param options
      */
-    void configure(ImmutableMap<String, String> options);
+    void configure(Map<String, String> options);
 
     /**
      * @return the suffix of the template type, e.g '.ftl', '.mustache'

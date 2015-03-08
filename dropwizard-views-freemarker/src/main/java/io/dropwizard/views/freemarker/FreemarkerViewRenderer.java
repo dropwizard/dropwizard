@@ -12,6 +12,7 @@ import freemarker.template.TemplateException;
 import freemarker.template.Version;
 import io.dropwizard.views.View;
 import io.dropwizard.views.ViewRenderer;
+
 import javax.ws.rs.WebApplicationException;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -76,7 +77,7 @@ public class FreemarkerViewRenderer implements ViewRenderer {
         }
     }
 
-    public void configure(ImmutableMap<String, String> baseConfig) {
+    public void configure(Map<String, String> baseConfig) {
         this.loader.setBaseConfig(baseConfig);
     }
 

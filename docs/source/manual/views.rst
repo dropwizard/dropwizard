@@ -16,7 +16,12 @@ To enable views for your :ref:`Application <man-core-application>`, add the ``Vi
 .. code-block:: java
 
     public void initialize(Bootstrap<MyConfiguration> bootstrap) {
-        bootstrap.addBundle(new ViewBundle());
+        bootstrap.addBundle(new ViewBundle<MyConfiguration>() {
+            @Override
+            public Map<String, Map<String, String>> getViewConfiguration(MyConfiguration config) {
+                return config.getViewRendererConfiguration();
+            }
+        });
     }
 
 Then, in your :ref:`resource method <man-core-resources>`, add a ``View`` class:
