@@ -1,15 +1,5 @@
 package io.dropwizard.views;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.lang.reflect.Field;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.validation.constraints.NotNull;
-import javax.ws.rs.WebApplicationException;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -21,28 +11,40 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
+import javax.validation.constraints.NotNull;
+import javax.ws.rs.WebApplicationException;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.lang.reflect.Field;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class ViewBundleTest {
     private final JerseyEnvironment jerseyEnvironment = mock(JerseyEnvironment.class);
     private final Environment environment = mock(Environment.class);
     private static class MyConfiguration extends Configuration {
         @NotNull
-        private ImmutableMap<String, ImmutableMap<String, String>> viewRendererConfiguration = ImmutableMap.of();
+        private Map<String, Map<String, String>> viewRendererConfiguration = Collections.emptyMap();
 
         @JsonProperty("viewRendererConfiguration")
-        public ImmutableMap<String, ImmutableMap<String, String>> getViewRendererConfiguration() {
+        public Map<String, Map<String, String>> getViewRendererConfiguration() {
             return viewRendererConfiguration;
         }
 
         @JsonProperty("viewRendererConfiguration")
         public void setViewRendererConfiguration(Map<String, Map<String, String>> viewRendererConfiguration) {
-            ImmutableMap.Builder<String, ImmutableMap<String, String>> builder = ImmutableMap.builder();
+            ImmutableMap.Builder<String, Map<String, String>> builder = ImmutableMap.builder();
             for (Map.Entry<String, Map<String, String>> entry : viewRendererConfiguration.entrySet()) {
                 builder.put(entry.getKey(), ImmutableMap.copyOf(entry.getValue()));
             }
@@ -57,10 +59,10 @@ public class ViewBundleTest {
 
     @Test
     public void addsTheViewMessageBodyWriterToTheEnvironment() throws Exception {
-        new ViewBundle() {
+        new ViewBundle<Configuration>() {
             @Override
-            public ImmutableMap<String, Map<String, String>> getViewConfiguration(Configuration configuration) {
-                return ImmutableMap.of();
+            public Map<String, Map<String, String>> getViewConfiguration(Configuration configuration) {
+                return Collections.emptyMap();
             }
         }.run(null, environment);
 
@@ -91,7 +93,7 @@ public class ViewBundleTest {
             }
 
             @Override
-            public void configure(ImmutableMap<String, String> options) {
+            public void configure(Map<String, String> options) {
                 assertThat("should contain the testKey", Boolean.TRUE, is(options.containsKey(testKey)));
             }
 
@@ -103,7 +105,7 @@ public class ViewBundleTest {
 
         new ViewBundle<MyConfiguration>(ImmutableList.of(renderer)) {
             @Override
-            public ImmutableMap<String, ImmutableMap<String, String>> getViewConfiguration(MyConfiguration configuration) {
+            public Map<String, Map<String, String>> getViewConfiguration(MyConfiguration configuration) {
                 return configuration.getViewRendererConfiguration();
             }
         }.run(myConfiguration, environment);

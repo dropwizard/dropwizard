@@ -7,10 +7,10 @@ import com.google.common.base.Charsets;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.util.concurrent.UncheckedExecutionException;
 import io.dropwizard.views.View;
 import io.dropwizard.views.ViewRenderer;
+
 import javax.ws.rs.WebApplicationException;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -18,6 +18,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.util.Locale;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -56,7 +57,7 @@ public class MustacheViewRenderer implements ViewRenderer {
     }
 
     @Override
-    public void configure(ImmutableMap<String, String> options) {}
+    public void configure(Map<String, String> options) {}
 
     @Override
     public String getSuffix() {

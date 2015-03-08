@@ -1,13 +1,17 @@
 package io.dropwizard.views;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import java.util.ServiceLoader;
 import io.dropwizard.Bundle;
 import io.dropwizard.Configuration;
 import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+
+import java.util.Collections;
+import java.util.Map;
+import java.util.ServiceLoader;
+
+import static com.google.common.base.MoreObjects.firstNonNull;
 
 /**
  * A {@link Bundle}, which by default, enables the rendering of FreeMarker & Mustache views by your application.
@@ -66,7 +70,7 @@ import io.dropwizard.setup.Environment;
  * <p>In this template, {@code ${person.name}} calls {@code getPerson().getName()}, and the
  * {@code ?html} escapes all HTML control characters in the result. The {@code ftlvariable} comment
  * at the top indicate to Freemarker (and your IDE) that the root object is a {@code Person},
- * allowing for better typesafety in your templates.</p>
+ * allowing for better type-safety in your templates.</p>
  *
  * @see <a href="http://freemarker.sourceforge.net/docs/index.html">FreeMarker Manual</a>
  *
@@ -97,12 +101,10 @@ public abstract class ViewBundle<T extends Configuration> implements ConfiguredB
 
     @Override
     public void run(T configuration, Environment environment) throws Exception {
-        ImmutableMap<String, String> empty = ImmutableMap.of();
-        
-        ImmutableMap<String, ImmutableMap<String, String>> options = getViewConfiguration(configuration);
+        Map<String, Map<String, String>> options = getViewConfiguration(configuration);
         for(ViewRenderer viewRenderer : viewRenderers) {
-            ImmutableMap<String, String> viewOptions = options.get(viewRenderer.getSuffix());
-            viewRenderer.configure(viewOptions == null ? empty : viewOptions);
+            Map<String, String> viewOptions = options.get(viewRenderer.getSuffix());
+            viewRenderer.configure(firstNonNull(viewOptions, Collections.<String, String>emptyMap()));
         }
         environment.jersey().register(new ViewMessageBodyWriter(environment.metrics(), viewRenderers));
     }
