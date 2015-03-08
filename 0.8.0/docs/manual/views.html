@@ -97,7 +97,12 @@
 <p class="rubric">The <tt class="docutils literal"><span class="pre">dropwizard-views-mustache</span></tt> &amp; <tt class="docutils literal"><span class="pre">dropwizard-views-freemarker</span></tt> modules provides you with simple, fast HTML views using either <a class="reference external" href="http://FreeMarker.sourceforge.net/">FreeMarker</a> or <a class="reference external" href="http://mustache.github.com/mustache.5.html">Mustache</a>.</p>
 <p>To enable views for your <a class="reference internal" href="core.html#man-core-application"><em>Application</em></a>, add the <tt class="docutils literal"><span class="pre">ViewBundle</span></tt> in the <tt class="docutils literal"><span class="pre">initialize</span></tt> method of your Application class:</p>
 <div class="highlight-java"><div class="highlight"><pre><span class="kd">public</span> <span class="kt">void</span> <span class="nf">initialize</span><span class="o">(</span><span class="n">Bootstrap</span><span class="o">&lt;</span><span class="n">MyConfiguration</span><span class="o">&gt;</span> <span class="n">bootstrap</span><span class="o">)</span> <span class="o">{</span>
-    <span class="n">bootstrap</span><span class="o">.</span><span class="na">addBundle</span><span class="o">(</span><span class="k">new</span> <span class="n">ViewBundle</span><span class="o">());</span>
+    <span class="n">bootstrap</span><span class="o">.</span><span class="na">addBundle</span><span class="o">(</span><span class="k">new</span> <span class="n">ViewBundle</span><span class="o">&lt;</span><span class="n">MyConfiguration</span><span class="o">&gt;()</span> <span class="o">{</span>
+        <span class="nd">@Override</span>
+        <span class="kd">public</span> <span class="n">ImmutableMap</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">ImmutableMap</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">String</span><span class="o">&gt;&gt;</span> <span class="n">getViewConfiguration</span><span class="o">(</span><span class="n">MyConfiguration</span> <span class="n">config</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="n">config</span><span class="o">.</span><span class="na">getViewRendererConfiguration</span><span class="o">();</span>
+        <span class="o">}</span>
+    <span class="o">});</span>
 <span class="o">}</span>
 </pre></div>
 </div>
