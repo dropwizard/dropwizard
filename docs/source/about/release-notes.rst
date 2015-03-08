@@ -4,10 +4,18 @@
 Release Notes
 #############
 
+.. _rel-0.8.1:
+
+v0.8.1:
+=======
+
+* Fixed transcation commiting lifecycle for ``@UnitOfWork``  (#850, #915)
+* Fixed noisy Logback messages on startup (#902)
+
 .. _rel-0.8.0:
 
-v0.8.0:
-=======
+v0.8.0: Mar 5 2015
+==================
 
 * Migrated ``dropwizard-spdy`` from NPN to ALPN
 * Dropped support for deprecated SPDY/2 in ``dropwizard-spdy``
