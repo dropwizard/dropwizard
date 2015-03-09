@@ -173,7 +173,7 @@ public class JerseyClientBuilderTest {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public void usesAnExecutorServiceFromTheEnvironment() throws Exception {
         final JerseyClientConfiguration configuration = new JerseyClientConfiguration();
         configuration.setMinThreads(7);

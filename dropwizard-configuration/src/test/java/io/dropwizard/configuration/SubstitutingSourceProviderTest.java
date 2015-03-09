@@ -15,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class SubstitutingSourceProviderTest {
     @Test
     public void shouldSubstituteCorrectly() throws IOException {
-        StrLookup dummyLookup = new StrLookup() {
+        StrLookup<?> dummyLookup = new StrLookup<Object>() {
             @Override
             public String lookup(String key) {
                 return "baz";
@@ -29,7 +29,7 @@ public class SubstitutingSourceProviderTest {
 
     @Test
     public void shouldSubstituteOnlyExistingVariables() throws IOException {
-        StrLookup dummyLookup = new StrLookup() {
+        StrLookup<?> dummyLookup = new StrLookup<Object>() {
             @Override
             public String lookup(String key) {
                 return null;
@@ -43,7 +43,7 @@ public class SubstitutingSourceProviderTest {
 
     @Test
     public void shouldSubstituteWithDefaultValue() throws IOException {
-        StrLookup dummyLookup = new StrLookup() {
+        StrLookup<?> dummyLookup = new StrLookup<Object>() {
             @Override
             public String lookup(String key) {
                 return null;

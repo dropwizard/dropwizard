@@ -5,7 +5,7 @@ import org.apache.commons.lang3.text.StrLookup;
 /**
  * A custom {@link org.apache.commons.lang3.text.StrLookup} implementation using environment variables as lookup source.
  */
-public class EnvironmentVariableLookup extends StrLookup {
+public class EnvironmentVariableLookup extends StrLookup<Object> {
     private final boolean strict;
 
     /**

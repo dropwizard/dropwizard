@@ -26,7 +26,7 @@ public class DBIHealthCheckTest {
         DBI dbi = mock(DBI.class);
         Handle handle = mock(Handle.class);
         when(dbi.open()).thenReturn(handle);
-        Mockito.doAnswer(new Answer() {
+        Mockito.doAnswer(new Answer<Object>() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
                 try {
