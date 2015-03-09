@@ -8,6 +8,7 @@ import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.db.DatabaseConfiguration;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import io.dropwizard.util.Duration;
 import org.hibernate.SessionFactory;
 
 public abstract class HibernateBundle<T extends Configuration> implements ConfiguredBundle<T>, DatabaseConfiguration<T> {
@@ -55,8 +56,11 @@ public abstract class HibernateBundle<T extends Configuration> implements Config
         this.sessionFactory = sessionFactoryFactory.build(this, environment, dbConfig, entities, name());
         environment.jersey().register(new UnitOfWorkApplicationListener(sessionFactory));
         environment.healthChecks().register(name(),
-                                            new SessionFactoryHealthCheck(sessionFactory,
-                                                                          dbConfig.getValidationQuery()));
+                                            new SessionFactoryHealthCheck(
+                                                    environment.getHealthCheckExecutorService(),
+                                                    dbConfig.getValidationQueryTimeout().or(Duration.seconds(5)),
+                                                    sessionFactory,
+                                                    dbConfig.getValidationQuery()));
     }
 
     public SessionFactory getSessionFactory() {

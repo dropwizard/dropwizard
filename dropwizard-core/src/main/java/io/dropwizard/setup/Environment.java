@@ -3,6 +3,7 @@ package io.dropwizard.setup;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheckRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.jersey.setup.JerseyContainerHolder;
 import io.dropwizard.jersey.setup.JerseyEnvironment;
@@ -13,6 +14,10 @@ import org.glassfish.jersey.servlet.ServletContainer;
 
 import javax.servlet.Servlet;
 import javax.validation.Validator;
+
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -39,6 +44,8 @@ public class Environment {
 
     private final MutableServletContextHandler adminContext;
     private final AdminEnvironment adminEnvironment;
+    
+    private final ExecutorService healthCheckExecutorService;
 
     /**
      * Creates a new environment.
@@ -71,6 +78,15 @@ public class Environment {
 
         this.jerseyServletContainer = new JerseyContainerHolder(new ServletContainer(jerseyConfig));
         this.jerseyEnvironment = new JerseyEnvironment(jerseyServletContainer, jerseyConfig);
+
+
+        this.healthCheckExecutorService = this.lifecycle().executorService("TimeBoundHealthCheck-pool-%d")
+                .workQueue(new ArrayBlockingQueue<Runnable>(1))
+                .minThreads(1)
+                .maxThreads(4)
+                .threadFactory(new ThreadFactoryBuilder().setDaemon(true).build())
+                .rejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy())
+                .build();
     }
 
     /**
@@ -78,6 +94,13 @@ public class Environment {
      */
     public JerseyEnvironment jersey() {
         return jerseyEnvironment;
+    }
+
+    /**
+     * Returns an {@link ExecutorService} to run time bound health checks
+     */
+    public ExecutorService getHealthCheckExecutorService() {
+        return healthCheckExecutorService;
     }
 
     /**

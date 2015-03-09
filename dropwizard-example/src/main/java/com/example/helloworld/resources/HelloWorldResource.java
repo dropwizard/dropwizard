@@ -5,6 +5,7 @@ import com.example.helloworld.core.Saying;
 import com.example.helloworld.core.Template;
 import com.google.common.base.Optional;
 import io.dropwizard.jersey.caching.CacheControl;
+import io.dropwizard.jersey.params.DateTimeParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,5 +38,11 @@ public class HelloWorldResource {
     @POST
     public void receiveHello(@Valid Saying saying) {
         LOGGER.info("Received a saying: {}", saying);
+    }
+    
+    @GET
+    @Path("/date")
+    public void receiveDate(@QueryParam("date") DateTimeParam dateTimeParam) {
+        LOGGER.info("Received a saying: {}", dateTimeParam.get());
     }
 }
