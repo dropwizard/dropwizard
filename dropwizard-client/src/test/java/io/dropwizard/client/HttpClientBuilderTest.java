@@ -40,7 +40,7 @@ import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
 import org.junit.Before;
 import org.junit.Test;
-import sun.net.spi.DefaultProxySelector;
+import java.net.ProxySelector;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -261,7 +261,8 @@ public class HttpClientBuilderTest {
 
     @Test
     public void usesACustomRoutePlanner() throws Exception {
-        final HttpRoutePlanner routePlanner = new SystemDefaultRoutePlanner(new DefaultProxySelector());
+        ProxySelector proxySelector = (ProxySelector) Class.forName("sun.net.spi.DefaultProxySelector").newInstance();
+        final HttpRoutePlanner routePlanner = new SystemDefaultRoutePlanner(proxySelector);
         final CloseableHttpClient httpClient = builder.using(configuration).using(routePlanner)
                 .createClient(apacheBuilder, connectionManager, "test");
 
