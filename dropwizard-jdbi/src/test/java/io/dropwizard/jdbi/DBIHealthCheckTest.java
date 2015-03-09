@@ -9,6 +9,7 @@ import org.mockito.stubbing.Answer;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
@@ -19,7 +20,7 @@ import static org.mockito.Mockito.when;
 
 public class DBIHealthCheckTest {
 
-    @Test 
+    @Test
     public void testItTimesOutProperly() throws Exception {
         String validationQuery = "select 1";
         DBI dbi = mock(DBI.class);
@@ -30,16 +31,19 @@ public class DBIHealthCheckTest {
             public Object answer(InvocationOnMock invocation) throws Throwable {
                 try {
                     TimeUnit.SECONDS.sleep(10);
+                } catch (Exception ignored) {
                 }
-                catch (Exception ignored) {}
                 return null;
             }
         }).when(handle).execute(validationQuery);
-        DBIHealthCheck dbiHealthCheck = new DBIHealthCheck(Executors.newSingleThreadExecutor(), 
+        
+        ExecutorService executorService = Executors.newSingleThreadExecutor();
+        DBIHealthCheck dbiHealthCheck = new DBIHealthCheck(executorService,
                 Duration.milliseconds(5),
-                dbi, 
+                dbi,
                 validationQuery);
         HealthCheck.Result result = dbiHealthCheck.check();
+        executorService.shutdown();
         assertThat("is unhealthy", false, is(result.isHealthy()));
     }
 }

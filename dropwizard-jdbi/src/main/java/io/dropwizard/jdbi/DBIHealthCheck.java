@@ -2,7 +2,7 @@ package io.dropwizard.jdbi;
 
 import com.codahale.metrics.health.HealthCheck;
 import com.google.common.util.concurrent.MoreExecutors;
-import io.dropwizard.db.TimeBoundHealthChecks;
+import io.dropwizard.db.TimeBoundHealthCheck;
 import io.dropwizard.util.Duration;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
@@ -12,14 +12,12 @@ import java.util.concurrent.ExecutorService;
 public class DBIHealthCheck extends HealthCheck {
     private final DBI dbi;
     private final String validationQuery;
-    private final Duration duration;
-    private final ExecutorService executorService;
+    private final TimeBoundHealthCheck timeBoundHealthCheck;
     
     public DBIHealthCheck(ExecutorService executorService, Duration duration, DBI dbi, String validationQuery) {
         this.dbi = dbi;
         this.validationQuery = validationQuery;
-        this.duration = duration;
-        this.executorService = executorService;
+        this.timeBoundHealthCheck = new TimeBoundHealthCheck(executorService, duration);
     }
     
     public DBIHealthCheck(DBI dbi, String validationQuery) {
@@ -28,7 +26,7 @@ public class DBIHealthCheck extends HealthCheck {
 
     @Override
     protected Result check() throws Exception {
-        return TimeBoundHealthChecks.check(executorService, duration, new Callable<Result>() {
+        return timeBoundHealthCheck.check(new Callable<Result>() {
             @Override
             public Result call() throws Exception {
                 try (Handle handle = dbi.open()) {

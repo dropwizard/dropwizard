@@ -2,7 +2,7 @@ package io.dropwizard.hibernate;
 
 import com.codahale.metrics.health.HealthCheck;
 import com.google.common.util.concurrent.MoreExecutors;
-import io.dropwizard.db.TimeBoundHealthChecks;
+import io.dropwizard.db.TimeBoundHealthCheck;
 import io.dropwizard.util.Duration;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -14,8 +14,7 @@ import java.util.concurrent.ExecutorService;
 public class SessionFactoryHealthCheck extends HealthCheck {
     private final SessionFactory sessionFactory;
     private final String validationQuery;
-    private final Duration duration;
-    private final ExecutorService executorService;
+    private final TimeBoundHealthCheck timeBoundHealthCheck;
 
     public SessionFactoryHealthCheck(SessionFactory sessionFactory,
                                      String validationQuery) {
@@ -28,8 +27,7 @@ public class SessionFactoryHealthCheck extends HealthCheck {
                                      String validationQuery) {
         this.sessionFactory = sessionFactory;
         this.validationQuery = validationQuery;
-        this.executorService = executorService;
-        this.duration = duration;
+        this.timeBoundHealthCheck = new TimeBoundHealthCheck(executorService, duration);
     }
     
 
@@ -43,7 +41,7 @@ public class SessionFactoryHealthCheck extends HealthCheck {
 
     @Override
     protected Result check() throws Exception {
-        return TimeBoundHealthChecks.check(executorService, duration, new Callable<Result>() {
+        return timeBoundHealthCheck.check(new Callable<Result>() {
             @Override
             public Result call() throws Exception {
                 final Session session = sessionFactory.openSession();
