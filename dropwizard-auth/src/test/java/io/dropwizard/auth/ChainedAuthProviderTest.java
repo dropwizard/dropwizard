@@ -113,6 +113,7 @@ public class ChainedAuthProviderTest extends JerseyTest {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public static class ChainedAuthTestResourceConfig extends DropwizardResourceConfig {
         public ChainedAuthTestResourceConfig() {
             super(true, new MetricRegistry());

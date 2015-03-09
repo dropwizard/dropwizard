@@ -70,6 +70,7 @@ public class ViewBundleTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void addsTheViewMessageBodyWriterWithSingleViewRendererToTheEnvironment() throws Exception {
         final String viewSuffix = ".ftl";
         final String testKey = "testKey";

@@ -18,6 +18,7 @@ import static org.mockito.Mockito.when;
 public class TimeBoundHealthCheckTest {
     
     @Test
+    @SuppressWarnings("unchecked")
     public void testCheck() throws InterruptedException, ExecutionException, TimeoutException {
         final ExecutorService executorService = mock(ExecutorService.class);
         final Duration duration = mock(Duration.class);
