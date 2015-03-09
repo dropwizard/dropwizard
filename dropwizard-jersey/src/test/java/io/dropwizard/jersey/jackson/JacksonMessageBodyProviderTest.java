@@ -42,7 +42,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
-@SuppressWarnings("unchecked")
+@SuppressWarnings({"serial", "unchecked"})
 public class JacksonMessageBodyProviderTest {
     private static final Annotation[] NONE = new Annotation[0];
 

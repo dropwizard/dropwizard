@@ -27,6 +27,8 @@ import java.util.List;
  */
 public class FuzzyEnumModule extends Module {
     private static class PermissiveEnumDeserializer extends StdScalarDeserializer<Enum<?>> {
+        private static final long serialVersionUID = 1L;
+
         private final Enum<?>[] constants;
         private final List<String> acceptedValues;
 
