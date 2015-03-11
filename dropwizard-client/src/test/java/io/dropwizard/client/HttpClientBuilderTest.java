@@ -51,10 +51,7 @@ import java.lang.reflect.Field;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 public class HttpClientBuilderTest {
@@ -88,7 +85,7 @@ public class HttpClientBuilderTest {
     @Test
     public void setsTheMaximumConnectionPoolSize() throws Exception {
         configuration.setMaxConnections(412);
-        final CloseableHttpClient client = builder.using(configuration)
+        final ConfiguredCloseableHttpClient client = builder.using(configuration)
                 .createClient(apacheBuilder, builder.configureConnectionManager(connectionManager), "test");
 
         assertThat(client).isNotNull();
@@ -100,7 +97,7 @@ public class HttpClientBuilderTest {
     @Test
     public void setsTheMaximumRoutePoolSize() throws Exception {
         configuration.setMaxConnectionsPerRoute(413);
-        final CloseableHttpClient client = builder.using(configuration)
+        final ConfiguredCloseableHttpClient client = builder.using(configuration)
                 .createClient(apacheBuilder, builder.configureConnectionManager(connectionManager), "test");
 
         assertThat(client).isNotNull();
@@ -229,14 +226,14 @@ public class HttpClientBuilderTest {
         assertThat(((RequestConfig) spyHttpClientBuilderField("defaultRequestConfig", apacheBuilder)).getConnectTimeout())
                 .isEqualTo(500);
     }
-    
+
     @Test
     public void setsTheConnectionRequestTimeout() throws Exception {
-    	configuration.setConnectionRequestTimeout(Duration.milliseconds(123));
-    	
-    	assertThat(builder.using(configuration).createClient(apacheBuilder, connectionManager, "test")).isNotNull();
-    	assertThat(((RequestConfig) spyHttpClientBuilderField("defaultRequestConfig", apacheBuilder)).getConnectionRequestTimeout())
-        		.isEqualTo(123);
+        configuration.setConnectionRequestTimeout(Duration.milliseconds(123));
+
+        assertThat(builder.using(configuration).createClient(apacheBuilder, connectionManager, "test")).isNotNull();
+        assertThat(((RequestConfig) spyHttpClientBuilderField("defaultRequestConfig", apacheBuilder)).getConnectionRequestTimeout())
+                .isEqualTo(123);
     }
 
     @Test
@@ -257,7 +254,7 @@ public class HttpClientBuilderTest {
     @Test
     public void usesTheDefaultRoutePlanner() throws Exception {
         final CloseableHttpClient httpClient = builder.using(configuration)
-                .createClient(apacheBuilder, connectionManager, "test");
+                .createClient(apacheBuilder, connectionManager, "test").getClient();
 
         assertThat(httpClient).isNotNull();
         assertThat(spyHttpClientBuilderField("routePlanner", apacheBuilder)).isNull();
@@ -278,7 +275,7 @@ public class HttpClientBuilderTest {
             }
         });
         final CloseableHttpClient httpClient = builder.using(configuration).using(routePlanner)
-                .createClient(apacheBuilder, connectionManager, "test");
+                .createClient(apacheBuilder, connectionManager, "test").getClient();
 
         assertThat(httpClient).isNotNull();
         assertThat(spyHttpClientBuilderField("routePlanner", apacheBuilder)).isSameAs(routePlanner);
@@ -343,6 +340,14 @@ public class HttpClientBuilderTest {
                 "metricNameStrategy", true)
                 .get(spyHttpClientBuilderField("requestExec", apacheBuilder)))
                 .isSameAs(HttpClientMetricNameStrategies.METHOD_ONLY);
+    }
+
+    @Test
+    public void exposedConfigIsTheSameAsInternalToTheWrappedHttpClient() throws Exception {
+        ConfiguredCloseableHttpClient client = builder.createClient(apacheBuilder, connectionManager, "test");
+        assertThat(client).isNotNull();
+
+        assertThat(spyHttpClientField("defaultConfig", client.getClient())).isEqualTo(client.getDefaultRequestConfig());
     }
 
     private Object spyHttpClientBuilderField(final String fieldName, final Object obj) throws Exception {
