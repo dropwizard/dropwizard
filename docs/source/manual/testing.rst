@@ -325,10 +325,10 @@ running and stop it again when they've completed (roughly equivalent to having u
         public void loginHandlerRedirectsAfterPost() {
             Client client = new JerseyClientBuilder(RULE.getEnvironment()).build("test client");
 
-            ClientResponse response = client.target(
+            Response response = client.target(
                      String.format("http://localhost:%d/login", RULE.getLocalPort()))
                     .request()
-                    .post(Entity.json(loginForm()), ClientResponse.class);
+                    .post(Entity.json(loginForm()));
 
             assertThat(response.getStatus()).isEqualTo(302);
         }
