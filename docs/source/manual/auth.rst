@@ -116,14 +116,9 @@ The ``ChainedAuthFactory`` enables usage of various authentication factories at 
     @Override
     public void run(ExampleConfiguration configuration,
                     Environment environment) {
-        ChainedAuthFactory chainedFactory = new ChainedAuthFactory(
-                new BasicAuthProvider<User>(new BasicAuthFactory<User>(new ExampleBasicAuthenticator(),
-                                                                                      "SUPER SECRET STUFF",
-                                                                                      User.class))),
-                new OAuthProvider<User>(new OAuthFactory<User>(new ExampleOAuthAuthenticator(),
-                                                                               "SUPER SECRET STUFF",
-                                                                               User.class)))
-        );
+        ChainedAuthFactory<User> chainedFactory = new ChainedAuthFactory<>(
+                new BasicAuthFactory<>(new ExampleBasicAuthenticator(), "SUPER SECRET STUFF", User.class),
+                new OAuthFactory<>(new ExampleOAuthAuthenticator(), "SUPER SECRET STUFF", User.class));
         environment.jersey().register(AuthFactory.binder(chainedFactory));
     }
 
