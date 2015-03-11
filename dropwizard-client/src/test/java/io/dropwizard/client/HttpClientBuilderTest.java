@@ -41,9 +41,14 @@ import org.apache.http.protocol.HttpContext;
 import org.junit.Before;
 import org.junit.Test;
 import java.net.ProxySelector;
+import java.net.Proxy;
+import java.net.URI;
+import java.net.SocketAddress;
+import java.net.InetSocketAddress;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -261,8 +266,17 @@ public class HttpClientBuilderTest {
 
     @Test
     public void usesACustomRoutePlanner() throws Exception {
-        ProxySelector proxySelector = (ProxySelector) Class.forName("sun.net.spi.DefaultProxySelector").newInstance();
-        final HttpRoutePlanner routePlanner = new SystemDefaultRoutePlanner(proxySelector);
+        final HttpRoutePlanner routePlanner = new SystemDefaultRoutePlanner(new ProxySelector() {
+            @Override
+            public List<Proxy> select(URI uri) {
+                return ImmutableList.of(new Proxy(Proxy.Type.HTTP, new InetSocketAddress("192.168.52.1", 8080)));
+            }
+
+            @Override
+            public void connectFailed(URI uri, SocketAddress sa, IOException ioe) {
+
+            }
+        });
         final CloseableHttpClient httpClient = builder.using(configuration).using(routePlanner)
                 .createClient(apacheBuilder, connectionManager, "test");
 
