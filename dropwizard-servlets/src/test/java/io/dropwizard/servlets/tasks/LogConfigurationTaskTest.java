@@ -45,7 +45,7 @@ public class LogConfigurationTaskTest {
         assertThat(logger1.getLevel()).isEqualTo(Level.DEBUG);
         assertThat(logger2.getLevel()).isEqualTo(DEFAULT_LEVEL);
 
-        assertThat(stringWriter.toString()).isEqualTo("Configured logging level for logger.one to DEBUG\n");
+        assertThat(stringWriter.toString()).isEqualTo(String.format("Configured logging level for logger.one to DEBUG%n"));
     }
 
     @Test
@@ -61,7 +61,7 @@ public class LogConfigurationTaskTest {
         assertThat(logger1.getLevel()).isNull();
         assertThat(logger2.getLevel()).isEqualTo(DEFAULT_LEVEL);
 
-        assertThat(stringWriter.toString()).isEqualTo("Configured logging level for logger.one to null\n");
+        assertThat(stringWriter.toString()).isEqualTo(String.format("Configured logging level for logger.one to null%n"));
     }
 
     @Test
@@ -80,6 +80,6 @@ public class LogConfigurationTaskTest {
         assertThat(logger2.getLevel()).isEqualTo(Level.INFO);
 
         assertThat(stringWriter.toString())
-                .isEqualTo("Configured logging level for logger.one to INFO\nConfigured logging level for logger.two to INFO\n");
+                .isEqualTo(String.format("Configured logging level for logger.one to INFO%nConfigured logging level for logger.two to INFO%n"));
     }
 }
