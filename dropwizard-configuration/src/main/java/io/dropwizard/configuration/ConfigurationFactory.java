@@ -7,7 +7,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.fasterxml.jackson.databind.node.TreeTraversingParser;
@@ -23,7 +22,12 @@ import javax.validation.Validator;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -116,7 +120,12 @@ public class ConfigurationFactory<T> {
      * @throws ConfigurationException if there is an error parsing or validating the file
      */
     public T build() throws IOException, ConfigurationException {
-        return build(JsonNodeFactory.instance.objectNode(), "default configuration");
+        try {
+            return build(mapper.valueToTree(klass.newInstance()), "default configuration");
+        } catch (InstantiationException | IllegalAccessException e) {
+            throw new IllegalArgumentException("Unable create an instance " +
+                    "of the configuration class: '" + klass.getCanonicalName() + "'", e);
+        }
     }
 
     private T build(JsonNode node, String path) throws IOException, ConfigurationException {

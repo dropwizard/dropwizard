@@ -43,7 +43,8 @@ public class HibernateBundleTest {
         when(factory.build(eq(bundle),
                            any(Environment.class),
                            any(DataSourceFactory.class),
-                           anyList())).thenReturn(sessionFactory);
+                           anyList(),
+                           eq("hibernate"))).thenReturn(sessionFactory);
     }
 
     @Test
@@ -65,7 +66,7 @@ public class HibernateBundleTest {
     public void buildsASessionFactory() throws Exception {
         bundle.run(configuration, environment);
 
-        verify(factory).build(bundle, environment, dbConfig, entities);
+        verify(factory).build(bundle, environment, dbConfig, entities, "hibernate");
     }
 
     @Test
@@ -90,6 +91,33 @@ public class HibernateBundleTest {
         assertThat(captor.getValue().getSessionFactory()).isEqualTo(sessionFactory);
 
         assertThat(captor.getValue().getValidationQuery()).isEqualTo("SELECT something");
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void registersACustomNameOfHealthCheckAndDBPoolMetrics() throws Exception {
+        final HibernateBundle<Configuration> customBundle = new HibernateBundle<Configuration>(entities, factory) {
+            @Override
+            public DataSourceFactory getDataSourceFactory(Configuration configuration) {
+                return dbConfig;
+            }
+
+            @Override
+            protected String name() {
+                return "custom-hibernate";
+            }
+        };
+        when(factory.build(eq(customBundle),
+                any(Environment.class),
+                any(DataSourceFactory.class),
+                anyList(),
+                eq("custom-hibernate"))).thenReturn(sessionFactory);
+
+        customBundle.run(configuration, environment);
+
+        final ArgumentCaptor<SessionFactoryHealthCheck> captor =
+                ArgumentCaptor.forClass(SessionFactoryHealthCheck.class);
+        verify(healthChecks).register(eq("custom-hibernate"), captor.capture());
     }
 
     @Test

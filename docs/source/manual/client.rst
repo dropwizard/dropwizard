@@ -12,8 +12,8 @@ Dropwizard Client
 
 .. _man-client-apache:
 
-Apache HttpClient, version 4.3
-===============================
+Apache HttpClient
+=================
 
 The underlying library for ``dropwizard-client`` is  Apache's HttpClient_, a full-featured,
 well-tested HTTP client library.
@@ -112,8 +112,8 @@ following pieces of data:
 
 .. _man-client-jersey:
 
-Jersey Client, version 1.18
-===========================
+Jersey Client
+=============
 
 If HttpClient_ is too low-level for you, Dropwizard also supports Jersey's `Client API`_.
 Jersey's ``Client`` allows you to use all of the server-side media type support that your service

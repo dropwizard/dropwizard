@@ -8,22 +8,28 @@ import ch.qos.logback.classic.jmx.JMXConfigurator;
 import ch.qos.logback.classic.jul.LevelChangePropagator;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.ConsoleAppender;
+import ch.qos.logback.core.encoder.LayoutWrappingEncoder;
+import ch.qos.logback.core.util.StatusPrinter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.logback.InstrumentedAppender;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import org.slf4j.ILoggerFactory;
 import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
 import javax.management.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.io.PrintStream;
 import java.lang.management.ManagementFactory;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 public class LoggingFactory {
     // initially configure for WARN+ console logging
@@ -48,7 +54,10 @@ public class LoggingFactory {
         final ConsoleAppender<ILoggingEvent> appender = new ConsoleAppender<>();
         appender.addFilter(filter);
         appender.setContext(root.getLoggerContext());
-        appender.setLayout(formatter);
+
+        LayoutWrappingEncoder<ILoggingEvent> layoutEncoder = new LayoutWrappingEncoder<>();
+        layoutEncoder.setLayout(formatter);
+        appender.setEncoder(layoutEncoder);
         appender.start();
 
         root.addAppender(appender);
@@ -70,6 +79,22 @@ public class LoggingFactory {
     private ImmutableList<AppenderFactory> appenders = ImmutableList.<AppenderFactory>of(
             new ConsoleAppenderFactory()
     );
+
+    @JsonIgnore
+    final LoggerContext loggerContext;
+
+    @JsonIgnore
+    final PrintStream configurationErrorsStream;
+
+    public LoggingFactory() {
+        this((LoggerContext) LoggerFactory.getILoggerFactory(), System.err);
+    }
+
+    @VisibleForTesting
+    LoggingFactory(LoggerContext loggerContext, PrintStream configurationErrorsStream) {
+        this.loggerContext = checkNotNull(loggerContext);
+        this.configurationErrorsStream = checkNotNull(configurationErrorsStream);
+    }
 
     @JsonProperty
     public Level getLevel() {
@@ -107,14 +132,21 @@ public class LoggingFactory {
         final Logger root = configureLevels();
 
         for (AppenderFactory output : appenders) {
-            root.addAppender(output.build(root.getLoggerContext(), name, null));
+            root.addAppender(output.build(loggerContext, name, null));
+        }
+
+        StatusPrinter.setPrintStream(configurationErrorsStream);
+        try {
+            StatusPrinter.printIfErrorsOccured(loggerContext);
+        }finally {
+            StatusPrinter.setPrintStream(System.out);
         }
 
         final MBeanServer server = ManagementFactory.getPlatformMBeanServer();
         try {
             final ObjectName objectName = new ObjectName("io.dropwizard:type=Logging");
             if (!server.isRegistered(objectName)) {
-                server.registerMBean(new JMXConfigurator(root.getLoggerContext(),
+                server.registerMBean(new JMXConfigurator(loggerContext,
                                                          server,
                                                          objectName),
                                      objectName);
@@ -128,34 +160,30 @@ public class LoggingFactory {
     }
 
     public void stop() {
-        ILoggerFactory loggerFactory = LoggerFactory.getILoggerFactory();
-        if (loggerFactory instanceof LoggerContext) {
-            LoggerContext context = (LoggerContext) loggerFactory;
-            context.stop();
-        }
+        loggerContext.stop();
     }
 
     private void configureInstrumentation(Logger root, MetricRegistry metricRegistry) {
         final InstrumentedAppender appender = new InstrumentedAppender(metricRegistry);
-        appender.setContext(root.getLoggerContext());
+        appender.setContext(loggerContext);
         appender.start();
         root.addAppender(appender);
     }
 
     private Logger configureLevels() {
-        final Logger root = (Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
-        root.getLoggerContext().reset();
+        final Logger root = loggerContext.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
+        loggerContext.reset();
 
         final LevelChangePropagator propagator = new LevelChangePropagator();
-        propagator.setContext(root.getLoggerContext());
+        propagator.setContext(loggerContext);
         propagator.setResetJUL(true);
 
-        root.getLoggerContext().addListener(propagator);
+        loggerContext.addListener(propagator);
 
         root.setLevel(level);
 
         for (Map.Entry<String, Level> entry : loggers.entrySet()) {
-            ((Logger) LoggerFactory.getLogger(entry.getKey())).setLevel(entry.getValue());
+            loggerContext.getLogger(entry.getKey()).setLevel(entry.getValue());
         }
 
         return root;

@@ -5,6 +5,7 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.FileAppender;
 import ch.qos.logback.core.Layout;
+import ch.qos.logback.core.encoder.LayoutWrappingEncoder;
 import ch.qos.logback.core.rolling.DefaultTimeBasedFileNamingAndTriggeringPolicy;
 import ch.qos.logback.core.rolling.RollingFileAppender;
 import ch.qos.logback.core.rolling.TimeBasedRollingPolicy;
@@ -160,8 +161,11 @@ public class FileAppenderFactory extends AbstractAppenderFactory {
 
         appender.setAppend(true);
         appender.setContext(context);
-        appender.setLayout(layout == null ? buildLayout(context, timeZone) : layout);
-        appender.setFile(currentLogFilename);
+
+        LayoutWrappingEncoder<ILoggingEvent> layoutEncoder = new LayoutWrappingEncoder<>();
+        layoutEncoder.setLayout(layout == null ? buildLayout(context, timeZone) : layout);
+        appender.setEncoder(layoutEncoder);
+
         appender.setPrudent(false);
         addThresholdFilter(appender, threshold);
         appender.stop();
@@ -173,6 +177,7 @@ public class FileAppenderFactory extends AbstractAppenderFactory {
     protected FileAppender<ILoggingEvent> buildAppender(LoggerContext context) {
         if (archive) {
             final RollingFileAppender<ILoggingEvent> appender = new RollingFileAppender<>();
+            appender.setFile(currentLogFilename);
             final DefaultTimeBasedFileNamingAndTriggeringPolicy<ILoggingEvent> triggeringPolicy =
                     new DefaultTimeBasedFileNamingAndTriggeringPolicy<>();
             triggeringPolicy.setContext(context);
@@ -192,6 +197,9 @@ public class FileAppenderFactory extends AbstractAppenderFactory {
             rollingPolicy.start();
             return appender;
         }
-        return new FileAppender<>();
+
+        final FileAppender<ILoggingEvent> appender = new FileAppender<>();
+        appender.setFile(currentLogFilename);
+        return appender;
     }
 }

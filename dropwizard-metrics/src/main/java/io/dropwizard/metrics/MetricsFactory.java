@@ -26,7 +26,7 @@ import javax.validation.constraints.NotNull;
  *     </tr>
  *     <tr>
  *         <td>frequency</td>
- *         <td>1 second</td>
+ *         <td>1 minute</td>
  *         <td>The frequency to report metrics. Overridable per-reporter.</td>
  *     </tr>
  *     <tr>

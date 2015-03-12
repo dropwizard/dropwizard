@@ -13,6 +13,7 @@ import io.dropwizard.jdbi.args.JodaDateTimeMapper;
 import io.dropwizard.jdbi.args.OptionalArgumentFactory;
 import io.dropwizard.jdbi.logging.LogbackLog;
 import io.dropwizard.setup.Environment;
+import io.dropwizard.util.Duration;
 import org.skife.jdbi.v2.ColonPrefixNamedParamStatementRewriter;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.StatementContext;
@@ -53,7 +54,11 @@ public class DBIFactory {
         final String validationQuery = configuration.getValidationQuery();
         final DBI dbi = new DBI(dataSource);
         environment.lifecycle().manage(dataSource);
-        environment.healthChecks().register(name, new DBIHealthCheck(dbi, validationQuery));
+        environment.healthChecks().register(name, new DBIHealthCheck(
+                environment.getHealthCheckExecutorService(),
+                configuration.getValidationQueryTimeout().or(Duration.seconds(5)),
+                dbi, 
+                validationQuery));
         dbi.setSQLLog(new LogbackLog(LOGGER, Level.TRACE));
         dbi.setTimingCollector(new InstrumentedTimingCollector(environment.metrics(),
                                                                new SanerNamingStrategy()));

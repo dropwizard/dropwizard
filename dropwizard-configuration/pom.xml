@@ -5,7 +5,7 @@
     <parent>
         <groupId>io.dropwizard</groupId>
         <artifactId>dropwizard-parent</artifactId>
-        <version>0.8.0-rc3-SNAPSHOT</version>
+        <version>0.8.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>dropwizard-configuration</artifactId>
@@ -33,4 +33,22 @@
             <version>3.3.2</version>
         </dependency>
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <!-- Required for tests related to environment variables -->
+                <configuration>
+                    <forkMode>always</forkMode>
+                    <environmentVariables>
+                        <TEST>test_value</TEST>
+                        <TEST_SUFFIX>2</TEST_SUFFIX>
+                        <TEST2>alternative</TEST2>
+                    </environmentVariables>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

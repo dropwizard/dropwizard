@@ -3,6 +3,7 @@ package io.dropwizard.hibernate;
 import com.codahale.metrics.MetricRegistry;
 import com.google.common.collect.ImmutableList;
 import io.dropwizard.db.DataSourceFactory;
+import io.dropwizard.db.ManagedPooledDataSource;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
 import io.dropwizard.logging.LoggingFactory;
 import io.dropwizard.setup.Environment;
@@ -14,6 +15,7 @@ import org.joda.time.DateTimeZone;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -63,6 +65,27 @@ public class SessionFactoryFactoryTest {
       build();
 
       verify(bundle).configure(any(Configuration.class));
+    }
+
+    @Test
+    public void setsPoolName() {
+        build();
+
+        ArgumentCaptor<SessionFactoryManager> sessionFactoryManager = ArgumentCaptor.forClass(SessionFactoryManager.class);
+        verify(lifecycleEnvironment).manage(sessionFactoryManager.capture());
+        ManagedPooledDataSource dataSource = (ManagedPooledDataSource) sessionFactoryManager.getValue().getDataSource();
+        assertThat(dataSource.getPool().getName()).isEqualTo("hibernate");
+    }
+
+    @Test
+    public void setsACustomPoolName() {
+        this.sessionFactory = factory.build(bundle, environment, config,
+                ImmutableList.<Class<?>>of(Person.class), "custom-hibernate-db");
+
+        ArgumentCaptor<SessionFactoryManager> sessionFactoryManager = ArgumentCaptor.forClass(SessionFactoryManager.class);
+        verify(lifecycleEnvironment).manage(sessionFactoryManager.capture());
+        ManagedPooledDataSource dataSource = (ManagedPooledDataSource) sessionFactoryManager.getValue().getDataSource();
+        assertThat(dataSource.getPool().getName()).isEqualTo("custom-hibernate-db");
     }
 
     @Test

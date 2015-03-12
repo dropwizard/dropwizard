@@ -42,7 +42,7 @@ public class DropwizardTestSupport<C extends Configuration> {
     private Application<C> application;
     private Environment environment;
     private Server jettyServer;
-    private List<ServiceListener> listeners = Lists.newArrayList();
+    private List<ServiceListener<C>> listeners = Lists.newArrayList();
 
     public DropwizardTestSupport(Class<? extends Application<C>> applicationClass,
                              @Nullable String configPath,
@@ -71,9 +71,8 @@ public class DropwizardTestSupport<C extends Configuration> {
         startIfRequired();
     }
 
-    @SuppressWarnings("unchecked")
     public void after() {
-        for (ServiceListener listener : listeners) {
+        for (ServiceListener<C> listener : listeners) {
             try {
                 listener.onStop(this);
             } catch (Exception ignored) {

@@ -4,6 +4,7 @@ import javax.ws.rs.WebApplicationException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * The rendering engine for a type of view.
@@ -30,4 +31,15 @@ public interface ViewRenderer {
     void render(View view,
                 Locale locale,
                 OutputStream output) throws IOException, WebApplicationException;
+
+    /**
+      * options for configuring the view renderer
+      * @param options
+     */
+    void configure(Map<String, String> options);
+
+    /**
+     * @return the suffix of the template type, e.g '.ftl', '.mustache'
+     */
+    String getSuffix();
 }

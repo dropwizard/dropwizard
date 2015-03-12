@@ -78,7 +78,7 @@ And Friends
 -----------
 
 In addition to Jetty_, Jersey_, and Jackson_, Dropwizard also includes a number of libraries to help
-you ship more quickly and with less regrets.
+you ship more quickly and with fewer regrets.
 
 * Guava_, which, in addition to highly optimized immutable data structures, provides a growing
   number of classes to speed up development in Java.

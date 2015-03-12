@@ -24,6 +24,7 @@ import org.skife.jdbi.v2.util.StringMapper;
 import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.List;
+import java.util.concurrent.Executors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.any;
@@ -53,6 +54,7 @@ public class JDBITest {
         when(environment.healthChecks()).thenReturn(healthChecks);
         when(environment.lifecycle()).thenReturn(lifecycleEnvironment);
         when(environment.metrics()).thenReturn(metricRegistry);
+        when(environment.getHealthCheckExecutorService()).thenReturn(Executors.newSingleThreadExecutor());
 
         this.dbi = factory.build(environment, hsqlConfig, "hsql");
         final ArgumentCaptor<Managed> managedCaptor = ArgumentCaptor.forClass(Managed.class);

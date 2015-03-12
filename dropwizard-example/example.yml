@@ -1,6 +1,6 @@
 template: Hello, %s!
 
-defaultName: Stranger
+defaultName: ${DW_DEFAULT_NAME:-Stranger}
 
 # Database settings.
 database:
@@ -66,3 +66,16 @@ logging:
 
   appenders:
     - type: console
+    - type: file
+      threshold: DEBUG
+      logFormat: "%-6level [%d{HH:mm:ss.SSS}] [%t] %logger{5} - %X{code} %msg %n"
+      currentLogFilename: /tmp/application.log
+      archivedLogFilenamePattern: /tmp/application-%d{yyyy-MM-dd}.log
+      archivedFileCount: 7
+      timeZone: UTC
+
+# the key needs to match the suffix of the renderer
+viewRendererConfiguration:
+    .ftl:
+        strict_syntax: yes
+        whitespace_stripping: yes

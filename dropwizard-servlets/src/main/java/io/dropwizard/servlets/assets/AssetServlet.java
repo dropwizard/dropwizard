@@ -1,11 +1,13 @@
 package io.dropwizard.servlets.assets;
 
 import com.google.common.base.CharMatcher;
+import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
+import com.google.common.collect.ImmutableList;
 import com.google.common.hash.Hashing;
 import com.google.common.io.Resources;
 import com.google.common.net.HttpHeaders;
 import com.google.common.net.MediaType;
-
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
@@ -15,7 +17,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.Charset;
-
+import java.util.List;
 import static com.google.common.base.Preconditions.checkArgument;
 
 public class AssetServlet extends HttpServlet {
@@ -112,6 +114,40 @@ public class AssetServlet extends HttpServlet {
                 return;
             }
 
+            final String rangeHeader = req.getHeader(HttpHeaders.RANGE);
+
+            final int resourceLength = cachedAsset.getResource().length;
+            ImmutableList<ByteRange> ranges = ImmutableList.of();
+
+            boolean usingRanges = false;
+            // Support for HTTP Byte Ranges
+            // http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html
+            if (rangeHeader != null) {
+
+                final String ifRange = req.getHeader(HttpHeaders.IF_RANGE);
+
+                if (ifRange == null || cachedAsset.getETag().equals(ifRange)) {
+
+                    try {
+                        ranges = parseRangeHeader(rangeHeader, resourceLength);
+                    } catch (NumberFormatException e) {
+                        resp.sendError(HttpServletResponse.SC_REQUESTED_RANGE_NOT_SATISFIABLE);
+                        return;
+                    }
+
+                    if (ranges.isEmpty()) {
+                        resp.sendError(HttpServletResponse.SC_REQUESTED_RANGE_NOT_SATISFIABLE);
+                        return;
+                    }
+
+                    resp.setStatus(HttpServletResponse.SC_PARTIAL_CONTENT);
+                    usingRanges = true;
+
+                    resp.addHeader(HttpHeaders.CONTENT_RANGE, "bytes "
+                            + Joiner.on(",").join(ranges) + "/" + resourceLength);
+                }
+            }
+
             resp.setDateHeader(HttpHeaders.LAST_MODIFIED, cachedAsset.getLastModifiedTime());
             resp.setHeader(HttpHeaders.ETAG, cachedAsset.getETag());
 
@@ -128,6 +164,11 @@ public class AssetServlet extends HttpServlet {
                 } catch (IllegalArgumentException ignore) {}
             }
 
+            if (mediaType.is(MediaType.ANY_VIDEO_TYPE)
+                    || mediaType.is(MediaType.ANY_AUDIO_TYPE) || usingRanges) {
+                resp.addHeader(HttpHeaders.ACCEPT_RANGES, "bytes");
+            }
+
             resp.setContentType(mediaType.type() + '/' + mediaType.subtype());
 
             if (mediaType.charset().isPresent()) {
@@ -135,7 +176,15 @@ public class AssetServlet extends HttpServlet {
             }
 
             try (ServletOutputStream output = resp.getOutputStream()) {
-                output.write(cachedAsset.getResource());
+                 if (usingRanges) {
+                    for (final ByteRange range : ranges) {
+                        output.write(cachedAsset.getResource(), range.getStart(),
+                                range.getEnd() - range.getStart() + 1);
+                    }
+                }
+                else {
+                    output.write(cachedAsset.getResource());
+                }
             }
         } catch (RuntimeException | URISyntaxException ignored) {
             resp.sendError(HttpServletResponse.SC_NOT_FOUND);
@@ -171,5 +220,27 @@ public class AssetServlet extends HttpServlet {
     private boolean isCachedClientSide(HttpServletRequest req, CachedAsset cachedAsset) {
         return cachedAsset.getETag().equals(req.getHeader(HttpHeaders.IF_NONE_MATCH)) ||
                 (req.getDateHeader(HttpHeaders.IF_MODIFIED_SINCE) >= cachedAsset.getLastModifiedTime());
+    }
+
+    /**
+     * Parses a given Range header for one or more byte ranges.
+     *
+     * @param rangeHeader Range header to parse
+     * @param resourceLength Length of the resource in bytes
+     * @return List of parsed ranges
+     */
+    private ImmutableList<ByteRange> parseRangeHeader(final String rangeHeader,
+            final int resourceLength) {
+        final ImmutableList.Builder<ByteRange> builder = ImmutableList.builder();
+        if (rangeHeader.indexOf("=") != -1) {
+            final String[] parts = rangeHeader.split("=");
+            if (parts.length > 1) {
+                final List<String> ranges = Splitter.on(",").trimResults().splitToList(parts[1]);
+                for (final String range : ranges) {
+                    builder.add(ByteRange.parse(range, resourceLength));
+                }
+            }
+        }
+        return builder.build();
     }
 }

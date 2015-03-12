@@ -4,10 +4,18 @@
 Release Notes
 #############
 
+.. _rel-0.8.1:
+
+v0.8.1:
+=======
+
+* Fixed transcation commiting lifecycle for ``@UnitOfWork``  (#850, #915)
+* Fixed noisy Logback messages on startup (#902)
+
 .. _rel-0.8.0:
 
-v0.8.0:
-=======
+v0.8.0: Mar 5 2015
+==================
 
 * Migrated ``dropwizard-spdy`` from NPN to ALPN
 * Dropped support for deprecated SPDY/2 in ``dropwizard-spdy``
@@ -15,21 +23,34 @@ v0.8.0:
 * Upgrade to commons-lang3 3.3.2
 * Upgrade to Guava 18.0
 * Upgrade to H2 1.4.185
-* Upgrade to Hibernate 4.3.8.Final
+* Upgrade to Hibernate 4.3.5.Final
 * Upgrade to Hibernate Validator 5.1.3.Final
-* Upgrade to Jackson 2.5.0
-* Upgrade to JDBI 2.57
-* Upgrade to Jersey 2.15
-* Upgrade to Jetty 9.2.6.v20141205
+* Upgrade to Jackson 2.5.1
+* Upgrade to JDBI 2.59
+* Upgrade to Jersey 2.16
+* Upgrade to Jetty 9.2.9.v20150224
 * Upgrade to Joda-Time 2.7
 * Upgrade to Liquibase 3.3.2
 * Upgrade to Mustache 0.8.16
 * Upgrade to SLF4J 1.7.10
-* Upgrade to tomcat-jdbc 8.0.17
+* Upgrade to tomcat-jdbc 8.0.18
 * Upgrade to JSR305 annotations 3.0.0
 * Upgrade to Junit 4.12
 * Upgrade to AssertJ 1.7.1
 * Upgrade to Mockito 1.10.17
+* Support for range headers
+* Ability to use Apache client configuration for Jersey client
+* Warning when maximum pool size and unbounded queues are combined
+* Fixed connection leak in CloseableLiquibase
+* Support ScheduledExecutorService with daemon thread
+* Improved DropwizardAppRule
+* Better connection pool metrics
+* Removed final modifier from Application#run
+* Fixed gzip encoding to support Jersey 2.x
+* Configuration to toggle regex [in/ex]clusion for Metrics
+* Configuration to disable default exception mappers
+* Configuration support for disabling chunked encoding
+* Documentation fixes and upgrades
 
 
 .. _rel-0.7.1:

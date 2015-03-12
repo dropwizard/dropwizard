@@ -29,6 +29,10 @@ public class CloseableLiquibase extends Liquibase implements AutoCloseable {
 
     @Override
     public void close() throws Exception {
-        dataSource.stop();
+        try {
+            database.close();
+        } finally {
+            dataSource.stop();
+        }
     }
 }
