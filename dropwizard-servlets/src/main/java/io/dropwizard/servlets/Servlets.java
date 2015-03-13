@@ -15,10 +15,11 @@ public class Servlets {
      * @return the full URL, including the query string
      */
     public static String getFullUrl(HttpServletRequest request) {
-        final StringBuilder url = new StringBuilder(100).append(request.getRequestURI());
-        if (request.getQueryString() != null) {
-            url.append('?').append(request.getQueryString());
+
+        if (request.getQueryString() == null) {
+            return request.getRequestURI();
         }
-        return url.toString();
+
+        return request.getRequestURI() + "?" + request.getQueryString();
     }
 }
