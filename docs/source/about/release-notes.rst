@@ -11,6 +11,7 @@ v0.8.1:
 
 * Fixed transcation commiting lifecycle for ``@UnitOfWork``  (#850, #915)
 * Fixed noisy Logback messages on startup (#902)
+* Fixed security issue where info is leaked during validation of unauthenticated resources(#768)
 
 .. _rel-0.8.0:
 

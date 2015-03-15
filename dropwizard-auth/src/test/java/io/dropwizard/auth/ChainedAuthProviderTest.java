@@ -2,9 +2,11 @@ package io.dropwizard.auth;
 
 import com.codahale.metrics.MetricRegistry;
 import com.google.common.base.Optional;
-import io.dropwizard.auth.basic.BasicAuthFactory;
+import com.google.common.collect.Lists;
+import io.dropwizard.auth.basic.BasicCredentialAuthHandler;
 import io.dropwizard.auth.basic.BasicCredentials;
-import io.dropwizard.auth.oauth.OAuthFactory;
+import io.dropwizard.auth.chained.ChainedAuthHandler;
+import io.dropwizard.auth.oauth.OAuthCredentialAuthHandler;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.logging.LoggingFactory;
 import org.glassfish.jersey.servlet.ServletProperties;
@@ -15,14 +17,16 @@ import org.glassfish.jersey.test.grizzly.GrizzlyWebTestContainerFactory;
 import org.glassfish.jersey.test.spi.TestContainerException;
 import org.glassfish.jersey.test.spi.TestContainerFactory;
 import org.junit.Test;
-
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
-
+import javax.ws.rs.core.SecurityContext;
+import java.security.Principal;
+import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
 
@@ -107,9 +111,10 @@ public class ChainedAuthProviderTest extends JerseyTest {
     @Path("/test/")
     @Produces(MediaType.TEXT_PLAIN)
     public static class ProtectedResource {
+        @Auth
         @GET
-        public String show(@Auth String principal) {
-            return principal;
+        public String show(@Context SecurityContext context) {
+            return context.getUserPrincipal().getName();
         }
     }
 
@@ -118,12 +123,12 @@ public class ChainedAuthProviderTest extends JerseyTest {
         public ChainedAuthTestResourceConfig() {
             super(true, new MetricRegistry());
 
-            final Authenticator<BasicCredentials, String> basicAuthenticator = new Authenticator<BasicCredentials, String>() {
+            final Authenticator<BasicCredentials, Principal> basicAuthenticator = new Authenticator<BasicCredentials, Principal>() {
                 @Override
-                public Optional<String> authenticate(BasicCredentials credentials) throws AuthenticationException {
+                public Optional<Principal> authenticate(BasicCredentials credentials) throws AuthenticationException {
                     if ("good-guy".equals(credentials.getUsername()) &&
                             "secret".equals(credentials.getPassword())) {
-                        return Optional.of("good-guy");
+                        return Optional.<Principal>of(new PrincipalImpl("good-guy"));
                     }
                     if ("bad-guy".equals(credentials.getUsername())) {
                         throw new AuthenticationException("CRAP");
@@ -132,11 +137,11 @@ public class ChainedAuthProviderTest extends JerseyTest {
                 }
             };
 
-            final Authenticator<String, String> oauthAuthenticator = new Authenticator<String, String>() {
+            final Authenticator<String, Principal> oauthAuthenticator = new Authenticator<String, Principal>() {
                 @Override
-                public Optional<String> authenticate(String credentials) throws AuthenticationException {
+                public Optional<Principal> authenticate(String credentials) throws AuthenticationException {
                     if ("A12B3C4D".equals(credentials)) {
-                        return Optional.of("good-guy");
+                        return Optional.<Principal>of(new PrincipalImpl("good-guy"));
                     }
                     if ("bad-guy".equals(credentials)) {
                         throw new AuthenticationException("CRAP");
@@ -145,10 +150,17 @@ public class ChainedAuthProviderTest extends JerseyTest {
                 }
             };
 
-            BasicAuthFactory<String> basicAuthFactory = new BasicAuthFactory<String>(basicAuthenticator, "realm", String.class);
-            OAuthFactory<String> oAuthFactory = new OAuthFactory<String>(oauthAuthenticator, "realm", String.class);
+            AuthHandler basicCredentialAuthHandler = new BasicCredentialAuthHandler.Builder()
+                    .setAuthenticator(basicAuthenticator)
+                    .buildAuthHandler();
 
-            register(AuthFactory.binder(new ChainedAuthFactory<String>(basicAuthFactory, oAuthFactory)));
+            AuthHandler oauthCredentialAuthHandler = new OAuthCredentialAuthHandler.Builder()
+                    .setAuthenticator(oauthAuthenticator)
+                    .setPrefix("Bearer")
+                    .buildAuthHandler();
+
+            List handlers = Lists.newArrayList(basicCredentialAuthHandler, oauthCredentialAuthHandler);
+            register(new AuthDynamicFeature(new ChainedAuthHandler(handlers)));
             register(AuthResource.class);
         }
     }
