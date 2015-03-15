@@ -17,6 +17,7 @@ v0.8.1:
 * Default configuration for views
 * Ensure that JerseyRequest scoped ClientConfig gets propagated to HttpUriRequest
 * More example tests
+* Fixed security issue where info is leaked during validation of unauthenticated resources(#768)
 
 .. _rel-0.8.0:
 

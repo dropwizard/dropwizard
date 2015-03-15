@@ -2,6 +2,8 @@ package io.dropwizard.auth;
 
 import com.google.common.base.Optional;
 
+import java.security.Principal;
+
 /**
  * An interface for classes which authenticate user-provided credentials and return principal
  * objects.
@@ -9,7 +11,7 @@ import com.google.common.base.Optional;
  * @param <C> the type of credentials the authenticator can authenticate
  * @param <P> the type of principals the authenticator returns
  */
-public interface Authenticator<C, P> {
+public interface Authenticator<C, P extends Principal> {
     /**
      * Given a set of user-provided credentials, return an optional principal.
      * <p/>

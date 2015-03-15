@@ -9,6 +9,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InOrder;
 
+import java.security.Principal;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.inOrder;
@@ -19,19 +21,19 @@ import static org.mockito.Mockito.when;
 
 public class CachingAuthenticatorTest {
     @SuppressWarnings("unchecked")
-    private final Authenticator<String, String> underlying = mock(Authenticator.class);
-    private final CachingAuthenticator<String, String> cached =
+    private final Authenticator<String, Principal> underlying = mock(Authenticator.class);
+    private final CachingAuthenticator<String, Principal> cached =
             new CachingAuthenticator<>(new MetricRegistry(), underlying, CacheBuilderSpec.parse("maximumSize=1"));
 
     @Before
     public void setUp() throws Exception {
-        when(underlying.authenticate(anyString())).thenReturn(Optional.of("principal"));
+        when(underlying.authenticate(anyString())).thenReturn(Optional.<Principal>of(new PrincipalImpl("principal")));
     }
 
     @Test
     public void cachesTheFirstReturnedPrincipal() throws Exception {
-        assertThat(cached.authenticate("credentials")).isEqualTo(Optional.of("principal"));
-        assertThat(cached.authenticate("credentials")).isEqualTo(Optional.of("principal"));
+        assertThat(cached.authenticate("credentials")).isEqualTo(Optional.<Principal>of(new PrincipalImpl("principal")));
+        assertThat(cached.authenticate("credentials")).isEqualTo(Optional.<Principal>of(new PrincipalImpl("principal")));
 
         verify(underlying, times(1)).authenticate("credentials");
     }
