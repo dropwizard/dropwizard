@@ -59,12 +59,7 @@ public class ViewBundleTest {
 
     @Test
     public void addsTheViewMessageBodyWriterToTheEnvironment() throws Exception {
-        new ViewBundle<Configuration>() {
-            @Override
-            public Map<String, Map<String, String>> getViewConfiguration(Configuration configuration) {
-                return Collections.emptyMap();
-            }
-        }.run(null, environment);
+        new ViewBundle<Configuration>().run(null, environment);
 
         verify(jerseyEnvironment).register(any(ViewMessageBodyWriter.class));
     }

@@ -1,6 +1,7 @@
 package io.dropwizard.views;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableMap;
 import io.dropwizard.Bundle;
 import io.dropwizard.Configuration;
 import io.dropwizard.ConfiguredBundle;
@@ -88,7 +89,7 @@ import static com.google.common.base.MoreObjects.firstNonNull;
  *
  * @see <a href="http://mustache.github.io/mustache.5.html">Mustache Manual</a>
  */
-public abstract class ViewBundle<T extends Configuration> implements ConfiguredBundle<T>, ViewConfigurable<T> {
+public class ViewBundle<T extends Configuration> implements ConfiguredBundle<T>, ViewConfigurable<T> {
     private final Iterable<ViewRenderer> viewRenderers;
 
     public ViewBundle() {
@@ -97,6 +98,10 @@ public abstract class ViewBundle<T extends Configuration> implements ConfiguredB
 
     public ViewBundle(Iterable<ViewRenderer> viewRenderers) {
         this.viewRenderers = ImmutableSet.copyOf(viewRenderers);
+    }
+
+    public Map<String, Map<String, String>> getViewConfiguration(T configuration) {
+        return ImmutableMap.of();
     }
 
     @Override
