@@ -1,6 +1,7 @@
 package io.dropwizard.testing.app;
 
 import com.codahale.metrics.annotation.Timed;
+import com.google.common.collect.ImmutableList;
 import io.dropwizard.testing.Person;
 
 import javax.ws.rs.GET;
@@ -22,5 +23,12 @@ public class PersonResource {
     @Timed
     public Person getPerson(@PathParam("name") String name) {
         return store.fetchPerson(name);
+    }
+
+    @GET
+    @Timed
+    @Path("/list")
+    public ImmutableList<Person> getPersonList(@PathParam("name") String name) {
+        return ImmutableList.of(getPerson(name));
     }
 }
