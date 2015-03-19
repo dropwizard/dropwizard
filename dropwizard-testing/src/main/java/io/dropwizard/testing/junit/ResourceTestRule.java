@@ -2,14 +2,14 @@ package io.dropwizard.testing.junit;
 
 import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
-
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.jersey.jackson.JacksonMessageBodyProvider;
 import io.dropwizard.logging.LoggingFactory;
-
+import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.test.JerseyTest;
 import org.glassfish.jersey.test.inmemory.InMemoryTestContainerFactory;
 import org.glassfish.jersey.test.spi.TestContainerException;
@@ -22,7 +22,6 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.core.Application;
-
 import java.util.Map;
 import java.util.Set;
 
@@ -152,6 +151,13 @@ public class ResourceTestRule implements TestRule {
                         @Override
                         protected TestContainerFactory getTestContainerFactory() throws TestContainerException {
                             return testContainerFactory;
+                        }
+
+                        @Override
+                        protected void configureClient(final ClientConfig config) {
+                            JacksonJsonProvider jsonProvider = new JacksonJsonProvider();
+                            jsonProvider.setMapper(mapper);
+                            config.register(jsonProvider);
                         }
                     };
                     test.setUp();
