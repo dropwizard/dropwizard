@@ -170,6 +170,15 @@ public class HttpClientBuilder {
      * @return an {@link CloseableHttpClient}
      */
     public CloseableHttpClient build(String name) {
+        return buildWithDefaultRequestConfiguration(name).getClient();
+    }
+
+    /**
+     * For internal use only, used in {@link io.dropwizard.client.JerseyClientBuilder} to create an instance of {@link io.dropwizard.client.DropwizardApacheConnector}
+     * @param name
+     * @return an {@link io.dropwizard.client.ConfiguredCloseableHttpClient}
+     */
+    ConfiguredCloseableHttpClient buildWithDefaultRequestConfiguration(String name) {
         final InstrumentedHttpClientConnectionManager manager = createConnectionManager(registry, name);
         return createClient(org.apache.http.impl.client.HttpClientBuilder.create(), manager, name);
     }
@@ -184,7 +193,7 @@ public class HttpClientBuilder {
      * @return the configured {@link CloseableHttpClient}
      */
     @VisibleForTesting
-    protected CloseableHttpClient createClient(
+    protected ConfiguredCloseableHttpClient createClient(
             final org.apache.http.impl.client.HttpClientBuilder builder,
             final InstrumentedHttpClientConnectionManager manager,
             final String name) {
@@ -241,7 +250,7 @@ public class HttpClientBuilder {
             builder.setRoutePlanner(routePlanner);
         }
 
-        return builder.build();
+        return new ConfiguredCloseableHttpClient(builder.build(), requestConfig);
     }
 
     /**

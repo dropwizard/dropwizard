@@ -1,11 +1,13 @@
 package io.dropwizard.client;
 
+import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.MoreExecutors;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
 import org.apache.http.StatusLine;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.client.methods.RequestBuilder;
@@ -13,6 +15,7 @@ import org.apache.http.entity.AbstractHttpEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.VersionInfo;
 import org.glassfish.jersey.apache.connector.LocalizationMessages;
+import org.glassfish.jersey.client.ClientProperties;
 import org.glassfish.jersey.client.ClientRequest;
 import org.glassfish.jersey.client.ClientResponse;
 import org.glassfish.jersey.client.spi.AsyncConnectorCallback;
@@ -21,6 +24,7 @@ import org.glassfish.jersey.message.internal.OutboundMessageContext;
 import org.glassfish.jersey.message.internal.Statuses;
 
 import javax.ws.rs.ProcessingException;
+import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Response;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -59,14 +63,19 @@ public class DropwizardApacheConnector implements Connector {
      * Actual HTTP client
      */
     private final CloseableHttpClient client;
+    /**
+     * Default HttpUriRequestConfig
+     */
+    private final RequestConfig defaultRequestConfig;
 
     /**
      * Should a chunked encoding be used in POST requests
      */
     private final boolean chunkedEncodingEnabled;
 
-    public DropwizardApacheConnector(CloseableHttpClient client, boolean chunkedEncodingEnabled) {
+    public DropwizardApacheConnector(CloseableHttpClient client, RequestConfig defaultRequestConfig, boolean chunkedEncodingEnabled) {
         this.client = client;
+        this.defaultRequestConfig = defaultRequestConfig;
         this.chunkedEncodingEnabled = chunkedEncodingEnabled;
     }
 
@@ -125,7 +134,39 @@ public class DropwizardApacheConnector implements Connector {
             }
             builder.addHeader(headerName, jerseyRequest.getHeaderString(headerName));
         }
+
+        Optional<RequestConfig> requestConfig = addJerseyRequestConfig(jerseyRequest.getConfiguration());
+        if (requestConfig.isPresent()) {
+            builder.setConfig(requestConfig.get());
+        }
+
         return builder.build();
+    }
+
+    private Optional<RequestConfig> addJerseyRequestConfig(Configuration configuration) {
+        final Integer timeout = (Integer) configuration.getProperty(ClientProperties.READ_TIMEOUT);
+        final Integer connectTimeout = (Integer) configuration.getProperty(ClientProperties.CONNECT_TIMEOUT);
+        final Boolean followRedirects = (Boolean) configuration.getProperty(ClientProperties.FOLLOW_REDIRECTS);
+
+        if (timeout != null || connectTimeout != null || followRedirects != null) {
+            RequestConfig.Builder requestConfig = RequestConfig.copy(defaultRequestConfig);
+
+            if (timeout != null) {
+                requestConfig.setSocketTimeout(timeout);
+            }
+
+            if (connectTimeout != null) {
+                requestConfig.setConnectTimeout(connectTimeout);
+            }
+
+            if (followRedirects != null) {
+                requestConfig.setRedirectsEnabled(followRedirects);
+            }
+
+            return Optional.of(requestConfig.build());
+        }
+
+        return Optional.absent();
     }
 
     /**
