@@ -15,7 +15,7 @@ Authenticators
 An authenticator is a strategy class which, given a set of client-provided credentials, possibly
 returns a principal (i.e., the person or entity on behalf of whom your service will do something).
 
-Authenticators implement the ``Authenticator<C, P>`` interface, which has a single method:
+Authenticators implement the ``Authenticator<C, P extends Principal>`` interface, which has a single method:
 
 .. code-block:: java
 
@@ -71,18 +71,20 @@ This caches up to 10,000 principals with an LRU policy, evicting stale entries a
 Basic Authentication
 ====================
 
-The ``BasicAuthFactory`` enables HTTP Basic authentication, and requires an authenticator which
-takes instances of ``BasicCredentials`` . Also the ``BasicAuthFactory`` needs to be parameterized
-with the type of the principal the authenticator produces, here ``String``:
+The ``AuthDynamicFeature`` with the ``BasicCredentialAuthHandler`` enables HTTP Basic authentication, and requires an authenticator which
+takes instances of ``BasicCredentials``:
 
 .. code-block:: java
 
     @Override
     public void run(ExampleConfiguration configuration,
                     Environment environment) {
-        environment.jersey().register(AuthFactory.binder(new BasicAuthFactory<String>(new ExampleAuthenticator(),
-                                                                                      "SUPER SECRET STUFF",
-                                                                                      String.class)));
+
+        environment.jersey().register(new AuthDynamicFeature(
+                new BasicCredentialAuthHandler.Builder<User, ExampleAuthenticator>()
+                    .setAuthenticator(new ExampleAuthenticator())
+                    .setRealm("SUPER SECRET STUFF")
+                    .buildAuthHandler()));
     }
 
 .. _man-auth-oauth2:
@@ -90,18 +92,34 @@ with the type of the principal the authenticator produces, here ``String``:
 OAuth2
 ======
 
-The ``OAuthFactory`` enables OAuth2 bearer-token authentication, and requires an authenticator
-which takes an instance of ``String``. Also the ``OAuthFactory`` needs to be parameterized
-with the type of the principal the authenticator produces, here ``User``:
+The ``AuthDynamicFeature`` with the ``OAuthCredentialAuthHandler`` enables OAuth2 bearer-token authentication,
+and requires an authenticator which takes instances of ``String``:
 
 .. code-block:: java
 
     @Override
     public void run(ExampleConfiguration configuration,
                     Environment environment) {
-       environment.jersey().register(AuthFactory.binder(new OAuthFactory<User>(new ExampleAuthenticator(),
-                                                                               "SUPER SECRET STUFF",
-                                                                               User.class)));
+        final Authenticator<String, Principal> authenticator = new Authenticator<String, Principal>() {
+            @Override
+            public Optional<Principal> authenticate(String credentials) throws AuthenticationException {
+                if ("good-guy".equals(credentials)) {
+                    return Optional.<Principal>of(new PrincipalImpl("good-guy"));
+                }
+
+                if ("bad-guy".equals(credentials)) {
+                    throw new AuthenticationException("CRAP");
+                }
+
+                return Optional.absent();
+            }
+        };
+
+        environment.jersey().register(new AuthDynamicFeature(
+            new OAuthCredentialAuthHandler.Builder<>()
+                .setAuthenticator(authenticator)
+                .setPrefix("Custom")
+                .buildAuthHandler()));
     }
 
 .. _man-auth-chained:
@@ -109,17 +127,51 @@ with the type of the principal the authenticator produces, here ``User``:
 Chained Factories
 =================
 
-The ``ChainedAuthFactory`` enables usage of various authentication factories at the same time.
+The ``ChainedAuthHandler`` enables usage of various authentication factories at the same time.
 
 .. code-block:: java
 
     @Override
     public void run(ExampleConfiguration configuration,
                     Environment environment) {
-        ChainedAuthFactory<User> chainedFactory = new ChainedAuthFactory<>(
-                new BasicAuthFactory<>(new ExampleBasicAuthenticator(), "SUPER SECRET STUFF", User.class),
-                new OAuthFactory<>(new ExampleOAuthAuthenticator(), "SUPER SECRET STUFF", User.class));
-        environment.jersey().register(AuthFactory.binder(chainedFactory));
+        final Authenticator<BasicCredentials, Principal> basicAuthenticator = new Authenticator<BasicCredentials, Principal>() {
+            @Override
+            public Optional<Principal> authenticate(BasicCredentials credentials) throws AuthenticationException {
+                if ("good-guy".equals(credentials.getUsername()) &&
+                        "secret".equals(credentials.getPassword())) {
+                    return Optional.<Principal>of(new PrincipalImpl("good-guy"));
+                }
+                if ("bad-guy".equals(credentials.getUsername())) {
+                    throw new AuthenticationException("CRAP");
+                }
+                return Optional.absent();
+            }
+        };
+
+        final Authenticator<String, Principal> oauthAuthenticator = new Authenticator<String, Principal>() {
+            @Override
+            public Optional<Principal> authenticate(String credentials) throws AuthenticationException {
+                if ("A12B3C4D".equals(credentials)) {
+                    return Optional.<Principal>of(new PrincipalImpl("good-guy"));
+                }
+                if ("bad-guy".equals(credentials)) {
+                    throw new AuthenticationException("CRAP");
+                }
+                return Optional.absent();
+            }
+        };
+
+        AuthHandler basicCredentialAuthHandler = new BasicCredentialAuthHandler.Builder()
+                .setAuthenticator(basicAuthenticator)
+                .buildAuthHandler();
+
+        AuthHandler oauthCredentialAuthHandler = new OAuthCredentialAuthHandler.Builder()
+                .setAuthenticator(oauthAuthenticator)
+                .setPrefix("Bearer")
+                .buildAuthHandler();
+
+        List handlers = Lists.newArrayList(basicCredentialAuthHandler, oauthCredentialAuthHandler);
+        environment.jersey().register(new AuthDynamicFeature(new ChainedAuthHandler(handlers)));
     }
 
 For this to work properly, all chained factories must produce the same type of principal, here ``User``.
@@ -130,13 +182,15 @@ For this to work properly, all chained factories must produce the same type of p
 Protecting Resources
 ====================
 
-To protect a resource, simply include an ``@Auth``-annotated principal as one of your resource
-method parameters:
+To protect a resource, simply include the ``@Auth`` annotation on your resource method.
+If you need access to the Principal, you need at a parameter to your method ``@Context SecurityContext context``
 
 .. code-block:: java
 
+    @Auth
     @GET
-    public SecretPlan getSecretPlan(@Auth User user) {
+    public SecretPlan getSecretPlan(@Context SecurityContext context) {
+        User userPrincipal = (User) context.getUserPrincipal();
         return dao.findPlanForUser(user);
     }
 
@@ -145,14 +199,4 @@ provider will return a scheme-appropriate ``401 Unauthorized`` response without 
 resource method.
 
 If you have a resource which is optionally protected (e.g., you want to display a logged-in user's
-name but not require login), set the ``required`` attribute of the annotation to ``false``:
-
-.. code-block:: java
-
-    @GET
-    public HomepageView getHomepage(@Auth(required = false) User user) {
-        return new HomepageView(Optional.fromNullable(user));
-    }
-
-If there is no authenticated principal, ``null`` is used instead, and your resource method is still
-called.
+name but not require login), set the ``required`` attribute of the annotation to ``false`` on the ``AuthHandler``:

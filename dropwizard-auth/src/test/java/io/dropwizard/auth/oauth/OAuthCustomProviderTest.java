@@ -2,10 +2,11 @@ package io.dropwizard.auth.oauth;
 
 import com.codahale.metrics.MetricRegistry;
 import com.google.common.base.Optional;
-import io.dropwizard.auth.AuthFactory;
+import io.dropwizard.auth.AuthDynamicFeature;
 import io.dropwizard.auth.AuthResource;
 import io.dropwizard.auth.AuthenticationException;
 import io.dropwizard.auth.Authenticator;
+import io.dropwizard.auth.PrincipalImpl;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.logging.LoggingFactory;
 import org.glassfish.jersey.servlet.ServletProperties;
@@ -19,6 +20,8 @@ import org.junit.Test;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.HttpHeaders;
+
+import java.security.Principal;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
@@ -60,6 +63,20 @@ public class OAuthCustomProviderTest extends JerseyTest {
     }
 
     @Test
+    public void resourceWithoutAuth200() {
+        assertThat(target("/test/noauth").request()
+                .get(String.class))
+                .isEqualTo("hello");
+    }
+
+    @Test
+    public void resourceWithAuthNotRequired200() {
+        assertThat(target("/test/authnotrequired").request()
+                .get(String.class))
+                .isEqualTo("No Principal");
+    }
+
+    @Test
     public void respondsToNonBasicCredentialsWith401() throws Exception {
         try {
             target("/test").request().header(HttpHeaders.AUTHORIZATION, "Derp WHEE").get(String.class);
@@ -85,11 +102,11 @@ public class OAuthCustomProviderTest extends JerseyTest {
         public BasicAuthTestResourceConfig() {
             super(true, new MetricRegistry());
 
-            final Authenticator<String, String> authenticator = new Authenticator<String, String>() {
+            final Authenticator<String, Principal> authenticator = new Authenticator<String, Principal>() {
                 @Override
-                public Optional<String> authenticate(String credentials) throws AuthenticationException {
+                public Optional<Principal> authenticate(String credentials) throws AuthenticationException {
                     if ("good-guy".equals(credentials)) {
-                        return Optional.of("good-guy");
+                        return Optional.<Principal>of(new PrincipalImpl("good-guy"));
                     }
 
                     if ("bad-guy".equals(credentials)) {
@@ -100,7 +117,12 @@ public class OAuthCustomProviderTest extends JerseyTest {
                 }
             };
 
-            register(AuthFactory.binder(new OAuthFactory<>(authenticator, "realm", String.class).prefix("Custom")));
+            register(new AuthDynamicFeature(
+                    new OAuthCredentialAuthHandler.Builder<>()
+                            .setAuthenticator(authenticator)
+                            .setPrefix("Custom")
+                            .buildAuthHandler()));
+
             register(AuthResource.class);
         }
     }

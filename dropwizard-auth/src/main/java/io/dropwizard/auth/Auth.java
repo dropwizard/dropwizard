@@ -3,14 +3,13 @@ package io.dropwizard.auth;
 import java.lang.annotation.*;
 
 /**
- * This annotation is used to inject authenticated principal objects into protected JAX-RS resource
- * methods.
+ * This annotation is used filter resource methods and provide a proper SecurityContext
  *
  * @see Authenticator
  */
 @Documented
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.PARAMETER, ElementType.FIELD })
+@Target({ ElementType.METHOD })
 public @interface Auth {
     /**
      * If {@code true}, the request will not be processed in the absence of a valid principal. If

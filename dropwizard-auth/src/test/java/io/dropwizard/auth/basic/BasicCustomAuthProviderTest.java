@@ -18,8 +18,12 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.SecurityContext;
+
+import java.security.Principal;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
@@ -64,6 +68,13 @@ public class BasicCustomAuthProviderTest extends JerseyTest {
     }
 
     @Test
+    public void resourceWithAuthNotRequired200() {
+        assertThat(target("/test/authnotrequired").request()
+                .get(String.class))
+                .isEqualTo("No Principal");
+    }
+
+    @Test
     public void respondsToNonBasicCredentialsWith401() throws Exception {
         try {
             target("/test").request()
@@ -93,9 +104,10 @@ public class BasicCustomAuthProviderTest extends JerseyTest {
     @Path("/test/")
     @Produces(MediaType.TEXT_PLAIN)
     public static class ExampleResource {
+        @Auth
         @GET
-        public String show(@Auth String principal) {
-            return principal;
+        public String show(@Context SecurityContext context) {
+            return context.getUserPrincipal().getName();
         }
     }
 
@@ -103,20 +115,25 @@ public class BasicCustomAuthProviderTest extends JerseyTest {
         public BasicAuthTestResourceConfig() {
             super(true, new MetricRegistry());
 
-            final Authenticator<BasicCredentials, String> authenticator = new Authenticator<BasicCredentials, String>() {
-                @Override
-                public Optional<String> authenticate(BasicCredentials credentials) throws AuthenticationException {
-                    if ("good-guy".equals(credentials.getUsername()) &&
-                            "secret".equals(credentials.getPassword())) {
-                        return Optional.of("good-guy");
-                    }
-                    if ("bad-guy".equals(credentials.getUsername())) {
-                        throw new AuthenticationException("CRAP");
-                    }
-                    return Optional.absent();
-                }
-            };
-            register(AuthFactory.binder(new BasicAuthFactory<>(authenticator, "realm", String.class).prefix("Custom")));
+            final Authenticator<BasicCredentials, Principal> authenticator =
+                    new Authenticator<BasicCredentials, Principal>() {
+                        @Override
+                        public Optional<Principal> authenticate(BasicCredentials credentials) throws AuthenticationException {
+                            if ("good-guy".equals(credentials.getUsername()) &&
+                                    "secret".equals(credentials.getPassword())) {
+                                return Optional.<Principal>of(new PrincipalImpl("good-guy"));
+                            }
+                            if ("bad-guy".equals(credentials.getUsername())) {
+                                throw new AuthenticationException("CRAP");
+                            }
+                            return Optional.absent();
+                        }
+                    };
+
+            register(new AuthDynamicFeature(new BasicCredentialAuthHandler.Builder<>()
+                    .setAuthenticator(authenticator)
+                    .setPrefix("Custom")
+                    .buildAuthHandler()));
             register(AuthResource.class);
         }
     }

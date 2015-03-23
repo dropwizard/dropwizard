@@ -12,6 +12,7 @@ import com.google.common.cache.CacheStats;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Sets;
 
+import java.security.Principal;
 import java.util.concurrent.ExecutionException;
 
 import static com.codahale.metrics.MetricRegistry.name;
@@ -23,7 +24,7 @@ import static com.codahale.metrics.MetricRegistry.name;
  * @param <C> the type of credentials the authenticator can authenticate
  * @param <P> the type of principals the authenticator returns
  */
-public class CachingAuthenticator<C, P> implements Authenticator<C, P> {
+public class CachingAuthenticator<C, P extends Principal> implements Authenticator<C, P> {
     private final Authenticator<C, P> underlying;
     private final LoadingCache<C, Optional<P>> cache;
     private final Meter cacheMisses;
