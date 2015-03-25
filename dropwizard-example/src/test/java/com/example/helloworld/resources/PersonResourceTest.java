@@ -4,6 +4,7 @@ import com.example.helloworld.core.Person;
 import com.example.helloworld.db.PersonDAO;
 import com.google.common.base.Optional;
 import io.dropwizard.testing.junit.ResourceTestRule;
+import org.glassfish.jersey.test.grizzly.GrizzlyWebTestContainerFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -25,6 +26,7 @@ public class PersonResourceTest {
     @ClassRule
     public static final ResourceTestRule RULE = ResourceTestRule.builder()
             .addResource(new PersonResource(DAO))
+            .setTestContainerFactory(new GrizzlyWebTestContainerFactory())
             .build();
     private Person person;
 
@@ -43,7 +45,7 @@ public class PersonResourceTest {
     public void getPersonSuccess() {
         when(DAO.findById(1L)).thenReturn(Optional.of(person));
 
-        Person found = RULE.client().target("/people/1").request().get(Person.class);
+        Person found = RULE.getJerseyTest().target("/people/1").request().get(Person.class);
 
         assertThat(found.getId()).isEqualTo(person.getId());
         verify(DAO).findById(1L);
@@ -52,9 +54,9 @@ public class PersonResourceTest {
     @Test
     public void getPersonNotFound() {
         when(DAO.findById(2L)).thenReturn(Optional.<Person>absent());
-        final Response response = RULE.client().target("/people/2").request().get();
+        final Response response = RULE.getJerseyTest().target("/people/2").request().get();
 
-        assertThat(response.getStatusInfo()).isEqualTo(Response.Status.NOT_FOUND);
+        assertThat(response.getStatusInfo().getStatusCode()).isEqualTo(Response.Status.NOT_FOUND.getStatusCode());
         verify(DAO).findById(2L);
     }
 }
