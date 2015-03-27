@@ -172,6 +172,10 @@ public class UnitOfWorkApplicationListener implements ApplicationEventListener {
     private void registerUnitOfWorkAnnotations (ResourceMethod method) {
         UnitOfWork annotation = method.getInvocable().getDefinitionMethod().getAnnotation(UnitOfWork.class);
 
+        if (annotation == null) {
+            annotation = method.getInvocable().getHandlingMethod().getAnnotation(UnitOfWork.class);
+        }
+
         if (annotation != null) {
             this.methodMap.put(method.getInvocable().getDefinitionMethod(), annotation);
         }
