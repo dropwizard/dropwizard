@@ -1,8 +1,10 @@
 package io.dropwizard.jersey.errors;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ErrorMessage {
     private final int code;
     private final String message;

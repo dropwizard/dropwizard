@@ -1,6 +1,7 @@
 package io.dropwizard.jersey.jackson;
 
 import com.codahale.metrics.MetricRegistry;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
 import io.dropwizard.jersey.DropwizardResourceConfig;
@@ -49,5 +50,10 @@ public class JsonProcessingExceptionMapperTest extends JerseyTest {
         Response response = target("/json/ok").request(MediaType.APPLICATION_JSON)
                 .post(Entity.entity(new UnknownRepresentation(100), MediaType.APPLICATION_JSON));
         assertThat(response.getStatus()).isEqualTo(400);
+
+        JsonNode errorMessage = response.readEntity(JsonNode.class);
+        assertThat(errorMessage.get("code").asInt()).isEqualTo(400);
+        assertThat(errorMessage.get("message").asText()).isEqualTo("Unable to process JSON");
+        assertThat(errorMessage.has("details")).isFalse();
     }
 }
