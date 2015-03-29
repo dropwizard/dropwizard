@@ -1,5 +1,8 @@
 package io.dropwizard.jersey.errors;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class ErrorMessage {
     private final int code;
     private final String message;
@@ -13,7 +16,9 @@ public class ErrorMessage {
         this(code, message, null);
     }
 
-    public ErrorMessage(int code, String message, String details) {
+    @JsonCreator
+    public ErrorMessage(@JsonProperty("code") int code, @JsonProperty("message") String message,
+                        @JsonProperty("details") String details) {
         this.code = code;
         this.message = message;
         this.details = details;
