@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.ws.rs.ext.Provider;
 
+import org.glassfish.jersey.server.internal.process.MappableException;
 import org.glassfish.jersey.server.model.Resource;
 import org.glassfish.jersey.server.model.ResourceMethod;
 import org.glassfish.jersey.server.monitoring.ApplicationEvent;
@@ -84,7 +85,7 @@ public class UnitOfWorkApplicationListener implements ApplicationEventListener {
                         commitTransaction();
                     } catch (Exception e) {
                         rollbackTransaction();
-                        this.<RuntimeException>rethrow(e);
+                        throw new MappableException(e);
                     }
                     finally {
                         this.session.close();
@@ -135,11 +136,6 @@ public class UnitOfWorkApplicationListener implements ApplicationEventListener {
                     txn.commit();
                 }
             }
-        }
-
-        @SuppressWarnings("unchecked")
-        private <E extends Exception> void rethrow(Exception e) throws E {
-            throw (E) e;
         }
     }
 
