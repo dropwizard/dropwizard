@@ -443,7 +443,7 @@ application. To enable it, move your application to a sub-URL.
 .. code-block:: yaml
 
     server:
-      type: simple
+      type: default
       rootPath: /application/*
 
 Then use an extended ``AssetsBundle`` constructor to serve resources in the
