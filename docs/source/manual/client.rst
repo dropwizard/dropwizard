@@ -150,3 +150,27 @@ Then, in your service's ``run`` method, create a new ``JerseyClientBuilder``:
         environment.jersey().register(new ExternalServiceResource(client));
     }
 
+Configuration
+-------------
+
+The Client that Dropwizard creates deviates from the `Jersey Client Configuration` defaults. The
+default, in Jersey, is for a client to never timeout reading or connecting in a request, while in
+Dropwizard, the default is 500 milliseconds.
+
+There are a couple of ways to change this behavior. The recommended way is to modify the
+:ref:`YAML configuration <man-configuration-clients-http>`. Alternatively, set the properties on
+the ``JerseyClientConfiguration``, which will take affect for all built clients. On a per client
+basis, the configuration can be changed through utilizing the ``property`` method and, in this case,
+the `Jersey Client Properties`_ can be used.
+
+.. warning::
+
+    Do not try to change Jersey properties using `Jersey Client Properties` through the
+
+    ``withProperty(String propertyName, Object propertyValue)``
+
+    method on the ``JerseyClientBuilder``, because by default it's configured by Dropwizard's
+    ``HttpClientBuilder``, so the Jersey properties are ignored.
+
+.. _Jersey Client Configuration: https://jersey.java.net/documentation/latest/appendix-properties.html#appendix-properties-client
+.. _Jersey Client Properties: https://jersey.java.net/apidocs/2.17/jersey/org/glassfish/jersey/client/ClientProperties.html
