@@ -3,6 +3,7 @@ package io.dropwizard.testing.junit;
 import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import io.dropwizard.jackson.Jackson;
@@ -10,18 +11,21 @@ import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.jersey.jackson.JacksonMessageBodyProvider;
 import io.dropwizard.logging.LoggingFactory;
 import org.glassfish.jersey.client.ClientConfig;
+import org.glassfish.jersey.servlet.ServletProperties;
+import org.glassfish.jersey.test.DeploymentContext;
 import org.glassfish.jersey.test.JerseyTest;
+import org.glassfish.jersey.test.ServletDeploymentContext;
 import org.glassfish.jersey.test.inmemory.InMemoryTestContainerFactory;
 import org.glassfish.jersey.test.spi.TestContainerException;
 import org.glassfish.jersey.test.spi.TestContainerFactory;
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
-
+import javax.servlet.ServletConfig;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.ws.rs.client.Client;
-import javax.ws.rs.core.Application;
+import javax.ws.rs.core.Context;
 import java.util.Map;
 import java.util.Set;
 
@@ -126,31 +130,62 @@ public class ResourceTestRule implements TestRule {
         return test;
     }
 
+    public static class ResourceTestResourceConfig extends DropwizardResourceConfig {
+        private static final String RULE_ID = "io.dropwizard.testing.junit.resourceTestRuleId";
+        private static final Map<String, ResourceTestRule> RULE_ID_TO_RULE = Maps.newHashMap();
+
+        public ResourceTestResourceConfig(final String ruleId, final ResourceTestRule resourceTestRule) {
+            super(true, new MetricRegistry());
+            RULE_ID_TO_RULE.put(ruleId, resourceTestRule);
+            configure(resourceTestRule);
+        }
+
+        public ResourceTestResourceConfig(@Context ServletConfig servletConfig) {
+            super(true, new MetricRegistry());
+            String ruleId = servletConfig.getInitParameter(RULE_ID);
+            Preconditions.checkNotNull(ruleId);
+
+            ResourceTestRule resourceTestRule = RULE_ID_TO_RULE.get(ruleId);
+            Preconditions.checkNotNull(resourceTestRule);
+            configure(resourceTestRule);
+        }
+
+        private void configure(final ResourceTestRule resourceTestRule) {
+            for (Class<?> provider : resourceTestRule.providers) {
+                register(provider);
+            }
+            for (Map.Entry<String, Object> property : resourceTestRule.properties.entrySet()) {
+                property(property.getKey(), property.getValue());
+            }
+            register(new JacksonMessageBodyProvider(resourceTestRule.mapper, resourceTestRule.validator));
+            for (Object singleton : resourceTestRule.singletons) {
+                register(singleton);
+            }
+        }
+    }
+
     @Override
     public Statement apply(final Statement base, Description description) {
+        final ResourceTestRule rule = this;
+        final String ruleId = String.valueOf(rule.hashCode());
         return new Statement() {
             @Override
             public void evaluate() throws Throwable {
                 try {
                     test = new JerseyTest() {
                         @Override
-                        protected Application configure() {
-                            DropwizardResourceConfig config = DropwizardResourceConfig.forTesting(new MetricRegistry());
-                            for (Class<?> provider : providers) {
-                                config.register(provider);
-                            }
-                            for (Map.Entry<String, Object> property : properties.entrySet()) {
-                                config.property(property.getKey(), property.getValue());
-                            }
-                            config.register(new JacksonMessageBodyProvider(mapper, validator));
-                            for (Object singleton : singletons)
-                                config.register(singleton);
-                            return config;
+                        protected TestContainerFactory getTestContainerFactory() throws TestContainerException {
+                            return testContainerFactory;
                         }
 
                         @Override
-                        protected TestContainerFactory getTestContainerFactory() throws TestContainerException {
-                            return testContainerFactory;
+                        protected DeploymentContext configureDeployment() {
+                            final ResourceTestResourceConfig resourceConfig = new ResourceTestResourceConfig(ruleId, rule);
+                            ServletDeploymentContext deploymentContext = ServletDeploymentContext.builder(resourceConfig)
+                                    .initParam(ServletProperties.JAXRS_APPLICATION_CLASS, ResourceTestResourceConfig.class.getName())
+                                    .initParam(ResourceTestResourceConfig.RULE_ID, ruleId)
+                                    .build();
+                            return deploymentContext;
                         }
 
                         @Override
@@ -163,6 +198,7 @@ public class ResourceTestRule implements TestRule {
                     test.setUp();
                     base.evaluate();
                 } finally {
+                    ResourceTestResourceConfig.RULE_ID_TO_RULE.remove(ruleId);
                     if (test != null) {
                         test.tearDown();
                     }
