@@ -11,6 +11,12 @@ v0.8.1:
 
 * Fixed transcation commiting lifecycle for ``@UnitOfWork``  (#850, #915)
 * Fixed noisy Logback messages on startup (#902)
+* Ability to use providers in TestRule, allows testing of auth & views (#513, #922)
+* Custom ExceptionMapper not invoked when Hibernate rollback (#949)
+* Support for setting a time bound on DBI and Hibernate health checks
+* Default configuration for views
+* Ensure that JerseyRequest scoped ClientConfig gets propagated to HttpUriRequest
+* More example tests
 
 .. _rel-0.8.0:
 
