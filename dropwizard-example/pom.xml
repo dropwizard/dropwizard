@@ -6,7 +6,7 @@
     </prerequisites>
 
     <artifactId>dropwizard-example</artifactId>
-    <version>0.8.1-SNAPSHOT</version>
+    <version>0.8.1-rc3-SNAPSHOT</version>
     <groupId>io.dropwizard</groupId>
     <name>Dropwizard Example Application</name>
 
