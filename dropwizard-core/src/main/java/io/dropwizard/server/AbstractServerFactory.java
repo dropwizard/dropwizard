@@ -164,6 +164,14 @@ import java.util.regex.Pattern;
  *         </td>
  *     </tr>
  *     <tr>
+ *         <td>{@code registerDefaultExceptionMappers}</td>
+ *         <td>true</td>
+ *         <td>
+ *            Whether or not the default Jersey ExceptionMappers should be registered.
+ *            Set this to false if you want to register your own.
+ *         </td>
+ *     </tr>
+ *     <tr>
  *         <td>{@code shutdownGracePeriod}</td>
  *         <td>30 seconds</td>
  *         <td>
