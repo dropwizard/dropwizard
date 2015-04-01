@@ -1,17 +1,17 @@
 package io.dropwizard.hibernate;
 
 import com.codahale.metrics.MetricRegistry;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
-
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.DropwizardResourceConfig;
+import io.dropwizard.jersey.errors.ErrorMessage;
 import io.dropwizard.jersey.jackson.JacksonMessageBodyProvider;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
 import io.dropwizard.logging.LoggingFactory;
 import io.dropwizard.setup.Environment;
-
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.test.JerseyTest;
 import org.hibernate.Session;
@@ -25,8 +25,9 @@ import javax.validation.Validation;
 import javax.ws.rs.*;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Application;
+import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
-
+import javax.ws.rs.core.Response;
 import java.util.TimeZone;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -123,7 +124,7 @@ public class JerseyIntegrationTest extends JerseyTest {
         try {
             session.createSQLQuery("DROP TABLE people IF EXISTS").executeUpdate();
             session.createSQLQuery(
-                    "CREATE TABLE people (name varchar(100) primary key, email varchar(100), birthday timestamp with time zone)")
+                    "CREATE TABLE people (name varchar(100) primary key, email varchar(16), birthday timestamp with time zone)")
                    .executeUpdate();
             session.createSQLQuery(
                     "INSERT INTO people VALUES ('Coda', 'coda@example.com', '1979-01-02 00:22:00+0:00')")
@@ -137,6 +138,8 @@ public class JerseyIntegrationTest extends JerseyTest {
         config.register(new PersonResource(new PersonDAO(sessionFactory)));
         config.register(new JacksonMessageBodyProvider(Jackson.newObjectMapper(),
                                                        Validation.buildDefaultValidatorFactory().getValidator()));
+        config.register(new DataExceptionMapper());
+
         return config;
     }
 
@@ -193,5 +196,21 @@ public class JerseyIntegrationTest extends JerseyTest {
 
         assertThat(hank.getBirthday())
                 .isEqualTo(person.getBirthday());
+    }
+
+
+    @Test
+    public void testSqlExceptionIsHandled() throws Exception {
+        final Person person = new Person();
+        person.setName("Jeff");
+        person.setEmail("jeff.hammersmith@targetprocessinc.com");
+        person.setBirthday(new DateTime(1984, 2, 11, 0, 0, DateTimeZone.UTC));
+
+        final Response response = target("/people/Jeff").request().
+                put(Entity.entity(person, MediaType.APPLICATION_JSON));
+
+        assertThat(response.getStatusInfo()).isEqualTo(Response.Status.BAD_REQUEST);
+        assertThat(response.getHeaderString(HttpHeaders.CONTENT_TYPE)).isEqualTo(MediaType.APPLICATION_JSON);
+        assertThat(response.readEntity(ErrorMessage.class).getMessage()).isEqualTo("Wrong email");
     }
 }

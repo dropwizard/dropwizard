@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.ws.rs.ext.Provider;
 
+import org.glassfish.jersey.server.internal.process.MappableException;
 import org.glassfish.jersey.server.model.Resource;
 import org.glassfish.jersey.server.model.ResourceMethod;
 import org.glassfish.jersey.server.monitoring.ApplicationEvent;
@@ -84,7 +85,7 @@ public class UnitOfWorkApplicationListener implements ApplicationEventListener {
                         commitTransaction();
                     } catch (Exception e) {
                         rollbackTransaction();
-                        this.<RuntimeException>rethrow(e);
+                        throw new MappableException(e);
                     }
                     finally {
                         this.session.close();
@@ -136,11 +137,6 @@ public class UnitOfWorkApplicationListener implements ApplicationEventListener {
                 }
             }
         }
-
-        @SuppressWarnings("unchecked")
-        private <E extends Exception> void rethrow(Exception e) throws E {
-            throw (E) e;
-        }
     }
 
     private Map<Method,UnitOfWork> methodMap = new HashMap<>();
@@ -171,6 +167,10 @@ public class UnitOfWorkApplicationListener implements ApplicationEventListener {
 
     private void registerUnitOfWorkAnnotations (ResourceMethod method) {
         UnitOfWork annotation = method.getInvocable().getDefinitionMethod().getAnnotation(UnitOfWork.class);
+
+        if (annotation == null) {
+            annotation = method.getInvocable().getHandlingMethod().getAnnotation(UnitOfWork.class);
+        }
 
         if (annotation != null) {
             this.methodMap.put(method.getInvocable().getDefinitionMethod(), annotation);
