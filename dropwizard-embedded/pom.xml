@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>io.dropwizard</groupId>
+        <artifactId>dropwizard-parent</artifactId>
+        <version>0.7.1-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>dropwizard-embedded</artifactId>
+    <name>Dropwizard Embedded</name>
+
+    <dependencies>
+        <dependency>
+            <groupId>io.dropwizard</groupId>
+            <artifactId>dropwizard-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>cobertura-maven-plugin</artifactId>
+                <version>2.6</version>
+                <configuration>
+                    <check>
+                        <haltOnFailure>true</haltOnFailure><!-- optional -->
+                        <!-- Per-class thresholds -->
+                        <lineRate>80</lineRate>
+                        <branchRate>80</branchRate>
+                        <!-- Project-wide thresholds -->
+                        <totalLineRate>80</totalLineRate>
+                        <totalBranchRate>80</totalBranchRate>
+                    </check>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>clean</goal>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

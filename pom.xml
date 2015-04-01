@@ -46,6 +46,7 @@
         <module>dropwizard-lifecycle</module>
         <module>dropwizard-assets</module>
         <module>dropwizard-spdy</module>
+        <module>dropwizard-embedded</module>
     </modules>
 
     <properties>
