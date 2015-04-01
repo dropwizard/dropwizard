@@ -187,6 +187,13 @@ import java.util.regex.Pattern;
  *             405 Method Not Allowed response.
  *         </td>
  *     </tr>
+ *     <tr>
+ *         <td>{@code rootPath}</td>
+ *         <td>/</td>
+ *         <td>
+ *           The URL pattern relative to {@code applicationContextPath} from which the JAX-RS resources will be served.
+ *         </td>
+ *     </tr>
  * </table>
  *
  * @see DefaultServerFactory
