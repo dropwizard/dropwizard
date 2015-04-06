@@ -26,6 +26,10 @@ public class LifecycleEnvironment {
         this.lifecycleListeners = Lists.newArrayList();
     }
 
+    public List<LifeCycle> getManagedObjects() {
+        return managedObjects;
+    }
+
     /**
      * Adds the given {@link Managed} instance to the set of objects managed by the server's
      * lifecycle. When the server starts, {@code managed} will be started. When the server stops,

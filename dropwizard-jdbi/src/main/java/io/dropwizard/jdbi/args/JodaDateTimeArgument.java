@@ -1,5 +1,6 @@
 package io.dropwizard.jdbi.args;
 
+import com.google.common.base.Optional;
 import org.joda.time.DateTime;
 import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.tweak.Argument;
@@ -8,6 +9,7 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.sql.Types;
+import java.util.Calendar;
 
 /**
  * An {@link Argument} for Joda {@link DateTime} objects.
@@ -15,9 +17,11 @@ import java.sql.Types;
 public class JodaDateTimeArgument implements Argument {
 
     private final DateTime value;
+    private final Optional<Calendar> calendar;
 
-    JodaDateTimeArgument(final DateTime value) {
+    JodaDateTimeArgument(final DateTime value, final Optional<Calendar> calendar) {
         this.value = value;
+        this.calendar = calendar;
     }
 
     @Override
@@ -25,7 +29,14 @@ public class JodaDateTimeArgument implements Argument {
                       final PreparedStatement statement,
                       final StatementContext ctx) throws SQLException {
         if (value != null) {
-            statement.setTimestamp(position, new Timestamp(value.getMillis()));
+            if (calendar.isPresent()) {
+                // We need to make a clone, because Calendar is not thread-safe
+                // and some JDBC drivers mutate it during time calculations
+                Calendar calendarClone = (Calendar) calendar.get().clone();
+                statement.setTimestamp(position, new Timestamp(value.getMillis()), calendarClone);
+            } else {
+                statement.setTimestamp(position, new Timestamp(value.getMillis()));
+            }
         } else {
             statement.setNull(position, Types.TIMESTAMP);
         }
