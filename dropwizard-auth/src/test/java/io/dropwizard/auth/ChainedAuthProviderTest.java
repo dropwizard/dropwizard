@@ -1,12 +1,15 @@
 package io.dropwizard.auth;
 
 import com.codahale.metrics.MetricRegistry;
-import com.google.common.base.Optional;
-import io.dropwizard.auth.basic.BasicAuthFactory;
-import io.dropwizard.auth.basic.BasicCredentials;
-import io.dropwizard.auth.oauth.OAuthFactory;
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
+import io.dropwizard.auth.basic.BasicCredentialAuthFilter;
+import io.dropwizard.auth.chained.ChainedAuthFilter;
+import io.dropwizard.auth.oauth.OAuthCredentialAuthFilter;
+import io.dropwizard.auth.util.AuthUtil;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.logging.LoggingFactory;
+import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
 import org.glassfish.jersey.servlet.ServletProperties;
 import org.glassfish.jersey.test.DeploymentContext;
 import org.glassfish.jersey.test.JerseyTest;
@@ -15,18 +18,21 @@ import org.glassfish.jersey.test.grizzly.GrizzlyWebTestContainerFactory;
 import org.glassfish.jersey.test.spi.TestContainerException;
 import org.glassfish.jersey.test.spi.TestContainerFactory;
 import org.junit.Test;
-
+import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
-
+import javax.ws.rs.core.SecurityContext;
+import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
 
 public class ChainedAuthProviderTest extends JerseyTest {
+    private static final String ADMIN_ROLE = "ADMIN";
     static {
         LoggingFactory.bootstrap();
     }
@@ -107,9 +113,10 @@ public class ChainedAuthProviderTest extends JerseyTest {
     @Path("/test/")
     @Produces(MediaType.TEXT_PLAIN)
     public static class ProtectedResource {
+        @RolesAllowed({ADMIN_ROLE})
         @GET
-        public String show(@Auth String principal) {
-            return principal;
+        public String show(@Context SecurityContext context) {
+            return context.getUserPrincipal().getName();
         }
     }
 
@@ -118,37 +125,24 @@ public class ChainedAuthProviderTest extends JerseyTest {
         public ChainedAuthTestResourceConfig() {
             super(true, new MetricRegistry());
 
-            final Authenticator<BasicCredentials, String> basicAuthenticator = new Authenticator<BasicCredentials, String>() {
-                @Override
-                public Optional<String> authenticate(BasicCredentials credentials) throws AuthenticationException {
-                    if ("good-guy".equals(credentials.getUsername()) &&
-                            "secret".equals(credentials.getPassword())) {
-                        return Optional.of("good-guy");
-                    }
-                    if ("bad-guy".equals(credentials.getUsername())) {
-                        throw new AuthenticationException("CRAP");
-                    }
-                    return Optional.absent();
-                }
-            };
+            final String validUser = "good-guy";
 
-            final Authenticator<String, String> oauthAuthenticator = new Authenticator<String, String>() {
-                @Override
-                public Optional<String> authenticate(String credentials) throws AuthenticationException {
-                    if ("A12B3C4D".equals(credentials)) {
-                        return Optional.of("good-guy");
-                    }
-                    if ("bad-guy".equals(credentials)) {
-                        throw new AuthenticationException("CRAP");
-                    }
-                    return Optional.absent();
-                }
-            };
+            final Function<AuthFilter.Tuple, SecurityContext> securityContextFunction =
+                    AuthUtil.getSecurityContextProviderFunction(validUser, ADMIN_ROLE);
+            AuthFilter basicCredentialAuthFilter = new BasicCredentialAuthFilter.Builder()
+                    .setAuthenticator(AuthUtil.getTestAuthenticatorBasicCredential(validUser))
+                    .setSecurityContextFunction(securityContextFunction)
+                    .buildAuthHandler();
 
-            BasicAuthFactory<String> basicAuthFactory = new BasicAuthFactory<String>(basicAuthenticator, "realm", String.class);
-            OAuthFactory<String> oAuthFactory = new OAuthFactory<String>(oauthAuthenticator, "realm", String.class);
+            AuthFilter oauthCredentialAuthFilter = new OAuthCredentialAuthFilter.Builder()
+                    .setAuthenticator(AuthUtil.getTestAuthenticator("A12B3C4D", validUser))
+                    .setPrefix("Bearer")
+                    .setSecurityContextFunction(securityContextFunction)
+                    .buildAuthHandler();
 
-            register(AuthFactory.binder(new ChainedAuthFactory<String>(basicAuthFactory, oAuthFactory)));
+            List handlers = Lists.newArrayList(basicCredentialAuthFilter, oauthCredentialAuthFilter);
+            register(new AuthDynamicFeature(new ChainedAuthFilter(handlers)));
+            register(RolesAllowedDynamicFeature.class);
             register(AuthResource.class);
         }
     }
