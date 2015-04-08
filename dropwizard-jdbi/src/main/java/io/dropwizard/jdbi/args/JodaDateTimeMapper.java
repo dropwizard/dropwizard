@@ -24,7 +24,11 @@ public class JodaDateTimeMapper extends TypedMapper<DateTime> {
      * explicitly. Otherwise it will not be correctly represented in
      * a time zone different from the time zone of the database.
      */
-    private Optional<Calendar> calendar = Optional.absent();
+    private Optional<Calendar> calendar;
+
+    public JodaDateTimeMapper() {
+        calendar = Optional.absent();
+    }
 
     public JodaDateTimeMapper(Optional<TimeZone> timeZone) {
         calendar = timeZone.transform(new Function<TimeZone, Calendar>() {
