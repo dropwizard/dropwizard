@@ -443,8 +443,13 @@ application. To enable it, move your application to a sub-URL.
 .. code-block:: yaml
 
     server:
-      type: simple
-      rootPath: /application/*
+      rootPath: /api/
+
+.. note::
+
+    If you use the :ref:`man-configuration-simple` server configuration, then ``rootPath`` is calculated relatively  from
+    ``applicationContextPath``. So, your API will be accessible from the path ``/application/api/``
+
 
 Then use an extended ``AssetsBundle`` constructor to serve resources in the
 ``assets`` folder from the root path. ``index.htm`` is served as the default
