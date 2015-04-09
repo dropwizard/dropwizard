@@ -480,8 +480,37 @@ line. The built-in ``server`` command, for example, spins up an HTTP server and 
 Each ``Command`` subclass has a name and a set of command line options which Dropwizard will use to
 parse the given command line arguments.
 
+Below is an example on how to add a command and have Dropwizard recognize it.
+
 .. code-block:: java
-	
+
+    public class MyCommand extends Command {
+        public MyCommand() {
+            // The name of our command is "hello" and the description printed is
+            // "Prints a greeting"
+            super("hello", "Prints a greeting");
+        }
+
+        @Override
+        public void configure(Subparser subparser) {
+            // Add a command line option
+            subparser.addArgument("-u", "--user")
+                    .dest("user")
+                    .type(String.class)
+                    .required(true)
+                    .help("The user of the program");
+        }
+
+        @Override
+        public void run(Bootstrap<?> bootstrap, Namespace namespace) throws Exception {
+            System.out.println("Hello " + namespace.getString("user"));
+        }
+    }
+
+Dropwizard recognizes our command once we add it in the ``initialize`` stage of our application.
+
+.. code-block:: java
+
     public class MyApplication extends Application<MyConfiguration>{
         @Override
         public void initialize(Bootstrap<DropwizardConfiguration> bootstrap) {
@@ -489,15 +518,43 @@ parse the given command line arguments.
         }
     }
 
+To invoke the new functionality, run the following:
+
+.. code-block:: text
+
+    java -jar <jarfile> hello dropwizard
+
 .. _man-core-commands-configured:
 
 Configured Commands
 -------------------
 
 Some commands require access to configuration parameters and should extend the ``ConfiguredCommand``
-class, using your application's ``Configuration`` class as its type parameter. Dropwizard will treat 
-the first argument on the command line as the path to a YAML configuration file, parse and validate it,
-and provide your command with an instance of the configuration class.
+class, using your application's ``Configuration`` class as its type parameter. By default,
+Dropwizard will treat the last argument on the command line as the path to a YAML configuration
+file, parse and validate it, and provide your command with an instance of the configuration class.
+
+A ``ConfiguredCommand`` can have additional command line options specified, while keeping the last
+argument the path to the YAML configuration.
+
+.. code-block:: java
+
+    @Override
+    public void configure(Subparser subparser) {
+        super.configure(subparser);
+
+        // Add a command line option
+        subparser.addArgument("-u", "--user")
+                .dest("user")
+                .type(String.class)
+                .required(true)
+                .help("The user of the program");
+    }
+
+For more advanced customization of the command line (for example, having the configuration file
+location specified by ``-c``), adapt the ConfiguredCommand_ class as needed.
+
+.. _ConfiguredCommand: https://github.com/dropwizard/dropwizard/blob/master/dropwizard-core/src/main/java/io/dropwizard/cli/ConfiguredCommand.java
 
 .. _man-core-tasks:
 
