@@ -97,7 +97,11 @@ public class DropwizardClientRule extends ExternalResource {
             environment.healthChecks().register("dummy", new DummyHealthCheck());
 
             for (Object resource : resources) {
-                environment.jersey().register(resource);
+                if (resource instanceof Class<?>) {
+                    environment.jersey().register((Class<?>) resource);
+                } else {
+                    environment.jersey().register(resource);
+                }
             }
         }
     }
