@@ -336,3 +336,12 @@ running and stop it again when they've completed (roughly equivalent to having u
             assertThat(response.getStatus()).isEqualTo(302);
         }
     }
+
+If you need to run a Command in your integration tests use the ``CommandRunner`` class.  You may provide a
+command to run, or you can provide the command name if it is already loaded in your Application.
+``CommandRunner`` supports the same parameters and configuration options as ``DropwizardAppRule``.
+
+.. code-block:: java
+
+    CommandRunner<TestConfiguration> runner = new CommandRunner(MyApp.class, ResourceHelpers.resourceFilePath("my-app-config.yaml"), "CommandName");
+    runner.run();

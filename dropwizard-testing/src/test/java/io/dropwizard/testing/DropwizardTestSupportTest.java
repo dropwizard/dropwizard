@@ -3,7 +3,6 @@ package io.dropwizard.testing;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableMultimap;
-import io.dropwizard.Application;
 import io.dropwizard.Configuration;
 import io.dropwizard.servlets.tasks.Task;
 import io.dropwizard.setup.Environment;
@@ -76,14 +75,6 @@ public class DropwizardTestSupportTest {
                 .post(Entity.entity("", MediaType.TEXT_PLAIN), String.class);
 
         assertThat(response, is("Hello has been said to test_user"));
-    }
-
-    public static class TestApplication extends Application<TestConfiguration> {
-        @Override
-        public void run(TestConfiguration configuration, Environment environment) throws Exception {
-            environment.jersey().register(new TestResource(configuration.getMessage()));
-            environment.admin().addTask(new HelloTask());
-        }
     }
 
     @Path("/")
