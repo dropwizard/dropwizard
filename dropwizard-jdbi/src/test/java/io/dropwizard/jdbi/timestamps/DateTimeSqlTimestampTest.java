@@ -29,19 +29,38 @@ public class DateTimeSqlTimestampTest {
 
     private static final DateTimeFormatter ISO_FMT = ISODateTimeFormat.dateTimeNoMillis();
 
-    private static TimeZone timeZone = getRandomTimeZone();
-    private static TemporaryFolder temporaryFolder = new TemporaryFolder();
-    private static DatabaseInTimeZone databaseInTimeZone = new DatabaseInTimeZone(temporaryFolder, timeZone);
-    private static DBIClient DBIClient = new DBIClient(timeZone);
+    private static TimeZone timeZone;
+    private static TemporaryFolder temporaryFolder;
+    private static DatabaseInTimeZone databaseInTimeZone;
+    private static DateTimeZone dbTimeZone;
+    private static DBIClient DBIClient;
+    @ClassRule
+    public static TestRule chain;
+
+    static {
+        boolean done = false;
+        while (!done) {
+            try {
+                timeZone = getRandomTimeZone();
+                dbTimeZone = DateTimeZone.forTimeZone(timeZone);
+                temporaryFolder = new TemporaryFolder();
+                databaseInTimeZone = new DatabaseInTimeZone(temporaryFolder, timeZone);
+                DBIClient = new DBIClient(timeZone);
+                chain = RuleChain.outerRule(temporaryFolder)
+                        .around(databaseInTimeZone)
+                        .around(DBIClient);
+                done = true;
+            } catch(IllegalArgumentException e) {
+                if (!e.getMessage().contains("is not recognised")) {
+                    throw e;
+                }
+            }
+        }
+    }
 
     private Handle handle;
     private FlightDao flightDao;
-    private DateTimeZone dbTimeZone = DateTimeZone.forTimeZone(timeZone);
 
-    @ClassRule
-    public static TestRule chain = RuleChain.outerRule(temporaryFolder)
-            .around(databaseInTimeZone)
-            .around(DBIClient);
 
     private static TimeZone getRandomTimeZone() {
         String[] ids = TimeZone.getAvailableIDs();
