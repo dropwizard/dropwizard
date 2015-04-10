@@ -2,6 +2,7 @@ package io.dropwizard.jersey.guava;
 
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
+import com.google.common.base.Strings;
 import org.glassfish.hk2.api.ServiceLocator;
 import org.glassfish.jersey.internal.inject.Providers;
 import org.glassfish.jersey.internal.util.ReflectionHelper;
@@ -38,7 +39,7 @@ public class OptionalParamConverterProvider implements ParamConverterProvider {
                 return new ParamConverter<T>() {
                     @Override
                     public T fromString(final String value) {
-                        return rawType.cast(Optional.fromNullable(value));
+                        return rawType.cast(Optional.fromNullable(Strings.emptyToNull(value)));
                     }
 
                     @Override
