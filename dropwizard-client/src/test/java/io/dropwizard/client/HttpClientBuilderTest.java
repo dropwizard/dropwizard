@@ -6,23 +6,25 @@ import com.codahale.metrics.httpclient.InstrumentedHttpClientConnectionManager;
 import com.codahale.metrics.httpclient.InstrumentedHttpRequestExecutor;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
+import io.dropwizard.client.proxy.AuthConfiguration;
+import io.dropwizard.client.proxy.ProxyConfiguration;
 import io.dropwizard.util.Duration;
 import org.apache.commons.lang3.reflect.FieldUtils;
-import org.apache.http.Header;
-import org.apache.http.HeaderIterator;
-import org.apache.http.HttpHeaders;
-import org.apache.http.HttpResponse;
+import org.apache.http.*;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.Credentials;
+import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.HttpRequestRetryHandler;
 import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.config.Registry;
 import org.apache.http.config.RegistryBuilder;
 import org.apache.http.config.SocketConfig;
 import org.apache.http.conn.DnsResolver;
 import org.apache.http.conn.routing.HttpRoutePlanner;
+import org.apache.http.conn.routing.HttpRoute;
 import org.apache.http.conn.socket.ConnectionSocketFactory;
 import org.apache.http.conn.socket.PlainConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
@@ -36,6 +38,7 @@ import org.apache.http.impl.conn.SystemDefaultDnsResolver;
 import org.apache.http.impl.conn.SystemDefaultRoutePlanner;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicListHeaderIterator;
+import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
 import org.junit.Before;
@@ -319,6 +322,81 @@ public class HttpClientBuilderTest {
                 .createClient(apacheBuilder, connectionManager, "test")).isNotNull();
 
         assertThat(spyHttpClientBuilderField("credentialsProvider", apacheBuilder)).isSameAs(credentialsProvider);
+    }
+
+    @Test
+    public void usesProxy() throws Exception {
+        HttpClientConfiguration config = new HttpClientConfiguration();
+        ProxyConfiguration proxy = new ProxyConfiguration("192.168.52.11", 8080);
+        config.setProxyConfiguration(proxy);
+
+        checkProxy(config, new HttpHost("dropwizard.io", 80), new HttpHost("192.168.52.11", 8080));
+    }
+
+    @Test
+    public void usesProxyWithoutPort() throws Exception {
+        HttpClientConfiguration config = new HttpClientConfiguration();
+        ProxyConfiguration proxy = new ProxyConfiguration("192.168.52.11");
+        config.setProxyConfiguration(proxy);
+
+        checkProxy(config, new HttpHost("dropwizard.io", 80), new HttpHost("192.168.52.11"));
+    }
+
+    @Test
+    public void usesProxyWithAuth() throws Exception {
+        HttpClientConfiguration config = new HttpClientConfiguration();
+        AuthConfiguration auth = new AuthConfiguration("secret", "stuff");
+        ProxyConfiguration proxy = new ProxyConfiguration("192.168.52.11", 8080, "http", auth);
+        config.setProxyConfiguration(proxy);
+
+        CloseableHttpClient httpClient = checkProxy(config, new HttpHost("dropwizard.io", 80),
+                new HttpHost("192.168.52.11", 8080, "http"));
+        CredentialsProvider credentialsProvider = (CredentialsProvider)
+                FieldUtils.getField(httpClient.getClass(), "credentialsProvider", true)
+                        .get(httpClient);
+
+        assertThat(credentialsProvider.getCredentials(new AuthScope("192.168.52.11", 8080)))
+                .isEqualTo(new UsernamePasswordCredentials("secret", "stuff"));
+    }
+
+    @Test
+    public void usesProxyWithNonProxyHosts() throws Exception {
+        HttpClientConfiguration config = new HttpClientConfiguration();
+        ProxyConfiguration proxy = new ProxyConfiguration("192.168.52.11", 8080);
+        proxy.setNonProxyHosts(ImmutableList.of("*.example.com"));
+        config.setProxyConfiguration(proxy);
+
+        checkProxy(config, new HttpHost("host.example.com", 80), null);
+    }
+
+    @Test
+    public void usesProxyWithNonProxyHostsAndTargetDoesNotMatch() throws Exception {
+        HttpClientConfiguration config = new HttpClientConfiguration();
+        ProxyConfiguration proxy = new ProxyConfiguration("192.168.52.11");
+        proxy.setNonProxyHosts(ImmutableList.of("*.example.com"));
+        config.setProxyConfiguration(proxy);
+
+        checkProxy(config, new HttpHost("dropwizard.io", 80), new HttpHost("192.168.52.11"));
+    }
+
+    @Test
+    public void usesNoProxy() throws Exception {
+        checkProxy(new HttpClientConfiguration(), new HttpHost("dropwizard.io", 80), null);
+    }
+
+    private CloseableHttpClient checkProxy(HttpClientConfiguration config, HttpHost target, HttpHost expectedProxy)
+            throws Exception {
+        CloseableHttpClient httpClient = builder.using(config).build("test");
+        HttpRoutePlanner routePlanner = (HttpRoutePlanner)
+                FieldUtils.getField(httpClient.getClass(), "routePlanner", true).get(httpClient);
+
+        HttpRoute route = routePlanner.determineRoute(target, new HttpGet(target.toURI()),
+                new BasicHttpContext());
+        assertThat(route.getProxyHost()).isEqualTo(expectedProxy);
+        assertThat(route.getTargetHost()).isEqualTo(target);
+        assertThat(route.getHopCount()).isEqualTo(expectedProxy != null ? 2 : 1);
+
+        return httpClient;
     }
 
     @Test

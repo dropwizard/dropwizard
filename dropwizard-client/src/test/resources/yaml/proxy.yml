@@ -1,0 +1,11 @@
+proxy:
+  host: '192.168.52.11'
+  port: 8080
+  scheme : 'https'
+  auth:
+    username: 'secret'
+    password: 'stuff'
+  nonProxyHosts:
+    - 'localhost'
+    - '192.168.52.*'
+    - '*.example.com'

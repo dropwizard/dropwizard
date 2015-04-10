@@ -1,0 +1,4 @@
+proxy:
+  host : ''
+  port: 8080
+  scheme : 'http'
