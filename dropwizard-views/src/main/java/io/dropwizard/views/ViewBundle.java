@@ -115,7 +115,7 @@ public class ViewBundle<T extends Configuration> implements ConfiguredBundle<T>,
     }
 
     @Override
-    public void initialize(Bootstrap<?> bootstrap) {
+    public void initialize(Bootstrap<? extends T> bootstrap) {
         // nothing doing
     }
 }
