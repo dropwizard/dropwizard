@@ -41,6 +41,14 @@ public class OptionalFormParamResourceTest extends JerseyTest {
     }
 
     @Test
+    public void shouldReturnMessageWhenMessageBlank() throws IOException {
+        final Form form = new Form("message", "");
+        final Response response = target("/optional/message").request().post(Entity.form(form));
+
+        assertThat(response.readEntity(String.class)).isEqualTo("");
+    }
+
+    @Test
     public void shouldReturnMessageWhenMessageIsPresent() throws IOException {
         final String customMessage = "Custom Message";
         final Form form = new Form("message", customMessage);
