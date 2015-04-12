@@ -6,7 +6,7 @@ Release Notes
 
 .. _rel-0.8.1:
 
-v0.8.1:
+v0.8.1: Apr 7 2015
 =======
 
 * Fixed transcation commiting lifecycle for ``@UnitOfWork``  (#850, #915)
