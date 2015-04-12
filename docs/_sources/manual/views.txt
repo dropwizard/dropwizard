@@ -16,8 +16,29 @@ To enable views for your :ref:`Application <man-core-application>`, add the ``Vi
 .. code-block:: java
 
     public void initialize(Bootstrap<MyConfiguration> bootstrap) {
-        bootstrap.addBundle(new ViewBundle());
+        bootstrap.addBundle(new ViewBundle<MyConfiguration>());
     }
+
+You can pass configuration through to view renderers by overriding ``getViewConfiguration``:
+
+.. code-block:: java
+
+    public void initialize(Bootstrap<MyConfiguration> bootstrap) {
+        bootstrap.addBundle(new ViewBundle<MyConfiguration>() {
+            @Override
+            public Map<String, Map<String, String>> getViewConfiguration(MyConfiguration config) {
+                return config.getViewRendererConfiguration();
+            }
+        });
+    }
+
+The returned map should have, for each extension (such as ``.ftl``), a ``Map<String, String>`` describing how to configure the renderer. Specific keys and their meanings can be found in the FreeMarker and Mustache documentation:
+
+.. code-block:: yaml
+
+views:
+    .ftl:
+        strict_syntax: yes
 
 Then, in your :ref:`resource method <man-core-resources>`, add a ``View`` class:
 

@@ -111,7 +111,10 @@
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#clients">Clients</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#httpclient">HttpClient</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#httpclient">HttpClient</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="#proxy">Proxy</a></li>
+</ul>
+</li>
 <li class="toctree-l4"><a class="reference internal" href="#jerseyclient">JerseyClient</a></li>
 </ul>
 </li>
@@ -127,7 +130,7 @@
 
                 <hr/>
                 <ul>
-                    <li><a href="https://dropwizard.github.io/dropwizard/0.8.0">Maven Site</a></li>
+                    <li><a href="https://dropwizard.github.io/dropwizard/0.8.1">Maven Site</a></li>
                     <li><a href="https://groups.google.com/forum/#!forum/dropwizard-user">User Mailing List</a></li>
                     <li><a href="https://groups.google.com/forum/#!forum/dropwizard-dev">Developer Mailing List</a></li>
                 </ul>
@@ -1462,6 +1465,71 @@ retried if they throw an exception other than <tt class="docutils literal"><span
 </tr>
 </tbody>
 </table>
+<div class="section" id="proxy">
+<span id="man-configuration-clients-http-proxy"></span><h4>Proxy</h4>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">httpClient</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">proxy</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">host</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">192.168.52.11</span>
+    <span class="l-Scalar-Plain">port</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">8080</span>
+    <span class="l-Scalar-Plain">scheme</span> <span class="p-Indicator">:</span> <span class="l-Scalar-Plain">http</span>
+    <span class="l-Scalar-Plain">auth</span><span class="p-Indicator">:</span>
+      <span class="l-Scalar-Plain">username</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">secret</span>
+      <span class="l-Scalar-Plain">password</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">stuff</span>
+    <span class="l-Scalar-Plain">nonProxyHosts</span><span class="p-Indicator">:</span>
+      <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">localhost</span>
+      <span class="p-Indicator">-</span> <span class="s">&#39;192.168.52.*&#39;</span>
+      <span class="p-Indicator">-</span> <span class="s">&#39;*.example.com&#39;</span>
+</pre></div>
+</div>
+<table border="1" class="docutils">
+<colgroup>
+<col width="11%" />
+<col width="15%" />
+<col width="74%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Name</th>
+<th class="head">Default</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>host</td>
+<td>REQUIRED</td>
+<td>The proxy server host name or ip address.</td>
+</tr>
+<tr class="row-odd"><td>port</td>
+<td>(scheme default)</td>
+<td>The proxy server port.
+If the port is not set then the scheme default port is used.</td>
+</tr>
+<tr class="row-even"><td>scheme</td>
+<td>http</td>
+<td>The proxy server URI scheme. HTTP and HTTPS schemas are permitted.
+By default HTTP scheme is used.</td>
+</tr>
+<tr class="row-odd"><td>auth</td>
+<td>(none)</td>
+<td>The proxy server BASIC authentication credentials.
+If they are not set then no credentials will be passed to the server.</td>
+</tr>
+<tr class="row-even"><td>username</td>
+<td>REQUIRED</td>
+<td>The username used to connect to the server.</td>
+</tr>
+<tr class="row-odd"><td>password</td>
+<td>REQUIRED</td>
+<td>The password used to connect to the server.</td>
+</tr>
+<tr class="row-even"><td>nonProxyHosts</td>
+<td>(none)</td>
+<td>List of patterns of hosts that should be reached without proxy.
+The patterns may contain symbol &#8216;*&#8217; as a wildcard.
+If a host matches one of the patterns it will be reached through a direct connection.</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 <div class="section" id="jerseyclient">
 <span id="man-configuration-clients-jersey"></span><h3>JerseyClient</h3>
@@ -1701,11 +1769,11 @@ interval.</td>
         <hr/>
         <footer>
             <p style="float: left">
-            &copy; Copyright 2010-2013, Coda Hale, Yammer Inc..
+            &copy; Copyright 2010-2013, Coda Hale, Yammer Inc., 2014-2015 Dropwizard Team.
             Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>
-            1.1.3.
+            1.2.2.
             </p>
-            <p style="float: right">Dropwizard v0.8.0</p>
+            <p style="float: right">Dropwizard v0.8.1</p>
         </footer>
     </div>
 </body>

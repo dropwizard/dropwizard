@@ -96,7 +96,7 @@
 
                 <hr/>
                 <ul>
-                    <li><a href="https://dropwizard.github.io/dropwizard/0.8.0">Maven Site</a></li>
+                    <li><a href="https://dropwizard.github.io/dropwizard/0.8.1">Maven Site</a></li>
                     <li><a href="https://groups.google.com/forum/#!forum/dropwizard-user">User Mailing List</a></li>
                     <li><a href="https://groups.google.com/forum/#!forum/dropwizard-dev">Developer Mailing List</a></li>
                 </ul>
@@ -183,15 +183,18 @@ writing via a <tt class="docutils literal"><span class="pre">PUT</span></tt> req
     <span class="nd">@Test</span>
     <span class="kd">public</span> <span class="kt">void</span> <span class="nf">serializesToJSON</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
         <span class="kd">final</span> <span class="n">Person</span> <span class="n">person</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Person</span><span class="o">(</span><span class="s">&quot;Luther Blissett&quot;</span><span class="o">,</span> <span class="s">&quot;lb@example.com&quot;</span><span class="o">);</span>
-        <span class="n">assertThat</span><span class="o">(</span><span class="n">MAPPER</span><span class="o">.</span><span class="na">writeValueAsString</span><span class="o">(</span><span class="n">person</span><span class="o">))</span>
-                <span class="o">.</span><span class="na">isEqualTo</span><span class="o">(</span><span class="n">fixture</span><span class="o">(</span><span class="s">&quot;fixtures/person.json&quot;</span><span class="o">));</span>
+
+        <span class="kd">final</span> <span class="n">String</span> <span class="n">expected</span> <span class="o">=</span> <span class="n">MAPPER</span><span class="o">.</span><span class="na">writeValueAsString</span><span class="o">(</span>
+                <span class="n">MAPPER</span><span class="o">.</span><span class="na">readValue</span><span class="o">(</span><span class="n">fixture</span><span class="o">(</span><span class="s">&quot;fixtures/person.json&quot;</span><span class="o">),</span> <span class="n">Person</span><span class="o">.</span><span class="na">class</span><span class="o">));</span>
+
+        <span class="n">assertThat</span><span class="o">(</span><span class="n">MAPPER</span><span class="o">.</span><span class="na">writeValueAsString</span><span class="o">(</span><span class="n">person</span><span class="o">)).</span><span class="na">isEqualTo</span><span class="o">(</span><span class="n">expected</span><span class="o">);</span>
     <span class="o">}</span>
 <span class="o">}</span>
 </pre></div>
 </div>
 <p>This test uses <a class="reference external" href="http://assertj.org/assertj-core-conditions.html">AssertJ assertions</a> and <a class="reference external" href="http://www.junit.org/">JUnit</a> to test that when a <tt class="docutils literal"><span class="pre">Person</span></tt> instance is serialized
-via Jackson it matches the JSON in the fixture file. (The comparison is done via a normalized JSON
-string representation, so whitespace doesn&#8217;t affect the results.)</p>
+via Jackson it matches the JSON in the fixture file. (The comparison is done on a normalized JSON
+string representation, so formatting doesn&#8217;t affect the results.)</p>
 </div>
 <div class="section" id="testing-deserialization">
 <span id="man-testing-representations-deserialization"></span><h3>Testing Deserialization</h3>
@@ -371,10 +374,10 @@ running and stop it again when they&#8217;ve completed (roughly equivalent to ha
     <span class="kd">public</span> <span class="kt">void</span> <span class="nf">loginHandlerRedirectsAfterPost</span><span class="o">()</span> <span class="o">{</span>
         <span class="n">Client</span> <span class="n">client</span> <span class="o">=</span> <span class="k">new</span> <span class="n">JerseyClientBuilder</span><span class="o">(</span><span class="n">RULE</span><span class="o">.</span><span class="na">getEnvironment</span><span class="o">()).</span><span class="na">build</span><span class="o">(</span><span class="s">&quot;test client&quot;</span><span class="o">);</span>
 
-        <span class="n">ClientResponse</span> <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="na">target</span><span class="o">(</span>
+        <span class="n">Response</span> <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="na">target</span><span class="o">(</span>
                  <span class="n">String</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="s">&quot;http://localhost:%d/login&quot;</span><span class="o">,</span> <span class="n">RULE</span><span class="o">.</span><span class="na">getLocalPort</span><span class="o">()))</span>
                 <span class="o">.</span><span class="na">request</span><span class="o">()</span>
-                <span class="o">.</span><span class="na">post</span><span class="o">(</span><span class="n">Entity</span><span class="o">.</span><span class="na">json</span><span class="o">(</span><span class="n">loginForm</span><span class="o">()),</span> <span class="n">ClientResponse</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+                <span class="o">.</span><span class="na">post</span><span class="o">(</span><span class="n">Entity</span><span class="o">.</span><span class="na">json</span><span class="o">(</span><span class="n">loginForm</span><span class="o">()));</span>
 
         <span class="n">assertThat</span><span class="o">(</span><span class="n">response</span><span class="o">.</span><span class="na">getStatus</span><span class="o">()).</span><span class="na">isEqualTo</span><span class="o">(</span><span class="mi">302</span><span class="o">);</span>
     <span class="o">}</span>
@@ -390,11 +393,11 @@ running and stop it again when they&#8217;ve completed (roughly equivalent to ha
         <hr/>
         <footer>
             <p style="float: left">
-            &copy; Copyright 2010-2013, Coda Hale, Yammer Inc..
+            &copy; Copyright 2010-2013, Coda Hale, Yammer Inc., 2014-2015 Dropwizard Team.
             Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>
-            1.1.3.
+            1.2.2.
             </p>
-            <p style="float: right">Dropwizard v0.8.0</p>
+            <p style="float: right">Dropwizard v0.8.1</p>
         </footer>
     </div>
 </body>

@@ -588,7 +588,7 @@ this:
     <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
-        <version>1.6</version>
+        <version>2.3</version>
         <configuration>
             <createDependencyReducedPom>true</createDependencyReducedPom>
             <filters>
