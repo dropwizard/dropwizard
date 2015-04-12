@@ -151,14 +151,13 @@ from their <tt class="docutils literal"><span class="pre">Accept-Language</span>
 template in <tt class="docutils literal"><span class="pre">person_en_CA.ftl</span></tt>.</p>
 </div>
 <p>Your template file might look something like this:</p>
-<div class="highlight-html"><div class="highlight"><pre><span class="hll">&lt;#-- @ftlvariable name=&quot;&quot; type=&quot;com.example.views.PersonView&quot; --&gt;
-</span>&lt;html&gt;
+<div class="highlight-html"><pre>&lt;#-- @ftlvariable name="" type="com.example.views.PersonView" --&gt;
+&lt;html&gt;
     &lt;body&gt;
         &lt;!-- calls getPerson().getName() and sanitizes it --&gt;
-<span class="hll">        &lt;h1&gt;Hello, ${person.name?html}!&lt;/h1&gt;
-</span>    &lt;/body&gt;
-&lt;/html&gt;
-</pre></div>
+        &lt;h1&gt;Hello, ${person.name?html}!&lt;/h1&gt;
+    &lt;/body&gt;
+&lt;/html&gt;</pre>
 </div>
 <p>The <tt class="docutils literal"><span class="pre">&#64;ftlvariable</span></tt> lets FreeMarker (and any FreeMarker IDE plugins you may be using) know that the
 root object is a <tt class="docutils literal"><span class="pre">com.example.views.PersonView</span></tt> instance. If you attempt to call a property which
@@ -200,7 +199,7 @@ your IDE.</p>
             <p style="float: left">
             &copy; Copyright 2010-2013, Coda Hale, Yammer Inc., 2014-2015 Dropwizard Team.
             Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>
-            1.2.2.
+            1.1.3.
             </p>
             <p style="float: right">Dropwizard v0.8.1</p>
         </footer>
