@@ -1,12 +1,15 @@
 package io.dropwizard.logging;
 
 import ch.qos.logback.classic.spi.ThrowableProxy;
+import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.net.SocketTimeoutException;
+import java.util.List;
+import java.util.regex.Pattern;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -57,21 +60,22 @@ public class PrefixedRootCauseFirstThrowableProxyConverterTest {
     }
 
     @Test
-    public void prefixesExceptionsWithExclamationMarks() throws Exception {
-        assertThat(converter.throwableProxyToString(proxy))
-                .startsWith(String.format(
-                        "! java.net.SocketTimeoutException: Timed-out reading from socket%n" +
-                        "! at io.dropwizard.logging.PrefixedRootCauseFirstThrowableProxyConverterTest.throwRoot(PrefixedRootCauseFirstThrowableProxyConverterTest.java:34)%n" +
-                        "! at io.dropwizard.logging.PrefixedRootCauseFirstThrowableProxyConverterTest.throwInnerWrapper(PrefixedRootCauseFirstThrowableProxyConverterTest.java:39)%n" +
-                        "! ... 31 common frames omitted%n" +
-                        "! Causing: java.io.IOException: Fairly general error doing some IO%n" +
-                        "! at io.dropwizard.logging.PrefixedRootCauseFirstThrowableProxyConverterTest.throwInnerWrapper(PrefixedRootCauseFirstThrowableProxyConverterTest.java:41)%n" +
-                        "! at io.dropwizard.logging.PrefixedRootCauseFirstThrowableProxyConverterTest.throwOuterWrapper(PrefixedRootCauseFirstThrowableProxyConverterTest.java:47)%n" +
-                        "! ... 30 common frames omitted%n" +
-                        "! Causing: java.lang.RuntimeException: Very general error doing something%n" +
-                        "! at io.dropwizard.logging.PrefixedRootCauseFirstThrowableProxyConverterTest.throwOuterWrapper(PrefixedRootCauseFirstThrowableProxyConverterTest.java:49)%n" +
-                        "! at io.dropwizard.logging.PrefixedRootCauseFirstThrowableProxyConverterTest.getException(PrefixedRootCauseFirstThrowableProxyConverterTest.java:25)%n" +
-                        "! at io.dropwizard.logging.PrefixedRootCauseFirstThrowableProxyConverterTest.<init>(PrefixedRootCauseFirstThrowableProxyConverterTest.java:21)%n"));
+    public void prefixesExceptionsWithExclamationMarks()  {
+        final List<String> stackTrace = Splitter.on(System.lineSeparator()).omitEmptyStrings()
+                .splitToList(converter.throwableProxyToString(proxy));
+        assertThat(stackTrace).isNotEmpty();
+        for (String line : stackTrace) {
+            assertThat(line).startsWith("!");
+        }
+    }
+
+    @Test
+    public void placesRootCauseIsFirst() {
+        assertThat(converter.throwableProxyToString(proxy)).matches(Pattern.compile(".+" +
+                "java\\.net\\.SocketTimeoutException: Timed-out reading from socket.+" +
+                "java\\.io\\.IOException: Fairly general error doing some IO.+" +
+                "java\\.lang\\.RuntimeException: Very general error doing something" +
+                ".+", Pattern.DOTALL));
     }
 
     /**
