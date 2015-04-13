@@ -36,6 +36,13 @@ public class OptionalHeaderParamResourceTest extends JerseyTest {
     }
 
     @Test
+    public void shouldReturnDefaultMessageWhenMessageIsBlank() {
+        String defaultMessage = "Default Message";
+        String response = target("/optional/message").request().header("message", "").get(String.class);
+        assertThat(response).isEqualTo(defaultMessage);
+    }
+
+    @Test
     public void shouldReturnMessageWhenMessageIsPresent() {
         String customMessage = "Custom Message";
         String response = target("/optional/message").request().header("message", customMessage).get(String.class);
