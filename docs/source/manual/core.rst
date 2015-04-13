@@ -978,6 +978,25 @@ For example:
 What's noteworthy here is that you can actually encapsulate the vast majority of your validation
 logic using specialized parameter objects. See ``AbstractParam`` for details.
 
+A good example of deriving from ``AbstractParam`` is when the application treats empty parameters as
+synonymous with nonexistent parameters, so a query string of ``?foo=`` will be interpreted as if
+``foo`` wasn't even in the query string. The following class accomplishes that goal.
+
+.. code-block:: java
+
+    public class NonEmptyString extends AbstractParam<Optional<String>> {
+        public NonEmptyString(String input) {
+            super(input);
+        }
+
+        @Override
+        protected Optional<String> parse(String input) throws Exception {
+            return Optional.fromNullable(Strings.emptyToNull(input));
+        }
+    }
+
+To use this new functionality, change the desired endpoint parameters to ``NonEmptyString``.
+
 .. _man-core-resources-request-entities:
 
 Request Entities
