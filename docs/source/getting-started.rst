@@ -452,8 +452,10 @@ adds to Jersey's existing functionality.)
 
     If the client sends a request to ``/hello-world?name=``, ``sayHello`` will be called with
     ``Optional.of("")``. This may seem odd at first, but this follows the standards (an application
-    may have different behavior depending on if a parameter is empty vs nonexistent). For more
-    information see :ref:`the section on parameters <man-core-resources-parameters>`
+    may have different behavior depending on if a parameter is empty vs nonexistent). You can swap
+    ``Optional<String>`` parameter with ``NonEmptyStringParam`` if you want ``/hello-world?name=``
+    to return "Hello, Stranger!" For more information on resource parameters see
+    :ref:`the documentation <man-core-resources-parameters>`
 
 Inside the ``sayHello`` method, we increment the counter, format the template using
 ``String.format(String, Object...)``, and return a new ``Saying`` instance.
