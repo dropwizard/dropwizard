@@ -28,12 +28,36 @@ public class ConstraintViolationExceptionMapperTest extends JerseyTest {
     }
 
     @Test
-    public void returnsAnErrorMessage() throws Exception {
+    public void postInvalidEntityIs422() throws Exception {
         assumeThat(Locale.getDefault().getLanguage(), is("en"));
 
-        final Response response = target("/valid/").request(MediaType.APPLICATION_JSON)
+        final Response response = target("/valid/foo").request(MediaType.APPLICATION_JSON)
                 .post(Entity.entity("{}", MediaType.APPLICATION_JSON));
         assertThat(response.getStatus()).isEqualTo(422);
         assertThat(response.readEntity(String.class)).isEqualTo("{\"errors\":[\"name may not be empty (was null)\"]}");
+    }
+
+    @Test
+    public void getInvalidReturnIs500() throws Exception {
+        // return value is too long and so will fail validation
+        final Response response = target("/valid/bar")
+                .queryParam("name", "dropwizard").request().get();
+        assertThat(response.getStatus()).isEqualTo(500);
+    }
+
+    @Test
+    public void getInvalidQueryParamsIs400() throws Exception {
+        // query parameter is too short and so will fail validation
+        final Response response = target("/valid/bar")
+                .queryParam("name", "hi").request().get();
+        assertThat(response.getStatus()).isEqualTo(400);
+    }
+
+    @Test
+    public void getInvalidBeanParamsIs400() throws Exception {
+        // bean parameter is too short and so will fail validation
+        final Response response = target("/valid/zoo")
+                .request().get();
+        assertThat(response.getStatus()).isEqualTo(400);
     }
 }
