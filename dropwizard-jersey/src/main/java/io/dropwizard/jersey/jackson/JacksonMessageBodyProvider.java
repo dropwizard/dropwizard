@@ -31,7 +31,7 @@ import java.util.*;
  * {@link JsonIgnoreType}.)
  */
 public class JacksonMessageBodyProvider extends JacksonJaxbJsonProvider {
-    private static final Logger LOGGER = LoggerFactory.getLogger(JsonProcessingExceptionMapper.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(JacksonMessageBodyProvider.class);
     /**
      * The default group array used in case any of the validate methods is called without a group.
      */
