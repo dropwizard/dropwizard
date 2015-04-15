@@ -21,6 +21,7 @@ import org.glassfish.jersey.server.monitoring.ApplicationEvent;
 import org.glassfish.jersey.server.monitoring.ApplicationEventListener;
 import org.glassfish.jersey.server.monitoring.RequestEvent;
 import org.glassfish.jersey.server.monitoring.RequestEventListener;
+import org.glassfish.jersey.server.validation.ValidationFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,6 +65,7 @@ public class DropwizardResourceConfig extends ResourceConfig {
         register(OptionalMessageBodyWriter.class);
         register(OptionalParamFeature.class);
         register(new SessionFactoryProvider.Binder());
+        register(ValidationFeature.class);
     }
 
     public static DropwizardResourceConfig forTesting(MetricRegistry metricRegistry) {
