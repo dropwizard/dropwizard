@@ -165,7 +165,7 @@ the `Jersey Client Properties`_ can be used.
 
 .. warning::
 
-    Do not try to change Jersey properties using `Jersey Client Properties` through the
+    Do not try to change Jersey properties using `Jersey Client Properties`_ through the
 
     ``withProperty(String propertyName, Object propertyValue)``
 

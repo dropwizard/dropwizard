@@ -979,6 +979,9 @@ For example:
   as an ``Integer``, returning a ``400 Bad Request`` if the value is malformed.
 * A ``@FormParam("name")``-annotated ``Set<String>`` parameter takes all the ``name`` values from a
   posted form and passes them to the method as a set of strings.
+* A ``*Param``--annotated ``NonEmptyStringParam`` will interpret empty strings as absent strings,
+  which is useful in cases where the endpoint treats empty strings and absent strings as
+  interchangeable.
 
 What's noteworthy here is that you can actually encapsulate the vast majority of your validation
 logic using specialized parameter objects. See ``AbstractParam`` for details.

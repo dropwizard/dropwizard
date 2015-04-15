@@ -36,6 +36,12 @@ public class OptionalCookieParamResourceTest extends JerseyTest {
     }
 
     @Test
+    public void shouldReturnMessageWhenMessageIsBlank() {
+        String response = target("/optional/message").request().cookie("message", "").get(String.class);
+        assertThat(response).isEqualTo("");
+    }
+
+    @Test
     public void shouldReturnMessageWhenMessageIsPresent() {
         String customMessage = "Custom Message";
         String response = target("/optional/message").request().cookie("message", customMessage).get(String.class);

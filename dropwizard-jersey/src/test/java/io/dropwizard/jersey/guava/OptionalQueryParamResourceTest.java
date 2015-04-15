@@ -43,6 +43,12 @@ public class OptionalQueryParamResourceTest extends JerseyTest {
     }
 
     @Test
+    public void shouldReturnMessageWhenMessageIsBlank() {
+        String response = target("/optional/message").queryParam("message", "").request().get(String.class);
+        assertThat(response).isEqualTo("");
+    }
+
+    @Test
     public void shouldReturnDecodedMessageWhenEncodedMessageIsPresent() {
         String encodedMessage = "Custom%20Message";
         String decodedMessage = "Custom Message";
