@@ -248,7 +248,7 @@ public abstract class AbstractServerFactory implements ServerFactory {
     private Set<String> allowedMethods = AllowedMethodsFilter.DEFAULT_ALLOWED_METHODS;
 
     @NotEmpty
-    private String jerseyRootPath = "/*";
+    private String jerseyRootPath = "/";
 
     @JsonIgnore
     @ValidationMethod(message = "must have a smaller minThreads than maxThreads")
@@ -474,7 +474,14 @@ public abstract class AbstractServerFactory implements ServerFactory {
             handler.addFilter(holder, "/*", EnumSet.allOf(DispatcherType.class));
         }
         if (jerseyContainer != null) {
-            jersey.setUrlPattern(jerseyRootPath);
+            String urlPattern = jerseyRootPath;
+            if (!urlPattern.endsWith("*") && !urlPattern.endsWith("/")) {
+                urlPattern += "/";
+            }
+            if (!urlPattern.endsWith("*")) {
+                urlPattern += "*";
+            }
+            jersey.setUrlPattern(urlPattern);
             jersey.register(new JacksonMessageBodyProvider(objectMapper, validator));
             if (registerDefaultExceptionMappers == null || registerDefaultExceptionMappers) {
                 jersey.register(new LoggingExceptionMapper<Throwable>() {
