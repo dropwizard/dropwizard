@@ -1,5 +1,6 @@
 package io.dropwizard.logging;
 
+import ch.qos.logback.classic.AsyncAppender;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.ILoggingEvent;
@@ -17,6 +18,18 @@ public class FileAppenderFactoryTest {
     public void isDiscoverable() throws Exception {
         assertThat(new DiscoverableSubtypeResolver().getDiscoveredSubtypes())
                 .contains(FileAppenderFactory.class);
+    }
+
+    @Test
+    public void includesCallerData() {
+        FileAppenderFactory fileAppenderFactory = new FileAppenderFactory();
+        fileAppenderFactory.setArchive(false);
+        AsyncAppender asyncAppender = (AsyncAppender) fileAppenderFactory.build(new LoggerContext(), "test", null);
+        assertThat(asyncAppender.isIncludeCallerData()).isFalse();
+
+        fileAppenderFactory.setIncludeCallerData(true);
+        asyncAppender = (AsyncAppender) fileAppenderFactory.build(new LoggerContext(), "test", null);
+        assertThat(asyncAppender.isIncludeCallerData()).isTrue();
     }
 
     @Test

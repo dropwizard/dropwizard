@@ -1,6 +1,8 @@
 package io.dropwizard.logging;
 
+import ch.qos.logback.classic.AsyncAppender;
 import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
 import io.dropwizard.jackson.DiscoverableSubtypeResolver;
@@ -14,6 +16,17 @@ public class ConsoleAppenderFactoryTest {
     public void isDiscoverable() throws Exception {
         assertThat(new DiscoverableSubtypeResolver().getDiscoveredSubtypes())
                 .contains(ConsoleAppenderFactory.class);
+    }
+
+    @Test
+    public void includesCallerData() {
+        ConsoleAppenderFactory consoleAppenderFactory = new ConsoleAppenderFactory();
+        AsyncAppender asyncAppender = (AsyncAppender) consoleAppenderFactory.build(new LoggerContext(), "test", null);
+        assertThat(asyncAppender.isIncludeCallerData()).isFalse();
+
+        consoleAppenderFactory.setIncludeCallerData(true);
+        asyncAppender = (AsyncAppender) consoleAppenderFactory.build(new LoggerContext(), "test", null);
+        assertThat(asyncAppender.isIncludeCallerData()).isTrue();
     }
 
     @Test
