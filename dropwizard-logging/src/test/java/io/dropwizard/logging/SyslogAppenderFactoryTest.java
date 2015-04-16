@@ -17,6 +17,11 @@ import java.lang.reflect.Field;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class SyslogAppenderFactoryTest {
+
+    static {
+        LoggingFactory.bootstrap();
+    }
+
     @Test
     public void isDiscoverable() throws Exception {
         assertThat(new DiscoverableSubtypeResolver().getDiscoveredSubtypes())

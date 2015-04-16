@@ -7,6 +7,7 @@ import io.dropwizard.views.ViewMessageBodyWriter;
 import io.dropwizard.views.ViewRenderer;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
+import org.glassfish.jersey.test.TestProperties;
 import org.junit.Test;
 
 import javax.ws.rs.GET;
@@ -48,6 +49,7 @@ public class MustacheViewRendererTest extends JerseyTest {
 
     @Override
     protected Application configure() {
+        forceSet(TestProperties.CONTAINER_PORT, "0");
         ResourceConfig config = new ResourceConfig();
         final ViewRenderer renderer = new MustacheViewRenderer();
         config.register(new ViewMessageBodyWriter(new MetricRegistry(), ImmutableList.of(renderer)));

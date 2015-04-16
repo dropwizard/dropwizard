@@ -9,6 +9,7 @@ import org.glassfish.jersey.servlet.ServletProperties;
 import org.glassfish.jersey.test.DeploymentContext;
 import org.glassfish.jersey.test.JerseyTest;
 import org.glassfish.jersey.test.ServletDeploymentContext;
+import org.glassfish.jersey.test.TestProperties;
 import org.glassfish.jersey.test.grizzly.GrizzlyWebTestContainerFactory;
 import org.glassfish.jersey.test.spi.TestContainerException;
 import org.glassfish.jersey.test.spi.TestContainerFactory;
@@ -16,6 +17,7 @@ import org.junit.Test;
 
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.Invocation;
+import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.NewCookie;
 import javax.ws.rs.core.Response;
@@ -34,9 +36,9 @@ public class FlashFactoryTest extends JerseyTest {
         return new GrizzlyWebTestContainerFactory();
     }
 
-
     @Override
     protected DeploymentContext configureDeployment() {
+        forceSet(TestProperties.CONTAINER_PORT, "0");
         final ResourceConfig rc = DropwizardResourceConfig.forTesting(new MetricRegistry());
 
         return ServletDeploymentContext.builder(rc)

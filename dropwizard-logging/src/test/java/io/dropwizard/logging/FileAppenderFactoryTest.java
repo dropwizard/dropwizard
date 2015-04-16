@@ -17,6 +17,11 @@ import org.slf4j.LoggerFactory;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class FileAppenderFactoryTest {
+
+    static {
+        LoggingFactory.bootstrap();
+    }
+
     @Test
     public void isDiscoverable() throws Exception {
         assertThat(new DiscoverableSubtypeResolver().getDiscoveredSubtypes())

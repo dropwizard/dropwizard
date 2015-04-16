@@ -11,6 +11,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
+import org.glassfish.jersey.test.TestProperties;
 import org.junit.Test;
 
 import com.codahale.metrics.MetricRegistry;
@@ -22,6 +23,7 @@ public class CacheControlledResponseFeatureTest extends JerseyTest {
 
     @Override
     protected Application configure() {
+        forceSet(TestProperties.CONTAINER_PORT, "0");
         ResourceConfig rc = DropwizardResourceConfig.forTesting(new MetricRegistry());
         rc = rc.register(CachingResource.class);
         return rc;
