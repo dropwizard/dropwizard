@@ -12,12 +12,22 @@ import static org.junit.Assert.assertEquals;
 
 public class DropwizardClientRuleTest {
     @ClassRule
-    public static final DropwizardClientRule RULE = new DropwizardClientRule(new TestResource("foo"));
+    public static final DropwizardClientRule RULE_WITH_INSTANCE = new DropwizardClientRule(new TestResource("foo"));
+
+    @ClassRule
+    public static final DropwizardClientRule RULE_WITH_CLASS = new DropwizardClientRule(TestResource.class);
 
     @Test(timeout = 5000)
     public void shouldGetStringBodyFromDropWizard() throws IOException {
-        final URL url = new URL(RULE.baseUri() + "/test");
+        final URL url = new URL(RULE_WITH_INSTANCE.baseUri() + "/test");
         final String response = new BufferedReader(new InputStreamReader(url.openStream())).readLine();
         assertEquals("foo", response);
+    }
+
+    @Test(timeout = 5000)
+    public void shouldGetDefaultStringBodyFromDropWizard() throws IOException {
+        final URL url = new URL(RULE_WITH_CLASS.baseUri() + "/test");
+        final String response = new BufferedReader(new InputStreamReader(url.openStream())).readLine();
+        assertEquals(TestResource.DEFAULT_MESSAGE, response);
     }
 }
