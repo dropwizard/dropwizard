@@ -17,6 +17,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import io.dropwizard.util.Duration;
+import org.slf4j.ILoggerFactory;
 import org.slf4j.LoggerFactory;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 
@@ -32,6 +34,10 @@ import java.util.TimeZone;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 public class LoggingFactory {
+
+    private static final Duration LOGGER_CONTEXT_AWAITING_TIMEOUT = Duration.seconds(10);
+    private static final Duration LOGGER_CONTEXT_AWAITING_SLEEP_TIME = Duration.milliseconds(100);
+
     // initially configure for WARN+ console logging
     public static void bootstrap() {
         bootstrap(Level.WARN);
@@ -40,11 +46,11 @@ public class LoggingFactory {
     public static void bootstrap(Level level) {
         hijackJDKLogging();
 
-        final Logger root = (Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
+        final Logger root = getLoggerContext().getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
         root.detachAndStopAllAppenders();
 
         final DropwizardLayout formatter = new DropwizardLayout(root.getLoggerContext(),
-                                                        TimeZone.getDefault());
+                TimeZone.getDefault());
         formatter.start();
 
         final ThresholdFilter filter = new ThresholdFilter();
@@ -61,6 +67,38 @@ public class LoggingFactory {
         appender.start();
 
         root.addAppender(appender);
+    }
+
+    /**
+     * Acquires the logger context.
+     *
+     * <p>It tries to correctly acquire the logger context in the multi-threaded environment.
+     * Because of the <a href="bug">http://jira.qos.ch/browse/SLF4J-167</a> a thread, that didn't
+     * start initialization has a possibility to get a reference not to a real context, but to a
+     * substitute.</p>
+     * <p>To work around this bug we spin-loop the thread with a sensible timeout, while the
+     * context is not initialized. We can't just make this method synchronized, because
+     * {@code  LoggerFactory.getILoggerFactory} doesn't safely publish own state. Threads can
+     * observe a stale state, even if the logger has been already initialized. That's why this
+     * method is not thread-safe, but it makes the best effort to return the correct result in
+     * the multi-threaded environment.</p>
+     */
+    private static LoggerContext getLoggerContext() {
+        final long startTime = System.nanoTime();
+        while (true) {
+            ILoggerFactory iLoggerFactory = LoggerFactory.getILoggerFactory();
+            if (iLoggerFactory instanceof LoggerContext) {
+                return (LoggerContext) iLoggerFactory;
+            }
+            if ((System.nanoTime() - startTime) > LOGGER_CONTEXT_AWAITING_TIMEOUT.toNanoseconds()) {
+                throw new IllegalStateException("Unable to acquire the logger context");
+            }
+            try {
+                Thread.sleep(LOGGER_CONTEXT_AWAITING_SLEEP_TIME.toMilliseconds());
+            } catch (InterruptedException e) {
+                throw new IllegalStateException(e);
+            }
+        }
     }
 
     private static void hijackJDKLogging() {
@@ -87,7 +125,7 @@ public class LoggingFactory {
     final PrintStream configurationErrorsStream;
 
     public LoggingFactory() {
-        this((LoggerContext) LoggerFactory.getILoggerFactory(), System.err);
+        this(getLoggerContext(), System.err);
     }
 
     @VisibleForTesting
@@ -138,7 +176,7 @@ public class LoggingFactory {
         StatusPrinter.setPrintStream(configurationErrorsStream);
         try {
             StatusPrinter.printIfErrorsOccured(loggerContext);
-        }finally {
+        } finally {
             StatusPrinter.setPrintStream(System.out);
         }
 
@@ -147,9 +185,9 @@ public class LoggingFactory {
             final ObjectName objectName = new ObjectName("io.dropwizard:type=Logging");
             if (!server.isRegistered(objectName)) {
                 server.registerMBean(new JMXConfigurator(loggerContext,
-                                                         server,
-                                                         objectName),
-                                     objectName);
+                                server,
+                                objectName),
+                        objectName);
             }
         } catch (MalformedObjectNameException | InstanceAlreadyExistsException |
                 NotCompliantMBeanException | MBeanRegistrationException e) {
