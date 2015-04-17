@@ -216,7 +216,7 @@ Note that the in-memory Jersey test container does not support all features, suc
 ``ResourceTestRule.Builder#setTestContainerFactory(TestContainerFactory)``.
 
 For example if you want to use the `Grizzly`_ HTTP server (which supports ``@Context`` injections) you need to add the
-dependency for the Jersey Test Framework providers to your Maven POM and set `GrizzlyTestContainerFactory`` as
+dependency for the Jersey Test Framework providers to your Maven POM and set ``GrizzlyWebTestContainerFactory`` as
 ``TestContainerFactory`` in your test classes.
 
 .. code-block:: xml
@@ -244,7 +244,7 @@ dependency for the Jersey Test Framework providers to your Maven POM and set `Gr
     public class ResourceTestWithGrizzly {
         @ClassRule
         public static final ResourceTestRule RULE = ResourceTestRule.builder()
-            .setTestContainerFactory(new GrizzlyTestContainerFactory())
+            .setTestContainerFactory(new GrizzlyWebTestContainerFactory())
             .addResource(new ExampleResource())
             .build();
 
