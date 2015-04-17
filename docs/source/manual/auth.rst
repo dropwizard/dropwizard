@@ -81,29 +81,35 @@ takes instances of ``BasicCredentials``:
     public void run(ExampleConfiguration configuration,
                     Environment environment) {
 
-        final Function<AuthFilter.Tuple, SecurityContext> securityContextFunction = return new SecurityContext() {
-            @Override
-            public Principal getUserPrincipal() {
-                return input.getPrincipal();
-            }
+        final Function<AuthFilter.Tuple, SecurityContext> securityContextFunction =
+            new Function<AuthFilter.Tuple, SecurityContext>() {
+                @Override
+                public SecurityContext apply(final AuthFilter.Tuple input) {
+                    return new SecurityContext() {
+                        @Override
+                        public Principal getUserPrincipal() {
+                            return input.getPrincipal();
+                        }
 
-            @Override
-            public boolean isUserInRole(String role) {
-                return getUserPrincipal() != null
-                        && validUser.equals(getUserPrincipal().getName())
-                        && validRole.equals(role);
-            }
+                        @Override
+                        public boolean isUserInRole(String role) {
+                            return getUserPrincipal() != null
+                                    && validUser.equals(getUserPrincipal().getName())
+                                    && validRole.equals(role);
+                        }
 
-            @Override
-            public boolean isSecure() {
-                return input.getContainerRequestContext().getSecurityContext().isSecure();
-            }
+                        @Override
+                        public boolean isSecure() {
+                            return input.getContainerRequestContext().getSecurityContext().isSecure();
+                        }
 
-            @Override
-            public String getAuthenticationScheme() {
-                return SecurityContext.BASIC_AUTH;
+                        @Override
+                        public String getAuthenticationScheme() {
+                            return SecurityContext.BASIC_AUTH;
+                        }
+                    }
+                }
             }
-        };
         environment.jersey().register(new AuthDynamicFeature(
                 new BasicCredentialAuthHandler.Builder<User, ExampleAuthenticator>()
                     .setAuthenticator(new ExampleAuthenticator())
@@ -142,29 +148,36 @@ requires an authenticator which takes instances of ``String``:
             }
         };
 
-        final Function<AuthFilter.Tuple, SecurityContext> securityContextFunction = return new SecurityContext() {
-            @Override
-            public Principal getUserPrincipal() {
-                return input.getPrincipal();
+        final Function<AuthFilter.Tuple, SecurityContext> securityContextFunction =
+            new Function<AuthFilter.Tuple, SecurityContext>() {
+                @Override
+                public SecurityContext apply(final AuthFilter.Tuple input) {
+                    return new SecurityContext() {
+                        @Override
+                        public Principal getUserPrincipal() {
+                            return input.getPrincipal();
+                        }
+
+                        @Override
+                        public boolean isUserInRole(String role) {
+                            return getUserPrincipal() != null
+                                    && validUser.equals(getUserPrincipal().getName())
+                                    && validRole.equals(role);
+                        }
+
+                        @Override
+                        public boolean isSecure() {
+                            return input.getContainerRequestContext().getSecurityContext().isSecure();
+                        }
+
+                        @Override
+                        public String getAuthenticationScheme() {
+                            return SecurityContext.BASIC_AUTH;
+                        }
+                    }
+                }
             }
 
-            @Override
-            public boolean isUserInRole(String role) {
-                return getUserPrincipal() != null
-                        && validUser.equals(getUserPrincipal().getName())
-                        && validRole.equals(role);
-            }
-
-            @Override
-            public boolean isSecure() {
-                return input.getContainerRequestContext().getSecurityContext().isSecure();
-            }
-
-            @Override
-            public String getAuthenticationScheme() {
-                return SecurityContext.BASIC_AUTH;
-            }
-        };
         environment.jersey().register(new AuthDynamicFeature(
             new OAuthCredentialAuthHandler.Builder<>()
                 .setAuthenticator(authenticator)
@@ -213,29 +226,35 @@ The ``ChainedAuthHandler`` enables usage of various authentication factories at 
             }
         };
 
-        final Function<AuthFilter.Tuple, SecurityContext> securityContextFunction = return new SecurityContext() {
-            @Override
-            public Principal getUserPrincipal() {
-                return input.getPrincipal();
-            }
+        final Function<AuthFilter.Tuple, SecurityContext> securityContextFunction =
+            new Function<AuthFilter.Tuple, SecurityContext>() {
+                @Override
+                public SecurityContext apply(final AuthFilter.Tuple input) {
+                    return new SecurityContext() {
+                        @Override
+                        public Principal getUserPrincipal() {
+                            return input.getPrincipal();
+                        }
 
-            @Override
-            public boolean isUserInRole(String role) {
-                return getUserPrincipal() != null
-                        && validUser.equals(getUserPrincipal().getName())
-                        && validRole.equals(role);
-            }
+                        @Override
+                        public boolean isUserInRole(String role) {
+                            return getUserPrincipal() != null
+                                    && validUser.equals(getUserPrincipal().getName())
+                                    && validRole.equals(role);
+                        }
 
-            @Override
-            public boolean isSecure() {
-                return input.getContainerRequestContext().getSecurityContext().isSecure();
-            }
+                        @Override
+                        public boolean isSecure() {
+                            return input.getContainerRequestContext().getSecurityContext().isSecure();
+                        }
 
-            @Override
-            public String getAuthenticationScheme() {
-                return SecurityContext.BASIC_AUTH;
+                        @Override
+                        public String getAuthenticationScheme() {
+                            return SecurityContext.BASIC_AUTH;
+                        }
+                    }
+                }
             }
-        };
 
         AuthHandler basicCredentialAuthHandler = new BasicCredentialAuthHandler.Builder()
                 .setSecurityContextFunction(securityContextFunction);
