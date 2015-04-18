@@ -7,6 +7,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
+import io.dropwizard.HttpConfiguration;
 import io.dropwizard.cli.ServerCommand;
 import io.dropwizard.lifecycle.Managed;
 import io.dropwizard.lifecycle.ServerLifecycleListener;
@@ -33,7 +34,7 @@ import static com.google.common.base.Throwables.propagate;
  *
  * @param <C> the configuration type
  */
-public class DropwizardTestSupport<C extends Configuration> {
+public class DropwizardTestSupport<C extends HttpConfiguration> {
     private final Class<? extends Application<C>> applicationClass;
     private final String configPath;
     private final Set<ConfigOverride> configOverrides;
@@ -188,7 +189,7 @@ public class DropwizardTestSupport<C extends Configuration> {
         return getEnvironment().getObjectMapper();
     }
 
-    public abstract static class ServiceListener<T extends Configuration> {
+    public abstract static class ServiceListener<T extends HttpConfiguration> {
         public void onRun(T configuration, Environment environment, DropwizardTestSupport<T> rule) throws Exception {
             // Default NOP
         }

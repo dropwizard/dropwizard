@@ -2,9 +2,15 @@ package io.dropwizard.testing.junit;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.Configuration;
+import io.dropwizard.HttpConfiguration;
+import io.dropwizard.server.DefaultServerFactory;
+import io.dropwizard.server.ServerFactory;
 import org.hibernate.validator.constraints.NotEmpty;
 
-public class TestConfiguration extends Configuration {
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
+public class TestConfiguration extends HttpConfiguration {
 
     @JsonProperty
     @NotEmpty

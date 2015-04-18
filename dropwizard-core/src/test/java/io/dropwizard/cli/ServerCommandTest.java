@@ -2,6 +2,8 @@ package io.dropwizard.cli;
 
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
+import io.dropwizard.HttpApplication;
+import io.dropwizard.HttpConfiguration;
 import io.dropwizard.server.ServerFactory;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
@@ -20,20 +22,20 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class ServerCommandTest {
-    private static class MyApplication extends Application<Configuration> {
+    private static class MyApplication extends HttpApplication<HttpConfiguration> {
         @Override
-        public void run(Configuration configuration, Environment environment) throws Exception {
+        public void run(HttpConfiguration configuration, Environment environment) throws Exception {
         }
     }
 
     private final MyApplication application = new MyApplication();
-    private final ServerCommand<Configuration> command = new ServerCommand<>(application);
+    private final ServerCommand<HttpConfiguration> command = new ServerCommand<>(application);
     private final Server server = new Server(0);
 
     private final Environment environment = mock(Environment.class);
     private final Namespace namespace = mock(Namespace.class);
     private final ServerFactory serverFactory = mock(ServerFactory.class);
-    private final Configuration configuration = mock(Configuration.class);
+    private final HttpConfiguration configuration = mock(HttpConfiguration.class);
 
     @Before
     public void setUp() throws Exception {

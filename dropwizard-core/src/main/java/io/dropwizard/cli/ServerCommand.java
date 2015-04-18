@@ -2,6 +2,7 @@ package io.dropwizard.cli;
 
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
+import io.dropwizard.HttpConfiguration;
 import io.dropwizard.setup.Environment;
 import net.sourceforge.argparse4j.inf.Namespace;
 import org.eclipse.jetty.server.Server;
@@ -15,7 +16,7 @@ import org.slf4j.LoggerFactory;
  *
  * @param <T> the {@link Configuration} subclass which is loaded from the configuration file
  */
-public class ServerCommand<T extends Configuration> extends EnvironmentCommand<T> {
+public class ServerCommand<T extends HttpConfiguration> extends EnvironmentCommand<T> {
     private static final Logger LOGGER = LoggerFactory.getLogger(ServerCommand.class);
 
     private final Class<T> configurationClass;

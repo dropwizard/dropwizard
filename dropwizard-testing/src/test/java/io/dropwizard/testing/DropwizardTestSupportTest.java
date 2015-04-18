@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableMultimap;
 import io.dropwizard.Application;
-import io.dropwizard.Configuration;
+import io.dropwizard.HttpConfiguration;
 import io.dropwizard.servlets.tasks.Task;
 import io.dropwizard.setup.Environment;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -102,7 +102,7 @@ public class DropwizardTestSupportTest {
         }
     }
 
-    public static class TestConfiguration extends Configuration {
+    public static class TestConfiguration extends HttpConfiguration {
         @NotEmpty
         @JsonProperty
         private String message;

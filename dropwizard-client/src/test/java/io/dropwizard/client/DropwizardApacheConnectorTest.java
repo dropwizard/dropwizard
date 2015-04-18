@@ -4,6 +4,8 @@ import com.codahale.metrics.MetricRegistry;
 import com.google.common.io.Resources;
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
+import io.dropwizard.HttpApplication;
+import io.dropwizard.HttpConfiguration;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.testing.junit.DropwizardAppRule;
@@ -40,7 +42,7 @@ public class DropwizardApacheConnectorTest {
     private static final String NON_ROUTABLE_IP_ADDRESS = "10.255.255.1"; 
     public static final URI URI_THAT_TIMESOUT_ON_CONNECTION_ATTEMPT = URI.create("http://" + NON_ROUTABLE_IP_ADDRESS);
     @ClassRule
-    public static DropwizardAppRule<Configuration> APP_RULE =
+    public static DropwizardAppRule<HttpConfiguration> APP_RULE =
             new DropwizardAppRule<>(TestApplication.class, Resources.getResource("yaml/dropwizardApacheConnectorTest.yml").getPath());
     public final URI testUri = URI.create("http://localhost:" + APP_RULE.getLocalPort());
     @Rule
@@ -147,13 +149,13 @@ public class DropwizardApacheConnectorTest {
 
     }
 
-    public static class TestApplication extends Application<Configuration> {
+    public static class TestApplication extends HttpApplication<HttpConfiguration> {
         public static void main(String[] args) throws Exception {
             new TestApplication().run(args);
         }
 
         @Override
-        public void run(Configuration configuration, Environment environment) throws Exception {
+        public void run(HttpConfiguration configuration, Environment environment) throws Exception {
             environment.jersey().register(TestResource.class);
         }
     }

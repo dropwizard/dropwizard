@@ -3,6 +3,7 @@ package io.dropwizard.testing.junit;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
+import io.dropwizard.HttpConfiguration;
 import io.dropwizard.lifecycle.Managed;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.testing.ConfigOverride;
@@ -22,7 +23,7 @@ import javax.annotation.Nullable;
  *
  * @param <C> the configuration type
  */
-public class DropwizardAppRule<C extends Configuration> extends ExternalResource {
+public class DropwizardAppRule<C extends HttpConfiguration> extends ExternalResource {
 
     private final DropwizardTestSupport<C> testSupport;
 
@@ -100,7 +101,7 @@ public class DropwizardAppRule<C extends Configuration> extends ExternalResource
         return testSupport.getObjectMapper();
     }
 
-    public abstract static class ServiceListener<T extends Configuration> {
+    public abstract static class ServiceListener<T extends HttpConfiguration> {
 
         public void onRun(T configuration, Environment environment, DropwizardAppRule<T> rule) throws Exception {
             // Default NOP

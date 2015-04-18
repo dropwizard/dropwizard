@@ -57,6 +57,10 @@ public abstract class Application<T extends Configuration> {
      */
     public abstract void run(T configuration, Environment environment) throws Exception;
 
+    protected Bootstrap<T> createBootstrap() {
+        return new Bootstrap<>(this);
+    }
+
     /**
      * Parses command-line arguments and runs the application. Call this method from a {@code public
      * static void main} entry point in your application.
@@ -65,8 +69,7 @@ public abstract class Application<T extends Configuration> {
      * @throws Exception if something goes wrong
      */
     public void run(String... arguments) throws Exception {
-        final Bootstrap<T> bootstrap = new Bootstrap<>(this);
-        bootstrap.addCommand(new ServerCommand<>(this));
+        final Bootstrap<T> bootstrap = createBootstrap();
         bootstrap.addCommand(new CheckCommand<>(this));
         initialize(bootstrap);
         final Cli cli = new Cli(new JarLocation(getClass()), bootstrap, System.out, System.err);

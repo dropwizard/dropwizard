@@ -16,6 +16,7 @@ import com.example.helloworld.resources.ProtectedResource;
 import com.example.helloworld.resources.ViewResource;
 import com.google.common.base.Function;
 import io.dropwizard.Application;
+import io.dropwizard.HttpApplication;
 import io.dropwizard.assets.AssetsBundle;
 import io.dropwizard.auth.AuthDynamicFeature;
 import io.dropwizard.auth.AuthFilter;
@@ -34,7 +35,7 @@ import javax.ws.rs.core.SecurityContext;
 import java.security.Principal;
 import java.util.Map;
 
-public class HelloWorldApplication extends Application<HelloWorldConfiguration> {
+public class HelloWorldApplication extends HttpApplication<HelloWorldConfiguration> {
     public static void main(String[] args) throws Exception {
         new HelloWorldApplication().run(args);
     }

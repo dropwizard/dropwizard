@@ -5,12 +5,17 @@ import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableMultimap;
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
+import io.dropwizard.HttpConfiguration;
+import io.dropwizard.server.DefaultServerFactory;
+import io.dropwizard.server.ServerFactory;
 import io.dropwizard.servlets.tasks.Task;
 import io.dropwizard.setup.Environment;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.junit.ClassRule;
 import org.junit.Test;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.client.ClientBuilder;
@@ -92,7 +97,7 @@ public class DropwizardAppRuleTest {
         }
     }
 
-    public static class TestConfiguration extends Configuration {
+    public static class TestConfiguration extends HttpConfiguration {
         @NotEmpty
         @JsonProperty
         private String message;

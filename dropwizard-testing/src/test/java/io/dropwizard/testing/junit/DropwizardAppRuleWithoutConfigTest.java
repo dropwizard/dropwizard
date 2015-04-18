@@ -3,6 +3,8 @@ package io.dropwizard.testing.junit;
 import com.google.common.collect.ImmutableMap;
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
+import io.dropwizard.HttpApplication;
+import io.dropwizard.HttpConfiguration;
 import io.dropwizard.setup.Environment;
 import java.util.Map;
 import javax.ws.rs.GET;
@@ -19,7 +21,7 @@ import org.junit.Test;
 public class DropwizardAppRuleWithoutConfigTest {
 
     @ClassRule
-    public static final DropwizardAppRule<Configuration> RULE = new DropwizardAppRule<>(TestApplication.class, null);
+    public static final DropwizardAppRule<HttpConfiguration> RULE = new DropwizardAppRule<>(TestApplication.class, null);
 
     Client client = ClientBuilder.newClient();
 
@@ -31,9 +33,9 @@ public class DropwizardAppRuleWithoutConfigTest {
         Assert.assertEquals(ImmutableMap.of("color", "orange"), response);
     }
 
-    public static class TestApplication extends Application<Configuration> {
+    public static class TestApplication extends HttpApplication<HttpConfiguration> {
         @Override
-        public void run(Configuration configuration, Environment environment) throws Exception {
+        public void run(HttpConfiguration configuration, Environment environment) throws Exception {
             environment.jersey().register(new TestResource());
         }
     }
