@@ -7,6 +7,7 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.FileAppender;
 import ch.qos.logback.core.rolling.RollingFileAppender;
+import ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP;
 import io.dropwizard.jackson.DiscoverableSubtypeResolver;
 import org.junit.Test;
 import org.slf4j.LoggerFactory;
@@ -46,6 +47,19 @@ public class FileAppenderFactoryTest {
         fileAppenderFactory.setArchive(true);
         fileAppenderFactory.setArchivedLogFilenamePattern("example-%d.log.gz");
         assertThat(fileAppenderFactory.buildAppender(new LoggerContext())).isInstanceOf(RollingFileAppender.class);
+    }
+
+    @Test
+    public void hasMaxFileSize() throws Exception {
+        FileAppenderFactory fileAppenderFactory = new FileAppenderFactory();
+        fileAppenderFactory.setCurrentLogFilename("logfile.log");
+        fileAppenderFactory.setArchive(true);
+        fileAppenderFactory.setMaxFileSize("100MB");
+        fileAppenderFactory.setArchivedLogFilenamePattern("example-%d-%i.log.gz");
+        RollingFileAppender<ILoggingEvent> appender = (RollingFileAppender<ILoggingEvent>) fileAppenderFactory.buildAppender(new LoggerContext());
+
+        assertThat(appender.getTriggeringPolicy()).isInstanceOf(SizeAndTimeBasedFNATP.class);
+        assertThat(((SizeAndTimeBasedFNATP) appender.getTriggeringPolicy()).getMaxFileSize()).isEqualTo("100MB");
     }
 
     @Test
