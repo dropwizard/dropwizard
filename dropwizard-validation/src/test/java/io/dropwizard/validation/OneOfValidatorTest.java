@@ -39,7 +39,7 @@ public class OneOfValidatorTest {
         example.basic = "four";
 
         assertThat(format(validator.validate(example)))
-                .containsOnly("basic must be one of [one, two, three] (was four)");
+                .containsOnly("basic must be one of [one, two, three]");
     }
 
     @Test

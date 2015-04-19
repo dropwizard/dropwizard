@@ -51,7 +51,7 @@ public class PortRangeValidatorTest {
         example.port = -1;
 
         assertThat(ConstraintViolations.format(validator.validate(example)))
-                .containsOnly("port must be between 1 and 65535 (was -1)");
+                .containsOnly("port must be between 1 and 65535");
     }
 
     @Test
@@ -59,7 +59,7 @@ public class PortRangeValidatorTest {
         example.otherPort = 8080;
 
         assertThat(ConstraintViolations.format(validator.validate(example)))
-                .containsOnly("otherPort must be between 10000 and 15000 (was 8080)");
+                .containsOnly("otherPort must be between 10000 and 15000");
     }
 
     @Test
@@ -67,6 +67,6 @@ public class PortRangeValidatorTest {
         example.otherPort = 16000;
 
         assertThat(ConstraintViolations.format(validator.validate(example)))
-                .containsOnly("otherPort must be between 10000 and 15000 (was 16000)");
+                .containsOnly("otherPort must be between 10000 and 15000");
     }
 }

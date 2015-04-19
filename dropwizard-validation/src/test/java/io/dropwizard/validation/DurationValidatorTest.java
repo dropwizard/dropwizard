@@ -19,7 +19,7 @@ public class DurationValidatorTest {
 
         @MinDuration(value = 30, unit = TimeUnit.SECONDS)
         private Duration tooSmall = Duration.milliseconds(100);
-        
+
         @DurationRange(min = 10, max = 30, unit = TimeUnit.MINUTES)
         private Duration outOfRange = Duration.minutes(60);
 
@@ -44,9 +44,9 @@ public class DurationValidatorTest {
 
             assertThat(errors)
                     .containsOnly(
-                            "outOfRange must be between 10 MINUTES and 30 MINUTES (was 60 minutes)",
-                            "tooBig must be less than or equal to 30 SECONDS (was 10 minutes)",
-                            "tooSmall must be greater than or equal to 30 SECONDS (was 100 milliseconds)");
+                            "outOfRange must be between 10 MINUTES and 30 MINUTES",
+                            "tooBig must be less than or equal to 30 SECONDS",
+                            "tooSmall must be greater than or equal to 30 SECONDS");
         }
     }
 

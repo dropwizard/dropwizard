@@ -34,6 +34,6 @@ public class ConstraintViolationExceptionMapperTest extends JerseyTest {
         final Response response = target("/valid/").request(MediaType.APPLICATION_JSON)
                 .post(Entity.entity("{}", MediaType.APPLICATION_JSON));
         assertThat(response.getStatus()).isEqualTo(422);
-        assertThat(response.readEntity(String.class)).isEqualTo("{\"errors\":[\"name may not be empty (was null)\"]}");
+        assertThat(response.readEntity(String.class)).isEqualTo("{\"errors\":[\"name may not be empty\"]}");
     }
 }
