@@ -3,6 +3,9 @@ package io.dropwizard.jersey;
 import com.codahale.metrics.MetricRegistry;
 import io.dropwizard.jersey.dummy.DummyResource;
 import io.dropwizard.logging.LoggingFactory;
+import java.util.regex.Pattern;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.POST;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -74,11 +77,41 @@ public class DropwizardResourceConfigTest {
                 .contains("GET     /another (io.dropwizard.jersey.DropwizardResourceConfigTest.ImplementingResource)");
     }
 
+    @Test
+    public void logsEndpointsSorted() {
+        rc.register(DummyResource.class);
+        rc.register(TestResource2.class);
+        rc.register(TestResource.class);
+        rc.register(ImplementingResource.class);
+
+        assertThat(rc.getEndpointsInfo()).matches(Pattern.compile(".*"
+                + "    GET     / \\(io\\.dropwizard\\.jersey\\.dummy\\.DummyResource\\)."
+                + "    GET     /another \\(io\\.dropwizard\\.jersey\\.DropwizardResourceConfigTest\\.ImplementingResource\\)."
+                + "    GET     /async \\(io\\.dropwizard\\.jersey\\.dummy\\.DummyResource\\)."
+                + "    DELETE  /dummy \\(io\\.dropwizard\\.jersey\\.DropwizardResourceConfigTest\\.TestResource2\\)."
+                + "    GET     /dummy \\(io\\.dropwizard\\.jersey\\.DropwizardResourceConfigTest\\.TestResource\\)."
+                + "    POST    /dummy \\(io\\.dropwizard\\.jersey\\.DropwizardResourceConfigTest\\.TestResource2\\).",
+                Pattern.DOTALL));
+    }
+
 
     @Path("/dummy")
     public static class TestResource {
         @GET
         public String foo() {
+            return "bar";
+        }
+    }
+
+    @Path("/dummy")
+    public static class TestResource2 {
+        @POST
+        public String fooPost() {
+            return "bar";
+        }
+
+        @DELETE
+        public String fooDelete() {
             return "bar";
         }
     }
