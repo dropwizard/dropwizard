@@ -30,6 +30,7 @@ import java.lang.management.ManagementFactory;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
+import java.util.concurrent.locks.ReentrantLock;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
@@ -37,6 +38,7 @@ public class LoggingFactory {
 
     private static final Duration LOGGER_CONTEXT_AWAITING_TIMEOUT = Duration.seconds(10);
     private static final Duration LOGGER_CONTEXT_AWAITING_SLEEP_TIME = Duration.milliseconds(100);
+    private static final ReentrantLock MBEAN_REGISTRATION_LOCK = new ReentrantLock();
 
     // initially configure for WARN+ console logging
     public static void bootstrap() {
@@ -181,6 +183,7 @@ public class LoggingFactory {
         }
 
         final MBeanServer server = ManagementFactory.getPlatformMBeanServer();
+        MBEAN_REGISTRATION_LOCK.lock();
         try {
             final ObjectName objectName = new ObjectName("io.dropwizard:type=Logging");
             if (!server.isRegistered(objectName)) {
@@ -192,6 +195,8 @@ public class LoggingFactory {
         } catch (MalformedObjectNameException | InstanceAlreadyExistsException |
                 NotCompliantMBeanException | MBeanRegistrationException e) {
             throw new RuntimeException(e);
+        } finally {
+            MBEAN_REGISTRATION_LOCK.unlock();
         }
 
         configureInstrumentation(root, metricRegistry);
