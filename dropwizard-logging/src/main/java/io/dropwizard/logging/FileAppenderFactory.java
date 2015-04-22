@@ -73,7 +73,7 @@ import java.util.TimeZone;
  *         <td>(unlimited)</td>
  *         <td>
  *             The maximum size of the currently active file before a rollover is triggered. The value can be expressed
- *             in bytes, kilobytes, megabytes, gigabytes, and terabytes using the by appending B, K, MB, GB, or TB to the
+ *             in bytes, kilobytes, megabytes, gigabytes, and terabytesyp by appending B, K, MB, GB, or TB to the
  *             numeric value.  Examples include 100MB, 1GB, 1TB.  Sizes can also be spelled out, such as 100 megabytes,
  *             1 gigabyte, 1 terabyte.
  *         </td>
