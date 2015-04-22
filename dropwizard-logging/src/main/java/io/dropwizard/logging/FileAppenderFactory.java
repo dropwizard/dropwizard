@@ -14,6 +14,7 @@ import ch.qos.logback.core.rolling.TimeBasedRollingPolicy;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import io.dropwizard.util.Size;
 import io.dropwizard.validation.ValidationMethod;
 
 import javax.validation.constraints.Min;
@@ -71,9 +72,10 @@ import java.util.TimeZone;
  *         <td>{@code maxFileSize}</td>
  *         <td>(unlimited)</td>
  *         <td>
- *             The maximum size of the currently active file before a rollover is triggered.  See.
- *             <a href="http://logback.qos.ch/manual/appenders.html#SizeBasedTriggeringPolicy>the Logback documentation</a>
- *             for details.
+ *             The maximum size of the currently active file before a rollover is triggered. The value can be expressed
+ *             in bytes, kilobytes, megabytes, gigabytes, and terabytes using the by appending B, K, MB, GB, or TB to the
+ *             numeric value.  Examples include 100MB, 1GB, 1TB.  Sizes can also be spelled out, such as 100 megabytes,
+ *             1 gigabyte, 1 terabyte.
  *         </td>
  *     </tr>
  *     <tr>
@@ -106,7 +108,7 @@ public class FileAppenderFactory extends AbstractAppenderFactory {
     @Min(1)
     private int archivedFileCount = 5;
 
-    private String maxFileSize;
+    private Size maxFileSize;
 
     @NotNull
     private TimeZone timeZone = TimeZone.getTimeZone("UTC");
@@ -152,12 +154,12 @@ public class FileAppenderFactory extends AbstractAppenderFactory {
     }
 
     @JsonProperty
-    public String getMaxFileSize() {
+    public Size getMaxFileSize() {
         return maxFileSize;
     }
 
     @JsonProperty
-    public void setMaxFileSize(String maxFileSize) {
+    public void setMaxFileSize(Size maxFileSize) {
         this.maxFileSize = maxFileSize;
     }
 
@@ -213,7 +215,7 @@ public class FileAppenderFactory extends AbstractAppenderFactory {
                 triggeringPolicy = new DefaultTimeBasedFileNamingAndTriggeringPolicy<>();
             } else {
                 SizeAndTimeBasedFNATP<ILoggingEvent> maxFileSizeTriggeringPolicy = new SizeAndTimeBasedFNATP<>();
-                maxFileSizeTriggeringPolicy.setMaxFileSize(maxFileSize);
+                maxFileSizeTriggeringPolicy.setMaxFileSize(String.valueOf(maxFileSize.toBytes()));
                 triggeringPolicy = maxFileSizeTriggeringPolicy;
             }
             triggeringPolicy.setContext(context);
