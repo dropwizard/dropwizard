@@ -13,6 +13,7 @@ import org.apache.http.conn.ConnectTimeoutException;
 import org.assertj.core.api.AbstractLongAssert;
 import org.glassfish.jersey.client.ClientProperties;
 import org.junit.Before;
+import org.junit.After;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -26,6 +27,7 @@ import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 import java.net.SocketTimeoutException;
 import java.net.URI;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
@@ -47,6 +49,7 @@ public class DropwizardApacheConnectorTest {
     public ExpectedException thrown = ExpectedException.none();
 
     private Client client;
+    private ExecutorService executorService = Executors.newSingleThreadExecutor();;
 
     @Before
     public void setup() {
@@ -54,9 +57,15 @@ public class DropwizardApacheConnectorTest {
         clientConfiguration.setConnectionTimeout(Duration.milliseconds(SLEEP_TIME_IN_MILLIS / 2));
         clientConfiguration.setTimeout(Duration.milliseconds(DEFAULT_CONNECT_TIMEOUT_IN_MILLIS));
         client = new JerseyClientBuilder(new MetricRegistry())
-                .using(Executors.newSingleThreadExecutor(), Jackson.newObjectMapper())
+                .using(executorService, Jackson.newObjectMapper())
                 .using(clientConfiguration)
                 .build("test");
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        executorService.shutdown();
+        client.close();
     }
 
     @Test
