@@ -165,6 +165,30 @@ public class JerseyClientBuilder {
     }
 
     /**
+     * Uses the given {@link ExecutorService}.
+     *
+     * @param executorService a thread pool
+     * @return {@code this}
+     * @see #using(io.dropwizard.setup.Environment)
+     */
+    public JerseyClientBuilder using(ExecutorService executorService) {
+        this.executorService = executorService;
+        return this;
+    }
+
+    /**
+     * Uses the given {@link ObjectMapper}.
+     *
+     * @param objectMapper    an object mapper
+     * @return {@code this}
+     * @see #using(io.dropwizard.setup.Environment)
+     */
+    public JerseyClientBuilder using(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+        return this;
+    }
+
+    /**
      * Use the given {@link ConnectorProvider} instance.
      * <p/><b>WARNING:</b> Use it with a caution. Most of features will not
      * work in a custom connection provider.
@@ -265,19 +289,24 @@ public class JerseyClientBuilder {
                     "an executor service and an object mapper");
         }
 
-        if (environment == null) {
-            return build(name, executorService, objectMapper, validator);
+        if (executorService == null && environment != null) {
+            executorService = environment.lifecycle()
+                    .executorService("jersey-client-" + name + "-%d")
+                    .minThreads(configuration.getMinThreads())
+                    .maxThreads(configuration.getMaxThreads())
+                    .workQueue(new ArrayBlockingQueue<Runnable>(configuration.getWorkQueueSize()))
+                    .build();
         }
 
-        return build(name, environment.lifecycle()
-                        .executorService("jersey-client-" + name + "-%d")
-                        .minThreads(configuration.getMinThreads())
-                        .maxThreads(configuration.getMaxThreads())
-                        .workQueue(new ArrayBlockingQueue<Runnable>(configuration.getWorkQueueSize()))
-                        .build(),
-                environment.getObjectMapper(),
-                environment.getValidator()
-        );
+        if (objectMapper == null && environment != null) {
+            objectMapper = environment.getObjectMapper();
+        }
+
+        if (environment != null) {
+            validator = environment.getValidator();
+        }
+
+        return build(name, executorService, objectMapper, validator);
     }
 
     private Client build(String name, ExecutorService threadPool,
