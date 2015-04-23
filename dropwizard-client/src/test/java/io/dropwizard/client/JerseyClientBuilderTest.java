@@ -92,6 +92,28 @@ public class JerseyClientBuilderTest {
     }
 
     @Test
+    public void throwsAnExceptionWithoutAnEnvironmentAndOnlyObjectMapper() throws Exception {
+        try {
+            builder.using(objectMapper).build("test");
+            failBecauseExceptionWasNotThrown(IllegalStateException.class);
+        } catch (IllegalStateException e) {
+            assertThat(e.getMessage())
+                    .isEqualTo("Must have either an environment or both an executor service and an object mapper");
+        }
+    }
+
+    @Test
+    public void throwsAnExceptionWithoutAnEnvironmentAndOnlyAThreadPool() throws Exception {
+        try {
+            builder.using(executorService).build("test");
+            failBecauseExceptionWasNotThrown(IllegalStateException.class);
+        } catch (IllegalStateException e) {
+            assertThat(e.getMessage())
+                    .isEqualTo("Must have either an environment or both an executor service and an object mapper");
+        }
+    }
+
+    @Test
     public void includesJerseyProperties() throws Exception {
         final Client client = builder.withProperty("poop", true)
                 .using(executorService, objectMapper)
@@ -145,6 +167,18 @@ public class JerseyClientBuilderTest {
             if (o instanceof DropwizardExecutorProvider) {
                 final DropwizardExecutorProvider provider = (DropwizardExecutorProvider) o;
                 assertThat(provider.getExecutorService()).isSameAs(executorService);
+            }
+        }
+
+    }
+
+    @Test
+    public void usesTheGivenThreadPoolAndEnvironmentsObjectMapper() throws Exception {
+        final Client client = builder.using(environment).using(executorService).build("test");
+        for (Object o : client.getConfiguration().getInstances()) {
+            if (o instanceof DropwizardExecutorProvider) {
+                final DropwizardExecutorProvider provider = (DropwizardExecutorProvider) o;
+                assertThat(provider.getRequestingExecutor()).isSameAs(executorService);
             }
         }
 
@@ -274,13 +308,13 @@ public class JerseyClientBuilderTest {
 
            @Override
            public void connectFailed(URI uri, SocketAddress sa, IOException ioe) {
-               
+
            }
        });
         builder.using(customHttpRoutePlanner);
         verify(apacheHttpClientBuilder).using(customHttpRoutePlanner);
     }
-    
+
     @Test
     public void usesACustomCredentialsProvider(){
         CredentialsProvider customCredentialsProvider = new SystemDefaultCredentialsProvider();
