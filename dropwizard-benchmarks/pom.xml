@@ -13,6 +13,7 @@
     </properties>
 
     <artifactId>dropwizard-benchmarks</artifactId>
+    <name>Dropwizard Benchmarks</name>
 
     <dependencies>
         <dependency>
@@ -30,7 +31,7 @@
         <dependency>
             <groupId>io.dropwizard</groupId>
             <artifactId>dropwizard-util</artifactId>
-            <version>${parent.version}</version>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 
