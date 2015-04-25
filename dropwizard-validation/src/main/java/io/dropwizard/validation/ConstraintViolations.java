@@ -22,10 +22,7 @@ public class ConstraintViolations {
                                  Joiner.on('.').join(usefulNodes),
                                  v.getMessage()).trim();
         } else {
-            return String.format("%s %s (was %s)",
-                                 v.getPropertyPath(),
-                                 v.getMessage(),
-                                 v.getInvalidValue());
+            return String.format("%s %s", v.getPropertyPath(), v.getMessage());
         }
     }
 
