@@ -73,10 +73,15 @@ public abstract class Application<T extends Configuration> {
         bootstrap.addCommand(new ServerCommand<>(this));
         bootstrap.addCommand(new CheckCommand<>(this));
         initialize(bootstrap);
+        // Should by called after initialize to give an opportunity to set a custom metric registry
+        bootstrap.registerMetrics();
+
         final Cli cli = new Cli(new JarLocation(getClass()), bootstrap, System.out, System.err);
         if (!cli.run(arguments)) {
             // only exit if there's an error running the command
             System.exit(1);
         }
     }
+
+
 }
