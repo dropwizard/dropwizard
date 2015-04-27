@@ -37,8 +37,22 @@ public class LoggingFactory {
         bootstrap(Level.WARN);
     }
 
-    public static void bootstrap(Level level) {
-        hijackJDKLogging();
+    private static Level bootstrapLevel;
+
+    /** Boostrap logging. This is synchronized to avoid logging initialization problems
+     * when test are run in parallel, see also http://jira.qos.ch/browse/SLF4J-167 for more details.
+     * @param level initial log level
+     */
+    public static synchronized void bootstrap(Level level) {
+        if(bootstrapLevel != null && bootstrapLevel.toInt() == level.toInt()) {
+            // initialization completed with correct level
+            return;
+        }
+
+        if(bootstrapLevel == null) {
+            // do this only on first run
+            hijackJDKLogging();
+        }
 
         final Logger root = (Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
         root.detachAndStopAllAppenders();
@@ -61,6 +75,7 @@ public class LoggingFactory {
         appender.start();
 
         root.addAppender(appender);
+        bootstrapLevel = level;
     }
 
     private static void hijackJDKLogging() {
