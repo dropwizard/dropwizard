@@ -6,7 +6,6 @@ import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.jersey.params.UUIDParam;
 import io.dropwizard.logging.LoggingFactory;
 import org.glassfish.jersey.test.JerseyTest;
-import org.glassfish.jersey.test.TestProperties;
 import org.junit.Test;
 
 import javax.ws.rs.BadRequestException;
@@ -24,7 +23,6 @@ public class OptionalQueryParamResourceTest extends JerseyTest {
 
     @Override
     protected Application configure() {
-        forceSet(TestProperties.CONTAINER_PORT, "0");
         return DropwizardResourceConfig.forTesting(new MetricRegistry())
                 .register(OptionalQueryParamResource.class)
                 .register(MyMessageParamConverterProvider.class);

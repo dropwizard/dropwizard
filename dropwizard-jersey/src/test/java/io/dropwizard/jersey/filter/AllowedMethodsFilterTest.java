@@ -10,7 +10,6 @@ import org.glassfish.jersey.servlet.ServletProperties;
 import org.glassfish.jersey.test.DeploymentContext;
 import org.glassfish.jersey.test.JerseyTest;
 import org.glassfish.jersey.test.ServletDeploymentContext;
-import org.glassfish.jersey.test.TestProperties;
 import org.glassfish.jersey.test.grizzly.GrizzlyWebTestContainerFactory;
 import org.glassfish.jersey.test.spi.TestContainerException;
 import org.glassfish.jersey.test.spi.TestContainerFactory;
@@ -23,7 +22,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
@@ -64,7 +62,6 @@ public class AllowedMethodsFilterTest extends JerseyTest {
 
     @Override
     protected DeploymentContext configureDeployment() {
-        forceSet(TestProperties.CONTAINER_PORT, "0");
         final ResourceConfig rc = DropwizardResourceConfig.forTesting(new MetricRegistry());
 
         final Map<String, String> filterParams = ImmutableMap.of(

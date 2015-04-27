@@ -4,7 +4,6 @@ import com.codahale.metrics.MetricRegistry;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.logging.LoggingFactory;
 import org.glassfish.jersey.test.JerseyTest;
-import org.glassfish.jersey.test.TestProperties;
 import org.junit.Test;
 
 import javax.ws.rs.WebApplicationException;
@@ -22,7 +21,6 @@ public class LoggingExceptionMapperTest extends JerseyTest {
 
     @Override
     protected Application configure() {
-        forceSet(TestProperties.CONTAINER_PORT, "0");
         return DropwizardResourceConfig.forTesting(new MetricRegistry())
                 .register(DefaultLoggingExceptionMapper.class)
                 .register(DefaultJacksonMessageBodyProvider.class)

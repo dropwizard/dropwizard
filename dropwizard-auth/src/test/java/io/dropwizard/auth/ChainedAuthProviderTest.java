@@ -14,7 +14,6 @@ import org.glassfish.jersey.servlet.ServletProperties;
 import org.glassfish.jersey.test.DeploymentContext;
 import org.glassfish.jersey.test.JerseyTest;
 import org.glassfish.jersey.test.ServletDeploymentContext;
-import org.glassfish.jersey.test.TestProperties;
 import org.glassfish.jersey.test.grizzly.GrizzlyWebTestContainerFactory;
 import org.glassfish.jersey.test.spi.TestContainerException;
 import org.glassfish.jersey.test.spi.TestContainerFactory;
@@ -46,7 +45,6 @@ public class ChainedAuthProviderTest extends JerseyTest {
 
     @Override
     protected DeploymentContext configureDeployment() {
-        forceSet(TestProperties.CONTAINER_PORT, "0");
         return ServletDeploymentContext.builder(new ChainedAuthTestResourceConfig())
                 .initParam(ServletProperties.JAXRS_APPLICATION_CLASS, ChainedAuthTestResourceConfig.class.getName())
                 .build();

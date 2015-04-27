@@ -14,7 +14,6 @@ import io.dropwizard.logging.LoggingFactory;
 import io.dropwizard.setup.Environment;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.test.JerseyTest;
-import org.glassfish.jersey.test.TestProperties;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.joda.time.DateTime;
@@ -102,8 +101,6 @@ public class JerseyIntegrationTest extends JerseyTest {
 
     @Override
     protected Application configure() {
-        forceSet(TestProperties.CONTAINER_PORT, "0");
-
         final MetricRegistry metricRegistry = new MetricRegistry();
         final SessionFactoryFactory factory = new SessionFactoryFactory();
         final DataSourceFactory dbConfig = new DataSourceFactory();
