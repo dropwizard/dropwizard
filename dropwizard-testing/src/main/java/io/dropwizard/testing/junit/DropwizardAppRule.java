@@ -1,7 +1,6 @@
 package io.dropwizard.testing.junit;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Optional;
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
 import io.dropwizard.lifecycle.Managed;
@@ -30,13 +29,8 @@ public class DropwizardAppRule<C extends Configuration> extends ExternalResource
     public DropwizardAppRule(Class<? extends Application<C>> applicationClass,
                              @Nullable String configPath,
                              ConfigOverride... configOverrides) {
-        this(applicationClass, configPath, Optional.<String>absent(), configOverrides);
-    }
+        this.testSupport = new DropwizardTestSupport<>(applicationClass, configPath, configOverrides);
 
-    public DropwizardAppRule(Class<? extends Application<C>> applicationClass, String configPath,
-                                 Optional<String> customPropertyPrefix, ConfigOverride... configOverrides) {
-        this.testSupport = new DropwizardTestSupport<>(applicationClass, configPath, customPropertyPrefix,
-                configOverrides);
     }
 
     public DropwizardAppRule(DropwizardTestSupport<C> testSupport) {

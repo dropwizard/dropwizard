@@ -1,6 +1,5 @@
 package io.dropwizard.testing.junit;
 
-import com.google.common.base.Optional;
 import org.junit.ClassRule;
 import org.junit.Test;
 
@@ -16,7 +15,7 @@ public class DropwizardAppRuleConfigOverrideTest {
     @ClassRule
     public static final DropwizardAppRule<TestConfiguration> RULE =
             new DropwizardAppRule<>(TestApplication.class, resourceFilePath("test-config.yaml"),
-                    Optional.of("app-rule"), config("app-rule", "message", "A new way to say Hooray!"));
+                    config("message", "A new way to say Hooray!"));
 
     @Test
     public void supportsConfigAttributeOverrides() {

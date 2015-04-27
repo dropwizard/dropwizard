@@ -7,7 +7,6 @@ import io.dropwizard.jersey.params.UUIDParam;
 import io.dropwizard.logging.LoggingFactory;
 import org.glassfish.jersey.internal.util.collection.MultivaluedStringMap;
 import org.glassfish.jersey.test.JerseyTest;
-import org.glassfish.jersey.test.TestProperties;
 import org.junit.Test;
 
 import javax.ws.rs.FormParam;
@@ -28,7 +27,6 @@ public class OptionalFormParamResourceTest extends JerseyTest {
 
     @Override
     protected Application configure() {
-        forceSet(TestProperties.CONTAINER_PORT, "0");
         return DropwizardResourceConfig.forTesting(new MetricRegistry())
                 .register(OptionalFormParamResource.class)
                 .register(MyMessageParamConverterProvider.class);
