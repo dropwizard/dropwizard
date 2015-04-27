@@ -1,11 +1,12 @@
 package io.dropwizard.client;
 
 import com.codahale.metrics.MetricRegistry;
-import com.google.common.io.Resources;
+import com.codahale.metrics.health.HealthCheck;
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.setup.Environment;
+import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import io.dropwizard.util.Duration;
 import org.apache.http.HttpStatus;
@@ -25,6 +26,7 @@ import javax.ws.rs.ProcessingException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
+import java.net.NoRouteToHostException;
 import java.net.SocketTimeoutException;
 import java.net.URI;
 import java.util.concurrent.ExecutorService;
@@ -35,21 +37,25 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.any;
 
 public class DropwizardApacheConnectorTest {
+
     private static final int SLEEP_TIME_IN_MILLIS = 500;
     private static final int DEFAULT_CONNECT_TIMEOUT_IN_MILLIS = 200;
     private static final int ERROR_MARGIN_IN_MILLIS = 300;
     private static final int INCREASE_IN_MILLIS = 100;
-    private static final String NON_ROUTABLE_IP_ADDRESS = "10.255.255.1"; 
-    public static final URI URI_THAT_TIMESOUT_ON_CONNECTION_ATTEMPT = URI.create("http://" + NON_ROUTABLE_IP_ADDRESS);
+    private static final URI NON_ROUTABLE_ADDRESS = URI.create("http://10.255.255.1");
+
     @ClassRule
-    public static DropwizardAppRule<Configuration> APP_RULE =
-            new DropwizardAppRule<>(TestApplication.class, Resources.getResource("yaml/dropwizardApacheConnectorTest.yml").getPath());
-    public final URI testUri = URI.create("http://localhost:" + APP_RULE.getLocalPort());
+    public static final DropwizardAppRule<Configuration> APP_RULE = new DropwizardAppRule<>(
+            TestApplication.class,
+            ResourceHelpers.resourceFilePath("yaml/dropwizardApacheConnectorTest.yml"));
+
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
+    private final URI testUri = URI.create("http://localhost:" + APP_RULE.getLocalPort());
+    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
+
     private Client client;
-    private ExecutorService executorService = Executors.newSingleThreadExecutor();;
 
     @Before
     public void setup() {
@@ -87,35 +93,30 @@ public class DropwizardApacheConnectorTest {
     }
 
     /**
-     *
-     * In first assertion we prove, that a request takes no longer than:
-     * request_time < set_connect_timeout + error_margin (1)
-     *
-     * in the second we show that if we set connect_timeout to set_connect_timeout + error margin + increase
-     * then
-     *
-     * request_time' > set_connect_timeout + error margin + increase (2)
-     *
-     * Now, (1) and (2) can hold at the same time iff then connect_timeout update was successful.
+     * <p>In first assertion we prove, that a request takes no longer than:
+     * <em>request_time < connect_timeout + error_margin</em> (1)</p>
+     * <p/>
+     * </p>In the second we show that if we set <b>connect_timeout</b> to
+     * <b>set_connect_timeout + increase + error_margin</b> then
+     * <em>request_time > connect_timeout + increase + error_margin</em> (2)</p>
+     * <p/>
+     * <p>Now, (1) and (2) can hold at the same time if then connect_timeout update was successful.</p>
      */
     @Test
     public void connect_timeout_override_changes_how_long_it_takes_for_a_connection_to_timeout() {
         // before override
-        assertThatGetConnectonTimeoutForTarget(
-                client.target(URI_THAT_TIMESOUT_ON_CONNECTION_ATTEMPT)
-        ).isLessThan(DEFAULT_CONNECT_TIMEOUT_IN_MILLIS + ERROR_MARGIN_IN_MILLIS);
+        WebTarget target = client.target(NON_ROUTABLE_ADDRESS);
+        assertThatConnectionTimeoutFor(target).isLessThan(DEFAULT_CONNECT_TIMEOUT_IN_MILLIS + ERROR_MARGIN_IN_MILLIS);
 
         // after override
-        assertThatGetConnectonTimeoutForTarget(
-                client.target(URI_THAT_TIMESOUT_ON_CONNECTION_ATTEMPT)
-                        .property(ClientProperties.CONNECT_TIMEOUT, DEFAULT_CONNECT_TIMEOUT_IN_MILLIS + INCREASE_IN_MILLIS + ERROR_MARGIN_IN_MILLIS)
-        ).isGreaterThan(DEFAULT_CONNECT_TIMEOUT_IN_MILLIS + INCREASE_IN_MILLIS + ERROR_MARGIN_IN_MILLIS);
+        final int newTimeout = DEFAULT_CONNECT_TIMEOUT_IN_MILLIS + INCREASE_IN_MILLIS + ERROR_MARGIN_IN_MILLIS;
+        final WebTarget newTarget = target.property(ClientProperties.CONNECT_TIMEOUT, newTimeout);
+        assertThatConnectionTimeoutFor(newTarget).isGreaterThan(newTimeout);
     }
 
     @Test
     public void when_no_override_then_redirected_request_successfully_redirected() {
-        assertThat(
-                client.target(testUri + "/redirect")
+        assertThat(client.target(testUri + "/redirect")
                         .request()
                         .get(String.class)
         ).isEqualTo("redirected");
@@ -123,8 +124,7 @@ public class DropwizardApacheConnectorTest {
 
     @Test
     public void when_configuration_overridden_to_disallow_redirects_temporary_redirect_status_returned() {
-        assertThat(
-                client.target(testUri + "/redirect")
+        assertThat(client.target(testUri + "/redirect")
                         .property(ClientProperties.FOLLOW_REDIRECTS, false)
                         .request()
                         .get(Response.class)
@@ -164,22 +164,26 @@ public class DropwizardApacheConnectorTest {
         @Override
         public void run(Configuration configuration, Environment environment) throws Exception {
             environment.jersey().register(TestResource.class);
+            environment.healthChecks().register("dummy", new HealthCheck() {
+                @Override
+                protected Result check() throws Exception {
+                    return Result.healthy();
+                }
+            });
         }
     }
 
-    private static AbstractLongAssert<?> assertThatGetConnectonTimeoutForTarget(WebTarget webTarget) {
+    private static AbstractLongAssert<?> assertThatConnectionTimeoutFor(WebTarget webTarget) {
         final long startTime = System.nanoTime();
         try {
-            webTarget
-                    .request()
-                    .get(Response.class);
+            webTarget.request().get(Response.class);
         } catch (ProcessingException e) {
             final long endTime = System.nanoTime();
             assertThat(e).isNotNull();
             //noinspection ConstantConditions
             assertThat(e.getCause()).isNotNull();
-            assertThat(e.getCause()).isInstanceOf(ConnectTimeoutException.class);
-            return assertThat((endTime - startTime)/1000000);
+            assertThat(e.getCause()).isInstanceOfAny(ConnectTimeoutException.class, NoRouteToHostException.class);
+            return assertThat(TimeUnit.MILLISECONDS.convert(endTime - startTime, TimeUnit.NANOSECONDS));
         }
         throw new AssertionError("ProcessingException expected but not thrown");
     }
