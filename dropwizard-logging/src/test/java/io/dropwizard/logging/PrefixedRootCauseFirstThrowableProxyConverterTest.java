@@ -77,14 +77,4 @@ public class PrefixedRootCauseFirstThrowableProxyConverterTest {
                 "java\\.lang\\.RuntimeException: Very general error doing something" +
                 ".+", Pattern.DOTALL));
     }
-
-    /**
-     * This test uses a regular expression to ensure that the final frame in the printed stack trace
-     * is the "main" function.
-     */
-    @Test
-    public void finalFrameIsMain() throws Exception {
-        assertThat(converter.throwableProxyToString(proxy))
-                .matches(String.format("^[\\s\\S]+! at \\S+\\.([^.]+)\\.main\\(\\1\\.java:\\d+\\)\\s*$"));
-    }
 }

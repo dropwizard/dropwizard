@@ -9,6 +9,7 @@ import io.dropwizard.views.View;
 import io.dropwizard.views.ViewMessageBodyWriter;
 import io.dropwizard.views.ViewRenderer;
 import org.glassfish.jersey.test.JerseyTest;
+import org.glassfish.jersey.test.TestProperties;
 import org.junit.Test;
 
 import javax.ws.rs.GET;
@@ -35,6 +36,7 @@ public class MultipleContentTypeTest extends JerseyTest {
 
     @Override
     protected Application configure() {
+        forceSet(TestProperties.CONTAINER_PORT, "0");
         final ViewRenderer renderer = new FreemarkerViewRenderer();
         return DropwizardResourceConfig.forTesting(new MetricRegistry())
                 .register(new ViewMessageBodyWriter(new MetricRegistry(), ImmutableList.of(renderer)))
