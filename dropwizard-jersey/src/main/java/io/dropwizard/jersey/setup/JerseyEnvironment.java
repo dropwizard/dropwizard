@@ -33,7 +33,7 @@ public class JerseyEnvironment {
      *
      * @param component a Jersey singleton component
      */
-    public void register(Object component) {
+    public void register(Object... component) {
         config.register(checkNotNull(component));
     }
 
