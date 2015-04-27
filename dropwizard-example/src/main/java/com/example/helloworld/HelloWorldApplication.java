@@ -94,12 +94,14 @@ public class HelloWorldApplication extends Application<HelloWorldConfiguration> 
                 .setRealm("SUPER SECRET STUFF")
                 .buildAuthHandler()));
         environment.jersey().register(RolesAllowedDynamicFeature.class);
-        environment.jersey().register(new HelloWorldResource(template));
-        environment.jersey().register(new ViewResource());
-        environment.jersey().register(new ProtectedResource());
-        environment.jersey().register(new PeopleResource(dao));
-        environment.jersey().register(new PersonResource(dao));
-        environment.jersey().register(new FilteredResource());
+        environment.jersey().register(
+                new HelloWorldResource(template),
+                new ViewResource(),
+                new ProtectedResource(),
+                new PeopleResource(dao),
+                new PersonResource(dao),
+                new FilteredResource()
+        );
     }
 
     private Function<AuthFilter.Tuple, SecurityContext> getSecurityContextFunction() {

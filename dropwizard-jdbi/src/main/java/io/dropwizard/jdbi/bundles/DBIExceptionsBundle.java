@@ -17,7 +17,6 @@ public class DBIExceptionsBundle implements Bundle {
 
     @Override
     public void run(Environment environment) {
-        environment.jersey().register(new LoggingSQLExceptionMapper());
-        environment.jersey().register(new LoggingDBIExceptionMapper());
+        environment.jersey().register(new LoggingSQLExceptionMapper(), new LoggingDBIExceptionMapper());
     }
 }

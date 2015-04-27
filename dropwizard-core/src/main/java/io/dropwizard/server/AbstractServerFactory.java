@@ -484,11 +484,12 @@ public abstract class AbstractServerFactory implements ServerFactory {
             jersey.setUrlPattern(urlPattern);
             jersey.register(new JacksonMessageBodyProvider(objectMapper, validator));
             if (registerDefaultExceptionMappers == null || registerDefaultExceptionMappers) {
-                jersey.register(new LoggingExceptionMapper<Throwable>() {
-                });
-                jersey.register(new ConstraintViolationExceptionMapper());
-                jersey.register(new JsonProcessingExceptionMapper());
-                jersey.register(new EarlyEofExceptionMapper());
+                jersey.register(
+                        new LoggingExceptionMapper<Throwable>() {},
+                        new ConstraintViolationExceptionMapper(),
+                        new JsonProcessingExceptionMapper(),
+                        new EarlyEofExceptionMapper()
+                );
             }
             handler.addServlet(new NonblockingServletHolder(jerseyContainer), jersey.getUrlPattern());
         }
