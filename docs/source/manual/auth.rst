@@ -117,6 +117,8 @@ takes instances of ``BasicCredentials``:
                     .setSecurityContextFunction(securityContextFunction);
                     .buildAuthHandler()));
         environment.jersey().register(RolesAllowedDynamicFeature.class);
+        //If you want to use @Auth to inject a custom Principal type into your resource
+        environment.jersey().register(new AuthValueFactoryProvider.Binder(User.class));
     }
 
 .. _man-auth-oauth2:
@@ -185,6 +187,8 @@ requires an authenticator which takes instances of ``String``:
                 .setPrefix("Custom")
                 .buildAuthHandler()));
         environment.jersey().register(RolesAllowedDynamicFeature.class);
+        //If you want to use @Auth to inject a custom Principal type into your resource
+        environment.jersey().register(new AuthValueFactoryProvider.Binder(User.class));
     }
 
 .. _man-auth-chained:
@@ -270,6 +274,8 @@ The ``ChainedAuthHandler`` enables usage of various authentication factories at 
         List handlers = Lists.newArrayList(basicCredentialAuthHandler, oauthCredentialAuthHandler);
         environment.jersey().register(new AuthDynamicFeature(new ChainedAuthHandler(handlers)));
         environment.jersey().register(RolesAllowedDynamicFeature.class);
+        //If you want to use @Auth to inject a custom Principal type into your resource
+        environment.jersey().register(new AuthValueFactoryProvider.Binder(User.class));
     }
 
 For this to work properly, all chained factories must produce the same type of principal, here ``User``.
@@ -291,6 +297,19 @@ If you need access to the Principal, you need to add a parameter to your method 
         User userPrincipal = (User) context.getUserPrincipal();
         return dao.findPlanForUser(user);
     }
+
+or you can add register the following with jersey
+
+.. code-block:: java
+
+    environment.jersey().register(new AuthValueFactoryProvider.Binder(User.class));
+
+    @RolesAllowed("ADMIN")
+    @GET
+    public SecretPlan getSecretPlan(@Auth User user) {
+        return dao.findPlanForUser(user);
+    }
+
 
 If there are no provided credentials for the request, or if the credentials are invalid, the
 provider will return a scheme-appropriate ``401 Unauthorized`` response without calling your
