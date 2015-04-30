@@ -192,7 +192,7 @@ requires an authenticator which takes instances of ``String``:
 Chained Factories
 =================
 
-The ``ChainedAuthHandler`` enables usage of various authentication factories at the same time.
+The ``ChainedAuthFilter`` enables usage of various authentication factories at the same time.
 
 .. code-block:: java
 
@@ -256,19 +256,19 @@ The ``ChainedAuthHandler`` enables usage of various authentication factories at 
                 }
             }
 
-        AuthHandler basicCredentialAuthHandler = new BasicCredentialAuthHandler.Builder()
+        AuthFilter basicCredentialAuthHandler = new BasicCredentialAuthFilter.Builder()
                 .setSecurityContextFunction(securityContextFunction);
                 .setAuthenticator(basicAuthenticator)
                 .buildAuthHandler();
 
-        AuthHandler oauthCredentialAuthHandler = new OAuthCredentialAuthHandler.Builder()
+        AuthFilter oauthCredentialAuthHandler = new OAuthCredentialAuthFilter.Builder()
                 .setSecurityContextFunction(securityContextFunction);
                 .setAuthenticator(oauthAuthenticator)
                 .setPrefix("Bearer")
                 .buildAuthHandler();
 
         List handlers = Lists.newArrayList(basicCredentialAuthHandler, oauthCredentialAuthHandler);
-        environment.jersey().register(new AuthDynamicFeature(new ChainedAuthHandler(handlers)));
+        environment.jersey().register(new AuthDynamicFeature(new ChainedAuthFilter(handlers)));
         environment.jersey().register(RolesAllowedDynamicFeature.class);
     }
 
