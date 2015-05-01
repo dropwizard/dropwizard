@@ -260,12 +260,12 @@ The ``ChainedAuthFilter`` enables usage of various authentication factories at t
                 }
             }
 
-        AuthFilter basicCredentialAuthHandler = new BasicCredentialAuthFilter.Builder()
+        AuthFilter basicCredentialAuthHandler = new BasicCredentialAuthFilter.Builder<User, BasicAuthenticator>()
                 .setSecurityContextFunction(securityContextFunction);
                 .setAuthenticator(basicAuthenticator)
                 .buildAuthHandler();
 
-        AuthFilter oauthCredentialAuthHandler = new OAuthCredentialAuthFilter.Builder()
+        AuthFilter oauthCredentialAuthHandler = new OAuthCredentialAuthFilter.Builder<User, OAuthAuthenticator>()
                 .setSecurityContextFunction(securityContextFunction);
                 .setAuthenticator(oauthAuthenticator)
                 .setPrefix("Bearer")
