@@ -12,6 +12,7 @@ v0.9.0
 * Upgrade to Jackson 2.5.3
 * Upgrade to Logback 1.1.3
 * Upgrade to Metrics 3.1.2
+* Upgrade to SLF4J 1.7.12
 
 .. _rel-0.8.1:
 
