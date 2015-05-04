@@ -4,6 +4,13 @@
 Release Notes
 #############
 
+.. _rel-0.9.0:
+
+v0.9.0
+======
+
+* Upgrade to Logback 1.1.3
+
 .. _rel-0.8.1:
 
 v0.8.1: Apr 7 2015
