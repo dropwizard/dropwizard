@@ -78,25 +78,15 @@ public class JerseyIntegrationTest extends JerseyTest {
     }
 
     private SessionFactory sessionFactory;
-    private TimeZone defaultTZ;
 
     @Override
     @After
     public void tearDown() throws Exception {
-        TimeZone.setDefault(defaultTZ);
         super.tearDown();
 
         if (sessionFactory != null) {
             sessionFactory.close();
         }
-    }
-
-    @Override
-    public void setUp() throws Exception {
-        super.setUp();
-
-        this.defaultTZ = TimeZone.getDefault();
-        TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
     }
 
     @Override
