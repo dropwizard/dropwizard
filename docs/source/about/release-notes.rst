@@ -9,6 +9,7 @@ Release Notes
 v0.9.0
 ======
 
+* Upgrade to commons-lang3 3.4
 * Upgrade to Jackson 2.5.3
 * Upgrade to Logback 1.1.3
 * Upgrade to Metrics 3.1.2
