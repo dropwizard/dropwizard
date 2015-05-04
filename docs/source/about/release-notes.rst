@@ -16,6 +16,7 @@ v0.9.0
 * Upgrade to Jackson 2.5.3
 * Upgrade to Jetty 9.2.10.v20150310
 * Upgrade to Jetty ALPN boot 7.1.3.v20150130
+* Upgrade to Jetty SetUID support 1.0.3
 * Upgrade to Liquibase 3.3.3
 * Upgrade to Logback 1.1.3
 * Upgrade to Metrics 3.1.2
