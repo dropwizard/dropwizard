@@ -11,6 +11,7 @@ v0.9.0
 
 * Upgrade to commons-lang3 3.4
 * Upgrade to Freemarker 2.3.22
+* Upgrade to Hibernate 4.3.9.Final
 * Upgrade to Jackson 2.5.3
 * Upgrade to Jetty 9.2.10.v20150310
 * Upgrade to Logback 1.1.3
