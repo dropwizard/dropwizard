@@ -53,7 +53,7 @@
         <dropwizard.url>http://www.dropwizard.io/${project.version}</dropwizard.url>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <metrics3.version>3.1.1</metrics3.version>
+        <metrics3.version>3.1.2</metrics3.version>
         <jersey.version>2.17</jersey.version>
         <jackson.api.version>2.5.3</jackson.api.version>
         <jackson.version>2.5.3</jackson.version>
