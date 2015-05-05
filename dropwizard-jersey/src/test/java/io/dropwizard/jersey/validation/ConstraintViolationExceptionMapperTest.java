@@ -43,6 +43,9 @@ public class ConstraintViolationExceptionMapperTest extends JerseyTest {
         final Response response = target("/valid/bar")
                 .queryParam("name", "dropwizard").request().get();
         assertThat(response.getStatus()).isEqualTo(500);
+
+        String ret = "{\"errors\":[\"blaze.<return value> length must be between 0 and 3\"]}";
+        assertThat(response.readEntity(String.class)).isEqualTo(ret);
     }
 
     @Test
@@ -50,7 +53,11 @@ public class ConstraintViolationExceptionMapperTest extends JerseyTest {
         // query parameter is too short and so will fail validation
         final Response response = target("/valid/bar")
                 .queryParam("name", "hi").request().get();
+
         assertThat(response.getStatus()).isEqualTo(400);
+
+        String ret = "{\"errors\":[\"blaze.arg0 length must be between 3 and 2147483647\"]}";
+        assertThat(response.readEntity(String.class)).isEqualTo(ret);
     }
 
     @Test
@@ -59,5 +66,8 @@ public class ConstraintViolationExceptionMapperTest extends JerseyTest {
         final Response response = target("/valid/zoo")
                 .request().get();
         assertThat(response.getStatus()).isEqualTo(400);
+
+        String ret = "{\"errors\":[\"blazer.arg0.name may not be empty\"]}";
+        assertThat(response.readEntity(String.class)).isEqualTo(ret);
     }
 }

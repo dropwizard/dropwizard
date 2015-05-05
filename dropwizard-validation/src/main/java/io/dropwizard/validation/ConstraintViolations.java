@@ -49,4 +49,26 @@ public class ConstraintViolations {
         }
         return builder.build();
     }
+
+    public static <T extends ConstraintViolation<?>> int determineStatus(Set<T> violations) {
+        // Detect where the constraint validation occurred so we can return an appropriate status
+        // code. If the constraint failed with a *Param annotation, return a bad request. If it
+        // failed validating the return value, return internal error. Else return unprocessable
+        // entity.
+        if (violations.size() > 0) {
+            ConstraintViolation<?> violation = violations.iterator().next();
+            for (Path.Node node : violation.getPropertyPath()) {
+                switch (node.getKind()) {
+                    case RETURN_VALUE:
+                        return 500;
+                    case PARAMETER:
+                        return 400;
+                }
+            }
+        }
+
+        // When Jackson deserializes and validates POST, PUT, etc and constraint violations occur,
+        // they occur from the entity's properties and not as parameter from the resource endpoint.
+        return 422;
+    }
 }
