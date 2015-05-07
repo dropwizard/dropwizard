@@ -65,20 +65,20 @@ public class BasicCredentialAuthFilter<P extends Principal> extends AuthFilter<B
 
 
     public static class Builder<APrincipal extends Principal, AAuthenticator extends Authenticator<BasicCredentials, APrincipal>>
-            extends AuthFilter.AuthHandlerBuilder<BasicCredentials, APrincipal, BasicCredentialAuthFilter<APrincipal>, AAuthenticator> {
+            extends AuthFilterBuilder<BasicCredentials, APrincipal, BasicCredentialAuthFilter<APrincipal>, AAuthenticator> {
 
         @Override
-        public BasicCredentialAuthFilter<APrincipal> buildAuthHandler() {
+        public BasicCredentialAuthFilter<APrincipal> buildAuthFilter() {
             if(realm == null || authenticator == null || prefix == null || securityContextFunction == null) {
                 throw new RuntimeException("Required auth filter parameters not set");
             }
 
-            BasicCredentialAuthFilter<APrincipal> basicCredentialAuthHandler = new BasicCredentialAuthFilter<>();
-            basicCredentialAuthHandler.setRealm(realm);
-            basicCredentialAuthHandler.setAuthenticator(authenticator);
-            basicCredentialAuthHandler.setPrefix(prefix);
-            basicCredentialAuthHandler.setSecurityContextFunction(securityContextFunction);
-            return basicCredentialAuthHandler;
+            BasicCredentialAuthFilter<APrincipal> basicCredentialAuthFilter= new BasicCredentialAuthFilter<>();
+            basicCredentialAuthFilter.setRealm(realm);
+            basicCredentialAuthFilter.setAuthenticator(authenticator);
+            basicCredentialAuthFilter.setPrefix(prefix);
+            basicCredentialAuthFilter.setSecurityContextFunction(securityContextFunction);
+            return basicCredentialAuthFilter;
         }
     }
 }

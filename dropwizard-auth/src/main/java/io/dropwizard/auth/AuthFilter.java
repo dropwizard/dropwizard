@@ -55,32 +55,32 @@ public abstract class AuthFilter<C, P extends Principal> implements ContainerReq
         }
     }
 
-    public static abstract class AuthHandlerBuilder<C, P extends Principal, T extends AuthFilter<C, P>, A extends Authenticator<C, P>> {
+    public static abstract class AuthFilterBuilder<C, P extends Principal, T extends AuthFilter<C, P>, A extends Authenticator<C, P>> {
         protected String realm = "realm";
         protected String prefix = "Basic";
         protected Authenticator<C, P> authenticator;
         protected Function<Tuple, SecurityContext> securityContextFunction;
 
-        public AuthHandlerBuilder setRealm(String realm) {
+        public AuthFilterBuilder<C, P, T, A>  setRealm(String realm) {
             this.realm = realm;
             return this;
         }
 
-        public AuthHandlerBuilder setPrefix(String prefix) {
+        public AuthFilterBuilder<C, P, T, A>  setPrefix(String prefix) {
             this.prefix = prefix;
             return this;
         }
 
-        public AuthHandlerBuilder setSecurityContextFunction(Function<Tuple, SecurityContext> securityContextFunction) {
+        public AuthFilterBuilder<C, P, T, A>  setSecurityContextFunction(Function<Tuple, SecurityContext> securityContextFunction) {
             this.securityContextFunction = securityContextFunction;
             return this;
         }
 
-        public AuthHandlerBuilder setAuthenticator(A authenticator) {
+        public AuthFilterBuilder<C, P, T, A> setAuthenticator(A authenticator) {
             this.authenticator = authenticator;
             return this;
         }
 
-        public abstract T buildAuthHandler();
+        public abstract T buildAuthFilter();
     }
 }
