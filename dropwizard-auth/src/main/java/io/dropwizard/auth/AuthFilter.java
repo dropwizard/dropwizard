@@ -61,22 +61,22 @@ public abstract class AuthFilter<C, P extends Principal> implements ContainerReq
         protected Authenticator<C, P> authenticator;
         protected Function<Tuple, SecurityContext> securityContextFunction;
 
-        public AuthFilterBuilder setRealm(String realm) {
+        public AuthFilterBuilder<C, P, T, A>  setRealm(String realm) {
             this.realm = realm;
             return this;
         }
 
-        public AuthFilterBuilder setPrefix(String prefix) {
+        public AuthFilterBuilder<C, P, T, A>  setPrefix(String prefix) {
             this.prefix = prefix;
             return this;
         }
 
-        public AuthFilterBuilder setSecurityContextFunction(Function<Tuple, SecurityContext> securityContextFunction) {
+        public AuthFilterBuilder<C, P, T, A>  setSecurityContextFunction(Function<Tuple, SecurityContext> securityContextFunction) {
             this.securityContextFunction = securityContextFunction;
             return this;
         }
 
-        public AuthFilterBuilder setAuthenticator(A authenticator) {
+        public AuthFilterBuilder<C, P, T, A> setAuthenticator(A authenticator) {
             this.authenticator = authenticator;
             return this;
         }
