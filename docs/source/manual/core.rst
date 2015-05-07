@@ -1259,10 +1259,13 @@ This gets converted into this JSON:
 Validation
 ----------
 
-Like :ref:`man-core-configuration`, you can add validation annotations to fields of your
-representation classes and validate them. If we're accepting client-provided ``Person`` objects, we
-probably want to ensure that the ``name`` field of the object isn't ``null`` or blank. We can do
-this as follows:
+You can add validation annotations on resource endpoints similar to how it is done in
+:ref:`man-core-configuration`. These annotations can be placed on resource return values,
+``*Param`` annotations, and fields of your representation classes.
+
+For example, if we're accepting client-provided ``Person`` and returning a modification, we probably
+want to ensure that the ``name`` field of the object isn't ``null`` or blank on both the request and
+response. We can do this as follows:
 
 .. code-block:: java
 
@@ -1282,17 +1285,34 @@ this as follows:
         }
     }
 
-Then, in our resource class, we can add the ``@Valid`` annotation to the ``Person`` annotation:
+Then, in our resource class, we can add the ``@Valid`` annotation to the ``Person`` parameter so
+that we know the ``Person`` object has a name in our endpoint. In addition, adding the ``@Valid``
+annotation to the return value will ensure we're not returning invalid data back to clients:
 
 .. code-block:: java
 
     @PUT
-    public Response replace(@Valid Person person) {
+    @Valid
+    public Person replace(@Valid Person person) {
+        // Oops, we got a bug!
+        return new Person(null);
+    }
+
+    @GET
+    @Valid
+    public Person find(@QueryParam("name") @NotEmpty name) {
         // ...
     }
 
-If the ``name`` field is missing, Dropwizard will return a ``text/plain``
-``422 Unprocessable Entity`` response detailing the validation errors::
+If validation fails, Dropwizard will return a ``text/plain`` response with an HTTP status code
+depending on where the validation failed:
+
+* Violation on a resource return value causes a ``500 Internal Server Error``
+* Violation on a representation class causes a ``422 Unprocessable Entity``
+* Violation on a ``*Param`` annotation causes a ``400 Bad Request``
+
+So in our example, if the ``name`` field is missing in a ``PUT`` request, Dropwizard will return a
+``422 Unprocessable Entity`` response detailing the validation error::
 
     * name may not be empty
 
