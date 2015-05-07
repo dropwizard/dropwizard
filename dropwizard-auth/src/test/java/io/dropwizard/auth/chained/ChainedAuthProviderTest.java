@@ -1,8 +1,11 @@
-package io.dropwizard.auth;
+package io.dropwizard.auth.chained;
 
 import com.codahale.metrics.MetricRegistry;
 import com.google.common.base.Function;
 import com.google.common.collect.Lists;
+import io.dropwizard.auth.AuthDynamicFeature;
+import io.dropwizard.auth.AuthFilter;
+import io.dropwizard.auth.AuthResource;
 import io.dropwizard.auth.basic.BasicCredentialAuthFilter;
 import io.dropwizard.auth.chained.ChainedAuthFilter;
 import io.dropwizard.auth.oauth.OAuthCredentialAuthFilter;
