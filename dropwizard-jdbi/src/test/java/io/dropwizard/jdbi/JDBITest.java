@@ -9,7 +9,7 @@ import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.db.ManagedDataSource;
 import io.dropwizard.lifecycle.Managed;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
-import io.dropwizard.logging.LoggingFactory;
+import io.dropwizard.logging.BootstrapLogging;
 import io.dropwizard.setup.Environment;
 import org.joda.time.DateTime;
 import org.junit.After;
@@ -34,7 +34,7 @@ public class JDBITest {
     private final DataSourceFactory hsqlConfig = new DataSourceFactory();
 
     {
-        LoggingFactory.bootstrap();
+        BootstrapLogging.bootstrap();
         hsqlConfig.setUrl("jdbc:h2:mem:DbTest-" + System.currentTimeMillis());
         hsqlConfig.setUser("sa");
         hsqlConfig.setDriverClass("org.h2.Driver");

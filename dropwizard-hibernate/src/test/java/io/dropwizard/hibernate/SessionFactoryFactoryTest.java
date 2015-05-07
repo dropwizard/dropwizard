@@ -5,7 +5,7 @@ import com.google.common.collect.ImmutableList;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.db.ManagedPooledDataSource;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
-import io.dropwizard.logging.LoggingFactory;
+import io.dropwizard.logging.BootstrapLogging;
 import io.dropwizard.setup.Environment;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -22,7 +22,7 @@ import static org.mockito.Mockito.*;
 
 public class SessionFactoryFactoryTest {
     static {
-        LoggingFactory.bootstrap();
+        BootstrapLogging.bootstrap();
     }
 
     private final SessionFactoryFactory factory = new SessionFactoryFactory();
