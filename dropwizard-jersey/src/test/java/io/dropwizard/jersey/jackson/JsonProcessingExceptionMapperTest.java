@@ -8,6 +8,7 @@ import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.logging.LoggingFactory;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.test.JerseyTest;
+import org.glassfish.jersey.test.TestProperties;
 import org.junit.Test;
 
 import javax.validation.Validation;
@@ -26,6 +27,7 @@ public class JsonProcessingExceptionMapperTest extends JerseyTest {
 
     @Override
     protected Application configure() {
+        forceSet(TestProperties.CONTAINER_PORT, "0");
         return DropwizardResourceConfig.forTesting(new MetricRegistry())
                 .packages("io.dropwizard.jersey.jackson");
     }
