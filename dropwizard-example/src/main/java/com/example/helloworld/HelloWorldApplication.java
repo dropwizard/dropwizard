@@ -91,7 +91,7 @@ public class HelloWorldApplication extends Application<HelloWorldConfiguration> 
                 .setAuthenticator(exampleAuthenticator)
                 .setSecurityContextFunction(getSecurityContextFunction())
                 .setRealm("SUPER SECRET STUFF")
-                .buildAuthHandler()));
+                .buildAuthFilter()));
         environment.jersey().register(new AuthValueFactoryProvider.Binder(User.class));
         environment.jersey().register(RolesAllowedDynamicFeature.class);
         environment.jersey().register(new HelloWorldResource(template));

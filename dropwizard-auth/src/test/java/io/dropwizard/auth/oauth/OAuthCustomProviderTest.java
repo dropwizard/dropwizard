@@ -132,7 +132,7 @@ public class OAuthCustomProviderTest extends JerseyTest {
                     .setAuthenticator(AuthUtil.<String, SecurityContext>getTestAuthenticator(validUser))
                     .setSecurityContextFunction(AuthUtil.getSecurityContextProviderFunction(validUser, "ADMIN"))
                     .setPrefix("Custom")
-                    .buildAuthHandler();
+                    .buildAuthFilter();
         }
     }
 }

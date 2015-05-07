@@ -134,13 +134,13 @@ public class ChainedAuthProviderTest extends JerseyTest {
             AuthFilter basicCredentialAuthFilter = new BasicCredentialAuthFilter.Builder()
                     .setAuthenticator(AuthUtil.getTestAuthenticatorBasicCredential(validUser))
                     .setSecurityContextFunction(securityContextFunction)
-                    .buildAuthHandler();
+                    .buildAuthFilter();
 
             AuthFilter oauthCredentialAuthFilter = new OAuthCredentialAuthFilter.Builder()
                     .setAuthenticator(AuthUtil.getTestAuthenticator("A12B3C4D", validUser))
                     .setPrefix("Bearer")
                     .setSecurityContextFunction(securityContextFunction)
-                    .buildAuthHandler();
+                    .buildAuthFilter();
 
             List handlers = Lists.newArrayList(basicCredentialAuthFilter, oauthCredentialAuthFilter);
             register(new AuthDynamicFeature(new ChainedAuthFilter(handlers)));

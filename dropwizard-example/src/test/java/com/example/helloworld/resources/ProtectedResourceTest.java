@@ -71,7 +71,7 @@ public class ProtectedResourceTest {
         });
         builder.setAuthenticator(AUTHENTICATOR);
         builder.setPrefix("Basic");
-        BASIC_AUTH_HANDLER = builder.buildAuthHandler();
+        BASIC_AUTH_HANDLER = builder.buildAuthFilter();
     }
 
     @ClassRule
