@@ -3,6 +3,7 @@ package io.dropwizard.http2;
 import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import io.dropwizard.jetty.HttpsConnectorFactory;
+import io.dropwizard.jetty.Jetty93InstrumentedConnectionFactory;
 import org.eclipse.jetty.alpn.server.ALPNServerConnectionFactory;
 import org.eclipse.jetty.http2.server.HTTP2ServerConnectionFactory;
 import org.eclipse.jetty.server.*;
@@ -45,7 +46,7 @@ public class Http2ConnectorFactory extends HttpsConnectorFactory {
         final SslConnectionFactory sslConnectionFactory = new SslConnectionFactory(sslContextFactory, "alpn");
 
         return buildConnector(server, new ScheduledExecutorScheduler(), buildBufferPool(), name, threadPool,
-                new InstrumentedConnectionFactory(sslConnectionFactory, metrics.timer(httpConnections())),
+                new Jetty93InstrumentedConnectionFactory(sslConnectionFactory, metrics.timer(httpConnections())),
                 alpn, http2, http1);
     }
 }

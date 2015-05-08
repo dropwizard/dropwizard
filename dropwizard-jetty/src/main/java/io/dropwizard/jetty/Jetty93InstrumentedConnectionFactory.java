@@ -13,7 +13,7 @@ import java.util.List;
  * A version {@link com.codahale.metrics.jetty9.InstrumentedConnectionFactory}, which supports Jetty 9.3 API.
  * NOTE: This class could be replaced, when <strong>dropwizard-metrics-jetty9</strong> will support Jetty 9.3.
  */
-class Jetty93InstrumentedConnectionFactory extends ContainerLifeCycle implements ConnectionFactory {
+public class Jetty93InstrumentedConnectionFactory extends ContainerLifeCycle implements ConnectionFactory {
 
     private final ConnectionFactory connectionFactory;
     private final Timer timer;
