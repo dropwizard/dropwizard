@@ -4,7 +4,7 @@ import com.codahale.metrics.MetricRegistry;
 import io.dropwizard.auth.*;
 import io.dropwizard.auth.util.AuthUtil;
 import io.dropwizard.jersey.DropwizardResourceConfig;
-import io.dropwizard.logging.LoggingFactory;
+import io.dropwizard.logging.BootstrapLogging;
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
 import org.glassfish.jersey.servlet.ServletProperties;
 import org.glassfish.jersey.test.DeploymentContext;
@@ -34,7 +34,7 @@ import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
 public class BasicCustomAuthProviderTest extends JerseyTest {
     final private static String VALID_ROLE = "ADMIN";
     static {
-        LoggingFactory.bootstrap();
+        BootstrapLogging.bootstrap();
     }
 
     @Override

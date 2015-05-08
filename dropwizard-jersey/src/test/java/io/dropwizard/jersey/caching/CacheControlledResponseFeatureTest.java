@@ -1,7 +1,7 @@
 package io.dropwizard.jersey.caching;
 
 import io.dropwizard.jersey.DropwizardResourceConfig;
-import io.dropwizard.logging.LoggingFactory;
+import io.dropwizard.logging.BootstrapLogging;
 
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.HttpHeaders;
@@ -18,7 +18,7 @@ import com.codahale.metrics.MetricRegistry;
 
 public class CacheControlledResponseFeatureTest extends JerseyTest {
     static {
-        LoggingFactory.bootstrap();
+        BootstrapLogging.bootstrap();
     }
 
     @Override
