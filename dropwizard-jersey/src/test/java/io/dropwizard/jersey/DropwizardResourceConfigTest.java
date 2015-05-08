@@ -86,12 +86,12 @@ public class DropwizardResourceConfigTest {
         rc.register(ImplementingResource.class);
 
         assertThat(rc.getEndpointsInfo()).matches(Pattern.compile(".*"
-                + "    GET     / \\(io\\.dropwizard\\.jersey\\.dummy\\.DummyResource\\)."
-                + "    GET     /another \\(io\\.dropwizard\\.jersey\\.DropwizardResourceConfigTest\\.ImplementingResource\\)."
-                + "    GET     /async \\(io\\.dropwizard\\.jersey\\.dummy\\.DummyResource\\)."
-                + "    DELETE  /dummy \\(io\\.dropwizard\\.jersey\\.DropwizardResourceConfigTest\\.TestResource2\\)."
-                + "    GET     /dummy \\(io\\.dropwizard\\.jersey\\.DropwizardResourceConfigTest\\.TestResource\\)."
-                + "    POST    /dummy \\(io\\.dropwizard\\.jersey\\.DropwizardResourceConfigTest\\.TestResource2\\).",
+                + "    GET     / \\(io\\.dropwizard\\.jersey\\.dummy\\.DummyResource\\)" + System.lineSeparator()
+                + "    GET     /another \\(io\\.dropwizard\\.jersey\\.DropwizardResourceConfigTest\\.ImplementingResource\\)" + System.lineSeparator()
+                + "    GET     /async \\(io\\.dropwizard\\.jersey\\.dummy\\.DummyResource\\)" + System.lineSeparator()
+                + "    DELETE  /dummy \\(io\\.dropwizard\\.jersey\\.DropwizardResourceConfigTest\\.TestResource2\\)" + System.lineSeparator()
+                + "    GET     /dummy \\(io\\.dropwizard\\.jersey\\.DropwizardResourceConfigTest\\.TestResource\\)" + System.lineSeparator()
+                + "    POST    /dummy \\(io\\.dropwizard\\.jersey\\.DropwizardResourceConfigTest\\.TestResource2\\)" + System.lineSeparator(),
                 Pattern.DOTALL));
     }
 
