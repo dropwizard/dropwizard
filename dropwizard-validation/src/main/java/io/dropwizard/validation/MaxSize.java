@@ -13,7 +13,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * The annotated element must be a {@link io.dropwizard.util.Size}
- * whose value must be higher or equal to the specified minimum.
+ * whose value must be less than or equal to the specified maximum.
  * <p/>
  * <code>null</code> elements are considered valid
  */
@@ -29,12 +29,12 @@ public @interface MaxSize {
     @SuppressWarnings("UnusedDeclaration") Class<? extends Payload>[] payload() default { };
 
     /**
-     * @return value the element must be higher or equal to
+     * @return value the element must be less than or equal to
      */
     long value();
 
     /**
-     * @return unit of the value the element must be higher or equal to
+     * @return unit of the value the element must be less than or equal to
      */
     SizeUnit unit() default SizeUnit.BYTES;
 }
