@@ -4,9 +4,9 @@ import com.codahale.metrics.MetricRegistry;
 import io.dropwizard.jersey.dummy.DummyResource;
 import io.dropwizard.logging.BootstrapLogging;
 
-import java.util.regex.Pattern;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.POST;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -85,14 +85,16 @@ public class DropwizardResourceConfigTest {
         rc.register(TestResource.class);
         rc.register(ImplementingResource.class);
 
-        assertThat(rc.getEndpointsInfo()).matches(Pattern.compile(".*"
-                + "    GET     / \\(io\\.dropwizard\\.jersey\\.dummy\\.DummyResource\\)" + System.lineSeparator()
-                + "    GET     /another \\(io\\.dropwizard\\.jersey\\.DropwizardResourceConfigTest\\.ImplementingResource\\)" + System.lineSeparator()
-                + "    GET     /async \\(io\\.dropwizard\\.jersey\\.dummy\\.DummyResource\\)" + System.lineSeparator()
-                + "    DELETE  /dummy \\(io\\.dropwizard\\.jersey\\.DropwizardResourceConfigTest\\.TestResource2\\)" + System.lineSeparator()
-                + "    GET     /dummy \\(io\\.dropwizard\\.jersey\\.DropwizardResourceConfigTest\\.TestResource\\)" + System.lineSeparator()
-                + "    POST    /dummy \\(io\\.dropwizard\\.jersey\\.DropwizardResourceConfigTest\\.TestResource2\\)" + System.lineSeparator(),
-                Pattern.DOTALL));
+        final String expectedLog = String.format(
+                "The following paths were found for the configured resources:%n"
+                + "%n"
+                + "    GET     / (io.dropwizard.jersey.dummy.DummyResource)%n"
+                + "    GET     /another (io.dropwizard.jersey.DropwizardResourceConfigTest.ImplementingResource)%n"
+                + "    GET     /async (io.dropwizard.jersey.dummy.DummyResource)%n"
+                + "    DELETE  /dummy (io.dropwizard.jersey.DropwizardResourceConfigTest.TestResource2)%n"
+                + "    GET     /dummy (io.dropwizard.jersey.DropwizardResourceConfigTest.TestResource)%n"
+                + "    POST    /dummy (io.dropwizard.jersey.DropwizardResourceConfigTest.TestResource2)%n");
+        assertThat(rc.getEndpointsInfo()).isEqualTo(expectedLog);
     }
 
 
