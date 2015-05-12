@@ -72,6 +72,11 @@
             <artifactId>jetty-util</artifactId>
             <version>${jetty.version}</version>
         </dependency>
+			<dependency>
+				<groupId>org.mongodb</groupId>
+				<artifactId>mongo-java-driver</artifactId>
+				<version>${mongodb.version}</version>
+			</dependency>        
         <dependency>
             <groupId>io.dropwizard</groupId>
             <artifactId>dropwizard-configuration</artifactId>
