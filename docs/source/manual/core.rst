@@ -51,7 +51,7 @@ Our applications tend to look like this:
 .. _man-core-application:
 
 Application
-============
+===========
 
 The main entry point into a Dropwizard application is, unsurprisingly, the ``Application`` class. Each
 ``Application`` has a **name**, which is mostly used to render the command-line interface. In the
@@ -580,7 +580,7 @@ record runtime information about your tasks. Here's a basic task class:
         private final Database database;
 
         public TruncateDatabaseTask(Database database) {
-            super('truncate');
+            super("truncate");
             this.database = database;
         }
 
