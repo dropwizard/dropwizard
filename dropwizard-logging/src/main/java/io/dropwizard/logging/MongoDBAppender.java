@@ -1,5 +1,7 @@
 package io.dropwizard.logging;
 
+import io.dropwizard.util.Size;
+
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -47,7 +49,7 @@ public class MongoDBAppender extends UnsynchronizedAppenderBase<ILoggingEvent>{
 
     private int socketTimeout;
 
-    private boolean slaveOk;
+    private ReadPreference readPreference;
 
     private int w;
 
@@ -57,7 +59,7 @@ public class MongoDBAppender extends UnsynchronizedAppenderBase<ILoggingEvent>{
 
     private boolean capped = false;
 
-    private long size = 10000;
+    private Size size;
 
     private long max = 10000;    
     
@@ -118,7 +120,7 @@ public class MongoDBAppender extends UnsynchronizedAppenderBase<ILoggingEvent>{
         builder.connectTimeout(connectTimeout);
         builder.socketTimeout(socketTimeout);
         builder.writeConcern(new WriteConcern(w, wtimeout, fsync, false));
-        builder.readPreference(slaveOk ? ReadPreference.secondaryPreferred() : ReadPreference.primaryPreferred());
+        builder.readPreference(this.readPreference);
 
         return builder.build();
     }
@@ -127,7 +129,7 @@ public class MongoDBAppender extends UnsynchronizedAppenderBase<ILoggingEvent>{
         if(!db.getCollectionNames().contains(collectionName)) {
             BasicDBObject dbObject = new BasicDBObject("create", collectionName);
             dbObject.put("capped", capped);
-            dbObject.put("size", size);
+            dbObject.put("size", size.toBytes());
             dbObject.put("max", max);
             CommandResult cappedResult = db.command(dbObject);
         }
@@ -178,9 +180,6 @@ public class MongoDBAppender extends UnsynchronizedAppenderBase<ILoggingEvent>{
 		this.socketTimeout = socketTimeout;
 	}
 
-	public void setSlaveOk(boolean slaveOk) {
-		this.slaveOk = slaveOk;
-	}
 
 	public void setW(int w) {
 		this.w = w;
@@ -198,12 +197,16 @@ public class MongoDBAppender extends UnsynchronizedAppenderBase<ILoggingEvent>{
 		this.capped = capped;
 	}
 
-	public void setSize(long size) {
+	public void setSize(Size size) {
 		this.size = size;
 	}
 
 	public void setMax(long max) {
 		this.max = max;
+	}
+
+	public void setReadPreference(ReadPreference readPreference) {
+		this.readPreference = readPreference;
 	}
 
 }
