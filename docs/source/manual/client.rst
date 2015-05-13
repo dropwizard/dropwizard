@@ -60,7 +60,7 @@ following pieces of data:
     The number the number idle connections ready to be used to execute requests.
 
 ``org.apache.http.conn.ClientConnectionManager.leased-connections``
-    The number of persistent connections currently being used to execut requests.
+    The number of persistent connections currently being used to execute requests.
 
 ``org.apache.http.conn.ClientConnectionManager.max-connections``
     The maximum number of allowed connections.

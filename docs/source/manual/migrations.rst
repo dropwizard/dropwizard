@@ -41,9 +41,9 @@ Then, in your application's ``initialize`` method, add a new ``MigrationsBundle`
     public void initialize(Bootstrap<ExampleConfiguration> bootstrap) {
         bootstrap.addBundle(new MigrationsBundle<ExampleConfiguration>() {
             @Override
-	        public DataSourceFactory getDataSourceFactory(ExampleConfiguration configuration) {
-	            return configuration.getDataSourceFactory();
-	        }
+            public DataSourceFactory getDataSourceFactory(ExampleConfiguration configuration) {
+                return configuration.getDataSourceFactory();
+            }
         });
     }
 

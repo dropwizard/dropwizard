@@ -1,8 +1,8 @@
 .. _man-configuration:
 
-###################################
+##################################
 Dropwizard Configuration Reference
-###################################
+##################################
 
 .. highlight:: text
 
@@ -72,7 +72,7 @@ Now you can use ``WidgetFactory`` objects in your application's configuration.
 .. _man-configuration-servers:
 
 Servers
-========
+=======
 
 .. code-block:: yaml
 
@@ -84,7 +84,7 @@ Servers
 .. _man-configuration-all:
 
 All
-----
+---
 
 =================================== ===============================================  =============================================================================
 Name                                Default                                          Description
@@ -127,7 +127,7 @@ registerDefaultExceptionMappers     true                                        
 .. _man-configuration-gzip:
 
 GZip
-.....
+....
 
 .. code-block:: yaml
 
@@ -176,7 +176,7 @@ appenders              console appender The set of AppenderFactory appenders to 
 .. _man-configuration-simple:
 
 Simple
--------
+------
 
 Extends the attributes that are available to :ref:`all servers <man-configuration-all>`
 
@@ -206,7 +206,7 @@ adminContextPath          /admin            The context path of the admin servle
 .. _man-configuration-default:
 
 Default
---------
+-------
 
 Extends the attributes that are available to :ref:`all servers <man-configuration-all>`
 
@@ -260,7 +260,7 @@ Connectors
 .. _man-configuration-http:
 
 HTTP
-------
+----
 
 .. code-block:: yaml
     
@@ -334,7 +334,7 @@ useForwardedHeaders      true                Whether or not to look at ``X-Forwa
 .. _man-configuration-https:
 
 HTTPS
-------
+-----
 
 Extends the attributes that are available to the :ref:`HTTP connector <man-configuration-http>`
 
@@ -409,7 +409,7 @@ supportedCipherSuites            (none)              A list of cipher suites (e.
 excludedCipherSuites             (none)              A list of cipher suites (e.g., ``TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256``) which
                                                      are excluded. These cipher suites will be refused and exclusion takes higher 
                                                      precedence than inclusion, such that if a cipher suite is listed in 
-                                                     ``supportedCipherSuites`` and ``excludedCipherSuitse``, the cipher suite will be
+                                                     ``supportedCipherSuites`` and ``excludedCipherSuites``, the cipher suite will be
                                                      excluded. To verify that the proper cipher suites are being whitelisted and
                                                      blacklisted, it is recommended to use the tool `sslyze`_.
 allowRenegotiation               true                Whether or not TLS renegotiation is allowed.
@@ -421,7 +421,7 @@ endpointIdentificationAlgorithm  (none)              Which endpoint identificati
 .. _man-configuration-spdy:
 
 SPDY
-------
+----
 
 Extends the attributes that are available to the :ref:`HTTPS connector <man-configuration-https>`
 
@@ -453,7 +453,7 @@ pushStrategy           (none)       The `push strategy`_ to use for server-initi
 .. _man-configuration-logging:
 
 Logging
-=========
+=======
 
 .. code-block:: yaml
 
@@ -509,7 +509,7 @@ logFormat              default      The Logback pattern with which events will b
 .. _man-configuration-logging-file:
 
 File
--------
+----
 
 .. code-block:: yaml
 
@@ -547,7 +547,7 @@ logFormat                    default      The Logback pattern with which events 
 .. _man-configuration-logging-syslog:
 
 Syslog
--------
+------
 
 .. code-block:: yaml
 
@@ -584,7 +584,7 @@ stackTracePrefix             \t           The prefix to use when writing stack t
 .. _man-configuration-metrics:
 
 Metrics
-=========
+=======
 
 The metrics configuration has two fields; frequency and reporters.
 
@@ -755,7 +755,7 @@ ttl                    1                The time-to-live of the UDP packets for 
 uuid                   (none)           The UUID to tag announced metrics with.
 spoof                  (none)           The hostname and port to use instead of this nodes for the announced metrics. 
                                         In the format ``hostname:port``.
-tmax                   60               The tmax value to annouce metrics with.
+tmax                   60               The tmax value to announce metrics with.
 dmax                   0                The dmax value to announce metrics with.
 ====================== ===============  ====================================================================================================
 
@@ -875,7 +875,7 @@ userAgent                 ``applicationName`` (``clientName``)    The User-Agent
 .. _man-configuration-clients-http-proxy:
 
 Proxy
-......
+.....
 
 .. code-block:: yaml
 
