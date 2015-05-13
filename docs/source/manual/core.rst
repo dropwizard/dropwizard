@@ -1438,7 +1438,7 @@ this example demonstrates a servlet filter analogous to the previous example:
 .. code-block:: java
 
     public class DateNotSpecifiedServletFilter implements javax.servlet.Filter {
-        // Other methods in interface ommited for brevity
+        // Other methods in interface omitted for brevity
 
         @Override
         public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
