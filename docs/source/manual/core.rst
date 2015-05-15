@@ -1445,7 +1445,7 @@ this example demonstrates a servlet filter analogous to the previous example:
             if (request instanceof HttpServletRequest) {
                 String dateHeader = ((HttpServletRequest) request).getHeader(HttpHeaders.DATE);
 
-                if (dateHeader == null) {
+                if (dateHeader != null) {
                     chain.doFilter(request, response); // This signals that the request should pass this filter
                 } else {
                     HttpServletResponse httpResponse = (HttpServletResponse) response;
