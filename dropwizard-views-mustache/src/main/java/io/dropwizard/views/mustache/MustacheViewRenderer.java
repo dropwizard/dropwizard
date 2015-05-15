@@ -1,5 +1,6 @@
 package io.dropwizard.views.mustache;
 
+import com.github.mustachejava.DefaultMustacheFactory;
 import com.github.mustachejava.Mustache;
 import com.github.mustachejava.MustacheException;
 import com.github.mustachejava.MustacheFactory;
@@ -32,7 +33,7 @@ public class MustacheViewRenderer implements ViewRenderer {
                                      .build(new CacheLoader<Class<? extends View>, MustacheFactory>() {
                                          @Override
                                          public MustacheFactory load(Class<? extends View> key) throws Exception {
-                                             return new PerClassMustacheFactory(key);
+                                             return new DefaultMustacheFactory(new PerClassMustacheResolver(key));
                                          }
                                      });
     }
