@@ -46,7 +46,7 @@ Then create subtypes of the top-level type corresponding to each alternative, an
 
         @Override
         public Chisel createWidget() {
-            return new Chisel(weight);
+            return new Chisel(radius);
         }
     }
 
