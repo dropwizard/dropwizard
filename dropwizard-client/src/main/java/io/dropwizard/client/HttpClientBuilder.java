@@ -204,7 +204,7 @@ public class HttpClientBuilder {
             final org.apache.http.impl.client.HttpClientBuilder builder,
             final InstrumentedHttpClientConnectionManager manager,
             final String name) {
-        final String cookiePolicy = configuration.isCookiesEnabled() ? CookieSpecs.BEST_MATCH : CookieSpecs.IGNORE_COOKIES;
+        final String cookiePolicy = configuration.isCookiesEnabled() ? CookieSpecs.DEFAULT : CookieSpecs.IGNORE_COOKIES;
         final Integer timeout = (int) configuration.getTimeout().toMilliseconds();
         final Integer connectionTimeout = (int) configuration.getConnectionTimeout().toMilliseconds();
         final Integer connectionRequestTimeout = (int) configuration.getConnectionRequestTimeout().toMilliseconds();
@@ -222,7 +222,6 @@ public class HttpClientBuilder {
                 .setSocketTimeout(timeout)
                 .setConnectTimeout(connectionTimeout)
                 .setConnectionRequestTimeout(connectionRequestTimeout)
-                .setStaleConnectionCheckEnabled(false)
                 .build();
         final SocketConfig socketConfig = SocketConfig.custom()
                 .setTcpNoDelay(true)
@@ -317,6 +316,7 @@ public class HttpClientBuilder {
             InstrumentedHttpClientConnectionManager connectionManager) {
         connectionManager.setDefaultMaxPerRoute(configuration.getMaxConnectionsPerRoute());
         connectionManager.setMaxTotal(configuration.getMaxConnections());
+        connectionManager.setValidateAfterInactivity(0);
         return connectionManager;
     }
 }

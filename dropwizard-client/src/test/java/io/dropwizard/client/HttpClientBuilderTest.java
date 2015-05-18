@@ -209,7 +209,7 @@ public class HttpClientBuilderTest {
         assertThat(builder.using(configuration).createClient(apacheBuilder, connectionManager, "test")).isNotNull();
 
         assertThat(((RequestConfig) spyHttpClientBuilderField("defaultRequestConfig", apacheBuilder)).getCookieSpec())
-                .isEqualTo(CookieSpecs.BEST_MATCH);
+                .isEqualTo(CookieSpecs.DEFAULT);
     }
 
     @Test
