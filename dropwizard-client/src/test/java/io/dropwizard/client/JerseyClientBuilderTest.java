@@ -19,6 +19,7 @@ import org.apache.http.conn.DnsResolver;
 import org.apache.http.conn.routing.HttpRoutePlanner;
 import org.apache.http.conn.socket.ConnectionSocketFactory;
 import org.apache.http.conn.socket.PlainConnectionSocketFactory;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
 import org.apache.http.impl.client.SystemDefaultCredentialsProvider;
@@ -278,8 +279,7 @@ public class JerseyClientBuilderTest {
         }}, null);
         final Registry<ConnectionSocketFactory> customRegistry = RegistryBuilder.<ConnectionSocketFactory>create()
                 .register("http", PlainConnectionSocketFactory.getSocketFactory())
-                .register("https", new SSLConnectionSocketFactory(ctx,
-                        SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER))
+                .register("https", new SSLConnectionSocketFactory(ctx, new NoopHostnameVerifier()))
                 .build();
         builder.using(customRegistry);
         verify(apacheHttpClientBuilder).using(customRegistry);
