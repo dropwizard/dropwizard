@@ -6,6 +6,9 @@ import com.codahale.metrics.httpclient.InstrumentedHttpClientConnectionManager;
 import com.codahale.metrics.httpclient.InstrumentedHttpRequestExecutor;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
+import io.dropwizard.lifecycle.Managed;
+import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
+import io.dropwizard.setup.Environment;
 import io.dropwizard.util.Duration;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.http.Header;
@@ -40,6 +43,8 @@ import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+
 import java.net.ProxySelector;
 import java.net.Proxy;
 import java.net.URI;
@@ -348,6 +353,31 @@ public class HttpClientBuilderTest {
         assertThat(client).isNotNull();
 
         assertThat(spyHttpClientField("defaultConfig", client.getClient())).isEqualTo(client.getDefaultRequestConfig());
+    }
+
+    @Test
+    public void managedByEnvironment() throws Exception {
+        final Environment environment = mock(Environment.class);
+        when(environment.getName()).thenReturn("test-env");
+        when(environment.metrics()).thenReturn(new MetricRegistry());
+
+        final LifecycleEnvironment lifecycle = mock(LifecycleEnvironment.class);
+        when(environment.lifecycle()).thenReturn(lifecycle);
+
+        final CloseableHttpClient httpClient = mock(CloseableHttpClient.class);
+        HttpClientBuilder httpClientBuilder = spy(new HttpClientBuilder(environment));
+        when(httpClientBuilder.buildWithDefaultRequestConfiguration("test-apache-client"))
+                .thenReturn(new ConfiguredCloseableHttpClient(httpClient, RequestConfig.DEFAULT));
+        assertThat(httpClientBuilder.build("test-apache-client")).isSameAs(httpClient);
+
+        // Verify that we registered the managed object
+        final ArgumentCaptor<Managed> argumentCaptor = ArgumentCaptor.forClass(Managed.class);
+        verify(lifecycle).manage(argumentCaptor.capture());
+
+        // Verify that the managed object actually stops the HTTP client
+        final Managed managed = argumentCaptor.getValue();
+        managed.stop();
+        verify(httpClient).close();
     }
 
     private Object spyHttpClientBuilderField(final String fieldName, final Object obj) throws Exception {
