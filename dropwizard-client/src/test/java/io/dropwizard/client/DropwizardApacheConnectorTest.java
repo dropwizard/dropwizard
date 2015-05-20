@@ -13,7 +13,9 @@ import org.apache.http.HttpStatus;
 import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.conn.HttpHostConnectException;
 import org.assertj.core.api.AbstractLongAssert;
+import org.eclipse.jetty.util.component.LifeCycle;
 import org.glassfish.jersey.client.ClientProperties;
+import org.glassfish.jersey.client.JerseyClient;
 import org.junit.Before;
 import org.junit.After;
 import org.junit.ClassRule;
@@ -21,6 +23,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import javax.validation.Validation;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.ProcessingException;
@@ -54,25 +57,33 @@ public class DropwizardApacheConnectorTest {
     public ExpectedException thrown = ExpectedException.none();
 
     private final URI testUri = URI.create("http://localhost:" + APP_RULE.getLocalPort());
-    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
-    private Client client;
+    private JerseyClient client;
+    private Environment environment;
 
     @Before
-    public void setup() {
+    public void setup() throws Exception {
         JerseyClientConfiguration clientConfiguration = new JerseyClientConfiguration();
         clientConfiguration.setConnectionTimeout(Duration.milliseconds(SLEEP_TIME_IN_MILLIS / 2));
         clientConfiguration.setTimeout(Duration.milliseconds(DEFAULT_CONNECT_TIMEOUT_IN_MILLIS));
-        client = new JerseyClientBuilder(new MetricRegistry())
-                .using(executorService, Jackson.newObjectMapper())
+
+        environment = new Environment("test-dropwizard-apache-connector", Jackson.newObjectMapper(),
+                Validation.buildDefaultValidatorFactory().getValidator(), new MetricRegistry(),
+                getClass().getClassLoader());
+        client = (JerseyClient) new JerseyClientBuilder(environment)
                 .using(clientConfiguration)
                 .build("test");
+        for (LifeCycle lifeCycle : environment.lifecycle().getManagedObjects()) {
+            lifeCycle.start();
+        }
     }
 
     @After
     public void tearDown() throws Exception {
-        executorService.shutdown();
-        client.close();
+        for (LifeCycle lifeCycle : environment.lifecycle().getManagedObjects()) {
+            lifeCycle.stop();
+        }
+        assertThat(client.isClosed()).isTrue();
     }
 
     @Test
