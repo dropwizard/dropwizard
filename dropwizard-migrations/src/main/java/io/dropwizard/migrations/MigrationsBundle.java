@@ -10,7 +10,7 @@ import io.dropwizard.util.Generics;
 public abstract class MigrationsBundle<T extends Configuration> implements Bundle, DatabaseConfiguration<T> {
     @Override
     public final void initialize(Bootstrap<?> bootstrap) {
-        final Class<T> klass = Generics.getTypeParameter(getClass(), Configuration.class);
+        final Class<T> klass = (Class<T>)bootstrap.getApplication().getConfigurationClass();
         bootstrap.addCommand(new DbCommand<>(this, klass));
     }
 
