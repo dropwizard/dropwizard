@@ -18,6 +18,9 @@ public class LoggingUtil {
     private static boolean julHijacked = false;
     private static final Lock julHijackingLock = new ReentrantLock();
 
+    private LoggingUtil() {
+    }
+
     /**
      * Acquires the logger context.
      * <p/>

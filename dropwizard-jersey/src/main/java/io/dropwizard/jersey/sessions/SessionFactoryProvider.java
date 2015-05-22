@@ -20,7 +20,7 @@ public class SessionFactoryProvider extends AbstractValueFactoryProvider {
 
     @Inject
     public SessionFactoryProvider(final MultivaluedParameterExtractorProvider extractorProvider,
-                                      final ServiceLocator injector) {
+                                  final ServiceLocator injector) {
         super(extractorProvider, injector, Parameter.Source.UNKNOWN);
     }
 
@@ -29,15 +29,17 @@ public class SessionFactoryProvider extends AbstractValueFactoryProvider {
         final Class<?> classType = parameter.getRawType();
 
         Session sessionAnnotation = parameter.getAnnotation(Session.class);
-        if (sessionAnnotation == null)
+        if (sessionAnnotation == null) {
             return null;
+        }
 
-        if (classType.isAssignableFrom(HttpSession.class))
+        if (classType.isAssignableFrom(HttpSession.class)) {
             return new HttpSessionFactory(sessionAnnotation.doNotCreate());
-        else if (classType.isAssignableFrom(Flash.class))
+        } else if (classType.isAssignableFrom(Flash.class)) {
             return new FlashFactory(sessionAnnotation.doNotCreate());
-        else
+        } else {
             return null;
+        }
     }
 
     public static class SessionInjectionResolver extends ParamInjectionResolver<Session> {

@@ -63,6 +63,8 @@ public class ConstraintViolations {
                         return 500;
                     case PARAMETER:
                         return 400;
+                    default:
+                        continue;
                 }
             }
         }

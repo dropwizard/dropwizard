@@ -96,14 +96,14 @@ public class SyslogAppenderFactory extends AbstractAppenderFactory {
     private static final String LOG_TOKEN_PID = "%pid";
 
     private static final Pattern PID_PATTERN = Pattern.compile("(\\d+)@");
-    private static String PID = "";
+    private static String pid = "";
 
     // make an attempt to get the PID of the process
     // this will only work on UNIX platforms; for others, the PID will be "unknown"
     static {
         final Matcher matcher = PID_PATTERN.matcher(ManagementFactory.getRuntimeMXBean().getName());
         if (matcher.find()) {
-            PID = "[" + matcher.group(1) + "]";
+            pid = "[" + matcher.group(1) + "]";
         }
     }
 
@@ -204,7 +204,7 @@ public class SyslogAppenderFactory extends AbstractAppenderFactory {
         final SyslogAppender appender = new SyslogAppender();
         appender.setName("syslog-appender");
         appender.setContext(context);
-        appender.setSuffixPattern(logFormat.replaceAll(LOG_TOKEN_PID, PID).replaceAll(LOG_TOKEN_NAME, Matcher.quoteReplacement(applicationName)));
+        appender.setSuffixPattern(logFormat.replaceAll(LOG_TOKEN_PID, pid).replaceAll(LOG_TOKEN_NAME, Matcher.quoteReplacement(applicationName)));
         appender.setSyslogHost(host);
         appender.setPort(port);
         appender.setFacility(facility.toString().toLowerCase(Locale.ENGLISH));

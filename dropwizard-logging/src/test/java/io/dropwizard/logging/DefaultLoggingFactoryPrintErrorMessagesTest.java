@@ -61,14 +61,14 @@ public class DefaultLoggingFactoryPrintErrorMessagesTest {
 
     @Test
     public void testWhenUsingDefaultConstructor_SystemErrIsSet() throws Exception {
-        PrintStream configurationErrorsStream = new DefaultLoggingFactory().configurationErrorsStream;
+        PrintStream configurationErrorsStream = new DefaultLoggingFactory().getConfigurationErrorsStream();
 
         assertThat(configurationErrorsStream).isSameAs(System.err);
     }
 
     @Test
     public void testWhenUsingDefaultConstructor_StaticILoggerFactoryIsSet() throws Exception {
-        LoggerContext loggerContext = new DefaultLoggingFactory().loggerContext;
+        LoggerContext loggerContext = new DefaultLoggingFactory().getLoggerContext();
 
         assertThat(loggerContext).isSameAs(LoggerFactory.getILoggerFactory());
     }

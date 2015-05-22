@@ -221,7 +221,7 @@ public class DropwizardResourceConfig extends ResourceConfig {
     }
 
     private static class ComponentLoggingListener implements ApplicationEventListener {
-        final DropwizardResourceConfig config;
+        private final DropwizardResourceConfig config;
 
         public ComponentLoggingListener(DropwizardResourceConfig config) {
             this.config = config;
@@ -230,7 +230,7 @@ public class DropwizardResourceConfig extends ResourceConfig {
         @Override
         public void onEvent(ApplicationEvent event) {
             if (event.getType() == ApplicationEvent.Type.INITIALIZATION_APP_FINISHED) {
-                this.config.logComponents();
+                config.logComponents();
             }
         }
 

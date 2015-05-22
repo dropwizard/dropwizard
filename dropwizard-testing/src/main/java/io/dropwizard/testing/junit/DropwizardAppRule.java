@@ -44,7 +44,7 @@ public class DropwizardAppRule<C extends Configuration> extends ExternalResource
     }
 
     public DropwizardAppRule<C> addListener(final ServiceListener<C> listener) {
-        this.testSupport.addListener(new DropwizardTestSupport.ServiceListener<C>(){
+        this.testSupport.addListener(new DropwizardTestSupport.ServiceListener<C>() {
 
             public void onRun(C configuration, Environment environment, DropwizardTestSupport<C> rule) throws Exception {
                 listener.onRun(configuration, environment, DropwizardAppRule.this);
@@ -117,7 +117,7 @@ public class DropwizardAppRule<C extends Configuration> extends ExternalResource
         }
     }
 
-    public DropwizardTestSupport<C> getTestSupport(){
+    public DropwizardTestSupport<C> getTestSupport() {
         return testSupport;
     }
 }

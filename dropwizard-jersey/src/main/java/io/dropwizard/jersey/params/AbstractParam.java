@@ -103,8 +103,12 @@ public abstract class AbstractParam<T> {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) { return true; }
-        if ((obj == null) || (getClass() != obj.getClass())) { return false; }
+        if (this == obj) {
+            return true;
+        }
+        if ((obj == null) || (getClass() != obj.getClass())) {
+            return false;
+        }
         final AbstractParam<?> that = (AbstractParam<?>) obj;
         return value.equals(that.value);
     }

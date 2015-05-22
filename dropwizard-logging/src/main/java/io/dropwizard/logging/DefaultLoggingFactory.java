@@ -27,7 +27,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 @JsonTypeName("default")
-public class DefaultLoggingFactory implements LoggingFactory{
+public class DefaultLoggingFactory implements LoggingFactory {
     private static final ReentrantLock MBEAN_REGISTRATION_LOCK = new ReentrantLock();
     private static final ReentrantLock CONFIGURE_LOGGING_LEVEL_LOCK = new ReentrantLock();
 
@@ -44,10 +44,10 @@ public class DefaultLoggingFactory implements LoggingFactory{
     );
 
     @JsonIgnore
-    final LoggerContext loggerContext;
+    private final LoggerContext loggerContext;
 
     @JsonIgnore
-    final PrintStream configurationErrorsStream;
+    private final PrintStream configurationErrorsStream;
 
     public DefaultLoggingFactory() {
         this(LoggingUtil.getLoggerContext(), System.err);
@@ -57,6 +57,16 @@ public class DefaultLoggingFactory implements LoggingFactory{
     DefaultLoggingFactory(LoggerContext loggerContext, PrintStream configurationErrorsStream) {
         this.loggerContext = checkNotNull(loggerContext);
         this.configurationErrorsStream = checkNotNull(configurationErrorsStream);
+    }
+
+    @VisibleForTesting
+    LoggerContext getLoggerContext() {
+        return loggerContext;
+    }
+
+    @VisibleForTesting
+    PrintStream getConfigurationErrorsStream() {
+        return configurationErrorsStream;
     }
 
     @JsonProperty

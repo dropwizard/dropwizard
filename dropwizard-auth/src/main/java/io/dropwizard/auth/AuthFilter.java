@@ -10,7 +10,7 @@ import javax.ws.rs.core.SecurityContext;
 import java.security.Principal;
 
 @Priority(Priorities.AUTHENTICATION)
-public abstract class AuthFilter<C, P extends Principal> implements ContainerRequestFilter{
+public abstract class AuthFilter<C, P extends Principal> implements ContainerRequestFilter {
     protected String prefix;
     protected String realm;
     protected Authenticator<C, P> authenticator;
@@ -55,7 +55,7 @@ public abstract class AuthFilter<C, P extends Principal> implements ContainerReq
         }
     }
 
-    public static abstract class AuthFilterBuilder<C, P extends Principal, T extends AuthFilter<C, P>, A extends Authenticator<C, P>> {
+    public abstract static class AuthFilterBuilder<C, P extends Principal, T extends AuthFilter<C, P>, A extends Authenticator<C, P>> {
         protected String realm = "realm";
         protected String prefix = "Basic";
         protected Authenticator<C, P> authenticator;

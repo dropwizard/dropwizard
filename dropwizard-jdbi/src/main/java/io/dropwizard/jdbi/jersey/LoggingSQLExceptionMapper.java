@@ -24,7 +24,7 @@ public class LoggingSQLExceptionMapper extends LoggingExceptionMapper<SQLExcepti
     }
 
     @VisibleForTesting
-    static void setLogger(Logger newLogger){
-       logger = newLogger;
+    static void setLogger(Logger newLogger) {
+        logger = newLogger;
     }
 }

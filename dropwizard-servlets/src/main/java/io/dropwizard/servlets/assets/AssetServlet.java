@@ -161,7 +161,9 @@ public class AssetServlet extends HttpServlet {
                     if (defaultCharset != null && mediaType.is(MediaType.ANY_TEXT_TYPE)) {
                         mediaType = mediaType.withCharset(defaultCharset);
                     }
-                } catch (IllegalArgumentException ignore) {}
+                } catch (IllegalArgumentException ignore) {
+                    // ignore
+                }
             }
 
             if (mediaType.is(MediaType.ANY_VIDEO_TYPE)
@@ -176,13 +178,12 @@ public class AssetServlet extends HttpServlet {
             }
 
             try (ServletOutputStream output = resp.getOutputStream()) {
-                 if (usingRanges) {
-                    for (final ByteRange range : ranges) {
+                if (usingRanges) {
+                    for (ByteRange range : ranges) {
                         output.write(cachedAsset.getResource(), range.getStart(),
                                 range.getEnd() - range.getStart() + 1);
                     }
-                }
-                else {
+                } else {
                     output.write(cachedAsset.getResource());
                 }
             }
