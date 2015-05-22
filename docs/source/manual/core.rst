@@ -233,7 +233,7 @@ value of environment variables using a ``SubstitutingSourceProvider`` and ``Envi
             // Enable variable substitution with environment variables
             bootstrap.setConfigurationSourceProvider(
                     new SubstitutingSourceProvider(bootstrap.getConfigurationSourceProvider(),
-                                                       new EnvironmentVariableSubstitutor()
+                                                       new EnvironmentVariableSubstitutor(false)
                     )
             );
 
