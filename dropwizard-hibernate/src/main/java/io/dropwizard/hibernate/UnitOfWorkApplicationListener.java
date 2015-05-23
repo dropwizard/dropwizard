@@ -43,19 +43,19 @@ public class UnitOfWorkApplicationListener implements ApplicationEventListener {
      *
      * @param sessionFactory a {@link SessionFactory}
      */
-    public UnitOfWorkApplicationListener (SessionFactory sessionFactory) {
+    public UnitOfWorkApplicationListener(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
     }
 
     private static class UnitOfWorkEventListener implements RequestEventListener {
-        private final Map<Method,UnitOfWork> methodMap;
+        private final Map<Method, UnitOfWork> methodMap;
         private final SessionFactory sessionFactory;
         private UnitOfWork unitOfWork;
         private Session session;
 
 
-        public UnitOfWorkEventListener (Map<Method,UnitOfWork> methodMap,
-                                        SessionFactory sessionFactory) {
+        public UnitOfWorkEventListener(Map<Method, UnitOfWork> methodMap,
+                                       SessionFactory sessionFactory) {
             this.methodMap = methodMap;
             this.sessionFactory = sessionFactory;
         }
@@ -78,28 +78,24 @@ public class UnitOfWorkApplicationListener implements ApplicationEventListener {
                         throw th;
                     }
                 }
-            }
-            else if (event.getType() == RequestEvent.Type.RESP_FILTERS_START) {
+            } else if (event.getType() == RequestEvent.Type.RESP_FILTERS_START) {
                 if (this.session != null) {
                     try {
                         commitTransaction();
                     } catch (Exception e) {
                         rollbackTransaction();
                         throw new MappableException(e);
-                    }
-                    finally {
+                    } finally {
                         this.session.close();
                         this.session = null;
                         ManagedSessionContext.unbind(this.sessionFactory);
                     }
                 }
-            }
-            else if (event.getType() == RequestEvent.Type.ON_EXCEPTION) {
+            } else if (event.getType() == RequestEvent.Type.ON_EXCEPTION) {
                 if (this.session != null) {
                     try {
                         rollbackTransaction();
-                    }
-                    finally {
+                    } finally {
                         this.session.close();
                         this.session = null;
                         ManagedSessionContext.unbind(this.sessionFactory);
@@ -139,19 +135,19 @@ public class UnitOfWorkApplicationListener implements ApplicationEventListener {
         }
     }
 
-    private Map<Method,UnitOfWork> methodMap = new HashMap<>();
+    private Map<Method, UnitOfWork> methodMap = new HashMap<>();
 
     @Override
     public void onEvent(ApplicationEvent event) {
         if (event.getType() == ApplicationEvent.Type.INITIALIZATION_APP_FINISHED) {
             for (Resource resource : event.getResourceModel().getResources()) {
                 for (ResourceMethod method : resource.getAllMethods()) {
-                    registerUnitOfWorkAnnotations (method);
+                    registerUnitOfWorkAnnotations(method);
                 }
 
                 for (Resource childResource : resource.getChildResources()) {
                     for (ResourceMethod method : childResource.getAllMethods()) {
-                        registerUnitOfWorkAnnotations (method);
+                        registerUnitOfWorkAnnotations(method);
                     }
                 }
             }
@@ -160,12 +156,10 @@ public class UnitOfWorkApplicationListener implements ApplicationEventListener {
 
     @Override
     public RequestEventListener onRequest(RequestEvent event) {
-        RequestEventListener listener = new UnitOfWorkEventListener (methodMap, sessionFactory);
-
-        return listener;
+        return new UnitOfWorkEventListener(methodMap, sessionFactory);
     }
 
-    private void registerUnitOfWorkAnnotations (ResourceMethod method) {
+    private void registerUnitOfWorkAnnotations(ResourceMethod method) {
         UnitOfWork annotation = method.getInvocable().getDefinitionMethod().getAnnotation(UnitOfWork.class);
 
         if (annotation == null) {

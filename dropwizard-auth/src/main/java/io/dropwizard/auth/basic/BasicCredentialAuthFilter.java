@@ -19,8 +19,10 @@ import java.security.Principal;
 
 @Priority(Priorities.AUTHENTICATION)
 public class BasicCredentialAuthFilter<P extends Principal> extends AuthFilter<BasicCredentials, P> {
-    final private static Logger LOGGER = LoggerFactory.getLogger(BasicCredentialAuthFilter.class);
-    private BasicCredentialAuthFilter() {}
+    private static final Logger LOGGER = LoggerFactory.getLogger(BasicCredentialAuthFilter.class);
+
+    private BasicCredentialAuthFilter() {
+    }
 
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {
@@ -55,8 +57,7 @@ public class BasicCredentialAuthFilter<P extends Principal> extends AuthFilter<B
                     }
                 }
             }
-        }
-        catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             LOGGER.warn("Error decoding credentials", e);
         }
 
@@ -69,11 +70,11 @@ public class BasicCredentialAuthFilter<P extends Principal> extends AuthFilter<B
 
         @Override
         public BasicCredentialAuthFilter<APrincipal> buildAuthFilter() {
-            if(realm == null || authenticator == null || prefix == null || securityContextFunction == null) {
+            if (realm == null || authenticator == null || prefix == null || securityContextFunction == null) {
                 throw new RuntimeException("Required auth filter parameters not set");
             }
 
-            BasicCredentialAuthFilter<APrincipal> basicCredentialAuthFilter= new BasicCredentialAuthFilter<>();
+            BasicCredentialAuthFilter<APrincipal> basicCredentialAuthFilter = new BasicCredentialAuthFilter<>();
             basicCredentialAuthFilter.setRealm(realm);
             basicCredentialAuthFilter.setAuthenticator(authenticator);
             basicCredentialAuthFilter.setPrefix(prefix);

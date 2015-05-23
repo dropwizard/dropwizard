@@ -38,7 +38,7 @@ public class FreemarkerViewRenderer implements ViewRenderer {
             configuration.loadBuiltInEncodingMap();
             configuration.setDefaultEncoding(Charsets.UTF_8.name());
             configuration.setClassForTemplateLoading(key, "/");
-            for(Map.Entry<String, String> entry : baseConfig.entrySet()) {
+            for (Map.Entry<String, String> entry : baseConfig.entrySet()) {
                 configuration.setSetting(entry.getKey(), entry.getValue());
             }
             return configuration;
@@ -66,7 +66,7 @@ public class FreemarkerViewRenderer implements ViewRenderer {
     @Override
     public void render(View view,
                        Locale locale,
-                       OutputStream output) throws IOException, WebApplicationException {
+                       OutputStream output) throws IOException {
         try {
             final Configuration configuration = configurationCache.getUnchecked(view.getClass());
             final Charset charset = view.getCharset().or(Charset.forName(configuration.getEncoding(locale)));

@@ -174,18 +174,17 @@ public class ResourceTestRule implements TestRule {
                 try {
                     test = new JerseyTest() {
                         @Override
-                        protected TestContainerFactory getTestContainerFactory() throws TestContainerException {
+                        protected TestContainerFactory getTestContainerFactory() {
                             return testContainerFactory;
                         }
 
                         @Override
                         protected DeploymentContext configureDeployment() {
                             final ResourceTestResourceConfig resourceConfig = new ResourceTestResourceConfig(ruleId, rule);
-                            ServletDeploymentContext deploymentContext = ServletDeploymentContext.builder(resourceConfig)
+                            return ServletDeploymentContext.builder(resourceConfig)
                                     .initParam(ServletProperties.JAXRS_APPLICATION_CLASS, ResourceTestResourceConfig.class.getName())
                                     .initParam(ResourceTestResourceConfig.RULE_ID, ruleId)
                                     .build();
-                            return deploymentContext;
                         }
 
                         @Override

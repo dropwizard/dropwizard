@@ -83,11 +83,11 @@ public abstract class AbstractLiquibaseCommand<T extends Configuration> extends 
         final String catalogName = namespace.getString("catalog");
         final String schemaName = namespace.getString("schema");
 
-        if(database.supportsCatalogs() && catalogName != null) {
+        if (database.supportsCatalogs() && catalogName != null) {
             database.setDefaultCatalogName(catalogName);
             database.setOutputDefaultCatalog(true);
         }
-        if(database.supportsSchemas() && schemaName != null) {
+        if (database.supportsSchemas() && schemaName != null) {
             database.setDefaultSchemaName(schemaName);
             database.setOutputDefaultSchema(true);
         }

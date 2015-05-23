@@ -128,8 +128,12 @@ public class Duration implements Comparable<Duration> {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) { return true; }
-        if ((obj == null) || (getClass() != obj.getClass())) { return false; }
+        if (this == obj) {
+            return true;
+        }
+        if ((obj == null) || (getClass() != obj.getClass())) {
+            return false;
+        }
         final Duration duration = (Duration) obj;
         return (count == duration.count) && (unit == duration.unit);
 

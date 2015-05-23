@@ -46,7 +46,7 @@ public class ChainedAuthFilter<C, P extends Principal> extends AuthFilter<C, P> 
                     return;
                 }
             } catch (WebApplicationException e) {
-                if(firstException == null) {
+                if (firstException == null) {
                     firstException = e;
                 }
             }

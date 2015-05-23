@@ -18,8 +18,9 @@ import java.security.Principal;
 
 @Priority(Priorities.AUTHENTICATION)
 public class OAuthCredentialAuthFilter<P extends Principal> extends AuthFilter<String, P> {
-    final private static Logger LOGGER = LoggerFactory.getLogger(OAuthCredentialAuthFilter.class);
-    private OAuthCredentialAuthFilter() {}
+    private static final Logger LOGGER = LoggerFactory.getLogger(OAuthCredentialAuthFilter.class);
+    private OAuthCredentialAuthFilter() {
+    }
 
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {
@@ -53,7 +54,7 @@ public class OAuthCredentialAuthFilter<P extends Principal> extends AuthFilter<S
             extends AuthFilterBuilder<String, APrincipal, OAuthCredentialAuthFilter<APrincipal>, AAuthenticator> {
         @Override
         public OAuthCredentialAuthFilter<APrincipal> buildAuthFilter() {
-            if(realm == null || authenticator == null || prefix == null || securityContextFunction == null) {
+            if (realm == null || authenticator == null || prefix == null || securityContextFunction == null) {
                 throw new RuntimeException("Required auth filter parameters not set");
             }
 

@@ -26,6 +26,9 @@ public class BootstrapLogging {
     private static boolean bootstrapped = false;
     private static final Lock bootstrappingLock = new ReentrantLock();
 
+    private BootstrapLogging() {
+    }
+
     // initially configure for WARN+ console logging
     public static void bootstrap() {
         bootstrap(Level.WARN);

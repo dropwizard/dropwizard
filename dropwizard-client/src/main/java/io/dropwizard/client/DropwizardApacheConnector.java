@@ -55,8 +55,8 @@ import static com.google.common.base.MoreObjects.firstNonNull;
  */
 public class DropwizardApacheConnector implements Connector {
 
-    private static final String APACHE_HTTP_CLIENT_VERSION = VersionInfo.loadVersionInfo
-            ("org.apache.http.client", DropwizardApacheConnector.class.getClassLoader())
+    private static final String APACHE_HTTP_CLIENT_VERSION = VersionInfo
+            .loadVersionInfo("org.apache.http.client", DropwizardApacheConnector.class.getClassLoader())
             .getRelease();
 
     /**
@@ -83,7 +83,7 @@ public class DropwizardApacheConnector implements Connector {
      * {@inheritDoc}
      */
     @Override
-    public ClientResponse apply(ClientRequest jerseyRequest) throws ProcessingException {
+    public ClientResponse apply(ClientRequest jerseyRequest) {
         try {
             final HttpUriRequest apacheRequest = buildApacheRequest(jerseyRequest);
             final CloseableHttpResponse apacheResponse = client.execute(apacheRequest);
@@ -265,7 +265,7 @@ public class DropwizardApacheConnector implements Connector {
          * </p>
          */
         @Override
-        public InputStream getContent() throws IOException, IllegalStateException {
+        public InputStream getContent() throws IOException {
             // Shouldn't be called
             throw new UnsupportedOperationException("Reading from the entity is not supported");
         }
@@ -348,7 +348,7 @@ public class DropwizardApacheConnector implements Connector {
          * </p>
          */
         @Override
-        public InputStream getContent() throws IOException, IllegalStateException {
+        public InputStream getContent() throws IOException {
             // Shouldn't be called
             throw new UnsupportedOperationException("Reading from the entity is not supported");
         }

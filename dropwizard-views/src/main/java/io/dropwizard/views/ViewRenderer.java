@@ -30,7 +30,7 @@ public interface ViewRenderer {
      */
     void render(View view,
                 Locale locale,
-                OutputStream output) throws IOException, WebApplicationException;
+                OutputStream output) throws IOException;
 
     /**
       * options for configuring the view renderer

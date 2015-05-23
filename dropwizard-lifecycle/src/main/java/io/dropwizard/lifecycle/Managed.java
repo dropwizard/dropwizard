@@ -10,12 +10,12 @@ public interface Managed {
      *
      * @throws Exception if something goes wrong; this will halt the application startup.
      */
-    public void start() throws Exception;
+    void start() throws Exception;
 
     /**
      * Stops the object. Called <i>after</i> the application is no longer accepting requests.
      *
      * @throws Exception if something goes wrong.
      */
-    public void stop() throws Exception;
+    void stop() throws Exception;
 }
