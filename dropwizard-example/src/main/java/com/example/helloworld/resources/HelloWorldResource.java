@@ -39,10 +39,18 @@ public class HelloWorldResource {
     public void receiveHello(@Valid Saying saying) {
         LOGGER.info("Received a saying: {}", saying);
     }
-    
+
     @GET
     @Path("/date")
-    public void receiveDate(@QueryParam("date") DateTimeParam dateTimeParam) {
-        LOGGER.info("Received a saying: {}", dateTimeParam.get());
+    @Produces(MediaType.TEXT_PLAIN)
+    public String receiveDate(@QueryParam("date") Optional<DateTimeParam> dateTimeParam) {
+        if (dateTimeParam.isPresent()) {
+            final DateTimeParam actualDateTimeParam = dateTimeParam.get();
+            LOGGER.info("Received a date: {}", actualDateTimeParam);
+            return actualDateTimeParam.get().toString();
+        } else {
+            LOGGER.warn("No received date");
+            return null;
+        }
     }
 }
