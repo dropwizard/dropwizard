@@ -959,6 +959,9 @@ Metrics
 Every resource method can be annotated with ``@Timed``, ``@Metered``, and ``@ExceptionMetered``.
 Dropwizard augments Jersey to automatically record runtime information about your resource methods.
 
+* ``@Timed`` measures the duration of requests to a resource
+* ``@Metered`` measures the rate at which the resource is accessed
+* ``@ExceptionMetered`` measures how often exceptions occur processing the resource
 
 .. _man-core-resources-parameters:
 
