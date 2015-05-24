@@ -57,6 +57,21 @@ public class DropwizardResourceConfigTest {
     }
 
     @Test
+    public void combinesAlRegisteredClassesPathOnMethodLevel() {
+        rc.register(new TestResource());
+        rc.register(new ResourcePathOnMethodLevel());
+
+        assertThat(rc.allClasses()).contains(
+                TestResource.class,
+                ResourcePathOnMethodLevel.class
+        );
+
+        assertThat(rc.getEndpointsInfo())
+                .contains("GET     /bar (io.dropwizard.jersey.DropwizardResourceConfigTest.ResourcePathOnMethodLevel)")
+                .contains("GET     /dummy (io.dropwizard.jersey.DropwizardResourceConfigTest.TestResource)");
+    }
+
+    @Test
     public void logsNoInterfaces() {
         rc.packages(getClass().getPackage().getName());
 
@@ -123,6 +138,13 @@ public class DropwizardResourceConfigTest {
     public static interface ResourceInterface {
         @GET
         public String bar();
+    }
+
+    public static class ResourcePathOnMethodLevel {
+        @GET @Path("/bar")
+        public String bar() {
+            return "";
+        }
     }
 
     public static class ImplementingResource implements ResourceInterface {
