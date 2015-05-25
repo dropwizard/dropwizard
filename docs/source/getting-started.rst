@@ -329,7 +329,7 @@ To model this representation, we'll create a representation class:
 
 .. code-block:: java
 
-    package com.example.helloworld.core;
+    package com.example.helloworld.api;
 
     import com.fasterxml.jackson.annotation.JsonProperty;
     import org.hibernate.validator.constraints.Length;
@@ -392,7 +392,7 @@ instances from the URI ``/hello-world``, so our resource class will look like th
 
     package com.example.helloworld.resources;
 
-    import com.example.helloworld.core.Saying;
+    import com.example.helloworld.api.Saying;
     import com.google.common.base.Optional;
     import com.codahale.metrics.annotation.Timed;
 
