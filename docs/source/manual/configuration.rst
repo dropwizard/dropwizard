@@ -6,69 +6,6 @@ Dropwizard Configuration Reference
 
 .. highlight:: text
 
-.. rubric:: The ``dropwizard-configuration`` module provides you with a polymorphic configuration
-            mechanism, meaning that a particular section of your configuration file can be implemented
-            using one or more configuration classes.
-
-To use this capability for your own configuration classes, create a top-level configuration interface or class that
-implements ``Discoverable`` and add the name of that class to ``META-INF/services/io.dropwizard.jackson.Discoverable``.
-Make sure to use `Jackson polymorphic deserialization`_ annotations appropriately.
-
-.. _Jackson polymorphic deserialization: http://wiki.fasterxml.com/JacksonPolymorphicDeserialization
-
-.. code-block:: java
-
-    @JsonTypeInfo(use = Id.NAME, include = As.PROPERTY, property = "type")
-    interface WidgetFactory extends Discoverable {
-        Widget createWidget();
-    }
-
-Then create subtypes of the top-level type corresponding to each alternative, and add their names to
-``META-INF/services/WidgetFactory``.
-
-.. code-block:: java
-
-    @JsonTypeName("hammer")
-    public class HammerFactory implements WidgetFactory {
-        @JsonProperty
-        private int weight = 10;
-
-        @Override
-        public Hammer createWidget() {
-            return new Hammer(weight);
-        }
-    }
-
-    @JsonTypeName("chisel")
-    public class ChiselFactory implements WidgetFactory {
-        @JsonProperty
-        private float radius = 1;
-
-        @Override
-        public Chisel createWidget() {
-            return new Chisel(radius);
-        }
-    }
-
-Now you can use ``WidgetFactory`` objects in your application's configuration.
-
-.. code-block:: java
-
-    public class MyConfiguration extends Configuration {
-        @JsonProperty
-        @NotNull
-        @Valid
-        private List<WidgetFactory> widgets;
-    }
-
-.. code-block:: yaml
-
-    widgets:
-      - type: hammer
-        weight: 20
-      - type: chisel
-        radius: 0.4
-
 .. _man-configuration-servers:
 
 Servers
@@ -1052,3 +989,71 @@ evictionInterval                5 seconds                The amount of time to s
 validationInterval              30 seconds               To avoid excess validation, only run validation once every
                                                          interval.
 ============================    =====================    ===============================================================
+
+.. _man-configuration-polymorphic:
+
+Polymorphic configuration
+========
+
+.. rubric:: The ``dropwizard-configuration`` module provides you with a polymorphic configuration
+            mechanism, meaning that a particular section of your configuration file can be implemented
+            using one or more configuration classes.
+
+To use this capability for your own configuration classes, create a top-level configuration interface or class that
+implements ``Discoverable`` and add the name of that class to ``META-INF/services/io.dropwizard.jackson.Discoverable``.
+Make sure to use `Jackson polymorphic deserialization`_ annotations appropriately.
+
+.. _Jackson polymorphic deserialization: http://wiki.fasterxml.com/JacksonPolymorphicDeserialization
+
+.. code-block:: java
+
+    @JsonTypeInfo(use = Id.NAME, include = As.PROPERTY, property = "type")
+    interface WidgetFactory extends Discoverable {
+        Widget createWidget();
+    }
+
+Then create subtypes of the top-level type corresponding to each alternative, and add their names to
+``META-INF/services/WidgetFactory``.
+
+.. code-block:: java
+
+    @JsonTypeName("hammer")
+    public class HammerFactory implements WidgetFactory {
+        @JsonProperty
+        private int weight = 10;
+
+        @Override
+        public Hammer createWidget() {
+            return new Hammer(weight);
+        }
+    }
+
+    @JsonTypeName("chisel")
+    public class ChiselFactory implements WidgetFactory {
+        @JsonProperty
+        private float radius = 1;
+
+        @Override
+        public Chisel createWidget() {
+            return new Chisel(radius);
+        }
+    }
+
+Now you can use ``WidgetFactory`` objects in your application's configuration.
+
+.. code-block:: java
+
+    public class MyConfiguration extends Configuration {
+        @JsonProperty
+        @NotNull
+        @Valid
+        private List<WidgetFactory> widgets;
+    }
+
+.. code-block:: yaml
+
+    widgets:
+      - type: hammer
+        weight: 20
+      - type: chisel
+        radius: 0.4
