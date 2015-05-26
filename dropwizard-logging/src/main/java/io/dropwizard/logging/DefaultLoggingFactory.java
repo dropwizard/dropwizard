@@ -29,7 +29,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @JsonTypeName("default")
 public class DefaultLoggingFactory implements LoggingFactory {
     private static final ReentrantLock MBEAN_REGISTRATION_LOCK = new ReentrantLock();
-    private static final ReentrantLock CONFIGURE_LOGGING_LEVEL_LOCK = new ReentrantLock();
+    private static final ReentrantLock CHANGE_LOGGER_CONTEXT_LOCK = new ReentrantLock();
 
     @NotNull
     private Level level = Level.INFO;
@@ -102,12 +102,12 @@ public class DefaultLoggingFactory implements LoggingFactory {
     public void configure(MetricRegistry metricRegistry, String name) {
         LoggingUtil.hijackJDKLogging();
 
-        CONFIGURE_LOGGING_LEVEL_LOCK.lock();
+        CHANGE_LOGGER_CONTEXT_LOCK.lock();
         final Logger root;
         try {
             root = configureLevels();
         } finally {
-            CONFIGURE_LOGGING_LEVEL_LOCK.unlock();
+            CHANGE_LOGGER_CONTEXT_LOCK.unlock();
         }
 
         for (AppenderFactory output : appenders) {
@@ -142,7 +142,13 @@ public class DefaultLoggingFactory implements LoggingFactory {
     }
 
     public void stop() {
-        loggerContext.stop();
+        // Should acquire the lock to avoid concurrent listener changes
+        CHANGE_LOGGER_CONTEXT_LOCK.lock();
+        try {
+            loggerContext.stop();
+        } finally {
+            CHANGE_LOGGER_CONTEXT_LOCK.unlock();
+        }
     }
 
     private void configureInstrumentation(Logger root, MetricRegistry metricRegistry) {
