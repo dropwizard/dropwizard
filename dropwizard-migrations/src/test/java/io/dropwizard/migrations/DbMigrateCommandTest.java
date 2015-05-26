@@ -3,6 +3,7 @@ package io.dropwizard.migrations;
 import com.google.common.collect.ImmutableMap;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.db.DatabaseConfiguration;
+import net.jcip.annotations.NotThreadSafe;
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
@@ -17,6 +18,7 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@NotThreadSafe
 public class DbMigrateCommandTest {
 
     private DbMigrateCommand<TestMigrateConfiguration> migrateCommand = new DbMigrateCommand<>(
