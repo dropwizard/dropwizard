@@ -12,7 +12,6 @@ import org.mockito.InOrder;
 import java.security.Principal;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
@@ -103,17 +102,14 @@ public class CachingAuthenticatorTest {
     @Test
     public void calculatesCacheStats() throws Exception {
         cached.authenticate("credentials1");
-        assertThat(cached.stats().loadCount()).isEqualTo(1);
+        assertThat(cached.stats().loadCount()).isEqualTo(0);
+        assertThat(cached.size()).isEqualTo(1);
     }
 
     @Test
     public void shouldNotCacheAbsentPrincipals() throws Exception {
         when(underlying.authenticate(anyString())).thenReturn(Optional.<Principal>absent());
-        try {
-            cached.authenticate("credentials");
-            failBecauseExceptionWasNotThrown(AuthenticationException.class);
-        } catch (AuthenticationException e) {
-        }
+        assertThat(cached.authenticate("credentials")).isEqualTo(Optional.absent());
         verify(underlying).authenticate("credentials");
         assertThat(cached.size()).isEqualTo(0);
     }
