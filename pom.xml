@@ -483,6 +483,12 @@
                         <format>xml</format>
                     </formats>
                     <aggregate>true</aggregate>
+                    <instrumentation>
+                        <excludes>
+                            <exclude>io/dropwizard/benchmarks/**/*.class</exclude>
+                            <exclude>org/openjdk/jmh/**/*.class</exclude>
+                        </excludes>
+                    </instrumentation>
                 </configuration>
                 <dependencies>
                     <dependency>
