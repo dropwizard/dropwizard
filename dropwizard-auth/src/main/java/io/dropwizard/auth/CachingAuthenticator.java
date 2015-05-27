@@ -60,12 +60,7 @@ public class CachingAuthenticator<C, P extends Principal> implements Authenticat
             @Override
             public Optional<P> load(C key) throws Exception {
                 cacheMisses.mark();
-                final Optional<P> result = underlying.authenticate(key);
-                // only cache present values
-                if (!result.isPresent()) {
-                    throw new AuthenticationException("Failed to load security context into cache");
-                }
-                return result;
+                return underlying.authenticate(key);
             }
         });
     }
