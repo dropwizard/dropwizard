@@ -61,6 +61,13 @@ public class ConstraintViolationExceptionMapperTest extends JerseyTest {
 
         String ret = "{\"errors\":[\"query param name length must be between 3 and 2147483647\"]}";
         assertThat(response.readEntity(String.class)).isEqualTo(ret);
+
+        // Send another request to trigger reflection cache
+        final Response cache = target("/valid/bar")
+                .queryParam("name", "hi").request().get();
+        assertThat(cache.getStatus()).isEqualTo(400);
+        assertThat(cache.readEntity(String.class)).isEqualTo(ret);
+
     }
 
     @Test
@@ -159,5 +166,22 @@ public class ConstraintViolationExceptionMapperTest extends JerseyTest {
 
         String ret = "{\"errors\":[\"matrix param bob may not be empty\"]}";
         assertThat(response.readEntity(String.class)).isEqualTo(ret);
+    }
+
+    @Test
+    public void functionWithSameNameReturnDifferentErrors() throws Exception {
+        // This test is to make sure that functions with the same name and
+        // number of parameters (but different parameter types), don't return
+        // the same validation error due to any caching effects
+        final Response response = target("/valid/head")
+                .request().get();
+
+        String ret = "{\"errors\":[\"header cheese may not be empty\"]}";
+        assertThat(response.readEntity(String.class)).isEqualTo(ret);
+
+        final Response response2 = target("/valid/headCopy")
+                .request().get();
+        String ret2 = "{\"errors\":[\"query param cheese may not be null\"]}";
+        assertThat(response2.readEntity(String.class)).isEqualTo(ret2);
     }
 }

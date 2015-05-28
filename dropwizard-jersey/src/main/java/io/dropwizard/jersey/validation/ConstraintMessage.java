@@ -2,6 +2,7 @@ package io.dropwizard.jersey.validation;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Maps;
 import io.dropwizard.validation.ConstraintViolations;
 import io.dropwizard.validation.ValidationMethod;
 import org.apache.commons.lang3.StringUtils;
@@ -17,12 +18,25 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.concurrent.ConcurrentMap;
 
 public class ConstraintMessage {
+    private static final ConcurrentMap<Path, String> reflectCache = Maps.newConcurrentMap();
+
     /**
      * Gets the human friendly location of where the violation was raised.
      */
     public static String getMessage(ConstraintViolation<?> v) {
+        if (reflectCache.containsKey(v.getPropertyPath())) {
+            return reflectCache.get(v.getPropertyPath());
+        }
+
+        String message = calculateMessage(v);
+        reflectCache.put(v.getPropertyPath(), message);
+        return message;
+    }
+
+    private static String calculateMessage(ConstraintViolation<?> v) {
         final Optional<String> returnValueName = getMethodReturnValueName(v);
         if (returnValueName.isPresent()) {
             final String name = isValidationMethod(v) ?

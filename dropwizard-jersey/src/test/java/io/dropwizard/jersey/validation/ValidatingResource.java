@@ -1,5 +1,6 @@
 package io.dropwizard.jersey.validation;
 
+import io.dropwizard.jersey.params.IntParam;
 import io.dropwizard.validation.Validated;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
@@ -39,6 +40,12 @@ public class ValidatingResource {
     @Path("head")
     public String heads(@HeaderParam("cheese") @NotEmpty String secretSauce) {
         return secretSauce;
+    }
+
+    @GET
+    @Path("headCopy")
+    public String heads(@QueryParam("cheese") @NotNull IntParam secretSauce) {
+        return secretSauce.get().toString();
     }
 
     @GET
