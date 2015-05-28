@@ -1,6 +1,7 @@
 package io.dropwizard.benchmarks.jersey;
 
 import io.dropwizard.jersey.validation.ConstraintMessage;
+import io.dropwizard.logging.BootstrapLogging;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.runner.Runner;
@@ -21,6 +22,10 @@ import static org.apache.commons.lang3.reflect.MethodUtils.getAccessibleMethod;
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 @State(Scope.Benchmark)
 public class ConstraintViolationBenchmark {
+
+    static {
+        BootstrapLogging.bootstrap();
+    }
 
     public static class Resource {
         public String paramFunc(@HeaderParam("cheese") @NotEmpty String secretSauce) {
