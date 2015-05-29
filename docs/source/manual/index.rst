@@ -18,6 +18,7 @@ User Manual
     hibernate
     auth
     forms
+    validation
     views
     scala
     testing
