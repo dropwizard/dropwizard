@@ -7,10 +7,10 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.jersey.setup.JerseyContainerHolder;
 import io.dropwizard.jersey.setup.JerseyEnvironment;
+import io.dropwizard.jersey.setup.JerseyServletContainer;
 import io.dropwizard.jetty.MutableServletContextHandler;
 import io.dropwizard.jetty.setup.ServletEnvironment;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
-import org.glassfish.jersey.servlet.ServletContainer;
 
 import javax.servlet.Servlet;
 import javax.validation.Validator;
@@ -76,7 +76,7 @@ public class Environment {
 
         final DropwizardResourceConfig jerseyConfig = new DropwizardResourceConfig(metricRegistry);
 
-        this.jerseyServletContainer = new JerseyContainerHolder(new ServletContainer(jerseyConfig));
+        this.jerseyServletContainer = new JerseyContainerHolder(new JerseyServletContainer(jerseyConfig));
         this.jerseyEnvironment = new JerseyEnvironment(jerseyServletContainer, jerseyConfig);
 
 
