@@ -9,6 +9,7 @@ import com.google.common.annotations.VisibleForTesting;
 import io.dropwizard.client.proxy.AuthConfiguration;
 import io.dropwizard.client.proxy.NonProxyListProxyRoutePlanner;
 import io.dropwizard.client.proxy.ProxyConfiguration;
+import io.dropwizard.lifecycle.Managed;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.util.Duration;
 import org.apache.http.ConnectionReuseStrategy;
@@ -61,6 +62,7 @@ public class HttpClientBuilder {
 
     private final MetricRegistry metricRegistry;
     private String environmentName;
+    private Environment environment;
     private HttpClientConfiguration configuration = new HttpClientConfiguration();
     private DnsResolver resolver = new SystemDefaultDnsResolver();
     private HttpRequestRetryHandler httpRequestRetryHandler;
@@ -80,6 +82,7 @@ public class HttpClientBuilder {
     public HttpClientBuilder(Environment environment) {
         this(environment.metrics());
         name(environment.getName());
+        this.environment = environment;
     }
 
     /**
@@ -177,7 +180,21 @@ public class HttpClientBuilder {
      * @return an {@link CloseableHttpClient}
      */
     public CloseableHttpClient build(String name) {
-        return buildWithDefaultRequestConfiguration(name).getClient();
+        final CloseableHttpClient client = buildWithDefaultRequestConfiguration(name).getClient();
+        // If the environment is present, we tie the client with the server lifecycle
+        if (environment != null) {
+            environment.lifecycle().manage(new Managed() {
+                @Override
+                public void start() throws Exception {
+                }
+
+                @Override
+                public void stop() throws Exception {
+                    client.close();
+                }
+            });
+        }
+        return client;
     }
 
     /**
