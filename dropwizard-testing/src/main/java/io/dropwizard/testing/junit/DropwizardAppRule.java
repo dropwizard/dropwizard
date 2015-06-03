@@ -1,6 +1,7 @@
 package io.dropwizard.testing.junit;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Optional;
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
 import io.dropwizard.lifecycle.Managed;
@@ -29,8 +30,13 @@ public class DropwizardAppRule<C extends Configuration> extends ExternalResource
     public DropwizardAppRule(Class<? extends Application<C>> applicationClass,
                              @Nullable String configPath,
                              ConfigOverride... configOverrides) {
-        this.testSupport = new DropwizardTestSupport<>(applicationClass, configPath, configOverrides);
+        this(applicationClass, configPath, Optional.<String>absent(), configOverrides);
+    }
 
+    public DropwizardAppRule(Class<? extends Application<C>> applicationClass, String configPath,
+                                 Optional<String> customPropertyPrefix, ConfigOverride... configOverrides) {
+        this.testSupport = new DropwizardTestSupport<>(applicationClass, configPath, customPropertyPrefix,
+                configOverrides);
     }
 
     public DropwizardAppRule(DropwizardTestSupport<C> testSupport) {
@@ -38,7 +44,7 @@ public class DropwizardAppRule<C extends Configuration> extends ExternalResource
     }
 
     public DropwizardAppRule<C> addListener(final ServiceListener<C> listener) {
-        this.testSupport.addListener(new DropwizardTestSupport.ServiceListener<C>(){
+        this.testSupport.addListener(new DropwizardTestSupport.ServiceListener<C>() {
 
             public void onRun(C configuration, Environment environment, DropwizardTestSupport<C> rule) throws Exception {
                 listener.onRun(configuration, environment, DropwizardAppRule.this);
@@ -111,7 +117,7 @@ public class DropwizardAppRule<C extends Configuration> extends ExternalResource
         }
     }
 
-    public DropwizardTestSupport<C> getTestSupport(){
+    public DropwizardTestSupport<C> getTestSupport() {
         return testSupport;
     }
 }

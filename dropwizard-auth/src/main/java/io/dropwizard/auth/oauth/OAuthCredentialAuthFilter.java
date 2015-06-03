@@ -18,8 +18,9 @@ import java.security.Principal;
 
 @Priority(Priorities.AUTHENTICATION)
 public class OAuthCredentialAuthFilter<P extends Principal> extends AuthFilter<String, P> {
-    final private static Logger LOGGER = LoggerFactory.getLogger(OAuthCredentialAuthFilter.class);
-    private OAuthCredentialAuthFilter() {}
+    private static final Logger LOGGER = LoggerFactory.getLogger(OAuthCredentialAuthFilter.class);
+    private OAuthCredentialAuthFilter() {
+    }
 
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {
@@ -50,19 +51,19 @@ public class OAuthCredentialAuthFilter<P extends Principal> extends AuthFilter<S
     }
 
     public static class Builder<APrincipal extends Principal, AAuthenticator extends Authenticator<String, APrincipal>>
-            extends AuthFilter.AuthHandlerBuilder<String, APrincipal, OAuthCredentialAuthFilter<APrincipal>, AAuthenticator> {
+            extends AuthFilterBuilder<String, APrincipal, OAuthCredentialAuthFilter<APrincipal>, AAuthenticator> {
         @Override
-        public OAuthCredentialAuthFilter<APrincipal> buildAuthHandler() {
-            if(realm == null || authenticator == null || prefix == null || securityContextFunction == null) {
+        public OAuthCredentialAuthFilter<APrincipal> buildAuthFilter() {
+            if (realm == null || authenticator == null || prefix == null || securityContextFunction == null) {
                 throw new RuntimeException("Required auth filter parameters not set");
             }
 
-            OAuthCredentialAuthFilter<APrincipal> oauthCredentialAuthHandler = new OAuthCredentialAuthFilter<>();
-            oauthCredentialAuthHandler.setRealm(realm);
-            oauthCredentialAuthHandler.setAuthenticator(authenticator);
-            oauthCredentialAuthHandler.setPrefix(prefix);
-            oauthCredentialAuthHandler.setSecurityContextFunction(securityContextFunction);
-            return oauthCredentialAuthHandler;
+            OAuthCredentialAuthFilter<APrincipal> oauthCredentialAuthFilter = new OAuthCredentialAuthFilter<>();
+            oauthCredentialAuthFilter.setRealm(realm);
+            oauthCredentialAuthFilter.setAuthenticator(authenticator);
+            oauthCredentialAuthFilter.setPrefix(prefix);
+            oauthCredentialAuthFilter.setSecurityContextFunction(securityContextFunction);
+            return oauthCredentialAuthFilter;
         }
     }
 }

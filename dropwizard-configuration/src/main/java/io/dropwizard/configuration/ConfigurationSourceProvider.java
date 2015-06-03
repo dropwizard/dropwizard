@@ -16,6 +16,6 @@ public interface ConfigurationSourceProvider {
      * @return an {@link InputStream}
      * @throws IOException if there is an error reading the data at {@code path}
      */
-    public InputStream open(String path) throws IOException;
+    InputStream open(String path) throws IOException;
 
 }

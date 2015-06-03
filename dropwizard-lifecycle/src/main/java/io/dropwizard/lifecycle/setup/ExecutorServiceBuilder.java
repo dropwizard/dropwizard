@@ -89,7 +89,7 @@ public class ExecutorServiceBuilder {
     }
 
     @VisibleForTesting
-    static void setLog(Logger newLog){
+    static void setLog(Logger newLog) {
        log = newLog;
     }
 }

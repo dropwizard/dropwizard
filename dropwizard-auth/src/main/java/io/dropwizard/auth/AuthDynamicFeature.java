@@ -17,7 +17,7 @@ public class AuthDynamicFeature implements DynamicFeature {
     @Override
     public void configure(ResourceInfo resourceInfo, FeatureContext context) {
         AnnotatedMethod am = new AnnotatedMethod(resourceInfo.getResourceMethod());
-        if(am.isAnnotationPresent(RolesAllowed.class) || am.isAnnotationPresent(DenyAll.class)) {
+        if (am.isAnnotationPresent(RolesAllowed.class) || am.isAnnotationPresent(DenyAll.class)) {
             context.register(authFilter);
         }
     }

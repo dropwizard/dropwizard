@@ -35,7 +35,7 @@ public class JacksonMessageBodyProvider extends JacksonJaxbJsonProvider {
     /**
      * The default group array used in case any of the validate methods is called without a group.
      */
-    private static final Class<?>[] DEFAULT_GROUP_ARRAY = new Class<?>[]{ Default.class };
+    private static final Class<?>[] DEFAULT_GROUP_ARRAY = new Class<?>[]{Default.class};
     private final ObjectMapper mapper;
     private final Validator validator;
 
@@ -69,7 +69,7 @@ public class JacksonMessageBodyProvider extends JacksonJaxbJsonProvider {
     }
 
     private Object validate(Annotation[] annotations, Object value) {
-        if(null == value) {
+        if (null == value) {
             throw new ConstraintViolationException("The request entity was empty",
                     Collections.<ConstraintViolation<Object>>emptySet());
         }
@@ -79,15 +79,15 @@ public class JacksonMessageBodyProvider extends JacksonJaxbJsonProvider {
         if (classes != null) {
             Set<ConstraintViolation<Object>> violations = null;
 
-            if(value instanceof Map) {
-                violations = validate(((Map)value).values(), classes);
-            } else if(value instanceof Iterable) {
-                violations = validate((Iterable)value, classes);
-            } else if(value.getClass().isArray()) {
+            if (value instanceof Map) {
+                violations = validate(((Map) value).values(), classes);
+            } else if (value instanceof Iterable) {
+                violations = validate((Iterable) value, classes);
+            } else if (value.getClass().isArray()) {
                 violations = new HashSet<>();
 
                 Object[] values = (Object[]) value;
-                for(Object item : values) {
+                for (Object item : values) {
                     violations.addAll(validator.validate(item, classes));
                 }
             } else {
@@ -108,7 +108,7 @@ public class JacksonMessageBodyProvider extends JacksonJaxbJsonProvider {
 
     private Set<ConstraintViolation<Object>> validate(Iterable values, Class<?>[] classes) {
         Set<ConstraintViolation<Object>> violations = new HashSet<>();
-        for(Object value : values) {
+        for (Object value : values) {
             violations.addAll(validator.validate(value, classes));
         }
 
@@ -120,7 +120,7 @@ public class JacksonMessageBodyProvider extends JacksonJaxbJsonProvider {
             if (annotation.annotationType() == Valid.class) {
                 return DEFAULT_GROUP_ARRAY;
             } else if (annotation.annotationType() == Validated.class) {
-                return  ((Validated) annotation).value();
+                return ((Validated) annotation).value();
             }
         }
         return null;

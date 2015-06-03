@@ -28,22 +28,20 @@ public class AllowedMethodsFilter implements Filter {
         final String allowedMethodsConfig = config.getInitParameter(ALLOWED_METHODS_PARAM);
         if (allowedMethodsConfig == null) {
             allowedMethods.addAll(DEFAULT_ALLOWED_METHODS);
-        }
-        else {
+        } else {
             allowedMethods.addAll(Arrays.asList(allowedMethodsConfig.split(",")));
         }
     }
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        handle((HttpServletRequest)request, (HttpServletResponse)response, chain);
+        handle((HttpServletRequest) request, (HttpServletResponse) response, chain);
     }
 
     private void handle(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws IOException, ServletException {
         if (allowedMethods.contains(request.getMethod())) {
             chain.doFilter(request, response);
-        }
-        else {
+        } else {
             LOG.debug("Request with disallowed method {} blocked", request.getMethod());
             response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
         }

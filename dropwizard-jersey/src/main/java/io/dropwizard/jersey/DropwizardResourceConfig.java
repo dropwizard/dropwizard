@@ -45,7 +45,6 @@ public class DropwizardResourceConfig extends ResourceConfig {
         this(true, null);
     }
 
-    @SuppressWarnings("unchecked")
     public DropwizardResourceConfig(boolean testOnly, MetricRegistry metricRegistry) {
         super();
 
@@ -184,6 +183,9 @@ public class DropwizardResourceConfig extends ResourceConfig {
         }
 
         private String normalizePath(String basePath, String path) {
+            if (path == null) {
+                return basePath;
+            }
             if (basePath.endsWith("/")) {
                 return path.startsWith("/") ? basePath + path.substring(1) : basePath + path;
             }
@@ -221,7 +223,7 @@ public class DropwizardResourceConfig extends ResourceConfig {
     }
 
     private static class ComponentLoggingListener implements ApplicationEventListener {
-        final DropwizardResourceConfig config;
+        private final DropwizardResourceConfig config;
 
         public ComponentLoggingListener(DropwizardResourceConfig config) {
             this.config = config;
@@ -230,7 +232,7 @@ public class DropwizardResourceConfig extends ResourceConfig {
         @Override
         public void onEvent(ApplicationEvent event) {
             if (event.getType() == ApplicationEvent.Type.INITIALIZATION_APP_FINISHED) {
-                this.config.logComponents();
+                config.logComponents();
             }
         }
 

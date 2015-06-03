@@ -4,6 +4,7 @@ import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheckRegistry;
 import com.google.common.collect.ImmutableMultimap;
 import io.dropwizard.jetty.MutableServletContextHandler;
+import io.dropwizard.logging.BootstrapLogging;
 import io.dropwizard.servlets.tasks.Task;
 import org.eclipse.jetty.server.Server;
 import org.junit.Test;
@@ -14,6 +15,10 @@ import java.io.PrintWriter;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class AdminEnvironmentTest {
+    static {
+        BootstrapLogging.bootstrap();
+    }
+
     private final MutableServletContextHandler handler = new MutableServletContextHandler();
     private final HealthCheckRegistry healthCheckRegistry = new HealthCheckRegistry();
     private final MetricRegistry metricRegistry = new MetricRegistry();

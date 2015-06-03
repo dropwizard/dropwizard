@@ -14,7 +14,7 @@ v0.9.0
 * Upgrade to H2 1.4.187
 * Upgrade to Hibernate 4.3.9.Final
 * Upgrade to Jackson 2.5.3
-* Upgrade to Jetty 9.2.10.v20150310
+* Upgrade to Jetty 9.2.11.v20150529
 * Upgrade to Jetty ALPN boot 7.1.3.v20150130
 * Upgrade to Jetty SetUID support 1.0.3
 * Upgrade to Liquibase 3.3.3
@@ -26,9 +26,9 @@ v0.9.0
 .. _rel-0.8.1:
 
 v0.8.1: Apr 7 2015
-=======
+==================
 
-* Fixed transcation commiting lifecycle for ``@UnitOfWork``  (#850, #915)
+* Fixed transaction committing lifecycle for ``@UnitOfWork``  (#850, #915)
 * Fixed noisy Logback messages on startup (#902)
 * Ability to use providers in TestRule, allows testing of auth & views (#513, #922)
 * Custom ExceptionMapper not invoked when Hibernate rollback (#949)
@@ -87,7 +87,7 @@ v0.7.1: Jun 18 2014
 * Added instrumentation to ``Task``, using metrics annotations.
 * Added ability to blacklist SSL cipher suites.
 * Added ``@PATCH`` annotation for Jersey resource methods to indicate use of the HTTP ``PATCH`` method.
-* Added support for configurble request retry behavior for ``HttpClientBuilder`` and ``JerseyClientBuilder``.
+* Added support for configurable request retry behavior for ``HttpClientBuilder`` and ``JerseyClientBuilder``.
 * Added facility to get the admin HTTP port in ``DropwizardAppTestRule``.
 * Added ``ScanningHibernateBundle``, which scans packages for entities, instead of requiring you to add them individually.
 * Added facility to invalidate credentials from the ``CachingAuthenticator`` that match a specified ``Predicate``.
@@ -96,7 +96,7 @@ v0.7.1: Jun 18 2014
 * Added ``stackTracePrefix`` configuration option to ``SyslogAppenderFactory`` to configure the pattern prepended to each line in the stack-trace sent to syslog. Defaults to the TAB character, "\t". Note: this is different from the bang prepended to text logs (such as "console", and "file"), as syslog has different conventions for multi-line messages.
 * Added ability to validate ``Optional`` values using validation annotations. Such values require the ``@UnwrapValidatedValue`` annotation, in addition to the validations you wish to use.
 * Added facility to configure the ``User-Agent`` for ``HttpClient``. Configurable via the ``userAgent`` configuration option.
-* Added configurable ``AllowedMethodsFilter``. Configure allowed HTTP methods for both the application and admin connnectors with ``allowedMethods``.
+* Added configurable ``AllowedMethodsFilter``. Configure allowed HTTP methods for both the application and admin connectors with ``allowedMethods``.
 * Added support for specifying a ``CredentialProvider`` for HTTP clients.
 * Fixed silently overriding Servlets or ServletFilters; registering a duplicate will now emit a warning.
 * Fixed ``SyslogAppenderFactory`` failing when the application name contains a PCRE reserved character (e.g. ``/`` or ``$``).
@@ -106,7 +106,7 @@ v0.7.1: Jun 18 2014
 * Fixed ``DiscoverableSubtypeResolver`` using the system ``ClassLoader``, instead of the local one.
 * Fixed regression causing Liquibase ``--dump`` to fail to dump the database.
 * Fixed the CSV metrics reporter failing when the output directory doesn't exist. It will now attempt to create the directory on startup.
-* Fixed global frequency for metrics reporters being permenantly overridden by the default frequency for individual reporters.
+* Fixed global frequency for metrics reporters being permanently overridden by the default frequency for individual reporters.
 * Fixed tests failing on Windows due to platform-specific line separators.
 * Changed ``DropwizardAppTestRule`` so that it no longer requires a configuration path to operate. When no path is specified, it will now use the applications' default configuration.
 * Changed ``Bootstrap`` so that ``getMetricsFactory()`` may now be overridden to provide a custom instance to the framework to use. 
@@ -117,7 +117,7 @@ v0.7.1: Jun 18 2014
 * Upgraded to Metrics 3.0.2
 * Upgraded to Logback 1.1.2
 * Upgraded to h2 1.4.178
-* Upgraded to jDBI 2.55
+* Upgraded to JDBI 2.55
 * Upgraded to Hibernate 4.3.5 Final
 * Upgraded to Hibernate Validator 5.1.1 Final
 * Upgraded to Mustache 0.8.15

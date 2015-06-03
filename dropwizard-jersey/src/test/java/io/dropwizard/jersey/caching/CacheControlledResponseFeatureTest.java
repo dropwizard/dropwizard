@@ -1,7 +1,7 @@
 package io.dropwizard.jersey.caching;
 
 import io.dropwizard.jersey.DropwizardResourceConfig;
-import io.dropwizard.logging.LoggingFactory;
+import io.dropwizard.logging.BootstrapLogging;
 
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.HttpHeaders;
@@ -11,17 +11,19 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
+import org.glassfish.jersey.test.TestProperties;
 import org.junit.Test;
 
 import com.codahale.metrics.MetricRegistry;
 
 public class CacheControlledResponseFeatureTest extends JerseyTest {
     static {
-        LoggingFactory.bootstrap();
+        BootstrapLogging.bootstrap();
     }
 
     @Override
     protected Application configure() {
+        forceSet(TestProperties.CONTAINER_PORT, "0");
         ResourceConfig rc = DropwizardResourceConfig.forTesting(new MetricRegistry());
         rc = rc.register(CachingResource.class);
         return rc;

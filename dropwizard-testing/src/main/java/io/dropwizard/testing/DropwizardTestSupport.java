@@ -1,6 +1,7 @@
 package io.dropwizard.testing;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -8,6 +9,8 @@ import com.google.common.collect.Lists;
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
 import io.dropwizard.cli.ServerCommand;
+import io.dropwizard.configuration.ConfigurationFactory;
+import io.dropwizard.configuration.ConfigurationFactoryFactory;
 import io.dropwizard.lifecycle.Managed;
 import io.dropwizard.lifecycle.ServerLifecycleListener;
 import io.dropwizard.setup.Bootstrap;
@@ -17,6 +20,7 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 
 import javax.annotation.Nullable;
+import javax.validation.Validator;
 import java.util.List;
 import java.util.Set;
 
@@ -37,6 +41,7 @@ public class DropwizardTestSupport<C extends Configuration> {
     private final Class<? extends Application<C>> applicationClass;
     private final String configPath;
     private final Set<ConfigOverride> configOverrides;
+    private final Optional<String> customPropertyPrefix;
 
     private C configuration;
     private Application<C> application;
@@ -47,9 +52,15 @@ public class DropwizardTestSupport<C extends Configuration> {
     public DropwizardTestSupport(Class<? extends Application<C>> applicationClass,
                              @Nullable String configPath,
                              ConfigOverride... configOverrides) {
+        this(applicationClass, configPath, Optional.<String>absent(), configOverrides);
+    }
+
+    public DropwizardTestSupport(Class<? extends Application<C>> applicationClass, String configPath,
+                                 Optional<String> customPropertyPrefix, ConfigOverride... configOverrides) {
         this.applicationClass = applicationClass;
         this.configPath = configPath;
         this.configOverrides = ImmutableSet.copyOf(firstNonNull(configOverrides, new ConfigOverride[0]));
+        this.customPropertyPrefix = customPropertyPrefix;
     }
 
     public DropwizardTestSupport<C> addListener(ServiceListener<C> listener) {
@@ -139,6 +150,15 @@ public class DropwizardTestSupport<C extends Configuration> {
                     }
                 }
             };
+            if (customPropertyPrefix.isPresent()) {
+                bootstrap.setConfigurationFactoryFactory(new ConfigurationFactoryFactory<C>() {
+                    @Override
+                    public ConfigurationFactory<C> create(Class<C> klass, Validator validator,
+                                                          ObjectMapper objectMapper, String propertyPrefix) {
+                        return new ConfigurationFactory<>(klass, validator, objectMapper, customPropertyPrefix.get());
+                    }
+                });
+            }
 
             application.initialize(bootstrap);
             final ServerCommand<C> command = new ServerCommand<>(application);

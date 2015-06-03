@@ -10,13 +10,17 @@ import ch.qos.logback.core.rolling.RollingFileAppender;
 import ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP;
 import io.dropwizard.jackson.DiscoverableSubtypeResolver;
 import io.dropwizard.util.Size;
-import io.dropwizard.util.SizeUnit;
 import org.junit.Test;
 import org.slf4j.LoggerFactory;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class FileAppenderFactoryTest {
+
+    static {
+        BootstrapLogging.bootstrap();
+    }
+
     @Test
     public void isDiscoverable() throws Exception {
         assertThat(new DiscoverableSubtypeResolver().getDiscoveredSubtypes())

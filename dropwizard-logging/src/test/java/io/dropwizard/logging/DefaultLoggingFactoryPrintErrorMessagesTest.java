@@ -21,18 +21,18 @@ import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assume.assumeTrue;
 
-public class LoggingFactoryPrintErrorMessagesTest {
+public class DefaultLoggingFactoryPrintErrorMessagesTest {
 
     @Rule
     public final TemporaryFolder tempDir = new TemporaryFolder();
 
-    LoggingFactory factory;
+    DefaultLoggingFactory factory;
     ByteArrayOutputStream output;
 
     @Before
     public void setUp() throws Exception {
         output = new ByteArrayOutputStream();
-        factory = new LoggingFactory(new LoggerContext(), new PrintStream(output));
+        factory = new DefaultLoggingFactory(new LoggerContext(), new PrintStream(output));
     }
 
     @After
@@ -61,14 +61,14 @@ public class LoggingFactoryPrintErrorMessagesTest {
 
     @Test
     public void testWhenUsingDefaultConstructor_SystemErrIsSet() throws Exception {
-        PrintStream configurationErrorsStream = new LoggingFactory().configurationErrorsStream;
+        PrintStream configurationErrorsStream = new DefaultLoggingFactory().getConfigurationErrorsStream();
 
         assertThat(configurationErrorsStream).isSameAs(System.err);
     }
 
     @Test
     public void testWhenUsingDefaultConstructor_StaticILoggerFactoryIsSet() throws Exception {
-        LoggerContext loggerContext = new LoggingFactory().loggerContext;
+        LoggerContext loggerContext = new DefaultLoggingFactory().getLoggerContext();
 
         assertThat(loggerContext).isSameAs(LoggerFactory.getILoggerFactory());
     }

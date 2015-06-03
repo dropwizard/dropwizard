@@ -2,10 +2,11 @@ package io.dropwizard.jersey;
 
 import com.codahale.metrics.MetricRegistry;
 import io.dropwizard.jersey.dummy.DummyResource;
-import io.dropwizard.logging.LoggingFactory;
-import java.util.regex.Pattern;
+import io.dropwizard.logging.BootstrapLogging;
+
 import javax.ws.rs.DELETE;
 import javax.ws.rs.POST;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -16,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class DropwizardResourceConfigTest {
     static {
-        LoggingFactory.bootstrap();
+        BootstrapLogging.bootstrap();
     }
 
     private DropwizardResourceConfig rc;
@@ -56,6 +57,21 @@ public class DropwizardResourceConfigTest {
     }
 
     @Test
+    public void combinesAlRegisteredClassesPathOnMethodLevel() {
+        rc.register(new TestResource());
+        rc.register(new ResourcePathOnMethodLevel());
+
+        assertThat(rc.allClasses()).contains(
+                TestResource.class,
+                ResourcePathOnMethodLevel.class
+        );
+
+        assertThat(rc.getEndpointsInfo())
+                .contains("GET     /bar (io.dropwizard.jersey.DropwizardResourceConfigTest.ResourcePathOnMethodLevel)")
+                .contains("GET     /dummy (io.dropwizard.jersey.DropwizardResourceConfigTest.TestResource)");
+    }
+
+    @Test
     public void logsNoInterfaces() {
         rc.packages(getClass().getPackage().getName());
 
@@ -84,14 +100,16 @@ public class DropwizardResourceConfigTest {
         rc.register(TestResource.class);
         rc.register(ImplementingResource.class);
 
-        assertThat(rc.getEndpointsInfo()).matches(Pattern.compile(".*"
-                + "    GET     / \\(io\\.dropwizard\\.jersey\\.dummy\\.DummyResource\\)."
-                + "    GET     /another \\(io\\.dropwizard\\.jersey\\.DropwizardResourceConfigTest\\.ImplementingResource\\)."
-                + "    GET     /async \\(io\\.dropwizard\\.jersey\\.dummy\\.DummyResource\\)."
-                + "    DELETE  /dummy \\(io\\.dropwizard\\.jersey\\.DropwizardResourceConfigTest\\.TestResource2\\)."
-                + "    GET     /dummy \\(io\\.dropwizard\\.jersey\\.DropwizardResourceConfigTest\\.TestResource\\)."
-                + "    POST    /dummy \\(io\\.dropwizard\\.jersey\\.DropwizardResourceConfigTest\\.TestResource2\\).",
-                Pattern.DOTALL));
+        final String expectedLog = String.format(
+                "The following paths were found for the configured resources:%n"
+                + "%n"
+                + "    GET     / (io.dropwizard.jersey.dummy.DummyResource)%n"
+                + "    GET     /another (io.dropwizard.jersey.DropwizardResourceConfigTest.ImplementingResource)%n"
+                + "    GET     /async (io.dropwizard.jersey.dummy.DummyResource)%n"
+                + "    DELETE  /dummy (io.dropwizard.jersey.DropwizardResourceConfigTest.TestResource2)%n"
+                + "    GET     /dummy (io.dropwizard.jersey.DropwizardResourceConfigTest.TestResource)%n"
+                + "    POST    /dummy (io.dropwizard.jersey.DropwizardResourceConfigTest.TestResource2)%n");
+        assertThat(rc.getEndpointsInfo()).isEqualTo(expectedLog);
     }
 
 
@@ -120,6 +138,13 @@ public class DropwizardResourceConfigTest {
     public static interface ResourceInterface {
         @GET
         public String bar();
+    }
+
+    public static class ResourcePathOnMethodLevel {
+        @GET @Path("/bar")
+        public String bar() {
+            return "";
+        }
     }
 
     public static class ImplementingResource implements ResourceInterface {

@@ -144,7 +144,7 @@ public class ServletEnvironment {
      * @param resourceBase A string representing the base resource for the
      *                     context. Any string accepted by Resource.newResource(String)
      *                     may be passed and the call is equivalent to
-     *                     {@link setBaseResource(newResource(resourceBase))}
+     *                     {@link #setBaseResource(Resource)}}
      */
     public void setResourceBase(String resourceBase) {
         handler.setResourceBase(resourceBase);

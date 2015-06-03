@@ -3,7 +3,7 @@ package io.dropwizard;
 import io.dropwizard.cli.CheckCommand;
 import io.dropwizard.cli.Cli;
 import io.dropwizard.cli.ServerCommand;
-import io.dropwizard.logging.LoggingFactory;
+import io.dropwizard.logging.BootstrapLogging;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.util.Generics;
@@ -12,12 +12,16 @@ import io.dropwizard.util.JarLocation;
 /**
  * The base class for Dropwizard applications.
  *
+ * The default constructor will be inherited in subclasses if
+ * a default constructor isn't provided. If you do provide one,
+ * it's important to call default constructor to preserve logging
+ *
  * @param <T> the type of configuration class for this application
  */
 public abstract class Application<T extends Configuration> {
-    static {
+    protected Application() {
         // make sure spinning up Hibernate Validator doesn't yell at us
-        LoggingFactory.bootstrap();
+        BootstrapLogging.bootstrap();
     }
 
     /**
@@ -69,10 +73,15 @@ public abstract class Application<T extends Configuration> {
         bootstrap.addCommand(new ServerCommand<>(this));
         bootstrap.addCommand(new CheckCommand<>(this));
         initialize(bootstrap);
+        // Should by called after initialize to give an opportunity to set a custom metric registry
+        bootstrap.registerMetrics();
+
         final Cli cli = new Cli(new JarLocation(getClass()), bootstrap, System.out, System.err);
         if (!cli.run(arguments)) {
             // only exit if there's an error running the command
             System.exit(1);
         }
     }
+
+
 }
