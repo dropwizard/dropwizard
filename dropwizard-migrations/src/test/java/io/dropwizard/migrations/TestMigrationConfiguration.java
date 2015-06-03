@@ -3,11 +3,11 @@ package io.dropwizard.migrations;
 import io.dropwizard.Configuration;
 import io.dropwizard.db.DataSourceFactory;
 
-public class TestMigrateConfiguration extends Configuration {
+public class TestMigrationConfiguration extends Configuration {
 
     private DataSourceFactory dataSource;
 
-    public TestMigrateConfiguration(DataSourceFactory dataSource) {
+    public TestMigrationConfiguration(DataSourceFactory dataSource) {
         this.dataSource = dataSource;
     }
 

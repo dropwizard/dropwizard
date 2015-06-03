@@ -19,35 +19,22 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @NotThreadSafe
-public class DbMigrateCommandTest {
+public class DbMigrateCommandTest extends AbstractMigrationTest {
 
-    private DbMigrateCommand<TestMigrateConfiguration> migrateCommand = new DbMigrateCommand<>(
-            new DatabaseConfiguration<TestMigrateConfiguration>() {
+    private DbMigrateCommand<TestMigrationConfiguration> migrateCommand = new DbMigrateCommand<>(
+            new DatabaseConfiguration<TestMigrationConfiguration>() {
                 @Override
-                public DataSourceFactory getDataSourceFactory(TestMigrateConfiguration configuration) {
+                public DataSourceFactory getDataSourceFactory(TestMigrationConfiguration configuration) {
                     return configuration.getDataSource();
                 }
-            }, TestMigrateConfiguration.class);
-    private TestMigrateConfiguration conf;
+            }, TestMigrationConfiguration.class);
+    private TestMigrationConfiguration conf;
     private String databaseUrl;
-
-    private static String createTempFile() {
-        try {
-            return File.createTempFile("test-example", null).getAbsolutePath();
-        } catch (IOException e) {
-            throw new IllegalStateException(e);
-        }
-    }
 
     @Before
     public void setUp() throws Exception {
         databaseUrl = "jdbc:h2:" + createTempFile();
-
-        final DataSourceFactory dataSource = new DataSourceFactory();
-        dataSource.setDriverClass("org.h2.Driver");
-        dataSource.setUser("sa");
-        dataSource.setUrl(databaseUrl);
-        conf = new TestMigrateConfiguration(dataSource);
+        conf = createConfiguration(databaseUrl);
     }
 
     @Test
