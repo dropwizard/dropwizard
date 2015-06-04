@@ -40,23 +40,24 @@ public class DbStatusCommandTest extends AbstractMigrationTest {
         final TestMigrationConfiguration existedDbConf = createConfiguration(existedDbUrl);
 
         statusCommand.run(null, new Namespace(ImmutableMap.<String, Object>of()), existedDbConf);
-        assertThat(baos.toString("UTF-8")).matches("\\S+ is up to date\n");
+        assertThat(baos.toString("UTF-8")).matches("\\S+ is up to date" + System.lineSeparator());
     }
 
     @Test
     public void testRun() throws Exception {
         statusCommand.run(null, new Namespace(ImmutableMap.<String, Object>of()), conf);
-        assertThat(baos.toString("UTF-8")).matches("3 change sets have not been applied to \\S+\n");
+        assertThat(baos.toString("UTF-8")).matches(
+                "3 change sets have not been applied to \\S+" + System.lineSeparator());
     }
 
     @Test
     public void testVerbose() throws Exception {
         statusCommand.run(null, new Namespace(ImmutableMap.of("verbose", (Object) true)), conf);
         assertThat(baos.toString("UTF-8")).matches(
-                "3 change sets have not been applied to \\S+\n" +
-                        "\\s*migrations\\.xml::1::db_dev\n" +
-                        "\\s*migrations\\.xml::2::db_dev\n" +
-                        "\\s*migrations\\.xml::3::db_dev\n");
+                "3 change sets have not been applied to \\S+" + System.lineSeparator() +
+                        "\\s*migrations\\.xml::1::db_dev"  + System.lineSeparator() +
+                        "\\s*migrations\\.xml::2::db_dev"  + System.lineSeparator() +
+                        "\\s*migrations\\.xml::3::db_dev" + System.lineSeparator());
     }
 
     @Test
