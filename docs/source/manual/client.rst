@@ -129,11 +129,11 @@ To create a :ref:`managed <man-core-managed>`, instrumented ``JerseyClient`` ins
     public class ExampleConfiguration extends Configuration {
         @Valid
         @NotNull
-        private JerseyClientConfiguration httpClient = new JerseyClientConfiguration();
+        private JerseyClientConfiguration jerseyClient = new JerseyClientConfiguration();
 
-        @JsonProperty("httpClient")
+        @JsonProperty("jerseyClient")
         public JerseyClientConfiguration getJerseyClientConfiguration() {
-            return httpClient;
+            return jerseyClient;
         }
     }
 
@@ -146,7 +146,7 @@ Then, in your service's ``run`` method, create a new ``JerseyClientBuilder``:
                     Environment environment) {
 
         final Client client = new JerseyClientBuilder(environment).using(config.getJerseyClientConfiguration())
-                                                                  .build(getName());                                                       
+                                                                  .build(getName());
         environment.jersey().register(new ExternalServiceResource(client));
     }
 
