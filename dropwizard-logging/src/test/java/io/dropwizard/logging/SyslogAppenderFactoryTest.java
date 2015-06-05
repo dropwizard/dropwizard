@@ -6,17 +6,18 @@ import ch.qos.logback.classic.net.SyslogAppender;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
 import ch.qos.logback.classic.AsyncAppender;
-import ch.qos.logback.core.AsyncAppenderBase;
-import ch.qos.logback.core.spi.AppenderAttachableImpl;
 import io.dropwizard.jackson.DiscoverableSubtypeResolver;
 import org.junit.Test;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.Field;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class SyslogAppenderFactoryTest {
+
+    static {
+        BootstrapLogging.bootstrap();
+    }
+
     @Test
     public void isDiscoverable() throws Exception {
         assertThat(new DiscoverableSubtypeResolver().getDiscoveredSubtypes())

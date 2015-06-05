@@ -71,13 +71,14 @@ public class ProtectedResourceTest {
         });
         builder.setAuthenticator(AUTHENTICATOR);
         builder.setPrefix("Basic");
-        BASIC_AUTH_HANDLER = builder.buildAuthHandler();
+        BASIC_AUTH_HANDLER = builder.buildAuthFilter();
     }
 
     @ClassRule
     public static final ResourceTestRule resources = ResourceTestRule.builder()
             .addProvider(RolesAllowedDynamicFeature.class)
             .addProvider(new AuthDynamicFeature(BASIC_AUTH_HANDLER))
+            .addProvider(new AuthValueFactoryProvider.Binder(User.class))
             .setTestContainerFactory(new GrizzlyWebTestContainerFactory())
             .addProvider(ProtectedResource.class)
             .build();

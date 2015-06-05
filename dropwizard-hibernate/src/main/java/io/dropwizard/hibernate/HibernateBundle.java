@@ -5,7 +5,7 @@ import com.google.common.collect.ImmutableList;
 import io.dropwizard.AbstractConfiguredHttpBundle;
 import io.dropwizard.ConfiguredHttpBundle;
 import io.dropwizard.HttpConfiguration;
-import io.dropwizard.db.DataSourceFactory;
+import io.dropwizard.db.PooledDataSourceFactory;
 import io.dropwizard.db.DatabaseConfiguration;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.HttpEnvironment;
@@ -55,15 +55,15 @@ public abstract class HibernateBundle<T extends HttpConfiguration>
 
     @Override
     public final void run(T configuration, HttpEnvironment environment) throws Exception {
-        final DataSourceFactory dbConfig = getDataSourceFactory(configuration);
+        final PooledDataSourceFactory dbConfig = getDataSourceFactory(configuration);
         this.sessionFactory = sessionFactoryFactory.build(this, environment, dbConfig, entities, name());
         environment.jersey().register(new UnitOfWorkApplicationListener(sessionFactory));
         environment.healthChecks().register(name(),
                                             new SessionFactoryHealthCheck(
                                                     environment.getHealthCheckExecutorService(),
-                                                    dbConfig.getValidationQueryTimeout().or(Duration.seconds(5)),
+                                                    dbConfig.getHealthCheckValidationTimeout().or(Duration.seconds(5)),
                                                     sessionFactory,
-                                                    dbConfig.getValidationQuery()));
+                                                    dbConfig.getHealthCheckValidationQuery()));
     }
 
     public SessionFactory getSessionFactory() {

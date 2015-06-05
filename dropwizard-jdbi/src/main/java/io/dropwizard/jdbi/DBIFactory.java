@@ -7,7 +7,7 @@ import com.codahale.metrics.jdbi.strategies.DelegatingStatementNameStrategy;
 import com.codahale.metrics.jdbi.strategies.NameStrategies;
 import com.codahale.metrics.jdbi.strategies.StatementNameStrategy;
 import com.google.common.base.Optional;
-import io.dropwizard.db.DataSourceFactory;
+import io.dropwizard.db.PooledDataSourceFactory;
 import io.dropwizard.db.ManagedDataSource;
 import io.dropwizard.jdbi.args.JodaDateTimeArgumentFactory;
 import io.dropwizard.jdbi.args.JodaDateTimeMapper;
@@ -62,22 +62,22 @@ public class DBIFactory {
     }
 
     public DBI build(Environment environment,
-                     DataSourceFactory configuration,
+                     PooledDataSourceFactory configuration,
                      String name) {
         final ManagedDataSource dataSource = configuration.build(environment.metrics(), name);
         return build(environment, configuration, dataSource, name);
     }
 
     public DBI build(Environment environment,
-                     DataSourceFactory configuration,
+                     PooledDataSourceFactory configuration,
                      ManagedDataSource dataSource,
                      String name) {
-        final String validationQuery = configuration.getValidationQuery();
+        final String validationQuery = configuration.getHealthCheckValidationQuery();
         final DBI dbi = new DBI(dataSource);
         environment.lifecycle().manage(dataSource);
         environment.healthChecks().register(name, new DBIHealthCheck(
                 environment.getHealthCheckExecutorService(),
-                configuration.getValidationQueryTimeout().or(Duration.seconds(5)),
+                configuration.getHealthCheckValidationTimeout().or(Duration.seconds(5)),
                 dbi,
                 validationQuery));
         dbi.setSQLLog(new LogbackLog(LOGGER, Level.TRACE));

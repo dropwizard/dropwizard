@@ -13,8 +13,8 @@ public class UUIDParam extends AbstractParam<UUID> {
     }
 
     @Override
-    protected String errorMessage(String input, Exception e) {
-        return '"' + input + "\" is not a UUID.";
+    protected String errorMessage(Exception e) {
+        return "Parameter is not a UUID.";
     }
 
     @Override

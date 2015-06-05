@@ -8,6 +8,10 @@ import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import io.dropwizard.client.proxy.AuthConfiguration;
 import io.dropwizard.client.proxy.ProxyConfiguration;
+import io.dropwizard.jackson.Jackson;
+import io.dropwizard.lifecycle.Managed;
+import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
+import io.dropwizard.setup.Environment;
 import io.dropwizard.util.Duration;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.http.*;
@@ -15,6 +19,7 @@ import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.Credentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.HttpRequestRetryHandler;
 import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
@@ -43,6 +48,9 @@ import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+
+import javax.validation.Validation;
 import java.net.ProxySelector;
 import java.net.Proxy;
 import java.net.URI;
@@ -54,6 +62,7 @@ import java.lang.reflect.Field;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
@@ -209,7 +218,7 @@ public class HttpClientBuilderTest {
         assertThat(builder.using(configuration).createClient(apacheBuilder, connectionManager, "test")).isNotNull();
 
         assertThat(((RequestConfig) spyHttpClientBuilderField("defaultRequestConfig", apacheBuilder)).getCookieSpec())
-                .isEqualTo(CookieSpecs.BEST_MATCH);
+                .isEqualTo(CookieSpecs.DEFAULT);
     }
 
     @Test
@@ -426,6 +435,31 @@ public class HttpClientBuilderTest {
         assertThat(client).isNotNull();
 
         assertThat(spyHttpClientField("defaultConfig", client.getClient())).isEqualTo(client.getDefaultRequestConfig());
+    }
+
+    @Test
+    public void managedByEnvironment() throws Exception {
+        final Environment environment = mock(Environment.class);
+        when(environment.getName()).thenReturn("test-env");
+        when(environment.metrics()).thenReturn(new MetricRegistry());
+
+        final LifecycleEnvironment lifecycle = mock(LifecycleEnvironment.class);
+        when(environment.lifecycle()).thenReturn(lifecycle);
+
+        final CloseableHttpClient httpClient = mock(CloseableHttpClient.class);
+        HttpClientBuilder httpClientBuilder = spy(new HttpClientBuilder(environment));
+        when(httpClientBuilder.buildWithDefaultRequestConfiguration("test-apache-client"))
+                .thenReturn(new ConfiguredCloseableHttpClient(httpClient, RequestConfig.DEFAULT));
+        assertThat(httpClientBuilder.build("test-apache-client")).isSameAs(httpClient);
+
+        // Verify that we registered the managed object
+        final ArgumentCaptor<Managed> argumentCaptor = ArgumentCaptor.forClass(Managed.class);
+        verify(lifecycle).manage(argumentCaptor.capture());
+
+        // Verify that the managed object actually stops the HTTP client
+        final Managed managed = argumentCaptor.getValue();
+        managed.stop();
+        verify(httpClient).close();
     }
 
     private Object spyHttpClientBuilderField(final String fieldName, final Object obj) throws Exception {

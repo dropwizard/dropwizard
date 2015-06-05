@@ -18,7 +18,7 @@ public class SizeValidatorTest {
 
         @MinSize(value = 30, unit = SizeUnit.KILOBYTES)
         private Size tooSmall = Size.bytes(100);
-        
+
         @SizeRange(min = 10, max = 100, unit = SizeUnit.KILOBYTES)
         private Size outOfRange = Size.megabytes(2);
 
@@ -39,9 +39,9 @@ public class SizeValidatorTest {
     public void returnsASetOfErrorsForAnObject() throws Exception {
         if ("en".equals(Locale.getDefault().getLanguage())) {
             assertThat(ConstraintViolations.format(validator.validate(new Example())))
-                    .containsOnly("outOfRange must be between 10 KILOBYTES and 100 KILOBYTES (was 2 megabytes)",
-                                  "tooBig must be less than or equal to 30 KILOBYTES (was 2 gigabytes)",
-                                  "tooSmall must be greater than or equal to 30 KILOBYTES (was 100 bytes)");
+                    .containsOnly("outOfRange must be between 10 KILOBYTES and 100 KILOBYTES",
+                                  "tooBig must be less than or equal to 30 KILOBYTES",
+                                  "tooSmall must be greater than or equal to 30 KILOBYTES");
         }
     }
 

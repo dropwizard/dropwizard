@@ -2,7 +2,7 @@ package io.dropwizard.views.freemarker;
 
 import com.codahale.metrics.MetricRegistry;
 import com.google.common.collect.ImmutableList;
-import io.dropwizard.logging.LoggingFactory;
+import io.dropwizard.logging.BootstrapLogging;
 import io.dropwizard.views.ViewMessageBodyWriter;
 import io.dropwizard.views.ViewRenderer;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -21,7 +21,7 @@ import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
 
 public class FreemarkerViewRendererTest extends JerseyTest {
     static {
-        LoggingFactory.bootstrap();
+        BootstrapLogging.bootstrap();
     }
 
     @Path("/test/")

@@ -6,12 +6,13 @@ import io.dropwizard.auth.AuthFilter;
 import io.dropwizard.auth.AuthResource;
 import io.dropwizard.auth.util.AuthUtil;
 import io.dropwizard.jersey.DropwizardResourceConfig;
-import io.dropwizard.logging.LoggingFactory;
+import io.dropwizard.logging.BootstrapLogging;
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
 import org.glassfish.jersey.servlet.ServletProperties;
 import org.glassfish.jersey.test.DeploymentContext;
 import org.glassfish.jersey.test.JerseyTest;
 import org.glassfish.jersey.test.ServletDeploymentContext;
+import org.glassfish.jersey.test.TestProperties;
 import org.glassfish.jersey.test.grizzly.GrizzlyWebTestContainerFactory;
 import org.glassfish.jersey.test.spi.TestContainerException;
 import org.glassfish.jersey.test.spi.TestContainerFactory;
@@ -24,7 +25,7 @@ import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
 
 public class OAuthCustomProviderTest extends JerseyTest {
     static {
-        LoggingFactory.bootstrap();
+        BootstrapLogging.bootstrap();
     }
 
     @Override
@@ -35,6 +36,7 @@ public class OAuthCustomProviderTest extends JerseyTest {
 
     @Override
     protected DeploymentContext configureDeployment() {
+        forceSet(TestProperties.CONTAINER_PORT, "0");
         return ServletDeploymentContext.builder(new BasicAuthTestResourceConfig())
                 .initParam(ServletProperties.JAXRS_APPLICATION_CLASS, BasicAuthTestResourceConfig.class.getName())
                 .build();
@@ -130,7 +132,7 @@ public class OAuthCustomProviderTest extends JerseyTest {
                     .setAuthenticator(AuthUtil.<String, SecurityContext>getTestAuthenticator(validUser))
                     .setSecurityContextFunction(AuthUtil.getSecurityContextProviderFunction(validUser, "ADMIN"))
                     .setPrefix("Custom")
-                    .buildAuthHandler();
+                    .buildAuthFilter();
         }
     }
 }

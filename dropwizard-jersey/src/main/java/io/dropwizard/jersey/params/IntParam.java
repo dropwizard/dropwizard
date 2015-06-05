@@ -10,8 +10,8 @@ public class IntParam extends AbstractParam<Integer> {
     }
 
     @Override
-    protected String errorMessage(String input, Exception e) {
-        return '"' + input + "\" is not a number.";
+    protected String errorMessage(Exception e) {
+        return "Parameter is not a number.";
     }
 
     @Override

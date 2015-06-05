@@ -22,7 +22,7 @@ import java.lang.reflect.Type;
 public class OptionalMessageBodyWriter implements MessageBodyWriter<Optional<?>> {
 
     @Inject
-    javax.inject.Provider<MessageBodyWorkers> mbw;
+    private javax.inject.Provider<MessageBodyWorkers> mbw;
 
     // Jersey ignores this
     @Override
@@ -37,7 +37,7 @@ public class OptionalMessageBodyWriter implements MessageBodyWriter<Optional<?>>
         return (Optional.class.isAssignableFrom(type));
     }
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
     public void writeTo(Optional<?> entity,
                         Class<?> type,
@@ -46,9 +46,10 @@ public class OptionalMessageBodyWriter implements MessageBodyWriter<Optional<?>>
                         MediaType mediaType,
                         MultivaluedMap<String, Object> httpHeaders,
                         OutputStream entityStream)
-                               throws IOException, WebApplicationException {
-        if (!entity.isPresent())
+            throws IOException {
+        if (!entity.isPresent()) {
             throw new NotFoundException();
+        }
 
         ParameterizedType actualGenericType = (ParameterizedType) genericType;
 

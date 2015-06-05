@@ -1,7 +1,7 @@
 package com.example.helloworld.resources;
 
 import com.codahale.metrics.annotation.Timed;
-import com.example.helloworld.core.Saying;
+import com.example.helloworld.api.Saying;
 import com.example.helloworld.core.Template;
 import com.google.common.base.Optional;
 import io.dropwizard.jersey.caching.CacheControl;
@@ -39,10 +39,18 @@ public class HelloWorldResource {
     public void receiveHello(@Valid Saying saying) {
         LOGGER.info("Received a saying: {}", saying);
     }
-    
+
     @GET
     @Path("/date")
-    public void receiveDate(@QueryParam("date") DateTimeParam dateTimeParam) {
-        LOGGER.info("Received a saying: {}", dateTimeParam.get());
+    @Produces(MediaType.TEXT_PLAIN)
+    public String receiveDate(@QueryParam("date") Optional<DateTimeParam> dateTimeParam) {
+        if (dateTimeParam.isPresent()) {
+            final DateTimeParam actualDateTimeParam = dateTimeParam.get();
+            LOGGER.info("Received a date: {}", actualDateTimeParam);
+            return actualDateTimeParam.get().toString();
+        } else {
+            LOGGER.warn("No received date");
+            return null;
+        }
     }
 }

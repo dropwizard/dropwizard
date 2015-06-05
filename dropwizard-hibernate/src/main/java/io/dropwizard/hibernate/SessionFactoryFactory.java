@@ -1,7 +1,7 @@
 package io.dropwizard.hibernate;
 
 import com.google.common.collect.Sets;
-import io.dropwizard.db.DataSourceFactory;
+import io.dropwizard.db.PooledDataSourceFactory;
 import io.dropwizard.db.ManagedDataSource;
 import io.dropwizard.setup.Environment;
 import org.hibernate.SessionFactory;
@@ -25,14 +25,14 @@ public class SessionFactoryFactory {
 
     public SessionFactory build(HibernateBundle<?> bundle,
                                 Environment environment,
-                                DataSourceFactory dbConfig,
+                                PooledDataSourceFactory dbConfig,
                                 List<Class<?>> entities) {
         return build(bundle, environment, dbConfig, entities, DEFAULT_NAME);
     }
 
     public SessionFactory build(HibernateBundle<?> bundle,
                                 Environment environment,
-                                DataSourceFactory dbConfig,
+                                PooledDataSourceFactory dbConfig,
                                 List<Class<?>> entities,
                                 String name) {
         final ManagedDataSource dataSource = dbConfig.build(environment.metrics(), name);
@@ -41,7 +41,7 @@ public class SessionFactoryFactory {
 
     public SessionFactory build(HibernateBundle<?> bundle,
                                 Environment environment,
-                                DataSourceFactory dbConfig,
+                                PooledDataSourceFactory dbConfig,
                                 ManagedDataSource dataSource,
                                 List<Class<?>> entities) {
         final ConnectionProvider provider = buildConnectionProvider(dataSource,
@@ -65,7 +65,7 @@ public class SessionFactoryFactory {
     }
 
     private SessionFactory buildSessionFactory(HibernateBundle<?> bundle,
-                                               DataSourceFactory dbConfig,
+                                               PooledDataSourceFactory dbConfig,
                                                ConnectionProvider connectionProvider,
                                                Map<String, String> properties,
                                                List<Class<?>> entities) {

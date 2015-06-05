@@ -26,14 +26,17 @@ public class ErrorMessage {
         this.details = details;
     }
 
+    @JsonProperty("code")
     public Integer getCode() {
         return code;
     }
 
+    @JsonProperty("message")
     public String getMessage() {
         return message;
     }
 
+    @JsonProperty("details")
     public String getDetails() {
         return details;
     }

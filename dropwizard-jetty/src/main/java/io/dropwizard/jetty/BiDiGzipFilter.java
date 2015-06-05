@@ -250,7 +250,8 @@ public class BiDiGzipFilter extends IncludableGzipFilter {
         public boolean isFinished() {
             try {
                 return input.available() == 0;
-            } catch (IOException ignored) {}
+            } catch (IOException ignored) {
+            }
             return true;
         }
 
@@ -258,7 +259,8 @@ public class BiDiGzipFilter extends IncludableGzipFilter {
         public boolean isReady() {
             try {
                 return input.available() > 0;
-            } catch (IOException ignored) {}
+            } catch (IOException ignored) {
+            }
             return false;
         }
 

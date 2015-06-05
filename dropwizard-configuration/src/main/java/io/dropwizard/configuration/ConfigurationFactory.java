@@ -79,7 +79,7 @@ public class ConfigurationFactory<T> {
         try (InputStream input = provider.open(checkNotNull(path))) {
             final JsonNode node = mapper.readTree(yamlFactory.createParser(input));
 
-            if (node == null){
+            if (node == null) {
                 throw ConfigurationParsingException
                         .builder("Configuration at " + path + " must not be empty")
                         .build(path);
@@ -178,7 +178,7 @@ public class ConfigurationFactory<T> {
         final Iterable<String> split = Splitter.on('.').trimResults().split(name);
         final String[] parts = Iterables.toArray(split, String.class);
 
-        for(int i = 0; i < parts.length; i++) {
+        for (int i = 0; i < parts.length; i++) {
             String key = parts[i];
 
             if (!(node instanceof ObjectNode)) {
@@ -207,21 +207,18 @@ public class ConfigurationFactory<T> {
                 }
                 if (!child.isArray()) {
                     throw new IllegalArgumentException("Unable to override " + name + "; node with index is not an array.");
-                }
-                else if (index >= child.size()) {
+                } else if (index >= child.size()) {
                     throw new ArrayIndexOutOfBoundsException("Unable to override " + name + "; index is greater than size of array.");
                 }
                 if (moreParts) {
                     child = child.get(index);
                     node = child;
-                }
-                else {
-                    ArrayNode array = (ArrayNode)child;
+                } else {
+                    ArrayNode array = (ArrayNode) child;
                     array.set(index, TextNode.valueOf(value));
                     return;
                 }
-            }
-            else if (moreParts) {
+            } else if (moreParts) {
                 child = obj.get(key);
                 if (child == null) {
                     child = obj.objectNode();
@@ -241,8 +238,7 @@ public class ConfigurationFactory<T> {
                     for (String val : Splitter.on(Pattern.compile("(?<!\\\\),")).trimResults().split(value)) {
                         arrayNode.add(escapedComma.matcher(val).replaceAll(","));
                     }
-                }
-                else {
+                } else {
                     obj.put(key, value);
                 }
             }

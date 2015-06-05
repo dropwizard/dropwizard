@@ -1,5 +1,5 @@
 package com.example.helloworld;
-
+import io.dropwizard.auth.AuthValueFactoryProvider;
 import com.example.helloworld.auth.ExampleAuthenticator;
 import com.example.helloworld.cli.RenderCommand;
 import com.example.helloworld.core.Person;
@@ -31,7 +31,6 @@ import io.dropwizard.setup.Environment;
 import io.dropwizard.setup.HttpEnvironment;
 import io.dropwizard.views.ViewBundle;
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
-
 import javax.ws.rs.core.SecurityContext;
 import java.security.Principal;
 import java.util.Map;
@@ -94,7 +93,8 @@ public class HelloWorldApplication extends HttpApplication<HelloWorldConfigurati
                 .setAuthenticator(exampleAuthenticator)
                 .setSecurityContextFunction(getSecurityContextFunction())
                 .setRealm("SUPER SECRET STUFF")
-                .buildAuthHandler()));
+                .buildAuthFilter()));
+        environment.jersey().register(new AuthValueFactoryProvider.Binder(User.class));
         environment.jersey().register(RolesAllowedDynamicFeature.class);
         environment.jersey().register(new HelloWorldResource(template));
         environment.jersey().register(new ViewResource());

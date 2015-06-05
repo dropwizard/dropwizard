@@ -1,7 +1,7 @@
 package com.example.helloworld;
 
 import com.example.helloworld.core.Person;
-import com.example.helloworld.core.Saying;
+import com.example.helloworld.api.Saying;
 import com.google.common.base.Optional;
 import io.dropwizard.testing.ConfigOverride;
 import io.dropwizard.testing.ResourceHelpers;

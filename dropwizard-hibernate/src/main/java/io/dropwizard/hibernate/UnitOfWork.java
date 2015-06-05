@@ -13,7 +13,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 /**
  * When annotating a Jersey resource method, wraps the method in a Hibernate session.
  *
- * @see UnitOfWorkRequestDispatcher
+ * @see UnitOfWorkApplicationListener
  */
 @Target(METHOD)
 @Retention(RUNTIME)

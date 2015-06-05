@@ -29,4 +29,13 @@
         <Bug pattern="RCN_REDUNDANT_NULLCHECK_OF_NULL_VALUE"/>
         <Class name="io.dropwizard.configuration.ConfigurationFactory"/>
     </Match>
+
+    <!-- exclude the generated code by JMH from the analysis -->
+    <Match>
+       <Package name="~io\.dropwizard\.benchmarks\..*\.generated"/>
+    </Match>
+
+    <Match>
+        <Package name="~org\.openjdk\.jmh.*"/>
+    </Match>
 </FindBugsFilter>

@@ -516,12 +516,12 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
         this.validateCerts = validateCerts;
     }
 
-    @ValidationMethod(message="keyStorePath should not be null")
+    @ValidationMethod(message = "keyStorePath should not be null")
     public boolean isValidKeyStorePath() {
         return keyStoreType.startsWith("Windows-") || keyStorePath != null;
     }
 
-    @ValidationMethod(message="keyStorePassword should not be null or empty")
+    @ValidationMethod(message = "keyStorePassword should not be null or empty")
     public boolean isValidKeyStorePassword() {
         return keyStoreType.startsWith("Windows-") ||
                 !Strings.isNullOrEmpty(keyStorePassword);

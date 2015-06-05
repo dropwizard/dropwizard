@@ -19,11 +19,13 @@ import org.apache.http.conn.DnsResolver;
 import org.apache.http.conn.routing.HttpRoutePlanner;
 import org.apache.http.conn.socket.ConnectionSocketFactory;
 import org.apache.http.conn.socket.PlainConnectionSocketFactory;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
 import org.apache.http.impl.client.SystemDefaultCredentialsProvider;
 import org.apache.http.impl.conn.SystemDefaultDnsResolver;
 import org.apache.http.impl.conn.SystemDefaultRoutePlanner;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -80,10 +82,37 @@ public class JerseyClientBuilderTest {
         builder.setApacheHttpClientBuilder(apacheHttpClientBuilder);
     }
 
+    @After
+    public void tearDown() throws Exception {
+        executorService.shutdown();
+    }
+
     @Test
     public void throwsAnExceptionWithoutAnEnvironmentOrAThreadPoolAndObjectMapper() throws Exception {
         try {
             builder.build("test");
+            failBecauseExceptionWasNotThrown(IllegalStateException.class);
+        } catch (IllegalStateException e) {
+            assertThat(e.getMessage())
+                    .isEqualTo("Must have either an environment or both an executor service and an object mapper");
+        }
+    }
+
+    @Test
+    public void throwsAnExceptionWithoutAnEnvironmentAndOnlyObjectMapper() throws Exception {
+        try {
+            builder.using(objectMapper).build("test");
+            failBecauseExceptionWasNotThrown(IllegalStateException.class);
+        } catch (IllegalStateException e) {
+            assertThat(e.getMessage())
+                    .isEqualTo("Must have either an environment or both an executor service and an object mapper");
+        }
+    }
+
+    @Test
+    public void throwsAnExceptionWithoutAnEnvironmentAndOnlyAThreadPool() throws Exception {
+        try {
+            builder.using(executorService).build("test");
             failBecauseExceptionWasNotThrown(IllegalStateException.class);
         } catch (IllegalStateException e) {
             assertThat(e.getMessage())
@@ -129,6 +158,18 @@ public class JerseyClientBuilderTest {
     @Test
     public void usesTheGivenThreadPool() throws Exception {
         final Client client = builder.using(executorService, objectMapper).build("test");
+        for (Object o : client.getConfiguration().getInstances()) {
+            if (o instanceof DropwizardExecutorProvider) {
+                final DropwizardExecutorProvider provider = (DropwizardExecutorProvider) o;
+                assertThat(provider.getRequestingExecutor()).isSameAs(executorService);
+            }
+        }
+
+    }
+
+    @Test
+    public void usesTheGivenThreadPoolAndEnvironmentsObjectMapper() throws Exception {
+        final Client client = builder.using(environment).using(executorService).build("test");
         for (Object o : client.getConfiguration().getInstances()) {
             if (o instanceof DropwizardExecutorProvider) {
                 final DropwizardExecutorProvider provider = (DropwizardExecutorProvider) o;
@@ -238,8 +279,7 @@ public class JerseyClientBuilderTest {
         }}, null);
         final Registry<ConnectionSocketFactory> customRegistry = RegistryBuilder.<ConnectionSocketFactory>create()
                 .register("http", PlainConnectionSocketFactory.getSocketFactory())
-                .register("https", new SSLConnectionSocketFactory(ctx,
-                        SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER))
+                .register("https", new SSLConnectionSocketFactory(ctx, new NoopHostnameVerifier()))
                 .build();
         builder.using(customRegistry);
         verify(apacheHttpClientBuilder).using(customRegistry);
@@ -262,13 +302,13 @@ public class JerseyClientBuilderTest {
 
            @Override
            public void connectFailed(URI uri, SocketAddress sa, IOException ioe) {
-               
+
            }
        });
         builder.using(customHttpRoutePlanner);
         verify(apacheHttpClientBuilder).using(customHttpRoutePlanner);
     }
-    
+
     @Test
     public void usesACustomCredentialsProvider(){
         CredentialsProvider customCredentialsProvider = new SystemDefaultCredentialsProvider();

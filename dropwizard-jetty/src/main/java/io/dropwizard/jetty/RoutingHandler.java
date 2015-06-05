@@ -19,8 +19,8 @@ public class RoutingHandler extends AbstractHandler {
      * ImmutableMap-backed implementation it was ~54us vs. ~4500us for 1,000,000 iterations.
      */
     private static class Entry {
-        final Connector connector;
-        final Handler handler;
+        private final Connector connector;
+        private final Handler handler;
 
         private Entry(Connector connector, Handler handler) {
             this.connector = connector;

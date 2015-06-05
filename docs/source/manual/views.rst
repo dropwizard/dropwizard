@@ -36,8 +36,8 @@ The returned map should have, for each extension (such as ``.ftl``), a ``Map<Str
 
 .. code-block:: yaml
 
-views:
-    .ftl:
+    views:
+      .ftl:
         strict_syntax: yes
 
 Then, in your :ref:`resource method <man-core-resources>`, add a ``View`` class:

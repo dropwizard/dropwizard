@@ -318,7 +318,7 @@ public class ConfigurationFactoryTest {
                 assertThat(e.getMessage())
                         .endsWith(String.format(
                                 "factory-test-invalid.yml has an error:%n" +
-                                        "  * name must match \"[\\w]+[\\s]+[\\w]+([\\s][\\w]+)?\" (was Boop)%n"));
+                                        "  * name must match \"[\\w]+[\\s]+[\\w]+([\\s][\\w]+)?\"%n"));
             }
         }
     }

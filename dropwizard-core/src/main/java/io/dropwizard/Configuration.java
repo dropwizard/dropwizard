@@ -3,6 +3,7 @@ package io.dropwizard;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
+import io.dropwizard.logging.DefaultLoggingFactory;
 import io.dropwizard.logging.LoggingFactory;
 import io.dropwizard.metrics.MetricsFactory;
 
@@ -61,7 +62,7 @@ public class Configuration {
 
     @Valid
     @NotNull
-    private LoggingFactory logging = new LoggingFactory();
+    private LoggingFactory logging = new DefaultLoggingFactory();
 
     @Valid
     @NotNull

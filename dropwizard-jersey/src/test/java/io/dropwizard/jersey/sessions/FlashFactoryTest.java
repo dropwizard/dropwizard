@@ -2,13 +2,14 @@ package io.dropwizard.jersey.sessions;
 
 import com.codahale.metrics.MetricRegistry;
 import io.dropwizard.jersey.DropwizardResourceConfig;
-import io.dropwizard.logging.LoggingFactory;
+import io.dropwizard.logging.BootstrapLogging;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.ServerProperties;
 import org.glassfish.jersey.servlet.ServletProperties;
 import org.glassfish.jersey.test.DeploymentContext;
 import org.glassfish.jersey.test.JerseyTest;
 import org.glassfish.jersey.test.ServletDeploymentContext;
+import org.glassfish.jersey.test.TestProperties;
 import org.glassfish.jersey.test.grizzly.GrizzlyWebTestContainerFactory;
 import org.glassfish.jersey.test.spi.TestContainerException;
 import org.glassfish.jersey.test.spi.TestContainerFactory;
@@ -25,7 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class FlashFactoryTest extends JerseyTest {
     static {
-        LoggingFactory.bootstrap();
+        BootstrapLogging.bootstrap();
     }
 
     @Override
@@ -34,9 +35,9 @@ public class FlashFactoryTest extends JerseyTest {
         return new GrizzlyWebTestContainerFactory();
     }
 
-
     @Override
     protected DeploymentContext configureDeployment() {
+        forceSet(TestProperties.CONTAINER_PORT, "0");
         final ResourceConfig rc = DropwizardResourceConfig.forTesting(new MetricRegistry());
 
         return ServletDeploymentContext.builder(rc)

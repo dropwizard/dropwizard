@@ -110,7 +110,7 @@ public class ViewBundle<T extends HttpConfiguration>
     @Override
     public void run(T configuration, HttpEnvironment environment) throws Exception {
         Map<String, Map<String, String>> options = getViewConfiguration(configuration);
-        for(ViewRenderer viewRenderer : viewRenderers) {
+        for (ViewRenderer viewRenderer : viewRenderers) {
             Map<String, String> viewOptions = options.get(viewRenderer.getSuffix());
             viewRenderer.configure(firstNonNull(viewOptions, Collections.<String, String>emptyMap()));
         }

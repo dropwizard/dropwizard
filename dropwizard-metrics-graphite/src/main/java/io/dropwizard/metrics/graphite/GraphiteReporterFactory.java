@@ -6,12 +6,12 @@ import com.codahale.metrics.graphite.Graphite;
 import com.codahale.metrics.graphite.GraphiteReporter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import com.google.common.annotations.VisibleForTesting;
 import io.dropwizard.metrics.BaseReporterFactory;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.hibernate.validator.constraints.Range;
 
 import javax.validation.constraints.NotNull;
-import java.net.InetSocketAddress;
 
 /**
  * A factory for {@link GraphiteReporter} instances.
@@ -83,12 +83,15 @@ public class GraphiteReporterFactory extends BaseReporterFactory {
 
     @Override
     public ScheduledReporter build(MetricRegistry registry) {
-        final Graphite graphite = new Graphite(new InetSocketAddress(host, port));
+        return builder(registry).build(new Graphite(host, port));
+    }
+
+    @VisibleForTesting
+    protected GraphiteReporter.Builder builder(MetricRegistry registry) {
         return GraphiteReporter.forRegistry(registry)
-                               .convertDurationsTo(getDurationUnit())
-                               .convertRatesTo(getRateUnit())
-                               .filter(getFilter())
-                               .prefixedWith(getPrefix())
-                               .build(graphite);
+                .convertDurationsTo(getDurationUnit())
+                .convertRatesTo(getRateUnit())
+                .filter(getFilter())
+                .prefixedWith(getPrefix());
     }
 }

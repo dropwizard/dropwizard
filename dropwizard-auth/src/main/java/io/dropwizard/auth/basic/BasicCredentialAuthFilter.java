@@ -19,8 +19,10 @@ import java.security.Principal;
 
 @Priority(Priorities.AUTHENTICATION)
 public class BasicCredentialAuthFilter<P extends Principal> extends AuthFilter<BasicCredentials, P> {
-    final private static Logger LOGGER = LoggerFactory.getLogger(BasicCredentialAuthFilter.class);
-    private BasicCredentialAuthFilter() {}
+    private static final Logger LOGGER = LoggerFactory.getLogger(BasicCredentialAuthFilter.class);
+
+    private BasicCredentialAuthFilter() {
+    }
 
     @Override
     public void filter(ContainerRequestContext requestContext) throws IOException {
@@ -55,8 +57,7 @@ public class BasicCredentialAuthFilter<P extends Principal> extends AuthFilter<B
                     }
                 }
             }
-        }
-        catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             LOGGER.warn("Error decoding credentials", e);
         }
 
@@ -65,20 +66,20 @@ public class BasicCredentialAuthFilter<P extends Principal> extends AuthFilter<B
 
 
     public static class Builder<APrincipal extends Principal, AAuthenticator extends Authenticator<BasicCredentials, APrincipal>>
-            extends AuthFilter.AuthHandlerBuilder<BasicCredentials, APrincipal, BasicCredentialAuthFilter<APrincipal>, AAuthenticator> {
+            extends AuthFilterBuilder<BasicCredentials, APrincipal, BasicCredentialAuthFilter<APrincipal>, AAuthenticator> {
 
         @Override
-        public BasicCredentialAuthFilter<APrincipal> buildAuthHandler() {
-            if(realm == null || authenticator == null || prefix == null || securityContextFunction == null) {
+        public BasicCredentialAuthFilter<APrincipal> buildAuthFilter() {
+            if (realm == null || authenticator == null || prefix == null || securityContextFunction == null) {
                 throw new RuntimeException("Required auth filter parameters not set");
             }
 
-            BasicCredentialAuthFilter<APrincipal> basicCredentialAuthHandler = new BasicCredentialAuthFilter<>();
-            basicCredentialAuthHandler.setRealm(realm);
-            basicCredentialAuthHandler.setAuthenticator(authenticator);
-            basicCredentialAuthHandler.setPrefix(prefix);
-            basicCredentialAuthHandler.setSecurityContextFunction(securityContextFunction);
-            return basicCredentialAuthHandler;
+            BasicCredentialAuthFilter<APrincipal> basicCredentialAuthFilter = new BasicCredentialAuthFilter<>();
+            basicCredentialAuthFilter.setRealm(realm);
+            basicCredentialAuthFilter.setAuthenticator(authenticator);
+            basicCredentialAuthFilter.setPrefix(prefix);
+            basicCredentialAuthFilter.setSecurityContextFunction(securityContextFunction);
+            return basicCredentialAuthFilter;
         }
     }
 }

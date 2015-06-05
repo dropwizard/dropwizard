@@ -51,7 +51,7 @@ Our applications tend to look like this:
 .. _man-core-application:
 
 Application
-============
+===========
 
 The main entry point into a Dropwizard application is, unsurprisingly, the ``Application`` class. Each
 ``Application`` has a **name**, which is mostly used to render the command-line interface. In the
@@ -233,7 +233,7 @@ value of environment variables using a ``SubstitutingSourceProvider`` and ``Envi
             // Enable variable substitution with environment variables
             bootstrap.setConfigurationSourceProvider(
                     new SubstitutingSourceProvider(bootstrap.getConfigurationSourceProvider(),
-                                                       new EnvironmentVariableSubstitutor()
+                                                       new EnvironmentVariableSubstitutor(false)
                     )
             );
 
@@ -580,7 +580,7 @@ record runtime information about your tasks. Here's a basic task class:
         private final Database database;
 
         public TruncateDatabaseTask(Database database) {
-            super('truncate');
+            super("truncate");
             this.database = database;
         }
 
@@ -959,6 +959,9 @@ Metrics
 Every resource method can be annotated with ``@Timed``, ``@Metered``, and ``@ExceptionMetered``.
 Dropwizard augments Jersey to automatically record runtime information about your resource methods.
 
+* ``@Timed`` measures the duration of requests to a resource
+* ``@Metered`` measures the rate at which the resource is accessed
+* ``@ExceptionMetered`` measures how often exceptions occur processing the resource
 
 .. _man-core-resources-parameters:
 
@@ -1259,10 +1262,13 @@ This gets converted into this JSON:
 Validation
 ----------
 
-Like :ref:`man-core-configuration`, you can add validation annotations to fields of your
-representation classes and validate them. If we're accepting client-provided ``Person`` objects, we
-probably want to ensure that the ``name`` field of the object isn't ``null`` or blank. We can do
-this as follows:
+You can add validation annotations on resource endpoints similar to how it is done in
+:ref:`man-core-configuration`. These annotations can be placed on resource return values,
+``*Param`` annotations, and fields of your representation classes.
+
+For example, if we're accepting client-provided ``Person`` and returning a modification, we probably
+want to ensure that the ``name`` field of the object isn't ``null`` or blank on both the request and
+response. We can do this as follows:
 
 .. code-block:: java
 
@@ -1282,17 +1288,34 @@ this as follows:
         }
     }
 
-Then, in our resource class, we can add the ``@Valid`` annotation to the ``Person`` annotation:
+Then, in our resource class, we can add the ``@Valid`` annotation to the ``Person`` parameter so
+that we know the ``Person`` object has a name in our endpoint. In addition, adding the ``@Valid``
+annotation to the return value will ensure we're not returning invalid data back to clients:
 
 .. code-block:: java
 
     @PUT
-    public Response replace(@Valid Person person) {
+    @Valid
+    public Person replace(@Valid Person person) {
+        // Oops, we got a bug!
+        return new Person(null);
+    }
+
+    @GET
+    @Valid
+    public Person find(@QueryParam("name") @NotEmpty name) {
         // ...
     }
 
-If the ``name`` field is missing, Dropwizard will return a ``text/plain``
-``422 Unprocessable Entity`` response detailing the validation errors::
+If validation fails, Dropwizard will return a ``text/plain`` response with an HTTP status code
+depending on where the validation failed:
+
+* Violation on a resource return value causes a ``500 Internal Server Error``
+* Violation on a representation class causes a ``422 Unprocessable Entity``
+* Violation on a ``*Param`` annotation causes a ``400 Bad Request``
+
+So in our example, if the ``name`` field is missing in a ``PUT`` request, Dropwizard will return a
+``422 Unprocessable Entity`` response detailing the validation error::
 
     * name may not be empty
 
@@ -1418,14 +1441,14 @@ this example demonstrates a servlet filter analogous to the previous example:
 .. code-block:: java
 
     public class DateNotSpecifiedServletFilter implements javax.servlet.Filter {
-        // Other methods in interface ommited for brevity
+        // Other methods in interface omitted for brevity
 
         @Override
         public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
             if (request instanceof HttpServletRequest) {
                 String dateHeader = ((HttpServletRequest) request).getHeader(HttpHeaders.DATE);
 
-                if (dateHeader == null) {
+                if (dateHeader != null) {
                     chain.doFilter(request, response); // This signals that the request should pass this filter
                 } else {
                     HttpServletResponse httpResponse = (HttpServletResponse) response;

@@ -1,5 +1,11 @@
 package io.dropwizard.jersey.validation;
 
+import com.google.common.base.Function;
+import com.google.common.collect.FluentIterable;
+import com.google.common.collect.ImmutableList;
+import io.dropwizard.validation.ConstraintViolations;
+
+import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
@@ -7,14 +13,19 @@ import javax.ws.rs.ext.Provider;
 
 @Provider
 public class ConstraintViolationExceptionMapper implements ExceptionMapper<ConstraintViolationException> {
-    private static final int UNPROCESSABLE_ENTITY = 422;
 
     @Override
     public Response toResponse(ConstraintViolationException exception) {
-        final ValidationErrorMessage message = new ValidationErrorMessage(exception.getConstraintViolations());
+        final ImmutableList<String> errors = FluentIterable.from(exception.getConstraintViolations())
+                .transform(new Function<ConstraintViolation<?>, String>() {
+                    @Override
+                    public String apply(ConstraintViolation<?> v) {
+                        return ConstraintMessage.getMessage(v);
+                    }
+                }).toList();
 
-        return Response.status(UNPROCESSABLE_ENTITY)
-                       .entity(message)
-                       .build();
+        return Response.status(ConstraintViolations.determineStatus(exception.getConstraintViolations()))
+                .entity(new ValidationErrorMessage(errors))
+                .build();
     }
 }

@@ -3,13 +3,14 @@ package io.dropwizard.jersey.filter;
 import com.codahale.metrics.MetricRegistry;
 import com.google.common.collect.ImmutableMap;
 import io.dropwizard.jersey.DropwizardResourceConfig;
-import io.dropwizard.logging.LoggingFactory;
+import io.dropwizard.logging.BootstrapLogging;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.ServerProperties;
 import org.glassfish.jersey.servlet.ServletProperties;
 import org.glassfish.jersey.test.DeploymentContext;
 import org.glassfish.jersey.test.JerseyTest;
 import org.glassfish.jersey.test.ServletDeploymentContext;
+import org.glassfish.jersey.test.TestProperties;
 import org.glassfish.jersey.test.grizzly.GrizzlyWebTestContainerFactory;
 import org.glassfish.jersey.test.spi.TestContainerException;
 import org.glassfish.jersey.test.spi.TestContainerFactory;
@@ -36,7 +37,7 @@ import static org.mockito.Mockito.when;
 
 public class AllowedMethodsFilterTest extends JerseyTest {
     static {
-        LoggingFactory.bootstrap();
+        BootstrapLogging.bootstrap();
     }
 
     private static final int DISALLOWED_STATUS_CODE = Response.Status.METHOD_NOT_ALLOWED.getStatusCode();
@@ -62,6 +63,7 @@ public class AllowedMethodsFilterTest extends JerseyTest {
 
     @Override
     protected DeploymentContext configureDeployment() {
+        forceSet(TestProperties.CONTAINER_PORT, "0");
         final ResourceConfig rc = DropwizardResourceConfig.forTesting(new MetricRegistry());
 
         final Map<String, String> filterParams = ImmutableMap.of(

@@ -12,8 +12,8 @@ public class BooleanParam extends AbstractParam<Boolean> {
     }
 
     @Override
-    protected String errorMessage(String input, Exception e) {
-        return '"' + input + "\" must be \"true\" or \"false\".";
+    protected String errorMessage(Exception e) {
+        return "Parameter must be \"true\" or \"false\".";
     }
 
     @Override

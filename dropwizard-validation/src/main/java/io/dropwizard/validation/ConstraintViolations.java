@@ -11,22 +11,23 @@ import javax.validation.Path;
 import java.util.Set;
 
 public class ConstraintViolations {
+    private static final Joiner DOT_JOINER = Joiner.on('.');
+
     private ConstraintViolations() { /* singleton */ }
 
     public static <T> String format(ConstraintViolation<T> v) {
         if (v.getConstraintDescriptor().getAnnotation() instanceof ValidationMethod) {
-            final ImmutableList<Path.Node> nodes = ImmutableList.copyOf(v.getPropertyPath());
-            final ImmutableList<Path.Node> usefulNodes = nodes.subList(0, nodes.size() - 1);
-            final String msg = v.getMessage().startsWith(".") ? "%s%s" : "%s %s";
-            return String.format(msg,
-                                 Joiner.on('.').join(usefulNodes),
-                                 v.getMessage()).trim();
+            return validationMethodFormatted(v);
         } else {
-            return String.format("%s %s (was %s)",
-                                 v.getPropertyPath(),
-                                 v.getMessage(),
-                                 v.getInvalidValue());
+            return String.format("%s %s", v.getPropertyPath(), v.getMessage());
         }
+    }
+
+    public static <T> String validationMethodFormatted(ConstraintViolation<T> v) {
+        final ImmutableList<Path.Node> nodes = ImmutableList.copyOf(v.getPropertyPath());
+        String usefulNodes = DOT_JOINER.join(nodes.subList(0, nodes.size() - 1));
+        String msg = usefulNodes + (v.getMessage().startsWith(".") ? "" : " ") + v.getMessage();
+        return msg.trim();
     }
 
     public static <T> ImmutableList<String> format(Set<ConstraintViolation<T>> violations) {
@@ -51,5 +52,29 @@ public class ConstraintViolations {
             builder.add(violation);
         }
         return builder.build();
+    }
+
+    public static <T extends ConstraintViolation<?>> int determineStatus(Set<T> violations) {
+        // Detect where the constraint validation occurred so we can return an appropriate status
+        // code. If the constraint failed with a *Param annotation, return a bad request. If it
+        // failed validating the return value, return internal error. Else return unprocessable
+        // entity.
+        if (violations.size() > 0) {
+            ConstraintViolation<?> violation = violations.iterator().next();
+            for (Path.Node node : violation.getPropertyPath()) {
+                switch (node.getKind()) {
+                    case RETURN_VALUE:
+                        return 500;
+                    case PARAMETER:
+                        return 400;
+                    default:
+                        continue;
+                }
+            }
+        }
+
+        // When Jackson deserializes and validates POST, PUT, etc and constraint violations occur,
+        // they occur from the entity's properties and not as parameter from the resource endpoint.
+        return 422;
     }
 }

@@ -102,6 +102,15 @@ public class CachingAuthenticatorTest {
     @Test
     public void calculatesCacheStats() throws Exception {
         cached.authenticate("credentials1");
-        assertThat(cached.stats().loadCount()).isEqualTo(1);
+        assertThat(cached.stats().loadCount()).isEqualTo(0);
+        assertThat(cached.size()).isEqualTo(1);
+    }
+
+    @Test
+    public void shouldNotCacheAbsentPrincipals() throws Exception {
+        when(underlying.authenticate(anyString())).thenReturn(Optional.<Principal>absent());
+        assertThat(cached.authenticate("credentials")).isEqualTo(Optional.absent());
+        verify(underlying).authenticate("credentials");
+        assertThat(cached.size()).isEqualTo(0);
     }
 }

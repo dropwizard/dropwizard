@@ -56,7 +56,7 @@ public class TaskServlet extends HttpServlet {
             Method executeMethod = task.getClass().getMethod("execute",
                     ImmutableMultimap.class, PrintWriter.class);
 
-            if(executeMethod.isAnnotationPresent(Timed.class)) {
+            if (executeMethod.isAnnotationPresent(Timed.class)) {
                 Timed annotation = executeMethod.getAnnotation(Timed.class);
                 String name = chooseName(annotation.name(),
                         annotation.absolute(),
@@ -65,7 +65,7 @@ public class TaskServlet extends HttpServlet {
                 taskExecutor = new TimedTask(taskExecutor, timer);
             }
 
-            if(executeMethod.isAnnotationPresent(Metered.class)) {
+            if (executeMethod.isAnnotationPresent(Metered.class)) {
                 Metered annotation = executeMethod.getAnnotation(Metered.class);
                 String name = chooseName(annotation.name(),
                                         annotation.absolute(),
@@ -74,7 +74,7 @@ public class TaskServlet extends HttpServlet {
                 taskExecutor = new MeteredTask(taskExecutor, meter);
             }
 
-            if(executeMethod.isAnnotationPresent(ExceptionMetered.class)) {
+            if (executeMethod.isAnnotationPresent(ExceptionMetered.class)) {
                 ExceptionMetered annotation = executeMethod.getAnnotation(ExceptionMetered.class);
                 String name = chooseName(annotation.name(),
                                         annotation.absolute(),
@@ -83,7 +83,7 @@ public class TaskServlet extends HttpServlet {
                 Meter exceptionMeter = metricRegistry.meter(name);
                 taskExecutor = new ExceptionMeteredTask(taskExecutor, exceptionMeter, annotation.cause());
             }
-        } catch (NoSuchMethodException e) {
+        } catch (NoSuchMethodException ignored) {
         }
 
         taskExecutors.put(task, taskExecutor);
@@ -210,7 +210,7 @@ public class TaskServlet extends HttpServlet {
         public void executeTask(ImmutableMultimap<String, String> params, PrintWriter output) throws Exception {
             try {
                 underlying.executeTask(params, output);
-            } catch(Exception e) {
+            } catch (Exception e) {
                 if (exceptionMeter != null && exceptionClass.isAssignableFrom(e.getClass()) ||
                         (e.getCause() != null && exceptionClass.isAssignableFrom(e.getCause().getClass()))) {
                     exceptionMeter.mark();
