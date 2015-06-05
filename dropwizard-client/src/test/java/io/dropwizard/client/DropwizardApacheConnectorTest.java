@@ -2,12 +2,10 @@ package io.dropwizard.client;
 
 import com.codahale.metrics.MetricRegistry;
 import com.google.common.io.Resources;
-import io.dropwizard.Application;
-import io.dropwizard.Configuration;
 import io.dropwizard.HttpApplication;
 import io.dropwizard.HttpConfiguration;
 import io.dropwizard.jackson.Jackson;
-import io.dropwizard.setup.Environment;
+import io.dropwizard.setup.HttpEnvironment;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import io.dropwizard.util.Duration;
 import org.apache.http.HttpStatus;
@@ -155,7 +153,7 @@ public class DropwizardApacheConnectorTest {
         }
 
         @Override
-        public void run(HttpConfiguration configuration, Environment environment) throws Exception {
+        public void run(HttpConfiguration configuration, HttpEnvironment environment) throws Exception {
             environment.jersey().register(TestResource.class);
         }
     }

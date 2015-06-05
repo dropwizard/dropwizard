@@ -6,7 +6,7 @@ import com.google.common.collect.ImmutableMap;
 import io.dropwizard.jetty.ConnectorFactory;
 import io.dropwizard.jetty.ContextRoutingHandler;
 import io.dropwizard.jetty.HttpConnectorFactory;
-import io.dropwizard.setup.Environment;
+import io.dropwizard.setup.HttpEnvironment;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
@@ -93,7 +93,7 @@ public class SimpleServerFactory extends AbstractServerFactory {
     }
 
     @Override
-    public Server build(Environment environment) {
+    public Server build(HttpEnvironment environment) {
         printBanner(environment.getName());
         final ThreadPool threadPool = createThreadPool(environment.metrics());
         final Server server = buildServer(environment.lifecycle(), threadPool);

@@ -5,7 +5,7 @@ import com.google.common.base.Optional;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jdbi.DBIFactory;
-import io.dropwizard.setup.Environment;
+import io.dropwizard.setup.HttpEnvironment;
 import org.eclipse.jetty.util.component.LifeCycle;
 import org.junit.rules.ExternalResource;
 import org.skife.jdbi.v2.DBI;
@@ -34,7 +34,7 @@ public class DBIClient extends ExternalResource {
 
     @Override
     protected void before() throws Throwable {
-        final Environment environment = new Environment("test", Jackson.newObjectMapper(),
+        final HttpEnvironment environment = new HttpEnvironment("test", Jackson.newObjectMapper(),
                 Validation.buildDefaultValidatorFactory().getValidator(), new MetricRegistry(),
                 getClass().getClassLoader());
 

@@ -2,7 +2,7 @@ package io.dropwizard.server;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import io.dropwizard.jackson.Discoverable;
-import io.dropwizard.setup.Environment;
+import io.dropwizard.setup.HttpEnvironment;
 import org.eclipse.jetty.server.Server;
 
 /**
@@ -18,5 +18,5 @@ public interface ServerFactory extends Discoverable {
      * @param environment the application's environment
      * @return a {@link Server} running the Dropwizard application
      */
-    Server build(Environment environment);
+    Server build(HttpEnvironment environment);
 }

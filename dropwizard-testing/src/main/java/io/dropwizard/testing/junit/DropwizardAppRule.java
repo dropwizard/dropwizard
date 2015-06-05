@@ -1,8 +1,7 @@
 package io.dropwizard.testing.junit;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.dropwizard.Application;
-import io.dropwizard.Configuration;
+import io.dropwizard.HttpApplication;
 import io.dropwizard.HttpConfiguration;
 import io.dropwizard.lifecycle.Managed;
 import io.dropwizard.setup.Environment;
@@ -16,7 +15,7 @@ import javax.annotation.Nullable;
 /**
  * A JUnit rule for starting and stopping your application at the start and end of a test class.
  * <p>
- * By default, the {@link Application} will be constructed using reflection to invoke the nullary
+ * By default, the {@link HttpApplication} will be constructed using reflection to invoke the nullary
  * constructor. If your application does not provide a public nullary constructor, you will need to
  * override the {@link #newApplication()} method to provide your application instance(s).
  * </p>
@@ -27,7 +26,7 @@ public class DropwizardAppRule<C extends HttpConfiguration> extends ExternalReso
 
     private final DropwizardTestSupport<C> testSupport;
 
-    public DropwizardAppRule(Class<? extends Application<C>> applicationClass,
+    public DropwizardAppRule(Class<? extends HttpApplication<C>> applicationClass,
                              @Nullable String configPath,
                              ConfigOverride... configOverrides) {
         this.testSupport = new DropwizardTestSupport<>(applicationClass, configPath, configOverrides);
@@ -85,11 +84,11 @@ public class DropwizardAppRule<C extends HttpConfiguration> extends ExternalReso
         return testSupport.getAdminPort();
     }
 
-    public Application<C> newApplication() {
+    public HttpApplication<C> newApplication() {
         return testSupport.newApplication();
     }
 
-    public <A extends Application<C>> A getApplication() {
+    public <A extends HttpApplication<C>> A getApplication() {
         return testSupport.getApplication();
     }
 

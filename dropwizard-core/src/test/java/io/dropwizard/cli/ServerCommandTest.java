@@ -1,12 +1,9 @@
 package io.dropwizard.cli;
 
-import io.dropwizard.Application;
-import io.dropwizard.Configuration;
 import io.dropwizard.HttpApplication;
 import io.dropwizard.HttpConfiguration;
 import io.dropwizard.server.ServerFactory;
-import io.dropwizard.setup.Bootstrap;
-import io.dropwizard.setup.Environment;
+import io.dropwizard.setup.HttpEnvironment;
 import net.sourceforge.argparse4j.inf.Namespace;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.component.AbstractLifeCycle;
@@ -24,7 +21,7 @@ import static org.mockito.Mockito.when;
 public class ServerCommandTest {
     private static class MyApplication extends HttpApplication<HttpConfiguration> {
         @Override
-        public void run(HttpConfiguration configuration, Environment environment) throws Exception {
+        public void run(HttpConfiguration configuration, HttpEnvironment environment) throws Exception {
         }
     }
 
@@ -32,7 +29,7 @@ public class ServerCommandTest {
     private final ServerCommand<HttpConfiguration> command = new ServerCommand<>(application);
     private final Server server = new Server(0);
 
-    private final Environment environment = mock(Environment.class);
+    private final HttpEnvironment environment = mock(HttpEnvironment.class);
     private final Namespace namespace = mock(Namespace.class);
     private final ServerFactory serverFactory = mock(ServerFactory.class);
     private final HttpConfiguration configuration = mock(HttpConfiguration.class);

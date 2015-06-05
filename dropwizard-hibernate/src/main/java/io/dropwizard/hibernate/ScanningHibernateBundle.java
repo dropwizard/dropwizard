@@ -2,7 +2,7 @@ package io.dropwizard.hibernate;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
-import io.dropwizard.Configuration;
+import io.dropwizard.HttpConfiguration;
 import org.glassfish.jersey.server.internal.scanning.AnnotationAcceptingListener;
 import org.glassfish.jersey.server.internal.scanning.PackageNamesScanner;
 
@@ -13,7 +13,7 @@ import java.io.InputStream;
 /**
  * Extension of HibernateBundle that scans given package for entities instead of giving them by hand.
  */
-public abstract class ScanningHibernateBundle<T extends Configuration> extends HibernateBundle<T> {
+public abstract class ScanningHibernateBundle<T extends HttpConfiguration> extends HibernateBundle<T> {
     /**
      * @param pckg string with package containing Hibernate entities (classes annotated with Hibernate {@code @Entity}
      *             annotation) e. g. {@code com.codahale.fake.db.directory.entities}

@@ -1,9 +1,9 @@
 package io.dropwizard.cli;
 
-import io.dropwizard.Application;
 import io.dropwizard.Configuration;
+import io.dropwizard.HttpApplication;
 import io.dropwizard.HttpConfiguration;
-import io.dropwizard.setup.Environment;
+import io.dropwizard.setup.HttpEnvironment;
 import net.sourceforge.argparse4j.inf.Namespace;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.component.AbstractLifeCycle;
@@ -16,12 +16,12 @@ import org.slf4j.LoggerFactory;
  *
  * @param <T> the {@link Configuration} subclass which is loaded from the configuration file
  */
-public class ServerCommand<T extends HttpConfiguration> extends EnvironmentCommand<T> {
+public class ServerCommand<T extends HttpConfiguration> extends HttpEnvironmentCommand<T> {
     private static final Logger LOGGER = LoggerFactory.getLogger(ServerCommand.class);
 
     private final Class<T> configurationClass;
 
-    public ServerCommand(Application<T> application) {
+    public ServerCommand(HttpApplication<T> application) {
         super(application, "server", "Runs the Dropwizard application as an HTTP server");
         this.configurationClass = application.getConfigurationClass();
     }
@@ -36,7 +36,7 @@ public class ServerCommand<T extends HttpConfiguration> extends EnvironmentComma
     }
 
     @Override
-    protected void run(Environment environment, Namespace namespace, T configuration) throws Exception {
+    protected void run(HttpEnvironment environment, Namespace namespace, T configuration) throws Exception {
         final Server server = configuration.getServerFactory().build(environment);
         try {
             server.addLifeCycleListener(new LifeCycleListener());

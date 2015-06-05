@@ -5,8 +5,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
-import io.dropwizard.Application;
-import io.dropwizard.Configuration;
+import io.dropwizard.HttpApplication;
 import io.dropwizard.HttpConfiguration;
 import io.dropwizard.cli.ServerCommand;
 import io.dropwizard.lifecycle.Managed;
@@ -27,7 +26,7 @@ import static com.google.common.base.Throwables.propagate;
 /**
  * A test support class for starting and stopping your application at the start and end of a test class.
  * <p>
- * By default, the {@link Application} will be constructed using reflection to invoke the nullary
+ * By default, the {@link HttpApplication} will be constructed using reflection to invoke the nullary
  * constructor. If your application does not provide a public nullary constructor, you will need to
  * override the {@link #newApplication()} method to provide your application instance(s).
  * </p>
@@ -35,17 +34,17 @@ import static com.google.common.base.Throwables.propagate;
  * @param <C> the configuration type
  */
 public class DropwizardTestSupport<C extends HttpConfiguration> {
-    private final Class<? extends Application<C>> applicationClass;
+    private final Class<? extends HttpApplication<C>> applicationClass;
     private final String configPath;
     private final Set<ConfigOverride> configOverrides;
 
     private C configuration;
-    private Application<C> application;
+    private HttpApplication<C> application;
     private Environment environment;
     private Server jettyServer;
     private List<ServiceListener<C>> listeners = Lists.newArrayList();
 
-    public DropwizardTestSupport(Class<? extends Application<C>> applicationClass,
+    public DropwizardTestSupport(Class<? extends HttpApplication<C>> applicationClass,
                              @Nullable String configPath,
                              ConfigOverride... configOverrides) {
         this.applicationClass = applicationClass;
@@ -168,7 +167,7 @@ public class DropwizardTestSupport<C extends HttpConfiguration> {
         return ((ServerConnector) jettyServer.getConnectors()[1]).getLocalPort();
     }
 
-    public Application<C> newApplication() {
+    public HttpApplication<C> newApplication() {
         try {
             return applicationClass.newInstance();
         } catch (Exception e) {
@@ -177,7 +176,7 @@ public class DropwizardTestSupport<C extends HttpConfiguration> {
     }
 
     @SuppressWarnings("unchecked")
-    public <A extends Application<C>> A getApplication() {
+    public <A extends HttpApplication<C>> A getApplication() {
         return (A) application;
     }
 

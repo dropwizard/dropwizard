@@ -1,12 +1,13 @@
 package io.dropwizard.testing.junit;
 
 import com.google.common.collect.ImmutableMap;
-import io.dropwizard.Application;
-import io.dropwizard.Configuration;
 import io.dropwizard.HttpApplication;
 import io.dropwizard.HttpConfiguration;
-import io.dropwizard.setup.Environment;
-import java.util.Map;
+import io.dropwizard.setup.HttpEnvironment;
+import org.junit.Assert;
+import org.junit.ClassRule;
+import org.junit.Test;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -14,9 +15,7 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import org.junit.Assert;
-import org.junit.ClassRule;
-import org.junit.Test;
+import java.util.Map;
 
 public class DropwizardAppRuleWithoutConfigTest {
 
@@ -35,7 +34,7 @@ public class DropwizardAppRuleWithoutConfigTest {
 
     public static class TestApplication extends HttpApplication<HttpConfiguration> {
         @Override
-        public void run(HttpConfiguration configuration, Environment environment) throws Exception {
+        public void run(HttpConfiguration configuration, HttpEnvironment environment) throws Exception {
             environment.jersey().register(new TestResource());
         }
     }

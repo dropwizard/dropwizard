@@ -2,11 +2,12 @@ package io.dropwizard.views;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableMap;
+import io.dropwizard.AbstractConfiguredHttpBundle;
 import io.dropwizard.Bundle;
-import io.dropwizard.Configuration;
 import io.dropwizard.ConfiguredBundle;
+import io.dropwizard.HttpConfiguration;
 import io.dropwizard.setup.Bootstrap;
-import io.dropwizard.setup.Environment;
+import io.dropwizard.setup.HttpEnvironment;
 
 import java.util.Collections;
 import java.util.Map;
@@ -89,7 +90,9 @@ import static com.google.common.base.MoreObjects.firstNonNull;
  *
  * @see <a href="http://mustache.github.io/mustache.5.html">Mustache Manual</a>
  */
-public class ViewBundle<T extends Configuration> implements ConfiguredBundle<T>, ViewConfigurable<T> {
+public class ViewBundle<T extends HttpConfiguration>
+        extends AbstractConfiguredHttpBundle<T>
+        implements ConfiguredBundle<T>, ViewConfigurable<T> {
     private final Iterable<ViewRenderer> viewRenderers;
 
     public ViewBundle() {
@@ -105,7 +108,7 @@ public class ViewBundle<T extends Configuration> implements ConfiguredBundle<T>,
     }
 
     @Override
-    public void run(T configuration, Environment environment) throws Exception {
+    public void run(T configuration, HttpEnvironment environment) throws Exception {
         Map<String, Map<String, String>> options = getViewConfiguration(configuration);
         for(ViewRenderer viewRenderer : viewRenderers) {
             Map<String, String> viewOptions = options.get(viewRenderer.getSuffix());

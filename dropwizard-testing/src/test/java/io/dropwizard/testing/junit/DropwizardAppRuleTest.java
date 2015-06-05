@@ -3,19 +3,15 @@ package io.dropwizard.testing.junit;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableMultimap;
-import io.dropwizard.Application;
-import io.dropwizard.Configuration;
+import io.dropwizard.HttpApplication;
 import io.dropwizard.HttpConfiguration;
-import io.dropwizard.server.DefaultServerFactory;
-import io.dropwizard.server.ServerFactory;
 import io.dropwizard.servlets.tasks.Task;
 import io.dropwizard.setup.Environment;
+import io.dropwizard.setup.HttpEnvironment;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.junit.ClassRule;
 import org.junit.Test;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.client.ClientBuilder;
@@ -73,9 +69,9 @@ public class DropwizardAppRuleTest {
         assertThat(response, is("Hello has been said to test_user"));
     }
 
-    public static class TestApplication extends Application<TestConfiguration> {
+    public static class TestApplication extends HttpApplication<TestConfiguration> {
         @Override
-        public void run(TestConfiguration configuration, Environment environment) throws Exception {
+        public void run(TestConfiguration configuration, HttpEnvironment environment) throws Exception {
             environment.jersey().register(new TestResource(configuration.getMessage()));
             environment.admin().addTask(new HelloTask());
         }
