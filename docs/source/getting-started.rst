@@ -83,7 +83,7 @@ you ship more quickly and with fewer regrets.
 * Guava_, which, in addition to highly optimized immutable data structures, provides a growing
   number of classes to speed up development in Java.
 * Logback_ and slf4j_ for performant and flexible logging.
-* `Hibernate Validator`_, the `JSR-303`_ reference implementation, provides an easy, declarative
+* `Hibernate Validator`_, the `JSR-349`_ reference implementation, provides an easy, declarative
   framework for validating user input and generating helpful, i18n-friendly error messages.
 * The `Apache HttpClient`_ and Jersey_ client libraries allow for both low- and high-level
   interaction with other web services.
