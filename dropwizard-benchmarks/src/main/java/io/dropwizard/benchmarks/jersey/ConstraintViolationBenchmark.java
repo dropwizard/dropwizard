@@ -1,6 +1,7 @@
 package io.dropwizard.benchmarks.jersey;
 
 import io.dropwizard.jersey.validation.ConstraintMessage;
+import io.dropwizard.jersey.validation.Validators;
 import io.dropwizard.logging.BootstrapLogging;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.openjdk.jmh.annotations.*;
@@ -9,7 +10,6 @@ import org.openjdk.jmh.runner.options.OptionsBuilder;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Valid;
-import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.executable.ExecutableValidator;
 import javax.ws.rs.HeaderParam;
@@ -47,7 +47,7 @@ public class ConstraintViolationBenchmark {
 
     @Setup
     public void prepare() {
-        final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+        final Validator validator = Validators.newValidator();
         final ExecutableValidator execValidator = validator.forExecutables();
 
         Set<ConstraintViolation<ConstraintViolationBenchmark.Resource>> paramViolations =

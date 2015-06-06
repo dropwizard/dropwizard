@@ -1,10 +1,12 @@
 package io.dropwizard.jersey.validation;
 
 import io.dropwizard.jersey.params.IntParam;
+import io.dropwizard.jersey.params.NonEmptyStringParam;
 import io.dropwizard.validation.Validated;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotEmpty;
+import org.hibernate.validator.valuehandling.UnwrapValidatedValue;
 
 import javax.servlet.ServletContext;
 import javax.validation.Valid;
@@ -28,6 +30,12 @@ public class ValidatingResource {
     @Length(max = 3)
     public String blaze(@QueryParam("name") @Length(min = 3) String name) {
         return name;
+    }
+
+    @GET
+    @Path("barter")
+    public String isnt(@QueryParam("name") @Length(min = 3) @UnwrapValidatedValue NonEmptyStringParam name) {
+        return name.get().orNull();
     }
 
     @GET
