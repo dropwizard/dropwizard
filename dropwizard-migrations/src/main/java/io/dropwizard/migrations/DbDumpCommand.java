@@ -68,7 +68,7 @@ public class DbDumpCommand<T extends Configuration> extends AbstractLiquibaseCom
         columns.addArgument("--columns")
                .action(Arguments.storeTrue())
                .dest("columns")
-               .help("Check for added, removed, or modified tables (default)");
+               .help("Check for added, removed, or modified columns (default)");
         columns.addArgument("--ignore-columns")
                .action(Arguments.storeFalse())
                .dest("columns")
@@ -132,7 +132,7 @@ public class DbDumpCommand<T extends Configuration> extends AbstractLiquibaseCom
         sequences.addArgument("--ignore-sequences")
                  .action(Arguments.storeFalse())
                  .dest("sequences")
-                 .help("Ignore foreign keys");
+                 .help("Ignore sequences");
 
         final ArgumentGroup data = subparser.addArgumentGroup("Data");
         data.addArgument("--data")
