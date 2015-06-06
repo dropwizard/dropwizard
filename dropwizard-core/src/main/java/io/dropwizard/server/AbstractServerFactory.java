@@ -20,6 +20,7 @@ import io.dropwizard.jersey.jackson.JsonProcessingExceptionMapper;
 import io.dropwizard.jersey.validation.ConstraintViolationExceptionMapper;
 import io.dropwizard.jersey.jackson.JacksonMessageBodyProvider;
 import io.dropwizard.jersey.setup.JerseyEnvironment;
+import io.dropwizard.jersey.validation.JerseyViolationExceptionMapper;
 import io.dropwizard.jetty.GzipFilterFactory;
 import io.dropwizard.jetty.MutableServletContextHandler;
 import io.dropwizard.jetty.NonblockingServletHolder;
@@ -479,10 +480,11 @@ public abstract class AbstractServerFactory implements ServerFactory {
                 urlPattern += "*";
             }
             jersey.setUrlPattern(urlPattern);
-            jersey.register(new JacksonMessageBodyProvider(objectMapper, validator));
+            jersey.register(new JacksonMessageBodyProvider(objectMapper));
             if (registerDefaultExceptionMappers == null || registerDefaultExceptionMappers) {
                 jersey.register(new LoggingExceptionMapper<Throwable>() {
                 });
+                jersey.register(new JerseyViolationExceptionMapper());
                 jersey.register(new ConstraintViolationExceptionMapper());
                 jersey.register(new JsonProcessingExceptionMapper());
                 jersey.register(new EarlyEofExceptionMapper());

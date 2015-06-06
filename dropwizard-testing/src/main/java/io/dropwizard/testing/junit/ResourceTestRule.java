@@ -9,6 +9,7 @@ import com.google.common.collect.Sets;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.jersey.jackson.JacksonMessageBodyProvider;
+import io.dropwizard.jersey.validation.JerseyViolationExceptionMapper;
 import io.dropwizard.jersey.validation.Validators;
 import io.dropwizard.jersey.validation.ConstraintViolationExceptionMapper;
 import io.dropwizard.logging.BootstrapLogging;
@@ -154,6 +155,7 @@ public class ResourceTestRule implements TestRule {
 
         private void configure(final ResourceTestRule resourceTestRule) {
             register(new ConstraintViolationExceptionMapper());
+            register(new JerseyViolationExceptionMapper());
             for (Class<?> provider : resourceTestRule.providers) {
                 register(provider);
             }
@@ -161,7 +163,7 @@ public class ResourceTestRule implements TestRule {
             for (Map.Entry<String, Object> property : resourceTestRule.properties.entrySet()) {
                 property(property.getKey(), property.getValue());
             }
-            register(new JacksonMessageBodyProvider(resourceTestRule.mapper, resourceTestRule.validator));
+            register(new JacksonMessageBodyProvider(resourceTestRule.mapper));
             for (Object singleton : resourceTestRule.singletons) {
                 register(singleton);
             }

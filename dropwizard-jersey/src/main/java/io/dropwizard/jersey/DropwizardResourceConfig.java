@@ -13,6 +13,7 @@ import io.dropwizard.jersey.guava.OptionalParamFeature;
 import io.dropwizard.jersey.params.NonEmptyStringParamFeature;
 import io.dropwizard.jersey.sessions.SessionFactoryProvider;
 import io.dropwizard.jersey.validation.HibernateValidationFeature;
+import io.dropwizard.jersey.validation.JerseyViolationExceptionMapper;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.ServerProperties;
 import org.glassfish.jersey.server.model.Resource;
@@ -67,7 +68,6 @@ public class DropwizardResourceConfig extends ResourceConfig {
         register(NonEmptyStringParamFeature.class);
         register(new SessionFactoryProvider.Binder());
         register(HibernateValidationFeature.class);
-        register(ValidationFeature.class);
     }
 
     public static DropwizardResourceConfig forTesting(MetricRegistry metricRegistry) {
