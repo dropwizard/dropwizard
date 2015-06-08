@@ -70,12 +70,24 @@ Then, in our resource class, we can add the ``@Valid`` or the ``@Validated`` ann
 If the name field is missing, Dropwizard will return a ``422 Unprocessable Entity`` response
 detailing the validation errors: ``name may not be empty``
 
+.. note::
+
+    You don't need ``@Valid`` or ``@Validated`` when the type you are validating can be validated
+    directly (``int``, ``String``, ``Integer``). If a class has fields that need validating, then
+    instances of the class must be marked ``@Valid`` or ``@Validated``. For more information, see
+    the Hibernate Validator documentation on `Object graphs`_ and `Cascaded validation`_.
+
+.. _Object graphs: http://docs.jboss.org/hibernate/validator/5.1/reference/en-US/html/chapter-bean-constraints.html#section-object-graph-validation
+
+.. _Cascaded validation: http://docs.jboss.org/hibernate/validator/5.1/reference/en-US/html/chapter-method-constraints.html#d0e1888
+
 .. _man-validation-validations-optional-constraints:
 
 ``Optional<T>`` Constraints
 ***************************
 
-When ``Optional<T>`` is constrained, it is the type contained within the ``Optional`` that is
+If you have an ``Optional<T>`` field or parameter that needs validation, add the
+``@UnwrapValidatedValue`` annotation on it. This makes the type contained within the ``Optional``
 constrained. If the ``Optional`` is absent, then the constraints are not applied.
 
 .. note::
@@ -85,31 +97,10 @@ constrained. If the ``Optional`` is absent, then the constraints are not applied
     ``bar?q=``, ``q`` will evaluate to ``Optional.of("")``. If you want ``q`` to evaluate to
     ``Optional.absent()`` in this situation, change the type to ``NonEmptyStringParam``
 
-.. _man-validation-programming-by-contract:
+.. note::
 
-Programming by Contract
-=======================
-
-Validations can be performed on endpoint return values. This enables you, as the service provider,
-to make guarantees. If the constraints are violated, instead of returning faulty data, an internal
-server error is sent. This is known as "Programming by Contract"
-
-Our venerable ``Person`` needs a name and we can guarantee that it will have a name in a response if
-we mark the method with ``@Valid`` or ``@Validated``.
-
-.. code-block:: java
-
-    @PUT
-    @Valid
-    public Person replace(@Valid Person person) {
-        // Oops, we got a bug!
-        return new Person(null);
-    }
-
-In our example, the server will respond a ``500 Internal Server Error`` status and an error message:
-``name may not be empty``.
-
-.. _man-validation-annotations:
+    Param types such as ``IntParam`` and ``NonEmptyStringParam`` can also be constrained if
+    annotated with ``@UnwrapValidatedValue``
 
 Annotations
 ===========
@@ -147,6 +138,7 @@ which are briefly shown below.
 
         // Method that must return true for the object to be valid
         @ValidationMethod(message="name may not be Coda")
+        @JsonIgnore
         public boolean isNotCoda() {
             return !"Coda".equals(name);
         }
@@ -226,6 +218,36 @@ are performed.
     and wherever ``@Validated(Version2Checks.class)`` is used, version 1 constraints are checked
     too.
 
+.. _man-validation-testing:
+
+Testing
+=======
+
+It is critical to test the constraints so that you can ensure the assumptions about the data hold
+and see what kinds of error messages clients will receive for bad input. The recommended way for
+testing annotations is through :ref:`Testing Resources <man-testing-resources>`, as Dropwizard does
+a bit of magic behind the scenes when a constraint violation occurs to set the response's status
+code and ensure that the error messages are user friendly.
+
+.. code-block:: java
+
+    @Test
+    public void personNeedsAName() {
+        // Tests what happens when a person with a null name is sent to
+        // the endpoint.
+        final Response post = resources.client()
+                .target("/person/v1").request()
+                .post(Entity.json(new Person(null)));
+
+        // Clients will recieve a 422 on bad request entity
+        assertThat(post.getStatus()).isEqualTo(422);
+
+        // Check to make sure that errors are correct and human readable
+        ValidationErrorMessage msg = post.readEntity(ValidationErrorMessage.class);
+        assertThat(msg.getErrors())
+                .containsOnly("name may not be empty");
+    }
+
 .. _man-validation-extending:
 
 Extending
@@ -236,8 +258,10 @@ are a series of extension points. To register your own
 ``ExceptionMapper<ConstraintViolationException>`` you'll need to first set
 ``registerDefaultExceptionMappers`` to false in the configuration file or in code before registering
 your exception mapper with jersey. Then, optionally, register other default exception mappers:
-``LoggingExceptionMapper<Throwable>``, ``JsonProcessingExceptionMapper``,
-``EarlyEofExceptionMapper``.
+
+* ``LoggingExceptionMapper<Throwable>``
+* ``JsonProcessingExceptionMapper``
+* ``EarlyEofExceptionMapper``
 
 If you need to validate entities outside of resource endpoints, the validator can be accessed in the
 ``Environment`` when the application is first ran.
