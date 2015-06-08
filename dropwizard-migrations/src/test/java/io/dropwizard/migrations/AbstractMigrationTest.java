@@ -9,6 +9,10 @@ import java.io.IOException;
 
 public class AbstractMigrationTest {
 
+    static {
+        ArgumentParsers.setTerminalWidthDetection(false);
+    }
+
     protected static Subparser createSubparser(AbstractLiquibaseCommand<?> command) {
         final Subparser subparser = ArgumentParsers.newArgumentParser("db")
                 .addSubparsers()
