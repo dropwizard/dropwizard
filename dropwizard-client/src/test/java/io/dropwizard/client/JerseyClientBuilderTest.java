@@ -161,7 +161,7 @@ public class JerseyClientBuilderTest {
         for (Object o : client.getConfiguration().getInstances()) {
             if (o instanceof DropwizardExecutorProvider) {
                 final DropwizardExecutorProvider provider = (DropwizardExecutorProvider) o;
-                assertThat(provider.getRequestingExecutor()).isSameAs(executorService);
+                assertThat(provider.getExecutorService()).isSameAs(executorService);
             }
         }
 
@@ -173,7 +173,7 @@ public class JerseyClientBuilderTest {
         for (Object o : client.getConfiguration().getInstances()) {
             if (o instanceof DropwizardExecutorProvider) {
                 final DropwizardExecutorProvider provider = (DropwizardExecutorProvider) o;
-                assertThat(provider.getRequestingExecutor()).isSameAs(executorService);
+                assertThat(provider.getExecutorService()).isSameAs(executorService);
             }
         }
 
