@@ -1330,6 +1330,7 @@ declarative annotations. As an emergency maneuver, add the ``@ValidationMethod``
 
 .. code-block:: java
 
+    @JsonIgnore
     @ValidationMethod(message="may not be Coda")
     public boolean isNotCoda() {
         return !("Coda".equals(name));
