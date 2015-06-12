@@ -41,11 +41,11 @@ import javax.validation.ValidatorFactory;
  */
 public class Bootstrap<T extends Configuration> {
     private final Application<T> application;
-    private final ObjectMapper objectMapper;
     private final List<Bundle> bundles;
     private final List<ConfiguredBundle<? super T>> configuredBundles;
     private final List<Command> commands;
 
+    private ObjectMapper objectMapper;
     private MetricRegistry metricRegistry;
     private ConfigurationSourceProvider configurationSourceProvider;
     private ClassLoader classLoader;
@@ -171,6 +171,17 @@ public class Bootstrap<T extends Configuration> {
      */
     public ObjectMapper getObjectMapper() {
         return objectMapper;
+    }
+
+    /**
+     * Sets the given {@link ObjectMapper} to the bootstrap.
+     * <p<b>WARNING:</b> The mapper should be created by {@link Jackson#newMinimalObjectMapper()}
+     * or {@link Jackson#newObjectMapper()}, otherwise it will not work with Dropwizard.</p>
+     *
+     * @param objectMapper an {@link ObjectMapper}
+     */
+    public void setObjectMapper(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
     }
 
     /**
