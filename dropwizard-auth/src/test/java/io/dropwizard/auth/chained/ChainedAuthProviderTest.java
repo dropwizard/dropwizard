@@ -1,12 +1,8 @@
 package io.dropwizard.auth.chained;
 
 import com.codahale.metrics.MetricRegistry;
-import com.google.common.base.Function;
 import com.google.common.collect.Lists;
-import io.dropwizard.auth.AuthDynamicFeature;
-import io.dropwizard.auth.AuthFilter;
-import io.dropwizard.auth.AuthResource;
-import io.dropwizard.auth.Authenticator;
+import io.dropwizard.auth.*;
 import io.dropwizard.auth.basic.BasicCredentialAuthFilter;
 import io.dropwizard.auth.basic.BasicCredentials;
 import io.dropwizard.auth.oauth.OAuthCredentialAuthFilter;
@@ -133,8 +129,8 @@ public class ChainedAuthProviderTest extends JerseyTest {
 
             final String validUser = "good-guy";
 
-            final Function<AuthFilter.Tuple, SecurityContext> securityContextFunction =
-                    AuthUtil.getSecurityContextProviderFunction(validUser, ADMIN_ROLE);
+            final Authorizer<Principal> authorizer =
+                    AuthUtil.getTestAuthorizer(validUser, ADMIN_ROLE);
 
             final Authenticator<BasicCredentials, Principal> basicAuthenticator =
                     AuthUtil.getTestAuthenticatorBasicCredential(validUser);
@@ -145,13 +141,13 @@ public class ChainedAuthProviderTest extends JerseyTest {
             final AuthFilter<BasicCredentials, Principal> basicAuthFilter =
                     new BasicCredentialAuthFilter.Builder<>()
                     .setAuthenticator(basicAuthenticator)
-                    .setSecurityContextFunction(securityContextFunction)
+                    .setAuthorizer(authorizer)
                     .buildAuthFilter();
 
             final AuthFilter<String, Principal> oAuthFilter = new OAuthCredentialAuthFilter.Builder<>()
                     .setAuthenticator(oauthAuthenticator)
                     .setPrefix("Bearer")
-                    .setSecurityContextFunction(securityContextFunction)
+                    .setAuthorizer(authorizer)
                     .buildAuthFilter();
 
             register(new AuthDynamicFeature(new ChainedAuthFilter<>(buildHandlerList(basicAuthFilter, oAuthFilter ))));
