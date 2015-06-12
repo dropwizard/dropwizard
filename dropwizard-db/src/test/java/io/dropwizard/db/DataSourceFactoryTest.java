@@ -1,7 +1,9 @@
 package io.dropwizard.db;
 
 import com.codahale.metrics.MetricRegistry;
+import com.google.common.base.Optional;
 import io.dropwizard.util.Duration;
+import org.apache.tomcat.jdbc.pool.Validator;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -80,5 +82,19 @@ public class DataSourceFactoryTest {
         factory.setDriverClass("org.example.no.driver.here");
 
         factory.build(metricRegistry, "test").getConnection();
+    }
+
+    @Test
+    public void testCustomValidator() throws Exception {
+        factory.setValidatorClassName(Optional.of(CustomConnectionValidator.class.getName()));
+        try (Connection connection = dataSource().getConnection()) {
+            try (PreparedStatement statement = connection.prepareStatement("select 1")) {
+                try (ResultSet rs = statement.executeQuery()) {
+                    assertThat(rs.next());
+                    assertThat(rs.getInt(1)).isEqualTo(1);
+                }
+            }
+        }
+        assertThat(CustomConnectionValidator.loaded).isTrue();
     }
 }
