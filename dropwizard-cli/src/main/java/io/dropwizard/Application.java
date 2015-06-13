@@ -2,7 +2,6 @@ package io.dropwizard;
 
 import io.dropwizard.cli.CheckCommand;
 import io.dropwizard.cli.Cli;
-import io.dropwizard.cli.ServerCommand;
 import io.dropwizard.logging.BootstrapLogging;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;

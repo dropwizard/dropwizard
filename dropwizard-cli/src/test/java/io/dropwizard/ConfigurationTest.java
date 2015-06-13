@@ -8,7 +8,6 @@ import com.google.common.collect.Lists;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.dropwizard.jackson.Jackson;
-import io.dropwizard.jetty.ConnectorFactory;
 import io.dropwizard.logging.AppenderFactory;
 
 import org.junit.Test;
@@ -32,23 +31,12 @@ public class ConfigurationTest {
         mapper.getSubtypeResolver()
             .registerSubtypes(Lists
                     .newArrayList(Iterables.transform(ServiceLoader.load(AppenderFactory.class),
-                            new Function<AppenderFactory,Class<AppenderFactory>> () {
+                            new Function<AppenderFactory, Class<AppenderFactory>>() {
                                 @SuppressWarnings("unchecked")
                                 public Class<AppenderFactory> apply(AppenderFactory factory) {
                                     return (Class<AppenderFactory>) factory.getClass();
                                 }
                             }
-                       ).iterator()).toArray(dummyArray));
-
-        mapper.getSubtypeResolver()
-        .registerSubtypes(Lists
-                .newArrayList(Iterables.transform(ServiceLoader.load(ConnectorFactory.class),
-                        new Function<ConnectorFactory,Class<ConnectorFactory>> () {
-                            @SuppressWarnings("unchecked")
-                            public Class<ConnectorFactory> apply(ConnectorFactory factory) {
-                                return (Class<ConnectorFactory>) factory.getClass();
-                            }
-                        }
                     ).iterator()).toArray(dummyArray));
 
         // Issue-96: some types were not serializable
