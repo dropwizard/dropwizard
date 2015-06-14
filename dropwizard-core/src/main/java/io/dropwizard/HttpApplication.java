@@ -3,13 +3,14 @@ package io.dropwizard;
 import io.dropwizard.cli.ServerCommand;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import io.dropwizard.setup.HttpBootstrap;
 import io.dropwizard.setup.HttpEnvironment;
 
 public abstract class HttpApplication<T extends HttpConfiguration> extends Application<T> {
 
     @Override
     protected Bootstrap<T> createBootstrap() {
-        final Bootstrap<T> bootstrap = new Bootstrap<>(this);
+        final Bootstrap<T> bootstrap = new HttpBootstrap<>(this);
         bootstrap.addCommand(new ServerCommand<>(this));
         return bootstrap;
     }

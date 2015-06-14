@@ -5,9 +5,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.jersey.setup.JerseyContainerHolder;
 import io.dropwizard.jersey.setup.JerseyEnvironment;
+import io.dropwizard.jersey.setup.JerseyServletContainer;
 import io.dropwizard.jetty.MutableServletContextHandler;
 import io.dropwizard.jetty.setup.ServletEnvironment;
-import org.glassfish.jersey.servlet.ServletContainer;
 
 import javax.servlet.Servlet;
 import javax.validation.Validator;
@@ -42,7 +42,7 @@ public class HttpEnvironment extends Environment {
 
         final DropwizardResourceConfig jerseyConfig = new DropwizardResourceConfig(metricRegistry);
 
-        this.jerseyServletContainer = new JerseyContainerHolder(new ServletContainer(jerseyConfig));
+        this.jerseyServletContainer = new JerseyContainerHolder(new JerseyServletContainer(jerseyConfig));
         this.jerseyEnvironment = new JerseyEnvironment(jerseyServletContainer, jerseyConfig);
     }
 

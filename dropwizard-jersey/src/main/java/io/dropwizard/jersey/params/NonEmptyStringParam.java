@@ -10,7 +10,7 @@ import com.google.common.base.Strings;
  * {@code Optional.of("")}.
  */
 public class NonEmptyStringParam extends AbstractParam<Optional<String>> {
-    protected NonEmptyStringParam(String input) {
+    public NonEmptyStringParam(String input) {
         super(input);
     }
 

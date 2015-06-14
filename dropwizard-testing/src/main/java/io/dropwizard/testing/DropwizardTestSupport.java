@@ -21,6 +21,7 @@ import org.eclipse.jetty.server.ServerConnector;
 
 import javax.annotation.Nullable;
 import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 import java.util.List;
 import java.util.Set;
 

@@ -67,7 +67,18 @@ public class ConstraintViolationExceptionMapperTest extends JerseyTest {
                 .queryParam("name", "hi").request().get();
         assertThat(cache.getStatus()).isEqualTo(400);
         assertThat(cache.readEntity(String.class)).isEqualTo(ret);
+    }
 
+    @Test
+    public void getInvalidCustomTypeIs400() throws Exception {
+        // query parameter is too short and so will fail validation
+        final Response response = target("/valid/barter")
+                .queryParam("name", "hi").request().get();
+
+        assertThat(response.getStatus()).isEqualTo(400);
+
+        String ret = "{\"errors\":[\"query param name length must be between 3 and 2147483647\"]}";
+        assertThat(response.readEntity(String.class)).isEqualTo(ret);
     }
 
     @Test
