@@ -149,7 +149,7 @@ public class BasicCustomAuthProviderTest extends JerseyTest {
 
             BasicCredentialAuthFilter.Builder<Principal, Authenticator<BasicCredentials, Principal>> builder
                     = new BasicCredentialAuthFilter.Builder<>();
-            builder.setSecurityContextFunction(AuthUtil.getSecurityContextProviderFunction(validUser, VALID_ROLE));
+            builder.setAuthorizer(AuthUtil.getTestAuthorizer(validUser, VALID_ROLE));
             builder.setAuthenticator(AuthUtil.getTestAuthenticatorBasicCredential(validUser));
             builder.setPrefix("Custom");
             return builder.buildAuthFilter();

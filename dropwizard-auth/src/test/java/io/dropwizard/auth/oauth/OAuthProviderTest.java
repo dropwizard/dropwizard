@@ -123,9 +123,9 @@ public class OAuthProviderTest extends JerseyTest {
             final String validUser = "good-guy";
 
             return new OAuthCredentialAuthFilter.Builder<>()
-                    .setAuthenticator(AuthUtil.<String, Principal>getTestAuthenticator(validUser))
+                    .setAuthenticator(AuthUtil.getTestAuthenticator(validUser))
+                    .setAuthorizer(AuthUtil.getTestAuthorizer(validUser, "ADMIN"))
                     .setPrefix("Bearer")
-                    .setSecurityContextFunction(AuthUtil.getSecurityContextProviderFunction(validUser, "ADMIN"))
                     .buildAuthFilter();
         }
     }
