@@ -4,7 +4,7 @@ import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module;
 import com.google.common.collect.ImmutableList;
 import io.dropwizard.Configuration;
 import io.dropwizard.ConfiguredBundle;
-import io.dropwizard.db.DataSourceFactory;
+import io.dropwizard.db.PooledDataSourceFactory;
 import io.dropwizard.db.DatabaseConfiguration;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
@@ -52,15 +52,15 @@ public abstract class HibernateBundle<T extends Configuration> implements Config
 
     @Override
     public final void run(T configuration, Environment environment) throws Exception {
-        final DataSourceFactory dbConfig = getDataSourceFactory(configuration);
+        final PooledDataSourceFactory dbConfig = getDataSourceFactory(configuration);
         this.sessionFactory = sessionFactoryFactory.build(this, environment, dbConfig, entities, name());
         environment.jersey().register(new UnitOfWorkApplicationListener(sessionFactory));
         environment.healthChecks().register(name(),
                                             new SessionFactoryHealthCheck(
                                                     environment.getHealthCheckExecutorService(),
-                                                    dbConfig.getValidationQueryTimeout().or(Duration.seconds(5)),
+                                                    dbConfig.getHealthCheckValidationTimeout().or(Duration.seconds(5)),
                                                     sessionFactory,
-                                                    dbConfig.getValidationQuery()));
+                                                    dbConfig.getHealthCheckValidationQuery()));
     }
 
     public SessionFactory getSessionFactory() {

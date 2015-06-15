@@ -11,19 +11,23 @@ import javax.validation.Path;
 import java.util.Set;
 
 public class ConstraintViolations {
+    private static final Joiner DOT_JOINER = Joiner.on('.');
+
     private ConstraintViolations() { /* singleton */ }
 
     public static <T> String format(ConstraintViolation<T> v) {
         if (v.getConstraintDescriptor().getAnnotation() instanceof ValidationMethod) {
-            final ImmutableList<Path.Node> nodes = ImmutableList.copyOf(v.getPropertyPath());
-            final ImmutableList<Path.Node> usefulNodes = nodes.subList(0, nodes.size() - 1);
-            final String msg = v.getMessage().startsWith(".") ? "%s%s" : "%s %s";
-            return String.format(msg,
-                                 Joiner.on('.').join(usefulNodes),
-                                 v.getMessage()).trim();
+            return validationMethodFormatted(v);
         } else {
             return String.format("%s %s", v.getPropertyPath(), v.getMessage());
         }
+    }
+
+    public static <T> String validationMethodFormatted(ConstraintViolation<T> v) {
+        final ImmutableList<Path.Node> nodes = ImmutableList.copyOf(v.getPropertyPath());
+        String usefulNodes = DOT_JOINER.join(nodes.subList(0, nodes.size() - 1));
+        String msg = usefulNodes + (v.getMessage().startsWith(".") ? "" : " ") + v.getMessage();
+        return msg.trim();
     }
 
     public static <T> ImmutableList<String> format(Set<ConstraintViolation<T>> violations) {

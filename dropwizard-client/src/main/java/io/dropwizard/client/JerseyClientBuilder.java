@@ -9,6 +9,7 @@ import com.google.common.collect.Maps;
 import io.dropwizard.jersey.gzip.ConfiguredGZipEncoder;
 import io.dropwizard.jersey.gzip.GZipDecoder;
 import io.dropwizard.jersey.jackson.JacksonMessageBodyProvider;
+import io.dropwizard.lifecycle.Managed;
 import io.dropwizard.setup.Environment;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.HttpRequestRetryHandler;
@@ -313,7 +314,19 @@ public class JerseyClientBuilder {
                          ObjectMapper objectMapper,
                          Validator validator) {
         final Client client = ClientBuilder.newClient(buildConfig(name, threadPool, objectMapper, validator));
+        // Tie the client to server lifecycle
+        if (environment != null) {
+            environment.lifecycle().manage(new Managed() {
+                @Override
+                public void start() throws Exception {
+                }
 
+                @Override
+                public void stop() throws Exception {
+                    client.close();
+                }
+            });
+        }
         if (configuration.isGzipEnabled()) {
             client.register(new GZipDecoder());
             client.register(new ConfiguredGZipEncoder(configuration.isGzipEnabledForRequests()));
