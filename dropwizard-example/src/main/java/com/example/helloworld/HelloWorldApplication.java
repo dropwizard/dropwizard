@@ -1,4 +1,5 @@
 package com.example.helloworld;
+import com.example.helloworld.auth.ExampleAuthorizer;
 import io.dropwizard.auth.AuthValueFactoryProvider;
 import com.example.helloworld.auth.ExampleAuthenticator;
 import com.example.helloworld.cli.RenderCommand;
@@ -14,12 +15,10 @@ import com.example.helloworld.resources.PeopleResource;
 import com.example.helloworld.resources.PersonResource;
 import com.example.helloworld.resources.ProtectedResource;
 import com.example.helloworld.resources.ViewResource;
-import com.google.common.base.Function;
 import io.dropwizard.Application;
 import io.dropwizard.HttpApplication;
 import io.dropwizard.assets.AssetsBundle;
 import io.dropwizard.auth.AuthDynamicFeature;
-import io.dropwizard.auth.AuthFilter;
 import io.dropwizard.auth.basic.BasicCredentialAuthFilter;
 import io.dropwizard.configuration.EnvironmentVariableSubstitutor;
 import io.dropwizard.configuration.SubstitutingSourceProvider;
@@ -31,8 +30,6 @@ import io.dropwizard.setup.Environment;
 import io.dropwizard.setup.HttpEnvironment;
 import io.dropwizard.views.ViewBundle;
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
-import javax.ws.rs.core.SecurityContext;
-import java.security.Principal;
 import java.util.Map;
 
 public class HelloWorldApplication extends HttpApplication<HelloWorldConfiguration> {
@@ -87,11 +84,9 @@ public class HelloWorldApplication extends HttpApplication<HelloWorldConfigurati
 
         environment.healthChecks().register("template", new TemplateHealthCheck(template));
         environment.jersey().register(DateRequiredFeature.class);
-        ExampleAuthenticator exampleAuthenticator = new ExampleAuthenticator();
-
         environment.jersey().register(new AuthDynamicFeature(new BasicCredentialAuthFilter.Builder<User, ExampleAuthenticator>()
-                .setAuthenticator(exampleAuthenticator)
-                .setSecurityContextFunction(getSecurityContextFunction())
+                .setAuthenticator(new ExampleAuthenticator())
+                .setAuthorizer(new ExampleAuthorizer())
                 .setRealm("SUPER SECRET STUFF")
                 .buildAuthFilter()));
         environment.jersey().register(new AuthValueFactoryProvider.Binder(User.class));
@@ -102,35 +97,5 @@ public class HelloWorldApplication extends HttpApplication<HelloWorldConfigurati
         environment.jersey().register(new PeopleResource(dao));
         environment.jersey().register(new PersonResource(dao));
         environment.jersey().register(new FilteredResource());
-    }
-
-    private Function<AuthFilter.Tuple, SecurityContext> getSecurityContextFunction() {
-        return new Function<AuthFilter.Tuple, SecurityContext>() {
-            @Override
-            public SecurityContext apply(final AuthFilter.Tuple input) {
-                return new SecurityContext() {
-
-                    @Override
-                    public Principal getUserPrincipal() {
-                        return input.getPrincipal();
-                    }
-
-                    @Override
-                    public boolean isUserInRole(String role) {
-                        return true;
-                    }
-
-                    @Override
-                    public boolean isSecure() {
-                        return input.getContainerRequestContext().getSecurityContext().isSecure();
-                    }
-
-                    @Override
-                    public String getAuthenticationScheme() {
-                        return SecurityContext.BASIC_AUTH;
-                    }
-                };
-            }
-        };
     }
 }
