@@ -156,7 +156,7 @@ Your main ``Configuration`` subclass can then include this as a member field:
         }
     }
 
-And your ``Application`` subclass can then use your factory to directly construct a client for the 
+And your ``Application`` subclass can then use your factory to directly construct a client for the
 message queue:
 
 .. code-block:: java
@@ -174,8 +174,8 @@ Then, in your application's YAML file, you can use a nested ``messageQueue`` fie
       host: mq.example.com
       port: 5673
 
-The ``@NotNull``, ``@NotEmpty``, ``@Min``, ``@Max``, and ``@Valid`` annotations are part of Dropwizard's
-:ref:`man-core-representations-validation` functionality. If your YAML configuration file's
+The ``@NotNull``, ``@NotEmpty``, ``@Min``, ``@Max``, and ``@Valid`` annotations are part of
+:ref:`man-validation` functionality. If your YAML configuration file's
 ``messageQueue.host`` field was missing (or was a blank string), Dropwizard would refuse to start
 and would output an error message describing the issues.
 
@@ -192,7 +192,7 @@ Dropwizard then calls your ``Application`` subclass to initialize your applicati
 
     ``java -Ddw.logging.level=DEBUG server my-config.json``
 
-    This will work even if the configuration setting in question does not exist in your config file, in 
+    This will work even if the configuration setting in question does not exist in your config file, in
     which case it will get added.
 
     You can override configuration settings in arrays of objects like this:
@@ -209,11 +209,11 @@ Dropwizard then calls your ``Application`` subclass to initialize your applicati
     ``java -Ddw.myapp.myserver.hosts=server1,server2,server3 server my-config.json``
 
     If you need to use the ',' character in one of the values, you can escape it by using '\,' instead.
-    
-    The array override facility only handles configuration elements that are arrays of simple strings. 
-    Also, the setting in question must already exist in your configuration file as an array; 
-    this mechanism will not work if the configuration key being overridden does not exist in your configuration 
-    file. If it does not exist or is not an array setting, it will get added as a simple string setting, including 
+
+    The array override facility only handles configuration elements that are arrays of simple strings.
+    Also, the setting in question must already exist in your configuration file as an array;
+    this mechanism will not work if the configuration key being overridden does not exist in your configuration
+    file. If it does not exist or is not an array setting, it will get added as a simple string setting, including
     the ',' characters as part of the string.
 
 .. _man-core-environment-variables:
@@ -761,7 +761,7 @@ Finally, Dropwizard can also log statements to syslog.
           # The syslog facility to which statements will be sent.
           facility: local0
 
-You can combine any number of different ``appenders``, including multiple instances of the same 
+You can combine any number of different ``appenders``, including multiple instances of the same
 appender with different configurations:
 
 .. code-block:: yaml
@@ -1014,7 +1014,7 @@ this:
 Jersey maps the request entity to any single, unbound parameter. In this case, because the resource
 is annotated with ``@Consumes(MediaType.APPLICATION_JSON)``, it uses the Dropwizard-provided Jackson
 support which, in addition to parsing the JSON and mapping it to an instance of ``Notification``,
-also runs that instance through Dropwizard's :ref:`man-core-representations-validation`.
+also runs that instance through Dropwizard's :ref:`man-validation-validations-constraining-entities`.
 
 If the deserialized ``Notification`` isn't valid, Dropwizard returns a ``422 Unprocessable Entity``
 response to the client.
@@ -1070,7 +1070,7 @@ If at all possible, prefer throwing ``Exception`` instances to returning
 If you throw a subclass of ``WebApplicationException`` jersey will map that to a defined response.
 
 If you want more control, you can also declare JerseyProviders in your Environment to map Exceptions
-to certain responses by calling ``JerseyEnvironment#register(Object)`` with an implementation of 
+to certain responses by calling ``JerseyEnvironment#register(Object)`` with an implementation of
 javax.ws.rs.ext.ExceptionMapper.
 e.g. Your resource throws an InvalidArgumentException, but the response would be 400, bad request.
 
@@ -1257,90 +1257,6 @@ This gets converted into this JSON:
         "first_name": "Coda"
     }
 
-.. _man-core-representations-validation:
-
-Validation
-----------
-
-You can add validation annotations on resource endpoints similar to how it is done in
-:ref:`man-core-configuration`. These annotations can be placed on resource return values,
-``*Param`` annotations, and fields of your representation classes.
-
-For example, if we're accepting client-provided ``Person`` and returning a modification, we probably
-want to ensure that the ``name`` field of the object isn't ``null`` or blank on both the request and
-response. We can do this as follows:
-
-.. code-block:: java
-
-    public class Person {
-
-        @NotEmpty // ensure that name isn't null or blank
-        private final String name;
-
-        @JsonCreator
-        public Person(@JsonProperty("name") String name) {
-            this.name = name;
-        }
-
-        @JsonProperty("name")
-        public String getName() {
-            return name;
-        }
-    }
-
-Then, in our resource class, we can add the ``@Valid`` annotation to the ``Person`` parameter so
-that we know the ``Person`` object has a name in our endpoint. In addition, adding the ``@Valid``
-annotation to the return value will ensure we're not returning invalid data back to clients:
-
-.. code-block:: java
-
-    @PUT
-    @Valid
-    public Person replace(@Valid Person person) {
-        // Oops, we got a bug!
-        return new Person(null);
-    }
-
-    @GET
-    @Valid
-    public Person find(@QueryParam("name") @NotEmpty name) {
-        // ...
-    }
-
-If validation fails, Dropwizard will return a ``text/plain`` response with an HTTP status code
-depending on where the validation failed:
-
-* Violation on a resource return value causes a ``500 Internal Server Error``
-* Violation on a representation class causes a ``422 Unprocessable Entity``
-* Violation on a ``*Param`` annotation causes a ``400 Bad Request``
-
-So in our example, if the ``name`` field is missing in a ``PUT`` request, Dropwizard will return a
-``422 Unprocessable Entity`` response detailing the validation error::
-
-    * name may not be empty
-
-.. _man-core-resources-validation-advanced:
-
-Advanced
-********
-
-More complex validations (for example, cross-field comparisons) are often hard to do using
-declarative annotations. As an emergency maneuver, add the ``@ValidationMethod`` to any
-``boolean``-returning method which begins with ``is``:
-
-.. code-block:: java
-
-    @JsonIgnore
-    @ValidationMethod(message="may not be Coda")
-    public boolean isNotCoda() {
-        return !("Coda".equals(name));
-    }
-
-.. note::
-
-    Due to the rather daft JavaBeans conventions, the method must begin with ``is`` (e.g.,
-    ``#isValidPortRange()``. This is a limitation of Hibernate Validator, not Dropwizard.
-
 .. _man-core-representations-streaming:
 
 Streaming Output
@@ -1492,5 +1408,3 @@ enable the following functionality:
     * Resources that return Guava Optional are unboxed. Present returns underlying type, and non present 404s
     * Resource methods that are annotated with ``@CacheControl`` are delegated to a special dispatcher that decorates on the cache control headers
     * Enables using Jackson to parse request entities into objects and generate response entities from objects, all while performing validation
-
-
