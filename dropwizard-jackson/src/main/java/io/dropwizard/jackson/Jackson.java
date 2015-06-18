@@ -37,6 +37,18 @@ public class Jackson {
         return configure(mapper);
     }
 
+    /**
+     * Creates a new minimal {@link ObjectMapper} that will work with Dropwizard out of box.
+     * <p><b>NOTE:</b> Use it, if the default Dropwizard's {@link ObjectMapper}, created in
+     * {@link #newObjectMapper()}, is too aggressive for you.</p>
+     */
+    public static ObjectMapper newMinimalObjectMapper() {
+        return new ObjectMapper()
+                .registerModule(new GuavaModule())
+                .registerModule(new LogbackModule())
+                .setSubtypeResolver(new DiscoverableSubtypeResolver());
+    }
+
     private static ObjectMapper configure(ObjectMapper mapper) {
         mapper.registerModule(new GuavaModule());
         mapper.registerModule(new LogbackModule());
