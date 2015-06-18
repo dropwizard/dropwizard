@@ -14,7 +14,8 @@ v0.9.0
 * Upgrade to H2 1.4.187
 * Upgrade to Hibernate 4.3.9.Final
 * Upgrade to Jackson 2.5.3
-* Upgrade to Jetty 9.2.10.v20150310
+* Upgrade to Jersey 2.18
+* Upgrade to Jetty 9.2.11.v20150529
 * Upgrade to Jetty ALPN boot 7.1.3.v20150130
 * Upgrade to Jetty SetUID support 1.0.3
 * Upgrade to Liquibase 3.3.3

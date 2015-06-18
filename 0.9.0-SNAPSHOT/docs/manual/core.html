@@ -115,10 +115,6 @@
 <li class="toctree-l5"><a class="reference internal" href="#snake-case"><tt class="docutils literal"><span class="pre">snake_case</span></tt></a></li>
 </ul>
 </li>
-<li class="toctree-l4"><a class="reference internal" href="#validation">Validation</a><ul>
-<li class="toctree-l5"><a class="reference internal" href="#advanced">Advanced</a></li>
-</ul>
-</li>
 <li class="toctree-l4"><a class="reference internal" href="#streaming-output">Streaming Output</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#html-representations">HTML Representations</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#custom-representations">Custom Representations</a></li>
@@ -135,6 +131,7 @@
 <li class="toctree-l2"><a class="reference internal" href="hibernate.html">Dropwizard Hibernate</a></li>
 <li class="toctree-l2"><a class="reference internal" href="auth.html">Dropwizard Authentication</a></li>
 <li class="toctree-l2"><a class="reference internal" href="forms.html">Dropwizard Forms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="validation.html">Dropwizard Validation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="views.html">Dropwizard Views</a></li>
 <li class="toctree-l2"><a class="reference internal" href="scala.html">Dropwizard &amp; Scala</a></li>
 <li class="toctree-l2"><a class="reference internal" href="testing.html">Testing Dropwizard</a></li>
@@ -301,8 +298,8 @@ message queue:</p>
   <span class="nl">port:</span> <span class="mi">5673</span>
 </pre></div>
 </div>
-<p>The <tt class="docutils literal"><span class="pre">&#64;NotNull</span></tt>, <tt class="docutils literal"><span class="pre">&#64;NotEmpty</span></tt>, <tt class="docutils literal"><span class="pre">&#64;Min</span></tt>, <tt class="docutils literal"><span class="pre">&#64;Max</span></tt>, and <tt class="docutils literal"><span class="pre">&#64;Valid</span></tt> annotations are part of Dropwizard&#8217;s
-<a class="reference internal" href="#man-core-representations-validation"><em>Validation</em></a> functionality. If your YAML configuration file&#8217;s
+<p>The <tt class="docutils literal"><span class="pre">&#64;NotNull</span></tt>, <tt class="docutils literal"><span class="pre">&#64;NotEmpty</span></tt>, <tt class="docutils literal"><span class="pre">&#64;Min</span></tt>, <tt class="docutils literal"><span class="pre">&#64;Max</span></tt>, and <tt class="docutils literal"><span class="pre">&#64;Valid</span></tt> annotations are part of
+<a class="reference internal" href="validation.html#man-validation"><em>Dropwizard Validation</em></a> functionality. If your YAML configuration file&#8217;s
 <tt class="docutils literal"><span class="pre">messageQueue.host</span></tt> field was missing (or was a blank string), Dropwizard would refuse to start
 and would output an error message describing the issues.</p>
 <p>Once your application has parsed the YAML file and constructed its <tt class="docutils literal"><span class="pre">Configuration</span></tt> instance,
@@ -982,7 +979,7 @@ this:</p>
 <p>Jersey maps the request entity to any single, unbound parameter. In this case, because the resource
 is annotated with <tt class="docutils literal"><span class="pre">&#64;Consumes(MediaType.APPLICATION_JSON)</span></tt>, it uses the Dropwizard-provided Jackson
 support which, in addition to parsing the JSON and mapping it to an instance of <tt class="docutils literal"><span class="pre">Notification</span></tt>,
-also runs that instance through Dropwizard&#8217;s <a class="reference internal" href="#man-core-representations-validation"><em>Validation</em></a>.</p>
+also runs that instance through Dropwizard&#8217;s <a class="reference internal" href="validation.html#man-validation-validations-constraining-entities"><em>Constraining Entities</em></a>.</p>
 <p>If the deserialized <tt class="docutils literal"><span class="pre">Notification</span></tt> isn&#8217;t valid, Dropwizard returns a <tt class="docutils literal"><span class="pre">422</span> <span class="pre">Unprocessable</span> <span class="pre">Entity</span></tt>
 response to the client.</p>
 <div class="admonition note">
@@ -1168,78 +1165,6 @@ just annotate the class with <tt class="docutils literal"><span class="pre">&#64
     <span class="s2">&quot;first_name&quot;</span><span class="o">:</span> <span class="s2">&quot;Coda&quot;</span>
 <span class="p">}</span>
 </pre></div>
-</div>
-</div>
-</div>
-<div class="section" id="validation">
-<span id="man-core-representations-validation"></span><h3>Validation</h3>
-<p>You can add validation annotations on resource endpoints similar to how it is done in
-<a class="reference internal" href="#man-core-configuration"><em>Configuration</em></a>. These annotations can be placed on resource return values,
-<tt class="docutils literal"><span class="pre">*Param</span></tt> annotations, and fields of your representation classes.</p>
-<p>For example, if we&#8217;re accepting client-provided <tt class="docutils literal"><span class="pre">Person</span></tt> and returning a modification, we probably
-want to ensure that the <tt class="docutils literal"><span class="pre">name</span></tt> field of the object isn&#8217;t <tt class="docutils literal"><span class="pre">null</span></tt> or blank on both the request and
-response. We can do this as follows:</p>
-<div class="highlight-java"><div class="highlight"><pre><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Person</span> <span class="o">{</span>
-
-    <span class="nd">@NotEmpty</span> <span class="c1">// ensure that name isn&#39;t null or blank</span>
-    <span class="kd">private</span> <span class="kd">final</span> <span class="n">String</span> <span class="n">name</span><span class="o">;</span>
-
-    <span class="nd">@JsonCreator</span>
-    <span class="kd">public</span> <span class="nf">Person</span><span class="o">(</span><span class="nd">@JsonProperty</span><span class="o">(</span><span class="s">&quot;name&quot;</span><span class="o">)</span> <span class="n">String</span> <span class="n">name</span><span class="o">)</span> <span class="o">{</span>
-        <span class="k">this</span><span class="o">.</span><span class="na">name</span> <span class="o">=</span> <span class="n">name</span><span class="o">;</span>
-    <span class="o">}</span>
-
-    <span class="nd">@JsonProperty</span><span class="o">(</span><span class="s">&quot;name&quot;</span><span class="o">)</span>
-    <span class="kd">public</span> <span class="n">String</span> <span class="nf">getName</span><span class="o">()</span> <span class="o">{</span>
-        <span class="k">return</span> <span class="n">name</span><span class="o">;</span>
-    <span class="o">}</span>
-<span class="o">}</span>
-</pre></div>
-</div>
-<p>Then, in our resource class, we can add the <tt class="docutils literal"><span class="pre">&#64;Valid</span></tt> annotation to the <tt class="docutils literal"><span class="pre">Person</span></tt> parameter so
-that we know the <tt class="docutils literal"><span class="pre">Person</span></tt> object has a name in our endpoint. In addition, adding the <tt class="docutils literal"><span class="pre">&#64;Valid</span></tt>
-annotation to the return value will ensure we&#8217;re not returning invalid data back to clients:</p>
-<div class="highlight-java"><div class="highlight"><pre><span class="nd">@PUT</span>
-<span class="nd">@Valid</span>
-<span class="kd">public</span> <span class="n">Person</span> <span class="nf">replace</span><span class="o">(</span><span class="nd">@Valid</span> <span class="n">Person</span> <span class="n">person</span><span class="o">)</span> <span class="o">{</span>
-    <span class="c1">// Oops, we got a bug!</span>
-    <span class="k">return</span> <span class="k">new</span> <span class="nf">Person</span><span class="o">(</span><span class="kc">null</span><span class="o">);</span>
-<span class="o">}</span>
-
-<span class="nd">@GET</span>
-<span class="nd">@Valid</span>
-<span class="kd">public</span> <span class="n">Person</span> <span class="nf">find</span><span class="o">(</span><span class="nd">@QueryParam</span><span class="o">(</span><span class="s">&quot;name&quot;</span><span class="o">)</span> <span class="nd">@NotEmpty</span> <span class="n">name</span><span class="o">)</span> <span class="o">{</span>
-    <span class="c1">// ...</span>
-<span class="o">}</span>
-</pre></div>
-</div>
-<p>If validation fails, Dropwizard will return a <tt class="docutils literal"><span class="pre">text/plain</span></tt> response with an HTTP status code
-depending on where the validation failed:</p>
-<ul class="simple">
-<li>Violation on a resource return value causes a <tt class="docutils literal"><span class="pre">500</span> <span class="pre">Internal</span> <span class="pre">Server</span> <span class="pre">Error</span></tt></li>
-<li>Violation on a representation class causes a <tt class="docutils literal"><span class="pre">422</span> <span class="pre">Unprocessable</span> <span class="pre">Entity</span></tt></li>
-<li>Violation on a <tt class="docutils literal"><span class="pre">*Param</span></tt> annotation causes a <tt class="docutils literal"><span class="pre">400</span> <span class="pre">Bad</span> <span class="pre">Request</span></tt></li>
-</ul>
-<p>So in our example, if the <tt class="docutils literal"><span class="pre">name</span></tt> field is missing in a <tt class="docutils literal"><span class="pre">PUT</span></tt> request, Dropwizard will return a
-<tt class="docutils literal"><span class="pre">422</span> <span class="pre">Unprocessable</span> <span class="pre">Entity</span></tt> response detailing the validation error:</p>
-<div class="highlight-text"><div class="highlight"><pre>* name may not be empty
-</pre></div>
-</div>
-<div class="section" id="advanced">
-<span id="man-core-resources-validation-advanced"></span><h4>Advanced</h4>
-<p>More complex validations (for example, cross-field comparisons) are often hard to do using
-declarative annotations. As an emergency maneuver, add the <tt class="docutils literal"><span class="pre">&#64;ValidationMethod</span></tt> to any
-<tt class="docutils literal"><span class="pre">boolean</span></tt>-returning method which begins with <tt class="docutils literal"><span class="pre">is</span></tt>:</p>
-<div class="highlight-java"><div class="highlight"><pre><span class="nd">@ValidationMethod</span><span class="o">(</span><span class="n">message</span><span class="o">=</span><span class="s">&quot;may not be Coda&quot;</span><span class="o">)</span>
-<span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">isNotCoda</span><span class="o">()</span> <span class="o">{</span>
-    <span class="k">return</span> <span class="o">!(</span><span class="s">&quot;Coda&quot;</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">name</span><span class="o">));</span>
-<span class="o">}</span>
-</pre></div>
-</div>
-<div class="admonition note">
-<p class="first admonition-title">Note</p>
-<p class="last">Due to the rather daft JavaBeans conventions, the method must begin with <tt class="docutils literal"><span class="pre">is</span></tt> (e.g.,
-<tt class="docutils literal"><span class="pre">#isValidPortRange()</span></tt>. This is a limitation of Hibernate Validator, not Dropwizard.</p>
 </div>
 </div>
 </div>

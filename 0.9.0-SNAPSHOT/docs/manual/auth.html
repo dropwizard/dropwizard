@@ -74,6 +74,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#caching">Caching</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="#authorizer">Authorizer</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#basic-authentication">Basic Authentication</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#oauth2">OAuth2</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#chained-factories">Chained Factories</a></li>
@@ -81,6 +82,7 @@
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="forms.html">Dropwizard Forms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="validation.html">Dropwizard Validation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="views.html">Dropwizard Views</a></li>
 <li class="toctree-l2"><a class="reference internal" href="scala.html">Dropwizard &amp; Scala</a></li>
 <li class="toctree-l2"><a class="reference internal" href="testing.html">Testing Dropwizard</a></li>
@@ -111,7 +113,7 @@ Authentication or OAuth2 bearer tokens.</p>
 <p>An authenticator is a strategy class which, given a set of client-provided credentials, possibly
 returns a principal (i.e., the person or entity on behalf of whom your service will do something).</p>
 <p>Authenticators implement the <tt class="docutils literal"><span class="pre">Authenticator&lt;C,</span> <span class="pre">P</span> <span class="pre">extends</span> <span class="pre">Principal&gt;</span></tt> interface, which has a single method:</p>
-<div class="highlight-java"><div class="highlight"><pre><span class="kd">public</span> <span class="kd">class</span> <span class="nc">SimpleAuthenticator</span> <span class="kd">implements</span> <span class="n">Authenticator</span><span class="o">&lt;</span><span class="n">BasicCredentials</span><span class="o">,</span> <span class="n">User</span><span class="o">&gt;</span> <span class="o">{</span>
+<div class="highlight-java"><div class="highlight"><pre><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ExampleAuthenticator</span> <span class="kd">implements</span> <span class="n">Authenticator</span><span class="o">&lt;</span><span class="n">BasicCredentials</span><span class="o">,</span> <span class="n">User</span><span class="o">&gt;</span> <span class="o">{</span>
     <span class="nd">@Override</span>
     <span class="kd">public</span> <span class="n">Optional</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span> <span class="n">authenticate</span><span class="o">(</span><span class="n">BasicCredentials</span> <span class="n">credentials</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">AuthenticationException</span> <span class="o">{</span>
         <span class="k">if</span> <span class="o">(</span><span class="s">&quot;secret&quot;</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">credentials</span><span class="o">.</span><span class="na">getPassword</span><span class="o">()))</span> <span class="o">{</span>
@@ -153,6 +155,20 @@ configuration file to look like this:</p>
 <p>This caches up to 10,000 principals with an LRU policy, evicting stale entries after 10 minutes.</p>
 </div>
 </div>
+<div class="section" id="authorizer">
+<span id="man-auth-authorizer"></span><h2>Authorizer</h2>
+<p>An authorizer is a strategy class which, given a principal and a role, decides if access is granted to the
+principal.</p>
+<p>The authorizer implements the <tt class="docutils literal"><span class="pre">Authorizer&lt;P</span> <span class="pre">extends</span> <span class="pre">Principal&gt;</span></tt> interface, which has a single method:</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ExampleAuthorizer</span> <span class="kd">implements</span> <span class="n">Authorizer</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;</span> <span class="o">{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">authorize</span><span class="o">(</span><span class="n">User</span> <span class="n">user</span><span class="o">,</span> <span class="n">String</span> <span class="n">role</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">user</span><span class="o">.</span><span class="na">getName</span><span class="o">().</span><span class="na">equals</span><span class="o">(</span><span class="s">&quot;good-guy&quot;</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="n">role</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="s">&quot;ADMIN&quot;</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+</div>
 <div class="section" id="basic-authentication">
 <span id="man-auth-basic"></span><h2>Basic Authentication</h2>
 <p>The <tt class="docutils literal"><span class="pre">AuthDynamicFeature</span></tt> with the <tt class="docutils literal"><span class="pre">BasicCredentialAuthFilter</span></tt> and <tt class="docutils literal"><span class="pre">RolesAllowedDynamicFeature</span></tt>
@@ -161,41 +177,11 @@ takes instances of <tt class="docutils literal"><span class="pre">BasicCredentia
 <div class="highlight-java"><div class="highlight"><pre><span class="nd">@Override</span>
 <span class="kd">public</span> <span class="kt">void</span> <span class="nf">run</span><span class="o">(</span><span class="n">ExampleConfiguration</span> <span class="n">configuration</span><span class="o">,</span>
                 <span class="n">Environment</span> <span class="n">environment</span><span class="o">)</span> <span class="o">{</span>
-
-    <span class="kd">final</span> <span class="n">Function</span><span class="o">&lt;</span><span class="n">AuthFilter</span><span class="o">.</span><span class="na">Tuple</span><span class="o">,</span> <span class="n">SecurityContext</span><span class="o">&gt;</span> <span class="n">securityContextFunction</span> <span class="o">=</span>
-        <span class="k">new</span> <span class="n">Function</span><span class="o">&lt;</span><span class="n">AuthFilter</span><span class="o">.</span><span class="na">Tuple</span><span class="o">,</span> <span class="n">SecurityContext</span><span class="o">&gt;()</span> <span class="o">{</span>
-            <span class="nd">@Override</span>
-            <span class="kd">public</span> <span class="n">SecurityContext</span> <span class="nf">apply</span><span class="o">(</span><span class="kd">final</span> <span class="n">AuthFilter</span><span class="o">.</span><span class="na">Tuple</span> <span class="n">input</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">return</span> <span class="k">new</span> <span class="nf">SecurityContext</span><span class="o">()</span> <span class="o">{</span>
-                    <span class="nd">@Override</span>
-                    <span class="kd">public</span> <span class="n">Principal</span> <span class="nf">getUserPrincipal</span><span class="o">()</span> <span class="o">{</span>
-                        <span class="k">return</span> <span class="n">input</span><span class="o">.</span><span class="na">getPrincipal</span><span class="o">();</span>
-                    <span class="o">}</span>
-
-                    <span class="nd">@Override</span>
-                    <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">isUserInRole</span><span class="o">(</span><span class="n">String</span> <span class="n">role</span><span class="o">)</span> <span class="o">{</span>
-                        <span class="k">return</span> <span class="nf">getUserPrincipal</span><span class="o">()</span> <span class="o">!=</span> <span class="kc">null</span>
-                                <span class="o">&amp;&amp;</span> <span class="n">validUser</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">getUserPrincipal</span><span class="o">().</span><span class="na">getName</span><span class="o">())</span>
-                                <span class="o">&amp;&amp;</span> <span class="n">validRole</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">role</span><span class="o">);</span>
-                    <span class="o">}</span>
-
-                    <span class="nd">@Override</span>
-                    <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">isSecure</span><span class="o">()</span> <span class="o">{</span>
-                        <span class="k">return</span> <span class="n">input</span><span class="o">.</span><span class="na">getContainerRequestContext</span><span class="o">().</span><span class="na">getSecurityContext</span><span class="o">().</span><span class="na">isSecure</span><span class="o">();</span>
-                    <span class="o">}</span>
-
-                    <span class="nd">@Override</span>
-                    <span class="kd">public</span> <span class="n">String</span> <span class="nf">getAuthenticationScheme</span><span class="o">()</span> <span class="o">{</span>
-                        <span class="k">return</span> <span class="n">SecurityContext</span><span class="o">.</span><span class="na">BASIC_AUTH</span><span class="o">;</span>
-                    <span class="o">}</span>
-                <span class="o">}</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
     <span class="n">environment</span><span class="o">.</span><span class="na">jersey</span><span class="o">().</span><span class="na">register</span><span class="o">(</span><span class="k">new</span> <span class="n">AuthDynamicFeature</span><span class="o">(</span>
             <span class="k">new</span> <span class="n">BasicCredentialAuthFilter</span><span class="o">.</span><span class="na">Builder</span><span class="o">&lt;</span><span class="n">User</span><span class="o">,</span> <span class="n">ExampleAuthenticator</span><span class="o">&gt;()</span>
                 <span class="o">.</span><span class="na">setAuthenticator</span><span class="o">(</span><span class="k">new</span> <span class="n">ExampleAuthenticator</span><span class="o">())</span>
+                <span class="o">.</span><span class="na">setAuthorizer</span><span class="o">(</span><span class="k">new</span> <span class="n">ExampleAuthorizer</span><span class="o">())</span>
                 <span class="o">.</span><span class="na">setRealm</span><span class="o">(</span><span class="s">&quot;SUPER SECRET STUFF&quot;</span><span class="o">)</span>
-                <span class="o">.</span><span class="na">setSecurityContextFunction</span><span class="o">(</span><span class="n">securityContextFunction</span><span class="o">);</span>
                 <span class="o">.</span><span class="na">buildAuthFilter</span><span class="o">()));</span>
     <span class="n">environment</span><span class="o">.</span><span class="na">jersey</span><span class="o">().</span><span class="na">register</span><span class="o">(</span><span class="n">RolesAllowedDynamicFeature</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
     <span class="c1">//If you want to use @Auth to inject a custom Principal type into your resource</span>
@@ -207,61 +193,16 @@ takes instances of <tt class="docutils literal"><span class="pre">BasicCredentia
 <div class="section" id="oauth2">
 <span id="man-auth-oauth2"></span><h2>OAuth2</h2>
 <p>The <tt class="docutils literal"><span class="pre">AuthDynamicFeature</span></tt> with <tt class="docutils literal"><span class="pre">OAuthCredentialAuthFilter</span></tt> and <tt class="docutils literal"><span class="pre">RolesAllowedDynamicFeature</span></tt>
-enables OAuth2 bearer-token authentication and authorization;
-requires an authenticator which takes instances of <tt class="docutils literal"><span class="pre">String</span></tt>:</p>
+enables OAuth2 bearer-token authentication and authorization; requires an authenticator which
+takes instances of <tt class="docutils literal"><span class="pre">String</span></tt>:</p>
 <div class="highlight-java"><div class="highlight"><pre><span class="nd">@Override</span>
 <span class="kd">public</span> <span class="kt">void</span> <span class="nf">run</span><span class="o">(</span><span class="n">ExampleConfiguration</span> <span class="n">configuration</span><span class="o">,</span>
                 <span class="n">Environment</span> <span class="n">environment</span><span class="o">)</span> <span class="o">{</span>
-    <span class="kd">final</span> <span class="n">Authenticator</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Principal</span><span class="o">&gt;</span> <span class="n">authenticator</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Authenticator</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Principal</span><span class="o">&gt;()</span> <span class="o">{</span>
-        <span class="nd">@Override</span>
-        <span class="kd">public</span> <span class="n">Optional</span><span class="o">&lt;</span><span class="n">Principal</span><span class="o">&gt;</span> <span class="n">authenticate</span><span class="o">(</span><span class="n">String</span> <span class="n">credentials</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">AuthenticationException</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(</span><span class="s">&quot;good-guy&quot;</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">credentials</span><span class="o">))</span> <span class="o">{</span>
-                <span class="k">return</span> <span class="n">Optional</span><span class="o">.&lt;</span><span class="n">Principal</span><span class="o">&gt;</span><span class="n">of</span><span class="o">(</span><span class="k">new</span> <span class="n">PrincipalImpl</span><span class="o">(</span><span class="s">&quot;good-guy&quot;</span><span class="o">));</span>
-            <span class="o">}</span>
-
-            <span class="k">if</span> <span class="o">(</span><span class="s">&quot;bad-guy&quot;</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">credentials</span><span class="o">))</span> <span class="o">{</span>
-                <span class="k">throw</span> <span class="k">new</span> <span class="nf">AuthenticationException</span><span class="o">(</span><span class="s">&quot;CRAP&quot;</span><span class="o">);</span>
-            <span class="o">}</span>
-
-            <span class="k">return</span> <span class="n">Optional</span><span class="o">.</span><span class="na">absent</span><span class="o">();</span>
-        <span class="o">}</span>
-    <span class="o">};</span>
-
-    <span class="kd">final</span> <span class="n">Function</span><span class="o">&lt;</span><span class="n">AuthFilter</span><span class="o">.</span><span class="na">Tuple</span><span class="o">,</span> <span class="n">SecurityContext</span><span class="o">&gt;</span> <span class="n">securityContextFunction</span> <span class="o">=</span>
-        <span class="k">new</span> <span class="n">Function</span><span class="o">&lt;</span><span class="n">AuthFilter</span><span class="o">.</span><span class="na">Tuple</span><span class="o">,</span> <span class="n">SecurityContext</span><span class="o">&gt;()</span> <span class="o">{</span>
-            <span class="nd">@Override</span>
-            <span class="kd">public</span> <span class="n">SecurityContext</span> <span class="nf">apply</span><span class="o">(</span><span class="kd">final</span> <span class="n">AuthFilter</span><span class="o">.</span><span class="na">Tuple</span> <span class="n">input</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">return</span> <span class="k">new</span> <span class="nf">SecurityContext</span><span class="o">()</span> <span class="o">{</span>
-                    <span class="nd">@Override</span>
-                    <span class="kd">public</span> <span class="n">Principal</span> <span class="nf">getUserPrincipal</span><span class="o">()</span> <span class="o">{</span>
-                        <span class="k">return</span> <span class="n">input</span><span class="o">.</span><span class="na">getPrincipal</span><span class="o">();</span>
-                    <span class="o">}</span>
-
-                    <span class="nd">@Override</span>
-                    <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">isUserInRole</span><span class="o">(</span><span class="n">String</span> <span class="n">role</span><span class="o">)</span> <span class="o">{</span>
-                        <span class="k">return</span> <span class="nf">getUserPrincipal</span><span class="o">()</span> <span class="o">!=</span> <span class="kc">null</span>
-                                <span class="o">&amp;&amp;</span> <span class="n">validUser</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">getUserPrincipal</span><span class="o">().</span><span class="na">getName</span><span class="o">())</span>
-                                <span class="o">&amp;&amp;</span> <span class="n">validRole</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">role</span><span class="o">);</span>
-                    <span class="o">}</span>
-
-                    <span class="nd">@Override</span>
-                    <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">isSecure</span><span class="o">()</span> <span class="o">{</span>
-                        <span class="k">return</span> <span class="n">input</span><span class="o">.</span><span class="na">getContainerRequestContext</span><span class="o">().</span><span class="na">getSecurityContext</span><span class="o">().</span><span class="na">isSecure</span><span class="o">();</span>
-                    <span class="o">}</span>
-
-                    <span class="nd">@Override</span>
-                    <span class="kd">public</span> <span class="n">String</span> <span class="nf">getAuthenticationScheme</span><span class="o">()</span> <span class="o">{</span>
-                        <span class="k">return</span> <span class="n">SecurityContext</span><span class="o">.</span><span class="na">BASIC_AUTH</span><span class="o">;</span>
-                    <span class="o">}</span>
-                <span class="o">}</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
-
     <span class="n">environment</span><span class="o">.</span><span class="na">jersey</span><span class="o">().</span><span class="na">register</span><span class="o">(</span><span class="k">new</span> <span class="n">AuthDynamicFeature</span><span class="o">(</span>
-        <span class="k">new</span> <span class="n">OAuthCredentialAuthFilter</span><span class="o">.</span><span class="na">Builder</span><span class="o">&lt;&gt;()</span>
-            <span class="o">.</span><span class="na">setAuthenticator</span><span class="o">(</span><span class="n">authenticator</span><span class="o">)</span>
-            <span class="o">.</span><span class="na">setSecurityContextFunction</span><span class="o">(</span><span class="n">securityContextFunction</span><span class="o">);</span>
-            <span class="o">.</span><span class="na">setPrefix</span><span class="o">(</span><span class="s">&quot;Custom&quot;</span><span class="o">)</span>
+        <span class="k">new</span> <span class="n">OAuthCredentialAuthFilter</span><span class="o">.</span><span class="na">Builder</span><span class="o">&lt;</span><span class="n">User</span><span class="o">,</span> <span class="n">ExampleOAuthAuthenticator</span><span class="o">&gt;()</span>
+            <span class="o">.</span><span class="na">setAuthenticator</span><span class="o">(</span><span class="k">new</span> <span class="n">ExampleOAuthAuthenticator</span><span class="o">())</span>
+            <span class="o">.</span><span class="na">setAuthorizer</span><span class="o">(</span><span class="k">new</span> <span class="n">ExampleAuthorizer</span><span class="o">())</span>
+            <span class="o">.</span><span class="na">setPrefix</span><span class="o">(</span><span class="s">&quot;SUPER SECRET STUFF&quot;</span><span class="o">)</span>
             <span class="o">.</span><span class="na">buildAuthFilter</span><span class="o">()));</span>
     <span class="n">environment</span><span class="o">.</span><span class="na">jersey</span><span class="o">().</span><span class="na">register</span><span class="o">(</span><span class="n">RolesAllowedDynamicFeature</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
     <span class="c1">//If you want to use @Auth to inject a custom Principal type into your resource</span>
@@ -276,75 +217,19 @@ requires an authenticator which takes instances of <tt class="docutils literal">
 <div class="highlight-java"><div class="highlight"><pre><span class="nd">@Override</span>
 <span class="kd">public</span> <span class="kt">void</span> <span class="nf">run</span><span class="o">(</span><span class="n">ExampleConfiguration</span> <span class="n">configuration</span><span class="o">,</span>
                 <span class="n">Environment</span> <span class="n">environment</span><span class="o">)</span> <span class="o">{</span>
-    <span class="kd">final</span> <span class="n">Authenticator</span><span class="o">&lt;</span><span class="n">BasicCredentials</span><span class="o">,</span> <span class="n">Principal</span><span class="o">&gt;</span> <span class="n">basicAuthenticator</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Authenticator</span><span class="o">&lt;</span><span class="n">BasicCredentials</span><span class="o">,</span> <span class="n">Principal</span><span class="o">&gt;()</span> <span class="o">{</span>
-        <span class="nd">@Override</span>
-        <span class="kd">public</span> <span class="n">Optional</span><span class="o">&lt;</span><span class="n">Principal</span><span class="o">&gt;</span> <span class="n">authenticate</span><span class="o">(</span><span class="n">BasicCredentials</span> <span class="n">credentials</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">AuthenticationException</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(</span><span class="s">&quot;good-guy&quot;</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">credentials</span><span class="o">.</span><span class="na">getUsername</span><span class="o">())</span> <span class="o">&amp;&amp;</span>
-                    <span class="s">&quot;secret&quot;</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">credentials</span><span class="o">.</span><span class="na">getPassword</span><span class="o">()))</span> <span class="o">{</span>
-                <span class="k">return</span> <span class="n">Optional</span><span class="o">.&lt;</span><span class="n">Principal</span><span class="o">&gt;</span><span class="n">of</span><span class="o">(</span><span class="k">new</span> <span class="n">PrincipalImpl</span><span class="o">(</span><span class="s">&quot;good-guy&quot;</span><span class="o">));</span>
-            <span class="o">}</span>
-            <span class="k">if</span> <span class="o">(</span><span class="s">&quot;bad-guy&quot;</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">credentials</span><span class="o">.</span><span class="na">getUsername</span><span class="o">()))</span> <span class="o">{</span>
-                <span class="k">throw</span> <span class="k">new</span> <span class="nf">AuthenticationException</span><span class="o">(</span><span class="s">&quot;CRAP&quot;</span><span class="o">);</span>
-            <span class="o">}</span>
-            <span class="k">return</span> <span class="n">Optional</span><span class="o">.</span><span class="na">absent</span><span class="o">();</span>
-        <span class="o">}</span>
-    <span class="o">};</span>
-
-    <span class="kd">final</span> <span class="n">Authenticator</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Principal</span><span class="o">&gt;</span> <span class="n">oauthAuthenticator</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Authenticator</span><span class="o">&lt;</span><span class="n">String</span><span class="o">,</span> <span class="n">Principal</span><span class="o">&gt;()</span> <span class="o">{</span>
-        <span class="nd">@Override</span>
-        <span class="kd">public</span> <span class="n">Optional</span><span class="o">&lt;</span><span class="n">Principal</span><span class="o">&gt;</span> <span class="n">authenticate</span><span class="o">(</span><span class="n">String</span> <span class="n">credentials</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">AuthenticationException</span> <span class="o">{</span>
-            <span class="k">if</span> <span class="o">(</span><span class="s">&quot;A12B3C4D&quot;</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">credentials</span><span class="o">))</span> <span class="o">{</span>
-                <span class="k">return</span> <span class="n">Optional</span><span class="o">.&lt;</span><span class="n">Principal</span><span class="o">&gt;</span><span class="n">of</span><span class="o">(</span><span class="k">new</span> <span class="n">PrincipalImpl</span><span class="o">(</span><span class="s">&quot;good-guy&quot;</span><span class="o">));</span>
-            <span class="o">}</span>
-            <span class="k">if</span> <span class="o">(</span><span class="s">&quot;bad-guy&quot;</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">credentials</span><span class="o">))</span> <span class="o">{</span>
-                <span class="k">throw</span> <span class="k">new</span> <span class="nf">AuthenticationException</span><span class="o">(</span><span class="s">&quot;CRAP&quot;</span><span class="o">);</span>
-            <span class="o">}</span>
-            <span class="k">return</span> <span class="n">Optional</span><span class="o">.</span><span class="na">absent</span><span class="o">();</span>
-        <span class="o">}</span>
-    <span class="o">};</span>
-
-    <span class="kd">final</span> <span class="n">Function</span><span class="o">&lt;</span><span class="n">AuthFilter</span><span class="o">.</span><span class="na">Tuple</span><span class="o">,</span> <span class="n">SecurityContext</span><span class="o">&gt;</span> <span class="n">securityContextFunction</span> <span class="o">=</span>
-        <span class="k">new</span> <span class="n">Function</span><span class="o">&lt;</span><span class="n">AuthFilter</span><span class="o">.</span><span class="na">Tuple</span><span class="o">,</span> <span class="n">SecurityContext</span><span class="o">&gt;()</span> <span class="o">{</span>
-            <span class="nd">@Override</span>
-            <span class="kd">public</span> <span class="n">SecurityContext</span> <span class="nf">apply</span><span class="o">(</span><span class="kd">final</span> <span class="n">AuthFilter</span><span class="o">.</span><span class="na">Tuple</span> <span class="n">input</span><span class="o">)</span> <span class="o">{</span>
-                <span class="k">return</span> <span class="k">new</span> <span class="nf">SecurityContext</span><span class="o">()</span> <span class="o">{</span>
-                    <span class="nd">@Override</span>
-                    <span class="kd">public</span> <span class="n">Principal</span> <span class="nf">getUserPrincipal</span><span class="o">()</span> <span class="o">{</span>
-                        <span class="k">return</span> <span class="n">input</span><span class="o">.</span><span class="na">getPrincipal</span><span class="o">();</span>
-                    <span class="o">}</span>
-
-                    <span class="nd">@Override</span>
-                    <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">isUserInRole</span><span class="o">(</span><span class="n">String</span> <span class="n">role</span><span class="o">)</span> <span class="o">{</span>
-                        <span class="k">return</span> <span class="nf">getUserPrincipal</span><span class="o">()</span> <span class="o">!=</span> <span class="kc">null</span>
-                                <span class="o">&amp;&amp;</span> <span class="n">validUser</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">getUserPrincipal</span><span class="o">().</span><span class="na">getName</span><span class="o">())</span>
-                                <span class="o">&amp;&amp;</span> <span class="n">validRole</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="n">role</span><span class="o">);</span>
-                    <span class="o">}</span>
-
-                    <span class="nd">@Override</span>
-                    <span class="kd">public</span> <span class="kt">boolean</span> <span class="nf">isSecure</span><span class="o">()</span> <span class="o">{</span>
-                        <span class="k">return</span> <span class="n">input</span><span class="o">.</span><span class="na">getContainerRequestContext</span><span class="o">().</span><span class="na">getSecurityContext</span><span class="o">().</span><span class="na">isSecure</span><span class="o">();</span>
-                    <span class="o">}</span>
-
-                    <span class="nd">@Override</span>
-                    <span class="kd">public</span> <span class="n">String</span> <span class="nf">getAuthenticationScheme</span><span class="o">()</span> <span class="o">{</span>
-                        <span class="k">return</span> <span class="n">SecurityContext</span><span class="o">.</span><span class="na">BASIC_AUTH</span><span class="o">;</span>
-                    <span class="o">}</span>
-                <span class="o">}</span>
-            <span class="o">}</span>
-        <span class="o">}</span>
-
-    <span class="n">AuthFilter</span> <span class="n">basicCredentialAuthFilter</span> <span class="o">=</span> <span class="k">new</span> <span class="n">BasicCredentialAuthFilter</span><span class="o">.</span><span class="na">Builder</span><span class="o">&lt;</span><span class="n">User</span><span class="o">,</span> <span class="n">BasicAuthenticator</span><span class="o">&gt;()</span>
-            <span class="o">.</span><span class="na">setSecurityContextFunction</span><span class="o">(</span><span class="n">securityContextFunction</span><span class="o">);</span>
-            <span class="o">.</span><span class="na">setAuthenticator</span><span class="o">(</span><span class="n">basicAuthenticator</span><span class="o">)</span>
+    <span class="n">AuthFilter</span> <span class="n">basicCredentialAuthFilter</span> <span class="o">=</span> <span class="k">new</span> <span class="n">BasicCredentialAuthFilter</span><span class="o">.</span><span class="na">Builder</span><span class="o">&lt;&gt;()</span>
+            <span class="o">.</span><span class="na">setAuthenticator</span><span class="o">(</span><span class="k">new</span> <span class="n">ExampleBasicAuthenticator</span><span class="o">())</span>
+            <span class="o">.</span><span class="na">setAuthorizer</span><span class="o">(</span><span class="k">new</span> <span class="n">ExampleAuthorizer</span><span class="o">())</span>
+            <span class="o">.</span><span class="na">setPrefix</span><span class="o">(</span><span class="s">&quot;Basic&quot;</span><span class="o">)</span>
             <span class="o">.</span><span class="na">buildAuthFilter</span><span class="o">();</span>
 
-    <span class="n">AuthFilter</span> <span class="n">oauthCredentialAuthFilter</span> <span class="o">=</span> <span class="k">new</span> <span class="n">OAuthCredentialAuthFilter</span><span class="o">.</span><span class="na">Builder</span><span class="o">&lt;</span><span class="n">User</span><span class="o">,</span> <span class="n">OAuthAuthenticator</span><span class="o">&gt;()</span>
-            <span class="o">.</span><span class="na">setSecurityContextFunction</span><span class="o">(</span><span class="n">securityContextFunction</span><span class="o">);</span>
-            <span class="o">.</span><span class="na">setAuthenticator</span><span class="o">(</span><span class="n">oauthAuthenticator</span><span class="o">)</span>
+    <span class="n">AuthFilter</span> <span class="n">oauthCredentialAuthFilter</span> <span class="o">=</span> <span class="k">new</span> <span class="n">OAuthCredentialAuthFilter</span><span class="o">.</span><span class="na">Builder</span><span class="o">&lt;&gt;()</span>
+            <span class="o">.</span><span class="na">setAuthenticator</span><span class="o">(</span><span class="k">new</span> <span class="n">ExampleOAuthAuthenticator</span><span class="o">())</span>
+            <span class="o">.</span><span class="na">setAuthorizer</span><span class="o">(</span><span class="k">new</span> <span class="n">ExampleAuthorizer</span><span class="o">())</span>
             <span class="o">.</span><span class="na">setPrefix</span><span class="o">(</span><span class="s">&quot;Bearer&quot;</span><span class="o">)</span>
             <span class="o">.</span><span class="na">buildAuthFilter</span><span class="o">();</span>
 
-    <span class="n">List</span> <span class="n">filters</span> <span class="o">=</span> <span class="n">Lists</span><span class="o">.</span><span class="na">newArrayList</span><span class="o">(</span><span class="n">basicCredentialAuthFilter</span><span class="o">,</span> <span class="n">oauthCredentialAuthFilter</span><span class="o">);</span>
+    <span class="n">List</span><span class="o">&lt;</span><span class="n">AuthFilter</span><span class="o">&gt;</span> <span class="n">filters</span> <span class="o">=</span> <span class="n">Lists</span><span class="o">.</span><span class="na">newArrayList</span><span class="o">(</span><span class="n">basicCredentialAuthFilter</span><span class="o">,</span> <span class="n">oauthCredentialAuthFilter</span><span class="o">);</span>
     <span class="n">environment</span><span class="o">.</span><span class="na">jersey</span><span class="o">().</span><span class="na">register</span><span class="o">(</span><span class="k">new</span> <span class="n">AuthDynamicFeature</span><span class="o">(</span><span class="k">new</span> <span class="n">ChainedAuthFilter</span><span class="o">(</span><span class="n">handlers</span><span class="o">)));</span>
     <span class="n">environment</span><span class="o">.</span><span class="na">jersey</span><span class="o">().</span><span class="na">register</span><span class="o">(</span><span class="n">RolesAllowedDynamicFeature</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
     <span class="c1">//If you want to use @Auth to inject a custom Principal type into your resource</span>
@@ -356,7 +241,7 @@ requires an authenticator which takes instances of <tt class="docutils literal">
 </div>
 <div class="section" id="protecting-resources">
 <span id="man-auth-resources"></span><h2>Protecting Resources</h2>
-<p>To protect a resource, simply include the <tt class="docutils literal"><span class="pre">&#64;RolesAllowed</span></tt> annotation on your resource method.
+<p>To protect a resource, simply include the <tt class="docutils literal"><span class="pre">&#64;RolesAllowed</span></tt> annotation with an appropriate role on your resource method.
 If you need access to the Principal, you need to add a parameter to your method <tt class="docutils literal"><span class="pre">&#64;Context</span> <span class="pre">SecurityContext</span> <span class="pre">context</span></tt></p>
 <div class="highlight-java"><div class="highlight"><pre><span class="nd">@RolesAllowed</span><span class="o">(</span><span class="s">&quot;ADMIN&quot;</span><span class="o">)</span>
 <span class="nd">@GET</span>
