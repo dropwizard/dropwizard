@@ -988,6 +988,9 @@ evictionInterval                5 seconds                The amount of time to s
 
 validationInterval              30 seconds               To avoid excess validation, only run validation once every
                                                          interval.
+
+validatorClassName              none                     Name of a class of a custom validator implementation, which
+                                                         will be used for validating connections.
 ============================    =====================    ===============================================================
 
 .. _man-configuration-polymorphic:

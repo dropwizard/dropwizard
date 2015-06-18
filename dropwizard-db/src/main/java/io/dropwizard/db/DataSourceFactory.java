@@ -248,6 +248,14 @@ import java.util.concurrent.TimeUnit;
  *             To avoid excess validation, only run validation once every interval.
  *         </td>
  *     </tr>
+ *     <tr>
+ *         <td>{@code validatorClassName}</td>
+ *         <td>(none)</td>
+ *         <td>
+ *             Name of a class of a custom {@link org.apache.tomcat.jdbc.pool.Validator}
+ *             implementation, which will be used for validating connections.
+ *         </td>
+ *     </tr>
  * </table>
  */
 public class DataSourceFactory implements PooledDataSourceFactory {
@@ -353,6 +361,8 @@ public class DataSourceFactory implements PooledDataSourceFactory {
     @NotNull
     @MinDuration(1)
     private Duration validationInterval = Duration.seconds(30);
+
+    private Optional<String> validatorClassName = Optional.absent();
 
     @JsonProperty
     @Override
@@ -697,6 +707,16 @@ public class DataSourceFactory implements PooledDataSourceFactory {
         return Optional.fromNullable(validationQueryTimeout);
     }
 
+    @JsonProperty
+    public Optional<String> getValidatorClassName() {
+        return validatorClassName;
+    }
+
+    @JsonProperty
+    public void setValidatorClassName(Optional<String> validatorClassName) {
+        this.validatorClassName = validatorClassName;
+    }
+
     @Override
     public Optional<Duration> getHealthCheckValidationTimeout() {
         return Optional.fromNullable(validationQueryTimeout);
@@ -760,6 +780,9 @@ public class DataSourceFactory implements PooledDataSourceFactory {
 
         if (getValidationQueryTimeout().isPresent()) {
             poolConfig.setValidationQueryTimeout((int) validationQueryTimeout.toSeconds());
+        }
+        if (validatorClassName.isPresent()) {
+            poolConfig.setValidatorClassName(validatorClassName.get());
         }
 
         return new ManagedPooledDataSource(poolConfig, metricRegistry);

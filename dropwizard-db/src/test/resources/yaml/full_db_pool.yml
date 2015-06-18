@@ -39,3 +39,5 @@ checkConnectionWhileIdle: false
 checkConnectionOnBorrow: true
 checkConnectionOnConnect: false
 checkConnectionOnReturn: true
+
+validatorClassName: io.dropwizard.db.CustomConnectionValidator
