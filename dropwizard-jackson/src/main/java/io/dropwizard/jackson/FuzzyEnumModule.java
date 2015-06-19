@@ -43,7 +43,6 @@ public class FuzzyEnumModule extends Module {
         }
 
         @Override
-
         public Enum<?> deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
             final String text = CharMatcher.WHITESPACE
                     .removeFrom(jp.getText())
@@ -65,6 +64,12 @@ public class FuzzyEnumModule extends Module {
         public JsonDeserializer<?> findEnumDeserializer(Class<?> type,
                                                         DeserializationConfig config,
                                                         BeanDescription desc) throws JsonMappingException {
+            // If the user configured to use `toString` method to deserialize enums
+            if (config.hasDeserializationFeatures(
+                    DeserializationFeature.READ_ENUMS_USING_TO_STRING.getMask())) {
+                return null;
+            }
+
             // If there is a JsonCreator annotation we should use that instead of the PermissiveEnumDeserializer
             final Collection<AnnotatedMethod> factoryMethods = desc.getFactoryMethods();
             if (factoryMethods != null) {

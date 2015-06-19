@@ -3,11 +3,13 @@ package io.dropwizard.setup;
 import com.codahale.metrics.Histogram;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.UniformReservoir;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
 import io.dropwizard.configuration.DefaultConfigurationFactoryFactory;
 import io.dropwizard.configuration.FileConfigurationSourceProvider;
 
+import io.dropwizard.jackson.Jackson;
 import io.dropwizard.validation.valuehandling.OptionalValidatedValueUnwrapper;
 import org.hibernate.validator.HibernateValidator;
 import org.hibernate.validator.internal.engine.ValidatorFactoryImpl;
@@ -106,5 +108,12 @@ public class BootstrapTest {
         bootstrap.setValidatorFactory(factory);
 
         assertThat(bootstrap.getValidatorFactory()).isSameAs(factory);
+    }
+
+    @Test
+    public void canUseCustomObjectMapper() {
+        final ObjectMapper minimalObjectMapper = Jackson.newMinimalObjectMapper();
+        bootstrap.setObjectMapper(minimalObjectMapper);
+        assertThat(bootstrap.getObjectMapper()).isSameAs(minimalObjectMapper);
     }
 }

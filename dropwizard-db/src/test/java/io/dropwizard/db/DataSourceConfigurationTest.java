@@ -50,6 +50,7 @@ public class DataSourceConfigurationTest {
         assertThat(ds.getCheckConnectionOnConnect()).isEqualTo(false);
         assertThat(ds.getCheckConnectionOnReturn()).isEqualTo(true);
         assertThat(ds.getValidationQueryTimeout()).isEqualTo(Optional.of(Duration.seconds(3)));
+        assertThat(ds.getValidatorClassName()).isEqualTo(Optional.of("io.dropwizard.db.CustomConnectionValidator"));
     }
 
     @Test

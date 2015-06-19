@@ -1,5 +1,6 @@
 package io.dropwizard.migrations;
 
+import com.google.common.annotations.VisibleForTesting;
 import io.dropwizard.Configuration;
 import io.dropwizard.db.DatabaseConfiguration;
 import liquibase.CatalogAndSchema;
@@ -39,6 +40,14 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class DbDumpCommand<T extends Configuration> extends AbstractLiquibaseCommand<T> {
+
+    private PrintStream outputStream = System.out;
+
+    @VisibleForTesting
+    void setOutputStream(PrintStream outputStream) {
+        this.outputStream = outputStream;
+    }
+
     public DbDumpCommand(DatabaseConfiguration<T> strategy, Class<T> configurationClass) {
         super("dump",
               "Generate a dump of the existing database state.",
@@ -68,7 +77,7 @@ public class DbDumpCommand<T extends Configuration> extends AbstractLiquibaseCom
         columns.addArgument("--columns")
                .action(Arguments.storeTrue())
                .dest("columns")
-               .help("Check for added, removed, or modified tables (default)");
+               .help("Check for added, removed, or modified columns (default)");
         columns.addArgument("--ignore-columns")
                .action(Arguments.storeFalse())
                .dest("columns")
@@ -132,7 +141,7 @@ public class DbDumpCommand<T extends Configuration> extends AbstractLiquibaseCom
         sequences.addArgument("--ignore-sequences")
                  .action(Arguments.storeFalse())
                  .dest("sequences")
-                 .help("Ignore foreign keys");
+                 .help("Ignore sequences");
 
         final ArgumentGroup data = subparser.addArgumentGroup("Data");
         data.addArgument("--data")
@@ -152,31 +161,31 @@ public class DbDumpCommand<T extends Configuration> extends AbstractLiquibaseCom
     public void run(Namespace namespace, Liquibase liquibase) throws Exception {
         final Set<Class<? extends DatabaseObject>> compareTypes = new HashSet<>();
 
-        if (namespace.getBoolean("columns")) {
+        if (isTrue(namespace.getBoolean("columns"))) {
             compareTypes.add(Column.class);
         }
-        if (namespace.getBoolean("data")) {
+        if (isTrue(namespace.getBoolean("data"))) {
             compareTypes.add(Data.class);
         }
-        if (namespace.getBoolean("foreign-keys")) {
+        if (isTrue(namespace.getBoolean("foreign-keys"))) {
             compareTypes.add(ForeignKey.class);
         }
-        if (namespace.getBoolean("indexes")) {
+        if (isTrue(namespace.getBoolean("indexes"))) {
             compareTypes.add(Index.class);
         }
-        if (namespace.getBoolean("primary-keys")) {
+        if (isTrue(namespace.getBoolean("primary-keys"))) {
             compareTypes.add(PrimaryKey.class);
         }
-        if (namespace.getBoolean("sequences")) {
+        if (isTrue(namespace.getBoolean("sequences"))) {
             compareTypes.add(Sequence.class);
         }
-        if (namespace.getBoolean("tables")) {
+        if (isTrue(namespace.getBoolean("tables"))) {
             compareTypes.add(Table.class);
         }
-        if (namespace.getBoolean("unique-constraints")) {
+        if (isTrue(namespace.getBoolean("unique-constraints"))) {
             compareTypes.add(UniqueConstraint.class);
         }
-        if (namespace.getBoolean("views")) {
+        if (isTrue(namespace.getBoolean("views"))) {
             compareTypes.add(View.class);
         }
 
@@ -189,7 +198,7 @@ public class DbDumpCommand<T extends Configuration> extends AbstractLiquibaseCom
                 generateChangeLog(database, database.getDefaultSchema(), diffToChangeLog, file, compareTypes);
             }
         } else {
-            generateChangeLog(database, database.getDefaultSchema(), diffToChangeLog, System.out, compareTypes);
+            generateChangeLog(database, database.getDefaultSchema(), diffToChangeLog, outputStream, compareTypes);
         }
     }
 
@@ -211,5 +220,9 @@ public class DbDumpCommand<T extends Configuration> extends AbstractLiquibaseCom
         } catch (InvalidExampleException e) {
             throw new UnexpectedLiquibaseException(e);
         }
+    }
+
+    private static boolean isTrue(Boolean nullableCondition) {
+        return nullableCondition != null && nullableCondition;
     }
 }
