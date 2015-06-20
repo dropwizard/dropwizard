@@ -7,7 +7,7 @@
 
     <artifactId>dropwizard-cli-example</artifactId>
     <groupId>io.dropwizard</groupId>
-    <version>0.9.0-SNAPSHOT</version>
+    <version>0.9.0-rc2-SNAPSHOT</version>
     <name>Dropwizard Example CLI Application</name>
 
     <properties>
