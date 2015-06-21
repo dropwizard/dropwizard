@@ -590,7 +590,11 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
     }
 
     protected SslContextFactory buildSslContextFactory() {
-        final SslContextFactory factory = new SslContextFactory(keyStorePath);
+        final SslContextFactory factory = new SslContextFactory();
+        if (keyStorePath != null) {
+            factory.setKeyStorePath(keyStorePath);
+        }
+
         final String keyStoreType = getKeyStoreType();
         if (keyStoreType.startsWith("Windows-")) {
             try {
