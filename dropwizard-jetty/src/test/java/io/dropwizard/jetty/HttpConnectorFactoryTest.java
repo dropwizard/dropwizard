@@ -1,7 +1,6 @@
 package io.dropwizard.jetty;
 
 import com.codahale.metrics.MetricRegistry;
-import com.codahale.metrics.jetty9.InstrumentedConnectionFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.io.Resources;
 import io.dropwizard.configuration.ConfigurationFactory;
@@ -137,13 +136,12 @@ public class HttpConnectorFactoryTest {
         assertThat(connector.getAcceptors()).isEqualTo(1);
         assertThat(connector.getSelectorManager().getSelectorCount()).isEqualTo(2);
 
-        // Again reflection, but there are no other way
-        ConnectionFactory connectionFactory = connector.getConnectionFactory("http/1.1");
-        assertThat(connectionFactory).isInstanceOf(InstrumentedConnectionFactory.class);
-        assertThat(getField(InstrumentedConnectionFactory.class, "timer", true).get(connectionFactory))
+        Jetty93InstrumentedConnectionFactory connectionFactory =
+                (Jetty93InstrumentedConnectionFactory) connector.getConnectionFactory("http/1.1");
+        assertThat(connectionFactory).isInstanceOf(Jetty93InstrumentedConnectionFactory.class);
+        assertThat(connectionFactory.getTimer())
                 .isSameAs(metrics.timer("org.eclipse.jetty.server.HttpConnectionFactory.127.0.0.1.8080.connections"));
-        HttpConnectionFactory httpConnectionFactory = (HttpConnectionFactory)
-                getField(InstrumentedConnectionFactory.class, "connectionFactory", true).get(connectionFactory);
+        HttpConnectionFactory httpConnectionFactory = (HttpConnectionFactory)  connectionFactory.getConnectionFactory();
         assertThat(httpConnectionFactory.getInputBufferSize()).isEqualTo(8192);
 
         HttpConfiguration httpConfiguration = httpConnectionFactory.getHttpConfiguration();
