@@ -221,11 +221,6 @@
                 <version>${jetty.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.eclipse.jetty.spdy</groupId>
-                <artifactId>spdy-http-server</artifactId>
-                <version>${jetty.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-alpn-server</artifactId>
                 <version>${jetty.version}</version>
@@ -729,11 +724,6 @@
             <dependency>
                 <groupId>io.dropwizard</groupId>
                 <artifactId>dropwizard-servlets</artifactId>
-                <version>${dropwizard.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.dropwizard</groupId>
-                <artifactId>dropwizard-spdy</artifactId>
                 <version>${dropwizard.version}</version>
             </dependency>
             <dependency>

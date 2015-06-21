@@ -369,38 +369,6 @@ endpointIdentificationAlgorithm  (none)              Which endpoint identificati
 
 .. _sslyze: https://github.com/iSECPartners/sslyze
 
-.. _man-configuration-spdy:
-
-SPDY
-----
-
-Extends the attributes that are available to the :ref:`HTTPS connector <man-configuration-https>`
-
-For this connector to work with ALPN protocol you need to provide alpn-boot library to JVM's bootpath.
-The correct library version depends on the JVM version. Consult Jetty ALPN guide__ for the reference.
-
-.. __: http://www.eclipse.org/jetty/documentation/current/alpn-chapter.html
-
-.. code-block:: yaml
-
-    server:
-      applicationConnectors:
-        - type: spdy3
-          port: 8445
-          keyStorePath: example.keystore
-          keyStorePassword: example
-          validateCerts: false
-
-
-====================== ===========  ===========
-Name                   Default      Description
-====================== ===========  ===========
-pushStrategy           (none)       The `push strategy`_ to use for server-initiated SPDY pushes.
-====================== ===========  ===========
-
-.. _`push strategy`: https://github.com/dropwizard/dropwizard/blob/master/dropwizard-spdy/src/main/java/io/dropwizard/spdy/PushStrategyFactory.java
-
-
 .. _man-configuration-logging:
 
 Logging
