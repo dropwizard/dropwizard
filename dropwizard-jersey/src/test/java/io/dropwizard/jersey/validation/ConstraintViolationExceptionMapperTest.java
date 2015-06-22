@@ -41,6 +41,16 @@ public class ConstraintViolationExceptionMapperTest extends JerseyTest {
     }
 
     @Test
+    public void postNullEntityIs422() throws Exception {
+        final Response response = target("/valid/foo").request(MediaType.APPLICATION_JSON)
+                .post(Entity.entity(null, MediaType.APPLICATION_JSON));
+        assertThat(response.getStatus()).isEqualTo(422);
+
+        String ret = "{\"errors\":[\"The request entity was empty\"]}";
+        assertThat(response.readEntity(String.class)).isEqualTo(ret);
+    }
+
+    @Test
     public void getInvalidReturnIs500() throws Exception {
         // return value is too long and so will fail validation
         final Response response = target("/valid/bar")
