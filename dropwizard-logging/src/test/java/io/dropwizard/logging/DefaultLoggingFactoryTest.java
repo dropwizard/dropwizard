@@ -1,16 +1,23 @@
 package io.dropwizard.logging;
 
 import ch.qos.logback.classic.Level;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.Resources;
+
+import io.dropwizard.configuration.ConfigurationException;
 import io.dropwizard.configuration.ConfigurationFactory;
 import io.dropwizard.jackson.Jackson;
+
 import org.junit.Before;
 import org.junit.Test;
 
 import javax.validation.Validation;
+
 import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -39,18 +46,30 @@ public class DefaultLoggingFactoryTest {
 
     @Test
     public void hasASetOfOverriddenLevels() throws Exception {
-        assertThat(config.getLoggers().get("com.example.app")).isNotNull();
-        assertThat(config.getLoggers().get("com.example.app").getLevel())
-                .isEqualTo(Level.DEBUG);
-        assertThat(config.getLoggers().get("com.example.app").getAppenders())
+        assertThat(config.getLoggers()).isEqualTo(
+                ImmutableMap.of("com.example.app", Level.DEBUG));
+    }
+
+    @Test
+    public void canReadAdvancedLoggers() throws IOException,
+            ConfigurationException, URISyntaxException {
+        DefaultLoggingFactory advancedConfig = factory.build(new File(Resources
+                .getResource("yaml/logging_advanced.yml").toURI()));
+        assertThat(advancedConfig.getAdvancedLoggers().get("com.example.app"))
                 .isNotNull();
         assertThat(
-                config.getLoggers().get("com.example.app").getAppenders()
-                        .get(0).getClass()).isEqualTo(
+                advancedConfig.getAdvancedLoggers().get("com.example.app")
+                        .getLevel()).isEqualTo(Level.DEBUG);
+        assertThat(
+                advancedConfig.getAdvancedLoggers().get("com.example.app")
+                        .getAppenders()).isNotNull();
+        assertThat(
+                advancedConfig.getAdvancedLoggers().get("com.example.app")
+                        .getAppenders().get(0).getClass()).isEqualTo(
                 ConsoleAppenderFactory.class);
         assertThat(
-                config.getLoggers().get("com.example.app").getAppenders()
-                        .get(1).getClass())
-                .isEqualTo(FileAppenderFactory.class);
+                advancedConfig.getAdvancedLoggers().get("com.example.app")
+                        .getAppenders().get(1).getClass()).isEqualTo(
+                FileAppenderFactory.class);
     }
 }

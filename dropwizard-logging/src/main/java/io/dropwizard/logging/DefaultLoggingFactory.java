@@ -41,7 +41,9 @@ public class DefaultLoggingFactory implements LoggingFactory {
     private Level level = Level.INFO;
 
     @NotNull
-    private ImmutableMap<String, DefaultLoggerFactory> loggers = ImmutableMap
+    private ImmutableMap<String, Level> loggers = ImmutableMap.of();
+
+    private ImmutableMap<String, DefaultLoggerFactory> advancedLoggers = ImmutableMap
             .of();
 
     @Valid
@@ -87,13 +89,24 @@ public class DefaultLoggingFactory implements LoggingFactory {
     }
 
     @JsonProperty
-    public ImmutableMap<String, DefaultLoggerFactory> getLoggers() {
+    public ImmutableMap<String, Level> getLoggers() {
         return loggers;
     }
 
     @JsonProperty
-    public void setLoggers(Map<String, DefaultLoggerFactory> loggers) {
+    public ImmutableMap<String, DefaultLoggerFactory> getAdvancedLoggers() {
+        return advancedLoggers;
+    }
+
+    @JsonProperty
+    public void setLoggers(Map<String, Level> loggers) {
         this.loggers = ImmutableMap.copyOf(loggers);
+    }
+
+    @JsonProperty
+    public void setAdvancedLoggers(
+            Map<String, DefaultLoggerFactory> advancedLoggers) {
+        this.advancedLoggers = ImmutableMap.copyOf(advancedLoggers);
     }
 
     @JsonProperty
@@ -179,15 +192,23 @@ public class DefaultLoggingFactory implements LoggingFactory {
 
         root.setLevel(level);
 
-        for (Entry<String, DefaultLoggerFactory> entry : loggers.entrySet()) {
-            Logger logger = loggerContext.getLogger(entry.getKey());
-            logger.setLevel(entry.getValue().getLevel());
-            for (AppenderFactory appender : entry.getValue().getAppenders()) {
-                Appender<ILoggingEvent> newAppender = appender.build(
-                        loggerContext, name, null);
-                logger.addAppender(newAppender);
-            }
+        if (advancedLoggers != null && advancedLoggers.size() > 0) {
+            for (Entry<String, DefaultLoggerFactory> entry : advancedLoggers
+                    .entrySet()) {
+                Logger logger = loggerContext.getLogger(entry.getKey());
+                logger.setLevel(entry.getValue().getLevel());
+                for (AppenderFactory appender : entry.getValue().getAppenders()) {
+                    Appender<ILoggingEvent> newAppender = appender.build(
+                            loggerContext, name, null);
+                    logger.addAppender(newAppender);
+                }
 
+            }
+        } else {
+            for (Map.Entry<String, Level> entry : loggers.entrySet()) {
+                loggerContext.getLogger(entry.getKey()).setLevel(
+                        entry.getValue());
+            }
         }
         return root;
     }
