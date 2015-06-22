@@ -13,6 +13,7 @@ import javax.ws.rs.Priorities;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.SecurityContext;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.Principal;
@@ -25,7 +26,7 @@ public class BasicCredentialAuthFilter<P extends Principal> extends AuthFilter<B
     }
 
     @Override
-    public void filter(ContainerRequestContext requestContext) throws IOException {
+    public void filter(final ContainerRequestContext requestContext) throws IOException {
         final String header = requestContext.getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
         try {
             if (header != null) {
@@ -42,11 +43,29 @@ public class BasicCredentialAuthFilter<P extends Principal> extends AuthFilter<B
                             final String password = decoded.substring(i + 1);
                             final BasicCredentials credentials = new BasicCredentials(username, password);
                             try {
-                                final Optional<P> result = authenticator.authenticate(credentials);
-                                if (result.isPresent()) {
-                                    Principal principal = result.get();
-                                    requestContext.setSecurityContext(
-                                            getSecurityContextFunction().apply(new Tuple(requestContext, principal)));
+                                final Optional<P> principal = authenticator.authenticate(credentials);
+                                if (principal.isPresent()) {
+                                    requestContext.setSecurityContext(new SecurityContext() {
+                                        @Override
+                                        public Principal getUserPrincipal() {
+                                            return principal.get();
+                                        }
+
+                                        @Override
+                                        public boolean isUserInRole(String role) {
+                                            return authorizer.authorize(principal.get(), role);
+                                        }
+
+                                        @Override
+                                        public boolean isSecure() {
+                                            return requestContext.getSecurityContext().isSecure();
+                                        }
+
+                                        @Override
+                                        public String getAuthenticationScheme() {
+                                            return SecurityContext.BASIC_AUTH;
+                                        }
+                                    });
                                     return;
                                 }
                             } catch (AuthenticationException e) {
@@ -70,7 +89,7 @@ public class BasicCredentialAuthFilter<P extends Principal> extends AuthFilter<B
 
         @Override
         public BasicCredentialAuthFilter<APrincipal> buildAuthFilter() {
-            if (realm == null || authenticator == null || prefix == null || securityContextFunction == null) {
+            if (realm == null || authenticator == null || prefix == null || authorizer == null) {
                 throw new RuntimeException("Required auth filter parameters not set");
             }
 
@@ -78,7 +97,7 @@ public class BasicCredentialAuthFilter<P extends Principal> extends AuthFilter<B
             basicCredentialAuthFilter.setRealm(realm);
             basicCredentialAuthFilter.setAuthenticator(authenticator);
             basicCredentialAuthFilter.setPrefix(prefix);
-            basicCredentialAuthFilter.setSecurityContextFunction(securityContextFunction);
+            basicCredentialAuthFilter.setAuthorizer(authorizer);
             return basicCredentialAuthFilter;
         }
     }

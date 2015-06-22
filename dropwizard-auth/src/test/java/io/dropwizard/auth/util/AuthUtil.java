@@ -1,14 +1,9 @@
 package io.dropwizard.auth.util;
 
-import com.google.common.base.Function;
 import com.google.common.base.Optional;
-import io.dropwizard.auth.AuthFilter;
-import io.dropwizard.auth.AuthenticationException;
-import io.dropwizard.auth.Authenticator;
-import io.dropwizard.auth.PrincipalImpl;
+import io.dropwizard.auth.*;
 import io.dropwizard.auth.basic.BasicCredentials;
 
-import javax.ws.rs.core.SecurityContext;
 import java.security.Principal;
 
 public class AuthUtil {
@@ -48,37 +43,14 @@ public class AuthUtil {
         return getTestAuthenticator(presented, presented);
     }
 
-    public static Function<AuthFilter.Tuple, SecurityContext> getSecurityContextProviderFunction(
-            final String validUser,
-            final String validRole
-    ) {
-        return new Function<AuthFilter.Tuple, SecurityContext>() {
+    public static Authorizer<Principal> getTestAuthorizer(final String validUser,
+                                                          final String validRole) {
+        return new Authorizer<Principal>() {
             @Override
-            public SecurityContext apply(final AuthFilter.Tuple input) {
-                return new SecurityContext() {
-
-                    @Override
-                    public Principal getUserPrincipal() {
-                        return input.getPrincipal();
-                    }
-
-                    @Override
-                    public boolean isUserInRole(String role) {
-                        return getUserPrincipal() != null
-                                && validUser.equals(getUserPrincipal().getName())
-                                && validRole.equals(role);
-                    }
-
-                    @Override
-                    public boolean isSecure() {
-                        return input.getContainerRequestContext().getSecurityContext().isSecure();
-                    }
-
-                    @Override
-                    public String getAuthenticationScheme() {
-                        return SecurityContext.BASIC_AUTH;
-                    }
-                };
+            public boolean authorize(Principal principal, String role) {
+                return principal != null
+                        && validUser.equals(principal.getName())
+                        && validRole.equals(role);
             }
         };
     }
