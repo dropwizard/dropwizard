@@ -4,7 +4,9 @@ import com.codahale.metrics.annotation.Timed;
 import com.google.common.collect.ImmutableList;
 import io.dropwizard.testing.Person;
 
+import javax.validation.Valid;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -30,5 +32,10 @@ public class PersonResource {
     @Path("/list")
     public ImmutableList<Person> getPersonList(@PathParam("name") String name) {
         return ImmutableList.of(getPerson(name));
+    }
+
+    @POST
+    public Person createPerson(@Valid Person person) {
+        return new Person(person.getName(), person.getEmail().trim());
     }
 }

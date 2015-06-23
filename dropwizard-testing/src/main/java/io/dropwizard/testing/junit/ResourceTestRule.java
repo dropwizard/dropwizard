@@ -8,7 +8,10 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.DropwizardResourceConfig;
+import io.dropwizard.jersey.errors.EarlyEofExceptionMapper;
+import io.dropwizard.jersey.errors.LoggingExceptionMapper;
 import io.dropwizard.jersey.jackson.JacksonMessageBodyProvider;
+import io.dropwizard.jersey.jackson.JsonProcessingExceptionMapper;
 import io.dropwizard.jersey.validation.Validators;
 import io.dropwizard.jersey.validation.ConstraintViolationExceptionMapper;
 import io.dropwizard.logging.BootstrapLogging;
@@ -152,7 +155,11 @@ public class ResourceTestRule implements TestRule {
         }
 
         private void configure(final ResourceTestRule resourceTestRule) {
+            register(new LoggingExceptionMapper<Throwable>() {
+            });
             register(new ConstraintViolationExceptionMapper());
+            register(new JsonProcessingExceptionMapper());
+            register(new EarlyEofExceptionMapper());
             for (Class<?> provider : resourceTestRule.providers) {
                 register(provider);
             }

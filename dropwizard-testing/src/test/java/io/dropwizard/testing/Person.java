@@ -1,10 +1,12 @@
 package io.dropwizard.testing;
 
 import com.google.common.base.MoreObjects;
+import org.hibernate.validator.constraints.NotEmpty;
 
 import java.util.Objects;
 
 public class Person {
+    @NotEmpty
     private String name;
     private String email;
 
