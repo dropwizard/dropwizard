@@ -282,7 +282,7 @@ application containing your test doubles.
         }
 
         @ClassRule
-        public final static DropwizardClientRule dropwizard = new DropwizardClientRule(new PingResource());
+        public static final DropwizardClientRule dropwizard = new DropwizardClientRule(new PingResource());
 
         @Test
         public void shouldPing() throws IOException {
