@@ -6,6 +6,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
+
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
 import io.dropwizard.cli.ServerCommand;
@@ -16,11 +17,14 @@ import io.dropwizard.lifecycle.ServerLifecycleListener;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import net.sourceforge.argparse4j.inf.Namespace;
+
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 
 import javax.annotation.Nullable;
 import javax.validation.Validator;
+
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -38,16 +42,23 @@ import static com.google.common.base.Throwables.propagate;
  * @param <C> the configuration type
  */
 public class DropwizardTestSupport<C extends Configuration> {
-    private final Class<? extends Application<C>> applicationClass;
-    private final String configPath;
-    private final Set<ConfigOverride> configOverrides;
-    private final Optional<String> customPropertyPrefix;
+    protected final Class<? extends Application<C>> applicationClass;
+    protected final String configPath;
+    protected final Set<ConfigOverride> configOverrides;
+    protected final Optional<String> customPropertyPrefix;
 
-    private C configuration;
-    private Application<C> application;
-    private Environment environment;
-    private Server jettyServer;
-    private List<ServiceListener<C>> listeners = Lists.newArrayList();
+    /**
+     * Flag that indicates whether instance was constructed with an explicit
+     * Configuration object or not; handling of the two cases differ.
+     * Needed because state of {@link #configuration} changes during lifecycle.
+     */
+    protected final boolean explicitConfig;
+
+    protected C configuration;
+    protected Application<C> application;
+    protected Environment environment;
+    protected Server jettyServer;
+    protected List<ServiceListener<C>> listeners = Lists.newArrayList();
 
     public DropwizardTestSupport(Class<? extends Application<C>> applicationClass,
                              @Nullable String configPath,
@@ -61,6 +72,31 @@ public class DropwizardTestSupport<C extends Configuration> {
         this.configPath = configPath;
         this.configOverrides = ImmutableSet.copyOf(firstNonNull(configOverrides, new ConfigOverride[0]));
         this.customPropertyPrefix = customPropertyPrefix;
+        explicitConfig = false;
+    }
+
+    /**
+     * Alternative constructor that may be used to directly provide Configuration
+     * to use, instead of specifying resource path for locating data to create
+     * Configuration.
+     *
+     * @since 0.9
+     *
+     * @param applicationClass Type of Application to create
+     * @param config Pre-constructed configuration object caller provides; will not
+     *   be manipulated in any way, no overriding
+     */
+    public DropwizardTestSupport(Class<? extends Application<C>> applicationClass,
+            C configuration) {
+        if (configuration == null) {
+            throw new IllegalArgumentException("Can not pass null configuration for explicitly configured instance");
+        }
+        this.applicationClass = applicationClass;
+        configPath = "";
+        configOverrides = Collections.emptySet();
+        customPropertyPrefix = Optional.absent();
+        this.configuration = configuration;
+        explicitConfig = true;
     }
 
     public DropwizardTestSupport<C> addListener(ServiceListener<C> listener) {
@@ -120,7 +156,6 @@ public class DropwizardTestSupport<C extends Configuration> {
         }
     }
 
-    @SuppressWarnings("unchecked")
     private void startIfRequired() {
         if (jettyServer != null) {
             return;
@@ -141,7 +176,7 @@ public class DropwizardTestSupport<C extends Configuration> {
                     DropwizardTestSupport.this.configuration = configuration;
                     DropwizardTestSupport.this.environment = environment;
                     super.run(configuration, environment);
-                    for (ServiceListener listener : listeners) {
+                    for (ServiceListener<C> listener : listeners) {
                         try {
                             listener.onRun(configuration, environment, DropwizardTestSupport.this);
                         } catch (Exception ex) {
@@ -150,7 +185,15 @@ public class DropwizardTestSupport<C extends Configuration> {
                     }
                 }
             };
-            if (customPropertyPrefix.isPresent()) {
+            if (explicitConfig) {
+                bootstrap.setConfigurationFactoryFactory(new ConfigurationFactoryFactory<C>() {
+                    @Override
+                    public ConfigurationFactory<C> create(Class<C> klass, Validator validator,
+                                                          ObjectMapper objectMapper, String propertyPrefix) {
+                        return new POJOConfigurationFactory<C>(configuration);
+                    }
+                });
+            } else  if (customPropertyPrefix.isPresent()) {
                 bootstrap.setConfigurationFactoryFactory(new ConfigurationFactoryFactory<C>() {
                     @Override
                     public ConfigurationFactory<C> create(Class<C> klass, Validator validator,

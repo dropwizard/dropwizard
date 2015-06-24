@@ -1,13 +1,12 @@
 package io.dropwizard.testing.junit;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableMultimap;
+
 import io.dropwizard.Application;
-import io.dropwizard.Configuration;
 import io.dropwizard.servlets.tasks.Task;
 import io.dropwizard.setup.Environment;
-import org.hibernate.validator.constraints.NotEmpty;
+
 import org.junit.ClassRule;
 import org.junit.Test;
 
@@ -16,6 +15,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
+
 import java.io.PrintWriter;
 
 import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
@@ -88,20 +88,6 @@ public class DropwizardAppRuleTest {
         @Path("test")
         @GET
         public String test() {
-            return message;
-        }
-    }
-
-    public static class TestConfiguration extends Configuration {
-        @NotEmpty
-        @JsonProperty
-        private String message;
-
-        @NotEmpty
-        @JsonProperty
-        private String extra;
-
-        public String getMessage() {
             return message;
         }
     }
