@@ -27,6 +27,10 @@ public class DropwizardAppRule<C extends Configuration> extends ExternalResource
 
     private final DropwizardTestSupport<C> testSupport;
 
+    public DropwizardAppRule(Class<? extends Application<C>> applicationClass) {
+        this(applicationClass, (String) null);
+    }
+
     public DropwizardAppRule(Class<? extends Application<C>> applicationClass,
                              @Nullable String configPath,
                              ConfigOverride... configOverrides) {
@@ -35,8 +39,19 @@ public class DropwizardAppRule<C extends Configuration> extends ExternalResource
 
     public DropwizardAppRule(Class<? extends Application<C>> applicationClass, String configPath,
                                  Optional<String> customPropertyPrefix, ConfigOverride... configOverrides) {
-        this.testSupport = new DropwizardTestSupport<>(applicationClass, configPath, customPropertyPrefix,
-                configOverrides);
+        this(new DropwizardTestSupport<>(applicationClass, configPath, customPropertyPrefix,
+                configOverrides));
+    }
+
+    /**
+     * Alternate constructor that allows specifying exact Configuration object to
+     * use, instead of reading a resource and binding it as Configuration object.
+     *
+     * @since 0.9
+     */
+    public DropwizardAppRule(Class<? extends Application<C>> applicationClass,
+            C configuration) {
+        this(new DropwizardTestSupport<>(applicationClass, configuration));
     }
 
     public DropwizardAppRule(DropwizardTestSupport<C> testSupport) {
@@ -45,15 +60,15 @@ public class DropwizardAppRule<C extends Configuration> extends ExternalResource
 
     public DropwizardAppRule<C> addListener(final ServiceListener<C> listener) {
         this.testSupport.addListener(new DropwizardTestSupport.ServiceListener<C>() {
-
+            @Override
             public void onRun(C configuration, Environment environment, DropwizardTestSupport<C> rule) throws Exception {
                 listener.onRun(configuration, environment, DropwizardAppRule.this);
             }
 
+            @Override
             public void onStop(DropwizardTestSupport<C> rule) throws Exception {
                 listener.onStop(DropwizardAppRule.this);
             }
-
         });
         return this;
     }
@@ -73,7 +88,6 @@ public class DropwizardAppRule<C extends Configuration> extends ExternalResource
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     protected void after() {
         testSupport.after();
     }
