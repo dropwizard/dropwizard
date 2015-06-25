@@ -148,6 +148,14 @@
                 <role>committer</role>
             </roles>
         </developer>
+        <developer>
+            <name>Nick Babcock</name>
+            <email>nbabcock19@hotmail.com</email>
+            <timezone>America/New_York</timezone>
+            <roles>
+                <role>committer</role>
+            </roles>
+        </developer>
     </developers>
 
     <licenses>
