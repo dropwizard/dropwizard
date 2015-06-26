@@ -8,8 +8,32 @@ Release Notes
 
 v0.9.0
 ======
-
-* Upgrade to commons-lang3 3.4
+* Various documentation fixes
+* Respect deserialization of enums using toString()
+* Add tests for DbDumpCommand
+* Fix descriptions of parameters of DbDumpCommand
+* Add support for setting a custom DB pool connection validator
+* Add facility to set a custom ObjectMapper in Bootstrap
+* Add facility to plug-in custom DB connection pools
+* Create managed instances of Jersey HTTP Client
+* Update CachingAuthenticator to not cache absent values.
+* Descriptive constraint violation messages
+* Fix Coveralls integration
+* Upgrade Surefire plugin to 2.18.1
+* Discoverable logging conf
+* Run tests in parallel
+* Remove javax.el 2.x dependencies
+* Upgrade to Apache HTTP Client 4.4.1
+* Added a benchmark for DropwizardResourceConfig
+* Fix #953 Possible reflective cross site scripting in ConstraintViolation
+* Added support for logback's maxFileSize attribute
+* Add a JMH benchmark for Size
+* Add a JMH benchmark for Duration
+* HTTP(S) proxy support for Dropwizard HTTP client
+* Filter based Authorizaton & Authentication
+* Add Jersey Bean Validation Support
+* Upgrade to JDBI 2.62
+* Upgrade to Dropwizard Metrics 3.1.2
 * Upgrade to Freemarker 2.3.22
 * Upgrade to H2 1.4.187
 * Upgrade to Hibernate 4.3.9.Final
@@ -22,6 +46,7 @@ v0.9.0
 * Upgrade to Logback 1.1.3
 * Upgrade to Metrics 3.1.2
 * Upgrade to SLF4J 1.7.12
+* Upgrade to commons-lang3 3.4
 * Upgrade to tomcat-jdbc 8.0.21
 
 .. _rel-0.8.1:
