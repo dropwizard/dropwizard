@@ -24,7 +24,6 @@ import org.glassfish.jersey.message.internal.OutboundMessageContext;
 import org.glassfish.jersey.message.internal.Statuses;
 
 import javax.ws.rs.ProcessingException;
-import javax.ws.rs.core.Configuration;
 import javax.ws.rs.core.Response;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -135,7 +134,7 @@ public class DropwizardApacheConnector implements Connector {
             builder.addHeader(headerName, jerseyRequest.getHeaderString(headerName));
         }
 
-        Optional<RequestConfig> requestConfig = addJerseyRequestConfig(jerseyRequest.getConfiguration());
+        Optional<RequestConfig> requestConfig = addJerseyRequestConfig(jerseyRequest);
         if (requestConfig.isPresent()) {
             builder.setConfig(requestConfig.get());
         }
@@ -143,10 +142,10 @@ public class DropwizardApacheConnector implements Connector {
         return builder.build();
     }
 
-    private Optional<RequestConfig> addJerseyRequestConfig(Configuration configuration) {
-        final Integer timeout = (Integer) configuration.getProperty(ClientProperties.READ_TIMEOUT);
-        final Integer connectTimeout = (Integer) configuration.getProperty(ClientProperties.CONNECT_TIMEOUT);
-        final Boolean followRedirects = (Boolean) configuration.getProperty(ClientProperties.FOLLOW_REDIRECTS);
+    private Optional<RequestConfig> addJerseyRequestConfig(ClientRequest clientRequest) {
+        final Integer timeout = clientRequest.resolveProperty(ClientProperties.READ_TIMEOUT, Integer.class);
+        final Integer connectTimeout = clientRequest.resolveProperty(ClientProperties.CONNECT_TIMEOUT, Integer.class);
+        final Boolean followRedirects = clientRequest.resolveProperty(ClientProperties.FOLLOW_REDIRECTS, Boolean.class);
 
         if (timeout != null || connectTimeout != null || followRedirects != null) {
             RequestConfig.Builder requestConfig = RequestConfig.copy(defaultRequestConfig);
