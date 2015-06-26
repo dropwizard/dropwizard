@@ -1,7 +1,6 @@
 package io.dropwizard.testing.junit;
 
 import io.dropwizard.Application;
-import io.dropwizard.jetty.ConnectorFactory;
 import io.dropwizard.jetty.HttpConnectorFactory;
 import io.dropwizard.server.DefaultServerFactory;
 import io.dropwizard.setup.Environment;

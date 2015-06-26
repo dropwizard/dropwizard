@@ -9,8 +9,7 @@ import io.dropwizard.configuration.ConfigurationFactory;
 import io.dropwizard.configuration.ConfigurationSourceProvider;
 
 public class POJOConfigurationFactory<C extends Configuration>
-    extends ConfigurationFactory<C>
-{
+    extends ConfigurationFactory<C> {
     protected final C configuration;
 
     @SuppressWarnings("unchecked")

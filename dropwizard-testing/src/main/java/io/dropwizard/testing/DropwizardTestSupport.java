@@ -83,7 +83,7 @@ public class DropwizardTestSupport<C extends Configuration> {
      * @since 0.9
      *
      * @param applicationClass Type of Application to create
-     * @param config Pre-constructed configuration object caller provides; will not
+     * @param configuration Pre-constructed configuration object caller provides; will not
      *   be manipulated in any way, no overriding
      */
     public DropwizardTestSupport(Class<? extends Application<C>> applicationClass,
@@ -93,7 +93,7 @@ public class DropwizardTestSupport<C extends Configuration> {
         }
         this.applicationClass = applicationClass;
         configPath = "";
-        configOverrides = Collections.emptySet();
+        configOverrides = ImmutableSet.of();
         customPropertyPrefix = Optional.absent();
         this.configuration = configuration;
         explicitConfig = true;
@@ -190,10 +190,10 @@ public class DropwizardTestSupport<C extends Configuration> {
                     @Override
                     public ConfigurationFactory<C> create(Class<C> klass, Validator validator,
                                                           ObjectMapper objectMapper, String propertyPrefix) {
-                        return new POJOConfigurationFactory<C>(configuration);
+                        return new POJOConfigurationFactory<>(configuration);
                     }
                 });
-            } else  if (customPropertyPrefix.isPresent()) {
+            } else if (customPropertyPrefix.isPresent()) {
                 bootstrap.setConfigurationFactoryFactory(new ConfigurationFactoryFactory<C>() {
                     @Override
                     public ConfigurationFactory<C> create(Class<C> klass, Validator validator,
