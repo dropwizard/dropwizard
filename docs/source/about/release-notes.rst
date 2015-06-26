@@ -30,8 +30,8 @@ v0.9.0
 * Add a JMH benchmark for Size
 * Add a JMH benchmark for Duration
 * HTTP(S) proxy support for Dropwizard HTTP client
-* Filter based Authorizaton & Authentication
-* Add Jersey Bean Validation Support
+* Filter based Authorization & Authentication
+* Add Jersey Bean Validation support
 * Upgrade to JDBI 2.62
 * Upgrade to Dropwizard Metrics 3.1.2
 * Upgrade to Freemarker 2.3.22
