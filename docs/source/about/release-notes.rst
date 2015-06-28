@@ -8,45 +8,49 @@ Release Notes
 
 v0.9.0
 ======
-* Various documentation fixes
-* Respect deserialization of enums using toString()
-* Add tests for DbDumpCommand
-* Fix descriptions of parameters of DbDumpCommand
-* Add support for setting a custom DB pool connection validator
-* Add facility to set a custom ObjectMapper in Bootstrap
-* Add facility to plug-in custom DB connection pools
-* Create managed instances of Jersey HTTP Client
-* Update CachingAuthenticator to not cache absent values.
-* Descriptive constraint violation messages
-* Fix Coveralls integration
-* Upgrade Surefire plugin to 2.18.1
-* Discoverable logging conf
-* Run tests in parallel
-* Remove javax.el 2.x dependencies
-* Upgrade to Apache HTTP Client 4.4.1
-* Added a benchmark for DropwizardResourceConfig
-* Fix #953 Possible reflective cross site scripting in ConstraintViolation
-* Added support for logback's maxFileSize attribute
-* Add a JMH benchmark for Size
-* Add a JMH benchmark for Duration
+* Various documentation fixes and improvements
+* New filter-based authorization & authentication
+* Fixed a security bug in `CachingAuthenticator` with caching results of failed authentication attempts.
+* Correct handling misconfigured context paths in `ServerFactory`
+* Logging context paths during application startup
+* Support for Jersey Bean Validation
+* Returning descriptive constraint violation messages
+* Trace logging of failed constraint violations
+* Returning correct HTTP status codes for constraint violations
+* Fixed possible XSS in constraint violations
+* Support for including caller data in appenders
+* Support for defining custom logging factories (e.g. native Logback)
+* Support for defining the maximum log file size in `FileAppenderFactory`.
+* Sorting endpoints in the application startup log
+* Dynamic DNS resolution in the Graphite metric reporter
+* Support for defining a custom `MetricRegistry` during bootstrap (e.g. with HdrHistogram)
+* Support for defining a custom `ObjectMapper` during bootstrap.
+* Added facility to plug-in custom DB connection pools (e.g. HikariCP)
+* Support for setting a custom DB pool connection validator
 * HTTP(S) proxy support for Dropwizard HTTP client
-* Filter based Authorization & Authentication
-* Add Jersey Bean Validation support
-* Upgrade to JDBI 2.62
-* Upgrade to Dropwizard Metrics 3.1.2
-* Upgrade to Freemarker 2.3.22
-* Upgrade to H2 1.4.187
-* Upgrade to Hibernate 4.3.9.Final
-* Upgrade to Jackson 2.5.3
-* Upgrade to Jersey 2.18
-* Upgrade to Jetty 9.2.11.v20150529
-* Upgrade to Jetty ALPN boot 7.1.3.v20150130
-* Upgrade to Jetty SetUID support 1.0.3
-* Upgrade to Liquibase 3.3.3
-* Upgrade to Logback 1.1.3
-* Upgrade to Metrics 3.1.2
-* Upgrade to SLF4J 1.7.12
-* Upgrade to commons-lang3 3.4
+* Apache and Jersey clients are now managed by the application environment
+* Support for request-scoped configuration for Jersey client
+* Respecting Jackson feature for deserializing enums using `toString`
+* Support for passing explicit Configuration via test rules
+* Improved build time build by running tests in parallel
+* Added JMH benchmarks
+* Removed javax.el-2.x in favour of javax.el-3.0
+* Upgraded to JDBI 2.62
+* Upgraded to Apache HTTP Client 4.41
+* Upgraded to Dropwizard Metrics 3.1.2
+* Upgraded to Freemarker 2.3.22
+* Upgraded to H2 1.4.187
+* Upgraded to Hibernate 4.3.9.Final
+* Upgraded to Jackson 2.5.3
+* Upgraded to Jersey 2.18
+* Upgraded to Jetty 9.2.11.v20150529
+* Upgraded to Jetty ALPN boot 7.1.3.v20150130
+* Upgraded to Jetty SetUID support 1.0.3
+* Upgraded to Liquibase 3.3.3
+* Upgraded to Logback 1.1.3
+* Upgraded to Metrics 3.1.2
+* Upgraded to SLF4J 1.7.12
+* Upgraded to commons-lang3 3.4
 * Upgrade to tomcat-jdbc 8.0.21
 
 .. _rel-0.8.1:
