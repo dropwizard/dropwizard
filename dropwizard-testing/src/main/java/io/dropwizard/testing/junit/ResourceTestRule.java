@@ -156,11 +156,6 @@ public class ResourceTestRule implements TestRule {
         }
 
         private void configure(final ResourceTestRule resourceTestRule) {
-            register(new LoggingExceptionMapper<Throwable>() {
-            });
-            register(new ConstraintViolationExceptionMapper());
-            register(new JsonProcessingExceptionMapper());
-            register(new EarlyEofExceptionMapper());
             for (Class<?> provider : resourceTestRule.providers) {
                 register(provider);
             }
@@ -172,6 +167,11 @@ public class ResourceTestRule implements TestRule {
             for (Object singleton : resourceTestRule.singletons) {
                 register(singleton);
             }
+            register(new LoggingExceptionMapper<Throwable>() {
+            });
+            register(new ConstraintViolationExceptionMapper());
+            register(new JsonProcessingExceptionMapper());
+            register(new EarlyEofExceptionMapper());
         }
     }
 
