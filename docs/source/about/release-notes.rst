@@ -173,7 +173,7 @@ v0.7.0: Apr 04 2014
 * Added ``ConfigurationSourceProvider`` to allow loading configuration files from sources other than
   the filesystem.
 * Added setuid support. Configure the user/group to run as and soft/hard open file limits in the
-  ``ServerFactory``. To bind to privileged ports (e.g. 80), enable ``startAsRoot`` and set ``user``
+  ``ServerFactory``. To bind to privileged ports (e.g. 80), enable ``startsAsRoot`` and set ``user``
   and ``group``, then start your application as the root user.
 * Added builders for managed executors.
 * Added a default ``check`` command, which loads and validates the service configuration.
