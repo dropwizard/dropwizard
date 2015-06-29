@@ -4,6 +4,13 @@
 Release Notes
 #############
 
+.. _rel-0.8.2:
+
+v0.8.2
+======
+* Support for request-scoped configuration for Jersey client
+* Upgraded to Jersey 2.19
+
 .. _rel-0.8.1:
 
 v0.8.1:
