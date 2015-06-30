@@ -239,6 +239,7 @@ public abstract class AbstractServerFactory implements ServerFactory {
 
     private Boolean startsAsRoot;
 
+    @Deprecated
     private Boolean registerDefaultExceptionMappers = Boolean.TRUE;
 
     private Duration shutdownGracePeriod = Duration.seconds(30);
