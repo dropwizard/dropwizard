@@ -4,6 +4,7 @@ import org.eclipse.jetty.io.EofException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Priority;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
@@ -16,6 +17,7 @@ import javax.ws.rs.ext.Provider;
 * only catching jetty server based errors where the client disconnects, as specified by {@link EofException}.
 */
 @Provider
+@Priority(Integer.MAX_VALUE)
 public class EarlyEofExceptionMapper implements ExceptionMapper<EofException> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EarlyEofExceptionMapper.class);

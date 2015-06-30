@@ -253,15 +253,17 @@ code and ensure that the error messages are user friendly.
 Extending
 =========
 
-While Dropwizard provides good defaults for error messages, one size may not fit all and so there
-are a series of extension points. To register your own
-``ExceptionMapper<ConstraintViolationException>`` you'll need to first set
-``registerDefaultExceptionMappers`` to false in the configuration file or in code before registering
-your exception mapper with jersey. Then, optionally, register other default exception mappers:
+While Dropwizard provides good defaults for error messages, one size may not fit all. To provide
+your own error messages, create a class implementing
+``ExceptionMapper<ConstraintViolationException>`` and register it in your
+``JerseyEnvironment``. Your custom exception mapper will override Dropwizard's.
 
-* ``LoggingExceptionMapper<Throwable>``
-* ``JsonProcessingExceptionMapper``
-* ``EarlyEofExceptionMapper``
+There are a couple methods that should help you when implementing your custom
+``ExceptionMapper<ConstraintViolationException>``.
+
+* ``ConstraintViolations.determineStatus``: determines what status code to return based on where the
+   violation occurred
+* ``ConstraintMessage.getMessage``: returns the human friendly error message for a violation
 
 If you need to validate entities outside of resource endpoints, the validator can be accessed in the
 ``Environment`` when the application is first ran.
@@ -270,9 +272,3 @@ If you need to validate entities outside of resource endpoints, the validator ca
 
     Validator validator = environment.getValidator();
     Set<ConstraintViolation> errors = validator.validate(/* instance of class */)
-
-The method used to determine what status code to return based on violations is
-``ConstraintViolations.determineStatus``
-
-The method used to determine the human friendly error message due to a constraint violation is
-``ConstraintMessage.getMessage``.
