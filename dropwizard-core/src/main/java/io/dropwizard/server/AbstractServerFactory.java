@@ -167,7 +167,9 @@ import java.util.regex.Pattern;
  *         <td>true</td>
  *         <td>
  *            Whether or not the default Jersey ExceptionMappers should be registered.
- *            Set this to false if you want to register your own.
+ *            Set this to false if you want to register your own. Note that this option
+ *            is deprecated as user defined ExceptionMappers can override the default
+ *            Jersey ExceptionMappers.
  *         </td>
  *     </tr>
  *     <tr>
