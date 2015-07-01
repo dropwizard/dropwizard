@@ -3,14 +3,12 @@ package io.dropwizard.jersey;
 import com.codahale.metrics.MetricRegistry;
 import io.dropwizard.jersey.dummy.DummyResource;
 import io.dropwizard.logging.BootstrapLogging;
-
-import javax.ws.rs.DELETE;
-import javax.ws.rs.POST;
-
 import org.junit.Before;
 import org.junit.Test;
 
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -112,6 +110,13 @@ public class DropwizardResourceConfigTest {
         assertThat(rc.getEndpointsInfo()).isEqualTo(expectedLog);
     }
 
+    @Test
+    public void logsNestedEndpoints() {
+        rc.register(WrapperResource.class);
+
+        assertThat(rc.getEndpointsInfo())
+                .contains("    GET     /wrapper/bar (io.dropwizard.jersey.DropwizardResourceConfigTest.ResourcePathOnMethodLevel)");
+    }
 
     @Path("/dummy")
     public static class TestResource {
@@ -138,6 +143,14 @@ public class DropwizardResourceConfigTest {
     public static interface ResourceInterface {
         @GET
         public String bar();
+    }
+
+    @Path("/")
+    public static class WrapperResource {
+        @Path("wrapper")
+        public ResourcePathOnMethodLevel getNested() {
+            return new ResourcePathOnMethodLevel();
+        }
     }
 
     public static class ResourcePathOnMethodLevel {

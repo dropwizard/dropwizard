@@ -175,7 +175,7 @@ public class DropwizardResourceConfig extends ResourceConfig {
             }
 
             for (Resource childResource : resource.getChildResources()) {
-                for (ResourceMethod method : childResource.getResourceMethods()) {
+                for (ResourceMethod method : childResource.getAllMethods()) {
                     if (method.getType() == ResourceMethod.JaxrsType.RESOURCE_METHOD) {
                         final String path = normalizePath(basePath, childResource.getPath());
                         endpointLogLines.add(new EndpointLogLine(method.getHttpMethod(), path, klass));
