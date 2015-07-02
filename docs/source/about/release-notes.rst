@@ -9,31 +9,31 @@ Release Notes
 v0.9.0
 ======
 * Various documentation fixes and improvements
-* New filter-based authorization & authentication
-* Fixed a security bug in `CachingAuthenticator` with caching results of failed authentication attempts.
-* Correct handling misconfigured context paths in `ServerFactory`
-* Logging context paths during application startup
-* Support for Jersey Bean Validation
-* Returning descriptive constraint violation messages
-* Trace logging of failed constraint violations
-* Returning correct HTTP status codes for constraint violations
-* Fixed possible XSS in constraint violations
-* Support for including caller data in appenders
-* Support for defining custom logging factories (e.g. native Logback)
-* Support for defining the maximum log file size in `FileAppenderFactory`.
-* Sorting endpoints in the application startup log
-* Dynamic DNS resolution in the Graphite metric reporter
-* Support for defining a custom `MetricRegistry` during bootstrap (e.g. with HdrHistogram)
-* Support for defining a custom `ObjectMapper` during bootstrap.
-* Added facility to plug-in custom DB connection pools (e.g. HikariCP)
-* Support for setting a custom DB pool connection validator
-* HTTP(S) proxy support for Dropwizard HTTP client
-* Apache and Jersey clients are now managed by the application environment
-* Support for request-scoped configuration for Jersey client
-* Respecting Jackson feature for deserializing enums using `toString`
-* Support for passing explicit Configuration via test rules
-* Improved build time build by running tests in parallel
-* Added JMH benchmarks
+* New filter-based authorization & authentication `#952 <https://github.com/dropwizard/dropwizard/pull/952>`_, `#1023 <https://github.com/dropwizard/dropwizard/pull/1023>`_, `#1114 <https://github.com/dropwizard/dropwizard/pull/1114>`_
+* Fixed a security bug in ``CachingAuthenticator`` with caching results of failed authentication attempts `#1082 <https://github.com/dropwizard/dropwizard/pull/1082>`_
+* Correct handling misconfigured context paths in ``ServerFactory`` `#785 <https://github.com/dropwizard/dropwizard/pull/785>`_
+* Logging context paths during application startup `#994 <https://github.com/dropwizard/dropwizard/pull/994>`_, `#1072 <https://github.com/dropwizard/dropwizard/pull/1072>`_
+* Support for `Jersey Bean Validation <https://jersey.java.net/documentation/latest/bean-validation.html>`_ `#842 <https://github.com/dropwizard/dropwizard/pull/842>`_
+* Returning descriptive constraint violation messages `#1039 <https://github.com/dropwizard/dropwizard/pull/1039>`_,
+* Trace logging of failed constraint violations `#992 <https://github.com/dropwizard/dropwizard/pull/992>`_
+* Returning correct HTTP status codes for constraint violations `#993 <https://github.com/dropwizard/dropwizard/pull/993>`_
+* Fixed possible XSS in constraint violations `#892 <https://github.com/dropwizard/dropwizard/issues/892>`_
+* Support for including caller data in appenders `#995 <https://github.com/dropwizard/dropwizard/pull/995>`_
+* Support for defining custom logging factories (e.g. native Logback) `#996 <https://github.com/dropwizard/dropwizard/pull/996>`_
+* Support for defining the maximum log file size in ``FileAppenderFactory``. `#1000 <https://github.com/dropwizard/dropwizard/pull/1000>`_
+* Sorting endpoints in the application startup log `#1002 <https://github.com/dropwizard/dropwizard/pull/1002>`_
+* Dynamic DNS resolution in the Graphite metric reporter `#1004 <https://github.com/dropwizard/dropwizard/pull/1004>`_
+* Support for defining a custom ``MetricRegistry`` during bootstrap (e.g. with HdrHistogram) `#1015 <https://github.com/dropwizard/dropwizard/pull/1015>`_
+* Support for defining a custom ``ObjectMapper`` during bootstrap. `#1112 <https://github.com/dropwizard/dropwizard/pull/1112>`_
+* Added facility to plug-in custom DB connection pools (e.g. HikariCP) `#1030 <https://github.com/dropwizard/dropwizard/pull/1030>`_
+* Support for setting a custom DB pool connection validator `#1113 <https://github.com/dropwizard/dropwizard/pull/1113>`_
+* HTTP(S) proxy support for Dropwizard HTTP client `#657 <https://github.com/dropwizard/dropwizard/pull/657>`_
+* Apache and Jersey clients are now managed by the application environment `#1061 <https://github.com/dropwizard/dropwizard/pull/1061>`_
+* Support for request-scoped configuration for Jersey client  `#939 <https://github.com/dropwizard/dropwizard/pull/939>`_
+* Respecting Jackson feature for deserializing enums using ``toString`` `#1104 <https://github.com/dropwizard/dropwizard/pull/1104>`_
+* Support for passing explicit ``Configuration`` via test rules `#1131 <https://github.com/dropwizard/dropwizard/pull/1131>`_
+* Improved build time build by running tests in parallel `#1032 <https://github.com/dropwizard/dropwizard/pull/1032>`_
+* Added JMH benchmarks  `#990 <https://github.com/dropwizard/dropwizard/pull/990>`_
 * Removed javax.el-2.x in favour of javax.el-3.0
 * Upgraded to JDBI 2.62
 * Upgraded to Apache HTTP Client 4.41
