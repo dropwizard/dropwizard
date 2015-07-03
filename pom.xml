@@ -54,7 +54,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <metrics3.version>3.1.2</metrics3.version>
-        <jersey.version>2.18</jersey.version>
+        <jersey.version>2.19</jersey.version>
         <jackson.api.version>2.5.3</jackson.api.version>
         <jackson.version>2.5.3</jackson.version>
         <logback.version>1.1.3</logback.version>
@@ -144,6 +144,22 @@
             <name>Glenn McAllister</name>
             <email>glenn.mcallister@gmail.com</email>
             <timezone>America/Toronto</timezone>
+            <roles>
+                <role>committer</role>
+            </roles>
+        </developer>
+        <developer>
+            <name>Nick Babcock</name>
+            <email>nbabcock19@hotmail.com</email>
+            <timezone>America/New_York</timezone>
+            <roles>
+                <role>committer</role>
+            </roles>
+        </developer>
+        <developer>
+            <name>Justin Plock</name>
+            <email>jplock@gmail.com</email>
+            <timezone>America/New_York</timezone>
             <roles>
                 <role>committer</role>
             </roles>

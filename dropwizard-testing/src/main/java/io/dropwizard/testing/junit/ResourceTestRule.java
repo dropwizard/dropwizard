@@ -13,6 +13,7 @@ import io.dropwizard.jersey.validation.Validators;
 import io.dropwizard.jersey.validation.ConstraintViolationExceptionMapper;
 import io.dropwizard.logging.BootstrapLogging;
 import org.glassfish.jersey.client.ClientConfig;
+import org.glassfish.jersey.server.ServerProperties;
 import org.glassfish.jersey.servlet.ServletProperties;
 import org.glassfish.jersey.test.DeploymentContext;
 import org.glassfish.jersey.test.JerseyTest;
@@ -156,6 +157,7 @@ public class ResourceTestRule implements TestRule {
             for (Class<?> provider : resourceTestRule.providers) {
                 register(provider);
             }
+            property(ServerProperties.RESPONSE_SET_STATUS_OVER_SEND_ERROR, "true");
             for (Map.Entry<String, Object> property : resourceTestRule.properties.entrySet()) {
                 property(property.getKey(), property.getValue());
             }

@@ -8,21 +8,51 @@ Release Notes
 
 v0.9.0
 ======
-
-* Upgrade to commons-lang3 3.4
-* Upgrade to Freemarker 2.3.22
-* Upgrade to H2 1.4.187
-* Upgrade to Hibernate 4.3.9.Final
-* Upgrade to Jackson 2.5.3
-* Upgrade to Jersey 2.18
-* Upgrade to Jetty 9.2.11.v20150529
-* Upgrade to Jetty ALPN boot 7.1.3.v20150130
-* Upgrade to Jetty SetUID support 1.0.3
-* Upgrade to Liquibase 3.3.3
-* Upgrade to Logback 1.1.3
-* Upgrade to Metrics 3.1.2
-* Upgrade to SLF4J 1.7.12
+* Various documentation fixes and improvements
+* New filter-based authorization & authentication `#952 <https://github.com/dropwizard/dropwizard/pull/952>`_, `#1023 <https://github.com/dropwizard/dropwizard/pull/1023>`_, `#1114 <https://github.com/dropwizard/dropwizard/pull/1114>`_
+* Fixed a security bug in ``CachingAuthenticator`` with caching results of failed authentication attempts `#1082 <https://github.com/dropwizard/dropwizard/pull/1082>`_
+* Correct handling misconfigured context paths in ``ServerFactory`` `#785 <https://github.com/dropwizard/dropwizard/pull/785>`_
+* Logging context paths during application startup `#994 <https://github.com/dropwizard/dropwizard/pull/994>`_, `#1072 <https://github.com/dropwizard/dropwizard/pull/1072>`_
+* Support for `Jersey Bean Validation <https://jersey.java.net/documentation/latest/bean-validation.html>`_ `#842 <https://github.com/dropwizard/dropwizard/pull/842>`_
+* Returning descriptive constraint violation messages `#1039 <https://github.com/dropwizard/dropwizard/pull/1039>`_,
+* Trace logging of failed constraint violations `#992 <https://github.com/dropwizard/dropwizard/pull/992>`_
+* Returning correct HTTP status codes for constraint violations `#993 <https://github.com/dropwizard/dropwizard/pull/993>`_
+* Fixed possible XSS in constraint violations `#892 <https://github.com/dropwizard/dropwizard/issues/892>`_
+* Support for including caller data in appenders `#995 <https://github.com/dropwizard/dropwizard/pull/995>`_
+* Support for defining custom logging factories (e.g. native Logback) `#996 <https://github.com/dropwizard/dropwizard/pull/996>`_
+* Support for defining the maximum log file size in ``FileAppenderFactory``. `#1000 <https://github.com/dropwizard/dropwizard/pull/1000>`_
+* Sorting endpoints in the application startup log `#1002 <https://github.com/dropwizard/dropwizard/pull/1002>`_
+* Dynamic DNS resolution in the Graphite metric reporter `#1004 <https://github.com/dropwizard/dropwizard/pull/1004>`_
+* Support for defining a custom ``MetricRegistry`` during bootstrap (e.g. with HdrHistogram) `#1015 <https://github.com/dropwizard/dropwizard/pull/1015>`_
+* Support for defining a custom ``ObjectMapper`` during bootstrap. `#1112 <https://github.com/dropwizard/dropwizard/pull/1112>`_
+* Added facility to plug-in custom DB connection pools (e.g. HikariCP) `#1030 <https://github.com/dropwizard/dropwizard/pull/1030>`_
+* Support for setting a custom DB pool connection validator `#1113 <https://github.com/dropwizard/dropwizard/pull/1113>`_
+* HTTP(S) proxy support for Dropwizard HTTP client `#657 <https://github.com/dropwizard/dropwizard/pull/657>`_
+* Apache and Jersey clients are now managed by the application environment `#1061 <https://github.com/dropwizard/dropwizard/pull/1061>`_
+* Support for request-scoped configuration for Jersey client  `#939 <https://github.com/dropwizard/dropwizard/pull/939>`_
+* Respecting Jackson feature for deserializing enums using ``toString`` `#1104 <https://github.com/dropwizard/dropwizard/pull/1104>`_
+* Support for passing explicit ``Configuration`` via test rules `#1131 <https://github.com/dropwizard/dropwizard/pull/1131>`_
+* Improved build time build by running tests in parallel `#1032 <https://github.com/dropwizard/dropwizard/pull/1032>`_
+* Added JMH benchmarks  `#990 <https://github.com/dropwizard/dropwizard/pull/990>`_
+* Removed javax.el-2.x in favour of javax.el-3.0
+* Upgraded to JDBI 2.62
+* Upgraded to Apache HTTP Client 4.41
+* Upgraded to Dropwizard Metrics 3.1.2
+* Upgraded to Freemarker 2.3.22
+* Upgraded to H2 1.4.187
+* Upgraded to Hibernate 4.3.9.Final
+* Upgraded to Jackson 2.5.3
+* Upgraded to Jersey 2.19
+* Upgraded to Jetty 9.2.11.v20150529
+* Upgraded to Jetty ALPN boot 7.1.3.v20150130
+* Upgraded to Jetty SetUID support 1.0.3
+* Upgraded to Liquibase 3.3.3
+* Upgraded to Logback 1.1.3
+* Upgraded to Metrics 3.1.2
+* Upgraded to SLF4J 1.7.12
+* Upgraded to commons-lang3 3.4
 * Upgrade to tomcat-jdbc 8.0.21
+* Upgraded to joda-time 2.8.1
 
 .. _rel-0.8.1:
 
@@ -148,7 +178,7 @@ v0.7.0: Apr 04 2014
 * Added ``ConfigurationSourceProvider`` to allow loading configuration files from sources other than
   the filesystem.
 * Added setuid support. Configure the user/group to run as and soft/hard open file limits in the
-  ``ServerFactory``. To bind to privileged ports (e.g. 80), enable ``startAsRoot`` and set ``user``
+  ``ServerFactory``. To bind to privileged ports (e.g. 80), enable ``startsAsRoot`` and set ``user``
   and ``group``, then start your application as the root user.
 * Added builders for managed executors.
 * Added a default ``check`` command, which loads and validates the service configuration.

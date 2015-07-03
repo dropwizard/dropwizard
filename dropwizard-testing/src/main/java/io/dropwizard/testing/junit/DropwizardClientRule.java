@@ -56,7 +56,7 @@ public class DropwizardClientRule extends ExternalResource {
     private final DropwizardTestSupport<Configuration> testSupport;
 
     public DropwizardClientRule(Object... resources) {
-        testSupport = new DropwizardTestSupport<Configuration>(null, null) {
+        testSupport = new DropwizardTestSupport<Configuration>(FakeApplication.class, "") {
             @Override
             public Application<Configuration> newApplication() {
                 return new FakeApplication();

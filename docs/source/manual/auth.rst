@@ -128,7 +128,7 @@ takes instances of ``String``:
             new OAuthCredentialAuthFilter.Builder<User, ExampleOAuthAuthenticator>()
                 .setAuthenticator(new ExampleOAuthAuthenticator())
                 .setAuthorizer(new ExampleAuthorizer())
-                .setPrefix("SUPER SECRET STUFF")
+                .setPrefix("Bearer")
                 .buildAuthFilter()));
         environment.jersey().register(RolesAllowedDynamicFeature.class);
         //If you want to use @Auth to inject a custom Principal type into your resource

@@ -14,6 +14,13 @@ public class TestConfiguration extends Configuration {
     @NotEmpty
     private String extra;
 
+    public TestConfiguration() { }
+
+    public TestConfiguration(String message, String extra) {
+        this.message = message;
+        this.extra = extra;
+    }
+
     public String getMessage() {
         return message;
     }
