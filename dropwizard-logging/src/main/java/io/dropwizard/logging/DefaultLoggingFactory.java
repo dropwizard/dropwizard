@@ -5,7 +5,10 @@ import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.jmx.JMXConfigurator;
 import ch.qos.logback.classic.jul.LevelChangePropagator;
+import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.util.StatusPrinter;
+
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.logback.InstrumentedAppender;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -18,10 +21,12 @@ import com.google.common.collect.ImmutableMap;
 import javax.management.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+
 import java.io.PrintStream;
 import java.lang.management.ManagementFactory;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.locks.ReentrantLock;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -29,6 +34,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @JsonTypeName("default")
 public class DefaultLoggingFactory implements LoggingFactory {
     private static final ReentrantLock MBEAN_REGISTRATION_LOCK = new ReentrantLock();
+    private static final ReentrantLock CONFIGURE_LOGGING_LEVEL_LOCK = new ReentrantLock();
     private static final ReentrantLock CHANGE_LOGGER_CONTEXT_LOCK = new ReentrantLock();
 
     @NotNull
@@ -37,11 +43,13 @@ public class DefaultLoggingFactory implements LoggingFactory {
     @NotNull
     private ImmutableMap<String, Level> loggers = ImmutableMap.of();
 
+    private ImmutableMap<String, DefaultLoggerFactory> advancedLoggers = ImmutableMap
+            .of();
+
     @Valid
     @NotNull
-    private ImmutableList<AppenderFactory> appenders = ImmutableList.<AppenderFactory>of(
-            new ConsoleAppenderFactory()
-    );
+    private ImmutableList<AppenderFactory> appenders = ImmutableList
+            .<AppenderFactory> of(new ConsoleAppenderFactory());
 
     @JsonIgnore
     private final LoggerContext loggerContext;
@@ -54,7 +62,8 @@ public class DefaultLoggingFactory implements LoggingFactory {
     }
 
     @VisibleForTesting
-    DefaultLoggingFactory(LoggerContext loggerContext, PrintStream configurationErrorsStream) {
+    DefaultLoggingFactory(LoggerContext loggerContext,
+            PrintStream configurationErrorsStream) {
         this.loggerContext = checkNotNull(loggerContext);
         this.configurationErrorsStream = checkNotNull(configurationErrorsStream);
     }
@@ -85,8 +94,19 @@ public class DefaultLoggingFactory implements LoggingFactory {
     }
 
     @JsonProperty
+    public ImmutableMap<String, DefaultLoggerFactory> getAdvancedLoggers() {
+        return advancedLoggers;
+    }
+
+    @JsonProperty
     public void setLoggers(Map<String, Level> loggers) {
         this.loggers = ImmutableMap.copyOf(loggers);
+    }
+
+    @JsonProperty
+    public void setAdvancedLoggers(
+            Map<String, DefaultLoggerFactory> advancedLoggers) {
+        this.advancedLoggers = ImmutableMap.copyOf(advancedLoggers);
     }
 
     @JsonProperty
@@ -102,12 +122,12 @@ public class DefaultLoggingFactory implements LoggingFactory {
     public void configure(MetricRegistry metricRegistry, String name) {
         LoggingUtil.hijackJDKLogging();
 
-        CHANGE_LOGGER_CONTEXT_LOCK.lock();
+        CONFIGURE_LOGGING_LEVEL_LOCK.lock();
         final Logger root;
         try {
-            root = configureLevels();
+            root = configureLoggers(name);
         } finally {
-            CHANGE_LOGGER_CONTEXT_LOCK.unlock();
+            CONFIGURE_LOGGING_LEVEL_LOCK.unlock();
         }
 
         for (AppenderFactory output : appenders) {
@@ -124,15 +144,14 @@ public class DefaultLoggingFactory implements LoggingFactory {
         final MBeanServer server = ManagementFactory.getPlatformMBeanServer();
         MBEAN_REGISTRATION_LOCK.lock();
         try {
-            final ObjectName objectName = new ObjectName("io.dropwizard:type=Logging");
+            final ObjectName objectName = new ObjectName(
+                    "io.dropwizard:type=Logging");
             if (!server.isRegistered(objectName)) {
-                server.registerMBean(new JMXConfigurator(loggerContext,
-                                server,
-                                objectName),
-                        objectName);
+                server.registerMBean(new JMXConfigurator(loggerContext, server,
+                        objectName), objectName);
             }
-        } catch (MalformedObjectNameException | InstanceAlreadyExistsException |
-                NotCompliantMBeanException | MBeanRegistrationException e) {
+        } catch (MalformedObjectNameException | InstanceAlreadyExistsException
+                | NotCompliantMBeanException | MBeanRegistrationException e) {
             throw new RuntimeException(e);
         } finally {
             MBEAN_REGISTRATION_LOCK.unlock();
@@ -151,15 +170,18 @@ public class DefaultLoggingFactory implements LoggingFactory {
         }
     }
 
-    private void configureInstrumentation(Logger root, MetricRegistry metricRegistry) {
-        final InstrumentedAppender appender = new InstrumentedAppender(metricRegistry);
+    private void configureInstrumentation(Logger root,
+            MetricRegistry metricRegistry) {
+        final InstrumentedAppender appender = new InstrumentedAppender(
+                metricRegistry);
         appender.setContext(loggerContext);
         appender.start();
         root.addAppender(appender);
     }
 
-    private Logger configureLevels() {
-        final Logger root = loggerContext.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
+    private Logger configureLoggers(String name) {
+        final Logger root = loggerContext
+                .getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
         loggerContext.reset();
 
         final LevelChangePropagator propagator = new LevelChangePropagator();
@@ -170,10 +192,24 @@ public class DefaultLoggingFactory implements LoggingFactory {
 
         root.setLevel(level);
 
-        for (Map.Entry<String, Level> entry : loggers.entrySet()) {
-            loggerContext.getLogger(entry.getKey()).setLevel(entry.getValue());
-        }
+        if (advancedLoggers != null && advancedLoggers.size() > 0) {
+            for (Entry<String, DefaultLoggerFactory> entry : advancedLoggers
+                    .entrySet()) {
+                Logger logger = loggerContext.getLogger(entry.getKey());
+                logger.setLevel(entry.getValue().getLevel());
+                for (AppenderFactory appender : entry.getValue().getAppenders()) {
+                    Appender<ILoggingEvent> newAppender = appender.build(
+                            loggerContext, name, null);
+                    logger.addAppender(newAppender);
+                }
 
+            }
+        } else {
+            for (Map.Entry<String, Level> entry : loggers.entrySet()) {
+                loggerContext.getLogger(entry.getKey()).setLevel(
+                        entry.getValue());
+            }
+        }
         return root;
     }
 }

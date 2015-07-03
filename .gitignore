@@ -10,3 +10,4 @@ logs
 .classpath
 .project
 nb-configuration.xml
+/build/
