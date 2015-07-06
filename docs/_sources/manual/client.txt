@@ -173,4 +173,4 @@ the `Jersey Client Properties`_ can be used.
     ``HttpClientBuilder``, so the Jersey properties are ignored.
 
 .. _Jersey Client Configuration: https://jersey.java.net/documentation/latest/appendix-properties.html#appendix-properties-client
-.. _Jersey Client Properties: https://jersey.java.net/apidocs/2.17/jersey/org/glassfish/jersey/client/ClientProperties.html
+.. _Jersey Client Properties: https://jersey.java.net/apidocs/2.19/jersey/org/glassfish/jersey/client/ClientProperties.html
