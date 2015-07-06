@@ -173,18 +173,6 @@ public class JerseyClientBuilderTest {
     }
 
     @Test
-    public void usesTheGivenThreadPoolAndEnvironmentsObjectMapper() throws Exception {
-        final Client client = builder.using(environment).using(executorService).build("test");
-        for (Object o : client.getConfiguration().getInstances()) {
-            if (o instanceof DropwizardExecutorProvider) {
-                final DropwizardExecutorProvider provider = (DropwizardExecutorProvider) o;
-                assertThat(provider.getRequestingExecutor()).isSameAs(executorService);
-            }
-        }
-
-    }
-
-    @Test
     public void addBidirectionalGzipSupportIfEnabled() throws Exception {
         final JerseyClientConfiguration configuration = new JerseyClientConfiguration();
         configuration.setGzipEnabled(true);
