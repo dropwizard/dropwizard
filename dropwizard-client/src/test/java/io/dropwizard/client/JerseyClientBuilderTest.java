@@ -132,7 +132,19 @@ public class JerseyClientBuilderTest {
         for (Object o : client.getConfiguration().getInstances()) {
             if (o instanceof DropwizardExecutorProvider) {
                 final DropwizardExecutorProvider provider = (DropwizardExecutorProvider) o;
-                assertThat(provider.getRequestingExecutor()).isSameAs(executorService);
+                assertThat(provider.getExecutorService()).isSameAs(executorService);
+            }
+        }
+
+    }
+
+    @Test
+    public void usesTheGivenThreadPoolAndEnvironmentsObjectMapper() throws Exception {
+        final Client client = builder.using(environment).using(executorService).build("test");
+        for (Object o : client.getConfiguration().getInstances()) {
+            if (o instanceof DropwizardExecutorProvider) {
+                final DropwizardExecutorProvider provider = (DropwizardExecutorProvider) o;
+                assertThat(provider.getExecutorService()).isSameAs(executorService);
             }
         }
 
