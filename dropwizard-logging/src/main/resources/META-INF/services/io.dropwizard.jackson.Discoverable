@@ -1,1 +1,2 @@
 io.dropwizard.logging.AppenderFactory
+io.dropwizard.logging.LoggerFactory
