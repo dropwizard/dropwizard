@@ -19,7 +19,7 @@ import org.glassfish.jersey.test.spi.TestContainerFactory;
 import org.junit.Test;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.SecurityContext;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
 

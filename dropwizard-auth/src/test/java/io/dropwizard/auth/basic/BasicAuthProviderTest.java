@@ -3,7 +3,6 @@ package io.dropwizard.auth.basic;
 import com.codahale.metrics.MetricRegistry;
 import io.dropwizard.auth.AuthDynamicFeature;
 import io.dropwizard.auth.AuthResource;
-import io.dropwizard.auth.Authenticator;
 import io.dropwizard.auth.util.AuthUtil;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.logging.BootstrapLogging;
@@ -155,8 +154,7 @@ public class BasicAuthProviderTest extends JerseyTest {
         private ContainerRequestFilter getAuthFilter() {
             final String validUser = "good-guy";
 
-            BasicCredentialAuthFilter.Builder<Principal, Authenticator<BasicCredentials, Principal>> builder
-                    = new BasicCredentialAuthFilter.Builder<>();
+            BasicCredentialAuthFilter.Builder<Principal> builder  = new BasicCredentialAuthFilter.Builder<>();
             builder.setAuthorizer(AuthUtil.getTestAuthorizer(validUser, VALID_ROLE));
             builder.setAuthenticator(AuthUtil.<BasicCredentials, Principal>getTestAuthenticatorBasicCredential(validUser));
             return builder.buildAuthFilter();

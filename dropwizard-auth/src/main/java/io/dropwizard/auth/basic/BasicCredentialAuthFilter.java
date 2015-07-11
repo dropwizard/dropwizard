@@ -5,6 +5,7 @@ import com.google.common.io.BaseEncoding;
 import io.dropwizard.auth.AuthenticationException;
 import io.dropwizard.auth.AuthFilter;
 import io.dropwizard.auth.Authenticator;
+import io.dropwizard.auth.Authorizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.annotation.Priority;
@@ -84,21 +85,18 @@ public class BasicCredentialAuthFilter<P extends Principal> extends AuthFilter<B
     }
 
 
-    public static class Builder<APrincipal extends Principal, AAuthenticator extends Authenticator<BasicCredentials, APrincipal>>
-            extends AuthFilterBuilder<BasicCredentials, APrincipal, BasicCredentialAuthFilter<APrincipal>, AAuthenticator> {
+    /**
+     * Builder for {@link BasicCredentialAuthFilter}.
+     * <p>An {@link Authenticator} and an {@link Authorizer} must be provided during the building process.</p>
+     *
+     * @param <P> the principal
+     */
+    public static class Builder<P extends Principal> extends
+            AuthFilterBuilder<BasicCredentials, P, BasicCredentialAuthFilter<P>> {
 
         @Override
-        public BasicCredentialAuthFilter<APrincipal> buildAuthFilter() {
-            if (realm == null || authenticator == null || prefix == null || authorizer == null) {
-                throw new RuntimeException("Required auth filter parameters not set");
-            }
-
-            BasicCredentialAuthFilter<APrincipal> basicCredentialAuthFilter = new BasicCredentialAuthFilter<>();
-            basicCredentialAuthFilter.setRealm(realm);
-            basicCredentialAuthFilter.setAuthenticator(authenticator);
-            basicCredentialAuthFilter.setPrefix(prefix);
-            basicCredentialAuthFilter.setAuthorizer(authorizer);
-            return basicCredentialAuthFilter;
+        protected BasicCredentialAuthFilter<P> newInstance() {
+            return new BasicCredentialAuthFilter<>();
         }
     }
 }

@@ -82,7 +82,7 @@ public class HelloWorldApplication extends Application<HelloWorldConfiguration> 
 
         environment.healthChecks().register("template", new TemplateHealthCheck(template));
         environment.jersey().register(DateRequiredFeature.class);
-        environment.jersey().register(new AuthDynamicFeature(new BasicCredentialAuthFilter.Builder<User, ExampleAuthenticator>()
+        environment.jersey().register(new AuthDynamicFeature(new BasicCredentialAuthFilter.Builder<User>()
                 .setAuthenticator(new ExampleAuthenticator())
                 .setAuthorizer(new ExampleAuthorizer())
                 .setRealm("SUPER SECRET STUFF")

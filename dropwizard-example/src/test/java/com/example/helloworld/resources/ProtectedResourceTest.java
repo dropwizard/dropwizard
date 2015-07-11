@@ -1,7 +1,6 @@
 package com.example.helloworld.resources;
 
 import com.example.helloworld.core.User;
-import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import io.dropwizard.auth.*;
 import io.dropwizard.auth.basic.BasicCredentialAuthFilter;
@@ -46,7 +45,7 @@ public class ProtectedResourceTest {
             }
         };
 
-        BASIC_AUTH_HANDLER = new BasicCredentialAuthFilter.Builder<User, Authenticator<BasicCredentials, User>>()
+        BASIC_AUTH_HANDLER = new BasicCredentialAuthFilter.Builder<User>()
                 .setAuthenticator(AUTHENTICATOR)
                 .setAuthorizer(AUTHORIZER)
                 .setPrefix("Basic")
