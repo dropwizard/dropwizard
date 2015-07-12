@@ -132,7 +132,7 @@ takes instances of ``String``:
                 .buildAuthFilter()));
         environment.jersey().register(RolesAllowedDynamicFeature.class);
         //If you want to use @Auth to inject a custom Principal type into your resource
-        environment.jersey().register(new AuthValueFactoryProvider.Binder(User.class));
+        environment.jersey().register(new AuthValueFactoryProvider.Binder<>(User.class));
     }
 
 .. _man-auth-chained:
@@ -163,7 +163,7 @@ The ``ChainedAuthFilter`` enables usage of various authentication factories at t
         environment.jersey().register(new AuthDynamicFeature(new ChainedAuthFilter(handlers)));
         environment.jersey().register(RolesAllowedDynamicFeature.class);
         //If you want to use @Auth to inject a custom Principal type into your resource
-        environment.jersey().register(new AuthValueFactoryProvider.Binder(User.class));
+        environment.jersey().register(new AuthValueFactoryProvider.Binder<>(User.class));
     }
 
 For this to work properly, all chained factories must produce the same type of principal, here ``User``.
@@ -190,7 +190,7 @@ or you can add register the following with jersey
 
 .. code-block:: java
 
-    environment.jersey().register(new AuthValueFactoryProvider.Binder(User.class));
+    environment.jersey().register(new AuthValueFactoryProvider.Binder<>(User.class));
 
     @RolesAllowed("ADMIN")
     @GET
