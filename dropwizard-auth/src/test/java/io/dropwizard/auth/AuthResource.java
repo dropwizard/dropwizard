@@ -10,24 +10,23 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.SecurityContext;
-import java.security.Principal;
 
 @Path("/test/")
 @Produces(MediaType.TEXT_PLAIN)
 public class AuthResource {
+
     @RolesAllowed({"ADMIN"})
     @GET
+    @Path("admin")
     public String show(@Context SecurityContext securityContext) {
-        Principal principal = securityContext.getUserPrincipal();
-        return principal.getName();
+        return "'" + securityContext.getUserPrincipal().getName() + "' has admin privileges";
     }
 
     @PermitAll
     @GET
-    @Path("authnotrequired")
-    public String showNotRequired(@Context SecurityContext securityContext) {
-        Principal principal = securityContext.getUserPrincipal();
-        return principal == null ? "No Principal" : principal.getName();
+    @Path("profile")
+    public String showForEveryUser(@Context SecurityContext securityContext) {
+        return "'" + securityContext.getUserPrincipal().getName() + "' has user privileges";
     }
 
     @GET

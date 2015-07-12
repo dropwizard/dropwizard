@@ -27,7 +27,7 @@ public abstract class AuthFilter<C, P extends Principal> implements ContainerReq
         private String realm = "realm";
         private String prefix = "Basic";
         private Authenticator<C, P> authenticator;
-        private Authorizer<P> authorizer;
+        private Authorizer<P> authorizer = new PermitAllAuthorizer<>();
 
         /**
          * Sets the given realm
@@ -74,10 +74,10 @@ public abstract class AuthFilter<C, P extends Principal> implements ContainerReq
         }
 
         /**
-         * Builds an instance of the filter with provided an authenticator,
+         * Builds an instance of the filter with a provided authenticator,
          * an authorizer, a prefix, and a realm.
          *
-         * @return a new instance of a filter
+         * @return a new instance of the filter
          */
         public T buildAuthFilter() {
             Preconditions.checkArgument(realm != null, "Realm is not set");

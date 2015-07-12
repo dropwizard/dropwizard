@@ -72,7 +72,7 @@ public class OAuthCredentialAuthFilter<P extends Principal> extends AuthFilter<S
 
     /**
      * Builder for {@link OAuthCredentialAuthFilter}.
-     * <p>An {@link Authenticator} and an {@link Authorizer} must be provided during the building process.</p>
+     * <p>An {@link Authenticator} must be provided during the building process.</p>
      *
      * @param <P> the type of the principal
      */

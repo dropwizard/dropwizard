@@ -87,7 +87,7 @@ public class BasicCredentialAuthFilter<P extends Principal> extends AuthFilter<B
 
     /**
      * Builder for {@link BasicCredentialAuthFilter}.
-     * <p>An {@link Authenticator} and an {@link Authorizer} must be provided during the building process.</p>
+     * <p>An {@link Authenticator} must be provided during the building process.</p>
      *
      * @param <P> the principal
      */
