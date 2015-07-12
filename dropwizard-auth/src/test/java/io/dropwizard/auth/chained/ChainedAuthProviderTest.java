@@ -1,6 +1,7 @@
 package io.dropwizard.auth.chained;
 
 import com.codahale.metrics.MetricRegistry;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import io.dropwizard.auth.*;
 import io.dropwizard.auth.basic.BasicCredentialAuthFilter;
@@ -56,7 +57,7 @@ public class ChainedAuthProviderTest extends JerseyTest {
     @Test
     public void respondsToMissingCredentialsWith401() throws Exception {
         try {
-            target("/test").request().get(String.class);
+            target("/test/admin").request().get(String.class);
             failBecauseExceptionWasNotThrown(WebApplicationException.class);
         } catch (WebApplicationException e) {
             assertThat(e.getResponse().getStatus())
@@ -69,25 +70,25 @@ public class ChainedAuthProviderTest extends JerseyTest {
 
     @Test
     public void transformsBasicCredentialsToPrincipals() throws Exception {
-        assertThat(target("/test").request()
+        assertThat(target("/test/admin").request()
                 .header(HttpHeaders.AUTHORIZATION, "Basic Z29vZC1ndXk6c2VjcmV0")
                 .get(String.class))
-                .isEqualTo("good-guy");
+                .isEqualTo("'good-guy' has admin privileges");
     }
 
     @Test
     public void transformsBearerCredentialsToPrincipals() throws Exception {
-        assertThat(target("/test").request()
+        assertThat(target("/test/admin").request()
                 .header(HttpHeaders.AUTHORIZATION, "Bearer A12B3C4D")
                 .get(String.class))
-                .isEqualTo("good-guy");
+                .isEqualTo("'good-guy' has admin privileges");
     }
 
 
     @Test
     public void respondsToNonBasicCredentialsWith401() throws Exception {
         try {
-            target("/test").request()
+            target("/test/admin").request()
                     .header(HttpHeaders.AUTHORIZATION, "Derp Z29vZC1ndXk6c2VjcmV0")
                     .get(String.class);
             failBecauseExceptionWasNotThrown(WebApplicationException.class);
@@ -103,7 +104,7 @@ public class ChainedAuthProviderTest extends JerseyTest {
     @Test
     public void respondsToExceptionsWith500() throws Exception {
         try {
-            target("/test").request()
+            target("/test/admin").request()
                     .header(HttpHeaders.AUTHORIZATION, "Basic YmFkLWd1eTpzZWNyZXQ=")
                     .get(String.class);
             failBecauseExceptionWasNotThrown(WebApplicationException.class);
@@ -127,19 +128,18 @@ public class ChainedAuthProviderTest extends JerseyTest {
         public ChainedAuthTestResourceConfig() {
             super(true, new MetricRegistry());
 
-            final String validUser = "good-guy";
+            final String adminUser = "good-guy";
+            final String ordinaryUser = "ordinary-guy";
 
-            final Authorizer<Principal> authorizer =
-                    AuthUtil.getTestAuthorizer(validUser, ADMIN_ROLE);
+            final Authorizer<Principal> authorizer = AuthUtil.getTestAuthorizer(adminUser, ADMIN_ROLE);
 
             final Authenticator<BasicCredentials, Principal> basicAuthenticator =
-                    AuthUtil.getTestAuthenticatorBasicCredential(validUser);
+                    AuthUtil.getBasicAuthenticator(ImmutableList.of(adminUser, ordinaryUser));
 
             final Authenticator<String, Principal> oauthAuthenticator
-                    = AuthUtil.getTestAuthenticator("A12B3C4D", validUser);
+                    = AuthUtil.getSingleUserOAuthAuthenticator("A12B3C4D", adminUser);
 
-            final AuthFilter<BasicCredentials, Principal> basicAuthFilter =
-                    new BasicCredentialAuthFilter.Builder<>()
+            final AuthFilter<BasicCredentials, Principal> basicAuthFilter = new BasicCredentialAuthFilter.Builder<>()
                     .setAuthenticator(basicAuthenticator)
                     .setAuthorizer(authorizer)
                     .buildAuthFilter();

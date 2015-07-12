@@ -5,16 +5,16 @@ import io.dropwizard.auth.*;
 import io.dropwizard.auth.basic.BasicCredentials;
 
 import java.security.Principal;
+import java.util.List;
 
 public class AuthUtil {
 
-    public static Authenticator<BasicCredentials, Principal> getTestAuthenticatorBasicCredential(final String validUser) {
+    public static Authenticator<BasicCredentials, Principal> getBasicAuthenticator(final List<String> validUsers) {
         return new Authenticator<BasicCredentials, Principal>() {
             @Override
             public Optional<Principal> authenticate(BasicCredentials credentials) throws AuthenticationException {
-                if (validUser.equals(credentials.getUsername()) &&
-                        "secret".equals(credentials.getPassword())) {
-                    return Optional.<Principal>of(new PrincipalImpl(validUser));
+                if (validUsers.contains(credentials.getUsername()) && "secret".equals(credentials.getPassword())) {
+                    return Optional.<Principal>of(new PrincipalImpl(credentials.getUsername()));
                 }
                 if ("bad-guy".equals(credentials.getUsername())) {
                     throw new AuthenticationException("CRAP");
@@ -24,7 +24,8 @@ public class AuthUtil {
         };
     }
 
-    public static Authenticator<String, Principal> getTestAuthenticator(final String presented, final String returned) {
+    public static Authenticator<String, Principal> getSingleUserOAuthAuthenticator(final String presented,
+                                                                                   final String returned) {
         return new Authenticator<String, Principal>() {
             @Override
             public Optional<Principal> authenticate(String user) throws AuthenticationException {
@@ -39,8 +40,19 @@ public class AuthUtil {
         };
     }
 
-    public static Authenticator<String, Principal> getTestAuthenticator(final String presented) {
-        return getTestAuthenticator(presented, presented);
+    public static Authenticator<String, Principal> getMultiplyUsersOAuthAuthenticator(final List<String> validUsers) {
+        return new Authenticator<String, Principal>() {
+            @Override
+            public Optional<Principal> authenticate(String credentials) throws AuthenticationException {
+                if (validUsers.contains(credentials)) {
+                    return Optional.<Principal>of(new PrincipalImpl(credentials));
+                }
+                if (credentials.equals("bad-guy")) {
+                    throw new AuthenticationException("CRAP");
+                }
+                return Optional.absent();
+            }
+        };
     }
 
     public static Authorizer<Principal> getTestAuthorizer(final String validUser,

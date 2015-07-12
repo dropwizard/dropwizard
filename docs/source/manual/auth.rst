@@ -92,7 +92,8 @@ Basic Authentication
 
 The ``AuthDynamicFeature`` with the ``BasicCredentialAuthFilter`` and ``RolesAllowedDynamicFeature``
 enables HTTP Basic authentication and authorization; requires an authenticator which
-takes instances of ``BasicCredentials``:
+takes instances of ``BasicCredentials``. If you don't use authorization, then ``RolesAllowedDynamicFeature``
+is not required.
 
 .. code-block:: java
 
@@ -117,7 +118,8 @@ OAuth2
 
 The ``AuthDynamicFeature`` with ``OAuthCredentialAuthFilter`` and ``RolesAllowedDynamicFeature``
 enables OAuth2 bearer-token authentication and authorization; requires an authenticator which
-takes instances of ``String``:
+takes instances of ``String``. If you don't use authorization, then ``RolesAllowedDynamicFeature``
+is not required.
 
 .. code-block:: java
 
@@ -174,7 +176,12 @@ For this to work properly, all chained factories must produce the same type of p
 Protecting Resources
 ====================
 
-To protect a resource, simply include the ``@RolesAllowed`` annotation with an appropriate role on your resource method.
+To protect a resource, you need to mark your resource methods with one of the following annotations:
+
+* ``@PermitAll``. All authenticated users will have access to the method.
+* ``@RolesAllowed``. Access will be granted for the users with the specified roles.
+* ``@DenyAll``. No access will be granted to anyone.
+
 If you need access to the Principal, you need to add a parameter to your method ``@Context SecurityContext context``
 
 .. code-block:: java
