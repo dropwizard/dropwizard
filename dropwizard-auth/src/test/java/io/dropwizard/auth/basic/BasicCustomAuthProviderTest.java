@@ -147,8 +147,7 @@ public class BasicCustomAuthProviderTest extends JerseyTest {
         private ContainerRequestFilter getAuthFilter() {
             final String validUser = "good-guy";
 
-            BasicCredentialAuthFilter.Builder<Principal, Authenticator<BasicCredentials, Principal>> builder
-                    = new BasicCredentialAuthFilter.Builder<>();
+            BasicCredentialAuthFilter.Builder<Principal> builder  = new BasicCredentialAuthFilter.Builder<>();
             builder.setAuthorizer(AuthUtil.getTestAuthorizer(validUser, VALID_ROLE));
             builder.setAuthenticator(AuthUtil.getTestAuthenticatorBasicCredential(validUser));
             builder.setPrefix("Custom");

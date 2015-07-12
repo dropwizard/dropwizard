@@ -100,7 +100,7 @@ takes instances of ``BasicCredentials``:
     public void run(ExampleConfiguration configuration,
                     Environment environment) {
         environment.jersey().register(new AuthDynamicFeature(
-                new BasicCredentialAuthFilter.Builder<User, ExampleAuthenticator>()
+                new BasicCredentialAuthFilter.Builder<User>()
                     .setAuthenticator(new ExampleAuthenticator())
                     .setAuthorizer(new ExampleAuthorizer())
                     .setRealm("SUPER SECRET STUFF")
@@ -125,7 +125,7 @@ takes instances of ``String``:
     public void run(ExampleConfiguration configuration,
                     Environment environment) {
         environment.jersey().register(new AuthDynamicFeature(
-            new OAuthCredentialAuthFilter.Builder<User, ExampleOAuthAuthenticator>()
+            new OAuthCredentialAuthFilter.Builder<User>()
                 .setAuthenticator(new ExampleOAuthAuthenticator())
                 .setAuthorizer(new ExampleAuthorizer())
                 .setPrefix("Bearer")
