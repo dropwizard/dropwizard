@@ -176,24 +176,14 @@ For this to work properly, all chained factories must produce the same type of p
 Protecting Resources
 ====================
 
-To protect a resource, you need to mark your resource methods with one of the following annotations:
+There are two ways to protect a resource.  You can mark your resource method with one of the following annotations:
 
 * ``@PermitAll``. All authenticated users will have access to the method.
 * ``@RolesAllowed``. Access will be granted for the users with the specified roles.
 * ``@DenyAll``. No access will be granted to anyone.
 
-If you need access to the Principal, you need to add a parameter to your method ``@Context SecurityContext context``
-
-.. code-block:: java
-
-    @RolesAllowed("ADMIN")
-    @GET
-    public SecretPlan getSecretPlan(@Context SecurityContext context) {
-        User userPrincipal = (User) context.getUserPrincipal();
-        return dao.findPlanForUser(user);
-    }
-
-or you can add register the following with jersey
+Alternatively, you can annotate the parameter representing your principal with ``@Auth``. Note you must register a
+jersey provider to make this work.
 
 .. code-block:: java
 
@@ -205,6 +195,19 @@ or you can add register the following with jersey
         return dao.findPlanForUser(user);
     }
 
+You can also access the Principal by adding a parameter to your method ``@Context SecurityContext context``. Note this
+will not automatically register the servlet filter which performs authentication. You will still need to add one of
+``@PermitAll``, ``@RolesAllowed``, or ``@DenyAll``. This is not the case with ``@Auth``. When that is present, the auth
+filter is automatically registered to facilitate users upgrading from older versions of Dropwizard
+
+.. code-block:: java
+
+    @RolesAllowed("ADMIN")
+    @GET
+    public SecretPlan getSecretPlan(@Context SecurityContext context) {
+        User userPrincipal = (User) context.getUserPrincipal();
+        return dao.findPlanForUser(user);
+    }
 
 If there are no provided credentials for the request, or if the credentials are invalid, the
 provider will return a scheme-appropriate ``401 Unauthorized`` response without calling your

@@ -4,6 +4,8 @@ import com.codahale.metrics.MetricRegistry;
 import com.google.common.collect.ImmutableList;
 import io.dropwizard.auth.AuthDynamicFeature;
 import io.dropwizard.auth.AuthResource;
+import io.dropwizard.auth.AuthValueFactoryProvider;
+import io.dropwizard.auth.PrincipalImpl;
 import io.dropwizard.auth.util.AuthUtil;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.logging.BootstrapLogging;
@@ -129,6 +131,14 @@ public class BasicAuthProviderTest extends JerseyTest {
     }
 
     @Test
+    public void transformsCredentialsToPrincipalsWhenAuthAnnotationExistsWithoutMethodAnnotation() throws Exception {
+        assertThat(target("/test/implicit-permitall").request()
+            .header(HttpHeaders.AUTHORIZATION, "Basic Z29vZC1ndXk6c2VjcmV0")
+            .get(String.class))
+            .isEqualTo("'good-guy' has user privileges");
+    }
+
+    @Test
     public void respondsToNonBasicCredentialsWith401() throws Exception {
         try {
             target("/test/admin").request()
@@ -159,6 +169,7 @@ public class BasicAuthProviderTest extends JerseyTest {
             super(true, new MetricRegistry());
 
             register(new AuthDynamicFeature(getAuthFilter()));
+            register(new AuthValueFactoryProvider.Binder(Principal.class));
             register(RolesAllowedDynamicFeature.class);
             register(AuthResource.class);
         }

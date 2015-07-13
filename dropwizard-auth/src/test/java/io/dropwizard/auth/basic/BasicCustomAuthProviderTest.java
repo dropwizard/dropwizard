@@ -151,6 +151,7 @@ public class BasicCustomAuthProviderTest extends JerseyTest {
         public BasicAuthTestResourceConfig() {
             super(true, new MetricRegistry());
 
+            register(new AuthValueFactoryProvider.Binder(Principal.class));
             register(new AuthDynamicFeature(getAuthFilter()));
             register(RolesAllowedDynamicFeature.class);
             register(AuthResource.class);

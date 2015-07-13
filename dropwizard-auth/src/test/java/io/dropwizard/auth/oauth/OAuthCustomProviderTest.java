@@ -20,6 +20,8 @@ import org.junit.Test;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.HttpHeaders;
 
+import java.security.Principal;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
 
@@ -149,6 +151,7 @@ public class OAuthCustomProviderTest extends JerseyTest {
         public BasicAuthTestResourceConfig() {
             super(true, new MetricRegistry());
 
+            register(new AuthValueFactoryProvider.Binder(Principal.class));
             register(new AuthDynamicFeature(getAuthFilter()));
             register(RolesAllowedDynamicFeature.class);
             register(AuthResource.class);

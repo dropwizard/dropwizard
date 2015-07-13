@@ -150,6 +150,7 @@ public class ChainedAuthProviderTest extends JerseyTest {
                     .setAuthorizer(authorizer)
                     .buildAuthFilter();
 
+            register(new AuthValueFactoryProvider.Binder(Principal.class));
             register(new AuthDynamicFeature(new ChainedAuthFilter<>(buildHandlerList(basicAuthFilter, oAuthFilter ))));
             register(RolesAllowedDynamicFeature.class);
             register(AuthResource.class);

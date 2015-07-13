@@ -12,6 +12,7 @@ import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.DynamicFeature;
 import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.FeatureContext;
+import java.lang.annotation.Annotation;
 
 /**
  * A {@link DynamicFeature} that registers the provided auth filter
@@ -34,9 +35,19 @@ public class AuthDynamicFeature implements DynamicFeature {
     @Override
     public void configure(ResourceInfo resourceInfo, FeatureContext context) {
         final AnnotatedMethod am = new AnnotatedMethod(resourceInfo.getResourceMethod());
+        final Annotation[][] parameterAnnotations = am.getParameterAnnotations();
         if (am.isAnnotationPresent(RolesAllowed.class) || am.isAnnotationPresent(DenyAll.class) ||
-                am.isAnnotationPresent(PermitAll.class)) {
+            am.isAnnotationPresent(PermitAll.class)) {
             context.register(authFilter);
+        } else {
+            for (Annotation[] annotations : parameterAnnotations) {
+                for (Annotation annotation : annotations) {
+                    if (annotation instanceof Auth) {
+                        context.register(authFilter);
+                        return;
+                    }
+                }
+            }
         }
     }
 }
