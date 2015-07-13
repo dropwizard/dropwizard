@@ -25,7 +25,7 @@ public enum SizeUnit {
     GIGABYTES(8L * 1024 * 1024 * 1024),
 
     /**
-     * Megabytes.
+     * Terabytes.
      */
     TERABYTES(8L * 1024 * 1024 * 1024 * 1024);
 
