@@ -30,7 +30,7 @@ public class ProtectedResourceTest {
     public static final ResourceTestRule RULE = ResourceTestRule.builder()
             .addProvider(RolesAllowedDynamicFeature.class)
             .addProvider(new AuthDynamicFeature(BASIC_AUTH_HANDLER))
-            .addProvider(new AuthValueFactoryProvider.Binder(User.class))
+            .addProvider(new AuthValueFactoryProvider.Binder<>(User.class))
             .setTestContainerFactory(new GrizzlyWebTestContainerFactory())
             .addProvider(ProtectedResource.class)
             .build();
