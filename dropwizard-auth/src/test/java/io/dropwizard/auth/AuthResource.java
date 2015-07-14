@@ -10,6 +10,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.SecurityContext;
+import java.security.Principal;
 
 @Path("/test/")
 @Produces(MediaType.TEXT_PLAIN)
@@ -18,15 +19,21 @@ public class AuthResource {
     @RolesAllowed({"ADMIN"})
     @GET
     @Path("admin")
-    public String show(@Context SecurityContext securityContext) {
-        return "'" + securityContext.getUserPrincipal().getName() + "' has admin privileges";
+    public String show(@Auth Principal principal) {
+        return "'" + principal.getName() + "' has admin privileges";
     }
 
     @PermitAll
     @GET
     @Path("profile")
-    public String showForEveryUser(@Context SecurityContext securityContext) {
-        return "'" + securityContext.getUserPrincipal().getName() + "' has user privileges";
+    public String showForEveryUser(@Auth Principal principal) {
+        return "'" + principal.getName() + "' has user privileges";
+    }
+
+    @GET
+    @Path("implicit-permitall")
+    public String implicitPermitAllAuthorization(@Auth Principal principal) {
+        return "'" + principal.getName() + "' has user privileges";
     }
 
     @GET
