@@ -14,7 +14,7 @@ public abstract class AuthFilter<C, P extends Principal> implements ContainerReq
     protected String realm;
     protected Authenticator<C, P> authenticator;
     protected Authorizer<P> authorizer;
-    protected UnauthorizedHandler unauthorizedHandler = new DefaultUnauthorizedHandler();
+    protected UnauthorizedHandler unauthorizedHandler;
 
     /**
      * Abstract builder for auth filters.
@@ -28,6 +28,7 @@ public abstract class AuthFilter<C, P extends Principal> implements ContainerReq
         private String prefix = "Basic";
         private Authenticator<C, P> authenticator;
         private Authorizer<P> authorizer = new PermitAllAuthorizer<>();
+        private UnauthorizedHandler unauthorizedHandler = new DefaultUnauthorizedHandler();
 
         /**
          * Sets the given realm
@@ -74,6 +75,17 @@ public abstract class AuthFilter<C, P extends Principal> implements ContainerReq
         }
 
         /**
+         * Sets the given unauthorized handler
+         *
+         * @param unauthorizedHandler an {@link UnauthorizedHandler}
+         * @return the current builder
+         */
+        public AuthFilterBuilder<C, P, T> setUnauthorizedHandler(UnauthorizedHandler unauthorizedHandler) {
+            this.unauthorizedHandler = unauthorizedHandler;
+            return this;
+        }
+
+        /**
          * Builds an instance of the filter with a provided authenticator,
          * an authorizer, a prefix, and a realm.
          *
@@ -84,12 +96,14 @@ public abstract class AuthFilter<C, P extends Principal> implements ContainerReq
             Preconditions.checkArgument(prefix != null, "Prefix is not set");
             Preconditions.checkArgument(authenticator != null, "Authenticator is not set");
             Preconditions.checkArgument(authorizer != null, "Authorizer is not set");
+            Preconditions.checkArgument(unauthorizedHandler != null, "Unauthorized handler is not set");
 
             T authFilter = newInstance();
             authFilter.authorizer = authorizer;
             authFilter.authenticator = authenticator;
             authFilter.prefix = prefix;
             authFilter.realm = realm;
+            authFilter.unauthorizedHandler = unauthorizedHandler;
             return authFilter;
         }
 
