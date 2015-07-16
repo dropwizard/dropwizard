@@ -104,6 +104,7 @@ is not required.
                 new BasicCredentialAuthFilter.Builder<User>()
                     .setAuthenticator(new ExampleAuthenticator())
                     .setAuthorizer(new ExampleAuthorizer())
+                    .setUnauthorizedHandler(new ExampleUnauthorizedHandler())
                     .setRealm("SUPER SECRET STUFF")
                     .buildAuthFilter()));
         environment.jersey().register(RolesAllowedDynamicFeature.class);

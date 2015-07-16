@@ -28,6 +28,7 @@ public abstract class AuthFilter<C, P extends Principal> implements ContainerReq
         private String prefix = "Basic";
         private Authenticator<C, P> authenticator;
         private Authorizer<P> authorizer = new PermitAllAuthorizer<>();
+        private UnauthorizedHandler unauthorizedHandler = new DefaultUnauthorizedHandler();
 
         /**
          * Sets the given realm
@@ -73,6 +74,11 @@ public abstract class AuthFilter<C, P extends Principal> implements ContainerReq
             return this;
         }
 
+        public AuthFilterBuilder<C, P, T> setUnauthorizedHandler(UnauthorizedHandler unauthorizedHandler){
+            this.unauthorizedHandler = unauthorizedHandler;
+            return this;
+        }
+
         /**
          * Builds an instance of the filter with a provided authenticator,
          * an authorizer, a prefix, and a realm.
@@ -84,12 +90,14 @@ public abstract class AuthFilter<C, P extends Principal> implements ContainerReq
             Preconditions.checkArgument(prefix != null, "Prefix is not set");
             Preconditions.checkArgument(authenticator != null, "Authenticator is not set");
             Preconditions.checkArgument(authorizer != null, "Authorizer is not set");
+            Preconditions.checkArgument(unauthorizedHandler != null, "Unauthorized Handler is not set");
 
             T authFilter = newInstance();
             authFilter.authorizer = authorizer;
             authFilter.authenticator = authenticator;
             authFilter.prefix = prefix;
             authFilter.realm = realm;
+            authFilter.unauthorizedHandler = unauthorizedHandler;
             return authFilter;
         }
 
