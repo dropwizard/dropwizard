@@ -21,8 +21,8 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Set;
 import java.util.regex.Pattern;
-import java.util.zip.Deflater;
-import java.util.zip.DeflaterInputStream;
+import java.util.zip.Inflater;
+import java.util.zip.InflaterInputStream;
 import java.util.zip.GZIPInputStream;
 
 /**
@@ -30,7 +30,13 @@ import java.util.zip.GZIPInputStream;
  * entities.
  */
 public class BiDiGzipFilter extends IncludableGzipFilter {
-    private final ThreadLocal<Deflater> localDeflater = new ThreadLocal<>();
+    private final ThreadLocal<Inflater> localInflater = new ThreadLocal<>();
+
+    /**
+     * Whether inflating (decompressing) of deflate-encoded requests
+     * should be performed in the GZIP-compatible mode
+     */
+    private boolean inflateNoWrap = true;
 
     public Set<String> getMimeTypes() {
         return _mimeTypes;
@@ -71,6 +77,14 @@ public class BiDiGzipFilter extends IncludableGzipFilter {
 
     public void setDeflateNoWrap(boolean noWrap) {
         this._deflateNoWrap = noWrap;
+    }
+
+    public boolean isInflateNoWrap() {
+        return inflateNoWrap;
+    }
+
+    public void setInflateNoWrap(boolean inflateNoWrap) {
+        this.inflateNoWrap = inflateNoWrap;
     }
 
     public Set<String> getMethods() {
@@ -135,22 +149,28 @@ public class BiDiGzipFilter extends IncludableGzipFilter {
         }
     }
 
-    private Deflater buildDeflater() {
-        final Deflater deflater = localDeflater.get();
-        if (deflater != null) {
-            return deflater;
+    private Inflater buildInflater() {
+        final Inflater inflater = localInflater.get();
+        if (inflater != null) {
+            // The request could fail in the middle of decompressing, so potentially we can get
+            // a broken inflater in the thread local storage. That's why we need to clear the storage.
+            localInflater.set(null);
+
+            // Reuse the inflater from the thread local storage
+            inflater.reset();
+            return inflater;
+        } else {
+            return new Inflater(inflateNoWrap);
         }
-        return new Deflater(_deflateCompressionLevel, _deflateNoWrap);
     }
 
     private ServletRequest wrapDeflatedRequest(HttpServletRequest request) throws IOException {
-        final Deflater deflater = buildDeflater();
-        final DeflaterInputStream input = new DeflaterInputStream(request.getInputStream(), deflater, _bufferSize) {
+        final Inflater inflater = buildInflater();
+        final InflaterInputStream input = new InflaterInputStream(request.getInputStream(), inflater, _bufferSize) {
             @Override
             public void close() throws IOException {
-                deflater.reset();
-                localDeflater.set(deflater);
                 super.close();
+                localInflater.set(inflater);
             }
         };
         return new WrappedServletRequest(request, input);
