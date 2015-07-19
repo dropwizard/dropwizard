@@ -27,6 +27,7 @@ public class GzipFilterFactory {
     private Set<String> compressedMimeTypes = Sets.newHashSet();
     private Set<String> includedMethods = Sets.newHashSet();
     private boolean gzipCompatibleDeflation = true;
+    private boolean gzipCompatibleInflation = true;
     private String vary = "Accept-Encoding";
 
     @Min(Deflater.DEFAULT_COMPRESSION)
@@ -104,6 +105,16 @@ public class GzipFilterFactory {
     }
 
     @JsonProperty
+    public boolean isGzipCompatibleInflation() {
+        return gzipCompatibleInflation;
+    }
+
+    @JsonProperty
+    public void setGzipCompatibleInflation(boolean gzipCompatibleInflation) {
+        this.gzipCompatibleInflation = gzipCompatibleInflation;
+    }
+
+    @JsonProperty
     public Set<Pattern> getExcludedUserAgentPatterns() {
         return excludedUserAgentPatterns;
     }
@@ -162,6 +173,7 @@ public class GzipFilterFactory {
         }
 
         filter.setDeflateNoWrap(gzipCompatibleDeflation);
+        filter.setInflateNoWrap(gzipCompatibleInflation);
 
         return filter;
     }
