@@ -112,22 +112,6 @@ public class BiDiGzipFilter extends IncludableGzipFilter {
         this._excludedAgentPatterns = userAgentPatterns;
     }
 
-    public Set<String> getExcludedPaths() {
-        return _excludedPaths;
-    }
-
-    public void setExcludedPaths(Set<String> paths) {
-        this._excludedPaths = paths;
-    }
-
-    public Set<Pattern> getExcludedPathPatterns() {
-        return _excludedPathPatterns;
-    }
-
-    public void setExcludedPathPatterns(Set<Pattern> patterns) {
-        this._excludedPathPatterns = patterns;
-    }
-
     public String getVary() {
         return _vary;
     }
