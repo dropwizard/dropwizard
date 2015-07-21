@@ -1,25 +1,23 @@
 package io.dropwizard.logging;
 
-import ch.qos.logback.classic.Level;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.io.Resources;
-
+import static org.assertj.core.api.Assertions.assertThat;
 import io.dropwizard.configuration.ConfigurationException;
 import io.dropwizard.configuration.ConfigurationFactory;
 import io.dropwizard.jackson.Jackson;
-
-import org.junit.Before;
-import org.junit.Test;
-
-import javax.validation.Validation;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import javax.validation.Validation;
+
+import org.junit.Before;
+import org.junit.Test;
+
+import ch.qos.logback.classic.Level;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.io.Resources;
 
 public class DefaultLoggingFactoryTest {
     private final ObjectMapper objectMapper = Jackson.newObjectMapper();
@@ -45,31 +43,18 @@ public class DefaultLoggingFactoryTest {
     }
 
     @Test
-    public void hasASetOfOverriddenLevels() throws Exception {
-        assertThat(config.getLoggers()).isEqualTo(
-                ImmutableMap.of("com.example.app", Level.DEBUG));
-    }
-
-    @Test
-    public void canReadAdvancedLoggers() throws IOException,
+    public void canParseNewLoggerFormat() throws IOException,
             ConfigurationException, URISyntaxException {
-        DefaultLoggingFactory advancedConfig = factory.build(new File(Resources
+        DefaultLoggingFactory config = factory.build(new File(Resources
                 .getResource("yaml/logging_advanced.yml").toURI()));
-        assertThat(advancedConfig.getAdvancedLoggers().get("com.example.app"))
-                .isNotNull();
-        assertThat(
-                advancedConfig.getAdvancedLoggers().get("com.example.app")
-                        .getLevel()).isEqualTo(Level.DEBUG);
-        assertThat(
-                advancedConfig.getAdvancedLoggers().get("com.example.app")
-                        .getAppenders()).isNotNull();
-        assertThat(
-                advancedConfig.getAdvancedLoggers().get("com.example.app")
-                        .getAppenders().get(0).getClass()).isEqualTo(
+        assertThat(config.getLoggers().get("com.example.newApp")).isNotNull();
+        DefaultLoggerFactory configuration = Jackson.newObjectMapper()
+                .treeToValue(config.getLoggers().get("com.example.newApp"),
+                        DefaultLoggerFactory.class);
+        assertThat(configuration.getLevel()).isEqualTo(Level.DEBUG);
+        assertThat(configuration.getAppenders().get(0).getClass()).isEqualTo(
                 ConsoleAppenderFactory.class);
-        assertThat(
-                advancedConfig.getAdvancedLoggers().get("com.example.app")
-                        .getAppenders().get(1).getClass()).isEqualTo(
+        assertThat(configuration.getAppenders().get(1).getClass()).isEqualTo(
                 FileAppenderFactory.class);
     }
 }

@@ -8,28 +8,28 @@ import com.google.common.collect.ImmutableList;
 import ch.qos.logback.classic.Level;
 
 public class DefaultLoggerFactory {
-	@NotNull
-	private Level level = Level.INFO;
+    @NotNull
+    private Level level = Level.INFO;
 
-	@Valid
-	@NotNull
-	private ImmutableList<AppenderFactory> appenders = ImmutableList
-			.<AppenderFactory> of(new ConsoleAppenderFactory());
+    @Valid
+    @NotNull
+    private ImmutableList<AppenderFactory> appenders = ImmutableList
+            .<AppenderFactory> of(new ConsoleAppenderFactory());
 
-	public Level getLevel() {
-		return level;
-	}
+    public Level getLevel() {
+        return level;
+    }
 
-	public void setLevel(Level level) {
-		this.level = level;
-	}
+    public void setLevel(Level level) {
+        this.level = level;
+    }
 
-	public ImmutableList<AppenderFactory> getAppenders() {
-		return appenders;
-	}
+    public ImmutableList<AppenderFactory> getAppenders() {
+        return appenders;
+    }
 
-	public void setAppenders(ImmutableList<AppenderFactory> appenders) {
-		this.appenders = appenders;
-	}
+    public void setAppenders(ImmutableList<AppenderFactory> appenders) {
+        this.appenders = appenders;
+    }
 
 }

@@ -1,8 +1,7 @@
 level: INFO
 loggers:
   com.example.app: INFO
-advancedLoggers:
-  com.example.app: 
+  com.example.newApp: 
     level: DEBUG
     appenders:
       - type: console
