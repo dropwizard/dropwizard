@@ -4,6 +4,7 @@ import com.google.common.base.Optional;
 import io.dropwizard.auth.AuthenticationException;
 import io.dropwizard.auth.AuthFilter;
 import io.dropwizard.auth.Authenticator;
+import io.dropwizard.auth.Authorizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,20 +70,18 @@ public class OAuthCredentialAuthFilter<P extends Principal> extends AuthFilter<S
         throw new WebApplicationException(unauthorizedHandler.buildResponse(prefix, realm));
     }
 
-    public static class Builder<APrincipal extends Principal, AAuthenticator extends Authenticator<String, APrincipal>>
-            extends AuthFilterBuilder<String, APrincipal, OAuthCredentialAuthFilter<APrincipal>, AAuthenticator> {
-        @Override
-        public OAuthCredentialAuthFilter<APrincipal> buildAuthFilter() {
-            if (realm == null || authenticator == null || prefix == null || authorizer == null) {
-                throw new RuntimeException("Required auth filter parameters not set");
-            }
+    /**
+     * Builder for {@link OAuthCredentialAuthFilter}.
+     * <p>An {@link Authenticator} must be provided during the building process.</p>
+     *
+     * @param <P> the type of the principal
+     */
+    public static class Builder<P extends Principal>
+            extends AuthFilterBuilder<String, P, OAuthCredentialAuthFilter<P>> {
 
-            OAuthCredentialAuthFilter<APrincipal> oauthCredentialAuthFilter = new OAuthCredentialAuthFilter<>();
-            oauthCredentialAuthFilter.setRealm(realm);
-            oauthCredentialAuthFilter.setAuthenticator(authenticator);
-            oauthCredentialAuthFilter.setPrefix(prefix);
-            oauthCredentialAuthFilter.setAuthorizer(authorizer);
-            return oauthCredentialAuthFilter;
+        @Override
+        protected OAuthCredentialAuthFilter<P> newInstance() {
+            return new OAuthCredentialAuthFilter<>();
         }
     }
 }

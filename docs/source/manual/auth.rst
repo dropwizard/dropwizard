@@ -92,7 +92,8 @@ Basic Authentication
 
 The ``AuthDynamicFeature`` with the ``BasicCredentialAuthFilter`` and ``RolesAllowedDynamicFeature``
 enables HTTP Basic authentication and authorization; requires an authenticator which
-takes instances of ``BasicCredentials``:
+takes instances of ``BasicCredentials``. If you don't use authorization, then ``RolesAllowedDynamicFeature``
+is not required.
 
 .. code-block:: java
 
@@ -100,7 +101,7 @@ takes instances of ``BasicCredentials``:
     public void run(ExampleConfiguration configuration,
                     Environment environment) {
         environment.jersey().register(new AuthDynamicFeature(
-                new BasicCredentialAuthFilter.Builder<User, ExampleAuthenticator>()
+                new BasicCredentialAuthFilter.Builder<User>()
                     .setAuthenticator(new ExampleAuthenticator())
                     .setAuthorizer(new ExampleAuthorizer())
                     .setRealm("SUPER SECRET STUFF")
@@ -117,7 +118,8 @@ OAuth2
 
 The ``AuthDynamicFeature`` with ``OAuthCredentialAuthFilter`` and ``RolesAllowedDynamicFeature``
 enables OAuth2 bearer-token authentication and authorization; requires an authenticator which
-takes instances of ``String``:
+takes instances of ``String``. If you don't use authorization, then ``RolesAllowedDynamicFeature``
+is not required.
 
 .. code-block:: java
 
@@ -125,14 +127,14 @@ takes instances of ``String``:
     public void run(ExampleConfiguration configuration,
                     Environment environment) {
         environment.jersey().register(new AuthDynamicFeature(
-            new OAuthCredentialAuthFilter.Builder<User, ExampleOAuthAuthenticator>()
+            new OAuthCredentialAuthFilter.Builder<User>()
                 .setAuthenticator(new ExampleOAuthAuthenticator())
                 .setAuthorizer(new ExampleAuthorizer())
                 .setPrefix("Bearer")
                 .buildAuthFilter()));
         environment.jersey().register(RolesAllowedDynamicFeature.class);
         //If you want to use @Auth to inject a custom Principal type into your resource
-        environment.jersey().register(new AuthValueFactoryProvider.Binder(User.class));
+        environment.jersey().register(new AuthValueFactoryProvider.Binder<>(User.class));
     }
 
 .. _man-auth-chained:
@@ -163,7 +165,7 @@ The ``ChainedAuthFilter`` enables usage of various authentication factories at t
         environment.jersey().register(new AuthDynamicFeature(new ChainedAuthFilter(handlers)));
         environment.jersey().register(RolesAllowedDynamicFeature.class);
         //If you want to use @Auth to inject a custom Principal type into your resource
-        environment.jersey().register(new AuthValueFactoryProvider.Binder(User.class));
+        environment.jersey().register(new AuthValueFactoryProvider.Binder<>(User.class));
     }
 
 For this to work properly, all chained factories must produce the same type of principal, here ``User``.
@@ -174,8 +176,29 @@ For this to work properly, all chained factories must produce the same type of p
 Protecting Resources
 ====================
 
-To protect a resource, simply include the ``@RolesAllowed`` annotation with an appropriate role on your resource method.
-If you need access to the Principal, you need to add a parameter to your method ``@Context SecurityContext context``
+There are two ways to protect a resource.  You can mark your resource method with one of the following annotations:
+
+* ``@PermitAll``. All authenticated users will have access to the method.
+* ``@RolesAllowed``. Access will be granted for the users with the specified roles.
+* ``@DenyAll``. No access will be granted to anyone.
+
+Alternatively, you can annotate the parameter representing your principal with ``@Auth``. Note you must register a
+jersey provider to make this work.
+
+.. code-block:: java
+
+    environment.jersey().register(new AuthValueFactoryProvider.Binder<>(User.class));
+
+    @RolesAllowed("ADMIN")
+    @GET
+    public SecretPlan getSecretPlan(@Auth User user) {
+        return dao.findPlanForUser(user);
+    }
+
+You can also access the Principal by adding a parameter to your method ``@Context SecurityContext context``. Note this
+will not automatically register the servlet filter which performs authentication. You will still need to add one of
+``@PermitAll``, ``@RolesAllowed``, or ``@DenyAll``. This is not the case with ``@Auth``. When that is present, the auth
+filter is automatically registered to facilitate users upgrading from older versions of Dropwizard
 
 .. code-block:: java
 
@@ -185,19 +208,6 @@ If you need access to the Principal, you need to add a parameter to your method 
         User userPrincipal = (User) context.getUserPrincipal();
         return dao.findPlanForUser(user);
     }
-
-or you can add register the following with jersey
-
-.. code-block:: java
-
-    environment.jersey().register(new AuthValueFactoryProvider.Binder(User.class));
-
-    @RolesAllowed("ADMIN")
-    @GET
-    public SecretPlan getSecretPlan(@Auth User user) {
-        return dao.findPlanForUser(user);
-    }
-
 
 If there are no provided credentials for the request, or if the credentials are invalid, the
 provider will return a scheme-appropriate ``401 Unauthorized`` response without calling your

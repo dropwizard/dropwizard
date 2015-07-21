@@ -73,20 +73,34 @@ GZip
         bufferSize: 8KiB
 
 
-+----------------------+------------+---------------------------------------------------------------------------------------------------+ 
-|     Name             | Default    | Description                                                                                       | 
-+======================+============+===================================================================================================+ 
-| enabled              | true       | If true, all requests with gzip in their Accept-Content-Encoding                                  | 
-|                      |            | headers will have their response entities encoded with gzip.                                      |
-+----------------------+------------+---------------------------------------------------------------------------------------------------+
-| minimumEntitySize    | 256 bytes  | All response entities under this size are not compressed.                                         |
-+----------------------+------------+---------------------------------------------------------------------------------------------------+
-| bufferSize           | 8KiB       | The size of the buffer to use when compressing.                                                   |
-+----------------------+------------+---------------------------------------------------------------------------------------------------+
-| excludedUserAgents   | []         | The set of user agents to exclude from compression.                                               |
-+----------------------+------------+---------------------------------------------------------------------------------------------------+
-| compressedMimeTypes  | []         | If specified, the set of mime types to compress.                                                  |
-+----------------------+------------+---------------------------------------------------------------------------------------------------+
++---------------------------+---------------------+------------------------------------------------------------------------------------------------------+
+|     Name                  | Default             | Description                                                                                          |
++===========================+=====================+======================================================================================================+
+| enabled                   | true                | If true, all requests with ``gzip`` or ``deflate`` in the ``Accept-Encoding`` header will have their |
+|                           |                     | response entities compressed and requests with ``gzip`` or ``deflate`` in the ``Content-Encoding``   |
+|                           |                     | header will have their request entities decompressed.                                                |
++---------------------------+---------------------+------------------------------------------------------------------------------------------------------+
+| minimumEntitySize         | 256 bytes           | All response entities under this size are not compressed.                                            |
++---------------------------+---------------------+------------------------------------------------------------------------------------------------------+
+| bufferSize                | 8KiB                | The size of the buffer to use when compressing.                                                      |
++---------------------------+---------------------+------------------------------------------------------------------------------------------------------+
+| excludedUserAgents        | []                  | The set of user agents to exclude from compression.                                                  |
++---------------------------+---------------------+------------------------------------------------------------------------------------------------------+
+| excludedUserAgentPatterns | []                  | The set of user agent patterns to exclude from compression.                                          |
++---------------------------+---------------------+------------------------------------------------------------------------------------------------------+
+| compressedMimeTypes       | Jetty's default     | The list of mime types to compress. The default is all types apart                                   |
+|                           |                     | the commonly known image, video, audio and compressed types.                                         |
++---------------------------+---------------------+------------------------------------------------------------------------------------------------------+
+| includedMethods           | Jetty's default     | The list list of HTTP methods to compress. The default is to compress only GET responses.            |
++---------------------------+---------------------+------------------------------------------------------------------------------------------------------+
+| deflateCompressionLevel   | -1                  | The compression level used for ZLIB deflation(compression).                                          |
++---------------------------+---------------------+------------------------------------------------------------------------------------------------------+
+| gzipCompatibleDeflation   | true                | If true, then ZLIB deflation(compression) will be performed in the GZIP-compatible mode.             |
++---------------------------+---------------------+------------------------------------------------------------------------------------------------------+
+| gzipCompatibleInflation   | true                | If true, then ZLIB inflation(decompression) will be performed in the GZIP-compatible mode.           |
++---------------------------+---------------------+------------------------------------------------------------------------------------------------------+
+| vary                      | ``Accept-Encoding`` | Value of the `Vary` header sent with responses that could be compressed.                             |
++---------------------------+---------------------+------------------------------------------------------------------------------------------------------+
 
 
 .. _man-configuration-requestLog:
