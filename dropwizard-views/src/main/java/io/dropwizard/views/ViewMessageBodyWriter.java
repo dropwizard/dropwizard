@@ -2,18 +2,18 @@ package io.dropwizard.views;
 
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.*;
 import javax.ws.rs.ext.MessageBodyWriter;
 import javax.ws.rs.ext.Provider;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
-import java.text.MessageFormat;
 import java.util.List;
 import java.util.Locale;
 import java.util.ServiceLoader;
@@ -23,10 +23,11 @@ import static com.codahale.metrics.MetricRegistry.name;
 @Provider
 @Produces({ MediaType.TEXT_HTML, MediaType.APPLICATION_XHTML_XML })
 public class ViewMessageBodyWriter implements MessageBodyWriter<View> {
-    private static final String MISSING_TEMPLATE_MSG =
+    private final static Logger logger = LoggerFactory.getLogger(MessageBodyWriter.class);
+    public final static String TEMPLATE_ERROR_MSG =
             "<html>" +
-                "<head><title>Missing Template</title></head>" +
-                "<body><h1>Missing Template</h1><p>Template \"{0}\" not found.</p></body>" +
+                "<head><title>Template Error</title></head>" +
+                "<body><h1>Template Error</h1><p>Something went wrong rendering the page</p></body>" +
             "</html>";
 
     @Context
@@ -77,11 +78,11 @@ public class ViewMessageBodyWriter implements MessageBodyWriter<View> {
                 }
             }
             throw new ViewRenderException("Unable to find a renderer for " + t.getTemplateName());
-        } catch (FileNotFoundException e) {
-            final String msg = MessageFormat.format(MISSING_TEMPLATE_MSG, t.getTemplateName());
+        } catch (Exception e) {
+            logger.debug("Template Error", e);
             throw new WebApplicationException(Response.serverError()
                                                       .type(MediaType.TEXT_HTML_TYPE)
-                                                      .entity(msg)
+                                                      .entity(TEMPLATE_ERROR_MSG)
                                                       .build());
         } finally {
             context.stop();

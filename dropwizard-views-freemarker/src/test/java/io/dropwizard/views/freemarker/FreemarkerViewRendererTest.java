@@ -44,6 +44,12 @@ public class FreemarkerViewRendererTest extends JerseyTest {
         public BadView showBad() {
             return new BadView();
         }
+
+        @GET
+        @Path("/error")
+        public ErrorView showError() {
+            return new ErrorView();
+        }
     }
 
     @Override
@@ -83,7 +89,21 @@ public class FreemarkerViewRendererTest extends JerseyTest {
                     .isEqualTo(500);
 
             assertThat(e.getResponse().readEntity(String.class))
-                .isEqualTo("<html><head><title>Missing Template</title></head><body><h1>Missing Template</h1><p>Template \"/woo-oo-ahh.txt.ftl\" not found.</p></body></html>");
+                .isEqualTo(ViewMessageBodyWriter.TEMPLATE_ERROR_MSG);
+        }
+    }
+
+    @Test
+    public void returnsA500ForViewsThatCantCompile() throws Exception {
+        try {
+            target("/test/error").request().get(String.class);
+            failBecauseExceptionWasNotThrown(WebApplicationException.class);
+        } catch (WebApplicationException e) {
+            assertThat(e.getResponse().getStatus())
+                    .isEqualTo(500);
+
+            assertThat(e.getResponse().readEntity(String.class))
+                    .isEqualTo(ViewMessageBodyWriter.TEMPLATE_ERROR_MSG);
         }
     }
 }
