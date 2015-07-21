@@ -1,0 +1,30 @@
+level: INFO
+loggers:
+  com.example.app: INFO
+  com.example.newApp: 
+    level: DEBUG
+    appenders:
+      - type: console
+        threshold: ALL
+      - type: file
+        threshold: ALL
+        currentLogFilename: ./logs/example.log
+        archivedLogFilenamePattern: ./logs/example-%d.log.gz
+        archivedFileCount: 5
+appenders:
+  - type: console
+    threshold: ALL
+  - type: file
+    threshold: ALL
+    currentLogFilename: ./logs/example.log
+    archivedLogFilenamePattern: ./logs/example-%d.log.gz
+    archivedFileCount: 5
+  - type: file
+    threshold: ALL
+    maxFileSize: 100MB
+    currentLogFilename: ./logs/max-file-size-example.log
+    archivedLogFilenamePattern: ./logs/max-file-size-example-%d-%i.log.gz
+    archivedFileCount: 5
+  - type: syslog
+    host: localhost
+    facility: local0
