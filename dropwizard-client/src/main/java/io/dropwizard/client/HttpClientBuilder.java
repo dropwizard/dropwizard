@@ -251,8 +251,7 @@ public class HttpClientBuilder {
                 .setDefaultSocketConfig(socketConfig)
                 .setConnectionReuseStrategy(reuseStrategy)
                 .setRetryHandler(retryHandler)
-                .setUserAgent(createUserAgent(name))
-                .setConnectionManagerShared(configuration.isShareConnectionManagerEnabled());
+                .setUserAgent(createUserAgent(name));
 
         if (keepAlive != 0) {
             // either keep alive based on response header Keep-Alive,

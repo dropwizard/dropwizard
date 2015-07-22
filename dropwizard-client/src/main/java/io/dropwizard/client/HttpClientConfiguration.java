@@ -31,8 +31,6 @@ public class HttpClientConfiguration {
 
     private boolean cookiesEnabled = false;
 
-    private boolean shareConnectionManagerEnabled = true;
-
     @Min(1)
     @Max(Integer.MAX_VALUE)
     private int maxConnections = 1024;
@@ -163,15 +161,5 @@ public class HttpClientConfiguration {
     @JsonProperty("proxy")
     public void setProxyConfiguration(ProxyConfiguration proxyConfiguration) {
         this.proxyConfiguration = proxyConfiguration;
-    }
-
-    @JsonProperty
-    public boolean isShareConnectionManagerEnabled() {
-        return shareConnectionManagerEnabled;
-    }
-
-    @JsonProperty
-    public void setShareConnectionManagerEnabled(boolean shareConnectionManagerEnabled) {
-        this.shareConnectionManagerEnabled = shareConnectionManagerEnabled;
     }
 }
