@@ -411,7 +411,14 @@ Logging
     logging:
       level: INFO
       loggers:
-        io.dropwizard: INFO
+        "io.dropwizard": INFO
+        "org.hibernate.SQL":
+          level: DEBUG
+          appenders:
+            - type: file
+              currentLogFilename: /var/log/myapplication-sql.log
+              archivedLogFilenamePattern: /var/log/myapplication-sql-%d.log.gz
+              archivedFileCount: 5
       appenders:
         - type: console
 
@@ -419,9 +426,9 @@ Logging
 ====================== ===========  ===========
 Name                   Default      Description
 ====================== ===========  ===========
-level                  Level.INFO   Logback logging level
-loggers                (none)       
-appenders              (none)       one of console, file or syslog
+level                  Level.INFO   Logback logging level.
+loggers                (none)       Individual logger configuration (both forms are acceptable).
+appenders              (none)       One of console, file or syslog.
 ====================== ===========  ===========
 
 

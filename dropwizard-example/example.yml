@@ -62,12 +62,14 @@ logging:
     # Sets the level for 'com.example.app' to DEBUG.
     com.example.app: DEBUG
 
-    org.hibernate.SQL: ALL
+    # Redirects SQL logs to a separate file
+    org.hibernate.SQL:
+      level: DEBUG
 
   appenders:
     - type: console
     - type: file
-      threshold: DEBUG
+      threshold: INFO
       logFormat: "%-6level [%d{HH:mm:ss.SSS}] [%t] %logger{5} - %X{code} %msg %n"
       currentLogFilename: /tmp/application.log
       archivedLogFilenamePattern: /tmp/application-%d{yyyy-MM-dd}-%i.log.gz
