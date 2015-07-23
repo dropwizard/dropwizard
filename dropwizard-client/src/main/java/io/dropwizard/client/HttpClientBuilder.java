@@ -46,7 +46,7 @@ import java.io.IOException;
  * <p>
  * Among other things,
  * <ul>
- * <li>Disables stale connection checks</li>
+ * <li>Disables stale connection checks by default</li>
  * <li>Disables Nagle's algorithm</li>
  * <li>Disables cookie management by default</li>
  * </ul>
@@ -333,7 +333,7 @@ public class HttpClientBuilder {
             InstrumentedHttpClientConnectionManager connectionManager) {
         connectionManager.setDefaultMaxPerRoute(configuration.getMaxConnectionsPerRoute());
         connectionManager.setMaxTotal(configuration.getMaxConnections());
-        connectionManager.setValidateAfterInactivity(0);
+        connectionManager.setValidateAfterInactivity((int) configuration.getValidateAfterInactivityPeriod().toMilliseconds());
         return connectionManager;
     }
 }
