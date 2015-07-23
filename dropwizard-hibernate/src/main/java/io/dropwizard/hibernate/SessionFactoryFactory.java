@@ -91,7 +91,12 @@ public class SessionFactoryFactory {
                 .applySettings(properties)
                 .build();
 
+        beforeSessionFactoryCreation(configuration, registry);
+
         return configuration.buildSessionFactory(registry);
+    }
+
+    protected void beforeSessionFactoryCreation(Configuration configuration, ServiceRegistry registry){
     }
 
     private void addAnnotatedClasses(Configuration configuration,
