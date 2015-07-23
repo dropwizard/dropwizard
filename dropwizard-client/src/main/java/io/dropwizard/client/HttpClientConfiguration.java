@@ -53,7 +53,9 @@ public class HttpClientConfiguration {
     @Nullable
     private ProxyConfiguration proxyConfiguration;
 
-    @JsonProperty
+    @NotNull
+    private Duration validateAfterInactivityPeriod = Duration.microseconds(0);
+
     public Duration getKeepAlive() {
         return keepAlive;
     }
@@ -161,5 +163,15 @@ public class HttpClientConfiguration {
     @JsonProperty("proxy")
     public void setProxyConfiguration(ProxyConfiguration proxyConfiguration) {
         this.proxyConfiguration = proxyConfiguration;
+    }
+
+    @JsonProperty
+    public Duration getValidateAfterInactivityPeriod() {
+        return validateAfterInactivityPeriod;
+    }
+
+    @JsonProperty
+    public void setValidateAfterInactivityPeriod(Duration validateAfterInactivityPeriod) {
+        this.validateAfterInactivityPeriod = validateAfterInactivityPeriod;
     }
 }
