@@ -52,7 +52,7 @@ public class ValidatingResource {
 
     @GET
     @Path("headCopy")
-    public String heads(@QueryParam("cheese") @NotNull IntParam secretSauce) {
+    public String heads(@QueryParam("cheese") @NotNull @UnwrapValidatedValue(false) IntParam secretSauce) {
         return secretSauce.get().toString();
     }
 
