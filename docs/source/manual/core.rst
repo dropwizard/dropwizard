@@ -128,7 +128,7 @@ create a new ``MessageQueueFactory`` class:
                 public void stop() {
                     client.close();
                 }
-            };
+            });
             return client;
         }
     }
