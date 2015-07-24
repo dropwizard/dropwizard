@@ -54,7 +54,7 @@ shutdownGracePeriod                 30 seconds                                  
                                                                                      to cleanly shutdown before forcibly terminating them.
 allowedMethods                      ``GET``, ``POST``, ``PUT``, ``DELETE``,          The set of allowed HTTP methods. Others will be rejected with a
                                     ``HEAD``, ``OPTIONS``, ``PATCH``                 405 Method Not Allowed response.
-rootPath                            ``/``                                            The URL pattern relative to ``applicationContextPath`` from which
+rootPath                            ``/*``                                            The URL pattern relative to ``applicationContextPath`` from which
                                                                                      the JAX-RS resources will be served.
 registerDefaultExceptionMappers     true                                             Whether or not the default Jersey ExceptionMappers should be registered.
                                                                                      Set this to false if you want to register your own.
