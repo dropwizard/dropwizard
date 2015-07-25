@@ -74,6 +74,8 @@ public class DefaultLoggingFactoryTest {
     public void testConfigure() throws Exception {
         final File newAppLog = new File("/tmp/example-new-app.log");
         final File defaultLog = new File("/tmp/example.log");
+
+        // Cleanup to be safe
         Files.write(new byte[]{}, newAppLog);
         Files.write(new byte[]{}, defaultLog);
 
@@ -101,5 +103,11 @@ public class DefaultLoggingFactoryTest {
                 "DEBUG com.example.newApp: New application debug log",
                 "INFO  com.example.newApp: New application info log");
 
+        if (!newAppLog.delete()) {
+            System.err.println("Unable delete log file: " + newAppLog);
+        }
+        if (!defaultLog.delete()) {
+            System.err.println("Unable delete log file: " + defaultLog);
+        }
     }
 }
