@@ -4,7 +4,7 @@ import com.google.common.io.Resources;
 import io.dropwizard.jetty.setup.ServletEnvironment;
 import io.dropwizard.servlets.assets.AssetServlet;
 import io.dropwizard.servlets.assets.ResourceURL;
-import io.dropwizard.setup.Environment;
+import io.dropwizard.setup.HttpEnvironment;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -17,7 +17,7 @@ import static org.mockito.Mockito.*;
 
 public class AssetsBundleTest {
     private final ServletEnvironment servletEnvironment = mock(ServletEnvironment.class);
-    private final Environment environment = mock(Environment.class);
+    private final HttpEnvironment environment = mock(HttpEnvironment.class);
 
     private AssetServlet servlet;
     private String servletPath;

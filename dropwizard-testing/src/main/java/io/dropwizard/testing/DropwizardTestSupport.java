@@ -6,9 +6,8 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
-
-import io.dropwizard.Application;
-import io.dropwizard.Configuration;
+import io.dropwizard.HttpApplication;
+import io.dropwizard.HttpConfiguration;
 import io.dropwizard.cli.ServerCommand;
 import io.dropwizard.configuration.ConfigurationFactory;
 import io.dropwizard.configuration.ConfigurationFactoryFactory;
@@ -17,14 +16,11 @@ import io.dropwizard.lifecycle.ServerLifecycleListener;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import net.sourceforge.argparse4j.inf.Namespace;
-
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 
 import javax.annotation.Nullable;
 import javax.validation.Validator;
-
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -34,18 +30,18 @@ import static com.google.common.base.Throwables.propagate;
 /**
  * A test support class for starting and stopping your application at the start and end of a test class.
  * <p>
- * By default, the {@link Application} will be constructed using reflection to invoke the nullary
+ * By default, the {@link HttpApplication} will be constructed using reflection to invoke the nullary
  * constructor. If your application does not provide a public nullary constructor, you will need to
  * override the {@link #newApplication()} method to provide your application instance(s).
  * </p>
  *
  * @param <C> the configuration type
  */
-public class DropwizardTestSupport<C extends Configuration> {
-    protected final Class<? extends Application<C>> applicationClass;
-    protected final String configPath;
-    protected final Set<ConfigOverride> configOverrides;
-    protected final Optional<String> customPropertyPrefix;
+public class DropwizardTestSupport<C extends HttpConfiguration> {
+    private final Class<? extends HttpApplication<C>> applicationClass;
+    private final String configPath;
+    private final Set<ConfigOverride> configOverrides;
+    private final Optional<String> customPropertyPrefix;
 
     /**
      * Flag that indicates whether instance was constructed with an explicit
@@ -54,19 +50,19 @@ public class DropwizardTestSupport<C extends Configuration> {
      */
     protected final boolean explicitConfig;
 
-    protected C configuration;
-    protected Application<C> application;
-    protected Environment environment;
-    protected Server jettyServer;
-    protected List<ServiceListener<C>> listeners = Lists.newArrayList();
+    private C configuration;
+    private HttpApplication<C> application;
+    private Environment environment;
+    private Server jettyServer;
+    private List<ServiceListener<C>> listeners = Lists.newArrayList();
 
-    public DropwizardTestSupport(Class<? extends Application<C>> applicationClass,
+    public DropwizardTestSupport(Class<? extends HttpApplication<C>> applicationClass,
                              @Nullable String configPath,
                              ConfigOverride... configOverrides) {
         this(applicationClass, configPath, Optional.<String>absent(), configOverrides);
     }
 
-    public DropwizardTestSupport(Class<? extends Application<C>> applicationClass, String configPath,
+    public DropwizardTestSupport(Class<? extends HttpApplication<C>> applicationClass, String configPath,
                                  Optional<String> customPropertyPrefix, ConfigOverride... configOverrides) {
         this.applicationClass = applicationClass;
         this.configPath = configPath;
@@ -86,7 +82,7 @@ public class DropwizardTestSupport<C extends Configuration> {
      * @param configuration Pre-constructed configuration object caller provides; will not
      *   be manipulated in any way, no overriding
      */
-    public DropwizardTestSupport(Class<? extends Application<C>> applicationClass,
+    public DropwizardTestSupport(Class<? extends HttpApplication<C>> applicationClass,
             C configuration) {
         if (configuration == null) {
             throw new IllegalArgumentException("Can not pass null configuration for explicitly configured instance");
@@ -230,7 +226,7 @@ public class DropwizardTestSupport<C extends Configuration> {
         return ((ServerConnector) jettyServer.getConnectors()[1]).getLocalPort();
     }
 
-    public Application<C> newApplication() {
+    public HttpApplication<C> newApplication() {
         try {
             return applicationClass.newInstance();
         } catch (Exception e) {
@@ -239,7 +235,7 @@ public class DropwizardTestSupport<C extends Configuration> {
     }
 
     @SuppressWarnings("unchecked")
-    public <A extends Application<C>> A getApplication() {
+    public <A extends HttpApplication<C>> A getApplication() {
         return (A) application;
     }
 
@@ -251,7 +247,7 @@ public class DropwizardTestSupport<C extends Configuration> {
         return getEnvironment().getObjectMapper();
     }
 
-    public abstract static class ServiceListener<T extends Configuration> {
+    public abstract static class ServiceListener<T extends HttpConfiguration> {
         public void onRun(T configuration, Environment environment, DropwizardTestSupport<T> rule) throws Exception {
             // Default NOP
         }

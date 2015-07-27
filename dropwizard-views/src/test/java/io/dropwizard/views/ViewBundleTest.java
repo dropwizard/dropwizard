@@ -4,9 +4,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
-import io.dropwizard.Configuration;
+import io.dropwizard.HttpConfiguration;
 import io.dropwizard.jersey.setup.JerseyEnvironment;
-import io.dropwizard.setup.Environment;
+import io.dropwizard.setup.HttpEnvironment;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -32,8 +32,8 @@ import static org.mockito.Mockito.when;
 
 public class ViewBundleTest {
     private final JerseyEnvironment jerseyEnvironment = mock(JerseyEnvironment.class);
-    private final Environment environment = mock(Environment.class);
-    private static class MyConfiguration extends Configuration {
+    private final HttpEnvironment environment = mock(HttpEnvironment.class);
+    private static class MyConfiguration extends HttpConfiguration {
         @NotNull
         private Map<String, Map<String, String>> viewRendererConfiguration = Collections.emptyMap();
 
@@ -59,7 +59,7 @@ public class ViewBundleTest {
 
     @Test
     public void addsTheViewMessageBodyWriterToTheEnvironment() throws Exception {
-        new ViewBundle<Configuration>().run(null, environment);
+        new ViewBundle<>().run(null, environment);
 
         verify(jerseyEnvironment).register(any(ViewMessageBodyWriter.class));
     }

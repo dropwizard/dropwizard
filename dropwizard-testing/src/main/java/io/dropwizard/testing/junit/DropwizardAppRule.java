@@ -2,8 +2,8 @@ package io.dropwizard.testing.junit;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Optional;
-import io.dropwizard.Application;
-import io.dropwizard.Configuration;
+import io.dropwizard.HttpApplication;
+import io.dropwizard.HttpConfiguration;
 import io.dropwizard.lifecycle.Managed;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.testing.ConfigOverride;
@@ -16,28 +16,28 @@ import javax.annotation.Nullable;
 /**
  * A JUnit rule for starting and stopping your application at the start and end of a test class.
  * <p>
- * By default, the {@link Application} will be constructed using reflection to invoke the nullary
+ * By default, the {@link HttpApplication} will be constructed using reflection to invoke the nullary
  * constructor. If your application does not provide a public nullary constructor, you will need to
  * override the {@link #newApplication()} method to provide your application instance(s).
  * </p>
  *
  * @param <C> the configuration type
  */
-public class DropwizardAppRule<C extends Configuration> extends ExternalResource {
+public class DropwizardAppRule<C extends HttpConfiguration> extends ExternalResource {
 
     private final DropwizardTestSupport<C> testSupport;
 
-    public DropwizardAppRule(Class<? extends Application<C>> applicationClass) {
+    public DropwizardAppRule(Class<? extends HttpApplication<C>> applicationClass) {
         this(applicationClass, (String) null);
     }
 
-    public DropwizardAppRule(Class<? extends Application<C>> applicationClass,
+    public DropwizardAppRule(Class<? extends HttpApplication<C>> applicationClass,
                              @Nullable String configPath,
                              ConfigOverride... configOverrides) {
         this(applicationClass, configPath, Optional.<String>absent(), configOverrides);
     }
 
-    public DropwizardAppRule(Class<? extends Application<C>> applicationClass, String configPath,
+    public DropwizardAppRule(Class<? extends HttpApplication<C>> applicationClass, String configPath,
                                  Optional<String> customPropertyPrefix, ConfigOverride... configOverrides) {
         this(new DropwizardTestSupport<>(applicationClass, configPath, customPropertyPrefix,
                 configOverrides));
@@ -49,7 +49,7 @@ public class DropwizardAppRule<C extends Configuration> extends ExternalResource
      *
      * @since 0.9
      */
-    public DropwizardAppRule(Class<? extends Application<C>> applicationClass,
+    public DropwizardAppRule(Class<? extends HttpApplication<C>> applicationClass,
             C configuration) {
         this(new DropwizardTestSupport<>(applicationClass, configuration));
     }
@@ -104,11 +104,11 @@ public class DropwizardAppRule<C extends Configuration> extends ExternalResource
         return testSupport.getAdminPort();
     }
 
-    public Application<C> newApplication() {
+    public HttpApplication<C> newApplication() {
         return testSupport.newApplication();
     }
 
-    public <A extends Application<C>> A getApplication() {
+    public <A extends HttpApplication<C>> A getApplication() {
         return testSupport.getApplication();
     }
 
@@ -120,7 +120,7 @@ public class DropwizardAppRule<C extends Configuration> extends ExternalResource
         return testSupport.getObjectMapper();
     }
 
-    public abstract static class ServiceListener<T extends Configuration> {
+    public abstract static class ServiceListener<T extends HttpConfiguration> {
 
         public void onRun(T configuration, Environment environment, DropwizardAppRule<T> rule) throws Exception {
             // Default NOP

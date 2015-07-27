@@ -29,7 +29,7 @@ import com.codahale.metrics.jvm.ThreadStatesGaugeSet;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import io.dropwizard.jersey.validation.Validators;
+import io.dropwizard.validation.Validators;
 
 import javax.validation.ValidatorFactory;
 
@@ -223,6 +223,14 @@ public class Bootstrap<T extends Configuration> {
         this.metricRegistry = metricRegistry;
     }
 
+    public ConfigurationFactoryFactory<T> getConfigurationFactoryFactory() {
+        return configurationFactoryFactory;
+    }
+
+    public void setConfigurationFactoryFactory(ConfigurationFactoryFactory<T> configurationFactoryFactory) {
+        this.configurationFactoryFactory = configurationFactoryFactory;
+    }
+
     /**
      * Returns the application's validator factory.
      */
@@ -232,13 +240,5 @@ public class Bootstrap<T extends Configuration> {
 
     public void setValidatorFactory(ValidatorFactory validatorFactory) {
         this.validatorFactory = validatorFactory;
-    }
-
-    public ConfigurationFactoryFactory<T> getConfigurationFactoryFactory() {
-        return configurationFactoryFactory;
-    }
-
-    public void setConfigurationFactoryFactory(ConfigurationFactoryFactory<T> configurationFactoryFactory) {
-        this.configurationFactoryFactory = configurationFactoryFactory;
     }
 }

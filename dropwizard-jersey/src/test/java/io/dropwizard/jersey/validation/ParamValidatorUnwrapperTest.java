@@ -25,7 +25,7 @@ public class ParamValidatorUnwrapperTest {
         public NonEmptyStringParam name = new NonEmptyStringParam("a");
     }
 
-    private final Validator validator = Validators.newValidator();
+    private final Validator validator = JerseyValidators.newValidator();
 
     @Test
     public void succeedsWithAllGoodData() {

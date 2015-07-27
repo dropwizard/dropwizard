@@ -1,32 +1,24 @@
 package io.dropwizard;
 
-import java.util.ServiceLoader;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jetty.ConnectorFactory;
 import io.dropwizard.logging.AppenderFactory;
-
 import org.junit.Test;
+
+import java.util.ServiceLoader;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ConfigurationTest {
-    private final Configuration configuration = new Configuration();
+public class HttpConfigurationTest {
+    private final HttpConfiguration configuration = new HttpConfiguration();
 
     @Test
     public void hasAnHttpConfiguration() throws Exception {
         assertThat(configuration.getServerFactory())
-                .isNotNull();
-    }
-
-    @Test
-    public void hasALoggingConfiguration() throws Exception {
-        assertThat(configuration.getLoggingFactory())
                 .isNotNull();
     }
 
@@ -63,7 +55,7 @@ public class ConfigurationTest {
                 .isNotNull();
 
         // and as an added bonus, let's see we can also read it back:
-        final Configuration cfg = mapper.readValue(json, Configuration.class);
+        final Configuration cfg = mapper.readValue(json, HttpConfiguration.class);
         assertThat(cfg)
                 .isNotNull();
     }

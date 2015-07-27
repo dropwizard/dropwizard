@@ -4,17 +4,9 @@ import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheckRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import io.dropwizard.jersey.DropwizardResourceConfig;
-import io.dropwizard.jersey.setup.JerseyContainerHolder;
-import io.dropwizard.jersey.setup.JerseyEnvironment;
-import io.dropwizard.jersey.setup.JerseyServletContainer;
-import io.dropwizard.jetty.MutableServletContextHandler;
-import io.dropwizard.jetty.setup.ServletEnvironment;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
 
-import javax.servlet.Servlet;
 import javax.validation.Validator;
-
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -34,17 +26,8 @@ public class Environment {
     private final ObjectMapper objectMapper;
     private Validator validator;
 
-    private final JerseyContainerHolder jerseyServletContainer;
-    private final JerseyEnvironment jerseyEnvironment;
-
-    private final MutableServletContextHandler servletContext;
-    private final ServletEnvironment servletEnvironment;
-
     private final LifecycleEnvironment lifecycleEnvironment;
 
-    private final MutableServletContextHandler adminContext;
-    private final AdminEnvironment adminEnvironment;
-    
     private final ExecutorService healthCheckExecutorService;
 
     /**
@@ -56,29 +39,14 @@ public class Environment {
     public Environment(String name,
                        ObjectMapper objectMapper,
                        Validator validator,
-                       MetricRegistry metricRegistry,
-                       ClassLoader classLoader) {
+                       MetricRegistry metricRegistry) {
         this.name = name;
         this.objectMapper = objectMapper;
         this.metricRegistry = metricRegistry;
         this.healthCheckRegistry = new HealthCheckRegistry();
         this.validator = validator;
 
-        this.servletContext = new MutableServletContextHandler();
-        servletContext.setClassLoader(classLoader);
-        this.servletEnvironment = new ServletEnvironment(servletContext);
-
-        this.adminContext = new MutableServletContextHandler();
-        adminContext.setClassLoader(classLoader);
-        this.adminEnvironment = new AdminEnvironment(adminContext, healthCheckRegistry, metricRegistry);
-
         this.lifecycleEnvironment = new LifecycleEnvironment();
-
-        final DropwizardResourceConfig jerseyConfig = new DropwizardResourceConfig(metricRegistry);
-
-        this.jerseyServletContainer = new JerseyContainerHolder(new JerseyServletContainer(jerseyConfig));
-        this.jerseyEnvironment = new JerseyEnvironment(jerseyServletContainer, jerseyConfig);
-
 
         this.healthCheckExecutorService = this.lifecycle().executorService("TimeBoundHealthCheck-pool-%d")
                 .workQueue(new ArrayBlockingQueue<Runnable>(1))
@@ -90,13 +58,6 @@ public class Environment {
     }
 
     /**
-     * Returns the application's {@link JerseyEnvironment}.
-     */
-    public JerseyEnvironment jersey() {
-        return jerseyEnvironment;
-    }
-
-    /**
      * Returns an {@link ExecutorService} to run time bound health checks
      */
     public ExecutorService getHealthCheckExecutorService() {
@@ -104,24 +65,10 @@ public class Environment {
     }
 
     /**
-     * Returns the application's {@link AdminEnvironment}.
-     */
-    public AdminEnvironment admin() {
-        return adminEnvironment;
-    }
-
-    /**
      * Returns the application's {@link LifecycleEnvironment}.
      */
     public LifecycleEnvironment lifecycle() {
         return lifecycleEnvironment;
-    }
-
-    /**
-     * Returns the application's {@link ServletEnvironment}.
-     */
-    public ServletEnvironment servlets() {
-        return servletEnvironment;
     }
 
     /**
@@ -166,21 +113,4 @@ public class Environment {
         return healthCheckRegistry;
     }
 
-    /*
-    * Internal Accessors
-    */
-
-    // TODO: 5/4/13 <coda> -- figure out how to make these accessors not a public API
-
-    public MutableServletContextHandler getApplicationContext() {
-        return servletContext;
-    }
-
-    public Servlet getJerseyServletContainer() {
-        return jerseyServletContainer.getContainer();
-    }
-
-    public MutableServletContextHandler getAdminContext() {
-        return adminContext;
-    }
 }

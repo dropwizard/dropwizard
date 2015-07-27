@@ -3,10 +3,11 @@ package io.dropwizard.testing;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableMultimap;
-import io.dropwizard.Application;
-import io.dropwizard.Configuration;
+import io.dropwizard.HttpApplication;
+import io.dropwizard.HttpConfiguration;
 import io.dropwizard.servlets.tasks.Task;
 import io.dropwizard.setup.Environment;
+import io.dropwizard.setup.HttpEnvironment;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -78,9 +79,9 @@ public class DropwizardTestSupportTest {
         assertThat(response, is("Hello has been said to test_user"));
     }
 
-    public static class TestApplication extends Application<TestConfiguration> {
+    public static class TestApplication extends HttpApplication<TestConfiguration> {
         @Override
-        public void run(TestConfiguration configuration, Environment environment) throws Exception {
+        public void run(TestConfiguration configuration, HttpEnvironment environment) throws Exception {
             environment.jersey().register(new TestResource(configuration.getMessage()));
             environment.admin().addTask(new HelloTask());
         }
@@ -102,7 +103,7 @@ public class DropwizardTestSupportTest {
         }
     }
 
-    public static class TestConfiguration extends Configuration {
+    public static class TestConfiguration extends HttpConfiguration {
         @NotEmpty
         @JsonProperty
         private String message;

@@ -29,7 +29,7 @@ public class HibernateValidationFeature implements Feature {
     private static class DefaultConfigurationProvider implements Factory<Configuration> {
         @Override
         public Configuration provide() {
-            return Validators.newConfiguration();
+            return JerseyValidators.newConfiguration();
         }
 
         @Override

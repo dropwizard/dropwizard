@@ -29,16 +29,25 @@ public abstract class EnvironmentCommand<T extends Configuration> extends Config
 
     @Override
     protected final void run(Bootstrap<T> bootstrap, Namespace namespace, T configuration) throws Exception {
-        final Environment environment = new Environment(bootstrap.getApplication().getName(),
-                                                        bootstrap.getObjectMapper(),
-                                                        bootstrap.getValidatorFactory().getValidator(),
-                                                        bootstrap.getMetricRegistry(),
-                                                        bootstrap.getClassLoader());
+        final Environment environment = createEnvironment(bootstrap);
         configuration.getMetricsFactory().configure(environment.lifecycle(),
                                                     bootstrap.getMetricRegistry());
         bootstrap.run(configuration, environment);
         application.run(configuration, environment);
         run(environment, namespace, configuration);
+    }
+
+    /**
+     * Creates the environment for this command.
+     *
+     * @param bootstrap the bootstrap
+     * @return the created environment
+     */
+    protected Environment createEnvironment(Bootstrap<T> bootstrap) {
+        return new Environment(bootstrap.getApplication().getName(),
+                               bootstrap.getObjectMapper(),
+                               bootstrap.getValidatorFactory().getValidator(),
+                               bootstrap.getMetricRegistry());
     }
 
     /**

@@ -1,12 +1,14 @@
 package io.dropwizard.testing.junit;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableMultimap;
-
-import io.dropwizard.Application;
+import io.dropwizard.HttpApplication;
+import io.dropwizard.HttpConfiguration;
 import io.dropwizard.servlets.tasks.Task;
 import io.dropwizard.setup.Environment;
-
+import io.dropwizard.setup.HttpEnvironment;
+import org.hibernate.validator.constraints.NotEmpty;
 import org.junit.ClassRule;
 import org.junit.Test;
 
@@ -15,7 +17,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
-
 import java.io.PrintWriter;
 
 import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
@@ -68,9 +69,9 @@ public class DropwizardAppRuleTest {
         assertThat(response, is("Hello has been said to test_user"));
     }
 
-    public static class TestApplication extends Application<TestConfiguration> {
+    public static class TestApplication extends HttpApplication<TestConfiguration> {
         @Override
-        public void run(TestConfiguration configuration, Environment environment) throws Exception {
+        public void run(TestConfiguration configuration, HttpEnvironment environment) throws Exception {
             environment.jersey().register(new TestResource(configuration.getMessage()));
             environment.admin().addTask(new HelloTask());
         }
@@ -88,6 +89,20 @@ public class DropwizardAppRuleTest {
         @Path("test")
         @GET
         public String test() {
+            return message;
+        }
+    }
+
+    public static class TestConfiguration extends HttpConfiguration {
+        @NotEmpty
+        @JsonProperty
+        private String message;
+
+        @NotEmpty
+        @JsonProperty
+        private String extra;
+
+        public String getMessage() {
             return message;
         }
     }

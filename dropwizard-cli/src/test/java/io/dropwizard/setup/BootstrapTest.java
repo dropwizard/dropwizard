@@ -10,8 +10,6 @@ import io.dropwizard.configuration.DefaultConfigurationFactoryFactory;
 import io.dropwizard.configuration.FileConfigurationSourceProvider;
 
 import io.dropwizard.jackson.Jackson;
-import io.dropwizard.jersey.validation.NonEmptyStringParamUnwrapper;
-import io.dropwizard.jersey.validation.ParamValidatorUnwrapper;
 import io.dropwizard.validation.valuehandling.OptionalValidatedValueUnwrapper;
 import org.hibernate.validator.HibernateValidator;
 import org.hibernate.validator.internal.engine.ValidatorFactoryImpl;
@@ -96,19 +94,9 @@ public class BootstrapTest {
         assertThat(bootstrap.getValidatorFactory()).isInstanceOf(ValidatorFactoryImpl.class);
 
         ValidatorFactoryImpl validatorFactory = (ValidatorFactoryImpl)bootstrap.getValidatorFactory();
-        assertThat(validatorFactory.getValidatedValueHandlers()).hasSize(3);
+        assertThat(validatorFactory.getValidatedValueHandlers()).hasSize(1);
         assertThat(validatorFactory.getValidatedValueHandlers().get(0))
                 .isInstanceOf(OptionalValidatedValueUnwrapper.class);
-
-        // It's imperative that the NonEmptyString validator come before the general param validator
-        // because a NonEmptyString is a param that wraps an optional and the Hibernate Validator
-        // can't unwrap nested classes it knows how to unwrap.
-        // https://hibernate.atlassian.net/browse/HV-904
-        assertThat(validatorFactory.getValidatedValueHandlers().get(1))
-                .isInstanceOf(NonEmptyStringParamUnwrapper.class);
-
-        assertThat(validatorFactory.getValidatedValueHandlers().get(2))
-                .isInstanceOf(ParamValidatorUnwrapper.class);
     }
 
     @Test

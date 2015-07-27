@@ -1,11 +1,11 @@
 package io.dropwizard.testing.junit;
 
 import com.codahale.metrics.health.HealthCheck;
-import io.dropwizard.Application;
-import io.dropwizard.Configuration;
+import io.dropwizard.HttpApplication;
+import io.dropwizard.HttpConfiguration;
 import io.dropwizard.jetty.HttpConnectorFactory;
 import io.dropwizard.server.SimpleServerFactory;
-import io.dropwizard.setup.Environment;
+import io.dropwizard.setup.HttpEnvironment;
 import io.dropwizard.testing.DropwizardTestSupport;
 import org.junit.rules.ExternalResource;
 
@@ -53,12 +53,12 @@ import java.net.URL;
  */
 public class DropwizardClientRule extends ExternalResource {
     private final Object[] resources;
-    private final DropwizardTestSupport<Configuration> testSupport;
+    private final DropwizardTestSupport<HttpConfiguration> testSupport;
 
     public DropwizardClientRule(Object... resources) {
-        testSupport = new DropwizardTestSupport<Configuration>(FakeApplication.class, "") {
+        testSupport = new DropwizardTestSupport<HttpConfiguration>(FakeApplication.class, "") {
             @Override
-            public Application<Configuration> newApplication() {
+            public HttpApplication<HttpConfiguration> newApplication() {
                 return new FakeApplication();
             }
         };
@@ -86,9 +86,9 @@ public class DropwizardClientRule extends ExternalResource {
         }
     }
 
-    private class FakeApplication extends Application<Configuration> {
+    private class FakeApplication extends HttpApplication<HttpConfiguration> {
         @Override
-        public void run(Configuration configuration, Environment environment) {
+        public void run(HttpConfiguration configuration, HttpEnvironment environment) {
             final SimpleServerFactory serverConfig = new SimpleServerFactory();
             configuration.setServerFactory(serverConfig);
             final HttpConnectorFactory connectorConfig = (HttpConnectorFactory) serverConfig.getConnector();

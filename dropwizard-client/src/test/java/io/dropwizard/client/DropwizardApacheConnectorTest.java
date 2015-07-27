@@ -2,10 +2,10 @@ package io.dropwizard.client;
 
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheck;
-import io.dropwizard.Application;
-import io.dropwizard.Configuration;
+import io.dropwizard.HttpApplication;
+import io.dropwizard.HttpConfiguration;
 import io.dropwizard.jackson.Jackson;
-import io.dropwizard.setup.Environment;
+import io.dropwizard.setup.HttpEnvironment;
 import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import io.dropwizard.util.Duration;
@@ -27,14 +27,11 @@ import javax.validation.Validation;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.ProcessingException;
-import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 import java.net.NoRouteToHostException;
 import java.net.SocketTimeoutException;
 import java.net.URI;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -49,7 +46,7 @@ public class DropwizardApacheConnectorTest {
     private static final URI NON_ROUTABLE_ADDRESS = URI.create("http://10.255.255.1");
 
     @ClassRule
-    public static final DropwizardAppRule<Configuration> APP_RULE = new DropwizardAppRule<>(
+    public static final DropwizardAppRule<HttpConfiguration> APP_RULE = new DropwizardAppRule<>(
             TestApplication.class,
             ResourceHelpers.resourceFilePath("yaml/dropwizardApacheConnectorTest.yml"));
 
@@ -59,7 +56,7 @@ public class DropwizardApacheConnectorTest {
     private final URI testUri = URI.create("http://localhost:" + APP_RULE.getLocalPort());
 
     private JerseyClient client;
-    private Environment environment;
+    private HttpEnvironment environment;
 
     @Before
     public void setup() throws Exception {
@@ -67,7 +64,7 @@ public class DropwizardApacheConnectorTest {
         clientConfiguration.setConnectionTimeout(Duration.milliseconds(SLEEP_TIME_IN_MILLIS / 2));
         clientConfiguration.setTimeout(Duration.milliseconds(DEFAULT_CONNECT_TIMEOUT_IN_MILLIS));
 
-        environment = new Environment("test-dropwizard-apache-connector", Jackson.newObjectMapper(),
+        environment = new HttpEnvironment("test-dropwizard-apache-connector", Jackson.newObjectMapper(),
                 Validation.buildDefaultValidatorFactory().getValidator(), new MetricRegistry(),
                 getClass().getClassLoader());
         client = (JerseyClient) new JerseyClientBuilder(environment)
@@ -178,13 +175,13 @@ public class DropwizardApacheConnectorTest {
 
     }
 
-    public static class TestApplication extends Application<Configuration> {
+    public static class TestApplication extends HttpApplication<HttpConfiguration> {
         public static void main(String[] args) throws Exception {
             new TestApplication().run(args);
         }
 
         @Override
-        public void run(Configuration configuration, Environment environment) throws Exception {
+        public void run(HttpConfiguration configuration, HttpEnvironment environment) throws Exception {
             environment.jersey().register(TestResource.class);
             environment.healthChecks().register("dummy", new HealthCheck() {
                 @Override

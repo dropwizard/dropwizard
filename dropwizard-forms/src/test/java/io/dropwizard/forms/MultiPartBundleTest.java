@@ -2,7 +2,7 @@ package io.dropwizard.forms;
 
 import com.codahale.metrics.MetricRegistry;
 import io.dropwizard.jackson.Jackson;
-import io.dropwizard.setup.Environment;
+import io.dropwizard.setup.HttpEnvironment;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.junit.Test;
 
@@ -12,7 +12,7 @@ public class MultiPartBundleTest {
 
     @Test
     public void testRun() throws Exception {
-        final Environment environment = new Environment(
+        final HttpEnvironment environment = new HttpEnvironment(
                 "multipart-test",
                 Jackson.newObjectMapper(),
                 null,

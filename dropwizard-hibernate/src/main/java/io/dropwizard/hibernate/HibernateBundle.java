@@ -2,16 +2,19 @@ package io.dropwizard.hibernate;
 
 import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module;
 import com.google.common.collect.ImmutableList;
-import io.dropwizard.Configuration;
-import io.dropwizard.ConfiguredBundle;
+import io.dropwizard.AbstractConfiguredHttpBundle;
+import io.dropwizard.ConfiguredHttpBundle;
+import io.dropwizard.HttpConfiguration;
 import io.dropwizard.db.PooledDataSourceFactory;
 import io.dropwizard.db.DatabaseConfiguration;
 import io.dropwizard.setup.Bootstrap;
-import io.dropwizard.setup.Environment;
+import io.dropwizard.setup.HttpEnvironment;
 import io.dropwizard.util.Duration;
 import org.hibernate.SessionFactory;
 
-public abstract class HibernateBundle<T extends Configuration> implements ConfiguredBundle<T>, DatabaseConfiguration<T> {
+public abstract class HibernateBundle<T extends HttpConfiguration>
+        extends AbstractConfiguredHttpBundle<T>
+        implements ConfiguredHttpBundle<T>, DatabaseConfiguration<T> {
     private static final String DEFAULT_NAME = "hibernate";
 
     private SessionFactory sessionFactory;
@@ -51,7 +54,7 @@ public abstract class HibernateBundle<T extends Configuration> implements Config
     }
 
     @Override
-    public final void run(T configuration, Environment environment) throws Exception {
+    public final void run(T configuration, HttpEnvironment environment) throws Exception {
         final PooledDataSourceFactory dbConfig = getDataSourceFactory(configuration);
         this.sessionFactory = sessionFactoryFactory.build(this, environment, dbConfig, entities, name());
         environment.jersey().register(new UnitOfWorkApplicationListener(sessionFactory));

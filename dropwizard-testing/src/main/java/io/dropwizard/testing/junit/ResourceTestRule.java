@@ -9,7 +9,7 @@ import com.google.common.collect.Sets;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.jersey.jackson.JacksonMessageBodyProvider;
-import io.dropwizard.jersey.validation.Validators;
+import io.dropwizard.jersey.validation.JerseyValidators;
 import io.dropwizard.jersey.validation.ConstraintViolationExceptionMapper;
 import io.dropwizard.logging.BootstrapLogging;
 import org.glassfish.jersey.client.ClientConfig;
@@ -46,7 +46,7 @@ public class ResourceTestRule implements TestRule {
         private final Set<Class<?>> providers = Sets.newHashSet();
         private final Map<String, Object> properties = Maps.newHashMap();
         private ObjectMapper mapper = Jackson.newObjectMapper();
-        private Validator validator = Validators.newValidator();
+        private Validator validator = JerseyValidators.newValidator();
         private TestContainerFactory testContainerFactory = new InMemoryTestContainerFactory();
 
         public Builder setMapper(ObjectMapper mapper) {

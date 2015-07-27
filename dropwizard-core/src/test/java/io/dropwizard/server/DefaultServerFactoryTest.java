@@ -15,7 +15,7 @@ import io.dropwizard.jetty.HttpConnectorFactory;
 import io.dropwizard.logging.ConsoleAppenderFactory;
 import io.dropwizard.logging.FileAppenderFactory;
 import io.dropwizard.logging.SyslogAppenderFactory;
-import io.dropwizard.setup.Environment;
+import io.dropwizard.setup.HttpEnvironment;
 import org.eclipse.jetty.server.AbstractNetworkConnector;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.NetworkConnector;
@@ -33,14 +33,8 @@ import java.io.File;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.concurrent.Callable;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
 import java.util.Set;
+import java.util.concurrent.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -99,7 +93,7 @@ public class DefaultServerFactoryTest {
     @Test
     public void registersDefaultExceptionMappers() throws Exception {
         assertThat(http.getRegisterDefaultExceptionMappers()).isTrue();
-        Environment environment = new Environment("test", Jackson.newObjectMapper(),
+        HttpEnvironment environment = new HttpEnvironment("test", Jackson.newObjectMapper(),
                 Validation.buildDefaultValidatorFactory().getValidator(), new MetricRegistry(),
                 ClassLoader.getSystemClassLoader());
         http.build(environment);
@@ -115,7 +109,7 @@ public class DefaultServerFactoryTest {
     public void doesNotDefaultExceptionMappers() throws Exception {
         http.setRegisterDefaultExceptionMappers(false);
         assertThat(http.getRegisterDefaultExceptionMappers()).isFalse();
-        Environment environment = new Environment("test", Jackson.newObjectMapper(),
+        HttpEnvironment environment = new HttpEnvironment("test", Jackson.newObjectMapper(),
                 Validation.buildDefaultValidatorFactory().getValidator(), new MetricRegistry(),
                 ClassLoader.getSystemClassLoader());
         http.build(environment);
@@ -129,7 +123,7 @@ public class DefaultServerFactoryTest {
         ObjectMapper objectMapper = Jackson.newObjectMapper();
         Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
         MetricRegistry metricRegistry = new MetricRegistry();
-        Environment environment = new Environment("test", objectMapper, validator, metricRegistry,
+        HttpEnvironment environment = new HttpEnvironment("test", objectMapper, validator, metricRegistry,
                 ClassLoader.getSystemClassLoader());
 
         CountDownLatch requestReceived = new CountDownLatch(1);

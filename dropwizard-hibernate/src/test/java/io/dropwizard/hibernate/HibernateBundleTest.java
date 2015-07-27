@@ -5,11 +5,12 @@ import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module;
 import com.google.common.collect.ImmutableList;
-import io.dropwizard.Configuration;
+import io.dropwizard.HttpConfiguration;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.jersey.setup.JerseyEnvironment;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import io.dropwizard.setup.HttpEnvironment;
 import org.hibernate.SessionFactory;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,13 +24,13 @@ public class HibernateBundleTest {
     private final ImmutableList<Class<?>> entities = ImmutableList.<Class<?>>of(Person.class);
     private final SessionFactoryFactory factory = mock(SessionFactoryFactory.class);
     private final SessionFactory sessionFactory = mock(SessionFactory.class);
-    private final Configuration configuration = mock(Configuration.class);
+    private final HttpConfiguration configuration = mock(HttpConfiguration.class);
     private final HealthCheckRegistry healthChecks = mock(HealthCheckRegistry.class);
     private final JerseyEnvironment jerseyEnvironment = mock(JerseyEnvironment.class);
-    private final Environment environment = mock(Environment.class);
-    private final HibernateBundle<Configuration> bundle = new HibernateBundle<Configuration>(entities, factory) {
+    private final HttpEnvironment environment = mock(HttpEnvironment.class);
+    private final HibernateBundle<HttpConfiguration> bundle = new HibernateBundle<HttpConfiguration>(entities, factory) {
         @Override
-        public DataSourceFactory getDataSourceFactory(Configuration configuration) {
+        public DataSourceFactory getDataSourceFactory(HttpConfiguration configuration) {
             return dbConfig;
         }
     };
@@ -48,10 +49,11 @@ public class HibernateBundleTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void addsHibernateSupportToJackson() throws Exception {
         final ObjectMapper objectMapperFactory = mock(ObjectMapper.class);
 
-        final Bootstrap<?> bootstrap = mock(Bootstrap.class);
+        final Bootstrap<HttpConfiguration> bootstrap = mock(Bootstrap.class);
         when(bootstrap.getObjectMapper()).thenReturn(objectMapperFactory);
 
         bundle.initialize(bootstrap);
@@ -96,9 +98,9 @@ public class HibernateBundleTest {
     @Test
     @SuppressWarnings("unchecked")
     public void registersACustomNameOfHealthCheckAndDBPoolMetrics() throws Exception {
-        final HibernateBundle<Configuration> customBundle = new HibernateBundle<Configuration>(entities, factory) {
+        final HibernateBundle<HttpConfiguration> customBundle = new HibernateBundle<HttpConfiguration>(entities, factory) {
             @Override
-            public DataSourceFactory getDataSourceFactory(Configuration configuration) {
+            public DataSourceFactory getDataSourceFactory(HttpConfiguration configuration) {
                 return dbConfig;
             }
 

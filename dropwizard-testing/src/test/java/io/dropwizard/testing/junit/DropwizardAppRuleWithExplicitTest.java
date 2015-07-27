@@ -1,9 +1,8 @@
 package io.dropwizard.testing.junit;
 
-import io.dropwizard.Application;
+import io.dropwizard.HttpApplication;
 import io.dropwizard.jetty.HttpConnectorFactory;
 import io.dropwizard.server.DefaultServerFactory;
-import io.dropwizard.setup.Environment;
 
 import java.util.Map;
 
@@ -15,6 +14,7 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import io.dropwizard.setup.HttpEnvironment;
 import org.junit.Assert;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -49,9 +49,9 @@ public class DropwizardAppRuleWithExplicitTest {
         Assert.assertEquals(ImmutableMap.of("message", "stuff!"), response);
     }
 
-    public static class TestApplication extends Application<TestConfiguration> {
+    public static class TestApplication extends HttpApplication<TestConfiguration> {
         @Override
-        public void run(TestConfiguration configuration, Environment environment) throws Exception {
+        public void run(TestConfiguration configuration, HttpEnvironment environment) throws Exception {
             environment.jersey().register(new TestResource(configuration.getMessage()));
         }
     }
