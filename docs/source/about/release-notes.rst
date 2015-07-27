@@ -54,7 +54,7 @@ v0.9.0
 * Upgraded to commons-lang3 3.4
 * Upgraded to tomcat-jdbc 8.0.24
 * Upgraded to joda-time 2.8.1
-* Upgraded to jdbi 2.63
+* Upgraded to jdbi 2.63.1
 
 .. _rel-0.8.1:
 
