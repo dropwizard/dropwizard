@@ -54,7 +54,7 @@ shutdownGracePeriod                 30 seconds                                  
                                                                                      to cleanly shutdown before forcibly terminating them.
 allowedMethods                      ``GET``, ``POST``, ``PUT``, ``DELETE``,          The set of allowed HTTP methods. Others will be rejected with a
                                     ``HEAD``, ``OPTIONS``, ``PATCH``                 405 Method Not Allowed response.
-rootPath                            ``/``                                            The URL pattern relative to ``applicationContextPath`` from which
+rootPath                            ``/*``                                            The URL pattern relative to ``applicationContextPath`` from which
                                                                                      the JAX-RS resources will be served.
 registerDefaultExceptionMappers     true                                             Whether or not the default Jersey ExceptionMappers should be registered.
                                                                                      Set this to false if you want to register your own.
@@ -73,20 +73,34 @@ GZip
         bufferSize: 8KiB
 
 
-+----------------------+------------+---------------------------------------------------------------------------------------------------+ 
-|     Name             | Default    | Description                                                                                       | 
-+======================+============+===================================================================================================+ 
-| enabled              | true       | If true, all requests with gzip in their Accept-Content-Encoding                                  | 
-|                      |            | headers will have their response entities encoded with gzip.                                      |
-+----------------------+------------+---------------------------------------------------------------------------------------------------+
-| minimumEntitySize    | 256 bytes  | All response entities under this size are not compressed.                                         |
-+----------------------+------------+---------------------------------------------------------------------------------------------------+
-| bufferSize           | 8KiB       | The size of the buffer to use when compressing.                                                   |
-+----------------------+------------+---------------------------------------------------------------------------------------------------+
-| excludedUserAgents   | []         | The set of user agents to exclude from compression.                                               |
-+----------------------+------------+---------------------------------------------------------------------------------------------------+
-| compressedMimeTypes  | []         | If specified, the set of mime types to compress.                                                  |
-+----------------------+------------+---------------------------------------------------------------------------------------------------+
++---------------------------+---------------------+------------------------------------------------------------------------------------------------------+
+|     Name                  | Default             | Description                                                                                          |
++===========================+=====================+======================================================================================================+
+| enabled                   | true                | If true, all requests with ``gzip`` or ``deflate`` in the ``Accept-Encoding`` header will have their |
+|                           |                     | response entities compressed and requests with ``gzip`` or ``deflate`` in the ``Content-Encoding``   |
+|                           |                     | header will have their request entities decompressed.                                                |
++---------------------------+---------------------+------------------------------------------------------------------------------------------------------+
+| minimumEntitySize         | 256 bytes           | All response entities under this size are not compressed.                                            |
++---------------------------+---------------------+------------------------------------------------------------------------------------------------------+
+| bufferSize                | 8KiB                | The size of the buffer to use when compressing.                                                      |
++---------------------------+---------------------+------------------------------------------------------------------------------------------------------+
+| excludedUserAgents        | []                  | The set of user agents to exclude from compression.                                                  |
++---------------------------+---------------------+------------------------------------------------------------------------------------------------------+
+| excludedUserAgentPatterns | []                  | The set of user agent patterns to exclude from compression.                                          |
++---------------------------+---------------------+------------------------------------------------------------------------------------------------------+
+| compressedMimeTypes       | Jetty's default     | The list of mime types to compress. The default is all types apart                                   |
+|                           |                     | the commonly known image, video, audio and compressed types.                                         |
++---------------------------+---------------------+------------------------------------------------------------------------------------------------------+
+| includedMethods           | Jetty's default     | The list list of HTTP methods to compress. The default is to compress only GET responses.            |
++---------------------------+---------------------+------------------------------------------------------------------------------------------------------+
+| deflateCompressionLevel   | -1                  | The compression level used for ZLIB deflation(compression).                                          |
++---------------------------+---------------------+------------------------------------------------------------------------------------------------------+
+| gzipCompatibleDeflation   | true                | If true, then ZLIB deflation(compression) will be performed in the GZIP-compatible mode.             |
++---------------------------+---------------------+------------------------------------------------------------------------------------------------------+
+| gzipCompatibleInflation   | true                | If true, then ZLIB inflation(decompression) will be performed in the GZIP-compatible mode.           |
++---------------------------+---------------------+------------------------------------------------------------------------------------------------------+
+| vary                      | ``Accept-Encoding`` | Value of the `Vary` header sent with responses that could be compressed.                             |
++---------------------------+---------------------+------------------------------------------------------------------------------------------------------+
 
 
 .. _man-configuration-requestLog:
@@ -397,7 +411,14 @@ Logging
     logging:
       level: INFO
       loggers:
-        io.dropwizard: INFO
+        "io.dropwizard": INFO
+        "org.hibernate.SQL":
+          level: DEBUG
+          appenders:
+            - type: file
+              currentLogFilename: /var/log/myapplication-sql.log
+              archivedLogFilenamePattern: /var/log/myapplication-sql-%d.log.gz
+              archivedFileCount: 5
       appenders:
         - type: console
 
@@ -405,9 +426,9 @@ Logging
 ====================== ===========  ===========
 Name                   Default      Description
 ====================== ===========  ===========
-level                  Level.INFO   Logback logging level
-loggers                (none)       
-appenders              (none)       one of console, file or syslog
+level                  Level.INFO   Logback logging level.
+loggers                (none)       Individual logger configuration (both forms are acceptable).
+appenders              (none)       One of console, file or syslog.
 ====================== ===========  ===========
 
 
@@ -789,24 +810,26 @@ See HttpClientConfiguration_  for more options.
       userAgent: <application name> (<client name>)
 
 
-========================= ======================================  =============================================================================
-Name                      Default                                 Description
-========================= ======================================  =============================================================================
-timeout                   500 milliseconds                        The maximum idle time for a connection, once established.
-connectionTimeout         500 milliseconds                        The maximum time to wait for a connection to open.
-connectionRequestTimeout  500 milliseconds                        The maximum time to wait for a connection to be returned from the connection pool.
-timeToLive                1 hour                                  The maximum time a pooled connection can stay idle (not leased to any thread)
-                                                                  before it is shut down.
-cookiesEnabled            false                                   Whether or not to enable cookies.
-maxConnections            1024                                    The maximum number of concurrent open connections.
-maxConnectionsPerRoute    1024                                    The maximum number of concurrent open connections per route.
-keepAlive                 0 milliseconds                          The maximum time a connection will be kept alive before it is reconnected. If set
-                                                                  to 0, connections will be immediately closed after every request/response.
-retries                   0                                       The number of times to retry failed requests. Requests are only
-                                                                  retried if they throw an exception other than ``InterruptedIOException``,
-                                                                  ``UnknownHostException``, ``ConnectException``, or ``SSLException``.
-userAgent                 ``applicationName`` (``clientName``)    The User-Agent to send with requests.
-========================= ======================================  =============================================================================
+=============================  ======================================  =============================================================================
+Name                           Default                                 Description
+=============================  ======================================  =============================================================================
+timeout                        500 milliseconds                        The maximum idle time for a connection, once established.
+connectionTimeout              500 milliseconds                        The maximum time to wait for a connection to open.
+connectionRequestTimeout       500 milliseconds                        The maximum time to wait for a connection to be returned from the connection pool.
+timeToLive                     1 hour                                  The maximum time a pooled connection can stay idle (not leased to any thread)
+                                                                       before it is shut down.
+cookiesEnabled                 false                                   Whether or not to enable cookies.
+maxConnections                 1024                                    The maximum number of concurrent open connections.
+maxConnectionsPerRoute         1024                                    The maximum number of concurrent open connections per route.
+keepAlive                      0 milliseconds                          The maximum time a connection will be kept alive before it is reconnected. If set
+                                                                       to 0, connections will be immediately closed after every request/response.
+retries                        0                                       The number of times to retry failed requests. Requests are only
+                                                                       retried if they throw an exception other than ``InterruptedIOException``,
+                                                                       ``UnknownHostException``, ``ConnectException``, or ``SSLException``.
+userAgent                      ``applicationName`` (``clientName``)    The User-Agent to send with requests.
+validateAfterInactivityPeriod  0 milliseconds                          The maximum time before a persistent connection is checked to remain active.
+                                                                       If set to 0, no inactivity check will be performed.
+=============================  ======================================  =============================================================================
 
 
 .. _man-configuration-clients-http-proxy:

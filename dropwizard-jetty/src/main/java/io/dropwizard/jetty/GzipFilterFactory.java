@@ -13,6 +13,78 @@ import java.util.zip.Deflater;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+/**
+ * Builds GZIP filters.
+ *
+ * <p/>
+ * <b>Configuration Parameters:</b>
+ * <table>
+ *     <tr>
+ *         <td>Name</td>
+ *         <td>Default</td>
+ *         <td>Description</td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code enabled}</td>
+ *         <td>true</td>
+ *         <td>If true, all requests with `gzip` or `deflate` in the `Accept-Encoding` header will have their
+ *             response entities compressed and requests with `gzip` or `deflate` in the `Content-Encoding`
+ *             header will have their request entities decompressed.</td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code minimumEntitySize}</td>
+ *         <td>256 bytes</td>
+ *         <td>All response entities under this size are not compressed.</td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code bufferSize}</td>
+ *         <td>8KiB</td>
+ *         <td>The size of the buffer to use when compressing.</td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code excludedUserAgents}</td>
+ *         <td>(none)</td>
+ *         <td>The set of user agents to exclude from compression. </td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code excludedUserAgentPatterns}</td>
+ *         <td>(none)</td>
+ *         <td>The set of user agent patterns to exclude from compression. </td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code compressedMimeTypes}</td>
+ *         <td>(Jetty's default)</td>
+ *         <td>The list of mime types to compress. The default is all types apart the
+ *         commonly known image, video, audio and compressed types.</td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code includedMethods}</td>
+ *         <td>(Jetty's default)</td>
+ *         <td>The list list of HTTP methods to compress. The default is to compress
+ *         only GET responses.</td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code deflateCompressionLevel}</td>
+ *         <td>-1</td>
+ *         <td>The compression level used for ZLIB deflation(compression).</td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code gzipCompatibleDeflation}</td>
+ *         <td>true</td>
+ *         <td>If true, then ZLIB deflation(compression) will be performed in the GZIP-compatible mode.</td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code gzipCompatibleInflation}</td>
+ *         <td>true</td>
+ *         <td>If true, then ZLIB inflation(decompression) will be performed in the GZIP-compatible mode.</td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code vary}</td>
+ *         <td>Accept-Encoding</td>
+ *         <td>Value of the `Vary` header sent with responses that could be compressed.</td>
+ *     </tr>
+ * </table>
+ */
 public class GzipFilterFactory {
     private boolean enabled = true;
 
@@ -27,6 +99,7 @@ public class GzipFilterFactory {
     private Set<String> compressedMimeTypes = Sets.newHashSet();
     private Set<String> includedMethods = Sets.newHashSet();
     private boolean gzipCompatibleDeflation = true;
+    private boolean gzipCompatibleInflation = true;
     private String vary = "Accept-Encoding";
 
     @Min(Deflater.DEFAULT_COMPRESSION)
@@ -104,6 +177,16 @@ public class GzipFilterFactory {
     }
 
     @JsonProperty
+    public boolean isGzipCompatibleInflation() {
+        return gzipCompatibleInflation;
+    }
+
+    @JsonProperty
+    public void setGzipCompatibleInflation(boolean gzipCompatibleInflation) {
+        this.gzipCompatibleInflation = gzipCompatibleInflation;
+    }
+
+    @JsonProperty
     public Set<Pattern> getExcludedUserAgentPatterns() {
         return excludedUserAgentPatterns;
     }
@@ -162,6 +245,7 @@ public class GzipFilterFactory {
         }
 
         filter.setDeflateNoWrap(gzipCompatibleDeflation);
+        filter.setInflateNoWrap(gzipCompatibleInflation);
 
         return filter;
     }

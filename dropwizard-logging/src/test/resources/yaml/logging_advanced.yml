@@ -1,0 +1,20 @@
+level: INFO
+loggers:
+  "com.example.app": INFO
+  "com.example.newApp":
+    level: DEBUG
+    appenders:
+      - type: file
+        currentLogFilename: "/tmp/example-new-app.log"
+        archivedLogFilenamePattern: "/tmp/example-new-app-%d.log.gz"
+        logFormat: "%-5level %logger: %msg%n"
+        archivedFileCount: 5
+  "com.example.legacyApp":
+    level: DEBUG
+appenders:
+  - type: console
+  - type: file
+    currentLogFilename: "/tmp/example.log"
+    archivedLogFilenamePattern: "/tmp/example-%d.log.gz"
+    logFormat: "%-5level %logger: %msg%n"
+    archivedFileCount: 5

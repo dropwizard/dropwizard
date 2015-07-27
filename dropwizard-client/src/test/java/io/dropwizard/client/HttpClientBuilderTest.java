@@ -8,18 +8,20 @@ import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import io.dropwizard.client.proxy.AuthConfiguration;
 import io.dropwizard.client.proxy.ProxyConfiguration;
-import io.dropwizard.jackson.Jackson;
 import io.dropwizard.lifecycle.Managed;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.util.Duration;
 import org.apache.commons.lang3.reflect.FieldUtils;
-import org.apache.http.*;
+import org.apache.http.Header;
+import org.apache.http.HeaderIterator;
+import org.apache.http.HttpHeaders;
+import org.apache.http.HttpHost;
+import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.Credentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.HttpRequestRetryHandler;
 import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
@@ -28,8 +30,8 @@ import org.apache.http.config.Registry;
 import org.apache.http.config.RegistryBuilder;
 import org.apache.http.config.SocketConfig;
 import org.apache.http.conn.DnsResolver;
-import org.apache.http.conn.routing.HttpRoutePlanner;
 import org.apache.http.conn.routing.HttpRoute;
+import org.apache.http.conn.routing.HttpRoutePlanner;
 import org.apache.http.conn.socket.ConnectionSocketFactory;
 import org.apache.http.conn.socket.PlainConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
@@ -50,19 +52,16 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
-import javax.validation.Validation;
-import java.net.ProxySelector;
-import java.net.Proxy;
-import java.net.URI;
-import java.net.SocketAddress;
-import java.net.InetSocketAddress;
-
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+import java.net.ProxySelector;
+import java.net.SocketAddress;
+import java.net.URI;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
@@ -406,6 +405,18 @@ public class HttpClientBuilderTest {
         assertThat(route.getHopCount()).isEqualTo(expectedProxy != null ? 2 : 1);
 
         return httpClient;
+    }
+    
+    @Test
+    public void setValidateAfterInactivityPeriodFromConfiguration() throws Exception {
+        int validateAfterInactivityPeriod = 50000;
+        configuration.setValidateAfterInactivityPeriod(Duration.milliseconds(validateAfterInactivityPeriod));
+        final ConfiguredCloseableHttpClient client = builder.using(configuration)
+                .createClient(apacheBuilder, builder.configureConnectionManager(connectionManager), "test");
+
+        assertThat(client).isNotNull();
+        assertThat(spyHttpClientBuilderField("connManager", apacheBuilder)).isSameAs(connectionManager);
+        verify(connectionManager).setValidateAfterInactivity(validateAfterInactivityPeriod);
     }
 
     @Test

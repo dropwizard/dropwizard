@@ -21,8 +21,7 @@ Read more at [dropwizard.io](http://www.dropwizard.io).
 
 Want to contribute to Dropwizard?
 ---
-Before working on the code, if you plan to contribute changes, please read the following.
-the [CONTRIBUTING](CONTRIBUTING.md) document.
+Before working on the code, if you plan to contribute changes, please read the following [CONTRIBUTING](CONTRIBUTING.md) document.
 
 Need help or found an issue?
 ---

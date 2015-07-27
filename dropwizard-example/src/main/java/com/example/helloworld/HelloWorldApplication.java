@@ -84,12 +84,12 @@ public class HelloWorldApplication extends HttpApplication<HelloWorldConfigurati
 
         environment.healthChecks().register("template", new TemplateHealthCheck(template));
         environment.jersey().register(DateRequiredFeature.class);
-        environment.jersey().register(new AuthDynamicFeature(new BasicCredentialAuthFilter.Builder<User, ExampleAuthenticator>()
+        environment.jersey().register(new AuthDynamicFeature(new BasicCredentialAuthFilter.Builder<User>()
                 .setAuthenticator(new ExampleAuthenticator())
                 .setAuthorizer(new ExampleAuthorizer())
                 .setRealm("SUPER SECRET STUFF")
                 .buildAuthFilter()));
-        environment.jersey().register(new AuthValueFactoryProvider.Binder(User.class));
+        environment.jersey().register(new AuthValueFactoryProvider.Binder<>(User.class));
         environment.jersey().register(RolesAllowedDynamicFeature.class);
         environment.jersey().register(new HelloWorldResource(template));
         environment.jersey().register(new ViewResource());

@@ -6,14 +6,14 @@
     </prerequisites>
 
     <artifactId>dropwizard-example</artifactId>
-    <version>0.9.0-rc2-SNAPSHOT</version>
+    <version>0.9.0-rc4-SNAPSHOT</version>
     <groupId>io.dropwizard</groupId>
     <name>Dropwizard Example Application</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <jersey.version>2.18</jersey.version>
+        <jersey.version>2.19</jersey.version>
         <h2.version>1.4.187</h2.version>
     </properties>
 

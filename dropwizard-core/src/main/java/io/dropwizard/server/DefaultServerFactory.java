@@ -3,6 +3,7 @@ package io.dropwizard.server;
 import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import com.google.common.base.MoreObjects;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import io.dropwizard.jetty.ConnectorFactory;
@@ -228,5 +229,17 @@ public class DefaultServerFactory extends AbstractServerFactory {
             connectors.add(factory.build(server, metricRegistry, "application", null));
         }
         return connectors;
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("applicationConnectors", applicationConnectors)
+                .add("adminConnectors", adminConnectors)
+                .add("adminMaxThreads", adminMaxThreads)
+                .add("adminMinThreads", adminMinThreads)
+                .add("applicationContextPath", applicationContextPath)
+                .add("adminContextPath", adminContextPath)
+                .toString();
     }
 }

@@ -20,13 +20,13 @@ import java.util.Map;
 public class DropwizardAppRuleWithoutConfigTest {
 
     @ClassRule
-    public static final DropwizardAppRule<HttpConfiguration> RULE = new DropwizardAppRule<>(TestApplication.class, null);
+    public static final DropwizardAppRule<HttpConfiguration> RULE = new DropwizardAppRule<>(TestApplication.class);
 
     Client client = ClientBuilder.newClient();
 
     @Test
     public void runWithoutConfigFile() {
-        Map response = client.target("http://localhost:" + RULE.getLocalPort() + "/test")
+        Map<?,?> response = client.target("http://localhost:" + RULE.getLocalPort() + "/test")
                 .request()
                 .get(Map.class);
         Assert.assertEquals(ImmutableMap.of("color", "orange"), response);

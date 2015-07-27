@@ -118,7 +118,7 @@ public class ViewBundle<T extends HttpConfiguration>
     }
 
     @Override
-    public void initialize(Bootstrap<? extends T> bootstrap) {
+    public void initialize(Bootstrap<?> bootstrap) {
         // nothing doing
     }
 }

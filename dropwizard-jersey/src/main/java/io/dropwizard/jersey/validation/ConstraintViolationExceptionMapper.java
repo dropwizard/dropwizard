@@ -1,6 +1,7 @@
 package io.dropwizard.jersey.validation;
 
 import com.google.common.base.Function;
+import com.google.common.base.Strings;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableList;
 import io.dropwizard.validation.ConstraintViolations;
@@ -16,13 +17,17 @@ public class ConstraintViolationExceptionMapper implements ExceptionMapper<Const
 
     @Override
     public Response toResponse(ConstraintViolationException exception) {
-        final ImmutableList<String> errors = FluentIterable.from(exception.getConstraintViolations())
+        ImmutableList<String> errors = FluentIterable.from(exception.getConstraintViolations())
                 .transform(new Function<ConstraintViolation<?>, String>() {
                     @Override
                     public String apply(ConstraintViolation<?> v) {
                         return ConstraintMessage.getMessage(v);
                     }
                 }).toList();
+
+        if (errors.size() == 0) {
+            errors = ImmutableList.of(Strings.nullToEmpty(exception.getMessage()));
+        }
 
         return Response.status(ConstraintViolations.determineStatus(exception.getConstraintViolations()))
                 .entity(new ValidationErrorMessage(errors))

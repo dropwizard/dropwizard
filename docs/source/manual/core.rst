@@ -128,7 +128,7 @@ create a new ``MessageQueueFactory`` class:
                 public void stop() {
                     client.close();
                 }
-            };
+            });
             return client;
         }
     }
@@ -672,8 +672,9 @@ A few items of note:
 Configuration
 -------------
 
-You can specify a default logger level and even override the levels of
-other loggers in your YAML configuration file:
+You can specify a default logger level, override the levels of other loggers in your YAML configuration file,
+and even specify appenders for them. The latter form of configuration is preferable, but the former is also
+acceptable.
 
 .. code-block:: yaml
 
@@ -689,6 +690,14 @@ other loggers in your YAML configuration file:
         # Overrides the level of com.example.dw.Thing and sets it to DEBUG.
         "com.example.dw.Thing": DEBUG
 
+        # Enables the SQL query log and redirect it to a separate file
+        "org.hibernate.SQL":
+          level: DEBUG
+          appenders:
+            - type: file
+              currentLogFilename: ./logs/example-sql.log
+              archivedLogFilenamePattern: ./logs/example-sql-%d.log.gz
+              archivedFileCount: 5
 .. _man-core-logging-console:
 
 Console Logging

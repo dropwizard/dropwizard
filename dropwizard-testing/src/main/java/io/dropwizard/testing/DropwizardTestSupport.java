@@ -21,7 +21,6 @@ import org.eclipse.jetty.server.ServerConnector;
 
 import javax.annotation.Nullable;
 import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
 import java.util.List;
 import java.util.Set;
 
@@ -44,6 +43,13 @@ public class DropwizardTestSupport<C extends HttpConfiguration> {
     private final Set<ConfigOverride> configOverrides;
     private final Optional<String> customPropertyPrefix;
 
+    /**
+     * Flag that indicates whether instance was constructed with an explicit
+     * Configuration object or not; handling of the two cases differ.
+     * Needed because state of {@link #configuration} changes during lifecycle.
+     */
+    protected final boolean explicitConfig;
+
     private C configuration;
     private HttpApplication<C> application;
     private Environment environment;
@@ -62,6 +68,31 @@ public class DropwizardTestSupport<C extends HttpConfiguration> {
         this.configPath = configPath;
         this.configOverrides = ImmutableSet.copyOf(firstNonNull(configOverrides, new ConfigOverride[0]));
         this.customPropertyPrefix = customPropertyPrefix;
+        explicitConfig = false;
+    }
+
+    /**
+     * Alternative constructor that may be used to directly provide Configuration
+     * to use, instead of specifying resource path for locating data to create
+     * Configuration.
+     *
+     * @since 0.9
+     *
+     * @param applicationClass Type of Application to create
+     * @param configuration Pre-constructed configuration object caller provides; will not
+     *   be manipulated in any way, no overriding
+     */
+    public DropwizardTestSupport(Class<? extends HttpApplication<C>> applicationClass,
+            C configuration) {
+        if (configuration == null) {
+            throw new IllegalArgumentException("Can not pass null configuration for explicitly configured instance");
+        }
+        this.applicationClass = applicationClass;
+        configPath = "";
+        configOverrides = ImmutableSet.of();
+        customPropertyPrefix = Optional.absent();
+        this.configuration = configuration;
+        explicitConfig = true;
     }
 
     public DropwizardTestSupport<C> addListener(ServiceListener<C> listener) {
@@ -121,7 +152,6 @@ public class DropwizardTestSupport<C extends HttpConfiguration> {
         }
     }
 
-    @SuppressWarnings("unchecked")
     private void startIfRequired() {
         if (jettyServer != null) {
             return;
@@ -142,7 +172,7 @@ public class DropwizardTestSupport<C extends HttpConfiguration> {
                     DropwizardTestSupport.this.configuration = configuration;
                     DropwizardTestSupport.this.environment = environment;
                     super.run(configuration, environment);
-                    for (ServiceListener listener : listeners) {
+                    for (ServiceListener<C> listener : listeners) {
                         try {
                             listener.onRun(configuration, environment, DropwizardTestSupport.this);
                         } catch (Exception ex) {
@@ -151,7 +181,15 @@ public class DropwizardTestSupport<C extends HttpConfiguration> {
                     }
                 }
             };
-            if (customPropertyPrefix.isPresent()) {
+            if (explicitConfig) {
+                bootstrap.setConfigurationFactoryFactory(new ConfigurationFactoryFactory<C>() {
+                    @Override
+                    public ConfigurationFactory<C> create(Class<C> klass, Validator validator,
+                                                          ObjectMapper objectMapper, String propertyPrefix) {
+                        return new POJOConfigurationFactory<>(configuration);
+                    }
+                });
+            } else if (customPropertyPrefix.isPresent()) {
                 bootstrap.setConfigurationFactoryFactory(new ConfigurationFactoryFactory<C>() {
                     @Override
                     public ConfigurationFactory<C> create(Class<C> klass, Validator validator,

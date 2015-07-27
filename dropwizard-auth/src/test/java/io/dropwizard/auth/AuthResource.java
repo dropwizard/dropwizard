@@ -15,19 +15,25 @@ import java.security.Principal;
 @Path("/test/")
 @Produces(MediaType.TEXT_PLAIN)
 public class AuthResource {
+
     @RolesAllowed({"ADMIN"})
     @GET
-    public String show(@Context SecurityContext securityContext) {
-        Principal principal = securityContext.getUserPrincipal();
-        return principal.getName();
+    @Path("admin")
+    public String show(@Auth Principal principal) {
+        return "'" + principal.getName() + "' has admin privileges";
     }
 
     @PermitAll
     @GET
-    @Path("authnotrequired")
-    public String showNotRequired(@Context SecurityContext securityContext) {
-        Principal principal = securityContext.getUserPrincipal();
-        return principal == null ? "No Principal" : principal.getName();
+    @Path("profile")
+    public String showForEveryUser(@Auth Principal principal) {
+        return "'" + principal.getName() + "' has user privileges";
+    }
+
+    @GET
+    @Path("implicit-permitall")
+    public String implicitPermitAllAuthorization(@Auth Principal principal) {
+        return "'" + principal.getName() + "' has user privileges";
     }
 
     @GET
