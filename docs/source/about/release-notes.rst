@@ -52,8 +52,9 @@ v0.9.0
 * Upgraded to Metrics 3.1.2
 * Upgraded to SLF4J 1.7.12
 * Upgraded to commons-lang3 3.4
-* Upgrade to tomcat-jdbc 8.0.21
+* Upgraded to tomcat-jdbc 8.0.24
 * Upgraded to joda-time 2.8.1
+* Upgraded to jdbi 2.63
 
 .. _rel-0.8.1:
 
