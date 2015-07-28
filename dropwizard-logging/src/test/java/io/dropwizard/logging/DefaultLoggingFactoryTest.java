@@ -6,13 +6,20 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.google.common.base.Charsets;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.io.Files;
 import com.google.common.io.Resources;
 import io.dropwizard.configuration.ConfigurationFactory;
+import io.dropwizard.configuration.FileConfigurationSourceProvider;
+import io.dropwizard.configuration.SubstitutingSourceProvider;
 import io.dropwizard.jackson.Jackson;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.text.StrSubstitutor;
 import org.assertj.core.data.MapEntry;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.slf4j.LoggerFactory;
 
 import javax.validation.Validation;
@@ -28,6 +35,9 @@ public class DefaultLoggingFactoryTest {
             objectMapper, "dw");
 
     private DefaultLoggingFactory config;
+
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder();
 
     @Before
     public void setUp() throws Exception {
@@ -58,8 +68,8 @@ public class DefaultLoggingFactoryTest {
         final AppenderFactory appenderFactory = newAppConfiguration.getAppenders().get(0);
         assertThat(appenderFactory).isInstanceOf(FileAppenderFactory.class);
         final FileAppenderFactory fileAppenderFactory = (FileAppenderFactory) appenderFactory;
-        assertThat(fileAppenderFactory.getCurrentLogFilename()).isEqualTo("/tmp/example-new-app.log");
-        assertThat(fileAppenderFactory.getArchivedLogFilenamePattern()).isEqualTo("/tmp/example-new-app-%d.log.gz");
+        assertThat(fileAppenderFactory.getCurrentLogFilename()).isEqualTo("${new_app}.log");
+        assertThat(fileAppenderFactory.getArchivedLogFilenamePattern()).isEqualTo("${new_app}-%d.log.gz");
         assertThat(fileAppenderFactory.getArchivedFileCount()).isEqualTo(5);
 
         final JsonNode legacyApp = config.getLoggers().get("com.example.legacyApp");
@@ -72,15 +82,17 @@ public class DefaultLoggingFactoryTest {
 
     @Test
     public void testConfigure() throws Exception {
-        final File newAppLog = new File("/tmp/example-new-app.log");
-        final File defaultLog = new File("/tmp/example.log");
+        final File newAppLog = folder.newFile("example-new-app.log");
+        final File defaultLog = folder.newFile("example.log");
+        final StrSubstitutor substitutor = new StrSubstitutor(ImmutableMap.of(
+                "new_app", StringUtils.removeEnd(newAppLog.getAbsolutePath(), ".log"),
+                "default", StringUtils.removeEnd(defaultLog.getAbsolutePath(), ".log")
+        ));
 
-        // Cleanup to be safe
-        Files.write(new byte[]{}, newAppLog);
-        Files.write(new byte[]{}, defaultLog);
-
+        final String configPath = Resources.getResource("yaml/logging_advanced.yml").getFile();
         final DefaultLoggingFactory config = factory.build(
-                new File(Resources.getResource("yaml/logging_advanced.yml").toURI()));
+                new SubstitutingSourceProvider(new FileConfigurationSourceProvider(), substitutor),
+                configPath);
         config.configure(new MetricRegistry(), "test-logger");
 
         LoggerFactory.getLogger("com.example.app").debug("Application debug log");
@@ -102,12 +114,5 @@ public class DefaultLoggingFactoryTest {
         assertThat(Files.readLines(newAppLog, Charsets.UTF_8)).containsOnly(
                 "DEBUG com.example.newApp: New application debug log",
                 "INFO  com.example.newApp: New application info log");
-
-        if (!newAppLog.delete()) {
-            System.err.println("Unable delete log file: " + newAppLog);
-        }
-        if (!defaultLog.delete()) {
-            System.err.println("Unable delete log file: " + defaultLog);
-        }
     }
 }

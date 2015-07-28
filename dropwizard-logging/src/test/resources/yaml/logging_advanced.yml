@@ -5,8 +5,8 @@ loggers:
     level: DEBUG
     appenders:
       - type: file
-        currentLogFilename: "/tmp/example-new-app.log"
-        archivedLogFilenamePattern: "/tmp/example-new-app-%d.log.gz"
+        currentLogFilename: '${new_app}.log'
+        archivedLogFilenamePattern: '${new_app}-%d.log.gz'
         logFormat: "%-5level %logger: %msg%n"
         archivedFileCount: 5
   "com.example.legacyApp":
@@ -14,7 +14,7 @@ loggers:
 appenders:
   - type: console
   - type: file
-    currentLogFilename: "/tmp/example.log"
-    archivedLogFilenamePattern: "/tmp/example-%d.log.gz"
+    currentLogFilename: '${default}.log'
+    archivedLogFilenamePattern: '${default}-%d.log.gz'
     logFormat: "%-5level %logger: %msg%n"
     archivedFileCount: 5
