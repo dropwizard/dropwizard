@@ -21,7 +21,7 @@ v0.9.0
 * Support for including caller data in appenders `#995 <https://github.com/dropwizard/dropwizard/pull/995>`_
 * Support for defining custom logging factories (e.g. native Logback) `#996 <https://github.com/dropwizard/dropwizard/pull/996>`_
 * Support for defining the maximum log file size in ``FileAppenderFactory``. `#1000 <https://github.com/dropwizard/dropwizard/pull/1000>`_
-* Support for individual logger appenders `#1092 <https://github.com/dropwizard/dropwizard/pull/1092>`
+* Support for individual logger appenders `#1092 <https://github.com/dropwizard/dropwizard/pull/1092>`_
 * Sorting endpoints in the application startup log `#1002 <https://github.com/dropwizard/dropwizard/pull/1002>`_
 * Dynamic DNS resolution in the Graphite metric reporter `#1004 <https://github.com/dropwizard/dropwizard/pull/1004>`_
 * Support for defining a custom ``MetricRegistry`` during bootstrap (e.g. with HdrHistogram) `#1015 <https://github.com/dropwizard/dropwizard/pull/1015>`_
