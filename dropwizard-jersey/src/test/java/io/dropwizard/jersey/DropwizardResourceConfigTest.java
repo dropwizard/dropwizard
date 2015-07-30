@@ -1,6 +1,5 @@
 package io.dropwizard.jersey;
 
-import com.codahale.metrics.MetricRegistry;
 import io.dropwizard.jersey.dummy.DummyResource;
 import io.dropwizard.logging.BootstrapLogging;
 import org.junit.Before;
@@ -10,8 +9,11 @@ import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import com.codahale.metrics.MetricRegistry;
 
 public class DropwizardResourceConfigTest {
     static {
@@ -118,6 +120,17 @@ public class DropwizardResourceConfigTest {
                 .contains("    GET     /wrapper/bar (io.dropwizard.jersey.DropwizardResourceConfigTest.ResourcePathOnMethodLevel)");
     }
 
+    @Test
+    public void duplicatePathsTest() {
+        rc.register(TestDuplicateResource.class);
+        final String expectedLog = String.format("The following paths were found for the configured resources:%n" + "%n"
+                + "    GET     /anotherMe (io.dropwizard.jersey.DropwizardResourceConfigTest.TestDuplicateResource)%n"
+                + "    GET     /callme (io.dropwizard.jersey.DropwizardResourceConfigTest.TestDuplicateResource)%n");
+
+        assertThat(rc.getEndpointsInfo()).contains(expectedLog);
+        assertThat(rc.getEndpointsInfo()).containsOnlyOnce("    GET     /callme (io.dropwizard.jersey.DropwizardResourceConfigTest.TestDuplicateResource)");
+    }
+
     @Path("/dummy")
     public static class TestResource {
         @GET
@@ -137,6 +150,38 @@ public class DropwizardResourceConfigTest {
         public String fooDelete() {
             return "bar";
         }
+    }
+
+    @Path("/")
+    public static class TestDuplicateResource {
+
+        @GET
+        @Path("callme")
+        @Produces(MediaType.APPLICATION_JSON)
+        public String fooGet() {
+            return "bar";
+        }
+
+        @GET
+        @Path("callme")
+        @Produces(MediaType.TEXT_HTML)
+        public String fooGet2() {
+            return "bar2";
+        }
+
+        @GET
+        @Path("callme")
+        @Produces(MediaType.APPLICATION_XML)
+        public String fooGet3() {
+            return "bar3";
+        }
+
+        @GET
+        @Path("anotherMe")
+        public String fooGet4() {
+            return "bar4";
+        }
+
     }
 
     @Path("/another")
