@@ -127,10 +127,6 @@ public class DropwizardApacheConnector implements Connector {
                 .setUri(jerseyRequest.getUri())
                 .setEntity(getHttpEntity(jerseyRequest));
         for (String headerName : jerseyRequest.getHeaders().keySet()) {
-            // Ignore user-agent because it's already configured in the Apache HTTP client
-            if (headerName.equalsIgnoreCase(HttpHeaders.USER_AGENT)) {
-                continue;
-            }
             builder.addHeader(headerName, jerseyRequest.getHeaderString(headerName));
         }
 
