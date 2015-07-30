@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import javax.ws.rs.client.ClientRequestContext;
 import javax.ws.rs.client.ClientRequestFilter;
+import javax.ws.rs.ext.Provider;
 
 import org.glassfish.jersey.client.ClientRequest;
 
@@ -14,6 +15,7 @@ import org.glassfish.jersey.client.ClientRequest;
  *
  */
 
+@Provider
 public class JerseyIgnoreRequestUserAgentHeaderFilter implements ClientRequestFilter {
 
 	@Override
