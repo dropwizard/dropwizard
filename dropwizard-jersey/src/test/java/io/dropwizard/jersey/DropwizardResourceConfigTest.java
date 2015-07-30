@@ -127,13 +127,8 @@ public class DropwizardResourceConfigTest {
                 + "    GET     /anotherMe (io.dropwizard.jersey.DropwizardResourceConfigTest.TestDuplicateResource)%n"
                 + "    GET     /callme (io.dropwizard.jersey.DropwizardResourceConfigTest.TestDuplicateResource)%n");
 
-        final String shouldNotContainLog = String.format(
-                  "    GET     /callme (io.dropwizard.jersey.DropwizardResourceConfigTest.TestDuplicateResource)%n"
-                + "    GET     /callme (io.dropwizard.jersey.DropwizardResourceConfigTest.TestDuplicateResource)%n"
-                + "    GET     /callme (io.dropwizard.jersey.DropwizardResourceConfigTest.TestDuplicateResource)%n");
-
         assertThat(rc.getEndpointsInfo()).contains(expectedLog);
-        assertThat(rc.getEndpointsInfo()).doesNotContain(shouldNotContainLog);
+        assertThat(rc.getEndpointsInfo()).containsOnlyOnce("    GET     /callme (io.dropwizard.jersey.DropwizardResourceConfigTest.TestDuplicateResource)");
     }
 
     @Path("/dummy")

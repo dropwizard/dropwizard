@@ -3,8 +3,10 @@ package io.dropwizard.jersey;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.jersey2.InstrumentedResourceMethodApplicationListener;
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Objects;
 import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Sets;
+
 import io.dropwizard.jersey.caching.CacheControlledResponseFeature;
 import io.dropwizard.jersey.guava.OptionalMessageBodyWriter;
 import io.dropwizard.jersey.guava.OptionalParamFeature;
@@ -26,8 +28,10 @@ import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.Path;
 import javax.ws.rs.ext.Provider;
+
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
+import java.util.Comparator;
 import java.util.Set;
 
 public class DropwizardResourceConfig extends ResourceConfig {
@@ -111,7 +115,7 @@ public class DropwizardResourceConfig extends ResourceConfig {
 
     public String getEndpointsInfo() {
         final StringBuilder msg = new StringBuilder(1024);
-        final Set<EndpointLogLine> endpointLogLines = Sets.newTreeSet();
+        final Set<EndpointLogLine> endpointLogLines = Sets.newTreeSet(new EndpointComparator());
 
         msg.append("The following paths were found for the configured resources:");
         msg.append(NEWLINE).append(NEWLINE);
@@ -193,12 +197,10 @@ public class DropwizardResourceConfig extends ResourceConfig {
         }
     }
 
-    private static class EndpointLogLine implements Comparable<EndpointLogLine>, Serializable {
+    private static class EndpointLogLine {
         private final String httpMethod;
         private final String basePath;
         private final Class<?> klass;
-
-        private static final long serialVersionUID = 1L;
 
         public EndpointLogLine(String httpMethod, String basePath, Class<?> klass) {
             this.basePath = basePath;
@@ -212,21 +214,8 @@ public class DropwizardResourceConfig extends ResourceConfig {
         }
 
         @Override
-        public int compareTo(EndpointLogLine other) {
-            return ComparisonChain.start()
-                .compare(this.basePath, other.basePath)
-                .compare(this.httpMethod, other.httpMethod)
-                .result();
-        }
-
-        @Override
         public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + ((basePath == null) ? 0 : basePath.hashCode());
-            result = prime * result + ((httpMethod == null) ? 0 : httpMethod.hashCode());
-            result = prime * result + ((klass == null) ? 0 : klass.hashCode());
-            return result;
+            return Objects.hashCode(httpMethod, basePath, klass);
         }
 
         @Override
@@ -256,6 +245,18 @@ public class DropwizardResourceConfig extends ResourceConfig {
             return true;
         }
 
+    }
+
+    private static class EndpointComparator implements Comparator<EndpointLogLine>, Serializable {
+        private static final long serialVersionUID = 1L;
+
+        @Override
+        public int compare(EndpointLogLine endpointA, EndpointLogLine endpointB) {
+            return ComparisonChain.start()
+                .compare(endpointA.basePath, endpointB.basePath)
+                .compare(endpointA.httpMethod, endpointB.httpMethod)
+                .result();
+        }
     }
 
     private static class ComponentLoggingListener implements ApplicationEventListener {
