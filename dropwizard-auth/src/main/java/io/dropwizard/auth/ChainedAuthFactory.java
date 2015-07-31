@@ -59,7 +59,7 @@ public class ChainedAuthFactory<T> extends AuthFactory<Object, T> {
     public AuthFactory<Object, T> clone(boolean required) {
         ChainedAuthFactory<T> clone = new ChainedAuthFactory<>();
         for (AuthFactory<?, T> factory : factories) {
-            clone.addChainedProvider(factory.clone(true));
+            clone.addChainedProvider(factory.clone(required));
         }
         return clone;
     }

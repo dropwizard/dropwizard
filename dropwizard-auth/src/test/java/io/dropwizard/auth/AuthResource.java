@@ -12,4 +12,14 @@ public class AuthResource {
     public String show(@Auth String principal) {
         return principal;
     }
+
+    @GET
+    @Path("/optional")
+    public String showOptional(@Auth(required = false) String principal) {
+        if (principal == null) {
+            return "missing";
+        } else {
+            return principal;
+        }
+    }
 }
