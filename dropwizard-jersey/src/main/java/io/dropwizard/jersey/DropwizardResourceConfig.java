@@ -3,14 +3,17 @@ package io.dropwizard.jersey;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.jersey2.InstrumentedResourceMethodApplicationListener;
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Objects;
 import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Sets;
+
 import io.dropwizard.jersey.caching.CacheControlledResponseFeature;
 import io.dropwizard.jersey.guava.OptionalMessageBodyWriter;
 import io.dropwizard.jersey.guava.OptionalParamFeature;
 import io.dropwizard.jersey.params.NonEmptyStringParamFeature;
 import io.dropwizard.jersey.sessions.SessionFactoryProvider;
 import io.dropwizard.jersey.validation.HibernateValidationFeature;
+
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.ServerProperties;
 import org.glassfish.jersey.server.model.Resource;
@@ -25,6 +28,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.Path;
 import javax.ws.rs.ext.Provider;
+
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.util.Comparator;
@@ -208,6 +212,7 @@ public class DropwizardResourceConfig extends ResourceConfig {
         public String toString() {
             return String.format("    %-7s %s (%s)", httpMethod, basePath, klass.getCanonicalName());
         }
+
     }
 
     private static class EndpointComparator implements Comparator<EndpointLogLine>, Serializable {
