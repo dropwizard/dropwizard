@@ -1,17 +1,22 @@
 package io.dropwizard.jersey;
 
-import com.codahale.metrics.MetricRegistry;
 import io.dropwizard.jersey.dummy.DummyResource;
 import io.dropwizard.logging.BootstrapLogging;
+
 import org.junit.Before;
 import org.junit.Test;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 
 import static org.assertj.core.api.Assertions.assertThat;
+
+import com.codahale.metrics.MetricRegistry;
 
 public class DropwizardResourceConfigTest {
     static {
@@ -118,6 +123,32 @@ public class DropwizardResourceConfigTest {
                 .contains("    GET     /wrapper/bar (io.dropwizard.jersey.DropwizardResourceConfigTest.ResourcePathOnMethodLevel)");
     }
 
+    @Test
+    public void duplicatePathsTest() {
+        rc.register(TestDuplicateResource.class);
+        final String expectedLog = String.format("The following paths were found for the configured resources:%n" + "%n"
+                + "    GET     /anotherMe (io.dropwizard.jersey.DropwizardResourceConfigTest.TestDuplicateResource)%n"
+                + "    GET     /callme (io.dropwizard.jersey.DropwizardResourceConfigTest.TestDuplicateResource)%n");
+
+        assertThat(rc.getEndpointsInfo()).contains(expectedLog);
+        assertThat(rc.getEndpointsInfo()).containsOnlyOnce("    GET     /callme (io.dropwizard.jersey.DropwizardResourceConfigTest.TestDuplicateResource)");
+    }
+    
+    @Test
+    public void correctMediaType() {
+        rc.register(TestMediaTypeResource.class);
+        final String expectedGetMethodLog = String.format(
+                 "    GET     /callme (io.dropwizard.jersey.DropwizardResourceConfigTest.TestMediaTypeResource)%n"
+               + "         Accepts  -  [application/xml]%n"
+               + "         Produces -  [application/json, text/html]"
+               + "    GET     /callme (io.dropwizard.jersey.DropwizardResourceConfigTest.TestDuplicateResource)%n");
+        final String expectedPostMethodLog = String.format(
+                "    POST    /callme (io.dropwizard.jersey.DropwizardResourceConfigTest.TestMediaTypeResource)%n"
+              + "         Accepts  -  [application/xml, application/xml]");
+
+        assertThat(rc.getEndpointsInfo()).contains(expectedGetMethodLog).contains(expectedPostMethodLog);
+    }
+    
     @Path("/dummy")
     public static class TestResource {
         @GET
@@ -137,6 +168,84 @@ public class DropwizardResourceConfigTest {
         public String fooDelete() {
             return "bar";
         }
+    }
+
+    @Path("/")
+    public static class TestMediaTypeResource {
+
+        @GET
+        @Path("callme")
+        @Produces(MediaType.APPLICATION_JSON)
+        public String fooGet() {
+            return "bar";
+        }
+
+        @GET
+        @Path("callme")
+        @Produces(MediaType.TEXT_HTML)
+        public String fooGet2() {
+            return "bar2";
+        }
+
+        @GET
+        @Path("callme")
+        @Consumes(MediaType.APPLICATION_XML)
+        public String fooGet3() {
+            return "bar3";
+        }
+        
+        @POST
+        @Path("callme")
+        @Consumes(MediaType.APPLICATION_XML)
+        public String fooGet4() {
+            return "bar4";
+        }
+        
+        @POST
+        @Path("callme")
+        @Consumes(MediaType.APPLICATION_XML)
+        public String fooGet5() {
+            return "bar5";
+        }
+
+        @GET
+        @Path("anotherMe")
+        public String fooGetX() {
+            return "bar4";
+        }
+
+    }
+    
+    @Path("/")
+    public static class TestDuplicateResource {
+
+        @GET
+        @Path("callme")
+        @Produces(MediaType.APPLICATION_JSON)
+        public String fooGet() {
+            return "bar";
+        }
+
+        @GET
+        @Path("callme")
+        @Produces(MediaType.TEXT_HTML)
+        public String fooGet2() {
+            return "bar2";
+        }
+
+        @GET
+        @Path("callme")
+        @Produces(MediaType.APPLICATION_XML)
+        public String fooGet3() {
+            return "bar3";
+        }
+
+        @GET
+        @Path("anotherMe")
+        public String fooGet4() {
+            return "bar4";
+        }
+
     }
 
     @Path("/another")
