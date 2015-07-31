@@ -3,14 +3,18 @@ package io.dropwizard.jersey;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.jersey2.InstrumentedResourceMethodApplicationListener;
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Objects;
 import com.google.common.collect.ComparisonChain;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+
 import io.dropwizard.jersey.caching.CacheControlledResponseFeature;
 import io.dropwizard.jersey.guava.OptionalMessageBodyWriter;
 import io.dropwizard.jersey.guava.OptionalParamFeature;
 import io.dropwizard.jersey.params.NonEmptyStringParamFeature;
 import io.dropwizard.jersey.sessions.SessionFactoryProvider;
 import io.dropwizard.jersey.validation.HibernateValidationFeature;
+
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.ServerProperties;
 import org.glassfish.jersey.server.model.Resource;
@@ -24,10 +28,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.Path;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.ext.Provider;
+
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Set;
 
 public class DropwizardResourceConfig extends ResourceConfig {
@@ -111,7 +120,7 @@ public class DropwizardResourceConfig extends ResourceConfig {
 
     public String getEndpointsInfo() {
         final StringBuilder msg = new StringBuilder(1024);
-        final Set<EndpointLogLine> endpointLogLines = Sets.newTreeSet(new EndpointComparator());
+        final List<EndpointLogLine> endpointLogLines = Lists.newArrayList();
 
         msg.append("The following paths were found for the configured resources:");
         msg.append(NEWLINE).append(NEWLINE);
@@ -128,6 +137,7 @@ public class DropwizardResourceConfig extends ResourceConfig {
         }
 
         if (!endpointLogLines.isEmpty()) {
+            Collections.sort(endpointLogLines, new EndpointComparator());
             for (EndpointLogLine line : endpointLogLines) {
                 msg.append(line).append(NEWLINE);
             }
@@ -152,33 +162,47 @@ public class DropwizardResourceConfig extends ResourceConfig {
             this.klass = klass;
         }
 
-        public void populate(Set<EndpointLogLine> endpointLogLines) {
+        public void populate(List<EndpointLogLine> endpointLogLines) {
             populate(this.rootPath, klass, false, endpointLogLines);
         }
 
-        private void populate(String basePath, Class<?> klass, boolean isLocator, Set<EndpointLogLine> endpointLogLines) {
+        private void populate(String basePath, Class<?> klass, boolean isLocator, List<EndpointLogLine> endpointLogLines) {
             populate(basePath, klass, isLocator, Resource.from(klass), endpointLogLines);
         }
 
-        private void populate(String basePath, Class<?> klass, boolean isLocator, Resource resource, Set<EndpointLogLine> endpointLogLines) {
+        private void populate(String basePath, Class<?> klass, boolean isLocator, Resource resource, List<EndpointLogLine> endpointLogLines) {
             if (!isLocator) {
                 basePath = normalizePath(basePath, resource.getPath());
             }
 
             for (ResourceMethod method : resource.getResourceMethods()) {
-                endpointLogLines.add(new EndpointLogLine(method.getHttpMethod(), basePath, klass));
+                populateList(endpointLogLines, method, new EndpointLogLine(method.getHttpMethod(), basePath, klass));
             }
 
             for (Resource childResource : resource.getChildResources()) {
                 for (ResourceMethod method : childResource.getAllMethods()) {
                     if (method.getType() == ResourceMethod.JaxrsType.RESOURCE_METHOD) {
                         final String path = normalizePath(basePath, childResource.getPath());
-                        endpointLogLines.add(new EndpointLogLine(method.getHttpMethod(), path, klass));
+                        populateList(endpointLogLines, method, new EndpointLogLine(method.getHttpMethod(), path, klass));
                     } else if (method.getType() == ResourceMethod.JaxrsType.SUB_RESOURCE_LOCATOR) {
                         final String path = normalizePath(basePath, childResource.getPath());
                         populate(path, method.getInvocable().getRawResponseType(), true, endpointLogLines);
                     }
                 }
+            }
+        }
+
+        private void populateList(List<EndpointLogLine> endpointLogLines, ResourceMethod method, EndpointLogLine candidateLogLine) {
+            int indexInLogLineList = endpointLogLines.indexOf(candidateLogLine);
+            if (indexInLogLineList >= 0) {
+                candidateLogLine = endpointLogLines.get(indexInLogLineList);
+            }
+            candidateLogLine.consumedMediaTypes.addAll(method.getConsumedTypes());
+            candidateLogLine.producedMediaTypes.addAll(method.getProducedTypes());
+            if (indexInLogLineList >= 0) {
+                endpointLogLines.set(indexInLogLineList, candidateLogLine);
+            } else {
+                endpointLogLines.add(candidateLogLine);
             }
         }
 
@@ -197,6 +221,8 @@ public class DropwizardResourceConfig extends ResourceConfig {
         private final String httpMethod;
         private final String basePath;
         private final Class<?> klass;
+        private final List<MediaType> consumedMediaTypes = Lists.newArrayList();
+        private final List<MediaType> producedMediaTypes = Lists.newArrayList();
 
         public EndpointLogLine(String httpMethod, String basePath, Class<?> klass) {
             this.basePath = basePath;
@@ -206,8 +232,48 @@ public class DropwizardResourceConfig extends ResourceConfig {
 
         @Override
         public String toString() {
-            return String.format("    %-7s %s (%s)", httpMethod, basePath, klass.getCanonicalName());
+            StringBuilder builder = new StringBuilder(String.format("    %-7s %s (%s)", httpMethod, basePath, klass.getCanonicalName()));
+            if(!consumedMediaTypes.isEmpty()){
+                builder.append(System.lineSeparator() + String.format("         Accepts  -  %s", Arrays.toString(consumedMediaTypes.toArray())));
+            }
+            if(!producedMediaTypes.isEmpty()){
+                builder.append(System.lineSeparator() + String.format("         Produces -  %s", Arrays.toString(producedMediaTypes.toArray())));
+            }
+            return builder.toString();
         }
+
+        @Override
+        public int hashCode() {
+            return Objects.hashCode(httpMethod, basePath, klass);
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null)
+                return false;
+            if (getClass() != obj.getClass())
+                return false;
+            EndpointLogLine other = (EndpointLogLine) obj;
+            if (basePath == null) {
+                if (other.basePath != null)
+                    return false;
+            } else if (!basePath.equals(other.basePath))
+                return false;
+            if (httpMethod == null) {
+                if (other.httpMethod != null)
+                    return false;
+            } else if (!httpMethod.equals(other.httpMethod))
+                return false;
+            if (klass == null) {
+                if (other.klass != null)
+                    return false;
+            } else if (klass != other.klass)
+                return false;
+            return true;
+        }
+
     }
 
     private static class EndpointComparator implements Comparator<EndpointLogLine>, Serializable {

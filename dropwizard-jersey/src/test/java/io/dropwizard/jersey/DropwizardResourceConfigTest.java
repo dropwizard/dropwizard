@@ -2,9 +2,11 @@ package io.dropwizard.jersey;
 
 import io.dropwizard.jersey.dummy.DummyResource;
 import io.dropwizard.logging.BootstrapLogging;
+
 import org.junit.Before;
 import org.junit.Test;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -130,7 +132,21 @@ public class DropwizardResourceConfigTest {
         assertThat(rc.getEndpointsInfo()).contains(expectedLog);
         assertThat(rc.getEndpointsInfo()).containsOnlyOnce("    GET     /callme (io.dropwizard.jersey.DropwizardResourceConfigTest.TestDuplicateResource)");
     }
+    
+    @Test
+    public void correctMediaType() {
+        rc.register(TestMediaTypeResource.class);
+        final String expectedGetMethodLog = String.format(
+                 "    GET     /callme (io.dropwizard.jersey.DropwizardResourceConfigTest.TestMediaTypeResource)%n"
+               + "         Accepts  -  [application/xml]%n"
+               + "         Produces -  [application/json, text/html]");
+        final String expectedPostMethodLog = String.format(
+                "    POST    /callme (io.dropwizard.jersey.DropwizardResourceConfigTest.TestMediaTypeResource)%n"
+              + "         Accepts  -  [application/xml, application/xml]");
 
+        assertThat(rc.getEndpointsInfo()).contains(expectedGetMethodLog).contains(expectedPostMethodLog);
+    }
+    
     @Path("/dummy")
     public static class TestResource {
         @GET
@@ -152,6 +168,52 @@ public class DropwizardResourceConfigTest {
         }
     }
 
+    @Path("/")
+    public static class TestMediaTypeResource {
+
+        @GET
+        @Path("callme")
+        @Produces(MediaType.APPLICATION_JSON)
+        public String fooGet() {
+            return "bar";
+        }
+
+        @GET
+        @Path("callme")
+        @Produces(MediaType.TEXT_HTML)
+        public String fooGet2() {
+            return "bar2";
+        }
+
+        @GET
+        @Path("callme")
+        @Consumes(MediaType.APPLICATION_XML)
+        public String fooGet3() {
+            return "bar3";
+        }
+        
+        @POST
+        @Path("callme")
+        @Consumes(MediaType.APPLICATION_XML)
+        public String fooGet4() {
+            return "bar4";
+        }
+        
+        @POST
+        @Path("callme")
+        @Consumes(MediaType.APPLICATION_XML)
+        public String fooGet5() {
+            return "bar5";
+        }
+
+        @GET
+        @Path("anotherMe")
+        public String fooGetX() {
+            return "bar4";
+        }
+
+    }
+    
     @Path("/")
     public static class TestDuplicateResource {
 
