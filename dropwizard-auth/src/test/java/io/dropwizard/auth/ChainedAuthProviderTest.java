@@ -16,12 +16,8 @@ import org.glassfish.jersey.test.spi.TestContainerException;
 import org.glassfish.jersey.test.spi.TestContainerFactory;
 import org.junit.Test;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
@@ -104,13 +100,11 @@ public class ChainedAuthProviderTest extends JerseyTest {
         }
     }
 
-    @Path("/test/")
-    @Produces(MediaType.TEXT_PLAIN)
-    public static class ProtectedResource {
-        @GET
-        public String show(@Auth String principal) {
-            return principal;
-        }
+    @Test
+    public void doesntFailWithMissingCredentialsOnNonRequiredResource()
+            throws Exception {
+        assertThat(target("/test/optional").request().get(String.class))
+                .isEqualTo("missing");
     }
 
     @SuppressWarnings("unchecked")
