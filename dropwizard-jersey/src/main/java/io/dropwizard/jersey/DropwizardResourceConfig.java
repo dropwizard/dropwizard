@@ -213,38 +213,6 @@ public class DropwizardResourceConfig extends ResourceConfig {
             return String.format("    %-7s %s (%s)", httpMethod, basePath, klass.getCanonicalName());
         }
 
-        @Override
-        public int hashCode() {
-            return Objects.hashCode(httpMethod, basePath, klass);
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (this == obj)
-                return true;
-            if (obj == null)
-                return false;
-            if (getClass() != obj.getClass())
-                return false;
-            EndpointLogLine other = (EndpointLogLine) obj;
-            if (basePath == null) {
-                if (other.basePath != null)
-                    return false;
-            } else if (!basePath.equals(other.basePath))
-                return false;
-            if (httpMethod == null) {
-                if (other.httpMethod != null)
-                    return false;
-            } else if (!httpMethod.equals(other.httpMethod))
-                return false;
-            if (klass == null) {
-                if (other.klass != null)
-                    return false;
-            } else if (klass != other.klass)
-                return false;
-            return true;
-        }
-
     }
 
     private static class EndpointComparator implements Comparator<EndpointLogLine>, Serializable {
