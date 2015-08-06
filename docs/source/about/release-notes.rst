@@ -37,7 +37,7 @@ v0.9.0
 * Added JMH benchmarks  `#990 <https://github.com/dropwizard/dropwizard/pull/990>`_
 * Removed javax.el-2.x in favour of javax.el-3.0
 * Upgraded to JDBI 2.62
-* Upgraded to Apache HTTP Client 4.41
+* Upgraded to Apache HTTP Client 4.5
 * Upgraded to Dropwizard Metrics 3.1.2
 * Upgraded to Freemarker 2.3.22
 * Upgraded to H2 1.4.187
