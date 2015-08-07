@@ -54,7 +54,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <metrics3.version>3.1.2</metrics3.version>
-        <jersey.version>2.19</jersey.version>
+        <jersey.version>2.20</jersey.version>
         <jackson.api.version>2.6.0</jackson.api.version>
         <jackson.version>2.6.0</jackson.version>
         <jackson.joda.version>2.6.0-1</jackson.joda.version>
