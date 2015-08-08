@@ -40,7 +40,7 @@ v0.9.0
 * Upgraded to JDBI 2.63.1
 * Upgraded to Apache HTTP Client 4.5
 * Upgraded to Dropwizard Metrics 3.1.2
-* Upgraded to Freemarker 2.3.22
+* Upgraded to Freemarker 2.3.23
 * Upgraded to H2 1.4.187
 * Upgraded to Hibernate 4.3.11.Final
 * Upgraded to Jackson 2.6.0
