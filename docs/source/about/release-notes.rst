@@ -42,7 +42,7 @@ v0.9.0
 * Upgraded to Dropwizard Metrics 3.1.2
 * Upgraded to Freemarker 2.3.22
 * Upgraded to H2 1.4.187
-* Upgraded to Hibernate 4.3.9.Final
+* Upgraded to Hibernate 4.3.11.Final
 * Upgraded to Jackson 2.6.0
 * Upgraded to Jersey 2.20
 * Upgraded to Jetty 9.2.13.v20150730
