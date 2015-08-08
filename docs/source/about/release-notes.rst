@@ -48,7 +48,7 @@ v0.9.0
 * Upgraded to Jetty 9.2.13.v20150730
 * Upgraded to Jetty ALPN boot 7.1.3.v20150130
 * Upgraded to Jetty SetUID support 1.0.3
-* Upgraded to Liquibase 3.3.3
+* Upgraded to Liquibase 3.4.1
 * Upgraded to Logback 1.1.3
 * Upgraded to Metrics 3.1.2
 * Upgraded to Mockito 1.10.19
