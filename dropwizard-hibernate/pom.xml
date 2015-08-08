@@ -37,7 +37,7 @@
         <dependency>
             <groupId>org.jadira.usertype</groupId>
             <artifactId>usertype.core</artifactId>
-            <version>3.2.0.GA</version>
+            <version>4.0.0.GA</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.hibernate</groupId>

@@ -44,6 +44,7 @@ v0.9.0
 * Upgraded to H2 1.4.187
 * Upgraded to Hibernate 4.3.11.Final
 * Upgraded to Jackson 2.6.0
+* Upgraded to Jadira Usertype Core 4.0.0.GA
 * Upgraded to Jersey 2.20
 * Upgraded to Jetty 9.2.13.v20150730
 * Upgraded to Jetty ALPN boot 7.1.3.v20150130
