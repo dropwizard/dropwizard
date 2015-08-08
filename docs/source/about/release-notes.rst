@@ -43,7 +43,7 @@ v0.9.0
 * Upgraded to H2 1.4.187
 * Upgraded to Hibernate 4.3.9.Final
 * Upgraded to Jackson 2.6.0
-* Upgraded to Jersey 2.19
+* Upgraded to Jersey 2.20
 * Upgraded to Jetty 9.2.13.v20150730
 * Upgraded to Jetty ALPN boot 7.1.3.v20150130
 * Upgraded to Jetty SetUID support 1.0.3
