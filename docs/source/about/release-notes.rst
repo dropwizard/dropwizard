@@ -36,6 +36,7 @@ v0.9.0
 * Improved build time build by running tests in parallel `#1032 <https://github.com/dropwizard/dropwizard/pull/1032>`_
 * Added JMH benchmarks  `#990 <https://github.com/dropwizard/dropwizard/pull/990>`_
 * Removed javax.el-2.x in favour of javax.el-3.0
+* Upgraded to argparse4j 0.6.0
 * Upgrade to AssertJ 2.1.0
 * Upgraded to JDBI 2.63.1
 * Upgraded to Apache HTTP Client 4.5

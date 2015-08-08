@@ -15,7 +15,11 @@ public class DbTagCommand<T extends Configuration> extends AbstractLiquibaseComm
     public void configure(Subparser subparser) {
         super.configure(subparser);
 
-        subparser.addArgument("tag-name").nargs(1).required(true).help("The tag name");
+        subparser.addArgument("tag-name")
+                .dest("tag-name")
+                .nargs(1)
+                .required(true)
+                .help("The tag name");
     }
 
     @Override
