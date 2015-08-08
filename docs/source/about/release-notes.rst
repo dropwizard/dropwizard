@@ -37,7 +37,7 @@ v0.9.0
 * Added JMH benchmarks  `#990 <https://github.com/dropwizard/dropwizard/pull/990>`_
 * Removed javax.el-2.x in favour of javax.el-3.0
 * Upgrade to AssertJ 2.1.0
-* Upgraded to JDBI 2.62
+* Upgraded to JDBI 2.63.1
 * Upgraded to Apache HTTP Client 4.5
 * Upgraded to Dropwizard Metrics 3.1.2
 * Upgraded to Freemarker 2.3.22
@@ -55,7 +55,6 @@ v0.9.0
 * Upgraded to commons-lang3 3.4
 * Upgraded to tomcat-jdbc 8.0.24
 * Upgraded to joda-time 2.8.1
-* Upgraded to jdbi 2.63.1
 
 .. _rel-0.8.1:
 
