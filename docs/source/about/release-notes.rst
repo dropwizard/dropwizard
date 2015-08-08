@@ -51,6 +51,7 @@ v0.9.0
 * Upgraded to Liquibase 3.3.3
 * Upgraded to Logback 1.1.3
 * Upgraded to Metrics 3.1.2
+* Upgraded to Mockito 1.10.19
 * Upgraded to SLF4J 1.7.12
 * Upgraded to commons-lang3 3.4
 * Upgraded to tomcat-jdbc 8.0.24
