@@ -16,9 +16,9 @@ import org.glassfish.jersey.client.ClientRequest;
 @Provider
 public class JerseyIgnoreRequestUserAgentHeaderFilter implements ClientRequestFilter {
 
-	@Override
-	public void filter(ClientRequestContext requestContext) throws IOException {
-		((ClientRequest)requestContext).ignoreUserAgent(true);
-	}
+    @Override
+    public void filter(ClientRequestContext requestContext) throws IOException {
+        ((ClientRequest) requestContext).ignoreUserAgent(true);
+    }
 
 }
