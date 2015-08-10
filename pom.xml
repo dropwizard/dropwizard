@@ -56,8 +56,7 @@
         <metrics3.version>3.1.2</metrics3.version>
         <jersey.version>2.20</jersey.version>
         <jackson.api.version>2.6.0</jackson.api.version>
-        <jackson.version>2.6.0</jackson.version>
-        <jackson.joda.version>2.6.0-1</jackson.joda.version>
+        <jackson.version>2.6.1</jackson.version>
         <logback.version>1.1.3</logback.version>
         <slf4j.version>1.7.12</slf4j.version>
         <servlet.version>3.0.0.v201112011016</servlet.version>
