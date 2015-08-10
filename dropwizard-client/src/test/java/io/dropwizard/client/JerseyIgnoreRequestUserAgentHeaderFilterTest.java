@@ -1,7 +1,6 @@
 package io.dropwizard.client;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertTrue;
 
 import java.net.URI;
 import java.util.concurrent.Executors;
@@ -12,9 +11,7 @@ import javax.ws.rs.Path;
 
 import org.junit.Before;
 import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 import com.codahale.metrics.MetricRegistry;
 import com.google.common.base.Optional;
