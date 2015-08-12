@@ -108,7 +108,7 @@ is not required.
                     .buildAuthFilter()));
         environment.jersey().register(RolesAllowedDynamicFeature.class);
         //If you want to use @Auth to inject a custom Principal type into your resource
-        environment.jersey().register(new AuthValueFactoryProvider.Binder(User.class));
+        environment.jersey().register(new AuthValueFactoryProvider.Binder<>(User.class));
     }
 
 .. _man-auth-oauth2:
