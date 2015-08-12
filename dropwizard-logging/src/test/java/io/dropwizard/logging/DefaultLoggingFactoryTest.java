@@ -101,6 +101,8 @@ public class DefaultLoggingFactoryTest {
         LoggerFactory.getLogger("com.example.newApp").info("New application info log");
         LoggerFactory.getLogger("com.example.legacyApp").debug("Legacy application debug log");
         LoggerFactory.getLogger("com.example.legacyApp").info("Legacy application info log");
+        LoggerFactory.getLogger("com.example.notAdditive").debug("Not additive application debug log");
+        LoggerFactory.getLogger("com.example.notAdditive").info("Not additive application info log");
 
         config.stop();
 
@@ -113,6 +115,8 @@ public class DefaultLoggingFactoryTest {
 
         assertThat(Files.readLines(newAppLog, Charsets.UTF_8)).containsOnly(
                 "DEBUG com.example.newApp: New application debug log",
-                "INFO  com.example.newApp: New application info log");
+                "INFO  com.example.newApp: New application info log",
+                "DEBUG com.example.notAdditive: Not additive application debug log",
+                "INFO  com.example.notAdditive: Not additive application info log");
     }
 }

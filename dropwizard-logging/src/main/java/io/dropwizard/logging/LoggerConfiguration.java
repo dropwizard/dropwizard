@@ -22,6 +22,16 @@ public class LoggerConfiguration {
     @NotNull
     private ImmutableList<AppenderFactory> appenders = ImmutableList.of();
 
+    private boolean additive = true;
+
+    public boolean isAdditive() {
+        return additive;
+    }
+
+    public void setAdditive(boolean additive) {
+        this.additive = additive;
+    }
+
     public Level getLevel() {
         return level;
     }

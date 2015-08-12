@@ -693,6 +693,8 @@ acceptable.
         # Enables the SQL query log and redirect it to a separate file
         "org.hibernate.SQL":
           level: DEBUG
+          # This line stops org.hibernate.SQL (or anything under it) from using the root logger
+          additive: false
           appenders:
             - type: file
               currentLogFilename: ./logs/example-sql.log

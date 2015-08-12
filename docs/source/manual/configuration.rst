@@ -414,6 +414,7 @@ Logging
         "io.dropwizard": INFO
         "org.hibernate.SQL":
           level: DEBUG
+          additive: false
           appenders:
             - type: file
               currentLogFilename: /var/log/myapplication-sql.log
@@ -427,6 +428,7 @@ Logging
 Name                   Default      Description
 ====================== ===========  ===========
 level                  Level.INFO   Logback logging level.
+additive               true         Logback additive setting.
 loggers                (none)       Individual logger configuration (both forms are acceptable).
 appenders              (none)       One of console, file or syslog.
 ====================== ===========  ===========
