@@ -314,6 +314,8 @@ public class JerseyClientBuilder {
                          ObjectMapper objectMapper,
                          Validator validator) {
         final Client client = ClientBuilder.newClient(buildConfig(name, threadPool, objectMapper, validator));
+        client.register(new JerseyIgnoreRequestUserAgentHeaderFilter());
+
         // Tie the client to server lifecycle
         if (environment != null) {
             environment.lifecycle().manage(new Managed() {
