@@ -189,6 +189,7 @@ public class DefaultLoggingFactory implements LoggingFactory {
                     throw new IllegalArgumentException("Wrong format of logger '" + entry.getKey() + "'", e);
                 }
                 logger.setLevel(configuration.getLevel());
+                logger.setAdditive(configuration.isAdditive());
                 for (AppenderFactory appender : configuration.getAppenders()) {
                     logger.addAppender(appender.build(loggerContext, name, null));
                 }

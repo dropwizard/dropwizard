@@ -11,6 +11,15 @@ loggers:
         archivedFileCount: 5
   "com.example.legacyApp":
     level: DEBUG
+  "com.example.notAdditive":
+    level: DEBUG
+    additive: false
+    appenders:
+      - type: file
+        currentLogFilename: '${new_app}.log'
+        archivedLogFilenamePattern: '${new_app}-%d.log.gz'
+        logFormat: "%-5level %logger: %msg%n"
+        archivedFileCount: 5
 appenders:
   - type: console
   - type: file
