@@ -1,0 +1,5 @@
+# this is needed to start the application in the JerseyIgnoreRequestUserAgentHeaderFilterTest
+server:
+  applicationConnectors:
+    - type: http
+      port: 0

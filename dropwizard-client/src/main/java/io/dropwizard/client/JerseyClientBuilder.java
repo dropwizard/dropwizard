@@ -313,6 +313,8 @@ public class JerseyClientBuilder {
                          ObjectMapper objectMapper,
                          Validator validator) {
         final Client client = ClientBuilder.newClient(buildConfig(name, threadPool, objectMapper, validator));
+        
+        client.register(new JerseyIgnoreRequestUserAgentHeaderFilter());
 
         if (configuration.isGzipEnabled()) {
             client.register(new GZipDecoder());
