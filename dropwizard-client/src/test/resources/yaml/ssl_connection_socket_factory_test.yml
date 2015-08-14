@@ -1,0 +1,11 @@
+server:
+  applicationConnectors:
+      - type: https
+        port: 0
+        keyStoreType: PKCS12
+        keyStorePassword: password
+        validateCerts: false
+        validatePeers: false
+  adminConnectors:
+      - type: http
+        port: 0
