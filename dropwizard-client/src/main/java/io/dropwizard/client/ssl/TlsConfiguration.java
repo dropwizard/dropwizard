@@ -28,6 +28,8 @@ public class TlsConfiguration {
 
     private boolean trustSelfSignedCertificates = false;
 
+    private boolean verifyHostname = true;
+
     @JsonProperty
     public void setTrustSelfSignedCertificates(boolean trustSelfSignedCertificates) {
         this.trustSelfSignedCertificates = trustSelfSignedCertificates;
@@ -96,6 +98,16 @@ public class TlsConfiguration {
     @JsonProperty
     public void setTrustStorePassword(String trustStorePassword) {
         this.trustStorePassword = trustStorePassword;
+    }
+
+    @JsonProperty
+    public boolean isVerifyHostname() {
+        return verifyHostname;
+    }
+
+    @JsonProperty
+    public void setVerifyHostname(boolean verifyHostname) {
+        this.verifyHostname = verifyHostname;
     }
 
     @JsonProperty

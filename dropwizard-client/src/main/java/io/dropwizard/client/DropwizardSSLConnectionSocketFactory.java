@@ -1,12 +1,14 @@
 package io.dropwizard.client;
 
 import io.dropwizard.client.ssl.TlsConfiguration;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLInitializationException;
 import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.ssl.TrustStrategy;
 
+import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 import java.io.File;
 import java.io.FileInputStream;
@@ -22,7 +24,17 @@ public class DropwizardSSLConnectionSocketFactory {
     }
 
     public SSLConnectionSocketFactory getSocketFactory() throws SSLInitializationException {
-        return new SSLConnectionSocketFactory(buildSslContext(), SSLConnectionSocketFactory.getDefaultHostnameVerifier());
+        return new SSLConnectionSocketFactory(buildSslContext(), chooseHostnameVerifier());
+    }
+
+    private HostnameVerifier chooseHostnameVerifier() {
+        HostnameVerifier hostnameVerifier;
+        if(configuration.isVerifyHostname()) {
+            hostnameVerifier = SSLConnectionSocketFactory.getDefaultHostnameVerifier();
+        } else {
+            hostnameVerifier = new NoopHostnameVerifier();
+        }
+        return hostnameVerifier;
     }
 
     private SSLContext buildSslContext() throws SSLInitializationException {

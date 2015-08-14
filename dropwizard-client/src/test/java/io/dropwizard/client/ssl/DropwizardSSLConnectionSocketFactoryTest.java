@@ -14,6 +14,7 @@ import org.junit.ClassRule;
 import org.junit.Test;
 
 import javax.net.ssl.SSLHandshakeException;
+import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.ProcessingException;
@@ -70,6 +71,13 @@ public class DropwizardSSLConnectionSocketFactoryTest {
             ConfigOverride.config("clientAuth", "server.applicationConnectors[0].trustStorePassword", "password")
             );
 
+    @ClassRule
+    public static DropwizardAppRule<Configuration> BAD_HOST_APP_RULE = new DropwizardAppRule<Configuration>(TlsTestApplication.class,
+            ResourceHelpers.resourceFilePath("yaml/ssl_connection_socket_factory_test.yml"),
+            Optional.of("badHost"),
+            ConfigOverride.config("badHost", "server.applicationConnectors[0].keyStorePath", ResourceHelpers.resourceFilePath("stores/server/bad_host_keycert.p12"))
+    );
+
     @Test
     public void shouldReturn200IfServerCertInTruststore() throws Exception {
         final TlsConfiguration tlsConfiguration = new TlsConfiguration();
@@ -87,7 +95,6 @@ public class DropwizardSSLConnectionSocketFactoryTest {
         final TlsConfiguration tlsConfiguration = new TlsConfiguration();
         tlsConfiguration.setTrustStorePath(new File(ResourceHelpers.resourceFilePath("stores/server/other_cert_truststore.ts")));
         tlsConfiguration.setTrustStorePassword("password");
-        tlsConfiguration.setTrustSelfSignedCertificates(true);
         final JerseyClientConfiguration jerseyClientConfiguration = new JerseyClientConfiguration();
         jerseyClientConfiguration.setTlsConfiguration(tlsConfiguration);
         final Client client = new JerseyClientBuilder(TLS_APP_RULE.getEnvironment()).using(jerseyClientConfiguration).build("tls_broken_client");
@@ -160,5 +167,35 @@ public class DropwizardSSLConnectionSocketFactoryTest {
         } catch(ProcessingException e) {
             assertThat(e.getCause()).isInstanceOf(SocketException.class);
         }
+    }
+
+    @Test
+    public void shouldErrorIfHostnameVerificationOnAndServerHostnameDoesntMatch() throws Exception {
+        final TlsConfiguration tlsConfiguration = new TlsConfiguration();
+        tlsConfiguration.setTrustStorePath(new File(ResourceHelpers.resourceFilePath("stores/server/ca_truststore.ts")));
+        tlsConfiguration.setTrustStorePassword("password");
+        final JerseyClientConfiguration jerseyClientConfiguration = new JerseyClientConfiguration();
+        jerseyClientConfiguration.setTlsConfiguration(tlsConfiguration);
+        final Client client = new JerseyClientBuilder(BAD_HOST_APP_RULE.getEnvironment()).using(jerseyClientConfiguration).build("bad_host_broken");
+        try {
+            final Response response = client.target(String.format("https://localhost:%d", BAD_HOST_APP_RULE.getLocalPort())).request().get();
+            fail("Expected ProcessingException");
+        } catch (ProcessingException e) {
+            assertThat(e.getCause()).isExactlyInstanceOf(SSLPeerUnverifiedException.class);
+            assertThat(e.getCause().getMessage()).isEqualTo("Host name 'localhost' does not match the certificate subject provided by the peer (O=server, CN=badhost)");
+        }
+    }
+
+    @Test
+    public void shouldBeOkIfHostnameVerificationOffAndServerHostnameDoesntMatch() throws Exception {
+        final TlsConfiguration tlsConfiguration = new TlsConfiguration();
+        tlsConfiguration.setTrustStorePath(new File(ResourceHelpers.resourceFilePath("stores/server/ca_truststore.ts")));
+        tlsConfiguration.setVerifyHostname(false);
+        tlsConfiguration.setTrustStorePassword("password");
+        final JerseyClientConfiguration jerseyClientConfiguration = new JerseyClientConfiguration();
+        jerseyClientConfiguration.setTlsConfiguration(tlsConfiguration);
+        final Client client = new JerseyClientBuilder(BAD_HOST_APP_RULE.getEnvironment()).using(jerseyClientConfiguration).build("bad_host_working");
+        final Response response = client.target(String.format("https://localhost:%d", BAD_HOST_APP_RULE.getLocalPort())).request().get();
+        assertThat(response.getStatus()).isEqualTo(200);
     }
 }
