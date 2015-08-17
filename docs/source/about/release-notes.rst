@@ -46,7 +46,7 @@ v0.9.0
 * Upgraded to Hibernate 4.3.11.Final
 * Upgraded to Jackson 2.6.1
 * Upgraded to Jadira Usertype Core 4.0.0.GA
-* Upgraded to Jersey 2.20
+* Upgraded to Jersey 2.21
 * Upgraded to Jetty 9.2.13.v20150730
 * Upgraded to Jetty ALPN boot 7.1.3.v20150130
 * Upgraded to Jetty SetUID support 1.0.3
