@@ -335,6 +335,18 @@ public class JacksonMessageBodyProviderTest {
                 new MultivaluedHashMap<String,String>(),
                 null);
     }
+    
+    @Test
+    public void throwsAConstraintViolationExceptionForEmptyRequestEntitiesNoAnnotations() throws Exception {
+        final Class<?> klass = Example.class;
+        assertThat(
+                provider.readFrom((Class<Object>) klass,
+                        Example.class,
+                        new Annotation[]{},
+                        MediaType.APPLICATION_JSON_TYPE,
+                        new MultivaluedHashMap<String, String>(),
+                        null)).isNull();
+    }
 
     @Test
     public void returnsValidatedArrayRequestEntities() throws Exception {
