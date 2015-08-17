@@ -120,4 +120,9 @@ public class FuzzyEnumModuleTest {
                 .configure(DeserializationFeature.READ_ENUMS_USING_TO_STRING, true);
         assertThat(toStringEnumsMapper.readValue("\"Pound sterling\"", CurrencyCode.class)).isEqualTo(CurrencyCode.GBP);
     }
+    
+    @Test
+    public void readsEnumsUsingToStringWithDeserializationFeatureOff() throws Exception {
+        assertThat(mapper.readValue("\"Pound sterling\"", CurrencyCode.class)).isEqualTo(CurrencyCode.GBP);
+    }
 }
