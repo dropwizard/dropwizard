@@ -6,6 +6,7 @@ server:
         keyStorePassword: password
         validateCerts: false
         validatePeers: false
+        supportedProtocols: ['TLSv1.2']
   adminConnectors:
       - type: http
         port: 0

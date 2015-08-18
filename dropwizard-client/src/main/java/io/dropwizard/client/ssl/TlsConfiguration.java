@@ -5,12 +5,14 @@ import com.google.common.base.Strings;
 import io.dropwizard.validation.ValidationMethod;
 import org.hibernate.validator.constraints.NotEmpty;
 
+import javax.annotation.Nullable;
 import java.io.File;
+import java.util.List;
 
 public class TlsConfiguration {
 
     @NotEmpty
-    private String protocol = "TLS";
+    private String protocol = "TLSv1.2";
 
     private File keyStorePath;
 
@@ -29,6 +31,12 @@ public class TlsConfiguration {
     private boolean trustSelfSignedCertificates = false;
 
     private boolean verifyHostname = true;
+
+    @Nullable
+    private List<String> supportedProtocols = null;
+
+    @Nullable
+    private List<String> supportedCiphers = null;
 
     @JsonProperty
     public void setTrustSelfSignedCertificates(boolean trustSelfSignedCertificates) {
@@ -118,6 +126,28 @@ public class TlsConfiguration {
     @JsonProperty
     public void setProtocol(String protocol) {
         this.protocol = protocol;
+    }
+
+    @Nullable
+    @JsonProperty
+    public List<String> getSupportedCiphers() {
+        return supportedCiphers;
+    }
+
+    @JsonProperty
+    public void setSupportedCiphers(@Nullable List<String> supportedCiphers) {
+        this.supportedCiphers = supportedCiphers;
+    }
+
+    @Nullable
+    @JsonProperty
+    public List<String> getSupportedProtocols() {
+        return supportedProtocols;
+    }
+
+    @JsonProperty
+    public void setSupportedProtocols(@Nullable List<String> supportedProtocols) {
+        this.supportedProtocols = supportedProtocols;
     }
 
     @ValidationMethod(message = "keyStorePassword should not be null or empty if keyStorePath not null")

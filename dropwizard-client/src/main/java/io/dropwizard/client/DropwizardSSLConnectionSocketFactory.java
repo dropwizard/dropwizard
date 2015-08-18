@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.security.KeyStore;
+import java.util.List;
 
 public class DropwizardSSLConnectionSocketFactory {
 
@@ -24,7 +25,23 @@ public class DropwizardSSLConnectionSocketFactory {
     }
 
     public SSLConnectionSocketFactory getSocketFactory() throws SSLInitializationException {
-        return new SSLConnectionSocketFactory(buildSslContext(), chooseHostnameVerifier());
+        return new SSLConnectionSocketFactory(buildSslContext(), getSupportedProtocols(), getSupportedCiphers(), chooseHostnameVerifier());
+    }
+
+    private String[] getSupportedCiphers() {
+        final List<String> supportedCiphers = configuration.getSupportedCiphers();
+        if(supportedCiphers == null) {
+            return null;
+        }
+        return supportedCiphers.toArray(new String[supportedCiphers.size()]);
+    }
+
+    private String[] getSupportedProtocols() {
+        final List<String> supportedProtocols = configuration.getSupportedProtocols();
+        if(supportedProtocols == null) {
+            return null;
+        }
+        return supportedProtocols.toArray(new String[supportedProtocols.size()]);
     }
 
     private HostnameVerifier chooseHostnameVerifier() {
