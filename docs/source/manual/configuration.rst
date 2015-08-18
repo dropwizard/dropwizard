@@ -874,6 +874,49 @@ nonProxyHosts   (none)             List of patterns of hosts that should be reac
 =============   =================  ======================================================================
 
 
+.. _man-configuration-clients-http-tls:
+
+TLS
+.....
+
+.. code-block:: yaml
+
+    httpClient:
+      tls:
+        protocol: TLSv1.2
+        verifyHostname: true
+        keyStorePath: /path/to/file
+        keyStorePassword: changeit
+        keyStoreType: JKS
+        trustStorePath: /path/to/file
+        trustStorePassword: changeit
+        trustStoreType: JKS
+        trustSelfSignedCertificates: false
+        supportedProtocols: TLSv1.1,TLSv1.2
+        supportedCipherSuites: TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256
+
+
+===========================  =================  ============================================================================================================================
+Name                         Default            Description
+===========================  =================  ============================================================================================================================
+protocol                     TLSv1.2            The default protocol the client will attempt to use during the SSL Handshake.
+                                                See 
+                                                `here <http://docs.oracle.com/javase/8/docs/technotes/guides/security/StandardNames.html#SSLContext>`_ for more information.
+verifyHostname               true               Whether to verify the hostname of the server against the hostname presented in the server certificate.
+keyStorePath                 (none)             The path to the Java key store which contains the client certificate and private key.
+keyStorePassword             (none)             The password used to access the key store.
+keyStoreType                 JKS                The type of key store (usually ``JKS``, ``PKCS12``, ``JCEKS``, ``Windows-MY``, or ``Windows-ROOT``).
+trustStorePath               (none)             The path to the Java key store which contains the CA certificates used to establish trust.
+trustStorePassword           (none)             The password used to access the trust store.
+trustStoreType               JKS                The type of trust store (usually ``JKS``, ``PKCS12``, ``JCEKS``, ``Windows-MY``, or ``Windows-ROOT``).
+trustSelfSignedCertificates  false              Whether the client will trust certificates of servers that are self-signed.
+supportedProtocols           (none)             A list of protocols (e.g., ``SSLv3``, ``TLSv1``) which are supported. All
+                                                other protocols will be refused.
+supportedCipherSuites        (none)             A list of cipher suites (e.g., ``TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256``) which
+                                                are supported. All other cipher suites will be refused.
+===========================  =================  ============================================================================================================================
+
+
 .. _man-configuration-clients-jersey:
 
 JerseyClient
