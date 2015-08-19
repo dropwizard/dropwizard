@@ -6,7 +6,6 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
-
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
 import io.dropwizard.cli.ServerCommand;
@@ -17,14 +16,12 @@ import io.dropwizard.lifecycle.ServerLifecycleListener;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import net.sourceforge.argparse4j.inf.Namespace;
-
+import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 
 import javax.annotation.Nullable;
 import javax.validation.Validator;
-
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -227,7 +224,12 @@ public class DropwizardTestSupport<C extends Configuration> {
     }
 
     public int getAdminPort() {
-        return ((ServerConnector) jettyServer.getConnectors()[1]).getLocalPort();
+        final Connector[] connectors = jettyServer.getConnectors();
+        return ((ServerConnector) connectors[connectors.length -1]).getLocalPort();
+    }
+
+    public int getPort(int connectorIndex) {
+        return ((ServerConnector) jettyServer.getConnectors()[connectorIndex]).getLocalPort();
     }
 
     public Application<C> newApplication() {

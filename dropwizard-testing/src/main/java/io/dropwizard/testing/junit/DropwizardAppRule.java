@@ -100,6 +100,10 @@ public class DropwizardAppRule<C extends Configuration> extends ExternalResource
         return testSupport.getLocalPort();
     }
 
+    public int getPort(int connectorIndex) {
+       return testSupport.getPort(connectorIndex);
+    }
+
     public int getAdminPort() {
         return testSupport.getAdminPort();
     }
