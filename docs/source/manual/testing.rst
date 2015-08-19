@@ -177,6 +177,10 @@ loads a given resource instance in an in-memory Jersey server:
         @Before
         public void setup() {
             when(dao.fetchPerson(eq("blah"))).thenReturn(person);
+        }
+
+        @After
+        public void tearDown(){
             // we have to reset the mock after each test because of the
             // @ClassRule, or use a @Rule as mentioned below.
             reset(dao);
