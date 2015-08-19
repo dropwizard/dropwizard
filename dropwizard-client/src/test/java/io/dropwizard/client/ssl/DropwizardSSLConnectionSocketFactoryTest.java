@@ -9,7 +9,6 @@ import io.dropwizard.setup.Environment;
 import io.dropwizard.testing.ConfigOverride;
 import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit.DropwizardAppRule;
-import io.dropwizard.util.Duration;
 import org.glassfish.jersey.client.ClientResponse;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -159,7 +158,7 @@ public class DropwizardSSLConnectionSocketFactoryTest {
             final Response response = client.target(String.format("https://localhost:%d", CLIENT_AUTH_APP_RULE.getLocalPort())).request().get();
             fail("expected ProcessingException");
         } catch(ProcessingException e) {
-            assertThat(e.getCause()).isInstanceOf(SocketException.class);
+            assertThat(e.getCause()).isInstanceOfAny(SocketException.class, SSLHandshakeException.class);
         }
     }
 
@@ -191,8 +190,7 @@ public class DropwizardSSLConnectionSocketFactoryTest {
             final Response response = client.target(String.format("https://localhost:%d", SSL3_APP_RULE.getLocalPort())).request().get();
             fail("expected ProcessingException");
         } catch (ProcessingException e) {
-            assertThat(e.getCause()).isInstanceOf(SSLHandshakeException.class);
-            assertThat(e.getCause().getMessage()).isEqualTo("Server chose SSLv3, but that protocol version is not enabled or not supported by the client.");
+            assertThat(e.getCause()).isInstanceOfAny(SocketException.class, SSLHandshakeException.class);
         }
     }
 }
