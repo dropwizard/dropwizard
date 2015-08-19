@@ -103,6 +103,17 @@ public class ConstraintViolationExceptionMapperTest extends JerseyTest {
     }
 
     @Test
+    public void getInvalidSubBeanParamsIs400() throws Exception {
+        final Response response = target("/valid/sub-zoo")
+                .queryParam("address", "42 Wallaby Way")
+                .request().get();
+        assertThat(response.getStatus()).isEqualTo(400);
+
+        String ret = "{\"errors\":[\"query param name may not be empty\"]}";
+        assertThat(response.readEntity(String.class)).isEqualTo(ret);
+    }
+
+    @Test
     public void getInvalidHeaderParamsIs400() throws Exception {
         final Response response = target("/valid/head")
                 .request().get();

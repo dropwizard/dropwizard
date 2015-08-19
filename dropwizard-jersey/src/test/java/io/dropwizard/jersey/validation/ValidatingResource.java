@@ -45,6 +45,12 @@ public class ValidatingResource {
     }
 
     @GET
+    @Path("sub-zoo")
+    public String subBlazer(@Valid @BeanParam SubBeanParameter params) {
+        return params.getName() + " " + params.getAddress();
+    }
+
+    @GET
     @Path("head")
     public String heads(@HeaderParam("cheese") @NotEmpty String secretSauce) {
         return secretSauce;
