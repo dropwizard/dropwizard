@@ -25,8 +25,8 @@ import io.dropwizard.testing.junit.DropwizardAppRule;
 import io.dropwizard.util.Duration;
 
 public class JerseyIgnoreRequestUserAgentHeaderFilterTest {
-    private static final long DEFAULT_CONNECTION_TIMEOUT = 500L;
-    private static final long DEFAULT_TIMEOUT = 1000L;
+    private static final long DEFAULT_CONNECTION_TIMEOUT = 5000L;
+    private static final long DEFAULT_TIMEOUT = 10000L;
 
     @ClassRule
     public static DropwizardAppRule<Configuration> APP_RULE =
