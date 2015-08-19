@@ -25,8 +25,8 @@ import io.dropwizard.testing.junit.DropwizardAppRule;
 import io.dropwizard.util.Duration;
 
 public class JerseyIgnoreRequestUserAgentHeaderFilterTest {
-    private static final long DEFAULT_CONNECTION_TIMEOUT = 5000L;
-    private static final long DEFAULT_TIMEOUT = 10000L;
+    private static final int SLEEP_TIME_IN_MILLIS = 500;
+    private static final int DEFAULT_CONNECT_TIMEOUT_IN_MILLIS = 200;
 
     @ClassRule
     public static DropwizardAppRule<Configuration> APP_RULE =
@@ -41,10 +41,10 @@ public class JerseyIgnoreRequestUserAgentHeaderFilterTest {
     @Before
     public void setup() {
         clientConfiguration = new JerseyClientConfiguration();
-        clientConfiguration.setConnectionTimeout(Duration.milliseconds(DEFAULT_CONNECTION_TIMEOUT));
-        clientConfiguration.setTimeout(Duration.milliseconds(DEFAULT_TIMEOUT));
+        clientConfiguration.setConnectionTimeout(Duration.milliseconds(SLEEP_TIME_IN_MILLIS / 2));
+        clientConfiguration.setTimeout(Duration.milliseconds(DEFAULT_CONNECT_TIMEOUT_IN_MILLIS));
         clientBuilder = new JerseyClientBuilder(new MetricRegistry())
-                .using(Executors.newCachedThreadPool(), Jackson.newObjectMapper());
+                .using(Executors.newSingleThreadExecutor(), Jackson.newObjectMapper());
     }
     
     @Test
