@@ -70,7 +70,7 @@ public class ConstraintMessage {
         final Class<?> resourceClass = violation.getLeafBean().getClass();
         switch (parent.getKind()) {
             case PARAMETER:
-                Field field = FieldUtils.getDeclaredField(resourceClass, member.getName(), true);
+                Field field = FieldUtils.getField(resourceClass, member.getName(), true);
                 return getMemberName(field.getDeclaredAnnotations());
             case METHOD:
                 List<Class<?>> params = parent.as(Path.MethodNode.class).getParameterTypes();
