@@ -9,6 +9,7 @@ import io.dropwizard.setup.Environment;
 import io.dropwizard.testing.ConfigOverride;
 import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit.DropwizardAppRule;
+import io.dropwizard.util.Duration;
 import org.glassfish.jersey.client.ClientResponse;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -74,6 +75,8 @@ public class DropwizardSSLConnectionSocketFactoryTest {
         tlsConfiguration.setTrustStorePassword("password");
         jerseyClientConfiguration = new JerseyClientConfiguration();
         jerseyClientConfiguration.setTlsConfiguration(tlsConfiguration);
+        jerseyClientConfiguration.setConnectionTimeout(Duration.milliseconds(2000));
+        jerseyClientConfiguration.setTimeout(Duration.milliseconds(5000));
     }
 
     @Test
