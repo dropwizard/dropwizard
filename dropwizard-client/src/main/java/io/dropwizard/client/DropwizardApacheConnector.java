@@ -215,11 +215,7 @@ public class DropwizardApacheConnector implements Connector {
      */
     @Override
     public void close() {
-        try {
-            client.close();
-        } catch (IOException e) {
-            throw new ProcessingException(LocalizationMessages.FAILED_TO_STOP_CLIENT(), e);
-        }
+        // Should not close the client here, because it's managed by the Dropwizard environment
     }
 
     /**
