@@ -25,24 +25,19 @@ import io.dropwizard.testing.junit.DropwizardAppRule;
 import io.dropwizard.util.Duration;
 
 public class JerseyIgnoreRequestUserAgentHeaderFilterTest {
-    private static final int SLEEP_TIME_IN_MILLIS = 500;
-    private static final int DEFAULT_CONNECT_TIMEOUT_IN_MILLIS = 200;
-
     @ClassRule
     public static DropwizardAppRule<Configuration> APP_RULE =
             new DropwizardAppRule<>(TestApplication.class, Resources.getResource("yaml/jerseyIgnoreRequestUserAgentHeaderFilterTest.yml").getPath());
     
-    public final URI testUri = URI.create("http://localhost:" + APP_RULE.getLocalPort());
-
+    private final URI testUri = URI.create("http://localhost:" + APP_RULE.getLocalPort());
     private JerseyClientBuilder clientBuilder;
-    
     private JerseyClientConfiguration clientConfiguration;
 
     @Before
     public void setup() {
         clientConfiguration = new JerseyClientConfiguration();
-        clientConfiguration.setConnectionTimeout(Duration.milliseconds(SLEEP_TIME_IN_MILLIS / 2));
-        clientConfiguration.setTimeout(Duration.milliseconds(DEFAULT_CONNECT_TIMEOUT_IN_MILLIS));
+        clientConfiguration.setConnectionTimeout(Duration.milliseconds(1000L));
+        clientConfiguration.setTimeout(Duration.milliseconds(2500L));
         clientBuilder = new JerseyClientBuilder(new MetricRegistry())
             .using(clientConfiguration)
             .using(Executors.newSingleThreadExecutor(), Jackson.newObjectMapper());
@@ -87,17 +82,14 @@ public class JerseyIgnoreRequestUserAgentHeaderFilterTest {
                         .get(String.class)
         ).isEqualTo("RequestUserAgentHeaderValue");
     }
-    
-    
+
     @Path("/")
     public static class TestResource {
-
        @GET
         @Path("user_agent")
         public String getReturnUserAgentHeader(@HeaderParam("User-Agent") String userAgentHeader) {
             return userAgentHeader;
         }
-        
     }
 
     public static class TestApplication extends Application<Configuration> {
@@ -110,7 +102,4 @@ public class JerseyIgnoreRequestUserAgentHeaderFilterTest {
             environment.jersey().register(TestResource.class);
         }
     }
-
-
-
 }
