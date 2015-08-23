@@ -42,8 +42,8 @@ import static org.hamcrest.CoreMatchers.any;
 
 public class DropwizardApacheConnectorTest {
 
-    private static final int SLEEP_TIME_IN_MILLIS = 500;
-    private static final int DEFAULT_CONNECT_TIMEOUT_IN_MILLIS = 200;
+    private static final int SLEEP_TIME_IN_MILLIS = 1000;
+    private static final int DEFAULT_CONNECT_TIMEOUT_IN_MILLIS = 500;
     private static final int ERROR_MARGIN_IN_MILLIS = 300;
     private static final int INCREASE_IN_MILLIS = 100;
     private static final URI NON_ROUTABLE_ADDRESS = URI.create("http://10.255.255.1");
