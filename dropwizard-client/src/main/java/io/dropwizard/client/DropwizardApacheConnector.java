@@ -55,7 +55,7 @@ import static com.google.common.base.MoreObjects.firstNonNull;
 public class DropwizardApacheConnector implements Connector {
 
     private static final String APACHE_HTTP_CLIENT_VERSION = VersionInfo.loadVersionInfo
-            ("org.apache.http.client", DropwizardApacheConnector.class.getClassLoader())
+        ("org.apache.http.client", DropwizardApacheConnector.class.getClassLoader())
             .getRelease();
 
     /**
@@ -219,11 +219,7 @@ public class DropwizardApacheConnector implements Connector {
      */
     @Override
     public void close() {
-        try {
-            client.close();
-        } catch (IOException e) {
-            throw new ProcessingException(LocalizationMessages.FAILED_TO_STOP_CLIENT(), e);
-        }
+        //Should not close the client here, because it's managed by the Dropwizard environment
     }
 
     /**
