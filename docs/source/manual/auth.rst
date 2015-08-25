@@ -249,7 +249,7 @@ In this example we are testing the basic authentication so we need to set the he
         import org.apache.commons.codec.binary.Base64;
 
 
-        String authorizationHeader = StringUtils.join("Basic ", new String(
+        String authorizationHeader = "Basic " + new String(
                 Base64.encodeBase64("test@test.com:test".getBytes())), StandardCharsets.US_ASCII);
         Builder builder = resources.getJerseyTest().target("/entities")
                 .request()
