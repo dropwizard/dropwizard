@@ -59,6 +59,14 @@ v0.9.0
 * Upgraded to tomcat-jdbc 8.0.24
 * Upgraded to joda-time 2.8.1
 
+.. _rel-0.8.2:
+
+v0.8.2 July 6 2015
+==================
+
+* Support for request-scoped configuration for Jersey client `#1137 <https://github.com/dropwizard/dropwizard/pull/1137>`_
+* Upgraded to Jersey 2.19 `#1143 <https://github.com/dropwizard/dropwizard/pull/1143>`_
+
 .. _rel-0.8.1:
 
 v0.8.1: Apr 7 2015
