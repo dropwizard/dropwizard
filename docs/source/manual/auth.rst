@@ -216,3 +216,41 @@ resource method.
 If you have a resource which is optionally protected (e.g., you want to display a logged-in user's
 name but not require login), you need to implement a custom filter which injects a security context
 containing the principal if it exists, without performing authentication.
+
+Testing Protected Resources
+===========================
+
+Add this dependency into your ``build.gradle`` file:
+
+.. code-block:: java
+
+    testCompile group: 'io.dropwizard', name: 'dropwizard-testing', version: '<version>'
+    testCompile (group: 'org.glassfish.jersey.test-framework.providers', name: 'jersey-test-framework-provider-grizzly2', version: '2.19') {
+        exclude group: 'javax.servlet', module: 'javax.servlet-api'
+        exclude group: 'junit', module: 'junit'
+    }
+
+When you build your ``ResourceTestRule``, add the ``GrizzlyWebTestContainerFactory`` line.
+
+.. code-block:: java
+
+    @Rule
+    ResourceTestRule rule = ResourceTestRule
+            .builder()
+            .setTestContainerFactory(new GrizzlyWebTestContainerFactory())
+            .addProvider(AuthFactory.binder(new BasicAuthProvider<>(new ExampleAuthenticator(), "SUPER SECRET STUFF")))
+            .addResource(...)
+            .build();
+
+In this example we are testing the basic authentication so we need to set the header manually. Note the use of ``resources.getJerseyTest()`` to make the test work
+
+.. code-block:: java
+
+        String authorizationHeader = StringUtils.join("Basic ", new String(
+                Base64.encodeBase64("test@test.com:test".getBytes())));
+        Builder builder = resources.getJerseyTest().target(R.URL_SHOPS)
+                .request()
+                .header(Header.Authorization.name(), authorizationHeader);
+        Response response = builder.post(Entity.json(shop));
+        Assertions.assertThat(response.getStatus()).isEqualTo(
+                Status.CREATED.getStatusCode());
