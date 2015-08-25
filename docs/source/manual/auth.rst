@@ -245,12 +245,15 @@ When you build your ``ResourceTestRule``, add the ``GrizzlyWebTestContainerFacto
 In this example we are testing the basic authentication so we need to set the header manually. Note the use of ``resources.getJerseyTest()`` to make the test work
 
 .. code-block:: java
+        import java.nio.charset.StandardCharsets;
+        import org.apache.commons.codec.binary.Base64;
+
 
         String authorizationHeader = StringUtils.join("Basic ", new String(
-                Base64.encodeBase64("test@test.com:test".getBytes())));
-        Builder builder = resources.getJerseyTest().target(R.URL_SHOPS)
+                Base64.encodeBase64("test@test.com:test".getBytes())), StandardCharsets.US_ASCII);
+        Builder builder = resources.getJerseyTest().target("/entities")
                 .request()
                 .header(Header.Authorization.name(), authorizationHeader);
-        Response response = builder.post(Entity.json(shop));
+        Response response = builder.post(Entity.json(entity));
         Assertions.assertThat(response.getStatus()).isEqualTo(
                 Status.CREATED.getStatusCode());
