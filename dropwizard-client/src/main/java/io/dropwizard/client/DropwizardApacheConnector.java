@@ -55,7 +55,7 @@ import static com.google.common.base.MoreObjects.firstNonNull;
 public class DropwizardApacheConnector implements Connector {
 
     private static final String APACHE_HTTP_CLIENT_VERSION = VersionInfo.loadVersionInfo
-            ("org.apache.http.client", DropwizardApacheConnector.class.getClassLoader())
+        ("org.apache.http.client", DropwizardApacheConnector.class.getClassLoader())
             .getRelease();
 
     /**
@@ -127,6 +127,10 @@ public class DropwizardApacheConnector implements Connector {
                 .setUri(jerseyRequest.getUri())
                 .setEntity(getHttpEntity(jerseyRequest));
         for (String headerName : jerseyRequest.getHeaders().keySet()) {
+            // Ignore user-agent because it's already configured in the Apache HTTP client
+            if (headerName.equalsIgnoreCase(HttpHeaders.USER_AGENT)) {
+                continue;
+            }
             builder.addHeader(headerName, jerseyRequest.getHeaderString(headerName));
         }
 
@@ -215,7 +219,7 @@ public class DropwizardApacheConnector implements Connector {
      */
     @Override
     public void close() {
-        // Should not close the client here, because it's managed by the Dropwizard environment
+        //Should not close the client here, because it's managed by the Dropwizard environment
     }
 
     /**

@@ -70,6 +70,18 @@ public class DropwizardApacheConnectorTest {
     }
 
     @Test
+    public void when_jersey_client_runtime_is_garbage_collected_apache_client_is_not_closed() {
+        for (int j = 0; j < 5; j++) {
+            System.gc(); // We actually want GC here
+            final String response = client.target(testUri + "/long_running")
+                .property(ClientProperties.READ_TIMEOUT, SLEEP_TIME_IN_MILLIS * 2)
+                .request()
+                .get(String.class);
+            assertThat(response).isEqualTo("success");
+        }
+    }
+
+    @Test
     public void when_read_timeout_override_created_then_client_requests_completes_successfully() {
         client.target(testUri + "/long_running")
                 .property(ClientProperties.READ_TIMEOUT, SLEEP_TIME_IN_MILLIS * 2)
