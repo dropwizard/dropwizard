@@ -3,6 +3,7 @@ package io.dropwizard.client;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Optional;
 import io.dropwizard.client.proxy.ProxyConfiguration;
+import io.dropwizard.client.ssl.TlsConfiguration;
 import io.dropwizard.util.Duration;
 
 import javax.annotation.Nullable;
@@ -59,6 +60,10 @@ public class HttpClientConfiguration {
     public Duration getKeepAlive() {
         return keepAlive;
     }
+
+    @Valid
+    @Nullable
+    private TlsConfiguration tlsConfiguration;
 
     @JsonProperty
     public void setKeepAlive(Duration keepAlive) {
@@ -173,5 +178,15 @@ public class HttpClientConfiguration {
     @JsonProperty
     public void setValidateAfterInactivityPeriod(Duration validateAfterInactivityPeriod) {
         this.validateAfterInactivityPeriod = validateAfterInactivityPeriod;
+    }
+
+    @JsonProperty("tls")
+    public TlsConfiguration getTlsConfiguration() {
+        return tlsConfiguration;
+    }
+
+    @JsonProperty("tls")
+    public void setTlsConfiguration(TlsConfiguration tlsConfiguration) {
+        this.tlsConfiguration = tlsConfiguration;
     }
 }

@@ -66,11 +66,8 @@ public class HttpClientBuilder {
     private HttpClientConfiguration configuration = new HttpClientConfiguration();
     private DnsResolver resolver = new SystemDefaultDnsResolver();
     private HttpRequestRetryHandler httpRequestRetryHandler;
-    private Registry<ConnectionSocketFactory> registry
-            = RegistryBuilder.<ConnectionSocketFactory>create()
-            .register("http", PlainConnectionSocketFactory.getSocketFactory())
-            .register("https", SSLConnectionSocketFactory.getSocketFactory())
-            .build();
+    private Registry<ConnectionSocketFactory> registry;
+
     private CredentialsProvider credentialsProvider = null;
     private HttpClientMetricNameStrategy metricNameStrategy = HttpClientMetricNameStrategies.METHOD_ONLY;
     private HttpRoutePlanner routePlanner = null;
@@ -203,7 +200,7 @@ public class HttpClientBuilder {
      * @return an {@link io.dropwizard.client.ConfiguredCloseableHttpClient}
      */
     ConfiguredCloseableHttpClient buildWithDefaultRequestConfiguration(String name) {
-        final InstrumentedHttpClientConnectionManager manager = createConnectionManager(registry, name);
+        final InstrumentedHttpClientConnectionManager manager = createConnectionManager(createConfiguredRegistry(), name);
         return createClient(org.apache.http.impl.client.HttpClientBuilder.create(), manager, name);
     }
 
@@ -327,6 +324,25 @@ public class HttpClientBuilder {
                 name);
         return configureConnectionManager(manager);
     }
+
+    private Registry<ConnectionSocketFactory> createConfiguredRegistry() {
+        if (registry != null) {
+            return registry;
+        }
+
+        final SSLConnectionSocketFactory sslConnectionSocketFactory;
+        if(configuration.getTlsConfiguration() == null) {
+            sslConnectionSocketFactory = SSLConnectionSocketFactory.getSocketFactory();
+        } else {
+            sslConnectionSocketFactory = new DropwizardSSLConnectionSocketFactory(configuration.getTlsConfiguration()).getSocketFactory();
+        }
+
+        return RegistryBuilder.<ConnectionSocketFactory>create()
+                .register("http", PlainConnectionSocketFactory.getSocketFactory())
+                .register("https", sslConnectionSocketFactory)
+                .build();
+    }
+
 
     @VisibleForTesting
     protected InstrumentedHttpClientConnectionManager configureConnectionManager(

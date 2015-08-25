@@ -1,0 +1,40 @@
+server:
+  applicationConnectors:
+      - type: https
+        port: 0
+        keyStoreType: PKCS12
+        keyStorePassword: password
+        validateCerts: false
+        supportedProtocols: ["TLSv1.2"]
+      - type: https
+        port: 0
+        keyStoreType: PKCS12
+        keyStorePassword: password
+        validateCerts: false
+      - type: https
+        port: 0
+        keyStoreType: PKCS12
+        keyStorePassword: password
+        validateCerts: false
+        supportedProtocols: ["TLSv1.2"]
+      - type: https
+        port: 0
+        keyStoreType: PKCS12
+        keyStorePassword: password
+        validateCerts: false
+        supportedProtocols: ["TLSv1.2"]
+      - type: https
+        port: 0
+        keyStoreType: PKCS12
+        keyStorePassword: password
+        validateCerts: false
+        supportedProtocols: ["TLSv1.2"]
+  adminConnectors:
+      - type: http
+        port: 0
+
+
+logging:
+  level: INFO
+  appenders:
+    - type: console
