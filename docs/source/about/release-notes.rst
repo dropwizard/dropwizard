@@ -59,6 +59,12 @@ v0.9.0
 * Upgraded to tomcat-jdbc 8.0.24
 * Upgraded to joda-time 2.8.1
 
+.. _rel-0.8.3:
+
+v0.8.3 Aug 24 2015
+==================
+* Fixed an issue with closing the HTTP client connection pool after a full GC `#1160 <https://github.com/dropwizard/dropwizard/pull/1160>`_
+
 .. _rel-0.8.2:
 
 v0.8.2 July 6 2015
