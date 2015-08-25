@@ -222,13 +222,30 @@ Testing Protected Resources
 
 Add this dependency into your ``build.gradle`` file:
 
-.. code-block:: java
+.. code-block:: xml
 
-    testCompile group: 'io.dropwizard', name: 'dropwizard-testing', version: '<version>'
-    testCompile (group: 'org.glassfish.jersey.test-framework.providers', name: 'jersey-test-framework-provider-grizzly2', version: '2.19') {
-        exclude group: 'javax.servlet', module: 'javax.servlet-api'
-        exclude group: 'junit', module: 'junit'
-    }
+    <dependencies>
+      <dependency>
+        <groupId>io.dropwizard</groupId>
+        <artifactId>dropwizard-testing</artifactId>
+        <version>${dropwizard.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.glassfish.jersey.test-framework.providers</groupId>
+        <artifactId>jersey-test-framework-provider-grizzly2</artifactId>
+        <version>2.19</version>
+        <exclusions>
+          <exclusion>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+    </dependencies>
 
 When you build your ``ResourceTestRule``, add the ``GrizzlyWebTestContainerFactory`` line.
 
