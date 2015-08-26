@@ -6,7 +6,7 @@
     </prerequisites>
 
     <artifactId>dropwizard-example</artifactId>
-    <version>0.8.3-SNAPSHOT</version>
+    <version>0.8.4</version>
     <groupId>io.dropwizard</groupId>
     <name>Dropwizard Example Application</name>
 
@@ -29,42 +29,42 @@
         <dependency>
             <groupId>io.dropwizard</groupId>
             <artifactId>dropwizard-core</artifactId>
-            <version>0.8.4-SNAPSHOT</version>
+            <version>0.8.4</version>
         </dependency>
         <dependency>
             <groupId>io.dropwizard</groupId>
             <artifactId>dropwizard-auth</artifactId>
-            <version>0.8.4-SNAPSHOT</version>
+            <version>0.8.4</version>
         </dependency>
         <dependency>
             <groupId>io.dropwizard</groupId>
             <artifactId>dropwizard-assets</artifactId>
-            <version>0.8.4-SNAPSHOT</version>
+            <version>0.8.4</version>
         </dependency>
         <dependency>
             <groupId>io.dropwizard</groupId>
             <artifactId>dropwizard-spdy</artifactId>
-            <version>0.8.4-SNAPSHOT</version>
+            <version>0.8.4</version>
         </dependency>
         <dependency>
             <groupId>io.dropwizard</groupId>
             <artifactId>dropwizard-hibernate</artifactId>
-            <version>0.8.4-SNAPSHOT</version>
+            <version>0.8.4</version>
         </dependency>
         <dependency>
             <groupId>io.dropwizard</groupId>
             <artifactId>dropwizard-migrations</artifactId>
-            <version>0.8.4-SNAPSHOT</version>
+            <version>0.8.4</version>
         </dependency>
         <dependency>
             <groupId>io.dropwizard</groupId>
             <artifactId>dropwizard-views-freemarker</artifactId>
-            <version>0.8.4-SNAPSHOT</version>
+            <version>0.8.4</version>
         </dependency>
         <dependency>
             <groupId>io.dropwizard</groupId>
             <artifactId>dropwizard-views-mustache</artifactId>
-            <version>0.8.4-SNAPSHOT</version>
+            <version>0.8.4</version>
         </dependency>
         <dependency>
             <groupId>com.h2database</groupId>
@@ -74,7 +74,7 @@
         <dependency>
             <groupId>io.dropwizard</groupId>
             <artifactId>dropwizard-testing</artifactId>
-            <version>0.8.4-SNAPSHOT</version>
+            <version>0.8.4</version>
             <scope>test</scope>
         </dependency>
         <dependency>
