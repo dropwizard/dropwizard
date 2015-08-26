@@ -80,6 +80,25 @@ public class ConstraintViolationExceptionMapperTest extends JerseyTest {
     }
 
     @Test
+    public void cacheIsForParamNamesOnly() throws Exception {
+        // query parameter must not be null, and must be at least 3
+        final Response response = target("/valid/fhqwhgads")
+                .queryParam("num", 2).request().get();
+
+        assertThat(response.getStatus()).isEqualTo(400);
+
+        String ret = "{\"errors\":[\"query param num must be greater than or equal to 3\"]}";
+        assertThat(response.readEntity(String.class)).isEqualTo(ret);
+
+        // Send another request to trigger reflection cache. This one is invalid in a different way
+        // and should get a different message.
+        final Response cache = target("/valid/fhqwhgads").request().get();
+        assertThat(cache.getStatus()).isEqualTo(400);
+        ret = "{\"errors\":[\"query param num may not be null\"]}";
+        assertThat(cache.readEntity(String.class)).isEqualTo(ret);
+    }
+
+    @Test
     public void getInvalidCustomTypeIs400() throws Exception {
         // query parameter is too short and so will fail validation
         final Response response = target("/valid/barter")

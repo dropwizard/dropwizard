@@ -6,24 +6,31 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Iterables;
 import io.dropwizard.validation.ConstraintViolations;
 import io.dropwizard.validation.ValidationMethod;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.reflect.FieldUtils;
-import org.apache.commons.lang3.reflect.MethodUtils;
-
-import javax.validation.ConstraintViolation;
-import javax.validation.ElementKind;
-import javax.validation.Path;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
+import javax.validation.ConstraintViolation;
+import javax.validation.ElementKind;
+import javax.validation.Path;
+import javax.validation.metadata.ConstraintDescriptor;
+import javax.ws.rs.CookieParam;
+import javax.ws.rs.FormParam;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.MatrixParam;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.reflect.FieldUtils;
+import org.apache.commons.lang3.reflect.MethodUtils;
+import org.apache.commons.lang3.tuple.Pair;
 
 public class ConstraintMessage {
-    private static final Cache<Path, String> MESSAGES_CACHE = CacheBuilder.newBuilder()
+
+    private static final Cache<Pair<Path, ? extends ConstraintDescriptor<?>>, String> MESSAGES_CACHE =
+            CacheBuilder.newBuilder()
             .expireAfterWrite(1, TimeUnit.HOURS)
             .build();
 
@@ -34,10 +41,13 @@ public class ConstraintMessage {
      * Gets the human friendly location of where the violation was raised.
      */
     public static String getMessage(ConstraintViolation<?> v) {
-        String message = MESSAGES_CACHE.getIfPresent(v.getPropertyPath());
+        Pair<Path, ? extends ConstraintDescriptor<?>> of =
+                Pair.of(v.getPropertyPath(), v.getConstraintDescriptor());
+
+        String message = MESSAGES_CACHE.getIfPresent(of);
         if (message == null) {
             message = calculateMessage(v);
-            MESSAGES_CACHE.put(v.getPropertyPath(), message);
+            MESSAGES_CACHE.put(of, message);
         }
         return message;
     }
