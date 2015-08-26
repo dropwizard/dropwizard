@@ -220,7 +220,7 @@ containing the principal if it exists, without performing authentication.
 Testing Protected Resources
 ===========================
 
-Add this dependency into your ``build.gradle`` file:
+Add this dependency into your ``pom.xml`` file:
 
 .. code-block:: xml
 
