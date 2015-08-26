@@ -216,3 +216,61 @@ resource method.
 If you have a resource which is optionally protected (e.g., you want to display a logged-in user's
 name but not require login), you need to implement a custom filter which injects a security context
 containing the principal if it exists, without performing authentication.
+
+Testing Protected Resources
+===========================
+
+Add this dependency into your ``pom.xml`` file:
+
+.. code-block:: xml
+
+    <dependencies>
+      <dependency>
+        <groupId>io.dropwizard</groupId>
+        <artifactId>dropwizard-testing</artifactId>
+        <version>${dropwizard.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.glassfish.jersey.test-framework.providers</groupId>
+        <artifactId>jersey-test-framework-provider-grizzly2</artifactId>
+        <version>${jersey.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+          </exclusion>
+        </exclusions>
+      </dependency>
+    </dependencies>
+
+When you build your ``ResourceTestRule``, add the ``GrizzlyWebTestContainerFactory`` line.
+
+.. code-block:: java
+
+    @Rule
+    ResourceTestRule rule = ResourceTestRule
+            .builder()
+            .setTestContainerFactory(new GrizzlyWebTestContainerFactory())
+            .addProvider(AuthFactory.binder(new BasicAuthProvider<>(new ExampleAuthenticator(), "SUPER SECRET STUFF")))
+            .addResource(...)
+            .build();
+
+In this example we are testing the basic authentication so we need to set the header manually. Note the use of ``resources.getJerseyTest()`` to make the test work
+
+.. code-block:: java
+        import java.nio.charset.StandardCharsets;
+        import org.apache.commons.codec.binary.Base64;
+
+
+        String authorizationHeader = "Basic " + new String(
+                Base64.encodeBase64("test@test.com:test".getBytes())), StandardCharsets.US_ASCII);
+        Builder builder = resources.getJerseyTest().target("/entities")
+                .request()
+                .header(Header.Authorization.name(), authorizationHeader);
+        Response response = builder.post(Entity.json(entity));
+        Assertions.assertThat(response.getStatus()).isEqualTo(
+                Status.CREATED.getStatusCode());
