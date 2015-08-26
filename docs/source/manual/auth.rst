@@ -233,7 +233,7 @@ Add this dependency into your ``pom.xml`` file:
       <dependency>
         <groupId>org.glassfish.jersey.test-framework.providers</groupId>
         <artifactId>jersey-test-framework-provider-grizzly2</artifactId>
-        <version>2.19</version>
+        <version>${jersey.version}</version>
         <exclusions>
           <exclusion>
             <groupId>javax.servlet</groupId>
