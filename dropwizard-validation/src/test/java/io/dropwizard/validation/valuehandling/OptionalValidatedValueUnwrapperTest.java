@@ -20,7 +20,6 @@ public class OptionalValidatedValueUnwrapperTest {
     public static class Example {
 
         @Min(3)
-        @UnwrapValidatedValue
         public Optional<Integer> three = Optional.absent();
 
         @NotNull
