@@ -13,7 +13,6 @@ import freemarker.template.Version;
 import io.dropwizard.views.View;
 import io.dropwizard.views.ViewRenderer;
 
-import javax.ws.rs.WebApplicationException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -73,7 +72,7 @@ public class FreemarkerViewRenderer implements ViewRenderer {
             final Template template = configuration.getTemplate(view.getTemplateName(), locale, charset.name());
             template.process(view, new OutputStreamWriter(output, template.getEncoding()));
         } catch (TemplateException e) {
-            throw new WebApplicationException(e);
+            throw new RuntimeException(e);
         }
     }
 
