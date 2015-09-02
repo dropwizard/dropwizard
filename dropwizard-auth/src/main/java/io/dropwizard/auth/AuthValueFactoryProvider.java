@@ -48,13 +48,14 @@ public class AuthValueFactoryProvider<T extends Principal> extends AbstractValue
      * the type {@link T} being annotated with {@link Auth} annotation.
      *
      * @param parameter parameter that was annotated for being injected
-     * @return the factory if parameter matched type
+     * @return the factory if annotated parameter matched type
      */
     @Override
     public AbstractContainerRequestValueFactory<?> createValueFactory(Parameter parameter) {
-        if (!principalClass.equals(parameter.getRawType())) {
+        if (!parameter.isAnnotationPresent(Auth.class) || !principalClass.equals(parameter.getRawType())) {
             return null;
         }
+
         return new AbstractContainerRequestValueFactory<Principal>() {
 
             /**
