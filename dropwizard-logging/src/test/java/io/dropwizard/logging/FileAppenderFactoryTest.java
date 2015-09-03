@@ -6,8 +6,10 @@ import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.FileAppender;
+import ch.qos.logback.core.rolling.FixedWindowRollingPolicy;
 import ch.qos.logback.core.rolling.RollingFileAppender;
 import ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP;
+import ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy;
 import io.dropwizard.jackson.DiscoverableSubtypeResolver;
 import io.dropwizard.util.Size;
 import org.junit.Rule;
@@ -71,6 +73,20 @@ public class FileAppenderFactoryTest {
 
         assertThat(appender.getTriggeringPolicy()).isInstanceOf(SizeAndTimeBasedFNATP.class);
         assertThat(((SizeAndTimeBasedFNATP) appender.getTriggeringPolicy()).getMaxFileSize()).isEqualTo("1024");
+    }
+
+    @Test
+    public void hasMaxFileSizeFixedWindow() throws Exception {
+        FileAppenderFactory fileAppenderFactory = new FileAppenderFactory();
+        fileAppenderFactory.setCurrentLogFilename(folder.newFile("logfile.log").toString());
+        fileAppenderFactory.setArchive(true);
+        fileAppenderFactory.setMaxFileSize(Size.kilobytes(1));
+        fileAppenderFactory.setArchivedLogFilenamePattern(folder.newFile("example-%i.log.gz").toString());
+        RollingFileAppender<ILoggingEvent> appender = (RollingFileAppender<ILoggingEvent>) fileAppenderFactory.buildAppender(new LoggerContext());
+
+        assertThat(appender.getRollingPolicy()).isInstanceOf(FixedWindowRollingPolicy.class);
+        assertThat(appender.getTriggeringPolicy()).isInstanceOf(SizeBasedTriggeringPolicy.class);
+        assertThat(((SizeBasedTriggeringPolicy) appender.getTriggeringPolicy()).getMaxFileSize()).isEqualTo("1024");
     }
 
     @Test
