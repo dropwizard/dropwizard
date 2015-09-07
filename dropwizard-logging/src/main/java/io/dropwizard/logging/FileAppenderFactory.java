@@ -184,7 +184,13 @@ public class FileAppenderFactory extends AbstractAppenderFactory {
     @JsonIgnore
     @ValidationMethod(message = "when specifying maxFileSize, archivedLogFilenamePattern must contain %i")
     public boolean isValidForMaxFileSizeSetting() {
-        return maxFileSize == null || (archive && archivedLogFilenamePattern.contains("%i"));
+        return !archive || maxFileSize == null || (archivedLogFilenamePattern!= null && archivedLogFilenamePattern.contains("%i"));
+    }
+
+    @JsonIgnore
+    @ValidationMethod(message = "when archivedLogFilenamePattern contains %i, maxFileSize must be specified")
+    public boolean isMaxFileSizeSettingSpecified() {
+        return !archive || !(archivedLogFilenamePattern != null && archivedLogFilenamePattern.contains("%i")) || maxFileSize != null;
     }
 
     @Override
