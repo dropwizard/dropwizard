@@ -314,8 +314,11 @@ The ``DropwizardClientRule`` takes care of:
 Integration Testing
 ===================
 
-It can be useful to start up your entire app and hit it with real HTTP requests during testing. This can be
-achieved by adding ``DropwizardAppRule`` to your JUnit test class, which will start the app prior to any tests
+It can be useful to start up your entire app and hit it with real HTTP requests during testing. 
+
+JUnit
+-----
+Adding ``DropwizardAppRule`` to your JUnit test class will start the app prior to any tests
 running and stop it again when they've completed (roughly equivalent to having used ``@BeforeClass`` and ``@AfterClass``).
 ``DropwizardAppRule`` also exposes the app's ``Configuration``,
 ``Environment`` and the app object itself so that these can be queried by the tests.
@@ -331,6 +334,40 @@ running and stop it again when they've completed (roughly equivalent to having u
         @Test
         public void loginHandlerRedirectsAfterPost() {
             Client client = new JerseyClientBuilder(RULE.getEnvironment()).build("test client");
+
+            Response response = client.target(
+                     String.format("http://localhost:%d/login", RULE.getLocalPort()))
+                    .request()
+                    .post(Entity.json(loginForm()));
+
+            assertThat(response.getStatus()).isEqualTo(302);
+        }
+    }
+    
+Non-JUnit
+---------
+By creating a DropwizardTestSupport instance in your test you can manually start and stop the app in your tests, you do this by calling its ``before`` and ``after`` methods. ``DropwizardTestSupport`` also exposes the app's ``Configuration``, ``Environment`` and the app object itself so that these can be queried by the tests.
+
+.. code-block:: java
+
+    public class LoginAcceptanceTest {
+
+        public static final DropwizardTestSupport<TestConfiguration> SUPPORT =
+                new DropwizardTestSupport<TestConfiguration>(MyApp.class, ResourceHelpers.resourceFilePath("my-app-config.yaml"));
+
+        @BeforeClass
+        public void beforeClass() {
+          SUPPORT.before();
+        }
+        
+        @AfterClass
+        public void afterClass() {
+          SUPPORT.after();
+        }
+        
+        @Test
+        public void loginHandlerRedirectsAfterPost() {
+            Client client = new JerseyClientBuilder(SUPPORT.getEnvironment()).build("test client");
 
             Response response = client.target(
                      String.format("http://localhost:%d/login", RULE.getLocalPort()))
