@@ -91,6 +91,16 @@ public class DataSourceConfigurationTest {
         assertThat(ds.getValidationQueryTimeout()).isEqualTo(Optional.absent());
     }
 
+    @Test
+    public void testInlineUserPasswordConfiguration() throws Exception {
+        DataSourceFactory ds = getDataSourceFactory("yaml/inline_user_pass_db_pool.yml");
+
+        assertThat(ds.getDriverClass()).isEqualTo("org.postgresql.Driver");
+        assertThat(ds.getUrl()).isEqualTo("jdbc:postgresql://db.example.com/db-prod?user=scott&password=tiger");
+        assertThat(ds.getUser()).isNull();
+        assertThat(ds.getPassword()).isNull();
+    }
+
     private DataSourceFactory getDataSourceFactory(String resourceName) throws Exception {
         return new ConfigurationFactory<>(DataSourceFactory.class,
                 Validation.buildDefaultValidatorFactory().getValidator(), Jackson.newObjectMapper(), "dw")
