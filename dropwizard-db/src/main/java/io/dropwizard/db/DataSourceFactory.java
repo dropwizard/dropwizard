@@ -40,7 +40,7 @@ import java.util.concurrent.TimeUnit;
  *     </tr>
  *     <tr>
  *         <td>{@code user}</td>
- *         <td><b>REQUIRED</b></td>
+ *         <td><b>none</b></td>
  *         <td>The username used to connect to the server.</td>
  *     </tr>
  *     <tr>
@@ -294,10 +294,9 @@ public class DataSourceFactory implements PooledDataSourceFactory {
 
     private Boolean readOnlyByDefault;
 
-    @NotNull
     private String user = null;
 
-    private String password = "";
+    private String password = null;
 
     @NotNull
     private String url = null;
@@ -769,7 +768,7 @@ public class DataSourceFactory implements PooledDataSourceFactory {
         poolConfig.setName(name);
         poolConfig.setUrl(url);
         poolConfig.setUsername(user);
-        poolConfig.setPassword(password);
+        poolConfig.setPassword(user != null && password == null ? "" : password);
         poolConfig.setTestWhileIdle(checkConnectionWhileIdle);
         poolConfig.setValidationQuery(validationQuery);
         poolConfig.setTestOnBorrow(checkConnectionOnBorrow);

@@ -973,7 +973,7 @@ driverClass                     REQUIRED                 The full name of the JD
 
 url                             REQUIRED                 The URL of the server.
 
-user                            REQUIRED                 The username used to connect to the server.
+user                            none                     The username used to connect to the server.
 
 password                        none                     The password used to connect to the server.
 
