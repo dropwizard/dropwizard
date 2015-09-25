@@ -17,7 +17,6 @@ import io.dropwizard.jersey.errors.EarlyEofExceptionMapper;
 import io.dropwizard.jersey.errors.LoggingExceptionMapper;
 import io.dropwizard.jersey.filter.AllowedMethodsFilter;
 import io.dropwizard.jersey.jackson.JsonProcessingExceptionMapper;
-import io.dropwizard.jersey.validation.ConstraintViolationExceptionMapper;
 import io.dropwizard.jersey.jackson.JacksonMessageBodyProvider;
 import io.dropwizard.jersey.setup.JerseyEnvironment;
 import io.dropwizard.jersey.validation.JerseyViolationExceptionMapper;
@@ -485,7 +484,6 @@ public abstract class AbstractServerFactory implements ServerFactory {
                 jersey.register(new LoggingExceptionMapper<Throwable>() {
                 });
                 jersey.register(new JerseyViolationExceptionMapper());
-                jersey.register(new ConstraintViolationExceptionMapper());
                 jersey.register(new JsonProcessingExceptionMapper());
                 jersey.register(new EarlyEofExceptionMapper());
             }
