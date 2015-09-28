@@ -2,6 +2,8 @@ package io.dropwizard.jersey;
 
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.jersey2.InstrumentedResourceMethodApplicationListener;
+import com.fasterxml.classmate.ResolvedType;
+import com.fasterxml.classmate.TypeResolver;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Sets;
@@ -33,6 +35,7 @@ import java.util.Set;
 public class DropwizardResourceConfig extends ResourceConfig {
     private static final Logger LOGGER = LoggerFactory.getLogger(DropwizardResourceConfig.class);
     private static final String NEWLINE = String.format("%n");
+    private static final TypeResolver TYPE_RESOLVER = new TypeResolver();
 
     private String urlPattern = "/*";
 
@@ -176,7 +179,12 @@ public class DropwizardResourceConfig extends ResourceConfig {
                         endpointLogLines.add(new EndpointLogLine(method.getHttpMethod(), path, klass));
                     } else if (method.getType() == ResourceMethod.JaxrsType.SUB_RESOURCE_LOCATOR) {
                         final String path = normalizePath(basePath, childResource.getPath());
-                        populate(path, method.getInvocable().getRawResponseType(), true, endpointLogLines);
+                        final ResolvedType responseType = TYPE_RESOLVER
+                                .resolve(method.getInvocable().getResponseType());
+                        final Class<?> erasedType = !responseType.getTypeBindings().isEmpty() ?
+                                responseType.getTypeBindings().getBoundType(0).getErasedType() :
+                                responseType.getErasedType();
+                        populate(path, erasedType, true, endpointLogLines);
                     }
                 }
             }

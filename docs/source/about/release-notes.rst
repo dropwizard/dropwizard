@@ -46,9 +46,9 @@ v0.9.0
 * Upgraded to Freemarker 2.3.23
 * Upgraded to H2 1.4.187
 * Upgraded to Hibernate 4.3.11.Final
-* Upgraded to Jackson 2.6.1
+* Upgraded to Jackson 2.6.2
 * Upgraded to Jadira Usertype Core 4.0.0.GA
-* Upgraded to Jersey 2.21
+* Upgraded to Jersey 2.22
 * Upgraded to Jetty 9.2.13.v20150730
 * Upgraded to Hibernate Validator 5.2.1.Final
 * Upgraded to Jetty ALPN boot 7.1.3.v20150130

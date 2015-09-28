@@ -30,6 +30,8 @@ commitOnReturn: true
 autoCommitByDefault: false
 defaultCatalog: test_catalog
 defaultTransactionIsolation: read-committed
+removeAbandoned: true
+removeAbandonedTimeout: 15s
 useFairQueue: false
 
 logAbandonedConnections: true

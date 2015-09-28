@@ -973,9 +973,18 @@ driverClass                     REQUIRED                 The full name of the JD
 
 url                             REQUIRED                 The URL of the server.
 
-user                            REQUIRED                 The username used to connect to the server.
+user                            none                     The username used to connect to the server.
 
 password                        none                     The password used to connect to the server.
+
+removeAbandoned                 false                    Remove abandoned connections if they exceed
+                                                         removeAbandonedTimeout. If set to true a connection is
+                                                         considered abandoned and eligible for removal if it has been in
+                                                         use longer than the removeAbandonedTimeout and the condition
+                                                         for abandonWhenPercentageFull is met.
+
+removeAbandonedTimeout          60 seconds               The time before a database connection can be considered
+                                                         abandoned.
 
 abandonWhenPercentageFull       0                        Connections that have been abandoned (timed out) won't get
                                                          closed and reported up unless the number of connections in use

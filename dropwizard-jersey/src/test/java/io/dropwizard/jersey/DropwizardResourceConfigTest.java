@@ -117,7 +117,8 @@ public class DropwizardResourceConfigTest {
         rc.register(WrapperResource.class);
 
         assertThat(rc.getEndpointsInfo())
-                .contains("    GET     /wrapper/bar (io.dropwizard.jersey.DropwizardResourceConfigTest.ResourcePathOnMethodLevel)");
+                .contains("    GET     /wrapper/bar (io.dropwizard.jersey.DropwizardResourceConfigTest.ResourcePathOnMethodLevel)")
+                .contains("    GET     /locator/bar (io.dropwizard.jersey.DropwizardResourceConfigTest.ResourcePathOnMethodLevel)");
     }
 
     @Test
@@ -195,6 +196,11 @@ public class DropwizardResourceConfigTest {
         @Path("wrapper")
         public ResourcePathOnMethodLevel getNested() {
             return new ResourcePathOnMethodLevel();
+        }
+
+        @Path("locator")
+        public Class<ResourcePathOnMethodLevel> getNested2() {
+            return ResourcePathOnMethodLevel.class;
         }
     }
 

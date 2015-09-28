@@ -24,8 +24,7 @@ public class DataSourceFactoryTest {
     @Before
     public void setUp() {
         factory = new DataSourceFactory();
-        factory.setUrl("jdbc:h2:mem:DbTest-" + System.currentTimeMillis());
-        factory.setUser("sa");
+        factory.setUrl("jdbc:h2:mem:DbTest-" + System.currentTimeMillis() + ";user=sa");
         factory.setDriverClass("org.h2.Driver");
         factory.setValidationQuery("SELECT 1");
     }
