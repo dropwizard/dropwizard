@@ -34,6 +34,8 @@ public class DataSourceConfigurationTest {
         assertThat(ds.getValidationInterval()).isEqualTo(Duration.minutes(1));
         assertThat(ds.isAutoCommentsEnabled()).isFalse();
         assertThat(ds.getReadOnlyByDefault()).isFalse();
+        assertThat(ds.isRemoveAbandoned()).isTrue();
+        assertThat(ds.getRemoveAbandonedTimeout()).isEqualTo(Duration.seconds(15L));
         assertThat(ds.getAbandonWhenPercentageFull()).isEqualTo(75);
         assertThat(ds.isAlternateUsernamesAllowed()).isTrue();
         assertThat(ds.getCommitOnReturn()).isTrue();
@@ -73,6 +75,8 @@ public class DataSourceConfigurationTest {
         assertThat(ds.getValidationInterval()).isEqualTo(Duration.seconds(30));
         assertThat(ds.isAutoCommentsEnabled()).isTrue();
         assertThat(ds.getReadOnlyByDefault()).isNull();
+        assertThat(ds.isRemoveAbandoned()).isFalse();
+        assertThat(ds.getRemoveAbandonedTimeout()).isEqualTo(Duration.seconds(60L));
         assertThat(ds.getAbandonWhenPercentageFull()).isEqualTo(0);
         assertThat(ds.isAlternateUsernamesAllowed()).isFalse();
         assertThat(ds.getCommitOnReturn()).isFalse();
