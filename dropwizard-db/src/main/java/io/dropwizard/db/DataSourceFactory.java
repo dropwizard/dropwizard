@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Optional;
 import com.google.common.collect.Maps;
+import com.google.common.primitives.Ints;
 import io.dropwizard.util.Duration;
 import io.dropwizard.validation.MinDuration;
 import io.dropwizard.validation.ValidationMethod;
@@ -15,6 +16,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.sql.Connection;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
@@ -47,6 +49,23 @@ import java.util.concurrent.TimeUnit;
  *         <td>{@code password}</td>
  *         <td>none</td>
  *         <td>The password used to connect to the server.</td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code removeAbandoned}</td>
+ *         <td>{@code false}</td>
+ *         <td>
+ *             Remove abandoned connections if they exceed the {@code removeAbandonedTimeout}.
+ *             If set to {@code true} a connection is considered abandoned and eligible for removal if it has
+ *             been in use longer than the {@code removeAbandonedTimeout} and the condition for
+ *             {@code abandonWhenPercentageFull} is met.
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code removeAbandonedTimeout}</td>
+ *         <td>60 seconds</td>
+ *         <td>
+ *             The time before a database connection can be considered abandoned.
+ *         </td>
  *     </tr>
  *     <tr>
  *         <td>{@code abandonWhenPercentageFull}</td>
@@ -362,6 +381,12 @@ public class DataSourceFactory implements PooledDataSourceFactory {
     private Duration validationInterval = Duration.seconds(30);
 
     private Optional<String> validatorClassName = Optional.absent();
+
+    private boolean removeAbandoned = false;
+
+    @NotNull
+    @MinDuration(1)
+    private Duration removeAbandonedTimeout = Duration.seconds(60L);
 
     @JsonProperty
     @Override
@@ -726,6 +751,26 @@ public class DataSourceFactory implements PooledDataSourceFactory {
         this.validationQueryTimeout = validationQueryTimeout;
     }
 
+    @JsonProperty
+    public boolean isRemoveAbandoned() {
+        return removeAbandoned;
+    }
+
+    @JsonProperty
+    public void setRemoveAbandoned(boolean removeAbandoned) {
+        this.removeAbandoned = removeAbandoned;
+    }
+
+    @JsonProperty
+    public Duration getRemoveAbandonedTimeout() {
+        return removeAbandonedTimeout;
+    }
+
+    @JsonProperty
+    public void setRemoveAbandonedTimeout(Duration removeAbandonedTimeout) {
+        this.removeAbandonedTimeout = Objects.requireNonNull(removeAbandonedTimeout);
+    }
+
     @Override
     public void asSingleConnectionPool() {
         minSize = 1;
@@ -769,6 +814,9 @@ public class DataSourceFactory implements PooledDataSourceFactory {
         poolConfig.setUrl(url);
         poolConfig.setUsername(user);
         poolConfig.setPassword(user != null && password == null ? "" : password);
+        poolConfig.setRemoveAbandoned(removeAbandoned);
+        poolConfig.setRemoveAbandonedTimeout(Ints.saturatedCast(removeAbandonedTimeout.toSeconds()));
+
         poolConfig.setTestWhileIdle(checkConnectionWhileIdle);
         poolConfig.setValidationQuery(validationQuery);
         poolConfig.setTestOnBorrow(checkConnectionOnBorrow);
