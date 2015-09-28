@@ -109,7 +109,19 @@ public class AssetsBundle implements Bundle {
         environment.servlets().addServlet(assetsName, createServlet()).addMapping(uriPath + '*');
     }
 
-    private AssetServlet createServlet() {
+    public String getResourcePath() {
+        return resourcePath;
+    }
+
+    public String getUriPath() {
+        return uriPath;
+    }
+
+    public String getIndexFile() {
+        return indexFile;
+    }
+
+    protected AssetServlet createServlet() {
         return new AssetServlet(resourcePath, uriPath, indexFile, Charsets.UTF_8);
     }
 }
