@@ -5,7 +5,8 @@ import java.util.zip.GZIPInputStream;
 
 import javax.annotation.Priority;
 import javax.ws.rs.Priorities;
-import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.client.ClientRequestContext;
+import javax.ws.rs.client.ClientRequestFilter;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.ext.Provider;
 import javax.ws.rs.ext.ReaderInterceptor;
@@ -23,14 +24,10 @@ import javax.ws.rs.ext.ReaderInterceptorContext;
  */
 @Provider
 @Priority(Priorities.ENTITY_CODER)
-public class GZipDecoder implements ReaderInterceptor {
+public class GZipDecoder implements ReaderInterceptor, ClientRequestFilter {
 
     @Override
     public Object aroundReadFrom(ReaderInterceptorContext context) throws IOException {
-        if (!context.getHeaders().containsKey(HttpHeaders.ACCEPT_ENCODING)) {
-            context.getHeaders().add(HttpHeaders.ACCEPT_ENCODING, "gzip");
-        }
-
         String contentEncoding = context.getHeaders().getFirst(HttpHeaders.CONTENT_ENCODING);
         if (contentEncoding != null &&
                 (contentEncoding.equals("gzip") || contentEncoding.equals("x-gzip"))) {
@@ -38,5 +35,12 @@ public class GZipDecoder implements ReaderInterceptor {
         }
         return context.proceed();
     }
+
+	@Override
+	public void filter(ClientRequestContext context) throws IOException {
+        if (!context.getHeaders().containsKey(HttpHeaders.ACCEPT_ENCODING)) {
+            context.getHeaders().add(HttpHeaders.ACCEPT_ENCODING, "gzip");
+        }		
+	}
 
 }

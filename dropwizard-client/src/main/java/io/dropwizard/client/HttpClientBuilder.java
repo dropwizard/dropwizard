@@ -286,6 +286,9 @@ public class HttpClientBuilder {
             builder.setRoutePlanner(routePlanner);
         }
 
+        // because Gzip is managed at the Jersey level
+        builder.disableContentCompression() ;
+        
         return new ConfiguredCloseableHttpClient(builder.build(), requestConfig);
     }
 
