@@ -64,6 +64,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.never;
 
 public class JerseyClientBuilderTest {
     private final JerseyClientBuilder builder = new JerseyClientBuilder(new MetricRegistry());
@@ -190,6 +191,7 @@ public class JerseyClientBuilderTest {
                 .iterator().hasNext()).isTrue();
         assertThat(Iterables.filter(client.getConfiguration().getInstances(), ConfiguredGZipEncoder.class)
                 .iterator().hasNext()).isTrue();
+        verify(apacheHttpClientBuilder, never()).disableContentCompression(true);
     }
 
     @Test
@@ -204,6 +206,7 @@ public class JerseyClientBuilderTest {
                 .iterator().hasNext()).isFalse();
         assertThat(Iterables.filter(client.getConfiguration().getInstances(), ConfiguredGZipEncoder.class)
                 .iterator().hasNext()).isFalse();
+        verify(apacheHttpClientBuilder).disableContentCompression(true);
     }
 
     @Test

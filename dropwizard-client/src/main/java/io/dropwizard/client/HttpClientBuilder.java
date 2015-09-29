@@ -71,6 +71,7 @@ public class HttpClientBuilder {
     private CredentialsProvider credentialsProvider = null;
     private HttpClientMetricNameStrategy metricNameStrategy = HttpClientMetricNameStrategies.METHOD_ONLY;
     private HttpRoutePlanner routePlanner = null;
+    private boolean disableContentCompression;
 
     public HttpClientBuilder(MetricRegistry metricRegistry) {
         this.metricRegistry = metricRegistry;
@@ -171,6 +172,17 @@ public class HttpClientBuilder {
     }
 
     /**
+     * Disable support of decompression of responses
+     *
+     * @param disableContentCompression {@code true}, if disabled
+     * @return {@code this}
+     */
+    public HttpClientBuilder disableContentCompression(boolean disableContentCompression) {
+        this.disableContentCompression = disableContentCompression;
+        return this;
+    }
+
+    /**
      * Builds the {@link HttpClient}.
      *
      * @param name
@@ -196,6 +208,7 @@ public class HttpClientBuilder {
 
     /**
      * For internal use only, used in {@link io.dropwizard.client.JerseyClientBuilder} to create an instance of {@link io.dropwizard.client.DropwizardApacheConnector}
+     *
      * @param name
      * @return an {@link io.dropwizard.client.ConfiguredCloseableHttpClient}
      */
@@ -286,6 +299,10 @@ public class HttpClientBuilder {
             builder.setRoutePlanner(routePlanner);
         }
 
+        if (disableContentCompression) {
+            builder.disableContentCompression();
+        }
+
         return new ConfiguredCloseableHttpClient(builder.build(), requestConfig);
     }
 
@@ -331,7 +348,7 @@ public class HttpClientBuilder {
         }
 
         final SSLConnectionSocketFactory sslConnectionSocketFactory;
-        if(configuration.getTlsConfiguration() == null) {
+        if (configuration.getTlsConfiguration() == null) {
             sslConnectionSocketFactory = SSLConnectionSocketFactory.getSocketFactory();
         } else {
             sslConnectionSocketFactory = new DropwizardSSLConnectionSocketFactory(configuration.getTlsConfiguration()).getSocketFactory();

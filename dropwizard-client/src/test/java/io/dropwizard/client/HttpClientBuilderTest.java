@@ -406,7 +406,7 @@ public class HttpClientBuilderTest {
 
         return httpClient;
     }
-    
+
     @Test
     public void setValidateAfterInactivityPeriodFromConfiguration() throws Exception {
         int validateAfterInactivityPeriod = 50000;
@@ -446,6 +446,19 @@ public class HttpClientBuilderTest {
         assertThat(client).isNotNull();
 
         assertThat(spyHttpClientField("defaultConfig", client.getClient())).isEqualTo(client.getDefaultRequestConfig());
+    }
+
+    @Test
+    public void disablesContentCompression() throws Exception {
+        ConfiguredCloseableHttpClient client = builder
+                .disableContentCompression(true)
+                .createClient(apacheBuilder, connectionManager, "test");
+        assertThat(client).isNotNull();
+
+        final Boolean contentCompressionDisabled = (Boolean) FieldUtils
+                .getField(httpClientBuilderClass, "contentCompressionDisabled", true)
+                .get(apacheBuilder);
+        assertThat(contentCompressionDisabled).isTrue();
     }
 
     @Test

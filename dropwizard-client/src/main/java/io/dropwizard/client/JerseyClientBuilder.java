@@ -313,6 +313,10 @@ public class JerseyClientBuilder {
     private Client build(String name, ExecutorService threadPool,
                          ObjectMapper objectMapper,
                          Validator validator) {
+        if (!configuration.isGzipEnabled()) {
+            apacheHttpClientBuilder.disableContentCompression(true);
+        }
+
         final Client client = ClientBuilder.newClient(buildConfig(name, threadPool, objectMapper, validator));
         client.register(new JerseyIgnoreRequestUserAgentHeaderFilter());
 
