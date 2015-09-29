@@ -197,10 +197,10 @@ public class AssetServlet extends HttpServlet {
         final String requestedResourcePath = SLASHES.trimFrom(key.substring(uriPath.length()));
         final String absoluteRequestedResourcePath = SLASHES.trimFrom(this.resourcePath + requestedResourcePath);
 
-        URL requestedResourceURL = Resources.getResource(absoluteRequestedResourcePath);
+        URL requestedResourceURL = getResourceUrl(absoluteRequestedResourcePath);
         if (ResourceURL.isDirectory(requestedResourceURL)) {
             if (indexFile != null) {
-                requestedResourceURL = Resources.getResource(absoluteRequestedResourcePath + '/' + indexFile);
+                requestedResourceURL = getResourceUrl(absoluteRequestedResourcePath + '/' + indexFile);
             } else {
                 // directory requested but no index file defined
                 return null;
@@ -216,6 +216,11 @@ public class AssetServlet extends HttpServlet {
         // zero out the millis since the date we get back from If-Modified-Since will not have them
         lastModified = (lastModified / 1000) * 1000;
         return new CachedAsset(readResource(requestedResourceURL), lastModified);
+    }
+
+    protected URL getResourceUrl(String absoluteRequestedResourcePath)
+    {
+        return Resources.getResource(absoluteRequestedResourcePath);
     }
 
     protected byte[] readResource(URL requestedResourceURL) throws IOException
