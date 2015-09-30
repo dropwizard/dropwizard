@@ -44,6 +44,11 @@ public class JerseyClientIntegrationTest {
     private static final String CHUNKED = "chunked";
     private static final String GZIP = "gzip";
     private static final ObjectMapper JSON_MAPPER = Jackson.newObjectMapper();
+    private static final String GZIP_DEFLATE = "gzip,deflate";
+    private static final String JSON_TOKEN = JSON_MAPPER.createObjectNode()
+            .put("id", 214)
+            .put("token", "a23f78bc31cc5de821ad9412e")
+            .toString();
 
     private HttpServer httpServer;
 
@@ -67,7 +72,7 @@ public class JerseyClientIntegrationTest {
                     assertThat(requestHeaders.get(TRANSFER_ENCODING)).containsExactly(CHUNKED);
                     assertThat(requestHeaders.get(HttpHeaders.CONTENT_LENGTH)).isNull();
                     assertThat(requestHeaders.get(HttpHeaders.CONTENT_ENCODING)).containsExactly(GZIP);
-
+                    assertThat(requestHeaders.get(HttpHeaders.ACCEPT_ENCODING)).containsExactly(GZIP_DEFLATE);
                     checkBody(httpExchange, true);
                     postResponse(httpExchange);
                 } finally {
@@ -91,6 +96,7 @@ public class JerseyClientIntegrationTest {
                     assertThat(requestHeaders.get(HttpHeaders.CONTENT_LENGTH)).containsExactly("58");
                     assertThat(requestHeaders.get(TRANSFER_ENCODING)).isNull();
                     assertThat(requestHeaders.get(HttpHeaders.CONTENT_ENCODING)).containsExactly(GZIP);
+                    assertThat(requestHeaders.get(HttpHeaders.ACCEPT_ENCODING));
 
                     checkBody(httpExchange, true);
                     postResponse(httpExchange);
@@ -116,6 +122,7 @@ public class JerseyClientIntegrationTest {
                     assertThat(requestHeaders.get(TRANSFER_ENCODING)).containsExactly(CHUNKED);
                     assertThat(requestHeaders.get(HttpHeaders.CONTENT_LENGTH)).isNull();
                     assertThat(requestHeaders.get(HttpHeaders.CONTENT_ENCODING)).isNull();
+                    assertThat(requestHeaders.get(HttpHeaders.ACCEPT_ENCODING)).containsExactly(GZIP_DEFLATE);
 
                     checkBody(httpExchange, false);
                     postResponse(httpExchange);
@@ -127,6 +134,37 @@ public class JerseyClientIntegrationTest {
         httpServer.start();
 
         JerseyClientConfiguration configuration = new JerseyClientConfiguration();
+        configuration.setGzipEnabledForRequests(false);
+        postRequest(configuration);
+    }
+
+    @Test
+    public void testChunkedPostWithoutGzip() throws Exception {
+        httpServer.createContext("/register", new HttpHandler() {
+            @Override
+            public void handle(HttpExchange httpExchange) throws IOException {
+                try {
+                    Headers requestHeaders = httpExchange.getRequestHeaders();
+                    assertThat(requestHeaders.get(TRANSFER_ENCODING)).containsExactly(CHUNKED);
+                    assertThat(requestHeaders.get(HttpHeaders.CONTENT_LENGTH)).isNull();
+                    assertThat(requestHeaders.get(HttpHeaders.CONTENT_ENCODING)).isNull();
+                    assertThat(requestHeaders.get(HttpHeaders.ACCEPT_ENCODING)).isNull();
+
+                    checkBody(httpExchange, false);
+
+                    httpExchange.getResponseHeaders().add(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON);
+                    httpExchange.sendResponseHeaders(200, 0);
+                    httpExchange.getResponseBody().write(JSON_TOKEN.getBytes(Charsets.UTF_8));
+                    httpExchange.getResponseBody().close();
+                } finally {
+                    httpExchange.close();
+                }
+            }
+        });
+        httpServer.start();
+
+        JerseyClientConfiguration configuration = new JerseyClientConfiguration();
+        configuration.setGzipEnabled(false);
         configuration.setGzipEnabledForRequests(false);
         postRequest(configuration);
     }
@@ -158,10 +196,7 @@ public class JerseyClientIntegrationTest {
         httpExchange.getResponseHeaders().add(HttpHeaders.CONTENT_ENCODING, GZIP);
         httpExchange.sendResponseHeaders(200, 0);
         GZIPOutputStream gzipStream = new GZIPOutputStream(httpExchange.getResponseBody());
-        gzipStream.write(JSON_MAPPER.createObjectNode()
-                .put("id", 214)
-                .put("token", "a23f78bc31cc5de821ad9412e")
-                .toString().getBytes(Charsets.UTF_8));
+        gzipStream.write(JSON_TOKEN.getBytes(Charsets.UTF_8));
         gzipStream.close();
     }
 
