@@ -356,7 +356,7 @@ public class JerseyClientBuilder {
         }
 
         config.register(new JacksonMessageBodyProvider(objectMapper));
-        config.register(HibernateValidationFeature.class);
+        config.register(new HibernateValidationFeature(validator));
 
         for (Map.Entry<String, Object> property : this.properties.entrySet()) {
             config.property(property.getKey(), property.getValue());
