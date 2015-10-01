@@ -1391,7 +1391,7 @@ specification for which paths this filter should active. Here's an example:
 
 .. code-block:: java
 
-        environment.servlets().addFilter("DateHeaderServletFilter", new DateHeaderServletFilter())
+        environment.servlets().addFilter("DateNotSpecifiedServletFilter", new DateNotSpecifiedServletFilter())
                               .addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/*");
 .. _man-glue-detail:
 
