@@ -27,7 +27,7 @@ public abstract class LoggingExceptionMapper<E extends Throwable> implements Exc
             status = response.getStatus();
             errorMessage = new ErrorMessage(status, exception.getLocalizedMessage());
         } else {
-            final long id = logException(id, exception);
+            final long id = logException(exception);
             status = Response.Status.INTERNAL_SERVER_ERROR.getStatusCode();
             errorMessage = new ErrorMessage(formatErrorMessage(id, exception));
         }
