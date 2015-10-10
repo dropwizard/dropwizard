@@ -125,7 +125,7 @@ public class JerseyIntegrationTest extends JerseyTest {
         }
 
         final DropwizardResourceConfig config = DropwizardResourceConfig.forTesting(new MetricRegistry());
-        config.register(new UnitOfWorkApplicationListener(sessionFactory));
+        config.register(new UnitOfWorkApplicationListener("hr-db", sessionFactory));
         config.register(new PersonResource(new PersonDAO(sessionFactory)));
         config.register(new JacksonMessageBodyProvider(Jackson.newObjectMapper(),
                                                        Validation.buildDefaultValidatorFactory().getValidator()));

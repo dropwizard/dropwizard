@@ -13,6 +13,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.context.internal.ManagedSessionContext;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InOrder;
@@ -33,7 +34,8 @@ import static org.mockito.Mockito.when;
 @SuppressWarnings("HibernateResourceOpenedButNotSafelyClosed")
 public class UnitOfWorkApplicationListenerTest {
     private final SessionFactory sessionFactory = mock(SessionFactory.class);
-    private final UnitOfWorkApplicationListener listener = new UnitOfWorkApplicationListener(sessionFactory);
+    private final SessionFactory analyticsSessionFactory = mock(SessionFactory.class);
+    private final UnitOfWorkApplicationListener listener = new UnitOfWorkApplicationListener();
     private final ApplicationEvent appEvent = mock(ApplicationEvent.class);
     private final ExtendedUriInfo uriInfo = mock(ExtendedUriInfo.class);
 
@@ -42,17 +44,27 @@ public class UnitOfWorkApplicationListenerTest {
     private final RequestEvent responseFiltersStartEvent = mock(RequestEvent.class);
     private final RequestEvent requestMethodExceptionEvent = mock(RequestEvent.class);
     private final Session session = mock(Session.class);
+    private final Session analyticsSession = mock(Session.class);
     private final Transaction transaction = mock(Transaction.class);
+    private final Transaction analyticsTransaction = mock(Transaction.class);
 
     @SuppressWarnings("unchecked")
     @Before
     public void setUp() throws Exception {
+        listener.registerSessionFactory(HibernateBundle.DEFAULT_NAME, sessionFactory);
+        listener.registerSessionFactory("analytics", analyticsSessionFactory);
+
         when(sessionFactory.openSession()).thenReturn(session);
         when(session.getSessionFactory()).thenReturn(sessionFactory);
         when(session.beginTransaction()).thenReturn(transaction);
         when(session.getTransaction()).thenReturn(transaction);
-
         when(transaction.isActive()).thenReturn(true);
+
+        when(analyticsSessionFactory.openSession()).thenReturn(analyticsSession);
+        when(analyticsSession.getSessionFactory()).thenReturn(analyticsSessionFactory);
+        when(analyticsSession.beginTransaction()).thenReturn(analyticsTransaction);
+        when(analyticsSession.getTransaction()).thenReturn(analyticsTransaction);
+        when(analyticsTransaction.isActive()).thenReturn(true);
 
         when(appEvent.getType()).thenReturn(ApplicationEvent.Type.INITIALIZATION_APP_FINISHED);
         when(requestMethodStartEvent.getType()).thenReturn(RequestEvent.Type.RESOURCE_METHOD_START);
@@ -216,6 +228,28 @@ public class UnitOfWorkApplicationListenerTest {
         verify(transaction, never()).rollback();
     }
 
+    @Test
+    public void beginsAndCommitsATransactionForAnalytics() throws Exception {
+        prepareAppEvent("methodWithUnitOfWorkOnAnalyticsDatabase");
+        execute();
+
+        final InOrder inOrder = inOrder(analyticsSession, analyticsTransaction);
+        inOrder.verify(analyticsSession).beginTransaction();
+        inOrder.verify(analyticsTransaction).commit();
+        inOrder.verify(analyticsSession).close();
+    }
+
+    @Test
+    public void throwsExceptionOnNotRegisteredDatabase() throws Exception {
+        try {
+            prepareAppEvent("methodWithUnitOfWorkOnNotRegisteredDatabase");
+            execute();
+            Assert.fail();
+        } catch (IllegalArgumentException e) {
+            Assert.assertEquals(e.getMessage(), "Unregistered Hibernate bundle: 'warehouse'");
+        }
+    }
+
     private void prepareAppEvent(String resourceMethodName) throws NoSuchMethodException {
         final Resource.Builder builder = Resource.builder();
         final MockResource mockResource = new MockResource();
@@ -294,6 +328,16 @@ public class UnitOfWorkApplicationListenerTest {
         @UnitOfWork(readOnly = false)
         @Override
         public void bothMethodsAnnotated() {
+
+        }
+
+        @UnitOfWork("analytics")
+        public void methodWithUnitOfWorkOnAnalyticsDatabase() {
+
+        }
+
+        @UnitOfWork("warehouse")
+        public void methodWithUnitOfWorkOnNotRegisteredDatabase() {
 
         }
     }

@@ -47,4 +47,10 @@ public @interface UnitOfWork {
      * @see org.hibernate.Session#setFlushMode(org.hibernate.FlushMode)
      */
     FlushMode flushMode() default FlushMode.AUTO;
+
+    /**
+     * The name of a hibernate bundle (session factory) that specifies
+     * a datasource against which a transaction will be opened.
+     */
+    String value() default HibernateBundle.DEFAULT_NAME;
 }
