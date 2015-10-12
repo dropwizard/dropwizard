@@ -12,7 +12,7 @@ import io.dropwizard.util.Duration;
 import org.hibernate.SessionFactory;
 
 public abstract class HibernateBundle<T extends Configuration> implements ConfiguredBundle<T>, DatabaseConfiguration<T> {
-    private static final String DEFAULT_NAME = "hibernate";
+    public static final String DEFAULT_NAME = "hibernate";
 
     private SessionFactory sessionFactory;
 
@@ -54,13 +54,24 @@ public abstract class HibernateBundle<T extends Configuration> implements Config
     public final void run(T configuration, Environment environment) throws Exception {
         final PooledDataSourceFactory dbConfig = getDataSourceFactory(configuration);
         this.sessionFactory = sessionFactoryFactory.build(this, environment, dbConfig, entities, name());
-        environment.jersey().register(new UnitOfWorkApplicationListener(sessionFactory));
+        registerUnitOfWorkListerIfAbsent(environment).registerSessionFactory(name(), sessionFactory);
         environment.healthChecks().register(name(),
                                             new SessionFactoryHealthCheck(
                                                     environment.getHealthCheckExecutorService(),
                                                     dbConfig.getHealthCheckValidationTimeout().or(Duration.seconds(5)),
                                                     sessionFactory,
                                                     dbConfig.getHealthCheckValidationQuery()));
+    }
+
+    private UnitOfWorkApplicationListener registerUnitOfWorkListerIfAbsent(Environment environment) {
+        for (Object singleton : environment.jersey().getResourceConfig().getSingletons()) {
+            if (singleton instanceof UnitOfWorkApplicationListener) {
+                return (UnitOfWorkApplicationListener) singleton;
+            }
+        }
+        final UnitOfWorkApplicationListener listener = new UnitOfWorkApplicationListener();
+        environment.jersey().register(listener);
+        return listener;
     }
 
     public SessionFactory getSessionFactory() {
