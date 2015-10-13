@@ -62,7 +62,7 @@
         <servlet.version>3.0.0.v201112011016</servlet.version>
         <jetty.version>9.2.13.v20150730</jetty.version>
         <guava.version>18.0</guava.version>
-        <h2.version>1.4.187</h2.version>
+        <h2.version>1.4.190</h2.version>
         <assertj.version>2.2.0</assertj.version>
         <mockito.version>1.10.19</mockito.version>
     </properties>

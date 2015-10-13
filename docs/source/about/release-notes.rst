@@ -44,7 +44,7 @@ v0.9.0
 * Upgraded to Apache HTTP Client 4.5
 * Upgraded to Dropwizard Metrics 3.1.2
 * Upgraded to Freemarker 2.3.23
-* Upgraded to H2 1.4.187
+* Upgraded to H2 1.4.190
 * Upgraded to Hibernate 4.3.11.Final
 * Upgraded to Jackson 2.6.3
 * Upgraded to Jadira Usertype Core 4.0.0.GA
