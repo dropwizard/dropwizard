@@ -60,7 +60,7 @@ v0.9.0
 * Upgraded to SLF4J 1.7.12
 * Upgraded to commons-lang3 3.4
 * Upgraded to tomcat-jdbc 8.0.24
-* Upgraded to joda-time 2.8.1
+* Upgraded to joda-time 2.8.2
 
 .. _rel-0.8.3:
 
