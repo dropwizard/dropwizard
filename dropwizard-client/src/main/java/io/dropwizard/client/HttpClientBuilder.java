@@ -20,6 +20,7 @@ import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.HttpRequestRetryHandler;
+import org.apache.http.client.RedirectStrategy;
 import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.config.Registry;
@@ -71,6 +72,7 @@ public class HttpClientBuilder {
     private CredentialsProvider credentialsProvider = null;
     private HttpClientMetricNameStrategy metricNameStrategy = HttpClientMetricNameStrategies.METHOD_ONLY;
     private HttpRoutePlanner routePlanner = null;
+    private RedirectStrategy redirectStrategy;
     private boolean disableContentCompression;
 
     public HttpClientBuilder(MetricRegistry metricRegistry) {
@@ -168,6 +170,17 @@ public class HttpClientBuilder {
      */
     public HttpClientBuilder using(HttpClientMetricNameStrategy metricNameStrategy) {
         this.metricNameStrategy = metricNameStrategy;
+        return this;
+    }
+
+    /**
+     * Use the given {@link org.apache.http.client.RedirectStrategy} instance.
+     *
+     * @param redirectStrategy    a {@link org.apache.http.client.RedirectStrategy} instance
+     * @return {@code this}
+     */
+    public HttpClientBuilder using(RedirectStrategy redirectStrategy) {
+        this.redirectStrategy = redirectStrategy;
         return this;
     }
 
@@ -301,6 +314,10 @@ public class HttpClientBuilder {
 
         if (disableContentCompression) {
             builder.disableContentCompression();
+        }
+
+        if (redirectStrategy != null) {
+            builder.setRedirectStrategy(redirectStrategy);
         }
 
         return new ConfiguredCloseableHttpClient(builder.build(), requestConfig);

@@ -17,15 +17,19 @@ import org.apache.http.Header;
 import org.apache.http.HeaderIterator;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpHost;
+import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
+import org.apache.http.ProtocolException;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.Credentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.HttpRequestRetryHandler;
+import org.apache.http.client.RedirectStrategy;
 import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.config.Registry;
 import org.apache.http.config.RegistryBuilder;
 import org.apache.http.config.SocketConfig;
@@ -484,6 +488,29 @@ public class HttpClientBuilderTest {
         final Managed managed = argumentCaptor.getValue();
         managed.stop();
         verify(httpClient).close();
+    }
+
+    @Test
+    public void usesACustomRedirectStrategy() throws Exception {
+        RedirectStrategy neverFollowRedirectStrategy = new RedirectStrategy() {
+            @Override
+            public boolean isRedirected(HttpRequest httpRequest,
+                                        HttpResponse httpResponse,
+                                        HttpContext httpContext) throws ProtocolException {
+                return false;
+            }
+
+            @Override
+            public HttpUriRequest getRedirect(HttpRequest httpRequest,
+                                              HttpResponse httpResponse,
+                                              HttpContext httpContext) throws ProtocolException {
+                return null;
+            }
+        };
+        ConfiguredCloseableHttpClient client = builder.using(neverFollowRedirectStrategy)
+                                                      .createClient(apacheBuilder, connectionManager, "test");
+        assertThat(client).isNotNull();
+        assertThat(spyHttpClientBuilderField("redirectStrategy", apacheBuilder)).isSameAs(neverFollowRedirectStrategy);
     }
 
     private Object spyHttpClientBuilderField(final String fieldName, final Object obj) throws Exception {
