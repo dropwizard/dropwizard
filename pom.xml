@@ -18,8 +18,8 @@
     </description>
 
     <modules>
+        <module>docs</module>
         <module>dropwizard-bom</module>
-        <module>dropwizard-archetypes</module>
         <module>dropwizard-core</module>
         <module>dropwizard-client</module>
         <module>dropwizard-db</module>
@@ -47,14 +47,15 @@
         <module>dropwizard-lifecycle</module>
         <module>dropwizard-assets</module>
         <module>dropwizard-spdy</module>
+        <module>dropwizard-archetypes</module>
         <module>dropwizard-benchmarks</module>
-        <module>docs</module>
     </modules>
 
     <properties>
         <dropwizard.url>http://www.dropwizard.io/${project.version}</dropwizard.url>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <maven.site.deploy.skip>true</maven.site.deploy.skip>
         <junit.version>4.12</junit.version>
         <assertj.version>2.2.0</assertj.version>
         <mockito.version>1.10.19</mockito.version>
