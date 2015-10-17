@@ -221,10 +221,10 @@ Dropwizard, the default is 500 milliseconds.</p>
 <a class="reference internal" href="configuration.html#man-configuration-clients-http"><em>YAML configuration</em></a>. Alternatively, set the properties on
 the <tt class="docutils literal"><span class="pre">JerseyClientConfiguration</span></tt>, which will take affect for all built clients. On a per client
 basis, the configuration can be changed through utilizing the <tt class="docutils literal"><span class="pre">property</span></tt> method and, in this case,
-the <a class="reference external" href="https://jersey.java.net/apidocs/2.18/jersey/org/glassfish/jersey/client/ClientProperties.html">Jersey Client Properties</a> can be used.</p>
+the <a class="reference external" href="https://jersey.java.net/apidocs/2.22/jersey/org/glassfish/jersey/client/ClientProperties.html">Jersey Client Properties</a> can be used.</p>
 <div class="admonition warning">
 <p class="first admonition-title">Warning</p>
-<p>Do not try to change Jersey properties using <a class="reference external" href="https://jersey.java.net/apidocs/2.18/jersey/org/glassfish/jersey/client/ClientProperties.html">Jersey Client Properties</a> through the</p>
+<p>Do not try to change Jersey properties using <a class="reference external" href="https://jersey.java.net/apidocs/2.22/jersey/org/glassfish/jersey/client/ClientProperties.html">Jersey Client Properties</a> through the</p>
 <p><tt class="docutils literal"><span class="pre">withProperty(String</span> <span class="pre">propertyName,</span> <span class="pre">Object</span> <span class="pre">propertyValue)</span></tt></p>
 <p class="last">method on the <tt class="docutils literal"><span class="pre">JerseyClientBuilder</span></tt>, because by default it&#8217;s configured by Dropwizard&#8217;s
 <tt class="docutils literal"><span class="pre">HttpClientBuilder</span></tt>, so the Jersey properties are ignored.</p>

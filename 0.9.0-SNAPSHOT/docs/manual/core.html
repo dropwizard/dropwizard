@@ -258,7 +258,7 @@ create a new <tt class="docutils literal"><span class="pre">MessageQueueFactory<
             <span class="kd">public</span> <span class="kt">void</span> <span class="nf">stop</span><span class="o">()</span> <span class="o">{</span>
                 <span class="n">client</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
             <span class="o">}</span>
-        <span class="o">};</span>
+        <span class="o">});</span>
         <span class="k">return</span> <span class="n">client</span><span class="o">;</span>
     <span class="o">}</span>
 <span class="o">}</span>
@@ -702,8 +702,9 @@ configured with the <cite>stackTracePrefix</cite> option when defining your appe
 </div>
 <div class="section" id="id4">
 <h3>Configuration</h3>
-<p>You can specify a default logger level and even override the levels of
-other loggers in your YAML configuration file:</p>
+<p>You can specify a default logger level, override the levels of other loggers in your YAML configuration file,
+and even specify appenders for them. The latter form of configuration is preferable, but the former is also
+acceptable.</p>
 <div class="highlight-yaml"><div class="highlight"><pre><span class="c1"># Logging settings.</span>
 <span class="l-Scalar-Plain">logging</span><span class="p-Indicator">:</span>
 
@@ -715,6 +716,17 @@ other loggers in your YAML configuration file:</p>
 
     <span class="c1"># Overrides the level of com.example.dw.Thing and sets it to DEBUG.</span>
     <span class="s">&quot;com.example.dw.Thing&quot;</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">DEBUG</span>
+
+    <span class="c1"># Enables the SQL query log and redirect it to a separate file</span>
+    <span class="s">&quot;org.hibernate.SQL&quot;</span><span class="p-Indicator">:</span>
+      <span class="l-Scalar-Plain">level</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">DEBUG</span>
+      <span class="c1"># This line stops org.hibernate.SQL (or anything under it) from using the root logger</span>
+      <span class="l-Scalar-Plain">additive</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">false</span>
+      <span class="l-Scalar-Plain">appenders</span><span class="p-Indicator">:</span>
+        <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">type</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">file</span>
+          <span class="l-Scalar-Plain">currentLogFilename</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">./logs/example-sql.log</span>
+          <span class="l-Scalar-Plain">archivedLogFilenamePattern</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">./logs/example-sql-%d.log.gz</span>
+          <span class="l-Scalar-Plain">archivedFileCount</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">5</span>
 </pre></div>
 </div>
 </div>
@@ -1257,7 +1269,7 @@ this example demonstrates a servlet filter analogous to the previous example:</p
 </div>
 <p>This servlet filter can then be registered in your Application class by wrapping it in <tt class="docutils literal"><span class="pre">FilterHolder</span></tt> and adding it to the application context together with a
 specification for which paths this filter should active. Here&#8217;s an example:</p>
-<div class="highlight-java"><div class="highlight"><pre><span class="n">environment</span><span class="o">.</span><span class="na">servlets</span><span class="o">().</span><span class="na">addFilter</span><span class="o">(</span><span class="s">&quot;DateHeaderServletFilter&quot;</span><span class="o">,</span> <span class="k">new</span> <span class="n">DateHeaderServletFilter</span><span class="o">())</span>
+<div class="highlight-java"><div class="highlight"><pre><span class="n">environment</span><span class="o">.</span><span class="na">servlets</span><span class="o">().</span><span class="na">addFilter</span><span class="o">(</span><span class="s">&quot;DateNotSpecifiedServletFilter&quot;</span><span class="o">,</span> <span class="k">new</span> <span class="n">DateNotSpecifiedServletFilter</span><span class="o">())</span>
                       <span class="o">.</span><span class="na">addMappingForUrlPatterns</span><span class="o">(</span><span class="n">EnumSet</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="n">DispatcherType</span><span class="o">.</span><span class="na">REQUEST</span><span class="o">),</span> <span class="kc">true</span><span class="o">,</span> <span class="s">&quot;/*&quot;</span><span class="o">);</span>
 </pre></div>
 </div>

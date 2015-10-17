@@ -69,6 +69,8 @@
 <li class="toctree-l2"><a class="reference internal" href="faq.html">Frequently Asked Questions</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="">Release Notes</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#v0-9-0">v0.9.0</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v0-8-3-aug-24-2015">v0.8.3 Aug 24 2015</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v0-8-2-july-6-2015">v0.8.2 July 6 2015</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#v0-8-1-apr-7-2015">v0.8.1: Apr 7 2015</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#v0-8-0-mar-5-2015">v0.8.0: Mar 5 2015</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#v0-7-1-jun-18-2014">v0.7.1: Jun 18 2014</a></li>
@@ -114,20 +116,81 @@
 <div class="section" id="v0-9-0">
 <span id="rel-0-9-0"></span><h2>v0.9.0</h2>
 <ul class="simple">
-<li>Upgrade to commons-lang3 3.4</li>
-<li>Upgrade to Freemarker 2.3.22</li>
-<li>Upgrade to H2 1.4.187</li>
-<li>Upgrade to Hibernate 4.3.9.Final</li>
-<li>Upgrade to Jackson 2.5.3</li>
-<li>Upgrade to Jersey 2.18</li>
-<li>Upgrade to Jetty 9.2.11.v20150529</li>
-<li>Upgrade to Jetty ALPN boot 7.1.3.v20150130</li>
-<li>Upgrade to Jetty SetUID support 1.0.3</li>
-<li>Upgrade to Liquibase 3.3.3</li>
-<li>Upgrade to Logback 1.1.3</li>
-<li>Upgrade to Metrics 3.1.2</li>
-<li>Upgrade to SLF4J 1.7.12</li>
-<li>Upgrade to tomcat-jdbc 8.0.21</li>
+<li>Various documentation fixes and improvements</li>
+<li>New filter-based authorization &amp; authentication <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/952">#952</a>, <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1023">#1023</a>, <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1114">#1114</a>, <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1162">#1162</a>, <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1241">#1241</a></li>
+<li>Fixed a security bug in <tt class="docutils literal"><span class="pre">CachingAuthenticator</span></tt> with caching results of failed authentication attempts <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1082">#1082</a></li>
+<li>Correct handling misconfigured context paths in <tt class="docutils literal"><span class="pre">ServerFactory</span></tt> <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/785">#785</a></li>
+<li>Logging context paths during application startup <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/994">#994</a>, <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1072">#1072</a></li>
+<li>Support for <a class="reference external" href="https://jersey.java.net/documentation/latest/bean-validation.html">Jersey Bean Validation</a> <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/842">#842</a></li>
+<li>Returning descriptive constraint violation messages <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1039">#1039</a>,</li>
+<li>Trace logging of failed constraint violations <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/992">#992</a></li>
+<li>Returning correct HTTP status codes for constraint violations <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/993">#993</a></li>
+<li>Fixed possible XSS in constraint violations <a class="reference external" href="https://github.com/dropwizard/dropwizard/issues/892">#892</a></li>
+<li>Support for including caller data in appenders <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/995">#995</a></li>
+<li>Support for defining custom logging factories (e.g. native Logback) <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/996">#996</a></li>
+<li>Support for defining the maximum log file size in <tt class="docutils literal"><span class="pre">FileAppenderFactory</span></tt>. <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1000">#1000</a></li>
+<li>Support for fixed window rolling policy in <tt class="docutils literal"><span class="pre">FileAppenderFactory</span></tt> <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1218">#1218</a></li>
+<li>Support for individual logger appenders <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1092">#1092</a></li>
+<li>Support for disabling logger additivity <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1215">#1215</a></li>
+<li>Sorting endpoints in the application startup log <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1002">#1002</a></li>
+<li>Dynamic DNS resolution in the Graphite metric reporter <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1004">#1004</a></li>
+<li>Support for defining a custom <tt class="docutils literal"><span class="pre">MetricRegistry</span></tt> during bootstrap (e.g. with HdrHistogram) <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1015">#1015</a></li>
+<li>Support for defining a custom <tt class="docutils literal"><span class="pre">ObjectMapper</span></tt> during bootstrap. <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1112">#1112</a></li>
+<li>Added facility to plug-in custom DB connection pools (e.g. HikariCP) <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1030">#1030</a></li>
+<li>Support for setting a custom DB pool connection validator <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1113">#1113</a></li>
+<li>Support for enabling of removing abandoned DB pool connections <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1264">#1264</a></li>
+<li>Support for credentials in a DB data source URL <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1260">#1260</a></li>
+<li>Support for simultaneous work of several Hibernate bundles <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1276">#1276</a></li>
+<li>HTTP(S) proxy support for Dropwizard HTTP client <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/657">#657</a></li>
+<li>Support external configuration of TLS properties for Dropwizard HTTP client <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1224">#1224</a></li>
+<li>Support for not accepting GZIP-compressed responses in HTTP clients <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1270">#1270</a></li>
+<li>Support for setting a custom redirect strategy in HTTP clients <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1281">#1281</a></li>
+<li>Apache and Jersey clients are now managed by the application environment <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1061">#1061</a></li>
+<li>Support for request-scoped configuration for Jersey client  <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/939">#939</a></li>
+<li>Respecting Jackson feature for deserializing enums using <tt class="docutils literal"><span class="pre">toString</span></tt> <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1104">#1104</a></li>
+<li>Support for passing explicit <tt class="docutils literal"><span class="pre">Configuration</span></tt> via test rules <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1131">#1131</a></li>
+<li>On view template error, return a generic error page instead of template not found <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1178">#1178</a></li>
+<li>In some cases an instance of Jersey HTTP client could be abruptly closed during the application lifetime <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1232">#1232</a></li>
+<li>Improved build time build by running tests in parallel <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1032">#1032</a></li>
+<li>Added JMH benchmarks  <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/990">#990</a></li>
+<li>Removed javax.el-2.x in favour of javax.el-3.0</li>
+<li>Upgraded to argparse4j 0.6.0</li>
+<li>Upgrade to AssertJ 2.2.0</li>
+<li>Upgraded to JDBI 2.63.1</li>
+<li>Upgraded to Apache HTTP Client 4.5.1</li>
+<li>Upgraded to Dropwizard Metrics 3.1.2</li>
+<li>Upgraded to Freemarker 2.3.23</li>
+<li>Upgraded to H2 1.4.190</li>
+<li>Upgraded to Hibernate 4.3.11.Final</li>
+<li>Upgraded to Jackson 2.6.3</li>
+<li>Upgraded to Jadira Usertype Core 4.0.0.GA</li>
+<li>Upgraded to Jersey 2.22.1</li>
+<li>Upgraded to Jetty 9.2.13.v20150730</li>
+<li>Upgraded to JSR305 annotations 3.0.1</li>
+<li>Upgraded to Hibernate Validator 5.2.2.Final</li>
+<li>Upgraded to Jetty ALPN boot 7.1.3.v20150130</li>
+<li>Upgraded to Jetty SetUID support 1.0.3</li>
+<li>Upgraded to Liquibase 3.4.1</li>
+<li>Upgraded to Logback 1.1.3</li>
+<li>Upgraded to Metrics 3.1.2</li>
+<li>Upgraded to Mockito 1.10.19</li>
+<li>Upgraded to SLF4J 1.7.12</li>
+<li>Upgraded to commons-lang3 3.4</li>
+<li>Upgraded to tomcat-jdbc 8.0.28</li>
+<li>Upgraded to joda-time 2.8.2</li>
+</ul>
+</div>
+<div class="section" id="v0-8-3-aug-24-2015">
+<span id="rel-0-8-3"></span><h2>v0.8.3 Aug 24 2015</h2>
+<ul class="simple">
+<li>Fixed an issue with closing the HTTP client connection pool after a full GC <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1160">#1160</a></li>
+</ul>
+</div>
+<div class="section" id="v0-8-2-july-6-2015">
+<span id="rel-0-8-2"></span><h2>v0.8.2 July 6 2015</h2>
+<ul class="simple">
+<li>Support for request-scoped configuration for Jersey client <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1137">#1137</a></li>
+<li>Upgraded to Jersey 2.19 <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1143">#1143</a></li>
 </ul>
 </div>
 <div class="section" id="v0-8-1-apr-7-2015">
@@ -248,7 +311,7 @@ logs.</li>
 <li>Added <tt class="docutils literal"><span class="pre">ConfigurationSourceProvider</span></tt> to allow loading configuration files from sources other than
 the filesystem.</li>
 <li>Added setuid support. Configure the user/group to run as and soft/hard open file limits in the
-<tt class="docutils literal"><span class="pre">ServerFactory</span></tt>. To bind to privileged ports (e.g. 80), enable <tt class="docutils literal"><span class="pre">startAsRoot</span></tt> and set <tt class="docutils literal"><span class="pre">user</span></tt>
+<tt class="docutils literal"><span class="pre">ServerFactory</span></tt>. To bind to privileged ports (e.g. 80), enable <tt class="docutils literal"><span class="pre">startsAsRoot</span></tt> and set <tt class="docutils literal"><span class="pre">user</span></tt>
 and <tt class="docutils literal"><span class="pre">group</span></tt>, then start your application as the root user.</li>
 <li>Added builders for managed executors.</li>
 <li>Added a default <tt class="docutils literal"><span class="pre">check</span></tt> command, which loads and validates the service configuration.</li>

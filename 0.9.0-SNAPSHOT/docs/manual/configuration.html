@@ -114,6 +114,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#clients">Clients</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#httpclient">HttpClient</a><ul>
 <li class="toctree-l5"><a class="reference internal" href="#proxy">Proxy</a></li>
+<li class="toctree-l5"><a class="reference internal" href="#tls">TLS</a></li>
 </ul>
 </li>
 <li class="toctree-l4"><a class="reference internal" href="#jerseyclient">JerseyClient</a></li>
@@ -241,9 +242,11 @@ to cleanly shutdown before forcibly terminating them.</td>
 405 Method Not Allowed response.</td>
 </tr>
 <tr class="row-odd"><td>rootPath</td>
-<td><tt class="docutils literal"><span class="pre">/</span></tt></td>
-<td>The URL pattern relative to <tt class="docutils literal"><span class="pre">applicationContextPath</span></tt> from which
-the JAX-RS resources will be served.</td>
+<td><tt class="docutils literal"><span class="pre">/*</span></tt></td>
+<td><blockquote class="first">
+<div>The URL pattern relative to <tt class="docutils literal"><span class="pre">applicationContextPath</span></tt> from which</div></blockquote>
+<p class="last">the JAX-RS resources will be served.</p>
+</td>
 </tr>
 <tr class="row-even"><td>registerDefaultExceptionMappers</td>
 <td>true</td>
@@ -261,9 +264,9 @@ Set this to false if you want to register your own.</td>
 </div>
 <table border="1" class="docutils">
 <colgroup>
-<col width="17%" />
-<col width="9%" />
-<col width="74%" />
+<col width="18%" />
+<col width="14%" />
+<col width="68%" />
 </colgroup>
 <thead valign="bottom">
 <tr class="row-odd"><th class="head">Name</th>
@@ -274,8 +277,9 @@ Set this to false if you want to register your own.</td>
 <tbody valign="top">
 <tr class="row-even"><td>enabled</td>
 <td>true</td>
-<td>If true, all requests with gzip in their Accept-Content-Encoding
-headers will have their response entities encoded with gzip.</td>
+<td>If true, all requests with <tt class="docutils literal"><span class="pre">gzip</span></tt> or <tt class="docutils literal"><span class="pre">deflate</span></tt> in the <tt class="docutils literal"><span class="pre">Accept-Encoding</span></tt> header will have their
+response entities compressed and requests with <tt class="docutils literal"><span class="pre">gzip</span></tt> or <tt class="docutils literal"><span class="pre">deflate</span></tt> in the <tt class="docutils literal"><span class="pre">Content-Encoding</span></tt>
+header will have their request entities decompressed.</td>
 </tr>
 <tr class="row-odd"><td>minimumEntitySize</td>
 <td>256 bytes</td>
@@ -289,9 +293,34 @@ headers will have their response entities encoded with gzip.</td>
 <td>[]</td>
 <td>The set of user agents to exclude from compression.</td>
 </tr>
-<tr class="row-even"><td>compressedMimeTypes</td>
+<tr class="row-even"><td>excludedUserAgentPatterns</td>
 <td>[]</td>
-<td>If specified, the set of mime types to compress.</td>
+<td>The set of user agent patterns to exclude from compression.</td>
+</tr>
+<tr class="row-odd"><td>compressedMimeTypes</td>
+<td>Jetty&#8217;s default</td>
+<td>The list of mime types to compress. The default is all types apart
+the commonly known image, video, audio and compressed types.</td>
+</tr>
+<tr class="row-even"><td>includedMethods</td>
+<td>Jetty&#8217;s default</td>
+<td>The list list of HTTP methods to compress. The default is to compress only GET responses.</td>
+</tr>
+<tr class="row-odd"><td>deflateCompressionLevel</td>
+<td>-1</td>
+<td>The compression level used for ZLIB deflation(compression).</td>
+</tr>
+<tr class="row-even"><td>gzipCompatibleDeflation</td>
+<td>true</td>
+<td>If true, then ZLIB deflation(compression) will be performed in the GZIP-compatible mode.</td>
+</tr>
+<tr class="row-odd"><td>gzipCompatibleInflation</td>
+<td>true</td>
+<td>If true, then ZLIB inflation(decompression) will be performed in the GZIP-compatible mode.</td>
+</tr>
+<tr class="row-even"><td>vary</td>
+<td><tt class="docutils literal"><span class="pre">Accept-Encoding</span></tt></td>
+<td>Value of the <cite>Vary</cite> header sent with responses that could be compressed.</td>
 </tr>
 </tbody>
 </table>
@@ -788,16 +817,24 @@ The correct library version depends on the JVM version. Consult Jetty ALPN <a cl
 <div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">logging</span><span class="p-Indicator">:</span>
   <span class="l-Scalar-Plain">level</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">INFO</span>
   <span class="l-Scalar-Plain">loggers</span><span class="p-Indicator">:</span>
-    <span class="l-Scalar-Plain">io.dropwizard</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">INFO</span>
+    <span class="s">&quot;io.dropwizard&quot;</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">INFO</span>
+    <span class="s">&quot;org.hibernate.SQL&quot;</span><span class="p-Indicator">:</span>
+      <span class="l-Scalar-Plain">level</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">DEBUG</span>
+      <span class="l-Scalar-Plain">additive</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">false</span>
+      <span class="l-Scalar-Plain">appenders</span><span class="p-Indicator">:</span>
+        <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">type</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">file</span>
+          <span class="l-Scalar-Plain">currentLogFilename</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">/var/log/myapplication-sql.log</span>
+          <span class="l-Scalar-Plain">archivedLogFilenamePattern</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">/var/log/myapplication-sql-%d.log.gz</span>
+          <span class="l-Scalar-Plain">archivedFileCount</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">5</span>
   <span class="l-Scalar-Plain">appenders</span><span class="p-Indicator">:</span>
     <span class="p-Indicator">-</span> <span class="l-Scalar-Plain">type</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">console</span>
 </pre></div>
 </div>
 <table border="1" class="docutils">
 <colgroup>
-<col width="35%" />
-<col width="17%" />
-<col width="48%" />
+<col width="24%" />
+<col width="12%" />
+<col width="65%" />
 </colgroup>
 <thead valign="bottom">
 <tr class="row-odd"><th class="head">Name</th>
@@ -808,15 +845,19 @@ The correct library version depends on the JVM version. Consult Jetty ALPN <a cl
 <tbody valign="top">
 <tr class="row-even"><td>level</td>
 <td>Level.INFO</td>
-<td>Logback logging level</td>
+<td>Logback logging level.</td>
 </tr>
-<tr class="row-odd"><td>loggers</td>
-<td>(none)</td>
-<td>&nbsp;</td>
+<tr class="row-odd"><td>additive</td>
+<td>true</td>
+<td>Logback additive setting.</td>
 </tr>
-<tr class="row-even"><td>appenders</td>
+<tr class="row-even"><td>loggers</td>
 <td>(none)</td>
-<td>one of console, file or syslog</td>
+<td>Individual logger configuration (both forms are acceptable).</td>
+</tr>
+<tr class="row-odd"><td>appenders</td>
+<td>(none)</td>
+<td>One of console, file or syslog.</td>
 </tr>
 </tbody>
 </table>
@@ -1357,9 +1398,9 @@ In the format <tt class="docutils literal"><span class="pre">hostname:port</span
 </div>
 <table border="1" class="docutils">
 <colgroup>
-<col width="17%" />
+<col width="19%" />
 <col width="26%" />
-<col width="57%" />
+<col width="55%" />
 </colgroup>
 <thead valign="bottom">
 <tr class="row-odd"><th class="head">Name</th>
@@ -1411,6 +1452,11 @@ retried if they throw an exception other than <tt class="docutils literal"><span
 <tr class="row-odd"><td>userAgent</td>
 <td><tt class="docutils literal"><span class="pre">applicationName</span></tt> (<tt class="docutils literal"><span class="pre">clientName</span></tt>)</td>
 <td>The User-Agent to send with requests.</td>
+</tr>
+<tr class="row-even"><td>validateAfterInactivityPeriod</td>
+<td>0 milliseconds</td>
+<td>The maximum time before a persistent connection is checked to remain active.
+If set to 0, no inactivity check will be performed.</td>
 </tr>
 </tbody>
 </table>
@@ -1475,6 +1521,87 @@ If they are not set then no credentials will be passed to the server.</td>
 <td>List of patterns of hosts that should be reached without proxy.
 The patterns may contain symbol &#8216;*&#8217; as a wildcard.
 If a host matches one of the patterns it will be reached through a direct connection.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="tls">
+<span id="man-configuration-clients-http-tls"></span><h4>TLS</h4>
+<div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">httpClient</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">tls</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">protocol</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">TLSv1.2</span>
+    <span class="l-Scalar-Plain">verifyHostname</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">true</span>
+    <span class="l-Scalar-Plain">keyStorePath</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">/path/to/file</span>
+    <span class="l-Scalar-Plain">keyStorePassword</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">changeit</span>
+    <span class="l-Scalar-Plain">keyStoreType</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">JKS</span>
+    <span class="l-Scalar-Plain">trustStorePath</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">/path/to/file</span>
+    <span class="l-Scalar-Plain">trustStorePassword</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">changeit</span>
+    <span class="l-Scalar-Plain">trustStoreType</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">JKS</span>
+    <span class="l-Scalar-Plain">trustSelfSignedCertificates</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">false</span>
+    <span class="l-Scalar-Plain">supportedProtocols</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">TLSv1.1,TLSv1.2</span>
+    <span class="l-Scalar-Plain">supportedCipherSuites</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256</span>
+</pre></div>
+</div>
+<table border="1" class="docutils">
+<colgroup>
+<col width="16%" />
+<col width="10%" />
+<col width="74%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Name</th>
+<th class="head">Default</th>
+<th class="head">Description</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>protocol</td>
+<td>TLSv1.2</td>
+<td>The default protocol the client will attempt to use during the SSL Handshake.
+See
+<a class="reference external" href="http://docs.oracle.com/javase/8/docs/technotes/guides/security/StandardNames.html#SSLContext">here</a> for more information.</td>
+</tr>
+<tr class="row-odd"><td>verifyHostname</td>
+<td>true</td>
+<td>Whether to verify the hostname of the server against the hostname presented in the server certificate.</td>
+</tr>
+<tr class="row-even"><td>keyStorePath</td>
+<td>(none)</td>
+<td>The path to the Java key store which contains the client certificate and private key.</td>
+</tr>
+<tr class="row-odd"><td>keyStorePassword</td>
+<td>(none)</td>
+<td>The password used to access the key store.</td>
+</tr>
+<tr class="row-even"><td>keyStoreType</td>
+<td>JKS</td>
+<td>The type of key store (usually <tt class="docutils literal"><span class="pre">JKS</span></tt>, <tt class="docutils literal"><span class="pre">PKCS12</span></tt>, <tt class="docutils literal"><span class="pre">JCEKS</span></tt>, <tt class="docutils literal"><span class="pre">Windows-MY</span></tt>, or <tt class="docutils literal"><span class="pre">Windows-ROOT</span></tt>).</td>
+</tr>
+<tr class="row-odd"><td>trustStorePath</td>
+<td>(none)</td>
+<td>The path to the Java key store which contains the CA certificates used to establish trust.</td>
+</tr>
+<tr class="row-even"><td>trustStorePassword</td>
+<td>(none)</td>
+<td>The password used to access the trust store.</td>
+</tr>
+<tr class="row-odd"><td>trustStoreType</td>
+<td>JKS</td>
+<td>The type of trust store (usually <tt class="docutils literal"><span class="pre">JKS</span></tt>, <tt class="docutils literal"><span class="pre">PKCS12</span></tt>, <tt class="docutils literal"><span class="pre">JCEKS</span></tt>, <tt class="docutils literal"><span class="pre">Windows-MY</span></tt>, or <tt class="docutils literal"><span class="pre">Windows-ROOT</span></tt>).</td>
+</tr>
+<tr class="row-even"><td>trustSelfSignedCertificates</td>
+<td>false</td>
+<td>Whether the client will trust certificates of servers that are self-signed.</td>
+</tr>
+<tr class="row-odd"><td>supportedProtocols</td>
+<td>(none)</td>
+<td>A list of protocols (e.g., <tt class="docutils literal"><span class="pre">SSLv3</span></tt>, <tt class="docutils literal"><span class="pre">TLSv1</span></tt>) which are supported. All
+other protocols will be refused.</td>
+</tr>
+<tr class="row-even"><td>supportedCipherSuites</td>
+<td>(none)</td>
+<td>A list of cipher suites (e.g., <tt class="docutils literal"><span class="pre">TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256</span></tt>) which
+are supported. All other cipher suites will be refused.</td>
 </tr>
 </tbody>
 </table>
@@ -1566,12 +1693,25 @@ Additional threads will be spawn only if the queue is reached its maximum size.<
 <td>The URL of the server.</td>
 </tr>
 <tr class="row-even"><td>user</td>
-<td>REQUIRED</td>
+<td>none</td>
 <td>The username used to connect to the server.</td>
 </tr>
 <tr class="row-odd"><td>password</td>
 <td>none</td>
 <td>The password used to connect to the server.</td>
+</tr>
+<tr class="row-even"><td>removeAbandoned</td>
+<td>false</td>
+<td>Remove abandoned connections if they exceed
+removeAbandonedTimeout. If set to true a connection is
+considered abandoned and eligible for removal if it has been in
+use longer than the removeAbandonedTimeout and the condition
+for abandonWhenPercentageFull is met.</td>
+</tr>
+<tr class="row-odd"><td>removeAbandonedTimeout</td>
+<td>60 seconds</td>
+<td>The time before a database connection can be considered
+abandoned.</td>
 </tr>
 <tr class="row-even"><td>abandonWhenPercentageFull</td>
 <td>0</td>
@@ -1706,6 +1846,11 @@ resizing.</td>
 <td>30 seconds</td>
 <td>To avoid excess validation, only run validation once every
 interval.</td>
+</tr>
+<tr class="row-odd"><td>validatorClassName</td>
+<td>none</td>
+<td>Name of a class of a custom validator implementation, which
+will be used for validating connections.</td>
 </tr>
 </tbody>
 </table>

@@ -72,7 +72,10 @@
 <li class="toctree-l2"><a class="reference internal" href="auth.html">Dropwizard Authentication</a></li>
 <li class="toctree-l2"><a class="reference internal" href="forms.html">Dropwizard Forms</a></li>
 <li class="toctree-l2"><a class="reference internal" href="validation.html">Dropwizard Validation</a></li>
-<li class="toctree-l2 current"><a class="current reference internal" href="">Dropwizard Views</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="">Dropwizard Views</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#template-errors">Template Errors</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="scala.html">Dropwizard &amp; Scala</a></li>
 <li class="toctree-l2"><a class="reference internal" href="testing.html">Testing Dropwizard</a></li>
 <li class="toctree-l2"><a class="reference internal" href="example.html">Dropwizard Example, Step by Step</a></li>
@@ -184,6 +187,12 @@ your IDE.</p>
 <p>For more information on how to use Mustache, see the <a class="reference external" href="http://mustache.github.com/mustache.5.html">Mustache</a> and <a class="reference external" href="https://github.com/spullara/mustache.java">Mustache.java</a> documentation.</p>
 <blockquote>
 <div></div></blockquote>
+<div class="section" id="template-errors">
+<span id="man-views-template-errors"></span><h2>Template Errors</h2>
+<p>If there is an error with the template (eg. the template file is not found or there is a compilation
+error with the template), the user will receive a <tt class="docutils literal"><span class="pre">500</span> <span class="pre">Internal</span> <span class="pre">Sever</span> <span class="pre">Error</span></tt> with a generic HTML
+message. The exact error will logged under debug mode.</p>
+</div>
 </div>
 
 

@@ -79,6 +79,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#oauth2">OAuth2</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#chained-factories">Chained Factories</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#protecting-resources">Protecting Resources</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#testing-protected-resources">Testing Protected Resources</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="forms.html">Dropwizard Forms</a></li>
@@ -173,19 +174,20 @@ principal.</p>
 <span id="man-auth-basic"></span><h2>Basic Authentication</h2>
 <p>The <tt class="docutils literal"><span class="pre">AuthDynamicFeature</span></tt> with the <tt class="docutils literal"><span class="pre">BasicCredentialAuthFilter</span></tt> and <tt class="docutils literal"><span class="pre">RolesAllowedDynamicFeature</span></tt>
 enables HTTP Basic authentication and authorization; requires an authenticator which
-takes instances of <tt class="docutils literal"><span class="pre">BasicCredentials</span></tt>:</p>
+takes instances of <tt class="docutils literal"><span class="pre">BasicCredentials</span></tt>. If you don&#8217;t use authorization, then <tt class="docutils literal"><span class="pre">RolesAllowedDynamicFeature</span></tt>
+is not required.</p>
 <div class="highlight-java"><div class="highlight"><pre><span class="nd">@Override</span>
 <span class="kd">public</span> <span class="kt">void</span> <span class="nf">run</span><span class="o">(</span><span class="n">ExampleConfiguration</span> <span class="n">configuration</span><span class="o">,</span>
                 <span class="n">Environment</span> <span class="n">environment</span><span class="o">)</span> <span class="o">{</span>
     <span class="n">environment</span><span class="o">.</span><span class="na">jersey</span><span class="o">().</span><span class="na">register</span><span class="o">(</span><span class="k">new</span> <span class="n">AuthDynamicFeature</span><span class="o">(</span>
-            <span class="k">new</span> <span class="n">BasicCredentialAuthFilter</span><span class="o">.</span><span class="na">Builder</span><span class="o">&lt;</span><span class="n">User</span><span class="o">,</span> <span class="n">ExampleAuthenticator</span><span class="o">&gt;()</span>
+            <span class="k">new</span> <span class="n">BasicCredentialAuthFilter</span><span class="o">.</span><span class="na">Builder</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;()</span>
                 <span class="o">.</span><span class="na">setAuthenticator</span><span class="o">(</span><span class="k">new</span> <span class="n">ExampleAuthenticator</span><span class="o">())</span>
                 <span class="o">.</span><span class="na">setAuthorizer</span><span class="o">(</span><span class="k">new</span> <span class="n">ExampleAuthorizer</span><span class="o">())</span>
                 <span class="o">.</span><span class="na">setRealm</span><span class="o">(</span><span class="s">&quot;SUPER SECRET STUFF&quot;</span><span class="o">)</span>
                 <span class="o">.</span><span class="na">buildAuthFilter</span><span class="o">()));</span>
     <span class="n">environment</span><span class="o">.</span><span class="na">jersey</span><span class="o">().</span><span class="na">register</span><span class="o">(</span><span class="n">RolesAllowedDynamicFeature</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
     <span class="c1">//If you want to use @Auth to inject a custom Principal type into your resource</span>
-    <span class="n">environment</span><span class="o">.</span><span class="na">jersey</span><span class="o">().</span><span class="na">register</span><span class="o">(</span><span class="k">new</span> <span class="n">AuthValueFactoryProvider</span><span class="o">.</span><span class="na">Binder</span><span class="o">(</span><span class="n">User</span><span class="o">.</span><span class="na">class</span><span class="o">));</span>
+    <span class="n">environment</span><span class="o">.</span><span class="na">jersey</span><span class="o">().</span><span class="na">register</span><span class="o">(</span><span class="k">new</span> <span class="n">AuthValueFactoryProvider</span><span class="o">.</span><span class="na">Binder</span><span class="o">&lt;&gt;(</span><span class="n">User</span><span class="o">.</span><span class="na">class</span><span class="o">));</span>
 <span class="o">}</span>
 </pre></div>
 </div>
@@ -194,19 +196,20 @@ takes instances of <tt class="docutils literal"><span class="pre">BasicCredentia
 <span id="man-auth-oauth2"></span><h2>OAuth2</h2>
 <p>The <tt class="docutils literal"><span class="pre">AuthDynamicFeature</span></tt> with <tt class="docutils literal"><span class="pre">OAuthCredentialAuthFilter</span></tt> and <tt class="docutils literal"><span class="pre">RolesAllowedDynamicFeature</span></tt>
 enables OAuth2 bearer-token authentication and authorization; requires an authenticator which
-takes instances of <tt class="docutils literal"><span class="pre">String</span></tt>:</p>
+takes instances of <tt class="docutils literal"><span class="pre">String</span></tt>. If you don&#8217;t use authorization, then <tt class="docutils literal"><span class="pre">RolesAllowedDynamicFeature</span></tt>
+is not required.</p>
 <div class="highlight-java"><div class="highlight"><pre><span class="nd">@Override</span>
 <span class="kd">public</span> <span class="kt">void</span> <span class="nf">run</span><span class="o">(</span><span class="n">ExampleConfiguration</span> <span class="n">configuration</span><span class="o">,</span>
                 <span class="n">Environment</span> <span class="n">environment</span><span class="o">)</span> <span class="o">{</span>
     <span class="n">environment</span><span class="o">.</span><span class="na">jersey</span><span class="o">().</span><span class="na">register</span><span class="o">(</span><span class="k">new</span> <span class="n">AuthDynamicFeature</span><span class="o">(</span>
-        <span class="k">new</span> <span class="n">OAuthCredentialAuthFilter</span><span class="o">.</span><span class="na">Builder</span><span class="o">&lt;</span><span class="n">User</span><span class="o">,</span> <span class="n">ExampleOAuthAuthenticator</span><span class="o">&gt;()</span>
+        <span class="k">new</span> <span class="n">OAuthCredentialAuthFilter</span><span class="o">.</span><span class="na">Builder</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;()</span>
             <span class="o">.</span><span class="na">setAuthenticator</span><span class="o">(</span><span class="k">new</span> <span class="n">ExampleOAuthAuthenticator</span><span class="o">())</span>
             <span class="o">.</span><span class="na">setAuthorizer</span><span class="o">(</span><span class="k">new</span> <span class="n">ExampleAuthorizer</span><span class="o">())</span>
-            <span class="o">.</span><span class="na">setPrefix</span><span class="o">(</span><span class="s">&quot;SUPER SECRET STUFF&quot;</span><span class="o">)</span>
+            <span class="o">.</span><span class="na">setPrefix</span><span class="o">(</span><span class="s">&quot;Bearer&quot;</span><span class="o">)</span>
             <span class="o">.</span><span class="na">buildAuthFilter</span><span class="o">()));</span>
     <span class="n">environment</span><span class="o">.</span><span class="na">jersey</span><span class="o">().</span><span class="na">register</span><span class="o">(</span><span class="n">RolesAllowedDynamicFeature</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
     <span class="c1">//If you want to use @Auth to inject a custom Principal type into your resource</span>
-    <span class="n">environment</span><span class="o">.</span><span class="na">jersey</span><span class="o">().</span><span class="na">register</span><span class="o">(</span><span class="k">new</span> <span class="n">AuthValueFactoryProvider</span><span class="o">.</span><span class="na">Binder</span><span class="o">(</span><span class="n">User</span><span class="o">.</span><span class="na">class</span><span class="o">));</span>
+    <span class="n">environment</span><span class="o">.</span><span class="na">jersey</span><span class="o">().</span><span class="na">register</span><span class="o">(</span><span class="k">new</span> <span class="n">AuthValueFactoryProvider</span><span class="o">.</span><span class="na">Binder</span><span class="o">&lt;&gt;(</span><span class="n">User</span><span class="o">.</span><span class="na">class</span><span class="o">));</span>
 <span class="o">}</span>
 </pre></div>
 </div>
@@ -233,7 +236,7 @@ takes instances of <tt class="docutils literal"><span class="pre">String</span><
     <span class="n">environment</span><span class="o">.</span><span class="na">jersey</span><span class="o">().</span><span class="na">register</span><span class="o">(</span><span class="k">new</span> <span class="n">AuthDynamicFeature</span><span class="o">(</span><span class="k">new</span> <span class="n">ChainedAuthFilter</span><span class="o">(</span><span class="n">handlers</span><span class="o">)));</span>
     <span class="n">environment</span><span class="o">.</span><span class="na">jersey</span><span class="o">().</span><span class="na">register</span><span class="o">(</span><span class="n">RolesAllowedDynamicFeature</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
     <span class="c1">//If you want to use @Auth to inject a custom Principal type into your resource</span>
-    <span class="n">environment</span><span class="o">.</span><span class="na">jersey</span><span class="o">().</span><span class="na">register</span><span class="o">(</span><span class="k">new</span> <span class="n">AuthValueFactoryProvider</span><span class="o">.</span><span class="na">Binder</span><span class="o">(</span><span class="n">User</span><span class="o">.</span><span class="na">class</span><span class="o">));</span>
+    <span class="n">environment</span><span class="o">.</span><span class="na">jersey</span><span class="o">().</span><span class="na">register</span><span class="o">(</span><span class="k">new</span> <span class="n">AuthValueFactoryProvider</span><span class="o">.</span><span class="na">Binder</span><span class="o">&lt;&gt;(</span><span class="n">User</span><span class="o">.</span><span class="na">class</span><span class="o">));</span>
 <span class="o">}</span>
 </pre></div>
 </div>
@@ -241,22 +244,31 @@ takes instances of <tt class="docutils literal"><span class="pre">String</span><
 </div>
 <div class="section" id="protecting-resources">
 <span id="man-auth-resources"></span><h2>Protecting Resources</h2>
-<p>To protect a resource, simply include the <tt class="docutils literal"><span class="pre">&#64;RolesAllowed</span></tt> annotation with an appropriate role on your resource method.
-If you need access to the Principal, you need to add a parameter to your method <tt class="docutils literal"><span class="pre">&#64;Context</span> <span class="pre">SecurityContext</span> <span class="pre">context</span></tt></p>
-<div class="highlight-java"><div class="highlight"><pre><span class="nd">@RolesAllowed</span><span class="o">(</span><span class="s">&quot;ADMIN&quot;</span><span class="o">)</span>
-<span class="nd">@GET</span>
-<span class="kd">public</span> <span class="n">SecretPlan</span> <span class="nf">getSecretPlan</span><span class="o">(</span><span class="nd">@Context</span> <span class="n">SecurityContext</span> <span class="n">context</span><span class="o">)</span> <span class="o">{</span>
-    <span class="n">User</span> <span class="n">userPrincipal</span> <span class="o">=</span> <span class="o">(</span><span class="n">User</span><span class="o">)</span> <span class="n">context</span><span class="o">.</span><span class="na">getUserPrincipal</span><span class="o">();</span>
-    <span class="k">return</span> <span class="n">dao</span><span class="o">.</span><span class="na">findPlanForUser</span><span class="o">(</span><span class="n">user</span><span class="o">);</span>
-<span class="o">}</span>
-</pre></div>
-</div>
-<p>or you can add register the following with jersey</p>
-<div class="highlight-java"><div class="highlight"><pre><span class="n">environment</span><span class="o">.</span><span class="na">jersey</span><span class="o">().</span><span class="na">register</span><span class="o">(</span><span class="k">new</span> <span class="n">AuthValueFactoryProvider</span><span class="o">.</span><span class="na">Binder</span><span class="o">(</span><span class="n">User</span><span class="o">.</span><span class="na">class</span><span class="o">));</span>
+<p>There are two ways to protect a resource.  You can mark your resource method with one of the following annotations:</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">&#64;PermitAll</span></tt>. All authenticated users will have access to the method.</li>
+<li><tt class="docutils literal"><span class="pre">&#64;RolesAllowed</span></tt>. Access will be granted for the users with the specified roles.</li>
+<li><tt class="docutils literal"><span class="pre">&#64;DenyAll</span></tt>. No access will be granted to anyone.</li>
+</ul>
+<p>Alternatively, you can annotate the parameter representing your principal with <tt class="docutils literal"><span class="pre">&#64;Auth</span></tt>. Note you must register a
+jersey provider to make this work.</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="n">environment</span><span class="o">.</span><span class="na">jersey</span><span class="o">().</span><span class="na">register</span><span class="o">(</span><span class="k">new</span> <span class="n">AuthValueFactoryProvider</span><span class="o">.</span><span class="na">Binder</span><span class="o">&lt;&gt;(</span><span class="n">User</span><span class="o">.</span><span class="na">class</span><span class="o">));</span>
 
 <span class="nd">@RolesAllowed</span><span class="o">(</span><span class="s">&quot;ADMIN&quot;</span><span class="o">)</span>
 <span class="nd">@GET</span>
 <span class="kd">public</span> <span class="n">SecretPlan</span> <span class="nf">getSecretPlan</span><span class="o">(</span><span class="nd">@Auth</span> <span class="n">User</span> <span class="n">user</span><span class="o">)</span> <span class="o">{</span>
+    <span class="k">return</span> <span class="n">dao</span><span class="o">.</span><span class="na">findPlanForUser</span><span class="o">(</span><span class="n">user</span><span class="o">);</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>You can also access the Principal by adding a parameter to your method <tt class="docutils literal"><span class="pre">&#64;Context</span> <span class="pre">SecurityContext</span> <span class="pre">context</span></tt>. Note this
+will not automatically register the servlet filter which performs authentication. You will still need to add one of
+<tt class="docutils literal"><span class="pre">&#64;PermitAll</span></tt>, <tt class="docutils literal"><span class="pre">&#64;RolesAllowed</span></tt>, or <tt class="docutils literal"><span class="pre">&#64;DenyAll</span></tt>. This is not the case with <tt class="docutils literal"><span class="pre">&#64;Auth</span></tt>. When that is present, the auth
+filter is automatically registered to facilitate users upgrading from older versions of Dropwizard</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="nd">@RolesAllowed</span><span class="o">(</span><span class="s">&quot;ADMIN&quot;</span><span class="o">)</span>
+<span class="nd">@GET</span>
+<span class="kd">public</span> <span class="n">SecretPlan</span> <span class="nf">getSecretPlan</span><span class="o">(</span><span class="nd">@Context</span> <span class="n">SecurityContext</span> <span class="n">context</span><span class="o">)</span> <span class="o">{</span>
+    <span class="n">User</span> <span class="n">userPrincipal</span> <span class="o">=</span> <span class="o">(</span><span class="n">User</span><span class="o">)</span> <span class="n">context</span><span class="o">.</span><span class="na">getUserPrincipal</span><span class="o">();</span>
     <span class="k">return</span> <span class="n">dao</span><span class="o">.</span><span class="na">findPlanForUser</span><span class="o">(</span><span class="n">user</span><span class="o">);</span>
 <span class="o">}</span>
 </pre></div>
@@ -267,6 +279,63 @@ resource method.</p>
 <p>If you have a resource which is optionally protected (e.g., you want to display a logged-in user&#8217;s
 name but not require login), you need to implement a custom filter which injects a security context
 containing the principal if it exists, without performing authentication.</p>
+</div>
+<div class="section" id="testing-protected-resources">
+<h2>Testing Protected Resources</h2>
+<p>Add this dependency into your <tt class="docutils literal"><span class="pre">pom.xml</span></tt> file:</p>
+<div class="highlight-xml"><div class="highlight"><pre><span class="nt">&lt;dependencies&gt;</span>
+  <span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>io.dropwizard<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>dropwizard-testing<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>${dropwizard.version}<span class="nt">&lt;/version&gt;</span>
+  <span class="nt">&lt;/dependency&gt;</span>
+  <span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>org.glassfish.jersey.test-framework.providers<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>jersey-test-framework-provider-grizzly2<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>${jersey.version}<span class="nt">&lt;/version&gt;</span>
+    <span class="nt">&lt;exclusions&gt;</span>
+      <span class="nt">&lt;exclusion&gt;</span>
+        <span class="nt">&lt;groupId&gt;</span>javax.servlet<span class="nt">&lt;/groupId&gt;</span>
+        <span class="nt">&lt;artifactId&gt;</span>javax.servlet-api<span class="nt">&lt;/artifactId&gt;</span>
+      <span class="nt">&lt;/exclusion&gt;</span>
+      <span class="nt">&lt;exclusion&gt;</span>
+        <span class="nt">&lt;groupId&gt;</span>junit<span class="nt">&lt;/groupId&gt;</span>
+        <span class="nt">&lt;artifactId&gt;</span>junit<span class="nt">&lt;/artifactId&gt;</span>
+      <span class="nt">&lt;/exclusion&gt;</span>
+    <span class="nt">&lt;/exclusions&gt;</span>
+  <span class="nt">&lt;/dependency&gt;</span>
+<span class="nt">&lt;/dependencies&gt;</span>
+</pre></div>
+</div>
+<p>When you build your <tt class="docutils literal"><span class="pre">ResourceTestRule</span></tt>, add the <tt class="docutils literal"><span class="pre">GrizzlyWebTestContainerFactory</span></tt> line.</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="nd">@Rule</span>
+<span class="kd">public</span> <span class="n">ResourceTestRule</span> <span class="n">rule</span> <span class="o">=</span> <span class="n">ResourceTestRule</span>
+        <span class="o">.</span><span class="na">builder</span><span class="o">()</span>
+        <span class="o">.</span><span class="na">setTestContainerFactory</span><span class="o">(</span><span class="k">new</span> <span class="n">GrizzlyWebTestContainerFactory</span><span class="o">())</span>
+        <span class="o">.</span><span class="na">addProvider</span><span class="o">(</span><span class="k">new</span> <span class="n">AuthDynamicFeature</span><span class="o">(</span><span class="k">new</span> <span class="n">OAuthCredentialAuthFilter</span><span class="o">.</span><span class="na">Builder</span><span class="o">&lt;</span><span class="n">User</span><span class="o">&gt;()</span>
+                <span class="o">.</span><span class="na">setAuthenticator</span><span class="o">(</span><span class="k">new</span> <span class="n">MyOAuthAuthenticator</span><span class="o">())</span>
+                <span class="o">.</span><span class="na">setAuthorizer</span><span class="o">(</span><span class="k">new</span> <span class="n">MyAuthorizer</span><span class="o">())</span>
+                <span class="o">.</span><span class="na">setRealm</span><span class="o">(</span><span class="s">&quot;SUPER SECRET STUFF&quot;</span><span class="o">)</span>
+                <span class="o">.</span><span class="na">setPrefix</span><span class="o">(</span><span class="s">&quot;Bearer&quot;</span><span class="o">)</span>
+                <span class="o">.</span><span class="na">buildAuthFilter</span><span class="o">()))</span>
+        <span class="o">.</span><span class="na">addProvider</span><span class="o">(</span><span class="n">RolesAllowedDynamicFeature</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
+        <span class="o">.</span><span class="na">addProvider</span><span class="o">(</span><span class="k">new</span> <span class="n">AuthValueFactoryProvider</span><span class="o">.</span><span class="na">Binder</span><span class="o">&lt;&gt;(</span><span class="n">User</span><span class="o">.</span><span class="na">class</span><span class="o">))</span>
+        <span class="o">.</span><span class="na">addResource</span><span class="o">(</span><span class="k">new</span> <span class="n">ProtectedResource</span><span class="o">())</span>
+        <span class="o">.</span><span class="na">build</span><span class="o">();</span>
+</pre></div>
+</div>
+<p>In this example we are testing the oauth authentication so we need to set the header manually. Note the use of <tt class="docutils literal"><span class="pre">resources.getJerseyTest()</span></tt> to make the test work</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="nd">@Test</span>
+<span class="kd">public</span> <span class="kt">void</span> <span class="nf">testProtected</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+    <span class="kd">final</span> <span class="n">Response</span> <span class="n">response</span> <span class="o">=</span> <span class="n">rule</span><span class="o">.</span><span class="na">getJerseyTest</span><span class="o">().</span><span class="na">target</span><span class="o">(</span><span class="s">&quot;/protected&quot;</span><span class="o">)</span>
+            <span class="o">.</span><span class="na">request</span><span class="o">(</span><span class="n">MediaType</span><span class="o">.</span><span class="na">APPLICATION_JSON_TYPE</span><span class="o">)</span>
+            <span class="o">.</span><span class="na">header</span><span class="o">(</span><span class="s">&quot;Authorization&quot;</span><span class="o">,</span> <span class="s">&quot;Bearer TOKEN&quot;</span><span class="o">)</span>
+            <span class="o">.</span><span class="na">get</span><span class="o">();</span>
+
+    <span class="n">assertThat</span><span class="o">(</span><span class="n">response</span><span class="o">.</span><span class="na">getStatus</span><span class="o">()).</span><span class="na">isEqualTo</span><span class="o">(</span><span class="mi">200</span><span class="o">);</span>
+<span class="o">}</span>
+</pre></div>
+</div>
 </div>
 </div>
 

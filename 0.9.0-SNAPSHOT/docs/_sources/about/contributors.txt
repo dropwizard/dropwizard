@@ -8,6 +8,7 @@ Dropwizard wouldn't exist without the hard work contributed by numerous individu
 
 Many, many thanks to:
 
+* `Aaron Ingram <https://github.com/aingram>`_
 * `Adam Jordens <https://github.com/adamjordens>`_
 * `Adam Marcus <https://github.com/marcua>`_
 * `akumlehn <https://github.com/akumlehn>`_
@@ -19,6 +20,7 @@ Many, many thanks to:
 * `Andrei Savu <https://github.com/andreisavu>`_
 * `Andrew Clay Shafer <https://github.com/littleidea>`_
 * `anikiej <https://github.com/anikiej>`_
+* `Antanas Končius <https://github.com/akoncius>`_
 * `Armando Singer <https://github.com/asinger>`_
 * `Artem Prigoda <https://github.com/arteam>`_
 * `Arun Horne <https://github.com/arunh>`_
@@ -54,6 +56,7 @@ Many, many thanks to:
 * `Christopher Currie <https://github.com/christophercurrie>`_
 * `Christopher Elkins <https://github.com/celkins>`_
 * `Christopher Gray <https://github.com/chrisgray>`_
+* `Christopher Kingsbury<https://github.com/ckingsbu>`_
 * `Christoph Kutzinski <https://github.com/kutzi>`_
 * `Coda Hale <https://github.com/codahale>`_
 * `Collin Van Dyck <https://github.com/collinvandyck>`_
@@ -65,6 +68,7 @@ Many, many thanks to:
 * `David Morgantini <https://github.com/dmorgantini>`_
 * `David Stendardi <https://github.com/dstendardi>`_
 * `Dennis Hoersch <https://github.com/dhs3000>`_
+* `Deepu Mohan Puthrote <https://github.com/warfox>`_
 * `Derek Cicerone <https://github.com/derekcicerone>`_
 * `Derek Stainer <https://github.com/dstainer>`_
 * `Devin Breen <https://github.com/ometa>`_
@@ -73,6 +77,7 @@ Many, many thanks to:
 * `Dietrich Featherston <https://github.com/d2fn>`_
 * `Dimitris Zavaliadis <https://github.com/dimzava>`_
 * `Dmitry Minkovsky <https://github.com/dminkovsky>`_
+* `Doug Roccato <https://github.com/roccato>`_
 * `dom farr <https://github.com/dominicfarr>`_
 * `eepstein <https://github.com/eepstein>`_
 * `eitan101 <https://github.com/eitan101>`_
@@ -81,6 +86,7 @@ Many, many thanks to:
 * `florinn <https://github.com/florinn>`_
 * `Fredrik Sundberg <https://github.com/KingBuzzer>`_
 * `Frode Nerbråten <https://github.com/froden>`_
+* `Gabe Henkes <https://github.com/ghenkes>`_
 * `Gary Dusbabek <https://github.com/gdusbabek>`_
 * `Glenn McAllister <https://github.com/glennmcallister>`_
 * `Graham O'Regan <https://github.com/grahamoregan>`_
@@ -96,6 +102,7 @@ Many, many thanks to:
 * `James Ward <https://github.com/jamesward>`_
 * `Jamie Furness <https://github.com/reines>`_
 * `Jan Galinski <https://github.com/jangalinski>`_
+* `Jan Olaf Krems <https://github.com/jkrems>`_
 * `Jared Stehler <https://github.com/jaredstehler-cengage>`_
 * `Jason Clawson <https://github.com/jclawson>`_
 * `Jason Dunkelberger <https://github.com/dirkraft>`_
@@ -107,6 +114,7 @@ Many, many thanks to:
 * `Johan Wirde (@jwirde) <https://github.com/wirde>`_
 * `Jonathan Halterman <https://github.com/jhalterman>`_
 * `Jonathan Ruckwood <https://github.com/jon-ruckwood>`_
+* `Jonathan Welzel <https://github.com/jnwelzel>`_
 * `Jon Radon <https://github.com/JonMR>`_
 * `Jordan Zimmerman <https://github.com/Randgalt>`_
 * `Joshua Spiewak <https://github.com/jspiewak>`_
@@ -122,6 +130,7 @@ Many, many thanks to:
 * `Lunfu Zhong <https://github.com/zhongl>`_
 * `Malte S. Stretz <https://github.com/mss>`_
 * `Marcin Biegan <https://github.com/mabn>`_
+* `Marcus Höjvall <https://github.com/softarn>`_
 * `Marius Volkhart <https://github.com/MariusVolkhart>`_
 * `Mark Reddy <https://github.com/markreddy>`_
 * `Mark Wolfe <https://github.com/wolfeidau>`_
@@ -137,6 +146,7 @@ Many, many thanks to:
 * `Michael Fairley <https://github.com/michaelfairley>`_
 * `Michael Kearns <https://github.com/LeekAnarchism>`_
 * `Michael McCarthy <https://github.com/mikeycmccarthy>`_
+* `Michael Piefel <https://github.com/piefel>`_
 * `Michal Rutkowski <https://github.com/velocipedist>`_
 * `Mike Miller <https://github.com/mikemil>`_
 * `Moritz Kammerer <https://github.com/phxql>`_
@@ -154,6 +164,7 @@ Many, many thanks to:
 * `Punyashloka Biswal <https://github.com/punya>`_
 * `Quoc-Viet Nguyen <https://github.com/nqv>`_
 * `Rachel Newstead <https://github.com/rnewstead1>`_
+* `RawToast <https://github.com/rawtoast>`_
 * `rayokota <https://github.com/rayokota>`_
 * `Rémi Alvergnat <https://github.com/Toilal>`_
 * `Richard Kettelerij <https://github.com/rkettelerij>`_
@@ -170,6 +181,7 @@ Many, many thanks to:
 * `Sebastian Hartte <https://github.com/shartte>`_
 * `Simon Collins <https://github.com/simoncollins>`_
 * `smolloy <https://github.com/smolloy>`_
+* `Sourav Mitra <https://github.com/souvravmitra>`_
 * `Stephen Huenneke <https://github.com/skastel>`_
 * `Steve Agalloco <https://github.com/stve>`_
 * `Steve Hill <https://github.com/sghill>`_
@@ -178,6 +190,7 @@ Many, many thanks to:
 * `Szymon Pacanowski <https://github.com/spacanowski>`_
 * `Tatu Saloranta <https://github.com/cowtowncoder>`_
 * `Ted Nyman <https://github.com/tnm>`_
+* `Thiago Moretto <https://github.com/thiagomoretto>`_
 * `Thomas Darimont <https://github.com/thomasdarimont>`_
 * `Tim Bart <https://github.com/pims>`_
 * `Tom Akehurst <https://github.com/tomakehurst>`_

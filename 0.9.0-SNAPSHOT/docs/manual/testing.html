@@ -83,7 +83,11 @@
 </li>
 <li class="toctree-l3"><a class="reference internal" href="#testing-resources">Testing Resources</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#testing-client-implementations">Testing Client Implementations</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#integration-testing">Integration Testing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#integration-testing">Integration Testing</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id2">JUnit</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#non-junit">Non-JUnit</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="example.html">Dropwizard Example, Step by Step</a></li>
@@ -245,6 +249,10 @@ loads a given resource instance in an in-memory Jersey server:</p>
     <span class="nd">@Before</span>
     <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setup</span><span class="o">()</span> <span class="o">{</span>
         <span class="n">when</span><span class="o">(</span><span class="n">dao</span><span class="o">.</span><span class="na">fetchPerson</span><span class="o">(</span><span class="n">eq</span><span class="o">(</span><span class="s">&quot;blah&quot;</span><span class="o">))).</span><span class="na">thenReturn</span><span class="o">(</span><span class="n">person</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="nd">@After</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">tearDown</span><span class="o">(){</span>
         <span class="c1">// we have to reset the mock after each test because of the</span>
         <span class="c1">// @ClassRule, or use a @Rule as mentioned below.</span>
         <span class="n">reset</span><span class="o">(</span><span class="n">dao</span><span class="o">);</span>
@@ -332,7 +340,7 @@ application containing your test doubles.</p>
     <span class="o">}</span>
 
     <span class="nd">@ClassRule</span>
-    <span class="kd">public</span> <span class="kd">final</span> <span class="kd">static</span> <span class="n">DropwizardClientRule</span> <span class="n">dropwizard</span> <span class="o">=</span> <span class="k">new</span> <span class="n">DropwizardClientRule</span><span class="o">(</span><span class="k">new</span> <span class="n">PingResource</span><span class="o">());</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">DropwizardClientRule</span> <span class="n">dropwizard</span> <span class="o">=</span> <span class="k">new</span> <span class="n">DropwizardClientRule</span><span class="o">(</span><span class="k">new</span> <span class="n">PingResource</span><span class="o">());</span>
 
     <span class="nd">@Test</span>
     <span class="kd">public</span> <span class="kt">void</span> <span class="nf">shouldPing</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">IOException</span> <span class="o">{</span>
@@ -360,8 +368,10 @@ application containing your test doubles.</p>
 </div>
 <div class="section" id="integration-testing">
 <h2>Integration Testing</h2>
-<p>It can be useful to start up your entire app and hit it with real HTTP requests during testing. This can be
-achieved by adding <tt class="docutils literal"><span class="pre">DropwizardAppRule</span></tt> to your JUnit test class, which will start the app prior to any tests
+<p>It can be useful to start up your entire app and hit it with real HTTP requests during testing.</p>
+<div class="section" id="id2">
+<h3>JUnit</h3>
+<p>Adding <tt class="docutils literal"><span class="pre">DropwizardAppRule</span></tt> to your JUnit test class will start the app prior to any tests
 running and stop it again when they&#8217;ve completed (roughly equivalent to having used <tt class="docutils literal"><span class="pre">&#64;BeforeClass</span></tt> and <tt class="docutils literal"><span class="pre">&#64;AfterClass</span></tt>).
 <tt class="docutils literal"><span class="pre">DropwizardAppRule</span></tt> also exposes the app&#8217;s <tt class="docutils literal"><span class="pre">Configuration</span></tt>,
 <tt class="docutils literal"><span class="pre">Environment</span></tt> and the app object itself so that these can be queried by the tests.</p>
@@ -384,6 +394,40 @@ running and stop it again when they&#8217;ve completed (roughly equivalent to ha
     <span class="o">}</span>
 <span class="o">}</span>
 </pre></div>
+</div>
+</div>
+<div class="section" id="non-junit">
+<h3>Non-JUnit</h3>
+<p>By creating a DropwizardTestSupport instance in your test you can manually start and stop the app in your tests, you do this by calling its <tt class="docutils literal"><span class="pre">before</span></tt> and <tt class="docutils literal"><span class="pre">after</span></tt> methods. <tt class="docutils literal"><span class="pre">DropwizardTestSupport</span></tt> also exposes the app&#8217;s <tt class="docutils literal"><span class="pre">Configuration</span></tt>, <tt class="docutils literal"><span class="pre">Environment</span></tt> and the app object itself so that these can be queried by the tests.</p>
+<div class="highlight-java"><div class="highlight"><pre><span class="kd">public</span> <span class="kd">class</span> <span class="nc">LoginAcceptanceTest</span> <span class="o">{</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">DropwizardTestSupport</span><span class="o">&lt;</span><span class="n">TestConfiguration</span><span class="o">&gt;</span> <span class="n">SUPPORT</span> <span class="o">=</span>
+            <span class="k">new</span> <span class="n">DropwizardTestSupport</span><span class="o">&lt;</span><span class="n">TestConfiguration</span><span class="o">&gt;(</span><span class="n">MyApp</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="n">ResourceHelpers</span><span class="o">.</span><span class="na">resourceFilePath</span><span class="o">(</span><span class="s">&quot;my-app-config.yaml&quot;</span><span class="o">));</span>
+
+    <span class="nd">@BeforeClass</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">beforeClass</span><span class="o">()</span> <span class="o">{</span>
+      <span class="n">SUPPORT</span><span class="o">.</span><span class="na">before</span><span class="o">();</span>
+    <span class="o">}</span>
+
+    <span class="nd">@AfterClass</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">afterClass</span><span class="o">()</span> <span class="o">{</span>
+      <span class="n">SUPPORT</span><span class="o">.</span><span class="na">after</span><span class="o">();</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Test</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">loginHandlerRedirectsAfterPost</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">Client</span> <span class="n">client</span> <span class="o">=</span> <span class="k">new</span> <span class="n">JerseyClientBuilder</span><span class="o">(</span><span class="n">SUPPORT</span><span class="o">.</span><span class="na">getEnvironment</span><span class="o">()).</span><span class="na">build</span><span class="o">(</span><span class="s">&quot;test client&quot;</span><span class="o">);</span>
+
+        <span class="n">Response</span> <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="na">target</span><span class="o">(</span>
+                 <span class="n">String</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="s">&quot;http://localhost:%d/login&quot;</span><span class="o">,</span> <span class="n">RULE</span><span class="o">.</span><span class="na">getLocalPort</span><span class="o">()))</span>
+                <span class="o">.</span><span class="na">request</span><span class="o">()</span>
+                <span class="o">.</span><span class="na">post</span><span class="o">(</span><span class="n">Entity</span><span class="o">.</span><span class="na">json</span><span class="o">(</span><span class="n">loginForm</span><span class="o">()));</span>
+
+        <span class="n">assertThat</span><span class="o">(</span><span class="n">response</span><span class="o">.</span><span class="na">getStatus</span><span class="o">()).</span><span class="na">isEqualTo</span><span class="o">(</span><span class="mi">302</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+</div>
 </div>
 </div>
 </div>
