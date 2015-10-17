@@ -11,17 +11,27 @@
     <version>0.9.0-rc5-SNAPSHOT</version>
   </parent>
 
-  <groupId>io.dropwizard.archetypes</groupId>
   <artifactId>java-simple</artifactId>
   <packaging>maven-archetype</packaging>
 
   <name>Dropwizard Archetype for Simple Java Services</name>
 
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>io.dropwizard</groupId>
+        <artifactId>dropwizard-bom</artifactId>
+        <version>${project.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
   <dependencies>
     <dependency>
       <groupId>io.dropwizard</groupId>
       <artifactId>dropwizard-core</artifactId>
-      <version>${project.version}</version>
     </dependency>
   </dependencies>
 
