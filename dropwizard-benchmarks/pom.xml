@@ -11,6 +11,12 @@
         <!-- see https://issues.apache.org/jira/browse/MCOMPILER-235 -->
         <maven.compiler.useIncrementalCompilation>false</maven.compiler.useIncrementalCompilation>
         <jmh.version>1.11.1</jmh.version>
+        <!-- Skip deployment of this sub-module -->
+        <source.skip>true</source.skip>
+        <maven.javadoc.skip>true</maven.javadoc.skip>
+        <maven.deploy.skip>true</maven.deploy.skip>
+        <maven.site.skip>true</maven.site.skip>
+        <maven.site.deploy.skip>true</maven.site.deploy.skip>
     </properties>
 
     <artifactId>dropwizard-benchmarks</artifactId>
