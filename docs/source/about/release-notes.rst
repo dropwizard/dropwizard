@@ -71,6 +71,15 @@ v0.9.0
 * Upgraded to tomcat-jdbc 8.0.28
 * Upgraded to joda-time 2.8.2
 
+.. _rel-0.8.4:
+
+v0.8.4 Aug 26 2015
+==================
+
+* Upgrade to Apache HTTP Client 4.5
+* Upgrade to Jersey 2.21
+* Fixed user-agent shadowing in Jersey HTTP Client `#1198 <https://github.com/dropwizard/dropwizard/pull/1198>`_
+
 .. _rel-0.8.3:
 
 v0.8.3 Aug 24 2015
