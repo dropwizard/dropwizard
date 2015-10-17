@@ -8,7 +8,9 @@
     </parent>
 
     <properties>
-        <jmh.version>1.8</jmh.version>
+        <!-- see https://issues.apache.org/jira/browse/MCOMPILER-235 -->
+        <maven.compiler.useIncrementalCompilation>false</maven.compiler.useIncrementalCompilation>
+        <jmh.version>1.11.1</jmh.version>
     </properties>
 
     <artifactId>dropwizard-benchmarks</artifactId>
