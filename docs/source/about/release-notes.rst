@@ -9,7 +9,7 @@ Release Notes
 v0.9.0
 ======
 * Various documentation fixes and improvements
-* New filter-based authorization & authentication `#952 <https://github.com/dropwizard/dropwizard/pull/952>`_, `#1023 <https://github.com/dropwizard/dropwizard/pull/1023>`_, `#1114 <https://github.com/dropwizard/dropwizard/pull/1114>`_
+* New filter-based authorization & authentication `#952 <https://github.com/dropwizard/dropwizard/pull/952>`_, `#1023 <https://github.com/dropwizard/dropwizard/pull/1023>`_, `#1114 <https://github.com/dropwizard/dropwizard/pull/1114>`_, `#1162 <https://github.com/dropwizard/dropwizard/pull/1162>`_, `#1241 <https://github.com/dropwizard/dropwizard/pull/1241>`_
 * Fixed a security bug in ``CachingAuthenticator`` with caching results of failed authentication attempts `#1082 <https://github.com/dropwizard/dropwizard/pull/1082>`_
 * Correct handling misconfigured context paths in ``ServerFactory`` `#785 <https://github.com/dropwizard/dropwizard/pull/785>`_
 * Logging context paths during application startup `#994 <https://github.com/dropwizard/dropwizard/pull/994>`_, `#1072 <https://github.com/dropwizard/dropwizard/pull/1072>`_
@@ -21,20 +21,28 @@ v0.9.0
 * Support for including caller data in appenders `#995 <https://github.com/dropwizard/dropwizard/pull/995>`_
 * Support for defining custom logging factories (e.g. native Logback) `#996 <https://github.com/dropwizard/dropwizard/pull/996>`_
 * Support for defining the maximum log file size in ``FileAppenderFactory``. `#1000 <https://github.com/dropwizard/dropwizard/pull/1000>`_
+* Support for fixed window rolling policy in ``FileAppenderFactory`` `#1218 <https://github.com/dropwizard/dropwizard/pull/1218>`_
 * Support for individual logger appenders `#1092 <https://github.com/dropwizard/dropwizard/pull/1092>`_
+* Support for disabling logger additivity `#1215 <https://github.com/dropwizard/dropwizard/pull/1215>`_
 * Sorting endpoints in the application startup log `#1002 <https://github.com/dropwizard/dropwizard/pull/1002>`_
 * Dynamic DNS resolution in the Graphite metric reporter `#1004 <https://github.com/dropwizard/dropwizard/pull/1004>`_
 * Support for defining a custom ``MetricRegistry`` during bootstrap (e.g. with HdrHistogram) `#1015 <https://github.com/dropwizard/dropwizard/pull/1015>`_
 * Support for defining a custom ``ObjectMapper`` during bootstrap. `#1112 <https://github.com/dropwizard/dropwizard/pull/1112>`_
 * Added facility to plug-in custom DB connection pools (e.g. HikariCP) `#1030 <https://github.com/dropwizard/dropwizard/pull/1030>`_
 * Support for setting a custom DB pool connection validator `#1113 <https://github.com/dropwizard/dropwizard/pull/1113>`_
+* Support for enabling of removing abandoned DB pool connections `#1264 <https://github.com/dropwizard/dropwizard/pull/1264>`_
+* Support for credentials in a DB data source URL `#1260 <https://github.com/dropwizard/dropwizard/pull/1260>`_
+* Support for simultaneous work of several Hibernate bundles `#1276 <https://github.com/dropwizard/dropwizard/pull/1276>`_
 * HTTP(S) proxy support for Dropwizard HTTP client `#657 <https://github.com/dropwizard/dropwizard/pull/657>`_
 * Support external configuration of TLS properties for Dropwizard HTTP client `#1224 <https://github.com/dropwizard/dropwizard/pull/1224>`_
+* Support for not accepting GZIP-compressed responses in HTTP clients `#1270 <https://github.com/dropwizard/dropwizard/pull/1270>`_
+* Support for setting a custom redirect strategy in HTTP clients `#1281 <https://github.com/dropwizard/dropwizard/pull/1281>`_
 * Apache and Jersey clients are now managed by the application environment `#1061 <https://github.com/dropwizard/dropwizard/pull/1061>`_
 * Support for request-scoped configuration for Jersey client  `#939 <https://github.com/dropwizard/dropwizard/pull/939>`_
 * Respecting Jackson feature for deserializing enums using ``toString`` `#1104 <https://github.com/dropwizard/dropwizard/pull/1104>`_
 * Support for passing explicit ``Configuration`` via test rules `#1131 <https://github.com/dropwizard/dropwizard/pull/1131>`_
 * On view template error, return a generic error page instead of template not found `#1178 <https://github.com/dropwizard/dropwizard/pull/1178>`_
+* In some cases an instance of Jersey HTTP client could be abruptly closed during the application lifetime `#1232 <https://github.com/dropwizard/dropwizard/pull/1232>`_
 * Improved build time build by running tests in parallel `#1032 <https://github.com/dropwizard/dropwizard/pull/1032>`_
 * Added JMH benchmarks  `#990 <https://github.com/dropwizard/dropwizard/pull/990>`_
 * Removed javax.el-2.x in favour of javax.el-3.0
