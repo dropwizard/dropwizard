@@ -239,7 +239,6 @@ public class HttpClientBuilder {
      * @param name
      * @return the configured {@link CloseableHttpClient}
      */
-    @VisibleForTesting
     protected ConfiguredCloseableHttpClient createClient(
             final org.apache.http.impl.client.HttpClientBuilder builder,
             final InstrumentedHttpClientConnectionManager manager,
