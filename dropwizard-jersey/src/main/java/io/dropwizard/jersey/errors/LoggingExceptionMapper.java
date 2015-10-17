@@ -20,12 +20,14 @@ public abstract class LoggingExceptionMapper<E extends Throwable> implements Exc
         final ErrorMessage errorMessage;
 
         if (exception instanceof WebApplicationException) {
-            status = ((WebApplicationException) exception).getResponse().getStatus();
+            final Response response = ((WebApplicationException) exception).getResponse();
+            if (response.getStatusInfo().getFamily().equals(Response.Status.Family.SERVER_ERROR)) {
+                logException(exception);
+            }
+            status = response.getStatus();
             errorMessage = new ErrorMessage(status, exception.getLocalizedMessage());
         } else {
-            final long id = ThreadLocalRandom.current().nextLong();
-            logException(id, exception);
-
+            final long id = logException(exception);
             status = Response.Status.INTERNAL_SERVER_ERROR.getStatusCode();
             errorMessage = new ErrorMessage(formatErrorMessage(id, exception));
         }
@@ -39,6 +41,12 @@ public abstract class LoggingExceptionMapper<E extends Throwable> implements Exc
     @SuppressWarnings("UnusedParameters")
     protected String formatErrorMessage(long id, E exception) {
         return String.format("There was an error processing your request. It has been logged (ID %016x).", id);
+    }
+
+    protected long logException(E exception) {
+        long id = ThreadLocalRandom.current().nextLong();
+        logException(id, exception);
+        return id;
     }
 
     protected void logException(long id, E exception) {
