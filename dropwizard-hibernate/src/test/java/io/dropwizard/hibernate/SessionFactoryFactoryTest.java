@@ -7,9 +7,11 @@ import io.dropwizard.db.ManagedPooledDataSource;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
 import io.dropwizard.logging.BootstrapLogging;
 import io.dropwizard.setup.Environment;
+import org.hibernate.EmptyInterceptor;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.service.ServiceRegistry;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.junit.After;
@@ -18,7 +20,11 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class SessionFactoryFactoryTest {
     static {
@@ -30,9 +36,9 @@ public class SessionFactoryFactoryTest {
     private final HibernateBundle<?> bundle = mock(HibernateBundle.class);
     private final LifecycleEnvironment lifecycleEnvironment = mock(LifecycleEnvironment.class);
     private final Environment environment = mock(Environment.class);
-    private final DataSourceFactory config = new DataSourceFactory();
     private final MetricRegistry metricRegistry = new MetricRegistry();
 
+    private DataSourceFactory config;
     private SessionFactory sessionFactory;
 
     @Before
@@ -40,6 +46,7 @@ public class SessionFactoryFactoryTest {
         when(environment.metrics()).thenReturn(metricRegistry);
         when(environment.lifecycle()).thenReturn(lifecycleEnvironment);
 
+        config = new DataSourceFactory();
         config.setUrl("jdbc:hsqldb:mem:DbTest-" + System.currentTimeMillis());
         config.setUser("sa");
         config.setDriverClass("org.hsqldb.jdbcDriver");
@@ -111,6 +118,23 @@ public class SessionFactoryFactoryTest {
         } finally {
             session.close();
         }
+    }
+
+    @Test
+    public void configureRunsBeforeSessionFactoryCreation(){
+        final SessionFactoryFactory customFactory = new SessionFactoryFactory() {
+            @Override
+            protected void configure(Configuration configuration, ServiceRegistry registry) {
+                super.configure(configuration, registry);
+                configuration.setInterceptor(EmptyInterceptor.INSTANCE);
+            }
+        };
+        sessionFactory = customFactory.build(bundle,
+                                             environment,
+                                             config,
+                                             ImmutableList.<Class<?>>of(Person.class));
+
+        assertThat(sessionFactory.getSessionFactoryOptions().getInterceptor()).isSameAs(EmptyInterceptor.INSTANCE);
     }
 
     private void build() {

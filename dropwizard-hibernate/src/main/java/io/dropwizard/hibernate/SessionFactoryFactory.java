@@ -1,8 +1,8 @@
 package io.dropwizard.hibernate;
 
 import com.google.common.collect.Sets;
-import io.dropwizard.db.PooledDataSourceFactory;
 import io.dropwizard.db.ManagedDataSource;
+import io.dropwizard.db.PooledDataSourceFactory;
 import io.dropwizard.setup.Environment;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
@@ -91,7 +91,12 @@ public class SessionFactoryFactory {
                 .applySettings(properties)
                 .build();
 
+        configure(configuration, registry);
+
         return configuration.buildSessionFactory(registry);
+    }
+
+    protected void configure(Configuration configuration, ServiceRegistry registry){
     }
 
     private void addAnnotatedClasses(Configuration configuration,
