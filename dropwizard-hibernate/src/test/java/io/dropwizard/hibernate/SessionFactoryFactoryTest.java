@@ -10,6 +10,7 @@ import io.dropwizard.setup.Environment;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.service.ServiceRegistry;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.junit.After;
@@ -111,6 +112,16 @@ public class SessionFactoryFactoryTest {
         } finally {
             session.close();
         }
+    }
+
+    @Test
+    public void beforeSessionFactoryCreation(){
+        SessionFactoryFactory spy = spy(factory);
+        this.sessionFactory = spy.build(bundle,
+                                            environment,
+                                            config,
+                                            ImmutableList.<Class<?>>of(Person.class));
+        verify(spy).beforeSessionFactoryCreation(any(Configuration.class), any(ServiceRegistry.class));
     }
 
     private void build() {
