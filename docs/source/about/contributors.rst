@@ -229,6 +229,7 @@ Many, many thanks to:
 * `Vadim Spivak <https://github.com/vadims>`_
 * `Varun Loiwal <https://github.com/varunl>`_
 * `Vidit Drolia <https://github.com/vdrolia>`_
+* `Vitor Reis <https://github.com/vitorreis>`_
 * `vzx <https://github.com/vzx>`_
 * `William Herbert <https://github.com/WilliamHerbert>`_
 * `Xavier Shay <https://github.com/xaviershay>`_
