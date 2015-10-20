@@ -61,7 +61,7 @@ Many, many thanks to:
 * `Christopher Elkins <https://github.com/celkins>`_
 * `Christopher Gray <https://github.com/chrisgray>`_
 * `Christopher Holmes <https://github.com/chrisholmes>`_
-* `Christopher Kingsbury<https://github.com/ckingsbu>`_
+* `Christopher Kingsbury <https://github.com/ckingsbu>`_
 * `Christoph Kutzinski <https://github.com/kutzi>`_
 * `Coda Hale <https://github.com/codahale>`_
 * `Collin Van Dyck <https://github.com/collinvandyck>`_
