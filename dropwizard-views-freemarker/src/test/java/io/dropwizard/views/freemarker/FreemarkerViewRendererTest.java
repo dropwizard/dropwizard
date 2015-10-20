@@ -66,7 +66,7 @@ public class FreemarkerViewRendererTest extends JerseyTest {
         final String response = target("/test/absolute")
                 .request().get(String.class);
         assertThat(response)
-                .isEqualToIgnoringCase("Woop woop. yay" + System.lineSeparator());
+                .isEqualTo("Woop woop. yay");
     }
 
     @Test
@@ -74,7 +74,7 @@ public class FreemarkerViewRendererTest extends JerseyTest {
         final String response = target("/test/relative")
                 .request().get(String.class);
         assertThat(response)
-                .isEqualToIgnoringCase("Ok." + System.lineSeparator());
+                .isEqualTo("Ok.");
     }
 
     @Test
