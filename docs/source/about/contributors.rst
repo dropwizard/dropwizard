@@ -67,11 +67,14 @@ Many, many thanks to:
 * `Collin Van Dyck <https://github.com/collinvandyck>`_
 * `Csaba Palfi <https://github.com/csabapalfi>`_
 * `Dale Wijnand <https://github.com/dwijnand>`_
+* `Damian Pawlowski <https://github.com/profes>`_
 * `Dan Everton <https://github.com/deverton>`_
 * `Dan McWeeney <https://github.com/mcdan>`_
+* `Dang Nguyen Anh Khoa <https://github.com/wakandan>`_
 * `Daniel Temme <https://github.com/dmt>`_
 * `dareonion <https://github.com/dareonion>`_
 * `David Illsley <https://github.com/davidillsley>`_
+* `David Martin <https://github.com/dmartinpro>`_
 * `David Morgantini <https://github.com/dmorgantini>`_
 * `David Stendardi <https://github.com/dstendardi>`_
 * `Dennis Hoersch <https://github.com/dhs3000>`_
@@ -93,6 +96,7 @@ Many, many thanks to:
 * `eitan101 <https://github.com/eitan101>`_
 * `Emeka Mosanya <https://github.com/emeka>`_
 * `Eric Tschetter <https://github.com/metamx>`_
+* `Felix Braun <https://github.com/fexbraun>`_
 * `FleaflickerLLC <https://github.com/FleaflickerLLC>`_
 * `florinn <https://github.com/florinn>`_
 * `Fredrik Sundberg <https://github.com/KingBuzzer>`_
