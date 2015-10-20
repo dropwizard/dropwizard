@@ -34,6 +34,11 @@ To create a :ref:`managed <man-core-managed>`, instrumented ``HttpClient`` insta
         public HttpClientConfiguration getHttpClientConfiguration() {
             return httpClient;
         }
+        
+        @JsonProperty("httpClient")
+        public void setHttpClientConfiguration(HttpClientConfiguration httpClient) {
+            this.httpClient = httpClient;
+        }
     }
 
 Then, in your application's ``run`` method, create a new ``HttpClientBuilder``:
