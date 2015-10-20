@@ -1,12 +1,22 @@
-.idea
-target
-atlassian-ide-plugin.xml
+# Maven
+target/
 dependency-reduced-pom.xml
-logs
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+release.properties
+
+# IntelliJ IDEA
+.idea/
 *.iml
 *.ipr
-#Eclipse-specific
+*.iws
+
+# Eclipse
 .settings/
 .classpath
 .project
+
 nb-configuration.xml
+atlassian-ide-plugin.xml
+
+logs
