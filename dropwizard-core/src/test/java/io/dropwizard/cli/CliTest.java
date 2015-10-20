@@ -11,13 +11,14 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
+import java.util.Locale;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 public class CliTest {
     private final JarLocation location = mock(JarLocation.class);
-    @SuppressWarnings("unchecked")
+    
     private final Application<Configuration> app = new Application<Configuration>() {
         @Override
         public void run(Configuration configuration, Environment environment) throws Exception {
@@ -32,6 +33,9 @@ public class CliTest {
     @Before
     @SuppressWarnings("unchecked")
     public void setUp() throws Exception {
+    	//set default locale because some tests assert localized error messages
+    	Locale.setDefault(Locale.ENGLISH);
+    	
         when(location.toString()).thenReturn("dw-thing.jar");
         when(location.getVersion()).thenReturn(Optional.of("1.0.0"));
         bootstrap.addCommand(command);
