@@ -1,0 +1,7 @@
+*.txt text=auto
+*.java text=auto
+*.yml text=auto
+*.xml text=auto
+*.md text=auto
+*.mustache text=auto
+*.ftl text=auto
