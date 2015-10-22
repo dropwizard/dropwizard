@@ -8,6 +8,7 @@ import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.jersey.errors.ErrorMessage;
 import io.dropwizard.jersey.jackson.JacksonMessageBodyProvider;
+import io.dropwizard.jersey.validation.Validators;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
 import io.dropwizard.logging.BootstrapLogging;
 import io.dropwizard.setup.Environment;
@@ -21,7 +22,6 @@ import org.joda.time.DateTimeZone;
 import org.junit.After;
 import org.junit.Test;
 
-import javax.validation.Validation;
 import javax.ws.rs.*;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Application;
@@ -128,7 +128,7 @@ public class JerseyIntegrationTest extends JerseyTest {
         config.register(new UnitOfWorkApplicationListener("hr-db", sessionFactory));
         config.register(new PersonResource(new PersonDAO(sessionFactory)));
         config.register(new JacksonMessageBodyProvider(Jackson.newObjectMapper(),
-                                                       Validation.buildDefaultValidatorFactory().getValidator()));
+                                                       Validators.newValidator()));
         config.register(new DataExceptionMapper());
 
         return config;
@@ -137,7 +137,7 @@ public class JerseyIntegrationTest extends JerseyTest {
     @Override
     protected void configureClient(ClientConfig config) {
         config.register(new JacksonMessageBodyProvider(Jackson.newObjectMapper(),
-                Validation.buildDefaultValidatorFactory().getValidator()));
+                Validators.newValidator()));
     }
 
     @Test

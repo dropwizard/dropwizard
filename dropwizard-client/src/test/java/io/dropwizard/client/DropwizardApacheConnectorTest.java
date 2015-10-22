@@ -5,6 +5,7 @@ import com.codahale.metrics.health.HealthCheck;
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
 import io.dropwizard.jackson.Jackson;
+import io.dropwizard.jersey.validation.Validators;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit.DropwizardAppRule;
@@ -16,26 +17,22 @@ import org.assertj.core.api.AbstractLongAssert;
 import org.eclipse.jetty.util.component.LifeCycle;
 import org.glassfish.jersey.client.ClientProperties;
 import org.glassfish.jersey.client.JerseyClient;
-import org.junit.Before;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import javax.validation.Validation;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.ProcessingException;
-import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
 import java.net.NoRouteToHostException;
 import java.net.SocketTimeoutException;
 import java.net.URI;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -70,7 +67,7 @@ public class DropwizardApacheConnectorTest {
         clientConfiguration.setTimeout(Duration.milliseconds(DEFAULT_CONNECT_TIMEOUT_IN_MILLIS));
 
         environment = new Environment("test-dropwizard-apache-connector", Jackson.newObjectMapper(),
-                Validation.buildDefaultValidatorFactory().getValidator(), new MetricRegistry(),
+                Validators.newValidator(), new MetricRegistry(),
                 getClass().getClassLoader());
         client = (JerseyClient) new JerseyClientBuilder(environment)
                 .using(clientConfiguration)

@@ -9,6 +9,7 @@ import com.google.common.collect.Iterables;
 import io.dropwizard.jersey.gzip.ConfiguredGZipEncoder;
 import io.dropwizard.jersey.gzip.GZipDecoder;
 import io.dropwizard.jersey.jackson.JacksonMessageBodyProvider;
+import io.dropwizard.jersey.validation.Validators;
 import io.dropwizard.lifecycle.setup.ExecutorServiceBuilder;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
 import io.dropwizard.setup.Environment;
@@ -72,7 +73,7 @@ public class JerseyClientBuilderTest {
     private final Environment environment = mock(Environment.class);
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
     private final ObjectMapper objectMapper = mock(ObjectMapper.class);
-    private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+    private final Validator validator = Validators.newValidator();
     private final HttpClientBuilder apacheHttpClientBuilder = mock(HttpClientBuilder.class);
 
     @Before

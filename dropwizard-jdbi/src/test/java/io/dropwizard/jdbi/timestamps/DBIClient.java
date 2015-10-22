@@ -5,12 +5,12 @@ import com.google.common.base.Optional;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jdbi.DBIFactory;
+import io.dropwizard.jersey.validation.Validators;
 import io.dropwizard.setup.Environment;
 import org.eclipse.jetty.util.component.LifeCycle;
 import org.junit.rules.ExternalResource;
 import org.skife.jdbi.v2.DBI;
 
-import javax.validation.Validation;
 import java.util.List;
 import java.util.TimeZone;
 
@@ -35,7 +35,7 @@ public class DBIClient extends ExternalResource {
     @Override
     protected void before() throws Throwable {
         final Environment environment = new Environment("test", Jackson.newObjectMapper(),
-                Validation.buildDefaultValidatorFactory().getValidator(), new MetricRegistry(),
+                Validators.newValidator(), new MetricRegistry(),
                 getClass().getClassLoader());
 
         final DataSourceFactory dataSourceFactory = new DataSourceFactory();
