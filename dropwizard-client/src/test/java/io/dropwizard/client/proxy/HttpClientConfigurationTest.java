@@ -8,9 +8,9 @@ import io.dropwizard.configuration.ConfigurationFactory;
 import io.dropwizard.configuration.ConfigurationParsingException;
 import io.dropwizard.configuration.ConfigurationValidationException;
 import io.dropwizard.jackson.Jackson;
+import io.dropwizard.jersey.validation.Validators;
 import org.junit.Test;
 
-import javax.validation.Validation;
 import java.io.File;
 import java.util.List;
 
@@ -24,7 +24,7 @@ public class HttpClientConfigurationTest {
 
     private void load(String configLocation) throws Exception {
         configuration = new ConfigurationFactory<>(HttpClientConfiguration.class,
-                Validation.buildDefaultValidatorFactory().getValidator(),
+                Validators.newValidator(),
                 objectMapper, "dw")
                 .build(new File(Resources.getResource(configLocation).toURI()));
     }

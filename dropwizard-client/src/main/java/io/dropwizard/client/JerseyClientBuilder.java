@@ -9,6 +9,7 @@ import com.google.common.collect.Maps;
 import io.dropwizard.jersey.gzip.ConfiguredGZipEncoder;
 import io.dropwizard.jersey.gzip.GZipDecoder;
 import io.dropwizard.jersey.jackson.JacksonMessageBodyProvider;
+import io.dropwizard.jersey.validation.Validators;
 import io.dropwizard.lifecycle.Managed;
 import io.dropwizard.setup.Environment;
 import org.apache.http.client.CredentialsProvider;
@@ -21,7 +22,6 @@ import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.spi.Connector;
 import org.glassfish.jersey.client.spi.ConnectorProvider;
 
-import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -58,7 +58,7 @@ public class JerseyClientBuilder {
     private JerseyClientConfiguration configuration = new JerseyClientConfiguration();
 
     private HttpClientBuilder apacheHttpClientBuilder;
-    private Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+    private Validator validator = Validators.newValidator();
     private Environment environment;
     private ObjectMapper objectMapper;
     private ExecutorService executorService;

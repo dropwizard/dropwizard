@@ -6,6 +6,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.reflect.TypeToken;
 import io.dropwizard.jackson.Jackson;
+import io.dropwizard.jersey.validation.Validators;
 import io.dropwizard.validation.ConstraintViolations;
 import io.dropwizard.validation.Validated;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -14,7 +15,6 @@ import org.junit.Test;
 
 import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
-import javax.validation.Validation;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.WebApplicationException;
@@ -102,7 +102,7 @@ public class JacksonMessageBodyProviderTest {
     private final ObjectMapper mapper = spy(Jackson.newObjectMapper());
     private final JacksonMessageBodyProvider provider =
             new JacksonMessageBodyProvider(mapper,
-                                           Validation.buildDefaultValidatorFactory().getValidator());
+                                           Validators.newValidator());
 
     @Before
     public void setUp() throws Exception {

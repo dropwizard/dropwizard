@@ -11,6 +11,7 @@ import io.dropwizard.jersey.errors.EarlyEofExceptionMapper;
 import io.dropwizard.jersey.errors.LoggingExceptionMapper;
 import io.dropwizard.jersey.jackson.JsonProcessingExceptionMapper;
 import io.dropwizard.jersey.validation.ConstraintViolationExceptionMapper;
+import io.dropwizard.jersey.validation.Validators;
 import io.dropwizard.jetty.HttpConnectorFactory;
 import io.dropwizard.logging.ConsoleAppenderFactory;
 import io.dropwizard.logging.FileAppenderFactory;
@@ -100,7 +101,7 @@ public class DefaultServerFactoryTest {
     public void registersDefaultExceptionMappers() throws Exception {
         assertThat(http.getRegisterDefaultExceptionMappers()).isTrue();
         Environment environment = new Environment("test", Jackson.newObjectMapper(),
-                Validation.buildDefaultValidatorFactory().getValidator(), new MetricRegistry(),
+                Validators.newValidator(), new MetricRegistry(),
                 ClassLoader.getSystemClassLoader());
         http.build(environment);
         Set<Object> singletons = environment.jersey().getResourceConfig().getSingletons();
@@ -116,7 +117,7 @@ public class DefaultServerFactoryTest {
         http.setRegisterDefaultExceptionMappers(false);
         assertThat(http.getRegisterDefaultExceptionMappers()).isFalse();
         Environment environment = new Environment("test", Jackson.newObjectMapper(),
-                Validation.buildDefaultValidatorFactory().getValidator(), new MetricRegistry(),
+                Validators.newValidator(), new MetricRegistry(),
                 ClassLoader.getSystemClassLoader());
         http.build(environment);
         for (Object singleton : environment.jersey().getResourceConfig().getSingletons()) {
@@ -127,7 +128,7 @@ public class DefaultServerFactoryTest {
     @Test
     public void testGracefulShutdown() throws Exception {
         ObjectMapper objectMapper = Jackson.newObjectMapper();
-        Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+        Validator validator = Validators.newValidator();
         MetricRegistry metricRegistry = new MetricRegistry();
         Environment environment = new Environment("test", objectMapper, validator, metricRegistry,
                 ClassLoader.getSystemClassLoader());
