@@ -82,7 +82,7 @@ class by mapping YAML field names to object field names.
     If your configuration file doesn't end in ``.yml`` or ``.yaml``, Dropwizard tries to parse it
     as a JSON file.
 
-In order to keep your configuration file and class manageable, we recommend grouping related
+To keep your configuration file and class manageable, we recommend grouping related
 configuration parameters into independent configuration classes. If your application requires a set of
 configuration parameters in order to connect to a message queue, for example, we recommend that you
 create a new ``MessageQueueFactory`` class:
@@ -951,7 +951,7 @@ Methods on a resource class which accept incoming requests are annotated with th
 handle: ``@GET``, ``@POST``, ``@PUT``, ``@DELETE``, ``@HEAD``, ``@OPTIONS``, ``@PATCH``.
 
 Support for arbitrary new methods can be added via the ``@HttpMethod`` annotation. They also must
-to be added to the :ref:`list of allowed methods <man-configuration-all>`. This means, by default,
+be added to the :ref:`list of allowed methods <man-configuration-all>`. This means, by default,
 methods such as ``CONNECT`` and ``TRACE`` are blocked, and will return a ``405 Method Not Allowed``
 response.
 
@@ -1416,6 +1416,6 @@ your application resources are served from one ``Servlet``
 enable the following functionality:
 
     * Resource method requests with ``@Timed``, ``@Metered``, ``@ExceptionMetered`` are delegated to special dispatchers which decorate the metric telemetry
-    * Resources that return Guava Optional are unboxed. Present returns underlying type, and non present 404s
+    * Resources that return Guava Optional are unboxed. Present returns underlying type, and non-present 404s
     * Resource methods that are annotated with ``@CacheControl`` are delegated to a special dispatcher that decorates on the cache control headers
     * Enables using Jackson to parse request entities into objects and generate response entities from objects, all while performing validation

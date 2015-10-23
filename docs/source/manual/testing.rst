@@ -17,8 +17,8 @@ Testing Representations
 =======================
 
 While Jackson's JSON support is powerful and fairly easy-to-use, you shouldn't just rely on
-eyeballing your representation classes to ensure you're actually producing the API you think you
-are. By using the helper methods in `FixtureHelpers` you can add unit tests for serializing and
+eyeballing your representation classes to ensure you're producing the API you think you
+are. By using the helper methods in `FixtureHelpers`, you can add unit tests for serializing and
 deserializing your representation classes to and from JSON.
 
 Let's assume we have a ``Person`` class which your API uses as both a request entity (e.g., when
@@ -219,7 +219,7 @@ Note that the in-memory Jersey test container does not support all features, suc
 ``BasicAuthFactory`` and ``OAuthFactory``. A different `test container`__ can be used via
 ``ResourceTestRule.Builder#setTestContainerFactory(TestContainerFactory)``.
 
-For example if you want to use the `Grizzly`_ HTTP server (which supports ``@Context`` injections) you need to add the
+For example, if you want to use the `Grizzly`_ HTTP server (which supports ``@Context`` injections) you need to add the
 dependency for the Jersey Test Framework providers to your Maven POM and set ``GrizzlyWebTestContainerFactory`` as
 ``TestContainerFactory`` in your test classes.
 
@@ -268,7 +268,7 @@ dependency for the Jersey Test Framework providers to your Maven POM and set ``G
 Testing Client Implementations
 ==============================
 
-In order to avoid circular dependencies in your projects or to speed up test runs, you can test your HTTP client code
+To avoid circular dependencies in your projects or to speed up test runs, you can test your HTTP client code
 by writing a JAX-RS resource as test double and let the ``DropwizardClientRule`` start and stop a simple Dropwizard
 application containing your test doubles.
 

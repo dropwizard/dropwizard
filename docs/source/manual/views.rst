@@ -6,7 +6,7 @@ Dropwizard Views
 
 .. highlight:: text
 
-.. rubric:: The ``dropwizard-views-mustache`` & ``dropwizard-views-freemarker`` modules provides you with simple, fast HTML views using either FreeMarker_ or Mustache_.
+.. rubric:: The ``dropwizard-views-mustache`` & ``dropwizard-views-freemarker`` modules provide you with simple, fast HTML views using either FreeMarker_ or Mustache_.
 
 .. _FreeMarker: http://FreeMarker.sourceforge.net/
 .. _Mustache: http://mustache.github.com/mustache.5.html

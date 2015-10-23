@@ -7,7 +7,7 @@ Getting Started
 .. highlight:: text
 
 .. rubric:: *Getting Started* will guide you through the process of creating a simple Dropwizard
-            project: Hello World. Along the way, we'll explain the various underlying libraries and
+            Project: Hello World. Along the way, we'll explain the various underlying libraries and
             their roles, important concepts in Dropwizard, and suggest some organizational
             techniques to help you as your project grows. (Or you can just skip to the
             :ref:`fun part <gs-maven-setup>`.)
@@ -84,10 +84,10 @@ you ship more quickly and with fewer regrets.
   number of classes to speed up development in Java.
 * Logback_ and slf4j_ for performant and flexible logging.
 * `Hibernate Validator`_, the `JSR-349`_ reference implementation, provides an easy, declarative
-  framework for validating user input and generating helpful, i18n-friendly error messages.
+  framework for validating user input and generating helpful and i18n-friendly error messages.
 * The `Apache HttpClient`_ and Jersey_ client libraries allow for both low- and high-level
   interaction with other web services.
-* JDBI_ is the most straight-forward way to use a relational database with Java.
+* JDBI_ is the most straightforward way to use a relational database with Java.
 * Liquibase_ is a great way to keep your database schema in check throughout your development and
   release cycles, applying high-level database refactorings instead of one-off DDL scripts.
 * Freemarker_ and Mustache_ are simple templating systems for more user-facing applications.
@@ -113,7 +113,7 @@ Setting Up Maven
 ================
 
 We recommend you use Maven_ for new Dropwizard applications. If you're a big Ant_ / Ivy_, Buildr_,
-Gradle_, SBT_, Leiningen_, or Gant_ fan, that's cool, but we use Maven and we'll be using Maven as
+Gradle_, SBT_, Leiningen_, or Gant_ fan, that's cool, but we use Maven, and we'll be using Maven as
 we go through this example application. If you have any questions about how Maven works,
 `Maven: The Complete Reference`__ should have what you're looking for. (We're assuming you know how
 to create a new Maven project. If not, you can use `this <https://gist.github.com/2019732>`_ to get
@@ -173,7 +173,7 @@ name to use in case the user doesn't specify their name.
 
 .. _example conf here: https://github.com/dropwizard/dropwizard/blob/master/dropwizard-example/src/main/java/com/example/helloworld/HelloWorldConfiguration.java
 
-Here's what our configuration class will looks like, full `example conf here`_ :
+Here's what our configuration class will look like, full `example conf here`_:
 
 .. _gs-configuration-class:
 
@@ -219,7 +219,7 @@ When this class is deserialized from the YAML file, it will pull two root-level 
 object: ``template``, the template for our Hello World saying, and ``defaultName``, the default name
 to use. Both ``template`` and ``defaultName`` are annotated with ``@NotEmpty``, so if the YAML
 configuration file has blank values for either or is missing ``template`` entirely an informative
-exception will be thrown and your application won't start.
+exception will be thrown, and your application won't start.
 
 Both the getters and setters for ``template`` and ``defaultName`` are annotated with
 ``@JsonProperty``, which allows Jackson to both deserialize the properties from a YAML file but also
@@ -238,7 +238,7 @@ to serialize it.
 
 .. _example yml here: https://github.com/dropwizard/dropwizard/blob/master/dropwizard-example/example.yml
 
-Our YAML file, will then look like the below, full `example yml here`_ :
+Our YAML file will then look like the below, full `example yml here`_:
 
 .. _gs-yaml-file:
 
@@ -250,7 +250,7 @@ Our YAML file, will then look like the below, full `example yml here`_ :
 Dropwizard has *many* more configuration parameters than that, but they all have sane defaults so
 you can keep your configuration files small and focused.
 
-So save that YAML file as ``hello-world.yml``, because we'll be getting up and running pretty soon
+So save that YAML file as ``hello-world.yml``, because we'll be getting up and running pretty soon,
 and we'll need it. Next up, we're creating our application class!
 
 .. _gs-application:
@@ -363,7 +363,7 @@ To model this representation, we'll create a representation class:
 This is a pretty simple POJO, but there are a few things worth noting here.
 
 First, it's immutable. This makes ``Saying`` instances *very* easy to reason about in multi-threaded
-environments as well as single-threaded environments. Second, it uses the Java Bean standard for the
+environments as well as single-threaded environments. Second, it uses the JavaBeans standard for the
 ``id`` and ``content`` properties. This allows Jackson_ to serialize it to the JSON we need. The
 Jackson object mapping code will populate the ``id`` field of the JSON object with the return value
 of ``#getId()``, likewise with ``content`` and ``#getContent()``. Lastly, the bean leverages validation to ensure the content size is no greater than 3.
@@ -372,7 +372,7 @@ of ``#getId()``, likewise with ``content`` and ``#getContent()``. Lastly, the be
 
     The JSON serialization here is done by Jackson, which supports far more than simple JavaBean
     objects like this one. In addition to the sophisticated set of `annotations`__, you can even
-    write your own custom serializers and deserializers.
+    write your custom serializers and deserializers.
 
 .. __: http://wiki.fasterxml.com/JacksonAnnotations
 
@@ -386,7 +386,7 @@ Creating A Resource Class
 
 Jersey resources are the meat-and-potatoes of a Dropwizard application. Each resource class is
 associated with a URI template. For our application, we need a resource which returns new ``Saying``
-instances from the URI ``/hello-world``, so our resource class will look like this:
+instances from the URI ``/hello-world``, so our resource class looks like this:
 
 .. code-block:: java
 
@@ -761,7 +761,7 @@ for administration requests. If you press ``^C``, the application will shut down
 closing the server socket, then waiting for in-flight requests to be processed, then shutting down
 the process itself.
 
-But while it's up, let's give it a whirl!
+However, while it's up, let's give it a whirl!
 `Click here to say hello! <http://localhost:8080/hello-world>`_
 `Click here to get even friendlier! <http://localhost:8080/hello-world?name=Successful+Dropwizard+User>`_
 
@@ -798,7 +798,7 @@ Next Steps
 ==========
 
 Well, congratulations. You've got a Hello World application ready for production (except for the
-lack of tests) that's capable of doing 30,000-50,000 requests per second. Hopefully you've gotten a
+lack of tests) that's capable of doing 30,000-50,000 requests per second. Hopefully, you've gotten a
 feel for how Dropwizard combines Jetty, Jersey, Jackson, and other stable, mature libraries to
 provide a phenomenal platform for developing RESTful web applications.
 
