@@ -5,6 +5,8 @@ import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.logging.BootstrapLogging;
 import org.glassfish.jersey.test.JerseyTest;
 import org.glassfish.jersey.test.TestProperties;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import javax.ws.rs.client.Entity;
@@ -22,7 +24,9 @@ public class ConstraintViolationExceptionMapperTest extends JerseyTest {
     static {
         BootstrapLogging.bootstrap();
     }
-
+    
+    private static final Locale DEFAULT_LOCALE = Locale.getDefault();
+    
     @Override
     protected Application configure() {
         forceSet(TestProperties.CONTAINER_PORT, "0");
@@ -30,6 +34,18 @@ public class ConstraintViolationExceptionMapperTest extends JerseyTest {
                 .packages("io.dropwizard.jersey.validation");
     }
 
+    @BeforeClass
+    public static void init() {
+        // Set default locale to English because some tests assert localized error messages
+        Locale.setDefault(Locale.ENGLISH);
+    }
+
+    @AfterClass
+    public static void shutdown() {
+        Locale.setDefault(DEFAULT_LOCALE);
+    }
+    
+    
     @Test
     public void postInvalidEntityIs422() throws Exception {
         assumeThat(Locale.getDefault().getLanguage(), is("en"));
