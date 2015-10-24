@@ -164,8 +164,8 @@ Dropwizard, the default is 500 milliseconds.
 
 There are a couple of ways to change this behavior. The recommended way is to modify the
 :ref:`YAML configuration <man-configuration-clients-http>`. Alternatively, set the properties on
-the ``JerseyClientConfiguration``, which will take affect for all built clients. On a per client
-basis, the configuration can be changed through utilizing the ``property`` method and, in this case,
+the ``JerseyClientConfiguration``, which will take effect for all built clients. On a per client
+basis, the configuration can be changed by utilizing the ``property`` method and, in this case,
 the `Jersey Client Properties`_ can be used.
 
 .. warning::

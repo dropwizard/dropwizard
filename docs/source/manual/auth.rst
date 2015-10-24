@@ -35,7 +35,7 @@ password is ``secret``, authenticates the client as a ``User`` with the client-p
 If the password doesn't match, an absent ``Optional`` is returned instead, indicating that the
 credentials are invalid.
 
-.. warning:: It's important for authentication services to not provide too much information in their
+.. warning:: It's important for authentication services not to provide too much information in their
              errors. The fact that a username or email has an account may be meaningful to an
              attacker, so the ``Authenticator`` interface doesn't allow you to distinguish between
              a bad username and a bad password. You should only throw an ``AuthenticationException``
@@ -179,7 +179,7 @@ Protecting Resources
 There are two ways to protect a resource.  You can mark your resource method with one of the following annotations:
 
 * ``@PermitAll``. All authenticated users will have access to the method.
-* ``@RolesAllowed``. Access will be granted for the users with the specified roles.
+* ``@RolesAllowed``. Access will be granted to the users with the specified roles.
 * ``@DenyAll``. No access will be granted to anyone.
 
 Alternatively, you can annotate the parameter representing your principal with ``@Auth``. Note you must register a
@@ -267,7 +267,7 @@ When you build your ``ResourceTestRule``, add the ``GrizzlyWebTestContainerFacto
             .build();
 
 
-In this example we are testing the oauth authentication so we need to set the header manually. Note the use of ``resources.getJerseyTest()`` to make the test work
+In this example, we are testing the oauth authentication, so we need to set the header manually. Note the use of ``resources.getJerseyTest()`` to make the test work
 
 .. code-block:: java
 

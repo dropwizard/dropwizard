@@ -54,7 +54,7 @@ Your database migrations are stored in your Dropwizard project, in
 ``src/main/resources/migrations.xml``. This file will be packaged with your application, allowing you to
 run migrations using your application's command-line interface.
 
-For example, to create a new ``people`` table, I might create an initial ``migrations.xml`` like
+For example, to create a new ``people`` table, you might create an initial ``migrations.xml`` like
 this:
 
 .. code-block:: xml
@@ -101,7 +101,7 @@ document, you can run the ``db dump`` command:
 
     java -jar hello-world.jar db dump helloworld.yml
 
-This will output a Liquibase_ change log with a change set capable of recreating your database.
+This will output a Liquibase_ change log with a changeset capable of recreating your database.
 
 Tagging Your Schema
 ===================
@@ -116,7 +116,7 @@ To tag your schema at a particular point in time (e.g., to make rolling back eas
 Migrating Your Schema
 =====================
 
-To apply pending change sets to your database schema, run the ``db migrate`` command:
+To apply pending changesets to your database schema, run the ``db migrate`` command:
 
 .. code-block:: text
 
@@ -129,13 +129,13 @@ To apply pending change sets to your database schema, run the ``db migrate`` com
 
 .. note::
 
-    To apply only a specific number of pending change sets, use the ``--count`` flag.
+    To apply only a specific number of pending changesets, use the ``--count`` flag.
 
 Rolling Back Your Schema
 ========================
 
-To roll back change sets which have already been applied, run the ``db rollback`` command. You will
-need to specify either a **tag**, a **date**, or a **number of change sets** to roll back to:
+To roll back changesets which have already been applied, run the ``db rollback`` command. You will
+need to specify either a **tag**, a **date**, or a **number of changesets** to roll back to:
 
 .. code-block:: text
 
@@ -149,7 +149,7 @@ need to specify either a **tag**, a **date**, or a **number of change sets** to 
 Testing Migrations
 ==================
 
-To verify that a set of pending change sets can be fully rolled back, use the ``db test`` command,
+To verify that a set of pending changesets can be fully rolled back, use the ``db test`` command,
 which will migrate forward, roll back to the original state, then migrate forward again:
 
 .. code-block:: text
@@ -163,14 +163,14 @@ which will migrate forward, roll back to the original state, then migrate forwar
 Preparing A Rollback Script
 ===========================
 
-To prepare a rollback script for pending change sets *before* they have been applied, use the
+To prepare a rollback script for pending changesets *before* they have been applied, use the
 ``db prepare-rollback`` command:
 
 .. code-block:: text
 
     java -jar hello-world.jar db prepare-rollback helloworld.yml
 
-This will output a DDL script to stdout capable of rolling back all unapplied change sets.
+This will output a DDL script to stdout capable of rolling back all unapplied changesets.
 
 Generating Documentation
 ========================
@@ -196,18 +196,18 @@ To drop all objects in the database, use the ``db drop-all`` command:
     You need to specify the ``--confirm-delete-everything`` flag because this command **deletes
     everything in the database**. Be sure you want to do that first.
 
-Fast-Forwarding Through A Change Set
+Fast-Forwarding Through A Changeset
 ====================================
 
-To mark a pending change set as applied (e.g., after having backfilled your ``migrations.xml`` with
+To mark a pending changeset as applied (e.g., after having backfilled your ``migrations.xml`` with
 ``db dump``), use the ``db fast-forward`` command:
 
 .. code-block:: text
 
      java -jar hello-world.jar db fast-forward helloworld.yml
 
-This will mark the next pending change set as applied. You can also use the ``--all`` flag to mark
-all pending change sets as applied.
+This will mark the next pending changeset as applied. You can also use the ``--all`` flag to mark
+all pending changesets as applied.
 
 More Information
 ================

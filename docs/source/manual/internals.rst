@@ -4,9 +4,13 @@
 Dropwizard Internals
 ####################
 
+You already read through the whole Dropwizard documentation? 
+Congrats! Then you are ready to have a look into some nitty-gritty details of Dropwizard.  
 
 Startup Sequence
 ================
+
+Below you find the startup sequence of a Dropwizard Application: 
 
 #. Application.run(args)
 
@@ -56,7 +60,7 @@ Startup Sequence
 On Bundles
 ==========
 
-Running bundles happens in FIFO order. (ConfiguredBundles are always run after Bundles)
+Running bundles happens in FIFO order (ConfiguredBundles are always run after Bundles).
 
 Jetty Lifecycle
 ===============
