@@ -7,17 +7,21 @@ import com.codahale.metrics.jdbi.strategies.DelegatingStatementNameStrategy;
 import com.codahale.metrics.jdbi.strategies.NameStrategies;
 import com.codahale.metrics.jdbi.strategies.StatementNameStrategy;
 import com.google.common.base.Optional;
-import io.dropwizard.db.PooledDataSourceFactory;
+import com.google.common.collect.ImmutableList;
 import io.dropwizard.db.ManagedDataSource;
+import io.dropwizard.db.PooledDataSourceFactory;
+import io.dropwizard.jdbi.args.DelegatingArgumentFactory;
 import io.dropwizard.jdbi.args.JodaDateTimeArgumentFactory;
 import io.dropwizard.jdbi.args.JodaDateTimeMapper;
 import io.dropwizard.jdbi.args.OptionalArgumentFactory;
 import io.dropwizard.jdbi.logging.LogbackLog;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.util.Duration;
+import org.skife.jdbi.v2.BuiltInArgumentFactoryFactory;
 import org.skife.jdbi.v2.ColonPrefixNamedParamStatementRewriter;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.StatementContext;
+import org.skife.jdbi.v2.tweak.ArgumentFactory;
 import org.slf4j.LoggerFactory;
 
 import java.util.TimeZone;
@@ -86,14 +90,19 @@ public class DBIFactory {
         if (configuration.isAutoCommentsEnabled()) {
             dbi.setStatementRewriter(new NamePrependingStatementRewriter(new ColonPrefixNamedParamStatementRewriter()));
         }
-        dbi.registerArgumentFactory(new OptionalArgumentFactory(configuration.getDriverClass()));
-        dbi.registerContainerFactory(new ImmutableListContainerFactory());
-        dbi.registerContainerFactory(new ImmutableSetContainerFactory());
-        dbi.registerContainerFactory(new OptionalContainerFactory());
 
         final Optional<TimeZone> timeZone = databaseTimeZone();
         dbi.registerArgumentFactory(new JodaDateTimeArgumentFactory(timeZone));
         dbi.registerMapper(new JodaDateTimeMapper(timeZone));
+
+        final ArgumentFactory delegatingArgumentFactory = new DelegatingArgumentFactory(
+            ImmutableList.<ArgumentFactory>of(BuiltInArgumentFactoryFactory.create(), new JodaDateTimeArgumentFactory())
+        );
+
+        dbi.registerArgumentFactory(new OptionalArgumentFactory(configuration.getDriverClass(), delegatingArgumentFactory));
+        dbi.registerContainerFactory(new ImmutableListContainerFactory());
+        dbi.registerContainerFactory(new ImmutableSetContainerFactory());
+        dbi.registerContainerFactory(new OptionalContainerFactory());
 
         return dbi;
     }

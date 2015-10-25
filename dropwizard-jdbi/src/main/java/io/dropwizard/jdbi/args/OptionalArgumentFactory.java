@@ -9,45 +9,33 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Types;
 
+import static java.util.Objects.requireNonNull;
+
 public class OptionalArgumentFactory implements ArgumentFactory<Optional<Object>> {
-    private static class DefaultOptionalArgument implements Argument {
-        private final Optional<?> value;
-
-        private DefaultOptionalArgument(Optional<?> value) {
-            this.value = value;
-        }
-
+    private static final class DefaultAbsentArgument implements Argument {
         @Override
         public void apply(int position,
                           PreparedStatement statement,
                           StatementContext ctx) throws SQLException {
-            if (value.isPresent()) {
-                statement.setObject(position, value.get());
-            } else {
-                statement.setNull(position, Types.OTHER);
-            }
+            statement.setNull(position, Types.OTHER);
         }
     }
 
-    private static class MsSqlOptionalArgument implements Argument {
-        private final Optional<?> value;
-
-        private MsSqlOptionalArgument(Optional<?> value) {
-            this.value = value;
-        }
-
+    private static final class MsSqlAbsentArgument implements Argument {
         @Override
         public void apply(int position,
                           PreparedStatement statement,
                           StatementContext ctx) throws SQLException {
-            statement.setObject(position, value.orNull());
+            statement.setObject(position, null);
         }
     }
 
     private final String jdbcDriver;
+    private final ArgumentFactory argumentFactory;
 
-    public OptionalArgumentFactory(String jdbcDriver) {
-        this.jdbcDriver = jdbcDriver;
+    public OptionalArgumentFactory(String jdbcDriver, ArgumentFactory argumentFactory) {
+        this.jdbcDriver = requireNonNull(jdbcDriver);
+        this.argumentFactory = requireNonNull(argumentFactory);
     }
 
     @Override
@@ -56,10 +44,17 @@ public class OptionalArgumentFactory implements ArgumentFactory<Optional<Object>
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public Argument build(Class<?> expectedType, Optional<Object> value, StatementContext ctx) {
-        if ("com.microsoft.sqlserver.jdbc.SQLServerDriver".equals(jdbcDriver)) {
-            return new MsSqlOptionalArgument(value);
+        if (value.isPresent()) {
+            final Object o = value.get();
+            return argumentFactory.build(o.getClass(), o, ctx);
+        } else {
+            if ("com.microsoft.sqlserver.jdbc.SQLServerDriver".equals(jdbcDriver)) {
+                return new MsSqlAbsentArgument();
+            }
+
+            return new DefaultAbsentArgument();
         }
-        return new DefaultOptionalArgument(value);
     }
 }
