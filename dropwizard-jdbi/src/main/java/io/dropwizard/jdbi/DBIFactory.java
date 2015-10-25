@@ -7,6 +7,7 @@ import com.codahale.metrics.jdbi.strategies.DelegatingStatementNameStrategy;
 import com.codahale.metrics.jdbi.strategies.NameStrategies;
 import com.codahale.metrics.jdbi.strategies.StatementNameStrategy;
 import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableList;
 import io.dropwizard.db.ManagedDataSource;
 import io.dropwizard.db.PooledDataSourceFactory;
 import io.dropwizard.jdbi.args.DelegatingArgumentFactory;
@@ -16,13 +17,13 @@ import io.dropwizard.jdbi.args.OptionalArgumentFactory;
 import io.dropwizard.jdbi.logging.LogbackLog;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.util.Duration;
+import org.skife.jdbi.v2.BuiltInArgumentFactoryFactory;
 import org.skife.jdbi.v2.ColonPrefixNamedParamStatementRewriter;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.tweak.ArgumentFactory;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collections;
 import java.util.TimeZone;
 
 import static com.codahale.metrics.MetricRegistry.name;
@@ -95,7 +96,7 @@ public class DBIFactory {
         dbi.registerMapper(new JodaDateTimeMapper(timeZone));
 
         final ArgumentFactory delegatingArgumentFactory = new DelegatingArgumentFactory(
-            Collections.<ArgumentFactory>singleton(new JodaDateTimeArgumentFactory())
+            ImmutableList.<ArgumentFactory>of(BuiltInArgumentFactoryFactory.create(), new JodaDateTimeArgumentFactory())
         );
 
         dbi.registerArgumentFactory(new OptionalArgumentFactory(configuration.getDriverClass(), delegatingArgumentFactory));
