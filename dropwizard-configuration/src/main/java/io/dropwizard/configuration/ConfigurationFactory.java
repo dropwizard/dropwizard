@@ -128,7 +128,8 @@ public class ConfigurationFactory<T> {
      */
     public T build() throws IOException, ConfigurationException {
         try {
-            return build(mapper.valueToTree(klass.newInstance()), "default configuration");
+            final JsonNode node = mapper.valueToTree(klass.newInstance());
+            return build(node, "default configuration");
         } catch (InstantiationException | IllegalAccessException e) {
             throw new IllegalArgumentException("Unable create an instance " +
                     "of the configuration class: '" + klass.getCanonicalName() + "'", e);

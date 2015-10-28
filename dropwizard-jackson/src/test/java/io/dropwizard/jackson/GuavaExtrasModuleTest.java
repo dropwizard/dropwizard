@@ -1,6 +1,5 @@
 package io.dropwizard.jackson;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.guava.GuavaModule;
 import com.google.common.base.Optional;
@@ -34,13 +33,13 @@ public class GuavaExtrasModuleTest {
 
     @Test
     public void canDeserializeAbsentOptions() throws Exception {
-        assertThat(mapper.readValue("null", new TypeReference<Optional<String>>() {}))
+        assertThat(mapper.readValue("null", Optional.class))
                 .isEqualTo(Optional.absent());
     }
 
     @Test
     public void canDeserializePresentOptions() throws Exception {
-        assertThat(mapper.readValue("\"woo\"", new TypeReference<Optional<String>>() {}))
+        assertThat(mapper.readValue("\"woo\"", Optional.class))
                 .isEqualTo(Optional.of("woo"));
     }
 }
