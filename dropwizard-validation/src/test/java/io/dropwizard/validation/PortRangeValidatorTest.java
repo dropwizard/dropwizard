@@ -3,7 +3,6 @@ package io.dropwizard.validation;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.validation.Validation;
 import javax.validation.Validator;
 import java.util.Locale;
 
@@ -22,7 +21,7 @@ public class PortRangeValidatorTest {
     }
 
 
-    private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+    private final Validator validator = BaseValidator.newValidator();
     private final Example example = new Example();
 
     @Before

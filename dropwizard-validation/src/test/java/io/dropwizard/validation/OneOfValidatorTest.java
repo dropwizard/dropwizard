@@ -2,7 +2,6 @@ package io.dropwizard.validation;
 
 import org.junit.Test;
 
-import javax.validation.Validation;
 import javax.validation.Validator;
 import java.util.Locale;
 
@@ -23,7 +22,7 @@ public class OneOfValidatorTest {
         private String whitespaceInsensitive = "one";
     }
 
-    private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+    private final Validator validator = BaseValidator.newValidator();
 
     @Test
     public void allowsExactElements() throws Exception {

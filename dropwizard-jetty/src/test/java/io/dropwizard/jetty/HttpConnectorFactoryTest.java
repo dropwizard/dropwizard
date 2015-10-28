@@ -12,6 +12,7 @@ import io.dropwizard.logging.FileAppenderFactory;
 import io.dropwizard.logging.SyslogAppenderFactory;
 import io.dropwizard.util.Duration;
 import io.dropwizard.util.Size;
+import io.dropwizard.validation.BaseValidator;
 import org.eclipse.jetty.io.ArrayByteBufferPool;
 import org.eclipse.jetty.io.ByteBufferPool;
 import org.eclipse.jetty.server.*;
@@ -21,7 +22,6 @@ import org.eclipse.jetty.util.thread.ThreadPool;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.validation.Validation;
 import javax.validation.Validator;
 import java.io.File;
 
@@ -31,7 +31,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class HttpConnectorFactoryTest {
 
     private final ObjectMapper objectMapper = Jackson.newObjectMapper();
-    private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+    private final Validator validator = BaseValidator.newValidator();
 
     @Before
     public void setUp() throws Exception {

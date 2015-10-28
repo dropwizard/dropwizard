@@ -9,9 +9,9 @@ import java.util.List;
 import java.util.Set;
 
 import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
 import javax.validation.Validator;
 
+import io.dropwizard.validation.BaseValidator;
 import org.apache.commons.lang3.SystemUtils;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.junit.Test;
@@ -27,7 +27,7 @@ import static org.junit.Assume.assumeTrue;
 
 public class HttpsConnectorFactoryTest {
     private static final String WINDOWS_MY_KEYSTORE_NAME = "Windows-MY";
-    private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+    private final Validator validator = BaseValidator.newValidator();
 
     @Test
     public void isDiscoverable() throws Exception {

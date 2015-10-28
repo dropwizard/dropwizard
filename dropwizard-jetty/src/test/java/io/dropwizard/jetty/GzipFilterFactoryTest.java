@@ -5,10 +5,10 @@ import com.google.common.io.Resources;
 import io.dropwizard.configuration.ConfigurationFactory;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.util.Size;
+import io.dropwizard.validation.BaseValidator;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.validation.Validation;
 import java.io.File;
 import java.util.regex.Pattern;
 import java.util.zip.Deflater;
@@ -21,8 +21,7 @@ public class GzipFilterFactoryTest {
     @Before
     public void setUp() throws Exception {
         this.gzip = new ConfigurationFactory<>(GzipFilterFactory.class,
-                Validation.buildDefaultValidatorFactory()
-                        .getValidator(),
+                BaseValidator.newValidator(),
                 Jackson.newObjectMapper(), "dw")
                 .build(new File(Resources.getResource("yaml/gzip.yml").toURI()));
     }

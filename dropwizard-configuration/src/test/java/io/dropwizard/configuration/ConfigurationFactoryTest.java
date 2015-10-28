@@ -7,13 +7,13 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.io.Resources;
 import io.dropwizard.jackson.Jackson;
+import io.dropwizard.validation.BaseValidator;
 import org.assertj.core.data.MapEntry;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -110,7 +110,7 @@ public class ConfigurationFactoryTest {
         }
     }
 
-    private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+    private final Validator validator = BaseValidator.newValidator();
     private final ConfigurationFactory<Example> factory =
             new ConfigurationFactory<>(Example.class, validator, Jackson.newObjectMapper(), "dw");
     private File malformedFile;

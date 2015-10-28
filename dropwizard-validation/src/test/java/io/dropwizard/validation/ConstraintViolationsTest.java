@@ -4,7 +4,6 @@ import org.junit.Test;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Valid;
-import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -17,7 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SuppressWarnings({"UnusedDeclaration"})
 public class ConstraintViolationsTest {
 
-    private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+    private final Validator validator = BaseValidator.newValidator();
     private final ExecutableValidator execValidator = validator.forExecutables();
 
     @Max(3)

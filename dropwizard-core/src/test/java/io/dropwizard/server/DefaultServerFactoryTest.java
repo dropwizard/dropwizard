@@ -17,6 +17,7 @@ import io.dropwizard.logging.ConsoleAppenderFactory;
 import io.dropwizard.logging.FileAppenderFactory;
 import io.dropwizard.logging.SyslogAppenderFactory;
 import io.dropwizard.setup.Environment;
+import io.dropwizard.validation.BaseValidator;
 import org.eclipse.jetty.server.AbstractNetworkConnector;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.NetworkConnector;
@@ -24,7 +25,6 @@ import org.eclipse.jetty.server.Server;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -34,6 +34,7 @@ import java.io.File;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
@@ -41,7 +42,6 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
-import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -57,8 +57,7 @@ public class DefaultServerFactoryTest {
                                                            HttpConnectorFactory.class);
 
         this.http = new ConfigurationFactory<>(DefaultServerFactory.class,
-                                               Validation.buildDefaultValidatorFactory()
-                                                                 .getValidator(),
+                                               BaseValidator.newValidator(),
                                                objectMapper, "dw")
                 .build(new File(Resources.getResource("yaml/server.yml").toURI()));
     }
@@ -140,7 +139,7 @@ public class DefaultServerFactoryTest {
 
         final ScheduledExecutorService executor = Executors.newScheduledThreadPool(3);
         final Server server = http.build(environment);
-        
+
         ((AbstractNetworkConnector)server.getConnectors()[0]).setPort(0);
 
         ScheduledFuture<Void> cleanup = executor.schedule(new Callable<Void>() {

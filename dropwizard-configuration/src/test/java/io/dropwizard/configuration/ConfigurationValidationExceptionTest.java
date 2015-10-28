@@ -1,10 +1,10 @@
 package io.dropwizard.configuration;
 
+import io.dropwizard.validation.BaseValidator;
 import org.junit.Before;
 import org.junit.Test;
 
 import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.constraints.NotNull;
 import java.util.Locale;
@@ -26,7 +26,7 @@ public class ConfigurationValidationExceptionTest {
     public void setUp() throws Exception {
         assumeThat(Locale.getDefault().getLanguage(), is("en"));
 
-        final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+        final Validator validator = BaseValidator.newValidator();
         final Set<ConstraintViolation<Example>> violations = validator.validate(new Example());
         this.e = new ConfigurationValidationException("config.yml", violations);
     }
