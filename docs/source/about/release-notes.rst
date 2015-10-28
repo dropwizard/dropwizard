@@ -9,7 +9,9 @@ Release Notes
 v1.0.0
 ======
 
+* Use Java 8 as baseline
 * Upgraded to AssertJ 3.2.0
+
 
 .. _rel-0.9.0:
 
