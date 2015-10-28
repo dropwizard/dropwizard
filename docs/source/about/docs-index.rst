@@ -4,7 +4,7 @@
 Other Versions
 ##############
 
-- `0.9.0-SNAPSHOT <http://dropwizard.github.io/dropwizard/0.9.0-SNAPSHOT/docs>`_
+- `0.9.0 <http://dropwizard.github.io/dropwizard/0.9.0/docs>`_
 - `0.8.4 <http://dropwizard.github.io/dropwizard/0.8.4/docs>`_
 - `0.8.2 <http://dropwizard.github.io/dropwizard/0.8.2/docs>`_
 - `0.8.1 <http://dropwizard.github.io/dropwizard/0.8.1/docs>`_
