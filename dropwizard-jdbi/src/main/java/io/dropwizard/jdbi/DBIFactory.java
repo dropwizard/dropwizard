@@ -12,6 +12,7 @@ import io.dropwizard.db.ManagedDataSource;
 import io.dropwizard.jdbi.args.JodaDateTimeArgumentFactory;
 import io.dropwizard.jdbi.args.JodaDateTimeMapper;
 import io.dropwizard.jdbi.args.OptionalArgumentFactory;
+import io.dropwizard.jdbi.args.OptionalJodaTimeArgumentFactory;
 import io.dropwizard.jdbi.logging.LogbackLog;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.util.Duration;
@@ -93,6 +94,8 @@ public class DBIFactory {
 
         final Optional<TimeZone> timeZone = databaseTimeZone();
         dbi.registerArgumentFactory(new JodaDateTimeArgumentFactory(timeZone));
+        // Should be registered after OptionalArgumentFactory to be processed first
+        dbi.registerArgumentFactory(new OptionalJodaTimeArgumentFactory(timeZone));
         dbi.registerMapper(new JodaDateTimeMapper(timeZone));
 
         return dbi;
