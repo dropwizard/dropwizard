@@ -4,10 +4,16 @@
 Release Notes
 #############
 
+.. _rel-0.9.1:
+
+v0.9.1
+======
+
+
 .. _rel-0.9.0:
 
-v0.9.0 Oct 28 2015
-==================
+v0.9.0: Oct 28 2015
+===================
 
 * Various documentation fixes and improvements
 * New filter-based authorization & authentication `#952 <https://github.com/dropwizard/dropwizard/pull/952>`_, `#1023 <https://github.com/dropwizard/dropwizard/pull/1023>`_, `#1114 <https://github.com/dropwizard/dropwizard/pull/1114>`_, `#1162 <https://github.com/dropwizard/dropwizard/pull/1162>`_, `#1241 <https://github.com/dropwizard/dropwizard/pull/1241>`_
