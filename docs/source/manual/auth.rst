@@ -162,7 +162,7 @@ The ``ChainedAuthFilter`` enables usage of various authentication factories at t
                 .buildAuthFilter();
 
         List<AuthFilter> filters = Lists.newArrayList(basicCredentialAuthFilter, oauthCredentialAuthFilter);
-        environment.jersey().register(new AuthDynamicFeature(new ChainedAuthFilter(handlers)));
+        environment.jersey().register(new AuthDynamicFeature(new ChainedAuthFilter(filters)));
         environment.jersey().register(RolesAllowedDynamicFeature.class);
         //If you want to use @Auth to inject a custom Principal type into your resource
         environment.jersey().register(new AuthValueFactoryProvider.Binder<>(User.class));
