@@ -10,6 +10,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
 import io.dropwizard.util.Duration;
+import org.hibernate.validator.valuehandling.UnwrapValidatedValue;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -87,6 +88,7 @@ public abstract class BaseReporterFactory implements ReporterFactory {
 
     @NotNull
     @Valid
+    @UnwrapValidatedValue(false)
     private Optional<Duration> frequency = Optional.absent();
 
     private boolean useRegexFilters = false;
