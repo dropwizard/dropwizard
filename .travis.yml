@@ -1,7 +1,6 @@
 sudo: false
 language: java
 jdk:
-  - oraclejdk7
   - oraclejdk8
 after_success:
   - bash .travis_after_success.sh
