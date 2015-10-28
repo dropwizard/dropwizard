@@ -6,8 +6,9 @@ Release Notes
 
 .. _rel-0.9.0:
 
-v0.9.0
-======
+v0.9.0 Oct 28 2015
+==================
+
 * Various documentation fixes and improvements
 * New filter-based authorization & authentication `#952 <https://github.com/dropwizard/dropwizard/pull/952>`_, `#1023 <https://github.com/dropwizard/dropwizard/pull/1023>`_, `#1114 <https://github.com/dropwizard/dropwizard/pull/1114>`_, `#1162 <https://github.com/dropwizard/dropwizard/pull/1162>`_, `#1241 <https://github.com/dropwizard/dropwizard/pull/1241>`_
 * Fixed a security bug in ``CachingAuthenticator`` with caching results of failed authentication attempts `#1082 <https://github.com/dropwizard/dropwizard/pull/1082>`_
@@ -59,6 +60,7 @@ v0.9.0
 * Upgraded to Jadira Usertype Core 4.0.0.GA
 * Upgraded to Jersey 2.22.1
 * Upgraded to Jetty 9.2.13.v20150730
+* Upgraded to Joda-Time 2.9
 * Upgraded to JSR305 annotations 3.0.1
 * Upgraded to Hibernate Validator 5.2.2.Final
 * Upgraded to Jetty ALPN boot 7.1.3.v20150130
@@ -70,12 +72,11 @@ v0.9.0
 * Upgraded to SLF4J 1.7.12
 * Upgraded to commons-lang3 3.4
 * Upgraded to tomcat-jdbc 8.0.28
-* Upgraded to Joda-Time 2.9
 
 .. _rel-0.8.4:
 
-v0.8.4 Aug 26 2015
-==================
+v0.8.4: Aug 26 2015
+===================
 
 * Upgrade to Apache HTTP Client 4.5
 * Upgrade to Jersey 2.21
@@ -83,13 +84,13 @@ v0.8.4 Aug 26 2015
 
 .. _rel-0.8.3:
 
-v0.8.3 Aug 24 2015
-==================
+v0.8.3: Aug 24 2015
+===================
 * Fixed an issue with closing the HTTP client connection pool after a full GC `#1160 <https://github.com/dropwizard/dropwizard/pull/1160>`_
 
 .. _rel-0.8.2:
 
-v0.8.2 July 6 2015
+v0.8.2: Jul 6 2015
 ==================
 
 * Support for request-scoped configuration for Jersey client `#1137 <https://github.com/dropwizard/dropwizard/pull/1137>`_
