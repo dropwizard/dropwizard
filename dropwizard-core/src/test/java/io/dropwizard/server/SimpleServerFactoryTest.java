@@ -17,6 +17,7 @@ import io.dropwizard.logging.FileAppenderFactory;
 import io.dropwizard.logging.SyslogAppenderFactory;
 import io.dropwizard.servlets.tasks.Task;
 import io.dropwizard.setup.Environment;
+import io.dropwizard.validation.BaseValidator;
 import org.eclipse.jetty.server.AbstractNetworkConnector;
 import org.eclipse.jetty.server.Server;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -24,7 +25,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -44,7 +44,7 @@ public class SimpleServerFactoryTest {
 
     private SimpleServerFactory http;
     private final ObjectMapper objectMapper = Jackson.newObjectMapper();
-    private Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+    private Validator validator = BaseValidator.newValidator();
 
     @Before
     public void setUp() throws Exception {

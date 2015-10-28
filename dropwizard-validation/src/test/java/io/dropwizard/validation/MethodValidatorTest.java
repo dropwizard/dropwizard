@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableList;
 import org.junit.Test;
 
 import javax.validation.Valid;
-import javax.validation.Validation;
 import javax.validation.Validator;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -33,7 +32,7 @@ public class MethodValidatorTest {
         }
     }
 
-    private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+    private final Validator validator = BaseValidator.newValidator();
 
     @Test
     public void complainsAboutMethodsWhichReturnFalse() throws Exception {

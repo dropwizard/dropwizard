@@ -12,13 +12,13 @@ import ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP;
 import ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy;
 import io.dropwizard.jackson.DiscoverableSubtypeResolver;
 import io.dropwizard.util.Size;
+import io.dropwizard.validation.BaseValidator;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.slf4j.LoggerFactory;
 import com.google.common.collect.ImmutableList;
 import io.dropwizard.validation.ConstraintViolations;
-import javax.validation.Validation;
 import javax.validation.Validator;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -29,7 +29,7 @@ public class FileAppenderFactoryTest {
         BootstrapLogging.bootstrap();
     }
 
-    private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+    private final Validator validator = BaseValidator.newValidator();
 
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
