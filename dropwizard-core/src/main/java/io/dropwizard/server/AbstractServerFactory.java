@@ -12,6 +12,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
+import com.google.common.base.Optional;
 import com.google.common.io.Resources;
 import io.dropwizard.jersey.errors.EarlyEofExceptionMapper;
 import io.dropwizard.jersey.errors.LoggingExceptionMapper;
@@ -24,12 +25,14 @@ import io.dropwizard.jetty.GzipFilterFactory;
 import io.dropwizard.jetty.MutableServletContextHandler;
 import io.dropwizard.jetty.NonblockingServletHolder;
 import io.dropwizard.jetty.RequestLogFactory;
+import io.dropwizard.jetty.Slf4jRequestLogFactory;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
 import io.dropwizard.servlets.ThreadNameFilter;
 import io.dropwizard.util.Duration;
 import io.dropwizard.validation.MinDuration;
 import io.dropwizard.validation.ValidationMethod;
 import org.eclipse.jetty.server.Handler;
+import org.eclipse.jetty.server.RequestLog;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ErrorHandler;
 import org.eclipse.jetty.server.handler.RequestLogHandler;
@@ -204,7 +207,7 @@ public abstract class AbstractServerFactory implements ServerFactory {
 
     @Valid
     @NotNull
-    private RequestLogFactory requestLog = new RequestLogFactory();
+    private RequestLogFactory requestLog = new Slf4jRequestLogFactory();
 
     @Valid
     @NotNull
@@ -564,9 +567,10 @@ public abstract class AbstractServerFactory implements ServerFactory {
     }
 
     protected Handler addRequestLog(Server server, Handler handler, String name) {
-        if (requestLog.isEnabled()) {
+        Optional<? extends RequestLog> rl = requestLog.build(name);
+        if (rl.isPresent()) {
             final RequestLogHandler requestLogHandler = new RequestLogHandler();
-            requestLogHandler.setRequestLog(requestLog.build(name));
+            requestLogHandler.setRequestLog(rl.get());
             // server should own the request log's lifecycle since it's already started,
             // the handler might not become managed in case of an error which would leave
             // the request log stranded

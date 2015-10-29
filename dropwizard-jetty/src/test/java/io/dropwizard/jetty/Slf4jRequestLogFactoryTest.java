@@ -16,8 +16,8 @@ import java.util.TimeZone;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class RequestLogFactoryTest {
-    private RequestLogFactory requestLog;
+public class Slf4jRequestLogFactoryTest {
+    private Slf4jRequestLogFactory requestLog;
 
     @Before
     public void setUp() throws Exception {
@@ -25,7 +25,7 @@ public class RequestLogFactoryTest {
         objectMapper.getSubtypeResolver().registerSubtypes(ConsoleAppenderFactory.class,
                                                            FileAppenderFactory.class,
                                                            SyslogAppenderFactory.class);
-        this.requestLog = new ConfigurationFactory<>(RequestLogFactory.class,
+        this.requestLog = new ConfigurationFactory<>(Slf4jRequestLogFactory.class,
                                                      Validation.buildDefaultValidatorFactory()
                                                                        .getValidator(),
                                                      objectMapper, "dw")
