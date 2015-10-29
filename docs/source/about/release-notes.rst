@@ -10,6 +10,7 @@ v1.0.0
 ======
 
 * Use Java 8 as baseline
+* Add `ConfigurationSourceProvider` for reading resources from classpath `#1314 <https://github.com/dropwizard/dropwizard/issues/1314>`_
 * Upgraded to AssertJ 3.2.0
 
 
