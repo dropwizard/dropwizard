@@ -9,6 +9,8 @@ Release Notes
 v0.9.1
 ======
 
+* Add `ConfigurationSourceProvider` for reading resources from classpath `#1314 <https://github.com/dropwizard/dropwizard/issues/1314>`_
+
 
 .. _rel-0.9.0:
 
