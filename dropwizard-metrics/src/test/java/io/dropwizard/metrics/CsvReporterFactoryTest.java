@@ -7,10 +7,10 @@ import io.dropwizard.configuration.ConfigurationFactory;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jackson.DiscoverableSubtypeResolver;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
+import io.dropwizard.validation.BaseValidator;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.validation.Validation;
 import java.io.File;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -19,7 +19,7 @@ public class CsvReporterFactoryTest {
     private final ObjectMapper objectMapper = Jackson.newObjectMapper();
     private final ConfigurationFactory<MetricsFactory> factory =
             new ConfigurationFactory<>(MetricsFactory.class,
-                                       Validation.buildDefaultValidatorFactory().getValidator(),
+                                       BaseValidator.newValidator(),
                                        objectMapper, "dw");
 
     @Before

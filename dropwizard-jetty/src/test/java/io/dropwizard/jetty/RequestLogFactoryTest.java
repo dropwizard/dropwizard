@@ -7,10 +7,10 @@ import io.dropwizard.jackson.Jackson;
 import io.dropwizard.logging.ConsoleAppenderFactory;
 import io.dropwizard.logging.FileAppenderFactory;
 import io.dropwizard.logging.SyslogAppenderFactory;
+import io.dropwizard.validation.BaseValidator;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.validation.Validation;
 import java.io.File;
 import java.util.TimeZone;
 
@@ -26,8 +26,7 @@ public class RequestLogFactoryTest {
                                                            FileAppenderFactory.class,
                                                            SyslogAppenderFactory.class);
         this.requestLog = new ConfigurationFactory<>(RequestLogFactory.class,
-                                                     Validation.buildDefaultValidatorFactory()
-                                                                       .getValidator(),
+                                                     BaseValidator.newValidator(),
                                                      objectMapper, "dw")
                 .build(new File(Resources.getResource("yaml/requestLog.yml").toURI()));
     }

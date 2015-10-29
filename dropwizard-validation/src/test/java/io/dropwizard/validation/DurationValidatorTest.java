@@ -4,7 +4,6 @@ import com.google.common.collect.ImmutableList;
 import io.dropwizard.util.Duration;
 import org.junit.Test;
 
-import javax.validation.Validation;
 import javax.validation.Validator;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
@@ -34,7 +33,7 @@ public class DurationValidatorTest {
         }
     }
 
-    private final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
+    private final Validator validator = BaseValidator.newValidator();
 
     @Test
     public void returnsASetOfErrorsForAnObject() throws Exception {

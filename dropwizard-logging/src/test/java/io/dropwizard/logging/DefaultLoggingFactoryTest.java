@@ -13,6 +13,7 @@ import io.dropwizard.configuration.ConfigurationFactory;
 import io.dropwizard.configuration.FileConfigurationSourceProvider;
 import io.dropwizard.configuration.SubstitutingSourceProvider;
 import io.dropwizard.jackson.Jackson;
+import io.dropwizard.validation.BaseValidator;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.StrSubstitutor;
 import org.assertj.core.data.MapEntry;
@@ -22,7 +23,6 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.slf4j.LoggerFactory;
 
-import javax.validation.Validation;
 import java.io.File;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -31,7 +31,7 @@ public class DefaultLoggingFactoryTest {
     private final ObjectMapper objectMapper = Jackson.newObjectMapper();
     private final ConfigurationFactory<DefaultLoggingFactory> factory = new ConfigurationFactory<>(
             DefaultLoggingFactory.class,
-            Validation.buildDefaultValidatorFactory().getValidator(),
+            BaseValidator.newValidator(),
             objectMapper, "dw");
 
     private DefaultLoggingFactory config;
