@@ -26,7 +26,9 @@ import java.util.List;
  * </ul>
  */
 public class FuzzyEnumModule extends Module {
+
     private static class PermissiveEnumDeserializer extends StdScalarDeserializer<Enum<?>> {
+
         private static final long serialVersionUID = 1L;
 
         private final Enum<?>[] constants;
@@ -48,8 +50,18 @@ public class FuzzyEnumModule extends Module {
                     .removeFrom(jp.getText())
                     .replace('-', '_')
                     .replace('.', '_');
+
             for (Enum<?> constant : constants) {
                 if (constant.name().equalsIgnoreCase(text)) {
+                    return constant;
+                }
+            }
+
+            //In some cases there are certain enums that don't follow the same patter across an enterprise.  So this
+            //means that you have a mix of enums that use toString(), some use @JsonCreator, and some just use the
+            //standard constant name().  This block handles finding the proper enum by toString()
+            for (Enum<?> constant : constants) {
+                if (constant.toString().equalsIgnoreCase(jp.getText())) {
                     return constant;
                 }
             }
@@ -59,11 +71,12 @@ public class FuzzyEnumModule extends Module {
     }
 
     private static class PermissiveEnumDeserializers extends Deserializers.Base {
+
         @Override
         @SuppressWarnings("unchecked")
         public JsonDeserializer<?> findEnumDeserializer(Class<?> type,
-                                                        DeserializationConfig config,
-                                                        BeanDescription desc) throws JsonMappingException {
+                DeserializationConfig config,
+                BeanDescription desc) throws JsonMappingException {
             // If the user configured to use `toString` method to deserialize enums
             if (config.hasDeserializationFeatures(
                     DeserializationFeature.READ_ENUMS_USING_TO_STRING.getMask())) {
