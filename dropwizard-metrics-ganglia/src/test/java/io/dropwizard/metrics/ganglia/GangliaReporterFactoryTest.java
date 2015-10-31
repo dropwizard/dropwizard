@@ -1,13 +1,27 @@
 package io.dropwizard.metrics.ganglia;
 
+import com.google.common.base.Optional;
+import io.dropwizard.configuration.ConfigurationFactory;
 import io.dropwizard.jackson.DiscoverableSubtypeResolver;
-import org.assertj.core.api.Assertions;
+import io.dropwizard.jackson.Jackson;
+import io.dropwizard.validation.BaseValidator;
 import org.junit.Test;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 public class GangliaReporterFactoryTest {
+
     @Test
     public void isDiscoverable() throws Exception {
-        Assertions.assertThat(new DiscoverableSubtypeResolver().getDiscoveredSubtypes())
-                .contains(GangliaReporterFactory.class);
+        assertThat(new DiscoverableSubtypeResolver().getDiscoveredSubtypes())
+            .contains(GangliaReporterFactory.class);
+    }
+
+    @Test
+    public void createDefaultFactory() throws Exception {
+        final GangliaReporterFactory factory = new ConfigurationFactory<>(GangliaReporterFactory.class,
+            BaseValidator.newValidator(), Jackson.newObjectMapper(), "dw")
+            .build();
+        assertThat(factory.getFrequency()).isEqualTo(Optional.absent());
     }
 }
