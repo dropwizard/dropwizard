@@ -9,7 +9,8 @@ Release Notes
 v0.9.1
 ======
 
-* Add `ConfigurationSourceProvider` for reading resources from classpath `#1314 <https://github.com/dropwizard/dropwizard/issues/1314>`_
+* Add ``ConfigurationSourceProvider`` for reading resources from classpath `#1314 <https://github.com/dropwizard/dropwizard/issues/1314>`_
+* Add ``@UnwrapValidatedValue`` annotation to `BaseReporterFactory.frequency` `#1308 <https://github.com/dropwizard/dropwizard/issues/1308>`_, `#1309 <https://github.com/dropwizard/dropwizard/issues/1309>`_
 
 
 .. _rel-0.9.0:
