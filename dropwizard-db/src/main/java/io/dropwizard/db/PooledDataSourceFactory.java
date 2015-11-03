@@ -32,6 +32,16 @@ public interface PooledDataSourceFactory {
      *
      * @return the timeout as {@code Duration}
      */
+    Optional<Duration> getValidationQueryTimeout();
+
+    /**
+     * Returns the timeout for awaiting a response from the database
+     * during connection health checks.
+     *
+     * @return the timeout as {@code Duration}
+     * @deprecated Use {@link #getValidationQueryTimeout()}
+     */
+    @Deprecated
     Optional<Duration> getHealthCheckValidationTimeout();
 
     /**
@@ -40,6 +50,16 @@ public interface PooledDataSourceFactory {
      *
      * @return the SQL query as a string
      */
+    String getValidationQuery();
+
+    /**
+     * Returns the SQL query, which is being used for the database
+     * connection health check.
+     *
+     * @return the SQL query as a string
+     * @deprecated Use {@link #getValidationQuery()}
+     */
+    @Deprecated
     String getHealthCheckValidationQuery();
 
     /**
