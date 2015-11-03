@@ -4,32 +4,45 @@
 Release Notes
 #############
 
+.. _rel-0.8.5:
+
+v0.8.5
+======
+
+* Treat ``null`` values in JAX-RS resource method parameters of type ``Optional<T>`` as absent value after conversion `#1323 https://github.com/dropwizard/dropwizard/pull/1323`_
+
+
 .. _rel-0.8.4:
 
-v0.8.4 Aug 26 2015
-======
+v0.8.4: Aug 26 2015
+==================
 
 * Upgrade to Apache HTTP Client 4.5
 * Upgrade to Jersey 2.21
 * Fixed user-agent shadowing in Jersey HTTP Client (#1198)
 
+
 .. _rel-0.8.3:
 
-v0.8.3 Aug 24 2015
-======
+v0.8.3: Aug 24 2015
+===================
+
 * In some cases an instance of Jersey HTTP client could be abruptly closed during the application lifetime (#1232)
+
 
 .. _rel-0.8.2: 
 
-v0.8.2 Jul 6 2015
-======
+v0.8.2: Jul 6 2015
+==================
+
 * Support for request-scoped configuration for Jersey client
 * Upgraded to Jersey 2.19
+
 
 .. _rel-0.8.1:
 
 v0.8.1: Apr 7 2015
-=======
+==================
 
 * Fixed transcation commiting lifecycle for ``@UnitOfWork``  (#850, #915)
 * Fixed noisy Logback messages on startup (#902)
@@ -39,6 +52,7 @@ v0.8.1: Apr 7 2015
 * Default configuration for views
 * Ensure that JerseyRequest scoped ClientConfig gets propagated to HttpUriRequest
 * More example tests
+
 
 .. _rel-0.8.0:
 
