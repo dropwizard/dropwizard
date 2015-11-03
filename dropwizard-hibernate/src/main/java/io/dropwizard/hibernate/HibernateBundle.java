@@ -58,9 +58,9 @@ public abstract class HibernateBundle<T extends Configuration> implements Config
         environment.healthChecks().register(name(),
                                             new SessionFactoryHealthCheck(
                                                     environment.getHealthCheckExecutorService(),
-                                                    dbConfig.getHealthCheckValidationTimeout().or(Duration.seconds(5)),
+                                                    dbConfig.getValidationQueryTimeout().or(Duration.seconds(5)),
                                                     sessionFactory,
-                                                    dbConfig.getHealthCheckValidationQuery()));
+                                                    dbConfig.getValidationQuery()));
     }
 
     private UnitOfWorkApplicationListener registerUnitOfWorkListerIfAbsent(Environment environment) {

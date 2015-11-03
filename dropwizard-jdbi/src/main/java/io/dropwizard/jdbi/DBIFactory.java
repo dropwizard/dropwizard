@@ -73,12 +73,12 @@ public class DBIFactory {
                      PooledDataSourceFactory configuration,
                      ManagedDataSource dataSource,
                      String name) {
-        final String validationQuery = configuration.getHealthCheckValidationQuery();
+        final String validationQuery = configuration.getValidationQuery();
         final DBI dbi = new DBI(dataSource);
         environment.lifecycle().manage(dataSource);
         environment.healthChecks().register(name, new DBIHealthCheck(
                 environment.getHealthCheckExecutorService(),
-                configuration.getHealthCheckValidationTimeout().or(Duration.seconds(5)),
+                configuration.getValidationQueryTimeout().or(Duration.seconds(5)),
                 dbi,
                 validationQuery));
         dbi.setSQLLog(new LogbackLog(LOGGER, Level.TRACE));
