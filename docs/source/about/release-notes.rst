@@ -9,7 +9,7 @@ Release Notes
 v0.8.5
 ======
 
-* Treat ``null`` values in JAX-RS resource method parameters of type ``Optional<T>`` as absent value after conversion `#1323 https://github.com/dropwizard/dropwizard/pull/1323`_
+* Treat ``null`` values in JAX-RS resource method parameters of type ``Optional<T>`` as absent value after conversion `#1323 <https://github.com/dropwizard/dropwizard/pull/1323>`_
 
 
 .. _rel-0.8.4:
