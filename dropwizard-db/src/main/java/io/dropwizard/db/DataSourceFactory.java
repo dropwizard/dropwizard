@@ -461,14 +461,17 @@ public class DataSourceFactory implements PooledDataSourceFactory {
         this.maxWaitForConnection = maxWaitForConnection;
     }
 
+    @Override
     @JsonProperty
     public String getValidationQuery() {
         return validationQuery;
     }
 
     @Override
+    @Deprecated
+    @JsonIgnore
     public String getHealthCheckValidationQuery() {
-        return validationQuery;
+        return getValidationQuery();
     }
 
     @JsonProperty
@@ -726,6 +729,7 @@ public class DataSourceFactory implements PooledDataSourceFactory {
         this.validationInterval = validationInterval;
     }
 
+    @Override
     @JsonProperty
     public Optional<Duration> getValidationQueryTimeout() {
         return Optional.fromNullable(validationQueryTimeout);
@@ -742,8 +746,10 @@ public class DataSourceFactory implements PooledDataSourceFactory {
     }
 
     @Override
+    @Deprecated
+    @JsonIgnore
     public Optional<Duration> getHealthCheckValidationTimeout() {
-        return Optional.fromNullable(validationQueryTimeout);
+        return getValidationQueryTimeout();
     }
 
     @JsonProperty
