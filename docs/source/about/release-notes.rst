@@ -6,8 +6,8 @@ Release Notes
 
 .. _rel-0.8.5:
 
-v0.8.5
-======
+v0.8.5: Nov 3 2015
+==================
 
 * Treat ``null`` values in JAX-RS resource method parameters of type ``Optional<T>`` as absent value after conversion `#1323 <https://github.com/dropwizard/dropwizard/pull/1323>`_
 
