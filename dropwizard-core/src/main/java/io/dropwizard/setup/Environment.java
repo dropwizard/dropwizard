@@ -4,6 +4,7 @@ import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheckRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import io.dropwizard.health.ExecutorServiceFactory;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.jersey.setup.JerseyContainerHolder;
 import io.dropwizard.jersey.setup.JerseyEnvironment;
@@ -57,7 +58,8 @@ public class Environment {
                        ObjectMapper objectMapper,
                        Validator validator,
                        MetricRegistry metricRegistry,
-                       ClassLoader classLoader) {
+                       ClassLoader classLoader,
+                       ExecutorServiceFactory executorServiceFactory) {
         this.name = name;
         this.objectMapper = objectMapper;
         this.metricRegistry = metricRegistry;
@@ -79,14 +81,7 @@ public class Environment {
         this.jerseyServletContainer = new JerseyContainerHolder(new JerseyServletContainer(jerseyConfig));
         this.jerseyEnvironment = new JerseyEnvironment(jerseyServletContainer, jerseyConfig);
 
-
-        this.healthCheckExecutorService = this.lifecycle().executorService("TimeBoundHealthCheck-pool-%d")
-                .workQueue(new ArrayBlockingQueue<Runnable>(1))
-                .minThreads(1)
-                .maxThreads(4)
-                .threadFactory(new ThreadFactoryBuilder().setDaemon(true).build())
-                .rejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy())
-                .build();
+        this.healthCheckExecutorService = executorServiceFactory.build(this.lifecycleEnvironment);
     }
 
     /**

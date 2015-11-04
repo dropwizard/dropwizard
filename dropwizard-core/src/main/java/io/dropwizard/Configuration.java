@@ -2,6 +2,7 @@ package io.dropwizard;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
+import io.dropwizard.health.HealthFactory;
 import io.dropwizard.logging.DefaultLoggingFactory;
 import io.dropwizard.logging.LoggingFactory;
 import io.dropwizard.metrics.MetricsFactory;
@@ -72,6 +73,10 @@ public class Configuration {
     @NotNull
     private MetricsFactory metrics = new MetricsFactory();
 
+    @Valid
+    @NotNull
+    private HealthFactory health = new HealthFactory();
+
     /**
      * Returns the server-specific section of the configuration file.
      *
@@ -116,6 +121,16 @@ public class Configuration {
     @JsonProperty("metrics")
     public void setMetricsFactory(MetricsFactory metrics) {
         this.metrics = metrics;
+    }
+
+    @JsonProperty("health")
+    public HealthFactory getHealth() {
+        return health;
+    }
+
+    @JsonProperty("health")
+    public void setHealth(HealthFactory health) {
+        this.health = health;
     }
 
     @Override

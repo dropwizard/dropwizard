@@ -3,6 +3,7 @@ package io.dropwizard.jdbi.timestamps;
 import com.codahale.metrics.MetricRegistry;
 import com.google.common.base.Optional;
 import io.dropwizard.db.DataSourceFactory;
+import io.dropwizard.health.ManagedExecutorServiceFactory;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jdbi.DBIFactory;
 import io.dropwizard.jersey.validation.Validators;
@@ -36,7 +37,7 @@ public class DBIClient extends ExternalResource {
     protected void before() throws Throwable {
         final Environment environment = new Environment("test", Jackson.newObjectMapper(),
                 Validators.newValidator(), new MetricRegistry(),
-                getClass().getClassLoader());
+                getClass().getClassLoader(), new ManagedExecutorServiceFactory("Testing-HealthCheck-pool-%d"));
 
         final DataSourceFactory dataSourceFactory = new DataSourceFactory();
         dataSourceFactory.setDriverClass("org.h2.Driver");

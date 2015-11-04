@@ -1,6 +1,7 @@
 package io.dropwizard.forms;
 
 import com.codahale.metrics.MetricRegistry;
+import io.dropwizard.health.ManagedExecutorServiceFactory;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.setup.Environment;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
@@ -17,7 +18,8 @@ public class MultiPartBundleTest {
                 Jackson.newObjectMapper(),
                 null,
                 new MetricRegistry(),
-                getClass().getClassLoader()
+                getClass().getClassLoader(),
+                new ManagedExecutorServiceFactory("Testing-HealthCheck-pool-%d")
         );
 
         new MultiPartBundle().run(environment);

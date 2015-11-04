@@ -4,6 +4,7 @@ import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheck;
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
+import io.dropwizard.health.ManagedExecutorServiceFactory;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.validation.Validators;
 import io.dropwizard.setup.Environment;
@@ -68,7 +69,8 @@ public class DropwizardApacheConnectorTest {
 
         environment = new Environment("test-dropwizard-apache-connector", Jackson.newObjectMapper(),
                 Validators.newValidator(), new MetricRegistry(),
-                getClass().getClassLoader());
+                getClass().getClassLoader(),
+                new ManagedExecutorServiceFactory("Only-Testing-HealthCheck-pool-%d"));
         client = (JerseyClient) new JerseyClientBuilder(environment)
                 .using(clientConfiguration)
                 .build("test");

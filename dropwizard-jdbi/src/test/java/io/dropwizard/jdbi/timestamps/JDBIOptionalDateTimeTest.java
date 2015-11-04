@@ -3,6 +3,7 @@ package io.dropwizard.jdbi.timestamps;
 import com.codahale.metrics.MetricRegistry;
 import com.google.common.base.Optional;
 import io.dropwizard.db.DataSourceFactory;
+import io.dropwizard.health.ManagedExecutorServiceFactory;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jdbi.DBIFactory;
 import io.dropwizard.jersey.validation.Validators;
@@ -26,7 +27,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class JDBIOptionalDateTimeTest {
 
     private final Environment env = new Environment("test-optional-date-time", Jackson.newObjectMapper(),
-            Validators.newValidator(), new MetricRegistry(), null);
+            Validators.newValidator(), new MetricRegistry(), null, new ManagedExecutorServiceFactory("Testing-HealthCheck-pool-%d"));
 
 
     private TaskDao dao;

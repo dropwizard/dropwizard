@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.io.CharStreams;
 import com.google.common.io.Resources;
 import io.dropwizard.configuration.ConfigurationFactory;
+import io.dropwizard.health.ExecutorServiceFactory;
+import io.dropwizard.health.ManagedExecutorServiceFactory;
 import io.dropwizard.jackson.DiscoverableSubtypeResolver;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.errors.EarlyEofExceptionMapper;
@@ -47,6 +49,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class DefaultServerFactoryTest {
     private DefaultServerFactory http;
+    private final ExecutorServiceFactory executorServiceFactory =
+        new ManagedExecutorServiceFactory("Testing-HealthCheck-pool-%d");
 
     @Before
     public void setUp() throws Exception {
@@ -56,10 +60,10 @@ public class DefaultServerFactoryTest {
                                                            SyslogAppenderFactory.class,
                                                            HttpConnectorFactory.class);
 
-        this.http = new ConfigurationFactory<>(DefaultServerFactory.class,
-                                               BaseValidator.newValidator(),
-                                               objectMapper, "dw")
-                .build(new File(Resources.getResource("yaml/server.yml").toURI()));
+        File ymlFile = new File(Resources.getResource("yaml/server.yml").toURI());
+        Validator validator = BaseValidator.newValidator();
+        this.http = new ConfigurationFactory<>(DefaultServerFactory.class, validator, objectMapper, "dw")
+                .build(ymlFile);
     }
 
     @Test
@@ -101,7 +105,7 @@ public class DefaultServerFactoryTest {
         assertThat(http.getRegisterDefaultExceptionMappers()).isTrue();
         Environment environment = new Environment("test", Jackson.newObjectMapper(),
                 Validators.newValidator(), new MetricRegistry(),
-                ClassLoader.getSystemClassLoader());
+                ClassLoader.getSystemClassLoader(), executorServiceFactory);
         http.build(environment);
         Set<Object> singletons = environment.jersey().getResourceConfig().getSingletons();
         assertThat(singletons).hasAtLeastOneElementOfType(LoggingExceptionMapper.class);
@@ -117,7 +121,7 @@ public class DefaultServerFactoryTest {
         assertThat(http.getRegisterDefaultExceptionMappers()).isFalse();
         Environment environment = new Environment("test", Jackson.newObjectMapper(),
                 Validators.newValidator(), new MetricRegistry(),
-                ClassLoader.getSystemClassLoader());
+                ClassLoader.getSystemClassLoader(), executorServiceFactory);
         http.build(environment);
         for (Object singleton : environment.jersey().getResourceConfig().getSingletons()) {
             assertThat(singleton).isNotInstanceOf(ExceptionMapper.class);
@@ -130,7 +134,7 @@ public class DefaultServerFactoryTest {
         Validator validator = Validators.newValidator();
         MetricRegistry metricRegistry = new MetricRegistry();
         Environment environment = new Environment("test", objectMapper, validator, metricRegistry,
-                ClassLoader.getSystemClassLoader());
+                ClassLoader.getSystemClassLoader(), executorServiceFactory);
 
         CountDownLatch requestReceived = new CountDownLatch(1);
         CountDownLatch shutdownInvoked = new CountDownLatch(1);

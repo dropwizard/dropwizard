@@ -7,11 +7,14 @@ import com.google.common.collect.ImmutableMultimap;
 import com.google.common.io.CharStreams;
 import com.google.common.io.Resources;
 import io.dropwizard.configuration.ConfigurationFactory;
+import io.dropwizard.health.ExecutorServiceFactory;
+import io.dropwizard.health.ManagedExecutorServiceFactory;
 import io.dropwizard.jackson.DiscoverableSubtypeResolver;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.jetty.ConnectorFactory;
 import io.dropwizard.jetty.HttpConnectorFactory;
+import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
 import io.dropwizard.logging.ConsoleAppenderFactory;
 import io.dropwizard.logging.FileAppenderFactory;
 import io.dropwizard.logging.SyslogAppenderFactory;
@@ -37,12 +40,15 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class SimpleServerFactoryTest {
 
     private SimpleServerFactory http;
+    private final ExecutorServiceFactory executorServiceFactory =
+        new ManagedExecutorServiceFactory("Testing-HealthCheck-pool-%d");
     private final ObjectMapper objectMapper = Jackson.newObjectMapper();
     private Validator validator = BaseValidator.newValidator();
 
@@ -50,8 +56,9 @@ public class SimpleServerFactoryTest {
     public void setUp() throws Exception {
         objectMapper.getSubtypeResolver().registerSubtypes(ConsoleAppenderFactory.class,
                 FileAppenderFactory.class, SyslogAppenderFactory.class, HttpConnectorFactory.class);
+        File ymlFile = new File(Resources.getResource("yaml/simple_server.yml").toURI());
         http = new ConfigurationFactory<>(SimpleServerFactory.class, validator, objectMapper, "dw")
-                .build(new File(Resources.getResource("yaml/simple_server.yml").toURI()));
+                .build(ymlFile);
     }
 
     @Test
@@ -79,7 +86,7 @@ public class SimpleServerFactoryTest {
     @Test
     public void testBuild() throws Exception {
         final Environment environment = new Environment("testEnvironment", objectMapper, validator, new MetricRegistry(),
-                ClassLoader.getSystemClassLoader());
+                ClassLoader.getSystemClassLoader(), executorServiceFactory);
         environment.jersey().register(new TestResource());
         environment.admin().addTask(new TestTask());
 

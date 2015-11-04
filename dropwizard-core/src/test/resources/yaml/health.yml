@@ -1,0 +1,5 @@
+executorService:
+  nameFormat: "for-testing-pool-%d"
+  workQueueCapacity: 2
+  minThreads: 3
+  maxThreads: 6
