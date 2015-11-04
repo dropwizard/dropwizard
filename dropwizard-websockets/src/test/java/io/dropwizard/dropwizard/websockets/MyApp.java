@@ -1,6 +1,7 @@
 package io.dropwizard.dropwizard.websockets;
 
 import com.codahale.metrics.annotation.Metered;
+import com.codahale.metrics.annotation.Timed;
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
 import io.dropwizard.setup.Bootstrap;
@@ -38,6 +39,8 @@ public class MyApp extends Application<Configuration> {
         environment.jersey().register(new MyResource());
     }
 
+    @Metered
+    @Timed
     @ServerEndpoint("/ws")
     public static class BroadcastServer {
         @OnOpen
@@ -46,7 +49,6 @@ public class MyApp extends Application<Configuration> {
         }
 
         @OnMessage
-        @Metered
         public void myOnMsg(final Session session, String tetxt) {
             session.getAsyncRemote().sendText(tetxt.toUpperCase());
 

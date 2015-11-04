@@ -1,9 +1,14 @@
 package io.dropwizard.dropwizard.websockets;
 
+import com.codahale.metrics.Counter;
 import com.codahale.metrics.Meter;
 import com.codahale.metrics.MetricRegistry;
 import static com.codahale.metrics.MetricRegistry.name;
+import com.codahale.metrics.Timer;
+import com.codahale.metrics.Timer.Context;
+import com.codahale.metrics.annotation.ExceptionMetered;
 import com.codahale.metrics.annotation.Metered;
+import com.codahale.metrics.annotation.Timed;
 import java.lang.reflect.Method;
 import java.util.Optional;
 import javax.websocket.CloseReason;
@@ -19,6 +24,10 @@ public class InstrumentedJsrAnnotatedEventDriver extends JsrAnnotatedEventDriver
     private final AnnotatedServerEndpointMetadata annmd;
     private MetricRegistry metrics;
     private Optional<Meter> onTextMeter = Optional.empty();
+    private Optional<Meter> onOpenMeter;
+    private Optional<Counter> countOpened;
+    private Optional<Timer> timer;
+    private Optional<Meter> exceptionMetered;
 
     private InstrumentedJsrAnnotatedEventDriver(WebSocketPolicy policy, EndpointInstance endpointInstance, JsrEvents<?, ?> events) {
         super(policy, endpointInstance, events);
@@ -28,34 +37,50 @@ public class InstrumentedJsrAnnotatedEventDriver extends JsrAnnotatedEventDriver
     public InstrumentedJsrAnnotatedEventDriver(WebSocketPolicy policy, EndpointInstance ei, JsrEvents<ServerEndpoint, ServerEndpointConfig> events, MetricRegistry metrics) {
         this(policy, ei, events);
         this.metrics = metrics;
-        Method onText = annmd.onText.getMethod();
-        final Metered annotation = onText.getAnnotation(Metered.class);
-        if (annotation != null) {
-            this.onTextMeter = Optional.of(metrics.meter(name(annotation.name(), onText.getDeclaringClass().getName(), onText.getName())));
+
+        Metered metered = annmd.getEndpointClass().getAnnotation(Metered.class);
+        Timed timed = annmd.getEndpointClass().getAnnotation(Timed.class);
+        ExceptionMetered em = annmd.getEndpointClass().getAnnotation(ExceptionMetered.class);
+        if (metered != null) {
+            this.onTextMeter = Optional.of(metrics.meter(name(metered.name(), annmd.getEndpointClass().getName(), annmd.onText.getMethod().getName())));
+            this.onOpenMeter = Optional.of(metrics.meter(name(metered.name(), annmd.getEndpointClass().getName(), annmd.onOpen.getMethod().getName())));
+            this.countOpened = Optional.of(metrics.counter(name(metered.name(), annmd.getEndpointClass().getName())));
         }
+        if (timed != null) 
+            this.timer = Optional.of(metrics.timer(name(timed.name(), annmd.getEndpointClass().getName())));
+        
+        if (em != null)
+            this.exceptionMetered = Optional.of(metrics.meter(name(em.name(),annmd.getEndpointClass().getName(),annmd.onError.getMethod().getName())));
     }
 
     @Override
     public void onTextMessage(String message) {
         onTextMeter.ifPresent(Meter::mark);
-        super.onTextMessage(message); //To change body of generated methods, choose Tools | Templates.
+        super.onTextMessage(message);
     }
 
     @Override
     public void onConnect() {
-        System.out.println("XXXXX " + annmd.onOpen.getMethod().getName());
+        onOpenMeter.ifPresent(Meter::mark);
+        countOpened.ifPresent(Counter::inc);
+        timer.ifPresent(e -> getJsrSession().getUserProperties().put(this.getClass().getName(), e.time()));
         super.onConnect(); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public void onError(Throwable cause) {
+        exceptionMetered.ifPresent(Meter::mark);
         super.onError(cause); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     protected void onClose(CloseReason closereason) {
-        System.out.println("XXXXX " + annmd.onClose.getMethod().getName());
+        countOpened.ifPresent(Counter::dec);
         super.onClose(closereason); //To change body of generated methods, choose Tools | Templates.
+        Context ctx = (Context) getJsrSession().getUserProperties().get(this.getClass().getName());
+        if (ctx != null)
+            ctx.close();
+
     }
 
 }
