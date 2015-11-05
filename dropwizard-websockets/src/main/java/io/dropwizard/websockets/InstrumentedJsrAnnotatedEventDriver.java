@@ -21,9 +21,7 @@ import org.eclipse.jetty.websocket.jsr356.server.AnnotatedServerEndpointMetadata
 
 public class InstrumentedJsrAnnotatedEventDriver extends JsrAnnotatedEventDriver {
     private final AnnotatedServerEndpointMetadata annmd;
-    private MetricRegistry metrics;
     private Optional<Meter> onTextMeter = Optional.empty();
-    private Optional<Meter> onOpenMeter;
     private Optional<Counter> countOpened;
     private Optional<Timer> timer;
     private Optional<Meter> exceptionMetered;
@@ -35,8 +33,6 @@ public class InstrumentedJsrAnnotatedEventDriver extends JsrAnnotatedEventDriver
 
     public InstrumentedJsrAnnotatedEventDriver(WebSocketPolicy policy, EndpointInstance ei, JsrEvents<ServerEndpoint, ServerEndpointConfig> events, MetricRegistry metrics) {
         this(policy, ei, events);
-        this.metrics = metrics;
-
         Metered metered = annmd.getEndpointClass().getAnnotation(Metered.class);
         Timed timed = annmd.getEndpointClass().getAnnotation(Timed.class);
         ExceptionMetered em = annmd.getEndpointClass().getAnnotation(ExceptionMetered.class);

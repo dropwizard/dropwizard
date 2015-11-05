@@ -1,6 +1,5 @@
 package io.dropwizard.websockets;
 
-import io.dropwizard.websockets.WebsocketBundle;
 import com.codahale.metrics.annotation.Metered;
 import com.codahale.metrics.annotation.Timed;
 import com.codahale.metrics.health.HealthCheck;

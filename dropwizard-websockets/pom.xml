@@ -40,13 +40,11 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
-            <!--<version>2.5.0</version>-->
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
-            <!--<version>2.5.0</version>-->
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -54,12 +52,24 @@
             <artifactId>tyrus-client-java8</artifactId>
             <version>1.12</version>
             <scope>test</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>javax.websocket</groupId>
+                        <artifactId>javax.websocket-api</artifactId>
+                    </exclusion>
+                </exclusions>
         </dependency>
         <dependency>
             <groupId>org.glassfish.tyrus</groupId>
             <artifactId>tyrus-container-grizzly-client</artifactId>
             <version>1.12</version>
             <scope>test</scope>
+                <exclusions>
+                    <exclusion>
+                        <groupId>javax.websocket</groupId>
+                        <artifactId>javax.websocket-api</artifactId>
+                    </exclusion>
+                </exclusions>
         </dependency>
 
     </dependencies>
