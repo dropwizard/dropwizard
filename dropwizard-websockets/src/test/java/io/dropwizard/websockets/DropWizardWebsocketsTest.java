@@ -75,7 +75,7 @@ public class DropWizardWebsocketsTest {
                 json.path("timers").path(MyApp.BroadcastServer.class.getName()).path("count").asInt());
 
         // Length of session should be 5ms
-        Assert.assertEquals(0.05, json.path("timers").path(MyApp.BroadcastServer.class.getName()).path("max").asDouble(), 0.03);
+        Assert.assertEquals(0.05, json.path("timers").path(MyApp.BroadcastServer.class.getName()).path("max").asDouble(), 1);
 
         // No Open connections
         Assert.assertEquals(0,
