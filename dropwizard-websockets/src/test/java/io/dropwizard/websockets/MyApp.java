@@ -26,10 +26,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 public class MyApp extends Application<Configuration> {
-    public static void main(String[] args) throws Exception {
-//        new MyApp().run(args);
-        new MyApp().run(new String[]{"server"});
-    }
 
     @Override
     public void initialize(Bootstrap<Configuration> bootstrap) {
@@ -59,7 +55,6 @@ public class MyApp extends Application<Configuration> {
         @OnMessage
         public void myOnMsg(final Session session, String tetxt) {
             session.getAsyncRemote().sendText(tetxt.toUpperCase());
-
         }
 
         @OnClose
