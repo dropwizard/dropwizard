@@ -1,7 +1,9 @@
-package io.dropwizard.dropwizard.websockets;
+package io.dropwizard.websockets;
 
+import io.dropwizard.websockets.WebsocketBundle;
 import com.codahale.metrics.annotation.Metered;
 import com.codahale.metrics.annotation.Timed;
+import com.codahale.metrics.health.HealthCheck;
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
 import io.dropwizard.setup.Bootstrap;
@@ -37,6 +39,12 @@ public class MyApp extends Application<Configuration> {
     @Override
     public void run(Configuration configuration, Environment environment) throws InvalidKeySpecException, NoSuchAlgorithmException, ServletException, DeploymentException {
         environment.jersey().register(new MyResource());
+        environment.healthChecks().register("alive", new HealthCheck() {
+            @Override
+            protected HealthCheck.Result check() throws Exception {
+                return HealthCheck.Result.healthy();
+            }
+        });
     }
 
     @Metered
@@ -66,7 +74,7 @@ public class MyApp extends Application<Configuration> {
         @Metered
         @GET
         public String get(@QueryParam(value = "name") String name) throws Exception {
-            return "hello "+name;
+            return "hello " + name;
         }
     }
 }

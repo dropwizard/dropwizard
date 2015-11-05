@@ -1,4 +1,4 @@
-package io.dropwizard.dropwizard.websockets;
+package io.dropwizard.websockets;
 
 import com.codahale.metrics.Counter;
 import com.codahale.metrics.Meter;
@@ -9,7 +9,6 @@ import com.codahale.metrics.Timer.Context;
 import com.codahale.metrics.annotation.ExceptionMetered;
 import com.codahale.metrics.annotation.Metered;
 import com.codahale.metrics.annotation.Timed;
-import java.lang.reflect.Method;
 import java.util.Optional;
 import javax.websocket.CloseReason;
 import javax.websocket.server.ServerEndpoint;
@@ -43,8 +42,7 @@ public class InstrumentedJsrAnnotatedEventDriver extends JsrAnnotatedEventDriver
         ExceptionMetered em = annmd.getEndpointClass().getAnnotation(ExceptionMetered.class);
         if (metered != null) {
             this.onTextMeter = Optional.of(metrics.meter(name(metered.name(), annmd.getEndpointClass().getName(), annmd.onText.getMethod().getName())));
-            this.onOpenMeter = Optional.of(metrics.meter(name(metered.name(), annmd.getEndpointClass().getName(), annmd.onOpen.getMethod().getName())));
-            this.countOpened = Optional.of(metrics.counter(name(metered.name(), annmd.getEndpointClass().getName())));
+            this.countOpened = Optional.of(metrics.counter(name(metered.name(), annmd.getEndpointClass().getName(),"openConnections")));
         }
         if (timed != null) 
             this.timer = Optional.of(metrics.timer(name(timed.name(), annmd.getEndpointClass().getName())));
@@ -61,7 +59,6 @@ public class InstrumentedJsrAnnotatedEventDriver extends JsrAnnotatedEventDriver
 
     @Override
     public void onConnect() {
-        onOpenMeter.ifPresent(Meter::mark);
         countOpened.ifPresent(Counter::inc);
         timer.ifPresent(e -> getJsrSession().getUserProperties().put(this.getClass().getName(), e.time()));
         super.onConnect(); //To change body of generated methods, choose Tools | Templates.

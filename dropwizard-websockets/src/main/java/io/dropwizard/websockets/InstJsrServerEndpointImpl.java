@@ -15,7 +15,7 @@
 //  You may elect to redistribute this code under either of these licenses.
 //  ========================================================================
 //
-package io.dropwizard.dropwizard.websockets;
+package io.dropwizard.websockets;
 
 import com.codahale.metrics.MetricRegistry;
 import javax.websocket.OnMessage;

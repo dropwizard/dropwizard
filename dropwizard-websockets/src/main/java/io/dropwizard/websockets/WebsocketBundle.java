@@ -1,4 +1,4 @@
-package io.dropwizard.dropwizard.websockets;
+package io.dropwizard.websockets;
 
 import io.dropwizard.Bundle;
 import io.dropwizard.jetty.MutableServletContextHandler;
@@ -15,7 +15,7 @@ import org.eclipse.jetty.websocket.common.events.EventDriverFactory;
 import org.eclipse.jetty.websocket.common.events.EventDriverImpl;
 import org.eclipse.jetty.websocket.jsr356.server.ServerContainer;
 import org.eclipse.jetty.websocket.server.WebSocketUpgradeFilter;
-import static io.dropwizard.dropwizard.websockets.GeneralUtils.rethrow;
+import static io.dropwizard.websockets.GeneralUtils.rethrow;
 
 public class WebsocketBundle implements Bundle {
 
