@@ -1,7 +1,6 @@
 enabled: false
 minimumEntitySize: 12KB
 bufferSize: 32KB
-excludedUserAgents: ["IE"]
 excludedUserAgentPatterns: ["OLD-2.+"]
 compressedMimeTypes: ["text/plain"]
 includedMethods: ["GET", "POST"]
