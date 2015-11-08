@@ -34,6 +34,7 @@ server:
       port: 8443
       keyStorePath: example.keystore
       keyStorePassword: example
+      trustStorePath: /etc/ssl/certs/java/cacerts
       validateCerts: false
   adminConnectors:
     - type: http
@@ -42,6 +43,7 @@ server:
       port: 8444
       keyStorePath: example.keystore
       keyStorePassword: example
+      trustStorePath: /etc/ssl/certs/java/cacerts
       validateCerts: false
 
 # Logging settings.
