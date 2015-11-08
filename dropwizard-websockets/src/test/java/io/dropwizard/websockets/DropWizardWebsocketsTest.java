@@ -56,9 +56,18 @@ public class DropWizardWebsocketsTest {
     }
 
     @Test
-    public void testWs() throws Exception {
+    public void testAnnotatedWebsocket() throws Exception {
+        testWsMetrics(MyApp.AnnotatedEchoServer.class, "annotated-ws");
+    }
+
+    @Test
+    public void testExtendsWebsocket() throws Exception {
+        testWsMetrics(MyApp.EchoServer.class, "extends-ws");
+    }
+
+    private void testWsMetrics(final Class<?> klass, final String path) throws Exception {
         try (Session ws = new SessionBuilder()
-                .uri(new URI(String.format("ws://%s:%d/ws", LOCALHOST, PORT)))
+                .uri(new URI(String.format("ws://%s:%d/%s", LOCALHOST, PORT, path)))
                 .connect()) {
             for (int i = 0; i < 3; i++) {
                 ws.getAsyncRemote().sendText("hello");
@@ -66,24 +75,24 @@ public class DropWizardWebsocketsTest {
             ObjectNode json = om.readValue(client.execute(new HttpGet(METRICS_URL), BASIC_RESPONSE_HANDLER), ObjectNode.class);
             // One open connection
             Assert.assertEquals(1,
-                    json.path("counters").path(MyApp.BroadcastServer.class.getName() + ".openConnections").path("count").asInt());
+                    json.path("counters").path(klass.getName() + ".openConnections").path("count").asInt());
         }
         ObjectNode json = om.readValue(client.execute(new HttpGet(METRICS_URL), BASIC_RESPONSE_HANDLER), ObjectNode.class);
 
         // Number of sessions that were opened
         Assert.assertEquals(1,
-                json.path("timers").path(MyApp.BroadcastServer.class.getName()).path("count").asInt());
+                json.path("timers").path(klass.getName()).path("count").asInt());
 
         // Length of session should be 5ms
-        Assert.assertEquals(0.05, json.path("timers").path(MyApp.BroadcastServer.class.getName()).path("max").asDouble(), 1);
+        Assert.assertEquals(0.05, json.path("timers").path(klass.getName()).path("max").asDouble(), 1);
 
         // No Open connections
         Assert.assertEquals(0,
-                json.path("counters").path(MyApp.BroadcastServer.class.getName() + ".openConnections").path("count").asInt());
+                json.path("counters").path(klass.getName() + ".openConnections").path("count").asInt());
 
         // Three text messages
         Assert.assertEquals(3,
-                json.path("meters").path(MyApp.BroadcastServer.class.getName() + ".myOnMsg").path("count").asInt());
+                json.path("meters").path(klass.getName() + ".OnMessage").path("count").asInt());
     }
 
     public static void waitUrlAvailable(final String url) throws InterruptedException, IOException {

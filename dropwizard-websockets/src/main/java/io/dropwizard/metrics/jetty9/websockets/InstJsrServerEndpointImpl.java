@@ -15,7 +15,7 @@
 //  You may elect to redistribute this code under either of these licenses.
 //  ========================================================================
 //
-package io.dropwizard.websockets;
+package io.dropwizard.metrics.jetty9.websockets;
 
 import com.codahale.metrics.MetricRegistry;
 import javax.websocket.OnMessage;
@@ -59,7 +59,7 @@ public class InstJsrServerEndpointImpl implements EventDriverImpl {
         policy.setMaxBinaryMessageSize(maxBinaryMessage);
         policy.setMaxTextMessageSize(maxTextMessage);
 
-        JsrAnnotatedEventDriver driver = new InstrumentedJsrAnnotatedEventDriver(policy, ei, events, metrics);
+        JsrAnnotatedEventDriver driver = new InstJsrAnnotatedEventDriver(policy, ei, events, metrics);
         // Handle @PathParam values
         ServerEndpointConfig config = (ServerEndpointConfig) ei.getConfig();
         if (config instanceof PathParamServerEndpointConfig) {

@@ -10,9 +10,13 @@ import io.dropwizard.setup.Environment;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.Arrays;
 import javax.servlet.ServletException;
 import javax.websocket.CloseReason;
 import javax.websocket.DeploymentException;
+import javax.websocket.Endpoint;
+import javax.websocket.EndpointConfig;
+import javax.websocket.MessageHandler;
 import javax.websocket.OnClose;
 import javax.websocket.OnMessage;
 import javax.websocket.OnOpen;
@@ -23,12 +27,15 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import org.eclipse.jetty.websocket.jsr356.server.BasicServerEndpointConfig;
 
 public class MyApp extends Application<Configuration> {
 
     @Override
     public void initialize(Bootstrap<Configuration> bootstrap) {
-        bootstrap.addBundle(new WebsocketBundle(BroadcastServer.class));
+        bootstrap.addBundle(new WebsocketBundle(
+                Arrays.asList(AnnotatedEchoServer.class),
+                Arrays.asList(new BasicServerEndpointConfig(EchoServer.class, "/extends-ws"))));
     }
 
     @Override
@@ -44,20 +51,37 @@ public class MyApp extends Application<Configuration> {
 
     @Metered
     @Timed
-    @ServerEndpoint("/ws")
-    public static class BroadcastServer {
+    @ServerEndpoint("/annotated-ws")
+    public static class AnnotatedEchoServer {
         @OnOpen
         public void myOnOpen(final Session session) throws IOException {
             session.getAsyncRemote().sendText("welcome");
         }
 
         @OnMessage
-        public void myOnMsg(final Session session, String tetxt) {
-            session.getAsyncRemote().sendText(tetxt.toUpperCase());
+        public void myOnMsg(final Session session, String message) {
+            session.getAsyncRemote().sendText(message.toUpperCase());
         }
 
         @OnClose
         public void myOnClose(final Session session, CloseReason cr) {
+        }
+    }
+
+    @Metered
+    @Timed
+    public static class EchoServer extends Endpoint implements MessageHandler.Whole<String> {
+        private Session session;
+
+        @Override
+        public void onOpen(Session session, EndpointConfig config) {
+            session.getAsyncRemote().sendText("welcome");
+            this.session = session;
+        }
+
+        @Override
+        public void onMessage(String message) {
+            session.getAsyncRemote().sendText(message.toUpperCase());
         }
     }
 
