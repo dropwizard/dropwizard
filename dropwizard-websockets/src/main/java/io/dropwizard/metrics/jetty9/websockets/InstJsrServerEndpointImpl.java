@@ -14,9 +14,6 @@ import org.eclipse.jetty.websocket.jsr356.endpoints.JsrAnnotatedEventDriver;
 import org.eclipse.jetty.websocket.jsr356.server.AnnotatedServerEndpointMetadata;
 import org.eclipse.jetty.websocket.jsr356.server.PathParamServerEndpointConfig;
 
-/**
- * Event Driver for classes annotated with &#064;{@link ServerEndpoint}
- */
 public class InstJsrServerEndpointImpl implements EventDriverImpl {
     private final MetricRegistry metrics;
 

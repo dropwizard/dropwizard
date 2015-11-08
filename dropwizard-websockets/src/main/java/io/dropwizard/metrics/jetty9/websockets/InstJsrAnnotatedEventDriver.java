@@ -13,17 +13,12 @@ import org.eclipse.jetty.websocket.jsr356.endpoints.EndpointInstance;
 import org.eclipse.jetty.websocket.jsr356.endpoints.JsrAnnotatedEventDriver;
 
 public class InstJsrAnnotatedEventDriver extends JsrAnnotatedEventDriver {
-    private EventDriverMetrics edm;
-
-    private InstJsrAnnotatedEventDriver(WebSocketPolicy policy, EndpointInstance endpointInstance, JsrEvents<?, ?> events) {
-        super(policy, endpointInstance, events);
-    }
+    private final EventDriverMetrics edm;
 
     public InstJsrAnnotatedEventDriver(WebSocketPolicy policy, EndpointInstance ei, JsrEvents<ServerEndpoint, ServerEndpointConfig> events, MetricRegistry metrics) {
-        this(policy, ei, events);
+        super(policy, ei, events);
         this.edm = new EventDriverMetrics(metadata.getEndpointClass(), metrics);
     }
-
 
     @Override
     public void onTextMessage(String message) {
@@ -35,23 +30,22 @@ public class InstJsrAnnotatedEventDriver extends JsrAnnotatedEventDriver {
     public void onConnect() {
         edm.countOpened.ifPresent(Counter::inc);
         edm.timer.ifPresent(e -> getJsrSession().getUserProperties().put(this.getClass().getName(), e.time()));
-        super.onConnect(); //To change body of generated methods, choose Tools | Templates.
+        super.onConnect();
     }
 
     @Override
     public void onError(Throwable cause) {
         edm.exceptionMetered.ifPresent(Meter::mark);
-        super.onError(cause); //To change body of generated methods, choose Tools | Templates.
+        super.onError(cause);
     }
 
     @Override
     protected void onClose(CloseReason closereason) {
         edm.countOpened.ifPresent(Counter::dec);
-        super.onClose(closereason); //To change body of generated methods, choose Tools | Templates.
         Context ctx = (Context) getJsrSession().getUserProperties().get(this.getClass().getName());
         if (ctx != null)
             ctx.close();
-
+        super.onClose(closereason);
     }
 
 }
