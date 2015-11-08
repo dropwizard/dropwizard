@@ -2,10 +2,6 @@ package io.dropwizard.websockets;
 
 import java.util.function.Consumer;
 
-/**
- *
- * @author eitanya
- */
 public class GeneralUtils {
     
     @FunctionalInterface
