@@ -1,9 +1,10 @@
-package io.dropwizard.metrics.jetty9.websockets;
+package io.dropwizard.metrics.jetty9.websockets.annotated;
 
 import com.codahale.metrics.Counter;
 import com.codahale.metrics.Meter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer.Context;
+import io.dropwizard.metrics.jetty9.websockets.EventDriverMetrics;
 import javax.websocket.CloseReason;
 import javax.websocket.server.ServerEndpoint;
 import javax.websocket.server.ServerEndpointConfig;

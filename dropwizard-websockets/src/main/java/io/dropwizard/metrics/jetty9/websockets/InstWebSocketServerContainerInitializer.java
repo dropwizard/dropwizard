@@ -2,6 +2,8 @@ package io.dropwizard.metrics.jetty9.websockets;
 
 import com.codahale.metrics.MetricRegistry;
 import io.dropwizard.jetty.MutableServletContextHandler;
+import io.dropwizard.metrics.jetty9.websockets.annotated.InstJsrServerEndpointImpl;
+import io.dropwizard.metrics.jetty9.websockets.endpoint.InstJsrServerExtendsEndpointImpl;
 import javax.servlet.ServletException;
 import org.eclipse.jetty.websocket.common.events.EventDriverFactory;
 import org.eclipse.jetty.websocket.jsr356.server.ServerContainer;

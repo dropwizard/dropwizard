@@ -1,7 +1,9 @@
-package io.dropwizard.metrics.jetty9.websockets;
+package io.dropwizard.metrics.jetty9.websockets.annotated;
 
 import com.codahale.metrics.MetricRegistry;
-import javax.websocket.OnMessage;
+import static io.dropwizard.websockets.GeneralUtils.rethrow;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import javax.websocket.server.ServerEndpoint;
 import javax.websocket.server.ServerEndpointConfig;
 import org.eclipse.jetty.websocket.api.WebSocketPolicy;
@@ -12,14 +14,20 @@ import org.eclipse.jetty.websocket.jsr356.annotations.OnMessageCallable;
 import org.eclipse.jetty.websocket.jsr356.endpoints.EndpointInstance;
 import org.eclipse.jetty.websocket.jsr356.endpoints.JsrAnnotatedEventDriver;
 import org.eclipse.jetty.websocket.jsr356.server.AnnotatedServerEndpointMetadata;
+import org.eclipse.jetty.websocket.jsr356.server.JsrServerEndpointImpl;
 import org.eclipse.jetty.websocket.jsr356.server.PathParamServerEndpointConfig;
 
 public class InstJsrServerEndpointImpl implements EventDriverImpl {
     private final MetricRegistry metrics;
+    private final JsrServerEndpointImpl origImpl;
+    private final Method getMaxMessageSizeMethod;
 
-    InstJsrServerEndpointImpl(MetricRegistry metrics) {
+    public InstJsrServerEndpointImpl(MetricRegistry metrics) {
         super();
         this.metrics = metrics;
+        this.origImpl = new JsrServerEndpointImpl();
+        this.getMaxMessageSizeMethod = rethrow(() -> this.origImpl.getClass().getDeclaredMethod("getMaxMessageSize",int.class,OnMessageCallable[].class)).get();
+        getMaxMessageSizeMethod.setAccessible(true);
     }
 
     @Override
@@ -39,7 +47,10 @@ public class InstJsrServerEndpointImpl implements EventDriverImpl {
         policy.setMaxBinaryMessageSize(maxBinaryMessage);
         policy.setMaxTextMessageSize(maxTextMessage);
 
+        //////// instrumentation is here
         JsrAnnotatedEventDriver driver = new InstJsrAnnotatedEventDriver(policy, ei, events, metrics);
+        ////////
+        
         // Handle @PathParam values
         ServerEndpointConfig config = (ServerEndpointConfig) ei.getConfig();
         if (config instanceof PathParamServerEndpointConfig) {
@@ -52,35 +63,15 @@ public class InstJsrServerEndpointImpl implements EventDriverImpl {
 
     @Override
     public String describeRule() {
-        return "class is annotated with @" + ServerEndpoint.class.getName();
+        return origImpl.describeRule();
     }
 
-    private int getMaxMessageSize(int defaultMaxMessageSize, OnMessageCallable... onMessages) {
-        for (OnMessageCallable callable : onMessages) {
-            if (callable == null) {
-                continue;
-            }
-            OnMessage onMsg = callable.getMethod().getAnnotation(OnMessage.class);
-            if (onMsg == null) {
-                continue;
-            }
-            if (onMsg.maxMessageSize() > 0) {
-                return (int) onMsg.maxMessageSize();
-            }
-        }
-        return defaultMaxMessageSize;
+    private int getMaxMessageSize(int defaultMaxMessageSize, OnMessageCallable... onMessages) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+        return (int) getMaxMessageSizeMethod.invoke(origImpl, defaultMaxMessageSize, onMessages);        
     }
 
     @Override
     public boolean supports(Object websocket) {
-        if (!(websocket instanceof EndpointInstance)) {
-            return false;
-        }
-
-        EndpointInstance ei = (EndpointInstance) websocket;
-        Object endpoint = ei.getEndpoint();
-
-        ServerEndpoint anno = endpoint.getClass().getAnnotation(ServerEndpoint.class);
-        return (anno != null);
+        return origImpl.supports(websocket);
     }
 }
