@@ -31,8 +31,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static com.codahale.metrics.MetricRegistry.name;
-
 /**
  * Builds HTTPS connectors (HTTP over TLS/SSL).
  * <p/>
@@ -678,12 +676,6 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
 
         factory.setRenegotiationAllowed(allowRenegotiation);
         factory.setEndpointIdentificationAlgorithm(endpointIdentificationAlgorithm);
-
-        // TODO: 6/20/13 <coda> -- figure out SSL session caching
-        // This doesn't seem to be hooked up to anything yet in Jetty.
-        // factory.setSessionCachingEnabled(false);
-        // factory.setSslSessionCacheSize(10);
-        // factory.setSslSessionTimeout(10);
 
         factory.setValidateCerts(validateCerts);
         factory.setValidatePeerCerts(validatePeers);
