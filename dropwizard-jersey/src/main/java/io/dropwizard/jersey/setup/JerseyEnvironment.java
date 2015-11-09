@@ -3,7 +3,6 @@ package io.dropwizard.jersey.setup;
 import com.google.common.base.Function;
 import javax.servlet.Servlet;
 import org.glassfish.jersey.server.ResourceConfig;
-import org.glassfish.jersey.servlet.ServletContainer;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 
 import javax.annotation.Nullable;

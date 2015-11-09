@@ -3,7 +3,6 @@ package io.dropwizard.cli;
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
 import io.dropwizard.server.ServerFactory;
-import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import net.sourceforge.argparse4j.inf.Namespace;
 import org.eclipse.jetty.server.Server;

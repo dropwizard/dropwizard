@@ -34,7 +34,6 @@ import org.mockito.ArgumentCaptor;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
-import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.WebApplicationException;
