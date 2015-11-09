@@ -1,12 +1,9 @@
 package io.dropwizard.auth.basic;
 
-import com.codahale.metrics.MetricRegistry;
 import com.google.common.collect.ImmutableList;
 import io.dropwizard.auth.*;
 import io.dropwizard.auth.util.AuthUtil;
 import io.dropwizard.jersey.DropwizardResourceConfig;
-import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
-
 import javax.ws.rs.container.ContainerRequestFilter;
 import java.security.Principal;
 

@@ -10,7 +10,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
-import java.util.regex.Pattern;
 import java.util.zip.Deflater;
 
 import static org.assertj.core.api.Assertions.assertThat;

@@ -19,8 +19,6 @@ import org.eclipse.jetty.util.thread.ThreadPool;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import static com.codahale.metrics.MetricRegistry.name;
-
 /**
  * Builds SPDY v3 connectors.
  * <p/>

@@ -10,7 +10,6 @@ import io.dropwizard.util.Generics;
 
 import java.io.IOException;
 
-import javax.validation.Validation;
 import javax.validation.Validator;
 
 import net.sourceforge.argparse4j.inf.Namespace;

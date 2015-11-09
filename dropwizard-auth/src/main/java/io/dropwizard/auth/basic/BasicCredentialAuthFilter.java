@@ -5,7 +5,6 @@ import com.google.common.io.BaseEncoding;
 import io.dropwizard.auth.AuthenticationException;
 import io.dropwizard.auth.AuthFilter;
 import io.dropwizard.auth.Authenticator;
-import io.dropwizard.auth.Authorizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.annotation.Priority;

@@ -7,7 +7,6 @@ import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.tweak.Argument;
 import org.skife.jdbi.v2.tweak.ArgumentFactory;
 
-import javax.annotation.Nullable;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.TimeZone;
