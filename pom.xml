@@ -49,6 +49,7 @@
         <module>dropwizard-spdy</module>
         <module>dropwizard-archetypes</module>
         <module>dropwizard-benchmarks</module>
+        <module>dropwizard-websockets</module>
     </modules>
 
     <properties>

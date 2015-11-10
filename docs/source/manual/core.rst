@@ -477,6 +477,51 @@ instances, the extended constructor should be used to specify a unique name for 
 
 .. _man-core-commands:
 
+Serving Websockets
+------------------
+
+Serving your websockets with dropwizard can be done using the ``WebsocketBundle``:
+
+.. code-block:: java
+
+    @Override
+    public void initialize(Bootstrap<Configuration> bootstrap) {
+        bootstrap.addBundle(new WebsocketBundle(MyWebSocket1.class, MyWebSocket2.class));
+    }
+
+
+The endpoint classes should be standard JSR-356 Annotated endpoints.
+Currently programtic endpoints (which subclass Endpoint but are not annotated) are not supported.
+
+In order to track metrics of your endpoint you should annotate it as follows:
+
+.. code-block:: java
+
+    @Metered
+    @Timed
+    @ServerEndpoint("/ws")
+    public static class BroadcastServer {
+        @OnOpen
+        public void myOnOpen(final Session session) throws IOException {
+            session.getAsyncRemote().sendText("welcome");
+        }
+
+        @OnMessage
+        public void myOnMsg(final Session session, String tetxt) {
+            session.getAsyncRemote().sendText(tetxt.toUpperCase());
+        }
+
+        @OnClose
+        public void myOnClose(final Session session, CloseReason cr) {
+        }
+    }
+
+Then you'll be able to see metrics of:
+* Timer of session duration.
+* Counter of current open sessions.
+* Meter of ingoing text messages.
+* TODO - Meter of outgoing text messages
+
 Commands
 ========
 

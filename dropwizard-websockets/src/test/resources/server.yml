@@ -1,0 +1,7 @@
+server:
+  applicationConnectors:
+    - type: http
+      port: 48080
+  adminConnectors:
+    - type: http
+      port: 48081

@@ -24,8 +24,8 @@ reducing both time-to-market and maintenance burdens.
 
 .. _gs-jetty:
 
-Jetty for HTTP
---------------
+Jetty for HTTP & Websockets
+---------------------------
 
 Because you can't be a web application without HTTP, Dropwizard uses the Jetty_ HTTP library to
 embed an incredibly tuned HTTP server directly into your project. Instead of handing your
