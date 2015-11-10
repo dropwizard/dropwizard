@@ -56,8 +56,6 @@ import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.regex.Pattern;
 
-// TODO: 5/15/13 <coda> -- add tests for AbstractServerFactory
-
 /**
  * A base class for {@link ServerFactory} implementations.
  * <p/>

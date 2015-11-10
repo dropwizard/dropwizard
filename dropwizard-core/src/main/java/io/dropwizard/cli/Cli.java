@@ -72,12 +72,10 @@ public class Cli {
             }
             return true;
         } catch (ArgumentParserException e) {
-            // TODO: 5/25/13 <coda> -- make ArgumentParser#handleError not depend on System.err
             stdErr.println(e.getMessage());
             e.getParser().printHelp(stdErr);
             return false;
         } catch (ConfigurationException e) {
-            // TODO: 7/26/13 <ntelford> -- as above, this probably shouldn't depend on System.err
             stdErr.println(e.getMessage());
             return false;
         }
