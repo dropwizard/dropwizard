@@ -2,6 +2,7 @@ package io.dropwizard.auth;
 
 import java.security.Principal;
 import java.util.Objects;
+import com.google.common.base.MoreObjects;
 
 public class PrincipalImpl implements Principal {
     private final String name;
@@ -32,5 +33,10 @@ public class PrincipalImpl implements Principal {
     @Override
     public int hashCode() {
         return Objects.hashCode(name);
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this).add("name",  name).toString();
     }
 }
