@@ -9,6 +9,7 @@ import com.google.common.collect.Sets;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.jersey.jackson.JacksonMessageBodyProvider;
+import io.dropwizard.jersey.validation.HibernateValidationFeature;
 import io.dropwizard.jersey.validation.JerseyViolationExceptionMapper;
 import io.dropwizard.jersey.validation.Validators;
 import io.dropwizard.logging.BootstrapLogging;
@@ -162,6 +163,7 @@ public class ResourceTestRule implements TestRule {
                 property(property.getKey(), property.getValue());
             }
             register(new JacksonMessageBodyProvider(resourceTestRule.mapper));
+            register(new HibernateValidationFeature(resourceTestRule.validator));
             for (Object singleton : resourceTestRule.singletons) {
                 register(singleton);
             }

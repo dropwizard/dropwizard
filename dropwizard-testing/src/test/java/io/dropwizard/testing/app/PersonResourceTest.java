@@ -52,4 +52,15 @@ public class PersonResourceTest {
                 .get(new GenericType<ImmutableList<Person>>() {}))
                 .isEqualTo(ImmutableList.of(person));
     }
+
+    @Test
+    public void testGetPersonWithQueryParam() {
+        // Test to ensure that the dropwizard validator is registered so that
+        // it can validate the "ind" IntParam.
+        assertThat(resources.client().target("/person/blah/index")
+            .queryParam("ind", 0).request()
+            .get(Person.class))
+            .isEqualTo(person);
+        verify(dao).fetchPerson("blah");
+    }
 }
