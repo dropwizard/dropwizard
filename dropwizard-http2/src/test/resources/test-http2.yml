@@ -1,0 +1,10 @@
+server:
+  type: simple
+  connector:
+    type: http2
+    port: 0
+    keyStorePassword: http2_server
+    trustStorePath: /etc/ssl/certs/java/cacerts
+    validateCerts: false
+  applicationContextPath: /api
+  adminContextPath: /admin
