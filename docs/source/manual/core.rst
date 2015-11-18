@@ -804,6 +804,19 @@ appender with different configurations:
           archivedLogFilenamePattern: ./logs/debug-%d{yyyy-MM-dd-hh}.log.gz
           archivedFileCount: 6
 
+.. _man-core-logging-http-config:
+
+Logging Configuration via HTTP
+------------------------------
+
+Active log levels can be changed during the runtime of a Dropwizard application via HTTP using
+the ``LogConfigurationTask``. For instance, to configure the log level for a
+single ``Logger``:
+
+.. code-block:: shell
+
+    curl -X POST -d "logger=com.example.helloworld&level=INFO" http://localhost:8081/tasks/log-level
+
 .. _man-core-testing-applications:
 
 Testing Applications
