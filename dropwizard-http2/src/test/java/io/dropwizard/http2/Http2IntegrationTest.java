@@ -1,6 +1,7 @@
 package io.dropwizard.http2;
 
 import com.google.common.base.Optional;
+import com.google.common.net.HttpHeaders;
 import io.dropwizard.Configuration;
 import io.dropwizard.logging.BootstrapLogging;
 import io.dropwizard.testing.ConfigOverride;
@@ -17,11 +18,15 @@ import org.eclipse.jetty.http2.frames.HeadersFrame;
 import org.eclipse.jetty.util.FuturePromise;
 import org.eclipse.jetty.util.Promise;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
+import org.glassfish.jersey.client.JerseyClient;
+import org.glassfish.jersey.client.JerseyClientBuilder;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.net.InetSocketAddress;
 import java.util.concurrent.TimeUnit;
 
@@ -49,6 +54,8 @@ public class Http2IntegrationTest {
         sslContextFactory.setTrustStorePath(ResourceHelpers.resourceFilePath("stores/http2_client.jts"));
         sslContextFactory.setTrustStorePassword("http2_client");
         sslContextFactory.setIncludeCipherSuites("TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256");
+        sslContextFactory.start();
+
         client.addBean(sslContextFactory);
         client.start();
     }
@@ -59,8 +66,23 @@ public class Http2IntegrationTest {
     }
 
     @Test
+    public void testHttp11() throws Exception {
+        final String hostname = "localhost";
+        final int port = appRule.getLocalPort();
+        final JerseyClient http11Client = new JerseyClientBuilder()
+                .sslContext(sslContextFactory.getSslContext())
+                .build();
+        final Response response = http11Client.target("https://" + hostname + ":" + port + "/api/test")
+                .request()
+                .get();
+        assertThat(response.getHeaderString(HttpHeaders.CONTENT_TYPE)).isEqualTo(MediaType.APPLICATION_JSON);
+        assertThat(response.readEntity(String.class)).isEqualTo(FakeApplication.HELLO_WORLD);
+        http11Client.close();
+    }
+
+    @Test
     public void testHttp2() throws Exception {
-        final String hostname = "127.0.0.1";
+        final String hostname = "localhost";
         final int port = appRule.getLocalPort();
 
         final FuturePromise<Session> sessionPromise = new FuturePromise<>();
