@@ -25,6 +25,7 @@ import io.dropwizard.jetty.MutableServletContextHandler;
 import io.dropwizard.jetty.NonblockingServletHolder;
 import io.dropwizard.jetty.RequestLogFactory;
 import io.dropwizard.jetty.Slf4jRequestLogFactory;
+import io.dropwizard.jetty.ServerPushFilterFactory;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
 import io.dropwizard.servlets.ThreadNameFilter;
 import io.dropwizard.util.Duration;
@@ -76,6 +77,11 @@ import java.util.regex.Pattern;
  *         <td>{@code gzip}</td>
  *         <td></td>
  *         <td>The {@link GzipHandlerFactory GZIP} configuration.</td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code serverPush}</td>
+ *         <td></td>
+ *         <td>The {@link ServerPushFilterFactory} configuration.</td>
  *     </tr>
  *     <tr>
  *         <td>{@code maxThreads}</td>
@@ -209,6 +215,10 @@ public abstract class AbstractServerFactory implements ServerFactory {
     @NotNull
     private GzipHandlerFactory gzip = new GzipHandlerFactory();
 
+    @Valid
+    @NotNull
+    private ServerPushFilterFactory serverPush = new ServerPushFilterFactory();
+
     @Min(2)
     private int maxThreads = 1024;
 
@@ -272,6 +282,16 @@ public abstract class AbstractServerFactory implements ServerFactory {
     @JsonProperty("gzip")
     public void setGzipFilterFactory(GzipHandlerFactory gzip) {
         this.gzip = gzip;
+    }
+
+    @JsonProperty("serverPush")
+    public ServerPushFilterFactory getServerPush() {
+        return serverPush;
+    }
+
+    @JsonProperty("serverPush")
+    public void setServerPush(ServerPushFilterFactory serverPush) {
+        this.serverPush = serverPush;
     }
 
     @JsonProperty
@@ -467,6 +487,7 @@ public abstract class AbstractServerFactory implements ServerFactory {
         handler.addFilter(AllowedMethodsFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST))
                 .setInitParameter(AllowedMethodsFilter.ALLOWED_METHODS_PARAM, Joiner.on(',').join(allowedMethods));
         handler.addFilter(ThreadNameFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST));
+        serverPush.addFilter(handler);
         if (jerseyContainer != null) {
             String urlPattern = jerseyRootPath;
             if (!urlPattern.endsWith("*") && !urlPattern.endsWith("/")) {
