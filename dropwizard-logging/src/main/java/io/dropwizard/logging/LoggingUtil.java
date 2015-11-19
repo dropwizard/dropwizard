@@ -55,7 +55,7 @@ public class LoggingUtil {
 
     /**
      * Gets the root j.u.l.Logger and removes all registered handlers
-     * then redirects all active j.u.l. to SL4J
+     * then redirects all active j.u.l. to SLF4J
      * <p/>
      * N.B. This should only happen once, hence the flag and locking
      */
