@@ -6,5 +6,7 @@ server:
     keyStorePassword: http2_server
     trustStorePath: /etc/ssl/certs/java/cacerts
     validateCerts: false
+    supportedProtocols:
+      - TLSv1.2
   applicationContextPath: /api
   adminContextPath: /admin
