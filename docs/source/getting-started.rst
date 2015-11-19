@@ -97,7 +97,7 @@ you ship more quickly and with fewer regrets.
 .. _Logback: http://logback.qos.ch/
 .. _slf4j: http://www.slf4j.org/
 .. _Hibernate Validator: http://www.hibernate.org/subprojects/validator.html
-.. _JSR-303: http://jcp.org/en/jsr/detail?id=303
+.. _JSR-349: http://jcp.org/en/jsr/detail?id=349
 .. _Apache HttpClient: http://hc.apache.org/httpcomponents-client-ga/index.html
 .. _JDBI: http://www.jdbi.org
 .. _Liquibase: http://www.liquibase.org
