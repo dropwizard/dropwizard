@@ -2,6 +2,8 @@ package io.dropwizard.jersey.jackson;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
 import io.dropwizard.jersey.errors.ErrorMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,11 +39,12 @@ public class JsonProcessingExceptionMapper implements ExceptionMapper<JsonProces
         final String message = exception.getOriginalMessage();
 
         /*
-         * If we can't deserialize the JSON because someone forgot a no-arg constructor, it's a
-         * server error and we should inform the developer.
+         * If we can't deserialize the JSON because someone forgot a no-arg
+         * constructor, or it is not known how to serialize the type it's
+         * a server error and we should inform the developer.
          */
-        if (message.startsWith("No suitable constructor found")) {
-            LOGGER.error("Unable to deserialize the specific type", exception);
+        if (exception instanceof JsonMappingException && !(exception instanceof UnrecognizedPropertyException)) {
+            LOGGER.error("Unable to serialize or deserialize the specific type", exception);
             return Response.serverError().build();
         }
 

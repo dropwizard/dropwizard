@@ -48,6 +48,12 @@ public class JsonProcessingExceptionMapperTest extends JerseyTest {
     }
 
     @Test
+    public void returnsA500ForNonSerializableRepresentationClassesOutbound() throws Exception {
+        Response response = target("/json/brokenOutbound").request(MediaType.APPLICATION_JSON).get();
+        assertThat(response.getStatus()).isEqualTo(500);
+    }
+
+    @Test
     public void returnsA400ForNonDeserializableRequestEntities() throws Exception {
         Response response = target("/json/ok").request(MediaType.APPLICATION_JSON)
                 .post(Entity.entity(new UnknownRepresentation(100), MediaType.APPLICATION_JSON));
