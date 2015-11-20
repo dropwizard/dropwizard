@@ -15,6 +15,9 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.thread.ScheduledExecutorScheduler;
 import org.eclipse.jetty.util.thread.ThreadPool;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+
 /**
  * Builds HTTP/2 clear text (h2c) connectors.
  * <p/>
@@ -49,7 +52,12 @@ import org.eclipse.jetty.util.thread.ThreadPool;
 @JsonTypeName("http2c")
 public class Http2CConnectorFactory extends HttpConnectorFactory {
 
+    @Min(100)
+    @Max(Integer.MAX_VALUE)
     private int maxConcurrentStreams = 1024;
+
+    @Min(1)
+    @Max(Integer.MAX_VALUE)
     private int initialStreamSendWindow = 65535;
 
     @JsonProperty
