@@ -12,6 +12,9 @@ import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.util.thread.ScheduledExecutorScheduler;
 import org.eclipse.jetty.util.thread.ThreadPool;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+
 /**
  * Builds HTTP/2 over TLS connectors.
  * <p/>
@@ -47,7 +50,12 @@ import org.eclipse.jetty.util.thread.ThreadPool;
 @JsonTypeName("http2")
 public class Http2ConnectorFactory extends HttpsConnectorFactory {
 
+    @Min(100)
+    @Max(Integer.MAX_VALUE)
     private int maxConcurrentStreams = 1024;
+
+    @Min(1)
+    @Max(Integer.MAX_VALUE)
     private int initialStreamSendWindow = 65535;
 
     @JsonProperty
