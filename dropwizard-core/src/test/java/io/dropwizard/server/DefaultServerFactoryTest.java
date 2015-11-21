@@ -10,8 +10,8 @@ import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.errors.EarlyEofExceptionMapper;
 import io.dropwizard.jersey.errors.LoggingExceptionMapper;
 import io.dropwizard.jersey.jackson.JsonProcessingExceptionMapper;
-import io.dropwizard.jersey.validation.ConstraintViolationExceptionMapper;
 import io.dropwizard.jersey.validation.Validators;
+import io.dropwizard.jersey.validation.JerseyViolationExceptionMapper;
 import io.dropwizard.jetty.HttpConnectorFactory;
 import io.dropwizard.logging.ConsoleAppenderFactory;
 import io.dropwizard.logging.FileAppenderFactory;
@@ -105,9 +105,9 @@ public class DefaultServerFactoryTest {
         http.build(environment);
         Set<Object> singletons = environment.jersey().getResourceConfig().getSingletons();
         assertThat(singletons).hasAtLeastOneElementOfType(LoggingExceptionMapper.class);
-        assertThat(singletons).hasAtLeastOneElementOfType(ConstraintViolationExceptionMapper.class);
         assertThat(singletons).hasAtLeastOneElementOfType(JsonProcessingExceptionMapper.class);
         assertThat(singletons).hasAtLeastOneElementOfType(EarlyEofExceptionMapper.class);
+        assertThat(singletons).hasAtLeastOneElementOfType(JerseyViolationExceptionMapper.class);
 
     }
 

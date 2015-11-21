@@ -10,6 +10,7 @@ import io.dropwizard.jersey.gzip.ConfiguredGZipEncoder;
 import io.dropwizard.jersey.gzip.GZipDecoder;
 import io.dropwizard.jersey.jackson.JacksonMessageBodyProvider;
 import io.dropwizard.jersey.validation.Validators;
+import io.dropwizard.jersey.validation.HibernateValidationFeature;
 import io.dropwizard.lifecycle.Managed;
 import io.dropwizard.setup.Environment;
 import org.apache.http.client.CredentialsProvider;
@@ -354,7 +355,8 @@ public class JerseyClientBuilder {
             config.register(provider);
         }
 
-        config.register(new JacksonMessageBodyProvider(objectMapper, validator));
+        config.register(new JacksonMessageBodyProvider(objectMapper));
+        config.register(new HibernateValidationFeature(validator));
 
         for (Map.Entry<String, Object> property : this.properties.entrySet()) {
             config.property(property.getKey(), property.getValue());

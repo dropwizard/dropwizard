@@ -3,8 +3,16 @@ package io.dropwizard.benchmarks.jersey;
 import io.dropwizard.jersey.validation.ConstraintMessage;
 import io.dropwizard.jersey.validation.Validators;
 import io.dropwizard.logging.BootstrapLogging;
+import org.glassfish.jersey.process.Inflector;
+import org.glassfish.jersey.server.model.Invocable;
 import org.hibernate.validator.constraints.NotEmpty;
-import org.openjdk.jmh.annotations.*;
+import org.openjdk.jmh.annotations.Benchmark;
+import org.openjdk.jmh.annotations.BenchmarkMode;
+import org.openjdk.jmh.annotations.Mode;
+import org.openjdk.jmh.annotations.OutputTimeUnit;
+import org.openjdk.jmh.annotations.Scope;
+import org.openjdk.jmh.annotations.Setup;
+import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
 
@@ -13,6 +21,7 @@ import javax.validation.Valid;
 import javax.validation.Validator;
 import javax.validation.executable.ExecutableValidator;
 import javax.ws.rs.HeaderParam;
+import javax.ws.rs.core.Request;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -45,6 +54,13 @@ public class ConstraintViolationBenchmark {
     private ConstraintViolation<ConstraintViolationBenchmark.Resource> paramViolation;
     private ConstraintViolation<ConstraintViolationBenchmark.Resource> objViolation;
 
+    final Invocable invocable = Invocable.create(new Inflector<Request, Object>() {
+        @Override
+        public Object apply(Request request) {
+            return null;
+        }
+    });
+
     @Setup
     public void prepare() {
         final Validator validator = Validators.newValidator();
@@ -69,12 +85,12 @@ public class ConstraintViolationBenchmark {
 
     @Benchmark
     public String paramViolation() {
-        return ConstraintMessage.getMessage(paramViolation);
+        return ConstraintMessage.getMessage(paramViolation, invocable);
     }
 
     @Benchmark
     public String objViolation() {
-        return ConstraintMessage.getMessage(objViolation);
+        return ConstraintMessage.getMessage(objViolation, invocable);
     }
 
     public static void main(String[] args) throws Exception {
