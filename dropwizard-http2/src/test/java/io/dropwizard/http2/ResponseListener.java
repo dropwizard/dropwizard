@@ -13,38 +13,36 @@ import javax.ws.rs.core.MediaType;
 
 import java.io.ByteArrayOutputStream;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ResponseListener extends Stream.Listener.Adapter {
 
     private final ByteArrayOutputStream responseByteStream = new ByteArrayOutputStream();
-    private final CountDownLatch latch = new CountDownLatch(2);
+    private final CountDownLatch latch;
+
+    public ResponseListener(CountDownLatch latch) {
+        this.latch = latch;
+    }
 
     @Override
     public void onHeaders(Stream stream, HeadersFrame frame) {
         final MetaData metaData = frame.getMetaData();
         assertThat(metaData.getVersion()).isEqualTo(HttpVersion.HTTP_2);
         assertThat(metaData.getFields().get(HttpHeader.CONTENT_TYPE)).isEqualTo(MediaType.APPLICATION_JSON);
-        latch.countDown();
     }
 
     @Override
     public void onData(Stream stream, DataFrame frame, Callback callback) {
-        while (frame.getData().remaining() > 0) {
+        while (frame.getData().hasRemaining()) {
             responseByteStream.write(frame.getData().get());
         }
 
         callback.succeeded();
         if (frame.isEndStream()) {
+            assertThat(new String(responseByteStream.toByteArray(), Charsets.UTF_8))
+                    .isEqualTo(FakeApplication.HELLO_WORLD);
             latch.countDown();
         }
-    }
-
-    public String getResponse() throws InterruptedException {
-        latch.await(5, TimeUnit.SECONDS);
-        assertThat(latch.getCount()).isEqualTo(0);
-        return new String(responseByteStream.toByteArray(), Charsets.UTF_8);
     }
 }

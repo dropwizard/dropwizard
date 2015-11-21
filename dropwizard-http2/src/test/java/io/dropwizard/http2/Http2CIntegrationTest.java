@@ -25,6 +25,7 @@ import org.junit.Test;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.net.InetSocketAddress;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -76,8 +77,32 @@ public class Http2CIntegrationTest {
         final MetaData.Request request = new MetaData.Request("GET",
                 new HttpURI("http://" + hostname + ":" + port + "/api/test"),
                 HttpVersion.HTTP_2, new HttpFields());
-        final ResponseListener listener = new ResponseListener();
-        session.newStream(new HeadersFrame(request, null, true), new Promise.Adapter<>(), listener);
-        assertThat(listener.getResponse()).isEqualTo(FakeApplication.HELLO_WORLD);
+        CountDownLatch latch = new CountDownLatch(1);
+        session.newStream(new HeadersFrame(request, null, true), new Promise.Adapter<>(), new ResponseListener(latch));
+
+        latch.await(5, TimeUnit.SECONDS);
+        assertThat(latch.getCount()).isEqualTo(0);
+    }
+
+    @Test
+    public void testHttp2cManyRequests() throws Exception {
+        final String hostname = "127.0.0.1";
+        final int port = appRule.getLocalPort();
+
+        final FuturePromise<Session> sessionPromise = new FuturePromise<>();
+        client.connect(new InetSocketAddress(hostname, port), new ServerSessionListener.Adapter(), sessionPromise);
+        final Session session = sessionPromise.get(5, TimeUnit.SECONDS);
+
+        final MetaData.Request request = new MetaData.Request("GET",
+                new HttpURI("http://" + hostname + ":" + port + "/api/test"),
+                HttpVersion.HTTP_2, new HttpFields());
+        int amount = 100;
+        final CountDownLatch latch = new CountDownLatch(amount);
+        for (int i = 0; i < amount; i++) {
+            session.newStream(new HeadersFrame(request, null, true), new Promise.Adapter<>(),
+                    new ResponseListener(latch));
+        }
+        latch.await(10, TimeUnit.SECONDS);
+        assertThat(latch.getCount()).isEqualTo(0);
     }
 }
