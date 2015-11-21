@@ -117,6 +117,44 @@ appenders              console appender The set of AppenderFactory appenders to 
                                         *TODO* See logging/appender refs for more info
 ====================== ================ ===========
 
+.. _man-configuration-server-push:
+
+Server Push
+...........
+
+Server push technology allows a server to send additional resources to a client along with the request resource.
+Works only for HTTP/2 connections.
+
+.. code-block:: yaml
+
+    server:
+      serverPush:
+        enabled: true
+        associatePeriod: '4 seconds'
+        maxAssociations: 16
+        refererHosts: ['dropwizard.io', 'dropwizard.github.io']
+        refererPorts: [8444, 8445]
+
+
++-----------------+------------+------------------------------------------------------------------------------------------------------+
+|     Name        | Default    | Description                                                                                          |
++=================+============+======================================================================================================+
+| enabled         | false      | If true, the filter will organize resources as primary resources (those referenced by the            |
+|                 |            | ``Referer`` header) and secondary resources (those that have the ``Referer`` header). Secondary      |
+|                 |            | resources that have been requested within a time window from the request of the primary resource     |
+|                 |            | will be associated with the it. The next time a client will request the primary resource, the        |
+|                 |            | server will send to the client the secondary resources along with the primary in a single response.  |
++-----------------+------------+------------------------------------------------------------------------------------------------------+
+| associatePeriod | 4 seconds  | The time window within which a request for a secondary resource will be associated to a              |
+|                 |            | primary resource..                                                                                   |
++-----------------+------------+------------------------------------------------------------------------------------------------------+
+| maxAssociations | 16         | The maximum number of secondary resources that may be associated to a primary resource.              |
++-----------------+------------+------------------------------------------------------------------------------------------------------+
+| refererHosts    | All hosts  | The list of referrer hosts for which the server push technology is supported.                        |
++-----------------+------------+------------------------------------------------------------------------------------------------------+
+| refererPorts    | All ports  | The list of referrer ports for which the server push technology is supported                         |
++-----------------+------------+------------------------------------------------------------------------------------------------------+
+
 
 .. _man-configuration-simple:
 
@@ -362,6 +400,88 @@ endpointIdentificationAlgorithm  (none)              Which endpoint identificati
 ================================ ==================  ======================================================================================
 
 .. _sslyze: https://github.com/iSECPartners/sslyze
+
+.. _man-configuration-http2:
+
+HTTP/2 over TLS
+---------------
+
+HTTP/2 is a new protocol, intended as a successor of HTTP/1.1. It adds several important features
+like binary structure, stream multiplexing over a single connection, header compression, and server push.
+At the same time it remains semantically compatible with HTTP/1.1, which should make the upgrade process more
+seamless. Checkout HTTP/2 FAQ__ for the futher information.
+
+.. __: https://http2.github.io/faq/
+
+For an encrypted connection HTTP/2 uses ALPN protocol. It's a TLS extension that allows a client to negotiate
+a protocol to use after the handshake is complete. If either side does not support ALPN, then the protocol will
+be ignored, and an HTTP/1.1 connection over TLS will be used instead.
+
+For this connector to work with ALPN protocol you need to provide alpn-boot library to JVM's bootpath.
+The correct library version depends on the JVM version. Consult Jetty ALPN guide__ for the reference.
+
+.. __: http://www.eclipse.org/jetty/documentation/current/alpn-chapter.html
+
+This connector extends the attributes that are available to the :ref:`HTTPS connector <man-configuration-https>`
+
+.. code-block:: yaml
+
+    server:
+      applicationConnectors:
+        - type: http2
+          port: 8445
+          maxConcurrentStreams: 1024
+          initialStreamSendWindow: 65535
+          keyStorePath: /path/to/file # required
+          keyStorePassword: changeit
+          trustStorePath: /path/to/file # required
+          trustStorePassword: changeit
+
+
+========================  ========  ===================================================================================
+Name                      Default   Description
+========================  ========  ===================================================================================
+maxConcurrentStreams      1024      The maximum number of concurrently open streams allowed on a single HTTP/2
+                                    connection. Larger values increase parallelism, but cost a memory commitment.
+initialStreamSendWindow   65535     The initial flow control window size for a new stream. Larger values may allow
+                                    greater throughput, but also risk head of line blocking if TCP/IP flow control is
+                                    triggered.
+========================  ========  ===================================================================================
+
+.. _man-configuration-http2c:
+
+HTTP/2 Plain Text
+-----------------
+
+HTTP/2 promotes using encryption, but doesn't require it. However, most browsers stated that they will
+not support HTTP/2 only without encryption. Currently no browser supports HTTP/2 unencrypted.
+
+The connector should be only used in closed secured networks or during development. It expects from clients
+an HTTP/1.1 OPTIONS request with ``Upgrade : h2c`` header to indicate a wish to upgrade to HTTP/2 or a request the
+HTTP/2 connection preface. If the client doesn't support HTTP/2, a plain HTTP/1.1 connections will be used instead.
+
+This connector extends the attributes that are available to the :ref:`HTTP connector <man-configuration-http>`
+
+.. code-block:: yaml
+
+    server:
+      applicationConnectors:
+        - type: http2c
+          port: 8446
+          maxConcurrentStreams: 1024
+          initialStreamSendWindow: 65535
+
+
+========================  ========  ===================================================================================
+Name                      Default   Description
+========================  ========  ===================================================================================
+maxConcurrentStreams      1024      The maximum number of concurrently open streams allowed on a single HTTP/2
+                                    connection. Larger values increase parallelism, but cost a memory commitment.
+initialStreamSendWindow   65535     The initial flow control window size for a new stream. Larger values may allow
+                                    greater throughput, but also risk head of line blocking if TCP/IP flow control is
+                                    triggered.
+========================  ========  ===================================================================================
+
 
 .. _man-configuration-logging:
 
