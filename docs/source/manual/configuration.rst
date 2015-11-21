@@ -84,8 +84,6 @@ GZip
 +---------------------------+---------------------+------------------------------------------------------------------------------------------------------+
 | bufferSize                | 8KiB                | The size of the buffer to use when compressing.                                                      |
 +---------------------------+---------------------+------------------------------------------------------------------------------------------------------+
-| excludedUserAgents        | []                  | The set of user agents to exclude from compression.                                                  |
-+---------------------------+---------------------+------------------------------------------------------------------------------------------------------+
 | excludedUserAgentPatterns | []                  | The set of user agent patterns to exclude from compression.                                          |
 +---------------------------+---------------------+------------------------------------------------------------------------------------------------------+
 | compressedMimeTypes       | Jetty's default     | The list of mime types to compress. The default is all types apart                                   |
@@ -95,11 +93,7 @@ GZip
 +---------------------------+---------------------+------------------------------------------------------------------------------------------------------+
 | deflateCompressionLevel   | -1                  | The compression level used for ZLIB deflation(compression).                                          |
 +---------------------------+---------------------+------------------------------------------------------------------------------------------------------+
-| gzipCompatibleDeflation   | true                | If true, then ZLIB deflation(compression) will be performed in the GZIP-compatible mode.             |
-+---------------------------+---------------------+------------------------------------------------------------------------------------------------------+
 | gzipCompatibleInflation   | true                | If true, then ZLIB inflation(decompression) will be performed in the GZIP-compatible mode.           |
-+---------------------------+---------------------+------------------------------------------------------------------------------------------------------+
-| vary                      | ``Accept-Encoding`` | Value of the `Vary` header sent with responses that could be compressed.                             |
 +---------------------------+---------------------+------------------------------------------------------------------------------------------------------+
 
 
@@ -368,38 +362,6 @@ endpointIdentificationAlgorithm  (none)              Which endpoint identificati
 ================================ ==================  ======================================================================================
 
 .. _sslyze: https://github.com/iSECPartners/sslyze
-
-.. _man-configuration-spdy:
-
-SPDY
-----
-
-Extends the attributes that are available to the :ref:`HTTPS connector <man-configuration-https>`
-
-For this connector to work with ALPN protocol you need to provide alpn-boot library to JVM's bootpath.
-The correct library version depends on the JVM version. Consult Jetty ALPN guide__ for the reference.
-
-.. __: http://www.eclipse.org/jetty/documentation/current/alpn-chapter.html
-
-.. code-block:: yaml
-
-    server:
-      applicationConnectors:
-        - type: spdy3
-          port: 8445
-          keyStorePath: example.keystore
-          keyStorePassword: example
-          validateCerts: false
-
-
-====================== ===========  ===========
-Name                   Default      Description
-====================== ===========  ===========
-pushStrategy           (none)       The `push strategy`_ to use for server-initiated SPDY pushes.
-====================== ===========  ===========
-
-.. _`push strategy`: https://github.com/dropwizard/dropwizard/blob/master/dropwizard-spdy/src/main/java/io/dropwizard/spdy/PushStrategyFactory.java
-
 
 .. _man-configuration-logging:
 

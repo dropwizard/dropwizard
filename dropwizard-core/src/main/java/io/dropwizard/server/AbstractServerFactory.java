@@ -21,7 +21,7 @@ import io.dropwizard.jersey.jackson.JacksonMessageBodyProvider;
 import io.dropwizard.jersey.setup.JerseyEnvironment;
 import io.dropwizard.jersey.validation.HibernateValidationFeature;
 import io.dropwizard.jersey.validation.JerseyViolationExceptionMapper;
-import io.dropwizard.jetty.GzipFilterFactory;
+import io.dropwizard.jetty.GzipHandlerFactory;
 import io.dropwizard.jetty.MutableServletContextHandler;
 import io.dropwizard.jetty.NonblockingServletHolder;
 import io.dropwizard.jetty.RequestLogFactory;
@@ -76,7 +76,7 @@ import java.util.regex.Pattern;
  *     <tr>
  *         <td>{@code gzip}</td>
  *         <td></td>
- *         <td>The {@link GzipFilterFactory GZIP} configuration.</td>
+ *         <td>The {@link GzipHandlerFactory GZIP} configuration.</td>
  *     </tr>
  *     <tr>
  *         <td>{@code maxThreads}</td>
@@ -208,7 +208,7 @@ public abstract class AbstractServerFactory implements ServerFactory {
 
     @Valid
     @NotNull
-    private GzipFilterFactory gzip = new GzipFilterFactory();
+    private GzipHandlerFactory gzip = new GzipHandlerFactory();
 
     @Min(2)
     private int maxThreads = 1024;
@@ -266,12 +266,12 @@ public abstract class AbstractServerFactory implements ServerFactory {
     }
 
     @JsonProperty("gzip")
-    public GzipFilterFactory getGzipFilterFactory() {
+    public GzipHandlerFactory getGzipFilterFactory() {
         return gzip;
     }
 
     @JsonProperty("gzip")
-    public void setGzipFilterFactory(GzipFilterFactory gzip) {
+    public void setGzipFilterFactory(GzipHandlerFactory gzip) {
         this.gzip = gzip;
     }
 
@@ -468,10 +468,6 @@ public abstract class AbstractServerFactory implements ServerFactory {
         handler.addFilter(AllowedMethodsFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST))
                 .setInitParameter(AllowedMethodsFilter.ALLOWED_METHODS_PARAM, Joiner.on(',').join(allowedMethods));
         handler.addFilter(ThreadNameFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST));
-        if (gzip.isEnabled()) {
-            final FilterHolder holder = new FilterHolder(gzip.build());
-            handler.addFilter(holder, "/*", EnumSet.allOf(DispatcherType.class));
-        }
         if (jerseyContainer != null) {
             String urlPattern = jerseyRootPath;
             if (!urlPattern.endsWith("*") && !urlPattern.endsWith("/")) {
@@ -584,6 +580,10 @@ public abstract class AbstractServerFactory implements ServerFactory {
         StatisticsHandler statisticsHandler = new StatisticsHandler();
         statisticsHandler.setHandler(handler);
         return statisticsHandler;
+    }
+
+    protected Handler buildGzipHandler(Handler handler) {
+        return gzip.isEnabled() ? gzip.build(handler) : handler;
     }
 
     protected void printBanner(String name) {

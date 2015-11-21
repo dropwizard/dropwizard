@@ -46,7 +46,6 @@
         <module>dropwizard-servlets</module>
         <module>dropwizard-lifecycle</module>
         <module>dropwizard-assets</module>
-        <module>dropwizard-spdy</module>
         <module>dropwizard-archetypes</module>
         <module>dropwizard-benchmarks</module>
     </modules>

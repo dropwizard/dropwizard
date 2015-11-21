@@ -131,7 +131,8 @@ public class SimpleServerFactory extends AbstractServerFactory {
                 applicationContextPath, applicationHandler,
                 adminContextPath, adminHandler
         ));
-        server.setHandler(addStatsHandler(addRequestLog(server, routingHandler, environment.getName())));
+        final Handler gzipHandler = buildGzipHandler(routingHandler);
+        server.setHandler(addStatsHandler(addRequestLog(server, gzipHandler, environment.getName())));
 
         return server;
     }

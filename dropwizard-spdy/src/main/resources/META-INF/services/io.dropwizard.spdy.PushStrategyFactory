@@ -1,2 +1,0 @@
-io.dropwizard.spdy.NonePushStrategyFactory
-io.dropwizard.spdy.ReferrerPushStrategyFactory
