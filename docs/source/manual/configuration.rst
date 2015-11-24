@@ -122,8 +122,8 @@ appenders              console appender The set of AppenderFactory appenders to 
 Server Push
 ...........
 
-Server push technology allows a server to send additional resources to a client along with the request resource.
-Works only for HTTP/2 connections.
+Server push technology allows a server to send additional resources to a client along with the requested resource.
+It works only for HTTP/2 connections.
 
 .. code-block:: yaml
 
@@ -409,16 +409,16 @@ HTTP/2 over TLS
 HTTP/2 is a new protocol, intended as a successor of HTTP/1.1. It adds several important features
 like binary structure, stream multiplexing over a single connection, header compression, and server push.
 At the same time it remains semantically compatible with HTTP/1.1, which should make the upgrade process more
-seamless. Checkout HTTP/2 FAQ__ for the futher information.
+seamless. Checkout HTTP/2 FAQ__ for the further information.
 
 .. __: https://http2.github.io/faq/
 
-For an encrypted connection HTTP/2 uses ALPN protocol. It's a TLS extension that allows a client to negotiate
+For an encrypted connection HTTP/2 uses ALPN protocol. It's a TLS extension, that allows a client to negotiate
 a protocol to use after the handshake is complete. If either side does not support ALPN, then the protocol will
 be ignored, and an HTTP/1.1 connection over TLS will be used instead.
 
 For this connector to work with ALPN protocol you need to provide alpn-boot library to JVM's bootpath.
-The correct library version depends on the JVM version. Consult Jetty ALPN guide__ for the reference.
+The correct library version depends on a JVM version. Consult Jetty ALPN guide__ for the reference.
 
 .. __: http://www.eclipse.org/jetty/documentation/current/alpn-chapter.html
 
@@ -454,11 +454,11 @@ HTTP/2 Plain Text
 -----------------
 
 HTTP/2 promotes using encryption, but doesn't require it. However, most browsers stated that they will
-not support HTTP/2 only without encryption. Currently no browser supports HTTP/2 unencrypted.
+not support HTTP/2 without encryption. Currently no browser supports HTTP/2 unencrypted.
 
-The connector should be only used in closed secured networks or during development. It expects from clients
-an HTTP/1.1 OPTIONS request with ``Upgrade : h2c`` header to indicate a wish to upgrade to HTTP/2 or a request the
-HTTP/2 connection preface. If the client doesn't support HTTP/2, a plain HTTP/1.1 connections will be used instead.
+The connector should only be used in closed secured networks or during development. It expects from clients
+an HTTP/1.1 OPTIONS request with ``Upgrade : h2c`` header to indicate a wish to upgrade to HTTP/2, or a request with
+the HTTP/2 connection preface. If the client doesn't support HTTP/2, a plain HTTP/1.1 connections will be used instead.
 
 This connector extends the attributes that are available to the :ref:`HTTP connector <man-configuration-http>`
 
