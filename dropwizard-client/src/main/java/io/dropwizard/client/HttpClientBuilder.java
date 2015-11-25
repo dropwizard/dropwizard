@@ -13,6 +13,7 @@ import io.dropwizard.lifecycle.Managed;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.util.Duration;
 import org.apache.http.ConnectionReuseStrategy;
+import org.apache.http.Header;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
@@ -41,6 +42,7 @@ import org.apache.http.impl.conn.SystemDefaultDnsResolver;
 import org.apache.http.protocol.HttpContext;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * A convenience class for building {@link HttpClient} instances.
@@ -74,6 +76,7 @@ public class HttpClientBuilder {
     private HttpRoutePlanner routePlanner = null;
     private RedirectStrategy redirectStrategy;
     private boolean disableContentCompression;
+    private List<? extends Header> defaultHeaders;
 
     public HttpClientBuilder(MetricRegistry metricRegistry) {
         this.metricRegistry = metricRegistry;
@@ -181,6 +184,17 @@ public class HttpClientBuilder {
      */
     public HttpClientBuilder using(RedirectStrategy redirectStrategy) {
         this.redirectStrategy = redirectStrategy;
+        return this;
+    }
+
+    /**
+     * Use the given default headers for each HTTP request
+     *
+     * @param defaultHeaders HTTP headers
+     * @return {@code} this
+     */
+    public HttpClientBuilder using(List<? extends Header> defaultHeaders) {
+        this.defaultHeaders = defaultHeaders;
         return this;
     }
 
@@ -317,6 +331,10 @@ public class HttpClientBuilder {
 
         if (redirectStrategy != null) {
             builder.setRedirectStrategy(redirectStrategy);
+        }
+
+        if (defaultHeaders != null) {
+            builder.setDefaultHeaders(defaultHeaders);
         }
 
         return new ConfiguredCloseableHttpClient(builder.build(), requestConfig);
