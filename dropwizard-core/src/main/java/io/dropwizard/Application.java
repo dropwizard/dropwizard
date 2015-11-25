@@ -87,11 +87,9 @@ public abstract class Application<T extends Configuration> {
      *
      * @param bootstrap the bootstrap instance
      */
-    protected void addDefaultCommands(Bootstrap<T> bootstrap)
-    {
+    protected void addDefaultCommands(Bootstrap<T> bootstrap) {
         bootstrap.addCommand(new ServerCommand<>(this));
         bootstrap.addCommand(new CheckCommand<>(this));
     }
-
 
 }
