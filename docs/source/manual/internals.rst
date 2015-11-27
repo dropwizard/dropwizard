@@ -47,8 +47,7 @@ Below you find the startup sequence of a Dropwizard Application:
          #. create Environment
          #. bootstrap.run(cfg, env)
          
-            #. for each Bundle: bundle.run()
-            #. for each ConfiguredBundle: bundle.run()
+            #. for each Bundle or ConfiguredBundle: bundle.run()
             
          #. application.run(cfg, env) (implemented by your Application)
         
@@ -60,7 +59,7 @@ Below you find the startup sequence of a Dropwizard Application:
 On Bundles
 ==========
 
-Running bundles happens in FIFO order (ConfiguredBundles are always run after Bundles).
+Running bundles happens in FIFO order.
 
 Jetty Lifecycle
 ===============
