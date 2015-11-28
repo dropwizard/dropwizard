@@ -1,7 +1,6 @@
 package io.dropwizard.jdbi.timestamps;
 
 import com.codahale.metrics.MetricRegistry;
-import com.google.common.base.Optional;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jdbi.DBIFactory;
@@ -12,6 +11,7 @@ import org.junit.rules.ExternalResource;
 import org.skife.jdbi.v2.DBI;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.TimeZone;
 
 /**

@@ -1,7 +1,5 @@
 package io.dropwizard.jdbi.args;
 
-import com.google.common.base.Function;
-import com.google.common.base.Optional;
 import org.joda.time.DateTime;
 import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.tweak.Argument;
@@ -9,6 +7,7 @@ import org.skife.jdbi.v2.tweak.ArgumentFactory;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.Optional;
 import java.util.TimeZone;
 
 /**
@@ -26,7 +25,7 @@ public class JodaDateTimeArgumentFactory implements ArgumentFactory<DateTime> {
     private final Optional<Calendar> calendar;
 
     public JodaDateTimeArgumentFactory() {
-        calendar = Optional.absent();
+        calendar = Optional.empty();
     }
 
     /**
@@ -35,12 +34,7 @@ public class JodaDateTimeArgumentFactory implements ArgumentFactory<DateTime> {
      * @param timeZone a time zone representing an offset
      */
     public JodaDateTimeArgumentFactory(Optional<TimeZone> timeZone) {
-        calendar = timeZone.transform(new Function<TimeZone, Calendar>() {
-            @Override
-            public Calendar apply(TimeZone tz) {
-                return new GregorianCalendar(tz);
-            }
-        });
+        calendar = timeZone.map(GregorianCalendar::new);
     }
 
     @Override

@@ -1,6 +1,5 @@
 package io.dropwizard.auth.basic;
 
-import com.google.common.base.Optional;
 import com.google.common.io.BaseEncoding;
 import io.dropwizard.auth.AuthenticationException;
 import io.dropwizard.auth.AuthFilter;
@@ -17,6 +16,7 @@ import javax.ws.rs.core.SecurityContext;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.Principal;
+import java.util.Optional;
 
 @Priority(Priorities.AUTHENTICATION)
 public class BasicCredentialAuthFilter<P extends Principal> extends AuthFilter<BasicCredentials, P> {

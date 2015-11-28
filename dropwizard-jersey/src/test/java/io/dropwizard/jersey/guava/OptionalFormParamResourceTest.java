@@ -3,6 +3,8 @@ package io.dropwizard.jersey.guava;
 import com.codahale.metrics.MetricRegistry;
 import com.google.common.base.Optional;
 import io.dropwizard.jersey.DropwizardResourceConfig;
+import io.dropwizard.jersey.MyMessage;
+import io.dropwizard.jersey.MyMessageParamConverterProvider;
 import io.dropwizard.jersey.params.UUIDParam;
 import io.dropwizard.logging.BootstrapLogging;
 import org.glassfish.jersey.internal.util.collection.MultivaluedStringMap;

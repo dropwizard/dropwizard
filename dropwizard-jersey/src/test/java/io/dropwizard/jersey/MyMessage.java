@@ -1,4 +1,4 @@
-package io.dropwizard.jersey.guava;
+package io.dropwizard.jersey;
 
 public class MyMessage {
     private final String message;

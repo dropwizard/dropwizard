@@ -1,5 +1,6 @@
 package io.dropwizard.validation;
 
+import io.dropwizard.validation.valuehandling.GuavaOptionalValidatedValueUnwrapper;
 import io.dropwizard.validation.valuehandling.OptionalValidatedValueUnwrapper;
 import org.hibernate.validator.HibernateValidator;
 import org.hibernate.validator.HibernateValidatorConfiguration;
@@ -26,6 +27,7 @@ public class BaseValidator {
         return Validation
             .byProvider(HibernateValidator.class)
             .configure()
+            .addValidatedValueHandler(new GuavaOptionalValidatedValueUnwrapper())
             .addValidatedValueHandler(new OptionalValidatedValueUnwrapper());
     }
 }

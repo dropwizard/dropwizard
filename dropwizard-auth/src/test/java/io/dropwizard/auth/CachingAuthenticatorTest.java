@@ -1,8 +1,6 @@
 package io.dropwizard.auth;
 
 import com.codahale.metrics.MetricRegistry;
-import com.google.common.base.Optional;
-import com.google.common.base.Predicate;
 import com.google.common.cache.CacheBuilderSpec;
 import com.google.common.collect.ImmutableSet;
 import org.junit.Before;
@@ -10,6 +8,7 @@ import org.junit.Test;
 import org.mockito.InOrder;
 
 import java.security.Principal;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.anyString;
@@ -23,7 +22,7 @@ public class CachingAuthenticatorTest {
     @SuppressWarnings("unchecked")
     private final Authenticator<String, Principal> underlying = mock(Authenticator.class);
     private final CachingAuthenticator<String, Principal> cached =
-            new CachingAuthenticator<>(new MetricRegistry(), underlying, CacheBuilderSpec.parse("maximumSize=1"));
+        new CachingAuthenticator<>(new MetricRegistry(), underlying, CacheBuilderSpec.parse("maximumSize=1"));
 
     @Before
     public void setUp() throws Exception {
@@ -70,15 +69,8 @@ public class CachingAuthenticatorTest {
 
     @Test
     public void invalidatesCredentialsMatchingGivenPredicate() throws Exception {
-        Predicate<String> predicate = new Predicate<String>() {
-            @Override
-            public boolean apply(String c) {
-                return c.equals("credentials");
-            }
-        };
-
         cached.authenticate("credentials");
-        cached.invalidateAll(predicate);
+        cached.invalidateAll("credentials"::equals);
         cached.authenticate("credentials");
 
         verify(underlying, times(2)).authenticate("credentials");
@@ -108,8 +100,8 @@ public class CachingAuthenticatorTest {
 
     @Test
     public void shouldNotCacheAbsentPrincipals() throws Exception {
-        when(underlying.authenticate(anyString())).thenReturn(Optional.<Principal>absent());
-        assertThat(cached.authenticate("credentials")).isEqualTo(Optional.absent());
+        when(underlying.authenticate(anyString())).thenReturn(Optional.<Principal>empty());
+        assertThat(cached.authenticate("credentials")).isEqualTo(Optional.empty());
         verify(underlying).authenticate("credentials");
         assertThat(cached.size()).isEqualTo(0);
     }

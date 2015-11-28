@@ -10,7 +10,9 @@ import org.slf4j.Logger;
 
 import java.sql.SQLException;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
 public class LoggingDBIExceptionMapperTest {
 

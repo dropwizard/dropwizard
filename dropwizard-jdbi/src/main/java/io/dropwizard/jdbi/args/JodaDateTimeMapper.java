@@ -1,21 +1,21 @@
 package io.dropwizard.jdbi.args;
 
-import com.google.common.base.Function;
-import com.google.common.base.Optional;
 import org.joda.time.DateTime;
-import org.skife.jdbi.v2.util.TypedMapper;
+import org.skife.jdbi.v2.StatementContext;
+import org.skife.jdbi.v2.tweak.ResultColumnMapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.Optional;
 import java.util.TimeZone;
 
 /**
- * A {@link TypedMapper} to map Joda {@link DateTime} objects.
+ * A {@link ResultColumnMapper} to map Joda {@link DateTime} objects.
  */
-public class JodaDateTimeMapper extends TypedMapper<DateTime> {
+public class JodaDateTimeMapper implements ResultColumnMapper<DateTime> {
 
     /**
      * <p>{@link Calendar} for representing a database time zone.<p>
@@ -27,16 +27,11 @@ public class JodaDateTimeMapper extends TypedMapper<DateTime> {
     private Optional<Calendar> calendar;
 
     public JodaDateTimeMapper() {
-        calendar = Optional.absent();
+        calendar = Optional.empty();
     }
 
     public JodaDateTimeMapper(Optional<TimeZone> timeZone) {
-        calendar = timeZone.transform(new Function<TimeZone, Calendar>() {
-            @Override
-            public Calendar apply(TimeZone tz) {
-                return new GregorianCalendar(tz);
-            }
-        });
+        calendar = timeZone.map(GregorianCalendar::new);
     }
 
     /**
@@ -55,22 +50,20 @@ public class JodaDateTimeMapper extends TypedMapper<DateTime> {
     }
 
     @Override
-    protected DateTime extractByName(final ResultSet r, final String name) throws SQLException {
-        final Timestamp timestamp = calendar.isPresent() ? r.getTimestamp(name, cloneCalendar()) :
-                r.getTimestamp(name);
+    public DateTime mapColumn(ResultSet r, int columnNumber, StatementContext ctx) throws SQLException {
+        final Timestamp timestamp = calendar.isPresent() ? r.getTimestamp(columnNumber, cloneCalendar()) :
+            r.getTimestamp(columnNumber);
         if (timestamp == null) {
             return null;
         }
-        return new DateTime(timestamp.getTime());
-    }
+        return new DateTime(timestamp.getTime());    }
 
     @Override
-    protected DateTime extractByIndex(final ResultSet r, final int index) throws SQLException {
-        final Timestamp timestamp = calendar.isPresent() ? r.getTimestamp(index, cloneCalendar()) :
-                r.getTimestamp(index);
+    public DateTime mapColumn(ResultSet r, String columnLabel, StatementContext ctx) throws SQLException {
+        final Timestamp timestamp = calendar.isPresent() ? r.getTimestamp(columnLabel, cloneCalendar()) :
+            r.getTimestamp(columnLabel);
         if (timestamp == null) {
             return null;
         }
-        return new DateTime(timestamp.getTime());
-    }
+        return new DateTime(timestamp.getTime());    }
 }

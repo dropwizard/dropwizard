@@ -1,4 +1,4 @@
-package io.dropwizard.jersey.guava;
+package io.dropwizard.jersey;
 
 import javax.ws.rs.ext.ParamConverter;
 import javax.ws.rs.ext.ParamConverterProvider;

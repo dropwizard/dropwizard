@@ -25,11 +25,10 @@ import static org.assertj.core.api.Assertions.assertThat;
  * Test for handling translation between DateTime to SQL TIMESTAMP
  * in a different time zone
  */
-public class DateTimeSqlTimestampTest {
+public class JodaDateTimeSqlTimestampTest {
 
     private static final DateTimeFormatter ISO_FMT = ISODateTimeFormat.dateTimeNoMillis();
 
-    private static TimeZone timeZone;
     private static TemporaryFolder temporaryFolder;
     private static DatabaseInTimeZone databaseInTimeZone;
     private static DateTimeZone dbTimeZone;
@@ -41,7 +40,7 @@ public class DateTimeSqlTimestampTest {
         boolean done = false;
         while (!done) {
             try {
-                timeZone = getRandomTimeZone();
+                final TimeZone timeZone = getRandomTimeZone();
                 dbTimeZone = DateTimeZone.forTimeZone(timeZone);
                 temporaryFolder = new TemporaryFolder();
                 databaseInTimeZone = new DatabaseInTimeZone(temporaryFolder, timeZone);

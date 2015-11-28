@@ -5,22 +5,48 @@ import ch.qos.logback.classic.Logger;
 import com.codahale.metrics.jdbi.InstrumentedTimingCollector;
 import com.codahale.metrics.jdbi.strategies.DelegatingStatementNameStrategy;
 import com.codahale.metrics.jdbi.strategies.NameStrategies;
-import com.codahale.metrics.jdbi.strategies.StatementNameStrategy;
-import com.google.common.base.Optional;
-import io.dropwizard.db.PooledDataSourceFactory;
 import io.dropwizard.db.ManagedDataSource;
+import io.dropwizard.db.PooledDataSourceFactory;
+import io.dropwizard.jdbi.args.GuavaOptionalArgumentFactory;
+import io.dropwizard.jdbi.args.GuavaOptionalInstantArgumentFactory;
+import io.dropwizard.jdbi.args.GuavaOptionalJodaTimeArgumentFactory;
+import io.dropwizard.jdbi.args.GuavaOptionalLocalDateArgumentFactory;
+import io.dropwizard.jdbi.args.GuavaOptionalLocalDateTimeArgumentFactory;
+import io.dropwizard.jdbi.args.GuavaOptionalOffsetTimeArgumentFactory;
+import io.dropwizard.jdbi.args.GuavaOptionalZonedTimeArgumentFactory;
+import io.dropwizard.jdbi.args.InstantArgumentFactory;
+import io.dropwizard.jdbi.args.InstantMapper;
 import io.dropwizard.jdbi.args.JodaDateTimeArgumentFactory;
 import io.dropwizard.jdbi.args.JodaDateTimeMapper;
+import io.dropwizard.jdbi.args.LocalDateArgumentFactory;
+import io.dropwizard.jdbi.args.LocalDateMapper;
+import io.dropwizard.jdbi.args.LocalDateTimeArgumentFactory;
+import io.dropwizard.jdbi.args.LocalDateTimeMapper;
+import io.dropwizard.jdbi.args.OffsetDateTimeArgumentFactory;
+import io.dropwizard.jdbi.args.OffsetDateTimeMapper;
 import io.dropwizard.jdbi.args.OptionalArgumentFactory;
+import io.dropwizard.jdbi.args.OptionalDoubleArgumentFactory;
+import io.dropwizard.jdbi.args.OptionalDoubleMapper;
+import io.dropwizard.jdbi.args.OptionalInstantArgumentFactory;
+import io.dropwizard.jdbi.args.OptionalIntArgumentFactory;
+import io.dropwizard.jdbi.args.OptionalIntMapper;
 import io.dropwizard.jdbi.args.OptionalJodaTimeArgumentFactory;
+import io.dropwizard.jdbi.args.OptionalLocalDateArgumentFactory;
+import io.dropwizard.jdbi.args.OptionalLocalDateTimeArgumentFactory;
+import io.dropwizard.jdbi.args.OptionalLongArgumentFactory;
+import io.dropwizard.jdbi.args.OptionalLongMapper;
+import io.dropwizard.jdbi.args.OptionalOffsetTimeArgumentFactory;
+import io.dropwizard.jdbi.args.OptionalZonedTimeArgumentFactory;
+import io.dropwizard.jdbi.args.ZonedDateTimeArgumentFactory;
+import io.dropwizard.jdbi.args.ZonedDateTimeMapper;
 import io.dropwizard.jdbi.logging.LogbackLog;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.util.Duration;
 import org.skife.jdbi.v2.ColonPrefixNamedParamStatementRewriter;
 import org.skife.jdbi.v2.DBI;
-import org.skife.jdbi.v2.StatementContext;
 import org.slf4j.LoggerFactory;
 
+import java.util.Optional;
 import java.util.TimeZone;
 
 import static com.codahale.metrics.MetricRegistry.name;
@@ -35,19 +61,14 @@ public class DBIFactory {
                     NameStrategies.CONTEXT_CLASS,
                     NameStrategies.CONTEXT_NAME,
                     NameStrategies.SQL_OBJECT,
-                    new StatementNameStrategy() {
-                        @Override
-                        public String getStatementName(StatementContext statementContext) {
-                            return RAW_SQL;
-                        }
-                    });
+                    statementContext -> RAW_SQL);
         }
     }
 
     /**
      * Get a time zone of a database
      *
-     * <p/>Override this method to specify a time zone of a database
+     * <p>Override this method to specify a time zone of a database
      * to use in {@link io.dropwizard.jdbi.args.JodaDateTimeMapper} and
      * {@link io.dropwizard.jdbi.args.JodaDateTimeArgument}</p>
      *
@@ -59,7 +80,7 @@ public class DBIFactory {
      * @return a time zone of a database
      */
     protected Optional<TimeZone> databaseTimeZone() {
-        return Optional.absent();
+        return Optional.empty();
     }
 
     public DBI build(Environment environment,
@@ -87,16 +108,49 @@ public class DBIFactory {
         if (configuration.isAutoCommentsEnabled()) {
             dbi.setStatementRewriter(new NamePrependingStatementRewriter(new ColonPrefixNamedParamStatementRewriter()));
         }
+        dbi.registerArgumentFactory(new GuavaOptionalArgumentFactory(configuration.getDriverClass()));
         dbi.registerArgumentFactory(new OptionalArgumentFactory(configuration.getDriverClass()));
+        dbi.registerArgumentFactory(new OptionalDoubleArgumentFactory());
+        dbi.registerArgumentFactory(new OptionalIntArgumentFactory());
+        dbi.registerArgumentFactory(new OptionalLongArgumentFactory());
+        dbi.registerColumnMapper(new OptionalDoubleMapper());
+        dbi.registerColumnMapper(new OptionalIntMapper());
+        dbi.registerColumnMapper(new OptionalLongMapper());
         dbi.registerContainerFactory(new ImmutableListContainerFactory());
         dbi.registerContainerFactory(new ImmutableSetContainerFactory());
+        dbi.registerContainerFactory(new GuavaOptionalContainerFactory());
         dbi.registerContainerFactory(new OptionalContainerFactory());
 
         final Optional<TimeZone> timeZone = databaseTimeZone();
         dbi.registerArgumentFactory(new JodaDateTimeArgumentFactory(timeZone));
+        dbi.registerArgumentFactory(new LocalDateArgumentFactory());
+        dbi.registerArgumentFactory(new LocalDateTimeArgumentFactory());
+        dbi.registerArgumentFactory(new InstantArgumentFactory(timeZone));
+        dbi.registerArgumentFactory(new OffsetDateTimeArgumentFactory(timeZone));
+        dbi.registerArgumentFactory(new ZonedDateTimeArgumentFactory(timeZone));
+
+        // Should be registered after GuavaOptionalArgumentFactory to be processed first
+        dbi.registerArgumentFactory(new GuavaOptionalJodaTimeArgumentFactory(timeZone));
+        dbi.registerArgumentFactory(new GuavaOptionalLocalDateArgumentFactory());
+        dbi.registerArgumentFactory(new GuavaOptionalLocalDateTimeArgumentFactory());
+        dbi.registerArgumentFactory(new GuavaOptionalInstantArgumentFactory(timeZone));
+        dbi.registerArgumentFactory(new GuavaOptionalOffsetTimeArgumentFactory(timeZone));
+        dbi.registerArgumentFactory(new GuavaOptionalZonedTimeArgumentFactory(timeZone));
+
         // Should be registered after OptionalArgumentFactory to be processed first
         dbi.registerArgumentFactory(new OptionalJodaTimeArgumentFactory(timeZone));
-        dbi.registerMapper(new JodaDateTimeMapper(timeZone));
+        dbi.registerArgumentFactory(new OptionalLocalDateArgumentFactory());
+        dbi.registerArgumentFactory(new OptionalLocalDateTimeArgumentFactory());
+        dbi.registerArgumentFactory(new OptionalInstantArgumentFactory(timeZone));
+        dbi.registerArgumentFactory(new OptionalOffsetTimeArgumentFactory(timeZone));
+        dbi.registerArgumentFactory(new OptionalZonedTimeArgumentFactory(timeZone));
+
+        dbi.registerColumnMapper(new JodaDateTimeMapper(timeZone));
+        dbi.registerColumnMapper(new InstantMapper(timeZone));
+        dbi.registerColumnMapper(new LocalDateMapper());
+        dbi.registerColumnMapper(new LocalDateTimeMapper());
+        dbi.registerColumnMapper(new OffsetDateTimeMapper());
+        dbi.registerColumnMapper(new ZonedDateTimeMapper());
 
         return dbi;
     }
