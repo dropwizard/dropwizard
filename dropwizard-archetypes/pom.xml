@@ -163,4 +163,14 @@
       </resource>
     </resources>
   </build>
+
+  <profiles>
+    <profile>
+      <id>dev</id>
+      <properties>
+        <archetype.test.skip>true</archetype.test.skip>
+        <invoker.skip>true</invoker.skip>
+      </properties>
+    </profile>
+  </profiles>
 </project>

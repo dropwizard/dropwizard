@@ -270,6 +270,13 @@
                 <javadoc.doclint.none>-Xdoclint:none</javadoc.doclint.none>
             </properties>
         </profile>
+        <profile>
+            <id>dev</id>
+            <properties>
+                <maven.javadoc.skip>true</maven.javadoc.skip>
+                <findbugs.skip>true</findbugs.skip>
+            </properties>
+        </profile>
     </profiles>
 
     <dependencyManagement>
