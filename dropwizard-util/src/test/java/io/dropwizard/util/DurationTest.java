@@ -1,7 +1,10 @@
 package io.dropwizard.util;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -800,5 +803,59 @@ public class DurationTest {
         assertThat(Duration.days(1)).isGreaterThan(Duration.minutes(-1));
         assertThat(Duration.days(1)).isGreaterThan(Duration.hours(-1));
         assertThat(Duration.days(1)).isGreaterThan(Duration.days(-1));
+    }
+
+    @Test
+    public void serializesCorrectlyWithJackson() throws IOException {
+        final ObjectMapper mapper = new ObjectMapper();
+
+        assertThat(mapper.writeValueAsString(Duration.nanoseconds(0L))).isEqualTo("\"0 nanoseconds\"");
+        assertThat(mapper.writeValueAsString(Duration.nanoseconds(1L))).isEqualTo("\"1 nanosecond\"");
+        assertThat(mapper.writeValueAsString(Duration.nanoseconds(2L))).isEqualTo("\"2 nanoseconds\"");
+        assertThat(mapper.writeValueAsString(Duration.microseconds(0L))).isEqualTo("\"0 microseconds\"");
+        assertThat(mapper.writeValueAsString(Duration.microseconds(1L))).isEqualTo("\"1 microsecond\"");
+        assertThat(mapper.writeValueAsString(Duration.microseconds(2L))).isEqualTo("\"2 microseconds\"");
+        assertThat(mapper.writeValueAsString(Duration.milliseconds(0L))).isEqualTo("\"0 milliseconds\"");
+        assertThat(mapper.writeValueAsString(Duration.milliseconds(1L))).isEqualTo("\"1 millisecond\"");
+        assertThat(mapper.writeValueAsString(Duration.milliseconds(2L))).isEqualTo("\"2 milliseconds\"");
+        assertThat(mapper.writeValueAsString(Duration.seconds(0L))).isEqualTo("\"0 seconds\"");
+        assertThat(mapper.writeValueAsString(Duration.seconds(1L))).isEqualTo("\"1 second\"");
+        assertThat(mapper.writeValueAsString(Duration.seconds(2L))).isEqualTo("\"2 seconds\"");
+        assertThat(mapper.writeValueAsString(Duration.minutes(0L))).isEqualTo("\"0 minutes\"");
+        assertThat(mapper.writeValueAsString(Duration.minutes(1L))).isEqualTo("\"1 minute\"");
+        assertThat(mapper.writeValueAsString(Duration.minutes(2L))).isEqualTo("\"2 minutes\"");
+        assertThat(mapper.writeValueAsString(Duration.hours(0L))).isEqualTo("\"0 hours\"");
+        assertThat(mapper.writeValueAsString(Duration.hours(1L))).isEqualTo("\"1 hour\"");
+        assertThat(mapper.writeValueAsString(Duration.hours(2L))).isEqualTo("\"2 hours\"");
+        assertThat(mapper.writeValueAsString(Duration.days(0L))).isEqualTo("\"0 days\"");
+        assertThat(mapper.writeValueAsString(Duration.days(1L))).isEqualTo("\"1 day\"");
+        assertThat(mapper.writeValueAsString(Duration.days(2L))).isEqualTo("\"2 days\"");
+    }
+
+    @Test
+    public void deserializesCorrectlyWithJackson() throws IOException {
+        final ObjectMapper mapper = new ObjectMapper();
+
+        assertThat(mapper.readValue("\"0 nanoseconds\"", Duration.class)).isEqualTo(Duration.nanoseconds(0L));
+        assertThat(mapper.readValue("\"1 nanosecond\"", Duration.class)).isEqualTo(Duration.nanoseconds(1L));
+        assertThat(mapper.readValue("\"2 nanoseconds\"", Duration.class)).isEqualTo(Duration.nanoseconds(2L));
+        assertThat(mapper.readValue("\"0 microseconds\"", Duration.class)).isEqualTo(Duration.microseconds(0L));
+        assertThat(mapper.readValue("\"1 microsecond\"", Duration.class)).isEqualTo(Duration.microseconds(1L));
+        assertThat(mapper.readValue("\"2 microseconds\"", Duration.class)).isEqualTo(Duration.microseconds(2L));
+        assertThat(mapper.readValue("\"0 milliseconds\"", Duration.class)).isEqualTo(Duration.milliseconds(0L));
+        assertThat(mapper.readValue("\"1 millisecond\"", Duration.class)).isEqualTo(Duration.milliseconds(1L));
+        assertThat(mapper.readValue("\"2 milliseconds\"", Duration.class)).isEqualTo(Duration.milliseconds(2L));
+        assertThat(mapper.readValue("\"0 seconds\"", Duration.class)).isEqualTo(Duration.seconds(0L));
+        assertThat(mapper.readValue("\"1 second\"", Duration.class)).isEqualTo(Duration.seconds(1L));
+        assertThat(mapper.readValue("\"2 seconds\"", Duration.class)).isEqualTo(Duration.seconds(2L));
+        assertThat(mapper.readValue("\"0 minutes\"", Duration.class)).isEqualTo(Duration.minutes(0L));
+        assertThat(mapper.readValue("\"1 minutes\"", Duration.class)).isEqualTo(Duration.minutes(1L));
+        assertThat(mapper.readValue("\"2 minutes\"", Duration.class)).isEqualTo(Duration.minutes(2L));
+        assertThat(mapper.readValue("\"0 hours\"", Duration.class)).isEqualTo(Duration.hours(0L));
+        assertThat(mapper.readValue("\"1 hours\"", Duration.class)).isEqualTo(Duration.hours(1L));
+        assertThat(mapper.readValue("\"2 hours\"", Duration.class)).isEqualTo(Duration.hours(2L));
+        assertThat(mapper.readValue("\"0 days\"", Duration.class)).isEqualTo(Duration.days(0L));
+        assertThat(mapper.readValue("\"1 day\"", Duration.class)).isEqualTo(Duration.days(1L));
+        assertThat(mapper.readValue("\"2 days\"", Duration.class)).isEqualTo(Duration.days(2L));
     }
 }
