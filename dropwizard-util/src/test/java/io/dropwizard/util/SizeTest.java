@@ -1,6 +1,9 @@
 package io.dropwizard.util;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
+
+import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -486,5 +489,47 @@ public class SizeTest {
         assertThat(Size.terabytes(1)).isGreaterThan(Size.megabytes(-1));
         assertThat(Size.terabytes(1)).isGreaterThan(Size.gigabytes(-1));
         assertThat(Size.terabytes(1)).isGreaterThan(Size.terabytes(-1));
+    }
+
+    @Test
+    public void serializesCorrectlyWithJackson() throws IOException {
+        final ObjectMapper mapper = new ObjectMapper();
+
+        assertThat(mapper.writeValueAsString(Size.bytes(0L))).isEqualTo("\"0 bytes\"");
+        assertThat(mapper.writeValueAsString(Size.bytes(1L))).isEqualTo("\"1 byte\"");
+        assertThat(mapper.writeValueAsString(Size.bytes(2L))).isEqualTo("\"2 bytes\"");
+        assertThat(mapper.writeValueAsString(Size.kilobytes(0L))).isEqualTo("\"0 kilobytes\"");
+        assertThat(mapper.writeValueAsString(Size.kilobytes(1L))).isEqualTo("\"1 kilobyte\"");
+        assertThat(mapper.writeValueAsString(Size.kilobytes(2L))).isEqualTo("\"2 kilobytes\"");
+        assertThat(mapper.writeValueAsString(Size.megabytes(0L))).isEqualTo("\"0 megabytes\"");
+        assertThat(mapper.writeValueAsString(Size.megabytes(1L))).isEqualTo("\"1 megabyte\"");
+        assertThat(mapper.writeValueAsString(Size.megabytes(2L))).isEqualTo("\"2 megabytes\"");
+        assertThat(mapper.writeValueAsString(Size.gigabytes(0L))).isEqualTo("\"0 gigabytes\"");
+        assertThat(mapper.writeValueAsString(Size.gigabytes(1L))).isEqualTo("\"1 gigabyte\"");
+        assertThat(mapper.writeValueAsString(Size.gigabytes(2L))).isEqualTo("\"2 gigabytes\"");
+        assertThat(mapper.writeValueAsString(Size.terabytes(0L))).isEqualTo("\"0 terabytes\"");
+        assertThat(mapper.writeValueAsString(Size.terabytes(1L))).isEqualTo("\"1 terabyte\"");
+        assertThat(mapper.writeValueAsString(Size.terabytes(2L))).isEqualTo("\"2 terabytes\"");
+    }
+
+    @Test
+    public void deserializesCorrectlyWithJackson() throws IOException {
+        final ObjectMapper mapper = new ObjectMapper();
+
+        assertThat(mapper.readValue("\"0 bytes\"", Size.class)).isEqualTo(Size.bytes(0L));
+        assertThat(mapper.readValue("\"1 byte\"", Size.class)).isEqualTo(Size.bytes(1L));
+        assertThat(mapper.readValue("\"2 bytes\"", Size.class)).isEqualTo(Size.bytes(2L));
+        assertThat(mapper.readValue("\"0 kilobytes\"", Size.class)).isEqualTo(Size.kilobytes(0L));
+        assertThat(mapper.readValue("\"1 kilobyte\"", Size.class)).isEqualTo(Size.kilobytes(1L));
+        assertThat(mapper.readValue("\"2 kilobytes\"", Size.class)).isEqualTo(Size.kilobytes(2L));
+        assertThat(mapper.readValue("\"0 megabytes\"", Size.class)).isEqualTo(Size.megabytes(0L));
+        assertThat(mapper.readValue("\"1 megabyte\"", Size.class)).isEqualTo(Size.megabytes(1L));
+        assertThat(mapper.readValue("\"2 megabytes\"", Size.class)).isEqualTo(Size.megabytes(2L));
+        assertThat(mapper.readValue("\"0 gigabytes\"", Size.class)).isEqualTo(Size.gigabytes(0L));
+        assertThat(mapper.readValue("\"1 gigabyte\"", Size.class)).isEqualTo(Size.gigabytes(1L));
+        assertThat(mapper.readValue("\"2 gigabytes\"", Size.class)).isEqualTo(Size.gigabytes(2L));
+        assertThat(mapper.readValue("\"0 terabytes\"", Size.class)).isEqualTo(Size.terabytes(0L));
+        assertThat(mapper.readValue("\"1 terabytes\"", Size.class)).isEqualTo(Size.terabytes(1L));
+        assertThat(mapper.readValue("\"2 terabytes\"", Size.class)).isEqualTo(Size.terabytes(2L));
     }
 }

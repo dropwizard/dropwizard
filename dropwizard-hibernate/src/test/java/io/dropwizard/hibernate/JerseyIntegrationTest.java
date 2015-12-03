@@ -127,8 +127,7 @@ public class JerseyIntegrationTest extends JerseyTest {
         final DropwizardResourceConfig config = DropwizardResourceConfig.forTesting(new MetricRegistry());
         config.register(new UnitOfWorkApplicationListener("hr-db", sessionFactory));
         config.register(new PersonResource(new PersonDAO(sessionFactory)));
-        config.register(new JacksonMessageBodyProvider(Jackson.newObjectMapper(),
-                                                       Validators.newValidator()));
+        config.register(new JacksonMessageBodyProvider(Jackson.newObjectMapper()));
         config.register(new DataExceptionMapper());
 
         return config;
@@ -136,8 +135,7 @@ public class JerseyIntegrationTest extends JerseyTest {
 
     @Override
     protected void configureClient(ClientConfig config) {
-        config.register(new JacksonMessageBodyProvider(Jackson.newObjectMapper(),
-                Validators.newValidator()));
+        config.register(new JacksonMessageBodyProvider(Jackson.newObjectMapper()));
     }
 
     @Test

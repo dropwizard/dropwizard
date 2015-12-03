@@ -54,7 +54,7 @@ shutdownGracePeriod                 30 seconds                                  
                                                                                      to cleanly shutdown before forcibly terminating them.
 allowedMethods                      ``GET``, ``POST``, ``PUT``, ``DELETE``,          The set of allowed HTTP methods. Others will be rejected with a
                                     ``HEAD``, ``OPTIONS``, ``PATCH``                 405 Method Not Allowed response.
-rootPath                            ``/*``                                            The URL pattern relative to ``applicationContextPath`` from which
+rootPath                            ``/*``                                           The URL pattern relative to ``applicationContextPath`` from which
                                                                                      the JAX-RS resources will be served.
 registerDefaultExceptionMappers     true                                             Whether or not the default Jersey ExceptionMappers should be registered.
                                                                                      Set this to false if you want to register your own.
@@ -84,8 +84,6 @@ GZip
 +---------------------------+---------------------+------------------------------------------------------------------------------------------------------+
 | bufferSize                | 8KiB                | The size of the buffer to use when compressing.                                                      |
 +---------------------------+---------------------+------------------------------------------------------------------------------------------------------+
-| excludedUserAgents        | []                  | The set of user agents to exclude from compression.                                                  |
-+---------------------------+---------------------+------------------------------------------------------------------------------------------------------+
 | excludedUserAgentPatterns | []                  | The set of user agent patterns to exclude from compression.                                          |
 +---------------------------+---------------------+------------------------------------------------------------------------------------------------------+
 | compressedMimeTypes       | Jetty's default     | The list of mime types to compress. The default is all types apart                                   |
@@ -95,11 +93,7 @@ GZip
 +---------------------------+---------------------+------------------------------------------------------------------------------------------------------+
 | deflateCompressionLevel   | -1                  | The compression level used for ZLIB deflation(compression).                                          |
 +---------------------------+---------------------+------------------------------------------------------------------------------------------------------+
-| gzipCompatibleDeflation   | true                | If true, then ZLIB deflation(compression) will be performed in the GZIP-compatible mode.             |
-+---------------------------+---------------------+------------------------------------------------------------------------------------------------------+
 | gzipCompatibleInflation   | true                | If true, then ZLIB inflation(decompression) will be performed in the GZIP-compatible mode.           |
-+---------------------------+---------------------+------------------------------------------------------------------------------------------------------+
-| vary                      | ``Accept-Encoding`` | Value of the `Vary` header sent with responses that could be compressed.                             |
 +---------------------------+---------------------+------------------------------------------------------------------------------------------------------+
 
 
@@ -369,38 +363,6 @@ endpointIdentificationAlgorithm  (none)              Which endpoint identificati
 
 .. _sslyze: https://github.com/iSECPartners/sslyze
 
-.. _man-configuration-spdy:
-
-SPDY
-----
-
-Extends the attributes that are available to the :ref:`HTTPS connector <man-configuration-https>`
-
-For this connector to work with ALPN protocol you need to provide alpn-boot library to JVM's bootpath.
-The correct library version depends on the JVM version. Consult Jetty ALPN guide__ for the reference.
-
-.. __: http://www.eclipse.org/jetty/documentation/current/alpn-chapter.html
-
-.. code-block:: yaml
-
-    server:
-      applicationConnectors:
-        - type: spdy3
-          port: 8445
-          keyStorePath: example.keystore
-          keyStorePassword: example
-          validateCerts: false
-
-
-====================== ===========  ===========
-Name                   Default      Description
-====================== ===========  ===========
-pushStrategy           (none)       The `push strategy`_ to use for server-initiated SPDY pushes.
-====================== ===========  ===========
-
-.. _`push strategy`: https://github.com/dropwizard/dropwizard/blob/master/dropwizard-spdy/src/main/java/io/dropwizard/spdy/PushStrategyFactory.java
-
-
 .. _man-configuration-logging:
 
 Logging
@@ -600,8 +562,8 @@ The inclusion and exclusion rules are defined as:
 * If **includes** is empty, then all metrics are included;
 * If **includes** is not empty, only metrics from this list are included;
 * If **excludes** is empty, no metrics are excluded;
-* If **excludes** is not empty, then exclusion rules take precedence over inclusion rules. Thus if a name matches
-the exclusion rules it will not be included in reports even if it also matches the inclusion rules.
+* If **excludes** is not empty, then exclusion rules take precedence over inclusion rules. Thus if a name matches the exclusion rules it will not be included in reports even if it also matches the inclusion rules.
+
 
 .. _man-configuration-metrics-formatted:
 
@@ -1073,7 +1035,7 @@ validatorClassName              none                     Name of a class of a cu
 .. _man-configuration-polymorphic:
 
 Polymorphic configuration
-========
+=========================
 
 .. rubric:: The ``dropwizard-configuration`` module provides you with a polymorphic configuration
             mechanism, meaning that a particular section of your configuration file can be implemented

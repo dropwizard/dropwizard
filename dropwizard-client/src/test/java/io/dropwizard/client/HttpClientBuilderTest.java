@@ -513,6 +513,24 @@ public class HttpClientBuilderTest {
         assertThat(spyHttpClientBuilderField("redirectStrategy", apacheBuilder)).isSameAs(neverFollowRedirectStrategy);
     }
 
+    @Test
+    public void usesDefaultHeaders() throws Exception {
+        final ConfiguredCloseableHttpClient client =
+                builder.using(ImmutableList.of(new BasicHeader(HttpHeaders.ACCEPT_LANGUAGE, "de")))
+                        .createClient(apacheBuilder, connectionManager, "test");
+        assertThat(client).isNotNull();
+
+        @SuppressWarnings("unchecked")
+        List<? extends Header> defaultHeaders = (List<? extends Header>) FieldUtils
+                .getField(httpClientBuilderClass, "defaultHeaders", true)
+                .get(apacheBuilder);
+
+        assertThat(defaultHeaders).hasSize(1);
+        final Header header = defaultHeaders.get(0);
+        assertThat(header.getName()).isEqualTo(HttpHeaders.ACCEPT_LANGUAGE);
+        assertThat(header.getValue()).isEqualTo("de");
+    }
+
     private Object spyHttpClientBuilderField(final String fieldName, final Object obj) throws Exception {
         final Field field = FieldUtils.getField(httpClientBuilderClass, fieldName, true);
         return field.get(obj);

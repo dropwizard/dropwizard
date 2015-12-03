@@ -46,7 +46,6 @@
         <module>dropwizard-servlets</module>
         <module>dropwizard-lifecycle</module>
         <module>dropwizard-assets</module>
-        <module>dropwizard-spdy</module>
         <module>dropwizard-archetypes</module>
         <module>dropwizard-benchmarks</module>
     </modules>
@@ -271,6 +270,13 @@
                 <javadoc.doclint.none>-Xdoclint:none</javadoc.doclint.none>
             </properties>
         </profile>
+        <profile>
+            <id>dev</id>
+            <properties>
+                <maven.javadoc.skip>true</maven.javadoc.skip>
+                <findbugs.skip>true</findbugs.skip>
+            </properties>
+        </profile>
     </profiles>
 
     <dependencyManagement>
@@ -411,9 +417,9 @@
                     <version>2.8.1</version>
                 </plugin>
                 <plugin>
-                    <groupId>org.tomdz.maven</groupId>
+                    <groupId>kr.motd.maven</groupId>
                     <artifactId>sphinx-maven-plugin</artifactId>
-                    <version>1.0.3</version>
+                    <version>1.1.0.Final</version>
                 </plugin>
             </plugins>
         </pluginManagement>

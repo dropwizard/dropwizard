@@ -1,14 +1,15 @@
 package io.dropwizard.jetty;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 import io.dropwizard.util.Size;
+import org.eclipse.jetty.server.Handler;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.Set;
-import java.util.regex.Pattern;
 import java.util.zip.Deflater;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -42,11 +43,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
  *         <td>The size of the buffer to use when compressing.</td>
  *     </tr>
  *     <tr>
- *         <td>{@code excludedUserAgents}</td>
- *         <td>(none)</td>
- *         <td>The set of user agents to exclude from compression. </td>
- *     </tr>
- *     <tr>
  *         <td>{@code excludedUserAgentPatterns}</td>
  *         <td>(none)</td>
  *         <td>The set of user agent patterns to exclude from compression. </td>
@@ -69,23 +65,14 @@ import static com.google.common.base.Preconditions.checkNotNull;
  *         <td>The compression level used for ZLIB deflation(compression).</td>
  *     </tr>
  *     <tr>
- *         <td>{@code gzipCompatibleDeflation}</td>
- *         <td>true</td>
- *         <td>If true, then ZLIB deflation(compression) will be performed in the GZIP-compatible mode.</td>
- *     </tr>
- *     <tr>
  *         <td>{@code gzipCompatibleInflation}</td>
  *         <td>true</td>
  *         <td>If true, then ZLIB inflation(decompression) will be performed in the GZIP-compatible mode.</td>
  *     </tr>
- *     <tr>
- *         <td>{@code vary}</td>
- *         <td>Accept-Encoding</td>
- *         <td>Value of the `Vary` header sent with responses that could be compressed.</td>
- *     </tr>
  * </table>
  */
-public class GzipFilterFactory {
+public class GzipHandlerFactory {
+
     private boolean enabled = true;
 
     @NotNull
@@ -94,17 +81,16 @@ public class GzipFilterFactory {
     @NotNull
     private Size bufferSize = Size.kilobytes(8);
 
-    private Set<String> excludedUserAgents = Sets.newHashSet();
-    private Set<Pattern> excludedUserAgentPatterns = Sets.newHashSet();
-    private Set<String> compressedMimeTypes = Sets.newHashSet();
-    private Set<String> includedMethods = Sets.newHashSet();
-    private boolean gzipCompatibleDeflation = true;
-    private boolean gzipCompatibleInflation = true;
-    private String vary = "Accept-Encoding";
+    // By default compress responses for all user-agents
+    private Set<String> excludedUserAgentPatterns = Sets.newHashSet();
+    private Set<String> compressedMimeTypes;
+    private Set<String> includedMethods;
 
     @Min(Deflater.DEFAULT_COMPRESSION)
     @Max(Deflater.BEST_COMPRESSION)
     private int deflateCompressionLevel = Deflater.DEFAULT_COMPRESSION;
+
+    private boolean gzipCompatibleInflation = true;
 
     @JsonProperty
     public boolean isEnabled() {
@@ -137,16 +123,6 @@ public class GzipFilterFactory {
     }
 
     @JsonProperty
-    public Set<String> getExcludedUserAgents() {
-        return excludedUserAgents;
-    }
-
-    @JsonProperty
-    public void setExcludedUserAgents(Set<String> userAgents) {
-        this.excludedUserAgents = userAgents;
-    }
-
-    @JsonProperty
     public Set<String> getCompressedMimeTypes() {
         return compressedMimeTypes;
     }
@@ -167,16 +143,6 @@ public class GzipFilterFactory {
     }
 
     @JsonProperty
-    public boolean isGzipCompatibleDeflation() {
-        return gzipCompatibleDeflation;
-    }
-
-    @JsonProperty
-    public void setGzipCompatibleDeflation(boolean compatible) {
-        this.gzipCompatibleDeflation = compatible;
-    }
-
-    @JsonProperty
     public boolean isGzipCompatibleInflation() {
         return gzipCompatibleInflation;
     }
@@ -186,14 +152,12 @@ public class GzipFilterFactory {
         this.gzipCompatibleInflation = gzipCompatibleInflation;
     }
 
-    @JsonProperty
-    public Set<Pattern> getExcludedUserAgentPatterns() {
+    public Set<String> getExcludedUserAgentPatterns() {
         return excludedUserAgentPatterns;
     }
 
-    @JsonProperty
-    public void setExcludedUserAgentPatterns(Set<Pattern> patterns) {
-        this.excludedUserAgentPatterns = patterns;
+    public void setExcludedUserAgentPatterns(Set<String> excludedUserAgentPatterns) {
+        this.excludedUserAgentPatterns = excludedUserAgentPatterns;
     }
 
     @JsonProperty
@@ -206,47 +170,24 @@ public class GzipFilterFactory {
         this.includedMethods = methods;
     }
 
-    @JsonProperty
-    public String getVary() {
-        return vary;
-    }
-
-    @JsonProperty
-    public void setVary(String vary) {
-        this.vary = vary;
-    }
-
-    public BiDiGzipFilter build() {
-        final BiDiGzipFilter filter = new BiDiGzipFilter();
-        filter.setMinGzipSize((int) minimumEntitySize.toBytes());
-
-        filter.setBufferSize((int) bufferSize.toBytes());
-
-        filter.setDeflateCompressionLevel(deflateCompressionLevel);
-
-        if (excludedUserAgents != null) {
-            filter.setExcludedAgents(excludedUserAgents);
-        }
+    public BiDiGzipHandler build(Handler handler) {
+        final BiDiGzipHandler gzipHandler = new BiDiGzipHandler();
+        gzipHandler.setHandler(handler);
+        gzipHandler.setMinGzipSize((int) minimumEntitySize.toBytes());
+        gzipHandler.setInputBufferSize((int) bufferSize.toBytes());
+        gzipHandler.setCompressionLevel(deflateCompressionLevel);
 
         if (compressedMimeTypes != null) {
-            filter.setMimeTypes(compressedMimeTypes);
+            gzipHandler.setIncludedMimeTypes(Iterables.toArray(compressedMimeTypes, String.class));
         }
 
         if (includedMethods != null) {
-            filter.setMethods(includedMethods);
+            gzipHandler.setIncludedMethods(Iterables.toArray(includedMethods, String.class));
         }
 
-        if (excludedUserAgentPatterns != null) {
-            filter.setExcludedAgentPatterns(excludedUserAgentPatterns);
-        }
+        gzipHandler.setExcludedAgentPatterns(Iterables.toArray(excludedUserAgentPatterns, String.class));
+        gzipHandler.setInflateNoWrap(gzipCompatibleInflation);
 
-        if (vary != null) {
-            filter.setVary(vary);
-        }
-
-        filter.setDeflateNoWrap(gzipCompatibleDeflation);
-        filter.setInflateNoWrap(gzipCompatibleInflation);
-
-        return filter;
+        return gzipHandler;
     }
 }

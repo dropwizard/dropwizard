@@ -36,7 +36,7 @@ public class JsonProcessingExceptionMapperTest extends JerseyTest {
     protected void configureClient(ClientConfig config) {
         final Validator validator = Validators.newValidator();
         final ObjectMapper mapper = new ObjectMapper();
-        final JacksonMessageBodyProvider provider = new JacksonMessageBodyProvider(mapper, validator);
+        final JacksonMessageBodyProvider provider = new JacksonMessageBodyProvider(mapper);
         config.register(provider);
     }
 
@@ -44,6 +44,12 @@ public class JsonProcessingExceptionMapperTest extends JerseyTest {
     public void returnsA500ForNonDeserializableRepresentationClasses() throws Exception {
         Response response = target("/json/broken").request(MediaType.APPLICATION_JSON)
                 .post(Entity.entity(new BrokenRepresentation(ImmutableList.of("whee")), MediaType.APPLICATION_JSON));
+        assertThat(response.getStatus()).isEqualTo(500);
+    }
+
+    @Test
+    public void returnsA500ForNonSerializableRepresentationClassesOutbound() throws Exception {
+        Response response = target("/json/brokenOutbound").request(MediaType.APPLICATION_JSON).get();
         assertThat(response.getStatus()).isEqualTo(500);
     }
 

@@ -29,6 +29,9 @@ public class FuzzyEnumModuleTest {
 
     private enum CurrencyCode {
         USD("United States dollar"),
+        AUD("a_u_d"),
+        CAD("c-a-d"),
+        BLA("b.l.a"),
         EUR("Euro"),
         GBP("Pound sterling");
 
@@ -120,4 +123,12 @@ public class FuzzyEnumModuleTest {
                 .configure(DeserializationFeature.READ_ENUMS_USING_TO_STRING, true);
         assertThat(toStringEnumsMapper.readValue("\"Pound sterling\"", CurrencyCode.class)).isEqualTo(CurrencyCode.GBP);
     }
+    
+    @Test
+    public void readsEnumsUsingToStringWithDeserializationFeatureOff() throws Exception {
+        assertThat(mapper.readValue("\"Pound sterling\"", CurrencyCode.class)).isEqualTo(CurrencyCode.GBP);
+        assertThat(mapper.readValue("\"a_u_d\"", CurrencyCode.class)).isEqualTo(CurrencyCode.AUD);
+        assertThat(mapper.readValue("\"c-a-d\"", CurrencyCode.class)).isEqualTo(CurrencyCode.CAD);
+        assertThat(mapper.readValue("\"b.l.a\"", CurrencyCode.class)).isEqualTo(CurrencyCode.BLA);
+    }    
 }
