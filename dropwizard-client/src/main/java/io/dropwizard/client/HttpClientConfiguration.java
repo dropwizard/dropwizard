@@ -16,7 +16,7 @@ import javax.validation.constraints.NotNull;
 /**
  * The configuration class used by {@link HttpClientBuilder}.
  *
- * @see <a href="http://dropwizard.io/manual/configuration.html#httpclient">Http Client Configuration</a>
+ * @see <a href="http://dropwizard.io/${project.version}/docs/manual/configuration.html#httpclient">Http Client Configuration</a>
  */
 public class HttpClientConfiguration {
     @NotNull
