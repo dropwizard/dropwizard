@@ -10,7 +10,7 @@ import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 
 /**
- * @{link MustacheResolver} implementation that resolves mustache
+ * {@link MustacheResolver} implementation that resolves mustache
  * files from the classpath relatively from a provided class.
  */
 class PerClassMustacheResolver implements MustacheResolver {
