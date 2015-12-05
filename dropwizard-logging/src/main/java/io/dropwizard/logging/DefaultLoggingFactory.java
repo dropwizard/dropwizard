@@ -19,7 +19,12 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import io.dropwizard.jackson.Jackson;
 
-import javax.management.*;
+import javax.management.InstanceAlreadyExistsException;
+import javax.management.MBeanRegistrationException;
+import javax.management.MBeanServer;
+import javax.management.MalformedObjectNameException;
+import javax.management.NotCompliantMBeanException;
+import javax.management.ObjectName;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.io.PrintStream;
@@ -28,7 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.Objects.requireNonNull;
 
 @JsonTypeName("default")
 public class DefaultLoggingFactory implements LoggingFactory {
@@ -59,8 +64,8 @@ public class DefaultLoggingFactory implements LoggingFactory {
 
     @VisibleForTesting
     DefaultLoggingFactory(LoggerContext loggerContext, PrintStream configurationErrorsStream) {
-        this.loggerContext = checkNotNull(loggerContext);
-        this.configurationErrorsStream = checkNotNull(configurationErrorsStream);
+        this.loggerContext = requireNonNull(loggerContext);
+        this.configurationErrorsStream = requireNonNull(configurationErrorsStream);
     }
 
     @VisibleForTesting

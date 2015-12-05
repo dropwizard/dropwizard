@@ -12,7 +12,7 @@ import javax.validation.constraints.NotNull;
 import java.util.Set;
 import java.util.zip.Deflater;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.Objects.requireNonNull;
 
 /**
  * Builds GZIP filters.
@@ -109,7 +109,7 @@ public class GzipHandlerFactory {
 
     @JsonProperty
     public void setMinimumEntitySize(Size size) {
-        this.minimumEntitySize = checkNotNull(size);
+        this.minimumEntitySize = requireNonNull(size);
     }
 
     @JsonProperty
@@ -119,7 +119,7 @@ public class GzipHandlerFactory {
 
     @JsonProperty
     public void setBufferSize(Size size) {
-        this.bufferSize = checkNotNull(size);
+        this.bufferSize = requireNonNull(size);
     }
 
     @JsonProperty

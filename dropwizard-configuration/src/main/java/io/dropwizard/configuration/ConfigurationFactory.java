@@ -30,7 +30,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.Objects.requireNonNull;
 
 /**
  * A factory class for loading YAML configuration files, binding them to configuration objects, and
@@ -83,7 +83,7 @@ public class ConfigurationFactory<T> {
      * @throws ConfigurationException if there is an error parsing or validating the file
      */
     public T build(ConfigurationSourceProvider provider, String path) throws IOException, ConfigurationException {
-        try (InputStream input = provider.open(checkNotNull(path))) {
+        try (InputStream input = provider.open(requireNonNull(path))) {
             final JsonNode node = mapper.readTree(yamlFactory.createParser(input));
 
             if (node == null) {

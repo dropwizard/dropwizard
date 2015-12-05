@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.Objects.requireNonNull;
 
 /**
  * A delegating {@link ConfigurationSourceProvider} which replaces variables in the underlying configuration
@@ -25,8 +25,8 @@ public class SubstitutingSourceProvider implements ConfigurationSourceProvider {
      * @param substitutor The custom {@link org.apache.commons.lang3.text.StrSubstitutor} implementation.
      */
     public SubstitutingSourceProvider(ConfigurationSourceProvider delegate, StrSubstitutor substitutor) {
-        this.delegate = checkNotNull(delegate);
-        this.substitutor = checkNotNull(substitutor);
+        this.delegate = requireNonNull(delegate);
+        this.substitutor = requireNonNull(substitutor);
     }
 
     /**

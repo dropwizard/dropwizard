@@ -4,7 +4,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.Objects.requireNonNull;
 
 /**
  * Helper methods for class type parameters.
@@ -33,7 +33,7 @@ public class Generics {
      */
     @SuppressWarnings("unchecked")
     public static <T> Class<T> getTypeParameter(Class<?> klass, Class<? super T> bound) {
-        Type t = checkNotNull(klass);
+        Type t = requireNonNull(klass);
         while (t instanceof Class<?>) {
             t = ((Class<?>) t).getGenericSuperclass();
         }

@@ -4,7 +4,7 @@ import com.google.common.base.MoreObjects;
 
 import java.util.Objects;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.Objects.requireNonNull;
 
 /**
  * A set of user-provided Basic Authentication credentials, consisting of a username and a
@@ -21,8 +21,8 @@ public class BasicCredentials {
      * @param password the password
      */
     public BasicCredentials(String username, String password) {
-        this.username = checkNotNull(username);
-        this.password = checkNotNull(password);
+        this.username = requireNonNull(username);
+        this.password = requireNonNull(password);
     }
 
     /**

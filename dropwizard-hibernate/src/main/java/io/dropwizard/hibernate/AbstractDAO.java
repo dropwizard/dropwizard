@@ -1,12 +1,17 @@
 package io.dropwizard.hibernate;
 
 import io.dropwizard.util.Generics;
-import org.hibernate.*;
+import org.hibernate.Criteria;
+import org.hibernate.Hibernate;
+import org.hibernate.HibernateException;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 
 import java.io.Serializable;
 import java.util.List;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.Objects.requireNonNull;
 
 /**
  * An abstract base class for Hibernate DAO classes.
@@ -23,7 +28,7 @@ public class AbstractDAO<E> {
      * @param sessionFactory    a session provider
      */
     public AbstractDAO(SessionFactory sessionFactory) {
-        this.sessionFactory = checkNotNull(sessionFactory);
+        this.sessionFactory = requireNonNull(sessionFactory);
         this.entityClass = Generics.getTypeParameter(getClass());
     }
 
@@ -54,7 +59,7 @@ public class AbstractDAO<E> {
      * @see Session#getNamedQuery(String)
      */
     protected Query namedQuery(String queryName) throws HibernateException {
-        return currentSession().getNamedQuery(checkNotNull(queryName));
+        return currentSession().getNamedQuery(requireNonNull(queryName));
     }
 
     /**
@@ -78,7 +83,7 @@ public class AbstractDAO<E> {
      */
     @SuppressWarnings("unchecked")
     protected E uniqueResult(Criteria criteria) throws HibernateException {
-        return (E) checkNotNull(criteria).uniqueResult();
+        return (E) requireNonNull(criteria).uniqueResult();
     }
 
     /**
@@ -92,7 +97,7 @@ public class AbstractDAO<E> {
      */
     @SuppressWarnings("unchecked")
     protected E uniqueResult(Query query) throws HibernateException {
-        return (E) checkNotNull(query).uniqueResult();
+        return (E) requireNonNull(query).uniqueResult();
     }
 
     /**
@@ -104,7 +109,7 @@ public class AbstractDAO<E> {
      */
     @SuppressWarnings("unchecked")
     protected List<E> list(Criteria criteria) throws HibernateException {
-        return checkNotNull(criteria).list();
+        return requireNonNull(criteria).list();
     }
 
     /**
@@ -116,7 +121,7 @@ public class AbstractDAO<E> {
      */
     @SuppressWarnings("unchecked")
     protected List<E> list(Query query) throws HibernateException {
-        return checkNotNull(query).list();
+        return requireNonNull(query).list();
     }
 
     /**
@@ -131,7 +136,7 @@ public class AbstractDAO<E> {
      */
     @SuppressWarnings("unchecked")
     protected E get(Serializable id) {
-        return (E) currentSession().get(entityClass, checkNotNull(id));
+        return (E) currentSession().get(entityClass, requireNonNull(id));
     }
 
     /**
@@ -146,7 +151,7 @@ public class AbstractDAO<E> {
      * @see Session#saveOrUpdate(Object)
      */
     protected E persist(E entity) throws HibernateException {
-        currentSession().saveOrUpdate(checkNotNull(entity));
+        currentSession().saveOrUpdate(requireNonNull(entity));
         return entity;
     }
 

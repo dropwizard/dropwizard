@@ -10,7 +10,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.Objects.requireNonNull;
 
 public class Size implements Comparable<Size> {
     private static final Pattern SIZE_PATTERN = Pattern.compile("(\\d+)\\s*(\\S+)");
@@ -76,7 +76,7 @@ public class Size implements Comparable<Size> {
 
     private Size(long count, SizeUnit unit) {
         this.count = count;
-        this.unit = checkNotNull(unit);
+        this.unit = requireNonNull(unit);
     }
 
     public long getQuantity() {

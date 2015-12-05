@@ -16,7 +16,7 @@ import javax.validation.groups.Default;
 import javax.validation.metadata.BeanDescriptor;
 import java.util.Set;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.Objects.requireNonNull;
 
 public class DropwizardConfiguredValidator implements ConfiguredValidator {
     private static final Logger LOGGER = LoggerFactory.getLogger(DropwizardConfiguredValidator.class);
@@ -24,7 +24,7 @@ public class DropwizardConfiguredValidator implements ConfiguredValidator {
     private final Validator validator;
 
     public DropwizardConfiguredValidator(Validator validator) {
-        this.validator = checkNotNull(validator);
+        this.validator = requireNonNull(validator);
     }
 
     @Override
