@@ -8,10 +8,10 @@ import io.dropwizard.Application;
 import io.dropwizard.Configuration;
 import io.dropwizard.configuration.DefaultConfigurationFactoryFactory;
 import io.dropwizard.configuration.FileConfigurationSourceProvider;
-
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.validation.NonEmptyStringParamUnwrapper;
 import io.dropwizard.jersey.validation.ParamValidatorUnwrapper;
+import io.dropwizard.validation.valuehandling.GuavaOptionalValidatedValueUnwrapper;
 import io.dropwizard.validation.valuehandling.OptionalValidatedValueUnwrapper;
 import org.hibernate.validator.HibernateValidator;
 import org.hibernate.validator.internal.engine.ValidatorFactoryImpl;
@@ -103,7 +103,8 @@ public class BootstrapTest {
         // https://hibernate.atlassian.net/browse/HV-904
         assertThat(validatorFactory.getValidatedValueHandlers())
                 .extractingResultOf("getClass")
-                .containsSubsequence(OptionalValidatedValueUnwrapper.class,
+                .containsSubsequence(GuavaOptionalValidatedValueUnwrapper.class,
+                                     OptionalValidatedValueUnwrapper.class,
                                      NonEmptyStringParamUnwrapper.class,
                                      ParamValidatorUnwrapper.class);
     }

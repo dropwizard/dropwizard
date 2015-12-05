@@ -3,7 +3,6 @@ package io.dropwizard.auth;
 import com.codahale.metrics.Meter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
-import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
@@ -11,6 +10,8 @@ import com.google.common.cache.CacheBuilderSpec;
 import com.google.common.cache.CacheStats;
 import com.google.common.collect.Sets;
 import java.security.Principal;
+import java.util.Optional;
+
 import static com.codahale.metrics.MetricRegistry.name;
 
 /**

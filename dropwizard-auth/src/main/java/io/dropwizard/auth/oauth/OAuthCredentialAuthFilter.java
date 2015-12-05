@@ -1,6 +1,5 @@
 package io.dropwizard.auth.oauth;
 
-import com.google.common.base.Optional;
 import io.dropwizard.auth.AuthenticationException;
 import io.dropwizard.auth.AuthFilter;
 import io.dropwizard.auth.Authenticator;
@@ -16,6 +15,7 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.SecurityContext;
 import java.io.IOException;
 import java.security.Principal;
+import java.util.Optional;
 
 @Priority(Priorities.AUTHENTICATION)
 public class OAuthCredentialAuthFilter<P extends Principal> extends AuthFilter<String, P> {

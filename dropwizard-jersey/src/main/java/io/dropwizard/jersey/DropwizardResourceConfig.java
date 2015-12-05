@@ -8,8 +8,6 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Sets;
 import io.dropwizard.jersey.caching.CacheControlledResponseFeature;
-import io.dropwizard.jersey.guava.OptionalMessageBodyWriter;
-import io.dropwizard.jersey.guava.OptionalParamFeature;
 import io.dropwizard.jersey.params.NonEmptyStringParamFeature;
 import io.dropwizard.jersey.sessions.SessionFactoryProvider;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -60,8 +58,10 @@ public class DropwizardResourceConfig extends ResourceConfig {
 
         register(new InstrumentedResourceMethodApplicationListener(metricRegistry));
         register(CacheControlledResponseFeature.class);
-        register(OptionalMessageBodyWriter.class);
-        register(OptionalParamFeature.class);
+        register(io.dropwizard.jersey.guava.OptionalMessageBodyWriter.class);
+        register(io.dropwizard.jersey.guava.OptionalParamFeature.class);
+        register(io.dropwizard.jersey.optional.OptionalMessageBodyWriter.class);
+        register(io.dropwizard.jersey.optional.OptionalParamFeature.class);
         register(NonEmptyStringParamFeature.class);
         register(new SessionFactoryProvider.Binder());
     }

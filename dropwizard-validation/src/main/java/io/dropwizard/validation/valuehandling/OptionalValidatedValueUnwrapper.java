@@ -2,14 +2,14 @@ package io.dropwizard.validation.valuehandling;
 
 import com.fasterxml.classmate.ResolvedType;
 import com.fasterxml.classmate.TypeResolver;
-import com.google.common.base.Optional;
 import org.hibernate.validator.spi.valuehandling.ValidatedValueUnwrapper;
 
 import java.lang.reflect.Type;
+import java.util.Optional;
 
 /**
- * A {@link ValidatedValueUnwrapper} for Guava's {@link Optional}.
- * <p/>
+ * A {@link ValidatedValueUnwrapper} for {@link Optional}.
+ *
  * Extracts the value contained by the {@link Optional} for validation, or produces {@code null}.
  */
 public class OptionalValidatedValueUnwrapper extends ValidatedValueUnwrapper<Optional<?>> {
@@ -18,7 +18,7 @@ public class OptionalValidatedValueUnwrapper extends ValidatedValueUnwrapper<Opt
 
     @Override
     public Object handleValidatedValue(final Optional<?> optional) {
-        return optional.orNull();
+        return optional.orElse(null);
     }
 
     @Override

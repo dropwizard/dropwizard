@@ -1,6 +1,5 @@
 package io.dropwizard.jdbi.args;
 
-import com.google.common.base.Optional;
 import org.joda.time.DateTime;
 import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.tweak.Argument;
@@ -10,6 +9,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.Calendar;
+import java.util.Optional;
 
 /**
  * An {@link Argument} for Joda {@link DateTime} objects.

@@ -1,14 +1,11 @@
 package io.dropwizard.jdbi.timestamps;
 
 import com.codahale.metrics.MetricRegistry;
-import com.google.common.base.Optional;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jdbi.DBIFactory;
 import io.dropwizard.jersey.validation.Validators;
 import io.dropwizard.setup.Environment;
-import org.joda.time.DateTime;
-import org.joda.time.format.ISODateTimeFormat;
 import org.junit.Before;
 import org.junit.Test;
 import org.skife.jdbi.v2.DBI;
@@ -19,15 +16,15 @@ import org.skife.jdbi.v2.sqlobject.SqlUpdate;
 import org.skife.jdbi.v2.sqlobject.customizers.SingleValueResult;
 
 import java.io.IOException;
-import java.util.TimeZone;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class JDBIOptionalDateTimeTest {
-
-    private final Environment env = new Environment("test-optional-date-time", Jackson.newObjectMapper(),
+public class OptionalInstantTest {
+    private final Environment env = new Environment("test-optional-instant", Jackson.newObjectMapper(),
             Validators.newValidator(), new MetricRegistry(), null);
-
 
     private TaskDao dao;
 
@@ -35,14 +32,9 @@ public class JDBIOptionalDateTimeTest {
     public void setupTests() throws IOException {
         final DataSourceFactory dataSourceFactory = new DataSourceFactory();
         dataSourceFactory.setDriverClass("org.h2.Driver");
-        dataSourceFactory.setUrl("jdbc:h2:mem:date-time-optional-" + System.currentTimeMillis() + "?user=sa");
+        dataSourceFactory.setUrl("jdbc:h2:mem:optional-instant-" + System.currentTimeMillis() + "?user=sa");
         dataSourceFactory.setInitialSize(1);
-        final DBI dbi = new DBIFactory() {
-            @Override
-            protected Optional<TimeZone> databaseTimeZone() {
-                return Optional.of(TimeZone.getTimeZone("CET"));
-            }
-        }.build(env, dataSourceFactory, "test");
+        final DBI dbi = new DBIFactory().build(env, dataSourceFactory, "test");
         try (Handle h = dbi.open()) {
             h.execute("CREATE TABLE tasks (" +
                     "id INT PRIMARY KEY, " +
@@ -57,16 +49,17 @@ public class JDBIOptionalDateTimeTest {
 
     @Test
     public void testPresent() {
-        final Optional<DateTime> endDate = Optional.of(ISODateTimeFormat.date().parseDateTime("2015-11-03"));
-        dao.insert(1, Optional.of("John Hughes"), DateTime.now(), endDate, Optional.<String>absent());
+        final Instant startDate = Instant.now();
+        final Instant endDate = startDate.plus(1L, ChronoUnit.DAYS);
+        dao.insert(1, Optional.of("John Hughes"), startDate, Optional.of(endDate), Optional.<String>empty());
 
-        assertThat(dao.findEndDateById(1)).isEqualTo(endDate);
+        assertThat(dao.findEndDateById(1).get()).isEqualTo(endDate);
     }
 
     @Test
     public void testAbsent() {
-        dao.insert(2, Optional.of("Kate Johansen"), DateTime.now(),
-                Optional.<DateTime>absent(), Optional.of("To be done"));
+        dao.insert(2, Optional.of("Kate Johansen"), Instant.now(),
+                Optional.<Instant>empty(), Optional.of("To be done"));
 
         assertThat(dao.findEndDateById(2).isPresent()).isFalse();
     }
@@ -76,11 +69,11 @@ public class JDBIOptionalDateTimeTest {
         @SqlUpdate("INSERT INTO tasks(id, assignee, start_date, end_date, comments) " +
                 "VALUES (:id, :assignee, :start_date, :end_date, :comments)")
         void insert(@Bind("id") int id, @Bind("assignee") Optional<String> assignee,
-                    @Bind("start_date") DateTime startDate, @Bind("end_date") Optional<DateTime> endDate,
+                    @Bind("start_date") Instant startDate, @Bind("end_date") Optional<Instant> endDate,
                     @Bind("comments") Optional<String> comments);
 
         @SqlQuery("SELECT end_date FROM tasks WHERE id = :id")
         @SingleValueResult
-        Optional<DateTime> findEndDateById(@Bind("id") int id);
+        Optional<Instant> findEndDateById(@Bind("id") int id);
     }
 }
