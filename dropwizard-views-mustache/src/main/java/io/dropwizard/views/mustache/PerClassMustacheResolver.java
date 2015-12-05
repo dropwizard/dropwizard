@@ -1,13 +1,13 @@
 package io.dropwizard.views.mustache;
 
 import com.github.mustachejava.MustacheResolver;
-import com.google.common.base.Charsets;
 import io.dropwizard.views.View;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 
 /**
  * @{link MustacheResolver} implementation that resolves mustache
@@ -26,6 +26,6 @@ class PerClassMustacheResolver implements MustacheResolver {
         if (is == null) {
             return null;
         }
-        return new BufferedReader(new InputStreamReader(is, Charsets.UTF_8));
+        return new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
     }
 }

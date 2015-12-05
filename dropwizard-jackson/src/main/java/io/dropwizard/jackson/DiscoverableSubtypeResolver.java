@@ -1,7 +1,6 @@
 package io.dropwizard.jackson;
 
 import com.fasterxml.jackson.databind.jsontype.impl.StdSubtypeResolver;
-import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import org.slf4j.Logger;
@@ -12,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Enumeration;
 import java.util.List;
 
@@ -58,7 +58,7 @@ public class DiscoverableSubtypeResolver extends StdSubtypeResolver {
             while (resources.hasMoreElements()) {
                 final URL url = resources.nextElement();
                 try (InputStream input = url.openStream();
-                     InputStreamReader streamReader = new InputStreamReader(input, Charsets.UTF_8);
+                     InputStreamReader streamReader = new InputStreamReader(input, StandardCharsets.UTF_8);
                      BufferedReader reader = new BufferedReader(streamReader)) {
                     String line;
                     while ((line = reader.readLine()) != null) {

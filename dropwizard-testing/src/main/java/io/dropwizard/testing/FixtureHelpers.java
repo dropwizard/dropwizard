@@ -1,10 +1,10 @@
 package io.dropwizard.testing;
 
-import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 /**
  * A set of helper method for fixture files.
@@ -21,7 +21,7 @@ public class FixtureHelpers {
      * @throws IllegalArgumentException if an I/O error occurs.
      */
     public static String fixture(String filename) {
-        return fixture(filename, Charsets.UTF_8);
+        return fixture(filename, StandardCharsets.UTF_8);
     }
 
     /**

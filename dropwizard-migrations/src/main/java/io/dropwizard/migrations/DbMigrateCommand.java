@@ -1,7 +1,6 @@
 package io.dropwizard.migrations;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
 import com.google.common.base.MoreObjects;
 import io.dropwizard.Configuration;
@@ -13,6 +12,7 @@ import net.sourceforge.argparse4j.inf.Subparser;
 
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 public class DbMigrateCommand<T extends Configuration> extends AbstractLiquibaseCommand<T> {
@@ -57,13 +57,13 @@ public class DbMigrateCommand<T extends Configuration> extends AbstractLiquibase
         final boolean dryRun = MoreObjects.firstNonNull(namespace.getBoolean("dry-run"), false);
         if (count != null) {
             if (dryRun) {
-                liquibase.update(count, context, new OutputStreamWriter(outputStream, Charsets.UTF_8));
+                liquibase.update(count, context, new OutputStreamWriter(outputStream, StandardCharsets.UTF_8));
             } else {
                 liquibase.update(count, context);
             }
         } else {
             if (dryRun) {
-                liquibase.update(context, new OutputStreamWriter(outputStream, Charsets.UTF_8));
+                liquibase.update(context, new OutputStreamWriter(outputStream, StandardCharsets.UTF_8));
             } else {
                 liquibase.update(context);
             }

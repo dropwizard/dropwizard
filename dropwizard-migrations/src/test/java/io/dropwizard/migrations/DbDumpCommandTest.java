@@ -1,6 +1,5 @@
 package io.dropwizard.migrations;
 
-import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
@@ -20,7 +19,13 @@ import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
@@ -91,7 +96,7 @@ public class DbDumpCommandTest extends AbstractMigrationTest {
         final Map<String, Object> attributes = ImmutableMap.of("output", (Object) file.getAbsolutePath());
         dumpCommand.run(null, new Namespace(attributes), existedDbConf);
         // Check that file is exist, and has some XML content (no reason to make a full-blown XML assertion)
-        assertThat(Files.toString(file, Charsets.UTF_8)).startsWith("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>");
+        assertThat(Files.toString(file, StandardCharsets.UTF_8)).startsWith("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>");
     }
 
     @Test

@@ -1,6 +1,5 @@
 package io.dropwizard.views.freemarker;
 
-import com.google.common.base.Charsets;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -17,6 +16,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 import java.util.Map;
 
@@ -27,7 +27,7 @@ public class FreemarkerViewRenderer implements ViewRenderer {
 
     private static final Version FREEMARKER_VERSION = Configuration.getVersion();
     private final TemplateLoader loader;
-    
+
     private static class TemplateLoader extends CacheLoader<Class<?>, Configuration> {
         private Map<String, String> baseConfig = ImmutableMap.of();
         @Override
@@ -35,7 +35,7 @@ public class FreemarkerViewRenderer implements ViewRenderer {
             final Configuration configuration = new Configuration(FREEMARKER_VERSION);
             configuration.setObjectWrapper(new DefaultObjectWrapperBuilder(FREEMARKER_VERSION).build());
             configuration.loadBuiltInEncodingMap();
-            configuration.setDefaultEncoding(Charsets.UTF_8.name());
+            configuration.setDefaultEncoding(StandardCharsets.UTF_8.name());
             configuration.setClassForTemplateLoading(key, "/");
             for (Map.Entry<String, String> entry : baseConfig.entrySet()) {
                 configuration.setSetting(entry.getKey(), entry.getValue());

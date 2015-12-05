@@ -1,6 +1,5 @@
 package io.dropwizard.migrations;
 
-import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
 import io.dropwizard.Configuration;
 import io.dropwizard.db.DatabaseConfiguration;
@@ -10,6 +9,7 @@ import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
 
 import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 public class DbPrepareRollbackCommand<T extends Configuration> extends AbstractLiquibaseCommand<T> {
@@ -38,9 +38,9 @@ public class DbPrepareRollbackCommand<T extends Configuration> extends AbstractL
         final String context = getContext(namespace);
         final Integer count = namespace.getInt("count");
         if (count != null) {
-            liquibase.futureRollbackSQL(count, context, new OutputStreamWriter(System.out, Charsets.UTF_8));
+            liquibase.futureRollbackSQL(count, context, new OutputStreamWriter(System.out, StandardCharsets.UTF_8));
         } else {
-            liquibase.futureRollbackSQL(context, new OutputStreamWriter(System.out, Charsets.UTF_8));
+            liquibase.futureRollbackSQL(context, new OutputStreamWriter(System.out, StandardCharsets.UTF_8));
         }
     }
 

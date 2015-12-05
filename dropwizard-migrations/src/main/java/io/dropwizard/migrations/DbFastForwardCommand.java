@@ -1,6 +1,5 @@
 package io.dropwizard.migrations;
 
-import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
 import io.dropwizard.Configuration;
 import io.dropwizard.db.DatabaseConfiguration;
@@ -10,6 +9,7 @@ import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
 
 import java.io.OutputStreamWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 public class DbFastForwardCommand<T extends Configuration> extends AbstractLiquibaseCommand<T> {
@@ -49,13 +49,13 @@ public class DbFastForwardCommand<T extends Configuration> extends AbstractLiqui
         final String context = getContext(namespace);
         if (namespace.getBoolean("all")) {
             if (namespace.getBoolean("dry-run")) {
-                liquibase.changeLogSync(context, new OutputStreamWriter(System.out, Charsets.UTF_8));
+                liquibase.changeLogSync(context, new OutputStreamWriter(System.out, StandardCharsets.UTF_8));
             } else {
                 liquibase.changeLogSync(context);
             }
         } else {
             if (namespace.getBoolean("dry-run")) {
-                liquibase.markNextChangeSetRan(context, new OutputStreamWriter(System.out, Charsets.UTF_8));
+                liquibase.markNextChangeSetRan(context, new OutputStreamWriter(System.out, StandardCharsets.UTF_8));
             } else {
                 liquibase.markNextChangeSetRan(context);
             }

@@ -1,12 +1,16 @@
 package io.dropwizard.servlets.assets;
 
-import com.google.common.base.Charsets;
 import com.google.common.net.HttpHeaders;
-import org.eclipse.jetty.http.*;
+import org.eclipse.jetty.http.HttpHeader;
+import org.eclipse.jetty.http.HttpTester;
+import org.eclipse.jetty.http.HttpVersion;
+import org.eclipse.jetty.http.MimeTypes;
 import org.eclipse.jetty.servlet.ServletTester;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.nio.charset.StandardCharsets;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -23,7 +27,7 @@ public class AssetServletTest {
         private static final long serialVersionUID = -1L;
 
         public DummyAssetServlet() {
-            super(RESOURCE_PATH, DUMMY_SERVLET, "index.htm", Charsets.UTF_8);
+            super(RESOURCE_PATH, DUMMY_SERVLET, "index.htm", StandardCharsets.UTF_8);
         }
     }
 
@@ -31,7 +35,7 @@ public class AssetServletTest {
         private static final long serialVersionUID = -1L;
 
         public NoIndexAssetServlet() {
-            super(RESOURCE_PATH, DUMMY_SERVLET, null, Charsets.UTF_8);
+            super(RESOURCE_PATH, DUMMY_SERVLET, null, StandardCharsets.UTF_8);
         }
     }
 
@@ -39,7 +43,7 @@ public class AssetServletTest {
         private static final long serialVersionUID = 1L;
 
         public RootAssetServlet() {
-            super("/", ROOT_SERVLET, null, Charsets.UTF_8);
+            super("/", ROOT_SERVLET, null, StandardCharsets.UTF_8);
         }
     }
 
@@ -263,7 +267,7 @@ public class AssetServletTest {
         response = HttpTester.parseResponse(servletTester.getResponses(request
                 .generate()));
         assertThat(response.getStatus()).isEqualTo(416);
-        
+
         request.setHeader(HttpHeaders.RANGE, "bytes=");
         response = HttpTester.parseResponse(servletTester.getResponses(request
                 .generate()));
@@ -303,7 +307,7 @@ public class AssetServletTest {
                 "bytes 5-6,7-10/11");
         assertThat(response.get(HttpHeaders.CONTENT_LENGTH)).isEqualTo("6");
     }
-    
+
     @Test
     public void supportsIfRangeMatchRequests() throws Exception {
         response = HttpTester.parseResponse(servletTester.getResponses(request

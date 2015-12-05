@@ -1,17 +1,22 @@
 package io.dropwizard.cli;
 
-import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;
 import io.dropwizard.configuration.ConfigurationException;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.util.JarLocation;
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.impl.Arguments;
-import net.sourceforge.argparse4j.inf.*;
+import net.sourceforge.argparse4j.inf.Argument;
+import net.sourceforge.argparse4j.inf.ArgumentAction;
+import net.sourceforge.argparse4j.inf.ArgumentParser;
+import net.sourceforge.argparse4j.inf.ArgumentParserException;
+import net.sourceforge.argparse4j.inf.Namespace;
+import net.sourceforge.argparse4j.inf.Subparser;
 
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.SortedMap;
@@ -40,8 +45,8 @@ public class Cli {
      * @param stdErr       standard err
      */
     public Cli(JarLocation location, Bootstrap<?> bootstrap, OutputStream stdOut, OutputStream stdErr) {
-        this.stdOut = new PrintWriter(new OutputStreamWriter(stdOut, Charsets.UTF_8), true);
-        this.stdErr = new PrintWriter(new OutputStreamWriter(stdErr, Charsets.UTF_8), true);
+        this.stdOut = new PrintWriter(new OutputStreamWriter(stdOut, StandardCharsets.UTF_8), true);
+        this.stdErr = new PrintWriter(new OutputStreamWriter(stdErr, StandardCharsets.UTF_8), true);
         this.commands = Maps.newTreeMap();
         this.parser = buildParser(location);
         this.bootstrap = bootstrap;

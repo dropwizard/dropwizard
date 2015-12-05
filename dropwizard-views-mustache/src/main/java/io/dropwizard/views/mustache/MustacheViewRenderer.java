@@ -3,7 +3,6 @@ package io.dropwizard.views.mustache;
 import com.github.mustachejava.DefaultMustacheFactory;
 import com.github.mustachejava.Mustache;
 import com.github.mustachejava.MustacheFactory;
-import com.google.common.base.Charsets;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -14,6 +13,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 import java.util.Map;
 
@@ -43,7 +43,7 @@ public class MustacheViewRenderer implements ViewRenderer {
         try {
             final Mustache template = factories.get(view.getClass())
                                                .compile(view.getTemplateName());
-            final Charset charset = view.getCharset().or(Charsets.UTF_8);
+            final Charset charset = view.getCharset().or(StandardCharsets.UTF_8);
             try (OutputStreamWriter writer = new OutputStreamWriter(output, charset)) {
                 template.execute(writer, view);
             }

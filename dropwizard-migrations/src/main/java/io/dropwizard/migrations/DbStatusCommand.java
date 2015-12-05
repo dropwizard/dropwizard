@@ -1,7 +1,6 @@
 package io.dropwizard.migrations;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
 import com.google.common.base.MoreObjects;
 import io.dropwizard.Configuration;
@@ -13,6 +12,7 @@ import net.sourceforge.argparse4j.inf.Subparser;
 
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 public class DbStatusCommand<T extends Configuration> extends AbstractLiquibaseCommand<T> {
@@ -47,7 +47,7 @@ public class DbStatusCommand<T extends Configuration> extends AbstractLiquibaseC
     public void run(Namespace namespace, Liquibase liquibase) throws Exception {
         liquibase.reportStatus(MoreObjects.firstNonNull(namespace.getBoolean("verbose"), false),
                                getContext(namespace),
-                               new OutputStreamWriter(outputStream, Charsets.UTF_8));
+                               new OutputStreamWriter(outputStream, StandardCharsets.UTF_8));
     }
 
     private String getContext(Namespace namespace) {

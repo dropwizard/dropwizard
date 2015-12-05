@@ -10,14 +10,13 @@ import com.codahale.metrics.servlets.MetricsServlet;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Charsets;
 import com.google.common.base.Joiner;
 import com.google.common.io.Resources;
 import io.dropwizard.jersey.errors.EarlyEofExceptionMapper;
 import io.dropwizard.jersey.errors.LoggingExceptionMapper;
 import io.dropwizard.jersey.filter.AllowedMethodsFilter;
-import io.dropwizard.jersey.jackson.JsonProcessingExceptionMapper;
 import io.dropwizard.jersey.jackson.JacksonMessageBodyProvider;
+import io.dropwizard.jersey.jackson.JsonProcessingExceptionMapper;
 import io.dropwizard.jersey.setup.JerseyEnvironment;
 import io.dropwizard.jersey.validation.HibernateValidationFeature;
 import io.dropwizard.jersey.validation.JerseyViolationExceptionMapper;
@@ -36,7 +35,6 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ErrorHandler;
 import org.eclipse.jetty.server.handler.RequestLogHandler;
 import org.eclipse.jetty.server.handler.StatisticsHandler;
-import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.setuid.RLimit;
 import org.eclipse.jetty.setuid.SetUIDListener;
 import org.eclipse.jetty.util.BlockingArrayQueue;
@@ -53,6 +51,7 @@ import javax.validation.Validator;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.EnumSet;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
@@ -589,7 +588,7 @@ public abstract class AbstractServerFactory implements ServerFactory {
     protected void printBanner(String name) {
         try {
             final String banner = WINDOWS_NEWLINE.matcher(Resources.toString(Resources.getResource("banner.txt"),
-                                                                             Charsets.UTF_8))
+                                                                             StandardCharsets.UTF_8))
                                                  .replaceAll("\n")
                                                  .replace("\n", String.format("%n"));
             LOGGER.info(String.format("Starting {}%n{}"), name, banner);

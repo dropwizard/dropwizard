@@ -1,6 +1,5 @@
 package io.dropwizard.jetty;
 
-import com.google.common.base.Charsets;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.CharStreams;
 import com.google.common.io.Resources;
@@ -20,8 +19,11 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.zip.*;
+import java.nio.charset.StandardCharsets;
+import java.util.zip.DeflaterOutputStream;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
+import java.util.zip.Inflater;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -120,9 +122,9 @@ public class BiDiGzipHandlerTest {
 
         @Override
         protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-            resp.setCharacterEncoding(Charsets.UTF_8.toString());
+            resp.setCharacterEncoding(StandardCharsets.UTF_8.toString());
             resp.setContentType(PLAIN_TEXT_UTF_8);
-            Resources.asCharSource(Resources.getResource("assets/banner.txt"), Charsets.UTF_8)
+            Resources.asCharSource(Resources.getResource("assets/banner.txt"), StandardCharsets.UTF_8)
                     .copyTo(resp.getWriter());
         }
 

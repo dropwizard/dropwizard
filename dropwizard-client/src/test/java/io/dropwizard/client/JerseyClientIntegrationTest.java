@@ -3,7 +3,6 @@ package io.dropwizard.client;
 import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Charsets;
 import com.google.common.base.Optional;
 import com.google.common.io.CharStreams;
 import com.sun.net.httpserver.Headers;
@@ -25,6 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.InetSocketAddress;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.zip.GZIPInputStream;
@@ -154,7 +154,7 @@ public class JerseyClientIntegrationTest {
 
                     httpExchange.getResponseHeaders().add(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON);
                     httpExchange.sendResponseHeaders(200, 0);
-                    httpExchange.getResponseBody().write(JSON_TOKEN.getBytes(Charsets.UTF_8));
+                    httpExchange.getResponseBody().write(JSON_TOKEN.getBytes(StandardCharsets.UTF_8));
                     httpExchange.getResponseBody().close();
                 } finally {
                     httpExchange.close();
@@ -196,7 +196,7 @@ public class JerseyClientIntegrationTest {
         httpExchange.getResponseHeaders().add(HttpHeaders.CONTENT_ENCODING, GZIP);
         httpExchange.sendResponseHeaders(200, 0);
         GZIPOutputStream gzipStream = new GZIPOutputStream(httpExchange.getResponseBody());
-        gzipStream.write(JSON_TOKEN.getBytes(Charsets.UTF_8));
+        gzipStream.write(JSON_TOKEN.getBytes(StandardCharsets.UTF_8));
         gzipStream.close();
     }
 
@@ -207,7 +207,7 @@ public class JerseyClientIntegrationTest {
 
         InputStream requestBody = gzip ? new GZIPInputStream(httpExchange.getRequestBody()) :
                 httpExchange.getRequestBody();
-        String body = CharStreams.toString(new InputStreamReader(requestBody, Charsets.UTF_8));
+        String body = CharStreams.toString(new InputStreamReader(requestBody, StandardCharsets.UTF_8));
         assertThat(JSON_MAPPER.readTree(body)).isEqualTo(JSON_MAPPER.createObjectNode()
                 .put("email", "john@doe.me")
                 .put("name", "John Doe"));
@@ -227,7 +227,7 @@ public class JerseyClientIntegrationTest {
                     httpExchange.getResponseBody().write(JSON_MAPPER.createObjectNode()
                             .put("email", "john@doe.me")
                             .put("name", "John Doe")
-                            .toString().getBytes(Charsets.UTF_8));
+                            .toString().getBytes(StandardCharsets.UTF_8));
                 } finally {
                     httpExchange.close();
                 }
@@ -265,7 +265,7 @@ public class JerseyClientIntegrationTest {
                     assertThat(httpExchange.getRequestHeaders().get(HttpHeaders.USER_AGENT))
                             .containsExactly("Custom user-agent");
                     httpExchange.sendResponseHeaders(200, 0);
-                    httpExchange.getResponseBody().write("Hello World!".getBytes(Charsets.UTF_8));
+                    httpExchange.getResponseBody().write("Hello World!".getBytes(StandardCharsets.UTF_8));
                 } finally {
                     httpExchange.close();
                 }
@@ -303,7 +303,7 @@ public class JerseyClientIntegrationTest {
                 try {
                     httpExchange.getResponseHeaders().add(HttpHeaders.CONTENT_TYPE, TEXT_PLAIN);
                     httpExchange.sendResponseHeaders(200, 0);
-                    httpExchange.getResponseBody().write("Hello World!".getBytes(Charsets.UTF_8));
+                    httpExchange.getResponseBody().write("Hello World!".getBytes(StandardCharsets.UTF_8));
                 } finally {
                     httpExchange.close();
                 }
