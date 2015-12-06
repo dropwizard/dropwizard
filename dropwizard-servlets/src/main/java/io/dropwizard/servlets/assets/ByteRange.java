@@ -1,7 +1,7 @@
 package io.dropwizard.servlets.assets;
 
 import javax.annotation.concurrent.Immutable;
-import com.google.common.base.Objects;
+import java.util.Objects;
 
 @Immutable
 public final class ByteRange {
@@ -58,12 +58,12 @@ public final class ByteRange {
         }
 
         final ByteRange other = (ByteRange) obj;
-        return Objects.equal(start, other.start) && Objects.equal(end, other.end);
+        return Objects.equals(start, other.start) && Objects.equals(end, other.end);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(start, end);
+        return Objects.hash(start, end);
     }
 
     @Override
