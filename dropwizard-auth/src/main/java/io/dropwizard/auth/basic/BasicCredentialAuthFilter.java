@@ -1,13 +1,11 @@
 package io.dropwizard.auth.basic;
 
 import com.google.common.io.BaseEncoding;
-import io.dropwizard.auth.AuthenticationException;
 import io.dropwizard.auth.AuthFilter;
 import io.dropwizard.auth.Authenticator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
+import javax.annotation.Nullable;
 import javax.annotation.Priority;
-import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.Priorities;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.container.ContainerRequestContext;
@@ -16,73 +14,63 @@ import javax.ws.rs.core.SecurityContext;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.Principal;
-import java.util.Optional;
 
 @Priority(Priorities.AUTHENTICATION)
 public class BasicCredentialAuthFilter<P extends Principal> extends AuthFilter<BasicCredentials, P> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(BasicCredentialAuthFilter.class);
 
     private BasicCredentialAuthFilter() {
     }
 
     @Override
-    public void filter(final ContainerRequestContext requestContext) throws IOException {
-        final String header = requestContext.getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
-        try {
-            if (header != null) {
-                final int space = header.indexOf(' ');
-                if (space > 0) {
-                    final String method = header.substring(0, space);
-                    if (prefix.equalsIgnoreCase(method)) {
-                        final String decoded = new String(
-                                BaseEncoding.base64().decode(header.substring(space + 1)),
-                                StandardCharsets.UTF_8);
-                        final int i = decoded.indexOf(':');
-                        if (i > 0) {
-                            final String username = decoded.substring(0, i);
-                            final String password = decoded.substring(i + 1);
-                            final BasicCredentials credentials = new BasicCredentials(username, password);
-                            try {
-                                final Optional<P> principal = authenticator.authenticate(credentials);
-                                if (principal.isPresent()) {
-                                    requestContext.setSecurityContext(new SecurityContext() {
-                                        @Override
-                                        public Principal getUserPrincipal() {
-                                            return principal.get();
-                                        }
-
-                                        @Override
-                                        public boolean isUserInRole(String role) {
-                                            return authorizer.authorize(principal.get(), role);
-                                        }
-
-                                        @Override
-                                        public boolean isSecure() {
-                                            return requestContext.getSecurityContext().isSecure();
-                                        }
-
-                                        @Override
-                                        public String getAuthenticationScheme() {
-                                            return SecurityContext.BASIC_AUTH;
-                                        }
-                                    });
-                                    return;
-                                }
-                            } catch (AuthenticationException e) {
-                                LOGGER.warn("Error authenticating credentials", e);
-                                throw new InternalServerErrorException();
-                            }
-                        }
-                    }
-                }
-            }
-        } catch (IllegalArgumentException e) {
-            LOGGER.warn("Error decoding credentials", e);
+    public void filter(ContainerRequestContext requestContext) throws IOException {
+        final BasicCredentials credentials =
+                getCredentials(requestContext.getHeaders().getFirst(HttpHeaders.AUTHORIZATION));
+        if (!authenticate(requestContext, credentials, SecurityContext.BASIC_AUTH)) {
+            throw new WebApplicationException(unauthorizedHandler.buildResponse(prefix, realm));
         }
-
-        throw new WebApplicationException(unauthorizedHandler.buildResponse(prefix, realm));
     }
 
+    /**
+     * Parses a Base64-encoded value of the `Authorization` header
+     * in the form of `Basic dXNlcm5hbWU6cGFzc3dvcmQ=`.
+     *
+     * @param header the value of the `Authorization` header
+     * @return a username and a password as {@link BasicCredentials}
+     */
+    @Nullable
+    private BasicCredentials getCredentials(String header) {
+        if (header == null) {
+            return null;
+        }
+
+        final int space = header.indexOf(' ');
+        if (space <= 0) {
+            return null;
+        }
+
+        final String method = header.substring(0, space);
+        if (!prefix.equalsIgnoreCase(method)) {
+            return null;
+        }
+
+        final String decoded;
+        try {
+            decoded = new String(BaseEncoding.base64().decode(header.substring(space + 1)), StandardCharsets.UTF_8);
+        } catch (IllegalArgumentException e) {
+            logger.warn("Error decoding credentials", e);
+            return null;
+        }
+
+        // Decoded credentials is 'username:password'
+        final int i = decoded.indexOf(':');
+        if (i <= 0) {
+            return null;
+        }
+
+        final String username = decoded.substring(0, i);
+        final String password = decoded.substring(i + 1);
+        return new BasicCredentials(username, password);
+    }
 
     /**
      * Builder for {@link BasicCredentialAuthFilter}.
