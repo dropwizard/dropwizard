@@ -19,7 +19,7 @@ public class OptionalContainerFactory implements ContainerFactory<Optional<?>> {
 
     private static class OptionalContainerBuilder implements ContainerBuilder<Optional<?>> {
 
-        Optional<?> optional = Optional.empty();
+        private Optional<?> optional = Optional.empty();
 
         @Override
         public ContainerBuilder<Optional<?>> add(Object it) {

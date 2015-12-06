@@ -8,7 +8,7 @@ class DropwizardExecutorProvider implements ExecutorServiceProvider {
 
     private final ExecutorService threadPool;
 
-    public DropwizardExecutorProvider(ExecutorService threadPool) {
+    DropwizardExecutorProvider(ExecutorService threadPool) {
         this.threadPool = threadPool;
     }
 

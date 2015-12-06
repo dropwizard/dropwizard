@@ -72,22 +72,22 @@ public class AuthValueFactoryProvider<T extends Principal> extends AbstractValue
     }
 
     @Singleton
-    private static class AuthInjectionResolver extends ParamInjectionResolver<Auth> {
+    static class AuthInjectionResolver extends ParamInjectionResolver<Auth> {
 
         /**
          * Create new {@link Auth} annotation injection resolver.
          */
-        public AuthInjectionResolver() {
+        AuthInjectionResolver() {
             super(AuthValueFactoryProvider.class);
         }
     }
 
     @Singleton
-    private static class PrincipalClassProvider<T extends Principal> {
+    static class PrincipalClassProvider<T extends Principal> {
 
         private final Class<T> clazz;
 
-        public PrincipalClassProvider(Class<T> clazz) {
+        PrincipalClassProvider(Class<T> clazz) {
             this.clazz = clazz;
         }
     }

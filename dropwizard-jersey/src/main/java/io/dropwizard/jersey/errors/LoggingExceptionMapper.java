@@ -44,7 +44,7 @@ public abstract class LoggingExceptionMapper<E extends Throwable> implements Exc
     }
 
     protected long logException(E exception) {
-        long id = ThreadLocalRandom.current().nextLong();
+        final long id = ThreadLocalRandom.current().nextLong();
         logException(id, exception);
         return id;
     }

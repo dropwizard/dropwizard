@@ -28,7 +28,8 @@ public class OptionalParamConverterProvider implements ParamConverterProvider {
      * {@inheritDoc}
      */
     @Override
-    public <T> ParamConverter<T> getConverter(final Class<T> rawType, final Type genericType, final Annotation[] annotations) {
+    public <T> ParamConverter<T> getConverter(final Class<T> rawType, final Type genericType,
+                                              final Annotation[] annotations) {
         if (Optional.class.equals(rawType)) {
             final List<ClassTypePair> ctps = ReflectionHelper.getTypeArgumentAndClass(genericType);
             final ClassTypePair ctp = (ctps.size() == 1) ? ctps.get(0) : null;
@@ -47,8 +48,7 @@ public class OptionalParamConverterProvider implements ParamConverterProvider {
                 };
             }
 
-            final Set<ParamConverterProvider> converterProviders = Providers.getProviders(locator, ParamConverterProvider.class);
-            for (ParamConverterProvider provider : converterProviders) {
+            for (ParamConverterProvider provider : Providers.getProviders(locator, ParamConverterProvider.class)) {
                 final ParamConverter<?> converter = provider.getConverter(ctp.rawClass(), ctp.type(), annotations);
                 if (converter != null) {
                     return new ParamConverter<T>() {

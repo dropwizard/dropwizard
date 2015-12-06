@@ -22,7 +22,8 @@ public class ParamValidatorUnwrapper extends ValidatedValueUnwrapper<AbstractPar
 
     @Override
     public Type getValidatedValueType(final Type type) {
-        ResolvedType resolvedType = resolver.resolve(type);
-        return resolvedType.typeParametersFor(AbstractParam.class).get(0).getErasedType();
+        return resolver.resolve(type)
+                .typeParametersFor(AbstractParam.class).get(0)
+                .getErasedType();
     }
 }

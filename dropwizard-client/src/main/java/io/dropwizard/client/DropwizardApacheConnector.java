@@ -71,7 +71,8 @@ public class DropwizardApacheConnector implements Connector {
      */
     private final boolean chunkedEncodingEnabled;
 
-    public DropwizardApacheConnector(CloseableHttpClient client, RequestConfig defaultRequestConfig, boolean chunkedEncodingEnabled) {
+    public DropwizardApacheConnector(CloseableHttpClient client, RequestConfig defaultRequestConfig,
+                                     boolean chunkedEncodingEnabled) {
         this.client = client;
         this.defaultRequestConfig = defaultRequestConfig;
         this.chunkedEncodingEnabled = chunkedEncodingEnabled;
@@ -121,7 +122,7 @@ public class DropwizardApacheConnector implements Connector {
      * @return a new {@link org.apache.http.client.methods.HttpUriRequest}
      */
     private HttpUriRequest buildApacheRequest(ClientRequest jerseyRequest) {
-        RequestBuilder builder = RequestBuilder
+        final RequestBuilder builder = RequestBuilder
                 .create(jerseyRequest.getMethod())
                 .setUri(jerseyRequest.getUri())
                 .setEntity(getHttpEntity(jerseyRequest));
@@ -129,7 +130,7 @@ public class DropwizardApacheConnector implements Connector {
             builder.addHeader(headerName, jerseyRequest.getHeaderString(headerName));
         }
 
-        Optional<RequestConfig> requestConfig = addJerseyRequestConfig(jerseyRequest);
+        final Optional<RequestConfig> requestConfig = addJerseyRequestConfig(jerseyRequest);
         if (requestConfig.isPresent()) {
             builder.setConfig(requestConfig.get());
         }
@@ -143,7 +144,7 @@ public class DropwizardApacheConnector implements Connector {
         final Boolean followRedirects = clientRequest.resolveProperty(ClientProperties.FOLLOW_REDIRECTS, Boolean.class);
 
         if (timeout != null || connectTimeout != null || followRedirects != null) {
-            RequestConfig.Builder requestConfig = RequestConfig.copy(defaultRequestConfig);
+            final RequestConfig.Builder requestConfig = RequestConfig.copy(defaultRequestConfig);
 
             if (timeout != null) {
                 requestConfig.setSocketTimeout(timeout);

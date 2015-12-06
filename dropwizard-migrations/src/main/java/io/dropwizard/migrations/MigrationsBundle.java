@@ -8,8 +8,9 @@ import io.dropwizard.setup.Environment;
 
 public abstract class MigrationsBundle<T extends Configuration> implements Bundle, DatabaseConfiguration<T> {
     @Override
+    @SuppressWarnings("unchecked")
     public final void initialize(Bootstrap<?> bootstrap) {
-        final Class<T> klass = (Class<T>)bootstrap.getApplication().getConfigurationClass();
+        final Class<T> klass = (Class<T>) bootstrap.getApplication().getConfigurationClass();
         bootstrap.addCommand(new DbCommand<>(this, klass));
     }
 

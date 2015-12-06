@@ -18,7 +18,7 @@ class Jetty93InstrumentedConnectionFactory extends ContainerLifeCycle implements
     private final ConnectionFactory connectionFactory;
     private final Timer timer;
 
-    public Jetty93InstrumentedConnectionFactory(ConnectionFactory connectionFactory, Timer timer) {
+    Jetty93InstrumentedConnectionFactory(ConnectionFactory connectionFactory, Timer timer) {
         this.connectionFactory = connectionFactory;
         this.timer = timer;
         addBean(connectionFactory);

@@ -3,7 +3,11 @@ package io.dropwizard.servlets.assets;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.*;
+import java.net.JarURLConnection;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
@@ -33,16 +37,17 @@ public class ResourceURL {
                     }
 
                     // WARNING! Heuristics ahead.
-                    // It turns out that JarEntry#isDirectory() really just tests whether the filename ends in a '/'. If you try
-                    // to open the same URL without a trailing '/', it'll succeed — but the result won't be what you want.
-                    // We try to get around this by calling getInputStream() on the file inside the jar. This seems to return null
-                    // for directories (though that behavior is undocumented as far as I can tell). If you have a better idea,
-                    // please improve this.
+                    // It turns out that JarEntry#isDirectory() really just tests whether the filename ends in a '/'.
+                    // If you try to open the same URL without a trailing '/', it'll succeed — but the result won't be
+                    // what you want. We try to get around this by calling getInputStream() on the file inside the jar.
+                    // This seems to return null for directories (though that behavior is undocumented as far as I
+                    // can tell). If you have a better idea, please improve this.
 
-                    String filename = resourceURL.getFile();
-                    filename = filename.substring(filename.indexOf('!') + 2); // leaves just the relative file path inside the jar
+                    final String fileName = resourceURL.getFile();
+                    // leaves just the relative file path inside the jar
+                    final String relativeFilePath = fileName.substring(fileName.indexOf('!') + 2);
                     final JarFile jarFile = jarConnection.getJarFile();
-                    final ZipEntry zipEntry = jarFile.getEntry(filename);
+                    final ZipEntry zipEntry = jarFile.getEntry(relativeFilePath);
                     final InputStream inputStream = jarFile.getInputStream(zipEntry);
 
                     return (inputStream == null);
@@ -52,7 +57,8 @@ public class ResourceURL {
             case "file":
                 return new File(resourceURL.toURI()).isDirectory();
             default:
-                throw new IllegalArgumentException("Unsupported protocol " + resourceURL.getProtocol() + " for resource " + resourceURL);
+                throw new IllegalArgumentException("Unsupported protocol " + resourceURL.getProtocol() +
+                        " for resource " + resourceURL);
         }
     }
 
@@ -76,13 +82,14 @@ public class ResourceURL {
 
     /**
      * Returns the last modified time for file:// and jar:// URLs.  This is slightly tricky for a couple of reasons:
-     * 1) calling getConnection on a {@link URLConnection} to a file opens an {@link InputStream} to that file that must
-     * then be closed — though this is not true for {@code URLConnection}s to jar resources
+     * 1) calling getConnection on a {@link URLConnection} to a file opens an {@link InputStream} to that file that
+     * must then be closed — though this is not true for {@code URLConnection}s to jar resources
      * 2) calling getLastModified on {@link JarURLConnection}s returns the last modified time of the jar file, rather
      * than the file within
      *
      * @param resourceURL the URL to return the last modified time for
-     * @return the last modified time of the resource, expressed as the number of milliseconds since the epoch, or 0 if there was a problem
+     * @return the last modified time of the resource, expressed as the number of milliseconds since the epoch, or 0
+     * if there was a problem
      */
     public static long getLastModified(URL resourceURL) {
         final String protocol = resourceURL.getProtocol();

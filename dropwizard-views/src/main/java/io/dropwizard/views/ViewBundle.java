@@ -106,9 +106,9 @@ public class ViewBundle<T extends Configuration> implements ConfiguredBundle<T>,
 
     @Override
     public void run(T configuration, Environment environment) throws Exception {
-        Map<String, Map<String, String>> options = getViewConfiguration(configuration);
+        final Map<String, Map<String, String>> options = getViewConfiguration(configuration);
         for (ViewRenderer viewRenderer : viewRenderers) {
-            Map<String, String> viewOptions = options.get(viewRenderer.getSuffix());
+            final Map<String, String> viewOptions = options.get(viewRenderer.getSuffix());
             viewRenderer.configure(firstNonNull(viewOptions, Collections.<String, String>emptyMap()));
         }
         environment.jersey().register(new ViewMessageBodyWriter(environment.metrics(), viewRenderers));

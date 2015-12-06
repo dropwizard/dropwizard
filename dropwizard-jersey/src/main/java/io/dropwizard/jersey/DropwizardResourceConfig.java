@@ -147,7 +147,7 @@ public class DropwizardResourceConfig extends ResourceConfig {
         private final String rootPath;
         private final Class<?> klass;
 
-        public EndpointLogger(String urlPattern, Class<?> klass) {
+        EndpointLogger(String urlPattern, Class<?> klass) {
             this.rootPath = urlPattern.endsWith("/*") ? urlPattern.substring(0, urlPattern.length() - 1) : urlPattern;
             this.klass = klass;
         }
@@ -156,11 +156,13 @@ public class DropwizardResourceConfig extends ResourceConfig {
             populate(this.rootPath, klass, false, endpointLogLines);
         }
 
-        private void populate(String basePath, Class<?> klass, boolean isLocator, Set<EndpointLogLine> endpointLogLines) {
+        private void populate(String basePath, Class<?> klass, boolean isLocator,
+                              Set<EndpointLogLine> endpointLogLines) {
             populate(basePath, klass, isLocator, Resource.from(klass), endpointLogLines);
         }
 
-        private void populate(String basePath, Class<?> klass, boolean isLocator, Resource resource, Set<EndpointLogLine> endpointLogLines) {
+        private void populate(String basePath, Class<?> klass, boolean isLocator, Resource resource,
+                              Set<EndpointLogLine> endpointLogLines) {
             if (!isLocator) {
                 basePath = normalizePath(basePath, resource.getPath());
             }
@@ -203,7 +205,7 @@ public class DropwizardResourceConfig extends ResourceConfig {
         private final String basePath;
         private final Class<?> klass;
 
-        public EndpointLogLine(String httpMethod, String basePath, Class<?> klass) {
+        EndpointLogLine(String httpMethod, String basePath, Class<?> klass) {
             this.basePath = basePath;
             this.klass = klass;
             this.httpMethod = httpMethod;
@@ -230,7 +232,7 @@ public class DropwizardResourceConfig extends ResourceConfig {
     private static class ComponentLoggingListener implements ApplicationEventListener {
         private final DropwizardResourceConfig config;
 
-        public ComponentLoggingListener(DropwizardResourceConfig config) {
+        ComponentLoggingListener(DropwizardResourceConfig config) {
             this.config = config;
         }
 

@@ -146,10 +146,10 @@ public class ResourceTestRule implements TestRule {
 
         public ResourceTestResourceConfig(@Context ServletConfig servletConfig) {
             super(true, new MetricRegistry());
-            String ruleId = servletConfig.getInitParameter(RULE_ID);
+            final String ruleId = servletConfig.getInitParameter(RULE_ID);
             requireNonNull(ruleId);
 
-            ResourceTestRule resourceTestRule = RULE_ID_TO_RULE.get(ruleId);
+            final ResourceTestRule resourceTestRule = RULE_ID_TO_RULE.get(ruleId);
             requireNonNull(resourceTestRule);
             configure(resourceTestRule);
         }
@@ -187,16 +187,16 @@ public class ResourceTestRule implements TestRule {
 
                         @Override
                         protected DeploymentContext configureDeployment() {
-                            final ResourceTestResourceConfig resourceConfig = new ResourceTestResourceConfig(ruleId, rule);
-                            return ServletDeploymentContext.builder(resourceConfig)
-                                    .initParam(ServletProperties.JAXRS_APPLICATION_CLASS, ResourceTestResourceConfig.class.getName())
+                            return ServletDeploymentContext.builder(new ResourceTestResourceConfig(ruleId, rule))
+                                    .initParam(ServletProperties.JAXRS_APPLICATION_CLASS,
+                                            ResourceTestResourceConfig.class.getName())
                                     .initParam(ResourceTestResourceConfig.RULE_ID, ruleId)
                                     .build();
                         }
 
                         @Override
                         protected void configureClient(final ClientConfig config) {
-                            JacksonJsonProvider jsonProvider = new JacksonJsonProvider();
+                            final JacksonJsonProvider jsonProvider = new JacksonJsonProvider();
                             jsonProvider.setMapper(mapper);
                             config.register(jsonProvider);
                         }

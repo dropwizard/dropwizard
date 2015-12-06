@@ -37,8 +37,8 @@ public class ConstraintViolations {
             }
         }
 
-        String usefulNodes = DOT_JOINER.join(nodes.subList(paramIndex + 1, nodes.size() - 1));
-        String msg = usefulNodes + (v.getMessage().startsWith(".") ? "" : " ") + v.getMessage();
+        final String usefulNodes = DOT_JOINER.join(nodes.subList(paramIndex + 1, nodes.size() - 1));
+        final String msg = usefulNodes + (v.getMessage().startsWith(".") ? "" : " ") + v.getMessage();
         return msg.trim();
     }
 

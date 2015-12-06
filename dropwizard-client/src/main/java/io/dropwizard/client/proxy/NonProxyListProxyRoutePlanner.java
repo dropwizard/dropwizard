@@ -40,7 +40,7 @@ public class NonProxyListProxyRoutePlanner extends DefaultProxyRoutePlanner {
             return ImmutableList.of();
         }
 
-        ImmutableList.Builder<Pattern> patterns = ImmutableList.builder();
+        final ImmutableList.Builder<Pattern> patterns = ImmutableList.builder();
         for (String nonProxyHost : nonProxyHosts) {
             // Replaces a wildcard to a regular expression
             patterns.add(Pattern.compile(WILDCARD.matcher(nonProxyHost).replaceAll(REGEX_WILDCARD)));

@@ -289,7 +289,7 @@ public class DataSourceFactory implements PooledDataSourceFactory {
 
         private final int value;
 
-        private TransactionIsolation(int value) {
+        TransactionIsolation(int value) {
             this.value = value;
         }
 

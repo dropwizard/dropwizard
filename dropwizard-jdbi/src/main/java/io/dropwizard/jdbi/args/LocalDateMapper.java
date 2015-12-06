@@ -14,7 +14,7 @@ import java.time.LocalDate;
 public class LocalDateMapper implements ResultColumnMapper<LocalDate> {
     @Override
     public LocalDate mapColumn(ResultSet r, String columnLabel, StatementContext ctx) throws SQLException {
-        Timestamp timestamp = r.getTimestamp(columnLabel);
+        final Timestamp timestamp = r.getTimestamp(columnLabel);
         if (timestamp == null) {
             return null;
         }
@@ -23,7 +23,7 @@ public class LocalDateMapper implements ResultColumnMapper<LocalDate> {
 
     @Override
     public LocalDate mapColumn(ResultSet r, int columnNumber, StatementContext ctx) throws SQLException {
-        Timestamp timestamp = r.getTimestamp(columnNumber);
+        final Timestamp timestamp = r.getTimestamp(columnNumber);
         if (timestamp == null) {
             return null;
         }

@@ -188,7 +188,7 @@ public class GangliaReporterFactory extends BaseReporterFactory {
     @Override
     public ScheduledReporter build(MetricRegistry registry) {
         try {
-            GMetric ganglia = new GMetric(host,
+            final GMetric ganglia = new GMetric(host,
                                           port,
                                           mode,
                                           ttl,

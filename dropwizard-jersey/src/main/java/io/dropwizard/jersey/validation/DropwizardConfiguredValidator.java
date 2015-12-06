@@ -28,8 +28,9 @@ public class DropwizardConfiguredValidator implements ConfiguredValidator {
     }
 
     @Override
-    public void validateResourceAndInputParams(Object resource, final Invocable invocable, Object[] objects) throws ConstraintViolationException {
-        Class<?>[] groups = getGroup(invocable);
+    public void validateResourceAndInputParams(Object resource, final Invocable invocable, Object[] objects)
+            throws ConstraintViolationException {
+        final Class<?>[] groups = getGroup(invocable);
         final Set<ConstraintViolation<Object>> violations =
             forExecutables().validateParameters(resource, invocable.getHandlingMethod(), objects, groups);
         if (!violations.isEmpty()) {
@@ -54,19 +55,21 @@ public class DropwizardConfiguredValidator implements ConfiguredValidator {
     }
 
     @Override
-    public void validateResult(Object resource, Invocable invocable, Object returnValue) throws ConstraintViolationException {
+    public void validateResult(Object resource, Invocable invocable, Object returnValue)
+            throws ConstraintViolationException {
         // If the Validated annotation is on a method, then validate the response with
         // the specified constraint group.
-        Class<?>[] groups = {Default.class};
+        final Class<?>[] groups;
         if (invocable.getHandlingMethod().isAnnotationPresent(Validated.class)) {
             groups = invocable.getHandlingMethod().getAnnotation(Validated.class).value();
+        } else {
+            groups = new Class<?>[]{Default.class};
         }
 
         final Set<ConstraintViolation<Object>> violations =
             forExecutables().validateReturnValue(resource, invocable.getHandlingMethod(), returnValue, groups);
         if (!violations.isEmpty()) {
-            Set<ConstraintViolation<?>> constraintViolations = ConstraintViolations.copyOf(violations);
-            LOGGER.trace("Response validation failed: {}", constraintViolations);
+            LOGGER.trace("Response validation failed: {}", ConstraintViolations.copyOf(violations));
             throw new JerseyViolationException(violations, invocable);
         }
     }

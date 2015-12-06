@@ -46,14 +46,15 @@ public class ConstraintMessage {
      * Gets the human friendly location of where the violation was raised.
      */
     public static String getMessage(ConstraintViolation<?> v, Invocable invocable) {
-        Pair<Path, ? extends ConstraintDescriptor<?>> of =
+        final Pair<Path, ? extends ConstraintDescriptor<?>> of =
                 Pair.of(v.getPropertyPath(), v.getConstraintDescriptor());
-        String message = MESSAGES_CACHE.getIfPresent(of);
-        if (message == null) {
-            message = calculateMessage(v, invocable);
+        final String cachedMessage = MESSAGES_CACHE.getIfPresent(of);
+        if (cachedMessage == null) {
+            final String message = calculateMessage(v, invocable);
             MESSAGES_CACHE.put(of, message);
+            return message;
         }
-        return message;
+        return cachedMessage;
     }
 
     private static String calculateMessage(ConstraintViolation<?> v, Invocable invocable) {
@@ -75,7 +76,7 @@ public class ConstraintMessage {
             // A present entity means that the request body failed validation but
             // if the request entity is simple (eg. byte[], String, etc), the entity
             // string will be empty, so prepend a message about the request body
-            String prefix = Strings.isNullOrEmpty(entity.get()) ? "The request body" : entity.get();
+            final String prefix = Strings.isNullOrEmpty(entity.get()) ? "The request body" : entity.get();
             return prefix + " " + v.getMessage();
         }
 
@@ -135,8 +136,8 @@ public class ConstraintMessage {
             case METHOD:
                 // Constraint violation occurred directly on a function
                 // parameter annotated with *Param
-                Method method = invocable.getHandlingMethod();
-                int paramIndex = member.as(Path.ParameterNode.class).getParameterIndex();
+                final Method method = invocable.getHandlingMethod();
+                final int paramIndex = member.as(Path.ParameterNode.class).getParameterIndex();
                 return getMemberName(method.getParameterAnnotations()[paramIndex]);
             default:
                 return Optional.absent();
@@ -198,14 +199,14 @@ public class ConstraintMessage {
      */
     public static <T extends ConstraintViolation<?>> int determineStatus(Set<T> violations, Invocable invocable) {
         if (violations.size() > 0) {
-            ConstraintViolation<?> violation = violations.iterator().next();
+            final ConstraintViolation<?> violation = violations.iterator().next();
             for (Path.Node node : violation.getPropertyPath()) {
                 switch (node.getKind()) {
                     case RETURN_VALUE:
                         return 500;
                     case PARAMETER:
                         // Now determine if the parameter is the request entity
-                        int index = node.as(Path.ParameterNode.class).getParameterIndex();
+                        final int index = node.as(Path.ParameterNode.class).getParameterIndex();
                         final Parameter parameter = invocable.getParameters().get(index);
                         return parameter.getSource().equals(Parameter.Source.UNKNOWN) ? 422 : 400;
                     default:

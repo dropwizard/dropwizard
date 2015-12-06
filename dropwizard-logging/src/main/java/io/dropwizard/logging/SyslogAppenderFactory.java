@@ -204,7 +204,9 @@ public class SyslogAppenderFactory extends AbstractAppenderFactory {
         final SyslogAppender appender = new SyslogAppender();
         appender.setName("syslog-appender");
         appender.setContext(context);
-        appender.setSuffixPattern(logFormat.replaceAll(LOG_TOKEN_PID, pid).replaceAll(LOG_TOKEN_NAME, Matcher.quoteReplacement(applicationName)));
+        appender.setSuffixPattern(logFormat
+                .replaceAll(LOG_TOKEN_PID, pid)
+                .replaceAll(LOG_TOKEN_NAME, Matcher.quoteReplacement(applicationName)));
         appender.setSyslogHost(host);
         appender.setPort(port);
         appender.setFacility(facility.toString().toLowerCase(Locale.ENGLISH));

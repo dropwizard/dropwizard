@@ -25,7 +25,7 @@ public class JerseyViolationExceptionMapper implements ExceptionMapper<JerseyVio
                     }
                 }).toList();
 
-        int status = ConstraintMessage.determineStatus(violations, invocable);
+        final int status = ConstraintMessage.determineStatus(violations, invocable);
         return Response.status(status)
                 .entity(new ValidationErrorMessage(errors))
                 .build();

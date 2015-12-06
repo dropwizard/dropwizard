@@ -184,13 +184,15 @@ public class FileAppenderFactory extends AbstractAppenderFactory {
     @JsonIgnore
     @ValidationMethod(message = "when specifying maxFileSize, archivedLogFilenamePattern must contain %i")
     public boolean isValidForMaxFileSizeSetting() {
-        return !archive || maxFileSize == null || (archivedLogFilenamePattern!= null && archivedLogFilenamePattern.contains("%i"));
+        return !archive || maxFileSize == null ||
+                (archivedLogFilenamePattern != null && archivedLogFilenamePattern.contains("%i"));
     }
 
     @JsonIgnore
     @ValidationMethod(message = "when archivedLogFilenamePattern contains %i, maxFileSize must be specified")
     public boolean isMaxFileSizeSettingSpecified() {
-        return !archive || !(archivedLogFilenamePattern != null && archivedLogFilenamePattern.contains("%i")) || maxFileSize != null;
+        return !archive || !(archivedLogFilenamePattern != null && archivedLogFilenamePattern.contains("%i")) ||
+                maxFileSize != null;
     }
 
     @Override
@@ -201,7 +203,7 @@ public class FileAppenderFactory extends AbstractAppenderFactory {
         appender.setAppend(true);
         appender.setContext(context);
 
-        LayoutWrappingEncoder<ILoggingEvent> layoutEncoder = new LayoutWrappingEncoder<>();
+        final LayoutWrappingEncoder<ILoggingEvent> layoutEncoder = new LayoutWrappingEncoder<>();
         layoutEncoder.setLayout(layout == null ? buildLayout(context, timeZone) : layout);
         appender.setEncoder(layoutEncoder);
 
@@ -219,8 +221,8 @@ public class FileAppenderFactory extends AbstractAppenderFactory {
             appender.setFile(currentLogFilename);
 
             if (maxFileSize != null && !archivedLogFilenamePattern.contains("%d")) {
-                FixedWindowRollingPolicy rollingPolicy = new FixedWindowRollingPolicy();
-                SizeBasedTriggeringPolicy<ILoggingEvent> triggeringPolicy = new SizeBasedTriggeringPolicy<>();
+                final FixedWindowRollingPolicy rollingPolicy = new FixedWindowRollingPolicy();
+                final SizeBasedTriggeringPolicy<ILoggingEvent> triggeringPolicy = new SizeBasedTriggeringPolicy<>();
                 triggeringPolicy.setMaxFileSize(String.valueOf(maxFileSize.toBytes()));
                 triggeringPolicy.setContext(context);
                 rollingPolicy.setContext(context);
@@ -236,7 +238,8 @@ public class FileAppenderFactory extends AbstractAppenderFactory {
                 if (maxFileSize == null) {
                     triggeringPolicy = new DefaultTimeBasedFileNamingAndTriggeringPolicy<>();
                 } else {
-                    SizeAndTimeBasedFNATP<ILoggingEvent> maxFileSizeTriggeringPolicy = new SizeAndTimeBasedFNATP<>();
+                    final SizeAndTimeBasedFNATP<ILoggingEvent> maxFileSizeTriggeringPolicy =
+                            new SizeAndTimeBasedFNATP<>();
                     maxFileSizeTriggeringPolicy.setMaxFileSize(String.valueOf(maxFileSize.toBytes()));
                     triggeringPolicy = maxFileSizeTriggeringPolicy;
                 }

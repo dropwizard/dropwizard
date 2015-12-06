@@ -46,7 +46,7 @@ public class ServletEnvironment {
         holder.setName(name);
         handler.getServletHandler().addServlet(holder);
 
-        ServletRegistration.Dynamic registration = holder.getRegistration();
+        final ServletRegistration.Dynamic registration = holder.getRegistration();
         checkDuplicateRegistration(name, servlets, "servlet");
 
         return registration;
@@ -64,7 +64,7 @@ public class ServletEnvironment {
         holder.setName(name);
         handler.getServletHandler().addServlet(holder);
 
-        ServletRegistration.Dynamic registration = holder.getRegistration();
+        final ServletRegistration.Dynamic registration = holder.getRegistration();
         checkDuplicateRegistration(name, servlets, "servlet");
 
         return registration;
@@ -79,14 +79,7 @@ public class ServletEnvironment {
      *         configuration
      */
     public FilterRegistration.Dynamic addFilter(String name, Filter filter) {
-        final FilterHolder holder = new FilterHolder(requireNonNull(filter));
-        holder.setName(name);
-        handler.getServletHandler().addFilter(holder);
-
-        FilterRegistration.Dynamic registration = holder.getRegistration();
-        checkDuplicateRegistration(name, filters, "filter");
-
-        return registration;
+        return addFilter(name, new FilterHolder(requireNonNull(filter)));
     }
 
     /**
@@ -97,11 +90,14 @@ public class ServletEnvironment {
      * @return a {@link javax.servlet.FilterRegistration.Dynamic} instance allowing for further configuration
      */
     public FilterRegistration.Dynamic addFilter(String name, Class<? extends Filter> klass) {
-        final FilterHolder holder = new FilterHolder(requireNonNull(klass));
+        return addFilter(name, new FilterHolder(requireNonNull(klass)));
+    }
+
+    private FilterRegistration.Dynamic addFilter(String name, FilterHolder holder) {
         holder.setName(name);
         handler.getServletHandler().addFilter(holder);
 
-        FilterRegistration.Dynamic registration = holder.getRegistration();
+        final FilterRegistration.Dynamic registration = holder.getRegistration();
         checkDuplicateRegistration(name, filters, "filter");
 
         return registration;
@@ -194,7 +190,7 @@ public class ServletEnvironment {
     }
 
     private void checkDuplicateRegistration(String name, Set<String> items, String type) {
-        if(!items.add(name)) {
+        if (!items.add(name)) {
             LOGGER.warn("Overriding the existing {} registered with the name: {}", type, name);
         }
     }
