@@ -4,8 +4,6 @@ import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.google.common.base.MoreObjects;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import io.dropwizard.jetty.ConnectorFactory;
 import io.dropwizard.jetty.HttpConnectorFactory;
 import io.dropwizard.jetty.RoutingHandler;
@@ -23,6 +21,9 @@ import org.slf4j.LoggerFactory;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -68,15 +69,14 @@ import java.util.Map;
 @JsonTypeName("default")
 public class DefaultServerFactory extends AbstractServerFactory {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultServerFactory.class);
-    @Valid
-    @NotNull
-    private List<ConnectorFactory> applicationConnectors =
-            Lists.newArrayList(HttpConnectorFactory.application());
 
     @Valid
     @NotNull
-    private List<ConnectorFactory> adminConnectors =
-            Lists.newArrayList(HttpConnectorFactory.admin());
+    private List<ConnectorFactory> applicationConnectors = Collections.singletonList(HttpConnectorFactory.application());
+
+    @Valid
+    @NotNull
+    private List<ConnectorFactory> adminConnectors = Collections.singletonList(HttpConnectorFactory.admin());
 
     @Min(2)
     private int adminMaxThreads = 64;
@@ -189,7 +189,7 @@ public class DefaultServerFactory extends AbstractServerFactory {
 
         final List<Connector> adConnectors = buildAdminConnectors(metricRegistry, server);
 
-        final Map<Connector, Handler> handlers = Maps.newLinkedHashMap();
+        final Map<Connector, Handler> handlers = new LinkedHashMap<>();
 
         for (Connector connector : appConnectors) {
             server.addConnector(connector);
@@ -211,7 +211,7 @@ public class DefaultServerFactory extends AbstractServerFactory {
         threadPool.setName("dw-admin");
         server.addBean(threadPool);
 
-        final List<Connector> connectors = Lists.newArrayList();
+        final List<Connector> connectors = new ArrayList<>();
         for (ConnectorFactory factory : adminConnectors) {
             Connector connector = factory.build(server, metricRegistry, "admin", threadPool);
             if (connector instanceof ContainerLifeCycle) {
@@ -223,7 +223,7 @@ public class DefaultServerFactory extends AbstractServerFactory {
     }
 
     private List<Connector> buildAppConnectors(MetricRegistry metricRegistry, Server server) {
-        final List<Connector> connectors = Lists.newArrayList();
+        final List<Connector> connectors = new ArrayList<>();
         for (ConnectorFactory factory : applicationConnectors) {
             connectors.add(factory.build(server, metricRegistry, "application", null));
         }

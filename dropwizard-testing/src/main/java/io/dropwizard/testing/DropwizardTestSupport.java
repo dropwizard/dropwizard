@@ -5,7 +5,6 @@ import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
 import io.dropwizard.cli.ServerCommand;
@@ -22,6 +21,7 @@ import org.eclipse.jetty.server.ServerConnector;
 
 import javax.annotation.Nullable;
 import javax.validation.Validator;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -55,7 +55,7 @@ public class DropwizardTestSupport<C extends Configuration> {
     protected Application<C> application;
     protected Environment environment;
     protected Server jettyServer;
-    protected List<ServiceListener<C>> listeners = Lists.newArrayList();
+    protected List<ServiceListener<C>> listeners = new ArrayList<>();
 
     public DropwizardTestSupport(Class<? extends Application<C>> applicationClass,
                              @Nullable String configPath,

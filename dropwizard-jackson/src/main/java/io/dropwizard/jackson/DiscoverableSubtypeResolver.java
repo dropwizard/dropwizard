@@ -2,7 +2,6 @@ package io.dropwizard.jackson;
 
 import com.fasterxml.jackson.databind.jsontype.impl.StdSubtypeResolver;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,6 +11,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
@@ -49,7 +49,7 @@ public class DiscoverableSubtypeResolver extends StdSubtypeResolver {
     }
 
     protected List<Class<?>> discoverServices(Class<?> klass) {
-        final List<Class<?>> serviceClasses = Lists.newArrayList();
+        final List<Class<?>> serviceClasses = new ArrayList<>();
         try {
             // use classloader that loaded this class to find the service descriptors on the classpath
             // better than ClassLoader.getSystemResources() which may not be the same classloader if ths app

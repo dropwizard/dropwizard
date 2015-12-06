@@ -2,7 +2,6 @@ package io.dropwizard.jdbi;
 
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheckRegistry;
-import com.google.common.collect.Lists;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.db.ManagedDataSource;
 import io.dropwizard.lifecycle.Managed;
@@ -21,6 +20,7 @@ import org.skife.jdbi.v2.util.StringColumnMapper;
 
 import java.sql.Timestamp;
 import java.sql.Types;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Executors;
@@ -46,7 +46,7 @@ public class JDBITest {
     private final LifecycleEnvironment lifecycleEnvironment = mock(LifecycleEnvironment.class);
     private final Environment environment = mock(Environment.class);
     private final DBIFactory factory = new DBIFactory();
-    private final List<Managed> managed = Lists.newArrayList();
+    private final List<Managed> managed = new ArrayList<>();
     private final MetricRegistry metricRegistry = new MetricRegistry();
     private DBI dbi;
 

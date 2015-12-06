@@ -4,8 +4,6 @@ import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.httpclient.HttpClientMetricNameStrategy;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
 import io.dropwizard.jersey.gzip.ConfiguredGZipEncoder;
 import io.dropwizard.jersey.gzip.GZipDecoder;
 import io.dropwizard.jersey.jackson.JacksonMessageBodyProvider;
@@ -27,6 +25,8 @@ import javax.validation.Validator;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.Configuration;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -53,9 +53,9 @@ import static java.util.Objects.requireNonNull;
  */
 public class JerseyClientBuilder {
 
-    private final List<Object> singletons = Lists.newArrayList();
-    private final List<Class<?>> providers = Lists.newArrayList();
-    private final Map<String, Object> properties = Maps.newLinkedHashMap();
+    private final List<Object> singletons = new ArrayList<>();
+    private final List<Class<?>> providers = new ArrayList<>();
+    private final Map<String, Object> properties = new LinkedHashMap<>();
     private JerseyClientConfiguration configuration = new JerseyClientConfiguration();
 
     private HttpClientBuilder apacheHttpClientBuilder;

@@ -6,7 +6,6 @@ import com.fasterxml.classmate.ResolvedType;
 import com.fasterxml.classmate.TypeResolver;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ComparisonChain;
-import com.google.common.collect.Sets;
 import io.dropwizard.jersey.caching.CacheControlledResponseFeature;
 import io.dropwizard.jersey.params.NonEmptyStringParamFeature;
 import io.dropwizard.jersey.sessions.SessionFactoryProvider;
@@ -26,7 +25,9 @@ import javax.ws.rs.ext.Provider;
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 public class DropwizardResourceConfig extends ResourceConfig {
     private static final Logger LOGGER = LoggerFactory.getLogger(DropwizardResourceConfig.class);
@@ -91,7 +92,7 @@ public class DropwizardResourceConfig extends ResourceConfig {
      */
     @VisibleForTesting
     Set<Class<?>> allClasses() {
-        final Set<Class<?>> allClasses = Sets.newHashSet(getClasses());
+        final Set<Class<?>> allClasses = new HashSet<>(getClasses());
         for (Object singleton : getSingletons()) {
             allClasses.add(singleton.getClass());
         }
@@ -99,7 +100,7 @@ public class DropwizardResourceConfig extends ResourceConfig {
     }
 
     private Set<String> canonicalNamesByAnnotation(final Class<? extends Annotation> annotation) {
-        final Set<String> result = Sets.newHashSet();
+        final Set<String> result = new HashSet<>();
         for (Class<?> clazz : getClasses()) {
             if (clazz.isAnnotationPresent(annotation)) {
                 result.add(clazz.getCanonicalName());
@@ -110,12 +111,12 @@ public class DropwizardResourceConfig extends ResourceConfig {
 
     public String getEndpointsInfo() {
         final StringBuilder msg = new StringBuilder(1024);
-        final Set<EndpointLogLine> endpointLogLines = Sets.newTreeSet(new EndpointComparator());
+        final Set<EndpointLogLine> endpointLogLines = new TreeSet<>(new EndpointComparator());
 
         msg.append("The following paths were found for the configured resources:");
         msg.append(NEWLINE).append(NEWLINE);
 
-        final Set<Class<?>> allResources = Sets.newHashSet();
+        final Set<Class<?>> allResources = new HashSet<>();
         for (Class<?> clazz : allClasses()) {
             if (!clazz.isInterface() && Resource.from(clazz) != null) {
                 allResources.add(clazz);

@@ -2,8 +2,12 @@ package io.dropwizard.auth.chained;
 
 import com.codahale.metrics.MetricRegistry;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-import io.dropwizard.auth.*;
+import io.dropwizard.auth.AuthBaseTest;
+import io.dropwizard.auth.AuthDynamicFeature;
+import io.dropwizard.auth.AuthFilter;
+import io.dropwizard.auth.AuthResource;
+import io.dropwizard.auth.AuthValueFactoryProvider;
+import io.dropwizard.auth.Authorizer;
 import io.dropwizard.auth.basic.BasicCredentialAuthFilter;
 import io.dropwizard.auth.basic.BasicCredentials;
 import io.dropwizard.auth.oauth.OAuthCredentialAuthFilter;
@@ -46,10 +50,7 @@ public class ChainedAuthProviderTest extends AuthBaseTest<ChainedAuthProviderTes
         @SuppressWarnings("unchecked")
         public List<AuthFilter> buildHandlerList(AuthFilter<BasicCredentials, Principal> basicAuthFilter,
                                                  AuthFilter<String, Principal> oAuthFilter) {
-            final List<AuthFilter> handlers = Lists.newArrayList();
-            handlers.add(basicAuthFilter);
-            handlers.add(oAuthFilter);
-            return handlers;
+            return ImmutableList.of(basicAuthFilter, oAuthFilter);
         }
     }
 

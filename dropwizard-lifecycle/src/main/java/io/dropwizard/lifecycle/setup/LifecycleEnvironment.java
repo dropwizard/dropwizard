@@ -1,6 +1,5 @@
 package io.dropwizard.lifecycle.setup;
 
-import com.google.common.collect.Lists;
 import io.dropwizard.lifecycle.JettyManaged;
 import io.dropwizard.lifecycle.Managed;
 import io.dropwizard.lifecycle.ServerLifecycleListener;
@@ -11,6 +10,7 @@ import org.eclipse.jetty.util.component.LifeCycle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.Objects.requireNonNull;
@@ -22,8 +22,8 @@ public class LifecycleEnvironment {
     private final List<LifeCycle.Listener> lifecycleListeners;
 
     public LifecycleEnvironment() {
-        this.managedObjects = Lists.newArrayList();
-        this.lifecycleListeners = Lists.newArrayList();
+        this.managedObjects = new ArrayList<>();
+        this.lifecycleListeners = new ArrayList<>();
     }
 
     public List<LifeCycle> getManagedObjects() {

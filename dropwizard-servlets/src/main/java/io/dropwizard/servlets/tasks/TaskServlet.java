@@ -6,9 +6,7 @@ import com.codahale.metrics.Timer;
 import com.codahale.metrics.annotation.ExceptionMetered;
 import com.codahale.metrics.annotation.Metered;
 import com.codahale.metrics.annotation.Timed;
-import static com.codahale.metrics.MetricRegistry.name;
 import com.google.common.collect.ImmutableMultimap;
-import com.google.common.collect.Maps;
 import com.google.common.net.MediaType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +20,10 @@ import java.io.PrintWriter;
 import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Enumeration;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+
+import static com.codahale.metrics.MetricRegistry.name;
 
 /**
  * A servlet which provides access to administrative {@link Task}s. It only responds to {@code POST}
@@ -44,8 +45,8 @@ public class TaskServlet extends HttpServlet {
      */
     public TaskServlet(MetricRegistry metricRegistry) {
         this.metricRegistry = metricRegistry;
-        this.tasks = Maps.newConcurrentMap();
-        this.taskExecutors = Maps.newConcurrentMap();
+        this.tasks = new ConcurrentHashMap<>();
+        this.taskExecutors = new ConcurrentHashMap<>();
     }
 
     public void add(Task task) {

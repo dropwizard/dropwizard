@@ -3,8 +3,6 @@ package io.dropwizard.testing.junit;
 import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.jersey.jackson.JacksonMessageBodyProvider;
@@ -28,6 +26,8 @@ import javax.servlet.ServletConfig;
 import javax.validation.Validator;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.core.Context;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -44,9 +44,9 @@ public class ResourceTestRule implements TestRule {
 
     public static class Builder {
 
-        private final Set<Object> singletons = Sets.newHashSet();
-        private final Set<Class<?>> providers = Sets.newHashSet();
-        private final Map<String, Object> properties = Maps.newHashMap();
+        private final Set<Object> singletons = new HashSet<>();
+        private final Set<Class<?>> providers = new HashSet<>();
+        private final Map<String, Object> properties = new HashMap<>();
         private ObjectMapper mapper = Jackson.newObjectMapper();
         private Validator validator = Validators.newValidator();
         private TestContainerFactory testContainerFactory = new InMemoryTestContainerFactory();
@@ -136,7 +136,7 @@ public class ResourceTestRule implements TestRule {
 
     public static class ResourceTestResourceConfig extends DropwizardResourceConfig {
         private static final String RULE_ID = "io.dropwizard.testing.junit.resourceTestRuleId";
-        private static final Map<String, ResourceTestRule> RULE_ID_TO_RULE = Maps.newHashMap();
+        private static final Map<String, ResourceTestRule> RULE_ID_TO_RULE = new HashMap<>();
 
         public ResourceTestResourceConfig(final String ruleId, final ResourceTestRule resourceTestRule) {
             super(true, new MetricRegistry());

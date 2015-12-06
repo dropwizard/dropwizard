@@ -4,11 +4,11 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Ordering;
-import com.google.common.collect.Sets;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ElementKind;
 import javax.validation.Path;
+import java.util.HashSet;
 import java.util.Set;
 
 public class ConstraintViolations {
@@ -43,7 +43,7 @@ public class ConstraintViolations {
     }
 
     public static <T> ImmutableList<String> format(Set<ConstraintViolation<T>> violations) {
-        final Set<String> errors = Sets.newHashSet();
+        final Set<String> errors = new HashSet<>();
         for (ConstraintViolation<?> v : violations) {
             errors.add(format(v));
         }
@@ -51,7 +51,7 @@ public class ConstraintViolations {
     }
 
     public static ImmutableList<String> formatUntyped(Set<ConstraintViolation<?>> violations) {
-        final Set<String> errors = Sets.newHashSet();
+        final Set<String> errors = new HashSet<>();
         for (ConstraintViolation<?> v : violations) {
             errors.add(format(v));
         }

@@ -1,11 +1,11 @@
 package io.dropwizard.logging;
 
 import ch.qos.logback.classic.spi.ThrowableProxy;
-import com.google.common.collect.Lists;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -15,7 +15,7 @@ public class PrefixedThrowableProxyConverterTest {
 
     @Before
     public void setup() {
-        converter.setOptionList(Lists.newArrayList("full"));
+        converter.setOptionList(Collections.singletonList("full"));
         converter.start();
     }
 

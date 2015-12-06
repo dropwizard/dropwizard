@@ -11,7 +11,6 @@ import com.codahale.metrics.jvm.MemoryUsageGaugeSet;
 import com.codahale.metrics.jvm.ThreadStatesGaugeSet;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
 import io.dropwizard.Application;
 import io.dropwizard.Bundle;
 import io.dropwizard.Configuration;
@@ -27,6 +26,7 @@ import io.dropwizard.jersey.validation.Validators;
 
 import javax.validation.ValidatorFactory;
 import java.lang.management.ManagementFactory;
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.Objects.requireNonNull;
@@ -60,9 +60,9 @@ public class Bootstrap<T extends Configuration> {
     public Bootstrap(Application<T> application) {
         this.application = application;
         this.objectMapper = Jackson.newObjectMapper();
-        this.bundles = Lists.newArrayList();
-        this.configuredBundles = Lists.newArrayList();
-        this.commands = Lists.newArrayList();
+        this.bundles = new ArrayList<>();
+        this.configuredBundles = new ArrayList<>();
+        this.commands = new ArrayList<>();
         this.validatorFactory = Validators.newValidatorFactory();
         this.metricRegistry = new MetricRegistry();
         this.configurationSourceProvider = new FileConfigurationSourceProvider();

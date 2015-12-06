@@ -2,12 +2,12 @@ package io.dropwizard.logging;
 
 import ch.qos.logback.classic.spi.ThrowableProxy;
 import com.google.common.base.Splitter;
-import com.google.common.collect.Lists;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.net.SocketTimeoutException;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -55,7 +55,7 @@ public class PrefixedRootCauseFirstThrowableProxyConverterTest {
 
     @Before
     public void setup() {
-        converter.setOptionList(Lists.newArrayList("full"));
+        converter.setOptionList(Collections.singletonList("full"));
         converter.start();
     }
 

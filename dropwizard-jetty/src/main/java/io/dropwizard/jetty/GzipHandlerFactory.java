@@ -2,13 +2,13 @@ package io.dropwizard.jetty;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Sets;
 import io.dropwizard.util.Size;
 import org.eclipse.jetty.server.Handler;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.zip.Deflater;
 
@@ -82,7 +82,7 @@ public class GzipHandlerFactory {
     private Size bufferSize = Size.kilobytes(8);
 
     // By default compress responses for all user-agents
-    private Set<String> excludedUserAgentPatterns = Sets.newHashSet();
+    private Set<String> excludedUserAgentPatterns = new HashSet<>();
     private Set<String> compressedMimeTypes;
     private Set<String> includedMethods;
 
