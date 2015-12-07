@@ -1,13 +1,10 @@
 package io.dropwizard.auth.oauth;
 
-import io.dropwizard.auth.AuthenticationException;
 import io.dropwizard.auth.AuthFilter;
 import io.dropwizard.auth.Authenticator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nullable;
 import javax.annotation.Priority;
-import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.Priorities;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.container.ContainerRequestContext;
@@ -15,58 +12,44 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.SecurityContext;
 import java.io.IOException;
 import java.security.Principal;
-import java.util.Optional;
 
 @Priority(Priorities.AUTHENTICATION)
 public class OAuthCredentialAuthFilter<P extends Principal> extends AuthFilter<String, P> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(OAuthCredentialAuthFilter.class);
+
     private OAuthCredentialAuthFilter() {
     }
 
     @Override
     public void filter(final ContainerRequestContext requestContext) throws IOException {
-        final String header = requestContext.getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
-        if (header != null) {
-            try {
-                final int space = header.indexOf(' ');
-                if (space > 0) {
-                    final String method = header.substring(0, space);
-                    if (prefix.equalsIgnoreCase(method)) {
-                        final String credentials = header.substring(space + 1);
-                        final Optional<P> principal = authenticator.authenticate(credentials);
-                        if (principal.isPresent()) {
-                            requestContext.setSecurityContext(new SecurityContext() {
-                                @Override
-                                public Principal getUserPrincipal() {
-                                    return principal.get();
-                                }
+        final String credentials = getCredentials(requestContext.getHeaders().getFirst(HttpHeaders.AUTHORIZATION));
+        if (!authenticate(requestContext, credentials, SecurityContext.BASIC_AUTH)) {
+            throw new WebApplicationException(unauthorizedHandler.buildResponse(prefix, realm));
+        }
+    }
 
-                                @Override
-                                public boolean isUserInRole(String role) {
-                                    return authorizer.authorize(principal.get(), role);
-                                }
-
-                                @Override
-                                public boolean isSecure() {
-                                    return requestContext.getSecurityContext().isSecure();
-                                }
-
-                                @Override
-                                public String getAuthenticationScheme() {
-                                    return SecurityContext.BASIC_AUTH;
-                                }
-                            });
-                            return;
-                        }
-                    }
-                }
-            } catch (AuthenticationException e) {
-                LOGGER.warn("Error authenticating credentials", e);
-                throw new InternalServerErrorException();
-            }
+    /**
+     * Parses a value of the `Authorization` header in the form of `Bearer a892bf3e284da9bb40648ab10`.
+     *
+     * @param header the value of the `Authorization` header
+     * @return a token
+     */
+    @Nullable
+    private String getCredentials(String header) {
+        if (header == null) {
+            return null;
         }
 
-        throw new WebApplicationException(unauthorizedHandler.buildResponse(prefix, realm));
+        final int space = header.indexOf(' ');
+        if (space <= 0) {
+            return null;
+        }
+
+        final String method = header.substring(0, space);
+        if (!prefix.equalsIgnoreCase(method)) {
+            return null;
+        }
+
+        return header.substring(space + 1);
     }
 
     /**

@@ -1,14 +1,22 @@
 package io.dropwizard.auth;
 
 import com.google.common.base.Preconditions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.Priority;
+import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.Priorities;
+import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
+import javax.ws.rs.core.SecurityContext;
 import java.security.Principal;
+import java.util.Optional;
 
 @Priority(Priorities.AUTHENTICATION)
 public abstract class AuthFilter<C, P extends Principal> implements ContainerRequestFilter {
+
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     protected String prefix;
     protected String realm;
@@ -108,5 +116,53 @@ public abstract class AuthFilter<C, P extends Principal> implements ContainerReq
         }
 
         protected abstract T newInstance();
+    }
+
+    /**
+     * Authenticates a request with user credentials and setup the security context.
+     *
+     * @param requestContext the context of the request
+     * @param credentials    the user credentials
+     * @param scheme         the authentication scheme; one of {@code BASIC_AUTH, FORM_AUTH, CLIENT_CERT_AUTH, DIGEST_AUTH}.
+     *                       See {@link SecurityContext}
+     * @return {@code true}, if the request is authenticated, otherwise {@code false}
+     */
+    protected boolean authenticate(ContainerRequestContext requestContext, C credentials, String scheme) {
+        try {
+            if (credentials == null) {
+                return false;
+            }
+
+            final Optional<P> principal = authenticator.authenticate(credentials);
+            if (!principal.isPresent()) {
+                return false;
+            }
+
+            requestContext.setSecurityContext(new SecurityContext() {
+                @Override
+                public Principal getUserPrincipal() {
+                    return principal.get();
+                }
+
+                @Override
+                public boolean isUserInRole(String role) {
+                    return authorizer.authorize(principal.get(), role);
+                }
+
+                @Override
+                public boolean isSecure() {
+                    return requestContext.getSecurityContext().isSecure();
+                }
+
+                @Override
+                public String getAuthenticationScheme() {
+                    return scheme;
+                }
+            });
+            return true;
+        } catch (AuthenticationException e) {
+            logger.warn("Error authenticating credentials", e);
+            throw new InternalServerErrorException();
+        }
     }
 }
