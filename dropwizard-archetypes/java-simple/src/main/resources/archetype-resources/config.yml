@@ -1,3 +1,5 @@
+applicationName: ${name}
+
 logging:
   level: INFO
   loggers:
