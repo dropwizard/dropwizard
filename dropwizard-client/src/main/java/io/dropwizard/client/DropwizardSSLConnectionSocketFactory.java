@@ -25,12 +25,13 @@ public class DropwizardSSLConnectionSocketFactory {
     }
 
     public SSLConnectionSocketFactory getSocketFactory() throws SSLInitializationException {
-        return new SSLConnectionSocketFactory(buildSslContext(), getSupportedProtocols(), getSupportedCiphers(), chooseHostnameVerifier());
+        return new SSLConnectionSocketFactory(buildSslContext(), getSupportedProtocols(), getSupportedCiphers(),
+                chooseHostnameVerifier());
     }
 
     private String[] getSupportedCiphers() {
         final List<String> supportedCiphers = configuration.getSupportedCiphers();
-        if(supportedCiphers == null) {
+        if (supportedCiphers == null) {
             return null;
         }
         return supportedCiphers.toArray(new String[supportedCiphers.size()]);
@@ -38,7 +39,7 @@ public class DropwizardSSLConnectionSocketFactory {
 
     private String[] getSupportedProtocols() {
         final List<String> supportedProtocols = configuration.getSupportedProtocols();
-        if(supportedProtocols == null) {
+        if (supportedProtocols == null) {
             return null;
         }
         return supportedProtocols.toArray(new String[supportedProtocols.size()]);
@@ -46,7 +47,7 @@ public class DropwizardSSLConnectionSocketFactory {
 
     private HostnameVerifier chooseHostnameVerifier() {
         HostnameVerifier hostnameVerifier;
-        if(configuration.isVerifyHostname()) {
+        if (configuration.isVerifyHostname()) {
             hostnameVerifier = SSLConnectionSocketFactory.getDefaultHostnameVerifier();
         } else {
             hostnameVerifier = new NoopHostnameVerifier();
@@ -69,19 +70,21 @@ public class DropwizardSSLConnectionSocketFactory {
     }
 
     private void loadKeyMaterial(SSLContextBuilder sslContextBuilder) throws Exception {
-        if(configuration.getKeyStorePath() != null) {
-            final KeyStore keystore = loadKeyStore(configuration.getKeyStoreType(), configuration.getKeyStorePath(), configuration.getKeyStorePassword());
+        if (configuration.getKeyStorePath() != null) {
+            final KeyStore keystore = loadKeyStore(configuration.getKeyStoreType(), configuration.getKeyStorePath(),
+                    configuration.getKeyStorePassword());
             sslContextBuilder.loadKeyMaterial(keystore, configuration.getKeyStorePassword().toCharArray());
         }
     }
 
     private void loadTrustMaterial(SSLContextBuilder sslContextBuilder) throws Exception {
         KeyStore trustStore = null;
-        if(configuration.getTrustStorePath() != null) {
-            trustStore = loadKeyStore(configuration.getTrustStoreType(), configuration.getTrustStorePath(), configuration.getTrustStorePassword());
+        if (configuration.getTrustStorePath() != null) {
+            trustStore = loadKeyStore(configuration.getTrustStoreType(), configuration.getTrustStorePath(),
+                    configuration.getTrustStorePassword());
         }
         TrustStrategy trustStrategy = null;
-        if(configuration.isTrustSelfSignedCertificates()) {
+        if (configuration.isTrustSelfSignedCertificates()) {
             trustStrategy = new TrustSelfSignedStrategy();
         }
         sslContextBuilder.loadTrustMaterial(trustStore, trustStrategy);
@@ -89,11 +92,8 @@ public class DropwizardSSLConnectionSocketFactory {
 
     private KeyStore loadKeyStore(String type, File path, String password) throws Exception {
         final KeyStore keyStore = KeyStore.getInstance(type);
-        InputStream inputStream = new FileInputStream(path);
-        try {
+        try (InputStream inputStream = new FileInputStream(path)) {
             keyStore.load(inputStream, password.toCharArray());
-        } finally {
-            inputStream.close();
         }
         return keyStore;
     }

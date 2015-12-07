@@ -35,13 +35,17 @@ public class InstantMapper implements ResultColumnMapper<Instant> {
 
     @Override
     public Instant mapColumn(ResultSet r, int columnNumber, StatementContext ctx) throws SQLException {
-        final Timestamp timestamp = calendar.isPresent() ? r.getTimestamp(columnNumber, cloneCalendar()) : r.getTimestamp(columnNumber);
+        final Timestamp timestamp = calendar.isPresent() ?
+                r.getTimestamp(columnNumber, cloneCalendar()) :
+                r.getTimestamp(columnNumber);
         return timestamp == null ? null : timestamp.toInstant();
     }
 
     @Override
     public Instant mapColumn(ResultSet r, String columnLabel, StatementContext ctx) throws SQLException {
-        final Timestamp timestamp = calendar.isPresent() ? r.getTimestamp(columnLabel, cloneCalendar()) : r.getTimestamp(columnLabel);
+        final Timestamp timestamp = calendar.isPresent() ?
+                r.getTimestamp(columnLabel, cloneCalendar()) :
+                r.getTimestamp(columnLabel);
         return timestamp == null ? null : timestamp.toInstant();
     }
 

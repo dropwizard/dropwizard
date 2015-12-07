@@ -53,8 +53,8 @@ public class LogConfigurationTask extends Task {
 
     @Override
     public void execute(ImmutableMultimap<String, String> parameters, PrintWriter output) throws Exception {
-        List<String> loggerNames = getLoggerNames(parameters);
-        Level loggerLevel = getLoggerLevel(parameters);
+        final List<String> loggerNames = getLoggerNames(parameters);
+        final Level loggerLevel = getLoggerLevel(parameters);
 
         for (String loggerName : loggerNames) {
             loggerContext.getLogger(loggerName).setLevel(loggerLevel);
@@ -68,7 +68,7 @@ public class LogConfigurationTask extends Task {
     }
 
     private Level getLoggerLevel(ImmutableMultimap<String, String> parameters) {
-        List<String> loggerLevels = parameters.get("level").asList();
+        final List<String> loggerLevels = parameters.get("level").asList();
         return loggerLevels.isEmpty() ? null : Level.valueOf(loggerLevels.get(0));
     }
 }

@@ -576,7 +576,7 @@ public abstract class AbstractServerFactory implements ServerFactory {
     protected Handler addStatsHandler(Handler handler) {
         // Graceful shutdown is implemented via the statistics handler,
         // see https://bugs.eclipse.org/bugs/show_bug.cgi?id=420142
-        StatisticsHandler statisticsHandler = new StatisticsHandler();
+        final StatisticsHandler statisticsHandler = new StatisticsHandler();
         statisticsHandler.setHandler(handler);
         return statisticsHandler;
     }

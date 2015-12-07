@@ -98,7 +98,7 @@ public abstract class AuthFilter<C, P extends Principal> implements ContainerReq
             Preconditions.checkArgument(authorizer != null, "Authorizer is not set");
             Preconditions.checkArgument(unauthorizedHandler != null, "Unauthorized handler is not set");
 
-            T authFilter = newInstance();
+            final T authFilter = newInstance();
             authFilter.authorizer = authorizer;
             authFilter.authenticator = authenticator;
             authFilter.prefix = prefix;

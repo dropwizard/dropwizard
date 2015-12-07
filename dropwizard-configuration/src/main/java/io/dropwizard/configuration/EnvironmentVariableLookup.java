@@ -35,7 +35,7 @@ public class EnvironmentVariableLookup extends StrLookup<Object> {
      */
     @Override
     public String lookup(String key) {
-        String value = System.getenv(key);
+        final String value = System.getenv(key);
 
         if (value == null && strict) {
             throw new UndefinedEnvironmentVariableException("The environment variable '" + key

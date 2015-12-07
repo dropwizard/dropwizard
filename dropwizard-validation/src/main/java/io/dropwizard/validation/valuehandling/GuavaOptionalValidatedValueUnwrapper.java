@@ -23,7 +23,7 @@ public class GuavaOptionalValidatedValueUnwrapper extends ValidatedValueUnwrappe
 
     @Override
     public Type getValidatedValueType(final Type type) {
-        ResolvedType resolvedType = resolver.resolve(type);
+        final ResolvedType resolvedType = resolver.resolve(type);
         return resolvedType.typeParametersFor(Optional.class).get(0).getErasedType();
     }
 }

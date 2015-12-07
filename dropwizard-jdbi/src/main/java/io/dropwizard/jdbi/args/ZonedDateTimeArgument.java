@@ -32,7 +32,7 @@ public class ZonedDateTimeArgument implements Argument {
             if (calendar.isPresent()) {
                 // We need to make a clone, because Calendar is not thread-safe
                 // and some JDBC drivers mutate it during time calculations
-                Calendar calendarClone = (Calendar) calendar.get().clone();
+                final Calendar calendarClone = (Calendar) calendar.get().clone();
                 statement.setTimestamp(position, new Timestamp(value.toInstant().toEpochMilli()), calendarClone);
             } else {
                 statement.setTimestamp(position, new Timestamp(value.toInstant().toEpochMilli()));

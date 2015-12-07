@@ -18,7 +18,9 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.zip.*;
+import java.util.zip.Inflater;
+import java.util.zip.InflaterInputStream;
+import java.util.zip.GZIPInputStream;
 
 /**
  * An extension of {@link GzipHandler} which decompresses gzip- and deflate-encoded request
@@ -211,7 +213,7 @@ public class BiDiGzipHandler extends GzipHandler {
     private static class RemoveHttpHeaderWrapper extends HttpServletRequestWrapper {
         private final String headerName;
 
-        public RemoveHttpHeaderWrapper(final HttpServletRequest request, final String headerName) {
+        RemoveHttpHeaderWrapper(final HttpServletRequest request, final String headerName) {
             super(request);
             this.headerName = headerName;
         }

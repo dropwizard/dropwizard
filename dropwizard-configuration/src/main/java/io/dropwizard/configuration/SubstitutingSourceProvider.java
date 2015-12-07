@@ -34,8 +34,8 @@ public class SubstitutingSourceProvider implements ConfigurationSourceProvider {
      */
     @Override
     public InputStream open(String path) throws IOException {
-        String config = new String(ByteStreams.toByteArray(delegate.open(path)), StandardCharsets.UTF_8);
-        String substituted = substitutor.replace(config);
+        final String config = new String(ByteStreams.toByteArray(delegate.open(path)), StandardCharsets.UTF_8);
+        final String substituted = substitutor.replace(config);
 
         return new ByteArrayInputStream(substituted.getBytes(StandardCharsets.UTF_8));
     }

@@ -53,7 +53,7 @@ public class OptionalMessageBodyWriter implements MessageBodyWriter<Optional<?>>
         final Type innerGenericType = (genericType instanceof ParameterizedType) ?
             ((ParameterizedType) genericType).getActualTypeArguments()[0] : entity.get().getClass();
 
-        MessageBodyWriter writer = mbw.get().getMessageBodyWriter(entity.get().getClass(),
+        final MessageBodyWriter writer = mbw.get().getMessageBodyWriter(entity.get().getClass(),
             innerGenericType, annotations, mediaType);
         writer.writeTo(entity.get(), entity.get().getClass(),
             innerGenericType, annotations, mediaType, httpHeaders, entityStream);

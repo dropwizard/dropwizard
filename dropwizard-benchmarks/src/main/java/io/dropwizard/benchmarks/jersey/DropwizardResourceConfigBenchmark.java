@@ -3,11 +3,22 @@ package io.dropwizard.benchmarks.jersey;
 import com.codahale.metrics.MetricRegistry;
 import com.google.common.collect.ImmutableList;
 import io.dropwizard.jersey.DropwizardResourceConfig;
-import org.openjdk.jmh.annotations.*;
+import org.openjdk.jmh.annotations.Benchmark;
+import org.openjdk.jmh.annotations.BenchmarkMode;
+import org.openjdk.jmh.annotations.Mode;
+import org.openjdk.jmh.annotations.OutputTimeUnit;
+import org.openjdk.jmh.annotations.Scope;
+import org.openjdk.jmh.annotations.Setup;
+import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
 
-import javax.ws.rs.*;
+import javax.ws.rs.GET;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 

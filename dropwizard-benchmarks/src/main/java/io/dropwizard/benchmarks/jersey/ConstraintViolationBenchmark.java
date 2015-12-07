@@ -66,7 +66,7 @@ public class ConstraintViolationBenchmark {
         final Validator validator = Validators.newValidator();
         final ExecutableValidator execValidator = validator.forExecutables();
 
-        Set<ConstraintViolation<ConstraintViolationBenchmark.Resource>> paramViolations =
+        final Set<ConstraintViolation<ConstraintViolationBenchmark.Resource>> paramViolations =
             execValidator.validateParameters(
                 new Resource(),
                 getAccessibleMethod(ConstraintViolationBenchmark.Resource.class, "paramFunc", String.class),
@@ -74,7 +74,7 @@ public class ConstraintViolationBenchmark {
             );
         paramViolation = paramViolations.iterator().next();
 
-        Set<ConstraintViolation<ConstraintViolationBenchmark.Resource>> objViolations =
+        final Set<ConstraintViolation<ConstraintViolationBenchmark.Resource>> objViolations =
             execValidator.validateParameters(
                 new Resource(),
                 getAccessibleMethod(ConstraintViolationBenchmark.Resource.class, "objectFunc", Foo.class),

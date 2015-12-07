@@ -7,7 +7,11 @@ import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.MessageBodyWriter;
 import javax.ws.rs.ext.Provider;
 import java.io.IOException;
@@ -23,8 +27,8 @@ import static com.codahale.metrics.MetricRegistry.name;
 @Provider
 @Produces({ MediaType.TEXT_HTML, MediaType.APPLICATION_XHTML_XML })
 public class ViewMessageBodyWriter implements MessageBodyWriter<View> {
-    private final static Logger logger = LoggerFactory.getLogger(MessageBodyWriter.class);
-    public final static String TEMPLATE_ERROR_MSG =
+    private static final Logger logger = LoggerFactory.getLogger(MessageBodyWriter.class);
+    public static final String TEMPLATE_ERROR_MSG =
             "<html>" +
                 "<head><title>Template Error</title></head>" +
                 "<body><h1>Template Error</h1><p>Something went wrong rendering the page</p></body>" +

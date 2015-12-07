@@ -96,7 +96,7 @@ public class SessionFactoryFactory {
         return configuration.buildSessionFactory(registry);
     }
 
-    protected void configure(Configuration configuration, ServiceRegistry registry){
+    protected void configure(Configuration configuration, ServiceRegistry registry) {
     }
 
     private void addAnnotatedClasses(Configuration configuration,
