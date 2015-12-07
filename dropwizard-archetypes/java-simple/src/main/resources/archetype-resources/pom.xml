@@ -42,6 +42,7 @@
         <dependency>
             <groupId>io.dropwizard</groupId>
             <artifactId>dropwizard-core</artifactId>
+            <version>\${dropwizard.version}</version>
         </dependency>
     </dependencies>
 

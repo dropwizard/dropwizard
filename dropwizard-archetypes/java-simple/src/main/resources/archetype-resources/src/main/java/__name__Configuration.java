@@ -6,5 +6,17 @@ import org.hibernate.validator.constraints.*;
 import javax.validation.constraints.*;
 
 public class ${name}Configuration extends Configuration {
-    // TODO: implement service configuration
+
+    @NotEmpty
+    private String applicationName;
+
+    @JsonProperty
+    public String getApplicationName() {
+        return applicationName;
+    }
+
+    @JsonProperty
+    public void setApplicationName(String applicationName) {
+        this.applicationName = applicationName;
+    }
 }

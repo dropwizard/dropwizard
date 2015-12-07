@@ -1,0 +1,6 @@
+applicationName: ${name}
+
+logging:
+  level: INFO
+  loggers:
+    ${groupId}: DEBUG
