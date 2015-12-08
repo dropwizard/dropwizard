@@ -109,15 +109,13 @@ Now that you've gotten the lay of the land, let's dig in!
 
 .. _gs-maven-setup:
 
-Setting Up Maven
-================
+Setting Up Using Maven
+======================
 
 We recommend you use Maven_ for new Dropwizard applications. If you're a big Ant_ / Ivy_, Buildr_,
 Gradle_, SBT_, Leiningen_, or Gant_ fan, that's cool, but we use Maven, and we'll be using Maven as
 we go through this example application. If you have any questions about how Maven works,
-`Maven: The Complete Reference`__ should have what you're looking for. (We're assuming you know how
-to create a new Maven project. If not, you can use `this <https://gist.github.com/2019732>`_ to get
-started.)
+`Maven: The Complete Reference`__ should have what you're looking for.
 
 .. _Maven: http://maven.apache.org
 .. _Ant: http://ant.apache.org/
@@ -128,6 +126,23 @@ started.)
 .. _Gant: http://gant.codehaus.org/
 .. _Leiningen: https://github.com/technomancy/leiningen
 .. __: http://www.sonatype.com/books/mvnref-book/reference/
+
+
+You have three alternatives from here:
+
+1. Create a project using dropwizard-archetype_
+
+    mvn archetype:generate -DarchetypeGroupId=io.dropwizard.archetypes -DarchetypeArtifactId=java-simple -DarchetypeVersion=0.9.1
+
+2. Look at the dropwizard-example_
+
+3. Follow the tutorial below to see how you can include it in your existing project
+
+.. _dropwizard-archetype: https://github.com/dropwizard/dropwizard/tree/master/dropwizard-archetypes
+.. _dropwizard-example: https://github.com/dropwizard/dropwizard/tree/master/dropwizard-example
+
+Tutorial
+--------
 
 First, add a ``dropwizard.version`` property to your POM with the current version of Dropwizard
 (which is |release|):

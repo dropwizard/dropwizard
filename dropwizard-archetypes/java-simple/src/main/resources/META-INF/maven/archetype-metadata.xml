@@ -99,6 +99,22 @@
         <fileSet filtered="true" packaged="false">
             <directory>src/test/resources/fixtures</directory>
         </fileSet>
+
+        <!-- config -->
+        <fileSet filtered="true" packaged="false">
+            <directory></directory>
+            <includes>
+                <include>config.yml</include>
+            </includes>
+        </fileSet>
+
+        <!-- readme -->
+        <fileSet filtered="true" packaged="false">
+            <directory></directory>
+            <includes>
+                <include>README.md</include>
+            </includes>
+        </fileSet>
     </fileSets>
 
 </archetype-descriptor>
