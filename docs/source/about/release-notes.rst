@@ -11,6 +11,7 @@ v1.0.0
 
 * Use Java 8 as baseline
 * Add `ConfigurationSourceProvider` for reading resources from classpath `#1314 <https://github.com/dropwizard/dropwizard/issues/1314>`_
+* Upgraded to Jackson 2.6.4
 * Upgraded to JDBI 2.70
 * Upgraded to Jetty 9.3.6.v20151106
 * Upgraded to Joda-Time 2.9.1
