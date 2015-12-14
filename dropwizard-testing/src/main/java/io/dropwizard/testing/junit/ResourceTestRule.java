@@ -5,7 +5,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.DropwizardResourceConfig;
+import io.dropwizard.jersey.errors.EarlyEofExceptionMapper;
+import io.dropwizard.jersey.errors.LoggingExceptionMapper;
 import io.dropwizard.jersey.jackson.JacksonMessageBodyProvider;
+import io.dropwizard.jersey.jackson.JsonProcessingExceptionMapper;
 import io.dropwizard.jersey.validation.HibernateValidationFeature;
 import io.dropwizard.jersey.validation.JerseyViolationExceptionMapper;
 import io.dropwizard.jersey.validation.Validators;
@@ -50,6 +53,7 @@ public class ResourceTestRule implements TestRule {
         private ObjectMapper mapper = Jackson.newObjectMapper();
         private Validator validator = Validators.newValidator();
         private TestContainerFactory testContainerFactory = new InMemoryTestContainerFactory();
+        private boolean registerDefaultExceptionMappers = true;
 
         public Builder setMapper(ObjectMapper mapper) {
             this.mapper = mapper;
@@ -86,8 +90,13 @@ public class ResourceTestRule implements TestRule {
             return this;
         }
 
+        public Builder setRegisterDefaultExceptionMappers(boolean value) {
+            registerDefaultExceptionMappers = value;
+            return this;
+        }
+
         public ResourceTestRule build() {
-            return new ResourceTestRule(singletons, providers, properties, mapper, validator, testContainerFactory);
+            return new ResourceTestRule(singletons, providers, properties, mapper, validator, testContainerFactory, registerDefaultExceptionMappers);
         }
     }
 
@@ -101,6 +110,7 @@ public class ResourceTestRule implements TestRule {
     private final ObjectMapper mapper;
     private final Validator validator;
     private final TestContainerFactory testContainerFactory;
+    private final boolean registerDefaultExceptionMappers;
 
     private JerseyTest test;
 
@@ -109,13 +119,15 @@ public class ResourceTestRule implements TestRule {
                              Map<String, Object> properties,
                              ObjectMapper mapper,
                              Validator validator,
-                             TestContainerFactory testContainerFactory) {
+                             TestContainerFactory testContainerFactory,
+                             boolean registerDefaultExceptionMappers) {
         this.singletons = singletons;
         this.providers = providers;
         this.properties = properties;
         this.mapper = mapper;
         this.validator = validator;
         this.testContainerFactory = testContainerFactory;
+        this.registerDefaultExceptionMappers = registerDefaultExceptionMappers;
     }
 
     public Validator getValidator() {
@@ -155,7 +167,13 @@ public class ResourceTestRule implements TestRule {
         }
 
         private void configure(final ResourceTestRule resourceTestRule) {
-            register(new JerseyViolationExceptionMapper());
+            if (resourceTestRule.registerDefaultExceptionMappers) {
+                register(new LoggingExceptionMapper<Throwable>() {
+                });
+                register(new JerseyViolationExceptionMapper());
+                register(new JsonProcessingExceptionMapper());
+                register(new EarlyEofExceptionMapper());
+            }
             for (Class<?> provider : resourceTestRule.providers) {
                 register(provider);
             }

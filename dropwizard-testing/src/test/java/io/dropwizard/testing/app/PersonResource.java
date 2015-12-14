@@ -4,14 +4,17 @@ import com.codahale.metrics.annotation.Timed;
 import com.google.common.collect.ImmutableList;
 import io.dropwizard.jersey.params.IntParam;
 import io.dropwizard.testing.Person;
+import org.eclipse.jetty.io.EofException;
 
 import javax.validation.constraints.Min;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import java.util.Map;
 
 @Path("/person/{name}")
 @Produces(MediaType.APPLICATION_JSON)
@@ -41,5 +44,17 @@ public class PersonResource {
     public Person getPersonWithIndex(@Min(0) @QueryParam("ind") IntParam index,
                                      @PathParam("name") String name) {
         return getPersonList(name).get(index.get());
+    }
+
+    @POST
+    @Path("/runtime-exception")
+    public Person exceptional(Map<String, String> mapper) throws Exception {
+        throw new Exception("I'm an exception!");
+    }
+
+    @GET
+    @Path("/eof-exception")
+    public Person eofException() throws Exception {
+        throw new EofException("I'm an eof exception!");
     }
 }
