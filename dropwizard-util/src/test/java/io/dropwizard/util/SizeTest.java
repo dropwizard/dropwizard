@@ -1,6 +1,7 @@
 package io.dropwizard.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.junit.Test;
 
 import java.io.IOException;
@@ -114,6 +115,20 @@ public class SizeTest {
     public void parseSizeWithWhiteSpaces() {
         assertThat(Size.parse("64   kilobytes"))
                 .isEqualTo(Size.kilobytes(64));
+    }
+    
+    @Test
+    public void parseCaseInsensitive() {        
+        assertThat(Size.parse("1b")).isEqualTo(Size.parse("1B"));
+    }
+    
+    @Test
+    public void parseSingleLetterSuffix() {
+        assertThat(Size.parse("1B")).isEqualTo(Size.bytes(1));
+        assertThat(Size.parse("1K")).isEqualTo(Size.kilobytes(1));
+        assertThat(Size.parse("1M")).isEqualTo(Size.megabytes(1));
+        assertThat(Size.parse("1G")).isEqualTo(Size.gigabytes(1));
+        assertThat(Size.parse("1T")).isEqualTo(Size.terabytes(1));
     }
 
     @Test(expected = IllegalArgumentException.class)

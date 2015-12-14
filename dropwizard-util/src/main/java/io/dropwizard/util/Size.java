@@ -2,7 +2,7 @@ package io.dropwizard.util;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
-import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSortedMap;
 
 import java.util.Locale;
 import java.util.Map;
@@ -15,22 +15,26 @@ import static java.util.Objects.requireNonNull;
 public class Size implements Comparable<Size> {
     private static final Pattern SIZE_PATTERN = Pattern.compile("(\\d+)\\s*(\\S+)");
 
-    private static final Map<String, SizeUnit> SUFFIXES = new ImmutableMap.Builder<String, SizeUnit>()
+    private static final Map<String, SizeUnit> SUFFIXES = ImmutableSortedMap.<String, SizeUnit>orderedBy(String.CASE_INSENSITIVE_ORDER)
             .put("B", SizeUnit.BYTES)
             .put("byte", SizeUnit.BYTES)
             .put("bytes", SizeUnit.BYTES)
+            .put("K", SizeUnit.KILOBYTES)
             .put("KB", SizeUnit.KILOBYTES)
             .put("KiB", SizeUnit.KILOBYTES)
             .put("kilobyte", SizeUnit.KILOBYTES)
             .put("kilobytes", SizeUnit.KILOBYTES)
+            .put("M", SizeUnit.MEGABYTES)
             .put("MB", SizeUnit.MEGABYTES)
             .put("MiB", SizeUnit.MEGABYTES)
             .put("megabyte", SizeUnit.MEGABYTES)
             .put("megabytes", SizeUnit.MEGABYTES)
+            .put("G", SizeUnit.GIGABYTES)
             .put("GB", SizeUnit.GIGABYTES)
             .put("GiB", SizeUnit.GIGABYTES)
             .put("gigabyte", SizeUnit.GIGABYTES)
             .put("gigabytes", SizeUnit.GIGABYTES)
+            .put("T", SizeUnit.TERABYTES)
             .put("TB", SizeUnit.TERABYTES)
             .put("TiB", SizeUnit.TERABYTES)
             .put("terabyte", SizeUnit.TERABYTES)
