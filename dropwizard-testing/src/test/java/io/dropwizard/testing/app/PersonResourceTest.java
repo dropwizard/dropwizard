@@ -10,7 +10,9 @@ import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 
+import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.GenericType;
+import javax.ws.rs.core.Response;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -62,5 +64,39 @@ public class PersonResourceTest {
             .get(Person.class))
             .isEqualTo(person);
         verify(dao).fetchPerson("blah");
+    }
+
+    @Test
+    public void testDefaultConstraintViolation() {
+        assertThat(resources.client().target("/person/blah/index")
+            .queryParam("ind", -1).request()
+            .get().readEntity(String.class))
+            .isEqualTo("{\"errors\":[\"query param ind must be greater than or equal to 0\"]}");
+    }
+
+    @Test
+    public void testDefaultJsonProcessingMapper() {
+        assertThat(resources.client().target("/person/blah/runtime-exception")
+            .request()
+            .post(Entity.json("{ \"he: \"ho\"}"))
+            .readEntity(String.class))
+            .isEqualTo("{\"code\":400,\"message\":\"Unable to process JSON\"}");
+    }
+
+    @Test
+    public void testDefaultExceptionMapper() {
+        assertThat(resources.client().target("/person/blah/runtime-exception")
+            .request()
+            .post(Entity.json("{}"))
+            .readEntity(String.class))
+            .startsWith("{\"code\":500,\"message\":\"There was an error processing your request. It has been logged");
+    }
+
+    @Test
+    public void testDefaultEofExceptionMapper() {
+        assertThat(resources.client().target("/person/blah/eof-exception")
+            .request()
+            .get().getStatus())
+            .isEqualTo(Response.Status.BAD_REQUEST.getStatusCode());
     }
 }

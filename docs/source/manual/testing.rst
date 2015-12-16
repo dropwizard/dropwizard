@@ -215,6 +215,18 @@ easily.
 
     You can trust ``PeopleStore`` works because you've got working unit tests for it, right?
 
+Default Exception Mappers
+-------------------------
+
+By default, a ``ResourceTestRule`` will register all the default exception mappers (this behavior is new in 1.0). If
+``registerDefaultExceptionMappers`` in the configuration yaml is planned to be set to ``false``,
+``ResourceTestRule.Builder#setRegisterDefaultExceptionMappers(boolean)`` will also need to be set to ``false``. Then,
+all custom exception mappers will need to be registered on the builder, similarly to how they are registered in an
+``Application`` class.
+
+Test Containers
+---------------
+
 Note that the in-memory Jersey test container does not support all features, such as the ``@Context`` injection used by
 ``BasicAuthFactory`` and ``OAuthFactory``. A different `test container`__ can be used via
 ``ResourceTestRule.Builder#setTestContainerFactory(TestContainerFactory)``.
@@ -314,7 +326,7 @@ The ``DropwizardClientRule`` takes care of:
 Integration Testing
 ===================
 
-It can be useful to start up your entire app and hit it with real HTTP requests during testing. 
+It can be useful to start up your entire app and hit it with real HTTP requests during testing.
 
 JUnit
 -----
@@ -343,7 +355,7 @@ running and stop it again when they've completed (roughly equivalent to having u
             assertThat(response.getStatus()).isEqualTo(302);
         }
     }
-    
+
 Non-JUnit
 ---------
 By creating a DropwizardTestSupport instance in your test you can manually start and stop the app in your tests, you do this by calling its ``before`` and ``after`` methods. ``DropwizardTestSupport`` also exposes the app's ``Configuration``, ``Environment`` and the app object itself so that these can be queried by the tests.
@@ -359,12 +371,12 @@ By creating a DropwizardTestSupport instance in your test you can manually start
         public void beforeClass() {
           SUPPORT.before();
         }
-        
+
         @AfterClass
         public void afterClass() {
           SUPPORT.after();
         }
-        
+
         @Test
         public void loginHandlerRedirectsAfterPost() {
             Client client = new JerseyClientBuilder(SUPPORT.getEnvironment()).build("test client");
