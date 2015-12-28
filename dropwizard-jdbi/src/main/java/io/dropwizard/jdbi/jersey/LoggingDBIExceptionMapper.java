@@ -29,7 +29,7 @@ public class LoggingDBIExceptionMapper extends LoggingExceptionMapper<DBIExcepti
     }
 
     @VisibleForTesting
-    static void setLogger(Logger newLogger) {
+    static synchronized void setLogger(Logger newLogger) {
         logger = newLogger;
     }
 }

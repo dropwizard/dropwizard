@@ -94,7 +94,7 @@ public class ExecutorServiceBuilder {
     }
 
     @VisibleForTesting
-    static void setLog(Logger newLog) {
+    static synchronized void setLog(Logger newLog) {
        log = newLog;
     }
 }
