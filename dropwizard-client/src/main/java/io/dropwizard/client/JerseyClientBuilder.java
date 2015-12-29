@@ -291,7 +291,7 @@ public class JerseyClientBuilder {
                     "an executor service and an object mapper");
         }
 
-        if (executorService == null && environment != null) {
+        if (executorService == null) {
             executorService = environment.lifecycle()
                     .executorService("jersey-client-" + name + "-%d")
                     .minThreads(configuration.getMinThreads())
@@ -300,7 +300,7 @@ public class JerseyClientBuilder {
                     .build();
         }
 
-        if (objectMapper == null && environment != null) {
+        if (objectMapper == null) {
             objectMapper = environment.getObjectMapper();
         }
 

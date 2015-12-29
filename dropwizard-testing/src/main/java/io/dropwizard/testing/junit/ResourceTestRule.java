@@ -223,9 +223,7 @@ public class ResourceTestRule implements TestRule {
                     base.evaluate();
                 } finally {
                     ResourceTestResourceConfig.RULE_ID_TO_RULE.remove(ruleId);
-                    if (test != null) {
-                        test.tearDown();
-                    }
+                    test.tearDown();
                 }
             }
         };
