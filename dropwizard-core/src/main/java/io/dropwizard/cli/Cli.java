@@ -89,7 +89,7 @@ public class Cli {
         }
     }
 
-    private boolean isFlag(String[][] flags, String[] arguments) {
+    private static boolean isFlag(String[][] flags, String[] arguments) {
         for (String[] cmd : flags) {
             if (Arrays.equals(arguments, cmd)) {
                 return true;
