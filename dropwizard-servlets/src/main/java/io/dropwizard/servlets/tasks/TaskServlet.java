@@ -209,9 +209,11 @@ public class TaskServlet extends HttpServlet {
             try {
                 underlying.executeTask(params, output);
             } catch (Exception e) {
-                if (exceptionMeter != null && exceptionClass.isAssignableFrom(e.getClass()) ||
-                        (e.getCause() != null && exceptionClass.isAssignableFrom(e.getCause().getClass()))) {
-                    exceptionMeter.mark();
+                if (exceptionMeter != null) {
+                    if (exceptionClass.isAssignableFrom(e.getClass()) ||
+                            (e.getCause() != null && exceptionClass.isAssignableFrom(e.getCause().getClass()))) {
+                        exceptionMeter.mark();
+                    }
                 }
 
                 throw e;
