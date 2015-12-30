@@ -276,6 +276,20 @@
                 <maven.javadoc.skip>true</maven.javadoc.skip>
                 <findbugs.skip>true</findbugs.skip>
             </properties>
+            <build>
+                <plugins>
+                    <!-- Run tests in parallel in the dev mode-->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <parallel>classes</parallel>
+                            <threadCount>2</threadCount>
+                            <perCoreThreadCount>true</perCoreThreadCount>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
     </profiles>
 
@@ -438,9 +452,6 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <argLine>-Duser.language=en -Duser.region=US</argLine>
-                    <parallel>classes</parallel>
-                    <threadCount>2</threadCount>
-                    <perCoreThreadCount>true</perCoreThreadCount>
                 </configuration>
             </plugin>
             <plugin>
