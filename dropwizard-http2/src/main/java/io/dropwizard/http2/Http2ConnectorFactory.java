@@ -3,6 +3,7 @@ package io.dropwizard.http2;
 import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import com.google.common.collect.ImmutableList;
 import io.dropwizard.jetty.HttpsConnectorFactory;
 import io.dropwizard.jetty.Jetty93InstrumentedConnectionFactory;
 import org.eclipse.jetty.alpn.server.ALPNServerConnectionFactory;
@@ -87,6 +88,11 @@ public class Http2ConnectorFactory extends HttpsConnectorFactory {
 
     @Override
     public Connector build(Server server, MetricRegistry metrics, String name, ThreadPool threadPool) {
+        // HTTP/2 requires that a server MUST support TLSv1.2 and TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256 cipher
+        // See http://http2.github.io/http2-spec/index.html#rfc.section.9.2.2
+        setSupportedProtocols(ImmutableList.of("TLSv1.2"));
+        setSupportedCipherSuites(ImmutableList.of("TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256"));
+
         logSupportedParameters();
 
         // Setup connection factories

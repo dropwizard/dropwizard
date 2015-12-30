@@ -39,7 +39,6 @@ public class Http2IntegrationTest extends AbstractHttp2Test {
     public void setUp() throws Exception {
         sslContextFactory.setTrustStorePath(ResourceHelpers.resourceFilePath("stores/http2_client.jts"));
         sslContextFactory.setTrustStorePassword("http2_client");
-        sslContextFactory.setIncludeCipherSuites("TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256");
         sslContextFactory.start();
 
         client = new HttpClient(new HttpClientTransportOverHTTP2(new HTTP2Client()), sslContextFactory);

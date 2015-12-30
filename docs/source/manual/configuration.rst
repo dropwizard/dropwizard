@@ -422,6 +422,12 @@ The correct library version depends on a JVM version. Consult Jetty ALPN guide__
 
 .. __: http://www.eclipse.org/jetty/documentation/current/alpn-chapter.html
 
+Note that your JVM also must provide ``TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256`` cipher. The specification states__
+that HTTP/2 deployments must support it to avoid handshake failures. It's the single supported cipher in HTTP/2
+connector by default.
+
+.. __: http://http2.github.io/http2-spec/index.html#rfc.section.9.2.2
+
 This connector extends the attributes that are available to the :ref:`HTTPS connector <man-configuration-https>`
 
 .. code-block:: yaml

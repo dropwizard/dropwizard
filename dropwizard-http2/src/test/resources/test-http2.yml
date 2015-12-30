@@ -6,11 +6,5 @@ server:
     keyStorePassword: http2_server
     trustStorePath: /etc/ssl/certs/java/cacerts
     validateCerts: false
-    supportedProtocols:
-      - 'TLSv1.2'
-    supportedCipherSuites:
-      - 'TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256'
-      - 'TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256'
-      - 'TLS_DHE_RSA_WITH_AES_128_GCM_SHA256'
   applicationContextPath: /api
   adminContextPath: /admin
