@@ -33,7 +33,7 @@ public class PrefixedRootCauseFirstThrowableProxyConverterTest {
         return null; // unpossible, tell the type-system
     }
 
-    private void throwRoot() throws SocketTimeoutException {
+    private static void throwRoot() throws SocketTimeoutException {
         throw new SocketTimeoutException("Timed-out reading from socket");
     }
 

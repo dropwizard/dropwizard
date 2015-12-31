@@ -271,7 +271,7 @@ public class UnitOfWorkApplicationListenerTest {
         when(uriInfo.getMatchedResourceMethod()).thenReturn(resourceMethod);
     }
 
-    private boolean methodDefinedOnInterface(String methodName, Method[] methods) {
+    private static boolean methodDefinedOnInterface(String methodName, Method[] methods) {
         for (Method method : methods) {
             if (method.getName().equals(methodName)) {
                 return true;

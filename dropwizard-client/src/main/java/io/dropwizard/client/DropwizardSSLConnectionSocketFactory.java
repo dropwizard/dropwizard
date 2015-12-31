@@ -90,7 +90,7 @@ public class DropwizardSSLConnectionSocketFactory {
         sslContextBuilder.loadTrustMaterial(trustStore, trustStrategy);
     }
 
-    private KeyStore loadKeyStore(String type, File path, String password) throws Exception {
+    private static KeyStore loadKeyStore(String type, File path, String password) throws Exception {
         final KeyStore keyStore = KeyStore.getInstance(type);
         try (InputStream inputStream = new FileInputStream(path)) {
             keyStore.load(inputStream, password.toCharArray());

@@ -189,7 +189,7 @@ public class DropwizardResourceConfig extends ResourceConfig {
             }
         }
 
-        private String normalizePath(String basePath, String path) {
+        private static String normalizePath(String basePath, String path) {
             if (path == null) {
                 return basePath;
             }
