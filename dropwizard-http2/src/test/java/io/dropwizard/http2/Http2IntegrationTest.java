@@ -29,7 +29,9 @@ public class Http2IntegrationTest extends AbstractHttp2Test {
             FakeApplication.class, ResourceHelpers.resourceFilePath("test-http2.yml"),
             Optional.of("tls_http2"),
             ConfigOverride.config("tls_http2", "server.connector.keyStorePath",
-                    ResourceHelpers.resourceFilePath("stores/http2_server.jks"))
+                    ResourceHelpers.resourceFilePath("stores/http2_server.jks")),
+            ConfigOverride.config("tls_http2", "server.connector.trustStorePath",
+                    ResourceHelpers.resourceFilePath("stores/http2_client.jts"))
     );
 
     private final SslContextFactory sslContextFactory = new SslContextFactory();
