@@ -8,8 +8,12 @@ import javax.ws.rs.container.ContainerRequestFilter;
 import java.security.Principal;
 
 public class BasicAuthProviderTest extends AuthBaseTest<BasicAuthProviderTest.BasicAuthTestResourceConfig> {
-    public static class BasicAuthTestResourceConfig extends AuthBaseResourceConfig{
-        protected ContainerRequestFilter getAuthFilter() {
+    public static class BasicAuthTestResourceConfig extends AbstractAuthResourceConfig {
+        public BasicAuthTestResourceConfig() {
+            register(AuthResource.class);
+        }
+
+        @Override protected ContainerRequestFilter getAuthFilter() {
             BasicCredentialAuthFilter.Builder<Principal> builder = new BasicCredentialAuthFilter.Builder<>();
             builder.setAuthorizer(AuthUtil.getTestAuthorizer(ADMIN_USER, ADMIN_ROLE));
             builder.setAuthenticator(AuthUtil.getBasicAuthenticator(ImmutableList.of(ADMIN_USER, ORDINARY_USER)));
