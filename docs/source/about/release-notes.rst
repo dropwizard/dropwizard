@@ -23,6 +23,7 @@ v1.0.0
 * Added a development profile to the build `#1364 <https://github.com/dropwizard/dropwizard/issues/1364>`_
 * All the default exception mappers in ``ResourceTestRule`` are registered by default `#1387 <https://github.com/dropwizard/dropwizard/pull/1387>`_
 * Ability to provide own ``RequestLogFactory`` `#1290 <https://github.com/dropwizard/dropwizard/pull/1290>`_
+* Support for authentication by polymorphic principals `#1392 <https://github.com/dropwizard/dropwizard/pull/1392>`_
 * Upgraded to Guava 19.0
 * Upgraded to Jackson 2.6.4
 * Upgraded to JDBI 2.70 `#1358 <https://github.com/dropwizard/dropwizard/pull/1358>`_

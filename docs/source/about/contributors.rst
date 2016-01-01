@@ -96,6 +96,7 @@ Many, many thanks to:
 * `eitan101 <https://github.com/eitan101>`_
 * `Emeka Mosanya <https://github.com/emeka>`_
 * `Eric Tschetter <https://github.com/metamx>`_
+* `Evan Meagher <https://github.com/evnm>`_
 * `Farid Zakaria <https://github.com/fzakaria>`_
 * `Felix Braun <https://github.com/fexbraun>`_
 * `FleaflickerLLC <https://github.com/FleaflickerLLC>`_
