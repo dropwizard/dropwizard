@@ -11,36 +11,41 @@ import org.glassfish.jersey.server.internal.inject.ParamInjectionResolver;
 import org.glassfish.jersey.server.model.Parameter;
 import org.glassfish.jersey.server.spi.internal.ValueFactoryProvider;
 
+import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.security.Principal;
 
 /**
- * Value factory provider supporting {@link Principal} injection
- * by the {@link Auth} annotation.
+ * Value factory provider supporting injection of a hierarchy of
+ * {@link Principal} subclasses by the {@link Auth} annotation.
  *
- * @param <T> the type of the principal
+ * @param <T> the type acting as the superclass from which injected
+ *            principals inherit
  */
 @Singleton
-public class AuthValueFactoryProvider<T extends Principal> extends AbstractValueFactoryProvider {
-
+public class PolymorphicAuthValueFactoryProvider<T extends Principal> extends AbstractValueFactoryProvider {
     /**
-     * Class of the provided {@link Principal}
+     * Set of provided {@link Principal} subclasses.
      */
-    private final Class<T> principalClass;
+    protected final Set<Class<? extends T>> principalClassSet;
+
 
     /**
      * {@link Principal} value factory provider injection constructor.
      *
-     * @param mpep                   multivalued parameter extractor provider
-     * @param injector               injector instance
-     * @param principalClassProvider provider of the principal class
+     * @param mpep                      multivalued parameter extractor provider
+     * @param injector                  injector instance
+     * @param principalClassSetProvider provider(s) of the principal class
      */
     @Inject
-    public AuthValueFactoryProvider(MultivaluedParameterExtractorProvider mpep,
-                                    ServiceLocator injector, PrincipalClassProvider<T> principalClassProvider) {
+    public PolymorphicAuthValueFactoryProvider(
+        MultivaluedParameterExtractorProvider mpep,
+        ServiceLocator injector,
+        PrincipalClassSetProvider<T> principalClassSetProvider
+    ) {
         super(mpep, injector, Parameter.Source.UNKNOWN);
-        this.principalClass = principalClassProvider.clazz;
+        this.principalClassSet = principalClassSetProvider.clazzSet;
     }
 
     /**
@@ -52,7 +57,7 @@ public class AuthValueFactoryProvider<T extends Principal> extends AbstractValue
      */
     @Override
     public AbstractContainerRequestValueFactory<?> createValueFactory(Parameter parameter) {
-        if (!parameter.isAnnotationPresent(Auth.class) || !principalClass.equals(parameter.getRawType())) {
+        if (!parameter.isAnnotationPresent(Auth.class) || !principalClassSet.contains(parameter.getRawType())) {
             return null;
         } else {
             return new PrincipalContainerRequestValueFactory();
@@ -65,38 +70,39 @@ public class AuthValueFactoryProvider<T extends Principal> extends AbstractValue
         /**
          * Create new {@link Auth} annotation injection resolver.
          */
-        AuthInjectionResolver() {
-            super(AuthValueFactoryProvider.class);
+        public AuthInjectionResolver() {
+            super(PolymorphicAuthValueFactoryProvider.class);
         }
     }
 
     @Singleton
-    static class PrincipalClassProvider<T extends Principal> {
+    protected static class PrincipalClassSetProvider<T extends Principal> {
 
-        private final Class<T> clazz;
+        private final Set<Class<? extends T>> clazzSet;
 
-        PrincipalClassProvider(Class<T> clazz) {
-            this.clazz = clazz;
+        public PrincipalClassSetProvider(Set<Class<? extends T>> clazzSet) {
+            this.clazzSet = clazzSet;
         }
     }
 
     /**
-     * Injection binder for {@link AuthValueFactoryProvider} and {@link AuthInjectionResolver}.
+     * Injection binder for {@link PolymorphicAuthValueFactoryProvider} and
+     * {@link AuthInjectionResolver}.
      *
      * @param <T> the type of the principal
      */
     public static class Binder<T extends Principal> extends AbstractBinder {
 
-        private final Class<T> principalClass;
+        private final Set<Class<? extends T>> principalClassSet;
 
-        public Binder(Class<T> principalClass) {
-            this.principalClass = principalClass;
+        public Binder(Set<Class<? extends T>> principalClassSet) {
+            this.principalClassSet = principalClassSet;
         }
 
         @Override
         protected void configure() {
-            bind(new PrincipalClassProvider<>(principalClass)).to(PrincipalClassProvider.class);
-            bind(AuthValueFactoryProvider.class).to(ValueFactoryProvider.class).in(Singleton.class);
+            bind(new PrincipalClassSetProvider<>(principalClassSet)).to(PrincipalClassSetProvider.class);
+            bind(PolymorphicAuthValueFactoryProvider.class).to(ValueFactoryProvider.class).in(Singleton.class);
             bind(AuthInjectionResolver.class).to(new TypeLiteral<InjectionResolver<Auth>>() {
             }).in(Singleton.class);
         }

@@ -1,7 +1,10 @@
 package io.dropwizard.auth.principal;
 
 import io.dropwizard.auth.AbstractAuthResourceConfig;
+import io.dropwizard.auth.AuthDynamicFeature;
+import io.dropwizard.auth.AuthValueFactoryProvider;
 import io.dropwizard.logging.BootstrapLogging;
+import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.server.model.Parameter;
 import org.glassfish.jersey.servlet.ServletProperties;
 import org.glassfish.jersey.test.DeploymentContext;
@@ -13,6 +16,7 @@ import org.junit.Test;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
+import javax.ws.rs.container.DynamicFeature;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import java.io.IOException;
@@ -50,12 +54,19 @@ public class NoAuthPrincipalEntityTest extends JerseyTest {
         }
 
         @Override protected ContainerRequestFilter getAuthFilter() {
-
             return new ContainerRequestFilter() {
                 @Override public void filter(ContainerRequestContext requestContext) throws IOException {
                     throw new AssertionError("Authentication must not be performed");
                 }
             };
+        }
+
+        @Override protected AbstractBinder getAuthBinder() {
+            return new AuthValueFactoryProvider.Binder<>(getPrincipalClass());
+        }
+
+        @Override protected DynamicFeature getAuthDynamicFeature(ContainerRequestFilter authFilter) {
+            return new AuthDynamicFeature(authFilter);
         }
     }
 
