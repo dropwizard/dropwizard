@@ -9,11 +9,24 @@ Release Notes
 v1.0.0
 ======
 
-* Use Java 8 as baseline
+* Using Java 8 as baseline
+* ``dropwizard-java8`` bundle merged into mainline `#1365 <https://github.com/dropwizard/dropwizard/issues/1365>`_
+* HTTP/2 and server push support `#1349 <https://github.com/dropwizard/dropwizard/issues/1349>`_
+* ``dropwizard-spdy`` module is removed in favor of ``dropwizard-http2`` `#1330 <https://github.com/dropwizard/dropwizard/pull/1330>`_
+* Support for validating return values in JAX-RS resources `#1251 <https://github.com/dropwizard/dropwizard/pull/1251>`_
+* Consistent handling null entities in JAX-RS resources `#1251 <https://github.com/dropwizard/dropwizard/pull/1251>`_
+* Returning an HTTP 500 error for entities that can't be serialized `#1347 <https://github.com/dropwizard/dropwizard/pull/1347>`_
+* Support fallback to the ``toString`` method during deserializing enum values from JSON  `#1340 <https://github.com/dropwizard/dropwizard/pull/1340>`_
+* Support for setting default headers in Apache HTTP client `#1354 <https://github.com/dropwizard/dropwizard/pull/1354>`_
+* Printing help once on invalid command line arguments `#1376 <https://github.com/dropwizard/dropwizard/pull/1376>`_
+* Support for case insensitive and all single letter ``SizeUnit`` suffixes `#1380 <https://github.com/dropwizard/dropwizard/pull/1380>`_
+* Added a development profile to the build `#1364 <https://github.com/dropwizard/dropwizard/issues/1364>`_
+* All the default exception mappers in ``ResourceTestRule`` are registered by default `#1387 <https://github.com/dropwizard/dropwizard/pull/1387>`_
+* Ability to provide own ``RequestLogFactory`` `#1290 <https://github.com/dropwizard/dropwizard/pull/1290>`_
 * Upgraded to Guava 19.0
 * Upgraded to Jackson 2.6.4
-* Upgraded to JDBI 2.70
-* Upgraded to Jetty 9.3.6.v20151106
+* Upgraded to JDBI 2.70 `#1358 <https://github.com/dropwizard/dropwizard/pull/1358>`_
+* Upgraded to Jetty 9.3.6.v20151106 `#1330 <https://github.com/dropwizard/dropwizard/pull/1330>`_
 * Upgraded to Joda-Time 2.9.1
 * Upgraded to Liquibase 3.4.2
 * Upgraded to SLF4J 1.7.13
