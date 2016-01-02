@@ -1,0 +1,8 @@
+server:
+  type: simple
+  connector:
+    type: http2c
+    port: 0
+  applicationContextPath: /api
+  adminContextPath: /admin
+

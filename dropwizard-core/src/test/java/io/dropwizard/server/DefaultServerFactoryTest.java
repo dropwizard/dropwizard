@@ -13,6 +13,7 @@ import io.dropwizard.jersey.jackson.JsonProcessingExceptionMapper;
 import io.dropwizard.jersey.validation.Validators;
 import io.dropwizard.jersey.validation.JerseyViolationExceptionMapper;
 import io.dropwizard.jetty.HttpConnectorFactory;
+import io.dropwizard.jetty.ServerPushFilterFactory;
 import io.dropwizard.logging.ConsoleAppenderFactory;
 import io.dropwizard.logging.FileAppenderFactory;
 import io.dropwizard.logging.SyslogAppenderFactory;
@@ -66,6 +67,14 @@ public class DefaultServerFactoryTest {
     public void loadsGzipConfig() throws Exception {
         assertThat(http.getGzipFilterFactory().isEnabled())
                 .isFalse();
+    }
+
+    @Test
+    public void loadsServerPushConfig() throws Exception {
+        final ServerPushFilterFactory serverPush = http.getServerPush();
+        assertThat(serverPush.isEnabled()).isTrue();
+        assertThat(serverPush.getRefererHosts()).contains("dropwizard.io");
+        assertThat(serverPush.getRefererPorts()).contains(8445);
     }
 
     @Test

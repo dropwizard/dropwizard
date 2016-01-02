@@ -1,0 +1,2 @@
+io.dropwizard.http2.Http2ConnectorFactory
+io.dropwizard.http2.Http2CConnectorFactory

@@ -1,0 +1,9 @@
+server:
+  type: simple
+  connector:
+    type: http2
+    port: 0
+    keyStorePassword: http2_server
+    validateCerts: false
+  applicationContextPath: /api
+  adminContextPath: /admin

@@ -48,6 +48,7 @@
         <module>dropwizard-assets</module>
         <module>dropwizard-archetypes</module>
         <module>dropwizard-benchmarks</module>
+        <module>dropwizard-http2</module>
     </modules>
 
     <properties>
