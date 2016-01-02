@@ -10,7 +10,6 @@ v1.0.0
 ======
 
 * Use Java 8 as baseline
-* Add `ConfigurationSourceProvider` for reading resources from classpath `#1314 <https://github.com/dropwizard/dropwizard/issues/1314>`_
 * Upgraded to Guava 19.0
 * Upgraded to Jackson 2.6.4
 * Upgraded to JDBI 2.70
@@ -20,6 +19,15 @@ v1.0.0
 * Upgraded to SLF4J 1.7.13
 * Upgraded to AssertJ 3.2.0
 
+.. _rel-0.9.1:
+
+v0.9.1: Nov 3 2015
+==================
+
+* Add ``ConfigurationSourceProvider`` for reading resources from classpath `#1314 <https://github.com/dropwizard/dropwizard/issues/1314>`_
+* Add ``@UnwrapValidatedValue`` annotation to `BaseReporterFactory.frequency` `#1308 <https://github.com/dropwizard/dropwizard/issues/1308>`_, `#1309 <https://github.com/dropwizard/dropwizard/issues/1309>`_
+* Fix serialization of default configuration for ``DataSourceFactory`` by deprecating ``PooledDataSourceFactory#getHealthCheckValidationQuery()`` and ``PooledDataSourceFactory#getHealthCheckValidationTimeout()`` `#1321 <https://github.com/dropwizard/dropwizard/issues/1321>`_, `#1322 <https://github.com/dropwizard/dropwizard/pull/1322>`_
+* Treat ``null`` values in JAX-RS resource method parameters of type ``Optional<T>`` as absent value after conversion `#1323 <https://github.com/dropwizard/dropwizard/pull/1323>`_
 
 .. _rel-0.9.0:
 
