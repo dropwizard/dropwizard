@@ -51,6 +51,13 @@ import javax.validation.constraints.Min;
 @JsonTypeName("http2")
 public class Http2ConnectorFactory extends HttpsConnectorFactory {
 
+    /**
+     * Supported protocols
+     */
+    private static final String H2 = "h2";
+    private static final String H2_17 = "h2-17";
+    private static final String HTTP_1_1 = "http/1.1";
+
     @Min(100)
     @Max(Integer.MAX_VALUE)
     private int maxConcurrentStreams = 1024;
@@ -78,13 +85,6 @@ public class Http2ConnectorFactory extends HttpsConnectorFactory {
     public void setInitialStreamSendWindow(int initialStreamSendWindow) {
         this.initialStreamSendWindow = initialStreamSendWindow;
     }
-
-    /**
-     * Supported protocols
-     */
-    private static final String H2 = "h2";
-    private static final String H2_17 = "h2-17";
-    private static final String HTTP_1_1 = "http/1.1";
 
     @Override
     public Connector build(Server server, MetricRegistry metrics, String name, ThreadPool threadPool) {
