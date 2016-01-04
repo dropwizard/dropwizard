@@ -17,7 +17,7 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 
 /**
- * Builds HTTP/2 over TLS connectors.
+ * Builds HTTP/2 over TLS (h2) connectors.
  * <p/>
  * <b>Configuration Parameters:</b>
  * <table>
@@ -48,7 +48,7 @@ import javax.validation.constraints.Min;
  *
  * @see HttpsConnectorFactory
  */
-@JsonTypeName("http2")
+@JsonTypeName("h2")
 public class Http2ConnectorFactory extends HttpsConnectorFactory {
 
     /**

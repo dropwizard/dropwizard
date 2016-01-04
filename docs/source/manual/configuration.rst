@@ -434,7 +434,7 @@ This connector extends the attributes that are available to the :ref:`HTTPS conn
 
     server:
       applicationConnectors:
-        - type: http2
+        - type: h2
           port: 8445
           maxConcurrentStreams: 1024
           initialStreamSendWindow: 65535
@@ -472,7 +472,7 @@ This connector extends the attributes that are available to the :ref:`HTTP conne
 
     server:
       applicationConnectors:
-        - type: http2c
+        - type: h2c
           port: 8446
           maxConcurrentStreams: 1024
           initialStreamSendWindow: 65535

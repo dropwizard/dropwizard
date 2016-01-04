@@ -49,7 +49,7 @@ import javax.validation.constraints.Min;
  * For more configuration parameters, see {@link HttpsConnectorFactory}.
  * @see HttpConnectorFactory
  */
-@JsonTypeName("http2c")
+@JsonTypeName("h2c")
 public class Http2CConnectorFactory extends HttpConnectorFactory {
 
     @Min(100)
