@@ -37,7 +37,7 @@ server:
       validateCerts: false
       validatePeers: false
     #this requires the alpn-boot library on the JVM's boot classpath
-    #- type: http2
+    #- type: h2
     #  port: 8445
     #  keyStorePath: example.keystore
     #  keyStorePassword: example

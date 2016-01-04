@@ -1,7 +1,7 @@
 server:
   type: simple
   connector:
-    type: http2
+    type: h2
     port: 0
     keyStorePassword: http2_server
     validateCerts: false
