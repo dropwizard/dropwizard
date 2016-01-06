@@ -27,9 +27,9 @@ public class ConstraintViolationExceptionMapperTest extends JerseyTest {
     static {
         BootstrapLogging.bootstrap();
     }
-    
+
     private static final Locale DEFAULT_LOCALE = Locale.getDefault();
-    
+
     @Override
     protected Application configure() {
         forceSet(TestProperties.CONTAINER_PORT, "0");
@@ -48,8 +48,7 @@ public class ConstraintViolationExceptionMapperTest extends JerseyTest {
     public static void shutdown() {
         Locale.setDefault(DEFAULT_LOCALE);
     }
-    
-    
+
     @Test
     public void postInvalidEntityIs422() throws Exception {
         assumeThat(Locale.getDefault().getLanguage(), is("en"));
@@ -312,6 +311,19 @@ public class ConstraintViolationExceptionMapperTest extends JerseyTest {
                 .request().get();
         String ret2 = "{\"errors\":[\"query param cheese may not be null\"]}";
         assertThat(response2.readEntity(String.class)).isEqualTo(ret2);
+    }
+
+    @Test
+    public void paramsCanBeValidatedWhenNull() {
+        assertThat(target("/valid/nullable-int-param")
+            .request().get().readEntity(String.class)).isEqualTo("I was null");
+    }
+
+    @Test
+    public void paramsCanBeUnwrappedAndValidated() {
+        assertThat(target("/valid/nullable-int-param").queryParam("num", 4)
+            .request().get().readEntity(String.class))
+            .containsOnlyOnce("[\"query param num must be less than or equal to 3\"]");
     }
 
     @Test
