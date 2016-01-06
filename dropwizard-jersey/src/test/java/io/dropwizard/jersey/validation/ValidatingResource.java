@@ -1,5 +1,6 @@
 package io.dropwizard.jersey.validation;
 
+import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 
 import io.dropwizard.jersey.jackson.JacksonMessageBodyProviderTest.PartialExample;
@@ -154,6 +155,12 @@ public class ValidatingResource {
     @Path("headCopy")
     public String heads(@QueryParam("cheese") @NotNull @UnwrapValidatedValue(false) IntParam secretSauce) {
         return secretSauce.get().toString();
+    }
+
+    @GET
+    @Path("nullable-int-param")
+    public String nullableIntParam(@QueryParam("num") @Max(3) IntParam secretSauce) {
+        return secretSauce == null ? "I was null" : secretSauce.get().toString();
     }
 
     @GET
