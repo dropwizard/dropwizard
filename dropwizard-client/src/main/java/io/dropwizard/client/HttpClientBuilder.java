@@ -56,12 +56,7 @@ import java.util.List;
  * </p>
  */
 public class HttpClientBuilder {
-    private static final HttpRequestRetryHandler NO_RETRIES = new HttpRequestRetryHandler() {
-        @Override
-        public boolean retryRequest(IOException exception, int executionCount, HttpContext context) {
-            return false;
-        }
-    };
+    private static final HttpRequestRetryHandler NO_RETRIES = (exception, executionCount, context) -> false;
 
     private final MetricRegistry metricRegistry;
     private String environmentName;

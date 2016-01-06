@@ -155,7 +155,7 @@ public class JacksonMessageBodyProviderTest {
                                              Example.class,
                                              NONE,
                                              MediaType.APPLICATION_JSON_TYPE,
-                                             new MultivaluedHashMap<String,String>(),
+                                             new MultivaluedHashMap<>(),
                                              entity);
 
         assertThat(obj)
@@ -178,7 +178,7 @@ public class JacksonMessageBodyProviderTest {
             PartialExample.class,
             new Annotation[]{valid},
             MediaType.APPLICATION_JSON_TYPE,
-            new MultivaluedHashMap<String,String>(),
+            new MultivaluedHashMap<>(),
             entity);
 
         assertThat(obj)
@@ -201,7 +201,7 @@ public class JacksonMessageBodyProviderTest {
             PartialExample.class,
             new Annotation[]{valid},
             MediaType.APPLICATION_JSON_TYPE,
-            new MultivaluedHashMap<String,String>(),
+            new MultivaluedHashMap<>(),
             entity);
 
         assertThat(obj)
@@ -221,7 +221,7 @@ public class JacksonMessageBodyProviderTest {
                               Example.class,
                               NONE,
                               MediaType.APPLICATION_JSON_TYPE,
-                              new MultivaluedHashMap<String,String>(),
+                              new MultivaluedHashMap<>(),
                               entity);
             failBecauseExceptionWasNotThrown(WebApplicationException.class);
         } catch (JsonProcessingException e) {
@@ -243,7 +243,7 @@ public class JacksonMessageBodyProviderTest {
                          Example.class,
                          NONE,
                          MediaType.APPLICATION_JSON_TYPE,
-                         new MultivaluedHashMap<String,Object>(),
+                         new MultivaluedHashMap<>(),
                          output);
 
         assertThat(output.toString())
@@ -278,7 +278,7 @@ public class JacksonMessageBodyProviderTest {
                 type,
                 new Annotation[]{ valid },
                 MediaType.APPLICATION_JSON_TYPE,
-                new MultivaluedHashMap<String, String>(),
+                new MultivaluedHashMap<>(),
                 entity);
 
         assertThat(obj)

@@ -50,7 +50,7 @@ public class DbRollbackCommand<T extends Configuration> extends AbstractLiquibas
     public void run(Namespace namespace, Liquibase liquibase) throws Exception {
         final String tag = namespace.getString("tag");
         final Integer count = namespace.getInt("count");
-        final Date date = (Date) namespace.get("date");
+        final Date date = namespace.get("date");
         final Boolean dryRun = namespace.getBoolean("dry-run");
         final String context = getContext(namespace);
 

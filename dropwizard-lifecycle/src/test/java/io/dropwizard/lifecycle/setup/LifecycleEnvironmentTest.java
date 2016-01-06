@@ -51,12 +51,7 @@ public class LifecycleEnvironmentTest {
     @Test
     public void scheduledExecutorServiceBuildsDaemonThreads() throws ExecutionException, InterruptedException {
         final ScheduledExecutorService executorService = environment.scheduledExecutorService("daemon-%d", true).build();
-        final Future<Boolean> isDaemon = executorService.submit(new Callable<Boolean>() {
-            @Override
-            public Boolean call() throws Exception {
-                return Thread.currentThread().isDaemon();
-            }
-        });
+        final Future<Boolean> isDaemon = executorService.submit(() -> Thread.currentThread().isDaemon());
 
         assertThat(isDaemon.get()).isTrue();
     }
@@ -64,12 +59,7 @@ public class LifecycleEnvironmentTest {
     @Test
     public void scheduledExecutorServiceBuildsUserThreadsByDefault() throws ExecutionException, InterruptedException {
         final ScheduledExecutorService executorService = environment.scheduledExecutorService("user-%d").build();
-        final Future<Boolean> isDaemon = executorService.submit(new Callable<Boolean>() {
-            @Override
-            public Boolean call() throws Exception {
-                return Thread.currentThread().isDaemon();
-            }
-        });
+        final Future<Boolean> isDaemon = executorService.submit(() -> Thread.currentThread().isDaemon());
 
         assertThat(isDaemon.get()).isFalse();
     }

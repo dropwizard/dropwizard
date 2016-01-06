@@ -22,12 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class DbMigrateCommandTest extends AbstractMigrationTest {
 
     private DbMigrateCommand<TestMigrationConfiguration> migrateCommand = new DbMigrateCommand<>(
-            new DatabaseConfiguration<TestMigrationConfiguration>() {
-                @Override
-                public DataSourceFactory getDataSourceFactory(TestMigrationConfiguration configuration) {
-                    return configuration.getDataSource();
-                }
-            }, TestMigrationConfiguration.class);
+        TestMigrationConfiguration::getDataSource, TestMigrationConfiguration.class);
     private TestMigrationConfiguration conf;
     private String databaseUrl;
 

@@ -64,10 +64,8 @@ public class PolymorphicPrincipalEntityTest extends JerseyTest {
         }
 
         @Override protected ContainerRequestFilter getAuthFilter() {
-            return new ContainerRequestFilter() {
-                @Override public void filter(ContainerRequestContext requestContext) throws IOException {
-                    throw new AssertionError("getAuthFilter result must not be invoked");
-                }
+            return requestContext -> {
+                throw new AssertionError("getAuthFilter result must not be invoked");
             };
         }
 

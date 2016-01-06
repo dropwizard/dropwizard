@@ -59,7 +59,7 @@ public class ViewBundleTest {
 
     @Test
     public void addsTheViewMessageBodyWriterToTheEnvironment() throws Exception {
-        new ViewBundle<Configuration>().run(null, environment);
+        new ViewBundle<>().run(null, environment);
 
         verify(jerseyEnvironment).register(any(ViewMessageBodyWriter.class));
     }

@@ -57,15 +57,13 @@ public class NoAuthPolymorphicPrincipalEntityTest extends JerseyTest {
         }
 
         @Override protected ContainerRequestFilter getAuthFilter() {
-            return new ContainerRequestFilter() {
-                @Override public void filter(ContainerRequestContext requestContext) throws IOException {
-                    throw new AssertionError("Authentication must not be performed");
-                }
+            return requestContext -> {
+                throw new AssertionError("Authentication must not be performed");
             };
         }
 
         @Override protected AbstractBinder getAuthBinder() {
-            return new PolymorphicAuthValueFactoryProvider.Binder<PrincipalImpl>(
+            return new PolymorphicAuthValueFactoryProvider.Binder<>(
                 ImmutableSet.of(JsonPrincipal.class, NullPrincipal.class));
         }
 
