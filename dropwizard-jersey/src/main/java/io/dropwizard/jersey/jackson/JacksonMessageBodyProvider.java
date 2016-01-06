@@ -10,12 +10,9 @@ import java.lang.reflect.Type;
 
 /**
  * A Jersey provider which enables using Jackson to parse request entities into objects and generate
- * response entities from objects. Any request entity method parameters annotated with
- * {@code @Valid} are validated, and an informative 422 Unprocessable Entity response is returned
- * should the entity be invalid.
+ * response entities from objects.
  * <p/>
- * (Essentially, extends {@link JacksonJaxbJsonProvider} with validation and support for
- * {@link JsonIgnoreType}.)
+ * (Essentially, extends {@link JacksonJaxbJsonProvider} with support for {@link JsonIgnoreType}.)
  */
 public class JacksonMessageBodyProvider extends JacksonJaxbJsonProvider {
     private final ObjectMapper mapper;

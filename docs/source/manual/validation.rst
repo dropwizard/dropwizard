@@ -25,7 +25,7 @@ endpoint doesn't allow a null or empty ``name`` query parameter.
         // ...
     }
 
-If a client sends an empty or nonexistant name query param, Dropwizard will respond with a ``400 Bad Request``
+If a client sends an empty or nonexistent name query param, Dropwizard will respond with a ``400 Bad Request``
 code with the error: ``query param name may not be empty``.
 
 Additionally, annotations such as ``HeaderParam``, ``CookieParam``, ``FormParam``, etc, can be
@@ -57,13 +57,12 @@ the object isn't ``null`` or blank in the request. We can do this as follows:
         }
     }
 
-Then, in our resource class, we can add the ``@Valid`` or the ``@Validated`` annotation to the
-``Person`` annotation:
+Then, in our resource class, we can add the ``@Valid`` annotation to the ``Person`` annotation:
 
 .. code-block:: java
 
     @PUT
-    public Person replace(@Valid Person person) {
+    public Person replace(@NotNull @Valid Person person) {
         // ...
     }
 
@@ -72,35 +71,110 @@ detailing the validation errors: ``name may not be empty``
 
 .. note::
 
-    You don't need ``@Valid`` or ``@Validated`` when the type you are validating can be validated
-    directly (``int``, ``String``, ``Integer``). If a class has fields that need validating, then
-    instances of the class must be marked ``@Valid`` or ``@Validated``. For more information, see
-    the Hibernate Validator documentation on `Object graphs`_ and `Cascaded validation`_.
+    You don't need ``@Valid`` when the type you are validating can be validated directly (``int``,
+    ``String``, ``Integer``). If a class has fields that need validating, then instances of the
+    class must be marked ``@Valid``. For more information, see the Hibernate Validator documentation
+    on `Object graphs`_ and `Cascaded validation`_.
 
 .. _Object graphs: http://docs.jboss.org/hibernate/validator/5.2/reference/en-US/html/chapter-bean-constraints.html#section-object-graph-validation
 
 .. _Cascaded validation: http://docs.jboss.org/hibernate/validator/5.2/reference/en-US/html/chapter-method-constraints.html#_cascaded_validation
+
+Since our entity is also annotated with ``@NotNull``, Dropwizard will also guard against ``null``
+input with a response stating that the body must not be null.
 
 .. _man-validation-validations-optional-constraints:
 
 ``Optional<T>`` Constraints
 ***************************
 
-If you have an ``Optional<T>`` field or parameter that needs validation, add the
-``@UnwrapValidatedValue`` annotation on it. This makes the type contained within the ``Optional``
-constrained. If the ``Optional`` is absent, then the constraints are not applied.
+If an entity, field, or parameter is not required, it can be wrapped in an ``Optional<T>``, but the
+inner value can still be constrained with the ``@UnwrapValidatedValue`` annotation. If the
+``Optional`` is absent, then the constraints are not applied.
 
 .. note::
 
-    Be careful when using constraints with ``*Param`` annotations with ``Optional<String>`` types as
-    there is a subtle, but important distinction between null and empty. If a client requests
+    Be careful when using constraints with ``*Param`` annotations on ``Optional<String>`` parameters
+    as there is a subtle, but important distinction between null and empty. If a client requests
     ``bar?q=``, ``q`` will evaluate to ``Optional.of("")``. If you want ``q`` to evaluate to
     ``Optional.absent()`` in this situation, change the type to ``NonEmptyStringParam``
 
 .. note::
 
-    Param types such as ``IntParam`` and ``NonEmptyStringParam`` can also be constrained if
-    annotated with ``@UnwrapValidatedValue``
+    Param types such as ``IntParam`` and ``NonEmptyStringParam`` can also be constrained.
+
+There is a caveat regarding ``@UnwrapValidatedValue`` and ``*Param`` types, as there still are some
+cumbersome situations when constraints need to be applied to the container and the value.
+
+.. code-block:: java
+
+    @POST
+    // The @NotNull is supposed to mean that the parameter is required but the Max(3) is supposed to
+    // apply to the contained integer. Currently, this code will fail saying that Max can't
+    // be applied on an IntParam
+    public List<Person> createNum(@QueryParam("num") @UnwrapValidatedValue(false)
+                                  @NotNull @Max(3) IntParam num) {
+        // ...
+    }
+
+    @GET
+    // Similarly, the underlying validation framework can't unwrap nested types (an integer wrapped
+    // in an IntParam wrapped in an Optional), regardless if the @UnwrapValidatedValue is used
+    public Person retrieve(@QueryParam("num") @Max(3) Optional<IntParam> num) {
+        // ...
+    }
+
+To work around these limitations, if the parameter is required check for it in the endpoint and
+throw an exception, else use ``@DefaultValue`` or move the ``Optional`` into the endpoint.
+
+.. code-block:: java
+
+    @POST
+    // Workaround to handle required int params and validations
+    public List<Person> createNum(@QueryParam("num") @Max(3) IntParam num) {
+        if (num == null) {
+            throw new WebApplicationException("query param num must not be null", 400);
+        }
+        // ...
+    }
+
+    @GET
+    // Workaround to handle optional int params and validations with DefaultValue
+    public Person retrieve(@QueryParam("num") @DefaultValue("0") @Max(3) IntParam num) {
+        // ...
+    }
+
+    @GET
+    // Workaround to handle optional int params and validations with Optional
+    public Person retrieve2(@QueryParam("num") @Max(3) IntParam num) {
+        Optional.fromNullable(num);
+        // ...
+    }
+
+.. _man-validation-validations-return-value-validations:
+
+Return Value Validations
+************************
+
+It's reasonable to want to make guarantees to clients regarding the server response. For example,
+you may want to assert that no response will ever be ``null``, and if an endpoint creates a
+``Person`` that the person is valid.
+
+.. code-block:: java
+
+    @POST
+    @NotNull
+    @Valid
+    public Person create() {
+        return new Person(null);
+    }
+
+In this instance, instead of returning someone with a null name, Dropwizard will return an ``HTTP
+500 Internal Server Error`` with the error ``server response name may not be empty``, so the client
+knows the server failed through no fault of their own.
+
+Analogous to an empty request body, an empty entity annotated with ``@NotNull`` will return ``server
+response may not be null``
 
 Annotations
 ===========
@@ -157,11 +231,10 @@ simple workaround:
 
 .. _man-validation-annotations-validated:
 
-``@Validated``
-**************
+Validating Grouped Constraints with ``@Validated``
+**************************************************
 
-The ``@Validated`` annotation behaves similar to ``@Valid``. The difference is that the
-``@Validated`` annotation allows for `validation groups`_ to be specifically set, instead of the
+The ``@Validated`` annotation allows for `validation groups`_ to be specifically set, instead of the
 default group. This is useful when different endpoints share the same entity but may have different
 requirements.
 
@@ -199,12 +272,12 @@ both versions of the API but at different endpoints.
     public class PersonResource {
         @POST
         @Path("/v1")
-        public void createPersonV1(@Validated(Version1Checks.class) Person person) {
+        public void createPersonV1(@Valid @Validated(Version1Checks.class) Person person) {
         }
 
         @POST
         @Path("/v2")
-        public void createPersonV2(@Validated({Version1Checks.class, Version2Checks.class}) Person person) {
+        public void createPersonV2(@Valid @Validated({Version1Checks.class, Version2Checks.class}) Person person) {
         }
     }
 
@@ -239,7 +312,7 @@ code and ensure that the error messages are user friendly.
                 .target("/person/v1").request()
                 .post(Entity.json(new Person(null)));
 
-        // Clients will recieve a 422 on bad request entity
+        // Clients will receive a 422 on bad request entity
         assertThat(post.getStatus()).isEqualTo(422);
 
         // Check to make sure that errors are correct and human readable
@@ -255,7 +328,7 @@ Extending
 
 While Dropwizard provides good defaults for error messages, one size may not fit all and so there
 are a series of extension points. To register your own
-``ExceptionMapper<ConstraintViolationException>`` you'll need to first set
+``ExceptionMapper<JerseyViolationException>`` you'll need to first set
 ``registerDefaultExceptionMappers`` to false in the configuration file or in code before registering
 your exception mapper with jersey. Then, optionally, register other default exception mappers:
 
