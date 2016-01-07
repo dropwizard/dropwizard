@@ -53,7 +53,7 @@ public class DropwizardSSLConnectionSocketFactoryTest {
     }
 
     @ClassRule
-    public static DropwizardAppRule<Configuration> TLS_APP_RULE = new DropwizardAppRule<Configuration>(TlsTestApplication.class,
+    public static DropwizardAppRule<Configuration> TLS_APP_RULE = new DropwizardAppRule<>(TlsTestApplication.class,
             ResourceHelpers.resourceFilePath("yaml/ssl_connection_socket_factory_test.yml"),
             Optional.of("tls"),
             ConfigOverride.config("tls", "server.applicationConnectors[0].keyStorePath", ResourceHelpers.resourceFilePath("stores/server/keycert.p12")),

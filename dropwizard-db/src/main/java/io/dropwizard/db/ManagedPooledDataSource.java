@@ -37,37 +37,16 @@ public class ManagedPooledDataSource extends DataSourceProxy implements ManagedD
     public void start() throws Exception {
         final ConnectionPool connectionPool = createPool();
         metricRegistry.register(name(getClass(), connectionPool.getName(), "active"),
-                new Gauge<Integer>() {
-                    @Override
-                    public Integer getValue() {
-                        return connectionPool.getActive();
-                    }
-                });
+            (Gauge<Integer>) connectionPool::getActive);
 
         metricRegistry.register(name(getClass(), connectionPool.getName(), "idle"),
-                new Gauge<Integer>() {
-
-                    @Override
-                    public Integer getValue() {
-                        return connectionPool.getIdle();
-                    }
-                });
+            (Gauge<Integer>) connectionPool::getIdle);
 
         metricRegistry.register(name(getClass(), connectionPool.getName(), "waiting"),
-                new Gauge<Integer>() {
-                    @Override
-                    public Integer getValue() {
-                        return connectionPool.getWaitCount();
-                    }
-                });
+            (Gauge<Integer>) connectionPool::getWaitCount);
 
         metricRegistry.register(name(getClass(), connectionPool.getName(), "size"),
-                new Gauge<Integer>() {
-                    @Override
-                    public Integer getValue() {
-                        return connectionPool.getSize();
-                    }
-                });
+            (Gauge<Integer>) connectionPool::getSize);
     }
 
     @Override

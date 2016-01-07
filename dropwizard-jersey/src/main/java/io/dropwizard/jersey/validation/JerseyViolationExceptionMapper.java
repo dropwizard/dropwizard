@@ -18,12 +18,7 @@ public class JerseyViolationExceptionMapper implements ExceptionMapper<JerseyVio
         final Set<ConstraintViolation<?>> violations = exception.getConstraintViolations();
         final Invocable invocable = exception.getInvocable();
         final ImmutableList<String> errors = FluentIterable.from(exception.getConstraintViolations())
-                .transform(new Function<ConstraintViolation<?>, String>() {
-                    @Override
-                    public String apply(ConstraintViolation<?> constraintViolation) {
-                        return ConstraintMessage.getMessage(constraintViolation, invocable);
-                    }
-                }).toList();
+                .transform(violation -> ConstraintMessage.getMessage(violation, invocable)).toList();
 
         final int status = ConstraintMessage.determineStatus(violations, invocable);
         return Response.status(status)

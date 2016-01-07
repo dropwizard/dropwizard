@@ -27,13 +27,10 @@ public class DBIHealthCheck extends HealthCheck {
 
     @Override
     protected Result check() throws Exception {
-        return timeBoundHealthCheck.check(new Callable<Result>() {
-            @Override
-            public Result call() throws Exception {
-                try (Handle handle = dbi.open()) {
-                    handle.execute(validationQuery);
-                    return Result.healthy();
-                }
+        return timeBoundHealthCheck.check(() -> {
+            try (Handle handle = dbi.open()) {
+                handle.execute(validationQuery);
+                return Result.healthy();
             }
         });
     }

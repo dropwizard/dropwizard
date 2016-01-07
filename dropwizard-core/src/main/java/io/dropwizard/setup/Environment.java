@@ -78,7 +78,7 @@ public class Environment {
 
 
         this.healthCheckExecutorService = this.lifecycle().executorService("TimeBoundHealthCheck-pool-%d")
-                .workQueue(new ArrayBlockingQueue<Runnable>(1))
+                .workQueue(new ArrayBlockingQueue<>(1))
                 .minThreads(1)
                 .maxThreads(4)
                 .threadFactory(new ThreadFactoryBuilder().setDaemon(true).build())

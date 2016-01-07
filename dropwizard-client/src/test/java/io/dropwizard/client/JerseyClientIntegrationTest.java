@@ -64,20 +64,17 @@ public class JerseyClientIntegrationTest {
 
     @Test
     public void testChunkedGzipPost() throws Exception {
-        httpServer.createContext("/register", new HttpHandler() {
-            @Override
-            public void handle(HttpExchange httpExchange) throws IOException {
-                try {
-                    Headers requestHeaders = httpExchange.getRequestHeaders();
-                    assertThat(requestHeaders.get(TRANSFER_ENCODING)).containsExactly(CHUNKED);
-                    assertThat(requestHeaders.get(HttpHeaders.CONTENT_LENGTH)).isNull();
-                    assertThat(requestHeaders.get(HttpHeaders.CONTENT_ENCODING)).containsExactly(GZIP);
-                    assertThat(requestHeaders.get(HttpHeaders.ACCEPT_ENCODING)).containsExactly(GZIP_DEFLATE);
-                    checkBody(httpExchange, true);
-                    postResponse(httpExchange);
-                } finally {
-                    httpExchange.close();
-                }
+        httpServer.createContext("/register", httpExchange -> {
+            try {
+                Headers requestHeaders = httpExchange.getRequestHeaders();
+                assertThat(requestHeaders.get(TRANSFER_ENCODING)).containsExactly(CHUNKED);
+                assertThat(requestHeaders.get(HttpHeaders.CONTENT_LENGTH)).isNull();
+                assertThat(requestHeaders.get(HttpHeaders.CONTENT_ENCODING)).containsExactly(GZIP);
+                assertThat(requestHeaders.get(HttpHeaders.ACCEPT_ENCODING)).containsExactly(GZIP_DEFLATE);
+                checkBody(httpExchange, true);
+                postResponse(httpExchange);
+            } finally {
+                httpExchange.close();
             }
         });
         httpServer.start();
@@ -87,22 +84,19 @@ public class JerseyClientIntegrationTest {
 
     @Test
     public void testBufferedGzipPost() {
-        httpServer.createContext("/register", new HttpHandler() {
-            @Override
-            public void handle(HttpExchange httpExchange) throws IOException {
-                try {
-                    Headers requestHeaders = httpExchange.getRequestHeaders();
+        httpServer.createContext("/register", httpExchange -> {
+            try {
+                Headers requestHeaders = httpExchange.getRequestHeaders();
 
-                    assertThat(requestHeaders.get(HttpHeaders.CONTENT_LENGTH)).containsExactly("58");
-                    assertThat(requestHeaders.get(TRANSFER_ENCODING)).isNull();
-                    assertThat(requestHeaders.get(HttpHeaders.CONTENT_ENCODING)).containsExactly(GZIP);
-                    assertThat(requestHeaders.get(HttpHeaders.ACCEPT_ENCODING));
+                assertThat(requestHeaders.get(HttpHeaders.CONTENT_LENGTH)).containsExactly("58");
+                assertThat(requestHeaders.get(TRANSFER_ENCODING)).isNull();
+                assertThat(requestHeaders.get(HttpHeaders.CONTENT_ENCODING)).containsExactly(GZIP);
+                assertThat(requestHeaders.get(HttpHeaders.ACCEPT_ENCODING));
 
-                    checkBody(httpExchange, true);
-                    postResponse(httpExchange);
-                } finally {
-                    httpExchange.close();
-                }
+                checkBody(httpExchange, true);
+                postResponse(httpExchange);
+            } finally {
+                httpExchange.close();
             }
         });
         httpServer.start();
@@ -114,21 +108,18 @@ public class JerseyClientIntegrationTest {
 
     @Test
     public void testChunkedPost() throws Exception {
-        httpServer.createContext("/register", new HttpHandler() {
-            @Override
-            public void handle(HttpExchange httpExchange) throws IOException {
-                try {
-                    Headers requestHeaders = httpExchange.getRequestHeaders();
-                    assertThat(requestHeaders.get(TRANSFER_ENCODING)).containsExactly(CHUNKED);
-                    assertThat(requestHeaders.get(HttpHeaders.CONTENT_LENGTH)).isNull();
-                    assertThat(requestHeaders.get(HttpHeaders.CONTENT_ENCODING)).isNull();
-                    assertThat(requestHeaders.get(HttpHeaders.ACCEPT_ENCODING)).containsExactly(GZIP_DEFLATE);
+        httpServer.createContext("/register", httpExchange -> {
+            try {
+                Headers requestHeaders = httpExchange.getRequestHeaders();
+                assertThat(requestHeaders.get(TRANSFER_ENCODING)).containsExactly(CHUNKED);
+                assertThat(requestHeaders.get(HttpHeaders.CONTENT_LENGTH)).isNull();
+                assertThat(requestHeaders.get(HttpHeaders.CONTENT_ENCODING)).isNull();
+                assertThat(requestHeaders.get(HttpHeaders.ACCEPT_ENCODING)).containsExactly(GZIP_DEFLATE);
 
-                    checkBody(httpExchange, false);
-                    postResponse(httpExchange);
-                } finally {
-                    httpExchange.close();
-                }
+                checkBody(httpExchange, false);
+                postResponse(httpExchange);
+            } finally {
+                httpExchange.close();
             }
         });
         httpServer.start();
@@ -140,25 +131,22 @@ public class JerseyClientIntegrationTest {
 
     @Test
     public void testChunkedPostWithoutGzip() throws Exception {
-        httpServer.createContext("/register", new HttpHandler() {
-            @Override
-            public void handle(HttpExchange httpExchange) throws IOException {
-                try {
-                    Headers requestHeaders = httpExchange.getRequestHeaders();
-                    assertThat(requestHeaders.get(TRANSFER_ENCODING)).containsExactly(CHUNKED);
-                    assertThat(requestHeaders.get(HttpHeaders.CONTENT_LENGTH)).isNull();
-                    assertThat(requestHeaders.get(HttpHeaders.CONTENT_ENCODING)).isNull();
-                    assertThat(requestHeaders.get(HttpHeaders.ACCEPT_ENCODING)).isNull();
+        httpServer.createContext("/register", httpExchange -> {
+            try {
+                Headers requestHeaders = httpExchange.getRequestHeaders();
+                assertThat(requestHeaders.get(TRANSFER_ENCODING)).containsExactly(CHUNKED);
+                assertThat(requestHeaders.get(HttpHeaders.CONTENT_LENGTH)).isNull();
+                assertThat(requestHeaders.get(HttpHeaders.CONTENT_ENCODING)).isNull();
+                assertThat(requestHeaders.get(HttpHeaders.ACCEPT_ENCODING)).isNull();
 
-                    checkBody(httpExchange, false);
+                checkBody(httpExchange, false);
 
-                    httpExchange.getResponseHeaders().add(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON);
-                    httpExchange.sendResponseHeaders(200, 0);
-                    httpExchange.getResponseBody().write(JSON_TOKEN.getBytes(StandardCharsets.UTF_8));
-                    httpExchange.getResponseBody().close();
-                } finally {
-                    httpExchange.close();
-                }
+                httpExchange.getResponseHeaders().add(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON);
+                httpExchange.sendResponseHeaders(200, 0);
+                httpExchange.getResponseBody().write(JSON_TOKEN.getBytes(StandardCharsets.UTF_8));
+                httpExchange.getResponseBody().close();
+            } finally {
+                httpExchange.close();
             }
         });
         httpServer.start();
@@ -216,21 +204,18 @@ public class JerseyClientIntegrationTest {
 
     @Test
     public void testGet() {
-        httpServer.createContext("/player", new HttpHandler() {
-            @Override
-            public void handle(HttpExchange httpExchange) throws IOException {
-                try {
-                    assertThat(httpExchange.getRequestURI().getQuery()).isEqualTo("id=21");
+        httpServer.createContext("/player", httpExchange -> {
+            try {
+                assertThat(httpExchange.getRequestURI().getQuery()).isEqualTo("id=21");
 
-                    httpExchange.getResponseHeaders().add(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON);
-                    httpExchange.sendResponseHeaders(200, 0);
-                    httpExchange.getResponseBody().write(JSON_MAPPER.createObjectNode()
-                            .put("email", "john@doe.me")
-                            .put("name", "John Doe")
-                            .toString().getBytes(StandardCharsets.UTF_8));
-                } finally {
-                    httpExchange.close();
-                }
+                httpExchange.getResponseHeaders().add(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON);
+                httpExchange.sendResponseHeaders(200, 0);
+                httpExchange.getResponseBody().write(JSON_MAPPER.createObjectNode()
+                        .put("email", "john@doe.me")
+                        .put("name", "John Doe")
+                        .toString().getBytes(StandardCharsets.UTF_8));
+            } finally {
+                httpExchange.close();
             }
         });
         httpServer.start();
@@ -258,17 +243,14 @@ public class JerseyClientIntegrationTest {
 
     @Test
     public void testSetUserAgent() {
-        httpServer.createContext("/test", new HttpHandler() {
-            @Override
-            public void handle(HttpExchange httpExchange) throws IOException {
-                try {
-                    assertThat(httpExchange.getRequestHeaders().get(HttpHeaders.USER_AGENT))
-                            .containsExactly("Custom user-agent");
-                    httpExchange.sendResponseHeaders(200, 0);
-                    httpExchange.getResponseBody().write("Hello World!".getBytes(StandardCharsets.UTF_8));
-                } finally {
-                    httpExchange.close();
-                }
+        httpServer.createContext("/test", httpExchange -> {
+            try {
+                assertThat(httpExchange.getRequestHeaders().get(HttpHeaders.USER_AGENT))
+                        .containsExactly("Custom user-agent");
+                httpExchange.sendResponseHeaders(200, 0);
+                httpExchange.getResponseBody().write("Hello World!".getBytes(StandardCharsets.UTF_8));
+            } finally {
+                httpExchange.close();
             }
         });
         httpServer.start();
@@ -297,16 +279,13 @@ public class JerseyClientIntegrationTest {
      */
     @Test
     public void testFilterOnAWebTarget() {
-        httpServer.createContext("/test", new HttpHandler() {
-            @Override
-            public void handle(HttpExchange httpExchange) throws IOException {
-                try {
-                    httpExchange.getResponseHeaders().add(HttpHeaders.CONTENT_TYPE, TEXT_PLAIN);
-                    httpExchange.sendResponseHeaders(200, 0);
-                    httpExchange.getResponseBody().write("Hello World!".getBytes(StandardCharsets.UTF_8));
-                } finally {
-                    httpExchange.close();
-                }
+        httpServer.createContext("/test", httpExchange -> {
+            try {
+                httpExchange.getResponseHeaders().add(HttpHeaders.CONTENT_TYPE, TEXT_PLAIN);
+                httpExchange.sendResponseHeaders(200, 0);
+                httpExchange.getResponseBody().write("Hello World!".getBytes(StandardCharsets.UTF_8));
+            } finally {
+                httpExchange.close();
             }
         });
         httpServer.start();

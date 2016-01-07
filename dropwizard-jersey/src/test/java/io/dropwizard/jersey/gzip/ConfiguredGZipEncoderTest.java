@@ -29,7 +29,7 @@ public class ConfiguredGZipEncoderTest {
     @Test
     public void gzipParametersSpec() throws IOException {
         ClientRequestContext context = mock(ClientRequestContext.class);
-        MultivaluedMap<String, Object> headers = new MultivaluedHashMap<String, Object>();
+        MultivaluedMap<String, Object> headers = new MultivaluedHashMap<>();
         when(context.getHeaders()).thenReturn(headers);
         headers.put(HttpHeaders.CONTENT_ENCODING, null);
         when(context.hasEntity()).thenReturn(true);

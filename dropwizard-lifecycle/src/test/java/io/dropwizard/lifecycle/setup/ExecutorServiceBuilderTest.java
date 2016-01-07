@@ -36,7 +36,7 @@ public class ExecutorServiceBuilderTest {
 
     @Test
     public void testGiveNoWarningAboutMaximumPoolSizeAndBoundedQueue() {
-        executorServiceBuilder.workQueue(new ArrayBlockingQueue<Runnable>(16));
+        executorServiceBuilder.workQueue(new ArrayBlockingQueue<>(16));
 
         executorServiceBuilder.build();
 

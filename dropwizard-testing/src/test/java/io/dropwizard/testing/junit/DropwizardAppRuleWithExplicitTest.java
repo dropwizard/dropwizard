@@ -36,7 +36,7 @@ public class DropwizardAppRuleWithExplicitTest {
         DefaultServerFactory sf = (DefaultServerFactory) config.getServerFactory();
         ((HttpConnectorFactory) sf.getApplicationConnectors().get(0)).setPort(0);
         ((HttpConnectorFactory) sf.getAdminConnectors().get(0)).setPort(0);
-        RULE = new DropwizardAppRule<TestConfiguration>(TestApplication.class, config);
+        RULE = new DropwizardAppRule<>(TestApplication.class, config);
     }
 
     Client client = ClientBuilder.newClient();
