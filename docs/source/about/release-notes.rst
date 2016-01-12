@@ -4,6 +4,13 @@
 Release Notes
 #############
 
+.. _rel-0.9.2:
+
+v0.9.2:
+==================
+
+* Support `@UnitOfWork` annotation outside of Jersey resources `#1361 <https://github.com/dropwizard/dropwizard/issues/1361>`_
+
 .. _rel-0.9.1:
 
 v0.9.1: Nov 3 2015
