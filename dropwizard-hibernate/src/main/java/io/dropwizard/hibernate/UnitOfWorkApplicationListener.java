@@ -15,9 +15,6 @@ import org.glassfish.jersey.server.monitoring.RequestEvent;
 import org.glassfish.jersey.server.monitoring.RequestEventListener;
 
 import org.hibernate.SessionFactory;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
-import org.hibernate.context.internal.ManagedSessionContext;
 
 
 /**
@@ -64,100 +61,28 @@ public class UnitOfWorkApplicationListener implements ApplicationEventListener {
 
     private static class UnitOfWorkEventListener implements RequestEventListener {
         private final Map<Method, UnitOfWork> methodMap;
-        private final Map<String, SessionFactory> sessionFactories;
-
-        private UnitOfWork unitOfWork;
-        private Session session;
-        private SessionFactory sessionFactory;
+        private final UnitOfWorkAspect unitOfWorkAspect;
 
         public UnitOfWorkEventListener(Map<Method, UnitOfWork> methodMap,
                                        Map<String, SessionFactory> sessionFactories) {
             this.methodMap = methodMap;
-            this.sessionFactories = sessionFactories;
+            unitOfWorkAspect = new UnitOfWorkAspect(sessionFactories);
         }
 
         @Override
         public void onEvent(RequestEvent event) {
             if (event.getType() == RequestEvent.Type.RESOURCE_METHOD_START) {
-                this.unitOfWork = this.methodMap.get(event.getUriInfo()
+                UnitOfWork unitOfWork = methodMap.get(event.getUriInfo()
                         .getMatchedResourceMethod().getInvocable().getDefinitionMethod());
-                if (unitOfWork != null) {
-                    sessionFactory = sessionFactories.get(unitOfWork.value());
-                    if (sessionFactory == null) {
-                        // If the user didn't specify the name of a session factory,
-                        // and we have only one registered, we can assume that it's the right one.
-                        if (unitOfWork.value().equals(HibernateBundle.DEFAULT_NAME) && sessionFactories.size() == 1) {
-                            sessionFactory = sessionFactories.values().iterator().next();
-                        } else {
-                            throw new IllegalArgumentException("Unregistered Hibernate bundle: '" +
-                                    unitOfWork.value() + "'");
-                        }
-                    }
-                    this.session = this.sessionFactory.openSession();
-                    try {
-                        configureSession();
-                        ManagedSessionContext.bind(this.session);
-                        beginTransaction();
-                    } catch (Throwable th) {
-                        this.session.close();
-                        this.session = null;
-                        ManagedSessionContext.unbind(this.sessionFactory);
-                        throw th;
-                    }
-                }
+                unitOfWorkAspect.beforeStart(unitOfWork);
             } else if (event.getType() == RequestEvent.Type.RESP_FILTERS_START) {
-                if (this.session != null) {
-                    try {
-                        commitTransaction();
-                    } catch (Exception e) {
-                        rollbackTransaction();
-                        throw new MappableException(e);
-                    } finally {
-                        this.session.close();
-                        this.session = null;
-                        ManagedSessionContext.unbind(this.sessionFactory);
-                    }
+                try {
+                    unitOfWorkAspect.afterEnd();
+                } catch (Exception e) {
+                    throw new MappableException(e);
                 }
             } else if (event.getType() == RequestEvent.Type.ON_EXCEPTION) {
-                if (this.session != null) {
-                    try {
-                        rollbackTransaction();
-                    } finally {
-                        this.session.close();
-                        this.session = null;
-                        ManagedSessionContext.unbind(this.sessionFactory);
-                    }
-                }
-            }
-        }
-
-        private void beginTransaction() {
-            if (this.unitOfWork.transactional()) {
-                this.session.beginTransaction();
-            }
-        }
-
-        private void configureSession() {
-            this.session.setDefaultReadOnly(this.unitOfWork.readOnly());
-            this.session.setCacheMode(this.unitOfWork.cacheMode());
-            this.session.setFlushMode(this.unitOfWork.flushMode());
-        }
-
-        private void rollbackTransaction() {
-            if (this.unitOfWork.transactional()) {
-                final Transaction txn = this.session.getTransaction();
-                if (txn != null && txn.isActive()) {
-                    txn.rollback();
-                }
-            }
-        }
-
-        private void commitTransaction() {
-            if (this.unitOfWork.transactional()) {
-                final Transaction txn = this.session.getTransaction();
-                if (txn != null && txn.isActive()) {
-                    txn.commit();
-                }
+                unitOfWorkAspect.onError();
             }
         }
     }
