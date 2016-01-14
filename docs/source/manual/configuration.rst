@@ -253,6 +253,7 @@ HTTP
         - type: http
           port: 8080
           bindHost: 127.0.0.1 # only bind to loopback
+          inheritChannel: false
           headerCacheSize: 512 bytes
           outputBufferSize: 32KiB
           maxRequestHeaderSize: 8KiB
@@ -277,6 +278,8 @@ Name                     Default             Description
 ======================== ==================  ======================================================================================
 port                     8080                The TCP/IP port on which to listen for incoming connections.
 bindHost                 (none)              The hostname to bind to.
+inheritChannel           false               Whether this connector uses a channel inherited from the JVM.
+                                             Use it with `Server::Starter`_, to launch an instance of Jetty on demand.
 headerCacheSize          512 bytes           The size of the header field cache.
 outputBufferSize         32KiB               The size of the buffer into which response content is aggregated before being sent to
                                              the client. A larger buffer can improve performance by allowing a content producer
@@ -313,6 +316,8 @@ useForwardedHeaders      true                Whether or not to look at ``X-Forwa
 
 .. _`java.net.Socket#setSoTimeout(int)`: http://docs.oracle.com/javase/7/docs/api/java/net/Socket.html#setSoTimeout(int)
 .. _`ForwardedRequestCustomizer`: http://download.eclipse.org/jetty/stable-9/apidocs/org/eclipse/jetty/server/ForwardedRequestCustomizer.html
+
+.. _`Server::Starter`:  https://github.com/kazuho/p5-Server-Starter
 
 .. _man-configuration-https:
 

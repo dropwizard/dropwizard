@@ -50,6 +50,15 @@ import static com.codahale.metrics.MetricRegistry.name;
  *         <td>The hostname to bind to.</td>
  *     </tr>
  *     <tr>
+ *         <td>{@code inheritChannel}</td>
+ *         <td>false</td>
+ *         <td>
+ *             Whether this connector uses a channel inherited from the JVM.
+ *             Use it with <a href="https://github.com/kazuho/p5-Server-Starter">Server::Starter</a>,
+ *             to launch an instance of Jetty on demand.
+ *         </td>
+ *     </tr>
+ *     <tr>
  *         <td>{@code headerCacheSize}</td>
  *         <td>512 bytes</td>
  *         <td>The size of the header field cache.</td>
@@ -185,6 +194,8 @@ public class HttpConnectorFactory implements ConnectorFactory {
 
     private String bindHost = null;
 
+    private boolean inheritChannel = false;
+
     @NotNull
     @MinSize(128)
     private Size headerCacheSize = Size.bytes(512);
@@ -254,6 +265,16 @@ public class HttpConnectorFactory implements ConnectorFactory {
     @JsonProperty
     public void setBindHost(String bindHost) {
         this.bindHost = bindHost;
+    }
+
+    @JsonProperty
+    public boolean isInheritChannel() {
+        return inheritChannel;
+    }
+
+    @JsonProperty
+    public void setInheritChannel(boolean inheritChannel) {
+        this.inheritChannel = inheritChannel;
     }
 
     @JsonProperty
@@ -466,6 +487,7 @@ public class HttpConnectorFactory implements ConnectorFactory {
                                                               factories);
         connector.setPort(port);
         connector.setHost(bindHost);
+        connector.setInheritChannel(inheritChannel);
         if (acceptQueueSize != null) {
             connector.setAcceptQueueSize(acceptQueueSize);
         }
