@@ -28,11 +28,11 @@ import java.util.concurrent.atomic.AtomicInteger;
  * </p>
  *
  * <pre>
- * @RunWith(Suite.class)
- * @SuiteClasses({FooTest.class, BarTest.class})
+ * &#064;RunWith(Suite.class)
+ * &#064;SuiteClasses({FooTest.class, BarTest.class})
  * public class MySuite {
- *   @ClassRule
- *   public static final DropwizardAppRule&lt;MyConfig> DROPWIZARD = new DropwizardAppRule&lt;>(MyApp.class);
+ *   &#064;ClassRule
+ *   public static final DropwizardAppRule&lt;MyConfig> DROPWIZARD = new DropwizardAppRule&lt;>(...);
  * }
  * </pre>
  *
@@ -43,13 +43,13 @@ import java.util.concurrent.atomic.AtomicInteger;
  *
  * <pre>
  * public class FooTest {
- *   @ClassRule public static final DropwizardAppRule&lt;MyConfig> DROPWIZARD = MySuite.DROPWIZARD;
+ *   &#064;ClassRule public static final DropwizardAppRule&lt;MyConfig> DROPWIZARD = MySuite.DROPWIZARD;
  *
  *   public void testFoo() { ... }
  * }
  *
  * public class BarTest {
- *   @ClassRule public static final DropwizardAppRule&lt;MyConfig> DROPWIZARD = MySuite.DROPWIZARD;
+ *   &#064;ClassRule public static final DropwizardAppRule&lt;MyConfig> DROPWIZARD = MySuite.DROPWIZARD;
  *
  *   public void testBar() { ... }
  * }
