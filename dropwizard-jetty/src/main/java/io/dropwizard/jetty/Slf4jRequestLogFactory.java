@@ -11,7 +11,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.google.common.collect.ImmutableList;
 import io.dropwizard.logging.AppenderFactory;
+import io.dropwizard.logging.AsyncAppenderFactory;
+import io.dropwizard.logging.AsyncLoggingEventAppenderFactory;
 import io.dropwizard.logging.ConsoleAppenderFactory;
+import io.dropwizard.logging.filter.FilterFactory;
+import io.dropwizard.logging.filter.ThresholdFilterFactory;
 import org.slf4j.LoggerFactory;
 
 import javax.validation.Valid;
@@ -56,17 +60,17 @@ public class Slf4jRequestLogFactory implements RequestLogFactory<Slf4jRequestLog
 
     @Valid
     @NotNull
-    private ImmutableList<AppenderFactory> appenders = ImmutableList.<AppenderFactory>of(
-            new ConsoleAppenderFactory()
+    private ImmutableList<AppenderFactory<ILoggingEvent>> appenders = ImmutableList.<AppenderFactory<ILoggingEvent>>of(
+            new ConsoleAppenderFactory<ILoggingEvent>()
     );
 
     @JsonProperty
-    public ImmutableList<AppenderFactory> getAppenders() {
+    public ImmutableList<AppenderFactory<ILoggingEvent>> getAppenders() {
         return appenders;
     }
 
     @JsonProperty
-    public void setAppenders(ImmutableList<AppenderFactory> appenders) {
+    public void setAppenders(ImmutableList<AppenderFactory<ILoggingEvent>> appenders) {
         this.appenders = appenders;
     }
 
@@ -96,9 +100,12 @@ public class Slf4jRequestLogFactory implements RequestLogFactory<Slf4jRequestLog
         final RequestLogLayout layout = new RequestLogLayout();
         layout.start();
 
+        final FilterFactory<ILoggingEvent> thresholdFilterFactory = new ThresholdFilterFactory();
+        final AsyncAppenderFactory<ILoggingEvent> asyncAppenderFactory = new AsyncLoggingEventAppenderFactory();
+
         final AppenderAttachableImpl<ILoggingEvent> attachable = new AppenderAttachableImpl<>();
-        for (AppenderFactory output : this.appenders) {
-            attachable.addAppender(output.build(context, name, layout));
+        for (AppenderFactory<ILoggingEvent> output : this.appenders) {
+            attachable.addAppender(output.build(context, name, layout, thresholdFilterFactory, asyncAppenderFactory));
         }
 
         return new Slf4jRequestLog(attachable, timeZone);

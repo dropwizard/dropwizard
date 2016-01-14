@@ -8,6 +8,7 @@ import ch.qos.logback.core.Layout;
 import ch.qos.logback.core.net.SyslogConstants;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import io.dropwizard.logging.filter.FilterFactory;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -68,7 +69,7 @@ import java.util.regex.Pattern;
  * @see AbstractAppenderFactory
  */
 @JsonTypeName("syslog")
-public class SyslogAppenderFactory extends AbstractAppenderFactory {
+public class SyslogAppenderFactory extends AbstractAppenderFactory<ILoggingEvent> {
     public enum Facility {
         AUTH,
         AUTHPRIV,
@@ -131,8 +132,8 @@ public class SyslogAppenderFactory extends AbstractAppenderFactory {
     /**
      * Returns the Logback pattern with which events will be formatted.
      */
-    @Override
     @JsonProperty
+    @Override
     public String getLogFormat() {
         return logFormat;
     }
@@ -140,8 +141,8 @@ public class SyslogAppenderFactory extends AbstractAppenderFactory {
     /**
      * Sets the Logback pattern with which events will be formatted.
      */
-    @Override
     @JsonProperty
+    @Override
     public void setLogFormat(String logFormat) {
         this.logFormat = logFormat;
     }
@@ -200,7 +201,8 @@ public class SyslogAppenderFactory extends AbstractAppenderFactory {
     }
 
     @Override
-    public Appender<ILoggingEvent> build(LoggerContext context, String applicationName, Layout<ILoggingEvent> layout) {
+    public Appender<ILoggingEvent> build(LoggerContext context, String applicationName, Layout<ILoggingEvent> layout,
+                                         FilterFactory<ILoggingEvent> thresholdFilterFactory, AsyncAppenderFactory<ILoggingEvent> asyncAppenderFactory) {
         final SyslogAppender appender = new SyslogAppender();
         appender.setName("syslog-appender");
         appender.setContext(context);
@@ -212,8 +214,8 @@ public class SyslogAppenderFactory extends AbstractAppenderFactory {
         appender.setFacility(facility.toString().toLowerCase(Locale.ENGLISH));
         appender.setThrowableExcluded(!includeStackTrace);
         appender.setStackTracePattern(stackTracePrefix);
-        addThresholdFilter(appender, threshold);
+        appender.addFilter(thresholdFilterFactory.build(threshold));
         appender.start();
-        return wrapAsync(appender);
+        return wrapAsync(appender, asyncAppenderFactory);
     }
 }

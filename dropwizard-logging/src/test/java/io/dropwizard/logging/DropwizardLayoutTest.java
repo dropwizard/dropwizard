@@ -3,15 +3,12 @@ package io.dropwizard.logging;
 import ch.qos.logback.classic.LoggerContext;
 import org.junit.Test;
 
-import java.util.TimeZone;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
 public class DropwizardLayoutTest {
     private final LoggerContext context = mock(LoggerContext.class);
-    private final TimeZone timeZone = TimeZone.getTimeZone("UTC");
-    private final DropwizardLayout layout = new DropwizardLayout(context, timeZone);
+    private final DropwizardLayout layout = new DropwizardLayout(context, "%-5p [%d{ISO8601,UTC}] %c: %m%n%rEx");
 
     @Test
     public void prefixesThrowables() throws Exception {
