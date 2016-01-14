@@ -431,6 +431,7 @@ public class DataSourceFactory implements PooledDataSourceFactory {
     }
 
     @JsonProperty
+    @Override
     public String getUrl() {
         return url;
     }
