@@ -70,6 +70,13 @@ public interface PooledDataSourceFactory {
     String getDriverClass();
 
     /**
+     * Returns the JDBC connection URL.
+     *
+     * @return the JDBC connection URL as a string
+     */
+    String getUrl();
+
+    /**
      * Configures the pool as a single connection pool.
      * It's useful for tools that use only one database connection,
      * such as database migrations.
