@@ -25,11 +25,14 @@ import io.dropwizard.logging.filter.FilterFactory;
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
 public interface AppenderFactory<E> extends Discoverable {
     /**
-     * Given a Logback context, an application name, and a layout, build a new appender.
+     * Given a Logback context, an application name, a layout,
+     * a thresholdFilterFactory, and an asyncAppenderFactory build a new appender.
      *
      * @param context         the Logback context
      * @param applicationName the application name
      * @param layout          the layout for logging
+     * @param thresholdFilterFactory the factory for the threshold filter
+     * @param asyncAppenderFactory   the factory for the async appender
      * @return a new, started {@link Appender}
      */
     Appender<E> build(LoggerContext context,
@@ -38,5 +41,8 @@ public interface AppenderFactory<E> extends Discoverable {
                                   FilterFactory<E> thresholdFilterFactory,
                                   AsyncAppenderFactory<E> asyncAppenderFactory);
 
+    /**
+     * @return the log format of this AppenderFactory
+     */
     String getLogFormat();
 }

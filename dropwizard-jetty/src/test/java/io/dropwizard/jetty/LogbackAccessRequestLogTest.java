@@ -19,11 +19,11 @@ import org.mockito.ArgumentCaptor;
 import ch.qos.logback.access.spi.IAccessEvent;
 import ch.qos.logback.core.Appender;
 
-public class DropwizardRequestLogTest {
+public class LogbackAccessRequestLogTest {
 
     @SuppressWarnings("unchecked")
     private final Appender<IAccessEvent> appender = mock(Appender.class);
-    private final DropwizardRequestLog requestLog = new DropwizardRequestLog();
+    private final LogbackAccessRequestLog requestLog = new LogbackAccessRequestLog();
 
     private final Request request = mock(Request.class);
     private final Response response = mock(Response.class);

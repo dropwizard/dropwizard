@@ -33,6 +33,19 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  *         <td>The minimum event level the appender will handle.</td>
  *     </tr>
  *     <tr>
+ *         <td>{@code logFormat}</td>
+ *         <td>(none)</td>
+ *         <td>An appender-specific log format.</td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code timeZone}</td>
+ *         <td>{@code UTC}</td>
+ *         <td>
+ *             The time zone to which event timestamps will be converted.
+ *             Ignored if logFormat is supplied.
+ *         </td>
+ *     </tr>
+ *     <tr>
  *         <td>{@code queueSize}</td>
  *         <td>{@link AsyncAppenderBase}</td>
  *         <td>The maximum capacity of the blocking queue.</td>

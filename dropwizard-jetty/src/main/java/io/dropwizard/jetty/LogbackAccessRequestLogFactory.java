@@ -1,8 +1,5 @@
 package io.dropwizard.jetty;
 
-import java.util.Optional;
-import java.util.TimeZone;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
@@ -26,31 +23,20 @@ import io.dropwizard.logging.filter.FilterFactory;
 import io.dropwizard.logging.filter.NullFilterFactory;
 
 /**
- * A factory for creating {@link RequestLog} instances.
+ * A factory for creating {@link LogbackAccessRequestLog} instances.
  * <p/>
  * <b>Configuration Parameters:</b>
  * <table>
- * <tr>
- * <td>Name</td>
- * <td>Default</td>
- * <td>Description</td>
- * </tr>
- * <tr>
- * <td>{@code timeZone}</td>
- * <td>UTC</td>
- * <td>The time zone to which request timestamps will be converted, if using the default {@code logFormat}.</td>
- * </tr>
- * <tr>
- * <td>{@code logFormat}</td>
- * <td>HTTP [%t{dd/MMM/yyyy:HH:mm:ss Z,UTC}] %h %l %u "%r" %s %b "%i{Referer}" "%i{User-Agent}"</td>
- * <td>The Logback pattern with which events will be formatted. See
- * <a href="http://logback.qos.ch/manual/layouts.html#logback-access">the Logback documentation</a> for details.</td>
- * </tr>
- * <tr>
- * <td>{@code appenders}</td>
- * <td>a default {@link ConsoleAppenderFactory console} appender</td>
- * <td>The set of {@link AppenderFactory appenders} to which requests will be logged.</td>
- * </tr>
+ *     <tr>
+ *         <td>Name</td>
+ *         <td>Default</td>
+ *         <td>Description</td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code appenders}</td>
+ *         <td>a default {@link ConsoleAppenderFactory console} appender</td>
+ *         <td>The set of {@link AppenderFactory appenders} to which requests will be logged.</td>
+ *     </tr>
  * </table>
  */
 @JsonTypeName("logback-access")
@@ -83,13 +69,13 @@ public class LogbackAccessRequestLogFactory implements RequestLogFactory {
 
         final LoggerContext context = logger.getLoggerContext();
 
-        final DropwizardRequestLog requestLog = new DropwizardRequestLog();
+        final LogbackAccessRequestLog requestLog = new LogbackAccessRequestLog();
 
         final FilterFactory<IAccessEvent> thresholdFilterFactory = new NullFilterFactory<>();
         final AsyncAppenderFactory<IAccessEvent> asyncAppenderFactory = new AsyncAccessEventAppenderFactory();
 
         for (AppenderFactory<IAccessEvent> output : appenders) {
-            final Layout<IAccessEvent> layout = new DropwizardRequestLayout(context, output.getLogFormat());
+            final Layout<IAccessEvent> layout = new LogbackAccessRequestLayout(context, output.getLogFormat());
             layout.start();
             requestLog.addAppender(output.build(context, name, layout, thresholdFilterFactory, asyncAppenderFactory));
         }
