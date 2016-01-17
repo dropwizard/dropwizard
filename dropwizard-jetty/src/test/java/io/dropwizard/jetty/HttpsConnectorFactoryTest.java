@@ -1,7 +1,11 @@
 package io.dropwizard.jetty;
 
+import com.google.common.io.Resources;
+import io.dropwizard.configuration.ConfigurationFactory;
 import io.dropwizard.jackson.DiscoverableSubtypeResolver;
 
+import java.io.File;
+import java.net.URI;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.util.Collection;
@@ -11,12 +15,12 @@ import java.util.Set;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 
+import io.dropwizard.jackson.Jackson;
 import io.dropwizard.validation.BaseValidator;
 import org.apache.commons.lang3.SystemUtils;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.junit.Test;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 
@@ -33,6 +37,41 @@ public class HttpsConnectorFactoryTest {
     public void isDiscoverable() throws Exception {
         assertThat(new DiscoverableSubtypeResolver().getDiscoveredSubtypes())
                 .contains(HttpsConnectorFactory.class);
+    }
+
+    @Test
+    public void testParsingConfiguration() throws Exception {
+        HttpsConnectorFactory https = new ConfigurationFactory<>(HttpsConnectorFactory.class, validator,
+                Jackson.newObjectMapper(), "dw-https").
+                build(new File(Resources.getResource("yaml/https-connector.yml").toURI()));
+
+        assertThat(https.getPort()).isEqualTo(8443);
+        assertThat(https.getKeyStorePath()).isEqualTo("/path/to/ks_file");
+        assertThat(https.getKeyStorePassword()).isEqualTo("changeit");
+        assertThat(https.getKeyStoreType()).isEqualTo("JKS");
+        assertThat(https.getTrustStorePath()).isEqualTo("/path/to/ts_file");
+        assertThat(https.getTrustStorePassword()).isEqualTo("changeit");
+        assertThat(https.getTrustStoreType()).isEqualTo("JKS");
+        assertThat(https.getTrustStoreProvider()).isEqualTo("BC");
+        assertThat(https.getKeyManagerPassword()).isEqualTo("changeit");
+        assertThat(https.getNeedClientAuth()).isTrue();
+        assertThat(https.getWantClientAuth()).isTrue();
+        assertThat(https.getCertAlias()).isEqualTo("http_server");
+        assertThat(https.getCrlPath()).isEqualTo(new File("/path/to/crl_file"));
+        assertThat(https.getEnableCRLDP()).isTrue();
+        assertThat(https.getEnableOCSP()).isTrue();
+        assertThat(https.getMaxCertPathLength()).isEqualTo(3);
+        assertThat(https.getOcspResponderUrl()).isEqualTo(new URI("http://ip.example.com:9443/ca/ocsp"));
+        assertThat(https.getJceProvider()).isEqualTo("BC");
+        assertThat(https.getValidatePeers()).isTrue();
+        assertThat(https.getValidatePeers()).isTrue();
+        assertThat(https.getSupportedProtocols()).containsExactly("TLSv1.1", "TLSv1.2");
+        assertThat(https.getExcludedProtocols()).isEmpty();
+        assertThat(https.getSupportedCipherSuites())
+                .containsExactly("ECDHE-RSA-AES128-GCM-SHA256", "ECDHE-ECDSA-AES128-GCM-SHA256");
+        assertThat(https.getExcludedCipherSuites()).isEmpty();
+        assertThat(https.getAllowRenegotiation()).isFalse();
+        assertThat(https.getEndpointIdentificationAlgorithm()).isEqualTo("HTTPS");
     }
 
     @Test

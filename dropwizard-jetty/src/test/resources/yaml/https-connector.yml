@@ -1,0 +1,28 @@
+type: https
+port: 8443
+keyStorePath: '/path/to/ks_file'
+keyStorePassword: changeit
+keyStoreType: JKS
+keyStoreProvider: BC
+trustStorePath: '/path/to/ts_file'
+trustStorePassword: changeit
+trustStoreType: JKS
+trustStoreProvider: BC
+keyManagerPassword: changeit
+needClientAuth: true
+wantClientAuth: true
+certAlias: http_server
+crlPath: '/path/to/crl_file'
+enableCRLDP: true
+enableOCSP: true
+maxCertPathLength: 3
+ocspResponderUrl: 'http://ip.example.com:9443/ca/ocsp'
+jceProvider: BC
+validateCerts: true
+validatePeers: true
+supportedProtocols: ['TLSv1.1', 'TLSv1.2']
+excludedProtocols:  []
+supportedCipherSuites: ['ECDHE-RSA-AES128-GCM-SHA256', 'ECDHE-ECDSA-AES128-GCM-SHA256']
+excludedCipherSuites: []
+allowRenegotiation: false
+endpointIdentificationAlgorithm: HTTPS
