@@ -1,0 +1,7 @@
+name: Migty Wizard
+type:
+    - wizard
+propertis:
+  admin: true
+servers:
+  - port: 8080
