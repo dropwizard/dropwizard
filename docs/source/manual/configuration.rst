@@ -1036,7 +1036,7 @@ See JerseyClientConfiguration_ and HttpClientConfiguration_ for more options.
 Name                    Default             Description
 ======================= ==================  ===================================================================================================
 minThreads              1                   The minimum number of threads in the pool used for asynchronous requests.
-maxThreads              128                 The maximum number of threads in the pool used for asynchronous requests.
+maxThreads              128                 The maximum number of threads in the pool used for asynchronous requests. If asynchronous requests made by jersey client while serving requests, the number must be set according to the `maxThread` setting of the :ref:`server <man-configuration-all>`. Otherwise some requests made to dropwizard on heavy load may fail due to congestion on the jersey client's thread pool.
 workQueueSize           8                   The size of the work queue of the pool used for asynchronous requests.
                                             Additional threads will be spawn only if the queue is reached its maximum size.
 gzipEnabled             true                Adds an Accept-Encoding: gzip header to all requests, and enables automatic gzip decoding of responses.
