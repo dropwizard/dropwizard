@@ -31,7 +31,6 @@ v1.0.0
 * Upgraded to Jackson 2.6.4
 * Upgraded to JDBI 2.71 `#1358 <https://github.com/dropwizard/dropwizard/pull/1358>`_
 * Upgraded to Jetty 9.3.7.v20160115 `#1330 <https://github.com/dropwizard/dropwizard/pull/1330>`_
-* Upgraded to Jetty ALPN boot 8.1.6.v20151105
 * Upgraded to Joda-Time 2.9.1
 * Upgraded to Liquibase 3.4.2
 * Upgraded to liquibase-slf4j 2.0.0
