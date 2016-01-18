@@ -426,13 +426,13 @@ public class ConfigurationFactoryTest {
             fail("Should print a detailed error on a malformed YAML file");
         } catch (Exception e) {
             assertThat(e.getMessage()).isEqualTo(resourceFileName + " has an error:" + NEWLINE +
-                    "  * Malformed YAML at line: 2, column: 21; while parsing a flow sequence" + NEWLINE +
-                    " in 'reader', line 2, column 7:" + NEWLINE +
-                    "    type: [ coder,wizard" + NEWLINE +
-                    "          ^" + NEWLINE +
-                    "expected ',' or ']', but got StreamEnd" + NEWLINE +
-                    " in 'reader', line 2, column 21:" + NEWLINE +
-                    "    wizard" + NEWLINE +
+                    "  * Malformed YAML at line: 2, column: 21; while parsing a flow sequence\n" +
+                    " in 'reader', line 2, column 7:\n" +
+                    "    type: [ coder,wizard\n" +
+                    "          ^\n" +
+                    "expected ',' or ']', but got StreamEnd\n" +
+                    " in 'reader', line 2, column 21:\n" +
+                    "    wizard\n" +
                     "          ^" + NEWLINE);
         }
     }
