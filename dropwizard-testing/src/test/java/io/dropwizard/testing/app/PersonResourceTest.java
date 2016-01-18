@@ -10,9 +10,12 @@ import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.ext.ExceptionMapper;
+import javax.ws.rs.ext.Provider;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -21,6 +24,13 @@ import static org.mockito.Mockito.*;
  * Tests {@link ResourceTestRule}.
  */
 public class PersonResourceTest {
+    private static class DummyExceptionMapper implements ExceptionMapper<WebApplicationException> {
+        @Override
+        public Response toResponse(WebApplicationException e) {
+            throw new UnsupportedOperationException();
+        }
+    }
+
     private static final PeopleStore dao = mock(PeopleStore.class);
 
     private static final ObjectMapper mapper = Jackson.newObjectMapper()
@@ -30,6 +40,7 @@ public class PersonResourceTest {
     public static final ResourceTestRule resources = ResourceTestRule.builder()
             .addResource(new PersonResource(dao))
             .setMapper(mapper)
+            .setClientConfigurator(clientConfig -> clientConfig.register(DummyExceptionMapper.class))
             .build();
 
     private final Person person = new Person("blah", "blah@example.com");
@@ -98,5 +109,10 @@ public class PersonResourceTest {
             .request()
             .get().getStatus())
             .isEqualTo(Response.Status.BAD_REQUEST.getStatusCode());
+    }
+
+    @Test
+    public void testCustomClientConfiguration() {
+        assertThat(resources.client().getConfiguration().isRegistered(DummyExceptionMapper.class)).isTrue();
     }
 }
