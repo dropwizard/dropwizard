@@ -277,7 +277,7 @@
             <dependency>
                 <groupId>org.mortbay.jetty.alpn</groupId>
                 <artifactId>alpn-boot</artifactId>
-                <version>8.1.3.v20150130</version>
+                <version>8.1.6.v20151105</version>
                 <scope>test</scope>
             </dependency>
 
