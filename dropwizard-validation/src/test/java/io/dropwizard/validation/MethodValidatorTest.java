@@ -41,6 +41,6 @@ public class MethodValidatorTest {
 
         assertThat(errors)
                 .containsOnly("must have a false thing",
-                              "subExample also needs something special");
+                              "also needs something special");
     }
 }
