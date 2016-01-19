@@ -138,7 +138,9 @@ public abstract class AuthFilter<C, P extends Principal> implements ContainerReq
                 return false;
             }
 
-            boolean secure = requestContext.getSecurityContext().isSecure();
+            final SecurityContext securityContext = requestContext.getSecurityContext();
+            final boolean secure = securityContext != null && securityContext.isSecure();
+            
             requestContext.setSecurityContext(new SecurityContext() {
                 @Override
                 public Principal getUserPrincipal() {
