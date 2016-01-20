@@ -35,10 +35,6 @@ public class BootstrapLogging {
     }
 
     public static void bootstrap(Level level) {
-        bootstrap(level, getDefaultLogFormat(TimeZone.getDefault()));
-    }
-
-    public static void bootstrap(Level level, String logFormat) {
         LoggingUtil.hijackJDKLogging();
 
         bootstrappingLock.lock();
@@ -49,7 +45,7 @@ public class BootstrapLogging {
             final Logger root = LoggingUtil.getLoggerContext().getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
             root.detachAndStopAllAppenders();
 
-            final DropwizardLayout formatter = new DropwizardLayout(root.getLoggerContext(), logFormat);
+            final DropwizardLayout formatter = new DropwizardLayout(root.getLoggerContext(), TimeZone.getDefault());
             formatter.start();
 
             final ThresholdFilter filter = new ThresholdFilter();
@@ -70,9 +66,5 @@ public class BootstrapLogging {
         } finally {
             bootstrappingLock.unlock();
         }
-    }
-
-    private static String getDefaultLogFormat(TimeZone timeZone) {
-        return "%-5p [%d{ISO8601," + timeZone.getID() + "}] %c: %m%n%rEx";
     }
 }

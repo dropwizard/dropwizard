@@ -6,7 +6,6 @@ import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.jmx.JMXConfigurator;
 import ch.qos.logback.classic.jul.LevelChangePropagator;
 import ch.qos.logback.classic.spi.ILoggingEvent;
-import ch.qos.logback.core.Layout;
 import ch.qos.logback.core.util.StatusPrinter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.logback.InstrumentedAppender;
@@ -125,11 +124,10 @@ public class DefaultLoggingFactory implements LoggingFactory {
 
         final FilterFactory<ILoggingEvent> thresholdFilterFactory = new ThresholdFilterFactory();
         final AsyncAppenderFactory<ILoggingEvent> asyncAppenderFactory = new AsyncLoggingEventAppenderFactory();
+        final LayoutFactory<ILoggingEvent> layoutFactory = new DropwizardLayoutFactory();
 
         for (AppenderFactory<ILoggingEvent> output : appenders) {
-            final Layout<ILoggingEvent> layout = new DropwizardLayout(loggerContext, output.getLogFormat());
-            layout.start();
-            root.addAppender(output.build(loggerContext, name, layout, thresholdFilterFactory, asyncAppenderFactory));
+            root.addAppender(output.build(loggerContext, name, layoutFactory, thresholdFilterFactory, asyncAppenderFactory));
         }
 
         StatusPrinter.setPrintStream(configurationErrorsStream);
@@ -190,6 +188,7 @@ public class DefaultLoggingFactory implements LoggingFactory {
 
         final FilterFactory<ILoggingEvent> thresholdFilterFactory = new ThresholdFilterFactory();
         final AsyncAppenderFactory<ILoggingEvent> asyncAppenderFactory = new AsyncLoggingEventAppenderFactory();
+        final LayoutFactory<ILoggingEvent> layoutFactory = new DropwizardLayoutFactory();
 
         for (Map.Entry<String, JsonNode> entry : loggers.entrySet()) {
             final Logger logger = loggerContext.getLogger(entry.getKey());
@@ -209,9 +208,7 @@ public class DefaultLoggingFactory implements LoggingFactory {
                 logger.setAdditive(configuration.isAdditive());
 
                 for (AppenderFactory<ILoggingEvent> appender : configuration.getAppenders()) {
-                    final Layout<ILoggingEvent> layout = new DropwizardLayout(loggerContext, appender.getLogFormat());
-                    layout.start();
-                    logger.addAppender(appender.build(loggerContext, name, layout, thresholdFilterFactory, asyncAppenderFactory));
+                    logger.addAppender(appender.build(loggerContext, name, layoutFactory, thresholdFilterFactory, asyncAppenderFactory));
                 }
             } else {
                 throw new IllegalArgumentException("Unsupported format of logger '" + entry.getKey() + "'");

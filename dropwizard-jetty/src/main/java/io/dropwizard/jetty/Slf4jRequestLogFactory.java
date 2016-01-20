@@ -3,8 +3,6 @@ package io.dropwizard.jetty;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.ILoggingEvent;
-import ch.qos.logback.core.CoreConstants;
-import ch.qos.logback.core.LayoutBase;
 import ch.qos.logback.core.spi.AppenderAttachableImpl;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -14,6 +12,7 @@ import io.dropwizard.logging.AppenderFactory;
 import io.dropwizard.logging.AsyncAppenderFactory;
 import io.dropwizard.logging.AsyncLoggingEventAppenderFactory;
 import io.dropwizard.logging.ConsoleAppenderFactory;
+import io.dropwizard.logging.LayoutFactory;
 import io.dropwizard.logging.filter.FilterFactory;
 import io.dropwizard.logging.filter.ThresholdFilterFactory;
 import org.slf4j.LoggerFactory;
@@ -48,12 +47,6 @@ import java.util.TimeZone;
  */
 @JsonTypeName("slf4j")
 public class Slf4jRequestLogFactory implements RequestLogFactory<Slf4jRequestLog> {
-    private static class RequestLogLayout extends LayoutBase<ILoggingEvent> {
-        @Override
-        public String doLayout(ILoggingEvent event) {
-            return event.getFormattedMessage() + CoreConstants.LINE_SEPARATOR;
-        }
-    }
 
     @NotNull
     private TimeZone timeZone = TimeZone.getTimeZone("UTC");
@@ -102,10 +95,11 @@ public class Slf4jRequestLogFactory implements RequestLogFactory<Slf4jRequestLog
 
         final FilterFactory<ILoggingEvent> thresholdFilterFactory = new ThresholdFilterFactory();
         final AsyncAppenderFactory<ILoggingEvent> asyncAppenderFactory = new AsyncLoggingEventAppenderFactory();
+        final LayoutFactory<ILoggingEvent> layoutFactory = new RequestLogLayoutFactory();
 
         final AppenderAttachableImpl<ILoggingEvent> attachable = new AppenderAttachableImpl<>();
         for (AppenderFactory<ILoggingEvent> output : this.appenders) {
-            attachable.addAppender(output.build(context, name, layout, thresholdFilterFactory, asyncAppenderFactory));
+            attachable.addAppender(output.build(context, name, layoutFactory, thresholdFilterFactory, asyncAppenderFactory));
         }
 
         return new Slf4jRequestLog(attachable, timeZone);

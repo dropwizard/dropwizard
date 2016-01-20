@@ -2,7 +2,6 @@ package io.dropwizard.logging;
 
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.core.Appender;
-import ch.qos.logback.core.Layout;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import io.dropwizard.jackson.Discoverable;
 import io.dropwizard.logging.filter.FilterFactory;
@@ -30,19 +29,14 @@ public interface AppenderFactory<E> extends Discoverable {
      *
      * @param context         the Logback context
      * @param applicationName the application name
-     * @param layout          the layout for logging
+     * @param layoutFactory   the factory for the layout for logging
      * @param thresholdFilterFactory the factory for the threshold filter
      * @param asyncAppenderFactory   the factory for the async appender
      * @return a new, started {@link Appender}
      */
     Appender<E> build(LoggerContext context,
                                   String applicationName,
-                                  Layout<E> layout,
+                                  LayoutFactory<E> layoutFactory,
                                   FilterFactory<E> thresholdFilterFactory,
                                   AsyncAppenderFactory<E> asyncAppenderFactory);
-
-    /**
-     * @return the log format of this AppenderFactory
-     */
-    String getLogFormat();
 }

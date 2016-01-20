@@ -26,27 +26,20 @@ public class ConsoleAppenderFactoryTest {
 
     @Test
     public void includesCallerData() {
-        final LoggerContext context = new LoggerContext();
-        final Layout<ILoggingEvent> layout = new DropwizardLayout(context, "%-5p [%d{ISO8601,UTC}] %c: %m%n%rEx");
-        layout.start();
         ConsoleAppenderFactory<ILoggingEvent> consoleAppenderFactory = new ConsoleAppenderFactory<>();
-        AsyncAppender asyncAppender = (AsyncAppender) consoleAppenderFactory.build(context, "test", layout, new NullFilterFactory<ILoggingEvent>(), new AsyncLoggingEventAppenderFactory());
+        AsyncAppender asyncAppender = (AsyncAppender) consoleAppenderFactory.build(new LoggerContext(), "test", new DropwizardLayoutFactory(), new NullFilterFactory<>(), new AsyncLoggingEventAppenderFactory());
         assertThat(asyncAppender.isIncludeCallerData()).isFalse();
 
         consoleAppenderFactory.setIncludeCallerData(true);
-        asyncAppender = (AsyncAppender) consoleAppenderFactory.build(context, "test", layout, new NullFilterFactory<ILoggingEvent>(), new AsyncLoggingEventAppenderFactory());
+        asyncAppender = (AsyncAppender) consoleAppenderFactory.build(new LoggerContext(), "test", new DropwizardLayoutFactory(), new NullFilterFactory<>(), new AsyncLoggingEventAppenderFactory());
         assertThat(asyncAppender.isIncludeCallerData()).isTrue();
     }
 
     @Test
     public void appenderContextIsSet() throws Exception {
         final Logger root = (Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
-        final LoggerContext context = root.getLoggerContext();
-        final Layout<ILoggingEvent> layout = new DropwizardLayout(context, "%-5p [%d{ISO8601,UTC}] %c: %m%n%rEx");
-        layout.start();
-
         final ConsoleAppenderFactory<ILoggingEvent> appenderFactory = new ConsoleAppenderFactory<>();
-        final Appender<ILoggingEvent> appender = appenderFactory.build(context, "test", layout, new NullFilterFactory<ILoggingEvent>(), new AsyncLoggingEventAppenderFactory());
+        final Appender<ILoggingEvent> appender = appenderFactory.build(root.getLoggerContext(), "test", new DropwizardLayoutFactory(), new NullFilterFactory<>(), new AsyncLoggingEventAppenderFactory());
 
         assertThat(appender.getContext()).isEqualTo(root.getLoggerContext());
     }
@@ -54,12 +47,8 @@ public class ConsoleAppenderFactoryTest {
     @Test
     public void appenderNameIsSet() throws Exception {
         final Logger root = (Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
-        final LoggerContext context = root.getLoggerContext();
-        final Layout<ILoggingEvent> layout = new DropwizardLayout(context, "%-5p [%d{ISO8601,UTC}] %c: %m%n%rEx");
-        layout.start();
-
         final ConsoleAppenderFactory<ILoggingEvent> appenderFactory = new ConsoleAppenderFactory<>();
-        final Appender<ILoggingEvent> appender = appenderFactory.build(context, "test", layout, new NullFilterFactory<ILoggingEvent>(), new AsyncLoggingEventAppenderFactory());
+        final Appender<ILoggingEvent> appender = appenderFactory.build(root.getLoggerContext(), "test", new DropwizardLayoutFactory(), new NullFilterFactory<>(), new AsyncLoggingEventAppenderFactory());
 
         assertThat(appender.getName()).isEqualTo("async-console-appender");
     }

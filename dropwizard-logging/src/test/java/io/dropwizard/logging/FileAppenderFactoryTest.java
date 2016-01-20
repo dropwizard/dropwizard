@@ -44,16 +44,13 @@ public class FileAppenderFactoryTest {
 
     @Test
     public void includesCallerData() {
-        final LoggerContext context = new LoggerContext();
-        final Layout<ILoggingEvent> layout = new DropwizardLayout(context, "%-5p [%d{ISO8601,UTC}] %c: %m%n%rEx");
-        layout.start();
         FileAppenderFactory<ILoggingEvent> fileAppenderFactory = new FileAppenderFactory<>();
         fileAppenderFactory.setArchive(false);
-        AsyncAppender asyncAppender = (AsyncAppender) fileAppenderFactory.build(context, "test", layout, new NullFilterFactory<ILoggingEvent>(), new AsyncLoggingEventAppenderFactory());
+        AsyncAppender asyncAppender = (AsyncAppender) fileAppenderFactory.build(new LoggerContext(), "test", new DropwizardLayoutFactory(), new NullFilterFactory<>(), new AsyncLoggingEventAppenderFactory());
         assertThat(asyncAppender.isIncludeCallerData()).isFalse();
 
         fileAppenderFactory.setIncludeCallerData(true);
-        asyncAppender = (AsyncAppender) fileAppenderFactory.build(context, "test", layout, new NullFilterFactory<ILoggingEvent>(), new AsyncLoggingEventAppenderFactory());
+        asyncAppender = (AsyncAppender) fileAppenderFactory.build(new LoggerContext(), "test", new DropwizardLayoutFactory(), new NullFilterFactory<>(), new AsyncLoggingEventAppenderFactory());
         assertThat(asyncAppender.isIncludeCallerData()).isTrue();
     }
 
@@ -147,13 +144,9 @@ public class FileAppenderFactoryTest {
     @Test
     public void appenderContextIsSet() throws Exception {
         final Logger root = (Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
-        final LoggerContext context = root.getLoggerContext();
-        final Layout<ILoggingEvent> layout = new DropwizardLayout(context, "%-5p [%d{ISO8601,UTC}] %c: %m%n%rEx");
-        layout.start();
-
         final FileAppenderFactory<ILoggingEvent> appenderFactory = new FileAppenderFactory<>();
         appenderFactory.setArchivedLogFilenamePattern(folder.newFile("example-%d.log.gz").toString());
-        final Appender<ILoggingEvent> appender = appenderFactory.build(context, "test", layout, new NullFilterFactory<ILoggingEvent>(), new AsyncLoggingEventAppenderFactory());
+        final Appender<ILoggingEvent> appender = appenderFactory.build(root.getLoggerContext(), "test", new DropwizardLayoutFactory(), new NullFilterFactory<>(), new AsyncLoggingEventAppenderFactory());
 
         assertThat(appender.getContext()).isEqualTo(root.getLoggerContext());
     }
@@ -161,13 +154,9 @@ public class FileAppenderFactoryTest {
     @Test
     public void appenderNameIsSet() throws Exception {
         final Logger root = (Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
-        final LoggerContext context = root.getLoggerContext();
-        final Layout<ILoggingEvent> layout = new DropwizardLayout(context, "%-5p [%d{ISO8601,UTC}] %c: %m%n%rEx");
-        layout.start();
-
         final FileAppenderFactory<ILoggingEvent> appenderFactory = new FileAppenderFactory<>();
         appenderFactory.setArchivedLogFilenamePattern(folder.newFile("example-%d.log.gz").toString());
-        final Appender<ILoggingEvent> appender = appenderFactory.build(root.getLoggerContext(), "test", layout, new NullFilterFactory<ILoggingEvent>(), new AsyncLoggingEventAppenderFactory());
+        final Appender<ILoggingEvent> appender = appenderFactory.build(root.getLoggerContext(), "test", new DropwizardLayoutFactory(), new NullFilterFactory<>(), new AsyncLoggingEventAppenderFactory());
 
         assertThat(appender.getName()).isEqualTo("async-file-appender");
     }

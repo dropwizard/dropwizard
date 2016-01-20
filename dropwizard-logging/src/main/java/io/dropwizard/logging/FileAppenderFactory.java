@@ -3,7 +3,6 @@ package io.dropwizard.logging;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.FileAppender;
-import ch.qos.logback.core.Layout;
 import ch.qos.logback.core.encoder.LayoutWrappingEncoder;
 import ch.qos.logback.core.rolling.DefaultTimeBasedFileNamingAndTriggeringPolicy;
 import ch.qos.logback.core.rolling.RollingFileAppender;
@@ -183,7 +182,7 @@ public class FileAppenderFactory<E extends DeferredProcessingAware> extends Abst
     }
 
     @Override
-    public Appender<E> build(LoggerContext context, String applicationName, Layout<E> layout,
+    public Appender<E> build(LoggerContext context, String applicationName, LayoutFactory<E> layoutFactory,
                              FilterFactory<E> thresholdFilterFactory, AsyncAppenderFactory<E> asyncAppenderFactory) {
         final FileAppender<E> appender = buildAppender(context);
         appender.setName("file-appender");
@@ -192,7 +191,7 @@ public class FileAppenderFactory<E extends DeferredProcessingAware> extends Abst
         appender.setContext(context);
 
         final LayoutWrappingEncoder<E> layoutEncoder = new LayoutWrappingEncoder<>();
-        layoutEncoder.setLayout(layout);
+        layoutEncoder.setLayout(buildLayout(context, layoutFactory));
         appender.setEncoder(layoutEncoder);
 
         appender.setPrudent(false);

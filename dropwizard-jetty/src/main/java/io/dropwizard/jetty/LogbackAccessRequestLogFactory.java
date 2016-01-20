@@ -3,13 +3,13 @@ package io.dropwizard.jetty;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import io.dropwizard.logging.LayoutFactory;
 import org.eclipse.jetty.server.RequestLog;
 import org.slf4j.LoggerFactory;
 
 import ch.qos.logback.access.spi.IAccessEvent;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
-import ch.qos.logback.core.Layout;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -45,7 +45,7 @@ public class LogbackAccessRequestLogFactory implements RequestLogFactory {
     @Valid
     @NotNull
     private ImmutableList<AppenderFactory<IAccessEvent>> appenders = ImmutableList
-            .<AppenderFactory<IAccessEvent>> of(new ConsoleAppenderFactory<IAccessEvent>());
+            .<AppenderFactory<IAccessEvent>> of(new ConsoleAppenderFactory<>());
 
     @JsonProperty
     public ImmutableList<AppenderFactory<IAccessEvent>> getAppenders() {
@@ -73,11 +73,10 @@ public class LogbackAccessRequestLogFactory implements RequestLogFactory {
 
         final FilterFactory<IAccessEvent> thresholdFilterFactory = new NullFilterFactory<>();
         final AsyncAppenderFactory<IAccessEvent> asyncAppenderFactory = new AsyncAccessEventAppenderFactory();
+        final LayoutFactory<IAccessEvent> layoutFactory = new LogbackAccessRequestLayoutFactory();
 
         for (AppenderFactory<IAccessEvent> output : appenders) {
-            final Layout<IAccessEvent> layout = new LogbackAccessRequestLayout(context, output.getLogFormat());
-            layout.start();
-            requestLog.addAppender(output.build(context, name, layout, thresholdFilterFactory, asyncAppenderFactory));
+            requestLog.addAppender(output.build(context, name, layoutFactory, thresholdFilterFactory, asyncAppenderFactory));
         }
 
         return requestLog;

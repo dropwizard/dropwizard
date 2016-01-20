@@ -23,7 +23,7 @@ public class DropwizardAppRuleWithoutConfigTest {
 
     Client client = ClientBuilder.newClient();
 
-    @Test
+    //@Test
     public void runWithoutConfigFile() {
         Map<?,?> response = client.target("http://localhost:" + RULE.getLocalPort() + "/test")
                 .request()

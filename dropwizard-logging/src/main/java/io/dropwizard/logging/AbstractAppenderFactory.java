@@ -1,21 +1,20 @@
 package io.dropwizard.logging;
 
-import java.util.Optional;
-import java.util.TimeZone;
+import ch.qos.logback.classic.AsyncAppender;
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.core.Appender;
+import ch.qos.logback.core.AsyncAppenderBase;
+import ch.qos.logback.core.Context;
+import ch.qos.logback.core.pattern.PatternLayoutBase;
+import ch.qos.logback.core.spi.DeferredProcessingAware;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.base.Strings;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-
-import ch.qos.logback.classic.AsyncAppender;
-import ch.qos.logback.classic.Level;
-import ch.qos.logback.core.Appender;
-import ch.qos.logback.core.AsyncAppenderBase;
-import ch.qos.logback.core.Context;
-import ch.qos.logback.core.spi.DeferredProcessingAware;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-
+import java.util.TimeZone;
 
 /**
  * A base implementation of {@link AppenderFactory}.
@@ -71,14 +70,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  */
 public abstract class AbstractAppenderFactory<E extends DeferredProcessingAware> implements AppenderFactory<E> {
 
-    private static String getDefaultLogFormat(TimeZone timeZone) {
-        return "%-5p [%d{ISO8601," + timeZone.getID() + "}] %c: %m%n%rEx";
-    }
-
     @NotNull
     protected Level threshold = Level.ALL;
 
-    protected Optional<String> logFormat = Optional.empty();
+    protected String logFormat;
 
     @NotNull
     protected TimeZone timeZone = TimeZone.getTimeZone("UTC");
@@ -90,14 +85,13 @@ public abstract class AbstractAppenderFactory<E extends DeferredProcessingAware>
     private int discardingThreshold = -1;
 
     @JsonProperty
-    @Override
     public String getLogFormat() {
-        return logFormat.orElse(getDefaultLogFormat(timeZone));
+        return logFormat;
     }
 
     @JsonProperty
     public void setLogFormat(String logFormat) {
-        this.logFormat = Optional.ofNullable(logFormat);
+        this.logFormat = logFormat;
     }
 
     @JsonProperty
@@ -168,5 +162,14 @@ public abstract class AbstractAppenderFactory<E extends DeferredProcessingAware>
         asyncAppender.addAppender(appender);
         asyncAppender.start();
         return asyncAppender;
+    }
+
+    protected PatternLayoutBase<E> buildLayout(LoggerContext context, LayoutFactory<E> layoutFactory) {
+        final PatternLayoutBase<E> formatter = layoutFactory.build(context, timeZone);
+        if (!Strings.isNullOrEmpty(logFormat)) {
+            formatter.setPattern(logFormat);
+        }
+        formatter.start();
+        return formatter;
     }
 }
