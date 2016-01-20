@@ -10,7 +10,7 @@ historically not sucked:
 
 * [Jetty](http://www.eclipse.org/jetty/) for HTTP servin'.
 * [Jersey](http://jersey.java.net/) for REST modelin'.
-* [Jackson](http://jackson.codehaus.org) for JSON parsin' and generatin'.
+* [Jackson](https://github.com/FasterXML/jackson) for JSON parsin' and generatin'.
 * [Logback](http://logback.qos.ch/) for loggin'.
 * [Hibernate Validator](http://www.hibernate.org/subprojects/validator.html) for validatin'.
 * [Metrics](http://metrics.dropwizard.io) for figurin' out what your application is doin' in production.
