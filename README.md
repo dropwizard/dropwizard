@@ -13,7 +13,7 @@ historically not sucked:
 * [Jackson](http://jackson.codehaus.org) for JSON parsin' and generatin'.
 * [Logback](http://logback.qos.ch/) for loggin'.
 * [Hibernate Validator](http://www.hibernate.org/subprojects/validator.html) for validatin'.
-* [Metrics](http://metrics.codahale.com) for figurin' out what your application is doin' in production.
+* [Metrics](http://metrics.dropwizard.io) for figurin' out what your application is doin' in production.
 * [JDBI](http://www.jdbi.org) and [Hibernate](http://www.hibernate.org/) for databasin'.
 * [Liquibase](http://www.liquibase.org/) for migratin'.
 
