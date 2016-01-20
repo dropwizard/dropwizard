@@ -91,6 +91,13 @@ v0.9.0: Oct 28 2015
 * Upgraded to commons-lang3 3.4
 * Upgraded to tomcat-jdbc 8.0.28
 
+.. _rel-0.8.5:
+
+v0.8.5: Nov 3 2015
+==================
+
+* Treat ``null`` values in JAX-RS resource method parameters of type ``Optional<T>`` as absent value after conversion `#1323 <https://github.com/dropwizard/dropwizard/pull/1323>`_
+
 .. _rel-0.8.4:
 
 v0.8.4: Aug 26 2015
