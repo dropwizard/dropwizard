@@ -1,0 +1,3 @@
+io.dropwizard.client
+io.dropwizard.client.proxy
+io.dropwizard.client.ssl

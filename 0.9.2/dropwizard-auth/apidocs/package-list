@@ -1,0 +1,4 @@
+io.dropwizard.auth
+io.dropwizard.auth.basic
+io.dropwizard.auth.chained
+io.dropwizard.auth.oauth
