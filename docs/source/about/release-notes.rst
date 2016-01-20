@@ -39,6 +39,13 @@ v1.0.0
 * Upgraded to tomcat-jdbc 8.0.30
 * Upgraded to AssertJ 3.3.0
 
+.. _rel-0.9.2:
+
+v0.9.2: Jan 20 2016
+==================
+
+* Support `@UnitOfWork` annotation outside of Jersey resources `#1361 <https://github.com/dropwizard/dropwizard/issues/1361>`_
+
 .. _rel-0.9.1:
 
 v0.9.1: Nov 3 2015
