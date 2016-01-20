@@ -14,9 +14,9 @@ historically not sucked:
 * [Jersey](http://jersey.java.net/) for REST modelin'.
 * [Jackson](https://github.com/FasterXML/jackson) for JSON parsin' and generatin'.
 * [Logback](http://logback.qos.ch/) for loggin'.
-* [Hibernate Validator](http://www.hibernate.org/subprojects/validator.html) for validatin'.
+* [Hibernate Validator](http://hibernate.org/validator/) for validatin'.
 * [Metrics](http://metrics.dropwizard.io) for figurin' out what your application is doin' in production.
-* [JDBI](http://www.jdbi.org) and [Hibernate](http://www.hibernate.org/) for databasin'.
+* [JDBI](http://www.jdbi.org) and [Hibernate](http://www.hibernate.org/orm/) for databasin'.
 * [Liquibase](http://www.liquibase.org/) for migratin'.
 
 Read more at [dropwizard.io](http://www.dropwizard.io).
