@@ -10,6 +10,8 @@ import ch.qos.logback.core.pattern.PatternLayoutBase;
 import ch.qos.logback.core.spi.DeferredProcessingAware;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Strings;
+import io.dropwizard.logging.async.AsyncAppenderFactory;
+import io.dropwizard.logging.layout.LayoutFactory;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -84,26 +86,6 @@ public abstract class AbstractAppenderFactory<E extends DeferredProcessingAware>
 
     private int discardingThreshold = -1;
 
-    @JsonProperty
-    public String getLogFormat() {
-        return logFormat;
-    }
-
-    @JsonProperty
-    public void setLogFormat(String logFormat) {
-        this.logFormat = logFormat;
-    }
-
-    @JsonProperty
-    public TimeZone getTimeZone() {
-        return timeZone;
-    }
-
-    @JsonProperty
-    public void setTimeZone(TimeZone timeZone) {
-        this.timeZone = timeZone;
-    }
-
     private boolean includeCallerData = false;
 
     @JsonProperty
@@ -134,6 +116,26 @@ public abstract class AbstractAppenderFactory<E extends DeferredProcessingAware>
     @JsonProperty
     public void setThreshold(Level threshold) {
         this.threshold = threshold;
+    }
+
+    @JsonProperty
+    public String getLogFormat() {
+        return logFormat;
+    }
+
+    @JsonProperty
+    public void setLogFormat(String logFormat) {
+        this.logFormat = logFormat;
+    }
+
+    @JsonProperty
+    public TimeZone getTimeZone() {
+        return timeZone;
+    }
+
+    @JsonProperty
+    public void setTimeZone(TimeZone timeZone) {
+        this.timeZone = timeZone;
     }
 
     @JsonProperty

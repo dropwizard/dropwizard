@@ -7,7 +7,9 @@ import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.net.SyslogConstants;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import io.dropwizard.logging.async.AsyncAppenderFactory;
 import io.dropwizard.logging.filter.FilterFactory;
+import io.dropwizard.logging.layout.LayoutFactory;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;

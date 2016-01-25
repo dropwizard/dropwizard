@@ -1,4 +1,4 @@
-package io.dropwizard.jetty;
+package io.dropwizard.request.logging;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.eclipse.jetty.server.RequestLog;
@@ -10,7 +10,7 @@ import io.dropwizard.jackson.Discoverable;
  *
  * @param <T> type of a {@link RequestLog} implementation
  */
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", defaultImpl = Slf4jRequestLogFactory.class)
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", defaultImpl = LogbackAccessRequestLogFactory.class)
 public interface RequestLogFactory<T extends RequestLog> extends Discoverable {
 
     boolean isEnabled();

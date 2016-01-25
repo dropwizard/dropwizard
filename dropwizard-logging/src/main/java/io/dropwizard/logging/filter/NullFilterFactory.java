@@ -2,13 +2,14 @@ package io.dropwizard.logging.filter;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.core.filter.Filter;
+import ch.qos.logback.core.spi.DeferredProcessingAware;
 import ch.qos.logback.core.spi.FilterReply;
 
 /**
  * Factory for building a logback {@link Filter} that will always defer to the next Filter.
  * @param <E> The type of log event
  */
-public class NullFilterFactory<E> implements FilterFactory<E> {
+public class NullFilterFactory<E extends DeferredProcessingAware> implements FilterFactory<E> {
 
     /**
      * Creates a {@link Filter} that will always defer to the next Filter in the chain, if any.

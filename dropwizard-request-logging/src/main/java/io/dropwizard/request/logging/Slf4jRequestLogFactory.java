@@ -1,4 +1,4 @@
-package io.dropwizard.jetty;
+package io.dropwizard.request.logging;
 
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
@@ -9,12 +9,14 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.google.common.collect.ImmutableList;
 import io.dropwizard.logging.AppenderFactory;
-import io.dropwizard.logging.AsyncAppenderFactory;
-import io.dropwizard.logging.AsyncLoggingEventAppenderFactory;
+import io.dropwizard.logging.async.AsyncAppenderFactory;
+import io.dropwizard.logging.async.AsyncLoggingEventAppenderFactory;
 import io.dropwizard.logging.ConsoleAppenderFactory;
-import io.dropwizard.logging.LayoutFactory;
+import io.dropwizard.logging.layout.LayoutFactory;
 import io.dropwizard.logging.filter.FilterFactory;
 import io.dropwizard.logging.filter.ThresholdFilterFactory;
+import io.dropwizard.request.logging.layout.RequestLogLayout;
+import io.dropwizard.request.logging.layout.RequestLogLayoutFactory;
 import org.slf4j.LoggerFactory;
 
 import javax.validation.Valid;
@@ -54,7 +56,7 @@ public class Slf4jRequestLogFactory implements RequestLogFactory<Slf4jRequestLog
     @Valid
     @NotNull
     private ImmutableList<AppenderFactory<ILoggingEvent>> appenders = ImmutableList.<AppenderFactory<ILoggingEvent>>of(
-            new ConsoleAppenderFactory<ILoggingEvent>()
+            new ConsoleAppenderFactory<>()
     );
 
     @JsonProperty

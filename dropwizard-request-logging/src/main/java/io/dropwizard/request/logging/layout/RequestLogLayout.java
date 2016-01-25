@@ -1,4 +1,4 @@
-package io.dropwizard.jetty;
+package io.dropwizard.request.logging.layout;
 
 import java.util.Map;
 

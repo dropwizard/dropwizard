@@ -1,0 +1,2 @@
+io.dropwizard.request.logging.Slf4jRequestLogFactory
+io.dropwizard.request.logging.LogbackAccessRequestLogFactory

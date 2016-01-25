@@ -19,8 +19,12 @@ import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import io.dropwizard.jackson.Jackson;
+import io.dropwizard.logging.async.AsyncAppenderFactory;
+import io.dropwizard.logging.async.AsyncLoggingEventAppenderFactory;
 import io.dropwizard.logging.filter.FilterFactory;
 import io.dropwizard.logging.filter.ThresholdFilterFactory;
+import io.dropwizard.logging.layout.DropwizardLayoutFactory;
+import io.dropwizard.logging.layout.LayoutFactory;
 
 import javax.management.InstanceAlreadyExistsException;
 import javax.management.MalformedObjectNameException;

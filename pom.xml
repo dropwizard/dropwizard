@@ -49,6 +49,7 @@
         <module>dropwizard-archetypes</module>
         <module>dropwizard-benchmarks</module>
         <module>dropwizard-http2</module>
+        <module>dropwizard-request-logging</module>
     </modules>
 
     <properties>

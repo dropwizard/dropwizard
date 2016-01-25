@@ -1,9 +1,11 @@
-package io.dropwizard.jetty;
+package io.dropwizard.request.logging;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import io.dropwizard.logging.LayoutFactory;
+import io.dropwizard.logging.layout.LayoutFactory;
+import io.dropwizard.request.logging.async.AsyncAccessEventAppenderFactory;
+import io.dropwizard.request.logging.layout.LogbackAccessRequestLayoutFactory;
 import org.eclipse.jetty.server.RequestLog;
 import org.slf4j.LoggerFactory;
 
@@ -17,7 +19,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.google.common.collect.ImmutableList;
 
 import io.dropwizard.logging.AppenderFactory;
-import io.dropwizard.logging.AsyncAppenderFactory;
+import io.dropwizard.logging.async.AsyncAppenderFactory;
 import io.dropwizard.logging.ConsoleAppenderFactory;
 import io.dropwizard.logging.filter.FilterFactory;
 import io.dropwizard.logging.filter.NullFilterFactory;

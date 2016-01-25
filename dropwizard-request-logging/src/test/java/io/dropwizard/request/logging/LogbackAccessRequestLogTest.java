@@ -1,4 +1,4 @@
-package io.dropwizard.jetty;
+package io.dropwizard.request.logging;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;

@@ -1,4 +1,4 @@
-package io.dropwizard.jetty;
+package io.dropwizard.request.logging;
 
 import ch.qos.logback.access.jetty.RequestLogImpl;
 

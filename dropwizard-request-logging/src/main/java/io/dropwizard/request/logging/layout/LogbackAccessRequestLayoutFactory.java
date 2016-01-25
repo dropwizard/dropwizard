@@ -1,11 +1,11 @@
-package io.dropwizard.jetty;
+package io.dropwizard.request.logging.layout;
 
 import java.util.TimeZone;
 
 import ch.qos.logback.access.spi.IAccessEvent;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.core.pattern.PatternLayoutBase;
-import io.dropwizard.logging.LayoutFactory;
+import io.dropwizard.logging.layout.LayoutFactory;
 
 /**
  * Factory that creates a {@link LogbackAccessRequestLayout}

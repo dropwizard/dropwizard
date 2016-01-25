@@ -1,2 +1,0 @@
-io.dropwizard.jetty.Slf4jRequestLogFactory
-io.dropwizard.jetty.LogbackAccessRequestLogFactory

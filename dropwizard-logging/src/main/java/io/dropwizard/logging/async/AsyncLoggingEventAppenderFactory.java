@@ -1,4 +1,4 @@
-package io.dropwizard.logging;
+package io.dropwizard.logging.async;
 
 import ch.qos.logback.classic.AsyncAppender;
 import ch.qos.logback.classic.spi.ILoggingEvent;

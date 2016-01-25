@@ -5,9 +5,10 @@ import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
-import ch.qos.logback.core.Layout;
 import io.dropwizard.jackson.DiscoverableSubtypeResolver;
+import io.dropwizard.logging.async.AsyncLoggingEventAppenderFactory;
 import io.dropwizard.logging.filter.NullFilterFactory;
+import io.dropwizard.logging.layout.DropwizardLayoutFactory;
 import org.junit.Test;
 import org.slf4j.LoggerFactory;
 
