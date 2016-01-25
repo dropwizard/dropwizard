@@ -1,5 +1,7 @@
 package io.dropwizard.hibernate;
 
+import static org.hibernate.resource.transaction.spi.TransactionStatus.*;
+
 import com.codahale.metrics.health.HealthCheck;
 import com.google.common.util.concurrent.MoreExecutors;
 import io.dropwizard.db.TimeBoundHealthCheck;
@@ -8,7 +10,6 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 
 public class SessionFactoryHealthCheck extends HealthCheck {
@@ -49,7 +50,7 @@ public class SessionFactoryHealthCheck extends HealthCheck {
                     session.createSQLQuery(validationQuery).list();
                     txn.commit();
                 } catch (Exception e) {
-                    if (txn.isActive()) {
+                    if (txn.getStatus() == ACTIVE || txn.getStatus() == MARKED_ROLLBACK) {
                         txn.rollback();
                     }
                     throw e;

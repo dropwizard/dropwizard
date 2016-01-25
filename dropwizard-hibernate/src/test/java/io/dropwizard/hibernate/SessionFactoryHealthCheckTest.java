@@ -9,6 +9,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.*;
 
+import static org.hibernate.resource.transaction.spi.TransactionStatus.ACTIVE;
+
 @SuppressWarnings("HibernateResourceOpenedButNotSafelyClosed")
 public class SessionFactoryHealthCheckTest {
     private final SessionFactory factory = mock(SessionFactory.class);
@@ -57,7 +59,7 @@ public class SessionFactoryHealthCheckTest {
 
         final Transaction transaction = mock(Transaction.class);
         when(session.beginTransaction()).thenReturn(transaction);
-        when(transaction.isActive()).thenReturn(true);
+        when(transaction.getStatus()).thenReturn(ACTIVE);
 
         final SQLQuery query = mock(SQLQuery.class);
         when(session.createSQLQuery(anyString())).thenReturn(query);

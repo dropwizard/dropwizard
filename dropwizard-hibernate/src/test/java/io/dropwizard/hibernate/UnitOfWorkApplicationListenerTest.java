@@ -17,10 +17,10 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InOrder;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 
 import java.lang.reflect.Method;
+
+import static org.hibernate.resource.transaction.spi.TransactionStatus.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doAnswer;
@@ -58,13 +58,13 @@ public class UnitOfWorkApplicationListenerTest {
         when(session.getSessionFactory()).thenReturn(sessionFactory);
         when(session.beginTransaction()).thenReturn(transaction);
         when(session.getTransaction()).thenReturn(transaction);
-        when(transaction.isActive()).thenReturn(true);
+        when(transaction.getStatus()).thenReturn(ACTIVE);
 
         when(analyticsSessionFactory.openSession()).thenReturn(analyticsSession);
         when(analyticsSession.getSessionFactory()).thenReturn(analyticsSessionFactory);
         when(analyticsSession.beginTransaction()).thenReturn(analyticsTransaction);
         when(analyticsSession.getTransaction()).thenReturn(analyticsTransaction);
-        when(analyticsTransaction.isActive()).thenReturn(true);
+        when(analyticsTransaction.getStatus()).thenReturn(ACTIVE);
 
         when(appEvent.getType()).thenReturn(ApplicationEvent.Type.INITIALIZATION_APP_FINISHED);
         when(requestMethodStartEvent.getType()).thenReturn(RequestEvent.Type.RESOURCE_METHOD_START);
@@ -191,7 +191,7 @@ public class UnitOfWorkApplicationListenerTest {
 
     @Test
     public void doesNotCommitAnInactiveTransaction() throws Exception {
-        when(transaction.isActive()).thenReturn(false);
+        when(transaction.getStatus()).thenReturn(NOT_ACTIVE);
 
         execute();
 
@@ -209,7 +209,7 @@ public class UnitOfWorkApplicationListenerTest {
 
     @Test
     public void doesNotRollbackAnInactiveTransaction() throws Exception {
-        when(transaction.isActive()).thenReturn(false);
+        when(transaction.getStatus()).thenReturn(NOT_ACTIVE);
 
         executeWithException();
 

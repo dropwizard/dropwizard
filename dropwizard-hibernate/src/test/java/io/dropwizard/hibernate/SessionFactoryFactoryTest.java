@@ -18,6 +18,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import java.util.HashMap;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.any;
@@ -50,6 +51,11 @@ public class SessionFactoryFactoryTest {
         config.setUser("sa");
         config.setDriverClass("org.hsqldb.jdbcDriver");
         config.setValidationQuery("SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS");
+        
+        HashMap<String, String> props = new HashMap<>();
+        props.put("hibernate.show_sql", "true");
+        props.put("hibernate.dialect", "org.hibernate.dialect.HSQLDialect");
+        config.setProperties(props);
     }
 
     @After
@@ -101,7 +107,7 @@ public class SessionFactoryFactoryTest {
         final Session session = sessionFactory.openSession();
         try {
             session.createSQLQuery("DROP TABLE people IF EXISTS").executeUpdate();
-            session.createSQLQuery("CREATE TABLE people (name varchar(100) primary key, email varchar(100), birthday timestamp)").executeUpdate();
+            session.createSQLQuery("CREATE TABLE people (name varchar(100) primary key, email varchar(100), birthday timestamp(0))").executeUpdate();
             session.createSQLQuery("INSERT INTO people VALUES ('Coda', 'coda@example.com', '1979-01-02 00:22:00')").executeUpdate();
 
             final Person entity = (Person) session.get(Person.class, "Coda");
