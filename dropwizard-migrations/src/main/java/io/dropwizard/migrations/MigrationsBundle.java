@@ -7,11 +7,17 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 
 public abstract class MigrationsBundle<T extends Configuration> implements Bundle, DatabaseConfiguration<T> {
+    public static final String DEFAULT_NAME = "db";
+
     @Override
     @SuppressWarnings("unchecked")
     public final void initialize(Bootstrap<?> bootstrap) {
         final Class<T> klass = (Class<T>) bootstrap.getApplication().getConfigurationClass();
-        bootstrap.addCommand(new DbCommand<>(this, klass));
+        bootstrap.addCommand(new DbCommand<>(name(), this, klass));
+    }
+
+    protected String name() {
+        return DEFAULT_NAME;
     }
 
     @Override

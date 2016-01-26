@@ -13,8 +13,8 @@ public class DbCommand<T extends Configuration> extends AbstractLiquibaseCommand
     private static final String COMMAND_NAME_ATTR = "subcommand";
     private final SortedMap<String, AbstractLiquibaseCommand<T>> subcommands;
 
-    public DbCommand(DatabaseConfiguration<T> strategy, Class<T> configurationClass) {
-        super("db", "Run database migration tasks", strategy, configurationClass);
+    public DbCommand(String name, DatabaseConfiguration<T> strategy, Class<T> configurationClass) {
+        super(name, "Run database migration tasks", strategy, configurationClass);
         this.subcommands = new TreeMap<>();
         addSubcommand(new DbCalculateChecksumCommand<>(strategy, configurationClass));
         addSubcommand(new DbClearChecksumsCommand<>(strategy, configurationClass));
