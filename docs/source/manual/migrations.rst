@@ -209,10 +209,10 @@ To mark a pending changeset as applied (e.g., after having backfilled your ``mig
 This will mark the next pending changeset as applied. You can also use the ``--all`` flag to mark
 all pending changesets as applied.
 
-Support for adding multiple migration bundles
+Support For Adding Multiple Migration Bundles
 =============================================
 
-Assuming migrations need to be done for two different databases, you would need to have two differnet data source factories:
+Assuming migrations need to be done for two different databases, you would need to have two different data source factories:
 
 .. code-block:: java
 
@@ -267,7 +267,7 @@ Now multiple migration bundles can be added with unique names like so:
         });
     }
 
-Now to migrate your schema:
+To migrate your schema:
 
 .. code-block:: text
 
@@ -281,8 +281,8 @@ and
 
 .. note::
 
-    Do note that whenever you add a name to a migration bundle as defined above, this name becomes the command that
-    needs to be run at the command line. eg: To check the state of your database, use the ``status`` command:
+    Whenever a name is added to a migration bundle, it becomes the command that needs to be run at the command line.
+    eg: To check the state of your database, use the ``status`` command:
 
 .. code-block:: text
 
@@ -294,10 +294,10 @@ or
 
     java -jar hello-world.jar db2 status helloworld.yml
 
-By default the migration bundle uses the "db" command. By overriding as above you can customize it to provide any name you want
+By default the migration bundle uses the "db" command. By overriding you can customize it to provide any name you want
 and have multiple migration bundles. Wherever the "db" command was being used, this custom name can be used.
 
-There will also be a need to provide different change log files as well. This can be done as
+There will also be a need to provide different change log migration files as well. This can be done as
 
 .. code-block:: text
 
