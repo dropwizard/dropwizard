@@ -12,9 +12,9 @@ import io.dropwizard.logging.AppenderFactory;
 import io.dropwizard.logging.async.AsyncAppenderFactory;
 import io.dropwizard.logging.async.AsyncLoggingEventAppenderFactory;
 import io.dropwizard.logging.ConsoleAppenderFactory;
+import io.dropwizard.logging.filter.LevelFilterFactory;
+import io.dropwizard.logging.filter.ThresholdLevelFilterFactory;
 import io.dropwizard.logging.layout.LayoutFactory;
-import io.dropwizard.logging.filter.FilterFactory;
-import io.dropwizard.logging.filter.ThresholdFilterFactory;
 import io.dropwizard.request.logging.layout.RequestLogLayout;
 import io.dropwizard.request.logging.layout.RequestLogLayoutFactory;
 import org.slf4j.LoggerFactory;
@@ -95,13 +95,13 @@ public class Slf4jRequestLogFactory implements RequestLogFactory<Slf4jRequestLog
         final RequestLogLayout layout = new RequestLogLayout();
         layout.start();
 
-        final FilterFactory<ILoggingEvent> thresholdFilterFactory = new ThresholdFilterFactory();
+        final LevelFilterFactory<ILoggingEvent> levelFilterFactory = new ThresholdLevelFilterFactory();
         final AsyncAppenderFactory<ILoggingEvent> asyncAppenderFactory = new AsyncLoggingEventAppenderFactory();
         final LayoutFactory<ILoggingEvent> layoutFactory = new RequestLogLayoutFactory();
 
         final AppenderAttachableImpl<ILoggingEvent> attachable = new AppenderAttachableImpl<>();
         for (AppenderFactory<ILoggingEvent> output : this.appenders) {
-            attachable.addAppender(output.build(context, name, layoutFactory, thresholdFilterFactory, asyncAppenderFactory));
+            attachable.addAppender(output.build(context, name, layoutFactory, levelFilterFactory, asyncAppenderFactory));
         }
 
         return new Slf4jRequestLog(attachable, timeZone);

@@ -6,7 +6,7 @@ import ch.qos.logback.core.spi.DeferredProcessingAware;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import io.dropwizard.jackson.Discoverable;
 import io.dropwizard.logging.async.AsyncAppenderFactory;
-import io.dropwizard.logging.filter.FilterFactory;
+import io.dropwizard.logging.filter.LevelFilterFactory;
 import io.dropwizard.logging.layout.LayoutFactory;
 
 /**
@@ -28,18 +28,18 @@ import io.dropwizard.logging.layout.LayoutFactory;
 public interface AppenderFactory<E extends DeferredProcessingAware> extends Discoverable {
     /**
      * Given a Logback context, an application name, a layout,
-     * a thresholdFilterFactory, and an asyncAppenderFactory build a new appender.
+     * a levelFilterFactory, and an asyncAppenderFactory build a new appender.
      *
      * @param context         the Logback context
      * @param applicationName the application name
      * @param layoutFactory   the factory for the layout for logging
-     * @param thresholdFilterFactory the factory for the threshold filter
+     * @param levelFilterFactory the factory for the level filter
      * @param asyncAppenderFactory   the factory for the async appender
      * @return a new, started {@link Appender}
      */
     Appender<E> build(LoggerContext context,
                                   String applicationName,
                                   LayoutFactory<E> layoutFactory,
-                                  FilterFactory<E> thresholdFilterFactory,
+                                  LevelFilterFactory<E> levelFilterFactory,
                                   AsyncAppenderFactory<E> asyncAppenderFactory);
 }

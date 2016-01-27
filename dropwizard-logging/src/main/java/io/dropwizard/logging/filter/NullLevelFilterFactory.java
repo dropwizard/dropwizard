@@ -9,7 +9,7 @@ import ch.qos.logback.core.spi.FilterReply;
  * Factory for building a logback {@link Filter} that will always defer to the next Filter.
  * @param <E> The type of log event
  */
-public class NullFilterFactory<E extends DeferredProcessingAware> implements FilterFactory<E> {
+public class NullLevelFilterFactory<E extends DeferredProcessingAware> implements LevelFilterFactory<E> {
 
     /**
      * Creates a {@link Filter} that will always defer to the next Filter in the chain, if any.

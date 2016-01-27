@@ -3,9 +3,6 @@ package io.dropwizard.request.logging;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-import io.dropwizard.logging.layout.LayoutFactory;
-import io.dropwizard.request.logging.async.AsyncAccessEventAppenderFactory;
-import io.dropwizard.request.logging.layout.LogbackAccessRequestLayoutFactory;
 import org.eclipse.jetty.server.RequestLog;
 import org.slf4j.LoggerFactory;
 
@@ -19,10 +16,13 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.google.common.collect.ImmutableList;
 
 import io.dropwizard.logging.AppenderFactory;
-import io.dropwizard.logging.async.AsyncAppenderFactory;
 import io.dropwizard.logging.ConsoleAppenderFactory;
-import io.dropwizard.logging.filter.FilterFactory;
-import io.dropwizard.logging.filter.NullFilterFactory;
+import io.dropwizard.logging.async.AsyncAppenderFactory;
+import io.dropwizard.logging.filter.LevelFilterFactory;
+import io.dropwizard.logging.filter.NullLevelFilterFactory;
+import io.dropwizard.logging.layout.LayoutFactory;
+import io.dropwizard.request.logging.async.AsyncAccessEventAppenderFactory;
+import io.dropwizard.request.logging.layout.LogbackAccessRequestLayoutFactory;
 
 /**
  * A factory for creating {@link LogbackAccessRequestLog} instances.
@@ -73,12 +73,12 @@ public class LogbackAccessRequestLogFactory implements RequestLogFactory {
 
         final LogbackAccessRequestLog requestLog = new LogbackAccessRequestLog();
 
-        final FilterFactory<IAccessEvent> thresholdFilterFactory = new NullFilterFactory<>();
+        final LevelFilterFactory<IAccessEvent> levelFilterFactory = new NullLevelFilterFactory<>();
         final AsyncAppenderFactory<IAccessEvent> asyncAppenderFactory = new AsyncAccessEventAppenderFactory();
         final LayoutFactory<IAccessEvent> layoutFactory = new LogbackAccessRequestLayoutFactory();
 
         for (AppenderFactory<IAccessEvent> output : appenders) {
-            requestLog.addAppender(output.build(context, name, layoutFactory, thresholdFilterFactory, asyncAppenderFactory));
+            requestLog.addAppender(output.build(context, name, layoutFactory, levelFilterFactory, asyncAppenderFactory));
         }
 
         return requestLog;

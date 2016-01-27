@@ -8,10 +8,10 @@ import ch.qos.logback.core.filter.Filter;
 /**
  * Factory that creates a {@link Filter} of type {@link ILoggingEvent}
  */
-public class ThresholdFilterFactory implements FilterFactory<ILoggingEvent> {
+public class ThresholdLevelFilterFactory implements LevelFilterFactory<ILoggingEvent> {
 
     /**
-     * Creates and starts a {@link Filter} that for the given threshold.
+     * Creates and starts a {@link Filter} for the given threshold.
      * @param threshold The minimum event level for this filter.
      * @return a new, started {@link Filter}
      */

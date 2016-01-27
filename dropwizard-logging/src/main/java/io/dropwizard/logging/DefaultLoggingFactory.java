@@ -21,8 +21,8 @@ import com.google.common.collect.ImmutableMap;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.logging.async.AsyncAppenderFactory;
 import io.dropwizard.logging.async.AsyncLoggingEventAppenderFactory;
-import io.dropwizard.logging.filter.FilterFactory;
-import io.dropwizard.logging.filter.ThresholdFilterFactory;
+import io.dropwizard.logging.filter.LevelFilterFactory;
+import io.dropwizard.logging.filter.ThresholdLevelFilterFactory;
 import io.dropwizard.logging.layout.DropwizardLayoutFactory;
 import io.dropwizard.logging.layout.LayoutFactory;
 
@@ -56,7 +56,7 @@ public class DefaultLoggingFactory implements LoggingFactory {
     @Valid
     @NotNull
     private ImmutableList<AppenderFactory<ILoggingEvent>> appenders = ImmutableList.<AppenderFactory<ILoggingEvent>>of(
-            new ConsoleAppenderFactory<ILoggingEvent>()
+            new ConsoleAppenderFactory<>()
     );
 
     @JsonIgnore
@@ -126,12 +126,12 @@ public class DefaultLoggingFactory implements LoggingFactory {
             CHANGE_LOGGER_CONTEXT_LOCK.unlock();
         }
 
-        final FilterFactory<ILoggingEvent> thresholdFilterFactory = new ThresholdFilterFactory();
+        final LevelFilterFactory<ILoggingEvent> levelFilterFactory = new ThresholdLevelFilterFactory();
         final AsyncAppenderFactory<ILoggingEvent> asyncAppenderFactory = new AsyncLoggingEventAppenderFactory();
         final LayoutFactory<ILoggingEvent> layoutFactory = new DropwizardLayoutFactory();
 
         for (AppenderFactory<ILoggingEvent> output : appenders) {
-            root.addAppender(output.build(loggerContext, name, layoutFactory, thresholdFilterFactory, asyncAppenderFactory));
+            root.addAppender(output.build(loggerContext, name, layoutFactory, levelFilterFactory, asyncAppenderFactory));
         }
 
         StatusPrinter.setPrintStream(configurationErrorsStream);
@@ -190,7 +190,7 @@ public class DefaultLoggingFactory implements LoggingFactory {
 
         root.setLevel(level);
 
-        final FilterFactory<ILoggingEvent> thresholdFilterFactory = new ThresholdFilterFactory();
+        final LevelFilterFactory<ILoggingEvent> levelFilterFactory = new ThresholdLevelFilterFactory();
         final AsyncAppenderFactory<ILoggingEvent> asyncAppenderFactory = new AsyncLoggingEventAppenderFactory();
         final LayoutFactory<ILoggingEvent> layoutFactory = new DropwizardLayoutFactory();
 
@@ -212,7 +212,7 @@ public class DefaultLoggingFactory implements LoggingFactory {
                 logger.setAdditive(configuration.isAdditive());
 
                 for (AppenderFactory<ILoggingEvent> appender : configuration.getAppenders()) {
-                    logger.addAppender(appender.build(loggerContext, name, layoutFactory, thresholdFilterFactory, asyncAppenderFactory));
+                    logger.addAppender(appender.build(loggerContext, name, layoutFactory, levelFilterFactory, asyncAppenderFactory));
                 }
             } else {
                 throw new IllegalArgumentException("Unsupported format of logger '" + entry.getKey() + "'");

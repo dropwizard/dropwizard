@@ -8,7 +8,7 @@ import ch.qos.logback.core.net.SyslogConstants;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import io.dropwizard.logging.async.AsyncAppenderFactory;
-import io.dropwizard.logging.filter.FilterFactory;
+import io.dropwizard.logging.filter.LevelFilterFactory;
 import io.dropwizard.logging.layout.LayoutFactory;
 
 import javax.validation.constraints.Max;
@@ -203,7 +203,7 @@ public class SyslogAppenderFactory extends AbstractAppenderFactory<ILoggingEvent
 
     @Override
     public Appender<ILoggingEvent> build(LoggerContext context, String applicationName, LayoutFactory<ILoggingEvent> layoutFactory,
-                                         FilterFactory<ILoggingEvent> thresholdFilterFactory, AsyncAppenderFactory<ILoggingEvent> asyncAppenderFactory) {
+                                         LevelFilterFactory<ILoggingEvent> levelFilterFactory, AsyncAppenderFactory<ILoggingEvent> asyncAppenderFactory) {
         final SyslogAppender appender = new SyslogAppender();
         appender.setName("syslog-appender");
         appender.setContext(context);
@@ -215,7 +215,7 @@ public class SyslogAppenderFactory extends AbstractAppenderFactory<ILoggingEvent
         appender.setFacility(facility.toString().toLowerCase(Locale.ENGLISH));
         appender.setThrowableExcluded(!includeStackTrace);
         appender.setStackTracePattern(stackTracePrefix);
-        appender.addFilter(thresholdFilterFactory.build(threshold));
+        appender.addFilter(levelFilterFactory.build(threshold));
         appender.start();
         return wrapAsync(appender, asyncAppenderFactory);
     }
