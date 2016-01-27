@@ -2,6 +2,8 @@ package io.dropwizard.hibernate;
 
 import com.codahale.metrics.MetricRegistry;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.db.ManagedPooledDataSource;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
@@ -18,7 +20,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
-import java.util.HashMap;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.any;
@@ -52,10 +53,10 @@ public class SessionFactoryFactoryTest {
         config.setDriverClass("org.hsqldb.jdbcDriver");
         config.setValidationQuery("SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS");
         
-        HashMap<String, String> props = new HashMap<>();
-        props.put("hibernate.show_sql", "true");
-        props.put("hibernate.dialect", "org.hibernate.dialect.HSQLDialect");
-        config.setProperties(props);
+        config.setProperties(ImmutableMap.<String, String>builder().
+                put("hibernate.show_sql", "true").
+                put("hibernate.dialect", "org.hibernate.dialect.HSQLDialect").
+                build());
     }
 
     @After

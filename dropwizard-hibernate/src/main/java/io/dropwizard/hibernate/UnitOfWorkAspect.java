@@ -5,9 +5,6 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.context.internal.ManagedSessionContext;
 
-import static org.hibernate.resource.transaction.spi.TransactionStatus.ACTIVE;
-import static org.hibernate.resource.transaction.spi.TransactionStatus.MARKED_ROLLBACK;
-
 import java.util.Map;
 
 /**
@@ -107,7 +104,7 @@ class UnitOfWorkAspect {
             return;
         }
         final Transaction txn = session.getTransaction();
-        if (txn != null && (txn.getStatus() == ACTIVE || txn.getStatus() == MARKED_ROLLBACK)) {
+        if (txn != null && txn.getStatus().canRollback()) {
             txn.rollback();
         }
     }
@@ -117,7 +114,7 @@ class UnitOfWorkAspect {
             return;
         }
         final Transaction txn = session.getTransaction();
-        if (txn != null && (txn.getStatus() == ACTIVE || txn.getStatus() == MARKED_ROLLBACK)) {
+        if (txn != null && txn.getStatus().canRollback()) {
             txn.commit();
         }
     }

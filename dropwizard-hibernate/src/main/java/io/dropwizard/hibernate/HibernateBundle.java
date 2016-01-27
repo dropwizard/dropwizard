@@ -36,7 +36,7 @@ public abstract class HibernateBundle<T extends Configuration> implements Config
     }
 
     /**
-     * Override to configure the {@link Hibernate4Module}.
+     * Override to configure the {@link Hibernate5Module}.
      */
     protected Hibernate5Module createHibernate5Module() {
         return new Hibernate5Module();
