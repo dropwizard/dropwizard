@@ -10,12 +10,15 @@ import ch.qos.logback.core.pattern.PatternLayoutBase;
 import ch.qos.logback.core.spi.DeferredProcessingAware;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableList;
 import io.dropwizard.logging.async.AsyncAppenderFactory;
+import io.dropwizard.logging.filter.FilterFactory;
 import io.dropwizard.logging.layout.LayoutFactory;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 import java.util.TimeZone;
 
 /**
@@ -68,6 +71,14 @@ import java.util.TimeZone;
  *             events of level WARN and ERROR. To keep all events, set discardingThreshold to 0.
  *         </td>
  *     </tr>
+ *     <tr>
+ *         <td>{@code filterFactories}</td>
+ *         <td>(none)</td>
+ *         <td>
+ *             A list of {@link FilterFactory filters} to apply to the appender, in order,
+ *             after the {@code threshold}.
+ *         </td>
+ *     </tr>
  * </table>
  */
 public abstract class AbstractAppenderFactory<E extends DeferredProcessingAware> implements AppenderFactory<E> {
@@ -87,6 +98,8 @@ public abstract class AbstractAppenderFactory<E extends DeferredProcessingAware>
     private int discardingThreshold = -1;
 
     private boolean includeCallerData = false;
+
+    private ImmutableList<FilterFactory<E>> filterFactories = ImmutableList.of();
 
     @JsonProperty
     public int getQueueSize() {
@@ -146,6 +159,16 @@ public abstract class AbstractAppenderFactory<E extends DeferredProcessingAware>
     @JsonProperty
     public void setIncludeCallerData(boolean includeCallerData) {
         this.includeCallerData = includeCallerData;
+    }
+
+    @JsonProperty
+    public ImmutableList<FilterFactory<E>> getFilterFactories() {
+        return filterFactories;
+    }
+
+    @JsonProperty
+    public void setFilterFactories(List<FilterFactory<E>> appenders) {
+        this.filterFactories = ImmutableList.copyOf(appenders);
     }
 
     protected Appender<E> wrapAsync(Appender<E> appender, AsyncAppenderFactory<E> asyncAppenderFactory) {

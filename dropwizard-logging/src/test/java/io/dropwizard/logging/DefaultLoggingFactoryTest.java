@@ -71,6 +71,7 @@ public class DefaultLoggingFactoryTest {
         assertThat(fileAppenderFactory.getCurrentLogFilename()).isEqualTo("${new_app}.log");
         assertThat(fileAppenderFactory.getArchivedLogFilenamePattern()).isEqualTo("${new_app}-%d.log.gz");
         assertThat(fileAppenderFactory.getArchivedFileCount()).isEqualTo(5);
+        assertThat(fileAppenderFactory.getFilterFactories()).containsExactly(new TestFilterFactory(), new SecondTestFilterFactory());
 
         final JsonNode legacyApp = config.getLoggers().get("com.example.legacyApp");
         assertThat(legacyApp).isNotNull();
@@ -119,4 +120,5 @@ public class DefaultLoggingFactoryTest {
                 "DEBUG com.example.notAdditive: Not additive application debug log",
                 "INFO  com.example.notAdditive: Not additive application info log");
     }
+
 }
