@@ -105,7 +105,7 @@
             <dependency>
                 <groupId>org.jadira.usertype</groupId>
                 <artifactId>usertype.core</artifactId>
-                <version>4.0.0.GA</version>
+                <version>5.0.0.GA</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.hibernate</groupId>
@@ -124,7 +124,7 @@
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-core</artifactId>
-                <version>4.3.11.Final</version>
+                <version>5.0.7.Final</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.jboss.logging</groupId>
@@ -325,7 +325,7 @@
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.datatype</groupId>
-                <artifactId>jackson-datatype-hibernate4</artifactId>
+                <artifactId>jackson-datatype-hibernate5</artifactId>
                 <version>${jackson.version}</version>
                 <exclusions>
                     <exclusion>

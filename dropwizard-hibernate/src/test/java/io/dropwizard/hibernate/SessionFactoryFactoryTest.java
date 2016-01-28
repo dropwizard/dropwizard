@@ -2,6 +2,8 @@ package io.dropwizard.hibernate;
 
 import com.codahale.metrics.MetricRegistry;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.db.ManagedPooledDataSource;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
@@ -50,6 +52,11 @@ public class SessionFactoryFactoryTest {
         config.setUser("sa");
         config.setDriverClass("org.hsqldb.jdbcDriver");
         config.setValidationQuery("SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS");
+        
+        config.setProperties(ImmutableMap.<String, String>builder().
+                put("hibernate.show_sql", "true").
+                put("hibernate.dialect", "org.hibernate.dialect.HSQLDialect").
+                build());
     }
 
     @After
@@ -101,7 +108,7 @@ public class SessionFactoryFactoryTest {
         final Session session = sessionFactory.openSession();
         try {
             session.createSQLQuery("DROP TABLE people IF EXISTS").executeUpdate();
-            session.createSQLQuery("CREATE TABLE people (name varchar(100) primary key, email varchar(100), birthday timestamp)").executeUpdate();
+            session.createSQLQuery("CREATE TABLE people (name varchar(100) primary key, email varchar(100), birthday timestamp(0))").executeUpdate();
             session.createSQLQuery("INSERT INTO people VALUES ('Coda', 'coda@example.com', '1979-01-02 00:22:00')").executeUpdate();
 
             final Person entity = (Person) session.get(Person.class, "Coda");

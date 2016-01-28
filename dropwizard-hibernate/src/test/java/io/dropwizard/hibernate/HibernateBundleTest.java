@@ -3,7 +3,7 @@ package io.dropwizard.hibernate;
 import com.codahale.metrics.health.HealthCheckRegistry;
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module;
+import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
 import com.google.common.collect.ImmutableList;
 import io.dropwizard.Configuration;
 import io.dropwizard.db.DataSourceFactory;
@@ -62,7 +62,7 @@ public class HibernateBundleTest {
         final ArgumentCaptor<Module> captor = ArgumentCaptor.forClass(Module.class);
         verify(objectMapperFactory).registerModule(captor.capture());
 
-        assertThat(captor.getValue()).isInstanceOf(Hibernate4Module.class);
+        assertThat(captor.getValue()).isInstanceOf(Hibernate5Module.class);
     }
 
     @Test

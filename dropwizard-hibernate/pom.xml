@@ -30,7 +30,7 @@
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-hibernate4</artifactId>
+            <artifactId>jackson-datatype-hibernate5</artifactId>
         </dependency>
         <dependency>
             <groupId>org.jadira.usertype</groupId>
@@ -40,6 +40,7 @@
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
         </dependency>
+
         <!-- we need HSQL because it handles time zones, H2 totally doesn't -->
         <dependency>
             <groupId>org.hsqldb</groupId>

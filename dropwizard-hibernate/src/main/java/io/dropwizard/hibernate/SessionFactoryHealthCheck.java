@@ -8,7 +8,6 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 
 public class SessionFactoryHealthCheck extends HealthCheck {
@@ -49,7 +48,7 @@ public class SessionFactoryHealthCheck extends HealthCheck {
                     session.createSQLQuery(validationQuery).list();
                     txn.commit();
                 } catch (Exception e) {
-                    if (txn.isActive()) {
+                    if (txn.getStatus().canRollback()) {
                         txn.rollback();
                     }
                     throw e;
