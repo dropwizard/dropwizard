@@ -209,6 +209,104 @@ To mark a pending changeset as applied (e.g., after having backfilled your ``mig
 This will mark the next pending changeset as applied. You can also use the ``--all`` flag to mark
 all pending changesets as applied.
 
+Support For Adding Multiple Migration Bundles
+=============================================
+
+Assuming migrations need to be done for two different databases, you would need to have two different data source factories:
+
+.. code-block:: java
+
+    public class ExampleConfiguration extends Configuration {
+        @Valid
+        @NotNull
+        private DataSourceFactory database1 = new DataSourceFactory();
+
+        @Valid
+        @NotNull
+        private DataSourceFactory database2 = new DataSourceFactory();
+
+        @JsonProperty("database1")
+        public DataSourceFactory getDb1DataSourceFactory() {
+            return database1;
+        }
+
+        @JsonProperty("database2")
+        public DataSourceFactory getDb2DataSourceFactory() {
+            return database2;
+        }
+    }
+
+Now multiple migration bundles can be added with unique names like so:
+
+.. code-block:: java
+
+    @Override
+    public void initialize(Bootstrap<ExampleConfiguration> bootstrap) {
+        bootstrap.addBundle(new MigrationsBundle<ExampleConfiguration>() {
+            @Override
+            public DataSourceFactory getDataSourceFactory(ExampleConfiguration configuration) {
+                return configuration.getDb1DataSourceFactory();
+            }
+
+            @Override
+            public String name() {
+                return "db1";
+            }
+        });
+
+        bootstrap.addBundle(new MigrationsBundle<ExampleConfiguration>() {
+            @Override
+            public DataSourceFactory getDataSourceFactory(ExampleConfiguration configuration) {
+                return configuration.getDb2DataSourceFactory();
+            }
+
+            @Override
+            public String name() {
+                return "db2";
+            }
+        });
+    }
+
+To migrate your schema:
+
+.. code-block:: text
+
+    java -jar hello-world.jar db1 migrate helloworld.yml
+
+and
+
+.. code-block:: text
+
+    java -jar hello-world.jar db2 migrate helloworld.yml
+
+.. note::
+
+    Whenever a name is added to a migration bundle, it becomes the command that needs to be run at the command line.
+    eg: To check the state of your database, use the ``status`` command:
+
+.. code-block:: text
+
+    java -jar hello-world.jar db1 status helloworld.yml
+
+or
+
+.. code-block:: text
+
+    java -jar hello-world.jar db2 status helloworld.yml
+
+By default the migration bundle uses the "db" command. By overriding you can customize it to provide any name you want
+and have multiple migration bundles. Wherever the "db" command was being used, this custom name can be used.
+
+There will also be a need to provide different change log migration files as well. This can be done as
+
+.. code-block:: text
+
+    java -jar hello-world.jar db1 migrate helloworld.yml --migrations <path_to_db1_migrations.xml>
+
+.. code-block:: text
+
+    java -jar hello-world.jar db2 migrate helloworld.yml --migrations <path_to_db2_migrations.xml>
+
 More Information
 ================
 
