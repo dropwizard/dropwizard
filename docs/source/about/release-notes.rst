@@ -28,6 +28,8 @@ v1.0.0
 * Support for using ``DropwizardAppRule`` at the suite level `#1411 <https://github.com/dropwizard/dropwizard/pull/1411>`_
 * Upgraded to argparse4j 0.7.0
 * Upgraded to Guava 19.0
+* Upgraded to Hibernate 5.0.7 `#1429 <https://github.com/dropwizard/dropwizard/pull/1429>`_
+* Upgraded to Jadira Usertype Core 5.0.0.GA
 * Upgraded to Jackson 2.6.4
 * Upgraded to JDBI 2.71 `#1358 <https://github.com/dropwizard/dropwizard/pull/1358>`_
 * Upgraded to Jetty 9.3.7.v20160115 `#1330 <https://github.com/dropwizard/dropwizard/pull/1330>`_
@@ -42,7 +44,7 @@ v1.0.0
 .. _rel-0.9.2:
 
 v0.9.2: Jan 20 2016
-==================
+===================
 
 * Support `@UnitOfWork` annotation outside of Jersey resources `#1361 <https://github.com/dropwizard/dropwizard/issues/1361>`_
 
@@ -241,7 +243,7 @@ v0.7.1: Jun 18 2014
 * Fixed global frequency for metrics reporters being permanently overridden by the default frequency for individual reporters.
 * Fixed tests failing on Windows due to platform-specific line separators.
 * Changed ``DropwizardAppTestRule`` so that it no longer requires a configuration path to operate. When no path is specified, it will now use the applications' default configuration.
-* Changed ``Bootstrap`` so that ``getMetricsFactory()`` may now be overridden to provide a custom instance to the framework to use. 
+* Changed ``Bootstrap`` so that ``getMetricsFactory()`` may now be overridden to provide a custom instance to the framework to use.
 * Upgraded to Guava 17.0
   Note: this addresses a bug with BloomFilters that is incompatible with pre-17.0 BloomFilters.
 * Upgraded to Jackson 2.3.3

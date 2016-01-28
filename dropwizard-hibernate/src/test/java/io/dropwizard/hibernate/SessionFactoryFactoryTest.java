@@ -3,7 +3,6 @@ package io.dropwizard.hibernate;
 import com.codahale.metrics.MetricRegistry;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.db.ManagedPooledDataSource;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
@@ -52,11 +51,11 @@ public class SessionFactoryFactoryTest {
         config.setUser("sa");
         config.setDriverClass("org.hsqldb.jdbcDriver");
         config.setValidationQuery("SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS");
-        
-        config.setProperties(ImmutableMap.<String, String>builder().
-                put("hibernate.show_sql", "true").
-                put("hibernate.dialect", "org.hibernate.dialect.HSQLDialect").
-                build());
+
+        final ImmutableMap<String, String> properties = ImmutableMap.of(
+            "hibernate.show_sql", "true",
+            "hibernate.dialect", "org.hibernate.dialect.HSQLDialect");
+        config.setProperties(properties);
     }
 
     @After
