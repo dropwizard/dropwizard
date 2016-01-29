@@ -5,6 +5,7 @@ import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.jmx.JMXConfigurator;
 import ch.qos.logback.classic.jul.LevelChangePropagator;
+import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.util.StatusPrinter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.logback.InstrumentedAppender;
@@ -18,6 +19,12 @@ import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import io.dropwizard.jackson.Jackson;
+import io.dropwizard.logging.async.AsyncAppenderFactory;
+import io.dropwizard.logging.async.AsyncLoggingEventAppenderFactory;
+import io.dropwizard.logging.filter.LevelFilterFactory;
+import io.dropwizard.logging.filter.ThresholdLevelFilterFactory;
+import io.dropwizard.logging.layout.DropwizardLayoutFactory;
+import io.dropwizard.logging.layout.LayoutFactory;
 
 import javax.management.InstanceAlreadyExistsException;
 import javax.management.MalformedObjectNameException;
@@ -48,8 +55,8 @@ public class DefaultLoggingFactory implements LoggingFactory {
 
     @Valid
     @NotNull
-    private ImmutableList<AppenderFactory> appenders = ImmutableList.<AppenderFactory>of(
-            new ConsoleAppenderFactory()
+    private ImmutableList<AppenderFactory<ILoggingEvent>> appenders = ImmutableList.<AppenderFactory<ILoggingEvent>>of(
+            new ConsoleAppenderFactory<>()
     );
 
     @JsonIgnore
@@ -99,12 +106,12 @@ public class DefaultLoggingFactory implements LoggingFactory {
     }
 
     @JsonProperty
-    public ImmutableList<AppenderFactory> getAppenders() {
+    public ImmutableList<AppenderFactory<ILoggingEvent>> getAppenders() {
         return appenders;
     }
 
     @JsonProperty
-    public void setAppenders(List<AppenderFactory> appenders) {
+    public void setAppenders(List<AppenderFactory<ILoggingEvent>> appenders) {
         this.appenders = ImmutableList.copyOf(appenders);
     }
 
@@ -119,8 +126,12 @@ public class DefaultLoggingFactory implements LoggingFactory {
             CHANGE_LOGGER_CONTEXT_LOCK.unlock();
         }
 
-        for (AppenderFactory output : appenders) {
-            root.addAppender(output.build(loggerContext, name, null));
+        final LevelFilterFactory<ILoggingEvent> levelFilterFactory = new ThresholdLevelFilterFactory();
+        final AsyncAppenderFactory<ILoggingEvent> asyncAppenderFactory = new AsyncLoggingEventAppenderFactory();
+        final LayoutFactory<ILoggingEvent> layoutFactory = new DropwizardLayoutFactory();
+
+        for (AppenderFactory<ILoggingEvent> output : appenders) {
+            root.addAppender(output.build(loggerContext, name, layoutFactory, levelFilterFactory, asyncAppenderFactory));
         }
 
         StatusPrinter.setPrintStream(configurationErrorsStream);
@@ -179,6 +190,10 @@ public class DefaultLoggingFactory implements LoggingFactory {
 
         root.setLevel(level);
 
+        final LevelFilterFactory<ILoggingEvent> levelFilterFactory = new ThresholdLevelFilterFactory();
+        final AsyncAppenderFactory<ILoggingEvent> asyncAppenderFactory = new AsyncLoggingEventAppenderFactory();
+        final LayoutFactory<ILoggingEvent> layoutFactory = new DropwizardLayoutFactory();
+
         for (Map.Entry<String, JsonNode> entry : loggers.entrySet()) {
             final Logger logger = loggerContext.getLogger(entry.getKey());
             final JsonNode jsonNode = entry.getValue();
@@ -195,8 +210,9 @@ public class DefaultLoggingFactory implements LoggingFactory {
                 }
                 logger.setLevel(configuration.getLevel());
                 logger.setAdditive(configuration.isAdditive());
-                for (AppenderFactory appender : configuration.getAppenders()) {
-                    logger.addAppender(appender.build(loggerContext, name, null));
+
+                for (AppenderFactory<ILoggingEvent> appender : configuration.getAppenders()) {
+                    logger.addAppender(appender.build(loggerContext, name, layoutFactory, levelFilterFactory, asyncAppenderFactory));
                 }
             } else {
                 throw new IllegalArgumentException("Unsupported format of logger '" + entry.getKey() + "'");

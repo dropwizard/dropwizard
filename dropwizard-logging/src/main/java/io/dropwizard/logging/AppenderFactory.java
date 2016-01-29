@@ -1,11 +1,13 @@
 package io.dropwizard.logging;
 
 import ch.qos.logback.classic.LoggerContext;
-import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
-import ch.qos.logback.core.Layout;
+import ch.qos.logback.core.spi.DeferredProcessingAware;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import io.dropwizard.jackson.Discoverable;
+import io.dropwizard.logging.async.AsyncAppenderFactory;
+import io.dropwizard.logging.filter.LevelFilterFactory;
+import io.dropwizard.logging.layout.LayoutFactory;
 
 /**
  * A service provider interface for creating Logback {@link Appender} instances.
@@ -23,16 +25,21 @@ import io.dropwizard.jackson.Discoverable;
  * @see SyslogAppenderFactory
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
-public interface AppenderFactory extends Discoverable {
+public interface AppenderFactory<E extends DeferredProcessingAware> extends Discoverable {
     /**
-     * Given a Logback context, an application name, and a layout, build a new appender.
+     * Given a Logback context, an application name, a layout,
+     * a levelFilterFactory, and an asyncAppenderFactory build a new appender.
      *
      * @param context         the Logback context
      * @param applicationName the application name
-     * @param layout          the layout for logging
+     * @param layoutFactory   the factory for the layout for logging
+     * @param levelFilterFactory the factory for the level filter
+     * @param asyncAppenderFactory   the factory for the async appender
      * @return a new, started {@link Appender}
      */
-    Appender<ILoggingEvent> build(LoggerContext context,
+    Appender<E> build(LoggerContext context,
                                   String applicationName,
-                                  Layout<ILoggingEvent> layout);
+                                  LayoutFactory<E> layoutFactory,
+                                  LevelFilterFactory<E> levelFilterFactory,
+                                  AsyncAppenderFactory<E> asyncAppenderFactory);
 }

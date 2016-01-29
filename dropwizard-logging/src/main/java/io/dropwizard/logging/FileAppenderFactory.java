@@ -1,10 +1,8 @@
 package io.dropwizard.logging;
 
 import ch.qos.logback.classic.LoggerContext;
-import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.FileAppender;
-import ch.qos.logback.core.Layout;
 import ch.qos.logback.core.encoder.LayoutWrappingEncoder;
 import ch.qos.logback.core.rolling.DefaultTimeBasedFileNamingAndTriggeringPolicy;
 import ch.qos.logback.core.rolling.RollingFileAppender;
@@ -13,15 +11,18 @@ import ch.qos.logback.core.rolling.TimeBasedFileNamingAndTriggeringPolicy;
 import ch.qos.logback.core.rolling.TimeBasedRollingPolicy;
 import ch.qos.logback.core.rolling.FixedWindowRollingPolicy;
 import ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy;
+import ch.qos.logback.core.spi.DeferredProcessingAware;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import io.dropwizard.logging.async.AsyncAppenderFactory;
+import io.dropwizard.logging.filter.LevelFilterFactory;
+import io.dropwizard.logging.layout.LayoutFactory;
 import io.dropwizard.util.Size;
 import io.dropwizard.validation.ValidationMethod;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import java.util.TimeZone;
 
 /**
  * An {@link AppenderFactory} implementation which provides an appender that writes events to a file, archiving older
@@ -99,7 +100,7 @@ import java.util.TimeZone;
  * @see AbstractAppenderFactory
  */
 @JsonTypeName("file")
-public class FileAppenderFactory extends AbstractAppenderFactory {
+public class FileAppenderFactory<E extends DeferredProcessingAware> extends AbstractAppenderFactory<E> {
     @NotNull
     private String currentLogFilename;
 
@@ -111,9 +112,6 @@ public class FileAppenderFactory extends AbstractAppenderFactory {
     private int archivedFileCount = 5;
 
     private Size maxFileSize;
-
-    @NotNull
-    private TimeZone timeZone = TimeZone.getTimeZone("UTC");
 
     @JsonProperty
     public String getCurrentLogFilename() {
@@ -165,16 +163,6 @@ public class FileAppenderFactory extends AbstractAppenderFactory {
         this.maxFileSize = maxFileSize;
     }
 
-    @JsonProperty
-    public TimeZone getTimeZone() {
-        return timeZone;
-    }
-
-    @JsonProperty
-    public void setTimeZone(TimeZone timeZone) {
-        this.timeZone = timeZone;
-    }
-
     @JsonIgnore
     @ValidationMethod(message = "must have archivedLogFilenamePattern if archive is true")
     public boolean isValidArchiveConfiguration() {
@@ -196,33 +184,34 @@ public class FileAppenderFactory extends AbstractAppenderFactory {
     }
 
     @Override
-    public Appender<ILoggingEvent> build(LoggerContext context, String applicationName, Layout<ILoggingEvent> layout) {
-        final FileAppender<ILoggingEvent> appender = buildAppender(context);
+    public Appender<E> build(LoggerContext context, String applicationName, LayoutFactory<E> layoutFactory,
+                             LevelFilterFactory<E> levelFilterFactory, AsyncAppenderFactory<E> asyncAppenderFactory) {
+        final FileAppender<E> appender = buildAppender(context);
         appender.setName("file-appender");
 
         appender.setAppend(true);
         appender.setContext(context);
 
-        final LayoutWrappingEncoder<ILoggingEvent> layoutEncoder = new LayoutWrappingEncoder<>();
-        layoutEncoder.setLayout(layout == null ? buildLayout(context, timeZone) : layout);
+        final LayoutWrappingEncoder<E> layoutEncoder = new LayoutWrappingEncoder<>();
+        layoutEncoder.setLayout(buildLayout(context, layoutFactory));
         appender.setEncoder(layoutEncoder);
 
         appender.setPrudent(false);
-        addThresholdFilter(appender, threshold);
+        appender.addFilter(levelFilterFactory.build(threshold));
         appender.stop();
         appender.start();
 
-        return wrapAsync(appender);
+        return wrapAsync(appender, asyncAppenderFactory);
     }
 
-    protected FileAppender<ILoggingEvent> buildAppender(LoggerContext context) {
+    protected FileAppender<E> buildAppender(LoggerContext context) {
         if (archive) {
-            final RollingFileAppender<ILoggingEvent> appender = new RollingFileAppender<>();
+            final RollingFileAppender<E> appender = new RollingFileAppender<>();
             appender.setFile(currentLogFilename);
 
             if (maxFileSize != null && !archivedLogFilenamePattern.contains("%d")) {
                 final FixedWindowRollingPolicy rollingPolicy = new FixedWindowRollingPolicy();
-                final SizeBasedTriggeringPolicy<ILoggingEvent> triggeringPolicy = new SizeBasedTriggeringPolicy<>();
+                final SizeBasedTriggeringPolicy<E> triggeringPolicy = new SizeBasedTriggeringPolicy<>();
                 triggeringPolicy.setMaxFileSize(String.valueOf(maxFileSize.toBytes()));
                 triggeringPolicy.setContext(context);
                 rollingPolicy.setContext(context);
@@ -234,18 +223,17 @@ public class FileAppenderFactory extends AbstractAppenderFactory {
                 rollingPolicy.start();
                 return appender;
             } else {
-                final TimeBasedFileNamingAndTriggeringPolicy<ILoggingEvent> triggeringPolicy;
+                final TimeBasedFileNamingAndTriggeringPolicy<E> triggeringPolicy;
                 if (maxFileSize == null) {
                     triggeringPolicy = new DefaultTimeBasedFileNamingAndTriggeringPolicy<>();
                 } else {
-                    final SizeAndTimeBasedFNATP<ILoggingEvent> maxFileSizeTriggeringPolicy =
-                            new SizeAndTimeBasedFNATP<>();
+                    final SizeAndTimeBasedFNATP<E> maxFileSizeTriggeringPolicy = new SizeAndTimeBasedFNATP<>();
                     maxFileSizeTriggeringPolicy.setMaxFileSize(String.valueOf(maxFileSize.toBytes()));
                     triggeringPolicy = maxFileSizeTriggeringPolicy;
                 }
                 triggeringPolicy.setContext(context);
 
-                final TimeBasedRollingPolicy<ILoggingEvent> rollingPolicy = new TimeBasedRollingPolicy<>();
+                final TimeBasedRollingPolicy<E> rollingPolicy = new TimeBasedRollingPolicy<>();
                 rollingPolicy.setContext(context);
                 rollingPolicy.setFileNamePattern(archivedLogFilenamePattern);
                 rollingPolicy.setTimeBasedFileNamingAndTriggeringPolicy(
@@ -262,7 +250,7 @@ public class FileAppenderFactory extends AbstractAppenderFactory {
             }
         }
 
-        final FileAppender<ILoggingEvent> appender = new FileAppender<>();
+        final FileAppender<E> appender = new FileAppender<>();
         appender.setFile(currentLogFilename);
         return appender;
     }

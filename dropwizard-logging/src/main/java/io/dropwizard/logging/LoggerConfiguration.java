@@ -3,6 +3,7 @@ package io.dropwizard.logging;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import ch.qos.logback.classic.spi.ILoggingEvent;
 import com.google.common.collect.ImmutableList;
 import ch.qos.logback.classic.Logger;
 
@@ -20,7 +21,7 @@ public class LoggerConfiguration {
 
     @Valid
     @NotNull
-    private ImmutableList<AppenderFactory> appenders = ImmutableList.of();
+    private ImmutableList<AppenderFactory<ILoggingEvent>> appenders = ImmutableList.of();
 
     private boolean additive = true;
 
@@ -40,11 +41,11 @@ public class LoggerConfiguration {
         this.level = level;
     }
 
-    public ImmutableList<AppenderFactory> getAppenders() {
+    public ImmutableList<AppenderFactory<ILoggingEvent>> getAppenders() {
         return appenders;
     }
 
-    public void setAppenders(List<AppenderFactory> appenders) {
+    public void setAppenders(List<AppenderFactory<ILoggingEvent>> appenders) {
         this.appenders = ImmutableList.copyOf(appenders);
     }
 }

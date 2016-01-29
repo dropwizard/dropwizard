@@ -1,4 +1,4 @@
-package io.dropwizard.jetty;
+package io.dropwizard.request.logging;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.io.Resources;
@@ -12,12 +12,11 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
-import java.util.TimeZone;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class RequestLogFactoryTest {
-    private Slf4jRequestLogFactory slf4jRequestLog;
+    private LogbackAccessRequestLogFactory logbackAccessRequestLogFactory;
 
     @Before
     public void setUp() throws Exception {
@@ -25,15 +24,18 @@ public class RequestLogFactoryTest {
         objectMapper.getSubtypeResolver().registerSubtypes(ConsoleAppenderFactory.class,
                                                            FileAppenderFactory.class,
                                                            SyslogAppenderFactory.class);
-        this.slf4jRequestLog = new ConfigurationFactory<>(Slf4jRequestLogFactory.class,
+        this.logbackAccessRequestLogFactory = new ConfigurationFactory<>(LogbackAccessRequestLogFactory.class,
                                                      BaseValidator.newValidator(),
                                                      objectMapper, "dw")
                 .build(new File(Resources.getResource("yaml/requestLog.yml").toURI()));
     }
 
     @Test
-    public void defaultTimeZoneIsUTC() {
-        assertThat(slf4jRequestLog.getTimeZone())
-            .isEqualTo(TimeZone.getTimeZone("UTC"));
+    public void fileAppenderFactoryIsSet() {
+        assertThat(logbackAccessRequestLogFactory).isNotNull();
+        assertThat(logbackAccessRequestLogFactory.getAppenders()).isNotNull();
+        assertThat(logbackAccessRequestLogFactory.getAppenders().size()).isEqualTo(1);
+        assertThat(logbackAccessRequestLogFactory.getAppenders().get(0))
+            .isInstanceOf(FileAppenderFactory.class);
     }
 }

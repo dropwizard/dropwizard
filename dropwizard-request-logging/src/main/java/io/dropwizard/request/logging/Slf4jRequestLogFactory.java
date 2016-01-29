@@ -1,17 +1,22 @@
-package io.dropwizard.jetty;
+package io.dropwizard.request.logging;
 
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.ILoggingEvent;
-import ch.qos.logback.core.CoreConstants;
-import ch.qos.logback.core.LayoutBase;
 import ch.qos.logback.core.spi.AppenderAttachableImpl;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.google.common.collect.ImmutableList;
 import io.dropwizard.logging.AppenderFactory;
+import io.dropwizard.logging.async.AsyncAppenderFactory;
+import io.dropwizard.logging.async.AsyncLoggingEventAppenderFactory;
 import io.dropwizard.logging.ConsoleAppenderFactory;
+import io.dropwizard.logging.filter.LevelFilterFactory;
+import io.dropwizard.logging.filter.ThresholdLevelFilterFactory;
+import io.dropwizard.logging.layout.LayoutFactory;
+import io.dropwizard.request.logging.layout.RequestLogLayout;
+import io.dropwizard.request.logging.layout.RequestLogLayoutFactory;
 import org.slf4j.LoggerFactory;
 
 import javax.validation.Valid;
@@ -44,29 +49,23 @@ import java.util.TimeZone;
  */
 @JsonTypeName("slf4j")
 public class Slf4jRequestLogFactory implements RequestLogFactory<Slf4jRequestLog> {
-    private static class RequestLogLayout extends LayoutBase<ILoggingEvent> {
-        @Override
-        public String doLayout(ILoggingEvent event) {
-            return event.getFormattedMessage() + CoreConstants.LINE_SEPARATOR;
-        }
-    }
 
     @NotNull
     private TimeZone timeZone = TimeZone.getTimeZone("UTC");
 
     @Valid
     @NotNull
-    private ImmutableList<AppenderFactory> appenders = ImmutableList.<AppenderFactory>of(
-            new ConsoleAppenderFactory()
+    private ImmutableList<AppenderFactory<ILoggingEvent>> appenders = ImmutableList.<AppenderFactory<ILoggingEvent>>of(
+            new ConsoleAppenderFactory<>()
     );
 
     @JsonProperty
-    public ImmutableList<AppenderFactory> getAppenders() {
+    public ImmutableList<AppenderFactory<ILoggingEvent>> getAppenders() {
         return appenders;
     }
 
     @JsonProperty
-    public void setAppenders(ImmutableList<AppenderFactory> appenders) {
+    public void setAppenders(ImmutableList<AppenderFactory<ILoggingEvent>> appenders) {
         this.appenders = appenders;
     }
 
@@ -96,9 +95,13 @@ public class Slf4jRequestLogFactory implements RequestLogFactory<Slf4jRequestLog
         final RequestLogLayout layout = new RequestLogLayout();
         layout.start();
 
+        final LevelFilterFactory<ILoggingEvent> levelFilterFactory = new ThresholdLevelFilterFactory();
+        final AsyncAppenderFactory<ILoggingEvent> asyncAppenderFactory = new AsyncLoggingEventAppenderFactory();
+        final LayoutFactory<ILoggingEvent> layoutFactory = new RequestLogLayoutFactory();
+
         final AppenderAttachableImpl<ILoggingEvent> attachable = new AppenderAttachableImpl<>();
-        for (AppenderFactory output : this.appenders) {
-            attachable.addAppender(output.build(context, name, layout));
+        for (AppenderFactory<ILoggingEvent> output : this.appenders) {
+            attachable.addAppender(output.build(context, name, layoutFactory, levelFilterFactory, asyncAppenderFactory));
         }
 
         return new Slf4jRequestLog(attachable, timeZone);

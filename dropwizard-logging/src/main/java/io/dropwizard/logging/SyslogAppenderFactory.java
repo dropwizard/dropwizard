@@ -4,10 +4,12 @@ import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.net.SyslogAppender;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
-import ch.qos.logback.core.Layout;
 import ch.qos.logback.core.net.SyslogConstants;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import io.dropwizard.logging.async.AsyncAppenderFactory;
+import io.dropwizard.logging.filter.LevelFilterFactory;
+import io.dropwizard.logging.layout.LayoutFactory;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -68,7 +70,7 @@ import java.util.regex.Pattern;
  * @see AbstractAppenderFactory
  */
 @JsonTypeName("syslog")
-public class SyslogAppenderFactory extends AbstractAppenderFactory {
+public class SyslogAppenderFactory extends AbstractAppenderFactory<ILoggingEvent> {
     public enum Facility {
         AUTH,
         AUTHPRIV,
@@ -200,7 +202,8 @@ public class SyslogAppenderFactory extends AbstractAppenderFactory {
     }
 
     @Override
-    public Appender<ILoggingEvent> build(LoggerContext context, String applicationName, Layout<ILoggingEvent> layout) {
+    public Appender<ILoggingEvent> build(LoggerContext context, String applicationName, LayoutFactory<ILoggingEvent> layoutFactory,
+                                         LevelFilterFactory<ILoggingEvent> levelFilterFactory, AsyncAppenderFactory<ILoggingEvent> asyncAppenderFactory) {
         final SyslogAppender appender = new SyslogAppender();
         appender.setName("syslog-appender");
         appender.setContext(context);
@@ -212,8 +215,8 @@ public class SyslogAppenderFactory extends AbstractAppenderFactory {
         appender.setFacility(facility.toString().toLowerCase(Locale.ENGLISH));
         appender.setThrowableExcluded(!includeStackTrace);
         appender.setStackTracePattern(stackTracePrefix);
-        addThresholdFilter(appender, threshold);
+        appender.addFilter(levelFilterFactory.build(threshold));
         appender.start();
-        return wrapAsync(appender);
+        return wrapAsync(appender, asyncAppenderFactory);
     }
 }

@@ -11,6 +11,9 @@ import ch.qos.logback.core.rolling.RollingFileAppender;
 import ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP;
 import ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy;
 import io.dropwizard.jackson.DiscoverableSubtypeResolver;
+import io.dropwizard.logging.async.AsyncLoggingEventAppenderFactory;
+import io.dropwizard.logging.filter.NullLevelFilterFactory;
+import io.dropwizard.logging.layout.DropwizardLayoutFactory;
 import io.dropwizard.util.Size;
 import io.dropwizard.validation.BaseValidator;
 import org.junit.Rule;
@@ -42,20 +45,20 @@ public class FileAppenderFactoryTest {
 
     @Test
     public void includesCallerData() {
-        FileAppenderFactory fileAppenderFactory = new FileAppenderFactory();
+        FileAppenderFactory<ILoggingEvent> fileAppenderFactory = new FileAppenderFactory<>();
         fileAppenderFactory.setArchive(false);
-        AsyncAppender asyncAppender = (AsyncAppender) fileAppenderFactory.build(new LoggerContext(), "test", null);
+        AsyncAppender asyncAppender = (AsyncAppender) fileAppenderFactory.build(new LoggerContext(), "test", new DropwizardLayoutFactory(), new NullLevelFilterFactory<>(), new AsyncLoggingEventAppenderFactory());
         assertThat(asyncAppender.isIncludeCallerData()).isFalse();
 
         fileAppenderFactory.setIncludeCallerData(true);
-        asyncAppender = (AsyncAppender) fileAppenderFactory.build(new LoggerContext(), "test", null);
+        asyncAppender = (AsyncAppender) fileAppenderFactory.build(new LoggerContext(), "test", new DropwizardLayoutFactory(), new NullLevelFilterFactory<>(), new AsyncLoggingEventAppenderFactory());
         assertThat(asyncAppender.isIncludeCallerData()).isTrue();
     }
 
     @Test
     public void isRolling() throws Exception {
         // the method we want to test is protected, so we need to override it so we can see it
-        FileAppenderFactory fileAppenderFactory = new FileAppenderFactory() {
+        FileAppenderFactory fileAppenderFactory = new FileAppenderFactory<ILoggingEvent>() {
             @Override
             public FileAppender<ILoggingEvent> buildAppender(LoggerContext context) {
                 return super.buildAppender(context);
@@ -142,9 +145,9 @@ public class FileAppenderFactoryTest {
     @Test
     public void appenderContextIsSet() throws Exception {
         final Logger root = (Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
-        final FileAppenderFactory appenderFactory = new FileAppenderFactory();
+        final FileAppenderFactory<ILoggingEvent> appenderFactory = new FileAppenderFactory<>();
         appenderFactory.setArchivedLogFilenamePattern(folder.newFile("example-%d.log.gz").toString());
-        final Appender<ILoggingEvent> appender = appenderFactory.build(root.getLoggerContext(), "test", null);
+        final Appender<ILoggingEvent> appender = appenderFactory.build(root.getLoggerContext(), "test", new DropwizardLayoutFactory(), new NullLevelFilterFactory<>(), new AsyncLoggingEventAppenderFactory());
 
         assertThat(appender.getContext()).isEqualTo(root.getLoggerContext());
     }
@@ -152,9 +155,9 @@ public class FileAppenderFactoryTest {
     @Test
     public void appenderNameIsSet() throws Exception {
         final Logger root = (Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
-        final FileAppenderFactory appenderFactory = new FileAppenderFactory();
+        final FileAppenderFactory<ILoggingEvent> appenderFactory = new FileAppenderFactory<>();
         appenderFactory.setArchivedLogFilenamePattern(folder.newFile("example-%d.log.gz").toString());
-        final Appender<ILoggingEvent> appender = appenderFactory.build(root.getLoggerContext(), "test", null);
+        final Appender<ILoggingEvent> appender = appenderFactory.build(root.getLoggerContext(), "test", new DropwizardLayoutFactory(), new NullLevelFilterFactory<>(), new AsyncLoggingEventAppenderFactory());
 
         assertThat(appender.getName()).isEqualTo("async-file-appender");
     }

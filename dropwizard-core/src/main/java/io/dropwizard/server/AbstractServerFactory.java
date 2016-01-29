@@ -23,10 +23,10 @@ import io.dropwizard.jersey.validation.JerseyViolationExceptionMapper;
 import io.dropwizard.jetty.GzipHandlerFactory;
 import io.dropwizard.jetty.MutableServletContextHandler;
 import io.dropwizard.jetty.NonblockingServletHolder;
-import io.dropwizard.jetty.RequestLogFactory;
-import io.dropwizard.jetty.Slf4jRequestLogFactory;
 import io.dropwizard.jetty.ServerPushFilterFactory;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
+import io.dropwizard.request.logging.LogbackAccessRequestLogFactory;
+import io.dropwizard.request.logging.RequestLogFactory;
 import io.dropwizard.servlets.ThreadNameFilter;
 import io.dropwizard.util.Duration;
 import io.dropwizard.validation.MinDuration;
@@ -209,7 +209,7 @@ public abstract class AbstractServerFactory implements ServerFactory {
 
     @Valid
     @NotNull
-    private RequestLogFactory requestLog = new Slf4jRequestLogFactory();
+    private RequestLogFactory requestLog = new LogbackAccessRequestLogFactory();
 
     @Valid
     @NotNull
