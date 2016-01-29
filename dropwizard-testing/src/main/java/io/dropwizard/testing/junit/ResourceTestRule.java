@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 
 /**
  * A JUnit {@link TestRule} for testing Jersey resources.
@@ -42,6 +43,7 @@ public class ResourceTestRule implements TestRule {
         private final Map<String, Object> properties = new HashMap<>();
         private ObjectMapper mapper = Jackson.newObjectMapper();
         private Validator validator = Validators.newValidator();
+        private Consumer<ClientConfig> clientConfigurator = c -> {};
         private TestContainerFactory testContainerFactory = new InMemoryTestContainerFactory();
         private boolean registerDefaultExceptionMappers = true;
 
@@ -52,6 +54,11 @@ public class ResourceTestRule implements TestRule {
 
         public Builder setValidator(Validator validator) {
             this.validator = validator;
+            return this;
+        }
+
+        public Builder setClientConfigurator(Consumer<ClientConfig> clientConfigurator) {
+            this.clientConfigurator = clientConfigurator;
             return this;
         }
 
@@ -91,8 +98,9 @@ public class ResourceTestRule implements TestRule {
          * @return a new {@link ResourceTestRule}
          */
         public ResourceTestRule build() {
-            return new ResourceTestRule(new ResourceTestJerseyConfiguration(singletons, providers, properties, mapper, validator,
-                    testContainerFactory, registerDefaultExceptionMappers));
+            return new ResourceTestRule(new ResourceTestJerseyConfiguration(
+                singletons, providers, properties, mapper, validator,
+                clientConfigurator, testContainerFactory, registerDefaultExceptionMappers));
         }
     }
 
@@ -118,6 +126,10 @@ public class ResourceTestRule implements TestRule {
 
     public ObjectMapper getObjectMapper() {
         return configuration.mapper;
+    }
+
+    public Consumer<ClientConfig> getClientConfigurator() {
+        return configuration.clientConfigurator;
     }
 
     public Client client() {
@@ -151,10 +163,11 @@ public class ResourceTestRule implements TestRule {
                         }
 
                         @Override
-                        protected void configureClient(ClientConfig config) {
+                        protected void configureClient(ClientConfig clientConfig) {
                             final JacksonJsonProvider jsonProvider = new JacksonJsonProvider();
                             jsonProvider.setMapper(configuration.mapper);
-                            config.register(jsonProvider);
+                            configuration.clientConfigurator.accept(clientConfig);
+                            clientConfig.register(jsonProvider);
                         }
                     };
                     test.setUp();
