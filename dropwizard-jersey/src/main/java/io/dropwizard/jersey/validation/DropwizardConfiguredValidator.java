@@ -1,5 +1,6 @@
 package io.dropwizard.jersey.validation;
 
+import com.google.common.collect.ImmutableList;
 import io.dropwizard.validation.ConstraintViolations;
 import io.dropwizard.validation.Validated;
 import org.glassfish.jersey.server.internal.inject.ConfiguredValidator;
@@ -14,6 +15,8 @@ import javax.validation.Validator;
 import javax.validation.executable.ExecutableValidator;
 import javax.validation.groups.Default;
 import javax.validation.metadata.BeanDescriptor;
+import javax.ws.rs.WebApplicationException;
+import java.util.Arrays;
 import java.util.Set;
 
 import static java.util.Objects.requireNonNull;
@@ -44,14 +47,37 @@ public class DropwizardConfiguredValidator implements ConfiguredValidator {
      * {@link Default} group
      */
     private Class<?>[] getGroup(Invocable invocable) {
+        final ImmutableList.Builder<Class<?>[]> builder = ImmutableList.builder();
         for (Parameter parameter : invocable.getParameters()) {
-            if (parameter.getSource().equals(Parameter.Source.UNKNOWN)) {
-                if (parameter.isAnnotationPresent(Validated.class)) {
-                    return parameter.getAnnotation(Validated.class).value();
-                }
+            if (parameter.isAnnotationPresent(Validated.class)) {
+                builder.add(parameter.getAnnotation(Validated.class).value());
             }
         }
-        return new Class<?>[] {Default.class};
+
+        final ImmutableList<Class<?>[]> groups = builder.build();
+        switch (groups.size()) {
+            // No parameters were annotated with Validated, so validate under the default group
+            case 0: return new Class<?>[] {Default.class};
+
+            // A single parameter was annotated with Validated, so use their group
+            case 1: return groups.get(0);
+
+            // Multiple parameters were annotated with Validated, so we must check if
+            // all groups are equal to each other, if not, throw an exception because
+            // the validator is unable to handle parameters validated under different
+            // groups. If the parameters have the same group, we can grab the first
+            // group.
+            default:
+                for (int i = 0; i < groups.size(); i++) {
+                    for (int j = i; j < groups.size(); j++) {
+                        if (!Arrays.deepEquals(groups.get(i), groups.get(j))) {
+                            throw new WebApplicationException("Parameters must have the same validation groups in " +
+                                invocable.getHandlingMethod().getName(), 500);
+                        }
+                    }
+                }
+                return groups.get(0);
+        }
     }
 
     @Override
