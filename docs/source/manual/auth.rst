@@ -182,6 +182,9 @@ There are two ways to protect a resource.  You can mark your resource method wit
 * ``@RolesAllowed``. Access will be granted to the users with the specified roles.
 * ``@DenyAll``. No access will be granted to anyone.
 
+.. note::
+    You can use ``@RolesAllowed`` on the class level. Method annotations take precedence over the class one.
+
 Alternatively, you can annotate the parameter representing your principal with ``@Auth``. Note you must register a
 jersey provider to make this work.
 

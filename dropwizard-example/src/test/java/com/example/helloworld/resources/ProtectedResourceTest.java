@@ -58,6 +58,21 @@ public class ProtectedResourceTest {
     }
 
     @Test
+    public void testProtectedEndpointBadCredentials401() {
+        try {
+            RULE.getJerseyTest().target("/protected").request()
+                .header(HttpHeaders.AUTHORIZATION, "Basic c25lYWt5LWJhc3RhcmQ6YXNkZg==")
+                .get(String.class);
+            failBecauseExceptionWasNotThrown(WebApplicationException.class);
+        } catch (WebApplicationException e) {
+            assertThat(e.getResponse().getStatus()).isEqualTo(401);
+            assertThat(e.getResponse().getHeaders().get(HttpHeaders.WWW_AUTHENTICATE))
+                .containsOnly("Basic realm=\"SUPER SECRET STUFF\"");
+        }
+
+    }
+
+    @Test
     public void testProtectedAdminEndpoint() {
         String secret = RULE.getJerseyTest().target("/protected/admin").request()
                 .header(HttpHeaders.AUTHORIZATION, "Basic Y2hpZWYtd2l6YXJkOnNlY3JldA==")
