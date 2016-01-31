@@ -5,6 +5,9 @@ loggers:
     level: DEBUG
     appenders:
       - type: file
+        filterFactories:
+          - type: test-filter-factory
+          - type: second-test-filter-factory
         currentLogFilename: '${new_app}.log'
         archivedLogFilenamePattern: '${new_app}-%d.log.gz'
         logFormat: "%-5level %logger: %msg%n"

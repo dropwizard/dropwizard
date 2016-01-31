@@ -542,6 +542,8 @@ Console
           timeZone: UTC
           target: stdout
           logFormat: # TODO
+          filterFactories:
+            - type: URI
 
 
 ====================== ===========  ===========
@@ -554,6 +556,8 @@ target                 stdout       The name of the standard stream to which eve
                                     Can be ``stdout`` or ``stderr``.
 logFormat              default      The Logback pattern with which events will be formatted. See
                                     the Logback_ documentation for details.
+filterFactories        (none)       The list of filters to apply to the appender, in order, after
+                                    the thresold.
 ====================== ===========  ===========
 
 .. _Logback: http://logback.qos.ch/manual/layouts.html#conversionWord
@@ -577,6 +581,8 @@ File
           archivedFileCount: 5
           timeZone: UTC
           logFormat: # TODO
+          filterFactories:
+            - type: URI
 
 
 ============================ ===========  ==================================================================================================
@@ -594,6 +600,8 @@ archivedFileCount            5            The number of archived files to keep. 
 timeZone                     UTC          The time zone to which event timestamps will be converted.
 logFormat                    default      The Logback pattern with which events will be formatted. See
                                           the Logback_ documentation for details.
+filterFactories              (none)       The list of filters to apply to the appender, in order, after
+                                          the thresold.
 ============================ ===========  ==================================================================================================
 
 
@@ -614,6 +622,8 @@ Syslog
           threshold: ALL
           stackTracePrefix: \t
           logFormat: # TODO
+          filterFactories:
+            - type: URI
 
 
 ============================ ===========  ==================================================================================================
@@ -631,8 +641,31 @@ logFormat                    default      The Logback pattern with which events 
                                           the Logback_ documentation for details.
 stackTracePrefix             \t           The prefix to use when writing stack trace lines (these are sent
                                           to the syslog server separately from the main message)
+filterFactories              (none)       The list of filters to apply to the appender, in order, after
+                                          the thresold.
 ============================ ===========  ==================================================================================================
 
+
+.. _man-configuration-logging-filter-factories:
+
+FilterFactories
+---------------
+
+.. code-block:: yaml
+
+    logging:
+      level: INFO
+      appenders:
+        - type: console
+          filterFactories:
+            - type: URI
+
+
+====================== ===========  ================
+Name                   Default      Description
+====================== ===========  ================
+type                   REQUIRED     The filter type.
+====================== ===========  ================
 
 .. _man-configuration-metrics:
 
