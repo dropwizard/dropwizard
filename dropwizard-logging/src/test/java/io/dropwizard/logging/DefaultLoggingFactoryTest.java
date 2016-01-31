@@ -1,10 +1,12 @@
 package io.dropwizard.logging;
 
 import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.spi.ILoggingEvent;
 import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.TextNode;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.Files;
 import com.google.common.io.Resources;
@@ -12,6 +14,7 @@ import io.dropwizard.configuration.ConfigurationFactory;
 import io.dropwizard.configuration.FileConfigurationSourceProvider;
 import io.dropwizard.configuration.SubstitutingSourceProvider;
 import io.dropwizard.jackson.Jackson;
+import io.dropwizard.logging.filter.FilterFactory;
 import io.dropwizard.validation.BaseValidator;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.StrSubstitutor;
@@ -65,13 +68,16 @@ public class DefaultLoggingFactoryTest {
         final LoggerConfiguration newAppConfiguration = objectMapper.treeToValue(newApp, LoggerConfiguration.class);
         assertThat(newAppConfiguration.getLevel()).isEqualTo(Level.DEBUG);
         assertThat(newAppConfiguration.getAppenders()).hasSize(1);
-        final AppenderFactory appenderFactory = newAppConfiguration.getAppenders().get(0);
+        final AppenderFactory<ILoggingEvent> appenderFactory = newAppConfiguration.getAppenders().get(0);
         assertThat(appenderFactory).isInstanceOf(FileAppenderFactory.class);
-        final FileAppenderFactory fileAppenderFactory = (FileAppenderFactory) appenderFactory;
+        final FileAppenderFactory<ILoggingEvent> fileAppenderFactory = (FileAppenderFactory<ILoggingEvent>) appenderFactory;
         assertThat(fileAppenderFactory.getCurrentLogFilename()).isEqualTo("${new_app}.log");
         assertThat(fileAppenderFactory.getArchivedLogFilenamePattern()).isEqualTo("${new_app}-%d.log.gz");
         assertThat(fileAppenderFactory.getArchivedFileCount()).isEqualTo(5);
-        assertThat(fileAppenderFactory.getFilterFactories()).containsExactly(new TestFilterFactory(), new SecondTestFilterFactory());
+        final ImmutableList<FilterFactory<ILoggingEvent>> filterFactories = fileAppenderFactory.getFilterFactories();
+        assertThat(filterFactories).hasSize(2);
+        assertThat(filterFactories.get(0)).isExactlyInstanceOf(TestFilterFactory.class);
+        assertThat(filterFactories.get(1)).isExactlyInstanceOf(SecondTestFilterFactory.class);
 
         final JsonNode legacyApp = config.getLoggers().get("com.example.legacyApp");
         assertThat(legacyApp).isNotNull();
