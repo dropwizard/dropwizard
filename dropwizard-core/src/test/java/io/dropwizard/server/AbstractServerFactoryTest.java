@@ -35,49 +35,33 @@ public class AbstractServerFactoryTest {
 
     @Before
     public void before() {
-        when(this.environment.jersey()).thenReturn(this.jerseyEnvironment);
+        when(environment.jersey()).thenReturn(jerseyEnvironment);
     }
 
     @Test
     public void usesYamlDefinedPattern() {
-        this.serverFactory.setJerseyRootPath(YAML_SET_PATTERN);
-        this.jerseyEnvironment.setUrlPattern(RUN_SET_PATTERN);
+        serverFactory.setJerseyRootPath(YAML_SET_PATTERN);
+        jerseyEnvironment.setUrlPattern(RUN_SET_PATTERN);
 
-        this.serverFactory.build(this.environment);
+        serverFactory.build(environment);
 
-        assertThat(this.jerseyEnvironment.getUrlPattern()).isEqualTo(YAML_SET_PATTERN);
+        assertThat(jerseyEnvironment.getUrlPattern()).isEqualTo(YAML_SET_PATTERN);
     }
 
     @Test
     public void usesRunDefinedPatternWhenNoYaml() {
-        this.jerseyEnvironment.setUrlPattern(RUN_SET_PATTERN);
+        jerseyEnvironment.setUrlPattern(RUN_SET_PATTERN);
 
-        this.serverFactory.build(this.environment);
+        serverFactory.build(environment);
 
-        assertThat(this.jerseyEnvironment.getUrlPattern()).isEqualTo(RUN_SET_PATTERN);
+        assertThat(jerseyEnvironment.getUrlPattern()).isEqualTo(RUN_SET_PATTERN);
     }
 
     @Test
     public void usesDefaultPatternWhenNoneSet() {
-        this.serverFactory.build(this.environment);
+        serverFactory.build(environment);
 
-        assertThat(this.jerseyEnvironment.getUrlPattern()).isEqualTo(DEFAULT_PATTERN);
-    }
-
-    @Test
-    public void yamlPatternEndsWithSlashStar() {
-        assertPatternEndsWithSlashStar("/missing/slash/star");
-    }
-
-    @Test
-    public void yamlPatternEndsWithStar() {
-        assertPatternEndsWithSlashStar("/missing/star/");
-    }
-
-    private void assertPatternEndsWithSlashStar(String jerseyRootPath) {
-        this.serverFactory.setJerseyRootPath(jerseyRootPath);
-        this.serverFactory.build(this.environment);
-        assertThat(this.jerseyEnvironment.getUrlPattern()).endsWith("/*");
+        assertThat(jerseyEnvironment.getUrlPattern()).isEqualTo(DEFAULT_PATTERN);
     }
 
     /**
@@ -90,7 +74,7 @@ public class AbstractServerFactoryTest {
             // mimics the current default + simple server factory build() methods
             ThreadPool threadPool = createThreadPool(environment.metrics());
             Server server = buildServer(environment.lifecycle(), threadPool);
-            this.createAppServlet(server,
+            createAppServlet(server,
                                   environment.jersey(),
                                   environment.getObjectMapper(),
                                   environment.getValidator(),

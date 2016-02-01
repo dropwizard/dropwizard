@@ -489,14 +489,7 @@ public abstract class AbstractServerFactory implements ServerFactory {
         serverPush.addFilter(handler);
         if (jerseyContainer != null) {
             if (jerseyRootPath.isPresent()) {
-                String urlPattern = jerseyRootPath.get();
-                if (!urlPattern.endsWith("*") && !urlPattern.endsWith("/")) {
-                    urlPattern += "/";
-                }
-                if (!urlPattern.endsWith("*")) {
-                    urlPattern += "*";
-                }
-                jersey.setUrlPattern(urlPattern);
+                jersey.setUrlPattern(jerseyRootPath.get());
             }
             jersey.register(new JacksonMessageBodyProvider(objectMapper));
             jersey.register(new HibernateValidationFeature(validator));
