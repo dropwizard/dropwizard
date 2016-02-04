@@ -31,7 +31,7 @@ public class ExecutorServiceBuilder {
         this.environment = environment;
         this.nameFormat = nameFormat;
         this.corePoolSize = 0;
-        this.maximumPoolSize = Integer.MAX_VALUE;
+        this.maximumPoolSize = 1;
         this.keepAliveTime = Duration.seconds(60);
         this.shutdownTime = Duration.seconds(5);
         this.workQueue = new LinkedBlockingQueue<>();
@@ -75,7 +75,7 @@ public class ExecutorServiceBuilder {
     }
 
     public ExecutorService build() {
-        if (maximumPoolSize != Integer.MAX_VALUE && !isBoundedQueue()) {
+        if (corePoolSize != maximumPoolSize && maximumPoolSize > 1 && !isBoundedQueue()) {
             log.warn("Parameter 'maximumPoolSize' is conflicting with unbounded work queues");
         }
         final ThreadPoolExecutor executor = new ThreadPoolExecutor(corePoolSize,
