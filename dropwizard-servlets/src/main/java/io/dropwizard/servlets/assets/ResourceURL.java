@@ -45,7 +45,7 @@ public class ResourceURL {
 
                     final String fileName = resourceURL.getFile();
                     // leaves just the relative file path inside the jar
-                    final String relativeFilePath = fileName.substring(fileName.indexOf('!') + 2);
+                    final String relativeFilePath = fileName.substring(fileName.lastIndexOf('!') + 2);
                     final JarFile jarFile = jarConnection.getJarFile();
                     final ZipEntry zipEntry = jarFile.getEntry(relativeFilePath);
                     final InputStream inputStream = jarFile.getInputStream(zipEntry);
