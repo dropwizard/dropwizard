@@ -35,8 +35,8 @@ import io.dropwizard.jdbi.args.OptionalLocalDateArgumentFactory;
 import io.dropwizard.jdbi.args.OptionalLocalDateTimeArgumentFactory;
 import io.dropwizard.jdbi.args.OptionalLongArgumentFactory;
 import io.dropwizard.jdbi.args.OptionalLongMapper;
-import io.dropwizard.jdbi.args.OptionalOffsetTimeArgumentFactory;
-import io.dropwizard.jdbi.args.OptionalZonedTimeArgumentFactory;
+import io.dropwizard.jdbi.args.OptionalOffsetDateTimeArgumentFactory;
+import io.dropwizard.jdbi.args.OptionalZonedDateTimeArgumentFactory;
 import io.dropwizard.jdbi.args.ZonedDateTimeArgumentFactory;
 import io.dropwizard.jdbi.args.ZonedDateTimeMapper;
 import io.dropwizard.jdbi.logging.LogbackLog;
@@ -142,8 +142,8 @@ public class DBIFactory {
         dbi.registerArgumentFactory(new OptionalLocalDateArgumentFactory());
         dbi.registerArgumentFactory(new OptionalLocalDateTimeArgumentFactory());
         dbi.registerArgumentFactory(new OptionalInstantArgumentFactory(timeZone));
-        dbi.registerArgumentFactory(new OptionalOffsetTimeArgumentFactory(timeZone));
-        dbi.registerArgumentFactory(new OptionalZonedTimeArgumentFactory(timeZone));
+        dbi.registerArgumentFactory(new OptionalOffsetDateTimeArgumentFactory(timeZone));
+        dbi.registerArgumentFactory(new OptionalZonedDateTimeArgumentFactory(timeZone));
 
         dbi.registerColumnMapper(new JodaDateTimeMapper(timeZone));
         dbi.registerColumnMapper(new InstantMapper(timeZone));
