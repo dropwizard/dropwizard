@@ -11,6 +11,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Joiner;
+import com.google.common.base.Optional;
 import com.google.common.io.Resources;
 import io.dropwizard.jersey.errors.EarlyEofExceptionMapper;
 import io.dropwizard.jersey.errors.LoggingExceptionMapper;
@@ -40,7 +41,6 @@ import org.eclipse.jetty.setuid.RLimit;
 import org.eclipse.jetty.setuid.SetUIDListener;
 import org.eclipse.jetty.util.BlockingArrayQueue;
 import org.eclipse.jetty.util.thread.ThreadPool;
-import org.hibernate.validator.constraints.NotEmpty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -193,7 +193,7 @@ import java.util.regex.Pattern;
  *     </tr>
  *     <tr>
  *         <td>{@code rootPath}</td>
- *         <td>/</td>
+ *         <td>/*</td>
  *         <td>
  *           The URL pattern relative to {@code applicationContextPath} from which the JAX-RS resources will be served.
  *         </td>
@@ -255,8 +255,7 @@ public abstract class AbstractServerFactory implements ServerFactory {
     @NotNull
     private Set<String> allowedMethods = AllowedMethodsFilter.DEFAULT_ALLOWED_METHODS;
 
-    @NotEmpty
-    private String jerseyRootPath = "/";
+    private Optional<String> jerseyRootPath = Optional.absent();
 
     @JsonIgnore
     @ValidationMethod(message = "must have a smaller minThreads than maxThreads")
@@ -443,13 +442,13 @@ public abstract class AbstractServerFactory implements ServerFactory {
     }
 
     @JsonProperty("rootPath")
-    public String getJerseyRootPath() {
+    public Optional<String> getJerseyRootPath() {
         return jerseyRootPath;
     }
 
     @JsonProperty("rootPath")
     public void setJerseyRootPath(String jerseyRootPath) {
-        this.jerseyRootPath = jerseyRootPath;
+        this.jerseyRootPath = Optional.fromNullable(jerseyRootPath);
     }
 
     protected Handler createAdminServlet(Server server,
@@ -489,14 +488,9 @@ public abstract class AbstractServerFactory implements ServerFactory {
         handler.addFilter(ThreadNameFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST));
         serverPush.addFilter(handler);
         if (jerseyContainer != null) {
-            String urlPattern = jerseyRootPath;
-            if (!urlPattern.endsWith("*") && !urlPattern.endsWith("/")) {
-                urlPattern += "/";
+            if (jerseyRootPath.isPresent()) {
+                jersey.setUrlPattern(jerseyRootPath.get());
             }
-            if (!urlPattern.endsWith("*")) {
-                urlPattern += "*";
-            }
-            jersey.setUrlPattern(urlPattern);
             jersey.register(new JacksonMessageBodyProvider(objectMapper));
             jersey.register(new HibernateValidationFeature(validator));
             if (registerDefaultExceptionMappers == null || registerDefaultExceptionMappers) {

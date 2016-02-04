@@ -103,7 +103,14 @@ public class JerseyEnvironment {
     }
 
     public void setUrlPattern(String urlPattern) {
-        config.setUrlPattern(urlPattern);
+        String normalizedUrlPattern = urlPattern;
+        if (!normalizedUrlPattern.endsWith("*") && !normalizedUrlPattern.endsWith("/")) {
+            normalizedUrlPattern += "/";
+        }
+        if (!normalizedUrlPattern.endsWith("*")) {
+            normalizedUrlPattern+= "*";
+        }
+        config.setUrlPattern(normalizedUrlPattern);
     }
 
     public DropwizardResourceConfig getResourceConfig() {
