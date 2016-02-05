@@ -13,15 +13,15 @@ import java.util.TimeZone;
 /**
  * An {@link ArgumentFactory} for {@link ZonedDateTime} arguments wrapped by {@link Optional}.
  */
-public class OptionalZonedTimeArgumentFactory implements ArgumentFactory<Optional<ZonedDateTime>> {
+public class OptionalZonedDateTimeArgumentFactory implements ArgumentFactory<Optional<ZonedDateTime>> {
 
     private final Optional<Calendar> calendar;
 
-    public OptionalZonedTimeArgumentFactory() {
+    public OptionalZonedDateTimeArgumentFactory() {
         calendar = Optional.empty();
     }
 
-    public OptionalZonedTimeArgumentFactory(Optional<TimeZone> timeZone) {
+    public OptionalZonedDateTimeArgumentFactory(Optional<TimeZone> timeZone) {
         calendar = timeZone.map(GregorianCalendar::new);
     }
 
@@ -30,7 +30,7 @@ public class OptionalZonedTimeArgumentFactory implements ArgumentFactory<Optiona
         if (value instanceof Optional) {
             final Optional<?> optionalValue = (Optional<?>) value;
             // Fall through to OptionalArgumentFactory if absent.
-            // Fall through to OptionalArgumentFactory if present, but not DateTime.
+            // Fall through to OptionalArgumentFactory if present, but not ZonedDateTime.
             return optionalValue.isPresent() && optionalValue.get() instanceof ZonedDateTime;
         }
         return false;
