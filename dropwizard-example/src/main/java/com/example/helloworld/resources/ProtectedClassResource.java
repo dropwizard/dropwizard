@@ -10,8 +10,8 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.SecurityContext;
 
 /**
- * {@link RolesAllowed} is supported on the class level.<p>
-*  Method level authorization annotations take precedence over the class level one
+ * {@link RolesAllowed}, {@link PermitAll} are supported on the class level.<p>
+ * Method level annotations take precedence over the class level ones
  */
 
 @Path("/protected")

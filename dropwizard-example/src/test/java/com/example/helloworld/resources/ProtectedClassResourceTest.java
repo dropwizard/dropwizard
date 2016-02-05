@@ -7,7 +7,7 @@ import io.dropwizard.auth.AuthDynamicFeature;
 import io.dropwizard.auth.AuthValueFactoryProvider;
 import io.dropwizard.auth.basic.BasicCredentialAuthFilter;
 import io.dropwizard.testing.junit.ResourceTestRule;
-import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.ForbiddenException;
 import javax.ws.rs.core.HttpHeaders;
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
 import org.glassfish.jersey.test.grizzly.GrizzlyWebTestContainerFactory;
@@ -74,8 +74,8 @@ public final class ProtectedClassResourceTest {
             RULE.getJerseyTest().target("/protected").request()
             .header(HttpHeaders.AUTHORIZATION, "Basic Z3Vlc3Q6c2VjcmV0")
             .get(String.class);
-            failBecauseExceptionWasNotThrown(WebApplicationException.class);
-        } catch (WebApplicationException e) {
+            failBecauseExceptionWasNotThrown(ForbiddenException.class);
+        } catch (ForbiddenException e) {
             assertThat(e.getResponse().getStatus()).isEqualTo(403);
         }
     }
