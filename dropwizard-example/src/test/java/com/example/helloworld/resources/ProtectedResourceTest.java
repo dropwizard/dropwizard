@@ -3,16 +3,17 @@ package com.example.helloworld.resources;
 import com.example.helloworld.auth.ExampleAuthenticator;
 import com.example.helloworld.auth.ExampleAuthorizer;
 import com.example.helloworld.core.User;
-import io.dropwizard.auth.*;
+import io.dropwizard.auth.AuthDynamicFeature;
+import io.dropwizard.auth.AuthValueFactoryProvider;
 import io.dropwizard.auth.basic.BasicCredentialAuthFilter;
 import io.dropwizard.testing.junit.ResourceTestRule;
+import javax.ws.rs.ForbiddenException;
+import javax.ws.rs.NotAuthorizedException;
+import javax.ws.rs.core.HttpHeaders;
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
 import org.glassfish.jersey.test.grizzly.GrizzlyWebTestContainerFactory;
 import org.junit.ClassRule;
 import org.junit.Test;
-
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.HttpHeaders;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
@@ -48,11 +49,26 @@ public class ProtectedResourceTest {
         try {
              RULE.getJerseyTest().target("/protected").request()
                     .get(String.class);
-            failBecauseExceptionWasNotThrown(WebApplicationException.class);
-        } catch (WebApplicationException e) {
+            failBecauseExceptionWasNotThrown(NotAuthorizedException.class);
+        } catch (NotAuthorizedException e) {
             assertThat(e.getResponse().getStatus()).isEqualTo(401);
             assertThat(e.getResponse().getHeaders().get(HttpHeaders.WWW_AUTHENTICATE))
                     .containsOnly("Basic realm=\"SUPER SECRET STUFF\"");
+        }
+
+    }
+
+    @Test
+    public void testProtectedEndpointBadCredentials401() {
+        try {
+            RULE.getJerseyTest().target("/protected").request()
+                .header(HttpHeaders.AUTHORIZATION, "Basic c25lYWt5LWJhc3RhcmQ6YXNkZg==")
+                .get(String.class);
+            failBecauseExceptionWasNotThrown(NotAuthorizedException.class);
+        } catch (NotAuthorizedException e) {
+            assertThat(e.getResponse().getStatus()).isEqualTo(401);
+            assertThat(e.getResponse().getHeaders().get(HttpHeaders.WWW_AUTHENTICATE))
+                .containsOnly("Basic realm=\"SUPER SECRET STUFF\"");
         }
 
     }
@@ -71,8 +87,8 @@ public class ProtectedResourceTest {
             RULE.getJerseyTest().target("/protected/admin").request()
                     .header(HttpHeaders.AUTHORIZATION, "Basic Z29vZC1ndXk6c2VjcmV0")
                     .get(String.class);
-            failBecauseExceptionWasNotThrown(WebApplicationException.class);
-        } catch (WebApplicationException e) {
+            failBecauseExceptionWasNotThrown(ForbiddenException.class);
+        } catch (ForbiddenException e) {
             assertThat(e.getResponse().getStatus()).isEqualTo(403);
         }
     }
