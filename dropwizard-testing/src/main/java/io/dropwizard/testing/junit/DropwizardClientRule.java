@@ -1,6 +1,7 @@
 package io.dropwizard.testing.junit;
 
 import com.codahale.metrics.health.HealthCheck;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
 import io.dropwizard.jetty.HttpConnectorFactory;
@@ -67,6 +68,14 @@ public class DropwizardClientRule extends ExternalResource {
 
     public URI baseUri() {
         return URI.create("http://localhost:" + testSupport.getLocalPort() + "/application");
+    }
+
+    public ObjectMapper getObjectMapper() {
+        return testSupport.getObjectMapper();
+    }
+
+    public Environment getEnvironment() {
+        return testSupport.getEnvironment();
     }
 
     @Override
