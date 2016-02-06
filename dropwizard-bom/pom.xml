@@ -779,7 +779,7 @@
             <dependency>
                 <groupId>io.dropwizard</groupId>
                 <artifactId>dropwizard-request-logging</artifactId>
-                <version>${dropwizard.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.dropwizard</groupId>
