@@ -28,7 +28,6 @@ public class OptionalHeaderParamResourceTest extends JerseyTest {
     protected Application configure() {
         forceSet(TestProperties.CONTAINER_PORT, "0");
         return DropwizardResourceConfig.forTesting(new MetricRegistry())
-                .register(OptionalParamFeature.class)
                 .register(OptionalHeaderParamResource.class)
                 .register(MyMessageParamConverterProvider.class);
     }

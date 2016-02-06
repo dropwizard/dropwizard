@@ -62,6 +62,9 @@ public class DropwizardResourceConfig extends ResourceConfig {
         register(io.dropwizard.jersey.guava.OptionalMessageBodyWriter.class);
         register(io.dropwizard.jersey.guava.OptionalParamFeature.class);
         register(io.dropwizard.jersey.optional.OptionalMessageBodyWriter.class);
+        register(io.dropwizard.jersey.optional.OptionalDoubleMessageBodyWriter.class);
+        register(io.dropwizard.jersey.optional.OptionalIntMessageBodyWriter.class);
+        register(io.dropwizard.jersey.optional.OptionalLongMessageBodyWriter.class);
         register(io.dropwizard.jersey.optional.OptionalParamFeature.class);
         register(NonEmptyStringParamFeature.class);
         register(new SessionFactoryProvider.Binder());
