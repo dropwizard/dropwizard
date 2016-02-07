@@ -69,4 +69,12 @@ public class LoggingExceptionMapperTest extends JerseyTest {
             assertThat(response.readEntity(String.class)).isEqualTo("{\"code\":400,\"message\":\"KAPOW\"}");
         }
     }
+
+    @Test
+    public void handlesRedirectInWebApplicationException() {
+        String responseText = target("/exception/web-application-exception-with-redirect")
+            .request(MediaType.APPLICATION_JSON)
+            .get(String.class);
+        assertThat(responseText).isEqualTo("{\"status\":\"OK\"}");
+    }
 }
