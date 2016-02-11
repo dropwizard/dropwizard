@@ -4,10 +4,12 @@ import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.ScheduledReporter;
 import com.codahale.metrics.graphite.Graphite;
 import com.codahale.metrics.graphite.GraphiteReporter;
+import com.codahale.metrics.graphite.GraphiteUDP;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.google.common.annotations.VisibleForTesting;
 import io.dropwizard.metrics.BaseReporterFactory;
+import io.dropwizard.validation.OneOf;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.hibernate.validator.constraints.Range;
 
@@ -38,6 +40,12 @@ import javax.validation.constraints.NotNull;
  *         <td><i>None</i></td>
  *         <td>The prefix for Metric key names to report to Graphite.</td>
  *     </tr>
+ *     <tr>
+ *         <td>transport</td>
+ *         <td><i>tcp</i></td>
+ *         <td>The transport used to report to Graphite. One of {@code tcp} or
+ *         {@code udp}.</td>
+ *     </tr>
  * </table>
  */
 @JsonTypeName("graphite")
@@ -50,6 +58,10 @@ public class GraphiteReporterFactory extends BaseReporterFactory {
 
     @NotNull
     private String prefix = "";
+
+    @NotNull
+    @OneOf(value = {"tcp", "udp"}, ignoreCase = true)
+    private String transport = "tcp";
 
     @JsonProperty
     public String getHost() {
@@ -81,9 +93,25 @@ public class GraphiteReporterFactory extends BaseReporterFactory {
         this.prefix = prefix;
     }
 
+    @JsonProperty
+    public String getTransport() {
+        return transport;
+    }
+
+    @JsonProperty
+    public void setTransport(String transport) {
+        this.transport = transport;
+    }
+
     @Override
     public ScheduledReporter build(MetricRegistry registry) {
-        return builder(registry).build(new Graphite(host, port));
+        GraphiteReporter.Builder builder = builder(registry);
+
+        if ("udp".equalsIgnoreCase(transport)) {
+            return builder.build(new GraphiteUDP(host, port));
+        } else {
+            return builder.build(new Graphite(host, port));
+        }
     }
 
     @VisibleForTesting
