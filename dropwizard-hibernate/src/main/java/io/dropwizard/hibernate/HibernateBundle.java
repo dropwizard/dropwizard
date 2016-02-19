@@ -1,15 +1,18 @@
 package io.dropwizard.hibernate;
 
+import org.hibernate.SessionFactory;
+
 import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
+import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module.Feature;
 import com.google.common.collect.ImmutableList;
+
 import io.dropwizard.Configuration;
 import io.dropwizard.ConfiguredBundle;
-import io.dropwizard.db.PooledDataSourceFactory;
 import io.dropwizard.db.DatabaseConfiguration;
+import io.dropwizard.db.PooledDataSourceFactory;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.util.Duration;
-import org.hibernate.SessionFactory;
 
 public abstract class HibernateBundle<T extends Configuration> implements ConfiguredBundle<T>, DatabaseConfiguration<T> {
     public static final String DEFAULT_NAME = "hibernate";
@@ -39,7 +42,7 @@ public abstract class HibernateBundle<T extends Configuration> implements Config
      * Override to configure the {@link Hibernate5Module}.
      */
     protected Hibernate5Module createHibernate5Module() {
-        return new Hibernate5Module();
+        return new Hibernate5Module().enable(Feature.FORCE_LAZY_LOADING);
     }
 
     /**
