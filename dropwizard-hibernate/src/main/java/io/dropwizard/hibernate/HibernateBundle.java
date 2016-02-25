@@ -18,6 +18,7 @@ public abstract class HibernateBundle<T extends Configuration> implements Config
     public static final String DEFAULT_NAME = "hibernate";
 
     private SessionFactory sessionFactory;
+    private boolean lazyLoadingEnabled = true;
 
     private final ImmutableList<Class<?>> entities;
     private final SessionFactoryFactory sessionFactoryFactory;
@@ -42,7 +43,11 @@ public abstract class HibernateBundle<T extends Configuration> implements Config
      * Override to configure the {@link Hibernate5Module}.
      */
     protected Hibernate5Module createHibernate5Module() {
-        return new Hibernate5Module().enable(Feature.FORCE_LAZY_LOADING);
+        Hibernate5Module module = new Hibernate5Module();
+        if(lazyLoadingEnabled) {
+            module.enable(Feature.FORCE_LAZY_LOADING);
+        }
+        return module;
     }
 
     /**
@@ -75,6 +80,14 @@ public abstract class HibernateBundle<T extends Configuration> implements Config
         final UnitOfWorkApplicationListener listener = new UnitOfWorkApplicationListener();
         environment.jersey().register(listener);
         return listener;
+    }
+    
+    public boolean isLazyLoadingEnabled() {
+        return lazyLoadingEnabled;
+    }
+
+    public void setLazyLoadingEnabled(boolean lazyLoadingEnabled) {
+        this.lazyLoadingEnabled = lazyLoadingEnabled;
     }
 
     public SessionFactory getSessionFactory() {

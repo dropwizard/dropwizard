@@ -35,6 +35,10 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 
 public class LazyLoadingTest extends JerseyTest {
+    
+    private Bootstrap<?> bootstrap;
+    private HibernateBundle<Configuration> bundle;
+    
     static {
         BootstrapLogging.bootstrap();
     }
@@ -88,7 +92,7 @@ public class LazyLoadingTest extends JerseyTest {
         final LifecycleEnvironment lifecycleEnvironment = mock(LifecycleEnvironment.class);
         when(environment.lifecycle()).thenReturn(lifecycleEnvironment);
         when(environment.metrics()).thenReturn(metricRegistry);
-        final HibernateBundle<Configuration> bundle = new HibernateBundle<Configuration>(null, factory) {
+        bundle = new HibernateBundle<Configuration>(null, factory) {
             @Override
             public DataSourceFactory getDataSourceFactory(Configuration configuration) {
                 return dbConfig;
@@ -125,12 +129,12 @@ public class LazyLoadingTest extends JerseyTest {
             session.close();
         }
         
+        bootstrap = mock(Bootstrap.class);
         final ObjectMapper objMapper = Jackson.newObjectMapper();
-        final Bootstrap<?> bootstrap = mock(Bootstrap.class);
         when(bootstrap.getObjectMapper()).thenReturn(objMapper);
-        bundle.initialize(bootstrap);
+        // Bundle is initialised at start of actual test methods to allow lazy loading to be enabled or disabled.
 
-        final DropwizardResourceConfig config = DropwizardResourceConfig.forTesting(new MetricRegistry());
+        final DropwizardResourceConfig config = DropwizardResourceConfig.forTesting(metricRegistry);
         config.register(new UnitOfWorkApplicationListener("hr-db", sessionFactory));
         config.register(new DogResource(new DogDAO(sessionFactory)));
         config.register(new JacksonMessageBodyProvider(objMapper));
@@ -145,7 +149,9 @@ public class LazyLoadingTest extends JerseyTest {
     }
 
     @Test
-    public void serialisesLazyObject() throws Exception {
+    public void serialisesLazyObjectWhenEnabled() throws Exception {
+        bundle.initialize(bootstrap);
+        
         final Dog raf = target("/dogs/Raf").request(MediaType.APPLICATION_JSON).get(Dog.class);
 
         assertThat(raf.getName())
@@ -156,5 +162,19 @@ public class LazyLoadingTest extends JerseyTest {
 
         assertThat(raf.getOwner().getName())
                 .isEqualTo("Coda");
+    }
+    
+    @Test
+    public void sendsNullWhenDisabled() throws Exception {
+        bundle.setLazyLoadingEnabled(false);
+        bundle.initialize(bootstrap);
+        
+        final Dog raf = target("/dogs/Raf").request(MediaType.APPLICATION_JSON).get(Dog.class);
+
+        assertThat(raf.getName())
+                .isEqualTo("Raf");
+
+        assertThat(raf.getOwner())
+                .isNull();
     }
 }
