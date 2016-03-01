@@ -430,8 +430,37 @@ behavior. For example, ``AssetBundle`` from the ``dropwizard-assets`` module pro
 to serve static assets from your application's ``src/main/resources/assets`` directory as files
 available from ``/assets/*`` (or any other path) in your application.
 
+Configured Bundles
+------------------
+
 Some bundles require configuration parameters. These bundles implement ``ConfiguredBundle`` and will
 require your application's ``Configuration`` subclass to implement a specific interface.
+
+
+For example: given the configured bundle ``MyConfiguredBundle`` and the interface ``MyConfiguredBundleConfig`` below.
+Your application's ``Configuration`` subclass would need to implement ``MyConfiguredBundleConfig``.
+
+.. code-block:: java
+
+    public class MyConfiguredBundle implements ConfiguredBundle<MyConfiguredBundleConfig>{
+
+        @Override
+        public void run(MyConfiguredBundleConfig applicationConfig, Environment environment) {
+            applicationConfig.getBundleSpecificConfig();
+        }
+
+        @Override
+        public void initialize(Bootstrap<?> bootstrap) {
+
+        }
+    }
+
+    public interface MyConfiguredBundleConfig{
+
+        String getBundleSpecificConfig();
+
+    }
+
 
 Serving Assets
 --------------
