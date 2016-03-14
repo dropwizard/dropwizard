@@ -41,7 +41,7 @@ v1.0.0
 * Upgraded to Liquibase 3.4.2
 * Upgraded to liquibase-slf4j 2.0.0
 * Upgraded to Mustache 0.9.1
-* Upgraded to SLF4J 1.7.16
+* Upgraded to SLF4J 1.7.18
 * Upgraded to tomcat-jdbc 8.0.32
 * Upgraded to AssertJ 3.3.0
 
