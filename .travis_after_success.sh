@@ -22,4 +22,4 @@ if [[ "$TRAVIS_PULL_REQUEST" = "true" ]]; then
     exit
 fi
 
-mvn -B deploy --settings maven_deploy_settings.xml -Dmaven.test.skip=true -Dmaven.javadoc.skip=true -Dsource.skip=true -Dfindbugs.skip=true
+mvn -B deploy --settings maven_deploy_settings.xml -Dmaven.test.skip=true -Dfindbugs.skip=true
