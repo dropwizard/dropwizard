@@ -425,8 +425,8 @@ public class ConfigurationFactoryTest {
             factory.build(resourceFileName);
             fail("Should print a detailed error on a malformed YAML file");
         } catch (Exception e) {
-            assertThat(e.getMessage()).isEqualTo(resourceFileName + " has an error:" + NEWLINE +
-                    "  * Malformed YAML at line: 2, column: 21; while parsing a flow sequence\n" +
+            assertThat(e.getMessage()).isEqualTo(
+                    "YAML decoding problem: while parsing a flow sequence\n" +
                     " in 'reader', line 2, column 7:\n" +
                     "    type: [ coder,wizard\n" +
                     "          ^\n" +

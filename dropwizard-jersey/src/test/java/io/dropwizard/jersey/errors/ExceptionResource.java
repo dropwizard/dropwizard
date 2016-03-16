@@ -10,6 +10,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import java.io.IOException;
+import java.io.StringReader;
 import java.net.URI;
 
 @Path("/exception/")
@@ -23,7 +24,7 @@ public class ExceptionResource {
     @GET
     @Path("json-mapping-exception")
     public void jsonMappingException() throws JsonMappingException {
-        throw new JsonMappingException("BOOM");
+        throw new JsonMappingException(new StringReader(""), "BOOM");
     }
 
     @GET

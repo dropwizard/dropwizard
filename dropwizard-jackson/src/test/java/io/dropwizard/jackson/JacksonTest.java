@@ -5,6 +5,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class JacksonTest
@@ -24,5 +28,18 @@ public class JacksonTest
 
         assertThat(mapper.getFactory()).isNotNull();
     }
+
+    @Test
+    public void objectMapperCanDeserializeJdk7Types() throws IOException {
+        final LogMetadata metadata = Jackson.newObjectMapper()
+            .readValue("{\"path\": \"/var/log/app/server.log\"}", LogMetadata.class);
+        assertThat(metadata).isNotNull();
+        assertThat(metadata.path).isEqualTo(Paths.get("/var/log/app/server.log"));
+    }
+
+     static class LogMetadata {
+
+         public Path path;
+     }
 
 }
