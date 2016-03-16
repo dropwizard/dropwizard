@@ -4,9 +4,13 @@ import com.codahale.metrics.annotation.Timed;
 import com.google.common.collect.ImmutableList;
 import io.dropwizard.jersey.params.IntParam;
 import io.dropwizard.testing.Person;
+import io.dropwizard.validation.Validated;
 import org.eclipse.jetty.io.EofException;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Min;
+import javax.validation.groups.Default;
+import javax.ws.rs.BeanParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -56,5 +60,19 @@ public class PersonResource {
     @Path("/eof-exception")
     public Person eofException() throws Exception {
         throw new EofException("I'm an eof exception!");
+    }
+
+    @POST
+    @Path("/validation-groups-exception")
+    public String validationGroupsException(
+        @Valid @Validated(Partial1.class) @BeanParam BeanParameter params,
+        @Valid @Validated(Default.class) byte[] entity) {
+        return params.age.toString() + entity.length;
+    }
+
+    public interface Partial1 { }
+    public static class BeanParameter {
+        @QueryParam("age")
+        public Integer age;
     }
 }

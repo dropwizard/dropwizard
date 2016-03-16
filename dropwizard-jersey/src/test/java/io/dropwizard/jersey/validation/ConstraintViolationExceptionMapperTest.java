@@ -198,6 +198,31 @@ public class ConstraintViolationExceptionMapperTest extends JerseyTest {
     }
 
     @Test
+    public void getGroupSubBeanParamsIs400() throws Exception {
+        final Response response = target("/valid/sub-group-zoo")
+            .queryParam("address", "42 WALLABY WAY")
+            .queryParam("name", "Coda")
+            .request().get();
+        assertThat(response.getStatus()).isEqualTo(400);
+
+        assertThat(response.readEntity(String.class))
+            .containsOnlyOnce("[\"address must not be uppercase\"]");
+    }
+
+    @Test
+    public void postValidGroupsIs400() throws Exception {
+        final Response response = target("/valid/sub-valid-group-zoo")
+            .queryParam("address", "42 WALLABY WAY")
+            .queryParam("name", "Coda")
+            .request()
+            .post(Entity.json("{}"));
+        assertThat(response.getStatus()).isEqualTo(400);
+
+        assertThat(response.readEntity(String.class))
+            .containsOnlyOnce("[\"address must not be uppercase\"]");
+    }
+
+    @Test
     public void getInvalidatedBeanParamsIs400() throws Exception {
         // bean parameter is too short and so will fail validation
         final Response response = target("/valid/zoo2")

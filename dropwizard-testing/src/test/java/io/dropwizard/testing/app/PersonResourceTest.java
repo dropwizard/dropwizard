@@ -112,6 +112,17 @@ public class PersonResourceTest {
     }
 
     @Test
+    public void testValidationGroupsException() {
+        final Response resp = resources.client().target("/person/blah/validation-groups-exception")
+            .request()
+            .post(Entity.json("{}"));
+        assertThat(resp.getStatus()).isEqualTo(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+        assertThat(resp.readEntity(String.class))
+            .isEqualTo("{\"code\":500,\"message\":\"Parameters must have the same" +
+                " validation groups in validationGroupsException\"}");
+    }
+
+    @Test
     public void testCustomClientConfiguration() {
         assertThat(resources.client().getConfiguration().isRegistered(DummyExceptionMapper.class)).isTrue();
     }

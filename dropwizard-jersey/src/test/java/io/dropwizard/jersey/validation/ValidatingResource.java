@@ -140,6 +140,20 @@ public class ValidatingResource {
     }
 
     @GET
+    @Path("sub-group-zoo")
+    public String subGroupBlazer(@Valid @Validated(Partial1.class) @BeanParam SubBeanParameter params) {
+        return params.getName() + " " + params.getAddress();
+    }
+
+    @POST
+    @Path("sub-valid-group-zoo")
+    public String subValidGroupBlazer(
+        @Valid @Validated(Partial1.class) @BeanParam SubBeanParameter params,
+        @Valid @Validated(Partial1.class) ValidRepresentation entity) {
+        return params.getName() + " " + params.getAddress() + " " + entity.getName();
+    }
+
+    @GET
     @Path("zoo2")
     public String blazerValidated(@Validated @Valid @BeanParam BeanParameter params) {
         return params.getName();
