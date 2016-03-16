@@ -19,8 +19,8 @@ loggers:
     additive: false
     appenders:
       - type: file
-        currentLogFilename: '${new_app}.log'
-        archivedLogFilenamePattern: '${new_app}-%d.log.gz'
+        currentLogFilename: '${new_app_not_additive}.log'
+        archivedLogFilenamePattern: '${new_app_not_additive}-%d.log.gz'
         logFormat: "%-5level %logger: %msg%n"
         archivedFileCount: 5
 appenders:
