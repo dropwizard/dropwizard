@@ -15,11 +15,11 @@ import com.fasterxml.jackson.databind.introspect.AnnotatedParameter;
 public class AnnotationSensitivePropertyNamingStrategy extends PropertyNamingStrategy {
     private static final long serialVersionUID = -1372862028366311230L;
 
-    private final LowerCaseWithUnderscoresStrategy snakeCase;
+    private final SnakeCaseStrategy snakeCase;
 
     public AnnotationSensitivePropertyNamingStrategy() {
         super();
-        this.snakeCase = new LowerCaseWithUnderscoresStrategy();
+        this.snakeCase = new SnakeCaseStrategy();
     }
 
     @Override
