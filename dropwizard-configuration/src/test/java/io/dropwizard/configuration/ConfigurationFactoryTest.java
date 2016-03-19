@@ -130,6 +130,7 @@ public class ConfigurationFactoryTest {
     private File emptyFile;
     private File invalidFile;
     private File validFile;
+    private File importingFile;
 
     private static File resourceFileName(String resourceName) throws URISyntaxException {
         return new File(Resources.getResource(resourceName).toURI());
@@ -151,6 +152,7 @@ public class ConfigurationFactoryTest {
         this.emptyFile = resourceFileName("factory-test-empty.yml");
         this.invalidFile = resourceFileName("factory-test-invalid.yml");
         this.validFile = resourceFileName("factory-test-valid.yml");
+        this.importingFile = resourceFileName("factory-test-importing.yml");
     }
 
     @Test
@@ -372,6 +374,13 @@ public class ConfigurationFactoryTest {
         assertThat(example.servers.get(0).getPort()).isEqualTo(8080);
         assertThat(example.servers.get(1).getPort()).isEqualTo(8081);
         assertThat(example.servers.get(2).getPort()).isEqualTo(8082);
+    }
+
+    @Test
+    public void importConfigurationFile() throws Exception {
+        final Example example = factory.build(importingFile);
+
+        assertThat(example.getName()).isEqualTo("Coda Hale");
     }
 
     @Test
