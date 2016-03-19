@@ -382,7 +382,7 @@ By creating a DropwizardTestSupport instance in your test you can manually start
 
         @Test
         public void loginHandlerRedirectsAfterPost() {
-            Client client = new JerseyClientBuilder(SUPPORT.getEnvironment()).build("test client");
+            Client client = new JerseyClientBuilder().build();
 
             Response response = client.target(
                      String.format("http://localhost:%d/login", SUPPORT.getLocalPort()))
