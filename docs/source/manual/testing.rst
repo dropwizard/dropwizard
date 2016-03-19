@@ -365,16 +365,19 @@ By creating a DropwizardTestSupport instance in your test you can manually start
     public class LoginAcceptanceTest {
 
         public static final DropwizardTestSupport<TestConfiguration> SUPPORT =
-                new DropwizardTestSupport<TestConfiguration>(MyApp.class, ResourceHelpers.resourceFilePath("my-app-config.yaml"));
+                new DropwizardTestSupport<TestConfiguration>(MyApp.class,
+                    ResourceHelpers.resourceFilePath("my-app-config.yaml"),
+                    ConfigOverride.config("server.applicationConnectors[0].port", "0") // create random port
+                );
 
         @BeforeClass
         public void beforeClass() {
-          SUPPORT.before();
+            SUPPORT.before();
         }
 
         @AfterClass
         public void afterClass() {
-          SUPPORT.after();
+            SUPPORT.after();
         }
 
         @Test
@@ -382,7 +385,7 @@ By creating a DropwizardTestSupport instance in your test you can manually start
             Client client = new JerseyClientBuilder(SUPPORT.getEnvironment()).build("test client");
 
             Response response = client.target(
-                     String.format("http://localhost:%d/login", RULE.getLocalPort()))
+                     String.format("http://localhost:%d/login", SUPPORT.getLocalPort()))
                     .request()
                     .post(Entity.json(loginForm()));
 
