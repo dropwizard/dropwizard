@@ -326,7 +326,10 @@ The ``DropwizardClientRule`` takes care of:
 Integration Testing
 ===================
 
-It can be useful to start up your entire app and hit it with real HTTP requests during testing.
+It can be useful to start up your entire application and hit it with real HTTP requests during testing.
+The ``dropwizard-testing`` module offers helper classes for your easily doing so.
+The optional ``dropwizard-client`` module offers more helpers, e.g. a custom JerseyClientBuilder,
+which is aware of your application's environment.
 
 JUnit
 -----
@@ -367,7 +370,7 @@ By creating a DropwizardTestSupport instance in your test you can manually start
         public static final DropwizardTestSupport<TestConfiguration> SUPPORT =
                 new DropwizardTestSupport<TestConfiguration>(MyApp.class,
                     ResourceHelpers.resourceFilePath("my-app-config.yaml"),
-                    ConfigOverride.config("server.applicationConnectors[0].port", "0") // create random port
+                    ConfigOverride.config("server.applicationConnectors[0].port", "0") // Optional, if not using a separate testing-specific configuration file, use a randomly selected port
                 );
 
         @BeforeClass
@@ -382,7 +385,7 @@ By creating a DropwizardTestSupport instance in your test you can manually start
 
         @Test
         public void loginHandlerRedirectsAfterPost() {
-            Client client = new JerseyClientBuilder().build();
+            Client client = new JerseyClientBuilder(SUPPORT.getEnvironment()).build("test client");
 
             Response response = client.target(
                      String.format("http://localhost:%d/login", SUPPORT.getLocalPort()))
