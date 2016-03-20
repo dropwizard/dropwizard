@@ -1,0 +1,3 @@
+io.dropwizard.servlets
+io.dropwizard.servlets.assets
+io.dropwizard.servlets.tasks
