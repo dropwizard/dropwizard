@@ -96,6 +96,14 @@ import java.util.concurrent.TimeUnit;
  *         </td>
  *     </tr>
  *     <tr>
+ *         <td>{@code rollbackOnReturn}</td>
+ *         <td>{@code false}</td>
+ *         <td>
+ *             Set to true if you want the connection pool to rollback any pending transaction when a
+ *             connection is returned.
+ *         </td>
+ *     </tr>
+ *     <tr>
  *         <td>{@code autoCommitByDefault}</td>
  *         <td>JDBC driver's default</td>
  *         <td>The default auto-commit state of the connections.</td>
@@ -308,6 +316,8 @@ public class DataSourceFactory implements PooledDataSourceFactory {
     private boolean alternateUsernamesAllowed = false;
 
     private boolean commitOnReturn = false;
+
+    private boolean rollbackOnReturn = false;
 
     private Boolean autoCommitByDefault;
 
@@ -566,8 +576,18 @@ public class DataSourceFactory implements PooledDataSourceFactory {
     }
 
     @JsonProperty
+    public boolean getRollbackOnReturn() {
+        return rollbackOnReturn;
+    }
+
+    @JsonProperty
     public void setCommitOnReturn(boolean commitOnReturn) {
         this.commitOnReturn = commitOnReturn;
+    }
+
+    @JsonProperty
+    public void setRollbackOnReturn(boolean rollbackOnReturn) {
+        this.rollbackOnReturn = rollbackOnReturn;
     }
 
     @JsonProperty
@@ -796,6 +816,7 @@ public class DataSourceFactory implements PooledDataSourceFactory {
         poolConfig.setAbandonWhenPercentageFull(abandonWhenPercentageFull);
         poolConfig.setAlternateUsernameAllowed(alternateUsernamesAllowed);
         poolConfig.setCommitOnReturn(commitOnReturn);
+        poolConfig.setRollbackOnReturn(rollbackOnReturn);
         poolConfig.setDbProperties(properties);
         poolConfig.setDefaultAutoCommit(autoCommitByDefault);
         poolConfig.setDefaultCatalog(defaultCatalog);

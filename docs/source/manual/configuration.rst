@@ -69,7 +69,7 @@ GZip
 .. code-block:: yaml
 
     server:
-      gzip: 
+      gzip:
         bufferSize: 8KiB
 
 
@@ -105,7 +105,7 @@ Request Log
 .. code-block:: yaml
 
     server:
-      requestLog: 
+      requestLog:
         timeZone: UTC
 
 
@@ -224,7 +224,7 @@ Name                      Default                   Description
 applicationConnectors     An `HTTP connector`_      A set of :ref:`connectors <man-configuration-connectors>` which will
                           listening on port 8080.   handle application requests.
 adminConnectors           An `HTTP connector`_      An `HTTP connector`_ listening on port 8081.
-                          listening on port 8081.   A set of :ref:`connectors <man-configuration-connectors>` which will 
+                          listening on port 8081.   A set of :ref:`connectors <man-configuration-connectors>` which will
                                                     handle admin requests.
 adminMinThreads           1                         The minimum number of threads to use for admin requests.
 adminMaxThreads           64                        The maximum number of threads to use for admin requests.
@@ -246,7 +246,7 @@ HTTP
 ----
 
 .. code-block:: yaml
-    
+
     # Extending from the default server configuration
     server:
       applicationConnectors:
@@ -300,7 +300,7 @@ idleTimeout              30 seconds          The maximum idle time for a connect
                                              or when waiting for a new message to be sent on a connection.
                                              This value is interpreted as the maximum time between some progress being made on the
                                              connection. So if a single byte is read or written, then the timeout is reset.
-minBufferPoolSize        64 bytes            The minimum size of the buffer pool. 
+minBufferPoolSize        64 bytes            The minimum size of the buffer pool.
 bufferPoolIncrement      1KiB                The increment by which the buffer pool should be increased.
 maxBufferPoolSize        64KiB               The maximum size of the buffer pool.
 acceptorThreads          # of CPUs/2         The number of worker threads dedicated to accepting connections.
@@ -327,7 +327,7 @@ HTTPS
 Extends the attributes that are available to the :ref:`HTTP connector <man-configuration-http>`
 
 .. code-block:: yaml
-    
+
     # Extending from the default server configuration
     server:
       applicationConnectors:
@@ -337,14 +337,14 @@ Extends the attributes that are available to the :ref:`HTTP connector <man-confi
           keyStorePath: /path/to/file
           keyStorePassword: changeit
           keyStoreType: JKS
-          keyStoreProvider: 
+          keyStoreProvider:
           trustStorePath: /path/to/file
           trustStorePassword: changeit
           trustStoreType: JKS
-          trustStoreProvider: 
+          trustStoreProvider:
           keyManagerPassword: changeit
           needClientAuth: false
-          wantClientAuth: 
+          wantClientAuth:
           certAlias: <alias>
           crlPath: /path/to/file
           enableCRLDP: false
@@ -395,8 +395,8 @@ excludedProtocols                (none)              A list of protocols (e.g., 
 supportedCipherSuites            (none)              A list of cipher suites (e.g., ``TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256``) which
                                                      are supported. All other cipher suites will be refused
 excludedCipherSuites             (none)              A list of cipher suites (e.g., ``TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256``) which
-                                                     are excluded. These cipher suites will be refused and exclusion takes higher 
-                                                     precedence than inclusion, such that if a cipher suite is listed in 
+                                                     are excluded. These cipher suites will be refused and exclusion takes higher
+                                                     precedence than inclusion, such that if a cipher suite is listed in
                                                      ``supportedCipherSuites`` and ``excludedCipherSuites``, the cipher suite will be
                                                      excluded. To verify that the proper cipher suites are being whitelisted and
                                                      blacklisted, it is recommended to use the tool `sslyze`_.
@@ -594,7 +594,7 @@ threshold                    ALL          The lowest level of events to write to
 archive                      true         Whether or not to archive old events in separate files.
 archivedLogFilenamePattern   (none)       Required if ``archive`` is ``true``.
                                           The filename pattern for archived files. ``%d`` is replaced with the date in ``yyyy-MM-dd`` form,
-                                          and the fact that it ends with ``.gz`` indicates the file will be gzipped as it's archived.                                
+                                          and the fact that it ends with ``.gz`` indicates the file will be gzipped as it's archived.
                                           Likewise, filename patterns which end in ``.zip`` will be filled as they are archived.
 archivedFileCount            5            The number of archived files to keep. Must be between ``1`` and ``50``.
 timeZone                     UTC          The time zone to which event timestamps will be converted.
@@ -835,11 +835,11 @@ Name                   Default          Description
 ====================== ===============  ====================================================================================================
 host                   localhost        The hostname (or group) of the Ganglia server(s) to report to.
 port                   8649             The port of the Ganglia server(s) to report to.
-mode                   unicast          The UDP addressing mode to announce the metrics with. One of ``unicast`` 
+mode                   unicast          The UDP addressing mode to announce the metrics with. One of ``unicast``
                                         or ``multicast``.
 ttl                    1                The time-to-live of the UDP packets for the announced metrics.
 uuid                   (none)           The UUID to tag announced metrics with.
-spoof                  (none)           The hostname and port to use instead of this nodes for the announced metrics. 
+spoof                  (none)           The hostname and port to use instead of this nodes for the announced metrics.
                                         In the format ``hostname:port``.
 tmax                   60               The tmax value to announce metrics with.
 dmax                   0                The dmax value to announce metrics with.
@@ -1026,7 +1026,7 @@ TLS
 Name                         Default            Description
 ===========================  =================  ============================================================================================================================
 protocol                     TLSv1.2            The default protocol the client will attempt to use during the SSL Handshake.
-                                                See 
+                                                See
                                                 `here <http://docs.oracle.com/javase/8/docs/technotes/guides/security/StandardNames.html#SSLContext>`_ for more information.
 verifyHostname               true               Whether to verify the hostname of the server against the hostname presented in the server certificate.
 keyStorePath                 (none)             The path to the Java key store which contains the client certificate and private key.
@@ -1124,6 +1124,10 @@ alternateUsernamesAllowed       false                    Set to true if the call
 
 commitOnReturn                  false                    Set to true if you want the connection pool to commit any
                                                          pending transaction when a connection is returned.
+
+rollbackOnReturn                false                    Set to true if you want the connection pool to rollback any
+                                                         pending transaction when a connection is returned.
+
 
 autoCommitByDefault             JDBC driver's default    The default auto-commit state of the connections.
 
