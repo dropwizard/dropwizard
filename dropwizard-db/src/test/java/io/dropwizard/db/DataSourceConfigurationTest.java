@@ -39,6 +39,7 @@ public class DataSourceConfigurationTest {
         assertThat(ds.getAbandonWhenPercentageFull()).isEqualTo(75);
         assertThat(ds.isAlternateUsernamesAllowed()).isTrue();
         assertThat(ds.getCommitOnReturn()).isTrue();
+        assertThat(ds.getRollbackOnReturn()).isTrue();
         assertThat(ds.getAutoCommitByDefault()).isFalse();
         assertThat(ds.getDefaultCatalog()).isEqualTo("test_catalog");
         assertThat(ds.getDefaultTransactionIsolation())
@@ -80,6 +81,7 @@ public class DataSourceConfigurationTest {
         assertThat(ds.getAbandonWhenPercentageFull()).isEqualTo(0);
         assertThat(ds.isAlternateUsernamesAllowed()).isFalse();
         assertThat(ds.getCommitOnReturn()).isFalse();
+        assertThat(ds.getRollbackOnReturn()).isFalse();
         assertThat(ds.getAutoCommitByDefault()).isNull();
         assertThat(ds.getDefaultCatalog()).isNull();
         assertThat(ds.getDefaultTransactionIsolation())

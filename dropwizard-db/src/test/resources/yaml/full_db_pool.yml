@@ -27,6 +27,7 @@ autoCommentsEnabled: false
 abandonWhenPercentageFull: 75
 alternateUsernamesAllowed: true
 commitOnReturn: true
+rollbackOnReturn: true
 autoCommitByDefault: false
 defaultCatalog: test_catalog
 defaultTransactionIsolation: read-committed
