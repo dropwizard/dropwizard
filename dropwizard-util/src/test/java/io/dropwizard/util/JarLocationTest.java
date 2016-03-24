@@ -1,7 +1,8 @@
 package io.dropwizard.util;
 
-import com.google.common.base.Optional;
 import org.junit.Test;
+
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -15,6 +16,6 @@ public class JarLocationTest {
     @Test
     public void hasAVersion() throws Exception {
         assertThat(new JarLocation(JarLocationTest.class).getVersion())
-                .isEqualTo(Optional.<String>absent());
+                .isEqualTo(Optional.empty());
     }
 }

@@ -1,13 +1,13 @@
 package io.dropwizard.testing.junit;
 
-import com.google.common.base.Optional;
 import org.junit.ClassRule;
 import org.junit.Test;
 
 import javax.ws.rs.client.ClientBuilder;
+import java.util.Optional;
 
-import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static io.dropwizard.testing.ConfigOverride.config;
+import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 

@@ -101,7 +101,7 @@ public class Cli {
     private ArgumentParser buildParser(JarLocation location) {
         final String usage = "java -jar " + location;
         final ArgumentParser p = ArgumentParsers.newArgumentParser(usage, false);
-        p.version(location.getVersion().or(
+        p.version(location.getVersion().orElse(
                 "No application version detected. Add a Implementation-Version " +
                         "entry to your JAR's manifest to enable this."));
         addHelp(p);

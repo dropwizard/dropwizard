@@ -3,9 +3,10 @@ package io.dropwizard.metrics;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.ScheduledReporter;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.google.common.base.Optional;
 import io.dropwizard.jackson.Discoverable;
 import io.dropwizard.util.Duration;
+
+import java.util.Optional;
 
 /**
  * A service provider interface for creating metrics {@link ScheduledReporter reporters}.

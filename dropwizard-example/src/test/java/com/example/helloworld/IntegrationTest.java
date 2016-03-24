@@ -1,8 +1,7 @@
 package com.example.helloworld;
 
-import com.example.helloworld.core.Person;
 import com.example.helloworld.api.Saying;
-import com.google.common.base.Optional;
+import com.example.helloworld.core.Person;
 import io.dropwizard.testing.ConfigOverride;
 import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit.DropwizardAppRule;
@@ -14,6 +13,7 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import java.io.File;
 import java.io.IOException;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -54,7 +54,7 @@ public class IntegrationTest {
 
     @Test
     public void testHelloWorld() throws Exception {
-        final Optional<String> name = Optional.fromNullable("Dr. IntegrationTest");
+        final Optional<String> name = Optional.of("Dr. IntegrationTest");
         final Saying saying = client.target("http://localhost:" + RULE.getLocalPort() + "/hello-world")
                 .queryParam("name", name.get())
                 .request()

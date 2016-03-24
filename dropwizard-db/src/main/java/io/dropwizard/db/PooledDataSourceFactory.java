@@ -1,7 +1,7 @@
 package io.dropwizard.db;
 
 import com.codahale.metrics.MetricRegistry;
-import com.google.common.base.Optional;
+import java.util.Optional;
 import io.dropwizard.util.Duration;
 
 import java.util.Map;

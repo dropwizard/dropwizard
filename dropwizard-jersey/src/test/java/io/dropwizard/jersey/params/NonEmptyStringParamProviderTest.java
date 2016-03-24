@@ -56,7 +56,7 @@ public class NonEmptyStringParamProviderTest extends JerseyTest {
         @GET
         @Path("/string")
         public String getMessage(@QueryParam("message") NonEmptyStringParam message) {
-            return message.get().or("Hello");
+            return message.get().orElse("Hello");
         }
     }
 }

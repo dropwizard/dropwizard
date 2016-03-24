@@ -1,7 +1,6 @@
 package io.dropwizard.testing;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -9,9 +8,7 @@ import io.dropwizard.Application;
 import io.dropwizard.Configuration;
 import io.dropwizard.cli.ServerCommand;
 import io.dropwizard.configuration.ConfigurationFactory;
-import io.dropwizard.configuration.ConfigurationFactoryFactory;
 import io.dropwizard.lifecycle.Managed;
-import io.dropwizard.lifecycle.ServerLifecycleListener;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import net.sourceforge.argparse4j.inf.Namespace;
@@ -20,9 +17,9 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 
 import javax.annotation.Nullable;
-import javax.validation.Validator;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import static com.google.common.base.MoreObjects.firstNonNull;
@@ -60,7 +57,7 @@ public class DropwizardTestSupport<C extends Configuration> {
     public DropwizardTestSupport(Class<? extends Application<C>> applicationClass,
                              @Nullable String configPath,
                              ConfigOverride... configOverrides) {
-        this(applicationClass, configPath, Optional.<String>absent(), configOverrides);
+        this(applicationClass, configPath, Optional.empty(), configOverrides);
     }
 
     public DropwizardTestSupport(Class<? extends Application<C>> applicationClass, String configPath,
@@ -91,7 +88,7 @@ public class DropwizardTestSupport<C extends Configuration> {
         this.applicationClass = applicationClass;
         configPath = "";
         configOverrides = ImmutableSet.of();
-        customPropertyPrefix = Optional.absent();
+        customPropertyPrefix = Optional.empty();
         this.configuration = configuration;
         explicitConfig = true;
     }

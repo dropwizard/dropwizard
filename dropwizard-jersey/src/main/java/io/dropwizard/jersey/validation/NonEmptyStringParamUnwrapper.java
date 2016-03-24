@@ -13,7 +13,7 @@ import java.lang.reflect.Type;
 public class NonEmptyStringParamUnwrapper extends ValidatedValueUnwrapper<NonEmptyStringParam> {
     @Override
     public Object handleValidatedValue(final NonEmptyStringParam nonEmptyStringParam) {
-        return nonEmptyStringParam.get().orNull();
+        return nonEmptyStringParam.get().orElse(null);
     }
 
     @Override

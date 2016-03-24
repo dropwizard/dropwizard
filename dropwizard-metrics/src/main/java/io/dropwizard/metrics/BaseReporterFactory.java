@@ -1,11 +1,9 @@
 package io.dropwizard.metrics;
 
-import com.codahale.metrics.Metric;
 import com.codahale.metrics.MetricFilter;
 import com.codahale.metrics.ScheduledReporter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.base.Optional;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -16,6 +14,7 @@ import org.hibernate.validator.valuehandling.UnwrapValidatedValue;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
@@ -91,7 +90,7 @@ public abstract class BaseReporterFactory implements ReporterFactory {
     @Valid
     @MinDuration(0)
     @UnwrapValidatedValue
-    private Optional<Duration> frequency = Optional.absent();
+    private Optional<Duration> frequency = Optional.empty();
 
     private boolean useRegexFilters = false;
 

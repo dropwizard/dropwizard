@@ -5,7 +5,6 @@ import com.codahale.metrics.ScheduledReporter;
 import com.codahale.metrics.ganglia.GangliaReporter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import com.google.common.base.Optional;
 import info.ganglia.gmetric4j.gmetric.GMetric;
 import io.dropwizard.metrics.BaseReporterFactory;
 import io.dropwizard.util.Duration;
@@ -15,6 +14,7 @@ import org.hibernate.validator.constraints.Range;
 
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -167,7 +167,7 @@ public class GangliaReporterFactory extends BaseReporterFactory {
 
     @JsonProperty
     public Optional<UUID> getUuid() {
-        return Optional.fromNullable(uuid);
+        return Optional.ofNullable(uuid);
     }
 
     @JsonProperty
@@ -177,7 +177,7 @@ public class GangliaReporterFactory extends BaseReporterFactory {
 
     @JsonProperty
     public Optional<String> getSpoof() {
-        return Optional.fromNullable(spoof);
+        return Optional.ofNullable(spoof);
     }
 
     @JsonProperty

@@ -1,6 +1,5 @@
 package io.dropwizard.cli;
 
-import com.google.common.base.Optional;
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
 import io.dropwizard.setup.Bootstrap;
@@ -14,6 +13,7 @@ import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Locale;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.any;
@@ -89,7 +89,7 @@ public class CliTest {
 
     @Test
     public void handlesMissingVersions() throws Exception {
-        when(location.getVersion()).thenReturn(Optional.<String>absent());
+        when(location.getVersion()).thenReturn(Optional.empty());
         final Cli newCli = new Cli(location, bootstrap, stdOut, stdErr);
 
         assertThat(newCli.run("--version"))

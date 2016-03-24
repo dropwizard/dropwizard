@@ -11,7 +11,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Joiner;
-import com.google.common.base.Optional;
 import com.google.common.io.Resources;
 import io.dropwizard.jersey.errors.EarlyEofExceptionMapper;
 import io.dropwizard.jersey.errors.LoggingExceptionMapper;
@@ -54,6 +53,7 @@ import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.EnumSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.regex.Pattern;
@@ -255,7 +255,7 @@ public abstract class AbstractServerFactory implements ServerFactory {
     @NotNull
     private Set<String> allowedMethods = AllowedMethodsFilter.DEFAULT_ALLOWED_METHODS;
 
-    private Optional<String> jerseyRootPath = Optional.absent();
+    private Optional<String> jerseyRootPath = Optional.empty();
 
     @JsonIgnore
     @ValidationMethod(message = "must have a smaller minThreads than maxThreads")
@@ -448,7 +448,7 @@ public abstract class AbstractServerFactory implements ServerFactory {
 
     @JsonProperty("rootPath")
     public void setJerseyRootPath(String jerseyRootPath) {
-        this.jerseyRootPath = Optional.fromNullable(jerseyRootPath);
+        this.jerseyRootPath = Optional.ofNullable(jerseyRootPath);
     }
 
     protected Handler createAdminServlet(Server server,

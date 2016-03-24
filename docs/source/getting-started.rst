@@ -408,7 +408,6 @@ instances from the URI ``/hello-world``, so our resource class looks like this:
     package com.example.helloworld.resources;
 
     import com.example.helloworld.api.Saying;
-    import com.google.common.base.Optional;
     import com.codahale.metrics.annotation.Timed;
 
     import javax.ws.rs.GET;
@@ -417,6 +416,7 @@ instances from the URI ``/hello-world``, so our resource class looks like this:
     import javax.ws.rs.QueryParam;
     import javax.ws.rs.core.MediaType;
     import java.util.concurrent.atomic.AtomicLong;
+    import java.util.Optional;
 
     @Path("/hello-world")
     @Produces(MediaType.APPLICATION_JSON)
@@ -434,7 +434,7 @@ instances from the URI ``/hello-world``, so our resource class looks like this:
         @GET
         @Timed
         public Saying sayHello(@QueryParam("name") Optional<String> name) {
-            final String value = String.format(template, name.or(defaultName));
+            final String value = String.format(template, name.orElse(defaultName));
             return new Saying(counter.incrementAndGet(), value);
         }
     }
