@@ -68,7 +68,7 @@ public class FreemarkerViewRenderer implements ViewRenderer {
                        OutputStream output) throws IOException {
         try {
             final Configuration configuration = configurationCache.getUnchecked(view.getClass());
-            final Charset charset = view.getCharset().or(Charset.forName(configuration.getEncoding(locale)));
+            final Charset charset = view.getCharset().orElseGet(() -> Charset.forName(configuration.getEncoding(locale)));
             final Template template = configuration.getTemplate(view.getTemplateName(), locale, charset.name());
             template.process(view, new OutputStreamWriter(output, template.getEncoding()));
         } catch (TemplateException e) {

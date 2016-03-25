@@ -43,7 +43,7 @@ public class MustacheViewRenderer implements ViewRenderer {
         try {
             final Mustache template = factories.get(view.getClass())
                                                .compile(view.getTemplateName());
-            final Charset charset = view.getCharset().or(StandardCharsets.UTF_8);
+            final Charset charset = view.getCharset().orElse(StandardCharsets.UTF_8);
             try (OutputStreamWriter writer = new OutputStreamWriter(output, charset)) {
                 template.execute(writer, view);
             }

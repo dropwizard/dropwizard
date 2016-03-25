@@ -1,7 +1,8 @@
 package io.dropwizard.jersey.params;
 
-import com.google.common.base.Optional;
 import org.junit.Test;
+
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -9,13 +10,13 @@ public class NonEmptyStringParamTest {
     @Test
     public void aBlankStringIsAnAbsentString() throws Exception {
         final NonEmptyStringParam param = new NonEmptyStringParam("");
-        assertThat(param.get()).isEqualTo(Optional.absent());
+        assertThat(param.get()).isEqualTo(Optional.empty());
     }
 
     @Test
     public void aNullStringIsAnAbsentString() throws Exception {
         final NonEmptyStringParam param = new NonEmptyStringParam(null);
-        assertThat(param.get()).isEqualTo(Optional.absent());
+        assertThat(param.get()).isEqualTo(Optional.empty());
     }
 
     @Test

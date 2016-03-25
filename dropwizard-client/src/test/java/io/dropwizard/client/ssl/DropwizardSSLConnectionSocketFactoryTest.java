@@ -1,6 +1,5 @@
 package io.dropwizard.client.ssl;
 
-import com.google.common.base.Optional;
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
 import io.dropwizard.client.JerseyClientBuilder;
@@ -24,6 +23,7 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.core.Response;
 import java.io.File;
 import java.net.SocketException;
+import java.util.Optional;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;

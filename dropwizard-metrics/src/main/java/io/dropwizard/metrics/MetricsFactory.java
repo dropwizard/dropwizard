@@ -85,7 +85,7 @@ public class MetricsFactory {
             try {
                 final ScheduledReporterManager manager =
                         new ScheduledReporterManager(reporter.build(registry),
-                                                     reporter.getFrequency().or(getFrequency()));
+                                                     reporter.getFrequency().orElseGet(this::getFrequency));
                 environment.manage(manager);
             } catch (Exception e) {
                 LOGGER.warn("Failed to create reporter, metrics may not be properly reported.", e);

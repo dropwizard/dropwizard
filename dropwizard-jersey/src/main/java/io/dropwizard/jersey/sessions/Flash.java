@@ -1,8 +1,7 @@
 package io.dropwizard.jersey.sessions;
 
-import com.google.common.base.Optional;
-
 import javax.servlet.http.HttpSession;
+import java.util.Optional;
 
 public class Flash<T> {
     private static final String ATTRIBUTE = "flash";
@@ -19,7 +18,7 @@ public class Flash<T> {
     }
 
     public Optional<T> get() {
-        return Optional.fromNullable(value);
+        return Optional.ofNullable(value);
     }
 
     public void set(T value) {

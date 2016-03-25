@@ -3,7 +3,6 @@ package io.dropwizard.db;
 import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.base.Optional;
 import com.google.common.primitives.Ints;
 import io.dropwizard.util.Duration;
 import io.dropwizard.validation.MinDuration;
@@ -18,6 +17,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -390,7 +390,7 @@ public class DataSourceFactory implements PooledDataSourceFactory {
     @MinDuration(1)
     private Duration validationInterval = Duration.seconds(30);
 
-    private Optional<String> validatorClassName = Optional.absent();
+    private Optional<String> validatorClassName = Optional.empty();
 
     private boolean removeAbandoned = false;
 
@@ -682,7 +682,7 @@ public class DataSourceFactory implements PooledDataSourceFactory {
 
     @JsonProperty
     public Optional<Duration> getMaxConnectionAge() {
-        return Optional.fromNullable(maxConnectionAge);
+        return Optional.ofNullable(maxConnectionAge);
     }
 
     @JsonProperty
@@ -753,7 +753,7 @@ public class DataSourceFactory implements PooledDataSourceFactory {
     @Override
     @JsonProperty
     public Optional<Duration> getValidationQueryTimeout() {
-        return Optional.fromNullable(validationQueryTimeout);
+        return Optional.ofNullable(validationQueryTimeout);
     }
 
     @JsonProperty

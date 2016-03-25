@@ -3,7 +3,6 @@ package com.example.helloworld.resources;
 import com.example.helloworld.core.Person;
 import com.example.helloworld.db.PersonDAO;
 import com.example.helloworld.views.PersonView;
-import com.google.common.base.Optional;
 import io.dropwizard.hibernate.UnitOfWork;
 import io.dropwizard.jersey.params.LongParam;
 
@@ -47,10 +46,6 @@ public class PersonResource {
     }
 
     private Person findSafely(long personId) {
-        final Optional<Person> person = peopleDAO.findById(personId);
-        if (!person.isPresent()) {
-            throw new NotFoundException("No such user.");
-        }
-        return person.get();
+        return peopleDAO.findById(personId).orElseThrow(() -> new NotFoundException("No such user."));
     }
 }

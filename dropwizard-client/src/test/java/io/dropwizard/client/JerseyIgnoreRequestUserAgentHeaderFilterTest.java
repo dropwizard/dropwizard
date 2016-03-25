@@ -1,34 +1,31 @@
 package io.dropwizard.client;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import java.net.URI;
-import java.util.concurrent.Executors;
-
-import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.Path;
-
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Test;
-
 import com.codahale.metrics.MetricRegistry;
-import com.google.common.base.Optional;
 import com.google.common.io.Resources;
-
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import io.dropwizard.util.Duration;
+import org.junit.Before;
+import org.junit.ClassRule;
+import org.junit.Test;
+
+import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.Path;
+import java.net.URI;
+import java.util.Optional;
+import java.util.concurrent.Executors;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class JerseyIgnoreRequestUserAgentHeaderFilterTest {
     @ClassRule
     public static DropwizardAppRule<Configuration> APP_RULE =
             new DropwizardAppRule<>(TestApplication.class, Resources.getResource("yaml/jerseyIgnoreRequestUserAgentHeaderFilterTest.yml").getPath());
-    
+
     private final URI testUri = URI.create("http://localhost:" + APP_RULE.getLocalPort());
     private JerseyClientBuilder clientBuilder;
     private JerseyClientConfiguration clientConfiguration;
@@ -42,7 +39,7 @@ public class JerseyIgnoreRequestUserAgentHeaderFilterTest {
             .using(clientConfiguration)
             .using(Executors.newSingleThreadExecutor(), Jackson.newObjectMapper());
     }
-    
+
     @Test
     public void clientIsSetRequestIsNotSet() {
         clientConfiguration.setUserAgent(Optional.of("ClientUserAgentHeaderValue"));
@@ -53,7 +50,7 @@ public class JerseyIgnoreRequestUserAgentHeaderFilterTest {
                         .get(String.class)
         ).isEqualTo("ClientUserAgentHeaderValue");
     }
-    
+
     @Test
     public void clientIsNotSetRequestIsSet() {
         assertThat(
@@ -65,7 +62,7 @@ public class JerseyIgnoreRequestUserAgentHeaderFilterTest {
 
     @Test
     public void clientIsNotSetRequestIsNotSet() {
-        assertThat(false);        
+        assertThat(false);
         assertThat(
                 clientBuilder.build("ClientName").target(testUri + "/user_agent")
                         .request()

@@ -1,9 +1,8 @@
 package io.dropwizard.util;
 
-import com.google.common.base.Optional;
-
 import java.io.File;
 import java.net.URL;
+import java.util.Optional;
 
 /**
  * A class which encapsulates the location on the local filesystem of the JAR in which the current
@@ -17,11 +16,8 @@ public class JarLocation {
     }
 
     public Optional<String> getVersion() {
-        final Package pkg = klass.getPackage();
-        if (pkg == null) {
-            return Optional.absent();
-        }
-        return Optional.fromNullable(pkg.getImplementationVersion());
+        return Optional.ofNullable(klass.getPackage())
+            .map(Package::getImplementationVersion);
     }
 
     @Override

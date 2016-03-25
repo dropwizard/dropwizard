@@ -1,6 +1,5 @@
 package io.dropwizard.http2;
 
-import com.google.common.base.Optional;
 import com.google.common.net.HttpHeaders;
 import io.dropwizard.Configuration;
 import io.dropwizard.testing.ConfigOverride;
@@ -19,6 +18,7 @@ import org.junit.Test;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

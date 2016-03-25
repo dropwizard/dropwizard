@@ -1,13 +1,10 @@
 package io.dropwizard.jersey.validation;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-
-import io.dropwizard.jersey.jackson.JacksonMessageBodyProviderTest.PartialExample;
-import io.dropwizard.jersey.jackson.JacksonMessageBodyProviderTest.Partial1;
-import io.dropwizard.jersey.jackson.JacksonMessageBodyProviderTest.Partial2;
 import io.dropwizard.jersey.jackson.JacksonMessageBodyProviderTest.Example;
 import io.dropwizard.jersey.jackson.JacksonMessageBodyProviderTest.ListExample;
+import io.dropwizard.jersey.jackson.JacksonMessageBodyProviderTest.Partial1;
+import io.dropwizard.jersey.jackson.JacksonMessageBodyProviderTest.Partial2;
+import io.dropwizard.jersey.jackson.JacksonMessageBodyProviderTest.PartialExample;
 import io.dropwizard.jersey.params.IntParam;
 import io.dropwizard.jersey.params.NonEmptyStringParam;
 import io.dropwizard.validation.Validated;
@@ -18,6 +15,8 @@ import org.hibernate.validator.valuehandling.UnwrapValidatedValue;
 
 import javax.servlet.ServletContext;
 import javax.validation.Valid;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -62,7 +61,7 @@ public class ValidatingResource {
     @GET
     @Path("barter")
     public String isnt(@QueryParam("name") @Length(min = 3) @UnwrapValidatedValue NonEmptyStringParam name) {
-        return name.get().orNull();
+        return name.get().orElse(null);
     }
 
     @POST

@@ -1,6 +1,5 @@
 package io.dropwizard.db;
 
-import com.google.common.base.Optional;
 import com.google.common.io.Resources;
 import io.dropwizard.configuration.ConfigurationFactory;
 import io.dropwizard.jackson.Jackson;
@@ -9,6 +8,7 @@ import io.dropwizard.util.Duration;
 import org.junit.Test;
 
 import java.io.File;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -90,11 +90,11 @@ public class DataSourceConfigurationTest {
         assertThat(ds.getInitializationQuery()).isNull();
         assertThat(ds.getLogAbandonedConnections()).isEqualTo(false);
         assertThat(ds.getLogValidationErrors()).isEqualTo(false);
-        assertThat(ds.getMaxConnectionAge()).isEqualTo(Optional.absent());
+        assertThat(ds.getMaxConnectionAge()).isEqualTo(Optional.empty());
         assertThat(ds.getCheckConnectionOnBorrow()).isEqualTo(false);
         assertThat(ds.getCheckConnectionOnConnect()).isEqualTo(true);
         assertThat(ds.getCheckConnectionOnReturn()).isEqualTo(false);
-        assertThat(ds.getValidationQueryTimeout()).isEqualTo(Optional.absent());
+        assertThat(ds.getValidationQueryTimeout()).isEqualTo(Optional.empty());
     }
 
     @Test

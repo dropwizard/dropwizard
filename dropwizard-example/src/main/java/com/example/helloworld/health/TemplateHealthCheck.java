@@ -2,7 +2,8 @@ package com.example.helloworld.health;
 
 import com.codahale.metrics.health.HealthCheck;
 import com.example.helloworld.core.Template;
-import com.google.common.base.Optional;
+
+import java.util.Optional;
 
 public class TemplateHealthCheck extends HealthCheck {
     private final Template template;
@@ -14,7 +15,7 @@ public class TemplateHealthCheck extends HealthCheck {
     @Override
     protected Result check() throws Exception {
         template.render(Optional.of("woo"));
-        template.render(Optional.<String>absent());
+        template.render(Optional.empty());
         return Result.healthy();
     }
 }

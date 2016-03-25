@@ -1,6 +1,5 @@
 package io.dropwizard.client;
 
-import com.google.common.base.Optional;
 import com.google.common.util.concurrent.MoreExecutors;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -18,7 +17,6 @@ import org.glassfish.jersey.client.ClientRequest;
 import org.glassfish.jersey.client.ClientResponse;
 import org.glassfish.jersey.client.spi.AsyncConnectorCallback;
 import org.glassfish.jersey.client.spi.Connector;
-import org.glassfish.jersey.message.internal.OutboundMessageContext;
 import org.glassfish.jersey.message.internal.Statuses;
 
 import javax.ws.rs.ProcessingException;
@@ -30,6 +28,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.Future;
 
 import static com.google.common.base.MoreObjects.firstNonNull;
@@ -131,9 +130,7 @@ public class DropwizardApacheConnector implements Connector {
         }
 
         final Optional<RequestConfig> requestConfig = addJerseyRequestConfig(jerseyRequest);
-        if (requestConfig.isPresent()) {
-            builder.setConfig(requestConfig.get());
-        }
+        requestConfig.ifPresent(builder::setConfig);
 
         return builder.build();
     }
@@ -161,7 +158,7 @@ public class DropwizardApacheConnector implements Connector {
             return Optional.of(requestConfig.build());
         }
 
-        return Optional.absent();
+        return Optional.empty();
     }
 
     /**

@@ -41,7 +41,6 @@ import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
 import org.apache.http.impl.conn.SystemDefaultDnsResolver;
 import org.apache.http.protocol.HttpContext;
 
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -345,7 +344,7 @@ public class HttpClientBuilder {
      */
     protected String createUserAgent(String name) {
         final String defaultUserAgent = environmentName == null ? name : String.format("%s (%s)", environmentName, name);
-        return configuration.getUserAgent().or(defaultUserAgent);
+        return configuration.getUserAgent().orElse(defaultUserAgent);
     }
 
 

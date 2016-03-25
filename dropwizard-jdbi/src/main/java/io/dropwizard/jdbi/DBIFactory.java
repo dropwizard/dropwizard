@@ -99,7 +99,7 @@ public class DBIFactory {
         environment.lifecycle().manage(dataSource);
         environment.healthChecks().register(name, new DBIHealthCheck(
                 environment.getHealthCheckExecutorService(),
-                configuration.getValidationQueryTimeout().or(Duration.seconds(5)),
+                configuration.getValidationQueryTimeout().orElseGet(() -> Duration.seconds(5)),
                 dbi,
                 validationQuery));
         dbi.setSQLLog(new LogbackLog(LOGGER, Level.TRACE));

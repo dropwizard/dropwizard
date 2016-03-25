@@ -1,10 +1,11 @@
 package io.dropwizard.testing.junit;
 
-import com.google.common.base.Optional;
 import org.junit.Test;
 
-import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
+import java.util.Optional;
+
 import static io.dropwizard.testing.ConfigOverride.config;
+import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class DropwizardAppRuleResetConfigOverrideTest {
