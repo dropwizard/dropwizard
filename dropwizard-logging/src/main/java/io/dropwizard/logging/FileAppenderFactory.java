@@ -199,7 +199,6 @@ public class FileAppenderFactory<E extends DeferredProcessingAware> extends Abst
         appender.setPrudent(false);
         appender.addFilter(levelFilterFactory.build(threshold));
         getFilterFactories().stream().forEach(f -> appender.addFilter(f.build()));
-        appender.stop();
         appender.start();
 
         return wrapAsync(appender, asyncAppenderFactory);
