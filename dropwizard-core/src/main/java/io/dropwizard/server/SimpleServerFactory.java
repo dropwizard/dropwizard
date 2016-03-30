@@ -6,15 +6,16 @@ import com.google.common.collect.ImmutableMap;
 import io.dropwizard.jetty.ConnectorFactory;
 import io.dropwizard.jetty.ContextRoutingHandler;
 import io.dropwizard.jetty.HttpConnectorFactory;
+import io.dropwizard.jetty.MutableServletContextHandler;
 import io.dropwizard.setup.Environment;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.thread.ThreadPool;
-import org.hibernate.validator.constraints.NotEmpty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Optional;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
@@ -61,11 +62,9 @@ public class SimpleServerFactory extends AbstractServerFactory {
     @NotNull
     private ConnectorFactory connector = HttpConnectorFactory.application();
 
-    @NotEmpty
-    private String applicationContextPath = "/application";
+    private Optional<String> applicationContextPath = Optional.empty();
 
-    @NotEmpty
-    private String adminContextPath = "/admin";
+    private Optional<String> adminContextPath = Optional.empty();
 
     @JsonProperty
     public ConnectorFactory getConnector() {
@@ -78,23 +77,23 @@ public class SimpleServerFactory extends AbstractServerFactory {
     }
 
     @JsonProperty
-    public String getApplicationContextPath() {
+    public Optional<String> getApplicationContextPath() {
         return applicationContextPath;
     }
 
     @JsonProperty
     public void setApplicationContextPath(String contextPath) {
-        this.applicationContextPath = contextPath;
+        this.applicationContextPath = Optional.ofNullable(contextPath);
     }
 
     @JsonProperty
-    public String getAdminContextPath() {
+    public Optional<String> getAdminContextPath() {
         return adminContextPath;
     }
 
     @JsonProperty
     public void setAdminContextPath(String contextPath) {
-        this.adminContextPath = contextPath;
+        this.adminContextPath = Optional.ofNullable(contextPath);
     }
 
     @Override
@@ -102,9 +101,13 @@ public class SimpleServerFactory extends AbstractServerFactory {
         printBanner(environment.getName());
         final ThreadPool threadPool = createThreadPool(environment.metrics());
         final Server server = buildServer(environment.lifecycle(), threadPool);
+        final MutableServletContextHandler applicationContext = environment.getApplicationContext();
+        final MutableServletContextHandler adminContext = environment.getAdminContext();
 
         LOGGER.info("Registering jersey handler with root path prefix: {}", applicationContextPath);
-        environment.getApplicationContext().setContextPath(applicationContextPath);
+        if (applicationContextPath.isPresent()) {
+        	applicationContext.setContextPath(applicationContextPath.get());
+        }
         final Handler applicationHandler = createAppServlet(server,
                                                             environment.jersey(),
                                                             environment.getObjectMapper(),
@@ -114,7 +117,9 @@ public class SimpleServerFactory extends AbstractServerFactory {
                                                             environment.metrics());
 
         LOGGER.info("Registering admin handler with root path prefix: {}", adminContextPath);
-        environment.getAdminContext().setContextPath(adminContextPath);
+        if (adminContextPath.isPresent()) {
+        	adminContext.setContextPath(adminContextPath.get());
+        }
         final Handler adminHandler = createAdminServlet(server,
                                                         environment.getAdminContext(),
                                                         environment.metrics(),
@@ -127,9 +132,16 @@ public class SimpleServerFactory extends AbstractServerFactory {
 
         server.addConnector(conn);
 
+        if (applicationContext.getContextPath().equals("/") &&
+        		applicationContext.getContextPath().equals(adminContext.getContextPath())) {
+        	// contextRouting handler does not allow the same context path for both handlers
+        	// if they are the same, use the default paths.
+        	applicationContext.setContextPath("/application");
+        	adminContext.setContextPath("/admin");
+        }
         final ContextRoutingHandler routingHandler = new ContextRoutingHandler(ImmutableMap.of(
-                applicationContextPath, applicationHandler,
-                adminContextPath, adminHandler
+        		environment.getApplicationContext().getContextPath(), applicationHandler,
+        		environment.getAdminContext().getContextPath(), adminHandler
         ));
         final Handler gzipHandler = buildGzipHandler(routingHandler);
         server.setHandler(addStatsHandler(addRequestLog(server, gzipHandler, environment.getName())));

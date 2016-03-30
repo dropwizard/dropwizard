@@ -1,0 +1,4 @@
+type: simple
+connector:
+  type: http
+  port: 0

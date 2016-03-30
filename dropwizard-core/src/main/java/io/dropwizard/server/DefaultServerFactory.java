@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * The default implementation of {@link ServerFactory}, which allows for multiple sets of
@@ -84,11 +85,9 @@ public class DefaultServerFactory extends AbstractServerFactory {
     @Min(1)
     private int adminMinThreads = 1;
 
-    @NotEmpty
-    private String applicationContextPath = "/";
+    private Optional<String> applicationContextPath = Optional.empty();
 
-    @NotEmpty
-    private String adminContextPath = "/";
+    private Optional<String> adminContextPath = Optional.empty();
 
     @JsonProperty
     public List<ConnectorFactory> getApplicationConnectors() {
@@ -131,23 +130,23 @@ public class DefaultServerFactory extends AbstractServerFactory {
     }
 
     @JsonProperty
-    public String getApplicationContextPath() {
+    public Optional<String> getApplicationContextPath() {
         return applicationContextPath;
     }
 
     @JsonProperty
     public void setApplicationContextPath(final String applicationContextPath) {
-        this.applicationContextPath = applicationContextPath;
+        this.applicationContextPath = Optional.ofNullable(applicationContextPath);
     }
 
     @JsonProperty
-    public String getAdminContextPath() {
+    public Optional<String> getAdminContextPath() {
         return adminContextPath;
     }
 
     @JsonProperty
     public void setAdminContextPath(final String adminContextPath) {
-        this.adminContextPath = adminContextPath;
+        this.adminContextPath = Optional.ofNullable(adminContextPath);
     }
 
     @Override
@@ -157,7 +156,9 @@ public class DefaultServerFactory extends AbstractServerFactory {
         final Server server = buildServer(environment.lifecycle(), threadPool);
 
         LOGGER.info("Registering jersey handler with root path prefix: {}", applicationContextPath);
-        environment.getApplicationContext().setContextPath(applicationContextPath);
+        if (applicationContextPath.isPresent()) {
+        	environment.getApplicationContext().setContextPath(applicationContextPath.get());
+        }
         final Handler applicationHandler = createAppServlet(server,
                                                             environment.jersey(),
                                                             environment.getObjectMapper(),
@@ -167,7 +168,9 @@ public class DefaultServerFactory extends AbstractServerFactory {
                                                             environment.metrics());
 
         LOGGER.info("Registering admin handler with root path prefix: {}", adminContextPath);
-        environment.getAdminContext().setContextPath(adminContextPath);
+        if (adminContextPath.isPresent()) {
+        	environment.getAdminContext().setContextPath(adminContextPath.get());
+        }
         final Handler adminHandler = createAdminServlet(server,
                                                         environment.getAdminContext(),
                                                         environment.metrics(),
