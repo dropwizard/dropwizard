@@ -379,7 +379,7 @@ is called.
 
 For example, given a theoretical Riak__ client which needs to be started and stopped:
 
-.. __: http://riak.basho.com
+.. __: http://basho.com/products/
 
 .. code-block:: java
 
