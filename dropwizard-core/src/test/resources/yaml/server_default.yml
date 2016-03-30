@@ -1,0 +1,3 @@
+applicationConnectors:
+  - type: http
+    port: 0

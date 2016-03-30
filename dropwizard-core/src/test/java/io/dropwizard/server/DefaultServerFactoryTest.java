@@ -4,6 +4,7 @@ import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.io.CharStreams;
 import com.google.common.io.Resources;
+import io.dropwizard.configuration.ConfigurationException;
 import io.dropwizard.configuration.ConfigurationFactory;
 import io.dropwizard.jackson.DiscoverableSubtypeResolver;
 import io.dropwizard.jackson.Jackson;
@@ -26,13 +27,14 @@ import org.eclipse.jetty.server.Server;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.validation.Validator;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.ext.ExceptionMapper;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Set;
@@ -45,8 +47,12 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
 
 public class DefaultServerFactoryTest {
+    private Environment environment = new Environment("test", Jackson.newObjectMapper(),
+            Validators.newValidator(), new MetricRegistry(),
+            ClassLoader.getSystemClassLoader());
     private DefaultServerFactory http;
 
     @Before
@@ -91,12 +97,12 @@ public class DefaultServerFactoryTest {
 
     @Test
     public void hasApplicationContextPath() throws Exception {
-        assertThat(http.getApplicationContextPath()).isEqualTo("/app");
+        assertThat(http.getApplicationContextPath().get()).isEqualTo("/app");
     }
 
     @Test
     public void hasAdminContextPath() throws Exception {
-        assertThat(http.getAdminContextPath()).isEqualTo("/admin");
+        assertThat(http.getAdminContextPath().get()).isEqualTo("/admin");
     }
 
     @Test
@@ -108,9 +114,6 @@ public class DefaultServerFactoryTest {
     @Test
     public void registersDefaultExceptionMappers() throws Exception {
         assertThat(http.getRegisterDefaultExceptionMappers()).isTrue();
-        Environment environment = new Environment("test", Jackson.newObjectMapper(),
-                Validators.newValidator(), new MetricRegistry(),
-                ClassLoader.getSystemClassLoader());
         http.build(environment);
         Set<Object> singletons = environment.jersey().getResourceConfig().getSingletons();
         assertThat(singletons).hasAtLeastOneElementOfType(LoggingExceptionMapper.class);
@@ -124,9 +127,6 @@ public class DefaultServerFactoryTest {
     public void doesNotDefaultExceptionMappers() throws Exception {
         http.setRegisterDefaultExceptionMappers(false);
         assertThat(http.getRegisterDefaultExceptionMappers()).isFalse();
-        Environment environment = new Environment("test", Jackson.newObjectMapper(),
-                Validators.newValidator(), new MetricRegistry(),
-                ClassLoader.getSystemClassLoader());
         http.build(environment);
         for (Object singleton : environment.jersey().getResourceConfig().getSingletons()) {
             assertThat(singleton).isNotInstanceOf(ExceptionMapper.class);
@@ -135,12 +135,6 @@ public class DefaultServerFactoryTest {
 
     @Test
     public void testGracefulShutdown() throws Exception {
-        ObjectMapper objectMapper = Jackson.newObjectMapper();
-        Validator validator = Validators.newValidator();
-        MetricRegistry metricRegistry = new MetricRegistry();
-        Environment environment = new Environment("test", objectMapper, validator, metricRegistry,
-                ClassLoader.getSystemClassLoader());
-
         CountDownLatch requestReceived = new CountDownLatch(1);
         CountDownLatch shutdownInvoked = new CountDownLatch(1);
 
@@ -202,6 +196,39 @@ public class DefaultServerFactoryTest {
         executor.shutdownNow();
     }
 
+    @Test
+    public void testDefaultContextPath() throws IOException, ConfigurationException, URISyntaxException {
+    	useDefaultServerYml();
+    	http.build(environment);
+
+    	assertEquals("/", environment.getAdminContext().getContextPath());
+    	assertEquals("/", environment.getApplicationContext().getContextPath());
+    }
+
+    @Test
+    public void testRunDefinedContextPath() throws IOException, ConfigurationException, URISyntaxException {
+    	useDefaultServerYml();
+    	environment.getAdminContext().setContextPath("/admin");
+    	environment.getApplicationContext().setContextPath("/application");
+    	http.build(environment);
+
+    	assertEquals("/admin", environment.getAdminContext().getContextPath());
+    	assertEquals("/application", environment.getApplicationContext().getContextPath());
+    }
+
+    @Test
+    public void testYamlDefinedContextPath() throws IOException, ConfigurationException, URISyntaxException {
+    	useDefaultServerYml();
+    	environment.getAdminContext().setContextPath("/admin");
+    	environment.getApplicationContext().setContextPath("/application");
+    	http.setAdminContextPath("/admin-override");
+    	http.setApplicationContextPath("/application-override");
+    	http.build(environment);
+
+    	assertEquals("/admin-override", environment.getAdminContext().getContextPath());
+    	assertEquals("/application-override", environment.getApplicationContext().getContextPath());
+    }
+
     @Path("/test")
     @Produces("text/plain")
     public static class TestResource {
@@ -220,5 +247,13 @@ public class DefaultServerFactoryTest {
             shutdownInvoked.await();
             return "test";
         }
+    }
+
+    private void useDefaultServerYml() throws IOException, ConfigurationException, URISyntaxException {
+    	http = new ConfigurationFactory<>(DefaultServerFactory.class,
+										  BaseValidator.newValidator(),
+										  Jackson.newObjectMapper(),
+										  "dw")
+			    .build(new File(Resources.getResource("yaml/server_default.yml").toURI()));
     }
 }

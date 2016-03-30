@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.io.CharStreams;
 import com.google.common.io.Resources;
+import io.dropwizard.configuration.ConfigurationException;
 import io.dropwizard.configuration.ConfigurationFactory;
 import io.dropwizard.jackson.DiscoverableSubtypeResolver;
 import io.dropwizard.jackson.Jackson;
@@ -25,18 +26,23 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
+import java.net.URISyntaxException;
 import java.net.URL;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
 
 public class SimpleServerFactoryTest {
 
     private SimpleServerFactory http;
     private final ObjectMapper objectMapper = Jackson.newObjectMapper();
     private Validator validator = BaseValidator.newValidator();
+    private Environment environment = new Environment("testEnvironment", objectMapper, validator, new MetricRegistry(),
+            ClassLoader.getSystemClassLoader());
 
     @Before
     public void setUp() throws Exception {
@@ -54,12 +60,12 @@ public class SimpleServerFactoryTest {
 
     @Test
     public void testGetAdminContext() {
-        assertThat(http.getAdminContextPath()).isEqualTo("/secret");
+        assertThat(http.getAdminContextPath().get()).isEqualTo("/secret");
     }
 
     @Test
     public void testGetApplicationContext() {
-        assertThat(http.getApplicationContextPath()).isEqualTo("/service");
+        assertThat(http.getApplicationContextPath().get()).isEqualTo("/service");
     }
 
     @Test
@@ -70,8 +76,6 @@ public class SimpleServerFactoryTest {
 
     @Test
     public void testBuild() throws Exception {
-        final Environment environment = new Environment("testEnvironment", objectMapper, validator, new MetricRegistry(),
-                ClassLoader.getSystemClassLoader());
         environment.jersey().register(new TestResource());
         environment.admin().addTask(new TestTask());
 
@@ -85,6 +89,44 @@ public class SimpleServerFactoryTest {
                 .isEqualTo("Hello, test_user!");
 
         server.stop();
+    }
+
+    @Test
+    public void testDefaultContextPath() throws IOException, ConfigurationException, URISyntaxException {
+    	http = new ConfigurationFactory<>(SimpleServerFactory.class, validator, objectMapper, "dw")
+                .build(new File(Resources.getResource("yaml/simple_server_default.yml").toURI()));
+    	http.build(environment);
+
+    	assertEquals("/admin", environment.getAdminContext().getContextPath());
+    	assertEquals("/application", environment.getApplicationContext().getContextPath());
+    }
+
+    @Test
+    public void testRunDefinedContextPath() throws IOException, ConfigurationException, URISyntaxException {
+    	http = new ConfigurationFactory<>(SimpleServerFactory.class, validator, objectMapper, "dw")
+                .build(new File(Resources.getResource("yaml/simple_server_default.yml").toURI()));
+
+    	environment.getAdminContext().setContextPath("/admin-run");
+    	environment.getApplicationContext().setContextPath("/application-run");
+    	http.build(environment);
+
+    	assertEquals("/admin-run", environment.getAdminContext().getContextPath());
+    	assertEquals("/application-run", environment.getApplicationContext().getContextPath());
+    }
+
+    @Test
+    public void testYamlDefinedContextPath() throws IOException, ConfigurationException, URISyntaxException {
+    	http = new ConfigurationFactory<>(SimpleServerFactory.class, validator, objectMapper, "dw")
+                .build(new File(Resources.getResource("yaml/simple_server_default.yml").toURI()));
+
+    	environment.getAdminContext().setContextPath("/admin-run");
+    	environment.getApplicationContext().setContextPath("/application-run");
+    	http.setAdminContextPath("/admin-yml");
+    	http.setApplicationContextPath("/application-yml");
+    	http.build(environment);
+
+    	assertEquals("/admin-yml", environment.getAdminContext().getContextPath());
+    	assertEquals("/application-yml", environment.getApplicationContext().getContextPath());
     }
 
     private static String httpRequest(String requestMethod, String url) throws Exception {
