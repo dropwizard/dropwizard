@@ -6,8 +6,9 @@ import org.eclipse.jetty.http.HttpTester;
 import org.eclipse.jetty.http.HttpVersion;
 import org.eclipse.jetty.http.MimeTypes;
 import org.eclipse.jetty.servlet.ServletTester;
-import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.nio.charset.StandardCharsets;
@@ -55,12 +56,12 @@ public class AssetServletTest {
         }
     }
 
-    private final ServletTester servletTester = new ServletTester();
+    private static final ServletTester servletTester = new ServletTester();
     private final HttpTester.Request request = HttpTester.newRequest();
     private HttpTester.Response response;
 
-    @Before
-    public void setup() throws Exception {
+    @BeforeClass
+    public static void startServletTester() throws Exception {
         servletTester.addServlet(DummyAssetServlet.class, DUMMY_SERVLET + '*');
         servletTester.addServlet(NoIndexAssetServlet.class, NOINDEX_SERVLET + '*');
         servletTester.addServlet(NoCharsetAssetServlet.class, NOCHARSET_SERVLET + '*');
@@ -69,15 +70,18 @@ public class AssetServletTest {
 
         servletTester.getContext().getMimeTypes().addMimeMapping("mp4", "video/mp4");
         servletTester.getContext().getMimeTypes().addMimeMapping("m4a", "audio/mp4");
+    }
 
+    @AfterClass
+    public static void stopServletTester() throws Exception {
+        servletTester.stop();
+    }
+
+    @Before
+    public void setUp() throws Exception {
         request.setMethod("GET");
         request.setURI(DUMMY_SERVLET + "example.txt");
         request.setVersion(HttpVersion.HTTP_1_0);
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        servletTester.stop();
     }
 
     @Test
