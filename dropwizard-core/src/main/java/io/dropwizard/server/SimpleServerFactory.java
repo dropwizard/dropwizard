@@ -103,6 +103,8 @@ public class SimpleServerFactory extends AbstractServerFactory {
         final ThreadPool threadPool = createThreadPool(environment.metrics());
         final Server server = buildServer(environment.lifecycle(), threadPool);
 
+        LOGGER.info("Registering jersey handler with root path prefix: {}", applicationContextPath);
+        environment.getApplicationContext().setContextPath(applicationContextPath);
         final Handler applicationHandler = createAppServlet(server,
                                                             environment.jersey(),
                                                             environment.getObjectMapper(),
@@ -111,6 +113,8 @@ public class SimpleServerFactory extends AbstractServerFactory {
                                                             environment.getJerseyServletContainer(),
                                                             environment.metrics());
 
+        LOGGER.info("Registering admin handler with root path prefix: {}", adminContextPath);
+        environment.getAdminContext().setContextPath(adminContextPath);
         final Handler adminHandler = createAdminServlet(server,
                                                         environment.getAdminContext(),
                                                         environment.metrics(),
@@ -131,14 +135,5 @@ public class SimpleServerFactory extends AbstractServerFactory {
         server.setHandler(addStatsHandler(addRequestLog(server, gzipHandler, environment.getName())));
 
         return server;
-    }
-
-    @Override
-    public void configure(Environment environment) {
-        LOGGER.info("Registering jersey handler with root path prefix: {}", applicationContextPath);
-        environment.getApplicationContext().setContextPath(applicationContextPath);
-
-        LOGGER.info("Registering admin handler with root path prefix: {}", adminContextPath);
-        environment.getAdminContext().setContextPath(adminContextPath);
     }
 }
