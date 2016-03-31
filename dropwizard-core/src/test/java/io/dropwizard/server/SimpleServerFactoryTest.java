@@ -31,12 +31,15 @@ import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
 
 public class SimpleServerFactoryTest {
 
     private SimpleServerFactory http;
     private final ObjectMapper objectMapper = Jackson.newObjectMapper();
     private Validator validator = BaseValidator.newValidator();
+    private Environment environment = new Environment("testEnvironment", objectMapper, validator, new MetricRegistry(),
+            ClassLoader.getSystemClassLoader());
 
     @Before
     public void setUp() throws Exception {
@@ -70,8 +73,6 @@ public class SimpleServerFactoryTest {
 
     @Test
     public void testBuild() throws Exception {
-        final Environment environment = new Environment("testEnvironment", objectMapper, validator, new MetricRegistry(),
-                ClassLoader.getSystemClassLoader());
         environment.jersey().register(new TestResource());
         environment.admin().addTask(new TestTask());
 
@@ -85,6 +86,14 @@ public class SimpleServerFactoryTest {
                 .isEqualTo("Hello, test_user!");
 
         server.stop();
+    }
+
+    @Test
+    public void testConfiguredEnvironment() {
+        http.configure(environment);
+
+    	assertEquals(http.getAdminContextPath(), environment.getAdminContext().getContextPath());
+    	assertEquals(http.getApplicationContextPath(), environment.getApplicationContext().getContextPath());
     }
 
     private static String httpRequest(String requestMethod, String url) throws Exception {

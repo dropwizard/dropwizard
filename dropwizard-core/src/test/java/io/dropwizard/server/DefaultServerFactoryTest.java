@@ -26,7 +26,6 @@ import org.eclipse.jetty.server.Server;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.validation.Validator;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -45,21 +44,26 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
 
 public class DefaultServerFactoryTest {
+	private Environment environment = new Environment("test", Jackson.newObjectMapper(),
+            Validators.newValidator(), new MetricRegistry(),
+            ClassLoader.getSystemClassLoader());
     private DefaultServerFactory http;
 
     @Before
     public void setUp() throws Exception {
+
         final ObjectMapper objectMapper = Jackson.newObjectMapper();
         objectMapper.getSubtypeResolver().registerSubtypes(ConsoleAppenderFactory.class,
                                                            FileAppenderFactory.class,
                                                            SyslogAppenderFactory.class,
                                                            HttpConnectorFactory.class);
 
-        this.http = new ConfigurationFactory<>(DefaultServerFactory.class,
-                                               BaseValidator.newValidator(),
-                                               objectMapper, "dw")
+        http = new ConfigurationFactory<>(DefaultServerFactory.class,
+                                          BaseValidator.newValidator(),
+                                          objectMapper, "dw")
                 .build(new File(Resources.getResource("yaml/server.yml").toURI()));
     }
 
@@ -108,9 +112,7 @@ public class DefaultServerFactoryTest {
     @Test
     public void registersDefaultExceptionMappers() throws Exception {
         assertThat(http.getRegisterDefaultExceptionMappers()).isTrue();
-        Environment environment = new Environment("test", Jackson.newObjectMapper(),
-                Validators.newValidator(), new MetricRegistry(),
-                ClassLoader.getSystemClassLoader());
+
         http.build(environment);
         Set<Object> singletons = environment.jersey().getResourceConfig().getSingletons();
         assertThat(singletons).hasAtLeastOneElementOfType(LoggingExceptionMapper.class);
@@ -135,12 +137,6 @@ public class DefaultServerFactoryTest {
 
     @Test
     public void testGracefulShutdown() throws Exception {
-        ObjectMapper objectMapper = Jackson.newObjectMapper();
-        Validator validator = Validators.newValidator();
-        MetricRegistry metricRegistry = new MetricRegistry();
-        Environment environment = new Environment("test", objectMapper, validator, metricRegistry,
-                ClassLoader.getSystemClassLoader());
-
         CountDownLatch requestReceived = new CountDownLatch(1);
         CountDownLatch shutdownInvoked = new CountDownLatch(1);
 
@@ -200,6 +196,14 @@ public class DefaultServerFactoryTest {
         // cancel the cleanup future since everything succeeded
         cleanup.cancel(false);
         executor.shutdownNow();
+    }
+
+    @Test
+    public void testConfiguredEnvironment() {
+    	http.configure(environment);
+
+    	assertEquals(http.getAdminContextPath(), environment.getAdminContext().getContextPath());
+    	assertEquals(http.getApplicationContextPath(), environment.getApplicationContext().getContextPath());
     }
 
     @Path("/test")

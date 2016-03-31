@@ -152,12 +152,12 @@ public class DefaultServerFactory extends AbstractServerFactory {
 
     @Override
     public Server build(Environment environment) {
+    	// ensures that the environment is configured before the server is built
+    	configure(environment);
+
         printBanner(environment.getName());
         final ThreadPool threadPool = createThreadPool(environment.metrics());
         final Server server = buildServer(environment.lifecycle(), threadPool);
-
-        LOGGER.info("Registering jersey handler with root path prefix: {}", applicationContextPath);
-        environment.getApplicationContext().setContextPath(applicationContextPath);
         final Handler applicationHandler = createAppServlet(server,
                                                             environment.jersey(),
                                                             environment.getObjectMapper(),
@@ -166,8 +166,7 @@ public class DefaultServerFactory extends AbstractServerFactory {
                                                             environment.getJerseyServletContainer(),
                                                             environment.metrics());
 
-        LOGGER.info("Registering admin handler with root path prefix: {}", adminContextPath);
-        environment.getAdminContext().setContextPath(adminContextPath);
+
         final Handler adminHandler = createAdminServlet(server,
                                                         environment.getAdminContext(),
                                                         environment.metrics(),
@@ -179,6 +178,15 @@ public class DefaultServerFactory extends AbstractServerFactory {
         final Handler gzipHandler = buildGzipHandler(routingHandler);
         server.setHandler(addStatsHandler(addRequestLog(server, gzipHandler, environment.getName())));
         return server;
+    }
+
+    @Override
+    public void configure(Environment environment) {
+        LOGGER.info("Registering jersey handler with root path prefix: {}", applicationContextPath);
+        environment.getApplicationContext().setContextPath(applicationContextPath);
+
+        LOGGER.info("Registering admin handler with root path prefix: {}", adminContextPath);
+        environment.getAdminContext().setContextPath(adminContextPath);
     }
 
     private RoutingHandler buildRoutingHandler(MetricRegistry metricRegistry,
