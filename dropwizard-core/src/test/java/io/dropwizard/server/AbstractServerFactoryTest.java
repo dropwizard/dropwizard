@@ -85,5 +85,10 @@ public class AbstractServerFactoryTest {
                                   environment.metrics());
             return server;
         }
+
+		@Override
+		public void configure(Environment environment) {
+			// left blank intentionally
+		}
     }
 }
