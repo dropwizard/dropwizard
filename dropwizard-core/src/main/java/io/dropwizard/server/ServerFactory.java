@@ -19,4 +19,11 @@ public interface ServerFactory extends Discoverable {
      * @return a {@link Server} running the Dropwizard application
      */
     Server build(Environment environment);
+
+    /**
+     * Configures the given environment with settings defined in the factory.
+     *
+     * @param environment the application's environment
+     */
+    void configure(Environment environment);
 }
