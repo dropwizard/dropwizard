@@ -7,8 +7,9 @@ import org.skife.jdbi.v2.StatementContext;
 import java.sql.PreparedStatement;
 import java.sql.Timestamp;
 import java.sql.Types;
+import java.time.Instant;
 import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
+import java.time.ZoneId;
 import java.util.Optional;
 
 public class OffsetDateTimeArgumentTest {
@@ -18,12 +19,12 @@ public class OffsetDateTimeArgumentTest {
 
     @Test
     public void apply() throws Exception {
-        final ZoneOffset localOffset = ZoneOffset.from(OffsetDateTime.now());
-        OffsetDateTime dateTime = OffsetDateTime.of(2007, 12, 3, 10, 15, 30, 375_000_000, localOffset);
+        final Instant now = OffsetDateTime.now().toInstant();
+        final OffsetDateTime dateTime = OffsetDateTime.ofInstant(now, ZoneId.systemDefault());
 
         new OffsetDateTimeArgument(dateTime, Optional.empty()).apply(1, statement, context);
 
-        Mockito.verify(statement).setTimestamp(1, Timestamp.valueOf("2007-12-03 10:15:30.375"));
+        Mockito.verify(statement).setTimestamp(1, Timestamp.from(now));
     }
 
     @Test
