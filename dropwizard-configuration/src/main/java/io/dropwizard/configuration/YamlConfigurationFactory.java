@@ -19,7 +19,6 @@ import com.google.common.collect.Iterables;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -33,8 +32,7 @@ import static java.util.Objects.requireNonNull;
 
 /**
  * A factory class for loading YAML configuration files, binding them to configuration objects, and
- * and validating their constraints. Allows for overriding configuration parameters from system
- * properties.
+ * validating their constraints. Allows for overriding configuration parameters from system properties.
  *
  * @param <T> the type of the configuration objects to produce
  */
@@ -101,18 +99,6 @@ public class YamlConfigurationFactory<T> implements ConfigurationFactory<T> {
 
             throw builder.build(path);
         }
-    }
-
-    /**
-     * Loads, parses, binds, and validates a configuration object from a file.
-     *
-     * @param file the path of the configuration file
-     * @return a validated configuration object
-     * @throws IOException            if there is an error reading the file
-     * @throws ConfigurationException if there is an error parsing or validating the file
-     */
-    public T build(File file) throws IOException, ConfigurationException {
-        return build(new FileConfigurationSourceProvider(), file.toString());
     }
 
     @Override
