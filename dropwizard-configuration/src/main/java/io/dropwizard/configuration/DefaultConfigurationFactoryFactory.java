@@ -11,6 +11,6 @@ public class DefaultConfigurationFactoryFactory<T> implements ConfigurationFacto
             Validator    validator, 
             ObjectMapper objectMapper,
             String       propertyPrefix) {
-        return new ConfigurationFactory<>(klass, validator, objectMapper, propertyPrefix);
+        return new YamlConfigurationFactory<>(klass, validator, objectMapper, propertyPrefix);
     }
 }

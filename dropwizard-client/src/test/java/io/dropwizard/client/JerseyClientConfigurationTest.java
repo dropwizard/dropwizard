@@ -1,7 +1,8 @@
 package io.dropwizard.client;
 
 import com.google.common.io.Resources;
-import io.dropwizard.configuration.ConfigurationFactory;
+
+import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.validation.Validators;
 import org.junit.Test;
@@ -14,7 +15,7 @@ public class JerseyClientConfigurationTest {
 
     @Test
     public void testBasicJerseyClient() throws Exception {
-        final JerseyClientConfiguration configuration = new ConfigurationFactory<>(JerseyClientConfiguration.class,
+        final JerseyClientConfiguration configuration = new YamlConfigurationFactory<>(JerseyClientConfiguration.class,
                 Validators.newValidator(), Jackson.newObjectMapper(), "dw")
                 .build(new File(Resources.getResource("yaml/jersey-client.yml").toURI()));
         assertThat(configuration.getMinThreads()).isEqualTo(8);

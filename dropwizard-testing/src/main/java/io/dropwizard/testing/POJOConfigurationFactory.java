@@ -5,11 +5,11 @@ import java.io.File;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import io.dropwizard.Configuration;
-import io.dropwizard.configuration.ConfigurationFactory;
 import io.dropwizard.configuration.ConfigurationSourceProvider;
+import io.dropwizard.configuration.YamlConfigurationFactory;
 
 public class POJOConfigurationFactory<C extends Configuration>
-    extends ConfigurationFactory<C> {
+    extends YamlConfigurationFactory<C> {
     protected final C configuration;
 
     @SuppressWarnings("unchecked")

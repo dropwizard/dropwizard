@@ -2,9 +2,9 @@ package io.dropwizard.jetty;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.io.Resources;
-import io.dropwizard.configuration.ConfigurationFactory;
+
+import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.Jackson;
-import io.dropwizard.logging.BootstrapLogging;
 import io.dropwizard.util.Duration;
 import io.dropwizard.validation.BaseValidator;
 import org.eclipse.jetty.servlet.ServletContextHandler;
@@ -24,7 +24,7 @@ public class ServerPushFilterFactoryTest {
 
     @Test
     public void testLoadConfiguration() throws Exception {
-        final ServerPushFilterFactory serverPush = new ConfigurationFactory<>(
+        final ServerPushFilterFactory serverPush = new YamlConfigurationFactory<>(
                 ServerPushFilterFactory.class, BaseValidator.newValidator(),
                 Jackson.newObjectMapper(), "dw-server-push")
                 .build(new File(Resources.getResource("yaml/server-push.yml").toURI()));

@@ -1,6 +1,6 @@
 package io.dropwizard.metrics.ganglia;
 
-import io.dropwizard.configuration.ConfigurationFactory;
+import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.DiscoverableSubtypeResolver;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.validation.BaseValidator;
@@ -20,7 +20,7 @@ public class GangliaReporterFactoryTest {
 
     @Test
     public void createDefaultFactory() throws Exception {
-        final GangliaReporterFactory factory = new ConfigurationFactory<>(GangliaReporterFactory.class,
+        final GangliaReporterFactory factory = new YamlConfigurationFactory<>(GangliaReporterFactory.class,
             BaseValidator.newValidator(), Jackson.newObjectMapper(), "dw")
             .build();
         assertThat(factory.getFrequency()).isEqualTo(Optional.empty());

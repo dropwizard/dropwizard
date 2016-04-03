@@ -2,7 +2,8 @@ package io.dropwizard.jetty;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.Resources;
-import io.dropwizard.configuration.ConfigurationFactory;
+
+import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.util.Size;
 import io.dropwizard.validation.BaseValidator;
@@ -19,7 +20,7 @@ public class GzipHandlerFactoryTest {
 
     @Before
     public void setUp() throws Exception {
-        this.gzip = new ConfigurationFactory<>(GzipHandlerFactory.class,
+        this.gzip = new YamlConfigurationFactory<>(GzipHandlerFactory.class,
                 BaseValidator.newValidator(), Jackson.newObjectMapper(), "dw")
                 .build(new File(Resources.getResource("yaml/gzip.yml").toURI()));
     }
@@ -69,7 +70,7 @@ public class GzipHandlerFactoryTest {
 
     @Test
     public void testBuildDefault() throws Exception {
-        final BiDiGzipHandler handler = new ConfigurationFactory<>(GzipHandlerFactory.class,
+        final BiDiGzipHandler handler = new YamlConfigurationFactory<>(GzipHandlerFactory.class,
                 BaseValidator.newValidator(), Jackson.newObjectMapper(), "dw")
                 .build(new File(Resources.getResource("yaml/default_gzip.yml").toURI()))
                 .build(null);
