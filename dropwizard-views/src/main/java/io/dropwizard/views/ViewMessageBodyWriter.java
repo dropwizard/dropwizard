@@ -27,7 +27,7 @@ import static com.codahale.metrics.MetricRegistry.name;
 @Provider
 @Produces({ MediaType.TEXT_HTML, MediaType.APPLICATION_XHTML_XML })
 public class ViewMessageBodyWriter implements MessageBodyWriter<View> {
-    private static final Logger logger = LoggerFactory.getLogger(MessageBodyWriter.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MessageBodyWriter.class);
     public static final String TEMPLATE_ERROR_MSG =
             "<html>" +
                 "<head><title>Template Error</title></head>" +
@@ -35,7 +35,6 @@ public class ViewMessageBodyWriter implements MessageBodyWriter<View> {
             "</html>";
 
     @Context
-    @SuppressWarnings("UnusedDeclaration")
     private HttpHeaders headers;
 
     private final Iterable<ViewRenderer> renderers;
@@ -83,7 +82,7 @@ public class ViewMessageBodyWriter implements MessageBodyWriter<View> {
             }
             throw new ViewRenderException("Unable to find a renderer for " + t.getTemplateName());
         } catch (Exception e) {
-            logger.debug("Template Error", e);
+            LOGGER.error("Template Error", e);
             throw new WebApplicationException(Response.serverError()
                                                       .type(MediaType.TEXT_HTML_TYPE)
                                                       .entity(TEMPLATE_ERROR_MSG)
