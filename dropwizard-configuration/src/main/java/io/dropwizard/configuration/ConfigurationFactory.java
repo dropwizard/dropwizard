@@ -29,6 +29,8 @@ import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import io.dropwizard.jackson.JsonUtil;
+
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -87,8 +89,12 @@ public class ConfigurationFactory<T> {
      * @throws ConfigurationException if there is an error parsing or validating the file
      */
     public T build(ConfigurationSourceProvider provider, String path) throws IOException, ConfigurationException {
+        return build(loadConfiguration(provider, path), path);
+    }
+
+    private JsonNode loadConfiguration(ConfigurationSourceProvider provider, String path) throws IOException, ConfigurationParsingException {
         try (InputStream input = provider.open(requireNonNull(path))) {
-            final JsonNode node = mapper.readTree(yamlFactory.createParser(input));
+            JsonNode node = mapper.readTree(yamlFactory.createParser(input));
 
             if (node == null) {
                 throw ConfigurationParsingException
@@ -96,7 +102,22 @@ public class ConfigurationFactory<T> {
                         .build(path);
             }
 
-            return build(node, path);
+            if (node.has("imports") && node.get("imports").isArray()) {
+                for (JsonNode configImport : node.get("imports")) {
+                    if (configImport.isTextual()) {
+                        JsonNode imported = loadConfiguration(
+                            provider,
+                            new File(new File(path).getParent(), configImport.asText()).toString()
+                        );
+                        node = JsonUtil.merge(node, imported);
+                    }
+                }
+
+                node = ((ObjectNode) node).without("imports");
+            }
+
+
+            return node;
         } catch (YAMLException e) {
             final ConfigurationParsingException.Builder builder = ConfigurationParsingException
                     .builder("Malformed YAML")
