@@ -3,7 +3,8 @@ package io.dropwizard.jetty;
 import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.io.Resources;
-import io.dropwizard.configuration.ConfigurationFactory;
+
+import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.DiscoverableSubtypeResolver;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.logging.ConsoleAppenderFactory;
@@ -47,7 +48,7 @@ public class HttpConnectorFactoryTest {
     @Test
     public void testParseMinimalConfiguration() throws Exception {
         HttpConnectorFactory http =
-                new ConfigurationFactory<>(HttpConnectorFactory.class, validator, objectMapper, "dw")
+                new YamlConfigurationFactory<>(HttpConnectorFactory.class, validator, objectMapper, "dw")
                 .build(new File(Resources.getResource("yaml/http-connector-minimal.yml").toURI()));
 
         assertThat(http.getPort()).isEqualTo(8080);
@@ -75,7 +76,7 @@ public class HttpConnectorFactoryTest {
     @Test
     public void testParseFullConfiguration() throws Exception {
         HttpConnectorFactory http =
-                new ConfigurationFactory<>(HttpConnectorFactory.class, validator, objectMapper, "dw")
+                new YamlConfigurationFactory<>(HttpConnectorFactory.class, validator, objectMapper, "dw")
                 .build(new File(Resources.getResource("yaml/http-connector.yml").toURI()));
 
         assertThat(http.getPort()).isEqualTo(9090);

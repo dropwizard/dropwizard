@@ -2,7 +2,8 @@ package io.dropwizard.request.logging;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.io.Resources;
-import io.dropwizard.configuration.ConfigurationFactory;
+
+import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.logging.ConsoleAppenderFactory;
 import io.dropwizard.logging.FileAppenderFactory;
@@ -24,7 +25,7 @@ public class RequestLogFactoryTest {
         objectMapper.getSubtypeResolver().registerSubtypes(ConsoleAppenderFactory.class,
                                                            FileAppenderFactory.class,
                                                            SyslogAppenderFactory.class);
-        this.logbackAccessRequestLogFactory = new ConfigurationFactory<>(LogbackAccessRequestLogFactory.class,
+        this.logbackAccessRequestLogFactory = new YamlConfigurationFactory<>(LogbackAccessRequestLogFactory.class,
                                                      BaseValidator.newValidator(),
                                                      objectMapper, "dw")
                 .build(new File(Resources.getResource("yaml/requestLog.yml").toURI()));

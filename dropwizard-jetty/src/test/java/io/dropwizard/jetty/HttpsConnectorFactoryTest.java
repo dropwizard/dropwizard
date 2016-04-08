@@ -1,7 +1,8 @@
 package io.dropwizard.jetty;
 
 import com.google.common.io.Resources;
-import io.dropwizard.configuration.ConfigurationFactory;
+
+import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.DiscoverableSubtypeResolver;
 
 import java.io.File;
@@ -41,9 +42,9 @@ public class HttpsConnectorFactoryTest {
 
     @Test
     public void testParsingConfiguration() throws Exception {
-        HttpsConnectorFactory https = new ConfigurationFactory<>(HttpsConnectorFactory.class, validator,
-                Jackson.newObjectMapper(), "dw-https").
-                build(new File(Resources.getResource("yaml/https-connector.yml").toURI()));
+        HttpsConnectorFactory https = new YamlConfigurationFactory<>(HttpsConnectorFactory.class, validator,
+                Jackson.newObjectMapper(), "dw-https")
+                .build(new File(Resources.getResource("yaml/https-connector.yml").toURI()));
 
         assertThat(https.getPort()).isEqualTo(8443);
         assertThat(https.getKeyStorePath()).isEqualTo("/path/to/ks_file");

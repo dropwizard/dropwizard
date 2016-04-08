@@ -1,11 +1,12 @@
 package io.dropwizard.db;
 
 import com.codahale.metrics.MetricRegistry;
-import io.dropwizard.configuration.ConfigurationFactory;
 import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
+import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.util.Duration;
 import io.dropwizard.validation.BaseValidator;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -102,7 +103,7 @@ public class DataSourceFactoryTest {
 
     @Test
     public void createDefaultFactory() throws Exception {
-        final DataSourceFactory factory = new ConfigurationFactory<>(DataSourceFactory.class,
+        final DataSourceFactory factory = new YamlConfigurationFactory<>(DataSourceFactory.class,
             BaseValidator.newValidator(), Jackson.newObjectMapper(), "dw")
             .build(new ResourceConfigurationSourceProvider(), "yaml/minimal_db_pool.yml");
 

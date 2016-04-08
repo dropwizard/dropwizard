@@ -12,9 +12,10 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.Files;
 import com.google.common.io.Resources;
-import io.dropwizard.configuration.ConfigurationFactory;
+
 import io.dropwizard.configuration.FileConfigurationSourceProvider;
 import io.dropwizard.configuration.SubstitutingSourceProvider;
+import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.logging.filter.FilterFactory;
 import io.dropwizard.validation.BaseValidator;
@@ -31,7 +32,7 @@ import org.slf4j.LoggerFactory;
 
 public class DefaultLoggingFactoryTest {
     private final ObjectMapper objectMapper = Jackson.newObjectMapper();
-    private final ConfigurationFactory<DefaultLoggingFactory> factory = new ConfigurationFactory<>(
+    private final YamlConfigurationFactory<DefaultLoggingFactory> factory = new YamlConfigurationFactory<>(
             DefaultLoggingFactory.class,
             BaseValidator.newValidator(),
             objectMapper, "dw");

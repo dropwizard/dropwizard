@@ -7,7 +7,7 @@ import com.google.common.collect.ImmutableSet;
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
 import io.dropwizard.cli.ServerCommand;
-import io.dropwizard.configuration.ConfigurationFactory;
+import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.lifecycle.Managed;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
@@ -179,7 +179,7 @@ public class DropwizardTestSupport<C extends Configuration> {
                     new POJOConfigurationFactory<>(configuration));
             } else if (customPropertyPrefix.isPresent()) {
                 bootstrap.setConfigurationFactoryFactory((klass, validator, objectMapper, propertyPrefix) ->
-                    new ConfigurationFactory<>(klass, validator, objectMapper, customPropertyPrefix.get()));
+                    new YamlConfigurationFactory<>(klass, validator, objectMapper, customPropertyPrefix.get()));
             }
 
             application.initialize(bootstrap);
