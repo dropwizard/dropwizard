@@ -21,14 +21,18 @@ public class ServerCommand<T extends Configuration> extends EnvironmentCommand<T
     private final Class<T> configurationClass;
 
     public ServerCommand(Application<T> application) {
-        super(application, "server", "Runs the Dropwizard application as an HTTP server");
+        this(application, "server", "Runs the Dropwizard application as an HTTP server");
+    }
+
+    protected ServerCommand(final Application<T> application, final String name, final String description) {
+        super(application, name, description);
         this.configurationClass = application.getConfigurationClass();
     }
 
     /*
-     * Since we don't subclass ServerCommand, we need a concrete reference to the configuration
-     * class.
-     */
+         * Since we don't subclass ServerCommand, we need a concrete reference to the configuration
+         * class.
+         */
     @Override
     protected Class<T> getConfigurationClass() {
         return configurationClass;
