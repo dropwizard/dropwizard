@@ -24,6 +24,12 @@ public class ServerCommand<T extends Configuration> extends EnvironmentCommand<T
         this(application, "server", "Runs the Dropwizard application as an HTTP server");
     }
 
+    /**
+     * A constructor to allow reuse of the server command as a different name
+     * @param application the application using this command
+     * @param name the argument name to invoke this command
+     * @param description a summary of what the command does
+     */
     protected ServerCommand(final Application<T> application, final String name, final String description) {
         super(application, name, description);
         this.configurationClass = application.getConfigurationClass();

@@ -57,6 +57,11 @@ public abstract class ConfiguredCommand<T extends Configuration> extends Command
         addFileArgument(subparser);
     }
 
+    /**
+     * Adds the configuration file argument for the configured command.
+     * @param subparser The subparser to register the argument on
+     * @return the register argument
+     */
     protected Argument addFileArgument(Subparser subparser) {
         return subparser.addArgument("file")
                         .nargs("?")
