@@ -8,7 +8,6 @@ import io.dropwizard.util.Duration;
 import io.dropwizard.validation.BaseValidator;
 
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -21,7 +20,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.fail;
 
-    public class DataSourceFactoryTest {
+public class DataSourceFactoryTest {
     private final MetricRegistry metricRegistry = new MetricRegistry();
 
     private DataSourceFactory factory;
