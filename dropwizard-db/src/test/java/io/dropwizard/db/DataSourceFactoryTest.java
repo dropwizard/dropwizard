@@ -8,6 +8,7 @@ import io.dropwizard.util.Duration;
 import io.dropwizard.validation.BaseValidator;
 
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -18,8 +19,9 @@ import java.sql.SQLException;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.fail;
 
-public class DataSourceFactoryTest {
+    public class DataSourceFactoryTest {
     private final MetricRegistry metricRegistry = new MetricRegistry();
 
     private DataSourceFactory factory;
@@ -44,6 +46,18 @@ public class DataSourceFactoryTest {
         dataSource = factory.build(metricRegistry, "test");
         dataSource.start();
         return dataSource;
+    }
+
+    @Test
+    public void testInitialSizeIsZero() throws Exception {
+        factory.setUrl("nonsense invalid url");
+        factory.setInitialSize(0);
+        ManagedDataSource dataSource = factory.build(metricRegistry, "test");
+        try {
+            dataSource.start();
+        } catch (Exception e) {
+            fail();
+        }
     }
 
     @Test

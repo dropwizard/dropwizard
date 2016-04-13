@@ -117,7 +117,8 @@ public class DataSourceConfigurationTest {
             DataSourceFactory ds = getDataSourceFactory("yaml/empty_initial_pool.yml");
             assertThat(ds.getInitialSize()).isEqualTo(0);
         } catch (ConfigurationValidationException e) {
-            fail();
+            e.printStackTrace();
+            fail(e.getMessage());
         }
     }
 
