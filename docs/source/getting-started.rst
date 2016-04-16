@@ -125,7 +125,7 @@ we go through this example application. If you have any questions about how Mave
 .. _SBT: https://github.com/harrah/xsbt/wiki
 .. _Gant: https://github.com/Gant/Gant
 .. _Leiningen: https://github.com/technomancy/leiningen
-.. __: http://www.sonatype.com/books/mvnref-book/reference/
+.. __: https://books.sonatype.com/mvnref-book/reference/
 
 
 You have three alternatives from here:
