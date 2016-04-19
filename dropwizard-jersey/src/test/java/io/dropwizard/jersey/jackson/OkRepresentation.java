@@ -2,16 +2,29 @@ package io.dropwizard.jersey.jackson;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.time.LocalDate;
+
 public class OkRepresentation {
-    private String message;
+    private Integer message;
+    private LocalDate date;
 
     @JsonProperty
-    public String getMessage() {
+    public Integer getMessage() {
         return message;
     }
 
     @JsonProperty
-    public void setMessage(String message) {
+    public LocalDate getDate() {
+        return date;
+    }
+
+    @JsonProperty
+    public void setMessage(Integer message) {
         this.message = message;
+    }
+
+    @JsonProperty
+    public void setDate(LocalDate date) {
+        this.date = date;
     }
 }

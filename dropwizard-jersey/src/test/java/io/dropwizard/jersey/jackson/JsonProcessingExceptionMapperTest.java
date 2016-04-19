@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
 import io.dropwizard.jersey.DropwizardResourceConfig;
-import io.dropwizard.jersey.validation.Validators;
 import io.dropwizard.logging.BootstrapLogging;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.test.JerseyTest;
@@ -47,6 +46,17 @@ public class JsonProcessingExceptionMapperTest extends JerseyTest {
     }
 
     @Test
+    public void returnsA500ForListNonDeserializableRepresentationClasses() throws Exception {
+        final ImmutableList<BrokenRepresentation> ent =
+            ImmutableList.of(new BrokenRepresentation(ImmutableList.of()),
+                new BrokenRepresentation(ImmutableList.of("whoo")));
+
+        Response response = target("/json/brokenList").request(MediaType.APPLICATION_JSON)
+            .post(Entity.entity(ent, MediaType.APPLICATION_JSON));
+        assertThat(response.getStatus()).isEqualTo(500);
+    }
+
+    @Test
     public void returnsA500ForNonSerializableRepresentationClassesOutbound() throws Exception {
         Response response = target("/json/brokenOutbound").request(MediaType.APPLICATION_JSON).get();
         assertThat(response.getStatus()).isEqualTo(500);
@@ -63,4 +73,37 @@ public class JsonProcessingExceptionMapperTest extends JerseyTest {
         assertThat(errorMessage.get("message").asText()).isEqualTo("Unable to process JSON");
         assertThat(errorMessage.has("details")).isFalse();
     }
+
+    @Test
+    public void returnsA400ForInvalidFormatRequestEntities() throws Exception {
+        assertEndpointReturns400("{\"message\": \"a\", \"date\": \"2016-01-01\"}");
+    }
+
+    @Test
+    public void returnsA400ForInvalidFormatRequestEntitiesWrapped() throws Exception {
+        assertEndpointReturns400("{\"message\": \"1\", \"date\": \"a\"}");
+    }
+
+    @Test
+    public void returnsA400ForInvalidFormatRequestEntitiesArray() throws Exception {
+        assertEndpointReturns400("{\"message\": \"1\", \"date\": [1,1,1,1]}");
+    }
+
+    @Test
+    public void returnsA400ForSemanticInvalidDate() throws Exception {
+        assertEndpointReturns400("{\"message\": \"1\", \"date\": [-1,-1,-1]}");
+    }
+
+    private void assertEndpointReturns400(String entity) {
+        Response response = target("/json/ok").request(MediaType.APPLICATION_JSON)
+            .post(Entity.entity(entity, MediaType.APPLICATION_JSON));
+        assertThat(response.getStatus()).isEqualTo(400);
+
+        JsonNode errorMessage = response.readEntity(JsonNode.class);
+        assertThat(errorMessage.get("code").asInt()).isEqualTo(400);
+        assertThat(errorMessage.get("message").asText()).isEqualTo("Unable to process JSON");
+        assertThat(errorMessage.has("details")).isFalse();
+    }
+
+
 }
