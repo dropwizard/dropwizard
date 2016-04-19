@@ -59,9 +59,12 @@ import javax.validation.constraints.NotNull;
  *         <td>{@code archivedLogFilenamePattern}</td>
  *         <td><b>REQUIRED</b> if {@code archive} is {@code true}.</td>
  *         <td>
- *             The filename pattern for archived files. {@code %d} is replaced with the date in {@code yyyy-MM-dd} form,
- *             and the fact that it ends with {@code .gz} indicates the file will be gzipped as it's archived. Likewise,
- *             filename patterns which end in {@code .zip} will be filled as they are archived.
+ *             The filename pattern for archived files.
+ *             If {@code maxFileSize} is specified, rollover is size-based, and the pattern must contain {@code %i} for
+ *             an integer index of the archived file.
+ *             Otherwise rollover is date-based, and the pattern must contain {@code %d}, which is replaced with the
+ *             date in {@code yyyy-MM-dd} form.
+ *             If the pattern ends with {@code .gz} or {@code .zip}, files will be compressed as they are archived.
  *         </td>
  *     </tr>
  *     <tr>
