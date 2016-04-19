@@ -593,10 +593,17 @@ currentLogFilename           REQUIRED     The filename where current events are 
 threshold                    ALL          The lowest level of events to write to the file.
 archive                      true         Whether or not to archive old events in separate files.
 archivedLogFilenamePattern   (none)       Required if ``archive`` is ``true``.
-                                          The filename pattern for archived files. ``%d`` is replaced with the date in ``yyyy-MM-dd`` form,
-                                          and the fact that it ends with ``.gz`` indicates the file will be gzipped as it's archived.
-                                          Likewise, filename patterns which end in ``.zip`` will be filled as they are archived.
+                                          The filename pattern for archived files.
+                                          If ``maxFileSize`` is specified, rollover is size-based, and the pattern must contain ``%i`` for
+                                          an integer index of the archived file.
+                                          Otherwise rollover is date-based, and the pattern must contain ``%d``, which is replaced with the
+                                          date in ``yyyy-MM-dd`` form.
+                                          If the pattern ends with ``.gz`` or ``.zip``, files will be compressed as they are archived.
 archivedFileCount            5            The number of archived files to keep. Must be between ``1`` and ``50``.
+maxFileSize                  (unlimited)  The maximum size of the currently active file before a rollover is triggered. The value can be
+                                          expressed in bytes, kilobytes, megabytes, gigabytes, and terabytes by appending B, K, MB, GB, or
+                                          TB to the numeric value.  Examples include 100MB, 1GB, 1TB.  Sizes can also be spelled out, such
+                                          as 100 megabytes, 1 gigabyte, 1 terabyte.
 timeZone                     UTC          The time zone to which event timestamps will be converted.
 logFormat                    default      The Logback pattern with which events will be formatted. See
                                           the Logback_ documentation for details.
