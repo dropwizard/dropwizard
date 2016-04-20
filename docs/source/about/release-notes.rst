@@ -46,7 +46,7 @@ v1.0.0
 * Upgraded to Mustache 0.9.1
 * Upgraded to SLF4J 1.7.21
 * Upgraded to tomcat-jdbc 8.0.32
-* Upgraded to AssertJ 3.3.0
+* Upgraded to AssertJ 3.4.1
 
 .. _rel-0.9.2:
 
