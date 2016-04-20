@@ -433,7 +433,7 @@ public class ConfigurationFactoryTest {
                     "expected ',' or ']', but got StreamEnd\n" +
                     " in 'reader', line 2, column 21:\n" +
                     "    wizard\n" +
-                    "          ^" + NEWLINE);
+                    "          ^\n");
         }
     }
 }
