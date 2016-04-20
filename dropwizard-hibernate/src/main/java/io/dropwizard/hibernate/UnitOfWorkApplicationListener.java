@@ -75,7 +75,7 @@ public class UnitOfWorkApplicationListener implements ApplicationEventListener {
                 UnitOfWork unitOfWork = methodMap.get(event.getUriInfo()
                         .getMatchedResourceMethod().getInvocable().getDefinitionMethod());
                 unitOfWorkAspect.beforeStart(unitOfWork);
-            } else if (event.getType() == RequestEvent.Type.RESP_FILTERS_START) {
+            } else if (event.getType() == RequestEvent.Type.FINISHED) {
                 try {
                     unitOfWorkAspect.afterEnd();
                 } catch (Exception e) {

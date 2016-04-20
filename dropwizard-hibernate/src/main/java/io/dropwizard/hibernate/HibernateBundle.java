@@ -1,20 +1,24 @@
 package io.dropwizard.hibernate;
 
+import org.hibernate.SessionFactory;
+
 import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
+import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module.Feature;
 import com.google.common.collect.ImmutableList;
+
 import io.dropwizard.Configuration;
 import io.dropwizard.ConfiguredBundle;
-import io.dropwizard.db.PooledDataSourceFactory;
 import io.dropwizard.db.DatabaseConfiguration;
+import io.dropwizard.db.PooledDataSourceFactory;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.util.Duration;
-import org.hibernate.SessionFactory;
 
 public abstract class HibernateBundle<T extends Configuration> implements ConfiguredBundle<T>, DatabaseConfiguration<T> {
     public static final String DEFAULT_NAME = "hibernate";
 
     private SessionFactory sessionFactory;
+    private boolean lazyLoadingEnabled = true;
 
     private final ImmutableList<Class<?>> entities;
     private final SessionFactoryFactory sessionFactoryFactory;
@@ -39,7 +43,11 @@ public abstract class HibernateBundle<T extends Configuration> implements Config
      * Override to configure the {@link Hibernate5Module}.
      */
     protected Hibernate5Module createHibernate5Module() {
-        return new Hibernate5Module();
+        Hibernate5Module module = new Hibernate5Module();
+        if(lazyLoadingEnabled) {
+            module.enable(Feature.FORCE_LAZY_LOADING);
+        }
+        return module;
     }
 
     /**
@@ -72,6 +80,14 @@ public abstract class HibernateBundle<T extends Configuration> implements Config
         final UnitOfWorkApplicationListener listener = new UnitOfWorkApplicationListener();
         environment.jersey().register(listener);
         return listener;
+    }
+    
+    public boolean isLazyLoadingEnabled() {
+        return lazyLoadingEnabled;
+    }
+
+    public void setLazyLoadingEnabled(boolean lazyLoadingEnabled) {
+        this.lazyLoadingEnabled = lazyLoadingEnabled;
     }
 
     public SessionFactory getSessionFactory() {
