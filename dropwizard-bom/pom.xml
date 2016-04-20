@@ -31,7 +31,7 @@
         <metrics3.version>3.1.2</metrics3.version>
         <slf4j.version>1.7.21</slf4j.version>
         <logback.version>1.1.7</logback.version>
-        <h2.version>1.4.190</h2.version>
+        <h2.version>1.4.191</h2.version>
     </properties>
 
     <dependencyManagement>
@@ -95,7 +95,7 @@
             <dependency>
                 <groupId>org.apache.tomcat</groupId>
                 <artifactId>tomcat-jdbc</artifactId>
-                <version>8.0.32</version>
+                <version>8.0.33</version>
             </dependency>
             <dependency>
                 <groupId>com.h2database</groupId>
