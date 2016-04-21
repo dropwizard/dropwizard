@@ -109,16 +109,10 @@ public class DataSourceConfigurationTest {
         assertThat(ds.getUser()).isNull();
         assertThat(ds.getPassword()).isNull();
     }
-    // Test added for https://github.com/dropwizard/dropwizard/issues/1037
     @Test
     public void testInitialSizeZeroIsAllowed() throws Exception {
-        try {
-            DataSourceFactory ds = getDataSourceFactory("yaml/empty_initial_pool.yml");
-            assertThat(ds.getInitialSize()).isEqualTo(0);
-        } catch (ConfigurationValidationException e) {
-            e.printStackTrace();
-            fail(e.getMessage());
-        }
+        DataSourceFactory ds = getDataSourceFactory("yaml/empty_initial_pool.yml");
+           assertThat(ds.getInitialSize()).isEqualTo(0);
     }
 
     private DataSourceFactory getDataSourceFactory(String resourceName) throws Exception {
