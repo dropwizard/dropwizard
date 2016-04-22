@@ -96,7 +96,7 @@ public class DbDumpCommandTest extends AbstractMigrationTest {
         final Map<String, Object> attributes = ImmutableMap.of("output", (Object) file.getAbsolutePath());
         dumpCommand.run(null, new Namespace(attributes), existedDbConf);
         // Check that file is exist, and has some XML content (no reason to make a full-blown XML assertion)
-        assertThat(Files.toString(file, StandardCharsets.UTF_8)).startsWith("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>");
+        assertThat(Files.toString(file, StandardCharsets.UTF_8)).startsWith("<?xml version=\"1.1\" encoding=\"UTF-8\" standalone=\"no\"?>");
     }
 
     @Test
