@@ -52,11 +52,7 @@ public class DataSourceFactoryTest {
         factory.setUrl("nonsense invalid url");
         factory.setInitialSize(0);
         ManagedDataSource dataSource = factory.build(metricRegistry, "test");
-        try {
-            dataSource.start();
-        } catch (Exception e) {
-            fail();
-        }
+        dataSource.start();
     }
 
     @Test
