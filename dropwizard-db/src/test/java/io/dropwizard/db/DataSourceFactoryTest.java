@@ -18,6 +18,7 @@ import java.sql.SQLException;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.fail;
 
 public class DataSourceFactoryTest {
     private final MetricRegistry metricRegistry = new MetricRegistry();
@@ -44,6 +45,14 @@ public class DataSourceFactoryTest {
         dataSource = factory.build(metricRegistry, "test");
         dataSource.start();
         return dataSource;
+    }
+
+    @Test
+    public void testInitialSizeIsZero() throws Exception {
+        factory.setUrl("nonsense invalid url");
+        factory.setInitialSize(0);
+        ManagedDataSource dataSource = factory.build(metricRegistry, "test");
+        dataSource.start();
     }
 
     @Test

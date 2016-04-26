@@ -2,6 +2,7 @@ package io.dropwizard.db;
 
 import com.google.common.io.Resources;
 
+import io.dropwizard.configuration.ConfigurationValidationException;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.validation.Validators;
@@ -12,6 +13,7 @@ import java.io.File;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.fail;
 
 public class DataSourceConfigurationTest {
 
@@ -106,6 +108,11 @@ public class DataSourceConfigurationTest {
         assertThat(ds.getUrl()).isEqualTo("jdbc:postgresql://db.example.com/db-prod?user=scott&password=tiger");
         assertThat(ds.getUser()).isNull();
         assertThat(ds.getPassword()).isNull();
+    }
+    @Test
+    public void testInitialSizeZeroIsAllowed() throws Exception {
+        DataSourceFactory ds = getDataSourceFactory("yaml/empty_initial_pool.yml");
+           assertThat(ds.getInitialSize()).isEqualTo(0);
     }
 
     private DataSourceFactory getDataSourceFactory(String resourceName) throws Exception {
