@@ -24,6 +24,7 @@ v1.0.0
 * Support for case insensitive and all single letter ``SizeUnit`` suffixes `#1380 <https://github.com/dropwizard/dropwizard/pull/1380>`_
 * Added a development profile to the build `#1364 <https://github.com/dropwizard/dropwizard/issues/1364>`_
 * All the default exception mappers in ``ResourceTestRule`` are registered by default `#1387 <https://github.com/dropwizard/dropwizard/pull/1387>`_
+* Allow DB minSize and initialSize to be zero for lazy connections `#1517 <https://github.com/dropwizard/dropwizard/pull/1517>`_
 * Ability to provide own ``RequestLogFactory`` `#1290 <https://github.com/dropwizard/dropwizard/pull/1290>`_
 * Support for authentication by polymorphic principals `#1392 <https://github.com/dropwizard/dropwizard/pull/1392>`_
 * Support for configuring Jetty's ``inheritedChannel`` option `#1410 <https://github.com/dropwizard/dropwizard/pull/1410>`_
