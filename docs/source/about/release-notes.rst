@@ -38,7 +38,7 @@ v1.0.0
 * Upgraded to Hibernate 5.0.7 `#1429 <https://github.com/dropwizard/dropwizard/pull/1429>`_
 * Upgraded to Hibernate Validator 5.2.4.Final
 * Upgraded to Jadira Usertype Core 5.0.0.GA
-* Upgraded to Jackson 2.7.3
+* Upgraded to Jackson 2.7.4
 * Upgraded to JDBI 2.73 `#1358 <https://github.com/dropwizard/dropwizard/pull/1358>`_
 * Upgraded to Jersey 2.22.2
 * Upgraded to Jetty 9.3.8.v20160314 `#1330 <https://github.com/dropwizard/dropwizard/pull/1330>`_
