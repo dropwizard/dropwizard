@@ -22,6 +22,7 @@
         <module>dropwizard-bom</module>
         <module>dropwizard-core</module>
         <module>dropwizard-client</module>
+        <module>dropwizard-codegen-maven-plugin</module>
         <module>dropwizard-db</module>
         <module>dropwizard-jdbi</module>
         <module>dropwizard-migrations</module>
