@@ -8,6 +8,7 @@ import org.junit.Test;
 import javax.ws.rs.HttpMethod;
 import java.util.ArrayList;
 import java.util.List;
+import static org.junit.Assert.assertNotNull;
 
 public class JavaCodeGeneratorTest {
 
@@ -27,8 +28,11 @@ public class JavaCodeGeneratorTest {
 
     private List<ScannedMethod> createScannedMethods() {
         List<ScannedMethod> scannedMethods = new ArrayList<>();
-        scannedMethods.add(createScannedMethods1());
-        scannedMethods.add(createScannedMethods2());
+        scannedMethods.add(createScannedMethodsGet());
+        scannedMethods.add(createScannedMethodsPost());
+        scannedMethods.add(createScannedMethodsPut());
+        scannedMethods.add(createScannedMethodsDelete());
+        scannedMethods.add(createScannedMethodsHead());
         return scannedMethods;
     }
 
@@ -39,7 +43,7 @@ public class JavaCodeGeneratorTest {
         return scannedClass;
     }
 
-    private ScannedMethod createScannedMethods1() {
+    private ScannedMethod createScannedMethodsGet() {
         ScannedMethod scannedMethod = new ScannedMethod();
         scannedMethod.setName("getSomething");
         scannedMethod.setMethod(HttpMethod.GET);
@@ -48,13 +52,41 @@ public class JavaCodeGeneratorTest {
         return scannedMethod;
     }
 
-    private ScannedMethod createScannedMethods2() {
+    private ScannedMethod createScannedMethodsPost() {
         ScannedMethod scannedMethod = new ScannedMethod();
         scannedMethod.setName("addSomething");
         scannedMethod.setMethod(HttpMethod.POST);
         scannedMethod.setUrl("http://localhost:8080/something/add");
         scannedMethod.setClassToReturn(Something.class);
         scannedMethod.setClassToPost(Something.class);
+        return scannedMethod;
+    }
+
+    private ScannedMethod createScannedMethodsPut() {
+        ScannedMethod scannedMethod = new ScannedMethod();
+        scannedMethod.setName("putSomething");
+        scannedMethod.setMethod(HttpMethod.PUT);
+        scannedMethod.setUrl("http://localhost:8080/something/put");
+        scannedMethod.setClassToReturn(Something.class);
+        scannedMethod.setClassToPost(Something.class);
+        return scannedMethod;
+    }
+
+    private ScannedMethod createScannedMethodsDelete() {
+        ScannedMethod scannedMethod = new ScannedMethod();
+        scannedMethod.setName("deleteSomething");
+        scannedMethod.setMethod(HttpMethod.DELETE);
+        scannedMethod.setUrl("http://localhost:8080/something/delete");
+        scannedMethod.setClassToReturn(Void.class);
+        return scannedMethod;
+    }
+
+    private ScannedMethod createScannedMethodsHead() {
+        ScannedMethod scannedMethod = new ScannedMethod();
+        scannedMethod.setName("headSomething");
+        scannedMethod.setMethod(HttpMethod.HEAD);
+        scannedMethod.setUrl("http://localhost:8080/something/head");
+        scannedMethod.setClassToReturn(Void.class);
         return scannedMethod;
     }
 }

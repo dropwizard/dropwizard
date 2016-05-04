@@ -1,9 +1,6 @@
 package io.dropwizard.codegen;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -22,4 +19,17 @@ public class TestResource {
     public Something addSomething(Something something) {
         return something;
     }
+
+    @PUT
+    @Path("/update")
+    public Something updateSomething(Something something) {
+        return something;
+    }
+
+    @DELETE
+    @Path("/delete")
+    public void deleteSomething(int id) {
+
+    }
+
 }

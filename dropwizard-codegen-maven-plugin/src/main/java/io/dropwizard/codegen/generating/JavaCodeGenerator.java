@@ -49,7 +49,10 @@ public class JavaCodeGenerator {
     private static List<MethodSpec> createMethodSpecList(List<ScannedMethod> scannedMethods) {
         List<MethodSpec> methodSpecList = new ArrayList<>();
         for(ScannedMethod scannedMethod : scannedMethods) {
-            methodSpecList.add(createMethodSpec(scannedMethod));
+            MethodSpec methodSpec = createMethodSpec(scannedMethod);
+            if(methodSpec != null) {
+                methodSpecList.add(methodSpec);
+            }
         }
         Collections.sort(methodSpecList, createMethodSpecComparator());
         return methodSpecList;
@@ -69,12 +72,21 @@ public class JavaCodeGenerator {
                 .addStatement("return jsonClient.http().post($S, dataToPost).object($T.class)", scannedMethod.getUrl(), scannedMethod.getClassToReturn())
                 .addModifiers(Modifier.PUBLIC)
                 .build();
-        } else {
+        } else if(HttpMethod.PUT.equals(scannedMethod.getMethod())) {
             return MethodSpec.methodBuilder(scannedMethod.getName())
+                .addParameter(scannedMethod.getClassToPost(), "dataToPost")
                 .returns(scannedMethod.getClassToReturn())
-                .addStatement("not implemented yet $S $T", scannedMethod.getUrl(), scannedMethod.getClassToReturn())
+                .addStatement("return jsonClient.http().put($S, dataToPost).object($T.class)", scannedMethod.getUrl(), scannedMethod.getClassToReturn())
                 .addModifiers(Modifier.PUBLIC)
                 .build();
+        } else if(HttpMethod.DELETE.equals(scannedMethod.getMethod())) {
+            return MethodSpec.methodBuilder(scannedMethod.getName())
+                .returns(scannedMethod.getClassToReturn())
+                .addStatement("return jsonClient.http().delete($S).object($T.class)", scannedMethod.getUrl(), scannedMethod.getClassToReturn())
+                .addModifiers(Modifier.PUBLIC)
+                .build();
+        } else {
+            return null;
         }
     }
 

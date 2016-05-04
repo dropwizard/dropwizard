@@ -36,13 +36,6 @@ public class ResourcesScanner {
 
         Reflections reflections = new Reflections(configuration);
 
-        Set<URL> urls1 = reflections.getConfiguration().getUrls();
-        if(log != null) {
-            for(URL url : urls1) {
-                log.info("url1: " + url.toString());
-            }
-        }
-
         List<ScannedClass> scannedClasses = new ArrayList<>();
         for(Class<?> scannedResourceClass : reflections.getTypesAnnotatedWith(javax.ws.rs.Path.class)) {
             scannedClasses.add(createScannedClass(rootHost, scannedResourceClass));
