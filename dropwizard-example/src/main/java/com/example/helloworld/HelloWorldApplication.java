@@ -2,7 +2,6 @@ package com.example.helloworld;
 
 import com.example.helloworld.auth.ExampleAuthorizer;
 import io.dropwizard.auth.AuthValueFactoryProvider;
-import com.codahale.metrics.ScheduledReporter;
 import com.example.helloworld.auth.ExampleAuthenticator;
 import com.example.helloworld.cli.RenderCommand;
 import com.example.helloworld.core.Person;
@@ -25,11 +24,9 @@ import io.dropwizard.configuration.EnvironmentVariableSubstitutor;
 import io.dropwizard.configuration.SubstitutingSourceProvider;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.hibernate.HibernateBundle;
-import io.dropwizard.metrics.graphite.GraphiteReporterFactory;
 import io.dropwizard.migrations.MigrationsBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import io.dropwizard.util.Duration;
 import io.dropwizard.views.ViewBundle;
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
 import java.util.Map;
@@ -93,19 +90,11 @@ public class HelloWorldApplication extends Application<HelloWorldConfiguration> 
                 .buildAuthFilter()));
         environment.jersey().register(new AuthValueFactoryProvider.Binder<>(User.class));
         environment.jersey().register(RolesAllowedDynamicFeature.class);
-
-        // resources
         environment.jersey().register(new HelloWorldResource(template));
         environment.jersey().register(new ViewResource());
         environment.jersey().register(new ProtectedResource());
         environment.jersey().register(new PeopleResource(dao));
         environment.jersey().register(new PersonResource(dao));
         environment.jersey().register(new FilteredResource());
-
-        // metrics
-        final GraphiteReporterFactory graphite = configuration.getGraphiteReporterFactory();
-        final Duration frequency = graphite.getFrequency().orElse(Duration.minutes(1));
-        final ScheduledReporter reporter = graphite.build(environment.metrics());
-        reporter.start(frequency.getQuantity(), frequency.getUnit());
     }
 }
