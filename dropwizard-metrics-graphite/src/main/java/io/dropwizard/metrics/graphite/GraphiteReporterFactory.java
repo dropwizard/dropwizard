@@ -10,8 +10,8 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.google.common.annotations.VisibleForTesting;
 import io.dropwizard.metrics.BaseReporterFactory;
 import io.dropwizard.validation.OneOf;
+import io.dropwizard.validation.PortRange;
 import org.hibernate.validator.constraints.NotEmpty;
-import org.hibernate.validator.constraints.Range;
 
 import javax.validation.constraints.NotNull;
 
@@ -32,7 +32,7 @@ import javax.validation.constraints.NotNull;
  *     </tr>
  *     <tr>
  *         <td>port</td>
- *         <td>8080</td>
+ *         <td>2003</td>
  *         <td>The port of the Graphite server to report to.</td>
  *     </tr>
  *     <tr>
@@ -53,8 +53,8 @@ public class GraphiteReporterFactory extends BaseReporterFactory {
     @NotEmpty
     private String host = "localhost";
 
-    @Range(min = 0, max = 49151)
-    private int port = 8080;
+    @PortRange
+    private int port = 2003;
 
     @NotNull
     private String prefix = "";

@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableMap;
 import io.dropwizard.Configuration;
 import io.dropwizard.db.DataSourceFactory;
-import io.dropwizard.metrics.graphite.GraphiteReporterFactory;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.Valid;
@@ -26,9 +25,6 @@ public class HelloWorldConfiguration extends Configuration {
 
     @NotNull
     private Map<String, Map<String, String>> viewRendererConfiguration = Collections.emptyMap();
-
-    @Valid
-    private GraphiteReporterFactory graphiteReporterFactory = new GraphiteReporterFactory();
 
     @JsonProperty
     public String getTemplate() {
@@ -76,15 +72,5 @@ public class HelloWorldConfiguration extends Configuration {
             builder.put(entry.getKey(), ImmutableMap.copyOf(entry.getValue()));
         }
         this.viewRendererConfiguration = builder.build();
-    }
-
-    @JsonProperty("metrics")
-    public GraphiteReporterFactory getGraphiteReporterFactory() {
-        return graphiteReporterFactory;
-    }
-
-    @JsonProperty("metrics")
-    public void setGraphiteReporterFactory(GraphiteReporterFactory graphiteReporterFactory) {
-        this.graphiteReporterFactory = graphiteReporterFactory;
     }
 }

@@ -53,7 +53,7 @@ public class GraphiteReporterFactoryTest {
 
         final Graphite graphite = argument.getValue();
         assertThat(getField(graphite, "hostname")).isEqualTo("localhost");
-        assertThat(getField(graphite, "port")).isEqualTo(8080);
+        assertThat(getField(graphite, "port")).isEqualTo(2003);
         assertThat(getField(graphite, "address")).isNull();
     }
 
@@ -67,7 +67,7 @@ public class GraphiteReporterFactoryTest {
 
         final GraphiteUDP graphite = argument.getValue();
         assertThat(getField(graphite, "hostname")).isEqualTo("localhost");
-        assertThat(getField(graphite, "port")).isEqualTo(8080);
+        assertThat(getField(graphite, "port")).isEqualTo(2003);
         assertThat(getField(graphite, "address")).isNull();
     }
 
