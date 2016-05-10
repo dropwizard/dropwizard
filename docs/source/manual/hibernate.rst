@@ -132,6 +132,7 @@ actually require database access, so the ``@UnitOfWork`` annotation is provided:
 .. code-block:: java
 
     @GET
+    @Path("/{id}")
     @Timed
     @UnitOfWork
     public Person findPerson(@PathParam("id") LongParam id) {
