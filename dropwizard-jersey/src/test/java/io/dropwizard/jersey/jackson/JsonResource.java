@@ -28,7 +28,13 @@ public class JsonResource {
 
     @POST
     @Path("/ok")
-    public List<String> ok(OkRepresentation rep) {
+    public List<Integer> ok(OkRepresentation rep) {
         return ImmutableList.of(rep.getMessage());
+    }
+
+    @POST
+    @Path("/brokenList")
+    public List<Integer> ok(List<BrokenRepresentation> rep) {
+        return ImmutableList.of(rep.size());
     }
 }
