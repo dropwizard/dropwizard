@@ -5,6 +5,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
 
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 
@@ -36,6 +39,20 @@ public class JacksonMessageBodyProvider extends JacksonJaxbJsonProvider {
                                Annotation[] annotations,
                                MediaType mediaType) {
         return isProvidable(type) && super.isWriteable(type, genericType, annotations, mediaType);
+    }
+
+    @Override
+    public Object readFrom(Class<Object> type,
+                           Type genericType,
+                           Annotation[] annotations,
+                           MediaType mediaType,
+                           MultivaluedMap<String, String> httpHeaders,
+                           InputStream entityStream) throws IOException {
+        try {
+            return super.readFrom(type, genericType, annotations, mediaType, httpHeaders, entityStream);
+        } catch (Throwable cause) {
+            throw new WrappedJsonProcessingException(cause);
+        }
     }
 
     private boolean isProvidable(Class<?> type) {
