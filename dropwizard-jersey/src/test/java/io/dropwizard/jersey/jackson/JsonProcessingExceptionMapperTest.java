@@ -5,14 +5,12 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
 import io.dropwizard.jersey.DropwizardResourceConfig;
-import io.dropwizard.jersey.validation.Validators;
 import io.dropwizard.logging.BootstrapLogging;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.test.JerseyTest;
 import org.glassfish.jersey.test.TestProperties;
 import org.junit.Test;
 
-import javax.validation.Validator;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
@@ -40,10 +38,10 @@ public class JsonProcessingExceptionMapperTest extends JerseyTest {
     }
 
     @Test
-    public void returnsA500ForNonDeserializableRepresentationClasses() throws Exception {
+    public void returnsA400ForNonDeserializableRepresentationClasses() throws Exception {
         Response response = target("/json/broken").request(MediaType.APPLICATION_JSON)
                 .post(Entity.entity(new BrokenRepresentation(ImmutableList.of("whee")), MediaType.APPLICATION_JSON));
-        assertThat(response.getStatus()).isEqualTo(500);
+        isA400ForNonDeserializableRequest(response);
     }
 
     @Test
@@ -56,8 +54,11 @@ public class JsonProcessingExceptionMapperTest extends JerseyTest {
     public void returnsA400ForNonDeserializableRequestEntities() throws Exception {
         Response response = target("/json/ok").request(MediaType.APPLICATION_JSON)
                 .post(Entity.entity(new UnknownRepresentation(100), MediaType.APPLICATION_JSON));
-        assertThat(response.getStatus()).isEqualTo(400);
+        isA400ForNonDeserializableRequest(response);
+    }
 
+    private static void isA400ForNonDeserializableRequest(Response response) {
+        assertThat(response.getStatus()).isEqualTo(400);
         JsonNode errorMessage = response.readEntity(JsonNode.class);
         assertThat(errorMessage.get("code").asInt()).isEqualTo(400);
         assertThat(errorMessage.get("message").asText()).isEqualTo("Unable to process JSON");
