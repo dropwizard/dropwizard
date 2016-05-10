@@ -13,11 +13,12 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 public class DbFastForwardCommand<T extends Configuration> extends AbstractLiquibaseCommand<T> {
-    protected DbFastForwardCommand(DatabaseConfiguration<T> strategy, Class<T> configurationClass) {
+    protected DbFastForwardCommand(DatabaseConfiguration<T> strategy, Class<T> configurationClass, String migrationsFileName) {
         super("fast-forward",
               "Mark the next pending change set as applied without running it",
               strategy,
-              configurationClass);
+              configurationClass,
+              migrationsFileName);
     }
 
     @Override

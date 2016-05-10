@@ -7,8 +7,8 @@ import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
 
 public class DbGenerateDocsCommand<T extends Configuration> extends AbstractLiquibaseCommand<T> {
-    public DbGenerateDocsCommand(DatabaseConfiguration<T> strategy, Class<T> configurationClass) {
-        super("generate-docs", "Generate documentation about the database state.", strategy, configurationClass);
+    public DbGenerateDocsCommand(DatabaseConfiguration<T> strategy, Class<T> configurationClass, String migrationsFileName) {
+        super("generate-docs", "Generate documentation about the database state.", strategy, configurationClass, migrationsFileName);
     }
 
     @Override

@@ -25,7 +25,7 @@ public class CloseableLiquibaseTest {
         factory.setUser("DbTest");
 
         dataSource = (ManagedPooledDataSource) factory.build(new MetricRegistry(), "DbTest");
-        liquibase = new CloseableLiquibase(dataSource);
+        liquibase = new CloseableLiquibaseWithClassPathMigrationsFile(dataSource, "migrations.xml");
     }
 
     @Test

@@ -2,28 +2,17 @@ package io.dropwizard.migrations;
 
 import io.dropwizard.db.ManagedDataSource;
 import liquibase.Liquibase;
-import liquibase.database.jvm.JdbcConnection;
+import liquibase.database.DatabaseConnection;
 import liquibase.exception.LiquibaseException;
-import liquibase.resource.ClassLoaderResourceAccessor;
-import liquibase.resource.FileSystemResourceAccessor;
+import liquibase.resource.ResourceAccessor;
 
 import java.sql.SQLException;
 
-public class CloseableLiquibase extends Liquibase implements AutoCloseable {
-    private static final String DEFAULT_MIGRATIONS_FILE = "migrations.xml";
+public abstract class CloseableLiquibase extends Liquibase implements AutoCloseable {
     private final ManagedDataSource dataSource;
 
-    public CloseableLiquibase(ManagedDataSource dataSource) throws LiquibaseException, SQLException {
-        super(DEFAULT_MIGRATIONS_FILE,
-              new ClassLoaderResourceAccessor(),
-              new JdbcConnection(dataSource.getConnection()));
-        this.dataSource = dataSource;
-    }
-
-    public CloseableLiquibase(ManagedDataSource dataSource, String file) throws LiquibaseException, SQLException {
-        super(file,
-              new FileSystemResourceAccessor(),
-              new JdbcConnection(dataSource.getConnection()));
+    public CloseableLiquibase(String changeLogFile, ResourceAccessor resourceAccessor, DatabaseConnection conn, ManagedDataSource dataSource) throws LiquibaseException, SQLException {
+        super(changeLogFile, resourceAccessor, conn);
         this.dataSource = dataSource;
     }
 

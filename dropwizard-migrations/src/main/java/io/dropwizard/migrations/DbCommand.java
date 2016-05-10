@@ -13,22 +13,22 @@ public class DbCommand<T extends Configuration> extends AbstractLiquibaseCommand
     private static final String COMMAND_NAME_ATTR = "subcommand";
     private final SortedMap<String, AbstractLiquibaseCommand<T>> subcommands;
 
-    public DbCommand(String name, DatabaseConfiguration<T> strategy, Class<T> configurationClass) {
-        super(name, "Run database migration tasks", strategy, configurationClass);
+    public DbCommand(String name, DatabaseConfiguration<T> strategy, Class<T> configurationClass, String migrationsFileName) {
+        super(name, "Run database migration tasks", strategy, configurationClass, migrationsFileName);
         this.subcommands = new TreeMap<>();
-        addSubcommand(new DbCalculateChecksumCommand<>(strategy, configurationClass));
-        addSubcommand(new DbClearChecksumsCommand<>(strategy, configurationClass));
-        addSubcommand(new DbDropAllCommand<>(strategy, configurationClass));
-        addSubcommand(new DbDumpCommand<>(strategy, configurationClass));
-        addSubcommand(new DbFastForwardCommand<>(strategy, configurationClass));
-        addSubcommand(new DbGenerateDocsCommand<>(strategy, configurationClass));
-        addSubcommand(new DbLocksCommand<>(strategy, configurationClass));
-        addSubcommand(new DbMigrateCommand<>(strategy, configurationClass));
-        addSubcommand(new DbPrepareRollbackCommand<>(strategy, configurationClass));
-        addSubcommand(new DbRollbackCommand<>(strategy, configurationClass));
-        addSubcommand(new DbStatusCommand<>(strategy, configurationClass));
-        addSubcommand(new DbTagCommand<>(strategy, configurationClass));
-        addSubcommand(new DbTestCommand<>(strategy, configurationClass));
+        addSubcommand(new DbCalculateChecksumCommand<>(strategy, configurationClass, migrationsFileName));
+        addSubcommand(new DbClearChecksumsCommand<>(strategy, configurationClass, migrationsFileName));
+        addSubcommand(new DbDropAllCommand<>(strategy, configurationClass, migrationsFileName));
+        addSubcommand(new DbDumpCommand<>(strategy, configurationClass, migrationsFileName));
+        addSubcommand(new DbFastForwardCommand<>(strategy, configurationClass, migrationsFileName));
+        addSubcommand(new DbGenerateDocsCommand<>(strategy, configurationClass, migrationsFileName));
+        addSubcommand(new DbLocksCommand<>(strategy, configurationClass, migrationsFileName));
+        addSubcommand(new DbMigrateCommand<>(strategy, configurationClass, migrationsFileName));
+        addSubcommand(new DbPrepareRollbackCommand<>(strategy, configurationClass, migrationsFileName));
+        addSubcommand(new DbRollbackCommand<>(strategy, configurationClass, migrationsFileName));
+        addSubcommand(new DbStatusCommand<>(strategy, configurationClass, migrationsFileName));
+        addSubcommand(new DbTagCommand<>(strategy, configurationClass, migrationsFileName));
+        addSubcommand(new DbTestCommand<>(strategy, configurationClass, migrationsFileName));
     }
 
     private void addSubcommand(AbstractLiquibaseCommand<T> subcommand) {

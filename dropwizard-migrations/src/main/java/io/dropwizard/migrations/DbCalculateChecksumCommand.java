@@ -12,8 +12,8 @@ import org.slf4j.LoggerFactory;
 public class DbCalculateChecksumCommand<T extends Configuration> extends AbstractLiquibaseCommand<T> {
     private static final Logger LOGGER = LoggerFactory.getLogger("liquibase");
 
-    public DbCalculateChecksumCommand(DatabaseConfiguration<T> strategy, Class<T> configurationClass) {
-        super("calculate-checksum", "Calculates and prints a checksum for a change set", strategy, configurationClass);
+    public DbCalculateChecksumCommand(DatabaseConfiguration<T> strategy, Class<T> configurationClass, String migrationsFileName) {
+        super("calculate-checksum", "Calculates and prints a checksum for a change set", strategy, configurationClass, migrationsFileName);
     }
 
     @Override

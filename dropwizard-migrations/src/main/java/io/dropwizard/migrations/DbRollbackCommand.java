@@ -14,11 +14,12 @@ import java.util.Date;
 import java.util.List;
 
 public class DbRollbackCommand<T extends Configuration> extends AbstractLiquibaseCommand<T> {
-    public DbRollbackCommand(DatabaseConfiguration<T> strategy, Class<T> configurationClass) {
+    public DbRollbackCommand(DatabaseConfiguration<T> strategy, Class<T> configurationClass, String migrationsFileName) {
         super("rollback",
               "Rollback the database schema to a previous version.",
               strategy,
-              configurationClass);
+              configurationClass,
+              migrationsFileName);
     }
 
     @Override

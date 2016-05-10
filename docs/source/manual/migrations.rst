@@ -52,7 +52,8 @@ Defining Migrations
 
 Your database migrations are stored in your Dropwizard project, in
 ``src/main/resources/migrations.xml``. This file will be packaged with your application, allowing you to
-run migrations using your application's command-line interface.
+run migrations using your application's command-line interface. You can change the name of the migrations
+file used by overriding the ``getMigrationsFileName()`` method in ``MigrationsBundle``.
 
 For example, to create a new ``people`` table, you might create an initial ``migrations.xml`` like
 this:

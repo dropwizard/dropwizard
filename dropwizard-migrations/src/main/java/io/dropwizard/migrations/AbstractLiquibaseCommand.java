@@ -19,14 +19,17 @@ import java.sql.SQLException;
 public abstract class AbstractLiquibaseCommand<T extends Configuration> extends ConfiguredCommand<T> {
     private final DatabaseConfiguration<T> strategy;
     private final Class<T> configurationClass;
+    private final String migrationsFileName;
 
     protected AbstractLiquibaseCommand(String name,
                                        String description,
                                        DatabaseConfiguration<T> strategy,
-                                       Class<T> configurationClass) {
+                                       Class<T> configurationClass,
+                                       String migrationsFileName) {
         super(name, description);
         this.strategy = strategy;
         this.configurationClass = configurationClass;
+        this.migrationsFileName = migrationsFileName;
     }
 
     @Override
@@ -72,9 +75,10 @@ public abstract class AbstractLiquibaseCommand<T extends Configuration> extends 
 
         final String migrationsFile = namespace.getString("migrations-file");
         if (migrationsFile == null) {
-            liquibase = new CloseableLiquibase(dataSource);
+            liquibase = new CloseableLiquibaseWithClassPathMigrationsFile(dataSource, migrationsFileName) {
+            };
         } else {
-            liquibase = new CloseableLiquibase(dataSource, migrationsFile);
+            liquibase = new CloseableLiquibaseWithFileSystemMigrationsFile(dataSource, migrationsFile);
         }
 
         final Database database = liquibase.getDatabase();
