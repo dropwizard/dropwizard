@@ -71,7 +71,8 @@ import javax.validation.constraints.NotNull;
  *         <td>{@code archivedFileCount}</td>
  *         <td>{@code 5}</td>
  *         <td>
- *             The number of archived files to keep. Must be greater than {@code 0}.
+ *             The number of archived files to keep. Must be greater than or equal to {@code 0}. Zero is a
+ *             special value signifying to keep infinite logs (use with caution)
  *         </td>
  *     </tr>
  *     <tr>
@@ -111,7 +112,7 @@ public class FileAppenderFactory<E extends DeferredProcessingAware> extends Abst
 
     private String archivedLogFilenamePattern;
 
-    @Min(1)
+    @Min(0)
     private int archivedFileCount = 5;
 
     private Size maxFileSize;

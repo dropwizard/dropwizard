@@ -599,7 +599,8 @@ archivedLogFilenamePattern   (none)       Required if ``archive`` is ``true``.
                                           Otherwise rollover is date-based, and the pattern must contain ``%d``, which is replaced with the
                                           date in ``yyyy-MM-dd`` form.
                                           If the pattern ends with ``.gz`` or ``.zip``, files will be compressed as they are archived.
-archivedFileCount            5            The number of archived files to keep. Must be between ``1`` and ``50``.
+archivedFileCount            5            The number of archived files to keep. Must be greater than or equal to ``0``. Zero is a
+                                          special value signifying to keep infinite logs (use with caution)
 maxFileSize                  (unlimited)  The maximum size of the currently active file before a rollover is triggered. The value can be
                                           expressed in bytes, kilobytes, megabytes, gigabytes, and terabytes by appending B, K, MB, GB, or
                                           TB to the numeric value.  Examples include 100MB, 1GB, 1TB.  Sizes can also be spelled out, such
