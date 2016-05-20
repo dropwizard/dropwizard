@@ -86,6 +86,18 @@ public class FileAppenderFactoryTest {
     }
 
     @Test
+    public void isValidForInfiniteRolledFiles() throws Exception{
+        FileAppenderFactory fileAppenderFactory = new FileAppenderFactory();
+        fileAppenderFactory.setCurrentLogFilename(folder.newFile("logfile.log").toString());
+        fileAppenderFactory.setArchivedFileCount(0);
+        fileAppenderFactory.setArchivedLogFilenamePattern(folder.newFile("example-%d.log.gz").toString());
+        ImmutableList<String> errors =
+            ConstraintViolations.format(validator.validate(fileAppenderFactory));
+        assertThat(errors).isEmpty();
+        assertThat(fileAppenderFactory.buildAppender(new LoggerContext())).isNotNull();
+    }
+
+    @Test
     public void isValidForMaxFileSize() throws Exception{
         FileAppenderFactory fileAppenderFactory = new FileAppenderFactory();
         fileAppenderFactory.setCurrentLogFilename(folder.newFile("logfile.log").toString());
