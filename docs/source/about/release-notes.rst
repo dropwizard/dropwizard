@@ -42,7 +42,7 @@ v1.0.0
 * Upgraded to Jadira Usertype Core 5.0.0.GA
 * Upgraded to Jackson 2.7.4
 * Upgraded to JDBI 2.73 `#1358 <https://github.com/dropwizard/dropwizard/pull/1358>`_
-* Upgraded to Jersey 2.22.2
+* Upgraded to Jersey 2.23
 * Upgraded to Jetty 9.3.8.v20160314 `#1330 <https://github.com/dropwizard/dropwizard/pull/1330>`_
 * Upgraded to Joda-Time 2.9.3
 * Upgraded to Liquibase 3.5.0
