@@ -24,13 +24,43 @@ public class JodaDateTimeMapper extends TypedMapper<DateTime> {
      * explicitly. Otherwise it will not be correctly represented in
      * a time zone different from the time zone of the database.
      */
-    private Optional<Calendar> calendar;
+    private final Optional<Calendar> calendar;
 
     public JodaDateTimeMapper() {
         calendar = Optional.absent();
     }
 
     public JodaDateTimeMapper(Optional<TimeZone> timeZone) {
+        calendar = timeZone.transform(new Function<TimeZone, Calendar>() {
+            @Override
+            public Calendar apply(TimeZone tz) {
+                return new GregorianCalendar(tz);
+            }
+        });
+    }
+
+    public JodaDateTimeMapper(int index) {
+        super(index);
+        calendar = Optional.absent();
+    }
+
+    public JodaDateTimeMapper(String name) {
+        super(name);
+        calendar = Optional.absent();
+    }
+
+    public JodaDateTimeMapper(int index, Optional<TimeZone> timeZone) {
+        super(index);
+        calendar = timeZone.transform(new Function<TimeZone, Calendar>() {
+            @Override
+            public Calendar apply(TimeZone tz) {
+                return new GregorianCalendar(tz);
+            }
+        });
+    }
+
+    public JodaDateTimeMapper(String name, Optional<TimeZone> timeZone) {
+        super(name);
         calendar = timeZone.transform(new Function<TimeZone, Calendar>() {
             @Override
             public Calendar apply(TimeZone tz) {
