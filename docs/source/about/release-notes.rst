@@ -37,21 +37,25 @@ v1.0.0
 * Upgraded to argparse4j 0.7.0
 * Upgraded to Guava 19.0
 * Upgraded to H2 1.4.191
-* Upgraded to Hibernate 5.0.7 `#1429 <https://github.com/dropwizard/dropwizard/pull/1429>`_
+* Upgraded to Hibernate 5.1.0 `#1429 <https://github.com/dropwizard/dropwizard/pull/1429>`_
 * Upgraded to Hibernate Validator 5.2.4.Final
+* Upgraded to HSQLDB 2.3.4
 * Upgraded to Jadira Usertype Core 5.0.0.GA
 * Upgraded to Jackson 2.7.4
 * Upgraded to JDBI 2.73 `#1358 <https://github.com/dropwizard/dropwizard/pull/1358>`_
-* Upgraded to Jersey 2.22.2
-* Upgraded to Jetty 9.3.8.v20160314 `#1330 <https://github.com/dropwizard/dropwizard/pull/1330>`_
+* Upgraded to Jersey 2.23
+* Upgraded to Jetty 9.3.9.v20160517 `#1330 <https://github.com/dropwizard/dropwizard/pull/1330>`_
+* Upgraded to JMH 1.12
 * Upgraded to Joda-Time 2.9.3
-* Upgraded to Liquibase 3.5.0
+* Upgraded to Liquibase 3.5.1
 * Upgraded to liquibase-slf4j 2.0.0
 * Upgraded to Logback 1.1.7
 * Upgraded to Mustache 0.9.1
 * Upgraded to SLF4J 1.7.21
-* Upgraded to tomcat-jdbc 8.0.33
+* Upgraded to tomcat-jdbc 8.5.2
+* Upgraded to Objenesis 2.3
 * Upgraded to AssertJ 3.4.1
+* Upgraded to Mockito 2.0.53-beta
 
 .. _rel-0.9.2:
 
