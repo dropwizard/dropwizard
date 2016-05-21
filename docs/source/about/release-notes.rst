@@ -55,6 +55,7 @@ v1.0.0
 * Upgraded to tomcat-jdbc 8.5.2
 * Upgraded to Objenesis 2.3
 * Upgraded to AssertJ 3.4.1
+* Upgraded to Mockito 2.0.53-beta
 
 .. _rel-0.9.2:
 
