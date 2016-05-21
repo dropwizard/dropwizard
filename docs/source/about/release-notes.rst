@@ -52,7 +52,7 @@ v1.0.0
 * Upgraded to Logback 1.1.7
 * Upgraded to Mustache 0.9.1
 * Upgraded to SLF4J 1.7.21
-* Upgraded to tomcat-jdbc 8.0.33
+* Upgraded to tomcat-jdbc 8.5.2
 * Upgraded to Objenesis 2.3
 * Upgraded to AssertJ 3.4.1
 
