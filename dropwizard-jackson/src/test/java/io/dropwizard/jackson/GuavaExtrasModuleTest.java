@@ -32,6 +32,12 @@ public class GuavaExtrasModuleTest {
     }
 
     @Test
+    public void canSerializeCacheBuilderSpecs() throws Exception {
+        assertThat(mapper.writeValueAsString(CacheBuilderSpec.disableCaching()))
+            .isEqualTo("\"maximumSize=0\"");
+    }
+
+    @Test
     public void canDeserializeAbsentOptions() throws Exception {
         assertThat(mapper.readValue("null", Optional.class))
                 .isEqualTo(Optional.absent());
