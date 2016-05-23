@@ -10,7 +10,7 @@
     <!-- kind of hard to use exit codes without System.exit -->
     <Match>
         <Class name="io.dropwizard.Application"/>
-        <Method name="run"/>
+        <Method name="onFatalError"/>
         <Bug pattern="DM_EXIT"/>
     </Match>
 
