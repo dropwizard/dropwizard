@@ -78,7 +78,7 @@ public abstract class Application<T extends Configuration> {
         final Cli cli = new Cli(new JarLocation(getClass()), bootstrap, System.out, System.err);
         if (!cli.run(arguments)) {
             // only exit if there's an error running the command
-            System.exit(1);
+            onFatalError();
         }
     }
 
@@ -92,4 +92,13 @@ public abstract class Application<T extends Configuration> {
         bootstrap.addCommand(new CheckCommand<>(this));
     }
 
+    /**
+     * Called by {@link #run(String...)} to indicate there was a fatal error running the requested command.
+     *
+     * The default implementation calls {@link System#exit(int)} with a non-zero status code to terminate the
+     * application.
+     */
+    protected void onFatalError() {
+        System.exit(1);
+    }
 }
