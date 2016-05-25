@@ -8,8 +8,8 @@ import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
 
 public class DbDropAllCommand<T extends Configuration> extends AbstractLiquibaseCommand<T> {
-    public DbDropAllCommand(DatabaseConfiguration<T> strategy, Class<T> configurationClass) {
-        super("drop-all", "Delete all user-owned objects from the database.", strategy, configurationClass);
+    public DbDropAllCommand(DatabaseConfiguration<T> strategy, Class<T> configurationClass, String migrationsFileName) {
+        super("drop-all", "Delete all user-owned objects from the database.", strategy, configurationClass, migrationsFileName);
     }
 
     @Override

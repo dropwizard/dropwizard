@@ -20,7 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class DbStatusCommandTest extends AbstractMigrationTest {
 
     private final DbStatusCommand<TestMigrationConfiguration> statusCommand =
-            new DbStatusCommand<>(new TestMigrationDatabaseConfiguration(), TestMigrationConfiguration.class);
+            new DbStatusCommand<>(new TestMigrationDatabaseConfiguration(), TestMigrationConfiguration.class, "migrations.xml");
     private final ByteArrayOutputStream baos = new ByteArrayOutputStream();
     private TestMigrationConfiguration conf;
 

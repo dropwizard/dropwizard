@@ -48,11 +48,12 @@ public class DbDumpCommand<T extends Configuration> extends AbstractLiquibaseCom
         this.outputStream = outputStream;
     }
 
-    public DbDumpCommand(DatabaseConfiguration<T> strategy, Class<T> configurationClass) {
+    public DbDumpCommand(DatabaseConfiguration<T> strategy, Class<T> configurationClass, String migrationsFileName) {
         super("dump",
               "Generate a dump of the existing database state.",
               strategy,
-              configurationClass);
+              configurationClass,
+              migrationsFileName);
     }
 
     @Override

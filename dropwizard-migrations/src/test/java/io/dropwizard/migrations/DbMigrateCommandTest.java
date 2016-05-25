@@ -1,8 +1,6 @@
 package io.dropwizard.migrations;
 
 import com.google.common.collect.ImmutableMap;
-import io.dropwizard.db.DataSourceFactory;
-import io.dropwizard.db.DatabaseConfiguration;
 import net.jcip.annotations.NotThreadSafe;
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.inf.Namespace;
@@ -22,7 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class DbMigrateCommandTest extends AbstractMigrationTest {
 
     private DbMigrateCommand<TestMigrationConfiguration> migrateCommand = new DbMigrateCommand<>(
-        TestMigrationConfiguration::getDataSource, TestMigrationConfiguration.class);
+        TestMigrationConfiguration::getDataSource, TestMigrationConfiguration.class, "migrations.xml");
     private TestMigrationConfiguration conf;
     private String databaseUrl;
 

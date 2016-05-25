@@ -11,8 +11,8 @@ import net.sourceforge.argparse4j.inf.Subparser;
 import java.util.List;
 
 public class DbTestCommand<T extends Configuration> extends AbstractLiquibaseCommand<T> {
-    public DbTestCommand(DatabaseConfiguration<T> strategy, Class<T> configurationClass) {
-        super("test", "Apply and rollback pending change sets.", strategy, configurationClass);
+    public DbTestCommand(DatabaseConfiguration<T> strategy, Class<T> configurationClass, String migrationsFileName) {
+        super("test", "Apply and rollback pending change sets.", strategy, configurationClass, migrationsFileName);
     }
 
     @Override

@@ -13,8 +13,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 public class DbPrepareRollbackCommand<T extends Configuration> extends AbstractLiquibaseCommand<T> {
-    public DbPrepareRollbackCommand(DatabaseConfiguration<T> strategy, Class<T> configurationClass) {
-        super("prepare-rollback", "Generate rollback DDL scripts for pending change sets.", strategy, configurationClass);
+    public DbPrepareRollbackCommand(DatabaseConfiguration<T> strategy, Class<T> configurationClass, String migrationsFileName) {
+        super("prepare-rollback", "Generate rollback DDL scripts for pending change sets.", strategy, configurationClass, migrationsFileName);
     }
 
     @Override

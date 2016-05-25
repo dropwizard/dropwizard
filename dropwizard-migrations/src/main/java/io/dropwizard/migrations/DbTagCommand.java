@@ -7,8 +7,8 @@ import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
 
 public class DbTagCommand<T extends Configuration> extends AbstractLiquibaseCommand<T> {
-    public DbTagCommand(DatabaseConfiguration<T> strategy, Class<T> configurationClass) {
-        super("tag", "Tag the database schema.", strategy, configurationClass);
+    public DbTagCommand(DatabaseConfiguration<T> strategy, Class<T> configurationClass, String migrationsFileName) {
+        super("tag", "Tag the database schema.", strategy, configurationClass, migrationsFileName);
     }
 
     @Override

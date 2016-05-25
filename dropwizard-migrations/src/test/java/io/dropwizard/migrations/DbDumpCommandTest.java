@@ -38,7 +38,7 @@ public class DbDumpCommandTest extends AbstractMigrationTest {
     private static List<String> attributeNames;
 
     private final DbDumpCommand<TestMigrationConfiguration> dumpCommand =
-            new DbDumpCommand<>(new TestMigrationDatabaseConfiguration(), TestMigrationConfiguration.class);
+            new DbDumpCommand<>(new TestMigrationDatabaseConfiguration(), TestMigrationConfiguration.class, "migrations.xml");
     private final ByteArrayOutputStream baos = new ByteArrayOutputStream();
     private TestMigrationConfiguration existedDbConf;
 

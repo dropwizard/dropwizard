@@ -8,8 +8,8 @@ import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
 
 public class DbLocksCommand<T extends Configuration> extends AbstractLiquibaseCommand<T> {
-    public DbLocksCommand(DatabaseConfiguration<T> strategy, Class<T> configurationClass) {
-        super("locks", "Manage database migration locks", strategy, configurationClass);
+    public DbLocksCommand(DatabaseConfiguration<T> strategy, Class<T> configurationClass, String migrationsFileName) {
+        super("locks", "Manage database migration locks", strategy, configurationClass, migrationsFileName);
     }
 
     @Override

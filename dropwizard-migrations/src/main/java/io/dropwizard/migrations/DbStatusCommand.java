@@ -24,8 +24,8 @@ public class DbStatusCommand<T extends Configuration> extends AbstractLiquibaseC
         this.outputStream = outputStream;
     }
 
-    public DbStatusCommand(DatabaseConfiguration<T> strategy, Class<T> configurationClass) {
-        super("status", "Check for pending change sets.", strategy, configurationClass);
+    public DbStatusCommand(DatabaseConfiguration<T> strategy, Class<T> configurationClass, String migrationsFileName) {
+        super("status", "Check for pending change sets.", strategy, configurationClass, migrationsFileName);
     }
 
     @Override

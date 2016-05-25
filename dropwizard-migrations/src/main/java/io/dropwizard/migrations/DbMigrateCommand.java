@@ -24,8 +24,8 @@ public class DbMigrateCommand<T extends Configuration> extends AbstractLiquibase
         this.outputStream = outputStream;
     }
 
-    public DbMigrateCommand(DatabaseConfiguration<T> strategy, Class<T> configurationClass) {
-        super("migrate", "Apply all pending change sets.", strategy, configurationClass);
+    public DbMigrateCommand(DatabaseConfiguration<T> strategy, Class<T> configurationClass, String migrationsFileName) {
+        super("migrate", "Apply all pending change sets.", strategy, configurationClass, migrationsFileName);
     }
 
     @Override
