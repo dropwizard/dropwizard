@@ -27,12 +27,22 @@ public class ServerCommandTest {
 
     private final MyApplication application = new MyApplication();
     private final ServerCommand<Configuration> command = new ServerCommand<>(application);
-    private final Server server = new Server(0);
+    private final Server server = new Server(0) {
+        @Override
+        protected void doStop() throws Exception {
+            super.doStop();
+            if (ServerCommandTest.this.throwException) {
+               System.out.println("throw NullPointerException, see Issue#1557");
+               throw new NullPointerException();
+            }
+        }
+    };
 
     private final Environment environment = mock(Environment.class);
     private final Namespace namespace = mock(Namespace.class);
     private final ServerFactory serverFactory = mock(ServerFactory.class);
     private final Configuration configuration = mock(Configuration.class);
+    private boolean throwException = false;
 
     @Before
     public void setUp() throws Exception {
@@ -73,6 +83,7 @@ public class ServerCommandTest {
 
     @Test
     public void stopsAServerIfThereIsAnErrorStartingIt() throws Exception {
+        this.throwException = true;
         server.addBean(new AbstractLifeCycle() {
             @Override
             protected void doStart() throws Exception {
@@ -90,5 +101,6 @@ public class ServerCommandTest {
 
         assertThat(server.isStarted())
                 .isFalse();
+        this.throwException = false;
     }
 }
