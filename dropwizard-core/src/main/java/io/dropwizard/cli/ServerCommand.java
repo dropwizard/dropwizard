@@ -56,12 +56,12 @@ public class ServerCommand<T extends Configuration> extends EnvironmentCommand<T
             try {
                 server.stop();
             } catch (Exception e1) {
-                LOGGER.warn("Failure during stop server", e);
+                LOGGER.warn("Failure during stop server", e1);
             }
             try {
                 cleanup();
             } catch (Exception e2) {
-                LOGGER.warn("Failure during cleanup", e);
+                LOGGER.warn("Failure during cleanup", e2);
             }
             throw e;
         }
