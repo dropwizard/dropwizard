@@ -93,8 +93,8 @@ public class SimpleServerFactoryTest {
     public void testConfiguredEnvironment() {
         http.configure(environment);
 
-    	assertEquals(http.getAdminContextPath(), environment.getAdminContext().getContextPath());
-    	assertEquals(http.getApplicationContextPath(), environment.getApplicationContext().getContextPath());
+        assertEquals(http.getAdminContextPath(), environment.getAdminContext().getContextPath());
+        assertEquals(http.getApplicationContextPath(), environment.getApplicationContext().getContextPath());
     }
 
     private static String httpRequest(String requestMethod, String url) throws Exception {

@@ -152,8 +152,8 @@ public class DefaultServerFactory extends AbstractServerFactory {
 
     @Override
     public Server build(Environment environment) {
-    	// ensures that the environment is configured before the server is built
-    	configure(environment);
+        // ensures that the environment is configured before the server is built
+        configure(environment);
 
         printBanner(environment.getName());
         final ThreadPool threadPool = createThreadPool(environment.metrics());

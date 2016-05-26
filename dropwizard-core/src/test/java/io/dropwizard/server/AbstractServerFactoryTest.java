@@ -86,9 +86,9 @@ public class AbstractServerFactoryTest {
             return server;
         }
 
-		@Override
-		public void configure(Environment environment) {
-			// left blank intentionally
-		}
+        @Override
+        public void configure(Environment environment) {
+            // left blank intentionally
+        }
     }
 }

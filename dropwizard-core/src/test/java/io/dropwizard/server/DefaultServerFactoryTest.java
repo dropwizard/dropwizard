@@ -48,7 +48,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 
 public class DefaultServerFactoryTest {
-	private Environment environment = new Environment("test", Jackson.newObjectMapper(),
+    private Environment environment = new Environment("test", Jackson.newObjectMapper(),
             Validators.newValidator(), new MetricRegistry(),
             ClassLoader.getSystemClassLoader());
     private DefaultServerFactory http;
@@ -201,10 +201,10 @@ public class DefaultServerFactoryTest {
 
     @Test
     public void testConfiguredEnvironment() {
-    	http.configure(environment);
+        http.configure(environment);
 
-    	assertEquals(http.getAdminContextPath(), environment.getAdminContext().getContextPath());
-    	assertEquals(http.getApplicationContextPath(), environment.getApplicationContext().getContextPath());
+        assertEquals(http.getAdminContextPath(), environment.getAdminContext().getContextPath());
+        assertEquals(http.getApplicationContextPath(), environment.getApplicationContext().getContextPath());
     }
 
     @Path("/test")

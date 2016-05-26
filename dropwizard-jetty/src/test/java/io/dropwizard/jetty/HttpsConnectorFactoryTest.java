@@ -77,26 +77,26 @@ public class HttpsConnectorFactoryTest {
 
     @Test
     public void testSupportedProtocols() {
-    	List<String> supportedProtocols = ImmutableList.of("SSLv3", "TLS1");
+        List<String> supportedProtocols = ImmutableList.of("SSLv3", "TLS1");
 
-    	HttpsConnectorFactory factory = new HttpsConnectorFactory();
-    	factory.setKeyStorePassword("password"); // necessary to avoid a prompt for a password
-    	factory.setSupportedProtocols(supportedProtocols);
+        HttpsConnectorFactory factory = new HttpsConnectorFactory();
+        factory.setKeyStorePassword("password"); // necessary to avoid a prompt for a password
+        factory.setSupportedProtocols(supportedProtocols);
 
-    	SslContextFactory sslContextFactory = factory.buildSslContextFactory();
-    	assertThat(ImmutableList.copyOf(sslContextFactory.getIncludeProtocols())).isEqualTo(supportedProtocols);
+        SslContextFactory sslContextFactory = factory.buildSslContextFactory();
+        assertThat(ImmutableList.copyOf(sslContextFactory.getIncludeProtocols())).isEqualTo(supportedProtocols);
     }
 
     @Test
     public void testExcludedProtocols() {
-    	List<String> excludedProtocols = ImmutableList.of("SSLv3", "TLS1");
+        List<String> excludedProtocols = ImmutableList.of("SSLv3", "TLS1");
 
-    	HttpsConnectorFactory factory = new HttpsConnectorFactory();
-    	factory.setKeyStorePassword("password"); // necessary to avoid a prompt for a password
-    	factory.setExcludedProtocols(excludedProtocols);
+        HttpsConnectorFactory factory = new HttpsConnectorFactory();
+        factory.setKeyStorePassword("password"); // necessary to avoid a prompt for a password
+        factory.setExcludedProtocols(excludedProtocols);
 
-    	SslContextFactory sslContextFactory = factory.buildSslContextFactory();
-    	assertThat(ImmutableList.copyOf(sslContextFactory.getExcludeProtocols())).isEqualTo(excludedProtocols);
+        SslContextFactory sslContextFactory = factory.buildSslContextFactory();
+        assertThat(ImmutableList.copyOf(sslContextFactory.getExcludeProtocols())).isEqualTo(excludedProtocols);
     }
 
     @Test
