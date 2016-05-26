@@ -14,6 +14,7 @@ import org.junit.rules.TemporaryFolder;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.io.Files;
 
 import ch.qos.logback.classic.AsyncAppender;
 import ch.qos.logback.classic.Logger;
@@ -159,17 +160,14 @@ public class FileAppenderFactoryTest {
 
     @Test
     public void testCurrentLogFileNameIsEmptyAndAppenderUsesArchivedNameInstead() throws Exception {
-        final Logger root = (Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
         final FileAppenderFactory<ILoggingEvent> appenderFactory = new FileAppenderFactory<>();
         appenderFactory.setArchivedLogFilenamePattern(folder.newFile("test-archived-name-%d.log").toString());
-        final Appender<ILoggingEvent> appender = appenderFactory.build(root.getLoggerContext(), "test", new DropwizardLayoutFactory(), new NullLevelFilterFactory<>(), new AsyncLoggingEventAppenderFactory());
+        final FileAppender<ILoggingEvent> rollingAppender = appenderFactory.buildAppender(new LoggerContext());
 
-        RollingFileAppender<ILoggingEvent> rollingAppender = (RollingFileAppender<ILoggingEvent>) ((AsyncAppender) appender).getAppender("file-appender");
-        
-        String file = rollingAppender.getFile();
-        String dateSuffic = LocalDateTime.now().format(DateTimeFormatter.ofPattern("YYYY-MM-dd"));
-        String[] split = file.split("/");
-        Assert.assertEquals("test-archived-name-" + dateSuffic + ".log", split[split.length-1]);
+        final String file = rollingAppender.getFile();
+        final String dateSuffix = LocalDateTime.now().format(DateTimeFormatter.ofPattern("YYYY-MM-dd"));
+        final String name = Files.getNameWithoutExtension(file);
+        Assert.assertEquals("test-archived-name-" + dateSuffix, name);
     }
 
     @Test
