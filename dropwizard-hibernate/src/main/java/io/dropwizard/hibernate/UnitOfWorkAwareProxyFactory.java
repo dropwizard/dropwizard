@@ -75,23 +75,20 @@ public class UnitOfWorkAwareProxyFactory {
             final Proxy proxy = (Proxy) (constructorParamTypes.length == 0 ?
                     factory.createClass().newInstance() :
                     factory.create(constructorParamTypes, constructorArguments));
-            proxy.setHandler(new MethodHandler() {
-                @Override
-                public Object invoke(Object self, Method overridden, Method proceed, Object[] args) throws Throwable {
-                    final UnitOfWork unitOfWork = overridden.getAnnotation(UnitOfWork.class);
-                    final UnitOfWorkAspect unitOfWorkAspect = new UnitOfWorkAspect(sessionFactories);
-                    try {
-                        unitOfWorkAspect.beforeStart(unitOfWork);
-                        Object result = proceed.invoke(self, args);
-                        unitOfWorkAspect.afterEnd();
-                        return result;
-                    } catch (InvocationTargetException e) {
-                        unitOfWorkAspect.onError();
-                        throw e.getCause();
-                    } catch (Exception e) {
-                        unitOfWorkAspect.onError();
-                        throw e;
-                    }
+            proxy.setHandler((self, overridden, proceed, args) -> {
+                final UnitOfWork unitOfWork = overridden.getAnnotation(UnitOfWork.class);
+                final UnitOfWorkAspect unitOfWorkAspect = new UnitOfWorkAspect(sessionFactories);
+                try {
+                    unitOfWorkAspect.beforeStart(unitOfWork);
+                    Object result = proceed.invoke(self, args);
+                    unitOfWorkAspect.afterEnd();
+                    return result;
+                } catch (InvocationTargetException e) {
+                    unitOfWorkAspect.onError();
+                    throw e.getCause();
+                } catch (Exception e) {
+                    unitOfWorkAspect.onError();
+                    throw e;
                 }
             });
             return (T) proxy;
