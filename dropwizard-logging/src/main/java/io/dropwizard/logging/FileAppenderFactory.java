@@ -106,7 +106,7 @@ import io.dropwizard.validation.ValidationMethod;
 @JsonTypeName("file")
 public class FileAppenderFactory<E extends DeferredProcessingAware> extends AbstractAppenderFactory<E> {
 
-	private String currentLogFilename;
+    private String currentLogFilename;
 
     private boolean archive = true;
 
@@ -190,7 +190,7 @@ public class FileAppenderFactory<E extends DeferredProcessingAware> extends Abst
     @JsonIgnore
     @ValidationMethod(message = "currentLogFilename can only be null when archiving is enabled")
     public boolean isValidFileConfiguration() {
-    	return archive || currentLogFilename != null;
+        return archive || currentLogFilename != null;
     }
 
     @Override

@@ -135,8 +135,8 @@ public class FileAppenderFactoryTest {
     
     @Test
     public void testCurrentFileNameErrorWhenArchiveIsNotEnabled() throws Exception {
-    	FileAppenderFactory fileAppenderFactory = new FileAppenderFactory();
-    	fileAppenderFactory.setArchive(false);
+        FileAppenderFactory fileAppenderFactory = new FileAppenderFactory();
+        fileAppenderFactory.setArchive(false);
         ImmutableList<String> errors =
                 ConstraintViolations.format(validator.validate(fileAppenderFactory));
         assertThat(errors)
@@ -148,10 +148,10 @@ public class FileAppenderFactoryTest {
     
     @Test
     public void testCurrentFileNameCanBeNullWhenArchiveIsEnabled() throws Exception {
-    	FileAppenderFactory fileAppenderFactory = new FileAppenderFactory();
-    	fileAppenderFactory.setArchive(true);
-    	fileAppenderFactory.setArchivedLogFilenamePattern("name-to-be-used");
-    	fileAppenderFactory.setCurrentLogFilename(null);
+        FileAppenderFactory fileAppenderFactory = new FileAppenderFactory();
+        fileAppenderFactory.setArchive(true);
+        fileAppenderFactory.setArchivedLogFilenamePattern("name-to-be-used");
+        fileAppenderFactory.setCurrentLogFilename(null);
         ImmutableList<String> errors =
                 ConstraintViolations.format(validator.validate(fileAppenderFactory));
         assertThat(errors).isEmpty();
