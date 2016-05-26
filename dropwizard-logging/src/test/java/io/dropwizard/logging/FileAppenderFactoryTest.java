@@ -1,5 +1,20 @@
 package io.dropwizard.logging;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
+import javax.validation.Validator;
+
+import org.junit.Assert;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.ImmutableList;
+
 import ch.qos.logback.classic.AsyncAppender;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
@@ -16,15 +31,7 @@ import io.dropwizard.logging.filter.NullLevelFilterFactory;
 import io.dropwizard.logging.layout.DropwizardLayoutFactory;
 import io.dropwizard.util.Size;
 import io.dropwizard.validation.BaseValidator;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-import org.slf4j.LoggerFactory;
-import com.google.common.collect.ImmutableList;
 import io.dropwizard.validation.ConstraintViolations;
-import javax.validation.Validator;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 public class FileAppenderFactoryTest {
 
@@ -125,7 +132,45 @@ public class FileAppenderFactoryTest {
         errors = ConstraintViolations.format(validator.validate(fileAppenderFactory));
         assertThat(errors).isEmpty();
     }
+    
+    @Test
+    public void testCurrentFileNameErrorWhenArchiveIsNotEnabled() throws Exception {
+    	FileAppenderFactory fileAppenderFactory = new FileAppenderFactory();
+    	fileAppenderFactory.setArchive(false);
+        ImmutableList<String> errors =
+                ConstraintViolations.format(validator.validate(fileAppenderFactory));
+        assertThat(errors)
+                .containsOnly("currentLogFilename can only be null when archiving is enabled");
+        fileAppenderFactory.setCurrentLogFilename("test");
+        errors = ConstraintViolations.format(validator.validate(fileAppenderFactory));
+        assertThat(errors).isEmpty();
+    }
+    
+    @Test
+    public void testCurrentFileNameCanBeNullWhenArchiveIsEnabled() throws Exception {
+    	FileAppenderFactory fileAppenderFactory = new FileAppenderFactory();
+    	fileAppenderFactory.setArchive(true);
+    	fileAppenderFactory.setArchivedLogFilenamePattern("name-to-be-used");
+    	fileAppenderFactory.setCurrentLogFilename(null);
+        ImmutableList<String> errors =
+                ConstraintViolations.format(validator.validate(fileAppenderFactory));
+        assertThat(errors).isEmpty();
+    }
 
+    @Test
+    public void testCurrentLogFileNameIsEmptyAndAppenderUsesArchivedNameInstead() throws Exception {
+        final Logger root = (Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
+        final FileAppenderFactory<ILoggingEvent> appenderFactory = new FileAppenderFactory<>();
+        appenderFactory.setArchivedLogFilenamePattern(folder.newFile("test-archived-name-%d.log").toString());
+        final Appender<ILoggingEvent> appender = appenderFactory.build(root.getLoggerContext(), "test", new DropwizardLayoutFactory(), new NullLevelFilterFactory<>(), new AsyncLoggingEventAppenderFactory());
+
+        RollingFileAppender<ILoggingEvent> rollingAppender = (RollingFileAppender<ILoggingEvent>) ((AsyncAppender) appender).getAppender("file-appender");
+        
+        String file = rollingAppender.getFile();
+        String dateSuffic = LocalDateTime.now().format(DateTimeFormatter.ofPattern("YYYY-MM-dd"));
+        String[] split = file.split("/");
+        Assert.assertEquals("test-archived-name-" + dateSuffic + ".log", split[split.length-1]);
+    }
 
     @Test
     public void hasMaxFileSize() throws Exception {
@@ -153,7 +198,7 @@ public class FileAppenderFactoryTest {
         assertThat(appender.getTriggeringPolicy()).isInstanceOf(SizeBasedTriggeringPolicy.class);
         assertThat(((SizeBasedTriggeringPolicy) appender.getTriggeringPolicy()).getMaxFileSize()).isEqualTo("1024");
     }
-
+    
     @Test
     public void appenderContextIsSet() throws Exception {
         final Logger root = (Logger) LoggerFactory.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
