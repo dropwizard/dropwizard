@@ -442,7 +442,7 @@ This connector extends the attributes that are available to the :ref:`HTTPS conn
         - type: h2
           port: 8445
           maxConcurrentStreams: 1024
-          initialStreamSendWindow: 65535
+          initialStreamRecvWindow: 65535
           keyStorePath: /path/to/file # required
           keyStorePassword: changeit
           trustStorePath: /path/to/file # required
@@ -454,7 +454,7 @@ Name                      Default   Description
 ========================  ========  ===================================================================================
 maxConcurrentStreams      1024      The maximum number of concurrently open streams allowed on a single HTTP/2
                                     connection. Larger values increase parallelism, but cost a memory commitment.
-initialStreamSendWindow   65535     The initial flow control window size for a new stream. Larger values may allow
+initialStreamRecvWindow   65535     The initial flow control window size for a new stream. Larger values may allow
                                     greater throughput, but also risk head of line blocking if TCP/IP flow control is
                                     triggered.
 ========================  ========  ===================================================================================
@@ -480,7 +480,7 @@ This connector extends the attributes that are available to the :ref:`HTTP conne
         - type: h2c
           port: 8446
           maxConcurrentStreams: 1024
-          initialStreamSendWindow: 65535
+          initialStreamRecvWindow: 65535
 
 
 ========================  ========  ===================================================================================
@@ -488,7 +488,7 @@ Name                      Default   Description
 ========================  ========  ===================================================================================
 maxConcurrentStreams      1024      The maximum number of concurrently open streams allowed on a single HTTP/2
                                     connection. Larger values increase parallelism, but cost a memory commitment.
-initialStreamSendWindow   65535     The initial flow control window size for a new stream. Larger values may allow
+initialStreamRecvWindow   65535     The initial flow control window size for a new stream. Larger values may allow
                                     greater throughput, but also risk head of line blocking if TCP/IP flow control is
                                     triggered.
 ========================  ========  ===================================================================================
