@@ -104,8 +104,7 @@ public class SessionFactoryFactoryTest {
     public void buildsAWorkingSessionFactory() throws Exception {
         build();
 
-        final Session session = sessionFactory.openSession();
-        try {
+        try (Session session = sessionFactory.openSession()) {
             session.createSQLQuery("DROP TABLE people IF EXISTS").executeUpdate();
             session.createSQLQuery("CREATE TABLE people (name varchar(100) primary key, email varchar(100), birthday timestamp(0))").executeUpdate();
             session.createSQLQuery("INSERT INTO people VALUES ('Coda', 'coda@example.com', '1979-01-02 00:22:00')").executeUpdate();
@@ -113,15 +112,13 @@ public class SessionFactoryFactoryTest {
             final Person entity = session.get(Person.class, "Coda");
 
             assertThat(entity.getName())
-                    .isEqualTo("Coda");
+                .isEqualTo("Coda");
 
             assertThat(entity.getEmail())
-                    .isEqualTo("coda@example.com");
+                .isEqualTo("coda@example.com");
 
             assertThat(entity.getBirthday().toDateTime(DateTimeZone.UTC))
-                    .isEqualTo(new DateTime(1979, 1, 2, 0, 22, DateTimeZone.UTC));
-        } finally {
-            session.close();
+                .isEqualTo(new DateTime(1979, 1, 2, 0, 22, DateTimeZone.UTC));
         }
     }
 

@@ -49,14 +49,11 @@ public class UnitOfWorkAwareProxyFactoryTest {
 
         sessionFactory = new SessionFactoryFactory()
                 .build(bundle, environment, dataSourceFactory, ImmutableList.of());
-        final Session session = sessionFactory.openSession();
-        try {
+        try (Session session = sessionFactory.openSession()) {
             session.createSQLQuery("create table user_sessions (token varchar(64) primary key, username varchar(16))")
-                    .executeUpdate();
+                .executeUpdate();
             session.createSQLQuery("insert into user_sessions values ('67ab89d', 'jeff_28')")
-                    .executeUpdate();
-        } finally {
-            session.close();
+                .executeUpdate();
         }
     }
 

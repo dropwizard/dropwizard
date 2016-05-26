@@ -110,17 +110,14 @@ public class JerseyIntegrationTest extends JerseyTest {
                                             dbConfig,
                                             ImmutableList.of(Person.class));
 
-        final Session session = sessionFactory.openSession();
-        try {
+        try (Session session = sessionFactory.openSession()) {
             session.createSQLQuery("DROP TABLE people IF EXISTS").executeUpdate();
             session.createSQLQuery(
-                    "CREATE TABLE people (name varchar(100) primary key, email varchar(16), birthday timestamp with time zone)")
-                   .executeUpdate();
+                "CREATE TABLE people (name varchar(100) primary key, email varchar(16), birthday timestamp with time zone)")
+                .executeUpdate();
             session.createSQLQuery(
-                    "INSERT INTO people VALUES ('Coda', 'coda@example.com', '1979-01-02 00:22:00+0:00')")
-                   .executeUpdate();
-        } finally {
-            session.close();
+                "INSERT INTO people VALUES ('Coda', 'coda@example.com', '1979-01-02 00:22:00+0:00')")
+                .executeUpdate();
         }
 
         final DropwizardResourceConfig config = DropwizardResourceConfig.forTesting(new MetricRegistry());

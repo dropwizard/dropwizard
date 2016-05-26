@@ -109,24 +109,21 @@ public class LazyLoadingTest extends JerseyTest {
                                             dbConfig,
                                             ImmutableList.of(Person.class, Dog.class));
 
-        final Session session = sessionFactory.openSession();
-        try {
+        try (Session session = sessionFactory.openSession()) {
             session.createSQLQuery("DROP TABLE people IF EXISTS").executeUpdate();
             session.createSQLQuery(
-                    "CREATE TABLE people (name varchar(100) primary key, email varchar(16), birthday timestamp with time zone)")
-                   .executeUpdate();
+                "CREATE TABLE people (name varchar(100) primary key, email varchar(16), birthday timestamp with time zone)")
+                .executeUpdate();
             session.createSQLQuery(
-                    "INSERT INTO people VALUES ('Coda', 'coda@example.com', '1979-01-02 00:22:00+0:00')")
-                   .executeUpdate();
+                "INSERT INTO people VALUES ('Coda', 'coda@example.com', '1979-01-02 00:22:00+0:00')")
+                .executeUpdate();
             session.createSQLQuery("DROP TABLE dogs IF EXISTS").executeUpdate();
             session.createSQLQuery(
-                    "CREATE TABLE dogs (name varchar(100) primary key, owner varchar(100), CONSTRAINT fk_owner FOREIGN KEY (owner) REFERENCES people(name))")
-                   .executeUpdate();
+                "CREATE TABLE dogs (name varchar(100) primary key, owner varchar(100), CONSTRAINT fk_owner FOREIGN KEY (owner) REFERENCES people(name))")
+                .executeUpdate();
             session.createSQLQuery(
-                    "INSERT INTO dogs VALUES ('Raf', 'Coda')")
-                   .executeUpdate();
-        } finally {
-            session.close();
+                "INSERT INTO dogs VALUES ('Raf', 'Coda')")
+                .executeUpdate();
         }
 
         bootstrap = mock(Bootstrap.class);
