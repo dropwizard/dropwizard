@@ -48,7 +48,7 @@ public class UnitOfWorkAwareProxyFactoryTest {
         dataSourceFactory.setMinSize(1);
 
         sessionFactory = new SessionFactoryFactory()
-                .build(bundle, environment, dataSourceFactory, ImmutableList.<Class<?>>of());
+                .build(bundle, environment, dataSourceFactory, ImmutableList.of());
         final Session session = sessionFactory.openSession();
         try {
             session.createSQLQuery("create table user_sessions (token varchar(64) primary key, username varchar(16))")

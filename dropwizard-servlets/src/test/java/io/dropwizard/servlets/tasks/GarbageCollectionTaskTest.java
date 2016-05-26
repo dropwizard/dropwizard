@@ -15,7 +15,7 @@ public class GarbageCollectionTaskTest {
 
     @Test
     public void runsOnceWithNoParameters() throws Exception {
-        task.execute(ImmutableMultimap.<String, String>of(), output);
+        task.execute(ImmutableMultimap.of(), output);
 
         verify(runtime, times(1)).gc();
     }

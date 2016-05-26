@@ -108,7 +108,7 @@ public class JerseyIntegrationTest extends JerseyTest {
         this.sessionFactory = factory.build(bundle,
                                             environment,
                                             dbConfig,
-                                            ImmutableList.<Class<?>>of(Person.class));
+                                            ImmutableList.of(Person.class));
 
         final Session session = sessionFactory.openSession();
         try {

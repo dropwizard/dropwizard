@@ -92,7 +92,7 @@ public class SessionFactoryFactoryTest {
     @Test
     public void setsACustomPoolName() {
         this.sessionFactory = factory.build(bundle, environment, config,
-                ImmutableList.<Class<?>>of(Person.class), "custom-hibernate-db");
+                ImmutableList.of(Person.class), "custom-hibernate-db");
 
         ArgumentCaptor<SessionFactoryManager> sessionFactoryManager = ArgumentCaptor.forClass(SessionFactoryManager.class);
         verify(lifecycleEnvironment).manage(sessionFactoryManager.capture());
@@ -110,7 +110,7 @@ public class SessionFactoryFactoryTest {
             session.createSQLQuery("CREATE TABLE people (name varchar(100) primary key, email varchar(100), birthday timestamp(0))").executeUpdate();
             session.createSQLQuery("INSERT INTO people VALUES ('Coda', 'coda@example.com', '1979-01-02 00:22:00')").executeUpdate();
 
-            final Person entity = (Person) session.get(Person.class, "Coda");
+            final Person entity = session.get(Person.class, "Coda");
 
             assertThat(entity.getName())
                     .isEqualTo("Coda");
@@ -137,7 +137,7 @@ public class SessionFactoryFactoryTest {
         sessionFactory = customFactory.build(bundle,
                                              environment,
                                              config,
-                                             ImmutableList.<Class<?>>of(Person.class));
+                                             ImmutableList.of(Person.class));
 
         assertThat(sessionFactory.getSessionFactoryOptions().getInterceptor()).isSameAs(EmptyInterceptor.INSTANCE);
     }
@@ -146,6 +146,6 @@ public class SessionFactoryFactoryTest {
         this.sessionFactory = factory.build(bundle,
                                             environment,
                                             config,
-                                            ImmutableList.<Class<?>>of(Person.class));
+                                            ImmutableList.of(Person.class));
     }
 }

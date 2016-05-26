@@ -35,10 +35,10 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 
 public class LazyLoadingTest extends JerseyTest {
-    
+
     private Bootstrap<?> bootstrap;
     private HibernateBundle<Configuration> bundle;
-    
+
     static {
         BootstrapLogging.bootstrap();
     }
@@ -107,7 +107,7 @@ public class LazyLoadingTest extends JerseyTest {
         this.sessionFactory = factory.build(bundle,
                                             environment,
                                             dbConfig,
-                                            ImmutableList.<Class<?>>of(Person.class, Dog.class));
+                                            ImmutableList.of(Person.class, Dog.class));
 
         final Session session = sessionFactory.openSession();
         try {
@@ -128,7 +128,7 @@ public class LazyLoadingTest extends JerseyTest {
         } finally {
             session.close();
         }
-        
+
         bootstrap = mock(Bootstrap.class);
         final ObjectMapper objMapper = Jackson.newObjectMapper();
         when(bootstrap.getObjectMapper()).thenReturn(objMapper);
@@ -139,7 +139,7 @@ public class LazyLoadingTest extends JerseyTest {
         config.register(new DogResource(new DogDAO(sessionFactory)));
         config.register(new JacksonMessageBodyProvider(objMapper));
         config.register(new DataExceptionMapper());
-        
+
         return config;
     }
 
@@ -151,7 +151,7 @@ public class LazyLoadingTest extends JerseyTest {
     @Test
     public void serialisesLazyObjectWhenEnabled() throws Exception {
         bundle.initialize(bootstrap);
-        
+
         final Dog raf = target("/dogs/Raf").request(MediaType.APPLICATION_JSON).get(Dog.class);
 
         assertThat(raf.getName())
@@ -163,12 +163,12 @@ public class LazyLoadingTest extends JerseyTest {
         assertThat(raf.getOwner().getName())
                 .isEqualTo("Coda");
     }
-    
+
     @Test
     public void sendsNullWhenDisabled() throws Exception {
         bundle.setLazyLoadingEnabled(false);
         bundle.initialize(bootstrap);
-        
+
         final Dog raf = target("/dogs/Raf").request(MediaType.APPLICATION_JSON).get(Dog.class);
 
         assertThat(raf.getName())

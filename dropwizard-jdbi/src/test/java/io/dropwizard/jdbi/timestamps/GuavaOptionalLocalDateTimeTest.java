@@ -50,7 +50,7 @@ public class GuavaOptionalLocalDateTimeTest {
     public void testPresent() {
         final LocalDateTime startDate = LocalDateTime.now();
         final LocalDateTime endDate = startDate.plusDays(1L);
-        dao.insert(1, Optional.of("John Hughes"), startDate, Optional.of(endDate), Optional.<String>absent());
+        dao.insert(1, Optional.of("John Hughes"), startDate, Optional.of(endDate), Optional.absent());
 
         assertThat(dao.findEndDateById(1).get()).isEqualTo(endDate);
     }
@@ -58,7 +58,7 @@ public class GuavaOptionalLocalDateTimeTest {
     @Test
     public void testAbsent() {
         dao.insert(2, Optional.of("Kate Johansen"), LocalDateTime.now(),
-                Optional.<LocalDateTime>absent(), Optional.of("To be done"));
+                Optional.absent(), Optional.of("To be done"));
 
         assertThat(dao.findEndDateById(2).isPresent()).isFalse();
     }

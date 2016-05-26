@@ -55,7 +55,7 @@ public class DefaultLoggingFactory implements LoggingFactory {
 
     @Valid
     @NotNull
-    private ImmutableList<AppenderFactory<ILoggingEvent>> appenders = ImmutableList.<AppenderFactory<ILoggingEvent>>of(
+    private ImmutableList<AppenderFactory<ILoggingEvent>> appenders = ImmutableList.of(
             new ConsoleAppenderFactory<>()
     );
 

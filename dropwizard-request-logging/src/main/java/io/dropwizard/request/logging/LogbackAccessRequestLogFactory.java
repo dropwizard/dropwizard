@@ -47,7 +47,7 @@ public class LogbackAccessRequestLogFactory implements RequestLogFactory {
     @Valid
     @NotNull
     private ImmutableList<AppenderFactory<IAccessEvent>> appenders = ImmutableList
-            .<AppenderFactory<IAccessEvent>> of(new ConsoleAppenderFactory<>());
+            .of(new ConsoleAppenderFactory<>());
 
     @JsonProperty
     public ImmutableList<AppenderFactory<IAccessEvent>> getAppenders() {

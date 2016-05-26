@@ -51,7 +51,7 @@ public class GuavaOptionalOffsetDateTimeTest {
     public void testPresent() {
         final OffsetDateTime startDate = OffsetDateTime.now();
         final OffsetDateTime endDate = startDate.plusDays(1L);
-        dao.insert(1, Optional.of("John Hughes"), startDate, Optional.of(endDate), Optional.<String>absent());
+        dao.insert(1, Optional.of("John Hughes"), startDate, Optional.of(endDate), Optional.absent());
 
         assertThat(dao.findEndDateById(1).get()).isEqualTo(endDate);
     }
@@ -59,7 +59,7 @@ public class GuavaOptionalOffsetDateTimeTest {
     @Test
     public void testAbsent() {
         dao.insert(2, Optional.of("Kate Johansen"), OffsetDateTime.now(),
-                Optional.<OffsetDateTime>absent(), Optional.of("To be done"));
+                Optional.absent(), Optional.of("To be done"));
 
         assertThat(dao.findEndDateById(2).isPresent()).isFalse();
     }

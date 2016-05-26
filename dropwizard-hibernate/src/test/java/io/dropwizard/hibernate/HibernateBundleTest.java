@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
 
 public class HibernateBundleTest {
     private final DataSourceFactory dbConfig = new DataSourceFactory();
-    private final ImmutableList<Class<?>> entities = ImmutableList.<Class<?>>of(Person.class);
+    private final ImmutableList<Class<?>> entities = ImmutableList.of(Person.class);
     private final SessionFactoryFactory factory = mock(SessionFactoryFactory.class);
     private final SessionFactory sessionFactory = mock(SessionFactory.class);
     private final Configuration configuration = mock(Configuration.class);

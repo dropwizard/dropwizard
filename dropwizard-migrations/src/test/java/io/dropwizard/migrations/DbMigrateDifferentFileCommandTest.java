@@ -29,7 +29,7 @@ public class DbMigrateDifferentFileCommandTest extends AbstractMigrationTest {
 
     @Test
     public void testRun() throws Exception {
-        migrateCommand.run(null, new Namespace(ImmutableMap.<String, Object>of()), conf);
+        migrateCommand.run(null, new Namespace(ImmutableMap.of()), conf);
         try (Handle handle = new DBI(databaseUrl, "sa", "").open()) {
             final List<Map<String, Object>> rows = handle.select("select * from persons");
             assertThat(rows).hasSize(0);

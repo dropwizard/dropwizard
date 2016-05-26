@@ -187,7 +187,7 @@ public class DropwizardApacheConnector implements Connector {
     @Override
     public Future<?> apply(final ClientRequest request, final AsyncConnectorCallback callback) {
         // Simulate an asynchronous execution
-        return MoreExecutors.newDirectExecutorService().submit((Runnable) () -> {
+        return MoreExecutors.newDirectExecutorService().submit(() -> {
             try {
                 callback.response(apply(request));
             } catch (Exception e) {

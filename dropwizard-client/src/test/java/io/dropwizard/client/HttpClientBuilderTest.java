@@ -199,7 +199,7 @@ public class HttpClientBuilderTest {
         final HttpContext context = mock(HttpContext.class);
         final HttpResponse response = mock(HttpResponse.class);
         final HeaderIterator iterator = new BasicListHeaderIterator(
-                ImmutableList.<Header>of(new BasicHeader(HttpHeaders.CONNECTION, "timeout=50")),
+                ImmutableList.of(new BasicHeader(HttpHeaders.CONNECTION, "timeout=50")),
                 HttpHeaders.CONNECTION
         );
         when(response.headerIterator(HTTP.CONN_KEEP_ALIVE)).thenReturn(iterator);

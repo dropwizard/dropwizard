@@ -148,7 +148,7 @@ public class DefaultServerFactoryTest {
 
         ((AbstractNetworkConnector)server.getConnectors()[0]).setPort(0);
 
-        ScheduledFuture<Void> cleanup = executor.schedule((Callable<Void>) () -> {
+        ScheduledFuture<Void> cleanup = executor.schedule(() -> {
             if (!server.isStopped()) {
                 server.stop();
             }
@@ -170,7 +170,7 @@ public class DefaultServerFactoryTest {
 
         requestReceived.await(10, TimeUnit.SECONDS);
 
-        Future<Void> serverStopped = executor.submit((Callable<Void>) () -> {
+        Future<Void> serverStopped = executor.submit(() -> {
             server.stop();
             return null;
         });
