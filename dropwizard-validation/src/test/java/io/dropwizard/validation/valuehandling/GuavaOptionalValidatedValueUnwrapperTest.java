@@ -52,7 +52,7 @@ public class GuavaOptionalValidatedValueUnwrapperTest {
     @Test
     public void succeedsWhenPresentButNull() {
         Example example = new Example();
-        example.three = Optional.fromNullable(null);
+        example.three = Optional.absent();
         Set<ConstraintViolation<Example>> violations = validator.validate(example);
         assertThat(violations).isEmpty();
     }
@@ -76,7 +76,7 @@ public class GuavaOptionalValidatedValueUnwrapperTest {
     @Test
     public void notNullFailsWhenPresentButNull() {
         Example example = new Example();
-        example.notNull = Optional.fromNullable(null);
+        example.notNull = Optional.absent();
         Set<ConstraintViolation<Example>> violations = validator.validate(example);
         assertThat(violations).hasSize(1);
     }

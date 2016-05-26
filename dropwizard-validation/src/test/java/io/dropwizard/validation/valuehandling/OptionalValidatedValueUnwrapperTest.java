@@ -52,7 +52,7 @@ public class OptionalValidatedValueUnwrapperTest {
     @Test
     public void succeedsWhenPresentButNull() {
         Example example = new Example();
-        example.three = Optional.ofNullable(null);
+        example.three = Optional.empty();
         Set<ConstraintViolation<Example>> violations = validator.validate(example);
         assertThat(violations).isEmpty();
     }
@@ -76,7 +76,7 @@ public class OptionalValidatedValueUnwrapperTest {
     @Test
     public void notNullFailsWhenPresentButNull() {
         Example example = new Example();
-        example.notNull = Optional.ofNullable(null);
+        example.notNull = Optional.empty();
         Set<ConstraintViolation<Example>> violations = validator.validate(example);
         assertThat(violations).hasSize(1);
     }
