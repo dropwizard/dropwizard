@@ -1,12 +1,13 @@
 package io.dropwizard.servlets.assets;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class ByteRangeTest {
 
     private static final int RESOURCE_LENGTH = 10000;
-    
+
     @Test
     public void firstBytes() {
         final ByteRange actual = ByteRange.parse("0-499", RESOURCE_LENGTH);
@@ -34,7 +35,7 @@ public class ByteRangeTest {
         assertThat(actual.getStart()).isEqualTo(9500);
         assertThat(actual.getEnd()).isEqualTo(9999);
     }
-    
+
     @Test
     public void startBytes() {
         final ByteRange actual = ByteRange.parse("9500", RESOURCE_LENGTH);

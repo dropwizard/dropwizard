@@ -1,5 +1,6 @@
 package io.dropwizard.jersey;
 
+import com.codahale.metrics.MetricRegistry;
 import io.dropwizard.jersey.dummy.DummyResource;
 import io.dropwizard.logging.BootstrapLogging;
 import org.junit.Before;
@@ -13,7 +14,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import com.codahale.metrics.MetricRegistry;
 
 public class DropwizardResourceConfigTest {
     static {

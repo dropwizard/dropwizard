@@ -1,8 +1,7 @@
 package io.dropwizard.jersey.setup;
 
-import org.glassfish.jersey.servlet.ServletContainer;
-
 import io.dropwizard.jersey.DropwizardResourceConfig;
+import org.glassfish.jersey.servlet.ServletContainer;
 
 /**
  * Extends {@link ServletContainer} to provide consumers of dropwizard-jersey

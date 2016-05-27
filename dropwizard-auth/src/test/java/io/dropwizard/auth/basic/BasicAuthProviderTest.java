@@ -1,9 +1,12 @@
 package io.dropwizard.auth.basic;
 
 import com.google.common.collect.ImmutableList;
-import io.dropwizard.auth.*;
+import io.dropwizard.auth.AbstractAuthResourceConfig;
+import io.dropwizard.auth.AuthBaseTest;
+import io.dropwizard.auth.AuthResource;
 import io.dropwizard.auth.util.AuthUtil;
 import io.dropwizard.jersey.DropwizardResourceConfig;
+
 import javax.ws.rs.container.ContainerRequestFilter;
 import java.security.Principal;
 

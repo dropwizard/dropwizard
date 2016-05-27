@@ -1,8 +1,7 @@
 package com.example.helloworld;
 
-import com.example.helloworld.auth.ExampleAuthorizer;
-import io.dropwizard.auth.AuthValueFactoryProvider;
 import com.example.helloworld.auth.ExampleAuthenticator;
+import com.example.helloworld.auth.ExampleAuthorizer;
 import com.example.helloworld.cli.RenderCommand;
 import com.example.helloworld.core.Person;
 import com.example.helloworld.core.Template;
@@ -19,6 +18,7 @@ import com.example.helloworld.resources.ViewResource;
 import io.dropwizard.Application;
 import io.dropwizard.assets.AssetsBundle;
 import io.dropwizard.auth.AuthDynamicFeature;
+import io.dropwizard.auth.AuthValueFactoryProvider;
 import io.dropwizard.auth.basic.BasicCredentialAuthFilter;
 import io.dropwizard.configuration.EnvironmentVariableSubstitutor;
 import io.dropwizard.configuration.SubstitutingSourceProvider;
@@ -29,6 +29,7 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.views.ViewBundle;
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
+
 import java.util.Map;
 
 public class HelloWorldApplication extends Application<HelloWorldConfiguration> {

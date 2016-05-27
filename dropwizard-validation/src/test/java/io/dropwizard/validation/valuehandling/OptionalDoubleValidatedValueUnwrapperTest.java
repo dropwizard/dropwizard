@@ -10,7 +10,6 @@ import javax.validation.Validator;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.OptionalDouble;
-import java.util.OptionalInt;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;

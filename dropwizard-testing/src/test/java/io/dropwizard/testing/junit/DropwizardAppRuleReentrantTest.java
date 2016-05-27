@@ -1,8 +1,5 @@
 package io.dropwizard.testing.junit;
 
-import static org.mockito.Mockito.inOrder;
-import static org.mockito.Mockito.times;
-
 import io.dropwizard.testing.DropwizardTestSupport;
 import org.junit.Rule;
 import org.junit.Test;
@@ -13,6 +10,9 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
+
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.times;
 
 public class DropwizardAppRuleReentrantTest {
 

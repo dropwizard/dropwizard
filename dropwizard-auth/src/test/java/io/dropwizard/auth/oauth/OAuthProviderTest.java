@@ -1,7 +1,10 @@
 package io.dropwizard.auth.oauth;
 
 import com.google.common.collect.ImmutableList;
-import io.dropwizard.auth.*;
+import io.dropwizard.auth.AbstractAuthResourceConfig;
+import io.dropwizard.auth.AuthBaseTest;
+import io.dropwizard.auth.AuthFilter;
+import io.dropwizard.auth.AuthResource;
 import io.dropwizard.auth.util.AuthUtil;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 

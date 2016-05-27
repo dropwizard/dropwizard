@@ -1,13 +1,11 @@
 package io.dropwizard.hibernate;
 
 import com.google.common.collect.ImmutableMap;
-import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.Proxy;
 import javassist.util.proxy.ProxyFactory;
 import org.hibernate.SessionFactory;
 
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
 /**
  * A factory for creating proxies for components that use Hibernate data access objects

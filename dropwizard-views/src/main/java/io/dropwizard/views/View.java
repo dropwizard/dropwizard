@@ -1,9 +1,9 @@
 package io.dropwizard.views;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import java.util.Optional;
 
 import java.nio.charset.Charset;
+import java.util.Optional;
 
 /**
  * A Dropwizard view class.

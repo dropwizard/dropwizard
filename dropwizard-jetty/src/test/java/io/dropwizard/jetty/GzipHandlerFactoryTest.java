@@ -2,7 +2,6 @@ package io.dropwizard.jetty;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.io.Resources;
-
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.util.Size;

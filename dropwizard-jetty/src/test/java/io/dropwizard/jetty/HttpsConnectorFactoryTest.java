@@ -1,10 +1,18 @@
 package io.dropwizard.jetty;
 
+import com.google.common.collect.Collections2;
+import com.google.common.collect.ImmutableList;
 import com.google.common.io.Resources;
-
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.DiscoverableSubtypeResolver;
+import io.dropwizard.jackson.Jackson;
+import io.dropwizard.validation.BaseValidator;
+import org.apache.commons.lang3.SystemUtils;
+import org.eclipse.jetty.util.ssl.SslContextFactory;
+import org.junit.Test;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.Validator;
 import java.io.File;
 import java.net.URI;
 import java.security.KeyStore;
@@ -12,18 +20,6 @@ import java.security.KeyStoreException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-
-import javax.validation.ConstraintViolation;
-import javax.validation.Validator;
-
-import io.dropwizard.jackson.Jackson;
-import io.dropwizard.validation.BaseValidator;
-import org.apache.commons.lang3.SystemUtils;
-import org.eclipse.jetty.util.ssl.SslContextFactory;
-import org.junit.Test;
-
-import com.google.common.collect.Collections2;
-import com.google.common.collect.ImmutableList;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertNotNull;

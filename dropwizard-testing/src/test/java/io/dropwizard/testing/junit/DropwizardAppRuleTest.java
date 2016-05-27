@@ -2,11 +2,9 @@ package io.dropwizard.testing.junit;
 
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableMultimap;
-
 import io.dropwizard.Application;
 import io.dropwizard.servlets.tasks.Task;
 import io.dropwizard.setup.Environment;
-
 import org.junit.ClassRule;
 import org.junit.Test;
 
@@ -15,7 +13,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
-
 import java.io.PrintWriter;
 
 import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;

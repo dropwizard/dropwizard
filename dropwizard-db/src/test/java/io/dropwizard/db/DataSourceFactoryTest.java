@@ -6,7 +6,6 @@ import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.util.Duration;
 import io.dropwizard.validation.BaseValidator;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,7 +17,6 @@ import java.sql.SQLException;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.fail;
 
 public class DataSourceFactoryTest {
     private final MetricRegistry metricRegistry = new MetricRegistry();

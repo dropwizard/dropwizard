@@ -1,10 +1,10 @@
 package io.dropwizard.jersey.sessions;
 
+import org.glassfish.jersey.server.internal.inject.AbstractContainerRequestValueFactory;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.ws.rs.core.Context;
-
-import org.glassfish.jersey.server.internal.inject.AbstractContainerRequestValueFactory;
 
 public final class FlashFactory extends AbstractContainerRequestValueFactory<Flash<?>> {
     @Context

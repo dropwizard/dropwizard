@@ -2,6 +2,7 @@ package com.example.helloworld.resources;
 
 import com.example.helloworld.core.User;
 import io.dropwizard.auth.Auth;
+
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.GET;

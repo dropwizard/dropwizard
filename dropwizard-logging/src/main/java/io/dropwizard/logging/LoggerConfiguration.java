@@ -1,14 +1,12 @@
 package io.dropwizard.logging;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import com.google.common.collect.ImmutableList;
-import ch.qos.logback.classic.Logger;
 
-import ch.qos.logback.classic.Level;
-
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**

@@ -1,11 +1,5 @@
 package io.dropwizard.hibernate;
 
-import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.ws.rs.ext.Provider;
-
 import org.glassfish.jersey.server.internal.process.MappableException;
 import org.glassfish.jersey.server.model.Resource;
 import org.glassfish.jersey.server.model.ResourceMethod;
@@ -13,8 +7,12 @@ import org.glassfish.jersey.server.monitoring.ApplicationEvent;
 import org.glassfish.jersey.server.monitoring.ApplicationEventListener;
 import org.glassfish.jersey.server.monitoring.RequestEvent;
 import org.glassfish.jersey.server.monitoring.RequestEventListener;
-
 import org.hibernate.SessionFactory;
+
+import javax.ws.rs.ext.Provider;
+import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.Map;
 
 
 /**

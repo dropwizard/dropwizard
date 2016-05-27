@@ -1,8 +1,5 @@
 package io.dropwizard.jersey.gzip;
 
-import java.io.IOException;
-import java.util.zip.GZIPOutputStream;
-
 import javax.annotation.Priority;
 import javax.ws.rs.Priorities;
 import javax.ws.rs.client.ClientRequestContext;
@@ -11,6 +8,8 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.ext.Provider;
 import javax.ws.rs.ext.WriterInterceptor;
 import javax.ws.rs.ext.WriterInterceptorContext;
+import java.io.IOException;
+import java.util.zip.GZIPOutputStream;
 
 /**
  * GZIP encoding support. Writer interceptor that encodes the output  if

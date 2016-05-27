@@ -1,6 +1,5 @@
 package io.dropwizard.jersey.validation;
 
-import com.google.common.base.Function;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableList;
 import org.glassfish.jersey.server.model.Invocable;

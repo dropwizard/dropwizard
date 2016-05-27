@@ -1,7 +1,7 @@
 package io.dropwizard.views;
 
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import io.dropwizard.Bundle;
 import io.dropwizard.Configuration;
 import io.dropwizard.ConfiguredBundle;

@@ -1,11 +1,5 @@
 package io.dropwizard.logging;
 
-import javax.validation.constraints.Min;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonTypeName;
-
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.FileAppender;
@@ -18,11 +12,16 @@ import ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy;
 import ch.qos.logback.core.rolling.TimeBasedFileNamingAndTriggeringPolicy;
 import ch.qos.logback.core.rolling.TimeBasedRollingPolicy;
 import ch.qos.logback.core.spi.DeferredProcessingAware;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 import io.dropwizard.logging.async.AsyncAppenderFactory;
 import io.dropwizard.logging.filter.LevelFilterFactory;
 import io.dropwizard.logging.layout.LayoutFactory;
 import io.dropwizard.util.Size;
 import io.dropwizard.validation.ValidationMethod;
+
+import javax.validation.constraints.Min;
 
 /**
  * An {@link AppenderFactory} implementation which provides an appender that writes events to a file, archiving older
@@ -186,7 +185,7 @@ public class FileAppenderFactory<E extends DeferredProcessingAware> extends Abst
         return !archive || !(archivedLogFilenamePattern != null && archivedLogFilenamePattern.contains("%i")) ||
                 maxFileSize != null;
     }
-    
+
     @JsonIgnore
     @ValidationMethod(message = "currentLogFilename can only be null when archiving is enabled")
     public boolean isValidFileConfiguration() {

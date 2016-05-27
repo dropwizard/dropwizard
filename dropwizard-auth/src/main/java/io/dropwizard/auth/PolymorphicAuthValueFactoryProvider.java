@@ -11,10 +11,10 @@ import org.glassfish.jersey.server.internal.inject.ParamInjectionResolver;
 import org.glassfish.jersey.server.model.Parameter;
 import org.glassfish.jersey.server.spi.internal.ValueFactoryProvider;
 
-import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.security.Principal;
+import java.util.Set;
 
 /**
  * Value factory provider supporting injection of a hierarchy of
