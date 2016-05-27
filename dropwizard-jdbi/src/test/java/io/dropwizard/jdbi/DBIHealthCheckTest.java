@@ -4,8 +4,6 @@ import com.codahale.metrics.health.HealthCheck;
 import io.dropwizard.util.Duration;
 import org.junit.Test;
 import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 

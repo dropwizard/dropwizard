@@ -5,7 +5,9 @@ import org.junit.Test;
 
 import java.io.PrintWriter;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @SuppressWarnings("CallToSystemGC")
 public class GarbageCollectionTaskTest {
@@ -15,7 +17,7 @@ public class GarbageCollectionTaskTest {
 
     @Test
     public void runsOnceWithNoParameters() throws Exception {
-        task.execute(ImmutableMultimap.<String, String>of(), output);
+        task.execute(ImmutableMultimap.of(), output);
 
         verify(runtime, times(1)).gc();
     }

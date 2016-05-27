@@ -8,6 +8,12 @@ cache:
   directories:
     - $HOME/.m2
 
+# Use updated jdk version instead of buggy default
+addons:
+  apt:
+    packages:
+      - oracle-java8-installer
+
 # encrypted CI_DEPLOY_USERNAME and CI_DEPLOY_PASSWORD
 # values for maven deploy. these have been encrypted
 # with the public key from https://github.com/dropwizard/dropwizard

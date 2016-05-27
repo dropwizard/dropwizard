@@ -10,7 +10,9 @@ import org.junit.Test;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.util.List;
 import java.util.Map;
 
@@ -32,7 +34,7 @@ public class DbMigrateCommandTest extends AbstractMigrationTest {
 
     @Test
     public void testRun() throws Exception {
-        migrateCommand.run(null, new Namespace(ImmutableMap.<String, Object>of()), conf);
+        migrateCommand.run(null, new Namespace(ImmutableMap.of()), conf);
         try (Handle handle = new DBI(databaseUrl, "sa", "").open()) {
             final List<Map<String, Object>> rows = handle.select("select * from persons");
             assertThat(rows).hasSize(1);

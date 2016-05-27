@@ -50,14 +50,6 @@ public class OptionalValidatedValueUnwrapperTest {
     }
 
     @Test
-    public void succeedsWhenPresentButNull() {
-        Example example = new Example();
-        example.three = Optional.ofNullable(null);
-        Set<ConstraintViolation<Example>> violations = validator.validate(example);
-        assertThat(violations).isEmpty();
-    }
-
-    @Test
     public void succeedsWhenConstraintsMet() {
         Example example = new Example();
         example.three = Optional.of(10);
@@ -69,14 +61,6 @@ public class OptionalValidatedValueUnwrapperTest {
     public void notNullFailsWhenAbsent() {
         Example example = new Example();
         example.notNull = Optional.empty();
-        Set<ConstraintViolation<Example>> violations = validator.validate(example);
-        assertThat(violations).hasSize(1);
-    }
-
-    @Test
-    public void notNullFailsWhenPresentButNull() {
-        Example example = new Example();
-        example.notNull = Optional.ofNullable(null);
         Set<ConstraintViolation<Example>> violations = validator.validate(example);
         assertThat(violations).hasSize(1);
     }

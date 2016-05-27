@@ -3,6 +3,7 @@ package io.dropwizard.db;
 import com.codahale.metrics.health.HealthCheck;
 import io.dropwizard.util.Duration;
 import org.junit.Test;
+
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -16,7 +17,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class TimeBoundHealthCheckTest {
-    
+
     @Test
     @SuppressWarnings("unchecked")
     public void testCheck() throws InterruptedException, ExecutionException, TimeoutException {
@@ -24,7 +25,7 @@ public class TimeBoundHealthCheckTest {
         final Duration duration = mock(Duration.class);
         when(duration.getQuantity()).thenReturn(5L);
         when(duration.getUnit()).thenReturn(TimeUnit.SECONDS);
-        
+
         final Callable<HealthCheck.Result> callable = mock(Callable.class);
         final Future<HealthCheck.Result> future = mock(Future.class);
         when(executorService.submit(callable)).thenReturn(future);

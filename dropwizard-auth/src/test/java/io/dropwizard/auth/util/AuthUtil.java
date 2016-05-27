@@ -15,7 +15,7 @@ public class AuthUtil {
     public static Authenticator<BasicCredentials, Principal> getBasicAuthenticator(final List<String> validUsers) {
         return credentials -> {
             if (validUsers.contains(credentials.getUsername()) && "secret".equals(credentials.getPassword())) {
-                return Optional.<Principal>of(new PrincipalImpl(credentials.getUsername()));
+                return Optional.of(new PrincipalImpl(credentials.getUsername()));
             }
             if ("bad-guy".equals(credentials.getUsername())) {
                 throw new AuthenticationException("CRAP");
@@ -28,7 +28,7 @@ public class AuthUtil {
                                                                                    final String returned) {
         return user -> {
             if (presented.equals(user)) {
-                return Optional.<Principal>of(new PrincipalImpl(returned));
+                return Optional.of(new PrincipalImpl(returned));
             }
             if ("bad-guy".equals(user)) {
                 throw new AuthenticationException("CRAP");
@@ -40,7 +40,7 @@ public class AuthUtil {
     public static Authenticator<String, Principal> getMultiplyUsersOAuthAuthenticator(final List<String> validUsers) {
         return credentials -> {
             if (validUsers.contains(credentials)) {
-                return Optional.<Principal>of(new PrincipalImpl(credentials));
+                return Optional.of(new PrincipalImpl(credentials));
             }
             if ("bad-guy".equals(credentials)) {
                 throw new AuthenticationException("CRAP");

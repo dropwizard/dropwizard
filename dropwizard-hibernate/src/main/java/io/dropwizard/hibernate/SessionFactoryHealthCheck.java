@@ -28,7 +28,7 @@ public class SessionFactoryHealthCheck extends HealthCheck {
         this.validationQuery = validationQuery;
         this.timeBoundHealthCheck = new TimeBoundHealthCheck(executorService, duration);
     }
-    
+
 
     public SessionFactory getSessionFactory() {
         return sessionFactory;
@@ -41,8 +41,7 @@ public class SessionFactoryHealthCheck extends HealthCheck {
     @Override
     protected Result check() throws Exception {
         return timeBoundHealthCheck.check(() -> {
-            final Session session = sessionFactory.openSession();
-            try {
+            try (Session session = sessionFactory.openSession()) {
                 final Transaction txn = session.beginTransaction();
                 try {
                     session.createSQLQuery(validationQuery).list();
@@ -53,8 +52,6 @@ public class SessionFactoryHealthCheck extends HealthCheck {
                     }
                     throw e;
                 }
-            } finally {
-                session.close();
             }
             return Result.healthy();
         });

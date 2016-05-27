@@ -12,7 +12,11 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.PrintWriter;
 import java.util.Collections;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class TaskServletTest {
     private final Task gc = mock(Task.class);
@@ -49,12 +53,12 @@ public class TaskServletTest {
 
         when(request.getMethod()).thenReturn("POST");
         when(request.getPathInfo()).thenReturn("/gc");
-        when(request.getParameterNames()).thenReturn(Collections.enumeration(ImmutableList.<String>of()));
+        when(request.getParameterNames()).thenReturn(Collections.enumeration(ImmutableList.of()));
         when(response.getWriter()).thenReturn(output);
 
         servlet.service(request, response);
 
-        verify(gc).execute(ImmutableMultimap.<String, String>of(), output);
+        verify(gc).execute(ImmutableMultimap.of(), output);
     }
 
     @Test
@@ -77,7 +81,7 @@ public class TaskServletTest {
     public void returnsA500OnExceptions() throws Exception {
         when(request.getMethod()).thenReturn("POST");
         when(request.getPathInfo()).thenReturn("/gc");
-        when(request.getParameterNames()).thenReturn(Collections.enumeration(ImmutableList.<String>of()));
+        when(request.getParameterNames()).thenReturn(Collections.enumeration(ImmutableList.of()));
 
         final PrintWriter output = mock(PrintWriter.class);
         when(response.getWriter()).thenReturn(output);

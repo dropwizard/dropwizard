@@ -3,12 +3,12 @@ package io.dropwizard.auth;
 import com.google.common.collect.ImmutableMap;
 import org.glassfish.jersey.server.model.AnnotatedMethod;
 
-import java.lang.annotation.Annotation;
-import java.security.Principal;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.DynamicFeature;
 import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.FeatureContext;
+import java.lang.annotation.Annotation;
+import java.security.Principal;
 
 /**
  * A {@link DynamicFeature} that registers the provided auth filters

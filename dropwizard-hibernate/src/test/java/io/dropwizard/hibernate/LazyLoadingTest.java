@@ -1,29 +1,9 @@
 package io.dropwizard.hibernate;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Application;
-import javax.ws.rs.core.MediaType;
-
-import org.glassfish.jersey.client.ClientConfig;
-import org.glassfish.jersey.test.JerseyTest;
-import org.glassfish.jersey.test.TestProperties;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.junit.After;
-import org.junit.Test;
-
 import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
-
 import io.dropwizard.Configuration;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.jackson.Jackson;
@@ -33,12 +13,30 @@ import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
 import io.dropwizard.logging.BootstrapLogging;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import org.glassfish.jersey.client.ClientConfig;
+import org.glassfish.jersey.test.JerseyTest;
+import org.glassfish.jersey.test.TestProperties;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.junit.After;
+import org.junit.Test;
+
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Application;
+import javax.ws.rs.core.MediaType;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class LazyLoadingTest extends JerseyTest {
-    
+
     private Bootstrap<?> bootstrap;
     private HibernateBundle<Configuration> bundle;
-    
+
     static {
         BootstrapLogging.bootstrap();
     }
@@ -107,28 +105,25 @@ public class LazyLoadingTest extends JerseyTest {
         this.sessionFactory = factory.build(bundle,
                                             environment,
                                             dbConfig,
-                                            ImmutableList.<Class<?>>of(Person.class, Dog.class));
+                                            ImmutableList.of(Person.class, Dog.class));
 
-        final Session session = sessionFactory.openSession();
-        try {
+        try (Session session = sessionFactory.openSession()) {
             session.createSQLQuery("DROP TABLE people IF EXISTS").executeUpdate();
             session.createSQLQuery(
-                    "CREATE TABLE people (name varchar(100) primary key, email varchar(16), birthday timestamp with time zone)")
-                   .executeUpdate();
+                "CREATE TABLE people (name varchar(100) primary key, email varchar(16), birthday timestamp with time zone)")
+                .executeUpdate();
             session.createSQLQuery(
-                    "INSERT INTO people VALUES ('Coda', 'coda@example.com', '1979-01-02 00:22:00+0:00')")
-                   .executeUpdate();
+                "INSERT INTO people VALUES ('Coda', 'coda@example.com', '1979-01-02 00:22:00+0:00')")
+                .executeUpdate();
             session.createSQLQuery("DROP TABLE dogs IF EXISTS").executeUpdate();
             session.createSQLQuery(
-                    "CREATE TABLE dogs (name varchar(100) primary key, owner varchar(100), CONSTRAINT fk_owner FOREIGN KEY (owner) REFERENCES people(name))")
-                   .executeUpdate();
+                "CREATE TABLE dogs (name varchar(100) primary key, owner varchar(100), CONSTRAINT fk_owner FOREIGN KEY (owner) REFERENCES people(name))")
+                .executeUpdate();
             session.createSQLQuery(
-                    "INSERT INTO dogs VALUES ('Raf', 'Coda')")
-                   .executeUpdate();
-        } finally {
-            session.close();
+                "INSERT INTO dogs VALUES ('Raf', 'Coda')")
+                .executeUpdate();
         }
-        
+
         bootstrap = mock(Bootstrap.class);
         final ObjectMapper objMapper = Jackson.newObjectMapper();
         when(bootstrap.getObjectMapper()).thenReturn(objMapper);
@@ -139,7 +134,7 @@ public class LazyLoadingTest extends JerseyTest {
         config.register(new DogResource(new DogDAO(sessionFactory)));
         config.register(new JacksonMessageBodyProvider(objMapper));
         config.register(new DataExceptionMapper());
-        
+
         return config;
     }
 
@@ -151,7 +146,7 @@ public class LazyLoadingTest extends JerseyTest {
     @Test
     public void serialisesLazyObjectWhenEnabled() throws Exception {
         bundle.initialize(bootstrap);
-        
+
         final Dog raf = target("/dogs/Raf").request(MediaType.APPLICATION_JSON).get(Dog.class);
 
         assertThat(raf.getName())
@@ -163,12 +158,12 @@ public class LazyLoadingTest extends JerseyTest {
         assertThat(raf.getOwner().getName())
                 .isEqualTo("Coda");
     }
-    
+
     @Test
     public void sendsNullWhenDisabled() throws Exception {
         bundle.setLazyLoadingEnabled(false);
         bundle.initialize(bootstrap);
-        
+
         final Dog raf = target("/dogs/Raf").request(MediaType.APPLICATION_JSON).get(Dog.class);
 
         assertThat(raf.getName())

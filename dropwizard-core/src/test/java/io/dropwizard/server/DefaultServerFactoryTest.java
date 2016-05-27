@@ -4,15 +4,14 @@ import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.io.CharStreams;
 import com.google.common.io.Resources;
-
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.DiscoverableSubtypeResolver;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.errors.EarlyEofExceptionMapper;
 import io.dropwizard.jersey.errors.LoggingExceptionMapper;
 import io.dropwizard.jersey.jackson.JsonProcessingExceptionMapper;
-import io.dropwizard.jersey.validation.Validators;
 import io.dropwizard.jersey.validation.JerseyViolationExceptionMapper;
+import io.dropwizard.jersey.validation.Validators;
 import io.dropwizard.jetty.HttpConnectorFactory;
 import io.dropwizard.jetty.ServerPushFilterFactory;
 import io.dropwizard.logging.ConsoleAppenderFactory;
@@ -36,7 +35,6 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Set;
-import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -48,7 +46,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 
 public class DefaultServerFactoryTest {
-	private Environment environment = new Environment("test", Jackson.newObjectMapper(),
+    private Environment environment = new Environment("test", Jackson.newObjectMapper(),
             Validators.newValidator(), new MetricRegistry(),
             ClassLoader.getSystemClassLoader());
     private DefaultServerFactory http;
@@ -148,7 +146,7 @@ public class DefaultServerFactoryTest {
 
         ((AbstractNetworkConnector)server.getConnectors()[0]).setPort(0);
 
-        ScheduledFuture<Void> cleanup = executor.schedule((Callable<Void>) () -> {
+        ScheduledFuture<Void> cleanup = executor.schedule(() -> {
             if (!server.isStopped()) {
                 server.stop();
             }
@@ -170,7 +168,7 @@ public class DefaultServerFactoryTest {
 
         requestReceived.await(10, TimeUnit.SECONDS);
 
-        Future<Void> serverStopped = executor.submit((Callable<Void>) () -> {
+        Future<Void> serverStopped = executor.submit(() -> {
             server.stop();
             return null;
         });
@@ -201,10 +199,10 @@ public class DefaultServerFactoryTest {
 
     @Test
     public void testConfiguredEnvironment() {
-    	http.configure(environment);
+        http.configure(environment);
 
-    	assertEquals(http.getAdminContextPath(), environment.getAdminContext().getContextPath());
-    	assertEquals(http.getApplicationContextPath(), environment.getApplicationContext().getContextPath());
+        assertEquals(http.getAdminContextPath(), environment.getAdminContext().getContextPath());
+        assertEquals(http.getApplicationContextPath(), environment.getApplicationContext().getContextPath());
     }
 
     @Path("/test")

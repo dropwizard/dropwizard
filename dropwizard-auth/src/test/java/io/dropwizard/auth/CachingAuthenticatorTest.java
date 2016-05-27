@@ -26,7 +26,7 @@ public class CachingAuthenticatorTest {
 
     @Before
     public void setUp() throws Exception {
-        when(underlying.authenticate(anyString())).thenReturn(Optional.<Principal>of(new PrincipalImpl("principal")));
+        when(underlying.authenticate(anyString())).thenReturn(Optional.of(new PrincipalImpl("principal")));
     }
 
     @Test
@@ -100,7 +100,7 @@ public class CachingAuthenticatorTest {
 
     @Test
     public void shouldNotCacheAbsentPrincipals() throws Exception {
-        when(underlying.authenticate(anyString())).thenReturn(Optional.<Principal>empty());
+        when(underlying.authenticate(anyString())).thenReturn(Optional.empty());
         assertThat(cached.authenticate("credentials")).isEqualTo(Optional.empty());
         verify(underlying).authenticate("credentials");
         assertThat(cached.size()).isEqualTo(0);

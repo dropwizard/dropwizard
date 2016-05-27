@@ -7,7 +7,6 @@ import io.dropwizard.util.Duration;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 
 public class DBIHealthCheck extends HealthCheck {

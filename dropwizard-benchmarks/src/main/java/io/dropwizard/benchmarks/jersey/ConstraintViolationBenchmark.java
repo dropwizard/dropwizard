@@ -3,7 +3,6 @@ package io.dropwizard.benchmarks.jersey;
 import io.dropwizard.jersey.validation.ConstraintMessage;
 import io.dropwizard.jersey.validation.Validators;
 import io.dropwizard.logging.BootstrapLogging;
-import org.glassfish.jersey.process.Inflector;
 import org.glassfish.jersey.server.model.Invocable;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.openjdk.jmh.annotations.Benchmark;
@@ -21,7 +20,6 @@ import javax.validation.Valid;
 import javax.validation.Validator;
 import javax.validation.executable.ExecutableValidator;
 import javax.ws.rs.HeaderParam;
-import javax.ws.rs.core.Request;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 

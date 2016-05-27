@@ -1,7 +1,6 @@
 package io.dropwizard.jersey.caching;
 
-import java.io.IOException;
-import java.util.concurrent.TimeUnit;
+import org.glassfish.jersey.server.model.AnnotatedMethod;
 
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerResponseContext;
@@ -11,8 +10,8 @@ import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.FeatureContext;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.ext.Provider;
-
-import org.glassfish.jersey.server.model.AnnotatedMethod;
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 @Provider
 public class CacheControlledResponseFeature implements DynamicFeature {

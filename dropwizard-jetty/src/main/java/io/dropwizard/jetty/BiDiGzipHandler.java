@@ -18,9 +18,9 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.zip.GZIPInputStream;
 import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
-import java.util.zip.GZIPInputStream;
 
 /**
  * An extension of {@link GzipHandler} which decompresses gzip- and deflate-encoded request
@@ -34,7 +34,7 @@ public class BiDiGzipHandler extends GzipHandler {
      * Size of the buffer for decompressing requests
      */
     private int inputBufferSize = 8192;
-   
+
     /**
      * Whether inflating (decompressing) of deflate-encoded requests
      * should be performed in the GZIP-compatible mode

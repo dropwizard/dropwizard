@@ -10,7 +10,6 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -50,14 +49,6 @@ public class GuavaOptionalValidatedValueUnwrapperTest {
     }
 
     @Test
-    public void succeedsWhenPresentButNull() {
-        Example example = new Example();
-        example.three = Optional.fromNullable(null);
-        Set<ConstraintViolation<Example>> violations = validator.validate(example);
-        assertThat(violations).isEmpty();
-    }
-
-    @Test
     public void succeedsWhenConstraintsMet() {
         Example example = new Example();
         example.three = Optional.of(10);
@@ -69,14 +60,6 @@ public class GuavaOptionalValidatedValueUnwrapperTest {
     public void notNullFailsWhenAbsent() {
         Example example = new Example();
         example.notNull = Optional.absent();
-        Set<ConstraintViolation<Example>> violations = validator.validate(example);
-        assertThat(violations).hasSize(1);
-    }
-
-    @Test
-    public void notNullFailsWhenPresentButNull() {
-        Example example = new Example();
-        example.notNull = Optional.fromNullable(null);
         Set<ConstraintViolation<Example>> violations = validator.validate(example);
         assertThat(violations).hasSize(1);
     }

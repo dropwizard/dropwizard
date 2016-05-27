@@ -1,10 +1,10 @@
 package io.dropwizard.db;
 
 import com.codahale.metrics.MetricRegistry;
-import java.util.Optional;
 import io.dropwizard.util.Duration;
 
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Interface of a factory that produces JDBC data sources

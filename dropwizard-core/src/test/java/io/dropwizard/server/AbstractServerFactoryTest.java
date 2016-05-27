@@ -12,7 +12,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Tests that the {@link JerseyEnvironment#getUrlPattern()} is set by the following priority order:
@@ -86,9 +88,9 @@ public class AbstractServerFactoryTest {
             return server;
         }
 
-		@Override
-		public void configure(Environment environment) {
-			// left blank intentionally
-		}
+        @Override
+        public void configure(Environment environment) {
+            // left blank intentionally
+        }
     }
 }

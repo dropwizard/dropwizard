@@ -52,7 +52,7 @@ public class OptionalDateTimeTest {
     public void testPresent() {
         final DateTime startDate = DateTime.now();
         final DateTime endDate = startDate.plusDays(1);
-        dao.insert(1, Optional.of("John Hughes"), startDate, Optional.of(endDate), Optional.<String>empty());
+        dao.insert(1, Optional.of("John Hughes"), startDate, Optional.of(endDate), Optional.empty());
 
         assertThat(dao.findEndDateById(1).get()).isEqualTo(endDate);
     }
@@ -60,7 +60,7 @@ public class OptionalDateTimeTest {
     @Test
     public void testAbsent() {
         dao.insert(2, Optional.of("Kate Johansen"), DateTime.now(),
-                Optional.<DateTime>empty(), Optional.of("To be done"));
+                Optional.empty(), Optional.of("To be done"));
 
         assertThat(dao.findEndDateById(2).isPresent()).isFalse();
     }
