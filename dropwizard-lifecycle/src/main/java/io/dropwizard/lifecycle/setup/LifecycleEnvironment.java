@@ -64,7 +64,7 @@ public class LifecycleEnvironment {
     }
     
     public ScheduledExecutorServiceBuilder scheduledExecutorService(String nameFormat, ThreadFactory factory) {
-        return scheduledExecutorService(nameFormat, factory);
+        return new ScheduledExecutorServiceBuilder(this, nameFormat, factory);
     }
 
     public ScheduledExecutorServiceBuilder scheduledExecutorService(String nameFormat, boolean useDaemonThreads) {
