@@ -70,7 +70,7 @@ public class LifecycleEnvironmentTest {
 
     @Test
     public void scheduledExecutorServiceThreadFactory() throws ExecutionException, InterruptedException {
-        final String expectedName = "DropWizard ThreadFactory test";
+        final String expectedName = "DropWizard ThreadFactory Test";
         final String expectedNamePattern = expectedName + "-%d";
 
         final ThreadFactory tfactory = (new ThreadFactoryBuilder())
@@ -78,7 +78,7 @@ public class LifecycleEnvironmentTest {
             .setNameFormat(expectedNamePattern)
             .build();
 
-        final ScheduledExecutorService executorService = environment.scheduledExecutorService(expectedName, tfactory).build();
+        final ScheduledExecutorService executorService = environment.scheduledExecutorService("DropWizard Service", tfactory).build();
         final Future<Boolean> isFactoryInUse = executorService.submit(() -> Thread.currentThread().getName().startsWith(expectedName));
 
         assertThat(isFactoryInUse.get()).isTrue();
@@ -86,7 +86,7 @@ public class LifecycleEnvironmentTest {
 
     @Test
     public void executorServiceThreadFactory() throws ExecutionException, InterruptedException {
-        final String expectedName = "DropWizard ThreadFactory test";
+        final String expectedName = "DropWizard ThreadFactory Test";
         final String expectedNamePattern = expectedName + "-%d";
 
         final ThreadFactory tfactory = (new ThreadFactoryBuilder())
@@ -94,7 +94,7 @@ public class LifecycleEnvironmentTest {
             .setNameFormat(expectedNamePattern)
             .build();
 
-        final ExecutorService executorService = environment.executorService(expectedName, tfactory).build();
+        final ExecutorService executorService = environment.executorService("Dropwizard Service", tfactory).build();
         final Future<Boolean> isFactoryInUse = executorService.submit(() -> Thread.currentThread().getName().startsWith(expectedName));
 
         assertThat(isFactoryInUse.get()).isTrue();
