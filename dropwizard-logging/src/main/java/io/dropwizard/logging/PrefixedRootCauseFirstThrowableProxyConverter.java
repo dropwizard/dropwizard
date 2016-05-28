@@ -5,8 +5,8 @@ import ch.qos.logback.classic.spi.IThrowableProxy;
 
 import java.util.regex.Pattern;
 
-import static io.dropwizard.logging.PrefixedThrowableProxyConverter.PREFIX;
 import static io.dropwizard.logging.PrefixedThrowableProxyConverter.PATTERN;
+import static io.dropwizard.logging.PrefixedThrowableProxyConverter.PREFIX;
 
 /**
  * A {@link RootCauseFirstThrowableProxyConverter} that prefixes stack traces with {@code !}.

@@ -1,7 +1,6 @@
 package io.dropwizard.client.proxy;
 
 import com.google.common.collect.ImmutableList;
-import io.dropwizard.client.proxy.NonProxyListProxyRoutePlanner;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
 import org.apache.http.protocol.HttpContext;

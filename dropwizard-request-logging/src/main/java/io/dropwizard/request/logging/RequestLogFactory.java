@@ -1,9 +1,8 @@
 package io.dropwizard.request.logging;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import org.eclipse.jetty.server.RequestLog;
-
 import io.dropwizard.jackson.Discoverable;
+import org.eclipse.jetty.server.RequestLog;
 
 /**
  * A service provider interface for creating a Jetty {@link RequestLog}

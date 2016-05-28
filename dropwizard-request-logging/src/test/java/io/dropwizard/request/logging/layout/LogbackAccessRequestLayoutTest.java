@@ -1,14 +1,13 @@
 package io.dropwizard.request.logging.layout;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.core.Context;
+import org.junit.Test;
 
 import java.util.TimeZone;
 
-import org.junit.Test;
-
-import ch.qos.logback.classic.LoggerContext;
-import ch.qos.logback.core.Context;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 
 public class LogbackAccessRequestLayoutTest {
     final Context context = mock(LoggerContext.class);

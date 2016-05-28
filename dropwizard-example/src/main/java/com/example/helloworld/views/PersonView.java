@@ -1,7 +1,6 @@
 package com.example.helloworld.views;
 
 import com.example.helloworld.core.Person;
-
 import io.dropwizard.views.View;
 
 public class PersonView extends View {

@@ -1,10 +1,10 @@
 package io.dropwizard.configuration;
 
-import java.io.InputStream;
-import java.io.IOException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * An implementation of {@link ConfigurationSourceProvider} that reads the configuration from the

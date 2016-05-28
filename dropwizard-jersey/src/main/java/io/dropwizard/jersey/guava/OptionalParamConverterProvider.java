@@ -13,7 +13,6 @@ import javax.ws.rs.ext.ParamConverterProvider;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.List;
-import java.util.Set;
 
 @Singleton
 public class OptionalParamConverterProvider implements ParamConverterProvider {

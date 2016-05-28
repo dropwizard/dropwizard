@@ -13,7 +13,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 @Singleton
 public class OptionalParamConverterProvider implements ParamConverterProvider {

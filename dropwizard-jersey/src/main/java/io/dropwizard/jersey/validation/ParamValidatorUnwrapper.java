@@ -1,7 +1,6 @@
 package io.dropwizard.jersey.validation;
 
 
-import com.fasterxml.classmate.ResolvedType;
 import com.fasterxml.classmate.TypeResolver;
 import io.dropwizard.jersey.params.AbstractParam;
 import org.hibernate.validator.spi.valuehandling.ValidatedValueUnwrapper;

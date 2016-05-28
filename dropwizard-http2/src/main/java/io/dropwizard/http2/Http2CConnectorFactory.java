@@ -37,7 +37,7 @@ import javax.validation.constraints.Min;
  *         </td>
  *     </tr>
  *     <tr>
- *         <td>{@code initialStreamSendWindow}</td>
+ *         <td>{@code initialStreamRecvWindow}</td>
  *         <td>65535</td>
  *         <td>
  *             The initial flow control window size for a new stream. Larger values may allow greater throughput,
@@ -58,7 +58,7 @@ public class Http2CConnectorFactory extends HttpConnectorFactory {
 
     @Min(1)
     @Max(Integer.MAX_VALUE)
-    private int initialStreamSendWindow = 65535;
+    private int initialStreamRecvWindow = 65535;
 
     @JsonProperty
     public int getMaxConcurrentStreams() {
@@ -71,13 +71,13 @@ public class Http2CConnectorFactory extends HttpConnectorFactory {
     }
 
     @JsonProperty
-    public int getInitialStreamSendWindow() {
-        return initialStreamSendWindow;
+    public int getInitialStreamRecvWindow() {
+        return initialStreamRecvWindow;
     }
 
     @JsonProperty
-    public void setInitialStreamSendWindow(int initialStreamSendWindow) {
-        this.initialStreamSendWindow = initialStreamSendWindow;
+    public void setInitialStreamRecvWindow(int initialStreamRecvWindow) {
+        this.initialStreamRecvWindow = initialStreamRecvWindow;
     }
 
     @Override
@@ -88,7 +88,7 @@ public class Http2CConnectorFactory extends HttpConnectorFactory {
         final HttpConnectionFactory http11 = buildHttpConnectionFactory(httpConfig);
         final HTTP2ServerConnectionFactory http2c = new HTTP2CServerConnectionFactory(httpConfig);
         http2c.setMaxConcurrentStreams(maxConcurrentStreams);
-        http2c.setInitialStreamRecvWindow(initialStreamSendWindow);
+        http2c.setInitialStreamRecvWindow(initialStreamRecvWindow);
 
         // The server connector should use HTTP/1.1 by default. It affords to the server to stay compatible
         // with old clients. New clients which want to use HTTP/2, however, will make an HTTP/1.1 OPTIONS

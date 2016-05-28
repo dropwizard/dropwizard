@@ -1,12 +1,11 @@
 package io.dropwizard.testing;
 
-import java.io.File;
-
 import com.fasterxml.jackson.databind.JsonNode;
-
 import io.dropwizard.Configuration;
 import io.dropwizard.configuration.ConfigurationSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
+
+import java.io.File;
 
 public class POJOConfigurationFactory<C extends Configuration>
     extends YamlConfigurationFactory<C> {

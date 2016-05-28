@@ -1,7 +1,6 @@
 package io.dropwizard.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import org.junit.Test;
 
 import java.io.IOException;
@@ -116,12 +115,12 @@ public class SizeTest {
         assertThat(Size.parse("64   kilobytes"))
                 .isEqualTo(Size.kilobytes(64));
     }
-    
+
     @Test
-    public void parseCaseInsensitive() {        
+    public void parseCaseInsensitive() {
         assertThat(Size.parse("1b")).isEqualTo(Size.parse("1B"));
     }
-    
+
     @Test
     public void parseSingleLetterSuffix() {
         assertThat(Size.parse("1B")).isEqualTo(Size.bytes(1));

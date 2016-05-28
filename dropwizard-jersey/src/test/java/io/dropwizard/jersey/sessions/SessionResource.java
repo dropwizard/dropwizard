@@ -1,7 +1,5 @@
 package io.dropwizard.jersey.sessions;
 
-import java.util.Objects;
-
 import javax.servlet.http.HttpSession;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -9,6 +7,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import java.util.Objects;
 
 @Path("/session/")
 @Consumes(MediaType.TEXT_PLAIN)

@@ -92,7 +92,7 @@ public class SessionFactoryFactoryTest {
     @Test
     public void setsACustomPoolName() {
         this.sessionFactory = factory.build(bundle, environment, config,
-                ImmutableList.<Class<?>>of(Person.class), "custom-hibernate-db");
+                ImmutableList.of(Person.class), "custom-hibernate-db");
 
         ArgumentCaptor<SessionFactoryManager> sessionFactoryManager = ArgumentCaptor.forClass(SessionFactoryManager.class);
         verify(lifecycleEnvironment).manage(sessionFactoryManager.capture());
@@ -104,24 +104,21 @@ public class SessionFactoryFactoryTest {
     public void buildsAWorkingSessionFactory() throws Exception {
         build();
 
-        final Session session = sessionFactory.openSession();
-        try {
+        try (Session session = sessionFactory.openSession()) {
             session.createSQLQuery("DROP TABLE people IF EXISTS").executeUpdate();
             session.createSQLQuery("CREATE TABLE people (name varchar(100) primary key, email varchar(100), birthday timestamp(0))").executeUpdate();
             session.createSQLQuery("INSERT INTO people VALUES ('Coda', 'coda@example.com', '1979-01-02 00:22:00')").executeUpdate();
 
-            final Person entity = (Person) session.get(Person.class, "Coda");
+            final Person entity = session.get(Person.class, "Coda");
 
             assertThat(entity.getName())
-                    .isEqualTo("Coda");
+                .isEqualTo("Coda");
 
             assertThat(entity.getEmail())
-                    .isEqualTo("coda@example.com");
+                .isEqualTo("coda@example.com");
 
             assertThat(entity.getBirthday().toDateTime(DateTimeZone.UTC))
-                    .isEqualTo(new DateTime(1979, 1, 2, 0, 22, DateTimeZone.UTC));
-        } finally {
-            session.close();
+                .isEqualTo(new DateTime(1979, 1, 2, 0, 22, DateTimeZone.UTC));
         }
     }
 
@@ -137,7 +134,7 @@ public class SessionFactoryFactoryTest {
         sessionFactory = customFactory.build(bundle,
                                              environment,
                                              config,
-                                             ImmutableList.<Class<?>>of(Person.class));
+                                             ImmutableList.of(Person.class));
 
         assertThat(sessionFactory.getSessionFactoryOptions().getInterceptor()).isSameAs(EmptyInterceptor.INSTANCE);
     }
@@ -146,6 +143,6 @@ public class SessionFactoryFactoryTest {
         this.sessionFactory = factory.build(bundle,
                                             environment,
                                             config,
-                                            ImmutableList.<Class<?>>of(Person.class));
+                                            ImmutableList.of(Person.class));
     }
 }

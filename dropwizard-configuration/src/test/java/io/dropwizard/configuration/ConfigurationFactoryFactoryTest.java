@@ -1,17 +1,14 @@
 package io.dropwizard.configuration;
 
 import com.google.common.io.Resources;
-
-import org.junit.Before;
-import org.junit.Test;
-
-import java.io.File;
-
-import javax.validation.Validator;
-
 import io.dropwizard.configuration.ConfigurationFactoryTest.Example;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.validation.BaseValidator;
+import org.junit.Before;
+import org.junit.Test;
+
+import javax.validation.Validator;
+import java.io.File;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

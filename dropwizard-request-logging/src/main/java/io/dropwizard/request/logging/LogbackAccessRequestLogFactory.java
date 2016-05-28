@@ -1,20 +1,12 @@
 package io.dropwizard.request.logging;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-
-import org.eclipse.jetty.server.RequestLog;
-import org.slf4j.LoggerFactory;
-
 import ch.qos.logback.access.spi.IAccessEvent;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.google.common.collect.ImmutableList;
-
 import io.dropwizard.logging.AppenderFactory;
 import io.dropwizard.logging.ConsoleAppenderFactory;
 import io.dropwizard.logging.async.AsyncAppenderFactory;
@@ -23,6 +15,11 @@ import io.dropwizard.logging.filter.NullLevelFilterFactory;
 import io.dropwizard.logging.layout.LayoutFactory;
 import io.dropwizard.request.logging.async.AsyncAccessEventAppenderFactory;
 import io.dropwizard.request.logging.layout.LogbackAccessRequestLayoutFactory;
+import org.eclipse.jetty.server.RequestLog;
+import org.slf4j.LoggerFactory;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 /**
  * A factory for creating {@link LogbackAccessRequestLog} instances.
@@ -47,7 +44,7 @@ public class LogbackAccessRequestLogFactory implements RequestLogFactory {
     @Valid
     @NotNull
     private ImmutableList<AppenderFactory<IAccessEvent>> appenders = ImmutableList
-            .<AppenderFactory<IAccessEvent>> of(new ConsoleAppenderFactory<>());
+            .of(new ConsoleAppenderFactory<>());
 
     @JsonProperty
     public ImmutableList<AppenderFactory<IAccessEvent>> getAppenders() {

@@ -1,13 +1,13 @@
 package io.dropwizard.jersey.params;
 
+import io.dropwizard.jersey.errors.ErrorMessage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-
-import io.dropwizard.jersey.errors.ErrorMessage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * An abstract base class from which to build Jersey parameter classes.

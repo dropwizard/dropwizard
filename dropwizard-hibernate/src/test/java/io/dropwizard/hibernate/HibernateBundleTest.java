@@ -17,11 +17,16 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyList;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class HibernateBundleTest {
     private final DataSourceFactory dbConfig = new DataSourceFactory();
-    private final ImmutableList<Class<?>> entities = ImmutableList.<Class<?>>of(Person.class);
+    private final ImmutableList<Class<?>> entities = ImmutableList.of(Person.class);
     private final SessionFactoryFactory factory = mock(SessionFactoryFactory.class);
     private final SessionFactory sessionFactory = mock(SessionFactory.class);
     private final Configuration configuration = mock(Configuration.class);

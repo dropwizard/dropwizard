@@ -1,9 +1,9 @@
 package io.dropwizard.request.logging.layout;
 
-import java.util.TimeZone;
-
 import ch.qos.logback.access.PatternLayout;
 import ch.qos.logback.core.Context;
+
+import java.util.TimeZone;
 
 /**
  * A base layout for Logback Access request logs.

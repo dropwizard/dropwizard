@@ -51,14 +51,14 @@ public class GuavaOptionalDateTimeTest {
     public void testPresent() {
         final DateTime startDate = DateTime.now();
         final DateTime endDate = startDate.plusDays(1);
-        dao.insert(1, Optional.of("John Hughes"), startDate, Optional.of(endDate), Optional.<String>absent());
+        dao.insert(1, Optional.of("John Hughes"), startDate, Optional.of(endDate), Optional.absent());
 
         assertThat(dao.findEndDateById(1).get()).isEqualTo(endDate);
     }
 
     @Test
     public void testAbsent() {
-        dao.insert(2, Optional.of("Kate Johansen"), DateTime.now(), Optional.<DateTime>absent(), Optional.of("To be done"));
+        dao.insert(2, Optional.of("Kate Johansen"), DateTime.now(), Optional.absent(), Optional.of("To be done"));
 
         assertThat(dao.findEndDateById(2).isPresent()).isFalse();
     }
