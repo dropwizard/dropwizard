@@ -18,6 +18,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.ws.rs.BeanParam;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.CookieParam;
@@ -41,6 +42,11 @@ import java.util.Set;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class ValidatingResource {
+
+    @QueryParam("sort")
+    @Pattern(regexp = "^(asc|desc)$")
+    private String sortParam;
+
     @POST
     @Path("foo")
     @Valid

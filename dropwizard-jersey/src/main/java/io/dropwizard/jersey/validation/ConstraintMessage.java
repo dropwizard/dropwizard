@@ -94,7 +94,10 @@ public class ConstraintMessage {
      * friendly string representation of where the error occurred (eg. "patient.name")
      */
     public static Optional<String> isRequestEntity(ConstraintViolation<?> violation, Invocable invocable) {
-        final Path.Node parent = Iterables.get(violation.getPropertyPath(), 1);
+        final Path.Node parent = Iterables.get(violation.getPropertyPath(), 1, null);
+        if (parent == null) {
+            return Optional.empty();
+        }
         final List<Parameter> parameters = invocable.getParameters();
 
         switch (parent.getKind()) {

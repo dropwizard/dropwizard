@@ -533,4 +533,16 @@ public class ConstraintViolationExceptionMapperTest extends JerseyTest {
         assertThat(response.readEntity(String.class))
                 .containsOnlyOnce("examples may not be empty");
     }
+
+    @Test
+    public void testInvalidFieldQueryParam() {
+        final Response response = target("/valid/bar")
+            .queryParam("sort", "foo")
+            .request()
+            .get();
+
+        assertThat(response.getStatus()).isEqualTo(422);
+        assertThat(response.readEntity(String.class))
+            .containsOnlyOnce("sortParam must match \\\"^(asc|desc)$\\\"");
+    }
 }
