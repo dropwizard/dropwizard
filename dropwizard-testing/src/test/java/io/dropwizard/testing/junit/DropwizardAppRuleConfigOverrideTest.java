@@ -19,7 +19,8 @@ public class DropwizardAppRuleConfigOverrideTest {
             new DropwizardAppRule<>(TestApplication.class, resourceFilePath("test-config.yaml"),
                     Optional.of("app-rule"),
                     config("app-rule", "message", "A new way to say Hooray!"),
-                    config("app-rule", "extra", Suppliers.ofInstance("supplied")));
+                    config("app-rule", "extra", Suppliers.ofInstance("supplied")),
+                    config("extra", Suppliers.ofInstance("supplied again")));
 
     @Test
     public void supportsConfigAttributeOverrides() {
@@ -32,5 +33,6 @@ public class DropwizardAppRuleConfigOverrideTest {
     @Test
     public void supportsSuppliedConfigAttributeOverrides() throws Exception {
         assertThat(System.getProperty("app-rule.extra"), is("supplied"));
+        assertThat(System.getProperty("dw.extra"), is("supplied again"));
     }
 }
