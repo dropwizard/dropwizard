@@ -1,7 +1,6 @@
 package io.dropwizard.testing;
 
-import com.google.common.base.Supplier;
-import com.google.common.base.Suppliers;
+import java.util.function.Supplier;
 
 public class ConfigOverride {
 
@@ -17,11 +16,11 @@ public class ConfigOverride {
     }
 
     public static ConfigOverride config(String key, String value) {
-        return new ConfigOverride(DEFAULT_PREFIX, key, Suppliers.ofInstance(value));
+        return new ConfigOverride(DEFAULT_PREFIX, key, () -> value);
     }
 
     public static ConfigOverride config(String propertyPrefix, String key, String value) {
-        return new ConfigOverride(propertyPrefix, key, Suppliers.ofInstance(value));
+        return new ConfigOverride(propertyPrefix, key, () -> value);
     }
 
     public static ConfigOverride config(String key, Supplier<String> value) {
