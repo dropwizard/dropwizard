@@ -1,5 +1,6 @@
 package io.dropwizard.testing.junit;
 
+import com.google.common.base.Suppliers;
 import org.junit.ClassRule;
 import org.junit.Test;
 
@@ -16,7 +17,9 @@ public class DropwizardAppRuleConfigOverrideTest {
     @ClassRule
     public static final DropwizardAppRule<TestConfiguration> RULE =
             new DropwizardAppRule<>(TestApplication.class, resourceFilePath("test-config.yaml"),
-                    Optional.of("app-rule"), config("app-rule", "message", "A new way to say Hooray!"));
+                    Optional.of("app-rule"),
+                    config("app-rule", "message", "A new way to say Hooray!"),
+                    config("app-rule", "extra", Suppliers.ofInstance("supplied")));
 
     @Test
     public void supportsConfigAttributeOverrides() {
@@ -24,5 +27,10 @@ public class DropwizardAppRuleConfigOverrideTest {
                 .request().get(String.class);
 
         assertThat(content, is("A new way to say Hooray!"));
+    }
+
+    @Test
+    public void supportsSuppliedConfigAttributeOverrides() throws Exception {
+        assertThat(System.getProperty("app-rule.extra"), is("supplied"));
     }
 }
