@@ -17,6 +17,7 @@ import javax.validation.groups.Default;
 import javax.validation.metadata.BeanDescriptor;
 import javax.ws.rs.WebApplicationException;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Set;
 
 import static java.util.Objects.requireNonNull;
@@ -34,8 +35,14 @@ public class DropwizardConfiguredValidator implements ConfiguredValidator {
     public void validateResourceAndInputParams(Object resource, final Invocable invocable, Object[] objects)
             throws ConstraintViolationException {
         final Class<?>[] groups = getGroup(invocable);
-        final Set<ConstraintViolation<Object>> violations =
-            forExecutables().validateParameters(resource, invocable.getHandlingMethod(), objects, groups);
+        final Set<ConstraintViolation<Object>> violations = new HashSet<>();
+        final BeanDescriptor beanDescriptor = getConstraintsForClass(resource.getClass());
+
+        if (beanDescriptor.isBeanConstrained()) {
+            violations.addAll(validate(resource, groups));
+        }
+
+        violations.addAll(forExecutables().validateParameters(resource, invocable.getHandlingMethod(), objects, groups));
         if (!violations.isEmpty()) {
             throw new JerseyViolationException(violations, invocable);
         }
