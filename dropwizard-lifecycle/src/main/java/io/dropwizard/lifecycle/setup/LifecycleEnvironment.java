@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ThreadFactory;
 
 import static java.util.Objects.requireNonNull;
 
@@ -53,9 +54,17 @@ public class LifecycleEnvironment {
     public ExecutorServiceBuilder executorService(String nameFormat) {
         return new ExecutorServiceBuilder(this, nameFormat);
     }
+    
+    public ExecutorServiceBuilder executorService(String nameFormat, ThreadFactory factory) {
+        return new ExecutorServiceBuilder(this, nameFormat, factory);
+    }
 
     public ScheduledExecutorServiceBuilder scheduledExecutorService(String nameFormat) {
         return scheduledExecutorService(nameFormat, false);
+    }
+    
+    public ScheduledExecutorServiceBuilder scheduledExecutorService(String nameFormat, ThreadFactory factory) {
+        return new ScheduledExecutorServiceBuilder(this, nameFormat, factory);
     }
 
     public ScheduledExecutorServiceBuilder scheduledExecutorService(String nameFormat, boolean useDaemonThreads) {
