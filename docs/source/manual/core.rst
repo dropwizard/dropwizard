@@ -1109,24 +1109,85 @@ In general, though, we recommend you return actual domain objects if at all poss
 Error Handling
 --------------
 
-If your resource class unintentionally throws an exception, Dropwizard will log that exception
-(including stack traces) and return a terse, safe ``text/plain`` ``500 Internal Server Error``
-response.
+Almost as important as an application's happy path (receiving expected input and returning expected
+output) is an application behavior when something goes wrong.
+
+If your resource class unintentionally throws an exception, Dropwizard will log that exception under
+the ``ERROR`` level (including stack traces) and return a terse, safe ``application/json`` ``500
+Internal Server Error`` response. The response will contain an ID that can be grepped out the server
+logs for additional information.
 
 If your resource class needs to return an error to the client (e.g., the requested record doesn't
 exist), you have two options: throw a subclass of ``Exception`` or restructure your method to
-return a ``Response``.
+return a ``Response``. If at all possible, prefer throwing ``Exception`` instances to returning
+``Response`` objects, as that will make resource endpoints more self describing and easier to test.
 
-If at all possible, prefer throwing ``Exception`` instances to returning
-``Response`` objects.
+The least instrusive way to map error conditions to a response is to throw a ``WebApplicationException``:
 
-If you throw a subclass of ``WebApplicationException`` jersey will map that to a defined response.
+.. code-block:: java
 
-If you want more control, you can also declare JerseyProviders in your Environment to map Exceptions
-to certain responses by calling ``JerseyEnvironment#register(Object)`` with an implementation of
-javax.ws.rs.ext.ExceptionMapper.
-e.g. Your resource throws an InvalidArgumentException, but the response would be 400, bad request.
+    @GET
+    @Path("/{collection}")
+    public Saying reduceCols(@PathParam("collection") String collection) {
+        if (!collectionMap.containsKey(collection)) {
+            final String msg = String.format("Collection %s does not exist", collection);
+            throw new WebApplicationException(msg, Status.NOT_FOUND)
+        }
 
+        // ...
+    }
+
+In this example a ``GET`` request to ``/foobar`` will return
+
+.. code-block:: json
+
+    {"code":404,"message":"Collection foobar does not exist"}
+
+One can also take exceptions that your resource may throw and map them to appropriate responses. For instance,
+an endpoint may throw ``IllegalArugmentException`` and it may be worthy enough of a response to warrant a
+custom metric to track how often the event occurs. Here's an example of such an ``ExceptionMapper``
+
+.. code-block:: java
+
+    public class IllegalArgumentExceptionMapper implements ExceptionMapper<IllegalArgumentException> {
+        private final Meter exceptions;
+        public IllegalArgumentExceptionMapper(MetricRegistry metrics) {
+            exceptions = metrics.meter(name(getClass(), "exceptions"));
+        }
+
+        @Override
+        public Response toResponse(IllegalArgumentException e) {
+            exceptions.mark();
+            return Response.status(Status.BAD_REQUEST)
+                    .header("X-YOU-SILLY", "true")
+                    .type(MediaType.APPLICATION_JSON_TYPE)
+                    .entity(new ErrorMessage(Status.BAD_REQUEST.getStatusCode(),
+                            "You passed an illegal argument!"))
+                    .build();
+        }
+    }
+
+and then registering the exception mapper:
+
+.. code-block:: java
+
+    @Override
+    public void run(final MyConfiguration conf, final Environment env) {
+        env.jersey().register(new IllegalArgumentExceptionMapper(env.metrics()));
+        env.jersey().register(new Resource());
+    }
+
+Overriding Default Exception Mappers
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If you want more control, you can disable the exception mappers Dropwizard provides by default. This is done
+by setting ``server.registerDefaultExceptionMappers`` to ``false``. Since this disables all default exception
+mappers make sure to re-enable exception mappers that are wanted. The default exception mappers are:
+
+- ``LoggingExceptionMapper<Throwable>``
+- ``JerseyViolationExceptionMapper``
+- ``JsonProcessingExceptionMapper``
+- ``EarlyEofExceptionMapper``
 
 .. _man-core-resources-uris:
 
