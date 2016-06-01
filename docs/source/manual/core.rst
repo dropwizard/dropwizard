@@ -262,9 +262,10 @@ SSL
 
 SSL support is built into Dropwizard. You will need to provide your own java
 keystore, which is outside the scope of this document (``keytool`` is the
-command you need). There is a test keystore you can use in the
-`Dropwizard example project`__.
+command you need, and `Jetty's documentation`_ can get you started). There is a
+test keystore you can use in the `Dropwizard example project`__.
 
+.. _`Jetty's documentation`: http://www.eclipse.org/jetty/documentation/current/configuring-ssl.html
 .. __: https://github.com/dropwizard/dropwizard/tree/master/dropwizard-example
 
 .. code-block:: yaml
@@ -613,7 +614,7 @@ record runtime information about your tasks. Here's a basic task class:
             this.database = database;
         }
 
-          @Override
+        @Override
         public void execute(ImmutableMultimap<String, String> parameters, PrintWriter output) throws Exception {
             this.database.truncate();
         }
@@ -950,7 +951,7 @@ mapping various aspects of POJOs to outgoing HTTP responses. Here's a basic reso
 
         @POST
         public Response add(@PathParam("user") LongParam userId,
-                            @Valid Notification notification) {
+                            @NotNull @Valid Notification notification) {
             final long id = store.add(userId.get(), notification);
             return Response.created(UriBuilder.fromResource(NotificationResource.class)
                                               .build(userId.get(), id))
@@ -1057,7 +1058,7 @@ this:
 
     @POST
     public Response add(@PathParam("user") LongParam userId,
-                        @Valid Notification notification) {
+                        @NotNull @Valid Notification notification) {
         final long id = store.add(userId.get(), notification);
         return Response.created(UriBuilder.fromResource(NotificationResource.class)
                                           .build(userId.get(), id)
@@ -1074,7 +1075,9 @@ response to the client.
 
 .. note::
 
-    If your request entity parameter isn't annotated with ``@Valid``, it won't be validated.
+    If a request entity parameter is just annotated with ``@Valid``, it is still allowed to be
+    ``null``, so to ensure that the object is present and validated ``@NotNull @Valid`` is a
+    powerful combination.
 
 .. _man-core-resources-media-types:
 

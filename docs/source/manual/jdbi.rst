@@ -145,13 +145,15 @@ automatically prepend the SQL object's class and method name to the SQL query as
 
 This will allow you to quickly determine the origin of any slow or misbehaving queries.
 
-Guava Support
-=============
+Library Support
+===============
 
-``dropwizard-jdbi`` supports ``Optional<T>`` arguments and ``ImmutableList<T>`` and
-``ImmutableSet<T>`` query results.
+``dropwizard-jdbi`` supports a number of popular libraries data types that can be automatically
+serialized into the appropriate SQL type. Here's a list of what integration ``dropwizard-jdbi``
+provides:
 
-Joda Time Support
-=================
-``dropwizard-jdbi`` supports joda-time ``DateTime`` arguments and ``DateTime`` fields in query results.
+* Guava: support for ``Optional<T>`` arguments and ``ImmutableList<T>`` and ``ImmutableSet<T>`` query results.
+* Joda Time: support for ``DateTime`` arguments and ``DateTime`` fields in query results
+* Java 8: support for ``Optional<T>`` and kin (``OptionalInt``, etc.) arguments and java.time_ arguments.
 
+.. _java.time: https://docs.oracle.com/javase/8/docs/api/java/time/package-summary.html
