@@ -395,3 +395,61 @@ By creating a DropwizardTestSupport instance in your test you can manually start
             assertThat(response.getStatus()).isEqualTo(302);
         }
     }
+
+.. _man-testing-commands:
+
+Testing Commands
+================
+
+:ref:`Commands <man-core-commands>` can and should be tested, as it's important to ensure arguments
+are interpreted correctly, and the output is as expected.
+
+Below is a test for a command that adds the arguments as numbers and outputs the summation to the
+console. The test ensures that the result printed to the screen is correct by capturing standard out
+before the command is ran.
+
+.. code-block:: java
+
+    public class CommandTest {
+        private final ByteArrayOutputStream stdOut = new ByteArrayOutputStream();
+        private final ByteArrayOutputStream stdErr = new ByteArrayOutputStream();
+        private Cli cli;
+
+        @Before
+        public void setUp() throws Exception {
+            // Setup necessary mock
+            final JarLocation location = mock(JarLocation.class);
+            when(location.getVersion()).thenReturn(Optional.of("1.0.0"));
+
+            // Add commands you want to test
+            final Bootstrap<MyConfiguration> bootstrap = new Bootstrap<>(new MyApplication());
+            bootstrap.addCommand(new MyAddCommand());
+
+            // Redirect stdout and stderr to our byte streams
+            System.setOut(new PrintStream(stdOut));
+            System.setErr(new PrintStream(stdErr));
+
+            // Build what'll run the command and interpret arguments
+            cli = new Cli(location, bootstrap, stdOut, stdErr);
+        }
+
+        @After
+        public void teardown() {
+            System.setOut(null);
+            System.setErr(null);
+            System.setIn(null);
+        }
+
+        @Test
+        public void myAddCanAddThreeNumbersCorrectly() {
+            final boolean success = cli.run("add", "2", "3", "6");
+
+            SoftAssertions softly = new SoftAssertions();
+            softly.assertThat(success).as("Exit success").isTrue();
+
+            // Assert that 2 + 3 + 6 outputs 11
+            softly.assertThat(stdOut.toString()).as("stdout").isEqualTo("11");
+            softly.assertThat(stdErr.toString()).as("stderr").isEmpty();
+            softly.assertAll();
+        }
+    }
