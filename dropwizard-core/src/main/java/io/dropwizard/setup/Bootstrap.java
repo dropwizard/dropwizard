@@ -3,6 +3,7 @@ package io.dropwizard.setup;
 import com.codahale.metrics.JmxReporter;
 import com.codahale.metrics.JvmAttributeGaugeSet;
 import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.health.HealthCheckRegistry;
 import com.codahale.metrics.jvm.BufferPoolMetricSet;
 import com.codahale.metrics.jvm.ClassLoadingGaugeSet;
 import com.codahale.metrics.jvm.FileDescriptorRatioGauge;
@@ -51,6 +52,7 @@ public class Bootstrap<T extends Configuration> {
     private ValidatorFactory validatorFactory;
 
     private boolean metricsAreRegistered;
+    private HealthCheckRegistry healthCheckRegistry;
 
     /**
      * Creates a new {@link Bootstrap} for the given application.
@@ -68,6 +70,7 @@ public class Bootstrap<T extends Configuration> {
         this.configurationSourceProvider = new FileConfigurationSourceProvider();
         this.classLoader = Thread.currentThread().getContextClassLoader();
         this.configurationFactoryFactory = new DefaultConfigurationFactoryFactory<>();
+        this.healthCheckRegistry = new HealthCheckRegistry();
     }
 
     /**
@@ -238,5 +241,16 @@ public class Bootstrap<T extends Configuration> {
 
     public void setConfigurationFactoryFactory(ConfigurationFactoryFactory<T> configurationFactoryFactory) {
         this.configurationFactoryFactory = configurationFactoryFactory;
+    }
+
+    /**
+     * returns the health check registry
+     */
+    public HealthCheckRegistry getHealthCheckRegistry() {
+        return healthCheckRegistry;
+    }
+
+    public void setHealthCheckRegistry(HealthCheckRegistry healthCheckRegistry) {
+        this.healthCheckRegistry = healthCheckRegistry;
     }
 }
