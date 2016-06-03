@@ -55,11 +55,12 @@ public class Environment {
                        ObjectMapper objectMapper,
                        Validator validator,
                        MetricRegistry metricRegistry,
-                       ClassLoader classLoader) {
+                       ClassLoader classLoader,
+                       HealthCheckRegistry healthCheckRegistry) {
         this.name = name;
         this.objectMapper = objectMapper;
         this.metricRegistry = metricRegistry;
-        this.healthCheckRegistry = new HealthCheckRegistry();
+        this.healthCheckRegistry = healthCheckRegistry;
         this.validator = validator;
 
         this.servletContext = new MutableServletContextHandler();
@@ -87,6 +88,17 @@ public class Environment {
                 .build();
 
         SharedMetricRegistries.add("default", metricRegistry);
+    }
+
+    /**
+     * Creates an environment with default health check registry
+     */
+    public Environment(String name,
+                       ObjectMapper objectMapper,
+                       Validator validator,
+                       MetricRegistry metricRegistry,
+                       ClassLoader classLoader) {
+        this(name, objectMapper, validator, metricRegistry, classLoader, new HealthCheckRegistry());
     }
 
     /**
