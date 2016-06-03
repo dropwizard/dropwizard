@@ -51,7 +51,7 @@ public @interface SizeRange {
     /**
      * Defines several {@code @SizeRange} annotations on the same element.
      */
-    @Target({ METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER })
+    @Target({ METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER, TYPE_USE })
     @Retention(RUNTIME)
     @Documented
     public @interface List {
