@@ -1175,7 +1175,7 @@ minIdleTime                     1 minute                 The minimum amount of t
 validationQuery                 SELECT 1                 The SQL query that will be used to validate connections from
                                                          this pool before returning them to the caller or pool.
                                                          If specified, this query does not have to return any data, it
-                                                         just can't throw a SQLException.
+                                                         just can't throw a SQLException.( FireBird will throw exception unless validationQuery set to **select 1 from rdb$database**)
 
 validationQueryTimeout          none                     The timeout before a connection validation queries fail.
 
