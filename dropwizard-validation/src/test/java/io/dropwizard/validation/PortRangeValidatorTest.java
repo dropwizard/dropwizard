@@ -1,9 +1,12 @@
 package io.dropwizard.validation;
 
+import com.google.common.collect.ImmutableList;
 import org.junit.Before;
 import org.junit.Test;
 
+import javax.validation.Valid;
 import javax.validation.Validator;
+import java.util.List;
 import java.util.Locale;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -18,6 +21,9 @@ public class PortRangeValidatorTest {
 
         @PortRange(min = 10000, max = 15000)
         public int otherPort = 10001;
+
+        @Valid
+        List<@PortRange Integer> ports = ImmutableList.of();
     }
 
 
@@ -67,5 +73,12 @@ public class PortRangeValidatorTest {
 
         assertThat(ConstraintViolations.format(validator.validate(example)))
                 .containsOnly("otherPort must be between 10000 and 15000");
+    }
+
+    @Test
+    public void rejectsInvalidPortsInList() {
+        example.ports = ImmutableList.of(-1);
+        assertThat(ConstraintViolations.format(validator.validate(example)))
+            .containsOnly("ports[0] must be between 1 and 65535");
     }
 }
