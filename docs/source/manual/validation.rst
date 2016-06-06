@@ -176,6 +176,71 @@ knows the server failed through no fault of their own.
 Analogous to an empty request body, an empty entity annotated with ``@NotNull`` will return ``server
 response may not be null``
 
+.. _man-validation-limitations:
+
+Limitations
+===========
+
+Jersey allows for ``BeanParam`` to have setters with ``*Param`` annotations. While nice for simple
+transformations it does obstruct validation, so clients won't receive as instructive of error
+messages. The following example shows the behavior:
+
+.. code-block:: java
+
+    @Path("/root")
+    @Produces(MediaType.APPLICATION_JSON)
+    public class Resource {
+
+        @GET
+        @Path("params")
+        public String getBean(@Valid @BeanParam MyBeanParams params) {
+            return params.getField();
+        }
+
+        public static class MyBeanParams {
+            @NotEmpty
+            private String field;
+
+            public String getField() {
+                return field;
+            }
+
+            @QueryParam("foo")
+            public void setField(String field) {
+                this.field = Strings.nullToEmpty(field).trim();
+            }
+        }
+    }
+
+A client submitting the query parameter ``foo`` as blank will receive the following error message:
+
+.. code-block:: json
+
+    {"errors":["getBean.arg0.field may not be empty"]}
+
+Workarounds include:
+
+* Name ``BeanParam`` fields the same as the ``*Param`` annotation values
+* Supply validation message on annotation: ``@NotEmpty(message = "query param foo must not be empty")``
+* Perform transformations and validations on ``*Param`` inside endpoint
+
+The same kind of limitation applies for :ref:`Configuration <man-core-configuration>` objects:
+
+.. code-block:: java
+
+    public class MyConfiguration extends Configuration {
+        @NotNull
+        @JsonProperty("foo")
+        private String baz;
+    }
+
+Even though the property's name is ``foo``, the error when property is null will be:
+
+.. code-block:: plain
+
+  * baz may not be null
+
+
 Annotations
 ===========
 
