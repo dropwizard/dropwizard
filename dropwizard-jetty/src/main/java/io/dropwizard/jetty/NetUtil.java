@@ -16,8 +16,11 @@
 
 package io.dropwizard.jetty;
 
-import java.io.*;
-import java.nio.charset.Charset;
+import com.google.common.base.Charsets;
+import com.google.common.io.Files;
+
+import java.io.File;
+import java.io.IOException;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.Locale;
@@ -60,29 +63,15 @@ public class NetUtil {
                 // - Windows NT Server 4.0+: 200
                 // - Linux and Mac OS X: 128
                 int somaxconn = tcpBacklog;
-                File file = new File(TCP_BACKLOG_SETTING_LOCATION);
-                BufferedReader in = null;
                 try {
-                    // file.exists() may throw a SecurityException if a SecurityManager is used, so execute it in the
-                    // try / catch block.
-                    // See https://github.com/netty/netty/issues/4936
-                    if (file.exists()) {
-                        in = new BufferedReader(new InputStreamReader(new FileInputStream(file), Charset.forName("UTF-8")));
-                        somaxconn = Integer.parseInt(in.readLine());
-                    }
-                } catch (SecurityException | IOException | NumberFormatException e) {
+                    String setting = Files.toString(new File(TCP_BACKLOG_SETTING_LOCATION), Charsets.UTF_8);
+                    somaxconn = Integer.parseInt(setting.trim());
+                } catch (SecurityException | IOException | NumberFormatException | NullPointerException e) {
                     // file.exists() may throw a SecurityException, in this
                     // case we are just returning the default somaxconn that was passed in.
                 } finally {
-                    if (in != null) {
-                        try {
-                            in.close();
-                        } catch (Exception e) {
-                            // Ignored.
-                        }
-                    }
+                    return somaxconn;
                 }
-                return somaxconn;
             }
         });
 

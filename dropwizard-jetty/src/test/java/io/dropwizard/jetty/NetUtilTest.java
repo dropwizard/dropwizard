@@ -1,66 +1,60 @@
 package io.dropwizard.jetty;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assume.assumeThat;
 
 public class NetUtilTest {
 
     private static final String OS_NAME_PROPERTY = "os.name";
-    public String osName;
 
-    @Before
-    public void setup() {
-        osName = System.getProperty(OS_NAME_PROPERTY);
-    }
-
-    @After
-    public void tearDown() {
-        if (osName == null) {
-            System.clearProperty(OS_NAME_PROPERTY);
-        } else {
-            System.setProperty(OS_NAME_PROPERTY, osName);
-        }
-    }
-
+    /**
+     * Assuming Windows
+     */
     @Test
     public void testDefaultTcpBacklogForWindows() {
-        System.setProperty(OS_NAME_PROPERTY, "win");
-        if (NetUtil.isWindows() && !isTcpBacklogSettingReadable()) {
-            assertEquals(NetUtil.DEFAULT_TCP_BACKLOG_WINDOWS, NetUtil.getTcpBacklog());
-        }
+        assumeThat(System.getProperty(OS_NAME_PROPERTY),containsString("win"));
+        assumeThat(isTcpBacklogSettingReadable(),is(false));
+        assertEquals(NetUtil.DEFAULT_TCP_BACKLOG_WINDOWS, NetUtil.getTcpBacklog());
     }
 
+    /**
+     * Assuming Mac (which does not have /proc)
+     */
     @Test
     public void testNonWindowsDefaultTcpBacklog() {
-        System.setProperty(OS_NAME_PROPERTY, "lin");
+        assumeThat(System.getProperty(OS_NAME_PROPERTY), containsString("Mac OS X"));
+        assumeThat(isTcpBacklogSettingReadable(),is(false));
+        assertEquals(NetUtil.DEFAULT_TCP_BACKLOG_LINUX, NetUtil.getTcpBacklog());
 
-        if (!NetUtil.isWindows() && !isTcpBacklogSettingReadable()) {
-            assertEquals(NetUtil.DEFAULT_TCP_BACKLOG_LINUX, NetUtil.getTcpBacklog());
-        }
     }
 
+    /**
+     * Assuming Mac (which does not have /proc)
+     */
     @Test
     public void testNonWindowsSpecifiedTcpBacklog() {
-        System.setProperty(OS_NAME_PROPERTY, "lin");
-
-        if (!NetUtil.isWindows() && !isTcpBacklogSettingReadable()) {
-            assertEquals(100, NetUtil.getTcpBacklog(100));
-        }
+        assumeThat(System.getProperty(OS_NAME_PROPERTY), containsString("Mac OS X"));
+        assumeThat(isTcpBacklogSettingReadable(),is(false));
+        assertEquals(100, NetUtil.getTcpBacklog(100));
     }
 
+    /**
+     * Assuming Linux (which has /proc)
+     */
     @Test
     public void testOsSetting() {
-        if(!NetUtil.isWindows() && isTcpBacklogSettingReadable()) {
-            assertNotEquals(-1, NetUtil.getTcpBacklog(-1));
-        }
+        assumeThat(System.getProperty(OS_NAME_PROPERTY),containsString("Linux"));
+        assumeThat(isTcpBacklogSettingReadable(),is(true));
+        assertNotEquals(-1, NetUtil.getTcpBacklog(-1));
     }
 
 

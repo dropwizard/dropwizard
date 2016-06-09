@@ -162,4 +162,22 @@ public class HttpConnectorFactoryTest {
         connector.stop();
         server.stop();
     }
+
+    @Test
+    public void testDefaultAcceptQueueSize() throws Exception {
+        HttpConnectorFactory http = new HttpConnectorFactory();
+        http.setBindHost("127.0.0.1");
+        http.setAcceptorThreads(1);
+        http.setSelectorThreads(2);
+        http.setSoLingerTime(Duration.seconds(30));
+
+        Server server = new Server();
+        MetricRegistry metrics = new MetricRegistry();
+        ThreadPool threadPool = new QueuedThreadPool();
+
+        ServerConnector connector = (ServerConnector) http.build(server, metrics, "test-http-connector", threadPool);
+        assertThat(connector.getAcceptQueueSize()).isEqualTo(NetUtil.getTcpBacklog());
+
+    }
+
 }
