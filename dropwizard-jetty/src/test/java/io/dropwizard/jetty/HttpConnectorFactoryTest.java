@@ -178,6 +178,7 @@ public class HttpConnectorFactoryTest {
         ServerConnector connector = (ServerConnector) http.build(server, metrics, "test-http-connector", threadPool);
         assertThat(connector.getAcceptQueueSize()).isEqualTo(NetUtil.getTcpBacklog());
 
+        connector.stop();
     }
 
 }
