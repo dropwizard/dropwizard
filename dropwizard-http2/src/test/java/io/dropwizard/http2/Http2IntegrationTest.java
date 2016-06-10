@@ -74,9 +74,6 @@ public class Http2IntegrationTest extends AbstractHttp2Test {
 
     @Test
     public void testHttp2ManyRequests() throws Exception {
-        // For some reason the library requires to perform the first request synchronously with HTTP/2
-        testHttp2();
-
         performManyAsyncRequests(client, "https://localhost:" + appRule.getLocalPort() + "/api/test");
     }
 }
