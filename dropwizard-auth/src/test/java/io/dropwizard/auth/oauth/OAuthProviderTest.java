@@ -1,12 +1,17 @@
 package io.dropwizard.auth.oauth;
 
 import com.google.common.collect.ImmutableList;
+
+import org.junit.Test;
+
 import io.dropwizard.auth.AbstractAuthResourceConfig;
 import io.dropwizard.auth.AuthBaseTest;
 import io.dropwizard.auth.AuthFilter;
 import io.dropwizard.auth.AuthResource;
 import io.dropwizard.auth.util.AuthUtil;
 import io.dropwizard.jersey.DropwizardResourceConfig;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class OAuthProviderTest extends AuthBaseTest<OAuthProviderTest.OAuthTestResourceConfig>{
     public static class OAuthTestResourceConfig extends AbstractAuthResourceConfig {
@@ -21,6 +26,15 @@ public class OAuthProviderTest extends AuthBaseTest<OAuthProviderTest.OAuthTestR
                 .setPrefix(BEARER_PREFIX)
                 .buildAuthFilter();
         }
+    }
+
+    @Test
+    public void checksQueryStringAccessTokenIfAuthorizationHeaderMissing() {
+        assertThat(target("/test/profile")
+            .queryParam(OAuthCredentialAuthFilter.OAUTH_ACCESS_TOKEN_PARAM, getOrdinaryGuyValidToken())
+            .request()
+            .get(String.class))
+            .isEqualTo("'" + ORDINARY_USER + "' has user privileges");
     }
 
     @Override
