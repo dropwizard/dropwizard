@@ -38,7 +38,7 @@ v1.0.0
 * Upgraded to Apache HTTP Client 4.5.2
 * Upgraded to argparse4j 0.7.0
 * Upgraded to Guava 19.0
-* Upgraded to H2 1.4.191
+* Upgraded to H2 1.4.192
 * Upgraded to Hibernate 5.1.0 `#1429 <https://github.com/dropwizard/dropwizard/pull/1429>`_
 * Upgraded to Hibernate Validator 5.2.4.Final
 * Upgraded to HSQLDB 2.3.4
