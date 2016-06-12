@@ -16,12 +16,25 @@ import java.security.Principal;
 @Priority(Priorities.AUTHENTICATION)
 public class OAuthCredentialAuthFilter<P extends Principal> extends AuthFilter<String, P> {
 
+    /**
+     * Query parameter used to pass Bearer token
+     *
+     * @see <a href="https://tools.ietf.org/html/rfc6750#section-2.3">The OAuth 2.0 Authorization Framework: Bearer Token Usage</a>
+     */
+    public static final String OAUTH_ACCESS_TOKEN_PARAM = "access_token";
+
     private OAuthCredentialAuthFilter() {
     }
 
     @Override
     public void filter(final ContainerRequestContext requestContext) throws IOException {
-        final String credentials = getCredentials(requestContext.getHeaders().getFirst(HttpHeaders.AUTHORIZATION));
+        String credentials = getCredentials(requestContext.getHeaders().getFirst(HttpHeaders.AUTHORIZATION));
+
+        // If Authorization header is not used, check query parameter where token can be passed as well
+        if (credentials == null) {
+            credentials = requestContext.getUriInfo().getQueryParameters().getFirst(OAUTH_ACCESS_TOKEN_PARAM);
+        }
+
         if (!authenticate(requestContext, credentials, SecurityContext.BASIC_AUTH)) {
             throw new WebApplicationException(unauthorizedHandler.buildResponse(prefix, realm));
         }
