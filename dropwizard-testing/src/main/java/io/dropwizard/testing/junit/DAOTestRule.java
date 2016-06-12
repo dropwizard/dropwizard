@@ -20,7 +20,6 @@ public class DAOTestRule extends ExternalResource {
         BootstrapLogging.bootstrap();
     }
     
-    
     public static class Builder {
         
         private DAOTestHibernateConfiguration hibernateConfiguration = new DAOTestHibernateConfiguration();
@@ -60,11 +59,6 @@ public class DAOTestRule extends ExternalResource {
             return this;
         }
         
-        public Builder addPackage(final String packageName) {
-            hibernateConfiguration.packages.add(packageName);
-            return this;
-        }
-        
         public DAOTestRule build() {
             final Configuration config = new Configuration();
             config.setProperty("hibernate.connection.url", hibernateConfiguration.connectionUrl);
@@ -77,17 +71,12 @@ public class DAOTestRule extends ExternalResource {
             for (Class<?> entityClass : hibernateConfiguration.entityClasses) {
                 config.addAnnotatedClass(entityClass);
             }
-            
-            for (String packageName : hibernateConfiguration.packages) {
-                config.addPackage(packageName);
-            }
 
             final SessionFactory sessionFactory = config.buildSessionFactory();
             
             return new DAOTestRule(sessionFactory);
         }
     }
-    
 
     public static Builder newBuilder() {
         return new Builder();

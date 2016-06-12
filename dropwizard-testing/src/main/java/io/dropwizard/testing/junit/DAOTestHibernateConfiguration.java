@@ -13,7 +13,6 @@ class DAOTestHibernateConfiguration
     String showSql;
     
     Set<Class<?>> entityClasses;
-    Set<String> packages;
     
     DAOTestHibernateConfiguration()
     {
@@ -25,6 +24,5 @@ class DAOTestHibernateConfiguration
         showSql = "false";
         
         entityClasses = new LinkedHashSet<>();
-        packages = new LinkedHashSet<>();
     }
 }
