@@ -16,7 +16,7 @@ class DAOTestHibernateConfiguration
     
     DAOTestHibernateConfiguration()
     {
-        connectionUrl = "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1";
+        connectionUrl = "jdbc:h2:mem:";
         connectionUsername = "test";
         connectionDriverClass = "org.h2.Driver";
         currentSessionContextClass = "managed";

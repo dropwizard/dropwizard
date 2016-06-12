@@ -4,22 +4,14 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
 
 import org.hibernate.Session;
-import org.junit.After;
+import org.junit.Rule;
 import org.junit.Test;
 
 public class DAOTestRuleConfigTest {
     
-    private DAOTestRule database;
-
-    @After
-    public void tearDown() {
-        database.after();
-    }
-    
-    @Test
-    public void explicitConfigCreatesSessionFactory() throws Throwable {
-        database = DAOTestRule.newBuilder() //
-            .setConnectionUrl("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1") //
+    @Rule
+    public final DAOTestRule database = DAOTestRule.newBuilder() //
+            .setConnectionUrl("jdbc:h2:mem:") //
             .setConnectionDriverClass(org.h2.Driver.class) //
             .setConnectionUsername("username") //
             .setCurrentSessionContextClass("managed") //
@@ -27,10 +19,9 @@ public class DAOTestRuleConfigTest {
             .setShowSql(false) //
             .addEntityClass(TestEntity.class) //
             .build();
-        
-        // when initializing this rule
-        database.before();
-        
+
+    @Test
+    public void explicitConfigCreatesSessionFactory() {
         // it yields a valid SessionFactory instance
         assertThat(database.getSessionFactory(), notNullValue());
         
