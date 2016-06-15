@@ -149,6 +149,22 @@ back.
                Otherwise, you'll get a ``LazyInitializationException`` thrown in your template (or
                ``null`` values produced by Jackson).
 
+Transactional Resource Methods Outside Jersey Resources
+----------------------------------------------------
+
+Currently creating transactions with the `@UnitOfWork` annotation works out-of-box only for resources
+managed by Jersey. If you want to use it outside Jersey resources, e.g. in authenticators, you should
+instantiate your class with ``UnitOfWorkAwareProxyFactory``.
+
+.. code-block:: java
+
+     SessionDao dao = new SessionDao(hibernateBundle.getSessionFactory());
+     ExampleAuthenticator exampleAuthenticator = new UnitOfWorkAwareProxyFactory(hibernateBundle)
+                    .create(ExampleAuthenticator.class, SessionDao.class, dao);
+
+It will create a proxy of your class, which will open a Hibernate session with a transaction around
+methods with the ``@UnitOfWork`` annotation.
+
 Prepended Comments
 ==================
 
