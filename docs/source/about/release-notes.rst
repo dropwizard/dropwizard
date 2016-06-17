@@ -10,6 +10,7 @@ v0.9.3: Jun XX 2016
 ===================
 
 * Upgraded to Jackson 2.6.7 `#1600 <https://github.com/dropwizard/dropwizard/issues/1600>`_
+* Upgraded to Jetty 9.2.17.v20160517
 
 
 .. _rel-0.9.2:
