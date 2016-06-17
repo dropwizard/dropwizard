@@ -4,12 +4,21 @@
 Release Notes
 #############
 
+.. _rel-0.9.3:
+
+v0.9.3: Jun XX 2016
+===================
+
+* Upgraded to Jackson 2.6.7 `#1600 <https://github.com/dropwizard/dropwizard/issues/1600>`_
+
+
 .. _rel-0.9.2:
 
 v0.9.2: Jan 20 2016
-==================
+===================
 
 * Support `@UnitOfWork` annotation outside of Jersey resources `#1361 <https://github.com/dropwizard/dropwizard/issues/1361>`_
+
 
 .. _rel-0.9.1:
 
