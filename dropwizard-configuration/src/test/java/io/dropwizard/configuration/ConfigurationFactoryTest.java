@@ -72,6 +72,9 @@ public class ConfigurationFactoryTest {
 
         private boolean admin;
 
+        @JsonProperty("my.logger")
+        private Map<String, String> logger = new LinkedHashMap<>();
+
         public String getName() {
             return name;
         }
@@ -94,6 +97,10 @@ public class ConfigurationFactoryTest {
 
         public void setAdmin(boolean admin) {
             this.admin = admin;
+        }
+
+        public Map<String, String> getLogger() {
+            return logger;
         }
     }
 
@@ -199,6 +206,22 @@ public class ConfigurationFactoryTest {
         final Example example = factory.build(validFile);
         assertThat(example.getName())
             .isEqualTo("Coda Hale Overridden");
+    }
+
+    @Test
+    public void handlesExistingOverrideWithPeriod() throws Exception {
+        System.setProperty("dw.my\\.logger.level", "debug");
+        final Example example = factory.build(validFile);
+        assertThat(example.getLogger().get("level"))
+            .isEqualTo("debug");
+    }
+
+    @Test
+    public void handlesNewOverrideWithPeriod() throws Exception {
+        System.setProperty("dw.my\\.logger.com\\.example", "error");
+        final Example example = factory.build(validFile);
+        assertThat(example.getLogger().get("com.example"))
+            .isEqualTo("error");
     }
 
     @Test
@@ -419,7 +442,7 @@ public class ConfigurationFactoryTest {
                     "      - type" + NEWLINE +
                     "      - name" + NEWLINE +
                     "      - age" + NEWLINE +
-                    "        [1 more]" + NEWLINE);
+                    "        [2 more]" + NEWLINE);
         }
     }
 
