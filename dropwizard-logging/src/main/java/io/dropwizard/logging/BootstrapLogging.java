@@ -22,7 +22,7 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class BootstrapLogging {
 
-    @GuardedBy("bootsrappingLock")
+    @GuardedBy("bootstrappingLock")
     private static boolean bootstrapped = false;
     private static final Lock bootstrappingLock = new ReentrantLock();
 
