@@ -5,6 +5,9 @@
             <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
         </encoder>
     </appender>
+
+    <logger level="info" name="io.dropwizard.jetty.HttpsConnectorFactory"/>
+
     <root level="off">
         <appender-ref ref="STDOUT"/>
     </root>
