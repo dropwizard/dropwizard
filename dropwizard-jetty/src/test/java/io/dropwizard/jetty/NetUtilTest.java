@@ -59,8 +59,11 @@ public class NetUtilTest {
     
     @Test
     public void testAllLocalIps() throws Exception {
+        NetUtil.setLocalIpFilter((nif, adr) ->
+            (adr != null) && !adr.isLoopbackAddress() && (nif.isPointToPoint() || !adr.isLinkLocalAddress()));
         final Collection<InetAddress> addresses = NetUtil.getAllLocalIPs();
         assertThat(addresses.size()).isGreaterThan(0);
+        assertThat(addresses).doesNotContain(InetAddress.getLoopbackAddress());
     }
     
     @Test
@@ -68,7 +71,7 @@ public class NetUtilTest {
         NetUtil.setLocalIpFilter((inf, adr) -> adr != null);
         final Collection<InetAddress> addresses = NetUtil.getAllLocalIPs();
         assertThat(addresses.size()).isGreaterThan(0);
-        assertThat(addresses).contains(InetAddress.getLocalHost());
+        assertThat(addresses).contains(InetAddress.getLoopbackAddress());
     }
 
     public boolean isTcpBacklogSettingReadable() {
