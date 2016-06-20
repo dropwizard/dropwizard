@@ -5,7 +5,7 @@
     <parent>
         <groupId>io.dropwizard</groupId>
         <artifactId>dropwizard-parent</artifactId>
-        <version>0.9.3-SNAPSHOT</version>
+        <version>0.9.3</version>
     </parent>
 
     <artifactId>dropwizard-spdy</artifactId>
