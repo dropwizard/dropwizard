@@ -12,6 +12,7 @@ v0.9.3: Jun XX 2016
 * Added customizable constructors to ``JodaDateTimeMapper`` `#1552 <https://github.com/dropwizard/dropwizard/pull/1552>`_
 * Upgraded to Jackson 2.6.7 `#1600 <https://github.com/dropwizard/dropwizard/issues/1600>`_
 * Upgraded to Jetty 9.2.17.v20160517
+* Upgraded to SLF4J 1.7.21
 
 
 .. _rel-0.9.2:
