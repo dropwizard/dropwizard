@@ -28,7 +28,7 @@ public class AdminEnvironmentTest {
     public void addsATaskServlet() throws Exception {
         final Task task = new Task("thing") {
             @Override
-            public void execute(ImmutableMultimap<String, String> parameters, PrintWriter output) throws Exception {
+            public void execute(ImmutableMultimap<String, String> parameters, String body, PrintWriter output) throws Exception {
             }
         };
         env.addTask(task);

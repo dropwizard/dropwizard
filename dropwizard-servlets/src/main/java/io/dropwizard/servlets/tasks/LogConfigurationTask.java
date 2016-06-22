@@ -52,7 +52,7 @@ public class LogConfigurationTask extends Task {
     }
 
     @Override
-    public void execute(ImmutableMultimap<String, String> parameters, PrintWriter output) throws Exception {
+    public void execute(ImmutableMultimap<String, String> parameters, String body, PrintWriter output) throws Exception {
         final List<String> loggerNames = getLoggerNames(parameters);
         final Level loggerLevel = getLoggerLevel(parameters);
 
