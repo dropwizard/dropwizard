@@ -7,11 +7,18 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import javax.servlet.ReadListener;
+import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
@@ -50,30 +57,51 @@ public class TaskServletTest {
     @Test
     public void runsATaskWhenFound() throws Exception {
         final PrintWriter output = mock(PrintWriter.class);
+        final ServletInputStream bodyStream = new TestServletInputStream(new ByteArrayInputStream("".getBytes(StandardCharsets.UTF_8)));
 
         when(request.getMethod()).thenReturn("POST");
         when(request.getPathInfo()).thenReturn("/gc");
         when(request.getParameterNames()).thenReturn(Collections.enumeration(ImmutableList.of()));
         when(response.getWriter()).thenReturn(output);
+        when(request.getInputStream()).thenReturn(bodyStream);
 
         servlet.service(request, response);
 
-        verify(gc).execute(ImmutableMultimap.of(), output);
+        verify(gc).execute(ImmutableMultimap.of(), "", output);
     }
 
     @Test
     public void passesQueryStringParamsAlong() throws Exception {
         final PrintWriter output = mock(PrintWriter.class);
+        final ServletInputStream bodyStream = new TestServletInputStream(new ByteArrayInputStream("".getBytes(StandardCharsets.UTF_8)));
 
         when(request.getMethod()).thenReturn("POST");
         when(request.getPathInfo()).thenReturn("/gc");
         when(request.getParameterNames()).thenReturn(Collections.enumeration(ImmutableList.of("runs")));
-        when(request.getParameterValues("runs")).thenReturn(new String[]{"1"});
+        when(request.getParameterValues("runs")).thenReturn(new String[]{ "1" });
+        when(request.getInputStream()).thenReturn(bodyStream);
         when(response.getWriter()).thenReturn(output);
 
         servlet.service(request, response);
 
-        verify(gc).execute(ImmutableMultimap.of("runs", "1"), output);
+        verify(gc).execute(ImmutableMultimap.of("runs", "1"), "", output);
+    }
+
+    @Test
+    public void passesPostBodyAlong() throws Exception {
+        String body = "{\"json\": true}";
+        final PrintWriter output = mock(PrintWriter.class);
+        final ServletInputStream bodyStream = new TestServletInputStream(new ByteArrayInputStream(body.getBytes(StandardCharsets.UTF_8)));
+
+        when(request.getMethod()).thenReturn("POST");
+        when(request.getPathInfo()).thenReturn("/gc");
+        when(request.getParameterNames()).thenReturn(Collections.enumeration(ImmutableList.of()));
+        when(request.getInputStream()).thenReturn(bodyStream);
+        when(response.getWriter()).thenReturn(output);
+
+        servlet.service(request, response);
+
+        verify(gc).execute(ImmutableMultimap.of(), body, output);
     }
 
     @Test
@@ -88,7 +116,7 @@ public class TaskServletTest {
 
         final RuntimeException ex = new RuntimeException("whoops");
 
-        doThrow(ex).when(gc).execute(any(ImmutableMultimap.class), any(PrintWriter.class));
+        doThrow(ex).when(gc).execute(any(ImmutableMultimap.class), anyString(), any(PrintWriter.class));
 
         servlet.service(request, response);
 
@@ -102,9 +130,37 @@ public class TaskServletTest {
     @Test
     public void verifyTaskExecuteMethod() {
         try {
-            Task.class.getMethod("execute", ImmutableMultimap.class, PrintWriter.class);
+            Task.class.getMethod("execute", ImmutableMultimap.class, String.class, PrintWriter.class);
         } catch (NoSuchMethodException e) {
             Assert.fail("Execute method for " + Task.class.getName() + " not found");
+        }
+    }
+
+    private static class TestServletInputStream extends ServletInputStream {
+        private InputStream delegate;
+
+        public TestServletInputStream(InputStream delegate) {
+            this.delegate = delegate;
+        }
+
+        @Override
+        public boolean isFinished() {
+            return false;
+        }
+
+        @Override
+        public boolean isReady() {
+            return false;
+        }
+
+        @Override
+        public void setReadListener(ReadListener readListener) {
+
+        }
+
+        @Override
+        public int read() throws IOException {
+            return delegate.read();
         }
     }
 }

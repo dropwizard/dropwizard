@@ -6,7 +6,9 @@ import com.codahale.metrics.Timer;
 import com.codahale.metrics.annotation.ExceptionMetered;
 import com.codahale.metrics.annotation.Metered;
 import com.codahale.metrics.annotation.Timed;
+import com.google.common.base.Charsets;
 import com.google.common.collect.ImmutableMultimap;
+import com.google.common.io.CharStreams;
 import com.google.common.net.MediaType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +18,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.lang.reflect.Method;
 import java.util.Collection;
@@ -96,7 +99,7 @@ public class TaskServlet extends HttpServlet {
             final PrintWriter output = resp.getWriter();
             try {
                 final TaskExecutor taskExecutor = taskExecutors.get(task);
-                taskExecutor.executeTask(getParams(req), output);
+                taskExecutor.executeTask(getParams(req), getBody(req), output);
             } catch (Exception e) {
                 LOGGER.error("Error running {}", task.getName(), e);
                 resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -122,6 +125,10 @@ public class TaskServlet extends HttpServlet {
         return results.build();
     }
 
+    private String getBody(HttpServletRequest req) throws IOException {
+        return CharStreams.toString(new InputStreamReader(req.getInputStream(), Charsets.UTF_8));
+    }
+
     public Collection<Task> getTasks() {
         return tasks.values();
     }
@@ -144,8 +151,12 @@ public class TaskServlet extends HttpServlet {
             this.task = task;
         }
 
-        public void executeTask(ImmutableMultimap<String, String> params, PrintWriter output) throws Exception {
-            task.execute(params, output);
+        public void executeTask(ImmutableMultimap<String, String> params, String body, PrintWriter output) throws Exception {
+            try {
+                task.execute(params, body, output);
+            } catch (Exception e) {
+                throw e;
+            }
         }
     }
 
@@ -160,10 +171,10 @@ public class TaskServlet extends HttpServlet {
         }
 
         @Override
-        public void executeTask(ImmutableMultimap<String, String> params, PrintWriter output) throws Exception {
+        public void executeTask(ImmutableMultimap<String, String> params, String body, PrintWriter output) throws Exception {
             final Timer.Context context = timer.time();
             try {
-                underlying.executeTask(params, output);
+                underlying.executeTask(params, body, output);
             } finally {
                 context.stop();
             }
@@ -181,9 +192,9 @@ public class TaskServlet extends HttpServlet {
         }
 
         @Override
-        public void executeTask(ImmutableMultimap<String, String> params, PrintWriter output) throws Exception {
+        public void executeTask(ImmutableMultimap<String, String> params, String body, PrintWriter output) throws Exception {
             meter.mark();
-            underlying.executeTask(params, output);
+            underlying.executeTask(params, body, output);
         }
     }
 
@@ -201,9 +212,9 @@ public class TaskServlet extends HttpServlet {
         }
 
         @Override
-        public void executeTask(ImmutableMultimap<String, String> params, PrintWriter output) throws Exception {
+        public void executeTask(ImmutableMultimap<String, String> params, String body, PrintWriter output) throws Exception {
             try {
-                underlying.executeTask(params, output);
+                underlying.executeTask(params, body,  output);
             } catch (Exception e) {
                 if (exceptionMeter != null) {
                     if (exceptionClass.isAssignableFrom(e.getClass()) ||

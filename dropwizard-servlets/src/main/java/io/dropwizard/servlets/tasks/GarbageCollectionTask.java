@@ -32,7 +32,7 @@ public class GarbageCollectionTask extends Task {
 
     @Override
     @SuppressWarnings("CallToSystemGC")
-    public void execute(ImmutableMultimap<String, String> parameters, PrintWriter output) {
+    public void execute(ImmutableMultimap<String, String> parameters, String body, PrintWriter output) {
         final int count = parseRuns(parameters);
         for (int i = 0; i < count; i++) {
             output.println("Running GC...");
