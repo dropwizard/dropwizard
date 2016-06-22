@@ -615,7 +615,7 @@ record runtime information about your tasks. Here's a basic task class:
         }
 
         @Override
-        public void execute(ImmutableMultimap<String, String> parameters, PrintWriter output) throws Exception {
+        public void execute(ImmutableMultimap<String, String> parameters, String body, PrintWriter output) throws Exception {
             this.database.truncate();
         }
     }
@@ -627,7 +627,7 @@ You can then add this task to your application's environment:
     environment.admin().addTask(new TruncateDatabaseTask(database));
 
 Running a task can be done by sending a ``POST`` request to ``/tasks/{task-name}`` on the admin
-port. For example::
+port. The task will receive any query parameters and the post body as arguments. For example::
 
     $ curl -X POST http://dw.example.com:8081/tasks/gc
     Running GC...
