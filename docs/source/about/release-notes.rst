@@ -46,7 +46,7 @@ v1.0.0
 * Upgraded to Jackson 2.7.4
 * Upgraded to JDBI 2.73 `#1358 <https://github.com/dropwizard/dropwizard/pull/1358>`_
 * Upgraded to Jersey 2.23.1
-* Upgraded to Jetty 9.3.9.v20160517 `#1330 <https://github.com/dropwizard/dropwizard/pull/1330>`_
+* Upgraded to Jetty 9.3.10.v20160621 `#1330 <https://github.com/dropwizard/dropwizard/pull/1330>`_
 * Upgraded to JMH 1.12
 * Upgraded to Joda-Time 2.9.4
 * Upgraded to Liquibase 3.5.1
