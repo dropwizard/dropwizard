@@ -38,6 +38,8 @@ public class BiDiGzipHandlerTest {
 
     @Before
     public void setUp() throws Exception {
+        request.setHeader(HttpHeaders.HOST, "localhost");
+
         gzipHandler.setExcludedAgentPatterns();
         gzipHandler.addIncludedMethods("POST");
 
