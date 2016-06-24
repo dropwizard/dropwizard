@@ -116,6 +116,7 @@ Many, many thanks to:
 * `Ian Eure <https://github.com/ieure>`_
 * `Ilias Bartolini <https://github.com/iliasbartolini>`_
 * `Jacek Jackowiak <https://github.com/airborn>`_
+* `James Morris <https://github.com/RawToast>`_
 * `James Ward <https://github.com/jamesward>`_
 * `Jamie Furnaghan <https://github.com/reines>`_
 * `Jan Galinski <https://github.com/jangalinski>`_
@@ -193,7 +194,6 @@ Many, many thanks to:
 * `Punyashloka Biswal <https://github.com/punya>`_
 * `Quoc-Viet Nguyen <https://github.com/nqv>`_
 * `Rachel Newstead <https://github.com/rnewstead1>`_
-* `RawToast <https://github.com/RawToast>`_
 * `rayokota <https://github.com/rayokota>`_
 * `Rémi Alvergnat <https://github.com/Toilal>`_
 * `Richard Kettelerij <https://github.com/rkettelerij>`_
