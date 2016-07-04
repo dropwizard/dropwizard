@@ -39,7 +39,7 @@ public class LogConfigurationTaskTest {
                 "level", "debug");
 
         // when
-        task.execute(parameters, "", output);
+        task.execute(parameters, output);
 
         // then
         assertThat(logger1.getLevel()).isEqualTo(Level.DEBUG);
@@ -55,7 +55,7 @@ public class LogConfigurationTaskTest {
                 "logger", "logger.one");
 
         // when
-        task.execute(parameters, "", output);
+        task.execute(parameters, output);
 
         // then
         assertThat(logger1.getLevel()).isNull();
@@ -73,7 +73,7 @@ public class LogConfigurationTaskTest {
                 "level", "INFO");
 
         // when
-        task.execute(parameters, "", output);
+        task.execute(parameters, output);
 
         // then
         assertThat(logger1.getLevel()).isEqualTo(Level.INFO);

@@ -11,7 +11,6 @@ public class TaskTest {
     private final Task task = new Task("test") {
         @Override
         public void execute(ImmutableMultimap<String, String> parameters,
-                            String body,
                             PrintWriter output) throws Exception {
 
         }
