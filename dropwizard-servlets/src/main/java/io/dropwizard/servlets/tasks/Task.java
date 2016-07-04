@@ -38,6 +38,5 @@ public abstract class Task {
      * @throws Exception if something goes wrong
      */
     public abstract void execute(ImmutableMultimap<String, String> parameters,
-                                 String body,
                                  PrintWriter output) throws Exception;
 }

@@ -17,21 +17,21 @@ public class GarbageCollectionTaskTest {
 
     @Test
     public void runsOnceWithNoParameters() throws Exception {
-        task.execute(ImmutableMultimap.of(), "", output);
+        task.execute(ImmutableMultimap.of(), output);
 
         verify(runtime, times(1)).gc();
     }
 
     @Test
     public void usesTheFirstRunsParameter() throws Exception {
-        task.execute(ImmutableMultimap.of("runs", "3", "runs", "2"), "", output);
+        task.execute(ImmutableMultimap.of("runs", "3", "runs", "2"), output);
 
         verify(runtime, times(3)).gc();
     }
 
     @Test
     public void defaultsToOneRunIfTheQueryParamDoesNotParse() throws Exception {
-        task.execute(ImmutableMultimap.of("runs", "$"), "", output);
+        task.execute(ImmutableMultimap.of("runs", "$"), output);
 
         verify(runtime, times(1)).gc();
     }
