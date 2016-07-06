@@ -64,12 +64,9 @@ class UnitOfWorkAspect {
         } catch (Exception e) {
             rollbackTransaction();
             throw e;
-        } finally {
-            session.close();
-            session = null;
-            ManagedSessionContext.unbind(sessionFactory);
         }
-
+        // We should not close the session to let the lazy loading work during serializing a response to the client.
+        // If the response successfully serialized, then the session will be closed by the `onFinish` method
     }
 
     public void onError() {
@@ -80,7 +77,16 @@ class UnitOfWorkAspect {
         try {
             rollbackTransaction();
         } finally {
-            session.close();
+            onFinish();
+        }
+    }
+
+    public void onFinish() {
+        try {
+            if (session != null) {
+                session.close();
+            }
+        } finally {
             session = null;
             ManagedSessionContext.unbind(sessionFactory);
         }

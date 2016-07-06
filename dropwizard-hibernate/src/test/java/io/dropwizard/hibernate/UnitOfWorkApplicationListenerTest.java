@@ -41,6 +41,7 @@ public class UnitOfWorkApplicationListenerTest {
 
     private final RequestEvent requestStartEvent = mock(RequestEvent.class);
     private final RequestEvent requestMethodStartEvent = mock(RequestEvent.class);
+    private final RequestEvent responseFiltersStartEvent = mock(RequestEvent.class);
     private final RequestEvent responseFinishedEvent = mock(RequestEvent.class);
     private final RequestEvent requestMethodExceptionEvent = mock(RequestEvent.class);
     private final Session session = mock(Session.class);
@@ -70,6 +71,7 @@ public class UnitOfWorkApplicationListenerTest {
         when(requestMethodStartEvent.getType()).thenReturn(RequestEvent.Type.RESOURCE_METHOD_START);
         when(responseFinishedEvent.getType()).thenReturn(RequestEvent.Type.FINISHED);
         when(requestMethodExceptionEvent.getType()).thenReturn(RequestEvent.Type.ON_EXCEPTION);
+        when(responseFiltersStartEvent.getType()).thenReturn(RequestEvent.Type.RESP_FILTERS_START);
         when(requestMethodStartEvent.getUriInfo()).thenReturn(uriInfo);
         when(responseFinishedEvent.getUriInfo()).thenReturn(uriInfo);
         when(requestMethodExceptionEvent.getUriInfo()).thenReturn(uriInfo);
@@ -281,6 +283,7 @@ public class UnitOfWorkApplicationListenerTest {
         listener.onEvent(appEvent);
         RequestEventListener requestListener = listener.onRequest(requestStartEvent);
         requestListener.onEvent(requestMethodStartEvent);
+        requestListener.onEvent(responseFiltersStartEvent);
         requestListener.onEvent(responseFinishedEvent);
     }
 
@@ -288,7 +291,9 @@ public class UnitOfWorkApplicationListenerTest {
         listener.onEvent(appEvent);
         RequestEventListener requestListener = listener.onRequest(requestStartEvent);
         requestListener.onEvent(requestMethodStartEvent);
+        requestListener.onEvent(responseFiltersStartEvent);
         requestListener.onEvent(requestMethodExceptionEvent);
+        requestListener.onEvent(responseFinishedEvent);
     }
 
     public static class MockResource implements MockResourceInterface {
