@@ -87,6 +87,8 @@ public class UnitOfWorkAwareProxyFactory {
                 } catch (Exception e) {
                     unitOfWorkAspect.onError();
                     throw e;
+                } finally {
+                    unitOfWorkAspect.onFinish();
                 }
             });
             return (T) proxy;

@@ -1,0 +1,15 @@
+server:
+  applicationConnectors:
+    - type: http
+      port: 0
+  adminConnectors:
+    - type: http
+      port: 0
+  requestLog:
+    appenders: []
+logging:
+  appenders: []
+dataSource:
+  user: "sa"
+  driverClass: "org.hsqldb.jdbcDriver"
+  validationQuery: "SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS"

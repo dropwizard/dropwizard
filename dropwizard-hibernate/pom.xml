@@ -41,6 +41,11 @@
             <artifactId>hibernate-core</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>io.dropwizard</groupId>
+            <artifactId>dropwizard-testing</artifactId>
+            <scope>test</scope>
+        </dependency>
         <!-- we need HSQL because it handles time zones, H2 totally doesn't -->
         <dependency>
             <groupId>org.hsqldb</groupId>
