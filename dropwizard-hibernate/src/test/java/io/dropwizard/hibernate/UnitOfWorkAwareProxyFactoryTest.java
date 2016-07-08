@@ -7,6 +7,7 @@ import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
 import io.dropwizard.logging.BootstrapLogging;
 import io.dropwizard.setup.Environment;
+import javassist.util.proxy.ProxyFactory;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.junit.Before;
