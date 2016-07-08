@@ -62,15 +62,11 @@ public class NetUtil {
                 // The known defaults:
                 // - Windows NT Server 4.0+: 200
                 // - Linux and Mac OS X: 128
-                int somaxconn = tcpBacklog;
                 try {
                     String setting = Files.toString(new File(TCP_BACKLOG_SETTING_LOCATION), Charsets.UTF_8);
-                    somaxconn = Integer.parseInt(setting.trim());
+                    return Integer.parseInt(setting.trim());
                 } catch (SecurityException | IOException | NumberFormatException | NullPointerException e) {
-                    // file.exists() may throw a SecurityException, in this
-                    // case we are just returning the default somaxconn that was passed in.
-                } finally {
-                    return somaxconn;
+                    return tcpBacklog;
                 }
             }
         });
