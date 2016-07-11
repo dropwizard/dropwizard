@@ -97,7 +97,10 @@ public class JsonProcessingExceptionMapperTest extends JerseyTest {
 
     @Test
     public void returnsA400ForWrongInputType() throws Exception {
-        assertEndpointReturns400("ok", "false");
+        Response response = target(String.format("/json/%s", "ok"))
+            .request(MediaType.APPLICATION_JSON)
+            .post(Entity.entity("false", MediaType.APPLICATION_JSON));
+        assertThat(response.getStatus()).isEqualTo(500);
     }
 
     @Test
