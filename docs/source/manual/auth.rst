@@ -284,3 +284,102 @@ In this example, we are testing the oauth authentication, so we need to set the 
         assertThat(response.getStatus()).isEqualTo(200);
     }
 
+Multiple Principals and Authenticators
+======================================
+
+In some cases you may want to use different authenticators/authentication schemes for different
+resources. For example you may want Basic authentication for one resource and OAuth
+for another resource, at the same time using a different `Principal` for each
+authentication scheme.
+
+For this use case, there is the ``PolymorphicAuthDynamicFeature`` and the 
+``PolymorphicAuthValueFactoryProvider``. With these two components, we can use different
+combinations of authentication schemes/authenticators/authorizers/principals. To use this
+feature, we need to do a few things:
+
+* Register the ``PolymorphicAuthDynamicFeature`` with a map that maps principal types to
+  authentication filters.
+
+* Register the ``PolymorphicAuthValueFactoryProvider`` with a set of principal classes
+  that you will be using.
+
+* Annotate your resource method ``Principal`` parameters with ``@Auth``.
+
+As an example, the following code configures both OAuth and Basic authentication, using
+a different principal for each.
+
+.. code-block:: java
+
+    final AuthFilter<BasicCredentials, BasicPrincipal> basicFilter 
+            = new BasicCredentialAuthFilter.Builder<BasicPrincipal>()
+                    .setAuthenticator(new ExampleAuthenticator())
+                    .setRealm("SUPER SECRET STUFF")
+                    .buildAuthFilter());
+    final AuthFilter<String, OAuthPrincipal> oauthFilter
+            = new OAuthCredentialAuthFilter.Builder<OAuthPrincipal>()
+                    .setAuthenticator(new ExampleOAuthAuthenticator())
+                    .setPrefix("Bearer")
+                    .buildAuthFilter());
+
+    final PolymorphicAuthDynamicFeature feature = new PolymorphicAuthDynamicFeature<>(
+        ImmutableMap.of(
+            BasicPrincipal.class, basicFilter, 
+            OAuthPrincipal.class, oauthFilter));
+    final AbstractBinder binder = new PolymorphicAuthValueFactoryProvider.Binder<>(
+        ImmutableSet.of(BasicPrincipal.class, OAuthPrincipal.class));
+
+    environment.jersey().register(feature);
+    environment.jersey().register(binder);
+
+Now we are able to do something like the following
+
+.. code-block:: java
+
+    @GET
+    public Response basicAuthResource(@Auth BasicPrincipal principal) {}
+
+    @GET
+    public Response oauthResource(@Auth OAuthPrincipal principal) {}
+
+The first resource method will use Basic authentication while the second one will use OAuth.
+
+Note that with the above example, only *authentication* is configured. If you also want
+*authorization*, the following steps will need to be taken.
+
+* Register the ``RolesAllowedDynamicFeature`` with the application.
+
+* Make sure you add ``Authorizers`` when you build your ``AuthFilters``.
+
+* Annotate the resource *method* with the authorization annotation. Unlike the note earlier in
+  this document that says authorization annotations are allowed on classes, with this
+  poly feature, currently that is not supported. The annotation MUST go on the resource *method*
+
+So continuing with the previous example you should add the following configurations
+
+.. code-block:: java
+
+    ... = new BasicCredentialAuthFilter.Builder<BasicPrincipal>()
+            .setAuthorizer(new ExampleAuthorizer())..  // set authorizer
+
+    ... = new OAuthCredentialAuthFilter.Builder<OAuthPrincipal>()
+            .setAuthorizer(new ExampleAuthorizer())..  // set authorizer
+    
+    environment.jersey().register(RolesAllowedDynamicFeature.class);
+
+Now we can do
+
+.. code-block:: java
+
+    @GET
+    @RolesAllowed({ "ADMIN" })
+    public Response baseAuthResource(@Auth BasicPrincipal principal) {}
+
+    @GET
+    @RolesAllowed({ "ADMIN" })
+    public Response oauthResource(@Auth OAuthPrincipal principal) {}
+
+.. note::
+    The polymorphic auth feature *SHOULD NOT* be used with any other ``AuthDynamicFeature``. Doing so may have undesired effects.
+
+
+
