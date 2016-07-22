@@ -10,7 +10,3 @@ engines:
 ratings:
   paths:
   - "**.java"
-
-exclude_paths:
-- dropwizard-archetypes/
-- docs/
