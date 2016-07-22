@@ -12,5 +12,5 @@ ratings:
   - "**.java"
 
 exclude_paths:
-- dropwizard-archetypes/
-- **.png
+- "dropwizard-archetypes/"
+- "**.png"
