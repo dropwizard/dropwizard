@@ -13,3 +13,4 @@ ratings:
 
 exclude_paths:
 - dropwizard-archetypes/
+- docs/
