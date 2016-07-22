@@ -5,10 +5,6 @@
 <module name="Checker">
     <property name="localeLanguage" value="en"/>
     
-    <module name="SuppressionFilter">
-        <property name="file" value="checkstyle-suppressions.xml"/>
-    </module>
-
     <module name="FileTabCharacter"/>
 
     <module name="TreeWalker">
