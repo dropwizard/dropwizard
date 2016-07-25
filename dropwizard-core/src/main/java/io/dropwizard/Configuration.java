@@ -123,6 +123,7 @@ public class Configuration {
         return MoreObjects.toStringHelper(this)
                 .add("server", server)
                 .add("logging", logging)
+                .add("metrics", metrics)
                 .toString();
     }
 }
