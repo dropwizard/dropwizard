@@ -11,8 +11,7 @@ import java.nio.file.Paths;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class JacksonTest
-{
+public class JacksonTest {
     @Test
     public void objectMapperUsesGivenCustomJsonFactory() {
         JsonFactory factory = Mockito.mock(JsonFactory.class);
@@ -37,9 +36,18 @@ public class JacksonTest
         assertThat(metadata.path).isEqualTo(Paths.get("/var/log/app/server.log"));
     }
 
-     static class LogMetadata {
+    @Test
+    public void objectMapperSerializesNullValues() throws IOException {
+        final ObjectMapper mapper = Jackson.newObjectMapper();
+        final Issue1627 pojo = new Issue1627(null, null);
+        final String json = "{\"string\":null,\"uuid\":null}";
 
-         public Path path;
-     }
+        assertThat(mapper.writeValueAsString(pojo)).isEqualTo(json);
+    }
+
+    static class LogMetadata {
+
+        public Path path;
+    }
 
 }
