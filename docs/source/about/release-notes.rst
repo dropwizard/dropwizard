@@ -6,8 +6,8 @@ Release Notes
 
 .. _rel-1.0.0:
 
-v1.0.0
-======
+v1.0.0: Jul 26 2016
+===================
 
 * Using Java 8 as baseline
 * ``dropwizard-java8`` bundle merged into mainline `#1365 <https://github.com/dropwizard/dropwizard/issues/1365>`_
