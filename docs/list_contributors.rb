@@ -4,7 +4,7 @@ require 'octokit'
 Octokit.configure do |c|
   # Provide an Access Token to prevent running into the hourly rate-limit
   # see https://help.github.com/articles/creating-an-access-token-for-command-line-use
-  #c.access_token = ''
+  c.access_token = ENV['GITHUB_TOKEN'] || ''
   c.auto_paginate = true
 end
 
