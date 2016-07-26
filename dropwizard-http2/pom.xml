@@ -270,5 +270,23 @@
                 <alpn-boot.version>8.1.8.v20160420</alpn-boot.version>
             </properties>
         </profile>
+        <profile>
+            <id>jdk-1.8.0_101</id>
+            <activation>
+                <jdk>1.8.0_101</jdk>
+            </activation>
+            <properties>
+                <alpn-boot.version>8.1.9.v20160720</alpn-boot.version>
+            </properties>
+        </profile>
+        <profile>
+            <id>jdk-1.8.0_102</id>
+            <activation>
+                <jdk>1.8.0_102</jdk>
+            </activation>
+            <properties>
+                <alpn-boot.version>8.1.9.v20160720</alpn-boot.version>
+            </properties>
+        </profile>
     </profiles>
 </project>
