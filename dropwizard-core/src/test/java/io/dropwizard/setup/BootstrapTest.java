@@ -16,7 +16,6 @@ import io.dropwizard.validation.valuehandling.GuavaOptionalValidatedValueUnwrapp
 import io.dropwizard.validation.valuehandling.OptionalDoubleValidatedValueUnwrapper;
 import io.dropwizard.validation.valuehandling.OptionalIntValidatedValueUnwrapper;
 import io.dropwizard.validation.valuehandling.OptionalLongValidatedValueUnwrapper;
-import io.dropwizard.validation.valuehandling.OptionalValidatedValueUnwrapper;
 import org.hibernate.validator.HibernateValidator;
 import org.hibernate.validator.internal.engine.ValidatorFactoryImpl;
 import org.junit.Before;
@@ -114,7 +113,6 @@ public class BootstrapTest {
         assertThat(validatorFactory.getValidatedValueHandlers())
                 .extractingResultOf("getClass")
                 .containsSubsequence(GuavaOptionalValidatedValueUnwrapper.class,
-                                     OptionalValidatedValueUnwrapper.class,
                                      OptionalDoubleValidatedValueUnwrapper.class,
                                      OptionalIntValidatedValueUnwrapper.class,
                                      OptionalLongValidatedValueUnwrapper.class,
