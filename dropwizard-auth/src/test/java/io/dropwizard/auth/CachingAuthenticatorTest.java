@@ -3,8 +3,11 @@ package io.dropwizard.auth;
 import com.codahale.metrics.MetricRegistry;
 import com.google.common.cache.CacheBuilderSpec;
 import com.google.common.collect.ImmutableSet;
+import org.hamcrest.CoreMatchers;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.mockito.InOrder;
 
 import java.security.Principal;
@@ -23,6 +26,8 @@ public class CachingAuthenticatorTest {
     private final Authenticator<String, Principal> underlying = mock(Authenticator.class);
     private final CachingAuthenticator<String, Principal> cached =
         new CachingAuthenticator<>(new MetricRegistry(), underlying, CacheBuilderSpec.parse("maximumSize=1"));
+    @Rule
+    public ExpectedException expected = ExpectedException.none();
 
     @Before
     public void setUp() throws Exception {
@@ -94,7 +99,7 @@ public class CachingAuthenticatorTest {
     @Test
     public void calculatesCacheStats() throws Exception {
         cached.authenticate("credentials1");
-        assertThat(cached.stats().loadCount()).isEqualTo(0);
+        assertThat(cached.stats().loadCount()).isEqualTo(1);
         assertThat(cached.size()).isEqualTo(1);
     }
 
@@ -104,5 +109,21 @@ public class CachingAuthenticatorTest {
         assertThat(cached.authenticate("credentials")).isEqualTo(Optional.empty());
         verify(underlying).authenticate("credentials");
         assertThat(cached.size()).isEqualTo(0);
+    }
+
+    @Test
+    public void shouldPropagateAuthenticationException() throws AuthenticationException {
+        final AuthenticationException e = new AuthenticationException("Auth failed");
+        when(underlying.authenticate(anyString())).thenThrow(e);
+        expected.expect(CoreMatchers.sameInstance(e));
+        cached.authenticate("credentials");
+    }
+
+    @Test
+    public void shouldPropagateRuntimeException() throws AuthenticationException {
+        final RuntimeException e = new NullPointerException();
+        when(underlying.authenticate(anyString())).thenThrow(e);
+        expected.expect(CoreMatchers.sameInstance(e));
+        cached.authenticate("credentials");
     }
 }
