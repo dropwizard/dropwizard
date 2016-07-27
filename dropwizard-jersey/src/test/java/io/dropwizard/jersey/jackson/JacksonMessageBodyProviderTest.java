@@ -227,7 +227,7 @@ public class JacksonMessageBodyProviderTest {
         } catch (JsonProcessingException e) {
             assertThat(e.getMessage())
                     .startsWith("Unexpected character ('d' (code 100)): " +
-                                        "was expecting comma to separate OBJECT entries\n");
+                                        "was expecting comma to separate Object entries\n");
         }
     }
 

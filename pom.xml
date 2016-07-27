@@ -58,8 +58,8 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.site.deploy.skip>true</maven.site.deploy.skip>
         <junit.version>4.12</junit.version>
-        <assertj.version>3.4.1</assertj.version>
-        <mockito.version>2.0.54-beta</mockito.version>
+        <assertj.version>3.5.2</assertj.version>
+        <mockito.version>2.0.90-beta</mockito.version>
     </properties>
 
     <developers>

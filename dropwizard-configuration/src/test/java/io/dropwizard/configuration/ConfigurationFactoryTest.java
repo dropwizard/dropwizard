@@ -327,7 +327,7 @@ public class ConfigurationFactoryTest {
             failBecauseExceptionWasNotThrown(ConfigurationParsingException.class);
         } catch (ConfigurationParsingException e) {
             assertThat(e.getMessage())
-                    .containsOnlyOnce(" * Failed to parse configuration; Can not instantiate");
+                    .containsOnlyOnce(" * Failed to parse configuration; Can not construct instance of io.dropwizard.configuration.ConfigurationFactoryTest$Example");
         }
     }
 
@@ -442,15 +442,17 @@ public class ConfigurationFactoryTest {
             factory.build(resourceFileName);
             fail("Should print a detailed error on a malformed YAML file");
         } catch (Exception e) {
-            assertThat(e.getMessage()).isEqualTo(
-                    "YAML decoding problem: while parsing a flow sequence\n" +
-                    " in 'reader', line 2, column 7:\n" +
-                    "    type: [ coder,wizard\n" +
-                    "          ^\n" +
-                    "expected ',' or ']', but got StreamEnd\n" +
+            assertThat(e.getMessage()).matches("(?s).*/factory-test-malformed-advanced.yml has an error:\n"
+                    + "  \\* Malformed YAML at line: 2, column: 21; while parsing a flow sequence\n"
+                    + " in 'reader', line 2, column 7:\n"
+                    + "    type: \\[ coder,wizard\n"
+                    + "          \\^\n"
+                    + "expected ',' or '\\]', but got StreamEnd\n" +
                     " in 'reader', line 2, column 21:\n" +
                     "    wizard\n" +
-                    "          ^\n");
+                    "          \\^\n" +
+                    "\n" +
+                    " at \\[Source: java.io.FileInputStream@[0-9a-f]+; line: 2, column: 21\\]\n$");
         }
     }
 }
