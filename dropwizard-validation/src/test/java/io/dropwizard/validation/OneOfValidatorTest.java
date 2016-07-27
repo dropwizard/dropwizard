@@ -1,8 +1,11 @@
 package io.dropwizard.validation;
 
+import com.google.common.collect.ImmutableList;
 import org.junit.Test;
 
+import javax.validation.Valid;
 import javax.validation.Validator;
+import java.util.List;
 import java.util.Locale;
 
 import static io.dropwizard.validation.ConstraintViolations.format;
@@ -20,6 +23,9 @@ public class OneOfValidatorTest {
 
         @OneOf(value = {"one", "two", "three"}, ignoreWhitespace = true)
         private String whitespaceInsensitive = "one";
+
+        @Valid
+        private List<@OneOf({"one", "two", "three"}) String> basicList = ImmutableList.of("one");
     }
 
     private final Validator validator = BaseValidator.newValidator();
@@ -39,6 +45,15 @@ public class OneOfValidatorTest {
 
         assertThat(format(validator.validate(example)))
                 .containsOnly("basic must be one of [one, two, three]");
+    }
+
+    @Test
+    public void doesNotAllowBadElementsInList() {
+        final Example example = new Example();
+        example.basicList = ImmutableList.of("four");
+
+        assertThat(format(validator.validate(example)))
+            .containsOnly("basicList[0] must be one of [one, two, three]");
     }
 
     @Test
