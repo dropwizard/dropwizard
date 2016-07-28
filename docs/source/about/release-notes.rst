@@ -9,6 +9,10 @@ Release Notes
 v1.1.0: Unreleased
 ==================
 
+* Remove OptionalValidatedValueUnwrapper `#1583 <https://github.com/dropwizard/dropwizard/pull/1583>`_
+* Allow constraints to be applied to type `#1586 <https://github.com/dropwizard/dropwizard/pull/1586>`_
+* Use LoadingCache in CachingAuthenticator `#1615 <https://github.com/dropwizard/dropwizard/pull/1615>`_
+* Introduce CachingAuthorizer `#1639 <https://github.com/dropwizard/dropwizard/pull/1639>`_
 * Upgraded to Jetty 9.3.11.v20160721 `#1649 <https://github.com/dropwizard/dropwizard/pull/1649>`_
 
 .. _rel-1.0.0:
