@@ -3,7 +3,6 @@ package io.dropwizard.auth;
 import com.codahale.metrics.Meter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
-import com.google.common.base.Predicate;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheBuilderSpec;
@@ -13,6 +12,7 @@ import com.google.common.collect.Sets;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
 import java.security.Principal;
+import java.util.function.Predicate;
 
 import static com.codahale.metrics.MetricRegistry.name;
 
@@ -84,11 +84,11 @@ public class CachingAuthorizer<P extends Principal> implements Authorizer<P> {
 
             if (isAuthorized == null) {
                 cacheMisses.mark();
-                isAuthorized = Boolean.valueOf(underlying.authorize(principal, role));
+                isAuthorized = underlying.authorize(principal, role);
                 cache.put(cacheKey, isAuthorized);
             }
 
-            return isAuthorized.booleanValue();
+            return isAuthorized;
         } finally {
             context.stop();
         }
@@ -111,13 +111,9 @@ public class CachingAuthorizer<P extends Principal> implements Authorizer<P> {
      */
     public void invalidate(P principal) {
         final Predicate<ImmutablePair<P, String>> predicate =
-            new Predicate<ImmutablePair<P, String>>() {
-                @Override public boolean apply(ImmutablePair<P, String> cacheKey) {
-                    return cacheKey.getLeft().equals(principal);
-                }
-            };
+            cacheKey -> cacheKey.getLeft().equals(principal);
 
-        cache.invalidateAll(Sets.filter(cache.asMap().keySet(), predicate));
+        cache.invalidateAll(Sets.filter(cache.asMap().keySet(), predicate::test));
     }
 
     /**
@@ -128,13 +124,9 @@ public class CachingAuthorizer<P extends Principal> implements Authorizer<P> {
      */
     public void invalidateAll(Iterable<P> principals) {
         final Predicate<ImmutablePair<P, String>> predicate =
-            new Predicate<ImmutablePair<P, String>>() {
-                @Override public boolean apply(ImmutablePair<P, String> cacheKey) {
-                    return Iterables.contains(principals, cacheKey.getLeft());
-                }
-            };
+            cacheKey -> Iterables.contains(principals, cacheKey.getLeft());
 
-        cache.invalidateAll(Sets.filter(cache.asMap().keySet(), predicate));
+        cache.invalidateAll(Sets.filter(cache.asMap().keySet(), predicate::test));
     }
 
     /**
@@ -145,13 +137,9 @@ public class CachingAuthorizer<P extends Principal> implements Authorizer<P> {
      */
     public void invalidateAll(Predicate<? super P> predicate) {
       final Predicate<ImmutablePair<P, String>> nestedPredicate =
-            new Predicate<ImmutablePair<P, String>>() {
-                @Override public boolean apply(ImmutablePair<P, String> cacheKey) {
-                    return predicate.apply(cacheKey.getLeft());
-                }
-            };
+          cacheKey -> predicate.test(cacheKey.getLeft());
 
-        cache.invalidateAll(Sets.filter(cache.asMap().keySet(), nestedPredicate));
+        cache.invalidateAll(Sets.filter(cache.asMap().keySet(), nestedPredicate::test));
     }
 
     /**

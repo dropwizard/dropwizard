@@ -145,11 +145,7 @@ public class TaskServlet extends HttpServlet {
         }
 
         public void executeTask(ImmutableMultimap<String, String> params, PrintWriter output) throws Exception {
-            try {
-                task.execute(params, output);
-            } catch (Exception e) {
-                throw e;
-            }
+            task.execute(params, output);
         }
     }
 
