@@ -265,6 +265,9 @@ public class HttpClientBuilderTest {
     public void disablesStaleConnectionCheck() throws Exception {
         assertThat(builder.using(configuration).createClient(apacheBuilder, connectionManager, "test")).isNotNull();
 
+        // It is fine to use the isStaleConnectionCheckEnabled deprecated API, as we are ensuring
+        // that the builder creates a client that does not check for stale connections on each
+        // request, which adds significant overhead.
         assertThat(((RequestConfig) spyHttpClientBuilderField("defaultRequestConfig", apacheBuilder))
                 .isStaleConnectionCheckEnabled()).isFalse();
     }
