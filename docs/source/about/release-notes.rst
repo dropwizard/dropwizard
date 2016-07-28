@@ -14,6 +14,11 @@ v1.1.0: Unreleased
 * Use LoadingCache in CachingAuthenticator `#1615 <https://github.com/dropwizard/dropwizard/pull/1615>`_
 * Introduce CachingAuthorizer `#1639 <https://github.com/dropwizard/dropwizard/pull/1639>`_
 * Upgraded to Jetty 9.3.11.v20160721 `#1649 <https://github.com/dropwizard/dropwizard/pull/1649>`_
+* Upgraded to tomcat-jdbc 8.5.4 `#1654 <https://github.com/dropwizard/dropwizard/pull/1654>`_
+* Upgraded to Objenesis 2.4 `#1654 <https://github.com/dropwizard/dropwizard/pull/1654>`_
+* Upgraded to AssertJ 3.5.2 `#1654 <https://github.com/dropwizard/dropwizard/pull/1654>`_
+* Upgraded to classmate 1.3.1 `#1654 <https://github.com/dropwizard/dropwizard/pull/1654>`_
+* Upgraded to Mustache 0.9.3 `#1654 <https://github.com/dropwizard/dropwizard/pull/1654>`_
 
 .. _rel-1.0.0:
 
