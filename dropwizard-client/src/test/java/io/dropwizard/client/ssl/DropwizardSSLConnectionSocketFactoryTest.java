@@ -14,6 +14,7 @@ import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 
+import javax.net.ssl.SSLException;
 import javax.net.ssl.SSLHandshakeException;
 import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.ws.rs.GET;
@@ -169,7 +170,7 @@ public class DropwizardSSLConnectionSocketFactoryTest {
             client.target(String.format("https://localhost:%d", TLS_APP_RULE.getPort(4))).request().get();
             fail("expected ProcessingException");
         } catch (ProcessingException e) {
-            assertThat(e.getCause()).isInstanceOfAny(SocketException.class, SSLHandshakeException.class);
+            assertThat(e).hasRootCauseInstanceOf(SSLException.class);
         }
     }
 }

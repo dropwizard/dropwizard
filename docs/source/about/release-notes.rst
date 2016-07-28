@@ -4,6 +4,13 @@
 Release Notes
 #############
 
+.. _rel-1.1.0:
+
+v1.1.0: Unreleased
+==================
+
+* Upgraded to Jetty 9.3.11.v20160721 `#1649 <https://github.com/dropwizard/dropwizard/pull/1649>`_
+
 .. _rel-1.0.0:
 
 v1.0.0: Jul 26 2016
