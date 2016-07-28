@@ -57,6 +57,7 @@ public class LogbackAccessRequestLogFactory implements RequestLogFactory {
     }
 
     @JsonIgnore
+    @Override
     public boolean isEnabled() {
         return !appenders.isEmpty();
     }

@@ -33,7 +33,7 @@ public class NonblockingServletHolder extends ServletHolder {
     }
 
     @Override
-    public Servlet getServlet() throws ServletException {
+    public synchronized Servlet getServlet() throws ServletException {
         return servlet;
     }
 

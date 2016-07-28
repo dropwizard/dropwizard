@@ -40,7 +40,6 @@ import java.util.TimeZone;
  */
 @JsonTypeName("console")
 public class ConsoleReporterFactory extends BaseFormattedReporterFactory {
-    @SuppressWarnings("UnusedDeclaration")
     public enum ConsoleStream {
         STDOUT(System.out),
         STDERR(System.err);
@@ -82,6 +81,7 @@ public class ConsoleReporterFactory extends BaseFormattedReporterFactory {
         this.output = stream;
     }
 
+    @Override
     public ScheduledReporter build(MetricRegistry registry) {
         return ConsoleReporter.forRegistry(registry)
                               .convertDurationsTo(getDurationUnit())

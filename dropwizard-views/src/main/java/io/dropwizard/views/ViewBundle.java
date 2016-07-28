@@ -100,6 +100,7 @@ public class ViewBundle<T extends Configuration> implements ConfiguredBundle<T>,
         this.viewRenderers = ImmutableSet.copyOf(viewRenderers);
     }
 
+    @Override
     public Map<String, Map<String, String>> getViewConfiguration(T configuration) {
         return ImmutableMap.of();
     }

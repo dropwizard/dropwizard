@@ -66,6 +66,7 @@ public class Slf4jReporterFactory extends BaseReporterFactory {
         this.markerName = markerName;
     }
 
+    @Override
     public ScheduledReporter build(MetricRegistry registry) {
         final Slf4jReporter.Builder builder = Slf4jReporter.forRegistry(registry)
                                                            .convertDurationsTo(getDurationUnit())

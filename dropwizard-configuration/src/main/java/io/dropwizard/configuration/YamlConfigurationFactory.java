@@ -21,6 +21,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -104,9 +105,9 @@ public class YamlConfigurationFactory<T> implements ConfigurationFactory<T> {
     @Override
     public T build() throws IOException, ConfigurationException {
         try {
-            final JsonNode node = mapper.valueToTree(klass.newInstance());
+            final JsonNode node = mapper.valueToTree(klass.getConstructor().newInstance());
             return build(node, "default configuration");
-        } catch (InstantiationException | IllegalAccessException e) {
+        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
             throw new IllegalArgumentException("Unable create an instance " +
                     "of the configuration class: '" + klass.getCanonicalName() + "'", e);
         }
