@@ -105,9 +105,9 @@ public class YamlConfigurationFactory<T> implements ConfigurationFactory<T> {
     @Override
     public T build() throws IOException, ConfigurationException {
         try {
-            final JsonNode node = mapper.valueToTree(klass.getConstructor().newInstance());
+            final JsonNode node = mapper.valueToTree(klass.newInstance());
             return build(node, "default configuration");
-        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | SecurityException e) {
             throw new IllegalArgumentException("Unable create an instance " +
                     "of the configuration class: '" + klass.getCanonicalName() + "'", e);
         }
