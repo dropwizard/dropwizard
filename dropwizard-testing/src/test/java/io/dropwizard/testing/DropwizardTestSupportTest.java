@@ -30,21 +30,19 @@ public class DropwizardTestSupportTest {
             new DropwizardTestSupport<>(TestApplication.class, resourceFilePath("test-config.yaml"));
 
     @BeforeClass
-    public static void setUp(){
+    public static void setUp() {
         TEST_SUPPORT.before();
     }
 
     @AfterClass
-    public static void tearDown(){
+    public static void tearDown() {
         TEST_SUPPORT.after();
     }
 
     @Test
     public void canGetExpectedResourceOverHttp() {
-        final String content = ClientBuilder.newClient().target("http://localhost:" +
-                TEST_SUPPORT.getLocalPort()
-                +"/test")
-                .request().get(String.class);
+        final String content = ClientBuilder.newClient().target(
+            "http://localhost:" + TEST_SUPPORT.getLocalPort() + "/test").request().get(String.class);
 
         assertThat(content, is("Yes, it's here"));
     }

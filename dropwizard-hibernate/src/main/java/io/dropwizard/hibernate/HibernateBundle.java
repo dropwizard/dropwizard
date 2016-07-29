@@ -42,7 +42,7 @@ public abstract class HibernateBundle<T extends Configuration> implements Config
      */
     protected Hibernate5Module createHibernate5Module() {
         Hibernate5Module module = new Hibernate5Module();
-        if(lazyLoadingEnabled) {
+        if (lazyLoadingEnabled) {
             module.enable(Feature.FORCE_LAZY_LOADING);
         }
         return module;

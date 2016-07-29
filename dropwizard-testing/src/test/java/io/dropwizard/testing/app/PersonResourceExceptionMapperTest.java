@@ -19,23 +19,23 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
 public class PersonResourceExceptionMapperTest {
-    private static final PeopleStore dao = mock(PeopleStore.class);
+    private static final PeopleStore PEOPLE_STORE = mock(PeopleStore.class);
 
-    private static final ObjectMapper mapper = Jackson.newObjectMapper()
+    private static final ObjectMapper OBJECT_MAPPER = Jackson.newObjectMapper()
         .registerModule(new GuavaModule());
 
     @ClassRule
-    public static final ResourceTestRule resources = ResourceTestRule.builder()
-        .addResource(new PersonResource(dao))
+    public static final ResourceTestRule RESOURCES = ResourceTestRule.builder()
+        .addResource(new PersonResource(PEOPLE_STORE))
         .setRegisterDefaultExceptionMappers(false)
         .addProvider(new MyJerseyExceptionMapper())
         .addProvider(new GenericExceptionMapper())
-        .setMapper(mapper)
+        .setMapper(OBJECT_MAPPER)
         .build();
 
     @Test
     public void testDefaultConstraintViolation() {
-        assertThat(resources.client().target("/person/blah/index")
+        assertThat(RESOURCES.client().target("/person/blah/index")
             .queryParam("ind", -1).request()
             .get().readEntity(String.class))
             .isEqualTo("Invalid data");
@@ -43,7 +43,7 @@ public class PersonResourceExceptionMapperTest {
 
     @Test
     public void testDefaultJsonProcessingMapper() {
-        assertThat(resources.client().target("/person/blah/runtime-exception")
+        assertThat(RESOURCES.client().target("/person/blah/runtime-exception")
             .request()
             .post(Entity.json("{ \"he: \"ho\"}"))
             .readEntity(String.class))
@@ -52,7 +52,7 @@ public class PersonResourceExceptionMapperTest {
 
     @Test
     public void testDefaultExceptionMapper() {
-        assertThat(resources.client().target("/person/blah/runtime-exception")
+        assertThat(RESOURCES.client().target("/person/blah/runtime-exception")
             .request()
             .post(Entity.json("{}"))
             .readEntity(String.class))
@@ -61,7 +61,7 @@ public class PersonResourceExceptionMapperTest {
 
     @Test
     public void testDefaultEofExceptionMapper() {
-        assertThat(resources.client().target("/person/blah/eof-exception")
+        assertThat(RESOURCES.client().target("/person/blah/eof-exception")
             .request()
             .get().readEntity(String.class))
             .isEqualTo("Something went wrong: I'm an eof exception!");

@@ -21,8 +21,8 @@ public class NetUtilTest {
      */
     @Test
     public void testDefaultTcpBacklogForWindows() {
-        assumeThat(System.getProperty(OS_NAME_PROPERTY),containsString("win"));
-        assumeThat(isTcpBacklogSettingReadable(),is(false));
+        assumeThat(System.getProperty(OS_NAME_PROPERTY), containsString("win"));
+        assumeThat(isTcpBacklogSettingReadable(), is(false));
         assertEquals(NetUtil.DEFAULT_TCP_BACKLOG_WINDOWS, NetUtil.getTcpBacklog());
     }
 
@@ -32,7 +32,7 @@ public class NetUtilTest {
     @Test
     public void testNonWindowsDefaultTcpBacklog() {
         assumeThat(System.getProperty(OS_NAME_PROPERTY), containsString("Mac OS X"));
-        assumeThat(isTcpBacklogSettingReadable(),is(false));
+        assumeThat(isTcpBacklogSettingReadable(), is(false));
         assertEquals(NetUtil.DEFAULT_TCP_BACKLOG_LINUX, NetUtil.getTcpBacklog());
 
     }
@@ -43,7 +43,7 @@ public class NetUtilTest {
     @Test
     public void testNonWindowsSpecifiedTcpBacklog() {
         assumeThat(System.getProperty(OS_NAME_PROPERTY), containsString("Mac OS X"));
-        assumeThat(isTcpBacklogSettingReadable(),is(false));
+        assumeThat(isTcpBacklogSettingReadable(), is(false));
         assertEquals(100, NetUtil.getTcpBacklog(100));
     }
 
@@ -52,8 +52,8 @@ public class NetUtilTest {
      */
     @Test
     public void testOsSetting() {
-        assumeThat(System.getProperty(OS_NAME_PROPERTY),containsString("Linux"));
-        assumeThat(isTcpBacklogSettingReadable(),is(true));
+        assumeThat(System.getProperty(OS_NAME_PROPERTY), containsString("Linux"));
+        assumeThat(isTcpBacklogSettingReadable(), is(true));
         assertNotEquals(-1, NetUtil.getTcpBacklog(-1));
     }
 
@@ -64,7 +64,7 @@ public class NetUtilTest {
             public Boolean run() {
                 try {
                     File f = new File(NetUtil.TCP_BACKLOG_SETTING_LOCATION);
-                    return (f.exists() && f.canRead());
+                    return f.exists() && f.canRead();
                 } catch (Exception e) {
                     return false;
                 }

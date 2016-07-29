@@ -2,7 +2,6 @@ package io.dropwizard.jersey.validation;
 
 import io.dropwizard.validation.BaseValidator;
 import org.hibernate.validator.HibernateValidatorConfiguration;
-import org.hibernate.validator.spi.valuehandling.ValidatedValueUnwrapper;
 
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
@@ -29,7 +28,7 @@ public class Validators {
 
     /**
      * Creates a new {@link HibernateValidatorConfiguration} with all the custom {@link
-     * ValidatedValueUnwrapper} registered.
+     * org.hibernate.validator.spi.valuehandling.ValidatedValueUnwrapper} registered.
      */
     public static HibernateValidatorConfiguration newConfiguration() {
         return BaseValidator.newConfiguration()

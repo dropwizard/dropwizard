@@ -145,7 +145,7 @@ public class DropwizardAppRule<C extends Configuration> extends ExternalResource
     }
 
     public int getPort(int connectorIndex) {
-       return testSupport.getPort(connectorIndex);
+        return testSupport.getPort(connectorIndex);
     }
 
     public int getAdminPort() {

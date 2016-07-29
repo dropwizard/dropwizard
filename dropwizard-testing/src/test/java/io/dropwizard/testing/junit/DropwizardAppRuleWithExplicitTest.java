@@ -40,7 +40,7 @@ public class DropwizardAppRuleWithExplicitTest {
 
     @Test
     public void runWithExplicitConfig() {
-        Map<?,?> response = client.target("http://localhost:" + RULE.getLocalPort() + "/test")
+        Map<?, ?> response = client.target("http://localhost:" + RULE.getLocalPort() + "/test")
                 .request()
                 .get(Map.class);
         Assert.assertEquals(ImmutableMap.of("message", "stuff!"), response);
@@ -58,7 +58,9 @@ public class DropwizardAppRuleWithExplicitTest {
     public static class TestResource {
         private final String message;
 
-        public TestResource(String m) { message = m; }
+        public TestResource(String m) {
+            message = m;
+        }
 
         @GET
         public Response get() {

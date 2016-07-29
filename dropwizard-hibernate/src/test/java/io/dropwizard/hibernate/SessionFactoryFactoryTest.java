@@ -74,9 +74,9 @@ public class SessionFactoryFactoryTest {
 
     @Test
     public void callsBundleToConfigure() throws Exception {
-      build();
+        build();
 
-      verify(bundle).configure(any(Configuration.class));
+        verify(bundle).configure(any(Configuration.class));
     }
 
     @Test
@@ -123,7 +123,7 @@ public class SessionFactoryFactoryTest {
     }
 
     @Test
-    public void configureRunsBeforeSessionFactoryCreation(){
+    public void configureRunsBeforeSessionFactoryCreation() {
         final SessionFactoryFactory customFactory = new SessionFactoryFactory() {
             @Override
             protected void configure(Configuration configuration, ServiceRegistry registry) {

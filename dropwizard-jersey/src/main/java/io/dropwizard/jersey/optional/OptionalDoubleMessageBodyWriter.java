@@ -24,7 +24,7 @@ public class OptionalDoubleMessageBodyWriter implements MessageBodyWriter<Option
 
     @Override
     public boolean isWriteable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
-        return (OptionalDouble.class.isAssignableFrom(type));
+        return OptionalDouble.class.isAssignableFrom(type);
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})

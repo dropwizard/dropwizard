@@ -220,13 +220,11 @@ public class AssetServlet extends HttpServlet {
         return new CachedAsset(readResource(requestedResourceURL), lastModified);
     }
 
-    protected URL getResourceUrl(String absoluteRequestedResourcePath)
-    {
+    protected URL getResourceUrl(String absoluteRequestedResourcePath) {
         return Resources.getResource(absoluteRequestedResourcePath);
     }
 
-    protected byte[] readResource(URL requestedResourceURL) throws IOException
-    {
+    protected byte[] readResource(URL requestedResourceURL) throws IOException {
         return Resources.toByteArray(requestedResourceURL);
     }
 

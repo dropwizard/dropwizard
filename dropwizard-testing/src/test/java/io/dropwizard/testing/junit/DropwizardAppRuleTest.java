@@ -28,10 +28,8 @@ public class DropwizardAppRuleTest {
 
     @Test
     public void canGetExpectedResourceOverHttp() {
-        final String content = ClientBuilder.newClient().target("http://localhost:" +
-                                         RULE.getLocalPort()
-                                         +"/test")
-                                         .request().get(String.class);
+        final String content = ClientBuilder.newClient().target(
+            "http://localhost:" + RULE.getLocalPort() + "/test").request().get(String.class);
 
         assertThat(content, is("Yes, it's here"));
     }

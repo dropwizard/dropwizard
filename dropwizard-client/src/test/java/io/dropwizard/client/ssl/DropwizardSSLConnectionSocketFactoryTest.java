@@ -54,20 +54,20 @@ public class DropwizardSSLConnectionSocketFactoryTest {
     }
 
     @ClassRule
-    public static DropwizardAppRule<Configuration> TLS_APP_RULE = new DropwizardAppRule<>(TlsTestApplication.class,
-            ResourceHelpers.resourceFilePath("yaml/ssl_connection_socket_factory_test.yml"),
-            Optional.of("tls"),
-            ConfigOverride.config("tls", "server.applicationConnectors[0].keyStorePath", ResourceHelpers.resourceFilePath("stores/server/keycert.p12")),
-            ConfigOverride.config("tls", "server.applicationConnectors[1].keyStorePath", ResourceHelpers.resourceFilePath("stores/server/self_sign_keycert.p12")),
-            ConfigOverride.config("tls", "server.applicationConnectors[2].keyStorePath", ResourceHelpers.resourceFilePath("stores/server/keycert.p12")),
-            ConfigOverride.config("tls", "server.applicationConnectors[2].trustStorePath", ResourceHelpers.resourceFilePath("stores/server/ca_truststore.ts")),
-            ConfigOverride.config("tls", "server.applicationConnectors[2].wantClientAuth", "true"),
-            ConfigOverride.config("tls", "server.applicationConnectors[2].needClientAuth", "true"),
-            ConfigOverride.config("tls", "server.applicationConnectors[2].validatePeers", "false"),
-            ConfigOverride.config("tls", "server.applicationConnectors[2].trustStorePassword", "password"),
-            ConfigOverride.config("tls", "server.applicationConnectors[3].keyStorePath", ResourceHelpers.resourceFilePath("stores/server/bad_host_keycert.p12")),
-            ConfigOverride.config("tls", "server.applicationConnectors[4].keyStorePath", ResourceHelpers.resourceFilePath("stores/server/keycert.p12")),
-            ConfigOverride.config("tls", "server.applicationConnectors[4].supportedProtocols", "SSLv1,SSLv2,SSLv3"));
+    public static final DropwizardAppRule<Configuration> TLS_APP_RULE = new DropwizardAppRule<>(TlsTestApplication.class,
+        ResourceHelpers.resourceFilePath("yaml/ssl_connection_socket_factory_test.yml"),
+        Optional.of("tls"),
+        ConfigOverride.config("tls", "server.applicationConnectors[0].keyStorePath", ResourceHelpers.resourceFilePath("stores/server/keycert.p12")),
+        ConfigOverride.config("tls", "server.applicationConnectors[1].keyStorePath", ResourceHelpers.resourceFilePath("stores/server/self_sign_keycert.p12")),
+        ConfigOverride.config("tls", "server.applicationConnectors[2].keyStorePath", ResourceHelpers.resourceFilePath("stores/server/keycert.p12")),
+        ConfigOverride.config("tls", "server.applicationConnectors[2].trustStorePath", ResourceHelpers.resourceFilePath("stores/server/ca_truststore.ts")),
+        ConfigOverride.config("tls", "server.applicationConnectors[2].wantClientAuth", "true"),
+        ConfigOverride.config("tls", "server.applicationConnectors[2].needClientAuth", "true"),
+        ConfigOverride.config("tls", "server.applicationConnectors[2].validatePeers", "false"),
+        ConfigOverride.config("tls", "server.applicationConnectors[2].trustStorePassword", "password"),
+        ConfigOverride.config("tls", "server.applicationConnectors[3].keyStorePath", ResourceHelpers.resourceFilePath("stores/server/bad_host_keycert.p12")),
+        ConfigOverride.config("tls", "server.applicationConnectors[4].keyStorePath", ResourceHelpers.resourceFilePath("stores/server/keycert.p12")),
+        ConfigOverride.config("tls", "server.applicationConnectors[4].supportedProtocols", "SSLv1,SSLv2,SSLv3"));
 
     @Before
     public void setUp() throws Exception {
@@ -94,8 +94,8 @@ public class DropwizardSSLConnectionSocketFactoryTest {
         try {
             client.target(String.format("https://localhost:%d", TLS_APP_RULE.getLocalPort())).request().get();
             fail("expected ProcessingException");
-        } catch(ProcessingException e) {
-           assertThat(e.getCause()).isInstanceOf(SSLHandshakeException.class);
+        } catch (ProcessingException e) {
+            assertThat(e.getCause()).isInstanceOf(SSLHandshakeException.class);
         }
     }
 
@@ -113,7 +113,7 @@ public class DropwizardSSLConnectionSocketFactoryTest {
         try {
             client.target(String.format("https://localhost:%d", TLS_APP_RULE.getPort(1))).request().get(ClientResponse.class);
             fail("expected ProcessingException");
-        } catch(ProcessingException e) {
+        } catch (ProcessingException e) {
             assertThat(e.getCause()).isInstanceOf(SSLHandshakeException.class);
         }
     }
@@ -137,7 +137,7 @@ public class DropwizardSSLConnectionSocketFactoryTest {
         try {
             client.target(String.format("https://localhost:%d", TLS_APP_RULE.getPort(2))).request().get();
             fail("expected ProcessingException");
-        } catch(ProcessingException e) {
+        } catch (ProcessingException e) {
             assertThat(e.getCause()).isInstanceOfAny(SocketException.class, SSLHandshakeException.class);
         }
     }

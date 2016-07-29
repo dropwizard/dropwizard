@@ -32,7 +32,7 @@ public class JodaDateTimeSqlTimestampTest {
     private static TemporaryFolder temporaryFolder;
     private static DatabaseInTimeZone databaseInTimeZone;
     private static DateTimeZone dbTimeZone;
-    private static DBIClient DBIClient;
+    private static DBIClient dbiClient;
     @ClassRule
     public static TestRule chain;
 
@@ -44,12 +44,12 @@ public class JodaDateTimeSqlTimestampTest {
                 dbTimeZone = DateTimeZone.forTimeZone(timeZone);
                 temporaryFolder = new TemporaryFolder();
                 databaseInTimeZone = new DatabaseInTimeZone(temporaryFolder, timeZone);
-                DBIClient = new DBIClient(timeZone);
+                dbiClient = new DBIClient(timeZone);
                 chain = RuleChain.outerRule(temporaryFolder)
                         .around(databaseInTimeZone)
-                        .around(DBIClient);
+                        .around(dbiClient);
                 done = true;
-            } catch(IllegalArgumentException e) {
+            } catch (IllegalArgumentException e) {
                 if (!e.getMessage().contains("is not recognised")) {
                     throw e;
                 }
@@ -68,7 +68,7 @@ public class JodaDateTimeSqlTimestampTest {
 
     @Before
     public void setUp() throws Exception {
-        handle = DBIClient.getDbi().open();
+        handle = dbiClient.getDbi().open();
         handle.execute("CREATE TABLE flights (" +
                 "  flight_id         VARCHAR(5)  PRIMARY KEY," +
                 "  departure_airport VARCHAR(3)  NOT NULL," +

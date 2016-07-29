@@ -83,8 +83,7 @@ public class ResourceURLTest {
         try {
             ResourceURL.isDirectory(url);
             fail("should have thrown an exception");
-        }
-        catch (ResourceNotFoundException ignored) {
+        } catch (ResourceNotFoundException ignored) {
             // expected
         }
     }

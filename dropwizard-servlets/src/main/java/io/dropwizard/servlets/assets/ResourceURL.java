@@ -50,7 +50,7 @@ public class ResourceURL {
                     final ZipEntry zipEntry = jarFile.getEntry(relativeFilePath);
                     final InputStream inputStream = jarFile.getInputStream(zipEntry);
 
-                    return (inputStream == null);
+                    return inputStream == null;
                 } catch (IOException e) {
                     throw new ResourceNotFoundException(e);
                 }

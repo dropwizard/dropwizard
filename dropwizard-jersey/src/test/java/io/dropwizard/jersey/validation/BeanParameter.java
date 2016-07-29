@@ -14,7 +14,7 @@ public class BeanParameter {
         return name;
     }
 
-    @ValidationMethod(message="name must be Coda")
+    @ValidationMethod(message = "name must be Coda")
     public boolean isCoda() {
         return "Coda".equals(name);
     }

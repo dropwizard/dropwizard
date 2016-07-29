@@ -207,7 +207,7 @@ public class DropwizardTestSupport<C extends Configuration> {
 
     public int getAdminPort() {
         final Connector[] connectors = jettyServer.getConnectors();
-        return ((ServerConnector) connectors[connectors.length -1]).getLocalPort();
+        return ((ServerConnector) connectors[connectors.length - 1]).getLocalPort();
     }
 
     public int getPort(int connectorIndex) {

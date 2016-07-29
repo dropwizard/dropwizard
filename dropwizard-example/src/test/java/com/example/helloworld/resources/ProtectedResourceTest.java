@@ -48,8 +48,8 @@ public class ProtectedResourceTest {
     @Test
     public void testProtectedEndpointNoCredentials401() {
         try {
-             RULE.getJerseyTest().target("/protected").request()
-                    .get(String.class);
+            RULE.getJerseyTest().target("/protected").request()
+                .get(String.class);
             failBecauseExceptionWasNotThrown(NotAuthorizedException.class);
         } catch (NotAuthorizedException e) {
             assertThat(e.getResponse().getStatus()).isEqualTo(401);

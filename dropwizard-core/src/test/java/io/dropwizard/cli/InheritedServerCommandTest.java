@@ -88,7 +88,7 @@ public class InheritedServerCommandTest {
     @Test
     public void usesDefaultConfigPath() throws Exception {
 
-        class SingletonConfigurationFactory implements ConfigurationFactory{
+        class SingletonConfigurationFactory implements ConfigurationFactory {
             @Override
             public Object build(final ConfigurationSourceProvider provider, final String path) throws IOException, ConfigurationException {
                 return configuration;

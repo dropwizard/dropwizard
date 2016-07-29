@@ -618,14 +618,14 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
 
         final String trustStoreType = getTrustStoreType();
         if (trustStoreType.startsWith("Windows-")) {
-          try {
-            final KeyStore keyStore = KeyStore.getInstance(trustStoreType);
+            try {
+                final KeyStore keyStore = KeyStore.getInstance(trustStoreType);
 
-            keyStore.load(null, null);
-            factory.setTrustStore(keyStore);
-          } catch (Exception e) {
-            throw new IllegalStateException("Windows key store not supported", e);
-          }
+                keyStore.load(null, null);
+                factory.setTrustStore(keyStore);
+            } catch (Exception e) {
+                throw new IllegalStateException("Windows key store not supported", e);
+            }
         } else {
             if (trustStorePath != null) {
                 factory.setTrustStorePath(trustStorePath);

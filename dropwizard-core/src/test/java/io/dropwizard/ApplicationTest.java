@@ -9,7 +9,8 @@ import java.io.File;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class ApplicationTest {
-    private static class FakeConfiguration extends Configuration {}
+    private static class FakeConfiguration extends Configuration {
+    }
 
     private static class FakeApplication extends Application<FakeConfiguration> {
         boolean fatalError = false;
@@ -23,7 +24,8 @@ public class ApplicationTest {
         }
     }
 
-    private static class PoserApplication extends FakeApplication {}
+    private static class PoserApplication extends FakeApplication {
+    }
 
     private static class WrapperApplication<C extends FakeConfiguration> extends Application<C> {
         private final Application<C> application;
@@ -69,8 +71,7 @@ public class ApplicationTest {
             final FakeApplication application = new FakeApplication();
             application.run("server", configFile.getAbsolutePath());
             assertThat(application.fatalError).isTrue();
-        }
-        finally {
+        } finally {
             configFile.delete();
         }
     }

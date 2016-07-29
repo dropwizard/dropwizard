@@ -104,7 +104,7 @@ public class BootstrapTest {
     public void defaultsToDefaultValidatorFactory() throws Exception {
         assertThat(bootstrap.getValidatorFactory()).isInstanceOf(ValidatorFactoryImpl.class);
 
-        ValidatorFactoryImpl validatorFactory = (ValidatorFactoryImpl)bootstrap.getValidatorFactory();
+        ValidatorFactoryImpl validatorFactory = (ValidatorFactoryImpl) bootstrap.getValidatorFactory();
 
         // It's imperative that the NonEmptyString validator come before the general param validator
         // because a NonEmptyString is a param that wraps an optional and the Hibernate Validator
