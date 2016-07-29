@@ -43,7 +43,8 @@ public class ResourceTestRule implements TestRule {
         private final Map<String, Object> properties = new HashMap<>();
         private ObjectMapper mapper = Jackson.newObjectMapper();
         private Validator validator = Validators.newValidator();
-        private Consumer<ClientConfig> clientConfigurator = c -> {};
+        private Consumer<ClientConfig> clientConfigurator = c -> {
+        };
         private TestContainerFactory testContainerFactory = new InMemoryTestContainerFactory();
         private boolean registerDefaultExceptionMappers = true;
 

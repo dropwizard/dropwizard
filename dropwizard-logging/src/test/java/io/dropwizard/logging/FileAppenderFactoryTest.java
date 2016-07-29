@@ -77,7 +77,7 @@ public class FileAppenderFactoryTest {
     }
 
     @Test
-    public void hasArchivedLogFilenamePattern() throws Exception{
+    public void hasArchivedLogFilenamePattern() throws Exception {
         FileAppenderFactory fileAppenderFactory = new FileAppenderFactory();
         fileAppenderFactory.setCurrentLogFilename(folder.newFile("logfile.log").toString());
         ImmutableList<String> errors =
@@ -91,7 +91,7 @@ public class FileAppenderFactoryTest {
     }
 
     @Test
-    public void isValidForInfiniteRolledFiles() throws Exception{
+    public void isValidForInfiniteRolledFiles() throws Exception {
         FileAppenderFactory fileAppenderFactory = new FileAppenderFactory();
         fileAppenderFactory.setCurrentLogFilename(folder.newFile("logfile.log").toString());
         fileAppenderFactory.setArchivedFileCount(0);
@@ -103,7 +103,7 @@ public class FileAppenderFactoryTest {
     }
 
     @Test
-    public void isValidForMaxFileSize() throws Exception{
+    public void isValidForMaxFileSize() throws Exception {
         FileAppenderFactory fileAppenderFactory = new FileAppenderFactory();
         fileAppenderFactory.setCurrentLogFilename(folder.newFile("logfile.log").toString());
         fileAppenderFactory.setMaxFileSize(Size.kilobytes(1));
@@ -118,7 +118,7 @@ public class FileAppenderFactoryTest {
     }
 
     @Test
-    public void hasMaxFileSizeValidation() throws Exception{
+    public void hasMaxFileSizeValidation() throws Exception {
         FileAppenderFactory fileAppenderFactory = new FileAppenderFactory();
         fileAppenderFactory.setCurrentLogFilename(folder.newFile("logfile.log").toString());
         fileAppenderFactory.setArchivedLogFilenamePattern(folder.newFile("example-%i.log.gz").toString());

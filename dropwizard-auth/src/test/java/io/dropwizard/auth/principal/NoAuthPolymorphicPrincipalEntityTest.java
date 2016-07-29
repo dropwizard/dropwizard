@@ -7,7 +7,6 @@ import io.dropwizard.auth.PolymorphicAuthDynamicFeature;
 import io.dropwizard.auth.PolymorphicAuthValueFactoryProvider;
 import io.dropwizard.logging.BootstrapLogging;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
-import org.glassfish.jersey.server.model.Parameter;
 import org.glassfish.jersey.servlet.ServletProperties;
 import org.glassfish.jersey.test.DeploymentContext;
 import org.glassfish.jersey.test.JerseyTest;
@@ -95,10 +94,10 @@ public class NoAuthPolymorphicPrincipalEntityTest extends JerseyTest {
 
     /**
      * When parameter is annotated then Jersey classifies such
-     * parameter as {@link Parameter.Source#UNKNOWN} instead of
-     * {@link Parameter.Source#ENTITY} which is used for unannotated
-     * parameters. ValueFactoryProvider resolution logic is different
-     * for these two sources therefore must be tested separately.
+     * parameter as {@link org.glassfish.jersey.server.model.Parameter.Source#UNKNOWN}
+     * instead of {@link org.glassfish.jersey.server.model.Parameter.Source#ENTITY}
+     * which is used for unannotated parameters. ValueFactoryProvider resolution
+     * logic is different for these two sources therefore must be tested separately.
      */
     @Test
     public void annotatedJsonPrincipalEntityResourceWithoutAuth200() {

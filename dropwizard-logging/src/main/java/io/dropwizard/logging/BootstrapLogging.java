@@ -22,9 +22,9 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class BootstrapLogging {
 
-    @GuardedBy("bootstrappingLock")
+    @GuardedBy("BOOTSTRAPPING_LOCK")
     private static boolean bootstrapped = false;
-    private static final Lock bootstrappingLock = new ReentrantLock();
+    private static final Lock BOOTSTRAPPING_LOCK = new ReentrantLock();
 
     private BootstrapLogging() {
     }
@@ -37,7 +37,7 @@ public class BootstrapLogging {
     public static void bootstrap(Level level) {
         LoggingUtil.hijackJDKLogging();
 
-        bootstrappingLock.lock();
+        BOOTSTRAPPING_LOCK.lock();
         try {
             if (bootstrapped) {
                 return;
@@ -64,7 +64,7 @@ public class BootstrapLogging {
             root.addAppender(appender);
             bootstrapped = true;
         } finally {
-            bootstrappingLock.unlock();
+            BOOTSTRAPPING_LOCK.unlock();
         }
     }
 }

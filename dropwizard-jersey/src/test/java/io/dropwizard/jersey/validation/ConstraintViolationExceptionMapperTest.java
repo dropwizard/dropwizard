@@ -450,7 +450,8 @@ public class ConstraintViolationExceptionMapperTest extends JerseyTest {
 
         assertThat(response.getStatus()).isEqualTo(200);
         final Collection<Example> example =
-                response.readEntity(new GenericType<Collection<Example>>() {});
+            response.readEntity(new GenericType<Collection<Example>>() {
+            });
 
         Example ex1 = new Example();
         Example ex2 = new Example();
@@ -496,7 +497,8 @@ public class ConstraintViolationExceptionMapperTest extends JerseyTest {
 
         assertThat(response.getStatus()).isEqualTo(200);
 
-        Map<String, Example> map = response.readEntity(new GenericType<Map<String, Example>>(){});
+        Map<String, Example> map = response.readEntity(new GenericType<Map<String, Example>>() {
+        });
         assertThat(map.get("one").id).isEqualTo(1);
         assertThat(map.get("two").id).isEqualTo(2);
     }
@@ -518,7 +520,8 @@ public class ConstraintViolationExceptionMapperTest extends JerseyTest {
                 .request().post(Entity.json("[ {\"examples\": [ {\"id\":1 } ] } ]"));
 
         assertThat(response.getStatus()).isEqualTo(200);
-        List<ListExample> res = response.readEntity(new GenericType<List<ListExample>>() {});
+        List<ListExample> res = response.readEntity(new GenericType<List<ListExample>>() {
+        });
         assertThat(res).hasSize(1);
         assertThat(res.get(0).examples).hasSize(1);
         assertThat(res.get(0).examples.get(0).id).isEqualTo(1);

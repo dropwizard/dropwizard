@@ -5,7 +5,8 @@ import org.junit.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class ViewTest {
-    private final View view = new View("/blah.tmp") {};
+    private final View view = new View("/blah.tmp") {
+    };
 
     @Test
     public void hasATemplate() throws Exception {

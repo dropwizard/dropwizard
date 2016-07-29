@@ -211,7 +211,7 @@ public class DbDumpCommand<T extends Configuration> extends AbstractLiquibaseCom
         final SnapshotControl snapshotControl = new SnapshotControl(database,
                 compareTypes.toArray(new Class[compareTypes.size()]));
         final CompareControl compareControl = new CompareControl(new CompareControl.SchemaComparison[]{
-                new CompareControl.SchemaComparison(catalogAndSchema, catalogAndSchema)}, compareTypes);
+            new CompareControl.SchemaComparison(catalogAndSchema, catalogAndSchema)}, compareTypes);
         final CatalogAndSchema[] compareControlSchemas = compareControl
                 .getSchemas(CompareControl.DatabaseRole.REFERENCE);
 

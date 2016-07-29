@@ -19,7 +19,7 @@ import static com.codahale.metrics.MetricRegistry.name;
 /**
  * An {@link Authorizer} decorator which uses a Guava {@link Cache} to
  * temporarily cache principals' role associations.
- *
+ * <p>
  * Cache entries include both inclusion and exclusion of a principal
  * within a given role.
  *
@@ -45,23 +45,23 @@ public class CachingAuthorizer<P extends Principal> implements Authorizer<P> {
      * Creates a new cached authorizer.
      *
      * @param metricRegistry the application's registry of metrics
-     * @param authorizer the underlying authorizer
-     * @param cacheSpec {@link CacheBuilderSpec}
+     * @param authorizer     the underlying authorizer
+     * @param cacheSpec      {@link CacheBuilderSpec}
      */
     public CachingAuthorizer(
         final MetricRegistry metricRegistry,
         final Authorizer<P> authorizer,
         final CacheBuilderSpec cacheSpec
     ) {
-      this(metricRegistry, authorizer, CacheBuilder.from(cacheSpec));
+        this(metricRegistry, authorizer, CacheBuilder.from(cacheSpec));
     }
 
     /**
      * Creates a new cached authorizer.
      *
      * @param metricRegistry the application's registry of metrics
-     * @param authorizer the underlying authorizer
-     * @param builder a {@link CacheBuilder}
+     * @param authorizer     the underlying authorizer
+     * @param builder        a {@link CacheBuilder}
      */
     public CachingAuthorizer(
         final MetricRegistry metricRegistry,
@@ -136,8 +136,8 @@ public class CachingAuthorizer<P extends Principal> implements Authorizer<P> {
      * @param predicate a predicate to filter credentials
      */
     public void invalidateAll(Predicate<? super P> predicate) {
-      final Predicate<ImmutablePair<P, String>> nestedPredicate =
-          cacheKey -> predicate.test(cacheKey.getLeft());
+        final Predicate<ImmutablePair<P, String>> nestedPredicate =
+            cacheKey -> predicate.test(cacheKey.getLeft());
 
         cache.invalidateAll(Sets.filter(cache.asMap().keySet(), nestedPredicate::test));
     }

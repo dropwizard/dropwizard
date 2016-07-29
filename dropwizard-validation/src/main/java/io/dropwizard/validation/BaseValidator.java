@@ -6,7 +6,6 @@ import io.dropwizard.validation.valuehandling.OptionalIntValidatedValueUnwrapper
 import io.dropwizard.validation.valuehandling.OptionalLongValidatedValueUnwrapper;
 import org.hibernate.validator.HibernateValidator;
 import org.hibernate.validator.HibernateValidatorConfiguration;
-import org.hibernate.validator.spi.valuehandling.ValidatedValueUnwrapper;
 
 import javax.validation.Validation;
 import javax.validation.Validator;
@@ -23,7 +22,7 @@ public class BaseValidator {
 
     /**
      * Creates a new {@link HibernateValidatorConfiguration} with the base custom {@link
-     * ValidatedValueUnwrapper} registered.
+     * org.hibernate.validator.spi.valuehandling.ValidatedValueUnwrapper} registered.
      */
     public static HibernateValidatorConfiguration newConfiguration() {
         return Validation

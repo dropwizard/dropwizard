@@ -18,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public class ResourceTestWithGrizzly {
     @ClassRule
-    public static final ResourceTestRule resources = ResourceTestRule.builder()
+    public static final ResourceTestRule RESOURCES = ResourceTestRule.builder()
             .addResource(new ContextInjectionResource())
             .setTestContainerFactory(new GrizzlyWebTestContainerFactory())
             .addProvider(new RuntimeExceptionMapper())
@@ -26,14 +26,14 @@ public class ResourceTestWithGrizzly {
 
     @Test
     public void testResource() {
-        assertThat(resources.getJerseyTest().target("test").request()
+        assertThat(RESOURCES.getJerseyTest().target("test").request()
                 .get(String.class))
                 .isEqualTo("test");
     }
 
     @Test
     public void testExceptionMapper() {
-        final Response resp = resources.getJerseyTest().target("test").request()
+        final Response resp = RESOURCES.getJerseyTest().target("test").request()
                 .post(Entity.json(""));
         assertThat(resp.getStatus()).isEqualTo(500);
         assertThat(resp.readEntity(String.class)).isEqualTo("Can't touch this");

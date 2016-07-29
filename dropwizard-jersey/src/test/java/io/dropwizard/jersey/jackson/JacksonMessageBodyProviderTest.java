@@ -281,11 +281,11 @@ public class JacksonMessageBodyProviderTest {
         final ByteArrayInputStream entity = new ByteArrayInputStream("[{\"id\":1}, {\"id\":2}]".getBytes());
 
         final Object obj = provider.readFrom((Class<Object>) klass,
-                type,
-                new Annotation[]{ valid },
-                MediaType.APPLICATION_JSON_TYPE,
-                new MultivaluedHashMap<>(),
-                entity);
+            type,
+            new Annotation[]{valid},
+            MediaType.APPLICATION_JSON_TYPE,
+            new MultivaluedHashMap<>(),
+            entity);
 
         assertThat(obj)
                 .isInstanceOf(klass);

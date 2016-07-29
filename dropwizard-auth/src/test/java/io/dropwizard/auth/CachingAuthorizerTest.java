@@ -8,7 +8,6 @@ import org.junit.Test;
 import org.mockito.InOrder;
 
 import java.security.Principal;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.anyObject;

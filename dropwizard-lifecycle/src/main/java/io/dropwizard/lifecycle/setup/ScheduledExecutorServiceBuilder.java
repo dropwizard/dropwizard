@@ -17,7 +17,7 @@ public class ScheduledExecutorServiceBuilder {
     private ThreadFactory threadFactory;
     private Duration shutdownTime;
     private RejectedExecutionHandler handler;
-    
+
     public ScheduledExecutorServiceBuilder(LifecycleEnvironment environment, String nameFormat, ThreadFactory factory) {
         this.environment = environment;
         this.nameFormat = nameFormat;
@@ -28,7 +28,7 @@ public class ScheduledExecutorServiceBuilder {
     }
 
     public ScheduledExecutorServiceBuilder(LifecycleEnvironment environment, String nameFormat, boolean useDaemonThreads) {
-    	this(environment, nameFormat, new ThreadFactoryBuilder().setNameFormat(nameFormat).setDaemon(useDaemonThreads).build());
+        this(environment, nameFormat, new ThreadFactoryBuilder().setNameFormat(nameFormat).setDaemon(useDaemonThreads).build());
     }
 
     public ScheduledExecutorServiceBuilder threads(int threads) {

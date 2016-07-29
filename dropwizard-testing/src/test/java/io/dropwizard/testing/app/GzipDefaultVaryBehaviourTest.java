@@ -24,14 +24,10 @@ public class GzipDefaultVaryBehaviourTest {
 
     @Test
     public void testDefaultVaryHeader() {
-        final Response clientResponse = ClientBuilder.newClient().target("http://localhost:" +
-                RULE.getLocalPort()
-                +"/test")
-                .request()
-                .header(ACCEPT_ENCODING, "gzip")
-                .get();
+        final Response clientResponse = ClientBuilder.newClient().target(
+            "http://localhost:" + RULE.getLocalPort() + "/test").request().header(ACCEPT_ENCODING, "gzip").get();
 
-        assertThat(clientResponse.getHeaders().get(VARY)).isEqualTo(asList((Object)ACCEPT_ENCODING));
+        assertThat(clientResponse.getHeaders().get(VARY)).isEqualTo(asList((Object) ACCEPT_ENCODING));
         assertThat(clientResponse.getHeaders().get(CONTENT_ENCODING)).isEqualTo(asList((Object) "gzip"));
     }
 }

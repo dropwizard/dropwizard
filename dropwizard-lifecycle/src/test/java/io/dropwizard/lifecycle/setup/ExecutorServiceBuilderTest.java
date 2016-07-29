@@ -106,8 +106,9 @@ public class ExecutorServiceBuilderTest {
             .maxThreads(Integer.MAX_VALUE)
             .build();
 
-        try { verify(log).warn(anyString()); }
-        catch (WantedButNotInvoked error) {
+        try {
+            verify(log).warn(anyString());
+        } catch (WantedButNotInvoked error) {
             // no warning has been given so we should be able to execute at least 2 things at once
             assertCanExecuteAtLeast2ConcurrentTasks(exe);
         }
@@ -122,8 +123,9 @@ public class ExecutorServiceBuilderTest {
         CountDownLatch latch = new CountDownLatch(2);
         Runnable concurrentLatchCountDownAndWait = () -> {
             latch.countDown();
-            try { latch.await(); }
-            catch (InterruptedException ex) {
+            try {
+                latch.await();
+            } catch (InterruptedException ex) {
                 Throwables.propagate(ex);
             }
         };
@@ -136,8 +138,7 @@ public class ExecutorServiceBuilderTest {
             assertThat(latch.await(1, TimeUnit.SECONDS))
                 .as("2 tasks executed concurrently on " + exe)
                 .isTrue();
-        }
-        catch (InterruptedException ex) {
+        } catch (InterruptedException ex) {
             Throwables.propagate(ex);
         }
     }

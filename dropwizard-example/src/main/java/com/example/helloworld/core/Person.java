@@ -12,12 +12,14 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "people")
-@NamedQueries({
-    @NamedQuery(
-        name = "com.example.helloworld.core.Person.findAll",
-        query = "SELECT p FROM Person p"
-    )
-})
+@NamedQueries(
+    {
+        @NamedQuery(
+            name = "com.example.helloworld.core.Person.findAll",
+            query = "SELECT p FROM Person p"
+        )
+    }
+)
 public class Person {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

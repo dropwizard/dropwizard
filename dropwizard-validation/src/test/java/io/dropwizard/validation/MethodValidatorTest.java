@@ -8,7 +8,7 @@ import javax.validation.Validator;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SuppressWarnings({"FieldMayBeFinal","MethodMayBeStatic","UnusedDeclaration"})
+@SuppressWarnings({"FieldMayBeFinal", "MethodMayBeStatic", "UnusedDeclaration"})
 public class MethodValidatorTest {
     public static class SubExample {
         @ValidationMethod(message = "also needs something special")
