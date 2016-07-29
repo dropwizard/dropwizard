@@ -10,3 +10,11 @@ engines:
 ratings:
   paths:
   - "**.java"
+
+exclude_paths:
+- "dropwizard-archetypes/"
+- "**.png"
+- "**.ts"
+- "**.p12"
+- "**.jts"
+- "**.keystore"
