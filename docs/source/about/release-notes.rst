@@ -4,10 +4,21 @@
 Release Notes
 #############
 
+.. _rel-1.1.0:
+
+v1.1.0: Unreleased
+==================
+
+* Remove OptionalValidatedValueUnwrapper `#1583 <https://github.com/dropwizard/dropwizard/pull/1583>`_
+* Allow constraints to be applied to type `#1586 <https://github.com/dropwizard/dropwizard/pull/1586>`_
+* Use LoadingCache in CachingAuthenticator `#1615 <https://github.com/dropwizard/dropwizard/pull/1615>`_
+* Introduce CachingAuthorizer `#1639 <https://github.com/dropwizard/dropwizard/pull/1639>`_
+* Upgraded to Jetty 9.3.11.v20160721 `#1649 <https://github.com/dropwizard/dropwizard/pull/1649>`_
+
 .. _rel-1.0.0:
 
-v1.0.0
-======
+v1.0.0: Jul 26 2016
+===================
 
 * Using Java 8 as baseline
 * ``dropwizard-java8`` bundle merged into mainline `#1365 <https://github.com/dropwizard/dropwizard/issues/1365>`_
@@ -43,7 +54,7 @@ v1.0.0
 * Upgraded to Hibernate Validator 5.2.4.Final
 * Upgraded to HSQLDB 2.3.4
 * Upgraded to Jadira Usertype Core 5.0.0.GA
-* Upgraded to Jackson 2.7.5
+* Upgraded to Jackson 2.7.6
 * Upgraded to JDBI 2.73 `#1358 <https://github.com/dropwizard/dropwizard/pull/1358>`_
 * Upgraded to Jersey 2.23.1
 * Upgraded to Jetty 9.3.9.v20160517 `#1330 <https://github.com/dropwizard/dropwizard/pull/1330>`_

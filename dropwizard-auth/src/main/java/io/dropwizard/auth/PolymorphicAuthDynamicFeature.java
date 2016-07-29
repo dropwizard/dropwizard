@@ -14,8 +14,6 @@ import java.security.Principal;
  * A {@link DynamicFeature} that registers the provided auth filters
  * to resource methods annotated with the {@link Auth} according to
  * the type of the annotated method parameter.
- * <p>Note that this feature only pertains to <i>authentication</i>.
- * To enable authorization, use {@link AuthDynamicFeature}.</p>
  */
 public class PolymorphicAuthDynamicFeature<T extends Principal> implements DynamicFeature {
 

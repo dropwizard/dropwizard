@@ -106,15 +106,16 @@ Request Log
 
     server:
       requestLog:
-        timeZone: UTC
+        appenders:
+          - type: console
+            timeZone: UTC
 
 
 ====================== ================ ===========
 Name                   Default          Description
 ====================== ================ ===========
-timeZone               UTC              The time zone to which request timestamps will be converted.
 appenders              console appender The set of AppenderFactory appenders to which requests will be logged.
-                                        *TODO* See logging/appender refs for more info
+                                        See :ref:`logging <man-configuration-logging>` for more info.
 ====================== ================ ===========
 
 .. _man-configuration-server-push:

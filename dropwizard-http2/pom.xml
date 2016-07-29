@@ -5,7 +5,7 @@
     <parent>
         <groupId>io.dropwizard</groupId>
         <artifactId>dropwizard-parent</artifactId>
-        <version>1.0.0-rc5-SNAPSHOT</version>
+        <version>1.0.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>dropwizard-http2</artifactId>
@@ -268,6 +268,24 @@
             </activation>
             <properties>
                 <alpn-boot.version>8.1.8.v20160420</alpn-boot.version>
+            </properties>
+        </profile>
+        <profile>
+            <id>jdk-1.8.0_101</id>
+            <activation>
+                <jdk>1.8.0_101</jdk>
+            </activation>
+            <properties>
+                <alpn-boot.version>8.1.9.v20160720</alpn-boot.version>
+            </properties>
+        </profile>
+        <profile>
+            <id>jdk-1.8.0_102</id>
+            <activation>
+                <jdk>1.8.0_102</jdk>
+            </activation>
+            <properties>
+                <alpn-boot.version>8.1.9.v20160720</alpn-boot.version>
             </properties>
         </profile>
     </profiles>

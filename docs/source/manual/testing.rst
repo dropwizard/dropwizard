@@ -411,6 +411,10 @@ before the command is ran.
 .. code-block:: java
 
     public class CommandTest {
+        private final PrintStream originalOut = System.out;
+        private final PrintStream originalErr = System.err;
+        private final InputStream originalIn = System.in;
+        
         private final ByteArrayOutputStream stdOut = new ByteArrayOutputStream();
         private final ByteArrayOutputStream stdErr = new ByteArrayOutputStream();
         private Cli cli;
@@ -435,9 +439,9 @@ before the command is ran.
 
         @After
         public void teardown() {
-            System.setOut(null);
-            System.setErr(null);
-            System.setIn(null);
+            System.setOut(originalOut);
+            System.setErr(originalErr);
+            System.setIn(originalIn);
         }
 
         @Test
