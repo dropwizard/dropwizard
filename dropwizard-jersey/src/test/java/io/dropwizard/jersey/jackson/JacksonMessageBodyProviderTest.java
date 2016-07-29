@@ -72,8 +72,11 @@ public class JacksonMessageBodyProviderTest {
         public List<Example> examples;
     }
 
-    public interface Partial1{}
-    public interface Partial2{}
+    public interface Partial1 {
+    }
+
+    public interface Partial2 {
+    }
 
     public static class PartialExample {
         @Min(value = 0, groups = Partial1.class)
@@ -253,19 +256,22 @@ public class JacksonMessageBodyProviderTest {
     @Test
     public void returnsValidatedCollectionRequestEntities() throws Exception {
         testValidatedCollectionType(Collection.class,
-                new TypeToken<Collection<Example>>() {}.getType());
+            new TypeToken<Collection<Example>>() {
+            }.getType());
     }
 
     @Test
     public void returnsValidatedSetRequestEntities() throws Exception {
         testValidatedCollectionType(Set.class,
-                new TypeToken<Set<Example>>() {}.getType());
+            new TypeToken<Set<Example>>() {
+            }.getType());
     }
 
     @Test
     public void returnsValidatedListRequestEntities() throws Exception {
         testValidatedCollectionType(List.class,
-                new TypeToken<List<Example>>() {}.getType());
+            new TypeToken<List<Example>>() {
+            }.getType());
     }
 
     private void testValidatedCollectionType(Class<?> klass, Type type) throws IOException {
@@ -284,7 +290,7 @@ public class JacksonMessageBodyProviderTest {
         assertThat(obj)
                 .isInstanceOf(klass);
 
-        Iterator<Example> iterator = ((Iterable<Example>)obj).iterator();
+        Iterator<Example> iterator = ((Iterable<Example>) obj).iterator();
         assertThat(iterator.next().id).isEqualTo(1);
         assertThat(iterator.next().id).isEqualTo(2);
     }

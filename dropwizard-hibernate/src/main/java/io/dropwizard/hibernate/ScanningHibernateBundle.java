@@ -23,7 +23,7 @@ public abstract class ScanningHibernateBundle<T extends Configuration> extends H
     }
 
     protected ScanningHibernateBundle(String pckg, SessionFactoryFactory sessionFactoryFactory) {
-        this(new String[] { pckg }, sessionFactoryFactory);
+        this(new String[]{pckg}, sessionFactoryFactory);
     }
 
     protected ScanningHibernateBundle(String[] pckgs, SessionFactoryFactory sessionFactoryFactory) {

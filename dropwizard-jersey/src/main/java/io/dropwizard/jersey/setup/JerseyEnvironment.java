@@ -108,7 +108,7 @@ public class JerseyEnvironment {
             normalizedUrlPattern += "/";
         }
         if (!normalizedUrlPattern.endsWith("*")) {
-            normalizedUrlPattern+= "*";
+            normalizedUrlPattern += "*";
         }
         config.setUrlPattern(normalizedUrlPattern);
     }

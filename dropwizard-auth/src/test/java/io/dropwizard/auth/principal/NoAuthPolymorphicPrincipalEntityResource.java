@@ -64,5 +64,6 @@ public class NoAuthPolymorphicPrincipalEntityResource {
 
     @Retention(RetentionPolicy.RUNTIME)
     @Target({ ElementType.PARAMETER })
-    public @interface DummyAnnotation {}
+    public @interface DummyAnnotation {
+    }
 }

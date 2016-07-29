@@ -33,7 +33,7 @@ public class OptionalMessageBodyWriter implements MessageBodyWriter<Optional<?>>
     @Override
     public boolean isWriteable(Class<?> type, Type genericType,
                                Annotation[] annotations, MediaType mediaType) {
-        return (Optional.class.isAssignableFrom(type));
+        return Optional.class.isAssignableFrom(type);
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})

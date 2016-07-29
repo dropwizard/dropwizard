@@ -106,16 +106,16 @@ public class Cli {
                         "entry to your JAR's manifest to enable this."));
         addHelp(p);
         p.addArgument("-v", "--version")
-         .action(Arguments.help()) // never gets called; intercepted in #run
-         .help("show the application version and exit");
+            .action(Arguments.help()) // never gets called; intercepted in #run
+            .help("show the application version and exit");
         return p;
     }
 
     private void addHelp(ArgumentParser p) {
         p.addArgument("-h", "--help")
-         .action(new SafeHelpAction(stdOut))
-         .help("show this help message and exit")
-         .setDefault(Arguments.SUPPRESS);
+            .action(new SafeHelpAction(stdOut))
+            .help("show this help message and exit")
+            .setDefault(Arguments.SUPPRESS);
     }
 
     private void addCommand(Command command) {

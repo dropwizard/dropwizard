@@ -23,7 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class JerseyIgnoreRequestUserAgentHeaderFilterTest {
     @ClassRule
-    public static DropwizardAppRule<Configuration> APP_RULE =
+    public static final DropwizardAppRule<Configuration> APP_RULE =
             new DropwizardAppRule<>(TestApplication.class, Resources.getResource("yaml/jerseyIgnoreRequestUserAgentHeaderFilterTest.yml").getPath());
 
     private final URI testUri = URI.create("http://localhost:" + APP_RULE.getLocalPort());
@@ -82,7 +82,7 @@ public class JerseyIgnoreRequestUserAgentHeaderFilterTest {
 
     @Path("/")
     public static class TestResource {
-       @GET
+        @GET
         @Path("user_agent")
         public String getReturnUserAgentHeader(@HeaderParam("User-Agent") String userAgentHeader) {
             return userAgentHeader;

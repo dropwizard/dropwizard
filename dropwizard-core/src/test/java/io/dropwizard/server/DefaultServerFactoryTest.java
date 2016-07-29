@@ -144,7 +144,7 @@ public class DefaultServerFactoryTest {
         final ScheduledExecutorService executor = Executors.newScheduledThreadPool(3);
         final Server server = http.build(environment);
 
-        ((AbstractNetworkConnector)server.getConnectors()[0]).setPort(0);
+        ((AbstractNetworkConnector) server.getConnectors()[0]).setPort(0);
 
         ScheduledFuture<Void> cleanup = executor.schedule(() -> {
             if (!server.isStopped()) {

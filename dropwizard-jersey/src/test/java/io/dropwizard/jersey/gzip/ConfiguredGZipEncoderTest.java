@@ -99,7 +99,7 @@ public class ConfiguredGZipEncoderTest {
 
         @Override
         public void proceed() throws IOException, WebApplicationException {
-            proceedCalled=true;
+            proceedCalled = true;
         }
 
         @Override

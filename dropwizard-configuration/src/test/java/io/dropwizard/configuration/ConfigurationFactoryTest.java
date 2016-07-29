@@ -397,7 +397,7 @@ public class ConfigurationFactoryTest {
         try {
             new YamlConfigurationFactory<>(NonInsatiableExample.class, validator, Jackson.newObjectMapper(), "dw").build();
             Assert.fail("Configuration is parsed, but shouldn't be");
-        } catch (IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             assertThat(e).hasMessage("Unable create an instance of the configuration class: " +
                     "'io.dropwizard.configuration.ConfigurationFactoryTest.NonInsatiableExample'");
         }

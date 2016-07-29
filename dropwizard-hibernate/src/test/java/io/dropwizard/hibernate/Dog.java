@@ -15,8 +15,8 @@ public class Dog {
     @Id
     private String name;
 
-    @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="owner")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "owner")
     private Person owner;
 
     @JsonProperty

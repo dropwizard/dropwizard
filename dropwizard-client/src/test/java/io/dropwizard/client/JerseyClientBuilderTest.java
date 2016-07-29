@@ -265,21 +265,23 @@ public class JerseyClientBuilderTest {
     @Test
     public void usesACustomConnectionFactoryRegistry() throws Exception {
         final SSLContext ctx = SSLContext.getInstance(SSLConnectionSocketFactory.TLS);
-        ctx.init(null, new TrustManager[]{new X509TrustManager() {
+        ctx.init(null, new TrustManager[]{
+            new X509TrustManager() {
 
-            @Override
-            public void checkClientTrusted(X509Certificate[] xcs, String string) throws CertificateException {
-            }
+                @Override
+                public void checkClientTrusted(X509Certificate[] xcs, String string) throws CertificateException {
+                }
 
-            @Override
-            public void checkServerTrusted(X509Certificate[] xcs, String string) throws CertificateException {
-            }
+                @Override
+                public void checkServerTrusted(X509Certificate[] xcs, String string) throws CertificateException {
+                }
 
-            @Override
-            public X509Certificate[] getAcceptedIssuers() {
-                return null;
+                @Override
+                public X509Certificate[] getAcceptedIssuers() {
+                    return null;
+                }
             }
-        }}, null);
+        }, null);
         final Registry<ConnectionSocketFactory> customRegistry = RegistryBuilder.<ConnectionSocketFactory>create()
                 .register("http", PlainConnectionSocketFactory.getSocketFactory())
                 .register("https", new SSLConnectionSocketFactory(ctx, new NoopHostnameVerifier()))
@@ -297,23 +299,23 @@ public class JerseyClientBuilderTest {
 
     @Test
     public void usesACustomHttpRoutePlanner() {
-       final HttpRoutePlanner customHttpRoutePlanner = new SystemDefaultRoutePlanner(new ProxySelector() {
-           @Override
-           public List<Proxy> select(URI uri) {
-               return ImmutableList.of(new Proxy(Proxy.Type.HTTP, new InetSocketAddress("192.168.53.12", 8080)));
-           }
+        final HttpRoutePlanner customHttpRoutePlanner = new SystemDefaultRoutePlanner(new ProxySelector() {
+            @Override
+            public List<Proxy> select(URI uri) {
+                return ImmutableList.of(new Proxy(Proxy.Type.HTTP, new InetSocketAddress("192.168.53.12", 8080)));
+            }
 
-           @Override
-           public void connectFailed(URI uri, SocketAddress sa, IOException ioe) {
+            @Override
+            public void connectFailed(URI uri, SocketAddress sa, IOException ioe) {
 
-           }
-       });
+            }
+        });
         builder.using(customHttpRoutePlanner);
         verify(apacheHttpClientBuilder).using(customHttpRoutePlanner);
     }
 
     @Test
-    public void usesACustomCredentialsProvider(){
+    public void usesACustomCredentialsProvider() {
         CredentialsProvider customCredentialsProvider = new SystemDefaultCredentialsProvider();
         builder.using(customCredentialsProvider);
         verify(apacheHttpClientBuilder).using(customCredentialsProvider);

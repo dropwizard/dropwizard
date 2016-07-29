@@ -32,8 +32,8 @@ public class ServerCommandTest {
         protected void doStop() throws Exception {
             super.doStop();
             if (ServerCommandTest.this.throwException) {
-               System.out.println("throw NullPointerException, see Issue#1557");
-               throw new NullPointerException();
+                System.out.println("throw NullPointerException, see Issue#1557");
+                throw new NullPointerException();
             }
         }
     };

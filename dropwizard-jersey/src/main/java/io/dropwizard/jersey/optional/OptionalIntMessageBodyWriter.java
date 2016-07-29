@@ -24,7 +24,7 @@ public class OptionalIntMessageBodyWriter implements MessageBodyWriter<OptionalI
 
     @Override
     public boolean isWriteable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
-        return (OptionalInt.class.isAssignableFrom(type));
+        return OptionalInt.class.isAssignableFrom(type);
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})

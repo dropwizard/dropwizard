@@ -38,12 +38,12 @@ public class HelloWorldApplication extends Application<HelloWorldConfiguration> 
     }
 
     private final HibernateBundle<HelloWorldConfiguration> hibernateBundle =
-            new HibernateBundle<HelloWorldConfiguration>(Person.class) {
-                @Override
-                public DataSourceFactory getDataSourceFactory(HelloWorldConfiguration configuration) {
-                    return configuration.getDataSourceFactory();
-                }
-            };
+        new HibernateBundle<HelloWorldConfiguration>(Person.class) {
+            @Override
+            public DataSourceFactory getDataSourceFactory(HelloWorldConfiguration configuration) {
+                return configuration.getDataSourceFactory();
+            }
+        };
 
     @Override
     public String getName() {
