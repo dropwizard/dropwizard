@@ -13,7 +13,7 @@ import io.dropwizard.jersey.DropwizardResourceConfig;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class OAuthProviderTest extends AuthBaseTest<OAuthProviderTest.OAuthTestResourceConfig>{
+public class OAuthProviderTest extends AuthBaseTest<OAuthProviderTest.OAuthTestResourceConfig> {
     public static class OAuthTestResourceConfig extends AbstractAuthResourceConfig {
         public OAuthTestResourceConfig() {
             register(AuthResource.class);

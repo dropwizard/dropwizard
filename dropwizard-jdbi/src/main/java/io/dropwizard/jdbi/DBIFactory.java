@@ -58,10 +58,10 @@ public class DBIFactory {
     private static class SanerNamingStrategy extends DelegatingStatementNameStrategy {
         private SanerNamingStrategy() {
             super(NameStrategies.CHECK_EMPTY,
-                    NameStrategies.CONTEXT_CLASS,
-                    NameStrategies.CONTEXT_NAME,
-                    NameStrategies.SQL_OBJECT,
-                    statementContext -> RAW_SQL);
+                NameStrategies.CONTEXT_CLASS,
+                NameStrategies.CONTEXT_NAME,
+                NameStrategies.SQL_OBJECT,
+                statementContext -> RAW_SQL);
         }
     }
 

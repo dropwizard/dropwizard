@@ -109,7 +109,7 @@ public class DataSourceConfigurationTest {
     @Test
     public void testInitialSizeZeroIsAllowed() throws Exception {
         DataSourceFactory ds = getDataSourceFactory("yaml/empty_initial_pool.yml");
-           assertThat(ds.getInitialSize()).isEqualTo(0);
+        assertThat(ds.getInitialSize()).isEqualTo(0);
     }
 
     private DataSourceFactory getDataSourceFactory(String resourceName) throws Exception {

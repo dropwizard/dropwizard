@@ -20,15 +20,15 @@ public class LevenshteinComparatorTest {
     @Test
     public void testLevenshteinComparatorSort() {
         // no assertions, just making sure we don't violate the compare contract
-        Arrays.sort(new String[] {
-                "y", "w", "y", "e",
-                "s", "u", "h", "o",
-                "d", "t", "d", "f",
-                "z", "j", "c", "k",
-                "f", "z", "o", "e",
-                "r", "t", "v", "d",
-                "l", "r", "w", "u",
-                "v", "a", "m", "o" }, c);
+        Arrays.sort(new String[]{
+            "y", "w", "y", "e",
+            "s", "u", "h", "o",
+            "d", "t", "d", "f",
+            "z", "j", "c", "k",
+            "f", "z", "o", "e",
+            "r", "t", "v", "d",
+            "l", "r", "w", "u",
+            "v", "a", "m", "o"}, c);
     }
 
     @Test

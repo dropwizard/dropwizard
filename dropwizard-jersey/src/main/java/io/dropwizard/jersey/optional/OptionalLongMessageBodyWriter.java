@@ -24,7 +24,7 @@ public class OptionalLongMessageBodyWriter implements MessageBodyWriter<Optional
 
     @Override
     public boolean isWriteable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
-        return (OptionalLong.class.isAssignableFrom(type));
+        return OptionalLong.class.isAssignableFrom(type);
     }
 
     @Override

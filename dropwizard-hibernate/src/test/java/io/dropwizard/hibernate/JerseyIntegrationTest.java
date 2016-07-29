@@ -105,7 +105,7 @@ public class JerseyIntegrationTest extends JerseyTest {
         when(environment.lifecycle()).thenReturn(lifecycleEnvironment);
         when(environment.metrics()).thenReturn(metricRegistry);
 
-        dbConfig.setUrl("jdbc:hsqldb:mem:DbTest-" + System.nanoTime()+"?hsqldb.translate_dti_types=false");
+        dbConfig.setUrl("jdbc:hsqldb:mem:DbTest-" + System.nanoTime() + "?hsqldb.translate_dti_types=false");
         dbConfig.setUser("sa");
         dbConfig.setDriverClass("org.hsqldb.jdbcDriver");
         dbConfig.setValidationQuery("SELECT 1 FROM INFORMATION_SCHEMA.SYSTEM_USERS");

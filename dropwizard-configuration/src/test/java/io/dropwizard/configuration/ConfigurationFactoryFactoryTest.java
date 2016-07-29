@@ -24,11 +24,12 @@ public class ConfigurationFactoryFactoryTest {
         this.validFile = new File(Resources.getResource("factory-test-valid.yml").toURI());
     }
 
-     @Test
-     public void createDefaultFactory() throws Exception {
-         ConfigurationFactory<Example> factory = factoryFactory.create(Example.class, validator, Jackson.newObjectMapper(), "dw");
-         final Example example = factory.build(validFile);
-         assertThat(example.getName())
-                 .isEqualTo("Coda Hale");
-     }
+    @Test
+    public void createDefaultFactory() throws Exception {
+        ConfigurationFactory<Example> factory =
+            factoryFactory.create(Example.class, validator, Jackson.newObjectMapper(), "dw");
+        final Example example = factory.build(validFile);
+        assertThat(example.getName())
+            .isEqualTo("Coda Hale");
+    }
 }

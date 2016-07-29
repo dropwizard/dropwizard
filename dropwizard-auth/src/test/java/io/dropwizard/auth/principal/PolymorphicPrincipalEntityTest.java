@@ -116,8 +116,8 @@ public class PolymorphicPrincipalEntityTest extends JerseyTest {
     @Test
     public void jsonPrincipalEntityResourceNoAuth401() {
         try {
-          target("/auth-test/json-principal-entity").request().get(String.class);
-          failBecauseExceptionWasNotThrown(WebApplicationException.class);
+            target("/auth-test/json-principal-entity").request().get(String.class);
+            failBecauseExceptionWasNotThrown(WebApplicationException.class);
         } catch (WebApplicationException e) {
             assertThat(e.getResponse().getStatus()).isEqualTo(401);
         }
@@ -134,8 +134,8 @@ public class PolymorphicPrincipalEntityTest extends JerseyTest {
     @Test
     public void nullPrincipalEntityResourceNoAuth401() {
         try {
-          target("/auth-test/null-principal-entity").request().get(String.class);
-          failBecauseExceptionWasNotThrown(WebApplicationException.class);
+            target("/auth-test/null-principal-entity").request().get(String.class);
+            failBecauseExceptionWasNotThrown(WebApplicationException.class);
         } catch (WebApplicationException e) {
             assertThat(e.getResponse().getStatus()).isEqualTo(401);
         }

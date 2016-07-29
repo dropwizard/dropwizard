@@ -44,5 +44,5 @@ public abstract class AbstractAuthResourceConfig extends DropwizardResourceConfi
      * @return The {@link ContainerRequestFilter} to use for request
      *         authentication.
      */
-    protected abstract ContainerRequestFilter getAuthFilter() ;
+    protected abstract ContainerRequestFilter getAuthFilter();
 }

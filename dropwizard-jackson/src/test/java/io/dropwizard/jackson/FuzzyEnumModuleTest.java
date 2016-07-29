@@ -16,7 +16,10 @@ import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
 public class FuzzyEnumModuleTest {
     private final ObjectMapper mapper = new ObjectMapper();
 
-    private enum EnumWithLowercase {lower_case_enum, mixedCaseEnum}
+    private enum EnumWithLowercase {
+        lower_case_enum,
+        mixedCaseEnum
+    }
 
     private enum EnumWithCreator {
         TEST;
@@ -123,12 +126,12 @@ public class FuzzyEnumModuleTest {
                 .configure(DeserializationFeature.READ_ENUMS_USING_TO_STRING, true);
         assertThat(toStringEnumsMapper.readValue("\"Pound sterling\"", CurrencyCode.class)).isEqualTo(CurrencyCode.GBP);
     }
-    
+
     @Test
     public void readsEnumsUsingToStringWithDeserializationFeatureOff() throws Exception {
         assertThat(mapper.readValue("\"Pound sterling\"", CurrencyCode.class)).isEqualTo(CurrencyCode.GBP);
         assertThat(mapper.readValue("\"a_u_d\"", CurrencyCode.class)).isEqualTo(CurrencyCode.AUD);
         assertThat(mapper.readValue("\"c-a-d\"", CurrencyCode.class)).isEqualTo(CurrencyCode.CAD);
         assertThat(mapper.readValue("\"b.l.a\"", CurrencyCode.class)).isEqualTo(CurrencyCode.BLA);
-    }    
+    }
 }
