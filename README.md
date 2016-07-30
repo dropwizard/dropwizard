@@ -4,6 +4,7 @@ Dropwizard
 [![Coverage Status](https://img.shields.io/coveralls/dropwizard/dropwizard.svg)](https://coveralls.io/r/dropwizard/dropwizard)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/io.dropwizard/dropwizard-core/badge.svg)](https://maven-badges.herokuapp.com/maven-central/io.dropwizard/dropwizard-core/)
 [![Javadoc](https://javadoc-emblem.rhcloud.com/doc/io.dropwizard/dropwizard-core/badge.svg)](http://www.javadoc.io/doc/io.dropwizard/dropwizard-core)
+[![Code Climate](https://codeclimate.com/github/dropwizard/dropwizard/badges/gpa.svg)](https://codeclimate.com/github/dropwizard/dropwizard)
 
 *Dropwizard is a sneaky way of making fast Java web applications.*
 
