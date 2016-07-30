@@ -19,10 +19,10 @@ import io.dropwizard.util.JarLocation;
  * @param <T> the type of configuration class for this application
  */
 public abstract class Application<T extends Configuration> {
-    protected Application() {
-        // make sure spinning up Hibernate Validator doesn't yell at us
-        BootstrapLogging.bootstrap();
-    }
+  protected Application() {
+    // make sure spinning up Hibernate Validator doesn't yell at us
+    BootstrapLogging.bootstrap();
+  }
 
     /**
      * Returns the {@link Class} of the configuration class type parameter.
