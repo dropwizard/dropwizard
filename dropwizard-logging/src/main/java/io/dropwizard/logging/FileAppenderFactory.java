@@ -220,16 +220,19 @@ public class FileAppenderFactory<E extends DeferredProcessingAware> extends Abst
 
             if (maxFileSize != null && !archivedLogFilenamePattern.contains("%d")) {
                 final FixedWindowRollingPolicy rollingPolicy = new FixedWindowRollingPolicy();
-                final SizeBasedTriggeringPolicy<E> triggeringPolicy = new SizeBasedTriggeringPolicy<>();
-                triggeringPolicy.setMaxFileSize(String.valueOf(maxFileSize.toBytes()));
-                triggeringPolicy.setContext(context);
                 rollingPolicy.setContext(context);
                 rollingPolicy.setMaxIndex(getArchivedFileCount());
                 rollingPolicy.setFileNamePattern(getArchivedLogFilenamePattern());
-                appender.setRollingPolicy(rollingPolicy);
-                appender.setTriggeringPolicy(triggeringPolicy);
                 rollingPolicy.setParent(appender);
                 rollingPolicy.start();
+                appender.setRollingPolicy(rollingPolicy);
+                
+                final SizeBasedTriggeringPolicy<E> triggeringPolicy = new SizeBasedTriggeringPolicy<>();
+                triggeringPolicy.setMaxFileSize(String.valueOf(maxFileSize.toBytes()));
+                triggeringPolicy.setContext(context);
+                triggeringPolicy.start();
+                appender.setTriggeringPolicy(triggeringPolicy);
+                
                 return appender;
             } else {
                 final TimeBasedFileNamingAndTriggeringPolicy<E> triggeringPolicy;

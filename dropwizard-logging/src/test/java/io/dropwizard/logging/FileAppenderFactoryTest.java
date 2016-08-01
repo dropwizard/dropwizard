@@ -190,7 +190,10 @@ public class FileAppenderFactoryTest {
         RollingFileAppender<ILoggingEvent> appender = (RollingFileAppender<ILoggingEvent>) fileAppenderFactory.buildAppender(new LoggerContext());
 
         assertThat(appender.getRollingPolicy()).isInstanceOf(FixedWindowRollingPolicy.class);
+        assertThat(appender.getRollingPolicy().isStarted());
+        
         assertThat(appender.getTriggeringPolicy()).isInstanceOf(SizeBasedTriggeringPolicy.class);
+        assertThat(appender.getTriggeringPolicy().isStarted());
         assertThat(((SizeBasedTriggeringPolicy) appender.getTriggeringPolicy()).getMaxFileSize()).isEqualTo("1024");
     }
 
