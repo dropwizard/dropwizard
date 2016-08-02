@@ -1,5 +1,6 @@
 package io.dropwizard;
 
+import ch.qos.logback.classic.Level;
 import io.dropwizard.cli.CheckCommand;
 import io.dropwizard.cli.Cli;
 import io.dropwizard.cli.ServerCommand;
@@ -12,16 +13,25 @@ import io.dropwizard.util.JarLocation;
 /**
  * The base class for Dropwizard applications.
  *
- * The default constructor will be inherited in subclasses if
- * a default constructor isn't provided. If you do provide one,
- * it's important to call default constructor to preserve logging
+ * Because the default constructor will be inherited by all
+ * subclasses, {BootstrapLogging.bootstrap()} will always be
+ * invoked. The log level used during the bootstrap process can be
+ * configured by {Application} subclasses by overriding
+ * {#bootstrapLogLevel}.
  *
  * @param <T> the type of configuration class for this application
  */
 public abstract class Application<T extends Configuration> {
     protected Application() {
         // make sure spinning up Hibernate Validator doesn't yell at us
-        BootstrapLogging.bootstrap();
+        BootstrapLogging.bootstrap(bootstrapLogLevel());
+    }
+
+    /**
+     * The log level at which to bootstrap logging on application startup.
+     */
+    protected Level bootstrapLogLevel() {
+        return Level.WARN;
     }
 
     /**
