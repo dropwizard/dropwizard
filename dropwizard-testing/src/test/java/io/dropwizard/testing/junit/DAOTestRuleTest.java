@@ -1,18 +1,15 @@
 package io.dropwizard.testing.junit;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.notNullValue;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
-
-import java.io.Serializable;
-
-import javax.validation.ConstraintViolationException;
-
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.junit.Rule;
 import org.junit.Test;
+
+import javax.validation.ConstraintViolationException;
+import java.io.Serializable;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
 
 public class DAOTestRuleTest {
 
@@ -23,14 +20,14 @@ public class DAOTestRuleTest {
     public void ruleCreatedSessionFactory() {
         final SessionFactory sessionFactory = daoTestRule.getSessionFactory();
 
-        assertThat(sessionFactory, notNullValue());
+        assertThat(sessionFactory).isNotNull();
     }
 
     @Test
     public void ruleCanOpenTransaction() {
         final Long id = daoTestRule.inTransaction(() -> persist(new TestEntity("description")).getId());
 
-        assertThat(id, notNullValue());
+        assertThat(id).isNotNull();
     }
 
     @Test
@@ -39,12 +36,12 @@ public class DAOTestRuleTest {
 
         final TestEntity testEntity = get(id);
 
-        assertThat(testEntity, notNullValue());
-        assertThat(testEntity.getDescription(), equalTo("description"));
+        assertThat(testEntity).isNotNull();
+        assertThat(testEntity.getDescription()).isEqualTo("description");
     }
 
     @Test(expected = ConstraintViolationException.class)
-    public void transcationThrowsExceptionAsExpected() {
+    public void transactionThrowsExceptionAsExpected() {
         daoTestRule.inTransaction(() -> persist(new TestEntity(null)));
     }
 
@@ -62,14 +59,13 @@ public class DAOTestRuleTest {
                 persist(testEntity);
                 persist(new TestEntity(null));
             });
-            fail("Expected a constraint violation");
+            failBecauseExceptionWasNotThrown(ConstraintViolationException.class);
         } catch (ConstraintViolationException ignoredException) {
             // keep calm and carry on
+            // ... the entity has the original value
+            final TestEntity sameTestEntity = get(testEntity.getId());
+            assertThat(sameTestEntity.getDescription()).isEqualTo("description");
         }
-
-        // ... the entity has the original value
-        final TestEntity sameTestEntity = get(testEntity.getId());
-        assertThat(sameTestEntity.getDescription(), equalTo("description"));
     }
 
 
