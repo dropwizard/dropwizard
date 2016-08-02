@@ -11,9 +11,9 @@ public class DAOTestRuleConfigTest {
 
     @Rule
     public final DAOTestRule database = DAOTestRule.newBuilder()
-        .setConnectionUrl("jdbc:h2:mem:rule-config-test")
-        .setConnectionDriverClass(org.h2.Driver.class)
-        .setConnectionUsername("username")
+        .setUrl("jdbc:h2:mem:rule-config-test")
+        .setDriver(org.h2.Driver.class)
+        .setUsername("username")
         .useSqlComments(true)
         .setHbm2DdlAuto("create")
         .setShowSql(true)

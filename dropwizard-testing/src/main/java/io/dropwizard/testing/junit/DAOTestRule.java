@@ -24,28 +24,28 @@ public class DAOTestRule extends ExternalResource {
 
     public static class Builder {
 
-        private String connectionUrl = "jdbc:h2:mem:" + UUID.randomUUID();
-        private String connectionUsername = "sa";
-        private String connectionPassword = "";
-        private String connectionDriverClass = "org.h2.Driver";
+        private String url = "jdbc:h2:mem:" + UUID.randomUUID();
+        private String username = "sa";
+        private String password = "";
+        private String driver = "org.h2.Driver";
         private String hbm2ddlAuto = "create";
         private boolean showSql = false;
         private boolean useSqlComments = false;
         private Set<Class<?>> entityClasses = new LinkedHashSet<>();
         private Map<String, String> properties = new HashMap<>();
 
-        public Builder setConnectionUrl(final String connectionUrl) {
-            this.connectionUrl = connectionUrl;
+        public Builder setUrl(final String url) {
+            this.url = url;
             return this;
         }
 
-        public Builder setConnectionUsername(final String connectionUsername) {
-            this.connectionUsername = connectionUsername;
+        public Builder setUsername(final String username) {
+            this.username = username;
             return this;
         }
 
-        public Builder setConnectionDriverClass(final Class<? extends java.sql.Driver> driverClass) {
-            this.connectionDriverClass = driverClass.getName();
+        public Builder setDriver(final Class<? extends java.sql.Driver> driver) {
+            this.driver = driver.getName();
             return this;
         }
 
@@ -76,10 +76,10 @@ public class DAOTestRule extends ExternalResource {
 
         public DAOTestRule build() {
             final Configuration config = new Configuration();
-            config.setProperty(AvailableSettings.URL, connectionUrl);
-            config.setProperty(AvailableSettings.USER, connectionUsername);
-            config.setProperty(AvailableSettings.PASS, connectionPassword);
-            config.setProperty(AvailableSettings.DRIVER, connectionDriverClass);
+            config.setProperty(AvailableSettings.URL, url);
+            config.setProperty(AvailableSettings.USER, username);
+            config.setProperty(AvailableSettings.PASS, password);
+            config.setProperty(AvailableSettings.DRIVER, driver);
             config.setProperty(AvailableSettings.HBM2DDL_AUTO, hbm2ddlAuto);
             config.setProperty(AvailableSettings.SHOW_SQL, String.valueOf(showSql));
             config.setProperty(AvailableSettings.USE_SQL_COMMENTS, String.valueOf(useSqlComments));
