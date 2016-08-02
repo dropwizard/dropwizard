@@ -87,6 +87,16 @@ public class UnitOfWorkAwareProxyFactoryTest {
                 .authenticate("b812ae4");
     }
 
+    @Test
+    public void testNewAspect() {
+        final UnitOfWorkAwareProxyFactory unitOfWorkAwareProxyFactory =
+                new UnitOfWorkAwareProxyFactory("default", sessionFactory);
+
+        UnitOfWorkAspect aspect1 = unitOfWorkAwareProxyFactory.newAspect();
+        UnitOfWorkAspect aspect2 = unitOfWorkAwareProxyFactory.newAspect();
+        assertThat(aspect1).isNotSameAs(aspect2);
+    }
+
     static class SessionDao {
 
         private SessionFactory sessionFactory;
