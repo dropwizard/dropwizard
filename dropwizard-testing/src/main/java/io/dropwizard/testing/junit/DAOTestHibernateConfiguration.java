@@ -1,27 +1,16 @@
 package io.dropwizard.testing.junit;
 
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 
 class DAOTestHibernateConfiguration {
 
-    String connectionUrl;
-    String connectionUsername;
-    String connectionDriverClass;
-    String currentSessionContextClass;
-    String hbm2ddlAuto;
-    String showSql;
-
-    Set<Class<?>> entityClasses;
-
-    DAOTestHibernateConfiguration() {
-        connectionUrl = "jdbc:h2:mem:";
-        connectionUsername = "test";
-        connectionDriverClass = "org.h2.Driver";
-        currentSessionContextClass = "managed";
-        hbm2ddlAuto = "create";
-        showSql = "false";
-
-        entityClasses = new LinkedHashSet<>();
-    }
+    String connectionUrl = "jdbc:h2:mem:" + UUID.randomUUID();
+    String connectionUsername = "sa";
+    String connectionPassword = "";
+    String connectionDriverClass = "org.h2.Driver";
+    String hbm2ddlAuto = "create";
+    boolean showSql = false;
+    boolean useSqlComments = false;
+    Set<Class<?>> entityClasses = new LinkedHashSet<>();
+    Map<String, String> properties = new HashMap<>();
 }

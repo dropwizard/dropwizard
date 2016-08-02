@@ -5,6 +5,7 @@ import java.util.function.Supplier;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.cfg.AvailableSettings;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.context.internal.ManagedSessionContext;
 import org.junit.rules.ExternalResource;
@@ -39,18 +40,18 @@ public class DAOTestRule extends ExternalResource {
             return this;
         }
 
-        public Builder setCurrentSessionContextClass(final String currentSessionContextClass) {
-            hibernateConfiguration.currentSessionContextClass = currentSessionContextClass;
-            return this;
-        }
-
         public Builder setHbm2DdlAuto(final String hbm2ddlAuto) {
             hibernateConfiguration.hbm2ddlAuto = hbm2ddlAuto;
             return this;
         }
 
         public Builder setShowSql(final boolean showSql) {
-            hibernateConfiguration.showSql = Boolean.toString(showSql);
+            hibernateConfiguration.showSql = showSql;
+            return this;
+        }
+
+        public Builder useSqlComments(final boolean useSqlComments) {
+            hibernateConfiguration.useSqlComments = useSqlComments;
             return this;
         }
 
@@ -59,22 +60,34 @@ public class DAOTestRule extends ExternalResource {
             return this;
         }
 
+        public Builder setProperty(String key, String value) {
+            hibernateConfiguration.properties.put(key, value);
+            return this;
+        }
+
         public DAOTestRule build() {
             final Configuration config = new Configuration();
-            config.setProperty("hibernate.connection.url", hibernateConfiguration.connectionUrl);
-            config.setProperty("hibernate.connection.username", hibernateConfiguration.connectionUsername);
-            config.setProperty("hibernate.connection.driver_class", hibernateConfiguration.connectionDriverClass);
-            config.setProperty("hibernate.current_session_context_class", hibernateConfiguration.currentSessionContextClass);
-            config.setProperty("hibernate.hbm2ddl.auto", hibernateConfiguration.hbm2ddlAuto);
-            config.setProperty("hibernate.show_sql", hibernateConfiguration.showSql);
+            config.setProperty(AvailableSettings.URL, hibernateConfiguration.connectionUrl);
+            config.setProperty(AvailableSettings.USER, hibernateConfiguration.connectionUsername);
+            config.setProperty(AvailableSettings.PASS, hibernateConfiguration.connectionPassword);
+            config.setProperty(AvailableSettings.DRIVER, hibernateConfiguration.connectionDriverClass);
+            config.setProperty(AvailableSettings.HBM2DDL_AUTO, hibernateConfiguration.hbm2ddlAuto);
+            config.setProperty(AvailableSettings.SHOW_SQL, String.valueOf(hibernateConfiguration.showSql));
+            config.setProperty(AvailableSettings.USE_SQL_COMMENTS,
+                String.valueOf(hibernateConfiguration.useSqlComments));
+            config.setProperty(AvailableSettings.CURRENT_SESSION_CONTEXT_CLASS, "managed");
+            config.setProperty(AvailableSettings.USE_GET_GENERATED_KEYS, "true");
+            config.setProperty(AvailableSettings.GENERATE_STATISTICS, "true");
+            config.setProperty(AvailableSettings.USE_REFLECTION_OPTIMIZER, "true");
+            config.setProperty(AvailableSettings.ORDER_UPDATES, "true");
+            config.setProperty(AvailableSettings.ORDER_INSERTS, "true");
+            config.setProperty(AvailableSettings.USE_NEW_ID_GENERATOR_MAPPINGS, "true");
+            config.setProperty("jadira.usertype.autoRegisterUserTypes", "true");
 
-            for (Class<?> entityClass : hibernateConfiguration.entityClasses) {
-                config.addAnnotatedClass(entityClass);
-            }
+            hibernateConfiguration.entityClasses.forEach(config::addAnnotatedClass);
+            hibernateConfiguration.properties.entrySet().forEach(e -> config.setProperty(e.getKey(), e.getValue()));
 
-            final SessionFactory sessionFactory = config.buildSessionFactory();
-
-            return new DAOTestRule(sessionFactory);
+            return new DAOTestRule(config.buildSessionFactory());
         }
     }
 

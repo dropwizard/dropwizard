@@ -11,13 +11,14 @@ public class DAOTestRuleConfigTest {
 
     @Rule
     public final DAOTestRule database = DAOTestRule.newBuilder()
-        .setConnectionUrl("jdbc:h2:mem:")
+        .setConnectionUrl("jdbc:h2:mem:rule-config-test")
         .setConnectionDriverClass(org.h2.Driver.class)
         .setConnectionUsername("username")
-        .setCurrentSessionContextClass("managed")
+        .useSqlComments(true)
         .setHbm2DdlAuto("create")
-        .setShowSql(false)
+        .setShowSql(true)
         .addEntityClass(TestEntity.class)
+        .setProperty("hibernate.format_sql", "true")
         .build();
 
     @Test
