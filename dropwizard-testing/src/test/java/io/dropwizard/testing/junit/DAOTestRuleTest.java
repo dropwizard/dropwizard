@@ -52,10 +52,7 @@ public class DAOTestRuleTest {
     public void rollsBackTransaction() {
         // given a successfully persisted entity
         final TestEntity testEntity = new TestEntity("description");
-        daoTestRule.transaction(() -> {
-            persist(testEntity);
-            return true;
-        });
+        daoTestRule.transaction(() -> persist(testEntity));
 
         // when we prepare an update of that entity
         testEntity.setDescription("newDescription");
@@ -64,7 +61,6 @@ public class DAOTestRuleTest {
             daoTestRule.transaction(() -> {
                 persist(testEntity);
                 persist(new TestEntity(null));
-                return true;
             });
             fail("Expected a constraint violation");
         } catch (ConstraintViolationException ignoredException) {

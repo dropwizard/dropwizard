@@ -148,4 +148,11 @@ public class DAOTestRule extends ExternalResource {
             throw e;
         }
     }
+
+    public void transaction(Runnable action) {
+        transaction(() -> {
+            action.run();
+            return true;
+        });
+    }
 }
