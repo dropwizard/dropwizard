@@ -11,12 +11,31 @@ import java.util.Map;
  * An aspect providing operations around a method with the {@link UnitOfWork} annotation.
  * It opens a Hibernate session and optionally a transaction.
  * <p>It should be created for every invocation of the method.</p>
+ * <p>Usage :</p>
+ * <pre>
+ * {@code
+ *   UnitOfWorkProxyFactory unitOfWorkProxyFactory = ...
+ *   UnitOfWork unitOfWork = ...         // get annotation from method.
+ *
+ *   UnitOfWorkAspect aspect = unitOfWorkProxyFactory.newAspect();
+ *   try {
+ *     aspect.beforeStart(unitOfWork);
+ *     ...                               // perform business logic.
+ *     aspect.afterEnd();
+ *   } catch (Exception e) {
+ *     aspect.onError();
+ *     throw e;
+ *   } finally {
+ *     aspect.onFinish();
+ *   }
+ * }
+ * </pre>
  */
-class UnitOfWorkAspect {
+public class UnitOfWorkAspect {
 
     private final Map<String, SessionFactory> sessionFactories;
 
-    public UnitOfWorkAspect(Map<String, SessionFactory> sessionFactories) {
+    UnitOfWorkAspect(Map<String, SessionFactory> sessionFactories) {
         this.sessionFactories = sessionFactories;
     }
 
