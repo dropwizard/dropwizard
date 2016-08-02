@@ -9,9 +9,11 @@ import com.google.common.annotations.VisibleForTesting;
 import io.dropwizard.client.proxy.AuthConfiguration;
 import io.dropwizard.client.proxy.NonProxyListProxyRoutePlanner;
 import io.dropwizard.client.proxy.ProxyConfiguration;
+import io.dropwizard.client.ssl.TlsConfiguration;
 import io.dropwizard.lifecycle.Managed;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.util.Duration;
+import javax.net.ssl.HostnameVerifier;
 import org.apache.http.ConnectionReuseStrategy;
 import org.apache.http.Header;
 import org.apache.http.HttpHost;
@@ -62,6 +64,7 @@ public class HttpClientBuilder {
     private Environment environment;
     private HttpClientConfiguration configuration = new HttpClientConfiguration();
     private DnsResolver resolver = new SystemDefaultDnsResolver();
+    private HostnameVerifier verifier;
     private HttpRequestRetryHandler httpRequestRetryHandler;
     private Registry<ConnectionSocketFactory> registry;
 
@@ -112,6 +115,17 @@ public class HttpClientBuilder {
      */
     public HttpClientBuilder using(DnsResolver resolver) {
         this.resolver = resolver;
+        return this;
+    }
+
+    /**
+     * Use the give (@link HostnameVerifier} instance.
+     *
+     * @param verifier a {@link HostnameVerifier} instance
+     * @return {@code this}
+     */
+    public HttpClientBuilder using(HostnameVerifier verifier) {
+        this.verifier = verifier;
         return this;
     }
 
@@ -332,6 +346,10 @@ public class HttpClientBuilder {
             builder.setDefaultHeaders(defaultHeaders);
         }
 
+        if (verifier != null) {
+            builder.setSSLHostnameVerifier(verifier);
+        }
+
         return new ConfiguredCloseableHttpClient(builder.build(), requestConfig);
     }
 
@@ -371,17 +389,23 @@ public class HttpClientBuilder {
         return configureConnectionManager(manager);
     }
 
-    private Registry<ConnectionSocketFactory> createConfiguredRegistry() {
+    @VisibleForTesting
+    Registry<ConnectionSocketFactory> createConfiguredRegistry() {
         if (registry != null) {
             return registry;
         }
 
+        TlsConfiguration tlsConfiguration = configuration.getTlsConfiguration();
+        if (tlsConfiguration == null && verifier != null) {
+            tlsConfiguration = new TlsConfiguration();
+        }
+
         final SSLConnectionSocketFactory sslConnectionSocketFactory;
-        if (configuration.getTlsConfiguration() == null) {
+        if (tlsConfiguration == null) {
             sslConnectionSocketFactory = SSLConnectionSocketFactory.getSocketFactory();
         } else {
-            sslConnectionSocketFactory = new DropwizardSSLConnectionSocketFactory(configuration.getTlsConfiguration())
-                    .getSocketFactory();
+            sslConnectionSocketFactory = new DropwizardSSLConnectionSocketFactory(tlsConfiguration,
+                verifier).getSocketFactory();
         }
 
         return RegistryBuilder.<ConnectionSocketFactory>create()

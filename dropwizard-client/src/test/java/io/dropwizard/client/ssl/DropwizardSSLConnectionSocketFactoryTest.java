@@ -1,7 +1,34 @@
 package io.dropwizard.client.ssl;
 
+import static java.util.Arrays.asList;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
+
+import java.io.File;
+import java.lang.reflect.Field;
+import java.net.SocketException;
+import java.util.Optional;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLHandshakeException;
+import javax.net.ssl.SSLPeerUnverifiedException;
+import javax.net.ssl.SSLSession;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.ProcessingException;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.core.Response;
+
+import org.apache.commons.lang3.reflect.FieldUtils;
+import org.apache.http.conn.ssl.NoopHostnameVerifier;
+import org.glassfish.jersey.client.ClientResponse;
+import org.junit.Before;
+import org.junit.ClassRule;
+import org.junit.Test;
+
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
+import io.dropwizard.client.DropwizardSSLConnectionSocketFactory;
 import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.client.JerseyClientConfiguration;
 import io.dropwizard.setup.Environment;
@@ -9,25 +36,6 @@ import io.dropwizard.testing.ConfigOverride;
 import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import io.dropwizard.util.Duration;
-import org.glassfish.jersey.client.ClientResponse;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Test;
-
-import javax.net.ssl.SSLHandshakeException;
-import javax.net.ssl.SSLPeerUnverifiedException;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.ProcessingException;
-import javax.ws.rs.client.Client;
-import javax.ws.rs.core.Response;
-import java.io.File;
-import java.net.SocketException;
-import java.util.Optional;
-
-import static java.util.Arrays.asList;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
 
 public class DropwizardSSLConnectionSocketFactoryTest {
     private TlsConfiguration tlsConfiguration;
@@ -77,6 +85,16 @@ public class DropwizardSSLConnectionSocketFactoryTest {
         jerseyClientConfiguration.setTlsConfiguration(tlsConfiguration);
         jerseyClientConfiguration.setConnectionTimeout(Duration.milliseconds(2000));
         jerseyClientConfiguration.setTimeout(Duration.milliseconds(5000));
+    }
+
+    @Test
+    public void configOnlyConstructorShouldSetNullCustomVerifier() throws Exception {
+        final DropwizardSSLConnectionSocketFactory socketFactory;
+        socketFactory = new DropwizardSSLConnectionSocketFactory(tlsConfiguration);
+
+        final Field verifierField =
+                FieldUtils.getField(DropwizardSSLConnectionSocketFactory.class, "verifier", true);
+        assertThat(verifierField.get(socketFactory)).isNull();
     }
 
     @Test
@@ -154,10 +172,37 @@ public class DropwizardSSLConnectionSocketFactoryTest {
     }
 
     @Test
+    public void shouldErrorIfHostnameVerificationOnAndServerHostnameMatchesAndFailVerifierSpecified() throws Exception {
+        final Client client = new JerseyClientBuilder(TLS_APP_RULE.getEnvironment()).using(jerseyClientConfiguration).using(new FailVerifier()).build("bad_host_broken_fail_verifier");
+        try {
+            client.target(String.format("https://localhost:%d", TLS_APP_RULE.getLocalPort())).request().get();
+            fail("Expected ProcessingException");
+        } catch (ProcessingException e) {
+            assertThat(e.getCause()).isExactlyInstanceOf(SSLPeerUnverifiedException.class);
+            assertThat(e.getCause().getMessage()).isEqualTo("Host name 'localhost' does not match the certificate subject provided by the peer (O=server, CN=localhost)");
+        }
+    }
+
+    @Test
+    public void shouldBeOkIfHostnameVerificationOnAndServerHostnameDoesntMatchAndNoopVerifierSpecified() throws Exception {
+        final Client client = new JerseyClientBuilder(TLS_APP_RULE.getEnvironment()).using(jerseyClientConfiguration).using(new NoopHostnameVerifier()).build("bad_host_noop_verifier_working");
+        final Response response = client.target(String.format("https://localhost:%d", TLS_APP_RULE.getPort(3))).request().get();
+        assertThat(response.getStatus()).isEqualTo(200);
+    }
+
+    @Test
     public void shouldBeOkIfHostnameVerificationOffAndServerHostnameDoesntMatch() throws Exception {
         tlsConfiguration.setVerifyHostname(false);
         final Client client = new JerseyClientBuilder(TLS_APP_RULE.getEnvironment()).using(jerseyClientConfiguration).build("bad_host_working");
         final Response response = client.target(String.format("https://localhost:%d", TLS_APP_RULE.getPort(3))).request().get();
+        assertThat(response.getStatus()).isEqualTo(200);
+    }
+
+    @Test
+    public void shouldBeOkIfHostnameVerificationOffAndServerHostnameMatchesAndFailVerfierSpecified() throws Exception {
+        tlsConfiguration.setVerifyHostname(false);
+        final Client client = new JerseyClientBuilder(TLS_APP_RULE.getEnvironment()).using(jerseyClientConfiguration).using(new FailVerifier()).build("bad_host_fail_verifier_working");
+        final Response response = client.target(String.format("https://localhost:%d", TLS_APP_RULE.getLocalPort())).request().get();
         assertThat(response.getStatus()).isEqualTo(200);
     }
 
@@ -170,6 +215,13 @@ public class DropwizardSSLConnectionSocketFactoryTest {
             fail("expected ProcessingException");
         } catch (ProcessingException e) {
             assertThat(e.getCause()).isInstanceOfAny(SocketException.class, SSLHandshakeException.class);
+        }
+    }
+    
+    private static class FailVerifier implements HostnameVerifier {
+        @Override
+        public boolean verify(String arg0, SSLSession arg1) {
+            return false;
         }
     }
 }
