@@ -1,5 +1,6 @@
 package io.dropwizard.testing.junit;
 
+import java.util.*;
 import java.util.function.Supplier;
 
 import org.hibernate.Session;
@@ -23,58 +24,65 @@ public class DAOTestRule extends ExternalResource {
 
     public static class Builder {
 
-        private DAOTestHibernateConfiguration hibernateConfiguration = new DAOTestHibernateConfiguration();
+        private String connectionUrl = "jdbc:h2:mem:" + UUID.randomUUID();
+        private String connectionUsername = "sa";
+        private String connectionPassword = "";
+        private String connectionDriverClass = "org.h2.Driver";
+        private String hbm2ddlAuto = "create";
+        private boolean showSql = false;
+        private boolean useSqlComments = false;
+        private Set<Class<?>> entityClasses = new LinkedHashSet<>();
+        private Map<String, String> properties = new HashMap<>();
 
         public Builder setConnectionUrl(final String connectionUrl) {
-            hibernateConfiguration.connectionUrl = connectionUrl;
+            this.connectionUrl = connectionUrl;
             return this;
         }
 
         public Builder setConnectionUsername(final String connectionUsername) {
-            hibernateConfiguration.connectionUsername = connectionUsername;
+            this.connectionUsername = connectionUsername;
             return this;
         }
 
         public Builder setConnectionDriverClass(final Class<? extends java.sql.Driver> driverClass) {
-            hibernateConfiguration.connectionDriverClass = driverClass.getName();
+            this.connectionDriverClass = driverClass.getName();
             return this;
         }
 
         public Builder setHbm2DdlAuto(final String hbm2ddlAuto) {
-            hibernateConfiguration.hbm2ddlAuto = hbm2ddlAuto;
+            this.hbm2ddlAuto = hbm2ddlAuto;
             return this;
         }
 
         public Builder setShowSql(final boolean showSql) {
-            hibernateConfiguration.showSql = showSql;
+            this.showSql = showSql;
             return this;
         }
 
         public Builder useSqlComments(final boolean useSqlComments) {
-            hibernateConfiguration.useSqlComments = useSqlComments;
+            this.useSqlComments = useSqlComments;
             return this;
         }
 
         public Builder addEntityClass(final Class<?> entityClass) {
-            hibernateConfiguration.entityClasses.add(entityClass);
+            this.entityClasses.add(entityClass);
             return this;
         }
 
         public Builder setProperty(String key, String value) {
-            hibernateConfiguration.properties.put(key, value);
+            this.properties.put(key, value);
             return this;
         }
 
         public DAOTestRule build() {
             final Configuration config = new Configuration();
-            config.setProperty(AvailableSettings.URL, hibernateConfiguration.connectionUrl);
-            config.setProperty(AvailableSettings.USER, hibernateConfiguration.connectionUsername);
-            config.setProperty(AvailableSettings.PASS, hibernateConfiguration.connectionPassword);
-            config.setProperty(AvailableSettings.DRIVER, hibernateConfiguration.connectionDriverClass);
-            config.setProperty(AvailableSettings.HBM2DDL_AUTO, hibernateConfiguration.hbm2ddlAuto);
-            config.setProperty(AvailableSettings.SHOW_SQL, String.valueOf(hibernateConfiguration.showSql));
-            config.setProperty(AvailableSettings.USE_SQL_COMMENTS,
-                String.valueOf(hibernateConfiguration.useSqlComments));
+            config.setProperty(AvailableSettings.URL, connectionUrl);
+            config.setProperty(AvailableSettings.USER, connectionUsername);
+            config.setProperty(AvailableSettings.PASS, connectionPassword);
+            config.setProperty(AvailableSettings.DRIVER, connectionDriverClass);
+            config.setProperty(AvailableSettings.HBM2DDL_AUTO, hbm2ddlAuto);
+            config.setProperty(AvailableSettings.SHOW_SQL, String.valueOf(showSql));
+            config.setProperty(AvailableSettings.USE_SQL_COMMENTS, String.valueOf(useSqlComments));
             config.setProperty(AvailableSettings.CURRENT_SESSION_CONTEXT_CLASS, "managed");
             config.setProperty(AvailableSettings.USE_GET_GENERATED_KEYS, "true");
             config.setProperty(AvailableSettings.GENERATE_STATISTICS, "true");
@@ -84,8 +92,8 @@ public class DAOTestRule extends ExternalResource {
             config.setProperty(AvailableSettings.USE_NEW_ID_GENERATOR_MAPPINGS, "true");
             config.setProperty("jadira.usertype.autoRegisterUserTypes", "true");
 
-            hibernateConfiguration.entityClasses.forEach(config::addAnnotatedClass);
-            hibernateConfiguration.properties.entrySet().forEach(e -> config.setProperty(e.getKey(), e.getValue()));
+            entityClasses.forEach(config::addAnnotatedClass);
+            properties.entrySet().forEach(e -> config.setProperty(e.getKey(), e.getValue()));
 
             return new DAOTestRule(config.buildSessionFactory());
         }
