@@ -414,7 +414,7 @@ before the command is ran.
         private final PrintStream originalOut = System.out;
         private final PrintStream originalErr = System.err;
         private final InputStream originalIn = System.in;
-        
+
         private final ByteArrayOutputStream stdOut = new ByteArrayOutputStream();
         private final ByteArrayOutputStream stdErr = new ByteArrayOutputStream();
         private Cli cli;
@@ -484,7 +484,7 @@ which setups a Hibernate ``SessionFactory``.
         @Test
         public createsFoo() {
             FooEntity fooEntity = new FooEntity("bar");
-            long id = database.transaction(() -> {
+            long id = database.inTransaction(() -> {
                 return fooDAO.save(fooEntity);
             });
 
@@ -493,7 +493,7 @@ which setups a Hibernate ``SessionFactory``.
 
         @Test
         public roundtripsFoo() {
-            long id = database.transaction(() -> {
+            long id = database.inTransaction(() -> {
                 return fooDAO.save(new FooEntity("baz"));
             });
 

@@ -136,7 +136,7 @@ public class DAOTestRule extends ExternalResource {
         return sessionFactory;
     }
 
-    public <T> T transaction(Supplier<T> supplier) {
+    public <T> T inTransaction(Supplier<T> supplier) {
         final Session session = sessionFactory.getCurrentSession();
         final Transaction transaction = session.beginTransaction();
         try {
@@ -149,8 +149,8 @@ public class DAOTestRule extends ExternalResource {
         }
     }
 
-    public void transaction(Runnable action) {
-        transaction(() -> {
+    public void inTransaction(Runnable action) {
+        inTransaction(() -> {
             action.run();
             return true;
         });

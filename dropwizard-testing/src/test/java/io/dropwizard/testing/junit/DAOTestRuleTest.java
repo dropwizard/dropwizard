@@ -28,14 +28,14 @@ public class DAOTestRuleTest {
 
     @Test
     public void ruleCanOpenTransaction() {
-        final Long id = daoTestRule.transaction(() -> persist(new TestEntity("description")).getId());
+        final Long id = daoTestRule.inTransaction(() -> persist(new TestEntity("description")).getId());
 
         assertThat(id, notNullValue());
     }
 
     @Test
     public void ruleCanRoundtrip() {
-        final Long id = daoTestRule.transaction(() -> persist(new TestEntity("description")).getId());
+        final Long id = daoTestRule.inTransaction(() -> persist(new TestEntity("description")).getId());
 
         final TestEntity testEntity = get(id);
 
@@ -45,20 +45,20 @@ public class DAOTestRuleTest {
 
     @Test(expected = ConstraintViolationException.class)
     public void transcationThrowsExceptionAsExpected() {
-        daoTestRule.transaction(() -> persist(new TestEntity(null)));
+        daoTestRule.inTransaction(() -> persist(new TestEntity(null)));
     }
 
     @Test
     public void rollsBackTransaction() {
         // given a successfully persisted entity
         final TestEntity testEntity = new TestEntity("description");
-        daoTestRule.transaction(() -> persist(testEntity));
+        daoTestRule.inTransaction(() -> persist(testEntity));
 
         // when we prepare an update of that entity
         testEntity.setDescription("newDescription");
         try {
             // ... but cause a constraint violation during the actual update
-            daoTestRule.transaction(() -> {
+            daoTestRule.inTransaction(() -> {
                 persist(testEntity);
                 persist(new TestEntity(null));
             });
