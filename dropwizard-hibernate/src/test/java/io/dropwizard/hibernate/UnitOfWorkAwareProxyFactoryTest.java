@@ -7,6 +7,7 @@ import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
 import io.dropwizard.logging.BootstrapLogging;
 import io.dropwizard.setup.Environment;
+import javassist.util.proxy.ProxyFactory;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.junit.Before;
@@ -69,6 +70,21 @@ public class UnitOfWorkAwareProxyFactoryTest {
         assertThat(oAuthAuthenticator.authenticate("bd1e23a")).isFalse();
     }
 
+    @Test
+    public void testManualProxyWorks() throws Exception {
+        final SessionDao sessionDao = new SessionDao(sessionFactory);
+        final UnitOfWorkAwareProxyFactory unitOfWorkAwareProxyFactory =
+                new UnitOfWorkAwareProxyFactory("default", sessionFactory);
+        final ProxyFactory proxyFactory = new ProxyFactory();
+        proxyFactory.setSuperclass(OAuthAuthenticator.class);
+        final OAuthAuthenticator oAuthAuthenticator = (OAuthAuthenticator)proxyFactory.createClass()
+                .getConstructor(SessionDao.class)
+                .newInstance(sessionDao);
+        unitOfWorkAwareProxyFactory.injectMethodHandler(oAuthAuthenticator);
+        assertThat(oAuthAuthenticator.authenticate("67ab89d")).isTrue();
+        assertThat(oAuthAuthenticator.authenticate("bd1e23a")).isFalse();
+    }
+    
     @Test
     public void testProxyWorksWithoutUnitOfWork() {
         assertThat(new UnitOfWorkAwareProxyFactory("default", sessionFactory)

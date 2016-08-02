@@ -1,6 +1,9 @@
 package io.dropwizard.hibernate;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import com.google.common.collect.ImmutableMap;
+import javassist.util.proxy.MethodHandler;
 import javassist.util.proxy.Proxy;
 import javassist.util.proxy.ProxyFactory;
 import org.hibernate.SessionFactory;
@@ -73,28 +76,43 @@ public class UnitOfWorkAwareProxyFactory {
             final Proxy proxy = (Proxy) (constructorParamTypes.length == 0 ?
                     factory.createClass().newInstance() :
                     factory.create(constructorParamTypes, constructorArguments));
-            proxy.setHandler((self, overridden, proceed, args) -> {
-                final UnitOfWork unitOfWork = overridden.getAnnotation(UnitOfWork.class);
-                final UnitOfWorkAspect unitOfWorkAspect = new UnitOfWorkAspect(sessionFactories);
-                try {
-                    unitOfWorkAspect.beforeStart(unitOfWork);
-                    Object result = proceed.invoke(self, args);
-                    unitOfWorkAspect.afterEnd();
-                    return result;
-                } catch (InvocationTargetException e) {
-                    unitOfWorkAspect.onError();
-                    throw e.getCause();
-                } catch (Exception e) {
-                    unitOfWorkAspect.onError();
-                    throw e;
-                } finally {
-                    unitOfWorkAspect.onFinish();
-                }
-            });
+            proxy.setHandler(createMethodHandler());
             return (T) proxy;
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException |
                 InvocationTargetException e) {
             throw new IllegalStateException("Unable to create a proxy for the class '" + clazz + "'", e);
         }
+    }
+    
+    /**
+     * Make the javassist-created <tt>proxy</tt> <b>@UnitOfWork</b> aware.
+     * 
+     * @param  proxy                    the javassist proxy to inject
+     * @throws IllegalArgumentException if <tt>proxy</tt> is not created with javassist.
+     */
+    public void injectMethodHandler(Object proxy) {
+        checkArgument(proxy instanceof Proxy, "proxy is not an instance of %s", Proxy.class);
+        ((Proxy)proxy).setHandler(createMethodHandler());
+    }
+    
+    private MethodHandler createMethodHandler() {
+      return (self, overridden, proceed, args) -> {
+          final UnitOfWork unitOfWork = overridden.getAnnotation(UnitOfWork.class);
+          final UnitOfWorkAspect unitOfWorkAspect = new UnitOfWorkAspect(sessionFactories);
+          try {
+              unitOfWorkAspect.beforeStart(unitOfWork);
+              Object result = proceed.invoke(self, args);
+              unitOfWorkAspect.afterEnd();
+              return result;
+          } catch (InvocationTargetException e) {
+              unitOfWorkAspect.onError();
+              throw e.getCause();
+          } catch (Exception e) {
+              unitOfWorkAspect.onError();
+              throw e;
+          } finally {
+              unitOfWorkAspect.onFinish();
+          }
+      };
     }
 }
