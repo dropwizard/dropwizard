@@ -34,37 +34,37 @@ public class DAOTestRule extends ExternalResource {
         private Set<Class<?>> entityClasses = new LinkedHashSet<>();
         private Map<String, String> properties = new HashMap<>();
 
-        public Builder setUrl(final String url) {
+        public Builder setUrl(String url) {
             this.url = url;
             return this;
         }
 
-        public Builder setUsername(final String username) {
+        public Builder setUsername(String username) {
             this.username = username;
             return this;
         }
 
-        public Builder setDriver(final Class<? extends java.sql.Driver> driver) {
+        public Builder setDriver(Class<? extends java.sql.Driver> driver) {
             this.driver = driver.getName();
             return this;
         }
 
-        public Builder setHbm2DdlAuto(final String hbm2ddlAuto) {
+        public Builder setHbm2DdlAuto(String hbm2ddlAuto) {
             this.hbm2ddlAuto = hbm2ddlAuto;
             return this;
         }
 
-        public Builder setShowSql(final boolean showSql) {
+        public Builder setShowSql(boolean showSql) {
             this.showSql = showSql;
             return this;
         }
 
-        public Builder useSqlComments(final boolean useSqlComments) {
+        public Builder useSqlComments(boolean useSqlComments) {
             this.useSqlComments = useSqlComments;
             return this;
         }
 
-        public Builder addEntityClass(final Class<?> entityClass) {
+        public Builder addEntityClass(Class<?> entityClass) {
             this.entityClasses.add(entityClass);
             return this;
         }
@@ -136,7 +136,7 @@ public class DAOTestRule extends ExternalResource {
         return sessionFactory;
     }
 
-    public <T> T transaction(final Supplier<T> supplier) {
+    public <T> T transaction(Supplier<T> supplier) {
         final Session session = sessionFactory.getCurrentSession();
         final Transaction transaction = session.beginTransaction();
         try {

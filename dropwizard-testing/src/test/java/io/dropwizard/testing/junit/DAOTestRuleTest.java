@@ -77,14 +77,14 @@ public class DAOTestRuleTest {
     }
 
 
-    private TestEntity persist(final TestEntity testEntity) {
+    private TestEntity persist(TestEntity testEntity) {
         final Session currentSession = daoTestRule.getSessionFactory().getCurrentSession();
         currentSession.saveOrUpdate(testEntity);
 
         return testEntity;
     }
 
-    private TestEntity get(final Serializable id) {
+    private TestEntity get(Serializable id) {
         final Session currentSession = daoTestRule.getSessionFactory().getCurrentSession();
         final TestEntity testEntity = currentSession.get(TestEntity.class, id);
         currentSession.refresh(testEntity);
