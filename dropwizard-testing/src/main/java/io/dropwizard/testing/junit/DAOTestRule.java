@@ -14,7 +14,32 @@ import org.junit.rules.ExternalResource;
 import io.dropwizard.logging.BootstrapLogging;
 
 /**
- * A JUnit {@link ExternalResource} for testing DAOs and Hibernate entities.
+ * A JUnit rule for testing DAOs and Hibernate entities. It allows to quickly
+ * test the database access code without starting the Dropwizard infrastructure.
+ * <p>
+ * Example:
+ * <pre><code>
+ * {@literal @}Rule
+    public DAOTestRule daoTestRule = DAOTestRule.newBuilder()
+          .addEntityClass(Person.class)
+          .build();
+
+    private PersonDAO personDAO;
+
+   {@literal @}Before
+    public void setUp() throws Exception {
+        personDAO = new PersonDAO(daoTestRule.getSessionFactory());
+    }
+
+   {@literal @}Test
+    public void createPerson() {
+        Person wizard = daoTestRule.inTransaction(() -> personDAO.create(new Person("Merlin", "The chief wizard")));
+        assertThat(wizard.getId()).isGreaterThan(0);
+        assertThat(wizard.getFullName()).isEqualTo("Merlin");
+        assertThat(wizard.getJobTitle()).isEqualTo("The chief wizard");
+    }
+ * </code></pre>
+ * </p>
  */
 public class DAOTestRule extends ExternalResource {
 
@@ -83,6 +108,8 @@ public class DAOTestRule extends ExternalResource {
             config.setProperty(AvailableSettings.HBM2DDL_AUTO, hbm2ddlAuto);
             config.setProperty(AvailableSettings.SHOW_SQL, String.valueOf(showSql));
             config.setProperty(AvailableSettings.USE_SQL_COMMENTS, String.valueOf(useSqlComments));
+            // Use the same configuration as in the Hibernate bundle to reduce differences between
+            // testing and production environments.
             config.setProperty(AvailableSettings.CURRENT_SESSION_CONTEXT_CLASS, "managed");
             config.setProperty(AvailableSettings.USE_GET_GENERATED_KEYS, "true");
             config.setProperty(AvailableSettings.GENERATE_STATISTICS, "true");
@@ -99,12 +126,21 @@ public class DAOTestRule extends ExternalResource {
         }
     }
 
+    /**
+     * Creates a new builder for {@link DAOTestRule}, which allows to customize a {@link SessionFactory}
+     * by different parameters. By default uses the H2 database in the memory mode.
+     *
+     * @return a new {@link Builder}
+     */
     public static Builder newBuilder() {
         return new Builder();
     }
 
     private final SessionFactory sessionFactory;
 
+    /**
+     * Use {@link DAOTestRule#newBuilder()}
+     */
     private DAOTestRule(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
     }
@@ -132,10 +168,22 @@ public class DAOTestRule extends ExternalResource {
         ManagedSessionContext.unbind(sessionFactory);
     }
 
+    /**
+     * Returns the current active session factory for injecting to DAOs.
+     *
+     * @return {@link SessionFactory} with an open session.
+     */
     public SessionFactory getSessionFactory() {
         return sessionFactory;
     }
 
+    /**
+     * Performs a call in a transaction
+     *
+     * @param supplier the call
+     * @param <T>  the type of the returned result
+     * @return the result of the call
+     */
     public <T> T inTransaction(Supplier<T> supplier) {
         final Session session = sessionFactory.getCurrentSession();
         final Transaction transaction = session.beginTransaction();
@@ -149,6 +197,11 @@ public class DAOTestRule extends ExternalResource {
         }
     }
 
+    /**
+     * Performs an action in a transaction
+     *
+     * @param action the action
+     */
     public void inTransaction(Runnable action) {
         inTransaction(() -> {
             action.run();
