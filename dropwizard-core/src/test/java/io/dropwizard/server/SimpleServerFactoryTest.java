@@ -30,7 +30,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
-
+import java.nio.charset.StandardCharsets;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 
@@ -102,7 +102,7 @@ public class SimpleServerFactoryTest {
         connection.setRequestMethod(requestMethod);
         connection.connect();
         try (InputStream inputStream = connection.getInputStream()) {
-            return CharStreams.toString(new InputStreamReader(inputStream));
+            return CharStreams.toString(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
         }
     }
 

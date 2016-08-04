@@ -216,7 +216,7 @@ public class DropwizardTestSupport<C extends Configuration> {
 
     public Application<C> newApplication() {
         try {
-            return applicationClass.newInstance();
+            return applicationClass.getConstructor().newInstance();
         } catch (Exception e) {
             throw propagate(e);
         }

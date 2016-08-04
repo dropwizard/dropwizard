@@ -14,6 +14,7 @@ class PrincipalContainerRequestValueFactory extends AbstractContainerRequestValu
      * @return {@link Principal} stored on the request, or {@code null}
      *         if no object was found.
      */
+    @Override
     public Principal provide() {
         final Principal principal = getContainerRequest().getSecurityContext().getUserPrincipal();
         if (principal == null) {

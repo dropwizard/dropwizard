@@ -71,7 +71,7 @@ public class UnitOfWorkAwareProxyFactory {
 
         try {
             final Proxy proxy = (Proxy) (constructorParamTypes.length == 0 ?
-                    factory.createClass().newInstance() :
+                    factory.createClass().getConstructor().newInstance() :
                     factory.create(constructorParamTypes, constructorArguments));
             proxy.setHandler((self, overridden, proceed, args) -> {
                 final UnitOfWork unitOfWork = overridden.getAnnotation(UnitOfWork.class);

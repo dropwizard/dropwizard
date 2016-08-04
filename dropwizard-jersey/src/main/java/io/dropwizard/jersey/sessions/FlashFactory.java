@@ -15,6 +15,7 @@ public final class FlashFactory extends AbstractContainerRequestValueFactory<Fla
         this.doNotCreate = doNotCreate;
     }
 
+    @Override
     @SuppressWarnings("rawtypes")
     public Flash<?> provide() {
         if (request == null) {

@@ -76,6 +76,7 @@ public class FreemarkerViewRenderer implements ViewRenderer {
         }
     }
 
+    @Override
     public void configure(Map<String, String> baseConfig) {
         this.loader.setBaseConfig(baseConfig);
     }

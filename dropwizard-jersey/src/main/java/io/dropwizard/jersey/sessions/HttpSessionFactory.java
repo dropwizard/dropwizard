@@ -15,6 +15,7 @@ public final class HttpSessionFactory extends AbstractContainerRequestValueFacto
         this.doNotCreate = doNotCreate;
     }
 
+    @Override
     public HttpSession provide() {
         if (request == null) {
             return null;
