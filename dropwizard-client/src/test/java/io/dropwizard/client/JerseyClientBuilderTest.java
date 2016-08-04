@@ -31,6 +31,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
+import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
@@ -260,6 +261,13 @@ public class JerseyClientBuilderTest {
         final DnsResolver customDnsResolver = new SystemDefaultDnsResolver();
         builder.using(customDnsResolver);
         verify(apacheHttpClientBuilder).using(customDnsResolver);
+    }
+
+    @Test
+    public void usesACustomHostnameVerifier() {
+        final HostnameVerifier customHostnameVerifier = new NoopHostnameVerifier();
+        builder.using(customHostnameVerifier);
+        verify(apacheHttpClientBuilder).using(customHostnameVerifier);
     }
 
     @Test
