@@ -240,6 +240,19 @@ public class HttpClientBuilder {
     }
 
     /**
+     * Configures an Apache {@link org.apache.http.impl.client.HttpClientBuilder HttpClientBuilder}.
+     *
+     * Intended for use by subclasses to inject HttpClientBuilder
+     * configuration. The default implementation is an identity
+     * function.
+     */
+    protected org.apache.http.impl.client.HttpClientBuilder customizeBuilder(
+        org.apache.http.impl.client.HttpClientBuilder builder
+    ) {
+        return builder;
+    }
+
+    /**
      * Map the parameters in {@link HttpClientConfiguration} to configuration on a
      * {@link org.apache.http.impl.client.HttpClientBuilder} instance
      *
@@ -276,7 +289,8 @@ public class HttpClientBuilder {
                 .setSoTimeout(timeout)
                 .build();
 
-        builder.setRequestExecutor(new InstrumentedHttpRequestExecutor(metricRegistry, metricNameStrategy, name))
+        customizeBuilder(builder)
+                .setRequestExecutor(new InstrumentedHttpRequestExecutor(metricRegistry, metricNameStrategy, name))
                 .setConnectionManager(manager)
                 .setDefaultRequestConfig(requestConfig)
                 .setDefaultSocketConfig(socketConfig)
