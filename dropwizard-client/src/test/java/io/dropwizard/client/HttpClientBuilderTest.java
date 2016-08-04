@@ -73,6 +73,23 @@ import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 public class HttpClientBuilderTest {
+    class CustomBuilder extends HttpClientBuilder {
+        public boolean customized;
+
+        public CustomBuilder(MetricRegistry metricRegistry) {
+            super(metricRegistry);
+            customized = false;
+        }
+
+        @Override
+        protected org.apache.http.impl.client.HttpClientBuilder customizeBuilder(
+            org.apache.http.impl.client.HttpClientBuilder builder
+        ) {
+            customized = true;
+            return builder;
+        }
+    }
+
     private final Class<?> httpClientBuilderClass;
     private final Class<?> httpClientClass;
     private final Registry<ConnectionSocketFactory> registry = RegistryBuilder.<ConnectionSocketFactory>create()
@@ -530,6 +547,14 @@ public class HttpClientBuilderTest {
         final Header header = defaultHeaders.get(0);
         assertThat(header.getName()).isEqualTo(HttpHeaders.ACCEPT_LANGUAGE);
         assertThat(header.getValue()).isEqualTo("de");
+    }
+
+    @Test
+    public void allowsCustomBuilderConfiguration() throws Exception {
+        CustomBuilder builder = new CustomBuilder(new MetricRegistry());
+        assertThat(builder.customized).isFalse();
+        ConfiguredCloseableHttpClient client = builder.createClient(apacheBuilder, connectionManager, "test");
+        assertThat(builder.customized).isTrue();
     }
 
     private Object spyHttpClientBuilderField(final String fieldName, final Object obj) throws Exception {
