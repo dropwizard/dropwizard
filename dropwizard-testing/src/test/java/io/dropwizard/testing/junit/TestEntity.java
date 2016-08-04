@@ -10,34 +10,34 @@ import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "test_entities")
-public class TestEntity {
-    
+class TestEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="id")
+    @Column(name = "id")
     private long id;
-    
+
     @NotNull
     @Column(name = "desc")
     private String description;
-    
+
     protected TestEntity() {
         // for Hibernate
     }
-    
+
     TestEntity(final String description) {
         this.description = description;
     }
-    
-    public long getId() {
+
+    long getId() {
         return id;
     }
-    
-    public String getDescription() {
+
+    String getDescription() {
         return description;
     }
-    
-    public void setDescription(final String description) {
+
+    void setDescription(final String description) {
         this.description = description;
     }
 }
