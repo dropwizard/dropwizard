@@ -638,8 +638,6 @@ You can also extend ``PostBodyTask`` to create a task which uses the body of the
 .. code-block:: java
 
     public class EchoTask extends PostBodyTask {
-        private final Database database;
-
         public EchoTask() {
             super("echo");
         }
