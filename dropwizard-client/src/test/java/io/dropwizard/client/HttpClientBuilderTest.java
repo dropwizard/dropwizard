@@ -80,7 +80,7 @@ import io.dropwizard.setup.Environment;
 import io.dropwizard.util.Duration;
 
 public class HttpClientBuilderTest {
-    class CustomBuilder extends HttpClientBuilder {
+    static class CustomBuilder extends HttpClientBuilder {
         public boolean customized;
 
         public CustomBuilder(MetricRegistry metricRegistry) {
@@ -107,7 +107,7 @@ public class HttpClientBuilderTest {
     private HttpClientBuilder builder;
     private InstrumentedHttpClientConnectionManager connectionManager;
     private org.apache.http.impl.client.HttpClientBuilder apacheBuilder;
-    
+
     public HttpClientBuilderTest() throws ClassNotFoundException {
         this.httpClientBuilderClass = Class.forName("org.apache.http.impl.client.HttpClientBuilder");
         this.httpClientClass = Class.forName("org.apache.http.impl.client.InternalHttpClient");
@@ -127,7 +127,7 @@ public class HttpClientBuilderTest {
     public void validate() {
         validateMockitoUsage();
     }
-    
+
     @Test
     public void setsTheMaximumConnectionPoolSize() throws Exception {
         configuration.setMaxConnections(412);
@@ -194,7 +194,7 @@ public class HttpClientBuilderTest {
         configuredRegistry = builder.using(customVerifier).createConfiguredRegistry();
         assertThat(configuredRegistry).isNotNull();
 
-        final SSLConnectionSocketFactory socketFactory = 
+        final SSLConnectionSocketFactory socketFactory =
                 (SSLConnectionSocketFactory) configuredRegistry.lookup("https");
         assertThat(socketFactory).isNotNull();
 
@@ -215,7 +215,7 @@ public class HttpClientBuilderTest {
         configuredRegistry = builder.using(configuration).using(customVerifier).createConfiguredRegistry();
         assertThat(configuredRegistry).isNotNull();
 
-        final SSLConnectionSocketFactory socketFactory = 
+        final SSLConnectionSocketFactory socketFactory =
                 (SSLConnectionSocketFactory) configuredRegistry.lookup("https");
         assertThat(socketFactory).isNotNull();
 
@@ -230,7 +230,7 @@ public class HttpClientBuilderTest {
         configuredRegistry = builder.createConfiguredRegistry();
         assertThat(configuredRegistry).isNotNull();
 
-        final SSLConnectionSocketFactory socketFactory = 
+        final SSLConnectionSocketFactory socketFactory =
                 (SSLConnectionSocketFactory) configuredRegistry.lookup("https");
         assertThat(socketFactory).isNotNull();
 
@@ -238,7 +238,7 @@ public class HttpClientBuilderTest {
                 FieldUtils.getField(SSLConnectionSocketFactory.class, "hostnameVerifier", true);
         assertThat(hostnameVerifierField.get(socketFactory)).isInstanceOf(HostnameVerifier.class);
     }
-   
+
     @Test
     public void canUseASystemHostnameVerifierByDefaultWhenTlsConfigurationSpecified() throws Exception {
         final TlsConfiguration tlsConfiguration = new TlsConfiguration();
@@ -249,7 +249,7 @@ public class HttpClientBuilderTest {
         configuredRegistry = builder.using(configuration).createConfiguredRegistry();
         assertThat(configuredRegistry).isNotNull();
 
-        final SSLConnectionSocketFactory socketFactory = 
+        final SSLConnectionSocketFactory socketFactory =
                 (SSLConnectionSocketFactory) configuredRegistry.lookup("https");
         assertThat(socketFactory).isNotNull();
 
@@ -263,7 +263,7 @@ public class HttpClientBuilderTest {
         final HostnameVerifier customVerifier = (s, sslSession) -> false;
 
         assertThat(builder.using(customVerifier).createClient(apacheBuilder, connectionManager, "test")).isNotNull();
-        
+
         final Field hostnameVerifierField =
                 FieldUtils.getField(org.apache.http.impl.client.HttpClientBuilder.class, "hostnameVerifier", true);
         assertThat(hostnameVerifierField.get(apacheBuilder)).isSameAs(customVerifier);
