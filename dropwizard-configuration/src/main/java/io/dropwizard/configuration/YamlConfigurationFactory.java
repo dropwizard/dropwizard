@@ -1,6 +1,5 @@
 package io.dropwizard.configuration;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,7 +20,6 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -69,8 +67,7 @@ public class YamlConfigurationFactory<T> implements ConfigurationFactory<T> {
             mapper = null;
             yamlFactory = null;
         } else {
-            mapper = objectMapper.copy()
-                    .enable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+            mapper = objectMapper;
             yamlFactory = new YAMLFactory();
         }
         this.validator = validator;

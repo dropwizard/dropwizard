@@ -1,5 +1,6 @@
 package io.dropwizard.configuration;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import javax.validation.Validator;
@@ -11,6 +12,11 @@ public class DefaultConfigurationFactoryFactory<T> implements ConfigurationFacto
             Validator    validator,
             ObjectMapper objectMapper,
             String       propertyPrefix) {
-        return new YamlConfigurationFactory<>(klass, validator, objectMapper, propertyPrefix);
+        return new YamlConfigurationFactory<>(
+            klass,
+            validator,
+            objectMapper.copy()
+                .enable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES),
+            propertyPrefix);
     }
 }
