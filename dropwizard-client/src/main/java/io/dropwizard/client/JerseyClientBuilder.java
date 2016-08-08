@@ -11,7 +11,7 @@ import io.dropwizard.jersey.validation.HibernateValidationFeature;
 import io.dropwizard.jersey.validation.Validators;
 import io.dropwizard.lifecycle.Managed;
 import io.dropwizard.setup.Environment;
-import javax.net.ssl.HostnameVerifier;
+import io.dropwizard.util.Duration;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.HttpRequestRetryHandler;
 import org.apache.http.config.Registry;
@@ -21,6 +21,7 @@ import org.apache.http.conn.socket.ConnectionSocketFactory;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.spi.ConnectorProvider;
 
+import javax.net.ssl.HostnameVerifier;
 import javax.validation.Validator;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -64,6 +65,7 @@ public class JerseyClientBuilder {
     private ObjectMapper objectMapper;
     private ExecutorService executorService;
     private ConnectorProvider connectorProvider;
+    private Duration shutdownGracePeriod = Duration.seconds(5);
 
     public JerseyClientBuilder(Environment environment) {
         this.apacheHttpClientBuilder = new HttpClientBuilder(environment);
@@ -114,6 +116,18 @@ public class JerseyClientBuilder {
      */
     public JerseyClientBuilder withProperty(String propertyName, Object propertyValue) {
         properties.put(propertyName, propertyValue);
+        return this;
+    }
+
+    /**
+     * Sets the shutdown grace period.
+     *
+     * @param shutdownGracePeriod a period of time to await shutdown of the
+     *        configured {ExecutorService}.
+     * @return {@code this}
+     */
+    public JerseyClientBuilder withShutdownGracePeriod(Duration shutdownGracePeriod) {
+        this.shutdownGracePeriod = shutdownGracePeriod;
         return this;
     }
 
@@ -384,7 +398,7 @@ public class JerseyClientBuilder {
             config.property(property.getKey(), property.getValue());
         }
 
-        config.register(new DropwizardExecutorProvider(threadPool));
+        config.register(new DropwizardExecutorProvider(threadPool, shutdownGracePeriod));
         if (connectorProvider == null) {
             final ConfiguredCloseableHttpClient apacheHttpClient =
                     apacheHttpClientBuilder.buildWithDefaultRequestConfiguration(name);

@@ -1,7 +1,11 @@
 package io.dropwizard.client;
 
 import com.google.common.util.concurrent.ForwardingExecutorService;
+import io.dropwizard.util.Duration;
+import org.glassfish.jersey.client.ClientAsyncExecutor;
 import org.glassfish.jersey.spi.ExecutorServiceProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.ExecutorService;
 
@@ -15,6 +19,7 @@ import java.util.concurrent.ExecutorService;
  * signaling to {@link DropwizardExecutorProvider} that the executor
  * is not shared.
  */
+@ClientAsyncExecutor
 class DropwizardExecutorProvider implements ExecutorServiceProvider {
     /**
      * An {@link ExecutorService} decorator used as a marker by
@@ -34,21 +39,32 @@ class DropwizardExecutorProvider implements ExecutorServiceProvider {
         }
     }
 
-    private final ExecutorService threadPool;
+    private static final Logger LOGGER = LoggerFactory.getLogger(DropwizardExecutorProvider.class);
 
-    DropwizardExecutorProvider(ExecutorService threadPool) {
-        this.threadPool = threadPool;
+    private final ExecutorService executor;
+    private final Duration shutdownGracePeriod;
+
+    DropwizardExecutorProvider(ExecutorService executor, Duration shutdownGracePeriod) {
+        this.executor = executor;
+        this.shutdownGracePeriod = shutdownGracePeriod;
     }
 
     @Override
     public ExecutorService getExecutorService() {
-        return this.threadPool;
+        return this.executor;
     }
 
     @Override
     public void dispose(ExecutorService executorService) {
         if (executorService instanceof DisposableExecutorService) {
             executorService.shutdown();
+
+            try {
+                executorService.awaitTermination(
+                    shutdownGracePeriod.getQuantity(), shutdownGracePeriod.getUnit());
+            } catch (InterruptedException err) {
+                LOGGER.warn("Interrupted while waiting for ExecutorService shutdown", err);
+            }
         }
     }
 }
