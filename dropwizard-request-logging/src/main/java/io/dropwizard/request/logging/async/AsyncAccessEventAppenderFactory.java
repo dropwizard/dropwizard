@@ -10,17 +10,11 @@ import io.dropwizard.logging.async.AsyncAppenderFactory;
 public class AsyncAccessEventAppenderFactory implements AsyncAppenderFactory<IAccessEvent> {
 
     /**
-     * Creates an {@link AsyncAppenderFactory} of type {@link IAccessEvent} that prepares events
-     * for deferred processing
-     * @return the {@link AsyncAppenderFactory}
+     * Creates an {@link AsyncAppenderBase} of type {@link IAccessEvent}.
+     * @return the {@link AsyncAppenderBase}
      */
     @Override
     public AsyncAppenderBase<IAccessEvent> build() {
-        return new AsyncAppenderBase<IAccessEvent>() {
-            @Override
-            protected void preprocess(IAccessEvent event) {
-                event.prepareForDeferredProcessing();
-            }
-        };
+        return new AsyncAppenderBase<IAccessEvent>();
     }
 }
