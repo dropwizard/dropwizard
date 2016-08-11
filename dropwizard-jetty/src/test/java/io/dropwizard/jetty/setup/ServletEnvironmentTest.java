@@ -161,12 +161,12 @@ public class ServletEnvironmentTest {
     }
 
     @Test
-    public void setsResourceBaseList() throws Exception {
+    public void setsBaseResourceStringList() throws Exception {
         String wooResource = tempDir.newFolder().getAbsolutePath();
         String fooResource = tempDir.newFolder().getAbsolutePath();
 
         final String[] testResources = new String[]{wooResource, fooResource};
-        environment.setResourceBase(testResources);
+        environment.setBaseResource(testResources);
 
         ArgumentCaptor<Resource> captor = ArgumentCaptor.forClass(Resource.class);
         verify(handler).setBaseResource(captor.capture());

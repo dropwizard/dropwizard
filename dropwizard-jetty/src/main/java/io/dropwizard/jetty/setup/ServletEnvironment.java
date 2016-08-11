@@ -148,6 +148,17 @@ public class ServletEnvironment {
     }
 
     /**
+     * Sets the base resources for this context.
+     *
+     * @param resources A list of strings representing the base resources to serve static
+     *                  content for the context. Any string accepted by Resource.newResource(String)
+     *                  may be passed and the call is equivalent to {@link #setBaseResource(Resource...)}}
+     */
+    public void setBaseResource(String... resources) {
+        handler.setBaseResource(new ResourceCollection(resources));
+    }
+
+    /**
      * Sets the base resource for this context.
      * @param resourceBase A string representing the base resource for the context. Any
      *                     string accepted by Resource.newResource(String) may be passed
@@ -156,18 +167,6 @@ public class ServletEnvironment {
     public void setResourceBase(String resourceBase) {
         handler.setResourceBase(resourceBase);
     }
-
-    /**
-     * Sets the base resources for this context.
-     *
-     * @param resources A list of strings representing the base resources to serve static
-     *                  content for the context. Any string accepted by Resource.newResource(String)
-     *                  may be passed and the call is equivalent to {@link #setBaseResource(Resource...)}}
-     */
-    public void setResourceBase(String... resources) {
-        handler.setBaseResource(new ResourceCollection(resources));
-    }
-
 
     /**
      * Set an initialization parameter.
