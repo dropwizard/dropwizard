@@ -95,7 +95,9 @@ GZip
 +---------------------------+---------------------+------------------------------------------------------------------------------------------------------+
 | gzipCompatibleInflation   | true                | If true, then ZLIB inflation(decompression) will be performed in the GZIP-compatible mode.           |
 +---------------------------+---------------------+------------------------------------------------------------------------------------------------------+
-
+| syncFlush                 | false               | The flush mode. Set to true if the application wishes to stream (e.g. SSE) the data,                 |
+|                           |                     | but this may hurt compression performance (as all pending output is flushed).                        |
++---------------------------+---------------------+------------------------------------------------------------------------------------------------------+
 
 .. _man-configuration-requestLog:
 
