@@ -92,6 +92,8 @@ public class GzipHandlerFactory {
 
     private boolean gzipCompatibleInflation = true;
 
+    private boolean syncFlush = false;
+    
     @JsonProperty
     public boolean isEnabled() {
         return enabled;
@@ -169,6 +171,16 @@ public class GzipHandlerFactory {
     public void setIncludedMethods(Set<String> methods) {
         this.includedMethods = methods;
     }
+    
+    @JsonProperty
+    public boolean isSyncFlush() {
+        return syncFlush;
+    }
+
+    @JsonProperty
+    public void setSyncFlush(boolean syncFlush) {
+        this.syncFlush = syncFlush;
+    }
 
     public BiDiGzipHandler build(Handler handler) {
         final BiDiGzipHandler gzipHandler = new BiDiGzipHandler();
@@ -176,6 +188,7 @@ public class GzipHandlerFactory {
         gzipHandler.setMinGzipSize((int) minimumEntitySize.toBytes());
         gzipHandler.setInputBufferSize((int) bufferSize.toBytes());
         gzipHandler.setCompressionLevel(deflateCompressionLevel);
+        gzipHandler.setSyncFlush(syncFlush);
 
         if (compressedMimeTypes != null) {
             gzipHandler.setIncludedMimeTypes(Iterables.toArray(compressedMimeTypes, String.class));
