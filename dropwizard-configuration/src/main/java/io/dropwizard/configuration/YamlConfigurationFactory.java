@@ -14,13 +14,11 @@ import com.fasterxml.jackson.dataformat.yaml.snakeyaml.error.MarkedYAMLException
 import com.fasterxml.jackson.dataformat.yaml.snakeyaml.error.YAMLException;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
-import com.google.common.collect.FluentIterable;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -156,18 +154,18 @@ public class YamlConfigurationFactory<T> implements ConfigurationFactory<T> {
 
     protected void addOverride(JsonNode root, String name, String value) {
         JsonNode node = root;
-        final String[] parts = ESCAPED_DOT_SPLITTER.splitToList(name).stream()
+        final List<String> parts = ESCAPED_DOT_SPLITTER.splitToList(name).stream()
                 .map(key -> ESCAPED_DOT_PATTERN.matcher(key).replaceAll("."))
-                .toArray(String[]::new);
-        for (int i = 0; i < parts.length; i++) {
-            final String key = parts[i];
+                .collect(Collectors.toList());
+        for (int i = 0; i < parts.size(); i++) {
+            final String key = parts.get(i);
 
             if (!(node instanceof ObjectNode)) {
                 throw new IllegalArgumentException("Unable to override " + name + "; it's not a valid path.");
             }
             final ObjectNode obj = (ObjectNode) node;
 
-            final String remainingPath = Joiner.on('.').join(Arrays.copyOfRange(parts, i, parts.length));
+            final String remainingPath = Joiner.on('.').join(parts.subList(i, parts.size()));
             if (obj.has(remainingPath) && !remainingPath.equals(key)) {
                 if (obj.get(remainingPath).isValueNode()) {
                     obj.put(remainingPath, value);
@@ -176,7 +174,7 @@ public class YamlConfigurationFactory<T> implements ConfigurationFactory<T> {
             }
 
             JsonNode child;
-            final boolean moreParts = i < parts.length - 1;
+            final boolean moreParts = i < parts.size() - 1;
 
             if (key.matches(".+\\[\\d+\\]$")) {
                 final int s = key.indexOf('[');
