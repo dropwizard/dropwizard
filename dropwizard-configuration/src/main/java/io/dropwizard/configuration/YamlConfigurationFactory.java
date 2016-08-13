@@ -14,7 +14,7 @@ import com.fasterxml.jackson.dataformat.yaml.snakeyaml.error.MarkedYAMLException
 import com.fasterxml.jackson.dataformat.yaml.snakeyaml.error.YAMLException;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
-import com.google.common.collect.Iterables;
+import com.google.common.collect.FluentIterable;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
@@ -39,7 +39,8 @@ public class YamlConfigurationFactory<T> implements ConfigurationFactory<T> {
 
     private static final Pattern ESCAPED_COMMA_PATTERN = Pattern.compile("\\\\,");
     private static final Splitter ESCAPED_COMMA_SPLITTER = Splitter.on(Pattern.compile("(?<!\\\\),")).trimResults();
-    private static final Splitter DOT_SPLITTER = Splitter.on('.').trimResults();
+    private static final Pattern ESCAPED_DOT_PATTERN = Pattern.compile("\\\\\\.");
+    private static final Splitter ESCAPED_DOT_SPLITTER = Splitter.on(Pattern.compile("(?<!\\\\)\\.")).trimResults();
 
     private final Class<T> klass;
     private final String propertyPrefix;
@@ -155,7 +156,9 @@ public class YamlConfigurationFactory<T> implements ConfigurationFactory<T> {
 
     protected void addOverride(JsonNode root, String name, String value) {
         JsonNode node = root;
-        final String[] parts = Iterables.toArray(DOT_SPLITTER.split(name), String.class);
+        final String[] parts = FluentIterable.from(ESCAPED_DOT_SPLITTER.split(name))
+                .transform(key -> ESCAPED_DOT_PATTERN.matcher(key).replaceAll("."))
+                .toArray(String.class);
         for (int i = 0; i < parts.length; i++) {
             final String key = parts[i];
 
