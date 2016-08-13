@@ -7,6 +7,7 @@ import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.resource.Resource;
+import org.eclipse.jetty.util.resource.ResourceCollection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -130,20 +131,38 @@ public class ServletEnvironment {
     /**
      * Sets the base resource for this context.
      *
-     * @param baseResource The resource used as the base for all static content
-     *                     of this context.
+     * @param baseResource The resource to be used as the base for all static content of this context.
      */
     public void setBaseResource(Resource baseResource) {
         handler.setBaseResource(baseResource);
     }
 
     /**
-     * Sets the base resource for this context.
+     * Sets the base resources for this context.
      *
-     * @param resourceBase A string representing the base resource for the
-     *                     context. Any string accepted by Resource.newResource(String)
-     *                     may be passed and the call is equivalent to
-     *                     {@link #setBaseResource(Resource)}}
+     * @param baseResources The list of resources to be used as the base for all static
+     *                      content of this context.
+     */
+    public void setBaseResource(Resource... baseResources) {
+        handler.setBaseResource(new ResourceCollection(baseResources));
+    }
+
+    /**
+     * Sets the base resources for this context.
+     *
+     * @param resources A list of strings representing the base resources to serve static
+     *                  content for the context. Any string accepted by Resource.newResource(String)
+     *                  may be passed and the call is equivalent to {@link #setBaseResource(Resource...)}}
+     */
+    public void setBaseResource(String... resources) {
+        handler.setBaseResource(new ResourceCollection(resources));
+    }
+
+    /**
+     * Sets the base resource for this context.
+     * @param resourceBase A string representing the base resource for the context. Any
+     *                     string accepted by Resource.newResource(String) may be passed
+     *                     and the call is equivalent to {@link #setBaseResource(Resource)}}
      */
     public void setResourceBase(String resourceBase) {
         handler.setResourceBase(resourceBase);
