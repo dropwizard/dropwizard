@@ -208,7 +208,7 @@ Dropwizard then calls your ``Application`` subclass to initialize your applicati
     that is an array of strings in the configuration, you could start your service like this:
     ``java -Ddw.myapp.myserver.hosts=server1,server2,server3 server my-config.json``
 
-    If you need to use the ',' character in one of the values, you can escape it by using '\,' instead.
+    If you need to use the ',' character in one of the values, you can escape it by using '\\,' instead.
 
     The array override facility only handles configuration elements that are arrays of simple strings.
     Also, the setting in question must already exist in your configuration file as an array;
