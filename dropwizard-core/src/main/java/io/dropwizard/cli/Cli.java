@@ -1,6 +1,5 @@
 package io.dropwizard.cli;
 
-import io.dropwizard.configuration.ConfigurationException;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.util.JarLocation;
 import net.sourceforge.argparse4j.ArgumentParsers;
@@ -83,8 +82,9 @@ public class Cli {
             stdErr.println(e.getMessage());
             e.getParser().printHelp(stdErr);
             return false;
-        } catch (ConfigurationException e) {
-            stdErr.println(e.getMessage());
+        } catch (Throwable t) {
+            // Unexpected exceptions should result in non-zero exit status of the process
+            stdErr.println(t.getMessage());
             return false;
         }
     }
