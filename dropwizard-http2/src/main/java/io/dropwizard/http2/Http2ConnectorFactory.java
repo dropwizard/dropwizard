@@ -98,8 +98,6 @@ public class Http2ConnectorFactory extends HttpsConnectorFactory {
         setSupportedProtocols(ImmutableList.of("TLSv1.2"));
         setSupportedCipherSuites(ImmutableList.of("TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256"));
 
-        logSupportedParameters();
-
         // Setup connection factories
         final HttpConfiguration httpConfig = buildHttpConfiguration();
         final HttpConnectionFactory http1 = buildHttpConnectionFactory(httpConfig);
@@ -111,6 +109,7 @@ public class Http2ConnectorFactory extends HttpsConnectorFactory {
         alpn.setDefaultProtocol(HTTP_1_1); // Speak HTTP 1.1 over TLS if negotiation fails
 
         final SslContextFactory sslContextFactory = buildSslContextFactory();
+        sslContextFactory.addLifeCycleListener(logSslInfoOnStart(sslContextFactory));
         server.addBean(sslContextFactory);
 
         // We should use ALPN as a negotiation protocol. Old clients that don't support it will be served
