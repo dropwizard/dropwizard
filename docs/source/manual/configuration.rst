@@ -354,9 +354,9 @@ Extends the attributes that are available to the :ref:`HTTP connector <man-confi
           jceProvider: (none)
           validateCerts: true
           validatePeers: true
-          supportedProtocols: SSLv3
+          supportedProtocols: [SSLv3]
           excludedProtocols: (none)
-          supportedCipherSuites: TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256
+          supportedCipherSuites: [TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256]
           excludedCipherSuites: (none)
           allowRenegotiation: true
           endpointIdentificationAlgorithm: (none)
@@ -366,7 +366,7 @@ Name                             Default             Description
 ================================ ==================  ======================================================================================
 keyStorePath                     REQUIRED            The path to the Java key store which contains the host certificate and private key.
 keyStorePassword                 REQUIRED            The password used to access the key store.
-keyStoreType                     JKS                 The type of key store (usually ``JKS``, ``PKCS12``, JCEKS``,
+keyStoreType                     JKS                 The type of key store (usually ``JKS``, ``PKCS12``, ``JCEKS``,
                                                      ``Windows-MY``}, or ``Windows-ROOT``).
 keyStoreProvider                 (none)              The JCE provider to use to access the key store.
 trustStorePath                   (none)              The path to the Java key store which contains the CA certificates used to establish
