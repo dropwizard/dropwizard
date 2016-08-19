@@ -407,7 +407,7 @@ allowRenegotiation               true                Whether or not TLS renegoti
 endpointIdentificationAlgorithm  (none)              Which endpoint identification algorithm, if any, to use during the TLS handshake.
 ================================ ==================  ======================================================================================
 
-.. _sslyze: https://github.com/iSECPartners/sslyze
+.. _sslyze: https://github.com/nabla-c0d3/sslyze
 
 .. _man-configuration-http2:
 
