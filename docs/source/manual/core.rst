@@ -278,6 +278,26 @@ test keystore you can use in the `Dropwizard example project`__.
           keyStorePassword: example
           validateCerts: false
 
+By default, only secure TLSv1.2 cipher suites are allowed. Older versions of cURL, Java 6 and 7, and
+other clients may be unable to communicate with the allowed cipher suites, but this was a conscious
+decision that sacrifices interoperability for security. Dropwizard allows a workaround by specifying
+a customized list of cipher suites. The following list of excluded cipher suites will allow for
+TLSv1 and TLSv1.1 clients to negotiate a connection similar to pre-Dropwizard 1.0.
+
+.. code-block:: yaml
+
+    server:
+      applicationConnectors:
+        - type: https
+          port: 8443
+          excludedCipherSuites:
+            - SSL_RSA_WITH_DES_CBC_SHA
+            - SSL_DHE_RSA_WITH_DES_CBC_SHA
+            - SSL_DHE_DSS_WITH_DES_CBC_SHA
+            - SSL_RSA_EXPORT_WITH_RC4_40_MD5
+            - SSL_RSA_EXPORT_WITH_DES40_CBC_SHA
+            - SSL_DHE_RSA_EXPORT_WITH_DES40_CBC_SHA
+            - SSL_DHE_DSS_EXPORT_WITH_DES40_CBC_SHA
 
 .. _man-core-bootstrapping:
 
