@@ -433,8 +433,9 @@ instances from the URI ``/hello-world``, so our resource class looks like this:
 
         @GET
         @Timed
-        public Saying sayHello(@QueryParam("name") Optional<String> name) {
-            final String value = String.format(template, name.orElse(defaultName));
+        public Saying sayHello(@QueryParam("name") String name) {
+            Optional<String> maybeName = Optional.ofNullable(name);
+            final String value = String.format(template, maybeName.orElse(defaultName));
             return new Saying(counter.incrementAndGet(), value);
         }
     }
