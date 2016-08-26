@@ -136,6 +136,34 @@ public class DefaultServerFactoryTest {
     }
 
     @Test
+    public void defaultsDetailedJsonProcessingExceptionToFalse() throws Exception {
+        http.build(environment);
+        JsonProcessingExceptionMapper exceptionMapper = null;
+        for (Object singleton : environment.jersey().getResourceConfig().getSingletons()) {
+            if (singleton instanceof JsonProcessingExceptionMapper) {
+                exceptionMapper = (JsonProcessingExceptionMapper) singleton;
+            }
+        }
+        assertThat(exceptionMapper).isNotNull();
+        assertThat(exceptionMapper.isShowDetails()).isFalse();
+    }
+
+    @Test
+    public void doesNotDefaultDetailedJsonProcessingExceptionToFalse() throws Exception {
+        http.setDetailedJsonProcessingExceptionMapper(true);
+
+        http.build(environment);
+        JsonProcessingExceptionMapper exceptionMapper = null;
+        for (Object singleton : environment.jersey().getResourceConfig().getSingletons()) {
+            if (singleton instanceof JsonProcessingExceptionMapper) {
+                exceptionMapper = (JsonProcessingExceptionMapper) singleton;
+            }
+        }
+        assertThat(exceptionMapper).isNotNull();
+        assertThat(exceptionMapper.isShowDetails()).isTrue();
+    }
+
+    @Test
     public void testGracefulShutdown() throws Exception {
         CountDownLatch requestReceived = new CountDownLatch(1);
         CountDownLatch shutdownInvoked = new CountDownLatch(1);

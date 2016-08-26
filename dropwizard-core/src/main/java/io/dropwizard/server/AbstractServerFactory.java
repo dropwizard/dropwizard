@@ -250,6 +250,8 @@ public abstract class AbstractServerFactory implements ServerFactory {
 
     private Boolean registerDefaultExceptionMappers = Boolean.TRUE;
 
+    private Boolean detailedJsonProcessingExceptionMapper = Boolean.FALSE;
+
     private Duration shutdownGracePeriod = Duration.seconds(30);
 
     @NotNull
@@ -421,6 +423,14 @@ public abstract class AbstractServerFactory implements ServerFactory {
         this.registerDefaultExceptionMappers = registerDefaultExceptionMappers;
     }
 
+    public Boolean getDetailedJsonProcessingExceptionMapper() {
+        return detailedJsonProcessingExceptionMapper;
+    }
+
+    public void setDetailedJsonProcessingExceptionMapper(Boolean detailedJsonProcessingExceptionMapper) {
+        this.detailedJsonProcessingExceptionMapper = detailedJsonProcessingExceptionMapper;
+    }
+
     @JsonProperty
     public Duration getShutdownGracePeriod() {
         return shutdownGracePeriod;
@@ -497,7 +507,7 @@ public abstract class AbstractServerFactory implements ServerFactory {
                 jersey.register(new LoggingExceptionMapper<Throwable>() {
                 });
                 jersey.register(new JerseyViolationExceptionMapper());
-                jersey.register(new JsonProcessingExceptionMapper());
+                jersey.register(new JsonProcessingExceptionMapper(detailedJsonProcessingExceptionMapper));
                 jersey.register(new EarlyEofExceptionMapper());
             }
             handler.addServlet(new NonblockingServletHolder(jerseyContainer), jersey.getUrlPattern());

@@ -28,6 +28,10 @@ public class JsonProcessingExceptionMapper implements ExceptionMapper<JsonProces
         this.showDetails = showDetails;
     }
 
+    public boolean isShowDetails() {
+        return showDetails;
+    }
+
     @Override
     public Response toResponse(JsonProcessingException exception) {
         /*
