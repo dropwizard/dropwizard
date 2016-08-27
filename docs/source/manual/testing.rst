@@ -414,7 +414,7 @@ before the command is ran.
         private final PrintStream originalOut = System.out;
         private final PrintStream originalErr = System.err;
         private final InputStream originalIn = System.in;
-        
+
         private final ByteArrayOutputStream stdOut = new ByteArrayOutputStream();
         private final ByteArrayOutputStream stdErr = new ByteArrayOutputStream();
         private Cli cli;
@@ -457,3 +457,54 @@ before the command is ran.
             softly.assertAll();
         }
     }
+
+.. _man-testing-database-interactions:
+
+Testing Database Interactions
+=============================
+
+In Dropwizard, the database access is managed via the ``@UnitOfWork`` annotation used on resource
+methods. In case you want to test database-layer code independently, a ``DAOTestRule`` is provided
+which setups a Hibernate ``SessionFactory``.
+
+.. code-block:: java
+
+    public class DatabaseTest {
+
+        @Rule
+        public DAOTestRule database = DAOTestRule.newBuilder().addEntityClass(FooEntity.class).build();
+
+        private FooDAO fooDAO;
+
+        @Before
+        public void setUp() {
+            fooDAO = new FooDAO(database.getSessionFactory());
+        }
+
+        @Test
+        public createsFoo() {
+            FooEntity fooEntity = new FooEntity("bar");
+            long id = database.inTransaction(() -> {
+                return fooDAO.save(fooEntity);
+            });
+
+            assertThat(fooEntity.getId, notNullValue());
+        }
+
+        @Test
+        public roundtripsFoo() {
+            long id = database.inTransaction(() -> {
+                return fooDAO.save(new FooEntity("baz"));
+            });
+
+            FooEntity fooEntity = fooDAO.get(id);
+
+            assertThat(fooEntity.getFoo(), equalTo("baz"));
+        }
+    }
+
+The ``DAOTestRule``
+
+* Creates a simple default Hibernate configuration using an H2 in-memory database
+* Provides a ``SessionFactory`` instance which can be passed to, e.g., a subclass of ``AbstractDAO``
+* Provides a function for executing database operations within a transaction
