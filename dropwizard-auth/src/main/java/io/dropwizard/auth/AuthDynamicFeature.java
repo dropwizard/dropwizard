@@ -21,13 +21,26 @@ import java.lang.annotation.Annotation;
  * <p>If authorization is not a concern, then {@link RolesAllowedDynamicFeature}
  * could be omitted. But to enable authentication, the {@link PermitAll} annotation
  * should be placed on the corresponding resource methods.</p>
+ * <p>Note that registration of the filter will follow the semantics of
+ * {@link FeatureContext#register(Class)} and {@link FeatureContext#register(Object)}:
+ * passing the filter as a {@link Class} to the {@link #AuthDynamicFeature(Class)}
+ * constructor will result in dependency injection, while objects passed to
+ * the {@link #AuthDynamicFeature(ContainerRequestFilter)} will be used directly.</p>
  */
 public class AuthDynamicFeature implements DynamicFeature {
 
     private final ContainerRequestFilter authFilter;
 
+    private final Class<? extends ContainerRequestFilter> authFilterClass;
+
     public AuthDynamicFeature(ContainerRequestFilter authFilter) {
         this.authFilter = authFilter;
+        this.authFilterClass = null;
+    }
+
+    public AuthDynamicFeature(Class<? extends ContainerRequestFilter> authFilterClass) {
+        this.authFilter = null;
+        this.authFilterClass = authFilterClass;
     }
 
     @Override
@@ -41,16 +54,24 @@ public class AuthDynamicFeature implements DynamicFeature {
             am.isAnnotationPresent(PermitAll.class);
 
         if (annotationOnClass || annotationOnMethod) {
-            context.register(authFilter);
+            registerAuthFilter(context);
         } else {
             for (Annotation[] annotations : parameterAnnotations) {
                 for (Annotation annotation : annotations) {
                     if (annotation instanceof Auth) {
-                        context.register(authFilter);
+                        registerAuthFilter(context);
                         return;
                     }
                 }
             }
+        }
+    }
+
+    private void registerAuthFilter(FeatureContext context) {
+        if (authFilter != null) {
+            context.register(authFilter);
+        } else if (authFilterClass != null) {
+            context.register(authFilterClass);
         }
     }
 }
