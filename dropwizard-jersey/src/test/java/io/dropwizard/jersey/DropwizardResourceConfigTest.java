@@ -10,6 +10,7 @@ import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
@@ -118,7 +119,8 @@ public class DropwizardResourceConfigTest {
 
         assertThat(rc.getEndpointsInfo())
                 .contains("    GET     /wrapper/bar (io.dropwizard.jersey.DropwizardResourceConfigTest.ResourcePathOnMethodLevel)")
-                .contains("    GET     /locator/bar (io.dropwizard.jersey.DropwizardResourceConfigTest.ResourcePathOnMethodLevel)");
+                .contains("    GET     /locator/bar (io.dropwizard.jersey.DropwizardResourceConfigTest.ResourcePathOnMethodLevel)")
+                .contains("    UNKNOWN /obj/{it} (java.lang.Object)");
     }
 
     @Test
@@ -201,6 +203,14 @@ public class DropwizardResourceConfigTest {
         @Path("locator")
         public Class<ResourcePathOnMethodLevel> getNested2() {
             return ResourcePathOnMethodLevel.class;
+        }
+
+        @Path("obj/{it}")
+        public Object getNested3(@PathParam("it") String path) {
+            if (path.equals("implement")) {
+                return new ImplementingResource();
+            }
+            return new ResourcePathOnMethodLevel();
         }
     }
 
