@@ -6,6 +6,7 @@ import com.fasterxml.classmate.ResolvedType;
 import com.fasterxml.classmate.TypeResolver;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ComparisonChain;
+import com.google.common.collect.Ordering;
 import io.dropwizard.jersey.caching.CacheControlledResponseFeature;
 import io.dropwizard.jersey.params.NonEmptyStringParamFeature;
 import io.dropwizard.jersey.sessions.SessionFactoryProvider;
@@ -232,7 +233,7 @@ public class DropwizardResourceConfig extends ResourceConfig {
         public int compare(EndpointLogLine endpointA, EndpointLogLine endpointB) {
             return ComparisonChain.start()
                 .compare(endpointA.basePath, endpointB.basePath)
-                .compare(endpointA.httpMethod, endpointB.httpMethod)
+                .compare(endpointA.httpMethod, endpointB.httpMethod, Comparator.nullsLast(Ordering.natural()))
                 .result();
         }
     }
