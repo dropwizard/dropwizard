@@ -186,7 +186,11 @@ public class DropwizardResourceConfig extends ResourceConfig {
                         final Class<?> erasedType = !responseType.getTypeBindings().isEmpty() ?
                                 responseType.getTypeBindings().getBoundType(0).getErasedType() :
                                 responseType.getErasedType();
-                        populate(path, erasedType, true, endpointLogLines);
+                        if (Resource.from(erasedType) == null) {
+                            endpointLogLines.add(new EndpointLogLine(method.getHttpMethod(), path, erasedType));
+                        } else {
+                            populate(path, erasedType, true, endpointLogLines);
+                        }
                     }
                 }
             }
@@ -216,7 +220,8 @@ public class DropwizardResourceConfig extends ResourceConfig {
 
         @Override
         public String toString() {
-            return String.format("    %-7s %s (%s)", httpMethod, basePath, klass.getCanonicalName());
+            final String method = httpMethod == null ? "UNKNOWN" : httpMethod;
+            return String.format("    %-7s %s (%s)", method, basePath, klass.getCanonicalName());
         }
     }
 
