@@ -3,6 +3,7 @@ package io.dropwizard.setup;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.SharedMetricRegistries;
 import com.codahale.metrics.health.HealthCheckRegistry;
+import com.codahale.metrics.health.SharedHealthCheckRegistries;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import io.dropwizard.jersey.DropwizardResourceConfig;
@@ -88,6 +89,7 @@ public class Environment {
                 .build();
 
         SharedMetricRegistries.add("default", metricRegistry);
+        SharedHealthCheckRegistries.add("default", healthCheckRegistry);
     }
 
     /**
