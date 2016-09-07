@@ -26,6 +26,8 @@ import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
 import org.apache.http.impl.client.SystemDefaultCredentialsProvider;
 import org.apache.http.impl.conn.SystemDefaultDnsResolver;
 import org.apache.http.impl.conn.SystemDefaultRoutePlanner;
+import org.glassfish.jersey.client.rx.RxClient;
+import org.glassfish.jersey.client.rx.java8.RxCompletionStageInvoker;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -155,6 +157,20 @@ public class JerseyClientBuilderTest {
     public void usesTheObjectMapperForJson() throws Exception {
         final Client client = builder.using(executorService, objectMapper).build("test");
         assertThat(client.getConfiguration().isRegistered(JacksonMessageBodyProvider.class)).isTrue();
+    }
+
+    @Test
+    public void createsAnRxEnabledClient() throws Exception {
+        final RxClient<RxCompletionStageInvoker> client =
+            builder.using(executorService, objectMapper)
+                .buildRx("test", RxCompletionStageInvoker.class);
+
+        for (Object o : client.getConfiguration().getInstances()) {
+            if (o instanceof DropwizardExecutorProvider) {
+                final DropwizardExecutorProvider provider = (DropwizardExecutorProvider) o;
+                assertThat(provider.getExecutorService()).isSameAs(executorService);
+            }
+        }
     }
 
     @Test

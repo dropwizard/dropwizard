@@ -19,6 +19,9 @@ import org.apache.http.conn.DnsResolver;
 import org.apache.http.conn.routing.HttpRoutePlanner;
 import org.apache.http.conn.socket.ConnectionSocketFactory;
 import org.glassfish.jersey.client.ClientConfig;
+import org.glassfish.jersey.client.rx.Rx;
+import org.glassfish.jersey.client.rx.RxClient;
+import org.glassfish.jersey.client.rx.RxInvoker;
 import org.glassfish.jersey.client.spi.ConnectorProvider;
 
 import javax.net.ssl.HostnameVerifier;
@@ -308,6 +311,15 @@ public class JerseyClientBuilder {
     public JerseyClientBuilder using(CredentialsProvider credentialsProvider) {
         apacheHttpClientBuilder.using(credentialsProvider);
         return this;
+    }
+
+    /**
+     * Builds the {@link RxClient} instance.
+     *
+     * @return a fully-configured {@link RxClient}
+     */
+    public <RX extends RxInvoker> RxClient<RX> buildRx(String name, Class<RX> invokerType) {
+        return Rx.from(build(name), invokerType, executorService);
     }
 
     /**
