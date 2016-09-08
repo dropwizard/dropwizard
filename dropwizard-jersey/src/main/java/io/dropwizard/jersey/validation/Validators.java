@@ -32,6 +32,7 @@ public class Validators {
      */
     public static HibernateValidatorConfiguration newConfiguration() {
         return BaseValidator.newConfiguration()
+                .parameterNameProvider(new JerseyParameterNameProvider())
                 .addValidatedValueHandler(new NonEmptyStringParamUnwrapper())
                 .addValidatedValueHandler(new ParamValidatorUnwrapper());
     }
