@@ -21,6 +21,17 @@ v1.1.0: Unreleased
 * Upgraded to classmate 1.3.1 `#1654 <https://github.com/dropwizard/dropwizard/pull/1654>`_
 * Upgraded to Mustache 0.9.3 `#1654 <https://github.com/dropwizard/dropwizard/pull/1654>`_
 
+.. _rel-1.0.1:
+
+v1.0.1: Sep 21 2016
+===================
+
+* Allow use of custom HostnameVerifier on clients `#1664 <https://github.com/dropwizard/dropwizard/pull/1664>`_
+* Allow to configure failing on unknown properties in the Dropwizard configuration `#1677 <https://github.com/dropwizard/dropwizard/pull/1677>`_
+* Fix request attribute-related race condition in Logback request logging `#1678 <https://github.com/dropwizard/dropwizard/pull/1678>`_
+* Log Jetty initialized SSLContext not the Default `#1698 <https://github.com/dropwizard/dropwizard/pull/1698>`_
+* Fix NPE of non-resource sub-resource methods `#1718 <https://github.com/dropwizard/dropwizard/pull/1718>`_
+
 .. _rel-1.0.0:
 
 v1.0.0: Jul 26 2016
