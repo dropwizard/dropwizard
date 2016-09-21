@@ -15,6 +15,10 @@ public class NonEmptyStringParam extends AbstractParam<Optional<String>> {
         super(input);
     }
 
+    public NonEmptyStringParam(String input, String parameterName) {
+        super(input, parameterName);
+    }
+
     @Override
     protected Optional<String> parse(String input) throws Exception {
         return Optional.ofNullable(Strings.emptyToNull(input));

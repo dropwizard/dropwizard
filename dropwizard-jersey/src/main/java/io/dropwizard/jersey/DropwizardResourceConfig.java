@@ -8,6 +8,7 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Ordering;
 import io.dropwizard.jersey.caching.CacheControlledResponseFeature;
+import io.dropwizard.jersey.params.AbstractParamConverterProvider;
 import io.dropwizard.jersey.params.NonEmptyStringParamFeature;
 import io.dropwizard.jersey.sessions.SessionFactoryProvider;
 import io.dropwizard.jersey.validation.ValidatingEnumParamConverterProvider;
@@ -70,6 +71,7 @@ public class DropwizardResourceConfig extends ResourceConfig {
         register(io.dropwizard.jersey.optional.OptionalLongMessageBodyWriter.class);
         register(io.dropwizard.jersey.optional.OptionalParamFeature.class);
         register(NonEmptyStringParamFeature.class);
+        register(AbstractParamConverterProvider.class);
         register(new ValidatingEnumParamConverterProvider(this));
         register(new SessionFactoryProvider.Binder());
     }

@@ -551,6 +551,35 @@ public class ConstraintViolationExceptionMapperTest extends JerseyTest {
     }
 
     @Test
+    public void testParameterValidation() {
+        Response response = target("/valid/paramValidation")
+            .request()
+            .get();
+        assertThat(response.getStatus()).isEqualTo(400);
+        assertThat(response.readEntity(String.class))
+            .containsOnlyOnce("query param length may not be null");
+        response = target("/valid/paramValidation")
+            .queryParam("length", 50)
+            .request()
+            .get();
+        assertThat(response.getStatus()).isEqualTo(400);
+        assertThat(response.readEntity(String.class))
+            .containsOnlyOnce("query param length must be less than or equal to 5");
+        response = target("/valid/paramValidation")
+            .queryParam("length", 1)
+            .request()
+            .get();
+        assertThat(response.getStatus()).isEqualTo(400);
+        assertThat(response.readEntity(String.class))
+            .containsOnlyOnce("query param length must be greater than or equal to 2");
+        response = target("/valid/paramValidation")
+            .queryParam("length", 3)
+            .request()
+            .get();
+        assertThat(response.getStatus()).isEqualTo(200);
+    }
+
+    @Test
     public void testEnumParam() {
         Response response = target("/valid/enumParam")
             .request()

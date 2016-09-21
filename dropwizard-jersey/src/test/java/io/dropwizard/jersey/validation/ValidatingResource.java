@@ -6,6 +6,7 @@ import io.dropwizard.jersey.jackson.JacksonMessageBodyProviderTest.Partial1;
 import io.dropwizard.jersey.jackson.JacksonMessageBodyProviderTest.Partial2;
 import io.dropwizard.jersey.jackson.JacksonMessageBodyProviderTest.PartialExample;
 import io.dropwizard.jersey.params.IntParam;
+import io.dropwizard.jersey.params.LongParam;
 import io.dropwizard.jersey.params.NonEmptyStringParam;
 import io.dropwizard.validation.Validated;
 import org.hibernate.validator.constraints.Email;
@@ -73,6 +74,12 @@ public class ValidatingResource {
     @Length(max = 3)
     public String blaze(@QueryParam("name") @Length(min = 3) String name) {
         return name;
+    }
+
+    @GET
+    @Path("paramValidation")
+    public String paramValidation(@UnwrapValidatedValue @NotNull @Min(2) @Max(5) @QueryParam("length") LongParam length) {
+        return Long.toString(length.get());
     }
 
     @GET
