@@ -2,7 +2,12 @@ package io.dropwizard.jersey.validation;
 
 import org.hibernate.validator.parameternameprovider.ReflectionParameterNameProvider;
 
-import javax.ws.rs.*;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.CookieParam;
+import javax.ws.rs.FormParam;
+import javax.ws.rs.MatrixParam;
 import javax.ws.rs.core.Context;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
@@ -23,7 +28,7 @@ public class JerseyParameterNameProvider extends ReflectionParameterNameProvider
     public List<String> getParameterNames(Method method) {
         Parameter[] parameters = method.getParameters();
         Annotation[][] parameterAnnotations = method.getParameterAnnotations();
-        List<String> names = new ArrayList<>( parameterAnnotations.length );
+        List<String> names = new ArrayList<>(parameterAnnotations.length);
         for (int i = 0; i < parameterAnnotations.length; i++) {
             Annotation[] annotations = parameterAnnotations[i];
             String name = getParameterNameFromAnnotations(annotations).orElse(parameters[i].getName());

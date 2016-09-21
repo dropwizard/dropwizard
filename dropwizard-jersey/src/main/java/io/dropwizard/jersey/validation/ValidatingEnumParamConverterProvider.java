@@ -11,7 +11,14 @@ import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.jersey.errors.ErrorMessage;
 import org.glassfish.jersey.server.model.Resource;
 
-import javax.ws.rs.*;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.HEAD;
+import javax.ws.rs.OPTIONS;
+import javax.ws.rs.BeanParam;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ParamConverter;
@@ -42,8 +49,7 @@ public class ValidatingEnumParamConverterProvider<C extends Enum<C>> implements 
                 for (Method method : clazz.getDeclaredMethods()) {
                     scanMethodForEnums(method, foundEnums);
                 }
-            }
-        );
+            });
         return foundEnums;
     }
 
@@ -57,11 +63,10 @@ public class ValidatingEnumParamConverterProvider<C extends Enum<C>> implements 
                 for (Class<?> paramType : method.getParameterTypes()) {
                     if (paramType.isEnum() && !foundEnums.contains(paramType)) {
                         foundEnums.add((Class<C>) paramType);
-                    }
-                    else if (paramType.equals(BeanParam.class)) {
+                    } else if (paramType.equals(BeanParam.class)) {
                         for (Field field : paramType.getDeclaredFields()) {
                             if (field.getType().isEnum() && !foundEnums.contains(field.getType())) {
-                                foundEnums.add((Class<C>)field.getType());
+                                foundEnums.add((Class<C>) field.getType());
                             }
                         }
                     }
@@ -95,7 +100,7 @@ public class ValidatingEnumParamConverterProvider<C extends Enum<C>> implements 
 
     @SuppressWarnings("unchecked")
     protected  <T> ParamConverter<T> getConverter(Class<C> rawType, Type type, Annotation[] annotations, String parameterName) {
-        return (ParamConverter<T>)new EnumParamConverter<>(rawType, parameterName);
+        return (ParamConverter<T>) new EnumParamConverter<>(rawType, parameterName);
     }
 
     protected class EnumParamConverter<E extends Enum<E>> implements ParamConverter<E> {

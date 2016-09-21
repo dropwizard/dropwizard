@@ -23,8 +23,7 @@ public class AbstractParamConverterProvider implements ParamConverterProvider {
             final Constructor<T> constructor;
             try {
                 constructor = rawType.getConstructor(String.class, String.class);
-            }
-            catch (NoSuchMethodException ignored) {
+            } catch (NoSuchMethodException ignored) {
                 // The Param class did not have a (String, String) constructor. We return null,
                 // leaving Jersey to handle these parameters as it normally would.
                 return null;
@@ -38,14 +37,12 @@ public class AbstractParamConverterProvider implements ParamConverterProvider {
                     }
                     try {
                         return constructor.newInstance(s, parameterName);
-                    }
-                    catch (InstantiationException | IllegalAccessException e) {
+                    } catch (InstantiationException | IllegalAccessException e) {
                         throw new InternalServerErrorException(String.format("Unable to convert parameter %s: %s", parameterName, e.getMessage()));
-                    }
-                    catch(InvocationTargetException e) {
+                    } catch (InvocationTargetException e) {
                         Throwable t = e.getTargetException();
                         if (t instanceof RuntimeException) {
-                            throw (RuntimeException)t;
+                            throw (RuntimeException) t;
                         }
                         return null;
                     }
