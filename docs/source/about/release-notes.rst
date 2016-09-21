@@ -9,6 +9,7 @@ Release Notes
 v1.1.0: Unreleased
 ==================
 
+* JerseyClientBuilder can create rx-capable client `#1721 <https://github.com/dropwizard/dropwizard/pull/1721>`_
 * Remove OptionalValidatedValueUnwrapper `#1583 <https://github.com/dropwizard/dropwizard/pull/1583>`_
 * Allow constraints to be applied to type `#1586 <https://github.com/dropwizard/dropwizard/pull/1586>`_
 * Use LoadingCache in CachingAuthenticator `#1615 <https://github.com/dropwizard/dropwizard/pull/1615>`_
