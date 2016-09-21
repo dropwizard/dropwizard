@@ -247,4 +247,11 @@ public class ValidatingResource {
     public FailingExample valmeth(@Valid FailingExample exam) {
         return exam;
     }
+
+    @GET
+    @Path("enumParam")
+    public String enumParam(@NotNull @QueryParam("choice") Choice choice) {
+        return choice.toString();
+    }
+
 }

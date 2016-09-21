@@ -180,13 +180,14 @@ public class ConstraintViolationExceptionMapperTest extends JerseyTest {
     @Test
     public void getInvalidBeanParamsIs400() throws Exception {
         // bean parameter is too short and so will fail validation
-        final Response response = target("/valid/zoo")
+        Response response = target("/valid/zoo")
                 .request().get();
         assertThat(response.getStatus()).isEqualTo(400);
 
         assertThat(response.readEntity(String.class))
                 .containsOnlyOnce("\"name must be Coda\"")
-                .containsOnlyOnce("\"query param name may not be empty\"");
+                .containsOnlyOnce("\"query param name may not be empty\"")
+                .containsOnlyOnce("\"query param choice may not be null\"");
     }
 
     @Test
@@ -548,4 +549,31 @@ public class ConstraintViolationExceptionMapperTest extends JerseyTest {
         assertThat(response.readEntity(String.class))
             .containsOnlyOnce("sortParam must match \\\"^(asc|desc)$\\\"");
     }
+
+    @Test
+    public void testEnumParam() {
+        Response response = target("/valid/enumParam")
+            .request()
+            .get();
+        assertThat(response.getStatus()).isEqualTo(400);
+        assertThat(response.readEntity(String.class))
+            .containsOnlyOnce("query param choice may not be null");
+        response = target("/valid/enumParam")
+            .queryParam("choice", "invalid")
+            .request()
+            .get();
+        assertThat(response.getStatus()).isEqualTo(400);
+        assertThat(response.readEntity(String.class))
+            .containsOnlyOnce("query param choice must be one of [OptionA, OptionB, OptionC]");
+
+        // Test enum in BeanParam
+        response = target("/valid/zoo")
+            .queryParam("choice", "invalid")
+            .request().get();
+        assertThat(response.getStatus()).isEqualTo(400);
+
+        assertThat(response.readEntity(String.class))
+            .containsOnlyOnce("query param choice must be one of [OptionA, OptionB, OptionC]");
+    }
+
 }
