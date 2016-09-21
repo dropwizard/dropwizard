@@ -34,7 +34,7 @@ To create a :ref:`managed <man-core-managed>`, instrumented ``HttpClient`` insta
         public HttpClientConfiguration getHttpClientConfiguration() {
             return httpClient;
         }
-        
+
         @JsonProperty("httpClient")
         public void setHttpClientConfiguration(HttpClientConfiguration httpClient) {
             this.httpClient = httpClient;
@@ -179,3 +179,40 @@ the `Jersey Client Properties`_ can be used.
 
 .. _Jersey Client Configuration: https://jersey.java.net/documentation/latest/appendix-properties.html#appendix-properties-client
 .. _Jersey Client Properties: https://jersey.java.net/apidocs/2.22/jersey/org/glassfish/jersey/client/ClientProperties.html
+
+.. _man-client-jersey-rx-usage:
+
+Rx Usage
+-------
+
+To increase the ergonomics of asynchronous client requests, Jersey allows creation of `rx-clients`_.
+You can instruct Dropwizard to create such a client:
+
+.. code-block:: java
+
+    @Override
+    public void run(ExampleConfiguration config,
+                    Environment environment) {
+
+        final RxClient<RxCompletionStageInvoker> client =
+            new JerseyClientBuilder(environment)
+                .using(config.getJerseyClientConfiguration())
+                .buildRx(getName(), RxCompletionStageInvoker.class);
+        environment.jersey().register(new ExternalServiceResource(client));
+    }
+
+``RxCompletionStageInvoker.class`` is the Java 8 implementation and can be added to the pom:
+
+.. code-block:: xml
+
+    <dependency>
+        <groupId>org.glassfish.jersey.ext.rx</groupId>
+        <artifactId>jersey-rx-client-java8</artifactId>
+    </dependency>
+
+Alternatively, there are RxJava, Guava, and JSR-166e implementations.
+
+By allowing Dropwizard to create the rx-client, the same thread pool that is utilized by traditional
+synchronous and asynchronous requests, is used for rx requests.
+
+.. _rx-clients: https://jersey.java.net/documentation/2.23.1/rx-client.html
