@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2016. Sense Labs, Inc. All Rights Reserved
- */
-
 package io.dropwizard.jersey.params;
 
 import io.dropwizard.util.Duration;
