@@ -18,6 +18,14 @@ to the `io.dropwizard` group.
 `gpg --gen-key`
 * Distribute the key
 `gpg --keyserver hkp://pgp.mit.edu --send-keys XXXX` # XXXX - the code of the generated key
+* Put your Sonatype credentials to your Maven settings file (`~/.m2/settings.xml`)
+```xml
+<server>
+    <id>sonatype-nexus-staging</id>
+    <username>alice</username>
+    <password>correcthorsebatterystaple</password>
+</server>
+```
 
 ## Performing a release
 
