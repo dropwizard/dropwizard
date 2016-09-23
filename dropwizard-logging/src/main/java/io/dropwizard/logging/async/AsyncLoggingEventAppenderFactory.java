@@ -10,8 +10,8 @@ import ch.qos.logback.core.AsyncAppenderBase;
 public class AsyncLoggingEventAppenderFactory implements AsyncAppenderFactory<ILoggingEvent> {
 
     /**
-     * Creates an {@link AsyncAppenderBase} of type {@link ILoggingEvent}
-     * @return the {@link AsyncAppenderBase}
+     * Creates an {@link AsyncAppenderFactory} of type {@link ILoggingEvent}
+     * @return the {@link AsyncAppenderFactory}
      */
     @Override
     public AsyncAppenderBase<ILoggingEvent> build() {
