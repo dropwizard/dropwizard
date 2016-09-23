@@ -217,7 +217,7 @@ public class HttpsConnectorFactoryTest {
         assertThat(sslContextFactory.getNeedClientAuth()).isTrue();
         assertThat(sslContextFactory.getWantClientAuth()).isTrue();
         assertThat(sslContextFactory.getCertAlias()).isEqualTo("alt_server");
-        assertThat(sslContextFactory.getCrlPath()).isEqualTo("/etc/ctr_list.txt");
+        assertThat(sslContextFactory.getCrlPath()).isEqualTo(new File("/etc/ctr_list.txt").getAbsolutePath());
         assertThat(sslContextFactory.isEnableCRLDP()).isTrue();
         assertThat(sslContextFactory.isEnableOCSP()).isTrue();
         assertThat(sslContextFactory.getMaxCertPathLength()).isEqualTo(4);
