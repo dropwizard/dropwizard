@@ -37,7 +37,7 @@ public class OptionalDateTimeTest {
         dataSourceFactory.setInitialSize(1);
         final DBI dbi = new DBIFactory().build(env, dataSourceFactory, "test");
         try (Handle h = dbi.open()) {
-            h.execute("CREATE TABLE tasks (" +
+            h.execute("CREATE TABLE IF NOT EXISTS tasks (" +
                     "id INT PRIMARY KEY, " +
                     "assignee VARCHAR(255) NOT NULL, " +
                     "start_date TIMESTAMP, " +
