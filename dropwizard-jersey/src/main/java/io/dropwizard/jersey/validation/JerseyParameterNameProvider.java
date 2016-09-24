@@ -10,7 +10,6 @@ import javax.ws.rs.FormParam;
 import javax.ws.rs.MatrixParam;
 import javax.ws.rs.core.Context;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
@@ -18,6 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class JerseyParameterNameProvider extends ReflectionParameterNameProvider {
+
 
     @Override
     public List<String> getParameterNames(Method method) {
