@@ -9,7 +9,6 @@ import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Ordering;
 import io.dropwizard.jersey.caching.CacheControlledResponseFeature;
 import io.dropwizard.jersey.params.AbstractParamConverterProvider;
-import io.dropwizard.jersey.params.NonEmptyStringParamFeature;
 import io.dropwizard.jersey.sessions.SessionFactoryProvider;
 import io.dropwizard.jersey.validation.ValidatingEnumParamConverterProvider;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -70,7 +69,6 @@ public class DropwizardResourceConfig extends ResourceConfig {
         register(io.dropwizard.jersey.optional.OptionalIntMessageBodyWriter.class);
         register(io.dropwizard.jersey.optional.OptionalLongMessageBodyWriter.class);
         register(io.dropwizard.jersey.optional.OptionalParamFeature.class);
-        register(NonEmptyStringParamFeature.class);
         register(AbstractParamConverterProvider.class);
         register(new ValidatingEnumParamConverterProvider(this));
         register(new SessionFactoryProvider.Binder());

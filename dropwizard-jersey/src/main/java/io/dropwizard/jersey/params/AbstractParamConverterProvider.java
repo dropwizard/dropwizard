@@ -32,7 +32,7 @@ public class AbstractParamConverterProvider implements ParamConverterProvider {
                 @Override
                 @SuppressWarnings("unchecked")
                 public T fromString(String s) {
-                    if (Strings.isNullOrEmpty(s)) {
+                    if (rawType != NonEmptyStringParam.class && Strings.isNullOrEmpty(s)) {
                         return null;
                     }
                     try {
@@ -50,7 +50,7 @@ public class AbstractParamConverterProvider implements ParamConverterProvider {
 
                 @Override
                 public String toString(T t) {
-                    return t.toString();
+                    return t == null ? null : t.toString();
                 }
             };
         }
