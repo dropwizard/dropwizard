@@ -20,11 +20,6 @@ import java.util.Optional;
 public class JerseyParameterNameProvider extends ReflectionParameterNameProvider {
 
     @Override
-    public List<String> getParameterNames(Constructor<?> constructor) {
-        return super.getParameterNames(constructor);
-    }
-
-    @Override
     public List<String> getParameterNames(Method method) {
         Parameter[] parameters = method.getParameters();
         Annotation[][] parameterAnnotations = method.getParameterAnnotations();
