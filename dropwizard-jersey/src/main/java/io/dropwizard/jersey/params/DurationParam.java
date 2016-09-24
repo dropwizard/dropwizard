@@ -1,11 +1,11 @@
-/*
- * Copyright (c) 2016. Sense Labs, Inc. All Rights Reserved
- */
-
 package io.dropwizard.jersey.params;
 
 import io.dropwizard.util.Duration;
 
+/**
+ * A parameter encapsulating duration values. All non-parsable values will return a {@code 400 Bad
+ * Request} response. Supports all input formats the {@link Duration} class supports.
+ */
 public class DurationParam extends AbstractParam<Duration> {
 
     public DurationParam(String input) {
@@ -14,6 +14,11 @@ public class DurationParam extends AbstractParam<Duration> {
 
     public DurationParam(String input, String parameterName) {
         super(input, parameterName);
+    }
+
+    @Override
+    protected String errorMessage(Exception e) {
+        return "%s is not a valid duration.";
     }
 
     @Override
