@@ -31,6 +31,14 @@ import java.lang.reflect.Type;
 import java.util.EnumSet;
 import java.util.Set;
 
+/**
+ * Provides converters to jersey for enums used as resource parameters.
+ *
+ * <p>By default jersey will return a 404 if a resource parameter of an enum type cannot be converted. This class
+ * provides converters for all enum types used as resource parameters that provide better error handling. If an
+ * invalid value is provided for the parameter a {@code 400 Bad Request} is returned and the error message will
+ * include the parameter name and a list of valid values.</p>
+ */
 @Provider
 public class ValidatingEnumParamConverterProvider<C extends Enum<C>> implements ParamConverterProvider {
 

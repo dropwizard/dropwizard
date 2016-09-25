@@ -16,8 +16,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Adds jersey support to parameter name discovery in hibernate validator.
+ *
+ * <p>This provider will behave like the hibernate-provided {@link ReflectionParameterNameProvider} except when a
+ * method parameter is annotated with a jersey parameter annotation, like {@link QueryParam}. If a jersey parameter
+ * annotation is present the value of the annotation is used as the parameter name.</p>
+ */
 public class JerseyParameterNameProvider extends ReflectionParameterNameProvider {
-
 
     @Override
     public List<String> getParameterNames(Method method) {

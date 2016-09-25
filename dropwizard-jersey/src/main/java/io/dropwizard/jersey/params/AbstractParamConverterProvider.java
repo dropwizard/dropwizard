@@ -11,6 +11,14 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Type;
 
+/**
+ * Provides converters to jersey for dropwizard's *Param classes.
+ *
+ * <p>When a param class is used as a resource parameter this converter will instantiate the parameter class with the
+ * value provided and the name of the parameter, so if value parsing fails the parameter name can be used in the error
+ * message. If the param class does not have a two-string constructor this provider will return null, causing jersey
+ * to use the single-string constructor for the parameter type as it normally would.</p>
+ */
 public class AbstractParamConverterProvider implements ParamConverterProvider {
 
     public AbstractParamConverterProvider() {
