@@ -2,8 +2,11 @@ package io.dropwizard.jersey.params;
 
 import com.google.common.base.Strings;
 import io.dropwizard.jersey.validation.JerseyParameterNameProvider;
+import org.glassfish.jersey.internal.inject.ExtractorException;
+import org.glassfish.jersey.server.internal.LocalizationMessages;
 
-import javax.ws.rs.InternalServerErrorException;
+import javax.ws.rs.ProcessingException;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.ext.ParamConverter;
 import javax.ws.rs.ext.ParamConverterProvider;
 import java.lang.annotation.Annotation;
@@ -39,27 +42,36 @@ public class AbstractParamConverterProvider implements ParamConverterProvider {
             return new ParamConverter<T>() {
                 @Override
                 @SuppressWarnings("unchecked")
-                public T fromString(String s) {
-                    if (rawType != NonEmptyStringParam.class && Strings.isNullOrEmpty(s)) {
+                public T fromString(String value) {
+                    if (rawType != NonEmptyStringParam.class && Strings.isNullOrEmpty(value)) {
                         return null;
                     }
                     try {
-                        return constructor.newInstance(s, parameterName);
-                    } catch (InstantiationException | IllegalAccessException e) {
-                        throw new InternalServerErrorException(String.format("Unable to convert parameter %s: %s", parameterName, e.getMessage()));
-                    } catch (InvocationTargetException e) {
-                        Throwable t = e.getTargetException();
-                        if (t instanceof RuntimeException) {
-                            throw (RuntimeException) t;
+                        return _fromString(value);
+                    } catch (InvocationTargetException ex) {
+                        final Throwable cause = ex.getCause();
+                        if (cause instanceof WebApplicationException) {
+                            throw (WebApplicationException) cause;
+                        } else {
+                            throw new ExtractorException(cause);
                         }
-                        return null;
+                    } catch (final Exception ex) {
+                        throw new ProcessingException(ex);
                     }
                 }
 
-                @Override
-                public String toString(T t) {
-                    return t == null ? null : t.toString();
+                protected T _fromString(String value) throws Exception {
+                    return constructor.newInstance(value, parameterName);
                 }
+
+                @Override
+                public String toString(T value) throws IllegalArgumentException {
+                    if (value == null) {
+                        throw new IllegalArgumentException(LocalizationMessages.METHOD_PARAMETER_CANNOT_BE_NULL("value"));
+                    }
+                    return value.toString();
+                }
+
             };
         }
         return null;

@@ -561,6 +561,17 @@ public class ConstraintViolationExceptionMapperTest extends JerseyTest {
     }
 
     @Test
+    public void emptyParameterMessageContainsParameterName() {
+        final Response response = target("/valid/paramValidation")
+            .queryParam("length", "")
+            .request()
+            .get();
+        assertThat(response.getStatus()).isEqualTo(400);
+        assertThat(response.readEntity(String.class))
+            .containsOnlyOnce("query param length may not be null");
+    }
+
+    @Test
     public void maxMessageContainsParameterName() {
         final Response response = target("/valid/paramValidation")
             .queryParam("length", 50)
