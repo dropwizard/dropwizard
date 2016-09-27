@@ -1,7 +1,3 @@
-/*
- * Copyright (c) 2016. Sense Labs, Inc. All Rights Reserved
- */
-
 package io.dropwizard.jersey.validation;
 
 import com.google.common.base.Joiner;
