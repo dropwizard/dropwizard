@@ -31,9 +31,9 @@ public class Enums {
             }
         }
 
-        //In some cases there are certain enums that don't follow the same patter across an enterprise.  So this
-        //means that you have a mix of enums that use toString(), some use @JsonCreator, and some just use the
-        //standard constant name().  This block handles finding the proper enum by toString()
+        // In some cases there are certain enums that don't follow the same pattern across an enterprise.  So this
+        // means that you have a mix of enums that use toString(), some use @JsonCreator, and some just use the
+        // standard constant name().  This block handles finding the proper enum by toString()
         for (Enum<?> constant : constants) {
             if (constant.toString().equalsIgnoreCase(value)) {
                 return constant;

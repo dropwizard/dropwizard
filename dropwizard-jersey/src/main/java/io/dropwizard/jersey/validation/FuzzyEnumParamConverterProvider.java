@@ -27,6 +27,9 @@ import static io.dropwizard.jersey.validation.JerseyParameterNameProvider.getPar
 @SuppressWarnings("unchecked")
 @Provider
 public class FuzzyEnumParamConverterProvider implements ParamConverterProvider {
+
+    private final static Joiner JOINER = Joiner.on(", ");
+
     @Override
     public <T> ParamConverter<T> getConverter(Class<T> rawType, Type genericType, Annotation[] annotations) {
         if (!rawType.isEnum()) {
@@ -44,12 +47,13 @@ public class FuzzyEnumParamConverterProvider implements ParamConverterProvider {
                     return null;
                 }
 
-                Enum<?> constant = Enums.fromStringFuzzy(value, constants);
+                final Enum<?> constant = Enums.fromStringFuzzy(value, constants);
                 if (constant != null) {
                     return (T) constant;
                 }
 
-                throw new WebApplicationException(getErrorResponse(String.format("%s must be one of [%s]", parameterName, Joiner.on(", ").join(constants))));
+                final String errMsg = String.format("%s must be one of [%s]", parameterName, JOINER.join(constants));
+                throw new WebApplicationException(getErrorResponse(errMsg));
             }
 
             @Override
@@ -66,4 +70,5 @@ public class FuzzyEnumParamConverterProvider implements ParamConverterProvider {
             }
         };
     }
+
 }
