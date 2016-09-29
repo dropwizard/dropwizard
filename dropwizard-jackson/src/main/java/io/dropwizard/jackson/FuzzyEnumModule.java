@@ -14,7 +14,7 @@ import com.fasterxml.jackson.databind.deser.Deserializers;
 import com.fasterxml.jackson.databind.deser.std.EnumDeserializer;
 import com.fasterxml.jackson.databind.deser.std.StdScalarDeserializer;
 import com.fasterxml.jackson.databind.introspect.AnnotatedMethod;
-import com.google.common.base.CharMatcher;
+import io.dropwizard.util.Enums;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -50,26 +50,11 @@ public class FuzzyEnumModule extends Module {
 
         @Override
         public Enum<?> deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
-            final String text = CharMatcher.WHITESPACE
-                    .removeFrom(jp.getText())
-                    .replace('-', '_')
-                    .replace('.', '_');
-            for (Enum<?> constant : constants) {
-                if (constant.name().equalsIgnoreCase(text)) {
-                    return constant;
-                }
+            Enum<?> constant = Enums.fromStringFuzzy(jp.getText(), constants);
+            if (constant != null) {
+                return constant;
             }
-
-            //In some cases there are certain enums that don't follow the same patter across an enterprise.  So this
-            //means that you have a mix of enums that use toString(), some use @JsonCreator, and some just use the
-            //standard constant name().  This block handles finding the proper enum by toString()
-            for (Enum<?> constant : constants) {
-                if (constant.toString().equalsIgnoreCase(jp.getText())) {
-                    return constant;
-                }
-            }
-
-            throw ctxt.mappingException(text + " was not one of " + acceptedValues);
+            throw ctxt.mappingException(jp.getText() + " was not one of " + acceptedValues);
         }
     }
 

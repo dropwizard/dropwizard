@@ -11,9 +11,13 @@ public class BooleanParam extends AbstractParam<Boolean> {
         super(input);
     }
 
+    public BooleanParam(String input, String parameterName) {
+        super(input, parameterName);
+    }
+
     @Override
     protected String errorMessage(Exception e) {
-        return "Parameter must be \"true\" or \"false\".";
+        return "%s must be \"true\" or \"false\".";
     }
 
     @Override

@@ -16,16 +16,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.ElementKind;
 import javax.validation.Path;
 import javax.validation.metadata.ConstraintDescriptor;
-import javax.ws.rs.CookieParam;
-import javax.ws.rs.FormParam;
-import javax.ws.rs.HeaderParam;
-import javax.ws.rs.MatrixParam;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -133,19 +124,13 @@ public class ConstraintMessage {
                 // Extract the failing *Param annotation inside the Bean Param
                 if (param.getSource().equals(Parameter.Source.BEAN_PARAM)) {
                     final Field field = FieldUtils.getField(param.getRawType(), member.getName(), true);
-                    return getMemberName(field.getDeclaredAnnotations());
+                    return JerseyParameterNameProvider.getParameterNameFromAnnotations(field.getDeclaredAnnotations());
                 }
-
-                return Optional.empty();
+                break;
             case METHOD:
-                // Constraint violation occurred directly on a function
-                // parameter annotated with *Param
-                final Method method = invocable.getHandlingMethod();
-                final int paramIndex = member.as(Path.ParameterNode.class).getParameterIndex();
-                return getMemberName(method.getParameterAnnotations()[paramIndex]);
-            default:
-                return Optional.empty();
+                return Optional.of(member.getName());
         }
+        return Optional.empty();
     }
 
     /**
@@ -164,31 +149,6 @@ public class ConstraintMessage {
         }
 
         return returnValueNames >= 0 ? Optional.of(result.toString()) : Optional.empty();
-    }
-
-    /**
-     * Derives member's name and type from it's annotations
-     */
-    private static Optional<String> getMemberName(Annotation[] memberAnnotations) {
-        for (Annotation a : memberAnnotations) {
-            if (a instanceof QueryParam) {
-                return Optional.of("query param " + ((QueryParam) a).value());
-            } else if (a instanceof PathParam) {
-                return Optional.of("path param " + ((PathParam) a).value());
-            } else if (a instanceof HeaderParam) {
-                return Optional.of("header " + ((HeaderParam) a).value());
-            } else if (a instanceof CookieParam) {
-                return Optional.of("cookie " + ((CookieParam) a).value());
-            } else if (a instanceof FormParam) {
-                return Optional.of("form field " + ((FormParam) a).value());
-            } else if (a instanceof Context) {
-                return Optional.of("context");
-            } else if (a instanceof MatrixParam) {
-                return Optional.of("matrix param " + ((MatrixParam) a).value());
-            }
-        }
-
-        return Optional.empty();
     }
 
     private static boolean isValidationMethod(ConstraintViolation<?> v) {

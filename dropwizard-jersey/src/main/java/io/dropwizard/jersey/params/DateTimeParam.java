@@ -12,6 +12,10 @@ public class DateTimeParam extends AbstractParam<DateTime> {
         super(input);
     }
 
+    public DateTimeParam(String input, String parameterName) {
+        super(input, parameterName);
+    }
+
     @Override
     protected DateTime parse(String input) throws Exception {
         return new DateTime(input, DateTimeZone.UTC);

@@ -180,13 +180,14 @@ public class ConstraintViolationExceptionMapperTest extends JerseyTest {
     @Test
     public void getInvalidBeanParamsIs400() throws Exception {
         // bean parameter is too short and so will fail validation
-        final Response response = target("/valid/zoo")
+        Response response = target("/valid/zoo")
                 .request().get();
         assertThat(response.getStatus()).isEqualTo(400);
 
         assertThat(response.readEntity(String.class))
                 .containsOnlyOnce("\"name must be Coda\"")
-                .containsOnlyOnce("\"query param name may not be empty\"");
+                .containsOnlyOnce("\"query param name may not be empty\"")
+                .containsOnlyOnce("\"query param choice may not be null\"");
     }
 
     @Test
@@ -548,4 +549,88 @@ public class ConstraintViolationExceptionMapperTest extends JerseyTest {
         assertThat(response.readEntity(String.class))
             .containsOnlyOnce("sortParam must match \\\"^(asc|desc)$\\\"");
     }
+
+    @Test
+    public void missingParameterMessageContainsParameterName() {
+        final Response response = target("/valid/paramValidation")
+            .request()
+            .get();
+        assertThat(response.getStatus()).isEqualTo(400);
+        assertThat(response.readEntity(String.class))
+            .containsOnlyOnce("query param length may not be null");
+    }
+
+    @Test
+    public void emptyParameterMessageContainsParameterName() {
+        final Response response = target("/valid/paramValidation")
+            .queryParam("length", "")
+            .request()
+            .get();
+        assertThat(response.getStatus()).isEqualTo(400);
+        assertThat(response.readEntity(String.class))
+            .containsOnlyOnce("query param length may not be null");
+    }
+
+    @Test
+    public void maxMessageContainsParameterName() {
+        final Response response = target("/valid/paramValidation")
+            .queryParam("length", 50)
+            .request()
+            .get();
+        assertThat(response.getStatus()).isEqualTo(400);
+        assertThat(response.readEntity(String.class))
+            .containsOnlyOnce("query param length must be less than or equal to 5");
+    }
+
+    @Test
+    public void minMessageContainsParameterName() {
+        final Response response = target("/valid/paramValidation")
+            .queryParam("length", 1)
+            .request()
+            .get();
+        assertThat(response.getStatus()).isEqualTo(400);
+        assertThat(response.readEntity(String.class))
+            .containsOnlyOnce("query param length must be greater than or equal to 2");
+    }
+
+    @Test
+    public void paramClassPassesValidation() {
+        final Response response = target("/valid/paramValidation")
+            .queryParam("length", 3)
+            .request()
+            .get();
+        assertThat(response.getStatus()).isEqualTo(200);
+    }
+
+    @Test
+    public void notPresentEnumParameter() {
+        final Response response = target("/valid/enumParam")
+            .request()
+            .get();
+        assertThat(response.getStatus()).isEqualTo(400);
+        assertThat(response.readEntity(String.class))
+            .containsOnlyOnce("query param choice may not be null");
+    }
+
+    @Test
+    public void invalidEnumParameter() {
+        final Response response = target("/valid/enumParam")
+            .queryParam("choice", "invalid")
+            .request()
+            .get();
+        assertThat(response.getStatus()).isEqualTo(400);
+        assertThat(response.readEntity(String.class))
+            .containsOnlyOnce("query param choice must be one of [OptionA, OptionB, OptionC]");
+    }
+
+    @Test
+    public void invalidBeanParamEnumParameter() {
+        final Response response = target("/valid/zoo")
+            .queryParam("choice", "invalid")
+            .request().get();
+        assertThat(response.getStatus()).isEqualTo(400);
+        assertThat(response.readEntity(String.class))
+            .containsOnlyOnce("query param choice must be one of [OptionA, OptionB, OptionC]");
+    }
+
 }
