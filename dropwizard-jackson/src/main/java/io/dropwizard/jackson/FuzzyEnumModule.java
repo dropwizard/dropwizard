@@ -14,7 +14,6 @@ import com.fasterxml.jackson.databind.deser.Deserializers;
 import com.fasterxml.jackson.databind.deser.std.EnumDeserializer;
 import com.fasterxml.jackson.databind.deser.std.StdScalarDeserializer;
 import com.fasterxml.jackson.databind.introspect.AnnotatedMethod;
-import com.google.common.base.CharMatcher;
 import io.dropwizard.util.Enums;
 
 import java.io.IOException;
