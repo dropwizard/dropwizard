@@ -349,7 +349,7 @@ public class ConfigurationFactoryTest {
             failBecauseExceptionWasNotThrown(ConfigurationParsingException.class);
         } catch (ConfigurationParsingException e) {
             assertThat(e.getMessage())
-                    .containsOnlyOnce(" * Failed to parse configuration; Can not instantiate");
+                    .containsOnlyOnce(" * Failed to parse configuration; Can not construct instance of io.dropwizard.configuration.ConfigurationFactoryTest$Example");
         }
     }
 
@@ -453,13 +453,15 @@ public class ConfigurationFactoryTest {
     public void printsDetailedInformationOnMalformedYaml() throws Exception {
         final File resourceFileName = resourceFileName("factory-test-malformed-advanced.yml");
         assertThatThrownBy(() -> factory.build(resourceFileName))
-            .hasMessage("YAML decoding problem: while parsing a flow sequence\n" +
+            .hasMessageContaining(String.format(
+                "factory-test-malformed-advanced.yml has an error:%n" +
+                "  * Malformed YAML at line: 2, column: 21; while parsing a flow sequence\n" +
                 " in 'reader', line 2, column 7:\n" +
                 "    type: [ coder,wizard\n" +
                 "          ^\n" +
                 "expected ',' or ']', but got StreamEnd\n" +
                 " in 'reader', line 2, column 21:\n" +
                 "    wizard\n" +
-                "          ^\n");
+                "          ^"));
     }
 }
