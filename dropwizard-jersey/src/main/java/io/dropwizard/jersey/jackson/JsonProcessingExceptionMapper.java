@@ -14,9 +14,15 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
+import java.util.regex.Pattern;
 
 @Provider
 public class JsonProcessingExceptionMapper implements ExceptionMapper<JsonProcessingException> {
+    // Pattern to match jackson error messages where a class lacks a single argument constructor
+    // or factory to handle a given type. For example:
+    // "no boolean/Boolean-argument constructor/factory method to deserialize from boolean value"
+    private static final Pattern WRONG_TYPE_REGEX = Pattern.compile("factory method to deserialize from \\w+ value");
+
     private static final Logger LOGGER = LoggerFactory.getLogger(JsonProcessingExceptionMapper.class);
     private final boolean showDetails;
 
@@ -61,8 +67,9 @@ public class JsonProcessingExceptionMapper implements ExceptionMapper<JsonProces
             // with Jackson on how to communicate client vs server fault, compare
             // start of message with known server faults.
             final boolean beanError = cause.getMessage().startsWith("No suitable constructor found") ||
-                cause.getMessage().startsWith("Can not construct instance") ||
-                cause.getMessage().startsWith("No serializer found for class");
+                cause.getMessage().startsWith("No serializer found for class") ||
+                (cause.getMessage().startsWith("Can not construct instance") &&
+                    !WRONG_TYPE_REGEX.matcher(cause.getMessage()).find());
 
             if (beanError && !clientCause) {
                 LOGGER.error("Unable to serialize or deserialize the specific type", exception);
