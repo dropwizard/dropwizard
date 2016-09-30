@@ -11,7 +11,7 @@ import java.net.URL;
 import java.util.jar.JarEntry;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class ResourceURLTest {
     private File directory;
@@ -78,14 +78,10 @@ public class ResourceURLTest {
 
     @Test
     public void isDirectoryThrowsResourceNotFoundExceptionForMissingDirectories() throws Exception {
-        URL url = Resources.getResource("META-INF/");
-        url = new URL(url.toExternalForm() + "missing");
-        try {
-            ResourceURL.isDirectory(url);
-            fail("should have thrown an exception");
-        } catch (ResourceNotFoundException ignored) {
-            // expected
-        }
+        final URL url = Resources.getResource("META-INF/");
+        final URL nurl = new URL(url.toExternalForm() + "missing");
+        assertThatThrownBy(() -> ResourceURL.isDirectory(nurl))
+            .isInstanceOf(ResourceNotFoundException.class);
     }
 
     @Test
