@@ -13,7 +13,6 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.context.internal.ManagedSessionContext;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InOrder;
@@ -21,6 +20,7 @@ import org.mockito.InOrder;
 import java.lang.reflect.Method;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.hibernate.resource.transaction.spi.TransactionStatus.ACTIVE;
 import static org.hibernate.resource.transaction.spi.TransactionStatus.NOT_ACTIVE;
 import static org.mockito.Mockito.doAnswer;
@@ -240,13 +240,10 @@ public class UnitOfWorkApplicationListenerTest {
 
     @Test
     public void throwsExceptionOnNotRegisteredDatabase() throws Exception {
-        try {
-            prepareAppEvent("methodWithUnitOfWorkOnNotRegisteredDatabase");
-            execute();
-            Assert.fail();
-        } catch (IllegalArgumentException e) {
-            Assert.assertEquals(e.getMessage(), "Unregistered Hibernate bundle: 'warehouse'");
-        }
+        prepareAppEvent("methodWithUnitOfWorkOnNotRegisteredDatabase");
+        assertThatThrownBy(this::execute)
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("Unregistered Hibernate bundle: 'warehouse'");
     }
 
     private void prepareAppEvent(String resourceMethodName) throws NoSuchMethodException {

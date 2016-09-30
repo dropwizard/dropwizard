@@ -35,7 +35,8 @@ import org.apache.http.conn.ssl.NoopHostnameVerifier;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.catchThrowable;
 
 public class DropwizardSSLConnectionSocketFactoryTest {
     private TlsConfiguration tlsConfiguration;
@@ -108,12 +109,9 @@ public class DropwizardSSLConnectionSocketFactoryTest {
     public void shouldErrorIfServerCertNotFoundInTruststore() throws Exception {
         tlsConfiguration.setTrustStorePath(new File(ResourceHelpers.resourceFilePath("stores/server/other_cert_truststore.ts")));
         final Client client = new JerseyClientBuilder(TLS_APP_RULE.getEnvironment()).using(jerseyClientConfiguration).build("tls_broken_client");
-        try {
-            client.target(String.format("https://localhost:%d", TLS_APP_RULE.getLocalPort())).request().get();
-            fail("expected ProcessingException");
-        } catch (ProcessingException e) {
-            assertThat(e.getCause()).isInstanceOf(SSLHandshakeException.class);
-        }
+        assertThatThrownBy(() -> client.target(String.format("https://localhost:%d", TLS_APP_RULE.getLocalPort())).request().get())
+            .isInstanceOf(ProcessingException.class)
+            .hasCauseInstanceOf(SSLHandshakeException.class);
     }
 
     @Test
@@ -127,12 +125,9 @@ public class DropwizardSSLConnectionSocketFactoryTest {
     @Test
     public void shouldErrorIfServerCertSelfSignedAndSelfSignedCertsNotAllowed() throws Exception {
         final Client client = new JerseyClientBuilder(TLS_APP_RULE.getEnvironment()).using(jerseyClientConfiguration).build("self_sign_failure");
-        try {
-            client.target(String.format("https://localhost:%d", TLS_APP_RULE.getPort(1))).request().get(ClientResponse.class);
-            fail("expected ProcessingException");
-        } catch (ProcessingException e) {
-            assertThat(e.getCause()).isInstanceOf(SSLHandshakeException.class);
-        }
+        assertThatThrownBy(() -> client.target(String.format("https://localhost:%d", TLS_APP_RULE.getPort(1))).request().get(ClientResponse.class))
+            .isInstanceOf(ProcessingException.class)
+            .hasCauseInstanceOf(SSLHandshakeException.class);
     }
 
     @Test
@@ -151,36 +146,25 @@ public class DropwizardSSLConnectionSocketFactoryTest {
         tlsConfiguration.setKeyStorePassword("password");
         tlsConfiguration.setKeyStoreType("PKCS12");
         final Client client = new JerseyClientBuilder(TLS_APP_RULE.getEnvironment()).using(jerseyClientConfiguration).build("client_auth_broken");
-        try {
-            client.target(String.format("https://localhost:%d", TLS_APP_RULE.getPort(2))).request().get();
-            fail("expected ProcessingException");
-        } catch (ProcessingException e) {
-            assertThat(e.getCause()).isInstanceOfAny(SocketException.class, SSLHandshakeException.class);
-        }
+        final Throwable exn = catchThrowable(() -> client.target(String.format("https://localhost:%d", TLS_APP_RULE.getPort(2))).request().get());
+        assertThat(exn).isInstanceOf(ProcessingException.class);
+        assertThat(exn.getCause()).isInstanceOfAny(SocketException.class, SSLHandshakeException.class);
     }
 
     @Test
     public void shouldErrorIfHostnameVerificationOnAndServerHostnameDoesntMatch() throws Exception {
         final Client client = new JerseyClientBuilder(TLS_APP_RULE.getEnvironment()).using(jerseyClientConfiguration).build("bad_host_broken");
-        try {
-            client.target(String.format("https://localhost:%d", TLS_APP_RULE.getPort(3))).request().get();
-            fail("Expected ProcessingException");
-        } catch (ProcessingException e) {
-            assertThat(e.getCause()).isExactlyInstanceOf(SSLPeerUnverifiedException.class);
-            assertThat(e.getCause().getMessage()).isEqualTo("Host name 'localhost' does not match the certificate subject provided by the peer (O=server, CN=badhost)");
-        }
+        final Throwable exn = catchThrowable(() -> client.target(String.format("https://localhost:%d", TLS_APP_RULE.getPort(3))).request().get());
+        assertThat(exn).hasCauseExactlyInstanceOf(SSLPeerUnverifiedException.class);
+        assertThat(exn.getCause()).hasMessage("Host name 'localhost' does not match the certificate subject provided by the peer (O=server, CN=badhost)");
     }
 
     @Test
     public void shouldErrorIfHostnameVerificationOnAndServerHostnameMatchesAndFailVerifierSpecified() throws Exception {
         final Client client = new JerseyClientBuilder(TLS_APP_RULE.getEnvironment()).using(jerseyClientConfiguration).using(new FailVerifier()).build("bad_host_broken_fail_verifier");
-        try {
-            client.target(String.format("https://localhost:%d", TLS_APP_RULE.getLocalPort())).request().get();
-            fail("Expected ProcessingException");
-        } catch (ProcessingException e) {
-            assertThat(e.getCause()).isExactlyInstanceOf(SSLPeerUnverifiedException.class);
-            assertThat(e.getCause().getMessage()).isEqualTo("Host name 'localhost' does not match the certificate subject provided by the peer (O=server, CN=localhost)");
-        }
+        final Throwable exn = catchThrowable(() -> client.target(String.format("https://localhost:%d", TLS_APP_RULE.getLocalPort())).request().get());
+        assertThat(exn).hasCauseExactlyInstanceOf(SSLPeerUnverifiedException.class);
+        assertThat(exn.getCause()).hasMessage("Host name 'localhost' does not match the certificate subject provided by the peer (O=server, CN=localhost)");
     }
 
     @Test
@@ -210,12 +194,9 @@ public class DropwizardSSLConnectionSocketFactoryTest {
     public void shouldRejectNonSupportedProtocols() throws Exception {
         tlsConfiguration.setSupportedProtocols(asList("TLSv1.2"));
         final Client client = new JerseyClientBuilder(TLS_APP_RULE.getEnvironment()).using(jerseyClientConfiguration).build("reject_non_supported");
-        try {
-            client.target(String.format("https://localhost:%d", TLS_APP_RULE.getPort(4))).request().get();
-            fail("expected ProcessingException");
-        } catch (ProcessingException e) {
-            assertThat(e).hasRootCauseInstanceOf(SSLException.class);
-        }
+        assertThatThrownBy(() -> client.target(String.format("https://localhost:%d", TLS_APP_RULE.getPort(4))).request().get())
+            .isInstanceOf(ProcessingException.class)
+            .hasRootCauseInstanceOf(SSLException.class);
     }
 
     private static class FailVerifier implements HostnameVerifier {
