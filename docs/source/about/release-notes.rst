@@ -4,6 +4,14 @@
 Release Notes
 #############
 
+.. _rel-1.0.3:
+
+v1.0.3: Unreleased
+==================
+
+* Upgraded to Jackson 2.7.8 `#1755 <https://github.com/dropwizard/dropwizard/pull/1755>`_
+* Prefer use of assertj's java8 exception assertions `#1753 <https://github.com/dropwizard/dropwizard/pull/1753>`_
+
 .. _rel-1.0.2:
 
 v1.0.2: Sep 23 2016
