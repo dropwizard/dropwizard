@@ -16,7 +16,7 @@ import java.util.Optional;
 /**
  * The configuration class used by {@link HttpClientBuilder}.
  *
- * @see <a href="http://dropwizard.io/0.9.1/docs/manual/configuration.html#httpclient">Http Client Configuration</a>
+ * @see <a href="http://dropwizard.io/${project.version}/docs/manual/configuration.html#httpclient">Http Client Configuration</a>
  */
 public class HttpClientConfiguration {
     @NotNull
