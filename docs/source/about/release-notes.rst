@@ -27,6 +27,13 @@ v1.1.0: Unreleased
 * Upgraded to classmate 1.3.1 `#1654 <https://github.com/dropwizard/dropwizard/pull/1654>`_
 * Upgraded to Mustache 0.9.3 `#1654 <https://github.com/dropwizard/dropwizard/pull/1654>`_
 
+.. _rel-1.0.2:
+
+v1.0.2: Sep 23 2016
+===================
+
+* Fix absence of request logs in Dropwizard 1.0.1 `#1737 <https://github.com/dropwizard/dropwizard/pull/1737>`_
+
 .. _rel-1.0.1:
 
 v1.0.1: Sep 21 2016
