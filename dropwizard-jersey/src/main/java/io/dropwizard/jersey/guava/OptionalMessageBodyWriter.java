@@ -1,20 +1,23 @@
 package io.dropwizard.jersey.guava;
 
-import com.google.common.base.Optional;
-import org.glassfish.jersey.message.MessageBodyWorkers;
-
-import javax.inject.Inject;
-import javax.ws.rs.NotFoundException;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.MultivaluedMap;
-import javax.ws.rs.ext.MessageBodyWriter;
-import javax.ws.rs.ext.Provider;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+
+import javax.inject.Inject;
+import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.ext.MessageBodyWriter;
+import javax.ws.rs.ext.Provider;
+
+import org.glassfish.jersey.message.MessageBodyWorkers;
+
+import com.google.common.base.Optional;
 
 @Provider
 @Produces(MediaType.WILDCARD)
@@ -47,7 +50,7 @@ public class OptionalMessageBodyWriter implements MessageBodyWriter<Optional<?>>
                         OutputStream entityStream)
             throws IOException {
         if (!entity.isPresent()) {
-            throw new NotFoundException();
+        	throw new WebApplicationException(Status.NO_CONTENT);
         }
 
         final ParameterizedType actualGenericType = (ParameterizedType) genericType;

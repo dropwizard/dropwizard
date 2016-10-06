@@ -1,15 +1,22 @@
 package io.dropwizard.hibernate;
 
-import com.codahale.metrics.MetricRegistry;
-import com.google.common.collect.ImmutableList;
-import io.dropwizard.db.DataSourceFactory;
-import io.dropwizard.jackson.Jackson;
-import io.dropwizard.jersey.DropwizardResourceConfig;
-import io.dropwizard.jersey.errors.ErrorMessage;
-import io.dropwizard.jersey.jackson.JacksonMessageBodyProvider;
-import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
-import io.dropwizard.logging.BootstrapLogging;
-import io.dropwizard.setup.Environment;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.util.Optional;
+
+import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.Application;
+import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.test.JerseyTest;
 import org.glassfish.jersey.test.TestProperties;
@@ -20,23 +27,17 @@ import org.joda.time.DateTimeZone;
 import org.junit.After;
 import org.junit.Test;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.core.Application;
-import javax.ws.rs.core.HttpHeaders;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.util.Optional;
+import com.codahale.metrics.MetricRegistry;
+import com.google.common.collect.ImmutableList;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import io.dropwizard.db.DataSourceFactory;
+import io.dropwizard.jackson.Jackson;
+import io.dropwizard.jersey.DropwizardResourceConfig;
+import io.dropwizard.jersey.errors.ErrorMessage;
+import io.dropwizard.jersey.jackson.JacksonMessageBodyProvider;
+import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
+import io.dropwizard.logging.BootstrapLogging;
+import io.dropwizard.setup.Environment;
 
 public class JerseyIntegrationTest extends JerseyTest {
     static {
@@ -154,15 +155,9 @@ public class JerseyIntegrationTest extends JerseyTest {
     }
 
     @Test
-    public void doesNotFindMissingData() throws Exception {
-        try {
-            target("/people/Poof").request(MediaType.APPLICATION_JSON)
-                    .get(Person.class);
-            failBecauseExceptionWasNotThrown(WebApplicationException.class);
-        } catch (WebApplicationException e) {
-            assertThat(e.getResponse().getStatus())
-                    .isEqualTo(404);
-        }
+    public void doesNotFindMissingData() {
+        Response response = target("/people/Poof").request(MediaType.APPLICATION_JSON).get();
+        assertThat(response.getStatusInfo().getStatusCode()).isEqualTo(Response.Status.NO_CONTENT.getStatusCode());
     }
 
     @Test
