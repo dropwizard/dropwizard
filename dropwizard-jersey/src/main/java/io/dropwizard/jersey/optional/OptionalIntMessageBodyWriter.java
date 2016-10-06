@@ -39,7 +39,7 @@ public class OptionalIntMessageBodyWriter implements MessageBodyWriter<OptionalI
                         MultivaluedMap<String, Object> httpHeaders,
                         OutputStream entityStream) throws IOException {
         if (!entity.isPresent()) {
-        	throw new WebApplicationException(Status.NO_CONTENT);
+            throw new WebApplicationException(Status.NO_CONTENT);
         }
 
         entityStream.write(Integer.toString(entity.getAsInt()).getBytes(StandardCharsets.US_ASCII));

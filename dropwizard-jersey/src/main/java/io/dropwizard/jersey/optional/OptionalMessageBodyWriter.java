@@ -49,7 +49,7 @@ public class OptionalMessageBodyWriter implements MessageBodyWriter<Optional<?>>
                         OutputStream entityStream)
             throws IOException {
         if (!entity.isPresent()) {
-        	throw new WebApplicationException(Status.NO_CONTENT);
+            throw new WebApplicationException(Status.NO_CONTENT);
         }
 
         final Type innerGenericType = (genericType instanceof ParameterizedType) ?

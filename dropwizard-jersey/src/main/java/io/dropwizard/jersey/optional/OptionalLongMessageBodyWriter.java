@@ -38,7 +38,7 @@ public class OptionalLongMessageBodyWriter implements MessageBodyWriter<Optional
                         MultivaluedMap<String, Object> httpHeaders,
                         OutputStream entityStream) throws IOException {
         if (!entity.isPresent()) {
-        	throw new WebApplicationException(Status.NO_CONTENT);
+            throw new WebApplicationException(Status.NO_CONTENT);
         }
 
         entityStream.write(Long.toString(entity.getAsLong()).getBytes(StandardCharsets.US_ASCII));
