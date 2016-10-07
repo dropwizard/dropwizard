@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
 import io.dropwizard.setup.Environment;
+import io.dropwizard.testing.ConfigOverride;
 import org.junit.Assert;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -20,7 +21,9 @@ import java.util.Map;
 public class DropwizardAppRuleWithoutConfigTest {
 
     @ClassRule
-    public static final DropwizardAppRule<Configuration> RULE = new DropwizardAppRule<>(TestApplication.class);
+    public static final DropwizardAppRule<Configuration> RULE = new DropwizardAppRule<>(TestApplication.class, null,
+        ConfigOverride.config("server.applicationConnectors[0].port", "0"),
+        ConfigOverride.config("server.adminConnectors[0].port", "0"));
 
     Client client = ClientBuilder.newClient();
 
