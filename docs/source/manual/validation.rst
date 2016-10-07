@@ -151,6 +151,37 @@ throw an exception, else use ``@DefaultValue`` or move the ``Optional`` into the
         // ...
     }
 
+.. _man-validation-validations-enum-constraints:
+
+Enum Constraints
+****************
+
+Given the following enum:
+
+.. code-block:: java
+
+    public enum Choice {
+        OptionA,
+        OptionB,
+        OptionC
+    }
+
+And the endpoint:
+
+.. code-block:: java
+
+    @GET
+    public String getEnum(@NotNull @QueryParam("choice") Choice choice) {
+        return choice.toString();
+    }
+
+One can expect Dropwizard not only to ensure that the query parameter exists, but to also provide
+the client a list of valid options ``query param choice must be one of [OptionA, OptionB, OptionC]``
+when an invalid parameter is provided. The enum that the query parameter is deserialized into is
+first attempted on the enum's ``name()`` field and then ``toString()``. During the case insensitive
+comparisons, the query parameter has whitespace removed with dashes and dots normalized to
+underscores. This logic is also used when deserializing request body's that contain enums.
+
 .. _man-validation-validations-return-value-validations:
 
 Return Value Validations
