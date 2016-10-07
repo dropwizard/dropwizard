@@ -174,6 +174,7 @@ public class DefaultServerFactoryTest {
         final Server server = http.build(environment);
 
         ((AbstractNetworkConnector) server.getConnectors()[0]).setPort(0);
+        ((AbstractNetworkConnector) server.getConnectors()[1]).setPort(0);
 
         ScheduledFuture<Void> cleanup = executor.schedule(() -> {
             if (!server.isStopped()) {
