@@ -1046,7 +1046,8 @@ keyStoreType                 JKS                The type of key store (usually `
 trustStorePath               (none)             The path to the Java key store which contains the CA certificates used to establish trust.
 trustStorePassword           (none)             The password used to access the trust store.
 trustStoreType               JKS                The type of trust store (usually ``JKS``, ``PKCS12``, ``JCEKS``, ``Windows-MY``, or ``Windows-ROOT``).
-trustSelfSignedCertificates  false              Whether the client will trust certificates of servers that are self-signed.
+trustSelfSignedCertificates  false              If true, will trust all self-signed certificates regardless of trustStore settings.
+                                                If false, trust decisions will be handled by the supplied trustStore.
 supportedProtocols           (none)             A list of protocols (e.g., ``SSLv3``, ``TLSv1``) which are supported. All
                                                 other protocols will be refused.
 supportedCipherSuites        (none)             A list of cipher suites (e.g., ``TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256``) which
