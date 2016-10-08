@@ -8,6 +8,10 @@ import org.glassfish.hk2.utilities.binding.AbstractBinder;
 
 import javax.ws.rs.ext.ExceptionMapper;
 
+/**
+ * An HK2 binder that registers all the default exception mappers while allowing users to override
+ * individual exception mappers without disabling all others.
+ */
 public class ExceptionMapperBinder extends AbstractBinder {
     private final boolean showDetails;
 

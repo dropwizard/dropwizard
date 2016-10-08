@@ -1219,14 +1219,23 @@ and then registering the exception mapper:
 Overriding Default Exception Mappers
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-If you want more control, you can disable the exception mappers Dropwizard provides by default. This is done
-by setting ``server.registerDefaultExceptionMappers`` to ``false``. Since this disables all default exception
-mappers make sure to re-enable exception mappers that are wanted. The default exception mappers are:
+To override a specific exception mapper, register your own class that implements the same
+``ExceptionMapper<T>`` as one of the default. For instance, we can customize responses caused by
+Jackson exceptions:
 
-- ``LoggingExceptionMapper<Throwable>``
-- ``JerseyViolationExceptionMapper``
-- ``JsonProcessingExceptionMapper``
-- ``EarlyEofExceptionMapper``
+.. code-block:: java
+
+    public class JsonProcessingExceptionMapper implements ExceptionMapper<JsonProcessingException> {
+        @Override
+        public Response toResponse(JsonProcessingException exception) {
+            // create the response
+        }
+    }
+
+With this method, one doesn't need to know what the default exception mappers are, as they are
+overridden if the user supplies a conflicting mapper. While not preferential, one can also disable
+all default exception mappers, by setting ``server.registerDefaultExceptionMappers`` to ``false``.
+See the class ``ExceptionMapperBinder`` for a list of the default exception mappers.
 
 .. _man-core-resources-uris:
 
