@@ -49,7 +49,7 @@ Then, in your application's ``run`` method, create a new ``HttpClientBuilder``:
     public void run(ExampleConfiguration config,
                     Environment environment) {
         final HttpClient httpClient = new HttpClientBuilder(environment).using(config.getHttpClientConfiguration())
-                                                                        .build();
+                                                                        .build(getName());
         environment.jersey().register(new ExternalServiceResource(httpClient));
     }
 
