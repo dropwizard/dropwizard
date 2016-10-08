@@ -97,7 +97,7 @@ public class SimpleServerFactoryTest {
         assertEquals(http.getApplicationContextPath(), environment.getApplicationContext().getContextPath());
     }
 
-    private static String httpRequest(String requestMethod, String url) throws Exception {
+    public static String httpRequest(String requestMethod, String url) throws Exception {
         final HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
         connection.setRequestMethod(requestMethod);
         connection.connect();
