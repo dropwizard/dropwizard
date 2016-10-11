@@ -1279,3 +1279,6 @@ Now you can use ``WidgetFactory`` objects in your application's configuration.
         weight: 20
       - type: chisel
         radius: 0.4
+
+See :ref:`testing configurations <man-testing-configurations>` for details on ensuring the
+configuration will be deserialized correctly.
