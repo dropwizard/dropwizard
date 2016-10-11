@@ -12,7 +12,7 @@ import javax.validation.constraints.Min;
  * {@link HttpClientConfiguration}.
  *
  * @see HttpClientConfiguration
- * @see <a href="http://dropwizard.io/0.9.1/docs/manual/configuration.html#jerseyclient">Jersey Client Configuration</a>
+ * @see <a href="http://dropwizard.io/1.0.2/docs/manual/configuration.html#jerseyclient">Jersey Client Configuration</a>
  */
 public class JerseyClientConfiguration extends HttpClientConfiguration {
     @Min(1)
