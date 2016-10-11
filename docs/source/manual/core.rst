@@ -1386,8 +1386,8 @@ Then make a ``FunkySerializer`` class which implements ``JsonSerializer<Funky>``
 
 .. _man-core-representations-advanced-snake-case:
 
-``snake_case``
-**************
+Snake Case
+~~~~~~~~~~
 
 A common issue with JSON is the disagreement between ``camelCase`` and ``snake_case`` field names.
 Java and Javascript folks tend to like ``camelCase``; Ruby, Python, and Perl folks insist on

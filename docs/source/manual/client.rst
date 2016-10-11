@@ -183,7 +183,7 @@ the `Jersey Client Properties`_ can be used.
 .. _man-client-jersey-rx-usage:
 
 Rx Usage
--------
+--------
 
 To increase the ergonomics of asynchronous client requests, Jersey allows creation of `rx-clients`_.
 You can instruct Dropwizard to create such a client:
