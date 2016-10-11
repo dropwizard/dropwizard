@@ -441,14 +441,15 @@ response through an ``ExceptionMapper<JerseyViolationException>``:
         }
     }
 
+To register ``MyJerseyViolationExceptionMapper`` and have it override the default:
 
-To register ``MyJerseyViolationExceptionMapper``, you'll need to first set
-``registerDefaultExceptionMappers`` to false in the configuration file or in code before registering
-your exception mapper with jersey. Then, optionally, register other default exception mappers:
+.. code-block:: java
 
-* ``LoggingExceptionMapper<Throwable>``
-* ``JsonProcessingExceptionMapper``
-* ``EarlyEofExceptionMapper``
+    @Override
+    public void run(final MyConfiguration conf, final Environment env) {
+        env.jersey().register(new MyJerseyViolationExceptionMapper());
+        env.jersey().register(new Resource());
+    }
 
 Dropwizard calculates the validation error message through ``ConstraintMessage.getMessage``.
 

@@ -12,14 +12,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Joiner;
 import com.google.common.io.Resources;
-import io.dropwizard.jersey.errors.EarlyEofExceptionMapper;
-import io.dropwizard.jersey.errors.LoggingExceptionMapper;
 import io.dropwizard.jersey.filter.AllowedMethodsFilter;
 import io.dropwizard.jersey.jackson.JacksonMessageBodyProvider;
-import io.dropwizard.jersey.jackson.JsonProcessingExceptionMapper;
 import io.dropwizard.jersey.setup.JerseyEnvironment;
 import io.dropwizard.jersey.validation.HibernateValidationFeature;
-import io.dropwizard.jersey.validation.JerseyViolationExceptionMapper;
 import io.dropwizard.jetty.GzipHandlerFactory;
 import io.dropwizard.jetty.MutableServletContextHandler;
 import io.dropwizard.jetty.NonblockingServletHolder;
@@ -28,6 +24,7 @@ import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
 import io.dropwizard.request.logging.LogbackAccessRequestLogFactory;
 import io.dropwizard.request.logging.RequestLogFactory;
 import io.dropwizard.servlets.ThreadNameFilter;
+import io.dropwizard.setup.ExceptionMapperBinder;
 import io.dropwizard.util.Duration;
 import io.dropwizard.validation.MinDuration;
 import io.dropwizard.validation.ValidationMethod;
@@ -504,11 +501,7 @@ public abstract class AbstractServerFactory implements ServerFactory {
             jersey.register(new JacksonMessageBodyProvider(objectMapper));
             jersey.register(new HibernateValidationFeature(validator));
             if (registerDefaultExceptionMappers == null || registerDefaultExceptionMappers) {
-                jersey.register(new LoggingExceptionMapper<Throwable>() {
-                });
-                jersey.register(new JerseyViolationExceptionMapper());
-                jersey.register(new JsonProcessingExceptionMapper(detailedJsonProcessingExceptionMapper));
-                jersey.register(new EarlyEofExceptionMapper());
+                jersey.register(new ExceptionMapperBinder(detailedJsonProcessingExceptionMapper));
             }
             handler.addServlet(new NonblockingServletHolder(jerseyContainer), jersey.getUrlPattern());
         }
