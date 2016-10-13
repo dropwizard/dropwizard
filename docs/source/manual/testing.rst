@@ -508,3 +508,39 @@ The ``DAOTestRule``
 * Creates a simple default Hibernate configuration using an H2 in-memory database
 * Provides a ``SessionFactory`` instance which can be passed to, e.g., a subclass of ``AbstractDAO``
 * Provides a function for executing database operations within a transaction
+
+.. _man-testing-configurations:
+
+Testing Configurations
+======================
+
+Configuration objects can be tested for correct deserialization and validation. Using the classes
+created in :ref:`polymorphic configurations <man-configuration-polymorphic>` as an example, one can
+assert the expected widget is deserialized based on the ``type`` field.
+
+.. code-block:: java
+
+    public class WidgetFactoryTest {
+        private final ObjectMapper objectMapper = Jackson.newObjectMapper();
+        private final Validator validator = Validators.newValidator();
+        private final YamlConfigurationFactory<WidgetFactory> factory =
+                new YamlConfigurationFactory<>(WidgetFactory.class, validator, objectMapper, "dw");
+
+        @Test
+        public void isDiscoverable() throws Exception {
+            // Make sure the types we specified in META-INF gets picked up
+            assertThat(new DiscoverableSubtypeResolver().getDiscoveredSubtypes())
+                    .contains(HammerFactory.class)
+                    .contains(ChiselFactory.class);
+        }
+
+        @Test
+        public void testBuildAHammer() throws Exception {
+            final File yml = new File(Resources.getResource("yaml/hammer.yml").toURI());
+            final WidgetFactory wid = factory.build(yml);
+            assertThat(wid).isInstanceOf(HammerFactory.class);
+            assertThat(((HammerFactory) wid).createWidget().getWeight()).isEqualTo(10);
+        }
+
+        // test for the chisel factory
+    }

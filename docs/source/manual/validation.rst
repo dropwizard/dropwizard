@@ -265,12 +265,9 @@ The same kind of limitation applies for :ref:`Configuration <man-core-configurat
         private String baz;
     }
 
-Even though the property's name is ``foo``, the error when property is null will be:
-
-.. code-block:: plain
+Even though the property's name is ``foo``, the error when property is null will be::
 
   * baz may not be null
-
 
 Annotations
 ===========
