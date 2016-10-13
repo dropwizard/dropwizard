@@ -17,6 +17,17 @@
         applications.
     </description>
 
+    <distributionManagement>
+        <repository>
+            <id>8drelease</id>
+            <url>https://nexus.priv.8d.com:2443/nexus/content/repositories/releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>8dsnapshot</id>
+            <url>https://nexus.priv.8d.com:2443/nexus/content/repositories/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
+
     <modules>
         <module>docs</module>
         <module>dropwizard-bom</module>
@@ -224,24 +235,6 @@
             </snapshots>
         </repository>
     </repositories>
-
-    <distributionManagement>
-        <snapshotRepository>
-            <id>sonatype-nexus-snapshots</id>
-            <name>Sonatype Nexus Snapshots</name>
-            <url>http://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-        <repository>
-            <id>sonatype-nexus-staging</id>
-            <name>Nexus Release Repository</name>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-        <site>
-            <id>dropwizard-site</id>
-            <name>Dropwizard</name>
-            <url>http://dropwizard.io/${project.version}</url>
-        </site>
-    </distributionManagement>
 
     <profiles>
         <profile>
