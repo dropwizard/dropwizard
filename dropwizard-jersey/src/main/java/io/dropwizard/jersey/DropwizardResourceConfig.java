@@ -247,9 +247,9 @@ public class DropwizardResourceConfig extends ResourceConfig {
 
         @Override
         public void onEvent(ApplicationEvent event) {
-            if (event.getType() == ApplicationEvent.Type.INITIALIZATION_APP_FINISHED) {
-                config.logComponents();
-            }
+            //if (event.getType() == ApplicationEvent.Type.INITIALIZATION_APP_FINISHED) {
+            //    config.logComponents();
+            //}
         }
 
         @Override

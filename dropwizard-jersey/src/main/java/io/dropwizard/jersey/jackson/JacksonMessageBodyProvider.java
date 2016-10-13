@@ -23,6 +23,7 @@ public class JacksonMessageBodyProvider extends JacksonJaxbJsonProvider {
     private final ObjectMapper mapper;
 
     public JacksonMessageBodyProvider(ObjectMapper mapper) {
+        super(mapper, DEFAULT_ANNOTATIONS);
         this.mapper = mapper;
         setMapper(mapper);
     }
