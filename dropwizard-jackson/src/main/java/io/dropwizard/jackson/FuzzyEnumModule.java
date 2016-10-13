@@ -76,7 +76,7 @@ public class FuzzyEnumModule extends Module {
                 for (AnnotatedMethod am : factoryMethods) {
                     final JsonCreator creator = am.getAnnotation(JsonCreator.class);
                     if (creator != null) {
-                        return EnumDeserializer.deserializerForCreator(config, type, am);
+                        return EnumDeserializer.deserializerForCreator(config, type, am, null, null);
                     }
                 }
             }

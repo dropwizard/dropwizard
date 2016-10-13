@@ -9,9 +9,9 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.fasterxml.jackson.databind.node.TreeTraversingParser;
+import com.fasterxml.jackson.dataformat.yaml.JacksonYAMLParseException;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.fasterxml.jackson.dataformat.yaml.snakeyaml.error.MarkedYAMLException;
-import com.fasterxml.jackson.dataformat.yaml.snakeyaml.error.YAMLException;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 
@@ -84,7 +84,7 @@ public class YamlConfigurationFactory<T> implements ConfigurationFactory<T> {
             }
 
             return build(node, path);
-        } catch (YAMLException e) {
+        } catch (JacksonYAMLParseException e) {
             final ConfigurationParsingException.Builder builder = ConfigurationParsingException
                     .builder("Malformed YAML")
                     .setCause(e)
