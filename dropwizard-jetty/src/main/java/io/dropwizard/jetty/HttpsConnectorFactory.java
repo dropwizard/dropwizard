@@ -14,6 +14,8 @@ import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.SecureRequestCustomizer;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.SslConnectionFactory;
+import org.eclipse.jetty.util.component.AbstractLifeCycle;
+import org.eclipse.jetty.util.component.LifeCycle;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.util.thread.ScheduledExecutorScheduler;
 import org.eclipse.jetty.util.thread.Scheduler;
@@ -27,7 +29,6 @@ import javax.net.ssl.SSLSocketFactory;
 import java.io.File;
 import java.net.URI;
 import java.security.KeyStore;
-import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -528,13 +529,13 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
 
     @Override
     public Connector build(Server server, MetricRegistry metrics, String name, ThreadPool threadPool) {
-        logSupportedParameters();
-
         final HttpConfiguration httpConfig = buildHttpConfiguration();
 
         final HttpConnectionFactory httpConnectionFactory = buildHttpConnectionFactory(httpConfig);
 
         final SslContextFactory sslContextFactory = buildSslContextFactory();
+        sslContextFactory.addLifeCycleListener(logSslInfoOnStart(sslContextFactory));
+
         server.addBean(sslContextFactory);
 
         final SslConnectionFactory sslConnectionFactory =
@@ -560,33 +561,40 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
         return config;
     }
 
-    protected void logSupportedParameters() {
+    /** Register a listener that waits until the ssl context factory has started. Once it has
+     *  started we can grab the fully initialized context so we can log the parameters.
+     */
+    protected AbstractLifeCycle.AbstractLifeCycleListener logSslInfoOnStart(final SslContextFactory sslContextFactory) {
+        return new AbstractLifeCycle.AbstractLifeCycleListener() {
+            @Override
+            public void lifeCycleStarted(LifeCycle event) {
+                logSupportedParameters(sslContextFactory.getSslContext());
+            }
+        };
+    }
+
+    private void logSupportedParameters(SSLContext context) {
         if (LOGGED.compareAndSet(false, true)) {
-            try {
-                final SSLContext context = SSLContext.getDefault();
-                final String[] protocols = context.getSupportedSSLParameters().getProtocols();
-                final SSLSocketFactory factory = context.getSocketFactory();
-                final String[] cipherSuites = factory.getSupportedCipherSuites();
-                LOGGER.info("Supported protocols: {}", Arrays.toString(protocols));
-                LOGGER.info("Supported cipher suites: {}", Arrays.toString(cipherSuites));
+            final String[] protocols = context.getSupportedSSLParameters().getProtocols();
+            final SSLSocketFactory factory = context.getSocketFactory();
+            final String[] cipherSuites = factory.getSupportedCipherSuites();
+            LOGGER.info("Supported protocols: {}", Arrays.toString(protocols));
+            LOGGER.info("Supported cipher suites: {}", Arrays.toString(cipherSuites));
 
-                if (getSupportedProtocols() != null) {
-                    LOGGER.info("Configured protocols: {}", getSupportedProtocols());
-                }
+            if (getSupportedProtocols() != null) {
+                LOGGER.info("Configured protocols: {}", getSupportedProtocols());
+            }
 
-                if (getExcludedProtocols() != null) {
-                    LOGGER.info("Excluded protocols: {}", getExcludedProtocols());
-                }
+            if (getExcludedProtocols() != null) {
+                LOGGER.info("Excluded protocols: {}", getExcludedProtocols());
+            }
 
-                if (getSupportedCipherSuites() != null) {
-                    LOGGER.info("Configured cipher suites: {}", getSupportedCipherSuites());
-                }
+            if (getSupportedCipherSuites() != null) {
+                LOGGER.info("Configured cipher suites: {}", getSupportedCipherSuites());
+            }
 
-                if (getExcludedCipherSuites() != null) {
-                    LOGGER.info("Excluded cipher suites: {}", getExcludedCipherSuites());
-                }
-            } catch (NoSuchAlgorithmException ignored) {
-
+            if (getExcludedCipherSuites() != null) {
+                LOGGER.info("Excluded cipher suites: {}", getExcludedCipherSuites());
             }
         }
     }

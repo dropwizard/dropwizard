@@ -8,7 +8,7 @@
     <parent>
         <groupId>io.dropwizard</groupId>
         <artifactId>dropwizard-parent</artifactId>
-        <version>1.0.0.1-SNAPSHOT</version>
+        <version>1.0.3-SNAPSHOT</version>
     </parent>
 
     <artifactId>dropwizard-bom</artifactId>
@@ -24,8 +24,8 @@
         <dropwizard.version>${project.version}</dropwizard.version>
         <guava.version>19.0</guava.version>
         <jersey.version>2.23.1</jersey.version>
-        <jackson.api.version>2.7.6</jackson.api.version>
-        <jackson.version>2.7.6</jackson.version>
+        <jackson.api.version>2.7.8</jackson.api.version>
+        <jackson.version>2.7.8</jackson.version>
         <jetty.version>9.3.9.v20160517</jetty.version>
         <servlet.version>3.0.0.v201112011016</servlet.version>
         <metrics3.version>3.1.2</metrics3.version>
@@ -181,7 +181,7 @@
             <dependency>
                 <groupId>com.github.spullara.mustache.java</groupId>
                 <artifactId>compiler</artifactId>
-                <version>0.9.2</version>
+                <version>0.9.4</version>
                 <exclusions>
                     <exclusion>
                         <groupId>com.google.guava</groupId>

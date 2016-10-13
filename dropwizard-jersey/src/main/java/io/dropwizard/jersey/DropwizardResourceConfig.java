@@ -6,6 +6,7 @@ import com.fasterxml.classmate.ResolvedType;
 import com.fasterxml.classmate.TypeResolver;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ComparisonChain;
+import com.google.common.collect.Ordering;
 import io.dropwizard.jersey.caching.CacheControlledResponseFeature;
 import io.dropwizard.jersey.params.NonEmptyStringParamFeature;
 import io.dropwizard.jersey.sessions.SessionFactoryProvider;
@@ -186,7 +187,11 @@ public class DropwizardResourceConfig extends ResourceConfig {
                         final Class<?> erasedType = !responseType.getTypeBindings().isEmpty() ?
                                 responseType.getTypeBindings().getBoundType(0).getErasedType() :
                                 responseType.getErasedType();
-                        populate(path, erasedType, true, endpointLogLines);
+                        if (Resource.from(erasedType) == null) {
+                            endpointLogLines.add(new EndpointLogLine(method.getHttpMethod(), path, erasedType));
+                        } else {
+                            populate(path, erasedType, true, endpointLogLines);
+                        }
                     }
                 }
             }
@@ -216,7 +221,8 @@ public class DropwizardResourceConfig extends ResourceConfig {
 
         @Override
         public String toString() {
-            return String.format("    %-7s %s (%s)", httpMethod, basePath, klass.getCanonicalName());
+            final String method = httpMethod == null ? "UNKNOWN" : httpMethod;
+            return String.format("    %-7s %s (%s)", method, basePath, klass.getCanonicalName());
         }
     }
 
@@ -227,7 +233,7 @@ public class DropwizardResourceConfig extends ResourceConfig {
         public int compare(EndpointLogLine endpointA, EndpointLogLine endpointB) {
             return ComparisonChain.start()
                 .compare(endpointA.basePath, endpointB.basePath)
-                .compare(endpointA.httpMethod, endpointB.httpMethod)
+                .compare(endpointA.httpMethod, endpointB.httpMethod, Comparator.nullsLast(Ordering.natural()))
                 .result();
         }
     }
