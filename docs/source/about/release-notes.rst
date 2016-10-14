@@ -29,6 +29,7 @@ v1.1.0: Unreleased
 * Upgraded to Mustache 0.9.4 `#1766 <https://github.com/dropwizard/dropwizard/pull/1766>`_
 * Upgraded to Mockito 2.2.1
 * Upgraded to Liquibase 3.5.3
+* Upgraded to JDBI 2.77
 
 .. _rel-1.0.2:
 
