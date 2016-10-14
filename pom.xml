@@ -59,7 +59,7 @@
         <maven.site.deploy.skip>true</maven.site.deploy.skip>
         <junit.version>4.12</junit.version>
         <assertj.version>3.5.2</assertj.version>
-        <mockito.version>2.0.54-beta</mockito.version>
+        <mockito.version>2.2.1</mockito.version>
     </properties>
 
     <developers>
