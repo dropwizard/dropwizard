@@ -10,7 +10,7 @@
     <properties>
         <!-- see https://issues.apache.org/jira/browse/MCOMPILER-235 -->
         <maven.compiler.useIncrementalCompilation>false</maven.compiler.useIncrementalCompilation>
-        <jmh.version>1.12</jmh.version>
+        <jmh.version>1.15</jmh.version>
         <!-- Skip deployment of this sub-module -->
         <source.skip>true</source.skip>
         <maven.javadoc.skip>true</maven.javadoc.skip>
