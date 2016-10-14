@@ -30,6 +30,7 @@ v1.1.0: Unreleased
 * Upgraded to Mockito 2.2.1
 * Upgraded to Liquibase 3.5.3
 * Upgraded to JDBI 2.77
+* Upgraded to Jersey 2.23.2
 
 .. _rel-1.0.2:
 
