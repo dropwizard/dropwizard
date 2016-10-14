@@ -2,6 +2,7 @@ package io.dropwizard.views;
 
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
+import com.google.common.annotations.VisibleForTesting;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -100,5 +101,10 @@ public class ViewMessageBodyWriter implements MessageBodyWriter<View> {
             }
         }
         return Locale.getDefault();
+    }
+
+    @VisibleForTesting
+    Iterable<ViewRenderer> getRenderers() {
+        return renderers;
     }
 }

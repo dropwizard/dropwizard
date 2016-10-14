@@ -21,12 +21,17 @@ v1.1.0: Unreleased
 * Use LoadingCache in CachingAuthenticator `#1615 <https://github.com/dropwizard/dropwizard/pull/1615>`_
 * Introduce CachingAuthorizer `#1639 <https://github.com/dropwizard/dropwizard/pull/1639>`_
 * Upgraded to Jackson 2.8.3 `#1749 <https://github.com/dropwizard/dropwizard/pull/1749>`_
-* Upgraded to Jetty 9.3.11.v20160721 `#1649 <https://github.com/dropwizard/dropwizard/pull/1649>`_
-* Upgraded to tomcat-jdbc 8.5.4 `#1654 <https://github.com/dropwizard/dropwizard/pull/1654>`_
+* Upgraded to Jetty 9.3.12.v20160915
+* Upgraded to tomcat-jdbc 8.5.6
 * Upgraded to Objenesis 2.4 `#1654 <https://github.com/dropwizard/dropwizard/pull/1654>`_
 * Upgraded to AssertJ 3.5.2 `#1654 <https://github.com/dropwizard/dropwizard/pull/1654>`_
-* Upgraded to classmate 1.3.1 `#1654 <https://github.com/dropwizard/dropwizard/pull/1654>`_
+* Upgraded to classmate 1.3.3
 * Upgraded to Mustache 0.9.4 `#1766 <https://github.com/dropwizard/dropwizard/pull/1766>`_
+* Upgraded to Mockito 2.2.1
+* Upgraded to Liquibase 3.5.3
+* Upgraded to JDBI 2.77
+* Upgraded to Jersey 2.23.2
+* Upgraded to javassist 3.21.0-GA
 
 .. _rel-1.0.2:
 
