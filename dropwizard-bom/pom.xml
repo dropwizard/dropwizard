@@ -26,7 +26,7 @@
         <jersey.version>2.23.2</jersey.version>
         <jackson.api.version>2.8.3</jackson.api.version>
         <jackson.version>2.8.3</jackson.version>
-        <jetty.version>9.3.11.v20160721</jetty.version>
+        <jetty.version>9.3.12.v20160915</jetty.version>
         <servlet.version>3.0.0.v201112011016</servlet.version>
         <metrics3.version>3.1.2</metrics3.version>
         <slf4j.version>1.7.21</slf4j.version>
