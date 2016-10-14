@@ -28,6 +28,7 @@ v1.1.0: Unreleased
 * Upgraded to classmate 1.3.1 `#1654 <https://github.com/dropwizard/dropwizard/pull/1654>`_
 * Upgraded to Mustache 0.9.4 `#1766 <https://github.com/dropwizard/dropwizard/pull/1766>`_
 * Upgraded to Mockito 2.2.1
+* Upgraded to Liquibase 3.5.3
 
 .. _rel-1.0.2:
 
