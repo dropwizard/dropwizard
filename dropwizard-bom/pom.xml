@@ -24,8 +24,7 @@
         <dropwizard.version>${project.version}</dropwizard.version>
         <guava.version>19.0</guava.version>
         <jersey.version>2.23.2</jersey.version>
-        <jackson.api.version>2.8.3</jackson.api.version>
-        <jackson.version>2.8.3</jackson.version>
+        <jackson.version>2.8.4</jackson.version>
         <jetty.version>9.3.12.v20160915</jetty.version>
         <servlet.version>3.0.0.v201112011016</servlet.version>
         <metrics3.version>3.1.2</metrics3.version>
@@ -291,9 +290,16 @@
 
             <!-- Jackson -->
             <dependency>
+                <groupId>com.github.joschi.jackson</groupId>
+                <artifactId>jackson-bom</artifactId>
+                <version>${jackson.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-annotations</artifactId>
-                <version>${jackson.api.version}</version>
+                <version>${jackson.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
