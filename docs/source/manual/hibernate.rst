@@ -49,7 +49,7 @@ and how to get a ``DataSourceFactory`` from your configuration subclass:
 
     @Override
     public void run(ExampleConfiguration config, Environment environment) {
-        final UserDAO dao = new UserDAO(hibernate.getSessionFactory());
+        final PersonDAO dao = new PersonDAO(hibernate.getSessionFactory());
         environment.jersey().register(new UserResource(dao));
     }
 
