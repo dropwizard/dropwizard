@@ -18,6 +18,7 @@ import org.junit.runners.model.Statement;
 
 import javax.validation.Validator;
 import javax.ws.rs.client.Client;
+import javax.ws.rs.client.WebTarget;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -133,10 +134,32 @@ public class ResourceTestRule implements TestRule {
         return configuration.clientConfigurator;
     }
 
+    /**
+     * Creates a web target to be sent to the resource under testing.
+     *
+     * @param path relative path (from tested application base URI) this web target should point to.
+     * @return the created JAX-RS web target.
+     */
+    public WebTarget target(String path) {
+        return getJerseyTest().target(path);
+    }
+
+    /**
+     * Returns the pre-configured {@link Client} for this test. For sending
+     * requests prefer {@link #target(String)}
+     *
+     * @return the {@link JerseyTest} configured {@link Client}
+     */
     public Client client() {
         return test.client();
     }
 
+    /**
+     * Returns the underlying {@link JerseyTest}. For sending requests prefer
+     * {@link #target(String)}.
+     *
+     * @return the underlying {@link JerseyTest}
+     */
     public JerseyTest getJerseyTest() {
         return test;
     }

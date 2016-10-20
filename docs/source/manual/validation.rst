@@ -401,8 +401,7 @@ code and ensure that the error messages are user friendly.
     public void personNeedsAName() {
         // Tests what happens when a person with a null name is sent to
         // the endpoint.
-        final Response post = resources.client()
-                .target("/person/v1").request()
+        final Response post = resources.target("/person/v1").request()
                 .post(Entity.json(new Person(null)));
 
         // Clients will receive a 422 on bad request entity

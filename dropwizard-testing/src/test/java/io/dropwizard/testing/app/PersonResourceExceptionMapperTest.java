@@ -35,7 +35,7 @@ public class PersonResourceExceptionMapperTest {
 
     @Test
     public void testDefaultConstraintViolation() {
-        assertThat(RESOURCES.client().target("/person/blah/index")
+        assertThat(RESOURCES.target("/person/blah/index")
             .queryParam("ind", -1).request()
             .get().readEntity(String.class))
             .isEqualTo("Invalid data");
@@ -43,7 +43,7 @@ public class PersonResourceExceptionMapperTest {
 
     @Test
     public void testDefaultJsonProcessingMapper() {
-        assertThat(RESOURCES.client().target("/person/blah/runtime-exception")
+        assertThat(RESOURCES.target("/person/blah/runtime-exception")
             .request()
             .post(Entity.json("{ \"he: \"ho\"}"))
             .readEntity(String.class))
@@ -52,7 +52,7 @@ public class PersonResourceExceptionMapperTest {
 
     @Test
     public void testDefaultExceptionMapper() {
-        assertThat(RESOURCES.client().target("/person/blah/runtime-exception")
+        assertThat(RESOURCES.target("/person/blah/runtime-exception")
             .request()
             .post(Entity.json("{}"))
             .readEntity(String.class))
@@ -61,7 +61,7 @@ public class PersonResourceExceptionMapperTest {
 
     @Test
     public void testDefaultEofExceptionMapper() {
-        assertThat(RESOURCES.client().target("/person/blah/eof-exception")
+        assertThat(RESOURCES.target("/person/blah/eof-exception")
             .request()
             .get().readEntity(String.class))
             .isEqualTo("Something went wrong: I'm an eof exception!");
