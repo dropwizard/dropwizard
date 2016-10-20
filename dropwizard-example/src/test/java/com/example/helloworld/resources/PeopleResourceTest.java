@@ -56,7 +56,7 @@ public class PeopleResourceTest {
     @Test
     public void createPerson() throws JsonProcessingException {
         when(PERSON_DAO.create(any(Person.class))).thenReturn(person);
-        final Response response = RESOURCES.client().target("/people")
+        final Response response = RESOURCES.target("/people")
                 .request(MediaType.APPLICATION_JSON_TYPE)
                 .post(Entity.entity(person, MediaType.APPLICATION_JSON_TYPE));
 
@@ -70,7 +70,7 @@ public class PeopleResourceTest {
         final ImmutableList<Person> people = ImmutableList.of(person);
         when(PERSON_DAO.findAll()).thenReturn(people);
 
-        final List<Person> response = RESOURCES.client().target("/people")
+        final List<Person> response = RESOURCES.target("/people")
             .request().get(new GenericType<List<Person>>() {
             });
 

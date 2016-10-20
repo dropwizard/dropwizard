@@ -270,13 +270,13 @@ When you build your ``ResourceTestRule``, add the ``GrizzlyWebTestContainerFacto
             .build();
 
 
-In this example, we are testing the oauth authentication, so we need to set the header manually. Note the use of ``resources.getJerseyTest()`` to make the test work
+In this example, we are testing the oauth authentication, so we need to set the header manually.
 
 .. code-block:: java
 
     @Test
     public void testProtected() throws Exception {
-        final Response response = rule.getJerseyTest().target("/protected")
+        final Response response = rule.target("/protected")
                 .request(MediaType.APPLICATION_JSON_TYPE)
                 .header("Authorization", "Bearer TOKEN")
                 .get();
@@ -292,7 +292,7 @@ resources. For example you may want Basic authentication for one resource and OA
 for another resource, at the same time using a different `Principal` for each
 authentication scheme.
 
-For this use case, there is the ``PolymorphicAuthDynamicFeature`` and the 
+For this use case, there is the ``PolymorphicAuthDynamicFeature`` and the
 ``PolymorphicAuthValueFactoryProvider``. With these two components, we can use different
 combinations of authentication schemes/authenticators/authorizers/principals. To use this
 feature, we need to do a few things:
@@ -310,7 +310,7 @@ a different principal for each.
 
 .. code-block:: java
 
-    final AuthFilter<BasicCredentials, BasicPrincipal> basicFilter 
+    final AuthFilter<BasicCredentials, BasicPrincipal> basicFilter
             = new BasicCredentialAuthFilter.Builder<BasicPrincipal>()
                     .setAuthenticator(new ExampleAuthenticator())
                     .setRealm("SUPER SECRET STUFF")
@@ -323,7 +323,7 @@ a different principal for each.
 
     final PolymorphicAuthDynamicFeature feature = new PolymorphicAuthDynamicFeature<>(
         ImmutableMap.of(
-            BasicPrincipal.class, basicFilter, 
+            BasicPrincipal.class, basicFilter,
             OAuthPrincipal.class, oauthFilter));
     final AbstractBinder binder = new PolymorphicAuthValueFactoryProvider.Binder<>(
         ImmutableSet.of(BasicPrincipal.class, OAuthPrincipal.class));
@@ -363,7 +363,7 @@ So continuing with the previous example you should add the following configurati
 
     ... = new OAuthCredentialAuthFilter.Builder<OAuthPrincipal>()
             .setAuthorizer(new ExampleAuthorizer())..  // set authorizer
-    
+
     environment.jersey().register(RolesAllowedDynamicFeature.class);
 
 Now we can do

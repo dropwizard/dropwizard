@@ -45,7 +45,7 @@ public class PersonResourceTest {
     public void getPersonSuccess() {
         when(DAO.findById(1L)).thenReturn(Optional.of(person));
 
-        Person found = RULE.getJerseyTest().target("/people/1").request().get(Person.class);
+        Person found = RULE.target("/people/1").request().get(Person.class);
 
         assertThat(found.getId()).isEqualTo(person.getId());
         verify(DAO).findById(1L);
@@ -54,7 +54,7 @@ public class PersonResourceTest {
     @Test
     public void getPersonNotFound() {
         when(DAO.findById(2L)).thenReturn(Optional.empty());
-        final Response response = RULE.getJerseyTest().target("/people/2").request().get();
+        final Response response = RULE.target("/people/2").request().get();
 
         assertThat(response.getStatusInfo().getStatusCode()).isEqualTo(Response.Status.NOT_FOUND.getStatusCode());
         verify(DAO).findById(2L);

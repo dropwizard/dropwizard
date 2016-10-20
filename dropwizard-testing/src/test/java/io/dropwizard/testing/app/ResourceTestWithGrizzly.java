@@ -26,14 +26,14 @@ public class ResourceTestWithGrizzly {
 
     @Test
     public void testResource() {
-        assertThat(RESOURCES.getJerseyTest().target("test").request()
+        assertThat(RESOURCES.target("test").request()
                 .get(String.class))
                 .isEqualTo("test");
     }
 
     @Test
     public void testExceptionMapper() {
-        final Response resp = RESOURCES.getJerseyTest().target("test").request()
+        final Response resp = RESOURCES.target("test").request()
                 .post(Entity.json(""));
         assertThat(resp.getStatus()).isEqualTo(500);
         assertThat(resp.readEntity(String.class)).isEqualTo("Can't touch this");

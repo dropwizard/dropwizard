@@ -188,7 +188,7 @@ loads a given resource instance in an in-memory Jersey server:
 
         @Test
         public void testGetPerson() {
-            assertThat(resources.client().target("/person/blah").request().get(Person.class))
+            assertThat(resources.target("/person/blah").request().get(Person.class))
                     .isEqualTo(person);
             verify(dao).fetchPerson("blah");
         }
@@ -199,7 +199,7 @@ want to test via ``ResourceTestRule.Builder#addResource(Object)``. Use a ``@Clas
 to have the rule wrap the entire test class or the ``@Rule`` annotation to have the rule wrap
 each test individually (make sure to remove static final modifier from ``resources``).
 
-In your tests, use ``#client()``, which returns a Jersey ``Client`` instance to talk to and test
+In your tests, use ``#target(String path)``, which initializes a request to talk to and test
 your instances.
 
 This doesn't require opening a port, but ``ResourceTestRule`` tests will perform all the serialization,
@@ -266,7 +266,7 @@ dependency for the Jersey Test Framework providers to your Maven POM and set ``G
 
         @Test
         public void testResource() {
-            assertThat(RULE.getJerseyTest().target("/example").request()
+            assertThat(RULE.target("/example").request()
                 .get(String.class))
                 .isEqualTo("example");
         }

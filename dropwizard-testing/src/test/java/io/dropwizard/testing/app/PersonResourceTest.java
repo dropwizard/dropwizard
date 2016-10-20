@@ -56,7 +56,7 @@ public class PersonResourceTest {
 
     @Test
     public void testGetPerson() {
-        assertThat(RESOURCES.client().target("/person/blah").request()
+        assertThat(RESOURCES.target("/person/blah").request()
                 .get(Person.class))
                 .isEqualTo(person);
         verify(PEOPLE_STORE).fetchPerson("blah");
@@ -64,7 +64,7 @@ public class PersonResourceTest {
 
     @Test
     public void testGetImmutableListOfPersons() {
-        assertThat(RESOURCES.client().target("/person/blah/list").request()
+        assertThat(RESOURCES.target("/person/blah/list").request()
             .get(new GenericType<ImmutableList<Person>>() {
             })).isEqualTo(ImmutableList.of(person));
     }
@@ -73,7 +73,7 @@ public class PersonResourceTest {
     public void testGetPersonWithQueryParam() {
         // Test to ensure that the dropwizard validator is registered so that
         // it can validate the "ind" IntParam.
-        assertThat(RESOURCES.client().target("/person/blah/index")
+        assertThat(RESOURCES.target("/person/blah/index")
             .queryParam("ind", 0).request()
             .get(Person.class))
             .isEqualTo(person);
@@ -82,7 +82,7 @@ public class PersonResourceTest {
 
     @Test
     public void testDefaultConstraintViolation() {
-        assertThat(RESOURCES.client().target("/person/blah/index")
+        assertThat(RESOURCES.target("/person/blah/index")
             .queryParam("ind", -1).request()
             .get().readEntity(String.class))
             .isEqualTo("{\"errors\":[\"query param ind must be greater than or equal to 0\"]}");
@@ -90,7 +90,7 @@ public class PersonResourceTest {
 
     @Test
     public void testDefaultJsonProcessingMapper() {
-        assertThat(RESOURCES.client().target("/person/blah/runtime-exception")
+        assertThat(RESOURCES.target("/person/blah/runtime-exception")
             .request()
             .post(Entity.json("{ \"he: \"ho\"}"))
             .readEntity(String.class))
@@ -99,7 +99,7 @@ public class PersonResourceTest {
 
     @Test
     public void testDefaultExceptionMapper() {
-        assertThat(RESOURCES.client().target("/person/blah/runtime-exception")
+        assertThat(RESOURCES.target("/person/blah/runtime-exception")
             .request()
             .post(Entity.json("{}"))
             .readEntity(String.class))
@@ -108,7 +108,7 @@ public class PersonResourceTest {
 
     @Test
     public void testDefaultEofExceptionMapper() {
-        assertThat(RESOURCES.client().target("/person/blah/eof-exception")
+        assertThat(RESOURCES.target("/person/blah/eof-exception")
             .request()
             .get().getStatus())
             .isEqualTo(Response.Status.BAD_REQUEST.getStatusCode());
@@ -116,7 +116,7 @@ public class PersonResourceTest {
 
     @Test
     public void testValidationGroupsException() {
-        final Response resp = RESOURCES.client().target("/person/blah/validation-groups-exception")
+        final Response resp = RESOURCES.target("/person/blah/validation-groups-exception")
             .request()
             .post(Entity.json("{}"));
         assertThat(resp.getStatus()).isEqualTo(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
