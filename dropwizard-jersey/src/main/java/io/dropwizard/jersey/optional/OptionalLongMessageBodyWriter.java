@@ -1,6 +1,5 @@
 package io.dropwizard.jersey.optional;
 
-import javax.ws.rs.NotFoundException;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
@@ -36,7 +35,7 @@ public class OptionalLongMessageBodyWriter implements MessageBodyWriter<Optional
                         MultivaluedMap<String, Object> httpHeaders,
                         OutputStream entityStream) throws IOException {
         if (!entity.isPresent()) {
-            throw new NotFoundException();
+            throw EmptyOptionalException.INSTANCE;
         }
 
         entityStream.write(Long.toString(entity.getAsLong()).getBytes(StandardCharsets.US_ASCII));

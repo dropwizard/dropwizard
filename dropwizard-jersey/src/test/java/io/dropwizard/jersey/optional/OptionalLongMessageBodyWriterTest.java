@@ -31,6 +31,7 @@ public class OptionalLongMessageBodyWriterTest extends JerseyTest {
     protected Application configure() {
         forceSet(TestProperties.CONTAINER_PORT, "0");
         return DropwizardResourceConfig.forTesting(new MetricRegistry())
+                .register(new EmptyOptionalExceptionMapper())
                 .register(OptionalLongReturnResource.class);
     }
 

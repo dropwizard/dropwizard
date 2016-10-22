@@ -1,10 +1,10 @@
 package io.dropwizard.jersey.guava;
 
 import com.google.common.base.Optional;
+import io.dropwizard.jersey.optional.EmptyOptionalException;
 import org.glassfish.jersey.message.MessageBodyWorkers;
 
 import javax.inject.Inject;
-import javax.ws.rs.NotFoundException;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
@@ -47,7 +47,7 @@ public class OptionalMessageBodyWriter implements MessageBodyWriter<Optional<?>>
                         OutputStream entityStream)
             throws IOException {
         if (!entity.isPresent()) {
-            throw new NotFoundException();
+            throw EmptyOptionalException.INSTANCE;
         }
 
         final ParameterizedType actualGenericType = (ParameterizedType) genericType;
