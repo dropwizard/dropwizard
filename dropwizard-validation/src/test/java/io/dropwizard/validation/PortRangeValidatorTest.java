@@ -79,6 +79,6 @@ public class PortRangeValidatorTest {
     public void rejectsInvalidPortsInList() {
         example.ports = ImmutableList.of(-1);
         assertThat(ConstraintViolations.format(validator.validate(example)))
-            .containsOnly("ports[0] must be between 1 and 65535");
+            .containsOnly("ports[0].<collection element> must be between 1 and 65535");
     }
 }
