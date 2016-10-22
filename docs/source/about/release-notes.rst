@@ -22,6 +22,7 @@ v1.1.0: Unreleased
 * Use LoadingCache in CachingAuthenticator `#1615 <https://github.com/dropwizard/dropwizard/pull/1615>`_
 * Introduce CachingAuthorizer `#1639 <https://github.com/dropwizard/dropwizard/pull/1639>`_
 * Upgraded to Jackson 2.8.4 `#1775 <https://github.com/dropwizard/dropwizard/pull/1775>`_
+* Upgraded to Hibernate Validator 5.3.0.Final `#1782 <https://github.com/dropwizard/dropwizard/pull/1782>`_
 * Upgraded to Jetty 9.3.12.v20160915
 * Upgraded to tomcat-jdbc 8.5.6
 * Upgraded to Objenesis 2.4 `#1654 <https://github.com/dropwizard/dropwizard/pull/1654>`_
