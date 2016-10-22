@@ -65,9 +65,9 @@ public class SizeValidatorTest {
                     .containsOnly("outOfRange must be between 10 KILOBYTES and 100 KILOBYTES",
                                   "tooBig must be less than or equal to 30 KILOBYTES",
                                   "tooSmall must be greater than or equal to 30 KILOBYTES",
-                                   "maxSize[0] must be less than or equal to 30 KILOBYTES",
-                                   "minSize[0] must be greater than or equal to 30 KILOBYTES",
-                                   "rangeSize[0] must be between 10 KILOBYTES and 100 KILOBYTES");
+                                   "maxSize[0].<collection element> must be less than or equal to 30 KILOBYTES",
+                                   "minSize[0].<collection element> must be greater than or equal to 30 KILOBYTES",
+                                   "rangeSize[0].<collection element> must be between 10 KILOBYTES and 100 KILOBYTES");
         }
     }
 

@@ -53,7 +53,7 @@ public class OneOfValidatorTest {
         example.basicList = ImmutableList.of("four");
 
         assertThat(format(validator.validate(example)))
-            .containsOnly("basicList[0] must be one of [one, two, three]");
+            .containsOnly("basicList[0].<collection element> must be one of [one, two, three]");
     }
 
     @Test
