@@ -50,6 +50,7 @@
         <module>dropwizard-benchmarks</module>
         <module>dropwizard-http2</module>
         <module>dropwizard-request-logging</module>
+        <module>dropwizard-e2e</module>
     </modules>
 
     <properties>
