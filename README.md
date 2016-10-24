@@ -41,8 +41,8 @@ mailing list, please use the following guidelines:
 issue, wrap it in three backticks: ```  so that it renders nicely
 * Write a unit test to show the issue!
 
-Sponsosrs
----------
+Sponsors
+--------
 
 Dropwizard is generously supported by some companies with licenses and free accounts for their products.
 

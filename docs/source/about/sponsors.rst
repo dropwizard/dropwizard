@@ -1,8 +1,8 @@
 .. _about-sponsors:
 
-#########
-Sponsosrs
-#########
+########
+Sponsors
+########
 
 Dropwizard is generously supported by some companies with licenses and free accounts for their products.
 
