@@ -40,3 +40,14 @@ mailing list, please use the following guidelines:
 * Paste error output or logs in your issue or in a Gist. If pasting them in the GitHub
 issue, wrap it in three backticks: ```  so that it renders nicely
 * Write a unit test to show the issue!
+
+Sponsosrs
+---------
+
+Dropwizard is generously supported by some companies with licenses and free accounts for their products.
+
+### JetBrains
+
+![JetBrains](docs/source/about/jetbrains.png)
+
+[JetBrains](https://www.jetbrains.com/) supports our open source project by sponsoring some [All Products Packs](https://www.jetbrains.com/products.html) within their [Free Open Source License](https://www.jetbrains.com/buy/opensource/) program.
