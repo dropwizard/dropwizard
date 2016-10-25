@@ -7,6 +7,7 @@ import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.jersey.errors.ErrorMessage;
 import io.dropwizard.jersey.jackson.JacksonMessageBodyProvider;
+import io.dropwizard.jersey.optional.EmptyOptionalExceptionMapper;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
 import io.dropwizard.logging.BootstrapLogging;
 import io.dropwizard.setup.Environment;
@@ -130,6 +131,7 @@ public class JerseyIntegrationTest extends JerseyTest {
         config.register(new PersonResource(new PersonDAO(sessionFactory)));
         config.register(new JacksonMessageBodyProvider(Jackson.newObjectMapper()));
         config.register(new DataExceptionMapper());
+        config.register(new EmptyOptionalExceptionMapper());
 
         return config;
     }

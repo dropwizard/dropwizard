@@ -31,7 +31,8 @@ public class OptionalDoubleMessageBodyWriterTest extends JerseyTest {
     protected Application configure() {
         forceSet(TestProperties.CONTAINER_PORT, "0");
         return DropwizardResourceConfig.forTesting(new MetricRegistry())
-                .register(OptionalDoubleReturnResource.class);
+                    .register(new EmptyOptionalExceptionMapper())
+                    .register(OptionalDoubleReturnResource.class);
     }
 
     @Test
