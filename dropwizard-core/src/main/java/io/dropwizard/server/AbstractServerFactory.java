@@ -13,7 +13,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Joiner;
 import com.google.common.io.Resources;
 import io.dropwizard.jersey.filter.AllowedMethodsFilter;
-import io.dropwizard.jersey.jackson.JacksonMessageBodyProvider;
+import io.dropwizard.jersey.jackson.JacksonBinder;
 import io.dropwizard.jersey.setup.JerseyEnvironment;
 import io.dropwizard.jersey.validation.HibernateValidationFeature;
 import io.dropwizard.jetty.GzipHandlerFactory;
@@ -498,7 +498,7 @@ public abstract class AbstractServerFactory implements ServerFactory {
             if (jerseyRootPath.isPresent()) {
                 jersey.setUrlPattern(jerseyRootPath.get());
             }
-            jersey.register(new JacksonMessageBodyProvider(objectMapper));
+            jersey.register(new JacksonBinder(objectMapper));
             jersey.register(new HibernateValidationFeature(validator));
             if (registerDefaultExceptionMappers == null || registerDefaultExceptionMappers) {
                 jersey.register(new ExceptionMapperBinder(detailedJsonProcessingExceptionMapper));
