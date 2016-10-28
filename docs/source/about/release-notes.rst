@@ -6,7 +6,7 @@ Release Notes
 
 .. _rel-1.0.3:
 
-v1.0.3: Unreleased
+v1.0.3: Oct 28 2016
 ==================
 
 * Fix support maxFileSize and archivedFileCount `#1660 <https://github.com/dropwizard/dropwizard/pull/1660>`_
