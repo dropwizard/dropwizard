@@ -9,6 +9,7 @@ Release Notes
 v1.0.3: Unreleased
 ==================
 
+* Fix support maxFileSize and archivedFileCount `#1660 <https://github.com/dropwizard/dropwizard/pull/1660>`_
 * Upgraded to Jackson 2.7.8 `#1755 <https://github.com/dropwizard/dropwizard/pull/1755>`_
 * Upgraded to Mustache 0.9.4 `#1766 <https://github.com/dropwizard/dropwizard/pull/1766>`_
 * Prefer use of assertj's java8 exception assertions `#1753 <https://github.com/dropwizard/dropwizard/pull/1753>`_
