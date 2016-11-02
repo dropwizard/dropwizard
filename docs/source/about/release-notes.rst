@@ -24,7 +24,7 @@ v1.1.0: Unreleased
 * Introduce CachingAuthorizer `#1639 <https://github.com/dropwizard/dropwizard/pull/1639>`_
 * Upgraded to Jackson 2.8.4 `#1775 <https://github.com/dropwizard/dropwizard/pull/1775>`_
 * Upgraded to Hibernate Validator 5.3.0.Final `#1782 <https://github.com/dropwizard/dropwizard/pull/1782>`_
-* Upgraded to Jetty 9.3.13.v20161014 `#1790 <https://github.com/dropwizard/dropwizard/pull/1790>`_
+* Upgraded to Jetty 9.3.14.v20161028 `#1796 <https://github.com/dropwizard/dropwizard/pull/1796>`_
 * Upgraded to tomcat-jdbc 8.5.6
 * Upgraded to Objenesis 2.4 `#1654 <https://github.com/dropwizard/dropwizard/pull/1654>`_
 * Upgraded to AssertJ 3.5.2 `#1654 <https://github.com/dropwizard/dropwizard/pull/1654>`_
