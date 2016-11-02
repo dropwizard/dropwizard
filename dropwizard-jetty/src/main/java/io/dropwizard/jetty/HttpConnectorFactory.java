@@ -116,6 +116,14 @@ import static com.codahale.metrics.MetricRegistry.name;
  *         </td>
  *     </tr>
  *     <tr>
+ *         <td>{@code blockingTimeout}</td>
+ *         <td>(none)</td>
+ *         <td>The timeout applied to blocking operations. This timeout is in addition to the {@code idleTimeout},
+ *             and applies to the total operation (as opposed to the idle timeout that applies to the time no data
+ *             is being sent).
+ *          </td>
+ *     </tr>
+ *     <tr>
  *         <td>{@code minBufferPoolSize}</td>
  *         <td>64 bytes</td>
  *         <td>The minimum size of the buffer pool.</td>
@@ -219,6 +227,8 @@ public class HttpConnectorFactory implements ConnectorFactory {
     @NotNull
     @MinDuration(value = 1, unit = TimeUnit.MILLISECONDS)
     private Duration idleTimeout = Duration.seconds(30);
+
+    private Duration blockingTimeout = null;
 
     @NotNull
     @MinSize(value = 1, unit = SizeUnit.BYTES)
@@ -335,6 +345,16 @@ public class HttpConnectorFactory implements ConnectorFactory {
     @JsonProperty
     public void setIdleTimeout(Duration idleTimeout) {
         this.idleTimeout = idleTimeout;
+    }
+
+    @JsonProperty
+    public Duration getBlockingTimeout() {
+        return blockingTimeout;
+    }
+
+    @JsonProperty
+    public void setBlockingTimeout(Duration blockingTimeout) {
+        this.blockingTimeout = blockingTimeout;
     }
 
     @JsonProperty
@@ -526,6 +546,9 @@ public class HttpConnectorFactory implements ConnectorFactory {
 
         if (useForwardedHeaders) {
             httpConfig.addCustomizer(new ForwardedRequestCustomizer());
+        }
+        if (blockingTimeout != null) {
+            httpConfig.setBlockingTimeout(blockingTimeout.toMilliseconds());
         }
         return httpConfig;
     }

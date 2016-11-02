@@ -303,6 +303,9 @@ idleTimeout              30 seconds          The maximum idle time for a connect
                                              or when waiting for a new message to be sent on a connection.
                                              This value is interpreted as the maximum time between some progress being made on the
                                              connection. So if a single byte is read or written, then the timeout is reset.
+blockingTimeout          (none)              The timeout applied to blocking operations. This timeout is in addition to
+                                             the `idleTimeout`, and applies to the total operation (as opposed to the
+                                             idle timeout that applies to the time no data is being sent).
 minBufferPoolSize        64 bytes            The minimum size of the buffer pool.
 bufferPoolIncrement      1KiB                The increment by which the buffer pool should be increased.
 maxBufferPoolSize        64KiB               The maximum size of the buffer pool.
