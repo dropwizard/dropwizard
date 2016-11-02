@@ -102,7 +102,10 @@
         <profile>
             <id>jdk-1.8.0</id>
             <activation>
-                <jdk>1.8.0</jdk>
+                <property>
+                    <name>java.version</name>
+                    <value>1.8.0</value>
+                </property>
             </activation>
             <properties>
                 <alpn-boot.version>8.1.0.v20141016</alpn-boot.version>
@@ -111,7 +114,10 @@
         <profile>
             <id>jdk-1.8.0_05</id>
             <activation>
-                <jdk>1.8.0_05</jdk>
+                <property>
+                    <name>java.version</name>
+                    <value>1.8.0_05</value>
+                </property>
             </activation>
             <properties>
                 <alpn-boot.version>8.1.0.v20141016</alpn-boot.version>
@@ -120,7 +126,10 @@
         <profile>
             <id>jdk-1.8.0_11</id>
             <activation>
-                <jdk>1.8.0_11</jdk>
+                <property>
+                    <name>java.version</name>
+                    <value>1.8.0_11</value>
+                </property>
             </activation>
             <properties>
                 <alpn-boot.version>8.1.0.v20141016</alpn-boot.version>
@@ -129,7 +138,10 @@
         <profile>
             <id>jdk-1.8.0_20</id>
             <activation>
-                <jdk>1.8.0_20</jdk>
+                <property>
+                    <name>java.version</name>
+                    <value>1.8.0_20</value>
+                </property>
             </activation>
             <properties>
                 <alpn-boot.version>8.1.0.v20141016</alpn-boot.version>
@@ -138,7 +150,10 @@
         <profile>
             <id>jdk-1.8.0_25</id>
             <activation>
-                <jdk>1.8.0_25</jdk>
+                <property>
+                    <name>java.version</name>
+                    <value>1.8.0_25</value>
+                </property>
             </activation>
             <properties>
                 <alpn-boot.version>8.1.2.v20141202</alpn-boot.version>
@@ -147,7 +162,10 @@
         <profile>
             <id>jdk-1.8.0_31</id>
             <activation>
-                <jdk>1.8.0_31</jdk>
+                <property>
+                    <name>java.version</name>
+                    <value>1.8.0_31</value>
+                </property>
             </activation>
             <properties>
                 <alpn-boot.version>8.1.3.v20150130</alpn-boot.version>
@@ -156,7 +174,10 @@
         <profile>
             <id>jdk-1.8.0_40</id>
             <activation>
-                <jdk>1.8.0_40</jdk>
+                <property>
+                    <name>java.version</name>
+                    <value>1.8.0_40</value>
+                </property>
             </activation>
             <properties>
                 <alpn-boot.version>8.1.3.v20150130</alpn-boot.version>
@@ -165,7 +186,10 @@
         <profile>
             <id>jdk-1.8.0_45</id>
             <activation>
-                <jdk>1.8.0_45</jdk>
+                <property>
+                    <name>java.version</name>
+                    <value>1.8.0_45</value>
+                </property>
             </activation>
             <properties>
                 <alpn-boot.version>8.1.3.v20150130</alpn-boot.version>
@@ -174,7 +198,10 @@
         <profile>
             <id>jdk-1.8.0_51</id>
             <activation>
-                <jdk>1.8.0_51</jdk>
+                <property>
+                    <name>java.version</name>
+                    <value>1.8.0_51</value>
+                </property>
             </activation>
             <properties>
                 <alpn-boot.version>8.1.4.v20150727</alpn-boot.version>
@@ -183,7 +210,10 @@
         <profile>
             <id>jdk-1.8.0_60</id>
             <activation>
-                <jdk>1.8.0_60</jdk>
+                <property>
+                    <name>java.version</name>
+                    <value>1.8.0_60</value>
+                </property>
             </activation>
             <properties>
                 <alpn-boot.version>8.1.5.v20150921</alpn-boot.version>
@@ -192,7 +222,10 @@
         <profile>
             <id>jdk-1.8.0_65</id>
             <activation>
-                <jdk>1.8.0_65</jdk>
+                <property>
+                    <name>java.version</name>
+                    <value>1.8.0_65</value>
+                </property>
             </activation>
             <properties>
                 <alpn-boot.version>8.1.6.v20151105</alpn-boot.version>
@@ -201,7 +234,10 @@
         <profile>
             <id>jdk-1.8.0_66</id>
             <activation>
-                <jdk>1.8.0_66</jdk>
+                <property>
+                    <name>java.version</name>
+                    <value>1.8.0_66</value>
+                </property>
             </activation>
             <properties>
                 <alpn-boot.version>8.1.6.v20151105</alpn-boot.version>
@@ -210,7 +246,10 @@
         <profile>
             <id>jdk-1.8.0_71</id>
             <activation>
-                <jdk>1.8.0_71</jdk>
+                <property>
+                    <name>java.version</name>
+                    <value>1.8.0_71</value>
+                </property>
             </activation>
             <properties>
                 <alpn-boot.version>8.1.7.v20160121</alpn-boot.version>
@@ -219,7 +258,10 @@
         <profile>
             <id>jdk-1.8.0_72</id>
             <activation>
-                <jdk>1.8.0_72</jdk>
+                <property>
+                    <name>java.version</name>
+                    <value>1.8.0_72</value>
+                </property>
             </activation>
             <properties>
                 <alpn-boot.version>8.1.7.v20160121</alpn-boot.version>
@@ -228,7 +270,10 @@
         <profile>
             <id>jdk-1.8.0_73</id>
             <activation>
-                <jdk>1.8.0_73</jdk>
+                <property>
+                    <name>java.version</name>
+                    <value>1.8.0_73</value>
+                </property>
             </activation>
             <properties>
                 <alpn-boot.version>8.1.7.v20160121</alpn-boot.version>
@@ -237,7 +282,10 @@
         <profile>
             <id>jdk-1.8.0_74</id>
             <activation>
-                <jdk>1.8.0_74</jdk>
+                <property>
+                    <name>java.version</name>
+                    <value>1.8.0_74</value>
+                </property>
             </activation>
             <properties>
                 <alpn-boot.version>8.1.7.v20160121</alpn-boot.version>
@@ -246,7 +294,10 @@
         <profile>
             <id>jdk-1.8.0_77</id>
             <activation>
-                <jdk>1.8.0_77</jdk>
+                <property>
+                    <name>java.version</name>
+                    <value>1.8.0_77</value>
+                </property>
             </activation>
             <properties>
                 <alpn-boot.version>8.1.7.v20160121</alpn-boot.version>
@@ -255,7 +306,10 @@
         <profile>
             <id>jdk-1.8.0_91</id>
             <activation>
-                <jdk>1.8.0_91</jdk>
+                <property>
+                    <name>java.version</name>
+                    <value>1.8.0_91</value>
+                </property>
             </activation>
             <properties>
                 <alpn-boot.version>8.1.7.v20160121</alpn-boot.version>
@@ -264,7 +318,10 @@
         <profile>
             <id>jdk-1.8.0_92</id>
             <activation>
-                <jdk>1.8.0_92</jdk>
+                <property>
+                    <name>java.version</name>
+                    <value>1.8.0_92</value>
+                </property>
             </activation>
             <properties>
                 <alpn-boot.version>8.1.8.v20160420</alpn-boot.version>
@@ -273,7 +330,10 @@
         <profile>
             <id>jdk-1.8.0_101</id>
             <activation>
-                <jdk>1.8.0_101</jdk>
+                <property>
+                    <name>java.version</name>
+                    <value>1.8.0_101</value>
+                </property>
             </activation>
             <properties>
                 <alpn-boot.version>8.1.9.v20160720</alpn-boot.version>
@@ -282,7 +342,10 @@
         <profile>
             <id>jdk-1.8.0_102</id>
             <activation>
-                <jdk>1.8.0_102</jdk>
+                <property>
+                    <name>java.version</name>
+                    <value>1.8.0_102</value>
+                </property>
             </activation>
             <properties>
                 <alpn-boot.version>8.1.9.v20160720</alpn-boot.version>
@@ -291,7 +354,10 @@
         <profile>
             <id>jdk-1.8.0_111</id>
             <activation>
-                <jdk>1.8.0_111</jdk>
+                <property>
+                    <name>java.version</name>
+                    <value>1.8.0_111</value>
+                </property>
             </activation>
             <properties>
                 <alpn-boot.version>8.1.9.v20160720</alpn-boot.version>
@@ -300,7 +366,10 @@
         <profile>
             <id>jdk-1.8.0_112</id>
             <activation>
-                <jdk>1.8.0_112</jdk>
+                <property>
+                    <name>java.version</name>
+                    <value>1.8.0_112</value>
+                </property>
             </activation>
             <properties>
                 <alpn-boot.version>8.1.10.v20161026</alpn-boot.version>
