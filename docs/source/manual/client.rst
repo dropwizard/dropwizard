@@ -124,7 +124,7 @@ If HttpClient_ is too low-level for you, Dropwizard also supports Jersey's `Clie
 Jersey's ``Client`` allows you to use all of the server-side media type support that your service
 uses to, for example, deserialize ``application/json`` request entities as POJOs.
 
-.. _Client API: https://jersey.java.net/documentation/2.22.1/client.html
+.. _Client API: https://jersey.java.net/documentation/2.24/client.html
 
 To create a :ref:`managed <man-core-managed>`, instrumented ``JerseyClient`` instance, your
 :ref:`configuration class <man-core-configuration>` needs an :ref:`jersey client configuration <man-configuration-clients-jersey>` instance:
@@ -178,7 +178,7 @@ the `Jersey Client Properties`_ can be used.
     ``HttpClientBuilder``, so the Jersey properties are ignored.
 
 .. _Jersey Client Configuration: https://jersey.java.net/documentation/latest/appendix-properties.html#appendix-properties-client
-.. _Jersey Client Properties: https://jersey.java.net/apidocs/2.22/jersey/org/glassfish/jersey/client/ClientProperties.html
+.. _Jersey Client Properties: https://jersey.java.net/apidocs/2.24/jersey/org/glassfish/jersey/client/ClientProperties.html
 
 .. _man-client-jersey-rx-usage:
 
@@ -215,4 +215,4 @@ Alternatively, there are RxJava, Guava, and JSR-166e implementations.
 By allowing Dropwizard to create the rx-client, the same thread pool that is utilized by traditional
 synchronous and asynchronous requests, is used for rx requests.
 
-.. _rx-clients: https://jersey.java.net/documentation/2.23.1/rx-client.html
+.. _rx-clients: https://jersey.java.net/documentation/2.24/rx-client.html
