@@ -74,6 +74,7 @@ public class HttpConnectorFactoryTest {
         assertThat(http.isUseServerHeader()).isFalse();
         assertThat(http.isUseDateHeader()).isTrue();
         assertThat(http.isUseForwardedHeaders()).isTrue();
+        assertThat(http.getBlockingTimeout()).isNull();
     }
 
     @Test
@@ -102,6 +103,7 @@ public class HttpConnectorFactoryTest {
         assertThat(http.isUseServerHeader()).isTrue();
         assertThat(http.isUseDateHeader()).isFalse();
         assertThat(http.isUseForwardedHeaders()).isFalse();
+        assertThat(http.getBlockingTimeout()).isEqualTo(Duration.seconds(30));
     }
 
     @Test
@@ -112,6 +114,7 @@ public class HttpConnectorFactoryTest {
         http.setSelectorThreads(2);
         http.setAcceptQueueSize(1024);
         http.setSoLingerTime(Duration.seconds(30));
+        http.setBlockingTimeout(Duration.minutes(1));
 
         Server server = new Server();
         MetricRegistry metrics = new MetricRegistry();
@@ -158,6 +161,7 @@ public class HttpConnectorFactoryTest {
         assertThat(httpConfiguration.getSendDateHeader()).isTrue();
         assertThat(httpConfiguration.getSendServerVersion()).isFalse();
         assertThat(httpConfiguration.getCustomizers()).hasAtLeastOneElementOfType(ForwardedRequestCustomizer.class);
+        assertThat(httpConfiguration.getBlockingTimeout()).isEqualTo(60000L);
 
         connector.stop();
         server.stop();

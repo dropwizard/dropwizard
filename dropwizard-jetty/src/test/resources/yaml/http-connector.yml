@@ -8,6 +8,7 @@ maxRequestHeaderSize: 4KiB
 maxResponseHeaderSize: 4KiB
 inputBufferSize: 4KiB
 idleTimeout: 10 seconds
+blockingTimeout: 30 seconds
 minBufferPoolSize: 128B
 bufferPoolIncrement: 500B
 maxBufferPoolSize: 32KiB
