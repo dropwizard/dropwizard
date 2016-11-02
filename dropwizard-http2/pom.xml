@@ -303,7 +303,7 @@
                 <jdk>1.8.0_112</jdk>
             </activation>
             <properties>
-                <alpn-boot.version>8.1.9.v20160720</alpn-boot.version>
+                <alpn-boot.version>8.1.10.v20161026</alpn-boot.version>
             </properties>
         </profile>
     </profiles>
