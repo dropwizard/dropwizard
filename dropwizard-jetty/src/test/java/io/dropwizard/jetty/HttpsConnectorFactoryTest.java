@@ -93,7 +93,7 @@ public class HttpsConnectorFactoryTest {
         factory.setKeyStorePassword("password"); // necessary to avoid a prompt for a password
         factory.setSupportedProtocols(supportedProtocols);
 
-        SslContextFactory sslContextFactory = factory.buildSslContextFactory();
+        SslContextFactory sslContextFactory = factory.configureSslContextFactory(new SslContextFactory());
         assertThat(ImmutableList.copyOf(sslContextFactory.getIncludeProtocols())).isEqualTo(supportedProtocols);
     }
 
@@ -105,7 +105,7 @@ public class HttpsConnectorFactoryTest {
         factory.setKeyStorePassword("password"); // necessary to avoid a prompt for a password
         factory.setExcludedProtocols(excludedProtocols);
 
-        SslContextFactory sslContextFactory = factory.buildSslContextFactory();
+        SslContextFactory sslContextFactory = factory.configureSslContextFactory(new SslContextFactory());
         assertThat(ImmutableList.copyOf(sslContextFactory.getExcludeProtocols())).isEqualTo(excludedProtocols);
     }
 
@@ -134,7 +134,7 @@ public class HttpsConnectorFactoryTest {
         final HttpsConnectorFactory factory = new HttpsConnectorFactory();
         factory.setKeyStoreType(WINDOWS_MY_KEYSTORE_NAME);
 
-        assertNotNull(factory.buildSslContextFactory());
+        assertNotNull(factory.configureSslContextFactory(new SslContextFactory()));
     }
 
     @Test(expected = IllegalStateException.class)
@@ -143,7 +143,7 @@ public class HttpsConnectorFactoryTest {
 
         final HttpsConnectorFactory factory = new HttpsConnectorFactory();
         factory.setKeyStoreType(WINDOWS_MY_KEYSTORE_NAME);
-        factory.buildSslContextFactory();
+        factory.configureSslContextFactory(new SslContextFactory());
     }
 
     @Test

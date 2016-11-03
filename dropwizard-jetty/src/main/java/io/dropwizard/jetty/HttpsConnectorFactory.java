@@ -533,10 +533,11 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
 
         final HttpConnectionFactory httpConnectionFactory = buildHttpConnectionFactory(httpConfig);
 
-        final SslContextFactory sslContextFactory = buildSslContextFactory();
+        final SslContextFactory sslContextFactory = configureSslContextFactory(new SslContextFactory());
         sslContextFactory.addLifeCycleListener(logSslInfoOnStart(sslContextFactory));
 
         server.addBean(sslContextFactory);
+        server.addBean(new SslReload(sslContextFactory, this::configureSslContextFactory));
 
         final SslConnectionFactory sslConnectionFactory =
                 new SslConnectionFactory(sslContextFactory, HttpVersion.HTTP_1_1.toString());
@@ -599,8 +600,7 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
         }
     }
 
-    protected SslContextFactory buildSslContextFactory() {
-        final SslContextFactory factory = new SslContextFactory();
+    protected SslContextFactory configureSslContextFactory(SslContextFactory factory) {
         if (keyStorePath != null) {
             factory.setKeyStorePath(keyStorePath);
         }

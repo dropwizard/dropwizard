@@ -17,4 +17,5 @@ exclude_paths:
 - "**.ts"
 - "**.p12"
 - "**.jts"
+- "**.jks"
 - "**.keystore"
