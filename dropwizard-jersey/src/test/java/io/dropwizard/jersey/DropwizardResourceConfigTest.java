@@ -3,6 +3,7 @@ package io.dropwizard.jersey;
 import com.codahale.metrics.MetricRegistry;
 import io.dropwizard.jersey.dummy.DummyResource;
 import io.dropwizard.logging.BootstrapLogging;
+import org.glassfish.jersey.server.model.Resource;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -121,6 +122,27 @@ public class DropwizardResourceConfigTest {
                 .contains("    GET     /wrapper/bar (io.dropwizard.jersey.DropwizardResourceConfigTest.ResourcePathOnMethodLevel)")
                 .contains("    GET     /locator/bar (io.dropwizard.jersey.DropwizardResourceConfigTest.ResourcePathOnMethodLevel)")
                 .contains("    UNKNOWN /obj/{it} (java.lang.Object)");
+    }
+    
+    @Test
+    public void logsProgrammaticalEndpoints() {
+        Resource.Builder resourceBuilder = Resource.builder("/prefix");
+        resourceBuilder.addChildResource(Resource.from(DummyResource.class));
+        resourceBuilder.addChildResource(Resource.from(TestResource.class));
+        resourceBuilder.addChildResource(Resource.from(ImplementingResource.class));
+        
+        rc.registerResources(resourceBuilder.build());
+        
+        final String expectedLog = String.format(
+                "The following paths were found for the configured resources:%n"
+                + "%n"
+                + "    GET     /prefix/ (io.dropwizard.jersey.dummy.DummyResource)%n"
+                + "    GET     /prefix/another (io.dropwizard.jersey.DropwizardResourceConfigTest.ImplementingResource)%n"
+                + "    GET     /prefix/async (io.dropwizard.jersey.dummy.DummyResource)%n"
+                + "    GET     /prefix/dummy (io.dropwizard.jersey.DropwizardResourceConfigTest.TestResource)%n"
+        );
+        
+        assertThat(rc.getEndpointsInfo()).isEqualTo(expectedLog);
     }
 
     @Test

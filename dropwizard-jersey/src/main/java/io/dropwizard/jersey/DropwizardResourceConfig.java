@@ -26,10 +26,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.ext.Provider;
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 public class DropwizardResourceConfig extends ResourceConfig {
     private static final Logger LOGGER = LoggerFactory.getLogger(DropwizardResourceConfig.class);
@@ -122,15 +119,29 @@ public class DropwizardResourceConfig extends ResourceConfig {
         msg.append("The following paths were found for the configured resources:");
         msg.append(NEWLINE).append(NEWLINE);
 
-        final Set<Class<?>> allResources = new HashSet<>();
+        final Set<Class<?>> allResourcesClasses = new HashSet<>();
         for (Class<?> clazz : allClasses()) {
             if (!clazz.isInterface() && Resource.from(clazz) != null) {
-                allResources.add(clazz);
+                allResourcesClasses.add(clazz);
             }
         }
 
-        for (Class<?> klass : allResources) {
+        for (Class<?> klass : allResourcesClasses) {
             new EndpointLogger(urlPattern, klass).populate(endpointLogLines);
+        }
+        
+        final Set<Resource> allResources = this.getResources();
+        for (Resource res : allResources) {
+            if (containsAny(allResourcesClasses, res.getHandlerClasses())) {
+                continue;
+            }
+            
+            for (Resource childRes : res.getChildResources()) {
+                for (Class<?> childResHandlerClass : childRes.getHandlerClasses()) {
+                    EndpointLogger epl = new EndpointLogger(urlPattern, childResHandlerClass);
+                    epl.populate(cleanUpPath(res.getPath() + epl.rootPath), epl.klass, false, childRes, endpointLogLines);
+                }
+            }
         }
 
         if (!endpointLogLines.isEmpty()) {
@@ -142,6 +153,24 @@ public class DropwizardResourceConfig extends ResourceConfig {
         }
 
         return msg.toString();
+    }
+    
+    private <T> boolean containsAny(Collection<T> collection, Collection<T> values) {
+        if (values.size() == 0) {
+            return false;
+        }
+    
+        for (T value : values) {
+            if (collection.contains(value)) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
+    private String cleanUpPath(String path) {
+        return path.replaceAll("//+", "/");
     }
 
 
