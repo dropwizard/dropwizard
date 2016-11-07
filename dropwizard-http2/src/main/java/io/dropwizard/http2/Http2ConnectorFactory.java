@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.google.common.collect.ImmutableList;
 import io.dropwizard.jetty.HttpsConnectorFactory;
 import io.dropwizard.jetty.Jetty93InstrumentedConnectionFactory;
+import io.dropwizard.jetty.SslReload;
 import org.eclipse.jetty.alpn.server.ALPNServerConnectionFactory;
 import org.eclipse.jetty.http2.server.HTTP2ServerConnectionFactory;
 import org.eclipse.jetty.server.Connector;
@@ -108,9 +109,10 @@ public class Http2ConnectorFactory extends HttpsConnectorFactory {
         final NegotiatingServerConnectionFactory alpn = new ALPNServerConnectionFactory(H2, H2_17);
         alpn.setDefaultProtocol(HTTP_1_1); // Speak HTTP 1.1 over TLS if negotiation fails
 
-        final SslContextFactory sslContextFactory = buildSslContextFactory();
+        final SslContextFactory sslContextFactory = configureSslContextFactory(new SslContextFactory());
         sslContextFactory.addLifeCycleListener(logSslInfoOnStart(sslContextFactory));
         server.addBean(sslContextFactory);
+        server.addBean(new SslReload(sslContextFactory, this::configureSslContextFactory));
 
         // We should use ALPN as a negotiation protocol. Old clients that don't support it will be served
         // via HTTPS. New clients, however, that want to use HTTP/2 will use TLS with ALPN extension.

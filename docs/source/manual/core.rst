@@ -525,6 +525,40 @@ instances, the extended constructor should be used to specify a unique name for 
         bootstrap.addBundle(new AssetsBundle("/assets/fonts", "/fonts", null, "fonts"));
     }
 
+.. _man-core-bundles-ssl-reload:
+
+SSL Reload
+----------
+
+By registering the ``SslReloadBundle`` your application can have new certificate information
+reloaded at runtime, so a restart is not necessary.
+
+.. code-block:: java
+
+    @Override
+    public void initialize(Bootstrap<HelloWorldConfiguration> bootstrap) {
+        bootstrap.addBundle(new SslReloadBundle());
+    }
+
+To trigger a reload send a ``POST`` request to ``ssl-reload``
+
+.. code-block::
+
+    curl -k -X POST 'https://localhost:<admin-port>/tasks/ssl-reload'
+
+Dropwizard will use the same exact https configuration (keystore location, password, etc) when
+performing the reload.
+
+.. note::
+
+    If anything is wrong with the new certificate (eg. wrong password in keystore), no new
+    certificates are loaded. So if the application and admin ports use different certificates and
+    one of them is invalid, then none of them are reloaded.
+
+    A http 500 error is returned on reload failure, so make sure to trap for this error with
+    whatever tool is used to trigger a certificate reload, and alert the appropriate admin. If the
+    situation is not remedied, next time the app is stopped, it will be unable to start!
+
 .. _man-core-commands:
 
 Commands
