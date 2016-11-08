@@ -13,8 +13,18 @@ public class ResourceConfigurationSourceProviderTest {
 
     @Test
     public void readsFileContents() throws Exception {
-        try (InputStream input = provider.open("example.txt")) {
-            assertThat(new String(ByteStreams.toByteArray(input), StandardCharsets.UTF_8).trim()).isEqualTo("whee");
+        assertForWheeContent("example.txt");
+        assertForWheeContent("io/dropwizard/configuration/not-root-example.txt");
+        assertForWheeContent("/io/dropwizard/configuration/not-root-example.txt");
+    }
+
+    private void assertForWheeContent(String path) throws Exception {
+        assertThat(loadResourceAsString(path)).isEqualTo("whee");
+    }
+
+    private String loadResourceAsString(String path) throws Exception {
+        try (InputStream input = provider.open(path)) {
+            return new String(ByteStreams.toByteArray(input), StandardCharsets.UTF_8).trim();
         }
     }
 }
