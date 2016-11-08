@@ -26,16 +26,18 @@ import javax.ws.rs.Path;
 import javax.ws.rs.ext.Provider;
 import java.io.Serializable;
 import java.lang.annotation.Annotation;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.regex.Pattern;
 
 public class DropwizardResourceConfig extends ResourceConfig {
     private static final Logger LOGGER = LoggerFactory.getLogger(DropwizardResourceConfig.class);
     private static final String NEWLINE = String.format("%n");
     private static final TypeResolver TYPE_RESOLVER = new TypeResolver();
+    
+    private static final Pattern PATH_DIRTY_SLASHES = Pattern.compile("\\s*/\\s*/+\\s*");
 
     private String urlPattern = "/*";
 
@@ -136,11 +138,12 @@ public class DropwizardResourceConfig extends ResourceConfig {
         
         final Set<Resource> allResources = this.getResources();
         for (Resource res : allResources) {
-            if (containsAny(allResourcesClasses, res.getHandlerClasses())) {
-                continue;
-            }
-            
             for (Resource childRes : res.getChildResources()) {
+                // It is not necessary to check if a handler class is already being logged.
+                //
+                // This code will never be reached because of ambiguous (sub-)resource methods
+                // related to the OPTIONS method and @Consumes/@Produces annotations.
+                
                 for (Class<?> childResHandlerClass : childRes.getHandlerClasses()) {
                     EndpointLogger epl = new EndpointLogger(urlPattern, childResHandlerClass);
                     epl.populate(cleanUpPath(res.getPath() + epl.rootPath), epl.klass, false, childRes, endpointLogLines);
@@ -159,22 +162,9 @@ public class DropwizardResourceConfig extends ResourceConfig {
         return msg.toString();
     }
     
-    private <T> boolean containsAny(Collection<T> collection, Collection<T> values) {
-        if (values.size() == 0) {
-            return false;
-        }
-    
-        for (T value : values) {
-            if (collection.contains(value)) {
-                return true;
-            }
-        }
-        
-        return false;
-    }
-    
-    private String cleanUpPath(String path) {
-        return path.replaceAll("//+", "/");
+    @VisibleForTesting
+    String cleanUpPath(String path) {
+        return PATH_DIRTY_SLASHES.matcher(path).replaceAll("/").trim();
     }
 
 

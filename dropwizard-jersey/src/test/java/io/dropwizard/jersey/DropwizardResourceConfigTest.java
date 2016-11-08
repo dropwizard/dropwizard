@@ -144,6 +144,15 @@ public class DropwizardResourceConfigTest {
         
         assertThat(rc.getEndpointsInfo()).isEqualTo(expectedLog);
     }
+    
+    @Test
+    public void testEndpointLoggerPathCleaning() {
+        String dirtyPath = " /this//is///a/dirty//path/     ";
+        String anotherDirtyPath = "a/l//p/h/  /a/b /////  e/t";
+        
+        assertThat(rc.cleanUpPath(dirtyPath)).isEqualTo("/this/is/a/dirty/path/");
+        assertThat(rc.cleanUpPath(anotherDirtyPath)).isEqualTo("a/l/p/h/a/b/e/t");
+    }
 
     @Test
     public void duplicatePathsTest() {
