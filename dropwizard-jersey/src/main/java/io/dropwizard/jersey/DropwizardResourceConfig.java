@@ -30,11 +30,14 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.regex.Pattern;
 
 public class DropwizardResourceConfig extends ResourceConfig {
     private static final Logger LOGGER = LoggerFactory.getLogger(DropwizardResourceConfig.class);
     private static final String NEWLINE = String.format("%n");
     private static final TypeResolver TYPE_RESOLVER = new TypeResolver();
+    
+    private static final Pattern PATH_DIRTY_SLASHES = Pattern.compile("\\s*/\\s*/+\\s*");
 
     private String urlPattern = "/*";
 
@@ -122,15 +125,30 @@ public class DropwizardResourceConfig extends ResourceConfig {
         msg.append("The following paths were found for the configured resources:");
         msg.append(NEWLINE).append(NEWLINE);
 
-        final Set<Class<?>> allResources = new HashSet<>();
+        final Set<Class<?>> allResourcesClasses = new HashSet<>();
         for (Class<?> clazz : allClasses()) {
             if (!clazz.isInterface() && Resource.from(clazz) != null) {
-                allResources.add(clazz);
+                allResourcesClasses.add(clazz);
             }
         }
 
-        for (Class<?> klass : allResources) {
+        for (Class<?> klass : allResourcesClasses) {
             new EndpointLogger(urlPattern, klass).populate(endpointLogLines);
+        }
+        
+        final Set<Resource> allResources = this.getResources();
+        for (Resource res : allResources) {
+            for (Resource childRes : res.getChildResources()) {
+                // It is not necessary to check if a handler class is already being logged.
+                //
+                // This code will never be reached because of ambiguous (sub-)resource methods
+                // related to the OPTIONS method and @Consumes/@Produces annotations.
+                
+                for (Class<?> childResHandlerClass : childRes.getHandlerClasses()) {
+                    EndpointLogger epl = new EndpointLogger(urlPattern, childResHandlerClass);
+                    epl.populate(cleanUpPath(res.getPath() + epl.rootPath), epl.klass, false, childRes, endpointLogLines);
+                }
+            }
         }
 
         if (!endpointLogLines.isEmpty()) {
@@ -142,6 +160,11 @@ public class DropwizardResourceConfig extends ResourceConfig {
         }
 
         return msg.toString();
+    }
+    
+    @VisibleForTesting
+    String cleanUpPath(String path) {
+        return PATH_DIRTY_SLASHES.matcher(path).replaceAll("/").trim();
     }
 
 
