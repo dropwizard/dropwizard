@@ -205,8 +205,7 @@ public abstract class AbstractServerFactory implements ServerFactory {
     private static final Pattern WINDOWS_NEWLINE = Pattern.compile("\\r\\n?");
 
     @Valid
-    @NotNull
-    private RequestLogFactory requestLog = new LogbackAccessRequestLogFactory();
+    private RequestLogFactory requestLog;
 
     @Valid
     @NotNull
@@ -263,12 +262,16 @@ public abstract class AbstractServerFactory implements ServerFactory {
     }
 
     @JsonProperty("requestLog")
-    public RequestLogFactory getRequestLogFactory() {
+    public synchronized RequestLogFactory getRequestLogFactory() {
+        if (requestLog == null) {
+            // Lazy init to avoid a hard dependency to logback
+            requestLog = new LogbackAccessRequestLogFactory();
+        }
         return requestLog;
     }
 
     @JsonProperty("requestLog")
-    public void setRequestLogFactory(RequestLogFactory requestLog) {
+    public synchronized void setRequestLogFactory(RequestLogFactory requestLog) {
         this.requestLog = requestLog;
     }
 
@@ -576,9 +579,9 @@ public abstract class AbstractServerFactory implements ServerFactory {
     }
 
     protected Handler addRequestLog(Server server, Handler handler, String name) {
-        if (requestLog.isEnabled()) {
+        if (getRequestLogFactory().isEnabled()) {
             final RequestLogHandler requestLogHandler = new RequestLogHandler();
-            requestLogHandler.setRequestLog(requestLog.build(name));
+            requestLogHandler.setRequestLog(getRequestLogFactory().build(name));
             // server should own the request log's lifecycle since it's already started,
             // the handler might not become managed in case of an error which would leave
             // the request log stranded
