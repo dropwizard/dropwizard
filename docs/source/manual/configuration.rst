@@ -102,12 +102,44 @@ GZip
 Request Log
 ...........
 
+The new request log uses the `logback-access`_ library for processing request logs, which allow to use an extended set
+of logging patterns. See the `logback-access-pattern`_ docs for the reference.
+
 .. code-block:: yaml
 
     server:
       requestLog:
-        timeZone: UTC
+        appenders:
+          - type: console
 
+.. _logback-access: http://logback.qos.ch/access.html
+.. _logback-access-pattern: http://logback.qos.ch/manual/layouts.html#AccessPatternLayout
+
+====================== ================ ===========
+Name                   Default          Description
+====================== ================ ===========
+appenders              console appender The set of AppenderFactory appenders to which requests will be logged.
+                                        *TODO* See logging/appender refs for more info
+====================== ================ ===========
+
+
+Classic Request Log
+...........
+
+The classic request log uses the `logback-classic`_ library for processing request logs. It produces logs only in the
+standard `NCSA common log format`_, but allows to use an extended set of appenders.
+
+.. code-block:: yaml
+
+    server:
+      requestLog:
+        type: classic
+        timeZone: UTC
+        appenders:
+          - type: console
+
+.. _logback-classic: http://logback.qos.ch/
+.. _NCSA common log format: https://en.wikipedia.org/wiki/Common_Log_Format
 
 ====================== ================ ===========
 Name                   Default          Description
@@ -116,6 +148,7 @@ timeZone               UTC              The time zone to which request timestamp
 appenders              console appender The set of AppenderFactory appenders to which requests will be logged.
                                         *TODO* See logging/appender refs for more info
 ====================== ================ ===========
+
 
 .. _man-configuration-server-push:
 
