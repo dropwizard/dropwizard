@@ -3,6 +3,7 @@ package io.dropwizard.views.mustache;
 import com.github.mustachejava.DefaultMustacheFactory;
 import com.github.mustachejava.Mustache;
 import com.github.mustachejava.MustacheFactory;
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -23,7 +24,7 @@ import java.util.Optional;
  */
 public class MustacheViewRenderer implements ViewRenderer {
     private final LoadingCache<Class<? extends View>, MustacheFactory> factories;
-    private boolean useCache;
+    private boolean useCache = true;
 
     public MustacheViewRenderer() {
         this.factories = CacheBuilder.newBuilder()
@@ -43,7 +44,8 @@ public class MustacheViewRenderer implements ViewRenderer {
     @Override
     public void render(View view, Locale locale, OutputStream output) throws IOException {
         try {
-            final MustacheFactory mustacheFactory = useCache ? factories.get(view.getClass()) : createNewMustacheFactory(view.getClass());
+            final MustacheFactory mustacheFactory = useCache ? factories.get(view.getClass()) :
+                createNewMustacheFactory(view.getClass());
             final Mustache template = mustacheFactory.compile(view.getTemplateName());
             final Charset charset = view.getCharset().orElse(StandardCharsets.UTF_8);
             try (OutputStreamWriter writer = new OutputStreamWriter(output, charset)) {
@@ -56,7 +58,14 @@ public class MustacheViewRenderer implements ViewRenderer {
 
     @Override
     public void configure(Map<String, String> options) {
-        useCache = !("false".equals(options.get("cache")));
+        useCache = Optional.ofNullable(options.get("cache"))
+            .map(Boolean::parseBoolean)
+            .orElse(true);
+    }
+
+    @VisibleForTesting
+    boolean isUseCache() {
+        return useCache;
     }
 
     @Override

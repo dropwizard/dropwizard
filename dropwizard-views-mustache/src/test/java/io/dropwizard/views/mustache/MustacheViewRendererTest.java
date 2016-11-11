@@ -2,6 +2,7 @@ package io.dropwizard.views.mustache;
 
 import com.codahale.metrics.MetricRegistry;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import io.dropwizard.logging.BootstrapLogging;
 import io.dropwizard.views.ViewMessageBodyWriter;
 import io.dropwizard.views.ViewRenderer;
@@ -101,5 +102,19 @@ public class MustacheViewRendererTest extends JerseyTest {
             assertThat(e.getResponse().readEntity(String.class))
                 .isEqualTo(ViewMessageBodyWriter.TEMPLATE_ERROR_MSG);
         }
+    }
+
+    @Test
+    public void cacheByDefault() {
+        MustacheViewRenderer mustacheViewRenderer = new MustacheViewRenderer();
+        mustacheViewRenderer.configure(ImmutableMap.of());
+        assertThat(mustacheViewRenderer.isUseCache()).isTrue();
+    }
+
+    @Test
+    public void canDisableCache() {
+        MustacheViewRenderer mustacheViewRenderer = new MustacheViewRenderer();
+        mustacheViewRenderer.configure(ImmutableMap.of("cache", "false"));
+        assertThat(mustacheViewRenderer.isUseCache()).isFalse();
     }
 }
