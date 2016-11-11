@@ -126,3 +126,14 @@ Template Errors
 If there is an error with the template (eg. the template file is not found or there is a compilation
 error with the template), the user will receive a ``500 Internal Sever Error`` with a generic HTML
 message. The exact error will logged under error mode.
+
+Caching
+===============
+By default templates are cached to improve loading time. If you want to disable it during the development mode,
+set the ``cache`` property to ``false`` in the view configuration.
+
+.. code-block:: yaml
+
+    views:
+      .mustache:
+        cache: false
