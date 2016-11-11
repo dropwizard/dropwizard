@@ -38,6 +38,7 @@ v1.1.0: Unreleased
 * Upgraded to JDBI 2.77
 * Upgraded to Jersey 2.24
 * Upgraded to javassist 3.21.0-GA
+* Upgraded to Guava 20.0
 
 .. _rel-1.0.3:
 
