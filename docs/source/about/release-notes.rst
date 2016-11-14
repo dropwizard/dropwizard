@@ -6,11 +6,11 @@ Release Notes
 
 .. _rel-1.0.4:
 
-v1.0.4
+v1.0.4 Nov 14 2016
 ==================
 
 * Upgraded to Jersey 2.23.2 `#1808 <https://github.com/dropwizard/dropwizard/pull/1808>`_
-* Bring back support for request logging with ``logback-classic`` `#1813 <https://github.com/dropwizard/dropwizard/pull/1813>`_
+* Brought back support for request logging with ``logback-classic`` `#1813 <https://github.com/dropwizard/dropwizard/pull/1813>`_
 
 .. _rel-1.0.3:
 
