@@ -4,6 +4,7 @@ import com.codahale.metrics.MetricRegistry;
 import com.google.common.collect.ImmutableList;
 import io.dropwizard.logging.BootstrapLogging;
 import io.dropwizard.views.ViewMessageBodyWriter;
+import io.dropwizard.views.ViewRenderExceptionMapper;
 import io.dropwizard.views.ViewRenderer;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
@@ -58,6 +59,7 @@ public class FreemarkerViewRendererTest extends JerseyTest {
         final ViewRenderer renderer = new FreemarkerViewRenderer();
         config.register(new ViewMessageBodyWriter(new MetricRegistry(), ImmutableList.of(renderer)));
         config.register(new ExampleResource());
+        config.register(new ViewRenderExceptionMapper());
         return config;
     }
 
@@ -87,7 +89,7 @@ public class FreemarkerViewRendererTest extends JerseyTest {
                     .isEqualTo(500);
 
             assertThat(e.getResponse().readEntity(String.class))
-                .isEqualTo(ViewMessageBodyWriter.TEMPLATE_ERROR_MSG);
+                .isEqualTo(ViewRenderExceptionMapper.TEMPLATE_ERROR_MSG);
         }
     }
 
@@ -101,7 +103,7 @@ public class FreemarkerViewRendererTest extends JerseyTest {
                     .isEqualTo(500);
 
             assertThat(e.getResponse().readEntity(String.class))
-                    .isEqualTo(ViewMessageBodyWriter.TEMPLATE_ERROR_MSG);
+                    .isEqualTo(ViewRenderExceptionMapper.TEMPLATE_ERROR_MSG);
         }
     }
 }
