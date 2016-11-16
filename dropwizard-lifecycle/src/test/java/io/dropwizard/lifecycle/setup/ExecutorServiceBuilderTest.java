@@ -1,6 +1,5 @@
 package io.dropwizard.lifecycle.setup;
 
-import com.google.common.base.Throwables;
 import io.dropwizard.util.Duration;
 import org.junit.Before;
 import org.junit.Test;
@@ -126,7 +125,7 @@ public class ExecutorServiceBuilderTest {
             try {
                 latch.await();
             } catch (InterruptedException ex) {
-                Throwables.propagate(ex);
+                throw new RuntimeException(ex);
             }
         };
 
@@ -139,7 +138,7 @@ public class ExecutorServiceBuilderTest {
                 .as("2 tasks executed concurrently on " + exe)
                 .isTrue();
         } catch (InterruptedException ex) {
-            Throwables.propagate(ex);
+            throw new RuntimeException(ex);
         }
     }
 }

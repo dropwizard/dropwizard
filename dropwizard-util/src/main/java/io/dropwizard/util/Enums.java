@@ -21,7 +21,7 @@ public class Enums {
      * @return The enum or null, if no enum constant matched the input value.
      */
     public static Enum<?> fromStringFuzzy(String value, Enum<?>[] constants) {
-        final String text = CharMatcher.WHITESPACE
+        final String text = CharMatcher.whitespace()
             .removeFrom(value)
             .replace('-', '_')
             .replace('.', '_');
