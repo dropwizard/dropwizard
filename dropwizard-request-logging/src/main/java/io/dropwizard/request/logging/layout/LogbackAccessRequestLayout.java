@@ -15,6 +15,12 @@ import java.util.TimeZone;
  */
 public class LogbackAccessRequestLayout extends PatternLayout {
 
+    static  {
+        // Replace the buggy default converter which don't work async appenders
+        defaultConverterMap.put("requestParameter", SafeRequestParameterConverter.class.getName());
+        defaultConverterMap.put("reqParameter", SafeRequestParameterConverter.class.getName());
+    }
+
     public LogbackAccessRequestLayout(Context context, TimeZone timeZone) {
         setOutputPatternAsHeader(false);
         setPattern("%h %l %u [%t{dd/MMM/yyyy:HH:mm:ss Z," + timeZone.getID()
