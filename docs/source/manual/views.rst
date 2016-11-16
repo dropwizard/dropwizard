@@ -72,7 +72,7 @@ If your template ends with ``.ftl``, it'll be interpreted as a FreeMarker_ templ
 
 Your template file might look something like this:
 
-.. code-block:: html
+.. code-block:: xml
     :emphasize-lines: 1,5
 
     <#-- @ftlvariable name="" type="com.example.views.PersonView" -->

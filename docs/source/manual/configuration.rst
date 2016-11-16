@@ -117,16 +117,16 @@ of logging patterns. See the `logback-access-pattern`_ docs for the reference.
 .. _logback-access: http://logback.qos.ch/access.html
 .. _logback-access-pattern: http://logback.qos.ch/manual/layouts.html#AccessPatternLayout
 
-====================== ================ ===========
+====================== ================ ======================================================================
 Name                   Default          Description
-====================== ================ ===========
+====================== ================ ======================================================================
 appenders              console appender The set of AppenderFactory appenders to which requests will be logged.
                                         See :ref:`logging <man-configuration-logging>` for more info.
-====================== ================ ===========
+====================== ================ ======================================================================
 
 
 Classic Request Log
-...........
+...................
 
 The classic request log uses the `logback-classic`_ library for processing request logs. It produces logs only in the
 standard `NCSA common log format`_, but allows to use an extended set of appenders.
@@ -143,14 +143,13 @@ standard `NCSA common log format`_, but allows to use an extended set of appende
 .. _logback-classic: http://logback.qos.ch/
 .. _NCSA common log format: https://en.wikipedia.org/wiki/Common_Log_Format
 
-====================== ================ ===========
+====================== ================ ======================================================================
 Name                   Default          Description
-====================== ================ ===========
+====================== ================ ======================================================================
 timeZone               UTC              The time zone to which request timestamps will be converted.
 appenders              console appender The set of AppenderFactory appenders to which requests will be logged.
                                         See :ref:`logging <man-configuration-logging>` for more info.
-====================== ================ ===========
-
+====================== ================ ======================================================================
 
 .. _man-configuration-server-push:
 
@@ -565,14 +564,14 @@ Logging
         - type: console
 
 
-====================== ===========  ===========
+====================== ===========  ============================================================
 Name                   Default      Description
-====================== ===========  ===========
+====================== ===========  ============================================================
 level                  Level.INFO   Logback logging level.
 additive               true         Logback additive setting.
 loggers                (none)       Individual logger configuration (both forms are acceptable).
 appenders              (none)       One of console, file or syslog.
-====================== ===========  ===========
+====================== ===========  ============================================================
 
 
 .. _man-configuration-logging-console:

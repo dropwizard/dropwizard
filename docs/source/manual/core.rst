@@ -542,7 +542,7 @@ reloaded at runtime, so a restart is not necessary.
 
 To trigger a reload send a ``POST`` request to ``ssl-reload``
 
-.. code-block::
+.. code-block:: shell
 
     curl -k -X POST 'https://localhost:<admin-port>/tasks/ssl-reload'
 

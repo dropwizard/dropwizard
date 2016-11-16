@@ -45,7 +45,7 @@ v1.1.0: Unreleased
 .. _rel-1.0.3:
 
 v1.0.3: Oct 28 2016
-==================
+===================
 
 * Fix support maxFileSize and archivedFileCount `#1660 <https://github.com/dropwizard/dropwizard/pull/1660>`_
 * Upgraded to Jackson 2.7.8 `#1755 <https://github.com/dropwizard/dropwizard/pull/1755>`_

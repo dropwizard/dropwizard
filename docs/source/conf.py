@@ -143,7 +143,7 @@ html_static_path = ['_static']
 # typographically correct entities.
 html_use_smartypants = True
 
-html_add_permalinks = None
+html_add_permalinks = unicode
 
 # Custom sidebar templates, maps document names to template names.
 #html_sidebars = {}
