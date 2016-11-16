@@ -182,6 +182,21 @@ import static com.codahale.metrics.MetricRegistry.name;
  *             {@link ForwardedRequestCustomizer} for details.
  *         </td>
  *     </tr>
+ *     <tr>
+ *         <td>{@code httpCompliance}</td>
+ *         <td>RFC7230</td>
+ *         <td>
+ *             This sets the http compliance level used by Jetty when parsing http, this can be useful when using a
+ *             non-RFC7230 compliant front end, such as nginx, which can produce multi-line headers when forwarding
+ *             client certificates using proxy_set_header X-SSL-CERT $ssl_client_cert;
+ *
+ *             Possible values are set forth in the org.eclipse.jetty.http.HttpCompliance enum:
+ *             <ul>
+ *                 <li>RFC7230: Disallow header folding.</li>
+ *                 <li>RFC2616: Allow header folding.</li>
+ *             </ul>
+ *         </td>
+ *     </tr>
  * </table>
  */
 @JsonTypeName("http")
