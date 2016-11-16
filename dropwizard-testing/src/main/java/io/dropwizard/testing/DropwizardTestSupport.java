@@ -8,6 +8,7 @@ import io.dropwizard.Application;
 import io.dropwizard.Configuration;
 import io.dropwizard.cli.Command;
 import io.dropwizard.cli.ServerCommand;
+import io.dropwizard.configuration.UrlConfigurationSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.lifecycle.Managed;
 import io.dropwizard.setup.Bootstrap;
@@ -18,6 +19,8 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 
 import javax.annotation.Nullable;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -212,6 +215,13 @@ public class DropwizardTestSupport<C extends Configuration> {
 
             application.initialize(bootstrap);
             final Command command = commandInstantiator.apply(application);
+
+            try {
+                new URL(configPath);
+                bootstrap.setConfigurationSourceProvider(new UrlConfigurationSourceProvider());
+            } catch (MalformedURLException e) {
+                // do nothing
+            }
 
             final ImmutableMap.Builder<String, Object> file = ImmutableMap.builder();
             if (!Strings.isNullOrEmpty(configPath)) {
