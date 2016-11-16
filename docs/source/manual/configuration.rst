@@ -306,6 +306,7 @@ HTTP
           useServerHeader: false
           useDateHeader: true
           useForwardedHeaders: true
+          httpCompliance: RFC7230
 
 
 ======================== ==================  ======================================================================================
@@ -350,6 +351,15 @@ useServerHeader          false               Whether or not to add the ``Server`
 useDateHeader            true                Whether or not to add the ``Date`` header to each response.
 useForwardedHeaders      true                Whether or not to look at ``X-Forwarded-*`` headers added by proxies. See
                                              `ForwardedRequestCustomizer`_ for details.
+httpCompliance           RFC7230             This sets the http compliance level used by Jetty when parsing http, this
+                                             can be useful when using a non-RFC7230 compliant front end, such as nginx,
+                                             which can produce multi-line headers when forwarding client certificates
+                                             using ``proxy_set_header X-SSL-CERT $ssl_client_cert;``
+                                             Possible values are set forth in the ``org.eclipse.jetty.http.HttpCompliance``
+                                             enum:
+
+                                             * RFC7230: Disallow header folding.
+                                             * RFC2616: Allow header folding.
 ======================== ==================  ======================================================================================
 
 .. _`java.net.Socket#setSoTimeout(int)`: http://docs.oracle.com/javase/7/docs/api/java/net/Socket.html#setSoTimeout(int)
