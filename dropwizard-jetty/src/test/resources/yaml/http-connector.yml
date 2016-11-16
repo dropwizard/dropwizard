@@ -20,3 +20,4 @@ soLingerTime: 30s
 useServerHeader: true
 useDateHeader: false
 useForwardedHeaders: false
+httpCompliance: RFC2616

@@ -12,6 +12,7 @@ import io.dropwizard.logging.SyslogAppenderFactory;
 import io.dropwizard.util.Duration;
 import io.dropwizard.util.Size;
 import io.dropwizard.validation.BaseValidator;
+import org.eclipse.jetty.http.HttpCompliance;
 import org.eclipse.jetty.io.ArrayByteBufferPool;
 import org.eclipse.jetty.io.ByteBufferPool;
 import org.eclipse.jetty.server.ForwardedRequestCustomizer;
@@ -75,6 +76,7 @@ public class HttpConnectorFactoryTest {
         assertThat(http.isUseDateHeader()).isTrue();
         assertThat(http.isUseForwardedHeaders()).isTrue();
         assertThat(http.getBlockingTimeout()).isNull();
+        assertThat(http.getHttpCompliance()).isEqualTo(HttpCompliance.RFC7230);
     }
 
     @Test
@@ -104,6 +106,7 @@ public class HttpConnectorFactoryTest {
         assertThat(http.isUseDateHeader()).isFalse();
         assertThat(http.isUseForwardedHeaders()).isFalse();
         assertThat(http.getBlockingTimeout()).isEqualTo(Duration.seconds(30));
+        assertThat(http.getHttpCompliance()).isEqualTo(HttpCompliance.RFC2616);
     }
 
     @Test
@@ -152,6 +155,7 @@ public class HttpConnectorFactoryTest {
                 .isSameAs(metrics.timer("org.eclipse.jetty.server.HttpConnectionFactory.127.0.0.1.8080.connections"));
         HttpConnectionFactory httpConnectionFactory = (HttpConnectionFactory)  connectionFactory.getConnectionFactory();
         assertThat(httpConnectionFactory.getInputBufferSize()).isEqualTo(8192);
+        assertThat(httpConnectionFactory.getHttpCompliance()).isEqualByComparingTo(HttpCompliance.RFC7230);
 
         HttpConfiguration httpConfiguration = httpConnectionFactory.getHttpConfiguration();
         assertThat(httpConfiguration.getHeaderCacheSize()).isEqualTo(512);
