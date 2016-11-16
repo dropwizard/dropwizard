@@ -25,6 +25,8 @@ v1.1.0: Unreleased
 * Introduce CachingAuthorizer `#1639 <https://github.com/dropwizard/dropwizard/pull/1639>`_
 * Enhance logging of registered endpoints `#1804 <https://github.com/dropwizard/dropwizard/pull/1804>`_
 * Allow to disable caching of Mustache views `#1289 <https://github.com/dropwizard/dropwizard/issues/1289>`_
+* Add the ``httpCompliance`` option to the HTTP configuration `#1825 <https://github.com/dropwizard/dropwizard/pull/1825>`_
+* Add the ``blockingTimeout`` option to the HTTP configuration `#1795 <https://github.com/dropwizard/dropwizard/pull/1795>`_
 * Upgraded to Jackson 2.8.4 `#1775 <https://github.com/dropwizard/dropwizard/pull/1775>`_
 * Upgraded to Hibernate Validator 5.3.0.Final `#1782 <https://github.com/dropwizard/dropwizard/pull/1782>`_
 * Upgraded to Jetty 9.3.14.v20161028 `#1796 <https://github.com/dropwizard/dropwizard/pull/1796>`_
