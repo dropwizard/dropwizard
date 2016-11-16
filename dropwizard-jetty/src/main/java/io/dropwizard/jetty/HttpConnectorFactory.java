@@ -9,6 +9,7 @@ import io.dropwizard.util.SizeUnit;
 import io.dropwizard.validation.MinDuration;
 import io.dropwizard.validation.MinSize;
 import io.dropwizard.validation.PortRange;
+import org.eclipse.jetty.http.HttpCompliance;
 import org.eclipse.jetty.io.ArrayByteBufferPool;
 import org.eclipse.jetty.io.ByteBufferPool;
 import org.eclipse.jetty.server.ConnectionFactory;
@@ -256,6 +257,7 @@ public class HttpConnectorFactory implements ConnectorFactory {
     private boolean useServerHeader = false;
     private boolean useDateHeader = true;
     private boolean useForwardedHeaders = true;
+    private HttpCompliance httpCompliance = HttpCompliance.RFC7230;
 
     @JsonProperty
     public int getPort() {
@@ -467,6 +469,17 @@ public class HttpConnectorFactory implements ConnectorFactory {
         this.useForwardedHeaders = useForwardedHeaders;
     }
 
+    @JsonProperty
+    public HttpCompliance getHttpCompliance() {
+        return httpCompliance;
+    }
+
+    @JsonProperty
+    public void setHttpCompliance(HttpCompliance httpCompliance) {
+        this.httpCompliance = httpCompliance;
+    }
+
+
     @Override
     public Connector build(Server server,
                            MetricRegistry metrics,
@@ -530,7 +543,7 @@ public class HttpConnectorFactory implements ConnectorFactory {
     }
 
     protected HttpConnectionFactory buildHttpConnectionFactory(HttpConfiguration httpConfig) {
-        final HttpConnectionFactory httpConnectionFactory = new HttpConnectionFactory(httpConfig);
+        final HttpConnectionFactory httpConnectionFactory = new HttpConnectionFactory(httpConfig, httpCompliance);
         httpConnectionFactory.setInputBufferSize((int) inputBufferSize.toBytes());
         return httpConnectionFactory;
     }
