@@ -30,6 +30,8 @@ public class Duration implements Comparable<Duration> {
             .put("second", TimeUnit.SECONDS)
             .put("seconds", TimeUnit.SECONDS)
             .put("m", TimeUnit.MINUTES)
+            .put("min", TimeUnit.MINUTES)
+            .put("mins", TimeUnit.MINUTES)
             .put("minute", TimeUnit.MINUTES)
             .put("minutes", TimeUnit.MINUTES)
             .put("h", TimeUnit.HOURS)
