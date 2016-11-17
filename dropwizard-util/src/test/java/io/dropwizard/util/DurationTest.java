@@ -82,6 +82,12 @@ public class DurationTest {
         assertThat(Duration.parse("1m"))
                 .isEqualTo(Duration.minutes(1));
 
+        assertThat(Duration.parse("1min"))
+            .isEqualTo(Duration.minutes(1));
+
+        assertThat(Duration.parse("2mins"))
+            .isEqualTo(Duration.minutes(2));
+
         assertThat(Duration.parse("1 minute"))
                 .isEqualTo(Duration.minutes(1));
 
