@@ -7,9 +7,9 @@ import com.google.common.collect.ImmutableMap;
 import freemarker.template.Configuration;
 import freemarker.template.DefaultObjectWrapperBuilder;
 import freemarker.template.Template;
-import freemarker.template.TemplateException;
 import freemarker.template.Version;
 import io.dropwizard.views.View;
+import io.dropwizard.views.ViewRenderException;
 import io.dropwizard.views.ViewRenderer;
 
 import java.io.IOException;
@@ -71,8 +71,8 @@ public class FreemarkerViewRenderer implements ViewRenderer {
             final Charset charset = view.getCharset().orElseGet(() -> Charset.forName(configuration.getEncoding(locale)));
             final Template template = configuration.getTemplate(view.getTemplateName(), locale, charset.name());
             template.process(view, new OutputStreamWriter(output, template.getEncoding()));
-        } catch (TemplateException e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            throw new ViewRenderException(e);
         }
     }
 
