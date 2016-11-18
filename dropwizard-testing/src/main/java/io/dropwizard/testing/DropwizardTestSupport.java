@@ -2,6 +2,7 @@ package io.dropwizard.testing;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
+import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import io.dropwizard.Application;
@@ -18,6 +19,7 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
 
 import javax.annotation.Nullable;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -25,7 +27,6 @@ import java.util.Set;
 import java.util.function.Function;
 
 import static com.google.common.base.MoreObjects.firstNonNull;
-import static com.google.common.base.Throwables.propagate;
 
 /**
  * A test support class for starting and stopping your application at the start and end of a test class.
@@ -159,7 +160,8 @@ public class DropwizardTestSupport<C extends Configuration> {
             try {
                 jettyServer.stop();
             } catch (Exception e) {
-                throw propagate(e);
+                Throwables.throwIfUnchecked(e);
+                throw new RuntimeException(e);
             } finally {
                 jettyServer = null;
             }
@@ -221,7 +223,8 @@ public class DropwizardTestSupport<C extends Configuration> {
 
             command.run(bootstrap, namespace);
         } catch (Exception e) {
-            throw propagate(e);
+            Throwables.throwIfUnchecked(e);
+            throw new RuntimeException(e);
         }
     }
 
@@ -245,8 +248,8 @@ public class DropwizardTestSupport<C extends Configuration> {
     public Application<C> newApplication() {
         try {
             return applicationClass.getConstructor().newInstance();
-        } catch (Exception e) {
-            throw propagate(e);
+        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
+            throw new RuntimeException(e);
         }
     }
 
