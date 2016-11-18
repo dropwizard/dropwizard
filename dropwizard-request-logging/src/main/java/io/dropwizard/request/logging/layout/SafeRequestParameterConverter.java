@@ -11,7 +11,7 @@ import java.util.Arrays;
  * with async appenders. It loads request parameters from a cached map rather than trying to load
  * request data from the original request which may be closed.
  */
-class SafeRequestParameterConverter extends AccessConverter {
+public class SafeRequestParameterConverter extends AccessConverter {
 
     private String key;
 
