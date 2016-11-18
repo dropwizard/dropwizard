@@ -3,8 +3,6 @@ package io.dropwizard.views;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
 import com.google.common.annotations.VisibleForTesting;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
@@ -27,7 +25,6 @@ import static com.codahale.metrics.MetricRegistry.name;
 @Provider
 @Produces({ MediaType.TEXT_HTML, MediaType.APPLICATION_XHTML_XML })
 public class ViewMessageBodyWriter implements MessageBodyWriter<View> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(MessageBodyWriter.class);
 
     @Context
     private HttpHeaders headers;
@@ -77,7 +74,6 @@ public class ViewMessageBodyWriter implements MessageBodyWriter<View> {
             }
             throw new ViewRenderException("Unable to find a renderer for " + t.getTemplateName());
         } catch (ViewRenderException e) {
-            LOGGER.error("Template Error", e);
             throw new WebApplicationException(e);
         } finally {
             context.stop();

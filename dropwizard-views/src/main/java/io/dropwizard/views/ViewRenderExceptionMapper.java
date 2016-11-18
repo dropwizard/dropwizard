@@ -6,6 +6,9 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * An {@link ExceptionMapper} that returns a 500 error response with a generic
  * HTML error page when a {@link ViewRenderException} is thrown.
@@ -14,6 +17,8 @@ import javax.ws.rs.ext.Provider;
  */
 @Provider
 public class ViewRenderExceptionMapper implements ExceptionMapper<WebApplicationException> {
+    
+    private static final Logger LOGGER = LoggerFactory.getLogger(ViewRenderExceptionMapper.class);
 
     /**
      * The generic HTML error page template.
@@ -26,7 +31,9 @@ public class ViewRenderExceptionMapper implements ExceptionMapper<WebApplication
 
     @Override
     public Response toResponse(WebApplicationException exception) {
-        if (exception.getCause() instanceof ViewRenderException) {
+        Throwable cause = exception.getCause();
+        if (cause instanceof ViewRenderException) {
+            LOGGER.error("Template Error", cause);
             return Response.serverError()
                     .type(MediaType.TEXT_HTML_TYPE)
                     .entity(TEMPLATE_ERROR_MSG)
