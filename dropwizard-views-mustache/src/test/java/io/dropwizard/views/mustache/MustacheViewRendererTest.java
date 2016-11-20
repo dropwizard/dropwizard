@@ -31,7 +31,7 @@ public class MustacheViewRendererTest extends JerseyTest {
 
     private ViewRenderer renderer;
 
-    protected static final Map<String,String> DEFAULT_RENDERER_CFG = ImmutableMap.of();
+    protected static final Map<String, String> DEFAULT_RENDERER_CFG = ImmutableMap.of();
 
     @Path("/test/")
     @Produces(MediaType.TEXT_HTML)
