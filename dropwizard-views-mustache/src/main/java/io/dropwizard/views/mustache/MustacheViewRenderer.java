@@ -3,6 +3,7 @@ package io.dropwizard.views.mustache;
 import com.github.mustachejava.DefaultMustacheFactory;
 import com.github.mustachejava.Mustache;
 import com.github.mustachejava.MustacheFactory;
+import com.github.mustachejava.resolver.FileSystemResolver;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -11,6 +12,7 @@ import io.dropwizard.views.View;
 import io.dropwizard.views.ViewRenderException;
 import io.dropwizard.views.ViewRenderer;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -26,6 +28,7 @@ import java.util.Optional;
 public class MustacheViewRenderer implements ViewRenderer {
     private final LoadingCache<Class<? extends View>, MustacheFactory> factories;
     private boolean useCache = true;
+    private File fileRoot;
 
     public MustacheViewRenderer() {
         this.factories = CacheBuilder.newBuilder()
@@ -62,6 +65,9 @@ public class MustacheViewRenderer implements ViewRenderer {
         useCache = Optional.ofNullable(options.get("cache"))
             .map(Boolean::parseBoolean)
             .orElse(true);
+        if (options.containsKey("fileRoot")) {
+            fileRoot = new File(options.get("fileRoot"));
+        }
     }
 
     @VisibleForTesting
@@ -75,7 +81,8 @@ public class MustacheViewRenderer implements ViewRenderer {
     }
 
     private MustacheFactory createNewMustacheFactory(Class<? extends View> key) {
-        return new DefaultMustacheFactory(new PerClassMustacheResolver(key));
+        return (fileRoot != null) ? new DefaultMustacheFactory(new FileSystemResolver(fileRoot))
+                : new DefaultMustacheFactory(new PerClassMustacheResolver(key));
     }
 
 }

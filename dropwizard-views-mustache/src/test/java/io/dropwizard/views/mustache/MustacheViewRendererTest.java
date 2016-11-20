@@ -22,10 +22,16 @@ import javax.ws.rs.core.MediaType;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
 
+import java.util.Map;
+
 public class MustacheViewRendererTest extends JerseyTest {
     static {
         BootstrapLogging.bootstrap();
     }
+
+    private ViewRenderer renderer;
+
+    protected static final Map<String,String> DEFAULT_RENDERER_CFG = ImmutableMap.of();
 
     @Path("/test/")
     @Produces(MediaType.TEXT_HTML)
@@ -59,7 +65,8 @@ public class MustacheViewRendererTest extends JerseyTest {
     protected Application configure() {
         forceSet(TestProperties.CONTAINER_PORT, "0");
         ResourceConfig config = new ResourceConfig();
-        final ViewRenderer renderer = new MustacheViewRenderer();
+        renderer = new MustacheViewRenderer();
+        renderer.configure(DEFAULT_RENDERER_CFG);
         config.register(new ViewMessageBodyWriter(new MetricRegistry(), ImmutableList.of(renderer)));
         config.register(new ViewRenderExceptionMapper());
         config.register(new ExampleResource());
@@ -73,9 +80,29 @@ public class MustacheViewRendererTest extends JerseyTest {
     }
 
     @Test
+    public void rendersViewsWithAbsoluteTemplatePathsFromFileSystem() throws Exception {
+        try {
+            renderer.configure(ImmutableMap.of("fileRoot", "src/test/resources", "cache", "false"));
+            rendersViewsWithAbsoluteTemplatePaths();
+        } finally {
+            renderer.configure(DEFAULT_RENDERER_CFG);
+        }
+    }
+
+    @Test
     public void rendersViewsWithRelativeTemplatePaths() throws Exception {
         final String response = target("/test/relative").request().get(String.class);
         assertThat(response).isEqualTo("Ok.\n");
+    }
+
+    @Test
+    public void rendersViewsWithRelativeTemplatePathsFromFileSystem() throws Exception {
+        try {
+            renderer.configure(ImmutableMap.of("fileRoot", "src/test/resources", "cache", "false"));
+            rendersViewsWithRelativeTemplatePaths();
+        } finally {
+            renderer.configure(DEFAULT_RENDERER_CFG);
+        }
     }
 
     @Test
