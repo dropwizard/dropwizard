@@ -22,7 +22,13 @@ import javax.ws.rs.core.MediaType;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
 
-public class MustacheViewRendererTest extends JerseyTest {
+/**
+ * Test class for {@link MustacheViewRenderer} configured to load Mustache
+ * templates from the file system.
+ * 
+ * @since 1.1.0
+ */
+public class MustacheViewRendererFileSystemTest extends JerseyTest {
     static {
         BootstrapLogging.bootstrap();
     }
@@ -60,6 +66,7 @@ public class MustacheViewRendererTest extends JerseyTest {
         forceSet(TestProperties.CONTAINER_PORT, "0");
         ResourceConfig config = new ResourceConfig();
         final ViewRenderer renderer = new MustacheViewRenderer();
+        renderer.configure(ImmutableMap.of("fileRoot", "src/test/resources"));
         config.register(new ViewMessageBodyWriter(new MetricRegistry(), ImmutableList.of(renderer)));
         config.register(new ViewRenderExceptionMapper());
         config.register(new ExampleResource());
@@ -106,17 +113,4 @@ public class MustacheViewRendererTest extends JerseyTest {
         }
     }
 
-    @Test
-    public void cacheByDefault() {
-        MustacheViewRenderer mustacheViewRenderer = new MustacheViewRenderer();
-        mustacheViewRenderer.configure(ImmutableMap.of());
-        assertThat(mustacheViewRenderer.isUseCache()).isTrue();
-    }
-
-    @Test
-    public void canDisableCache() {
-        MustacheViewRenderer mustacheViewRenderer = new MustacheViewRenderer();
-        mustacheViewRenderer.configure(ImmutableMap.of("cache", "false"));
-        assertThat(mustacheViewRenderer.isUseCache()).isFalse();
-    }
 }
