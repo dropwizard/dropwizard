@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.annotations.VisibleForTesting;
 import io.dropwizard.jersey.gzip.ConfiguredGZipEncoder;
 import io.dropwizard.jersey.gzip.GZipDecoder;
-import io.dropwizard.jersey.jackson.JacksonMessageBodyProvider;
+import io.dropwizard.jersey.jackson.JacksonBinder;
 import io.dropwizard.jersey.validation.HibernateValidationFeature;
 import io.dropwizard.jersey.validation.Validators;
 import io.dropwizard.lifecycle.Managed;
@@ -403,7 +403,7 @@ public class JerseyClientBuilder {
             config.register(provider);
         }
 
-        config.register(new JacksonMessageBodyProvider(objectMapper));
+        config.register(new JacksonBinder(objectMapper));
         config.register(new HibernateValidationFeature(validator));
 
         for (Map.Entry<String, Object> property : this.properties.entrySet()) {
