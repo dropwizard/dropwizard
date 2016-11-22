@@ -37,7 +37,7 @@ public class DropwizardApacheConnectorTest {
     private static final int DEFAULT_CONNECT_TIMEOUT_IN_MILLIS = 200;
     private static final int ERROR_MARGIN_IN_MILLIS = 300;
     private static final int INCREASE_IN_MILLIS = 100;
-    private static final String NON_ROUTABLE_IP_ADDRESS = "10.255.255.1"; 
+    private static final String NON_ROUTABLE_IP_ADDRESS = "10.255.255.1";
     public static final URI URI_THAT_TIMESOUT_ON_CONNECTION_ATTEMPT = URI.create("http://" + NON_ROUTABLE_IP_ADDRESS);
     @ClassRule
     public static DropwizardAppRule<Configuration> APP_RULE =
@@ -89,8 +89,40 @@ public class DropwizardApacheConnectorTest {
                 .get();
     }
 
+    @Test
+    public void force_to_shutdown_non_shared_connection_manager_pool() {
+        thrown.expect(javax.ws.rs.ProcessingException.class);
+        thrown.expectCause(any(IllegalStateException.class));
+        thrown.expectMessage("Connection pool shut down");
+
+        int retries = 5, i = 0;
+        JerseyClientConfiguration clientConfiguration = new JerseyClientConfiguration();
+        clientConfiguration.setShareConnectionManagerEnabled(false);
+        Client clientWithNonSharedPool = new JerseyClientBuilder(new MetricRegistry())
+                .using(Executors.newSingleThreadExecutor(), Jackson.newObjectMapper())
+                .using(clientConfiguration)
+                .build("test");
+        while (i < retries) {
+            System.gc();
+            clientWithNonSharedPool.target(testUri + "/success").property(ClientProperties.READ_TIMEOUT, SLEEP_TIME_IN_MILLIS * 2).request().get();
+            i++;
+        }
+    }
+
     /**
-     *
+     * shareConnectionManagerEnabled = true by default, then don't have any exceptions
+     */
+    @Test
+    public void shared_connection_manager_pool() {
+        int retries = 5, i = 0;
+        while (i < retries) {
+            System.gc();
+            client.target(testUri + "/success").property(ClientProperties.READ_TIMEOUT, SLEEP_TIME_IN_MILLIS * 2).request().get();
+            i++;
+        }
+    }
+
+    /**
      * In first assertion we prove, that a request takes no longer than:
      * request_time < set_connect_timeout + error_margin (1)
      *
@@ -142,6 +174,12 @@ public class DropwizardApacheConnectorTest {
         @Path("/long_running")
         public String getWithSleep() throws InterruptedException {
             TimeUnit.MILLISECONDS.sleep(SLEEP_TIME_IN_MILLIS);
+            return "success";
+        }
+
+        @GET
+        @Path("/success")
+        public String success() throws InterruptedException {
             return "success";
         }
 
