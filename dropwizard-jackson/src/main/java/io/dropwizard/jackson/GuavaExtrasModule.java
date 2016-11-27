@@ -35,7 +35,7 @@ public class GuavaExtrasModule extends Module {
 
     private static class CacheBuilderSpecSerializer extends JsonSerializer<CacheBuilderSpec> {
         @Override
-        public void serialize(CacheBuilderSpec value, JsonGenerator gen, SerializerProvider serializers) throws IOException, JsonProcessingException {
+        public void serialize(CacheBuilderSpec value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
             gen.writeString(value.toParsableString());
         }
     }
