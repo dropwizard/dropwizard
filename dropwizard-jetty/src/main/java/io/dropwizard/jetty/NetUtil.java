@@ -44,7 +44,7 @@ public class NetUtil {
     public static final int DEFAULT_TCP_BACKLOG_LINUX = 128;
     public static final String TCP_BACKLOG_SETTING_LOCATION = "/proc/sys/net/core/somaxconn";
 
-    private static final AtomicReference<LocalIpFilter> localIpFilter = new AtomicReference<LocalIpFilter>((nif, adr) ->
+    private static final AtomicReference<LocalIpFilter> localIpFilter = new AtomicReference<>((nif, adr) ->
         (adr != null) && !adr.isLoopbackAddress() && (nif.isPointToPoint() || !adr.isLinkLocalAddress())
     );
 
