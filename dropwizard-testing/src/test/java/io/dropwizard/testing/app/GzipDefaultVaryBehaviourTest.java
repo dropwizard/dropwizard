@@ -9,8 +9,9 @@ import org.junit.Test;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.Response;
 
+import java.util.Collections;
+
 import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
-import static java.util.Arrays.asList;
 import static javax.ws.rs.core.HttpHeaders.ACCEPT_ENCODING;
 import static javax.ws.rs.core.HttpHeaders.CONTENT_ENCODING;
 import static javax.ws.rs.core.HttpHeaders.VARY;
@@ -27,7 +28,7 @@ public class GzipDefaultVaryBehaviourTest {
         final Response clientResponse = ClientBuilder.newClient().target(
             "http://localhost:" + RULE.getLocalPort() + "/test").request().header(ACCEPT_ENCODING, "gzip").get();
 
-        assertThat(clientResponse.getHeaders().get(VARY)).isEqualTo(asList((Object) ACCEPT_ENCODING));
-        assertThat(clientResponse.getHeaders().get(CONTENT_ENCODING)).isEqualTo(asList((Object) "gzip"));
+        assertThat(clientResponse.getHeaders().get(VARY)).isEqualTo(Collections.singletonList((Object) ACCEPT_ENCODING));
+        assertThat(clientResponse.getHeaders().get(CONTENT_ENCODING)).isEqualTo(Collections.singletonList((Object) "gzip"));
     }
 }
