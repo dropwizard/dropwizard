@@ -66,19 +66,16 @@ public class NetUtil {
         // As a SecurityManager may prevent reading the somaxconn file we wrap this in a privileged block.
         //
         // See https://github.com/netty/netty/issues/3680
-        return AccessController.doPrivileged(new PrivilegedAction<Integer>() {
-            @Override
-            public Integer run() {
-                // Determine the default somaxconn (server socket backlog) value of the platform.
-                // The known defaults:
-                // - Windows NT Server 4.0+: 200
-                // - Linux and Mac OS X: 128
-                try {
-                    String setting = Files.toString(new File(TCP_BACKLOG_SETTING_LOCATION), StandardCharsets.UTF_8);
-                    return Integer.parseInt(setting.trim());
-                } catch (SecurityException | IOException | NumberFormatException | NullPointerException e) {
-                    return tcpBacklog;
-                }
+        return AccessController.doPrivileged((PrivilegedAction<Integer>) () -> {
+            // Determine the default somaxconn (server socket backlog) value of the platform.
+            // The known defaults:
+            // - Windows NT Server 4.0+: 200
+            // - Linux and Mac OS X: 128
+            try {
+                String setting = Files.toString(new File(TCP_BACKLOG_SETTING_LOCATION), StandardCharsets.UTF_8);
+                return Integer.parseInt(setting.trim());
+            } catch (SecurityException | IOException | NumberFormatException | NullPointerException e) {
+                return tcpBacklog;
             }
         });
 
