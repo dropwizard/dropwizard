@@ -134,7 +134,7 @@ public class ConfigurationParsingException extends ConfigurationException {
                 return suggestions;
             }
 
-            Collections.sort(suggestions, new LevenshteinComparator(getSuggestionBase()));
+            suggestions.sort(new LevenshteinComparator(getSuggestionBase()));
             suggestionsSorted = true;
 
             return suggestions;
