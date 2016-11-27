@@ -207,7 +207,7 @@ public class FileAppenderFactory<E extends DeferredProcessingAware> extends Abst
 
         appender.setPrudent(false);
         appender.addFilter(levelFilterFactory.build(threshold));
-        getFilterFactories().stream().forEach(f -> appender.addFilter(f.build()));
+        getFilterFactories().forEach(f -> appender.addFilter(f.build()));
         appender.start();
 
         return wrapAsync(appender, asyncAppenderFactory);
@@ -226,13 +226,13 @@ public class FileAppenderFactory<E extends DeferredProcessingAware> extends Abst
                 rollingPolicy.setParent(appender);
                 rollingPolicy.start();
                 appender.setRollingPolicy(rollingPolicy);
-                
+
                 final SizeBasedTriggeringPolicy<E> triggeringPolicy = new SizeBasedTriggeringPolicy<>();
                 triggeringPolicy.setMaxFileSize(String.valueOf(maxFileSize.toBytes()));
                 triggeringPolicy.setContext(context);
                 triggeringPolicy.start();
                 appender.setTriggeringPolicy(triggeringPolicy);
-                
+
                 return appender;
             } else {
                 final TimeBasedFileNamingAndTriggeringPolicy<E> triggeringPolicy;

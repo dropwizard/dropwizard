@@ -31,7 +31,7 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.mockito.Matchers;
+import org.mockito.Mockito;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -188,7 +188,7 @@ public class DropwizardApacheConnectorTest {
         final CloseableHttpResponse apacheResponse = mock(CloseableHttpResponse.class);
         when(apacheResponse.getStatusLine()).thenReturn(new BasicStatusLine(new ProtocolVersion("HTTP", 1, 1), 200, "OK"));
         when(apacheResponse.getAllHeaders()).thenReturn(apacheHeaders);
-        when(client.execute(Matchers.any())).thenReturn(apacheResponse);
+        when(client.execute(Mockito.any())).thenReturn(apacheResponse);
 
         final ClientRequest jerseyRequest = mock(ClientRequest.class);
         when(jerseyRequest.getUri()).thenReturn(URI.create("http://localhost"));

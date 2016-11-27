@@ -28,12 +28,12 @@ import javax.ws.rs.core.Response;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.net.SocketException;
+import java.util.Collections;
 import java.util.Optional;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 
-import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.catchThrowable;
@@ -192,7 +192,7 @@ public class DropwizardSSLConnectionSocketFactoryTest {
 
     @Test
     public void shouldRejectNonSupportedProtocols() throws Exception {
-        tlsConfiguration.setSupportedProtocols(asList("TLSv1.2"));
+        tlsConfiguration.setSupportedProtocols(Collections.singletonList("TLSv1.2"));
         final Client client = new JerseyClientBuilder(TLS_APP_RULE.getEnvironment()).using(jerseyClientConfiguration).build("reject_non_supported");
         assertThatThrownBy(() -> client.target(String.format("https://localhost:%d", TLS_APP_RULE.getPort(4))).request().get())
             .isInstanceOf(ProcessingException.class)

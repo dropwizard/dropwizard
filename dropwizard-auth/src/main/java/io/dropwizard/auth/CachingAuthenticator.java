@@ -84,7 +84,8 @@ public class CachingAuthenticator<C, P extends Principal> implements Authenticat
             Throwables.propagateIfPossible(cause, AuthenticationException.class);
             throw new AuthenticationException(cause);
         } catch (UncheckedExecutionException e) {
-            throw Throwables.propagate(e.getCause());
+            Throwables.throwIfUnchecked(e.getCause());
+            throw e;
         } finally {
             context.stop();
         }

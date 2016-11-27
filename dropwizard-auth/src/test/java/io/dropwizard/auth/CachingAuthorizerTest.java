@@ -10,7 +10,7 @@ import org.mockito.InOrder;
 import java.security.Principal;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.anyObject;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
@@ -34,7 +34,7 @@ public class CachingAuthorizerTest {
 
     @Before
     public void setUp() throws Exception {
-        when(underlying.authorize(anyObject(), anyString())).thenReturn(true);
+        when(underlying.authorize(any(), anyString())).thenReturn(true);
     }
 
     @Test

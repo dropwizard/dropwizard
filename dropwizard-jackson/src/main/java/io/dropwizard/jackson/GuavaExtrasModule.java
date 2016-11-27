@@ -2,7 +2,6 @@ package io.dropwizard.jackson;
 
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.BeanDescription;
 import com.fasterxml.jackson.databind.DeserializationConfig;
@@ -35,7 +34,7 @@ public class GuavaExtrasModule extends Module {
 
     private static class CacheBuilderSpecSerializer extends JsonSerializer<CacheBuilderSpec> {
         @Override
-        public void serialize(CacheBuilderSpec value, JsonGenerator gen, SerializerProvider serializers) throws IOException, JsonProcessingException {
+        public void serialize(CacheBuilderSpec value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
             gen.writeString(value.toParsableString());
         }
     }

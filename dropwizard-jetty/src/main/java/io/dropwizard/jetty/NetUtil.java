@@ -44,7 +44,7 @@ public class NetUtil {
     public static final int DEFAULT_TCP_BACKLOG_LINUX = 128;
     public static final String TCP_BACKLOG_SETTING_LOCATION = "/proc/sys/net/core/somaxconn";
 
-    private static final AtomicReference<LocalIpFilter> localIpFilter = new AtomicReference<LocalIpFilter>((nif, adr) ->
+    private static final AtomicReference<LocalIpFilter> LOCAL_IP_FILTER = new AtomicReference<>((nif, adr) ->
         (adr != null) && !adr.isLoopbackAddress() && (nif.isPointToPoint() || !adr.isLinkLocalAddress())
     );
 
@@ -66,19 +66,16 @@ public class NetUtil {
         // As a SecurityManager may prevent reading the somaxconn file we wrap this in a privileged block.
         //
         // See https://github.com/netty/netty/issues/3680
-        return AccessController.doPrivileged(new PrivilegedAction<Integer>() {
-            @Override
-            public Integer run() {
-                // Determine the default somaxconn (server socket backlog) value of the platform.
-                // The known defaults:
-                // - Windows NT Server 4.0+: 200
-                // - Linux and Mac OS X: 128
-                try {
-                    String setting = Files.toString(new File(TCP_BACKLOG_SETTING_LOCATION), StandardCharsets.UTF_8);
-                    return Integer.parseInt(setting.trim());
-                } catch (SecurityException | IOException | NumberFormatException | NullPointerException e) {
-                    return tcpBacklog;
-                }
+        return AccessController.doPrivileged((PrivilegedAction<Integer>) () -> {
+            // Determine the default somaxconn (server socket backlog) value of the platform.
+            // The known defaults:
+            // - Windows NT Server 4.0+: 200
+            // - Linux and Mac OS X: 128
+            try {
+                String setting = Files.toString(new File(TCP_BACKLOG_SETTING_LOCATION), StandardCharsets.UTF_8);
+                return Integer.parseInt(setting.trim());
+            } catch (SecurityException | IOException | NumberFormatException | NullPointerException e) {
+                return tcpBacklog;
             }
         });
 
@@ -99,7 +96,7 @@ public class NetUtil {
      * @param newLocalIpFilter the new local ip filter
      */
     public static void setLocalIpFilter(LocalIpFilter newLocalIpFilter) {
-        localIpFilter.set(newLocalIpFilter);
+        LOCAL_IP_FILTER.set(newLocalIpFilter);
     }
 
     /**
@@ -108,7 +105,7 @@ public class NetUtil {
      * @return ip filter
      */
     public static LocalIpFilter getLocalIpFilter() {
-        return localIpFilter.get();
+        return LOCAL_IP_FILTER.get();
     }
 
     /**
@@ -145,7 +142,7 @@ public class NetUtil {
             final Enumeration<InetAddress> adrs = nif.getInetAddresses();
             while (adrs.hasMoreElements()) {
                 final InetAddress adr = adrs.nextElement();
-                if (localIpFilter.get().use(nif, adr)) {
+                if (LOCAL_IP_FILTER.get().use(nif, adr)) {
                     listAdr.add(adr);
                 }
             }

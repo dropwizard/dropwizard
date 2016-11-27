@@ -858,9 +858,7 @@ public class DataSourceFactory implements PooledDataSourceFactory {
         if (getValidationQueryTimeout().isPresent()) {
             poolConfig.setValidationQueryTimeout((int) validationQueryTimeout.toSeconds());
         }
-        if (validatorClassName.isPresent()) {
-            poolConfig.setValidatorClassName(validatorClassName.get());
-        }
+        validatorClassName.ifPresent(poolConfig::setValidatorClassName);
 
         return new ManagedPooledDataSource(poolConfig, metricRegistry);
     }

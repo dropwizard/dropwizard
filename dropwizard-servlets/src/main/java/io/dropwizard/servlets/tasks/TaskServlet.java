@@ -152,15 +152,11 @@ public class TaskServlet extends HttpServlet {
         }
 
         public void executeTask(ImmutableMultimap<String, String> params, String body, PrintWriter output) throws Exception {
-            try {
-                if (task instanceof PostBodyTask) {
-                    PostBodyTask postBodyTask = (PostBodyTask) task;
-                    postBodyTask.execute(params, body, output);
-                } else {
-                    task.execute(params, output);
-                }
-            } catch (Exception e) {
-                throw e;
+            if (task instanceof PostBodyTask) {
+                PostBodyTask postBodyTask = (PostBodyTask) task;
+                postBodyTask.execute(params, body, output);
+            } else {
+                task.execute(params, output);
             }
         }
     }

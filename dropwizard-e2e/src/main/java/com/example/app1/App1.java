@@ -23,7 +23,8 @@ public class App1 extends Application<Configuration> {
     @Override
     public void run(Configuration config, Environment env) throws Exception {
         // Ensure that we can override the default 404 response on an
-        // empty optional and return a 204 instead
+        // empty optional and return a 204 instead. Anonymous class can't
+        // be converted to a lambda as Mappers need to be concrete classes.
         env.jersey().register(new ExceptionMapper<EmptyOptionalException>() {
             @Override
             public Response toResponse(EmptyOptionalException exception) {
