@@ -44,7 +44,7 @@ public class NetUtil {
     public static final int DEFAULT_TCP_BACKLOG_LINUX = 128;
     public static final String TCP_BACKLOG_SETTING_LOCATION = "/proc/sys/net/core/somaxconn";
 
-    private static final AtomicReference<LocalIpFilter> localIpFilter = new AtomicReference<>((nif, adr) ->
+    private static final AtomicReference<LocalIpFilter> LOCAL_IP_FILTER = new AtomicReference<>((nif, adr) ->
         (adr != null) && !adr.isLoopbackAddress() && (nif.isPointToPoint() || !adr.isLinkLocalAddress())
     );
 
@@ -96,7 +96,7 @@ public class NetUtil {
      * @param newLocalIpFilter the new local ip filter
      */
     public static void setLocalIpFilter(LocalIpFilter newLocalIpFilter) {
-        localIpFilter.set(newLocalIpFilter);
+        LOCAL_IP_FILTER.set(newLocalIpFilter);
     }
 
     /**
@@ -105,7 +105,7 @@ public class NetUtil {
      * @return ip filter
      */
     public static LocalIpFilter getLocalIpFilter() {
-        return localIpFilter.get();
+        return LOCAL_IP_FILTER.get();
     }
 
     /**
@@ -142,7 +142,7 @@ public class NetUtil {
             final Enumeration<InetAddress> adrs = nif.getInetAddresses();
             while (adrs.hasMoreElements()) {
                 final InetAddress adr = adrs.nextElement();
-                if (localIpFilter.get().use(nif, adr)) {
+                if (LOCAL_IP_FILTER.get().use(nif, adr)) {
                     listAdr.add(adr);
                 }
             }
