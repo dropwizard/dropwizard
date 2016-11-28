@@ -123,9 +123,44 @@ For more information on how to use Mustache, see the `Mustache`_ and `Mustache.j
 Template Errors
 ===============
 
-If there is an error with the template (eg. the template file is not found or there is a compilation
-error with the template), the user will receive a ``500 Internal Sever Error`` with a generic HTML
-message. The exact error will logged under error mode.
+By default, if there is an error with the template (eg. the template file is not found or there is a
+compilation error with the template), the user will receive a ``500 Internal Sever Error`` with a
+generic HTML message. The exact error will logged under error mode.
+
+To customize the behavior, create an exception mapper that will override the default one by looking
+for ``ViewRenderException``:
+
+.. code-block:: java
+
+    env.jersey().register(new ExtendedExceptionMapper<WebApplicationException>() {
+        @Override
+        public Response toResponse(WebApplicationException exception) {
+            // Return a response here
+        }
+
+        @Override
+        public boolean isMappable(WebApplicationException e) {
+            return ExceptionUtils.indexOfThrowable(e, ViewRenderException.class) != -1;
+        }
+    });
+
+As an example, to return a 404 instead of a internal server error when one's
+mustache templates can't be found:
+
+.. code-block:: java
+
+    env.jersey().register(new ExtendedExceptionMapper<WebApplicationException>() {
+        @Override
+        public Response toResponse(WebApplicationException exception) {
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+
+        @Override
+        public boolean isMappable(WebApplicationException e) {
+            return Throwables.getRootCause(e).getClass() == MustacheNotFoundException.class;
+        }
+    });
+
 
 Caching
 ===============
