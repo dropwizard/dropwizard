@@ -280,9 +280,14 @@ test keystore you can use in the `Dropwizard example project`__.
 
 By default, only secure TLSv1.2 cipher suites are allowed. Older versions of cURL, Java 6 and 7, and
 other clients may be unable to communicate with the allowed cipher suites, but this was a conscious
-decision that sacrifices interoperability for security. Dropwizard allows a workaround by specifying
-a customized list of cipher suites. The following list of excluded cipher suites will allow for
-TLSv1 and TLSv1.1 clients to negotiate a connection similar to pre-Dropwizard 1.0.
+decision that sacrifices interoperability for security.
+
+Dropwizard allows a workaround by specifying a customized list of cipher suites. If no lists of
+supported protocols or cipher suites are specified, then the JVM defaults are used. If no lists of
+excluded protocols or cipher suites are specified, then the defaults are inherited from Jetty.
+
+The following list of excluded cipher suites will allow for TLSv1 and TLSv1.1 clients to negotiate a
+connection similar to pre-Dropwizard 1.0.
 
 .. code-block:: yaml
 

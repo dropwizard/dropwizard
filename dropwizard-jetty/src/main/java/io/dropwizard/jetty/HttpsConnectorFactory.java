@@ -165,7 +165,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  *     </tr>
  *     <tr>
  *         <td>{@code supportedProtocols}</td>
- *         <td>(none)</td>
+ *         <td>JVM default</td>
  *         <td>
  *             A list of protocols (e.g., {@code SSLv3}, {@code TLSv1}) which are supported. All
  *             other protocols will be refused.
@@ -173,7 +173,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  *     </tr>
  *     <tr>
  *         <td>{@code excludedProtocols}</td>
- *         <td>(none)</td>
+ *         <td>Jetty's default</td>
  *         <td>
  *             A list of protocols (e.g., {@code SSLv3}, {@code TLSv1}) which are excluded. These
  *             protocols will be refused.
@@ -181,15 +181,15 @@ import java.util.concurrent.atomic.AtomicBoolean;
  *     </tr>
  *     <tr>
  *         <td>{@code supportedCipherSuites}</td>
- *         <td>(none)</td>
+ *         <td>JVM default</td>
  *         <td>
  *             A list of cipher suites (e.g., {@code TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256}) which
  *             are supported. All other cipher suites will be refused
  *         </td>
- *     </tr>
+ *    </tr>
  *    <tr>
  *         <td>{@code excludedCipherSuites}</td>
- *         <td>(none)</td>
+ *         <td>Jetty's default</td>
  *         <td>
  *             A list of cipher suites (e.g., {@code TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256}) which
  *             are excluded. These cipher suites will be refused.
