@@ -34,15 +34,11 @@ server:
       port: 8443
       keyStorePath: example.keystore
       keyStorePassword: example
-      validateCerts: false
-      validatePeers: false
     #this requires the alpn-boot library on the JVM's boot classpath
     #- type: h2
     #  port: 8445
     #  keyStorePath: example.keystore
     #  keyStorePassword: example
-    #  validateCerts: false
-    #  validatePeers: false
   adminConnectors:
     - type: http
       port: 8081
@@ -50,8 +46,6 @@ server:
       port: 8444
       keyStorePath: example.keystore
       keyStorePassword: example
-      validateCerts: false
-      validatePeers: false
 
 # Logging settings.
 logging:

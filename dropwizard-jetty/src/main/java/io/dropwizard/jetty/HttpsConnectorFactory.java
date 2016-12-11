@@ -152,16 +152,22 @@ import java.util.concurrent.atomic.AtomicBoolean;
  *     </tr>
  *     <tr>
  *         <td>{@code validateCerts}</td>
- *         <td>true</td>
+ *         <td>false</td>
  *         <td>
  *             Whether or not to validate TLS certificates before starting. If enabled, Dropwizard
- *             will refuse to start with expired or otherwise invalid certificates.
+ *             will refuse to start with expired or otherwise invalid certificates. This option will
+ *             cause unconditional failure in Dropwizard 1.x until a new validation mechanism can be
+ *             implemented.
  *         </td>
  *     </tr>
  *     <tr>
  *         <td>{@code validatePeers}</td>
- *         <td>true</td>
- *         <td>Whether or not to validate TLS peer certificates.</td>
+ *         <td>false</td>
+ *         <td>
+ *             Whether or not to validate TLS peer certificates. This option will
+ *             cause unconditional failure in Dropwizard 1.x until a new validation mechanism can be
+ *             implemented.
+ *         </td>
  *     </tr>
  *     <tr>
  *         <td>{@code supportedProtocols}</td>
@@ -247,8 +253,8 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
     private Integer maxCertPathLength;
     private URI ocspResponderUrl;
     private String jceProvider;
-    private boolean validateCerts = true;
-    private boolean validatePeers = true;
+    private boolean validateCerts = false;
+    private boolean validatePeers = false;
     private List<String> supportedProtocols;
     private List<String> excludedProtocols;
     private List<String> supportedCipherSuites;
