@@ -4,12 +4,8 @@ server:
           port: 0
           keyStorePath: keystore.jks
           keyStorePassword: password
-          validateCerts: false
-          validatePeers: false
     adminConnectors:
         - type: https
           port: 0
           keyStorePath: keystore.jks
           keyStorePassword: password
-          validateCerts: false
-          validatePeers: false
