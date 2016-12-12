@@ -401,10 +401,10 @@ Extends the attributes that are available to the :ref:`HTTP connector <man-confi
           jceProvider: (none)
           validateCerts: true
           validatePeers: true
-          supportedProtocols: (JVM default)
-          excludedProtocols: [SSL, SSLv2, SSLv2Hello, SSLv3] # (Jetty's default)
-          supportedCipherSuites: (JVM default)
-          excludedCipherSuites: [.*_(MD5|SHA|SHA1)$] # (Jetty's default)
+          supportedProtocols: [SSLv3]
+          excludedProtocols: (none)
+          supportedCipherSuites: [TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256]
+          excludedCipherSuites: (none)
           allowRenegotiation: true
           endpointIdentificationAlgorithm: (none)
 
@@ -432,9 +432,13 @@ enableOCSP                       false               Whether or not On-Line Cert
 maxCertPathLength                (unlimited)         The maximum certification path length.
 ocspResponderUrl                 (none)              The location of the OCSP responder.
 jceProvider                      (none)              The name of the JCE provider to use for cryptographic support.
-validateCerts                    true                Whether or not to validate TLS certificates before starting. If enabled, Dropwizard
-                                                     will refuse to start with expired or otherwise invalid certificates.
-validatePeers                    true                Whether or not to validate TLS peer certificates.
+validateCerts                    false               Whether or not to validate TLS certificates before starting. If enabled, Dropwizard
+                                                     will refuse to start with expired or otherwise invalid certificates. This option will
+                                                     cause unconditional failure in Dropwizard 1.x until a new validation mechanism can be
+                                                     implemented.
+validatePeers                    false               Whether or not to validate TLS peer certificates. This option will
+                                                     cause unconditional failure in Dropwizard 1.x until a new validation mechanism can be
+                                                     implemented.
 supportedProtocols               (none)              A list of protocols (e.g., ``SSLv3``, ``TLSv1``) which are supported. All
                                                      other protocols will be refused.
 excludedProtocols                (none)              A list of protocols (e.g., ``SSLv3``, ``TLSv1``) which are excluded. These
