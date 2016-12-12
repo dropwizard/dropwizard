@@ -3,6 +3,10 @@ package io.dropwizard.migrations;
 import com.codahale.metrics.MetricRegistry;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.db.ManagedPooledDataSource;
+import liquibase.database.Database;
+import liquibase.database.DatabaseConnection;
+import liquibase.database.DatabaseFactory;
+import liquibase.database.jvm.JdbcConnection;
 import net.jcip.annotations.NotThreadSafe;
 import org.apache.tomcat.jdbc.pool.ConnectionPool;
 import org.junit.Before;
@@ -25,7 +29,9 @@ public class CloseableLiquibaseTest {
         factory.setUser("DbTest");
 
         dataSource = (ManagedPooledDataSource) factory.build(new MetricRegistry(), "DbTest");
-        liquibase = new CloseableLiquibaseWithClassPathMigrationsFile(dataSource, "migrations.xml");
+        DatabaseConnection conn = new JdbcConnection(dataSource.getConnection());
+        Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(conn);
+        liquibase = new CloseableLiquibaseWithClassPathMigrationsFile(dataSource, database, "migrations.xml");
     }
 
     @Test

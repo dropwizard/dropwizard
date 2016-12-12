@@ -9,6 +9,9 @@ import io.dropwizard.db.PooledDataSourceFactory;
 import io.dropwizard.setup.Bootstrap;
 import liquibase.Liquibase;
 import liquibase.database.Database;
+import liquibase.database.DatabaseConnection;
+import liquibase.database.DatabaseFactory;
+import liquibase.database.jvm.JdbcConnection;
 import liquibase.exception.LiquibaseException;
 import liquibase.exception.ValidationFailedException;
 import net.sourceforge.argparse4j.inf.Namespace;
@@ -72,16 +75,21 @@ public abstract class AbstractLiquibaseCommand<T extends Configuration> extends 
             throws SQLException, LiquibaseException {
         final CloseableLiquibase liquibase;
         final ManagedDataSource dataSource = dataSourceFactory.build(new MetricRegistry(), "liquibase");
-
+        final Database database = createDatabase(dataSource, namespace);
         final String migrationsFile = namespace.getString("migrations-file");
         if (migrationsFile == null) {
-            liquibase = new CloseableLiquibaseWithClassPathMigrationsFile(dataSource, migrationsFileName) {
-            };
+            liquibase = new CloseableLiquibaseWithClassPathMigrationsFile(dataSource, database, migrationsFileName);
         } else {
-            liquibase = new CloseableLiquibaseWithFileSystemMigrationsFile(dataSource, migrationsFile);
+            liquibase = new CloseableLiquibaseWithFileSystemMigrationsFile(dataSource, database, migrationsFile);
         }
 
-        final Database database = liquibase.getDatabase();
+        return liquibase;
+    }
+
+    private Database createDatabase(final ManagedDataSource dataSource, Namespace namespace) throws SQLException, LiquibaseException {
+        DatabaseConnection conn = new JdbcConnection(dataSource.getConnection());
+        Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(conn);
+
         final String catalogName = namespace.getString("catalog");
         final String schemaName = namespace.getString("schema");
 
@@ -94,7 +102,7 @@ public abstract class AbstractLiquibaseCommand<T extends Configuration> extends 
             database.setOutputDefaultSchema(true);
         }
 
-        return liquibase;
+        return database;
     }
 
     protected abstract void run(Namespace namespace, Liquibase liquibase) throws Exception;
