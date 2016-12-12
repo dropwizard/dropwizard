@@ -401,10 +401,10 @@ Extends the attributes that are available to the :ref:`HTTP connector <man-confi
           jceProvider: (none)
           validateCerts: false
           validatePeers: false
-          supportedProtocols: [SSLv3]
-          excludedProtocols: (none)
-          supportedCipherSuites: [TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256]
-          excludedCipherSuites: (none)
+          supportedProtocols: (JVM default)
+          excludedProtocols: [SSL, SSLv2, SSLv2Hello, SSLv3] # (Jetty's default)
+          supportedCipherSuites: (JVM default)
+          excludedCipherSuites: [.*_(MD5|SHA|SHA1)$] # (Jetty's default)
           allowRenegotiation: true
           endpointIdentificationAlgorithm: (none)
 
@@ -498,6 +498,7 @@ This connector extends the attributes that are available to the :ref:`HTTPS conn
           keyStorePassword: changeit
           trustStorePath: /path/to/file # required
           trustStorePassword: changeit
+          supportedCipherSuites: TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256
 
 
 ========================  ========  ===================================================================================
