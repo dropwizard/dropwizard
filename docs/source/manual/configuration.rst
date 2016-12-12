@@ -603,6 +603,11 @@ Name                   Default      Description
 ====================== ===========  ===========
 type                   REQUIRED     The appender type. Must be ``console``.
 threshold              ALL          The lowest level of events to print to the console.
+queueSize              256          The maximum capacity of the blocking queue.
+discardingThreshold    51           When the blocking queue has only the capacity mentioned in discardingThreshold
+                                    remaining, it will drop events of level TRACE, DEBUG and INFO, keeping only events
+                                    of level WARN and ERROR. If no discarding threshold is specified, then a default
+                                    of queueSize / 5 is used. To keep all events, set discardingThreshold to 0.
 timeZone               UTC          The time zone to which event timestamps will be converted.
 target                 stdout       The name of the standard stream to which events will be written.
                                     Can be ``stdout`` or ``stderr``.
@@ -643,6 +648,11 @@ Name                         Default      Description
 type                         REQUIRED     The appender type. Must be ``file``.
 currentLogFilename           REQUIRED     The filename where current events are logged.
 threshold                    ALL          The lowest level of events to write to the file.
+queueSize                    256          The maximum capacity of the blocking queue.
+discardingThreshold          51           When the blocking queue has only the capacity mentioned in discardingThreshold
+                                          remaining, it will drop events of level TRACE, DEBUG and INFO, keeping only events
+                                          of level WARN and ERROR. If no discarding threshold is specified, then a default
+                                          of queueSize / 5 is used. To keep all events, set discardingThreshold to 0.
 archive                      true         Whether or not to archive old events in separate files.
 archivedLogFilenamePattern   (none)       Required if ``archive`` is ``true``.
                                           The filename pattern for archived files.
