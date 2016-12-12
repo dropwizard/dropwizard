@@ -45,6 +45,13 @@ v1.1.0: Unreleased
 * Upgraded to javassist 3.21.0-GA
 * Upgraded to Guava 20.0
 
+.. _rel-1.0.5:
+
+v1.0.5 Nov 18 2016
+==================
+
+* Fix request logs with request parameter in layout pattern `#1828 <https://github.com/dropwizard/dropwizard/pull/1828>`_
+
 .. _rel-1.0.4:
 
 v1.0.4 Nov 14 2016
