@@ -4,38 +4,28 @@ server:
         port: 0
         keyStoreType: PKCS12
         keyStorePassword: password
-        validateCerts: false
-        validatePeers: false
         trustStoreType: PKCS12
         supportedProtocols: ["TLSv1.2"]
       - type: https
         port: 0
         keyStoreType: PKCS12
         keyStorePassword: password
-        validateCerts: false
-        validatePeers: false
         trustStoreType: PKCS12
       - type: https
         port: 0
         keyStoreType: PKCS12
         keyStorePassword: password
-        validateCerts: false
-        validatePeers: false
         supportedProtocols: ["TLSv1.2"]
       - type: https
         port: 0
         keyStoreType: PKCS12
         keyStorePassword: password
-        validateCerts: false
-        validatePeers: false
         trustStoreType: PKCS12
         supportedProtocols: ["TLSv1.2"]
       - type: https
         port: 0
         keyStoreType: PKCS12
         keyStorePassword: password
-        validateCerts: false
-        validatePeers: false
         trustStoreType: PKCS12
         supportedProtocols: ["TLSv1.2"]
   adminConnectors:
