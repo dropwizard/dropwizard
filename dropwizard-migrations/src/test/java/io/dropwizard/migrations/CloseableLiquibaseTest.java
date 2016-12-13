@@ -5,7 +5,7 @@ import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.db.ManagedPooledDataSource;
 import liquibase.database.Database;
 import liquibase.database.DatabaseConnection;
-import liquibase.database.DatabaseFactory;
+import liquibase.database.core.H2Database;
 import liquibase.database.jvm.JdbcConnection;
 import net.jcip.annotations.NotThreadSafe;
 import org.apache.tomcat.jdbc.pool.ConnectionPool;
@@ -30,13 +30,17 @@ public class CloseableLiquibaseTest {
 
         dataSource = (ManagedPooledDataSource) factory.build(new MetricRegistry(), "DbTest");
         DatabaseConnection conn = new JdbcConnection(dataSource.getConnection());
-        Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(conn);
+        Database database = new H2Database();
+        database.setConnection(conn);
         liquibase = new CloseableLiquibaseWithClassPathMigrationsFile(dataSource, database, "migrations.xml");
     }
 
     @Test
     public void testWhenClosingAllConnectionsInPoolIsReleased() throws Exception {
+
         ConnectionPool pool = dataSource.getPool();
+        assertThat(pool.getActive()).isEqualTo(1);
+
         liquibase.close();
 
         assertThat(pool.getActive()).isZero();

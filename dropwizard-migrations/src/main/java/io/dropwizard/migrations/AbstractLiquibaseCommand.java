@@ -86,9 +86,9 @@ public abstract class AbstractLiquibaseCommand<T extends Configuration> extends 
         return liquibase;
     }
 
-    private Database createDatabase(final ManagedDataSource dataSource, Namespace namespace) throws SQLException, LiquibaseException {
-        DatabaseConnection conn = new JdbcConnection(dataSource.getConnection());
-        Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(conn);
+    private Database createDatabase(ManagedDataSource dataSource, Namespace namespace) throws SQLException, LiquibaseException {
+        final DatabaseConnection conn = new JdbcConnection(dataSource.getConnection());
+        final Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(conn);
 
         final String catalogName = namespace.getString("catalog");
         final String schemaName = namespace.getString("schema");

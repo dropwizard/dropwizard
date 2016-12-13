@@ -3,13 +3,10 @@ package io.dropwizard.migrations;
 import com.google.common.collect.ImmutableMap;
 import net.jcip.annotations.NotThreadSafe;
 import net.sourceforge.argparse4j.inf.Namespace;
+import org.assertj.core.data.Index;
 import org.junit.Before;
 import org.junit.Test;
 import org.skife.jdbi.v2.DBI;
-import org.skife.jdbi.v2.Handle;
-
-import java.util.List;
-import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -30,17 +27,16 @@ public class DbMigrateCustomSchemaTest extends AbstractMigrationTest {
     @Test
     public void testRunMigrationWithCustomSchema() throws Exception {
         String schemaName = "customschema";
-        try (Handle handle = new DBI(databaseUrl, "sa", "").open()) {
-            handle.execute("create schema " + schemaName);
-        }
+        DBI dbi = new DBI(databaseUrl, "sa", "");
+        dbi.useHandle(h -> h.execute("create schema " + schemaName));
         Namespace namespace = new Namespace(ImmutableMap.of("schema", schemaName));
         migrateCommand.run(null, namespace, conf);
-        try (Handle handle = new DBI(databaseUrl, "sa", "").open()) {
-            final List<Map<String, Object>> rows = handle.select("select * from " + schemaName + ".persons");
-            assertThat(rows).hasSize(1);
-            assertThat(rows.get(0)).isEqualTo(
-                ImmutableMap.of("id", 1, "name", "Bill Smith", "email", "bill@smith.me"));
-        }
+        dbi.useHandle(handle -> {
+            assertThat(handle
+                .select("select * from " + schemaName + ".persons"))
+                .hasSize(1)
+                .contains(ImmutableMap.of("id", 1, "name", "Bill Smith", "email", "bill@smith.me"), Index.atIndex(0));
+        });
     }
 
 }
