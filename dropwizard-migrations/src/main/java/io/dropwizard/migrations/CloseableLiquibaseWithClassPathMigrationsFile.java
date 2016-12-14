@@ -11,16 +11,24 @@ import java.sql.SQLException;
 
 public class CloseableLiquibaseWithClassPathMigrationsFile extends CloseableLiquibase implements AutoCloseable {
 
-    CloseableLiquibaseWithClassPathMigrationsFile(ManagedDataSource dataSource, Database database, String file) throws LiquibaseException, SQLException {
+    CloseableLiquibaseWithClassPathMigrationsFile(
+        ManagedDataSource dataSource,
+        Database database,
+        String file
+    ) throws LiquibaseException, SQLException {
         super(file,
               new ClassLoaderResourceAccessor(),
               database,
               dataSource);
     }
 
-    public CloseableLiquibaseWithClassPathMigrationsFile(ManagedDataSource dataSource, String file) throws LiquibaseException, SQLException {
+    public CloseableLiquibaseWithClassPathMigrationsFile(
+        ManagedDataSource dataSource,
+        String file
+    ) throws LiquibaseException, SQLException {
         this(dataSource,
-            DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(dataSource.getConnection())),
+            DatabaseFactory.getInstance()
+                .findCorrectDatabaseImplementation(new JdbcConnection(dataSource.getConnection())),
             file);
     }
 }

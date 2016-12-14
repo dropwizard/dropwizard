@@ -12,7 +12,12 @@ import java.sql.SQLException;
 public abstract class CloseableLiquibase extends Liquibase implements AutoCloseable {
     private final ManagedDataSource dataSource;
 
-    CloseableLiquibase(String changeLogFile, ResourceAccessor resourceAccessor, Database database, ManagedDataSource dataSource) throws LiquibaseException, SQLException {
+    CloseableLiquibase(
+        String changeLogFile,
+        ResourceAccessor resourceAccessor,
+        Database database,
+        ManagedDataSource dataSource
+    ) throws LiquibaseException, SQLException {
         super(changeLogFile, resourceAccessor, database);
         this.dataSource = dataSource;
     }
