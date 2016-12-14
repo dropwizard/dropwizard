@@ -30,7 +30,10 @@ public class CloseableLiquibaseTest {
 
     @Test
     public void testWhenClosingAllConnectionsInPoolIsReleased() throws Exception {
+
         ConnectionPool pool = dataSource.getPool();
+        assertThat(pool.getActive()).isEqualTo(1);
+
         liquibase.close();
 
         assertThat(pool.getActive()).isZero();
