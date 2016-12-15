@@ -60,6 +60,7 @@ import org.apache.http.message.BasicListHeaderIterator;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
+import org.apache.http.protocol.HttpProcessor;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -78,6 +79,7 @@ import io.dropwizard.lifecycle.Managed;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.util.Duration;
+
 
 public class HttpClientBuilderTest {
     static class CustomBuilder extends HttpClientBuilder {
@@ -640,6 +642,19 @@ public class HttpClientBuilderTest {
         final Header header = defaultHeaders.get(0);
         assertThat(header.getName()).isEqualTo(HttpHeaders.ACCEPT_LANGUAGE);
         assertThat(header.getValue()).isEqualTo("de");
+    }
+
+    @Test
+    public void usesHttpProcessor() throws Exception {
+        HttpProcessor httpProcessor = mock(HttpProcessor.class);
+        final ConfiguredCloseableHttpClient client =
+            builder.using(httpProcessor)
+                .createClient(apacheBuilder, connectionManager, "test");
+        assertThat(client).isNotNull();
+        assertThat(FieldUtils.getField(httpClientBuilderClass,
+            "httpprocessor", true)
+            .get(apacheBuilder))
+            .isSameAs(httpProcessor);
     }
 
     @Test
