@@ -1,32 +1,19 @@
 package io.dropwizard.client;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.validateMockitoUsage;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.initMocks;
-
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.net.InetSocketAddress;
-import java.net.Proxy;
-import java.net.ProxySelector;
-import java.net.SocketAddress;
-import java.net.URI;
-import java.util.List;
-import java.util.Optional;
-
-import javax.net.ssl.HostnameVerifier;
-
+import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.httpclient.HttpClientMetricNameStrategies;
+import com.codahale.metrics.httpclient.InstrumentedHttpClientConnectionManager;
+import com.codahale.metrics.httpclient.InstrumentedHttpRequestExecutor;
+import com.google.common.collect.ImmutableList;
+import io.dropwizard.client.proxy.AuthConfiguration;
+import io.dropwizard.client.proxy.ProxyConfiguration;
+import io.dropwizard.client.ssl.TlsConfiguration;
+import io.dropwizard.lifecycle.Managed;
+import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
+import io.dropwizard.setup.Environment;
+import io.dropwizard.util.Duration;
 import org.apache.commons.lang3.reflect.FieldUtils;
-import org.apache.http.Header;
-import org.apache.http.HeaderIterator;
-import org.apache.http.HttpHeaders;
-import org.apache.http.HttpHost;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpResponse;
+import org.apache.http.*;
 import org.apache.http.ProtocolException;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.Credentials;
@@ -60,24 +47,22 @@ import org.apache.http.message.BasicListHeaderIterator;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
+import org.apache.http.protocol.HttpProcessor;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
-import com.codahale.metrics.MetricRegistry;
-import com.codahale.metrics.httpclient.HttpClientMetricNameStrategies;
-import com.codahale.metrics.httpclient.InstrumentedHttpClientConnectionManager;
-import com.codahale.metrics.httpclient.InstrumentedHttpRequestExecutor;
-import com.google.common.collect.ImmutableList;
+import javax.net.ssl.HostnameVerifier;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.net.*;
+import java.util.List;
+import java.util.Optional;
 
-import io.dropwizard.client.proxy.AuthConfiguration;
-import io.dropwizard.client.proxy.ProxyConfiguration;
-import io.dropwizard.client.ssl.TlsConfiguration;
-import io.dropwizard.lifecycle.Managed;
-import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
-import io.dropwizard.setup.Environment;
-import io.dropwizard.util.Duration;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.*;
+import static org.mockito.MockitoAnnotations.initMocks;
 
 public class HttpClientBuilderTest {
     static class CustomBuilder extends HttpClientBuilder {
@@ -640,6 +625,19 @@ public class HttpClientBuilderTest {
         final Header header = defaultHeaders.get(0);
         assertThat(header.getName()).isEqualTo(HttpHeaders.ACCEPT_LANGUAGE);
         assertThat(header.getValue()).isEqualTo("de");
+    }
+
+    @Test
+    public void usesHttpProcessor() throws Exception {
+        HttpProcessor httpProcessor = mock(HttpProcessor.class);
+        final ConfiguredCloseableHttpClient client =
+            builder.using(httpProcessor)
+                .createClient(apacheBuilder, connectionManager, "test");
+        assertThat(client).isNotNull();
+        assertThat(FieldUtils.getField(httpClientBuilderClass,
+            "httpprocessor", true)
+            .get(apacheBuilder))
+            .isSameAs(httpProcessor);
     }
 
     @Test

@@ -42,6 +42,7 @@ import org.apache.http.impl.client.DefaultConnectionKeepAliveStrategy;
 import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
 import org.apache.http.impl.conn.SystemDefaultDnsResolver;
 import org.apache.http.protocol.HttpContext;
+import org.apache.http.protocol.HttpProcessor;
 
 import java.util.List;
 
@@ -74,6 +75,7 @@ public class HttpClientBuilder {
     private RedirectStrategy redirectStrategy;
     private boolean disableContentCompression;
     private List<? extends Header> defaultHeaders;
+    private HttpProcessor httpProcessor;
 
     public HttpClientBuilder(MetricRegistry metricRegistry) {
         this.metricRegistry = metricRegistry;
@@ -203,6 +205,17 @@ public class HttpClientBuilder {
      */
     public HttpClientBuilder using(List<? extends Header> defaultHeaders) {
         this.defaultHeaders = defaultHeaders;
+        return this;
+    }
+
+    /**
+     * Use the given {@link HttpProcessor} instance
+     *
+     * @param httpProcessor a {@link HttpProcessor} instance
+     * @return {@code} this
+     */
+    public HttpClientBuilder using(HttpProcessor httpProcessor) {
+        this.httpProcessor = httpProcessor;
         return this;
     }
 
@@ -362,6 +375,10 @@ public class HttpClientBuilder {
 
         if (verifier != null) {
             builder.setSSLHostnameVerifier(verifier);
+        }
+
+        if (httpProcessor != null) {
+            builder.setHttpProcessor(httpProcessor);
         }
 
         return new ConfiguredCloseableHttpClient(builder.build(), requestConfig);
