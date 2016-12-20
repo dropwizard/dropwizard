@@ -45,8 +45,7 @@ public class JsonProcessingExceptionMapper extends LoggingExceptionMapper<JsonPr
          * If the error is in the JSON generation, it's a server error.
          */
         if (exception instanceof JsonGenerationException) {
-            LOGGER.warn("Error generating JSON", exception);
-            return Response.serverError().build();
+            return super.toResponse(exception); // LoggingExceptionMapper will log exception
         }
 
         final String message = exception.getOriginalMessage();
