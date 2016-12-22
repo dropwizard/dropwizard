@@ -34,7 +34,7 @@ v1.1.0: Unreleased
 * Upgraded to Jackson 2.8.5 `#1838 <https://github.com/dropwizard/dropwizard/pull/1838>`_
 * Upgraded to Hibernate Validator 5.3.0.Final `#1782 <https://github.com/dropwizard/dropwizard/pull/1782>`_
 * Upgraded to Jetty 9.3.14.v20161028 `#1796 <https://github.com/dropwizard/dropwizard/pull/1796>`_
-* Upgraded to tomcat-jdbc 8.5.6
+* Upgraded to tomcat-jdbc 8.5.9
 * Upgraded to Objenesis 2.4 `#1654 <https://github.com/dropwizard/dropwizard/pull/1654>`_
 * Upgraded to AssertJ 3.5.2 `#1654 <https://github.com/dropwizard/dropwizard/pull/1654>`_
 * Upgraded to classmate 1.3.3
