@@ -13,12 +13,11 @@ import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 import java.util.regex.Pattern;
 
 @Provider
-public class JsonProcessingExceptionMapper extends LoggingExceptionMapper<JsonProcessingException> implements ExceptionMapper<JsonProcessingException> {
+public class JsonProcessingExceptionMapper extends LoggingExceptionMapper<JsonProcessingException> {
     // Pattern to match jackson error messages where a class lacks a single argument constructor
     // or factory to handle a given type. For example:
     // "no boolean/Boolean-argument constructor/factory method to deserialize from boolean value"
