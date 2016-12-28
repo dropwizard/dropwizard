@@ -12,6 +12,7 @@ import ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy;
 import ch.qos.logback.core.rolling.TimeBasedFileNamingAndTriggeringPolicy;
 import ch.qos.logback.core.rolling.TimeBasedRollingPolicy;
 import ch.qos.logback.core.spi.DeferredProcessingAware;
+import ch.qos.logback.core.util.FileSize;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
@@ -228,7 +229,7 @@ public class FileAppenderFactory<E extends DeferredProcessingAware> extends Abst
                 appender.setRollingPolicy(rollingPolicy);
 
                 final SizeBasedTriggeringPolicy<E> triggeringPolicy = new SizeBasedTriggeringPolicy<>();
-                triggeringPolicy.setMaxFileSize(String.valueOf(maxFileSize.toBytes()));
+                triggeringPolicy.setMaxFileSize(new FileSize(maxFileSize.toBytes()));
                 triggeringPolicy.setContext(context);
                 triggeringPolicy.start();
                 appender.setTriggeringPolicy(triggeringPolicy);
@@ -240,7 +241,7 @@ public class FileAppenderFactory<E extends DeferredProcessingAware> extends Abst
                     triggeringPolicy = new DefaultTimeBasedFileNamingAndTriggeringPolicy<>();
                 } else {
                     final SizeAndTimeBasedFNATP<E> maxFileSizeTriggeringPolicy = new SizeAndTimeBasedFNATP<>();
-                    maxFileSizeTriggeringPolicy.setMaxFileSize(String.valueOf(maxFileSize.toBytes()));
+                    maxFileSizeTriggeringPolicy.setMaxFileSize(new FileSize(maxFileSize.toBytes()));
                     triggeringPolicy = maxFileSizeTriggeringPolicy;
                 }
                 triggeringPolicy.setContext(context);
