@@ -47,6 +47,7 @@ v1.1.0: Unreleased
 * Upgraded to javassist 3.21.0-GA
 * Upgraded to Guava 20.0
 * Upgraded to SLF4J 1.7.22
+* Upgraded to H2 1.4.193
 
 .. _rel-1.0.5:
 
