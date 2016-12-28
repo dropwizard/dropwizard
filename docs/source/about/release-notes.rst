@@ -32,11 +32,11 @@ v1.1.0: Unreleased
 * Add the ``blockingTimeout`` option to the HTTP configuration `#1795 <https://github.com/dropwizard/dropwizard/pull/1795>`_
 * Add ``min`` and ``mins`` as valid ``Duration`` abbreviations `#1833 <https://github.com/dropwizard/dropwizard/pull/1833>`_
 * Upgraded to Jackson 2.8.5 `#1838 <https://github.com/dropwizard/dropwizard/pull/1838>`_
-* Upgraded to Hibernate Validator 5.3.0.Final `#1782 <https://github.com/dropwizard/dropwizard/pull/1782>`_
+* Upgraded to Hibernate Validator 5.3.4.Final
 * Upgraded to Jetty 9.3.14.v20161028 `#1796 <https://github.com/dropwizard/dropwizard/pull/1796>`_
 * Upgraded to tomcat-jdbc 8.5.9
 * Upgraded to Objenesis 2.4 `#1654 <https://github.com/dropwizard/dropwizard/pull/1654>`_
-* Upgraded to AssertJ 3.5.2 `#1654 <https://github.com/dropwizard/dropwizard/pull/1654>`_
+* Upgraded to AssertJ 3.6.1
 * Upgraded to classmate 1.3.3
 * Upgraded to Mustache 0.9.4 `#1766 <https://github.com/dropwizard/dropwizard/pull/1766>`_
 * Upgraded to Mockito 2.4.1
