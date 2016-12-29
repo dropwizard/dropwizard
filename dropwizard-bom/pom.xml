@@ -23,7 +23,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <dropwizard.version>${project.version}</dropwizard.version>
         <guava.version>20.0</guava.version>
-        <jersey.version>2.24</jersey.version>
+        <jersey.version>2.25</jersey.version>
         <jackson.version>2.8.5.1</jackson.version>
         <jetty.version>9.3.14.v20161028</jetty.version>
         <servlet.version>3.0.0.v201112011016</servlet.version>
