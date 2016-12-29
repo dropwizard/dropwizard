@@ -90,7 +90,7 @@ public class JerseyClientIntegrationTest {
                 assertThat(requestHeaders.get(HttpHeaders.CONTENT_LENGTH)).containsExactly("58");
                 assertThat(requestHeaders.get(TRANSFER_ENCODING)).isNull();
                 assertThat(requestHeaders.get(HttpHeaders.CONTENT_ENCODING)).containsExactly(GZIP);
-                assertThat(requestHeaders.get(HttpHeaders.ACCEPT_ENCODING));
+                assertThat(requestHeaders.get(HttpHeaders.ACCEPT_ENCODING)).containsExactly(GZIP_DEFLATE);
 
                 checkBody(httpExchange, true);
                 postResponse(httpExchange);

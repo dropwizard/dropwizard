@@ -100,7 +100,7 @@ public class DataSourceFactoryTest {
         try (Connection connection = dataSource().getConnection()) {
             try (PreparedStatement statement = connection.prepareStatement("select 1")) {
                 try (ResultSet rs = statement.executeQuery()) {
-                    assertThat(rs.next());
+                    assertThat(rs.next()).isTrue();
                     assertThat(rs.getInt(1)).isEqualTo(1);
                 }
             }
