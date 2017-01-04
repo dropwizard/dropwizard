@@ -1,6 +1,8 @@
 package io.dropwizard.jersey.jackson;
 
 import com.codahale.metrics.MetricRegistry;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
@@ -9,12 +11,16 @@ import io.dropwizard.logging.BootstrapLogging;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.test.JerseyTest;
 import org.glassfish.jersey.test.TestProperties;
+import org.junit.Assert;
 import org.junit.Test;
 
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
+import java.io.Closeable;
+import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -123,6 +129,32 @@ public class JsonProcessingExceptionMapperTest extends JerseyTest {
     @Test
     public void returnsA400ForSemanticInvalidDate() throws Exception {
         assertEndpointReturns400("ok", "{\"message\": \"1\", \"date\": [-1,-1,-1]}");
+    }
+
+    @Test
+    public void handlesNullPointerExceptionWithouthThrowingNullPointerExceptions() {
+        JsonProcessingExceptionMapper mapper = new JsonProcessingExceptionMapper();
+        String undereferenceable = null;
+        NullPointerException npeJustLikeTheVmMakesIt = null;
+        try {
+            undereferenceable.trim();
+        } catch (NullPointerException npe) {
+            npeJustLikeTheVmMakesIt = npe;
+        }
+        JsonProcessingException oops = null;
+        Closeable bogusCloseable = new Closeable() {
+            @Override
+            public void close() throws IOException {
+            }
+        };
+
+        try {
+            oops = new JsonMappingException(bogusCloseable, "These things actually happen", npeJustLikeTheVmMakesIt) {};
+        } catch (NullPointerException e) {
+            Assert.fail(mapper + " should not throw a NullPointerException: " + e);
+        }
+        Assert.assertNotNull(mapper + " should return a response",
+            mapper.toResponse(oops));
     }
 
     private <T> void assertEndpointReturns400(String endpoint, T entity) {
