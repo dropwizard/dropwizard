@@ -70,6 +70,7 @@ public class LazyLoadingTest {
 
             environment.jersey().register(new UnitOfWorkApplicationListener("hr-db", sessionFactory));
             environment.jersey().register(new DogResource(new DogDAO(sessionFactory)));
+            environment.jersey().register(new PersistenceExceptionMapper());
             environment.jersey().register(new ConstraintViolationExceptionMapper());
         }
 

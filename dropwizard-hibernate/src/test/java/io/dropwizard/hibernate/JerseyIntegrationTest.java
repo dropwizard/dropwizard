@@ -131,6 +131,7 @@ public class JerseyIntegrationTest extends JerseyTest {
         config.register(new UnitOfWorkApplicationListener("hr-db", sessionFactory));
         config.register(new PersonResource(new PersonDAO(sessionFactory)));
         config.register(new JacksonMessageBodyProvider(Jackson.newObjectMapper()));
+        config.register(new PersistenceExceptionMapper());
         config.register(new DataExceptionMapper());
         config.register(new EmptyOptionalExceptionMapper());
 
