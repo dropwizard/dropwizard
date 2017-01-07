@@ -84,7 +84,7 @@ public class AbstractDAOTest {
 
     private final SessionFactory factory = mock(SessionFactory.class);
     private final Criteria criteria = mock(Criteria.class);
-    private final Query query = mock(Query.class);
+    private final org.hibernate.query.Query query = mock(org.hibernate.query.Query.class);
     private final Session session = mock(Session.class);
     private final MockDAO dao = new MockDAO(factory);
 

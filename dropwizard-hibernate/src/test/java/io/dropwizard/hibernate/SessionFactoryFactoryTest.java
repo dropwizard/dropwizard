@@ -105,9 +105,10 @@ public class SessionFactoryFactoryTest {
         build();
 
         try (Session session = sessionFactory.openSession()) {
-            session.createSQLQuery("DROP TABLE people IF EXISTS").executeUpdate();
-            session.createSQLQuery("CREATE TABLE people (name varchar(100) primary key, email varchar(100), birthday timestamp(0))").executeUpdate();
-            session.createSQLQuery("INSERT INTO people VALUES ('Coda', 'coda@example.com', '1979-01-02 00:22:00')").executeUpdate();
+            session.beginTransaction();
+            session.createNativeQuery("DROP TABLE people IF EXISTS").executeUpdate();
+            session.createNativeQuery("CREATE TABLE people (name varchar(100) primary key, email varchar(100), birthday timestamp(0))").executeUpdate();
+            session.createNativeQuery("INSERT INTO people VALUES ('Coda', 'coda@example.com', '1979-01-02 00:22:00')").executeUpdate();
 
             final Person entity = session.get(Person.class, "Coda");
 

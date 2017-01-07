@@ -125,7 +125,7 @@ public class UnitOfWorkApplicationListenerTest {
 
         execute();
 
-        verify(session).setFlushMode(FlushMode.ALWAYS);
+        verify(session).setHibernateFlushMode(FlushMode.ALWAYS);
     }
 
     @Test

@@ -117,11 +117,12 @@ public class JerseyIntegrationTest extends JerseyTest {
                                             ImmutableList.of(Person.class));
 
         try (Session session = sessionFactory.openSession()) {
-            session.createSQLQuery("DROP TABLE people IF EXISTS").executeUpdate();
-            session.createSQLQuery(
+            session.beginTransaction();
+            session.createNativeQuery("DROP TABLE people IF EXISTS").executeUpdate();
+            session.createNativeQuery(
                 "CREATE TABLE people (name varchar(100) primary key, email varchar(16), birthday timestamp with time zone)")
                 .executeUpdate();
-            session.createSQLQuery(
+            session.createNativeQuery(
                 "INSERT INTO people VALUES ('Coda', 'coda@example.com', '1979-01-02 00:22:00+0:00')")
                 .executeUpdate();
         }

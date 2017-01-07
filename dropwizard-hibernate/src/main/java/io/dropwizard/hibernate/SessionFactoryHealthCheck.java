@@ -44,7 +44,7 @@ public class SessionFactoryHealthCheck extends HealthCheck {
             try (Session session = sessionFactory.openSession()) {
                 final Transaction txn = session.beginTransaction();
                 try {
-                    session.createSQLQuery(validationQuery).list();
+                    session.createNativeQuery(validationQuery).list();
                     txn.commit();
                 } catch (Exception e) {
                     if (txn.getStatus().canRollback()) {

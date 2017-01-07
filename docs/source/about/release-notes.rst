@@ -54,6 +54,7 @@ v1.1.0: Unreleased
 * Upgraded to H2 1.4.193
 * Upgraded to Joda-Time 2.9.7
 * Upgraded to commons-lang3 3.5
+* Upgraded to Hibernate ORM 5.2.5 `#1871 <https://github.com/dropwizard/dropwizard/pull/1871>`
 
 .. _rel-1.0.6:
 
