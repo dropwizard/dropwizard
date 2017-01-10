@@ -81,6 +81,14 @@ public class JsonProcessingExceptionMapperTest extends JerseyTest {
     }
 
     @Test
+    public void returnsA500ForBadDeserializers() throws Exception {
+        Response response = target("/json/custom").request(MediaType.APPLICATION_JSON)
+            .post(Entity.entity("{}", MediaType.APPLICATION_JSON));
+        assertThat(response.getStatus()).isEqualTo(500);
+        assertThat(response.getMediaType()).isEqualTo(MediaType.APPLICATION_JSON_TYPE);
+    }
+
+    @Test
     public void returnsA400ForMalformedInputCausingIoException() throws Exception {
         assertEndpointReturns400("url", "\"no-scheme.com\"");
     }
