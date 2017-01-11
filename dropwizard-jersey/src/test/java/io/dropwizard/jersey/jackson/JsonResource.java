@@ -40,6 +40,11 @@ public class JsonResource {
     }
 
     @POST
+    @Path("/custom")
+    public void custom(CustomRepresentation rep) {
+    }
+
+    @POST
     @Path("/url")
     public void url(URL url) {
     }
