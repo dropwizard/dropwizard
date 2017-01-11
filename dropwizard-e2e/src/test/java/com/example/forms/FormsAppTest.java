@@ -5,11 +5,13 @@ import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.client.JerseyClientConfiguration;
 import io.dropwizard.jersey.errors.ErrorMessage;
 import io.dropwizard.testing.junit.DropwizardAppRule;
+import io.dropwizard.util.Duration;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataMultiPart;
 import org.glassfish.jersey.media.multipart.MultiPart;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
+import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 
@@ -23,9 +25,15 @@ public class FormsAppTest {
     @ClassRule
     public static final DropwizardAppRule<Configuration> RULE = new DropwizardAppRule<>(FormsApp.class);
 
+    private final JerseyClientConfiguration config = new JerseyClientConfiguration();
+
+    @Before
+    public void setUp() throws Exception {
+        config.setTimeout(Duration.seconds(2));
+    }
+
     @Test
     public void canSubmitFormAndReceiveResponse() {
-        final JerseyClientConfiguration config = new JerseyClientConfiguration();
         config.setChunkedEncodingEnabled(false);
 
         final Client client = new JerseyClientBuilder(RULE.getEnvironment())
@@ -47,7 +55,9 @@ public class FormsAppTest {
      *  behavior. For more info, see issues #1013 and #1094 */
     @Test
     public void failOnNoChunkedEncoding() {
-        final Client client = new JerseyClientBuilder(RULE.getEnvironment()).build("test client 2");
+        final Client client = new JerseyClientBuilder(RULE.getEnvironment())
+            .using(config)
+            .build("test client 2");
 
         final MultiPart mp = new FormDataMultiPart()
             .bodyPart(new FormDataBodyPart(
