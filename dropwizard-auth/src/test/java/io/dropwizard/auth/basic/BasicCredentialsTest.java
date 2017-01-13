@@ -20,12 +20,12 @@ public class BasicCredentialsTest {
     @Test
     @SuppressWarnings({ "ObjectEqualsNull", "EqualsBetweenInconvertibleTypes", "LiteralAsArgToStringEquals" })
     public void hasAWorkingEqualsMethod() throws Exception {
-        assertThat(credentials.equals(credentials)).isTrue();
-        assertThat(credentials.equals(new BasicCredentials("u", "p"))).isTrue();
-        assertThat(credentials.equals(null)).isFalse();
-        assertThat(credentials.equals("string")).isFalse();
-        assertThat(credentials.equals(new BasicCredentials("u1", "p"))).isFalse();
-        assertThat(credentials.equals(new BasicCredentials("u", "p1"))).isFalse();
+        assertThat(credentials).isEqualTo(credentials);
+        assertThat(credentials).isEqualTo(new BasicCredentials("u", "p"));
+        assertThat(credentials).isNotEqualTo(null);
+        assertThat(credentials).isNotEqualTo("string");
+        assertThat(credentials).isNotEqualTo(new BasicCredentials("u1", "p"));
+        assertThat(credentials).isNotEqualTo(new BasicCredentials("u", "p1"));
     }
 
     @Test

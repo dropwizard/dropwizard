@@ -62,7 +62,6 @@ public class JerseyIgnoreRequestUserAgentHeaderFilterTest {
 
     @Test
     public void clientIsNotSetRequestIsNotSet() {
-        assertThat(false);
         assertThat(
                 clientBuilder.build("ClientName").target(testUri + "/user_agent")
                         .request()
