@@ -6,10 +6,12 @@ import com.google.common.collect.Iterables;
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
 import io.dropwizard.client.JerseyClientBuilder;
+import io.dropwizard.client.JerseyClientConfiguration;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.testing.ConfigOverride;
 import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit.DropwizardAppRule;
+import io.dropwizard.util.Duration;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -74,7 +76,11 @@ public abstract class AbstractRequestLogPatternIntegrationTest {
 
     @Before
     public void setUp() throws Exception {
-        client = new JerseyClientBuilder(dropwizardAppRule.getEnvironment()).build("test-request-logs");
+        final JerseyClientConfiguration configuration = new JerseyClientConfiguration();
+        configuration.setTimeout(Duration.seconds(2));
+        client = new JerseyClientBuilder(dropwizardAppRule.getEnvironment())
+            .using(configuration)
+            .build("test-request-logs");
     }
 
     @After
