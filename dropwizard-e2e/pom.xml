@@ -7,18 +7,20 @@
         <maven>3.0.0</maven>
     </prerequisites>
 
+    <parent>
+        <groupId>io.dropwizard</groupId>
+        <artifactId>dropwizard-parent</artifactId>
+        <version>1.1.0-SNAPSHOT</version>
+    </parent>
+
     <artifactId>dropwizard-e2e</artifactId>
-    <version>1.1.0-SNAPSHOT</version>
-    <groupId>io.dropwizard</groupId>
     <name>Dropwizard End-to-end Tests</name>
 
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-
         <!-- No need to deploy dropwizard-e2e -->
+        <maven.source.skip>true</maven.source.skip>
+        <maven.javadoc.skip>true</maven.javadoc.skip>
+        <maven.install.skip>true</maven.install.skip>
         <maven.deploy.skip>true</maven.deploy.skip>
         <maven.site.skip>true</maven.site.skip>
         <maven.site.deploy.skip>true</maven.site.deploy.skip>
@@ -99,5 +101,4 @@
             </build>
         </profile>
     </profiles>
-
 </project>
