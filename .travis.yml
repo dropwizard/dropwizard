@@ -28,3 +28,4 @@ env:
   global:
     - secure: "EAuz7bCKj4r438IEC2y73WVrFwXirflbXA4HhpwVmAFWNqC9LIIpkWcO5GVp773HsZvJBcJjJriP+aKRkImV8AyMgjCeEUv2dlezvbkIIz38vKyw9MWaPIyZ3uS9RCuL7OwGf5BeJ1DvHFYdMBaspZd+EmCYr7abnHdqs+Tm/W8="
     - secure: "RI0QcuKMsij3sgRm+Bjhu3X217U6UslvSzcRv13iLLwrTj73zhGi5PF/+kj8Qh1HMQw0oQRR6M8qPqGy82KcjiGbpgPgSy1rVAvkYg+Yw1k7v4l7Vgyj7TNsAM3pqHyojx2jgRjpQsgw/WXQmiahWV6OCOUzdbhEUwVzIXI+vtk="
+    - JAVA_OPTS: "'-Xms512m -Xmx2g'"
