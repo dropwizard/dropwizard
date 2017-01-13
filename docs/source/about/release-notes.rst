@@ -31,7 +31,7 @@ v1.1.0: Unreleased
 * Add the ``httpCompliance`` option to the HTTP configuration `#1825 <https://github.com/dropwizard/dropwizard/pull/1825>`_
 * Add the ``blockingTimeout`` option to the HTTP configuration `#1795 <https://github.com/dropwizard/dropwizard/pull/1795>`_
 * Add ``min`` and ``mins`` as valid ``Duration`` abbreviations `#1833 <https://github.com/dropwizard/dropwizard/pull/1833>`_
-* Upgraded to Jackson 2.8.5 `#1838 <https://github.com/dropwizard/dropwizard/pull/1838>`_
+* Upgraded to Jackson 2.8.6
 * Upgraded to Hibernate Validator 5.3.4.Final
 * Upgraded to Jetty 9.3.14.v20161028 `#1796 <https://github.com/dropwizard/dropwizard/pull/1796>`_
 * Upgraded to tomcat-jdbc 8.5.9
