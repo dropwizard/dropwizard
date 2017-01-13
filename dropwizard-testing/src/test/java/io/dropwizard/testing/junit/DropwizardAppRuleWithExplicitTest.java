@@ -5,9 +5,9 @@ import io.dropwizard.Application;
 import io.dropwizard.jetty.HttpConnectorFactory;
 import io.dropwizard.server.DefaultServerFactory;
 import io.dropwizard.setup.Environment;
-import org.junit.Assert;
-import org.junit.ClassRule;
-import org.junit.Test;
+import org.glassfish.jersey.client.ClientProperties;
+import org.glassfish.jersey.client.JerseyClientBuilder;
+import org.junit.*;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -36,7 +36,20 @@ public class DropwizardAppRuleWithExplicitTest {
         RULE = new DropwizardAppRule<>(TestApplication.class, config);
     }
 
-    Client client = ClientBuilder.newClient();
+    private Client client;
+
+    @Before
+    public void setUp() throws Exception {
+        client = new JerseyClientBuilder()
+            .property(ClientProperties.CONNECT_TIMEOUT, 1000)
+            .property(ClientProperties.READ_TIMEOUT, 5000)
+            .build();
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        client.close();
+    }
 
     @Test
     public void runWithExplicitConfig() {

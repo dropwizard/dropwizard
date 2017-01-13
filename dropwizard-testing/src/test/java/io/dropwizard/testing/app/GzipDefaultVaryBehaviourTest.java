@@ -3,9 +3,14 @@ package io.dropwizard.testing.app;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import io.dropwizard.testing.junit.TestApplication;
 import io.dropwizard.testing.junit.TestConfiguration;
+import org.glassfish.jersey.client.ClientProperties;
+import org.glassfish.jersey.client.JerseyClientBuilder;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 
+import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.Response;
 
@@ -23,10 +28,26 @@ public class GzipDefaultVaryBehaviourTest {
     public static final DropwizardAppRule<TestConfiguration> RULE =
             new DropwizardAppRule<>(TestApplication.class, resourceFilePath("gzip-vary-test-config.yaml"));
 
+    private Client client;
+
+    @Before
+    public void setUp() throws Exception {
+        client = new JerseyClientBuilder()
+            .property(ClientProperties.CONNECT_TIMEOUT, 1000)
+            .property(ClientProperties.READ_TIMEOUT, 5000)
+            .build();
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        client.close();
+    }
+
     @Test
     public void testDefaultVaryHeader() {
-        final Response clientResponse = ClientBuilder.newClient().target(
-            "http://localhost:" + RULE.getLocalPort() + "/test").request().header(ACCEPT_ENCODING, "gzip").get();
+        final Response clientResponse = client.target("http://localhost:" + RULE.getLocalPort() + "/test")
+            .request().header(ACCEPT_ENCODING, "gzip")
+            .get();
 
         assertThat(clientResponse.getHeaders().get(VARY)).isEqualTo(Collections.singletonList((Object) ACCEPT_ENCODING));
         assertThat(clientResponse.getHeaders().get(CONTENT_ENCODING)).isEqualTo(Collections.singletonList((Object) "gzip"));

@@ -6,11 +6,17 @@ import io.dropwizard.Application;
 import io.dropwizard.servlets.tasks.PostBodyTask;
 import io.dropwizard.servlets.tasks.Task;
 import io.dropwizard.setup.Environment;
+import org.glassfish.jersey.client.ClientConfig;
+import org.glassfish.jersey.client.ClientProperties;
+import org.glassfish.jersey.client.JerseyClientBuilder;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
@@ -25,15 +31,31 @@ public class DropwizardAppRuleTest {
 
     @ClassRule
     public static final DropwizardAppRule<TestConfiguration> RULE =
-            new DropwizardAppRule<>(TestApplication.class, resourceFilePath("test-config.yaml"));
+        new DropwizardAppRule<>(TestApplication.class, resourceFilePath("test-config.yaml"));
+
+    private Client client;
+
+    @Before
+    public void setUp() throws Exception {
+        client = new JerseyClientBuilder()
+            .property(ClientProperties.CONNECT_TIMEOUT, 1000)
+            .property(ClientProperties.READ_TIMEOUT, 5000)
+            .build();
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        client.close();
+    }
 
     @Test
     public void canGetExpectedResourceOverHttp() {
-        final String content = ClientBuilder.newClient().target(
-            "http://localhost:" + RULE.getLocalPort() + "/test").request().get(String.class);
+        final String content = client.target("http://localhost:" + RULE.getLocalPort() + "/test")
+            .request().get(String.class);
 
         assertThat(content, is("Yes, it's here"));
     }
+
 
     @Test
     public void returnsConfiguration() {
@@ -55,9 +77,8 @@ public class DropwizardAppRuleTest {
 
     @Test
     public void canPerformAdminTask() {
-        final String response
-                = ClientBuilder.newClient().target("http://localhost:"
-                        + RULE.getAdminPort() + "/tasks/hello?name=test_user")
+        final String response = client.target("http://localhost:" + RULE.getAdminPort() +
+            "/tasks/hello?name=test_user")
                 .request()
                 .post(Entity.entity("", MediaType.TEXT_PLAIN), String.class);
 
@@ -66,8 +87,7 @@ public class DropwizardAppRuleTest {
 
     @Test
     public void canPerformAdminTaskWithPostBody() {
-        final String response
-            = ClientBuilder.newClient().target("http://localhost:"
+        final String response = client.target("http://localhost:"
             + RULE.getAdminPort() + "/tasks/echo")
             .request()
             .post(Entity.entity("Custom message", MediaType.TEXT_PLAIN), String.class);

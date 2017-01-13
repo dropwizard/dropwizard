@@ -1,8 +1,13 @@
 package io.dropwizard.testing.junit;
 
+import org.glassfish.jersey.client.ClientProperties;
+import org.glassfish.jersey.client.JerseyClientBuilder;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 
+import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import java.util.Optional;
 
@@ -12,6 +17,21 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
 public class DropwizardAppRuleConfigOverrideTest {
+
+    private Client client;
+
+    @Before
+    public void setUp() throws Exception {
+        client = new JerseyClientBuilder()
+            .property(ClientProperties.CONNECT_TIMEOUT, 1000)
+            .property(ClientProperties.READ_TIMEOUT, 5000)
+            .build();
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        client.close();
+    }
 
     @ClassRule
     public static final DropwizardAppRule<TestConfiguration> RULE =
@@ -23,7 +43,7 @@ public class DropwizardAppRuleConfigOverrideTest {
 
     @Test
     public void supportsConfigAttributeOverrides() {
-        final String content = ClientBuilder.newClient().target("http://localhost:" + RULE.getLocalPort() + "/test")
+        final String content = client.target("http://localhost:" + RULE.getLocalPort() + "/test")
                 .request().get(String.class);
 
         assertThat(content, is("A new way to say Hooray!"));

@@ -5,9 +5,9 @@ import io.dropwizard.Application;
 import io.dropwizard.Configuration;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.testing.ConfigOverride;
-import org.junit.Assert;
-import org.junit.ClassRule;
-import org.junit.Test;
+import org.glassfish.jersey.client.ClientProperties;
+import org.glassfish.jersey.client.JerseyClientBuilder;
+import org.junit.*;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -25,7 +25,20 @@ public class DropwizardAppRuleWithoutConfigTest {
         ConfigOverride.config("server.applicationConnectors[0].port", "0"),
         ConfigOverride.config("server.adminConnectors[0].port", "0"));
 
-    Client client = ClientBuilder.newClient();
+    private Client client;
+
+    @Before
+    public void setUp() throws Exception {
+        client = new JerseyClientBuilder()
+            .property(ClientProperties.CONNECT_TIMEOUT, 1000)
+            .property(ClientProperties.READ_TIMEOUT, 5000)
+            .build();
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        client.close();
+    }
 
     @Test
     public void runWithoutConfigFile() {
