@@ -14,6 +14,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
+import java.util.Map;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -92,9 +93,26 @@ public class UnitOfWorkAwareProxyFactoryTest {
         final UnitOfWorkAwareProxyFactory unitOfWorkAwareProxyFactory =
                 new UnitOfWorkAwareProxyFactory("default", sessionFactory);
 
-        UnitOfWorkAspect aspect1 = unitOfWorkAwareProxyFactory.newAspect();
-        UnitOfWorkAspect aspect2 = unitOfWorkAwareProxyFactory.newAspect();
+        ImmutableMap<String, SessionFactory> sessionFactories = ImmutableMap.of("default", sessionFactory);
+        UnitOfWorkAspect aspect1 = unitOfWorkAwareProxyFactory.newAspect(sessionFactories);
+        UnitOfWorkAspect aspect2 = unitOfWorkAwareProxyFactory.newAspect(sessionFactories);
         assertThat(aspect1).isNotSameAs(aspect2);
+    }
+
+    @Test
+    public void testCanBeConfiguredWithACustomAspect() {
+        final SessionDao sessionDao = new SessionDao(sessionFactory);
+        final UnitOfWorkAwareProxyFactory unitOfWorkAwareProxyFactory =
+            new UnitOfWorkAwareProxyFactory("default", sessionFactory) {
+                @Override
+                public UnitOfWorkAspect newAspect(ImmutableMap<String, SessionFactory> sessionFactories) {
+                    return new CustomAspect(sessionFactories);
+                }
+            };
+
+        final OAuthAuthenticator oAuthAuthenticator = unitOfWorkAwareProxyFactory
+            .create(OAuthAuthenticator.class, SessionDao.class, sessionDao);
+        assertThat(oAuthAuthenticator.authenticate("gr6f9y0")).isTrue();
     }
 
     static class SessionDao {
@@ -141,6 +159,19 @@ public class UnitOfWorkAwareProxyFactoryTest {
         @UnitOfWork
         public boolean authenticate(String token) {
             throw new IllegalStateException("Session cluster is down");
+        }
+    }
+
+    static class CustomAspect extends UnitOfWorkAspect {
+        public CustomAspect(Map<String, SessionFactory> sessionFactories) {
+            super(sessionFactories);
+        }
+
+        @Override
+        protected void configureSession() {
+            super.configureSession();
+            getSession().createSQLQuery("insert into user_sessions values ('gr6f9y0', 'jeff_29')")
+                .executeUpdate();
         }
     }
 }
