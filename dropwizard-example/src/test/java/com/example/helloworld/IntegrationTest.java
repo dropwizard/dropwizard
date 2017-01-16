@@ -59,7 +59,7 @@ public class IntegrationTest {
     @Test
     public void testHelloWorld() throws Exception {
         final Optional<String> name = Optional.of("Dr. IntegrationTest");
-        final Saying saying = client.target("http://localhost:" + RULE.getLocalPort() + "/hello-world")
+        final Saying saying = client.target("http://127.0.0.1:" + RULE.getLocalPort() + "/hello-world")
                 .queryParam("name", name.get())
                 .request()
                 .get(Saying.class);
@@ -69,7 +69,7 @@ public class IntegrationTest {
     @Test
     public void testPostPerson() throws Exception {
         final Person person = new Person("Dr. IntegrationTest", "Chief Wizard");
-        final Person newPerson = client.target("http://localhost:" + RULE.getLocalPort() + "/people")
+        final Person newPerson = client.target("http://127.0.0.1:" + RULE.getLocalPort() + "/people")
                 .request()
                 .post(Entity.entity(person, MediaType.APPLICATION_JSON_TYPE))
                 .readEntity(Person.class);

@@ -26,7 +26,7 @@ public class CustomRequestLogPatternIntegrationTest extends AbstractRequestLogPa
 
     @Test
     public void testCustomPattern() throws Exception {
-        String url = String.format("http://localhost:%d/greet?name=Charley", dropwizardAppRule.getLocalPort());
+        String url = String.format("http://127.0.0.1:%d/greet?name=Charley", dropwizardAppRule.getLocalPort());
         for (int i = 0; i < 100; i++) {
             client.target(url).request().get();
         }

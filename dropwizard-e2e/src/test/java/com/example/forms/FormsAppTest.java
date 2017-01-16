@@ -44,7 +44,7 @@ public class FormsAppTest {
             .bodyPart(new FormDataBodyPart(
                 FormDataContentDisposition.name("file").fileName("fileName").build(), "CONTENT"));
 
-        final String url = String.format("http://localhost:%d/uploadFile", RULE.getLocalPort());
+        final String url = String.format("http://127.0.0.1:%d/uploadFile", RULE.getLocalPort());
         final String response = client.target(url).register(MultiPartFeature.class).request()
             .post(Entity.entity(mp, mp.getMediaType()), String.class);
         assertThat(response).isEqualTo("fileName:\nCONTENT");
@@ -63,7 +63,7 @@ public class FormsAppTest {
             .bodyPart(new FormDataBodyPart(
                 FormDataContentDisposition.name("file").fileName("fileName").build(), "CONTENT"));
 
-        final String url = String.format("http://localhost:%d/uploadFile", RULE.getLocalPort());
+        final String url = String.format("http://127.0.0.1:%d/uploadFile", RULE.getLocalPort());
         final Response response = client.target(url).register(MultiPartFeature.class).request()
             .post(Entity.entity(mp, mp.getMediaType()));
         assertThat(response.getStatus()).isEqualTo(400);

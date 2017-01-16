@@ -50,7 +50,7 @@ public class DropwizardAppRuleTest {
 
     @Test
     public void canGetExpectedResourceOverHttp() {
-        final String content = client.target("http://localhost:" + RULE.getLocalPort() + "/test")
+        final String content = client.target("http://127.0.0.1:" + RULE.getLocalPort() + "/test")
             .request().get(String.class);
 
         assertThat(content, is("Yes, it's here"));
@@ -77,7 +77,7 @@ public class DropwizardAppRuleTest {
 
     @Test
     public void canPerformAdminTask() {
-        final String response = client.target("http://localhost:" + RULE.getAdminPort() +
+        final String response = client.target("http://127.0.0.1:" + RULE.getAdminPort() +
             "/tasks/hello?name=test_user")
                 .request()
                 .post(Entity.entity("", MediaType.TEXT_PLAIN), String.class);
@@ -87,7 +87,7 @@ public class DropwizardAppRuleTest {
 
     @Test
     public void canPerformAdminTaskWithPostBody() {
-        final String response = client.target("http://localhost:"
+        final String response = client.target("http://127.0.0.1:"
             + RULE.getAdminPort() + "/tasks/echo")
             .request()
             .post(Entity.entity("Custom message", MediaType.TEXT_PLAIN), String.class);

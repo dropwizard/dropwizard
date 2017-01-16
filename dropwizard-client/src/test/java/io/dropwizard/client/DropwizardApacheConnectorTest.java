@@ -65,7 +65,7 @@ public class DropwizardApacheConnectorTest {
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
-    private final URI testUri = URI.create("http://localhost:" + APP_RULE.getLocalPort());
+    private final URI testUri = URI.create("http://127.0.0.1:" + APP_RULE.getLocalPort());
 
     private JerseyClient client;
     private Environment environment;
@@ -191,7 +191,7 @@ public class DropwizardApacheConnectorTest {
         when(client.execute(Mockito.any())).thenReturn(apacheResponse);
 
         final ClientRequest jerseyRequest = mock(ClientRequest.class);
-        when(jerseyRequest.getUri()).thenReturn(URI.create("http://localhost"));
+        when(jerseyRequest.getUri()).thenReturn(URI.create("http://127.0.0.1"));
         when(jerseyRequest.getMethod()).thenReturn("GET");
         when(jerseyRequest.getHeaders()).thenReturn(new MultivaluedHashMap<>());
 

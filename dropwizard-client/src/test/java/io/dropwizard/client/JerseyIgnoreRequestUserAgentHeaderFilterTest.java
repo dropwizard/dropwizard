@@ -26,7 +26,7 @@ public class JerseyIgnoreRequestUserAgentHeaderFilterTest {
     public static final DropwizardAppRule<Configuration> APP_RULE =
             new DropwizardAppRule<>(TestApplication.class, Resources.getResource("yaml/jerseyIgnoreRequestUserAgentHeaderFilterTest.yml").getPath());
 
-    private final URI testUri = URI.create("http://localhost:" + APP_RULE.getLocalPort());
+    private final URI testUri = URI.create("http://127.0.0.1:" + APP_RULE.getLocalPort());
     private JerseyClientBuilder clientBuilder;
     private JerseyClientConfiguration clientConfiguration;
 

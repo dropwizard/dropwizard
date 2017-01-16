@@ -162,7 +162,7 @@ public class LazyLoadingTest {
     }
 
     private String getUrlPrefix() {
-        return "http://localhost:" + dropwizardTestSupport.getLocalPort();
+        return "http://127.0.0.1:" + dropwizardTestSupport.getLocalPort();
     }
 
     @Test
