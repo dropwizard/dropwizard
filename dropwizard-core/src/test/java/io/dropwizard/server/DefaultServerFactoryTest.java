@@ -172,7 +172,7 @@ public class DefaultServerFactoryTest {
         final int port = ((AbstractNetworkConnector) server.getConnectors()[0]).getLocalPort();
 
         Future<String> futureResult = executor.submit(() -> {
-            URL url = new URL("http://localhost:" + port + "/app/test");
+            URL url = new URL("http://127.0.0.1:" + port + "/app/test");
             URLConnection connection = url.openConnection();
             connection.connect();
             return CharStreams.toString(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8));

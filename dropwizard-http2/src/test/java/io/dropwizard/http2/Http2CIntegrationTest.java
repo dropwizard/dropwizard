@@ -57,11 +57,11 @@ public class Http2CIntegrationTest  extends AbstractHttp2Test {
 
     @Test
     public void testHttp2c() throws Exception {
-        assertResponse(client.GET("http://localhost:" + appRule.getLocalPort() + "/api/test"));
+        assertResponse(client.GET("http://127.0.0.1:" + appRule.getLocalPort() + "/api/test"));
     }
 
     @Test
     public void testHttp2cManyRequests() throws Exception {
-        performManyAsyncRequests(client, "http://localhost:" + appRule.getLocalPort() + "/api/test");
+        performManyAsyncRequests(client, "http://127.0.0.1:" + appRule.getLocalPort() + "/api/test");
     }
 }

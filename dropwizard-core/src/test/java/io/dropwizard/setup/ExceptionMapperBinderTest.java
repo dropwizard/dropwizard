@@ -54,7 +54,7 @@ public class ExceptionMapperBinderTest {
         server.start();
 
         final int port = ((AbstractNetworkConnector) server.getConnectors()[0]).getLocalPort();
-        assertThat(httpRequest("GET", "http://localhost:" + port + "/service/test")).isEqualTo("alright!");
+        assertThat(httpRequest("GET", "http://127.0.0.1:" + port + "/service/test")).isEqualTo("alright!");
         server.stop();
     }
 

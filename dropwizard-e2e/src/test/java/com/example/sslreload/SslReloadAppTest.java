@@ -118,7 +118,7 @@ public class SslReloadAppTest {
     /** Issues a POST against the reload ssl admin task, asserts that the code and content
      *  are as expected, and finally returns the server certificate */
     private byte[] certBytes(int code, String content) throws Exception {
-        final URL url = new URL("https://localhost:" + rule.getAdminPort() + "/tasks/reload-ssl");
+        final URL url = new URL("https://127.0.0.1:" + rule.getAdminPort() + "/tasks/reload-ssl");
         final HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
         try {
             postIt(conn);

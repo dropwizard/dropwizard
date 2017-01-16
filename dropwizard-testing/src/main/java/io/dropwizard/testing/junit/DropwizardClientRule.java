@@ -67,7 +67,7 @@ public class DropwizardClientRule extends ExternalResource {
     }
 
     public URI baseUri() {
-        return URI.create("http://localhost:" + testSupport.getLocalPort() + "/application");
+        return URI.create("http://127.0.0.1:" + testSupport.getLocalPort() + "/application");
     }
 
     public ObjectMapper getObjectMapper() {

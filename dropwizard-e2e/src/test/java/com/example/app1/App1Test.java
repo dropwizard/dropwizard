@@ -36,7 +36,7 @@ public class App1Test {
     @Test
     public void custom204OnEmptyOptional() {
         final Client client = new JerseyClientBuilder(RULE.getEnvironment()).build("test client 1");
-        final String url = String.format("http://localhost:%d/empty-optional", RULE.getLocalPort());
+        final String url = String.format("http://127.0.0.1:%d/empty-optional", RULE.getLocalPort());
         final Response response = client.target(url).request().get();
         assertThat(response.getStatus()).isEqualTo(204);
     }
@@ -44,7 +44,7 @@ public class App1Test {
     @Test
     public void custom404OnViewRenderMissingMustacheTemplate() {
         final Client client = new JerseyClientBuilder(RULE.getEnvironment()).build("test client 2");
-        final String url = String.format("http://localhost:%d/view-with-missing-tpl", RULE.getLocalPort());
+        final String url = String.format("http://127.0.0.1:%d/view-with-missing-tpl", RULE.getLocalPort());
 
         final Response response = client.target(url).request().get();
         assertThat(response.getStatus()).isEqualTo(404);
@@ -52,7 +52,7 @@ public class App1Test {
 
     @Test
     public void customJsonProvider() {
-        final String url = String.format("http://localhost:%d/mapper", RULE.getLocalPort());
+        final String url = String.format("http://127.0.0.1:%d/mapper", RULE.getLocalPort());
         final String response = client.target(url)
             .request()
             .post(Entity.json("/** A Dropwizard specialty */\n{\"check\": \"mate\"}"), String.class);
@@ -62,7 +62,7 @@ public class App1Test {
 
     @Test
     public void customJsonProviderMissingHeader() {
-        final String url = String.format("http://localhost:%d/mapper", RULE.getLocalPort());
+        final String url = String.format("http://127.0.0.1:%d/mapper", RULE.getLocalPort());
         final Response response = client.target(url)
             .request()
             .post(Entity.json("{\"check\": \"mate\"}"));
@@ -71,7 +71,7 @@ public class App1Test {
 
     @Test
     public void customJsonProviderClient() {
-        final String url = String.format("http://localhost:%d/mapper", RULE.getLocalPort());
+        final String url = String.format("http://127.0.0.1:%d/mapper", RULE.getLocalPort());
         final String response = client.target(url)
             .request()
             .post(Entity.json(ImmutableMap.of("check", "mate")), String.class);
@@ -81,7 +81,7 @@ public class App1Test {
 
     @Test
     public void customJsonProviderRoundtrip() {
-        final String url = String.format("http://localhost:%d/mapper", RULE.getLocalPort());
+        final String url = String.format("http://127.0.0.1:%d/mapper", RULE.getLocalPort());
         final GenericType<Map<String, String>> typ = new GenericType<Map<String, String>>() {
         };
 
@@ -93,7 +93,7 @@ public class App1Test {
 
     @Test
     public void customBodyWriterTest() {
-        final String url = String.format("http://localhost:%d/custom-class", RULE.getLocalPort());
+        final String url = String.format("http://127.0.0.1:%d/custom-class", RULE.getLocalPort());
         final String response = client.target(url)
             .request()
             .get(String.class);

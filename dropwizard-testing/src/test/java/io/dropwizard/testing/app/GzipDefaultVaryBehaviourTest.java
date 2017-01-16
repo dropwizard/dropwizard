@@ -45,7 +45,7 @@ public class GzipDefaultVaryBehaviourTest {
 
     @Test
     public void testDefaultVaryHeader() {
-        final Response clientResponse = client.target("http://localhost:" + RULE.getLocalPort() + "/test")
+        final Response clientResponse = client.target("http://127.0.0.1:" + RULE.getLocalPort() + "/test")
             .request().header(ACCEPT_ENCODING, "gzip")
             .get();
 

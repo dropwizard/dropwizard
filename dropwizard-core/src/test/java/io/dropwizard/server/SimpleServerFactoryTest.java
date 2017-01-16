@@ -81,9 +81,9 @@ public class SimpleServerFactoryTest {
         server.start();
 
         final int port = ((AbstractNetworkConnector) server.getConnectors()[0]).getLocalPort();
-        assertThat(httpRequest("GET", "http://localhost:" + port + "/service/test"))
+        assertThat(httpRequest("GET", "http://127.0.0.1:" + port + "/service/test"))
                 .isEqualTo("{\"hello\": \"World\"}");
-        assertThat(httpRequest("POST", "http://localhost:" + port + "/secret/tasks/hello?name=test_user"))
+        assertThat(httpRequest("POST", "http://127.0.0.1:" + port + "/secret/tasks/hello?name=test_user"))
                 .isEqualTo("Hello, test_user!");
 
         server.stop();

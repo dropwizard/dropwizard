@@ -43,7 +43,7 @@ public class DropwizardAppRuleConfigOverrideTest {
 
     @Test
     public void supportsConfigAttributeOverrides() {
-        final String content = client.target("http://localhost:" + RULE.getLocalPort() + "/test")
+        final String content = client.target("http://127.0.0.1:" + RULE.getLocalPort() + "/test")
                 .request().get(String.class);
 
         assertThat(content, is("A new way to say Hooray!"));

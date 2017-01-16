@@ -42,7 +42,7 @@ public class DropwizardAppRuleWithoutConfigTest {
 
     @Test
     public void runWithoutConfigFile() {
-        Map<?, ?> response = client.target("http://localhost:" + RULE.getLocalPort() + "/test")
+        Map<?, ?> response = client.target("http://127.0.0.1:" + RULE.getLocalPort() + "/test")
                 .request()
                 .get(Map.class);
         Assert.assertEquals(ImmutableMap.of("color", "orange"), response);

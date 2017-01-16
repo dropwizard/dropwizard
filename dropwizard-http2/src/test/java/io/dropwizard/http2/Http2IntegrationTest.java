@@ -69,11 +69,11 @@ public class Http2IntegrationTest extends AbstractHttp2Test {
 
     @Test
     public void testHttp2() throws Exception {
-        assertResponse(client.GET("https://localhost:" + appRule.getLocalPort() + "/api/test"));
+        assertResponse(client.GET("https://127.0.0.1:" + appRule.getLocalPort() + "/api/test"));
     }
 
     @Test
     public void testHttp2ManyRequests() throws Exception {
-        performManyAsyncRequests(client, "https://localhost:" + appRule.getLocalPort() + "/api/test");
+        performManyAsyncRequests(client, "https://127.0.0.1:" + appRule.getLocalPort() + "/api/test");
     }
 }
