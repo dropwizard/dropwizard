@@ -44,6 +44,6 @@ public class AbstractHttp2Test {
                     });
         }
 
-        assertThat(latch.await(5, TimeUnit.SECONDS)).isTrue();
+        assertThat(latch.await(30, TimeUnit.SECONDS)).isTrue();
     }
 }
