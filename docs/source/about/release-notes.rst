@@ -33,7 +33,7 @@ v1.1.0: Unreleased
 * Add ``min`` and ``mins`` as valid ``Duration`` abbreviations `#1833 <https://github.com/dropwizard/dropwizard/pull/1833>`_
 * Upgraded to Jackson 2.8.6
 * Upgraded to Hibernate Validator 5.3.4.Final
-* Upgraded to Jetty 9.3.15.v20161220
+* Upgraded to Jetty 9.4.0.v20161208 `#1875 <https://github.com/dropwizard/dropwizard/pull/1875>`
 * Upgraded to tomcat-jdbc 8.5.9
 * Upgraded to Objenesis 2.4 `#1654 <https://github.com/dropwizard/dropwizard/pull/1654>`_
 * Upgraded to AssertJ 3.6.1
