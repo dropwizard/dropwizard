@@ -28,6 +28,7 @@ import org.junit.Test;
 
 import javax.validation.Validator;
 import java.io.File;
+import java.util.Optional;
 
 import static org.apache.commons.lang3.reflect.FieldUtils.getField;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -67,8 +68,8 @@ public class HttpConnectorFactoryTest {
         assertThat(http.getMinBufferPoolSize()).isEqualTo(Size.bytes(64));
         assertThat(http.getBufferPoolIncrement()).isEqualTo(Size.bytes(1024));
         assertThat(http.getMaxBufferPoolSize()).isEqualTo(Size.kilobytes(64));
-        assertThat(http.getAcceptorThreads()).isEqualTo(Math.max(1, Runtime.getRuntime().availableProcessors() / 2));
-        assertThat(http.getSelectorThreads()).isEqualTo(Runtime.getRuntime().availableProcessors());
+        assertThat(http.getAcceptorThreads()).isEmpty();
+        assertThat(http.getSelectorThreads()).isEmpty();
         assertThat(http.getAcceptQueueSize()).isNull();
         assertThat(http.isReuseAddress()).isTrue();
         assertThat(http.getSoLingerTime()).isNull();
@@ -97,8 +98,8 @@ public class HttpConnectorFactoryTest {
         assertThat(http.getMinBufferPoolSize()).isEqualTo(Size.bytes(128));
         assertThat(http.getBufferPoolIncrement()).isEqualTo(Size.bytes(500));
         assertThat(http.getMaxBufferPoolSize()).isEqualTo(Size.kilobytes(32));
-        assertThat(http.getAcceptorThreads()).isEqualTo(1);
-        assertThat(http.getSelectorThreads()).isEqualTo(4);
+        assertThat(http.getAcceptorThreads()).contains(1);
+        assertThat(http.getSelectorThreads()).contains(4);
         assertThat(http.getAcceptQueueSize()).isEqualTo(1024);
         assertThat(http.isReuseAddress()).isFalse();
         assertThat(http.getSoLingerTime()).isEqualTo(Duration.seconds(30));
@@ -113,8 +114,8 @@ public class HttpConnectorFactoryTest {
     public void testBuildConnector() throws Exception {
         HttpConnectorFactory http = new HttpConnectorFactory();
         http.setBindHost("127.0.0.1");
-        http.setAcceptorThreads(1);
-        http.setSelectorThreads(2);
+        http.setAcceptorThreads(Optional.of(1));
+        http.setSelectorThreads(Optional.of(2));
         http.setAcceptQueueSize(1024);
         http.setSoLingerTime(Duration.seconds(30));
         http.setBlockingTimeout(Duration.minutes(1));
@@ -175,8 +176,8 @@ public class HttpConnectorFactoryTest {
     public void testDefaultAcceptQueueSize() throws Exception {
         HttpConnectorFactory http = new HttpConnectorFactory();
         http.setBindHost("127.0.0.1");
-        http.setAcceptorThreads(1);
-        http.setSelectorThreads(2);
+        http.setAcceptorThreads(Optional.of(1));
+        http.setSelectorThreads(Optional.of(2));
         http.setSoLingerTime(Duration.seconds(30));
 
         Server server = new Server();
