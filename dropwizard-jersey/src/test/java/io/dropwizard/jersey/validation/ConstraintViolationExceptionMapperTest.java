@@ -1,13 +1,11 @@
 package io.dropwizard.jersey.validation;
 
 import com.codahale.metrics.MetricRegistry;
+import io.dropwizard.jersey.AbstractJerseyTest;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.jersey.jackson.JacksonMessageBodyProviderTest.Example;
 import io.dropwizard.jersey.jackson.JacksonMessageBodyProviderTest.ListExample;
 import io.dropwizard.jersey.jackson.JacksonMessageBodyProviderTest.PartialExample;
-import io.dropwizard.logging.BootstrapLogging;
-import org.glassfish.jersey.test.JerseyTest;
-import org.glassfish.jersey.test.TestProperties;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -27,16 +25,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assume.assumeThat;
 
-public class ConstraintViolationExceptionMapperTest extends JerseyTest {
-    static {
-        BootstrapLogging.bootstrap();
-    }
+public class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
+
 
     private static final Locale DEFAULT_LOCALE = Locale.getDefault();
 
     @Override
     protected Application configure() {
-        forceSet(TestProperties.CONTAINER_PORT, "0");
         return DropwizardResourceConfig.forTesting(new MetricRegistry())
                 .packages("io.dropwizard.jersey.validation")
                 .register(new HibernateValidationFeature(Validators.newValidator()));
