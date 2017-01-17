@@ -321,6 +321,11 @@
                 <version>${jetty.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-unixsocket</artifactId>
+                <version>${jetty.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.eclipse.jetty.toolchain.setuid</groupId>
                 <artifactId>jetty-setuid-java</artifactId>
                 <version>1.0.3</version>
@@ -780,6 +785,11 @@
             <dependency>
                 <groupId>io.dropwizard</groupId>
                 <artifactId>dropwizard-http2</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.dropwizard</groupId>
+                <artifactId>dropwizard-unixsocket</artifactId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>
