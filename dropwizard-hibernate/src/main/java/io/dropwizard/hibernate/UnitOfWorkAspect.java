@@ -35,7 +35,7 @@ public class UnitOfWorkAspect {
 
     private final Map<String, SessionFactory> sessionFactories;
 
-    UnitOfWorkAspect(Map<String, SessionFactory> sessionFactories) {
+    public UnitOfWorkAspect(Map<String, SessionFactory> sessionFactories) {
         this.sessionFactories = sessionFactories;
     }
 
@@ -111,7 +111,7 @@ public class UnitOfWorkAspect {
         }
     }
 
-    private void configureSession() {
+    protected void configureSession() {
         session.setDefaultReadOnly(unitOfWork.readOnly());
         session.setCacheMode(unitOfWork.cacheMode());
         session.setFlushMode(unitOfWork.flushMode());
@@ -143,4 +143,13 @@ public class UnitOfWorkAspect {
             txn.commit();
         }
     }
+
+    protected Session getSession() {
+        return session;
+    }
+
+    protected SessionFactory getSessionFactory() {
+        return sessionFactory;
+    }
+
 }

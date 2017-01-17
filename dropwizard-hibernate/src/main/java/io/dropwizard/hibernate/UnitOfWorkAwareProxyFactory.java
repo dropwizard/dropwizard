@@ -75,7 +75,7 @@ public class UnitOfWorkAwareProxyFactory {
                     factory.create(constructorParamTypes, constructorArguments));
             proxy.setHandler((self, overridden, proceed, args) -> {
                 final UnitOfWork unitOfWork = overridden.getAnnotation(UnitOfWork.class);
-                final UnitOfWorkAspect unitOfWorkAspect = newAspect();
+                final UnitOfWorkAspect unitOfWorkAspect = newAspect(sessionFactories);
                 try {
                     unitOfWorkAspect.beforeStart(unitOfWork);
                     Object result = proceed.invoke(self, args);
@@ -99,9 +99,17 @@ public class UnitOfWorkAwareProxyFactory {
     }
 
     /**
-     * @return a new
+     * @return a new aspect
      */
     public UnitOfWorkAspect newAspect() {
+        return new UnitOfWorkAspect(sessionFactories);
+    }
+
+    /**
+     * @return a new aspect
+     * @param sessionFactories
+     */
+    public UnitOfWorkAspect newAspect(ImmutableMap<String, SessionFactory> sessionFactories) {
         return new UnitOfWorkAspect(sessionFactories);
     }
 }
