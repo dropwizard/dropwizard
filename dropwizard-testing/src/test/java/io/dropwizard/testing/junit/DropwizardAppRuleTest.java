@@ -56,7 +56,7 @@ public class DropwizardAppRuleTest {
     @Test
     public void canPerformAdminTask() {
         final String response
-                = ClientBuilder.newClient().target("http://localhost:"
+                = RULE.client().target("http://localhost:"
                         + RULE.getAdminPort() + "/tasks/hello?name=test_user")
                 .request()
                 .post(Entity.entity("", MediaType.TEXT_PLAIN), String.class);
@@ -67,7 +67,7 @@ public class DropwizardAppRuleTest {
     @Test
     public void canPerformAdminTaskWithPostBody() {
         final String response
-            = ClientBuilder.newClient().target("http://localhost:"
+            = RULE.client().target("http://localhost:"
             + RULE.getAdminPort() + "/tasks/echo")
             .request()
             .post(Entity.entity("Custom message", MediaType.TEXT_PLAIN), String.class);

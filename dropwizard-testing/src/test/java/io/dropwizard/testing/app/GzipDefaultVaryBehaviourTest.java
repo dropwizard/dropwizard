@@ -6,7 +6,6 @@ import io.dropwizard.testing.junit.TestConfiguration;
 import org.junit.ClassRule;
 import org.junit.Test;
 
-import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.Response;
 
 import java.util.Collections;
@@ -25,7 +24,7 @@ public class GzipDefaultVaryBehaviourTest {
 
     @Test
     public void testDefaultVaryHeader() {
-        final Response clientResponse = ClientBuilder.newClient().target(
+        final Response clientResponse = RULE.client().target(
             "http://localhost:" + RULE.getLocalPort() + "/test").request().header(ACCEPT_ENCODING, "gzip").get();
 
         assertThat(clientResponse.getHeaders().get(VARY)).isEqualTo(Collections.singletonList((Object) ACCEPT_ENCODING));

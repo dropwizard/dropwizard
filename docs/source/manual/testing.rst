@@ -338,6 +338,10 @@ running and stop it again when they've completed (roughly equivalent to having u
 ``DropwizardAppRule`` also exposes the app's ``Configuration``,
 ``Environment`` and the app object itself so that these can be queried by the tests.
 
+If you don't want to use the ``dropwizard-client`` module or find it excessive for testing, you can get access to
+a Jersey HTTP client by calling the `client` method on the rule. The returned client is managed by the rule
+and can be reused across tests.
+
 .. code-block:: java
 
     public class LoginAcceptanceTest {

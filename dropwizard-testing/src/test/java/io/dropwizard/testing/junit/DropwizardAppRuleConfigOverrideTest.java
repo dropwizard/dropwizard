@@ -3,7 +3,6 @@ package io.dropwizard.testing.junit;
 import org.junit.ClassRule;
 import org.junit.Test;
 
-import javax.ws.rs.client.ClientBuilder;
 import java.util.Optional;
 
 import static io.dropwizard.testing.ConfigOverride.config;
@@ -23,7 +22,7 @@ public class DropwizardAppRuleConfigOverrideTest {
 
     @Test
     public void supportsConfigAttributeOverrides() {
-        final String content = ClientBuilder.newClient().target("http://localhost:" + RULE.getLocalPort() + "/test")
+        final String content = RULE.client().target("http://localhost:" + RULE.getLocalPort() + "/test")
                 .request().get(String.class);
 
         assertThat(content, is("A new way to say Hooray!"));
