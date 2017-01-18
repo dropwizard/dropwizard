@@ -1,0 +1,6 @@
+server:
+  type: simple
+  connector:
+    type: unixsocket
+  applicationContextPath: /app
+  adminContextPath: /admin

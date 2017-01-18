@@ -34,7 +34,7 @@ import static com.codahale.metrics.MetricRegistry.name;
  * <p/>
  */
 @JsonTypeName("unixsocket")
-public class UnixSocketFactory extends HttpConnectorFactory {
+public class UnixSocketConnectorFactory extends HttpConnectorFactory {
 
     private String socketFilename = "/tmp/dropwizard.sock";
 
@@ -65,6 +65,6 @@ public class UnixSocketFactory extends HttpConnectorFactory {
 
     @Override
     protected String httpConnections() {
-        return name(UnixSocketFactory.class,  socketFilename, "connections");
+        return name(UnixSocketConnectorFactory.class,  socketFilename, "connections");
     }
 }

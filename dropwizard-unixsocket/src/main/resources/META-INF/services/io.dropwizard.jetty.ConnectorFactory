@@ -1,1 +1,1 @@
-io.dropwizard.unixsocket.UnixSocketFactory
+io.dropwizard.unixsocket.UnixSocketConnectorFactory
