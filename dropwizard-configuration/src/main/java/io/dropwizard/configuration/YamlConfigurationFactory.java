@@ -1,5 +1,7 @@
 package io.dropwizard.configuration;
 
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -45,6 +47,7 @@ public class YamlConfigurationFactory<T> implements ConfigurationFactory<T> {
     private final ObjectMapper mapper;
     private final Validator validator;
     private final YAMLFactory yamlFactory;
+    private final JsonFactory jsonFactory;
 
     /**
      * Creates a new configuration factory for the given class.
@@ -65,9 +68,11 @@ public class YamlConfigurationFactory<T> implements ConfigurationFactory<T> {
         if (objectMapper == null) { // sub-class has no need for mapper
             mapper = null;
             yamlFactory = null;
+            jsonFactory = null;
         } else {
             mapper = objectMapper;
             yamlFactory = new YAMLFactory();
+            jsonFactory = new JsonFactory();
         }
         this.validator = validator;
     }
@@ -75,8 +80,14 @@ public class YamlConfigurationFactory<T> implements ConfigurationFactory<T> {
     @Override
     public T build(ConfigurationSourceProvider provider, String path) throws IOException, ConfigurationException {
         try (InputStream input = provider.open(requireNonNull(path))) {
-            final JsonNode node = mapper.readTree(yamlFactory.createParser(input));
-
+        	final JsonNode node;
+        	if(path.endsWith(".yaml") || path.endsWith(".yml")) {
+        		node = mapper.readTree(yamlFactory.createParser(input));
+        	}
+        	else {
+        		node = mapper.readTree(jsonFactory.createParser(input));
+        	}
+        		
             if (node == null) {
                 throw ConfigurationParsingException
                         .builder("Configuration at " + path + " must not be empty")
@@ -95,6 +106,13 @@ public class YamlConfigurationFactory<T> implements ConfigurationFactory<T> {
             }
 
             throw builder.build(path);
+        } catch (JsonParseException e) {
+            throw ConfigurationParsingException
+                    .builder("Malformed JSON")
+                    .setCause(e)
+                    .setLocation(e.getLocation())
+                    .setDetail(e.getMessage())
+                    .build(path);
         }
     }
 

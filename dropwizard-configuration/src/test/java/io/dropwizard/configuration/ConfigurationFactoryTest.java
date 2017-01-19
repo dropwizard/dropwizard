@@ -136,14 +136,14 @@ public class ConfigurationFactoryTest {
     }
 
     private final Validator validator = BaseValidator.newValidator();
-    private final YamlConfigurationFactory<Example> factory =
+    protected final YamlConfigurationFactory<Example> factory =
             new YamlConfigurationFactory<>(Example.class, validator, Jackson.newObjectMapper(), "dw");
-    private File malformedFile;
-    private File emptyFile;
-    private File invalidFile;
-    private File validFile;
+    protected File malformedFile;
+    protected File emptyFile;
+    protected File invalidFile;
+    protected File validFile;
 
-    private static File resourceFileName(String resourceName) throws URISyntaxException {
+    static File resourceFileName(String resourceName) throws URISyntaxException {
         return new File(Resources.getResource(resourceName).toURI());
     }
 
