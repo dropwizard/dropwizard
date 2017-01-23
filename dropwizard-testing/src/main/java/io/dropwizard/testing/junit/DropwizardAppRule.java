@@ -9,9 +9,12 @@ import io.dropwizard.lifecycle.Managed;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.testing.ConfigOverride;
 import io.dropwizard.testing.DropwizardTestSupport;
+import org.glassfish.jersey.client.ClientProperties;
+import org.glassfish.jersey.client.JerseyClientBuilder;
 import org.junit.rules.ExternalResource;
 
 import javax.annotation.Nullable;
+import javax.ws.rs.client.Client;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
@@ -66,9 +69,13 @@ import java.util.function.Function;
  */
 public class DropwizardAppRule<C extends Configuration> extends ExternalResource {
 
+    private static final int DEFAULT_CONNECT_TIMEOUT_MS = 1000;
+    private static final int DEFAULT_READ_TIMEOUT_MS = 5000;
+
     private final DropwizardTestSupport<C> testSupport;
 
     private final AtomicInteger recursiveCallCount = new AtomicInteger(0);
+    private Client client;
 
     public DropwizardAppRule(Class<? extends Application<C>> applicationClass) {
         this(applicationClass, (String) null);
@@ -152,6 +159,11 @@ public class DropwizardAppRule<C extends Configuration> extends ExternalResource
     protected void after() {
         if (recursiveCallCount.decrementAndGet() == 0) {
             testSupport.after();
+            synchronized (this) {
+                if (client != null) {
+                    client.close();
+                }
+            }
         }
     }
 
@@ -200,5 +212,28 @@ public class DropwizardAppRule<C extends Configuration> extends ExternalResource
 
     public DropwizardTestSupport<C> getTestSupport() {
         return testSupport;
+    }
+
+    /**
+     * Returns a new HTTP Jersey {@link Client} for performing HTTP requests against the tested
+     * Dropwizard server. The client can be reused across different tests and automatically
+     * closed along with the server. The client can be augmented by overriding the
+     * {@link #clientBuilder()} method.
+     *
+     * @return a new {@link Client} managed by the rule.
+     */
+    public Client client() {
+        synchronized (this) {
+            if (client == null) {
+                client = clientBuilder().build();
+            }
+            return client;
+        }
+    }
+
+    protected JerseyClientBuilder clientBuilder() {
+        return new JerseyClientBuilder()
+            .property(ClientProperties.CONNECT_TIMEOUT, DEFAULT_CONNECT_TIMEOUT_MS)
+            .property(ClientProperties.READ_TIMEOUT, DEFAULT_READ_TIMEOUT_MS);
     }
 }
