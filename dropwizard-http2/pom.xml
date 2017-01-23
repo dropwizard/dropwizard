@@ -24,9 +24,6 @@
                 <configuration>
                     <argLine>-Xbootclasspath/p:/"${user.home}/.m2/repository/org/mortbay/jetty/alpn/alpn-boot/${alpn-boot.version}/alpn-boot-${alpn-boot.version}.jar"
                              -Duser.language=en -Duser.region=US</argLine>
-                    <parallel>classes</parallel>
-                    <threadCount>2</threadCount>
-                    <perCoreThreadCount>true</perCoreThreadCount>
                 </configuration>
             </plugin>
         </plugins>
