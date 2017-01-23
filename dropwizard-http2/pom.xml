@@ -375,5 +375,17 @@
                 <alpn-boot.version>8.1.10.v20161026</alpn-boot.version>
             </properties>
         </profile>
+        <profile>
+            <id>jdk-1.8.0_121</id>
+            <activation>
+                <property>
+                    <name>java.version</name>
+                    <value>1.8.0_121</value>
+                </property>
+            </activation>
+            <properties>
+                <alpn-boot.version>8.1.11.v20170118</alpn-boot.version>
+            </properties>
+        </profile>
     </profiles>
 </project>
