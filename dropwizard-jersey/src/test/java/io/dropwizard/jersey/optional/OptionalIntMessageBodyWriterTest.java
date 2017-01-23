@@ -1,10 +1,8 @@
 package io.dropwizard.jersey.optional;
 
 import com.codahale.metrics.MetricRegistry;
+import io.dropwizard.jersey.AbstractJerseyTest;
 import io.dropwizard.jersey.DropwizardResourceConfig;
-import io.dropwizard.logging.BootstrapLogging;
-import org.glassfish.jersey.test.JerseyTest;
-import org.glassfish.jersey.test.TestProperties;
 import org.junit.Test;
 
 import javax.ws.rs.FormParam;
@@ -22,14 +20,10 @@ import java.util.OptionalInt;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
 
-public class OptionalIntMessageBodyWriterTest extends JerseyTest {
-    static {
-        BootstrapLogging.bootstrap();
-    }
+public class OptionalIntMessageBodyWriterTest extends AbstractJerseyTest {
 
     @Override
     protected Application configure() {
-        forceSet(TestProperties.CONTAINER_PORT, "0");
         return DropwizardResourceConfig.forTesting(new MetricRegistry())
                 .register(new EmptyOptionalExceptionMapper())
                 .register(OptionalIntReturnResource.class);
