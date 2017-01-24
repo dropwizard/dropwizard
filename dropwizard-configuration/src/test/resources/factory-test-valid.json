@@ -1,0 +1,25 @@
+{
+	"name": "Coda Hale",
+	"type": [
+		"coder",
+		"wizard"
+	],
+	"properties": {
+		"debug": true,
+		"settings.enabled": false
+	},
+	"servers": [
+		{
+			"port": 8080
+		},
+		{
+			"port": 8081
+		},
+		{
+			"port": 8082
+		}
+	],
+	"my.logger": {
+		"level": "info"
+	}
+}
