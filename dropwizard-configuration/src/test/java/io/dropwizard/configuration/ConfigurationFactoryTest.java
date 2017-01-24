@@ -161,7 +161,7 @@ public class ConfigurationFactoryTest {
 
     @Before
     public void setUp() throws Exception {
-    	factory = new YamlConfigurationFactory<>(Example.class, validator, Jackson.newObjectMapper(), "dw");
+        factory = new YamlConfigurationFactory<>(Example.class, validator, Jackson.newObjectMapper(), "dw");
         this.malformedFile = resourceFileName("factory-test-malformed.yml");
         this.emptyFile = resourceFileName("factory-test-empty.yml");
         this.invalidFile = resourceFileName("factory-test-invalid.yml");
@@ -379,8 +379,9 @@ public class ConfigurationFactoryTest {
             if ("en".equals(Locale.getDefault().getLanguage())) {
                 assertThat(e.getMessage())
                         .endsWith(String.format(
-                        		invalidFile.getName()+" has an error:%n" +
-                                        "  * name must match \"[\\w]+[\\s]+[\\w]+([\\s][\\w]+)?\"%n"));
+                        		"%s has an error:%n" +
+                                        "  * name must match \"[\\w]+[\\s]+[\\w]+([\\s][\\w]+)?\"%n",
+                                        invalidFile.getName()));
             }
         }
     }
@@ -450,7 +451,7 @@ public class ConfigurationFactoryTest {
         assertThatThrownBy(() -> factory.build(wrongTypeFile))
             .isInstanceOf(ConfigurationParsingException.class)
             .hasMessage(String.format("%s has an error:" + NEWLINE +
-                "  * Incorrect type of value at: age; is of type: String, expected: int" + NEWLINE,wrongTypeFile));
+                "  * Incorrect type of value at: age; is of type: String, expected: int" + NEWLINE, wrongTypeFile));
     }
 
     @Test
@@ -465,6 +466,6 @@ public class ConfigurationFactoryTest {
                 "expected ',' or ']', but got StreamEnd\n" +
                 " in 'reader', line 2, column 21:\n" +
                 "    wizard\n" +
-                "          ^",malformedAdvancedFile.getName()));
+                "          ^", malformedAdvancedFile.getName()));
     }
 }

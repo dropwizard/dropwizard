@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 import static java.util.Objects.requireNonNull;
 
 /**
- * A factory class for loading YAML configuration files, binding them to configuration objects, and
+ * A factory class for loading JSON configuration files, binding them to configuration objects, and
  * validating their constraints. Allows for overriding configuration parameters from system properties.
  *
  * @param <T> the type of the configuration objects to produce

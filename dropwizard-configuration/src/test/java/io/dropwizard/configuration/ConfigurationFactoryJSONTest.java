@@ -37,7 +37,8 @@ public class ConfigurationFactoryJSONTest extends ConfigurationFactoryTest {
     public void printsDetailedInformationOnMalformedYaml() throws Exception {
         assertThatThrownBy(() -> factory.build(malformedAdvancedFile))
             .hasMessageContaining(String.format(
-                malformedAdvancedFile.getName()+" has an error:%n" +
-                "  * Malformed JSON at line: 7, column: 3; Unexpected close marker '}': expected ']'"));
+                "%s has an error:%n" +
+                "  * Malformed JSON at line: 7, column: 3; Unexpected close marker '}': expected ']'",
+                malformedAdvancedFile.getName()));
     }
 }
