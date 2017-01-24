@@ -379,7 +379,7 @@ public class ConfigurationFactoryTest {
             if ("en".equals(Locale.getDefault().getLanguage())) {
                 assertThat(e.getMessage())
                         .endsWith(String.format(
-                        		"%s has an error:%n" +
+                                "%s has an error:%n" +
                                         "  * name must match \"[\\w]+[\\s]+[\\w]+([\\s][\\w]+)?\"%n",
                                         invalidFile.getName()));
             }
