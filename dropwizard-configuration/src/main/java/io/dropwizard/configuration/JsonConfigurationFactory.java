@@ -1,5 +1,7 @@
 package io.dropwizard.configuration;
 
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -9,9 +11,6 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.fasterxml.jackson.databind.node.TreeTraversingParser;
-import com.fasterxml.jackson.dataformat.yaml.JacksonYAMLParseException;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import com.fasterxml.jackson.dataformat.yaml.snakeyaml.error.MarkedYAMLException;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 
@@ -33,7 +32,7 @@ import static java.util.Objects.requireNonNull;
  *
  * @param <T> the type of the configuration objects to produce
  */
-public class YamlConfigurationFactory<T> implements ConfigurationFactory<T> {
+public class JsonConfigurationFactory<T> implements ConfigurationFactory<T> {
 
     private static final Pattern ESCAPED_COMMA_PATTERN = Pattern.compile("\\\\,");
     private static final Splitter ESCAPED_COMMA_SPLITTER = Splitter.on(Pattern.compile("(?<!\\\\),")).trimResults();
@@ -44,7 +43,7 @@ public class YamlConfigurationFactory<T> implements ConfigurationFactory<T> {
     private final String propertyPrefix;
     private final ObjectMapper mapper;
     private final Validator validator;
-    private final YAMLFactory yamlFactory;
+    private final JsonFactory jsonFactory;
 
     /**
      * Creates a new configuration factory for the given class.
@@ -54,7 +53,7 @@ public class YamlConfigurationFactory<T> implements ConfigurationFactory<T> {
      * @param objectMapper   the Jackson {@link ObjectMapper} to use
      * @param propertyPrefix the system property name prefix used by overrides
      */
-    public YamlConfigurationFactory(Class<T> klass,
+    public JsonConfigurationFactory(Class<T> klass,
                                     Validator validator,
                                     ObjectMapper objectMapper,
                                     String propertyPrefix) {
@@ -64,10 +63,10 @@ public class YamlConfigurationFactory<T> implements ConfigurationFactory<T> {
         // Sub-classes may choose to omit data-binding; if so, null ObjectMapper passed:
         if (objectMapper == null) { // sub-class has no need for mapper
             mapper = null;
-            yamlFactory = null;
+            jsonFactory = null;
         } else {
             mapper = objectMapper;
-            yamlFactory = new YAMLFactory();
+            jsonFactory = new JsonFactory();
         }
         this.validator = validator;
     }
@@ -75,7 +74,7 @@ public class YamlConfigurationFactory<T> implements ConfigurationFactory<T> {
     @Override
     public T build(ConfigurationSourceProvider provider, String path) throws IOException, ConfigurationException {
         try (InputStream input = provider.open(requireNonNull(path))) {
-            final JsonNode node = mapper.readTree(yamlFactory.createParser(input));
+            final JsonNode node = mapper.readTree(jsonFactory.createParser(input));
 
             if (node == null) {
                 throw ConfigurationParsingException
@@ -84,17 +83,13 @@ public class YamlConfigurationFactory<T> implements ConfigurationFactory<T> {
             }
 
             return build(node, path);
-        } catch (JacksonYAMLParseException e) {
-            final ConfigurationParsingException.Builder builder = ConfigurationParsingException
-                    .builder("Malformed YAML")
-                    .setCause(e)
-                    .setDetail(e.getMessage());
-
-            if (e instanceof MarkedYAMLException) {
-                builder.setLocation(((MarkedYAMLException) e).getProblemMark());
-            }
-
-            throw builder.build(path);
+        } catch (JsonParseException e) {
+            throw ConfigurationParsingException
+            .builder("Malformed JSON")
+            .setCause(e)
+            .setLocation(e.getLocation())
+            .setDetail(e.getMessage())
+            .build(path);
         }
     }
 
