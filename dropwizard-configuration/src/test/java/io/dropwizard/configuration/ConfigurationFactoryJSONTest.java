@@ -4,10 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
 
-import java.util.Locale;
-
 import org.junit.Before;
-import org.junit.Test;
 
 import io.dropwizard.jackson.Jackson;
 
@@ -15,7 +12,7 @@ public class ConfigurationFactoryJSONTest extends ConfigurationFactoryTest {
 
     @Before
     public void setUp() throws Exception {
-    	factory = new JsonConfigurationFactory<>(Example.class, validator, Jackson.newObjectMapper(), "dw");
+        factory = new JsonConfigurationFactory<>(Example.class, validator, Jackson.newObjectMapper(), "dw");
         this.malformedFile = resourceFileName("factory-test-malformed.json");
         this.emptyFile = resourceFileName("factory-test-empty.json");
         this.invalidFile = resourceFileName("factory-test-invalid.json");
@@ -36,7 +33,7 @@ public class ConfigurationFactoryJSONTest extends ConfigurationFactoryTest {
         }
     }
 
-    @Test
+    @Override
     public void printsDetailedInformationOnMalformedYaml() throws Exception {
         assertThatThrownBy(() -> factory.build(malformedAdvancedFile))
             .hasMessageContaining(String.format(
