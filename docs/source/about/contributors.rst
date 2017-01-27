@@ -9,7 +9,6 @@ Dropwizard wouldn't exist without the hard work contributed by numerous individu
 Many, many thanks to:
 
 * `Aaron Ingram <https://github.com/aingram>`_
-* `Adam Jordens <https://github.com/adamjordens>`_
 * `Adam Jordens <https://github.com/ajordens>`_
 * `Adam Marcus <https://github.com/marcua>`_
 * `Aidan <https://github.com/mcgin>`_
