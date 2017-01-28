@@ -29,11 +29,12 @@ public class UnixSocketConnectorFactoryTest {
 
     private File socket = new File("/tmp/dropwizard.sock");
 
+    private String httpRequest = "GET /app/hello HTTP/1.1\r\n" +
+        "Host: dropwizard-unixsock\r\n" +
+        "\r\n";
+
     @Test
     public void testClient() throws Exception {
-        String httpRequest = "GET /app/hello HTTP/1.1\r\n" +
-            "Host: dropwizard-unixsock\r\n" +
-            "\r\n";
         try (UnixSocketChannel channel = UnixSocketChannel.open(new UnixSocketAddress(socket));
              PrintWriter writer = new PrintWriter(Channels.newOutputStream(channel));
              Reader reader = new InputStreamReader(Channels.newInputStream(channel))) {
@@ -43,6 +44,22 @@ public class UnixSocketConnectorFactoryTest {
             char[] buf = new char[4096];
             int read = reader.read(buf);
             System.out.println("Read from the server: " + new String(buf, 0, read));
+        }
+    }
+
+    @Test
+    public void testManyClientCalls() throws Exception {
+        try (UnixSocketChannel channel = UnixSocketChannel.open(new UnixSocketAddress(socket));
+             PrintWriter writer = new PrintWriter(Channels.newOutputStream(channel));
+             Reader reader = new InputStreamReader(Channels.newInputStream(channel))) {
+            char[] buf = new char[4096];
+            for (int i = 0; i < 1000; i++) {
+                writer.print(httpRequest);
+                writer.flush();
+
+                int read = reader.read(buf);
+                System.out.println("Read from the server: " + new String(buf, 0, read));
+            }
         }
     }
 
