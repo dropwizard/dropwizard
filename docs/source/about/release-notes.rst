@@ -6,7 +6,7 @@ Release Notes
 
 .. _rel-1.0.6:
 
-v1.0.6 Unreleased
+v1.0.6 Jan 30 2017
 ==================
 
 * Switch cert and peer validation to false by default `#1855 <https://github.com/dropwizard/dropwizard/pull/1855>`_
