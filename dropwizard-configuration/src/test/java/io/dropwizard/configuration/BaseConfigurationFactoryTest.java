@@ -442,6 +442,6 @@ public abstract class BaseConfigurationFactoryTest {
 
     @Test
     public void printsDetailedInformationOnMalformedContent() throws Exception {
-    	factory.build(malformedAdvancedFile);
+        factory.build(malformedAdvancedFile);
     }
 }

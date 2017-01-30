@@ -16,12 +16,12 @@ public class YamlConfigurationFactoryTest extends BaseConfigurationFactoryTest {
         this.typoFile = resourceFileName("factory-test-typo.yml");
         this.wrongTypeFile = resourceFileName("factory-test-wrong-type.yml");
         this.malformedAdvancedFile = resourceFileName("factory-test-malformed-advanced.yml");
-	}
+    }
     
     @Override
     public void throwsAnExceptionOnMalformedFiles() throws Exception {
-    	try {
-    	    super.throwsAnExceptionOnMalformedFiles();
+        try {
+            super.throwsAnExceptionOnMalformedFiles();
         } catch (ConfigurationParsingException e) {
             assertThat(e)
                 .hasMessageContaining(" * Failed to parse configuration; Can not construct instance of io.dropwizard.configuration.BaseConfigurationFactoryTest$Example");
@@ -32,8 +32,8 @@ public class YamlConfigurationFactoryTest extends BaseConfigurationFactoryTest {
     public void printsDetailedInformationOnMalformedContent() throws Exception {
         try {
             super.printsDetailedInformationOnMalformedContent();
-        } catch(Throwable t) {
-        	assertThat(t).hasMessageContaining(String.format(
+        } catch (Throwable t) {
+            assertThat(t).hasMessageContaining(String.format(
                     "%s has an error:%n" +
                     "  * Malformed YAML at line: 3, column: 22; while parsing a flow sequence\n" +
                     " in 'reader', line 2, column 7:\n" +

@@ -91,7 +91,7 @@ public abstract class BaseConfigurationFactory<T> implements ConfigurationFactor
             return build(node, path);
         } catch (JsonParseException e) {
             throw ConfigurationParsingException
-            .builder("Malformed "+formatName)
+            .builder("Malformed " + formatName)
             .setCause(e)
             .setLocation(e.getLocation())
             .setDetail(e.getMessage())
@@ -100,10 +100,10 @@ public abstract class BaseConfigurationFactory<T> implements ConfigurationFactor
     }
 
     protected JsonParser createParser(InputStream input) throws IOException {
-    	return parserFactory.createParser(input);
+        return parserFactory.createParser(input);
     };
 
-	@Override
+    @Override
     public T build() throws IOException, ConfigurationException {
         try {
             final JsonNode node = mapper.valueToTree(klass.newInstance());
