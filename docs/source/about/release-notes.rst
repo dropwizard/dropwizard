@@ -10,6 +10,7 @@ v1.0.6 Unreleased
 ==================
 
 * Switch cert and peer validation to false by default `#1855 <https://github.com/dropwizard/dropwizard/pull/1855>`_
+* Add a JUnit rule for testing database interactions `#1905 <https://github.com/dropwizard/dropwizard/pull/1905>`_
 
 .. _rel-1.0.5:
 
