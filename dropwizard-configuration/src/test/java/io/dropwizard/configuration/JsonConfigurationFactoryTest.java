@@ -30,7 +30,7 @@ public class JsonConfigurationFactoryTest extends BaseConfigurationFactoryTest {
 
     @Override
     public void printsDetailedInformationOnMalformedContent() throws Exception {
-    	try {
+        try {
             super.printsDetailedInformationOnMalformedContent();
         } catch (ConfigurationParsingException e) {
             assertThat(e)
