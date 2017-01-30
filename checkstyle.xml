@@ -4,8 +4,10 @@
     "http://www.puppycrawl.com/dtds/configuration_1_3.dtd">
 <module name="Checker">
     <property name="localeLanguage" value="en"/>
-    
-    <module name="FileTabCharacter"/>
+
+    <module name="FileTabCharacter">
+        <property name="fileExtensions" value="java"/>
+    </module>
 
     <module name="TreeWalker">
 
