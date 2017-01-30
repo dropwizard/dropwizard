@@ -50,6 +50,7 @@ public abstract class BaseConfigurationFactory<T> implements ConfigurationFactor
 
     /**
      * Creates a new configuration factory for the given class.
+     *
      * @param parserFactory  the factory that creates the parser used
      * @param formatName     the name of the format parsed by this factory (used in exceptions)
      * @param klass          the configuration class
@@ -65,7 +66,7 @@ public abstract class BaseConfigurationFactory<T> implements ConfigurationFactor
         this.klass = klass;
         this.formatName = formatName;
         this.propertyPrefix = (propertyPrefix == null || propertyPrefix.endsWith("."))
-                ? propertyPrefix : (propertyPrefix + '.');
+            ? propertyPrefix : (propertyPrefix + '.');
         // Sub-classes may choose to omit data-binding; if so, null ObjectMapper passed:
         if (objectMapper == null) { // sub-class has no need for mapper
             this.mapper = null;
@@ -84,24 +85,24 @@ public abstract class BaseConfigurationFactory<T> implements ConfigurationFactor
 
             if (node == null) {
                 throw ConfigurationParsingException
-                        .builder("Configuration at " + path + " must not be empty")
-                        .build(path);
+                    .builder("Configuration at " + path + " must not be empty")
+                    .build(path);
             }
 
             return build(node, path);
         } catch (JsonParseException e) {
             throw ConfigurationParsingException
-            .builder("Malformed " + formatName)
-            .setCause(e)
-            .setLocation(e.getLocation())
-            .setDetail(e.getMessage())
-            .build(path);
+                .builder("Malformed " + formatName)
+                .setCause(e)
+                .setLocation(e.getLocation())
+                .setDetail(e.getMessage())
+                .build(path);
         }
     }
 
     protected JsonParser createParser(InputStream input) throws IOException {
         return parserFactory.createParser(input);
-    };
+    }
 
     @Override
     public T build() throws IOException, ConfigurationException {
@@ -110,7 +111,7 @@ public abstract class BaseConfigurationFactory<T> implements ConfigurationFactor
             return build(node, "default configuration");
         } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | SecurityException e) {
             throw new IllegalArgumentException("Unable create an instance " +
-                    "of the configuration class: '" + klass.getCanonicalName() + "'", e);
+                "of the configuration class: '" + klass.getCanonicalName() + "'", e);
         }
     }
 
@@ -129,39 +130,39 @@ public abstract class BaseConfigurationFactory<T> implements ConfigurationFactor
             return config;
         } catch (UnrecognizedPropertyException e) {
             final List<String> properties = e.getKnownPropertyIds().stream()
-                    .map(Object::toString)
-                    .collect(Collectors.toList());
+                .map(Object::toString)
+                .collect(Collectors.toList());
             throw ConfigurationParsingException.builder("Unrecognized field")
-                    .setFieldPath(e.getPath())
-                    .setLocation(e.getLocation())
-                    .addSuggestions(properties)
-                    .setSuggestionBase(e.getPropertyName())
-                    .setCause(e)
-                    .build(path);
+                .setFieldPath(e.getPath())
+                .setLocation(e.getLocation())
+                .addSuggestions(properties)
+                .setSuggestionBase(e.getPropertyName())
+                .setCause(e)
+                .build(path);
         } catch (InvalidFormatException e) {
             final String sourceType = e.getValue().getClass().getSimpleName();
             final String targetType = e.getTargetType().getSimpleName();
             throw ConfigurationParsingException.builder("Incorrect type of value")
-                    .setDetail("is of type: " + sourceType + ", expected: " + targetType)
-                    .setLocation(e.getLocation())
-                    .setFieldPath(e.getPath())
-                    .setCause(e)
-                    .build(path);
+                .setDetail("is of type: " + sourceType + ", expected: " + targetType)
+                .setLocation(e.getLocation())
+                .setFieldPath(e.getPath())
+                .setCause(e)
+                .build(path);
         } catch (JsonMappingException e) {
             throw ConfigurationParsingException.builder("Failed to parse configuration")
-                    .setDetail(e.getMessage())
-                    .setFieldPath(e.getPath())
-                    .setLocation(e.getLocation())
-                    .setCause(e)
-                    .build(path);
+                .setDetail(e.getMessage())
+                .setFieldPath(e.getPath())
+                .setLocation(e.getLocation())
+                .setCause(e)
+                .build(path);
         }
     }
 
     protected void addOverride(JsonNode root, String name, String value) {
         JsonNode node = root;
         final List<String> parts = ESCAPED_DOT_SPLITTER.splitToList(name).stream()
-                .map(key -> ESCAPED_DOT_PATTERN.matcher(key).replaceAll("."))
-                .collect(Collectors.toList());
+            .map(key -> ESCAPED_DOT_PATTERN.matcher(key).replaceAll("."))
+            .collect(Collectors.toList());
         for (int i = 0; i < parts.size(); i++) {
             final String key = parts.get(i);
 
@@ -187,14 +188,14 @@ public abstract class BaseConfigurationFactory<T> implements ConfigurationFactor
                 child = obj.get(key.substring(0, s));
                 if (child == null) {
                     throw new IllegalArgumentException("Unable to override " + name +
-                            "; node with index not found.");
+                        "; node with index not found.");
                 }
                 if (!child.isArray()) {
                     throw new IllegalArgumentException("Unable to override " + name +
-                            "; node with index is not an array.");
+                        "; node with index is not an array.");
                 } else if (index >= child.size()) {
                     throw new ArrayIndexOutOfBoundsException("Unable to override " + name +
-                            "; index is greater than size of array.");
+                        "; index is greater than size of array.");
                 }
                 if (moreParts) {
                     child = child.get(index);
@@ -212,7 +213,7 @@ public abstract class BaseConfigurationFactory<T> implements ConfigurationFactor
                 }
                 if (child.isArray()) {
                     throw new IllegalArgumentException("Unable to override " + name +
-                            "; target is an array but no index specified");
+                        "; target is an array but no index specified");
                 }
                 node = child;
             }
