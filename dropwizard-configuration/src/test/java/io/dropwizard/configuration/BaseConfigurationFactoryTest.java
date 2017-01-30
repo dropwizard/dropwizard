@@ -29,7 +29,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
 
-public class ConfigurationFactoryTest {
+public abstract class BaseConfigurationFactoryTest {
 
     private static final String NEWLINE = System.lineSeparator();
 
@@ -160,16 +160,7 @@ public class ConfigurationFactoryTest {
     }
 
     @Before
-    public void setUp() throws Exception {
-        factory = new YamlConfigurationFactory<>(Example.class, validator, Jackson.newObjectMapper(), "dw");
-        this.malformedFile = resourceFileName("factory-test-malformed.yml");
-        this.emptyFile = resourceFileName("factory-test-empty.yml");
-        this.invalidFile = resourceFileName("factory-test-invalid.yml");
-        this.validFile = resourceFileName("factory-test-valid.yml");
-        this.typoFile = resourceFileName("factory-test-typo.yml");
-        this.wrongTypeFile = resourceFileName("factory-test-wrong-type.yml");
-        this.malformedAdvancedFile = resourceFileName("factory-test-malformed-advanced.yml");
-    }
+    public abstract void setUp() throws Exception;
 
     @Test
     public void usesDefaultedCacheBuilderSpec() throws Exception {
@@ -350,13 +341,8 @@ public class ConfigurationFactoryTest {
 
     @Test
     public void throwsAnExceptionOnMalformedFiles() throws Exception {
-        try {
-            factory.build(malformedFile);
-            failBecauseExceptionWasNotThrown(ConfigurationParsingException.class);
-        } catch (ConfigurationParsingException e) {
-            assertThat(e.getMessage())
-                    .containsOnlyOnce(" * Failed to parse configuration; Can not construct instance of io.dropwizard.configuration.ConfigurationFactoryTest$Example");
-        }
+        factory.build(malformedFile);
+        failBecauseExceptionWasNotThrown(ConfigurationParsingException.class);
     }
 
     @Test
@@ -428,22 +414,22 @@ public class ConfigurationFactoryTest {
         assertThatThrownBy(factory::build)
             .isInstanceOf(IllegalArgumentException.class)
             .hasMessage("Unable create an instance of the configuration class: " +
-                "'io.dropwizard.configuration.ConfigurationFactoryTest.NonInsatiableExample'");
+                "'io.dropwizard.configuration.BaseConfigurationFactoryTest.NonInsatiableExample'");
     }
 
     @Test
     public void printsDidYouMeanOnUnrecognizedField() throws Exception {
         assertThatThrownBy(() -> factory.build(typoFile))
             .isInstanceOf(ConfigurationParsingException.class)
-            .hasMessage(typoFile + " has an error:" + NEWLINE +
-                "  * Unrecognized field at: propertis" + NEWLINE +
-                "    Did you mean?:" + NEWLINE +
-                "      - properties" + NEWLINE +
-                "      - servers" + NEWLINE +
-                "      - type" + NEWLINE +
-                "      - name" + NEWLINE +
-                "      - age" + NEWLINE +
-                "        [2 more]" + NEWLINE);
+            .hasMessage(String.format("%s has an error:%n" +
+                "  * Unrecognized field at: propertis%n" +
+                "    Did you mean?:%n" +
+                "      - properties%n" +
+                "      - servers%n" +
+                "      - type%n" +
+                "      - name%n" +
+                "      - age%n" +
+                "        [2 more]%n", typoFile));
     }
 
     @Test
@@ -455,17 +441,7 @@ public class ConfigurationFactoryTest {
     }
 
     @Test
-    public void printsDetailedInformationOnMalformedYaml() throws Exception {
-        assertThatThrownBy(() -> factory.build(malformedAdvancedFile))
-            .hasMessageContaining(String.format(
-                "%s has an error:%n" +
-                "  * Malformed YAML at line: 2, column: 21; while parsing a flow sequence\n" +
-                " in 'reader', line 2, column 7:\n" +
-                "    type: [ coder,wizard\n" +
-                "          ^\n" +
-                "expected ',' or ']', but got StreamEnd\n" +
-                " in 'reader', line 2, column 21:\n" +
-                "    wizard\n" +
-                "          ^", malformedAdvancedFile.getName()));
+    public void printsDetailedInformationOnMalformedContent() throws Exception {
+    	factory.build(malformedAdvancedFile);
     }
 }
