@@ -29,7 +29,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
 
-public class ConfigurationFactoryTest {
+public abstract class BaseConfigurationFactoryTest {
 
     private static final String NEWLINE = System.lineSeparator();
 
@@ -135,15 +135,17 @@ public class ConfigurationFactoryTest {
         }
     }
 
-    private final Validator validator = BaseValidator.newValidator();
-    private final YamlConfigurationFactory<Example> factory =
-            new YamlConfigurationFactory<>(Example.class, validator, Jackson.newObjectMapper(), "dw");
-    private File malformedFile;
-    private File emptyFile;
-    private File invalidFile;
-    private File validFile;
+    protected final Validator validator = BaseValidator.newValidator();
+    protected ConfigurationFactory<Example> factory;
+    protected File malformedFile;
+    protected File emptyFile;
+    protected File invalidFile;
+    protected File validFile;
+    protected File typoFile;
+    protected File wrongTypeFile;
+    protected File malformedAdvancedFile;
 
-    private static File resourceFileName(String resourceName) throws URISyntaxException {
+    protected static File resourceFileName(String resourceName) throws URISyntaxException {
         return new File(Resources.getResource(resourceName).toURI());
     }
 
@@ -158,12 +160,7 @@ public class ConfigurationFactoryTest {
     }
 
     @Before
-    public void setUp() throws Exception {
-        this.malformedFile = resourceFileName("factory-test-malformed.yml");
-        this.emptyFile = resourceFileName("factory-test-empty.yml");
-        this.invalidFile = resourceFileName("factory-test-invalid.yml");
-        this.validFile = resourceFileName("factory-test-valid.yml");
-    }
+    public abstract void setUp() throws Exception;
 
     @Test
     public void usesDefaultedCacheBuilderSpec() throws Exception {
@@ -344,13 +341,8 @@ public class ConfigurationFactoryTest {
 
     @Test
     public void throwsAnExceptionOnMalformedFiles() throws Exception {
-        try {
-            factory.build(malformedFile);
-            failBecauseExceptionWasNotThrown(ConfigurationParsingException.class);
-        } catch (ConfigurationParsingException e) {
-            assertThat(e.getMessage())
-                    .containsOnlyOnce(" * Failed to parse configuration; Can not construct instance of io.dropwizard.configuration.ConfigurationFactoryTest$Example");
-        }
+        factory.build(malformedFile);
+        failBecauseExceptionWasNotThrown(ConfigurationParsingException.class);
     }
 
     @Test
@@ -373,8 +365,9 @@ public class ConfigurationFactoryTest {
             if ("en".equals(Locale.getDefault().getLanguage())) {
                 assertThat(e.getMessage())
                         .endsWith(String.format(
-                                "factory-test-invalid.yml has an error:%n" +
-                                        "  * name must match \"[\\w]+[\\s]+[\\w]+([\\s][\\w]+)?\"%n"));
+                                "%s has an error:%n" +
+                                        "  * name must match \"[\\w]+[\\s]+[\\w]+([\\s][\\w]+)?\"%n",
+                                        invalidFile.getName()));
             }
         }
     }
@@ -421,47 +414,34 @@ public class ConfigurationFactoryTest {
         assertThatThrownBy(factory::build)
             .isInstanceOf(IllegalArgumentException.class)
             .hasMessage("Unable create an instance of the configuration class: " +
-                "'io.dropwizard.configuration.ConfigurationFactoryTest.NonInsatiableExample'");
+                "'io.dropwizard.configuration.BaseConfigurationFactoryTest.NonInsatiableExample'");
     }
 
     @Test
     public void printsDidYouMeanOnUnrecognizedField() throws Exception {
-        final File resourceFileName = resourceFileName("factory-test-typo.yml");
-        assertThatThrownBy(() -> factory.build(resourceFileName))
+        assertThatThrownBy(() -> factory.build(typoFile))
             .isInstanceOf(ConfigurationParsingException.class)
-            .hasMessage(resourceFileName + " has an error:" + NEWLINE +
-                "  * Unrecognized field at: propertis" + NEWLINE +
-                "    Did you mean?:" + NEWLINE +
-                "      - properties" + NEWLINE +
-                "      - servers" + NEWLINE +
-                "      - type" + NEWLINE +
-                "      - name" + NEWLINE +
-                "      - age" + NEWLINE +
-                "        [2 more]" + NEWLINE);
+            .hasMessage(String.format("%s has an error:%n" +
+                "  * Unrecognized field at: propertis%n" +
+                "    Did you mean?:%n" +
+                "      - properties%n" +
+                "      - servers%n" +
+                "      - type%n" +
+                "      - name%n" +
+                "      - age%n" +
+                "        [2 more]%n", typoFile));
     }
 
     @Test
     public void incorrectTypeIsFound() throws Exception {
-        final File resourceFileName = resourceFileName("factory-test-wrong-type.yml");
-        assertThatThrownBy(() -> factory.build(resourceFileName))
+        assertThatThrownBy(() -> factory.build(wrongTypeFile))
             .isInstanceOf(ConfigurationParsingException.class)
-            .hasMessage(resourceFileName + " has an error:" + NEWLINE +
-                "  * Incorrect type of value at: age; is of type: String, expected: int" + NEWLINE);
+            .hasMessage(String.format("%s has an error:" + NEWLINE +
+                "  * Incorrect type of value at: age; is of type: String, expected: int" + NEWLINE, wrongTypeFile));
     }
 
     @Test
-    public void printsDetailedInformationOnMalformedYaml() throws Exception {
-        final File resourceFileName = resourceFileName("factory-test-malformed-advanced.yml");
-        assertThatThrownBy(() -> factory.build(resourceFileName))
-            .hasMessageContaining(String.format(
-                "factory-test-malformed-advanced.yml has an error:%n" +
-                "  * Malformed YAML at line: 2, column: 21; while parsing a flow sequence\n" +
-                " in 'reader', line 2, column 7:\n" +
-                "    type: [ coder,wizard\n" +
-                "          ^\n" +
-                "expected ',' or ']', but got StreamEnd\n" +
-                " in 'reader', line 2, column 21:\n" +
-                "    wizard\n" +
-                "          ^"));
+    public void printsDetailedInformationOnMalformedContent() throws Exception {
+        factory.build(malformedAdvancedFile);
     }
 }
