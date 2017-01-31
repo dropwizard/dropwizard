@@ -1,5 +1,6 @@
 package io.dropwizard.migrations;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Joiner;
 import io.dropwizard.Configuration;
 import io.dropwizard.db.DatabaseConfiguration;
@@ -9,16 +10,25 @@ import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
 
 import java.io.OutputStreamWriter;
+import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 public class DbFastForwardCommand<T extends Configuration> extends AbstractLiquibaseCommand<T> {
+
+    private PrintStream printStream = System.out;
+
     protected DbFastForwardCommand(DatabaseConfiguration<T> strategy, Class<T> configurationClass, String migrationsFileName) {
         super("fast-forward",
               "Mark the next pending change set as applied without running it",
               strategy,
               configurationClass,
               migrationsFileName);
+    }
+
+    @VisibleForTesting
+    void setPrintStream(PrintStream printStream) {
+        this.printStream = printStream;
     }
 
     @Override
@@ -44,19 +54,18 @@ public class DbFastForwardCommand<T extends Configuration> extends AbstractLiqui
     }
 
     @Override
-    @SuppressWarnings("UseOfSystemOutOrSystemErr")
     public void run(Namespace namespace,
                     Liquibase liquibase) throws Exception {
         final String context = getContext(namespace);
         if (namespace.getBoolean("all")) {
             if (namespace.getBoolean("dry-run")) {
-                liquibase.changeLogSync(context, new OutputStreamWriter(System.out, StandardCharsets.UTF_8));
+                liquibase.changeLogSync(context, new OutputStreamWriter(printStream, StandardCharsets.UTF_8));
             } else {
                 liquibase.changeLogSync(context);
             }
         } else {
             if (namespace.getBoolean("dry-run")) {
-                liquibase.markNextChangeSetRan(context, new OutputStreamWriter(System.out, StandardCharsets.UTF_8));
+                liquibase.markNextChangeSetRan(context, new OutputStreamWriter(printStream, StandardCharsets.UTF_8));
             } else {
                 liquibase.markNextChangeSetRan(context);
             }
