@@ -7,6 +7,7 @@ import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.afterburner.AfterburnerModule;
+import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 
 /**
  * A utility class for Jackson.
@@ -57,6 +58,7 @@ public class Jackson {
         mapper.registerModule(new JodaModule());
         mapper.registerModule(new AfterburnerModule());
         mapper.registerModule(new FuzzyEnumModule());
+        mapper.registerModule(new ParameterNamesModule());
         mapper.registerModules(new Jdk8Module());
         mapper.registerModules(new JavaTimeModule());
         mapper.setPropertyNamingStrategy(new AnnotationSensitivePropertyNamingStrategy());
