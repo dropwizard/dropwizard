@@ -52,6 +52,14 @@ v1.1.0: Unreleased
 * Upgraded to Joda-Time 2.9.7
 * Upgraded to commons-lang3 3.5
 
+.. _rel-1.0.6:
+
+v1.0.6 Jan 30 2017
+==================
+
+* Switch cert and peer validation to false by default `#1855 <https://github.com/dropwizard/dropwizard/pull/1855>`_
+* Add a JUnit rule for testing database interactions `#1905 <https://github.com/dropwizard/dropwizard/pull/1905>`_
+
 .. _rel-1.0.5:
 
 v1.0.5 Nov 18 2016
