@@ -32,6 +32,7 @@ v1.1.0: Unreleased
 * Add the ``blockingTimeout`` option to the HTTP configuration `#1795 <https://github.com/dropwizard/dropwizard/pull/1795>`_
 * Add ``min`` and ``mins`` as valid ``Duration`` abbreviations `#1833 <https://github.com/dropwizard/dropwizard/pull/1833>`_
 * Register Jackson parameter-names modules `#1908 <https://github.com/dropwizard/dropwizard/pull/1908>`_
+* Native Jackson deserialization of enums when Jackson annotations are present `#1909 <https://github.com/dropwizard/dropwizard/pull/1909>`_
 * Add `JsonConfigurationFactory` for first-class support of the JSON configuration `#1897 <https://github.com/dropwizard/dropwizard/pull/1897>`_
 * Upgraded to Jackson 2.8.6
 * Upgraded to Hibernate Validator 5.3.4.Final
