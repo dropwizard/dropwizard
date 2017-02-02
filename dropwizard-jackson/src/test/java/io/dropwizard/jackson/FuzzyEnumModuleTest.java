@@ -1,6 +1,7 @@
 package io.dropwizard.jackson;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -48,6 +49,23 @@ public class FuzzyEnumModuleTest {
         public String toString() {
             return description;
         }
+    }
+
+    enum EnumWithPropertyAnno {
+        @JsonProperty("a a")
+        A,
+
+        // For this value, force use of anonymous sub-class, to ensure things still work
+        @JsonProperty("b b")
+        B {
+            @Override
+            public String toString() {
+                return "bb";
+            }
+        },
+
+        @JsonProperty("forgot password")
+        FORGOT_PASSWORD,
     }
 
     @Before
@@ -133,5 +151,20 @@ public class FuzzyEnumModuleTest {
         assertThat(mapper.readValue("\"a_u_d\"", CurrencyCode.class)).isEqualTo(CurrencyCode.AUD);
         assertThat(mapper.readValue("\"c-a-d\"", CurrencyCode.class)).isEqualTo(CurrencyCode.CAD);
         assertThat(mapper.readValue("\"b.l.a\"", CurrencyCode.class)).isEqualTo(CurrencyCode.BLA);
+    }
+
+    @Test
+    public void testEnumWithJsonPropertyRename() throws Exception {
+        final String json = mapper.writeValueAsString(new EnumWithPropertyAnno[] {
+            EnumWithPropertyAnno.B, EnumWithPropertyAnno.A, EnumWithPropertyAnno.FORGOT_PASSWORD
+        });
+        assertThat(json).isEqualTo("[\"b b\",\"a a\",\"forgot password\"]");
+
+        final EnumWithPropertyAnno[] result = mapper.readValue(json, EnumWithPropertyAnno[].class);
+
+        assertThat(result).isNotNull().hasSize(3);
+        assertThat(result[0]).isEqualTo(EnumWithPropertyAnno.B);
+        assertThat(result[1]).isEqualTo(EnumWithPropertyAnno.A);
+        assertThat(result[2]).isEqualTo(EnumWithPropertyAnno.FORGOT_PASSWORD);
     }
 }
