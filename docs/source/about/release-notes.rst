@@ -36,7 +36,7 @@ v1.1.0: Unreleased
 * Add `JsonConfigurationFactory` for first-class support of the JSON configuration `#1897 <https://github.com/dropwizard/dropwizard/pull/1897>`_
 * Upgraded to Jackson 2.8.6
 * Upgraded to Hibernate Validator 5.3.4.Final
-* Upgraded to Jetty 9.4.1.v20170120 `#1901 <https://github.com/dropwizard/dropwizard/pull/1901>`
+* Upgraded to Jetty 9.4.1.v20170120 `#1901 <https://github.com/dropwizard/dropwizard/pull/1901>`_
 * Upgraded to tomcat-jdbc 8.5.9
 * Upgraded to Objenesis 2.4 `#1654 <https://github.com/dropwizard/dropwizard/pull/1654>`_
 * Upgraded to AssertJ 3.6.1
