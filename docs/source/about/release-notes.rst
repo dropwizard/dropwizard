@@ -18,6 +18,7 @@ v1.1.0: Unreleased
 * Allow overriding of a default ``ExceptionMapper`` without re-registering all other defaults `#1768 <https://github.com/dropwizard/dropwizard/pull/1768>`_
 * Allow overriding of default ``JsonProvider`` `#1788 <https://github.com/dropwizard/dropwizard/pull/1788>`_
 * Finer-grain control of exception behaviour in view renderers `#1820 <https://github.com/dropwizard/dropwizard/pull/1820>`_
+* Default ``WebApplicationException`` handler preserves exception HTTP headers `#1912 <https://github.com/dropwizard/dropwizard/pull/1912>`_
 * JerseyClientBuilder can create rx-capable client `#1721 <https://github.com/dropwizard/dropwizard/pull/1721>`_
 * Configurable response for empty `Optional` return values `#1784 <https://github.com/dropwizard/dropwizard/pull/1784>`_
 * Add web test container agnostic way of invoking requests in ``ResourceTestRule`` `#1778 <https://github.com/dropwizard/dropwizard/pull/1778>`_

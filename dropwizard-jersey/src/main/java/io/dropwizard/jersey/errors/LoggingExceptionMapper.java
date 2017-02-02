@@ -16,9 +16,8 @@ public abstract class LoggingExceptionMapper<E extends Throwable> implements Exc
 
     @Override
     public Response toResponse(E exception) {
-        final int status;
-        final ErrorMessage errorMessage;
-
+        // If we're dealing with a web exception, we can service certain types of request (like
+        // redirection or server errors) better and also propagate properties of the inner response.
         if (exception instanceof WebApplicationException) {
             final Response response = ((WebApplicationException) exception).getResponse();
             Response.Status.Family family = response.getStatusInfo().getFamily();
@@ -28,17 +27,20 @@ public abstract class LoggingExceptionMapper<E extends Throwable> implements Exc
             if (family.equals(Response.Status.Family.SERVER_ERROR)) {
                 logException(exception);
             }
-            status = response.getStatus();
-            errorMessage = new ErrorMessage(status, exception.getLocalizedMessage());
-        } else {
-            final long id = logException(exception);
-            status = Response.Status.INTERNAL_SERVER_ERROR.getStatusCode();
-            errorMessage = new ErrorMessage(formatErrorMessage(id, exception));
+
+            return Response.fromResponse(response)
+                .type(MediaType.APPLICATION_JSON_TYPE)
+                .entity(new ErrorMessage(response.getStatus(), exception.getLocalizedMessage()))
+                .build();
         }
 
-        return Response.status(status)
+        // Else the thrown exception is a not a web exception, so the exception is most likely
+        // unexpected. We'll create a unique id in the server error response that is also logged for
+        // correlation
+        final long id = logException(exception);
+        return Response.status(Response.Status.INTERNAL_SERVER_ERROR.getStatusCode())
                 .type(MediaType.APPLICATION_JSON_TYPE)
-                .entity(errorMessage)
+                .entity(new ErrorMessage(formatErrorMessage(id, exception)))
                 .build();
     }
 
