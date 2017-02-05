@@ -9,6 +9,7 @@ import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 
 import java.io.ByteArrayOutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.regex.Pattern;
@@ -110,7 +111,7 @@ public class DbFastForwardCommandTest extends AbstractMigrationTest {
     @Test
     public void testPrintHelp() throws Exception {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        createSubparser(fastForwardCommand).printHelp(new PrintWriter(baos, true));
+        createSubparser(fastForwardCommand).printHelp(new PrintWriter(new OutputStreamWriter(baos, UTF_8), true));
         assertThat(baos.toString(UTF_8)).isEqualTo(String.format(
             "usage: db fast-forward [-h] [--migrations MIGRATIONS-FILE]%n" +
             "          [--catalog CATALOG] [--schema SCHEMA] [-n] [-a] [-i CONTEXTS]%n" +

@@ -8,6 +8,7 @@ import org.skife.jdbi.v2.Handle;
 
 import net.jcip.annotations.NotThreadSafe;
 import java.io.ByteArrayOutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -40,7 +41,7 @@ public class DbDropAllCommandTest extends AbstractMigrationTest {
     @Test
     public void testHelpPage() throws Exception {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
-        createSubparser(dropAllCommand).printHelp(new PrintWriter(out, true));
+        createSubparser(dropAllCommand).printHelp(new PrintWriter(new OutputStreamWriter(out, UTF_8), true));
         assertThat(out.toString(UTF_8)).isEqualTo(String.format(
             "usage: db drop-all [-h] [--migrations MIGRATIONS-FILE] [--catalog CATALOG]%n" +
                 "          [--schema SCHEMA] --confirm-delete-everything [file]%n" +

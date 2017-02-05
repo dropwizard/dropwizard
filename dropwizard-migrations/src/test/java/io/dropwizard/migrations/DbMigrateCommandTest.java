@@ -11,6 +11,7 @@ import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 
 import java.io.ByteArrayOutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.List;
@@ -71,7 +72,7 @@ public class DbMigrateCommandTest extends AbstractMigrationTest {
         migrateCommand.configure(subparser);
 
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        subparser.printHelp(new PrintWriter(baos, true));
+        subparser.printHelp(new PrintWriter(new OutputStreamWriter(baos, UTF_8), true));
         assertThat(baos.toString(UTF_8)).isEqualTo(String.format(
                         "usage: db migrate [-h] [--migrations MIGRATIONS-FILE] [--catalog CATALOG]%n" +
                         "          [--schema SCHEMA] [-n] [-c COUNT] [-i CONTEXTS] [file]%n" +

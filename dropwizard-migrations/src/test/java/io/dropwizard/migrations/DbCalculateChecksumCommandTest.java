@@ -8,6 +8,7 @@ import net.sourceforge.argparse4j.inf.Namespace;
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -35,7 +36,7 @@ public class DbCalculateChecksumCommandTest extends AbstractMigrationTest {
     @Test
     public void testHelpPage() throws Exception {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
-        createSubparser(migrateCommand).printHelp(new PrintWriter(out, true));
+        createSubparser(migrateCommand).printHelp(new PrintWriter(new OutputStreamWriter(out, UTF_8), true));
         assertThat(out.toString(UTF_8)).isEqualTo(String.format(
             "usage: db calculate-checksum [-h] [--migrations MIGRATIONS-FILE]%n" +
                 "          [--catalog CATALOG] [--schema SCHEMA] [file] id author%n" +

@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import java.io.ByteArrayOutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -28,7 +29,7 @@ public class DbClearChecksumsCommandTest extends AbstractMigrationTest {
     @Test
     public void testHelpPage() throws Exception {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
-        createSubparser(clearChecksums).printHelp(new PrintWriter(out, true));
+        createSubparser(clearChecksums).printHelp(new PrintWriter(new OutputStreamWriter(out, UTF_8), true));
         assertThat(out.toString(UTF_8)).isEqualTo(String.format(
             "usage: db clear-checksums [-h] [--migrations MIGRATIONS-FILE]%n" +
                 "          [--catalog CATALOG] [--schema SCHEMA] [file]%n" +

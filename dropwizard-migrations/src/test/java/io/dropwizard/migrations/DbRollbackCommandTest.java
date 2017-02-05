@@ -9,6 +9,7 @@ import org.junit.Test;
 import org.skife.jdbi.v2.DBI;
 
 import java.io.ByteArrayOutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.Date;
@@ -129,7 +130,7 @@ public class DbRollbackCommandTest extends AbstractMigrationTest {
 
     @Test
     public void testPrintHelp() throws Exception {
-        createSubparser(rollbackCommand).printHelp(new PrintWriter(baos, true));
+        createSubparser(rollbackCommand).printHelp(new PrintWriter(new OutputStreamWriter(baos, UTF_8), true));
         assertThat(baos.toString(UTF_8)).isEqualTo(String.format(
             "usage: db rollback [-h] [--migrations MIGRATIONS-FILE] [--catalog CATALOG]%n" +
             "          [--schema SCHEMA] [-n] [-t TAG] [-d DATE] [-c COUNT]%n" +

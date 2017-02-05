@@ -8,6 +8,7 @@ import org.skife.jdbi.v2.Handle;
 
 import net.jcip.annotations.NotThreadSafe;
 import java.io.ByteArrayOutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -34,7 +35,7 @@ public class DbCommandTest extends AbstractMigrationTest {
     @Test
     public void testPrintHelp() throws Exception {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        createSubparser(dbCommand).printHelp(new PrintWriter(baos, true));
+        createSubparser(dbCommand).printHelp(new PrintWriter(new OutputStreamWriter(baos, UTF_8), true));
         assertThat(baos.toString(UTF_8)).isEqualTo(String.format(
             "usage: db db [-h]%n" +
                 "          {calculate-checksum,clear-checksums,drop-all,dump,fast-forward,generate-docs,locks,migrate,prepare-rollback,rollback,status,tag,test}%n" +

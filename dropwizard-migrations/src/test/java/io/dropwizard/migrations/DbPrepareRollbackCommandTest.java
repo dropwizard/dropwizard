@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.UUID;
@@ -48,7 +49,7 @@ public class DbPrepareRollbackCommandTest extends AbstractMigrationTest {
     @Test
     public void testPrintHelp() throws Exception {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
-        createSubparser(prepareRollbackCommand).printHelp(new PrintWriter(out, true));
+        createSubparser(prepareRollbackCommand).printHelp(new PrintWriter(new OutputStreamWriter(out, UTF_8), true));
         assertThat(out.toString(UTF_8)).isEqualTo(String.format(
             "usage: db prepare-rollback [-h] [--migrations MIGRATIONS-FILE]%n" +
                 "          [--catalog CATALOG] [--schema SCHEMA] [-c COUNT] [-i CONTEXTS]%n" +

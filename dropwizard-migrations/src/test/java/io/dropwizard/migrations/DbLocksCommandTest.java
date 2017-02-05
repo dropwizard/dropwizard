@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import java.io.ByteArrayOutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 
@@ -60,7 +61,7 @@ public class DbLocksCommandTest extends AbstractMigrationTest {
     @Test
     public void testPrintHelp() throws Exception {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
-        createSubparser(locksCommand).printHelp(new PrintWriter(out, true));
+        createSubparser(locksCommand).printHelp(new PrintWriter(new OutputStreamWriter(out, UTF_8), true));
         assertThat(out.toString(UTF_8)).isEqualTo(String.format(
             "usage: db locks [-h] [--migrations MIGRATIONS-FILE] [--catalog CATALOG]%n" +
                 "          [--schema SCHEMA] [-l] [-r] [file]%n" +

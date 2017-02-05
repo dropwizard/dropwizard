@@ -12,6 +12,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.PrintStream;
 import java.io.PrintWriter;
+import java.io.OutputStreamWriter;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -61,7 +62,7 @@ public class DbStatusCommandTest extends AbstractMigrationTest {
 
     @Test
     public void testPrintHelp() throws Exception {
-        createSubparser(statusCommand).printHelp(new PrintWriter(baos, true));
+        createSubparser(statusCommand).printHelp(new PrintWriter(new OutputStreamWriter(baos, UTF_8), true));
         assertThat(baos.toString(UTF_8)).isEqualTo(String.format(
                 "usage: db status [-h] [--migrations MIGRATIONS-FILE] [--catalog CATALOG]%n" +
                         "          [--schema SCHEMA] [-v] [-i CONTEXTS] [file]%n" +

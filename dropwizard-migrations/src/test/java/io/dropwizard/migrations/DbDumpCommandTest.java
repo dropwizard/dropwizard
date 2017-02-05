@@ -22,6 +22,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
@@ -101,7 +102,7 @@ public class DbDumpCommandTest extends AbstractMigrationTest {
 
     @Test
     public void testHelpPage() throws Exception {
-        createSubparser(dumpCommand).printHelp(new PrintWriter(baos, true));
+        createSubparser(dumpCommand).printHelp(new PrintWriter(new OutputStreamWriter(baos, UTF_8), true));
         assertThat(baos.toString(UTF_8)).isEqualTo(String.format(
                 "usage: db dump [-h] [--migrations MIGRATIONS-FILE] [--catalog CATALOG]%n" +
                         "          [--schema SCHEMA] [-o OUTPUT] [--tables] [--ignore-tables]%n" +

@@ -9,6 +9,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import java.io.ByteArrayOutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -29,7 +30,7 @@ public class DbGenerateDocsCommandTest extends AbstractMigrationTest {
     @Test
     public void testHelpPage() throws Exception {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        createSubparser(generateDocsCommand).printHelp(new PrintWriter(baos, true));
+        createSubparser(generateDocsCommand).printHelp(new PrintWriter(new OutputStreamWriter(baos, UTF_8), true));
         assertThat(baos.toString(UTF_8)).isEqualTo(String.format(
             "usage: db generate-docs [-h] [--migrations MIGRATIONS-FILE]%n" +
                 "          [--catalog CATALOG] [--schema SCHEMA] [file] output%n" +

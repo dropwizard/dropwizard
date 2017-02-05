@@ -6,6 +6,7 @@ import net.sourceforge.argparse4j.inf.Namespace;
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -28,7 +29,7 @@ public class DbTestCommandTest extends AbstractMigrationTest {
     @Test
     public void testPrintHelp() throws Exception {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        createSubparser(dbTestCommand).printHelp(new PrintWriter(baos, true));
+        createSubparser(dbTestCommand).printHelp(new PrintWriter(new OutputStreamWriter(baos, UTF_8), true));
         assertThat(baos.toString(UTF_8)).isEqualTo(String.format(
             "usage: db test [-h] [--migrations MIGRATIONS-FILE] [--catalog CATALOG]%n" +
                 "          [--schema SCHEMA] [-i CONTEXTS] [file]%n" +
