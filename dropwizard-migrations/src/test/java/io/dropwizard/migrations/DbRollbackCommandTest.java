@@ -16,7 +16,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class DbRollbackCommandTest extends AbstractMigrationTest {
 
-    private final String migrationsFileName = "migrations-test.xml";
+    private final String migrationsFileName = "migrations-ddl.xml";
     private final DbRollbackCommand<TestMigrationConfiguration> rollbackCommand = new DbRollbackCommand<>(
         new TestMigrationDatabaseConfiguration(), TestMigrationConfiguration.class, migrationsFileName);
     private final DbMigrateCommand<TestMigrationConfiguration> migrateCommand = new DbMigrateCommand<>(

@@ -17,7 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class DbMigrateDifferentFileCommandTest extends AbstractMigrationTest {
 
     private DbMigrateCommand<TestMigrationConfiguration> migrateCommand = new DbMigrateCommand<>(
-        TestMigrationConfiguration::getDataSource, TestMigrationConfiguration.class, "migrations-test.xml");
+        TestMigrationConfiguration::getDataSource, TestMigrationConfiguration.class, "migrations-ddl.xml");
     private TestMigrationConfiguration conf;
     private String databaseUrl;
 

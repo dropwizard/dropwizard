@@ -16,7 +16,7 @@ public class DbPrepareRollbackCommandTest extends AbstractMigrationTest {
 
     private final DbPrepareRollbackCommand<TestMigrationConfiguration> prepareRollbackCommand =
         new DbPrepareRollbackCommand<>(new TestMigrationDatabaseConfiguration(), TestMigrationConfiguration.class,
-            "migrations-test.xml");
+            "migrations-ddl.xml");
     private TestMigrationConfiguration conf;
 
     @Before

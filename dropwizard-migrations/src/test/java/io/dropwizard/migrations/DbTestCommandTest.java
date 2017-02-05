@@ -12,7 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class DbTestCommandTest extends AbstractMigrationTest {
 
     private final DbTestCommand<TestMigrationConfiguration> dbTestCommand = new DbTestCommand<>(
-        new TestMigrationDatabaseConfiguration(), TestMigrationConfiguration.class, "migrations-test.xml");
+        new TestMigrationDatabaseConfiguration(), TestMigrationConfiguration.class, "migrations-ddl.xml");
 
     @Test
     public void testRun() throws Exception {

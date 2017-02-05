@@ -12,7 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class DbTagCommandTest extends AbstractMigrationTest {
 
-    private final String migrationsFileName = "migrations-test.xml";
+    private final String migrationsFileName = "migrations-ddl.xml";
     private final DbTagCommand<TestMigrationConfiguration> dbTagCommand = new DbTagCommand<>(
         new TestMigrationDatabaseConfiguration(), TestMigrationConfiguration.class, migrationsFileName);
 
