@@ -1,5 +1,6 @@
 package io.dropwizard.migrations;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Joiner;
 import io.dropwizard.Configuration;
 import io.dropwizard.db.DatabaseConfiguration;
@@ -9,12 +10,21 @@ import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
 
 import java.io.OutputStreamWriter;
+import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 public class DbPrepareRollbackCommand<T extends Configuration> extends AbstractLiquibaseCommand<T> {
+
+    private PrintStream outputStream = System.out;
+
     public DbPrepareRollbackCommand(DatabaseConfiguration<T> strategy, Class<T> configurationClass, String migrationsFileName) {
         super("prepare-rollback", "Generate rollback DDL scripts for pending change sets.", strategy, configurationClass, migrationsFileName);
+    }
+
+    @VisibleForTesting
+    void setOutputStream(PrintStream outputStream) {
+        this.outputStream = outputStream;
     }
 
     @Override
@@ -33,14 +43,13 @@ public class DbPrepareRollbackCommand<T extends Configuration> extends AbstractL
     }
 
     @Override
-    @SuppressWarnings("UseOfSystemOutOrSystemErr")
     public void run(Namespace namespace, Liquibase liquibase) throws Exception {
         final String context = getContext(namespace);
         final Integer count = namespace.getInt("count");
         if (count != null) {
-            liquibase.futureRollbackSQL(count, context, new OutputStreamWriter(System.out, StandardCharsets.UTF_8));
+            liquibase.futureRollbackSQL(count, context, new OutputStreamWriter(outputStream, StandardCharsets.UTF_8));
         } else {
-            liquibase.futureRollbackSQL(context, new OutputStreamWriter(System.out, StandardCharsets.UTF_8));
+            liquibase.futureRollbackSQL(context, new OutputStreamWriter(outputStream, StandardCharsets.UTF_8));
         }
     }
 
