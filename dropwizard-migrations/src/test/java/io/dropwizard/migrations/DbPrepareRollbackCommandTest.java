@@ -30,7 +30,7 @@ public class DbPrepareRollbackCommandTest extends AbstractMigrationTest {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         prepareRollbackCommand.setOutputStream(new PrintStream(baos));
         prepareRollbackCommand.run(null, new Namespace(ImmutableMap.of()), conf);
-        assertThat(baos.toString("UTF-8"))
+        assertThat(baos.toString(UTF_8))
             .contains("ALTER TABLE PUBLIC.persons DROP COLUMN email;")
             .contains("DROP TABLE PUBLIC.persons;");
     }
@@ -40,14 +40,14 @@ public class DbPrepareRollbackCommandTest extends AbstractMigrationTest {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         prepareRollbackCommand.setOutputStream(new PrintStream(baos));
         prepareRollbackCommand.run(null, new Namespace(ImmutableMap.of("count", 1)), conf);
-        assertThat(baos.toString("UTF-8")).contains("DROP TABLE PUBLIC.persons;");
+        assertThat(baos.toString(UTF_8)).contains("DROP TABLE PUBLIC.persons;");
     }
 
     @Test
     public void testPrintHelp() throws Exception {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         createSubparser(prepareRollbackCommand).printHelp(new PrintWriter(out, true));
-        assertThat(out.toString("UTF-8")).isEqualTo(String.format(
+        assertThat(out.toString(UTF_8)).isEqualTo(String.format(
             "usage: db prepare-rollback [-h] [--migrations MIGRATIONS-FILE]%n" +
                 "          [--catalog CATALOG] [--schema SCHEMA] [-c COUNT] [-i CONTEXTS]%n" +
                 "          [file]%n" +

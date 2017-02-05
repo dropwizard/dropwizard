@@ -27,7 +27,7 @@ public class DbClearChecksumsCommandTest extends AbstractMigrationTest {
     public void testHelpPage() throws Exception {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         createSubparser(clearChecksums).printHelp(new PrintWriter(out, true));
-        assertThat(out.toString("UTF-8")).isEqualTo(String.format(
+        assertThat(out.toString(UTF_8)).isEqualTo(String.format(
             "usage: db clear-checksums [-h] [--migrations MIGRATIONS-FILE]%n" +
                 "          [--catalog CATALOG] [--schema SCHEMA] [file]%n" +
                 "%n" +

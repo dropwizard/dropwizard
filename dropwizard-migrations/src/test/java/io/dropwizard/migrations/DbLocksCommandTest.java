@@ -60,7 +60,7 @@ public class DbLocksCommandTest extends AbstractMigrationTest {
     public void testPrintHelp() throws Exception {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         createSubparser(locksCommand).printHelp(new PrintWriter(out, true));
-        assertThat(out.toString("UTF-8")).isEqualTo(String.format(
+        assertThat(out.toString(UTF_8)).isEqualTo(String.format(
             "usage: db locks [-h] [--migrations MIGRATIONS-FILE] [--catalog CATALOG]%n" +
                 "          [--schema SCHEMA] [-l] [-r] [file]%n" +
                 "%n" +

@@ -102,7 +102,7 @@ public class DbDumpCommandTest extends AbstractMigrationTest {
     @Test
     public void testHelpPage() throws Exception {
         createSubparser(dumpCommand).printHelp(new PrintWriter(baos, true));
-        assertThat(baos.toString("UTF-8")).isEqualTo(String.format(
+        assertThat(baos.toString(UTF_8)).isEqualTo(String.format(
                 "usage: db dump [-h] [--migrations MIGRATIONS-FILE] [--catalog CATALOG]%n" +
                         "          [--schema SCHEMA] [-o OUTPUT] [--tables] [--ignore-tables]%n" +
                         "          [--columns] [--ignore-columns] [--views] [--ignore-views]%n" +

@@ -39,20 +39,20 @@ public class DbStatusCommandTest extends AbstractMigrationTest {
         final TestMigrationConfiguration existedDbConf = createConfiguration(existedDbUrl);
 
         statusCommand.run(null, new Namespace(ImmutableMap.of()), existedDbConf);
-        assertThat(baos.toString("UTF-8")).matches("\\S+ is up to date" + System.lineSeparator());
+        assertThat(baos.toString(UTF_8)).matches("\\S+ is up to date" + System.lineSeparator());
     }
 
     @Test
     public void testRun() throws Exception {
         statusCommand.run(null, new Namespace(ImmutableMap.of()), conf);
-        assertThat(baos.toString("UTF-8")).matches(
+        assertThat(baos.toString(UTF_8)).matches(
                 "3 change sets have not been applied to \\S+" + System.lineSeparator());
     }
 
     @Test
     public void testVerbose() throws Exception {
         statusCommand.run(null, new Namespace(ImmutableMap.of("verbose", (Object) true)), conf);
-        assertThat(baos.toString("UTF-8")).matches(
+        assertThat(baos.toString(UTF_8)).matches(
                 "3 change sets have not been applied to \\S+" + System.lineSeparator() +
                         "\\s*migrations\\.xml::1::db_dev"  + System.lineSeparator() +
                         "\\s*migrations\\.xml::2::db_dev"  + System.lineSeparator() +
@@ -62,7 +62,7 @@ public class DbStatusCommandTest extends AbstractMigrationTest {
     @Test
     public void testPrintHelp() throws Exception {
         createSubparser(statusCommand).printHelp(new PrintWriter(baos, true));
-        assertThat(baos.toString("UTF-8")).isEqualTo(String.format(
+        assertThat(baos.toString(UTF_8)).isEqualTo(String.format(
                 "usage: db status [-h] [--migrations MIGRATIONS-FILE] [--catalog CATALOG]%n" +
                         "          [--schema SCHEMA] [-v] [-i CONTEXTS] [file]%n" +
                         "%n" +

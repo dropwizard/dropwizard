@@ -56,7 +56,7 @@ public class DbMigrateCommandTest extends AbstractMigrationTest {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         migrateCommand.setOutputStream(new PrintStream(baos));
         migrateCommand.run(null, new Namespace(ImmutableMap.of("dry-run", (Object) true)), conf);
-        assertThat(baos.toString("UTF-8")).startsWith(String.format(
+        assertThat(baos.toString(UTF_8)).startsWith(String.format(
                 "-- *********************************************************************%n" +
                 "-- Update Database Script%n" +
                 "-- *********************************************************************%n"));
@@ -72,8 +72,7 @@ public class DbMigrateCommandTest extends AbstractMigrationTest {
 
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         subparser.printHelp(new PrintWriter(baos, true));
-
-        assertThat(baos.toString("UTF-8")).isEqualTo(String.format(
+        assertThat(baos.toString(UTF_8)).isEqualTo(String.format(
                         "usage: db migrate [-h] [--migrations MIGRATIONS-FILE] [--catalog CATALOG]%n" +
                         "          [--schema SCHEMA] [-n] [-c COUNT] [-i CONTEXTS] [file]%n" +
                         "%n" +

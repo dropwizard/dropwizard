@@ -40,7 +40,7 @@ public class DbDropAllCommandTest extends AbstractMigrationTest {
     public void testHelpPage() throws Exception {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         createSubparser(dropAllCommand).printHelp(new PrintWriter(out, true));
-        assertThat(out.toString("UTF-8")).isEqualTo(String.format(
+        assertThat(out.toString(UTF_8)).isEqualTo(String.format(
             "usage: db drop-all [-h] [--migrations MIGRATIONS-FILE] [--catalog CATALOG]%n" +
                 "          [--schema SCHEMA] --confirm-delete-everything [file]%n" +
                 "%n" +

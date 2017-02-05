@@ -87,7 +87,7 @@ public class DbFastForwardCommandTest extends AbstractMigrationTest {
         // Fast-forward one change
         fastForwardCommand.run(null, new Namespace(ImmutableMap.of("all", false, "dry-run", true)), conf);
 
-        assertThat(NEWLINE_PATTERN.splitAsStream(baos.toString("UTF-8"))
+        assertThat(NEWLINE_PATTERN.splitAsStream(baos.toString(UTF_8))
             .filter(s -> s.startsWith("INSERT INTO PUBLIC.DATABASECHANGELOG (")))
             .hasSize(1);
     }
@@ -100,7 +100,7 @@ public class DbFastForwardCommandTest extends AbstractMigrationTest {
         // Fast-forward 3 changes
         fastForwardCommand.run(null, new Namespace(ImmutableMap.of("all", true, "dry-run", true)), conf);
 
-        assertThat(NEWLINE_PATTERN.splitAsStream(baos.toString("UTF-8"))
+        assertThat(NEWLINE_PATTERN.splitAsStream(baos.toString(UTF_8))
             .filter(s -> s.startsWith("INSERT INTO PUBLIC.DATABASECHANGELOG (")))
             .hasSize(3);
     }
@@ -109,7 +109,7 @@ public class DbFastForwardCommandTest extends AbstractMigrationTest {
     public void testPrintHelp() throws Exception {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         createSubparser(fastForwardCommand).printHelp(new PrintWriter(baos, true));
-        assertThat(baos.toString("UTF-8")).isEqualTo(String.format(
+        assertThat(baos.toString(UTF_8)).isEqualTo(String.format(
             "usage: db fast-forward [-h] [--migrations MIGRATIONS-FILE]%n" +
             "          [--catalog CATALOG] [--schema SCHEMA] [-n] [-a] [-i CONTEXTS]%n" +
             "          [file]%n" +
