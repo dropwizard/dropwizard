@@ -1,6 +1,7 @@
 package io.dropwizard.migrations;
 
 import com.google.common.collect.ImmutableMap;
+import net.jcip.annotations.NotThreadSafe;
 import net.sourceforge.argparse4j.inf.Namespace;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,6 +15,7 @@ import java.util.regex.Pattern;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@NotThreadSafe
 public class DbFastForwardCommandTest extends AbstractMigrationTest {
 
     private static final Pattern NEWLINE_PATTERN = Pattern.compile(System.lineSeparator());

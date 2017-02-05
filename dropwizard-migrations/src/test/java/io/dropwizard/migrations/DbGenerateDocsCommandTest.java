@@ -3,6 +3,7 @@ package io.dropwizard.migrations;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import liquibase.Liquibase;
+import net.jcip.annotations.NotThreadSafe;
 import net.sourceforge.argparse4j.inf.Namespace;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -12,6 +13,7 @@ import java.io.PrintWriter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@NotThreadSafe
 public class DbGenerateDocsCommandTest extends AbstractMigrationTest {
 
     private DbGenerateDocsCommand<TestMigrationConfiguration> generateDocsCommand = new DbGenerateDocsCommand<>(

@@ -2,16 +2,17 @@ package io.dropwizard.migrations;
 
 import com.google.common.collect.ImmutableMap;
 import net.sourceforge.argparse4j.inf.Namespace;
-import org.junit.Before;
 import org.junit.Test;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 
+import net.jcip.annotations.NotThreadSafe;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@NotThreadSafe
 public class DbDropAllCommandTest extends AbstractMigrationTest {
 
     private DbDropAllCommand<TestMigrationConfiguration> dropAllCommand = new DbDropAllCommand<>(

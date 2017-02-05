@@ -1,6 +1,7 @@
 package io.dropwizard.migrations;
 
 import com.google.common.collect.ImmutableMap;
+import net.jcip.annotations.NotThreadSafe;
 import net.sourceforge.argparse4j.inf.Namespace;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,6 +13,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@NotThreadSafe
 public class DbPrepareRollbackCommandTest extends AbstractMigrationTest {
 
     private final DbPrepareRollbackCommand<TestMigrationConfiguration> prepareRollbackCommand =

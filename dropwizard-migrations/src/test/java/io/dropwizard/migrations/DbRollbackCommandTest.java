@@ -2,6 +2,7 @@ package io.dropwizard.migrations;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import net.jcip.annotations.NotThreadSafe;
 import net.sourceforge.argparse4j.inf.Namespace;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,6 +15,7 @@ import java.util.Date;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@NotThreadSafe
 public class DbRollbackCommandTest extends AbstractMigrationTest {
 
     private final String migrationsFileName = "migrations-ddl.xml";

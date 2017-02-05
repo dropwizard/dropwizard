@@ -2,8 +2,8 @@ package io.dropwizard.migrations;
 
 import com.google.common.collect.ImmutableMap;
 import liquibase.Liquibase;
+import net.jcip.annotations.NotThreadSafe;
 import net.sourceforge.argparse4j.inf.Namespace;
-import org.assertj.core.api.Assertions;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -14,6 +14,7 @@ import java.io.PrintWriter;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
+@NotThreadSafe
 public class DbLocksCommandTest extends AbstractMigrationTest {
 
     private DbLocksCommand<TestMigrationConfiguration> locksCommand = new DbLocksCommand<>(

@@ -1,6 +1,7 @@
 package io.dropwizard.migrations;
 
 import com.google.common.collect.ImmutableMap;
+import net.jcip.annotations.NotThreadSafe;
 import net.sourceforge.argparse4j.inf.Namespace;
 import org.junit.Test;
 
@@ -9,6 +10,7 @@ import java.io.PrintWriter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@NotThreadSafe
 public class DbTestCommandTest extends AbstractMigrationTest {
 
     private final DbTestCommand<TestMigrationConfiguration> dbTestCommand = new DbTestCommand<>(

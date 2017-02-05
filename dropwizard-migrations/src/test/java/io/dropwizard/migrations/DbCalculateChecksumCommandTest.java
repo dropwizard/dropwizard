@@ -3,8 +3,8 @@ package io.dropwizard.migrations;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import liquibase.change.CheckSum;
+import net.jcip.annotations.NotThreadSafe;
 import net.sourceforge.argparse4j.inf.Namespace;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
@@ -14,6 +14,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@NotThreadSafe
 public class DbCalculateChecksumCommandTest extends AbstractMigrationTest {
 
     private DbCalculateChecksumCommand<TestMigrationConfiguration> migrateCommand = new DbCalculateChecksumCommand<>(

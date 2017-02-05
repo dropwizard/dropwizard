@@ -6,11 +6,13 @@ import org.junit.Test;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 
+import net.jcip.annotations.NotThreadSafe;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@NotThreadSafe
 public class DbCommandTest extends AbstractMigrationTest {
 
     private final DbCommand<TestMigrationConfiguration> dbCommand = new DbCommand<>("db",
