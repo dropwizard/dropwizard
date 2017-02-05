@@ -71,7 +71,7 @@ public abstract class AbstractLiquibaseCommand<T extends Configuration> extends 
         }
     }
 
-    private CloseableLiquibase openLiquibase(final PooledDataSourceFactory dataSourceFactory, final Namespace namespace)
+    CloseableLiquibase openLiquibase(final PooledDataSourceFactory dataSourceFactory, final Namespace namespace)
             throws SQLException, LiquibaseException {
         final CloseableLiquibase liquibase;
         final ManagedDataSource dataSource = dataSourceFactory.build(new MetricRegistry(), "liquibase");
