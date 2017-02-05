@@ -28,7 +28,7 @@ public class DbFastForwardCommandTest extends AbstractMigrationTest {
 
     @Before
     public void setUp() throws Exception {
-        final String databaseUrl = "jdbc:h2:" + createTempFile();
+        final String databaseUrl = getDatabaseUrl();
         conf = createConfiguration(databaseUrl);
         dbi = new DBI(databaseUrl, "sa", "");
     }
@@ -114,27 +114,27 @@ public class DbFastForwardCommandTest extends AbstractMigrationTest {
         createSubparser(fastForwardCommand).printHelp(new PrintWriter(new OutputStreamWriter(baos, UTF_8), true));
         assertThat(baos.toString(UTF_8)).isEqualTo(String.format(
             "usage: db fast-forward [-h] [--migrations MIGRATIONS-FILE]%n" +
-            "          [--catalog CATALOG] [--schema SCHEMA] [-n] [-a] [-i CONTEXTS]%n" +
-            "          [file]%n" +
-            "%n" +
-            "Mark the next pending change set as applied without running it%n" +
-            "%n" +
-            "positional arguments:%n" +
-            "  file                   application configuration file%n" +
-            "%n" +
-            "optional arguments:%n" +
-            "  -h, --help             show this help message and exit%n" +
-            "  --migrations MIGRATIONS-FILE%n" +
-            "                         the file containing  the  Liquibase migrations for%n" +
-            "                         the application%n" +
-            "  --catalog CATALOG      Specify  the   database   catalog   (use  database%n" +
-            "                         default if omitted)%n" +
-            "  --schema SCHEMA        Specify the database schema  (use database default%n" +
-            "                         if omitted)%n" +
-            "  -n, --dry-run          output the DDL to stdout, don't run it%n" +
-            "  -a, --all              mark all pending change sets as applied%n" +
-            "  -i CONTEXTS, --include CONTEXTS%n" +
-            "                         include change sets from the given context%n"));
+                "          [--catalog CATALOG] [--schema SCHEMA] [-n] [-a] [-i CONTEXTS]%n" +
+                "          [file]%n" +
+                "%n" +
+                "Mark the next pending change set as applied without running it%n" +
+                "%n" +
+                "positional arguments:%n" +
+                "  file                   application configuration file%n" +
+                "%n" +
+                "optional arguments:%n" +
+                "  -h, --help             show this help message and exit%n" +
+                "  --migrations MIGRATIONS-FILE%n" +
+                "                         the file containing  the  Liquibase migrations for%n" +
+                "                         the application%n" +
+                "  --catalog CATALOG      Specify  the   database   catalog   (use  database%n" +
+                "                         default if omitted)%n" +
+                "  --schema SCHEMA        Specify the database schema  (use database default%n" +
+                "                         if omitted)%n" +
+                "  -n, --dry-run          output the DDL to stdout, don't run it%n" +
+                "  -a, --all              mark all pending change sets as applied%n" +
+                "  -i CONTEXTS, --include CONTEXTS%n" +
+                "                         include change sets from the given context%n"));
 
     }
 }

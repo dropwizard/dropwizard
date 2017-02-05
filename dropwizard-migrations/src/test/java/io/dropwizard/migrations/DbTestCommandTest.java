@@ -20,7 +20,7 @@ public class DbTestCommandTest extends AbstractMigrationTest {
     @Test
     public void testRun() throws Exception {
         // Apply and rollback some DDL changes
-        final TestMigrationConfiguration conf = createConfiguration("jdbc:h2:" + createTempFile());
+        final TestMigrationConfiguration conf = createConfiguration(getDatabaseUrl());
         dbTestCommand.run(null, new Namespace(ImmutableMap.of()), conf);
 
         // No exception, the test passed

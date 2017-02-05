@@ -21,7 +21,7 @@ public class DbDropAllCommandTest extends AbstractMigrationTest {
 
     @Test
     public void testRun() throws Exception {
-        final String databaseUrl = "jdbc:h2:" + createTempFile();
+        final String databaseUrl = getDatabaseUrl();
         final TestMigrationConfiguration conf = createConfiguration(databaseUrl);
 
         // Create some data

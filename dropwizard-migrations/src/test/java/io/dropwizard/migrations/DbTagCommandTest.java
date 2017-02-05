@@ -22,7 +22,7 @@ public class DbTagCommandTest extends AbstractMigrationTest {
     @Test
     public void testRun() throws Exception {
         // Migrate some DDL changes
-        final TestMigrationConfiguration conf = createConfiguration("jdbc:h2:" + createTempFile());
+        final TestMigrationConfiguration conf = createConfiguration(getDatabaseUrl());
         final DbMigrateCommand<TestMigrationConfiguration> dbMigrateCommand = new DbMigrateCommand<>(
             new TestMigrationDatabaseConfiguration(), TestMigrationConfiguration.class, migrationsFileName);
         dbMigrateCommand.run(null, new Namespace(ImmutableMap.of()), conf);

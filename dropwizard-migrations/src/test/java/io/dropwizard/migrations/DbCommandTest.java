@@ -21,7 +21,7 @@ public class DbCommandTest extends AbstractMigrationTest {
 
     @Test
     public void testRunSubCommand() throws Exception {
-        final String databaseUrl = "jdbc:h2:file:" + createTempFile();
+        final String databaseUrl = getDatabaseUrl();
         final TestMigrationConfiguration conf = createConfiguration(databaseUrl);
         dbCommand.run(null, new Namespace(ImmutableMap.of("subcommand", "migrate")), conf);
 

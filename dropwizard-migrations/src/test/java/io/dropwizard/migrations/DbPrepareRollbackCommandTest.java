@@ -10,7 +10,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.io.PrintWriter;
-import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -24,7 +23,7 @@ public class DbPrepareRollbackCommandTest extends AbstractMigrationTest {
 
     @Before
     public void setUp() throws Exception {
-        final String databaseUrl = "jdbc:h2:mem:" + UUID.randomUUID();
+        final String databaseUrl = getDatabaseUrl();
         conf = createConfiguration(databaseUrl);
     }
 

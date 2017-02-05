@@ -10,7 +10,6 @@ import org.junit.Test;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -29,7 +28,7 @@ public class DbCalculateChecksumCommandTest extends AbstractMigrationTest {
             checkSumVerified.set(true);
         });
         migrateCommand.run(null, new Namespace(ImmutableMap.of("id", ImmutableList.of("2"),
-            "author", ImmutableList.of("db_dev"))), createConfiguration("jdbc:h2:mem:" + UUID.randomUUID()));
+            "author", ImmutableList.of("db_dev"))), createConfiguration(getDatabaseUrl()));
         assertThat(checkSumVerified.get()).isTrue();
     }
 

@@ -25,7 +25,7 @@ public class DbMigrateDifferentFileCommandTest extends AbstractMigrationTest {
 
     @Before
     public void setUp() throws Exception {
-        databaseUrl = "jdbc:h2:" + createTempFile();
+        databaseUrl = getDatabaseUrl();
         conf = createConfiguration(databaseUrl);
     }
 

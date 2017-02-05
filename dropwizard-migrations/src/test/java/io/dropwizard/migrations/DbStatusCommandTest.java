@@ -13,7 +13,6 @@ import java.io.File;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.OutputStreamWriter;
-import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -27,8 +26,7 @@ public class DbStatusCommandTest extends AbstractMigrationTest {
 
     @Before
     public void setUp() throws Exception {
-        final String databaseUrl = "jdbc:h2:mem:" + UUID.randomUUID();
-        conf = createConfiguration(databaseUrl);
+        conf = createConfiguration(getDatabaseUrl());
 
         statusCommand.setOutputStream(new PrintStream(baos));
     }

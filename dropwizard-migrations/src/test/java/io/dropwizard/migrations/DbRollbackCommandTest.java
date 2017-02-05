@@ -30,7 +30,7 @@ public class DbRollbackCommandTest extends AbstractMigrationTest {
 
     @Before
     public void setUp() throws Exception {
-        String databaseUrl = "jdbc:h2:file:" + createTempFile();
+        final String databaseUrl = getDatabaseUrl();
         conf = createConfiguration(databaseUrl);
         dbi = new DBI(databaseUrl, "sa", "");
     }
