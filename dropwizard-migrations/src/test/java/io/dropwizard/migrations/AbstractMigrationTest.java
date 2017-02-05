@@ -12,6 +12,7 @@ public class AbstractMigrationTest {
     static {
         ArgumentParsers.setTerminalWidthDetection(false);
     }
+    protected static final String UTF_8 = "UTF-8";
 
     protected static Subparser createSubparser(AbstractLiquibaseCommand<?> command) {
         final Subparser subparser = ArgumentParsers.newArgumentParser("db")
