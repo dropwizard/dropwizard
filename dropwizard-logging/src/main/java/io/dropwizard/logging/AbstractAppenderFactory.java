@@ -175,7 +175,7 @@ public abstract class AbstractAppenderFactory<E extends DeferredProcessingAware>
     
     @JsonProperty
     public void setNeverBlock(boolean neverBlock) {
-    	this.neverBlock = neverBlock;
+        this.neverBlock = neverBlock;
     }
 
     protected Appender<E> wrapAsync(Appender<E> appender, AsyncAppenderFactory<E> asyncAppenderFactory) {
