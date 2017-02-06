@@ -620,6 +620,8 @@ logFormat              default      The Logback pattern with which events will b
                                     the Logback_ documentation for details.
 filterFactories        (none)       The list of filters to apply to the appender, in order, after
                                     the thresold.
+neverBlock             false        Prevent the wrapping asynchronous appender from blocking when its underlying queue is full.
+                                    Set to true to disable blocking.
 ====================== ===========  ===========
 
 .. _Logback: http://logback.qos.ch/manual/layouts.html#conversionWord
@@ -679,6 +681,8 @@ logFormat                    default      The Logback pattern with which events 
                                           the Logback_ documentation for details.
 filterFactories              (none)       The list of filters to apply to the appender, in order, after
                                           the thresold.
+neverBlock                   false        Prevent the wrapping asynchronous appender from blocking when its underlying queue is full.
+                                          Set to true to disable blocking.
 ============================ ===========  ==================================================================================================
 
 
@@ -720,6 +724,8 @@ stackTracePrefix             \t           The prefix to use when writing stack t
                                           to the syslog server separately from the main message)
 filterFactories              (none)       The list of filters to apply to the appender, in order, after
                                           the thresold.
+neverBlock                   false        Prevent the wrapping asynchronous appender from blocking when its underlying queue is full.
+                                          Set to true to disable blocking.
 ============================ ===========  ==================================================================================================
 
 
