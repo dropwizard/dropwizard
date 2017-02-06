@@ -11,6 +11,7 @@ import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
 
 import java.io.ByteArrayOutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.util.List;
@@ -28,7 +29,7 @@ public class DbMigrateCommandTest extends AbstractMigrationTest {
 
     @Before
     public void setUp() throws Exception {
-        databaseUrl = "jdbc:h2:" + createTempFile();
+        databaseUrl = getDatabaseUrl();
         conf = createConfiguration(databaseUrl);
     }
 
@@ -56,7 +57,7 @@ public class DbMigrateCommandTest extends AbstractMigrationTest {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         migrateCommand.setOutputStream(new PrintStream(baos));
         migrateCommand.run(null, new Namespace(ImmutableMap.of("dry-run", (Object) true)), conf);
-        assertThat(baos.toString("UTF-8")).startsWith(String.format(
+        assertThat(baos.toString(UTF_8)).startsWith(String.format(
                 "-- *********************************************************************%n" +
                 "-- Update Database Script%n" +
                 "-- *********************************************************************%n"));
@@ -71,9 +72,8 @@ public class DbMigrateCommandTest extends AbstractMigrationTest {
         migrateCommand.configure(subparser);
 
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        subparser.printHelp(new PrintWriter(baos, true));
-
-        assertThat(baos.toString("UTF-8")).isEqualTo(String.format(
+        subparser.printHelp(new PrintWriter(new OutputStreamWriter(baos, UTF_8), true));
+        assertThat(baos.toString(UTF_8)).isEqualTo(String.format(
                         "usage: db migrate [-h] [--migrations MIGRATIONS-FILE] [--catalog CATALOG]%n" +
                         "          [--schema SCHEMA] [-n] [-c COUNT] [-i CONTEXTS] [file]%n" +
                         "%n" +
