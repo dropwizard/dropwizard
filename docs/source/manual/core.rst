@@ -924,6 +924,25 @@ single ``Logger``:
 
 .. _man-core-testing-applications:
 
+Common Logging Configuration
+----------------------------
+
+Some settings are available to all loggers.
+
+.. code-block:: yaml
+
+    logging:
+      level: DEBUG
+      appenders:
+        - type: console
+          threshold: WARN
+          target: stderr
+          # all loggers are wrapped to append asynchronously, set neverBlock
+          # to true to ensure that the application will not block if the async
+          # append queue is full (default: false)
+          neverBlock: true
+
+
 Testing Applications
 ====================
 
