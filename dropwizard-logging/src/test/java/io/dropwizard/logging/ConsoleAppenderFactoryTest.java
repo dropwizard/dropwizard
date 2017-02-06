@@ -53,4 +53,32 @@ public class ConsoleAppenderFactoryTest {
 
         assertThat(appender.getName()).isEqualTo("async-console-appender");
     }
+    
+    @Test
+    public void isNeverBlock() throws Exception {
+        ConsoleAppenderFactory<ILoggingEvent> consoleAppenderFactory = new ConsoleAppenderFactory<>();
+        consoleAppenderFactory.setNeverBlock(true);
+        AsyncAppender asyncAppender = (AsyncAppender) consoleAppenderFactory.build(new LoggerContext(), "test", new DropwizardLayoutFactory(), new NullLevelFilterFactory<>(), new AsyncLoggingEventAppenderFactory());
+
+        assertThat(asyncAppender.isNeverBlock()).isTrue();
+    }
+    
+    @Test
+    public void isNotNeverBlock() throws Exception {
+        ConsoleAppenderFactory<ILoggingEvent> consoleAppenderFactory = new ConsoleAppenderFactory<>();
+        consoleAppenderFactory.setNeverBlock(false);
+        AsyncAppender asyncAppender = (AsyncAppender) consoleAppenderFactory.build(new LoggerContext(), "test", new DropwizardLayoutFactory(), new NullLevelFilterFactory<>(), new AsyncLoggingEventAppenderFactory());
+
+        assertThat(asyncAppender.isNeverBlock()).isFalse();
+    }
+    
+    @Test
+    public void defaultIsNotNeverBlock() throws Exception {
+        ConsoleAppenderFactory<ILoggingEvent> consoleAppenderFactory = new ConsoleAppenderFactory<>();
+        // default neverBlock
+        AsyncAppender asyncAppender = (AsyncAppender) consoleAppenderFactory.build(new LoggerContext(), "test", new DropwizardLayoutFactory(), new NullLevelFilterFactory<>(), new AsyncLoggingEventAppenderFactory());
+
+        assertThat(asyncAppender.isNeverBlock()).isFalse();
+    }
+    
 }
