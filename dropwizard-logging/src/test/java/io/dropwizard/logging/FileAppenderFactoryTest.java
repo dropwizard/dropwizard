@@ -27,6 +27,7 @@ import org.junit.rules.TemporaryFolder;
 import org.slf4j.LoggerFactory;
 
 import javax.validation.Validator;
+
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -223,5 +224,35 @@ public class FileAppenderFactoryTest {
         final Appender<ILoggingEvent> appender = appenderFactory.build(root.getLoggerContext(), "test", new DropwizardLayoutFactory(), new NullLevelFilterFactory<>(), new AsyncLoggingEventAppenderFactory());
 
         assertThat(appender.getName()).isEqualTo("async-file-appender");
+    }
+    
+    @Test
+    public void isNeverBlock() throws Exception {
+        FileAppenderFactory<ILoggingEvent> fileAppenderFactory = new FileAppenderFactory<>();
+        fileAppenderFactory.setArchive(false);
+        fileAppenderFactory.setNeverBlock(true);
+        AsyncAppender asyncAppender = (AsyncAppender) fileAppenderFactory.build(new LoggerContext(), "test", new DropwizardLayoutFactory(), new NullLevelFilterFactory<>(), new AsyncLoggingEventAppenderFactory());
+        
+        assertThat(asyncAppender.isNeverBlock()).isTrue();
+    }
+    
+    @Test
+    public void isNotNeverBlock() throws Exception {
+        FileAppenderFactory<ILoggingEvent> fileAppenderFactory = new FileAppenderFactory<>();
+        fileAppenderFactory.setArchive(false);
+        fileAppenderFactory.setNeverBlock(false);
+        AsyncAppender asyncAppender = (AsyncAppender) fileAppenderFactory.build(new LoggerContext(), "test", new DropwizardLayoutFactory(), new NullLevelFilterFactory<>(), new AsyncLoggingEventAppenderFactory());
+        
+        assertThat(asyncAppender.isNeverBlock()).isFalse();
+    }
+    
+    @Test
+    public void defaultIsNotNeverBlock() throws Exception {
+        FileAppenderFactory<ILoggingEvent> fileAppenderFactory = new FileAppenderFactory<>();
+        fileAppenderFactory.setArchive(false);
+        // default neverBlock
+        AsyncAppender asyncAppender = (AsyncAppender) fileAppenderFactory.build(new LoggerContext(), "test", new DropwizardLayoutFactory(), new NullLevelFilterFactory<>(), new AsyncLoggingEventAppenderFactory());
+        
+        assertThat(asyncAppender.isNeverBlock()).isFalse();
     }
 }

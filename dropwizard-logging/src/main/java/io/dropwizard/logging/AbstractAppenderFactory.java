@@ -100,6 +100,8 @@ public abstract class AbstractAppenderFactory<E extends DeferredProcessingAware>
     private boolean includeCallerData = false;
 
     private ImmutableList<FilterFactory<E>> filterFactories = ImmutableList.of();
+    
+    private boolean neverBlock = false;
 
     @JsonProperty
     public int getQueueSize() {
@@ -170,6 +172,11 @@ public abstract class AbstractAppenderFactory<E extends DeferredProcessingAware>
     public void setFilterFactories(List<FilterFactory<E>> appenders) {
         this.filterFactories = ImmutableList.copyOf(appenders);
     }
+    
+    @JsonProperty
+    public void setNeverBlock(boolean neverBlock) {
+        this.neverBlock = neverBlock;
+    }
 
     protected Appender<E> wrapAsync(Appender<E> appender, AsyncAppenderFactory<E> asyncAppenderFactory) {
         return wrapAsync(appender, asyncAppenderFactory, appender.getContext());
@@ -185,6 +192,7 @@ public abstract class AbstractAppenderFactory<E extends DeferredProcessingAware>
         asyncAppender.setContext(context);
         asyncAppender.setName("async-" + appender.getName());
         asyncAppender.addAppender(appender);
+        asyncAppender.setNeverBlock(neverBlock);
         asyncAppender.start();
         return asyncAppender;
     }
