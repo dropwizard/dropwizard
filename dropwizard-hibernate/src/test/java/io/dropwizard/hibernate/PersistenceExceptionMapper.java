@@ -1,5 +1,6 @@
 package io.dropwizard.hibernate;
 
+import org.glassfish.jersey.spi.ExtendedExceptionMapper;
 import org.hibernate.exception.DataException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,7 +13,7 @@ import javax.ws.rs.ext.Provider;
 import javax.ws.rs.ext.Providers;
 
 @Provider
-public class PersistenceExceptionMapper implements ExceptionMapper<PersistenceException> {
+public class PersistenceExceptionMapper implements ExtendedExceptionMapper<PersistenceException> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DataException.class);
 
@@ -32,6 +33,10 @@ public class PersistenceExceptionMapper implements ExceptionMapper<PersistenceEx
         final ExceptionMapper<Throwable> exceptionMapper = (ExceptionMapper<Throwable>) providers.getExceptionMapper(t.getClass());
 
         return exceptionMapper.toResponse(t);
+    }
 
+    @Override
+    public boolean isMappable(PersistenceException e) {
+        return providers.getExceptionMapper(e.getCause().getClass()) != null;
     }
 }
