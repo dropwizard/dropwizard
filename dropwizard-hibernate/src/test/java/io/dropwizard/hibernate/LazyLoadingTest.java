@@ -17,6 +17,7 @@ import org.hibernate.FlushMode;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.hibernate.exception.ConstraintViolationException;
 import org.junit.After;
 import org.junit.Test;
@@ -76,7 +77,7 @@ public class LazyLoadingTest {
 
         private void initDatabase(SessionFactory sessionFactory) {
             try (Session session = sessionFactory.openSession()) {
-                session.beginTransaction();
+                Transaction transaction = session.beginTransaction();
                 session.createNativeQuery(
                     "CREATE TABLE people (name varchar(100) primary key, email varchar(16), birthday timestamp with time zone)")
                     .executeUpdate();
@@ -89,6 +90,7 @@ public class LazyLoadingTest {
                 session.createNativeQuery(
                     "INSERT INTO dogs VALUES ('Raf', 'Coda')")
                     .executeUpdate();
+                transaction.commit();
             }
         }
     }

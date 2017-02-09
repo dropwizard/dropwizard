@@ -16,6 +16,7 @@ import org.glassfish.jersey.test.JerseyTest;
 import org.glassfish.jersey.test.TestProperties;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.junit.After;
@@ -117,7 +118,7 @@ public class JerseyIntegrationTest extends JerseyTest {
                                             ImmutableList.of(Person.class));
 
         try (Session session = sessionFactory.openSession()) {
-            session.beginTransaction();
+            Transaction transaction = session.beginTransaction();
             session.createNativeQuery("DROP TABLE people IF EXISTS").executeUpdate();
             session.createNativeQuery(
                 "CREATE TABLE people (name varchar(100) primary key, email varchar(16), birthday timestamp with time zone)")
@@ -125,6 +126,7 @@ public class JerseyIntegrationTest extends JerseyTest {
             session.createNativeQuery(
                 "INSERT INTO people VALUES ('Coda', 'coda@example.com', '1979-01-02 00:22:00+0:00')")
                 .executeUpdate();
+            transaction.commit();
         }
 
         final DropwizardResourceConfig config = DropwizardResourceConfig.forTesting(new MetricRegistry());

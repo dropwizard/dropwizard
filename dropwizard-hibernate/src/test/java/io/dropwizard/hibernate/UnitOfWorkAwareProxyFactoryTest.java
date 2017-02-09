@@ -52,11 +52,12 @@ public class UnitOfWorkAwareProxyFactoryTest {
         sessionFactory = new SessionFactoryFactory()
                 .build(bundle, environment, dataSourceFactory, ImmutableList.of());
         try (Session session = sessionFactory.openSession()) {
-            session.beginTransaction();
+            Transaction transaction = session.beginTransaction();
             session.createNativeQuery("create table user_sessions (token varchar(64) primary key, username varchar(16))")
                 .executeUpdate();
             session.createNativeQuery("insert into user_sessions values ('67ab89d', 'jeff_28')")
                 .executeUpdate();
+            transaction.commit();
         }
     }
 

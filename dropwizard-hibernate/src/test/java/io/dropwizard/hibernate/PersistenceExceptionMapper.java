@@ -17,7 +17,7 @@ public class PersistenceExceptionMapper implements ExceptionMapper<PersistenceEx
     private static final Logger LOGGER = LoggerFactory.getLogger(DataException.class);
 
     @Context
-    Providers providers;
+    private Providers providers;
 
     @Override
     public Response toResponse(PersistenceException e) {
