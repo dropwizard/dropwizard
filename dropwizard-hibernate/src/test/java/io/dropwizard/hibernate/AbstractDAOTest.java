@@ -3,9 +3,9 @@ package io.dropwizard.hibernate;
 import com.google.common.collect.ImmutableList;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.query.Query;
 import org.hibernate.proxy.HibernateProxy;
 import org.hibernate.proxy.LazyInitializer;
 import org.junit.Before;
@@ -84,7 +84,7 @@ public class AbstractDAOTest {
 
     private final SessionFactory factory = mock(SessionFactory.class);
     private final Criteria criteria = mock(Criteria.class);
-    private final org.hibernate.query.Query query = mock(org.hibernate.query.Query.class);
+    private final Query query = mock(Query.class);
     private final Session session = mock(Session.class);
     private final MockDAO dao = new MockDAO(factory);
 
