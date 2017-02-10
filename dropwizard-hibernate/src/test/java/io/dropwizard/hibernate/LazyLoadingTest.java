@@ -17,6 +17,7 @@ import org.hibernate.FlushMode;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.hibernate.exception.ConstraintViolationException;
 import org.junit.After;
 import org.junit.Test;
@@ -70,23 +71,26 @@ public class LazyLoadingTest {
 
             environment.jersey().register(new UnitOfWorkApplicationListener("hr-db", sessionFactory));
             environment.jersey().register(new DogResource(new DogDAO(sessionFactory)));
+            environment.jersey().register(new PersistenceExceptionMapper());
             environment.jersey().register(new ConstraintViolationExceptionMapper());
         }
 
         private void initDatabase(SessionFactory sessionFactory) {
             try (Session session = sessionFactory.openSession()) {
-                session.createSQLQuery(
+                Transaction transaction = session.beginTransaction();
+                session.createNativeQuery(
                     "CREATE TABLE people (name varchar(100) primary key, email varchar(16), birthday timestamp with time zone)")
                     .executeUpdate();
-                session.createSQLQuery(
+                session.createNativeQuery(
                     "INSERT INTO people VALUES ('Coda', 'coda@example.com', '1979-01-02 00:22:00+0:00')")
                     .executeUpdate();
-                session.createSQLQuery(
+                session.createNativeQuery(
                     "CREATE TABLE dogs (name varchar(100) primary key, owner varchar(100), CONSTRAINT fk_owner FOREIGN KEY (owner) REFERENCES people(name))")
                     .executeUpdate();
-                session.createSQLQuery(
+                session.createNativeQuery(
                     "INSERT INTO dogs VALUES ('Raf', 'Coda')")
                     .executeUpdate();
+                transaction.commit();
             }
         }
     }
@@ -109,7 +113,7 @@ public class LazyLoadingTest {
         }
 
         Dog create(Dog dog) throws HibernateException {
-            currentSession().setFlushMode(FlushMode.COMMIT);
+            currentSession().setHibernateFlushMode(FlushMode.COMMIT);
             currentSession().save(requireNonNull(dog));
             return dog;
         }

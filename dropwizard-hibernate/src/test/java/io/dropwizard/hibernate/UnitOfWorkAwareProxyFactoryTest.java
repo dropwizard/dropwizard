@@ -9,6 +9,7 @@ import io.dropwizard.logging.BootstrapLogging;
 import io.dropwizard.setup.Environment;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -51,10 +52,12 @@ public class UnitOfWorkAwareProxyFactoryTest {
         sessionFactory = new SessionFactoryFactory()
                 .build(bundle, environment, dataSourceFactory, ImmutableList.of());
         try (Session session = sessionFactory.openSession()) {
-            session.createSQLQuery("create table user_sessions (token varchar(64) primary key, username varchar(16))")
+            Transaction transaction = session.beginTransaction();
+            session.createNativeQuery("create table user_sessions (token varchar(64) primary key, username varchar(16))")
                 .executeUpdate();
-            session.createSQLQuery("insert into user_sessions values ('67ab89d', 'jeff_28')")
+            session.createNativeQuery("insert into user_sessions values ('67ab89d', 'jeff_28')")
                 .executeUpdate();
+            transaction.commit();
         }
     }
 
@@ -125,7 +128,7 @@ public class UnitOfWorkAwareProxyFactoryTest {
 
         public boolean isExist(String token) {
             return sessionFactory.getCurrentSession()
-                    .createSQLQuery("select username from user_sessions where token=:token")
+                    .createNativeQuery("select username from user_sessions where token=:token")
                     .setParameter("token", token)
                     .list()
                     .size() > 0;
@@ -170,8 +173,10 @@ public class UnitOfWorkAwareProxyFactoryTest {
         @Override
         protected void configureSession() {
             super.configureSession();
-            getSession().createSQLQuery("insert into user_sessions values ('gr6f9y0', 'jeff_29')")
+            Transaction transaction = getSession().beginTransaction();
+            getSession().createNativeQuery("insert into user_sessions values ('gr6f9y0', 'jeff_29')")
                 .executeUpdate();
+            transaction.commit();
         }
     }
 }

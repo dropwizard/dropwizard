@@ -114,7 +114,7 @@ public class UnitOfWorkAspect {
     protected void configureSession() {
         session.setDefaultReadOnly(unitOfWork.readOnly());
         session.setCacheMode(unitOfWork.cacheMode());
-        session.setFlushMode(unitOfWork.flushMode());
+        session.setHibernateFlushMode(unitOfWork.flushMode());
     }
 
     private void beginTransaction() {

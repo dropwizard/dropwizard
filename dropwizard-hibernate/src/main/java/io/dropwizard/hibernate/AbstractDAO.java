@@ -4,12 +4,15 @@ import io.dropwizard.util.Generics;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.query.Query;
+import org.hibernate.query.internal.AbstractProducedQuery;
 
 import java.io.Serializable;
 import java.util.List;
+
+import javax.persistence.criteria.CriteriaQuery;
 
 import static java.util.Objects.requireNonNull;
 
@@ -73,6 +76,22 @@ public class AbstractDAO<E> {
     }
 
     /**
+     * Convenience method to return a single instance that matches the criteria query,
+     * or null if the criteria returns no results.
+     *
+     * @param criteriaQuery the {@link CriteriaQuery} query to run
+     * @return the single result or {@code null}
+     * @throws HibernateException if there is more than one matching result
+     */
+    protected E uniqueResult(CriteriaQuery<E> criteriaQuery) throws HibernateException {
+        return AbstractProducedQuery.uniqueElement(
+            currentSession()
+                .createQuery(requireNonNull(criteriaQuery))
+                .getResultList()
+        );
+    }
+
+    /**
      * Convenience method to return a single instance that matches the criteria, or null if the
      * criteria returns no results.
      *
@@ -95,9 +114,8 @@ public class AbstractDAO<E> {
      * @throws HibernateException if there is more than one matching result
      * @see Query#uniqueResult()
      */
-    @SuppressWarnings("unchecked")
-    protected E uniqueResult(Query query) throws HibernateException {
-        return (E) requireNonNull(query).uniqueResult();
+    protected E uniqueResult(Query<E> query) throws HibernateException {
+        return requireNonNull(query).uniqueResult();
     }
 
     /**
@@ -113,14 +131,23 @@ public class AbstractDAO<E> {
     }
 
     /**
+     * Get the results of a {@link CriteriaQuery} query.
+     *
+     * @param criteria the {@link CriteriaQuery} query to run
+     * @return the list of matched query results
+     */
+    protected List<E> list(CriteriaQuery<E> criteria) throws HibernateException {
+        return currentSession().createQuery(requireNonNull(criteria)).getResultList();
+    }
+
+    /**
      * Get the results of a query.
      *
      * @param query the query to run
      * @return the list of matched query results
      * @see Query#list()
      */
-    @SuppressWarnings("unchecked")
-    protected List<E> list(Query query) throws HibernateException {
+    protected List<E> list(Query<E> query) throws HibernateException {
         return requireNonNull(query).list();
     }
 

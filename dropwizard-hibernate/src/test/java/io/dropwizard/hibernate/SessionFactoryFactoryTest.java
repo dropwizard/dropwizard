@@ -11,6 +11,7 @@ import io.dropwizard.setup.Environment;
 import org.hibernate.EmptyInterceptor;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
 import org.joda.time.DateTime;
@@ -105,9 +106,11 @@ public class SessionFactoryFactoryTest {
         build();
 
         try (Session session = sessionFactory.openSession()) {
-            session.createSQLQuery("DROP TABLE people IF EXISTS").executeUpdate();
-            session.createSQLQuery("CREATE TABLE people (name varchar(100) primary key, email varchar(100), birthday timestamp(0))").executeUpdate();
-            session.createSQLQuery("INSERT INTO people VALUES ('Coda', 'coda@example.com', '1979-01-02 00:22:00')").executeUpdate();
+            Transaction transaction = session.beginTransaction();
+            session.createNativeQuery("DROP TABLE people IF EXISTS").executeUpdate();
+            session.createNativeQuery("CREATE TABLE people (name varchar(100) primary key, email varchar(100), birthday timestamp(0))").executeUpdate();
+            session.createNativeQuery("INSERT INTO people VALUES ('Coda', 'coda@example.com', '1979-01-02 00:22:00')").executeUpdate();
+            transaction.commit();
 
             final Person entity = session.get(Person.class, "Coda");
 
