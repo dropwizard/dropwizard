@@ -20,6 +20,7 @@ import javax.persistence.criteria.CriteriaQuery;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -100,6 +101,7 @@ public class AbstractDAOTest {
         when(factory.getCurrentSession()).thenReturn(session);
         when(session.createCriteria(String.class)).thenReturn(criteria);
         when(session.getNamedQuery(anyString())).thenReturn(query);
+        when(session.createQuery(anyString(), same(String.class))).thenReturn(query);
     }
 
     @Test
@@ -120,6 +122,14 @@ public class AbstractDAOTest {
                 .isEqualTo(query);
 
         verify(session).getNamedQuery("query-name");
+    }
+
+    @Test
+    public void getsTypedQueries() throws Exception {
+        assertThat(dao.query("HQL"))
+            .isEqualTo(query);
+
+        verify(session).createQuery("HQL", String.class);
     }
 
     @Test
