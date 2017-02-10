@@ -66,6 +66,16 @@ public class AbstractDAO<E> {
     }
 
     /**
+     * Returns a typed {@link Query<E>}
+     *
+     * @param queryString HQL query
+     * @return typed query
+     */
+    protected Query<E> query(String queryString) {
+        return currentSession().createQuery(requireNonNull(queryString), getEntityClass());
+    }
+
+    /**
      * Returns the entity class managed by this DAO.
      *
      * @return the entity class managed by this DAO
