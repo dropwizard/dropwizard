@@ -265,8 +265,8 @@ Our YAML file will then look like the below, full `example yml here`_:
 Dropwizard has *many* more configuration parameters than that, but they all have sane defaults so
 you can keep your configuration files small and focused.
 
-So save that YAML file as ``hello-world.yml``, because we'll be getting up and running pretty soon,
-and we'll need it. Next up, we're creating our application class!
+So save that YAML file in the directory you plan to run the fat jar from (see below) as ``hello-world.yml``, because 
+we'll be getting up and running pretty soon, and we'll need it. Next up, we're creating our application class!
 
 .. _gs-application:
 
