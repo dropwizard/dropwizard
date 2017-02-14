@@ -46,7 +46,7 @@ v1.1.0: Unreleased
 * Upgraded to Mustache 0.9.4 `#1766 <https://github.com/dropwizard/dropwizard/pull/1766>`_
 * Upgraded to Mockito 2.6.1
 * Upgraded to Liquibase 3.5.3
-* Upgraded to Logback 1.1.10 `#1918 <https://github.com/dropwizard/dropwizard/pull/1918>`_
+* Upgraded to Logback 1.2.1 `#1918 <https://github.com/dropwizard/dropwizard/pull/1927>`_
 * Upgraded to JDBI 2.77
 * Upgraded to Jersey 2.25.1
 * Upgraded to javassist 3.21.0-GA
