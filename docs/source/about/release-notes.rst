@@ -55,6 +55,7 @@ v1.1.0: Unreleased
 * Upgraded to H2 1.4.193
 * Upgraded to Joda-Time 2.9.7
 * Upgraded to commons-lang3 3.5
+* Upgraded to Apache HTTP Client 4.5.3
 
 .. _rel-1.0.6:
 

@@ -156,7 +156,7 @@ public class DropwizardSSLConnectionSocketFactoryTest {
         final Client client = new JerseyClientBuilder(TLS_APP_RULE.getEnvironment()).using(jerseyClientConfiguration).build("bad_host_broken");
         final Throwable exn = catchThrowable(() -> client.target(String.format("https://localhost:%d", TLS_APP_RULE.getPort(3))).request().get());
         assertThat(exn).hasCauseExactlyInstanceOf(SSLPeerUnverifiedException.class);
-        assertThat(exn.getCause()).hasMessage("Host name 'localhost' does not match the certificate subject provided by the peer (O=server, CN=badhost)");
+        assertThat(exn.getCause()).hasMessage("Certificate for <localhost> doesn't match any of the subject alternative names: []");
     }
 
     @Test
@@ -164,7 +164,7 @@ public class DropwizardSSLConnectionSocketFactoryTest {
         final Client client = new JerseyClientBuilder(TLS_APP_RULE.getEnvironment()).using(jerseyClientConfiguration).using(new FailVerifier()).build("bad_host_broken_fail_verifier");
         final Throwable exn = catchThrowable(() -> client.target(String.format("https://localhost:%d", TLS_APP_RULE.getLocalPort())).request().get());
         assertThat(exn).hasCauseExactlyInstanceOf(SSLPeerUnverifiedException.class);
-        assertThat(exn.getCause()).hasMessage("Host name 'localhost' does not match the certificate subject provided by the peer (O=server, CN=localhost)");
+        assertThat(exn.getCause()).hasMessage("Certificate for <localhost> doesn't match any of the subject alternative names: []");
     }
 
     @Test
