@@ -48,7 +48,7 @@ v1.1.0: Unreleased
 * Upgraded to Liquibase 3.5.3
 * Upgraded to Logback 1.1.10 `#1918 <https://github.com/dropwizard/dropwizard/pull/1918>`_
 * Upgraded to JDBI 2.77
-* Upgraded to Jersey 2.25
+* Upgraded to Jersey 2.25.1
 * Upgraded to javassist 3.21.0-GA
 * Upgraded to Guava 21.0
 * Upgraded to SLF4J 1.7.22
