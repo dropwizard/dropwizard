@@ -216,9 +216,36 @@ If there are no provided credentials for the request, or if the credentials are 
 provider will return a scheme-appropriate ``401 Unauthorized`` response without calling your
 resource method.
 
-If you have a resource which is optionally protected (e.g., you want to display a logged-in user's
-name but not require login), you need to implement a custom filter which injects a security context
-containing the principal if it exists, without performing authentication.
+Optional protection
+-------------------
+
+Resource methods can be _optionally_ protected by representing the
+principal as an ``Optional``. In such cases, the ``Optional`` resource
+method argument will be populated with the principal, if
+present. Otherwise, the argument will be ``Optional.empty``.
+
+For instance, say you have an endpoint that should display a logged-in
+user's name, but return an anonymous reply for unauthenticated
+requests. You need to implement a custom filter which injects a
+security context containing the principal if it exists, without
+performing authentication.
+
+.. code-block:: java
+
+    @GET
+    public String getGreeting(@Auth Optional<User> userOpt) {
+        if (userOpt.isPresent()) {
+            return "Hello, " + userOpt.get().getName() + "!";
+        } else {
+            return "Greetings, anonymous visitor!"
+        }
+    }
+
+For optionally-protected resources, requests with invalid auth will be
+treated the same as those with no provided auth credentials. That is
+to say, requests that _fail_ to meet an authenticator or authorizer's
+requirements result in an empty principal being passed to the resource
+method.
 
 Testing Protected Resources
 ===========================
@@ -380,6 +407,3 @@ Now we can do
 
 .. note::
     The polymorphic auth feature *SHOULD NOT* be used with any other ``AuthDynamicFeature``. Doing so may have undesired effects.
-
-
-
