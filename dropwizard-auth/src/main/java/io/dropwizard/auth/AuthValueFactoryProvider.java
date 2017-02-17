@@ -54,17 +54,16 @@ public class AuthValueFactoryProvider<T extends Principal> extends AbstractValue
      */
     @Override
     public AbstractContainerRequestValueFactory<?> createValueFactory(Parameter parameter) {
-        final boolean isOptionalPrincipal = parameter.getRawType().equals(Optional.class)
-            && ParameterizedType.class.isAssignableFrom(parameter.getType().getClass())
-            && principalClass.equals(((ParameterizedType) parameter.getType()).getActualTypeArguments()[0]);
-
-        if (!parameter.isAnnotationPresent(Auth.class)
-           || !(principalClass.equals(parameter.getRawType()) || isOptionalPrincipal)) {
+        if (!parameter.isAnnotationPresent(Auth.class)) {
             return null;
-        } else if (isOptionalPrincipal) {
-            return new OptionalPrincipalContainerRequestValueFactory();
-        } else {
+        } else if (principalClass.equals(parameter.getRawType())) {
             return new PrincipalContainerRequestValueFactory();
+        } else {
+            final boolean isOptionalPrincipal = parameter.getRawType() == Optional.class
+                && ParameterizedType.class.isAssignableFrom(parameter.getType().getClass())
+                && principalClass == ((ParameterizedType) parameter.getType()).getActualTypeArguments()[0];
+
+            return isOptionalPrincipal ? new OptionalPrincipalContainerRequestValueFactory() : null;
         }
     }
 

@@ -32,7 +32,7 @@ public class AuthResource {
     @GET
     @Path("optional")
     public String checkOptionalAuth(@Auth Optional<Principal> principalOpt) {
-        return "principal was " + ((principalOpt.isPresent()) ? "" : "not ") + "present";
+        return "principal was " + (principalOpt.isPresent() ? "" : "not ") + "present";
     }
 
     @GET

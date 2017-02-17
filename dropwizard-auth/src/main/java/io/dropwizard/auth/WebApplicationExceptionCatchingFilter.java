@@ -1,5 +1,7 @@
 package io.dropwizard.auth;
 
+import com.google.common.base.Preconditions;
+
 import java.io.IOException;
 import java.security.Principal;
 import java.util.Optional;
@@ -16,6 +18,7 @@ class WebApplicationExceptionCatchingFilter implements ContainerRequestFilter {
     private final ContainerRequestFilter underlying;
 
     public WebApplicationExceptionCatchingFilter(ContainerRequestFilter underlying) {
+        Preconditions.checkNotNull(underlying, "Underlying ContainerRequestFilter is not set");
         this.underlying = underlying;
     }
 

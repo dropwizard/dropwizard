@@ -20,12 +20,6 @@ class OptionalPrincipalContainerRequestValueFactory
      */
     @Override
     public Optional<Principal> provide() {
-        final Principal principal = getContainerRequest().getSecurityContext().getUserPrincipal();
-
-        if (principal == null) {
-            return Optional.empty();
-        } else {
-            return Optional.of(principal);
-        }
+        return Optional.ofNullable(getContainerRequest().getSecurityContext().getUserPrincipal());
     }
 }

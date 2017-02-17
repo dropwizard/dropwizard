@@ -36,19 +36,22 @@ public class PolymorphicAuthDynamicFeature<T extends Principal> implements Dynam
         final Type[] parameterGenericTypes = am.getGenericParameterTypes();
 
         for (int i = 0; i < parameterAnnotations.length; i++) {
-            for (final Annotation annotation : parameterAnnotations[i]) {
-                // If the parameter type is an Optional, extract its type
-                // parameter. Otherwise, use the parameter type itself.
-                final Type paramType = (parameterTypes[i].equals(Optional.class))
-                    ? ((ParameterizedType) parameterGenericTypes[i]).getActualTypeArguments()[0]
-                    : parameterTypes[i];
+            final Class<?> type = parameterTypes[i];
 
+            // If the parameter type is an Optional, extract its type
+            // parameter. Otherwise, use the parameter type itself.
+            final Type paramType = type == Optional.class
+                ? ((ParameterizedType) parameterGenericTypes[i]).getActualTypeArguments()[0]
+                : type;
+
+            for (final Annotation annotation : parameterAnnotations[i]) {
                 if (annotation instanceof Auth && authFilterMap.containsKey(paramType)) {
-                    if (parameterTypes[i].equals(Optional.class)) {
-                        context.register(new WebApplicationExceptionCatchingFilter(authFilterMap.get(paramType)));
+                    if (type == Optional.class) {
+                        final ContainerRequestFilter filter = authFilterMap.get(paramType);
+                        context.register(new WebApplicationExceptionCatchingFilter(filter));
                         return;
                     } else {
-                        context.register(authFilterMap.get(parameterTypes[i]));
+                        context.register(authFilterMap.get(type));
                         return;
                     }
                 }
