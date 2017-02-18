@@ -100,11 +100,11 @@ public abstract class AuthFilter<C, P extends Principal> implements ContainerReq
          * @return a new instance of the filter
          */
         public T buildAuthFilter() {
-            Preconditions.checkArgument(realm != null, "Realm is not set");
-            Preconditions.checkArgument(prefix != null, "Prefix is not set");
-            Preconditions.checkArgument(authenticator != null, "Authenticator is not set");
-            Preconditions.checkArgument(authorizer != null, "Authorizer is not set");
-            Preconditions.checkArgument(unauthorizedHandler != null, "Unauthorized handler is not set");
+            Preconditions.checkNotNull(realm, "Realm is not set");
+            Preconditions.checkNotNull(prefix, "Prefix is not set");
+            Preconditions.checkNotNull(authenticator, "Authenticator is not set");
+            Preconditions.checkNotNull(authorizer, "Authorizer is not set");
+            Preconditions.checkNotNull(unauthorizedHandler, "Unauthorized handler is not set");
 
             final T authFilter = newInstance();
             authFilter.authorizer = authorizer;
@@ -140,7 +140,7 @@ public abstract class AuthFilter<C, P extends Principal> implements ContainerReq
 
             final SecurityContext securityContext = requestContext.getSecurityContext();
             final boolean secure = securityContext != null && securityContext.isSecure();
-            
+
             requestContext.setSecurityContext(new SecurityContext() {
                 @Override
                 public Principal getUserPrincipal() {

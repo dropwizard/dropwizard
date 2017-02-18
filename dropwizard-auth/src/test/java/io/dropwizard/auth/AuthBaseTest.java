@@ -95,6 +95,29 @@ public abstract class AuthBaseTest<T extends DropwizardResourceConfig> extends J
     }
 
     @Test
+    public void resourceWithValidOptionalAuthentication200() {
+        assertThat(target("/test/optional").request()
+            .header(HttpHeaders.AUTHORIZATION, getPrefix() + " " + getOrdinaryGuyValidToken())
+            .get(String.class))
+            .isEqualTo("principal was present");
+    }
+
+    @Test
+    public void resourceWithInvalidOptionalAuthentication200() {
+        assertThat(target("/test/optional").request()
+            .header(HttpHeaders.AUTHORIZATION, getPrefix() + " " + getBadGuyToken())
+            .get(String.class))
+            .isEqualTo("principal was not present");
+    }
+
+    @Test
+    public void resourceWithoutOptionalAuthentication200() {
+        assertThat(target("/test/optional").request()
+            .get(String.class))
+            .isEqualTo("principal was not present");
+    }
+
+    @Test
     public void resourceWithAuthorizationPrincipalIsNotAuthorized403() {
         try {
             target("/test/admin").request()

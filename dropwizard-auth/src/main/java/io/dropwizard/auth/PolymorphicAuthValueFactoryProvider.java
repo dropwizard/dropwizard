@@ -13,7 +13,9 @@ import org.glassfish.jersey.server.spi.internal.ValueFactoryProvider;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.lang.reflect.ParameterizedType;
 import java.security.Principal;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -57,10 +59,16 @@ public class PolymorphicAuthValueFactoryProvider<T extends Principal> extends Ab
      */
     @Override
     public AbstractContainerRequestValueFactory<?> createValueFactory(Parameter parameter) {
-        if (!parameter.isAnnotationPresent(Auth.class) || !principalClassSet.contains(parameter.getRawType())) {
+        if (!parameter.isAnnotationPresent(Auth.class)) {
             return null;
-        } else {
+        } else if (principalClassSet.contains(parameter.getRawType())) {
             return new PrincipalContainerRequestValueFactory();
+        } else {
+            final boolean isOptionalPrincipal = parameter.getRawType() == Optional.class
+                && ParameterizedType.class.isAssignableFrom(parameter.getType().getClass())
+                && principalClassSet.contains(((ParameterizedType) parameter.getType()).getActualTypeArguments()[0]);
+
+            return isOptionalPrincipal ? new OptionalPrincipalContainerRequestValueFactory() : null;
         }
     }
 
