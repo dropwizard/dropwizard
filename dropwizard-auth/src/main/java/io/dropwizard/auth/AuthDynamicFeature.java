@@ -11,6 +11,7 @@ import javax.ws.rs.container.DynamicFeature;
 import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.FeatureContext;
 import java.lang.annotation.Annotation;
+import java.util.Optional;
 
 /**
  * A {@link DynamicFeature} that registers the provided auth filter
@@ -47,7 +48,26 @@ public class AuthDynamicFeature implements DynamicFeature {
     public void configure(ResourceInfo resourceInfo, FeatureContext context) {
         final AnnotatedMethod am = new AnnotatedMethod(resourceInfo.getResourceMethod());
         final Annotation[][] parameterAnnotations = am.getParameterAnnotations();
-        //@DenyAll shouldn't be attached to classes
+        final Class<?>[] parameterTypes = am.getParameterTypes();
+
+        // First, check for any @Auth annotations on the method.
+        for (int i = 0; i < parameterAnnotations.length; i++) {
+            for (final Annotation annotation : parameterAnnotations[i]) {
+                if (annotation instanceof Auth) {
+                    // Optional auth requires that a concrete AuthFilter be provided.
+                    if (parameterTypes[i].equals(Optional.class) && authFilter != null) {
+                        context.register(new WebApplicationExceptionCatchingFilter(authFilter));
+                        return;
+                    } else {
+                        registerAuthFilter(context);
+                        return;
+                    }
+                }
+            }
+        }
+
+        // Second, check for any authorization annotations on the class or method.
+        // Note that @DenyAll shouldn't be attached to classes.
         final boolean annotationOnClass = (resourceInfo.getResourceClass().getAnnotation(RolesAllowed.class) != null) ||
             (resourceInfo.getResourceClass().getAnnotation(PermitAll.class) != null);
         final boolean annotationOnMethod = am.isAnnotationPresent(RolesAllowed.class) || am.isAnnotationPresent(DenyAll.class) ||
@@ -55,15 +75,6 @@ public class AuthDynamicFeature implements DynamicFeature {
 
         if (annotationOnClass || annotationOnMethod) {
             registerAuthFilter(context);
-        } else {
-            for (Annotation[] annotations : parameterAnnotations) {
-                for (Annotation annotation : annotations) {
-                    if (annotation instanceof Auth) {
-                        registerAuthFilter(context);
-                        return;
-                    }
-                }
-            }
         }
     }
 

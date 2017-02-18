@@ -3,12 +3,15 @@ package io.dropwizard.auth;
 import com.google.common.collect.ImmutableMap;
 import org.glassfish.jersey.server.model.AnnotatedMethod;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.security.Principal;
+import java.util.Optional;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.DynamicFeature;
 import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.FeatureContext;
-import java.lang.annotation.Annotation;
-import java.security.Principal;
 
 /**
  * A {@link DynamicFeature} that registers the provided auth filters
@@ -30,12 +33,27 @@ public class PolymorphicAuthDynamicFeature<T extends Principal> implements Dynam
         final AnnotatedMethod am = new AnnotatedMethod(resourceInfo.getResourceMethod());
         final Annotation[][] parameterAnnotations = am.getParameterAnnotations();
         final Class<?>[] parameterTypes = am.getParameterTypes();
+        final Type[] parameterGenericTypes = am.getGenericParameterTypes();
 
         for (int i = 0; i < parameterAnnotations.length; i++) {
+            final Class<?> type = parameterTypes[i];
+
+            // If the parameter type is an Optional, extract its type
+            // parameter. Otherwise, use the parameter type itself.
+            final Type paramType = type == Optional.class
+                ? ((ParameterizedType) parameterGenericTypes[i]).getActualTypeArguments()[0]
+                : type;
+
             for (final Annotation annotation : parameterAnnotations[i]) {
-                if (annotation instanceof Auth && authFilterMap.containsKey(parameterTypes[i])) {
-                    context.register(authFilterMap.get(parameterTypes[i]));
-                    return;
+                if (annotation instanceof Auth && authFilterMap.containsKey(paramType)) {
+                    if (type == Optional.class) {
+                        final ContainerRequestFilter filter = authFilterMap.get(paramType);
+                        context.register(new WebApplicationExceptionCatchingFilter(filter));
+                        return;
+                    } else {
+                        context.register(authFilterMap.get(type));
+                        return;
+                    }
                 }
             }
         }

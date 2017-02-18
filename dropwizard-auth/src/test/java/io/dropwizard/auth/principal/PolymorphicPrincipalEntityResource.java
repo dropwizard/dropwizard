@@ -7,6 +7,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -30,5 +31,11 @@ public class PolymorphicPrincipalEntityResource {
     public String principalEntityWithoutAuth(@Auth NullPrincipal principal) {
         assertThat(principal).isNotNull();
         return principal.getName();
+    }
+
+    @GET
+    @Path("optional")
+    public String checkOptionalAuth(@Auth Optional<NullPrincipal> principalOpt) {
+        return "principal was " + ((principalOpt.isPresent()) ? "" : "not ") + "present";
     }
 }

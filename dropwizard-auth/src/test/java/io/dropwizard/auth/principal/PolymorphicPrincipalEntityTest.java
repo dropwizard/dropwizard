@@ -140,4 +140,35 @@ public class PolymorphicPrincipalEntityTest extends JerseyTest {
             assertThat(e.getResponse().getStatus()).isEqualTo(401);
         }
     }
+
+    @Test
+    public void resourceWithValidOptionalAuthentication200() {
+        assertThat(target("/auth-test/optional").request()
+            .header(HttpHeaders.AUTHORIZATION, "Basic " + NULL_USERNAME_ENCODED_TOKEN)
+            .get(String.class))
+            .isEqualTo("principal was present");
+    }
+
+    @Test
+    public void resourceWithInvalidOptionalAuthentication200() {
+        assertThat(target("/auth-test/optional").request()
+            .header(HttpHeaders.AUTHORIZATION, "Basic cats")
+            .get(String.class))
+            .isEqualTo("principal was not present");
+    }
+
+    @Test
+    public void resourceWithoutOptionalAuthentication200() {
+        assertThat(target("/auth-test/optional").request()
+            .get(String.class))
+            .isEqualTo("principal was not present");
+    }
+
+    @Test
+    public void resourceWithDifferentOptionalAuthentication200() {
+        assertThat(target("/auth-test/optional").request()
+            .header(HttpHeaders.AUTHORIZATION, "Basic " + JSON_USERNAME_ENCODED_TOKEN)
+            .get(String.class))
+            .isEqualTo("principal was not present");
+    }
 }
