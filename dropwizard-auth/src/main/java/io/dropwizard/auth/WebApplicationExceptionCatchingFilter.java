@@ -3,8 +3,6 @@ package io.dropwizard.auth;
 import com.google.common.base.Preconditions;
 
 import java.io.IOException;
-import java.security.Principal;
-import java.util.Optional;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;

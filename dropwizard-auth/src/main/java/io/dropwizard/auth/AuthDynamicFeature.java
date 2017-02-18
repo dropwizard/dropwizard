@@ -11,7 +11,6 @@ import javax.ws.rs.container.DynamicFeature;
 import javax.ws.rs.container.ResourceInfo;
 import javax.ws.rs.core.FeatureContext;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Type;
 import java.util.Optional;
 
 /**

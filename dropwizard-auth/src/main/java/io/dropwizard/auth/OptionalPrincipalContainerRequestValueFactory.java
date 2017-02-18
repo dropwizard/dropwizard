@@ -11,8 +11,7 @@ import java.security.Principal;
  * Principal} from the current {@link ContainerRequest} instance.
  */
 class OptionalPrincipalContainerRequestValueFactory
-    extends AbstractContainerRequestValueFactory<Optional<Principal>>
-{
+    extends AbstractContainerRequestValueFactory<Optional<Principal>> {
     /**
      * @return {@link Optional}{@code <}{@link Principal}{@code >}
      *         stored on the request, or {@code Optional.empty()} if
