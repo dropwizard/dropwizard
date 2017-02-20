@@ -444,7 +444,7 @@
                 <plugin>
                     <groupId>kr.motd.maven</groupId>
                     <artifactId>sphinx-maven-plugin</artifactId>
-                    <version>1.5.2.Final</version>
+                    <version>1.5.3.Final</version>
                 </plugin>
             </plugins>
         </pluginManagement>
