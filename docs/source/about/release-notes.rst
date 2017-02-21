@@ -36,7 +36,7 @@ v1.1.0: Unreleased
 * Register Jackson parameter-names modules `#1908 <https://github.com/dropwizard/dropwizard/pull/1908>`_
 * Native Jackson deserialization of enums when Jackson annotations are present `#1909 <https://github.com/dropwizard/dropwizard/pull/1909>`_
 * Add `JsonConfigurationFactory` for first-class support of the JSON configuration `#1897 <https://github.com/dropwizard/dropwizard/pull/1897>`_
-* Upgraded to Jackson 2.8.6
+* Upgraded to Jackson 2.8.7
 * Upgraded to Hibernate Validator 5.3.4.Final
 * Upgraded to Jetty 9.4.1.v20170120 `#1901 <https://github.com/dropwizard/dropwizard/pull/1901>`_
 * Upgraded to tomcat-jdbc 8.5.9
