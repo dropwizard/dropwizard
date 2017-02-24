@@ -43,6 +43,7 @@ v1.1.0: Unreleased
 * Upgraded to Objenesis 2.4 `#1654 <https://github.com/dropwizard/dropwizard/pull/1654>`_
 * Upgraded to AssertJ 3.6.1
 * Upgraded to classmate 1.3.3
+* Upgraded to Metrics 3.2.0 `#1936 <https://github.com/dropwizard/dropwizard/pull/1936>`_
 * Upgraded to Mustache 0.9.4 `#1766 <https://github.com/dropwizard/dropwizard/pull/1766>`_
 * Upgraded to Mockito 2.6.1
 * Upgraded to Liquibase 3.5.3
