@@ -41,7 +41,7 @@ v1.1.0: Unreleased
 * Upgraded to Hibernate ORM 5.2.8.Final
 * Upgraded to Jetty 9.4.2.v20170220
 * Upgraded to tomcat-jdbc 8.5.9
-* Upgraded to Objenesis 2.4 `#1654 <https://github.com/dropwizard/dropwizard/pull/1654>`_
+* Upgraded to Objenesis 2.5.1
 * Upgraded to AssertJ 3.6.2
 * Upgraded to classmate 1.3.3
 * Upgraded to Mustache 0.9.4 `#1766 <https://github.com/dropwizard/dropwizard/pull/1766>`_
