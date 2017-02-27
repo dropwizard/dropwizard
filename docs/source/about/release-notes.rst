@@ -51,7 +51,7 @@ v1.1.0: Unreleased
 * Upgraded to Jersey 2.25.1
 * Upgraded to javassist 3.21.0-GA
 * Upgraded to Guava 21.0
-* Upgraded to SLF4J 1.7.22
+* Upgraded to SLF4J 1.7.24
 * Upgraded to H2 1.4.193
 * Upgraded to Joda-Time 2.9.7
 * Upgraded to commons-lang3 3.5
