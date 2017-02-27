@@ -38,20 +38,21 @@ v1.1.0: Unreleased
 * Add `JsonConfigurationFactory` for first-class support of the JSON configuration `#1897 <https://github.com/dropwizard/dropwizard/pull/1897>`_
 * Upgraded to Jackson 2.8.7
 * Upgraded to Hibernate Validator 5.3.4.Final
-* Upgraded to Jetty 9.4.1.v20170120 `#1901 <https://github.com/dropwizard/dropwizard/pull/1901>`_
+* Upgraded to Hibernate ORM 5.2.8.Final
+* Upgraded to Jetty 9.4.2.v20170220
 * Upgraded to tomcat-jdbc 8.5.9
-* Upgraded to Objenesis 2.4 `#1654 <https://github.com/dropwizard/dropwizard/pull/1654>`_
-* Upgraded to AssertJ 3.6.1
+* Upgraded to Objenesis 2.5.1
+* Upgraded to AssertJ 3.6.2
 * Upgraded to classmate 1.3.3
 * Upgraded to Mustache 0.9.4 `#1766 <https://github.com/dropwizard/dropwizard/pull/1766>`_
-* Upgraded to Mockito 2.6.1
+* Upgraded to Mockito 2.7.12
 * Upgraded to Liquibase 3.5.3
 * Upgraded to Logback 1.2.1 `#1918 <https://github.com/dropwizard/dropwizard/pull/1927>`_
-* Upgraded to JDBI 2.77
+* Upgraded to JDBI 2.78
 * Upgraded to Jersey 2.25.1
 * Upgraded to javassist 3.21.0-GA
 * Upgraded to Guava 21.0
-* Upgraded to SLF4J 1.7.22
+* Upgraded to SLF4J 1.7.24
 * Upgraded to H2 1.4.193
 * Upgraded to Joda-Time 2.9.7
 * Upgraded to commons-lang3 3.5
