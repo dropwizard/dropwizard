@@ -3,6 +3,7 @@ package io.dropwizard.servlets.tasks;
 import com.codahale.metrics.MetricRegistry;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMultimap;
+import java.io.StringWriter;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,6 +19,7 @@ import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
@@ -143,6 +145,40 @@ public class TaskServletTest {
             Assert.fail("Execute method for " + PostBodyTask.class.getName() + " not found");
         }
     }
+
+    @Test
+    public void returnAllTaskNamesLexicallyOnGet() throws Exception {
+        try (StringWriter sw = new StringWriter();
+             PrintWriter pw = new PrintWriter(sw)) {
+            when(request.getMethod()).thenReturn("GET");
+            when(request.getPathInfo()).thenReturn(null);
+            when(response.getWriter()).thenReturn(pw);
+            servlet.service(request, response);
+
+            final String newLine = System.lineSeparator();
+            assertThat(sw.toString())
+                .isEqualTo(gc.getName() + newLine + printJSON.getName() + newLine);
+        }
+    }
+
+    @Test
+    public void returnsA404WhenGettingUnknownTask() throws Exception {
+        when(request.getMethod()).thenReturn("GET");
+        when(request.getPathInfo()).thenReturn("/absent");
+        servlet.service(request, response);
+
+        verify(response).sendError(404);
+    }
+
+    @Test
+    public void returnsA405WhenGettingTaskByName() throws Exception {
+        when(request.getMethod()).thenReturn("GET");
+        when(request.getPathInfo()).thenReturn("/gc");
+        servlet.service(request, response);
+
+        verify(response).sendError(405);
+    }
+
 
     private static class TestServletInputStream extends ServletInputStream {
         private InputStream delegate;
