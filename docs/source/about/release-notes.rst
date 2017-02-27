@@ -45,7 +45,7 @@ v1.1.0: Unreleased
 * Upgraded to AssertJ 3.6.2
 * Upgraded to classmate 1.3.3
 * Upgraded to Mustache 0.9.4 `#1766 <https://github.com/dropwizard/dropwizard/pull/1766>`_
-* Upgraded to Mockito 2.6.1
+* Upgraded to Mockito 2.7.12
 * Upgraded to Liquibase 3.5.3
 * Upgraded to Logback 1.2.1 `#1918 <https://github.com/dropwizard/dropwizard/pull/1927>`_
 * Upgraded to JDBI 2.78
