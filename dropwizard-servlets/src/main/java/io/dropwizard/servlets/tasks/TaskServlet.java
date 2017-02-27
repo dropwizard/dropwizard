@@ -11,9 +11,6 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.io.CharStreams;
 import com.google.common.net.MediaType;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -100,11 +97,10 @@ public class TaskServlet extends HttpServlet {
         if (Strings.isNullOrEmpty(req.getPathInfo())) {
             try (final PrintWriter output = resp.getWriter()) {
                 resp.setContentType(MediaType.PLAIN_TEXT_UTF_8.toString());
-                final ArrayList<Task> tasks = new ArrayList<>(getTasks());
-                Collections.sort(tasks, Comparator.comparing(Task::getName));
-                for (final Task task : tasks) {
-                    output.println(task.getName());
-                }
+                getTasks().stream()
+                    .map(Task::getName)
+                    .sorted()
+                    .forEach(output::println);
             }
         } else if (tasks.containsKey(req.getPathInfo())) {
             resp.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
