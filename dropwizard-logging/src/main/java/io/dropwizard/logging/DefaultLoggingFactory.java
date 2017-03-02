@@ -1,11 +1,14 @@
 package io.dropwizard.logging;
 
+import ch.qos.logback.classic.AsyncAppender;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.jmx.JMXConfigurator;
 import ch.qos.logback.classic.jul.LevelChangePropagator;
 import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.Appender;
+import ch.qos.logback.core.ConsoleAppender;
 import ch.qos.logback.core.util.StatusPrinter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.logback.InstrumentedAppender;
@@ -18,6 +21,7 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.logging.async.AsyncAppenderFactory;
 import io.dropwizard.logging.async.AsyncLoggingEventAppenderFactory;
@@ -36,6 +40,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.io.PrintStream;
 import java.lang.management.ManagementFactory;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
@@ -167,9 +172,55 @@ public class DefaultLoggingFactory implements LoggingFactory {
         // Should acquire the lock to avoid concurrent listener changes
         CHANGE_LOGGER_CONTEXT_LOCK.lock();
         try {
-            loggerContext.stop();
+            // We need to go through a list of appenders and locate the async ones,
+            // as those could have messages left to write. Since there is no flushing
+            // mechanism built into logback, we wait for a short period of time before
+            // giving up that the appender will be completely flushed.
+            final Logger logger = loggerContext.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
+            final ArrayList<Appender<ILoggingEvent>> appenders = Lists.newArrayList(logger.iteratorForAppenders());
+            for (Appender<ILoggingEvent> appender : appenders) {
+                if (appender instanceof AsyncAppender) {
+                    flushAppender((AsyncAppender) appender);
+                }
+            }
+        } catch (InterruptedException ignored) {
+            // If the thread waiting for the logs to be flushed is aborted then
+            // user clearly wants the application to quit now, so stop trying
+            // to flush any appenders
+            Thread.currentThread().interrupt();
         } finally {
             CHANGE_LOGGER_CONTEXT_LOCK.unlock();
+        }
+    }
+
+    @Override
+    public void reset() {
+        CHANGE_LOGGER_CONTEXT_LOCK.lock();
+        try {
+            // Flush all the loggers and reinstate only the console logger as a
+            // sane default.
+            loggerContext.stop();
+            final Logger logger = loggerContext.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
+            logger.detachAndStopAllAppenders();
+            logger.addAppender(new ConsoleAppender<>());
+            loggerContext.start();
+        } finally {
+            CHANGE_LOGGER_CONTEXT_LOCK.unlock();
+        }
+    }
+
+    private void flushAppender(AsyncAppender appender) throws InterruptedException {
+        int timeWaiting = 0;
+        while (timeWaiting < appender.getMaxFlushTime() && appender.getNumberOfElementsInQueue() > 0) {
+            Thread.sleep(100);
+            timeWaiting += 100;
+        }
+
+        if (appender.getNumberOfElementsInQueue() > 0) {
+            // It may seem odd to log when we're trying to flush a logger that
+            // isn't flushing, but the same warning is issued inside
+            // appender.stop() if the appender isn't able to flush.
+            appender.addWarn(appender.getNumberOfElementsInQueue() + " events may be discarded");
         }
     }
 
