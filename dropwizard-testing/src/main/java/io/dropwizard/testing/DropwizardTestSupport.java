@@ -166,6 +166,9 @@ public class DropwizardTestSupport<C extends Configuration> {
                 jettyServer = null;
             }
         }
+
+        // Don't leak appenders into other test cases
+        configuration.getLoggingFactory().reset();
     }
 
     private void applyConfigOverrides() {
