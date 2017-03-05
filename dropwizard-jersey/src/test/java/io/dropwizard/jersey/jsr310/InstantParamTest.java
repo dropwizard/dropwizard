@@ -7,7 +7,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class InstantParamTest {
     @Test
-    public void parsesDateTimes() throws Exception {
+    public void parsesInstants() throws Exception {
         final InstantParam param = new InstantParam("1488751730055");
 
         assertThat(param.get())
