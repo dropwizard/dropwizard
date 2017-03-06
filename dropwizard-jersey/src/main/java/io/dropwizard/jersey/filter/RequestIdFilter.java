@@ -14,7 +14,9 @@ import org.slf4j.LoggerFactory;
 /**
  * This class adds a "X-Request-Id" HTTP response header and logs the following
  * information: request method, request path, request ID, response status,
- * response bytes (or -1 if not known)
+ * response bytes (or -1 if not known).
+ *
+ * @see https://devcenter.heroku.com/articles/http-request-id
  */
 @Provider
 @Priority(Priorities.USER)
@@ -28,7 +30,7 @@ public class RequestIdFilter implements ContainerResponseFilter {
             final ContainerResponseContext response) throws IOException {
 
         final UUID id = UUID.randomUUID();
-        LOGGER.info("method={} path={} request_id={} status={} bytes={}",
+        LOGGER.info("method={} path={} request_id={} status={} length={}",
                 request.getMethod(), request.getUriInfo().getPath(), id,
                 response.getStatus(), response.getLength());
         response.getHeaders().add(REQUEST_ID, id);

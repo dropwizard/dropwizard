@@ -14,7 +14,7 @@ import javax.ws.rs.ext.Provider;
 
 /**
  * This class ensures that any HTTP response that includes a Content-Type
- * response header, that it also includes the UTF-8 character set.
+ * response header, will also include the UTF-8 character set.
  */
 @Provider
 @Priority(Priorities.HEADER_DECORATOR)

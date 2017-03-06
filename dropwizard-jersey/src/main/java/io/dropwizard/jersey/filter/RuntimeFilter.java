@@ -11,8 +11,9 @@ import io.dropwizard.util.Duration;
 
 /**
  * This class adds an "X-Runtime" HTTP response header that includes the time
- * taken to execute the request, in seconds.
- * 
+ * taken to execute the request, in seconds (based on the implementation from
+ * Ruby on Rails).
+ *
  * @see https://github.com/rack/rack/blob/master/lib/rack/runtime.rb
  */
 @Provider
