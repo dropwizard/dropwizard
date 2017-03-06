@@ -37,7 +37,7 @@ public class RequestIdFilter implements ContainerResponseFilter {
             id = generateRandomUuid().toString();
         }
         
-        LOGGER.info("method={} path={} request_id={} status={} length={}",
+        LOGGER.trace("method={} path={} request_id={} status={} length={}",
                 request.getMethod(), request.getUriInfo().getPath(), id,
                 response.getStatus(), response.getLength());
         response.getHeaders().putSingle(REQUEST_ID, id);
