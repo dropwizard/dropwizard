@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 /**
  * This class adds a "X-Request-Id" HTTP response header and logs the following
  * information: request method, request path, request ID, response status,
- * response bytes (or -1 if not known).
+ * response length (or -1 if not known).
  *
  * @see https://devcenter.heroku.com/articles/http-request-id
  */
