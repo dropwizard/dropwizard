@@ -36,7 +36,7 @@ public class RuntimeFilter implements ContainerRequestFilter, ContainerResponseF
         final Long startTime = (Long) request.getProperty(RUNTIME_PROPERTY);
         if (startTime != null) {
             final float seconds = (System.nanoTime() - startTime) / NANOS_IN_SECOND;
-            response.getHeaders().add(RUNTIME_HEADER, String.format("%.6f", seconds));
+            response.getHeaders().putSingle(RUNTIME_HEADER, String.format("%.6f", seconds));
         }
     }
 }

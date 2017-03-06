@@ -18,7 +18,7 @@ import javax.ws.rs.ext.Provider;
  */
 @Provider
 @Priority(Priorities.HEADER_DECORATOR)
-public class CharsetFilter implements ContainerResponseFilter {
+public class CharsetUtf8Filter implements ContainerResponseFilter {
 
     private static final String UTF_8 = StandardCharsets.UTF_8.displayName(Locale.ENGLISH);
 
