@@ -20,6 +20,7 @@ import io.dropwizard.logging.async.AsyncAppenderFactory;
 import io.dropwizard.logging.filter.LevelFilterFactory;
 import io.dropwizard.logging.layout.LayoutFactory;
 import io.dropwizard.util.Size;
+import io.dropwizard.validation.MinSize;
 import io.dropwizard.validation.ValidationMethod;
 
 import javax.validation.constraints.Min;
@@ -99,6 +100,14 @@ import javax.validation.constraints.Min;
  *             for details.
  *         </td>
  *     </tr>
+ *     <tr>
+ *         <td>{@code bufferSize}</td>
+ *         <td>8KB</td>
+ *         <td>
+ *             The buffer size of the underlying FileAppender (setting added in logback 1.1.10). Increasing this from
+ *             the default of 8KB to 256KB is reported to significantly reduce thread contention.
+ *         </td>
+ *     </tr>
  * </table>
  *
  * @see AbstractAppenderFactory
@@ -116,6 +125,9 @@ public class FileAppenderFactory<E extends DeferredProcessingAware> extends Abst
     private int archivedFileCount = 5;
 
     private Size maxFileSize;
+
+    @MinSize(1)
+    private Size bufferSize = Size.bytes(FileAppender.DEFAULT_BUFFER_SIZE);
 
     @JsonProperty
     public String getCurrentLogFilename() {
@@ -165,6 +177,16 @@ public class FileAppenderFactory<E extends DeferredProcessingAware> extends Abst
     @JsonProperty
     public void setMaxFileSize(Size maxFileSize) {
         this.maxFileSize = maxFileSize;
+    }
+
+    @JsonProperty
+    public Size getBufferSize() {
+        return bufferSize;
+    }
+
+    @JsonProperty
+    public void setBufferSize(Size bufferSize) {
+        this.bufferSize = bufferSize;
     }
 
     @JsonIgnore
@@ -218,6 +240,7 @@ public class FileAppenderFactory<E extends DeferredProcessingAware> extends Abst
         if (archive) {
             final RollingFileAppender<E> appender = new RollingFileAppender<>();
             appender.setFile(currentLogFilename);
+            appender.setBufferSize(new FileSize(bufferSize.toBytes()));
 
             if (maxFileSize != null && !archivedLogFilenamePattern.contains("%d")) {
                 final FixedWindowRollingPolicy rollingPolicy = new FixedWindowRollingPolicy();
@@ -265,6 +288,7 @@ public class FileAppenderFactory<E extends DeferredProcessingAware> extends Abst
 
         final FileAppender<E> appender = new FileAppender<>();
         appender.setFile(currentLogFilename);
+        appender.setBufferSize(new FileSize(bufferSize.toBytes()));
         return appender;
     }
 }
