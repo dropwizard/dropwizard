@@ -647,6 +647,7 @@ File
           archivedFileCount: 5
           timeZone: UTC
           logFormat: # TODO
+          bufferSize: 8KB
           filterFactories:
             - type: URI
 
@@ -683,6 +684,8 @@ filterFactories              (none)       The list of filters to apply to the ap
                                           the thresold.
 neverBlock                   false        Prevent the wrapping asynchronous appender from blocking when its underlying queue is full.
                                           Set to true to disable blocking.
+bufferSize                   8KB          The buffer size of the underlying FileAppender (setting added in logback 1.1.10). Increasing this
+                                          from the default of 8KB to 256KB is reported to significantly reduce thread contention.
 ============================ ===========  ==================================================================================================
 
 
