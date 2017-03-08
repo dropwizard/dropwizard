@@ -148,6 +148,7 @@ v1.0.0: Jul 26 2016
 * Support for adding multiple ``MigrationBundles`` `#1430 <https://github.com/dropwizard/dropwizard/pull/1430>`_
 * Support for obtaining server context paths in the ``Application.run`` method `#1503 <https://github.com/dropwizard/dropwizard/pull/1503>`_
 * Support for unlimited log files for file appender `#1549 <https://github.com/dropwizard/dropwizard/pull/1549>`_
+* Add support for neverBlock on AsyncAppenders `#1917 <https://github.com/dropwizard/dropwizard/pull/1917>`_
 * Support for log file names determined by logging policy `#1561 <https://github.com/dropwizard/dropwizard/pull/1561>`_
 * Default Graphite reporter port changed from 8080 to 2003 `#1538 <https://github.com/dropwizard/dropwizard/pull/1538>`_
 * Upgraded to Apache HTTP Client 4.5.2
