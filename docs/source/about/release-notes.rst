@@ -39,6 +39,7 @@ v1.1.0: Unreleased
 * Introduce CachingAuthorizer `#1639 <https://github.com/dropwizard/dropwizard/pull/1639>`_
 * Enhance logging of registered endpoints `#1804 <https://github.com/dropwizard/dropwizard/pull/1804>`_
 * Flush loggers on command exit instead of destroying logging `#1947 <https://github.com/dropwizard/dropwizard/pull/1947>`_
+* Add support for neverBlock on AsyncAppenders `#1917 <https://github.com/dropwizard/dropwizard/pull/1917>`_
 * Allow to disable caching of Mustache views `#1289 <https://github.com/dropwizard/dropwizard/issues/1289>`_
 * Add the ``httpCompliance`` option to the HTTP configuration `#1825 <https://github.com/dropwizard/dropwizard/pull/1825>`_
 * Add the ``blockingTimeout`` option to the HTTP configuration `#1795 <https://github.com/dropwizard/dropwizard/pull/1795>`_
@@ -148,7 +149,6 @@ v1.0.0: Jul 26 2016
 * Support for adding multiple ``MigrationBundles`` `#1430 <https://github.com/dropwizard/dropwizard/pull/1430>`_
 * Support for obtaining server context paths in the ``Application.run`` method `#1503 <https://github.com/dropwizard/dropwizard/pull/1503>`_
 * Support for unlimited log files for file appender `#1549 <https://github.com/dropwizard/dropwizard/pull/1549>`_
-* Add support for neverBlock on AsyncAppenders `#1917 <https://github.com/dropwizard/dropwizard/pull/1917>`_
 * Support for log file names determined by logging policy `#1561 <https://github.com/dropwizard/dropwizard/pull/1561>`_
 * Default Graphite reporter port changed from 8080 to 2003 `#1538 <https://github.com/dropwizard/dropwizard/pull/1538>`_
 * Upgraded to Apache HTTP Client 4.5.2
