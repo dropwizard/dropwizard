@@ -8,5 +8,10 @@ import io.dropwizard.jackson.Discoverable;
 public interface LoggingFactory extends Discoverable {
     void configure(MetricRegistry metricRegistry, String name);
 
+    /** Should flush all log messages but not disable logging */
     void stop();
+
+    /** Mainly useful in testing to reset the logging to a sane default before
+     *  the next test configures logging to a desired level. */
+    void reset();
 }
