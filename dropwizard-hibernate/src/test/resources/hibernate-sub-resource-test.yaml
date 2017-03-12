@@ -1,0 +1,12 @@
+server:
+  applicationConnectors:
+    - type: http
+      port: 0
+  adminConnectors:
+    - type: http
+      port: 0
+logging:
+  appenders: []
+dataSource:
+  url: 'jdbc:h2:mem:sub-resources-test'
+  driverClass: "org.h2.Driver"

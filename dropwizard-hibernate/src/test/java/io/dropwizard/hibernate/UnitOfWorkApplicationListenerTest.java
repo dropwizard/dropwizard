@@ -2,9 +2,6 @@ package io.dropwizard.hibernate;
 
 import org.glassfish.jersey.server.ExtendedUriInfo;
 import org.glassfish.jersey.server.model.Resource;
-import org.glassfish.jersey.server.model.ResourceMethod;
-import org.glassfish.jersey.server.model.ResourceModel;
-import org.glassfish.jersey.server.monitoring.ApplicationEvent;
 import org.glassfish.jersey.server.monitoring.RequestEvent;
 import org.glassfish.jersey.server.monitoring.RequestEventListener;
 import org.hibernate.CacheMode;
@@ -36,7 +33,6 @@ public class UnitOfWorkApplicationListenerTest {
     private final SessionFactory sessionFactory = mock(SessionFactory.class);
     private final SessionFactory analyticsSessionFactory = mock(SessionFactory.class);
     private final UnitOfWorkApplicationListener listener = new UnitOfWorkApplicationListener();
-    private final ApplicationEvent appEvent = mock(ApplicationEvent.class);
     private final ExtendedUriInfo uriInfo = mock(ExtendedUriInfo.class);
 
     private final RequestEvent requestStartEvent = mock(RequestEvent.class);
@@ -67,7 +63,6 @@ public class UnitOfWorkApplicationListenerTest {
         when(analyticsSession.getTransaction()).thenReturn(analyticsTransaction);
         when(analyticsTransaction.getStatus()).thenReturn(ACTIVE);
 
-        when(appEvent.getType()).thenReturn(ApplicationEvent.Type.INITIALIZATION_APP_FINISHED);
         when(requestMethodStartEvent.getType()).thenReturn(RequestEvent.Type.RESOURCE_METHOD_START);
         when(responseFinishedEvent.getType()).thenReturn(RequestEvent.Type.FINISHED);
         when(requestMethodExceptionEvent.getType()).thenReturn(RequestEvent.Type.ON_EXCEPTION);
@@ -76,7 +71,7 @@ public class UnitOfWorkApplicationListenerTest {
         when(responseFinishedEvent.getUriInfo()).thenReturn(uriInfo);
         when(requestMethodExceptionEvent.getUriInfo()).thenReturn(uriInfo);
 
-        prepareAppEvent("methodWithDefaultAnnotation");
+        prepareResourceMethod("methodWithDefaultAnnotation");
     }
 
     @Test
@@ -92,7 +87,7 @@ public class UnitOfWorkApplicationListenerTest {
     public void bindsAndUnbindsTheSessionToTheManagedContext() throws Exception {
         doAnswer(invocation -> {
             assertThat(ManagedSessionContext.hasBind(sessionFactory))
-                    .isTrue();
+                .isTrue();
             return null;
         }).when(session).beginTransaction();
 
@@ -103,7 +98,7 @@ public class UnitOfWorkApplicationListenerTest {
 
     @Test
     public void configuresTheSessionsReadOnlyDefault() throws Exception {
-        prepareAppEvent("methodWithReadOnlyAnnotation");
+        prepareResourceMethod("methodWithReadOnlyAnnotation");
 
         execute();
 
@@ -112,7 +107,7 @@ public class UnitOfWorkApplicationListenerTest {
 
     @Test
     public void configuresTheSessionsCacheMode() throws Exception {
-        prepareAppEvent("methodWithCacheModeIgnoreAnnotation");
+        prepareResourceMethod("methodWithCacheModeIgnoreAnnotation");
 
         execute();
 
@@ -121,7 +116,7 @@ public class UnitOfWorkApplicationListenerTest {
 
     @Test
     public void configuresTheSessionsFlushMode() throws Exception {
-        prepareAppEvent("methodWithFlushModeAlwaysAnnotation");
+        prepareResourceMethod("methodWithFlushModeAlwaysAnnotation");
 
         execute();
 
@@ -131,7 +126,7 @@ public class UnitOfWorkApplicationListenerTest {
     @Test
     public void doesNotBeginATransactionIfNotTransactional() throws Exception {
         final String resourceMethodName = "methodWithTransactionalFalseAnnotation";
-        prepareAppEvent(resourceMethodName);
+        prepareResourceMethod(resourceMethodName);
 
         when(session.getTransaction()).thenReturn(null);
 
@@ -144,7 +139,7 @@ public class UnitOfWorkApplicationListenerTest {
     @Test
     public void detectsAnnotationOnHandlingMethod() throws NoSuchMethodException {
         final String resourceMethodName = "handlingMethodAnnotated";
-        prepareAppEvent(resourceMethodName);
+        prepareResourceMethod(resourceMethodName);
 
         execute();
 
@@ -154,7 +149,7 @@ public class UnitOfWorkApplicationListenerTest {
     @Test
     public void detectsAnnotationOnDefinitionMethod() throws NoSuchMethodException {
         final String resourceMethodName = "definitionMethodAnnotated";
-        prepareAppEvent(resourceMethodName);
+        prepareResourceMethod(resourceMethodName);
 
         execute();
 
@@ -164,7 +159,7 @@ public class UnitOfWorkApplicationListenerTest {
     @Test
     public void annotationOnDefinitionMethodOverridesHandlingMethod() throws NoSuchMethodException {
         final String resourceMethodName = "bothMethodsAnnotated";
-        prepareAppEvent(resourceMethodName);
+        prepareResourceMethod(resourceMethodName);
 
         execute();
 
@@ -229,7 +224,7 @@ public class UnitOfWorkApplicationListenerTest {
 
     @Test
     public void beginsAndCommitsATransactionForAnalytics() throws Exception {
-        prepareAppEvent("methodWithUnitOfWorkOnAnalyticsDatabase");
+        prepareResourceMethod("methodWithUnitOfWorkOnAnalyticsDatabase");
         execute();
 
         final InOrder inOrder = inOrder(analyticsSession, analyticsTransaction);
@@ -240,31 +235,24 @@ public class UnitOfWorkApplicationListenerTest {
 
     @Test
     public void throwsExceptionOnNotRegisteredDatabase() throws Exception {
-        prepareAppEvent("methodWithUnitOfWorkOnNotRegisteredDatabase");
+        prepareResourceMethod("methodWithUnitOfWorkOnNotRegisteredDatabase");
         assertThatThrownBy(this::execute)
             .isInstanceOf(IllegalArgumentException.class)
             .hasMessage("Unregistered Hibernate bundle: 'warehouse'");
     }
 
-    private void prepareAppEvent(String resourceMethodName) throws NoSuchMethodException {
-        final Resource.Builder builder = Resource.builder();
-        final MockResource mockResource = new MockResource();
-        final Method handlingMethod = mockResource.getClass().getMethod(resourceMethodName);
-
+    private void prepareResourceMethod(String resourceMethodName) throws NoSuchMethodException {
+        final Method handlingMethod = MockResource.class.getMethod(resourceMethodName);
         Method definitionMethod = handlingMethod;
-        Class<?> interfaceClass = mockResource.getClass().getInterfaces()[0];
+        Class<?> interfaceClass = MockResource.class.getInterfaces()[0];
         if (methodDefinedOnInterface(resourceMethodName, interfaceClass.getMethods())) {
             definitionMethod = interfaceClass.getMethod(resourceMethodName);
         }
-
-        final ResourceMethod resourceMethod = builder.addMethod()
-                .handlingMethod(handlingMethod)
-                .handledBy(mockResource, definitionMethod).build();
-        final Resource resource = builder.build();
-        final ResourceModel model = new ResourceModel.Builder(false).addResource(resource).build();
-
-        when(appEvent.getResourceModel()).thenReturn(model);
-        when(uriInfo.getMatchedResourceMethod()).thenReturn(resourceMethod);
+        when(uriInfo.getMatchedResourceMethod()).thenReturn(Resource.builder()
+            .addMethod()
+            .handlingMethod(handlingMethod)
+            .handledBy(new MockResource(), definitionMethod)
+            .build());
     }
 
     private static boolean methodDefinedOnInterface(String methodName, Method[] methods) {
@@ -277,7 +265,6 @@ public class UnitOfWorkApplicationListenerTest {
     }
 
     private void execute() {
-        listener.onEvent(appEvent);
         RequestEventListener requestListener = listener.onRequest(requestStartEvent);
         requestListener.onEvent(requestMethodStartEvent);
         requestListener.onEvent(responseFiltersStartEvent);
@@ -285,7 +272,6 @@ public class UnitOfWorkApplicationListenerTest {
     }
 
     private void executeWithException() {
-        listener.onEvent(appEvent);
         RequestEventListener requestListener = listener.onRequest(requestStartEvent);
         requestListener.onEvent(requestMethodStartEvent);
         requestListener.onEvent(responseFiltersStartEvent);
