@@ -1,5 +1,6 @@
 package io.dropwizard.metrics;
 
+import com.codahale.metrics.MetricAttribute;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.io.Resources;
 import io.dropwizard.configuration.YamlConfigurationFactory;
@@ -11,6 +12,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
+import java.util.EnumSet;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -46,5 +48,26 @@ public class MetricsFactoryTest {
         CsvReporterFactory csvReporter = new CsvReporterFactory();
         csvReporter.setFile(new File("metrics"));
         assertThat(config.getReporters()).hasSize(3);
+    }
+
+    @Test
+    public void canReadExcludedAndIncludedAttributes(){
+        assertThat(config.getReporters()).hasSize(3);
+        final ReporterFactory reporterFactory = config.getReporters().get(0);
+        assertThat(reporterFactory).isInstanceOf(ConsoleReporterFactory.class);
+        final ConsoleReporterFactory consoleReporterFactory = (ConsoleReporterFactory) reporterFactory;
+        assertThat(consoleReporterFactory.getIncludesAttributes()).isEqualTo(EnumSet.of(
+            MetricAttribute.P50, MetricAttribute.P95, MetricAttribute.P98, MetricAttribute.P99));
+        assertThat(consoleReporterFactory.getExcludesAttributes()).isEqualTo(EnumSet.of(MetricAttribute.P98));
+    }
+
+    @Test
+    public void canReadDefaultExcludedAndIncludedAttributes(){
+        assertThat(config.getReporters()).hasSize(3);
+        final ReporterFactory reporterFactory = config.getReporters().get(1);
+        assertThat(reporterFactory).isInstanceOf(CsvReporterFactory.class);
+        final CsvReporterFactory csvReporterFactory = (CsvReporterFactory) reporterFactory;
+        assertThat(csvReporterFactory.getIncludesAttributes()).isEqualTo(EnumSet.allOf(MetricAttribute.class));
+        assertThat(csvReporterFactory.getExcludesAttributes()).isEmpty();
     }
 }
