@@ -88,8 +88,16 @@ public class Environment {
                 .rejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy())
                 .build();
 
-        SharedMetricRegistries.add("default", metricRegistry);
-        SharedHealthCheckRegistries.add("default", healthCheckRegistry);
+        try {
+            SharedMetricRegistries.getDefault();
+        } catch (IllegalStateException e) {
+            SharedMetricRegistries.setDefault("default", metricRegistry);
+        }
+        try {
+            SharedHealthCheckRegistries.getDefault();
+        } catch (IllegalStateException e) {
+            SharedHealthCheckRegistries.setDefault("default", healthCheckRegistry);
+        }
     }
 
     /**
