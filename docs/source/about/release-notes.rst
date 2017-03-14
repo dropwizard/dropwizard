@@ -30,7 +30,7 @@ v1.1.0: Unreleased
 * Finer-grain control of exception behaviour in view renderers `#1820 <https://github.com/dropwizard/dropwizard/pull/1820>`_
 * Default ``WebApplicationException`` handler preserves exception HTTP headers `#1912 <https://github.com/dropwizard/dropwizard/pull/1912>`_
 * JerseyClientBuilder can create rx-capable client `#1721 <https://github.com/dropwizard/dropwizard/pull/1721>`_
-* Configurable response for empty `Optional` return values `#1784 <https://github.com/dropwizard/dropwizard/pull/1784>`_
+* Configurable response for empty ``Optional`` return values `#1784 <https://github.com/dropwizard/dropwizard/pull/1784>`_
 * Add web test container agnostic way of invoking requests in ``ResourceTestRule`` `#1778 <https://github.com/dropwizard/dropwizard/pull/1778>`_
 * Remove OptionalValidatedValueUnwrapper `#1583 <https://github.com/dropwizard/dropwizard/pull/1583>`_
 * Allow constraints to be applied to type `#1586 <https://github.com/dropwizard/dropwizard/pull/1586>`_
@@ -46,7 +46,7 @@ v1.1.0: Unreleased
 * Add ``min`` and ``mins`` as valid ``Duration`` abbreviations `#1833 <https://github.com/dropwizard/dropwizard/pull/1833>`_
 * Register Jackson parameter-names modules `#1908 <https://github.com/dropwizard/dropwizard/pull/1908>`_
 * Native Jackson deserialization of enums when Jackson annotations are present `#1909 <https://github.com/dropwizard/dropwizard/pull/1909>`_
-* Add `JsonConfigurationFactory` for first-class support of the JSON configuration `#1897 <https://github.com/dropwizard/dropwizard/pull/1897>`_
+* Add ``JsonConfigurationFactory`` for first-class support of the JSON configuration `#1897 <https://github.com/dropwizard/dropwizard/pull/1897>`_
 * Support disabled and enabled attributes for metrics `#1957 <https://github.com/dropwizard/dropwizard/pull/1957>`_
 * Support ``@UnitOfWork`` in sub-resources `#1959 <https://github.com/dropwizard/dropwizard/pull/1959>`_
 * Upgraded to Jackson 2.8.7
