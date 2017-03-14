@@ -1,5 +1,6 @@
 package io.dropwizard.metrics.graphite;
 
+import com.codahale.metrics.MetricAttribute;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.ScheduledReporter;
 import com.codahale.metrics.graphite.Graphite;
@@ -8,12 +9,16 @@ import com.codahale.metrics.graphite.GraphiteUDP;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 import io.dropwizard.metrics.BaseReporterFactory;
 import io.dropwizard.validation.OneOf;
 import io.dropwizard.validation.PortRange;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.constraints.NotNull;
+import java.util.EnumSet;
+import java.util.Set;
 
 /**
  * A factory for {@link GraphiteReporter} instances.
@@ -120,6 +125,7 @@ public class GraphiteReporterFactory extends BaseReporterFactory {
                 .convertDurationsTo(getDurationUnit())
                 .convertRatesTo(getRateUnit())
                 .filter(getFilter())
-                .prefixedWith(getPrefix());
+                .prefixedWith(getPrefix())
+                .disabledMetricAttributes(getDisabledAttributes());
     }
 }

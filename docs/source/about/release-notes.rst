@@ -40,6 +40,7 @@ v1.1.0: Unreleased
 * Register Jackson parameter-names modules `#1908 <https://github.com/dropwizard/dropwizard/pull/1908>`_
 * Native Jackson deserialization of enums when Jackson annotations are present `#1909 <https://github.com/dropwizard/dropwizard/pull/1909>`_
 * Add `JsonConfigurationFactory` for first-class support of the JSON configuration `#1897 <https://github.com/dropwizard/dropwizard/pull/1897>`_
+* Support disabled and enabled attributes for metrics `#1957 <https://github.com/dropwizard/dropwizard/pull/1957>`_
 * Support ``@UnitOfWork`` in sub-resources `#1959 <https://github.com/dropwizard/dropwizard/pull/1959>`_
 * Upgraded to Jackson 2.8.6
 * Upgraded to Hibernate Validator 5.3.4.Final
@@ -49,7 +50,7 @@ v1.1.0: Unreleased
 * Upgraded to Objenesis 2.5.1
 * Upgraded to AssertJ 3.6.2
 * Upgraded to classmate 1.3.3
-* Upgraded to Metrics 3.2.0 `#1936 <https://github.com/dropwizard/dropwizard/pull/1936>`_
+* Upgraded to Metrics 3.2.1 `#1936 <https://github.com/dropwizard/dropwizard/pull/1936>`_
 * Upgraded to Mustache 0.9.4 `#1766 <https://github.com/dropwizard/dropwizard/pull/1766>`_
 * Upgraded to Mockito 2.7.12
 * Upgraded to Liquibase 3.5.3

@@ -203,6 +203,7 @@ public class GangliaReporterFactory extends BaseReporterFactory {
                                   .prefixedWith(getPrefix())
                                   .withDMax((int) dmax.toSeconds())
                                   .withTMax((int) tmax.toSeconds())
+                                  .disabledMetricAttributes(getDisabledAttributes())
                                   .build(ganglia);
         } catch (IOException e) {
             throw new RuntimeException(e);
