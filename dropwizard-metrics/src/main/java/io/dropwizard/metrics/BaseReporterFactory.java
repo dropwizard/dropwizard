@@ -1,5 +1,6 @@
 package io.dropwizard.metrics;
 
+import com.codahale.metrics.MetricAttribute;
 import com.codahale.metrics.MetricFilter;
 import com.codahale.metrics.ScheduledReporter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -8,13 +9,16 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
 import io.dropwizard.util.Duration;
 import io.dropwizard.validation.MinDuration;
 import org.hibernate.validator.valuehandling.UnwrapValidatedValue;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.EnumSet;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
@@ -52,6 +56,20 @@ import java.util.regex.Pattern;
  *         <td>Metrics to include in reports, by name. When defined, only these metrics will be
  *         reported. See {@link #getFilter()}.  Exclusion rules (excludes) take precedence,
  *         so if a name matches both <i>excludes</i> and <i>includes</i>, it is excluded.</td>
+ *     </tr>
+ *     <tr>
+ *         <td>excludesAttributes</td>
+ *         <td>No excluded attributes.</td>
+ *         <td>Metric attributes to exclude from reports, by name (e.g `p98`, `m15_rate`, `stddev`).
+ *         When defined, matching metrics attributes will not be reported. See {@link MetricAttribute}</td>
+ *     </tr>
+ *     <tr>
+ *         <td>includesAttributes</td>
+ *         <td>All metrics attributes.</td>
+ *         <td>Metrics attributes to include in reports, by name (e.g `p98`, `m15_rate`, `stddev`).
+ *         When defined, only these attributes will be reported. See {@link MetricAttribute}.
+ *         Exclusion rules (excludes) take precedence, so if an attribute matches both <i>includesAttributes</i>
+ *         and <i>excludesAttributes</i>, it is excluded.</td>
  *     </tr>
  *     <tr>
  *         <td>useRegexFilters</td>
@@ -93,6 +111,10 @@ public abstract class BaseReporterFactory implements ReporterFactory {
     private Optional<Duration> frequency = Optional.empty();
 
     private boolean useRegexFilters = false;
+
+    private EnumSet<MetricAttribute> excludesAttributes = EnumSet.noneOf(MetricAttribute.class);
+
+    private EnumSet<MetricAttribute> includesAttributes = EnumSet.allOf(MetricAttribute.class);
 
     public TimeUnit getDurationUnit() {
         return durationUnit;
@@ -154,6 +176,26 @@ public abstract class BaseReporterFactory implements ReporterFactory {
         this.useRegexFilters = useRegexFilters;
     }
 
+    @JsonProperty
+    public EnumSet<MetricAttribute> getExcludesAttributes() {
+        return excludesAttributes;
+    }
+
+    @JsonProperty
+    public void setExcludesAttributes(EnumSet<MetricAttribute> excludesAttributes) {
+        this.excludesAttributes = excludesAttributes;
+    }
+
+    @JsonProperty
+    public EnumSet<MetricAttribute> getIncludesAttributes() {
+        return includesAttributes;
+    }
+
+    @JsonProperty
+    public void setIncludesAttributes(EnumSet<MetricAttribute> includesAttributes) {
+        this.includesAttributes = includesAttributes;
+    }
+
     /**
      * Gets a {@link MetricFilter} that specifically includes and excludes configured metrics.
      * <p/>
@@ -186,6 +228,12 @@ public abstract class BaseReporterFactory implements ReporterFactory {
             return !stringMatchingStrategy.containsMatch(getExcludes(), name) &&
                     (getIncludes().isEmpty() || stringMatchingStrategy.containsMatch(getIncludes(), name));
         };
+    }
+
+    protected Set<MetricAttribute> getDisabledAttributes() {
+        return ImmutableSet.copyOf(Sets.union(
+            Sets.difference(EnumSet.allOf(MetricAttribute.class), getIncludesAttributes()),
+            getExcludesAttributes()));
     }
 
     private interface StringMatchingStrategy {
