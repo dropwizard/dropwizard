@@ -197,7 +197,7 @@ public class FileAppenderFactoryTest {
 
         assertThat(appender.getRollingPolicy()).isInstanceOf(FixedWindowRollingPolicy.class);
         assertThat(appender.getRollingPolicy().isStarted()).isTrue();
-        
+
         assertThat(appender.getTriggeringPolicy()).isInstanceOf(SizeBasedTriggeringPolicy.class);
         assertThat(appender.getTriggeringPolicy().isStarted()).isTrue();
         final Field maxFileSizeField = SizeBasedTriggeringPolicy.class.getDeclaredField("maxFileSize");
@@ -225,34 +225,48 @@ public class FileAppenderFactoryTest {
 
         assertThat(appender.getName()).isEqualTo("async-file-appender");
     }
-    
+
     @Test
     public void isNeverBlock() throws Exception {
         FileAppenderFactory<ILoggingEvent> fileAppenderFactory = new FileAppenderFactory<>();
         fileAppenderFactory.setArchive(false);
         fileAppenderFactory.setNeverBlock(true);
         AsyncAppender asyncAppender = (AsyncAppender) fileAppenderFactory.build(new LoggerContext(), "test", new DropwizardLayoutFactory(), new NullLevelFilterFactory<>(), new AsyncLoggingEventAppenderFactory());
-        
+
         assertThat(asyncAppender.isNeverBlock()).isTrue();
     }
-    
+
     @Test
     public void isNotNeverBlock() throws Exception {
         FileAppenderFactory<ILoggingEvent> fileAppenderFactory = new FileAppenderFactory<>();
         fileAppenderFactory.setArchive(false);
         fileAppenderFactory.setNeverBlock(false);
         AsyncAppender asyncAppender = (AsyncAppender) fileAppenderFactory.build(new LoggerContext(), "test", new DropwizardLayoutFactory(), new NullLevelFilterFactory<>(), new AsyncLoggingEventAppenderFactory());
-        
+
         assertThat(asyncAppender.isNeverBlock()).isFalse();
     }
-    
+
     @Test
     public void defaultIsNotNeverBlock() throws Exception {
         FileAppenderFactory<ILoggingEvent> fileAppenderFactory = new FileAppenderFactory<>();
         fileAppenderFactory.setArchive(false);
         // default neverBlock
         AsyncAppender asyncAppender = (AsyncAppender) fileAppenderFactory.build(new LoggerContext(), "test", new DropwizardLayoutFactory(), new NullLevelFilterFactory<>(), new AsyncLoggingEventAppenderFactory());
-        
+
         assertThat(asyncAppender.isNeverBlock()).isFalse();
+    }
+
+    @Test
+    public void overrideBufferSize() throws NoSuchFieldException, IllegalAccessException {
+        FileAppenderFactory<ILoggingEvent> fileAppenderFactory = new FileAppenderFactory<>();
+        fileAppenderFactory.setArchive(false);
+        fileAppenderFactory.setBufferSize(Size.kilobytes(256));
+        AsyncAppender asyncAppender = (AsyncAppender) fileAppenderFactory.build(new LoggerContext(), "test", new DropwizardLayoutFactory(), new NullLevelFilterFactory<>(), new AsyncLoggingEventAppenderFactory());
+        final Appender<ILoggingEvent> fileAppender = asyncAppender.getAppender("file-appender");
+        assertThat(fileAppender).isInstanceOf(FileAppender.class);
+        final Field bufferSizeField = FileAppender.class.getDeclaredField("bufferSize");
+        bufferSizeField.setAccessible(true);
+        FileSize bufferSizeFromAppender = (FileSize) bufferSizeField.get(fileAppender);
+        assertThat(bufferSizeFromAppender.getSize()).isEqualTo(fileAppenderFactory.getBufferSize().toBytes());
     }
 }

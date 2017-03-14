@@ -4,13 +4,22 @@
 Release Notes
 #############
 
+.. _rel-1.2.0:
+
+v1.2.0: Unreleased
+==================
+
+* Support configuring FileAppender#bufferSize `#1951 <https://github.com/dropwizard/dropwizard/pull/1951>`_
+
 .. _rel-1.1.0:
 
 v1.1.0: Unreleased
 ==================
 
-* Upgraded to Hibernate ORM 5.2.7, introducing a series of deprecations and API changes in preparation for Hibernate ORM 6 `#1871 <https://github.com/dropwizard/dropwizard/pull/1871>`
+* Upgraded to Hibernate ORM 5.2.7, introducing a series of deprecations and API changes in preparation for Hibernate ORM 6 `#1871 <https://github.com/dropwizard/dropwizard/pull/1871>`_
 * Add runtime certificate reload via admin task `#1799 <https://github.com/dropwizard/dropwizard/pull/1799>`_
+* List available tasks lexically via admin task `#1939 <https://github.com/dropwizard/dropwizard/pull/1939>`_
+* Add support for optional resource protection `#1931 <https://github.com/dropwizard/dropwizard/pull/1931>`_
 * Invalid enum request parameters result in 400 response with possible choices `#1734 <https://github.com/dropwizard/dropwizard/pull/1734>`_
 * Enum request parameters are deserialized in the same fuzzy manner, as the request body `#1734 <https://github.com/dropwizard/dropwizard/pull/1734>`_
 * Request parameter name displayed in response to parse failure `#1734 <https://github.com/dropwizard/dropwizard/pull/1734>`_
@@ -29,6 +38,8 @@ v1.1.0: Unreleased
 * Switch cert and peer validation to false by default `#1855 <https://github.com/dropwizard/dropwizard/pull/1855>`_
 * Introduce CachingAuthorizer `#1639 <https://github.com/dropwizard/dropwizard/pull/1639>`_
 * Enhance logging of registered endpoints `#1804 <https://github.com/dropwizard/dropwizard/pull/1804>`_
+* Flush loggers on command exit instead of destroying logging `#1947 <https://github.com/dropwizard/dropwizard/pull/1947>`_
+* Add support for neverBlock on AsyncAppenders `#1917 <https://github.com/dropwizard/dropwizard/pull/1917>`_
 * Allow to disable caching of Mustache views `#1289 <https://github.com/dropwizard/dropwizard/issues/1289>`_
 * Add the ``httpCompliance`` option to the HTTP configuration `#1825 <https://github.com/dropwizard/dropwizard/pull/1825>`_
 * Add the ``blockingTimeout`` option to the HTTP configuration `#1795 <https://github.com/dropwizard/dropwizard/pull/1795>`_
@@ -44,6 +55,7 @@ v1.1.0: Unreleased
 * Upgraded to Objenesis 2.5.1
 * Upgraded to AssertJ 3.6.2
 * Upgraded to classmate 1.3.3
+* Upgraded to Metrics 3.2.1 `#1936 <https://github.com/dropwizard/dropwizard/pull/1936>`_
 * Upgraded to Mustache 0.9.4 `#1766 <https://github.com/dropwizard/dropwizard/pull/1766>`_
 * Upgraded to Mockito 2.7.12
 * Upgraded to Liquibase 3.5.3

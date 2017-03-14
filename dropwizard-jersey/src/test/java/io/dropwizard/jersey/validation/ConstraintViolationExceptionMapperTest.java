@@ -34,6 +34,7 @@ public class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
     protected Application configure() {
         return DropwizardResourceConfig.forTesting(new MetricRegistry())
                 .packages("io.dropwizard.jersey.validation")
+                .register(new ValidatingResource2())
                 .register(new HibernateValidationFeature(Validators.newValidator()));
     }
 
@@ -76,6 +77,15 @@ public class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
                 .post(Entity.entity("{}", MediaType.APPLICATION_JSON));
         assertThat(response.getStatus()).isEqualTo(422);
         assertThat(response.readEntity(String.class)).isEqualTo("{\"errors\":[\"name may not be empty\"]}");
+    }
+
+    @Test
+    public void postInvalidInterfaceEntityIs422() throws Exception {
+        final Response response = target("/valid2/repr").request(MediaType.APPLICATION_JSON)
+            .post(Entity.entity("{\"name\": \"a\"}", MediaType.APPLICATION_JSON));
+        assertThat(response.getStatus()).isEqualTo(400);
+        assertThat(response.readEntity(String.class))
+            .isEqualTo("{\"errors\":[\"query param interfaceVariable may not be null\"]}");
     }
 
     @Test
