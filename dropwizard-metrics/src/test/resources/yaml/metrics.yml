@@ -5,6 +5,8 @@ reporters:
     timeZone: PST
     durationUnit: milliseconds
     rateUnit: seconds
+    includesAttributes: [p50, p95, p98, p99]
+    excludesAttributes: [p98]
   - type: csv
     file: metrics
   - type: log

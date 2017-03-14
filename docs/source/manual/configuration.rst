@@ -792,6 +792,8 @@ The following options are available for all metrics reporters.
           rateUnit: seconds
           excludes: (none)
           includes: (all)
+          excludesAttributes: (none)
+          includesAttributes: (all)
           useRegexFilters: false
           frequency: 1 minute
 
@@ -803,6 +805,10 @@ durationUnit           milliseconds   The unit to report durations as. Overrides
 rateUnit               seconds        The unit to report rates as. Overrides per-metric rate units.
 excludes               (none)         Metrics to exclude from reports, by name. When defined, matching metrics will not be reported.
 includes               (all)          Metrics to include in reports, by name. When defined, only these metrics will be reported.
+excludesAttributes     (none)         Metric attributes to exclude from reports, by name (e.g. ``p98``, ``m15_rate``, ``stddev``).
+                                      When defined, matching metrics attributes will not be reported.
+includesAttributes     (all)          Metrics attributes to include in reports, by name (e.g. ``p98``, ``m15_rate``, ``stddev``).
+                                      When defined, only these attributes will be reported.
 useRegexFilters        false          Indicates whether the values of the 'includes' and 'excludes' fields should be treated as regular expressions or not.
 frequency              (none)         The frequency to report metrics. Overrides the default.
 ====================== =============  ===========
