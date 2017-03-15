@@ -57,6 +57,7 @@
         <dropwizard.url>http://www.dropwizard.io/${project.version}</dropwizard.url>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <javadoc.doclint.none>-Xdoclint:none</javadoc.doclint.none>
         <maven.site.deploy.skip>true</maven.site.deploy.skip>
         <junit.version>4.12</junit.version>
         <assertj.version>3.6.2</assertj.version>
@@ -271,15 +272,6 @@
                     </plugin>
                 </plugins>
             </build>
-        </profile>
-        <profile>
-            <id>java8-disable-strict-javadoc</id>
-            <activation>
-                <jdk>[1.8,)</jdk>
-            </activation>
-            <properties>
-                <javadoc.doclint.none>-Xdoclint:none</javadoc.doclint.none>
-            </properties>
         </profile>
         <profile>
             <id>dev</id>
