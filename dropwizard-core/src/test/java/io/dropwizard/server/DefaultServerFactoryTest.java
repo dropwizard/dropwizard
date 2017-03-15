@@ -153,6 +153,7 @@ public class DefaultServerFactoryTest {
         environment.jersey().register(new TestResource(requestReceived, shutdownInvoked));
 
         final ScheduledExecutorService executor = Executors.newScheduledThreadPool(3);
+        http.configure(environment);
         final Server server = http.build(environment);
 
         ((AbstractNetworkConnector) server.getConnectors()[0]).setPort(0);
