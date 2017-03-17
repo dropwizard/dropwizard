@@ -13,29 +13,24 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Optional;
 
 public class AllowedMethodsFilter implements Filter {
 
     public static final String ALLOWED_METHODS_PARAM = "allowedMethods";
-    public static final Set<String> DEFAULT_ALLOWED_METHODS = ImmutableSet.of(
+    public static final ImmutableSet<String> DEFAULT_ALLOWED_METHODS = ImmutableSet.of(
             "GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS", "PATCH"
     );
 
     private static final Logger LOG = LoggerFactory.getLogger(AllowedMethodsFilter.class);
 
-    private Set<String> allowedMethods = new HashSet<>();
+    private ImmutableSet<String> allowedMethods;
 
     @Override
     public void init(FilterConfig config) {
-        final String allowedMethodsConfig = config.getInitParameter(ALLOWED_METHODS_PARAM);
-        if (allowedMethodsConfig == null) {
-            allowedMethods.addAll(DEFAULT_ALLOWED_METHODS);
-        } else {
-            allowedMethods.addAll(Arrays.asList(allowedMethodsConfig.split(",")));
-        }
+        allowedMethods = Optional.ofNullable(config.getInitParameter(ALLOWED_METHODS_PARAM))
+            .map(p -> ImmutableSet.copyOf(p.split(",")))
+            .orElse(DEFAULT_ALLOWED_METHODS);
     }
 
     @Override
@@ -56,6 +51,5 @@ public class AllowedMethodsFilter implements Filter {
 
     @Override
     public void destroy() {
-        allowedMethods.clear();
     }
 }
