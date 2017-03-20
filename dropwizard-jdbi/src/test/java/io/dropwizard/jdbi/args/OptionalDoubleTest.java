@@ -6,6 +6,8 @@ import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jdbi.DBIFactory;
 import io.dropwizard.jersey.validation.Validators;
 import io.dropwizard.setup.Environment;
+import org.eclipse.jetty.util.component.LifeCycle;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.skife.jdbi.v2.DBI;
@@ -36,6 +38,13 @@ public class OptionalDoubleTest {
             h.execute("CREATE TABLE test (id INT PRIMARY KEY, optional DOUBLE)");
         }
         dao = dbi.onDemand(TestDao.class);
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        for (LifeCycle managedObject : env.lifecycle().getManagedObjects()) {
+            managedObject.stop();
+        }
     }
 
     @Test
