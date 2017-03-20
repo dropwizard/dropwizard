@@ -72,6 +72,13 @@ v1.1.0: Unreleased
 * Upgraded to commons-lang3 3.5
 * Upgraded to Apache HTTP Client 4.5.3
 
+.. _rel-1.0.7:
+
+v1.0.7 Mar 20 2017
+==================
+
+* Upgrade to Metrics 3.1.4 `#1969 <https://github.com/dropwizard/dropwizard/pull/1969>`_
+
 .. _rel-1.0.6:
 
 v1.0.6 Jan 30 2017
