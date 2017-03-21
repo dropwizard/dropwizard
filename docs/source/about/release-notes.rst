@@ -13,7 +13,7 @@ v1.2.0: Unreleased
 
 .. _rel-1.1.0:
 
-v1.1.0: 21 Mar 2017
+v1.1.0: Mar 21 2017
 ===================
 
 * Upgraded to Hibernate ORM 5.2.7, introducing a series of deprecations and API changes in preparation for Hibernate ORM 6 `#1871 <https://github.com/dropwizard/dropwizard/pull/1871>`_
