@@ -1222,7 +1222,7 @@ In this example a ``GET`` request to ``/foobar`` will return
     {"code":404,"message":"Collection foobar does not exist"}
 
 One can also take exceptions that your resource may throw and map them to appropriate responses. For instance,
-an endpoint may throw ``IllegalArugmentException`` and it may be worthy enough of a response to warrant a
+an endpoint may throw ``IllegalArgumentException`` and it may be worthy enough of a response to warrant a
 custom metric to track how often the event occurs. Here's an example of such an ``ExceptionMapper``
 
 .. code-block:: java
