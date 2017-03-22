@@ -158,6 +158,7 @@
 <li>Allow to disable caching of Mustache views <a class="reference external" href="https://github.com/dropwizard/dropwizard/issues/1289">#1289</a></li>
 <li>Add the <code class="docutils literal"><span class="pre">httpCompliance</span></code> option to the HTTP configuration <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1825">#1825</a></li>
 <li>Add the <code class="docutils literal"><span class="pre">blockingTimeout</span></code> option to the HTTP configuration <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1795">#1795</a></li>
+<li>Make <code class="docutils literal"><span class="pre">GZipHandler</span></code> sync-flush configurable <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1685">#1685</a></li>
 <li>Add <code class="docutils literal"><span class="pre">min</span></code> and <code class="docutils literal"><span class="pre">mins</span></code> as valid <code class="docutils literal"><span class="pre">Duration</span></code> abbreviations <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1833">#1833</a></li>
 <li>Register Jackson parameter-names modules <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1908">#1908</a></li>
 <li>Native Jackson deserialization of enums when Jackson annotations are present <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1909">#1909</a></li>
@@ -948,9 +949,9 @@ now instrumented via <code class="docutils literal"><span class="pre">metrics-je
         <hr/>
         <footer>
             <p style="float: left">
-            &copy; Copyright 2010-2013, Coda Hale, Yammer Inc., 2014-2016 Dropwizard Team.
+            &copy; Copyright 2010-2013, Coda Hale, Yammer Inc., 2014-2017 Dropwizard Team.
             Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>
-            1.5.2.
+            1.4.6.
             </p>
             <p style="float: right">Dropwizard v1.1.0</p>
         </footer>
