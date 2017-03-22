@@ -9,6 +9,7 @@ import io.dropwizard.util.SizeUnit;
 import io.dropwizard.validation.MinDuration;
 import io.dropwizard.validation.MinSize;
 import io.dropwizard.validation.PortRange;
+import org.eclipse.jetty.http.HttpCompliance;
 import org.eclipse.jetty.io.ArrayByteBufferPool;
 import org.eclipse.jetty.io.ByteBufferPool;
 import org.eclipse.jetty.server.ConnectionFactory;
@@ -173,6 +174,21 @@ import static com.codahale.metrics.MetricRegistry.name;
  *             {@link ForwardedRequestCustomizer} for details.
  *         </td>
  *     </tr>
+ *     <tr>
+ *         <td>{@code httpCompliance}</td>
+ *         <td>RFC7230</td>
+ *         <td>
+ *             This sets the http compliance level used by Jetty when parsing http, this can be useful when using a
+ *             non-RFC7230 compliant front end, such as nginx, which can produce multi-line headers when forwarding
+ *             client certificates using proxy_set_header X-SSL-CERT $ssl_client_cert;
+ *
+ *             Possible values are set forth in the org.eclipse.jetty.http.HttpCompliance enum:
+ *             <ul>
+ *                 <li>RFC7230: Disallow header folding.</li>
+ *                 <li>RFC2616: Allow header folding.</li>
+ *             </ul>
+ *         </td>
+ *     </tr>
  * </table>
  */
 @JsonTypeName("http")
@@ -246,6 +262,7 @@ public class HttpConnectorFactory implements ConnectorFactory {
     private boolean useServerHeader = false;
     private boolean useDateHeader = true;
     private boolean useForwardedHeaders = true;
+    private HttpCompliance httpCompliance = HttpCompliance.RFC7230;
 
     @JsonProperty
     public int getPort() {
@@ -447,6 +464,17 @@ public class HttpConnectorFactory implements ConnectorFactory {
         this.useForwardedHeaders = useForwardedHeaders;
     }
 
+    @JsonProperty
+    public HttpCompliance getHttpCompliance() {
+        return httpCompliance;
+    }
+
+    @JsonProperty
+    public void setHttpCompliance(HttpCompliance httpCompliance) {
+        this.httpCompliance = httpCompliance;
+    }
+
+
     @Override
     public Connector build(Server server,
                            MetricRegistry metrics,
@@ -510,7 +538,7 @@ public class HttpConnectorFactory implements ConnectorFactory {
     }
 
     protected HttpConnectionFactory buildHttpConnectionFactory(HttpConfiguration httpConfig) {
-        final HttpConnectionFactory httpConnectionFactory = new HttpConnectionFactory(httpConfig);
+        final HttpConnectionFactory httpConnectionFactory = new HttpConnectionFactory(httpConfig, httpCompliance);
         httpConnectionFactory.setInputBufferSize((int) inputBufferSize.toBytes());
         return httpConnectionFactory;
     }
