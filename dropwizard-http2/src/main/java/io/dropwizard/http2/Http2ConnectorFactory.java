@@ -21,6 +21,9 @@ import org.eclipse.jetty.util.thread.ThreadPool;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Builds HTTP/2 over TLS (h2) connectors.
@@ -97,7 +100,7 @@ public class Http2ConnectorFactory extends HttpsConnectorFactory {
         // HTTP/2 requires that a server MUST support TLSv1.2 and TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256 cipher
         // See http://http2.github.io/http2-spec/index.html#rfc.section.9.2.2
         setSupportedProtocols(ImmutableList.of("TLSv1.2"));
-        setSupportedCipherSuites(ImmutableList.of("TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256"));
+        setSupportedCipherSuites(addIfNotPresent(getSupportedCipherSuites(), "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256"));
 
         // Setup connection factories
         final HttpConfiguration httpConfig = buildHttpConfiguration();
@@ -122,5 +125,11 @@ public class Http2ConnectorFactory extends HttpsConnectorFactory {
         return buildConnector(server, new ScheduledExecutorScheduler(), buildBufferPool(), name, threadPool,
                 new Jetty93InstrumentedConnectionFactory(sslConnectionFactory, metrics.timer(httpConnections())),
                 alpn, http2, http1);
+    }
+
+    private static List<String> addIfNotPresent(List<String> someList, String elementToAddIfNotPresent) {
+        return Stream.concat(someList.stream(), Stream.of(elementToAddIfNotPresent))
+            .distinct()
+            .collect(Collectors.toList());
     }
 }
