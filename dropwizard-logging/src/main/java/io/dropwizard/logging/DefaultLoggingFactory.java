@@ -202,7 +202,9 @@ public class DefaultLoggingFactory implements LoggingFactory {
             loggerContext.stop();
             final Logger logger = loggerContext.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
             logger.detachAndStopAllAppenders();
-            logger.addAppender(new ConsoleAppender<>());
+            final ConsoleAppender<ILoggingEvent> consoleAppender = new ConsoleAppender<>();
+            consoleAppender.setContext(loggerContext);
+            logger.addAppender(consoleAppender);
             loggerContext.start();
         } finally {
             CHANGE_LOGGER_CONTEXT_LOCK.unlock();
