@@ -239,6 +239,7 @@ public class FileAppenderFactory<E extends DeferredProcessingAware> extends Abst
     protected FileAppender<E> buildAppender(LoggerContext context) {
         if (archive) {
             final RollingFileAppender<E> appender = new RollingFileAppender<>();
+            appender.setContext(context);
             appender.setFile(currentLogFilename);
             appender.setBufferSize(new FileSize(bufferSize.toBytes()));
 
@@ -287,6 +288,7 @@ public class FileAppenderFactory<E extends DeferredProcessingAware> extends Abst
         }
 
         final FileAppender<E> appender = new FileAppender<>();
+        appender.setContext(context);
         appender.setFile(currentLogFilename);
         appender.setBufferSize(new FileSize(bufferSize.toBytes()));
         return appender;
