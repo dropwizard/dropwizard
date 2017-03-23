@@ -21,7 +21,9 @@ import org.eclipse.jetty.util.thread.ThreadPool;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -100,7 +102,9 @@ public class Http2ConnectorFactory extends HttpsConnectorFactory {
         // HTTP/2 requires that a server MUST support TLSv1.2 and TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256 cipher
         // See http://http2.github.io/http2-spec/index.html#rfc.section.9.2.2
         setSupportedProtocols(ImmutableList.of("TLSv1.2"));
-        setSupportedCipherSuites(addIfNotPresent(getSupportedCipherSuites(), "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256"));
+        setSupportedCipherSuites(addIfNotPresent(
+            Optional.ofNullable(getSupportedCipherSuites()).orElse(Collections.emptyList()),
+            "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256"));
 
         // Setup connection factories
         final HttpConfiguration httpConfig = buildHttpConfiguration();
