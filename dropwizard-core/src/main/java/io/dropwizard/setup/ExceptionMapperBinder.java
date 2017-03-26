@@ -1,6 +1,7 @@
 package io.dropwizard.setup;
 
 import io.dropwizard.jersey.errors.EarlyEofExceptionMapper;
+import io.dropwizard.jersey.errors.IllegalStateExceptionMapper;
 import io.dropwizard.jersey.errors.LoggingExceptionMapper;
 import io.dropwizard.jersey.jackson.JsonProcessingExceptionMapper;
 import io.dropwizard.jersey.optional.EmptyOptionalExceptionMapper;
@@ -28,6 +29,7 @@ public class ExceptionMapperBinder extends AbstractBinder {
         bind(new JsonProcessingExceptionMapper(isShowDetails())).to(ExceptionMapper.class);
         bind(new EarlyEofExceptionMapper()).to(ExceptionMapper.class);
         bind(new EmptyOptionalExceptionMapper()).to(ExceptionMapper.class);
+        bind(new IllegalStateExceptionMapper()).to(ExceptionMapper.class);
     }
 
     public boolean isShowDetails() {
