@@ -614,6 +614,7 @@ discardingThreshold    51           When the blocking queue has only the capacit
                                     If no discarding threshold is specified, then a default of queueSize / 5 is used.
                                     To keep all events, set discardingThreshold to 0.
 timeZone               UTC          The time zone to which event timestamps will be converted.
+                                    To use the system/default time zone, set it to ``system``.
 target                 stdout       The name of the standard stream to which events will be written.
                                     Can be ``stdout`` or ``stderr``.
 logFormat              default      The Logback pattern with which events will be formatted. See

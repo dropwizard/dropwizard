@@ -21,6 +21,8 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.TimeZone;
 
+import static com.google.common.base.Strings.nullToEmpty;
+
 /**
  * A base implementation of {@link AppenderFactory}.
  * <p/>
@@ -100,7 +102,7 @@ public abstract class AbstractAppenderFactory<E extends DeferredProcessingAware>
     private boolean includeCallerData = false;
 
     private ImmutableList<FilterFactory<E>> filterFactories = ImmutableList.of();
-    
+
     private boolean neverBlock = false;
 
     @JsonProperty
@@ -149,6 +151,12 @@ public abstract class AbstractAppenderFactory<E extends DeferredProcessingAware>
     }
 
     @JsonProperty
+    public void setTimeZone(String zoneId) {
+        this.timeZone = nullToEmpty(zoneId).equalsIgnoreCase("system") ? TimeZone.getDefault() :
+            TimeZone.getTimeZone(zoneId);
+    }
+
+    @JsonProperty
     public void setTimeZone(TimeZone timeZone) {
         this.timeZone = timeZone;
     }
@@ -172,7 +180,7 @@ public abstract class AbstractAppenderFactory<E extends DeferredProcessingAware>
     public void setFilterFactories(List<FilterFactory<E>> appenders) {
         this.filterFactories = ImmutableList.copyOf(appenders);
     }
-    
+
     @JsonProperty
     public void setNeverBlock(boolean neverBlock) {
         this.neverBlock = neverBlock;
