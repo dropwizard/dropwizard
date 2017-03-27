@@ -18,6 +18,7 @@ import org.skife.jdbi.v2.sqlobject.SqlUpdate;
 
 import java.io.IOException;
 import java.util.OptionalLong;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -31,7 +32,7 @@ public class OptionalLongTest {
     public void setupTests() throws IOException {
         final DataSourceFactory dataSourceFactory = new DataSourceFactory();
         dataSourceFactory.setDriverClass("org.h2.Driver");
-        dataSourceFactory.setUrl("jdbc:h2:mem:optional-long-" + System.currentTimeMillis() + "?user=sa");
+        dataSourceFactory.setUrl("jdbc:h2:mem:optional-long-" + UUID.randomUUID() + "?user=sa");
         dataSourceFactory.setInitialSize(1);
         final DBI dbi = new DBIFactory().build(env, dataSourceFactory, "test");
         try (Handle h = dbi.open()) {
