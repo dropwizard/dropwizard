@@ -4,7 +4,6 @@ import static java.util.Objects.requireNonNull;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -108,10 +107,9 @@ public abstract class BaseConfigurationFactory<T> implements ConfigurationFactor
     @Override
     public T build() throws IOException, ConfigurationException {
         try {
-            final JsonNode node = mapper.valueToTree(klass.getConstructor().newInstance());
+            final JsonNode node = mapper.valueToTree(klass.newInstance());
             return build(node, "default configuration");
-        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | SecurityException
-            | NoSuchMethodException | InvocationTargetException e) {
+        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | SecurityException e) {
             throw new IllegalArgumentException("Unable create an instance " +
                 "of the configuration class: '" + klass.getCanonicalName() + "'", e);
         }
