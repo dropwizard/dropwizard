@@ -11,6 +11,7 @@ import io.dropwizard.logging.FileAppenderFactory;
 import io.dropwizard.logging.SyslogAppenderFactory;
 import io.dropwizard.request.logging.RequestLogFactory;
 import io.dropwizard.validation.BaseValidator;
+import org.eclipse.jetty.server.RequestLog;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -44,6 +45,12 @@ public class LogbackClassicRequestLogFactoryTest {
         assertThat(classicRequestLogFactory.getAppenders()).hasSize(3).extractingResultOf("getClass").contains(
             ConsoleAppenderFactory.class, FileAppenderFactory.class, SyslogAppenderFactory.class
         );
+    }
+
+    @Test
+    public void testBuild() {
+        final RequestLog requestLog = this.requestLog.build("classic-request-log");
+        assertThat(requestLog).isInstanceOf(DropwizardSlf4jRequestLog.class);
     }
 
     @Test

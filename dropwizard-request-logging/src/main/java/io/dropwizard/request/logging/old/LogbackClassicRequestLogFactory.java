@@ -3,6 +3,7 @@ package io.dropwizard.request.logging.old;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.core.Context;
 import ch.qos.logback.core.CoreConstants;
 import ch.qos.logback.core.pattern.PatternLayoutBase;
 import ch.qos.logback.core.spi.AppenderAttachableImpl;
@@ -54,6 +55,12 @@ import java.util.TimeZone;
 @JsonTypeName("classic")
 public class LogbackClassicRequestLogFactory implements RequestLogFactory {
     private static class RequestLogLayout extends PatternLayoutBase<ILoggingEvent> {
+
+        private RequestLogLayout(Context context) {
+            super();
+            setContext(context);
+        }
+
         @Override
         public String doLayout(ILoggingEvent event) {
             return event.getFormattedMessage() + CoreConstants.LINE_SEPARATOR;
@@ -108,7 +115,7 @@ public class LogbackClassicRequestLogFactory implements RequestLogFactory {
         final LoggerContext context = logger.getLoggerContext();
         final LevelFilterFactory<ILoggingEvent> levelFilterFactory = new NullLevelFilterFactory<>();
         final AsyncAppenderFactory<ILoggingEvent> asyncAppenderFactory = new AsyncLoggingEventAppenderFactory();
-        final LayoutFactory<ILoggingEvent> layoutFactory = (c, tz) -> new RequestLogLayout();
+        final LayoutFactory<ILoggingEvent> layoutFactory = (c, tz) -> new RequestLogLayout(c);
         final AppenderAttachableImpl<ILoggingEvent> attachable = new AppenderAttachableImpl<>();
         for (AppenderFactory<ILoggingEvent> appender : appenders) {
             attachable.addAppender(appender.build(context, name, layoutFactory, levelFilterFactory, asyncAppenderFactory));
