@@ -27,8 +27,7 @@ public class ManagedPooledDataSource extends DataSourceProxy implements ManagedD
         this.metricRegistry = metricRegistry;
     }
 
-    // JDK6 has JDBC 4.0 which doesn't have this -- don't add @Override
-    @SuppressWarnings("override")
+    @Override
     public Logger getParentLogger() throws SQLFeatureNotSupportedException {
         throw new SQLFeatureNotSupportedException("Doesn't use java.util.logging");
     }

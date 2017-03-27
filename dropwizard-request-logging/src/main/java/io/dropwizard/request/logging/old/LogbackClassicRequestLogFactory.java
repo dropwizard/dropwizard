@@ -95,10 +95,12 @@ public class LogbackClassicRequestLogFactory implements RequestLogFactory {
     }
 
     @JsonIgnore
+    @Override
     public boolean isEnabled() {
         return !appenders.isEmpty();
     }
 
+    @Override
     public RequestLog build(String name) {
         final Logger logger = (Logger) LoggerFactory.getLogger("http.request");
         logger.setAdditive(false);

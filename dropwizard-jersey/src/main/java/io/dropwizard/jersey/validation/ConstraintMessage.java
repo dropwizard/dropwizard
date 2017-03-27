@@ -129,6 +129,8 @@ public class ConstraintMessage {
                 break;
             case METHOD:
                 return Optional.of(member.getName());
+            default:
+                break;
         }
         return Optional.empty();
     }
