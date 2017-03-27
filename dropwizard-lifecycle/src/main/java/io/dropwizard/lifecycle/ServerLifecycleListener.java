@@ -30,6 +30,6 @@ public interface ServerLifecycleListener extends EventListener {
      */
     default int getAdminPort(Server server) {
         final Connector[] connectors = server.getConnectors();
-        return ((ServerConnector) connectors[connectors.length -1]).getLocalPort();
+        return ((ServerConnector) connectors[connectors.length - 1]).getLocalPort();
     }
 }

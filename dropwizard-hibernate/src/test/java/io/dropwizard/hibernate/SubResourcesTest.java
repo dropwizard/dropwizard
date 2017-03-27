@@ -15,7 +15,12 @@ import org.hibernate.Transaction;
 import org.junit.ClassRule;
 import org.junit.Test;
 
-import javax.ws.rs.*;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.POST;
+import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -170,16 +175,16 @@ public class SubResourcesTest {
     }
 
     @ClassRule
-    public static DropwizardAppRule<TestConfiguration> APP_RULE = new DropwizardAppRule<>(TestApplication.class,
+    public static DropwizardAppRule<TestConfiguration> appRule = new DropwizardAppRule<>(TestApplication.class,
         ResourceHelpers.resourceFilePath("hibernate-sub-resource-test.yaml"));
 
     private static String baseUri() {
-        return "http://localhost:" + APP_RULE.getLocalPort();
+        return "http://localhost:" + appRule.getLocalPort();
     }
 
     @Test
     public void canReadFromTopResource() throws Exception {
-        final Person person = APP_RULE.client()
+        final Person person = appRule.client()
             .target(baseUri() + "/people/Greg")
             .request()
             .get(Person.class);
@@ -189,7 +194,7 @@ public class SubResourcesTest {
 
     @Test
     public void canWriteTopResource() throws Exception {
-        final Person person = APP_RULE.client()
+        final Person person = appRule.client()
             .target(baseUri() + "/people")
             .request()
             .post(Entity.entity("{\"name\": \"Jason\", \"email\": \"jason@gmail.com\", \"birthday\":637317407000}",
@@ -200,7 +205,7 @@ public class SubResourcesTest {
 
     @Test
     public void canReadFromSubResources() throws Exception {
-        final Dog dog = APP_RULE.client()
+        final Dog dog = appRule.client()
             .target(baseUri() + "/people/Greg/dogs/Bello")
             .request()
             .get(Dog.class);
@@ -212,7 +217,7 @@ public class SubResourcesTest {
 
     @Test
     public void canWriteSubResource() throws Exception {
-        final Dog dog = APP_RULE.client()
+        final Dog dog = appRule.client()
             .target(baseUri() + "/people/Greg/dogs")
             .request()
             .post(Entity.entity("{\"name\": \"Bandit\"}", MediaType.APPLICATION_JSON_TYPE), Dog.class);
@@ -224,7 +229,7 @@ public class SubResourcesTest {
 
     @Test
     public void errorsAreHandled() throws Exception {
-        Response response = APP_RULE.client()
+        Response response = appRule.client()
             .target(baseUri() + "/people/Jim/dogs")
             .request()
             .post(Entity.entity("{\"name\": \"Bullet\"}", MediaType.APPLICATION_JSON_TYPE));
@@ -233,7 +238,7 @@ public class SubResourcesTest {
 
     @Test
     public void noSessionErrorIsRaised() throws Exception {
-        Response response = APP_RULE.client()
+        Response response = appRule.client()
             .target(baseUri() + "/people/Greg/dogs")
             .request()
             .get();

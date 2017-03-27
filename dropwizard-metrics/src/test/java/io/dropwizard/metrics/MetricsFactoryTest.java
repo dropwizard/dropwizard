@@ -22,25 +22,21 @@ public class MetricsFactoryTest {
     }
 
     private final ObjectMapper objectMapper = Jackson.newObjectMapper();
-    private final YamlConfigurationFactory<MetricsFactory> factory =
-            new YamlConfigurationFactory<>(MetricsFactory.class,
-                                           BaseValidator.newValidator(),
-                                           objectMapper, "dw");
+    private final YamlConfigurationFactory<MetricsFactory> factory = new YamlConfigurationFactory<>(
+        MetricsFactory.class, BaseValidator.newValidator(), objectMapper, "dw");
     private MetricsFactory config;
 
     @Before
     public void setUp() throws Exception {
-        objectMapper.getSubtypeResolver().registerSubtypes(ConsoleReporterFactory.class,
-                                                           CsvReporterFactory.class,
-                                                           Slf4jReporterFactory.class);
+        objectMapper.getSubtypeResolver().registerSubtypes(ConsoleReporterFactory.class, CsvReporterFactory.class,
+            Slf4jReporterFactory.class);
 
         this.config = factory.build(new File(Resources.getResource("yaml/metrics.yml").toURI()));
     }
 
     @Test
     public void hasADefaultFrequency() throws Exception {
-        assertThat(config.getFrequency())
-                .isEqualTo(Duration.seconds(10));
+        assertThat(config.getFrequency()).isEqualTo(Duration.seconds(10));
     }
 
     @Test
@@ -51,7 +47,7 @@ public class MetricsFactoryTest {
     }
 
     @Test
-    public void canReadExcludedAndIncludedAttributes(){
+    public void canReadExcludedAndIncludedAttributes() {
         assertThat(config.getReporters()).hasSize(3);
         final ReporterFactory reporterFactory = config.getReporters().get(0);
         assertThat(reporterFactory).isInstanceOf(ConsoleReporterFactory.class);
@@ -62,7 +58,7 @@ public class MetricsFactoryTest {
     }
 
     @Test
-    public void canReadDefaultExcludedAndIncludedAttributes(){
+    public void canReadDefaultExcludedAndIncludedAttributes() {
         assertThat(config.getReporters()).hasSize(3);
         final ReporterFactory reporterFactory = config.getReporters().get(1);
         assertThat(reporterFactory).isInstanceOf(CsvReporterFactory.class);

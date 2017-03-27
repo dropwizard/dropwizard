@@ -79,7 +79,7 @@ public class TaskServletTest {
         when(request.getMethod()).thenReturn("POST");
         when(request.getPathInfo()).thenReturn("/gc");
         when(request.getParameterNames()).thenReturn(Collections.enumeration(ImmutableList.of("runs")));
-        when(request.getParameterValues("runs")).thenReturn(new String[]{ "1" });
+        when(request.getParameterValues("runs")).thenReturn(new String[]{"1"});
         when(request.getInputStream()).thenReturn(bodyStream);
         when(response.getWriter()).thenReturn(output);
 
