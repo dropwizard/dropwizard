@@ -1,7 +1,5 @@
 package io.dropwizard.jersey.errors;
 
-import static javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE;
-
 import org.glassfish.jersey.server.internal.LocalizationMessages;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +8,8 @@ import javax.ws.rs.NotSupportedException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.Provider;
+
+import static javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE;
 
 /**
  * {@link javax.ws.rs.ext.ExceptionMapper ExceptionMapper} for {@link IllegalStateException}.
@@ -30,7 +30,7 @@ public class IllegalStateExceptionMapper extends LoggingExceptionMapper<IllegalS
              */
             // Logs exception with additional information for developers.
             LOGGER.debug("If the HTTP method is POST and using @FormParam in a resource method"
-                    + ", Content-Type should be application/x-www-form-urlencoded.", exception);
+                + ", Content-Type should be application/x-www-form-urlencoded.", exception);
             // Returns the same response as if NotSupportedException was thrown.
             return createResponse(new NotSupportedException());
         }
@@ -40,8 +40,11 @@ public class IllegalStateExceptionMapper extends LoggingExceptionMapper<IllegalS
     }
 
     private Response createResponse(final WebApplicationException exception) {
-        final ErrorMessage errorMessage =
-                new ErrorMessage(exception.getResponse().getStatus(), exception.getLocalizedMessage());
-        return Response.status(errorMessage.getCode()).type(APPLICATION_JSON_TYPE).entity(errorMessage).build();
+        final ErrorMessage errorMessage = new ErrorMessage(exception.getResponse().getStatus(),
+            exception.getLocalizedMessage());
+        return Response.status(errorMessage.getCode())
+            .type(APPLICATION_JSON_TYPE)
+            .entity(errorMessage)
+            .build();
     }
 }
