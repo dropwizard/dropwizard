@@ -65,8 +65,7 @@ public class Configuration {
     private ServerFactory server = new DefaultServerFactory();
 
     @Valid
-    @NotNull
-    private LoggingFactory logging = new DefaultLoggingFactory();
+    private LoggingFactory logging;
 
     @Valid
     @NotNull
@@ -96,7 +95,11 @@ public class Configuration {
      * @return logging-specific configuration parameters
      */
     @JsonProperty("logging")
-    public LoggingFactory getLoggingFactory() {
+    public synchronized LoggingFactory getLoggingFactory() {
+        if (logging == null) {
+            // Lazy init to avoid a hard dependency to logback
+            logging = new DefaultLoggingFactory();
+        }
         return logging;
     }
 
@@ -104,7 +107,7 @@ public class Configuration {
      * Sets the logging-specific section of the configuration file.
      */
     @JsonProperty("logging")
-    public void setLoggingFactory(LoggingFactory factory) {
+    public synchronized void setLoggingFactory(LoggingFactory factory) {
         this.logging = factory;
     }
 
@@ -121,9 +124,9 @@ public class Configuration {
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this)
-                .add("server", server)
-                .add("logging", logging)
-                .add("metrics", metrics)
-                .toString();
+            .add("server", server)
+            .add("logging", logging)
+            .add("metrics", metrics)
+            .toString();
     }
 }

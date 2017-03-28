@@ -23,8 +23,7 @@ import io.dropwizard.util.JarLocation;
  */
 public abstract class Application<T extends Configuration> {
     protected Application() {
-        // make sure spinning up Hibernate Validator doesn't yell at us
-        BootstrapLogging.bootstrap(bootstrapLogLevel());
+        bootstrapLogging();
     }
 
     /**
@@ -32,6 +31,11 @@ public abstract class Application<T extends Configuration> {
      */
     protected Level bootstrapLogLevel() {
         return Level.WARN;
+    }
+
+    protected void bootstrapLogging() {
+        // make sure spinning up Hibernate Validator doesn't yell at us
+        BootstrapLogging.bootstrap(bootstrapLogLevel());
     }
 
     /**
