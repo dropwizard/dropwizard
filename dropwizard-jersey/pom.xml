@@ -50,7 +50,7 @@
             <!-- dropwizard-validation has a newer version of these -->
             <exclusions>
             	<exclusion>
-            		<groupId>org.glassfish.web</groupId>
+            		<groupId>org.glassfish</groupId>
             		<artifactId>javax.el</artifactId>
             	</exclusion>
             	<exclusion>
