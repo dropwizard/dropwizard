@@ -5,6 +5,10 @@ import com.google.common.base.Strings;
 import io.dropwizard.jersey.errors.ErrorMessage;
 import io.dropwizard.util.Enums;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
+import java.util.stream.Stream;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -39,6 +43,10 @@ public class FuzzyEnumParamConverterProvider implements ParamConverterProvider {
         final Class<Enum<?>> type = (Class<Enum<?>>) rawType;
         final Enum<?>[] constants = type.getEnumConstants();
         final String parameterName = getParameterNameFromAnnotations(annotations).orElse("Parameter");
+        final Method fromStringM = Stream.of(type.getMethods())
+            .filter(m -> m.getName().equals("fromString") && Arrays.equals(m.getParameterTypes(), new Class[]{String.class}))
+            .findFirst()
+            .orElse(null);
 
         return new ParamConverter<T>() {
             @Override
@@ -47,7 +55,15 @@ public class FuzzyEnumParamConverterProvider implements ParamConverterProvider {
                     return null;
                 }
 
-                final Enum<?> constant = Enums.fromStringFuzzy(value, constants);
+                Object constant;
+                try {
+                    constant = fromStringM.invoke(null, value);
+                } catch (IllegalAccessException | InvocationTargetException | NullPointerException e) {
+                    // try getting it from the Fuzzy Enum
+                    constant = Enums.fromStringFuzzy(value, constants);
+                }
+
+                // return if a value is found
                 if (constant != null) {
                     return (T) constant;
                 }
