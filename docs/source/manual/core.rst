@@ -732,6 +732,59 @@ slf4j provides the following logging levels:
 ``TRACE``
   Finer-grained informational events than the ``DEBUG`` level.
 
+.. note::
+
+    If you don't want to use Logback, you can exclude it from Dropwizard and use an alternative logging configuration:
+
+    * Exclude Logback from the `dropwizard-core` artifact
+
+        .. code-block:: xml
+
+            <dependency>
+                <groupId>io.dropwizard</groupId>
+                <artifactId>dropwizard-core</artifactId>
+                <version>{$dropwizard.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>ch.qos.logback</groupId>
+                        <artifactId>logback-classic</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>ch.qos.logback</groupId>
+                        <artifactId>logback-access</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>log4j-over-slf4j</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+    * Mark the logging configuration as external in your Dropwizard config
+
+        .. code-block:: yaml
+
+            server:
+              type: simple
+              applicationContextPath: /application
+              adminContextPath: /admin
+              requestLog:
+                type: external
+            logging:
+              type: external
+
+    * Disable bootstrapping Logback in your application
+
+        .. code-block:: java
+
+            public class ExampleApplication extends Application<ExampleConfiguration> {
+
+                @Override
+                protected void bootstrapLogging() {
+                }
+            }
+
+
 .. _man-core-logging-format:
 
 Log Format
@@ -812,6 +865,8 @@ Console Logging
 
 By default, Dropwizard applications log ``INFO`` and higher to ``STDOUT``. You can configure this by
 editing the ``logging`` section of your YAML configuration file:
+
+
 
 .. code-block:: yaml
 
