@@ -13,7 +13,7 @@ import java.util.TimeZone;
 /**
  * A SLF4J-backed {@link RequestLog} implementation of {@link AbstractNCSARequestLog}.
  */
-class DropwizardSlf4jRequestLog extends AbstractNCSARequestLog {
+public class DropwizardSlf4jRequestLog extends AbstractNCSARequestLog {
     private final AppenderAttachableImpl<ILoggingEvent> appenders;
 
     /**
