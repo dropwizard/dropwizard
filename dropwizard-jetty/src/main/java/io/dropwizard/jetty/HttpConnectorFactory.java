@@ -22,6 +22,7 @@ import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.util.thread.ScheduledExecutorScheduler;
 import org.eclipse.jetty.util.thread.Scheduler;
 import org.eclipse.jetty.util.thread.ThreadPool;
+import org.hibernate.validator.valuehandling.UnwrapValidatedValue;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -262,9 +263,11 @@ public class HttpConnectorFactory implements ConnectorFactory {
     private Size maxBufferPoolSize = Size.kilobytes(64);
 
     @Min(1)
+    @UnwrapValidatedValue
     private Optional<Integer> acceptorThreads = Optional.empty();
 
     @Min(1)
+    @UnwrapValidatedValue
     private Optional<Integer> selectorThreads = Optional.empty();
 
     @Min(0)
