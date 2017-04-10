@@ -1113,6 +1113,7 @@ TLS
         trustSelfSignedCertificates: false
         supportedProtocols: TLSv1.1,TLSv1.2
         supportedCipherSuites: TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256
+        certAlias: alias-of-specific-cert
 
 
 ===========================  =================  ============================================================================================================================
@@ -1134,6 +1135,8 @@ supportedProtocols           (none)             A list of protocols (e.g., ``SSL
                                                 other protocols will be refused.
 supportedCipherSuites        (none)             A list of cipher suites (e.g., ``TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256``) which
                                                 are supported. All other cipher suites will be refused.
+certAlias                    (none)             The alias of a specific client certificate to present when authenticating. Use this when
+                                                the specified keystore has multiple certificates to force use of a non-default certficate.
 ===========================  =================  ============================================================================================================================
 
 

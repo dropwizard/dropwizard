@@ -6,6 +6,7 @@ import io.dropwizard.validation.ValidationMethod;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.annotation.Nullable;
+
 import java.io.File;
 import java.util.List;
 
@@ -37,6 +38,9 @@ public class TlsConfiguration {
 
     @Nullable
     private List<String> supportedCiphers = null;
+
+    @Nullable
+    private String certAlias = null;
 
     @JsonProperty
     public void setTrustSelfSignedCertificates(boolean trustSelfSignedCertificates) {
@@ -148,6 +152,17 @@ public class TlsConfiguration {
     @JsonProperty
     public void setSupportedProtocols(@Nullable List<String> supportedProtocols) {
         this.supportedProtocols = supportedProtocols;
+    }
+
+    @Nullable
+    @JsonProperty
+    public String getCertAlias() {
+        return certAlias;
+    }
+
+    @JsonProperty
+    public void setCertAlias(@Nullable String certAlias) {
+        this.certAlias = certAlias;
     }
 
     @ValidationMethod(message = "keyStorePassword should not be null or empty if keyStorePath not null")
