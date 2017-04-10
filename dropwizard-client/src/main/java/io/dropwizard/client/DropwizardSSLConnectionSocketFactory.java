@@ -5,6 +5,7 @@ import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLInitializationException;
 import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
+import org.apache.http.ssl.PrivateKeyStrategy;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.ssl.TrustStrategy;
 
@@ -73,11 +74,24 @@ public class DropwizardSSLConnectionSocketFactory {
         return sslContext;
     }
 
+    private PrivateKeyStrategy choosePrivateKeyStrategy() {
+        PrivateKeyStrategy privateKeyStrategy = null;
+        if (configuration.getCertAlias() != null) {
+            // Unconditionally return our configured alias allowing the consumer
+            // to throw an appropriate exception rather than trying to generate our
+            // own here if our configured alias is not a key in the aliases map.
+            privateKeyStrategy = (aliases, socket) -> configuration.getCertAlias();
+        }
+
+        return privateKeyStrategy;
+    }
+
     private void loadKeyMaterial(SSLContextBuilder sslContextBuilder) throws Exception {
         if (configuration.getKeyStorePath() != null) {
             final KeyStore keystore = loadKeyStore(configuration.getKeyStoreType(), configuration.getKeyStorePath(),
                     configuration.getKeyStorePassword());
-            sslContextBuilder.loadKeyMaterial(keystore, configuration.getKeyStorePassword().toCharArray());
+            
+            sslContextBuilder.loadKeyMaterial(keystore, configuration.getKeyStorePassword().toCharArray(), choosePrivateKeyStrategy());
         }
     }
 

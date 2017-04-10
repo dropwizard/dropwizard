@@ -152,6 +152,41 @@ public class DropwizardSSLConnectionSocketFactoryTest {
     }
 
     @Test
+    public void shouldReturn200IfAbleToClientAuthSpecifyingCertAliasForGoodCert() throws Exception {
+        tlsConfiguration.setKeyStorePath(new File(ResourceHelpers.resourceFilePath("stores/client/twokeys.p12")));
+        tlsConfiguration.setKeyStorePassword("password");
+        tlsConfiguration.setKeyStoreType("PKCS12");
+        tlsConfiguration.setCertAlias("1");
+        final Client client = new JerseyClientBuilder(TLS_APP_RULE.getEnvironment()).using(jerseyClientConfiguration).build("client_auth_using_cert_alias_working");
+        final Response response = client.target(String.format("https://localhost:%d", TLS_APP_RULE.getPort(2))).request().get();
+        assertThat(response.getStatus()).isEqualTo(200);
+    }
+
+    @Test
+    public void shouldErrorIfTryToClientAuthSpecifyingCertAliasForBadCert() throws Exception {
+        tlsConfiguration.setKeyStorePath(new File(ResourceHelpers.resourceFilePath("stores/client/twokeys.p12")));
+        tlsConfiguration.setKeyStorePassword("password");
+        tlsConfiguration.setKeyStoreType("PKCS12");
+        tlsConfiguration.setCertAlias("2");
+        final Client client = new JerseyClientBuilder(TLS_APP_RULE.getEnvironment()).using(jerseyClientConfiguration).build("client_auth_using_cert_alias_broken");
+        final Throwable exn = catchThrowable(() -> client.target(String.format("https://localhost:%d", TLS_APP_RULE.getPort(2))).request().get());
+        assertThat(exn).isInstanceOf(ProcessingException.class);
+        assertThat(exn.getCause()).isInstanceOfAny(SocketException.class, SSLHandshakeException.class);
+    }
+
+    @Test
+    public void shouldErrorIfTryToClientAuthSpecifyingUnknownCertAlias() throws Exception {
+        tlsConfiguration.setKeyStorePath(new File(ResourceHelpers.resourceFilePath("stores/client/twokeys.p12")));
+        tlsConfiguration.setKeyStorePassword("password");
+        tlsConfiguration.setKeyStoreType("PKCS12");
+        tlsConfiguration.setCertAlias("unknown");
+        final Client client = new JerseyClientBuilder(TLS_APP_RULE.getEnvironment()).using(jerseyClientConfiguration).build("client_auth_using_unknown_cert_alias_broken");
+        final Throwable exn = catchThrowable(() -> client.target(String.format("https://localhost:%d", TLS_APP_RULE.getPort(2))).request().get());
+        assertThat(exn).isInstanceOf(ProcessingException.class);
+        assertThat(exn.getCause()).isInstanceOfAny(SocketException.class, SSLHandshakeException.class);
+    }
+
+    @Test
     public void shouldErrorIfHostnameVerificationOnAndServerHostnameDoesntMatch() throws Exception {
         final Client client = new JerseyClientBuilder(TLS_APP_RULE.getEnvironment()).using(jerseyClientConfiguration).build("bad_host_broken");
         final Throwable exn = catchThrowable(() -> client.target(String.format("https://localhost:%d", TLS_APP_RULE.getPort(3))).request().get());
