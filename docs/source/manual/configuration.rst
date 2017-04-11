@@ -11,6 +11,8 @@ Dropwizard Configuration Reference
 Servers
 =======
 
+Tweaking some of the options will require good understanding of how Jetty is working. See the `Jetty architecture chapter`_ for reference.
+
 .. code-block:: yaml
 
     server:
@@ -19,6 +21,7 @@ Servers
 
 
 .. _man-configuration-all:
+.. _Jetty architecture chapter: http://www.eclipse.org/jetty/documentation/current/architecture.html#basic-architecture
 
 All
 ---
@@ -28,8 +31,8 @@ Name                                Default                                     
 =================================== ===============================================  =============================================================================
 type                                default                                          - default
                                                                                      - simple
-maxThreads                          1024                                             The maximum number of threads to use for requests.
-minThreads                          8                                                The minimum number of threads to use for requests.
+maxThreads                          1024                                             The maximum number of threads the thread pool is allowed to grow. Jetty will throw ``java.lang.IllegalStateException: Insufficient threads:`` in case of too aggressive limit on the thread count.
+minThreads                          8                                                The minimum number of threads to keep alive in the thread pool. Note that each Jetty's connector consumes threads from the pool. See :ref:`HTTP connector <man-configuration-http>` how the thread counts are calculated.
 maxQueuedRequests                   1024                                             The maximum number of requests to queue before blocking
                                                                                      the acceptors.
 idleThreadTimeout                   1 minute                                         The amount of time a worker thread can be idle before
