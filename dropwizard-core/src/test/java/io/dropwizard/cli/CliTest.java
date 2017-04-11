@@ -12,12 +12,14 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
+import java.io.PrintWriter;
 import java.util.Locale;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -34,6 +36,25 @@ public class CliTest {
         public void run(Configuration configuration, Environment environment) throws Exception {
         }
     };
+
+    private static final class BadAppException extends Exception {
+        private static final long serialVersionUID = 1L;
+
+        public static final String BAD_APP_EXCEPTION_STACK_TRACE = "BadAppException stack trace";
+
+        public BadAppException() {
+        }
+
+        public BadAppException(String message) {
+            super(message);
+        }
+
+        @Override
+        public void printStackTrace(PrintWriter writer) {
+            writer.println(BAD_APP_EXCEPTION_STACK_TRACE);
+        }
+    }
+
     private final Bootstrap<Configuration> bootstrap = new Bootstrap<>(app);
     private final ByteArrayOutputStream stdOut = new ByteArrayOutputStream();
     private final ByteArrayOutputStream stdErr = new ByteArrayOutputStream();
@@ -294,5 +315,36 @@ public class CliTest {
                 .isEmpty();
 
         verify(command).run(eq(bootstrap), any(Namespace.class), any(Configuration.class));
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void unhandledExceptionsWithoutMessagesAreLoggedAppropriately() throws Exception {
+        doThrow(new BadAppException()).when(command).run(any(Bootstrap.class), any(Namespace.class), any(Configuration.class));
+
+        assertThat(cli.run("check"))
+                .isFalse();
+
+        assertThat(stdOut.toString())
+                .isEmpty();
+
+        assertThat(stdErr.toString())
+                .isEqualTo(String.format("%s%n", BadAppException.BAD_APP_EXCEPTION_STACK_TRACE));
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void unhandledExceptionsWithMessagesAreLoggedAppropriately() throws Exception {
+        final String badAppExceptionMessage = "Something bad happened";
+        doThrow(new BadAppException(badAppExceptionMessage)).when(command).run(any(Bootstrap.class), any(Namespace.class), any(Configuration.class));
+
+        assertThat(cli.run("check"))
+                .isFalse();
+
+        assertThat(stdOut.toString())
+                .isEmpty();
+
+        assertThat(stdErr.toString())
+                .isEqualTo(String.format("%s%n%s%n", badAppExceptionMessage, BadAppException.BAD_APP_EXCEPTION_STACK_TRACE));
     }
 }
