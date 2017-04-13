@@ -263,12 +263,11 @@ public class FileAppenderFactory<E extends DeferredProcessingAware> extends Abst
                 final TimeBasedFileNamingAndTriggeringPolicy<E> triggeringPolicy = new DefaultTimeBasedFileNamingAndTriggeringPolicy<>();
                 final TimeBasedRollingPolicy<E> rollingPolicy;
                 if (maxFileSize == null) {
-                	rollingPolicy= new TimeBasedRollingPolicy<>();
-                    
+                    rollingPolicy = new TimeBasedRollingPolicy<>();
                 } else {
-                	SizeAndTimeBasedRollingPolicy<E> sizeAndTimeBasedRollingPolicy = new SizeAndTimeBasedRollingPolicy<>();
-                	sizeAndTimeBasedRollingPolicy.setMaxFileSize(new FileSize(maxFileSize.toBytes()));
-                	rollingPolicy = sizeAndTimeBasedRollingPolicy;
+                    SizeAndTimeBasedRollingPolicy<E> sizeAndTimeBasedRollingPolicy = new SizeAndTimeBasedRollingPolicy<>();
+                    sizeAndTimeBasedRollingPolicy.setMaxFileSize(new FileSize(maxFileSize.toBytes()));
+                    rollingPolicy = sizeAndTimeBasedRollingPolicy;
                 }
                 
                 triggeringPolicy.setContext(context);
