@@ -6,9 +6,10 @@ import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.FileAppender;
+import ch.qos.logback.core.rolling.DefaultTimeBasedFileNamingAndTriggeringPolicy;
 import ch.qos.logback.core.rolling.FixedWindowRollingPolicy;
 import ch.qos.logback.core.rolling.RollingFileAppender;
-import ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP;
+import ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy;
 import ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy;
 import ch.qos.logback.core.util.FileSize;
 import com.google.common.collect.ImmutableList;
@@ -179,10 +180,10 @@ public class FileAppenderFactoryTest {
         fileAppenderFactory.setArchivedLogFilenamePattern(folder.newFile("example-%d-%i.log.gz").toString());
         RollingFileAppender<ILoggingEvent> appender = (RollingFileAppender<ILoggingEvent>) fileAppenderFactory.buildAppender(new LoggerContext());
 
-        assertThat(appender.getTriggeringPolicy()).isInstanceOf(SizeAndTimeBasedFNATP.class);
-        final Field maxFileSizeField = SizeAndTimeBasedFNATP.class.getDeclaredField("maxFileSize");
+        assertThat(appender.getTriggeringPolicy()).isInstanceOf(DefaultTimeBasedFileNamingAndTriggeringPolicy.class);
+        final Field maxFileSizeField = SizeAndTimeBasedRollingPolicy.class.getDeclaredField("maxFileSize");
         maxFileSizeField.setAccessible(true);
-        final FileSize maxFileSize = (FileSize) maxFileSizeField.get(appender.getTriggeringPolicy());
+        final FileSize maxFileSize = (FileSize) maxFileSizeField.get(appender.getRollingPolicy());
         assertThat(maxFileSize.getSize()).isEqualTo(1024L);
     }
 
