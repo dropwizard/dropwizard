@@ -207,6 +207,43 @@ knows the server failed through no fault of their own.
 Analogous to an empty request body, an empty entity annotated with ``@NotNull`` will return ``server
 response may not be null``
 
+.. warning::
+
+   Be careful when using return value constraints when endpoints satisfy all of the following:
+
+   - Function name starts with ``get``
+   - No arguments
+   - The return value has validation constraints
+
+   If an endpoint satisfies these conditions, whenever a request is processed by the resource that
+   endpoint will be additionally invoked. To give a concrete example:
+
+    .. code-block:: java
+
+        @Path("/")
+        public class ValidatedResource {
+            private AtomicLong counter = new AtomicLong();
+
+            @GET
+            @Path("/foo")
+            @NotEmpty
+            public String getFoo() {
+                counter.getAndIncrement();
+                return "";
+            }
+
+            @GET
+            @Path("/bar")
+            public String getBar() {
+                return "";
+            }
+        }
+
+
+    If a ``/foo`` is requested then ``counter`` will have increment by 2, and if ``/bar`` is
+    requested then ``counter`` will increment by 1. It is our hope that such endpoints are few, far
+    between, and documented thoroughly.
+
 .. _man-validation-limitations:
 
 Limitations
