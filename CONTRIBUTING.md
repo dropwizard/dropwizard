@@ -20,10 +20,16 @@ they will be accepted, we ask that you follow these simple guidelines:
 
 Code style
 ---
-When submitting code, please make every effort to follow existing conventions and
-style in order to keep the code as readable as possible. We realize that the style
-used in Dropwizard might be different that what is used in your projects, but in the end
- it makes it easier to merge changes and maintain in the future.
+When submitting code, please make every effort to follow existing conventions
+and style in order to keep the code as readable as possible. We realize that the
+style used in Dropwizard might be different that what is used in your projects,
+but in the end it makes it easier to merge changes and maintain in the future.
+
+If you use Eclipse as your IDE, you can use the Eclipse Formatter settings file
+etc/eclipse-java-dropwizard-style.xml to format your submissions to conform to
+this project's style. If you use NetBeans, there is an excellent plugin for it
+called the "Eclipse Java Code Formatter Plugin" which allows you to use the same
+Eclipse formatting settings file in NetBeans.
 
 Testing
 ---
