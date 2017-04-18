@@ -22,7 +22,6 @@ import io.dropwizard.logging.layout.LayoutFactory;
 import io.dropwizard.util.Size;
 import io.dropwizard.validation.MinSize;
 import io.dropwizard.validation.ValidationMethod;
-
 import javax.validation.constraints.Min;
 
 /**
@@ -260,16 +259,16 @@ public class FileAppenderFactory<E extends DeferredProcessingAware> extends Abst
 
                 return appender;
             } else {
-                final TimeBasedFileNamingAndTriggeringPolicy<E> triggeringPolicy = new DefaultTimeBasedFileNamingAndTriggeringPolicy<>();
                 final TimeBasedRollingPolicy<E> rollingPolicy;
                 if (maxFileSize == null) {
                     rollingPolicy = new TimeBasedRollingPolicy<>();
                 } else {
-                    SizeAndTimeBasedRollingPolicy<E> sizeAndTimeBasedRollingPolicy = new SizeAndTimeBasedRollingPolicy<>();
+                    final SizeAndTimeBasedRollingPolicy<E> sizeAndTimeBasedRollingPolicy = new SizeAndTimeBasedRollingPolicy<>();
                     sizeAndTimeBasedRollingPolicy.setMaxFileSize(new FileSize(maxFileSize.toBytes()));
                     rollingPolicy = sizeAndTimeBasedRollingPolicy;
                 }
-                
+
+                final TimeBasedFileNamingAndTriggeringPolicy<E> triggeringPolicy = new DefaultTimeBasedFileNamingAndTriggeringPolicy<>();
                 triggeringPolicy.setContext(context);
                 rollingPolicy.setContext(context);
                 rollingPolicy.setFileNamePattern(archivedLogFilenamePattern);
