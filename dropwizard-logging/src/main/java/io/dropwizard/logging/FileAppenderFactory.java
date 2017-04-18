@@ -7,7 +7,7 @@ import ch.qos.logback.core.encoder.LayoutWrappingEncoder;
 import ch.qos.logback.core.rolling.DefaultTimeBasedFileNamingAndTriggeringPolicy;
 import ch.qos.logback.core.rolling.FixedWindowRollingPolicy;
 import ch.qos.logback.core.rolling.RollingFileAppender;
-import ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP;
+import ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy;
 import ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy;
 import ch.qos.logback.core.rolling.TimeBasedFileNamingAndTriggeringPolicy;
 import ch.qos.logback.core.rolling.TimeBasedRollingPolicy;
@@ -264,7 +264,7 @@ public class FileAppenderFactory<E extends DeferredProcessingAware> extends Abst
                 if (maxFileSize == null) {
                     triggeringPolicy = new DefaultTimeBasedFileNamingAndTriggeringPolicy<>();
                 } else {
-                    final SizeAndTimeBasedFNATP<E> maxFileSizeTriggeringPolicy = new SizeAndTimeBasedFNATP<>();
+                    final SizeAndTimeBasedRollingPolicy<E> maxFileSizeTriggeringPolicy = new SizeAndTimeBasedRollingPolicy<>();
                     maxFileSizeTriggeringPolicy.setMaxFileSize(new FileSize(maxFileSize.toBytes()));
                     triggeringPolicy = maxFileSizeTriggeringPolicy;
                 }
