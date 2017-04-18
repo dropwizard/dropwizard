@@ -195,6 +195,14 @@ import java.util.regex.Pattern;
  *           The URL pattern relative to {@code applicationContextPath} from which the JAX-RS resources will be served.
  *         </td>
  *     </tr>
+ *     <tr>
+ *         <td>{@code enableThreadNameFilter}</td>
+ *         <td>true</td>
+ *         <td>
+ *           Whether or not to apply the {@code ThreadNameFilter} that adjusts thread names to include the request
+ *           method and request URI.
+ *         </td>
+ *     </tr>
  * </table>
  *
  * @see DefaultServerFactory
@@ -254,6 +262,8 @@ public abstract class AbstractServerFactory implements ServerFactory {
     private Set<String> allowedMethods = AllowedMethodsFilter.DEFAULT_ALLOWED_METHODS;
 
     private Optional<String> jerseyRootPath = Optional.empty();
+
+    private boolean enableThreadNameFilter = true;
 
     @JsonIgnore
     @ValidationMethod(message = "must have a smaller minThreads than maxThreads")
@@ -461,6 +471,16 @@ public abstract class AbstractServerFactory implements ServerFactory {
         this.jerseyRootPath = Optional.ofNullable(jerseyRootPath);
     }
 
+    @JsonProperty
+    public boolean getEnableThreadNameFilter() {
+        return enableThreadNameFilter;
+    }
+
+    @JsonProperty
+    public void setEnableThreadNameFilter(boolean enableThreadNameFilter) {
+        this.enableThreadNameFilter = enableThreadNameFilter;
+    }
+
     protected Handler createAdminServlet(Server server,
                                          MutableServletContextHandler handler,
                                          MetricRegistry metrics,
@@ -495,7 +515,9 @@ public abstract class AbstractServerFactory implements ServerFactory {
         configureSessionsAndSecurity(handler, server);
         handler.addFilter(AllowedMethodsFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST))
                 .setInitParameter(AllowedMethodsFilter.ALLOWED_METHODS_PARAM, Joiner.on(',').join(allowedMethods));
-        handler.addFilter(ThreadNameFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST));
+        if (enableThreadNameFilter) {
+            handler.addFilter(ThreadNameFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST));
+        }
         serverPush.addFilter(handler);
         if (jerseyContainer != null) {
             jerseyRootPath.ifPresent(jersey::setUrlPattern);
