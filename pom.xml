@@ -32,6 +32,7 @@
         <module>dropwizard-views</module>
         <module>dropwizard-views-freemarker</module>
         <module>dropwizard-views-mustache</module>
+        <module>dropwizard-views-trimou</module>
         <module>dropwizard-testing</module>
         <module>dropwizard-util</module>
         <module>dropwizard-jackson</module>

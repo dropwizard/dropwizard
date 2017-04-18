@@ -1,0 +1,5 @@
+{{<base}}
+    {{$content}}
+        {{>partial}}
+    {{/content}}
+{{/base}}
