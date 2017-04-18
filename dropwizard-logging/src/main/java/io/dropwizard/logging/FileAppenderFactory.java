@@ -7,7 +7,7 @@ import ch.qos.logback.core.encoder.LayoutWrappingEncoder;
 import ch.qos.logback.core.rolling.DefaultTimeBasedFileNamingAndTriggeringPolicy;
 import ch.qos.logback.core.rolling.FixedWindowRollingPolicy;
 import ch.qos.logback.core.rolling.RollingFileAppender;
-import ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP;
+import ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy;
 import ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy;
 import ch.qos.logback.core.rolling.TimeBasedFileNamingAndTriggeringPolicy;
 import ch.qos.logback.core.rolling.TimeBasedRollingPolicy;
@@ -22,7 +22,6 @@ import io.dropwizard.logging.layout.LayoutFactory;
 import io.dropwizard.util.Size;
 import io.dropwizard.validation.MinSize;
 import io.dropwizard.validation.ValidationMethod;
-
 import javax.validation.constraints.Min;
 
 /**
@@ -260,21 +259,20 @@ public class FileAppenderFactory<E extends DeferredProcessingAware> extends Abst
 
                 return appender;
             } else {
-                final TimeBasedFileNamingAndTriggeringPolicy<E> triggeringPolicy;
+                final TimeBasedRollingPolicy<E> rollingPolicy;
                 if (maxFileSize == null) {
-                    triggeringPolicy = new DefaultTimeBasedFileNamingAndTriggeringPolicy<>();
+                    rollingPolicy = new TimeBasedRollingPolicy<>();
                 } else {
-                    final SizeAndTimeBasedFNATP<E> maxFileSizeTriggeringPolicy = new SizeAndTimeBasedFNATP<>();
-                    maxFileSizeTriggeringPolicy.setMaxFileSize(new FileSize(maxFileSize.toBytes()));
-                    triggeringPolicy = maxFileSizeTriggeringPolicy;
+                    final SizeAndTimeBasedRollingPolicy<E> sizeAndTimeBasedRollingPolicy = new SizeAndTimeBasedRollingPolicy<>();
+                    sizeAndTimeBasedRollingPolicy.setMaxFileSize(new FileSize(maxFileSize.toBytes()));
+                    rollingPolicy = sizeAndTimeBasedRollingPolicy;
                 }
-                triggeringPolicy.setContext(context);
 
-                final TimeBasedRollingPolicy<E> rollingPolicy = new TimeBasedRollingPolicy<>();
+                final TimeBasedFileNamingAndTriggeringPolicy<E> triggeringPolicy = new DefaultTimeBasedFileNamingAndTriggeringPolicy<>();
+                triggeringPolicy.setContext(context);
                 rollingPolicy.setContext(context);
                 rollingPolicy.setFileNamePattern(archivedLogFilenamePattern);
-                rollingPolicy.setTimeBasedFileNamingAndTriggeringPolicy(
-                        triggeringPolicy);
+                rollingPolicy.setTimeBasedFileNamingAndTriggeringPolicy(triggeringPolicy);
                 triggeringPolicy.setTimeBasedRollingPolicy(rollingPolicy);
                 rollingPolicy.setMaxHistory(archivedFileCount);
 
