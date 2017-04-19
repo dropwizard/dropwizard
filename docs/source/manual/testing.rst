@@ -59,8 +59,24 @@ writing via a ``PUT`` request) and a response entity (e.g., when reading via a `
             this.email = email;
         }
 
+        @Override
+        public boolean equals(Object obj) {
+            if (!Person.class.isInstance(obj)) {
+                return false;
+            }
+
+            final Person other = (Person) obj;
+            if ((this.name == null) ? (other.name != null) : !this.name.equals(other.name)) {
+                return false;
+            }
+
+            if ((this.email == null) ? (other.email != null) : !this.email.equals(other.email)) {
+                return false;
+            }
+            return true;
+        }
+
         // hashCode
-        // equals
         // toString etc.
     }
 
