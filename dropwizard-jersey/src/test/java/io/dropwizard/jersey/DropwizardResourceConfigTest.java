@@ -165,6 +165,17 @@ public class DropwizardResourceConfigTest {
         assertThat(rc.getEndpointsInfo()).containsOnlyOnce("    GET     /callme (io.dropwizard.jersey.DropwizardResourceConfigTest.TestDuplicateResource)");
     }
 
+    @Test
+    public void logsSubResourceEndpoints() {
+        rc.register(ResourceReturningResource.class);
+
+        final String expectedLog = String.format("The following paths were found for the configured resources:%n" + "%n"
+            + "    GET     /dummy/ (io.dropwizard.jersey.DropwizardResourceConfigTest.ResourceReturningResource)%n"
+            + "    GET     /dummy/iface (io.dropwizard.jersey.DropwizardResourceConfigTest.ResourceReturningResource)%n");
+
+        assertThat(rc.getEndpointsInfo()).contains(expectedLog);
+    }
+
     @Path("/dummy")
     public static class TestResource {
         @GET
@@ -256,6 +267,21 @@ public class DropwizardResourceConfigTest {
         @Override
         public String bar() {
             return "";
+        }
+    }
+
+    @Path("/dummy")
+    public static class ResourceReturningResource {
+        @GET
+        @Path("/")
+        public TestResource foo() {
+            return new TestResource();
+        }
+
+        @GET
+        @Path("/iface")
+        public ResourceInterface any() {
+            return new ImplementingResource();
         }
     }
 }
