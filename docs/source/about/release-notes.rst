@@ -18,6 +18,7 @@ v1.2.0: Unreleased
 * Upgrade to Jetty 9.4.4.v20170414
 * Upgrade to Joda-Time 2.9.9
 * Upgrade to Logback 1.2.3
+* Upgrade to SLF4J 1.7.25
 * Upgrade to tomcat-jdbc 8.5.14
 
 
