@@ -14,6 +14,7 @@ v1.2.0: Unreleased
 * Support Dropwizard applications without logback `#1900 <https://github.com/dropwizard/dropwizard/pull/1900>`_
 * Replace deprecated SizeAndTimeBasedFNATP with SizeAndTimeBasedRollingPolicy `#1900 <https://github.com/dropwizard/dropwizard/pull/2100>`_
 * Upgrade to H2 1.4.194
+* Upgrade to Hibernate Validator 5.4.1.Final
 * Upgrade to Jackson 2.8.8
 * Upgrade to Jetty 9.4.4.v20170414
 * Upgrade to Joda-Time 2.9.9
