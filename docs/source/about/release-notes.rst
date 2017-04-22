@@ -17,6 +17,7 @@ v1.2.0: Unreleased
 * Upgrade to Jetty 9.4.4.v20170414
 * Upgrade to Joda-Time 2.9.9
 * Upgrade to Logback 1.2.3
+* Upgrade to tomcat-jdbc 8.5.14
 
 
 .. _rel-1.1.0:
