@@ -12,7 +12,8 @@ v1.2.0: Unreleased
 * Support configuring FileAppender#bufferSize `#1951 <https://github.com/dropwizard/dropwizard/pull/1951>`_
 * Improve error handling of `@FormParam` resources `#1982 <https://github.com/dropwizard/dropwizard/pull/1982>`_
 * Support Dropwizard applications without logback `#1900 <https://github.com/dropwizard/dropwizard/pull/1900>`_
-* Replace deprecated SizeAndTimeBasedFNATP with SizeAndTimeBasedRollingPolicy `#1900 <https://github.com/dropwizard/dropwizard/pull/2100>`_
+* Replace deprecated SizeAndTimeBasedFNATP with SizeAndTimeBasedRollingPolicy `#2100 <https://github.com/dropwizard/dropwizard/pull/2100>`_
+* Upgrade to Jackson 2.8.8.1 `#2019 <https://github.com/dropwizard/dropwizard/pull/2019>`_
 
 .. _rel-1.1.0:
 
