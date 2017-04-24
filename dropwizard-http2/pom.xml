@@ -13,7 +13,7 @@
 
     <properties>
         <!-- Default alpn-boot version. See <profiles> for specific profiles. -->
-        <alpn-boot.version>8.1.3.v20150130</alpn-boot.version>
+        <alpn-boot.version>8.1.11.v20170118</alpn-boot.version>
     </properties>
 
     <build>
