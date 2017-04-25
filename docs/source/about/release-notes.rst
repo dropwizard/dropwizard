@@ -13,6 +13,17 @@ v1.2.0: Unreleased
 * Improve error handling of `@FormParam` resources `#1982 <https://github.com/dropwizard/dropwizard/pull/1982>`_
 * Support Dropwizard applications without logback `#1900 <https://github.com/dropwizard/dropwizard/pull/1900>`_
 * Replace deprecated SizeAndTimeBasedFNATP with SizeAndTimeBasedRollingPolicy `#1900 <https://github.com/dropwizard/dropwizard/pull/2100>`_
+* Upgrade to H2 1.4.194
+* Upgrade to Hibernate 5.2.10.Final
+* Upgrade to Hibernate Validator 5.4.1.Final
+* Upgrade to HSQLDB 2.4.0
+* Upgrade to Jackson 2.8.8
+* Upgrade to Jetty 9.4.4.v20170414
+* Upgrade to Joda-Time 2.9.9
+* Upgrade to Logback 1.2.3
+* Upgrade to SLF4J 1.7.25
+* Upgrade to tomcat-jdbc 8.5.14
+
 
 .. _rel-1.1.0:
 
