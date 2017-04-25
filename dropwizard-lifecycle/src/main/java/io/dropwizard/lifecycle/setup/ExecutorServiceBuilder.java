@@ -21,6 +21,7 @@ public class ExecutorServiceBuilder {
     private final String nameFormat;
     private int corePoolSize;
     private int maximumPoolSize;
+    private boolean allowCoreThreadTimeOut;
     private Duration keepAliveTime;
     private Duration shutdownTime;
     private BlockingQueue<Runnable> workQueue;
@@ -32,6 +33,7 @@ public class ExecutorServiceBuilder {
         this.nameFormat = nameFormat;
         this.corePoolSize = 0;
         this.maximumPoolSize = 1;
+        this.allowCoreThreadTimeOut = false;
         this.keepAliveTime = Duration.seconds(60);
         this.shutdownTime = Duration.seconds(5);
         this.workQueue = new LinkedBlockingQueue<>();
@@ -50,6 +52,11 @@ public class ExecutorServiceBuilder {
 
     public ExecutorServiceBuilder maxThreads(int threads) {
         this.maximumPoolSize = threads;
+        return this;
+    }
+
+    public ExecutorServiceBuilder allowCoreThreadTimeOut(boolean allowCoreThreadTimeOut) {
+        this.allowCoreThreadTimeOut = allowCoreThreadTimeOut;
         return this;
     }
 
@@ -89,6 +96,7 @@ public class ExecutorServiceBuilder {
                                                                    workQueue,
                                                                    threadFactory,
                                                                    handler);
+        executor.allowCoreThreadTimeOut(allowCoreThreadTimeOut);
         environment.manage(new ExecutorServiceManager(executor, shutdownTime, nameFormat));
         return executor;
     }
