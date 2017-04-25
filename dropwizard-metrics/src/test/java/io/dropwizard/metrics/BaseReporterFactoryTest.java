@@ -16,18 +16,15 @@ import static org.mockito.Mockito.mock;
 
 @RunWith(Parameterized.class)
 public class BaseReporterFactoryTest {
-
-
     private static final ImmutableSet<String> INCLUDES = ImmutableSet.of("inc", "both", "inc.+");
     private static final ImmutableSet<String> EXCLUDES = ImmutableSet.of("both", "exc", "exc.+");
     private static final ImmutableSet<String> EMPTY = ImmutableSet.of();
-
 
     @Parameterized.Parameters(name = "{index} {4} {2}={3}")
     public static List<Object[]> data() {
 
         return ImmutableList.of(
-                /**
+                /*
                  * case1: If include list is empty and exclude list is empty, everything should be
                  * included.
                  */
@@ -37,8 +34,9 @@ public class BaseReporterFactoryTest {
                 new Object[]{EMPTY, EMPTY, "any", true, true, "case1"},
                 new Object[]{EMPTY, EMPTY, "incWithSuffix", true, true, "case1"},
                 new Object[]{EMPTY, EMPTY, "excWithSuffix", true, true, "case1"},
+                new Object[]{EMPTY, EMPTY, "prefiXincSuffix", true, true, "case1"},
 
-                /**
+                /*
                  * case2: If include list is NOT empty and exclude list is empty, only the ones
                  * specified in the include list should be included.
                  */
@@ -46,10 +44,11 @@ public class BaseReporterFactoryTest {
                 new Object[]{INCLUDES, EMPTY, "both", true, true, "case2"},
                 new Object[]{INCLUDES, EMPTY, "exc", false, false, "case2"},
                 new Object[]{INCLUDES, EMPTY, "any", false, false, "case2"},
-                new Object[]{INCLUDES, EMPTY, "incWithSuffix", false, true, "case2"},
+                new Object[]{INCLUDES, EMPTY, "incWithSuffix", true, true, "case2"},
                 new Object[]{INCLUDES, EMPTY, "excWithSuffix", false, false, "case2"},
+                new Object[]{INCLUDES, EMPTY, "prefiXincSuffix", true, false, "case2"},
 
-                /**
+                /*
                  * case3: If include list is empty and exclude list is NOT empty, everything should be
                  * included except the ones in the exclude list.
                  */
@@ -58,9 +57,10 @@ public class BaseReporterFactoryTest {
                 new Object[]{EMPTY, EXCLUDES, "exc", false, false, "case3"},
                 new Object[]{EMPTY, EXCLUDES, "any", true, true, "case3"},
                 new Object[]{EMPTY, EXCLUDES, "incWithSuffix", true, true, "case3"},
-                new Object[]{EMPTY, EXCLUDES, "excWithSuffix", true, false, "case3"},
+                new Object[]{EMPTY, EXCLUDES, "excWithSuffix", false, false, "case3"},
+                new Object[]{EMPTY, EXCLUDES, "prefiXincSuffix", true, true, "case3"},
 
-                /**
+                /*
                  * case4: If include list is NOT empty and exclude list is NOT empty, only things not excluded
                  * and specifically included should show up. Excludes takes precedence.
                  */
@@ -68,8 +68,9 @@ public class BaseReporterFactoryTest {
                 new Object[]{INCLUDES, EXCLUDES, "both", false, false, "case4"},
                 new Object[]{INCLUDES, EXCLUDES, "exc", false, false, "case4"},
                 new Object[]{INCLUDES, EXCLUDES, "any", false, false, "case4"},
-                new Object[]{INCLUDES, EXCLUDES, "incWithSuffix", false, true, "case4"},
-                new Object[]{INCLUDES, EXCLUDES, "excWithSuffix", false, false, "case4"}
+                new Object[]{INCLUDES, EXCLUDES, "incWithSuffix", true, true, "case4"},
+                new Object[]{INCLUDES, EXCLUDES, "excWithSuffix", false, false, "case4"},
+                new Object[]{INCLUDES, EXCLUDES, "prefiXincSuffix", true, false, "case3"}
         );
     }
 
@@ -80,7 +81,7 @@ public class BaseReporterFactoryTest {
         }
     };
 
-    @Parameterized.Parameter(0)
+    @Parameterized.Parameter
     public ImmutableSet<String> includes;
 
     @Parameterized.Parameter(1)
@@ -121,5 +122,4 @@ public class BaseReporterFactoryTest {
                 .overridingErrorMessage(msg + ": expected 'matches(%s)=%s' for regex matcher", name, expectedRegexResult)
                 .isEqualTo(expectedRegexResult);
     }
-
 }

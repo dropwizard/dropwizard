@@ -5,6 +5,7 @@ import com.codahale.metrics.MetricFilter;
 import com.codahale.metrics.ScheduledReporter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.base.Strings;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -234,43 +235,5 @@ public abstract class BaseReporterFactory implements ReporterFactory {
         return ImmutableSet.copyOf(Sets.union(
             Sets.difference(EnumSet.allOf(MetricAttribute.class), getIncludesAttributes()),
             getExcludesAttributes()));
-    }
-
-    private interface StringMatchingStrategy {
-        boolean containsMatch(ImmutableSet<String> matchExpressions, String metricName);
-    }
-
-    private static class DefaultStringMatchingStrategy implements StringMatchingStrategy {
-        @Override
-        public boolean containsMatch(ImmutableSet<String> matchExpressions, String metricName) {
-            return matchExpressions.contains(metricName);
-        }
-    }
-
-    private static class RegexStringMatchingStrategy implements StringMatchingStrategy {
-        private final LoadingCache<String, Pattern> patternCache;
-
-        private RegexStringMatchingStrategy() {
-            patternCache = CacheBuilder.newBuilder()
-                    .expireAfterWrite(1, TimeUnit.HOURS)
-                    .build(new CacheLoader<String, Pattern>() {
-                        @Override
-                        public Pattern load(String regex) throws Exception {
-                            return Pattern.compile(regex);
-                        }
-                    });
-        }
-
-        @Override
-        public boolean containsMatch(ImmutableSet<String> matchExpressions, String metricName) {
-            for (String regexExpression : matchExpressions) {
-                if (patternCache.getUnchecked(regexExpression).matcher(metricName).matches()) {
-                    // just need to match on a single value - return as soon as we do
-                    return true;
-                }
-            }
-
-            return false;
-        }
     }
 }
