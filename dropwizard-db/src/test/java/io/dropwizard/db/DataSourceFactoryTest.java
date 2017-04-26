@@ -6,6 +6,8 @@ import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.util.Duration;
 import io.dropwizard.validation.BaseValidator;
+import org.apache.tomcat.jdbc.pool.interceptor.ConnectionState;
+import org.apache.tomcat.jdbc.pool.interceptor.StatementFinalizer;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -106,6 +108,16 @@ public class DataSourceFactoryTest {
             }
         }
         assertThat(CustomConnectionValidator.loaded).isTrue();
+    }
+
+    @Test
+    public void testJdbcInterceptors() throws Exception {
+        factory.setJdbcInterceptors(Optional.of("StatementFinalizer;ConnectionState"));
+        final ManagedPooledDataSource source = (ManagedPooledDataSource) dataSource();
+
+        assertThat(source.getPoolProperties().getJdbcInterceptorsAsArray())
+            .extracting("interceptorClass")
+            .contains(StatementFinalizer.class, ConnectionState.class);
     }
 
     @Test

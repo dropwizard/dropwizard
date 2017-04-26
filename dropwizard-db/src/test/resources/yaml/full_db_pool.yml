@@ -44,3 +44,4 @@ checkConnectionOnConnect: false
 checkConnectionOnReturn: true
 
 validatorClassName: io.dropwizard.db.CustomConnectionValidator
+jdbcInterceptors: "StatementFinalizer;SlowQueryReport"

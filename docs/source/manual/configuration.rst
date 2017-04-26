@@ -1299,6 +1299,7 @@ validationInterval              30 seconds               To avoid excess validat
 
 validatorClassName              none                     Name of a class of a custom validator implementation, which
                                                          will be used for validating connections.
+jdbcInterceptors                none                       A semicolon separated list of JDBC interceptor classnames.
 ============================    =====================    ===============================================================
 
 .. _man-configuration-polymorphic:

@@ -54,6 +54,7 @@ public class DataSourceConfigurationTest {
         assertThat(ds.getCheckConnectionOnReturn()).isEqualTo(true);
         assertThat(ds.getValidationQueryTimeout()).isEqualTo(Optional.of(Duration.seconds(3)));
         assertThat(ds.getValidatorClassName()).isEqualTo(Optional.of("io.dropwizard.db.CustomConnectionValidator"));
+        assertThat(ds.getJdbcInterceptors()).isEqualTo(Optional.of("StatementFinalizer;SlowQueryReport"));
     }
 
     @Test
