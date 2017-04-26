@@ -12,6 +12,7 @@ import org.hibernate.query.internal.AbstractProducedQuery;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 
 import static java.util.Objects.requireNonNull;
@@ -52,6 +53,16 @@ public class AbstractDAO<E> {
      */
     protected Criteria criteria() {
         return currentSession().createCriteria(entityClass);
+    }
+
+    /**
+     * Creates a new {@link CriteriaQuery} for {@code <E>}.
+     *
+     * @return a new {@link CriteriaQuery} query
+     */
+    protected CriteriaQuery<E> criteriaQuery() {
+        CriteriaBuilder builder = this.currentSession().getCriteriaBuilder();
+        return builder.createQuery(getEntityClass());
     }
 
     /**
