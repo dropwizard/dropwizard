@@ -89,6 +89,9 @@ public abstract class BaseReporterFactory implements ReporterFactory {
     private static final RegexStringMatchingStrategy REGEX_STRING_MATCHING_STRATEGY =
             new RegexStringMatchingStrategy();
 
+    private static final SubstringMatchingStrategy SUBSTRING_MATCHING_STRATEGY =
+        new SubstringMatchingStrategy();
+
     @NotNull
     private TimeUnit durationUnit = TimeUnit.MILLISECONDS;
 
@@ -107,6 +110,8 @@ public abstract class BaseReporterFactory implements ReporterFactory {
     private Optional<Duration> frequency = Optional.empty();
 
     private boolean useRegexFilters = false;
+
+    private boolean useSubstringMatching = false;
 
     private EnumSet<MetricAttribute> excludesAttributes = EnumSet.noneOf(MetricAttribute.class);
 
@@ -173,6 +178,16 @@ public abstract class BaseReporterFactory implements ReporterFactory {
     }
 
     @JsonProperty
+    public boolean getUseSubstringMatching() {
+        return useSubstringMatching;
+    }
+
+    @JsonProperty
+    public void setUseSubstringMatching(boolean useSubstringMatching) {
+        this.useSubstringMatching = useSubstringMatching;
+    }
+
+    @JsonProperty
     public EnumSet<MetricAttribute> getExcludesAttributes() {
         return excludesAttributes;
     }
@@ -216,7 +231,7 @@ public abstract class BaseReporterFactory implements ReporterFactory {
     @JsonIgnore
     public MetricFilter getFilter() {
         final StringMatchingStrategy stringMatchingStrategy = getUseRegexFilters() ?
-                REGEX_STRING_MATCHING_STRATEGY : DEFAULT_STRING_MATCHING_STRATEGY;
+                REGEX_STRING_MATCHING_STRATEGY : (getUseSubstringMatching() ? SUBSTRING_MATCHING_STRATEGY : DEFAULT_STRING_MATCHING_STRATEGY);
 
         return (name, metric) -> {
             // Include the metric if its name is not excluded and its name is included
