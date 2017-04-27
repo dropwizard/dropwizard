@@ -12,7 +12,7 @@ v1.2.0: Unreleased
 * Support configuring FileAppender#bufferSize `#1951 <https://github.com/dropwizard/dropwizard/pull/1951>`_
 * Improve error handling of `@FormParam` resources `#1982 <https://github.com/dropwizard/dropwizard/pull/1982>`_
 * Support Dropwizard applications without logback `#1900 <https://github.com/dropwizard/dropwizard/pull/1900>`_
-* Replace deprecated SizeAndTimeBasedFNATP with SizeAndTimeBasedRollingPolicy `#1900 <https://github.com/dropwizard/dropwizard/pull/2100>`_
+* Replace deprecated SizeAndTimeBasedFNATP with SizeAndTimeBasedRollingPolicy `#2100 <https://github.com/dropwizard/dropwizard/pull/2100>`_
 * Upgrade to H2 1.4.194
 * Upgrade to Hibernate 5.2.10.Final
 * Upgrade to Hibernate Validator 5.4.1.Final
