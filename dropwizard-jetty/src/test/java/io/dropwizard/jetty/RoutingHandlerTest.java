@@ -77,14 +77,14 @@ public class RoutingHandlerTest {
     public void withSessionHandler() throws Exception {
         final ContextHandler handler1 = new ContextHandler();
         final ServletContextHandler handler2 = new ServletContextHandler();
-        final SessionHandler handler2_1 = new SessionHandler();
-        handler2.setSessionHandler(handler2_1);
+        final SessionHandler childHandler1 = new SessionHandler();
+        handler2.setSessionHandler(childHandler1);
         final RoutingHandler handler = new RoutingHandler(ImmutableMap.of(connector1, handler1, connector2, handler2));
         new Server().setHandler(handler);
 
         handler.start();
         try {
-            assertThat(getSessionHandlers(handler)).containsOnly(handler2_1);
+            assertThat(getSessionHandlers(handler)).containsOnly(childHandler1);
         } finally {
             handler.stop();
         }
