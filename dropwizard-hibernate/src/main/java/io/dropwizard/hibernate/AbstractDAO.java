@@ -55,6 +55,15 @@ public class AbstractDAO<E> {
     }
 
     /**
+     * Creates a new {@link CriteriaQuery} for {@code <E>}.
+     *
+     * @return a new {@link CriteriaQuery} query
+     */
+    protected CriteriaQuery<E> criteriaQuery() {
+        return this.currentSession().getCriteriaBuilder().createQuery(getEntityClass());
+    }
+
+    /**
      * Returns a named {@link Query}.
      *
      * @param queryName the name of the query
