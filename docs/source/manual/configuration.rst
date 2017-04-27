@@ -815,6 +815,7 @@ excludesAttributes     (none)         Metric attributes to exclude from reports,
 includesAttributes     (all)          Metrics attributes to include in reports, by name (e.g. ``p98``, ``m15_rate``, ``stddev``).
                                       When defined, only these attributes will be reported.
 useRegexFilters        false          Indicates whether the values of the 'includes' and 'excludes' fields should be treated as regular expressions or not.
+useSubstringMatching   false          Uses a substring matching strategy to determine whether a metric should be processed.
 frequency              (none)         The frequency to report metrics. Overrides the default.
 ====================== =============  ===========
 
@@ -825,6 +826,8 @@ The inclusion and exclusion rules are defined as:
 * If **excludes** is empty, no metrics are excluded;
 * If **excludes** is not empty, then exclusion rules take precedence over inclusion rules. Thus if a name matches the exclusion rules it will not be included in reports even if it also matches the inclusion rules.
 
+When neither **useRegexFilters** nor **useSubstringMatching** are enabled, a default exact matching strategy will be used to determine whether a metric should be processed.
+In case both **useRegexFilters** and **useSubstringMatching** are set, **useRegexFilters** takes precedence over **useSubstringMatching**.
 
 .. _man-configuration-metrics-formatted:
 

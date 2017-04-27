@@ -5,9 +5,6 @@ import com.codahale.metrics.MetricFilter;
 import com.codahale.metrics.ScheduledReporter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import io.dropwizard.util.Duration;
@@ -20,7 +17,6 @@ import java.util.EnumSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Pattern;
 
 /**
  * A base {@link ReporterFactory} for configuring metric reporters.
@@ -93,6 +89,9 @@ public abstract class BaseReporterFactory implements ReporterFactory {
     private static final RegexStringMatchingStrategy REGEX_STRING_MATCHING_STRATEGY =
             new RegexStringMatchingStrategy();
 
+    private static final SubstringMatchingStrategy SUBSTRING_MATCHING_STRATEGY =
+        new SubstringMatchingStrategy();
+
     @NotNull
     private TimeUnit durationUnit = TimeUnit.MILLISECONDS;
 
@@ -111,6 +110,8 @@ public abstract class BaseReporterFactory implements ReporterFactory {
     private Optional<Duration> frequency = Optional.empty();
 
     private boolean useRegexFilters = false;
+
+    private boolean useSubstringMatching = false;
 
     private EnumSet<MetricAttribute> excludesAttributes = EnumSet.noneOf(MetricAttribute.class);
 
@@ -177,6 +178,16 @@ public abstract class BaseReporterFactory implements ReporterFactory {
     }
 
     @JsonProperty
+    public boolean getUseSubstringMatching() {
+        return useSubstringMatching;
+    }
+
+    @JsonProperty
+    public void setUseSubstringMatching(boolean useSubstringMatching) {
+        this.useSubstringMatching = useSubstringMatching;
+    }
+
+    @JsonProperty
     public EnumSet<MetricAttribute> getExcludesAttributes() {
         return excludesAttributes;
     }
@@ -220,7 +231,7 @@ public abstract class BaseReporterFactory implements ReporterFactory {
     @JsonIgnore
     public MetricFilter getFilter() {
         final StringMatchingStrategy stringMatchingStrategy = getUseRegexFilters() ?
-                REGEX_STRING_MATCHING_STRATEGY : DEFAULT_STRING_MATCHING_STRATEGY;
+                REGEX_STRING_MATCHING_STRATEGY : (getUseSubstringMatching() ? SUBSTRING_MATCHING_STRATEGY : DEFAULT_STRING_MATCHING_STRATEGY);
 
         return (name, metric) -> {
             // Include the metric if its name is not excluded and its name is included
@@ -234,43 +245,5 @@ public abstract class BaseReporterFactory implements ReporterFactory {
         return ImmutableSet.copyOf(Sets.union(
             Sets.difference(EnumSet.allOf(MetricAttribute.class), getIncludesAttributes()),
             getExcludesAttributes()));
-    }
-
-    private interface StringMatchingStrategy {
-        boolean containsMatch(ImmutableSet<String> matchExpressions, String metricName);
-    }
-
-    private static class DefaultStringMatchingStrategy implements StringMatchingStrategy {
-        @Override
-        public boolean containsMatch(ImmutableSet<String> matchExpressions, String metricName) {
-            return matchExpressions.contains(metricName);
-        }
-    }
-
-    private static class RegexStringMatchingStrategy implements StringMatchingStrategy {
-        private final LoadingCache<String, Pattern> patternCache;
-
-        private RegexStringMatchingStrategy() {
-            patternCache = CacheBuilder.newBuilder()
-                    .expireAfterWrite(1, TimeUnit.HOURS)
-                    .build(new CacheLoader<String, Pattern>() {
-                        @Override
-                        public Pattern load(String regex) throws Exception {
-                            return Pattern.compile(regex);
-                        }
-                    });
-        }
-
-        @Override
-        public boolean containsMatch(ImmutableSet<String> matchExpressions, String metricName) {
-            for (String regexExpression : matchExpressions) {
-                if (patternCache.getUnchecked(regexExpression).matcher(metricName).matches()) {
-                    // just need to match on a single value - return as soon as we do
-                    return true;
-                }
-            }
-
-            return false;
-        }
     }
 }
