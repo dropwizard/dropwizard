@@ -296,14 +296,6 @@ import java.util.concurrent.TimeUnit;
  * </table>
  */
 public class DataSourceFactory implements PooledDataSourceFactory {
-    public Optional<String> getJdbcInterceptors() {
-        return jdbcInterceptors;
-    }
-
-    public void setJdbcInterceptors(Optional<String> jdbcInterceptors) {
-        this.jdbcInterceptors = jdbcInterceptors;
-    }
-
     @SuppressWarnings("UnusedDeclaration")
     public enum TransactionIsolation {
         NONE(Connection.TRANSACTION_NONE),
@@ -816,6 +808,16 @@ public class DataSourceFactory implements PooledDataSourceFactory {
     @JsonProperty
     public void setRemoveAbandonedTimeout(Duration removeAbandonedTimeout) {
         this.removeAbandonedTimeout = Objects.requireNonNull(removeAbandonedTimeout);
+    }
+
+    @JsonProperty
+    public Optional<String> getJdbcInterceptors() {
+        return jdbcInterceptors;
+    }
+
+    @JsonProperty
+    public void setJdbcInterceptors(Optional<String> jdbcInterceptors) {
+        this.jdbcInterceptors = jdbcInterceptors;
     }
 
     @Override
