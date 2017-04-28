@@ -1,13 +1,13 @@
 package io.dropwizard.jetty.setup;
 
 import io.dropwizard.jetty.MutableServletContextHandler;
-import org.eclipse.jetty.continuation.ContinuationFilter;
 import org.eclipse.jetty.http.MimeTypes;
 import org.eclipse.jetty.security.SecurityHandler;
 import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.eclipse.jetty.servlets.WelcomeFilter;
 import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.util.resource.ResourceCollection;
 import org.junit.Before;
@@ -96,7 +96,7 @@ public class ServletEnvironmentTest {
 
     @Test
     public void addsFilterClasses() throws Exception {
-        final FilterRegistration.Dynamic builder = environment.addFilter("filter", ContinuationFilter.class);
+        final FilterRegistration.Dynamic builder = environment.addFilter("filter", WelcomeFilter.class);
         assertThat(builder)
                 .isNotNull();
 
@@ -107,7 +107,7 @@ public class ServletEnvironmentTest {
                 .isEqualTo("filter");
 
         // this is ugly, but comparing classes sucks with these type bounds
-        assertThat(holder.getValue().getHeldClass().equals(ContinuationFilter.class))
+        assertThat(holder.getValue().getHeldClass().equals(WelcomeFilter.class))
                 .isTrue();
     }
 
