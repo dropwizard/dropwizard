@@ -3,7 +3,7 @@ package io.dropwizard.jetty;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Request;
-import org.eclipse.jetty.server.handler.AbstractHandler;
+import org.eclipse.jetty.server.handler.HandlerCollection;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Map;
 
-public class RoutingHandler extends AbstractHandler {
+public class RoutingHandler extends HandlerCollection {
     /**
      * We use an array of entries instead of a map here for performance reasons. We're only ever
      * comparing connectors by reference, not by equality, so avoiding the overhead of a map is
@@ -37,6 +37,7 @@ public class RoutingHandler extends AbstractHandler {
             this.entries[i++] = new Entry(entry.getKey(), entry.getValue());
             addBean(entry.getValue());
         }
+        setHandlers(handlers.values().toArray(new Handler[handlers.size()]));
     }
 
     @Override

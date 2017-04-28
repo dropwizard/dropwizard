@@ -7,7 +7,14 @@ import org.eclipse.jetty.server.HttpChannel;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ContextHandler;
+import org.eclipse.jetty.server.session.SessionHandler;
+import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.junit.Test;
+
+import java.util.Arrays;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -65,4 +72,40 @@ public class RoutingHandlerTest {
 
         verify(handler1).handle("target", baseRequest, request, response);
     }
+
+    @Test
+    public void withSessionHandler() throws Exception {
+        final ContextHandler handler1 = new ContextHandler();
+        final ServletContextHandler handler2 = new ServletContextHandler();
+        final SessionHandler childHandler1 = new SessionHandler();
+        handler2.setSessionHandler(childHandler1);
+        final RoutingHandler handler = new RoutingHandler(ImmutableMap.of(connector1, handler1, connector2, handler2));
+        new Server().setHandler(handler);
+
+        handler.start();
+        try {
+            assertThat(getSessionHandlers(handler)).containsOnly(childHandler1);
+        } finally {
+            handler.stop();
+        }
+    }
+
+    @Test
+    public void withoutSessionHandler() throws Exception {
+        new Server().setHandler(handler);
+
+        handler.start();
+        try {
+            assertThat(getSessionHandlers(handler)).isEmpty();
+        } finally {
+            handler.stop();
+        }
+    }
+
+    private Set<SessionHandler> getSessionHandlers(final RoutingHandler routingHandler) {
+        return Arrays.stream(routingHandler.getServer().getChildHandlersByClass(ContextHandler.class))
+                .map(handler -> ((ContextHandler) handler).getChildHandlerByClass(SessionHandler.class))
+                .filter(Objects::nonNull).collect(Collectors.toSet());
+    }
+
 }
