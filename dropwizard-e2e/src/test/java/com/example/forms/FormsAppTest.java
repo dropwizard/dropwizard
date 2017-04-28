@@ -4,6 +4,7 @@ import io.dropwizard.Configuration;
 import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.client.JerseyClientConfiguration;
 import io.dropwizard.jersey.errors.ErrorMessage;
+import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import io.dropwizard.util.Duration;
 import org.glassfish.jersey.media.multipart.FormDataBodyPart;
@@ -23,7 +24,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class FormsAppTest {
     @ClassRule
-    public static final DropwizardAppRule<Configuration> RULE = new DropwizardAppRule<>(FormsApp.class);
+    public static final DropwizardAppRule<Configuration> RULE =
+        new DropwizardAppRule<>(FormsApp.class, ResourceHelpers.resourceFilePath("app1/config.yml"));
 
     private final JerseyClientConfiguration config = new JerseyClientConfiguration();
 

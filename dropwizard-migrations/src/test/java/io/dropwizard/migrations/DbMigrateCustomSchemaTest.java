@@ -31,12 +31,12 @@ public class DbMigrateCustomSchemaTest extends AbstractMigrationTest {
         dbi.useHandle(h -> h.execute("create schema " + schemaName));
         Namespace namespace = new Namespace(ImmutableMap.of("schema", schemaName, "catalog", "public"));
         migrateCommand.run(null, namespace, conf);
-        dbi.useHandle(handle -> {
+        dbi.useHandle(handle ->
             assertThat(handle
                 .select("select * from " + schemaName + ".persons"))
                 .hasSize(1)
-                .contains(ImmutableMap.of("id", 1, "name", "Bill Smith", "email", "bill@smith.me"), Index.atIndex(0));
-        });
+                .contains(ImmutableMap.of("id", 1, "name", "Bill Smith", "email", "bill@smith.me"), Index.atIndex(0))
+        );
     }
 
 }
