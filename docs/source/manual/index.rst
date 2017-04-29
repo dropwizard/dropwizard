@@ -25,4 +25,4 @@ User Manual
     example
     configuration
     internals
-
+    cdi
