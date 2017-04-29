@@ -9,7 +9,7 @@ public class ManagedWeld implements Managed {
     private static final Logger log = LoggerFactory.getLogger(ManagedWeld.class);
     private final Weld weld;
 
-    ManagedWeld () {
+    ManagedWeld() {
         weld = new Weld();
     }
 
