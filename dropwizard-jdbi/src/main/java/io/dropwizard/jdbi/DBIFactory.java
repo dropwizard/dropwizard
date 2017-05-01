@@ -37,6 +37,8 @@ import io.dropwizard.jdbi.args.OptionalLongArgumentFactory;
 import io.dropwizard.jdbi.args.OptionalLongMapper;
 import io.dropwizard.jdbi.args.OptionalOffsetDateTimeArgumentFactory;
 import io.dropwizard.jdbi.args.OptionalZonedDateTimeArgumentFactory;
+import io.dropwizard.jdbi.args.PeriodArgumentFactory;
+import io.dropwizard.jdbi.args.PeriodMapper;
 import io.dropwizard.jdbi.args.ZonedDateTimeArgumentFactory;
 import io.dropwizard.jdbi.args.ZonedDateTimeMapper;
 import io.dropwizard.jdbi.logging.LogbackLog;
@@ -128,6 +130,7 @@ public class DBIFactory {
         dbi.registerArgumentFactory(new InstantArgumentFactory(timeZone));
         dbi.registerArgumentFactory(new OffsetDateTimeArgumentFactory(timeZone));
         dbi.registerArgumentFactory(new ZonedDateTimeArgumentFactory(timeZone));
+        dbi.registerArgumentFactory(new PeriodArgumentFactory());
 
         // Should be registered after GuavaOptionalArgumentFactory to be processed first
         dbi.registerArgumentFactory(new GuavaOptionalJodaTimeArgumentFactory(timeZone));
@@ -151,6 +154,7 @@ public class DBIFactory {
         dbi.registerColumnMapper(new LocalDateTimeMapper());
         dbi.registerColumnMapper(new OffsetDateTimeMapper());
         dbi.registerColumnMapper(new ZonedDateTimeMapper());
+        dbi.registerColumnMapper(new PeriodMapper());
 
         return dbi;
     }
