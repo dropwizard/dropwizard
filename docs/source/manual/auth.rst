@@ -25,7 +25,7 @@ Authenticators implement the ``Authenticator<C, P extends Principal>`` interface
             if ("secret".equals(credentials.getPassword())) {
                 return Optional.of(new User(credentials.getUsername()));
             }
-            return Optional.absent();
+            return Optional.empty();
         }
     }
 
