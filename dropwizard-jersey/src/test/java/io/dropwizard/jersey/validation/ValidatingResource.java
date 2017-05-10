@@ -64,6 +64,14 @@ public class ValidatingResource {
     }
 
     @POST
+    @Path("fooValidatedAndNotNull")
+    @Validated
+    @Valid
+    public ValidRepresentation blahValidatedAndNotNull(@NotNull @Validated(Partial1.class) @Valid ValidRepresentation representation) {
+        return new ValidRepresentation();
+    }
+
+    @POST
     @Path("simpleEntity")
     public String simpleEntity(@Length(min = 3, max = 5) String name) {
         return name;

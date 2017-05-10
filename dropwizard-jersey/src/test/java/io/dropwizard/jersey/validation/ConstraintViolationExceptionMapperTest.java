@@ -80,6 +80,16 @@ public class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
     }
 
     @Test
+    public void postNullEntityWithInvalidatedIs422() throws Exception {
+        assumeThat(Locale.getDefault().getLanguage(), is("en"));
+
+        final Response response = target("/valid/fooValidatedAndNotNull").request(MediaType.APPLICATION_JSON)
+                .post(Entity.entity(null, MediaType.APPLICATION_JSON));
+        assertThat(response.getStatus()).isEqualTo(422);
+        assertThat(response.readEntity(String.class)).isEqualTo("{\"errors\":[\"The request body may not be null\"]}");
+    }
+
+    @Test
     public void postInvalidInterfaceEntityIs422() throws Exception {
         final Response response = target("/valid2/repr").request(MediaType.APPLICATION_JSON)
             .post(Entity.entity("{\"name\": \"a\"}", MediaType.APPLICATION_JSON));
