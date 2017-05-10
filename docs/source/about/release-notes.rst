@@ -14,6 +14,7 @@ v1.2.0: Unreleased
 * Add JDBC interceptors through configuration `#2030 <https://github.com/dropwizard/dropwizard/pull/2030>`_
 * Support Dropwizard applications without logback `#1900 <https://github.com/dropwizard/dropwizard/pull/1900>`_
 * Replace deprecated SizeAndTimeBasedFNATP with SizeAndTimeBasedRollingPolicy `#2100 <https://github.com/dropwizard/dropwizard/pull/2100>`_
+* JDBI support for `Period` types `#2039 <https://github.com/dropwizard/dropwizard/pull/2039>`_
 * Upgrade to H2 1.4.194
 * Upgrade to Hibernate 5.2.10.Final
 * Upgrade to Hibernate Validator 5.4.1.Final
