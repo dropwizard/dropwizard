@@ -26,27 +26,43 @@ Dropwizard consists mostly of glue code to automatically connect and configure t
 Organizing Your Project
 =======================
 
-In general, we recommend you separate your projects into three Maven modules: ``project-api``,
-``project-client``, and ``project-application``.
+If you plan on developing a client library for other developers to access your service, we recommend
+you separate your projects into three Maven modules: ``project-api``, ``project-client``, and
+``project-application``.
 
 ``project-api`` should contain your :ref:`man-core-representations`; ``project-client`` should use
 those classes and an :ref:`HTTP client <man-client>` to implement a full-fledged client for your
 application, and ``project-application`` should provide the actual application implementation, including
 :ref:`man-core-resources`.
 
-Our applications tend to look like this:
+To give a concrete example of this project structure, let's say we wanted to create a Stripe_-like
+API where clients can issue charges and the server would echo the charge back to the client.
+``stripe-api`` project would hold our ``Charge`` object as both the server and client want to work
+with the charge and to promote code reuse, ``Charge`` objects are stored in a shared module.
+``stripe-app`` is the Dropwizard application. ``stripe-client`` abstracts away the raw HTTP
+interactions and deserialization logic. Instead of using a HTTP client, users of ``stripe-client``
+would just pass in a ``Charge`` object to a function and behind the scenes, ``stripe-client`` will
+call the HTTP endpoint. The client library may also take care of connection pooling, and may
+provide a more friendly way of interpreting error messages. Basically, distributing a client library
+for your app will help other developers integrate more quickly with the service.
+
+If you are not planning on distributing a client library for developers, one
+can combine ``project-api`` and ``project-application`` into a single project,
+which tends to look like this:
 
 * ``com.example.myapplication``:
 
-  * ``api``: :ref:`man-core-representations`.
+  * ``api``: :ref:`man-core-representations`. Request and response bodies.
   * ``cli``: :ref:`man-core-commands`
-  * ``client``: :ref:`Client <man-client>` implementation for your application
-  * ``core``: Domain implementation
+  * ``client``: :ref:`Client <man-client>` code that accesses external HTTP services.
+  * ``core``: Domain implementation; where objects not used in the API such as POJOs, validations, crypto, etc, reside.
   * ``jdbi``: :ref:`Database <man-jdbi>` access classes
   * ``health``: :ref:`man-core-healthchecks`
   * ``resources``: :ref:`man-core-resources`
   * ``MyApplication``: The :ref:`application <man-core-application>` class
   * ``MyApplicationConfiguration``: :ref:`configuration <man-core-configuration>` class
+
+.. _Stripe: https://stripe.com/docs/api/java
 
 .. _man-core-application:
 
