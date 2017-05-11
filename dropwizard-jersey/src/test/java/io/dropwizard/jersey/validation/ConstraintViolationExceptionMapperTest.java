@@ -372,6 +372,16 @@ public class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
     }
 
     @Test
+    public void invalidNullPartialValidatedRequestEntities() {
+        final Response response = target("/valid/validatedPartialExample")
+            .request().post(Entity.json(null));
+
+        assertThat(response.getStatus()).isEqualTo(422);
+        assertThat(response.readEntity(String.class))
+            .isEqualTo("{\"errors\":[\"The request body may not be null\"]}");
+    }
+
+    @Test
     public void invalidEntityExceptionForPartialValidatedRequestEntities() {
         final Response response = target("/valid/validatedPartialExampleBoth")
                 .request().post(Entity.json("{\"id\":1}"));
@@ -379,6 +389,16 @@ public class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
         assertThat(response.getStatus()).isEqualTo(422);
         assertThat(response.readEntity(String.class))
                 .isEqualTo("{\"errors\":[\"text may not be null\"]}");
+    }
+
+    @Test
+    public void invalidNullPartialBothValidatedRequestEntities() {
+        final Response response = target("/valid/validatedPartialExampleBoth")
+            .request().post(Entity.json(null));
+
+        assertThat(response.getStatus()).isEqualTo(422);
+        assertThat(response.readEntity(String.class))
+            .isEqualTo("{\"errors\":[\"The request body may not be null\"]}");
     }
 
     @Test

@@ -91,7 +91,11 @@ public class ValidatingResource {
     @POST
     @Path("validatedPartialExampleBoth")
     public PartialExample validatedPartialExampleBoth(
-            @Validated({Partial1.class, Partial2.class}) @Valid PartialExample obj) {
+            @NotNull
+            @Valid
+            @Validated({Partial1.class, Partial2.class})
+            PartialExample obj
+    ) {
         return obj;
     }
 
@@ -134,7 +138,11 @@ public class ValidatingResource {
     @POST
     @Path("validatedPartialExample")
     public PartialExample validatedPartialExample(
-            @Validated({Partial1.class}) @Valid PartialExample obj) {
+            @NotNull(groups = Partial1.class)
+            @Valid
+            @Validated({Partial1.class})
+            PartialExample obj
+    ) {
         return obj;
     }
 
