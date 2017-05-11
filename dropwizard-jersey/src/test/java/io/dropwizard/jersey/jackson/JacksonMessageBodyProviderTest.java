@@ -14,6 +14,7 @@ import org.junit.Test;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.validation.groups.Default;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedHashMap;
@@ -76,7 +77,7 @@ public class JacksonMessageBodyProviderTest {
     public interface Partial1 {
     }
 
-    public interface Partial2 {
+    public interface Partial2 extends Default {
     }
 
     public static class PartialExample {
