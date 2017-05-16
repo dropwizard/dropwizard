@@ -45,4 +45,11 @@ public class ExceptionResource {
     public Response redirectTarget() {
         return Response.ok().entity("{\"status\":\"OK\"}").build();
     }
+
+    @GET
+    @Path("html-exception")
+    @Produces(MediaType.TEXT_HTML)
+    public void htmlException() throws WebApplicationException {
+        throw new WebApplicationException("BIFF", Response.Status.BAD_REQUEST);
+    }
 }
