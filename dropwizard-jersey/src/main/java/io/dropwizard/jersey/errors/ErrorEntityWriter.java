@@ -58,7 +58,7 @@ public abstract class ErrorEntityWriter<T, U> implements MessageBodyWriter<T> {
         responseHeaders.putSingle(HttpHeaders.CONTENT_TYPE, contentType);
 
         writer.writeTo(getRepresentation(entity), representation, representation, annotations,
-            MediaType.TEXT_HTML_TYPE, responseHeaders, entityStream);
+            contentType, responseHeaders, entityStream);
     }
 
     protected abstract U getRepresentation(T entity);
