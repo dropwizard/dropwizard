@@ -20,7 +20,7 @@ import java.lang.reflect.Type;
  * @param <T> The entity type to handle
  * @param <U> The response type to produce
  */
-public abstract class ErrorEntityWriter<T,U> implements MessageBodyWriter<T> {
+public abstract class ErrorEntityWriter<T, U> implements MessageBodyWriter<T> {
 
     /**
      * @param contentType Content type the writer will produce
