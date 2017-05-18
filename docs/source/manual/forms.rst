@@ -9,7 +9,7 @@ Dropwizard Forms
 .. rubric:: The ``dropwizard-forms`` module provides you with a support for multi-part forms
             via Jersey_.
 
-.. _Jersey: https://jersey.java.net/
+.. _Jersey: https://jersey.github.io/ 
 
 Adding The Bundle
 =================
@@ -67,5 +67,5 @@ More Information
 For additional and more detailed documentation about the Jersey multi-part support, please refer to the
 documentation in the `Jersey User Guide`_ and Javadoc_.
 
-.. _Jersey User Guide: https://jersey.java.net/documentation/latest/media.html#multipart
-.. _Javadoc: https://jersey.java.net/apidocs/latest/jersey/org/glassfish/jersey/media/multipart/package-summary.html
+.. _Jersey User Guide: https://jersey.github.io/documentation/latest/media.html#multipart 
+.. _Javadoc: https://jersey.github.io/apidocs/latest/jersey/org/glassfish/jersey/media/multipart/package-summary.html
