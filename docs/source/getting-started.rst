@@ -48,7 +48,7 @@ implementation) in terms of features or performance. It allows you to write clea
 which gracefully map HTTP requests to simple Java objects. It supports streaming output, matrix URI
 parameters, conditional ``GET`` requests, and much, much more.
 
-.. _Jersey: http://jersey.java.net
+.. _Jersey: https://jersey.github.io/ 
 .. _JAX-RS: http://jcp.org/en/jsr/detail?id=311
 
 .. _gs-jackson:

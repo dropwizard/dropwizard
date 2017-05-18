@@ -1066,7 +1066,7 @@ Unsurprisingly, most of your day-to-day work with a Dropwizard application will 
 classes, which model the resources exposed in your RESTful API. Dropwizard uses Jersey__ for this,
 so most of this section is just re-hashing or collecting various bits of Jersey documentation.
 
-.. __: http://jersey.java.net/
+.. __: http://jersey.github.io/
 
 Jersey is a framework for mapping various aspects of incoming HTTP requests to POJOs and then
 mapping various aspects of POJOs to outgoing HTTP responses. Here's a basic resource class:
@@ -1570,7 +1570,7 @@ has a rich api for `filters and interceptors`_ that can be used directly in Drop
 You can stop the request from reaching your resources by throwing a ``WebApplicationException``. Alternatively,
 you can use filters to modify inbound requests or outbound responses.
 
-.. _filters and interceptors: http://jersey.java.net/documentation/latest/filters-and-interceptors.html
+.. _filters and interceptors: http://jersey.github.io/documentation/latest/filters-and-interceptors.html
 
 .. code-block:: java
 

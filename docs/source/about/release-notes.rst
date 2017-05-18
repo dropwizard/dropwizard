@@ -229,7 +229,7 @@ v0.9.0: Oct 28 2015
 * Fixed a security bug in ``CachingAuthenticator`` with caching results of failed authentication attempts `#1082 <https://github.com/dropwizard/dropwizard/pull/1082>`_
 * Correct handling misconfigured context paths in ``ServerFactory`` `#785 <https://github.com/dropwizard/dropwizard/pull/785>`_
 * Logging context paths during application startup `#994 <https://github.com/dropwizard/dropwizard/pull/994>`_, `#1072 <https://github.com/dropwizard/dropwizard/pull/1072>`_
-* Support for `Jersey Bean Validation <https://jersey.java.net/documentation/latest/bean-validation.html>`_ `#842 <https://github.com/dropwizard/dropwizard/pull/842>`_
+* Support for `Jersey Bean Validation <https://jersey.github.io/documentation/latest/bean-validation.html>`_ `#842 <https://github.com/dropwizard/dropwizard/pull/842>`_
 * Returning descriptive constraint violation messages `#1039 <https://github.com/dropwizard/dropwizard/pull/1039>`_,
 * Trace logging of failed constraint violations `#992 <https://github.com/dropwizard/dropwizard/pull/992>`_
 * Returning correct HTTP status codes for constraint violations `#993 <https://github.com/dropwizard/dropwizard/pull/993>`_
