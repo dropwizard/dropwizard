@@ -46,7 +46,7 @@ v0.9.0 Oct 28 2015
 * In some cases an instance of Jersey HTTP client could be abruptly closed during the application lifetime `#1232 <https://github.com/dropwizard/dropwizard/pull/1232>`_
 * Improved build time build by running tests in parallel `#1032 <https://github.com/dropwizard/dropwizard/pull/1032>`_
 * Added JMH benchmarks  `#990 <https://github.com/dropwizard/dropwizard/pull/990>`_
-* Allow customization of Hibernate ``SessionFactory`` `#1182 <https://github.com/dropwizard/dropwizard/issue/1182>`_
+* Allow customization of Hibernate ``SessionFactory`` `#1182 <https://github.com/dropwizard/dropwizard/issues/1182>`_
 * Removed javax.el-2.x in favour of javax.el-3.0
 * Upgraded to argparse4j 0.6.0
 * Upgrade to AssertJ 2.2.0
