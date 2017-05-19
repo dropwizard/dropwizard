@@ -60,7 +60,7 @@ In terms of data formats, JSON has become the web’s *lingua franca*, and Jacks
 JSON on the JVM. In addition to being lightning fast, it has a sophisticated object mapper, allowing
 you to export your domain models directly.
 
-.. _Jackson: http://jackson.codehaus.org/
+.. _Jackson: https://github.com/FasterXML/jackson#readme
 
 .. _gs-metrics:
 

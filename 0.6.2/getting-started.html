@@ -135,7 +135,7 @@ parameters, conditional <tt class="docutils literal"><span class="pre">GET</span
 </div>
 <div class="section" id="jackson-for-json">
 <span id="gs-jackson"></span><h3>Jackson for JSON</h3>
-<p>In terms of data formats, JSON has become the web’s <em>lingua franca</em>, and <a class="reference external" href="http://jackson.codehaus.org/">Jackson</a> is the king of
+<p>In terms of data formats, JSON has become the web’s <em>lingua franca</em>, and <a class="reference external" href="https://github.com/FasterXML/jackson#readme">Jackson</a> is the king of
 JSON on the JVM. In addition to being lightning fast, it has a sophisticated object mapper, allowing
 you to export your domain models directly.</p>
 </div>
@@ -146,7 +146,7 @@ code&#8217;s behavior in your production environment.</p>
 </div>
 <div class="section" id="and-friends">
 <span id="gs-and-friends"></span><h3>And Friends</h3>
-<p>In addition to <a class="reference external" href="http://www.eclipse.org/jetty/">Jetty</a>, <a class="reference external" href="https://jersey.github.io">Jersey</a>, and <a class="reference external" href="http://jackson.codehaus.org/">Jackson</a>, Dropwizard also includes a number of libraries that
+<p>In addition to <a class="reference external" href="http://www.eclipse.org/jetty/">Jetty</a>, <a class="reference external" href="https://jersey.github.io">Jersey</a>, and <a class="reference external" href="https://github.com/FasterXML/jackson#readme">Jackson</a>, Dropwizard also includes a number of libraries that
 we&#8217;ve come to rely on:</p>
 <ul class="simple">
 <li><a class="reference external" href="http://code.google.com/p/guava-libraries/">Guava</a>, which, in addition to highly optimized immutable data structures, provides a growing
@@ -229,7 +229,7 @@ configuration file has blank values for either or is missing <tt class="docutils
 exception will be thrown and your service won&#8217;t start.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
-<p class="last">The mapping from YAML to your service&#8217;s <tt class="docutils literal"><span class="pre">Configuration</span></tt> instance is done by <a class="reference external" href="http://jackson.codehaus.org/">Jackson</a>. This
+<p class="last">The mapping from YAML to your service&#8217;s <tt class="docutils literal"><span class="pre">Configuration</span></tt> instance is done by <a class="reference external" href="https://github.com/FasterXML/jackson#readme">Jackson</a>. This
 means your <tt class="docutils literal"><span class="pre">Configuration</span></tt> class can use all of Jackson&#8217;s
 <a class="reference external" href="https://github.com/FasterXML/jackson-docs/wiki/JacksonAnnotations">object-mapping annotations</a>. The validation of <tt class="docutils literal"><span class="pre">&#64;NotEmpty</span></tt> is handled
 by Hibernate Validator, which has a <a class="reference external" href="http://docs.jboss.org/hibernate/validator/4.2/reference/en-US/html_single/#validator-defineconstraints-builtin">wide range of built-in constraints</a>
@@ -320,7 +320,7 @@ representation of the saying. (Thankfully, this is a fairly straight-forward ind
 <p>This is a pretty simple POJO, but there are a few things worth noting here.</p>
 <p>First, it&#8217;s immutable. This makes <tt class="docutils literal"><span class="pre">Saying</span></tt> instances <em>very</em> easy to reason about in multi-threaded
 environments as well as single-threaded environments. Second, it uses the Java Bean standard for the
-<tt class="docutils literal"><span class="pre">id</span></tt> and <tt class="docutils literal"><span class="pre">content</span></tt> properties. This allows <a class="reference external" href="http://jackson.codehaus.org/">Jackson</a> to serialize it to the JSON we need. The
+<tt class="docutils literal"><span class="pre">id</span></tt> and <tt class="docutils literal"><span class="pre">content</span></tt> properties. This allows <a class="reference external" href="https://github.com/FasterXML/jackson#readme">Jackson</a> to serialize it to the JSON we need. The
 Jackson object mapping code will populate the <tt class="docutils literal"><span class="pre">id</span></tt> field of the JSON object with the return value
 of <tt class="docutils literal"><span class="pre">#getId()</span></tt>, likewise with <tt class="docutils literal"><span class="pre">content</span></tt> and <tt class="docutils literal"><span class="pre">#getContent()</span></tt>.</p>
 <div class="admonition note">
