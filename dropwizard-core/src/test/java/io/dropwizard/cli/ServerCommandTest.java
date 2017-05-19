@@ -25,6 +25,14 @@ public class ServerCommandTest {
         }
     }
 
+    private static class NeedsToBeStopped extends AbstractLifeCycle {
+        boolean stopped = false;
+        @Override
+        protected void doStop() throws Exception {
+            stopped = true;
+        }
+    }
+
     private final MyApplication application = new MyApplication();
     private final ServerCommand<Configuration> command = new ServerCommand<>(application);
     private final Server server = new Server(0) {
@@ -101,6 +109,31 @@ public class ServerCommandTest {
 
         assertThat(server.isStarted())
                 .isFalse();
+        this.throwException = false;
+    }
+
+    @Test
+    public void managedObjectsAreShutdownAfterFailureInRun() throws Exception {
+        this.throwException = true;
+
+        final NeedsToBeStopped needsToBeStopped = new NeedsToBeStopped();
+        final MyApplication application = new MyApplication(){
+            @Override
+            public void run(Configuration configuration, Environment environment) throws Exception {
+                environment.lifecycle().manage(needsToBeStopped);
+                throw new IOException("oh crap again");
+            }
+        };
+        Server server = new Server(0);
+        when(serverFactory.build(environment)).thenReturn(server);
+        try {
+            new ServerCommand<>(application).run(environment, namespace, configuration);
+        } catch (IOException e) {
+            assertThat(e.getMessage()).isEqualTo("oh crap again");
+        }
+        assertThat(needsToBeStopped.stopped).isTrue();
+        assertThat(server.isStarted()).isFalse();
+
         this.throwException = false;
     }
 }
