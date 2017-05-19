@@ -285,7 +285,7 @@ v0.3.0: Mar 13 2012
   require applications to open a single port.
 * Added ``http.adminUsername`` and ``http.adminPassword`` to allow for Basic HTTP Authentication
   for the admin servlet.
-* Upgraded to `Metrics 2.1.1 <http://metrics.codahale.com/about/release-notes/#v2-1-1-mar-13-2012>`_.
+* Upgraded to `Metrics 2.1.1 <http://metrics.dropwizard.io/2.2.0/about/release-notes/#v2-1-1-mar-13-2012>`_.
 
 .. _rel-0.2.1:
 

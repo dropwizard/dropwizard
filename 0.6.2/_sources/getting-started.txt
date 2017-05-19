@@ -70,7 +70,7 @@ Metrics for metrics
 Our very own Metrics_ library rounds things out, providing you with unparalleled insight into your
 code's behavior in your production environment.
 
-.. _Metrics: http://metrics.codahale.com
+.. _Metrics: http://metrics.dropwizard.io
 
 .. _gs-and-friends:
 
