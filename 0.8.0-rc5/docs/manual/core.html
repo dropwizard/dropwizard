@@ -811,7 +811,7 @@ and an Agile Tool, but honestly we just enjoy this.</p>
 <div class="section" id="resources">
 <span id="man-core-resources"></span><h2>Resources</h2>
 <p>Unsurprisingly, most of your day-to-day work with a Dropwizard application will be in the resource
-classes, which model the resources exposed in your RESTful API. Dropwizard uses <a class="reference external" href="http://jersey.java.net/">Jersey</a> for this,
+classes, which model the resources exposed in your RESTful API. Dropwizard uses <a class="reference external" href="https://jersey.github.io/">Jersey</a> for this,
 so most of this section is just re-hashing or collecting various bits of Jersey documentation.</p>
 <p>Jersey is a framework for mapping various aspects of incoming HTTP requests to POJOs and then
 mapping various aspects of POJOs to outgoing HTTP responses. Here&#8217;s a basic resource class:</p>
@@ -1187,7 +1187,7 @@ application&#8217;s <tt class="docutils literal"><span class="pre">Environment</
 <div class="section" id="jersey-filters">
 <span id="man-core-jersey-filters"></span><h3>Jersey filters</h3>
 <p>There might be cases when you want to filter out requests or modify them before they reach your Resources. Jersey
-has a rich api for <a class="reference external" href="http://jersey.java.net/documentation/latest/filters-and-interceptors.html">filters and interceptors</a> that can be used directly in Dropwizard.
+has a rich api for <a class="reference external" href="https://jersey.github.io/documentation/latest/filters-and-interceptors.html">filters and interceptors</a> that can be used directly in Dropwizard.
 You can stop the request from reaching your resources by throwing a <tt class="docutils literal"><span class="pre">WebApplicationException</span></tt>. Alternatively,
 you can use filters to modify inbound requests or outbound responses.</p>
 <div class="highlight-java"><div class="highlight"><pre><span class="nd">@Provider</span>

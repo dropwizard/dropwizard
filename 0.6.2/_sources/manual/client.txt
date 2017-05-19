@@ -145,7 +145,7 @@ If HttpClient_ is too low-level for you, Dropwizard also supports Jersey's `Clie
 Jersey's ``Client`` allows you to use all of the server-side media type support that your service
 uses to, for example, deserialize ``application/json`` request entities as POJOs.
 
-.. _Client API: http://jersey.java.net/nonav/documentation/latest/user-guide.html#client-api
+.. _Client API: https://jersey.github.io/nonav/documentation/1.17/user-guide.html#client-api
 
 To create a :ref:`managed <man-core-managed>`, instrumented ``JerseyClient`` instance, your
 :ref:`configuration class <man-core-configuration>` needs an ``JerseyClientConfiguration`` instance:

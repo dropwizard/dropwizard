@@ -191,7 +191,7 @@ or a url without query string via <code class="docutils literal"><span class="pr
 </div>
 <div class="section" id="jersey-client">
 <span id="man-client-jersey"></span><h2>Jersey Client</h2>
-<p>If <a class="reference external" href="http://hc.apache.org/httpcomponents-core-4.3.x/index.html">HttpClient</a> is too low-level for you, Dropwizard also supports Jersey&#8217;s <a class="reference external" href="https://jersey.java.net/documentation/2.24/client.html">Client API</a>.
+<p>If <a class="reference external" href="http://hc.apache.org/httpcomponents-core-4.3.x/index.html">HttpClient</a> is too low-level for you, Dropwizard also supports Jersey&#8217;s <a class="reference external" href="https://jersey.github.io/documentation/2.24/client.html">Client API</a>.
 Jersey&#8217;s <code class="docutils literal"><span class="pre">Client</span></code> allows you to use all of the server-side media type support that your service
 uses to, for example, deserialize <code class="docutils literal"><span class="pre">application/json</span></code> request entities as POJOs.</p>
 <p>To create a <a class="reference internal" href="core.html#man-core-managed"><span class="std std-ref">managed</span></a>, instrumented <code class="docutils literal"><span class="pre">JerseyClient</span></code> instance, your
@@ -228,10 +228,10 @@ Dropwizard, the default is 500 milliseconds.</p>
 <a class="reference internal" href="configuration.html#man-configuration-clients-http"><span class="std std-ref">YAML configuration</span></a>. Alternatively, set the properties on
 the <code class="docutils literal"><span class="pre">JerseyClientConfiguration</span></code>, which will take effect for all built clients. On a per client
 basis, the configuration can be changed by utilizing the <code class="docutils literal"><span class="pre">property</span></code> method and, in this case,
-the <a class="reference external" href="https://jersey.java.net/apidocs/2.24/jersey/org/glassfish/jersey/client/ClientProperties.html">Jersey Client Properties</a> can be used.</p>
+the <a class="reference external" href="https://jersey.github.io/apidocs/2.24/jersey/org/glassfish/jersey/client/ClientProperties.html">Jersey Client Properties</a> can be used.</p>
 <div class="admonition warning">
 <p class="first admonition-title">Warning</p>
-<p>Do not try to change Jersey properties using <a class="reference external" href="https://jersey.java.net/apidocs/2.24/jersey/org/glassfish/jersey/client/ClientProperties.html">Jersey Client Properties</a> through the</p>
+<p>Do not try to change Jersey properties using <a class="reference external" href="https://jersey.github.io/apidocs/2.24/jersey/org/glassfish/jersey/client/ClientProperties.html">Jersey Client Properties</a> through the</p>
 <p><code class="docutils literal"><span class="pre">withProperty(String</span> <span class="pre">propertyName,</span> <span class="pre">Object</span> <span class="pre">propertyValue)</span></code></p>
 <p class="last">method on the <code class="docutils literal"><span class="pre">JerseyClientBuilder</span></code>, because by default it&#8217;s configured by Dropwizard&#8217;s
 <code class="docutils literal"><span class="pre">HttpClientBuilder</span></code>, so the Jersey properties are ignored.</p>
@@ -239,7 +239,7 @@ the <a class="reference external" href="https://jersey.java.net/apidocs/2.24/jer
 </div>
 <div class="section" id="rx-usage">
 <span id="man-client-jersey-rx-usage"></span><h3>Rx Usage</h3>
-<p>To increase the ergonomics of asynchronous client requests, Jersey allows creation of <a class="reference external" href="https://jersey.java.net/documentation/2.24/rx-client.html">rx-clients</a>.
+<p>To increase the ergonomics of asynchronous client requests, Jersey allows creation of <a class="reference external" href="https://jersey.github.io/documentation/2.24/rx-client.html">rx-clients</a>.
 You can instruct Dropwizard to create such a client:</p>
 <div class="highlight-java"><div class="highlight"><pre><span></span><span class="nd">@Override</span>
 <span class="kd">public</span> <span class="kt">void</span> <span class="nf">run</span><span class="o">(</span><span class="n">ExampleConfiguration</span> <span class="n">config</span><span class="o">,</span>
