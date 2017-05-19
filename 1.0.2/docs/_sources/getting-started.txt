@@ -60,7 +60,7 @@ In terms of data formats, JSON has become the web's *lingua franca*, and Jackson
 JSON on the JVM. In addition to being lightning fast, it has a sophisticated object mapper, allowing
 you to export your domain models directly.
 
-.. _Jackson: http://wiki.fasterxml.com/JacksonHome
+.. _Jackson: https://github.com/FasterXML/jackson-docs/wiki
 
 .. _gs-metrics:
 
@@ -248,7 +248,7 @@ to serialize it.
     handled by Hibernate Validator, which has a
     `wide range of built-in constraints`__ for you to use.
 
-.. __: http://wiki.fasterxml.com/JacksonAnnotations
+.. __: https://github.com/FasterXML/jackson-docs/wiki/JacksonAnnotations
 .. __: http://docs.jboss.org/hibernate/validator/4.2/reference/en-US/html_single/#validator-defineconstraints-builtin
 
 .. _example yml here: https://github.com/dropwizard/dropwizard/blob/master/dropwizard-example/example.yml
@@ -389,7 +389,7 @@ of ``#getId()``, likewise with ``content`` and ``#getContent()``. Lastly, the be
     objects like this one. In addition to the sophisticated set of `annotations`__, you can even
     write your custom serializers and deserializers.
 
-.. __: http://wiki.fasterxml.com/JacksonAnnotations
+.. __: https://github.com/FasterXML/jackson-docs/wiki/JacksonAnnotations
 
 Now that we've got our representation class, it makes sense to start in on the resource it
 represents.

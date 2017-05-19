@@ -207,7 +207,7 @@ exception will be thrown and your service won't start.
     by Hibernate Validator, which has a `wide range of built-in constraints`__
     for you to use.
 
-.. __: http://wiki.fasterxml.com/JacksonAnnotations
+.. __: https://github.com/FasterXML/jackson-docs/wiki/JacksonAnnotations
 .. __: http://docs.jboss.org/hibernate/validator/4.2/reference/en-US/html_single/#validator-defineconstraints-builtin
 
 Our YAML file, then, will look like this:
@@ -328,7 +328,7 @@ of ``#getId()``, likewise with ``content`` and ``#getContent()``.
     `annotations`__, you can even write your own custom serializers and
     deserializers.
 
-.. __: http://wiki.fasterxml.com/JacksonAnnotations
+.. __: https://github.com/FasterXML/jackson-docs/wiki/JacksonAnnotations
 
 Now that we've got our representation class, it makes sense to start in on the
 resource it represents.

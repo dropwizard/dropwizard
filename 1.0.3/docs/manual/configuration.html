@@ -2041,7 +2041,7 @@ mechanism, meaning that a particular section of your configuration file can be i
 using one or more configuration classes.</p>
 <p>To use this capability for your own configuration classes, create a top-level configuration interface or class that
 implements <code class="docutils literal"><span class="pre">Discoverable</span></code> and add the name of that class to <code class="docutils literal"><span class="pre">META-INF/services/io.dropwizard.jackson.Discoverable</span></code>.
-Make sure to use <a class="reference external" href="http://wiki.fasterxml.com/JacksonPolymorphicDeserialization">Jackson polymorphic deserialization</a> annotations appropriately.</p>
+Make sure to use <a class="reference external" href="https://github.com/FasterXML/jackson-docs/wiki/JacksonPolymorphicDeserialization">Jackson polymorphic deserialization</a> annotations appropriately.</p>
 <div class="highlight-java"><div class="highlight"><pre><span class="nd">@JsonTypeInfo</span><span class="o">(</span><span class="n">use</span> <span class="o">=</span> <span class="n">Id</span><span class="o">.</span><span class="na">NAME</span><span class="o">,</span> <span class="n">include</span> <span class="o">=</span> <span class="n">As</span><span class="o">.</span><span class="na">PROPERTY</span><span class="o">,</span> <span class="n">property</span> <span class="o">=</span> <span class="s">&quot;type&quot;</span><span class="o">)</span>
 <span class="kd">interface</span> <span class="nc">WidgetFactory</span> <span class="kd">extends</span> <span class="n">Discoverable</span> <span class="o">{</span>
     <span class="n">Widget</span> <span class="nf">createWidget</span><span class="o">();</span>
