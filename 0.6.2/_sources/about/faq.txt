@@ -21,6 +21,6 @@ How can I commit to Dropwizard?
   pull requests over large, multi-purpose ones. We reserve the right to turn down any proposed
   changes, but in general we're delighted when people want to make our projects better!
 
-.. __: https://github.com/codahale/dropwizard
+.. __: https://github.com/dropwizard/dropwizard
 
 

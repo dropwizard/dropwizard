@@ -68,7 +68,7 @@ Configuration
 Dropwizard provides a number of built-in configuration parameters. They are
 well documented in the `example project's configuration`__.
 
-.. __: https://github.com/codahale/dropwizard/blob/master/dropwizard-example/example.yml
+.. __: https://github.com/dropwizard/dropwizard/blob/master/dropwizard-example/example.yml
 
 Each ``Service`` subclass has a single type parameter: that of its matching ``Configuration``
 subclass. These are usually at the root of your service's main package. For example, your User
@@ -161,7 +161,7 @@ keystore, which is outside the scope of this document (``keytool`` is the
 command you need). There is a test keystore you can use in the
 `Dropwizard example project`__.
 
-.. __: https://github.com/codahale/dropwizard/tree/master/dropwizard-example
+.. __: https://github.com/dropwizard/dropwizard/tree/master/dropwizard-example
 
 .. code-block:: yaml
 

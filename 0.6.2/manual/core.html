@@ -198,7 +198,7 @@ your service.</p>
 <div class="section" id="configuration">
 <span id="man-core-configuration"></span><h2>Configuration</h2>
 <p>Dropwizard provides a number of built-in configuration parameters. They are
-well documented in the <a class="reference external" href="https://github.com/codahale/dropwizard/blob/master/dropwizard-example/example.yml">example project&#8217;s configuration</a>.</p>
+well documented in the <a class="reference external" href="https://github.com/dropwizard/dropwizard/blob/master/dropwizard-example/example.yml">example project&#8217;s configuration</a>.</p>
 <p>Each <tt class="docutils literal"><span class="pre">Service</span></tt> subclass has a single type parameter: that of its matching <tt class="docutils literal"><span class="pre">Configuration</span></tt>
 subclass. These are usually at the root of your service&#8217;s main package. For example, your User
 service would have two classes: <tt class="docutils literal"><span class="pre">UserServiceConfiguration</span></tt>, extending <tt class="docutils literal"><span class="pre">Configuration</span></tt>, and
@@ -273,7 +273,7 @@ configuration value being overridden.</p>
 <p>SSL support is built into Dropwizard. You will need to provide your own java
 keystore, which is outside the scope of this document (<tt class="docutils literal"><span class="pre">keytool</span></tt> is the
 command you need). There is a test keystore you can use in the
-<a class="reference external" href="https://github.com/codahale/dropwizard/tree/master/dropwizard-example">Dropwizard example project</a>.</p>
+<a class="reference external" href="https://github.com/dropwizard/dropwizard/tree/master/dropwizard-example">Dropwizard example project</a>.</p>
 <div class="highlight-yaml"><div class="highlight"><pre><span class="l-Scalar-Plain">http</span><span class="p-Indicator">:</span>
   <span class="l-Scalar-Plain">ssl</span><span class="p-Indicator">:</span>
     <span class="l-Scalar-Plain">keyStore</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">./example.keystore</span>
