@@ -288,7 +288,7 @@ easily.</p>
 <p>Note that the in-memory Jersey test container does not support all features, such as the <tt class="docutils literal"><span class="pre">&#64;Context</span></tt> injection used by
 <tt class="docutils literal"><span class="pre">BasicAuthFactory</span></tt> and <tt class="docutils literal"><span class="pre">OAuthFactory</span></tt>. A different <a class="reference external" href="https://jersey.github.io/documentation/latest/test-framework.html">test container</a> can be used via
 <tt class="docutils literal"><span class="pre">ResourceTestRule.Builder#setTestContainerFactory(TestContainerFactory)</span></tt>.</p>
-<p>For example if you want to use the <a class="reference external" href="https://grizzly.java.net/">Grizzly</a> HTTP server (which supports <tt class="docutils literal"><span class="pre">&#64;Context</span></tt> injections) you need to add the
+<p>For example if you want to use the <a class="reference external" href="https://javaee.github.io/grizzly/">Grizzly</a> HTTP server (which supports <tt class="docutils literal"><span class="pre">&#64;Context</span></tt> injections) you need to add the
 dependency for the Jersey Test Framework providers to your Maven POM and set <tt class="docutils literal"><span class="pre">GrizzlyWebTestContainerFactory</span></tt> as
 <tt class="docutils literal"><span class="pre">TestContainerFactory</span></tt> in your test classes.</p>
 <div class="highlight-xml"><div class="highlight"><pre><span class="nt">&lt;dependency&gt;</span>

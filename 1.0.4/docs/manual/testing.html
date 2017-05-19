@@ -303,7 +303,7 @@ all custom exception mappers will need to be registered on the builder, similarl
 <p>Note that the in-memory Jersey test container does not support all features, such as the <code class="docutils literal"><span class="pre">&#64;Context</span></code> injection used by
 <code class="docutils literal"><span class="pre">BasicAuthFactory</span></code> and <code class="docutils literal"><span class="pre">OAuthFactory</span></code>. A different <a class="reference external" href="https://jersey.github.io/documentation/latest/test-framework.html">test container</a> can be used via
 <code class="docutils literal"><span class="pre">ResourceTestRule.Builder#setTestContainerFactory(TestContainerFactory)</span></code>.</p>
-<p>For example, if you want to use the <a class="reference external" href="https://grizzly.java.net/">Grizzly</a> HTTP server (which supports <code class="docutils literal"><span class="pre">&#64;Context</span></code> injections) you need to add the
+<p>For example, if you want to use the <a class="reference external" href="https://javaee.github.io/grizzly/">Grizzly</a> HTTP server (which supports <code class="docutils literal"><span class="pre">&#64;Context</span></code> injections) you need to add the
 dependency for the Jersey Test Framework providers to your Maven POM and set <code class="docutils literal"><span class="pre">GrizzlyWebTestContainerFactory</span></code> as
 <code class="docutils literal"><span class="pre">TestContainerFactory</span></code> in your test classes.</p>
 <div class="highlight-xml"><div class="highlight"><pre><span class="nt">&lt;dependency&gt;</span>

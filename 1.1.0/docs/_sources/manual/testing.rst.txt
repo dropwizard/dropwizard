@@ -273,7 +273,7 @@ dependency for the Jersey Test Framework providers to your Maven POM and set ``G
     }
 
 .. __: https://jersey.github.io/documentation/latest/test-framework.html
-.. _Grizzly: https://grizzly.java.net/
+.. _Grizzly: https://javaee.github.io/grizzly/
 
 .. _man-testing-clients:
 
