@@ -162,7 +162,7 @@ detailing the validation errors: <code class="docutils literal"><span class="pre
 <p class="last">You don&#8217;t need <code class="docutils literal"><span class="pre">&#64;Valid</span></code> when the type you are validating can be validated directly (<code class="docutils literal"><span class="pre">int</span></code>,
 <code class="docutils literal"><span class="pre">String</span></code>, <code class="docutils literal"><span class="pre">Integer</span></code>). If a class has fields that need validating, then instances of the
 class must be marked <code class="docutils literal"><span class="pre">&#64;Valid</span></code>. For more information, see the Hibernate Validator documentation
-on <a class="reference external" href="http://docs.jboss.org/hibernate/validator/5.2/reference/en-US/html/chapter-bean-constraints.html#section-object-graph-validation">Object graphs</a> and <a class="reference external" href="http://docs.jboss.org/hibernate/validator/5.2/reference/en-US/html/chapter-method-constraints.html#_cascaded_validation">Cascaded validation</a>.</p>
+on <a class="reference external" href="https://docs.jboss.org/hibernate/validator/5.2/reference/en-US/html/ch02.html#section-object-graph-validation">Object graphs</a> and <a class="reference external" href="https://docs.jboss.org/hibernate/validator/5.2/reference/en-US/html/ch03.html#_cascaded_validation">Cascaded validation</a>.</p>
 </div>
 <p>Since our entity is also annotated with <code class="docutils literal"><span class="pre">&#64;NotNull</span></code>, Dropwizard will also guard against <code class="docutils literal"><span class="pre">null</span></code>
 input with a response stating that the body must not be null.</p>
@@ -328,7 +328,7 @@ messages. The following example shows the behavior:</p>
 </div>
 <div class="section" id="annotations">
 <h2>Annotations</h2>
-<p>In addition to the <a class="reference external" href="http://docs.jboss.org/hibernate/validator/5.2/reference/en-US/html/chapter-bean-constraints.html#section-builtin-constraints">annotations defined in Hibernate Validator</a>, Dropwizard contains another set of annotations,
+<p>In addition to the <a class="reference external" href="https://docs.jboss.org/hibernate/validator/5.2/reference/en-US/html/ch02.html#section-builtin-constraints">annotations defined in Hibernate Validator</a>, Dropwizard contains another set of annotations,
 which are briefly shown below.</p>
 <div class="highlight-java"><div class="highlight"><pre><span></span><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Person</span> <span class="o">{</span>
     <span class="nd">@NotEmpty</span>
@@ -375,7 +375,7 @@ not Dropwizard.</p>
 </div>
 <div class="section" id="validating-grouped-constraints-with-validated">
 <span id="man-validation-annotations-validated"></span><h3>Validating Grouped Constraints with <code class="docutils literal"><span class="pre">&#64;Validated</span></code></h3>
-<p>The <code class="docutils literal"><span class="pre">&#64;Validated</span></code> annotation allows for <a class="reference external" href="https://docs.jboss.org/hibernate/validator/5.2/reference/en-US/html/chapter-groups.html">validation groups</a> to be specifically set, instead of the
+<p>The <code class="docutils literal"><span class="pre">&#64;Validated</span></code> annotation allows for <a class="reference external" href="https://docs.jboss.org/hibernate/validator/5.2/reference/en-US/html/ch05.html">validation groups</a> to be specifically set, instead of the
 default group. This is useful when different endpoints share the same entity but may have different
 requirements.</p>
 <p>Going back to our favorite <code class="docutils literal"><span class="pre">Person</span></code> class. Let&#8217;s say we initially coded it such that <code class="docutils literal"><span class="pre">name</span></code> has

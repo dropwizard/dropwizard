@@ -77,9 +77,9 @@ detailing the validation errors: ``name may not be empty``
     instances of the class must be marked ``@Valid`` or ``@Validated``. For more information, see
     the Hibernate Validator documentation on `Object graphs`_ and `Cascaded validation`_.
 
-.. _Object graphs: http://docs.jboss.org/hibernate/validator/5.2/reference/en-US/html/chapter-bean-constraints.html#section-object-graph-validation
+.. _Object graphs: https://docs.jboss.org/hibernate/validator/5.2/reference/en-US/html/ch02.html#section-object-graph-validation
 
-.. _Cascaded validation: http://docs.jboss.org/hibernate/validator/5.2/reference/en-US/html/chapter-method-constraints.html#_cascaded_validation
+.. _Cascaded validation: https://docs.jboss.org/hibernate/validator/5.2/reference/en-US/html/ch03.html#_cascaded_validation
 
 .. _man-validation-validations-optional-constraints:
 
@@ -108,7 +108,7 @@ Annotations
 In addition to the `annotations defined in Hibernate Validator`_, Dropwizard contains another set of annotations,
 which are briefly shown below.
 
-.. _annotations defined in Hibernate Validator: http://docs.jboss.org/hibernate/validator/5.2/reference/en-US/html/chapter-bean-constraints.html#section-builtin-constraints
+.. _annotations defined in Hibernate Validator: https://docs.jboss.org/hibernate/validator/5.2/reference/en-US/html/ch02.html#section-builtin-constraints
 
 .. code-block:: java
 
@@ -165,7 +165,7 @@ The ``@Validated`` annotation behaves similar to ``@Valid``. The difference is t
 default group. This is useful when different endpoints share the same entity but may have different
 requirements.
 
-.. _validation groups: https://docs.jboss.org/hibernate/validator/5.2/reference/en-US/html/chapter-groups.html
+.. _validation groups: https://docs.jboss.org/hibernate/validator/5.2/reference/en-US/html/ch05.html
 
 Going back to our favorite ``Person`` class. Let's say we initially coded it such that ``name`` has
 to be non-empty, but realized that business requirements needs the max length to be no more than 5.
