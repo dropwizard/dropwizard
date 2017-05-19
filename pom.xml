@@ -51,6 +51,7 @@
         <module>dropwizard-http2</module>
         <module>dropwizard-request-logging</module>
         <module>dropwizard-e2e</module>
+        <module>dropwizard-cdi-weld</module>
     </modules>
 
     <properties>
@@ -62,6 +63,8 @@
         <junit.version>4.12</junit.version>
         <assertj.version>3.6.2</assertj.version>
         <mockito.version>2.7.22</mockito.version>
+        <weld.version>2.2.14.Final</weld.version>
+        <jersey.weld.version>2.25.1</jersey.weld.version>
     </properties>
 
     <developers>
