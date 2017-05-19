@@ -1207,7 +1207,7 @@ you can use filters to modify inbound requests or outbound responses.</p>
 </div>
 <p>This example filter checks the request for the &#8220;Date&#8221; header, and denies the request if was missing. Otherwise,
 the request is passed through.</p>
-<p>Filters can be dynamically bound to resource methods using <a class="reference external" href="http://jax-rs-spec.java.net/nonav/2.0-rev-a/apidocs/index.html">DynamicFeature</a>:</p>
+<p>Filters can be dynamically bound to resource methods using <a class="reference external" href="https://docs.oracle.com/javaee/7/api/javax/ws/rs/container/DynamicFeature.html">DynamicFeature</a>:</p>
 <div class="highlight-java"><div class="highlight"><pre><span class="nd">@Provider</span>
 <span class="kd">public</span> <span class="kd">class</span> <span class="nc">DateRequiredFeature</span> <span class="kd">implements</span> <span class="n">DynamicFeature</span> <span class="o">{</span>
     <span class="nd">@Override</span>
