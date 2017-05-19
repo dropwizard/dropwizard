@@ -1592,7 +1592,7 @@ the request is passed through.
 
 Filters can be dynamically bound to resource methods using `DynamicFeature`_:
 
-.. _DynamicFeature: http://jax-rs-spec.java.net/nonav/2.0-rev-a/apidocs/index.html
+.. _DynamicFeature: https://docs.oracle.com/javaee/7/api/javax/ws/rs/container/DynamicFeature.html
 
 .. code-block:: java
 
