@@ -125,7 +125,7 @@ started.)
 .. _Buildr: http://buildr.apache.org/
 .. _Gradle: http://www.gradle.org/
 .. _SBT: https://github.com/harrah/xsbt/wiki
-.. _Gant: http://gant.codehaus.org/
+.. _Gant: https://gant.github.io/
 .. _Leiningen: https://github.com/technomancy/leiningen
 .. __: http://www.sonatype.com/books/mvnref-book/reference/
 
