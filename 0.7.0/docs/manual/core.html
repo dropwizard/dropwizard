@@ -419,7 +419,7 @@ does so. Adding a <tt class="docutils literal"><span class="pre">Managed</span><
 lifecycle to that of the application&#8217;s HTTP server. Before the server starts, the <tt class="docutils literal"><span class="pre">#start()</span></tt> method is
 called. After the server has stopped (and after its graceful shutdown period) the <tt class="docutils literal"><span class="pre">#stop()</span></tt> method
 is called.</p>
-<p>For example, given a theoretical <a class="reference external" href="http://riak.basho.com">Riak</a> client which needs to be started and stopped:</p>
+<p>For example, given a theoretical <a class="reference external" href="http://basho.com/products/">Riak</a> client which needs to be started and stopped:</p>
 <div class="highlight-java"><div class="highlight"><pre><span class="kd">public</span> <span class="kd">class</span> <span class="nc">RiakClientManager</span> <span class="kd">implements</span> <span class="n">Managed</span> <span class="o">{</span>
     <span class="kd">private</span> <span class="kd">final</span> <span class="n">RiakClient</span> <span class="n">client</span><span class="o">;</span>
 
