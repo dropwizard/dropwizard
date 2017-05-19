@@ -4,6 +4,19 @@
 Release Notes
 #############
 
+.. _rel-1.1.1:
+
+v1.1.1 May 19 2017
+===================
+
+* Set the console logging context after a reset `#1973 <https://github.com/dropwizard/dropwizard/pull/1973>`_
+* Set logging context for file appenders before setting the buffer size `#1975 <https://github.com/dropwizard/dropwizard/pull/1975>`_
+* Remove javax.el from jersey-bean-validation `#1976 <https://github.com/dropwizard/dropwizard/pull/1976>`_
+* Exclude duplicated JTA 1.1 from dropwizard-hibernate dependencies `#1977 <https://github.com/dropwizard/dropwizard/pull/1977>`_
+* Add missing @UnwrapValidatedValue annotations `#1993 <https://github.com/dropwizard/dropwizard/pull/1993>`_
+* Fix HttpSessionListener.sessionDestroyed is not being called `#2032 <https://github.com/dropwizard/dropwizard/pull/2032>`_
+* Add flag to make ThreadNameFilter optional `#2014 <https://github.com/dropwizard/dropwizard/pull/2014>`_
+
 .. _rel-1.1.0:
 
 v1.1.0: Mar 21 2017
