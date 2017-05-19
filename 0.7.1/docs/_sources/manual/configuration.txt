@@ -370,7 +370,7 @@ Name                   Default      Description
 pushStrategy           (none)       The `push strategy`_ to use for server-initiated SPDY pushes.
 ====================== ===========  ===========
 
-.. _`push strategy`: https://github.com/dropwizard/dropwizard/blob/master/dropwizard-spdy/src/main/java/io/dropwizard/spdy/PushStrategyFactory.java
+.. _`push strategy`: https://github.com/dropwizard/dropwizard/blob/release/0.9.x/dropwizard-spdy/src/main/java/io/dropwizard/spdy/PushStrategyFactory.java
 
 
 .. _man-configuration-logging:
