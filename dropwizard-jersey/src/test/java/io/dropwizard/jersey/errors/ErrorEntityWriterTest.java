@@ -31,7 +31,7 @@ public class ErrorEntityWriterTest extends AbstractJerseyTest {
             register(new ErrorEntityWriter<ErrorMessage, String>(MediaType.TEXT_HTML_TYPE, String.class) {
                 @Override
                 protected String getRepresentation(ErrorMessage entity) {
-                    return "Uh oh: " + entity.getMessage();
+                    return "<!DOCTYPE html><html><body>" + entity.getMessage() + "</body></html>";
                 }
             });
         }
@@ -64,7 +64,7 @@ public class ErrorEntityWriterTest extends AbstractJerseyTest {
             final Response response = e.getResponse();
             assertThat(response.getStatus()).isEqualTo(400);
             assertThat(response.getMediaType()).isEqualTo(MediaType.TEXT_HTML_TYPE);
-            assertThat(response.readEntity(String.class)).isEqualTo("Uh oh: BIFF");
+            assertThat(response.readEntity(String.class)).isEqualTo("<!DOCTYPE html><html><body>BIFF</body></html>");
         }
     }
 
