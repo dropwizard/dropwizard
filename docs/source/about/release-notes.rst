@@ -16,6 +16,7 @@ v1.2.0: Unreleased
 * Replace deprecated SizeAndTimeBasedFNATP with SizeAndTimeBasedRollingPolicy `#2010 <https://github.com/dropwizard/dropwizard/pull/2010>`_
 * Decrease allowable tomcat jdbc validation interval to 50ms `#2051 <https://github.com/dropwizard/dropwizard/pull/2051>`_
 * Upgrade to AssertJ 3.8.0
+* Upgrade to Guava 22.0
 * Upgrade to H2 1.4.194
 * Upgrade to Hibernate 5.2.10.Final
 * Upgrade to Hibernate Validator 5.4.1.Final
