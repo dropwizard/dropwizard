@@ -27,7 +27,7 @@ v1.2.0: Unreleased
 * Upgrade to Logback 1.2.3
 * Upgrade to Mockito 2.8.9
 * Upgrade to SLF4J 1.7.25
-* Upgrade to tomcat-jdbc 8.5.14
+* Upgrade to tomcat-jdbc 8.5.15
 
 
 .. _rel-1.1.0:
