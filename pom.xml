@@ -60,7 +60,7 @@
         <javadoc.doclint.none>-Xdoclint:none</javadoc.doclint.none>
         <maven.site.deploy.skip>true</maven.site.deploy.skip>
         <junit.version>4.12</junit.version>
-        <assertj.version>3.6.2</assertj.version>
+        <assertj.version>3.8.0</assertj.version>
         <mockito.version>2.7.22</mockito.version>
     </properties>
 
