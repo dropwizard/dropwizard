@@ -15,16 +15,19 @@ v1.2.0: Unreleased
 * Support Dropwizard applications without logback `#1900 <https://github.com/dropwizard/dropwizard/pull/1900>`_
 * Replace deprecated SizeAndTimeBasedFNATP with SizeAndTimeBasedRollingPolicy `#2010 <https://github.com/dropwizard/dropwizard/pull/2010>`_
 * Decrease allowable tomcat jdbc validation interval to 50ms `#2051 <https://github.com/dropwizard/dropwizard/pull/2051>`_
-* Upgrade to H2 1.4.194
+* Upgrade to AssertJ 3.8.0
+* Upgrade to Guava 22.0
+* Upgrade to H2 1.4.195
 * Upgrade to Hibernate 5.2.10.Final
 * Upgrade to Hibernate Validator 5.4.1.Final
 * Upgrade to HSQLDB 2.4.0
 * Upgrade to Jackson 2.8.8
-* Upgrade to Jetty 9.4.4.v20170414
+* Upgrade to Jetty 9.4.5.v20170502
 * Upgrade to Joda-Time 2.9.9
 * Upgrade to Logback 1.2.3
+* Upgrade to Mockito 2.8.9
 * Upgrade to SLF4J 1.7.25
-* Upgrade to tomcat-jdbc 8.5.14
+* Upgrade to tomcat-jdbc 8.5.15
 
 
 .. _rel-1.1.0:
