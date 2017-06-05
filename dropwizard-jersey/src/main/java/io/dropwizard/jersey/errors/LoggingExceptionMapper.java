@@ -22,6 +22,7 @@ public abstract class LoggingExceptionMapper<E extends Throwable> implements Exc
             final Response response = ((WebApplicationException) exception).getResponse();
             Response.Status.Family family = response.getStatusInfo().getFamily();
             if (family.equals(Response.Status.Family.REDIRECTION)) {
+                logException(exception);
                 return response;
             }
             if (family.equals(Response.Status.Family.SERVER_ERROR)) {
