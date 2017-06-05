@@ -1,5 +1,14 @@
 package io.dropwizard.jdbi;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.util.Deque;
+import java.util.LinkedList;
+
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.skife.jdbi.v2.DBI;
@@ -40,20 +49,6 @@ import io.dropwizard.jdbi.args.OptionalOffsetDateTimeArgumentFactory;
 import io.dropwizard.jdbi.args.OptionalZonedDateTimeArgumentFactory;
 import io.dropwizard.jdbi.args.ZonedDateTimeArgumentFactory;
 import io.dropwizard.jdbi.args.ZonedDateTimeMapper;
-
-import java.util.Deque;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Optional;
-import java.util.Set;
-import java.util.TimeZone;
-import java.util.concurrent.atomic.AtomicBoolean;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class DBIFactoryTest {
 
