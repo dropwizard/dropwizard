@@ -13,8 +13,12 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Optional;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class IntegrationTest {
@@ -60,5 +64,16 @@ public class IntegrationTest {
         assertThat(newPerson.getId()).isNotNull();
         assertThat(newPerson.getFullName()).isEqualTo(person.getFullName());
         assertThat(newPerson.getJobTitle()).isEqualTo(person.getJobTitle());
+    }
+
+    @Test
+    public void testLogFileWritten() throws IOException {
+        // The log file is using a size and time based policy, which used to silently
+        // fail (and not write to a log file). This test ensures not only that the
+        // log file exists, but also contains the log line that jetty prints on startup
+        final Path log = Paths.get("./logs/application.log");
+        assertThat(log).exists();
+        final String actual = new String(Files.readAllBytes(log), UTF_8);
+        assertThat(actual).contains("0.0.0.0:" + RULE.getLocalPort());
     }
 }

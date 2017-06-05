@@ -262,22 +262,24 @@ public class FileAppenderFactory<E extends DeferredProcessingAware> extends Abst
                 final TimeBasedRollingPolicy<E> rollingPolicy;
                 if (maxFileSize == null) {
                     rollingPolicy = new TimeBasedRollingPolicy<>();
+
+                    final TimeBasedFileNamingAndTriggeringPolicy<E> triggeringPolicy = new DefaultTimeBasedFileNamingAndTriggeringPolicy<>();
+                    triggeringPolicy.setContext(context);
+                    triggeringPolicy.setTimeBasedRollingPolicy(rollingPolicy);
+                    appender.setTriggeringPolicy(triggeringPolicy);
                 } else {
+                    // Creating a size and time policy does not need a separate triggering policy set
+                    // on the appender because this policy registers the trigger policy
                     final SizeAndTimeBasedRollingPolicy<E> sizeAndTimeBasedRollingPolicy = new SizeAndTimeBasedRollingPolicy<>();
                     sizeAndTimeBasedRollingPolicy.setMaxFileSize(new FileSize(maxFileSize.toBytes()));
                     rollingPolicy = sizeAndTimeBasedRollingPolicy;
                 }
 
-                final TimeBasedFileNamingAndTriggeringPolicy<E> triggeringPolicy = new DefaultTimeBasedFileNamingAndTriggeringPolicy<>();
-                triggeringPolicy.setContext(context);
                 rollingPolicy.setContext(context);
                 rollingPolicy.setFileNamePattern(archivedLogFilenamePattern);
-                rollingPolicy.setTimeBasedFileNamingAndTriggeringPolicy(triggeringPolicy);
-                triggeringPolicy.setTimeBasedRollingPolicy(rollingPolicy);
                 rollingPolicy.setMaxHistory(archivedFileCount);
 
                 appender.setRollingPolicy(rollingPolicy);
-                appender.setTriggeringPolicy(triggeringPolicy);
 
                 rollingPolicy.setParent(appender);
                 rollingPolicy.start();
