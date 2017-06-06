@@ -77,6 +77,8 @@ Your application's configuration file will then look like this:
       # any properties specific to your JDBC driver:
       properties:
         charSet: UTF-8
+        characterEncoding: UTF-8
+        useUnicode: true
         hibernate.dialect: org.hibernate.dialect.PostgreSQLDialect
 
       # the maximum amount of time to wait on an empty pool before throwing an exception
