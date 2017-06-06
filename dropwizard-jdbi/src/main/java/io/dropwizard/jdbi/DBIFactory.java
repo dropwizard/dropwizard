@@ -146,11 +146,11 @@ public class DBIFactory {
         dbi.registerArgumentFactory(new OptionalZonedDateTimeArgumentFactory(timeZone));
 
         dbi.registerColumnMapper(new JodaDateTimeMapper(timeZone));
-        dbi.registerColumnMapper(new InstantMapper(timeZone));
         dbi.registerColumnMapper(new LocalDateMapper());
         dbi.registerColumnMapper(new LocalDateTimeMapper());
-        dbi.registerColumnMapper(new OffsetDateTimeMapper());
-        dbi.registerColumnMapper(new ZonedDateTimeMapper());
+        dbi.registerColumnMapper(new InstantMapper(timeZone));
+        dbi.registerColumnMapper(new OffsetDateTimeMapper(timeZone));
+        dbi.registerColumnMapper(new ZonedDateTimeMapper(timeZone));
 
         return dbi;
     }
