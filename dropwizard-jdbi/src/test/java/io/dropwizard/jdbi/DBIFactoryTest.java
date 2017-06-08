@@ -128,9 +128,9 @@ public class DBIFactoryTest {
         assertEquals(OptionalLongMapper.class, cm.removeFirst());
 
         assertEquals(JodaDateTimeMapper.class, cm.removeFirst());
-        assertEquals(InstantMapper.class, cm.removeFirst());
         assertEquals(LocalDateMapper.class, cm.removeFirst());
         assertEquals(LocalDateTimeMapper.class, cm.removeFirst());
+        assertEquals(InstantMapper.class, cm.removeFirst());
         assertEquals(OffsetDateTimeMapper.class, cm.removeFirst());
         assertEquals(ZonedDateTimeMapper.class, cm.removeFirst());
 
