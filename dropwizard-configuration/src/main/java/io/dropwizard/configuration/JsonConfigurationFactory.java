@@ -25,6 +25,6 @@ public class JsonConfigurationFactory<T> extends BaseConfigurationFactory<T> {
                                     Validator validator,
                                     ObjectMapper objectMapper,
                                     String propertyPrefix) {
-        super(new JsonFactory(), JsonFactory.FORMAT_NAME_JSON, klass, validator, objectMapper, propertyPrefix);
+        super(objectMapper.getFactory(), JsonFactory.FORMAT_NAME_JSON, klass, validator, objectMapper, propertyPrefix);
     }
 }
