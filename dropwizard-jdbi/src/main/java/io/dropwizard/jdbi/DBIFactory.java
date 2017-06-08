@@ -57,7 +57,7 @@ public class DBIFactory {
      * An SLF4J created instance of a LogBack logger for use with created DBI instances.
      */
     private static final Logger LOGGER = (Logger) LoggerFactory.getLogger(DBI.class);
-    
+
     private static final String RAW_SQL = name(DBI.class, "raw-sql");
 
     private static class SanerNamingStrategy extends DelegatingStatementNameStrategy {
@@ -72,11 +72,11 @@ public class DBIFactory {
 
     /**
      * Get a time zone of a database
-     *
+     * <p>
      * <p>Override this method to specify a time zone of a database
      * to use in {@link io.dropwizard.jdbi.args.JodaDateTimeMapper} and
      * {@link io.dropwizard.jdbi.args.JodaDateTimeArgument}</p>
-     *
+     * <p>
      * <p>It's needed for cases when the database operates in a different
      * time zone then the application and it doesn't use the SQL type
      * `TIMESTAMP WITH TIME ZONE`. It such cases information about the
@@ -88,20 +88,20 @@ public class DBIFactory {
         return Optional.empty();
     }
 
-    
+
     /**
      * Build a fully configured DBI instance managed by the DropWizard lifecycle
      * with the configured health check; this method should not be overridden
      * (instead, override {@link #configure(DBI, String)} and/or
      * {@link #newInstance(ManagedDataSource)})
-     * 
+     *
      * @param environment
      * @param configuration
      * @param name
      * @return A fully configured {@link DBI} object using a managed data source
-     *         based on the specified environment and configuration
+     * based on the specified environment and configuration
      * @see #build(Environment, PooledDataSourceFactory, ManagedDataSource,
-     *      String)
+     * String)
      */
     public DBI build(Environment environment,
                      PooledDataSourceFactory configuration,
@@ -115,7 +115,7 @@ public class DBIFactory {
      * with the configured health check; this method should not be overridden
      * (instead, override {@link #configure(DBI, String)} and/or
      * {@link #newInstance(ManagedDataSource)})
-     * 
+     *
      * @param environment
      * @param configuration
      * @param dataSource
@@ -129,25 +129,25 @@ public class DBIFactory {
 
         // Create the instance
         final DBI dbi = this.newInstance(dataSource);
-        
+
         // Manage the data source that created this instance.
         environment.lifecycle().manage(dataSource);
-        
+
         // Setup the required health checks.
         final String validationQuery = configuration.getValidationQuery();
         environment.healthChecks().register(name, new DBIHealthCheck(
-                environment.getHealthCheckExecutorService(),
-                configuration.getValidationQueryTimeout().orElseGet(() -> Duration.seconds(5)),
-                dbi,
-                validationQuery));
+            environment.getHealthCheckExecutorService(),
+            configuration.getValidationQueryTimeout().orElseGet(() -> Duration.seconds(5)),
+            dbi,
+            validationQuery));
 
         // Setup logging.
         dbi.setSQLLog(new LogbackLog(LOGGER, Level.TRACE));
-        
+
         // Setup the timing collector
         dbi.setTimingCollector(new InstrumentedTimingCollector(environment.metrics(),
-                new SanerNamingStrategy()));
-        
+            new SanerNamingStrategy()));
+
         if (configuration.isAutoCommentsEnabled()) {
             dbi.setStatementRewriter(new NamePrependingStatementRewriter(new ColonPrefixNamedParamStatementRewriter()));
         }
@@ -157,11 +157,11 @@ public class DBIFactory {
 
         return dbi;
     }
-    
+
     /**
      * This creates a vanilla DBI instance based on the specified data source;
      * this can be overridden if required
-     * 
+     *
      * @param dataSource
      * @return
      */
@@ -177,13 +177,13 @@ public class DBIFactory {
      * changes are made if you intend to use the default as a base so that the
      * customized argument settings will supersede the defaults
      * </p>
-     * 
+     *
      * @param dbi
      * @param configuration
      */
     protected void configure(final DBI dbi, final PooledDataSourceFactory configuration) {
         final String driverClazz = configuration.getDriverClass();
-        
+
         dbi.registerArgumentFactory(new GuavaOptionalArgumentFactory(driverClazz));
         dbi.registerArgumentFactory(new OptionalArgumentFactory(driverClazz));
         dbi.registerArgumentFactory(new OptionalDoubleArgumentFactory());
@@ -224,10 +224,10 @@ public class DBIFactory {
         dbi.registerArgumentFactory(new OptionalZonedDateTimeArgumentFactory(timeZone));
 
         dbi.registerColumnMapper(new JodaDateTimeMapper(timeZone));
-        dbi.registerColumnMapper(new InstantMapper(timeZone));
         dbi.registerColumnMapper(new LocalDateMapper());
         dbi.registerColumnMapper(new LocalDateTimeMapper());
-        dbi.registerColumnMapper(new OffsetDateTimeMapper());
-        dbi.registerColumnMapper(new ZonedDateTimeMapper());
+        dbi.registerColumnMapper(new InstantMapper(timeZone));
+        dbi.registerColumnMapper(new OffsetDateTimeMapper(timeZone));
+        dbi.registerColumnMapper(new ZonedDateTimeMapper(timeZone));
     }
 }
