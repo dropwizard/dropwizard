@@ -52,7 +52,12 @@ import java.util.TimeZone;
 import static com.codahale.metrics.MetricRegistry.name;
 
 public class DBIFactory {
+
+    /**
+     * An SLF4J created instance of a LogBack logger for use with created DBI instances.
+     */
     private static final Logger LOGGER = (Logger) LoggerFactory.getLogger(DBI.class);
+
     private static final String RAW_SQL = name(DBI.class, "raw-sql");
 
     private static class SanerNamingStrategy extends DelegatingStatementNameStrategy {
@@ -67,11 +72,11 @@ public class DBIFactory {
 
     /**
      * Get a time zone of a database
-     *
+     * <p>
      * <p>Override this method to specify a time zone of a database
      * to use in {@link io.dropwizard.jdbi.args.JodaDateTimeMapper} and
      * {@link io.dropwizard.jdbi.args.JodaDateTimeArgument}</p>
-     *
+     * <p>
      * <p>It's needed for cases when the database operates in a different
      * time zone then the application and it doesn't use the SQL type
      * `TIMESTAMP WITH TIME ZONE`. It such cases information about the
@@ -83,6 +88,21 @@ public class DBIFactory {
         return Optional.empty();
     }
 
+
+    /**
+     * Build a fully configured DBI instance managed by the DropWizard lifecycle
+     * with the configured health check; this method should not be overridden
+     * (instead, override {@link #configure(DBI, PooledDataSourceFactory)} and/or
+     * {@link #newInstance(ManagedDataSource)})
+     *
+     * @param environment
+     * @param configuration
+     * @param name
+     * @return A fully configured {@link DBI} object using a managed data source
+     * based on the specified environment and configuration
+     * @see #build(Environment, PooledDataSourceFactory, ManagedDataSource,
+     * String)
+     */
     public DBI build(Environment environment,
                      PooledDataSourceFactory configuration,
                      String name) {
@@ -90,26 +110,82 @@ public class DBIFactory {
         return build(environment, configuration, dataSource, name);
     }
 
+    /**
+     * Build a fully configured DBI instance managed by the DropWizard lifecycle
+     * with the configured health check; this method should not be overridden
+     * (instead, override {@link #configure(DBI, PooledDataSourceFactory)} and/or
+     * {@link #newInstance(ManagedDataSource)})
+     *
+     * @param environment
+     * @param configuration
+     * @param dataSource
+     * @param name
+     * @return A fully configured {@link DBI} object
+     */
     public DBI build(Environment environment,
                      PooledDataSourceFactory configuration,
                      ManagedDataSource dataSource,
                      String name) {
-        final String validationQuery = configuration.getValidationQuery();
-        final DBI dbi = new DBI(dataSource);
+
+        // Create the instance
+        final DBI dbi = this.newInstance(dataSource);
+
+        // Manage the data source that created this instance.
         environment.lifecycle().manage(dataSource);
+
+        // Setup the required health checks.
+        final String validationQuery = configuration.getValidationQuery();
         environment.healthChecks().register(name, new DBIHealthCheck(
-                environment.getHealthCheckExecutorService(),
-                configuration.getValidationQueryTimeout().orElseGet(() -> Duration.seconds(5)),
-                dbi,
-                validationQuery));
+            environment.getHealthCheckExecutorService(),
+            configuration.getValidationQueryTimeout().orElseGet(() -> Duration.seconds(5)),
+            dbi,
+            validationQuery));
+
+        // Setup logging.
         dbi.setSQLLog(new LogbackLog(LOGGER, Level.TRACE));
+
+        // Setup the timing collector
         dbi.setTimingCollector(new InstrumentedTimingCollector(environment.metrics(),
-                new SanerNamingStrategy()));
+            new SanerNamingStrategy()));
+
         if (configuration.isAutoCommentsEnabled()) {
             dbi.setStatementRewriter(new NamePrependingStatementRewriter(new ColonPrefixNamedParamStatementRewriter()));
         }
-        dbi.registerArgumentFactory(new GuavaOptionalArgumentFactory(configuration.getDriverClass()));
-        dbi.registerArgumentFactory(new OptionalArgumentFactory(configuration.getDriverClass()));
+
+        // Add the default argument and column mapper factories.
+        this.configure(dbi, configuration);
+
+        return dbi;
+    }
+
+    /**
+     * This creates a vanilla DBI instance based on the specified data source;
+     * this can be overridden if required
+     *
+     * @param dataSource
+     * @return
+     */
+    protected DBI newInstance(final ManagedDataSource dataSource) {
+        return new DBI(dataSource);
+    }
+
+    /**
+     * This method sets the default column mapper and argument factories
+     * <p>
+     * if this is overridden it is strongly recommend that
+     * {@code super.configure(dbi, configuration)} is invoked before any other
+     * changes are made if you intend to use the default as a base so that the
+     * customized argument settings will supersede the defaults
+     * </p>
+     *
+     * @param dbi
+     * @param configuration
+     */
+    protected void configure(final DBI dbi, final PooledDataSourceFactory configuration) {
+        final String driverClazz = configuration.getDriverClass();
+
+        dbi.registerArgumentFactory(new GuavaOptionalArgumentFactory(driverClazz));
+        dbi.registerArgumentFactory(new OptionalArgumentFactory(driverClazz));
         dbi.registerArgumentFactory(new OptionalDoubleArgumentFactory());
         dbi.registerArgumentFactory(new OptionalIntArgumentFactory());
         dbi.registerArgumentFactory(new OptionalLongArgumentFactory());
@@ -129,7 +205,8 @@ public class DBIFactory {
         dbi.registerArgumentFactory(new OffsetDateTimeArgumentFactory(timeZone));
         dbi.registerArgumentFactory(new ZonedDateTimeArgumentFactory(timeZone));
 
-        // Should be registered after GuavaOptionalArgumentFactory to be processed first
+        // Should be registered after GuavaOptionalArgumentFactory to be
+        // processed first
         dbi.registerArgumentFactory(new GuavaOptionalJodaTimeArgumentFactory(timeZone));
         dbi.registerArgumentFactory(new GuavaOptionalLocalDateArgumentFactory());
         dbi.registerArgumentFactory(new GuavaOptionalLocalDateTimeArgumentFactory());
@@ -137,7 +214,8 @@ public class DBIFactory {
         dbi.registerArgumentFactory(new GuavaOptionalOffsetTimeArgumentFactory(timeZone));
         dbi.registerArgumentFactory(new GuavaOptionalZonedTimeArgumentFactory(timeZone));
 
-        // Should be registered after OptionalArgumentFactory to be processed first
+        // Should be registered after OptionalArgumentFactory to be processed
+        // first
         dbi.registerArgumentFactory(new OptionalJodaTimeArgumentFactory(timeZone));
         dbi.registerArgumentFactory(new OptionalLocalDateArgumentFactory());
         dbi.registerArgumentFactory(new OptionalLocalDateTimeArgumentFactory());
@@ -151,7 +229,5 @@ public class DBIFactory {
         dbi.registerColumnMapper(new InstantMapper(timeZone));
         dbi.registerColumnMapper(new OffsetDateTimeMapper(timeZone));
         dbi.registerColumnMapper(new ZonedDateTimeMapper(timeZone));
-
-        return dbi;
     }
 }
