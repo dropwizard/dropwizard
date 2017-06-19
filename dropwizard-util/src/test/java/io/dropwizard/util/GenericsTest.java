@@ -17,15 +17,15 @@ import org.junit.runners.Parameterized.Parameters;
 @RunWith(Parameterized.class)
 public class GenericsTest {
 
-	@Parameters(name="Test {0}")
+    @Parameters(name = "Test {0}")
     public static Collection<Object[]> data() {
         return Arrays.asList(new Object[][] {
-        	{ Object.class, Object.class, Object.class, Object.class, IllegalStateException.class, "Cannot figure out type parameterization for "+Object.class.getName() },
-        	{ null, null, null, null, NullPointerException.class, null },
-        	{ IntegerList.class, Integer.class, Number.class, Integer.class, null, null },
-        	{ IntegerList.class, Integer.class, Integer.class, Integer.class, null, null },
-        	{ NumberList.class, Number.class, Number.class, Number.class, null, null },
-        	{ IntegerValueMap.class, Object.class, Number.class, Integer.class, null, null },
+            {Object.class, Object.class, Object.class, Object.class, IllegalStateException.class, "Cannot figure out type parameterization for " + Object.class.getName() },
+            {null, null, null, null, NullPointerException.class, null },
+            {IntegerList.class, Integer.class, Number.class, Integer.class, null, null },
+            {IntegerList.class, Integer.class, Integer.class, Integer.class, null, null },
+            {NumberList.class, Number.class, Number.class, Number.class, null, null },
+            {IntegerValueMap.class, Object.class, Number.class, Integer.class, null, null },
         });
     }
 
@@ -37,19 +37,19 @@ public class GenericsTest {
     public ExpectedException thrown = ExpectedException.none();
 
     public GenericsTest(Class<?> klass, Class<?> typeParameter, Class<?> bound, Class<?> boundTypeParameter, Class<? extends Exception> expectedException, String expectedMessage) {
-		this.klass = klass;
-		this.typeParameter = typeParameter;
-		this.bound = bound;
-		this.boundTypeParameter = boundTypeParameter;
-		
-	    if (expectedException != null) {
-	    	thrown.expect(expectedException);
-	    	if (expectedMessage != null)
-	    		thrown.expectMessage(expectedMessage);
-	    }
-	}
+        this.klass = klass;
+        this.typeParameter = typeParameter;
+        this.bound = bound;
+        this.boundTypeParameter = boundTypeParameter;
+        
+        if (expectedException != null) {
+            thrown.expect(expectedException);
+            if (expectedMessage != null)
+                thrown.expectMessage(expectedMessage);
+        }
+    }
 
-	@Test
+    @Test
     public void testTypeParameter() {
         Assert.assertEquals(typeParameter, Generics.getTypeParameter(klass));
     }
@@ -59,7 +59,7 @@ public class GenericsTest {
         Assert.assertEquals(boundTypeParameter, Generics.getTypeParameter(klass, bound));
     }
     
-    public static class IntegerList extends ArrayList<Integer> {}
-    public static class NumberList<V extends Number> extends ArrayList<V> {}
-    public static class IntegerValueMap<K> extends HashMap<K, Integer> {}
+    public static class IntegerList extends ArrayList<Integer> { }
+    public static class NumberList<V extends Number> extends ArrayList<V> { }
+    public static class IntegerValueMap<K> extends HashMap<K, Integer> { }
 }
