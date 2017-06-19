@@ -16,7 +16,7 @@ public class JsonConfigurationFactoryTest extends BaseConfigurationFactoryTest {
 
     private File commentFile;
 
-	@Override
+    @Override
     public void setUp() throws Exception {
         this.factory = new JsonConfigurationFactory<>(Example.class, validator, Jackson.newObjectMapper(), "dw");
         this.malformedFile = resourceFileName("factory-test-malformed.json");
@@ -47,32 +47,32 @@ public class JsonConfigurationFactoryTest extends BaseConfigurationFactoryTest {
             assertThat(e)
                     .hasMessageContaining(String.format(
                             "%s has an error:%n" +
-                            "  * Malformed JSON at line: 7, column: 3; Unexpected close marker '}': expected ']'",
-                            malformedAdvancedFile.getName()));
+	                            "  * Malformed JSON at line: 7, column: 3; Unexpected close marker '}': expected ']'",
+	                            malformedAdvancedFile.getName()));
         }
     }
     
-    @Test(expected=ConfigurationParsingException.class)
+    @Test(expected = ConfigurationParsingException.class)
     public void defaultJsonFactoryFailsOnComment() throws IOException, ConfigurationException {
-    	try {
-    		factory.build(commentFile);
-    	} catch(ConfigurationParsingException e) {
-    		assertThat(e)
+        try {
+            factory.build(commentFile);
+        } catch (ConfigurationParsingException e) {
+            assertThat(e)
             .hasMessageContaining(String.format(
                     "%s has an error:%n" +
-                    "  * Malformed JSON at line: 4, column: 4; Unexpected character ('/' (code 47)): maybe a (non-standard) comment? (not recognized as one since Feature 'ALLOW_COMMENTS' not enabled for parser)",
-                    commentFile.getName()));
-    		throw e;
-    	}
+	                    "  * Malformed JSON at line: 4, column: 4; Unexpected character ('/' (code 47)): maybe a (non-standard) comment? (not recognized as one since Feature 'ALLOW_COMMENTS' not enabled for parser)",
+	                    commentFile.getName()));
+            throw e;
+        }
     }
     
     @Test
     public void configuredMapperAllowsComment() throws IOException, ConfigurationException {
-    	ObjectMapper mapper = Jackson
-    		.newObjectMapper()
-    		.configure(Feature.ALLOW_COMMENTS, true);
-    	
-    	JsonConfigurationFactory<Example> factory = new JsonConfigurationFactory<>(Example.class, validator, mapper, "dw");
-    	factory.build(commentFile);
+        ObjectMapper mapper = Jackson
+            .newObjectMapper()
+            .configure(Feature.ALLOW_COMMENTS, true);
+        
+        JsonConfigurationFactory<Example> factory = new JsonConfigurationFactory<>(Example.class, validator, mapper, "dw");
+        factory.build(commentFile);
     }
 }
