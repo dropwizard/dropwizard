@@ -58,7 +58,7 @@ public class JsonConfigurationFactoryTest extends BaseConfigurationFactoryTest {
             factory.build(commentFile);
         } catch (ConfigurationParsingException e) {
             assertThat(e)
-            .hasMessageContaining(String.format(
+                .hasMessageContaining(String.format(
                     "%s has an error:%n" +
                         "  * Malformed JSON at line: 4, column: 4; Unexpected character ('/' (code 47)): maybe a (non-standard) comment? (not recognized as one since Feature 'ALLOW_COMMENTS' not enabled for parser)",
                         commentFile.getName()));
