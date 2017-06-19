@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 
-import org.junit.Assert;
+import static org.assertj.core.api.Assertions.*;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -51,12 +51,12 @@ public class GenericsTest {
 
     @Test
     public void testTypeParameter() {
-        Assert.assertEquals(typeParameter, Generics.getTypeParameter(klass));
+        assertThat(Generics.getTypeParameter(klass)).isEqualTo(typeParameter);
     }
     
     @Test
     public void testBoundTypeParameter() {
-        Assert.assertEquals(boundTypeParameter, Generics.getTypeParameter(klass, bound));
+        assertThat(Generics.getTypeParameter(klass, bound)).isEqualTo(boundTypeParameter);
     }
     
     public static class IntegerList extends ArrayList<Integer> { }
