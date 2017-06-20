@@ -993,6 +993,53 @@ single ``Logger``:
 
     curl -X POST -d "logger=com.example.helloworld&level=INFO" http://localhost:8081/tasks/log-level
 
+.. _man-core-logging-filters:
+
+Logging Filters
+---------------
+
+Just because a statement has a level of ``INFO``, doesn't mean it should be logged with other ``INFO`` statements. One can create logging filters that will intercept log statements before they are written and decide if they're allowed. Log filters can work on both regular statements and request log statements. The following example will be for request logging as there are many reasons why certain requests may be excluded from the log:
+
+* Only log requests that have large bodies
+* Only log requests that are slow
+* Only log requests that resulted in a non-2xx status code
+* Exclude requests that contain sensitive information in the URL
+* Exclude healthcheck requests
+
+The example will demonstrate excluding ``/secret`` requests from the log.
+
+.. code-block:: java
+
+    @JsonTypeName("secret-filter-factory")
+    public class SecretFilterFactory implements FilterFactory<IAccessEvent> {
+        @Override
+        public Filter<IAccessEvent> build() {
+            return new Filter<IAccessEvent>() {
+                @Override
+                public FilterReply decide(IAccessEvent event) {
+                    if (event.getRequestURI().equals("/secret")) {
+                        return FilterReply.DENY;
+                    } else {
+                        return FilterReply.NEUTRAL;
+                    }
+                }
+            };
+        }
+    }
+
+Reference ``SecretFilterFactory`` type in our configuration.
+
+.. code-block:: yaml
+
+    server:
+      requestLog:
+        appenders:
+          - type: console
+            filterFactories:
+              - type: secret-filter-factory
+
+The last step is to add our class (in this case ``com.example.SecretFilterFactory``) to ``META-INF/services/io.dropwizard.logging.filter.FilterFactory`` in our resources folder.
+
 .. _man-core-testing-applications:
 
 Testing Applications
