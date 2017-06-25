@@ -35,7 +35,7 @@ public class HttpClientConfigurationTest {
     }
 
     @Test
-    public void testFullConfig() throws Exception {
+    public void testFullConfigBasicProxy() throws Exception {
         load("yaml/proxy.yml");
 
         ProxyConfiguration proxy = configuration.getProxyConfiguration();
@@ -49,6 +49,31 @@ public class HttpClientConfigurationTest {
         assertThat(auth).isNotNull();
         assertThat(auth.getUsername()).isEqualTo("secret");
         assertThat(auth.getPassword()).isEqualTo("stuff");
+
+        List<String> nonProxyHosts = proxy.getNonProxyHosts();
+        assertThat(nonProxyHosts).contains("localhost", "192.168.52.*", "*.example.com");
+    }
+
+    @Test
+    public void testFullConfigNtlmProxy() throws Exception {
+        load("yaml/proxy_ntlm.yml");
+
+        ProxyConfiguration proxy = configuration.getProxyConfiguration();
+        assertThat(proxy).isNotNull();
+
+        assertThat(proxy.getHost()).isEqualTo("192.168.52.11");
+        assertThat(proxy.getPort()).isEqualTo(8080);
+        assertThat(proxy.getScheme()).isEqualTo("https");
+
+        AuthConfiguration auth = proxy.getAuth();
+        assertThat(auth).isNotNull();
+        assertThat(auth.getUsername()).isEqualTo("secret");
+        assertThat(auth.getPassword()).isEqualTo("stuff");
+        assertThat(auth.getAuthScheme()).isEqualTo("NTLM");
+        assertThat(auth.getRealm()).isEqualTo("realm");
+        assertThat(auth.getHostname()).isEqualTo("workstation");
+        assertThat(auth.getDomain()).isEqualTo("HYPERCOMPUGLOBALMEGANET");
+        assertThat(auth.getCredentialType()).isEqualTo("NT");
 
         List<String> nonProxyHosts = proxy.getNonProxyHosts();
         assertThat(nonProxyHosts).contains("localhost", "192.168.52.*", "*.example.com");
@@ -118,4 +143,13 @@ public class HttpClientConfigurationTest {
         load("./yaml/bad_auth_password.yml");
     }
 
+    @Test(expected = ConfigurationValidationException.class)
+    public void testBadAuthScheme() throws Exception {
+        load("./yaml/bad_auth_scheme.yml");
+    }
+
+    @Test(expected = ConfigurationValidationException.class)
+    public void testBadCredentialType() throws Exception {
+        load("./yaml/bad_auth_credential_type.yml");
+    }
 }

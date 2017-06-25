@@ -216,3 +216,12 @@ By allowing Dropwizard to create the rx-client, the same thread pool that is uti
 synchronous and asynchronous requests, is used for rx requests.
 
 .. _rx-clients: https://jersey.github.io/documentation/2.24/rx-client.html
+
+Proxy Authentication
+--------------------
+
+The client can utilise a forward proxy, supporting both Basic and NTLM authentication schemes. 
+
+.. code-block:: yaml
+
+    
