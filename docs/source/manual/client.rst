@@ -221,7 +221,71 @@ Proxy Authentication
 --------------------
 
 The client can utilise a forward proxy, supporting both Basic and NTLM authentication schemes. 
+Basic Auth against a proxy is simple:
+
+.. code-block:: yaml
+ 
+     proxy:
+          host: '192.168.52.11'
+          port: 8080
+          scheme : 'https'
+          auth:
+            username: 'secret'
+            password: 'stuff'
+          nonProxyHosts:
+            - 'localhost'
+            - '192.168.52.*'
+            - '*.example.com'   
+
+NTLM Auth is configured by setting the the relevant windows properties. 
 
 .. code-block:: yaml
 
-    
+     proxy:
+          host: '192.168.52.11'
+          port: 8080
+          scheme : 'https'
+          auth:
+            username: 'secret'
+            password: 'stuff'
+            authScheme: 'NTLM'
+            realm: 'realm'
+            hostname: 'workstation'
+            domain: 'HYPERCOMPUGLOBALMEGANET'
+            credentialType: 'NT'
+          nonProxyHosts:
+            - 'localhost'
+            - '192.168.52.*'
+            - '*.example.com'   
+
+NTLM proxies will generally respond to the initial request with a 407 Proxy Authentication challenge.
+You may need to enable retries to ensure the request is not lost when responding
+to the 407 challenge. 
+
+.. code-block:: java
+
+    import org.apache.http.client.ServiceUnavailableRetryStrategy;
+
+    // ... snip ...
+
+    @Override
+    public Client createClient() { 
+        final ServiceUnavailableRetryStrategy proxyAuthReqdRetryStrategy = new ServiceUnavailableRetryStrategy() {
+            @Override
+            public boolean retryRequest(HttpResponse httpResponse, int i, HttpContext httpContext) {
+
+                return (httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_PROXY_AUTHENTICATION_REQUIRED
+                        && i > 1);
+            }
+
+            @Override
+            public long getRetryInterval() {
+                return 0;
+            }
+        };
+
+        return builder.serviceUnavailableStrategy(proxyAuthReqdRetryStrategy)
+                .createClient(apacheBuilder, connectionManager, "test");
+    }
+
+

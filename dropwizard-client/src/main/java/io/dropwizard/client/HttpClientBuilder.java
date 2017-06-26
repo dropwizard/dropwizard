@@ -22,10 +22,7 @@ import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.Credentials;
 import org.apache.http.auth.NTCredentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.CredentialsProvider;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.HttpRequestRetryHandler;
-import org.apache.http.client.RedirectStrategy;
+import org.apache.http.client.*;
 import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.config.Registry;
@@ -76,6 +73,7 @@ public class HttpClientBuilder {
     private HttpRoutePlanner routePlanner = null;
     private RedirectStrategy redirectStrategy;
     private boolean disableContentCompression;
+    private ServiceUnavailableRetryStrategy serviceUnavailableRetryStrategy;
     private List<? extends Header> defaultHeaders;
     private HttpProcessor httpProcessor;
 
@@ -229,6 +227,17 @@ public class HttpClientBuilder {
      */
     public HttpClientBuilder disableContentCompression(boolean disableContentCompression) {
         this.disableContentCompression = disableContentCompression;
+        return this;
+    }
+
+    /**
+     * provide a custom {@link ServiceUnavailableRetryStrategy}
+     *
+     * @param serviceUnavailableRetryStrategy
+     * @return {@code this}
+     */
+    public HttpClientBuilder serviceUnavailableStrategy(ServiceUnavailableRetryStrategy serviceUnavailableRetryStrategy) {
+        this.serviceUnavailableRetryStrategy = serviceUnavailableRetryStrategy;
         return this;
     }
 
@@ -387,6 +396,10 @@ public class HttpClientBuilder {
 
         if (httpProcessor != null) {
             builder.setHttpProcessor(httpProcessor);
+        }
+
+        if (serviceUnavailableRetryStrategy != null) {
+            builder.setServiceUnavailableRetryStrategy(serviceUnavailableRetryStrategy);
         }
 
         return new ConfiguredCloseableHttpClient(builder.build(), requestConfig);

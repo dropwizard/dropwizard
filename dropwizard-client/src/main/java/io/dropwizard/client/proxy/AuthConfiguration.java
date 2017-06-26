@@ -6,7 +6,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
 
 /**
- * Represents a configuration of credentials (username / password)
+ * Represents a configuration of credentials for either Username Password or NT credentials
  * <p/>
  * <b>Configuration Parameters:</b>
  * <table>
@@ -27,33 +27,33 @@ import javax.validation.constraints.Pattern;
  *     </tr>
  *     <tr>
  *         <td>{@code authScheme}</td>
- *         <td>OPTIONAL, defaults to null</td>
- *         <td>The authentication scheme used by the underlying
+ *         <td>null</td>
+ *         <td>Optional, The authentication scheme used by the underlying
  *         {@link org.apache.http.auth.AuthScope} class. Can be one of:<ul>
  *         <li>Basic</li><li>NTLM</li></ul></td>
  *     </tr>
  *     <tr>
  *         <td>{@code realm}</td>
- *         <td>OPTIONAL, defaults to null</td>
- *         <td>Realm to be used for NTLM Authentication.</td>
+ *         <td>null</td>
+ *         <td>Optional, Realm to be used for NTLM Authentication.</td>
  *     </tr>
  *     <tr>
  *         <td>{@code hostname}</td>
- *         <td>OPTIONAL, defaults to null</td>
+ *         <td>null</td>
  *         <td>The hostname of the Principal in NTLM Authentication.</td>
  *     </tr>
  *     <tr>
  *         <td>{@code domain}</td>
- *         <td>REQUIRED</td>
- *         <td>The domain used in NTLM Authentication.</td>
+ *         <td>null</td>
+ *         <td>Optional, The domain used in NTLM Authentication.</td>
  *     </tr>
  *     <tr>
  *         <td>{@code credentialType}</td>
- *         <td>OPTIONAL</td>
+ *         <td>null</td>
  *         <td>The {@link org.apache.http.auth.Credentials} implementation
  *         to use for proxy authentication. Currently supports
- *         {@link org.apache.http.auth.UsernamePasswordCredentials} and
- *         {@link org.apache.http.auth.NTCredentials}</td>
+ *         UsernamePassword ({@link org.apache.http.auth.UsernamePasswordCredentials}) and
+ *         NT ({@link org.apache.http.auth.NTCredentials})</td>
  *     </tr>
  * </table>
  */

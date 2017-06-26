@@ -21,13 +21,7 @@ import java.util.Optional;
 import javax.net.ssl.HostnameVerifier;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
-import org.apache.http.Header;
-import org.apache.http.HeaderIterator;
-import org.apache.http.HttpHeaders;
-import org.apache.http.HttpHost;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpResponse;
-import org.apache.http.ProtocolException;
+import org.apache.http.*;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.Credentials;
 import org.apache.http.auth.NTCredentials;
@@ -35,6 +29,7 @@ import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.HttpRequestRetryHandler;
 import org.apache.http.client.RedirectStrategy;
+import org.apache.http.client.ServiceUnavailableRetryStrategy;
 import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
@@ -597,6 +592,33 @@ public class HttpClientBuilderTest {
                 .getField(httpClientBuilderClass, "contentCompressionDisabled", true)
                 .get(apacheBuilder);
         assertThat(contentCompressionDisabled).isTrue();
+    }
+
+    @Test
+    public void useCustomServiceUnavailableRetryStrategy() throws Exception {
+        final ServiceUnavailableRetryStrategy proxyAuthReqdRetryStrategy = new ServiceUnavailableRetryStrategy() {
+            @Override
+            public boolean retryRequest(HttpResponse httpResponse, int i, HttpContext httpContext) {
+
+                return (httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_PROXY_AUTHENTICATION_REQUIRED
+                        && i > 1);
+            }
+
+            @Override
+            public long getRetryInterval() {
+                return 0;
+            }
+        };
+
+        ConfiguredCloseableHttpClient client = builder
+                .serviceUnavailableStrategy(proxyAuthReqdRetryStrategy)
+                .createClient(apacheBuilder, connectionManager, "test");
+        assertThat(client).isNotNull();
+
+        final ServiceUnavailableRetryStrategy serviceUnavailableRetryStrategy = (ServiceUnavailableRetryStrategy) FieldUtils
+                .getField(httpClientBuilderClass, "serviceUnavailStrategy", true)
+                .get(apacheBuilder);
+        assertThat(serviceUnavailableRetryStrategy).isEqualTo(proxyAuthReqdRetryStrategy);
     }
 
     @Test
