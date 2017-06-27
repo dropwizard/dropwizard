@@ -4,7 +4,7 @@
     <parent>
         <artifactId>dropwizard-parent</artifactId>
         <groupId>io.dropwizard</groupId>
-        <version>1.0.8</version>
+        <version>1.0.9-SNAPSHOT</version>
     </parent>
 
     <properties>
