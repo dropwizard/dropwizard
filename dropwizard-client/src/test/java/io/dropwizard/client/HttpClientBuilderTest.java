@@ -21,7 +21,14 @@ import java.util.Optional;
 import javax.net.ssl.HostnameVerifier;
 
 import org.apache.commons.lang3.reflect.FieldUtils;
-import org.apache.http.*;
+import org.apache.http.Header;
+import org.apache.http.HeaderIterator;
+import org.apache.http.HttpHeaders;
+import org.apache.http.HttpHost;
+import org.apache.http.HttpRequest;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.ProtocolException;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.Credentials;
 import org.apache.http.auth.NTCredentials;
@@ -600,8 +607,8 @@ public class HttpClientBuilderTest {
             @Override
             public boolean retryRequest(HttpResponse httpResponse, int i, HttpContext httpContext) {
 
-                return (httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_PROXY_AUTHENTICATION_REQUIRED
-                        && i > 1);
+                return httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_PROXY_AUTHENTICATION_REQUIRED
+                        && i > 1;
             }
 
             @Override

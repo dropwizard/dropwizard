@@ -73,7 +73,7 @@ public class AuthConfiguration {
     @NotEmpty
     private String password;
 
-    @Pattern(regexp = BASIC_AUTH_SCHEME + "|" + NTLM_AUTH_SCHEME )
+    @Pattern(regexp = BASIC_AUTH_SCHEME + "|" + NTLM_AUTH_SCHEME)
     private String authScheme;
 
     private String realm;
