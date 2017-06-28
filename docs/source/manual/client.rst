@@ -249,16 +249,16 @@ NTLM Auth is configured by setting the the relevant windows properties.
             username: 'secret'
             password: 'stuff'
             authScheme: 'NTLM'
-            realm: 'realm'
-            hostname: 'workstation'
-            domain: 'HYPERCOMPUGLOBALMEGANET'
+            realm: 'realm'                    # optional, defaults to ANY_REALM
+            hostname: 'workstation'           # optional, defaults to null but may be required depending on your AD environment
+            domain: 'HYPERCOMPUGLOBALMEGANET' # optional, defaults to null but may be required depending on your AD environment
             credentialType: 'NT'
           nonProxyHosts:
             - 'localhost'
             - '192.168.52.*'
             - '*.example.com'   
 
-NTLM proxies will generally respond to the initial request with a 407 Proxy Authentication challenge.
+NTLM proxies will generally respond to the initial request with a ``407 Proxy Authentication Required`` challenge.
 You may need to enable retries to ensure the request is not lost when responding
 to the 407 challenge. 
 
