@@ -269,7 +269,7 @@ to the 407 challenge.
     // ... snip ...
 
     @Override
-    public Client createClient() { 
+    public JerseyClientBuilder createClient() { 
         final ServiceUnavailableRetryStrategy proxyAuthReqdRetryStrategy = new ServiceUnavailableRetryStrategy() {
             @Override
             public boolean retryRequest(HttpResponse httpResponse, int i, HttpContext httpContext) {
@@ -284,8 +284,10 @@ to the 407 challenge.
             }
         };
 
-        return builder.serviceUnavailableStrategy(proxyAuthReqdRetryStrategy)
-                .createClient(apacheBuilder, connectionManager, "test");
+        return new JerseyClientBuilder(new MetricRegistry())
+            .using(configuration)
+            .using(proxyAuthReqdRetryStrategy)
+            .build("proxy-retry-client");
     }
 
 

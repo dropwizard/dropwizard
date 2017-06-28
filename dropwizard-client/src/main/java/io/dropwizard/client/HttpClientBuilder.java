@@ -220,6 +220,17 @@ public class HttpClientBuilder {
     }
 
     /**
+     * provide a custom {@link ServiceUnavailableRetryStrategy}
+     *
+     * @param serviceUnavailableRetryStrategy
+     * @return {@code this}
+     */
+    public HttpClientBuilder using(ServiceUnavailableRetryStrategy serviceUnavailableRetryStrategy) {
+        this.serviceUnavailableRetryStrategy = serviceUnavailableRetryStrategy;
+        return this;
+    }
+
+    /**
      * Disable support of decompression of responses
      *
      * @param disableContentCompression {@code true}, if disabled
@@ -227,17 +238,6 @@ public class HttpClientBuilder {
      */
     public HttpClientBuilder disableContentCompression(boolean disableContentCompression) {
         this.disableContentCompression = disableContentCompression;
-        return this;
-    }
-
-    /**
-     * provide a custom {@link ServiceUnavailableRetryStrategy}
-     *
-     * @param serviceUnavailableRetryStrategy
-     * @return {@code this}
-     */
-    public HttpClientBuilder serviceUnavailableStrategy(ServiceUnavailableRetryStrategy serviceUnavailableRetryStrategy) {
-        this.serviceUnavailableRetryStrategy = serviceUnavailableRetryStrategy;
         return this;
     }
 

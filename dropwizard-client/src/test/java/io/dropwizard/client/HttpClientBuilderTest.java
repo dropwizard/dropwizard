@@ -611,7 +611,7 @@ public class HttpClientBuilderTest {
         };
 
         ConfiguredCloseableHttpClient client = builder
-                .serviceUnavailableStrategy(proxyAuthReqdRetryStrategy)
+                .using(proxyAuthReqdRetryStrategy)
                 .createClient(apacheBuilder, connectionManager, "test");
         assertThat(client).isNotNull();
 
@@ -706,6 +706,26 @@ public class HttpClientBuilderTest {
         assertThat(builder.customized).isFalse();
         ConfiguredCloseableHttpClient client = builder.createClient(apacheBuilder, connectionManager, "test");
         assertThat(builder.customized).isTrue();
+    }
+
+    @Test
+    public void configureCredentialReturnsNTCredentialsForNTLMConfig() throws Exception {
+        AuthConfiguration ntlmConfig = new AuthConfiguration("username", "password", "NTLM", "realm", "hostname", "domain", "NT");
+
+        Credentials credentials = builder.configureCredentials(ntlmConfig);
+        assertThat(credentials).isInstanceOf(NTCredentials.class);
+        assertThat(credentials.getPassword()).isEqualTo("password");
+        assertThat(credentials.getUserPrincipal().getName()).isEqualTo("DOMAIN\\username");
+    }
+
+    @Test
+    public void configureCredentialReturnsNTCredentialsForBasicConfig() throws Exception {
+        AuthConfiguration ntlmConfig = new AuthConfiguration("username", "password");
+
+        Credentials credentials = builder.configureCredentials(ntlmConfig);
+        assertThat(credentials).isInstanceOf(UsernamePasswordCredentials.class);
+        assertThat(credentials.getPassword()).isEqualTo("password");
+        assertThat(credentials.getUserPrincipal().getName()).isEqualTo("username");
     }
 
     private Object spyHttpClientBuilderField(final String fieldName, final Object obj) throws Exception {
