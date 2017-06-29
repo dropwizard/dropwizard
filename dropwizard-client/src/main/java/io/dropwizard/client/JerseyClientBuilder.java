@@ -14,7 +14,6 @@ import io.dropwizard.setup.Environment;
 import io.dropwizard.util.Duration;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.HttpRequestRetryHandler;
-import org.apache.http.client.ServiceUnavailableRetryStrategy;
 import org.apache.http.config.Registry;
 import org.apache.http.conn.DnsResolver;
 import org.apache.http.conn.routing.HttpRoutePlanner;
@@ -311,16 +310,6 @@ public class JerseyClientBuilder {
      */
     public JerseyClientBuilder using(CredentialsProvider credentialsProvider) {
         apacheHttpClientBuilder.using(credentialsProvider);
-        return this;
-    }
-
-    /**
-     * Use the given {@link ServiceUnavailableRetryStrategy} instance
-     * @param serviceUnavailableRetryStrategy a {@link ServiceUnavailableRetryStrategy} instance
-     * @return {@code this}
-     */
-    public JerseyClientBuilder using(ServiceUnavailableRetryStrategy serviceUnavailableRetryStrategy) {
-        apacheHttpClientBuilder.using(serviceUnavailableRetryStrategy);
         return this;
     }
 

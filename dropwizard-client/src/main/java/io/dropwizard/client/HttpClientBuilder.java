@@ -26,7 +26,6 @@ import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.HttpRequestRetryHandler;
 import org.apache.http.client.RedirectStrategy;
-import org.apache.http.client.ServiceUnavailableRetryStrategy;
 import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.config.Registry;
@@ -77,7 +76,6 @@ public class HttpClientBuilder {
     private HttpRoutePlanner routePlanner = null;
     private RedirectStrategy redirectStrategy;
     private boolean disableContentCompression;
-    private ServiceUnavailableRetryStrategy serviceUnavailableRetryStrategy;
     private List<? extends Header> defaultHeaders;
     private HttpProcessor httpProcessor;
 
@@ -220,17 +218,6 @@ public class HttpClientBuilder {
      */
     public HttpClientBuilder using(HttpProcessor httpProcessor) {
         this.httpProcessor = httpProcessor;
-        return this;
-    }
-
-    /**
-     * provide a custom {@link ServiceUnavailableRetryStrategy}
-     *
-     * @param serviceUnavailableRetryStrategy
-     * @return {@code this}
-     */
-    public HttpClientBuilder using(ServiceUnavailableRetryStrategy serviceUnavailableRetryStrategy) {
-        this.serviceUnavailableRetryStrategy = serviceUnavailableRetryStrategy;
         return this;
     }
 
@@ -402,10 +389,6 @@ public class HttpClientBuilder {
             builder.setHttpProcessor(httpProcessor);
         }
 
-        if (serviceUnavailableRetryStrategy != null) {
-            builder.setServiceUnavailableRetryStrategy(serviceUnavailableRetryStrategy);
-        }
-
         return new ConfiguredCloseableHttpClient(builder.build(), requestConfig);
     }
 
@@ -483,7 +466,7 @@ public class HttpClientBuilder {
     /**
      * determine the Credentials implementation to use
      * @param auth
-     * @return
+     * @return a {@code Credentials} instance, either {{@link UsernamePasswordCredentials} or {@link NTCredentials}}
      */
     protected Credentials configureCredentials(AuthConfiguration auth) {
 

@@ -276,23 +276,6 @@ public class JerseyClientBuilderTest {
     }
 
     @Test
-    public void usesACustomServiceUnavailableRetryStrategy() {
-        final ServiceUnavailableRetryStrategy retryStrategy = new ServiceUnavailableRetryStrategy() {
-            @Override
-            public boolean retryRequest(HttpResponse httpResponse, int i, HttpContext httpContext) {
-                return true;
-            }
-
-            @Override
-            public long getRetryInterval() {
-                return 0;
-            }
-        };
-        builder.using(retryStrategy);
-        verify(apacheHttpClientBuilder).using(retryStrategy);
-    }
-
-    @Test
     public void usesACustomConnectionFactoryRegistry() throws Exception {
         final SSLContext ctx = SSLContext.getInstance(SSLConnectionSocketFactory.TLS);
         ctx.init(null, new TrustManager[]{

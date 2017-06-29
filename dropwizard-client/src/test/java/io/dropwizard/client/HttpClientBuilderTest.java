@@ -602,33 +602,6 @@ public class HttpClientBuilderTest {
     }
 
     @Test
-    public void useCustomServiceUnavailableRetryStrategy() throws Exception {
-        final ServiceUnavailableRetryStrategy proxyAuthReqdRetryStrategy = new ServiceUnavailableRetryStrategy() {
-            @Override
-            public boolean retryRequest(HttpResponse httpResponse, int i, HttpContext httpContext) {
-
-                return httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_PROXY_AUTHENTICATION_REQUIRED
-                        && i > 1;
-            }
-
-            @Override
-            public long getRetryInterval() {
-                return 0;
-            }
-        };
-
-        ConfiguredCloseableHttpClient client = builder
-                .using(proxyAuthReqdRetryStrategy)
-                .createClient(apacheBuilder, connectionManager, "test");
-        assertThat(client).isNotNull();
-
-        final ServiceUnavailableRetryStrategy serviceUnavailableRetryStrategy = (ServiceUnavailableRetryStrategy) FieldUtils
-                .getField(httpClientBuilderClass, "serviceUnavailStrategy", true)
-                .get(apacheBuilder);
-        assertThat(serviceUnavailableRetryStrategy).isEqualTo(proxyAuthReqdRetryStrategy);
-    }
-
-    @Test
     public void managedByEnvironment() throws Exception {
         final Environment environment = mock(Environment.class);
         when(environment.getName()).thenReturn("test-env");
