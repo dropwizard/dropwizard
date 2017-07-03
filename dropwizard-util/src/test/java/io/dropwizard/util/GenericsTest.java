@@ -15,7 +15,7 @@ import org.junit.runners.Parameterized.Parameters;
 
 @SuppressWarnings("serial")
 @RunWith(Parameterized.class)
-public class GenericsTest {
+public class GenericsTest<T> {
 
     @Parameters(name = "Test {0}")
     public static Collection<Object[]> data() {
@@ -31,17 +31,17 @@ public class GenericsTest {
 
     private Class<?> klass;
     private Class<?> typeParameter;
-    private Class<?> bound;
+    private Class<? super T> bound;
     private Class<?> boundTypeParameter;
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
-    public GenericsTest(Class<?> klass, Class<?> typeParameter, Class<?> bound, Class<?> boundTypeParameter, Class<? extends Exception> expectedException, String expectedMessage) {
+    public GenericsTest(Class<?> klass, Class<?> typeParameter, Class<? super T> bound, Class<?> boundTypeParameter, Class<? extends Exception> expectedException, String expectedMessage) {
         this.klass = klass;
         this.typeParameter = typeParameter;
         this.bound = bound;
         this.boundTypeParameter = boundTypeParameter;
-        
+
         if (expectedException != null) {
             thrown.expect(expectedException);
             if (expectedMessage != null)
