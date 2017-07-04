@@ -4,6 +4,23 @@
 Release Notes
 #############
 
+.. _rel-1.1.2:
+
+v1.1.2 June 27 2017
+===================
+
+* Updated Jackson to 2.8.9. Fixes a security `vulnerability <https://github.com/FasterXML/jackson-databind/issues/1599>`_ with default typing `#2086 <https://github.com/dropwizard/dropwizard/issues/2086>`_
+* Use the correct `JsonFactory` in JSON configuration parsing `#2046 <https://github.com/dropwizard/dropwizard/issues/2046>`_
+* Support of extending of `DBIFactory` `#2067 <https://github.com/dropwizard/dropwizard/issues/2067>`_
+* Add time zone to Java 8 datetime mappers `#2069 <https://github.com/dropwizard/dropwizard/issues/2069>`_
+
+.. _rel-1.0.8:
+
+v1.0.8 June 27 2017
+===================
+
+* Updated Jackson to 2.7.9.1. Fixes a security `vulnerability <https://github.com/FasterXML/jackson-databind/issues/1599>`_ with default typing `#2087 <https://github.com/dropwizard/dropwizard/issues/2087>`_
+
 .. _rel-1.1.1:
 
 v1.1.1 May 19 2017
