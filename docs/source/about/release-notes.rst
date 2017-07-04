@@ -29,6 +29,35 @@ v1.2.0: Unreleased
 * Upgrade to SLF4J 1.7.25
 * Upgrade to tomcat-jdbc 8.5.15
 
+.. _rel-1.1.2:
+
+v1.1.2 June 27 2017
+===================
+
+* Updated Jackson to 2.8.9. Fixes a security `vulnerability <https://github.com/FasterXML/jackson-databind/issues/1599>`_ with default typing `#2086 <https://github.com/dropwizard/dropwizard/issues/2086>`_
+* Use the correct `JsonFactory` in JSON configuration parsing `#2046 <https://github.com/dropwizard/dropwizard/issues/2046>`_
+* Support of extending of `DBIFactory` `#2067 <https://github.com/dropwizard/dropwizard/issues/2067>`_
+* Add time zone to Java 8 datetime mappers `#2069 <https://github.com/dropwizard/dropwizard/issues/2069>`_
+
+.. _rel-1.0.8:
+
+v1.0.8 June 27 2017
+===================
+
+* Updated Jackson to 2.7.9.1. Fixes a security `vulnerability <https://github.com/FasterXML/jackson-databind/issues/1599>`_ with default typing `#2087 <https://github.com/dropwizard/dropwizard/issues/2087>`_
+
+.. _rel-1.1.1:
+
+v1.1.1 May 19 2017
+===================
+
+* Set the console logging context after a reset `#1973 <https://github.com/dropwizard/dropwizard/pull/1973>`_
+* Set logging context for file appenders before setting the buffer size `#1975 <https://github.com/dropwizard/dropwizard/pull/1975>`_
+* Remove javax.el from jersey-bean-validation `#1976 <https://github.com/dropwizard/dropwizard/pull/1976>`_
+* Exclude duplicated JTA 1.1 from dropwizard-hibernate dependencies `#1977 <https://github.com/dropwizard/dropwizard/pull/1977>`_
+* Add missing @UnwrapValidatedValue annotations `#1993 <https://github.com/dropwizard/dropwizard/pull/1993>`_
+* Fix HttpSessionListener.sessionDestroyed is not being called `#2032 <https://github.com/dropwizard/dropwizard/pull/2032>`_
+* Add flag to make ThreadNameFilter optional `#2014 <https://github.com/dropwizard/dropwizard/pull/2014>`_
 
 .. _rel-1.1.0:
 
