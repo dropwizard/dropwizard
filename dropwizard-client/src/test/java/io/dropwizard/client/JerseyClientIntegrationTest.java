@@ -8,6 +8,8 @@ import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
 import io.dropwizard.jackson.Jackson;
+import org.apache.http.client.HttpRequestRetryHandler;
+import org.apache.http.protocol.HttpContext;
 import org.glassfish.jersey.logging.LoggingFeature;
 import org.junit.After;
 import org.junit.Before;
@@ -156,11 +158,46 @@ public class JerseyClientIntegrationTest {
         postRequest(configuration);
     }
 
+    @Test
+    public void testRetryHandler() throws Exception {
+        httpServer.createContext("/register", httpExchange -> {
+            try {
+                Headers requestHeaders = httpExchange.getRequestHeaders();
+                assertThat(requestHeaders.get(TRANSFER_ENCODING)).containsExactly(CHUNKED);
+                assertThat(requestHeaders.get(HttpHeaders.CONTENT_LENGTH)).isNull();
+                assertThat(requestHeaders.get(HttpHeaders.CONTENT_ENCODING)).isNull();
+                assertThat(requestHeaders.get(HttpHeaders.ACCEPT_ENCODING)).isNull();
+
+                checkBody(httpExchange, false);
+
+                httpExchange.getResponseHeaders().add(HttpHeaders.CONTENT_TYPE, APPLICATION_JSON);
+                httpExchange.sendResponseHeaders(200, 0);
+                httpExchange.getResponseBody().write(JSON_TOKEN.getBytes(StandardCharsets.UTF_8));
+                httpExchange.getResponseBody().close();
+            } finally {
+                httpExchange.close();
+            }
+        });
+        httpServer.start();
+
+        JerseyClientConfiguration configuration = new JerseyClientConfiguration();
+        configuration.setGzipEnabled(false);
+        configuration.setGzipEnabledForRequests(false);
+
+        postRequest(configuration);
+    }
+
     private void postRequest(JerseyClientConfiguration configuration) {
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Client jersey = new JerseyClientBuilder(new MetricRegistry())
                 .using(executor, JSON_MAPPER)
                 .using(configuration)
+                .using(new HttpRequestRetryHandler() {
+                    @Override
+                    public boolean retryRequest(IOException e, int i, HttpContext httpContext) {
+                        return false;
+                    }
+                })
                 .build("jersey-test");
         Response response = jersey.target("http://127.0.0.1:" + httpServer.getAddress().getPort() + "/register")
                 .request()
