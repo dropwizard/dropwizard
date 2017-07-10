@@ -190,14 +190,12 @@ public class FileAppenderFactory<E extends DeferredProcessingAware> extends Abst
         this.bufferSize = bufferSize;
     }
 
-    public boolean isImmediateFlush()
-    {
+    public boolean isImmediateFlush() {
         return immediateFlush;
     }
 
     @JsonProperty
-    public void setImmediateFlush(boolean immediateFlush)
-    {
+    public void setImmediateFlush(boolean immediateFlush) {
         this.immediateFlush = immediateFlush;
     }
 
