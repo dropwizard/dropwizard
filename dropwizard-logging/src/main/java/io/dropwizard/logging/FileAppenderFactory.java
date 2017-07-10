@@ -128,6 +128,8 @@ public class FileAppenderFactory<E extends DeferredProcessingAware> extends Abst
     @MinSize(1)
     private Size bufferSize = Size.bytes(FileAppender.DEFAULT_BUFFER_SIZE);
 
+    private boolean immediateFlush = true;
+
     @JsonProperty
     public String getCurrentLogFilename() {
         return currentLogFilename;
@@ -188,6 +190,17 @@ public class FileAppenderFactory<E extends DeferredProcessingAware> extends Abst
         this.bufferSize = bufferSize;
     }
 
+    public boolean isImmediateFlush()
+    {
+        return immediateFlush;
+    }
+
+    @JsonProperty
+    public void setImmediateFlush(boolean immediateFlush)
+    {
+        this.immediateFlush = immediateFlush;
+    }
+
     @JsonIgnore
     @ValidationMethod(message = "must have archivedLogFilenamePattern if archive is true")
     public boolean isValidArchiveConfiguration() {
@@ -225,6 +238,7 @@ public class FileAppenderFactory<E extends DeferredProcessingAware> extends Abst
 
         final LayoutWrappingEncoder<E> layoutEncoder = new LayoutWrappingEncoder<>();
         layoutEncoder.setLayout(buildLayout(context, layoutFactory));
+        layoutEncoder.setImmediateFlush(immediateFlush);
         appender.setEncoder(layoutEncoder);
 
         appender.setPrudent(false);
