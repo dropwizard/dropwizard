@@ -177,7 +177,7 @@ public class FileAppenderFactoryTest {
         final Field maxFileSizeField = SizeAndTimeBasedRollingPolicy.class.getDeclaredField("maxFileSize");
         maxFileSizeField.setAccessible(true);
         final FileSize maxFileSize = (FileSize) maxFileSizeField.get(appender.getRollingPolicy());
-        assertThat(maxFileSize.getSize()).isEqualTo(1024L);
+        assertThat(maxFileSize.getSize()).isEqualTo(fileAppenderFactory.getMaxFileSize().toBytes());
     }
 
     @Test
@@ -276,18 +276,15 @@ public class FileAppenderFactoryTest {
         assertThat(fileAppender.isImmediateFlush()).isEqualTo(fileAppenderFactory.isImmediateFlush());
     }
 
-    private AsyncAppender buildAppender(FileAppenderFactory<ILoggingEvent> fileAppenderFactory, LoggerContext context)
-    {
+    private AsyncAppender buildAppender(FileAppenderFactory<ILoggingEvent> fileAppenderFactory, LoggerContext context) {
         return (AsyncAppender) fileAppenderFactory.build(context, "test", new DropwizardLayoutFactory(), new NullLevelFilterFactory<>(), new AsyncLoggingEventAppenderFactory());
     }
 
-    private AsyncAppender buildAppender(FileAppenderFactory<ILoggingEvent> fileAppenderFactory)
-    {
+    private AsyncAppender buildAppender(FileAppenderFactory<ILoggingEvent> fileAppenderFactory) {
         return buildAppender(fileAppenderFactory, new LoggerContext());
     }
 
-    private FileAppender<ILoggingEvent> getFileAppender(AsyncAppender asyncAppender)
-    {
+    private FileAppender<ILoggingEvent> getFileAppender(AsyncAppender asyncAppender) {
         return (FileAppender<ILoggingEvent>) asyncAppender.getAppender("file-appender");
     }
 }
