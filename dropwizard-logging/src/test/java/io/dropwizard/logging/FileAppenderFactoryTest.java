@@ -269,11 +269,11 @@ public class FileAppenderFactoryTest {
 
         fileAppenderFactory.setImmediateFlush(false);
         FileAppender<ILoggingEvent> fileAppender = getFileAppender(buildAppender(fileAppenderFactory));
-        assertThat(fileAppender.isImmediateFlush()).isFalse();
+        assertThat(fileAppender.isImmediateFlush()).isEqualTo(fileAppenderFactory.isImmediateFlush());
 
         fileAppenderFactory.setImmediateFlush(true);
         fileAppender = getFileAppender(buildAppender(fileAppenderFactory));
-        assertThat(fileAppender.isImmediateFlush()).isTrue();
+        assertThat(fileAppender.isImmediateFlush()).isEqualTo(fileAppenderFactory.isImmediateFlush());
     }
 
     private AsyncAppender buildAppender(FileAppenderFactory<ILoggingEvent> fileAppenderFactory, LoggerContext context)

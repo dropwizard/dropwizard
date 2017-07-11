@@ -265,48 +265,47 @@ public class FileAppenderFactory<E extends DeferredProcessingAware> extends Abst
         return wrapAsync(appender, asyncAppenderFactory);
     }
 
-    private void populateRollingFileAppender(final RollingFileAppender<E> appender, LoggerContext context)
-    {
+    private void populateRollingFileAppender(final RollingFileAppender<E> appender, LoggerContext context) {
         if (maxFileSize != null && !archivedLogFilenamePattern.contains("%d")) {
-			final FixedWindowRollingPolicy rollingPolicy = new FixedWindowRollingPolicy();
-			rollingPolicy.setContext(context);
-			rollingPolicy.setMaxIndex(getArchivedFileCount());
-			rollingPolicy.setFileNamePattern(getArchivedLogFilenamePattern());
-			rollingPolicy.setParent(appender);
-			rollingPolicy.start();
-			appender.setRollingPolicy(rollingPolicy);
+            final FixedWindowRollingPolicy rollingPolicy = new FixedWindowRollingPolicy();
+            rollingPolicy.setContext(context);
+            rollingPolicy.setMaxIndex(getArchivedFileCount());
+            rollingPolicy.setFileNamePattern(getArchivedLogFilenamePattern());
+            rollingPolicy.setParent(appender);
+            rollingPolicy.start();
+            appender.setRollingPolicy(rollingPolicy);
 
-			final SizeBasedTriggeringPolicy<E> triggeringPolicy = new SizeBasedTriggeringPolicy<>();
-			triggeringPolicy.setMaxFileSize(new FileSize(maxFileSize.toBytes()));
-			triggeringPolicy.setContext(context);
-			triggeringPolicy.start();
-			appender.setTriggeringPolicy(triggeringPolicy);
+            final SizeBasedTriggeringPolicy<E> triggeringPolicy = new SizeBasedTriggeringPolicy<>();
+            triggeringPolicy.setMaxFileSize(new FileSize(maxFileSize.toBytes()));
+            triggeringPolicy.setContext(context);
+            triggeringPolicy.start();
+            appender.setTriggeringPolicy(triggeringPolicy);
 
-		} else {
-			final TimeBasedRollingPolicy<E> rollingPolicy;
-			if (maxFileSize == null) {
-				rollingPolicy = new TimeBasedRollingPolicy<>();
+        } else {
+            final TimeBasedRollingPolicy<E> rollingPolicy;
+            if (maxFileSize == null) {
+                rollingPolicy = new TimeBasedRollingPolicy<>();
 
-				final TimeBasedFileNamingAndTriggeringPolicy<E> triggeringPolicy = new DefaultTimeBasedFileNamingAndTriggeringPolicy<>();
-				triggeringPolicy.setContext(context);
-				triggeringPolicy.setTimeBasedRollingPolicy(rollingPolicy);
-				appender.setTriggeringPolicy(triggeringPolicy);
-			} else {
-				// Creating a size and time policy does not need a separate triggering policy set
-				// on the appender because this policy registers the trigger policy
-				final SizeAndTimeBasedRollingPolicy<E> sizeAndTimeBasedRollingPolicy = new SizeAndTimeBasedRollingPolicy<>();
-				sizeAndTimeBasedRollingPolicy.setMaxFileSize(new FileSize(maxFileSize.toBytes()));
-				rollingPolicy = sizeAndTimeBasedRollingPolicy;
-			}
+                final TimeBasedFileNamingAndTriggeringPolicy<E> triggeringPolicy = new DefaultTimeBasedFileNamingAndTriggeringPolicy<>();
+                triggeringPolicy.setContext(context);
+                triggeringPolicy.setTimeBasedRollingPolicy(rollingPolicy);
+                appender.setTriggeringPolicy(triggeringPolicy);
+            } else {
+                // Creating a size and time policy does not need a separate triggering policy set
+                // on the appender because this policy registers the trigger policy
+                final SizeAndTimeBasedRollingPolicy<E> sizeAndTimeBasedRollingPolicy = new SizeAndTimeBasedRollingPolicy<>();
+                sizeAndTimeBasedRollingPolicy.setMaxFileSize(new FileSize(maxFileSize.toBytes()));
+                rollingPolicy = sizeAndTimeBasedRollingPolicy;
+            }
 
-			rollingPolicy.setContext(context);
-			rollingPolicy.setFileNamePattern(archivedLogFilenamePattern);
-			rollingPolicy.setMaxHistory(archivedFileCount);
+            rollingPolicy.setContext(context);
+            rollingPolicy.setFileNamePattern(archivedLogFilenamePattern);
+            rollingPolicy.setMaxHistory(archivedFileCount);
 
-			appender.setRollingPolicy(rollingPolicy);
+            appender.setRollingPolicy(rollingPolicy);
 
-			rollingPolicy.setParent(appender);
-			rollingPolicy.start();
-		}
+            rollingPolicy.setParent(appender);
+            rollingPolicy.start();
+        }
     }
 }
