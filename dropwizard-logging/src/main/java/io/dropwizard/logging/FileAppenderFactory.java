@@ -111,8 +111,8 @@ import javax.validation.constraints.Min;
  *         <td>{@code immediateFlush}</td>
  *         <td>{@code true}</td>
  *         <td>
- *             If set to true, log events will be immediate flushed to disk. Immediate flushing is safer, but
- *             it significantly degrades logging throughput.
+ *             If set to true, log events will be immediately flushed to disk. Immediate flushing is safer, but
+ *             it degrades logging throughput.
  *             See <a href="https://logback.qos.ch/manual/appenders.html#immediateFlush">the Logback documentation</a>
  *             for details.
  *         </td>
