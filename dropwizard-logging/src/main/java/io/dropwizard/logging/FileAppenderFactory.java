@@ -107,6 +107,16 @@ import javax.validation.constraints.Min;
  *             the default of 8KB to 256KB is reported to significantly reduce thread contention.
  *         </td>
  *     </tr>
+ *      <tr>
+ *         <td>{@code immediateFlush}</td>
+ *         <td>{@code true}</td>
+ *         <td>
+ *             If set to true, log events will be immediate flushed to disk. Immediate flushing is safer, but
+ *             it significantly degrades logging throughput.
+ *             See <a href="https://logback.qos.ch/manual/appenders.html#immediateFlush">the Logback documentation</a>
+ *             for details.
+ *         </td>
+ *     </tr>
  * </table>
  *
  * @see AbstractAppenderFactory
@@ -228,81 +238,75 @@ public class FileAppenderFactory<E extends DeferredProcessingAware> extends Abst
     @Override
     public Appender<E> build(LoggerContext context, String applicationName, LayoutFactory<E> layoutFactory,
                              LevelFilterFactory<E> levelFilterFactory, AsyncAppenderFactory<E> asyncAppenderFactory) {
-        final FileAppender<E> appender = buildAppender(context);
-        appender.setName("file-appender");
+        final FileAppender<E> appender = archive ? new RollingFileAppender<>() : new FileAppender<>();
 
-        appender.setAppend(true);
+        appender.setName("file-appender");
         appender.setContext(context);
+
+        appender.setFile(currentLogFilename);
+        appender.setBufferSize(new FileSize(bufferSize.toBytes()));
+        appender.setAppend(true);
+        appender.setPrudent(false);
+        appender.setImmediateFlush(immediateFlush);
 
         final LayoutWrappingEncoder<E> layoutEncoder = new LayoutWrappingEncoder<>();
         layoutEncoder.setLayout(buildLayout(context, layoutFactory));
-        layoutEncoder.setImmediateFlush(immediateFlush);
         appender.setEncoder(layoutEncoder);
 
-        appender.setPrudent(false);
+        if (archive) {
+            populateRollingFileAppender((RollingFileAppender<E>) appender, context);
+        }
+
         appender.addFilter(levelFilterFactory.build(threshold));
         getFilterFactories().forEach(f -> appender.addFilter(f.build()));
+
         appender.start();
 
         return wrapAsync(appender, asyncAppenderFactory);
     }
 
-    protected FileAppender<E> buildAppender(LoggerContext context) {
-        if (archive) {
-            final RollingFileAppender<E> appender = new RollingFileAppender<>();
-            appender.setContext(context);
-            appender.setFile(currentLogFilename);
-            appender.setBufferSize(new FileSize(bufferSize.toBytes()));
+    private void populateRollingFileAppender(final RollingFileAppender<E> appender, LoggerContext context)
+    {
+        if (maxFileSize != null && !archivedLogFilenamePattern.contains("%d")) {
+			final FixedWindowRollingPolicy rollingPolicy = new FixedWindowRollingPolicy();
+			rollingPolicy.setContext(context);
+			rollingPolicy.setMaxIndex(getArchivedFileCount());
+			rollingPolicy.setFileNamePattern(getArchivedLogFilenamePattern());
+			rollingPolicy.setParent(appender);
+			rollingPolicy.start();
+			appender.setRollingPolicy(rollingPolicy);
 
-            if (maxFileSize != null && !archivedLogFilenamePattern.contains("%d")) {
-                final FixedWindowRollingPolicy rollingPolicy = new FixedWindowRollingPolicy();
-                rollingPolicy.setContext(context);
-                rollingPolicy.setMaxIndex(getArchivedFileCount());
-                rollingPolicy.setFileNamePattern(getArchivedLogFilenamePattern());
-                rollingPolicy.setParent(appender);
-                rollingPolicy.start();
-                appender.setRollingPolicy(rollingPolicy);
+			final SizeBasedTriggeringPolicy<E> triggeringPolicy = new SizeBasedTriggeringPolicy<>();
+			triggeringPolicy.setMaxFileSize(new FileSize(maxFileSize.toBytes()));
+			triggeringPolicy.setContext(context);
+			triggeringPolicy.start();
+			appender.setTriggeringPolicy(triggeringPolicy);
 
-                final SizeBasedTriggeringPolicy<E> triggeringPolicy = new SizeBasedTriggeringPolicy<>();
-                triggeringPolicy.setMaxFileSize(new FileSize(maxFileSize.toBytes()));
-                triggeringPolicy.setContext(context);
-                triggeringPolicy.start();
-                appender.setTriggeringPolicy(triggeringPolicy);
+		} else {
+			final TimeBasedRollingPolicy<E> rollingPolicy;
+			if (maxFileSize == null) {
+				rollingPolicy = new TimeBasedRollingPolicy<>();
 
-                return appender;
-            } else {
-                final TimeBasedRollingPolicy<E> rollingPolicy;
-                if (maxFileSize == null) {
-                    rollingPolicy = new TimeBasedRollingPolicy<>();
+				final TimeBasedFileNamingAndTriggeringPolicy<E> triggeringPolicy = new DefaultTimeBasedFileNamingAndTriggeringPolicy<>();
+				triggeringPolicy.setContext(context);
+				triggeringPolicy.setTimeBasedRollingPolicy(rollingPolicy);
+				appender.setTriggeringPolicy(triggeringPolicy);
+			} else {
+				// Creating a size and time policy does not need a separate triggering policy set
+				// on the appender because this policy registers the trigger policy
+				final SizeAndTimeBasedRollingPolicy<E> sizeAndTimeBasedRollingPolicy = new SizeAndTimeBasedRollingPolicy<>();
+				sizeAndTimeBasedRollingPolicy.setMaxFileSize(new FileSize(maxFileSize.toBytes()));
+				rollingPolicy = sizeAndTimeBasedRollingPolicy;
+			}
 
-                    final TimeBasedFileNamingAndTriggeringPolicy<E> triggeringPolicy = new DefaultTimeBasedFileNamingAndTriggeringPolicy<>();
-                    triggeringPolicy.setContext(context);
-                    triggeringPolicy.setTimeBasedRollingPolicy(rollingPolicy);
-                    appender.setTriggeringPolicy(triggeringPolicy);
-                } else {
-                    // Creating a size and time policy does not need a separate triggering policy set
-                    // on the appender because this policy registers the trigger policy
-                    final SizeAndTimeBasedRollingPolicy<E> sizeAndTimeBasedRollingPolicy = new SizeAndTimeBasedRollingPolicy<>();
-                    sizeAndTimeBasedRollingPolicy.setMaxFileSize(new FileSize(maxFileSize.toBytes()));
-                    rollingPolicy = sizeAndTimeBasedRollingPolicy;
-                }
+			rollingPolicy.setContext(context);
+			rollingPolicy.setFileNamePattern(archivedLogFilenamePattern);
+			rollingPolicy.setMaxHistory(archivedFileCount);
 
-                rollingPolicy.setContext(context);
-                rollingPolicy.setFileNamePattern(archivedLogFilenamePattern);
-                rollingPolicy.setMaxHistory(archivedFileCount);
+			appender.setRollingPolicy(rollingPolicy);
 
-                appender.setRollingPolicy(rollingPolicy);
-
-                rollingPolicy.setParent(appender);
-                rollingPolicy.start();
-                return appender;
-            }
-        }
-
-        final FileAppender<E> appender = new FileAppender<>();
-        appender.setContext(context);
-        appender.setFile(currentLogFilename);
-        appender.setBufferSize(new FileSize(bufferSize.toBytes()));
-        return appender;
+			rollingPolicy.setParent(appender);
+			rollingPolicy.start();
+		}
     }
 }
