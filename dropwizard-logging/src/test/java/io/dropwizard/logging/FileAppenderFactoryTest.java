@@ -6,6 +6,7 @@ import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.FileAppender;
+import ch.qos.logback.core.OutputStreamAppender;
 import ch.qos.logback.core.rolling.FixedWindowRollingPolicy;
 import ch.qos.logback.core.rolling.RollingFileAppender;
 import ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy;
@@ -55,22 +56,28 @@ public class FileAppenderFactoryTest {
     public void includesCallerData() {
         FileAppenderFactory<ILoggingEvent> fileAppenderFactory = new FileAppenderFactory<>();
         fileAppenderFactory.setArchive(false);
-        AsyncAppender asyncAppender = buildAppender(fileAppenderFactory);
+        AsyncAppender asyncAppender = (AsyncAppender) fileAppenderFactory.build(new LoggerContext(), "test", new DropwizardLayoutFactory(), new NullLevelFilterFactory<>(), new AsyncLoggingEventAppenderFactory());
         assertThat(asyncAppender.isIncludeCallerData()).isFalse();
 
         fileAppenderFactory.setIncludeCallerData(true);
-        asyncAppender = buildAppender(fileAppenderFactory);
+        asyncAppender = (AsyncAppender) fileAppenderFactory.build(new LoggerContext(), "test", new DropwizardLayoutFactory(), new NullLevelFilterFactory<>(), new AsyncLoggingEventAppenderFactory());
         assertThat(asyncAppender.isIncludeCallerData()).isTrue();
     }
 
     @Test
     public void isRolling() throws Exception {
-        FileAppenderFactory<ILoggingEvent> fileAppenderFactory = new FileAppenderFactory<>();
+        // the method we want to test is protected, so we need to override it so we can see it
+        FileAppenderFactory fileAppenderFactory = new FileAppenderFactory<ILoggingEvent>() {
+            @Override
+            public FileAppender<ILoggingEvent> buildAppender(LoggerContext context) {
+                return super.buildAppender(context);
+            }
+        };
 
         fileAppenderFactory.setCurrentLogFilename(folder.newFile("logfile.log").toString());
         fileAppenderFactory.setArchive(true);
         fileAppenderFactory.setArchivedLogFilenamePattern(folder.newFile("example-%d.log.gz").toString());
-        assertThat(getFileAppender(buildAppender(fileAppenderFactory))).isInstanceOf(RollingFileAppender.class);
+        assertThat(fileAppenderFactory.buildAppender(new LoggerContext())).isInstanceOf(RollingFileAppender.class);
     }
 
     @Test
@@ -89,14 +96,14 @@ public class FileAppenderFactoryTest {
 
     @Test
     public void isValidForInfiniteRolledFiles() throws Exception {
-        FileAppenderFactory<ILoggingEvent> fileAppenderFactory = new FileAppenderFactory<>();
+        FileAppenderFactory fileAppenderFactory = new FileAppenderFactory();
         fileAppenderFactory.setCurrentLogFilename(folder.newFile("logfile.log").toString());
         fileAppenderFactory.setArchivedFileCount(0);
         fileAppenderFactory.setArchivedLogFilenamePattern(folder.newFile("example-%d.log.gz").toString());
         ImmutableList<String> errors =
             ConstraintViolations.format(validator.validate(fileAppenderFactory));
         assertThat(errors).isEmpty();
-        assertThat(buildAppender(fileAppenderFactory)).isNotNull();
+        assertThat(fileAppenderFactory.buildAppender(new LoggerContext())).isNotNull();
     }
 
     @Test
@@ -156,9 +163,9 @@ public class FileAppenderFactoryTest {
     public void testCurrentLogFileNameIsEmptyAndAppenderUsesArchivedNameInstead() throws Exception {
         final FileAppenderFactory<ILoggingEvent> appenderFactory = new FileAppenderFactory<>();
         appenderFactory.setArchivedLogFilenamePattern(folder.newFile("test-archived-name-%d.log").toString());
-        final FileAppender<ILoggingEvent> fileAppender = getFileAppender(buildAppender(appenderFactory));
+        final FileAppender<ILoggingEvent> rollingAppender = appenderFactory.buildAppender(new LoggerContext());
 
-        final String file = fileAppender.getFile();
+        final String file = rollingAppender.getFile();
         final String dateSuffix = LocalDateTime.now().format(DateTimeFormatter.ofPattern("YYYY-MM-dd"));
         final String name = Files.getNameWithoutExtension(file);
         Assert.assertEquals("test-archived-name-" + dateSuffix, name);
@@ -166,28 +173,28 @@ public class FileAppenderFactoryTest {
 
     @Test
     public void hasMaxFileSize() throws Exception {
-        FileAppenderFactory<ILoggingEvent> fileAppenderFactory = new FileAppenderFactory<>();
+        FileAppenderFactory fileAppenderFactory = new FileAppenderFactory();
         fileAppenderFactory.setCurrentLogFilename(folder.newFile("logfile.log").toString());
         fileAppenderFactory.setArchive(true);
         fileAppenderFactory.setMaxFileSize(Size.kilobytes(1));
         fileAppenderFactory.setArchivedLogFilenamePattern(folder.newFile("example-%d-%i.log.gz").toString());
-        RollingFileAppender<ILoggingEvent> appender = (RollingFileAppender<ILoggingEvent>) getFileAppender(buildAppender(fileAppenderFactory));
+        RollingFileAppender<ILoggingEvent> appender = (RollingFileAppender<ILoggingEvent>) fileAppenderFactory.buildAppender(new LoggerContext());
 
         assertThat(appender.getTriggeringPolicy()).isInstanceOf(SizeAndTimeBasedRollingPolicy.class);
         final Field maxFileSizeField = SizeAndTimeBasedRollingPolicy.class.getDeclaredField("maxFileSize");
         maxFileSizeField.setAccessible(true);
         final FileSize maxFileSize = (FileSize) maxFileSizeField.get(appender.getRollingPolicy());
-        assertThat(maxFileSize.getSize()).isEqualTo(fileAppenderFactory.getMaxFileSize().toBytes());
+        assertThat(maxFileSize.getSize()).isEqualTo(1024L);
     }
 
     @Test
     public void hasMaxFileSizeFixedWindow() throws Exception {
-        FileAppenderFactory<ILoggingEvent> fileAppenderFactory = new FileAppenderFactory<>();
+        FileAppenderFactory fileAppenderFactory = new FileAppenderFactory();
         fileAppenderFactory.setCurrentLogFilename(folder.newFile("logfile.log").toString());
         fileAppenderFactory.setArchive(true);
         fileAppenderFactory.setMaxFileSize(Size.kilobytes(1));
         fileAppenderFactory.setArchivedLogFilenamePattern(folder.newFile("example-%i.log.gz").toString());
-        RollingFileAppender<ILoggingEvent> appender = (RollingFileAppender<ILoggingEvent>) getFileAppender(buildAppender(fileAppenderFactory));
+        RollingFileAppender<ILoggingEvent> appender = (RollingFileAppender<ILoggingEvent>) fileAppenderFactory.buildAppender(new LoggerContext());
 
         assertThat(appender.getRollingPolicy()).isInstanceOf(FixedWindowRollingPolicy.class);
         assertThat(appender.getRollingPolicy().isStarted()).isTrue();
@@ -225,7 +232,7 @@ public class FileAppenderFactoryTest {
         FileAppenderFactory<ILoggingEvent> fileAppenderFactory = new FileAppenderFactory<>();
         fileAppenderFactory.setArchive(false);
         fileAppenderFactory.setNeverBlock(true);
-        AsyncAppender asyncAppender = buildAppender(fileAppenderFactory);
+        AsyncAppender asyncAppender = (AsyncAppender) fileAppenderFactory.build(new LoggerContext(), "test", new DropwizardLayoutFactory(), new NullLevelFilterFactory<>(), new AsyncLoggingEventAppenderFactory());
 
         assertThat(asyncAppender.isNeverBlock()).isTrue();
     }
@@ -235,7 +242,7 @@ public class FileAppenderFactoryTest {
         FileAppenderFactory<ILoggingEvent> fileAppenderFactory = new FileAppenderFactory<>();
         fileAppenderFactory.setArchive(false);
         fileAppenderFactory.setNeverBlock(false);
-        AsyncAppender asyncAppender = buildAppender(fileAppenderFactory);
+        AsyncAppender asyncAppender = (AsyncAppender) fileAppenderFactory.build(new LoggerContext(), "test", new DropwizardLayoutFactory(), new NullLevelFilterFactory<>(), new AsyncLoggingEventAppenderFactory());
 
         assertThat(asyncAppender.isNeverBlock()).isFalse();
     }
@@ -245,7 +252,7 @@ public class FileAppenderFactoryTest {
         FileAppenderFactory<ILoggingEvent> fileAppenderFactory = new FileAppenderFactory<>();
         fileAppenderFactory.setArchive(false);
         // default neverBlock
-        AsyncAppender asyncAppender = buildAppender(fileAppenderFactory);
+        AsyncAppender asyncAppender = (AsyncAppender) fileAppenderFactory.build(new LoggerContext(), "test", new DropwizardLayoutFactory(), new NullLevelFilterFactory<>(), new AsyncLoggingEventAppenderFactory());
 
         assertThat(asyncAppender.isNeverBlock()).isFalse();
     }
@@ -255,7 +262,9 @@ public class FileAppenderFactoryTest {
         FileAppenderFactory<ILoggingEvent> fileAppenderFactory = new FileAppenderFactory<>();
         fileAppenderFactory.setArchive(false);
         fileAppenderFactory.setBufferSize(Size.kilobytes(256));
-        final FileAppender<ILoggingEvent> fileAppender = getFileAppender(buildAppender(fileAppenderFactory));
+        AsyncAppender asyncAppender = (AsyncAppender) fileAppenderFactory.build(new LoggerContext(), "test", new DropwizardLayoutFactory(), new NullLevelFilterFactory<>(), new AsyncLoggingEventAppenderFactory());
+        final Appender<ILoggingEvent> fileAppender = asyncAppender.getAppender("file-appender");
+        assertThat(fileAppender).isInstanceOf(FileAppender.class);
         final Field bufferSizeField = FileAppender.class.getDeclaredField("bufferSize");
         bufferSizeField.setAccessible(true);
         FileSize bufferSizeFromAppender = (FileSize) bufferSizeField.get(fileAppender);
@@ -267,24 +276,17 @@ public class FileAppenderFactoryTest {
         FileAppenderFactory<ILoggingEvent> fileAppenderFactory = new FileAppenderFactory<>();
         fileAppenderFactory.setArchive(false);
 
+        Field isImmediateFlushField = OutputStreamAppender.class.getDeclaredField("immediateFlush");
+        isImmediateFlushField.setAccessible(true);
+
         fileAppenderFactory.setImmediateFlush(false);
-        FileAppender<ILoggingEvent> fileAppender = getFileAppender(buildAppender(fileAppenderFactory));
-        assertThat(fileAppender.isImmediateFlush()).isEqualTo(fileAppenderFactory.isImmediateFlush());
+        AsyncAppender asyncAppender = (AsyncAppender) fileAppenderFactory.build(new LoggerContext(), "test", new DropwizardLayoutFactory(), new NullLevelFilterFactory<>(), new AsyncLoggingEventAppenderFactory());
+        Appender<ILoggingEvent> fileAppender = asyncAppender.getAppender("file-appender");
+        assertThat((Boolean) isImmediateFlushField.get(fileAppender)).isEqualTo(fileAppenderFactory.isImmediateFlush());
 
         fileAppenderFactory.setImmediateFlush(true);
-        fileAppender = getFileAppender(buildAppender(fileAppenderFactory));
-        assertThat(fileAppender.isImmediateFlush()).isEqualTo(fileAppenderFactory.isImmediateFlush());
-    }
-
-    private AsyncAppender buildAppender(FileAppenderFactory<ILoggingEvent> fileAppenderFactory, LoggerContext context) {
-        return (AsyncAppender) fileAppenderFactory.build(context, "test", new DropwizardLayoutFactory(), new NullLevelFilterFactory<>(), new AsyncLoggingEventAppenderFactory());
-    }
-
-    private AsyncAppender buildAppender(FileAppenderFactory<ILoggingEvent> fileAppenderFactory) {
-        return buildAppender(fileAppenderFactory, new LoggerContext());
-    }
-
-    private FileAppender<ILoggingEvent> getFileAppender(AsyncAppender asyncAppender) {
-        return (FileAppender<ILoggingEvent>) asyncAppender.getAppender("file-appender");
+        asyncAppender = (AsyncAppender) fileAppenderFactory.build(new LoggerContext(), "test", new DropwizardLayoutFactory(), new NullLevelFilterFactory<>(), new AsyncLoggingEventAppenderFactory());
+        fileAppender = asyncAppender.getAppender("file-appender");
+        assertThat((Boolean) isImmediateFlushField.get(fileAppender)).isEqualTo(fileAppenderFactory.isImmediateFlush());
     }
 }
