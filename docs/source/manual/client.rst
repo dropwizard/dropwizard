@@ -216,3 +216,46 @@ By allowing Dropwizard to create the rx-client, the same thread pool that is uti
 synchronous and asynchronous requests, is used for rx requests.
 
 .. _rx-clients: https://jersey.github.io/documentation/2.24/rx-client.html
+
+Proxy Authentication
+--------------------
+
+The client can utilise a forward proxy, supporting both Basic and NTLM authentication schemes. 
+Basic Auth against a proxy is simple:
+
+.. code-block:: yaml
+ 
+     proxy:
+          host: '192.168.52.11'
+          port: 8080
+          scheme : 'https'
+          auth:
+            username: 'secret'
+            password: 'stuff'
+          nonProxyHosts:
+            - 'localhost'
+            - '192.168.52.*'
+            - '*.example.com'   
+
+NTLM Auth is configured by setting the the relevant windows properties. 
+
+.. code-block:: yaml
+
+     proxy:
+          host: '192.168.52.11'
+          port: 8080
+          scheme : 'https'
+          auth:
+            username: 'secret'
+            password: 'stuff'
+            authScheme: 'NTLM'
+            realm: 'realm'                    # optional, defaults to ANY_REALM
+            hostname: 'workstation'           # optional, defaults to null but may be required depending on your AD environment
+            domain: 'HYPERCOMPUGLOBALMEGANET' # optional, defaults to null but may be required depending on your AD environment
+            credentialType: 'NT'
+          nonProxyHosts:
+            - 'localhost'
+            - '192.168.52.*'
+            - '*.example.com'   
+
+

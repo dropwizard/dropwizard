@@ -1,0 +1,15 @@
+{
+	"name": "Migty Wizard",
+	/*This is a comment*/
+	"type": [
+		"wizard"
+	],
+	"properties": {
+		"admin": true
+	},
+	"servers": [
+		{
+			"port": 8080
+		}
+	]
+}

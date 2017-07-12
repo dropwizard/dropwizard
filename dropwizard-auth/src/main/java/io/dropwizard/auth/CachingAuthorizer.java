@@ -3,12 +3,16 @@ package io.dropwizard.auth;
 import com.codahale.metrics.Meter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
+import com.google.common.base.Throwables;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheBuilderSpec;
+import com.google.common.cache.CacheLoader;
 import com.google.common.cache.CacheStats;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
+import com.google.common.util.concurrent.UncheckedExecutionException;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
 import java.security.Principal;
@@ -39,7 +43,7 @@ public class CachingAuthorizer<P extends Principal> implements Authorizer<P> {
     //
     // `null` cache values are interpreted as cache misses, and will
     // thus result in read through to the underlying `Authorizer`.
-    private final Cache<ImmutablePair<P, String>, Boolean> cache;
+    private final LoadingCache<ImmutablePair<P, String>, Boolean> cache;
 
     /**
      * Creates a new cached authorizer.
@@ -71,7 +75,13 @@ public class CachingAuthorizer<P extends Principal> implements Authorizer<P> {
         this.underlying = authorizer;
         this.cacheMisses = metricRegistry.meter(name(authorizer.getClass(), "cache-misses"));
         this.getsTimer = metricRegistry.timer(name(authorizer.getClass(), "gets"));
-        this.cache = builder.recordStats().build();
+        this.cache = builder.recordStats().build(new CacheLoader<ImmutablePair<P, String>, Boolean>() {
+            @Override
+            public Boolean load(ImmutablePair<P, String> key) throws Exception {
+                cacheMisses.mark();
+                return underlying.authorize(key.left, key.right);
+            }
+        });
     }
 
     @Override
@@ -80,15 +90,10 @@ public class CachingAuthorizer<P extends Principal> implements Authorizer<P> {
 
         try {
             final ImmutablePair<P, String> cacheKey = ImmutablePair.of(principal, role);
-            Boolean isAuthorized = cache.getIfPresent(cacheKey);
-
-            if (isAuthorized == null) {
-                cacheMisses.mark();
-                isAuthorized = underlying.authorize(principal, role);
-                cache.put(cacheKey, isAuthorized);
-            }
-
-            return isAuthorized;
+            return cache.getUnchecked(cacheKey);
+        } catch (UncheckedExecutionException e) {
+            Throwables.throwIfUnchecked(e.getCause());
+            throw e;
         } finally {
             context.stop();
         }

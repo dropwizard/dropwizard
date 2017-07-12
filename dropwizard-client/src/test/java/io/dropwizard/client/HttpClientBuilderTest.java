@@ -30,6 +30,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.ProtocolException;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.Credentials;
+import org.apache.http.auth.NTCredentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.HttpRequestRetryHandler;
@@ -468,7 +469,7 @@ public class HttpClientBuilderTest {
     }
 
     @Test
-    public void usesProxyWithAuth() throws Exception {
+    public void usesProxyWithBasicAuth() throws Exception {
         HttpClientConfiguration config = new HttpClientConfiguration();
         AuthConfiguration auth = new AuthConfiguration("secret", "stuff");
         ProxyConfiguration proxy = new ProxyConfiguration("192.168.52.11", 8080, "http", auth);
@@ -482,6 +483,26 @@ public class HttpClientBuilderTest {
 
         assertThat(credentialsProvider.getCredentials(new AuthScope("192.168.52.11", 8080)))
                 .isEqualTo(new UsernamePasswordCredentials("secret", "stuff"));
+    }
+
+    @Test
+    public void usesProxyWithNtlmAuth() throws Exception {
+        HttpClientConfiguration config = new HttpClientConfiguration();
+        AuthConfiguration auth = new AuthConfiguration("secret", "stuff", "NTLM", "realm", "host", "domain", "NT");
+        ProxyConfiguration proxy = new ProxyConfiguration("192.168.52.11", 8080, "http", auth);
+        config.setProxyConfiguration(proxy);
+
+        CloseableHttpClient httpClient = checkProxy(config, new HttpHost("dropwizard.io", 80),
+                new HttpHost("192.168.52.11", 8080, "http"));
+        CredentialsProvider credentialsProvider = (CredentialsProvider)
+                FieldUtils.getField(httpClient.getClass(), "credentialsProvider", true)
+                        .get(httpClient);
+
+        AuthScope authScope = new AuthScope("192.168.52.11", 8080, "realm", "NTLM");
+        Credentials credentials = new NTCredentials("secret", "stuff", "host", "domain");
+
+        assertThat(credentialsProvider.getCredentials(authScope))
+                .isEqualTo(credentials);
     }
 
     @Test
@@ -663,6 +684,26 @@ public class HttpClientBuilderTest {
         assertThat(builder.customized).isFalse();
         ConfiguredCloseableHttpClient client = builder.createClient(apacheBuilder, connectionManager, "test");
         assertThat(builder.customized).isTrue();
+    }
+
+    @Test
+    public void configureCredentialReturnsNTCredentialsForNTLMConfig() throws Exception {
+        AuthConfiguration ntlmConfig = new AuthConfiguration("username", "password", "NTLM", "realm", "hostname", "domain", "NT");
+
+        Credentials credentials = builder.configureCredentials(ntlmConfig);
+        assertThat(credentials).isInstanceOf(NTCredentials.class);
+        assertThat(credentials.getPassword()).isEqualTo("password");
+        assertThat(credentials.getUserPrincipal().getName()).isEqualTo("DOMAIN\\username");
+    }
+
+    @Test
+    public void configureCredentialReturnsNTCredentialsForBasicConfig() throws Exception {
+        AuthConfiguration ntlmConfig = new AuthConfiguration("username", "password");
+
+        Credentials credentials = builder.configureCredentials(ntlmConfig);
+        assertThat(credentials).isInstanceOf(UsernamePasswordCredentials.class);
+        assertThat(credentials.getPassword()).isEqualTo("password");
+        assertThat(credentials.getUserPrincipal().getName()).isEqualTo("username");
     }
 
     private Object spyHttpClientBuilderField(final String fieldName, final Object obj) throws Exception {

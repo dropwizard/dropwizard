@@ -19,6 +19,8 @@ import org.apache.http.Header;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.Credentials;
+import org.apache.http.auth.NTCredentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.HttpClient;
@@ -348,10 +350,16 @@ public class HttpClientBuilder {
                 if (credentialsProvider == null) {
                     credentialsProvider = new BasicCredentialsProvider();
                 }
-                credentialsProvider.setCredentials(new AuthScope(httpHost),
-                        new UsernamePasswordCredentials(auth.getUsername(), auth.getPassword()));
+                // set the AuthScope
+                AuthScope authScope = new AuthScope(httpHost, auth.getRealm(), auth.getAuthScheme());
+
+                // set the credentials type
+                Credentials credentials = configureCredentials(auth);
+
+                credentialsProvider.setCredentials(authScope, credentials);
             }
         }
+
 
         if (credentialsProvider != null) {
             builder.setDefaultCredentialsProvider(credentialsProvider);
@@ -453,5 +461,20 @@ public class HttpClientBuilder {
         connectionManager.setMaxTotal(configuration.getMaxConnections());
         connectionManager.setValidateAfterInactivity((int) configuration.getValidateAfterInactivityPeriod().toMilliseconds());
         return connectionManager;
+    }
+
+    /**
+     * determine the Credentials implementation to use
+     * @param auth
+     * @return a {@code Credentials} instance, either {{@link UsernamePasswordCredentials} or {@link NTCredentials}}
+     */
+    protected Credentials configureCredentials(AuthConfiguration auth) {
+
+        if (null != auth.getCredentialType() && auth.getCredentialType().equalsIgnoreCase(AuthConfiguration.NT_CREDS)) {
+            return new NTCredentials(auth.getUsername(), auth.getPassword(), auth.getHostname(), auth.getDomain());
+        } else {
+            return new UsernamePasswordCredentials(auth.getUsername(), auth.getPassword());
+        }
+
     }
 }
