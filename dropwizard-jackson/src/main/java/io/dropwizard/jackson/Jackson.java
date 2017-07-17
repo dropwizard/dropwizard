@@ -59,8 +59,8 @@ public class Jackson {
         mapper.registerModule(new AfterburnerModule());
         mapper.registerModule(new FuzzyEnumModule());
         mapper.registerModule(new ParameterNamesModule());
-        mapper.registerModules(new Jdk8Module());
-        mapper.registerModules(new JavaTimeModule());
+        mapper.registerModule(new Jdk8Module());
+        mapper.registerModule(new JavaTimeModule());
         mapper.setPropertyNamingStrategy(new AnnotationSensitivePropertyNamingStrategy());
         mapper.setSubtypeResolver(new DiscoverableSubtypeResolver());
 
