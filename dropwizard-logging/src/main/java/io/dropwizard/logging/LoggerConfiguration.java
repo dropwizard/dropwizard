@@ -1,6 +1,5 @@
 package io.dropwizard.logging;
 
-import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import com.google.common.collect.ImmutableList;
@@ -15,7 +14,7 @@ import java.util.List;
 public class LoggerConfiguration {
 
     @NotNull
-    private Level level = Level.INFO;
+    private String level = "INFO";
 
     @Valid
     @NotNull
@@ -31,11 +30,11 @@ public class LoggerConfiguration {
         this.additive = additive;
     }
 
-    public Level getLevel() {
+    public String getLevel() {
         return level;
     }
 
-    public void setLevel(Level level) {
+    public void setLevel(String level) {
         this.level = level;
     }
 

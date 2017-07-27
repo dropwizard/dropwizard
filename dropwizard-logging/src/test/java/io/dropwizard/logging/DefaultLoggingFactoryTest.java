@@ -1,6 +1,5 @@
 package io.dropwizard.logging;
 
-import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -53,7 +52,7 @@ public class DefaultLoggingFactoryTest {
 
     @Test
     public void hasADefaultLevel() throws Exception {
-        assertThat(config.getLevel()).isEqualTo(Level.INFO);
+        assertThat(config.getLevel()).isEqualTo("INFO");
     }
 
     @Test
@@ -66,7 +65,7 @@ public class DefaultLoggingFactoryTest {
         final JsonNode newApp = config.getLoggers().get("com.example.newApp");
         assertThat(newApp).isNotNull();
         final LoggerConfiguration newAppConfiguration = objectMapper.treeToValue(newApp, LoggerConfiguration.class);
-        assertThat(newAppConfiguration.getLevel()).isEqualTo(Level.DEBUG);
+        assertThat(newAppConfiguration.getLevel()).isEqualTo("DEBUG");
         assertThat(newAppConfiguration.getAppenders()).hasSize(1);
         final AppenderFactory<ILoggingEvent> appenderFactory = newAppConfiguration.getAppenders().get(0);
         assertThat(appenderFactory).isInstanceOf(FileAppenderFactory.class);
@@ -83,7 +82,7 @@ public class DefaultLoggingFactoryTest {
         final JsonNode legacyApp = config.getLoggers().get("com.example.legacyApp");
         assertThat(legacyApp).isNotNull();
         final LoggerConfiguration legacyAppConfiguration = objectMapper.treeToValue(legacyApp, LoggerConfiguration.class);
-        assertThat(legacyAppConfiguration.getLevel()).isEqualTo(Level.DEBUG);
+        assertThat(legacyAppConfiguration.getLevel()).isEqualTo("DEBUG");
         // We should not create additional appenders, if they are not specified
         assertThat(legacyAppConfiguration.getAppenders()).isEmpty();
     }
