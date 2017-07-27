@@ -126,13 +126,13 @@ public abstract class AbstractAppenderFactory<E extends DeferredProcessingAware>
     }
 
     @JsonProperty
-    public Level getThreshold() {
-        return threshold;
+    public String getThreshold() {
+        return threshold.toString();
     }
 
     @JsonProperty
-    public void setThreshold(Level threshold) {
-        this.threshold = threshold;
+    public void setThreshold(String threshold) {
+        this.threshold = DefaultLoggingFactory.toLevel(threshold);
     }
 
     @JsonProperty

@@ -278,7 +278,7 @@ public class DefaultLoggingFactory implements LoggingFactory {
         return root;
     }
 
-    private static Level toLevel(@Nullable String text) {
+    static Level toLevel(@Nullable String text) {
         // required because YAML maps "off" to a boolean false
         if ("false".equalsIgnoreCase(text)) {
             // required because YAML maps "off" to a boolean false
