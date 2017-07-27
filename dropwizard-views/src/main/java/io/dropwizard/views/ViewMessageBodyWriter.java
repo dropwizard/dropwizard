@@ -3,6 +3,7 @@ package io.dropwizard.views;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
 import com.google.common.annotations.VisibleForTesting;
+import org.glassfish.jersey.message.internal.HeaderValueException;
 
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
@@ -10,6 +11,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.MessageBodyWriter;
 import javax.ws.rs.ext.Provider;
 import java.io.IOException;
@@ -80,8 +82,15 @@ public class ViewMessageBodyWriter implements MessageBodyWriter<View> {
         }
     }
 
-    private Locale detectLocale(HttpHeaders headers) {
-        final List<Locale> languages = headers.getAcceptableLanguages();
+    @VisibleForTesting
+    Locale detectLocale(HttpHeaders headers) {
+        final List<Locale> languages;
+        try {
+            languages = headers.getAcceptableLanguages();
+        } catch (HeaderValueException e) {
+            throw new WebApplicationException(e.getMessage(), Response.Status.BAD_REQUEST);
+        }
+
         for (Locale locale : languages) {
             if (!locale.toString().contains("*")) { // Freemarker doesn't do wildcards well
                 return locale;
