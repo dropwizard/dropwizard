@@ -30,6 +30,7 @@ import io.dropwizard.logging.filter.ThresholdLevelFilterFactory;
 import io.dropwizard.logging.layout.DropwizardLayoutFactory;
 import io.dropwizard.logging.layout.LayoutFactory;
 
+import javax.annotation.Nullable;
 import javax.management.InstanceAlreadyExistsException;
 import javax.management.MBeanRegistrationException;
 import javax.management.MBeanServer;
@@ -53,7 +54,7 @@ public class DefaultLoggingFactory implements LoggingFactory {
     private static final ReentrantLock CHANGE_LOGGER_CONTEXT_LOCK = new ReentrantLock();
 
     @NotNull
-    private Level level = Level.INFO;
+    private String level = "INFO";
 
     @NotNull
     private ImmutableMap<String, JsonNode> loggers = ImmutableMap.of();
@@ -91,12 +92,12 @@ public class DefaultLoggingFactory implements LoggingFactory {
     }
 
     @JsonProperty
-    public Level getLevel() {
+    public String getLevel() {
         return level;
     }
 
     @JsonProperty
-    public void setLevel(Level level) {
+    public void setLevel(String level) {
         this.level = level;
     }
 
@@ -243,7 +244,7 @@ public class DefaultLoggingFactory implements LoggingFactory {
 
         loggerContext.addListener(propagator);
 
-        root.setLevel(level);
+        root.setLevel(toLevel(level));
 
         final LevelFilterFactory<ILoggingEvent> levelFilterFactory = new ThresholdLevelFilterFactory();
         final AsyncAppenderFactory<ILoggingEvent> asyncAppenderFactory = new AsyncLoggingEventAppenderFactory();
@@ -263,7 +264,7 @@ public class DefaultLoggingFactory implements LoggingFactory {
                 } catch (JsonProcessingException e) {
                     throw new IllegalArgumentException("Wrong format of logger '" + entry.getKey() + "'", e);
                 }
-                logger.setLevel(configuration.getLevel());
+                logger.setLevel(toLevel(configuration.getLevel()));
                 logger.setAdditive(configuration.isAdditive());
 
                 for (AppenderFactory<ILoggingEvent> appender : configuration.getAppenders()) {
@@ -275,6 +276,18 @@ public class DefaultLoggingFactory implements LoggingFactory {
         }
 
         return root;
+    }
+
+    static Level toLevel(@Nullable String text) {
+        // required because YAML maps "off" to a boolean false
+        if ("false".equalsIgnoreCase(text)) {
+            // required because YAML maps "off" to a boolean false
+            return Level.OFF;
+        } else if ("true".equalsIgnoreCase(text)) {
+            // required because YAML maps "on" to a boolean true
+            return Level.ALL;
+        }
+        return Level.toLevel(text, Level.INFO);
     }
 
     @Override
