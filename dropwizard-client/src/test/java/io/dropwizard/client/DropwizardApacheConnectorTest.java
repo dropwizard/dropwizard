@@ -28,6 +28,7 @@ import org.glassfish.jersey.client.JerseyClient;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.ClassRule;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -124,6 +125,7 @@ public class DropwizardApacheConnectorTest {
      * <p>Now, (1) and (2) can hold at the same time if then connect_timeout update was successful.</p>
      */
     @Test
+    @Ignore("Flaky, timeout jumps over the treshold")
     public void connect_timeout_override_changes_how_long_it_takes_for_a_connection_to_timeout() {
         // before override
         WebTarget target = client.target(NON_ROUTABLE_ADDRESS);
