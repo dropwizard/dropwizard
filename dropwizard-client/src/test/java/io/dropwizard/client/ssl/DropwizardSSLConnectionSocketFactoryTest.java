@@ -10,6 +10,7 @@ import java.net.SocketException;
 import java.util.Optional;
 
 import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLException;
 import javax.net.ssl.SSLHandshakeException;
 import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.net.ssl.SSLSession;
@@ -214,10 +215,10 @@ public class DropwizardSSLConnectionSocketFactoryTest {
             client.target(String.format("https://localhost:%d", TLS_APP_RULE.getPort(4))).request().get();
             fail("expected ProcessingException");
         } catch (ProcessingException e) {
-            assertThat(e.getCause()).isInstanceOfAny(SocketException.class, SSLHandshakeException.class);
+            assertThat(e.getCause()).isInstanceOfAny(SocketException.class, SSLException.class);
         }
     }
-    
+
     private static class FailVerifier implements HostnameVerifier {
         @Override
         public boolean verify(String arg0, SSLSession arg1) {
