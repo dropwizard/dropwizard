@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
 import io.dropwizard.jersey.AbstractJerseyTest;
 import io.dropwizard.jersey.DropwizardResourceConfig;
+import io.dropwizard.jersey.errors.LoggingExceptionMapper;
 import org.glassfish.jersey.client.ClientConfig;
 import org.junit.Test;
 
@@ -21,7 +22,8 @@ public class JsonProcessingExceptionMapperTest extends AbstractJerseyTest {
     @Override
     protected Application configure() {
         return DropwizardResourceConfig.forTesting(new MetricRegistry())
-                .packages("io.dropwizard.jersey.jackson");
+                .packages("io.dropwizard.jersey.jackson")
+                .register(new LoggingExceptionMapper<Throwable>() { });
     }
 
     @Override
@@ -75,11 +77,21 @@ public class JsonProcessingExceptionMapperTest extends AbstractJerseyTest {
     }
 
     @Test
-    public void returnsA500ForBadDeserializers() throws Exception {
+    public void returnsA400ForCustomDeserializer() throws Exception {
         Response response = target("/json/custom").request(MediaType.APPLICATION_JSON)
             .post(Entity.entity("{}", MediaType.APPLICATION_JSON));
+        assertThat(response.getStatus()).isEqualTo(400);
+        assertThat(response.getMediaType()).isEqualTo(MediaType.APPLICATION_JSON_TYPE);
+        assertThat(response.readEntity(String.class)).contains("Unable to process JSON");
+    }
+
+    @Test
+    public void returnsA500ForCustomDeserializerUnexpected() throws Exception {
+        Response response = target("/json/custom").request(MediaType.APPLICATION_JSON)
+            .post(Entity.entity("\"SQL_INECTION\"", MediaType.APPLICATION_JSON));
         assertThat(response.getStatus()).isEqualTo(500);
         assertThat(response.getMediaType()).isEqualTo(MediaType.APPLICATION_JSON_TYPE);
+        assertThat(response.readEntity(String.class)).contains("There was an error processing your request.");
     }
 
     @Test

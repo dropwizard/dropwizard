@@ -486,7 +486,8 @@ The correct library version depends on a JVM version. Consult Jetty ALPN guide__
 
 Note that your JVM also must provide ``TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256`` cipher. The specification states__
 that HTTP/2 deployments must support it to avoid handshake failures. It's the single supported cipher in HTTP/2
-connector by default.
+connector by default. In case you want to support more strong ciphers, you should specify them in the
+``supportedCipherSuites`` parameter along with ``TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256``.
 
 .. __: http://http2.github.io/http2-spec/index.html#rfc.section.9.2.2
 
@@ -504,7 +505,9 @@ This connector extends the attributes that are available to the :ref:`HTTPS conn
           keyStorePassword: changeit
           trustStorePath: /path/to/file # required
           trustStorePassword: changeit
-          supportedCipherSuites: TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256
+          supportedCipherSuites: # optional
+            - TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+            - TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
 
 
 ========================  ========  ===================================================================================

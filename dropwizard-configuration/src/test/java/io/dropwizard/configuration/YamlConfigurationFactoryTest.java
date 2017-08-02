@@ -17,17 +17,17 @@ public class YamlConfigurationFactoryTest extends BaseConfigurationFactoryTest {
         this.wrongTypeFile = resourceFileName("factory-test-wrong-type.yml");
         this.malformedAdvancedFile = resourceFileName("factory-test-malformed-advanced.yml");
     }
-    
+
     @Override
     public void throwsAnExceptionOnMalformedFiles() throws Exception {
         try {
             super.throwsAnExceptionOnMalformedFiles();
         } catch (ConfigurationParsingException e) {
             assertThat(e)
-                .hasMessageContaining(" * Failed to parse configuration; Can not construct instance of io.dropwizard.configuration.BaseConfigurationFactoryTest$Example");
+                .hasMessageContaining(" * Failed to parse configuration; Cannot construct instance of `io.dropwizard.configuration.BaseConfigurationFactoryTest$Example`");
         }
     }
-    
+
     @Override
     public void printsDetailedInformationOnMalformedContent() throws Exception {
         try {

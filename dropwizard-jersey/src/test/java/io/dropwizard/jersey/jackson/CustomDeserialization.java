@@ -23,7 +23,12 @@ public class CustomDeserialization extends StdDeserializer<CustomRepresentation>
         JsonParser jsonParser,
         DeserializationContext deserializationContext
     ) throws IOException {
-        throw new MyNastyException(jsonParser);
+        final Object ss = jsonParser.readValueAs(Object.class);
+        if (ss.equals("SQL_INECTION")) {
+            throw new RuntimeException("Database fell over due to sql injection");
+        } else {
+            throw new MyNastyException(jsonParser);
+        }
     }
 
     /**

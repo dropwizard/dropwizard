@@ -47,13 +47,11 @@ public class Jackson {
     public static ObjectMapper newMinimalObjectMapper() {
         return new ObjectMapper()
                 .registerModule(new GuavaModule())
-                .registerModule(new LogbackModule())
                 .setSubtypeResolver(new DiscoverableSubtypeResolver());
     }
 
     private static ObjectMapper configure(ObjectMapper mapper) {
         mapper.registerModule(new GuavaModule());
-        mapper.registerModule(new LogbackModule());
         mapper.registerModule(new GuavaExtrasModule());
         mapper.registerModule(new JodaModule());
         mapper.registerModule(new AfterburnerModule());
