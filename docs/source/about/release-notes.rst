@@ -15,14 +15,20 @@ v1.2.0: Unreleased
 * Support Dropwizard applications without logback `#1900 <https://github.com/dropwizard/dropwizard/pull/1900>`_
 * Replace deprecated SizeAndTimeBasedFNATP with SizeAndTimeBasedRollingPolicy `#2010 <https://github.com/dropwizard/dropwizard/pull/2010>`_
 * Decrease allowable tomcat jdbc validation interval to 50ms `#2051 <https://github.com/dropwizard/dropwizard/pull/2051>`_
+* Add support for setting several cipher suites for HTTP/2 `#2119 <https://github.com/dropwizard/dropwizard/pull/2119>`_
+* Remove Dropwizard's Jackson dependency on Logback `#2112 <https://github.com/dropwizard/dropwizard/pull/2112>`_
+* Handle badly formed "Accept-Language" headers `#2103 <https://github.com/dropwizard/dropwizard/pull/2103>`_
+* Use LoadingCache in CachingAuthorizer `#2096 <https://github.com/dropwizard/dropwizard/pull/2096>`_
+* Client NTLM Authentication `#2091 <https://github.com/dropwizard/dropwizard/pull/2091>`_
+* Add optional Jersey filters `#1948 <https://github.com/dropwizard/dropwizard/pull/1948>`_
 * Upgrade to AssertJ 3.8.0
 * Upgrade to Guava 22.0
 * Upgrade to H2 1.4.195
 * Upgrade to Hibernate 5.2.10.Final
 * Upgrade to Hibernate Validator 5.4.1.Final
 * Upgrade to HSQLDB 2.4.0
-* Upgrade to Jackson 2.8.8
-* Upgrade to Jetty 9.4.5.v20170502
+* Upgrade to Jackson 2.9.0
+* Upgrade to Jetty 9.4.6.v20170531
 * Upgrade to Joda-Time 2.9.9
 * Upgrade to Logback 1.2.3
 * Upgrade to Mockito 2.8.9
