@@ -140,6 +140,11 @@ To create a :ref:`managed <man-core-managed>`, instrumented ``JerseyClient`` ins
         public JerseyClientConfiguration getJerseyClientConfiguration() {
             return jerseyClient;
         }
+        
+        @JsonProperty("jerseyClient")
+        public void setJerseyClientConfiguration(JerseyClientConfiguration jerseyClient) {
+            this.jerseyClient = jerseyClient;
+        }
     }
 
 Then, in your service's ``run`` method, create a new ``JerseyClientBuilder``:
