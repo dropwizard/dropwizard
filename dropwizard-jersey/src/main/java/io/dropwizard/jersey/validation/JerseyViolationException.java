@@ -11,6 +11,7 @@ import java.util.Set;
  * validating constraints on a resource endpoint.
  */
 public class JerseyViolationException extends ConstraintViolationException {
+    private static final long serialVersionUID = -2084629736062306666L;
     private final Invocable invocable;
 
     public JerseyViolationException(Set<? extends ConstraintViolation<?>> constraintViolations, Invocable invocable) {
