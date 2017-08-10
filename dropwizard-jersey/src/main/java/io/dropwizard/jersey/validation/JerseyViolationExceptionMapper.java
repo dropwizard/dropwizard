@@ -18,9 +18,8 @@ public class JerseyViolationExceptionMapper implements ExceptionMapper<JerseyVio
 
     @Override
     public Response toResponse(final JerseyViolationException exception) {
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Object validation failure", exception);
-        }
+        // Provide a way to log if desired, Issue #2128, PR #2129
+        LOGGER.debug("Object validation failure", exception);
 
         final Set<ConstraintViolation<?>> violations = exception.getConstraintViolations();
         final Invocable invocable = exception.getInvocable();
