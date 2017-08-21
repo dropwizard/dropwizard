@@ -34,6 +34,7 @@ v1.2.0: Unreleased
 * Upgrade to Metrics 3.2.4
 * Upgrade to Mockito 2.8.9
 * Upgrade to Mustache.java 0.9.5
+* Upgrade to Objenesis 2.6
 * Upgrade to SLF4J 1.7.25
 * Upgrade to tomcat-jdbc 8.5.15
 
