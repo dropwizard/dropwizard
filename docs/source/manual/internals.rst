@@ -33,7 +33,7 @@ Startup Sequence
 	  cli.run(arguments); 
 	}
 
-``Bootstrap`` is the The pre-start (temp) application environment, containing everything required to bootstrap a Dropwizard command (simplified code):
+``Bootstrap`` is the The pre-start (temp) application environment, containing everything required to bootstrap a Dropwizard command. Here is a simplified code snippet to illustrate its structure:
 
 .. code-block:: kotlin
 
@@ -50,7 +50,7 @@ Startup Sequence
 	  val healthCheckRegistry = new HealthCheckRegistry()
 	}
 
-``Environment`` is a longer lived object, holding Dropwizard’s Environment (not env. Such as dev or prod). It holds similar, but somewhat different set of properties than Bootsrap (simplified):
+``Environment`` is a longer lived object, holding Dropwizard’s Environment (not env. Such as dev or prod). It holds similar, but somewhat different set of properties than Bootsrap - here is a simplified code snippet to illustrate that:
 
 .. code-block:: kotlin
 	Environment {
@@ -88,13 +88,15 @@ The ``check`` command parses and validates the application's configuration.
 
 If you will check again the first code snippet in this document - you will see creating these 2 commands are the first step in the bootstrapping process.
 
-Another important command is db - allowing to execute various db actions
+Another important command is ``db`` - allowing to execute various db actions
 
 Similar to ``ConfiguredBundle``, some commands require access to configuration parameters and should extend the ``ConfiguredCommand`` class, using your application’s ``Configuration`` class as its type parameter. 
 
 
 The CLI class
 *************
+
+Let's begin with a simplified version of the constructor:
 
 .. code-block:: java
 
