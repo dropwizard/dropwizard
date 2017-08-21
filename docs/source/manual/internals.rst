@@ -10,8 +10,8 @@ Congrats! Then you are ready to have a look into some nitty-gritty details of Dr
 Startup Sequence
 ================
 
-Application<T extends Configuration> is the “Main” class of a dropwizard Application.
-application.run(args) in the first method to be called on startup. Here is a simplified implementation:
+``Application<T extends Configuration>`` is the “Main” class of a dropwizard Application.
+``application.run(args)`` in the first method to be called on startup. Here is a simplified implementation:
 
 .. code-block:: java
 
@@ -36,9 +36,7 @@ application.run(args) in the first method to be called on startup. Here is a sim
 	  cli.run(arguments); 
 	}
 
-
-
-Bootstrap is the The pre-start (temp) application environment, containing everything required to bootstrap a Dropwizard command (simplified code):
+``Bootstrap`` is the The pre-start (temp) application environment, containing everything required to bootstrap a Dropwizard command (simplified code):
 
 .. code-block:: kotlin
 
@@ -55,7 +53,7 @@ Bootstrap is the The pre-start (temp) application environment, containing everyt
 	  val healthCheckRegistry = new HealthCheckRegistry()
 	}
 
-Environment is a longer lived object, holding Dropwizard’s Environment (not env. Such as dev or prod). It holds similar, but somewhat different set of properties than Bootsrap (simplified):
+``Environment`` is a longer lived object, holding Dropwizard’s Environment (not env. Such as dev or prod). It holds similar, but somewhat different set of properties than Bootsrap (simplified):
 
 .. code-block:: kotlin
 	Environment {
@@ -78,9 +76,9 @@ Environment is a longer lived object, holding Dropwizard’s Environment (not en
 
 	}
 
-A Dropwizard Bundle is a reusable group of functionality (typically provided by the Dropwizard project), used to define blocks of an application’s behavior. 
-For example, AssetBundle from the dropwizard-assets module provides a simple way to serve static assets from your application’s src/main/resources/assets directory as files available from /assets/* (or any other path) in your application.
-ConfiguredBundle is a bundle that require a configuration provided by the Configuration object (implementing a relevant interface)
+A Dropwizard ``Bundle`` is a reusable group of functionality (typically provided by the Dropwizard project), used to define blocks of an application’s behavior. 
+For example, ``AssetBundle`` from the dropwizard-assets module provides a simple way to serve static assets from your application’s src/main/resources/assets directory as files available from /assets/* (or any other path) in your application.
+``ConfiguredBundle`` is a bundle that require a configuration provided by the ``Configuration`` object (implementing a relevant interface)
 
 Properties such as database connection details should not be stored on the Environment; that is what your Configuration .yml file is for. 
 Each logical environment (dev/test/staging/prod) - would have its own Configuration .yml - reflecting the differences between “server environments”.
@@ -88,15 +86,15 @@ Each logical environment (dev/test/staging/prod) - would have its own Configurat
 Commands
 ********
 
-Commands are basic actions which Dropwizard runs based on the arguments provided on the command line. The built-in server command, for example, spins up an HTTP server and runs your application. Each Command subclass has a name and a set of command line options which Dropwizard will use to parse the given command line arguments.
-The check command parses and validates the application's configuration.
+``Command`` objects are basic actions which Dropwizard runs based on the arguments provided on the command line. The built-in ``server`` command, for example, spins up an HTTP server and runs your application. Each Command subclass has a name and a set of command line options which Dropwizard will use to parse the given command line arguments.
+The ``check`` command parses and validates the application's configuration.
 
 If you will check again the first code snippet in this document - you will see creating these 2 commands are the first step in the bootstrapping process.
 
 Another important command is db - allowing to execute various db actions
 
 
-Similar to ConfiguredBundle, some commands require access to configuration parameters and should extend the ConfiguredCommand class, using your application’s Configuration class as its type parameter. 
+Similar to ``ConfiguredBundle``, some commands require access to configuration parameters and should extend the ``ConfiguredCommand`` class, using your application’s ``Configuration`` class as its type parameter. 
 In Next - there is currently no use of custom commands.
 
 The CLI class
@@ -120,25 +118,30 @@ Initializing, and then running it - is the last step of the Bootstrapping proces
 
 Run would just handle command lines args (--help, --version) or runs the configured commands.
 
-When running the server command, e.g.
-java -jar target/hello-world-0.0.1-SNAPSHOT.jar server hello-world.yml
+When running the ``server`` command, e.g.
+
+.. code-block:: 
+
+  java -jar target/hello-world-0.0.1-SNAPSHOT.jar server hello-world.yml
 
 Just to note 2 of our basic commands have ancestors:
-class CheckCommand<T extends Configuration> extends ConfiguredCommand<T>
 
-class ServerCommand<T extends Configuration> extends EnvironmentCommand<T>
+.. code-block:: java
+
+  class CheckCommand<T extends Configuration> extends ConfiguredCommand<T>
+  class ServerCommand<T extends Configuration> extends EnvironmentCommand<T>
 
 The order of operations is therefore:
 parse cmdline args, determine subcommand.
-Run ConfiguredCommand, which get a parameter with the location of a YAML configuration file - parses and validates it.
-CheckCommand.run() runs next, and does almost nothing: it logs "Configuration is OK"
-Run EnvironmentCommand:
-Create Environment 
-Calls bootstrap.run(cfg, env) - run bundles with config. & env.
+Run ``ConfiguredCommand``, which get a parameter with the location of a YAML configuration file - parses and validates it.
+``CheckCommand.run()`` runs next, and does almost nothing: it logs "Configuration is OK"
+Run ``EnvironmentCommand``:
+Create ``Environment`` 
+Calls ``bootstrap.run(cfg, env)`` - run bundles with config. & env.
 Bundles run in FIFO order.
-Calls application.run(cfg, env) -- implemented by you
-Now, ServerCommand.run() runs
-Calls serverFactory.build(environment) - to configure Jetty and Jersey, with all relevant Dropwizard modules.
+Calls ``application.run(cfg, env)`` -- implemented by you
+Now, ``ServerCommand.run()`` runs
+Calls ``serverFactory.build(environment)`` - to configure Jetty and Jersey, with all relevant Dropwizard modules.
 Starts Jetty.
 
 
