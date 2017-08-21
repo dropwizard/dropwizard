@@ -21,6 +21,7 @@ v1.2.0: Unreleased
 * Use LoadingCache in CachingAuthorizer `#2096 <https://github.com/dropwizard/dropwizard/pull/2096>`_
 * Client NTLM Authentication `#2091 <https://github.com/dropwizard/dropwizard/pull/2091>`_
 * Add optional Jersey filters `#1948 <https://github.com/dropwizard/dropwizard/pull/1948>`_
+* Upgrade to Apache commons-lang3 3.6
 * Upgrade to AssertJ 3.8.0
 * Upgrade to Guava 23.0
 * Upgrade to H2 1.4.195
