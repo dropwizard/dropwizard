@@ -22,11 +22,8 @@ Startup Sequence
 	  bootstrap.addCommand(new CheckCommand<>(this));
 
 	  initialize(bootstrap); // -- implemented by us; should call:
-		// 1. add bundles -- typically in Next:
-			  GuiceBundle - connect modules in `di` folder to Guice.
-			  SwaggerBundle - standard configurations
+		// 1. add bundles
 		// 2. add commands
-			  Currently: none
 	  
 	  // be called after initialize to give option to set a custom metric registry
 	  bootstrap.registerMetrics(); // start tracking some default jvm params…
@@ -93,9 +90,8 @@ If you will check again the first code snippet in this document - you will see c
 
 Another important command is db - allowing to execute various db actions
 
-
 Similar to ``ConfiguredBundle``, some commands require access to configuration parameters and should extend the ``ConfiguredCommand`` class, using your application’s ``Configuration`` class as its type parameter. 
-In Next - there is currently no use of custom commands.
+
 
 The CLI class
 *************
