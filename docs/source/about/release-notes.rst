@@ -21,9 +21,10 @@ v1.2.0: Unreleased
 * Use LoadingCache in CachingAuthorizer `#2096 <https://github.com/dropwizard/dropwizard/pull/2096>`_
 * Client NTLM Authentication `#2091 <https://github.com/dropwizard/dropwizard/pull/2091>`_
 * Add optional Jersey filters `#1948 <https://github.com/dropwizard/dropwizard/pull/1948>`_
+* Upgrade to Apache commons-lang3 3.6
 * Upgrade to AssertJ 3.8.0
-* Upgrade to Guava 22.0
-* Upgrade to H2 1.4.195
+* Upgrade to Guava 23.0
+* Upgrade to H2 1.4.196
 * Upgrade to Hibernate 5.2.10.Final
 * Upgrade to Hibernate Validator 5.4.1.Final
 * Upgrade to HSQLDB 2.4.0
@@ -31,10 +32,12 @@ v1.2.0: Unreleased
 * Upgrade to Jetty 9.4.6.v20170531
 * Upgrade to Joda-Time 2.9.9
 * Upgrade to Logback 1.2.3
-* Upgrade to Mockito 2.8.9
+* Upgrade to Metrics 3.2.4
+* Upgrade to Mockito 2.8.47
+* Upgrade to Mustache.java 0.9.5
+* Upgrade to Objenesis 2.6
 * Upgrade to SLF4J 1.7.25
-* Upgrade to tomcat-jdbc 8.5.15
-* Upgrade to Metrics 3.2.3
+* Upgrade to tomcat-jdbc 8.5.20
 
 .. _rel-1.1.2:
 
