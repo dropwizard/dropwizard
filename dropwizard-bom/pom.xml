@@ -180,7 +180,7 @@
             <dependency>
                 <groupId>com.github.spullara.mustache.java</groupId>
                 <artifactId>compiler</artifactId>
-                <version>0.9.4</version>
+                <version>0.9.5</version>
                 <exclusions>
                     <exclusion>
                         <groupId>com.google.guava</groupId>
