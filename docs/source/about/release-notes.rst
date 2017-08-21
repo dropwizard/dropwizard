@@ -36,7 +36,7 @@ v1.2.0: Unreleased
 * Upgrade to Mustache.java 0.9.5
 * Upgrade to Objenesis 2.6
 * Upgrade to SLF4J 1.7.25
-* Upgrade to tomcat-jdbc 8.5.15
+* Upgrade to tomcat-jdbc 8.5.20
 
 .. _rel-1.1.2:
 
