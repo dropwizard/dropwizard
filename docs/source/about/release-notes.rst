@@ -22,7 +22,7 @@ v1.2.0: Unreleased
 * Client NTLM Authentication `#2091 <https://github.com/dropwizard/dropwizard/pull/2091>`_
 * Add optional Jersey filters `#1948 <https://github.com/dropwizard/dropwizard/pull/1948>`_
 * Upgrade to AssertJ 3.8.0
-* Upgrade to Guava 22.0
+* Upgrade to Guava 23.0
 * Upgrade to H2 1.4.195
 * Upgrade to Hibernate 5.2.10.Final
 * Upgrade to Hibernate Validator 5.4.1.Final
