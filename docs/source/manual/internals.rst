@@ -132,17 +132,18 @@ Just to note 2 of our basic commands have ancestors:
   class ServerCommand<T extends Configuration> extends EnvironmentCommand<T>
 
 The order of operations is therefore:
-parse cmdline args, determine subcommand.
-Run ``ConfiguredCommand``, which get a parameter with the location of a YAML configuration file - parses and validates it.
-``CheckCommand.run()`` runs next, and does almost nothing: it logs "Configuration is OK"
-Run ``EnvironmentCommand``:
-Create ``Environment`` 
-Calls ``bootstrap.run(cfg, env)`` - run bundles with config. & env.
-Bundles run in FIFO order.
-Calls ``application.run(cfg, env)`` -- implemented by you
-Now, ``ServerCommand.run()`` runs
-Calls ``serverFactory.build(environment)`` - to configure Jetty and Jersey, with all relevant Dropwizard modules.
-Starts Jetty.
+
+1. parse cmdline args, determine subcommand.
+2. Run ``ConfiguredCommand``, which get a parameter with the location of a YAML configuration file - parses and validates it.
+3. ``CheckCommand.run()`` runs next, and does almost nothing: it logs ``"Configuration is OK"``
+4. Run ``EnvironmentCommand``:
+  a. Create ``Environment`` 
+  b. Calls ``bootstrap.run(cfg, env)`` - run bundles with config. & env.
+  c. Bundles run in FIFO order.
+  d. Calls ``application.run(cfg, env)`` -- implemented by you
+6. Now, ``ServerCommand.run()`` runs
+  a. Calls ``serverFactory.build(environment)`` - to configure Jetty and Jersey, with all relevant Dropwizard modules.
+  b. Starts Jetty.
 
 
 Jetty Lifecycle
