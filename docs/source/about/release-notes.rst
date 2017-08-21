@@ -31,10 +31,10 @@ v1.2.0: Unreleased
 * Upgrade to Jetty 9.4.6.v20170531
 * Upgrade to Joda-Time 2.9.9
 * Upgrade to Logback 1.2.3
+* Upgrade to Metrics 3.2.4
 * Upgrade to Mockito 2.8.9
 * Upgrade to SLF4J 1.7.25
 * Upgrade to tomcat-jdbc 8.5.15
-* Upgrade to Metrics 3.2.3
 
 .. _rel-1.1.2:
 
