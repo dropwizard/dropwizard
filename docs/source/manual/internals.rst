@@ -13,31 +13,29 @@ Startup Sequence
 `Application<T extends Configuration>` is the “Main” class of a dropwizard Application.
 
 `application.run(args)` in the first method to be called on startup. Here is a simplified implementation:
-```java
-public void run(String... arguments) throws Exception {
 
-  final Bootstrap<T> bootstrap = new Bootstrap<>(this);
-  bootstrap.addCommand(new ServerCommand<>(this));
-  bootstrap.addCommand(new CheckCommand<>(this));
+.. code-block:: java
+  public void run(String... arguments) throws Exception {
 
-  initialize(bootstrap); // -- implemented by us; should call:
-    // 1. add bundles -- typically in Next:
-          GuiceBundle - connect modules in `di` folder to Guice.
-          SwaggerBundle - standard configurations
-    // 2. add commands
-          Currently: none
+    final Bootstrap<T> bootstrap = new Bootstrap<>(this);
+    bootstrap.addCommand(new ServerCommand<>(this));
+    bootstrap.addCommand(new CheckCommand<>(this));
+
+    initialize(bootstrap); // -- implemented by you; should call:
+      // 1. add bundles 
+      // 2. add commands
   
-  // be called after initialize to give option to set a custom metric registry
-  bootstrap.registerMetrics(); // start tracking some default jvm params…
+    // be called after initialize to give option to set a custom metric registry
+    bootstrap.registerMetrics(); // start tracking some default jvm params…
 
-  // for each cmd, configure parser w/ cmd
-  final Cli cli = new Cli(new JarLocation(getClass()), bootstrap, our, err)
-  cli.run(arguments); 
-}
-```
+    // for each cmd, configure parser w/ cmd
+    final Cli cli = new Cli(new JarLocation(getClass()), bootstrap, our, err)
+    cli.run(arguments); 
+  }
 
 `Bootstrap` is the The pre-start (temp) application environment, containing everything required to bootstrap a Dropwizard command (simplified code):
-```
+
+.. code-block:: java
 Bootstrap(application: Application<T>) {
   val this.application = application
   val objectMapper = Jackson.newObjectMapper()
@@ -50,7 +48,7 @@ Bootstrap(application: Application<T>) {
   val configurationFactory = new DefaultConfigurationFactoryFactory()
   val healthCheckRegistry = new HealthCheckRegistry()
  }
-```
+
 
 `Environment` is a longer lived object, holding Dropwizard’s Environment (not env. Such as dev or prod). It holds similar, but somewhat different set of properties than Bootsrap (simplified):
 ```
