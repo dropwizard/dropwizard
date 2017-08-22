@@ -4,6 +4,8 @@ import io.dropwizard.util.Duration;
 
 import java.util.concurrent.ExecutorService;
 
+import com.google.common.annotations.VisibleForTesting;
+
 public class ExecutorServiceManager implements Managed {
     private final ExecutorService executor;
     private final Duration shutdownPeriod;
@@ -31,4 +33,18 @@ public class ExecutorServiceManager implements Managed {
         return super.toString() + '(' + poolName + ')';
     }
 
+    @VisibleForTesting
+    public ExecutorService getExecutor() {
+        return executor;
+    }
+
+    @VisibleForTesting
+    public Duration getShutdownPeriod() {
+        return shutdownPeriod;
+    }
+
+    @VisibleForTesting
+    public String getPoolName() {
+        return poolName;
+    }
 }
