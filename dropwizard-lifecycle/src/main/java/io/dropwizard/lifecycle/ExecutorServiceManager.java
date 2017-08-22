@@ -4,9 +4,13 @@ import io.dropwizard.util.Duration;
 
 import java.util.concurrent.ExecutorService;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.common.annotations.VisibleForTesting;
 
 public class ExecutorServiceManager implements Managed {
+    private static final Logger LOG = LoggerFactory.getLogger(ExecutorServiceManager.class);
     private final ExecutorService executor;
     private final Duration shutdownPeriod;
     private final String poolName;
@@ -25,7 +29,10 @@ public class ExecutorServiceManager implements Managed {
     @Override
     public void stop() throws Exception {
         executor.shutdown();
-        executor.awaitTermination(shutdownPeriod.getQuantity(), shutdownPeriod.getUnit());
+        final boolean success = executor.awaitTermination(shutdownPeriod.getQuantity(), shutdownPeriod.getUnit());
+        if (!success && LOG.isDebugEnabled()) {
+            LOG.debug("Timeout has elapsed before termination completed for executor " + executor.toString());
+        }
     }
 
     @Override
