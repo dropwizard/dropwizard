@@ -11,7 +11,7 @@ Startup Sequence
 ================
 
 ``Application<T extends Configuration>`` is the “Main” class of a dropwizard Application.
-``application.run(args)`` in the first method to be called on startup. Here is a simplified implementation:
+``application.run(args)`` is the first method to be called on startup. Here is a simplified implementation:
 
 .. code-block:: java
 
@@ -21,7 +21,7 @@ Startup Sequence
 	  bootstrap.addCommand(new ServerCommand<>(this));
 	  bootstrap.addCommand(new CheckCommand<>(this));
 
-	  initialize(bootstrap); // -- implemented by us; should call:
+	  initialize(bootstrap); // -- implemented by you; it should call:
 		// 1. add bundles
 		// 2. add commands
 	  
