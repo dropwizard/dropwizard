@@ -1,4 +1,0 @@
-io.dropwizard.request.logging
-io.dropwizard.request.logging.async
-io.dropwizard.request.logging.layout
-io.dropwizard.request.logging.old
