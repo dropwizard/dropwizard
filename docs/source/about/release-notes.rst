@@ -9,7 +9,9 @@ Release Notes
 v1.1.3: Unreleased
 ==================
 
+* Handle badly formed 'Accept-Language' headers `#2097 <https://github.com/dropwizard/dropwizard/issues/2097>`_
 * Upgrade to Jackson 2.8.10 `#2120 <https://github.com/dropwizard/dropwizard/issues/2120>`_
+* Upgrade to Jetty 9.4.6.v20170531 to address `CVE-2017-9735 <https://nvd.nist.gov/vuln/detail/CVE-2017-9735>`_ `#2113 <https://github.com/dropwizard/dropwizard/issues/2113>`_
 
 
 .. _rel-1.1.2:
