@@ -4,6 +4,14 @@
 Release Notes
 #############
 
+.. _rel-1.1.3:
+
+v1.1.3: Unreleased
+==================
+
+* Upgrade to Jackson 2.8.10 `#2120 <https://github.com/dropwizard/dropwizard/issues/2120>`_
+
+
 .. _rel-1.1.2:
 
 v1.1.2 June 27 2017
