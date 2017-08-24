@@ -11,7 +11,8 @@ Startup Sequence
 ================
 
 ``Application<T extends Configuration>`` is the “Main” class of a dropwizard Application.
-``application.run(args)`` is the first method to be called on startup. Here is a simplified implementation:
+
+``application.run(args)`` is the first method to be called on startup - Here is a simplified code snippet of its implementation:
 
 .. code-block:: java
 
@@ -22,10 +23,10 @@ Startup Sequence
 	  bootstrap.addCommand(new CheckCommand<>(this));
 
 	  initialize(bootstrap); // -- implemented by you; it should call:
-		// 1. add bundles
-		// 2. add commands
+		// 1. add bundles (typically being used)
+		// 2. add commands (if any)
 	  
-	  // be called after initialize to give option to set a custom metric registry
+	  // Should be called after `initialize` to give an opportunity to set a custom metric registry
 	  bootstrap.registerMetrics(); // start tracking some default jvm params…
 
 	  // for each cmd, configure parser w/ cmd
@@ -33,62 +34,63 @@ Startup Sequence
 	  cli.run(arguments); 
 	}
 
-``Bootstrap`` is the The pre-start (temp) application environment, containing everything required to bootstrap a Dropwizard command. Here is a simplified code snippet to illustrate its structure:
+``Bootstrap`` is the the pre-start (temp) application environment, containing everything required to bootstrap a Dropwizard command. Here is a simplified code snippet to illustrate its structure:
 
-.. code-block:: kotlin
+.. code-block:: java
 
 	Bootstrap(application: Application<T>) {
-	  val this.application = application
-	  val objectMapper = Jackson.newObjectMapper()
-	  val bundles = new ArrayList()
-	  val configuredBundles = new ArrayList()
-	  val commands = new ArrayList()
-	  val validatorFactory = Validators.newValidatorFactory();
-	  val metricRegistry = new MetricRegistry()
-	  val classLoader = Thread.currentThread().getContextClassLoader()
-	  val configurationFactory = new DefaultConfigurationFactoryFactory()
-	  val healthCheckRegistry = new HealthCheckRegistry()
+	  this.application = application;
+	  this.objectMapper = Jackson.newObjectMapper();
+	  this.bundles = new ArrayList<>();
+	  this.configuredBundles = new ArrayList<>();
+	  this.commands = new ArrayList<>();
+	  this.validatorFactory = Validators.newValidatorFactory();
+	  this.metricRegistry = new MetricRegistry();
+	  this.classLoader = Thread.currentThread().getContextClassLoader();
+	  this.onfigurationFactory = new DefaultConfigurationFactoryFactory<>();
+	  this.healthCheckRegistry = new HealthCheckRegistry();
 	}
 
-``Environment`` is a longer lived object, holding Dropwizard’s Environment (not env. Such as dev or prod). It holds similar, but somewhat different set of properties than Bootsrap - here is a simplified code snippet to illustrate that:
+``Environment`` is a longer-lived object, holding Dropwizard’s Environment (not env. Such as dev or prod). It holds a similar, but somewhat different set of properties than the Bootsrap object - here is a simplified code snippet to illustrate that:
 
-.. code-block:: kotlin
-	Environment {
+.. code-block:: java
+
+	Environment (...) {
 	  // from bootstrap
-	  val objectMapper
-	  val classLoader  
-	  val metricRegistry
-	  val healthCheckRegistry
-	  val validator = bootstrap.getValidatorFactory().getValidator()
+	  this.objectMapper = ...
+	  this.classLoader = ...  
+	  this.metricRegistry = ...
+	  this.healthCheckRegistry = ...
+	  this.validator = bootstrap.getValidatorFactory().getValidator()
 
 	  // extra:
-	  val bundles = new ArrayList()
-	  val configuredBundles = new ArrayList()
-
+	  this.bundles = new ArrayList<>();
+	  this.configuredBundles = new ArrayList<>();
 
 	  // sub-environments:
-	  val servletEnvironment -- exposed via servlets() method 
-	  val jerseyEnvironment -- exposed via jersey() method 
-	  val adminEnvironment -- exposed via admin() method 
+	  this.servletEnvironment = ... // -- exposed via the servlets() method 
+	  this.jerseyEnvironment = ... // -- exposed via the jersey() method 
+	  this.adminEnvironment = ... // -- exposed via the admin() method 
 
 	}
 
-A Dropwizard ``Bundle`` is a reusable group of functionality (typically provided by the Dropwizard project), used to define blocks of an application’s behavior. 
+A Dropwizard ``Bundle`` is a reusable group of functionality (sometimes provided by the Dropwizard project itself), used to define blocks of an application’s behavior. 
 For example, ``AssetBundle`` from the dropwizard-assets module provides a simple way to serve static assets from your application’s src/main/resources/assets directory as files available from /assets/* (or any other path) in your application.
-``ConfiguredBundle`` is a bundle that require a configuration provided by the ``Configuration`` object (implementing a relevant interface)
+
+A ``ConfiguredBundle`` is a bundle that require a configuration provided by the ``Configuration`` object (implementing a relevant interface)
 
 Properties such as database connection details should not be stored on the Environment; that is what your Configuration .yml file is for. 
-Each logical environment (dev/test/staging/prod) - would have its own Configuration .yml - reflecting the differences between “server environments”.
+Each logical environment (dev/test/staging/prod) - would have its own Configuration .yml - reflecting the differences between different “server environments”.
 
 Commands
 ********
 
-``Command`` objects are basic actions which Dropwizard runs based on the arguments provided on the command line. The built-in ``server`` command, for example, spins up an HTTP server and runs your application. Each Command subclass has a name and a set of command line options which Dropwizard will use to parse the given command line arguments.
+``Command`` objects are basic actions, which Dropwizard runs based on the arguments provided on the command line. The built-in ``server`` command, for example, spins up an HTTP server and runs your application. Each Command subclass has a name and a set of command line options which Dropwizard will use to parse the given command line arguments.
 The ``check`` command parses and validates the application's configuration.
 
-If you will check again the first code snippet in this document - you will see creating these 2 commands are the first step in the bootstrapping process.
+If you will check again the first code snippet in this document - you will see creating these two commands, is the first step in the bootstrapping process.
 
-Another important command is ``db`` - allowing to execute various db actions
+Another important command is ``db`` - allowing executing various db actions.
 
 Similar to ``ConfiguredBundle``, some commands require access to configuration parameters and should extend the ``ConfiguredCommand`` class, using your application’s ``Configuration`` class as its type parameter. 
 
@@ -96,7 +98,7 @@ Similar to ``ConfiguredBundle``, some commands require access to configuration p
 The CLI class
 *************
 
-Let's begin with a simplified version of the constructor:
+Let us begin with a simplified version of the constructor:
 
 .. code-block:: java
 
@@ -114,15 +116,14 @@ Let's begin with a simplified version of the constructor:
 Cli is the command-line runner for Dropwizard application.
 Initializing, and then running it - is the last step of the Bootstrapping process.
 
-Run would just handle command lines args (--help, --version) or runs the configured commands.
-
-When running the ``server`` command, e.g.
+Run would just handle commandline args (--help, --version) or runs the configured commands.
+E.g. - When running the ``server`` command:
 
 .. code-block:: 
 
   java -jar target/hello-world-0.0.1-SNAPSHOT.jar server hello-world.yml
 
-Just to note 2 of our basic commands have ancestors:
+Just note the two basic commands are built of a parent, and a sub-class:
 
 .. code-block:: java
 
@@ -131,17 +132,20 @@ Just to note 2 of our basic commands have ancestors:
 
 The order of operations is therefore:
 
-1. parse cmdline args, determine subcommand.
+1. Parse cmdline args, determine subcommand.
 2. Run ``ConfiguredCommand``, which get a parameter with the location of a YAML configuration file - parses and validates it.
 3. ``CheckCommand.run()`` runs next, and does almost nothing: it logs ``"Configuration is OK"``
 4. Run ``EnvironmentCommand``:
-  a. Create ``Environment`` 
-  b. Calls ``bootstrap.run(cfg, env)`` - run bundles with config. & env.
-  c. Bundles run in FIFO order.
-  d. Calls ``application.run(cfg, env)`` -- implemented by you
+
+  a) Create ``Environment`` 
+  b) Calls ``bootstrap.run(cfg, env)`` - run bundles with config. & env.
+  c) Bundles run in FIFO order.
+  d) Calls ``application.run(cfg, env)`` -- implemented by you
+  
 6. Now, ``ServerCommand.run()`` runs
-  a. Calls ``serverFactory.build(environment)`` - to configure Jetty and Jersey, with all relevant Dropwizard modules.
-  b. Starts Jetty.
+
+  a) Calls ``serverFactory.build(environment)`` - to configure Jetty and Jersey, with all relevant Dropwizard modules.
+  b) Starts Jetty.
 
 
 Jetty Lifecycle
