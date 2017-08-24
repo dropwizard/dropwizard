@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.annotations.VisibleForTesting;
 
 public class ExecutorServiceManager implements Managed {
+
     private static final Logger LOG = LoggerFactory.getLogger(ExecutorServiceManager.class);
     private final ExecutorService executor;
     private final Duration shutdownPeriod;
@@ -26,8 +27,15 @@ public class ExecutorServiceManager implements Managed {
         // OK BOSS
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @throws InterruptedException
+     *             This is thrown if the thread executing this method is
+     *             interrupted while awaiting executor tasks to complete.
+     */
     @Override
-    public void stop() throws Exception {
+    public void stop() throws InterruptedException, Exception {
         executor.shutdown();
         final boolean success = executor.awaitTermination(shutdownPeriod.getQuantity(), shutdownPeriod.getUnit());
         if (!success && LOG.isDebugEnabled()) {
