@@ -368,7 +368,7 @@ The ``@Validated`` annotation allows for `validation groups`_ to be specifically
 default group. This is useful when different endpoints share the same entity but may have different
 validation requirements.
 
-.. _validation groups: https://docs.jboss.org/hibernate/validator/5.2/reference/en-US/html/chapter-groups.html
+.. _validation groups: https://docs.jboss.org/hibernate/stable/validator/reference/en-US/html_single/?v=6.0#chapter-groups
 
 Going back to our favorite ``Person`` class. Let's say in the initial version of our API, ``name``
 has to be non-empty, but realized that business requirements changed and a name can't be longer than
