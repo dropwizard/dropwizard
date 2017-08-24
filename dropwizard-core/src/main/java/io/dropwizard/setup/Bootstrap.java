@@ -40,8 +40,7 @@ import static java.util.Objects.requireNonNull;
  */
 public class Bootstrap<T extends Configuration> {
     private final Application<T> application;
-    private final List<Bundle> bundles;
-    private final List<ConfiguredBundle<? super T>> configuredBundles;
+    private final List<ConfiguredBundle<? super T>> bundles;
     private final List<Command> commands;
 
     private ObjectMapper objectMapper;
@@ -63,7 +62,6 @@ public class Bootstrap<T extends Configuration> {
         this.application = application;
         this.objectMapper = Jackson.newObjectMapper();
         this.bundles = new ArrayList<>();
-        this.configuredBundles = new ArrayList<>();
         this.commands = new ArrayList<>();
         this.validatorFactory = Validators.newValidatorFactory();
         this.metricRegistry = new MetricRegistry();
@@ -135,8 +133,7 @@ public class Bootstrap<T extends Configuration> {
      * @param bundle a {@link Bundle}
      */
     public void addBundle(Bundle bundle) {
-        bundle.initialize(this);
-        bundles.add(bundle);
+        addBundle(new ConfiguredBundleAdapter<T>(bundle));
     }
 
     /**
@@ -146,7 +143,7 @@ public class Bootstrap<T extends Configuration> {
      */
     public void addBundle(ConfiguredBundle<? super T> bundle) {
         bundle.initialize(this);
-        configuredBundles.add(bundle);
+        bundles.add(bundle);
     }
 
     /**
@@ -193,10 +190,7 @@ public class Bootstrap<T extends Configuration> {
      * @throws Exception if a bundle throws an exception
      */
     public void run(T configuration, Environment environment) throws Exception {
-        for (Bundle bundle : bundles) {
-            bundle.run(environment);
-        }
-        for (ConfiguredBundle<? super T> bundle : configuredBundles) {
+        for (ConfiguredBundle<? super T> bundle : bundles) {
             bundle.run(configuration, environment);
         }
     }
