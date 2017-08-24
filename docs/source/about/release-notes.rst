@@ -39,6 +39,21 @@ v1.2.0: Unreleased
 * Upgrade to SLF4J 1.7.25
 * Upgrade to tomcat-jdbc 8.5.20
 
+.. _rel-1.1.4:
+
+v1.1.4: Aug 24 2017
+===================
+
+* Upgrade to Jackson 2.8.10 `#2120 <https://github.com/dropwizard/dropwizard/issues/2120>`_
+
+.. _rel-1.1.3:
+
+v1.1.3: Jul 31 2017
+===================
+
+* Handle badly formed 'Accept-Language' headers `#2097 <https://github.com/dropwizard/dropwizard/issues/2097>`_
+* Upgrade to Jetty 9.4.6.v20170531 to address `CVE-2017-9735 <https://nvd.nist.gov/vuln/detail/CVE-2017-9735>`_ `#2113 <https://github.com/dropwizard/dropwizard/issues/2113>`_
+
 .. _rel-1.1.2:
 
 v1.1.2 June 27 2017
