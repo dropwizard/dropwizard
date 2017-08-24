@@ -37,4 +37,10 @@ public class CheckCommand<T extends Configuration> extends ConfiguredCommand<T> 
                        T configuration) throws Exception {
         LOGGER.info("Configuration is OK");
     }
+
+    /* The stacktrace is redundant as the message contains the yaml error location */
+    @Override
+    public void onError(Cli cli, Namespace namespace, Throwable e) {
+        cli.getStdErr().println(e.getMessage());
+    }
 }

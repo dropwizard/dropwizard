@@ -55,4 +55,17 @@ public abstract class Command {
      * @throws Exception if something goes wrong
      */
     public abstract void run(Bootstrap<?> bootstrap, Namespace namespace) throws Exception;
+
+    /**
+     * Method is called if there is an issue parsing configuration, setting up the
+     * environment, or running the command itself. The default is printing the stacktrace
+     * to facilitate debugging, but can be customized per command.
+     *
+     * @param cli contains the streams for stdout and stderr
+     * @param namespace the parsed arguments from the commandline
+     * @param e The exception that was thrown when setting up or running the command
+     */
+    public void onError(Cli cli, Namespace namespace, Throwable e) {
+        e.printStackTrace(cli.getStdErr());
+    }
 }
