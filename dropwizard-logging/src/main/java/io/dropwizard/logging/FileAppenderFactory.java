@@ -199,10 +199,15 @@ public class FileAppenderFactory<E extends DeferredProcessingAware> extends Abst
         this.bufferSize = bufferSize;
     }
 
-    public boolean isPrudent() { return prudent; }
+    @JsonProperty
+    public boolean isPrudent() {
+        return prudent;
+    }
 
     @JsonProperty
-    public void setPrudent(boolean prudent) { this.prudent = prudent; }
+    public void setPrudent(boolean prudent) {
+        this.prudent = prudent;
+    }
 
     @JsonIgnore
     @ValidationMethod(message = "must have archivedLogFilenamePattern if archive is true")
