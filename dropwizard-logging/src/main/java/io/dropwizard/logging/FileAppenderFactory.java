@@ -118,6 +118,8 @@ public class FileAppenderFactory<E extends DeferredProcessingAware> extends Abst
 
     private boolean archive = true;
 
+    private boolean prudent = false;
+
     private String archivedLogFilenamePattern;
 
     @Min(0)
@@ -188,6 +190,11 @@ public class FileAppenderFactory<E extends DeferredProcessingAware> extends Abst
         this.bufferSize = bufferSize;
     }
 
+    public boolean isPrudent() { return prudent; }
+
+    @JsonProperty
+    public void setPrudent(boolean prudent) { this.prudent = prudent; }
+
     @JsonIgnore
     @ValidationMethod(message = "must have archivedLogFilenamePattern if archive is true")
     public boolean isValidArchiveConfiguration() {
@@ -227,7 +234,7 @@ public class FileAppenderFactory<E extends DeferredProcessingAware> extends Abst
         layoutEncoder.setLayout(buildLayout(context, layoutFactory));
         appender.setEncoder(layoutEncoder);
 
-        appender.setPrudent(false);
+        appender.setPrudent(prudent);
         appender.addFilter(levelFilterFactory.build(threshold));
         getFilterFactories().forEach(f -> appender.addFilter(f.build()));
         appender.start();
@@ -293,4 +300,5 @@ public class FileAppenderFactory<E extends DeferredProcessingAware> extends Abst
         appender.setBufferSize(new FileSize(bufferSize.toBytes()));
         return appender;
     }
+
 }
