@@ -61,7 +61,8 @@ import javax.validation.constraints.Min;
  *         <td>In prudent mode, FileAppender will safely write to the specified file,
  *         even in the presence of other FileAppender instances running in different JVMs,
  *         potentially running on different hosts, but triple the cost of writting a logging event.
- *         See <a href="https://logback.qos.ch/manual/appenders.html">logback documentation</a> for details</td>
+ *         Don't change this configuration unless you're know what you're doing,
+ *         see <a href="https://logback.qos.ch/manual/appenders.html">logback documentation</a> for details</td>
  *     </tr>
  *     <tr>
  *         <td>{@code archivedLogFilenamePattern}</td>
