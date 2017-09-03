@@ -104,10 +104,10 @@ Let us begin with a simplified version of the constructor:
 
 	public Cli(location : JarLocation, bootstrap : Bootstrap<?>, 
 			   stdOut: OutputStream, stdErr: OutputStream) {
-	  This.stdout = stdOut; this.stdErr = stdErr;
-	  val commands = new TreeMap<>();
-	  val parser = buildParser(location);
-	  val bootstrap = bootstrap;
+	  this.stdout = stdOut; this.stdErr = stdErr;
+	  this.commands = new TreeMap<>();
+	  this.parser = buildParser(location);
+	  this.bootstrap = bootstrap;
 	  for (command in bootstrap.commands) {
 		addCommand(command)
 	  }
