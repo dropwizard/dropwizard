@@ -210,6 +210,7 @@ public class DefaultLoggingFactory implements LoggingFactory {
             final LayoutWrappingEncoder<ILoggingEvent> layoutEncoder = new LayoutWrappingEncoder<>();
             layoutEncoder.setLayout(formatter);
             final ConsoleAppender<ILoggingEvent> consoleAppender = new ConsoleAppender<>();
+            consoleAppender.addFilter(new ThresholdLevelFilterFactory().build(Level.INFO));
             consoleAppender.setEncoder(layoutEncoder);
             consoleAppender.setContext(loggerContext);
             consoleAppender.start();
