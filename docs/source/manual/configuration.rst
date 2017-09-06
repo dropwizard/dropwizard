@@ -694,7 +694,7 @@ neverBlock                   false        Prevent the wrapping asynchronous appe
                                           Set to true to disable blocking.
 bufferSize                   8KB          The buffer size of the underlying FileAppender (setting added in logback 1.1.10). Increasing this
                                           from the default of 8KB to 256KB is reported to significantly reduce thread contention.
-prudent                      false         In prudent mode, FileAppender will safely write to the specified file,
+prudent                      false        In prudent mode, FileAppender will safely write to the specified file,
                                           even in the presence of other FileAppender instances running in different JVMs,
                                           potentially running on different hosts, but triple the cost of writting a logging event.
                                           Don't change this configuration unless you're know what you're doing,
