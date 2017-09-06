@@ -74,7 +74,7 @@ public class DefaultLoggingFactoryTest {
         assertThat(fileAppenderFactory.getArchivedLogFilenamePattern()).isEqualTo("${new_app}-%d.log.gz");
         assertThat(fileAppenderFactory.getArchivedFileCount()).isEqualTo(5);
         assertThat(fileAppenderFactory.getBufferSize().toKilobytes()).isEqualTo(256);
-        assertThat(fileAppenderFactory.isPrudent());
+        assertThat(fileAppenderFactory.isPrudent()).isEqualTo(true);
         final ImmutableList<FilterFactory<ILoggingEvent>> filterFactories = fileAppenderFactory.getFilterFactories();
         assertThat(filterFactories).hasSize(2);
         assertThat(filterFactories.get(0)).isExactlyInstanceOf(TestFilterFactory.class);
