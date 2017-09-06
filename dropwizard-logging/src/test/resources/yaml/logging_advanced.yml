@@ -13,6 +13,7 @@ loggers:
         logFormat: "%-5level %logger: %msg%n"
         archivedFileCount: 5
         bufferSize: 256KB
+        prudent: true
   "com.example.legacyApp":
     level: DEBUG
   "com.example.notAdditive":
@@ -31,3 +32,4 @@ appenders:
     archivedLogFilenamePattern: '${default}-%d.log.gz'
     logFormat: "%-5level %logger: %msg%n"
     archivedFileCount: 5
+    prudent: true
