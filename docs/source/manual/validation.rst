@@ -76,9 +76,9 @@ detailing the validation errors: ``name may not be empty``
     class must be marked ``@Valid``. For more information, see the Hibernate Validator documentation
     on `Object graphs`_ and `Cascaded validation`_.
 
-.. _Object graphs: http://docs.jboss.org/hibernate/validator/5.2/reference/en-US/html/chapter-bean-constraints.html#section-object-graph-validation
+.. _Object graphs: https://docs.jboss.org/hibernate/validator/5.4/reference/en-US/html_single/#section-object-graph-validation
 
-.. _Cascaded validation: http://docs.jboss.org/hibernate/validator/5.2/reference/en-US/html/chapter-method-constraints.html#_cascaded_validation
+.. _Cascaded validation: https://docs.jboss.org/hibernate/validator/5.4/reference/en-US/html_single/#example-cascaded-validation
 
 Since our entity is also annotated with ``@NotNull``, Dropwizard will also guard against ``null``
 input with a response stating that the body must not be null.
@@ -312,7 +312,7 @@ Annotations
 In addition to the `annotations defined in Hibernate Validator`_, Dropwizard contains another set of annotations,
 which are briefly shown below.
 
-.. _annotations defined in Hibernate Validator: http://docs.jboss.org/hibernate/validator/5.2/reference/en-US/html/chapter-bean-constraints.html#section-builtin-constraints
+.. _annotations defined in Hibernate Validator: https://docs.jboss.org/hibernate/validator/5.4/reference/en-US/html_single/#section-builtin-constraints
 
 .. code-block:: java
 
@@ -368,7 +368,7 @@ The ``@Validated`` annotation allows for `validation groups`_ to be specifically
 default group. This is useful when different endpoints share the same entity but may have different
 validation requirements.
 
-.. _validation groups: https://docs.jboss.org/hibernate/validator/5.2/reference/en-US/html/chapter-groups.html
+.. _validation groups: https://docs.jboss.org/hibernate/validator/5.4/reference/en-US/html_single/#chapter-groups
 
 Going back to our favorite ``Person`` class. Let's say in the initial version of our API, ``name``
 has to be non-empty, but realized that business requirements changed and a name can't be longer than
