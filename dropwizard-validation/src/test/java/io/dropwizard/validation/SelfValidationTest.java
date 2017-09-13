@@ -66,6 +66,14 @@ public class SelfValidationTest {
     }
     
     @Test
+    public void multipleTestingOfSameClass() throws Exception {
+        assertThat(ConstraintViolations.format(validator.validate(new CorrectExample())))
+                .isEmpty();
+        assertThat(ConstraintViolations.format(validator.validate(new CorrectExample())))
+                .isEmpty();
+    }
+    
+    @Test
     public void complexExample() throws Exception {
         assertThat(ConstraintViolations.format(validator.validate(new ComplexExample())))
                 .containsOnly(
