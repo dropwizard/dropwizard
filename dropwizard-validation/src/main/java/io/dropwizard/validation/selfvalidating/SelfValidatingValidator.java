@@ -23,7 +23,7 @@ import javassist.NotFoundException;
  * initiates the self validation process on an object, generating wrapping methods to call
  * the validation methods efficiently and then calls them.
  */
-public class SelfValidatingValidator implements ConstraintValidator<SelfValidating, Object>{
+public class SelfValidatingValidator implements ConstraintValidator<SelfValidating, Object> {
 
     private static final Logger LOG = LoggerFactory.getLogger(SelfValidatingValidator.class);
     private static final AtomicInteger COUNTER = new AtomicInteger();
@@ -40,7 +40,7 @@ public class SelfValidatingValidator implements ConstraintValidator<SelfValidati
 
         ViolationCollector collector = new ViolationCollector(context);
         context.disableDefaultConstraintViolation();
-        for(ValidationCaller caller:callers) {
+        for (ValidationCaller caller:callers) {
             caller.setValidationObject(value);
             caller.call(collector);
         }
@@ -54,11 +54,11 @@ public class SelfValidatingValidator implements ConstraintValidator<SelfValidati
      * @return
      */
     private synchronized List<ValidationCaller<?>> findMethods(Class<? extends Object> annotated) {
-        if(methodMap.containsKey(annotated))
+        if (methodMap.containsKey(annotated))
             return methodMap.get(annotated);
     
         synchronized (methodMap) {
-            if(methodMap.containsKey(annotated))
+            if (methodMap.containsKey(annotated))
                 return methodMap.get(annotated);
             
             List<ValidationCaller<?>> l = new ArrayList<>();
@@ -70,37 +70,37 @@ public class SelfValidatingValidator implements ConstraintValidator<SelfValidati
                 cp = ClassPool.getDefault();
                 callerSuperclass = cp.get(ValidationCaller.class.getName());
                 callingParameters = new CtClass[] {cp.get(ViolationCollector.class.getName())};
-            } catch(NotFoundException e) {
+            } catch (NotFoundException e) {
                 throw new IllegalStateException("Failed to load included class", e);
             }
                 
-            for(Method m:annotated.getMethods()) {
-                if(m.isAnnotationPresent(SelfValidation.class)) {
-                    if(!void.class.equals(m.getReturnType()))
+            for (Method m:annotated.getMethods()) {
+                if (m.isAnnotationPresent(SelfValidation.class)) {
+                    if (!void.class.equals(m.getReturnType()))
                         LOG.error("The method {} is annotated with SelfValidation but does not return void. It is ignored.", m);
-                    else if(m.getParameterTypes().length!=1 || !m.getParameterTypes()[0].equals(ViolationCollector.class))
+                    else if(m.getParameterTypes().length != 1 || !m.getParameterTypes()[0].equals(ViolationCollector.class))
                         LOG.error("The method {} is annotated with SelfValidation but does not have a single parameter of type {}", m, ViolationCollector.class);
                     else if((m.getModifiers() & Modifier.PUBLIC) == 0)
                         LOG.error("The method {} is annotated with SelfValidation but is not public", m);
                     else {
                         try {
-                            CtClass cc = cp.makeClass("ValidationCallerGeneratedImpl"+COUNTER.getAndIncrement());
+                            CtClass cc = cp.makeClass("ValidationCallerGeneratedImpl" + COUNTER.getAndIncrement());
                             cc.setSuperclass(callerSuperclass);
              
                             CtMethod method = new CtMethod(CtClass.voidType, "call", callingParameters, cc);
                             cc.addMethod(method);
-                            method.setBody("{ return (("+annotated.getName()+")getValidationObject())."+m.getName()+"($1); }");
+                            method.setBody("{ return ((" + annotated.getName() + ")getValidationObject())." + m.getName() + "($1); }");
                             
                             cc.setModifiers(Modifier.PUBLIC);
-                            ValidationCaller<?> caller = (ValidationCaller<?>)cc.toClass().newInstance();
+                            ValidationCaller<?> caller = (ValidationCaller<?>) cc.toClass().newInstance();
                             l.add(caller);
-                        } catch(Exception e) {
-                            LOG.error("Failed to generate ValidationCaller for method "+m.toString(), e);
+                        } catch (Exception e) {
+                            LOG.error("Failed to generate ValidationCaller for method " + m.toString(), e);
                         }
                     }
                 }
             }
-            if(l.isEmpty())
+            if (l.isEmpty())
                 LOG.error("The class {} is annotated with SelfValidating but contains no valid methods that are annotated with SelfValidation", annotated);
                 
             methodMap.put(annotated, l);

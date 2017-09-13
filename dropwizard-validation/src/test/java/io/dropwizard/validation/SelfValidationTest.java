@@ -33,17 +33,17 @@ public class SelfValidationTest {
     public static class ComplexExample {
         @SelfValidation
         public void validateFail1(ViolationCollector col) {
-            col.addViolation(FAILED+"1");
+            col.addViolation(FAILED + "1");
         }
         
         @SelfValidation
         public void validateFail2(ViolationCollector col) {
-            col.addViolation(FAILED+"2");
+            col.addViolation(FAILED + "2");
         }
         
         @SelfValidation
         public void validateFail3(ViolationCollector col) {
-            col.addViolation(FAILED+"3");
+            col.addViolation(FAILED + "3");
         }
         
         @SuppressWarnings("unused")
@@ -56,7 +56,7 @@ public class SelfValidationTest {
     @Test
     public void failingExample() throws Exception {
         assertThat(ConstraintViolations.format(validator.validate(new FailingExample())))
-                .containsOnly(" "+FAILED);
+                .containsOnly(" " + FAILED);
     }
     
     @Test
@@ -69,9 +69,9 @@ public class SelfValidationTest {
     public void complexExample() throws Exception {
         assertThat(ConstraintViolations.format(validator.validate(new ComplexExample())))
                 .containsOnly(
-                        " "+FAILED+"1",
-                        " "+FAILED+"2",
-                        " "+FAILED+"3"
-                );
+                        " " + FAILED + "1",
+                        " " + FAILED + "2",
+                        " " + FAILED + "3"
+            );
     }
 }
