@@ -6,16 +6,16 @@ package io.dropwizard.validation.selfvalidating;
  * @param <T> the object type that contains the validation method
  */
 public abstract class ValidationCaller<T> {
-	
-	protected T validationObject;
-	
-	public void setValidationObject(T obj) {
-		this.validationObject = obj;
-	}
-	
-	public T getValidationObject() {
-		return validationObject;
-	}
+    
+    protected T validationObject;
+    
+    public void setValidationObject(T obj) {
+        this.validationObject = obj;
+    }
+    
+    public T getValidationObject() {
+        return validationObject;
+    }
 
-	public abstract void call(ViolationCollector vc);
+    public abstract void call(ViolationCollector vc);
 }

@@ -20,8 +20,8 @@ import javax.validation.Payload;
 @Constraint(validatedBy =  SelfValidatingValidator.class)
 public @interface SelfValidating {
 
-	String message() default "";
-	
+    String message() default "";
+    
     Class<?>[] groups() default { };
 
     Class<? extends Payload>[] payload() default { };

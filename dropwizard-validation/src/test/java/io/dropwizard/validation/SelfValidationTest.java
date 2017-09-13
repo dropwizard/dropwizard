@@ -11,44 +11,44 @@ import io.dropwizard.validation.selfvalidating.SelfValidation;
 import io.dropwizard.validation.selfvalidating.ViolationCollector;
 
 public class SelfValidationTest {
-	
-	private static final String FAILED = "failed";
-	
-	@SelfValidating
+    
+    private static final String FAILED = "failed";
+    
+    @SelfValidating
     public static class FailingExample {
-		@SelfValidation
+        @SelfValidation
         public void validateFail(ViolationCollector col) {
-			col.addViolation(FAILED);
+            col.addViolation(FAILED);
         }
     }
-	
-	@SelfValidating
+    
+    @SelfValidating
     public static class CorrectExample {
-		@SuppressWarnings("unused")
-		@SelfValidation
+        @SuppressWarnings("unused")
+        @SelfValidation
         public void validateCorrect(ViolationCollector col) {}
     }
-	
-	@SelfValidating
+    
+    @SelfValidating
     public static class ComplexExample {
-		@SelfValidation
+        @SelfValidation
         public void validateFail1(ViolationCollector col) {
-			col.addViolation(FAILED+"1");
+            col.addViolation(FAILED+"1");
         }
-		
-		@SelfValidation
+        
+        @SelfValidation
         public void validateFail2(ViolationCollector col) {
-			col.addViolation(FAILED+"2");
+            col.addViolation(FAILED+"2");
         }
-		
-		@SelfValidation
+        
+        @SelfValidation
         public void validateFail3(ViolationCollector col) {
-			col.addViolation(FAILED+"3");
+            col.addViolation(FAILED+"3");
         }
-		
-		@SuppressWarnings("unused")
-		@SelfValidation
-		public void validateCorrect(ViolationCollector col) {}
+        
+        @SuppressWarnings("unused")
+        @SelfValidation
+        public void validateCorrect(ViolationCollector col) {}
     }
 
     private final Validator validator = BaseValidator.newValidator();
@@ -62,16 +62,16 @@ public class SelfValidationTest {
     @Test
     public void correctExample() throws Exception {
         assertThat(ConstraintViolations.format(validator.validate(new CorrectExample())))
-        		.isEmpty();
+                .isEmpty();
     }
     
     @Test
     public void complexExample() throws Exception {
         assertThat(ConstraintViolations.format(validator.validate(new ComplexExample())))
                 .containsOnly(
-                		" "+FAILED+"1",
-                		" "+FAILED+"2",
-                		" "+FAILED+"3"
+                        " "+FAILED+"1",
+                        " "+FAILED+"2",
+                        " "+FAILED+"3"
                 );
     }
 }
