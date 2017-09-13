@@ -40,23 +40,23 @@ public class SelfValidationTest {
     
     @SelfValidating
     public static class InvalidExample {
-    	@SuppressWarnings("unused")
-		@SelfValidation
+        @SuppressWarnings("unused")
+        @SelfValidation
         public void validateCorrect(ViolationCollector col) {}
-    	
-    	@SuppressWarnings("unused")
-		@SelfValidation
+        
+        @SuppressWarnings("unused")
+        @SelfValidation
         public void validateFailAdditionalParameters(ViolationCollector col, int a) {
             col.addViolation(FAILED);
         }
-    	
-    	@SelfValidation
+        
+        @SelfValidation
         public boolean validateFailReturn(ViolationCollector col) {
             col.addViolation(FAILED);
             return true;
         }
-    	
-    	@SelfValidation
+        
+        @SelfValidation
         private void validateFailPrivate(ViolationCollector col) {
             col.addViolation(FAILED);
         }
