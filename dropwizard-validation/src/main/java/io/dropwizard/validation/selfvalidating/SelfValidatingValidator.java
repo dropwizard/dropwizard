@@ -78,9 +78,9 @@ public class SelfValidatingValidator implements ConstraintValidator<SelfValidati
                 if (m.isAnnotationPresent(SelfValidation.class)) {
                     if (!void.class.equals(m.getReturnType()))
                         LOG.error("The method {} is annotated with SelfValidation but does not return void. It is ignored.", m);
-                    else if(m.getParameterTypes().length != 1 || !m.getParameterTypes()[0].equals(ViolationCollector.class))
+                    else if (m.getParameterTypes().length != 1 || !m.getParameterTypes()[0].equals(ViolationCollector.class))
                         LOG.error("The method {} is annotated with SelfValidation but does not have a single parameter of type {}", m, ViolationCollector.class);
-                    else if((m.getModifiers() & Modifier.PUBLIC) == 0)
+                    else if ((m.getModifiers() & Modifier.PUBLIC) == 0)
                         LOG.error("The method {} is annotated with SelfValidation but is not public", m);
                     else {
                         try {
