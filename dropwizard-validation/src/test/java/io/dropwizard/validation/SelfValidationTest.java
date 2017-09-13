@@ -23,10 +23,43 @@ public class SelfValidationTest {
     }
     
     @SelfValidating
+    public static class DirectContextExample {
+        @SelfValidation
+        public void validateFail(ViolationCollector col) {
+            col.getContext().buildConstraintViolationWithTemplate(FAILED).addConstraintViolation();
+            col.setViolationOccurred(true);
+        }
+    }
+    
+    @SelfValidating
     public static class CorrectExample {
         @SuppressWarnings("unused")
         @SelfValidation
         public void validateCorrect(ViolationCollector col) {}
+    }
+    
+    @SelfValidating
+    public static class InvalidExample {
+    	@SuppressWarnings("unused")
+		@SelfValidation
+        public void validateCorrect(ViolationCollector col) {}
+    	
+    	@SuppressWarnings("unused")
+		@SelfValidation
+        public void validateFailAdditionalParameters(ViolationCollector col, int a) {
+            col.addViolation(FAILED);
+        }
+    	
+    	@SelfValidation
+        public boolean validateFailReturn(ViolationCollector col) {
+            col.addViolation(FAILED);
+            return true;
+        }
+    	
+    	@SelfValidation
+        private void validateFailPrivate(ViolationCollector col) {
+            col.addViolation(FAILED);
+        }
     }
     
     @SelfValidating
@@ -74,6 +107,12 @@ public class SelfValidationTest {
     }
     
     @Test
+    public void testDirectContextUsage() throws Exception {
+        assertThat(ConstraintViolations.format(validator.validate(new DirectContextExample())))
+                .containsOnly(" " + FAILED);
+    }
+    
+    @Test
     public void complexExample() throws Exception {
         assertThat(ConstraintViolations.format(validator.validate(new ComplexExample())))
                 .containsOnly(
@@ -81,5 +120,11 @@ public class SelfValidationTest {
                         " " + FAILED + "2",
                         " " + FAILED + "3"
             );
+    }
+    
+    @Test
+    public void invalidExample() throws Exception {
+        assertThat(ConstraintViolations.format(validator.validate(new InvalidExample())))
+                .isEmpty();
     }
 }
