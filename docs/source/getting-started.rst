@@ -132,7 +132,7 @@ You have three alternatives from here:
 
 1. Create a project using dropwizard-archetype_
 
-    mvn archetype:generate -DarchetypeGroupId=io.dropwizard.archetypes -DarchetypeArtifactId=java-simple -DarchetypeVersion=1.0.0
+    mvn archetype:generate -DarchetypeGroupId=io.dropwizard.archetypes -DarchetypeArtifactId=java-simple -DarchetypeVersion=[REPALCE WITH A VALID DROPWIZARD VERSION]
 
 2. Look at the dropwizard-example_
 
