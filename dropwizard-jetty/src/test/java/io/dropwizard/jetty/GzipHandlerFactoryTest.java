@@ -33,13 +33,13 @@ public class GzipHandlerFactoryTest {
     @Test
     public void hasAMinimumEntitySize() throws Exception {
         assertThat(gzip.getMinimumEntitySize())
-                .isEqualTo(Size.kilobytes(12));
+                .isEqualTo(Size.kibibytes(12));
     }
 
     @Test
     public void hasABufferSize() throws Exception {
         assertThat(gzip.getBufferSize())
-                .isEqualTo(Size.kilobytes(32));
+                .isEqualTo(Size.kibibytes(32));
     }
 
     @Test

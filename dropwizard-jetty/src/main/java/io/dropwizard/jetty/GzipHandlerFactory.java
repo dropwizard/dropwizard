@@ -79,7 +79,7 @@ public class GzipHandlerFactory {
     private Size minimumEntitySize = Size.bytes(256);
 
     @NotNull
-    private Size bufferSize = Size.kilobytes(8);
+    private Size bufferSize = Size.kibibytes(8);
 
     // By default compress responses for all user-agents
     private Set<String> excludedUserAgentPatterns = new HashSet<>();
@@ -93,7 +93,7 @@ public class GzipHandlerFactory {
     private boolean gzipCompatibleInflation = true;
 
     private boolean syncFlush = false;
-    
+
     @JsonProperty
     public boolean isEnabled() {
         return enabled;
@@ -171,7 +171,7 @@ public class GzipHandlerFactory {
     public void setIncludedMethods(Set<String> methods) {
         this.includedMethods = methods;
     }
-    
+
     @JsonProperty
     public boolean isSyncFlush() {
         return syncFlush;

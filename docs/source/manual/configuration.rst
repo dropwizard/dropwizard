@@ -682,9 +682,9 @@ archivedLogFilenamePattern   (none)       Required if ``archive`` is ``true``.
 archivedFileCount            5            The number of archived files to keep. Must be greater than or equal to ``0``. Zero is a
                                           special value signifying to keep infinite logs (use with caution)
 maxFileSize                  (unlimited)  The maximum size of the currently active file before a rollover is triggered. The value can be
-                                          expressed in bytes, kilobytes, megabytes, gigabytes, and terabytes by appending B, K, MB, GB, or
-                                          TB to the numeric value.  Examples include 100MB, 1GB, 1TB.  Sizes can also be spelled out, such
-                                          as 100 megabytes, 1 gigabyte, 1 terabyte.
+                                          expressed in bytes, kibibytes, mebibytes, gibibytes, and tebibytes by appending B, KiB, MiB, GiB, or
+                                          TiB to the numeric value.  Examples include 100MiB, 1GiB, 1TiB.  Sizes can also be spelled out, such
+                                          as 100 mebibytes, 1 gibibyte, 1 tebibyte.
 timeZone                     UTC          The time zone to which event timestamps will be converted.
 logFormat                    default      The Logback pattern with which events will be formatted. See
                                           the Logback_ documentation for details.

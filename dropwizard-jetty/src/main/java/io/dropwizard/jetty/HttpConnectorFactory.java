@@ -229,20 +229,20 @@ public class HttpConnectorFactory implements ConnectorFactory {
     private Size headerCacheSize = Size.bytes(512);
 
     @NotNull
-    @MinSize(value = 8, unit = SizeUnit.KILOBYTES)
-    private Size outputBufferSize = Size.kilobytes(32);
+    @MinSize(value = 8, unit = SizeUnit.KIBIBYTES)
+    private Size outputBufferSize = Size.kibibytes(32);
 
     @NotNull
-    @MinSize(value = 1, unit = SizeUnit.KILOBYTES)
-    private Size maxRequestHeaderSize = Size.kilobytes(8);
+    @MinSize(value = 1, unit = SizeUnit.KIBIBYTES)
+    private Size maxRequestHeaderSize = Size.kibibytes(8);
 
     @NotNull
-    @MinSize(value = 1, unit = SizeUnit.KILOBYTES)
-    private Size maxResponseHeaderSize = Size.kilobytes(8);
+    @MinSize(value = 1, unit = SizeUnit.KIBIBYTES)
+    private Size maxResponseHeaderSize = Size.kibibytes(8);
 
     @NotNull
-    @MinSize(value = 1, unit = SizeUnit.KILOBYTES)
-    private Size inputBufferSize = Size.kilobytes(8);
+    @MinSize(value = 1, unit = SizeUnit.KIBIBYTES)
+    private Size inputBufferSize = Size.kibibytes(8);
 
     @NotNull
     @MinDuration(value = 1, unit = TimeUnit.MILLISECONDS)
@@ -260,7 +260,7 @@ public class HttpConnectorFactory implements ConnectorFactory {
 
     @NotNull
     @MinSize(value = 1, unit = SizeUnit.BYTES)
-    private Size maxBufferPoolSize = Size.kilobytes(64);
+    private Size maxBufferPoolSize = Size.kibibytes(64);
 
     @Min(1)
     @UnwrapValidatedValue

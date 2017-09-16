@@ -21,24 +21,39 @@ public class Size implements Comparable<Size> {
             .put("bytes", SizeUnit.BYTES)
             .put("K", SizeUnit.KILOBYTES)
             .put("KB", SizeUnit.KILOBYTES)
-            .put("KiB", SizeUnit.KILOBYTES)
+            .put("KiB", SizeUnit.KIBIBYTES)
             .put("kilobyte", SizeUnit.KILOBYTES)
+            .put("kibibyte", SizeUnit.KIBIBYTES)
             .put("kilobytes", SizeUnit.KILOBYTES)
+            .put("kibibytes", SizeUnit.KIBIBYTES)
             .put("M", SizeUnit.MEGABYTES)
             .put("MB", SizeUnit.MEGABYTES)
-            .put("MiB", SizeUnit.MEGABYTES)
+            .put("MiB", SizeUnit.MEBIBYTES)
             .put("megabyte", SizeUnit.MEGABYTES)
+            .put("mebibyte", SizeUnit.MEBIBYTES)
             .put("megabytes", SizeUnit.MEGABYTES)
+            .put("mebibytes", SizeUnit.MEBIBYTES)
             .put("G", SizeUnit.GIGABYTES)
             .put("GB", SizeUnit.GIGABYTES)
-            .put("GiB", SizeUnit.GIGABYTES)
+            .put("GiB", SizeUnit.GIBIBYTES)
             .put("gigabyte", SizeUnit.GIGABYTES)
+            .put("gibibyte", SizeUnit.GIBIBYTES)
             .put("gigabytes", SizeUnit.GIGABYTES)
+            .put("gibibytes", SizeUnit.GIBIBYTES)
             .put("T", SizeUnit.TERABYTES)
             .put("TB", SizeUnit.TERABYTES)
-            .put("TiB", SizeUnit.TERABYTES)
+            .put("TiB", SizeUnit.TEBIBYTES)
             .put("terabyte", SizeUnit.TERABYTES)
+            .put("tebibyte", SizeUnit.TEBIBYTES)
             .put("terabytes", SizeUnit.TERABYTES)
+            .put("tebibytes", SizeUnit.TEBIBYTES)
+            .put("P", SizeUnit.PETABYTES)
+            .put("PB", SizeUnit.PETABYTES)
+            .put("PiB", SizeUnit.PEBIBYTES)
+            .put("petabyte", SizeUnit.PETABYTES)
+            .put("pebibyte", SizeUnit.PEBIBYTES)
+            .put("petabytes", SizeUnit.PETABYTES)
+            .put("pebibytes", SizeUnit.PEBIBYTES)
             .build();
 
     public static Size bytes(long count) {
@@ -59,6 +74,30 @@ public class Size implements Comparable<Size> {
 
     public static Size terabytes(long count) {
         return new Size(count, SizeUnit.TERABYTES);
+    }
+
+    public static Size petabytes(long count) {
+        return new Size(count, SizeUnit.PETABYTES);
+    }
+
+    public static Size kibibytes(long count) {
+        return new Size(count, SizeUnit.KIBIBYTES);
+    }
+
+    public static Size mebibytes(long count) {
+        return new Size(count, SizeUnit.MEBIBYTES);
+    }
+
+    public static Size gibibytes(long count) {
+        return new Size(count, SizeUnit.GIBIBYTES);
+    }
+
+    public static Size tebibytes(long count) {
+        return new Size(count, SizeUnit.TEBIBYTES);
+    }
+
+    public static Size pebibytes(long count) {
+        return new Size(count, SizeUnit.PEBIBYTES);
     }
 
     @JsonCreator
@@ -109,6 +148,30 @@ public class Size implements Comparable<Size> {
 
     public long toTerabytes() {
         return SizeUnit.TERABYTES.convert(count, unit);
+    }
+
+    public long toPetabytes() {
+        return SizeUnit.PETABYTES.convert(count, unit);
+    }
+
+    public long toKibibytes() {
+        return SizeUnit.KIBIBYTES.convert(count, unit);
+    }
+
+    public long toMebibytes() {
+        return SizeUnit.MEBIBYTES.convert(count, unit);
+    }
+
+    public long toGibibytes() {
+        return SizeUnit.GIBIBYTES.convert(count, unit);
+    }
+
+    public long toTebibytes() {
+        return SizeUnit.TEBIBYTES.convert(count, unit);
+    }
+
+    public long toPebibytes() {
+        return SizeUnit.PEBIBYTES.convert(count, unit);
     }
 
     @Override

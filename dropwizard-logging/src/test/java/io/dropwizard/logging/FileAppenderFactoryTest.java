@@ -109,7 +109,7 @@ public class FileAppenderFactoryTest {
     public void isValidForMaxFileSize() throws Exception {
         FileAppenderFactory fileAppenderFactory = new FileAppenderFactory();
         fileAppenderFactory.setCurrentLogFilename(folder.newFile("logfile.log").toString());
-        fileAppenderFactory.setMaxFileSize(Size.kilobytes(1));
+        fileAppenderFactory.setMaxFileSize(Size.kibibytes(1));
         fileAppenderFactory.setArchivedLogFilenamePattern(folder.newFile("example-%d.log.gz").toString());
         ImmutableList<String> errors =
                 ConstraintViolations.format(validator.validate(fileAppenderFactory));
@@ -129,7 +129,7 @@ public class FileAppenderFactoryTest {
                 ConstraintViolations.format(validator.validate(fileAppenderFactory));
         assertThat(errors)
                 .containsOnly("when archivedLogFilenamePattern contains %i, maxFileSize must be specified");
-        fileAppenderFactory.setMaxFileSize(Size.kilobytes(1));
+        fileAppenderFactory.setMaxFileSize(Size.kibibytes(1));
         errors = ConstraintViolations.format(validator.validate(fileAppenderFactory));
         assertThat(errors).isEmpty();
     }
@@ -175,7 +175,7 @@ public class FileAppenderFactoryTest {
         FileAppenderFactory fileAppenderFactory = new FileAppenderFactory();
         fileAppenderFactory.setCurrentLogFilename(folder.newFile("logfile.log").toString());
         fileAppenderFactory.setArchive(true);
-        fileAppenderFactory.setMaxFileSize(Size.kilobytes(1));
+        fileAppenderFactory.setMaxFileSize(Size.kibibytes(1));
         fileAppenderFactory.setArchivedLogFilenamePattern(folder.newFile("example-%d-%i.log.gz").toString());
         RollingFileAppender<ILoggingEvent> appender = (RollingFileAppender<ILoggingEvent>) fileAppenderFactory.buildAppender(new LoggerContext());
 
@@ -191,7 +191,7 @@ public class FileAppenderFactoryTest {
         FileAppenderFactory fileAppenderFactory = new FileAppenderFactory();
         fileAppenderFactory.setCurrentLogFilename(folder.newFile("logfile.log").toString());
         fileAppenderFactory.setArchive(true);
-        fileAppenderFactory.setMaxFileSize(Size.kilobytes(1));
+        fileAppenderFactory.setMaxFileSize(Size.kibibytes(1));
         fileAppenderFactory.setArchivedLogFilenamePattern(folder.newFile("example-%i.log.gz").toString());
         RollingFileAppender<ILoggingEvent> appender = (RollingFileAppender<ILoggingEvent>) fileAppenderFactory.buildAppender(new LoggerContext());
 
@@ -260,7 +260,7 @@ public class FileAppenderFactoryTest {
     public void overrideBufferSize() throws NoSuchFieldException, IllegalAccessException {
         FileAppenderFactory<ILoggingEvent> fileAppenderFactory = new FileAppenderFactory<>();
         fileAppenderFactory.setArchive(false);
-        fileAppenderFactory.setBufferSize(Size.kilobytes(256));
+        fileAppenderFactory.setBufferSize(Size.kibibytes(256));
         AsyncAppender asyncAppender = (AsyncAppender) fileAppenderFactory.build(new LoggerContext(), "test", new DropwizardLayoutFactory(), new NullLevelFilterFactory<>(), new AsyncLoggingEventAppenderFactory());
         final Appender<ILoggingEvent> fileAppender = asyncAppender.getAppender("file-appender");
         assertThat(fileAppender).isInstanceOf(FileAppender.class);
