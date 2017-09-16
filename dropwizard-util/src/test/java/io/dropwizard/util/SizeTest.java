@@ -546,4 +546,17 @@ public class SizeTest {
         assertThat(mapper.readValue("\"1 terabytes\"", Size.class)).isEqualTo(Size.terabytes(1L));
         assertThat(mapper.readValue("\"2 terabytes\"", Size.class)).isEqualTo(Size.terabytes(2L));
     }
+    
+    @Test
+    public void verifyComparableContract() {
+        final Size kb = Size.kilobytes(1024L);
+        final Size bytes = Size.bytes(kb.toBytes());
+
+        assertThat(bytes.compareTo(kb)).isEqualTo(0);
+        assertThat(kb.compareTo(bytes)).isEqualTo(0);
+
+        // If comparator == 0, then the following must be true
+        assertThat(bytes.equals(kb)).isTrue();
+        assertThat(kb.equals(bytes)).isTrue();
+    }
 }
