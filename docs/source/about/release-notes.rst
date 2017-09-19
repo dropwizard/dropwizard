@@ -29,7 +29,7 @@ v1.2.0: Unreleased
 * Upgrade to Hibernate Validator 5.4.1.Final
 * Upgrade to HSQLDB 2.4.0
 * Upgrade to Jackson 2.9.1
-* Upgrade to Jetty 9.4.6.v20170531
+* Upgrade to Jetty 9.4.7.v20170914
 * Upgrade to Joda-Time 2.9.9
 * Upgrade to Logback 1.2.3
 * Upgrade to Metrics 3.2.4
