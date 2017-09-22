@@ -241,7 +241,7 @@ import java.util.concurrent.TimeUnit;
  *     </tr>
  *     <tr>
  *         <td>{@code checkConnectionOnConnect}</td>
- *         <td>{@code false}</td>
+ *         <td>{@code true}</td>
  *         <td>
  *             Whether or not connections will be validated before being added to the pool. If the
  *             connection fails to validate, it won't be added to the pool.
