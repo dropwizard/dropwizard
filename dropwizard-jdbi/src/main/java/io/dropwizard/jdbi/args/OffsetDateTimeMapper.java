@@ -70,6 +70,8 @@ public class OffsetDateTimeMapper implements ResultColumnMapper<OffsetDateTime> 
             return null;
         }
         final Optional<ZoneId> zoneId = calendar.flatMap(c -> Optional.of(c.getTimeZone().toZoneId()));
-        return OffsetDateTime.ofInstant(Instant.ofEpochMilli(timestamp.getTime()), zoneId.orElse(ZoneId.systemDefault()));
+        return OffsetDateTime.ofInstant(
+            Instant.ofEpochSecond(timestamp.getTime() / 1000, timestamp.getNanos()),
+            zoneId.orElse(ZoneId.systemDefault()));
     }
 }
