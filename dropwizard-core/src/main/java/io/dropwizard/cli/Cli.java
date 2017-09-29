@@ -93,12 +93,7 @@ public class Cli {
     }
 
     private static boolean isFlag(String[][] flags, String[] arguments) {
-        for (String[] cmd : flags) {
-            if (Arrays.equals(arguments, cmd)) {
-                return true;
-            }
-        }
-        return false;
+        return flags.stream().anyMatch(cmd -> Arrays.equals(arguments, cmd));
     }
 
     private ArgumentParser buildParser(JarLocation location) {

@@ -256,12 +256,7 @@ public class UnitOfWorkApplicationListenerTest {
     }
 
     private static boolean methodDefinedOnInterface(String methodName, Method[] methods) {
-        for (Method method : methods) {
-            if (method.getName().equals(methodName)) {
-                return true;
-            }
-        }
-        return false;
+        return methods.stream().anyMatch(method -> method.getName().equals(methodName));
     }
 
     private void execute() {

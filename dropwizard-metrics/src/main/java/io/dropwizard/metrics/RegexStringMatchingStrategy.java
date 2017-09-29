@@ -24,12 +24,6 @@ class RegexStringMatchingStrategy implements StringMatchingStrategy {
 
     @Override
     public boolean containsMatch(ImmutableSet<String> matchExpressions, String metricName) {
-        for (String regexExpression : matchExpressions) {
-            if (patternCache.getUnchecked(regexExpression).matcher(metricName).matches()) {
-                // just need to match on a single value - return as soon as we do
-                return true;
-            }
-        }
-        return false;
+        return matchExpressions.stream().anyMatch(regexExpression -> patternCache.getUnchecked(regexExpression).matcher(metricName).matches());
     }
 }
