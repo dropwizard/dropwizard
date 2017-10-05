@@ -33,7 +33,7 @@ v1.2.0: Unreleased
 * Upgrade to Joda-Time 2.9.9
 * Upgrade to Logback 1.2.3
 * Upgrade to Metrics 3.2.5
-* Upgrade to Mockito 2.8.47
+* Upgrade to Mockito 2.10.0
 * Upgrade to Mustache.java 0.9.5
 * Upgrade to Objenesis 2.6
 * Upgrade to SLF4J 1.7.25
