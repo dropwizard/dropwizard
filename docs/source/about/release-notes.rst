@@ -23,21 +23,23 @@ v1.2.0: Unreleased
 * Add optional Jersey filters `#1948 <https://github.com/dropwizard/dropwizard/pull/1948>`_
 * Upgrade to Apache commons-lang3 3.6
 * Upgrade to AssertJ 3.8.0
-* Upgrade to Guava 23.0
+* Upgrade to classmate 1.3.4
+* Upgrade to Guava 23.1
 * Upgrade to H2 1.4.196
-* Upgrade to Hibernate 5.2.10.Final
+* Upgrade to Hibernate 5.2.11.Final
 * Upgrade to Hibernate Validator 5.4.1.Final
 * Upgrade to HSQLDB 2.4.0
 * Upgrade to Jackson 2.9.1
 * Upgrade to Jetty 9.4.7.v20170914
+* Upgrade to JMH 1.19
 * Upgrade to Joda-Time 2.9.9
 * Upgrade to Logback 1.2.3
 * Upgrade to Metrics 3.2.5
-* Upgrade to Mockito 2.8.47
+* Upgrade to Mockito 2.10.0
 * Upgrade to Mustache.java 0.9.5
 * Upgrade to Objenesis 2.6
 * Upgrade to SLF4J 1.7.25
-* Upgrade to tomcat-jdbc 8.5.20
+* Upgrade to tomcat-jdbc 8.5.23
 
 .. _rel-1.1.4:
 
