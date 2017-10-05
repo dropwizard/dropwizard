@@ -25,7 +25,7 @@ v1.2.0: Unreleased
 * Upgrade to AssertJ 3.8.0
 * Upgrade to Guava 23.1
 * Upgrade to H2 1.4.196
-* Upgrade to Hibernate 5.2.10.Final
+* Upgrade to Hibernate 5.2.11.Final
 * Upgrade to Hibernate Validator 5.4.1.Final
 * Upgrade to HSQLDB 2.4.0
 * Upgrade to Jackson 2.9.1
