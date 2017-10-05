@@ -31,6 +31,7 @@ v1.2.0: Unreleased
 * Upgrade to HSQLDB 2.4.0
 * Upgrade to Jackson 2.9.1
 * Upgrade to Jetty 9.4.7.v20170914
+* Upgrade to JMH 1.19
 * Upgrade to Joda-Time 2.9.9
 * Upgrade to Logback 1.2.3
 * Upgrade to Metrics 3.2.5
