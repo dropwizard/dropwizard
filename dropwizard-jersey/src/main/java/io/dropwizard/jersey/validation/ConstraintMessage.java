@@ -91,14 +91,11 @@ public class ConstraintMessage {
         }
         final List<Parameter> parameters = invocable.getParameters();
 
-        switch (parent.getKind()) {
-            case PARAMETER:
-                final Parameter param = parameters.get(parent.as(Path.ParameterNode.class).getParameterIndex());
-                if (param.getSource().equals(Parameter.Source.UNKNOWN)) {
-                    return Optional.of(Joiner.on('.').join(Iterables.skip(violation.getPropertyPath(), 2)));
-                }
-            default:
-                break;
+        if (parent.getKind() == ElementKind.PARAMETER) {
+            final Parameter param = parameters.get(parent.as(Path.ParameterNode.class).getParameterIndex());
+            if (param.getSource().equals(Parameter.Source.UNKNOWN)) {
+                return Optional.of(Joiner.on('.').join(Iterables.skip(violation.getPropertyPath(), 2)));
+            }
         }
 
         return Optional.empty();
