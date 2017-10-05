@@ -3,8 +3,6 @@ engines:
     enabled: true
   checkstyle:
     enabled: true
-    config:
-      file: "checkstyle.xml"
 
 ratings:
   paths:
