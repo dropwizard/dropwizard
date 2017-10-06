@@ -19,9 +19,10 @@ Tweaking some of the options will require good understanding of how Jetty is wor
       type: default
       maxThreads: 1024
 
+.. _Jetty architecture chapter: http://www.eclipse.org/jetty/documentation/current/architecture.html#basic-architecture
+
 
 .. _man-configuration-all:
-.. _Jetty architecture chapter: http://www.eclipse.org/jetty/documentation/current/architecture.html#basic-architecture
 
 All
 ---
