@@ -6,8 +6,10 @@ Release Notes
 
 .. _rel-1.2.0:
 
-v1.2.0: Unreleased
+v1.2.0: Oct 6 2017
 ==================
+
+`Complete changelog on GitHub <https://github.com/dropwizard/dropwizard/milestone/25?closed=1>`__
 
 * Support configuring FileAppender#bufferSize `#1951 <https://github.com/dropwizard/dropwizard/pull/1951>`_
 * Improve error handling of `@FormParam` resources `#1982 <https://github.com/dropwizard/dropwizard/pull/1982>`_
@@ -46,12 +48,16 @@ v1.2.0: Unreleased
 v1.1.4: Aug 24 2017
 ===================
 
+`Complete changelog on GitHub <https://github.com/dropwizard/dropwizard/milestone/31?closed=1>`__
+
 * Upgrade to Jackson 2.8.10 `#2120 <https://github.com/dropwizard/dropwizard/issues/2120>`_
 
 .. _rel-1.1.3:
 
 v1.1.3: Jul 31 2017
 ===================
+
+`Complete changelog on GitHub <https://github.com/dropwizard/dropwizard/milestone/30?closed=1>`__
 
 * Handle badly formed 'Accept-Language' headers `#2097 <https://github.com/dropwizard/dropwizard/issues/2097>`_
 * Upgrade to Jetty 9.4.6.v20170531 to address `CVE-2017-9735 <https://nvd.nist.gov/vuln/detail/CVE-2017-9735>`_ `#2113 <https://github.com/dropwizard/dropwizard/issues/2113>`_
@@ -60,6 +66,8 @@ v1.1.3: Jul 31 2017
 
 v1.1.2 June 27 2017
 ===================
+
+`Complete changelog on GitHub <https://github.com/dropwizard/dropwizard/milestone/28?closed=1>`__
 
 * Updated Jackson to 2.8.9. Fixes a security `vulnerability <https://github.com/FasterXML/jackson-databind/issues/1599>`_ with default typing `#2086 <https://github.com/dropwizard/dropwizard/issues/2086>`_
 * Use the correct `JsonFactory` in JSON configuration parsing `#2046 <https://github.com/dropwizard/dropwizard/issues/2046>`_
@@ -71,12 +79,16 @@ v1.1.2 June 27 2017
 v1.0.8 June 27 2017
 ===================
 
+`Complete changelog on GitHub <https://github.com/dropwizard/dropwizard/milestone/29?closed=1>`__
+
 * Updated Jackson to 2.7.9.1. Fixes a security `vulnerability <https://github.com/FasterXML/jackson-databind/issues/1599>`_ with default typing `#2087 <https://github.com/dropwizard/dropwizard/issues/2087>`_
 
 .. _rel-1.1.1:
 
 v1.1.1 May 19 2017
 ===================
+
+`Complete changelog on GitHub <https://github.com/dropwizard/dropwizard/milestone/27?closed=1>`__
 
 * Set the console logging context after a reset `#1973 <https://github.com/dropwizard/dropwizard/pull/1973>`_
 * Set logging context for file appenders before setting the buffer size `#1975 <https://github.com/dropwizard/dropwizard/pull/1975>`_
@@ -90,6 +102,8 @@ v1.1.1 May 19 2017
 
 v1.1.0: Mar 21 2017
 ===================
+
+`Complete changelog on GitHub <https://github.com/dropwizard/dropwizard/milestone/15?closed=1>`__
 
 * Upgraded to Hibernate ORM 5.2.7, introducing a series of deprecations and API changes in preparation for Hibernate ORM 6 `#1871 <https://github.com/dropwizard/dropwizard/pull/1871>`_
 * Add runtime certificate reload via admin task `#1799 <https://github.com/dropwizard/dropwizard/pull/1799>`_
@@ -153,12 +167,16 @@ v1.1.0: Mar 21 2017
 v1.0.7 Mar 20 2017
 ==================
 
+`Complete changelog on GitHub <https://github.com/dropwizard/dropwizard/milestone/26?closed=1>`__
+
 * Upgrade to Metrics 3.1.4 `#1969 <https://github.com/dropwizard/dropwizard/pull/1969>`_
 
 .. _rel-1.0.6:
 
 v1.0.6 Jan 30 2017
 ==================
+
+`Complete changelog on GitHub <https://github.com/dropwizard/dropwizard/milestone/23?closed=1>`__
 
 * Switch cert and peer validation to false by default `#1855 <https://github.com/dropwizard/dropwizard/pull/1855>`_
 * Add a JUnit rule for testing database interactions `#1905 <https://github.com/dropwizard/dropwizard/pull/1905>`_
@@ -168,12 +186,16 @@ v1.0.6 Jan 30 2017
 v1.0.5 Nov 18 2016
 ==================
 
+`Complete changelog on GitHub <https://github.com/dropwizard/dropwizard/milestone/22?closed=1>`__
+
 * Fix request logs with request parameter in layout pattern `#1828 <https://github.com/dropwizard/dropwizard/pull/1828>`_
 
 .. _rel-1.0.4:
 
 v1.0.4 Nov 14 2016
 ==================
+
+`Complete changelog on GitHub <https://github.com/dropwizard/dropwizard/milestone/21?closed=1>`__
 
 * Upgraded to Jersey 2.23.2 `#1808 <https://github.com/dropwizard/dropwizard/pull/1808>`_
 * Brought back support for request logging with ``logback-classic`` `#1813 <https://github.com/dropwizard/dropwizard/pull/1813>`_
@@ -182,6 +204,8 @@ v1.0.4 Nov 14 2016
 
 v1.0.3: Oct 28 2016
 ===================
+
+`Complete changelog on GitHub <https://github.com/dropwizard/dropwizard/milestone/20?closed=1>`__
 
 * Fix support maxFileSize and archivedFileCount `#1660 <https://github.com/dropwizard/dropwizard/pull/1660>`_
 * Upgraded to Jackson 2.7.8 `#1755 <https://github.com/dropwizard/dropwizard/pull/1755>`_
@@ -193,12 +217,16 @@ v1.0.3: Oct 28 2016
 v1.0.2: Sep 23 2016
 ===================
 
+`Complete changelog on GitHub <https://github.com/dropwizard/dropwizard/milestone/19?closed=1>`__
+
 * Fix absence of request logs in Dropwizard 1.0.1 `#1737 <https://github.com/dropwizard/dropwizard/pull/1737>`_
 
 .. _rel-1.0.1:
 
 v1.0.1: Sep 21 2016
 ===================
+
+`Complete changelog on GitHub <https://github.com/dropwizard/dropwizard/milestone/17?closed=1>`__
 
 * Allow use of custom HostnameVerifier on clients `#1664 <https://github.com/dropwizard/dropwizard/pull/1664>`_
 * Allow to configure failing on unknown properties in the Dropwizard configuration `#1677 <https://github.com/dropwizard/dropwizard/pull/1677>`_
@@ -210,6 +238,8 @@ v1.0.1: Sep 21 2016
 
 v1.0.0: Jul 26 2016
 ===================
+
+`Complete changelog on GitHub <https://github.com/dropwizard/dropwizard/milestone/9?closed=1>`__
 
 * Using Java 8 as baseline
 * ``dropwizard-java8`` bundle merged into mainline `#1365 <https://github.com/dropwizard/dropwizard/issues/1365>`_
@@ -266,12 +296,16 @@ v1.0.0: Jul 26 2016
 v0.9.2: Jan 20 2016
 ===================
 
+`Complete changelog on GitHub <https://github.com/dropwizard/dropwizard/milestone/14?closed=1>`__
+
 * Support `@UnitOfWork` annotation outside of Jersey resources `#1361 <https://github.com/dropwizard/dropwizard/issues/1361>`_
 
 .. _rel-0.9.1:
 
 v0.9.1: Nov 3 2015
 ==================
+
+`Complete changelog on GitHub <https://github.com/dropwizard/dropwizard/milestone/13?closed=1>`__
 
 * Add ``ConfigurationSourceProvider`` for reading resources from classpath `#1314 <https://github.com/dropwizard/dropwizard/issues/1314>`_
 * Add ``@UnwrapValidatedValue`` annotation to `BaseReporterFactory.frequency` `#1308 <https://github.com/dropwizard/dropwizard/issues/1308>`_, `#1309 <https://github.com/dropwizard/dropwizard/issues/1309>`_
@@ -282,6 +316,8 @@ v0.9.1: Nov 3 2015
 
 v0.9.0: Oct 28 2015
 ===================
+
+`Complete changelog on GitHub <https://github.com/dropwizard/dropwizard/milestone/8?closed=1>`__
 
 * Various documentation fixes and improvements
 * New filter-based authorization & authentication `#952 <https://github.com/dropwizard/dropwizard/pull/952>`_, `#1023 <https://github.com/dropwizard/dropwizard/pull/1023>`_, `#1114 <https://github.com/dropwizard/dropwizard/pull/1114>`_, `#1162 <https://github.com/dropwizard/dropwizard/pull/1162>`_, `#1241 <https://github.com/dropwizard/dropwizard/pull/1241>`_
@@ -352,6 +388,8 @@ v0.9.0: Oct 28 2015
 v0.8.5: Nov 3 2015
 ==================
 
+`Complete changelog on GitHub <https://github.com/dropwizard/dropwizard/milestone/12?closed=1>`__
+
 * Treat ``null`` values in JAX-RS resource method parameters of type ``Optional<T>`` as absent value after conversion `#1323 <https://github.com/dropwizard/dropwizard/pull/1323>`_
 
 .. _rel-0.8.4:
@@ -367,12 +405,17 @@ v0.8.4: Aug 26 2015
 
 v0.8.3: Aug 24 2015
 ===================
+
+`Complete changelog on GitHub <https://github.com/dropwizard/dropwizard/milestone/11?closed=1>`__
+
 * Fixed an issue with closing the HTTP client connection pool after a full GC `#1160 <https://github.com/dropwizard/dropwizard/pull/1160>`_
 
 .. _rel-0.8.2:
 
 v0.8.2: Jul 6 2015
 ==================
+
+`Complete changelog on GitHub <https://github.com/dropwizard/dropwizard/milestone/10?closed=1>`__
 
 * Support for request-scoped configuration for Jersey client `#1137 <https://github.com/dropwizard/dropwizard/pull/1137>`_
 * Upgraded to Jersey 2.19 `#1143 <https://github.com/dropwizard/dropwizard/pull/1143>`_
@@ -381,6 +424,8 @@ v0.8.2: Jul 6 2015
 
 v0.8.1: Apr 7 2015
 ==================
+
+`Complete changelog on GitHub <https://github.com/dropwizard/dropwizard/milestone/7?closed=1>`__
 
 * Fixed transaction committing lifecycle for ``@UnitOfWork``  (#850, #915)
 * Fixed noisy Logback messages on startup (#902)
@@ -396,6 +441,8 @@ v0.8.1: Apr 7 2015
 
 v0.8.0: Mar 5 2015
 ==================
+
+`Complete changelog on GitHub <https://github.com/dropwizard/dropwizard/milestone/5?closed=1>`__
 
 * Migrated ``dropwizard-spdy`` from NPN to ALPN
 * Dropped support for deprecated SPDY/2 in ``dropwizard-spdy``
@@ -437,6 +484,8 @@ v0.8.0: Mar 5 2015
 
 v0.7.1: Jun 18 2014
 ===================
+
+`Complete changelog on GitHub <https://github.com/dropwizard/dropwizard/milestone/6?closed=1>`__
 
 * Added instrumentation to ``Task``, using metrics annotations.
 * Added ability to blacklist SSL cipher suites.
@@ -480,6 +529,8 @@ v0.7.1: Jun 18 2014
 
 v0.7.0: Apr 04 2014
 ===================
+
+`Complete changelog on GitHub <https://github.com/dropwizard/dropwizard/milestone/4?closed=1>`__
 
 * Upgraded to Java 7.
 * Moved to the ``io.dropwizard`` group ID and namespace.
@@ -762,6 +813,8 @@ v0.4.1: Jun 19 2012
 v0.4.0: May 1 2012
 ==================
 
+`Complete changelog on GitHub <https://github.com/dropwizard/dropwizard/milestone/4?closed=1>`__
+
 * Switched logging from Log4j__ to Logback__.
 
   * Deprecated ``Log#fatal`` methods.
@@ -815,6 +868,8 @@ v0.3.1: Mar 15 2012
 
 v0.3.0: Mar 13 2012
 ===================
+
+`Complete changelog on GitHub <https://github.com/dropwizard/dropwizard/milestone/1?closed=1>`__
 
 * Upgraded to JDBI 2.31.3.
 * Upgraded to Jackson 1.9.5.
