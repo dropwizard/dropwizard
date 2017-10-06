@@ -337,6 +337,7 @@
                             <compilerId>javac-with-errorprone</compilerId>
                             <forceJavacCompilerUse>true</forceJavacCompilerUse>
                             <showWarnings>true</showWarnings>
+                            <fork>true</fork>
                             <compilerArgument>-XepDisableWarningsInGeneratedCode</compilerArgument>
                         </configuration>
                         <dependencies>
