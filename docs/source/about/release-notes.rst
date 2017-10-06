@@ -813,7 +813,7 @@ v0.4.1: Jun 19 2012
 v0.4.0: May 1 2012
 ==================
 
-`Complete changelog on GitHub <https://github.com/dropwizard/dropwizard/milestone/4?closed=1>`__
+`Complete changelog on GitHub <https://github.com/dropwizard/dropwizard/milestone/3?closed=1>`__
 
 * Switched logging from Log4j__ to Logback__.
 
