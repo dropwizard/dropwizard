@@ -5,6 +5,9 @@ jdk:
   - oraclejdk8
 before_install:
   - ulimit -c unlimited -S
+script:
+  - ./mvnw test -B
+  - ./mvnw site -pl docs -B
 after_success:
   - bash .travis_after_success.sh
 cache:
