@@ -389,7 +389,7 @@ of ``#getId()``, likewise with ``content`` and ``#getContent()``. Lastly, the be
     objects like this one. In addition to the sophisticated set of `annotations`__, you can even
     write your custom serializers and deserializers.
 
-.. __: http://wiki.fasterxml.com/JacksonAnnotations
+.. __: https://github.com/FasterXML/jackson-annotations/wiki/Jackson-Annotations
 
 Now that we've got our representation class, it makes sense to start in on the resource it
 represents.
