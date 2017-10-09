@@ -270,7 +270,7 @@ to serialize it.</p>
 <p class="first admonition-title">Note</p>
 <p class="last">The mapping from YAML to your application&#8217;s <code class="docutils literal"><span class="pre">Configuration</span></code> instance is done
 by <a class="reference external" href="http://wiki.fasterxml.com/JacksonHome">Jackson</a>. This means your <code class="docutils literal"><span class="pre">Configuration</span></code> class can use all of
-Jackson&#8217;s <a class="reference external" href="http://wiki.fasterxml.com/JacksonAnnotations">object-mapping annotations</a>. The validation of <code class="docutils literal"><span class="pre">&#64;NotEmpty</span></code> is
+Jackson&#8217;s <a class="reference external" href="https://github.com/FasterXML/jackson-annotations/wiki/Jackson-Annotations">object-mapping annotations</a>. The validation of <code class="docutils literal"><span class="pre">&#64;NotEmpty</span></code> is
 handled by Hibernate Validator, which has a
 <a class="reference external" href="http://docs.jboss.org/hibernate/validator/4.2/reference/en-US/html_single/#validator-defineconstraints-builtin">wide range of built-in constraints</a> for you to use.</p>
 </div>
@@ -384,7 +384,7 @@ of <code class="docutils literal"><span class="pre">#getId()</span></code>, like
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
 <p class="last">The JSON serialization here is done by Jackson, which supports far more than simple JavaBean
-objects like this one. In addition to the sophisticated set of <a class="reference external" href="http://wiki.fasterxml.com/JacksonAnnotations">annotations</a>, you can even
+objects like this one. In addition to the sophisticated set of <a class="reference external" href="https://github.com/FasterXML/jackson-annotations/wiki/Jackson-Annotations">annotations</a>, you can even
 write your custom serializers and deserializers.</p>
 </div>
 <p>Now that we&#8217;ve got our representation class, it makes sense to start in on the resource it
