@@ -28,7 +28,7 @@ public class SelfValidatingValidator implements ConstraintValidator<SelfValidati
     private static final Logger LOG = LoggerFactory.getLogger(SelfValidatingValidator.class);
     private static final AtomicInteger COUNTER = new AtomicInteger();
     
-    private HashMap<Class<?>, List<ValidationCaller<?>>> methodMap = new HashMap<>();
+    private final HashMap<Class<?>, List<ValidationCaller<?>>> methodMap = new HashMap<>();
     
     @Override
     public void initialize(SelfValidating constraintAnnotation) {}
@@ -92,7 +92,8 @@ public class SelfValidatingValidator implements ConstraintValidator<SelfValidati
                             method.setBody("{ return ((" + annotated.getName() + ")getValidationObject())." + m.getName() + "($1); }");
                             
                             cc.setModifiers(Modifier.PUBLIC);
-                            ValidationCaller<?> caller = (ValidationCaller<?>) cc.toClass().newInstance();
+                            @SuppressWarnings("unchecked")
+                            ValidationCaller<?> caller = (ValidationCaller<?>) cc.toClass().getConstructor().newInstance();
                             l.add(caller);
                         } catch (Exception e) {
                             LOG.error("Failed to generate ValidationCaller for method " + m.toString(), e);
