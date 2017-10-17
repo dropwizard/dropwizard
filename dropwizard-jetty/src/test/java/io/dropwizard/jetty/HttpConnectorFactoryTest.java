@@ -130,7 +130,7 @@ public class HttpConnectorFactoryTest {
         assertThat(connector.getHost()).isEqualTo("127.0.0.1");
         assertThat(connector.getAcceptQueueSize()).isEqualTo(1024);
         assertThat(connector.getReuseAddress()).isTrue();
-        assertThat(connector.getSoLingerTime()).isEqualTo(30);
+        assertThat(connector.getSoLingerTime()).isEqualTo(30000);
         assertThat(connector.getIdleTimeout()).isEqualTo(30000);
         assertThat(connector.getName()).isEqualTo("test-http-connector");
 
