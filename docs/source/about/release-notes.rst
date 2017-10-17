@@ -4,6 +4,13 @@
 Release Notes
 #############
 
+.. _rel-1.1.5:
+
+v1.1.5: Unreleased
+==================
+
+* Correctly set up SO_LINGER for the HTTP connector `#2176 <https://github.com/dropwizard/dropwizard/pull/2176>`_
+
 .. _rel-1.1.4:
 
 v1.1.4: Aug 24 2017
