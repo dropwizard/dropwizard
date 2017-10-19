@@ -247,7 +247,7 @@ button.btn.small,input[type="submit"].btn.small{*padding-top:3px;*padding-bottom
 .navbar .nav .active>.dropdown-toggle:hover{color:#ffffff;}
 .navbar .nav.pull-right .dropdown-menu{left:auto;right:0;}.navbar .nav.pull-right .dropdown-menu:before{left:auto;right:12px;}
 .navbar .nav.pull-right .dropdown-menu:after{left:auto;right:13px;}
-.hero-unit{padding:60px;margin-bottom:30px;background-color:#f5f5f5;-webkit-border-radius:6px;-moz-border-radius:6px;border-radius:6px;}.hero-unit h1{margin-bottom:0;font-size:60px;line-height:1;letter-spacing:-1px;}
+.hero-unit{padding:60px;margin-bottom:30px;background-color:#f5f5f5;-webkit-border-radius:6px;-moz-border-radius:6px;border-radius:6px;}.hero-unit h1{margin-bottom:0;font-size:60px;line-height:1}
 .hero-unit p{font-size:18px;font-weight:200;line-height:27px;}
 .pull-right{float:right;}
 .pull-left{float:left;}
