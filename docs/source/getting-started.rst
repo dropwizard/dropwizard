@@ -130,7 +130,7 @@ we go through this example application. If you have any questions about how Mave
 
 You have three alternatives from here:
 
-1. Create a project using dropwizard-archetype_
+1. Create a project using dropwizard-archetype_::
 
     mvn archetype:generate -DarchetypeGroupId=io.dropwizard.archetypes -DarchetypeArtifactId=java-simple -DarchetypeVersion=[REPLACE WITH A VALID DROPWIZARD VERSION]
 
