@@ -36,7 +36,7 @@ maintenance, no arcane deployment tools, no class loader troubles, no hidden app
 trying to tune a single garbage collector to work with multiple application workloads) and allows
 you to use all of the existing Unix process management tools instead.
 
-.. _Jetty: http://www.eclipse.org/jetty/
+.. _Jetty: https://www.eclipse.org/jetty/
 
 .. _gs-jersey:
 
@@ -48,8 +48,8 @@ implementation) in terms of features or performance. It allows you to write clea
 which gracefully map HTTP requests to simple Java objects. It supports streaming output, matrix URI
 parameters, conditional ``GET`` requests, and much, much more.
 
-.. _Jersey: https://jersey.github.io/ 
-.. _JAX-RS: http://jcp.org/en/jsr/detail?id=311
+.. _Jersey: https://jersey.github.io/
+.. _JAX-RS: https://jcp.org/en/jsr/detail?id=311
 
 .. _gs-jackson:
 
@@ -60,7 +60,7 @@ In terms of data formats, JSON has become the web's *lingua franca*, and Jackson
 JSON on the JVM. In addition to being lightning fast, it has a sophisticated object mapper, allowing
 you to export your domain models directly.
 
-.. _Jackson: http://wiki.fasterxml.com/JacksonHome
+.. _Jackson: https://github.com/FasterXML/jackson
 
 .. _gs-metrics:
 
@@ -94,16 +94,16 @@ you ship more quickly and with fewer regrets.
 * `Joda Time`_ is a very complete, sane library for handling dates and times.
 
 .. _Guava: https://github.com/google/guava
-.. _Logback: http://logback.qos.ch/
-.. _slf4j: http://www.slf4j.org/
-.. _Hibernate Validator: http://www.hibernate.org/subprojects/validator.html
-.. _JSR 349: http://jcp.org/en/jsr/detail?id=349
+.. _Logback: https://logback.qos.ch/
+.. _slf4j: https://www.slf4j.org/
+.. _Hibernate Validator: http://hibernate.org/validator/
+.. _JSR 349: https://jcp.org/en/jsr/detail?id=349
 .. _Apache HttpClient: http://hc.apache.org/httpcomponents-client-ga/index.html
-.. _JDBI: http://www.jdbi.org
+.. _JDBI: http://jdbi.github.io/
 .. _Liquibase: http://www.liquibase.org
-.. _Freemarker: http://freemarker.sourceforge.net/
-.. _Mustache: http://mustache.github.io/
-.. _Joda Time: http://joda-time.sourceforge.net/
+.. _Freemarker: http://freemarker.org/
+.. _Mustache: https://mustache.github.io/
+.. _Joda Time: http://www.joda.org/joda-time/
 
 Now that you've gotten the lay of the land, let's dig in!
 
@@ -121,7 +121,7 @@ we go through this example application. If you have any questions about how Mave
 .. _Ant: http://ant.apache.org/
 .. _Ivy: http://ant.apache.org/ivy/
 .. _Buildr: http://buildr.apache.org/
-.. _Gradle: http://www.gradle.org/
+.. _Gradle: https://www.gradle.org/
 .. _SBT: https://github.com/harrah/xsbt/wiki
 .. _Gant: https://github.com/Gant/Gant
 .. _Leiningen: https://github.com/technomancy/leiningen
@@ -265,7 +265,7 @@ Our YAML file will then look like the below, full `example yml here`_:
 Dropwizard has *many* more configuration parameters than that, but they all have sane defaults so
 you can keep your configuration files small and focused.
 
-So save that YAML file in the directory you plan to run the fat jar from (see below) as ``hello-world.yml``, because 
+So save that YAML file in the directory you plan to run the fat jar from (see below) as ``hello-world.yml``, because
 we'll be getting up and running pretty soon, and we'll need it. Next up, we're creating our application class!
 
 .. _gs-application:
