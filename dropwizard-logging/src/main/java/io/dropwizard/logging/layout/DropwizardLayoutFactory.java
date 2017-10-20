@@ -31,6 +31,7 @@ public class DropwizardLayoutFactory implements LayoutFactory<ILoggingEvent> {
         jsonLayout.setContext(context);
         jsonLayout.setTimestampFormat(timestampFormat);
         jsonLayout.setTimestampFormatTimezoneId(timeZone.getID());
+        jsonLayout.setAppendLineSeparator(true);
         return  jsonLayout;
     }
 }
