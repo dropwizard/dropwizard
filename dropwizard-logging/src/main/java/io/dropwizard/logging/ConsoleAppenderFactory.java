@@ -3,10 +3,13 @@ package io.dropwizard.logging;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.ConsoleAppender;
+import ch.qos.logback.core.Layout;
 import ch.qos.logback.core.encoder.LayoutWrappingEncoder;
+import ch.qos.logback.core.pattern.PatternLayoutBase;
 import ch.qos.logback.core.spi.DeferredProcessingAware;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import com.google.common.base.Strings;
 import io.dropwizard.logging.async.AsyncAppenderFactory;
 import io.dropwizard.logging.filter.LevelFilterFactory;
 import io.dropwizard.logging.layout.LayoutFactory;
@@ -99,7 +102,7 @@ public class ConsoleAppenderFactory<E extends DeferredProcessingAware> extends A
         appender.setTarget(target.get());
 
         final LayoutWrappingEncoder<E> layoutEncoder = new LayoutWrappingEncoder<>();
-        layoutEncoder.setLayout(buildLayout(context, layoutFactory));
+        layoutEncoder.setLayout(buildPatternLayout(context, layoutFactory));
         appender.setEncoder(layoutEncoder);
 
         appender.addFilter(levelFilterFactory.build(threshold));
@@ -108,4 +111,5 @@ public class ConsoleAppenderFactory<E extends DeferredProcessingAware> extends A
 
         return wrapAsync(appender, asyncAppenderFactory);
     }
+
 }

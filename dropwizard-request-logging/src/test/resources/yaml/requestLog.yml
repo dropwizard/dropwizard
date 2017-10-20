@@ -3,3 +3,10 @@ appenders:
     currentLogFilename: "/var/log/dingo/dingo.log"
     archivedLogFilenamePattern: "/var/log/dingo/dingo-%d.log.zip"
     archivedFileCount: 5
+  - type: jsonFile
+    currentLogFilename: "/var/log/dingo/dingo-json.log"
+    archivedLogFilenamePattern: "/var/log/dingo/dingo-json-%d.log.zip"
+    archivedFileCount: 5
+    prettyPrint: true
+    timestampFormat: "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
+

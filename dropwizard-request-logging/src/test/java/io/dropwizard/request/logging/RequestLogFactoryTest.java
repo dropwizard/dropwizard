@@ -9,6 +9,7 @@ import io.dropwizard.jackson.DiscoverableSubtypeResolver;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.logging.ConsoleAppenderFactory;
 import io.dropwizard.logging.FileAppenderFactory;
+import io.dropwizard.logging.JsonFileAppenderFactory;
 import io.dropwizard.logging.SyslogAppenderFactory;
 import io.dropwizard.validation.BaseValidator;
 import org.junit.Before;
@@ -24,6 +25,7 @@ public class RequestLogFactoryTest {
         final ObjectMapper objectMapper = Jackson.newObjectMapper();
         objectMapper.getSubtypeResolver().registerSubtypes(ConsoleAppenderFactory.class,
                                                            FileAppenderFactory.class,
+                                                           JsonFileAppenderFactory.class,
                                                            SyslogAppenderFactory.class);
         this.logbackAccessRequestLogFactory = new YamlConfigurationFactory<>(LogbackAccessRequestLogFactory.class,
                                                      BaseValidator.newValidator(),
@@ -35,9 +37,11 @@ public class RequestLogFactoryTest {
     public void fileAppenderFactoryIsSet() {
         assertThat(logbackAccessRequestLogFactory).isNotNull();
         assertThat(logbackAccessRequestLogFactory.getAppenders()).isNotNull();
-        assertThat(logbackAccessRequestLogFactory.getAppenders().size()).isEqualTo(1);
+        assertThat(logbackAccessRequestLogFactory.getAppenders().size()).isEqualTo(2);
         assertThat(logbackAccessRequestLogFactory.getAppenders().get(0))
             .isInstanceOf(FileAppenderFactory.class);
+        assertThat(logbackAccessRequestLogFactory.getAppenders().get(1))
+                .isInstanceOf(JsonFileAppenderFactory.class);
     }
 
     @Test
