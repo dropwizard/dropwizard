@@ -68,6 +68,7 @@ public class HttpConnectorFactoryTest {
         assertThat(http.getMinBufferPoolSize()).isEqualTo(Size.bytes(64));
         assertThat(http.getBufferPoolIncrement()).isEqualTo(Size.bytes(1024));
         assertThat(http.getMaxBufferPoolSize()).isEqualTo(Size.kilobytes(64));
+        assertThat(http.getMinRequestDataRate()).isEqualTo(0L);
         assertThat(http.getAcceptorThreads()).isEmpty();
         assertThat(http.getSelectorThreads()).isEmpty();
         assertThat(http.getAcceptQueueSize()).isNull();
@@ -98,6 +99,7 @@ public class HttpConnectorFactoryTest {
         assertThat(http.getMinBufferPoolSize()).isEqualTo(Size.bytes(128));
         assertThat(http.getBufferPoolIncrement()).isEqualTo(Size.bytes(500));
         assertThat(http.getMaxBufferPoolSize()).isEqualTo(Size.kilobytes(32));
+        assertThat(http.getMinRequestDataRate()).isEqualTo(42L);
         assertThat(http.getAcceptorThreads()).contains(1);
         assertThat(http.getSelectorThreads()).contains(4);
         assertThat(http.getAcceptQueueSize()).isEqualTo(1024);
@@ -119,6 +121,7 @@ public class HttpConnectorFactoryTest {
         http.setAcceptQueueSize(1024);
         http.setSoLingerTime(Duration.seconds(30));
         http.setBlockingTimeout(Duration.minutes(1));
+        http.setMinRequestDataRate(42L);
 
         Server server = new Server();
         MetricRegistry metrics = new MetricRegistry();
@@ -167,6 +170,7 @@ public class HttpConnectorFactoryTest {
         assertThat(httpConfiguration.getSendServerVersion()).isFalse();
         assertThat(httpConfiguration.getCustomizers()).hasAtLeastOneElementOfType(ForwardedRequestCustomizer.class);
         assertThat(httpConfiguration.getBlockingTimeout()).isEqualTo(60000L);
+        assertThat(httpConfiguration.getMinRequestDataRate()).isEqualTo(42L);
 
         connector.stop();
         server.stop();
