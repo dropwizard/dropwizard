@@ -262,6 +262,8 @@ public class HttpConnectorFactory implements ConnectorFactory {
     @MinSize(value = 1, unit = SizeUnit.BYTES)
     private Size maxBufferPoolSize = Size.kilobytes(64);
 
+    private long minRequestDataRate = 0L;
+
     @Min(1)
     @UnwrapValidatedValue
     private Optional<Integer> acceptorThreads = Optional.empty();
@@ -408,6 +410,16 @@ public class HttpConnectorFactory implements ConnectorFactory {
     @JsonProperty
     public void setMaxBufferPoolSize(Size maxBufferPoolSize) {
         this.maxBufferPoolSize = maxBufferPoolSize;
+    }
+
+    @JsonProperty
+    public long getMinRequestDataRate() {
+        return minRequestDataRate;
+    }
+
+    @JsonProperty
+    public void setMinRequestDataRate(long minRequestDataRate) {
+        this.minRequestDataRate = minRequestDataRate;
     }
 
     @JsonProperty
@@ -577,6 +589,7 @@ public class HttpConnectorFactory implements ConnectorFactory {
         httpConfig.setResponseHeaderSize((int) maxResponseHeaderSize.toBytes());
         httpConfig.setSendDateHeader(useDateHeader);
         httpConfig.setSendServerVersion(useServerHeader);
+        httpConfig.setMinRequestDataRate(minRequestDataRate);
 
         if (useForwardedHeaders) {
             httpConfig.addCustomizer(new ForwardedRequestCustomizer());

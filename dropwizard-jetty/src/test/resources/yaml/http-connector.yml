@@ -12,6 +12,7 @@ blockingTimeout: 30 seconds
 minBufferPoolSize: 128B
 bufferPoolIncrement: 500B
 maxBufferPoolSize: 32KiB
+minRequestDataRate: 42
 acceptorThreads: 1
 selectorThreads: 4
 acceptQueueSize: 1024
