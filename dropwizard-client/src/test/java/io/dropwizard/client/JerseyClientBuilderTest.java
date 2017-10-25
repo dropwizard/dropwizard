@@ -12,7 +12,9 @@ import io.dropwizard.jersey.validation.Validators;
 import io.dropwizard.lifecycle.setup.ExecutorServiceBuilder;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
 import io.dropwizard.setup.Environment;
+import org.apache.http.HttpResponse;
 import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.ServiceUnavailableRetryStrategy;
 import org.apache.http.config.Registry;
 import org.apache.http.config.RegistryBuilder;
 import org.apache.http.conn.DnsResolver;
@@ -25,6 +27,7 @@ import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
 import org.apache.http.impl.client.SystemDefaultCredentialsProvider;
 import org.apache.http.impl.conn.SystemDefaultDnsResolver;
 import org.apache.http.impl.conn.SystemDefaultRoutePlanner;
+import org.apache.http.protocol.HttpContext;
 import org.glassfish.jersey.client.rx.RxClient;
 import org.glassfish.jersey.client.rx.java8.RxCompletionStageInvoker;
 import org.junit.After;
@@ -44,6 +47,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.ext.MessageBodyReader;
 import javax.ws.rs.ext.Provider;
+import javax.xml.ws.Service;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.annotation.Annotation;
@@ -270,6 +274,13 @@ public class JerseyClientBuilderTest {
         final HostnameVerifier customHostnameVerifier = new NoopHostnameVerifier();
         builder.using(customHostnameVerifier);
         verify(apacheHttpClientBuilder).using(customHostnameVerifier);
+    }
+
+    @Test
+    public void usesACustomServiceUnavailableRetryStrategy() {
+        final ServiceUnavailableRetryStrategy customServiceUnavailableRetryStrategy = mock(ServiceUnavailableRetryStrategy.class);
+        builder.using(customServiceUnavailableRetryStrategy);
+        verify(apacheHttpClientBuilder).using(customServiceUnavailableRetryStrategy);
     }
 
     @Test
