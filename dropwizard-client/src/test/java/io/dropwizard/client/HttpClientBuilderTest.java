@@ -35,6 +35,7 @@ import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.HttpRequestRetryHandler;
 import org.apache.http.client.RedirectStrategy;
+import org.apache.http.client.ServiceUnavailableRetryStrategy;
 import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
@@ -676,6 +677,19 @@ public class HttpClientBuilderTest {
             "httpprocessor", true)
             .get(apacheBuilder))
             .isSameAs(httpProcessor);
+    }
+
+    @Test
+    public void usesServiceUnavailableRetryStrategy() throws Exception {
+        ServiceUnavailableRetryStrategy serviceUnavailableRetryStrategy = mock(ServiceUnavailableRetryStrategy.class);
+        final ConfiguredCloseableHttpClient client =
+            builder.using(serviceUnavailableRetryStrategy)
+                .createClient(apacheBuilder, connectionManager, "test");
+        assertThat(client).isNotNull();
+        assertThat(FieldUtils.getField(httpClientBuilderClass,
+            "serviceUnavailStrategy", true)
+            .get(apacheBuilder))
+            .isSameAs(serviceUnavailableRetryStrategy);
     }
 
     @Test

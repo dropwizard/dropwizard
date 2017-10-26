@@ -13,6 +13,7 @@ import io.dropwizard.lifecycle.setup.ExecutorServiceBuilder;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
 import io.dropwizard.setup.Environment;
 import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.ServiceUnavailableRetryStrategy;
 import org.apache.http.config.Registry;
 import org.apache.http.config.RegistryBuilder;
 import org.apache.http.conn.DnsResolver;
@@ -270,6 +271,13 @@ public class JerseyClientBuilderTest {
         final HostnameVerifier customHostnameVerifier = new NoopHostnameVerifier();
         builder.using(customHostnameVerifier);
         verify(apacheHttpClientBuilder).using(customHostnameVerifier);
+    }
+
+    @Test
+    public void usesACustomServiceUnavailableRetryStrategy() {
+        final ServiceUnavailableRetryStrategy customServiceUnavailableRetryStrategy = mock(ServiceUnavailableRetryStrategy.class);
+        builder.using(customServiceUnavailableRetryStrategy);
+        verify(apacheHttpClientBuilder).using(customServiceUnavailableRetryStrategy);
     }
 
     @Test
