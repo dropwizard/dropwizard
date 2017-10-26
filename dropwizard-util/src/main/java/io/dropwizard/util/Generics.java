@@ -59,6 +59,14 @@ public class Generics {
                             }
                         }
                     }
+                } else if (param instanceof ParameterizedType) {
+                    final Type rawType = ((ParameterizedType) param).getRawType();
+                    if (rawType instanceof Class<?>) {
+                        final Class<T> cls = determineClass(bound, rawType);
+                        if (cls != null) {
+                            return cls;
+                        }
+                    }
                 }
             }
         }

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.Rule;
@@ -26,6 +27,7 @@ public class GenericsTest<T> {
             {IntegerList.class, Integer.class, Integer.class, Integer.class, null, null },
             {NumberList.class, Number.class, Number.class, Number.class, null, null },
             {IntegerValueMap.class, Object.class, Number.class, Integer.class, null, null },
+            {ListOfStringSets.class, Set.class, Set.class, Set.class, null, null },
         });
     }
 
@@ -53,13 +55,14 @@ public class GenericsTest<T> {
     public void testTypeParameter() {
         assertThat(Generics.getTypeParameter(klass)).isEqualTo(typeParameter);
     }
-    
+
     @Test
     public void testBoundTypeParameter() {
         assertThat(Generics.getTypeParameter(klass, bound)).isEqualTo(boundTypeParameter);
     }
-    
+
     public static class IntegerList extends ArrayList<Integer> { }
     public static class NumberList<V extends Number> extends ArrayList<V> { }
     public static class IntegerValueMap<K> extends HashMap<K, Integer> { }
+    public static class ListOfStringSets extends ArrayList<Set<String>> { }
 }
