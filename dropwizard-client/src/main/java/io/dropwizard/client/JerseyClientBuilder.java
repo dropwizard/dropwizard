@@ -70,7 +70,6 @@ public class JerseyClientBuilder {
     private ExecutorService executorService;
     private ConnectorProvider connectorProvider;
     private Duration shutdownGracePeriod = Duration.seconds(5);
-    private ServiceUnavailableRetryStrategy serviceUnavailableRetryStrategy;
 
     public JerseyClientBuilder(Environment environment) {
         this.apacheHttpClientBuilder = new HttpClientBuilder(environment);
