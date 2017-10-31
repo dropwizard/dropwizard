@@ -5,6 +5,8 @@ import com.google.common.base.Strings;
 import io.dropwizard.jersey.errors.ErrorMessage;
 import io.dropwizard.util.Enums;
 
+import java.lang.reflect.Method;
+import java.lang.reflect.InvocationTargetException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -13,8 +15,13 @@ import javax.ws.rs.ext.ParamConverterProvider;
 import javax.ws.rs.ext.Provider;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
+import java.security.AccessController;
 
 import static io.dropwizard.jersey.validation.JerseyParameterNameProvider.getParameterNameFromAnnotations;
+
+import org.glassfish.jersey.internal.util.ReflectionHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Provides converters to jersey for enums used as resource parameters.
@@ -27,6 +34,7 @@ import static io.dropwizard.jersey.validation.JerseyParameterNameProvider.getPar
 @SuppressWarnings("unchecked")
 @Provider
 public class FuzzyEnumParamConverterProvider implements ParamConverterProvider {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ParamConverterProvider.class);
 
     private final static Joiner JOINER = Joiner.on(", ");
 
@@ -39,6 +47,7 @@ public class FuzzyEnumParamConverterProvider implements ParamConverterProvider {
         final Class<Enum<?>> type = (Class<Enum<?>>) rawType;
         final Enum<?>[] constants = type.getEnumConstants();
         final String parameterName = getParameterNameFromAnnotations(annotations).orElse("Parameter");
+        Method fromStringMethod = AccessController.doPrivileged(ReflectionHelper.getFromStringStringMethodPA(rawType));
 
         return new ParamConverter<T>() {
             @Override
@@ -47,7 +56,35 @@ public class FuzzyEnumParamConverterProvider implements ParamConverterProvider {
                     return null;
                 }
 
-                final Enum<?> constant = Enums.fromStringFuzzy(value, constants);
+                if (fromStringMethod != null) {
+                    try {
+                        Object constant = fromStringMethod.invoke(null, value);
+                        // return if a value is found
+                        if (constant != null) {
+                            return (T) constant;
+                        }
+                        final String errMsg =
+                            String.format("%s is not a valid %s", parameterName, rawType.getSimpleName());
+                        throw new WebApplicationException(getErrorResponse(errMsg));
+                    } catch (IllegalAccessException e) {
+                        final String errMsg =
+                            String.format("Not permitted to call fromString on %s", rawType.getSimpleName());
+                        LOGGER.debug(errMsg, e);
+                        throw new WebApplicationException(getErrorResponse(errMsg));
+                    } catch (InvocationTargetException e) {
+                        if (e.getCause() instanceof WebApplicationException) {
+                            throw (WebApplicationException) e.getCause();
+                        }
+                        final String errMsg =
+                            String.format("Failed to convert %s to %s", parameterName, rawType.getSimpleName());
+                        LOGGER.debug(errMsg, e);
+                        throw new WebApplicationException(getErrorResponse(errMsg));
+                    }
+                }
+
+                Object constant = Enums.fromStringFuzzy(value, constants);
+
+                // return if a value is found
                 if (constant != null) {
                     return (T) constant;
                 }
