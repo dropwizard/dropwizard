@@ -26,7 +26,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Documented
 @Constraint(validatedBy = MaxDurationValidator.class)
 public @interface MaxDuration {
-    String message() default "must be less than or equal to {value} {unit}";
+    String message() default "must be less than or equal (or less than if in 'exclusive' mode) to {value} {unit}";
 
     Class<?>[] groups() default { };
 
@@ -41,4 +41,9 @@ public @interface MaxDuration {
      * @return unit of the value the element must be higher or equal to
      */
     TimeUnit unit() default TimeUnit.SECONDS;
+
+    /**
+     * @return if the validation should exclude the set value (default is inclusive).
+     */
+    boolean exclusive() default false;
 }
