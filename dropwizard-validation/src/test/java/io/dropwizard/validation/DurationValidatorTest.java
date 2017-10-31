@@ -18,13 +18,13 @@ public class DurationValidatorTest {
         @MaxDuration(value = 30, unit = TimeUnit.SECONDS)
         private Duration tooBig = Duration.minutes(10);
 
-        @MaxDuration(value = 30, unit = TimeUnit.SECONDS, exclusive = true)
+        @MaxDuration(value = 30, unit = TimeUnit.SECONDS, inclusive = false)
         private Duration tooBigExclusive = Duration.seconds(30);
 
         @MinDuration(value = 30, unit = TimeUnit.SECONDS)
         private Duration tooSmall = Duration.milliseconds(100);
 
-        @MinDuration(value = 30, unit = TimeUnit.SECONDS, exclusive = true)
+        @MinDuration(value = 30, unit = TimeUnit.SECONDS, inclusive = false)
         private Duration tooSmallExclusive = Duration.seconds(30);
 
         @DurationRange(min = 10, max = 30, unit = TimeUnit.MINUTES)
@@ -79,12 +79,12 @@ public class DurationValidatorTest {
             assertThat(errors)
                     .containsOnly(
                             "outOfRange must be between 10 MINUTES and 30 MINUTES",
-                            "tooBig must be less than or equal (or less than if in 'exclusive' mode) to 30 SECONDS",
-                            "tooBigExclusive must be less than or equal (or less than if in 'exclusive' mode) to 30 SECONDS",
-                            "tooSmall must be greater than or equal (or greater if in 'exclusive' mode) to 30 SECONDS",
-                            "tooSmallExclusive must be greater than or equal (or greater if in 'exclusive' mode) to 30 SECONDS",
-                            "maxDurs[0].<collection element> must be less than or equal (or less than if in 'exclusive' mode) to 30 SECONDS",
-                            "minDurs[0].<collection element> must be greater than or equal (or greater if in 'exclusive' mode) to 30 SECONDS",
+                            "tooBig must be less than (or equal if in 'inclusive' mode) to 30 SECONDS",
+                            "tooBigExclusive must be less than (or equal if in 'inclusive' mode) to 30 SECONDS",
+                            "tooSmall must be greater than (or equal if in 'inclusive' mode) to 30 SECONDS",
+                            "tooSmallExclusive must be greater than (or equal if in 'inclusive' mode) to 30 SECONDS",
+                            "maxDurs[0].<collection element> must be less than (or equal if in 'inclusive' mode) to 30 SECONDS",
+                            "minDurs[0].<collection element> must be greater than (or equal if in 'inclusive' mode) to 30 SECONDS",
                             "rangeDurs[0].<collection element> must be between 10 MINUTES and 30 MINUTES");
         }
     }

@@ -14,13 +14,13 @@ public class MinDurationValidator implements ConstraintValidator<MinDuration, Du
 
     private long minQty;
     private TimeUnit minUnit;
-    private boolean exclusive;
+    private boolean inclusive;
 
     @Override
     public void initialize(MinDuration constraintAnnotation) {
         this.minQty = constraintAnnotation.value();
         this.minUnit = constraintAnnotation.unit();
-        this.exclusive = constraintAnnotation.exclusive();
+        this.inclusive = constraintAnnotation.inclusive();
     }
 
     @Override
@@ -32,10 +32,10 @@ public class MinDurationValidator implements ConstraintValidator<MinDuration, Du
         long valueNanos = value.toNanoseconds();
         long annotationNanos = minUnit.toNanos(minQty);
 
-        if (exclusive) {
-            return valueNanos > annotationNanos;
-        } else {
+        if (inclusive) {
             return valueNanos >= annotationNanos;
+        } else {
+            return valueNanos > annotationNanos;
         }
     }
 }
