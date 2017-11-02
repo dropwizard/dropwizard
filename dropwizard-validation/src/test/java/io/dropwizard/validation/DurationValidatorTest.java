@@ -79,12 +79,12 @@ public class DurationValidatorTest {
             assertThat(errors)
                     .containsOnly(
                             "outOfRange must be between 10 MINUTES and 30 MINUTES",
-                            "tooBig must be less than (or equal if in 'inclusive' mode) to 30 SECONDS",
-                            "tooBigExclusive must be less than (or equal if in 'inclusive' mode) to 30 SECONDS",
-                            "tooSmall must be greater than (or equal if in 'inclusive' mode) to 30 SECONDS",
-                            "tooSmallExclusive must be greater than (or equal if in 'inclusive' mode) to 30 SECONDS",
-                            "maxDurs[0].<collection element> must be less than (or equal if in 'inclusive' mode) to 30 SECONDS",
-                            "minDurs[0].<collection element> must be greater than (or equal if in 'inclusive' mode) to 30 SECONDS",
+                            "tooBig must be less than (or equal to, if in 'inclusive' mode) to 30 SECONDS",
+                            "tooBigExclusive must be less than (or equal to, if in 'inclusive' mode) to 30 SECONDS",
+                            "tooSmall must be greater than (or equal to, if in 'inclusive' mode) to 30 SECONDS",
+                            "tooSmallExclusive must be greater than (or equal to, if in 'inclusive' mode) to 30 SECONDS",
+                            "maxDurs[0].<collection element> must be less than (or equal to, if in 'inclusive' mode) to 30 SECONDS",
+                            "minDurs[0].<collection element> must be greater than (or equal to, if in 'inclusive' mode) to 30 SECONDS",
                             "rangeDurs[0].<collection element> must be between 10 MINUTES and 30 MINUTES");
         }
     }

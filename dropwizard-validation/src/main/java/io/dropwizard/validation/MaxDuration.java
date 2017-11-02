@@ -26,7 +26,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Documented
 @Constraint(validatedBy = MaxDurationValidator.class)
 public @interface MaxDuration {
-    String message() default "must be less than (or equal if in 'inclusive' mode) to {value} {unit}";
+    String message() default "must be less than (or equal to, if in 'inclusive' mode) to {value} {unit}";
 
     Class<?>[] groups() default { };
 
@@ -43,7 +43,9 @@ public @interface MaxDuration {
     TimeUnit unit() default TimeUnit.SECONDS;
 
     /**
-     * @return if the validation should include the set value (default is true).
+     * @return {@code true} if the validation is to allow values equal to {@link #value()}.
+     * False if the validation is to be exclusive.
+     * Defaults to {@code true}.
      */
     boolean inclusive() default true;
 }
