@@ -107,6 +107,16 @@ import javax.validation.constraints.Min;
  *             the default of 8KB to 256KB is reported to significantly reduce thread contention.
  *         </td>
  *     </tr>
+ *      <tr>
+ *         <td>{@code immediateFlush}</td>
+ *         <td>{@code true}</td>
+ *         <td>
+ *             If set to true, log events will be immediately flushed to disk. Immediate flushing is safer, but
+ *             it degrades logging throughput.
+ *             See <a href="https://logback.qos.ch/manual/appenders.html#immediateFlush">the Logback documentation</a>
+ *             for details.
+ *         </td>
+ *     </tr>
  * </table>
  *
  * @see AbstractAppenderFactory
@@ -127,6 +137,8 @@ public class FileAppenderFactory<E extends DeferredProcessingAware> extends Abst
 
     @MinSize(1)
     private Size bufferSize = Size.bytes(FileAppender.DEFAULT_BUFFER_SIZE);
+
+    private boolean immediateFlush = true;
 
     @JsonProperty
     public String getCurrentLogFilename() {
@@ -188,6 +200,15 @@ public class FileAppenderFactory<E extends DeferredProcessingAware> extends Abst
         this.bufferSize = bufferSize;
     }
 
+    public boolean isImmediateFlush() {
+        return immediateFlush;
+    }
+
+    @JsonProperty
+    public void setImmediateFlush(boolean immediateFlush) {
+        this.immediateFlush = immediateFlush;
+    }
+
     @JsonIgnore
     @ValidationMethod(message = "must have archivedLogFilenamePattern if archive is true")
     public boolean isValidArchiveConfiguration() {
@@ -227,6 +248,7 @@ public class FileAppenderFactory<E extends DeferredProcessingAware> extends Abst
         layoutEncoder.setLayout(buildLayout(context, layoutFactory));
         appender.setEncoder(layoutEncoder);
 
+        appender.setImmediateFlush(immediateFlush);
         appender.setPrudent(false);
         appender.addFilter(levelFilterFactory.build(threshold));
         getFilterFactories().forEach(f -> appender.addFilter(f.build()));

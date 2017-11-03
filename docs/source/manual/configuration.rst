@@ -659,6 +659,7 @@ File
           timeZone: UTC
           logFormat: "%-5p [%d{ISO8601,UTC}] %c: %m%n%rEx"
           bufferSize: 8KB
+          immediateFlush: true
           filterFactories:
             - type: URI
 
@@ -697,6 +698,8 @@ neverBlock                   false                                      Prevent 
                                                                         Set to true to disable blocking.
 bufferSize                   8KB                                        The buffer size of the underlying FileAppender (setting added in logback 1.1.10). Increasing this
                                                                         from the default of 8KB to 256KB is reported to significantly reduce thread contention.
+immediateFlush               true         If set to true, log events will be immediately flushed to disk. Immediate flushing is safer, but
+                                          it degrades logging throughput.
 ============================ =========================================  ==================================================================================================
 
 
