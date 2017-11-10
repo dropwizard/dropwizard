@@ -1,12 +1,11 @@
 package io.dropwizard.benchmarks.jersey;
 
-import java.io.File;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.concurrent.TimeUnit;
-
-import javax.validation.Validator;
-
+import io.dropwizard.jersey.validation.Validators;
+import io.dropwizard.logging.BootstrapLogging;
+import io.dropwizard.validation.ValidationMethod;
+import io.dropwizard.validation.selfvalidating.SelfValidating;
+import io.dropwizard.validation.selfvalidating.SelfValidation;
+import io.dropwizard.validation.selfvalidating.ViolationCollector;
 import org.glassfish.jersey.server.model.Invocable;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
@@ -18,12 +17,8 @@ import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
 
-import io.dropwizard.jersey.validation.Validators;
-import io.dropwizard.logging.BootstrapLogging;
-import io.dropwizard.validation.ValidationMethod;
-import io.dropwizard.validation.selfvalidating.SelfValidating;
-import io.dropwizard.validation.selfvalidating.SelfValidation;
-import io.dropwizard.validation.selfvalidating.ViolationCollector;
+import javax.validation.Validator;
+import java.util.concurrent.TimeUnit;
 
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
@@ -44,13 +39,13 @@ public class SelfValidatingBenchmark {
         public boolean isValid2(String param1, int param2) {
             return true;
         }
-        
-        @ValidationMethod(message="invalid1")
+
+        @ValidationMethod(message = "invalid1")
         public boolean isInvalid1(String param1) {
             return false;
         }
-        
-        @ValidationMethod(message="invalid2")
+
+        @ValidationMethod(message = "invalid2")
         public boolean isInvalid2(String param1, int param2) {
             return false;
         }
@@ -65,12 +60,12 @@ public class SelfValidatingBenchmark {
         @SelfValidation
         public void validateValid2(ViolationCollector collector) {
         }
-        
+
         @SelfValidation
         public void validateInvalid1(ViolationCollector collector) {
             collector.addViolation("invalid1");
         }
-        
+
         @SelfValidation
         public void validateInvalid2(ViolationCollector collector) {
             collector.addViolation("invalid2");
@@ -100,13 +95,13 @@ public class SelfValidatingBenchmark {
         validator.validate(selfValidatingMethodUser);
     }
 
-    public static void main(String[] args) throws Exception {  
+    public static void main(String[] args) throws Exception {
         new Runner(new OptionsBuilder()
-                .include(SelfValidatingBenchmark.class.getSimpleName())
-                .forks(1)
-                .warmupIterations(5)
-                .measurementIterations(8)
-                .build())
-                .run();
+            .include(SelfValidatingBenchmark.class.getSimpleName())
+            .forks(1)
+            .warmupIterations(5)
+            .measurementIterations(8)
+            .build())
+            .run();
     }
 }

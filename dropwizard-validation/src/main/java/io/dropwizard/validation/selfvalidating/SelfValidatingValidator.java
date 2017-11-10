@@ -1,23 +1,23 @@
 package io.dropwizard.validation.selfvalidating;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Maps;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtMethod;
 import javassist.NotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 /**
  * This class is the base validator for the <code>@SelfValidating</code> annotation. It
@@ -26,8 +26,8 @@ import javassist.NotFoundException;
  */
 public class SelfValidatingValidator implements ConstraintValidator<SelfValidating, Object> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SelfValidatingValidator.class);
     private static final AtomicInteger COUNTER = new AtomicInteger();
+    private static final Logger log = LoggerFactory.getLogger(SelfValidatingValidator.class);
 
     private final ConcurrentMap<Class<?>, List<ValidationCaller<?>>> methodMap = Maps.newConcurrentMap();
 
@@ -35,14 +35,12 @@ public class SelfValidatingValidator implements ConstraintValidator<SelfValidati
     public void initialize(SelfValidating constraintAnnotation) {
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
+    @SuppressWarnings({"unchecked"})
     @Override
     public boolean isValid(Object value, ConstraintValidatorContext context) {
-        List<ValidationCaller<?>> callers = methodMap.computeIfAbsent(value.getClass(), this::findMethods);
-
-        ViolationCollector collector = new ViolationCollector(context);
+        final ViolationCollector collector = new ViolationCollector(context);
         context.disableDefaultConstraintViolation();
-        for (ValidationCaller caller : callers) {
+        for (ValidationCaller caller : methodMap.computeIfAbsent(value.getClass(), this::findMethods)) {
             caller.setValidationObject(value);
             caller.call(collector);
         }
@@ -53,12 +51,11 @@ public class SelfValidatingValidator implements ConstraintValidator<SelfValidati
      * This method generates <code>ValidationCaller</code>s for each method annotated
      * with <code>@SelfValidation</code> that adheres to required signature.
      */
+    @SuppressWarnings("unchecked")
     private List<ValidationCaller<?>> findMethods(Class<?> annotated) {
-        List<ValidationCaller<?>> l = new ArrayList<>();
-
-        ClassPool cp;
-        CtClass callerSuperclass;
-        CtClass[] callingParameters;
+        final ClassPool cp;
+        final CtClass callerSuperclass;
+        final CtClass[] callingParameters;
         try {
             cp = ClassPool.getDefault();
             callerSuperclass = cp.get(ValidationCaller.class.getName());
@@ -67,35 +64,44 @@ public class SelfValidatingValidator implements ConstraintValidator<SelfValidati
             throw new IllegalStateException("Failed to load included class", e);
         }
 
-        for (Method m : annotated.getMethods()) {
-            if (m.isAnnotationPresent(SelfValidation.class)) {
-                if (!void.class.equals(m.getReturnType()))
-                    LOG.error("The method {} is annotated with SelfValidation but does not return void. It is ignored.", m);
-                else if (m.getParameterTypes().length != 1 || !m.getParameterTypes()[0].equals(ViolationCollector.class))
-                    LOG.error("The method {} is annotated with SelfValidation but does not have a single parameter of type {}", m, ViolationCollector.class);
-                else if ((m.getModifiers() & Modifier.PUBLIC) == 0)
-                    LOG.error("The method {} is annotated with SelfValidation but is not public", m);
-                else {
-                    try {
-                        CtClass cc = cp.makeClass("ValidationCallerGeneratedImpl" + COUNTER.getAndIncrement());
-                        cc.setSuperclass(callerSuperclass);
+        final List<ValidationCaller<?>> callers = Arrays.stream(annotated.getDeclaredMethods())
+            .filter(m -> m.isAnnotationPresent(SelfValidation.class))
+            .filter(this::isCorrectMethod)
+            .map(m -> {
+                try {
+                    CtClass cc = cp.makeClass("ValidationCallerGeneratedImpl" + COUNTER.getAndIncrement());
+                    cc.setSuperclass(callerSuperclass);
 
-                        CtMethod method = new CtMethod(CtClass.voidType, "call", callingParameters, cc);
-                        cc.addMethod(method);
-                        method.setBody("{ return ((" + annotated.getName() + ")getValidationObject())." + m.getName() + "($1); }");
+                    CtMethod cm = new CtMethod(CtClass.voidType, "call", callingParameters, cc);
+                    cc.addMethod(cm);
+                    cm.setBody("{ return ((" + annotated.getName() + ")getValidationObject())." + m.getName() + "($1); }");
 
-                        cc.setModifiers(Modifier.PUBLIC);
-                        @SuppressWarnings("unchecked")
-                        ValidationCaller<?> caller = (ValidationCaller<?>) cc.toClass().getConstructor().newInstance();
-                        l.add(caller);
-                    } catch (Exception e) {
-                        LOG.error("Failed to generate ValidationCaller for method " + m.toString(), e);
-                    }
+                    cc.setModifiers(Modifier.PUBLIC);
+                    return (ValidationCaller<?>) cc.toClass().getConstructor().newInstance();
+                } catch (Exception e) {
+                    throw new IllegalStateException("Failed to generate ValidationCaller for method " + m, e);
                 }
-            }
+            }).collect(Collectors.toList());
+        if (callers.isEmpty()) {
+            log.error("The class {} is annotated with @SelfValidating but contains no valid methods that are annotated " +
+                "with @SelfValidation", annotated);
         }
-        if (l.isEmpty())
-            LOG.error("The class {} is annotated with SelfValidating but contains no valid methods that are annotated with SelfValidation", annotated);
-        return l;
+        return callers;
+    }
+
+    @VisibleForTesting
+    boolean isCorrectMethod(Method m) {
+        if (!void.class.equals(m.getReturnType())) {
+            log.error("The method {} is annotated with @SelfValidation but does not return void. It is ignored", m);
+            return false;
+        } else if (m.getParameterTypes().length != 1 || !m.getParameterTypes()[0].equals(ViolationCollector.class)) {
+            log.error("The method {} is annotated with @SelfValidation but does not have a single parameter of type {}",
+                m, ViolationCollector.class);
+            return false;
+        } else if (!Modifier.isPublic(m.getModifiers())) {
+            log.error("The method {} is annotated with @SelfValidation but is not public", m);
+            return false;
+        }
+        return true;
     }
 }

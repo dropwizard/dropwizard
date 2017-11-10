@@ -7,7 +7,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * This method, if used in conjunction with 
+ * This method, if used in conjunction with
  * {@link io.dropwizard.validation.selfvalidating.SelfValidating},
  * will be executed to check if the object itself is valid.
  * For that it requires the signature <code>public void methodName(ViolationCollector)</code>.
@@ -15,4 +15,5 @@ import java.lang.annotation.Target;
 @Documented
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface SelfValidation { }
+public @interface SelfValidation {
+}
