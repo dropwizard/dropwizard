@@ -16,6 +16,7 @@ import static io.dropwizard.servlets.Servlets.getFullUrl;
  * for the duration of the request.
  */
 public class ThreadNameFilter implements Filter {
+
     @Override
     public void init(FilterConfig filterConfig) throws ServletException { /* unused */ }
 
