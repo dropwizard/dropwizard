@@ -152,4 +152,10 @@ public class DefaultLoggingFactoryTest {
         assertThat(appenders).as("started").allMatch(LifeCycle::isStarted);
         assertThat(appenders).hasSize(1);
     }
+
+    @Test
+    public void testToStringIsImplented() {
+        assertThat(config.toString()).startsWith(
+            "DefaultLoggingFactory{level=INFO, loggers={com.example.app=\"DEBUG\"}, appenders=");
+    }
 }
