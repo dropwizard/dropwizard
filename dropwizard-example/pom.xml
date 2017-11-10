@@ -280,5 +280,26 @@
                 </plugins>
             </build>
         </profile>
+        <profile>
+            <id>jdk9</id>
+            <activation>
+                <jdk>9</jdk>
+            </activation>
+            <properties>
+                <maven.compiler.source>1.9</maven.compiler.source>
+                <maven.compiler.target>1.9</maven.compiler.target>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <argLine>--add-modules java.xml.bind</argLine>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
     </profiles>
 </project>

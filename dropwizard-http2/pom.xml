@@ -97,6 +97,33 @@
          see http://www.eclipse.org/jetty/documentation/current/alpn-chapter.html for reference. -->
     <profiles>
         <profile>
+            <id>jdk9</id>
+            <activation>
+                <jdk>9</jdk>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <argLine>-Duser.language=en -Duser.region=US --add-modules java.xml.bind</argLine>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+            <dependencies>
+                <dependency>
+                    <groupId>org.eclipse.jetty</groupId>
+                    <artifactId>jetty-alpn-java-server</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>org.eclipse.jetty</groupId>
+                    <artifactId>jetty-alpn-java-client</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
             <id>jdk-1.8.0</id>
             <activation>
                 <property>

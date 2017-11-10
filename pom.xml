@@ -225,6 +225,10 @@
                 <enabled>true</enabled>
             </snapshots>
         </repository>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
     </repositories>
 
     <distributionManagement>
@@ -297,7 +301,8 @@
         <profile>
             <id>compile-eclipse</id>
             <activation>
-                  <property>
+                <jdk>1.8</jdk>
+                <property>
                     <name>m2e.version</name>
                 </property>
             </activation>
@@ -320,7 +325,8 @@
         <profile>
             <id>compile-not-eclipse</id>
             <activation>
-                  <property>
+                <jdk>1.8</jdk>
+                <property>
                     <name>!m2e.version</name>
                 </property>
             </activation>
@@ -352,6 +358,35 @@
                                 <version>2.1.1</version>
                             </dependency>
                         </dependencies>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>jdk9</id>
+            <activation>
+                <jdk>9</jdk>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <configuration>
+                            <source>9</source>
+                            <target>9</target>
+                            <optimize>true</optimize>
+                            <debug>true</debug>
+                            <forceJavacCompilerUse>true</forceJavacCompilerUse>
+                            <showWarnings>true</showWarnings>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <argLine>-Duser.language=en -Duser.region=US --add-modules java.xml.bind</argLine>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>
@@ -436,7 +471,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>2.10.4</version>
+                    <version>3.0.0-M1</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -474,11 +509,6 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-site-plugin</artifactId>
                     <version>3.6</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>findbugs-maven-plugin</artifactId>
-                    <version>3.0.5</version>
                 </plugin>
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
@@ -577,23 +607,6 @@
                     <tagNameFormat>v@{project.version}</tagNameFormat>
                     <preparationGoals>clean test</preparationGoals>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>findbugs-maven-plugin</artifactId>
-                <configuration>
-                    <effort>Max</effort>
-                    <threshold>Default</threshold>
-                    <xmlOutput>true</xmlOutput>
-                    <excludeFilterFile>${basedir}/../findbugs-exclude.xml</excludeFilterFile>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

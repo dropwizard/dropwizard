@@ -102,9 +102,9 @@
                 <version>${h2.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.jadira.usertype</groupId>
+                <groupId>com.github.arteam.jadira</groupId>
                 <artifactId>usertype.core</artifactId>
-                <version>6.0.1.GA</version>
+                <version>6.0.1.GA-jdk9</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.slf4j</groupId>
@@ -286,6 +286,16 @@
                         <artifactId>jetty-server</artifactId>
                     </exclusion>
                 </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-alpn-java-server</artifactId>
+                <version>${jetty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-alpn-java-client</artifactId>
+                <version>${jetty.version}</version>
             </dependency>
 
             <!-- Jackson -->
