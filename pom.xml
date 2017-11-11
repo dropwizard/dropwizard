@@ -344,7 +344,19 @@
                             <forceJavacCompilerUse>true</forceJavacCompilerUse>
                             <showWarnings>true</showWarnings>
                             <fork>true</fork>
-                            <compilerArgument>-XepDisableWarningsInGeneratedCode</compilerArgument>
+                            <annotationProcessorPaths>
+                                <!-- enable extended nullability checks -->
+                                <path>
+                                    <groupId>com.uber.nullaway</groupId>
+                                    <artifactId>nullaway</artifactId>
+                                    <version>0.1.7</version>
+                                </path>
+                            </annotationProcessorPaths>
+                            <compilerArgs>
+                                <arg>-XepDisableWarningsInGeneratedCode</arg>
+                                <!-- Defaults to WARNING <arg>-Xep:NullAway:ERROR</arg> -->
+                                <arg>-XepOpt:NullAway:AnnotatedPackages=io.dropwizard</arg>
+                            </compilerArgs>
                         </configuration>
                         <dependencies>
                             <dependency>
@@ -355,7 +367,7 @@
                             <dependency>
                                 <groupId>com.google.errorprone</groupId>
                                 <artifactId>error_prone_core</artifactId>
-                                <version>2.1.1</version>
+                                <version>2.1.2</version>
                             </dependency>
                         </dependencies>
                     </plugin>
