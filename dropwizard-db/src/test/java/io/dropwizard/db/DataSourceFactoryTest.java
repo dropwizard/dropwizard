@@ -12,6 +12,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import javax.annotation.Nullable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -24,6 +25,8 @@ public class DataSourceFactoryTest {
     private final MetricRegistry metricRegistry = new MetricRegistry();
 
     private DataSourceFactory factory;
+
+    @Nullable
     private ManagedDataSource dataSource;
 
     @Before

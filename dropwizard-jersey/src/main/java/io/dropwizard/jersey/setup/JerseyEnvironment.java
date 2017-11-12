@@ -94,6 +94,7 @@ public class JerseyEnvironment {
      * @see org.glassfish.jersey.server.ResourceConfig
      */
     @SuppressWarnings("unchecked")
+    @Nullable
     public <T> T getProperty(String name) {
         return (T) config.getProperties().get(name);
     }

@@ -24,8 +24,8 @@ public class AssetsBundleTest {
     private final ServletEnvironment servletEnvironment = mock(ServletEnvironment.class);
     private final Environment environment = mock(Environment.class);
 
-    private AssetServlet servlet;
-    private String servletPath;
+    private AssetServlet servlet = new AssetServlet("/", "/", null, null);
+    private String servletPath = "";
 
     @Before
     public void setUp() throws Exception {

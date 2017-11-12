@@ -25,6 +25,7 @@ import org.glassfish.jersey.client.rx.RxClient;
 import org.glassfish.jersey.client.rx.RxInvoker;
 import org.glassfish.jersey.client.spi.ConnectorProvider;
 
+import javax.annotation.Nullable;
 import javax.net.ssl.HostnameVerifier;
 import javax.validation.Validator;
 import javax.ws.rs.client.Client;
@@ -65,9 +66,17 @@ public class JerseyClientBuilder {
 
     private HttpClientBuilder apacheHttpClientBuilder;
     private Validator validator = Validators.newValidator();
+
+    @Nullable
     private Environment environment;
+
+    @Nullable
     private ObjectMapper objectMapper;
+
+    @Nullable
     private ExecutorService executorService;
+
+    @Nullable
     private ConnectorProvider connectorProvider;
     private Duration shutdownGracePeriod = Duration.seconds(5);
 
@@ -351,7 +360,7 @@ public class JerseyClientBuilder {
             // is used to ensure that the service is shut down if the
             // Jersey client disposes of it.
             executorService = new DropwizardExecutorProvider.DisposableExecutorService(
-                environment.lifecycle()
+                requireNonNull(environment).lifecycle()
                     .executorService("jersey-client-" + name + "-%d")
                     .minThreads(configuration.getMinThreads())
                     .maxThreads(configuration.getMaxThreads())
@@ -361,7 +370,7 @@ public class JerseyClientBuilder {
         }
 
         if (objectMapper == null) {
-            objectMapper = environment.getObjectMapper();
+            objectMapper = requireNonNull(environment).getObjectMapper();
         }
 
         if (environment != null) {

@@ -20,6 +20,7 @@ import org.glassfish.jersey.client.spi.AsyncConnectorCallback;
 import org.glassfish.jersey.client.spi.Connector;
 import org.glassfish.jersey.message.internal.Statuses;
 
+import javax.annotation.Nullable;
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.core.Response;
 import java.io.ByteArrayInputStream;
@@ -63,6 +64,7 @@ public class DropwizardApacheConnector implements Connector {
     /**
      * Default HttpUriRequestConfig
      */
+    @Nullable
     private final RequestConfig defaultRequestConfig;
 
     /**
@@ -70,7 +72,7 @@ public class DropwizardApacheConnector implements Connector {
      */
     private final boolean chunkedEncodingEnabled;
 
-    public DropwizardApacheConnector(CloseableHttpClient client, RequestConfig defaultRequestConfig,
+    public DropwizardApacheConnector(CloseableHttpClient client, @Nullable RequestConfig defaultRequestConfig,
                                      boolean chunkedEncodingEnabled) {
         this.client = client;
         this.defaultRequestConfig = defaultRequestConfig;
@@ -172,6 +174,7 @@ public class DropwizardApacheConnector implements Connector {
      * @param jerseyRequest representation of an HTTP request in Jersey
      * @return a correct {@link org.apache.http.HttpEntity} implementation
      */
+    @Nullable
     private HttpEntity getHttpEntity(ClientRequest jerseyRequest) {
         if (jerseyRequest.getEntity() == null) {
             return null;

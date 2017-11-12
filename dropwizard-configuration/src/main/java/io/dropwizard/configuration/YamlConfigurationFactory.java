@@ -1,5 +1,6 @@
 package io.dropwizard.configuration;
 
+import javax.annotation.Nullable;
 import javax.validation.Validator;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -22,7 +23,7 @@ public class YamlConfigurationFactory<T> extends BaseConfigurationFactory<T> {
      * @param propertyPrefix the system property name prefix used by overrides
      */
     public YamlConfigurationFactory(Class<T> klass,
-                                    Validator validator,
+                                    @Nullable Validator validator,
                                     ObjectMapper objectMapper,
                                     String propertyPrefix) {
         super(new YAMLFactory(), YAMLFactory.FORMAT_NAME_YAML, klass, validator, objectMapper, propertyPrefix);

@@ -12,9 +12,14 @@ import io.dropwizard.setup.Environment;
 import io.dropwizard.util.Duration;
 import org.hibernate.SessionFactory;
 
+import javax.annotation.Nullable;
+
+import static java.util.Objects.requireNonNull;
+
 public abstract class HibernateBundle<T extends Configuration> implements ConfiguredBundle<T>, DatabaseConfiguration<T> {
     public static final String DEFAULT_NAME = "hibernate";
 
+    @Nullable
     private SessionFactory sessionFactory;
     private boolean lazyLoadingEnabled = true;
 
@@ -59,7 +64,8 @@ public abstract class HibernateBundle<T extends Configuration> implements Config
     @Override
     public final void run(T configuration, Environment environment) throws Exception {
         final PooledDataSourceFactory dbConfig = getDataSourceFactory(configuration);
-        this.sessionFactory = sessionFactoryFactory.build(this, environment, dbConfig, entities, name());
+        this.sessionFactory = requireNonNull(sessionFactoryFactory.build(this, environment, dbConfig,
+            entities, name()));
         registerUnitOfWorkListerIfAbsent(environment).registerSessionFactory(name(), sessionFactory);
         environment.healthChecks().register(name(),
                                             new SessionFactoryHealthCheck(
@@ -89,7 +95,7 @@ public abstract class HibernateBundle<T extends Configuration> implements Config
     }
 
     public SessionFactory getSessionFactory() {
-        return sessionFactory;
+        return requireNonNull(sessionFactory);
     }
 
     protected void configure(org.hibernate.cfg.Configuration configuration) {

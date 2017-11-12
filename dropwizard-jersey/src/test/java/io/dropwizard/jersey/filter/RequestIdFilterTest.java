@@ -2,10 +2,7 @@ package io.dropwizard.jersey.filter;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
 import org.slf4j.Logger;
 
 import javax.ws.rs.container.ContainerRequestContext;
@@ -16,20 +13,15 @@ import javax.ws.rs.core.UriInfo;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
 public class RequestIdFilterTest {
 
-    @Mock
-    private ContainerRequestContext request;
-
-    @Mock
-    private ContainerResponseContext response;
-
-    @Mock
-    private Logger logger;
+    private ContainerRequestContext request = mock(ContainerRequestContext.class);
+    private ContainerResponseContext response = mock(ContainerResponseContext.class);
+    private Logger logger = mock(Logger.class);
 
     private RequestIdFilter requestIdFilter = new RequestIdFilter();
     private MultivaluedMap<String, Object> headers = new MultivaluedHashMap<>();

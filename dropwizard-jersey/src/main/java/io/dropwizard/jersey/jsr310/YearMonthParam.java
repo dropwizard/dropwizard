@@ -2,6 +2,7 @@ package io.dropwizard.jersey.jsr310;
 
 import io.dropwizard.jersey.params.AbstractParam;
 
+import javax.annotation.Nullable;
 import java.time.YearMonth;
 
 /**
@@ -11,12 +12,12 @@ import java.time.YearMonth;
  * @see YearMonth
  */
 public class YearMonthParam extends AbstractParam<YearMonth> {
-    public YearMonthParam(final String input) {
+    public YearMonthParam(@Nullable final String input) {
         super(input);
     }
 
     @Override
-    protected YearMonth parse(final String input) throws Exception {
+    protected YearMonth parse(@Nullable final String input) throws Exception {
         return YearMonth.parse(input);
     }
 }

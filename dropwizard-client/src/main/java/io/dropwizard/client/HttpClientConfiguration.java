@@ -163,6 +163,7 @@ public class HttpClientConfiguration {
     }
 
     @JsonProperty("proxy")
+    @Nullable
     public ProxyConfiguration getProxyConfiguration() {
         return proxyConfiguration;
     }
@@ -183,6 +184,7 @@ public class HttpClientConfiguration {
     }
 
     @JsonProperty("tls")
+    @Nullable
     public TlsConfiguration getTlsConfiguration() {
         return tlsConfiguration;
     }

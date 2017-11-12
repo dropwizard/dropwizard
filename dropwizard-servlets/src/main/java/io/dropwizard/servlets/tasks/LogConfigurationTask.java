@@ -6,6 +6,7 @@ import com.google.common.collect.ImmutableMultimap;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nullable;
 import java.io.PrintWriter;
 import java.util.List;
 
@@ -67,6 +68,7 @@ public class LogConfigurationTask extends Task {
         return parameters.get("logger").asList();
     }
 
+    @Nullable
     private Level getLoggerLevel(ImmutableMultimap<String, String> parameters) {
         final List<String> loggerLevels = parameters.get("level").asList();
         return loggerLevels.isEmpty() ? null : Level.valueOf(loggerLevels.get(0));

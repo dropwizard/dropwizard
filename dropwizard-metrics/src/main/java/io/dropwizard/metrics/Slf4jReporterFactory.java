@@ -10,6 +10,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MarkerFactory;
 
+import javax.annotation.Nullable;
+
 /**
  * A {@link ReporterFactory} for {@link Slf4jReporter} instances.
  * <p/>
@@ -40,6 +42,7 @@ public class Slf4jReporterFactory extends BaseReporterFactory {
     @NotEmpty
     private String loggerName = "metrics";
 
+    @Nullable
     private String markerName;
 
     @JsonProperty("logger")
@@ -57,12 +60,13 @@ public class Slf4jReporterFactory extends BaseReporterFactory {
     }
 
     @JsonProperty
+    @Nullable
     public String getMarkerName() {
         return markerName;
     }
 
     @JsonProperty
-    public void setMarkerName(String markerName) {
+    public void setMarkerName(@Nullable String markerName) {
         this.markerName = markerName;
     }
 

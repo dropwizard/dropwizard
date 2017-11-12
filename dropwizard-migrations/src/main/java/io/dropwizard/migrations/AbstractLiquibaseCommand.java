@@ -17,6 +17,7 @@ import liquibase.exception.ValidationFailedException;
 import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
 
+import javax.annotation.Nullable;
 import java.sql.SQLException;
 
 public abstract class AbstractLiquibaseCommand<T extends Configuration> extends ConfiguredCommand<T> {
@@ -59,7 +60,7 @@ public abstract class AbstractLiquibaseCommand<T extends Configuration> extends 
 
     @Override
     @SuppressWarnings("UseOfSystemOutOrSystemErr")
-    protected void run(Bootstrap<T> bootstrap, Namespace namespace, T configuration) throws Exception {
+    protected void run(@Nullable Bootstrap<T> bootstrap, Namespace namespace, T configuration) throws Exception {
         final PooledDataSourceFactory dbConfig = strategy.getDataSourceFactory(configuration);
         dbConfig.asSingleConnectionPool();
 

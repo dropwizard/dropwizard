@@ -13,13 +13,14 @@ import org.junit.Test;
 import java.io.File;
 import java.util.List;
 
+import static java.util.Objects.requireNonNull;
 import static org.assertj.core.api.Assertions.assertThat;
 
 
 public class HttpClientConfigurationTest {
 
     private final ObjectMapper objectMapper = Jackson.newObjectMapper();
-    private HttpClientConfiguration configuration;
+    private HttpClientConfiguration configuration = new HttpClientConfiguration();
 
     private void load(String configLocation) throws Exception {
         configuration = new YamlConfigurationFactory<>(HttpClientConfiguration.class,
@@ -38,15 +39,13 @@ public class HttpClientConfigurationTest {
     public void testFullConfigBasicProxy() throws Exception {
         load("yaml/proxy.yml");
 
-        ProxyConfiguration proxy = configuration.getProxyConfiguration();
-        assertThat(proxy).isNotNull();
+        ProxyConfiguration proxy = requireNonNull(configuration.getProxyConfiguration());
 
         assertThat(proxy.getHost()).isEqualTo("192.168.52.11");
         assertThat(proxy.getPort()).isEqualTo(8080);
         assertThat(proxy.getScheme()).isEqualTo("https");
 
-        AuthConfiguration auth = proxy.getAuth();
-        assertThat(auth).isNotNull();
+        AuthConfiguration auth = requireNonNull(proxy.getAuth());
         assertThat(auth.getUsername()).isEqualTo("secret");
         assertThat(auth.getPassword()).isEqualTo("stuff");
 
@@ -58,15 +57,13 @@ public class HttpClientConfigurationTest {
     public void testFullConfigNtlmProxy() throws Exception {
         load("yaml/proxy_ntlm.yml");
 
-        ProxyConfiguration proxy = configuration.getProxyConfiguration();
-        assertThat(proxy).isNotNull();
+        ProxyConfiguration proxy = requireNonNull(configuration.getProxyConfiguration());
 
         assertThat(proxy.getHost()).isEqualTo("192.168.52.11");
         assertThat(proxy.getPort()).isEqualTo(8080);
         assertThat(proxy.getScheme()).isEqualTo("https");
 
-        AuthConfiguration auth = proxy.getAuth();
-        assertThat(auth).isNotNull();
+        AuthConfiguration auth = requireNonNull(proxy.getAuth());
         assertThat(auth.getUsername()).isEqualTo("secret");
         assertThat(auth.getPassword()).isEqualTo("stuff");
         assertThat(auth.getAuthScheme()).isEqualTo("NTLM");
@@ -83,8 +80,7 @@ public class HttpClientConfigurationTest {
     public void testNoScheme() throws Exception {
         load("./yaml/no_scheme.yml");
 
-        ProxyConfiguration proxy = configuration.getProxyConfiguration();
-        assertThat(proxy).isNotNull();
+        ProxyConfiguration proxy = requireNonNull(configuration.getProxyConfiguration());
         assertThat(proxy.getHost()).isEqualTo("192.168.52.11");
         assertThat(proxy.getPort()).isEqualTo(8080);
         assertThat(proxy.getScheme()).isEqualTo("http");
@@ -94,8 +90,7 @@ public class HttpClientConfigurationTest {
     public void testNoAuth() throws Exception {
         load("./yaml/no_auth.yml");
 
-        ProxyConfiguration proxy = configuration.getProxyConfiguration();
-        assertThat(proxy).isNotNull();
+        ProxyConfiguration proxy = requireNonNull(configuration.getProxyConfiguration());
         assertThat(proxy.getHost()).isNotNull();
         assertThat(proxy.getAuth()).isNull();
     }
@@ -104,8 +99,7 @@ public class HttpClientConfigurationTest {
     public void testNoPort() throws Exception {
         load("./yaml/no_port.yml");
 
-        ProxyConfiguration proxy = configuration.getProxyConfiguration();
-        assertThat(proxy).isNotNull();
+        ProxyConfiguration proxy = requireNonNull(configuration.getProxyConfiguration());
         assertThat(proxy.getHost()).isNotNull();
         assertThat(proxy.getPort()).isEqualTo(-1);
     }
@@ -114,7 +108,7 @@ public class HttpClientConfigurationTest {
     public void testNoNonProxy() throws Exception {
         load("./yaml/no_port.yml");
 
-        ProxyConfiguration proxy = configuration.getProxyConfiguration();
+        ProxyConfiguration proxy = requireNonNull(configuration.getProxyConfiguration());
         assertThat(proxy.getNonProxyHosts()).isNull();
     }
 

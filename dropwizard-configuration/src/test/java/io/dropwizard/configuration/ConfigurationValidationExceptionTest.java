@@ -4,6 +4,7 @@ import io.dropwizard.validation.BaseValidator;
 import org.junit.Before;
 import org.junit.Test;
 
+import javax.annotation.Nullable;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 import javax.validation.constraints.NotNull;
@@ -17,6 +18,7 @@ import static org.junit.Assume.assumeThat;
 public class ConfigurationValidationExceptionTest {
     private static class Example {
         @NotNull
+        @Nullable // Weird combination, but Hibernate Validator is not good with the compile nullable checks
         String woo;
     }
 

@@ -1,32 +1,21 @@
 package io.dropwizard.testing.junit;
 
 import io.dropwizard.testing.DropwizardTestSupport;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 import org.mockito.InOrder;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
 
 import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 
 public class DropwizardAppRuleReentrantTest {
 
-    @Rule
-    public MockitoRule mockitoRule = MockitoJUnit.rule();
-
-    @Mock
-    DropwizardTestSupport<TestConfiguration> testSupport;
-
-    @Mock
-    Statement statement;
-
-    @Mock
-    Description description;
+    DropwizardTestSupport<TestConfiguration> testSupport = mock(DropwizardTestSupport.class);
+    Statement statement = mock(Statement.class);
+    Description description = mock(Description.class);
 
     @Test
     public void testReentrantRuleStartsApplicationOnlyOnce() throws Throwable {

@@ -1,5 +1,7 @@
 package io.dropwizard.validation.selfvalidating;
 
+import javax.annotation.Nullable;
+
 /**
  * This class represents a wrapper for calling validation methods annotated with <code>@SelfValidation</code>.
  * It is used as a base class for the code generation.
@@ -8,12 +10,14 @@ package io.dropwizard.validation.selfvalidating;
  */
 public abstract class ValidationCaller<T> {
 
+    @Nullable
     protected T validationObject;
 
     public void setValidationObject(T obj) {
         this.validationObject = obj;
     }
 
+    @Nullable
     public T getValidationObject() {
         return validationObject;
     }

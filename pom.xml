@@ -354,7 +354,7 @@
                             </annotationProcessorPaths>
                             <compilerArgs>
                                 <arg>-XepDisableWarningsInGeneratedCode</arg>
-                                <!-- Defaults to WARNING <arg>-Xep:NullAway:ERROR</arg> -->
+                                <arg>-Xep:NullAway:ERROR</arg>
                                 <arg>-XepOpt:NullAway:AnnotatedPackages=io.dropwizard</arg>
                             </compilerArgs>
                         </configuration>

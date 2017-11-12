@@ -4,19 +4,15 @@ import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.Mockito;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@RunWith(MockitoJUnitRunner.class)
 public class ConfiguredCloseableHttpClientTest {
-    public ConfiguredCloseableHttpClient configuredClient;
-    @Mock
-    private CloseableHttpClient closeableHttpClientMock;
-    @Mock
-    private RequestConfig defaultRequestConfigMock;
+    private ConfiguredCloseableHttpClient configuredClient;
+
+    private CloseableHttpClient closeableHttpClientMock = Mockito.mock(CloseableHttpClient.class);
+    private RequestConfig defaultRequestConfigMock = Mockito.mock(RequestConfig.class);
 
     @Before
     public void setUp() {

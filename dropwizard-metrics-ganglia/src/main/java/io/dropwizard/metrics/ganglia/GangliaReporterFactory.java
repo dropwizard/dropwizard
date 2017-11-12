@@ -12,6 +12,7 @@ import io.dropwizard.validation.MinDuration;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.hibernate.validator.constraints.Range;
 
+import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.util.Optional;
@@ -93,8 +94,13 @@ public class GangliaReporterFactory extends BaseReporterFactory {
     @Range(min = 0, max = 255)
     private int ttl = 1;
 
+    @Nullable
     private String prefix;
+
+    @Nullable
     private UUID uuid;
+
+    @Nullable
     private String spoof;
 
     @JsonProperty
@@ -157,6 +163,7 @@ public class GangliaReporterFactory extends BaseReporterFactory {
         this.ttl = ttl;
     }
 
+    @Nullable
     public String getPrefix() {
         return prefix;
     }

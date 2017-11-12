@@ -1,5 +1,6 @@
 package io.dropwizard.jersey.params;
 
+import javax.annotation.Nullable;
 import java.util.UUID;
 
 /**
@@ -8,11 +9,11 @@ import java.util.UUID;
  */
 public class UUIDParam extends AbstractParam<UUID> {
 
-    public UUIDParam(String input) {
+    public UUIDParam(@Nullable String input) {
         super(input);
     }
 
-    public UUIDParam(String input, String parameterName) {
+    public UUIDParam(@Nullable String input, String parameterName) {
         super(input, parameterName);
     }
 
@@ -22,7 +23,7 @@ public class UUIDParam extends AbstractParam<UUID> {
     }
 
     @Override
-    protected UUID parse(String input) throws Exception {
+    protected UUID parse(@Nullable String input) throws Exception {
         return UUID.fromString(input);
     }
 

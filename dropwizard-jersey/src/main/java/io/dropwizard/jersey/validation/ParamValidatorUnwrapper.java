@@ -5,6 +5,7 @@ import com.fasterxml.classmate.TypeResolver;
 import io.dropwizard.jersey.params.AbstractParam;
 import org.hibernate.validator.spi.valuehandling.ValidatedValueUnwrapper;
 
+import javax.annotation.Nullable;
 import java.lang.reflect.Type;
 
 /**
@@ -15,6 +16,7 @@ public class ParamValidatorUnwrapper extends ValidatedValueUnwrapper<AbstractPar
     private final TypeResolver resolver = new TypeResolver();
 
     @Override
+    @Nullable
     public Object handleValidatedValue(final AbstractParam<?> abstractParam) {
         return abstractParam == null ? null : abstractParam.get();
     }

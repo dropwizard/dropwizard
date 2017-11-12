@@ -75,6 +75,8 @@ public class DropwizardAppRule<C extends Configuration> extends ExternalResource
     private final DropwizardTestSupport<C> testSupport;
 
     private final AtomicInteger recursiveCallCount = new AtomicInteger(0);
+
+    @Nullable
     private Client client;
 
     public DropwizardAppRule(Class<? extends Application<C>> applicationClass) {
@@ -87,12 +89,12 @@ public class DropwizardAppRule<C extends Configuration> extends ExternalResource
         this(applicationClass, configPath, Optional.empty(), configOverrides);
     }
 
-    public DropwizardAppRule(Class<? extends Application<C>> applicationClass, String configPath,
+    public DropwizardAppRule(Class<? extends Application<C>> applicationClass, @Nullable String configPath,
                              Optional<String> customPropertyPrefix, ConfigOverride... configOverrides) {
         this(applicationClass, configPath, customPropertyPrefix, ServerCommand::new, configOverrides);
     }
 
-    public DropwizardAppRule(Class<? extends Application<C>> applicationClass, String configPath,
+    public DropwizardAppRule(Class<? extends Application<C>> applicationClass, @Nullable String configPath,
                              Optional<String> customPropertyPrefix, Function<Application<C>,
                              Command> commandInstantiator, ConfigOverride... configOverrides) {
         this(new DropwizardTestSupport<>(applicationClass, configPath, customPropertyPrefix, commandInstantiator,

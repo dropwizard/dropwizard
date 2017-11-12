@@ -4,6 +4,7 @@ import org.joda.time.DateTime;
 import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.tweak.ResultColumnMapper;
 
+import javax.annotation.Nullable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -50,6 +51,7 @@ public class JodaDateTimeMapper implements ResultColumnMapper<DateTime> {
     }
 
     @Override
+    @Nullable
     public DateTime mapColumn(ResultSet r, int columnNumber, StatementContext ctx) throws SQLException {
         final Timestamp timestamp = calendar.isPresent() ? r.getTimestamp(columnNumber, cloneCalendar()) :
             r.getTimestamp(columnNumber);
@@ -59,6 +61,7 @@ public class JodaDateTimeMapper implements ResultColumnMapper<DateTime> {
         return new DateTime(timestamp.getTime());    }
 
     @Override
+    @Nullable
     public DateTime mapColumn(ResultSet r, String columnLabel, StatementContext ctx) throws SQLException {
         final Timestamp timestamp = calendar.isPresent() ? r.getTimestamp(columnLabel, cloneCalendar()) :
             r.getTimestamp(columnLabel);

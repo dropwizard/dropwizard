@@ -1,25 +1,17 @@
 package io.dropwizard.client;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.validateMockitoUsage;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.mockito.MockitoAnnotations.initMocks;
-
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.net.InetSocketAddress;
-import java.net.Proxy;
-import java.net.ProxySelector;
-import java.net.SocketAddress;
-import java.net.URI;
-import java.util.List;
-import java.util.Optional;
-
-import javax.net.ssl.HostnameVerifier;
-
+import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.httpclient.HttpClientMetricNameStrategies;
+import com.codahale.metrics.httpclient.InstrumentedHttpClientConnectionManager;
+import com.codahale.metrics.httpclient.InstrumentedHttpRequestExecutor;
+import com.google.common.collect.ImmutableList;
+import io.dropwizard.client.proxy.AuthConfiguration;
+import io.dropwizard.client.proxy.ProxyConfiguration;
+import io.dropwizard.client.ssl.TlsConfiguration;
+import io.dropwizard.lifecycle.Managed;
+import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
+import io.dropwizard.setup.Environment;
+import io.dropwizard.util.Duration;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.http.Header;
 import org.apache.http.HeaderIterator;
@@ -68,19 +60,25 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
-import com.codahale.metrics.MetricRegistry;
-import com.codahale.metrics.httpclient.HttpClientMetricNameStrategies;
-import com.codahale.metrics.httpclient.InstrumentedHttpClientConnectionManager;
-import com.codahale.metrics.httpclient.InstrumentedHttpRequestExecutor;
-import com.google.common.collect.ImmutableList;
+import javax.annotation.Nullable;
+import javax.net.ssl.HostnameVerifier;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
+import java.net.ProxySelector;
+import java.net.SocketAddress;
+import java.net.URI;
+import java.util.List;
+import java.util.Optional;
 
-import io.dropwizard.client.proxy.AuthConfiguration;
-import io.dropwizard.client.proxy.ProxyConfiguration;
-import io.dropwizard.client.ssl.TlsConfiguration;
-import io.dropwizard.lifecycle.Managed;
-import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
-import io.dropwizard.setup.Environment;
-import io.dropwizard.util.Duration;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.validateMockitoUsage;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import static org.mockito.MockitoAnnotations.initMocks;
 
 
 public class HttpClientBuilderTest {
@@ -436,6 +434,7 @@ public class HttpClientBuilderTest {
             }
 
             @Override
+            @Nullable
             public Credentials getCredentials(AuthScope authscope) {
                 return null;
             }
@@ -531,8 +530,8 @@ public class HttpClientBuilderTest {
         checkProxy(new HttpClientConfiguration(), new HttpHost("dropwizard.io", 80), null);
     }
 
-    private CloseableHttpClient checkProxy(HttpClientConfiguration config, HttpHost target, HttpHost expectedProxy)
-            throws Exception {
+    private CloseableHttpClient checkProxy(HttpClientConfiguration config, HttpHost target,
+                                           @Nullable HttpHost expectedProxy) throws Exception {
         CloseableHttpClient httpClient = builder.using(config).build("test");
         HttpRoutePlanner routePlanner = (HttpRoutePlanner)
                 FieldUtils.getField(httpClient.getClass(), "routePlanner", true).get(httpClient);
@@ -636,6 +635,7 @@ public class HttpClientBuilderTest {
             }
 
             @Override
+            @Nullable
             public HttpUriRequest getRedirect(HttpRequest httpRequest,
                                               HttpResponse httpResponse,
                                               HttpContext httpContext) throws ProtocolException {

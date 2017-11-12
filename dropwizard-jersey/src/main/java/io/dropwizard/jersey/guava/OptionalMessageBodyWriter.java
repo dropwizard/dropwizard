@@ -4,6 +4,7 @@ import com.google.common.base.Optional;
 import io.dropwizard.jersey.optional.EmptyOptionalException;
 import org.glassfish.jersey.message.MessageBodyWorkers;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
@@ -16,11 +17,14 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
+import static java.util.Objects.requireNonNull;
+
 @Provider
 @Produces(MediaType.WILDCARD)
 public class OptionalMessageBodyWriter implements MessageBodyWriter<Optional<?>> {
 
     @Inject
+    @Nullable
     private javax.inject.Provider<MessageBodyWorkers> mbw;
 
     // Jersey ignores this
@@ -52,7 +56,7 @@ public class OptionalMessageBodyWriter implements MessageBodyWriter<Optional<?>>
 
         final ParameterizedType actualGenericType = (ParameterizedType) genericType;
         final Type actualGenericTypeArgument = actualGenericType.getActualTypeArguments()[0];
-        final MessageBodyWriter writer = mbw.get().getMessageBodyWriter(entity.get().getClass(),
+        final MessageBodyWriter writer = requireNonNull(mbw).get().getMessageBodyWriter(entity.get().getClass(),
                 actualGenericTypeArgument, annotations, mediaType);
         writer.writeTo(entity.get(), entity.get().getClass(),
                 actualGenericTypeArgument,

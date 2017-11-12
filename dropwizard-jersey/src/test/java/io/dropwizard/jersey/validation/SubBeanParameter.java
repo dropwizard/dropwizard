@@ -11,7 +11,7 @@ import java.util.Locale;
 public class SubBeanParameter extends BeanParameter {
     @QueryParam("address")
     @NotEmpty
-    private String address;
+    private String address = "";
 
 
     @ValidationMethod(message = "address must not be uppercase",

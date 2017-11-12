@@ -5,6 +5,7 @@ import com.google.common.collect.Iterables;
 import io.dropwizard.util.Size;
 import org.eclipse.jetty.server.Handler;
 
+import javax.annotation.Nullable;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -83,7 +84,11 @@ public class GzipHandlerFactory {
 
     // By default compress responses for all user-agents
     private Set<String> excludedUserAgentPatterns = new HashSet<>();
+
+    @Nullable
     private Set<String> compressedMimeTypes;
+
+    @Nullable
     private Set<String> includedMethods;
 
     @Min(Deflater.DEFAULT_COMPRESSION)
@@ -93,7 +98,7 @@ public class GzipHandlerFactory {
     private boolean gzipCompatibleInflation = true;
 
     private boolean syncFlush = false;
-    
+
     @JsonProperty
     public boolean isEnabled() {
         return enabled;
@@ -125,6 +130,7 @@ public class GzipHandlerFactory {
     }
 
     @JsonProperty
+    @Nullable
     public Set<String> getCompressedMimeTypes() {
         return compressedMimeTypes;
     }
@@ -163,6 +169,7 @@ public class GzipHandlerFactory {
     }
 
     @JsonProperty
+    @Nullable
     public Set<String> getIncludedMethods() {
         return includedMethods;
     }
@@ -171,7 +178,7 @@ public class GzipHandlerFactory {
     public void setIncludedMethods(Set<String> methods) {
         this.includedMethods = methods;
     }
-    
+
     @JsonProperty
     public boolean isSyncFlush() {
         return syncFlush;
@@ -182,7 +189,7 @@ public class GzipHandlerFactory {
         this.syncFlush = syncFlush;
     }
 
-    public BiDiGzipHandler build(Handler handler) {
+    public BiDiGzipHandler build(@Nullable Handler handler) {
         final BiDiGzipHandler gzipHandler = new BiDiGzipHandler();
         gzipHandler.setHandler(handler);
         gzipHandler.setMinGzipSize((int) minimumEntitySize.toBytes());

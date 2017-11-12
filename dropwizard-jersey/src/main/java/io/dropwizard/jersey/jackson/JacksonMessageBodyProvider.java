@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
 
+import javax.annotation.Nullable;
 import javax.ws.rs.core.MediaType;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
@@ -24,17 +25,17 @@ public class JacksonMessageBodyProvider extends JacksonJaxbJsonProvider {
 
     @Override
     public boolean isReadable(Class<?> type,
-                              Type genericType,
-                              Annotation[] annotations,
-                              MediaType mediaType) {
+                              @Nullable Type genericType,
+                              @Nullable Annotation[] annotations,
+                              @Nullable MediaType mediaType) {
         return isProvidable(type) && super.isReadable(type, genericType, annotations, mediaType);
     }
 
     @Override
     public boolean isWriteable(Class<?> type,
-                               Type genericType,
-                               Annotation[] annotations,
-                               MediaType mediaType) {
+                               @Nullable Type genericType,
+                               @Nullable Annotation[] annotations,
+                               @Nullable MediaType mediaType) {
         return isProvidable(type) && super.isWriteable(type, genericType, annotations, mediaType);
     }
 

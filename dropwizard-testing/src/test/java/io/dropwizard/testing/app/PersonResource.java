@@ -7,6 +7,7 @@ import io.dropwizard.testing.Person;
 import io.dropwizard.validation.Validated;
 import org.eclipse.jetty.io.EofException;
 
+import javax.annotation.Nullable;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.groups.Default;
@@ -19,6 +20,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import java.util.Map;
+
+import static java.util.Objects.requireNonNull;
 
 @Path("/person/{name}")
 @Produces(MediaType.APPLICATION_JSON)
@@ -67,12 +70,13 @@ public class PersonResource {
     public String validationGroupsException(
         @Valid @Validated(Partial1.class) @BeanParam BeanParameter params,
         @Valid @Validated(Default.class) byte[] entity) {
-        return params.age.toString() + entity.length;
+        return requireNonNull(params.age).toString() + entity.length;
     }
 
     public interface Partial1 { }
     public static class BeanParameter {
         @QueryParam("age")
+        @Nullable
         public Integer age;
     }
 }

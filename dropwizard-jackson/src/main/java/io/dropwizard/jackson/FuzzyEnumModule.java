@@ -15,6 +15,7 @@ import com.fasterxml.jackson.databind.deser.std.StdScalarDeserializer;
 import com.fasterxml.jackson.databind.introspect.AnnotatedMethod;
 import io.dropwizard.util.Enums;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -62,6 +63,7 @@ public class FuzzyEnumModule extends Module {
     private static class PermissiveEnumDeserializers extends Deserializers.Base {
         @Override
         @SuppressWarnings("unchecked")
+        @Nullable
         public JsonDeserializer<?> findEnumDeserializer(Class<?> type,
                                                         DeserializationConfig config,
                                                         BeanDescription desc) throws JsonMappingException {

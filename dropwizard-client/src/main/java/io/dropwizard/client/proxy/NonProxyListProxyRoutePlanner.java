@@ -54,6 +54,7 @@ public class NonProxyListProxyRoutePlanner extends DefaultProxyRoutePlanner {
     }
 
     @Override
+    @Nullable
     protected HttpHost determineProxy(HttpHost target, HttpRequest request, HttpContext context) throws HttpException {
         for (Pattern nonProxyHostPattern : nonProxyHostPatterns) {
             if (nonProxyHostPattern.matcher(target.getHostName()).matches()) {

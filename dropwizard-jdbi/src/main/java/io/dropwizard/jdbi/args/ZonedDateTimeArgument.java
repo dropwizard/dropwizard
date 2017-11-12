@@ -3,6 +3,7 @@ package io.dropwizard.jdbi.args;
 import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.tweak.Argument;
 
+import javax.annotation.Nullable;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -16,10 +17,11 @@ import java.util.Optional;
  */
 public class ZonedDateTimeArgument implements Argument {
 
+    @Nullable
     private final ZonedDateTime value;
     private final Optional<Calendar> calendar;
 
-    ZonedDateTimeArgument(final ZonedDateTime value, final Optional<Calendar> calendar) {
+    ZonedDateTimeArgument(@Nullable final ZonedDateTime value, final Optional<Calendar> calendar) {
         this.value = value;
         this.calendar = calendar;
     }

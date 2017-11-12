@@ -5,6 +5,7 @@ import com.google.common.base.Splitter;
 import org.junit.Before;
 import org.junit.Test;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.util.Collections;
@@ -23,6 +24,7 @@ public class PrefixedRootCauseFirstThrowableProxyConverterTest {
 
     private final ThrowableProxy proxy = new ThrowableProxy(getException());
 
+    @Nullable
     private Exception getException() {
         try {
             throwOuterWrapper();

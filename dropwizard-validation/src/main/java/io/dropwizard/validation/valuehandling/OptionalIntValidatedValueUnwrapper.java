@@ -2,6 +2,7 @@ package io.dropwizard.validation.valuehandling;
 
 import org.hibernate.validator.spi.valuehandling.ValidatedValueUnwrapper;
 
+import javax.annotation.Nullable;
 import java.lang.reflect.Type;
 import java.util.OptionalInt;
 
@@ -12,6 +13,7 @@ import java.util.OptionalInt;
  */
 public class OptionalIntValidatedValueUnwrapper extends ValidatedValueUnwrapper<OptionalInt> {
     @Override
+    @Nullable
     public Object handleValidatedValue(final OptionalInt optional) {
         return optional.isPresent() ? optional.getAsInt() : null;
     }

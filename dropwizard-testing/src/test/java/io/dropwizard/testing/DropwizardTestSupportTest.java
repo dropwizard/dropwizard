@@ -116,11 +116,11 @@ public class DropwizardTestSupportTest {
     public static class TestConfiguration extends Configuration {
         @NotEmpty
         @JsonProperty
-        private String message;
+        private String message = "";
 
         @NotEmpty
         @JsonProperty
-        private String extra;
+        private String extra = "";
 
         public String getMessage() {
             return message;

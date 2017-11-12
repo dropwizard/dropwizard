@@ -22,7 +22,11 @@ import io.dropwizard.logging.layout.LayoutFactory;
 import io.dropwizard.util.Size;
 import io.dropwizard.validation.MinSize;
 import io.dropwizard.validation.ValidationMethod;
+
+import javax.annotation.Nullable;
 import javax.validation.constraints.Min;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * An {@link AppenderFactory} implementation which provides an appender that writes events to a file, archiving older
@@ -124,15 +128,18 @@ import javax.validation.constraints.Min;
 @JsonTypeName("file")
 public class FileAppenderFactory<E extends DeferredProcessingAware> extends AbstractAppenderFactory<E> {
 
+    @Nullable
     private String currentLogFilename;
 
     private boolean archive = true;
 
+    @Nullable
     private String archivedLogFilenamePattern;
 
     @Min(0)
     private int archivedFileCount = 5;
 
+    @Nullable
     private Size maxFileSize;
 
     @MinSize(1)
@@ -141,12 +148,13 @@ public class FileAppenderFactory<E extends DeferredProcessingAware> extends Abst
     private boolean immediateFlush = true;
 
     @JsonProperty
+    @Nullable
     public String getCurrentLogFilename() {
         return currentLogFilename;
     }
 
     @JsonProperty
-    public void setCurrentLogFilename(String currentLogFilename) {
+    public void setCurrentLogFilename(@Nullable String currentLogFilename) {
         this.currentLogFilename = currentLogFilename;
     }
 
@@ -161,6 +169,7 @@ public class FileAppenderFactory<E extends DeferredProcessingAware> extends Abst
     }
 
     @JsonProperty
+    @Nullable
     public String getArchivedLogFilenamePattern() {
         return archivedLogFilenamePattern;
     }
@@ -181,6 +190,7 @@ public class FileAppenderFactory<E extends DeferredProcessingAware> extends Abst
     }
 
     @JsonProperty
+    @Nullable
     public Size getMaxFileSize() {
         return maxFileSize;
     }
@@ -264,7 +274,7 @@ public class FileAppenderFactory<E extends DeferredProcessingAware> extends Abst
             appender.setFile(currentLogFilename);
             appender.setBufferSize(new FileSize(bufferSize.toBytes()));
 
-            if (maxFileSize != null && !archivedLogFilenamePattern.contains("%d")) {
+            if (maxFileSize != null && !requireNonNull(archivedLogFilenamePattern).contains("%d")) {
                 final FixedWindowRollingPolicy rollingPolicy = new FixedWindowRollingPolicy();
                 rollingPolicy.setContext(context);
                 rollingPolicy.setMaxIndex(getArchivedFileCount());

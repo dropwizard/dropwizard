@@ -5,6 +5,7 @@ import org.hibernate.exception.DataException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nullable;
 import javax.persistence.PersistenceException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
@@ -12,12 +13,15 @@ import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 import javax.ws.rs.ext.Providers;
 
+import static java.util.Objects.requireNonNull;
+
 @Provider
 public class PersistenceExceptionMapper implements ExtendedExceptionMapper<PersistenceException> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DataException.class);
 
     @Context
+    @Nullable
     private Providers providers;
 
     @Override
@@ -30,13 +34,14 @@ public class PersistenceExceptionMapper implements ExtendedExceptionMapper<Persi
         // Cast is necessary since the return type is ExceptionMapper<? extends Throwable> and Java
         // does not allow calling toResponse on the method with a Throwable
         @SuppressWarnings("unchecked")
-        final ExceptionMapper<Throwable> exceptionMapper = (ExceptionMapper<Throwable>) providers.getExceptionMapper(t.getClass());
+        final ExceptionMapper<Throwable> exceptionMapper = (ExceptionMapper<Throwable>)
+            requireNonNull(providers).getExceptionMapper(t.getClass());
 
         return exceptionMapper.toResponse(t);
     }
 
     @Override
     public boolean isMappable(PersistenceException e) {
-        return providers.getExceptionMapper(e.getCause().getClass()) != null;
+        return requireNonNull(providers).getExceptionMapper(e.getCause().getClass()) != null;
     }
 }
