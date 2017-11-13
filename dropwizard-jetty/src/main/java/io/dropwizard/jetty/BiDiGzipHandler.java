@@ -4,6 +4,7 @@ import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.gzip.GzipHandler;
 
+import javax.annotation.Nullable;
 import javax.servlet.ReadListener;
 import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
@@ -255,6 +256,7 @@ public class BiDiGzipHandler extends GzipHandler {
          * @param name a <code>String</code> specifying the name of a request header
          */
         @Override
+        @Nullable
         public String getHeader(final String name) {
             if (headerName.equalsIgnoreCase(name)) {
                 return null;

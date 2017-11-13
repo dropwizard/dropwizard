@@ -2,6 +2,7 @@ package io.dropwizard.jersey.jsr310;
 
 import io.dropwizard.jersey.params.AbstractParam;
 
+import javax.annotation.Nullable;
 import java.time.OffsetDateTime;
 
 /**
@@ -11,12 +12,12 @@ import java.time.OffsetDateTime;
  * @see OffsetDateTime
  */
 public class OffsetDateTimeParam extends AbstractParam<OffsetDateTime> {
-    public OffsetDateTimeParam(final String input) {
+    public OffsetDateTimeParam(@Nullable final String input) {
         super(input);
     }
 
     @Override
-    protected OffsetDateTime parse(final String input) throws Exception {
+    protected OffsetDateTime parse(@Nullable final String input) throws Exception {
         return OffsetDateTime.parse(input);
     }
 }

@@ -3,6 +3,7 @@ package io.dropwizard.jdbi.args;
 import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.tweak.ResultColumnMapper;
 
+import javax.annotation.Nullable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -52,6 +53,7 @@ public class ZonedDateTimeMapper implements ResultColumnMapper<ZonedDateTime> {
     }
 
     @Override
+    @Nullable
     public ZonedDateTime mapColumn(ResultSet r, int columnNumber, StatementContext ctx) throws SQLException {
         final Timestamp timestamp = calendar.isPresent() ? r.getTimestamp(columnNumber, cloneCalendar()) :
             r.getTimestamp(columnNumber);
@@ -59,12 +61,14 @@ public class ZonedDateTimeMapper implements ResultColumnMapper<ZonedDateTime> {
     }
 
     @Override
+    @Nullable
     public ZonedDateTime mapColumn(ResultSet r, String columnLabel, StatementContext ctx) throws SQLException {
         final Timestamp timestamp = calendar.isPresent() ? r.getTimestamp(columnLabel, cloneCalendar()) :
             r.getTimestamp(columnLabel);
         return convertToZonedDateTime(timestamp);
     }
 
+    @Nullable
     private ZonedDateTime convertToZonedDateTime(Timestamp timestamp) {
         if (timestamp == null) {
             return null;

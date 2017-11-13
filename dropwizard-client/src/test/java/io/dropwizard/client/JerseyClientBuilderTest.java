@@ -33,6 +33,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
+import javax.annotation.Nullable;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
@@ -295,6 +296,7 @@ public class JerseyClientBuilderTest {
                 }
 
                 @Override
+                @Nullable
                 public X509Certificate[] getAcceptedIssuers() {
                     return null;
                 }
@@ -348,7 +350,11 @@ public class JerseyClientBuilderTest {
         }
 
         @Override
-        public JerseyClientBuilderTest readFrom(Class<JerseyClientBuilderTest> type, Type genericType, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, String> httpHeaders, InputStream entityStream) throws IOException, WebApplicationException {
+        @Nullable
+        public JerseyClientBuilderTest readFrom(Class<JerseyClientBuilderTest> type, Type genericType,
+                                                Annotation[] annotations, MediaType mediaType,
+                                                MultivaluedMap<String, String> httpHeaders, InputStream entityStream)
+            throws IOException, WebApplicationException {
             return null;
         }
     }

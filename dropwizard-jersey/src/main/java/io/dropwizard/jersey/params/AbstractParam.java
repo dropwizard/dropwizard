@@ -4,6 +4,7 @@ import io.dropwizard.jersey.errors.ErrorMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nullable;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -19,7 +20,7 @@ public abstract class AbstractParam<T> {
     private final String parameterName;
     private final T value;
 
-    protected AbstractParam(String input) {
+    protected AbstractParam(@Nullable String input) {
         this(input, "Parameter");
     }
 
@@ -29,7 +30,7 @@ public abstract class AbstractParam<T> {
      * @param input an input value from a client request
      */
     @SuppressWarnings({"AbstractMethodCallInConstructor", "OverriddenMethodCallDuringObjectConstruction"})
-    protected AbstractParam(String input, String parameterName) {
+    protected AbstractParam(@Nullable String input, String parameterName) {
         this.parameterName = parameterName;
         try {
             this.value = parse(input);
@@ -49,7 +50,7 @@ public abstract class AbstractParam<T> {
      * @param e the exception thrown while parsing {@code input}
      * @return the {@link Response} to be sent to the client
      */
-    protected Response error(String input, Exception e) {
+    protected Response error(@Nullable String input, Exception e) {
         LOGGER.debug("Invalid input received: {}", input);
         String errorMessage = errorMessage(e);
         if (errorMessage.contains("%s")) {
@@ -100,7 +101,7 @@ public abstract class AbstractParam<T> {
     * @return {@code input}, parsed as an instance of {@code T}
     * @throws Exception if there is an error parsing the input
     */
-    protected abstract T parse(String input) throws Exception;
+    protected abstract T parse(@Nullable String input) throws Exception;
 
     /**
      * Returns the underlying value.

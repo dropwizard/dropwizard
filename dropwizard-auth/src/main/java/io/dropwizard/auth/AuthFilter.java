@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nullable;
 import javax.annotation.Priority;
 import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.Priorities;
@@ -18,11 +19,11 @@ public abstract class AuthFilter<C, P extends Principal> implements ContainerReq
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-    protected String prefix;
-    protected String realm;
-    protected Authenticator<C, P> authenticator;
-    protected Authorizer<P> authorizer;
-    protected UnauthorizedHandler unauthorizedHandler;
+    protected String prefix =  "Basic";
+    protected String realm = "realm";
+    protected Authenticator<C, P> authenticator = credentials -> Optional.empty();
+    protected Authorizer<P> authorizer = new PermitAllAuthorizer<>();
+    protected UnauthorizedHandler unauthorizedHandler = new DefaultUnauthorizedHandler();
 
     /**
      * Abstract builder for auth filters.
@@ -34,6 +35,7 @@ public abstract class AuthFilter<C, P extends Principal> implements ContainerReq
 
         private String realm = "realm";
         private String prefix = "Basic";
+        @Nullable
         private Authenticator<C, P> authenticator;
         private Authorizer<P> authorizer = new PermitAllAuthorizer<>();
         private UnauthorizedHandler unauthorizedHandler = new DefaultUnauthorizedHandler();
@@ -127,7 +129,7 @@ public abstract class AuthFilter<C, P extends Principal> implements ContainerReq
      *                       See {@link SecurityContext}
      * @return {@code true}, if the request is authenticated, otherwise {@code false}
      */
-    protected boolean authenticate(ContainerRequestContext requestContext, C credentials, String scheme) {
+    protected boolean authenticate(ContainerRequestContext requestContext, @Nullable C credentials, String scheme) {
         try {
             if (credentials == null) {
                 return false;

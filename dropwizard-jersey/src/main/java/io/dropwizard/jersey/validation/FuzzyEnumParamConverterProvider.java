@@ -4,9 +4,11 @@ import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import io.dropwizard.jersey.errors.ErrorMessage;
 import io.dropwizard.util.Enums;
+import org.glassfish.jersey.internal.util.ReflectionHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.InvocationTargetException;
+import javax.annotation.Nullable;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -14,14 +16,12 @@ import javax.ws.rs.ext.ParamConverter;
 import javax.ws.rs.ext.ParamConverterProvider;
 import javax.ws.rs.ext.Provider;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.security.AccessController;
 
 import static io.dropwizard.jersey.validation.JerseyParameterNameProvider.getParameterNameFromAnnotations;
-
-import org.glassfish.jersey.internal.util.ReflectionHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Provides converters to jersey for enums used as resource parameters.
@@ -39,7 +39,8 @@ public class FuzzyEnumParamConverterProvider implements ParamConverterProvider {
     private final static Joiner JOINER = Joiner.on(", ");
 
     @Override
-    public <T> ParamConverter<T> getConverter(Class<T> rawType, Type genericType, Annotation[] annotations) {
+    @Nullable
+    public <T> ParamConverter<T> getConverter(Class<T> rawType, @Nullable Type genericType, Annotation[] annotations) {
         if (!rawType.isEnum()) {
             return null;
         }
@@ -51,6 +52,7 @@ public class FuzzyEnumParamConverterProvider implements ParamConverterProvider {
 
         return new ParamConverter<T>() {
             @Override
+            @Nullable
             public T fromString(String value) {
                 if (Strings.isNullOrEmpty(value)) {
                     return null;

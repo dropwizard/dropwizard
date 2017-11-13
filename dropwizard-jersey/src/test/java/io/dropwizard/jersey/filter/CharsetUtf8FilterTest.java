@@ -2,9 +2,6 @@ package io.dropwizard.jersey.filter;
 
 import com.google.common.net.HttpHeaders;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
 
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerResponseContext;
@@ -13,16 +10,13 @@ import javax.ws.rs.core.MultivaluedHashMap;
 import javax.ws.rs.core.MultivaluedMap;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
 public class CharsetUtf8FilterTest {
 
-    @Mock
-    private ContainerRequestContext request;
-
-    @Mock
-    private ContainerResponseContext response;
+    private ContainerRequestContext request = mock(ContainerRequestContext.class);
+    private ContainerResponseContext response = mock(ContainerResponseContext.class);
 
     private CharsetUtf8Filter charsetUtf8Filter = new CharsetUtf8Filter();
 

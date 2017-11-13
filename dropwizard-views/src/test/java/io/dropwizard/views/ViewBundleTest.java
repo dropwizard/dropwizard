@@ -6,12 +6,8 @@ import io.dropwizard.Configuration;
 import io.dropwizard.jersey.setup.JerseyEnvironment;
 import io.dropwizard.setup.Environment;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
 
 import javax.validation.constraints.NotNull;
 import javax.ws.rs.WebApplicationException;
@@ -28,12 +24,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class ViewBundleTest {
-    @Rule
-    public final MockitoRule mockitoRule = MockitoJUnit.rule();
-    @Mock
-    private JerseyEnvironment jerseyEnvironment;
-
-    private final Environment environment = mock(Environment.class);
+    private JerseyEnvironment jerseyEnvironment = mock(JerseyEnvironment.class);
+    private Environment environment = mock(Environment.class);
 
     private static class MyConfiguration extends Configuration {
         @NotNull
@@ -61,7 +53,7 @@ public class ViewBundleTest {
 
     @Test
     public void addsTheViewMessageBodyWriterToTheEnvironment() throws Exception {
-        new ViewBundle<>().run(null, environment);
+        new ViewBundle<>().run(new MyConfiguration(), environment);
 
         verify(jerseyEnvironment).register(any(ViewMessageBodyWriter.class));
     }

@@ -6,6 +6,7 @@ import com.fasterxml.jackson.dataformat.yaml.snakeyaml.error.Mark;
 import com.google.common.collect.ImmutableSet;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -16,6 +17,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * A {@link ConfigurationException} for errors parsing a configuration file.
@@ -31,9 +34,13 @@ public class ConfigurationParsingException extends ConfigurationException {
         private List<JsonMappingException.Reference> fieldPath = Collections.emptyList();
         private int line = -1;
         private int column = -1;
-        private Exception cause = null;
+
+        @Nullable
+        private Exception cause;
         private List<String> suggestions = new ArrayList<>();
-        private String suggestionBase = null;
+
+        @Nullable
+        private String suggestionBase;
         private boolean suggestionsSorted = false;
 
         Builder(String summary) {
@@ -134,7 +141,7 @@ public class ConfigurationParsingException extends ConfigurationException {
                 return suggestions;
             }
 
-            suggestions.sort(new LevenshteinComparator(getSuggestionBase()));
+            suggestions.sort(new LevenshteinComparator(requireNonNull(getSuggestionBase())));
             suggestionsSorted = true;
 
             return suggestions;
@@ -156,6 +163,7 @@ public class ConfigurationParsingException extends ConfigurationException {
          *
          * @return the base for suggestions.
          */
+        @Nullable
         public String getSuggestionBase() {
             return suggestionBase;
         }
@@ -176,6 +184,7 @@ public class ConfigurationParsingException extends ConfigurationException {
          *
          * @return an Exception representing the cause of the problem, or null if there is none.
          */
+        @Nullable
         public Exception getCause() {
             return cause;
         }
@@ -273,7 +282,7 @@ public class ConfigurationParsingException extends ConfigurationException {
             }
 
             return hasCause()
-                    ? new ConfigurationParsingException(path, sb.toString(), getCause())
+                    ? new ConfigurationParsingException(path, sb.toString(), requireNonNull(getCause()))
                     : new ConfigurationParsingException(path, sb.toString());
         }
 

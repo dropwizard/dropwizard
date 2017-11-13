@@ -14,6 +14,7 @@ import io.dropwizard.jetty.MutableServletContextHandler;
 import io.dropwizard.jetty.setup.ServletEnvironment;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
 
+import javax.annotation.Nullable;
 import javax.servlet.Servlet;
 import javax.validation.Validator;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -56,7 +57,7 @@ public class Environment {
                        ObjectMapper objectMapper,
                        Validator validator,
                        MetricRegistry metricRegistry,
-                       ClassLoader classLoader,
+                       @Nullable ClassLoader classLoader,
                        HealthCheckRegistry healthCheckRegistry) {
         this.name = name;
         this.objectMapper = objectMapper;
@@ -107,7 +108,7 @@ public class Environment {
                        ObjectMapper objectMapper,
                        Validator validator,
                        MetricRegistry metricRegistry,
-                       ClassLoader classLoader) {
+                       @Nullable ClassLoader classLoader) {
         this(name, objectMapper, validator, metricRegistry, classLoader, new HealthCheckRegistry());
     }
 
@@ -196,6 +197,7 @@ public class Environment {
         return servletContext;
     }
 
+    @Nullable
     public Servlet getJerseyServletContainer() {
         return jerseyServletContainer.getContainer();
     }

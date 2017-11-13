@@ -2,6 +2,7 @@ package io.dropwizard.jdbi.args;
 
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.skife.jdbi.v2.StatementContext;
 
 import java.sql.ResultSet;
 import java.sql.Timestamp;
@@ -10,11 +11,13 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class InstantMapperTest {
 
     private final ResultSet resultSet = Mockito.mock(ResultSet.class);
+    private final StatementContext ctx = mock(StatementContext.class);
 
     @Test
     public void mapColumnByName() throws Exception {
@@ -22,7 +25,7 @@ public class InstantMapperTest {
         ZonedDateTime stored = expected.withZoneSameInstant(ZoneId.systemDefault());
         when(resultSet.getTimestamp("instant")).thenReturn(Timestamp.from(stored.toInstant()));
 
-        Instant actual = new InstantMapper().mapColumn(resultSet, "instant", null);
+        Instant actual = new InstantMapper().mapColumn(resultSet, "instant", ctx);
 
         assertThat(actual).isEqualTo(expected.toInstant());
     }
@@ -31,7 +34,7 @@ public class InstantMapperTest {
     public void mapColumnByName_TimestampIsNull() throws Exception {
         when(resultSet.getTimestamp("instant")).thenReturn(null);
 
-        Instant actual = new InstantMapper().mapColumn(resultSet, "instant", null);
+        Instant actual = new InstantMapper().mapColumn(resultSet, "instant", ctx);
 
         assertThat(actual).isNull();
     }
@@ -42,7 +45,7 @@ public class InstantMapperTest {
         ZonedDateTime stored = expected.withZoneSameInstant(ZoneId.systemDefault());
         when(resultSet.getTimestamp(1)).thenReturn(Timestamp.from(stored.toInstant()));
 
-        Instant actual = new InstantMapper().mapColumn(resultSet, 1, null);
+        Instant actual = new InstantMapper().mapColumn(resultSet, 1, ctx);
 
         assertThat(actual).isEqualTo(expected.toInstant());
     }
@@ -51,7 +54,7 @@ public class InstantMapperTest {
     public void mapColumnByIndex_TimestampIsNull() throws Exception {
         when(resultSet.getTimestamp(1)).thenReturn(null);
 
-        Instant actual = new InstantMapper().mapColumn(resultSet, 1, null);
+        Instant actual = new InstantMapper().mapColumn(resultSet, 1, ctx);
 
         assertThat(actual).isNull();
     }

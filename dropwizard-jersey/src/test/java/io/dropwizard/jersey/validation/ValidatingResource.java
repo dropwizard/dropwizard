@@ -46,7 +46,7 @@ public class ValidatingResource {
 
     @QueryParam("sort")
     @Pattern(regexp = "^(asc|desc)$")
-    private String sortParam;
+    private String sortParam = "";
 
     @POST
     @Path("foo")

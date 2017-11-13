@@ -6,8 +6,10 @@ import com.codahale.metrics.ScheduledReporter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
-import javax.validation.constraints.NotNull;
+import javax.annotation.Nullable;
 import java.io.File;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * A factory for configuring and building {@link CsvReporter} instances.
@@ -39,21 +41,23 @@ import java.io.File;
  */
 @JsonTypeName("csv")
 public class CsvReporterFactory extends BaseFormattedReporterFactory {
-    @NotNull
+    @Nullable
     private File file;
 
     @JsonProperty
+    @Nullable
     public File getFile() {
         return file;
     }
 
     @JsonProperty
-    public void setFile(File file) {
+    public void setFile(@Nullable File file) {
         this.file = file;
     }
 
     @Override
     public ScheduledReporter build(MetricRegistry registry) {
+        final File file = requireNonNull(this.file, "File is not set");
         final boolean creation = file.mkdirs();
         if (!creation && !file.exists()) {
             throw new RuntimeException("Failed to create" + file.getAbsolutePath());

@@ -12,8 +12,8 @@ import java.util.concurrent.TimeUnit;
  */
 public class MaxDurationValidator implements ConstraintValidator<MaxDuration, Duration> {
 
-    private long maxQty;
-    private TimeUnit maxUnit;
+    private long maxQty = 0;
+    private TimeUnit maxUnit = TimeUnit.MILLISECONDS;
 
     @Override
     public void initialize(MaxDuration constraintAnnotation) {

@@ -24,7 +24,7 @@ public class AllowedMethodsFilter implements Filter {
 
     private static final Logger LOG = LoggerFactory.getLogger(AllowedMethodsFilter.class);
 
-    private ImmutableSet<String> allowedMethods;
+    private ImmutableSet<String> allowedMethods = ImmutableSet.of();
 
     @Override
     public void init(FilterConfig config) {

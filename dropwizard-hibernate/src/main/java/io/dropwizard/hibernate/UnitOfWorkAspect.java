@@ -5,7 +5,11 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.context.internal.ManagedSessionContext;
 
+import javax.annotation.Nullable;
 import java.util.Map;
+
+import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.Objects.requireNonNull;
 
 /**
  * An aspect providing operations around a method with the {@link UnitOfWork} annotation.
@@ -40,11 +44,16 @@ public class UnitOfWorkAspect {
     }
 
     // Context variables
+    @Nullable
     private UnitOfWork unitOfWork;
+
+    @Nullable
     private Session session;
+
+    @Nullable
     private SessionFactory sessionFactory;
 
-    public void beforeStart(UnitOfWork unitOfWork) {
+    public void beforeStart(@Nullable UnitOfWork unitOfWork) {
         if (unitOfWork == null) {
             return;
         }
@@ -64,7 +73,7 @@ public class UnitOfWorkAspect {
         try {
             configureSession();
             ManagedSessionContext.bind(session);
-            beginTransaction();
+            beginTransaction(unitOfWork, session);
         } catch (Throwable th) {
             session.close();
             session = null;
@@ -74,14 +83,14 @@ public class UnitOfWorkAspect {
     }
 
     public void afterEnd() {
-        if (session == null) {
+        if (unitOfWork == null || session == null) {
             return;
         }
 
         try {
-            commitTransaction();
+            commitTransaction(unitOfWork, session);
         } catch (Exception e) {
-            rollbackTransaction();
+            rollbackTransaction(unitOfWork, session);
             throw e;
         }
         // We should not close the session to let the lazy loading work during serializing a response to the client.
@@ -89,12 +98,12 @@ public class UnitOfWorkAspect {
     }
 
     public void onError() {
-        if (session == null) {
+        if (unitOfWork == null || session == null) {
             return;
         }
 
         try {
-            rollbackTransaction();
+            rollbackTransaction(unitOfWork, session);
         } finally {
             onFinish();
         }
@@ -112,19 +121,21 @@ public class UnitOfWorkAspect {
     }
 
     protected void configureSession() {
+        checkNotNull(unitOfWork);
+        checkNotNull(session);
         session.setDefaultReadOnly(unitOfWork.readOnly());
         session.setCacheMode(unitOfWork.cacheMode());
         session.setHibernateFlushMode(unitOfWork.flushMode());
     }
 
-    private void beginTransaction() {
+    private void beginTransaction(UnitOfWork unitOfWork, Session session) {
         if (!unitOfWork.transactional()) {
             return;
         }
         session.beginTransaction();
     }
 
-    private void rollbackTransaction() {
+    private void rollbackTransaction(UnitOfWork unitOfWork, Session session) {
         if (!unitOfWork.transactional()) {
             return;
         }
@@ -134,7 +145,7 @@ public class UnitOfWorkAspect {
         }
     }
 
-    private void commitTransaction() {
+    private void commitTransaction(UnitOfWork unitOfWork, Session session) {
         if (!unitOfWork.transactional()) {
             return;
         }
@@ -145,11 +156,11 @@ public class UnitOfWorkAspect {
     }
 
     protected Session getSession() {
-        return session;
+        return requireNonNull(session);
     }
 
     protected SessionFactory getSessionFactory() {
-        return sessionFactory;
+        return requireNonNull(sessionFactory);
     }
 
 }

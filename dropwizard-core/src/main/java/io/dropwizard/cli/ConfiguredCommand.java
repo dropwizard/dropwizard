@@ -12,6 +12,7 @@ import net.sourceforge.argparse4j.inf.Argument;
 import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
 
+import javax.annotation.Nullable;
 import javax.validation.Validator;
 import java.io.IOException;
 
@@ -26,6 +27,7 @@ import java.io.IOException;
 public abstract class ConfiguredCommand<T extends Configuration> extends Command {
     private boolean asynchronous;
 
+    @Nullable
     private T configuration;
 
     protected ConfiguredCommand(String name, String description) {

@@ -2,6 +2,7 @@ package io.dropwizard.jersey.errors;
 
 import org.glassfish.jersey.message.MessageBodyWorkers;
 
+import javax.annotation.Nullable;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
@@ -12,6 +13,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * This class allows producing non-JSON responses for particular entities. For example, register a instance with the
@@ -33,7 +36,7 @@ public abstract class ErrorEntityWriter<T, U> implements MessageBodyWriter<T> {
 
     @Override
     public boolean isWriteable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
-        return headers.getAcceptableMediaTypes().contains(contentType);
+        return requireNonNull(headers).getAcceptableMediaTypes().contains(contentType);
     }
 
     @Override
@@ -51,7 +54,7 @@ public abstract class ErrorEntityWriter<T, U> implements MessageBodyWriter<T> {
                         OutputStream entityStream)
         throws IOException, WebApplicationException {
 
-        final MessageBodyWriter<U> writer = mbw.get().getMessageBodyWriter(representation,
+        final MessageBodyWriter<U> writer = requireNonNull(mbw).get().getMessageBodyWriter(representation,
             representation, annotations, contentType);
 
         // Fix the headers, because Dropwizard error mappers always set the content type to APPLICATION_JSON
@@ -67,8 +70,10 @@ public abstract class ErrorEntityWriter<T, U> implements MessageBodyWriter<T> {
     private Class<U> representation;
 
     @Context
+    @Nullable
     private HttpHeaders headers;
 
     @Context
+    @Nullable
     private javax.inject.Provider<MessageBodyWorkers> mbw;
 }

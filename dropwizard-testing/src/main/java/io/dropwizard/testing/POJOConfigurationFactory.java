@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import io.dropwizard.Configuration;
 import io.dropwizard.configuration.ConfigurationSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
+import io.dropwizard.jackson.Jackson;
 
 import java.io.File;
 
@@ -13,7 +14,7 @@ public class POJOConfigurationFactory<C extends Configuration>
 
     @SuppressWarnings("unchecked")
     public POJOConfigurationFactory(C cfg) {
-        super((Class<C>) cfg.getClass(), null, null, null);
+        super((Class<C>) cfg.getClass(), null, Jackson.newObjectMapper(), "dw");
         configuration = cfg;
     }
 

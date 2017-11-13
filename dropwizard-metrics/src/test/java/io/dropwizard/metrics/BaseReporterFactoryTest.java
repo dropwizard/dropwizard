@@ -82,13 +82,13 @@ public class BaseReporterFactoryTest {
     };
 
     @Parameterized.Parameter
-    public ImmutableSet<String> includes;
+    public ImmutableSet<String> includes = ImmutableSet.of();
 
     @Parameterized.Parameter(1)
-    public ImmutableSet<String> excludes;
+    public ImmutableSet<String> excludes = ImmutableSet.of();
 
     @Parameterized.Parameter(2)
-    public String name;
+    public String name = "";
 
     @Parameterized.Parameter(3)
     public boolean expectedDefaultResult;
@@ -100,7 +100,7 @@ public class BaseReporterFactoryTest {
     public boolean expectedSubstringResult;
 
     @Parameterized.Parameter(6)
-    public String msg;
+    public String msg = "";
 
     private final Metric metric = mock(Metric.class);
 

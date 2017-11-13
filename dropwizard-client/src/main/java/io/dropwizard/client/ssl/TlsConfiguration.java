@@ -15,15 +15,19 @@ public class TlsConfiguration {
     @NotEmpty
     private String protocol = "TLSv1.2";
 
+    @Nullable
     private File keyStorePath;
 
+    @Nullable
     private String keyStorePassword;
 
     @NotEmpty
     private String keyStoreType = "JKS";
 
+    @Nullable
     private File trustStorePath;
 
+    @Nullable
     private String trustStorePassword;
 
     @NotEmpty
@@ -53,6 +57,7 @@ public class TlsConfiguration {
     }
 
     @JsonProperty
+    @Nullable
     public File getKeyStorePath() {
         return keyStorePath;
     }
@@ -63,6 +68,7 @@ public class TlsConfiguration {
     }
 
     @JsonProperty
+    @Nullable
     public String getKeyStorePassword() {
         return keyStorePassword;
     }
@@ -91,8 +97,8 @@ public class TlsConfiguration {
         this.trustStoreType = trustStoreType;
     }
 
-
     @JsonProperty
+    @Nullable
     public File getTrustStorePath() {
         return trustStorePath;
     }
@@ -103,6 +109,7 @@ public class TlsConfiguration {
     }
 
     @JsonProperty
+    @Nullable
     public String getTrustStorePassword() {
         return trustStorePassword;
     }

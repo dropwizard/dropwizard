@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import javax.annotation.Nullable;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 
@@ -27,6 +28,7 @@ import com.fasterxml.jackson.databind.node.TextNode;
 import com.fasterxml.jackson.databind.node.TreeTraversingParser;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
+import com.google.common.base.Strings;
 
 /**
  * A generic factory class for loading configuration files, binding them to configuration objects, and
@@ -44,7 +46,10 @@ public abstract class BaseConfigurationFactory<T> implements ConfigurationFactor
     private final Class<T> klass;
     private final String propertyPrefix;
     protected final ObjectMapper mapper;
+
+    @Nullable
     private final Validator validator;
+
     private final String formatName;
     private final JsonFactory parserFactory;
 
@@ -60,21 +65,14 @@ public abstract class BaseConfigurationFactory<T> implements ConfigurationFactor
     public BaseConfigurationFactory(JsonFactory parserFactory,
                                     String formatName,
                                     Class<T> klass,
-                                    Validator validator,
+                                    @Nullable Validator validator,
                                     ObjectMapper objectMapper,
                                     String propertyPrefix) {
         this.klass = klass;
         this.formatName = formatName;
-        this.propertyPrefix = (propertyPrefix == null || propertyPrefix.endsWith("."))
-            ? propertyPrefix : (propertyPrefix + '.');
-        // Sub-classes may choose to omit data-binding; if so, null ObjectMapper passed:
-        if (objectMapper == null) { // sub-class has no need for mapper
-            this.mapper = null;
-            this.parserFactory = null;
-        } else {
-            this.mapper = objectMapper;
-            this.parserFactory = parserFactory;
-        }
+        this.propertyPrefix = propertyPrefix.endsWith(".") ? propertyPrefix : propertyPrefix + '.';
+        this.mapper = objectMapper;
+        this.parserFactory = parserFactory;
         this.validator = validator;
     }
 

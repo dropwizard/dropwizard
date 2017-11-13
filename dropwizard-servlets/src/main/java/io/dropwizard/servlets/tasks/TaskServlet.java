@@ -28,6 +28,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import static com.codahale.metrics.MetricRegistry.name;
+import static java.util.Objects.requireNonNull;
 
 /**
  * A servlet which provides access to administrative {@link Task}s. It only responds to {@code POST}
@@ -118,7 +119,7 @@ public class TaskServlet extends HttpServlet {
             final PrintWriter output = resp.getWriter();
             try {
                 final TaskExecutor taskExecutor = taskExecutors.get(task);
-                taskExecutor.executeTask(getParams(req), getBody(req), output);
+                requireNonNull(taskExecutor).executeTask(getParams(req), getBody(req), output);
             } catch (Exception e) {
                 LOGGER.error("Error running {}", task.getName(), e);
                 resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);

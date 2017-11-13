@@ -16,6 +16,7 @@
 package io.dropwizard.jetty;
 
 import com.google.common.io.Files;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -30,6 +31,8 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicReference;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * This class is taken from the Netty project, and all credit goes to them.
@@ -96,6 +99,7 @@ public class NetUtil {
      * @param newLocalIpFilter the new local ip filter
      */
     public static void setLocalIpFilter(LocalIpFilter newLocalIpFilter) {
+        requireNonNull(newLocalIpFilter);
         LOCAL_IP_FILTER.set(newLocalIpFilter);
     }
 
@@ -105,7 +109,7 @@ public class NetUtil {
      * @return ip filter
      */
     public static LocalIpFilter getLocalIpFilter() {
-        return LOCAL_IP_FILTER.get();
+        return requireNonNull(LOCAL_IP_FILTER.get());
     }
 
     /**
@@ -142,7 +146,7 @@ public class NetUtil {
             final Enumeration<InetAddress> adrs = nif.getInetAddresses();
             while (adrs.hasMoreElements()) {
                 final InetAddress adr = adrs.nextElement();
-                if (LOCAL_IP_FILTER.get().use(nif, adr)) {
+                if (getLocalIpFilter().use(nif, adr)) {
                     listAdr.add(adr);
                 }
             }

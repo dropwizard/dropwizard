@@ -1,5 +1,7 @@
 package io.dropwizard.jersey.params;
 
+import javax.annotation.Nullable;
+
 /**
  * A parameter encapsulating boolean values. If the query parameter value is {@code "true"},
  * regardless of case, the returned value is {@link Boolean#TRUE}. If the query parameter value is
@@ -7,11 +9,11 @@ package io.dropwizard.jersey.params;
  * values will return a {@code 400 Bad Request} response.
  */
 public class BooleanParam extends AbstractParam<Boolean> {
-    public BooleanParam(String input) {
+    public BooleanParam(@Nullable String input) {
         super(input);
     }
 
-    public BooleanParam(String input, String parameterName) {
+    public BooleanParam(@Nullable String input, String parameterName) {
         super(input, parameterName);
     }
 
@@ -21,7 +23,7 @@ public class BooleanParam extends AbstractParam<Boolean> {
     }
 
     @Override
-    protected Boolean parse(String input) throws Exception {
+    protected Boolean parse(@Nullable String input) throws Exception {
         if ("true".equalsIgnoreCase(input)) {
             return Boolean.TRUE;
         }

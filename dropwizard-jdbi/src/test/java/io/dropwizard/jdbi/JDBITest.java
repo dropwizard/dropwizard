@@ -48,7 +48,7 @@ public class JDBITest {
     private final DBIFactory factory = new DBIFactory();
     private final List<Managed> managed = new ArrayList<>();
     private final MetricRegistry metricRegistry = new MetricRegistry();
-    private DBI dbi;
+    private DBI dbi = mock(DBI.class);
 
     @Before
     public void setUp() throws Exception {
@@ -102,7 +102,6 @@ public class JDBITest {
         for (Managed obj : managed) {
             obj.stop();
         }
-        this.dbi = null;
     }
 
     @Test

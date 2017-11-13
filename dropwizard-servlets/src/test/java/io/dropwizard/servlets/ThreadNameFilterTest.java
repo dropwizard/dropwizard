@@ -3,9 +3,6 @@ package io.dropwizard.servlets;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
 
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -14,23 +11,19 @@ import javax.servlet.http.HttpServletResponse;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
 public class ThreadNameFilterTest {
 
-    @Mock
-    private HttpServletRequest request;
+    private HttpServletRequest request = mock(HttpServletRequest.class);
 
-    @Mock
-    private HttpServletResponse response;
+    private HttpServletResponse response = mock(HttpServletResponse.class);
 
-    @Mock
-    private FilterChain chain;
+    private FilterChain chain = mock(FilterChain.class);
 
-    @Mock
-    private FilterConfig filterConfig;
+    private FilterConfig filterConfig = mock(FilterConfig.class);
 
     private ThreadNameFilter threadNameFilter = new ThreadNameFilter();
 

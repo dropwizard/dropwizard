@@ -12,8 +12,8 @@ import java.util.concurrent.TimeUnit;
  */
 public class MinDurationValidator implements ConstraintValidator<MinDuration, Duration> {
 
-    private long minQty;
-    private TimeUnit minUnit;
+    private long minQty = 0;
+    private TimeUnit minUnit = TimeUnit.MILLISECONDS;
 
     @Override
     public void initialize(MinDuration constraintAnnotation) {

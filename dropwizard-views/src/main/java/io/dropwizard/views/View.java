@@ -2,6 +2,7 @@ package io.dropwizard.views;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import javax.annotation.Nullable;
 import java.nio.charset.Charset;
 import java.util.Optional;
 
@@ -10,6 +11,8 @@ import java.util.Optional;
  */
 public abstract class View {
     private final String templateName;
+
+    @Nullable
     private final Charset charset;
 
     /**
@@ -27,7 +30,7 @@ public abstract class View {
      * @param templateName the name of the template resource
      * @param charset      the character set for {@code templateName}
      */
-    protected View(String templateName, Charset charset) {
+    protected View(String templateName, @Nullable Charset charset) {
         this.templateName = resolveName(templateName);
         this.charset = charset;
     }

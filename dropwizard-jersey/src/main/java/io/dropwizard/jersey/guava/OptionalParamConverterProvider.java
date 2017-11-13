@@ -6,6 +6,7 @@ import org.glassfish.jersey.internal.inject.Providers;
 import org.glassfish.jersey.internal.util.ReflectionHelper;
 import org.glassfish.jersey.internal.util.collection.ClassTypePair;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.ws.rs.ext.ParamConverter;
@@ -27,6 +28,7 @@ public class OptionalParamConverterProvider implements ParamConverterProvider {
      * {@inheritDoc}
      */
     @Override
+    @Nullable
     public <T> ParamConverter<T> getConverter(final Class<T> rawType, final Type genericType, final Annotation[] annotations) {
         if (Optional.class.equals(rawType)) {
             final List<ClassTypePair> ctps = ReflectionHelper.getTypeArgumentAndClass(genericType);

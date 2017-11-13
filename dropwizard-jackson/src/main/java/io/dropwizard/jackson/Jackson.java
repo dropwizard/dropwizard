@@ -9,6 +9,8 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.afterburner.AfterburnerModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 
+import javax.annotation.Nullable;
+
 /**
  * A utility class for Jackson.
  */
@@ -33,7 +35,7 @@ public class Jackson {
      * @param jsonFactory instance of {@link com.fasterxml.jackson.core.JsonFactory} to use
      *                    for the created {@link com.fasterxml.jackson.databind.ObjectMapper} instance.
      */
-    public static ObjectMapper newObjectMapper(JsonFactory jsonFactory) {
+    public static ObjectMapper newObjectMapper(@Nullable JsonFactory jsonFactory) {
         final ObjectMapper mapper = new ObjectMapper(jsonFactory);
 
         return configure(mapper);

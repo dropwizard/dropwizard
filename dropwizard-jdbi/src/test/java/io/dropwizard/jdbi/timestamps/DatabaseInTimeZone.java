@@ -8,6 +8,8 @@ import java.io.File;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 
+import static org.mockito.Mockito.mock;
+
 /**
  * Run an instance of the H2 database in an another time zone
  */
@@ -16,7 +18,7 @@ public class DatabaseInTimeZone extends ExternalResource {
     private final TemporaryFolder temporaryFolder;
     private final TimeZone timeZone;
 
-    private Process process;
+    private Process process = mock(Process.class);
 
     public DatabaseInTimeZone(TemporaryFolder temporaryFolder, TimeZone timeZone) {
         this.temporaryFolder = temporaryFolder;

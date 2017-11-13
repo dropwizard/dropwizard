@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 
 /**
@@ -41,6 +42,7 @@ public class CustomDeserialization extends StdDeserializer<CustomRepresentation>
         }
 
         @Override
+        @Nullable
         public String getMessage() {
             return null;
         }

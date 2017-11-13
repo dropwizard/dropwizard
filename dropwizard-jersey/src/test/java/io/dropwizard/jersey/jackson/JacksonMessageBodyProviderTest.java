@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreType;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.ImmutableList;
 import com.google.common.reflect.TypeToken;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.validation.Validated;
@@ -11,6 +12,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 import org.junit.Before;
 import org.junit.Test;
 
+import javax.annotation.Nullable;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -71,7 +73,7 @@ public class JacksonMessageBodyProviderTest {
         @NotEmpty
         @Valid
         @JsonProperty
-        public List<Example> examples;
+        public List<Example> examples = ImmutableList.of();
     }
 
     public interface Partial1 {
@@ -86,6 +88,7 @@ public class JacksonMessageBodyProviderTest {
         public int id;
 
         @NotNull(groups = Partial2.class)
+        @Nullable
         @JsonProperty
         public String text;
     }

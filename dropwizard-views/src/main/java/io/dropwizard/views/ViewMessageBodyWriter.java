@@ -5,6 +5,7 @@ import com.codahale.metrics.Timer;
 import com.google.common.annotations.VisibleForTesting;
 import org.glassfish.jersey.message.internal.HeaderValueException;
 
+import javax.annotation.Nullable;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
@@ -23,13 +24,20 @@ import java.util.Locale;
 import java.util.ServiceLoader;
 
 import static com.codahale.metrics.MetricRegistry.name;
+import static java.util.Objects.requireNonNull;
 
 @Provider
-@Produces({ MediaType.TEXT_HTML, MediaType.APPLICATION_XHTML_XML })
+@Produces({MediaType.TEXT_HTML, MediaType.APPLICATION_XHTML_XML})
 public class ViewMessageBodyWriter implements MessageBodyWriter<View> {
 
     @Context
+    @Nullable
     private HttpHeaders headers;
+
+    @VisibleForTesting
+    void setHeaders(HttpHeaders headers) {
+        this.headers = headers;
+    }
 
     private final Iterable<ViewRenderer> renderers;
     private final MetricRegistry metricRegistry;
@@ -70,7 +78,7 @@ public class ViewMessageBodyWriter implements MessageBodyWriter<View> {
         try {
             for (ViewRenderer renderer : renderers) {
                 if (renderer.isRenderable(t)) {
-                    renderer.render(t, detectLocale(headers), entityStream);
+                    renderer.render(t, detectLocale(requireNonNull(headers)), entityStream);
                     return;
                 }
             }

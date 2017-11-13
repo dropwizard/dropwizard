@@ -11,6 +11,7 @@ import org.glassfish.jersey.server.internal.inject.ParamInjectionResolver;
 import org.glassfish.jersey.server.model.Parameter;
 import org.glassfish.jersey.server.spi.internal.ValueFactoryProvider;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.lang.reflect.ParameterizedType;
@@ -58,6 +59,7 @@ public class PolymorphicAuthValueFactoryProvider<T extends Principal> extends Ab
      * @return the factory if annotated parameter matched type
      */
     @Override
+    @Nullable
     public AbstractContainerRequestValueFactory<?> createValueFactory(Parameter parameter) {
         if (!parameter.isAnnotationPresent(Auth.class)) {
             return null;

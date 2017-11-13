@@ -1,6 +1,7 @@
 package io.dropwizard.sslreload;
 
 import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.ImmutableSet;
 import io.dropwizard.jetty.SslReload;
 import io.dropwizard.servlets.tasks.Task;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
@@ -10,7 +11,7 @@ import java.util.Collection;
 
 /** A task that will refresh all ssl factories with up to date certificate information */
 public class SslReloadTask extends Task {
-    private Collection<SslReload> reloader;
+    private Collection<SslReload> reloader = ImmutableSet.of();
 
     protected SslReloadTask() {
         super("reload-ssl");

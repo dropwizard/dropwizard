@@ -3,6 +3,7 @@ package io.dropwizard.auth;
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
 import org.glassfish.jersey.server.model.AnnotatedMethod;
 
+import javax.annotation.Nullable;
 import javax.annotation.security.DenyAll;
 import javax.annotation.security.PermitAll;
 import javax.annotation.security.RolesAllowed;
@@ -30,8 +31,10 @@ import java.util.Optional;
  */
 public class AuthDynamicFeature implements DynamicFeature {
 
+    @Nullable
     private final ContainerRequestFilter authFilter;
 
+    @Nullable
     private final Class<? extends ContainerRequestFilter> authFilterClass;
 
     public AuthDynamicFeature(ContainerRequestFilter authFilter) {

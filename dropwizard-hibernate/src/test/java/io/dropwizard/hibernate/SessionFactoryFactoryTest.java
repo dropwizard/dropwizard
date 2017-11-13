@@ -21,6 +21,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
+import javax.annotation.Nullable;
+
+import static java.util.Objects.requireNonNull;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.mock;
@@ -39,7 +42,9 @@ public class SessionFactoryFactoryTest {
     private final Environment environment = mock(Environment.class);
     private final MetricRegistry metricRegistry = new MetricRegistry();
 
-    private DataSourceFactory config;
+    private DataSourceFactory config = new DataSourceFactory();
+
+    @Nullable
     private SessionFactory sessionFactory;
 
     @Before
@@ -47,7 +52,6 @@ public class SessionFactoryFactoryTest {
         when(environment.metrics()).thenReturn(metricRegistry);
         when(environment.lifecycle()).thenReturn(lifecycleEnvironment);
 
-        config = new DataSourceFactory();
         config.setUrl("jdbc:hsqldb:mem:DbTest-" + System.currentTimeMillis());
         config.setUser("sa");
         config.setDriverClass("org.hsqldb.jdbcDriver");
@@ -105,7 +109,7 @@ public class SessionFactoryFactoryTest {
     public void buildsAWorkingSessionFactory() throws Exception {
         build();
 
-        try (Session session = sessionFactory.openSession()) {
+        try (Session session = requireNonNull(sessionFactory).openSession()) {
             Transaction transaction = session.beginTransaction();
             session.createNativeQuery("DROP TABLE people IF EXISTS").executeUpdate();
             session.createNativeQuery("CREATE TABLE people (name varchar(100) primary key, email varchar(100), birthday timestamp(0))").executeUpdate();
@@ -120,7 +124,7 @@ public class SessionFactoryFactoryTest {
             assertThat(entity.getEmail())
                 .isEqualTo("coda@example.com");
 
-            assertThat(entity.getBirthday().toDateTime(DateTimeZone.UTC))
+            assertThat(requireNonNull(entity.getBirthday()).toDateTime(DateTimeZone.UTC))
                 .isEqualTo(new DateTime(1979, 1, 2, 0, 22, DateTimeZone.UTC));
         }
     }

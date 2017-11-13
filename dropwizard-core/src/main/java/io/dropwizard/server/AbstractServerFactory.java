@@ -213,6 +213,7 @@ public abstract class AbstractServerFactory implements ServerFactory {
     private static final Pattern WINDOWS_NEWLINE = Pattern.compile("\\r\\n?");
 
     @Valid
+    @Nullable
     private RequestLogFactory requestLog;
 
     @Valid
@@ -235,21 +236,29 @@ public abstract class AbstractServerFactory implements ServerFactory {
     private Duration idleThreadTimeout = Duration.minutes(1);
 
     @Min(1)
+    @Nullable
     private Integer nofileSoftLimit;
 
     @Min(1)
+    @Nullable
     private Integer nofileHardLimit;
 
+    @Nullable
     private Integer gid;
 
+    @Nullable
     private Integer uid;
 
+    @Nullable
     private String user;
 
+    @Nullable
     private String group;
 
+    @Nullable
     private String umask;
 
+    @Nullable
     private Boolean startsAsRoot;
 
     private Boolean registerDefaultExceptionMappers = Boolean.TRUE;
@@ -346,6 +355,7 @@ public abstract class AbstractServerFactory implements ServerFactory {
     }
 
     @JsonProperty
+    @Nullable
     public Integer getNofileSoftLimit() {
         return nofileSoftLimit;
     }
@@ -356,6 +366,7 @@ public abstract class AbstractServerFactory implements ServerFactory {
     }
 
     @JsonProperty
+    @Nullable
     public Integer getNofileHardLimit() {
         return nofileHardLimit;
     }
@@ -366,6 +377,7 @@ public abstract class AbstractServerFactory implements ServerFactory {
     }
 
     @JsonProperty
+    @Nullable
     public Integer getGid() {
         return gid;
     }
@@ -376,6 +388,7 @@ public abstract class AbstractServerFactory implements ServerFactory {
     }
 
     @JsonProperty
+    @Nullable
     public Integer getUid() {
         return uid;
     }
@@ -386,6 +399,7 @@ public abstract class AbstractServerFactory implements ServerFactory {
     }
 
     @JsonProperty
+    @Nullable
     public String getUser() {
         return user;
     }
@@ -396,6 +410,7 @@ public abstract class AbstractServerFactory implements ServerFactory {
     }
 
     @JsonProperty
+    @Nullable
     public String getGroup() {
         return group;
     }
@@ -406,6 +421,7 @@ public abstract class AbstractServerFactory implements ServerFactory {
     }
 
     @JsonProperty
+    @Nullable
     public String getUmask() {
         return umask;
     }
@@ -416,6 +432,7 @@ public abstract class AbstractServerFactory implements ServerFactory {
     }
 
     @JsonProperty
+    @Nullable
     public Boolean getStartsAsRoot() {
         return startsAsRoot;
     }

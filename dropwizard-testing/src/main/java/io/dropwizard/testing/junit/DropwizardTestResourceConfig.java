@@ -49,6 +49,11 @@ class DropwizardTestResourceConfig extends DropwizardResourceConfig {
     }
 
     DropwizardTestResourceConfig(@Context ServletConfig servletConfig) {
-        this(CONFIGURATION_REGISTRY.get(requireNonNull(servletConfig.getInitParameter(CONFIGURATION_ID))));
+        this(getConfiguration(servletConfig));
+    }
+
+    private static ResourceTestJerseyConfiguration getConfiguration(@Context ServletConfig servletConfig) {
+        final String id = requireNonNull(servletConfig.getInitParameter(CONFIGURATION_ID), "No configuration id");
+        return requireNonNull(CONFIGURATION_REGISTRY.get(id), "No configuration");
     }
 }

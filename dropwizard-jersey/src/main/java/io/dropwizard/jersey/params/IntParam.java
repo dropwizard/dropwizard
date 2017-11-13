@@ -1,15 +1,17 @@
 package io.dropwizard.jersey.params;
 
+import javax.annotation.Nullable;
+
 /**
  * A parameter encapsulating integer values. All non-decimal values will return a
  * {@code 400 Bad Request} response.
  */
 public class IntParam extends AbstractParam<Integer> {
-    public IntParam(String input) {
+    public IntParam(@Nullable String input) {
         super(input);
     }
 
-    public IntParam(String input, String parameterName) {
+    public IntParam(@Nullable String input, String parameterName) {
         super(input, parameterName);
     }
 
@@ -19,7 +21,7 @@ public class IntParam extends AbstractParam<Integer> {
     }
 
     @Override
-    protected Integer parse(String input) {
+    protected Integer parse(@Nullable String input) {
         return Integer.valueOf(input);
     }
 }

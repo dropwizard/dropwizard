@@ -12,8 +12,8 @@ import javax.validation.ConstraintValidatorContext;
  */
 public class MaxSizeValidator implements ConstraintValidator<MaxSize, Size> {
 
-    private long maxQty;
-    private SizeUnit maxUnit;
+    private long maxQty = 0;
+    private SizeUnit maxUnit = SizeUnit.BYTES;
 
     @Override
     public void initialize(MaxSize constraintAnnotation) {

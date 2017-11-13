@@ -5,7 +5,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 public class ValidRepresentation {
     @NotEmpty
-    private String name;
+    private String name = "";
 
     @JsonProperty
     public String getName() {

@@ -8,11 +8,11 @@ public class TestConfiguration extends Configuration {
 
     @JsonProperty
     @NotEmpty
-    private String message;
+    private String message = "";
 
     @JsonProperty
     @NotEmpty
-    private String extra;
+    private String extra = "";
 
     public TestConfiguration() { }
 
