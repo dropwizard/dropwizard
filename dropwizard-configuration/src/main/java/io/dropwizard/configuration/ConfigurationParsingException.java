@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonLocation;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.dataformat.yaml.snakeyaml.error.Mark;
 import com.google.common.collect.ImmutableSet;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.similarity.LevenshteinDistance;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
@@ -311,6 +311,7 @@ public class ConfigurationParsingException extends ConfigurationException {
 
         protected static class LevenshteinComparator implements Comparator<String>, Serializable {
             private static final long serialVersionUID = 1L;
+            private static final LevenshteinDistance LEVENSHTEIN_DISTANCE = new LevenshteinDistance();
 
             private String base;
 
@@ -343,8 +344,8 @@ public class ConfigurationParsingException extends ConfigurationException {
                 }
 
                 // determine which of the two is closer to the base and order it first
-                return Integer.compare(StringUtils.getLevenshteinDistance(a, base),
-                        StringUtils.getLevenshteinDistance(b, base));
+                return Integer.compare(LEVENSHTEIN_DISTANCE.apply(a, base),
+                    LEVENSHTEIN_DISTANCE.apply(b, base));
             }
 
             private void writeObject(ObjectOutputStream stream) throws IOException {

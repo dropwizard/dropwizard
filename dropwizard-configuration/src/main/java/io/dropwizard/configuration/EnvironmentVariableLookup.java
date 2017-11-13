@@ -1,9 +1,9 @@
 package io.dropwizard.configuration;
 
-import org.apache.commons.lang3.text.StrLookup;
+import org.apache.commons.text.StrLookup;
 
 /**
- * A custom {@link org.apache.commons.lang3.text.StrLookup} implementation using environment variables as lookup source.
+ * A custom {@link org.apache.commons.text.StrLookup} implementation using environment variables as lookup source.
  */
 public class EnvironmentVariableLookup extends StrLookup<Object> {
     private final boolean strict;
