@@ -356,6 +356,7 @@
                                 <arg>-XepDisableWarningsInGeneratedCode</arg>
                                 <arg>-Xep:NullAway:ERROR</arg>
                                 <arg>-XepOpt:NullAway:AnnotatedPackages=io.dropwizard</arg>
+                                <arg>-XepOpt:NullAway:UnannotatedSubPackages=io.dropwizard.benchmarks</arg>
                             </compilerArgs>
                         </configuration>
                         <dependencies>
