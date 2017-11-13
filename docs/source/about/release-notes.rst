@@ -10,6 +10,7 @@ v1.2.1: Unreleased
 ==================
 
 * Correctly set up SO_LINGER for the HTTP connector `#2176 <https://github.com/dropwizard/dropwizard/pull/2176>`_
+* Upgrade to Hibernate 5.2.12.Final to address `HHH-11996 <https://hibernate.atlassian.net/browse/HHH-11996>`_, `#2206 <https://github.com/dropwizard/dropwizard/issues/2206>`_
 
 .. _rel-1.2.0:
 
