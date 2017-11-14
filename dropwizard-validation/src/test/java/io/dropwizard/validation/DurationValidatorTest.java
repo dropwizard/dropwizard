@@ -18,8 +18,14 @@ public class DurationValidatorTest {
         @MaxDuration(value = 30, unit = TimeUnit.SECONDS)
         private Duration tooBig = Duration.minutes(10);
 
+        @MaxDuration(value = 30, unit = TimeUnit.SECONDS, inclusive = false)
+        private Duration tooBigExclusive = Duration.seconds(30);
+
         @MinDuration(value = 30, unit = TimeUnit.SECONDS)
         private Duration tooSmall = Duration.milliseconds(100);
+
+        @MinDuration(value = 30, unit = TimeUnit.SECONDS, inclusive = false)
+        private Duration tooSmallExclusive = Duration.seconds(30);
 
         @DurationRange(min = 10, max = 30, unit = TimeUnit.MINUTES)
         private Duration outOfRange = Duration.minutes(60);
@@ -39,8 +45,14 @@ public class DurationValidatorTest {
         public void setTooBig(Duration tooBig) {
             this.tooBig = tooBig;
         }
+        public void setTooBigExclusive(Duration tooBigExclusive) {
+            this.tooBigExclusive = tooBigExclusive;
+        }
         public void setTooSmall(Duration tooSmall) {
             this.tooSmall = tooSmall;
+        }
+        public void setTooSmallExclusive(Duration tooSmallExclusive) {
+            this.tooSmallExclusive = tooSmallExclusive;
         }
         public void setOutOfRange(Duration outOfRange) {
             this.outOfRange = outOfRange;
@@ -67,10 +79,12 @@ public class DurationValidatorTest {
             assertThat(errors)
                     .containsOnly(
                             "outOfRange must be between 10 MINUTES and 30 MINUTES",
-                            "tooBig must be less than or equal to 30 SECONDS",
-                            "tooSmall must be greater than or equal to 30 SECONDS",
-                            "maxDurs[0].<collection element> must be less than or equal to 30 SECONDS",
-                            "minDurs[0].<collection element> must be greater than or equal to 30 SECONDS",
+                            "tooBig must be less than (or equal to, if in 'inclusive' mode) 30 SECONDS",
+                            "tooBigExclusive must be less than (or equal to, if in 'inclusive' mode) 30 SECONDS",
+                            "tooSmall must be greater than (or equal to, if in 'inclusive' mode) 30 SECONDS",
+                            "tooSmallExclusive must be greater than (or equal to, if in 'inclusive' mode) 30 SECONDS",
+                            "maxDurs[0].<collection element> must be less than (or equal to, if in 'inclusive' mode) 30 SECONDS",
+                            "minDurs[0].<collection element> must be greater than (or equal to, if in 'inclusive' mode) 30 SECONDS",
                             "rangeDurs[0].<collection element> must be between 10 MINUTES and 30 MINUTES");
         }
     }
@@ -79,7 +93,9 @@ public class DurationValidatorTest {
     public void returnsAnEmptySetForAValidObject() throws Exception {
         final Example example = new Example();
         example.setTooBig(Duration.seconds(10));
+        example.setTooBigExclusive(Duration.seconds(29));
         example.setTooSmall(Duration.seconds(100));
+        example.setTooSmallExclusive(Duration.seconds(31));
         example.setOutOfRange(Duration.minutes(15));
         example.setMaxDurs(ImmutableList.of(Duration.seconds(10)));
         example.setMinDurs(ImmutableList.of(Duration.seconds(100)));

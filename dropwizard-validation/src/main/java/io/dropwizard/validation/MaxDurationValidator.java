@@ -14,15 +14,28 @@ public class MaxDurationValidator implements ConstraintValidator<MaxDuration, Du
 
     private long maxQty = 0;
     private TimeUnit maxUnit = TimeUnit.MILLISECONDS;
+    private boolean inclusive = true;
 
     @Override
     public void initialize(MaxDuration constraintAnnotation) {
         this.maxQty = constraintAnnotation.value();
         this.maxUnit = constraintAnnotation.unit();
+        this.inclusive = constraintAnnotation.inclusive();
     }
 
     @Override
     public boolean isValid(Duration value, ConstraintValidatorContext context) {
-        return (value == null) || (value.toNanoseconds() <= maxUnit.toNanos(maxQty));
+        if (value == null) {
+            return true;
+        }
+
+        long valueNanos = value.toNanoseconds();
+        long annotationNanos = maxUnit.toNanos(maxQty);
+
+        if (inclusive) {
+            return valueNanos <= annotationNanos;
+        } else {
+            return valueNanos < annotationNanos;
+        }
     }
 }
