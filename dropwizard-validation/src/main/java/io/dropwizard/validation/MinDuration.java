@@ -26,7 +26,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Documented
 @Constraint(validatedBy = MinDurationValidator.class)
 public @interface MinDuration {
-    String message() default "must be greater than (or equal to, if in 'inclusive' mode) to {value} {unit}";
+    String message() default "must be greater than (or equal to, if in 'inclusive' mode) {value} {unit}";
 
     Class<?>[] groups() default { };
 
