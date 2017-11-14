@@ -20,7 +20,7 @@ import io.dropwizard.jackson.Jackson;
 import io.dropwizard.logging.filter.FilterFactory;
 import io.dropwizard.validation.BaseValidator;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.text.StrSubstitutor;
+import org.apache.commons.text.StrSubstitutor;
 import org.assertj.core.data.MapEntry;
 import org.junit.Before;
 import org.junit.Rule;
@@ -151,5 +151,11 @@ public class DefaultLoggingFactoryTest {
         assertThat(appenders).as("context").allMatch((Appender<?> a) -> a.getContext() != null);
         assertThat(appenders).as("started").allMatch(LifeCycle::isStarted);
         assertThat(appenders).hasSize(1);
+    }
+
+    @Test
+    public void testToStringIsImplented() {
+        assertThat(config.toString()).startsWith(
+            "DefaultLoggingFactory{level=INFO, loggers={com.example.app=\"DEBUG\"}, appenders=");
     }
 }

@@ -3,6 +3,7 @@ package io.dropwizard.client.proxy;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.validator.constraints.NotEmpty;
 
+import javax.annotation.Nullable;
 import javax.validation.constraints.Pattern;
 
 /**
@@ -68,21 +69,26 @@ public class AuthConfiguration {
     public static final String NT_CREDS = "NT";
 
     @NotEmpty
-    private String username;
+    private String username = "";
 
     @NotEmpty
-    private String password;
+    private String password = "";
 
     @Pattern(regexp = BASIC_AUTH_SCHEME + "|" + NTLM_AUTH_SCHEME)
+    @Nullable
     private String authScheme;
 
+    @Nullable
     private String realm;
 
+    @Nullable
     private String hostname;
 
+    @Nullable
     private String domain;
 
     @Pattern(regexp = USERNAME_PASSWORD_CREDS + "|" + NT_CREDS, flags = {Pattern.Flag.CASE_INSENSITIVE})
+    @Nullable
     private String credentialType;
 
     public AuthConfiguration() {
@@ -124,6 +130,7 @@ public class AuthConfiguration {
     }
 
     @JsonProperty
+    @Nullable
     public String getAuthScheme() {
         return authScheme;
     }
@@ -134,6 +141,7 @@ public class AuthConfiguration {
     }
 
     @JsonProperty
+    @Nullable
     public String getRealm() {
         return realm;
     }
@@ -144,6 +152,7 @@ public class AuthConfiguration {
     }
 
     @JsonProperty
+    @Nullable
     public String getHostname() {
         return hostname;
     }
@@ -154,6 +163,7 @@ public class AuthConfiguration {
     }
 
     @JsonProperty
+    @Nullable
     public String getDomain() {
         return domain;
     }
@@ -164,6 +174,7 @@ public class AuthConfiguration {
     }
 
     @JsonProperty
+    @Nullable
     public String getCredentialType() {
         return credentialType;
     }

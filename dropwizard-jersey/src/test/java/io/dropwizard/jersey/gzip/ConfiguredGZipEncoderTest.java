@@ -2,6 +2,7 @@ package io.dropwizard.jersey.gzip;
 
 import org.junit.Test;
 
+import javax.annotation.Nullable;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.ClientRequestContext;
 import javax.ws.rs.core.HttpHeaders;
@@ -75,14 +76,6 @@ public class ConfiguredGZipEncoderTest {
         assertThat(context.isProceedCalled(), is(true));
     }
 
-
-    @Test(expected = NullPointerException.class)
-    public void contextMayNotBeNull() throws IOException {
-        ClientRequestContext context = null;
-        new ConfiguredGZipEncoder(false).filter(context);
-    }
-
-
     private class WriterInterceptorContextMock implements WriterInterceptorContext {
         private final MultivaluedMap<String, Object> headers;
         private OutputStream os = new OutputStream() {
@@ -103,6 +96,7 @@ public class ConfiguredGZipEncoderTest {
         }
 
         @Override
+        @Nullable
         public Object getEntity() {
             return null;
         }
@@ -128,11 +122,13 @@ public class ConfiguredGZipEncoderTest {
         }
 
         @Override
+        @Nullable
         public Object getProperty(String name) {
             return null;
         }
 
         @Override
+        @Nullable
         public Collection<String> getPropertyNames() {
             return null;
         }
@@ -158,6 +154,7 @@ public class ConfiguredGZipEncoderTest {
         }
 
         @Override
+        @Nullable
         public Class<?> getType() {
             return null;
         }
@@ -168,6 +165,7 @@ public class ConfiguredGZipEncoderTest {
         }
 
         @Override
+        @Nullable
         public Type getGenericType() {
             return null;
         }
@@ -178,6 +176,7 @@ public class ConfiguredGZipEncoderTest {
         }
 
         @Override
+        @Nullable
         public MediaType getMediaType() {
             return null;
         }

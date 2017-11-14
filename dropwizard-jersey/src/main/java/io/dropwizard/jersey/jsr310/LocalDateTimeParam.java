@@ -2,6 +2,7 @@ package io.dropwizard.jersey.jsr310;
 
 import io.dropwizard.jersey.params.AbstractParam;
 
+import javax.annotation.Nullable;
 import java.time.LocalDateTime;
 
 /**
@@ -11,12 +12,12 @@ import java.time.LocalDateTime;
  * @see LocalDateTime
  */
 public class LocalDateTimeParam extends AbstractParam<LocalDateTime> {
-    public LocalDateTimeParam(final String input) {
+    public LocalDateTimeParam(@Nullable final String input) {
         super(input);
     }
 
     @Override
-    protected LocalDateTime parse(final String input) throws Exception {
+    protected LocalDateTime parse(@Nullable final String input) throws Exception {
         return LocalDateTime.parse(input);
     }
 }

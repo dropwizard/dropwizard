@@ -3,6 +3,7 @@ package io.dropwizard.jdbi.args;
 import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.tweak.Argument;
 
+import javax.annotation.Nullable;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -14,9 +15,10 @@ import java.time.LocalDateTime;
  */
 public class LocalDateTimeArgument implements Argument {
 
+    @Nullable
     private final LocalDateTime value;
 
-    LocalDateTimeArgument(final LocalDateTime value) {
+    LocalDateTimeArgument(@Nullable final LocalDateTime value) {
         this.value = value;
     }
 

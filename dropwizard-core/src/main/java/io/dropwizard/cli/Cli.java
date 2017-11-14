@@ -21,6 +21,8 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import static java.util.Objects.requireNonNull;
+
 /**
  * The command-line runner for Dropwizard application.
  */
@@ -70,7 +72,8 @@ public class Cli {
                 parser.printVersion(stdOut);
             } else {
                 final Namespace namespace = parser.parseArgs(arguments);
-                final Command command = commands.get(namespace.getString(COMMAND_NAME_ATTR));
+                final Command command = requireNonNull(commands.get(namespace.getString(COMMAND_NAME_ATTR)),
+                    "Command is not found");
                 try {
                     command.run(bootstrap, namespace);
                 } catch (Throwable e) {

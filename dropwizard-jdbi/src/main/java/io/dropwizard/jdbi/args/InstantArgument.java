@@ -3,6 +3,7 @@ package io.dropwizard.jdbi.args;
 import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.tweak.Argument;
 
+import javax.annotation.Nullable;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -15,10 +16,12 @@ import java.util.Optional;
  * An {@link Argument} for {@link Instant} objects.
  */
 public class InstantArgument implements Argument {
+
+    @Nullable
     private final Instant instant;
     private final Optional<Calendar> calendar;
 
-    protected InstantArgument(final Instant instant, final Optional<Calendar> calendar) {
+    protected InstantArgument(@Nullable final Instant instant, final Optional<Calendar> calendar) {
         this.instant = instant;
         this.calendar = calendar;
     }

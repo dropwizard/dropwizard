@@ -7,7 +7,10 @@ import org.eclipse.jetty.server.ConnectionFactory;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.util.component.ContainerLifeCycle;
 
+import javax.annotation.Nullable;
 import java.util.List;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * A version {@link com.codahale.metrics.jetty9.InstrumentedConnectionFactory}, which supports Jetty 9.3 API.
@@ -46,6 +49,8 @@ public class Jetty93InstrumentedConnectionFactory extends ContainerLifeCycle imp
     public Connection newConnection(Connector connector, EndPoint endPoint) {
         final Connection connection = connectionFactory.newConnection(connector, endPoint);
         connection.addListener(new Connection.Listener() {
+
+            @Nullable
             private Timer.Context context;
 
             @Override
@@ -55,7 +60,7 @@ public class Jetty93InstrumentedConnectionFactory extends ContainerLifeCycle imp
 
             @Override
             public void onClosed(Connection connection) {
-                context.stop();
+                requireNonNull(context).stop();
             }
         });
         return connection;

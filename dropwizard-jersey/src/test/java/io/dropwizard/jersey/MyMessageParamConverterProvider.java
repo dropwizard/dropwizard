@@ -1,5 +1,6 @@
 package io.dropwizard.jersey;
 
+import javax.annotation.Nullable;
 import javax.ws.rs.ext.ParamConverter;
 import javax.ws.rs.ext.ParamConverterProvider;
 import javax.ws.rs.ext.Provider;
@@ -11,6 +12,7 @@ public class MyMessageParamConverterProvider implements ParamConverterProvider {
 
     @Override
     @SuppressWarnings("unchecked")
+    @Nullable
     public <T> ParamConverter<T> getConverter(Class<T> rawType, Type genericType, Annotation[] annotations) {
         if (genericType.equals(MyMessage.class)) {
             return (ParamConverter<T>) new MyMessageParamConverter();

@@ -5,6 +5,7 @@ import io.dropwizard.jersey.validation.JerseyParameterNameProvider;
 import org.glassfish.jersey.internal.inject.ExtractorException;
 import org.glassfish.jersey.server.internal.LocalizationMessages;
 
+import javax.annotation.Nullable;
 import javax.ws.rs.ProcessingException;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.ext.ParamConverter;
@@ -28,6 +29,7 @@ public class AbstractParamConverterProvider implements ParamConverterProvider {
     }
 
     @Override
+    @Nullable
     public <T> ParamConverter<T> getConverter(Class<T> rawType, Type genericType, Annotation[] annotations) {
         if (AbstractParam.class.isAssignableFrom(rawType)) {
             final String parameterName = JerseyParameterNameProvider.getParameterNameFromAnnotations(annotations).orElse("Parameter");
@@ -42,6 +44,7 @@ public class AbstractParamConverterProvider implements ParamConverterProvider {
             return new ParamConverter<T>() {
                 @Override
                 @SuppressWarnings("unchecked")
+                @Nullable
                 public T fromString(String value) {
                     if (rawType != NonEmptyStringParam.class && Strings.isNullOrEmpty(value)) {
                         return null;

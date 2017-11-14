@@ -13,6 +13,7 @@ import io.dropwizard.lifecycle.setup.ExecutorServiceBuilder;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
 import io.dropwizard.setup.Environment;
 import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.ServiceUnavailableRetryStrategy;
 import org.apache.http.config.Registry;
 import org.apache.http.config.RegistryBuilder;
 import org.apache.http.conn.DnsResolver;
@@ -32,6 +33,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
+import javax.annotation.Nullable;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
@@ -273,6 +275,13 @@ public class JerseyClientBuilderTest {
     }
 
     @Test
+    public void usesACustomServiceUnavailableRetryStrategy() {
+        final ServiceUnavailableRetryStrategy customServiceUnavailableRetryStrategy = mock(ServiceUnavailableRetryStrategy.class);
+        builder.using(customServiceUnavailableRetryStrategy);
+        verify(apacheHttpClientBuilder).using(customServiceUnavailableRetryStrategy);
+    }
+
+    @Test
     public void usesACustomConnectionFactoryRegistry() throws Exception {
         final SSLContext ctx = SSLContext.getInstance(SSLConnectionSocketFactory.TLS);
         ctx.init(null, new TrustManager[]{
@@ -287,6 +296,7 @@ public class JerseyClientBuilderTest {
                 }
 
                 @Override
+                @Nullable
                 public X509Certificate[] getAcceptedIssuers() {
                     return null;
                 }
@@ -340,7 +350,11 @@ public class JerseyClientBuilderTest {
         }
 
         @Override
-        public JerseyClientBuilderTest readFrom(Class<JerseyClientBuilderTest> type, Type genericType, Annotation[] annotations, MediaType mediaType, MultivaluedMap<String, String> httpHeaders, InputStream entityStream) throws IOException, WebApplicationException {
+        @Nullable
+        public JerseyClientBuilderTest readFrom(Class<JerseyClientBuilderTest> type, Type genericType,
+                                                Annotation[] annotations, MediaType mediaType,
+                                                MultivaluedMap<String, String> httpHeaders, InputStream entityStream)
+            throws IOException, WebApplicationException {
             return null;
         }
     }

@@ -3,6 +3,7 @@ package io.dropwizard.jdbi.args;
 import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.tweak.ResultColumnMapper;
 
+import javax.annotation.Nullable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -52,6 +53,7 @@ public class OffsetDateTimeMapper implements ResultColumnMapper<OffsetDateTime> 
     }
 
     @Override
+    @Nullable
     public OffsetDateTime mapColumn(ResultSet r, int columnNumber, StatementContext ctx) throws SQLException {
         final Timestamp timestamp = calendar.isPresent() ? r.getTimestamp(columnNumber, cloneCalendar()) :
             r.getTimestamp(columnNumber);
@@ -59,17 +61,21 @@ public class OffsetDateTimeMapper implements ResultColumnMapper<OffsetDateTime> 
     }
 
     @Override
+    @Nullable
     public OffsetDateTime mapColumn(ResultSet r, String columnLabel, StatementContext ctx) throws SQLException {
         final Timestamp timestamp = calendar.isPresent() ? r.getTimestamp(columnLabel, cloneCalendar()) :
             r.getTimestamp(columnLabel);
         return convertToOffsetDateTime(timestamp);
     }
 
+    @Nullable
     private OffsetDateTime convertToOffsetDateTime(Timestamp timestamp) {
         if (timestamp == null) {
             return null;
         }
         final Optional<ZoneId> zoneId = calendar.flatMap(c -> Optional.of(c.getTimeZone().toZoneId()));
-        return OffsetDateTime.ofInstant(Instant.ofEpochMilli(timestamp.getTime()), zoneId.orElse(ZoneId.systemDefault()));
+        return OffsetDateTime.ofInstant(
+            Instant.ofEpochSecond(timestamp.getTime() / 1000, timestamp.getNanos()),
+            zoneId.orElse(ZoneId.systemDefault()));
     }
 }

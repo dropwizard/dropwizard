@@ -19,9 +19,10 @@ Tweaking some of the options will require good understanding of how Jetty is wor
       type: default
       maxThreads: 1024
 
+.. _Jetty architecture chapter: http://www.eclipse.org/jetty/documentation/current/architecture.html#basic-architecture
+
 
 .. _man-configuration-all:
-.. _Jetty architecture chapter: http://www.eclipse.org/jetty/documentation/current/architecture.html#basic-architecture
 
 All
 ---
@@ -301,6 +302,7 @@ HTTP
           minBufferPoolSize: 64 bytes
           bufferPoolIncrement: 1KiB
           maxBufferPoolSize: 64KiB
+          minRequestDataRate: 0
           acceptorThreads: 1
           selectorThreads: 2
           acceptQueueSize: 1024
@@ -345,6 +347,7 @@ blockingTimeout          (none)              The timeout applied to blocking ope
 minBufferPoolSize        64 bytes            The minimum size of the buffer pool.
 bufferPoolIncrement      1KiB                The increment by which the buffer pool should be increased.
 maxBufferPoolSize        64KiB               The maximum size of the buffer pool.
+minRequestDataRate       0                   The minimum request data rate in bytes per second; or <= 0 for no limit
 acceptorThreads          (Jetty's default)   The number of worker threads dedicated to accepting connections.
                                              By default is *max(1, min(4, #CPUs/8))*.
 selectorThreads          (Jetty's default)   The number of worker threads dedicated to sending and receiving data.
@@ -604,33 +607,33 @@ Console
           discardingThreshold: 0
           timeZone: UTC
           target: stdout
-          logFormat: # TODO
+          logFormat: "%-5p [%d{ISO8601,UTC}] %c: %m%n%rEx"
           filterFactories:
             - type: URI
 
 
-====================== ===========  ===========
-Name                   Default      Description
-====================== ===========  ===========
-type                   REQUIRED     The appender type. Must be ``console``.
-threshold              ALL          The lowest level of events to print to the console.
-queueSize              256          The maximum capacity of the blocking queue.
-discardingThreshold    51           When the blocking queue has only the capacity mentioned in
-                                    discardingThreshold remaining, it will drop events of level TRACE,
-                                    DEBUG and INFO, keeping only events of level WARN and ERROR.
-                                    If no discarding threshold is specified, then a default of queueSize / 5 is used.
-                                    To keep all events, set discardingThreshold to 0.
-timeZone               UTC          The time zone to which event timestamps will be converted.
-                                    To use the system/default time zone, set it to ``system``.
-target                 stdout       The name of the standard stream to which events will be written.
-                                    Can be ``stdout`` or ``stderr``.
-logFormat              default      The Logback pattern with which events will be formatted. See
-                                    the Logback_ documentation for details.
-filterFactories        (none)       The list of filters to apply to the appender, in order, after
-                                    the thresold.
-neverBlock             false        Prevent the wrapping asynchronous appender from blocking when its underlying queue is full.
-                                    Set to true to disable blocking.
-====================== ===========  ===========
+====================== =======================================  ===========
+Name                   Default                                  Description
+====================== =======================================  ===========
+type                   REQUIRED                                 The appender type. Must be ``console``.
+threshold              ALL                                      The lowest level of events to print to the console.
+queueSize              256                                      The maximum capacity of the blocking queue.
+discardingThreshold    51                                       When the blocking queue has only the capacity mentioned in
+                                                                discardingThreshold remaining, it will drop events of level TRACE,
+                                                                DEBUG and INFO, keeping only events of level WARN and ERROR.
+                                                                If no discarding threshold is specified, then a default of queueSize / 5 is used.
+                                                                To keep all events, set discardingThreshold to 0.
+timeZone               UTC                                      The time zone to which event timestamps will be converted.
+                                                                To use the system/default time zone, set it to ``system``.
+target                 stdout                                   The name of the standard stream to which events will be written.
+                                                                Can be ``stdout`` or ``stderr``.
+logFormat              %-5p [%d{ISO8601,UTC}] %c: %m%n%rEx      The Logback pattern with which events will be formatted. See
+                                                                the Logback_ documentation for details.
+filterFactories        (none)                                   The list of filters to apply to the appender, in order, after
+                                                                the threshold.
+neverBlock             false                                    Prevent the wrapping asynchronous appender from blocking when its underlying queue is full.
+                                                                Set to true to disable blocking.
+====================== =======================================  ===========
 
 .. _Logback: http://logback.qos.ch/manual/layouts.html#conversionWord
 
@@ -654,47 +657,50 @@ File
           archivedLogFilenamePattern: /var/log/myapplication-%d.log
           archivedFileCount: 5
           timeZone: UTC
-          logFormat: # TODO
+          logFormat: "%-5p [%d{ISO8601,UTC}] %c: %m%n%rEx"
           bufferSize: 8KB
+          immediateFlush: true
           filterFactories:
             - type: URI
 
 
-============================ ===========  ==================================================================================================
-Name                         Default      Description
-============================ ===========  ==================================================================================================
-type                         REQUIRED     The appender type. Must be ``file``.
-currentLogFilename           REQUIRED     The filename where current events are logged.
-threshold                    ALL          The lowest level of events to write to the file.
-queueSize                    256          The maximum capacity of the blocking queue.
-discardingThreshold          51           When the blocking queue has only the capacity mentioned in discardingThreshold
-                                          remaining, it will drop events of level TRACE, DEBUG and INFO, keeping only events
-                                          of level WARN and ERROR. If no discarding threshold is specified, then a default
-                                          of queueSize / 5 is used. To keep all events, set discardingThreshold to 0.
-archive                      true         Whether or not to archive old events in separate files.
-archivedLogFilenamePattern   (none)       Required if ``archive`` is ``true``.
-                                          The filename pattern for archived files.
-                                          If ``maxFileSize`` is specified, rollover is size-based, and the pattern must contain ``%i`` for
-                                          an integer index of the archived file.
-                                          Otherwise rollover is date-based, and the pattern must contain ``%d``, which is replaced with the
-                                          date in ``yyyy-MM-dd`` form.
-                                          If the pattern ends with ``.gz`` or ``.zip``, files will be compressed as they are archived.
-archivedFileCount            5            The number of archived files to keep. Must be greater than or equal to ``0``. Zero is a
-                                          special value signifying to keep infinite logs (use with caution)
-maxFileSize                  (unlimited)  The maximum size of the currently active file before a rollover is triggered. The value can be
-                                          expressed in bytes, kilobytes, megabytes, gigabytes, and terabytes by appending B, K, MB, GB, or
-                                          TB to the numeric value.  Examples include 100MB, 1GB, 1TB.  Sizes can also be spelled out, such
-                                          as 100 megabytes, 1 gigabyte, 1 terabyte.
-timeZone                     UTC          The time zone to which event timestamps will be converted.
-logFormat                    default      The Logback pattern with which events will be formatted. See
-                                          the Logback_ documentation for details.
-filterFactories              (none)       The list of filters to apply to the appender, in order, after
-                                          the thresold.
-neverBlock                   false        Prevent the wrapping asynchronous appender from blocking when its underlying queue is full.
-                                          Set to true to disable blocking.
-bufferSize                   8KB          The buffer size of the underlying FileAppender (setting added in logback 1.1.10). Increasing this
-                                          from the default of 8KB to 256KB is reported to significantly reduce thread contention.
-============================ ===========  ==================================================================================================
+============================ =========================================  ==================================================================================================
+Name                         Default                                    Description
+============================ =========================================  ==================================================================================================
+type                         REQUIRED                                   The appender type. Must be ``file``.
+currentLogFilename           REQUIRED                                   The filename where current events are logged.
+threshold                    ALL                                        The lowest level of events to write to the file.
+queueSize                    256                                        The maximum capacity of the blocking queue.
+discardingThreshold          51                                         When the blocking queue has only the capacity mentioned in discardingThreshold
+                                                                        remaining, it will drop events of level TRACE, DEBUG and INFO, keeping only events
+                                                                        of level WARN and ERROR. If no discarding threshold is specified, then a default
+                                                                        of queueSize / 5 is used. To keep all events, set discardingThreshold to 0.
+archive                      true                                       Whether or not to archive old events in separate files.
+archivedLogFilenamePattern   (none)                                     Required if ``archive`` is ``true``.
+                                                                        The filename pattern for archived files.
+                                                                        If ``maxFileSize`` is specified, rollover is size-based, and the pattern must contain ``%i`` for
+                                                                        an integer index of the archived file.
+                                                                        Otherwise rollover is date-based, and the pattern must contain ``%d``, which is replaced with the
+                                                                        date in ``yyyy-MM-dd`` form.
+                                                                        If the pattern ends with ``.gz`` or ``.zip``, files will be compressed as they are archived.
+archivedFileCount            5                                          The number of archived files to keep. Must be greater than or equal to ``0``. Zero is a
+                                                                        special value signifying to keep infinite logs (use with caution)
+maxFileSize                  (unlimited)                                The maximum size of the currently active file before a rollover is triggered. The value can be
+                                                                        expressed in bytes, kilobytes, megabytes, gigabytes, and terabytes by appending B, K, MB, GB, or
+                                                                        TB to the numeric value.  Examples include 100MB, 1GB, 1TB.  Sizes can also be spelled out, such
+                                                                        as 100 megabytes, 1 gigabyte, 1 terabyte.
+timeZone                     UTC                                        The time zone to which event timestamps will be converted.
+logFormat                    %-5p [%d{ISO8601,UTC}] %c: %m%n%rEx        The Logback pattern with which events will be formatted. See
+                                                                        the Logback_ documentation for details.
+filterFactories              (none)                                     The list of filters to apply to the appender, in order, after
+                                                                        the threshold.
+neverBlock                   false                                      Prevent the wrapping asynchronous appender from blocking when its underlying queue is full.
+                                                                        Set to true to disable blocking.
+bufferSize                   8KB                                        The buffer size of the underlying FileAppender (setting added in logback 1.1.10). Increasing this
+                                                                        from the default of 8KB to 256KB is reported to significantly reduce thread contention.
+immediateFlush               true         If set to true, log events will be immediately flushed to disk. Immediate flushing is safer, but
+                                          it degrades logging throughput.
+============================ =========================================  ==================================================================================================
 
 
 .. _man-configuration-logging-syslog:
@@ -713,31 +719,31 @@ Syslog
           facility: local0
           threshold: ALL
           stackTracePrefix: \t
-          logFormat: # TODO
+          logFormat: "%-5p [%d{ISO8601,UTC}] %c: %m%n%rEx"
           filterFactories:
             - type: URI
 
 
-============================ ===========  ==================================================================================================
-Name                         Default      Description
-============================ ===========  ==================================================================================================
-host                         localhost    The hostname of the syslog server.
-port                         514          The port on which the syslog server is listening.
-facility                     local0       The syslog facility to use. Can be either ``auth``, ``authpriv``,
-                                          ``daemon``, ``cron``, ``ftp``, ``lpr``, ``kern``, ``mail``,
-                                          ``news``, ``syslog``, ``user``, ``uucp``, ``local0``,
-                                          ``local1``, ``local2``, ``local3``, ``local4``, ``local5``,
-                                          ``local6``, or ``local7``.
-threshold                    ALL          The lowest level of events to write to the file.
-logFormat                    default      The Logback pattern with which events will be formatted. See
-                                          the Logback_ documentation for details.
-stackTracePrefix             \t           The prefix to use when writing stack trace lines (these are sent
-                                          to the syslog server separately from the main message)
-filterFactories              (none)       The list of filters to apply to the appender, in order, after
-                                          the thresold.
-neverBlock                   false        Prevent the wrapping asynchronous appender from blocking when its underlying queue is full.
-                                          Set to true to disable blocking.
-============================ ===========  ==================================================================================================
+============================ =====================================  ==================================================================================================
+Name                         Default                                Description
+============================ =====================================  ==================================================================================================
+host                         localhost                              The hostname of the syslog server.
+port                         514                                    The port on which the syslog server is listening.
+facility                     local0                                 The syslog facility to use. Can be either ``auth``, ``authpriv``,
+                                                                    ``daemon``, ``cron``, ``ftp``, ``lpr``, ``kern``, ``mail``,
+                                                                    ``news``, ``syslog``, ``user``, ``uucp``, ``local0``,
+                                                                    ``local1``, ``local2``, ``local3``, ``local4``, ``local5``,
+                                                                    ``local6``, or ``local7``.
+threshold                    ALL                                    The lowest level of events to write to the file.
+logFormat                    %-5p [%d{ISO8601,UTC}] %c: %m%n%rEx    The Logback pattern with which events will be formatted. See
+                                                                    the Logback_ documentation for details.
+stackTracePrefix             \t                                     The prefix to use when writing stack trace lines (these are sent
+                                                                    to the syslog server separately from the main message)
+filterFactories              (none)                                 The list of filters to apply to the appender, in order, after
+                                                                    the threshold.
+neverBlock                   false                                  Prevent the wrapping asynchronous appender from blocking when its underlying queue is full.
+                                                                    Set to true to disable blocking.
+============================ =====================================  ==================================================================================================
 
 
 .. _man-configuration-logging-filter-factories:

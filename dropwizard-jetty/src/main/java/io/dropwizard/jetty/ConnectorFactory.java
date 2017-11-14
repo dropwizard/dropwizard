@@ -7,6 +7,8 @@ import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.util.thread.ThreadPool;
 
+import javax.annotation.Nullable;
+
 /**
  * A factory for creating Jetty {@link Connector}s.
  */
@@ -24,5 +26,5 @@ public interface ConnectorFactory extends Discoverable {
     Connector build(Server server,
                     MetricRegistry metrics,
                     String name,
-                    ThreadPool threadPool);
+                    @Nullable ThreadPool threadPool);
 }

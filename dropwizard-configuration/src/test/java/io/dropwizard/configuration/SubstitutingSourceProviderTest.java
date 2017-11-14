@@ -1,10 +1,11 @@
 package io.dropwizard.configuration;
 
 import com.google.common.io.ByteStreams;
-import org.apache.commons.lang3.text.StrLookup;
-import org.apache.commons.lang3.text.StrSubstitutor;
+import org.apache.commons.text.StrLookup;
+import org.apache.commons.text.StrSubstitutor;
 import org.junit.Test;
 
+import javax.annotation.Nullable;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -42,6 +43,7 @@ public class SubstitutingSourceProviderTest {
     public void shouldSubstituteOnlyExistingVariables() throws IOException {
         StrLookup<?> dummyLookup = new StrLookup<Object>() {
             @Override
+            @Nullable
             public String lookup(String key) {
                 return null;
             }
@@ -56,6 +58,7 @@ public class SubstitutingSourceProviderTest {
     public void shouldSubstituteWithDefaultValue() throws IOException {
         StrLookup<?> dummyLookup = new StrLookup<Object>() {
             @Override
+            @Nullable
             public String lookup(String key) {
                 return null;
             }
@@ -67,7 +70,7 @@ public class SubstitutingSourceProviderTest {
     }
 
     private static class DummySourceProvider implements ConfigurationSourceProvider {
-        public InputStream lastStream;
+        public InputStream lastStream = new ByteArrayInputStream(new byte[]{});
 
         @Override
         public InputStream open(String s) throws IOException {

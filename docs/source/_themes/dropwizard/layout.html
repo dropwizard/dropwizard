@@ -15,6 +15,7 @@
 <head>
     <meta charset="{{ encoding }}">
     <title>{{ title|striptags|e }}{{ titlesuffix }}</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
     <link rel="stylesheet" href="{{ pathto('_static/pygments.css', 1) }}" type="text/css"/>
     {%- for cssfile in css_files %}
     <link rel="stylesheet" href="{{ pathto(cssfile, 1) }}" type="text/css"/>
@@ -40,7 +41,7 @@
             text-shadow: 0px -1px 0px {{theme_gradient_end}};
             color: {{theme_gradient_text}};
         }
-        
+
         #top-bar {
             background-color: {{theme_gradient_bg}};
             background-image: -moz-linear-gradient(top, {{theme_gradient_start}}, {{theme_gradient_end}});

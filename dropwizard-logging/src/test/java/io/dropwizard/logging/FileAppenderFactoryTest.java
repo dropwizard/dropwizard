@@ -6,6 +6,7 @@ import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.FileAppender;
+import ch.qos.logback.core.OutputStreamAppender;
 import ch.qos.logback.core.rolling.FixedWindowRollingPolicy;
 import ch.qos.logback.core.rolling.RollingFileAppender;
 import ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy;
@@ -268,5 +269,24 @@ public class FileAppenderFactoryTest {
         bufferSizeField.setAccessible(true);
         FileSize bufferSizeFromAppender = (FileSize) bufferSizeField.get(fileAppender);
         assertThat(bufferSizeFromAppender.getSize()).isEqualTo(fileAppenderFactory.getBufferSize().toBytes());
+    }
+
+    @Test
+    public void isImmediateFlushed() throws Exception {
+        FileAppenderFactory<ILoggingEvent> fileAppenderFactory = new FileAppenderFactory<>();
+        fileAppenderFactory.setArchive(false);
+
+        Field isImmediateFlushField = OutputStreamAppender.class.getDeclaredField("immediateFlush");
+        isImmediateFlushField.setAccessible(true);
+
+        fileAppenderFactory.setImmediateFlush(false);
+        AsyncAppender asyncAppender = (AsyncAppender) fileAppenderFactory.build(new LoggerContext(), "test", new DropwizardLayoutFactory(), new NullLevelFilterFactory<>(), new AsyncLoggingEventAppenderFactory());
+        Appender<ILoggingEvent> fileAppender = asyncAppender.getAppender("file-appender");
+        assertThat((Boolean) isImmediateFlushField.get(fileAppender)).isEqualTo(fileAppenderFactory.isImmediateFlush());
+
+        fileAppenderFactory.setImmediateFlush(true);
+        asyncAppender = (AsyncAppender) fileAppenderFactory.build(new LoggerContext(), "test", new DropwizardLayoutFactory(), new NullLevelFilterFactory<>(), new AsyncLoggingEventAppenderFactory());
+        fileAppender = asyncAppender.getAppender("file-appender");
+        assertThat((Boolean) isImmediateFlushField.get(fileAppender)).isEqualTo(fileAppenderFactory.isImmediateFlush());
     }
 }

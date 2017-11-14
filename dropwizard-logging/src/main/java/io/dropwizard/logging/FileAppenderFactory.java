@@ -22,7 +22,11 @@ import io.dropwizard.logging.layout.LayoutFactory;
 import io.dropwizard.util.Size;
 import io.dropwizard.validation.MinSize;
 import io.dropwizard.validation.ValidationMethod;
+
+import javax.annotation.Nullable;
 import javax.validation.constraints.Min;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * An {@link AppenderFactory} implementation which provides an appender that writes events to a file, archiving older
@@ -107,6 +111,16 @@ import javax.validation.constraints.Min;
  *             the default of 8KB to 256KB is reported to significantly reduce thread contention.
  *         </td>
  *     </tr>
+ *      <tr>
+ *         <td>{@code immediateFlush}</td>
+ *         <td>{@code true}</td>
+ *         <td>
+ *             If set to true, log events will be immediately flushed to disk. Immediate flushing is safer, but
+ *             it degrades logging throughput.
+ *             See <a href="https://logback.qos.ch/manual/appenders.html#immediateFlush">the Logback documentation</a>
+ *             for details.
+ *         </td>
+ *     </tr>
  * </table>
  *
  * @see AbstractAppenderFactory
@@ -114,27 +128,33 @@ import javax.validation.constraints.Min;
 @JsonTypeName("file")
 public class FileAppenderFactory<E extends DeferredProcessingAware> extends AbstractAppenderFactory<E> {
 
+    @Nullable
     private String currentLogFilename;
 
     private boolean archive = true;
 
+    @Nullable
     private String archivedLogFilenamePattern;
 
     @Min(0)
     private int archivedFileCount = 5;
 
+    @Nullable
     private Size maxFileSize;
 
     @MinSize(1)
     private Size bufferSize = Size.bytes(FileAppender.DEFAULT_BUFFER_SIZE);
 
+    private boolean immediateFlush = true;
+
     @JsonProperty
+    @Nullable
     public String getCurrentLogFilename() {
         return currentLogFilename;
     }
 
     @JsonProperty
-    public void setCurrentLogFilename(String currentLogFilename) {
+    public void setCurrentLogFilename(@Nullable String currentLogFilename) {
         this.currentLogFilename = currentLogFilename;
     }
 
@@ -149,6 +169,7 @@ public class FileAppenderFactory<E extends DeferredProcessingAware> extends Abst
     }
 
     @JsonProperty
+    @Nullable
     public String getArchivedLogFilenamePattern() {
         return archivedLogFilenamePattern;
     }
@@ -169,6 +190,7 @@ public class FileAppenderFactory<E extends DeferredProcessingAware> extends Abst
     }
 
     @JsonProperty
+    @Nullable
     public Size getMaxFileSize() {
         return maxFileSize;
     }
@@ -186,6 +208,15 @@ public class FileAppenderFactory<E extends DeferredProcessingAware> extends Abst
     @JsonProperty
     public void setBufferSize(Size bufferSize) {
         this.bufferSize = bufferSize;
+    }
+
+    public boolean isImmediateFlush() {
+        return immediateFlush;
+    }
+
+    @JsonProperty
+    public void setImmediateFlush(boolean immediateFlush) {
+        this.immediateFlush = immediateFlush;
     }
 
     @JsonIgnore
@@ -227,6 +258,7 @@ public class FileAppenderFactory<E extends DeferredProcessingAware> extends Abst
         layoutEncoder.setLayout(buildLayout(context, layoutFactory));
         appender.setEncoder(layoutEncoder);
 
+        appender.setImmediateFlush(immediateFlush);
         appender.setPrudent(false);
         appender.addFilter(levelFilterFactory.build(threshold));
         getFilterFactories().forEach(f -> appender.addFilter(f.build()));
@@ -242,7 +274,7 @@ public class FileAppenderFactory<E extends DeferredProcessingAware> extends Abst
             appender.setFile(currentLogFilename);
             appender.setBufferSize(new FileSize(bufferSize.toBytes()));
 
-            if (maxFileSize != null && !archivedLogFilenamePattern.contains("%d")) {
+            if (maxFileSize != null && !requireNonNull(archivedLogFilenamePattern).contains("%d")) {
                 final FixedWindowRollingPolicy rollingPolicy = new FixedWindowRollingPolicy();
                 rollingPolicy.setContext(context);
                 rollingPolicy.setMaxIndex(getArchivedFileCount());

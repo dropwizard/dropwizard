@@ -8,6 +8,7 @@ import io.dropwizard.metrics.MetricsFactory;
 import io.dropwizard.server.DefaultServerFactory;
 import io.dropwizard.server.ServerFactory;
 
+import javax.annotation.Nullable;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
@@ -65,6 +66,7 @@ public class Configuration {
     private ServerFactory server = new DefaultServerFactory();
 
     @Valid
+    @Nullable
     private LoggingFactory logging;
 
     @Valid

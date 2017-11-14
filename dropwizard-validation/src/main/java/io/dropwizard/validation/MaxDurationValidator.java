@@ -12,9 +12,9 @@ import java.util.concurrent.TimeUnit;
  */
 public class MaxDurationValidator implements ConstraintValidator<MaxDuration, Duration> {
 
-    private long maxQty;
-    private TimeUnit maxUnit;
-    private boolean inclusive;
+    private long maxQty = 0;
+    private TimeUnit maxUnit = TimeUnit.MILLISECONDS;
+    private boolean inclusive = true;
 
     @Override
     public void initialize(MaxDuration constraintAnnotation) {

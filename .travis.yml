@@ -1,20 +1,31 @@
-sudo: true
+dist: trusty
+sudo: false
 language: java
-jdk:
-  - oraclejdk8
 before_install:
   - ulimit -c unlimited -S
+script:
+  - ./mvnw test -B
+  - ./mvnw site -pl docs -B
 after_success:
   - bash .travis_after_success.sh
 cache:
   directories:
     - $HOME/.m2
 
-# Use updated jdk version instead of buggy default
-addons:
-  apt:
-    packages:
-      - oracle-java8-installer
+matrix:
+  include:
+    - os: linux
+      jdk: oraclejdk8
+      addons:
+        apt:
+          packages:
+            - oracle-java8-installer
+    - os: linux
+      jdk: oraclejdk9
+      addons:
+        apt:
+          packages:
+            - oracle-java9-installer
 
 # encrypted CI_DEPLOY_USERNAME and CI_DEPLOY_PASSWORD
 # values for maven deploy. these have been encrypted

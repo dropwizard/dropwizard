@@ -1,5 +1,6 @@
 package io.dropwizard.util;
 
+import javax.annotation.Nullable;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.lang.reflect.TypeVariable;
@@ -59,6 +60,14 @@ public class Generics {
                             }
                         }
                     }
+                } else if (param instanceof ParameterizedType) {
+                    final Type rawType = ((ParameterizedType) param).getRawType();
+                    if (rawType instanceof Class<?>) {
+                        final Class<T> cls = determineClass(bound, rawType);
+                        if (cls != null) {
+                            return cls;
+                        }
+                    }
                 }
             }
         }
@@ -66,6 +75,7 @@ public class Generics {
     }
 
     @SuppressWarnings("unchecked")
+    @Nullable
     private static <T> Class<T> determineClass(Class<? super T> bound, Type candidate) {
         if (candidate instanceof Class<?>) {
             final Class<?> cls = (Class<?>) candidate;

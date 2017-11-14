@@ -90,7 +90,7 @@ The ``check`` command parses and validates the application's configuration.
 
 If you will check again the first code snippet in this document - you will see creating these two commands, is the first step in the bootstrapping process.
 
-Another important command is ``db`` - allowing executing various db actions, see :ref:`_man-migrations`
+Another important command is ``db`` - allowing executing various db actions, see :ref:`man-migrations`
 
 Similar to ``ConfiguredBundle``, some commands require access to configuration parameters and should extend the ``ConfiguredCommand`` class, using your application’s ``Configuration`` class as its type parameter. 
 
@@ -119,7 +119,7 @@ Initializing, and then running it - is the last step of the Bootstrapping proces
 Run would just handle commandline args (--help, --version) or runs the configured commands.
 E.g. - When running the ``server`` command:
 
-.. code-block:: 
+.. code-block:: bash
 
   java -jar target/hello-world-0.0.1-SNAPSHOT.jar server hello-world.yml
 

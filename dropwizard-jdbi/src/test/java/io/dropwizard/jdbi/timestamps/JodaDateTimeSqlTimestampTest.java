@@ -16,6 +16,7 @@ import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
 import org.skife.jdbi.v2.sqlobject.SqlUpdate;
 
+import javax.annotation.Nullable;
 import java.util.Random;
 import java.util.TimeZone;
 
@@ -29,11 +30,11 @@ public class JodaDateTimeSqlTimestampTest {
 
     private static final DateTimeFormatter ISO_FMT = ISODateTimeFormat.dateTimeNoMillis();
 
-    private static TemporaryFolder temporaryFolder;
-    private static DatabaseInTimeZone databaseInTimeZone;
-    private static DateTimeZone dbTimeZone;
-    private static DBIClient dbiClient;
+    private static DateTimeZone dbTimeZone = DateTimeZone.UTC;
+    private static DBIClient dbiClient = new DBIClient(TimeZone.getDefault());
+
     @ClassRule
+    @Nullable
     public static TestRule chain;
 
     static {
@@ -42,11 +43,10 @@ public class JodaDateTimeSqlTimestampTest {
             try {
                 final TimeZone timeZone = getRandomTimeZone();
                 dbTimeZone = DateTimeZone.forTimeZone(timeZone);
-                temporaryFolder = new TemporaryFolder();
-                databaseInTimeZone = new DatabaseInTimeZone(temporaryFolder, timeZone);
+                final TemporaryFolder temporaryFolder = new TemporaryFolder();
                 dbiClient = new DBIClient(timeZone);
                 chain = RuleChain.outerRule(temporaryFolder)
-                        .around(databaseInTimeZone)
+                        .around(new DatabaseInTimeZone(temporaryFolder, timeZone))
                         .around(dbiClient);
                 done = true;
             } catch (IllegalArgumentException e) {

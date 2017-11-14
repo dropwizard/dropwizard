@@ -1,6 +1,7 @@
 package io.dropwizard.jdbi.timestamps;
 
 import com.codahale.metrics.MetricRegistry;
+import com.google.common.collect.ImmutableList;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jdbi.DBIFactory;
@@ -10,9 +11,12 @@ import org.eclipse.jetty.util.component.LifeCycle;
 import org.junit.rules.ExternalResource;
 import org.skife.jdbi.v2.DBI;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Optional;
 import java.util.TimeZone;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * Configured JDBI client for the database
@@ -21,15 +25,16 @@ public class DBIClient extends ExternalResource {
 
     private final TimeZone dbTimeZone;
 
+    @Nullable
     private DBI dbi;
-    private List<LifeCycle> managedObjects;
+    private List<LifeCycle> managedObjects = ImmutableList.of();
 
     public DBIClient(TimeZone dbTimeZone) {
         this.dbTimeZone = dbTimeZone;
     }
 
     public DBI getDbi() {
-        return dbi;
+        return requireNonNull(dbi);
     }
 
     @Override

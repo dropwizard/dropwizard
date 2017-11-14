@@ -11,6 +11,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import javax.annotation.Nullable;
 import java.nio.charset.StandardCharsets;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -58,6 +59,7 @@ public class AssetServletTest {
 
     private static final ServletTester SERVLET_TESTER = new ServletTester();
     private final HttpTester.Request request = HttpTester.newRequest();
+    @Nullable
     private HttpTester.Response response;
 
     @BeforeClass

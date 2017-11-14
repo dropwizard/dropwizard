@@ -24,6 +24,7 @@ import org.hibernate.validator.constraints.NotEmpty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nullable;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
 import java.io.File;
@@ -224,42 +225,77 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
     private static final Logger LOGGER = LoggerFactory.getLogger(HttpsConnectorFactory.class);
     private static final AtomicBoolean LOGGED = new AtomicBoolean(false);
 
+    @Nullable
     private String keyStorePath;
 
+    @Nullable
     private String keyStorePassword;
 
     @NotEmpty
     private String keyStoreType = "JKS";
 
+    @Nullable
     private String keyStoreProvider;
 
+    @Nullable
     private String trustStorePath;
 
+    @Nullable
     private String trustStorePassword;
 
     @NotEmpty
     private String trustStoreType = "JKS";
 
+    @Nullable
     private String trustStoreProvider;
 
+    @Nullable
     private String keyManagerPassword;
 
+    @Nullable
     private Boolean needClientAuth;
+
+    @Nullable
     private Boolean wantClientAuth;
+
+    @Nullable
     private String certAlias;
+
+    @Nullable
     private File crlPath;
+
+    @Nullable
     private Boolean enableCRLDP;
+
+    @Nullable
     private Boolean enableOCSP;
+
+    @Nullable
     private Integer maxCertPathLength;
+
+    @Nullable
     private URI ocspResponderUrl;
+
+    @Nullable
     private String jceProvider;
     private boolean validateCerts = false;
     private boolean validatePeers = false;
+
+    @Nullable
     private List<String> supportedProtocols;
+
+    @Nullable
     private List<String> excludedProtocols;
+
+    @Nullable
     private List<String> supportedCipherSuites;
+
+    @Nullable
     private List<String> excludedCipherSuites;
+
     private boolean allowRenegotiation = true;
+
+    @Nullable
     private String endpointIdentificationAlgorithm;
 
     @JsonProperty
@@ -273,6 +309,7 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
     }
 
     @JsonProperty
+    @Nullable
     public String getEndpointIdentificationAlgorithm() {
         return endpointIdentificationAlgorithm;
     }
@@ -283,6 +320,7 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
     }
 
     @JsonProperty
+    @Nullable
     public String getKeyStorePath() {
         return keyStorePath;
     }
@@ -293,6 +331,7 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
     }
 
     @JsonProperty
+    @Nullable
     public String getKeyStorePassword() {
         return keyStorePassword;
     }
@@ -313,6 +352,7 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
     }
 
     @JsonProperty
+    @Nullable
     public String getKeyStoreProvider() {
         return keyStoreProvider;
     }
@@ -333,6 +373,7 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
     }
 
     @JsonProperty
+    @Nullable
     public String getTrustStoreProvider() {
         return trustStoreProvider;
     }
@@ -343,6 +384,7 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
     }
 
     @JsonProperty
+    @Nullable
     public String getKeyManagerPassword() {
         return keyManagerPassword;
     }
@@ -353,6 +395,7 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
     }
 
     @JsonProperty
+    @Nullable
     public String getTrustStorePath() {
         return trustStorePath;
     }
@@ -363,16 +406,18 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
     }
 
     @JsonProperty
+    @Nullable
     public String getTrustStorePassword() {
         return trustStorePassword;
     }
 
     @JsonProperty
-    public void setTrustStorePassword(String trustStorePassword) {
+    public void setTrustStorePassword(@Nullable String trustStorePassword) {
         this.trustStorePassword = trustStorePassword;
     }
 
     @JsonProperty
+    @Nullable
     public Boolean getNeedClientAuth() {
         return needClientAuth;
     }
@@ -383,6 +428,7 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
     }
 
     @JsonProperty
+    @Nullable
     public Boolean getWantClientAuth() {
         return wantClientAuth;
     }
@@ -393,6 +439,7 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
     }
 
     @JsonProperty
+    @Nullable
     public String getCertAlias() {
         return certAlias;
     }
@@ -403,6 +450,7 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
     }
 
     @JsonProperty
+    @Nullable
     public File getCrlPath() {
         return crlPath;
     }
@@ -413,6 +461,7 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
     }
 
     @JsonProperty
+    @Nullable
     public Boolean getEnableCRLDP() {
         return enableCRLDP;
     }
@@ -423,6 +472,7 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
     }
 
     @JsonProperty
+    @Nullable
     public Boolean getEnableOCSP() {
         return enableOCSP;
     }
@@ -433,6 +483,7 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
     }
 
     @JsonProperty
+    @Nullable
     public Integer getMaxCertPathLength() {
         return maxCertPathLength;
     }
@@ -443,6 +494,7 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
     }
 
     @JsonProperty
+    @Nullable
     public URI getOcspResponderUrl() {
         return ocspResponderUrl;
     }
@@ -453,6 +505,7 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
     }
 
     @JsonProperty
+    @Nullable
     public String getJceProvider() {
         return jceProvider;
     }
@@ -473,6 +526,7 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
     }
 
     @JsonProperty
+    @Nullable
     public List<String> getSupportedProtocols() {
         return supportedProtocols;
     }
@@ -483,6 +537,7 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
     }
 
     @JsonProperty
+    @Nullable
     public List<String> getExcludedProtocols() {
         return excludedProtocols;
     }
@@ -493,11 +548,13 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
     }
 
     @JsonProperty
+    @Nullable
     public List<String> getSupportedCipherSuites() {
         return supportedCipherSuites;
     }
 
     @JsonProperty
+    @Nullable
     public List<String> getExcludedCipherSuites() {
         return excludedCipherSuites;
     }
@@ -534,7 +591,7 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
     }
 
     @Override
-    public Connector build(Server server, MetricRegistry metrics, String name, ThreadPool threadPool) {
+    public Connector build(Server server, MetricRegistry metrics, String name, @Nullable ThreadPool threadPool) {
         final HttpConfiguration httpConfig = buildHttpConfiguration();
 
         final HttpConnectionFactory httpConnectionFactory = buildHttpConnectionFactory(httpConfig);

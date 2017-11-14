@@ -2,6 +2,7 @@ package io.dropwizard.jersey.jsr310;
 
 import io.dropwizard.jersey.params.AbstractParam;
 
+import javax.annotation.Nullable;
 import java.time.ZoneId;
 
 /**
@@ -11,12 +12,12 @@ import java.time.ZoneId;
  * @see ZoneId
  */
 public class ZoneIdParam extends AbstractParam<ZoneId> {
-    public ZoneIdParam(final String input) {
+    public ZoneIdParam(@Nullable final String input) {
         super(input);
     }
 
     @Override
-    protected ZoneId parse(final String input) throws Exception {
+    protected ZoneId parse(@Nullable final String input) throws Exception {
         return ZoneId.of(input);
     }
 }

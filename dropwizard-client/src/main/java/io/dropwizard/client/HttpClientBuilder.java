@@ -13,7 +13,6 @@ import io.dropwizard.client.ssl.TlsConfiguration;
 import io.dropwizard.lifecycle.Managed;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.util.Duration;
-import javax.net.ssl.HostnameVerifier;
 import org.apache.http.ConnectionReuseStrategy;
 import org.apache.http.Header;
 import org.apache.http.HttpHost;
@@ -26,6 +25,7 @@ import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.HttpRequestRetryHandler;
 import org.apache.http.client.RedirectStrategy;
+import org.apache.http.client.ServiceUnavailableRetryStrategy;
 import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.config.Registry;
@@ -46,6 +46,8 @@ import org.apache.http.impl.conn.SystemDefaultDnsResolver;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpProcessor;
 
+import javax.annotation.Nullable;
+import javax.net.ssl.HostnameVerifier;
 import java.util.List;
 
 /**
@@ -63,21 +65,44 @@ public class HttpClientBuilder {
     private static final HttpRequestRetryHandler NO_RETRIES = (exception, executionCount, context) -> false;
 
     private final MetricRegistry metricRegistry;
+
+    @Nullable
     private String environmentName;
+
+    @Nullable
     private Environment environment;
     private HttpClientConfiguration configuration = new HttpClientConfiguration();
     private DnsResolver resolver = new SystemDefaultDnsResolver();
+
+    @Nullable
     private HostnameVerifier verifier;
+
+    @Nullable
     private HttpRequestRetryHandler httpRequestRetryHandler;
+
+    @Nullable
     private Registry<ConnectionSocketFactory> registry;
 
-    private CredentialsProvider credentialsProvider = null;
+    @Nullable
+    private CredentialsProvider credentialsProvider;
+
     private HttpClientMetricNameStrategy metricNameStrategy = HttpClientMetricNameStrategies.METHOD_ONLY;
-    private HttpRoutePlanner routePlanner = null;
+
+    @Nullable
+    private HttpRoutePlanner routePlanner;
+
+    @Nullable
     private RedirectStrategy redirectStrategy;
     private boolean disableContentCompression;
+
+    @Nullable
     private List<? extends Header> defaultHeaders;
+
+    @Nullable
     private HttpProcessor httpProcessor;
+
+    @Nullable
+    private ServiceUnavailableRetryStrategy serviceUnavailableRetryStrategy;
 
     public HttpClientBuilder(MetricRegistry metricRegistry) {
         this.metricRegistry = metricRegistry;
@@ -218,6 +243,17 @@ public class HttpClientBuilder {
      */
     public HttpClientBuilder using(HttpProcessor httpProcessor) {
         this.httpProcessor = httpProcessor;
+        return this;
+    }
+
+    /**
+     * Use the given {@link ServiceUnavailableRetryStrategy} instance
+     *
+     * @param serviceUnavailableRetryStrategy a {@link ServiceUnavailableRetryStrategy} instance
+     * @return {@code} this
+     */
+    public HttpClientBuilder using(ServiceUnavailableRetryStrategy serviceUnavailableRetryStrategy) {
+        this.serviceUnavailableRetryStrategy = serviceUnavailableRetryStrategy;
         return this;
     }
 
@@ -387,6 +423,10 @@ public class HttpClientBuilder {
 
         if (httpProcessor != null) {
             builder.setHttpProcessor(httpProcessor);
+        }
+
+        if (serviceUnavailableRetryStrategy != null) {
+            builder.setServiceUnavailableRetryStrategy(serviceUnavailableRetryStrategy);
         }
 
         return new ConfiguredCloseableHttpClient(builder.build(), requestConfig);

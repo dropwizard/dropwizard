@@ -4,7 +4,7 @@ import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
 public class OneOfValidator implements ConstraintValidator<OneOf, Object> {
-    private String[] values;
+    private String[] values = new String[]{};
     private boolean caseInsensitive;
     private boolean ignoreWhitespace;
 

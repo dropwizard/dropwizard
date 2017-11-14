@@ -1,7 +1,7 @@
 package io.dropwizard.configuration;
 
 import com.google.common.io.ByteStreams;
-import org.apache.commons.lang3.text.StrSubstitutor;
+import org.apache.commons.text.StrSubstitutor;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -22,7 +22,7 @@ public class SubstitutingSourceProvider implements ConfigurationSourceProvider {
      * Create a new instance.
      *
      * @param delegate    The underlying {@link io.dropwizard.configuration.ConfigurationSourceProvider}.
-     * @param substitutor The custom {@link org.apache.commons.lang3.text.StrSubstitutor} implementation.
+     * @param substitutor The custom {@link org.apache.commons.text.StrSubstitutor} implementation.
      */
     public SubstitutingSourceProvider(ConfigurationSourceProvider delegate, StrSubstitutor substitutor) {
         this.delegate = requireNonNull(delegate);

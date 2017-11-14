@@ -5,8 +5,8 @@ import com.google.common.base.MoreObjects;
 import java.util.Objects;
 
 public class Person {
-    private String name;
-    private String email;
+    private String name = "";
+    private String email = "";
 
     public Person() { /* Jackson deserialization */ }
 

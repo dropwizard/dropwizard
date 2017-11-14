@@ -1,6 +1,6 @@
 package io.dropwizard.configuration;
 
-import org.apache.commons.lang3.text.StrSubstitutor;
+import org.apache.commons.text.StrSubstitutor;
 
 /**
  * A custom {@link StrSubstitutor} using environment variables as lookup source.
@@ -19,7 +19,7 @@ public class EnvironmentVariableSubstitutor extends StrSubstitutor {
      *                                {@link UndefinedEnvironmentVariableException}, {@code false} otherwise.
      * @param substitutionInVariables a flag whether substitution is done in variable names.
      * @see io.dropwizard.configuration.EnvironmentVariableLookup#EnvironmentVariableLookup(boolean)
-     * @see org.apache.commons.lang3.text.StrSubstitutor#setEnableSubstitutionInVariables(boolean)
+     * @see org.apache.commons.text.StrSubstitutor#setEnableSubstitutionInVariables(boolean)
      */
     public EnvironmentVariableSubstitutor(boolean strict, boolean substitutionInVariables) {
         super(new EnvironmentVariableLookup(strict));

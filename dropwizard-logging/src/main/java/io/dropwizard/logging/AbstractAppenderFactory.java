@@ -15,6 +15,7 @@ import io.dropwizard.logging.async.AsyncAppenderFactory;
 import io.dropwizard.logging.filter.FilterFactory;
 import io.dropwizard.logging.layout.LayoutFactory;
 
+import javax.annotation.Nullable;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -88,6 +89,7 @@ public abstract class AbstractAppenderFactory<E extends DeferredProcessingAware>
     @NotNull
     protected Level threshold = Level.ALL;
 
+    @Nullable
     protected String logFormat;
 
     @NotNull
@@ -136,6 +138,7 @@ public abstract class AbstractAppenderFactory<E extends DeferredProcessingAware>
     }
 
     @JsonProperty
+    @Nullable
     public String getLogFormat() {
         return logFormat;
     }

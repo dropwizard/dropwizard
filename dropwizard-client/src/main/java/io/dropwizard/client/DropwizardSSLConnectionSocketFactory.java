@@ -9,6 +9,7 @@ import org.apache.http.ssl.PrivateKeyStrategy;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.ssl.TrustStrategy;
 
+import javax.annotation.Nullable;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
 import java.io.File;
@@ -17,16 +18,20 @@ import java.io.InputStream;
 import java.security.KeyStore;
 import java.util.List;
 
+import static java.util.Objects.requireNonNull;
+
 public class DropwizardSSLConnectionSocketFactory {
 
     private final TlsConfiguration configuration;
+
+    @Nullable
     private final HostnameVerifier verifier;
 
     public DropwizardSSLConnectionSocketFactory(TlsConfiguration configuration) {
         this(configuration, null);
     }
 
-    public DropwizardSSLConnectionSocketFactory(TlsConfiguration configuration, HostnameVerifier verifier) {
+    public DropwizardSSLConnectionSocketFactory(TlsConfiguration configuration, @Nullable HostnameVerifier verifier) {
         this.configuration = configuration;
         this.verifier = verifier;
     }
@@ -36,6 +41,7 @@ public class DropwizardSSLConnectionSocketFactory {
                 chooseHostnameVerifier());
     }
 
+    @Nullable
     private String[] getSupportedCiphers() {
         final List<String> supportedCiphers = configuration.getSupportedCiphers();
         if (supportedCiphers == null) {
@@ -44,6 +50,7 @@ public class DropwizardSSLConnectionSocketFactory {
         return supportedCiphers.toArray(new String[supportedCiphers.size()]);
     }
 
+    @Nullable
     private String[] getSupportedProtocols() {
         final List<String> supportedProtocols = configuration.getSupportedProtocols();
         if (supportedProtocols == null) {
@@ -74,6 +81,7 @@ public class DropwizardSSLConnectionSocketFactory {
         return sslContext;
     }
 
+    @Nullable
     private PrivateKeyStrategy choosePrivateKeyStrategy() {
         PrivateKeyStrategy privateKeyStrategy = null;
         if (configuration.getCertAlias() != null) {
@@ -89,9 +97,10 @@ public class DropwizardSSLConnectionSocketFactory {
     private void loadKeyMaterial(SSLContextBuilder sslContextBuilder) throws Exception {
         if (configuration.getKeyStorePath() != null) {
             final KeyStore keystore = loadKeyStore(configuration.getKeyStoreType(), configuration.getKeyStorePath(),
-                    configuration.getKeyStorePassword());
-            
-            sslContextBuilder.loadKeyMaterial(keystore, configuration.getKeyStorePassword().toCharArray(), choosePrivateKeyStrategy());
+                requireNonNull(configuration.getKeyStorePassword()));
+
+            sslContextBuilder.loadKeyMaterial(keystore,
+                requireNonNull(configuration.getKeyStorePassword()).toCharArray(), choosePrivateKeyStrategy());
         }
     }
 
@@ -99,7 +108,7 @@ public class DropwizardSSLConnectionSocketFactory {
         KeyStore trustStore = null;
         if (configuration.getTrustStorePath() != null) {
             trustStore = loadKeyStore(configuration.getTrustStoreType(), configuration.getTrustStorePath(),
-                    configuration.getTrustStorePassword());
+                    requireNonNull(configuration.getTrustStorePassword()));
         }
         TrustStrategy trustStrategy = null;
         if (configuration.isTrustSelfSignedCertificates()) {

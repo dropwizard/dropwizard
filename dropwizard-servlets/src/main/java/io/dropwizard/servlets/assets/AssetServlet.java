@@ -9,6 +9,7 @@ import com.google.common.io.Resources;
 import com.google.common.net.HttpHeaders;
 import com.google.common.net.MediaType;
 
+import javax.annotation.Nullable;
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
@@ -54,7 +55,11 @@ public class AssetServlet extends HttpServlet {
 
     private final String resourcePath;
     private final String uriPath;
+
+    @Nullable
     private final String indexFile;
+
+    @Nullable
     private final Charset defaultCharset;
 
     /**
@@ -75,8 +80,8 @@ public class AssetServlet extends HttpServlet {
      */
     public AssetServlet(String resourcePath,
                         String uriPath,
-                        String indexFile,
-                        Charset defaultCharset) {
+                        @Nullable String indexFile,
+                        @Nullable Charset defaultCharset) {
         final String trimmedPath = SLASHES.trimFrom(resourcePath);
         this.resourcePath = trimmedPath.isEmpty() ? trimmedPath : trimmedPath + '/';
         final String trimmedUri = SLASHES.trimTrailingFrom(uriPath);
@@ -93,6 +98,7 @@ public class AssetServlet extends HttpServlet {
         return uriPath;
     }
 
+    @Nullable
     public String getIndexFile() {
         return indexFile;
     }
@@ -194,6 +200,7 @@ public class AssetServlet extends HttpServlet {
         }
     }
 
+    @Nullable
     private CachedAsset loadAsset(String key) throws URISyntaxException, IOException {
         checkArgument(key.startsWith(uriPath));
         final String requestedResourcePath = SLASHES.trimFrom(key.substring(uriPath.length()));

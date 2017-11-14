@@ -4,16 +4,15 @@ import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
 import org.glassfish.jersey.message.internal.HeaderValueException;
 import org.glassfish.jersey.server.ContainerRequest;
-import org.junit.Rule;
 import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnit;
-import org.mockito.junit.MockitoRule;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.HttpHeaders;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.MultivaluedHashMap;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Locale;
@@ -31,20 +30,13 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 public class ViewMessageBodyWriterTest {
-    @Rule
-    public final MockitoRule mockitoRule = MockitoJUnit.rule();
-    @Mock
-    public ContainerRequest headers;
-    @Mock
-    public MetricRegistry metricRegistry;
-    @Mock
-    public View view;
-    @Mock
-    public OutputStream stream;
-    @Mock
-    public Timer timer;
-    @Mock
-    public Timer.Context timerContext;
+
+    public ContainerRequest headers = mock(ContainerRequest.class);
+    public MetricRegistry metricRegistry = mock(MetricRegistry.class);
+    public View view = mock(View.class);
+    public OutputStream stream = mock(OutputStream.class);
+    public Timer timer = mock(Timer.class);
+    public Timer.Context timerContext = mock(Timer.Context.class);
 
     @Test
     public void writeToShouldUseValidRenderer() throws IOException {
@@ -60,8 +52,10 @@ public class ViewMessageBodyWriterTest {
 
         final ViewMessageBodyWriter writer = spy(new ViewMessageBodyWriter(metricRegistry, Arrays.asList(nonRenderable, renderable)));
         doReturn(locale).when(writer).detectLocale(any());
+        writer.setHeaders(mock(HttpHeaders.class));
 
-        writer.writeTo(view, null, null, null, null, null, stream);
+        writer.writeTo(view, Class.class, Class.class, new Annotation[]{}, new MediaType(),
+            new MultivaluedHashMap<>(), stream);
 
         verify(nonRenderable).isRenderable(view);
         verifyNoMoreInteractions(nonRenderable);
@@ -78,7 +72,8 @@ public class ViewMessageBodyWriterTest {
         when(timer.time()).thenReturn(timerContext);
 
         assertThatExceptionOfType(WebApplicationException.class).isThrownBy(() -> {
-            writer.writeTo(view, null, null, null, null, null, stream);
+            writer.writeTo(view, Class.class, Class.class, new Annotation[]{}, new MediaType(),
+                new MultivaluedHashMap<>(), stream);
         }).withCauseExactlyInstanceOf(ViewRenderException.class);
 
         verify(timerContext).stop();
@@ -98,9 +93,11 @@ public class ViewMessageBodyWriterTest {
 
         final ViewMessageBodyWriter writer = spy(new ViewMessageBodyWriter(metricRegistry, Collections.singletonList(renderer)));
         doReturn(locale).when(writer).detectLocale(any());
+        writer.setHeaders(mock(HttpHeaders.class));
 
         assertThatExceptionOfType(WebApplicationException.class).isThrownBy(() -> {
-            writer.writeTo(view, null, null, null, null, null, stream);
+            writer.writeTo(view, Class.class, Class.class, new Annotation[]{}, new MediaType(),
+                new MultivaluedHashMap<>(), stream);
         }).withCause(exception);
 
         verify(timerContext).stop();

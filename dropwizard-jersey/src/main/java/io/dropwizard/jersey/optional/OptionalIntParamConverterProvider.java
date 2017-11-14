@@ -1,5 +1,6 @@
 package io.dropwizard.jersey.optional;
 
+import javax.annotation.Nullable;
 import javax.inject.Singleton;
 import javax.ws.rs.ext.ParamConverter;
 import javax.ws.rs.ext.ParamConverterProvider;
@@ -18,6 +19,7 @@ public class OptionalIntParamConverterProvider implements ParamConverterProvider
      */
     @Override
     @SuppressWarnings("unchecked")
+    @Nullable
     public <T> ParamConverter<T> getConverter(final Class<T> rawType, final Type genericType,
                                               final Annotation[] annotations) {
         return OptionalInt.class.equals(rawType) ? (ParamConverter<T>) paramConverter : null;

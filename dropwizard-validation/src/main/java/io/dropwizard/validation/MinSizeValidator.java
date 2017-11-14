@@ -12,8 +12,8 @@ import javax.validation.ConstraintValidatorContext;
  */
 public class MinSizeValidator implements ConstraintValidator<MinSize, Size> {
 
-    private long minQty;
-    private SizeUnit minUnit;
+    private long minQty = 0;
+    private SizeUnit minUnit = SizeUnit.BYTES;
 
     @Override
     public void initialize(MinSize constraintAnnotation) {

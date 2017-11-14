@@ -1,9 +1,11 @@
 package io.dropwizard.servlets.tasks;
 
 import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.annotation.ExceptionMetered;
+import com.codahale.metrics.annotation.Metered;
+import com.codahale.metrics.annotation.Timed;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMultimap;
-import java.io.StringWriter;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,9 +18,11 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 
+import static com.codahale.metrics.MetricRegistry.name;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doThrow;
@@ -30,17 +34,15 @@ public class TaskServletTest {
     private final Task gc = mock(Task.class);
     private final PostBodyTask printJSON = mock(PostBodyTask.class);
 
-    {
-        when(gc.getName()).thenReturn("gc");
-        when(printJSON.getName()).thenReturn("print-json");
-    }
-
-    private final TaskServlet servlet = new TaskServlet(new MetricRegistry());
+    private final MetricRegistry metricRegistry = new MetricRegistry();
+    private final TaskServlet servlet = new TaskServlet(metricRegistry);
     private final HttpServletRequest request = mock(HttpServletRequest.class);
     private final HttpServletResponse response = mock(HttpServletResponse.class);
 
     @Before
     public void setUp() throws Exception {
+        when(gc.getName()).thenReturn("gc");
+        when(printJSON.getName()).thenReturn("print-json");
         servlet.add(gc);
         servlet.add(printJSON);
     }
@@ -179,6 +181,66 @@ public class TaskServletTest {
         verify(response).sendError(405);
     }
 
+    @Test
+    public void testRunsTimedTask() throws Exception {
+        final Task timedTask = new Task("timed-task") {
+            @Override
+            @Timed(name = "vacuum-cleaning")
+            public void execute(ImmutableMultimap<String, String> parameters, PrintWriter output) throws Exception {
+                output.println("Vacuum cleaning");
+            }
+        };
+        servlet.add(timedTask);
+
+        when(request.getMethod()).thenReturn("POST");
+        when(request.getPathInfo()).thenReturn("/timed-task");
+        when(response.getWriter()).thenReturn(mock(PrintWriter.class));
+
+        servlet.service(request, response);
+
+        assertThat(metricRegistry.getTimers()).containsKey(name(timedTask.getClass(), "vacuum-cleaning"));
+    }
+
+    @Test
+    public void testRunsMeteredTask() throws Exception {
+        final Task meteredTask = new Task("metered-task") {
+            @Override
+            @Metered(name = "vacuum-cleaning")
+            public void execute(ImmutableMultimap<String, String> parameters, PrintWriter output) throws Exception {
+                output.println("Vacuum cleaning");
+            }
+        };
+        servlet.add(meteredTask);
+
+        when(request.getMethod()).thenReturn("POST");
+        when(request.getPathInfo()).thenReturn("/metered-task");
+        when(response.getWriter()).thenReturn(mock(PrintWriter.class));
+
+        servlet.service(request, response);
+
+        assertThat(metricRegistry.getMeters()).containsKey(name(meteredTask.getClass(), "vacuum-cleaning"));
+    }
+
+    @Test
+    public void testRunsExceptionMeteredTask() throws Exception {
+        final Task exceptionMeteredTask = new Task("exception-metered-task") {
+            @Override
+            @ExceptionMetered(name = "vacuum-cleaning-exceptions")
+            public void execute(ImmutableMultimap<String, String> parameters, PrintWriter output) throws Exception {
+                throw new RuntimeException("The engine has died");
+            }
+        };
+        servlet.add(exceptionMeteredTask);
+
+        when(request.getMethod()).thenReturn("POST");
+        when(request.getPathInfo()).thenReturn("/exception-metered-task");
+        when(response.getWriter()).thenReturn(mock(PrintWriter.class));
+
+        servlet.service(request, response);
+
+        assertThat(metricRegistry.getMeters()).containsKey(name(exceptionMeteredTask.getClass(),
+            "vacuum-cleaning-exceptions"));
+    }
 
     private static class TestServletInputStream extends ServletInputStream {
         private InputStream delegate;

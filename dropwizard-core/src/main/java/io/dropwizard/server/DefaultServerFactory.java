@@ -1,6 +1,7 @@
 package io.dropwizard.server;
 
 import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.jetty9.InstrumentedQueuedThreadPool;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.google.common.base.MoreObjects;
@@ -212,7 +213,7 @@ public class DefaultServerFactory extends AbstractServerFactory {
     private List<Connector> buildAdminConnectors(MetricRegistry metricRegistry, Server server) {
         // threadpool is shared between all the connectors, so it should be managed by the server instead of the
         // individual connectors
-        final QueuedThreadPool threadPool = new QueuedThreadPool(adminMaxThreads, adminMinThreads);
+        final QueuedThreadPool threadPool = new InstrumentedQueuedThreadPool(metricRegistry, adminMaxThreads, adminMinThreads);
         threadPool.setName("dw-admin");
         server.addBean(threadPool);
 

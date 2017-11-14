@@ -2,6 +2,7 @@ package io.dropwizard.validation.valuehandling;
 
 import org.hibernate.validator.spi.valuehandling.ValidatedValueUnwrapper;
 
+import javax.annotation.Nullable;
 import java.lang.reflect.Type;
 import java.util.OptionalLong;
 
@@ -12,6 +13,7 @@ import java.util.OptionalLong;
  */
 public class OptionalLongValidatedValueUnwrapper extends ValidatedValueUnwrapper<OptionalLong> {
     @Override
+    @Nullable
     public Object handleValidatedValue(final OptionalLong optional) {
         return optional.isPresent() ? optional.getAsLong() : null;
     }

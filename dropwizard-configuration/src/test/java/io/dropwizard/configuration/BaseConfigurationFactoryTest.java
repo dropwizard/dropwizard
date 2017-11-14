@@ -17,6 +17,7 @@ import javax.validation.Validator;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.io.File;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -56,12 +57,12 @@ public abstract class BaseConfigurationFactoryTest {
 
         @NotNull
         @Pattern(regexp = "[\\w]+[\\s]+[\\w]+([\\s][\\w]+)?")
-        private String name;
+        private String name = "";
 
         @JsonProperty
         private int age = 1;
 
-        List<String> type;
+        List<String> type = ImmutableList.of();
 
         @JsonProperty
         private Map<String, String> properties = new LinkedHashMap<>();
@@ -136,14 +137,24 @@ public abstract class BaseConfigurationFactoryTest {
     }
 
     protected final Validator validator = BaseValidator.newValidator();
-    protected ConfigurationFactory<Example> factory;
-    protected File malformedFile;
-    protected File emptyFile;
-    protected File invalidFile;
-    protected File validFile;
-    protected File typoFile;
-    protected File wrongTypeFile;
-    protected File malformedAdvancedFile;
+    protected ConfigurationFactory<Example> factory = new ConfigurationFactory<Example>() {
+        @Override
+        public Example build(ConfigurationSourceProvider provider, String path) throws IOException, ConfigurationException {
+            return new Example();
+        }
+
+        @Override
+        public Example build() throws IOException, ConfigurationException {
+            return new Example();
+        }
+    };
+    protected File malformedFile = new File("/");
+    protected File emptyFile = new File("/");
+    protected File invalidFile = new File("/");
+    protected File validFile = new File("/");
+    protected File typoFile = new File("/");
+    protected File wrongTypeFile = new File("/");
+    protected File malformedAdvancedFile = new File("/");
 
     protected static File resourceFileName(String resourceName) throws URISyntaxException {
         return new File(Resources.getResource(resourceName).toURI());

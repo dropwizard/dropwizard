@@ -3,6 +3,7 @@ package io.dropwizard.views.mustache;
 import com.github.mustachejava.MustacheResolver;
 import io.dropwizard.views.View;
 
+import javax.annotation.Nullable;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -21,6 +22,7 @@ class PerClassMustacheResolver implements MustacheResolver {
     }
 
     @Override
+    @Nullable
     public Reader getReader(String resourceName) {
         final InputStream is = klass.getResourceAsStream(resourceName);
         if (is == null) {

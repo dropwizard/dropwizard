@@ -11,6 +11,7 @@ import org.glassfish.jersey.server.internal.inject.ParamInjectionResolver;
 import org.glassfish.jersey.server.model.Parameter;
 import org.glassfish.jersey.server.spi.internal.ValueFactoryProvider;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.servlet.http.HttpSession;
@@ -25,6 +26,7 @@ public class SessionFactoryProvider extends AbstractValueFactoryProvider {
     }
 
     @Override
+    @Nullable
     protected Factory<?> createValueFactory(final Parameter parameter) {
         final Class<?> classType = parameter.getRawType();
 

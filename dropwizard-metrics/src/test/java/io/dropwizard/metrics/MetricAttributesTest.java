@@ -40,13 +40,13 @@ public class MetricAttributesTest {
     };
 
     @Parameter
-    public EnumSet<MetricAttribute> includes;
+    public EnumSet<MetricAttribute> includes = EnumSet.noneOf(MetricAttribute.class);
 
     @Parameter(1)
-    public EnumSet<MetricAttribute> excludes;
+    public EnumSet<MetricAttribute> excludes = EnumSet.noneOf(MetricAttribute.class);
 
     @Parameter(2)
-    public EnumSet<MetricAttribute> expectedResult;
+    public EnumSet<MetricAttribute> expectedResult = EnumSet.noneOf(MetricAttribute.class);
 
     @Test
     public void testGetDisabledAttributes() {
