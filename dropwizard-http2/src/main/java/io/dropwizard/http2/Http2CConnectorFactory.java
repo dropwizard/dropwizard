@@ -31,7 +31,7 @@ import javax.validation.constraints.Min;
  *     </tr>
  *     <tr>
  *         <td>{@code maxConcurrentStreams}</td>
- *         <td><1024</td>
+ *         <td>1024</td>
  *         <td>
  *             The maximum number of concurrently open streams allowed on a single HTTP/2 connection.
  *             Larger values increase parallelism, but cost a memory commitment.
