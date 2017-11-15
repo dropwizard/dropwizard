@@ -373,22 +373,22 @@ public class DataSourceFactory implements PooledDataSourceFactory {
 
     private boolean logValidationErrors = false;
 
-    @MinDuration(value = 1, unit = TimeUnit.SECONDS)
+    @MinDuration(value = 0, unit = TimeUnit.MILLISECONDS, inclusive = false)
     @Nullable
     private Duration maxConnectionAge;
 
     @NotNull
-    @MinDuration(value = 1, unit = TimeUnit.SECONDS)
+    @MinDuration(value = 0, unit = TimeUnit.MILLISECONDS, inclusive = false)
     private Duration maxWaitForConnection = Duration.seconds(30);
 
     @NotNull
-    @MinDuration(value = 1, unit = TimeUnit.SECONDS)
+    @MinDuration(value = 0, unit = TimeUnit.MILLISECONDS, inclusive = false)
     private Duration minIdleTime = Duration.minutes(1);
 
     @NotNull
     private String validationQuery = "/* Health Check */ SELECT 1";
 
-    @MinDuration(value = 1, unit = TimeUnit.SECONDS)
+    @MinDuration(value = 0, unit = TimeUnit.MILLISECONDS, inclusive = false)
     @Nullable
     private Duration validationQueryTimeout;
 
@@ -403,7 +403,7 @@ public class DataSourceFactory implements PooledDataSourceFactory {
     private boolean autoCommentsEnabled = true;
 
     @NotNull
-    @MinDuration(1)
+    @MinDuration(value = 0, unit = TimeUnit.MILLISECONDS, inclusive = false)
     private Duration evictionInterval = Duration.seconds(5);
 
     @NotNull
@@ -415,7 +415,7 @@ public class DataSourceFactory implements PooledDataSourceFactory {
     private boolean removeAbandoned = false;
 
     @NotNull
-    @MinDuration(1)
+    @MinDuration(value = 0, unit = TimeUnit.MILLISECONDS, inclusive = false)
     private Duration removeAbandonedTimeout = Duration.seconds(60L);
 
     private Optional<String> jdbcInterceptors = Optional.empty();
