@@ -255,7 +255,7 @@ public class FileAppenderFactory<E extends DeferredProcessingAware> extends Abst
         appender.setContext(context);
 
         final LayoutWrappingEncoder<E> layoutEncoder = new LayoutWrappingEncoder<>();
-        layoutEncoder.setLayout(buildLayout(context, layoutFactory));
+        layoutEncoder.setLayout(buildPatternLayout(context, layoutFactory));
         appender.setEncoder(layoutEncoder);
 
         appender.setImmediateFlush(immediateFlush);

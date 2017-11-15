@@ -8,6 +8,7 @@ import io.dropwizard.jackson.Jackson;
 import io.dropwizard.logging.BootstrapLogging;
 import io.dropwizard.logging.ConsoleAppenderFactory;
 import io.dropwizard.logging.FileAppenderFactory;
+import io.dropwizard.logging.JsonFileAppenderFactory;
 import io.dropwizard.logging.SyslogAppenderFactory;
 import io.dropwizard.request.logging.RequestLogFactory;
 import io.dropwizard.validation.BaseValidator;
@@ -32,7 +33,7 @@ public class LogbackClassicRequestLogFactoryTest {
     public void setUp() throws Exception {
         final ObjectMapper objectMapper = Jackson.newObjectMapper();
         objectMapper.getSubtypeResolver().registerSubtypes(ConsoleAppenderFactory.class, FileAppenderFactory.class,
-            SyslogAppenderFactory.class);
+                                                           JsonFileAppenderFactory.class, SyslogAppenderFactory.class);
         this.requestLog = new YamlConfigurationFactory<>(RequestLogFactory.class,
             BaseValidator.newValidator(), objectMapper, "dw")
             .build(new File(Resources.getResource("yaml/logbackClassicRequestLog.yml").toURI()));
@@ -42,8 +43,8 @@ public class LogbackClassicRequestLogFactoryTest {
     public void testDeserialized() {
         LogbackClassicRequestLogFactory classicRequestLogFactory = (LogbackClassicRequestLogFactory) requestLog;
         assertThat(classicRequestLogFactory.getTimeZone()).isEqualTo(TimeZone.getTimeZone("Europe/Amsterdam"));
-        assertThat(classicRequestLogFactory.getAppenders()).hasSize(3).extractingResultOf("getClass").contains(
-            ConsoleAppenderFactory.class, FileAppenderFactory.class, SyslogAppenderFactory.class
+        assertThat(classicRequestLogFactory.getAppenders()).hasSize(4).extractingResultOf("getClass").contains(
+            ConsoleAppenderFactory.class, FileAppenderFactory.class, JsonFileAppenderFactory.class, SyslogAppenderFactory.class
         );
     }
 

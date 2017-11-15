@@ -3,6 +3,7 @@ package io.dropwizard.request.logging.old;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.spi.ILoggingEvent;
+import ch.qos.logback.contrib.json.JsonLayoutBase;
 import ch.qos.logback.core.Context;
 import ch.qos.logback.core.CoreConstants;
 import ch.qos.logback.core.pattern.PatternLayoutBase;
@@ -25,6 +26,8 @@ import org.slf4j.LoggerFactory;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.TimeZone;
 
@@ -54,6 +57,30 @@ import java.util.TimeZone;
  */
 @JsonTypeName("classic")
 public class LogbackClassicRequestLogFactory implements RequestLogFactory {
+
+    private static class RequestLogLayoutFactory implements LayoutFactory<ILoggingEvent> {
+
+        @Override
+        public PatternLayoutBase<ILoggingEvent> buildPatternLayout(LoggerContext context, TimeZone timeZone) {
+            return new RequestLogLayout(context);
+        }
+
+        @Override
+        public JsonLayoutBase<ILoggingEvent> buildJsonLayout(LoggerContext context, TimeZone timeZone,
+                                                             String timestampFormat,
+                                                             boolean includeStackTrace, boolean prettyPrint) {
+            return new RequestLogJsonLayout();
+        }
+    }
+
+    private static class RequestLogJsonLayout extends JsonLayoutBase<ILoggingEvent> {
+
+        @Override
+        protected Map toJsonMap(ILoggingEvent event) {
+            return Collections.singletonMap("message", event.getFormattedMessage());
+        }
+    }
+
     private static class RequestLogLayout extends PatternLayoutBase<ILoggingEvent> {
 
         private RequestLogLayout(Context context) {
@@ -115,7 +142,7 @@ public class LogbackClassicRequestLogFactory implements RequestLogFactory {
         final LoggerContext context = logger.getLoggerContext();
         final LevelFilterFactory<ILoggingEvent> levelFilterFactory = new NullLevelFilterFactory<>();
         final AsyncAppenderFactory<ILoggingEvent> asyncAppenderFactory = new AsyncLoggingEventAppenderFactory();
-        final LayoutFactory<ILoggingEvent> layoutFactory = (c, tz) -> new RequestLogLayout(c);
+        final LayoutFactory<ILoggingEvent> layoutFactory = new RequestLogLayoutFactory();
         final AppenderAttachableImpl<ILoggingEvent> attachable = new AppenderAttachableImpl<>();
         for (AppenderFactory<ILoggingEvent> appender : appenders) {
             attachable.addAppender(appender.build(context, name, layoutFactory, levelFilterFactory, asyncAppenderFactory));
