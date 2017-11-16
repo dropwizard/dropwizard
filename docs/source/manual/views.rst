@@ -63,7 +63,7 @@ Then, in your :ref:`resource method <man-core-resources>`, add a ``View`` class:
 ``com.example.service.PersonView``, Dropwizard would then look for the file
 ``src/main/resources/com/example/service/person.ftl``.
 
-If your template ends with ``.ftl``, it'll be interpreted as a FreeMarker_ template. If it ends with
+If your template path contains ``.ftl``, ``.flth``, or ``.ftlx``, it'll be interpreted as a FreeMarker_ template. If it contains
 ``.mustache``, it'll be interpreted as a Mustache template.
 
 .. tip::

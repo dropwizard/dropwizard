@@ -41,7 +41,7 @@ import static com.google.common.base.MoreObjects.firstNonNull;
  * }
  * </code></pre>
  *
- *<p>The {@code "profile.ftl"} or {@code "profile.mustache"} is the path of the template relative to the class name. If
+ *<p>The {@code "profile.ftl[hx]"} or {@code "profile.mustache"} is the path of the template relative to the class name. If
  * this class was {@code com.example.application.PersonView}, Freemarker or Mustache would then look for the file
  * {@code src/main/resources/com/example/application/profile.ftl} or {@code
  * src/main/resources/com/example/application/profile.mustache} respectively. If the template path
