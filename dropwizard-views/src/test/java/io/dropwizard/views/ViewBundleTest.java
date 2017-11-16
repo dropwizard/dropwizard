@@ -60,10 +60,10 @@ public class ViewBundleTest {
 
     @Test
     public void addsTheViewMessageBodyWriterWithSingleViewRendererToTheEnvironment() throws Exception {
-        final String viewSuffix = ".ftl";
+        final String configurationKey = "freemarker";
         final String testKey = "testKey";
         final Map<String, String> freeMarkerConfig = Collections.singletonMap(testKey, "yes");
-        final Map<String, Map<String, String>> viewRendererConfig = Collections.singletonMap(viewSuffix, freeMarkerConfig);
+        final Map<String, Map<String, String>> viewRendererConfig = Collections.singletonMap(configurationKey, freeMarkerConfig);
 
         final MyConfiguration myConfiguration = new MyConfiguration();
         myConfiguration.setViewRendererConfiguration(viewRendererConfig);
@@ -85,8 +85,8 @@ public class ViewBundleTest {
             }
 
             @Override
-            public String getSuffix() {
-                return viewSuffix;
+            public String getConfigurationKey() {
+                return configurationKey;
             }
         };
 

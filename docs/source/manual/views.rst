@@ -32,13 +32,15 @@ You can pass configuration through to view renderers by overriding ``getViewConf
         });
     }
 
-The returned map should have, for each extension (such as ``.ftl``), a ``Map<String, String>`` describing how to configure the renderer. Specific keys and their meanings can be found in the FreeMarker and Mustache documentation:
+The returned map should have, for each renderer (such as ``freemarker`` or ``mustache``), a ``Map<String, String>`` describing how to configure the renderer. Specific keys and their meanings can be found in the FreeMarker and Mustache documentation:
 
 .. code-block:: yaml
 
     views:
-      .ftl:
-        strict_syntax: yes
+      freemarker:
+        strict_syntax: true
+      mustache:
+        cache: false
 
 Then, in your :ref:`resource method <man-core-resources>`, add a ``View`` class:
 

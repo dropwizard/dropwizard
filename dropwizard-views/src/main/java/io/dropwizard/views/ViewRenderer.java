@@ -39,7 +39,7 @@ public interface ViewRenderer {
     void configure(Map<String, String> options);
 
     /**
-     * @return the suffix of the template type, e.g '.ftl', '.mustache'
+     * @return the key to use in the view configurations, i.e. 'freemarker' or 'mustache'.
      */
-    String getSuffix();
+    String getConfigurationKey();
 }

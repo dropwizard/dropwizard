@@ -41,7 +41,7 @@ public class MustacheViewRenderer implements ViewRenderer {
 
     @Override
     public boolean isRenderable(View view) {
-        return view.getTemplateName().endsWith(getSuffix());
+        return view.getTemplateName().endsWith(".mustache");
     }
 
     @Override
@@ -71,8 +71,8 @@ public class MustacheViewRenderer implements ViewRenderer {
     }
 
     @Override
-    public String getSuffix() {
-        return ".mustache";
+    public String getConfigurationKey() {
+        return "mustache";
     }
 
     private MustacheFactory createNewMustacheFactory(Class<? extends View> key) {

@@ -59,7 +59,7 @@ public class FreemarkerViewRenderer implements ViewRenderer {
 
     @Override
     public boolean isRenderable(View view) {
-        return view.getTemplateName().endsWith(getSuffix());
+        return view.getTemplateName().endsWith(".ftl");
     }
 
     @Override
@@ -82,7 +82,7 @@ public class FreemarkerViewRenderer implements ViewRenderer {
     }
 
     @Override
-    public String getSuffix() {
-        return ".ftl";
+    public String getConfigurationKey() {
+        return "freemarker";
     }
 }
