@@ -6,7 +6,7 @@ public class AbsoluteView extends View {
     private final String name;
 
     public AbsoluteView(String name) {
-        super("/example.ftl");
+        super("/example.ftlh");
         this.name = name;
     }
 

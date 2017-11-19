@@ -21,11 +21,13 @@ import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 /**
  * A {@link ViewRenderer} which renders Mustache ({@code .mustache}) templates.
  */
 public class MustacheViewRenderer implements ViewRenderer {
+    private static final Pattern FILE_PATTERN = Pattern.compile("\\.mustache");
     private final LoadingCache<Class<? extends View>, MustacheFactory> factories;
     private boolean useCache = true;
     private Optional<File> fileRoot = Optional.empty();
@@ -41,7 +43,7 @@ public class MustacheViewRenderer implements ViewRenderer {
 
     @Override
     public boolean isRenderable(View view) {
-        return view.getTemplateName().endsWith(getSuffix());
+        return FILE_PATTERN.matcher(view.getTemplateName()).find();
     }
 
     @Override
@@ -71,8 +73,8 @@ public class MustacheViewRenderer implements ViewRenderer {
     }
 
     @Override
-    public String getSuffix() {
-        return ".mustache";
+    public String getConfigurationKey() {
+        return "mustache";
     }
 
     private MustacheFactory createNewMustacheFactory(Class<? extends View> key) {
