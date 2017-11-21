@@ -1,4 +1,4 @@
-package io.dropwizard.testing;
+package io.dropwizard.testing.app;
 
 import com.google.common.base.MoreObjects;
 

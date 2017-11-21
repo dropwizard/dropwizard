@@ -1,5 +1,6 @@
 package io.dropwizard.testing.junit;
 
+import io.dropwizard.testing.app.TestResource;
 import org.junit.ClassRule;
 import org.junit.Test;
 

@@ -1,6 +1,7 @@
-package io.dropwizard.testing.junit;
+package io.dropwizard.testing.common;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.dropwizard.testing.junit5.ResourceExtension;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.test.spi.TestContainerFactory;
 
@@ -11,7 +12,7 @@ import java.util.function.Consumer;
 
 /**
  * A configuration of a Jersey testing environment.
- * Encapsulates data required to configure a {@link ResourceTestRule}.
+ * Encapsulates data required to configure a {@link ResourceExtension}.
  * Primarily accessed via {@link DropwizardTestResourceConfig}.
  */
 class ResourceTestJerseyConfiguration {

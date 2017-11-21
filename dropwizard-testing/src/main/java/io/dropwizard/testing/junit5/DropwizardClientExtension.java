@@ -1,16 +1,15 @@
-package io.dropwizard.testing.junit;
+package io.dropwizard.testing.junit5;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.testing.common.DropwizardClient;
-import org.junit.rules.ExternalResource;
 
 import java.net.URI;
 import java.net.URL;
 
 //@formatter:off
 /**
- * Test your HTTP client code by writing a JAX-RS test double class and let this rule start and stop a
+ * Test your HTTP client code by writing a JAX-RS test double class and let this extension start and stop a
  * Dropwizard application containing your doubles.
  * <p>
  * Example:
@@ -23,8 +22,7 @@ import java.net.URL;
         }
     }
 
-    {@literal @}ClassRule
-    public static DropwizardClientRule dropwizard = new DropwizardClientRule(new PingResource());
+    public static DropwizardClientExtension dropwizard = new DropwizardClientExtension(new PingResource());
 
     {@literal @}Test
     public void shouldPing() throws IOException {
@@ -36,7 +34,7 @@ import java.net.URL;
  * Of course, you'd use your http client, not {@link URL#openStream()}.
  * </p>
  * <p>
- * The {@link DropwizardClientRule} takes care of:
+ * The {@link DropwizardClientExtension} takes care of:
  * <ul>
  * <li>Creating a simple default configuration.</li>
  * <li>Creating a simplistic application.</li>
@@ -49,10 +47,10 @@ import java.net.URL;
  * </p>
  */
 //@formatter:off
-public class DropwizardClientRule extends ExternalResource {
+public class DropwizardClientExtension implements DropwizardExtension {
     private final DropwizardClient client;
 
-    public DropwizardClientRule(Object... resources) {
+    public DropwizardClientExtension(Object... resources) {
         this.client = new DropwizardClient(resources);
     }
 
@@ -69,12 +67,12 @@ public class DropwizardClientRule extends ExternalResource {
     }
 
     @Override
-    protected void before() throws Throwable {
+    public void before() throws Throwable {
         client.before();
     }
 
     @Override
-    protected void after() {
+    public void after() {
         client.after();
     }
 }

@@ -1,4 +1,4 @@
-package io.dropwizard.testing.junit;
+package io.dropwizard.testing.common;
 
 import com.codahale.metrics.MetricRegistry;
 import io.dropwizard.jersey.DropwizardResourceConfig;

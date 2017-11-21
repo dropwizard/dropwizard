@@ -1,5 +1,7 @@
 package io.dropwizard.testing.junit;
 
+import io.dropwizard.testing.app.TestApplication;
+import io.dropwizard.testing.app.TestConfiguration;
 import org.junit.ClassRule;
 import org.junit.Test;
 

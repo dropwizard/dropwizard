@@ -1,13 +1,9 @@
-package io.dropwizard.testing.junit;
+package io.dropwizard.testing.junit5;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.testing.common.Resource;
-import io.dropwizard.testing.junit5.ResourceExtension;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.test.JerseyTest;
-import org.junit.rules.TestRule;
-import org.junit.runner.Description;
-import org.junit.runners.model.Statement;
 
 import javax.validation.Validator;
 import javax.ws.rs.client.Client;
@@ -15,35 +11,35 @@ import javax.ws.rs.client.WebTarget;
 import java.util.function.Consumer;
 
 /**
- * A JUnit {@link TestRule} for testing Jersey resources.
+ * An extension for testing Jersey resources.
  */
-public class ResourceTestRule implements TestRule {
+public class ResourceExtension implements DropwizardExtension {
     /**
      * A {@link ResourceExtension} builder which enables configuration of a Jersey testing environment.
      */
-    public static class Builder extends Resource.Builder<ResourceTestRule.Builder> {
+    public static class Builder extends Resource.Builder<Builder> {
         /**
          * Builds a {@link ResourceExtension} with a configured Jersey testing environment.
          *
          * @return a new {@link ResourceExtension}
          */
-        public ResourceTestRule build() {
-            return new ResourceTestRule(buildResource());
+        public ResourceExtension build() {
+            return new ResourceExtension(buildResource());
         }
     }
 
     /**
      * Creates a new Jersey testing environment builder for {@link ResourceExtension}
      *
-     * @return a new {@link ResourceExtension.Builder}
+     * @return a new {@link Builder}
      */
-    public static ResourceTestRule.Builder builder() {
-        return new ResourceTestRule.Builder();
+    public static Builder builder() {
+        return new Builder();
     }
 
     private final Resource resource;
 
-    private ResourceTestRule(Resource resource) {
+    private ResourceExtension(Resource resource) {
         this.resource = resource;
     }
 
@@ -90,17 +86,12 @@ public class ResourceTestRule implements TestRule {
     }
 
     @Override
-    public Statement apply(Statement base, Description description) {
-        return new Statement() {
-            @Override
-            public void evaluate() throws Throwable {
-                try {
-                    resource.before();
-                    base.evaluate();
-                } finally {
-                    resource.after();
-                }
-            }
-        };
+    public void before() throws Throwable {
+        resource.before();
+    }
+
+    @Override
+    public void after() throws Throwable {
+        resource.after();
     }
 }

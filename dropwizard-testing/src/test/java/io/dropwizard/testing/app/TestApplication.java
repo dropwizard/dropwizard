@@ -1,4 +1,4 @@
-package io.dropwizard.testing.junit;
+package io.dropwizard.testing.app;
 
 import io.dropwizard.Application;
 import io.dropwizard.setup.Environment;

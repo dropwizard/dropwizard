@@ -1,4 +1,4 @@
-package io.dropwizard.testing.junit;
+package io.dropwizard.testing.app;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
