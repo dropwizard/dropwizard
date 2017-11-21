@@ -22,7 +22,8 @@ public class DAOTest {
         BootstrapLogging.bootstrap();
     }
 
-    public static abstract class Builder<B extends Builder> {
+    @SuppressWarnings("unchecked")
+    public static abstract class Builder<B extends Builder<B>> {
         private String url = "jdbc:h2:mem:" + UUID.randomUUID();
         private String username = "sa";
         private String password = "";

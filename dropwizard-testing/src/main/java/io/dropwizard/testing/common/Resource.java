@@ -35,7 +35,8 @@ public class Resource {
     /**
      * A {@link Resource} builder which enables configuration of a Jersey testing environment.
      */
-    public static class Builder<B extends Builder> {
+    @SuppressWarnings("unchecked")
+    public static class Builder<B extends Builder<B>> {
 
         private final Set<Object> singletons = new HashSet<>();
         private final Set<Class<?>> providers = new HashSet<>();
