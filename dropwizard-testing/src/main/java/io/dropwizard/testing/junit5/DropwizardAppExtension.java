@@ -1,4 +1,4 @@
-package io.dropwizard.testing.junit;
+package io.dropwizard.testing.junit5;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.Application;
@@ -11,7 +11,6 @@ import io.dropwizard.testing.ConfigOverride;
 import io.dropwizard.testing.DropwizardTestSupport;
 import org.glassfish.jersey.client.ClientProperties;
 import org.glassfish.jersey.client.JerseyClientBuilder;
-import org.junit.rules.ExternalResource;
 
 import javax.annotation.Nullable;
 import javax.ws.rs.client.Client;
@@ -21,7 +20,7 @@ import java.util.function.Function;
 
 //@formatter:off
 /**
- * A JUnit rule for starting and stopping your application at the start and end of a test class.
+ * An extension for starting and stopping your application at the start and end of a test class.
  * <p>
  * By default, the {@link Application} will be constructed using reflection to invoke the nullary
  * constructor. If your application does not provide a public nullary constructor, you will need to
@@ -29,33 +28,32 @@ import java.util.function.Function;
  * </p>
  *
  * <p>
- * Using DropwizardAppRule at the suite level can speed up test runs, as the application is only started and stopped
+ * Using DropwizardAppExtension at the suite level can speed up test runs, as the application is only started and stopped
  * once for the entire suite:
  * </p>
  *
  * <pre>
- * &#064;RunWith(Suite.class)
- * &#064;SuiteClasses({FooTest.class, BarTest.class})
  * public class MySuite {
- *   &#064;ClassRule
- *   public static final DropwizardAppRule&lt;MyConfig> DROPWIZARD = new DropwizardAppRule&lt;>(...);
+ *   public static final DropwizardAppExtension&lt;MyConfig> DROPWIZARD = new DropwizardAppExtension&lt;>(...);
  * }
  * </pre>
  *
  * <p>
- * If the same instance of DropwizardAppRule is reused at the suite- and class-level, then the application will be
+ * If the same instance of DropwizardAppExtension is reused at the suite- and class-level, then the application will be
  * started and stopped once, regardless of whether the entire suite or a single test is executed.
  * </p>
  *
  * <pre>
+ * &#064;ExtendWith(DropwizardExtensionsSupport.class)
  * public class FooTest {
- *   &#064;ClassRule public static final DropwizardAppRule&lt;MyConfig> DROPWIZARD = MySuite.DROPWIZARD;
+ *   public static final DropwizardAppExtension&lt;MyConfig> DROPWIZARD = MySuite.DROPWIZARD;
  *
  *   public void testFoo() { ... }
  * }
  *
+ * &#064;ExtendWith(DropwizardExtensionsSupport.class)
  * public class BarTest {
- *   &#064;ClassRule public static final DropwizardAppRule&lt;MyConfig> DROPWIZARD = MySuite.DROPWIZARD;
+ *   public static final DropwizardAppExtension&lt;MyConfig> DROPWIZARD = MySuite.DROPWIZARD;
  *
  *   public void testBar() { ... }
  * }
@@ -68,7 +66,7 @@ import java.util.function.Function;
  * @param <C> the configuration type
  */
 //@formatter:on
-public class DropwizardAppRule<C extends Configuration> extends ExternalResource {
+public class DropwizardAppExtension<C extends Configuration> implements DropwizardExtension {
 
     private static final int DEFAULT_CONNECT_TIMEOUT_MS = 1000;
     private static final int DEFAULT_READ_TIMEOUT_MS = 5000;
@@ -80,26 +78,26 @@ public class DropwizardAppRule<C extends Configuration> extends ExternalResource
     @Nullable
     private Client client;
 
-    public DropwizardAppRule(Class<? extends Application<C>> applicationClass) {
+    public DropwizardAppExtension(Class<? extends Application<C>> applicationClass) {
         this(applicationClass, (String) null);
     }
 
-    public DropwizardAppRule(Class<? extends Application<C>> applicationClass,
-                             @Nullable String configPath,
-                             ConfigOverride... configOverrides) {
+    public DropwizardAppExtension(Class<? extends Application<C>> applicationClass,
+                                  @Nullable String configPath,
+                                  ConfigOverride... configOverrides) {
         this(applicationClass, configPath, Optional.empty(), configOverrides);
     }
 
-    public DropwizardAppRule(Class<? extends Application<C>> applicationClass, @Nullable String configPath,
-                             Optional<String> customPropertyPrefix, ConfigOverride... configOverrides) {
+    public DropwizardAppExtension(Class<? extends Application<C>> applicationClass, @Nullable String configPath,
+                                  Optional<String> customPropertyPrefix, ConfigOverride... configOverrides) {
         this(applicationClass, configPath, customPropertyPrefix, ServerCommand::new, configOverrides);
     }
 
-    public DropwizardAppRule(Class<? extends Application<C>> applicationClass, @Nullable String configPath,
-                             Optional<String> customPropertyPrefix, Function<Application<C>,
-                             Command> commandInstantiator, ConfigOverride... configOverrides) {
+    public DropwizardAppExtension(Class<? extends Application<C>> applicationClass, @Nullable String configPath,
+                                  Optional<String> customPropertyPrefix, Function<Application<C>,
+        Command> commandInstantiator, ConfigOverride... configOverrides) {
         this(new DropwizardTestSupport<>(applicationClass, configPath, customPropertyPrefix, commandInstantiator,
-                configOverrides));
+            configOverrides));
     }
 
     /**
@@ -108,8 +106,8 @@ public class DropwizardAppRule<C extends Configuration> extends ExternalResource
      *
      * @since 0.9
      */
-    public DropwizardAppRule(Class<? extends Application<C>> applicationClass,
-                             C configuration) {
+    public DropwizardAppExtension(Class<? extends Application<C>> applicationClass,
+                                  C configuration) {
         this(new DropwizardTestSupport<>(applicationClass, configuration));
     }
 
@@ -118,48 +116,48 @@ public class DropwizardAppRule<C extends Configuration> extends ExternalResource
      *
      * @since 1.1.0
      */
-    public DropwizardAppRule(Class<? extends Application<C>> applicationClass,
-                             C configuration, Function<Application<C>, Command> commandInstantiator) {
+    public DropwizardAppExtension(Class<? extends Application<C>> applicationClass,
+                                  C configuration, Function<Application<C>, Command> commandInstantiator) {
         this(new DropwizardTestSupport<>(applicationClass, configuration, commandInstantiator));
     }
 
-    public DropwizardAppRule(DropwizardTestSupport<C> testSupport) {
+    public DropwizardAppExtension(DropwizardTestSupport<C> testSupport) {
         this.testSupport = testSupport;
     }
 
-    public DropwizardAppRule<C> addListener(final ServiceListener<C> listener) {
+    public DropwizardAppExtension<C> addListener(final ServiceListener<C> listener) {
         this.testSupport.addListener(new DropwizardTestSupport.ServiceListener<C>() {
             @Override
             public void onRun(C configuration, Environment environment, DropwizardTestSupport<C> rule) throws Exception {
-                listener.onRun(configuration, environment, DropwizardAppRule.this);
+                listener.onRun(configuration, environment, DropwizardAppExtension.this);
             }
 
             @Override
             public void onStop(DropwizardTestSupport<C> rule) throws Exception {
-                listener.onStop(DropwizardAppRule.this);
+                listener.onStop(DropwizardAppExtension.this);
             }
         });
         return this;
     }
 
-    public DropwizardAppRule<C> manage(final Managed managed) {
+    public DropwizardAppExtension<C> manage(final Managed managed) {
         return addListener(new ServiceListener<C>() {
             @Override
-            public void onRun(C configuration, Environment environment, DropwizardAppRule<C> rule) throws Exception {
+            public void onRun(C configuration, Environment environment, DropwizardAppExtension<C> rule) throws Exception {
                 environment.lifecycle().manage(managed);
             }
         });
     }
 
     @Override
-    protected void before() {
+    public void before() {
         if (recursiveCallCount.getAndIncrement() == 0) {
             testSupport.before();
         }
     }
 
     @Override
-    protected void after() {
+    public void after() {
         if (recursiveCallCount.decrementAndGet() == 0) {
             testSupport.after();
             synchronized (this) {
@@ -205,11 +203,11 @@ public class DropwizardAppRule<C extends Configuration> extends ExternalResource
 
     public abstract static class ServiceListener<T extends Configuration> {
 
-        public void onRun(T configuration, Environment environment, DropwizardAppRule<T> rule) throws Exception {
+        public void onRun(T configuration, Environment environment, DropwizardAppExtension<T> rule) throws Exception {
             // Default NOP
         }
 
-        public void onStop(DropwizardAppRule<T> rule) throws Exception {
+        public void onStop(DropwizardAppExtension<T> rule) throws Exception {
             // Default NOP
         }
     }
@@ -224,7 +222,7 @@ public class DropwizardAppRule<C extends Configuration> extends ExternalResource
      * closed along with the server. The client can be augmented by overriding the
      * {@link #clientBuilder()} method.
      *
-     * @return a new {@link Client} managed by the rule.
+     * @return a new {@link Client} managed by the extension.
      */
     public Client client() {
         synchronized (this) {

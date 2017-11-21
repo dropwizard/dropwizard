@@ -3,7 +3,6 @@ package io.dropwizard.testing.app;
 import com.codahale.metrics.annotation.Timed;
 import com.google.common.collect.ImmutableList;
 import io.dropwizard.jersey.params.IntParam;
-import io.dropwizard.testing.Person;
 import io.dropwizard.validation.Validated;
 import org.eclipse.jetty.io.EofException;
 

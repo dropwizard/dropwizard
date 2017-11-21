@@ -1,4 +1,4 @@
-package io.dropwizard.testing.junit;
+package io.dropwizard.testing.app;
 
 import javax.annotation.Nullable;
 import javax.persistence.Column;
@@ -13,7 +13,7 @@ import static java.util.Objects.requireNonNull;
 
 @Entity
 @Table(name = "test_entities")
-class TestEntity {
+public class TestEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,19 +29,19 @@ class TestEntity {
         // for Hibernate
     }
 
-    TestEntity(@Nullable String description) {
+    public TestEntity(@Nullable String description) {
         this.description = description;
     }
 
-    long getId() {
+    public long getId() {
         return id;
     }
 
-    String getDescription() {
+    public String getDescription() {
         return requireNonNull(description);
     }
 
-    void setDescription(final String description) {
+    public void setDescription(final String description) {
         this.description = description;
     }
 }

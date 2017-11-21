@@ -1,33 +1,32 @@
-package io.dropwizard.testing.junit;
+package io.dropwizard.testing.junit5;
 
 import io.dropwizard.testing.common.DAOTest;
+import io.dropwizard.testing.junit.DAOTestRule;
 import org.hibernate.SessionFactory;
-import org.junit.rules.ExternalResource;
 
 import java.util.concurrent.Callable;
 
 //@formatter:off
 /**
- * A JUnit rule for testing DAOs and Hibernate entities. It allows to quickly
+ * An extension for testing DAOs and Hibernate entities. It allows to quickly
  * test the database access code without starting the Dropwizard infrastructure.
  * <p>
  * Example:
  * <pre><code>
- * {@literal @}Rule
-    public DAOTestRule daoTestRule = DAOTestRule.newBuilder()
+    public DAOTestExtension daoTestExtension = DAOTestExtension.newBuilder()
           .addEntityClass(Person.class)
           .build();
 
     private PersonDAO personDAO;
 
-   {@literal @}Before
+   {@literal @}BeforeEach
     public void setUp() throws Exception {
         personDAO = new PersonDAO(daoTestRule.getSessionFactory());
     }
 
    {@literal @}Test
     public void createPerson() {
-        Person wizard = daoTestRule.inTransaction(() -> personDAO.create(new Person("Merlin", "The chief wizard")));
+        Person wizard = daoTestExtension.inTransaction(() -> personDAO.create(new Person("Merlin", "The chief wizard")));
         assertThat(wizard.getId()).isGreaterThan(0);
         assertThat(wizard.getFullName()).isEqualTo("Merlin");
         assertThat(wizard.getJobTitle()).isEqualTo("The chief wizard");
@@ -36,12 +35,12 @@ import java.util.concurrent.Callable;
  * </p>
  */
 //@formatter:on
-public class DAOTestRule extends ExternalResource {
+public class DAOTestExtension implements DropwizardExtension {
     private final DAOTest daoTest;
 
     public static class Builder extends DAOTest.Builder<Builder> {
-        public DAOTestRule build() {
-            return new DAOTestRule(buildDAOTest());
+        public DAOTestExtension build() {
+            return new DAOTestExtension(buildDAOTest());
         }
     }
 
@@ -49,7 +48,7 @@ public class DAOTestRule extends ExternalResource {
      * Creates a new builder for {@link DAOTestRule}, which allows to customize a {@link SessionFactory}
      * by different parameters. By default uses the H2 database in the memory mode.
      *
-     * @return a new {@link Builder}
+     * @return a new {@link DAOTestRule.Builder}
      */
     public static Builder newBuilder() {
         return new Builder();
@@ -58,17 +57,17 @@ public class DAOTestRule extends ExternalResource {
     /**
      * Use {@link DAOTestRule#newBuilder()}
      */
-    private DAOTestRule(DAOTest daoTest) {
+    private DAOTestExtension(DAOTest daoTest) {
         this.daoTest = daoTest;
     }
 
     @Override
-    protected void before() throws Throwable {
+    public void before() throws Throwable {
         daoTest.before();
     }
 
     @Override
-    protected void after() {
+    public void after() {
         daoTest.after();
     }
 

@@ -1,6 +1,7 @@
 package io.dropwizard.testing.junit;
 
 import io.dropwizard.testing.DropwizardTestSupport;
+import io.dropwizard.testing.app.TestConfiguration;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
 import org.junit.runner.Description;

@@ -1,16 +1,16 @@
-package io.dropwizard.testing.junit;
+package io.dropwizard.testing.junit5;
 
 import io.dropwizard.testing.app.TestEntity;
 import org.hibernate.Session;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class DAOTestRuleConfigTest {
-
-    @Rule
-    public final DAOTestRule database = DAOTestRule.newBuilder()
+@ExtendWith(DropwizardExtensionsSupport.class)
+public class DAOTestExtensionConfigTest {
+    public final DAOTestExtension database = DAOTestExtension.newBuilder()
         .setUrl("jdbc:h2:mem:rule-config-test")
         .setDriver(org.h2.Driver.class)
         .setUsername("username")

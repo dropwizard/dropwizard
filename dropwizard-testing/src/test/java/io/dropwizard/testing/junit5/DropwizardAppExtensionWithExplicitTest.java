@@ -1,4 +1,4 @@
-package io.dropwizard.testing.junit;
+package io.dropwizard.testing.junit5;
 
 import com.google.common.collect.ImmutableMap;
 import io.dropwizard.Application;
@@ -6,9 +6,8 @@ import io.dropwizard.jetty.HttpConnectorFactory;
 import io.dropwizard.server.DefaultServerFactory;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.testing.app.TestConfiguration;
-import org.junit.Assert;
-import org.junit.ClassRule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -17,13 +16,16 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.Map;
 
-public class DropwizardAppRuleWithExplicitTest {
+import org.junit.jupiter.api.Assertions;
+
+@ExtendWith(DropwizardExtensionsSupport.class)
+public class DropwizardAppExtensionWithExplicitTest {
 
     @Test
     public void bogusTest() { }
 
-    @ClassRule
-    public static final DropwizardAppRule<TestConfiguration> RULE;
+    public static final DropwizardAppExtension<TestConfiguration> EXTENSION;
+
     static {
         // Bit complicated, as we want to avoid using the default http port (8080)
         // as there is another test that uses it already. So force bogus value of
@@ -32,16 +34,16 @@ public class DropwizardAppRuleWithExplicitTest {
         DefaultServerFactory sf = (DefaultServerFactory) config.getServerFactory();
         ((HttpConnectorFactory) sf.getApplicationConnectors().get(0)).setPort(0);
         ((HttpConnectorFactory) sf.getAdminConnectors().get(0)).setPort(0);
-        RULE = new DropwizardAppRule<>(TestApplication.class, config);
+        EXTENSION = new DropwizardAppExtension<>(TestApplication.class, config);
     }
 
 
     @Test
     public void runWithExplicitConfig() {
-        Map<?, ?> response = RULE.client().target("http://localhost:" + RULE.getLocalPort() + "/test")
+        Map<?, ?> response = EXTENSION.client().target("http://localhost:" + EXTENSION.getLocalPort() + "/test")
                 .request()
                 .get(Map.class);
-        Assert.assertEquals(ImmutableMap.of("message", "stuff!"), response);
+        Assertions.assertEquals(ImmutableMap.of("message", "stuff!"), response);
     }
 
     public static class TestApplication extends Application<TestConfiguration> {

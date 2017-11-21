@@ -1,13 +1,16 @@
-package io.dropwizard.testing.app;
+package io.dropwizard.testing.junit5;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.guava.GuavaModule;
 import com.google.common.collect.ImmutableList;
 import io.dropwizard.jackson.Jackson;
+import io.dropwizard.testing.app.Person;
+import io.dropwizard.testing.app.PeopleStore;
+import io.dropwizard.testing.app.PersonResource;
 import io.dropwizard.testing.junit.ResourceTestRule;
-import org.junit.Before;
-import org.junit.ClassRule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Entity;
@@ -16,7 +19,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.eq;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
@@ -25,6 +28,7 @@ import static org.mockito.Mockito.when;
 /**
  * Tests {@link ResourceTestRule}.
  */
+@ExtendWith(DropwizardExtensionsSupport.class)
 public class PersonResourceTest {
     private static class DummyExceptionMapper implements ExceptionMapper<WebApplicationException> {
         @Override
@@ -36,18 +40,17 @@ public class PersonResourceTest {
     private static final PeopleStore PEOPLE_STORE = mock(PeopleStore.class);
 
     private static final ObjectMapper OBJECT_MAPPER = Jackson.newObjectMapper()
-            .registerModule(new GuavaModule());
+        .registerModule(new GuavaModule());
 
-    @ClassRule
-    public static final ResourceTestRule RESOURCES = ResourceTestRule.builder()
-            .addResource(new PersonResource(PEOPLE_STORE))
-            .setMapper(OBJECT_MAPPER)
-            .setClientConfigurator(clientConfig -> clientConfig.register(DummyExceptionMapper.class))
-            .build();
+    public static final ResourceExtension RESOURCES = ResourceExtension.builder()
+        .addResource(new PersonResource(PEOPLE_STORE))
+        .setMapper(OBJECT_MAPPER)
+        .setClientConfigurator(clientConfig -> clientConfig.register(DummyExceptionMapper.class))
+        .build();
 
     private final Person person = new Person("blah", "blah@example.com");
 
-    @Before
+    @BeforeEach
     public void setup() {
         reset(PEOPLE_STORE);
         when(PEOPLE_STORE.fetchPerson(eq("blah"))).thenReturn(person);
@@ -56,8 +59,8 @@ public class PersonResourceTest {
     @Test
     public void testGetPerson() {
         assertThat(RESOURCES.target("/person/blah").request()
-                .get(Person.class))
-                .isEqualTo(person);
+            .get(Person.class))
+            .isEqualTo(person);
         verify(PEOPLE_STORE).fetchPerson("blah");
     }
 
