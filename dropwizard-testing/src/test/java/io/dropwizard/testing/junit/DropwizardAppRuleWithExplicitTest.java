@@ -6,24 +6,25 @@ import io.dropwizard.jetty.HttpConnectorFactory;
 import io.dropwizard.server.DefaultServerFactory;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.testing.app.TestConfiguration;
-import org.junit.Assert;
 import org.junit.ClassRule;
 import org.junit.Test;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.Map;
 
-public class DropwizardAppRuleWithExplicitTest {
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.entry;
 
-    @Test
-    public void bogusTest() { }
+public class DropwizardAppRuleWithExplicitTest {
 
     @ClassRule
     public static final DropwizardAppRule<TestConfiguration> RULE;
+
     static {
         // Bit complicated, as we want to avoid using the default http port (8080)
         // as there is another test that uses it already. So force bogus value of
@@ -38,10 +39,11 @@ public class DropwizardAppRuleWithExplicitTest {
 
     @Test
     public void runWithExplicitConfig() {
-        Map<?, ?> response = RULE.client().target("http://localhost:" + RULE.getLocalPort() + "/test")
-                .request()
-                .get(Map.class);
-        Assert.assertEquals(ImmutableMap.of("message", "stuff!"), response);
+        Map<String, String> response = RULE.client().target("http://localhost:" + RULE.getLocalPort() + "/test")
+            .request()
+            .get(new GenericType<Map<String, String>>() {
+            });
+        assertThat(response).containsOnly(entry("message", "stuff!"));
     }
 
     public static class TestApplication extends Application<TestConfiguration> {

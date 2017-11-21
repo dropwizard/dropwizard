@@ -1,15 +1,15 @@
 package io.dropwizard.testing.junit;
 
+import com.google.common.io.Resources;
 import io.dropwizard.testing.app.TestResource;
 import org.junit.ClassRule;
 import org.junit.Test;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import static org.junit.Assert.assertEquals;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class DropwizardClientRuleTest {
     @ClassRule
@@ -21,14 +21,12 @@ public class DropwizardClientRuleTest {
     @Test(timeout = 5000)
     public void shouldGetStringBodyFromDropWizard() throws IOException {
         final URL url = new URL(RULE_WITH_INSTANCE.baseUri() + "/test");
-        final String response = new BufferedReader(new InputStreamReader(url.openStream(), StandardCharsets.UTF_8)).readLine();
-        assertEquals("foo", response);
+        assertThat("foo").isEqualTo(Resources.toString(url, StandardCharsets.UTF_8));
     }
 
     @Test(timeout = 5000)
     public void shouldGetDefaultStringBodyFromDropWizard() throws IOException {
         final URL url = new URL(RULE_WITH_CLASS.baseUri() + "/test");
-        final String response = new BufferedReader(new InputStreamReader(url.openStream(), StandardCharsets.UTF_8)).readLine();
-        assertEquals(TestResource.DEFAULT_MESSAGE, response);
+        assertThat(Resources.toString(url, StandardCharsets.UTF_8)).isEqualTo(TestResource.DEFAULT_MESSAGE);
     }
 }

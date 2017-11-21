@@ -6,6 +6,7 @@ import io.dropwizard.jetty.HttpConnectorFactory;
 import io.dropwizard.server.DefaultServerFactory;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.testing.app.TestConfiguration;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -16,13 +17,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.Map;
 
-import org.junit.jupiter.api.Assertions;
-
 @ExtendWith(DropwizardExtensionsSupport.class)
 public class DropwizardAppExtensionWithExplicitTest {
-
-    @Test
-    public void bogusTest() { }
 
     public static final DropwizardAppExtension<TestConfiguration> EXTENSION;
 

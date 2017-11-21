@@ -1,6 +1,5 @@
 package io.dropwizard.testing.junit5;
 
-
 import io.dropwizard.testing.app.TestApplication;
 import io.dropwizard.testing.app.TestConfiguration;
 import org.junit.jupiter.api.Test;
@@ -8,11 +7,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.util.Optional;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
-
 import static io.dropwizard.testing.ConfigOverride.config;
 import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(DropwizardExtensionsSupport.class)
 public class DropwizardAppExtensionConfigOverrideTest {
@@ -29,12 +26,12 @@ public class DropwizardAppExtensionConfigOverrideTest {
         final String content = EXTENSION.client().target("http://localhost:" + EXTENSION.getLocalPort() + "/test")
             .request().get(String.class);
 
-        assertThat(content, is("A new way to say Hooray!"));
+        assertThat(content).isEqualTo("A new way to say Hooray!");
     }
 
     @Test
     public void supportsSuppliedConfigAttributeOverrides() throws Exception {
-        assertThat(System.getProperty("app-rule.extra"), is("supplied"));
-        assertThat(System.getProperty("dw.extra"), is("supplied again"));
+        assertThat(System.getProperty("app-rule.extra")).isEqualTo("supplied");
+        assertThat(System.getProperty("dw.extra")).isEqualTo("supplied again");
     }
 }
