@@ -331,6 +331,17 @@ public class JerseyClientBuilderTest {
         verify(apacheHttpClientBuilder).using(customCredentialsProvider);
     }
 
+    @Test
+    public void apacheConnectorCanOverridden() {
+        assertThat(new JerseyClientBuilder(new MetricRegistry()) {
+            @Override
+            protected DropwizardApacheConnector createDropwizardApacheConnector(ConfiguredCloseableHttpClient configuredClient) {
+                return new DropwizardApacheConnector(configuredClient.getClient(), configuredClient.getDefaultRequestConfig(),
+                    true, (clientRequest -> true));
+            }
+        }.using(environment).build("test")).isNotNull();
+    }
+
     @Provider
     @Consumes(MediaType.APPLICATION_SVG_XML)
     public static class FakeMessageBodyReader implements MessageBodyReader<JerseyClientBuilderTest> {

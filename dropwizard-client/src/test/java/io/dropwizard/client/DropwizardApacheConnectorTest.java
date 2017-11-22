@@ -14,6 +14,8 @@ import org.apache.http.Header;
 import org.apache.http.HttpStatus;
 import org.apache.http.ProtocolVersion;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.conn.HttpHostConnectException;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -32,6 +34,7 @@ import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 
 import javax.ws.rs.GET;
@@ -201,6 +204,36 @@ public class DropwizardApacheConnectorTest {
 
         assertThat(jerseyResponse.getStatus()).isEqualTo(apacheResponse.getStatusLine().getStatusCode());
 
+    }
+
+    @Test
+    public void chunkedEncodingCanBeUsedWithRepeatableEntities() throws Exception {
+        CloseableHttpClient client = mock(CloseableHttpClient.class);
+        DropwizardApacheConnector dropwizardApacheConnector = new DropwizardApacheConnector(client, null,
+            true, clientRequest -> clientRequest.getEntityType() == String.class);
+
+        CloseableHttpResponse apacheResponse = mock(CloseableHttpResponse.class);
+        when(apacheResponse.getStatusLine()).thenReturn(new BasicStatusLine(new ProtocolVersion("HTTP", 1, 1),
+            200, "OK"));
+        when(apacheResponse.getAllHeaders()).thenReturn(new Header[]{});
+
+        ArgumentCaptor<HttpUriRequest> apacheRequestCaptor = ArgumentCaptor.forClass(HttpUriRequest.class);
+        when(client.execute(apacheRequestCaptor.capture())).thenReturn(apacheResponse);
+
+        ClientRequest jerseyRequest = mock(ClientRequest.class);
+        when(jerseyRequest.getUri()).thenReturn(URI.create("http://localhost"));
+        when(jerseyRequest.getMethod()).thenReturn("POST");
+        when(jerseyRequest.getEntity()).thenReturn("Repeat me!");
+        when(jerseyRequest.getEntityType()).thenReturn(String.class);
+        when(jerseyRequest.getHeaders()).thenReturn(new MultivaluedHashMap<>());
+
+        ClientResponse jerseyResponse = dropwizardApacheConnector.apply(jerseyRequest);
+        assertThat(jerseyResponse).isNotNull();
+
+        HttpEntityEnclosingRequestBase apacheRequest = (HttpEntityEnclosingRequestBase) apacheRequestCaptor.getValue();
+        assertThat(apacheRequest.getEntity()).isNotNull();
+        assertThat(apacheRequest.getEntity().isChunked()).isTrue();
+        assertThat(apacheRequest.getEntity().isRepeatable()).isTrue();
     }
 
     @Path("/")
