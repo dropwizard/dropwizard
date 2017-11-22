@@ -4,10 +4,17 @@
 Release Notes
 #############
 
+.. _rel-1.1.6:
+
+v1.1.6: Nov 2, 2017
+===================
+
+* Support fromString in FuzzyEnumParamConverter `#2161 <https://github.com/dropwizard/dropwizard/pull/2161>`_
+
 .. _rel-1.1.5:
 
-v1.1.5: Unreleased
-==================
+v1.1.5: Oct 17, 2017
+===================
 
 * Correctly set up SO_LINGER for the HTTP connector `#2176 <https://github.com/dropwizard/dropwizard/pull/2176>`_
 
