@@ -4,6 +4,8 @@
 Other Versions
 ##############
 
+- `1.2.0 <http://dropwizard.github.io/dropwizard/1.2.0/docs>`_
+- `1.1.6 <http://dropwizard.github.io/dropwizard/1.1.6/docs>`_
 - `1.1.4 <http://dropwizard.github.io/dropwizard/1.1.4/docs>`_
 - `1.1.3 <http://dropwizard.github.io/dropwizard/1.1.3/docs>`_
 - `1.1.2 <http://dropwizard.github.io/dropwizard/1.1.2/docs>`_
