@@ -172,7 +172,7 @@ public class DropwizardApacheConnector implements Connector {
      * @param jerseyRequest representation of an HTTP request in Jersey
      * @return a correct {@link org.apache.http.HttpEntity} implementation
      */
-    private HttpEntity getHttpEntity(ClientRequest jerseyRequest) {
+    protected HttpEntity getHttpEntity(ClientRequest jerseyRequest) {
         if (jerseyRequest.getEntity() == null) {
             return null;
         }
