@@ -66,7 +66,7 @@ public abstract class HibernateBundle<T extends Configuration> implements Config
         final PooledDataSourceFactory dbConfig = getDataSourceFactory(configuration);
         this.sessionFactory = requireNonNull(sessionFactoryFactory.build(this, environment, dbConfig,
             entities, name()));
-        registerUnitOfWorkListerIfAbsent(environment).registerSessionFactory(name(), sessionFactory);
+        registerUnitOfWorkListenerIfAbsent(environment).registerSessionFactory(name(), sessionFactory);
         environment.healthChecks().register(name(),
                                             new SessionFactoryHealthCheck(
                                                     environment.getHealthCheckExecutorService(),
@@ -75,7 +75,7 @@ public abstract class HibernateBundle<T extends Configuration> implements Config
                                                     dbConfig.getValidationQuery()));
     }
 
-    private UnitOfWorkApplicationListener registerUnitOfWorkListerIfAbsent(Environment environment) {
+    private UnitOfWorkApplicationListener registerUnitOfWorkListenerIfAbsent(Environment environment) {
         for (Object singleton : environment.jersey().getResourceConfig().getSingletons()) {
             if (singleton instanceof UnitOfWorkApplicationListener) {
                 return (UnitOfWorkApplicationListener) singleton;
