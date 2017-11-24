@@ -30,6 +30,7 @@ import java.io.OutputStream;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Future;
+import java.util.function.Predicate;
 
 import static com.google.common.base.MoreObjects.firstNonNull;
 
@@ -70,11 +71,22 @@ public class DropwizardApacheConnector implements Connector {
      */
     private final boolean chunkedEncodingEnabled;
 
+    /**
+     * Is the entity in a POST HTTP request can be reloaded from the input, so the request can be retried.
+     */
+    private final Predicate<ClientRequest> isEntityRepeatable;
+
     public DropwizardApacheConnector(CloseableHttpClient client, RequestConfig defaultRequestConfig,
                                      boolean chunkedEncodingEnabled) {
+        this(client, defaultRequestConfig, chunkedEncodingEnabled, clientRequest -> !chunkedEncodingEnabled);
+    }
+
+    public DropwizardApacheConnector(CloseableHttpClient client, RequestConfig defaultRequestConfig,
+                                     boolean chunkedEncodingEnabled, Predicate<ClientRequest> isEntityRepeatable) {
         this.client = client;
         this.defaultRequestConfig = defaultRequestConfig;
         this.chunkedEncodingEnabled = chunkedEncodingEnabled;
+        this.isEntityRepeatable = isEntityRepeatable;
     }
 
     /**
@@ -177,7 +189,7 @@ public class DropwizardApacheConnector implements Connector {
             return null;
         }
 
-        return chunkedEncodingEnabled ? new JerseyRequestHttpEntity(jerseyRequest) :
+        return chunkedEncodingEnabled ? new JerseyRequestHttpEntity(jerseyRequest, isEntityRepeatable) :
                 new BufferedJerseyRequestHttpEntity(jerseyRequest);
     }
 
@@ -220,9 +232,11 @@ public class DropwizardApacheConnector implements Connector {
     private static class JerseyRequestHttpEntity extends AbstractHttpEntity {
 
         private ClientRequest clientRequest;
+        private final Predicate<ClientRequest> isEntityRepeatable;
 
-        private JerseyRequestHttpEntity(ClientRequest clientRequest) {
+        private JerseyRequestHttpEntity(ClientRequest clientRequest, Predicate<ClientRequest> isEntityRepeatable) {
             this.clientRequest = clientRequest;
+            this.isEntityRepeatable = isEntityRepeatable;
             setChunked(true);
         }
 
@@ -231,7 +245,7 @@ public class DropwizardApacheConnector implements Connector {
          */
         @Override
         public boolean isRepeatable() {
-            return false;
+            return isEntityRepeatable.test(clientRequest);
         }
 
         /**
