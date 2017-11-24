@@ -175,7 +175,7 @@ public class DropwizardApacheConnector implements Connector {
      * @return a correct {@link org.apache.http.HttpEntity} implementation
      */
     @Nullable
-    private HttpEntity getHttpEntity(ClientRequest jerseyRequest) {
+    protected HttpEntity getHttpEntity(ClientRequest jerseyRequest) {
         if (jerseyRequest.getEntity() == null) {
             return null;
         }

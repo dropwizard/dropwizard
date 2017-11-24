@@ -420,13 +420,19 @@ public class JerseyClientBuilder {
         if (connectorProvider == null) {
             final ConfiguredCloseableHttpClient apacheHttpClient =
                     apacheHttpClientBuilder.buildWithDefaultRequestConfiguration(name);
-            connectorProvider = (client, runtimeConfig) -> new DropwizardApacheConnector(
-                    apacheHttpClient.getClient(),
-                    apacheHttpClient.getDefaultRequestConfig(),
-                    configuration.isChunkedEncodingEnabled());
+            connectorProvider = (client, runtimeConfig) -> createDropwizardApacheConnector(apacheHttpClient);
         }
         config.connectorProvider(connectorProvider);
 
         return config;
+    }
+
+    /**
+     * Builds {@link DropwizardApacheConnector} based on the configured Apache HTTP client
+     * as {@link ConfiguredCloseableHttpClient} and the chunked encoding configuration set by the user.
+     */
+    protected DropwizardApacheConnector createDropwizardApacheConnector(ConfiguredCloseableHttpClient configuredClient) {
+        return new DropwizardApacheConnector(configuredClient.getClient(), configuredClient.getDefaultRequestConfig(),
+                configuration.isChunkedEncodingEnabled());
     }
 }

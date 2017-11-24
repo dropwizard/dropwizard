@@ -12,7 +12,9 @@ import io.dropwizard.jersey.validation.Validators;
 import io.dropwizard.lifecycle.setup.ExecutorServiceBuilder;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
 import io.dropwizard.setup.Environment;
+import org.apache.http.HttpEntity;
 import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.entity.GzipCompressingEntity;
 import org.apache.http.client.ServiceUnavailableRetryStrategy;
 import org.apache.http.config.Registry;
 import org.apache.http.config.RegistryBuilder;
@@ -22,10 +24,12 @@ import org.apache.http.conn.socket.ConnectionSocketFactory;
 import org.apache.http.conn.socket.PlainConnectionSocketFactory;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.impl.client.DefaultHttpRequestRetryHandler;
 import org.apache.http.impl.client.SystemDefaultCredentialsProvider;
 import org.apache.http.impl.conn.SystemDefaultDnsResolver;
 import org.apache.http.impl.conn.SystemDefaultRoutePlanner;
+import org.glassfish.jersey.client.ClientRequest;
 import org.glassfish.jersey.client.rx.RxClient;
 import org.glassfish.jersey.client.rx.java8.RxCompletionStageInvoker;
 import org.junit.After;
@@ -339,6 +343,22 @@ public class JerseyClientBuilderTest {
         CredentialsProvider customCredentialsProvider = new SystemDefaultCredentialsProvider();
         builder.using(customCredentialsProvider);
         verify(apacheHttpClientBuilder).using(customCredentialsProvider);
+    }
+
+    @Test
+    public void apacheConnectorCanOverridden() {
+        assertThat(new JerseyClientBuilder(new MetricRegistry()) {
+            @Override
+            protected DropwizardApacheConnector createDropwizardApacheConnector(ConfiguredCloseableHttpClient configuredClient) {
+                return new DropwizardApacheConnector(configuredClient.getClient(), configuredClient.getDefaultRequestConfig(),
+                    true) {
+                    @Override
+                    protected HttpEntity getHttpEntity(ClientRequest jerseyRequest) {
+                        return new GzipCompressingEntity(new ByteArrayEntity((byte[]) jerseyRequest.getEntity()));
+                    }
+                };
+            }
+        }.using(environment).build("test")).isNotNull();
     }
 
     @Provider
