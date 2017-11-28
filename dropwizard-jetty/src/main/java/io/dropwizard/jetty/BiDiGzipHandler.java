@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -22,6 +23,7 @@ import java.util.Enumeration;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
+import java.util.zip.ZipException;
 
 /**
  * An extension of {@link GzipHandler} which decompresses gzip- and deflate-encoded request
@@ -87,18 +89,33 @@ public class BiDiGzipHandler extends GzipHandler {
 
     private WrappedServletRequest wrapDeflatedRequest(HttpServletRequest request) throws IOException {
         final Inflater inflater = buildInflater();
-        final InflaterInputStream input = new InflaterInputStream(request.getInputStream(), inflater, inputBufferSize) {
-            @Override
-            public void close() throws IOException {
-                super.close();
-                localInflater.set(inflater);
-            }
-        };
-        return new WrappedServletRequest(request, input);
+        try {
+            final InflaterInputStream input = new InflaterInputStream(request.getInputStream(), inflater, inputBufferSize) {
+                @Override
+                public void close() throws IOException {
+                    super.close();
+                    localInflater.set(inflater);
+                }
+            };
+            InputStream exceptionHandlingInput = new ZipExceptionHandlingInputStream(input, DEFLATE);
+            return new WrappedServletRequest(request, exceptionHandlingInput);
+        } catch (ZipException e) {
+            throw ZipExceptionHandlingInputStream.buildBadDataException(DEFLATE, e);
+        } catch (EOFException e) {
+            throw ZipExceptionHandlingInputStream.buildPrematureEofException(DEFLATE, e);
+        }
     }
 
     private WrappedServletRequest wrapGzippedRequest(HttpServletRequest request) throws IOException {
-        return new WrappedServletRequest(request, new GZIPInputStream(request.getInputStream(), inputBufferSize));
+        try {
+            GZIPInputStream input = new GZIPInputStream(request.getInputStream(), inputBufferSize);
+            InputStream exceptionHandlingInput = new ZipExceptionHandlingInputStream(input, GZIP);
+            return new WrappedServletRequest(request, exceptionHandlingInput);
+        } catch (ZipException e) {
+            throw ZipExceptionHandlingInputStream.buildBadDataException(GZIP, e);
+        } catch (EOFException e) {
+            throw ZipExceptionHandlingInputStream.buildPrematureEofException(GZIP, e);
+        }
     }
 
     private HttpServletRequest removeContentEncodingHeader(final HttpServletRequest request) {
