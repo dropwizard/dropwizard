@@ -3,7 +3,6 @@ package io.dropwizard.configuration;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import javax.annotation.Nullable;
 import javax.validation.Validator;
 
 /**

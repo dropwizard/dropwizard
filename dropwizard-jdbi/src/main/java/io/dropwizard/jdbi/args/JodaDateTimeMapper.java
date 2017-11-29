@@ -58,7 +58,8 @@ public class JodaDateTimeMapper implements ResultColumnMapper<DateTime> {
         if (timestamp == null) {
             return null;
         }
-        return new DateTime(timestamp.getTime());    }
+        return new DateTime(timestamp.getTime());
+    }
 
     @Override
     @Nullable
@@ -68,5 +69,6 @@ public class JodaDateTimeMapper implements ResultColumnMapper<DateTime> {
         if (timestamp == null) {
             return null;
         }
-        return new DateTime(timestamp.getTime());    }
+        return new DateTime(timestamp.getTime());
+    }
 }

@@ -18,8 +18,7 @@ import java.util.Objects;
             name = "com.example.helloworld.core.Person.findAll",
             query = "SELECT p FROM Person p"
         )
-    }
-)
+    })
 public class Person {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

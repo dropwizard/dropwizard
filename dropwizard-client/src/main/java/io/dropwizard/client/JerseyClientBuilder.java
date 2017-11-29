@@ -11,7 +11,6 @@ import io.dropwizard.jersey.validation.HibernateValidationFeature;
 import io.dropwizard.jersey.validation.Validators;
 import io.dropwizard.lifecycle.Managed;
 import io.dropwizard.setup.Environment;
-import io.dropwizard.util.Duration;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.HttpRequestRetryHandler;
 import org.apache.http.client.ServiceUnavailableRetryStrategy;
