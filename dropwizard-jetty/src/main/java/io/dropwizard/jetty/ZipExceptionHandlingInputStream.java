@@ -12,19 +12,20 @@ import org.eclipse.jetty.http.BadMessageException;
  * This InputStream is used to decorate a GZIPInputStream or InflaterInputStream, intercept decompression
  * exceptions, and rethrow them as BadMessageExceptions
  */
-class ZipExceptionHandlingInputStream extends FilterInputStream {
+class ZipExceptionHandlingInputStream extends InputStream {
 
+    private final InputStream delegate;
     private final String format;
 
     ZipExceptionHandlingInputStream(InputStream in, String format) {
-        super(in);
+        this.delegate = in;
         this.format = format;
     }
 
     @Override
     public int read(byte[] b, int off, int len) throws IOException {
         try {
-            return super.read(b, off, len);
+            return delegate.read(b, off, len);
         } catch (IOException e) {
             throw handleException(format, e);
         }
@@ -33,7 +34,7 @@ class ZipExceptionHandlingInputStream extends FilterInputStream {
     @Override
     public int read() throws IOException {
         try {
-            return super.read();
+            return delegate.read();
         } catch (IOException e) {
             throw handleException(format, e);
         }
@@ -42,7 +43,7 @@ class ZipExceptionHandlingInputStream extends FilterInputStream {
     @Override
     public long skip(long n) throws IOException {
         try {
-            return super.skip(n);
+            return delegate.skip(n);
         } catch (IOException e) {
             throw handleException(format, e);
         }
@@ -51,7 +52,7 @@ class ZipExceptionHandlingInputStream extends FilterInputStream {
     @Override
     public int available() throws IOException {
         try {
-            return super.available();
+            return delegate.available();
         } catch (IOException e) {
             throw handleException(format, e);
         }
@@ -60,16 +61,26 @@ class ZipExceptionHandlingInputStream extends FilterInputStream {
     @Override
     public void close() throws IOException {
         try {
-            super.close();
+            delegate.close();
         } catch (IOException e) {
             throw handleException(format, e);
         }
     }
 
     @Override
+    public synchronized void mark(int readlimit) {
+        delegate.mark(readlimit);
+    }
+
+    @Override
+    public boolean markSupported() {
+        return delegate.markSupported();
+    }
+
+    @Override
     synchronized public void reset() throws IOException {
         try {
-            super.reset();
+            delegate.reset();
         } catch (IOException e) {
             throw handleException(format, e);
         }

@@ -9,6 +9,7 @@ import java.util.zip.ZipException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
@@ -75,6 +76,21 @@ public class ZipExceptionHandlingInputStreamTest {
         public void testClose() throws Exception {
             in.close();
             verify(delegate).close();
+            verifyNoMoreInteractions(delegate);
+        }
+
+        @Test
+        public void testMark() {
+            in.mark(42);
+            verify(delegate).mark(42);
+            verifyNoMoreInteractions(delegate);
+        }
+
+        @Test
+        public void testMarkSupported() {
+            doReturn(true).when(delegate).markSupported();
+            assertTrue(in.markSupported());
+            verify(delegate).markSupported();
             verifyNoMoreInteractions(delegate);
         }
 
