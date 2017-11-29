@@ -25,10 +25,8 @@ class ZipExceptionHandlingInputStream extends FilterInputStream {
     public int read(byte[] b, int off, int len) throws IOException {
         try {
             return super.read(b, off, len);
-        } catch (ZipException e) {
-            throw buildBadDataException(format, e);
-        } catch (EOFException e) {
-            throw buildPrematureEofException(format, e);
+        } catch (IOException e) {
+            throw handleException(format, e);
         }
     }
 
@@ -36,10 +34,8 @@ class ZipExceptionHandlingInputStream extends FilterInputStream {
     public int read() throws IOException {
         try {
             return super.read();
-        } catch (ZipException e) {
-            throw buildBadDataException(format, e);
-        } catch (EOFException e) {
-            throw buildPrematureEofException(format, e);
+        } catch (IOException e) {
+            throw handleException(format, e);
         }
     }
 
@@ -47,10 +43,8 @@ class ZipExceptionHandlingInputStream extends FilterInputStream {
     public long skip(long n) throws IOException {
         try {
             return super.skip(n);
-        } catch (ZipException e) {
-            throw buildBadDataException(format, e);
-        } catch (EOFException e) {
-            throw buildPrematureEofException(format, e);
+        } catch (IOException e) {
+            throw handleException(format, e);
         }
     }
 
@@ -58,10 +52,8 @@ class ZipExceptionHandlingInputStream extends FilterInputStream {
     public int available() throws IOException {
         try {
             return super.available();
-        } catch (ZipException e) {
-            throw buildBadDataException(format, e);
-        } catch (EOFException e) {
-            throw buildPrematureEofException(format, e);
+        } catch (IOException e) {
+            throw handleException(format, e);
         }
     }
 
@@ -69,10 +61,8 @@ class ZipExceptionHandlingInputStream extends FilterInputStream {
     public void close() throws IOException {
         try {
             super.close();
-        } catch (ZipException e) {
-            throw buildBadDataException(format, e);
-        } catch (EOFException e) {
-            throw buildPrematureEofException(format, e);
+        } catch (IOException e) {
+            throw handleException(format, e);
         }
     }
 
@@ -80,18 +70,26 @@ class ZipExceptionHandlingInputStream extends FilterInputStream {
     synchronized public void reset() throws IOException {
         try {
             super.reset();
-        } catch (ZipException e) {
-            throw buildBadDataException(format, e);
-        } catch (EOFException e) {
-            throw buildPrematureEofException(format, e);
+        } catch (IOException e) {
+            throw handleException(format, e);
         }
     }
 
-    static BadMessageException buildBadDataException(String format, Throwable cause) {
+    static BadMessageException handleException(String format, IOException e) throws IOException {
+        if (e instanceof ZipException) {
+            return buildBadDataException(format, e);
+        } else if (e instanceof EOFException) {
+            return buildPrematureEofException(format, e);
+        } else {
+            throw e;
+        }
+    }
+
+    private static BadMessageException buildBadDataException(String format, Throwable cause) {
         return new BadMessageException(400, "Invalid " + format + " data in request", cause);
     }
 
-    static BadMessageException buildPrematureEofException(String format, Throwable cause) {
+    private static BadMessageException buildPrematureEofException(String format, Throwable cause) {
         return new BadMessageException(400, "Premature end of " + format + " data", cause);
     }
 }

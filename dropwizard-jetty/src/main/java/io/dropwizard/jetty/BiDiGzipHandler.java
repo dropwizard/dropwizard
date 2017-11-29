@@ -98,10 +98,8 @@ public class BiDiGzipHandler extends GzipHandler {
                 }
             };
             return new WrappedServletRequest(request, new ZipExceptionHandlingInputStream(input, DEFLATE));
-        } catch (ZipException e) {
-            throw ZipExceptionHandlingInputStream.buildBadDataException(DEFLATE, e);
-        } catch (EOFException e) {
-            throw ZipExceptionHandlingInputStream.buildPrematureEofException(DEFLATE, e);
+        } catch (IOException e) {
+            throw ZipExceptionHandlingInputStream.handleException(DEFLATE, e);
         }
     }
 
@@ -109,10 +107,8 @@ public class BiDiGzipHandler extends GzipHandler {
         try {
             final GZIPInputStream input = new GZIPInputStream(request.getInputStream(), inputBufferSize);
             return new WrappedServletRequest(request, new ZipExceptionHandlingInputStream(input, GZIP));
-        } catch (ZipException e) {
-            throw ZipExceptionHandlingInputStream.buildBadDataException(GZIP, e);
-        } catch (EOFException e) {
-            throw ZipExceptionHandlingInputStream.buildPrematureEofException(GZIP, e);
+        } catch (IOException e) {
+            throw ZipExceptionHandlingInputStream.handleException(GZIP, e);
         }
     }
 
