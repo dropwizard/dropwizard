@@ -1,13 +1,19 @@
 package io.dropwizard.jetty;
 
 import java.io.EOFException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.zip.ZipException;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
@@ -83,10 +89,13 @@ public class ZipExceptionHandlingInputStreamTest {
 
     @RunWith(Parameterized.class)
     public static class ExceptionTest {
+
         @Parameterized.Parameters(name = "{0}")
         public static Collection<Object[]> parameters() {
             return Arrays.asList(new Object[][] {
-                {new EOFException()}, {new ZipException()}
+                {new EOFException(), BadMessageException.class},
+                {new ZipException(), BadMessageException.class},
+                {new IOException(), IOException.class},
             });
         }
 
@@ -94,45 +103,90 @@ public class ZipExceptionHandlingInputStreamTest {
         private final ZipExceptionHandlingInputStream in = new ZipExceptionHandlingInputStream(delegate, "gzip");
 
         private final Exception t;
+        private final Class<? extends Exception> expected;
 
-        public ExceptionTest(Exception t) {
+        public ExceptionTest(Exception t, Class<? extends Exception> expected) {
             this.t = t;
+            this.expected = expected;
         }
 
-        @Test(expected = BadMessageException.class)
+        @Test
         public void testReadBytes() throws Exception {
             doThrow(t).when(delegate).read(Mockito.any(byte[].class), anyInt(), anyInt());
-            in.read(new byte[32], 0, 32);
+            byte[] buffer = new byte[20];
+            try {
+                in.read(buffer, 4, 16);
+                fail();
+            } catch (Exception e) {
+                assertThat(e).isInstanceOf(expected);
+                verify(delegate).read(same(buffer), eq(4), eq(16));
+                verifyNoMoreInteractions(delegate);
+            }
         }
 
-        @Test(expected = BadMessageException.class)
+        @Test
         public void testReadByte() throws Exception {
             doThrow(t).when(delegate).read();
-            in.read();
+            try {
+                in.read();
+                fail();
+            } catch (Exception e) {
+                assertThat(e).isInstanceOf(expected);
+                verify(delegate).read();
+                verifyNoMoreInteractions(delegate);
+            }
         }
 
-        @Test(expected = BadMessageException.class)
+        @Test
         public void testSkip() throws Exception {
-            doThrow(t).when(delegate).skip(42L);
-            in.skip(42L);
+            doThrow(t).when(delegate).skip(anyLong());
+            try {
+                in.skip(42L);
+                fail();
+            } catch (Exception e) {
+                assertThat(e).isInstanceOf(expected);
+                verify(delegate).skip(42L);
+                verifyNoMoreInteractions(delegate);
+            }
         }
 
-        @Test(expected = BadMessageException.class)
+        @Test
         public void testAvailable() throws Exception {
             doThrow(t).when(delegate).available();
-            in.available();
+            try {
+                in.available();
+                fail();
+            } catch (Exception e) {
+                assertThat(e).isInstanceOf(expected);
+                verify(delegate).available();
+                verifyNoMoreInteractions(delegate);
+            }
         }
 
-        @Test(expected = BadMessageException.class)
+        @Test
         public void testClose() throws Exception {
             doThrow(t).when(delegate).close();
-            in.close();
+            try {
+                in.close();
+                fail();
+            } catch (Exception e) {
+                assertThat(e).isInstanceOf(expected);
+                verify(delegate).close();
+                verifyNoMoreInteractions(delegate);
+            }
         }
 
-        @Test(expected = BadMessageException.class)
+        @Test
         public void testReset() throws Exception {
             doThrow(t).when(delegate).reset();
-            in.reset();
+            try {
+                in.reset();
+                fail();
+            } catch (Exception e) {
+                assertThat(e).isInstanceOf(expected);
+                verify(delegate).reset();
+                verifyNoMoreInteractions(delegate);
+            }
         }
     }
 }
