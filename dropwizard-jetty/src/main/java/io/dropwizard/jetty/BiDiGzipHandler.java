@@ -87,18 +87,27 @@ public class BiDiGzipHandler extends GzipHandler {
 
     private WrappedServletRequest wrapDeflatedRequest(HttpServletRequest request) throws IOException {
         final Inflater inflater = buildInflater();
-        final InflaterInputStream input = new InflaterInputStream(request.getInputStream(), inflater, inputBufferSize) {
-            @Override
-            public void close() throws IOException {
-                super.close();
-                localInflater.set(inflater);
-            }
-        };
-        return new WrappedServletRequest(request, input);
+        try {
+            final InflaterInputStream input = new InflaterInputStream(request.getInputStream(), inflater, inputBufferSize) {
+                @Override
+                public void close() throws IOException {
+                    super.close();
+                    localInflater.set(inflater);
+                }
+            };
+            return new WrappedServletRequest(request, new ZipExceptionHandlingInputStream(input, DEFLATE));
+        } catch (IOException e) {
+            throw ZipExceptionHandlingInputStream.handleException(DEFLATE, e);
+        }
     }
 
     private WrappedServletRequest wrapGzippedRequest(HttpServletRequest request) throws IOException {
-        return new WrappedServletRequest(request, new GZIPInputStream(request.getInputStream(), inputBufferSize));
+        try {
+            final GZIPInputStream input = new GZIPInputStream(request.getInputStream(), inputBufferSize);
+            return new WrappedServletRequest(request, new ZipExceptionHandlingInputStream(input, GZIP));
+        } catch (IOException e) {
+            throw ZipExceptionHandlingInputStream.handleException(GZIP, e);
+        }
     }
 
     private HttpServletRequest removeContentEncodingHeader(final HttpServletRequest request) {
