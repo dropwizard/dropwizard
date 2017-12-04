@@ -10,12 +10,17 @@ import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.test.JerseyTest;
 import org.junit.Test;
 
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Application;
+import javax.ws.rs.core.Form;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
@@ -50,6 +55,12 @@ public class FreemarkerViewRendererTest extends JerseyTest {
         @Path("/error")
         public ErrorView showError() {
             return new ErrorView();
+        }
+
+        @POST
+        @Path("/auto-escaping")
+        public AutoEscapingView showUserInputSafely(@FormParam("input") String userInput) {
+            return new AutoEscapingView(userInput);
         }
     }
 
@@ -105,5 +116,15 @@ public class FreemarkerViewRendererTest extends JerseyTest {
             assertThat(e.getResponse().readEntity(String.class))
                     .isEqualTo(ViewRenderExceptionMapper.TEMPLATE_ERROR_MSG);
         }
+    }
+
+    @Test
+    public void rendersViewsUsingUnsafeInputWithAutoEscapingEnabled() throws Exception {
+        final String unsafe = "<script>alert(\"hello\")</script>";
+        final Response response = target("/test/auto-escaping")
+            .request().post(Entity.form(new Form("input", unsafe)));
+        assertThat(response.getStatus()).isEqualTo(Response.Status.OK.getStatusCode());
+        assertThat(response.getHeaderString("content-type")).isEqualToIgnoringCase(MediaType.TEXT_HTML);
+        assertThat(response.readEntity(String.class)).doesNotContain(unsafe);
     }
 }
