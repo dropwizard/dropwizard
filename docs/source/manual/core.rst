@@ -322,6 +322,49 @@ connection similar to pre-Dropwizard 1.0.
 
 .. _man-core-bootstrapping:
 
+Since the version 9.4.8 (Dropwizard 1.2.3) Jetty supports native SSL via Google's `Conscrypt`_ which uses `BoringSSL`_
+(Google's fork of OpenSSL) for handling cryptography. You can enable it in Dropwizard by registering the provider
+in your app:
+
+.. code-block:: xml
+
+    <dependency>
+        <groupId>org.conscrypt</groupId>
+        <artifactId>conscrypt-openjdk-uber</artifactId>
+        <version>${conscrypt.version}</version>
+    </dependency>
+
+.. code-block:: java
+
+    static {
+        Security.addProvider(new OpenSSLProvider());
+    }
+
+and setting the JCE provider in the configuration:
+
+.. code-block:: yaml
+
+    server:
+      type: simple
+      connector:
+        type: https
+        jceProvider: Conscrypt
+
+For HTTP/2 servers you need to add an ALPN Conscrypt provider as a dependency.
+
+.. code-block:: xml
+
+    <dependency>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-alpn-conscrypt-server</artifactId>
+        <version>${jetty.version}</version>
+        <scope>test</scope>
+    </dependency>
+
+.. _`Conscrypt`: https://github.com/google/conscrypt
+.. _`BoringSSL`: https://github.com/google/boringssl
+
+
 Bootstrapping
 =============
 
