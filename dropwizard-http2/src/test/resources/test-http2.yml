@@ -4,6 +4,7 @@ server:
     type: h2
     port: 0
     keyStorePassword: http2_server
+    trustStorePassword: http2_client
     validateCerts: false
   applicationContextPath: /api
   adminContextPath: /admin

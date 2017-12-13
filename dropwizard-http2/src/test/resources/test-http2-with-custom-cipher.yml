@@ -4,6 +4,7 @@ server:
     type: h2
     port: 0
     keyStorePassword: http2_server
+    trustStorePassword: http2_client
     validateCerts: false
     supportedCipherSuites:
       - 'TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384'
