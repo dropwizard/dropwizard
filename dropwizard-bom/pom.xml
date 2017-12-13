@@ -245,7 +245,7 @@
             </dependency>
             <dependency>
                 <groupId>org.eclipse.jetty</groupId>
-                <artifactId>jetty-alpn-server</artifactId>
+                <artifactId>jetty-alpn-openjdk8-server</artifactId>
                 <version>${jetty.version}</version>
             </dependency>
             <dependency>
@@ -266,6 +266,11 @@
             <dependency>
                 <groupId>org.eclipse.jetty.http2</groupId>
                 <artifactId>http2-http-client-transport</artifactId>
+                <version>${jetty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-alpn-openjdk8-client</artifactId>
                 <version>${jetty.version}</version>
             </dependency>
             <dependency>
