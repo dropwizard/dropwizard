@@ -71,6 +71,12 @@
         </dependency>
 
         <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-alpn-openjdk8-client</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
             <groupId>io.dropwizard</groupId>
             <artifactId>dropwizard-testing</artifactId>
             <scope>test</scope>
@@ -78,7 +84,7 @@
 
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-alpn-server</artifactId>
+            <artifactId>jetty-alpn-openjdk8-server</artifactId>
         </dependency>
 
         <!-- This needs to be on your JVM's bootpath for HTTP2 to work with ALPN protocol
