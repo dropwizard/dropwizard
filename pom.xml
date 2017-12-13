@@ -165,7 +165,7 @@
         <developer>
             <name>Artem Prigoda</name>
             <email>prigoda.artem@ya.ru</email>
-            <timezone>Europe/Moscow</timezone>
+            <timezone>Europe/Berlin</timezone>
             <roles>
                 <role>committer</role>
             </roles>
