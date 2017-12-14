@@ -283,6 +283,11 @@
                 <version>${jetty.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-alpn-conscrypt-server</artifactId>
+                <version>${jetty.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.eclipse.jetty.toolchain.setuid</groupId>
                 <artifactId>jetty-setuid-java</artifactId>
                 <version>1.0.3</version>
