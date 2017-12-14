@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
  * the annotated method.
  */
 @Documented
-@Target({ElementType.TYPE, ElementType.METHOD})
+@Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface CacheControl {
     /**
