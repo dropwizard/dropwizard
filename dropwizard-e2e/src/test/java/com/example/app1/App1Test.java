@@ -14,6 +14,10 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.Response;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -48,6 +52,26 @@ public class App1Test {
 
         final Response response = client.target(url).request().get();
         assertThat(response.getStatus()).isEqualTo(404);
+    }
+
+    @Test
+    public void earlyEofTest() throws IOException, InterruptedException {
+        // Only eof test so we ensure it's false before test
+        ((App1)RULE.getApplication()).wasEofExceptionHit = false;
+
+        final URL url = new URL(String.format("http://localhost:%d/mapper", RULE.getLocalPort()));
+        final HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestMethod("POST");
+        conn.setRequestProperty("Content-Type", "application/json");
+        conn.setDoOutput(true);
+        conn.setFixedLengthStreamingMode(100000);
+
+        conn.getOutputStream().write("{".getBytes(StandardCharsets.UTF_8));
+        conn.disconnect();
+
+        // Wait a bit for the app to process the request.
+        Thread.sleep(500);
+        assertThat(((App1)RULE.getApplication()).wasEofExceptionHit).isTrue();
     }
 
     @Test
