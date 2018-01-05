@@ -1025,6 +1025,55 @@ appender with different configurations:
 
 .. _man-core-logging-http-config:
 
+JSON Log Format
+---------------
+
+You may prefer to produce logs in a structured format such as JSON, so it can be processed by analytics or BI software.
+For that, add a module to the project for supporting JSON layouts:
+
+.. code-block:: xml
+
+    <dependency>
+        <groupId>io.dropwizard</groupId>
+        <artifactId>dropwizard-json-logging</artifactId>
+        <version>${dropwizard.version}</version>
+    </dependency>
+
+Setup the JSON layout in the configuration file.
+
+For general logging:
+
+.. code-block:: yaml
+
+    logging:
+      appenders:
+        - type: console
+          layout:
+            type: json
+
+The ``json`` layout will produces the following log message:
+
+.. code-block:: json
+
+    {"timestamp":1515002688000, "level":"INFO","logger":"org.eclipse.jetty.server.Server","thread":"main","message":"Started @6505ms"}
+
+For request logging:
+
+.. code-block:: yaml
+
+    server:
+      requestLog:
+        appenders:
+          - type: console
+            layout:
+              type: access-json
+
+The ``access-json`` layout will produces the following log message:
+
+.. code-block:: json
+
+    {"timestamp":1515002688000, "method":"GET","uri":"/hello-world", "status":200, "protocol":"HTTP/1.1","contentLength":37,"remoteAddress":"127.0.0.1","requestTime":5, "userAgent":"Mozilla/5.0"}
+
 Logging Configuration via HTTP
 ------------------------------
 

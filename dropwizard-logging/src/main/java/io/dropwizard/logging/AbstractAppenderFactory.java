@@ -6,13 +6,20 @@ import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.AsyncAppenderBase;
 import ch.qos.logback.core.Context;
+import ch.qos.logback.core.LayoutBase;
 import ch.qos.logback.core.pattern.PatternLayoutBase;
 import ch.qos.logback.core.spi.DeferredProcessingAware;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
+import io.dropwizard.jackson.Jackson;
 import io.dropwizard.logging.async.AsyncAppenderFactory;
 import io.dropwizard.logging.filter.FilterFactory;
+import io.dropwizard.logging.layout.DiscoverableLayoutFactory;
 import io.dropwizard.logging.layout.LayoutFactory;
 
 import javax.annotation.Nullable;
@@ -91,6 +98,9 @@ public abstract class AbstractAppenderFactory<E extends DeferredProcessingAware>
 
     @Nullable
     protected String logFormat;
+
+    @Nullable
+    protected DiscoverableLayoutFactory layout;
 
     @NotNull
     protected TimeZone timeZone = TimeZone.getTimeZone("UTC");
@@ -189,6 +199,15 @@ public abstract class AbstractAppenderFactory<E extends DeferredProcessingAware>
         this.neverBlock = neverBlock;
     }
 
+    @Nullable
+    public DiscoverableLayoutFactory getLayout() {
+        return layout;
+    }
+
+    public void setLayout(@Nullable DiscoverableLayoutFactory layout) {
+        this.layout = layout;
+    }
+
     protected Appender<E> wrapAsync(Appender<E> appender, AsyncAppenderFactory<E> asyncAppenderFactory) {
         return wrapAsync(appender, asyncAppenderFactory, appender.getContext());
     }
@@ -208,12 +227,20 @@ public abstract class AbstractAppenderFactory<E extends DeferredProcessingAware>
         return asyncAppender;
     }
 
-    protected PatternLayoutBase<E> buildLayout(LoggerContext context, LayoutFactory<E> layoutFactory) {
-        final PatternLayoutBase<E> formatter = layoutFactory.build(context, timeZone);
-        if (!Strings.isNullOrEmpty(logFormat)) {
-            formatter.setPattern(logFormat);
+    @SuppressWarnings("unchecked")
+    protected LayoutBase<E> buildLayout(LoggerContext context, LayoutFactory<E> defaultLayoutFactory) {
+        final LayoutBase<E> layoutBase;
+        if (layout == null) {
+            final PatternLayoutBase<E> patternLayoutBase = defaultLayoutFactory.build(context, timeZone);
+            if (!Strings.isNullOrEmpty(logFormat)) {
+                patternLayoutBase.setPattern(logFormat);
+            }
+            layoutBase = patternLayoutBase;
+        } else {
+            layoutBase = layout.build(context, timeZone);
         }
-        formatter.start();
-        return formatter;
+
+        layoutBase.start();
+        return layoutBase;
     }
 }

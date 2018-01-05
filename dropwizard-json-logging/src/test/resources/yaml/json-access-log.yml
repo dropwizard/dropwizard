@@ -1,0 +1,29 @@
+type: console
+layout:
+  type: access-json
+  timestampFormat: "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
+  prettyPrint: false
+  appendLineSeparator: true
+  includes:
+    - remoteUser
+    - statusCode
+    - method
+    - protocol
+    - requestUrl
+    - remoteHost
+    - requestParameters
+    - requestContent
+    - userAgent
+    - timestamp
+  responseHeaders:
+    - X-Request-Id
+  requestHeaders:
+    - User-Agent
+    - X-Request-Id
+  customFieldNames:
+    statusCode: status_code
+    userAgent: user_agent
+  additionalFields:
+    service-name: shipping-service
+    service-version: 1.2.3
+

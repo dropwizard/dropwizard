@@ -51,6 +51,7 @@
         <module>dropwizard-http2</module>
         <module>dropwizard-request-logging</module>
         <module>dropwizard-e2e</module>
+        <module>dropwizard-json-logging</module>
     </modules>
 
     <properties>
