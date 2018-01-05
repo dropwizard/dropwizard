@@ -39,7 +39,6 @@
         <module>dropwizard-configuration</module>
         <module>dropwizard-logging</module>
         <module>dropwizard-metrics</module>
-        <module>dropwizard-metrics-ganglia</module>
         <module>dropwizard-metrics-graphite</module>
         <module>dropwizard-jersey</module>
         <module>dropwizard-jetty</module>
