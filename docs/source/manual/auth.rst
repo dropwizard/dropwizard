@@ -377,6 +377,9 @@ Note that with the above example, only *authentication* is configured. If you al
 
 * Make sure you add ``Authorizers`` when you build your ``AuthFilters``.
 
+* Make sure any custom ``AuthFilter`` you add has the ``@Priority(Priorities.AUTHENTICATION)`` annotation set
+(otherwise authorization will be tested before the request's security context is properly set and will fail).
+
 * Annotate the resource *method* with the authorization annotation. Unlike the note earlier in
   this document that says authorization annotations are allowed on classes, with this
   poly feature, currently that is not supported. The annotation MUST go on the resource *method*
