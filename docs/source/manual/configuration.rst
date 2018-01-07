@@ -746,6 +746,60 @@ neverBlock                   false                                  Prevent the 
 ============================ =====================================  ==================================================================================================
 
 
+.. _man-configuration-logging-tcp:
+
+TCP
+------
+
+.. code-block:: yaml
+
+    logging:
+      level: INFO
+      appenders:
+        - type: tcp
+          host: localhost
+          port: 4560
+          connectionTimeout: 500ms
+          immediateFlush: true
+          sendBufferSize: 8KB
+
+
+============================ =============  ==================================================================
+Name                         Default        Description
+============================ =============  ==================================================================
+host                         localhost      The hostname of the TCP server.
+port                         4560           The port on which the TCP server is listening.
+connectionTimeout            500ms          The timeout to connect to the TCP server.
+immediateFlush               true           If set to true, log events will be immediately send to the server
+                                            Immediate flushing is safer, but it degrades logging throughput.
+sendBufferSize               8KB            The buffer size of the underlying SocketAppender.
+                                            Takes into effect if immediateFlush is disabled.
+============================ =============  ==================================================================
+
+
+.. _man-configuration-logging-udp:
+
+UDP
+------
+
+.. code-block:: yaml
+
+    logging:
+      level: INFO
+      appenders:
+        - type: udp
+          host: localhost
+          port: 514
+
+
+============================ =============  ==================================================================
+Name                         Default        Description
+============================ =============  ==================================================================
+host                         localhost      The hostname of the UDP server.
+port                         514            The port on which the UDP server is listening.
+============================ =============  ==================================================================
+
+
 .. _man-configuration-logging-filter-factories:
 
 FilterFactories
