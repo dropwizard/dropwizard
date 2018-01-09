@@ -27,7 +27,7 @@
         <jackson.version>2.9.3</jackson.version>
         <jetty.version>9.4.8.v20171121</jetty.version>
         <servlet.version>3.0.0.v201112011016</servlet.version>
-        <metrics3.version>3.2.5</metrics3.version>
+        <metrics4.version>4.0.2</metrics4.version>
         <slf4j.version>1.7.25</slf4j.version>
         <logback.version>1.2.3</logback.version>
         <h2.version>1.4.196</h2.version>
@@ -335,12 +335,12 @@
             <dependency>
                 <groupId>io.dropwizard.metrics</groupId>
                 <artifactId>metrics-annotation</artifactId>
-                <version>${metrics3.version}</version>
+                <version>${metrics4.version}</version>
             </dependency>
             <dependency>
                 <groupId>io.dropwizard.metrics</groupId>
                 <artifactId>metrics-core</artifactId>
-                <version>${metrics3.version}</version>
+                <version>${metrics4.version}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.slf4j</groupId>
@@ -351,7 +351,18 @@
             <dependency>
                 <groupId>io.dropwizard.metrics</groupId>
                 <artifactId>metrics-jvm</artifactId>
-                <version>${metrics3.version}</version>
+                <version>${metrics4.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-api</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>io.dropwizard.metrics</groupId>
+                <artifactId>metrics-jmx</artifactId>
+                <version>${metrics4.version}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.slf4j</groupId>
@@ -362,7 +373,7 @@
             <dependency>
                 <groupId>io.dropwizard.metrics</groupId>
                 <artifactId>metrics-servlets</artifactId>
-                <version>${metrics3.version}</version>
+                <version>${metrics4.version}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>com.fasterxml.jackson.core</groupId>
@@ -377,7 +388,7 @@
             <dependency>
                 <groupId>io.dropwizard.metrics</groupId>
                 <artifactId>metrics-healthchecks</artifactId>
-                <version>${metrics3.version}</version>
+                <version>${metrics4.version}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.slf4j</groupId>
@@ -388,7 +399,7 @@
             <dependency>
                 <groupId>io.dropwizard.metrics</groupId>
                 <artifactId>metrics-logback</artifactId>
-                <version>${metrics3.version}</version>
+                <version>${metrics4.version}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>ch.qos.logback</groupId>
@@ -403,7 +414,7 @@
             <dependency>
                 <groupId>io.dropwizard.metrics</groupId>
                 <artifactId>metrics-jersey2</artifactId>
-                <version>${metrics3.version}</version>
+                <version>${metrics4.version}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.glassfish.jersey.core</groupId>
@@ -418,7 +429,7 @@
             <dependency>
                 <groupId>io.dropwizard.metrics</groupId>
                 <artifactId>metrics-jetty9</artifactId>
-                <version>${metrics3.version}</version>
+                <version>${metrics4.version}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.eclipse.jetty</groupId>
@@ -433,7 +444,7 @@
             <dependency>
                 <groupId>io.dropwizard.metrics</groupId>
                 <artifactId>metrics-httpclient</artifactId>
-                <version>${metrics3.version}</version>
+                <version>${metrics4.version}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>commons-logging</groupId>
@@ -452,7 +463,7 @@
             <dependency>
                 <groupId>io.dropwizard.metrics</groupId>
                 <artifactId>metrics-jdbi</artifactId>
-                <version>${metrics3.version}</version>
+                <version>${metrics4.version}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.jdbi</groupId>
@@ -466,19 +477,8 @@
             </dependency>
             <dependency>
                 <groupId>io.dropwizard.metrics</groupId>
-                <artifactId>metrics-ganglia</artifactId>
-                <version>${metrics3.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.slf4j</groupId>
-                        <artifactId>slf4j-api</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>io.dropwizard.metrics</groupId>
                 <artifactId>metrics-graphite</artifactId>
-                <version>${metrics3.version}</version>
+                <version>${metrics4.version}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.slf4j</groupId>
