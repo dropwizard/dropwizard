@@ -80,7 +80,7 @@ Configuration
 =============
 
 Dropwizard provides a number of built-in configuration parameters. They are
-well documented in the `example project's configuration`__ and :ref:`configuration refererence <man-configuration>`.
+well documented in the `example project's configuration`__ and :ref:`configuration reference <man-configuration>`.
 
 .. __: https://github.com/dropwizard/dropwizard/blob/master/dropwizard-example/example.yml
 
