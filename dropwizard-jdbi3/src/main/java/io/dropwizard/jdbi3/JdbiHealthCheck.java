@@ -9,24 +9,24 @@ import org.jdbi.v3.core.Jdbi;
 import java.util.concurrent.ExecutorService;
 
 public class JdbiHealthCheck extends HealthCheck {
-    private final Jdbi dbi;
+    private final Jdbi jdbi;
     private final String validationQuery;
     private final TimeBoundHealthCheck timeBoundHealthCheck;
 
-    public JdbiHealthCheck(ExecutorService executorService, Duration duration, Jdbi dbi, String validationQuery) {
-        this.dbi = dbi;
+    public JdbiHealthCheck(ExecutorService executorService, Duration duration, Jdbi jdbi, String validationQuery) {
+        this.jdbi = jdbi;
         this.validationQuery = validationQuery;
         this.timeBoundHealthCheck = new TimeBoundHealthCheck(executorService, duration);
     }
 
-    public JdbiHealthCheck(Jdbi dbi, String validationQuery) {
-        this(MoreExecutors.newDirectExecutorService(), Duration.seconds(0), dbi, validationQuery);
+    public JdbiHealthCheck(Jdbi jdbi, String validationQuery) {
+        this(MoreExecutors.newDirectExecutorService(), Duration.seconds(0), jdbi, validationQuery);
     }
 
     @Override
     protected Result check() throws Exception {
         return timeBoundHealthCheck.check(() ->
-            dbi.withHandle((handle) -> {
+            jdbi.withHandle((handle) -> {
                 handle.execute(validationQuery);
                 return Result.healthy();
             })

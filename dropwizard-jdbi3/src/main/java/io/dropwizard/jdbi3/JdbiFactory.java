@@ -23,9 +23,10 @@ public class JdbiFactory {
     }
 
     /**
-     * Build a fully configured DBI instance managed by the DropWizard lifecycle
+     * Build a fully configured {@link Jdbi} instance managed by the DropWizard lifecycle
      * with the configured health check; this method should not be overridden
-     * (instead, override {@link #newInstance(ManagedDataSource)})
+     * (instead, override {@link #newInstance(ManagedDataSource)} and
+     * {@link #configure(Jdbi, PooledDataSourceFactory)})
      *
      * @param environment
      * @param configuration
@@ -43,9 +44,10 @@ public class JdbiFactory {
     }
 
     /**
-     * Build a fully configured DBI instance managed by the DropWizard lifecycle
+     * Build a fully configured {@link Jdbi} instance managed by the DropWizard lifecycle
      * with the configured health check; this method should not be overridden
-     * (instead, override {@link #newInstance(ManagedDataSource)})
+     * (instead, override {@link #newInstance(ManagedDataSource)} and
+     * {@link #configure(Jdbi, PooledDataSourceFactory)})
      *
      * @param environment
      * @param configuration
@@ -86,7 +88,7 @@ public class JdbiFactory {
     }
 
     /**
-     * This creates a vanilla DBI instance based on the specified data source;
+     * This creates a vanilla {@link Jdbi} instance based on the specified data source;
      * this can be overridden if required
      *
      * @param dataSource

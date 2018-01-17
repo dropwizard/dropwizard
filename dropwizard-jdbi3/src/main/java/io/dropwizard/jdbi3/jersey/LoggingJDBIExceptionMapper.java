@@ -10,11 +10,11 @@ import javax.ws.rs.ext.Provider;
 import java.sql.SQLException;
 
 /**
- * Iterates through a DBIException's cause if it's a SQLException otherwise log as normal.
+ * Iterates through a {@link JdbiException}'s cause if it's a {@link SQLException} otherwise log as normal.
  */
 @Provider
-public class LoggingDBIExceptionMapper extends LoggingExceptionMapper<JdbiException> {
-    private static Logger logger = LoggerFactory.getLogger(LoggingDBIExceptionMapper.class);
+public class LoggingJdbiExceptionMapper extends LoggingExceptionMapper<JdbiException> {
+    private static Logger logger = LoggerFactory.getLogger(LoggingJdbiExceptionMapper.class);
 
     @Override
     protected void logException(long id, JdbiException exception) {

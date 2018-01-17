@@ -21,10 +21,10 @@ public class JdbiHealthCheckTest {
     @Test
     public void testItTimesOutProperly() throws Exception {
         String validationQuery = "select 1";
-        Jdbi dbi = mock(Jdbi.class);
+        Jdbi jdbi = mock(Jdbi.class);
         Handle handle = mock(Handle.class);
-        when(dbi.open()).thenReturn(handle);
-        when(dbi.withHandle(Mockito.any())).thenCallRealMethod();
+        when(jdbi.open()).thenReturn(handle);
+        when(jdbi.withHandle(Mockito.any())).thenCallRealMethod();
         Mockito.doAnswer(invocation -> {
             try {
                 TimeUnit.SECONDS.sleep(10);
@@ -34,11 +34,11 @@ public class JdbiHealthCheckTest {
         }).when(handle).execute(validationQuery);
 
         ExecutorService executorService = Executors.newSingleThreadExecutor();
-        JdbiHealthCheck dbiHealthCheck = new JdbiHealthCheck(executorService,
+        JdbiHealthCheck jdbiHealthCheck = new JdbiHealthCheck(executorService,
                 Duration.milliseconds(5),
-                dbi,
+                jdbi,
                 validationQuery);
-        HealthCheck.Result result = dbiHealthCheck.check();
+        HealthCheck.Result result = jdbiHealthCheck.check();
         executorService.shutdown();
         assertThat("is unhealthy", false, is(result.isHealthy()));
     }

@@ -14,16 +14,16 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
-public class LoggingDBIExceptionMapperTest {
+public class LoggingJdbiExceptionMapperTest {
 
-    LoggingDBIExceptionMapper dbiExceptionMapper;
+    LoggingJdbiExceptionMapper jdbiExceptionMapper;
     Logger logger;
 
     @Before
     public void setUp() throws Exception {
         logger = mock(Logger.class);
-        dbiExceptionMapper = new LoggingDBIExceptionMapper();
-        LoggingDBIExceptionMapper.setLogger(logger);
+        jdbiExceptionMapper = new LoggingJdbiExceptionMapper();
+        LoggingJdbiExceptionMapper.setLogger(logger);
     }
 
     @Test
@@ -31,21 +31,21 @@ public class LoggingDBIExceptionMapperTest {
         StatementContext statementContext = mock(StatementContext.class);
         RuntimeException runtimeException = new RuntimeException("DB is down");
         SQLException sqlException = new SQLException("DB error", runtimeException);
-        JdbiException dbiException = new NoResultsException("Unable get a result set", sqlException, statementContext);
+        JdbiException jdbiException = new NoResultsException("Unable get a result set", sqlException, statementContext);
 
-        dbiExceptionMapper.logException(9812, dbiException);
+        jdbiExceptionMapper.logException(9812, jdbiException);
 
         verify(logger).error("Error handling a request: 0000000000002654", sqlException);
         verify(logger).error("Error handling a request: 0000000000002654", runtimeException);
-        verify(logger, never()).error("Error handling a request: 0000000000002654", dbiException);
+        verify(logger, never()).error("Error handling a request: 0000000000002654", jdbiException);
     }
 
     @Test
-    public void testPlainDBIException() throws Exception {
-        JdbiException dbiException = new TransactionException("Transaction failed for unknown reason");
+    public void testPlainJdbiException() throws Exception {
+        JdbiException jdbiException = new TransactionException("Transaction failed for unknown reason");
 
-        dbiExceptionMapper.logException(9812, dbiException);
+        jdbiExceptionMapper.logException(9812, jdbiException);
 
-        verify(logger).error("Error handling a request: 0000000000002654", dbiException);
+        verify(logger).error("Error handling a request: 0000000000002654", jdbiException);
     }
 }

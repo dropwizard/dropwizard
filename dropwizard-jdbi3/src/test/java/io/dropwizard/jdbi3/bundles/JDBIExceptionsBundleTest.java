@@ -1,6 +1,6 @@
 package io.dropwizard.jdbi3.bundles;
 
-import io.dropwizard.jdbi3.jersey.LoggingDBIExceptionMapper;
+import io.dropwizard.jdbi3.jersey.LoggingJdbiExceptionMapper;
 import io.dropwizard.jdbi3.jersey.LoggingSQLExceptionMapper;
 import io.dropwizard.jersey.setup.JerseyEnvironment;
 import io.dropwizard.setup.Environment;
@@ -12,7 +12,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class DBIExceptionsBundleTest {
+public class JdbiExceptionsBundleTest {
 
     @Test
     public void test() {
@@ -20,9 +20,9 @@ public class DBIExceptionsBundleTest {
         JerseyEnvironment jerseyEnvironment = mock(JerseyEnvironment.class);
         when(environment.jersey()).thenReturn(jerseyEnvironment);
 
-        new DBIExceptionsBundle().run(environment);
+        new JdbiExceptionsBundle().run(environment);
 
         verify(jerseyEnvironment, times(1)).register(isA(LoggingSQLExceptionMapper.class));
-        verify(jerseyEnvironment, times(1)).register(isA(LoggingDBIExceptionMapper.class));
+        verify(jerseyEnvironment, times(1)).register(isA(LoggingJdbiExceptionMapper.class));
     }
 }

@@ -9,7 +9,7 @@ import javax.ws.rs.ext.Provider;
 import java.sql.SQLException;
 
 /**
- * Iterates through SQLExceptions to log all causes
+ * Iterates through {@link SQLException}s to log all causes
  */
 @Provider
 public class LoggingSQLExceptionMapper extends LoggingExceptionMapper<SQLException> {

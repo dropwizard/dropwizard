@@ -9,7 +9,7 @@
     </parent>
 
     <artifactId>dropwizard-jdbi3</artifactId>
-    <name>Dropwizard JDBI3 Support</name>
+    <name>Dropwizard Jdbi3 Support</name>
 
     <dependencyManagement>
         <dependencies>

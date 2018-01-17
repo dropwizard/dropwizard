@@ -7,7 +7,7 @@ import org.jdbi.v3.core.statement.TemplateEngine;
 import java.util.Objects;
 
 /**
- * jDBI {@link TemplateEngine} that prepends the SQLObject's type and method name in front of every
+ * Jdbi {@link TemplateEngine} that prepends the SQLObject's type and method name in front of every
  * statement sent to the database.
  */
 public class NamePrependingTemplateEngine implements TemplateEngine {
