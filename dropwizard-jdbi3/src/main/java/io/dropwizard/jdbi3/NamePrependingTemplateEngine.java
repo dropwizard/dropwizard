@@ -25,22 +25,20 @@ public class NamePrependingTemplateEngine implements TemplateEngine {
         final ExtensionMethod extensionMethod = ctx.getExtensionMethod();
         final String originalResult = originalEngine.render(template, ctx);
 
-        if ((extensionMethod != null)
-            && (extensionMethod.getType() != null)
-            && (extensionMethod.getMethod() != null)) {
-            final StringBuilder query = new StringBuilder(originalResult.length() + 100);
-            query.append("/* ");
-            final String className = extensionMethod.getType().getSimpleName();
-            if (!className.isEmpty()) {
-                query.append(className).append('.');
-            }
-            query.append(extensionMethod.getMethod().getName());
-            query.append(" */ ");
-            query.append(originalResult);
-
-            return query.toString();
+        if (extensionMethod == null) {
+            return originalResult;
         }
 
-        return originalResult;
+        final StringBuilder query = new StringBuilder(originalResult.length() + 100);
+        query.append("/* ");
+        final String className = extensionMethod.getType().getSimpleName();
+        if (!className.isEmpty()) {
+            query.append(className).append('.');
+        }
+        query.append(extensionMethod.getMethod().getName());
+        query.append(" */ ");
+        query.append(originalResult);
+
+        return query.toString();
     }
 }

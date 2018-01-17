@@ -61,7 +61,7 @@ public class JdbiFactory {
                       String name) {
 
         // Create the instance
-        final Jdbi jdbi = this.newInstance(dataSource);
+        final Jdbi jdbi = newInstance(dataSource);
 
         // Manage the data source that created this instance.
         environment.lifecycle().manage(dataSource);

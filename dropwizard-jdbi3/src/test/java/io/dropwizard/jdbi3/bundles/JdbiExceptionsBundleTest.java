@@ -22,7 +22,7 @@ public class JdbiExceptionsBundleTest {
 
         new JdbiExceptionsBundle().run(environment);
 
-        verify(jerseyEnvironment, times(1)).register(isA(LoggingSQLExceptionMapper.class));
-        verify(jerseyEnvironment, times(1)).register(isA(LoggingJdbiExceptionMapper.class));
+        verify(jerseyEnvironment).register(isA(LoggingSQLExceptionMapper.class));
+        verify(jerseyEnvironment).register(isA(LoggingJdbiExceptionMapper.class));
     }
 }
