@@ -80,6 +80,8 @@ public class JdbiFactory {
             jdbi.setTemplateEngine(new NamePrependingTemplateEngine(original));
         }
 
+        configure(jdbi, configuration);
+
         return jdbi;
     }
 
@@ -92,5 +94,23 @@ public class JdbiFactory {
      */
     protected Jdbi newInstance(final ManagedDataSource dataSource) {
         return Jdbi.create(dataSource);
+    }
+
+    /**
+     * Overridable function to allow extra customization of the created {@link Jdbi}
+     * instance.
+     *
+     * <p>
+     * If this is overridden it is strongly recommend that
+     * {@code super.configure(jdbi, configuration)} is invoked before any other
+     * changes are made if you intend to use the default as a base so that the
+     * customized settings will supersede the defaults
+     * </p>
+     *
+     * @param jdbi
+     * @param configuration
+     */
+    protected void configure(final Jdbi jdbi, final PooledDataSourceFactory configuration) {
+
     }
 }
