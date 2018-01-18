@@ -83,6 +83,18 @@ public class ValidatingResource {
     }
 
     @GET
+    @Path("messageValidation")
+    public String messageValidation(
+        @UnwrapValidatedValue
+        @NotNull
+        @Min(value = 2, message = "The value ${validatedValue} is less then {value}")
+        @QueryParam("length")
+            LongParam length
+    ) {
+        return Long.toString(length.get());
+    }
+
+    @GET
     @Path("barter")
     public String isnt(@QueryParam("name") @Length(min = 3) @UnwrapValidatedValue NonEmptyStringParam name) {
         return name.get().orElse(null);
