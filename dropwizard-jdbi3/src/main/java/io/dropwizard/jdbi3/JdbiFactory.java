@@ -29,7 +29,7 @@ public class JdbiFactory {
      * Build a fully configured {@link Jdbi} instance managed by the DropWizard lifecycle
      * with the configured health check; this method should not be overridden
      * (instead, override {@link #newInstance(ManagedDataSource)} and
-     * {@link #configure(Jdbi, PooledDataSourceFactory)})
+     * {@link #configure(Jdbi)})
      *
      * @param environment
      * @param configuration
@@ -50,7 +50,7 @@ public class JdbiFactory {
      * Build a fully configured {@link Jdbi} instance managed by the DropWizard lifecycle
      * with the configured health check; this method should not be overridden
      * (instead, override {@link #newInstance(ManagedDataSource)} and
-     * {@link #configure(Jdbi, PooledDataSourceFactory)})
+     * {@link #configure(Jdbi)})
      *
      * @param environment
      * @param configuration
