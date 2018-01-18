@@ -96,7 +96,7 @@ Your service's configuration file will then look like this:
       minIdleTime: 1 minute
 
 Plugins
-#######
+=======
 
 JDBI3 is built using plugins_ to add features to its core implementation.
 Dropwizard adds the sqlobject_, jodatime_, and guava_ plugins by default,
