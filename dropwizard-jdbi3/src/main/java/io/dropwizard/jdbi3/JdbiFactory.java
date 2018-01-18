@@ -12,6 +12,7 @@ import org.jdbi.v3.core.statement.SqlStatements;
 import org.jdbi.v3.core.statement.TemplateEngine;
 import org.jdbi.v3.guava.GuavaPlugin;
 import org.jdbi.v3.jodatime2.JodaTimePlugin;
+import org.jdbi.v3.sqlobject.SqlObjectPlugin;
 
 public class JdbiFactory {
     private final StatementNameStrategy nameStrategy;
@@ -115,6 +116,7 @@ public class JdbiFactory {
      * @param configuration
      */
     protected void configure(final Jdbi jdbi, final PooledDataSourceFactory configuration) {
+        jdbi.installPlugin(new SqlObjectPlugin());
         jdbi.installPlugin(new JodaTimePlugin());
         jdbi.installPlugin(new GuavaPlugin());
     }
