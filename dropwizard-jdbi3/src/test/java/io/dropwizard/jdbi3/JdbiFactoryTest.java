@@ -54,6 +54,6 @@ public class JdbiFactoryTest {
         verify(healthChecks).register(eq(name), any(JdbiHealthCheck.class));
         verify(jdbi).setTimingCollector(any(InstrumentedTimingCollector.class));
         verify(jdbi).setTemplateEngine(any(NamePrependingTemplateEngine.class));
-        verify(factory).configure(jdbi, configuration);
+        verify(factory).configure(jdbi);
     }
 }

@@ -85,7 +85,7 @@ public class JdbiFactory {
             jdbi.setTemplateEngine(new NamePrependingTemplateEngine(original));
         }
 
-        configure(jdbi, configuration);
+        configure(jdbi);
 
         return jdbi;
     }
@@ -113,9 +113,8 @@ public class JdbiFactory {
      * </p>
      *
      * @param jdbi
-     * @param configuration
      */
-    protected void configure(final Jdbi jdbi, final PooledDataSourceFactory configuration) {
+    protected void configure(final Jdbi jdbi) {
         jdbi.installPlugin(new SqlObjectPlugin());
         jdbi.installPlugin(new JodaTimePlugin());
         jdbi.installPlugin(new GuavaPlugin());
