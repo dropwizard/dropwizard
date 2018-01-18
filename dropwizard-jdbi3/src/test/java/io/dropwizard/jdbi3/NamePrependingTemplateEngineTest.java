@@ -5,9 +5,6 @@ import org.jdbi.v3.core.statement.StatementContext;
 import org.jdbi.v3.core.statement.TemplateEngine;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.UUID;
 
@@ -15,7 +12,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
 public class NamePrependingTemplateEngineTest {
     private static final String TEMPLATE = UUID.randomUUID().toString();
     private static final String ORIGINAL_RENDERED = UUID.randomUUID().toString();
@@ -24,14 +20,14 @@ public class NamePrependingTemplateEngineTest {
         String myDbCall();
     }
 
-    @Mock
-    TemplateEngine original = mock(TemplateEngine.class);
-    @Mock
-    StatementContext ctx = mock(StatementContext.class);
+    private TemplateEngine original;
+    private StatementContext ctx;
     private NamePrependingTemplateEngine sut;
 
     @Before
     public void setup() {
+        original = mock(TemplateEngine.class);
+        ctx = mock(StatementContext.class);
         when(original.render(TEMPLATE, ctx)).thenReturn(ORIGINAL_RENDERED);
 
         sut = new NamePrependingTemplateEngine(original);
