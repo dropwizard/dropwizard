@@ -1,27 +1,20 @@
-.. _man-jdbi:
+.. _man-jdbi3:
 
-###############
-Dropwizard JDBI
-###############
+################
+Dropwizard JDBI3
+################
 
 .. highlight:: text
 
-.. rubric:: The ``dropwizard-jdbi`` module provides you with managed access to JDBI_, a flexible and
+.. rubric:: The ``dropwizard-jdbi3`` module provides you with managed access to JDBI_, a flexible and
             modular library for interacting with relational databases via SQL.
 
-.. _JDBI: http://jdbi.org/jdbi2/
-
-.. warning::
-
-    It is recommended that new projects use the :ref:`man-jdbi3` module. Existing projects
-    can update by following JDBI's `migration guide`_.
-
-.. _migration guide: http://jdbi.org/#_upgrading_from_v2_to_v3
+.. _JDBI: http://jdbi.org/
 
 Configuration
 =============
 
-To create a :ref:`managed <man-core-managed>`, instrumented ``DBI`` instance, your
+To create a :ref:`managed <man-core-managed>`, instrumented ``Jdbi`` instance, your
 :ref:`configuration class <man-core-configuration>` needs a ``DataSourceFactory`` instance:
 
 .. code-block:: java
@@ -42,20 +35,19 @@ To create a :ref:`managed <man-core-managed>`, instrumented ``DBI`` instance, yo
         }
     }
 
-Then, in your service's ``run`` method, create a new ``DBIFactory``:
+Then, in your service's ``run`` method, create a new ``JdbiFactory``:
 
 .. code-block:: java
 
     @Override
     public void run(ExampleConfiguration config, Environment environment) {
-        final DBIFactory factory = new DBIFactory();
-        final DBI jdbi = factory.build(environment, config.getDataSourceFactory(), "postgresql");
-        final UserDAO dao = jdbi.onDemand(UserDAO.class);
-        environment.jersey().register(new UserResource(dao));
+        final JdbiFactory factory = new JdbiFactory();
+        final Jdbi jdbi = factory.build(environment, config.getDataSourceFactory(), "postgresql");
+        environment.jersey().register(new UserResource(jdbi));
     }
 
 This will create a new :ref:`managed <man-core-managed>` connection pool to the database, a
-:ref:`health check <man-core-healthchecks>` for connectivity to the database, and a new ``DBI``
+:ref:`health check <man-core-healthchecks>` for connectivity to the database, and a new ``Jdbi``
 instance for you to use.
 
 Your service's configuration file will then look like this:
@@ -103,13 +95,25 @@ Your service's configuration file will then look like this:
       # the minimum amount of time an connection must sit idle in the pool before it is eligible for eviction
       minIdleTime: 1 minute
 
+Plugins
+=======
+
+JDBI3 is built using plugins_ to add features to its core implementation.
+Dropwizard adds the sqlobject_, jodatime_, and guava_ plugins by default,
+but you are free to add other existing plugins you might need or create your own.
+
+.. _plugins: http://jdbi.org/#_third_party_integration
+.. _sqlobject: http://jdbi.org/#_sql_objects
+.. _jodatime: http://jdbi.org/#_jodatime
+.. _guava: http://jdbi.org/#_google_guava
+
 Usage
 =====
 
 We highly recommend you use JDBI's `SQL Objects API`_, which allows you to write DAO classes as
 interfaces:
 
-.. _SQL Objects API: http://jdbi.org/jdbi2/sql_object_overview/
+.. _SQL Objects API: `sqlobject`_
 
 .. code-block:: java
 
@@ -127,20 +131,20 @@ interfaces:
     final MyDAO dao = database.onDemand(MyDAO.class);
 
 This ensures your DAO classes are trivially mockable, as well as encouraging you to extract mapping
-code (e.g., ``ResultSet`` -> domain objects) into testable, reusable classes.
+code (e.g., ``RowMapper`` -> domain objects) into testable, reusable classes.
 
 Exception Handling
 ==================
 
-By adding the ``DBIExceptionsBundle`` to your :ref:`application <man-core-application>`, Dropwizard
-will automatically unwrap any thrown ``SQLException`` or ``DBIException`` instances.
+By adding the ``JdbiExceptionsBundle`` to your :ref:`application <man-core-application>`, Dropwizard
+will automatically unwrap any thrown ``SQLException`` or ``JdbiException`` instances.
 This is critical for debugging, since otherwise only the common wrapper exception's stack trace is
 logged.
 
 Prepended Comments
 ==================
 
-If you're using JDBI's `SQL Objects API`_ (and you should be), ``dropwizard-jdbi`` will
+If you're using JDBI's `SQL Objects API`_ (and you should be), ``dropwizard-jdbi3`` will
 automatically prepend the SQL object's class and method name to the SQL query as an SQL comment:
 
 .. code-block:: sql
@@ -151,16 +155,3 @@ automatically prepend the SQL object's class and method name to the SQL query as
     WHERE name = 'Coda';
 
 This will allow you to quickly determine the origin of any slow or misbehaving queries.
-
-Library Support
-===============
-
-``dropwizard-jdbi`` supports a number of popular libraries data types that can be automatically
-serialized into the appropriate SQL type. Here's a list of what integration ``dropwizard-jdbi``
-provides:
-
-* Guava: support for ``Optional<T>`` arguments and ``ImmutableList<T>`` and ``ImmutableSet<T>`` query results.
-* Joda Time: support for ``DateTime`` arguments and ``DateTime`` fields in query results
-* Java 8: support for ``Optional<T>`` and kin (``OptionalInt``, etc.) arguments and java.time_ arguments.
-
-.. _java.time: https://docs.oracle.com/javase/8/docs/api/java/time/package-summary.html

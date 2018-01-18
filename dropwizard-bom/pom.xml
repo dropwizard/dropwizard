@@ -31,6 +31,7 @@
         <slf4j.version>1.7.25</slf4j.version>
         <logback.version>1.2.3</logback.version>
         <h2.version>1.4.196</h2.version>
+        <jdbi3.version>3.0.1</jdbi3.version>
     </properties>
 
     <dependencyManagement>
@@ -202,6 +203,28 @@
                 <groupId>org.jdbi</groupId>
                 <artifactId>jdbi</artifactId>
                 <version>2.78</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jdbi</groupId>
+                <artifactId>jdbi3-bom</artifactId>
+                <version>${jdbi3.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.jdbi</groupId>
+                <artifactId>jdbi3-core</artifactId>
+                <version>${jdbi3.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jdbi</groupId>
+                <artifactId>jdbi3-jodatime2</artifactId>
+                <version>${jdbi3.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jdbi</groupId>
+                <artifactId>jdbi3-guava</artifactId>
+                <version>${jdbi3.version}</version>
             </dependency>
 
             <!-- Jetty -->
@@ -468,6 +491,21 @@
                     <exclusion>
                         <groupId>org.jdbi</groupId>
                         <artifactId>jdbi</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.slf4j</groupId>
+                        <artifactId>slf4j-api</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>io.dropwizard.metrics</groupId>
+                <artifactId>metrics-jdbi3</artifactId>
+                <version>${metrics4.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.jdbi</groupId>
+                        <artifactId>jdbi3-core</artifactId>
                     </exclusion>
                     <exclusion>
                         <groupId>org.slf4j</groupId>

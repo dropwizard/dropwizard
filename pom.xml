@@ -24,6 +24,7 @@
         <module>dropwizard-client</module>
         <module>dropwizard-db</module>
         <module>dropwizard-jdbi</module>
+        <module>dropwizard-jdbi3</module>
         <module>dropwizard-migrations</module>
         <module>dropwizard-hibernate</module>
         <module>dropwizard-auth</module>
