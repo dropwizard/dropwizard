@@ -629,6 +629,25 @@ public class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
     }
 
     @Test
+    public void minCustomMessage() {
+        final Response response = target("/valid/messageValidation")
+            .queryParam("length", 1)
+            .request()
+            .get();
+        assertThat(response.getStatus()).isEqualTo(400);
+        assertThat(response.readEntity(String.class))
+            .containsOnlyOnce("query param length The value 1 is less then 2");
+
+        final Response response2 = target("/valid/messageValidation")
+            .queryParam("length", 0)
+            .request()
+            .get();
+        assertThat(response2.getStatus()).isEqualTo(400);
+        assertThat(response2.readEntity(String.class))
+            .containsOnlyOnce("query param length The value 0 is less then 2");
+    }
+
+    @Test
     public void notPresentEnumParameter() {
         final Response response = target("/valid/enumParam")
             .request()
