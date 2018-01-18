@@ -3,7 +3,11 @@ package io.dropwizard.jdbi3;
 import org.jdbi.v3.core.extension.ExtensionMethod;
 import org.jdbi.v3.core.statement.StatementContext;
 import org.jdbi.v3.core.statement.TemplateEngine;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.UUID;
 
@@ -11,43 +15,44 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@RunWith(MockitoJUnitRunner.class)
 public class NamePrependingTemplateEngineTest {
+    private static final String TEMPLATE = UUID.randomUUID().toString();
+    private static final String ORIGINAL_RENDERED = UUID.randomUUID().toString();
+
     public interface MyDao {
         String myDbCall();
     }
 
+    @Mock
+    TemplateEngine original = mock(TemplateEngine.class);
+    @Mock
+    StatementContext ctx = mock(StatementContext.class);
+    private NamePrependingTemplateEngine sut;
+
+    @Before
+    public void setup() {
+        when(original.render(TEMPLATE, ctx)).thenReturn(ORIGINAL_RENDERED);
+
+        sut = new NamePrependingTemplateEngine(original);
+    }
+
     @Test
     public void testNoExtensionMethodShouldReturnOriginal() {
-        final TemplateEngine original = mock(TemplateEngine.class);
-        final StatementContext ctx = mock(StatementContext.class);
-        final String template = UUID.randomUUID().toString();
-        final String originalRendered = UUID.randomUUID().toString();
-
         when(ctx.getExtensionMethod()).thenReturn(null);
-        when(original.render(template, ctx)).thenReturn(originalRendered);
 
-        final NamePrependingTemplateEngine sut = new NamePrependingTemplateEngine(original);
+        final String result = sut.render(TEMPLATE, ctx);
 
-        final String result = sut.render(template, ctx);
-
-        assertThat(result).isEqualTo(originalRendered);
+        assertThat(result).isEqualTo(ORIGINAL_RENDERED);
     }
 
     @Test
     public void testPrependsCorrectName() throws NoSuchMethodException {
-        final TemplateEngine original = mock(TemplateEngine.class);
-        final StatementContext ctx = mock(StatementContext.class);
-        final String template = UUID.randomUUID().toString();
-        final String originalRendered = UUID.randomUUID().toString();
-
         final ExtensionMethod extensionMethod = new ExtensionMethod(MyDao.class, MyDao.class.getMethod("myDbCall"));
 
         when(ctx.getExtensionMethod()).thenReturn(extensionMethod);
-        when(original.render(template, ctx)).thenReturn(originalRendered);
 
-        final NamePrependingTemplateEngine sut = new NamePrependingTemplateEngine(original);
-
-        final String result = sut.render(template, ctx);
+        final String result = sut.render(TEMPLATE, ctx);
 
         assertThat(result).containsSequence(
             "/* ",
@@ -55,6 +60,6 @@ public class NamePrependingTemplateEngineTest {
             ".",
             extensionMethod.getMethod().getName(),
             " */",
-            originalRendered);
+            ORIGINAL_RENDERED);
     }
 }

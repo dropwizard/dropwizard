@@ -4,6 +4,7 @@ import com.codahale.metrics.health.HealthCheck;
 import com.google.common.util.concurrent.MoreExecutors;
 import io.dropwizard.db.TimeBoundHealthCheck;
 import io.dropwizard.util.Duration;
+import org.jdbi.v3.core.Handle;
 import org.jdbi.v3.core.Jdbi;
 
 import java.util.concurrent.ExecutorService;
@@ -25,11 +26,12 @@ public class JdbiHealthCheck extends HealthCheck {
 
     @Override
     protected Result check() throws Exception {
-        return timeBoundHealthCheck.check(() ->
-            jdbi.withHandle((handle) -> {
-                handle.execute(validationQuery);
-                return Result.healthy();
-            })
+        return timeBoundHealthCheck.check(() -> {
+                try (Handle handle = jdbi.open()) {
+                    handle.execute(validationQuery);
+                    return Result.healthy();
+                }
+            }
         );
     }
 }
