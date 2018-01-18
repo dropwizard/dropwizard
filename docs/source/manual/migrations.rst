@@ -14,7 +14,7 @@ Dropwizard Migrations
 Configuration
 =============
 
-Like :ref:`man-jdbi`, your :ref:`configuration class <man-core-configuration>` needs a
+Like :ref:`man-jdbi3`, your :ref:`configuration class <man-core-configuration>` needs a
 ``DataSourceFactory`` instance:
 
 .. code-block:: java
