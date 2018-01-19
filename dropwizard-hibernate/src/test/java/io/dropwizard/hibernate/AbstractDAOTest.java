@@ -1,23 +1,23 @@
 package io.dropwizard.hibernate;
 
 import com.google.common.collect.ImmutableList;
-
+import com.google.common.collect.ImmutableMap;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.NonUniqueResultException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.query.Query;
 import org.hibernate.proxy.HibernateProxy;
 import org.hibernate.proxy.LazyInitializer;
+import org.hibernate.query.Query;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.Serializable;
-import java.util.List;
-
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import java.io.Serializable;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -28,10 +28,6 @@ import static org.mockito.Mockito.when;
 
 public class AbstractDAOTest {
     private static class MockDAO extends AbstractDAO<String> {
-        MockDAO(SessionFactory factory) {
-            super(factory);
-        }
-
         @Override
         public Session currentSession() {
             return super.currentSession();
@@ -96,16 +92,31 @@ public class AbstractDAOTest {
     @SuppressWarnings("unchecked")
     private final Query<String> query = mock(Query.class);
     private final Session session = mock(Session.class);
-    private final MockDAO dao = new MockDAO(factory);
+    private final MockDAO dao = new MockDAO();
+
+    private UnitOfWorkAspect unitOfWorkAspect;
 
     @Before
     public void setup() throws Exception {
         when(criteriaBuilder.createQuery(same(String.class))).thenReturn(criteriaQuery);
+        when(factory.openSession()).thenReturn(session);
         when(factory.getCurrentSession()).thenReturn(session);
+        when(session.getSessionFactory()).thenReturn(factory);
         when(session.createCriteria(String.class)).thenReturn(criteria);
         when(session.getCriteriaBuilder()).thenReturn(criteriaBuilder);
         when(session.getNamedQuery(anyString())).thenReturn(query);
         when(session.createQuery(anyString(), same(String.class))).thenReturn(query);
+
+        unitOfWorkAspect = new UnitOfWorkAspect(ImmutableMap.of(HibernateBundle.DEFAULT_NAME, factory));
+        UnitOfWork unitOfWork = ClassWithUnitOfWork.class
+                .getDeclaredMethod("defaultUnitOfWork")
+                .getAnnotation(UnitOfWork.class);
+        unitOfWorkAspect.beforeStart(unitOfWork);
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        unitOfWorkAspect.onFinish();
     }
 
     @Test
