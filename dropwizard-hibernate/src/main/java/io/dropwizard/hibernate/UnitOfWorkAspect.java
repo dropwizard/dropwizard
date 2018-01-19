@@ -7,8 +7,8 @@ import org.hibernate.context.internal.ManagedSessionContext;
 
 import javax.annotation.Nullable;
 import java.util.Map;
+import java.util.Optional;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -36,6 +36,7 @@ import static java.util.Objects.requireNonNull;
  * </pre>
  */
 public class UnitOfWorkAspect {
+    private static final ThreadLocal<UnitOfWorkContext> CONTEXT = new ThreadLocal<>();
 
     private final Map<String, SessionFactory> sessionFactories;
 
@@ -43,23 +44,12 @@ public class UnitOfWorkAspect {
         this.sessionFactories = sessionFactories;
     }
 
-    // Context variables
-    @Nullable
-    private UnitOfWork unitOfWork;
-
-    @Nullable
-    private Session session;
-
-    @Nullable
-    private SessionFactory sessionFactory;
-
     public void beforeStart(@Nullable UnitOfWork unitOfWork) {
         if (unitOfWork == null) {
             return;
         }
-        this.unitOfWork = unitOfWork;
 
-        sessionFactory = sessionFactories.get(unitOfWork.value());
+        SessionFactory sessionFactory = sessionFactories.get(unitOfWork.value());
         if (sessionFactory == null) {
             // If the user didn't specify the name of a session factory,
             // and we have only one registered, we can assume that it's the right one.
@@ -69,20 +59,22 @@ public class UnitOfWorkAspect {
                 throw new IllegalArgumentException("Unregistered Hibernate bundle: '" + unitOfWork.value() + "'");
             }
         }
-        session = sessionFactory.openSession();
+
+        Session session = sessionFactory.openSession();
         try {
+            setContext(unitOfWork, session);
             configureSession();
-            ManagedSessionContext.bind(session);
             beginTransaction(unitOfWork, session);
         } catch (Throwable th) {
             session.close();
-            session = null;
-            ManagedSessionContext.unbind(sessionFactory);
+            clearContext();
             throw th;
         }
     }
 
     public void afterEnd() {
+        UnitOfWork unitOfWork = getUnitOfWork();
+        Session session = getCurrentSession();
         if (unitOfWork == null || session == null) {
             return;
         }
@@ -98,6 +90,8 @@ public class UnitOfWorkAspect {
     }
 
     public void onError() {
+        UnitOfWork unitOfWork = getUnitOfWork();
+        Session session = getCurrentSession();
         if (unitOfWork == null || session == null) {
             return;
         }
@@ -111,18 +105,18 @@ public class UnitOfWorkAspect {
 
     public void onFinish() {
         try {
+            Session session = getCurrentSession();
             if (session != null) {
                 session.close();
             }
         } finally {
-            session = null;
-            ManagedSessionContext.unbind(sessionFactory);
+            clearContext();
         }
     }
 
     protected void configureSession() {
-        checkNotNull(unitOfWork);
-        checkNotNull(session);
+        Session session = requireNonNull(getCurrentSession());
+        UnitOfWork unitOfWork = requireNonNull(getUnitOfWork());
         session.setDefaultReadOnly(unitOfWork.readOnly());
         session.setCacheMode(unitOfWork.cacheMode());
         session.setHibernateFlushMode(unitOfWork.flushMode());
@@ -155,12 +149,38 @@ public class UnitOfWorkAspect {
         }
     }
 
-    protected Session getSession() {
-        return requireNonNull(session);
+    private static Optional<UnitOfWorkContext> getContext() {
+        return Optional.ofNullable(CONTEXT.get());
     }
 
-    protected SessionFactory getSessionFactory() {
-        return requireNonNull(sessionFactory);
+    private static void setContext(UnitOfWork unitOfWork, Session session) {
+        ManagedSessionContext.bind(session);
+        CONTEXT.set(new UnitOfWorkContext(unitOfWork, session.getSessionFactory()));
     }
 
+    private static void clearContext() {
+        ManagedSessionContext.unbind(getSessionFactory());
+        CONTEXT.remove();
+    }
+
+    @Nullable
+    public static SessionFactory getSessionFactory() {
+        return getContext()
+                .map(UnitOfWorkContext::getSessionFactory)
+                .orElse(null);
+    }
+
+    @Nullable
+    public static Session getCurrentSession() {
+        return Optional.ofNullable(getSessionFactory())
+                .map(SessionFactory::getCurrentSession)
+                .orElse(null);
+    }
+
+    @Nullable
+    public static UnitOfWork getUnitOfWork() {
+        return getContext()
+                .map(UnitOfWorkContext::getUnitOfWork)
+                .orElse(null);
+    }
 }
