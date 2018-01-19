@@ -7,7 +7,6 @@ import org.hibernate.context.internal.ManagedSessionContext;
 
 import javax.annotation.Nullable;
 import java.util.Map;
-import java.util.Optional;
 
 import static java.util.Objects.requireNonNull;
 
@@ -36,8 +35,6 @@ import static java.util.Objects.requireNonNull;
  * </pre>
  */
 public class UnitOfWorkAspect {
-    private static final ThreadLocal<UnitOfWorkContext> CONTEXT = new ThreadLocal<>();
-
     private final Map<String, SessionFactory> sessionFactories;
 
     public UnitOfWorkAspect(Map<String, SessionFactory> sessionFactories) {
@@ -73,16 +70,16 @@ public class UnitOfWorkAspect {
     }
 
     public void afterEnd() {
-        UnitOfWork unitOfWork = getUnitOfWork();
-        Session session = getCurrentSession();
-        if (unitOfWork == null || session == null) {
+        UnitOfWork unitOfWork = UnitOfWorkContext.getUnitOfWork();
+        SessionFactory sessionFactory = UnitOfWorkContext.getSessionFactory();
+        if (unitOfWork == null || sessionFactory == null) {
             return;
         }
 
         try {
-            commitTransaction(unitOfWork, session);
+            commitTransaction(unitOfWork, sessionFactory.getCurrentSession());
         } catch (Exception e) {
-            rollbackTransaction(unitOfWork, session);
+            rollbackTransaction(unitOfWork, sessionFactory.getCurrentSession());
             throw e;
         }
         // We should not close the session to let the lazy loading work during serializing a response to the client.
@@ -90,14 +87,14 @@ public class UnitOfWorkAspect {
     }
 
     public void onError() {
-        UnitOfWork unitOfWork = getUnitOfWork();
-        Session session = getCurrentSession();
-        if (unitOfWork == null || session == null) {
+        UnitOfWork unitOfWork = UnitOfWorkContext.getUnitOfWork();
+        SessionFactory sessionFactory = UnitOfWorkContext.getSessionFactory();
+        if (unitOfWork == null || sessionFactory == null) {
             return;
         }
 
         try {
-            rollbackTransaction(unitOfWork, session);
+            rollbackTransaction(unitOfWork, sessionFactory.getCurrentSession());
         } finally {
             onFinish();
         }
@@ -105,9 +102,9 @@ public class UnitOfWorkAspect {
 
     public void onFinish() {
         try {
-            Session session = getCurrentSession();
-            if (session != null) {
-                session.close();
+            SessionFactory sessionFactory = UnitOfWorkContext.getSessionFactory();
+            if (sessionFactory != null) {
+                sessionFactory.getCurrentSession().close();
             }
         } finally {
             clearContext();
@@ -115,8 +112,8 @@ public class UnitOfWorkAspect {
     }
 
     protected void configureSession() {
-        Session session = requireNonNull(getCurrentSession());
-        UnitOfWork unitOfWork = requireNonNull(getUnitOfWork());
+        Session session = UnitOfWorkContext.getCurrentSession();
+        UnitOfWork unitOfWork = requireNonNull(UnitOfWorkContext.getUnitOfWork());
         session.setDefaultReadOnly(unitOfWork.readOnly());
         session.setCacheMode(unitOfWork.cacheMode());
         session.setHibernateFlushMode(unitOfWork.flushMode());
@@ -149,38 +146,14 @@ public class UnitOfWorkAspect {
         }
     }
 
-    private static Optional<UnitOfWorkContext> getContext() {
-        return Optional.ofNullable(CONTEXT.get());
-    }
-
     private static void setContext(UnitOfWork unitOfWork, Session session) {
         ManagedSessionContext.bind(session);
-        CONTEXT.set(new UnitOfWorkContext(unitOfWork, session.getSessionFactory()));
+        UnitOfWorkContext.setUnitOfWork(unitOfWork);
+        UnitOfWorkContext.setSessionFactory(session.getSessionFactory());
     }
 
     private static void clearContext() {
-        ManagedSessionContext.unbind(getSessionFactory());
-        CONTEXT.remove();
-    }
-
-    @Nullable
-    public static SessionFactory getSessionFactory() {
-        return getContext()
-                .map(UnitOfWorkContext::getSessionFactory)
-                .orElse(null);
-    }
-
-    @Nullable
-    public static Session getCurrentSession() {
-        return Optional.ofNullable(getSessionFactory())
-                .map(SessionFactory::getCurrentSession)
-                .orElse(null);
-    }
-
-    @Nullable
-    public static UnitOfWork getUnitOfWork() {
-        return getContext()
-                .map(UnitOfWorkContext::getUnitOfWork)
-                .orElse(null);
+        ManagedSessionContext.unbind(UnitOfWorkContext.getSessionFactory());
+        UnitOfWorkContext.clear();
     }
 }

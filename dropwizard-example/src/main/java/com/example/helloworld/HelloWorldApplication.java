@@ -80,7 +80,7 @@ public class HelloWorldApplication extends Application<HelloWorldConfiguration> 
 
     @Override
     public void run(HelloWorldConfiguration configuration, Environment environment) {
-        final PersonDAO dao = new PersonDAO(hibernateBundle.getSessionFactory());
+        final PersonDAO dao = new PersonDAO();
         final Template template = configuration.buildTemplate();
 
         environment.healthChecks().register("template", new TemplateHealthCheck(template));

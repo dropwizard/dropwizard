@@ -173,8 +173,9 @@ public class UnitOfWorkAwareProxyFactoryTest {
         @Override
         protected void configureSession() {
             super.configureSession();
-            Transaction transaction = getCurrentSession().beginTransaction();
-            getCurrentSession().createNativeQuery("insert into user_sessions values ('gr6f9y0', 'jeff_29')")
+            Session currentSession = UnitOfWorkContext.getCurrentSession();
+            Transaction transaction = currentSession.beginTransaction();
+            currentSession.createNativeQuery("insert into user_sessions values ('gr6f9y0', 'jeff_29')")
                 .executeUpdate();
             transaction.commit();
         }

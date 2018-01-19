@@ -94,8 +94,6 @@ public class AbstractDAOTest {
     private final Session session = mock(Session.class);
     private final MockDAO dao = new MockDAO();
 
-    private UnitOfWorkAspect unitOfWorkAspect;
-
     @Before
     public void setup() throws Exception {
         when(criteriaBuilder.createQuery(same(String.class))).thenReturn(criteriaQuery);
@@ -107,16 +105,12 @@ public class AbstractDAOTest {
         when(session.getNamedQuery(anyString())).thenReturn(query);
         when(session.createQuery(anyString(), same(String.class))).thenReturn(query);
 
-        unitOfWorkAspect = new UnitOfWorkAspect(ImmutableMap.of(HibernateBundle.DEFAULT_NAME, factory));
-        UnitOfWork unitOfWork = ClassWithUnitOfWork.class
-                .getDeclaredMethod("defaultUnitOfWork")
-                .getAnnotation(UnitOfWork.class);
-        unitOfWorkAspect.beforeStart(unitOfWork);
+        UnitOfWorkContext.setSessionFactory(factory);
     }
 
     @After
     public void tearDown() throws Exception {
-        unitOfWorkAspect.onFinish();
+        UnitOfWorkContext.clear();
     }
 
     @Test

@@ -100,18 +100,18 @@ public class UnitOfWorkAspectTest {
 
         unitOfWorkAspect.beforeStart(defaultUnitOfWork);
 
-        assertThat(UnitOfWorkAspect.getCurrentSession()).isEqualTo(readOnlySession);
-        assertThat(UnitOfWorkAspect.getSessionFactory()).isEqualTo(readOnlySessionFactory);
-        assertThat(UnitOfWorkAspect.getUnitOfWork()).isEqualTo(defaultUnitOfWork);
+        assertThat(UnitOfWorkContext.getCurrentSession()).isEqualTo(readOnlySession);
+        assertThat(UnitOfWorkContext.getSessionFactory()).isEqualTo(readOnlySessionFactory);
+        assertThat(UnitOfWorkContext.getUnitOfWork()).isEqualTo(defaultUnitOfWork);
     }
 
     @Test
     public void setsContextBeforeStart() {
         unitOfWorkAspect.beforeStart(writeUnitOfWork);
 
-        assertThat(UnitOfWorkAspect.getCurrentSession()).isEqualTo(writeSession);
-        assertThat(UnitOfWorkAspect.getSessionFactory()).isEqualTo(writeSessionFactory);
-        assertThat(UnitOfWorkAspect.getUnitOfWork()).isEqualTo(writeUnitOfWork);
+        assertThat(UnitOfWorkContext.getCurrentSession()).isEqualTo(writeSession);
+        assertThat(UnitOfWorkContext.getSessionFactory()).isEqualTo(writeSessionFactory);
+        assertThat(UnitOfWorkContext.getUnitOfWork()).isEqualTo(writeUnitOfWork);
     }
 
     @Test
@@ -119,8 +119,7 @@ public class UnitOfWorkAspectTest {
         unitOfWorkAspect.beforeStart(writeUnitOfWork);
         unitOfWorkAspect.onFinish();
 
-        assertThat(UnitOfWorkAspect.getCurrentSession()).isNull();
-        assertThat(UnitOfWorkAspect.getSessionFactory()).isNull();
-        assertThat(UnitOfWorkAspect.getUnitOfWork()).isNull();
+        assertThat(UnitOfWorkContext.getSessionFactory()).isNull();
+        assertThat(UnitOfWorkContext.getUnitOfWork()).isNull();
     }
 }

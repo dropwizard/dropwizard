@@ -35,7 +35,7 @@ public class AbstractDAO<E> {
      * @return the current session
      */
     protected Session currentSession() {
-        return UnitOfWorkAspect.getCurrentSession();
+        return UnitOfWorkContext.getCurrentSession();
     }
 
     /**
