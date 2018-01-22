@@ -4,6 +4,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMap;
+import freemarker.core.HTMLOutputFormat;
 import freemarker.template.Configuration;
 import freemarker.template.DefaultObjectWrapperBuilder;
 import freemarker.template.Template;
@@ -38,6 +39,8 @@ public class FreemarkerViewRenderer implements ViewRenderer {
             configuration.loadBuiltInEncodingMap();
             configuration.setDefaultEncoding(StandardCharsets.UTF_8.name());
             configuration.setClassForTemplateLoading(key, "/");
+            // setting the outputformat implicitly enables auto escaping
+            configuration.setOutputFormat(HTMLOutputFormat.INSTANCE);
             for (Map.Entry<String, String> entry : baseConfig.entrySet()) {
                 configuration.setSetting(entry.getKey(), entry.getValue());
             }
