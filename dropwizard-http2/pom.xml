@@ -13,7 +13,7 @@
 
     <properties>
         <!-- Default alpn-boot version. See <profiles> for specific profiles. -->
-        <alpn-boot.version>8.1.11.v20170118</alpn-boot.version>
+        <alpn-boot.version>8.1.12.v20180117</alpn-boot.version>
     </properties>
 
     <build>
@@ -457,6 +457,54 @@
             </activation>
             <properties>
                 <alpn-boot.version>8.1.11.v20170118</alpn-boot.version>
+            </properties>
+        </profile>
+        <profile>
+            <id>jdk-1.8.0_151</id>
+            <activation>
+                <property>
+                    <name>java.version</name>
+                    <value>1.8.0_151</value>
+                </property>
+            </activation>
+            <properties>
+                <alpn-boot.version>8.1.11.v20170118</alpn-boot.version>
+            </properties>
+        </profile>
+        <profile>
+            <id>jdk-1.8.0_152</id>
+            <activation>
+                <property>
+                    <name>java.version</name>
+                    <value>1.8.0_152</value>
+                </property>
+            </activation>
+            <properties>
+                <alpn-boot.version>8.1.11.v20170118</alpn-boot.version>
+            </properties>
+        </profile>
+        <profile>
+            <id>jdk-1.8.0_161</id>
+            <activation>
+                <property>
+                    <name>java.version</name>
+                    <value>1.8.0_161</value>
+                </property>
+            </activation>
+            <properties>
+                <alpn-boot.version>8.1.12.v20180117</alpn-boot.version>
+            </properties>
+        </profile>
+        <profile>
+            <id>jdk-1.8.0_162</id>
+            <activation>
+                <property>
+                    <name>java.version</name>
+                    <value>1.8.0_162</value>
+                </property>
+            </activation>
+            <properties>
+                <alpn-boot.version>8.1.12.v20180117</alpn-boot.version>
             </properties>
         </profile>
     </profiles>
