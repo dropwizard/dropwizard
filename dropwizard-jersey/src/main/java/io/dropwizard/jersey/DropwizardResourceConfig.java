@@ -11,8 +11,6 @@ import io.dropwizard.jersey.caching.CacheControlledResponseFeature;
 import io.dropwizard.jersey.params.AbstractParamConverterProvider;
 import io.dropwizard.jersey.sessions.SessionFactoryProvider;
 import io.dropwizard.jersey.validation.FuzzyEnumParamConverterProvider;
-
-import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.ServerProperties;
 import org.glassfish.jersey.server.model.Resource;
@@ -31,7 +29,6 @@ import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.util.Comparator;
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
