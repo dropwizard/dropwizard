@@ -11,6 +11,8 @@ import io.dropwizard.jersey.caching.CacheControlledResponseFeature;
 import io.dropwizard.jersey.params.AbstractParamConverterProvider;
 import io.dropwizard.jersey.sessions.SessionFactoryProvider;
 import io.dropwizard.jersey.validation.FuzzyEnumParamConverterProvider;
+
+import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.ServerProperties;
 import org.glassfish.jersey.server.model.Resource;
@@ -29,6 +31,7 @@ import java.io.Serializable;
 import java.lang.annotation.Annotation;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
@@ -41,6 +44,7 @@ public class DropwizardResourceConfig extends ResourceConfig {
     private static final Pattern PATH_DIRTY_SLASHES = Pattern.compile("\\s*/\\s*/+\\s*");
 
     private String urlPattern = "/*";
+    private String contextPath = "";
 
     public DropwizardResourceConfig(MetricRegistry metricRegistry) {
         this(false, metricRegistry);
@@ -95,6 +99,10 @@ public class DropwizardResourceConfig extends ResourceConfig {
         this.urlPattern = urlPattern;
     }
 
+    public void setContextPath(String contextPath){
+        this.contextPath = contextPath;
+    }
+
     /**
      * Combines types of getClasses() and getSingletons in one Set.
      *
@@ -134,7 +142,7 @@ public class DropwizardResourceConfig extends ResourceConfig {
         }
 
         for (Class<?> klass : allResourcesClasses) {
-            new EndpointLogger(urlPattern, klass).populate(endpointLogLines);
+            new EndpointLogger(contextPath, urlPattern, klass).populate(endpointLogLines);
         }
 
         final Set<Resource> allResources = this.getResources();
@@ -146,7 +154,7 @@ public class DropwizardResourceConfig extends ResourceConfig {
                 // related to the OPTIONS method and @Consumes/@Produces annotations.
 
                 for (Class<?> childResHandlerClass : childRes.getHandlerClasses()) {
-                    EndpointLogger epl = new EndpointLogger(urlPattern, childResHandlerClass);
+                    EndpointLogger epl = new EndpointLogger(contextPath, urlPattern, childResHandlerClass);
                     epl.populate(cleanUpPath(res.getPath() + epl.rootPath), epl.klass, false, childRes, endpointLogLines);
                 }
             }
@@ -177,8 +185,10 @@ public class DropwizardResourceConfig extends ResourceConfig {
         private final String rootPath;
         private final Class<?> klass;
 
-        EndpointLogger(String urlPattern, Class<?> klass) {
-            this.rootPath = urlPattern.endsWith("/*") ? urlPattern.substring(0, urlPattern.length() - 1) : urlPattern;
+        EndpointLogger(String contextPath, String urlPattern, Class<?> klass) {
+            final String rootPattern = urlPattern.endsWith("/*") ? urlPattern.substring(0, urlPattern.length() - 1) : urlPattern;
+            final String normalizedContextPath = contextPath == null || contextPath.trim().isEmpty() ? "" : contextPath.startsWith("/") ? contextPath : "/" + contextPath;
+            this.rootPath = normalizedContextPath + rootPattern;
             this.klass = klass;
         }
 
