@@ -1082,16 +1082,18 @@ Extends the attributes that are available to :ref:`all reporters <man-configurat
       reporters:
         - type: graphite
           host: localhost
-          port: 8080
+          port: 2003
           prefix: <prefix>
+          transport: tcp
 
 
 ====================== ===============  ====================================================================================================
 Name                   Default          Description
 ====================== ===============  ====================================================================================================
 host                   localhost        The hostname of the Graphite server to report to.
-port                   8080             The port of the Graphite server to report to.
+port                   2003             The port of the Graphite server to report to.
 prefix                 (none)           The prefix for Metric key names to report to Graphite.
+transport              tcp              The type of transport to report to Graphite with ("tcp" or "udp").
 ====================== ===============  ====================================================================================================
 
 
