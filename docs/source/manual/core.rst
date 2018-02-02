@@ -357,8 +357,6 @@ For HTTP/2 servers you need to add an ALPN Conscrypt provider as a dependency.
     <dependency>
         <groupId>org.eclipse.jetty</groupId>
         <artifactId>jetty-alpn-conscrypt-server</artifactId>
-        <version>${jetty.version}</version>
-        <scope>test</scope>
     </dependency>
 
 .. _`Conscrypt`: https://github.com/google/conscrypt
