@@ -14,6 +14,7 @@ v1.3.0: Unreleased
 * Upgrade to Apache HttpClient 4.5.5
 * Upgrade to Apache Tomcat JDBC 9.0.4
 * Upgrade to AssertJ 3.9.0
+* Upgrade to Error Prone 2.2.0
 * Upgrade to Hibernate 5.2.13.Final
 * Upgrade to Jackson 2.9.4
 * Upgrade to Liquibase 3.5.4
