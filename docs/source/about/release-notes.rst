@@ -12,6 +12,7 @@ v1.3.0: Unreleased
 * Upgrade to Apache Commons Lang3 3.7
 * Upgrade to Apache Tomcat JDBC 9.0.4
 * Upgrade to AssertJ 3.9.0
+* Upgrade to Hibernate 5.2.13.Final
 * Upgrade to Jackson 2.9.4
 
 .. _rel-1.2.1:
