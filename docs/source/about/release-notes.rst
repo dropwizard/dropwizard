@@ -9,6 +9,7 @@ Release Notes
 v1.3.0: Unreleased
 ==================
 
+* Upgrade to AssertJ 3.9.0
 * Upgrade to Jackson 2.9.4
 
 .. _rel-1.2.1:
