@@ -41,6 +41,7 @@ public class DropwizardResourceConfig extends ResourceConfig {
     private static final Pattern PATH_DIRTY_SLASHES = Pattern.compile("\\s*/\\s*/+\\s*");
 
     private String urlPattern = "/*";
+    private String contextPath = "";
 
     public DropwizardResourceConfig(MetricRegistry metricRegistry) {
         this(false, metricRegistry);
@@ -95,6 +96,10 @@ public class DropwizardResourceConfig extends ResourceConfig {
         this.urlPattern = urlPattern;
     }
 
+    public void setContextPath(String contextPath){
+        this.contextPath = contextPath;
+    }
+
     /**
      * Combines types of getClasses() and getSingletons in one Set.
      *
@@ -134,7 +139,7 @@ public class DropwizardResourceConfig extends ResourceConfig {
         }
 
         for (Class<?> klass : allResourcesClasses) {
-            new EndpointLogger(urlPattern, klass).populate(endpointLogLines);
+            new EndpointLogger(contextPath, urlPattern, klass).populate(endpointLogLines);
         }
 
         final Set<Resource> allResources = this.getResources();
@@ -146,7 +151,7 @@ public class DropwizardResourceConfig extends ResourceConfig {
                 // related to the OPTIONS method and @Consumes/@Produces annotations.
 
                 for (Class<?> childResHandlerClass : childRes.getHandlerClasses()) {
-                    EndpointLogger epl = new EndpointLogger(urlPattern, childResHandlerClass);
+                    EndpointLogger epl = new EndpointLogger(contextPath, urlPattern, childResHandlerClass);
                     epl.populate(cleanUpPath(res.getPath() + epl.rootPath), epl.klass, false, childRes, endpointLogLines);
                 }
             }
@@ -177,8 +182,10 @@ public class DropwizardResourceConfig extends ResourceConfig {
         private final String rootPath;
         private final Class<?> klass;
 
-        EndpointLogger(String urlPattern, Class<?> klass) {
-            this.rootPath = urlPattern.endsWith("/*") ? urlPattern.substring(0, urlPattern.length() - 1) : urlPattern;
+        EndpointLogger(String contextPath, String urlPattern, Class<?> klass) {
+            final String rootPattern = urlPattern.endsWith("/*") ? urlPattern.substring(0, urlPattern.length() - 1) : urlPattern;
+            final String normalizedContextPath = contextPath == null || contextPath.trim().isEmpty() ? "" : contextPath.startsWith("/") ? contextPath : "/" + contextPath;
+            this.rootPath = normalizedContextPath + rootPattern;
             this.klass = klass;
         }
 
