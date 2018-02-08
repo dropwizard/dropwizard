@@ -57,8 +57,8 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <javadoc.doclint.none>-Xdoclint:none</javadoc.doclint.none>
         <maven.site.deploy.skip>true</maven.site.deploy.skip>
-        <junit.version>4.12.2</junit.version>
-        <junit5.version>5.0.2</junit5.version>
+        <junit.version>4.12.3</junit.version>
+        <junit5.version>5.0.3</junit5.version>
         <assertj.version>3.9.0</assertj.version>
         <mockito.version>2.13.0</mockito.version>
     </properties>

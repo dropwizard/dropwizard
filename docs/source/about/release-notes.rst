@@ -17,6 +17,7 @@ v1.3.0: Unreleased
 * Upgrade to Error Prone 2.2.0
 * Upgrade to Hibernate 5.2.13.Final
 * Upgrade to Jackson 2.9.4
+* Upgrade to JUnit 5.0.3
 * Upgrade to Liquibase 3.5.4
 * Upgrade to NullAway 0.3.2
 
