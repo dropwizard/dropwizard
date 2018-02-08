@@ -40,7 +40,7 @@ import static org.mockito.Mockito.when;
 public class LayoutIntegrationTests {
 
     static {
-        BootstrapLogging.bootstrap(Level.INFO);
+        BootstrapLogging.bootstrap(Level.INFO, new EventJsonLayoutBaseFactory());
     }
 
     private final ObjectMapper objectMapper = Jackson.newObjectMapper();
