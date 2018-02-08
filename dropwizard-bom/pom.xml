@@ -24,7 +24,7 @@
         <dropwizard.version>${project.version}</dropwizard.version>
         <guava.version>24.0-jre</guava.version>
         <jersey.version>2.25.1</jersey.version>
-        <jackson.version>2.9.3</jackson.version>
+        <jackson.version>2.9.4</jackson.version>
         <jetty.version>9.4.8.v20171121</jetty.version>
         <servlet.version>3.0.0.v201112011016</servlet.version>
         <metrics4.version>4.0.2</metrics4.version>

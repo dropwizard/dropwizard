@@ -4,6 +4,13 @@
 Release Notes
 #############
 
+.. _rel-1.3.0:
+
+v1.3.0: Unreleased
+==================
+
+* Upgrade to Jackson 2.9.4
+
 .. _rel-1.2.1:
 
 v1.2.1: Nov 22, 2017
