@@ -14,6 +14,7 @@ v1.3.0: Unreleased
 * Upgrade to AssertJ 3.9.0
 * Upgrade to Hibernate 5.2.13.Final
 * Upgrade to Jackson 2.9.4
+* Upgrade to Liquibase 3.5.4
 
 .. _rel-1.2.1:
 

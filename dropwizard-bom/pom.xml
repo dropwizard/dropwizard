@@ -155,7 +155,7 @@
             <dependency>
                 <groupId>org.liquibase</groupId>
                 <artifactId>liquibase-core</artifactId>
-                <version>3.5.3</version>
+                <version>3.5.4</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.yaml</groupId>
