@@ -25,15 +25,6 @@ database:
 #    port: 8080
 
 server:
-  requestLog:
-    appenders:
-      - type: console
-        layout:
-          type: access-json
-          timestampFormat: "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
-          requestHeaders:
-              - User-Agent
-              - X-Request-Id
 #  softNofileLimit: 1000
 #  hardNofileLimit: 1000
   applicationConnectors:
@@ -78,9 +69,6 @@ logging:
 
   appenders:
     - type: console
-      layout:
-        type: json
-        timestampFormat: "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
     - type: file
       threshold: INFO
       logFormat: "%-6level [%d{HH:mm:ss.SSS}] [%t] %logger{5} - %X{code} %msg %n"
@@ -90,8 +78,7 @@ logging:
       timeZone: UTC
       maxFileSize: 10MB
 
-
-# the key needs to match the suffix of the renderer
+# the key needs to match the configuration key of the renderer (ViewRenderer::getConfigurationKey)
 viewRendererConfiguration:
     freemarker:
         strict_syntax: yes
