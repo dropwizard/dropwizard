@@ -182,7 +182,7 @@
         <connection>scm:git:git://github.com/dropwizard/dropwizard.git</connection>
         <developerConnection>scm:git:git@github.com:dropwizard/dropwizard.git</developerConnection>
         <url>https://github.com/dropwizard/dropwizard</url>
-        <tag>v1.3.0-rc3</tag>
+        <tag>HEAD</tag>
     </scm>
 
     <issueManagement>
