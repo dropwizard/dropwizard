@@ -1,6 +1,7 @@
 package io.dropwizard.hibernate;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
@@ -146,7 +147,7 @@ public class LazyLoadingTest {
         @Override
         public Response toResponse(ConstraintViolationException e) {
             return Response.status(Response.Status.BAD_REQUEST)
-                .entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(), e.getCause().getMessage()))
+                .entity(new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(), Strings.nullToEmpty(e.getCause().getMessage())))
                 .build();
         }
     }

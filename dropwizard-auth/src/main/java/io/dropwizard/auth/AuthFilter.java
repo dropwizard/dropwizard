@@ -35,8 +35,7 @@ public abstract class AuthFilter<C, P extends Principal> implements ContainerReq
 
         private String realm = "realm";
         private String prefix = "Basic";
-        @Nullable
-        private Authenticator<C, P> authenticator;
+        private Authenticator<C, P> authenticator = credentials -> Optional.empty();
         private Authorizer<P> authorizer = new PermitAllAuthorizer<>();
         private UnauthorizedHandler unauthorizedHandler = new DefaultUnauthorizedHandler();
 

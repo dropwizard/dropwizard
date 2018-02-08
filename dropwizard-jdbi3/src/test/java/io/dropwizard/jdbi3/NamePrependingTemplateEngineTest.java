@@ -50,12 +50,12 @@ public class NamePrependingTemplateEngineTest {
 
         final String result = sut.render(TEMPLATE, ctx);
 
-        assertThat(result).containsSequence(
-            "/* ",
-            extensionMethod.getType().getSimpleName(),
-            ".",
-            extensionMethod.getMethod().getName(),
-            " */",
+        assertThat(result).isEqualTo(
+            "/* " +
+            extensionMethod.getType().getSimpleName() +
+            "." +
+            extensionMethod.getMethod().getName() +
+            " */ " +
             ORIGINAL_RENDERED);
     }
 }

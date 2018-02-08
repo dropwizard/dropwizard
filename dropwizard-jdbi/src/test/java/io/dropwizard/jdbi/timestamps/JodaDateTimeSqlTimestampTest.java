@@ -50,7 +50,7 @@ public class JodaDateTimeSqlTimestampTest {
                         .around(dbiClient);
                 done = true;
             } catch (IllegalArgumentException e) {
-                if (!e.getMessage().contains("is not recognised")) {
+                if (e.getMessage() == null || !e.getMessage().contains("is not recognised")) {
                     throw e;
                 }
             }
