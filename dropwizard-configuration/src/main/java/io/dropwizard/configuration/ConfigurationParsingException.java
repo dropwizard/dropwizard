@@ -2,7 +2,6 @@ package io.dropwizard.configuration;
 
 import com.fasterxml.jackson.core.JsonLocation;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.dataformat.yaml.snakeyaml.error.Mark;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
 import org.apache.commons.text.similarity.LevenshteinDistance;
@@ -218,12 +217,6 @@ public class ConfigurationParsingException extends ConfigurationException {
             return location == null
                     ? this
                     : setLocation(location.getLineNr(), location.getColumnNr());
-        }
-
-        Builder setLocation(Mark mark) {
-            return mark == null
-                    ? this
-                    : setLocation(mark.getLine(), mark.getColumn());
         }
 
         Builder setLocation(int line, int column) {
