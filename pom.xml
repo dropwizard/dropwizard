@@ -55,8 +55,15 @@
         <dropwizard.url>http://www.dropwizard.io/${project.version}</dropwizard.url>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <javadoc.doclint.none>-Xdoclint:none</javadoc.doclint.none>
         <maven.site.deploy.skip>true</maven.site.deploy.skip>
+
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <maven.compiler.showWarnings>true</maven.compiler.showWarnings>
+        <maven.compiler.showDeprecation>true</maven.compiler.showDeprecation>
+        <maven.compiler.optimize>false</maven.compiler.optimize>
+        <maven.compiler.forceJavacCompilerUse>true</maven.compiler.forceJavacCompilerUse>
+
         <junit.version>4.12.3</junit.version>
         <junit5.version>5.0.3</junit5.version>
         <assertj.version>3.9.0</assertj.version>
@@ -257,6 +264,9 @@
                     <value>true</value>
                 </property>
             </activation>
+            <properties>
+                <maven.compiler.optimize>true</maven.compiler.optimize>
+            </properties>
             <build>
                 <plugins>
                     <plugin>
@@ -280,7 +290,7 @@
             <id>dev</id>
             <properties>
                 <maven.javadoc.skip>true</maven.javadoc.skip>
-                <findbugs.skip>true</findbugs.skip>
+                <maven.source.skip>true</maven.source.skip>
             </properties>
             <build>
                 <plugins>
@@ -311,11 +321,7 @@
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-compiler-plugin</artifactId>
                         <configuration>
-                            <source>1.8</source>
-                            <target>1.8</target>
-                            <optimize>true</optimize>
                             <debug>true</debug>
-                            <showWarnings>true</showWarnings>
                         </configuration>
                     </plugin>
                 </plugins>
@@ -335,13 +341,8 @@
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-compiler-plugin</artifactId>
                         <configuration>
-                            <source>1.8</source>
-                            <target>1.8</target>
-                            <optimize>true</optimize>
                             <debug>true</debug>
                             <compilerId>javac-with-errorprone</compilerId>
-                            <forceJavacCompilerUse>true</forceJavacCompilerUse>
-                            <showWarnings>true</showWarnings>
                             <fork>true</fork>
                             <annotationProcessorPaths>
                                 <!-- enable extended nullability checks -->
@@ -385,12 +386,7 @@
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-compiler-plugin</artifactId>
                         <configuration>
-                            <source>9</source>
-                            <target>9</target>
-                            <optimize>true</optimize>
                             <debug>true</debug>
-                            <forceJavacCompilerUse>true</forceJavacCompilerUse>
-                            <showWarnings>true</showWarnings>
                         </configuration>
                     </plugin>
                     <plugin>
@@ -593,7 +589,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <configuration>
-                    <additionalparam>${javadoc.doclint.none}</additionalparam>
                     <doclint>none</doclint>
                     <quiet>true</quiet>
                 </configuration>
@@ -709,7 +704,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <configuration>
-                    <additionalparam>${javadoc.doclint.none}</additionalparam>
                     <doclint>none</doclint>
                     <quiet>true</quiet>
                 </configuration>
