@@ -15,14 +15,13 @@
  */
 package io.dropwizard.jetty;
 
-import com.google.common.io.Files;
-
-import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.ArrayList;
@@ -75,8 +74,8 @@ public class NetUtil {
             // - Windows NT Server 4.0+: 200
             // - Linux and Mac OS X: 128
             try {
-                String setting = Files.toString(new File(TCP_BACKLOG_SETTING_LOCATION), StandardCharsets.UTF_8);
-                return Integer.parseInt(setting.trim());
+                return Integer.parseInt(new String(Files.readAllBytes(Paths.get(TCP_BACKLOG_SETTING_LOCATION)),
+                    StandardCharsets.UTF_8).trim());
             } catch (SecurityException | IOException | NumberFormatException | NullPointerException e) {
                 return tcpBacklog;
             }
