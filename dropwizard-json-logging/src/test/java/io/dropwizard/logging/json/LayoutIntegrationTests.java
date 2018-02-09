@@ -31,7 +31,6 @@ import java.io.PrintStream;
 import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
-import static java.util.Objects.requireNonNull;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 import static org.mockito.Mockito.mock;
@@ -44,8 +43,6 @@ public class LayoutIntegrationTests {
     }
 
     private final ObjectMapper objectMapper = Jackson.newObjectMapper();
-    private final YamlConfigurationFactory<ConsoleAppenderFactory> yamlFactory = new YamlConfigurationFactory<>(
-        ConsoleAppenderFactory.class, BaseValidator.newValidator(), objectMapper, "dw-json-log");
 
     @Before
     public void setUp() {
@@ -54,13 +51,19 @@ public class LayoutIntegrationTests {
 
     @SuppressWarnings("unchecked")
     private <T extends DeferredProcessingAware> ConsoleAppenderFactory<T> getAppenderFactory(String s) throws Exception {
-        return yamlFactory.build(new File(Resources.getResource(s).toURI()));
+        return new YamlConfigurationFactory<>(ConsoleAppenderFactory.class, BaseValidator.newValidator(), objectMapper,
+            "dw-json-log").build(new File(Resources.getResource(s).toURI()));
+    }
+
+    @SuppressWarnings("unchecked")
+    private <T extends DeferredProcessingAware> DiscoverableLayoutFactory<T> getLayout(String s) throws Exception {
+        return new YamlConfigurationFactory<>(DiscoverableLayoutFactory.class, BaseValidator.newValidator(), objectMapper,
+            "dw-json-layout").build(new File(Resources.getResource(s).toURI()));
     }
 
     @Test
     public void testDeserializeJson() throws Exception {
-        ConsoleAppenderFactory<ILoggingEvent> appenderFactory = getAppenderFactory("yaml/json-log.yml");
-        DiscoverableLayoutFactory layout = requireNonNull(appenderFactory.getLayout());
+        DiscoverableLayoutFactory layout = getLayout("yaml/json-layout.yml");
         assertThat(layout).isInstanceOf(EventJsonLayoutBaseFactory.class);
         EventJsonLayoutBaseFactory factory = (EventJsonLayoutBaseFactory) layout;
         assertThat(factory).isNotNull();
@@ -82,8 +85,7 @@ public class LayoutIntegrationTests {
 
     @Test
     public void testDeserializeAccessJson() throws Exception {
-        ConsoleAppenderFactory<IAccessEvent> appenderFactory = getAppenderFactory("yaml/json-access-log.yml");
-        DiscoverableLayoutFactory layout = requireNonNull(appenderFactory.getLayout());
+        DiscoverableLayoutFactory layout = getLayout("yaml/json-access-layout.yml");
         assertThat(layout).isInstanceOf(AccessJsonLayoutBaseFactory.class);
         AccessJsonLayoutBaseFactory factory = (AccessJsonLayoutBaseFactory) layout;
         assertThat(factory.getTimestampFormat()).isEqualTo("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
