@@ -1,49 +1,43 @@
 package io.dropwizard.servlets.assets;
 
-import com.google.common.io.Files;
 import com.google.common.io.Resources;
-import org.junit.Before;
 import org.junit.Test;
 
-import java.io.File;
 import java.net.JarURLConnection;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.jar.JarEntry;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class ResourceURLTest {
-    private File directory;
-    private File file;
-
-    @Before
-    public void setup() throws Exception {
-        file = File.createTempFile("resource_url_test", null);
-        file.deleteOnExit();
-
-        directory = Files.createTempDir();
-        directory.deleteOnExit();
-    }
 
     @Test
     public void isDirectoryReturnsTrueForPlainDirectories() throws Exception {
-        final URL url = directory.toURI().toURL();
+        final Path path = Files.createTempDirectory("resource_url_test_dir");
+        final URL url = path.toUri().toURL();
 
         assertThat(url.getProtocol())
                 .isEqualTo("file");
         assertThat(ResourceURL.isDirectory(url))
                 .isTrue();
+
+        Files.delete(path);
     }
 
     @Test
     public void isDirectoryReturnsFalseForPlainFiles() throws Exception {
-        final URL url = file.toURI().toURL();
+        final Path path = Files.createTempFile("resource_url_test", null);
+        final URL url = path.toUri().toURL();
 
         assertThat(url.getProtocol())
                 .isEqualTo("file");
         assertThat(ResourceURL.isDirectory(url))
                 .isFalse();
+
+        Files.delete(path);
     }
 
     @Test
@@ -108,13 +102,16 @@ public class ResourceURLTest {
 
     @Test
     public void getLastModifiedReturnsTheLastModifiedTimeOfAFile() throws Exception {
-        final URL url = file.toURI().toURL();
+        final Path path = Files.createTempFile("resource_url_test", null);
+        final URL url = path.toUri().toURL();
         final long lastModified = ResourceURL.getLastModified(url);
 
         assertThat(lastModified)
                 .isGreaterThan(0);
         assertThat(lastModified)
-                .isEqualTo(file.lastModified());
+                .isEqualTo(path.toFile().lastModified());
+
+        Files.delete(path);
     }
 
     @Test

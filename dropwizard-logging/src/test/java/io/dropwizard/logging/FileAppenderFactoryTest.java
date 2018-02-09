@@ -13,7 +13,6 @@ import ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy;
 import ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy;
 import ch.qos.logback.core.util.FileSize;
 import com.google.common.collect.ImmutableList;
-import com.google.common.io.Files;
 import io.dropwizard.jackson.DiscoverableSubtypeResolver;
 import io.dropwizard.logging.async.AsyncLoggingEventAppenderFactory;
 import io.dropwizard.logging.filter.NullLevelFilterFactory;
@@ -21,7 +20,6 @@ import io.dropwizard.logging.layout.DropwizardLayoutFactory;
 import io.dropwizard.util.Size;
 import io.dropwizard.validation.BaseValidator;
 import io.dropwizard.validation.ConstraintViolations;
-import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -29,6 +27,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.validation.Validator;
 
+import java.io.File;
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -166,9 +165,8 @@ public class FileAppenderFactoryTest {
         final FileAppender<ILoggingEvent> rollingAppender = appenderFactory.buildAppender(new LoggerContext());
 
         final String file = rollingAppender.getFile();
-        final String dateSuffix = LocalDateTime.now().format(DateTimeFormatter.ofPattern("YYYY-MM-dd"));
-        final String name = Files.getNameWithoutExtension(file);
-        Assert.assertEquals("test-archived-name-" + dateSuffix, name);
+        assertThat(new File(file)).hasName("test-archived-name-" +
+            LocalDateTime.now().format(DateTimeFormatter.ofPattern("YYYY-MM-dd")) + ".log");
     }
 
     @Test

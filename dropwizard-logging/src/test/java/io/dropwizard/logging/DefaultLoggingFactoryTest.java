@@ -11,7 +11,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.io.Files;
 import com.google.common.io.Resources;
 import io.dropwizard.configuration.FileConfigurationSourceProvider;
 import io.dropwizard.configuration.SubstitutingSourceProvider;
@@ -30,6 +29,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -120,18 +120,18 @@ public class DefaultLoggingFactoryTest {
 
         config.stop();
 
-        assertThat(Files.readLines(defaultLog, StandardCharsets.UTF_8)).containsOnly(
+        assertThat(Files.readAllLines(defaultLog.toPath())).containsOnly(
                 "INFO  com.example.app: Application log",
                 "DEBUG com.example.newApp: New application debug log",
                 "INFO  com.example.newApp: New application info log",
                 "DEBUG com.example.legacyApp: Legacy application debug log",
                 "INFO  com.example.legacyApp: Legacy application info log");
 
-        assertThat(Files.readLines(newAppLog, StandardCharsets.UTF_8)).containsOnly(
+        assertThat(Files.readAllLines(newAppLog.toPath())).containsOnly(
                 "DEBUG com.example.newApp: New application debug log",
                 "INFO  com.example.newApp: New application info log");
 
-        assertThat(Files.readLines(newAppNotAdditiveLog, StandardCharsets.UTF_8)).containsOnly(
+        assertThat(Files.readAllLines(newAppNotAdditiveLog.toPath())).containsOnly(
             "DEBUG com.example.notAdditive: Not additive application debug log",
             "INFO  com.example.notAdditive: Not additive application info log");
     }
