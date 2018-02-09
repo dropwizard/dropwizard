@@ -56,7 +56,7 @@ public class FuzzyEnumModule extends Module {
             if (constant != null) {
                 return constant;
             }
-            throw ctxt.mappingException(jp.getText() + " was not one of " + acceptedValues);
+            throw ctxt.weirdStringException(jp.getText(), handledType(), jp.getText() + " was not one of " + acceptedValues);
         }
     }
 
