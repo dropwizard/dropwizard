@@ -162,6 +162,9 @@ public class BiDiGzipHandlerTest {
         protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
             assertThat(req.getHeader(HttpHeaders.CONTENT_TYPE)).isEqualToIgnoringCase(PLAIN_TEXT_UTF_8);
             assertThat(req.getHeader(HttpHeaders.CONTENT_ENCODING)).isNull();
+            assertThat(req.getHeader(HttpHeaders.CONTENT_LENGTH)).isNull();
+            assertThat(req.getContentLength()).isEqualTo(-1);
+            assertThat(req.getContentLengthLong()).isEqualTo(-1L);
             assertThat(CharStreams.toString(req.getReader())).isEqualTo(
                 Resources.toString(Resources.getResource("assets/new-banner.txt"), StandardCharsets.UTF_8));
 
