@@ -59,7 +59,8 @@ public class SessionFactoryFactoryTest {
 
         final ImmutableMap<String, String> properties = ImmutableMap.of(
             "hibernate.show_sql", "true",
-            "hibernate.dialect", "org.hibernate.dialect.HSQLDialect");
+            "hibernate.dialect", "org.hibernate.dialect.HSQLDialect",
+            "hibernate.jdbc.time_zone", "UTC");
         config.setProperties(properties);
     }
 
