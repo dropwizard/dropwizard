@@ -39,7 +39,7 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>com.github.arteam.jadira</groupId>
+            <groupId>org.jadira.usertype</groupId>
             <artifactId>usertype.core</artifactId>
         </dependency>
         <dependency>
