@@ -6,7 +6,7 @@
     <parent>
         <artifactId>dropwizard-parent</artifactId>
         <groupId>io.dropwizard</groupId>
-        <version>1.1.0-SNAPSHOT</version>
+        <version>1.3.0-rc7-SNAPSHOT</version>
     </parent>
 
     <artifactId>dropwizard-unixsocket</artifactId>
