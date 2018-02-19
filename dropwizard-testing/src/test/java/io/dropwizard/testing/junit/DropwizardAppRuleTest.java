@@ -3,6 +3,7 @@ package io.dropwizard.testing.junit;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.testing.app.DropwizardTestApplication;
 import io.dropwizard.testing.app.TestConfiguration;
+import org.assertj.core.api.Assertions;
 import org.junit.ClassRule;
 import org.junit.Test;
 
@@ -67,5 +68,13 @@ public class DropwizardAppRuleTest {
             .post(Entity.entity("Custom message", MediaType.TEXT_PLAIN), String.class);
 
         assertThat(response, is("Custom message"));
+    }
+
+    @Test
+    public void clientUsesJacksonMapperFromEnvironment() {
+        Assertions.assertThat(RULE.client().target("http://localhost:" + RULE.getLocalPort() + "/message")
+            .request()
+            .get(DropwizardTestApplication.MessageView.class).getMessage())
+            .contains("Yes, it's here");
     }
 }
