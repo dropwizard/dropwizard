@@ -4,7 +4,7 @@ language: java
 before_install:
   - ulimit -c unlimited -S
 script:
-  - ./mvnw test -B
+  - ./mvnw test -B -P code-coverage
   - ./mvnw site -pl docs -B
 after_success:
   - bash .travis_after_success.sh
