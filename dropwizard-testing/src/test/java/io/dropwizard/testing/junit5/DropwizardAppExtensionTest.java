@@ -11,6 +11,8 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 
+import java.util.Optional;
+
 import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -66,5 +68,12 @@ public class DropwizardAppExtensionTest {
             .post(Entity.entity("Custom message", MediaType.TEXT_PLAIN), String.class);
 
         assertThat(response, is("Custom message"));
+    }
+
+    @Test
+    public void clientUsesJacksonMapperFromEnvironment() {
+        assertThat(EXTENSION.client().target("http://localhost:" + EXTENSION.getLocalPort() + "/message")
+            .request()
+            .get(DropwizardTestApplication.MessageView.class).getMessage(), is(Optional.of("Yes, it's here")));
     }
 }
