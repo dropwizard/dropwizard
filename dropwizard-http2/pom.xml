@@ -14,20 +14,9 @@
     <properties>
         <!-- Default alpn-boot version. See <profiles> for specific profiles. -->
         <alpn-boot.version>8.1.12.v20180117</alpn-boot.version>
+        <argLine>-Xbootclasspath/p:/"${user.home}/.m2/repository/org/mortbay/jetty/alpn/alpn-boot/${alpn-boot.version}/alpn-boot-${alpn-boot.version}.jar"
+            -Duser.language=en -Duser.region=US</argLine>
     </properties>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <argLine>-Xbootclasspath/p:/"${user.home}/.m2/repository/org/mortbay/jetty/alpn/alpn-boot/${alpn-boot.version}/alpn-boot-${alpn-boot.version}.jar"
-                             -Duser.language=en -Duser.region=US</argLine>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 
     <dependencyManagement>
         <dependencies>
@@ -113,17 +102,9 @@
             <activation>
                 <jdk>9</jdk>
             </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <argLine>-Duser.language=en -Duser.region=US --add-modules java.xml.bind</argLine>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
+            <properties>
+                <argLine>-Duser.language=en -Duser.region=US --add-modules java.xml.bind</argLine>
+            </properties>
             <dependencies>
                 <dependency>
                     <groupId>org.eclipse.jetty</groupId>
