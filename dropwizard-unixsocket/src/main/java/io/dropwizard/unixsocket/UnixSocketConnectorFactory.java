@@ -10,6 +10,7 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.unixsocket.UnixSocketConnector;
 import org.eclipse.jetty.util.thread.Scheduler;
 import org.eclipse.jetty.util.thread.ThreadPool;
+import javax.annotation.Nullable;
 
 import static com.codahale.metrics.MetricRegistry.name;
 
@@ -50,7 +51,7 @@ public class UnixSocketConnectorFactory extends HttpConnectorFactory {
 
     @Override
     protected Connector buildConnector(Server server, Scheduler scheduler, ByteBufferPool bufferPool, String name,
-                                       ThreadPool threadPool, ConnectionFactory... factories) {
+                                       @Nullable ThreadPool threadPool, ConnectionFactory... factories) {
         final UnixSocketConnector connector = new UnixSocketConnector(server, threadPool, scheduler, bufferPool,
             getSelectorThreads().orElse(-1), factories);
         if (getAcceptQueueSize() != null) {
