@@ -14,8 +14,7 @@
     <properties>
         <!-- Default alpn-boot version. See <profiles> for specific profiles. -->
         <alpn-boot.version>8.1.12.v20180117</alpn-boot.version>
-        <argLine>-Xbootclasspath/p:/"${user.home}/.m2/repository/org/mortbay/jetty/alpn/alpn-boot/${alpn-boot.version}/alpn-boot-${alpn-boot.version}.jar"
-            -Duser.language=en -Duser.region=US</argLine>
+        <argLine>-Xbootclasspath/p:/${user.home}/.m2/repository/org/mortbay/jetty/alpn/alpn-boot/${alpn-boot.version}/alpn-boot-${alpn-boot.version}.jar -Duser.language=en -Duser.region=US</argLine>
     </properties>
 
     <dependencyManagement>
