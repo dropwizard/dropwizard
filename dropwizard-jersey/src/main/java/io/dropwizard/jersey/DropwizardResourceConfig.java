@@ -41,7 +41,7 @@ public class DropwizardResourceConfig extends ResourceConfig {
     private static final Pattern PATH_DIRTY_SLASHES = Pattern.compile("\\s*/\\s*/+\\s*");
 
     private String urlPattern = "/*";
-    private String contextPath = "";
+    private String contextPath = "/";
 
     public DropwizardResourceConfig(MetricRegistry metricRegistry) {
         this(false, metricRegistry);
@@ -184,7 +184,8 @@ public class DropwizardResourceConfig extends ResourceConfig {
 
         EndpointLogger(String contextPath, String urlPattern, Class<?> klass) {
             final String rootPattern = urlPattern.endsWith("/*") ? urlPattern.substring(0, urlPattern.length() - 1) : urlPattern;
-            final String normalizedContextPath = contextPath == null || contextPath.trim().isEmpty() ? "" : contextPath.startsWith("/") ? contextPath : "/" + contextPath;
+            final String normalizedContextPath = contextPath.isEmpty() || contextPath.equals("/") ? "" :
+                contextPath.startsWith("/") ? contextPath : "/" + contextPath;
             this.rootPath = normalizedContextPath + rootPattern;
             this.klass = klass;
         }
