@@ -32,7 +32,7 @@ public class JUnit5IntegrationTest {
     private static final String CONFIG_PATH = ResourceHelpers.resourceFilePath("test-example.yml");
 
 	public static final DropwizardAppExtension<HelloWorldConfiguration> EXTENSION = new DropwizardAppExtension<>(
-			HelloWorldApplication.class, ResourceHelpers.resourceFilePath(CONFIG_PATH), 
+			HelloWorldApplication.class, CONFIG_PATH, 
 			ConfigOverride.config("database.url", "jdbc:h2:" + TMP_FILE));
 
 
