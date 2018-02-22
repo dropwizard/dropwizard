@@ -26,7 +26,7 @@ import io.dropwizard.testing.junit5.DropwizardAppExtension;
 import io.dropwizard.testing.junit5.DropwizardExtensionsSupport;
 
 @ExtendWith(DropwizardExtensionsSupport.class)
-public class IntegrationTestJUnit5 {
+public class JUnit5IntegrationTest {
 	
     private static final String TMP_FILE = createTempFile();
     private static final String CONFIG_PATH = ResourceHelpers.resourceFilePath("test-example.yml");
