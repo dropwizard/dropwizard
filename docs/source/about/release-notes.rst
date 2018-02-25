@@ -9,22 +9,77 @@ Release Notes
 v1.3.0: Unreleased
 ==================
 
-* Upgrade to Apache Commons Lang3 3.7
-* Upgrade to Apache Commons Text 1.2
-* Upgrade to Apache HttpClient 4.5.5
-* Upgrade to Apache Tomcat JDBC 9.0.4
-* Upgrade to AssertJ 3.9.0
-* Upgrade to Error Prone 2.2.0
-* Upgrade to Hibernate 5.2.13.Final
-* Upgrade to Jackson 2.9.4
+* Correctly handle the default context path when logging endpoints `#2279 <https://github.com/dropwizard/dropwizard/pull/2279>`_
+* Add support for providing a custom logging layout during logging bootstrap `#2260 <https://github.com/dropwizard/dropwizard/pull/2260>`_
+* Add context path to logged endpoints `#2254 <https://github.com/dropwizard/dropwizard/pull/2254>`_
+* Enable auto escaping of strings in Freemarker templates `#2251 <https://github.com/dropwizard/dropwizard/pull/2251>`_
+* Add 'dropwizard-jdbi3' module `#2243 <https://github.com/dropwizard/dropwizard/pull/2243>`_, `#2247 <https://github.com/dropwizard/dropwizard/pull/2247>`_
+* Allow dynamic constraint validation messages `#2246 <https://github.com/dropwizard/dropwizard/pull/2246>`_
+* Add support for JSON logs in Dropwizard `#2232 <https://github.com/dropwizard/dropwizard/pull/2232>`_
+* Support for building and running Dropwizard on JDK9 `#2197 <https://github.com/dropwizard/dropwizard/pull/2197>`_
+* Add Dropwizard testing module for JUnit 5 `#2166 <https://github.com/dropwizard/dropwizard/pull/2166>`_
+* Add the SelfValidation annotation as a powerful alternative to ValidationMethod `#2150 <https://github.com/dropwizard/dropwizard/pull/2150>`_
+* Support multiple extensions for views (breaking change) `#2213 <https://github.com/dropwizard/dropwizard/pull/2213>`_
+* Set a minimal duration for DatasourceFactory.maxWaitForConnection `#2130 <https://github.com/dropwizard/dropwizard/pull/2130>`_
+* Migrate deprecated classes from commons-lang to commons-text `#2208 <https://github.com/dropwizard/dropwizard/pull/2208>`_
+* Enable NullAway errorprone checks `#2204 <https://github.com/dropwizard/dropwizard/pull/2204>`_
+* Support for setting the immediateFlush option for file logging `#2193 <https://github.com/dropwizard/dropwizard/pull/2193>`_
+* Use InstrumentedQueuedThreadPool for admin endpoint `#2186 <https://github.com/dropwizard/dropwizard/pull/2186>`_
+* Add support for configuring ServiceUnavailableRetryStrategy for HTTP clients `#2185 <https://github.com/dropwizard/dropwizard/pull/2185>`_
+* Add possibility to configure Jetty's minRequestDataRate `#2184 <https://github.com/dropwizard/dropwizard/pull/2184>`_
+* Add exclusive mode to MinDuration and MaxDuration annotations `#2167 <https://github.com/dropwizard/dropwizard/pull/2167>`_
+* Upgrade Jadira to 7.0.0-rc1 `#2272 <https://github.com/dropwizard/dropwizard/pull/2272>`_
+* Strip the Content-Length header after decompressing HTTP requests `#2271 <https://github.com/dropwizard/dropwizard/pull/2271>`_
+* Upgrade handling an unknown value in FuzzyEnumModule `#2266 <https://github.com/dropwizard/dropwizard/pull/2266>`_
+* Add support for providing a custom layout during logging bootstrap `#2260 <https://github.com/dropwizard/dropwizard/pull/2260>`_
+* Add context path to logged endpoints `#2254 <https://github.com/dropwizard/dropwizard/pull/2254>`_
+* Upgrade to metrics 4.0.2
+* Upgrade to Guava 24.0-jre
 * Upgrade to JUnit 5.0.3
-* Upgrade to Liquibase 3.5.4
+* Upgrade to Error Prone 2.2.0
 * Upgrade to NullAway 0.3.2
+* Upgrade to Apache HttpClient 4.5.5
+* Upgrade to Apache Commons Text 1.2
+* Upgrade to Liquibase 3.5.4
+* Upgrade to Hibernate 5.2.13.Final
+* Upgrade to Apache Tomcat JDBC 9.0.4
+* Upgrade to Apache Commons Lang3 3.7
+* Upgrade to AssertJ 3.9.0
+* Upgrade to Jackson 2.9.4
+
+.. _rel-1.2.4:
+
+v1.2.4: Feb 23, 2018
+====================
+
+* Upgrade Jackson to 2.9.4 in 1.2.* to address a CVE `#2269 <https://github.com/dropwizard/dropwizard/pull/2269>`_
+
+.. _rel-1.1.7:
+
+v1.1.7: Feb 23, 2018
+====================
+
+* Upgrade Jackson to 2.8.11 in 1.1.* to address a CVE `#2270 <https://github.com/dropwizard/dropwizard/pull/2270>`_
+
+.. _rel-1.2.3:
+
+v1.2.3: Jan 24, 2018
+====================
+
+* Enable auto escaping of strings in Freemarker templates `#2251 <https://github.com/dropwizard/dropwizard/pull/2251>`_
+
+.. _rel-1.2.2:
+
+v1.2.2: Nov 27, 2017
+====================
+
+* Don't shut down asynchronous executor in Jersey #2221
+* Add possibility to possibility to extend DropwizardApacheConnector #2220
 
 .. _rel-1.2.1:
 
 v1.2.1: Nov 22, 2017
-==================
+====================
 
 * Correctly set up SO_LINGER for the HTTP connector `#2176 <https://github.com/dropwizard/dropwizard/pull/2176>`_
 * Support fromString in FuzzyEnumParamConverter `#2161 <https://github.com/dropwizard/dropwizard/pull/2161>`_
@@ -41,7 +96,7 @@ v1.1.6: Nov 2, 2017
 .. _rel-1.1.5:
 
 v1.1.5: Oct 17, 2017
-===================
+====================
 
 * Correctly set up SO_LINGER for the HTTP connector `#2176 <https://github.com/dropwizard/dropwizard/pull/2176>`_
 
