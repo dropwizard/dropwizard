@@ -11,6 +11,7 @@ import io.dropwizard.setup.Environment;
 import io.dropwizard.testing.ConfigOverride;
 import io.dropwizard.testing.DropwizardTestSupport;
 import org.glassfish.jersey.client.ClientProperties;
+import org.glassfish.jersey.client.HttpUrlConnectorProvider;
 import org.glassfish.jersey.client.JerseyClientBuilder;
 
 import javax.annotation.Nullable;
@@ -238,6 +239,7 @@ public class DropwizardAppExtension<C extends Configuration> implements Dropwiza
         return new JerseyClientBuilder()
             .register(new JacksonBinder(getObjectMapper()))
             .property(ClientProperties.CONNECT_TIMEOUT, DEFAULT_CONNECT_TIMEOUT_MS)
-            .property(ClientProperties.READ_TIMEOUT, DEFAULT_READ_TIMEOUT_MS);
+            .property(ClientProperties.READ_TIMEOUT, DEFAULT_READ_TIMEOUT_MS)
+            .property(HttpUrlConnectorProvider.SET_METHOD_WORKAROUND, true);
     }
 }
