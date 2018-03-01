@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableMultimap;
 import io.dropwizard.Application;
+import io.dropwizard.jersey.PATCH;
 import io.dropwizard.servlets.tasks.PostBodyTask;
 import io.dropwizard.servlets.tasks.Task;
 import io.dropwizard.setup.Environment;
@@ -44,6 +45,12 @@ public class DropwizardTestApplication extends Application<TestConfiguration> {
         @Produces(MediaType.APPLICATION_JSON)
         public MessageView messageView() {
             return new MessageView(Optional.of(message));
+        }
+
+        @Path("echoPatch")
+        @PATCH
+        public String echoPatch(String patchMessage) {
+            return patchMessage;
         }
     }
 

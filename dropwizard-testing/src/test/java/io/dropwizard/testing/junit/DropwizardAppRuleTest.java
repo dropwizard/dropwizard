@@ -77,4 +77,12 @@ public class DropwizardAppRuleTest {
             .get(DropwizardTestApplication.MessageView.class).getMessage())
             .contains("Yes, it's here");
     }
+
+    @Test
+    public void clientSupportsPatchMethod() {
+        Assertions.assertThat(RULE.client().target("http://localhost:" + RULE.getLocalPort() + "/echoPatch")
+            .request()
+            .method("PATCH", Entity.text("Patch is working"), String.class))
+            .contains("Patch is working");
+    }
 }
