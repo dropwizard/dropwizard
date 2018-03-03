@@ -5,12 +5,14 @@ import com.example.helloworld.core.Person;
 import io.dropwizard.testing.ConfigOverride;
 import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit.DropwizardAppRule;
+import org.eclipse.jetty.http.HttpStatus;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
 
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -57,13 +59,35 @@ public class IntegrationTest {
     @Test
     public void testPostPerson() throws Exception {
         final Person person = new Person("Dr. IntegrationTest", "Chief Wizard");
-        final Person newPerson = RULE.client().target("http://localhost:" + RULE.getLocalPort() + "/people")
-                .request()
-                .post(Entity.entity(person, MediaType.APPLICATION_JSON_TYPE))
-                .readEntity(Person.class);
+        final Person newPerson = postPerson(person);
         assertThat(newPerson.getId()).isNotNull();
         assertThat(newPerson.getFullName()).isEqualTo(person.getFullName());
         assertThat(newPerson.getJobTitle()).isEqualTo(person.getJobTitle());
+    }
+
+    @Test
+    public void testRenderingPersonFreemarker() throws Exception {
+        testRenderingPerson("view_freemarker");
+    }
+
+    @Test
+    public void testRenderingPersonMustache() throws Exception {
+        testRenderingPerson("view_mustache");
+    }
+
+    private void testRenderingPerson(String viewName) throws Exception {
+        final Person person = new Person("Dr. IntegrationTest", "Chief Wizard");
+        final Person newPerson = postPerson(person);
+        final String url = "http://localhost:" + RULE.getLocalPort() + "/people/" + newPerson.getId() + "/" + viewName;
+        Response response = RULE.client().target(url).request().get();
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK_200);
+    }
+
+    private Person postPerson(Person person) {
+        return RULE.client().target("http://localhost:" + RULE.getLocalPort() + "/people")
+                .request()
+                .post(Entity.entity(person, MediaType.APPLICATION_JSON_TYPE))
+                .readEntity(Person.class);
     }
 
     @Test
