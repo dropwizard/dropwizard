@@ -28,11 +28,12 @@ public class EventJsonLayout extends AbstractJsonLayout<ILoggingEvent> {
     private final Map<String, String> customFieldNames;
 
     private ImmutableSet<String> includesMdcKeys;
+    private final boolean flattenMdc;
 
     public EventJsonLayout(JsonFormatter jsonFormatter, TimestampFormatter timestampFormatter,
                            ThrowableHandlingConverter throwableProxyConverter, Set<EventAttribute> includes,
                            Map<String, String> customFieldNames, Map<String, Object> additionalFields,
-                           Set<String> includesMdcKeys) {
+                           Set<String> includesMdcKeys, boolean flattenMdc) {
         super(jsonFormatter);
         this.timestampFormatter = timestampFormatter;
         this.additionalFields = ImmutableMap.copyOf(additionalFields);
@@ -40,6 +41,7 @@ public class EventJsonLayout extends AbstractJsonLayout<ILoggingEvent> {
         this.throwableProxyConverter = throwableProxyConverter;
         this.includes = ImmutableSet.copyOf(includes);
         this.includesMdcKeys = ImmutableSet.copyOf(includesMdcKeys);
+        this.flattenMdc = flattenMdc;
     }
 
     @Override
@@ -56,18 +58,23 @@ public class EventJsonLayout extends AbstractJsonLayout<ILoggingEvent> {
 
     @Override
     protected Map<String, Object> toJsonMap(ILoggingEvent event) {
-        return new MapBuilder(timestampFormatter, customFieldNames, additionalFields, 16)
+        final MapBuilder mapBuilder = new MapBuilder(timestampFormatter, customFieldNames, additionalFields, 16)
             .addTimestamp("timestamp", isIncluded(EventAttribute.TIMESTAMP), event.getTimeStamp())
             .add("level", isIncluded(EventAttribute.LEVEL), String.valueOf(event.getLevel()))
             .add("thread", isIncluded(EventAttribute.THREAD_NAME), event.getThreadName())
-            .add("mdc", isIncluded(EventAttribute.MDC), filterMdc(event.getMDCPropertyMap()))
             .add("logger", isIncluded(EventAttribute.LOGGER_NAME), event.getLoggerName())
             .add("message", isIncluded(EventAttribute.MESSAGE), event.getFormattedMessage())
             .add("context", isIncluded(EventAttribute.CONTEXT_NAME), event.getLoggerContextVO().getName())
             .add("version", jsonProtocolVersion != null, jsonProtocolVersion)
             .add("exception", isIncluded(EventAttribute.EXCEPTION) && event.getThrowableProxy() != null,
-                throwableProxyConverter.convert(event))
-            .build();
+                 throwableProxyConverter.convert(event));
+        final boolean includeMdc = isIncluded(EventAttribute.MDC);
+        if (flattenMdc) {
+            filterMdc(event.getMDCPropertyMap()).forEach((k,v) -> mapBuilder.add(k, includeMdc, v));
+        } else {
+            mapBuilder.add("mdc", includeMdc, filterMdc(event.getMDCPropertyMap()));
+        }
+        return mapBuilder.build();
     }
 
     private Map<String, String> filterMdc(Map<String, String> mdcPropertyMap) {

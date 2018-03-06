@@ -31,6 +31,11 @@ import java.util.TimeZone;
  * <td>(empty)</td>
  * <td>Set of MDC keys which should be included in the JSON map. By default includes everything.</td>
  * </tr>
+ * <tr>
+ * <td>{@code flattenMdc}</td>
+ * <td>{@code false}</td>
+ * <td>Whether the MDC should be included under the key "mdc" or flattened into the map.</td>
+ * </tr>
  * </table>
  */
 @JsonTypeName("json")
@@ -41,6 +46,7 @@ public class EventJsonLayoutBaseFactory extends AbstractJsonLayoutBaseFactory<IL
         EventAttribute.EXCEPTION, EventAttribute.TIMESTAMP);
 
     private Set<String> includesMdcKeys = ImmutableSet.of();
+    private boolean flattenMdc = false;
 
     @JsonProperty
     public EnumSet<EventAttribute> getIncludes() {
@@ -62,12 +68,22 @@ public class EventJsonLayoutBaseFactory extends AbstractJsonLayoutBaseFactory<IL
         this.includesMdcKeys = includesMdcKeys;
     }
 
+    @JsonProperty
+    public boolean isFlattenMdc() {
+        return flattenMdc;
+    }
+
+    @JsonProperty
+    public void setFlattenMdc(boolean flattenMdc) {
+        this.flattenMdc = flattenMdc;
+    }
+
     @Override
     @SuppressWarnings("unchecked")
     public LayoutBase<ILoggingEvent> build(LoggerContext context, TimeZone timeZone) {
         final EventJsonLayout jsonLayout = new EventJsonLayout(createDropwizardJsonFormatter(),
             createTimestampFormatter(timeZone), createThrowableProxyConverter(), includes, getCustomFieldNames(),
-            getAdditionalFields(), includesMdcKeys);
+            getAdditionalFields(), includesMdcKeys, flattenMdc);
         jsonLayout.setContext(context);
         return jsonLayout;
     }
