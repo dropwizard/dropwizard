@@ -41,7 +41,7 @@ public class EventJsonLayoutTest {
         EventAttribute.THREAD_NAME, EventAttribute.MDC, EventAttribute.LOGGER_NAME, EventAttribute.MESSAGE,
         EventAttribute.EXCEPTION, EventAttribute.TIMESTAMP);
     private EventJsonLayout eventJsonLayout = new EventJsonLayout(jsonFormatter, timestampFormatter, throwableProxyConverter,
-        includes, ImmutableMap.of(), ImmutableMap.of(), ImmutableSet.of());
+        includes, ImmutableMap.of(), ImmutableMap.of(), ImmutableSet.of(), false);
 
     @Before
     public void setUp() {
@@ -109,7 +109,7 @@ public class EventJsonLayoutTest {
     public void testReplaceFieldName() {
         Map<String, Object> map = new EventJsonLayout(jsonFormatter, timestampFormatter, throwableProxyConverter, includes,
             ImmutableMap.of("timestamp", "@timestamp", "message", "@message"), ImmutableMap.of(),
-            ImmutableSet.of())
+            ImmutableSet.of(), false)
             .toJsonMap(event);
         assertThat(map).containsOnly(entry("@timestamp", timestamp),
             entry("thread", "main"),
@@ -123,7 +123,7 @@ public class EventJsonLayoutTest {
     public void testAddNewField() {
         Map<String, Object> map = new EventJsonLayout(jsonFormatter, timestampFormatter, throwableProxyConverter, includes,
             ImmutableMap.of(), ImmutableMap.of("serviceName", "userService", "serviceBuild", 207),
-            ImmutableSet.of())
+            ImmutableSet.of(), false)
             .toJsonMap(event);
         assertThat(map).containsOnly(entry("timestamp", timestamp),
             entry("thread", "main"),
@@ -139,13 +139,27 @@ public class EventJsonLayoutTest {
     public void testFilterMdc() {
         Map<String, Object> map = new EventJsonLayout(jsonFormatter, timestampFormatter, throwableProxyConverter, includes,
             ImmutableMap.of(), ImmutableMap.of(),
-            ImmutableSet.of("userId", "orderId")).toJsonMap(event);
+            ImmutableSet.of("userId", "orderId"), false).toJsonMap(event);
         assertThat(map).containsOnly(entry("timestamp", timestamp),
             entry("thread", "main"),
             entry("level", "INFO"),
             entry("logger", logger),
             entry("message", message),
             entry("mdc", ImmutableMap.of("userId", "18", "orderId", "24")));
+    }
+
+    @Test
+    public void testFlattensMdcMap() {
+        Map<String, Object> map = new EventJsonLayout(jsonFormatter, timestampFormatter, throwableProxyConverter,
+            includes, ImmutableMap.of(), ImmutableMap.of(), ImmutableSet.of(), true).toJsonMap(event);
+        assertThat(map).containsOnly(entry("timestamp", timestamp),
+                                     entry("thread", "main"),
+                                     entry("level", "INFO"),
+                                     entry("logger", logger),
+                                     entry("message", message),
+                                     entry("userId", "18"),
+                                     entry("serviceId", "19"),
+                                     entry("orderId", "24"));
     }
 
     @Test
