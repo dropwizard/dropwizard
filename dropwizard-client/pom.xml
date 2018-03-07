@@ -36,7 +36,6 @@
 		<dependency>
 			<groupId>org.glassfish.jersey.ext.rx</groupId>
 			<artifactId>jersey-rx-client</artifactId>
-			<version>2.26</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
@@ -58,7 +57,6 @@
 		<dependency>
 			<groupId>org.glassfish.jersey.ext.rx</groupId>
 			<artifactId>jersey-rx-client-java8</artifactId>
-			<version>2.26</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
