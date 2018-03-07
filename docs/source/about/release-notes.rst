@@ -33,6 +33,7 @@ v1.3.0: Unreleased
 * Upgrade handling an unknown value in FuzzyEnumModule `#2266 <https://github.com/dropwizard/dropwizard/pull/2266>`_
 * Add support for providing a custom layout during logging bootstrap `#2260 <https://github.com/dropwizard/dropwizard/pull/2260>`_
 * Add context path to logged endpoints `#2254 <https://github.com/dropwizard/dropwizard/pull/2254>`_
+* Add a TCP and UDP log appenders to Dropwizard `#2291 <https://github.com/dropwizard/dropwizard/pull/2291>`_
 * Upgrade to metrics 4.0.2
 * Upgrade to Guava 24.0-jre
 * Upgrade to JUnit 5.0.3

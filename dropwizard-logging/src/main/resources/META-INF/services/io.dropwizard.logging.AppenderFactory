@@ -1,3 +1,5 @@
 io.dropwizard.logging.ConsoleAppenderFactory
 io.dropwizard.logging.FileAppenderFactory
 io.dropwizard.logging.SyslogAppenderFactory
+io.dropwizard.logging.TcpSocketAppenderFactory
+io.dropwizard.logging.UdpSocketAppenderFactory

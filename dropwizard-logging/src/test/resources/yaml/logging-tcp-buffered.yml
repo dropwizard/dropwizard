@@ -1,0 +1,7 @@
+level: INFO
+appenders:
+  - type: tcp
+    host: localhost
+    port: 24562
+    immediateFlush: false
+    sendBufferSize: 1KB

@@ -1,9 +1,8 @@
 package io.dropwizard.logging;
 
 import ch.qos.logback.classic.LoggerContext;
-import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.FileAppender;
-import ch.qos.logback.core.encoder.LayoutWrappingEncoder;
+import ch.qos.logback.core.OutputStreamAppender;
 import ch.qos.logback.core.rolling.DefaultTimeBasedFileNamingAndTriggeringPolicy;
 import ch.qos.logback.core.rolling.FixedWindowRollingPolicy;
 import ch.qos.logback.core.rolling.RollingFileAppender;
@@ -126,7 +125,7 @@ import static java.util.Objects.requireNonNull;
  * @see AbstractAppenderFactory
  */
 @JsonTypeName("file")
-public class FileAppenderFactory<E extends DeferredProcessingAware> extends AbstractAppenderFactory<E> {
+public class FileAppenderFactory<E extends DeferredProcessingAware> extends AbstractOutputStreamAppenderFactory<E> {
 
     @Nullable
     private String currentLogFilename;
@@ -246,25 +245,14 @@ public class FileAppenderFactory<E extends DeferredProcessingAware> extends Abst
     }
 
     @Override
-    public Appender<E> build(LoggerContext context, String applicationName, LayoutFactory<E> layoutFactory,
-                             LevelFilterFactory<E> levelFilterFactory, AsyncAppenderFactory<E> asyncAppenderFactory) {
+    protected OutputStreamAppender<E> appender(LoggerContext context) {
         final FileAppender<E> appender = buildAppender(context);
         appender.setName("file-appender");
-
         appender.setAppend(true);
         appender.setContext(context);
-
-        final LayoutWrappingEncoder<E> layoutEncoder = new LayoutWrappingEncoder<>();
-        layoutEncoder.setLayout(buildLayout(context, layoutFactory));
-        appender.setEncoder(layoutEncoder);
-
         appender.setImmediateFlush(immediateFlush);
         appender.setPrudent(false);
-        appender.addFilter(levelFilterFactory.build(threshold));
-        getFilterFactories().forEach(f -> appender.addFilter(f.build()));
-        appender.start();
-
-        return wrapAsync(appender, asyncAppenderFactory);
+        return appender;
     }
 
     protected FileAppender<E> buildAppender(LoggerContext context) {
