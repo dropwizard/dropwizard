@@ -440,7 +440,7 @@ enableCRLDP                      false               Whether or not CRL Distribu
 enableOCSP                       false               Whether or not On-Line Certificate Status Protocol (OCSP) support is enabled.
 maxCertPathLength                (unlimited)         The maximum certification path length.
 ocspResponderUrl                 (none)              The location of the OCSP responder.
-jceProvider                      (none)              The name of the JCE provider to use for cryptographic support.
+jceProvider                      (none)              The name of the JCE provider to use for cryptographic support. See `Oracle documentation <https://docs.oracle.com/javase/8/docs/technotes/guides/security/SunProviders.html>`_ for more information.
 validateCerts                    false               Whether or not to validate TLS certificates before starting. If enabled, Dropwizard
                                                      will refuse to start with expired or otherwise invalid certificates. This option will
                                                      cause unconditional failure in Dropwizard 1.x until a new validation mechanism can be
@@ -1294,6 +1294,7 @@ TLS
     httpClient:
       tls:
         protocol: TLSv1.2
+        provider: SunJSSE
         verifyHostname: true
         keyStorePath: /path/to/file
         keyStorePassword: changeit
@@ -1313,6 +1314,8 @@ Name                         Default            Description
 protocol                     TLSv1.2            The default protocol the client will attempt to use during the SSL Handshake.
                                                 See
                                                 `here <http://docs.oracle.com/javase/8/docs/technotes/guides/security/StandardNames.html#SSLContext>`_ for more information.
+provider                     (none)             The name of the JCE provider to use on client side for cryptographic support (for example, SunJCE, Conscrypt, BC, etc).
+                                                See `Oracle documentation <https://docs.oracle.com/javase/8/docs/technotes/guides/security/SunProviders.html>`_ for more information.
 verifyHostname               true               Whether to verify the hostname of the server against the hostname presented in the server certificate.
 keyStorePath                 (none)             The path to the Java key store which contains the client certificate and private key.
 keyStorePassword             (none)             The password used to access the key store.

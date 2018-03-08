@@ -71,7 +71,11 @@ public class DropwizardSSLConnectionSocketFactory {
         final SSLContext sslContext;
         try {
             final SSLContextBuilder sslContextBuilder = new SSLContextBuilder();
-            sslContextBuilder.useProtocol(configuration.getProtocol());
+            sslContextBuilder.setProtocol(configuration.getProtocol());
+            final String configuredProvider = configuration.getProvider();
+            if (configuredProvider != null) {
+                sslContextBuilder.setProvider(configuredProvider);
+            }
             loadKeyMaterial(sslContextBuilder);
             loadTrustMaterial(sslContextBuilder);
             sslContext = sslContextBuilder.build();

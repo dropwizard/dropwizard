@@ -16,6 +16,9 @@ public class TlsConfiguration {
     private String protocol = "TLSv1.2";
 
     @Nullable
+    private String provider;
+
+    @Nullable
     private File keyStorePath;
 
     @Nullable
@@ -137,6 +140,17 @@ public class TlsConfiguration {
     @JsonProperty
     public void setProtocol(String protocol) {
         this.protocol = protocol;
+    }
+
+    @JsonProperty
+    @Nullable
+    public String getProvider() {
+        return provider;
+    }
+
+    @JsonProperty
+    public void setProvider(@Nullable String provider) {
+        this.provider = provider;
     }
 
     @Nullable
