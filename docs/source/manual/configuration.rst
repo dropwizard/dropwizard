@@ -1487,6 +1487,12 @@ validationInterval              30 seconds               To avoid excess validat
 validatorClassName              none                     Name of a class of a custom validator implementation, which
                                                          will be used for validating connections.
 jdbcInterceptors                none                       A semicolon separated list of JDBC interceptor classnames.
+
+ignoreExceptionOnPreLoad        false                    Flag whether ignore error of connection creation while
+                                                         initializing the pool. Set to true if you want to ignore
+                                                         error of connection creation while initializing the pool.
+                                                         Set to false if you want to fail the initialization of the
+                                                         pool by throwing exception.
 ============================    =====================    ===============================================================
 
 .. _man-configuration-polymorphic:
