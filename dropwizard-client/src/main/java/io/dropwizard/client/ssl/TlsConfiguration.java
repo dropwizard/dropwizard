@@ -143,6 +143,7 @@ public class TlsConfiguration {
     }
 
     @JsonProperty
+    @Nullable
     public String getProvider() {
         return provider;
     }
