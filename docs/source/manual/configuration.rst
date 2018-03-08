@@ -1294,7 +1294,7 @@ TLS
     httpClient:
       tls:
         protocol: TLSv1.2
-        provider: SUN
+        provider: SunJSSE
         verifyHostname: true
         keyStorePath: /path/to/file
         keyStorePassword: changeit
