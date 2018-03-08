@@ -1314,7 +1314,7 @@ Name                         Default            Description
 protocol                     TLSv1.2            The default protocol the client will attempt to use during the SSL Handshake.
                                                 See
                                                 `here <http://docs.oracle.com/javase/8/docs/technotes/guides/security/StandardNames.html#SSLContext>`_ for more information.
-provider                     (none)             The name of the JCE provider to use on client side for cryptographic support.
+provider                     (none)             The name of the JCE provider to use on client side for cryptographic support (for example, SunJCE, Conscrypt, BC, etc).
 verifyHostname               true               Whether to verify the hostname of the server against the hostname presented in the server certificate.
 keyStorePath                 (none)             The path to the Java key store which contains the client certificate and private key.
 keyStorePassword             (none)             The password used to access the key store.
