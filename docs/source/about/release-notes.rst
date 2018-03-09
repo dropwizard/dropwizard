@@ -41,7 +41,7 @@ v1.3.0: Unreleased
 * Upgrade to NullAway 0.3.2
 * Upgrade to Apache HttpClient 4.5.5
 * Upgrade to Apache Commons Text 1.2
-* Upgrade to Liquibase 3.5.4
+* Upgrade to Liquibase 3.5.5
 * Upgrade to Hibernate 5.2.15.Final
 * Upgrade to Apache Tomcat JDBC 9.0.4
 * Upgrade to Apache Commons Lang3 3.7
