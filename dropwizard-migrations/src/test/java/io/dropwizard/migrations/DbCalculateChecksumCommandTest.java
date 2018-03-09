@@ -47,7 +47,7 @@ public class DbCalculateChecksumCommandTest extends AbstractMigrationTest {
                 "  id                     change set id%n" +
                 "  author                 author name%n" +
                 "%n" +
-                "optional arguments:%n" +
+                "named arguments:%n" +
                 "  -h, --help             show this help message and exit%n" +
                 "  --migrations MIGRATIONS-FILE%n" +
                 "                         the file containing  the  Liquibase migrations for%n" +

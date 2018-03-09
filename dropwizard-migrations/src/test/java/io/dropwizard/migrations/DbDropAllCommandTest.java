@@ -51,7 +51,7 @@ public class DbDropAllCommandTest extends AbstractMigrationTest {
                 "positional arguments:%n" +
                 "  file                   application configuration file%n" +
                 "%n" +
-                "optional arguments:%n" +
+                "named arguments:%n" +
                 "  -h, --help             show this help message and exit%n" +
                 "  --migrations MIGRATIONS-FILE%n" +
                 "                         the file containing  the  Liquibase migrations for%n" +

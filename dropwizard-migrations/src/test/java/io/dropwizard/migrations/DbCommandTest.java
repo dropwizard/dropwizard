@@ -46,7 +46,7 @@ public class DbCommandTest extends AbstractMigrationTest {
                 "positional arguments:%n" +
                 "  {calculate-checksum,clear-checksums,drop-all,dump,fast-forward,generate-docs,locks,migrate,prepare-rollback,rollback,status,tag,test}%n" +
                 "%n" +
-                "optional arguments:%n" +
+                "named arguments:%n" +
                 "  -h, --help             show this help message and exit%n"));
     }
 }
