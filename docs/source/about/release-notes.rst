@@ -43,7 +43,7 @@ v1.3.0: Unreleased
 * Upgrade to Apache Commons Text 1.2
 * Upgrade to Liquibase 3.5.5
 * Upgrade to Hibernate 5.2.15.Final
-* Upgrade to Apache Tomcat JDBC 9.0.4
+* Upgrade to Apache Tomcat JDBC 9.0.5
 * Upgrade to Apache Commons Lang3 3.7
 * Upgrade to AssertJ 3.9.1
 * Upgrade to Mockito 2.15.0
