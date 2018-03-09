@@ -45,7 +45,7 @@ v1.3.0: Unreleased
 * Upgrade to Hibernate 5.2.15.Final
 * Upgrade to Apache Tomcat JDBC 9.0.4
 * Upgrade to Apache Commons Lang3 3.7
-* Upgrade to AssertJ 3.9.0
+* Upgrade to AssertJ 3.9.1
 * Upgrade to Mockito 2.15.0
 * Upgrade to Jackson 2.9.4
 
