@@ -12,7 +12,7 @@ import static java.util.Objects.requireNonNull;
 
 /**
  * A delegating {@link ConfigurationSourceProvider} which replaces variables in the underlying configuration
- * source according to the rules of a custom {@link org.apache.commons.lang3.text.StrSubstitutor}.
+ * source according to the rules of a custom {@link org.apache.commons.text.StrSubstitutor}.
  */
 public class SubstitutingSourceProvider implements ConfigurationSourceProvider {
     private final ConfigurationSourceProvider delegate;

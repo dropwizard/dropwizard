@@ -30,7 +30,7 @@ import java.util.zip.InflaterInputStream;
  */
 public class BiDiGzipHandler extends GzipHandler {
 
-    private final ThreadLocal<Inflater> localInflater = new ThreadLocal<>();
+    private static final ThreadLocal<Inflater> localInflater = new ThreadLocal<>();
 
     /**
      * Size of the buffer for decompressing requests
@@ -49,9 +49,6 @@ public class BiDiGzipHandler extends GzipHandler {
 
     public void setInflateNoWrap(boolean inflateNoWrap) {
         this.inflateNoWrap = inflateNoWrap;
-    }
-
-    public BiDiGzipHandler() {
     }
 
     public void setInputBufferSize(int inputBufferSize) {

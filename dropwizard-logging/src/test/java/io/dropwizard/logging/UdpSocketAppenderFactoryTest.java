@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.SocketException;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -41,7 +42,7 @@ public class UdpSocketAppenderFactoryTest {
                 try {
                     DatagramPacket datagramPacket = new DatagramPacket(buffer, buffer.length);
                     datagramSocket.receive(datagramPacket);
-                    assertThat(new String(buffer, 0, datagramPacket.getLength()))
+                    assertThat(new String(buffer, 0, datagramPacket.getLength(), StandardCharsets.UTF_8))
                         .startsWith("INFO").contains("com.example.app: Application log " + i);
                     countDownLatch.countDown();
                 } catch (SocketException e) {

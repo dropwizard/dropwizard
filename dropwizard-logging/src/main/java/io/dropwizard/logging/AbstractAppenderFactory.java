@@ -154,7 +154,7 @@ public abstract class AbstractAppenderFactory<E extends DeferredProcessingAware>
     }
 
     @JsonProperty
-    public void setLogFormat(String logFormat) {
+    public void setLogFormat(@Nullable String logFormat) {
         this.logFormat = logFormat;
     }
 

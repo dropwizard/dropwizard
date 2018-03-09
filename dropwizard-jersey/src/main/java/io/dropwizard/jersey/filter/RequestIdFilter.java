@@ -21,7 +21,7 @@ import com.google.common.base.Strings;
  * information: request method, request path, request ID, response status,
  * response length (or -1 if not known).
  *
- * @see https://devcenter.heroku.com/articles/http-request-id
+ * @see <a href="https://devcenter.heroku.com/articles/http-request-id">Heroku - HTTP Request IDs</a>
  */
 @Provider
 @Priority(Priorities.USER)

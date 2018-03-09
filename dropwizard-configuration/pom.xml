@@ -53,7 +53,8 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <!-- Required for tests related to environment variables -->
                 <configuration>
-                    <forkMode>always</forkMode>
+                    <forkCount>1</forkCount>
+                    <reuseForks>false</reuseForks>
                     <environmentVariables>
                         <TEST>test_value</TEST>
                         <TEST_SUFFIX>2</TEST_SUFFIX>

@@ -17,7 +17,7 @@ import java.util.function.Supplier;
  * taken to execute the request, in seconds (based on the implementation from
  * Ruby on Rails).
  *
- * @see https://github.com/rack/rack/blob/master/lib/rack/runtime.rb
+ * @see <a href="https://github.com/rack/rack/blob/2.0.0/lib/rack/runtime.rb">Rack::Runtime</a>
  */
 @Provider
 @PreMatching

@@ -13,6 +13,7 @@ public class PostBodyTaskTest {
         }
     };
 
+    @SuppressWarnings("deprecation")
     @Test(expected = UnsupportedOperationException.class)
     public void throwsExceptionWhenCallingExecuteWithoutThePostBody() throws Exception {
         task.execute(new ImmutableMultimap.Builder<String, String>().build(), new PrintWriter(System.out));

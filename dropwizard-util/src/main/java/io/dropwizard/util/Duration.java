@@ -16,7 +16,7 @@ import static java.util.Objects.requireNonNull;
 public class Duration implements Comparable<Duration> {
     private static final Pattern DURATION_PATTERN = Pattern.compile("(\\d+)\\s*(\\S+)");
 
-    private static final Map<String, TimeUnit> SUFFIXES = new ImmutableMap.Builder<String, TimeUnit>()
+    private static final ImmutableMap<String, TimeUnit> SUFFIXES = new ImmutableMap.Builder<String, TimeUnit>()
             .put("ns", TimeUnit.NANOSECONDS)
             .put("nanosecond", TimeUnit.NANOSECONDS)
             .put("nanoseconds", TimeUnit.NANOSECONDS)

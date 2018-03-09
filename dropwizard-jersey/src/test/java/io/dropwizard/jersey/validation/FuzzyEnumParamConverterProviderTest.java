@@ -25,6 +25,7 @@ public class FuzzyEnumParamConverterProviderTest {
         A_1,
         A_2;
 
+        @Override
         public String toString() {
             return "<" + this.name() + ">";
         }

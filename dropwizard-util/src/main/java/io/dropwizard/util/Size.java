@@ -15,7 +15,7 @@ import static java.util.Objects.requireNonNull;
 public class Size implements Comparable<Size> {
     private static final Pattern SIZE_PATTERN = Pattern.compile("(\\d+)\\s*(\\S+)");
 
-    private static final Map<String, SizeUnit> SUFFIXES = ImmutableSortedMap.<String, SizeUnit>orderedBy(String.CASE_INSENSITIVE_ORDER)
+    private static final ImmutableSortedMap<String, SizeUnit> SUFFIXES = ImmutableSortedMap.<String, SizeUnit>orderedBy(String.CASE_INSENSITIVE_ORDER)
             .put("B", SizeUnit.BYTES)
             .put("byte", SizeUnit.BYTES)
             .put("bytes", SizeUnit.BYTES)
