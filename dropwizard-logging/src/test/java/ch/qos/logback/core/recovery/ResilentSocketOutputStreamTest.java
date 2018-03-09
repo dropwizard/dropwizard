@@ -60,9 +60,9 @@ public class ResilentSocketOutputStreamTest {
 
     @Test
     public void testThrowsExceptionIfCantCreateOutputStream() throws Exception {
-        assertThatIllegalStateException().isThrownBy(() -> new ResilentSocketOutputStream("10.255.255.1", 1024,
+        assertThatIllegalStateException().isThrownBy(() -> new ResilentSocketOutputStream("256.256.256.256", 1024,
             100, 1024, SocketFactory.getDefault()))
-            .withMessage("Unable to create a TCP connection to 10.255.255.1:1024");
+            .withMessage("Unable to create a TCP connection to 256.256.256.256:1024");
     }
 
     @Test
