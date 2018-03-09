@@ -26,7 +26,13 @@ matrix:
         apt:
           packages:
             - oracle-java9-installer
-
+deploy:
+  provider: script
+  script: bash .travis_deploy.sh
+  on:
+    repo: dropwizard/dropwizard
+    branch: master
+    jdk: oraclejdk8
 # encrypted CI_DEPLOY_USERNAME and CI_DEPLOY_PASSWORD
 # values for maven deploy. these have been encrypted
 # with the public key from https://github.com/dropwizard/dropwizard
