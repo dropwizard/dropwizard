@@ -1,10 +1,17 @@
 #!/usr/bin/env ruby
 require 'octokit'
 
+# Provide an Access Token in the OCTOKIT_ACCESS_TOKEN environemnt variable
+# to prevent running into the hourly rate-limit.
+#
+# See also:
+#   * https://octokit.github.io/octokit.rb/#Authentication and
+#   * https://help.github.com/articles/creating-a-personal-access-token-for-the-command-line/
+#
+# Example:
+#   OCTOKIT_ACCESS_TOKEN=11223344556677889900cafebabedeadbeef0000 ruby list_contributors.rb
+
 Octokit.configure do |c|
-  # Provide an Access Token to prevent running into the hourly rate-limit
-  # see https://help.github.com/articles/creating-an-access-token-for-command-line-use
-  c.access_token = ENV['GITHUB_TOKEN'] || ''
   c.auto_paginate = true
 end
 
