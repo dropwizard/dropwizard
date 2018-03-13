@@ -4,6 +4,13 @@
 Release Notes
 #############
 
+.. _rel-1.2.3:
+
+v1.2.3: Jan 24, 2018
+====================
+
+* Enable auto escaping of strings in Freemarker templates `#2251 <https://github.com/dropwizard/dropwizard/pull/2251>`_
+
 .. _rel-1.2.2:
 
 v1.2.2: Nov 27, 2017
