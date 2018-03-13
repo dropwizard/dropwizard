@@ -482,8 +482,12 @@ For an encrypted connection HTTP/2 uses ALPN protocol. It's a TLS extension, tha
 a protocol to use after the handshake is complete. If either side does not support ALPN, then the protocol will
 be ignored, and an HTTP/1.1 connection over TLS will be used instead.
 
-For this connector to work with ALPN protocol you need to provide alpn-boot library to JVM's bootpath.
-The correct library version depends on a JVM version. Consult Jetty ALPN guide__ for the reference.
+For this connector to work with ALPN protocol you need to either:
+
+* Enable native SSL support via Google's Conscrypt as described in the :ref:`SSL section <man-core-ssl>` of the
+  Core manual; or
+* Provide alpn-boot library to JVM's bootpath. The correct library version depends on the JVM version.
+  Consult Jetty ALPN guide__ for the reference.
 
 .. __: http://www.eclipse.org/jetty/documentation/current/alpn-chapter.html
 
