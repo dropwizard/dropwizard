@@ -4,6 +4,13 @@
 Release Notes
 #############
 
+.. _rel-1.2.4:
+
+v1.2.4: Feb 23, 2018
+====================
+
+* Upgrade Jackson to 2.9.4 in 1.2.* to address a CVE `#2269 <https://github.com/dropwizard/dropwizard/pull/2269>`_
+
 .. _rel-1.2.3:
 
 v1.2.3: Jan 24, 2018
