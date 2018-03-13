@@ -11,6 +11,7 @@ import javax.servlet.ServletConfig;
 import javax.ws.rs.core.Context;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Supplier;
 
 import static java.util.Objects.requireNonNull;
 
@@ -43,8 +44,8 @@ class DropwizardTestResourceConfig extends DropwizardResourceConfig {
         }
         register(new JacksonBinder(configuration.mapper));
         register(new HibernateValidationFeature(configuration.validator));
-        for (Object singleton : configuration.singletons) {
-            register(singleton);
+        for (Supplier<?> singleton : configuration.singletons) {
+            register(singleton.get());
         }
     }
 
