@@ -1,0 +1,270 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Dropwizard Internals | Dropwizard</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="../_static/dropwizard.css" type="text/css"/>
+    <link rel="top" title="Dropwizard" href="../index.html"/>
+    <link rel="up" title="User Manual" href="index.html"/>
+    <link rel="next" title="Javadoc" href="../about/javadoc.html"/>
+    <link rel="prev" title="Dropwizard Configuration Reference" href="configuration.html"/>
+    <style lang="text/css">
+        #top-bar, #top-bar small, #top-bar a {
+            text-shadow: 0px -1px 0px #182127;
+            color: #ffffff;
+        }
+
+        #top-bar {
+            background-color: #363F45;
+            background-image: -moz-linear-gradient(top, #545d63, #182127);
+            background-image: -ms-linear-gradient(top, #545d63, #182127);
+            background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#545d63), to(#182127));
+            background-image: -webkit-linear-gradient(top, #545d63, #182127);
+            background-image: -o-linear-gradient(top, #545d63, #182127);
+            background-image: linear-gradient(top, #545d63, #182127);
+            filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#545d63', endColorstr = '#182127', GradientType = 0);
+            -webkit-border-radius: 0;
+            -moz-border-radius: 0;
+            border-radius: 0;
+        }
+
+
+        .hero-unit {
+            background-image: url("../_static/dropwizard-hat.png") !important;
+            background-repeat: no-repeat !important;
+            background-position: 30px 50px;
+        }
+
+        .hero-unit div.section {
+            padding-left: 150px !important;
+        }
+    </style>
+</head>
+<body>
+    <a href="https://github.com/dropwizard/dropwizard">
+        <img style="position: absolute; top: 0; right: 0; border: 0;"
+             src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_ff7600.png"
+             alt="Fork me on GitHub"></a>
+    <div class="navbar">
+        <div class="navbar-inner container-fluid" id="top-bar">
+            <header class="row-fluid">
+                <h1 class="span12" id="title"><img class="logo" src="../_static/dropwizard-logo.png" alt="Logo"/>
+                    <a href="../index.html">Dropwizard</a>
+                    <small>Production-ready, out of the box.</small>
+                </h1>
+            </header>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <div class="span3" id="sidebar">
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../getting-started.html">Getting Started</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">User Manual</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="core.html">Dropwizard Core</a></li>
+<li class="toctree-l2"><a class="reference internal" href="client.html">Dropwizard Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jdbi.html">Dropwizard JDBI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jdbi3.html">Dropwizard JDBI3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="migrations.html">Dropwizard Migrations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hibernate.html">Dropwizard Hibernate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="auth.html">Dropwizard Authentication</a></li>
+<li class="toctree-l2"><a class="reference internal" href="forms.html">Dropwizard Forms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="validation.html">Dropwizard Validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="views.html">Dropwizard Views</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scala.html">Dropwizard &amp; Scala</a></li>
+<li class="toctree-l2"><a class="reference internal" href="testing.html">Testing Dropwizard</a></li>
+<li class="toctree-l2"><a class="reference internal" href="example.html">Dropwizard Example, Step by Step</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html">Dropwizard Configuration Reference</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Dropwizard Internals</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#startup-sequence">Startup Sequence</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#commands">Commands</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#the-cli-class">The CLI class</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#jetty-lifecycle">Jetty Lifecycle</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../about/javadoc.html">Javadoc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../about/index.html">About Dropwizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../about/docs-index.html">Other Versions</a></li>
+</ul>
+
+                <hr/>
+                <ul>
+                    <li><a href="https://dropwizard.github.io/dropwizard/1.3.0">Maven Site</a></li>
+                    <li><a href="https://groups.google.com/forum/#!forum/dropwizard-user">User Mailing List</a></li>
+                    <li><a href="https://groups.google.com/forum/#!forum/dropwizard-dev">Developer Mailing List</a></li>
+                </ul>
+            </div>
+            <div class="span9" id="body">
+                
+  <div class="section" id="dropwizard-internals">
+<span id="man-internals"></span><h1>Dropwizard Internals</h1>
+<p>You already read through the whole Dropwizard documentation?
+Congrats! Then you are ready to have a look into some nitty-gritty details of Dropwizard.</p>
+<div class="section" id="startup-sequence">
+<h2>Startup Sequence</h2>
+<p><code class="docutils literal"><span class="pre">Application&lt;T</span> <span class="pre">extends</span> <span class="pre">Configuration&gt;</span></code> is the “Main” class of a dropwizard Application.</p>
+<p><code class="docutils literal"><span class="pre">application.run(args)</span></code> is the first method to be called on startup - Here is a simplified code snippet of its implementation:</p>
+<div class="highlight-java"><div class="highlight"><pre><span></span><span class="kd">public</span> <span class="kt">void</span> <span class="nf">run</span><span class="o">(</span><span class="n">String</span><span class="o">...</span> <span class="n">arguments</span><span class="o">)</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+
+  <span class="kd">final</span> <span class="n">Bootstrap</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span> <span class="n">bootstrap</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Bootstrap</span><span class="o">&lt;&gt;(</span><span class="k">this</span><span class="o">);</span>
+  <span class="n">bootstrap</span><span class="o">.</span><span class="na">addCommand</span><span class="o">(</span><span class="k">new</span> <span class="n">ServerCommand</span><span class="o">&lt;&gt;(</span><span class="k">this</span><span class="o">));</span>
+  <span class="n">bootstrap</span><span class="o">.</span><span class="na">addCommand</span><span class="o">(</span><span class="k">new</span> <span class="n">CheckCommand</span><span class="o">&lt;&gt;(</span><span class="k">this</span><span class="o">));</span>
+
+  <span class="n">initialize</span><span class="o">(</span><span class="n">bootstrap</span><span class="o">);</span> <span class="c1">// -- implemented by you; it should call:</span>
+        <span class="c1">// 1. add bundles (typically being used)</span>
+        <span class="c1">// 2. add commands (if any)</span>
+
+  <span class="c1">// Should be called after `initialize` to give an opportunity to set a custom metric registry</span>
+  <span class="n">bootstrap</span><span class="o">.</span><span class="na">registerMetrics</span><span class="o">();</span> <span class="c1">// start tracking some default jvm params…</span>
+
+  <span class="c1">// for each cmd, configure parser w/ cmd</span>
+  <span class="kd">final</span> <span class="n">Cli</span> <span class="n">cli</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Cli</span><span class="o">(</span><span class="k">new</span> <span class="n">JarLocation</span><span class="o">(</span><span class="n">getClass</span><span class="o">()),</span> <span class="n">bootstrap</span><span class="o">,</span> <span class="n">our</span><span class="o">,</span> <span class="n">err</span><span class="o">)</span>
+  <span class="n">cli</span><span class="o">.</span><span class="na">run</span><span class="o">(</span><span class="n">arguments</span><span class="o">);</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">Bootstrap</span></code> is the the pre-start (temp) application environment, containing everything required to bootstrap a Dropwizard command. Here is a simplified code snippet to illustrate its structure:</p>
+<div class="highlight-java"><div class="highlight"><pre><span></span><span class="n">Bootstrap</span><span class="o">(</span><span class="n">application</span><span class="o">:</span> <span class="n">Application</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;)</span> <span class="o">{</span>
+  <span class="k">this</span><span class="o">.</span><span class="na">application</span> <span class="o">=</span> <span class="n">application</span><span class="o">;</span>
+  <span class="k">this</span><span class="o">.</span><span class="na">objectMapper</span> <span class="o">=</span> <span class="n">Jackson</span><span class="o">.</span><span class="na">newObjectMapper</span><span class="o">();</span>
+  <span class="k">this</span><span class="o">.</span><span class="na">bundles</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;&gt;();</span>
+  <span class="k">this</span><span class="o">.</span><span class="na">configuredBundles</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;&gt;();</span>
+  <span class="k">this</span><span class="o">.</span><span class="na">commands</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;&gt;();</span>
+  <span class="k">this</span><span class="o">.</span><span class="na">validatorFactory</span> <span class="o">=</span> <span class="n">Validators</span><span class="o">.</span><span class="na">newValidatorFactory</span><span class="o">();</span>
+  <span class="k">this</span><span class="o">.</span><span class="na">metricRegistry</span> <span class="o">=</span> <span class="k">new</span> <span class="n">MetricRegistry</span><span class="o">();</span>
+  <span class="k">this</span><span class="o">.</span><span class="na">classLoader</span> <span class="o">=</span> <span class="n">Thread</span><span class="o">.</span><span class="na">currentThread</span><span class="o">().</span><span class="na">getContextClassLoader</span><span class="o">();</span>
+  <span class="k">this</span><span class="o">.</span><span class="na">onfigurationFactory</span> <span class="o">=</span> <span class="k">new</span> <span class="n">DefaultConfigurationFactoryFactory</span><span class="o">&lt;&gt;();</span>
+  <span class="k">this</span><span class="o">.</span><span class="na">healthCheckRegistry</span> <span class="o">=</span> <span class="k">new</span> <span class="n">HealthCheckRegistry</span><span class="o">();</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p><code class="docutils literal"><span class="pre">Environment</span></code> is a longer-lived object, holding Dropwizard’s Environment (not env. Such as dev or prod). It holds a similar, but somewhat different set of properties than the Bootsrap object - here is a simplified code snippet to illustrate that:</p>
+<div class="highlight-java"><div class="highlight"><pre><span></span><span class="n">Environment</span> <span class="o">(...)</span> <span class="o">{</span>
+  <span class="c1">// from bootstrap</span>
+  <span class="k">this</span><span class="o">.</span><span class="na">objectMapper</span> <span class="o">=</span> <span class="o">...</span>
+  <span class="k">this</span><span class="o">.</span><span class="na">classLoader</span> <span class="o">=</span> <span class="o">...</span>
+  <span class="k">this</span><span class="o">.</span><span class="na">metricRegistry</span> <span class="o">=</span> <span class="o">...</span>
+  <span class="k">this</span><span class="o">.</span><span class="na">healthCheckRegistry</span> <span class="o">=</span> <span class="o">...</span>
+  <span class="k">this</span><span class="o">.</span><span class="na">validator</span> <span class="o">=</span> <span class="n">bootstrap</span><span class="o">.</span><span class="na">getValidatorFactory</span><span class="o">().</span><span class="na">getValidator</span><span class="o">()</span>
+
+  <span class="c1">// extra:</span>
+  <span class="k">this</span><span class="o">.</span><span class="na">bundles</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;&gt;();</span>
+  <span class="k">this</span><span class="o">.</span><span class="na">configuredBundles</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;&gt;();</span>
+
+  <span class="c1">// sub-environments:</span>
+  <span class="k">this</span><span class="o">.</span><span class="na">servletEnvironment</span> <span class="o">=</span> <span class="o">...</span> <span class="c1">// -- exposed via the servlets() method</span>
+  <span class="k">this</span><span class="o">.</span><span class="na">jerseyEnvironment</span> <span class="o">=</span> <span class="o">...</span> <span class="c1">// -- exposed via the jersey() method</span>
+  <span class="k">this</span><span class="o">.</span><span class="na">adminEnvironment</span> <span class="o">=</span> <span class="o">...</span> <span class="c1">// -- exposed via the admin() method</span>
+
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>A Dropwizard <code class="docutils literal"><span class="pre">Bundle</span></code> is a reusable group of functionality (sometimes provided by the Dropwizard project itself), used to define blocks of an application’s behavior.
+For example, <code class="docutils literal"><span class="pre">AssetBundle</span></code> from the dropwizard-assets module provides a simple way to serve static assets from your application’s src/main/resources/assets directory as files available from /assets/* (or any other path) in your application.</p>
+<p>A <code class="docutils literal"><span class="pre">ConfiguredBundle</span></code> is a bundle that require a configuration provided by the <code class="docutils literal"><span class="pre">Configuration</span></code> object (implementing a relevant interface)</p>
+<p>Properties such as database connection details should not be stored on the Environment; that is what your Configuration .yml file is for.
+Each logical environment (dev/test/staging/prod) - would have its own Configuration .yml - reflecting the differences between different “server environments”.</p>
+<div class="section" id="commands">
+<h3>Commands</h3>
+<p><code class="docutils literal"><span class="pre">Command</span></code> objects are basic actions, which Dropwizard runs based on the arguments provided on the command line. The built-in <code class="docutils literal"><span class="pre">server</span></code> command, for example, spins up an HTTP server and runs your application. Each Command subclass has a name and a set of command line options which Dropwizard will use to parse the given command line arguments.
+The <code class="docutils literal"><span class="pre">check</span></code> command parses and validates the application’s configuration.</p>
+<p>If you will check again the first code snippet in this document - you will see creating these two commands, is the first step in the bootstrapping process.</p>
+<p>Another important command is <code class="docutils literal"><span class="pre">db</span></code> - allowing executing various db actions, see <a class="reference internal" href="migrations.html#man-migrations"><span class="std std-ref">Dropwizard Migrations</span></a></p>
+<p>Similar to <code class="docutils literal"><span class="pre">ConfiguredBundle</span></code>, some commands require access to configuration parameters and should extend the <code class="docutils literal"><span class="pre">ConfiguredCommand</span></code> class, using your application’s <code class="docutils literal"><span class="pre">Configuration</span></code> class as its type parameter.</p>
+</div>
+<div class="section" id="the-cli-class">
+<h3>The CLI class</h3>
+<p>Let us begin with a simplified version of the constructor:</p>
+<div class="highlight-java"><div class="highlight"><pre><span></span><span class="kd">public</span> <span class="nf">Cli</span><span class="o">(</span><span class="n">location</span> <span class="o">:</span> <span class="n">JarLocation</span><span class="o">,</span> <span class="n">bootstrap</span> <span class="o">:</span> <span class="n">Bootstrap</span><span class="o">&lt;?&gt;,</span>
+                   <span class="n">stdOut</span><span class="o">:</span> <span class="n">OutputStream</span><span class="o">,</span> <span class="n">stdErr</span><span class="o">:</span> <span class="n">OutputStream</span><span class="o">)</span> <span class="o">{</span>
+  <span class="k">this</span><span class="o">.</span><span class="na">stdout</span> <span class="o">=</span> <span class="n">stdOut</span><span class="o">;</span> <span class="k">this</span><span class="o">.</span><span class="na">stdErr</span> <span class="o">=</span> <span class="n">stdErr</span><span class="o">;</span>
+  <span class="k">this</span><span class="o">.</span><span class="na">commands</span> <span class="o">=</span> <span class="k">new</span> <span class="n">TreeMap</span><span class="o">&lt;&gt;();</span>
+  <span class="k">this</span><span class="o">.</span><span class="na">parser</span> <span class="o">=</span> <span class="n">buildParser</span><span class="o">(</span><span class="n">location</span><span class="o">);</span>
+  <span class="k">this</span><span class="o">.</span><span class="na">bootstrap</span> <span class="o">=</span> <span class="n">bootstrap</span><span class="o">;</span>
+  <span class="k">for</span> <span class="o">(</span><span class="n">command</span> <span class="n">in</span> <span class="n">bootstrap</span><span class="o">.</span><span class="na">commands</span><span class="o">)</span> <span class="o">{</span>
+        <span class="n">addCommand</span><span class="o">(</span><span class="n">command</span><span class="o">)</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>Cli is the command-line runner for Dropwizard application.
+Initializing, and then running it - is the last step of the Bootstrapping process.</p>
+<p>Run would just handle commandline args (–help, –version) or runs the configured commands.
+E.g. - When running the <code class="docutils literal"><span class="pre">server</span></code> command:</p>
+<div class="highlight-bash"><div class="highlight"><pre><span></span>java -jar target/hello-world-0.0.1-SNAPSHOT.jar server hello-world.yml
+</pre></div>
+</div>
+<p>Just note the two basic commands are built of a parent, and a sub-class:</p>
+<div class="highlight-java"><div class="highlight"><pre><span></span><span class="kd">class</span> <span class="nc">CheckCommand</span><span class="o">&lt;</span><span class="n">T</span> <span class="kd">extends</span> <span class="n">Configuration</span><span class="o">&gt;</span> <span class="kd">extends</span> <span class="n">ConfiguredCommand</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span>
+<span class="kd">class</span> <span class="nc">ServerCommand</span><span class="o">&lt;</span><span class="n">T</span> <span class="kd">extends</span> <span class="n">Configuration</span><span class="o">&gt;</span> <span class="kd">extends</span> <span class="n">EnvironmentCommand</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>The order of operations is therefore:</p>
+<ol class="arabic simple">
+<li>Parse cmdline args, determine subcommand.</li>
+<li>Run <code class="docutils literal"><span class="pre">ConfiguredCommand</span></code>, which get a parameter with the location of a YAML configuration file - parses and validates it.</li>
+<li><code class="docutils literal"><span class="pre">CheckCommand.run()</span></code> runs next, and does almost nothing: it logs <code class="docutils literal"><span class="pre">&quot;Configuration</span> <span class="pre">is</span> <span class="pre">OK&quot;</span></code></li>
+<li>Run <code class="docutils literal"><span class="pre">EnvironmentCommand</span></code>:</li>
+</ol>
+<blockquote>
+<div><ol class="loweralpha simple">
+<li>Create <code class="docutils literal"><span class="pre">Environment</span></code></li>
+<li>Calls <code class="docutils literal"><span class="pre">bootstrap.run(cfg,</span> <span class="pre">env)</span></code> - run bundles with config. &amp; env.</li>
+<li>Bundles run in FIFO order.</li>
+<li>Calls <code class="docutils literal"><span class="pre">application.run(cfg,</span> <span class="pre">env)</span></code> – implemented by you</li>
+</ol>
+</div></blockquote>
+<ol class="arabic simple" start="6">
+<li>Now, <code class="docutils literal"><span class="pre">ServerCommand.run()</span></code> runs</li>
+</ol>
+<blockquote>
+<div><ol class="loweralpha simple">
+<li>Calls <code class="docutils literal"><span class="pre">serverFactory.build(environment)</span></code> - to configure Jetty and Jersey, with all relevant Dropwizard modules.</li>
+<li>Starts Jetty.</li>
+</ol>
+</div></blockquote>
+</div>
+</div>
+<div class="section" id="jetty-lifecycle">
+<h2>Jetty Lifecycle</h2>
+<p>If you have a component of your app that needs to know when Jetty is going to start,
+you can implement Managed as described in the dropwizard docs.</p>
+<p>If you have a component that needs to be signaled that Jetty has started
+(this happens after all Managed objects’ start() methods are called),
+you can register with the env’s lifecycle like:</p>
+<div class="highlight-java"><div class="highlight"><pre><span></span><span class="n">env</span><span class="o">.</span><span class="na">lifecycle</span><span class="o">().</span><span class="na">addServerLifecycleListener</span><span class="o">(</span><span class="k">new</span> <span class="n">ServerLifecycleListener</span><span class="o">()</span> <span class="o">{</span>
+    <span class="nd">@Override</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">serverStarted</span><span class="o">(</span><span class="n">Server</span> <span class="n">server</span><span class="o">)</span> <span class="o">{</span>
+              <span class="c1">/// ... do things here ....</span>
+    <span class="o">}</span>
+<span class="o">});</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+            </div>
+        </div>
+        <hr/>
+        <footer>
+            <p style="float: left">
+            &copy; Copyright 2010-2013, Coda Hale, Yammer Inc., 2014-2017 Dropwizard Team.
+            Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>
+            1.6.5.
+            </p>
+            <p style="float: right">Dropwizard v1.3.0</p>
+        </footer>
+    </div>
+</body>
+</html>
+
+

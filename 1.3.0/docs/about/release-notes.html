@@ -1,0 +1,1175 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Release Notes | Dropwizard</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="../_static/dropwizard.css" type="text/css"/>
+    <link rel="top" title="Dropwizard" href="../index.html"/>
+    <link rel="up" title="About Dropwizard" href="index.html"/>
+    <link rel="next" title="Security" href="security.html"/>
+    <link rel="prev" title="Frequently Asked Questions" href="faq.html"/>
+    <style lang="text/css">
+        #top-bar, #top-bar small, #top-bar a {
+            text-shadow: 0px -1px 0px #182127;
+            color: #ffffff;
+        }
+
+        #top-bar {
+            background-color: #363F45;
+            background-image: -moz-linear-gradient(top, #545d63, #182127);
+            background-image: -ms-linear-gradient(top, #545d63, #182127);
+            background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#545d63), to(#182127));
+            background-image: -webkit-linear-gradient(top, #545d63, #182127);
+            background-image: -o-linear-gradient(top, #545d63, #182127);
+            background-image: linear-gradient(top, #545d63, #182127);
+            filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#545d63', endColorstr = '#182127', GradientType = 0);
+            -webkit-border-radius: 0;
+            -moz-border-radius: 0;
+            border-radius: 0;
+        }
+
+
+        .hero-unit {
+            background-image: url("../_static/dropwizard-hat.png") !important;
+            background-repeat: no-repeat !important;
+            background-position: 30px 50px;
+        }
+
+        .hero-unit div.section {
+            padding-left: 150px !important;
+        }
+    </style>
+</head>
+<body>
+    <a href="https://github.com/dropwizard/dropwizard">
+        <img style="position: absolute; top: 0; right: 0; border: 0;"
+             src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_ff7600.png"
+             alt="Fork me on GitHub"></a>
+    <div class="navbar">
+        <div class="navbar-inner container-fluid" id="top-bar">
+            <header class="row-fluid">
+                <h1 class="span12" id="title"><img class="logo" src="../_static/dropwizard-logo.png" alt="Logo"/>
+                    <a href="../index.html">Dropwizard</a>
+                    <small>Production-ready, out of the box.</small>
+                </h1>
+            </header>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <div class="span3" id="sidebar">
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../getting-started.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../manual/index.html">User Manual</a></li>
+<li class="toctree-l1"><a class="reference internal" href="javadoc.html">Javadoc</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">About Dropwizard</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="contributors.html">Contributors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sponsors.html">Sponsors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html">Frequently Asked Questions</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Release Notes</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#v1-3-0-mar-14-2018">v1.3.0: Mar 14, 2018</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v1-2-4-feb-23-2018">v1.2.4: Feb 23, 2018</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v1-1-7-feb-23-2018">v1.1.7: Feb 23, 2018</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v1-2-3-jan-24-2018">v1.2.3: Jan 24, 2018</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v1-2-2-nov-27-2017">v1.2.2: Nov 27, 2017</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v1-2-1-nov-22-2017">v1.2.1: Nov 22, 2017</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v1-1-6-nov-2-2017">v1.1.6: Nov 2, 2017</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v1-1-5-oct-17-2017">v1.1.5: Oct 17, 2017</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v1-2-0-oct-6-2017">v1.2.0: Oct 6 2017</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v1-1-4-aug-24-2017">v1.1.4: Aug 24 2017</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v1-1-3-jul-31-2017">v1.1.3: Jul 31 2017</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v1-1-2-june-27-2017">v1.1.2 June 27 2017</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v1-0-8-june-27-2017">v1.0.8 June 27 2017</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v1-1-1-may-19-2017">v1.1.1 May 19 2017</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v1-1-0-mar-21-2017">v1.1.0: Mar 21 2017</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v1-0-7-mar-20-2017">v1.0.7 Mar 20 2017</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v1-0-6-jan-30-2017">v1.0.6 Jan 30 2017</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v1-0-5-nov-18-2016">v1.0.5 Nov 18 2016</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v1-0-4-nov-14-2016">v1.0.4 Nov 14 2016</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v1-0-3-oct-28-2016">v1.0.3: Oct 28 2016</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v1-0-2-sep-23-2016">v1.0.2: Sep 23 2016</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v1-0-1-sep-21-2016">v1.0.1: Sep 21 2016</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v1-0-0-jul-26-2016">v1.0.0: Jul 26 2016</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v0-9-2-jan-20-2016">v0.9.2: Jan 20 2016</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v0-9-1-nov-3-2015">v0.9.1: Nov 3 2015</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v0-9-0-oct-28-2015">v0.9.0: Oct 28 2015</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v0-8-5-nov-3-2015">v0.8.5: Nov 3 2015</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v0-8-4-aug-26-2015">v0.8.4: Aug 26 2015</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v0-8-3-aug-24-2015">v0.8.3: Aug 24 2015</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v0-8-2-jul-6-2015">v0.8.2: Jul 6 2015</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v0-8-1-apr-7-2015">v0.8.1: Apr 7 2015</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v0-8-0-mar-5-2015">v0.8.0: Mar 5 2015</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v0-7-1-jun-18-2014">v0.7.1: Jun 18 2014</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v0-7-0-apr-04-2014">v0.7.0: Apr 04 2014</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v0-6-2-mar-18-2013">v0.6.2: Mar 18 2013</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v0-6-1-nov-28-2012">v0.6.1: Nov 28 2012</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v0-6-0-nov-26-2012">v0.6.0: Nov 26 2012</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v0-5-1-aug-06-2012">v0.5.1: Aug 06 2012</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v0-5-0-jul-30-2012">v0.5.0: Jul 30 2012</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v0-4-4-jul-24-2012">v0.4.4: Jul 24 2012</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v0-4-3-jun-22-2012">v0.4.3: Jun 22 2012</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v0-4-2-jun-20-2012">v0.4.2: Jun 20 2012</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v0-4-1-jun-19-2012">v0.4.1: Jun 19 2012</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v0-4-0-may-1-2012">v0.4.0: May 1 2012</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v0-3-1-mar-15-2012">v0.3.1: Mar 15 2012</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v0-3-0-mar-13-2012">v0.3.0: Mar 13 2012</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v0-2-1-feb-24-2012">v0.2.1: Feb 24 2012</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v0-2-0-feb-15-2012">v0.2.0: Feb 15 2012</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v0-1-3-jan-19-2012">v0.1.3: Jan 19 2012</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v0-1-2-jan-07-2012">v0.1.2: Jan 07 2012</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v0-1-1-dec-28-2011">v0.1.1: Dec 28 2011</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#v0-1-0-dec-21-2011">v0.1.0: Dec 21 2011</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="security.html">Security</a></li>
+<li class="toctree-l2"><a class="reference internal" href="todos.html">Documentation TODOs</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="docs-index.html">Other Versions</a></li>
+</ul>
+
+                <hr/>
+                <ul>
+                    <li><a href="https://dropwizard.github.io/dropwizard/1.3.0">Maven Site</a></li>
+                    <li><a href="https://groups.google.com/forum/#!forum/dropwizard-user">User Mailing List</a></li>
+                    <li><a href="https://groups.google.com/forum/#!forum/dropwizard-dev">Developer Mailing List</a></li>
+                </ul>
+            </div>
+            <div class="span9" id="body">
+                
+  <div class="section" id="release-notes">
+<span id="id1"></span><h1>Release Notes</h1>
+<div class="section" id="v1-3-0-mar-14-2018">
+<span id="rel-1-3-0"></span><h2>v1.3.0: Mar 14, 2018</h2>
+<ul class="simple">
+<li>Add “dropwizard-jdbi3” module <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/2243">#2243</a>, <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/2247">#2247</a></li>
+<li>Add Dropwizard testing module for JUnit 5 <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/2166">#2166</a></li>
+<li>Support for building and running Dropwizard on JDK9 <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/2197">#2197</a></li>
+<li>Support for running Dropwizard with native SSL via Conscrypt <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/2230">#2230</a></li>
+<li>Add support for JSON logs in Dropwizard <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/2232">#2232</a></li>
+<li>Add a TCP and UDP log appenders to Dropwizard <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/2291">#2291</a></li>
+<li>Add support for providing a custom logging layout during logging bootstrap <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/2260">#2260</a></li>
+<li>Add context path to logged endpoints <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/2254">#2254</a></li>
+<li>Support multiple extensions for views (breaking change) <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/2213">#2213</a></li>
+<li>Enable auto escaping of strings in Freemarker templates <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/2251">#2251</a></li>
+<li>Allow dynamic constraint validation messages <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/2246">#2246</a></li>
+<li>Add the <code class="docutils literal"><span class="pre">&#64;SelfValidation</span></code> annotation as a powerful alternative to <code class="docutils literal"><span class="pre">&#64;ValidationMethod</span></code> <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/2150">#2150</a></li>
+<li>Set a minimal duration for <code class="docutils literal"><span class="pre">DatasourceFactory.maxWaitForConnection()</span></code> <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/2130">#2130</a></li>
+<li>Migrate deprecated classes from commons-lang to commons-text <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/2208">#2208</a></li>
+<li>Support for setting the <code class="docutils literal"><span class="pre">immediateFlush</span></code> option for file logging <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/2193">#2193</a></li>
+<li>Use <code class="docutils literal"><span class="pre">InstrumentedQueuedThreadPool</span></code> for admin endpoint <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/2186">#2186</a></li>
+<li>Add support for configuring <code class="docutils literal"><span class="pre">ServiceUnavailableRetryStrategy</span></code> for HTTP clients <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/2185">#2185</a></li>
+<li>Add possibility to configure Jetty’s <code class="docutils literal"><span class="pre">minRequestDataRate</span></code> <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/2184">#2184</a></li>
+<li>Add exclusive mode to <code class="docutils literal"><span class="pre">&#64;MinDuration</span></code> and <code class="docutils literal"><span class="pre">&#64;MaxDuration</span></code> annotations <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/2167">#2167</a></li>
+<li>Strip the <code class="docutils literal"><span class="pre">Content-Length</span></code> header after decompressing HTTP requests <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/2271">#2271</a></li>
+<li>Add support for providing a custom layout during logging bootstrap <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/2260">#2260</a></li>
+<li>Add support for PATCH request to Jersey test client <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/2288">#2288</a></li>
+<li>Add configuration option to <code class="docutils literal"><span class="pre">EventJsonLayoutBaseFactory</span></code> to flatten MDC <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/2293">#2293</a></li>
+<li>Allow to use custom security provider in HTTP client <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/2299">#2299</a></li>
+<li>Make <code class="docutils literal"><span class="pre">ignoreExceptionOnPreLoad</span></code> on <code class="docutils literal"><span class="pre">PoolProperties</span></code> configurable <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/2300">#2300</a></li>
+<li>Allow lazy initialization of resources in <code class="docutils literal"><span class="pre">ResourceTestRule</span></code> <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/2304">#2304</a></li>
+<li>Make sure Jersey test client uses Dropwizard’s <code class="docutils literal"><span class="pre">ObjectMapper</span></code> <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/2277">#2277</a></li>
+<li>Allow customizing Hibernate Configuration in <code class="docutils literal"><span class="pre">DAOTest</span></code> <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/2301">#2301</a></li>
+<li>Upgrade to Apache Commons Lang3 3.7</li>
+<li>Upgrade to Apache Commons Text 1.2</li>
+<li>Upgrade to Apache HttpClient 4.5.5</li>
+<li>Upgrade to Apache Tomcat JDBC 9.0.5</li>
+<li>Upgrade to Argparse4j 0.8.1</li>
+<li>Upgrade to AssertJ 3.9.1</li>
+<li>Upgrade to Dropwizard Metrics 4.0.2</li>
+<li>Upgrade to Error Prone 2.2.0</li>
+<li>Upgrade to Guava 24.0-jre</li>
+<li>Upgrade to Hibernate 5.2.15.Final</li>
+<li>Upgrade to Jackson 2.9.4</li>
+<li>Upgrade Jadira to 7.0.0-rc1 <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/2272">#2272</a></li>
+<li>Upgrade to Jdbi 3.1.0 <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/2289">#2289</a></li>
+<li>Upgrade to JUnit 5.0.3</li>
+<li>Upgrade to Mockito 2.15.0</li>
+<li>Upgrade to NullAway 0.3.2</li>
+</ul>
+</div>
+<div class="section" id="v1-2-4-feb-23-2018">
+<span id="rel-1-2-4"></span><h2>v1.2.4: Feb 23, 2018</h2>
+<ul class="simple">
+<li>Upgrade Jackson to 2.9.4 in 1.2.* to address a CVE <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/2269">#2269</a></li>
+</ul>
+</div>
+<div class="section" id="v1-1-7-feb-23-2018">
+<span id="rel-1-1-7"></span><h2>v1.1.7: Feb 23, 2018</h2>
+<ul class="simple">
+<li>Upgrade Jackson to 2.8.11 in 1.1.* to address a CVE <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/2270">#2270</a></li>
+</ul>
+</div>
+<div class="section" id="v1-2-3-jan-24-2018">
+<span id="rel-1-2-3"></span><h2>v1.2.3: Jan 24, 2018</h2>
+<ul class="simple">
+<li>Enable auto escaping of strings in Freemarker templates <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/2251">#2251</a></li>
+</ul>
+</div>
+<div class="section" id="v1-2-2-nov-27-2017">
+<span id="rel-1-2-2"></span><h2>v1.2.2: Nov 27, 2017</h2>
+<ul class="simple">
+<li>Don’t shut down asynchronous executor in Jersey #2221</li>
+<li>Add possibility to possibility to extend DropwizardApacheConnector #2220</li>
+</ul>
+</div>
+<div class="section" id="v1-2-1-nov-22-2017">
+<span id="rel-1-2-1"></span><h2>v1.2.1: Nov 22, 2017</h2>
+<ul class="simple">
+<li>Correctly set up SO_LINGER for the HTTP connector <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/2176">#2176</a></li>
+<li>Support fromString in FuzzyEnumParamConverter <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/2161">#2161</a></li>
+<li>Upgrade to Hibernate 5.2.12.Final to address <a class="reference external" href="https://hibernate.atlassian.net/browse/HHH-11996">HHH-11996</a>, <a class="reference external" href="https://github.com/dropwizard/dropwizard/issues/2206">#2206</a></li>
+<li>Upgrade to Freemaker 2.3.27-incubating</li>
+</ul>
+</div>
+<div class="section" id="v1-1-6-nov-2-2017">
+<span id="rel-1-1-6"></span><h2>v1.1.6: Nov 2, 2017</h2>
+<ul class="simple">
+<li>Support fromString in FuzzyEnumParamConverter <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/2161">#2161</a></li>
+</ul>
+</div>
+<div class="section" id="v1-1-5-oct-17-2017">
+<span id="rel-1-1-5"></span><h2>v1.1.5: Oct 17, 2017</h2>
+<ul class="simple">
+<li>Correctly set up SO_LINGER for the HTTP connector <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/2176">#2176</a></li>
+</ul>
+</div>
+<div class="section" id="v1-2-0-oct-6-2017">
+<span id="rel-1-2-0"></span><h2>v1.2.0: Oct 6 2017</h2>
+<p><a class="reference external" href="https://github.com/dropwizard/dropwizard/milestone/25?closed=1">Complete changelog on GitHub</a></p>
+<ul class="simple">
+<li>Support configuring FileAppender#bufferSize <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1951">#1951</a></li>
+<li>Improve error handling of <cite>&#64;FormParam</cite> resources <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1982">#1982</a></li>
+<li>Add JDBC interceptors through configuration <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/2030">#2030</a></li>
+<li>Support Dropwizard applications without logback <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1900">#1900</a></li>
+<li>Replace deprecated SizeAndTimeBasedFNATP with SizeAndTimeBasedRollingPolicy <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/2010">#2010</a></li>
+<li>Decrease allowable tomcat jdbc validation interval to 50ms <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/2051">#2051</a></li>
+<li>Add support for setting several cipher suites for HTTP/2 <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/2119">#2119</a></li>
+<li>Remove Dropwizard’s Jackson dependency on Logback <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/2112">#2112</a></li>
+<li>Handle badly formed “Accept-Language” headers <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/2103">#2103</a></li>
+<li>Use LoadingCache in CachingAuthorizer <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/2096">#2096</a></li>
+<li>Client NTLM Authentication <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/2091">#2091</a></li>
+<li>Add optional Jersey filters <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1948">#1948</a></li>
+<li>Upgrade to Apache commons-lang3 3.6</li>
+<li>Upgrade to AssertJ 3.8.0</li>
+<li>Upgrade to classmate 1.3.4</li>
+<li>Upgrade to Guava 23.1</li>
+<li>Upgrade to H2 1.4.196</li>
+<li>Upgrade to Hibernate 5.2.11.Final</li>
+<li>Upgrade to Hibernate Validator 5.4.1.Final</li>
+<li>Upgrade to HSQLDB 2.4.0</li>
+<li>Upgrade to Jackson 2.9.1</li>
+<li>Upgrade to Jetty 9.4.7.v20170914</li>
+<li>Upgrade to JMH 1.19</li>
+<li>Upgrade to Joda-Time 2.9.9</li>
+<li>Upgrade to Logback 1.2.3</li>
+<li>Upgrade to Metrics 3.2.5</li>
+<li>Upgrade to Mockito 2.10.0</li>
+<li>Upgrade to Mustache.java 0.9.5</li>
+<li>Upgrade to Objenesis 2.6</li>
+<li>Upgrade to SLF4J 1.7.25</li>
+<li>Upgrade to tomcat-jdbc 8.5.23</li>
+</ul>
+</div>
+<div class="section" id="v1-1-4-aug-24-2017">
+<span id="rel-1-1-4"></span><h2>v1.1.4: Aug 24 2017</h2>
+<p><a class="reference external" href="https://github.com/dropwizard/dropwizard/milestone/31?closed=1">Complete changelog on GitHub</a></p>
+<ul class="simple">
+<li>Upgrade to Jackson 2.8.10 <a class="reference external" href="https://github.com/dropwizard/dropwizard/issues/2120">#2120</a></li>
+</ul>
+</div>
+<div class="section" id="v1-1-3-jul-31-2017">
+<span id="rel-1-1-3"></span><h2>v1.1.3: Jul 31 2017</h2>
+<p><a class="reference external" href="https://github.com/dropwizard/dropwizard/milestone/30?closed=1">Complete changelog on GitHub</a></p>
+<ul class="simple">
+<li>Handle badly formed ‘Accept-Language’ headers <a class="reference external" href="https://github.com/dropwizard/dropwizard/issues/2097">#2097</a></li>
+<li>Upgrade to Jetty 9.4.6.v20170531 to address <a class="reference external" href="https://nvd.nist.gov/vuln/detail/CVE-2017-9735">CVE-2017-9735</a> <a class="reference external" href="https://github.com/dropwizard/dropwizard/issues/2113">#2113</a></li>
+</ul>
+</div>
+<div class="section" id="v1-1-2-june-27-2017">
+<span id="rel-1-1-2"></span><h2>v1.1.2 June 27 2017</h2>
+<p><a class="reference external" href="https://github.com/dropwizard/dropwizard/milestone/28?closed=1">Complete changelog on GitHub</a></p>
+<ul class="simple">
+<li>Updated Jackson to 2.8.9. Fixes a security <a class="reference external" href="https://github.com/FasterXML/jackson-databind/issues/1599">vulnerability</a> with default typing <a class="reference external" href="https://github.com/dropwizard/dropwizard/issues/2086">#2086</a></li>
+<li>Use the correct <cite>JsonFactory</cite> in JSON configuration parsing <a class="reference external" href="https://github.com/dropwizard/dropwizard/issues/2046">#2046</a></li>
+<li>Support of extending of <cite>DBIFactory</cite> <a class="reference external" href="https://github.com/dropwizard/dropwizard/issues/2067">#2067</a></li>
+<li>Add time zone to Java 8 datetime mappers <a class="reference external" href="https://github.com/dropwizard/dropwizard/issues/2069">#2069</a></li>
+</ul>
+</div>
+<div class="section" id="v1-0-8-june-27-2017">
+<span id="rel-1-0-8"></span><h2>v1.0.8 June 27 2017</h2>
+<p><a class="reference external" href="https://github.com/dropwizard/dropwizard/milestone/29?closed=1">Complete changelog on GitHub</a></p>
+<ul class="simple">
+<li>Updated Jackson to 2.7.9.1. Fixes a security <a class="reference external" href="https://github.com/FasterXML/jackson-databind/issues/1599">vulnerability</a> with default typing <a class="reference external" href="https://github.com/dropwizard/dropwizard/issues/2087">#2087</a></li>
+</ul>
+</div>
+<div class="section" id="v1-1-1-may-19-2017">
+<span id="rel-1-1-1"></span><h2>v1.1.1 May 19 2017</h2>
+<p><a class="reference external" href="https://github.com/dropwizard/dropwizard/milestone/27?closed=1">Complete changelog on GitHub</a></p>
+<ul class="simple">
+<li>Set the console logging context after a reset <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1973">#1973</a></li>
+<li>Set logging context for file appenders before setting the buffer size <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1975">#1975</a></li>
+<li>Remove javax.el from jersey-bean-validation <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1976">#1976</a></li>
+<li>Exclude duplicated JTA 1.1 from dropwizard-hibernate dependencies <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1977">#1977</a></li>
+<li>Add missing &#64;UnwrapValidatedValue annotations <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1993">#1993</a></li>
+<li>Fix HttpSessionListener.sessionDestroyed is not being called <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/2032">#2032</a></li>
+<li>Add flag to make ThreadNameFilter optional <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/2014">#2014</a></li>
+</ul>
+</div>
+<div class="section" id="v1-1-0-mar-21-2017">
+<span id="rel-1-1-0"></span><h2>v1.1.0: Mar 21 2017</h2>
+<p><a class="reference external" href="https://github.com/dropwizard/dropwizard/milestone/15?closed=1">Complete changelog on GitHub</a></p>
+<ul class="simple">
+<li>Upgraded to Hibernate ORM 5.2.7, introducing a series of deprecations and API changes in preparation for Hibernate ORM 6 <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1871">#1871</a></li>
+<li>Add runtime certificate reload via admin task <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1799">#1799</a></li>
+<li>List available tasks lexically via admin task <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1939">#1939</a></li>
+<li>Add support for optional resource protection <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1931">#1931</a></li>
+<li>Invalid enum request parameters result in 400 response with possible choices <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1734">#1734</a></li>
+<li>Enum request parameters are deserialized in the same fuzzy manner, as the request body <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1734">#1734</a></li>
+<li>Request parameter name displayed in response to parse failure <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1734">#1734</a></li>
+<li>Add <code class="docutils literal"><span class="pre">DurationParam</span></code> as a possible request parameter <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1734">#1734</a></li>
+<li>Add <code class="docutils literal"><span class="pre">SizeParam</span></code> as a possible request parameter <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1751">#1751</a></li>
+<li>Allow overriding of a default <code class="docutils literal"><span class="pre">ExceptionMapper</span></code> without re-registering all other defaults <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1768">#1768</a></li>
+<li>Allow overriding of default <code class="docutils literal"><span class="pre">JsonProvider</span></code> <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1788">#1788</a></li>
+<li>Finer-grain control of exception behaviour in view renderers <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1820">#1820</a></li>
+<li>Default <code class="docutils literal"><span class="pre">WebApplicationException</span></code> handler preserves exception HTTP headers <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1912">#1912</a></li>
+<li>JerseyClientBuilder can create rx-capable client <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1721">#1721</a></li>
+<li>Configurable response for empty <code class="docutils literal"><span class="pre">Optional</span></code> return values <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1784">#1784</a></li>
+<li>Add web test container agnostic way of invoking requests in <code class="docutils literal"><span class="pre">ResourceTestRule</span></code> <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1778">#1778</a></li>
+<li>Remove OptionalValidatedValueUnwrapper <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1583">#1583</a></li>
+<li>Allow constraints to be applied to type <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1586">#1586</a></li>
+<li>Use LoadingCache in CachingAuthenticator <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1615">#1615</a></li>
+<li>Switch cert and peer validation to false by default <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1855">#1855</a></li>
+<li>Introduce CachingAuthorizer <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1639">#1639</a></li>
+<li>Enhance logging of registered endpoints <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1804">#1804</a></li>
+<li>Flush loggers on command exit instead of destroying logging <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1947">#1947</a></li>
+<li>Add support for neverBlock on AsyncAppenders <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1917">#1917</a></li>
+<li>Allow to disable caching of Mustache views <a class="reference external" href="https://github.com/dropwizard/dropwizard/issues/1289">#1289</a></li>
+<li>Add the <code class="docutils literal"><span class="pre">httpCompliance</span></code> option to the HTTP configuration <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1825">#1825</a></li>
+<li>Add the <code class="docutils literal"><span class="pre">blockingTimeout</span></code> option to the HTTP configuration <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1795">#1795</a></li>
+<li>Make <code class="docutils literal"><span class="pre">GZipHandler</span></code> sync-flush configurable <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1685">#1685</a></li>
+<li>Add <code class="docutils literal"><span class="pre">min</span></code> and <code class="docutils literal"><span class="pre">mins</span></code> as valid <code class="docutils literal"><span class="pre">Duration</span></code> abbreviations <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1833">#1833</a></li>
+<li>Register Jackson parameter-names modules <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1908">#1908</a></li>
+<li>Native Jackson deserialization of enums when Jackson annotations are present <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1909">#1909</a></li>
+<li>Add <code class="docutils literal"><span class="pre">JsonConfigurationFactory</span></code> for first-class support of the JSON configuration <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1897">#1897</a></li>
+<li>Support disabled and enabled attributes for metrics <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1957">#1957</a></li>
+<li>Support <code class="docutils literal"><span class="pre">&#64;UnitOfWork</span></code> in sub-resources <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1959">#1959</a></li>
+<li>Upgraded to Jackson 2.8.7</li>
+<li>Upgraded to Hibernate Validator 5.3.4.Final</li>
+<li>Upgraded to Hibernate ORM 5.2.8.Final</li>
+<li>Upgraded to Jetty 9.4.2.v20170220</li>
+<li>Upgraded to tomcat-jdbc 8.5.9</li>
+<li>Upgraded to Objenesis 2.5.1</li>
+<li>Upgraded to AssertJ 3.6.2</li>
+<li>Upgraded to classmate 1.3.3</li>
+<li>Upgraded to Metrics 3.2.2 <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1970">#1970</a></li>
+<li>Upgraded to Mustache 0.9.4 <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1766">#1766</a></li>
+<li>Upgraded to Mockito 2.7.12</li>
+<li>Upgraded to Liquibase 3.5.3</li>
+<li>Upgraded to Logback 1.2.1 <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1927">#1918</a></li>
+<li>Upgraded to JDBI 2.78</li>
+<li>Upgraded to Jersey 2.25.1</li>
+<li>Upgraded to javassist 3.21.0-GA</li>
+<li>Upgraded to Guava 21.0</li>
+<li>Upgraded to SLF4J 1.7.24</li>
+<li>Upgraded to H2 1.4.193</li>
+<li>Upgraded to Joda-Time 2.9.7</li>
+<li>Upgraded to commons-lang3 3.5</li>
+<li>Upgraded to Apache HTTP Client 4.5.3</li>
+</ul>
+</div>
+<div class="section" id="v1-0-7-mar-20-2017">
+<span id="rel-1-0-7"></span><h2>v1.0.7 Mar 20 2017</h2>
+<p><a class="reference external" href="https://github.com/dropwizard/dropwizard/milestone/26?closed=1">Complete changelog on GitHub</a></p>
+<ul class="simple">
+<li>Upgrade to Metrics 3.1.4 <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1969">#1969</a></li>
+</ul>
+</div>
+<div class="section" id="v1-0-6-jan-30-2017">
+<span id="rel-1-0-6"></span><h2>v1.0.6 Jan 30 2017</h2>
+<p><a class="reference external" href="https://github.com/dropwizard/dropwizard/milestone/23?closed=1">Complete changelog on GitHub</a></p>
+<ul class="simple">
+<li>Switch cert and peer validation to false by default <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1855">#1855</a></li>
+<li>Add a JUnit rule for testing database interactions <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1905">#1905</a></li>
+</ul>
+</div>
+<div class="section" id="v1-0-5-nov-18-2016">
+<span id="rel-1-0-5"></span><h2>v1.0.5 Nov 18 2016</h2>
+<p><a class="reference external" href="https://github.com/dropwizard/dropwizard/milestone/22?closed=1">Complete changelog on GitHub</a></p>
+<ul class="simple">
+<li>Fix request logs with request parameter in layout pattern <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1828">#1828</a></li>
+</ul>
+</div>
+<div class="section" id="v1-0-4-nov-14-2016">
+<span id="rel-1-0-4"></span><h2>v1.0.4 Nov 14 2016</h2>
+<p><a class="reference external" href="https://github.com/dropwizard/dropwizard/milestone/21?closed=1">Complete changelog on GitHub</a></p>
+<ul class="simple">
+<li>Upgraded to Jersey 2.23.2 <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1808">#1808</a></li>
+<li>Brought back support for request logging with <code class="docutils literal"><span class="pre">logback-classic</span></code> <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1813">#1813</a></li>
+</ul>
+</div>
+<div class="section" id="v1-0-3-oct-28-2016">
+<span id="rel-1-0-3"></span><h2>v1.0.3: Oct 28 2016</h2>
+<p><a class="reference external" href="https://github.com/dropwizard/dropwizard/milestone/20?closed=1">Complete changelog on GitHub</a></p>
+<ul class="simple">
+<li>Fix support maxFileSize and archivedFileCount <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1660">#1660</a></li>
+<li>Upgraded to Jackson 2.7.8 <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1755">#1755</a></li>
+<li>Upgraded to Mustache 0.9.4 <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1766">#1766</a></li>
+<li>Prefer use of assertj’s java8 exception assertions <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1753">#1753</a></li>
+</ul>
+</div>
+<div class="section" id="v1-0-2-sep-23-2016">
+<span id="rel-1-0-2"></span><h2>v1.0.2: Sep 23 2016</h2>
+<p><a class="reference external" href="https://github.com/dropwizard/dropwizard/milestone/19?closed=1">Complete changelog on GitHub</a></p>
+<ul class="simple">
+<li>Fix absence of request logs in Dropwizard 1.0.1 <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1737">#1737</a></li>
+</ul>
+</div>
+<div class="section" id="v1-0-1-sep-21-2016">
+<span id="rel-1-0-1"></span><h2>v1.0.1: Sep 21 2016</h2>
+<p><a class="reference external" href="https://github.com/dropwizard/dropwizard/milestone/17?closed=1">Complete changelog on GitHub</a></p>
+<ul class="simple">
+<li>Allow use of custom HostnameVerifier on clients <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1664">#1664</a></li>
+<li>Allow to configure failing on unknown properties in the Dropwizard configuration <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1677">#1677</a></li>
+<li>Fix request attribute-related race condition in Logback request logging <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1678">#1678</a></li>
+<li>Log Jetty initialized SSLContext not the Default <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1698">#1698</a></li>
+<li>Fix NPE of non-resource sub-resource methods <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1718">#1718</a></li>
+</ul>
+</div>
+<div class="section" id="v1-0-0-jul-26-2016">
+<span id="rel-1-0-0"></span><h2>v1.0.0: Jul 26 2016</h2>
+<p><a class="reference external" href="https://github.com/dropwizard/dropwizard/milestone/9?closed=1">Complete changelog on GitHub</a></p>
+<ul class="simple">
+<li>Using Java 8 as baseline</li>
+<li><code class="docutils literal"><span class="pre">dropwizard-java8</span></code> bundle merged into mainline <a class="reference external" href="https://github.com/dropwizard/dropwizard/issues/1365">#1365</a></li>
+<li>HTTP/2 and server push support <a class="reference external" href="https://github.com/dropwizard/dropwizard/issues/1349">#1349</a></li>
+<li><code class="docutils literal"><span class="pre">dropwizard-spdy</span></code> module is removed in favor of <code class="docutils literal"><span class="pre">dropwizard-http2</span></code> <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1330">#1330</a></li>
+<li>Switching to <code class="docutils literal"><span class="pre">logback-access</span></code> for HTTP request logging <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1415">#1415</a></li>
+<li>Support for validating return values in JAX-RS resources <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1251">#1251</a></li>
+<li>Consistent handling null entities in JAX-RS resources <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1251">#1251</a></li>
+<li>Support for validating bean members in JAX-RS resources <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1572">#1572</a></li>
+<li>Returning an HTTP 500 error for entities that can’t be serialized <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1347">#1347</a></li>
+<li>Support serialisation of lazy loaded POJOs in Hibernate <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1466">#1466</a></li>
+<li>Support fallback to the <code class="docutils literal"><span class="pre">toString</span></code> method during deserializing enum values from JSON  <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1340">#1340</a></li>
+<li>Support for setting default headers in Apache HTTP client <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1354">#1354</a></li>
+<li>Printing help once on invalid command line arguments <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1376">#1376</a></li>
+<li>Support for case insensitive and all single letter <code class="docutils literal"><span class="pre">SizeUnit</span></code> suffixes <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1380">#1380</a></li>
+<li>Added a development profile to the build <a class="reference external" href="https://github.com/dropwizard/dropwizard/issues/1364">#1364</a></li>
+<li>All the default exception mappers in <code class="docutils literal"><span class="pre">ResourceTestRule</span></code> are registered by default <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1387">#1387</a></li>
+<li>Allow DB minSize and initialSize to be zero for lazy connections <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1517">#1517</a></li>
+<li>Ability to provide own <code class="docutils literal"><span class="pre">RequestLogFactory</span></code> <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1290">#1290</a></li>
+<li>Support for authentication by polymorphic principals <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1392">#1392</a></li>
+<li>Support for configuring Jetty’s <code class="docutils literal"><span class="pre">inheritedChannel</span></code> option <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1410">#1410</a></li>
+<li>Support for using <code class="docutils literal"><span class="pre">DropwizardAppRule</span></code> at the suite level <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1411">#1411</a></li>
+<li>Support for adding multiple <code class="docutils literal"><span class="pre">MigrationBundles</span></code> <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1430">#1430</a></li>
+<li>Support for obtaining server context paths in the <code class="docutils literal"><span class="pre">Application.run</span></code> method <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1503">#1503</a></li>
+<li>Support for unlimited log files for file appender <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1549">#1549</a></li>
+<li>Support for log file names determined by logging policy <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1561">#1561</a></li>
+<li>Default Graphite reporter port changed from 8080 to 2003 <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1538">#1538</a></li>
+<li>Upgraded to Apache HTTP Client 4.5.2</li>
+<li>Upgraded to argparse4j 0.7.0</li>
+<li>Upgraded to Guava 19.0</li>
+<li>Upgraded to H2 1.4.192</li>
+<li>Upgraded to Hibernate 5.1.0 <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1429">#1429</a></li>
+<li>Upgraded to Hibernate Validator 5.2.4.Final</li>
+<li>Upgraded to HSQLDB 2.3.4</li>
+<li>Upgraded to Jadira Usertype Core 5.0.0.GA</li>
+<li>Upgraded to Jackson 2.7.6</li>
+<li>Upgraded to JDBI 2.73 <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1358">#1358</a></li>
+<li>Upgraded to Jersey 2.23.1</li>
+<li>Upgraded to Jetty 9.3.9.v20160517 <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1330">#1330</a></li>
+<li>Upgraded to JMH 1.12</li>
+<li>Upgraded to Joda-Time 2.9.4</li>
+<li>Upgraded to Liquibase 3.5.1</li>
+<li>Upgraded to liquibase-slf4j 2.0.0</li>
+<li>Upgraded to Logback 1.1.7</li>
+<li>Upgraded to Mustache 0.9.2</li>
+<li>Upgraded to SLF4J 1.7.21</li>
+<li>Upgraded to tomcat-jdbc 8.5.3</li>
+<li>Upgraded to Objenesis 2.3</li>
+<li>Upgraded to AssertJ 3.4.1</li>
+<li>Upgraded to Mockito 2.0.54-beta</li>
+</ul>
+</div>
+<div class="section" id="v0-9-2-jan-20-2016">
+<span id="rel-0-9-2"></span><h2>v0.9.2: Jan 20 2016</h2>
+<p><a class="reference external" href="https://github.com/dropwizard/dropwizard/milestone/14?closed=1">Complete changelog on GitHub</a></p>
+<ul class="simple">
+<li>Support <cite>&#64;UnitOfWork</cite> annotation outside of Jersey resources <a class="reference external" href="https://github.com/dropwizard/dropwizard/issues/1361">#1361</a></li>
+</ul>
+</div>
+<div class="section" id="v0-9-1-nov-3-2015">
+<span id="rel-0-9-1"></span><h2>v0.9.1: Nov 3 2015</h2>
+<p><a class="reference external" href="https://github.com/dropwizard/dropwizard/milestone/13?closed=1">Complete changelog on GitHub</a></p>
+<ul class="simple">
+<li>Add <code class="docutils literal"><span class="pre">ConfigurationSourceProvider</span></code> for reading resources from classpath <a class="reference external" href="https://github.com/dropwizard/dropwizard/issues/1314">#1314</a></li>
+<li>Add <code class="docutils literal"><span class="pre">&#64;UnwrapValidatedValue</span></code> annotation to <cite>BaseReporterFactory.frequency</cite> <a class="reference external" href="https://github.com/dropwizard/dropwizard/issues/1308">#1308</a>, <a class="reference external" href="https://github.com/dropwizard/dropwizard/issues/1309">#1309</a></li>
+<li>Fix serialization of default configuration for <code class="docutils literal"><span class="pre">DataSourceFactory</span></code> by deprecating <code class="docutils literal"><span class="pre">PooledDataSourceFactory#getHealthCheckValidationQuery()</span></code> and <code class="docutils literal"><span class="pre">PooledDataSourceFactory#getHealthCheckValidationTimeout()</span></code> <a class="reference external" href="https://github.com/dropwizard/dropwizard/issues/1321">#1321</a>, <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1322">#1322</a></li>
+<li>Treat <code class="docutils literal"><span class="pre">null</span></code> values in JAX-RS resource method parameters of type <code class="docutils literal"><span class="pre">Optional&lt;T&gt;</span></code> as absent value after conversion <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1323">#1323</a></li>
+</ul>
+</div>
+<div class="section" id="v0-9-0-oct-28-2015">
+<span id="rel-0-9-0"></span><h2>v0.9.0: Oct 28 2015</h2>
+<p><a class="reference external" href="https://github.com/dropwizard/dropwizard/milestone/8?closed=1">Complete changelog on GitHub</a></p>
+<ul class="simple">
+<li>Various documentation fixes and improvements</li>
+<li>New filter-based authorization &amp; authentication <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/952">#952</a>, <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1023">#1023</a>, <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1114">#1114</a>, <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1162">#1162</a>, <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1241">#1241</a></li>
+<li>Fixed a security bug in <code class="docutils literal"><span class="pre">CachingAuthenticator</span></code> with caching results of failed authentication attempts <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1082">#1082</a></li>
+<li>Correct handling misconfigured context paths in <code class="docutils literal"><span class="pre">ServerFactory</span></code> <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/785">#785</a></li>
+<li>Logging context paths during application startup <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/994">#994</a>, <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1072">#1072</a></li>
+<li>Support for <a class="reference external" href="https://jersey.github.io/documentation/latest/bean-validation.html">Jersey Bean Validation</a> <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/842">#842</a></li>
+<li>Returning descriptive constraint violation messages <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1039">#1039</a>,</li>
+<li>Trace logging of failed constraint violations <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/992">#992</a></li>
+<li>Returning correct HTTP status codes for constraint violations <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/993">#993</a></li>
+<li>Fixed possible XSS in constraint violations <a class="reference external" href="https://github.com/dropwizard/dropwizard/issues/892">#892</a></li>
+<li>Support for including caller data in appenders <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/995">#995</a></li>
+<li>Support for defining custom logging factories (e.g. native Logback) <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/996">#996</a></li>
+<li>Support for defining the maximum log file size in <code class="docutils literal"><span class="pre">FileAppenderFactory</span></code>. <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1000">#1000</a></li>
+<li>Support for fixed window rolling policy in <code class="docutils literal"><span class="pre">FileAppenderFactory</span></code> <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1218">#1218</a></li>
+<li>Support for individual logger appenders <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1092">#1092</a></li>
+<li>Support for disabling logger additivity <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1215">#1215</a></li>
+<li>Sorting endpoints in the application startup log <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1002">#1002</a></li>
+<li>Dynamic DNS resolution in the Graphite metric reporter <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1004">#1004</a></li>
+<li>Support for defining a custom <code class="docutils literal"><span class="pre">MetricRegistry</span></code> during bootstrap (e.g. with HdrHistogram) <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1015">#1015</a></li>
+<li>Support for defining a custom <code class="docutils literal"><span class="pre">ObjectMapper</span></code> during bootstrap. <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1112">#1112</a></li>
+<li>Added facility to plug-in custom DB connection pools (e.g. HikariCP) <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1030">#1030</a></li>
+<li>Support for setting a custom DB pool connection validator <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1113">#1113</a></li>
+<li>Support for enabling of removing abandoned DB pool connections <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1264">#1264</a></li>
+<li>Support for credentials in a DB data source URL <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1260">#1260</a></li>
+<li>Support for simultaneous work of several Hibernate bundles <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1276">#1276</a></li>
+<li>HTTP(S) proxy support for Dropwizard HTTP client <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/657">#657</a></li>
+<li>Support external configuration of TLS properties for Dropwizard HTTP client <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1224">#1224</a></li>
+<li>Support for not accepting GZIP-compressed responses in HTTP clients <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1270">#1270</a></li>
+<li>Support for setting a custom redirect strategy in HTTP clients <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1281">#1281</a></li>
+<li>Apache and Jersey clients are now managed by the application environment <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1061">#1061</a></li>
+<li>Support for request-scoped configuration for Jersey client  <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/939">#939</a></li>
+<li>Respecting Jackson feature for deserializing enums using <code class="docutils literal"><span class="pre">toString</span></code> <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1104">#1104</a></li>
+<li>Support for passing explicit <code class="docutils literal"><span class="pre">Configuration</span></code> via test rules <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1131">#1131</a></li>
+<li>On view template error, return a generic error page instead of template not found <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1178">#1178</a></li>
+<li>In some cases an instance of Jersey HTTP client could be abruptly closed during the application lifetime <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1232">#1232</a></li>
+<li>Improved build time build by running tests in parallel <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1032">#1032</a></li>
+<li>Added JMH benchmarks  <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/990">#990</a></li>
+<li>Allow customization of Hibernate <code class="docutils literal"><span class="pre">SessionFactory</span></code> <a class="reference external" href="https://github.com/dropwizard/dropwizard/issue/1182">#1182</a></li>
+<li>Removed javax.el-2.x in favour of javax.el-3.0</li>
+<li>Upgraded to argparse4j 0.6.0</li>
+<li>Upgrade to AssertJ 2.2.0</li>
+<li>Upgraded to JDBI 2.63.1</li>
+<li>Upgraded to Apache HTTP Client 4.5.1</li>
+<li>Upgraded to Dropwizard Metrics 3.1.2</li>
+<li>Upgraded to Freemarker 2.3.23</li>
+<li>Upgraded to H2 1.4.190</li>
+<li>Upgraded to Hibernate 4.3.11.Final</li>
+<li>Upgraded to Jackson 2.6.3</li>
+<li>Upgraded to Jadira Usertype Core 4.0.0.GA</li>
+<li>Upgraded to Jersey 2.22.1</li>
+<li>Upgraded to Jetty 9.2.13.v20150730</li>
+<li>Upgraded to Joda-Time 2.9</li>
+<li>Upgraded to JSR305 annotations 3.0.1</li>
+<li>Upgraded to Hibernate Validator 5.2.2.Final</li>
+<li>Upgraded to Jetty ALPN boot 7.1.3.v20150130</li>
+<li>Upgraded to Jetty SetUID support 1.0.3</li>
+<li>Upgraded to Liquibase 3.4.1</li>
+<li>Upgraded to Logback 1.1.3</li>
+<li>Upgraded to Metrics 3.1.2</li>
+<li>Upgraded to Mockito 1.10.19</li>
+<li>Upgraded to SLF4J 1.7.12</li>
+<li>Upgraded to commons-lang3 3.4</li>
+<li>Upgraded to tomcat-jdbc 8.0.28</li>
+</ul>
+</div>
+<div class="section" id="v0-8-5-nov-3-2015">
+<span id="rel-0-8-5"></span><h2>v0.8.5: Nov 3 2015</h2>
+<p><a class="reference external" href="https://github.com/dropwizard/dropwizard/milestone/12?closed=1">Complete changelog on GitHub</a></p>
+<ul class="simple">
+<li>Treat <code class="docutils literal"><span class="pre">null</span></code> values in JAX-RS resource method parameters of type <code class="docutils literal"><span class="pre">Optional&lt;T&gt;</span></code> as absent value after conversion <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1323">#1323</a></li>
+</ul>
+</div>
+<div class="section" id="v0-8-4-aug-26-2015">
+<span id="rel-0-8-4"></span><h2>v0.8.4: Aug 26 2015</h2>
+<ul class="simple">
+<li>Upgrade to Apache HTTP Client 4.5</li>
+<li>Upgrade to Jersey 2.21</li>
+<li>Fixed user-agent shadowing in Jersey HTTP Client <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1198">#1198</a></li>
+</ul>
+</div>
+<div class="section" id="v0-8-3-aug-24-2015">
+<span id="rel-0-8-3"></span><h2>v0.8.3: Aug 24 2015</h2>
+<p><a class="reference external" href="https://github.com/dropwizard/dropwizard/milestone/11?closed=1">Complete changelog on GitHub</a></p>
+<ul class="simple">
+<li>Fixed an issue with closing the HTTP client connection pool after a full GC <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1160">#1160</a></li>
+</ul>
+</div>
+<div class="section" id="v0-8-2-jul-6-2015">
+<span id="rel-0-8-2"></span><h2>v0.8.2: Jul 6 2015</h2>
+<p><a class="reference external" href="https://github.com/dropwizard/dropwizard/milestone/10?closed=1">Complete changelog on GitHub</a></p>
+<ul class="simple">
+<li>Support for request-scoped configuration for Jersey client <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1137">#1137</a></li>
+<li>Upgraded to Jersey 2.19 <a class="reference external" href="https://github.com/dropwizard/dropwizard/pull/1143">#1143</a></li>
+</ul>
+</div>
+<div class="section" id="v0-8-1-apr-7-2015">
+<span id="rel-0-8-1"></span><h2>v0.8.1: Apr 7 2015</h2>
+<p><a class="reference external" href="https://github.com/dropwizard/dropwizard/milestone/7?closed=1">Complete changelog on GitHub</a></p>
+<ul class="simple">
+<li>Fixed transaction committing lifecycle for <code class="docutils literal"><span class="pre">&#64;UnitOfWork</span></code>  (#850, #915)</li>
+<li>Fixed noisy Logback messages on startup (#902)</li>
+<li>Ability to use providers in TestRule, allows testing of auth &amp; views (#513, #922)</li>
+<li>Custom ExceptionMapper not invoked when Hibernate rollback (#949)</li>
+<li>Support for setting a time bound on DBI and Hibernate health checks</li>
+<li>Default configuration for views</li>
+<li>Ensure that JerseyRequest scoped ClientConfig gets propagated to HttpUriRequest</li>
+<li>More example tests</li>
+<li>Fixed security issue where info is leaked during validation of unauthenticated resources(#768)</li>
+</ul>
+</div>
+<div class="section" id="v0-8-0-mar-5-2015">
+<span id="rel-0-8-0"></span><h2>v0.8.0: Mar 5 2015</h2>
+<p><a class="reference external" href="https://github.com/dropwizard/dropwizard/milestone/5?closed=1">Complete changelog on GitHub</a></p>
+<ul class="simple">
+<li>Migrated <code class="docutils literal"><span class="pre">dropwizard-spdy</span></code> from NPN to ALPN</li>
+<li>Dropped support for deprecated SPDY/2 in <code class="docutils literal"><span class="pre">dropwizard-spdy</span></code></li>
+<li>Upgrade to argparse4j 0.4.4</li>
+<li>Upgrade to commons-lang3 3.3.2</li>
+<li>Upgrade to Guava 18.0</li>
+<li>Upgrade to H2 1.4.185</li>
+<li>Upgrade to Hibernate 4.3.5.Final</li>
+<li>Upgrade to Hibernate Validator 5.1.3.Final</li>
+<li>Upgrade to Jackson 2.5.1</li>
+<li>Upgrade to JDBI 2.59</li>
+<li>Upgrade to Jersey 2.16</li>
+<li>Upgrade to Jetty 9.2.9.v20150224</li>
+<li>Upgrade to Joda-Time 2.7</li>
+<li>Upgrade to Liquibase 3.3.2</li>
+<li>Upgrade to Mustache 0.8.16</li>
+<li>Upgrade to SLF4J 1.7.10</li>
+<li>Upgrade to tomcat-jdbc 8.0.18</li>
+<li>Upgrade to JSR305 annotations 3.0.0</li>
+<li>Upgrade to Junit 4.12</li>
+<li>Upgrade to AssertJ 1.7.1</li>
+<li>Upgrade to Mockito 1.10.17</li>
+<li>Support for range headers</li>
+<li>Ability to use Apache client configuration for Jersey client</li>
+<li>Warning when maximum pool size and unbounded queues are combined</li>
+<li>Fixed connection leak in CloseableLiquibase</li>
+<li>Support ScheduledExecutorService with daemon thread</li>
+<li>Improved DropwizardAppRule</li>
+<li>Better connection pool metrics</li>
+<li>Removed final modifier from Application#run</li>
+<li>Fixed gzip encoding to support Jersey 2.x</li>
+<li>Configuration to toggle regex [in/ex]clusion for Metrics</li>
+<li>Configuration to disable default exception mappers</li>
+<li>Configuration support for disabling chunked encoding</li>
+<li>Documentation fixes and upgrades</li>
+</ul>
+</div>
+<div class="section" id="v0-7-1-jun-18-2014">
+<span id="rel-0-7-1"></span><h2>v0.7.1: Jun 18 2014</h2>
+<p><a class="reference external" href="https://github.com/dropwizard/dropwizard/milestone/6?closed=1">Complete changelog on GitHub</a></p>
+<ul class="simple">
+<li>Added instrumentation to <code class="docutils literal"><span class="pre">Task</span></code>, using metrics annotations.</li>
+<li>Added ability to blacklist SSL cipher suites.</li>
+<li>Added <code class="docutils literal"><span class="pre">&#64;PATCH</span></code> annotation for Jersey resource methods to indicate use of the HTTP <code class="docutils literal"><span class="pre">PATCH</span></code> method.</li>
+<li>Added support for configurable request retry behavior for <code class="docutils literal"><span class="pre">HttpClientBuilder</span></code> and <code class="docutils literal"><span class="pre">JerseyClientBuilder</span></code>.</li>
+<li>Added facility to get the admin HTTP port in <code class="docutils literal"><span class="pre">DropwizardAppTestRule</span></code>.</li>
+<li>Added <code class="docutils literal"><span class="pre">ScanningHibernateBundle</span></code>, which scans packages for entities, instead of requiring you to add them individually.</li>
+<li>Added facility to invalidate credentials from the <code class="docutils literal"><span class="pre">CachingAuthenticator</span></code> that match a specified <code class="docutils literal"><span class="pre">Predicate</span></code>.</li>
+<li>Added a CI build profile for JDK 8 to ensure that Dropwizard builds against the latest version of the JDK.</li>
+<li>Added <code class="docutils literal"><span class="pre">--catalog</span></code> and <code class="docutils literal"><span class="pre">--schema</span></code> options to Liquibase.</li>
+<li>Added <code class="docutils literal"><span class="pre">stackTracePrefix</span></code> configuration option to <code class="docutils literal"><span class="pre">SyslogAppenderFactory</span></code> to configure the pattern prepended to each line in the stack-trace sent to syslog. Defaults to the TAB character, “t”. Note: this is different from the bang prepended to text logs (such as “console”, and “file”), as syslog has different conventions for multi-line messages.</li>
+<li>Added ability to validate <code class="docutils literal"><span class="pre">Optional</span></code> values using validation annotations. Such values require the <code class="docutils literal"><span class="pre">&#64;UnwrapValidatedValue</span></code> annotation, in addition to the validations you wish to use.</li>
+<li>Added facility to configure the <code class="docutils literal"><span class="pre">User-Agent</span></code> for <code class="docutils literal"><span class="pre">HttpClient</span></code>. Configurable via the <code class="docutils literal"><span class="pre">userAgent</span></code> configuration option.</li>
+<li>Added configurable <code class="docutils literal"><span class="pre">AllowedMethodsFilter</span></code>. Configure allowed HTTP methods for both the application and admin connectors with <code class="docutils literal"><span class="pre">allowedMethods</span></code>.</li>
+<li>Added support for specifying a <code class="docutils literal"><span class="pre">CredentialProvider</span></code> for HTTP clients.</li>
+<li>Fixed silently overriding Servlets or ServletFilters; registering a duplicate will now emit a warning.</li>
+<li>Fixed <code class="docutils literal"><span class="pre">SyslogAppenderFactory</span></code> failing when the application name contains a PCRE reserved character (e.g. <code class="docutils literal"><span class="pre">/</span></code> or <code class="docutils literal"><span class="pre">$</span></code>).</li>
+<li>Fixed regression causing JMX reporting of metrics to not be enabled by default.</li>
+<li>Fixed transitive dependencies on log4j and extraneous sl4j backends bleeding in to projects. Dropwizard will now enforce that only Logback and slf4j-logback are used everywhere.</li>
+<li>Fixed clients disconnecting before the request has been fully received causing a “500 Internal Server Error” to be generated for the request log. Such situations will now correctly generate a “400 Bad Request”, as the request is malformed. Clients will never see these responses, but they matter for logging and metrics that were previously considering this situation as a server error.</li>
+<li>Fixed <code class="docutils literal"><span class="pre">DiscoverableSubtypeResolver</span></code> using the system <code class="docutils literal"><span class="pre">ClassLoader</span></code>, instead of the local one.</li>
+<li>Fixed regression causing Liquibase <code class="docutils literal"><span class="pre">--dump</span></code> to fail to dump the database.</li>
+<li>Fixed the CSV metrics reporter failing when the output directory doesn’t exist. It will now attempt to create the directory on startup.</li>
+<li>Fixed global frequency for metrics reporters being permanently overridden by the default frequency for individual reporters.</li>
+<li>Fixed tests failing on Windows due to platform-specific line separators.</li>
+<li>Changed <code class="docutils literal"><span class="pre">DropwizardAppTestRule</span></code> so that it no longer requires a configuration path to operate. When no path is specified, it will now use the applications’ default configuration.</li>
+<li>Changed <code class="docutils literal"><span class="pre">Bootstrap</span></code> so that <code class="docutils literal"><span class="pre">getMetricsFactory()</span></code> may now be overridden to provide a custom instance to the framework to use.</li>
+<li>Upgraded to Guava 17.0
+Note: this addresses a bug with BloomFilters that is incompatible with pre-17.0 BloomFilters.</li>
+<li>Upgraded to Jackson 2.3.3</li>
+<li>Upgraded to Apache HttpClient 4.3.4</li>
+<li>Upgraded to Metrics 3.0.2</li>
+<li>Upgraded to Logback 1.1.2</li>
+<li>Upgraded to h2 1.4.178</li>
+<li>Upgraded to JDBI 2.55</li>
+<li>Upgraded to Hibernate 4.3.5 Final</li>
+<li>Upgraded to Hibernate Validator 5.1.1 Final</li>
+<li>Upgraded to Mustache 0.8.15</li>
+</ul>
+</div>
+<div class="section" id="v0-7-0-apr-04-2014">
+<span id="rel-0-7-0"></span><h2>v0.7.0: Apr 04 2014</h2>
+<p><a class="reference external" href="https://github.com/dropwizard/dropwizard/milestone/4?closed=1">Complete changelog on GitHub</a></p>
+<ul class="simple">
+<li>Upgraded to Java 7.</li>
+<li>Moved to the <code class="docutils literal"><span class="pre">io.dropwizard</span></code> group ID and namespace.</li>
+<li>Extracted out a number of reusable libraries: <code class="docutils literal"><span class="pre">dropwizard-configuration</span></code>,
+<code class="docutils literal"><span class="pre">dropwizard-jackson</span></code>, <code class="docutils literal"><span class="pre">dropwizard-jersey</span></code>, <code class="docutils literal"><span class="pre">dropwizard-jetty</span></code>, <code class="docutils literal"><span class="pre">dropwizard-lifecycle</span></code>,
+<code class="docutils literal"><span class="pre">dropwizard-logging</span></code>, <code class="docutils literal"><span class="pre">dropwizard-servlets</span></code>, <code class="docutils literal"><span class="pre">dropwizard-util</span></code>, <code class="docutils literal"><span class="pre">dropwizard-validation</span></code>.</li>
+<li>Extracted out various elements of <code class="docutils literal"><span class="pre">Environment</span></code> to separate classes: <code class="docutils literal"><span class="pre">JerseyEnvironment</span></code>,
+<code class="docutils literal"><span class="pre">LifecycleEnvironment</span></code>, etc.</li>
+<li>Extracted out <code class="docutils literal"><span class="pre">dropwizard-views-freemarker</span></code> and <code class="docutils literal"><span class="pre">dropwizard-views-mustache</span></code>.
+<code class="docutils literal"><span class="pre">dropwizard-views</span></code> just provides infrastructure now.</li>
+<li>Renamed <code class="docutils literal"><span class="pre">Service</span></code> to <code class="docutils literal"><span class="pre">Application</span></code>.</li>
+<li>Added <code class="docutils literal"><span class="pre">dropwizard-forms</span></code>, which provides support for multipart MIME entities.</li>
+<li>Added <code class="docutils literal"><span class="pre">dropwizard-spdy</span></code>.</li>
+<li>Added <code class="docutils literal"><span class="pre">AppenderFactory</span></code>, allowing for arbitrary logging appenders for application and request
+logs.</li>
+<li>Added <code class="docutils literal"><span class="pre">ConnectorFactory</span></code>, allowing for arbitrary Jetty connectors.</li>
+<li>Added <code class="docutils literal"><span class="pre">ServerFactory</span></code>, with multi- and single-connector implementations.</li>
+<li>Added <code class="docutils literal"><span class="pre">ReporterFactory</span></code>, for metrics reporters, with Graphite and Ganglia implementations.</li>
+<li>Added <code class="docutils literal"><span class="pre">ConfigurationSourceProvider</span></code> to allow loading configuration files from sources other than
+the filesystem.</li>
+<li>Added setuid support. Configure the user/group to run as and soft/hard open file limits in the
+<code class="docutils literal"><span class="pre">ServerFactory</span></code>. To bind to privileged ports (e.g. 80), enable <code class="docutils literal"><span class="pre">startsAsRoot</span></code> and set <code class="docutils literal"><span class="pre">user</span></code>
+and <code class="docutils literal"><span class="pre">group</span></code>, then start your application as the root user.</li>
+<li>Added builders for managed executors.</li>
+<li>Added a default <code class="docutils literal"><span class="pre">check</span></code> command, which loads and validates the service configuration.</li>
+<li>Added support for the Jersey HTTP client to <code class="docutils literal"><span class="pre">dropwizard-client</span></code>.</li>
+<li>Added Jackson Afterburner support.</li>
+<li>Added support for <code class="docutils literal"><span class="pre">deflate</span></code>-encoded requests and responses.</li>
+<li>Added support for HTTP Sessions. Add the annotated parameter to your resource method:
+<code class="docutils literal"><span class="pre">&#64;Session</span> <span class="pre">HttpSession</span> <span class="pre">session</span></code> to have the session context injected.</li>
+<li>Added support for a “flash” message to be propagated across requests. Add the annotated parameter
+to your resource method: <code class="docutils literal"><span class="pre">&#64;Session</span> <span class="pre">Flash</span> <span class="pre">message</span></code> to have any existing flash message injected.</li>
+<li>Added support for deserializing Java <code class="docutils literal"><span class="pre">enums</span></code> with fuzzy matching rules (i.e., whitespace
+stripping, <code class="docutils literal"><span class="pre">-</span></code>/<code class="docutils literal"><span class="pre">_</span></code> equivalence, case insensitivity, etc.).</li>
+<li>Added <code class="docutils literal"><span class="pre">HibernateBundle#configure(Configuration)</span></code> for customization of Hibernate configuration.</li>
+<li>Added support for Joda Time <code class="docutils literal"><span class="pre">DateTime</span></code> arguments and results when using JDBI.</li>
+<li>Added configuration option to include Exception stack-traces when logging to syslog. Stack traces
+are now excluded by default.</li>
+<li>Added the application name and PID (if detectable) to the beginning of syslog messages, as is the
+convention.</li>
+<li>Added <code class="docutils literal"><span class="pre">--migrations</span></code> command-line option to <code class="docutils literal"><span class="pre">migrate</span></code> command to supply the migrations
+file explicitly.</li>
+<li>Validation errors are now returned as <code class="docutils literal"><span class="pre">application/json</span></code> responses.</li>
+<li>Simplified <code class="docutils literal"><span class="pre">AsyncRequestLog</span></code>; now standardized on Jetty 9 NCSA format.</li>
+<li>Renamed <code class="docutils literal"><span class="pre">DatabaseConfiguration</span></code> to <code class="docutils literal"><span class="pre">DataSourceFactory</span></code>, and <code class="docutils literal"><span class="pre">ConfigurationStrategy</span></code> to
+<code class="docutils literal"><span class="pre">DatabaseConfiguration</span></code>.</li>
+<li>Changed logging to be asynchronous. Messages are now buffered and batched in-memory before being
+delivered to the configured appender(s).</li>
+<li>Changed handling of runtime configuration errors. Will no longer display an Exception stack-trace
+and will present a more useful description of the problem, including suggestions when appropriate.</li>
+<li>Changed error handling to depend more heavily on Jersey exception mapping.</li>
+<li>Changed <code class="docutils literal"><span class="pre">dropwizard-db</span></code> to use <code class="docutils literal"><span class="pre">tomcat-jdbc</span></code> instead of <code class="docutils literal"><span class="pre">tomcat-dbcp</span></code>.</li>
+<li>Changed default formatting when logging nested Exceptions to display the root-cause first.</li>
+<li>Replaced <code class="docutils literal"><span class="pre">ResourceTest</span></code> with <code class="docutils literal"><span class="pre">ResourceTestRule</span></code>, a JUnit <code class="docutils literal"><span class="pre">TestRule</span></code>.</li>
+<li>Dropped Scala support.</li>
+<li>Dropped <code class="docutils literal"><span class="pre">ManagedSessionFactory</span></code>.</li>
+<li>Dropped <code class="docutils literal"><span class="pre">ObjectMapperFactory</span></code>; use <code class="docutils literal"><span class="pre">ObjectMapper</span></code> instead.</li>
+<li>Dropped <code class="docutils literal"><span class="pre">Validator</span></code>; use <code class="docutils literal"><span class="pre">javax.validation.Validator</span></code> instead.</li>
+<li>Fixed a shutdown bug in <code class="docutils literal"><span class="pre">dropwizard-migrations</span></code>.</li>
+<li>Fixed formatting of “Caused by” lines not being prefixed when logging nested Exceptions.</li>
+<li>Fixed not all available Jersey endpoints were being logged at startup.</li>
+<li>Upgraded to argparse4j 0.4.3.</li>
+<li>Upgraded to Guava 16.0.1.</li>
+<li>Upgraded to Hibernate Validator 5.0.2.</li>
+<li>Upgraded to Jackson 2.3.1.</li>
+<li>Upgraded to JDBI 2.53.</li>
+<li>Upgraded to Jetty 9.0.7.</li>
+<li>Upgraded to Liquibase 3.1.1.</li>
+<li>Upgraded to Logback 1.1.1.</li>
+<li>Upgraded to Metrics 3.0.1.</li>
+<li>Upgraded to Mustache 0.8.14.</li>
+<li>Upgraded to SLF4J 1.7.6.</li>
+<li>Upgraded to Jersey 1.18.</li>
+<li>Upgraded to Apache HttpClient 4.3.2.</li>
+<li>Upgraded to tomcat-jdbc 7.0.50.</li>
+<li>Upgraded to Hibernate 4.3.1.Final.</li>
+</ul>
+</div>
+<div class="section" id="v0-6-2-mar-18-2013">
+<span id="rel-0-6-2"></span><h2>v0.6.2: Mar 18 2013</h2>
+<ul class="simple">
+<li>Added support for non-UTF8 views.</li>
+<li>Fixed an NPE for services in the root package.</li>
+<li>Fixed exception handling in <code class="docutils literal"><span class="pre">TaskServlet</span></code>.</li>
+<li>Upgraded to Slf4j 1.7.4.</li>
+<li>Upgraded to Jetty 8.1.10.</li>
+<li>Upgraded to Jersey 1.17.1.</li>
+<li>Upgraded to Jackson 2.1.4.</li>
+<li>Upgraded to Logback 1.0.10.</li>
+<li>Upgraded to Hibernate 4.1.9.</li>
+<li>Upgraded to Hibernate Validator 4.3.1.</li>
+<li>Upgraded to tomcat-dbcp 7.0.37.</li>
+<li>Upgraded to Mustache.java 0.8.10.</li>
+<li>Upgraded to Apache HttpClient 4.2.3.</li>
+<li>Upgraded to Jackson 2.1.3.</li>
+<li>Upgraded to argparse4j 0.4.0.</li>
+<li>Upgraded to Guava 14.0.1.</li>
+<li>Upgraded to Joda Time 2.2.</li>
+<li>Added <code class="docutils literal"><span class="pre">retries</span></code> to <code class="docutils literal"><span class="pre">HttpClientConfiguration</span></code>.</li>
+<li>Fixed log formatting for extended stack traces, also now using extended stack traces as the
+default.</li>
+<li>Upgraded to FEST Assert 2.0M10.</li>
+</ul>
+</div>
+<div class="section" id="v0-6-1-nov-28-2012">
+<span id="rel-0-6-1"></span><h2>v0.6.1: Nov 28 2012</h2>
+<ul class="simple">
+<li>Fixed incorrect latencies in request logs on Linux.</li>
+<li>Added ability to register multiple <code class="docutils literal"><span class="pre">ServerLifecycleListener</span></code> instances.</li>
+</ul>
+</div>
+<div class="section" id="v0-6-0-nov-26-2012">
+<span id="rel-0-6-0"></span><h2>v0.6.0: Nov 26 2012</h2>
+<ul class="simple">
+<li>Added Hibernate support in <code class="docutils literal"><span class="pre">dropwizard-hibernate</span></code>.</li>
+<li>Added Liquibase migrations in <code class="docutils literal"><span class="pre">dropwizard-migrations</span></code>.</li>
+<li>Renamed <code class="docutils literal"><span class="pre">http.acceptorThreadCount</span></code> to <code class="docutils literal"><span class="pre">http.acceptorThreads</span></code>.</li>
+<li>Renamed <code class="docutils literal"><span class="pre">ssl.keyStorePath</span></code> to <code class="docutils literal"><span class="pre">ssl.keyStore</span></code>.</li>
+<li>Dropped <code class="docutils literal"><span class="pre">JerseyClient</span></code>. Use Jersey’s <code class="docutils literal"><span class="pre">Client</span></code> class instead.</li>
+<li>Moved JDBI support to <code class="docutils literal"><span class="pre">dropwizard-jdbi</span></code>.</li>
+<li>Dropped <code class="docutils literal"><span class="pre">Database</span></code>. Use JDBI’s <code class="docutils literal"><span class="pre">DBI</span></code> class instead.</li>
+<li>Dropped the <code class="docutils literal"><span class="pre">Json</span></code> class. Use <code class="docutils literal"><span class="pre">ObjectMapperFactory</span></code> and <code class="docutils literal"><span class="pre">ObjectMapper</span></code> instead.</li>
+<li>Decoupled JDBI support from tomcat-dbcp.</li>
+<li>Added group support to <code class="docutils literal"><span class="pre">Validator</span></code>.</li>
+<li>Moved CLI support to argparse4j.</li>
+<li>Fixed testing support for <code class="docutils literal"><span class="pre">Optional</span></code> resource method parameters.</li>
+<li>Fixed Freemarker support to use its internal encoding map.</li>
+<li>Added property support to <code class="docutils literal"><span class="pre">ResourceTest</span></code>.</li>
+<li>Fixed JDBI metrics support for raw SQL queries.</li>
+<li>Dropped Hamcrest matchers in favor of FEST assertions in <code class="docutils literal"><span class="pre">dropwizard-testing</span></code>.</li>
+<li>Split <code class="docutils literal"><span class="pre">Environment</span></code> into <code class="docutils literal"><span class="pre">Bootstrap</span></code> and <code class="docutils literal"><span class="pre">Environment</span></code>, and broke configuration of each into
+<code class="docutils literal"><span class="pre">Service</span></code>’s <code class="docutils literal"><span class="pre">#initialize(Bootstrap)</span></code> and <code class="docutils literal"><span class="pre">#run(Configuration,</span> <span class="pre">Environment)</span></code>.</li>
+<li>Combined <code class="docutils literal"><span class="pre">AbstractService</span></code> and <code class="docutils literal"><span class="pre">Service</span></code>.</li>
+<li>Trimmed down <code class="docutils literal"><span class="pre">ScalaService</span></code>, so be sure to add <code class="docutils literal"><span class="pre">ScalaBundle</span></code>.</li>
+<li>Added support for using <code class="docutils literal"><span class="pre">JerseyClientFactory</span></code> without an <code class="docutils literal"><span class="pre">Environment</span></code>.</li>
+<li>Dropped Jerkson in favor of Jackson’s Scala module.</li>
+<li>Added <code class="docutils literal"><span class="pre">Optional</span></code> support for JDBI.</li>
+<li>Fixed bug in stopping <code class="docutils literal"><span class="pre">AsyncRequestLog</span></code>.</li>
+<li>Added <code class="docutils literal"><span class="pre">UUIDParam</span></code>.</li>
+<li>Upgraded to Metrics 2.2.0.</li>
+<li>Upgraded to Jetty 8.1.8.</li>
+<li>Upgraded to Mockito 1.9.5.</li>
+<li>Upgraded to tomcat-dbcp 7.0.33.</li>
+<li>Upgraded to Mustache 0.8.8.</li>
+<li>Upgraded to Jersey 1.15.</li>
+<li>Upgraded to Apache HttpClient 4.2.2.</li>
+<li>Upgraded to JDBI 2.41.</li>
+<li>Upgraded to Logback 1.0.7 and SLF4J 1.7.2.</li>
+<li>Upgraded to Guava 13.0.1.</li>
+<li>Upgraded to Jackson 2.1.1.</li>
+<li>Added support for Joda Time.</li>
+</ul>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">Upgrading to 0.6.0 will require changing your code. First, your <code class="docutils literal"><span class="pre">Service</span></code> subclass will
+need to implement both <code class="docutils literal"><span class="pre">#initialize(Bootstrap&lt;T&gt;)</span></code> <strong>and</strong>
+<code class="docutils literal"><span class="pre">#run(T,</span> <span class="pre">Environment)</span></code>. What used to be in <code class="docutils literal"><span class="pre">initialize</span></code> should be moved to <code class="docutils literal"><span class="pre">run</span></code>.
+Second, your representation classes need to be migrated to Jackson 2. For the most part,
+this is just changing imports to <code class="docutils literal"><span class="pre">com.fasterxml.jackson.annotation.*</span></code>, but there are
+<a class="reference external" href="http://wiki.fasterxml.com/JacksonUpgradeFrom19To20">some subtler changes in functionality</a>.
+Finally, references to 0.5.x’s <code class="docutils literal"><span class="pre">Json</span></code>, <code class="docutils literal"><span class="pre">JerseyClient</span></code>, or <code class="docutils literal"><span class="pre">JDBI</span></code> classes should be
+changed to Jackon’s <code class="docutils literal"><span class="pre">ObjectMapper</span></code>, Jersey’s <code class="docutils literal"><span class="pre">Client</span></code>, and JDBI’s <code class="docutils literal"><span class="pre">DBI</span></code>
+respectively.</p>
+</div>
+</div>
+<div class="section" id="v0-5-1-aug-06-2012">
+<span id="rel-0-5-1"></span><h2>v0.5.1: Aug 06 2012</h2>
+<ul class="simple">
+<li>Fixed logging of managed objects.</li>
+<li>Fixed default file logging configuration.</li>
+<li>Added FEST-Assert as a <code class="docutils literal"><span class="pre">dropwizard-testing</span></code> dependency.</li>
+<li>Added support for Mustache templates (<code class="docutils literal"><span class="pre">*.mustache</span></code>) to <code class="docutils literal"><span class="pre">dropwizard-views</span></code>.</li>
+<li>Added support for arbitrary view renderers.</li>
+<li>Fixed command-line overrides when no configuration file is present.</li>
+<li>Added support for arbitrary <code class="docutils literal"><span class="pre">DnsResolver</span></code> implementations in <code class="docutils literal"><span class="pre">HttpClientFactory</span></code>.</li>
+<li>Upgraded to Guava 13.0 final.</li>
+<li>Fixed task path bugs.</li>
+<li>Upgraded to Metrics 2.1.3.</li>
+<li>Added <code class="docutils literal"><span class="pre">JerseyClientConfiguration#compressRequestEntity</span></code> for disabling the compression of request
+entities.</li>
+<li>Added <code class="docutils literal"><span class="pre">Environment#scanPackagesForResourcesAndProviders</span></code> for automatically detecting Jersey
+providers and resources.</li>
+<li>Added <code class="docutils literal"><span class="pre">Environment#setSessionHandler</span></code>.</li>
+</ul>
+</div>
+<div class="section" id="v0-5-0-jul-30-2012">
+<span id="rel-0-5-0"></span><h2>v0.5.0: Jul 30 2012</h2>
+<ul class="simple">
+<li>Upgraded to JDBI 2.38.1.</li>
+<li>Upgraded to Jackson 1.9.9.</li>
+<li>Upgraded to Jersey 1.13.</li>
+<li>Upgraded to Guava 13.0-rc2.</li>
+<li>Upgraded to HttpClient 4.2.1.</li>
+<li>Upgraded to tomcat-dbcp 7.0.29.</li>
+<li>Upgraded to Jetty 8.1.5.</li>
+<li>Improved <code class="docutils literal"><span class="pre">AssetServlet</span></code>:<ul>
+<li>More accurate <code class="docutils literal"><span class="pre">Last-Modified-At</span></code> timestamps.</li>
+<li>More general asset specification.</li>
+<li>Default filename is now configurable.</li>
+</ul>
+</li>
+<li>Improved <code class="docutils literal"><span class="pre">JacksonMessageBodyProvider</span></code>:<ul>
+<li>Now based on Jackson’s JAX-RS support.</li>
+<li>Doesn’t read or write types annotated with <code class="docutils literal"><span class="pre">&#64;JsonIgnoreType</span></code>.</li>
+</ul>
+</li>
+<li>Added <code class="docutils literal"><span class="pre">&#64;MinSize</span></code>, <code class="docutils literal"><span class="pre">&#64;MaxSize</span></code>, and <code class="docutils literal"><span class="pre">&#64;SizeRange</span></code> validations.</li>
+<li>Added <code class="docutils literal"><span class="pre">&#64;MinDuration</span></code>, <code class="docutils literal"><span class="pre">&#64;MaxDuration</span></code>, and <code class="docutils literal"><span class="pre">&#64;DurationRange</span></code> validations.</li>
+<li>Fixed race conditions in Logback initialization routines.</li>
+<li>Fixed <code class="docutils literal"><span class="pre">TaskServlet</span></code> problems with custom context paths.</li>
+<li>Added <code class="docutils literal"><span class="pre">jersey-text-framework-core</span></code> as an explicit dependency of <code class="docutils literal"><span class="pre">dropwizard-testing</span></code>. This
+helps out some non-Maven build frameworks with bugs in dependency processing.</li>
+<li>Added <code class="docutils literal"><span class="pre">addProvider</span></code> to <code class="docutils literal"><span class="pre">JerseyClientFactory</span></code>.</li>
+<li>Fixed <code class="docutils literal"><span class="pre">NullPointerException</span></code> problems with anonymous health check classes.</li>
+<li>Added support for serializing/deserializing <code class="docutils literal"><span class="pre">ByteBuffer</span></code> instances as JSON.</li>
+<li>Added <code class="docutils literal"><span class="pre">supportedProtocols</span></code> to SSL configuration, and disabled SSLv2 by default.</li>
+<li>Added support for <code class="docutils literal"><span class="pre">Optional&lt;Integer&gt;</span></code> query parameters and others.</li>
+<li>Removed <code class="docutils literal"><span class="pre">jersey-freemarker</span></code> dependency from <code class="docutils literal"><span class="pre">dropwizard-views</span></code>.</li>
+<li>Fixed missing thread contexts in logging statements.</li>
+<li>Made the configuration file argument for the <code class="docutils literal"><span class="pre">server</span></code> command optional.</li>
+<li>Added support for disabling log rotation.</li>
+<li>Added support for arbitrary KeyStore types.</li>
+<li>Added <code class="docutils literal"><span class="pre">Log.forThisClass()</span></code>.</li>
+<li>Made explicit service names optional.</li>
+</ul>
+</div>
+<div class="section" id="v0-4-4-jul-24-2012">
+<span id="rel-0-4-4"></span><h2>v0.4.4: Jul 24 2012</h2>
+<ul class="simple">
+<li>Added support for <code class="docutils literal"><span class="pre">&#64;JsonIgnoreType</span></code> to <code class="docutils literal"><span class="pre">JacksonMessageBodyProvider</span></code>.</li>
+</ul>
+</div>
+<div class="section" id="v0-4-3-jun-22-2012">
+<span id="rel-0-4-3"></span><h2>v0.4.3: Jun 22 2012</h2>
+<ul class="simple">
+<li>Re-enable immediate flushing for file and console logging appenders.</li>
+</ul>
+</div>
+<div class="section" id="v0-4-2-jun-20-2012">
+<span id="rel-0-4-2"></span><h2>v0.4.2: Jun 20 2012</h2>
+<ul class="simple">
+<li>Fixed <code class="docutils literal"><span class="pre">JsonProcessingExceptionMapper</span></code>. Now returns human-readable error messages for malformed
+or invalid JSON as a <code class="docutils literal"><span class="pre">400</span> <span class="pre">Bad</span> <span class="pre">Request</span></code>. Also handles problems with JSON generation and object
+mapping in a developer-friendly way.</li>
+</ul>
+</div>
+<div class="section" id="v0-4-1-jun-19-2012">
+<span id="rel-0-4-1"></span><h2>v0.4.1: Jun 19 2012</h2>
+<ul class="simple">
+<li>Fixed type parameter resolution in for subclasses of subclasses of <code class="docutils literal"><span class="pre">ConfiguredCommand</span></code>.</li>
+<li>Upgraded to Jackson 1.9.7.</li>
+<li>Upgraded to Logback 1.0.6, with asynchronous logging.</li>
+<li>Upgraded to Hibernate Validator 4.3.0.</li>
+<li>Upgraded to JDBI 2.34.</li>
+<li>Upgraded to Jetty 8.1.4.</li>
+<li>Added <code class="docutils literal"><span class="pre">logging.console.format</span></code>, <code class="docutils literal"><span class="pre">logging.file.format</span></code>, and <code class="docutils literal"><span class="pre">logging.syslog.format</span></code>
+parameters for custom log formats.</li>
+<li>Extended <code class="docutils literal"><span class="pre">ResourceTest</span></code> to allow for enabling/disabling specific Jersey features.</li>
+<li>Made <code class="docutils literal"><span class="pre">Configuration</span></code> serializable as JSON.</li>
+<li>Stopped lumping command-line options in a group in <code class="docutils literal"><span class="pre">Command</span></code>.</li>
+<li>Fixed <code class="docutils literal"><span class="pre">java.util.logging</span></code> level changes.</li>
+<li>Upgraded to Apache HttpClient 4.2.</li>
+<li>Improved performance of <code class="docutils literal"><span class="pre">AssetServlet</span></code>.</li>
+<li>Added <code class="docutils literal"><span class="pre">withBundle</span></code> to <code class="docutils literal"><span class="pre">ScalaService</span></code> to enable bundle mix-ins.</li>
+<li>Upgraded to SLF4J 1.6.6.</li>
+<li>Enabled configuration-parameterized Jersey containers.</li>
+<li>Upgraded to Jackson Guava 1.9.1, with support for <code class="docutils literal"><span class="pre">Optional</span></code>.</li>
+<li>Fixed error message in <code class="docutils literal"><span class="pre">AssetBundle</span></code>.</li>
+<li>Fixed <code class="docutils literal"><span class="pre">WebApplicationException``s</span> <span class="pre">being</span> <span class="pre">thrown</span> <span class="pre">by</span> <span class="pre">``JerseyClient</span></code>.</li>
+</ul>
+</div>
+<div class="section" id="v0-4-0-may-1-2012">
+<span id="rel-0-4-0"></span><h2>v0.4.0: May 1 2012</h2>
+<p><a class="reference external" href="https://github.com/dropwizard/dropwizard/milestone/3?closed=1">Complete changelog on GitHub</a></p>
+<ul class="simple">
+<li>Switched logging from <a class="reference external" href="http://logging.apache.org/log4j/1.2/">Log4j</a> to <a class="reference external" href="http://logback.qos.ch/">Logback</a>.<ul>
+<li>Deprecated <code class="docutils literal"><span class="pre">Log#fatal</span></code> methods.</li>
+<li>Deprecated Log4j usage.</li>
+<li>Removed Log4j JSON support.</li>
+<li>Switched file logging to a time-based rotation system with optional GZIP and ZIP compression.</li>
+<li>Replaced <code class="docutils literal"><span class="pre">logging.file.filenamePattern</span></code> with <code class="docutils literal"><span class="pre">logging.file.currentLogFilename</span></code> and
+<code class="docutils literal"><span class="pre">logging.file.archivedLogFilenamePattern</span></code>.</li>
+<li>Replaced <code class="docutils literal"><span class="pre">logging.file.retainedFileCount</span></code> with <code class="docutils literal"><span class="pre">logging.file.archivedFileCount</span></code>.</li>
+<li>Moved request logging to use a Logback-backed, time-based rotation system with optional GZIP
+and ZIP compression. <code class="docutils literal"><span class="pre">http.requestLog</span></code> now has <code class="docutils literal"><span class="pre">console</span></code>, <code class="docutils literal"><span class="pre">file</span></code>, and <code class="docutils literal"><span class="pre">syslog</span></code>
+sections.</li>
+</ul>
+</li>
+<li>Fixed validation errors for logging configuration.</li>
+<li>Added <code class="docutils literal"><span class="pre">ResourceTest#addProvider(Class&lt;?&gt;)</span></code>.</li>
+<li>Added <code class="docutils literal"><span class="pre">ETag</span></code> and <code class="docutils literal"><span class="pre">Last-Modified</span></code> support to <code class="docutils literal"><span class="pre">AssetServlet</span></code>.</li>
+<li>Fixed <code class="docutils literal"><span class="pre">off</span></code> logging levels conflicting with YAML’s helpfulness.</li>
+<li>Improved <code class="docutils literal"><span class="pre">Optional</span></code> support for some JDBC drivers.</li>
+<li>Added <code class="docutils literal"><span class="pre">ResourceTest#getJson()</span></code>.</li>
+<li>Upgraded to Jackson 1.9.6.</li>
+<li>Improved syslog logging.</li>
+<li>Fixed template paths for views.</li>
+<li>Upgraded to Guava 12.0.</li>
+<li>Added support for deserializing <code class="docutils literal"><span class="pre">CacheBuilderSpec</span></code> instances from JSON/YAML.</li>
+<li>Switched <code class="docutils literal"><span class="pre">AssetsBundle</span></code> and servlet to using cache builder specs.</li>
+<li>Switched <code class="docutils literal"><span class="pre">CachingAuthenticator</span></code> to using cache builder specs.</li>
+<li>Malformed JSON request entities now produce a <code class="docutils literal"><span class="pre">400</span> <span class="pre">Bad</span> <span class="pre">Request</span></code> instead of a
+<code class="docutils literal"><span class="pre">500</span> <span class="pre">Server</span> <span class="pre">Error</span></code> response.</li>
+<li>Added <code class="docutils literal"><span class="pre">connectionTimeout</span></code>, <code class="docutils literal"><span class="pre">maxConnectionsPerRoute</span></code>, and <code class="docutils literal"><span class="pre">keepAlive</span></code> to
+<code class="docutils literal"><span class="pre">HttpClientConfiguration</span></code>.</li>
+<li>Added support for using Guava’s <code class="docutils literal"><span class="pre">HostAndPort</span></code> in configuration properties.</li>
+<li>Upgraded to tomcat-dbcp 7.0.27.</li>
+<li>Upgraded to JDBI 2.33.2.</li>
+<li>Upgraded to HttpClient 4.1.3.</li>
+<li>Upgraded to Metrics 2.1.2.</li>
+<li>Upgraded to Jetty 8.1.3.</li>
+<li>Added SSL support.</li>
+</ul>
+</div>
+<div class="section" id="v0-3-1-mar-15-2012">
+<span id="rel-0-3-1"></span><h2>v0.3.1: Mar 15 2012</h2>
+<ul class="simple">
+<li>Fixed debug logging levels for <code class="docutils literal"><span class="pre">Log</span></code>.</li>
+</ul>
+</div>
+<div class="section" id="v0-3-0-mar-13-2012">
+<span id="rel-0-3-0"></span><h2>v0.3.0: Mar 13 2012</h2>
+<p><a class="reference external" href="https://github.com/dropwizard/dropwizard/milestone/1?closed=1">Complete changelog on GitHub</a></p>
+<ul class="simple">
+<li>Upgraded to JDBI 2.31.3.</li>
+<li>Upgraded to Jackson 1.9.5.</li>
+<li>Upgraded to Jetty 8.1.2. (Jetty 9 is now the experimental branch. Jetty 8 is just Jetty 7 with
+Servlet 3.0 support.)</li>
+<li>Dropped <code class="docutils literal"><span class="pre">dropwizard-templates</span></code> and added <code class="docutils literal"><span class="pre">dropwizard-views</span></code> instead.</li>
+<li>Added <code class="docutils literal"><span class="pre">AbstractParam#getMediaType()</span></code>.</li>
+<li>Fixed potential encoding bug in parsing YAML files.</li>
+<li>Fixed a <code class="docutils literal"><span class="pre">NullPointerException</span></code> when getting logging levels via JMX.</li>
+<li>Dropped support for <code class="docutils literal"><span class="pre">&#64;BearerToken</span></code> and added <code class="docutils literal"><span class="pre">dropwizard-auth</span></code> instead.</li>
+<li>Added <code class="docutils literal"><span class="pre">&#64;CacheControl</span></code> for resource methods.</li>
+<li>Added <code class="docutils literal"><span class="pre">AbstractService#getJson()</span></code> for full Jackson customization.</li>
+<li>Fixed formatting of configuration file parsing errors.</li>
+<li><code class="docutils literal"><span class="pre">ThreadNameFilter</span></code> is now added by default. The thread names Jetty worker threads are set to the
+method and URI of the HTTP request they are currently processing.</li>
+<li>Added command-line overriding of configuration parameters via system properties. For example,
+<code class="docutils literal"><span class="pre">-Ddw.http.port=8090</span></code> will override the configuration file to set <code class="docutils literal"><span class="pre">http.port</span></code> to <code class="docutils literal"><span class="pre">8090</span></code>.</li>
+<li>Removed <code class="docutils literal"><span class="pre">ManagedCommand</span></code>. It was rarely used and confusing.</li>
+<li>If <code class="docutils literal"><span class="pre">http.adminPort</span></code> is the same as <code class="docutils literal"><span class="pre">http.port</span></code>, the admin servlet will be hosted under
+<code class="docutils literal"><span class="pre">/admin</span></code>. This allows Dropwizard applications to be deployed to environments like Heroku, which
+require applications to open a single port.</li>
+<li>Added <code class="docutils literal"><span class="pre">http.adminUsername</span></code> and <code class="docutils literal"><span class="pre">http.adminPassword</span></code> to allow for Basic HTTP Authentication
+for the admin servlet.</li>
+<li>Upgraded to <a class="reference external" href="http://metrics.codahale.com/about/release-notes/#v2-1-1-mar-13-2012">Metrics 2.1.1</a>.</li>
+</ul>
+</div>
+<div class="section" id="v0-2-1-feb-24-2012">
+<span id="rel-0-2-1"></span><h2>v0.2.1: Feb 24 2012</h2>
+<ul class="simple">
+<li>Added <code class="docutils literal"><span class="pre">logging.console.timeZone</span></code> and <code class="docutils literal"><span class="pre">logging.file.timeZone</span></code> to control the time zone of
+the timestamps in the logs. Defaults to UTC.</li>
+<li>Upgraded to Jetty 7.6.1.</li>
+<li>Upgraded to Jersey 1.12.</li>
+<li>Upgraded to Guava 11.0.2.</li>
+<li>Upgraded to SnakeYAML 1.10.</li>
+<li>Upgraded to tomcat-dbcp 7.0.26.</li>
+<li>Upgraded to Metrics 2.0.3.</li>
+</ul>
+</div>
+<div class="section" id="v0-2-0-feb-15-2012">
+<span id="rel-0-2-0"></span><h2>v0.2.0: Feb 15 2012</h2>
+<ul class="simple">
+<li>Switched to using <code class="docutils literal"><span class="pre">jackson-datatype-guava</span></code> for JSON serialization/deserialization of Guava
+types.</li>
+<li>Use <code class="docutils literal"><span class="pre">InstrumentedQueuedThreadPool</span></code> from <code class="docutils literal"><span class="pre">metrics-jetty</span></code>.</li>
+<li>Upgraded to Jackson 1.9.4.</li>
+<li>Upgraded to Jetty 7.6.0 final.</li>
+<li>Upgraded to tomcat-dbcp 7.0.25.</li>
+<li>Improved fool-proofing for <code class="docutils literal"><span class="pre">Service</span></code> vs. <code class="docutils literal"><span class="pre">ScalaService</span></code>.</li>
+<li>Switched to using Jackson for configuration file parsing. SnakeYAML is used to parse YAML
+configuration files to a JSON intermediary form, then Jackson is used to map that to your
+<code class="docutils literal"><span class="pre">Configuration</span></code> subclass and its fields. Configuration files which don’t end in <code class="docutils literal"><span class="pre">.yaml</span></code> or
+<code class="docutils literal"><span class="pre">.yml</span></code> are treated as JSON.</li>
+<li>Rewrote <code class="docutils literal"><span class="pre">Json</span></code> to no longer be a singleton.</li>
+<li>Converted <code class="docutils literal"><span class="pre">JsonHelpers</span></code> in <code class="docutils literal"><span class="pre">dropwizard-testing</span></code> to use normalized JSON strings to compare
+JSON.</li>
+<li>Collapsed <code class="docutils literal"><span class="pre">DatabaseConfiguration</span></code>. It’s no longer a map of connection names to configuration
+objects.</li>
+<li>Changed <code class="docutils literal"><span class="pre">Database</span></code> to use the validation query in <code class="docutils literal"><span class="pre">DatabaseConfiguration</span></code> for its <code class="docutils literal"><span class="pre">#ping()</span></code>
+method.</li>
+<li>Changed many <code class="docutils literal"><span class="pre">HttpConfiguration</span></code> defaults to match Jetty’s defaults.</li>
+<li>Upgraded to JDBI 2.31.2.</li>
+<li>Fixed JAR locations in the CLI usage screens.</li>
+<li>Upgraded to Metrics 2.0.2.</li>
+<li>Added support for all servlet listener types.</li>
+<li>Added <code class="docutils literal"><span class="pre">Log#setLevel(Level)</span></code>.</li>
+<li>Added <code class="docutils literal"><span class="pre">Service#getJerseyContainer</span></code>, which allows services to fully customize the Jersey
+container instance.</li>
+<li>Added the <code class="docutils literal"><span class="pre">http.contextParameters</span></code> configuration parameter.</li>
+</ul>
+</div>
+<div class="section" id="v0-1-3-jan-19-2012">
+<span id="rel-0-1-3"></span><h2>v0.1.3: Jan 19 2012</h2>
+<ul class="simple">
+<li>Upgraded to Guava 11.0.1.</li>
+<li>Fixed logging in <code class="docutils literal"><span class="pre">ServerCommand</span></code>. For the last time.</li>
+<li>Switched to using the instrumented connectors from <code class="docutils literal"><span class="pre">metrics-jetty</span></code>. This allows for much
+lower-level metrics about your service, including whether or not your thread pools are overloaded.</li>
+<li>Added FindBugs to the build process.</li>
+<li>Added <code class="docutils literal"><span class="pre">ResourceTest</span></code> to <code class="docutils literal"><span class="pre">dropwizard-testing</span></code>, which uses the Jersey Test Framework to provide
+full testing of resources.</li>
+<li>Upgraded to Jetty 7.6.0.RC4.</li>
+<li>Decoupled URIs and resource paths in <code class="docutils literal"><span class="pre">AssetServlet</span></code> and <code class="docutils literal"><span class="pre">AssetsBundle</span></code>.</li>
+<li>Added <code class="docutils literal"><span class="pre">rootPath</span></code> to <code class="docutils literal"><span class="pre">Configuration</span></code>. It allows you to serve Jersey assets off a specific path
+(e.g., <code class="docutils literal"><span class="pre">/resources/*</span></code> vs <code class="docutils literal"><span class="pre">/*</span></code>).</li>
+<li><code class="docutils literal"><span class="pre">AssetServlet</span></code> now looks for <code class="docutils literal"><span class="pre">index.htm</span></code> when handling requests for the root URI.</li>
+<li>Upgraded to Metrics 2.0.0-RC0.</li>
+</ul>
+</div>
+<div class="section" id="v0-1-2-jan-07-2012">
+<span id="rel-0-1-2"></span><h2>v0.1.2: Jan 07 2012</h2>
+<ul class="simple">
+<li>All Jersey resource methods annotated with <code class="docutils literal"><span class="pre">&#64;Timed</span></code>, <code class="docutils literal"><span class="pre">&#64;Metered</span></code>, or <code class="docutils literal"><span class="pre">&#64;ExceptionMetered</span></code> are
+now instrumented via <code class="docutils literal"><span class="pre">metrics-jersey</span></code>.</li>
+<li>Now licensed under Apache License 2.0.</li>
+<li>Upgraded to Jetty 7.6.0.RC3.</li>
+<li>Upgraded to Metrics 2.0.0-BETA19.</li>
+<li>Fixed logging in <code class="docutils literal"><span class="pre">ServerCommand</span></code>.</li>
+<li>Made <code class="docutils literal"><span class="pre">ServerCommand#run()</span></code> non-<code class="docutils literal"><span class="pre">final</span></code>.</li>
+</ul>
+</div>
+<div class="section" id="v0-1-1-dec-28-2011">
+<span id="rel-0-1-1"></span><h2>v0.1.1: Dec 28 2011</h2>
+<ul class="simple">
+<li>Fixed <code class="docutils literal"><span class="pre">ManagedCommand</span></code> to provide access to the <code class="docutils literal"><span class="pre">Environment</span></code>, among other things.</li>
+<li>Made <code class="docutils literal"><span class="pre">JerseyClient</span></code>’s thread pool managed.</li>
+<li>Improved ease of use for <code class="docutils literal"><span class="pre">Duration</span></code> and <code class="docutils literal"><span class="pre">Size</span></code> configuration parameters.</li>
+<li>Upgraded to Mockito 1.9.0.</li>
+<li>Upgraded to Jetty 7.6.0.RC2.</li>
+<li>Removed single-arg constructors for <code class="docutils literal"><span class="pre">ConfiguredCommand</span></code>.</li>
+<li>Added <code class="docutils literal"><span class="pre">Log</span></code>, a simple front-end for logging.</li>
+</ul>
+</div>
+<div class="section" id="v0-1-0-dec-21-2011">
+<span id="rel-0-1-0"></span><h2>v0.1.0: Dec 21 2011</h2>
+<ul class="simple">
+<li>Initial release</li>
+</ul>
+</div>
+</div>
+
+
+            </div>
+        </div>
+        <hr/>
+        <footer>
+            <p style="float: left">
+            &copy; Copyright 2010-2013, Coda Hale, Yammer Inc., 2014-2017 Dropwizard Team.
+            Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>
+            1.6.5.
+            </p>
+            <p style="float: right">Dropwizard v1.3.0</p>
+        </footer>
+    </div>
+</body>
+</html>
+
+

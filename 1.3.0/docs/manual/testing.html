@@ -1,0 +1,617 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Testing Dropwizard | Dropwizard</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css"/>
+    <link rel="stylesheet" href="../_static/dropwizard.css" type="text/css"/>
+    <link rel="top" title="Dropwizard" href="../index.html"/>
+    <link rel="up" title="User Manual" href="index.html"/>
+    <link rel="next" title="Dropwizard Example, Step by Step" href="example.html"/>
+    <link rel="prev" title="Dropwizard &amp; Scala" href="scala.html"/>
+    <style lang="text/css">
+        #top-bar, #top-bar small, #top-bar a {
+            text-shadow: 0px -1px 0px #182127;
+            color: #ffffff;
+        }
+
+        #top-bar {
+            background-color: #363F45;
+            background-image: -moz-linear-gradient(top, #545d63, #182127);
+            background-image: -ms-linear-gradient(top, #545d63, #182127);
+            background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#545d63), to(#182127));
+            background-image: -webkit-linear-gradient(top, #545d63, #182127);
+            background-image: -o-linear-gradient(top, #545d63, #182127);
+            background-image: linear-gradient(top, #545d63, #182127);
+            filter: progid:DXImageTransform.Microsoft.gradient(startColorstr = '#545d63', endColorstr = '#182127', GradientType = 0);
+            -webkit-border-radius: 0;
+            -moz-border-radius: 0;
+            border-radius: 0;
+        }
+
+
+        .hero-unit {
+            background-image: url("../_static/dropwizard-hat.png") !important;
+            background-repeat: no-repeat !important;
+            background-position: 30px 50px;
+        }
+
+        .hero-unit div.section {
+            padding-left: 150px !important;
+        }
+    </style>
+</head>
+<body>
+    <a href="https://github.com/dropwizard/dropwizard">
+        <img style="position: absolute; top: 0; right: 0; border: 0;"
+             src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_ff7600.png"
+             alt="Fork me on GitHub"></a>
+    <div class="navbar">
+        <div class="navbar-inner container-fluid" id="top-bar">
+            <header class="row-fluid">
+                <h1 class="span12" id="title"><img class="logo" src="../_static/dropwizard-logo.png" alt="Logo"/>
+                    <a href="../index.html">Dropwizard</a>
+                    <small>Production-ready, out of the box.</small>
+                </h1>
+            </header>
+        </div>
+    </div>
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <div class="span3" id="sidebar">
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../getting-started.html">Getting Started</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">User Manual</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="core.html">Dropwizard Core</a></li>
+<li class="toctree-l2"><a class="reference internal" href="client.html">Dropwizard Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jdbi.html">Dropwizard JDBI</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jdbi3.html">Dropwizard JDBI3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="migrations.html">Dropwizard Migrations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hibernate.html">Dropwizard Hibernate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="auth.html">Dropwizard Authentication</a></li>
+<li class="toctree-l2"><a class="reference internal" href="forms.html">Dropwizard Forms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="validation.html">Dropwizard Validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="views.html">Dropwizard Views</a></li>
+<li class="toctree-l2"><a class="reference internal" href="scala.html">Dropwizard &amp; Scala</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Testing Dropwizard</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#testing-representations">Testing Representations</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#fixtures">Fixtures</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#testing-serialization">Testing Serialization</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#testing-deserialization">Testing Deserialization</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#testing-resources">Testing Resources</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#default-exception-mappers">Default Exception Mappers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#test-containers">Test Containers</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#testing-client-implementations">Testing Client Implementations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#integration-testing">Integration Testing</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#id2">JUnit</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#non-junit">Non-JUnit</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#testing-commands">Testing Commands</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#testing-database-interactions">Testing Database Interactions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#testing-configurations">Testing Configurations</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="example.html">Dropwizard Example, Step by Step</a></li>
+<li class="toctree-l2"><a class="reference internal" href="configuration.html">Dropwizard Configuration Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="internals.html">Dropwizard Internals</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../about/javadoc.html">Javadoc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../about/index.html">About Dropwizard</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../about/docs-index.html">Other Versions</a></li>
+</ul>
+
+                <hr/>
+                <ul>
+                    <li><a href="https://dropwizard.github.io/dropwizard/1.3.0">Maven Site</a></li>
+                    <li><a href="https://groups.google.com/forum/#!forum/dropwizard-user">User Mailing List</a></li>
+                    <li><a href="https://groups.google.com/forum/#!forum/dropwizard-dev">Developer Mailing List</a></li>
+                </ul>
+            </div>
+            <div class="span9" id="body">
+                
+  <div class="section" id="testing-dropwizard">
+<span id="manual-testing"></span><h1>Testing Dropwizard</h1>
+<p class="rubric">The <code class="docutils literal"><span class="pre">dropwizard-testing</span></code> module provides you with some handy classes for testing
+your <a class="reference internal" href="core.html#man-core-representations"><span class="std std-ref">representation classes</span></a>
+and <a class="reference internal" href="core.html#man-core-resources"><span class="std std-ref">resource classes</span></a>. It also provides a JUnit rule
+for full-stack testing of your entire app.</p>
+<div class="section" id="testing-representations">
+<span id="man-testing-representations"></span><h2>Testing Representations</h2>
+<p>While Jackson’s JSON support is powerful and fairly easy-to-use, you shouldn’t just rely on
+eyeballing your representation classes to ensure you’re producing the API you think you
+are. By using the helper methods in <cite>FixtureHelpers</cite>, you can add unit tests for serializing and
+deserializing your representation classes to and from JSON.</p>
+<p>Let’s assume we have a <code class="docutils literal"><span class="pre">Person</span></code> class which your API uses as both a request entity (e.g., when
+writing via a <code class="docutils literal"><span class="pre">PUT</span></code> request) and a response entity (e.g., when reading via a <code class="docutils literal"><span class="pre">GET</span></code> request):</p>
+<div class="highlight-java"><div class="highlight"><pre><span></span><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Person</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="n">String</span> <span class="n">name</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="n">String</span> <span class="n">email</span><span class="o">;</span>
+
+    <span class="kd">private</span> <span class="nf">Person</span><span class="o">()</span> <span class="o">{</span>
+        <span class="c1">// Jackson deserialization</span>
+    <span class="o">}</span>
+
+    <span class="kd">public</span> <span class="nf">Person</span><span class="o">(</span><span class="n">String</span> <span class="n">name</span><span class="o">,</span> <span class="n">String</span> <span class="n">email</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">name</span> <span class="o">=</span> <span class="n">name</span><span class="o">;</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">email</span> <span class="o">=</span> <span class="n">email</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="nd">@JsonProperty</span>
+    <span class="kd">public</span> <span class="n">String</span> <span class="nf">getName</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">name</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="nd">@JsonProperty</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setName</span><span class="o">(</span><span class="n">String</span> <span class="n">name</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">name</span> <span class="o">=</span> <span class="n">name</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="nd">@JsonProperty</span>
+    <span class="kd">public</span> <span class="n">String</span> <span class="nf">getEmail</span><span class="o">()</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="n">email</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="nd">@JsonProperty</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setEmail</span><span class="o">(</span><span class="n">String</span> <span class="n">email</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">this</span><span class="o">.</span><span class="na">email</span> <span class="o">=</span> <span class="n">email</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="c1">// hashCode</span>
+    <span class="c1">// equals</span>
+    <span class="c1">// toString etc.</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<div class="section" id="fixtures">
+<span id="man-testing-representations-fixtures"></span><h3>Fixtures</h3>
+<p>First, write out the exact JSON representation of a <code class="docutils literal"><span class="pre">Person</span></code> in the
+<code class="docutils literal"><span class="pre">src/test/resources/fixtures</span></code> directory of your Dropwizard project as <code class="docutils literal"><span class="pre">person.json</span></code>:</p>
+<div class="highlight-javascript"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;name&quot;</span><span class="o">:</span> <span class="s2">&quot;Luther Blissett&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;email&quot;</span><span class="o">:</span> <span class="s2">&quot;lb@example.com&quot;</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="testing-serialization">
+<span id="man-testing-representations-serialization"></span><h3>Testing Serialization</h3>
+<p>Next, write a test for serializing a <code class="docutils literal"><span class="pre">Person</span></code> instance to JSON:</p>
+<div class="highlight-java"><div class="highlight"><pre><span></span><span class="kn">import static</span> <span class="nn">io.dropwizard.testing.FixtureHelpers.*</span><span class="o">;</span>
+<span class="kn">import static</span> <span class="nn">org.assertj.core.api.Assertions.assertThat</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">io.dropwizard.jackson.Jackson</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.junit.Test</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">com.fasterxml.jackson.databind.ObjectMapper</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">PersonTest</span> <span class="o">{</span>
+
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">ObjectMapper</span> <span class="n">MAPPER</span> <span class="o">=</span> <span class="n">Jackson</span><span class="o">.</span><span class="na">newObjectMapper</span><span class="o">();</span>
+
+    <span class="nd">@Test</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">serializesToJSON</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+        <span class="kd">final</span> <span class="n">Person</span> <span class="n">person</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Person</span><span class="o">(</span><span class="s">&quot;Luther Blissett&quot;</span><span class="o">,</span> <span class="s">&quot;lb@example.com&quot;</span><span class="o">);</span>
+
+        <span class="kd">final</span> <span class="n">String</span> <span class="n">expected</span> <span class="o">=</span> <span class="n">MAPPER</span><span class="o">.</span><span class="na">writeValueAsString</span><span class="o">(</span>
+                <span class="n">MAPPER</span><span class="o">.</span><span class="na">readValue</span><span class="o">(</span><span class="n">fixture</span><span class="o">(</span><span class="s">&quot;fixtures/person.json&quot;</span><span class="o">),</span> <span class="n">Person</span><span class="o">.</span><span class="na">class</span><span class="o">));</span>
+
+        <span class="n">assertThat</span><span class="o">(</span><span class="n">MAPPER</span><span class="o">.</span><span class="na">writeValueAsString</span><span class="o">(</span><span class="n">person</span><span class="o">)).</span><span class="na">isEqualTo</span><span class="o">(</span><span class="n">expected</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>This test uses <a class="reference external" href="http://assertj.org/assertj-core-conditions.html">AssertJ assertions</a> and <a class="reference external" href="http://www.junit.org/">JUnit</a> to test that when a <code class="docutils literal"><span class="pre">Person</span></code> instance is serialized
+via Jackson it matches the JSON in the fixture file. (The comparison is done on a normalized JSON
+string representation, so formatting doesn’t affect the results.)</p>
+</div>
+<div class="section" id="testing-deserialization">
+<span id="man-testing-representations-deserialization"></span><h3>Testing Deserialization</h3>
+<p>Next, write a test for deserializing a <code class="docutils literal"><span class="pre">Person</span></code> instance from JSON:</p>
+<div class="highlight-java"><div class="highlight"><pre><span></span><span class="kn">import static</span> <span class="nn">io.dropwizard.testing.FixtureHelpers.*</span><span class="o">;</span>
+<span class="kn">import static</span> <span class="nn">org.assertj.core.api.Assertions.assertThat</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">io.dropwizard.jackson.Jackson</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.junit.Test</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">com.fasterxml.jackson.databind.ObjectMapper</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">PersonTest</span> <span class="o">{</span>
+
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">ObjectMapper</span> <span class="n">MAPPER</span> <span class="o">=</span> <span class="n">Jackson</span><span class="o">.</span><span class="na">newObjectMapper</span><span class="o">();</span>
+
+    <span class="nd">@Test</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">deserializesFromJSON</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+        <span class="kd">final</span> <span class="n">Person</span> <span class="n">person</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Person</span><span class="o">(</span><span class="s">&quot;Luther Blissett&quot;</span><span class="o">,</span> <span class="s">&quot;lb@example.com&quot;</span><span class="o">);</span>
+        <span class="n">assertThat</span><span class="o">(</span><span class="n">MAPPER</span><span class="o">.</span><span class="na">readValue</span><span class="o">(</span><span class="n">fixture</span><span class="o">(</span><span class="s">&quot;fixtures/person.json&quot;</span><span class="o">),</span> <span class="n">Person</span><span class="o">.</span><span class="na">class</span><span class="o">))</span>
+                <span class="o">.</span><span class="na">isEqualTo</span><span class="o">(</span><span class="n">person</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>This test uses <a class="reference external" href="http://assertj.org/assertj-core-conditions.html">AssertJ assertions</a> and <a class="reference external" href="http://www.junit.org/">JUnit</a> to test that when a <code class="docutils literal"><span class="pre">Person</span></code> instance is
+deserialized via Jackson from the specified JSON fixture it matches the given object.</p>
+</div>
+</div>
+<div class="section" id="testing-resources">
+<span id="man-testing-resources"></span><h2>Testing Resources</h2>
+<p>While many resource classes can be tested just by calling the methods on the class in a test, some
+resources lend themselves to a more full-stack approach. For these, use <code class="docutils literal"><span class="pre">ResourceTestRule</span></code>, which
+loads a given resource instance in an in-memory Jersey server:</p>
+<div class="highlight-java" id="man-testing-resources-example"><div class="highlight"><pre><span></span><span class="kn">import static</span> <span class="nn">org.assertj.core.api.Assertions.assertThat</span><span class="o">;</span>
+<span class="kn">import static</span> <span class="nn">org.mockito.Mockito.*</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">PersonResourceTest</span> <span class="o">{</span>
+
+    <span class="kd">private</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">PeopleStore</span> <span class="n">dao</span> <span class="o">=</span> <span class="n">mock</span><span class="o">(</span><span class="n">PeopleStore</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+
+    <span class="nd">@ClassRule</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">ResourceTestRule</span> <span class="n">resources</span> <span class="o">=</span> <span class="n">ResourceTestRule</span><span class="o">.</span><span class="na">builder</span><span class="o">()</span>
+            <span class="o">.</span><span class="na">addResource</span><span class="o">(</span><span class="k">new</span> <span class="n">PersonResource</span><span class="o">(</span><span class="n">dao</span><span class="o">))</span>
+            <span class="o">.</span><span class="na">build</span><span class="o">();</span>
+
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">Person</span> <span class="n">person</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Person</span><span class="o">(</span><span class="s">&quot;blah&quot;</span><span class="o">,</span> <span class="s">&quot;blah@example.com&quot;</span><span class="o">);</span>
+
+    <span class="nd">@Before</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setup</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">when</span><span class="o">(</span><span class="n">dao</span><span class="o">.</span><span class="na">fetchPerson</span><span class="o">(</span><span class="n">eq</span><span class="o">(</span><span class="s">&quot;blah&quot;</span><span class="o">))).</span><span class="na">thenReturn</span><span class="o">(</span><span class="n">person</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="nd">@After</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">tearDown</span><span class="o">(){</span>
+        <span class="c1">// we have to reset the mock after each test because of the</span>
+        <span class="c1">// @ClassRule, or use a @Rule as mentioned below.</span>
+        <span class="n">reset</span><span class="o">(</span><span class="n">dao</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Test</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">testGetPerson</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">assertThat</span><span class="o">(</span><span class="n">resources</span><span class="o">.</span><span class="na">target</span><span class="o">(</span><span class="s">&quot;/person/blah&quot;</span><span class="o">).</span><span class="na">request</span><span class="o">().</span><span class="na">get</span><span class="o">(</span><span class="n">Person</span><span class="o">.</span><span class="na">class</span><span class="o">))</span>
+                <span class="o">.</span><span class="na">isEqualTo</span><span class="o">(</span><span class="n">person</span><span class="o">);</span>
+        <span class="n">verify</span><span class="o">(</span><span class="n">dao</span><span class="o">).</span><span class="na">fetchPerson</span><span class="o">(</span><span class="s">&quot;blah&quot;</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>Instantiate a <code class="docutils literal"><span class="pre">ResourceTestRule</span></code> using its <code class="docutils literal"><span class="pre">Builder</span></code> and add the various resource instances you
+want to test via <code class="docutils literal"><span class="pre">ResourceTestRule.Builder#addResource(Object)</span></code>. Use a <code class="docutils literal"><span class="pre">&#64;ClassRule</span></code> annotation
+to have the rule wrap the entire test class or the <code class="docutils literal"><span class="pre">&#64;Rule</span></code> annotation to have the rule wrap
+each test individually (make sure to remove static final modifier from <code class="docutils literal"><span class="pre">resources</span></code>).</p>
+<p>In your tests, use <code class="docutils literal"><span class="pre">#target(String</span> <span class="pre">path)</span></code>, which initializes a request to talk to and test
+your instances.</p>
+<p>This doesn’t require opening a port, but <code class="docutils literal"><span class="pre">ResourceTestRule</span></code> tests will perform all the serialization,
+deserialization, and validation that happens inside of the HTTP process.</p>
+<p>This also doesn’t require a full integration test. In the above
+<a class="reference internal" href="#man-testing-resources-example"><span class="std std-ref">example</span></a>, a mocked <code class="docutils literal"><span class="pre">PeopleStore</span></code> is passed to the
+<code class="docutils literal"><span class="pre">PersonResource</span></code> instance to isolate it from the database. Not only does this make the test much
+faster, but it allows your resource unit tests to test error conditions and edge cases much more
+easily.</p>
+<div class="admonition hint">
+<p class="first admonition-title">Hint</p>
+<p class="last">You can trust <code class="docutils literal"><span class="pre">PeopleStore</span></code> works because you’ve got working unit tests for it, right?</p>
+</div>
+<div class="section" id="default-exception-mappers">
+<h3>Default Exception Mappers</h3>
+<p>By default, a <code class="docutils literal"><span class="pre">ResourceTestRule</span></code> will register all the default exception mappers (this behavior is new in 1.0). If
+<code class="docutils literal"><span class="pre">registerDefaultExceptionMappers</span></code> in the configuration yaml is planned to be set to <code class="docutils literal"><span class="pre">false</span></code>,
+<code class="docutils literal"><span class="pre">ResourceTestRule.Builder#setRegisterDefaultExceptionMappers(boolean)</span></code> will also need to be set to <code class="docutils literal"><span class="pre">false</span></code>. Then,
+all custom exception mappers will need to be registered on the builder, similarly to how they are registered in an
+<code class="docutils literal"><span class="pre">Application</span></code> class.</p>
+</div>
+<div class="section" id="test-containers">
+<h3>Test Containers</h3>
+<p>Note that the in-memory Jersey test container does not support all features, such as the <code class="docutils literal"><span class="pre">&#64;Context</span></code> injection.
+A different <a class="reference external" href="https://jersey.github.io/documentation/latest/test-framework.html">test container</a> can be used via
+<code class="docutils literal"><span class="pre">ResourceTestRule.Builder#setTestContainerFactory(TestContainerFactory)</span></code>.</p>
+<p>For example, if you want to use the <a class="reference external" href="https://javaee.github.io/grizzly/">Grizzly</a> HTTP server (which supports <code class="docutils literal"><span class="pre">&#64;Context</span></code> injections) you need to add the
+dependency for the Jersey Test Framework providers to your Maven POM and set <code class="docutils literal"><span class="pre">GrizzlyWebTestContainerFactory</span></code> as
+<code class="docutils literal"><span class="pre">TestContainerFactory</span></code> in your test classes.</p>
+<div class="highlight-xml"><div class="highlight"><pre><span></span><span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>org.glassfish.jersey.test-framework.providers<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>jersey-test-framework-provider-grizzly2<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>${jersey.version}<span class="nt">&lt;/version&gt;</span>
+    <span class="nt">&lt;scope&gt;</span>test<span class="nt">&lt;/scope&gt;</span>
+    <span class="nt">&lt;exclusions&gt;</span>
+        <span class="nt">&lt;exclusion&gt;</span>
+            <span class="nt">&lt;groupId&gt;</span>javax.servlet<span class="nt">&lt;/groupId&gt;</span>
+            <span class="nt">&lt;artifactId&gt;</span>javax.servlet-api<span class="nt">&lt;/artifactId&gt;</span>
+        <span class="nt">&lt;/exclusion&gt;</span>
+        <span class="nt">&lt;exclusion&gt;</span>
+            <span class="nt">&lt;groupId&gt;</span>junit<span class="nt">&lt;/groupId&gt;</span>
+            <span class="nt">&lt;artifactId&gt;</span>junit<span class="nt">&lt;/artifactId&gt;</span>
+        <span class="nt">&lt;/exclusion&gt;</span>
+    <span class="nt">&lt;/exclusions&gt;</span>
+<span class="nt">&lt;/dependency&gt;</span>
+</pre></div>
+</div>
+<div class="highlight-java"><div class="highlight"><pre><span></span><span class="kd">public</span> <span class="kd">class</span> <span class="nc">ResourceTestWithGrizzly</span> <span class="o">{</span>
+    <span class="nd">@ClassRule</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">ResourceTestRule</span> <span class="n">RULE</span> <span class="o">=</span> <span class="n">ResourceTestRule</span><span class="o">.</span><span class="na">builder</span><span class="o">()</span>
+        <span class="o">.</span><span class="na">setTestContainerFactory</span><span class="o">(</span><span class="k">new</span> <span class="n">GrizzlyWebTestContainerFactory</span><span class="o">())</span>
+        <span class="o">.</span><span class="na">addResource</span><span class="o">(</span><span class="k">new</span> <span class="n">ExampleResource</span><span class="o">())</span>
+        <span class="o">.</span><span class="na">build</span><span class="o">();</span>
+
+    <span class="nd">@Test</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">testResource</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">assertThat</span><span class="o">(</span><span class="n">RULE</span><span class="o">.</span><span class="na">target</span><span class="o">(</span><span class="s">&quot;/example&quot;</span><span class="o">).</span><span class="na">request</span><span class="o">()</span>
+            <span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">String</span><span class="o">.</span><span class="na">class</span><span class="o">))</span>
+            <span class="o">.</span><span class="na">isEqualTo</span><span class="o">(</span><span class="s">&quot;example&quot;</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="testing-client-implementations">
+<span id="man-testing-clients"></span><h2>Testing Client Implementations</h2>
+<p>To avoid circular dependencies in your projects or to speed up test runs, you can test your HTTP client code
+by writing a JAX-RS resource as test double and let the <code class="docutils literal"><span class="pre">DropwizardClientRule</span></code> start and stop a simple Dropwizard
+application containing your test doubles.</p>
+<div class="highlight-java" id="man-testing-clients-example"><div class="highlight"><pre><span></span><span class="kd">public</span> <span class="kd">class</span> <span class="nc">CustomClientTest</span> <span class="o">{</span>
+    <span class="nd">@Path</span><span class="o">(</span><span class="s">&quot;/ping&quot;</span><span class="o">)</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">class</span> <span class="nc">PingResource</span> <span class="o">{</span>
+        <span class="nd">@GET</span>
+        <span class="kd">public</span> <span class="n">String</span> <span class="nf">ping</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="s">&quot;pong&quot;</span><span class="o">;</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+
+    <span class="nd">@ClassRule</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">DropwizardClientRule</span> <span class="n">dropwizard</span> <span class="o">=</span> <span class="k">new</span> <span class="n">DropwizardClientRule</span><span class="o">(</span><span class="k">new</span> <span class="n">PingResource</span><span class="o">());</span>
+
+    <span class="nd">@Test</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">shouldPing</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">IOException</span> <span class="o">{</span>
+        <span class="kd">final</span> <span class="n">URL</span> <span class="n">url</span> <span class="o">=</span> <span class="k">new</span> <span class="n">URL</span><span class="o">(</span><span class="n">dropwizard</span><span class="o">.</span><span class="na">baseUri</span><span class="o">()</span> <span class="o">+</span> <span class="s">&quot;/ping&quot;</span><span class="o">);</span>
+        <span class="kd">final</span> <span class="n">String</span> <span class="n">response</span> <span class="o">=</span> <span class="k">new</span> <span class="n">BufferedReader</span><span class="o">(</span><span class="k">new</span> <span class="n">InputStreamReader</span><span class="o">(</span><span class="n">url</span><span class="o">.</span><span class="na">openStream</span><span class="o">())).</span><span class="na">readLine</span><span class="o">();</span>
+        <span class="n">assertEquals</span><span class="o">(</span><span class="s">&quot;pong&quot;</span><span class="o">,</span> <span class="n">response</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<div class="admonition hint">
+<p class="first admonition-title">Hint</p>
+<p class="last">Of course you would use your HTTP client in the <code class="docutils literal"><span class="pre">&#64;Test</span></code> method and not <code class="docutils literal"><span class="pre">java.net.URL#openStream()</span></code>.</p>
+</div>
+<p>The <code class="docutils literal"><span class="pre">DropwizardClientRule</span></code> takes care of:</p>
+<ul class="simple">
+<li>Creating a simple default configuration.</li>
+<li>Creating a simplistic application.</li>
+<li>Adding a dummy health check to the application to suppress the startup warning.</li>
+<li>Adding your JAX-RS resources (test doubles) to the Dropwizard application.</li>
+<li>Choosing a free random port number (important for running tests in parallel).</li>
+<li>Starting the Dropwizard application containing the test doubles.</li>
+<li>Stopping the Dropwizard application containing the test doubles.</li>
+</ul>
+</div>
+<div class="section" id="integration-testing">
+<h2>Integration Testing</h2>
+<p>It can be useful to start up your entire application and hit it with real HTTP requests during testing.
+The <code class="docutils literal"><span class="pre">dropwizard-testing</span></code> module offers helper classes for your easily doing so.
+The optional <code class="docutils literal"><span class="pre">dropwizard-client</span></code> module offers more helpers, e.g. a custom JerseyClientBuilder,
+which is aware of your application’s environment.</p>
+<div class="section" id="id2">
+<h3>JUnit</h3>
+<p>Adding <code class="docutils literal"><span class="pre">DropwizardAppRule</span></code> to your JUnit test class will start the app prior to any tests
+running and stop it again when they’ve completed (roughly equivalent to having used <code class="docutils literal"><span class="pre">&#64;BeforeClass</span></code> and <code class="docutils literal"><span class="pre">&#64;AfterClass</span></code>).
+<code class="docutils literal"><span class="pre">DropwizardAppRule</span></code> also exposes the app’s <code class="docutils literal"><span class="pre">Configuration</span></code>,
+<code class="docutils literal"><span class="pre">Environment</span></code> and the app object itself so that these can be queried by the tests.</p>
+<p>If you don’t want to use the <code class="docutils literal"><span class="pre">dropwizard-client</span></code> module or find it excessive for testing, you can get access to
+a Jersey HTTP client by calling the <cite>client</cite> method on the rule. The returned client is managed by the rule
+and can be reused across tests.</p>
+<div class="highlight-java"><div class="highlight"><pre><span></span><span class="kd">public</span> <span class="kd">class</span> <span class="nc">LoginAcceptanceTest</span> <span class="o">{</span>
+
+    <span class="nd">@ClassRule</span>
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">DropwizardAppRule</span><span class="o">&lt;</span><span class="n">TestConfiguration</span><span class="o">&gt;</span> <span class="n">RULE</span> <span class="o">=</span>
+            <span class="k">new</span> <span class="n">DropwizardAppRule</span><span class="o">&lt;</span><span class="n">TestConfiguration</span><span class="o">&gt;(</span><span class="n">MyApp</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="n">ResourceHelpers</span><span class="o">.</span><span class="na">resourceFilePath</span><span class="o">(</span><span class="s">&quot;my-app-config.yaml&quot;</span><span class="o">));</span>
+
+    <span class="nd">@Test</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">loginHandlerRedirectsAfterPost</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">Client</span> <span class="n">client</span> <span class="o">=</span> <span class="k">new</span> <span class="n">JerseyClientBuilder</span><span class="o">(</span><span class="n">RULE</span><span class="o">.</span><span class="na">getEnvironment</span><span class="o">()).</span><span class="na">build</span><span class="o">(</span><span class="s">&quot;test client&quot;</span><span class="o">);</span>
+
+        <span class="n">Response</span> <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="na">target</span><span class="o">(</span>
+                 <span class="n">String</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="s">&quot;http://localhost:%d/login&quot;</span><span class="o">,</span> <span class="n">RULE</span><span class="o">.</span><span class="na">getLocalPort</span><span class="o">()))</span>
+                <span class="o">.</span><span class="na">request</span><span class="o">()</span>
+                <span class="o">.</span><span class="na">post</span><span class="o">(</span><span class="n">Entity</span><span class="o">.</span><span class="na">json</span><span class="o">(</span><span class="n">loginForm</span><span class="o">()));</span>
+
+        <span class="n">assertThat</span><span class="o">(</span><span class="n">response</span><span class="o">.</span><span class="na">getStatus</span><span class="o">()).</span><span class="na">isEqualTo</span><span class="o">(</span><span class="mi">302</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="non-junit">
+<h3>Non-JUnit</h3>
+<p>By creating a DropwizardTestSupport instance in your test you can manually start and stop the app in your tests, you do this by calling its <code class="docutils literal"><span class="pre">before</span></code> and <code class="docutils literal"><span class="pre">after</span></code> methods. <code class="docutils literal"><span class="pre">DropwizardTestSupport</span></code> also exposes the app’s <code class="docutils literal"><span class="pre">Configuration</span></code>, <code class="docutils literal"><span class="pre">Environment</span></code> and the app object itself so that these can be queried by the tests.</p>
+<div class="highlight-java"><div class="highlight"><pre><span></span><span class="kd">public</span> <span class="kd">class</span> <span class="nc">LoginAcceptanceTest</span> <span class="o">{</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kd">final</span> <span class="n">DropwizardTestSupport</span><span class="o">&lt;</span><span class="n">TestConfiguration</span><span class="o">&gt;</span> <span class="n">SUPPORT</span> <span class="o">=</span>
+            <span class="k">new</span> <span class="n">DropwizardTestSupport</span><span class="o">&lt;</span><span class="n">TestConfiguration</span><span class="o">&gt;(</span><span class="n">MyApp</span><span class="o">.</span><span class="na">class</span><span class="o">,</span>
+                <span class="n">ResourceHelpers</span><span class="o">.</span><span class="na">resourceFilePath</span><span class="o">(</span><span class="s">&quot;my-app-config.yaml&quot;</span><span class="o">),</span>
+                <span class="n">ConfigOverride</span><span class="o">.</span><span class="na">config</span><span class="o">(</span><span class="s">&quot;server.applicationConnectors[0].port&quot;</span><span class="o">,</span> <span class="s">&quot;0&quot;</span><span class="o">)</span> <span class="c1">// Optional, if not using a separate testing-specific configuration file, use a randomly selected port</span>
+            <span class="o">);</span>
+
+    <span class="nd">@BeforeClass</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">beforeClass</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">SUPPORT</span><span class="o">.</span><span class="na">before</span><span class="o">();</span>
+    <span class="o">}</span>
+
+    <span class="nd">@AfterClass</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">afterClass</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">SUPPORT</span><span class="o">.</span><span class="na">after</span><span class="o">();</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Test</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">loginHandlerRedirectsAfterPost</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">Client</span> <span class="n">client</span> <span class="o">=</span> <span class="k">new</span> <span class="n">JerseyClientBuilder</span><span class="o">(</span><span class="n">SUPPORT</span><span class="o">.</span><span class="na">getEnvironment</span><span class="o">()).</span><span class="na">build</span><span class="o">(</span><span class="s">&quot;test client&quot;</span><span class="o">);</span>
+
+        <span class="n">Response</span> <span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="na">target</span><span class="o">(</span>
+                 <span class="n">String</span><span class="o">.</span><span class="na">format</span><span class="o">(</span><span class="s">&quot;http://localhost:%d/login&quot;</span><span class="o">,</span> <span class="n">SUPPORT</span><span class="o">.</span><span class="na">getLocalPort</span><span class="o">()))</span>
+                <span class="o">.</span><span class="na">request</span><span class="o">()</span>
+                <span class="o">.</span><span class="na">post</span><span class="o">(</span><span class="n">Entity</span><span class="o">.</span><span class="na">json</span><span class="o">(</span><span class="n">loginForm</span><span class="o">()));</span>
+
+        <span class="n">assertThat</span><span class="o">(</span><span class="n">response</span><span class="o">.</span><span class="na">getStatus</span><span class="o">()).</span><span class="na">isEqualTo</span><span class="o">(</span><span class="mi">302</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="testing-commands">
+<span id="man-testing-commands"></span><h2>Testing Commands</h2>
+<p><a class="reference internal" href="core.html#man-core-commands"><span class="std std-ref">Commands</span></a> can and should be tested, as it’s important to ensure arguments
+are interpreted correctly, and the output is as expected.</p>
+<p>Below is a test for a command that adds the arguments as numbers and outputs the summation to the
+console. The test ensures that the result printed to the screen is correct by capturing standard out
+before the command is ran.</p>
+<div class="highlight-java"><div class="highlight"><pre><span></span><span class="kd">public</span> <span class="kd">class</span> <span class="nc">CommandTest</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">PrintStream</span> <span class="n">originalOut</span> <span class="o">=</span> <span class="n">System</span><span class="o">.</span><span class="na">out</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">PrintStream</span> <span class="n">originalErr</span> <span class="o">=</span> <span class="n">System</span><span class="o">.</span><span class="na">err</span><span class="o">;</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">InputStream</span> <span class="n">originalIn</span> <span class="o">=</span> <span class="n">System</span><span class="o">.</span><span class="na">in</span><span class="o">;</span>
+
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">ByteArrayOutputStream</span> <span class="n">stdOut</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ByteArrayOutputStream</span><span class="o">();</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">ByteArrayOutputStream</span> <span class="n">stdErr</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ByteArrayOutputStream</span><span class="o">();</span>
+    <span class="kd">private</span> <span class="n">Cli</span> <span class="n">cli</span><span class="o">;</span>
+
+    <span class="nd">@Before</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setUp</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+        <span class="c1">// Setup necessary mock</span>
+        <span class="kd">final</span> <span class="n">JarLocation</span> <span class="n">location</span> <span class="o">=</span> <span class="n">mock</span><span class="o">(</span><span class="n">JarLocation</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+        <span class="n">when</span><span class="o">(</span><span class="n">location</span><span class="o">.</span><span class="na">getVersion</span><span class="o">()).</span><span class="na">thenReturn</span><span class="o">(</span><span class="n">Optional</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="s">&quot;1.0.0&quot;</span><span class="o">));</span>
+
+        <span class="c1">// Add commands you want to test</span>
+        <span class="kd">final</span> <span class="n">Bootstrap</span><span class="o">&lt;</span><span class="n">MyConfiguration</span><span class="o">&gt;</span> <span class="n">bootstrap</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Bootstrap</span><span class="o">&lt;&gt;(</span><span class="k">new</span> <span class="n">MyApplication</span><span class="o">());</span>
+        <span class="n">bootstrap</span><span class="o">.</span><span class="na">addCommand</span><span class="o">(</span><span class="k">new</span> <span class="n">MyAddCommand</span><span class="o">());</span>
+
+        <span class="c1">// Redirect stdout and stderr to our byte streams</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">setOut</span><span class="o">(</span><span class="k">new</span> <span class="n">PrintStream</span><span class="o">(</span><span class="n">stdOut</span><span class="o">));</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">setErr</span><span class="o">(</span><span class="k">new</span> <span class="n">PrintStream</span><span class="o">(</span><span class="n">stdErr</span><span class="o">));</span>
+
+        <span class="c1">// Build what&#39;ll run the command and interpret arguments</span>
+        <span class="n">cli</span> <span class="o">=</span> <span class="k">new</span> <span class="n">Cli</span><span class="o">(</span><span class="n">location</span><span class="o">,</span> <span class="n">bootstrap</span><span class="o">,</span> <span class="n">stdOut</span><span class="o">,</span> <span class="n">stdErr</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="nd">@After</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">teardown</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">setOut</span><span class="o">(</span><span class="n">originalOut</span><span class="o">);</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">setErr</span><span class="o">(</span><span class="n">originalErr</span><span class="o">);</span>
+        <span class="n">System</span><span class="o">.</span><span class="na">setIn</span><span class="o">(</span><span class="n">originalIn</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Test</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">myAddCanAddThreeNumbersCorrectly</span><span class="o">()</span> <span class="o">{</span>
+        <span class="kd">final</span> <span class="kt">boolean</span> <span class="n">success</span> <span class="o">=</span> <span class="n">cli</span><span class="o">.</span><span class="na">run</span><span class="o">(</span><span class="s">&quot;add&quot;</span><span class="o">,</span> <span class="s">&quot;2&quot;</span><span class="o">,</span> <span class="s">&quot;3&quot;</span><span class="o">,</span> <span class="s">&quot;6&quot;</span><span class="o">);</span>
+
+        <span class="n">SoftAssertions</span> <span class="n">softly</span> <span class="o">=</span> <span class="k">new</span> <span class="n">SoftAssertions</span><span class="o">();</span>
+        <span class="n">softly</span><span class="o">.</span><span class="na">assertThat</span><span class="o">(</span><span class="n">success</span><span class="o">).</span><span class="na">as</span><span class="o">(</span><span class="s">&quot;Exit success&quot;</span><span class="o">).</span><span class="na">isTrue</span><span class="o">();</span>
+
+        <span class="c1">// Assert that 2 + 3 + 6 outputs 11</span>
+        <span class="n">softly</span><span class="o">.</span><span class="na">assertThat</span><span class="o">(</span><span class="n">stdOut</span><span class="o">.</span><span class="na">toString</span><span class="o">()).</span><span class="na">as</span><span class="o">(</span><span class="s">&quot;stdout&quot;</span><span class="o">).</span><span class="na">isEqualTo</span><span class="o">(</span><span class="s">&quot;11&quot;</span><span class="o">);</span>
+        <span class="n">softly</span><span class="o">.</span><span class="na">assertThat</span><span class="o">(</span><span class="n">stdErr</span><span class="o">.</span><span class="na">toString</span><span class="o">()).</span><span class="na">as</span><span class="o">(</span><span class="s">&quot;stderr&quot;</span><span class="o">).</span><span class="na">isEmpty</span><span class="o">();</span>
+        <span class="n">softly</span><span class="o">.</span><span class="na">assertAll</span><span class="o">();</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="testing-database-interactions">
+<span id="man-testing-database-interactions"></span><h2>Testing Database Interactions</h2>
+<p>In Dropwizard, the database access is managed via the <code class="docutils literal"><span class="pre">&#64;UnitOfWork</span></code> annotation used on resource
+methods. In case you want to test database-layer code independently, a <code class="docutils literal"><span class="pre">DAOTestRule</span></code> is provided
+which setups a Hibernate <code class="docutils literal"><span class="pre">SessionFactory</span></code>.</p>
+<div class="highlight-java"><div class="highlight"><pre><span></span><span class="kd">public</span> <span class="kd">class</span> <span class="nc">DatabaseTest</span> <span class="o">{</span>
+
+    <span class="nd">@Rule</span>
+    <span class="kd">public</span> <span class="n">DAOTestRule</span> <span class="n">database</span> <span class="o">=</span> <span class="n">DAOTestRule</span><span class="o">.</span><span class="na">newBuilder</span><span class="o">().</span><span class="na">addEntityClass</span><span class="o">(</span><span class="n">FooEntity</span><span class="o">.</span><span class="na">class</span><span class="o">).</span><span class="na">build</span><span class="o">();</span>
+
+    <span class="kd">private</span> <span class="n">FooDAO</span> <span class="n">fooDAO</span><span class="o">;</span>
+
+    <span class="nd">@Before</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setUp</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">fooDAO</span> <span class="o">=</span> <span class="k">new</span> <span class="n">FooDAO</span><span class="o">(</span><span class="n">database</span><span class="o">.</span><span class="na">getSessionFactory</span><span class="o">());</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Test</span>
+    <span class="kd">public</span> <span class="nf">createsFoo</span><span class="o">()</span> <span class="o">{</span>
+        <span class="n">FooEntity</span> <span class="n">fooEntity</span> <span class="o">=</span> <span class="k">new</span> <span class="n">FooEntity</span><span class="o">(</span><span class="s">&quot;bar&quot;</span><span class="o">);</span>
+        <span class="kt">long</span> <span class="n">id</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="na">inTransaction</span><span class="o">(()</span> <span class="o">-&gt;</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="n">fooDAO</span><span class="o">.</span><span class="na">save</span><span class="o">(</span><span class="n">fooEntity</span><span class="o">);</span>
+        <span class="o">});</span>
+
+        <span class="n">assertThat</span><span class="o">(</span><span class="n">fooEntity</span><span class="o">.</span><span class="na">getId</span><span class="o">,</span> <span class="n">notNullValue</span><span class="o">());</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Test</span>
+    <span class="kd">public</span> <span class="nf">roundtripsFoo</span><span class="o">()</span> <span class="o">{</span>
+        <span class="kt">long</span> <span class="n">id</span> <span class="o">=</span> <span class="n">database</span><span class="o">.</span><span class="na">inTransaction</span><span class="o">(()</span> <span class="o">-&gt;</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="n">fooDAO</span><span class="o">.</span><span class="na">save</span><span class="o">(</span><span class="k">new</span> <span class="n">FooEntity</span><span class="o">(</span><span class="s">&quot;baz&quot;</span><span class="o">));</span>
+        <span class="o">});</span>
+
+        <span class="n">FooEntity</span> <span class="n">fooEntity</span> <span class="o">=</span> <span class="n">fooDAO</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="n">id</span><span class="o">);</span>
+
+        <span class="n">assertThat</span><span class="o">(</span><span class="n">fooEntity</span><span class="o">.</span><span class="na">getFoo</span><span class="o">(),</span> <span class="n">equalTo</span><span class="o">(</span><span class="s">&quot;baz&quot;</span><span class="o">));</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal"><span class="pre">DAOTestRule</span></code></p>
+<ul class="simple">
+<li>Creates a simple default Hibernate configuration using an H2 in-memory database</li>
+<li>Provides a <code class="docutils literal"><span class="pre">SessionFactory</span></code> instance which can be passed to, e.g., a subclass of <code class="docutils literal"><span class="pre">AbstractDAO</span></code></li>
+<li>Provides a function for executing database operations within a transaction</li>
+</ul>
+</div>
+<div class="section" id="testing-configurations">
+<span id="man-testing-configurations"></span><h2>Testing Configurations</h2>
+<p>Configuration objects can be tested for correct deserialization and validation. Using the classes
+created in <a class="reference internal" href="configuration.html#man-configuration-polymorphic"><span class="std std-ref">polymorphic configurations</span></a> as an example, one can
+assert the expected widget is deserialized based on the <code class="docutils literal"><span class="pre">type</span></code> field.</p>
+<div class="highlight-java"><div class="highlight"><pre><span></span><span class="kd">public</span> <span class="kd">class</span> <span class="nc">WidgetFactoryTest</span> <span class="o">{</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">ObjectMapper</span> <span class="n">objectMapper</span> <span class="o">=</span> <span class="n">Jackson</span><span class="o">.</span><span class="na">newObjectMapper</span><span class="o">();</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">Validator</span> <span class="n">validator</span> <span class="o">=</span> <span class="n">Validators</span><span class="o">.</span><span class="na">newValidator</span><span class="o">();</span>
+    <span class="kd">private</span> <span class="kd">final</span> <span class="n">YamlConfigurationFactory</span><span class="o">&lt;</span><span class="n">WidgetFactory</span><span class="o">&gt;</span> <span class="n">factory</span> <span class="o">=</span>
+            <span class="k">new</span> <span class="n">YamlConfigurationFactory</span><span class="o">&lt;&gt;(</span><span class="n">WidgetFactory</span><span class="o">.</span><span class="na">class</span><span class="o">,</span> <span class="n">validator</span><span class="o">,</span> <span class="n">objectMapper</span><span class="o">,</span> <span class="s">&quot;dw&quot;</span><span class="o">);</span>
+
+    <span class="nd">@Test</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">isDiscoverable</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+        <span class="c1">// Make sure the types we specified in META-INF gets picked up</span>
+        <span class="n">assertThat</span><span class="o">(</span><span class="k">new</span> <span class="n">DiscoverableSubtypeResolver</span><span class="o">().</span><span class="na">getDiscoveredSubtypes</span><span class="o">())</span>
+                <span class="o">.</span><span class="na">contains</span><span class="o">(</span><span class="n">HammerFactory</span><span class="o">.</span><span class="na">class</span><span class="o">)</span>
+                <span class="o">.</span><span class="na">contains</span><span class="o">(</span><span class="n">ChiselFactory</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="nd">@Test</span>
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">testBuildAHammer</span><span class="o">()</span> <span class="kd">throws</span> <span class="n">Exception</span> <span class="o">{</span>
+        <span class="kd">final</span> <span class="n">File</span> <span class="n">yml</span> <span class="o">=</span> <span class="k">new</span> <span class="n">File</span><span class="o">(</span><span class="n">Resources</span><span class="o">.</span><span class="na">getResource</span><span class="o">(</span><span class="s">&quot;yaml/hammer.yml&quot;</span><span class="o">).</span><span class="na">toURI</span><span class="o">());</span>
+        <span class="kd">final</span> <span class="n">WidgetFactory</span> <span class="n">wid</span> <span class="o">=</span> <span class="n">factory</span><span class="o">.</span><span class="na">build</span><span class="o">(</span><span class="n">yml</span><span class="o">);</span>
+        <span class="n">assertThat</span><span class="o">(</span><span class="n">wid</span><span class="o">).</span><span class="na">isInstanceOf</span><span class="o">(</span><span class="n">HammerFactory</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+        <span class="n">assertThat</span><span class="o">(((</span><span class="n">HammerFactory</span><span class="o">)</span> <span class="n">wid</span><span class="o">).</span><span class="na">createWidget</span><span class="o">().</span><span class="na">getWeight</span><span class="o">()).</span><span class="na">isEqualTo</span><span class="o">(</span><span class="mi">10</span><span class="o">);</span>
+    <span class="o">}</span>
+
+    <span class="c1">// test for the chisel factory</span>
+<span class="o">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+            </div>
+        </div>
+        <hr/>
+        <footer>
+            <p style="float: left">
+            &copy; Copyright 2010-2013, Coda Hale, Yammer Inc., 2014-2017 Dropwizard Team.
+            Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>
+            1.6.5.
+            </p>
+            <p style="float: right">Dropwizard v1.3.0</p>
+        </footer>
+    </div>
+</body>
+</html>
+
+
