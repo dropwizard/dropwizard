@@ -37,6 +37,7 @@ v1.3.0: Unreleased
 * Add configuration option to ``EventJsonLayoutBaseFactory`` to flatten MDC `#2293 <https://github.com/dropwizard/dropwizard/pull/2293>`_
 * Allow to use custom security provider in HTTP client `#2299 <https://github.com/dropwizard/dropwizard/pull/2299>`_
 * Make ``ignoreExceptionOnPreLoadon`` on ``PoolProperties`` configurable `#2300 <https://github.com/dropwizard/dropwizard/pull/2300>`_
+* Allow lazy initialization of resources in ``ResourceTestRule`` `#2304 <https://github.com/dropwizard/dropwizard/pull/2304>`_
 * Upgrade to Apache Commons Lang3 3.7
 * Upgrade to Apache Commons Text 1.2
 * Upgrade to Apache HttpClient 4.5.5
