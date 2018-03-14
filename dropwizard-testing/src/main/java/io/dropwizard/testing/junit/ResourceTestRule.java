@@ -2,7 +2,6 @@ package io.dropwizard.testing.junit;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.testing.common.Resource;
-import io.dropwizard.testing.junit5.ResourceExtension;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.test.JerseyTest;
 import org.junit.rules.TestRule;
@@ -14,18 +13,20 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.client.WebTarget;
 import java.util.function.Consumer;
 
+import static java.util.Objects.requireNonNull;
+
 /**
  * A JUnit {@link TestRule} for testing Jersey resources.
  */
 public class ResourceTestRule implements TestRule {
     /**
-     * A {@link ResourceExtension} builder which enables configuration of a Jersey testing environment.
+     * A {@link ResourceTestRule} builder which enables configuration of a Jersey testing environment.
      */
     public static class Builder extends Resource.Builder<ResourceTestRule.Builder> {
         /**
-         * Builds a {@link ResourceExtension} with a configured Jersey testing environment.
+         * Builds a {@link ResourceTestRule} with a configured Jersey testing environment.
          *
-         * @return a new {@link ResourceExtension}
+         * @return a new {@link ResourceTestRule}
          */
         public ResourceTestRule build() {
             return new ResourceTestRule(buildResource());
@@ -33,9 +34,9 @@ public class ResourceTestRule implements TestRule {
     }
 
     /**
-     * Creates a new Jersey testing environment builder for {@link ResourceExtension}
+     * Creates a new Jersey testing environment builder for {@link ResourceTestRule}
      *
-     * @return a new {@link ResourceExtension.Builder}
+     * @return a new {@link ResourceTestRule.Builder}
      */
     public static ResourceTestRule.Builder builder() {
         return new ResourceTestRule.Builder();
@@ -44,7 +45,7 @@ public class ResourceTestRule implements TestRule {
     private final Resource resource;
 
     private ResourceTestRule(Resource resource) {
-        this.resource = resource;
+        this.resource = requireNonNull(resource, "resource");
     }
 
     public Validator getValidator() {
