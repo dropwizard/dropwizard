@@ -895,40 +895,40 @@ JSON access log layout
       additionalFields:
         service-name: "user-service"
 
-=======================  =========================== ================
-Name                     Default                     Description
-=======================  =========================== ================
-timestampFormat          (none)                      By default, the timestamp is not formatted. To customize how timestamps are formatted,
-                                                     set the property to the corresponding DateTimeFormatter_ string or one of the predefined formats
-                                                     (e.g. ``ISO_LOCAL_TIME``, ``ISO_ZONED_DATE_TIME``,``RFC_1123_DATE_TIME``).
-prettyPrint              false                       Whether the JSON output should be formatted for human readability.
-appendLineSeparator      true                        Whether to append a line separator at the end of the message formatted as JSON.
+=======================  ===========================  ================
+Name                     Default                      Description
+=======================  ===========================  ================
+timestampFormat          (none)                       By default, the timestamp is not formatted. To customize how timestamps are formatted,
+                                                      set the property to the corresponding DateTimeFormatter_ string or one of the predefined formats
+                                                      (e.g. ``ISO_LOCAL_TIME``, ``ISO_ZONED_DATE_TIME``,``RFC_1123_DATE_TIME``).
+prettyPrint              false                        Whether the JSON output should be formatted for human readability.
+appendLineSeparator      true                         Whether to append a line separator at the end of the message formatted as JSON.
 includes                 (timestamp, remoteAddress,
                          protocol, method,
                          requestUri, statusCode,
                          requestTime, contentLength,
-                         userAgent)                  Set of logging event attributes to include in the JSON map:
+                         userAgent)                   Set of logging event attributes to include in the JSON map:
 
-                                                     - ``contentLength``     *true*     Whether to include the response content length, if it's known as the ``contentLength`` field.
-                                                     - ``method``            *true*     Whether to include the request HTTP method as the ``method`` field.
-                                                     - ``remoteAddress``     *true*     Whether to include the IP address of the client or last proxy that sent the request as the ``remoteAddress`` field.
-                                                     - ``remoteUser``        *true*     Whether to include information about the remote user as the ``remoteUser`` field.
-                                                     - ``requestTime``       *true*     Whether to include the time elapsed between receiving the request and logging it as the ``requestTime`` field. Time is in *ms*.
-                                                     - ``requestUri``        *true*     Whether to include the URI of the request as the ``uri`` field.
-                                                     - ``statusCode``        *true*     Whether to include the status code of the response as the ``status`` field.
-                                                     - ``protocol``          *true*     Whether to include the request HTTP protocol as the ``protocol`` field.
-                                                     - ``timestamp``         *true*     Whether to include the timestamp of the event the ``timestamp`` field.
-                                                     - ``userAgent``         *true*     Whether to include the user agent of the request as the ``userAgent`` field.
-                                                     - ``requestParameters`` *false*    Whether to include the request parameters as the ``params`` field.
-                                                     - ``requestContent``    *false*    Whether to include the body of the request as the ``requestContent`` field.
-                                                     - ``requestUrl``        *false*    Whether to include the request URL (method, URI, query parameters, protocol) as the ``contentLength`` field.
-                                                     - ``remoteHost``        *false*    Whether to include the fully qualified name of the client or the last proxy that sent the request as the ``remoteHost`` field.
-                                                     - ``responseContent``   *false*    Whether to include the response body as the ``responseContent`` field.
-                                                     - ``serverName``        *false*    Whether to include the name of the server to which the request was sent as the ``serverName`` field.
-requestHeaders           (empty)                     Set of request headers included in the JSON map as the ``headers`` field.
-responseHeaders          (empty)                     Set of response headers included in the JSON map as the ``responseHeaders`` field.
-customFieldNames         (empty)                     Map of field name replacements in the JSON map. For example ``requestTime:request_time, userAgent:user_agent)``.
-additionalFields         (empty)                     Map of fields to add in the JSON map.
+                                                      - ``contentLength``     *true*     Whether to include the response content length, if it's known as the ``contentLength`` field.
+                                                      - ``method``            *true*     Whether to include the request HTTP method as the ``method`` field.
+                                                      - ``remoteAddress``     *true*     Whether to include the IP address of the client or last proxy that sent the request as the ``remoteAddress`` field.
+                                                      - ``remoteUser``        *true*     Whether to include information about the remote user as the ``remoteUser`` field.
+                                                      - ``requestTime``       *true*     Whether to include the time elapsed between receiving the request and logging it as the ``requestTime`` field. Time is in *ms*.
+                                                      - ``requestUri``        *true*     Whether to include the URI of the request as the ``uri`` field.
+                                                      - ``statusCode``        *true*     Whether to include the status code of the response as the ``status`` field.
+                                                      - ``protocol``          *true*     Whether to include the request HTTP protocol as the ``protocol`` field.
+                                                      - ``timestamp``         *true*     Whether to include the timestamp of the event the ``timestamp`` field.
+                                                      - ``userAgent``         *true*     Whether to include the user agent of the request as the ``userAgent`` field.
+                                                      - ``requestParameters`` *false*    Whether to include the request parameters as the ``params`` field.
+                                                      - ``requestContent``    *false*    Whether to include the body of the request as the ``requestContent`` field.
+                                                      - ``requestUrl``        *false*    Whether to include the request URL (method, URI, query parameters, protocol) as the ``contentLength`` field.
+                                                      - ``remoteHost``        *false*    Whether to include the fully qualified name of the client or the last proxy that sent the request as the ``remoteHost`` field.
+                                                      - ``responseContent``   *false*    Whether to include the response body as the ``responseContent`` field.
+                                                      - ``serverName``        *false*    Whether to include the name of the server to which the request was sent as the ``serverName`` field.
+requestHeaders           (empty)                      Set of request headers included in the JSON map as the ``headers`` field.
+responseHeaders          (empty)                      Set of response headers included in the JSON map as the ``responseHeaders`` field.
+customFieldNames         (empty)                      Map of field name replacements in the JSON map. For example ``requestTime:request_time, userAgent:user_agent)``.
+additionalFields         (empty)                      Map of fields to add in the JSON map.
 =======================  ===========================  ================
 
 .. _DateTimeFormatter:  https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html
