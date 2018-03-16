@@ -1077,50 +1077,6 @@ file                   No default       The CSV file to write metrics to.
 ====================== ===============  ===========
 
 
-.. _man-configuration-metrics-ganglia:
-
-Ganglia Reporter
-----------------
-
-Reports metrics periodically to Ganglia.
-
-Extends the attributes that are available to :ref:`all reporters <man-configuration-metrics-all>`
-
-.. note::
-
-    You will need to add ``dropwizard-metrics-ganglia`` to your POM.
-
-.. code-block:: yaml
-
-    metrics:
-      reporters:
-        - type: ganglia
-          host: localhost
-          port: 8649
-          mode: unicast
-          ttl: 1
-          uuid: (none)
-          spoof: localhost:8649
-          tmax: 60
-          dmax: 0
-
-
-====================== ===============  ====================================================================================================
-Name                   Default          Description
-====================== ===============  ====================================================================================================
-host                   localhost        The hostname (or group) of the Ganglia server(s) to report to.
-port                   8649             The port of the Ganglia server(s) to report to.
-mode                   unicast          The UDP addressing mode to announce the metrics with. One of ``unicast``
-                                        or ``multicast``.
-ttl                    1                The time-to-live of the UDP packets for the announced metrics.
-uuid                   (none)           The UUID to tag announced metrics with.
-spoof                  (none)           The hostname and port to use instead of this nodes for the announced metrics.
-                                        In the format ``hostname:port``.
-tmax                   60               The tmax value to announce metrics with.
-dmax                   0                The dmax value to announce metrics with.
-====================== ===============  ====================================================================================================
-
-
 .. _man-configuration-metrics-graphite:
 
 Graphite Reporter
