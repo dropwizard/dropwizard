@@ -7,7 +7,7 @@ Release Notes
 .. _rel-1.3.0:
 
 v1.3.0: Mar 14, 2018
-==================
+====================
 
 * Add "dropwizard-jdbi3" module `#2243 <https://github.com/dropwizard/dropwizard/pull/2243>`_, `#2247 <https://github.com/dropwizard/dropwizard/pull/2247>`_
 * Add Dropwizard testing module for JUnit 5 `#2166 <https://github.com/dropwizard/dropwizard/pull/2166>`_
