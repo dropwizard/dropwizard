@@ -705,11 +705,6 @@
             </dependency>
             <dependency>
                 <groupId>io.dropwizard</groupId>
-                <artifactId>dropwizard-metrics-ganglia</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.dropwizard</groupId>
                 <artifactId>dropwizard-metrics-graphite</artifactId>
                 <version>${project.version}</version>
             </dependency>

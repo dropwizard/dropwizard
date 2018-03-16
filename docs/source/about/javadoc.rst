@@ -18,7 +18,6 @@ Javadoc
 - `dropwizard-lifecycle <../../dropwizard-lifecycle/apidocs/index.html>`_
 - `dropwizard-logging <../../dropwizard-logging/apidocs/index.html>`_
 - `dropwizard-metrics <../../dropwizard-metrics/apidocs/index.html>`_
-- `dropwizard-metrics-ganglia <../../dropwizard-metrics-ganglia/apidocs/index.html>`_
 - `dropwizard-metrics-graphite <../../dropwizard-metrics-graphite/apidocs/index.html>`_
 - `dropwizard-migrations <../../dropwizard-migrations/apidocs/index.html>`_
 - `dropwizard-servlets <../../dropwizard-servlets/apidocs/index.html>`_
