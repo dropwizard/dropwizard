@@ -41,9 +41,9 @@ public class JsonProcessingExceptionMapper extends LoggingExceptionMapper<JsonPr
         /*
          * Otherwise, it's those pesky users.
          */
-        LOGGER.error("Unable to process JSON", exception);
-
         final String message = exception.getOriginalMessage();
+        LOGGER.error("Unable to process JSON", message);
+
         final ErrorMessage errorMessage = new ErrorMessage(Response.Status.BAD_REQUEST.getStatusCode(),
                 "Unable to process JSON", showDetails ? message : null);
         return Response.status(Response.Status.BAD_REQUEST)
