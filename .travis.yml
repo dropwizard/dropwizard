@@ -3,6 +3,7 @@ sudo: false
 language: java
 before_install:
   - ulimit -c unlimited -S
+  - 'wget https://raw.githubusercontent.com/sormuras/bach/master/install-jdk.sh'
 script:
   - ./mvnw test -B -P code-coverage
   - ./mvnw site -pl docs -B
@@ -21,11 +22,8 @@ matrix:
           packages:
             - oracle-java8-installer
     - os: linux
-      jdk: oraclejdk9
-      addons:
-        apt:
-          packages:
-            - oracle-java9-installer
+      env: JDK='OpenJDK 10'
+      install: . ./install-jdk.sh -F 10
 deploy:
   provider: script
   script: bash .travis_deploy.sh
