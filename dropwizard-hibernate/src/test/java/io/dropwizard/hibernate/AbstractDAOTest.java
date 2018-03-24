@@ -20,6 +20,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.same;
 import static org.mockito.Mockito.mock;
@@ -171,12 +172,13 @@ public class AbstractDAOTest {
             .isEqualTo("woo");
     }
 
-    @Test(expected = NonUniqueResultException.class)
+    @Test
     public void throwsOnNonUniqueResultsFromJpaCriteriaQueries() throws Exception {
         when(session.createQuery(criteriaQuery)).thenReturn(query);
         when(query.getResultList()).thenReturn(ImmutableList.of("woo", "boo"));
 
-        dao.uniqueResult(criteriaQuery);
+        assertThatExceptionOfType(NonUniqueResultException.class).isThrownBy(() ->
+            dao.uniqueResult(criteriaQuery));
     }
 
     @Test

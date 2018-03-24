@@ -16,6 +16,7 @@ import javax.ws.rs.core.Application;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 public class OptionalCookieParamResourceTest extends AbstractJerseyTest {
 
@@ -60,10 +61,11 @@ public class OptionalCookieParamResourceTest extends AbstractJerseyTest {
         assertThat(response).isEqualTo(myMessage);
     }
 
-    @Test(expected = BadRequestException.class)
+    @Test
     public void shouldThrowBadRequestExceptionWhenInvalidUUIDIsPresent() {
         String invalidUUID = "invalid-uuid";
-        target("/optional/uuid").request().cookie("uuid", invalidUUID).get(String.class);
+        assertThatExceptionOfType(BadRequestException.class).isThrownBy(() ->
+            target("/optional/uuid").request().cookie("uuid", invalidUUID).get(String.class));
     }
 
     @Test
