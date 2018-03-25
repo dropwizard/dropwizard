@@ -1,0 +1,7 @@
+level: INFO
+appenders:
+  - type: tls
+    host: localhost
+    port: ${tls.server_port}
+    trustStorePath: ${tls.trust_store.path}
+    trustStorePassword: ${tls.trust_store.pass}

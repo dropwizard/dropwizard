@@ -1,0 +1,20 @@
+level: INFO
+appenders:
+  - type: tls
+    host: 172.16.11.244
+    port: 17002
+    keyStorePath: '/path/to/keystore.p12'
+    keyStorePassword: keystore_pass
+    keyStoreType: PKCS12
+    keyStoreProvider: BC
+    trustStorePath: '/path/to/trust_store.jks'
+    trustStorePassword: trust_store_pass
+    trustStoreType: JKS
+    trustStoreProvider: SUN
+    jceProvider: Conscrypt
+    validateCerts: true
+    validatePeers: true
+    supportedProtocols: [TLSv1.1, TLSv1.2]
+    excludedProtocols:  []
+    supportedCipherSuites: [ECDHE-RSA-AES128-GCM-SHA256, ECDHE-ECDSA-AES128-GCM-SHA256]
+    excludedCipherSuites: []
