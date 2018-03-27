@@ -97,9 +97,9 @@
          see http://www.eclipse.org/jetty/documentation/current/alpn-chapter.html for reference. -->
     <profiles>
         <profile>
-            <id>jdk9</id>
+            <id>jdk10</id>
             <activation>
-                <jdk>9</jdk>
+                <jdk>10</jdk>
             </activation>
             <properties>
                 <argLine>-Duser.language=en -Duser.region=US --add-modules java.xml.bind</argLine>

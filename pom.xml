@@ -373,9 +373,9 @@
             </build>
         </profile>
         <profile>
-            <id>jdk9</id>
+            <id>jdk10</id>
             <activation>
-                <jdk>9</jdk>
+                <jdk>10</jdk>
             </activation>
             <properties>
                 <argLine>-Duser.language=en -Duser.region=US --add-modules java.xml.bind</argLine>
@@ -395,14 +395,14 @@
         <profile>
             <id>code-coverage</id>
             <activation>
-                <jdk>9</jdk>
+                <jdk>10</jdk>
             </activation>
             <build>
                 <plugins>
                     <plugin>
                         <groupId>org.jacoco</groupId>
                         <artifactId>jacoco-maven-plugin</artifactId>
-                        <version>0.8.0</version>
+                        <version>0.8.1</version>
                         <executions>
                             <execution>
                                 <id>prepare-agent</id>
@@ -486,7 +486,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.19.1</version>
+                    <version>2.21.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
