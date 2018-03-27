@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 public class PersonDAOTest {
 
@@ -48,8 +49,9 @@ public class PersonDAOTest {
         assertThat(persons).extracting("jobTitle").containsOnly("The plumber", "The cook", "The watchman");
     }
 
-    @Test(expected = ConstraintViolationException.class)
+    @Test
     public void handlesNullFullName() {
-        daoTestRule.inTransaction(() -> personDAO.create(new Person(null, "The null")));
+        assertThatExceptionOfType(ConstraintViolationException.class).isThrownBy(()->
+            daoTestRule.inTransaction(() -> personDAO.create(new Person(null, "The null"))));
     }
 }

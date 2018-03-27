@@ -36,6 +36,7 @@ import java.util.Set;
 
 import static org.apache.commons.lang3.reflect.FieldUtils.getField;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assume.assumeFalse;
 import static org.junit.Assume.assumeTrue;
@@ -137,13 +138,14 @@ public class HttpsConnectorFactoryTest {
         assertNotNull(factory.configureSslContextFactory(new SslContextFactory()));
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void windowsKeyStoreUnavailableThrowsException() throws Exception {
         assumeFalse(canAccessWindowsKeyStore());
 
         final HttpsConnectorFactory factory = new HttpsConnectorFactory();
         factory.setKeyStoreType(WINDOWS_MY_KEYSTORE_NAME);
-        factory.configureSslContextFactory(new SslContextFactory());
+        assertThatIllegalStateException().isThrownBy(() ->
+            factory.configureSslContextFactory(new SslContextFactory()));
     }
 
     @Test

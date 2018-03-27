@@ -16,6 +16,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Application;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 public class OptionalQueryParamResourceTest extends AbstractJerseyTest {
 
@@ -68,10 +69,11 @@ public class OptionalQueryParamResourceTest extends AbstractJerseyTest {
         assertThat(response).isEqualTo(myMessage);
     }
 
-    @Test(expected = BadRequestException.class)
+    @Test
     public void shouldThrowBadRequestExceptionWhenInvalidUUIDIsPresent() {
         String invalidUUID = "invalid-uuid";
-        target("/optional/uuid").queryParam("uuid", invalidUUID).request().get(String.class);
+        assertThatExceptionOfType(BadRequestException.class).isThrownBy(() ->
+            target("/optional/uuid").queryParam("uuid", invalidUUID).request().get(String.class));
     }
 
     @Test

@@ -11,14 +11,13 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 import java.util.Map;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -29,9 +28,6 @@ public class UnitOfWorkAwareProxyFactoryTest {
     }
 
     private SessionFactory sessionFactory;
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
 
     @Before
     public void setUp() throws Exception {
@@ -83,12 +79,11 @@ public class UnitOfWorkAwareProxyFactoryTest {
 
     @Test
     public void testProxyHandlesErrors() {
-        thrown.expect(IllegalStateException.class);
-        thrown.expectMessage("Session cluster is down");
-
-        new UnitOfWorkAwareProxyFactory("default", sessionFactory)
+        assertThatExceptionOfType(IllegalStateException.class).isThrownBy(()->
+            new UnitOfWorkAwareProxyFactory("default", sessionFactory)
                 .create(BrokenAuthenticator.class)
-                .authenticate("b812ae4");
+                .authenticate("b812ae4"))
+            .withMessage("Session cluster is down");
     }
 
     @Test

@@ -7,20 +7,16 @@ import io.dropwizard.configuration.BaseConfigurationFactoryTest.Example;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.validation.BaseValidator;
 
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 import javax.validation.Validator;
 import java.io.File;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 
 public class ConfigurationFactoryFactoryTest {
-
-    @Rule
-    public final ExpectedException expectedException = ExpectedException.none();
 
     private final ConfigurationFactoryFactory<Example> factoryFactory = new DefaultConfigurationFactoryFactory<>();
     private final Validator validator = BaseValidator.newValidator();
@@ -41,9 +37,10 @@ public class ConfigurationFactoryFactoryTest {
             Resources.getResource("factory-test-unknown-property.yml").toURI());
         ConfigurationFactory<Example> factory =
             factoryFactory.create(Example.class, validator, Jackson.newObjectMapper(), "dw");
-        expectedException.expect(ConfigurationException.class);
-        expectedException.expectMessage("Unrecognized field at: trait");
-        factory.build(validFileWithUnknownProp);
+
+        assertThatExceptionOfType(ConfigurationException.class)
+            .isThrownBy(() -> factory.build(validFileWithUnknownProp))
+            .withMessageContaining("Unrecognized field at: trait");
     }
 
     @Test

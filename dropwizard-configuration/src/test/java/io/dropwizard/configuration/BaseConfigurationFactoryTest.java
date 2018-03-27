@@ -27,6 +27,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
 
@@ -318,12 +319,11 @@ public abstract class BaseConfigurationFactoryTest {
         }
     }
 
-    @Test(expected = ConfigurationParsingException.class)
+    @Test
     public void throwsAnExceptionOnArrayOverrideWithInvalidType() throws Exception {
         System.setProperty("dw.servers", "one,two");
 
-        factory.build(validFile);
-        failBecauseExceptionWasNotThrown(ConfigurationParsingException.class);
+        assertThatExceptionOfType(ConfigurationParsingException.class).isThrownBy(() -> factory.build(validFile));
     }
 
     @Test
