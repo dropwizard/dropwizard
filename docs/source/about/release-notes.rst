@@ -4,6 +4,14 @@
 Release Notes
 #############
 
+.. _rel-1.3.1:
+
+v1.3.1: Unreleased
+==================
+
+* Upgrade to Jackson 2.9.5 (`CVE-2018-7489 <https://nvd.nist.gov/vuln/detail/CVE-2018-7489>`_)
+
+
 .. _rel-1.3.0:
 
 v1.3.0: Mar 14, 2018
