@@ -1,0 +1,6 @@
+ch.qos.logback.core.recovery
+io.dropwizard.logging
+io.dropwizard.logging.async
+io.dropwizard.logging.filter
+io.dropwizard.logging.layout
+io.dropwizard.logging.socket
