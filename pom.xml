@@ -53,6 +53,8 @@
 
     <properties>
         <dropwizard.url>http://www.dropwizard.io/${project.version}</dropwizard.url>
+        <dropwizard.check.fail-owasp>true</dropwizard.check.fail-owasp>
+        <dropwizard.check.skip-owasp>false</dropwizard.check.skip-owasp>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.site.deploy.skip>true</maven.site.deploy.skip>
@@ -662,6 +664,27 @@
                         <configuration>
                             <failOnViolation>true</failOnViolation>
                         </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.owasp</groupId>
+                <artifactId>dependency-check-maven</artifactId>
+                <version>3.1.2</version>
+                <configuration>
+                    <failBuildOnAnyVulnerability>${dropwizard.check.fail-owasp}</failBuildOnAnyVulnerability>
+                    <skip>${dropwizard.check.skip-owasp}</skip>
+                    <showSummary>true</showSummary>
+                    <format>ALL</format>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>security-check</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
                     </execution>
                 </executions>
             </plugin>
