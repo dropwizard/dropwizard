@@ -53,8 +53,6 @@
 
     <properties>
         <dropwizard.url>http://www.dropwizard.io/${project.version}</dropwizard.url>
-        <dropwizard.check.fail-owasp>true</dropwizard.check.fail-owasp>
-        <dropwizard.check.skip-owasp>false</dropwizard.check.skip-owasp>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.site.deploy.skip>true</maven.site.deploy.skip>
@@ -673,10 +671,9 @@
                 <artifactId>dependency-check-maven</artifactId>
                 <version>3.1.2</version>
                 <configuration>
-                    <failBuildOnAnyVulnerability>${dropwizard.check.fail-owasp}</failBuildOnAnyVulnerability>
-                    <skip>${dropwizard.check.skip-owasp}</skip>
+                    <failBuildOnAnyVulnerability>true</failBuildOnAnyVulnerability>
                     <showSummary>true</showSummary>
-                    <format>ALL</format>
+                    <suppressionFiles>suppressed-cves.xml</suppressionFiles>
                 </configuration>
                 <executions>
                     <execution>
