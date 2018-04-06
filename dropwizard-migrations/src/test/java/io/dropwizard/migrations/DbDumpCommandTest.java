@@ -192,7 +192,7 @@ public class DbDumpCommandTest extends AbstractMigrationTest {
         final Element idColumn = (Element) columns.item(0);
         assertThat(idColumn.getAttribute("autoIncrement")).isEqualTo("true");
         assertThat(idColumn.getAttribute("name")).isEqualTo("ID");
-        assertThat(idColumn.getAttribute("type")).isEqualTo("INT(10)");
+        assertThat(idColumn.getAttribute("type")).isEqualTo("INT");
         final Element idColumnConstraints = getFirstElement(idColumn, "constraints");
         assertThat(idColumnConstraints.getAttribute("primaryKey")).isEqualTo("true");
         assertThat(idColumnConstraints.getAttribute("primaryKeyName")).isEqualTo("PK_PERSONS");
