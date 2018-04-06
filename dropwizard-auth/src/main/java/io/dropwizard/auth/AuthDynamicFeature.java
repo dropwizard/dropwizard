@@ -31,17 +31,20 @@ import java.util.Optional;
  */
 public class AuthDynamicFeature implements DynamicFeature {
 
-    @Nullable
     private final ContainerRequestFilter authFilter;
 
-    @Nullable
     private final Class<? extends ContainerRequestFilter> authFilterClass;
 
+    // We suppress the null away checks, as adding `@Nullable` to the auth
+    // filter fields, causes Jersey to try and resolve the fields to a concrete
+    // type (which subsequently fails).
+    @SuppressWarnings("NullAway")
     public AuthDynamicFeature(ContainerRequestFilter authFilter) {
         this.authFilter = authFilter;
         this.authFilterClass = null;
     }
 
+    @SuppressWarnings("NullAway")
     public AuthDynamicFeature(Class<? extends ContainerRequestFilter> authFilterClass) {
         this.authFilter = null;
         this.authFilterClass = authFilterClass;
