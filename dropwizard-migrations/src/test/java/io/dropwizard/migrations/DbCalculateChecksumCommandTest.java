@@ -24,7 +24,7 @@ public class DbCalculateChecksumCommandTest extends AbstractMigrationTest {
     public void testRun() throws Exception {
         final AtomicBoolean checkSumVerified = new AtomicBoolean();
         migrateCommand.setCheckSumConsumer(checkSum -> {
-            assertThat(checkSum).isEqualTo(CheckSum.parse("7:3a61a7a72c9ce082b7059215975e6e09"));
+            assertThat(checkSum).isEqualTo(CheckSum.parse("8:0f3683b37321ccfb1694a044986de4d9"));
             checkSumVerified.set(true);
         });
         migrateCommand.run(null, new Namespace(ImmutableMap.of("id", ImmutableList.of("2"),

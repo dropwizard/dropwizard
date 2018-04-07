@@ -1,6 +1,8 @@
 package io.dropwizard.migrations;
 
 import io.dropwizard.db.DataSourceFactory;
+import liquibase.sqlgenerator.SqlGeneratorFactory;
+import liquibase.sqlgenerator.core.AddColumnGeneratorSQLite;
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.inf.Subparser;
 
@@ -10,6 +12,7 @@ public class AbstractMigrationTest {
 
     static {
         ArgumentParsers.setTerminalWidthDetection(false);
+        SqlGeneratorFactory.getInstance().unregister(AddColumnGeneratorSQLite.class);
     }
 
     protected static final String UTF_8 = "UTF-8";
