@@ -26,17 +26,18 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @NotThreadSafe
 public class DbDumpCommandTest extends AbstractMigrationTest {
 
+    private static final List<String> ATTRIBUTE_NAMES = ImmutableList.of("columns", "foreign-keys", "indexes",
+        "primary-keys", "sequences", "tables", "unique-constraints", "views");
     private static DocumentBuilder xmlParser;
-    private static List<String> attributeNames;
 
     private final DbDumpCommand<TestMigrationConfiguration> dumpCommand =
             new DbDumpCommand<>(new TestMigrationDatabaseConfiguration(), TestMigrationConfiguration.class, "migrations.xml");
@@ -46,8 +47,6 @@ public class DbDumpCommandTest extends AbstractMigrationTest {
     @BeforeClass
     public static void initXmlParser() throws Exception {
         xmlParser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
-        attributeNames = ImmutableList.of("columns", "foreign-keys", "indexes", "primary-keys", "sequences",
-                "tables", "unique-constraints", "views");
     }
 
     @Before
@@ -60,11 +59,8 @@ public class DbDumpCommandTest extends AbstractMigrationTest {
 
     @Test
     public void testDumpSchema() throws Exception {
-        final Map<String, Object> attributes = new HashMap<>();
-        for (String name : attributeNames) {
-            attributes.put(name, true);
-        }
-        dumpCommand.run(null, new Namespace(attributes), existedDbConf);
+        dumpCommand.run(null, new Namespace(ATTRIBUTE_NAMES.stream()
+            .collect(Collectors.toMap(a -> a, b -> true))), existedDbConf);
 
         final Element changeSet = getFirstElement(toXmlDocument(baos).getDocumentElement(), "changeSet");
         assertCreateTable(changeSet);
@@ -72,11 +68,8 @@ public class DbDumpCommandTest extends AbstractMigrationTest {
 
     @Test
     public void testDumpSchemaAndData() throws Exception {
-        final Map<String, Object> attributes = new HashMap<>();
-        for (String name : Iterables.concat(attributeNames, ImmutableList.of("data"))) {
-            attributes.put(name, true);
-        }
-        dumpCommand.run(null, new Namespace(attributes), existedDbConf);
+        dumpCommand.run(null, new Namespace(Stream.concat(ATTRIBUTE_NAMES.stream(), Stream.of("data"))
+            .collect(Collectors.toMap(a -> a, b -> true))), existedDbConf);
 
         final NodeList changeSets = toXmlDocument(baos).getDocumentElement().getElementsByTagName("changeSet");
         assertCreateTable((Element) changeSets.item(0));
@@ -85,7 +78,7 @@ public class DbDumpCommandTest extends AbstractMigrationTest {
 
     @Test
     public void testDumpOnlyData() throws Exception {
-        dumpCommand.run(null, new Namespace(ImmutableMap.of("data", (Object) true)), existedDbConf);
+        dumpCommand.run(null, new Namespace(ImmutableMap.of("data", true)), existedDbConf);
 
         final Element changeSet = getFirstElement(toXmlDocument(baos).getDocumentElement(), "changeSet");
         assertInsertData(changeSet);
@@ -94,8 +87,7 @@ public class DbDumpCommandTest extends AbstractMigrationTest {
     @Test
     public void testWriteToFile() throws Exception {
         final File file = File.createTempFile("migration", ".xml");
-        final Map<String, Object> attributes = ImmutableMap.of("output", file.getAbsolutePath());
-        dumpCommand.run(null, new Namespace(attributes), existedDbConf);
+        dumpCommand.run(null, new Namespace(ImmutableMap.of("output", file.getAbsolutePath())), existedDbConf);
         // Check that file is exist, and has some XML content (no reason to make a full-blown XML assertion)
         assertThat(new String(Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8))
             .startsWith("<?xml version=\"1.1\" encoding=\"UTF-8\" standalone=\"no\"?>");
