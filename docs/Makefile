@@ -157,7 +157,4 @@ livehtml: html
 	sphinx-autobuild -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
 
 less:
-	lessc --compress source/_themes/dropwizard/less/dropwizard.less > source/_themes/dropwizard/static/dropwizard.css
-
-upload: clean dirhtml
-	rsync -avz --delete --exclude=maven $(BUILDDIR)/dirhtml/ codahale.com:/home/codahale/dropwizard.io/
+	lesscpy -x source/_themes/dropwizard/less/dropwizard.less > source/_themes/dropwizard/static/dropwizard.css
