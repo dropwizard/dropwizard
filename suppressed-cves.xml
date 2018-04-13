@@ -1,18 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.1.xsd">
     <suppress>
-        <notes><![CDATA[file name: dropwizard-views-1.4.0-SNAPSHOT.jar]]></notes>
-        <gav regex="true">^io\.dropwizard:dropwizard-views(-.*)?:.*$</gav>
+        <notes><![CDATA[false positive, dropwizard does not use Drupal]]></notes>
         <cve>CVE-2015-3378</cve>
     </suppress>
     <suppress>
-        <notes><![CDATA[file name: dropwizard-views-1.4.0-SNAPSHOT.jar]]></notes>
-        <gav regex="true">^io\.dropwizard:dropwizard-views(-.*)?:.*$</gav>
+        <notes><![CDATA[false positive, dropwiard does not use Drupal]]></notes>
         <cve>CVE-2015-3379</cve>
     </suppress>
     <suppress>
-        <notes><![CDATA[file name: compiler-0.9.5.jar]]></notes>
-        <gav regex="true">^com\.github\.spullara\.mustache\.java:compiler:.*$</gav>
+        <notes><![CDATA[false positive]]></notes>
         <cve>CVE-2015-8862</cve>
     </suppress>
 </suppressions>
