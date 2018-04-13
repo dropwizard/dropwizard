@@ -15,9 +15,21 @@ Octokit.configure do |c|
   c.auto_paginate = true
 end
 
-contributors = Octokit.contributors('dropwizard/dropwizard')
-contributors.each do |c|
+contributors = []
+repo_contributors = Octokit.contributors('dropwizard/dropwizard')
+repo_contributors.each do |c|
   user = Octokit.user(c.login)
-  name = if user.name.nil? then user.login else user.name end
-  puts "* `#{name} <#{user.html_url}>`_"
+  contributor = {}
+  contributor['login'] = user.login
+  if user.name.nil? then
+    contributor['name'] = user.login
+  else
+    contributor['name'] = user.name
+  end
+  contributors << contributor
+end
+
+sorted_contributors = contributors.sort_by{ |contributor| contributor['name'].downcase }
+sorted_contributors.each do |c|
+  puts "* :ghuser:`#{c['name']} <#{c['login']}>`"
 end
