@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.1.xsd">
+    <suppress>
+        <notes><![CDATA[false positive, Dropwizard does not use Drupal]]></notes>
+        <cve>CVE-2015-3378</cve>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[false positive, Dropwizard does not use Drupal]]></notes>
+        <cve>CVE-2015-3379</cve>
+    </suppress>
+    <suppress>
+        <notes><![CDATA[false positive]]></notes>
+        <cve>CVE-2015-8862</cve>
+    </suppress>
+</suppressions>
