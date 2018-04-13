@@ -5,7 +5,7 @@
         <cve>CVE-2015-3378</cve>
     </suppress>
     <suppress>
-        <notes><![CDATA[false positive, dropwiard does not use Drupal]]></notes>
+        <notes><![CDATA[false positive, dropwizard does not use Drupal]]></notes>
         <cve>CVE-2015-3379</cve>
     </suppress>
     <suppress>
