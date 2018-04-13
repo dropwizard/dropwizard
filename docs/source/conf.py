@@ -52,7 +52,7 @@ def get_version():
 
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
-extensions = ['sphinx.ext.todo']
+extensions = ['sphinx.ext.todo', 'sphinx.ext.extlinks']
 
 # Add any paths that contain templates here, relative to this directory.
 #templates_path = ['ytemplates']
@@ -324,3 +324,11 @@ epub_copyright = u'2013, Coda Hale'
 
 # Allow duplicate toc entries.
 #epub_tocdup = True
+
+# -- Options for sphinx.ext.extlinks -------------------------------------------
+extlinks = {
+  'issue': ('https://github.com/dropwizard/dropwizard/issues/%s', 'issue #'),
+  'pr': ('https://github.com/dropwizard/dropwizard/pull/%s', 'PR #'),
+  'javadoc': ("https://javadoc.io/doc/io.dropwizard/%%s/%s" % release, ''),
+  'ghuser': ('https://github.com/%s', '')
+}
