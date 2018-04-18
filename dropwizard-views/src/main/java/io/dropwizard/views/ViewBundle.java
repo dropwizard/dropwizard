@@ -51,8 +51,8 @@ import static com.google.common.base.MoreObjects.firstNonNull;
  * <p>A resource method with a view would looks something like this:</p>
  *
  * <pre><code>
- * \@GET
- * public PersonView getPerson(\@PathParam("id") String id) {
+ * @GET
+ * public PersonView getPerson(@PathParam("id") String id) {
  *     return new PersonView(dao.find(id));
  * }
  * </code></pre>
@@ -60,7 +60,7 @@ import static com.google.common.base.MoreObjects.firstNonNull;
  * <p>Freemarker templates look something like this:</p>
  *
  * <pre>{@code
- * &lt;#-- @ftlvariable name="" type="com.example.application.PersonView" --&gt;
+ * <#-- @ftlvariable name="" type="com.example.application.PersonView" -->
  * <html>
  *     <body>
  *         <h1>Hello, ${person.name?html}!</h1>
@@ -73,7 +73,7 @@ import static com.google.common.base.MoreObjects.firstNonNull;
  * at the top indicate to Freemarker (and your IDE) that the root object is a {@code Person},
  * allowing for better type-safety in your templates.</p>
  *
- * @see <a href="http://freemarker.sourceforge.net/docs/index.html">FreeMarker Manual</a>
+ * See Also: <a href="http://freemarker.sourceforge.net/docs/index.html">FreeMarker Manual</a>
  *
  * <p>Mustache templates look something like this:</p>
  *
@@ -87,7 +87,7 @@ import static com.google.common.base.MoreObjects.firstNonNull;
  *
  * <p>In this template, {@code {{person.name}}} calls {@code getPerson().getName()}.</p>
  *
- * @see <a href="http://mustache.github.io/mustache.5.html">Mustache Manual</a>
+ * See Also: <a href="http://mustache.github.io/mustache.5.html">Mustache Manual</a>
  */
 public class ViewBundle<T extends Configuration> implements ConfiguredBundle<T>, ViewConfigurable<T> {
     private final Iterable<ViewRenderer> viewRenderers;
