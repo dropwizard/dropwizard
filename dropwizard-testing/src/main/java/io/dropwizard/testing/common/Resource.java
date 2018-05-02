@@ -29,10 +29,6 @@ import static java.util.Objects.requireNonNull;
 
 public class Resource {
 
-    static {
-        BootstrapLogging.bootstrap();
-    }
-
     /**
      * A {@link Resource} builder which enables configuration of a Jersey testing environment.
      */
@@ -48,6 +44,7 @@ public class Resource {
         };
         private TestContainerFactory testContainerFactory = new InMemoryTestContainerFactory();
         private boolean registerDefaultExceptionMappers = true;
+        private boolean bootstrapLogging = true;
 
         public B setMapper(ObjectMapper mapper) {
             this.mapper = mapper;
@@ -102,12 +99,20 @@ public class Resource {
             return (B) this;
         }
 
+        public B bootstrapLogging(boolean value){
+            bootstrapLogging = value;
+            return (B) this;
+        }
+
         /**
          * Builds a {@link Resource} with a configured Jersey testing environment.
          *
          * @return a new {@link Resource}
          */
         protected Resource buildResource() {
+            if (bootstrapLogging) {
+                BootstrapLogging.bootstrap();
+            }
             return new Resource(new ResourceTestJerseyConfiguration(
                 singletons, providers, properties, mapper, validator,
                 clientConfigurator, testContainerFactory, registerDefaultExceptionMappers));
