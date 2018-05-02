@@ -5,3 +5,5 @@
 *.md text=auto
 *.mustache text eol=lf
 *.ftl text eol=lf
+*.ftlh text eol=lf
+*.ftlx text eol=lf
