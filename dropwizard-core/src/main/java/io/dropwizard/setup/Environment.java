@@ -92,15 +92,17 @@ public class Environment {
                 .rejectedExecutionHandler(new ThreadPoolExecutor.CallerRunsPolicy())
                 .build();
 
+        // Set the default metric registry to the one in this environment, if
+        // the default isn't already set. If a default is already registered,
+        // ignore the exception.
         try {
-            SharedMetricRegistries.getDefault();
-        } catch (IllegalStateException e) {
             SharedMetricRegistries.setDefault("default", metricRegistry);
+        } catch (IllegalStateException ignored) {
         }
+
         try {
-            SharedHealthCheckRegistries.getDefault();
-        } catch (IllegalStateException e) {
             SharedHealthCheckRegistries.setDefault("default", healthCheckRegistry);
+        } catch (IllegalStateException ignored) {
         }
     }
 
