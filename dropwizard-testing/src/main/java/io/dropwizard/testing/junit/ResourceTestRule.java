@@ -30,10 +30,6 @@ import java.util.function.Consumer;
  */
 public class ResourceTestRule implements TestRule {
 
-    static {
-        BootstrapLogging.bootstrap();
-    }
-
     /**
      * A {@link ResourceTestRule} builder which enables configuration of a Jersey testing environment.
      */
@@ -48,6 +44,7 @@ public class ResourceTestRule implements TestRule {
         };
         private TestContainerFactory testContainerFactory = new InMemoryTestContainerFactory();
         private boolean registerDefaultExceptionMappers = true;
+        private boolean bootstrapLogging = true;
 
         public Builder setMapper(ObjectMapper mapper) {
             this.mapper = mapper;
@@ -94,12 +91,19 @@ public class ResourceTestRule implements TestRule {
             return this;
         }
 
+        public Builder bootstrapLogging(boolean value){
+            bootstrapLogging = value;
+            return this;
+        }
         /**
          * Builds a {@link ResourceTestRule} with a configured Jersey testing environment.
          *
          * @return a new {@link ResourceTestRule}
          */
         public ResourceTestRule build() {
+            if (bootstrapLogging) {
+                BootstrapLogging.bootstrap();
+            }
             return new ResourceTestRule(new ResourceTestJerseyConfiguration(
                 singletons, providers, properties, mapper, validator,
                 clientConfigurator, testContainerFactory, registerDefaultExceptionMappers));
