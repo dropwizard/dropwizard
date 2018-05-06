@@ -6,6 +6,7 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Iterables;
 import io.dropwizard.validation.ValidationMethod;
+import io.dropwizard.validation.selfvalidating.SelfValidating;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -55,9 +56,9 @@ public class ConstraintMessage {
             return name + " ";
         }
 
-        // Take the message specified in a ValidationMethod annotation if it
-        // is what caused the violation
-        if (isValidationMethod(v)) {
+        // Take the message specified in a ValidationMethod or SelfValidation
+        // annotation if it is what caused the violation.
+        if (isValidationMethod(v) || isSelfValidating(v)) {
             return "";
         }
 
@@ -149,6 +150,10 @@ public class ConstraintMessage {
 
     private static boolean isValidationMethod(ConstraintViolation<?> v) {
         return v.getConstraintDescriptor().getAnnotation() instanceof ValidationMethod;
+    }
+
+    private static boolean isSelfValidating(ConstraintViolation<?> v) {
+        return v.getConstraintDescriptor().getAnnotation() instanceof SelfValidating;
     }
 
     /**

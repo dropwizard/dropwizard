@@ -678,4 +678,51 @@ public class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
             .containsOnlyOnce("query param choice must be one of [OptionA, OptionB, OptionC]");
     }
 
+    @Test
+    public void selfValidatingBeanParamInvalid() {
+        final Response response = target("/valid/selfValidatingBeanParam")
+            .queryParam("answer", 100)
+            .request()
+            .get();
+
+        assertThat(response.getStatus()).isEqualTo(400);
+        assertThat(response.readEntity(String.class))
+            .isEqualTo("{\"errors\":[\"The answer is 42\"]}");
+    }
+
+    @Test
+    public void selfValidatingBeanParamSuccess() {
+        final Response response = target("/valid/selfValidatingBeanParam")
+            .queryParam("answer", 42)
+            .request()
+            .get();
+
+        assertThat(response.getStatus()).isEqualTo(200);
+        assertThat(response.readEntity(String.class))
+            .isEqualTo("{\"answer\":42}");
+    }
+
+    @Test
+    public void selfValidatingPayloadInvalid() {
+        final Response response = target("/valid/selfValidatingPayload")
+            .request()
+            .post(Entity.json("{\"answer\":100}"));
+
+        assertThat(response.getStatus()).isEqualTo(422);
+        assertThat(response.readEntity(String.class))
+            .isEqualTo("{\"errors\":[\"The answer is 42\"]}");
+    }
+
+    @Test
+    public void selfValidatingPayloadSuccess() {
+        final String payload = "{\"answer\":42}";
+
+        final Response response = target("/valid/selfValidatingPayload")
+            .request()
+            .post(Entity.json(payload));
+
+        assertThat(response.getStatus()).isEqualTo(200);
+        assertThat(response.readEntity(String.class))
+            .isEqualTo(payload);
+    }
 }
