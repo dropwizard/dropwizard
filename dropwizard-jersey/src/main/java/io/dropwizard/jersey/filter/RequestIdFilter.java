@@ -55,7 +55,7 @@ public class RequestIdFilter implements ContainerResponseFilter {
      * Generate a random UUID v4 that will perform reasonably when used by
      * multiple threads under load.
      *
-     * @see https://github.com/Netflix/netflix-commons/blob/v0.3.0/netflix-commons-util/src/main/java/com/netflix/util/concurrent/ConcurrentUUIDFactory.java
+     * @see <a href="https://github.com/Netflix/netflix-commons/blob/v0.3.0/netflix-commons-util/src/main/java/com/netflix/util/concurrent/ConcurrentUUIDFactory.java">ConcurrentUUIDFactory</a>
      * @return random UUID
      */
     private static UUID generateRandomUuid() {
