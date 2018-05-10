@@ -98,7 +98,7 @@ public class GzipHandlerFactoryTest {
         Handler handler = mock(Handler.class);
         BiDiGzipHandler biDiGzipHandler = gzip.build(handler);
 
-        assertThat(biDiGzipHandler.isInflateNoWrap());
+        assertThat(biDiGzipHandler.isInflateNoWrap()).isTrue();
         assertThat(biDiGzipHandler.getMinGzipSize()).isEqualTo(4096);
         assertThat(biDiGzipHandler.getIncludedMethods()).containsExactlyInAnyOrder("GET", "POST");
         assertThat(biDiGzipHandler.getExcludedAgentPatterns()).containsExactly("MSIE 6.0");
