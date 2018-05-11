@@ -1,0 +1,4 @@
+io.dropwizard.testing
+io.dropwizard.testing.common
+io.dropwizard.testing.junit
+io.dropwizard.testing.junit5

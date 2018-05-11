@@ -1,0 +1,3 @@
+io.dropwizard.validation
+io.dropwizard.validation.selfvalidating
+io.dropwizard.validation.valuehandling
