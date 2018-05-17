@@ -12,6 +12,7 @@ import javax.annotation.Nullable;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.PUT;
 import javax.ws.rs.core.MediaType;
 import java.io.PrintWriter;
 import java.util.Collections;
@@ -53,6 +54,12 @@ public class DropwizardTestApplication extends Application<TestConfiguration> {
         @PATCH
         public String echoPatch(String patchMessage) {
             return patchMessage;
+        }
+
+        @Path("throwError")
+        @PUT
+        public String throwError(String errorMessage) {
+            throw new RuntimeException(errorMessage);
         }
     }
 

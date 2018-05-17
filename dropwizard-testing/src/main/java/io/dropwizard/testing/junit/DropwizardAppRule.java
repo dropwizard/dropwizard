@@ -1,26 +1,36 @@
 package io.dropwizard.testing.junit;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.glassfish.jersey.client.ClientProperties;
+import org.glassfish.jersey.client.HttpUrlConnectorProvider;
+import org.glassfish.jersey.client.JerseyClientBuilder;
+import org.junit.rules.ExternalResource;
+import org.junit.rules.TestRule;
+import org.junit.runner.Description;
+import org.junit.runners.model.MultipleFailureException;
+import org.junit.runners.model.Statement;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
+
+import javax.annotation.Nullable;
+import javax.ws.rs.client.Client;
+
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
 import io.dropwizard.cli.Command;
 import io.dropwizard.cli.ServerCommand;
 import io.dropwizard.configuration.ConfigurationSourceProvider;
+import io.dropwizard.jersey.errors.LoggingExceptionMapper;
 import io.dropwizard.jersey.jackson.JacksonFeature;
 import io.dropwizard.lifecycle.Managed;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.testing.ConfigOverride;
 import io.dropwizard.testing.DropwizardTestSupport;
-import org.glassfish.jersey.client.ClientProperties;
-import org.glassfish.jersey.client.HttpUrlConnectorProvider;
-import org.glassfish.jersey.client.JerseyClientBuilder;
-import org.junit.rules.ExternalResource;
-
-import javax.annotation.Nullable;
-import javax.ws.rs.client.Client;
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Function;
 
 //@formatter:off
 /**
@@ -80,6 +90,7 @@ public class DropwizardAppRule<C extends Configuration> extends ExternalResource
     private final DropwizardTestSupport<C> testSupport;
 
     private final AtomicInteger recursiveCallCount = new AtomicInteger(0);
+    private final List<Throwable> serverSideExceptions = new ArrayList<>();
 
     @Nullable
     private Client client;
@@ -196,6 +207,20 @@ public class DropwizardAppRule<C extends Configuration> extends ExternalResource
 
     public DropwizardAppRule(DropwizardTestSupport<C> testSupport) {
         this.testSupport = testSupport;
+        this.testSupport.addListener(new DropwizardTestSupport.ServiceListener<C>()
+        {
+            @Override
+            public void onRun(C configuration, Environment environment, DropwizardTestSupport<C> rule) throws Exception
+            {
+                environment.jersey().register(new LoggingExceptionMapper<Throwable>()
+                {
+                    protected void logException(long id, Throwable exception)
+                    {
+                        serverSideExceptions.add(exception);
+                    };
+                });
+            }
+        });
     }
 
     public DropwizardAppRule<C> addListener(final ServiceListener<C> listener) {
@@ -313,4 +338,53 @@ public class DropwizardAppRule<C extends Configuration> extends ExternalResource
             .property(ClientProperties.READ_TIMEOUT, DEFAULT_READ_TIMEOUT_MS)
             .property(HttpUrlConnectorProvider.SET_METHOD_WORKAROUND, true);
     }
+
+    public class ServerSideExceptionsCollector implements TestRule
+    {
+
+        private final int fromIndex;
+
+        public ServerSideExceptionsCollector(int fromIndex)
+        {
+            this.fromIndex = fromIndex;
+        }
+
+        @Override
+        public Statement apply(Statement base, Description description)
+        {
+            return new Statement()
+            {
+                @Override
+                public void evaluate() throws Throwable
+                {
+                    before();
+                    try
+                    {
+                        base.evaluate();
+                    }
+                    catch (final Throwable e)
+                    {
+                        final List<Throwable> exceptionsToReport = new ArrayList<>();
+                        exceptionsToReport.add(e);
+                        if (serverSideExceptions.size() > fromIndex)
+                        {
+                            exceptionsToReport.addAll(
+                                serverSideExceptions.subList(fromIndex, serverSideExceptions.size()));
+                        }
+                        MultipleFailureException.assertEmpty(exceptionsToReport);
+                    }
+                    finally
+                    {
+                        after();
+                    }
+                }
+            };
+        }
+    }
+
+    public ServerSideExceptionsCollector collectServerSideExceptions()
+    {
+        return new ServerSideExceptionsCollector(serverSideExceptions.size());
+    }
+
 }
