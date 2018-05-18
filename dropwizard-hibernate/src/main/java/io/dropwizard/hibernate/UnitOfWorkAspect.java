@@ -193,7 +193,7 @@ public class UnitOfWorkAspect {
             return;
         }
 
-        //We need to ensure that the changes in all the sessions have been rollbacked
+        //We need to ensure that the changes in all the sessions have been rolled back
         //and also we need to inform about the exceptions
         List<Optional<RuntimeException>> errors = sessions.values().stream()
             .map(UnitOfWorkAspect::rollbackTransaction)
