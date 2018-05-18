@@ -55,5 +55,5 @@ public @interface UnitOfWork {
      * The name of a hibernate bundle (session factory) that specifies
      * a datasource against which a transaction will be opened.
      */
-    String value() default HibernateBundle.DEFAULT_NAME;
+    String[] value() default HibernateBundle.DEFAULT_NAME;
 }

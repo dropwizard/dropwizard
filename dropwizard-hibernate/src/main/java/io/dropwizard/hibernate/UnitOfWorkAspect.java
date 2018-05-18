@@ -1,14 +1,22 @@
 package io.dropwizard.hibernate;
 
+import org.apache.commons.lang3.tuple.Pair;
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.context.internal.ManagedSessionContext;
 
 import javax.annotation.Nullable;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -47,11 +55,8 @@ public class UnitOfWorkAspect {
     @Nullable
     private UnitOfWork unitOfWork;
 
-    @Nullable
-    private Session session;
-
-    @Nullable
-    private SessionFactory sessionFactory;
+    private Map<String, Session> sessions = new HashMap<>();
+    private Map<String, SessionFactory> selectedSessionFactories = new HashMap<>();
 
     public void beforeStart(@Nullable UnitOfWork unitOfWork) {
         if (unitOfWork == null) {
@@ -59,51 +64,67 @@ public class UnitOfWorkAspect {
         }
         this.unitOfWork = unitOfWork;
 
-        sessionFactory = sessionFactories.get(unitOfWork.value());
-        if (sessionFactory == null) {
+        selectedSessionFactories = sessionFactories.entrySet()
+            .stream()
+            .filter(sessionFactoryEntry -> Arrays.asList(unitOfWork.value()).contains(sessionFactoryEntry.getKey()))
+            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+        if (selectedSessionFactories.isEmpty()
+            || selectedSessionFactories.size() != unitOfWork.value().length) {
+
             // If the user didn't specify the name of a session factory,
             // and we have only one registered, we can assume that it's the right one.
-            if (unitOfWork.value().equals(HibernateBundle.DEFAULT_NAME) && sessionFactories.size() == 1) {
-                sessionFactory = sessionFactories.values().iterator().next();
+            if (unitOfWork.value().length == 1
+                && unitOfWork.value()[0].equals(HibernateBundle.DEFAULT_NAME)
+                && sessionFactories.size() == 1) {
+
+                selectedSessionFactories = new HashMap<>();
+                selectedSessionFactories.putAll(sessionFactories);
             } else {
-                throw new IllegalArgumentException("Unregistered Hibernate bundle: '" + unitOfWork.value() + "'");
+                List<String> unregistered = Arrays.asList(unitOfWork.value()).stream()
+                    .filter(name -> !sessionFactories.containsKey(name))
+                    .collect(Collectors.toList());
+
+                throw new IllegalArgumentException("Unregistered Hibernate bundle/s: '" + String.join("','", unregistered) + "'");
             }
         }
-        session = sessionFactory.openSession();
+
+        sessions = selectedSessionFactories.entrySet().stream()
+            .map(entry -> Pair.of(entry.getKey(), entry.getValue().openSession()))
+            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
         try {
-            configureSession();
-            ManagedSessionContext.bind(session);
-            beginTransaction(unitOfWork, session);
+            configureSessions();
+            sessions.values().forEach(ManagedSessionContext::bind);
+            beginTransactions(unitOfWork, sessions);
         } catch (Throwable th) {
-            session.close();
-            session = null;
-            ManagedSessionContext.unbind(sessionFactory);
+            onFinish();
             throw th;
         }
     }
 
     public void afterEnd() {
-        if (unitOfWork == null || session == null) {
+        if (unitOfWork == null || sessions.isEmpty()) {
             return;
         }
 
         try {
-            commitTransaction(unitOfWork, session);
+            commitTransactions(unitOfWork, sessions);
         } catch (Exception e) {
-            rollbackTransaction(unitOfWork, session);
+            rollbackTransactions(unitOfWork, sessions);
             throw e;
         }
-        // We should not close the session to let the lazy loading work during serializing a response to the client.
-        // If the response successfully serialized, then the session will be closed by the `onFinish` method
+        // We should not close the sessions to let the lazy loading work during serializing a response to the client.
+        // If the response successfully serialized, then the sessions will be closed by the `onFinish` method
     }
 
     public void onError() {
-        if (unitOfWork == null || session == null) {
+        if (unitOfWork == null || sessions.isEmpty()) {
             return;
         }
 
         try {
-            rollbackTransaction(unitOfWork, session);
+            rollbackTransactions(unitOfWork, sessions);
         } finally {
             onFinish();
         }
@@ -111,56 +132,112 @@ public class UnitOfWorkAspect {
 
     public void onFinish() {
         try {
-            if (session != null) {
-                session.close();
+            //We need to ensure that all the sessions have been closed
+            //and also we need to inform about the exceptions
+            List<Optional<RuntimeException>> errors = sessions.values().stream()
+                .map(UnitOfWorkAspect::closeSession)
+                .filter(Optional::isPresent)
+                .collect(Collectors.toList());
+
+            if (!errors.isEmpty()) {
+                throw errors.iterator().next().get();
             }
         } finally {
-            session = null;
-            ManagedSessionContext.unbind(sessionFactory);
+            sessions = new HashMap<>();
+            selectedSessionFactories.values().forEach(ManagedSessionContext::unbind);
         }
     }
 
-    protected void configureSession() {
-        checkNotNull(unitOfWork);
-        checkNotNull(session);
-        session.setDefaultReadOnly(unitOfWork.readOnly());
-        session.setCacheMode(unitOfWork.cacheMode());
-        session.setHibernateFlushMode(unitOfWork.flushMode());
+    private static Optional<RuntimeException> closeSession(Session session) {
+        if (session != null) {
+            try {
+                session.close();
+            } catch (HibernateException e) {
+                return Optional.of(e);
+            }
+        }
+        return Optional.empty();
     }
 
-    private void beginTransaction(UnitOfWork unitOfWork, Session session) {
+    protected void configureSessions() {
+        sessions.values().stream().forEach(session -> {
+            checkNotNull(unitOfWork);
+            checkNotNull(session);
+            session.setDefaultReadOnly(unitOfWork.readOnly());
+            session.setCacheMode(unitOfWork.cacheMode());
+            session.setHibernateFlushMode(unitOfWork.flushMode());
+        });
+    }
+
+    private void beginTransactions(UnitOfWork unitOfWork, Map<String, Session> sessions) {
         if (!unitOfWork.transactional()) {
             return;
         }
-        session.beginTransaction();
+        sessions.values().forEach(Session::beginTransaction);
     }
 
-    private void rollbackTransaction(UnitOfWork unitOfWork, Session session) {
+    private static Optional<RuntimeException> rollbackTransaction(Session session) {
+        try {
+            final Transaction txn = session.getTransaction();
+            if (txn != null && txn.getStatus().canRollback()) {
+                txn.rollback();
+            }
+            return Optional.empty();
+        } catch (RuntimeException e) {
+            return Optional.of(e);
+        }
+    }
+
+    private void rollbackTransactions(UnitOfWork unitOfWork, Map<String, Session> sessions) {
         if (!unitOfWork.transactional()) {
             return;
         }
-        final Transaction txn = session.getTransaction();
-        if (txn != null && txn.getStatus().canRollback()) {
-            txn.rollback();
+
+        //We need to ensure that the changes in all the sessions have been rollbacked
+        //and also we need to inform about the exceptions
+        List<Optional<RuntimeException>> errors = sessions.values().stream()
+            .map(UnitOfWorkAspect::rollbackTransaction)
+            .filter(Optional::isPresent)
+            .collect(Collectors.toList());
+
+        if (!errors.isEmpty()) {
+            throw errors.iterator().next().get();
         }
     }
 
-    private void commitTransaction(UnitOfWork unitOfWork, Session session) {
+    private void commitTransactions(UnitOfWork unitOfWork, Map<String, Session> sessions) {
         if (!unitOfWork.transactional()) {
             return;
         }
-        final Transaction txn = session.getTransaction();
-        if (txn != null && txn.getStatus().canRollback()) {
-            txn.commit();
-        }
+
+        sessions.values().stream()
+            .map(Session::getTransaction)
+            .filter(txn -> (txn != null && txn.getStatus().canRollback()))
+            .forEach(Transaction::commit);
     }
 
     protected Session getSession() {
-        return requireNonNull(session);
+        checkState(sessions.size() == 1);
+
+        // If the user didn't specify the name of a session,
+        // and we have only one selected, we can assume that it's the right one.
+        return requireNonNull(sessions.values().iterator().next());
+    }
+
+    protected Session getSession(String name) {
+        return requireNonNull(sessions.get(name));
     }
 
     protected SessionFactory getSessionFactory() {
-        return requireNonNull(sessionFactory);
+        checkState(selectedSessionFactories.size() == 1);
+
+        // If the user didn't specify the name of a session factories,
+        // and we have only one selected, we can assume that it's the right one.
+        return requireNonNull(selectedSessionFactories.values().iterator().next());
+    }
+
+    protected SessionFactory getSessionFactory(String name) {
+        return requireNonNull(selectedSessionFactories.get(name));
     }
 
 }

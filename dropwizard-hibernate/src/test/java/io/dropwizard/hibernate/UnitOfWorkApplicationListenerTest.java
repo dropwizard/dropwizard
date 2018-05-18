@@ -234,11 +234,43 @@ public class UnitOfWorkApplicationListenerTest {
     }
 
     @Test
+    public void beginsAndCommitsATransactionForMultipleDatabases() throws Exception {
+        prepareResourceMethod("methodWithUnitOfWorkOnMultipleRegisteredDatabases");
+        execute();
+
+        final InOrder inOrderAnalytics = inOrder(analyticsSession, analyticsTransaction);
+        inOrderAnalytics.verify(analyticsSession).beginTransaction();
+        inOrderAnalytics.verify(analyticsTransaction).commit();
+        inOrderAnalytics.verify(analyticsSession).close();
+
+        final InOrder inOrderDefault = inOrder(session, transaction);
+        inOrderDefault.verify(session).beginTransaction();
+        inOrderDefault.verify(transaction).commit();
+        inOrderDefault.verify(session).close();
+    }
+
+    @Test
     public void throwsExceptionOnNotRegisteredDatabase() throws Exception {
         prepareResourceMethod("methodWithUnitOfWorkOnNotRegisteredDatabase");
         assertThatThrownBy(this::execute)
             .isInstanceOf(IllegalArgumentException.class)
-            .hasMessage("Unregistered Hibernate bundle: 'warehouse'");
+            .hasMessage("Unregistered Hibernate bundle/s: 'warehouse'");
+    }
+
+    @Test
+    public void throwsExceptionOnMultipleNotRegisteredDatabases() throws Exception {
+        prepareResourceMethod("methodWithUnitOfWorkOnMultipleNotRegisteredDatabases");
+        assertThatThrownBy(this::execute)
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("Unregistered Hibernate bundle/s: 'warehouse','audit'");
+    }
+
+    @Test
+    public void throwsExceptionOnRegisteredAndNotRegisteredDatabases() throws Exception {
+        prepareResourceMethod("methodWithUnitOfWorkOnRegisteredAndNotRegisteredDatabases");
+        assertThatThrownBy(this::execute)
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("Unregistered Hibernate bundle/s: 'warehouse'");
     }
 
     private void prepareResourceMethod(String resourceMethodName) throws NoSuchMethodException {
@@ -321,8 +353,23 @@ public class UnitOfWorkApplicationListenerTest {
 
         }
 
+        @UnitOfWork({"analytics", HibernateBundle.DEFAULT_NAME})
+        public void methodWithUnitOfWorkOnMultipleRegisteredDatabases() {
+
+        }
+
         @UnitOfWork("warehouse")
         public void methodWithUnitOfWorkOnNotRegisteredDatabase() {
+
+        }
+
+        @UnitOfWork({"warehouse", "audit"})
+        public void methodWithUnitOfWorkOnMultipleNotRegisteredDatabases() {
+
+        }
+
+        @UnitOfWork({"analytics", "warehouse"})
+        public void methodWithUnitOfWorkOnRegisteredAndNotRegisteredDatabases() {
 
         }
     }
