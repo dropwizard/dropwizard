@@ -352,7 +352,7 @@ and can be reused across tests.
 
         @Test
         public void loginHandlerRedirectsAfterPost() {
-            Client client = new JerseyClientBuilder(RULE.getEnvironment()).build("test client");
+            Client client = RULE.client();
 
             Response response = client.target(
                      String.format("http://localhost:%d/login", RULE.getLocalPort()))
