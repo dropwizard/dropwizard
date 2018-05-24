@@ -3,12 +3,17 @@ package io.dropwizard.logging;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.io.Resources;
+import io.dropwizard.configuration.FileConfigurationSourceProvider;
+import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
+import io.dropwizard.configuration.SubstitutingSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.util.Duration;
 import io.dropwizard.util.Size;
 import io.dropwizard.validation.BaseValidator;
+import org.apache.commons.text.StrSubstitutor;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -24,7 +29,6 @@ import java.util.concurrent.TimeUnit;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class TcpSocketAppenderFactoryTest {
-    private static final int TCP_PORT = 24562;
 
     @Rule
     public TcpServer tcpServer = new TcpServer(createServerSocket());
@@ -40,7 +44,7 @@ public class TcpSocketAppenderFactoryTest {
 
     private ServerSocket createServerSocket() {
         try {
-            return new ServerSocket(TCP_PORT);
+            return new ServerSocket(0);
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
@@ -65,7 +69,10 @@ public class TcpSocketAppenderFactoryTest {
 
     @Test
     public void testTestTcpLogging() throws Exception {
-        DefaultLoggingFactory loggingFactory = yamlConfigurationFactory.build(resourcePath("yaml/logging-tcp.yml"));
+        DefaultLoggingFactory loggingFactory = yamlConfigurationFactory.build(new SubstitutingSourceProvider(
+                new ResourceConfigurationSourceProvider(),
+                new StrSubstitutor(ImmutableMap.of("tcp.server.port", tcpServer.getPort()))),
+            "yaml/logging-tcp.yml");
         loggingFactory.configure(new MetricRegistry(), "tcp-test");
 
         Logger logger = LoggerFactory.getLogger("com.example.app");
@@ -80,8 +87,10 @@ public class TcpSocketAppenderFactoryTest {
 
     @Test
     public void testBufferingTcpLogging() throws Exception {
-        DefaultLoggingFactory loggingFactory = yamlConfigurationFactory.build(resourcePath(
-            "yaml/logging-tcp-buffered.yml"));
+        DefaultLoggingFactory loggingFactory = yamlConfigurationFactory.build(new SubstitutingSourceProvider(
+            new ResourceConfigurationSourceProvider(),
+                new StrSubstitutor(ImmutableMap.of("tcp.server.port", tcpServer.getPort()))),
+            "yaml/logging-tcp-buffered.yml");
         loggingFactory.configure(new MetricRegistry(), "tcp-test");
 
         Logger logger = LoggerFactory.getLogger("com.example.app");

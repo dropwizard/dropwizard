@@ -65,7 +65,7 @@ public class TlsSocketAppenderFactoryTest {
             new ResourceConfigurationSourceProvider(), new StrSubstitutor(ImmutableMap.of(
             "tls.trust_store.path", resourcePath("stores/tls_client.jks").getAbsolutePath(),
             "tls.trust_store.pass", "client_pass",
-            "tls.server_port", tcpServer.getServerSocket().getLocalPort()
+            "tls.server_port", tcpServer.getPort()
         ))), "yaml/logging-tls.yml");
         loggingFactory.configure(new MetricRegistry(), "tls-appender-test");
 

@@ -50,6 +50,10 @@ class TcpServer extends ExternalResource {
         return latch;
     }
 
+    int getPort() {
+        return serverSocket.getLocalPort();
+    }
+
     @Override
     protected void before() throws Throwable {
         thread.start();
