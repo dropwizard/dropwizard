@@ -6,6 +6,7 @@ import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.util.Size;
 import io.dropwizard.validation.BaseValidator;
+import org.eclipse.jetty.server.Handler;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -13,6 +14,7 @@ import java.io.File;
 import java.util.zip.Deflater;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 
 public class GzipHandlerFactoryTest {
     private GzipHandlerFactory gzip;
@@ -80,5 +82,29 @@ public class GzipHandlerFactoryTest {
         assertThat(handler.getIncludedMethods()).containsOnly("GET");
         assertThat(handler.getCompressionLevel()).isEqualTo(Deflater.DEFAULT_COMPRESSION);
         assertThat(handler.isInflateNoWrap()).isTrue();
+    }
+
+    @Test
+    public void testBuilderProperties() {
+        GzipHandlerFactory gzip = new GzipHandlerFactory();
+        gzip.setGzipCompatibleInflation(true); // Also known as "inflate no wrap"
+        gzip.setMinimumEntitySize(Size.bytes(4096));
+        gzip.setIncludedMethods(ImmutableSet.of("GET", "POST"));
+        gzip.setExcludedUserAgentPatterns(ImmutableSet.of("MSIE 6.0"));
+        gzip.setCompressedMimeTypes(ImmutableSet.of("text/html", "application/json"));
+        gzip.setExcludedMimeTypes(ImmutableSet.of("application/thrift"));
+        gzip.setIncludedPaths(ImmutableSet.of("/include/me"));
+        gzip.setExcludedPaths(ImmutableSet.of("/exclude/me"));
+        Handler handler = mock(Handler.class);
+        BiDiGzipHandler biDiGzipHandler = gzip.build(handler);
+
+        assertThat(biDiGzipHandler.isInflateNoWrap()).isTrue();
+        assertThat(biDiGzipHandler.getMinGzipSize()).isEqualTo(4096);
+        assertThat(biDiGzipHandler.getIncludedMethods()).containsExactlyInAnyOrder("GET", "POST");
+        assertThat(biDiGzipHandler.getExcludedAgentPatterns()).containsExactly("MSIE 6.0");
+        assertThat(biDiGzipHandler.getIncludedMimeTypes()).containsExactlyInAnyOrder("text/html", "application/json");
+        assertThat(biDiGzipHandler.getExcludedMimeTypes()).containsExactly("application/thrift");
+        assertThat(biDiGzipHandler.getIncludedPaths()).containsExactly("/include/me");
+        assertThat(biDiGzipHandler.getExcludedPaths()).containsExactly("/exclude/me");
     }
 }
