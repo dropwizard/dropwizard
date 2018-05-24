@@ -10,6 +10,7 @@ import io.dropwizard.testing.ConfigOverride;
 import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import io.dropwizard.util.Duration;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.glassfish.jersey.client.ClientResponse;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -28,6 +29,8 @@ import javax.ws.rs.core.Response;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.net.SocketException;
+import java.security.Security;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
 
@@ -233,6 +236,19 @@ public class DropwizardSSLConnectionSocketFactoryTest {
             .isInstanceOf(ProcessingException.class)
             .hasRootCauseInstanceOf(SSLException.class);
     }
+
+    @Test
+    public void supportsCustomJceProvider() {
+        tlsConfiguration.setProvider("SunJSSE");
+        assertThat(new JerseyClientBuilder(TLS_APP_RULE.getEnvironment())
+            .using(jerseyClientConfiguration)
+            .build("client_with_custom_jce_provider")
+            .target(String.format("https://localhost:%d", TLS_APP_RULE.getLocalPort()))
+            .request()
+            .get()
+            .getStatus()).isEqualTo(200);
+    }
+
 
     private static class FailVerifier implements HostnameVerifier {
         @Override
