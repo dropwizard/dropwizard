@@ -322,7 +322,7 @@ Or, for JUnit 5:
             }
         }
         
-        private static final DropwizardClientExtension dropwizard = new DropwizardClientExtension(PingResource.class);
+        private static final DropwizardClientExtension dropwizard = new DropwizardClientExtension(new PingResource());
         
         @Test
         void shouldPing() throws IOException {
