@@ -307,6 +307,30 @@ application containing your test doubles.
             assertEquals("pong", response);
         }
     }
+    
+Or, for JUnit 5:
+
+.. code-block:: java
+
+    @ExtendWith(DropwizardExtensionsSupport.class)
+    class CustomClientTest {
+        @Path("/ping")
+        public static final class PingResource {
+            @GET
+            public String ping() {
+                return "pong";
+            }
+        }
+        
+        private static final DropwizardClientExtension dropwizard = new DropwizardClientExtension(PingResource.class);
+        
+        @Test
+        void shouldPing() throws IOException {
+            final URL url = new URL(dropwizard.baseUri() + "/ping");
+            final String response = new BufferedReader(new InputStreamReader(url.openStream())).readLine();
+            assertEquals("pong", response);
+        }
+    }
 
 .. hint::
 
