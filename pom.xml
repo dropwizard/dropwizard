@@ -65,7 +65,7 @@
         <maven.compiler.forceJavacCompilerUse>true</maven.compiler.forceJavacCompilerUse>
         <argLine>-Duser.language=en -Duser.region=US</argLine>
 
-        <junit.version>4.12.3</junit.version>
+        <junit.version>4.12</junit.version>
         <junit5.version>5.2.0</junit5.version>
         <assertj.version>3.9.1</assertj.version>
         <mockito.version>2.15.0</mockito.version>
@@ -433,9 +433,9 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>org.junit.vintage</groupId>
-                <artifactId>junit-vintage-engine</artifactId>
-                <version>${junit5.version}</version>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>${junit.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -455,8 +455,8 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.junit.vintage</groupId>
-            <artifactId>junit-vintage-engine</artifactId>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
