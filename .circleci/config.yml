@@ -8,13 +8,6 @@ jobs:
       - image: circleci/openjdk:8-jdk
     steps:
       - checkout
-      - restore_cache:
-          key: dropwizard-{{ checksum "pom.xml" }}
-      - run: mvn dependency:go-offline
-      - save_cache:
-          paths:
-            - ~/.m2
-          key: dropwizard-{{ checksum "pom.xml" }}
       - run: mvn test
       - run:
           name: Save test results
