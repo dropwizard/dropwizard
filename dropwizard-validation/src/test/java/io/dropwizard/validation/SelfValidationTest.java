@@ -1,17 +1,32 @@
 package io.dropwizard.validation;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import javax.annotation.concurrent.NotThreadSafe;
+import javax.validation.Validator;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
 import io.dropwizard.validation.selfvalidating.SelfValidating;
 import io.dropwizard.validation.selfvalidating.SelfValidation;
 import io.dropwizard.validation.selfvalidating.ViolationCollector;
-import org.junit.Test;
+import uk.org.lidalia.slf4jext.Level;
+import uk.org.lidalia.slf4jtest.LoggingEvent;
+import uk.org.lidalia.slf4jtest.TestLoggerFactory;
 
-import javax.validation.Validator;
-
-import static org.assertj.core.api.Assertions.assertThat;
-
+@NotThreadSafe
 public class SelfValidationTest {
 
     private static final String FAILED = "failed";
+    private static final String FAILED_RESULT = " " + FAILED;
+    
+    @Before @After
+    public void clearAllLoggers() {
+        //this must be a clear all because the validation runs in other threads
+        TestLoggerFactory.clearAll();
+    }
 
     @SelfValidating
     public static class FailingExample {
@@ -19,6 +34,27 @@ public class SelfValidationTest {
         public void validateFail(ViolationCollector col) {
             col.addViolation(FAILED);
         }
+    }
+    
+    public static class SubclassExample extends FailingExample {
+        @SelfValidation
+        public void subValidateFail(ViolationCollector col) {
+            col.addViolation(FAILED+"subclass");
+        } 
+    }
+
+    @SelfValidating
+    public static class AnnotatedSubclassExample extends FailingExample {
+        @SelfValidation
+        public void subValidateFail(ViolationCollector col) {
+            col.addViolation(FAILED+"subclass");
+        } 
+    }
+    
+    public static class OverridingExample extends FailingExample {
+        @Override
+        public void validateFail(ViolationCollector col) {
+        } 
     }
 
     @SelfValidating
@@ -96,12 +132,46 @@ public class SelfValidationTest {
     @Test
     public void failingExample() throws Exception {
         assertThat(ConstraintViolations.format(validator.validate(new FailingExample())))
-            .containsOnly(" " + FAILED);
+            .containsExactlyInAnyOrder(FAILED_RESULT);
+        assertThat(TestLoggerFactory.getAllLoggingEvents())
+            .isEmpty();
+    }
+    
+    @Test
+    public void subClassExample() throws Exception {
+        assertThat(ConstraintViolations.format(validator.validate(new SubclassExample())))
+            .containsExactlyInAnyOrder(
+                    FAILED_RESULT,
+                    FAILED_RESULT+"subclass"
+            );
+        assertThat(TestLoggerFactory.getAllLoggingEvents())
+            .isEmpty();
+    }
+    
+    @Test
+    public void annotatedSubClassExample() throws Exception {
+        assertThat(ConstraintViolations.format(validator.validate(new AnnotatedSubclassExample())))
+            .containsExactlyInAnyOrder(
+                    FAILED_RESULT,
+                    FAILED_RESULT+"subclass"
+            );
+        assertThat(TestLoggerFactory.getAllLoggingEvents())
+            .isEmpty();
+    }
+    
+    @Test
+    public void overridingSubClassExample() throws Exception {
+        assertThat(ConstraintViolations.format(validator.validate(new OverridingExample())))
+            .isEmpty();
+        assertThat(TestLoggerFactory.getAllLoggingEvents())
+            .isEmpty();
     }
 
     @Test
     public void correctExample() throws Exception {
         assertThat(ConstraintViolations.format(validator.validate(new CorrectExample())))
+            .isEmpty();
+        assertThat(TestLoggerFactory.getAllLoggingEvents())
             .isEmpty();
     }
 
@@ -111,33 +181,67 @@ public class SelfValidationTest {
             .isEmpty();
         assertThat(ConstraintViolations.format(validator.validate(new CorrectExample())))
             .isEmpty();
+        assertThat(TestLoggerFactory.getAllLoggingEvents())
+            .isEmpty();
     }
 
     @Test
     public void testDirectContextUsage() throws Exception {
         assertThat(ConstraintViolations.format(validator.validate(new DirectContextExample())))
-            .containsOnly(" " + FAILED);
+            .containsExactlyInAnyOrder(FAILED_RESULT);
+        assertThat(TestLoggerFactory.getAllLoggingEvents())
+            .isEmpty();
     }
 
     @Test
     public void complexExample() throws Exception {
         assertThat(ConstraintViolations.format(validator.validate(new ComplexExample())))
-            .containsOnly(
-                " " + FAILED + "1",
-                " " + FAILED + "2",
-                " " + FAILED + "3"
+            .containsExactlyInAnyOrder(
+                FAILED_RESULT + "1",
+                FAILED_RESULT + "2",
+                FAILED_RESULT + "3"
             );
+        assertThat(TestLoggerFactory.getAllLoggingEvents())
+            .isEmpty();
     }
 
     @Test
     public void invalidExample() throws Exception {
         assertThat(ConstraintViolations.format(validator.validate(new InvalidExample())))
             .isEmpty();
+        assertThat(TestLoggerFactory.getAllLoggingEvents())
+            .containsExactlyInAnyOrder(
+                    new LoggingEvent(
+                            Level.ERROR, 
+                            "The method {} is annotated with @SelfValidation but does not have a single parameter of type {}",
+                            InvalidExample.class.getMethod("validateFailAdditionalParameters", ViolationCollector.class, int.class),
+                            ViolationCollector.class
+                    ),
+                    new LoggingEvent(
+                            Level.ERROR, 
+                            "The method {} is annotated with @SelfValidation but does not return void. It is ignored",
+                            InvalidExample.class.getMethod("validateFailReturn", ViolationCollector.class)
+                    ),
+                    new LoggingEvent(
+                            Level.ERROR, 
+                            "The method {} is annotated with @SelfValidation but is not public",
+                            InvalidExample.class.getDeclaredMethod("validateFailPrivate", ViolationCollector.class)
+                    )
+            );
     }
 
     @Test
     public void giveWarningIfNoValidationMethods() throws Exception {
         assertThat(ConstraintViolations.format(validator.validate(new NoValidations())))
             .isEmpty();
+        assertThat(TestLoggerFactory.getAllLoggingEvents())
+        .containsExactlyInAnyOrder(
+                new LoggingEvent(
+                        Level.WARN, 
+                        "The class {} is annotated with @SelfValidating but contains no valid methods that are annotated with @SelfValidation",
+                        NoValidations.class
+                )
+                
+        );
     }
 }
