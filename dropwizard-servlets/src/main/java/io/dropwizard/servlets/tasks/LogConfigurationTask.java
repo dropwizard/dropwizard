@@ -1,6 +1,7 @@
 package io.dropwizard.servlets.tasks;
 
 import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
 import com.google.common.collect.ImmutableMultimap;
 import org.slf4j.ILoggerFactory;
@@ -8,7 +9,10 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
 import java.io.PrintWriter;
+import java.time.Duration;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Sets the logging level for a number of loggers
@@ -33,6 +37,7 @@ import java.util.List;
 public class LogConfigurationTask extends Task {
 
     private final ILoggerFactory loggerContext;
+    private final Timer timer = new Timer(LogConfigurationTask.class.getSimpleName(), true);
 
     /**
      * Creates a new LogConfigurationTask.
@@ -57,10 +62,28 @@ public class LogConfigurationTask extends Task {
     public void execute(ImmutableMultimap<String, String> parameters, PrintWriter output) throws Exception {
         final List<String> loggerNames = getLoggerNames(parameters);
         final Level loggerLevel = getLoggerLevel(parameters);
+        final Duration duration = getDuration(parameters);
 
         for (String loggerName : loggerNames) {
-            ((LoggerContext) loggerContext).getLogger(loggerName).setLevel(loggerLevel);
-            output.println(String.format("Configured logging level for %s to %s", loggerName, loggerLevel));
+            Logger logger = ((LoggerContext) loggerContext).getLogger(loggerName);
+
+            String message = String.format("Configured logging level for %s to %s", loggerName, loggerLevel);
+
+            if (loggerLevel != null && duration != null) {
+                // Get the effective level before setting the new level
+                final Level effectiveLevel = logger.getEffectiveLevel();
+                final long millis = duration.toMillis();
+                timer.schedule(new TimerTask() {
+                    public void run() {
+                        logger.setLevel(effectiveLevel);
+                    }
+                }, millis);
+
+                message += String.format(" for %s milliseconds", millis);
+            }
+
+            logger.setLevel(loggerLevel);
+            output.println(message);
             output.flush();
         }
     }
@@ -73,5 +96,10 @@ public class LogConfigurationTask extends Task {
     private Level getLoggerLevel(ImmutableMultimap<String, String> parameters) {
         final List<String> loggerLevels = parameters.get("level").asList();
         return loggerLevels.isEmpty() ? null : Level.valueOf(loggerLevels.get(0));
+    }
+
+    private Duration getDuration(ImmutableMultimap<String, String> parameters) {
+        final List<String> durations = parameters.get("duration").asList();
+        return durations.isEmpty() ? null : Duration.parse(durations.get(0));
     }
 }

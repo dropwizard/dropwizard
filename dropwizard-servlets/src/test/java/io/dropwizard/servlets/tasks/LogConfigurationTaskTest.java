@@ -9,6 +9,7 @@ import org.junit.Test;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.time.Duration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -46,6 +47,30 @@ public class LogConfigurationTaskTest {
         assertThat(logger2.getLevel()).isEqualTo(DEFAULT_LEVEL);
 
         assertThat(stringWriter.toString()).isEqualTo(String.format("Configured logging level for logger.one to DEBUG%n"));
+    }
+
+    @Test
+    public void configuresSpecificLevelForALoggerForADuration() throws Exception {
+
+        long millis = 2000;
+
+        // given
+        ImmutableMultimap<String, String> parameters =
+        ImmutableMultimap.of(
+            "logger", "logger.one",
+            "level", "debug",
+            "duration", Duration.ofMillis(millis).toString());
+
+        // when
+        task.execute(parameters, output);
+
+        // then
+        assertThat(logger1.getLevel()).isEqualTo(Level.DEBUG);
+        assertThat(stringWriter.toString()).isEqualTo(String.format("Configured logging level for logger.one to DEBUG for %d milliseconds%n", millis));
+
+        // after
+        Thread.sleep(4000);
+        assertThat(logger1.getLevel()).isEqualTo(DEFAULT_LEVEL);
     }
 
     @Test
