@@ -74,15 +74,19 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 @JsonTypeName("syslog")
 public class SyslogAppenderFactory extends AbstractAppenderFactory<ILoggingEvent> {
     public enum Facility {
+        ALERT,
+        AUDIT,
         AUTH,
         AUTHPRIV,
         DAEMON,
+        CLOCK,
         CRON,
         FTP,
         LPR,
         KERN,
         MAIL,
         NEWS,
+        NTP,
         SYSLOG,
         USER,
         UUCP,
