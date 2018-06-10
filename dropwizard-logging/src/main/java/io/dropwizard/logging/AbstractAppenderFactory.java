@@ -21,6 +21,7 @@ import io.dropwizard.logging.async.AsyncAppenderFactory;
 import io.dropwizard.logging.filter.FilterFactory;
 import io.dropwizard.logging.layout.DiscoverableLayoutFactory;
 import io.dropwizard.logging.layout.LayoutFactory;
+import io.dropwizard.util.Duration;
 
 import javax.annotation.Nullable;
 import javax.validation.constraints.Max;
@@ -82,6 +83,22 @@ import static com.google.common.base.Strings.nullToEmpty;
  *         </td>
  *     </tr>
  *     <tr>
+ *         <td>{@code throttlingTimeWindow}</td>
+ *         <td>(none)</td>
+ *         <td>
+ *             Throttling time window. By default, there is no throttling.
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code maxMessagesPerThrottlingTimeWindow}</td>
+ *         <td>(none)</td>
+ *         <td>
+ *             Max number of messages sent during the throttling time window.
+ *             Used only if {@code throttlingTimeWindow} is defined.
+ *             Extra messages will be discarded.
+ *         </td>
+ *     </tr>
+ *     <tr>
  *         <td>{@code filterFactories}</td>
  *         <td>(none)</td>
  *         <td>
@@ -110,6 +127,13 @@ public abstract class AbstractAppenderFactory<E extends DeferredProcessingAware>
     private int queueSize = AsyncAppenderBase.DEFAULT_QUEUE_SIZE;
 
     private int discardingThreshold = -1;
+    
+    @Nullable
+    private Duration throttlingTimeWindow;
+    
+    @Min(1)
+    @Max(Integer.MAX_VALUE)
+    private int maxMessagesPerThrottlingTimeWindow = 1;
 
     private boolean includeCallerData = false;
 
@@ -135,6 +159,27 @@ public abstract class AbstractAppenderFactory<E extends DeferredProcessingAware>
     @JsonProperty
     public void setDiscardingThreshold(int discardingThreshold) {
         this.discardingThreshold = discardingThreshold;
+    }
+
+    @JsonProperty
+    @Nullable
+    public Duration getThrottlingTimeWindow() {
+        return throttlingTimeWindow;
+    }
+
+    @JsonProperty
+    public void setThrottlingTimeWindow(Duration throttlingTimeWindow) {
+        this.throttlingTimeWindow = throttlingTimeWindow;
+    }
+
+    @JsonProperty
+    public int getMaxMessagesPerThrottlingTimeWindow() {
+        return maxMessagesPerThrottlingTimeWindow;
+    }
+
+    @JsonProperty
+    public void setMaxMessagesPerThrottlingTimeWindow(int maxMessagesPerThrottlingTimeWindow) {
+        this.maxMessagesPerThrottlingTimeWindow = maxMessagesPerThrottlingTimeWindow;
     }
 
     @JsonProperty
@@ -224,7 +269,11 @@ public abstract class AbstractAppenderFactory<E extends DeferredProcessingAware>
         asyncAppender.addAppender(appender);
         asyncAppender.setNeverBlock(neverBlock);
         asyncAppender.start();
-        return asyncAppender;
+        if (throttlingTimeWindow == null) {
+            return asyncAppender;
+        } else {
+            return new ThrottlingAppenderWrapper<>(asyncAppender, throttlingTimeWindow, maxMessagesPerThrottlingTimeWindow);
+        }
     }
 
     @SuppressWarnings("unchecked")
