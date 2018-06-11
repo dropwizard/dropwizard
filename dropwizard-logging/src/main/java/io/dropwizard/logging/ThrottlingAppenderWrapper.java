@@ -4,9 +4,11 @@ import ch.qos.logback.core.Appender;
 import ch.qos.logback.core.Context;
 import ch.qos.logback.core.LogbackException;
 import ch.qos.logback.core.filter.Filter;
+import ch.qos.logback.core.spi.DeferredProcessingAware;
 import ch.qos.logback.core.spi.FilterReply;
 import ch.qos.logback.core.status.Status;
 import io.dropwizard.util.Duration;
+
 import java.util.List;
 
 /**
@@ -14,7 +16,7 @@ import java.util.List;
  * appender. Throttling is defined by a time window and a max number of messages
  * over this time window. Throttled messages are discarded.
  */
-class ThrottlingAppenderWrapper<E> implements Appender<E> {
+class ThrottlingAppenderWrapper<E extends DeferredProcessingAware> implements Appender<E> {
 
     private final Appender<E> delegate;
     private final long throttlingTimeWindow;
@@ -46,15 +48,18 @@ class ThrottlingAppenderWrapper<E> implements Appender<E> {
         boolean keep = true;
         long t = System.nanoTime();
         synchronized (timestamps) {
-            if (index == timestamps.length) {
-                if (timestamps[0] + throttlingTimeWindow > t) {
+            if (timestamps[index] != 0) {
+                // Check delta with first message of throttling time window
+                int first = index < timestamps.length - 1 ? index + 1 : 0;
+                if (timestamps[first] != 0 && timestamps[first] + throttlingTimeWindow > t) {
                     keep = false;
-                } else {
-                    System.arraycopy(timestamps, 1, timestamps, 0, timestamps.length - 1);
-                    timestamps[timestamps.length - 1] = t;
                 }
-            } else {
-                timestamps[index++] = t;
+            }
+            if (keep) {
+                timestamps[index] = t;
+                if (++index == timestamps.length) {
+                    index = 0;
+                }
             }
         }
         return keep;

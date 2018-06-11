@@ -1,0 +1,12 @@
+level: INFO
+loggers:
+  "com.example.app": INFO
+appenders:
+  - type: file
+    currentLogFilename: '${default}.log'
+    discardingThreshold: 0
+    throttlingTimeWindow: ${timeWindow}
+    maxMessagesPerThrottlingTimeWindow: ${maxMessages}
+    archivedLogFilenamePattern: '${default}-%d.log.gz'
+    logFormat: "%-5level %logger: %msg%n"
+    archivedFileCount: 5
