@@ -32,67 +32,67 @@ import java.math.BigDecimal;
  * <p/>
  * <b>Configuration Parameters:</b>
  * <table>
- * <tr>
- * <td>Name</td>
- * <td>Default</td>
- * <td>Description</td>
- * </tr>
- * <tr>
- * <td>{@code threshold}</td>
- * <td>ALL</td>
- * <td>The minimum event level the appender will handle.</td>
- * </tr>
- * <tr>
- * <td>{@code logFormat}</td>
- * <td>(none)</td>
- * <td>An appender-specific log format.</td>
- * </tr>
- * <tr>
- * <td>{@code timeZone}</td>
- * <td>{@code UTC}</td>
- * <td>
- * The time zone to which event timestamps will be converted. Ignored if
- * logFormat is supplied.
- * </td>
- * </tr>
- * <tr>
- * <td>{@code queueSize}</td>
- * <td>{@link AsyncAppenderBase}</td>
- * <td>The maximum capacity of the blocking queue.</td>
- * </tr>
- * <tr>
- * <td>{@code includeCallerData}</td>
- * <td>{@link AsyncAppenderBase}</td>
- * <td>
- * Whether to include caller data, required for line numbers. Beware, is
- * considered expensive.
- * </td>
- * </tr>
- * <tr>
- * <td>{@code discardingThreshold}</td>
- * <td>{@link AsyncAppenderBase}</td>
- * <td>
- * By default, when the blocking queue has 20% capacity remaining, it will drop
- * events of level TRACE, DEBUG and INFO, keeping only events of level WARN and
- * ERROR. To keep all events, set discardingThreshold to 0.
- * </td>
- * </tr>
- * <tr>
- * <td>{@code maxMessagesPerSecond}</td>
- * <td>(none)</td>
- * <td>
- * Throttling: maximum number of messages per second. Throttled messages are
- * discarded. By default, this is not set and throttling is disabled.
- * </td>
- * </tr>
- * <tr>
- * <td>{@code filterFactories}</td>
- * <td>(none)</td>
- * <td>
- * A list of {@link FilterFactory filters} to apply to the appender, in order,
- * after the {@code threshold}.
- * </td>
- * </tr>
+ *     <tr>
+ *         <td>Name</td>
+ *         <td>Default</td>
+ *         <td>Description</td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code threshold}</td>
+ *         <td>ALL</td>
+ *         <td>The minimum event level the appender will handle.</td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code logFormat}</td>
+ *         <td>(none)</td>
+ *         <td>An appender-specific log format.</td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code timeZone}</td>
+ *         <td>{@code UTC}</td>
+ *         <td>
+ *             The time zone to which event timestamps will be converted.
+ *             Ignored if logFormat is supplied.
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code queueSize}</td>
+ *         <td>{@link AsyncAppenderBase}</td>
+ *         <td>The maximum capacity of the blocking queue.</td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code includeCallerData}</td>
+ *         <td>{@link AsyncAppenderBase}</td>
+ *         <td>
+ *             Whether to include caller data, required for line numbers.
+ *             Beware, is considered expensive.
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code discardingThreshold}</td>
+ *         <td>{@link AsyncAppenderBase}</td>
+ *         <td>
+ *             By default, when the blocking queue has 20% capacity remaining,
+ *             it will drop events of level TRACE, DEBUG and INFO, keeping only
+ *             events of level WARN and ERROR. To keep all events, set discardingThreshold to 0.
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code maxMessagesPerSecond}</td>
+ *         <td>
+ *             Throttling: maximum number of messages per second.
+ *             Throttled messages are discarded.
+ *             By default, this is not set and throttling is disabled.
+ *         </td>
+ *     </tr>
+ *     <tr>
+ *         <td>{@code filterFactories}</td>
+ *         <td>(none)</td>
+ *         <td>
+ *             A list of {@link FilterFactory filters} to apply to the appender, in order,
+ *             after the {@code threshold}.
+ *         </td>
+ *     </tr>
  * </table>
  */
 public abstract class AbstractAppenderFactory<E extends DeferredProcessingAware> implements AppenderFactory<E> {
