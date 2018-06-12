@@ -245,7 +245,7 @@ public abstract class AbstractAppenderFactory<E extends DeferredProcessingAware>
         if (maxMessagesPerSecond == null) {
             return asyncAppender;
         } else {
-            return new ThrottlingAppenderWrapper<>(asyncAppender, maxMessagesPerSecond.doubleValue());
+            return new ThrottlingAppenderWrapper(asyncAppender, maxMessagesPerSecond.doubleValue());
         }
     }
 

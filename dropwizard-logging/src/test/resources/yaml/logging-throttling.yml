@@ -4,9 +4,9 @@ loggers:
 appenders:
   - type: file
     currentLogFilename: '${default}.log'
+    queueSize: 10000
     discardingThreshold: 0
-    throttlingTimeWindow: ${timeWindow}
-    maxMessagesPerThrottlingTimeWindow: ${maxMessages}
+    maxMessagesPerSecond: ${maxMessagesPerSecond}
     archivedLogFilenamePattern: '${default}-%d.log.gz'
     logFormat: "%-5level %logger: %msg%n"
     archivedFileCount: 5

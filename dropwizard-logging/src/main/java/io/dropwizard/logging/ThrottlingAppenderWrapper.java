@@ -1,6 +1,7 @@
 package io.dropwizard.logging;
 
 import ch.qos.logback.core.Appender;
+import ch.qos.logback.core.AsyncAppenderBase;
 import ch.qos.logback.core.Context;
 import ch.qos.logback.core.LogbackException;
 import ch.qos.logback.core.filter.Filter;
@@ -10,117 +11,122 @@ import ch.qos.logback.core.status.Status;
 import com.google.common.util.concurrent.RateLimiter;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
- * An {@link Appender} implementation that applies throttling to a delegate
- * appender. Throttling is defined by the max number of messages per second.
+ * An {@link AsyncAppenderBase} that applies throttling to a proxied appender.
+ * Throttling is defined by the max number of messages per second.
  * Throttled messages are discarded.
  */
-class ThrottlingAppenderWrapper<E extends DeferredProcessingAware> implements Appender<E> {
+class ThrottlingAppenderWrapper<E extends DeferredProcessingAware> implements Appender<E>, AsyncAppenderBaseProxy<E> {
 
-    private final Appender<E> delegate;
+    private final AsyncAppenderBase<E> appender;
     private final RateLimiter rateLimiter;
 
-    public ThrottlingAppenderWrapper(Appender<E> delegate, double maxMessagesPerSecond) {
-        this.delegate = delegate;
+    public ThrottlingAppenderWrapper(AsyncAppenderBase<E> delegate, double maxMessagesPerSecond) {
+        this.appender = delegate;
         this.rateLimiter = RateLimiter.create(maxMessagesPerSecond);
     }
 
     @Override
+    public AsyncAppenderBase<E> getAppender() {
+        return appender;
+    }
+
+    @Override
     public void start() {
-        delegate.start();
+        appender.start();
     }
 
     @Override
     public void stop() {
-        delegate.stop();
+        appender.stop();
     }
 
     @Override
     public boolean isStarted() {
-        return delegate.isStarted();
+        return appender.isStarted();
     }
 
     @Override
     public void doAppend(E event) throws LogbackException {
         if (rateLimiter.tryAcquire()) {
-            delegate.doAppend(event);
+            appender.doAppend(event);
         }
     }
 
     @Override
     public String getName() {
-        return delegate.getName();
+        return appender.getName();
     }
 
     @Override
     public void setName(String name) {
-        delegate.setName(name);
+        appender.setName(name);
     }
 
     @Override
     public Context getContext() {
-        return delegate.getContext();
+        return appender.getContext();
     }
 
     @Override
     public void setContext(Context context) {
-        delegate.setContext(context);
+        appender.setContext(context);
     }
 
     @Override
     public void addStatus(Status status) {
-        delegate.addStatus(status);
+        appender.addStatus(status);
     }
 
     @Override
     public void addInfo(String msg) {
-        delegate.addInfo(msg);
+        appender.addInfo(msg);
     }
 
     @Override
     public void addInfo(String msg, Throwable ex) {
-        delegate.addInfo(msg, ex);
+        appender.addInfo(msg, ex);
     }
 
     @Override
     public void addWarn(String msg) {
-        delegate.addWarn(msg);
+        appender.addWarn(msg);
     }
 
     @Override
     public void addWarn(String msg, Throwable ex) {
-        delegate.addWarn(msg, ex);
+        appender.addWarn(msg, ex);
     }
 
     @Override
     public void addError(String msg) {
-        delegate.addError(msg);
+        appender.addError(msg);
     }
 
     @Override
     public void addError(String msg, Throwable ex) {
-        delegate.addError(msg, ex);
+        appender.addError(msg, ex);
     }
 
     @Override
     public void addFilter(Filter<E> newFilter) {
-        delegate.addFilter(newFilter);
+        appender.addFilter(newFilter);
     }
 
     @Override
     public void clearAllFilters() {
-        delegate.clearAllFilters();
+        appender.clearAllFilters();
     }
 
     @Override
     public List<Filter<E>> getCopyOfAttachedFiltersList() {
-        return delegate.getCopyOfAttachedFiltersList();
+        return appender.getCopyOfAttachedFiltersList();
     }
 
     @Override
     public FilterReply getFilterChainDecision(E event) {
-        return delegate.getFilterChainDecision(event);
+        return appender.getFilterChainDecision(event);
     }
-
 }

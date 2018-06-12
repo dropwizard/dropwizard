@@ -38,11 +38,10 @@ public class ThrottlingAppenderTest {
         return folder.newFile("throttling.log");
     }
 
-    private DefaultLoggingFactory setup(File defaultLog, String timeWindow, int maxMessages) throws Exception {
+    private DefaultLoggingFactory setup(File defaultLog, double maxMessagesPerSecond) throws Exception {
         StrSubstitutor substitutor = new StrSubstitutor(ImmutableMap.of(
             "default", StringUtils.removeEnd(defaultLog.getAbsolutePath(), ".log"),
-            "timeWindow", timeWindow,
-            "maxMessages", maxMessages
+            "maxMessagesPerSecond", maxMessagesPerSecond
         ));
         String configPath = Resources.getResource("yaml/logging-throttling.yml").getFile();
         DefaultLoggingFactory config = factory.build(
@@ -53,10 +52,11 @@ public class ThrottlingAppenderTest {
     }
 
     @Test
-    public void first10Messages() throws Exception {
+    public void overThrottlingLimit() throws Exception {
         File defaultLog = newLog();
-        DefaultLoggingFactory config = setup(defaultLog,"1s", 10);
+        DefaultLoggingFactory config = setup(defaultLog, 10);
         Logger logger = LoggerFactory.getLogger("com.example.app");
+        Thread.sleep(1000);
         for (int i = 0; i < 100; i++) {
             logger.info("Application log {}", i);
         }
@@ -71,38 +71,59 @@ public class ThrottlingAppenderTest {
             "INFO  com.example.app: Application log 6",
             "INFO  com.example.app: Application log 7",
             "INFO  com.example.app: Application log 8",
-            "INFO  com.example.app: Application log 9");
-    }
-
-    @Test
-    public void oneMessagePerTimeWindow() throws Exception {
-        File defaultLog = newLog();
-        DefaultLoggingFactory config = setup(defaultLog,"100ms", 1);
-        Logger logger = LoggerFactory.getLogger("com.example.app");
-        for (int i = 0; i < 10; i++) {
-            logger.info("Application log {}", i);
-            Thread.sleep(50);
-        }
-        config.stop();
-        assertThat(Files.readAllLines(defaultLog.toPath())).containsOnly(
-            "INFO  com.example.app: Application log 0",
-            "INFO  com.example.app: Application log 2",
-            "INFO  com.example.app: Application log 4",
-            "INFO  com.example.app: Application log 6",
-            "INFO  com.example.app: Application log 8"
-        );
+            "INFO  com.example.app: Application log 9",
+            "INFO  com.example.app: Application log 10");
     }
 
     @Test
     public void belowThrottlingLimit() throws Exception {
         File defaultLog = newLog();
-        DefaultLoggingFactory config = setup(defaultLog,"1s", 1000);
+        DefaultLoggingFactory config = setup(defaultLog, 1000);
         Logger logger = LoggerFactory.getLogger("com.example.app");
+        Thread.sleep(1000);
         for (int i = 0; i < 1000; i++) {
             logger.info("Application log {}", i);
         }
         config.stop();
         assertThat(Files.readAllLines(defaultLog.toPath())).size().isEqualTo(1000);
+    }
+
+    @Test
+    public void overThrottlingLimit2Seconds() throws Exception {
+        File defaultLog = newLog();
+        DefaultLoggingFactory config = setup(defaultLog, 10);
+        Logger logger = LoggerFactory.getLogger("com.example.app");
+        Thread.sleep(1000);
+        for (int i = 0; i < 100; i++) {
+            if (i == 50) {
+                Thread.sleep(1000);
+            }
+            logger.info("Application log {}", i);
+        }
+        config.stop();
+        assertThat(Files.readAllLines(defaultLog.toPath())).containsOnly(
+            "INFO  com.example.app: Application log 0",
+            "INFO  com.example.app: Application log 1",
+            "INFO  com.example.app: Application log 2",
+            "INFO  com.example.app: Application log 3",
+            "INFO  com.example.app: Application log 4",
+            "INFO  com.example.app: Application log 5",
+            "INFO  com.example.app: Application log 6",
+            "INFO  com.example.app: Application log 7",
+            "INFO  com.example.app: Application log 8",
+            "INFO  com.example.app: Application log 9",
+            "INFO  com.example.app: Application log 10",
+            "INFO  com.example.app: Application log 50",
+            "INFO  com.example.app: Application log 51",
+            "INFO  com.example.app: Application log 52",
+            "INFO  com.example.app: Application log 53",
+            "INFO  com.example.app: Application log 54",
+            "INFO  com.example.app: Application log 55",
+            "INFO  com.example.app: Application log 56",
+            "INFO  com.example.app: Application log 57",
+            "INFO  com.example.app: Application log 58",
+            "INFO  com.example.app: Application log 59"
+        );
     }
 
 }
