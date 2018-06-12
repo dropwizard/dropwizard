@@ -7,26 +7,23 @@ import ch.qos.logback.core.filter.Filter;
 import ch.qos.logback.core.spi.DeferredProcessingAware;
 import ch.qos.logback.core.spi.FilterReply;
 import ch.qos.logback.core.status.Status;
-import io.dropwizard.util.Duration;
+import com.google.common.util.concurrent.RateLimiter;
 
 import java.util.List;
 
 /**
  * An {@link Appender} implementation that applies throttling to a delegate
- * appender. Throttling is defined by a time window and a max number of messages
- * over this time window. Throttled messages are discarded.
+ * appender. Throttling is defined by the max number of messages per second.
+ * Throttled messages are discarded.
  */
 class ThrottlingAppenderWrapper<E extends DeferredProcessingAware> implements Appender<E> {
 
     private final Appender<E> delegate;
-    private final long throttlingTimeWindow;
-    private final long[] timestamps;
-    private int index;
+    private final RateLimiter rateLimiter;
 
-    public ThrottlingAppenderWrapper(Appender<E> delegate, Duration throttlingTimeWindow, int maxMessagesPerThrottlingTimeWindow) {
+    public ThrottlingAppenderWrapper(Appender<E> delegate, double maxMessagesPerSecond) {
         this.delegate = delegate;
-        this.throttlingTimeWindow = throttlingTimeWindow.toNanoseconds();
-        this.timestamps = new long[maxMessagesPerThrottlingTimeWindow];
+        this.rateLimiter = RateLimiter.create(maxMessagesPerSecond);
     }
 
     @Override
@@ -44,30 +41,9 @@ class ThrottlingAppenderWrapper<E extends DeferredProcessingAware> implements Ap
         return delegate.isStarted();
     }
 
-    private boolean keepMessage() {
-        boolean keep = true;
-        long t = System.nanoTime();
-        synchronized (timestamps) {
-            if (timestamps[index] != 0) {
-                // Check delta with first message of throttling time window
-                int first = index < timestamps.length - 1 ? index + 1 : 0;
-                if (timestamps[first] != 0 && timestamps[first] + throttlingTimeWindow > t) {
-                    keep = false;
-                }
-            }
-            if (keep) {
-                timestamps[index] = t;
-                if (++index == timestamps.length) {
-                    index = 0;
-                }
-            }
-        }
-        return keep;
-    }
-
     @Override
     public void doAppend(E event) throws LogbackException {
-        if (keepMessage()) {
+        if (rateLimiter.tryAcquire()) {
             delegate.doAppend(event);
         }
     }
