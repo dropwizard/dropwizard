@@ -183,8 +183,8 @@ public abstract class AbstractAppenderFactory<E extends DeferredProcessingAware>
 
     @JsonProperty
     public void setTimeZone(String zoneId) {
-        this.timeZone = nullToEmpty(zoneId).equalsIgnoreCase("system") ? TimeZone.getDefault()
-                : TimeZone.getTimeZone(zoneId);
+        this.timeZone = nullToEmpty(zoneId).equalsIgnoreCase("system") ? TimeZone.getDefault() :
+            TimeZone.getTimeZone(zoneId);
     }
 
     @JsonProperty
