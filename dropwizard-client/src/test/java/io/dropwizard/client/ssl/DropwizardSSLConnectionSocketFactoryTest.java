@@ -10,8 +10,13 @@ import io.dropwizard.testing.ConfigOverride;
 import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import io.dropwizard.util.Duration;
+import org.apache.http.conn.ssl.SSLInitializationException;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.glassfish.jersey.client.ClientResponse;
+import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
 
@@ -28,6 +33,7 @@ import javax.ws.rs.core.Response;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.net.SocketException;
+import java.security.Security;
 import java.util.Collections;
 import java.util.Optional;
 
@@ -37,6 +43,7 @@ import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.catchThrowable;
+import static org.bouncycastle.jce.provider.BouncyCastleProvider.PROVIDER_NAME;
 
 public class DropwizardSSLConnectionSocketFactoryTest {
     private TlsConfiguration tlsConfiguration;
@@ -61,6 +68,15 @@ public class DropwizardSSLConnectionSocketFactoryTest {
         }
     }
 
+    static {
+        Security.addProvider(new BouncyCastleProvider());
+    }
+
+    @AfterClass
+    public static void classTearDown() throws Exception {
+        Security.removeProvider(PROVIDER_NAME);
+    }
+
     @ClassRule
     public static final DropwizardAppRule<Configuration> TLS_APP_RULE = new DropwizardAppRule<>(TlsTestApplication.class,
         ResourceHelpers.resourceFilePath("yaml/ssl_connection_socket_factory_test.yml"),
@@ -75,7 +91,16 @@ public class DropwizardSSLConnectionSocketFactoryTest {
         ConfigOverride.config("tls", "server.applicationConnectors[2].trustStorePassword", "password"),
         ConfigOverride.config("tls", "server.applicationConnectors[3].keyStorePath", ResourceHelpers.resourceFilePath("stores/server/bad_host_keycert.p12")),
         ConfigOverride.config("tls", "server.applicationConnectors[4].keyStorePath", ResourceHelpers.resourceFilePath("stores/server/keycert.p12")),
-        ConfigOverride.config("tls", "server.applicationConnectors[4].supportedProtocols", "SSLv1,SSLv2,SSLv3"));
+        ConfigOverride.config("tls", "server.applicationConnectors[4].supportedProtocols", "SSLv1,SSLv2,SSLv3"),
+        ConfigOverride.config("tls", "server.applicationConnectors[5].keyStorePath", ResourceHelpers.resourceFilePath("stores/server/acme-ssl.keystore.p12")),
+        ConfigOverride.config("tls", "server.applicationConnectors[5].trustStorePath", ResourceHelpers.resourceFilePath("stores/server/acme-ssl.truststore.p12")),
+        ConfigOverride.config("tls", "server.applicationConnectors[5].wantClientAuth", "true"),
+        ConfigOverride.config("tls", "server.applicationConnectors[5].needClientAuth", "true"),
+        ConfigOverride.config("tls", "server.applicationConnectors[5].validatePeers", "true"),
+        ConfigOverride.config("tls", "server.applicationConnectors[5].trustStorePassword", "acme01"),
+        ConfigOverride.config("tls", "server.applicationConnectors[5].keyStorePassword", "acme01"),
+        ConfigOverride.config("tls", "server.applicationConnectors[5].trustStoreProvider", PROVIDER_NAME),
+        ConfigOverride.config("tls", "server.applicationConnectors[5].keyStoreProvider", PROVIDER_NAME));
 
     @Before
     public void setUp() throws Exception {
@@ -234,6 +259,41 @@ public class DropwizardSSLConnectionSocketFactoryTest {
             .hasRootCauseInstanceOf(SSLException.class);
     }
 
+    @Test(expected = SSLInitializationException.class)
+    public void shouldFailDueDefaultProviderInsufficiency() throws Exception {
+        tlsConfiguration.setKeyStorePath(new File(ResourceHelpers.resourceFilePath("stores/client/acme-ssl.keystore.p12")));
+        tlsConfiguration.setKeyStorePassword("acme01");
+        tlsConfiguration.setKeyStoreType("PKCS12");
+        tlsConfiguration.setCertAlias("acme-ssl");
+        tlsConfiguration.setTrustStorePath(new File(ResourceHelpers.resourceFilePath("stores/server/acme-ssl.truststore.p12")));
+        tlsConfiguration.setTrustStorePassword("acme01");
+        tlsConfiguration.setTrustStoreType("PKCS12");
+
+        new JerseyClientBuilder(TLS_APP_RULE.getEnvironment()).using(jerseyClientConfiguration).build("reject_provider_non_supported");
+    }
+
+    @Test
+    public void shouldSucceedWithBcProvider() throws Exception {
+        // switching host verifier off for simplicity
+        tlsConfiguration.setVerifyHostname(false);
+
+        tlsConfiguration.setKeyStorePath(new File(ResourceHelpers.resourceFilePath("stores/client/acme-ssl.keystore.p12")));
+        tlsConfiguration.setKeyStorePassword("acme01");
+        tlsConfiguration.setKeyStoreType("PKCS12");
+        tlsConfiguration.setKeyStoreProvider(PROVIDER_NAME);
+        tlsConfiguration.setCertAlias("acme-ssl");
+
+        tlsConfiguration.setTrustStorePath(new File(ResourceHelpers.resourceFilePath("stores/server/acme-ssl.truststore.p12")));
+        tlsConfiguration.setTrustStorePassword("acme01");
+        tlsConfiguration.setTrustStoreType("PKCS12");
+        tlsConfiguration.setTrustStoreProvider(PROVIDER_NAME);
+
+        final Client client = new JerseyClientBuilder(TLS_APP_RULE.getEnvironment()).using(jerseyClientConfiguration).build("custom_jce_supported");
+        final Response response = client.target(String.format("https://localhost:%d", TLS_APP_RULE.getPort(5))).request().get();
+
+        assertThat(response.getStatus()).isEqualTo(200);
+    }
+    
     private static class FailVerifier implements HostnameVerifier {
         @Override
         public boolean verify(String arg0, SSLSession arg1) {
