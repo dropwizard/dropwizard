@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.TimeZone;
 
 import static com.google.common.base.Strings.nullToEmpty;
-import java.math.BigDecimal;
 
 /**
  * A base implementation of {@link AppenderFactory}.
@@ -115,8 +114,7 @@ public abstract class AbstractAppenderFactory<E extends DeferredProcessingAware>
 
     private int discardingThreshold = -1;
 
-    @Nullable
-    private BigDecimal maxMessagesPerSecond;
+    private double maxMessagesPerSecond = -1;
 
     private boolean includeCallerData = false;
 
@@ -145,13 +143,12 @@ public abstract class AbstractAppenderFactory<E extends DeferredProcessingAware>
     }
 
     @JsonProperty
-    @Nullable
-    public BigDecimal getMaxMessagesPerSecond() {
+    public double getMaxMessagesPerSecond() {
         return maxMessagesPerSecond;
     }
 
     @JsonProperty
-    public void setMaxMessagesPerSecond(BigDecimal maxMessagesPerSecond) {
+    public void setMaxMessagesPerSecond(double maxMessagesPerSecond) {
         this.maxMessagesPerSecond = maxMessagesPerSecond;
     }
 
@@ -242,10 +239,10 @@ public abstract class AbstractAppenderFactory<E extends DeferredProcessingAware>
         asyncAppender.addAppender(appender);
         asyncAppender.setNeverBlock(neverBlock);
         asyncAppender.start();
-        if (maxMessagesPerSecond == null) {
+        if (maxMessagesPerSecond < 0) {
             return asyncAppender;
         } else {
-            return new ThrottlingAppenderWrapper(asyncAppender, maxMessagesPerSecond.doubleValue());
+            return new ThrottlingAppenderWrapper(asyncAppender, maxMessagesPerSecond);
         }
     }
 
