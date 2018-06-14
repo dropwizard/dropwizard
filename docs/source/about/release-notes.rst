@@ -4,6 +4,14 @@
 Release Notes
 #############
 
+.. _rel-1.2.6:
+
+v1.2.6: May 11, 2018
+====================
+
+* Upgrade Jetty to 9.4.10.v20180503 `#2346 <https://github.com/dropwizard/dropwizard/pull/2346>`_
+* Add possibility to disable logging bootstrap for ResourceTestRule `#2333 <https://github.com/dropwizard/dropwizard/pull/2333>`_
+
 .. _rel-1.2.5:
 
 v1.2.5: Apr 4, 2018
