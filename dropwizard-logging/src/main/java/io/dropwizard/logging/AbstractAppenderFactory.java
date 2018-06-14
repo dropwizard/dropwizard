@@ -18,6 +18,7 @@ import io.dropwizard.logging.layout.DiscoverableLayoutFactory;
 import io.dropwizard.logging.layout.LayoutFactory;
 
 import javax.annotation.Nullable;
+import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -114,7 +115,9 @@ public abstract class AbstractAppenderFactory<E extends DeferredProcessingAware>
 
     private int discardingThreshold = -1;
 
-    private double maxMessagesPerSecond = -1;
+    @Nullable
+    @DecimalMin(value="0", inclusive = false)
+    private Double maxMessagesPerSecond;
 
     private boolean includeCallerData = false;
 
@@ -143,12 +146,13 @@ public abstract class AbstractAppenderFactory<E extends DeferredProcessingAware>
     }
 
     @JsonProperty
-    public double getMaxMessagesPerSecond() {
+    @Nullable
+    public Double getMaxMessagesPerSecond() {
         return maxMessagesPerSecond;
     }
 
     @JsonProperty
-    public void setMaxMessagesPerSecond(double maxMessagesPerSecond) {
+    public void setMaxMessagesPerSecond(Double maxMessagesPerSecond) {
         this.maxMessagesPerSecond = maxMessagesPerSecond;
     }
 

@@ -4,6 +4,7 @@ import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.Resources;
+import io.dropwizard.configuration.ConfigurationValidationException;
 import io.dropwizard.configuration.FileConfigurationSourceProvider;
 import io.dropwizard.configuration.SubstitutingSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
@@ -19,6 +20,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -30,6 +32,24 @@ public class ThrottlingAppenderTest {
         BaseValidator.newValidator(),
         objectMapper, "dw");
 
+
+    private static File loadResource(String resourceName) throws URISyntaxException {
+        return new File(Resources.getResource(resourceName).toURI());
+    }
+
+    @Test(expected = ConfigurationValidationException.class)
+    public void appenderWithZeroMaxMessagesPerSecond() throws Exception {
+        final YamlConfigurationFactory<ConsoleAppenderFactory> factory = new YamlConfigurationFactory<>(
+            ConsoleAppenderFactory.class, BaseValidator.newValidator(), Jackson.newObjectMapper(), "dw");
+        final ConsoleAppenderFactory appender = factory.build(loadResource("yaml/appender_with_zero_throttling.yml"));
+    }
+
+    @Test(expected = ConfigurationValidationException.class)
+    public void appenderWithNegativeMaxMessagesPerSecond() throws Exception {
+        final YamlConfigurationFactory<ConsoleAppenderFactory> factory = new YamlConfigurationFactory<>(
+            ConsoleAppenderFactory.class, BaseValidator.newValidator(), Jackson.newObjectMapper(), "dw");
+        final ConsoleAppenderFactory appender = factory.build(loadResource("yaml/appender_with_negative_throttling.yml"));
+    }
 
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
@@ -43,10 +63,9 @@ public class ThrottlingAppenderTest {
             "default", StringUtils.removeEnd(defaultLog.getAbsolutePath(), ".log"),
             "maxMessagesPerSecond", maxMessagesPerSecond
         ));
-        String configPath = Resources.getResource("yaml/logging-throttling.yml").getFile();
         DefaultLoggingFactory config = factory.build(
             new SubstitutingSourceProvider(new FileConfigurationSourceProvider(), substitutor),
-            configPath);
+            loadResource("yaml/logging-throttling.yml").getPath());
         config.configure(new MetricRegistry(), "test-logger");
         return config;
     }
