@@ -4,6 +4,14 @@
 Release Notes
 #############
 
+.. _rel-1.3.4:
+
+v1.3.4: Jun 14, 2018
+====================
+
+* Upgrade to Jackson 2.9.6 to fix CVE-2018-12022 and CVE-2018-12023 (`#2392 <https://github.com/dropwizard/dropwizard/issues/2392>`_, `#2393 <https://github.com/dropwizard/dropwizard/pull/2393>`_)
+* Upgrade to Liquibase 3.6.1 (`#2385 <https://github.com/dropwizard/dropwizard/issues/2385>`_, `#2386 <https://github.com/dropwizard/dropwizard/pull/2386>`_)
+
 .. _rel-1.2.7:
 
 v1.2.7: Jun 14, 2018
