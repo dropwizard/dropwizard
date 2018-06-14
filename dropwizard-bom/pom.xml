@@ -152,7 +152,7 @@
             <dependency>
                 <groupId>org.liquibase</groupId>
                 <artifactId>liquibase-core</artifactId>
-                <version>3.6.0</version>
+                <version>3.6.1</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.yaml</groupId>
