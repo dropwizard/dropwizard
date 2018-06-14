@@ -243,7 +243,7 @@ public abstract class AbstractAppenderFactory<E extends DeferredProcessingAware>
         asyncAppender.addAppender(appender);
         asyncAppender.setNeverBlock(neverBlock);
         asyncAppender.start();
-        if (maxMessagesPerSecond < 0) {
+        if (maxMessagesPerSecond == null) {
             return asyncAppender;
         } else {
             return new ThrottlingAppenderWrapper(asyncAppender, maxMessagesPerSecond);
