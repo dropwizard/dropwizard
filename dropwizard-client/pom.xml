@@ -33,10 +33,6 @@
             <artifactId>jersey-client</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.glassfish.jersey.ext.rx</groupId>
-            <artifactId>jersey-rx-client</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
         </dependency>
@@ -49,13 +45,13 @@
             <artifactId>jersey-apache-connector</artifactId>
         </dependency>
         <dependency>
-            <groupId>io.dropwizard</groupId>
-            <artifactId>dropwizard-testing</artifactId>
+            <groupId>org.glassfish.jersey.ext.rx</groupId>
+            <artifactId>jersey-rx-client-rxjava2</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.glassfish.jersey.ext.rx</groupId>
-            <artifactId>jersey-rx-client-java8</artifactId>
+            <groupId>io.dropwizard</groupId>
+            <artifactId>dropwizard-testing</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

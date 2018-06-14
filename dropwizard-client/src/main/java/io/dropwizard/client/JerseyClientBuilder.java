@@ -6,8 +6,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.annotations.VisibleForTesting;
 import io.dropwizard.jersey.gzip.ConfiguredGZipEncoder;
 import io.dropwizard.jersey.gzip.GZipDecoder;
-import io.dropwizard.jersey.jackson.JacksonBinder;
-import io.dropwizard.jersey.validation.HibernateValidationFeature;
+import io.dropwizard.jersey.jackson.JacksonFeature;
+import io.dropwizard.jersey.validation.HibernateValidationBinder;
 import io.dropwizard.jersey.validation.Validators;
 import io.dropwizard.lifecycle.Managed;
 import io.dropwizard.setup.Environment;
@@ -19,9 +19,6 @@ import org.apache.http.conn.DnsResolver;
 import org.apache.http.conn.routing.HttpRoutePlanner;
 import org.apache.http.conn.socket.ConnectionSocketFactory;
 import org.glassfish.jersey.client.ClientConfig;
-import org.glassfish.jersey.client.rx.Rx;
-import org.glassfish.jersey.client.rx.RxClient;
-import org.glassfish.jersey.client.rx.RxInvoker;
 import org.glassfish.jersey.client.spi.ConnectorProvider;
 
 import javax.annotation.Nullable;
@@ -29,6 +26,7 @@ import javax.net.ssl.HostnameVerifier;
 import javax.validation.Validator;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.RxInvokerProvider;
 import javax.ws.rs.core.Configuration;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -321,12 +319,12 @@ public class JerseyClientBuilder {
     }
 
     /**
-     * Builds the {@link RxClient} instance.
+     * Builds the {@link Client} instance with a custom reactive client provider.
      *
-     * @return a fully-configured {@link RxClient}
+     * @return a fully-configured {@link Client}
      */
-    public <RX extends RxInvoker> RxClient<RX> buildRx(String name, Class<RX> invokerType) {
-        return Rx.from(build(name), invokerType, executorService);
+    public <RX extends RxInvokerProvider> Client buildRx(String name, Class<RX> invokerType) {
+        return build(name).register(invokerType);
     }
 
     /**
@@ -408,8 +406,8 @@ public class JerseyClientBuilder {
             config.register(provider);
         }
 
-        config.register(new JacksonBinder(objectMapper));
-        config.register(new HibernateValidationFeature(validator));
+        config.register(new JacksonFeature(objectMapper));
+        config.register(new HibernateValidationBinder(validator));
 
         for (Map.Entry<String, Object> property : this.properties.entrySet()) {
             config.property(property.getKey(), property.getValue());
