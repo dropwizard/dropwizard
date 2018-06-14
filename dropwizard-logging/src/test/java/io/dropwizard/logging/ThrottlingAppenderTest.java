@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -120,29 +121,10 @@ public class ThrottlingAppenderTest {
             logger.info("Application log {}", i);
         }
         config.stop();
-        assertThat(Files.readAllLines(defaultLog.toPath())).containsOnly(
-            "INFO  com.example.app: Application log 0",
-            "INFO  com.example.app: Application log 1",
-            "INFO  com.example.app: Application log 2",
-            "INFO  com.example.app: Application log 3",
-            "INFO  com.example.app: Application log 4",
-            "INFO  com.example.app: Application log 5",
-            "INFO  com.example.app: Application log 6",
-            "INFO  com.example.app: Application log 7",
-            "INFO  com.example.app: Application log 8",
-            "INFO  com.example.app: Application log 9",
-            "INFO  com.example.app: Application log 10",
-            "INFO  com.example.app: Application log 50",
-            "INFO  com.example.app: Application log 51",
-            "INFO  com.example.app: Application log 52",
-            "INFO  com.example.app: Application log 53",
-            "INFO  com.example.app: Application log 54",
-            "INFO  com.example.app: Application log 55",
-            "INFO  com.example.app: Application log 56",
-            "INFO  com.example.app: Application log 57",
-            "INFO  com.example.app: Application log 58",
-            "INFO  com.example.app: Application log 59"
-        );
+        List<String> lines = Files.readAllLines(defaultLog.toPath());
+        assertThat(lines).hasSize(21);
+        assertThat(lines.get(0)).isEqualTo("INFO  com.example.app: Application log 0");
+        assertThat(lines.get(20)).isEqualTo("INFO  com.example.app: Application log 59");
     }
 
 }
