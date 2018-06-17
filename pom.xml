@@ -685,7 +685,6 @@
                 <executions>
                     <execution>
                         <id>security-check</id>
-                        <phase>validate</phase>
                         <goals>
                             <goal>check</goal>
                         </goals>
