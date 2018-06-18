@@ -4,7 +4,6 @@ import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.httpclient.HttpClientMetricNameStrategies;
 import com.codahale.metrics.httpclient.InstrumentedHttpClientConnectionManager;
 import com.codahale.metrics.httpclient.InstrumentedHttpRequestExecutor;
-import com.google.common.collect.ImmutableList;
 import io.dropwizard.client.proxy.AuthConfiguration;
 import io.dropwizard.client.proxy.ProxyConfiguration;
 import io.dropwizard.client.ssl.TlsConfiguration;
@@ -69,6 +68,7 @@ import java.net.Proxy;
 import java.net.ProxySelector;
 import java.net.SocketAddress;
 import java.net.URI;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -314,7 +314,7 @@ public class HttpClientBuilderTest {
         final HttpContext context = mock(HttpContext.class);
         final HttpResponse response = mock(HttpResponse.class);
         final HeaderIterator iterator = new BasicListHeaderIterator(
-                ImmutableList.of(new BasicHeader(HttpHeaders.CONNECTION, "timeout=50")),
+                Collections.singletonList(new BasicHeader(HttpHeaders.CONNECTION, "timeout=50")),
                 HttpHeaders.CONNECTION
         );
         when(response.headerIterator(HTTP.CONN_KEEP_ALIVE)).thenReturn(iterator);
@@ -399,7 +399,7 @@ public class HttpClientBuilderTest {
         final HttpRoutePlanner routePlanner = new SystemDefaultRoutePlanner(new ProxySelector() {
             @Override
             public List<Proxy> select(URI uri) {
-                return ImmutableList.of(new Proxy(Proxy.Type.HTTP, new InetSocketAddress("192.168.52.1", 8080)));
+                return Collections.singletonList(new Proxy(Proxy.Type.HTTP, new InetSocketAddress("192.168.52.1", 8080)));
             }
 
             @Override
@@ -509,7 +509,7 @@ public class HttpClientBuilderTest {
     public void usesProxyWithNonProxyHosts() throws Exception {
         HttpClientConfiguration config = new HttpClientConfiguration();
         ProxyConfiguration proxy = new ProxyConfiguration("192.168.52.11", 8080);
-        proxy.setNonProxyHosts(ImmutableList.of("*.example.com"));
+        proxy.setNonProxyHosts(Collections.singletonList("*.example.com"));
         config.setProxyConfiguration(proxy);
 
         checkProxy(config, new HttpHost("host.example.com", 80), null);
@@ -519,7 +519,7 @@ public class HttpClientBuilderTest {
     public void usesProxyWithNonProxyHostsAndTargetDoesNotMatch() throws Exception {
         HttpClientConfiguration config = new HttpClientConfiguration();
         ProxyConfiguration proxy = new ProxyConfiguration("192.168.52.11");
-        proxy.setNonProxyHosts(ImmutableList.of("*.example.com"));
+        proxy.setNonProxyHosts(Collections.singletonList("*.example.com"));
         config.setProxyConfiguration(proxy);
 
         checkProxy(config, new HttpHost("dropwizard.io", 80), new HttpHost("192.168.52.11"));
@@ -651,7 +651,7 @@ public class HttpClientBuilderTest {
     @Test
     public void usesDefaultHeaders() throws Exception {
         final ConfiguredCloseableHttpClient client =
-                builder.using(ImmutableList.of(new BasicHeader(HttpHeaders.ACCEPT_LANGUAGE, "de")))
+                builder.using(Collections.singletonList(new BasicHeader(HttpHeaders.ACCEPT_LANGUAGE, "de")))
                         .createClient(apacheBuilder, connectionManager, "test");
         assertThat(client).isNotNull();
 

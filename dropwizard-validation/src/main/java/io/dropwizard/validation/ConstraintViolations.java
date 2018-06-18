@@ -1,12 +1,11 @@
 package io.dropwizard.validation;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Ordering;
-
 import javax.validation.ConstraintViolation;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 public class ConstraintViolations {
     private ConstraintViolations() { /* singleton */ }
@@ -19,27 +18,23 @@ public class ConstraintViolations {
         }
     }
 
-    public static <T> ImmutableList<String> format(Set<ConstraintViolation<T>> violations) {
-        final Set<String> errors = new HashSet<>();
+    public static <T> Collection<String> format(Set<ConstraintViolation<T>> violations) {
+        final SortedSet<String> errors = new TreeSet<>();
         for (ConstraintViolation<?> v : violations) {
             errors.add(format(v));
         }
-        return ImmutableList.copyOf(Ordering.natural().sortedCopy(errors));
+        return errors;
     }
 
-    public static ImmutableList<String> formatUntyped(Set<ConstraintViolation<?>> violations) {
-        final Set<String> errors = new HashSet<>();
+    public static Collection<String> formatUntyped(Set<ConstraintViolation<?>> violations) {
+        final SortedSet<String> errors = new TreeSet<>();
         for (ConstraintViolation<?> v : violations) {
             errors.add(format(v));
         }
-        return ImmutableList.copyOf(Ordering.natural().sortedCopy(errors));
+        return errors;
     }
 
-    public static <T> ImmutableSet<ConstraintViolation<?>> copyOf(Set<ConstraintViolation<T>> violations) {
-        final ImmutableSet.Builder<ConstraintViolation<?>> builder = ImmutableSet.builder();
-        for (ConstraintViolation<T> violation : violations) {
-            builder.add(violation);
-        }
-        return builder.build();
+    public static <T> Set<ConstraintViolation<?>> copyOf(Set<ConstraintViolation<T>> violations) {
+        return new HashSet<>(violations);
     }
 }

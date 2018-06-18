@@ -3,7 +3,6 @@ package io.dropwizard.views.freemarker;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import com.google.common.collect.ImmutableMap;
 import freemarker.core.HTMLOutputFormat;
 import freemarker.template.Configuration;
 import freemarker.template.DefaultObjectWrapperBuilder;
@@ -18,6 +17,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -31,7 +31,7 @@ public class FreemarkerViewRenderer implements ViewRenderer {
     private final TemplateLoader loader;
 
     private static class TemplateLoader extends CacheLoader<Class<?>, Configuration> {
-        private Map<String, String> baseConfig = ImmutableMap.of();
+        private Map<String, String> baseConfig = Collections.emptyMap();
         @Override
         public Configuration load(Class<?> key) throws Exception {
             final Configuration configuration = new Configuration(FREEMARKER_VERSION);

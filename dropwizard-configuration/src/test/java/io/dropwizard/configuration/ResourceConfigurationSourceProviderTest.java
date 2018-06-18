@@ -1,8 +1,8 @@
 package io.dropwizard.configuration;
 
-import com.google.common.io.ByteStreams;
 import org.junit.Test;
 
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
@@ -19,12 +19,18 @@ public class ResourceConfigurationSourceProviderTest {
     }
 
     private void assertForWheeContent(String path) throws Exception {
-        assertThat(loadResourceAsString(path)).isEqualTo("whee");
+        assertThat(loadResourceAsString(path)).isEqualToIgnoringWhitespace("whee");
     }
 
     private String loadResourceAsString(String path) throws Exception {
-        try (InputStream input = provider.open(path)) {
-            return new String(ByteStreams.toByteArray(input), StandardCharsets.UTF_8).trim();
+        try (InputStream inputStream = provider.open(path);
+             ByteArrayOutputStream result = new ByteArrayOutputStream()) {
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = inputStream.read(buffer)) != -1) {
+                result.write(buffer, 0, length);
+            }
+            return result.toString(StandardCharsets.UTF_8.name());
         }
     }
 }

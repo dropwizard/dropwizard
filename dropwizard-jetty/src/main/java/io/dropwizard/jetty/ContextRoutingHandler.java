@@ -38,4 +38,20 @@ public class ContextRoutingHandler extends AbstractHandler {
             handler.handle(target, baseRequest, request, response);
         }
     }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        for (String key : handlers.keySet()) {
+            handlers.get(key).start();
+        }
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+        for (String key : handlers.keySet()) {
+            handlers.get(key).stop();
+        }
+    }
 }

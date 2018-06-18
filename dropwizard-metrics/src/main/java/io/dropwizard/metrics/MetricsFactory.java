@@ -2,8 +2,6 @@ package io.dropwizard.metrics;
 
 import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.base.MoreObjects;
-import com.google.common.collect.ImmutableList;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
 import io.dropwizard.util.Duration;
 import org.slf4j.Logger;
@@ -11,6 +9,8 @@ import org.slf4j.LoggerFactory;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * A factory for configuring the metrics sub-system for the environment.
@@ -46,15 +46,15 @@ public class MetricsFactory {
 
     @Valid
     @NotNull
-    private ImmutableList<ReporterFactory> reporters = ImmutableList.of();
+    private List<ReporterFactory> reporters = Collections.emptyList();
 
     @JsonProperty
-    public ImmutableList<ReporterFactory> getReporters() {
+    public List<ReporterFactory> getReporters() {
         return reporters;
     }
 
     @JsonProperty
-    public void setReporters(ImmutableList<ReporterFactory> reporters) {
+    public void setReporters(List<ReporterFactory> reporters) {
         this.reporters = reporters;
     }
 
@@ -95,9 +95,6 @@ public class MetricsFactory {
 
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(this)
-                .add("frequency", frequency)
-                .add("reporters", reporters)
-                .toString();
+        return "MetricsFactory{frequency=" + frequency + ", reporters=" + reporters + '}';
     }
 }

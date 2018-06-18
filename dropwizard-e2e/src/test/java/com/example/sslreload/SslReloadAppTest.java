@@ -1,11 +1,10 @@
 package com.example.sslreload;
 
-import com.google.common.io.CharStreams;
-import com.google.common.io.Resources;
 import io.dropwizard.Configuration;
 import io.dropwizard.testing.ConfigOverride;
 import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit.DropwizardAppRule;
+import io.dropwizard.util.Resources;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.junit.After;
 import org.junit.BeforeClass;
@@ -18,8 +17,9 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
-import java.io.File;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -29,6 +29,7 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
 import static org.assertj.core.api.Java6Assertions.assertThat;
+import static org.assertj.core.api.Java6Assertions.in;
 
 public class SslReloadAppTest {
     @ClassRule
@@ -102,14 +103,14 @@ public class SslReloadAppTest {
         Files.write(keystore, badKeystore);
 
         // Get the bytes for the first certificate. The reload should fail
-        byte[] firstCertBytes = certBytes(500, "Keystore was tampered with, or password was incorrect");
+        byte[] firstCertBytes = certBytes(500, "\nKeystore was tampered with, or password was incorrect");
 
         // Issue another request. The returned certificate should be the same as before
-        byte[] secondCertBytes = certBytes(500, "Keystore was tampered with, or password was incorrect");
+        byte[] secondCertBytes = certBytes(500, "\nKeystore was tampered with, or password was incorrect");
 
         // And just to triple check, a third request will continue with
         // the same original certificate
-        byte[] thirdCertBytes = certBytes(500, "Keystore was tampered with, or password was incorrect");
+        byte[] thirdCertBytes = certBytes(500, "\nKeystore was tampered with, or password was incorrect");
 
         assertThat(firstCertBytes)
             .isEqualTo(secondCertBytes)
@@ -125,17 +126,21 @@ public class SslReloadAppTest {
             postIt(conn);
 
             assertThat(conn.getResponseCode()).isEqualTo(code);
-            if (code == 200) {
-                assertThat(CharStreams.toString(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8)))
-                    .isEqualTo(content);
-            } else {
-                assertThat(CharStreams.toString(new InputStreamReader(conn.getErrorStream(), StandardCharsets.UTF_8)))
-                    .contains(content);
-            }
 
-            // The certificates are self signed, so are the only cert in the chain.
-            // Thus, we return the one and only certificate.
-            return conn.getServerCertificates()[0].getEncoded();
+            try (InputStream inputStream = code == 200 ? conn.getInputStream() : conn.getErrorStream();
+                 InputStreamReader inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8)) {
+                final StringBuilder sb = new StringBuilder();
+                char[] buffer = new char[1024];
+                while (inputStreamReader.read(buffer) != -1) {
+                    sb.append(buffer);
+                }
+                final String actualContent = sb.toString();
+                assertThat(actualContent).startsWith(content);
+
+                // The certificates are self signed, so are the only cert in the chain.
+                // Thus, we return the one and only certificate.
+                return conn.getServerCertificates()[0].getEncoded();
+            }
         } finally {
             conn.disconnect();
         }

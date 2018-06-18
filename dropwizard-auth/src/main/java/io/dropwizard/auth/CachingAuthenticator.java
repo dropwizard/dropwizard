@@ -3,19 +3,20 @@ package io.dropwizard.auth;
 import com.codahale.metrics.Meter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
-import com.google.common.base.Predicate;
 import com.google.common.base.Throwables;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheBuilderSpec;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.CacheStats;
 import com.google.common.cache.LoadingCache;
-import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.UncheckedExecutionException;
 
 import java.security.Principal;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import static com.codahale.metrics.MetricRegistry.name;
 
@@ -84,7 +85,13 @@ public class CachingAuthenticator<C, P extends Principal> implements Authenticat
             Throwables.propagateIfPossible(cause, AuthenticationException.class);
             throw new AuthenticationException(cause);
         } catch (UncheckedExecutionException e) {
-            Throwables.throwIfUnchecked(e.getCause());
+            Throwable throwable = e.getCause();
+            if (throwable instanceof RuntimeException) {
+              throw (RuntimeException) throwable;
+            }
+            if (throwable instanceof Error) {
+              throw (Error) throwable;
+            }
             throw e;
         } finally {
             context.stop();
@@ -115,7 +122,10 @@ public class CachingAuthenticator<C, P extends Principal> implements Authenticat
      * @param predicate a predicate to filter credentials
      */
     public void invalidateAll(Predicate<? super C> predicate) {
-        cache.invalidateAll(Sets.filter(cache.asMap().keySet(), predicate));
+        final Set<C> keys = cache.asMap().keySet().stream()
+                .filter(predicate)
+                .collect(Collectors.toSet());
+        cache.invalidateAll(keys);
     }
 
     /**

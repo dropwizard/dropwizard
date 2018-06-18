@@ -4,7 +4,6 @@ import com.github.mustachejava.DefaultMustacheFactory;
 import com.github.mustachejava.Mustache;
 import com.github.mustachejava.MustacheFactory;
 import com.github.mustachejava.resolver.FileSystemResolver;
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -67,7 +66,6 @@ public class MustacheViewRenderer implements ViewRenderer {
         fileRoot = Optional.ofNullable(options.get("fileRoot")).map(File::new);
     }
 
-    @VisibleForTesting
     boolean isUseCache() {
         return useCache;
     }

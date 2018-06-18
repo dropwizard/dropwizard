@@ -2,7 +2,7 @@ package io.dropwizard.auth;
 
 import com.codahale.metrics.MetricRegistry;
 import com.google.common.cache.CacheBuilderSpec;
-import com.google.common.collect.ImmutableSet;
+import io.dropwizard.util.Sets;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InOrder;
@@ -80,7 +80,7 @@ public class CachingAuthorizerTest {
     public void invalidatesSetsofPrincipals() throws Exception {
         cached.authorize(principal, role);
         cached.authorize(principal2, role);
-        cached.invalidateAll(ImmutableSet.of(principal, principal2));
+        cached.invalidateAll(Sets.of(principal, principal2));
         cached.authorize(principal, role);
         cached.authorize(principal2, role);
 

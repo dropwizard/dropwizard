@@ -9,8 +9,6 @@ import org.slf4j.LoggerFactory;
 
 import java.nio.charset.StandardCharsets;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
 /**
  * A bundle for serving static asset files from the classpath.
  */
@@ -91,8 +89,14 @@ public class AssetsBundle implements Bundle {
      * @param assetsName          the name of servlet mapping used for this assets bundle
      */
     public AssetsBundle(String resourcePath, String uriPath, String indexFile, String assetsName) {
-        checkArgument(resourcePath.startsWith("/"), "%s is not an absolute path", resourcePath);
-        checkArgument(!"/".equals(resourcePath), "%s is the classpath root", resourcePath);
+        if (!resourcePath.startsWith("/")) {
+            throw new IllegalArgumentException(resourcePath + " is not an absolute path");
+        }
+
+        if ("/".equals(resourcePath)) {
+            throw new IllegalArgumentException(resourcePath + " is the classpath root");
+        }
+
         this.resourcePath = resourcePath.endsWith("/") ? resourcePath : (resourcePath + '/');
         this.uriPath = uriPath.endsWith("/") ? uriPath : (uriPath + '/');
         this.indexFile = indexFile;

@@ -3,8 +3,7 @@ package io.dropwizard.jetty;
 import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import com.google.common.base.Strings;
-import com.google.common.collect.Iterables;
+import io.dropwizard.util.Strings;
 import io.dropwizard.validation.ValidationMethod;
 import org.eclipse.jetty.http.HttpVersion;
 import org.eclipse.jetty.io.ByteBufferPool;
@@ -758,19 +757,19 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
         factory.setValidatePeerCerts(validatePeers);
 
         if (supportedProtocols != null) {
-            factory.setIncludeProtocols(Iterables.toArray(supportedProtocols, String.class));
+            factory.setIncludeProtocols(supportedProtocols.toArray(new String[0]));
         }
 
         if (excludedProtocols != null) {
-            factory.setExcludeProtocols(Iterables.toArray(excludedProtocols, String.class));
+            factory.setExcludeProtocols(excludedProtocols.toArray(new String[0]));
         }
 
         if (supportedCipherSuites != null) {
-            factory.setIncludeCipherSuites(Iterables.toArray(supportedCipherSuites, String.class));
+            factory.setIncludeCipherSuites(supportedCipherSuites.toArray(new String[0]));
         }
 
         if (excludedCipherSuites != null) {
-            factory.setExcludeCipherSuites(Iterables.toArray(excludedCipherSuites, String.class));
+            factory.setExcludeCipherSuites(excludedCipherSuites.toArray(new String[0]));
         }
 
         return factory;

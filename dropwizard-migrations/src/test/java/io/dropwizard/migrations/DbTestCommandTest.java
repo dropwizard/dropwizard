@@ -1,6 +1,5 @@
 package io.dropwizard.migrations;
 
-import com.google.common.collect.ImmutableMap;
 import net.jcip.annotations.NotThreadSafe;
 import net.sourceforge.argparse4j.inf.Namespace;
 import org.junit.Test;
@@ -8,6 +7,7 @@ import org.junit.Test;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -21,7 +21,7 @@ public class DbTestCommandTest extends AbstractMigrationTest {
     public void testRun() throws Exception {
         // Apply and rollback some DDL changes
         final TestMigrationConfiguration conf = createConfiguration(getDatabaseUrl());
-        dbTestCommand.run(null, new Namespace(ImmutableMap.of()), conf);
+        dbTestCommand.run(null, new Namespace(Collections.emptyMap()), conf);
 
         // No exception, the test passed
     }

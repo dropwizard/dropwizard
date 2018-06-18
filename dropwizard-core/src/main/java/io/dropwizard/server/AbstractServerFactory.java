@@ -10,8 +10,6 @@ import com.codahale.metrics.servlets.MetricsServlet;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Joiner;
-import com.google.common.io.Resources;
 import io.dropwizard.jersey.filter.AllowedMethodsFilter;
 import io.dropwizard.jersey.jackson.JacksonBinder;
 import io.dropwizard.jersey.setup.JerseyEnvironment;
@@ -47,13 +45,17 @@ import javax.validation.Valid;
 import javax.validation.Validator;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.EnumSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * A base class for {@link ServerFactory} implementations.
@@ -507,8 +509,10 @@ public abstract class AbstractServerFactory implements ServerFactory {
         handler.getServletContext().setAttribute(MetricsServlet.METRICS_REGISTRY, metrics);
         handler.getServletContext().setAttribute(HealthCheckServlet.HEALTH_CHECK_REGISTRY, healthChecks);
         handler.addServlet(new NonblockingServletHolder(new AdminServlet()), "/*");
+        final String allowedMethodsParam = allowedMethods.stream()
+                .collect(Collectors.joining(","));
         handler.addFilter(AllowedMethodsFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST))
-                .setInitParameter(AllowedMethodsFilter.ALLOWED_METHODS_PARAM, Joiner.on(',').join(allowedMethods));
+                .setInitParameter(AllowedMethodsFilter.ALLOWED_METHODS_PARAM, allowedMethodsParam);
         return handler;
     }
 
@@ -530,8 +534,10 @@ public abstract class AbstractServerFactory implements ServerFactory {
                                        @Nullable Servlet jerseyContainer,
                                        MetricRegistry metricRegistry) {
         configureSessionsAndSecurity(handler, server);
+        final String allowedMethodsParam = allowedMethods.stream()
+                .collect(Collectors.joining(","));
         handler.addFilter(AllowedMethodsFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST))
-                .setInitParameter(AllowedMethodsFilter.ALLOWED_METHODS_PARAM, Joiner.on(',').join(allowedMethods));
+                .setInitParameter(AllowedMethodsFilter.ALLOWED_METHODS_PARAM, allowedMethodsParam);
         if (enableThreadNameFilter) {
             handler.addFilter(ThreadNameFilter.class, "/*", EnumSet.of(DispatcherType.REQUEST));
         }
@@ -644,15 +650,19 @@ public abstract class AbstractServerFactory implements ServerFactory {
     }
 
     protected void printBanner(String name) {
-        try {
-            final String banner = WINDOWS_NEWLINE.matcher(Resources.toString(Resources.getResource("banner.txt"),
-                                                                             StandardCharsets.UTF_8))
-                                                 .replaceAll("\n")
-                                                 .replace("\n", String.format("%n"));
-            LOGGER.info(String.format("Starting {}%n{}"), name, banner);
-        } catch (IllegalArgumentException | IOException ignored) {
-            // don't display the banner if there isn't one
-            LOGGER.info("Starting {}", name);
+        String msg = "Starting " + name;
+        final URL resource = Thread.currentThread().getContextClassLoader().getResource("banner.txt");
+        if (resource != null) {
+            try (final InputStream resourceStream = resource.openStream();
+                 final InputStreamReader inputStreamReader = new InputStreamReader(resourceStream);
+                 final BufferedReader bufferedReader = new BufferedReader(inputStreamReader)) {
+                final String banner = bufferedReader
+                        .lines()
+                        .collect(Collectors.joining(String.format("%n")));
+                msg = String.format("Starting %s%n%s", name, banner);
+            } catch (IllegalArgumentException | IOException ignored) {
+            }
         }
+        LOGGER.info(msg);
     }
 }

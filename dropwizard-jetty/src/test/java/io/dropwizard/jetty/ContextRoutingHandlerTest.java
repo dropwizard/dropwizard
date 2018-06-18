@@ -1,6 +1,6 @@
 package io.dropwizard.jetty;
 
-import com.google.common.collect.ImmutableMap;
+import io.dropwizard.util.Maps;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Request;
 import org.junit.Before;
@@ -28,7 +28,7 @@ public class ContextRoutingHandlerTest {
 
     @Before
     public void setUp() throws Exception {
-        this.handler = new ContextRoutingHandler(ImmutableMap.of(
+        this.handler = new ContextRoutingHandler(Maps.of(
                 "/", handler1,
                 "/admin", handler2
         ));

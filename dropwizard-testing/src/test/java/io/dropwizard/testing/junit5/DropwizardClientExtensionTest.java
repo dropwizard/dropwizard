@@ -1,7 +1,7 @@
 package io.dropwizard.testing.junit5;
 
-import com.google.common.io.Resources;
 import io.dropwizard.testing.app.TestResource;
+import io.dropwizard.util.Resources;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 

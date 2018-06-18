@@ -1,7 +1,7 @@
 package io.dropwizard.client;
 
-import com.google.common.collect.Lists;
-import com.google.common.util.concurrent.MoreExecutors;
+import io.dropwizard.util.DirectExecutorService;
+import io.dropwizard.util.Strings;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.StatusLine;
@@ -28,11 +28,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.Future;
-
-import static com.google.common.base.MoreObjects.firstNonNull;
 
 /**
  * Dropwizard Apache Connector.
@@ -89,14 +88,16 @@ public class DropwizardApacheConnector implements Connector {
             final CloseableHttpResponse apacheResponse = client.execute(apacheRequest);
 
             final StatusLine statusLine = apacheResponse.getStatusLine();
-            final Response.StatusType status = Statuses.from(statusLine.getStatusCode(),
-                    firstNonNull(statusLine.getReasonPhrase(), ""));
+            final String reasonPhrase = Strings.nullToEmpty(statusLine.getReasonPhrase());
+            final Response.StatusType status = Statuses.from(statusLine.getStatusCode(), reasonPhrase);
 
             final ClientResponse jerseyResponse = new ClientResponse(status, jerseyRequest);
             for (Header header : apacheResponse.getAllHeaders()) {
                 final List<String> headerValues = jerseyResponse.getHeaders().get(header.getName());
                 if (headerValues == null) {
-                    jerseyResponse.getHeaders().put(header.getName(), Lists.newArrayList(header.getValue()));
+                    final List<String> values = new ArrayList<>();
+                    values.add(header.getValue());
+                    jerseyResponse.getHeaders().put(header.getName(), values);
                 } else {
                     headerValues.add(header.getValue());
                 }
@@ -190,7 +191,7 @@ public class DropwizardApacheConnector implements Connector {
     @Override
     public Future<?> apply(final ClientRequest request, final AsyncConnectorCallback callback) {
         // Simulate an asynchronous execution
-        return MoreExecutors.newDirectExecutorService().submit(() -> {
+        return new DirectExecutorService().submit(() -> {
             try {
                 callback.response(apply(request));
             } catch (Exception e) {

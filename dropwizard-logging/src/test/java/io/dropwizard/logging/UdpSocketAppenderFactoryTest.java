@@ -2,9 +2,9 @@ package io.dropwizard.logging;
 
 import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.io.Resources;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.Jackson;
+import io.dropwizard.util.Resources;
 import io.dropwizard.validation.BaseValidator;
 import org.junit.After;
 import org.junit.Before;

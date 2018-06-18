@@ -2,9 +2,6 @@ package io.dropwizard.server;
 
 import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.ImmutableMultimap;
-import com.google.common.io.CharStreams;
-import com.google.common.io.Resources;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.DiscoverableSubtypeResolver;
 import io.dropwizard.jackson.Jackson;
@@ -14,6 +11,7 @@ import io.dropwizard.logging.FileAppenderFactory;
 import io.dropwizard.logging.SyslogAppenderFactory;
 import io.dropwizard.servlets.tasks.Task;
 import io.dropwizard.setup.Environment;
+import io.dropwizard.util.Resources;
 import io.dropwizard.validation.BaseValidator;
 import org.eclipse.jetty.server.AbstractNetworkConnector;
 import org.eclipse.jetty.server.Server;
@@ -24,13 +22,17 @@ import javax.validation.Validator;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 
@@ -101,8 +103,14 @@ public class SimpleServerFactoryTest {
         final HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
         connection.setRequestMethod(requestMethod);
         connection.connect();
-        try (InputStream inputStream = connection.getInputStream()) {
-            return CharStreams.toString(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+        try (InputStream inputStream = connection.getInputStream();
+             ByteArrayOutputStream result = new ByteArrayOutputStream()) {
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = inputStream.read(buffer)) != -1) {
+                result.write(buffer, 0, length);
+            }
+            return result.toString(StandardCharsets.UTF_8.name());
         }
     }
 
@@ -123,8 +131,8 @@ public class SimpleServerFactoryTest {
         }
 
         @Override
-        public void execute(ImmutableMultimap<String, String> parameters, PrintWriter output) throws Exception {
-            final String name = parameters.get("name").iterator().next();
+        public void execute(Map<String, List<String>> parameters, PrintWriter output) throws Exception {
+            final String name = parameters.getOrDefault("name", Collections.emptyList()).iterator().next();
             output.print("Hello, " + name + "!");
             output.flush();
         }

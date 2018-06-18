@@ -1,6 +1,7 @@
 package io.dropwizard.jersey.params;
 
-import com.google.common.base.Strings;
+
+import io.dropwizard.util.Strings;
 
 import javax.annotation.Nullable;
 import java.util.Optional;

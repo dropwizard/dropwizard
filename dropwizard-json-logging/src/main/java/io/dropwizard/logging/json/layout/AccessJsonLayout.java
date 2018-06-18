@@ -1,27 +1,28 @@
 package io.dropwizard.logging.json.layout;
 
 import ch.qos.logback.access.spi.IAccessEvent;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSortedSet;
-import com.google.common.collect.Sets;
-import com.google.common.net.HttpHeaders;
 import io.dropwizard.logging.json.AccessAttribute;
 
 import javax.annotation.Nullable;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 /**
  * Builds JSON messages from access log events as {@link IAccessEvent}.
  */
 public class AccessJsonLayout extends AbstractJsonLayout<IAccessEvent> {
+    private static final String USER_AGENT = "User-Agent";
 
-    private ImmutableSet<AccessAttribute> includes;
+    private Set<AccessAttribute> includes;
 
-    private ImmutableSet<String> requestHeaders = ImmutableSortedSet.of();
-    private ImmutableSet<String> responseHeaders = ImmutableSortedSet.of();
+    private SortedSet<String> requestHeaders = Collections.emptySortedSet();
+    private SortedSet<String> responseHeaders = Collections.emptySortedSet();
 
     @Nullable
     private String jsonProtocolVersion;
@@ -35,9 +36,9 @@ public class AccessJsonLayout extends AbstractJsonLayout<IAccessEvent> {
                             Map<String, Object> additionalFields) {
         super(jsonFormatter);
         this.timestampFormatter = timestampFormatter;
-        this.additionalFields = ImmutableMap.copyOf(additionalFields);
-        this.customFieldNames = ImmutableMap.copyOf(customFieldNames);
-        this.includes = Sets.immutableEnumSet(includes);
+        this.additionalFields = new HashMap<>(additionalFields);
+        this.customFieldNames = new HashMap<>(customFieldNames);
+        this.includes = EnumSet.copyOf(includes);
     }
 
     @Override
@@ -63,7 +64,7 @@ public class AccessJsonLayout extends AbstractJsonLayout<IAccessEvent> {
                 filterHeaders(event.getResponseHeaderMap(), responseHeaders))
             .add("serverName", isIncluded(AccessAttribute.SERVER_NAME), event.getServerName())
             .add("status", isIncluded(AccessAttribute.STATUS_CODE), event.getStatusCode())
-            .add("userAgent", isIncluded(AccessAttribute.USER_AGENT), event.getRequestHeader(HttpHeaders.USER_AGENT))
+            .add("userAgent", isIncluded(AccessAttribute.USER_AGENT), event.getRequestHeader(USER_AGENT))
             .add("version", jsonProtocolVersion != null, jsonProtocolVersion)
             .build();
     }
@@ -74,19 +75,19 @@ public class AccessJsonLayout extends AbstractJsonLayout<IAccessEvent> {
 
     private Map<String, String> filterHeaders(Map<String, String> headers, Set<String> filteredHeaderNames) {
         if (filteredHeaderNames.isEmpty()) {
-            return ImmutableMap.of();
+            return Collections.emptyMap();
         }
         return headers.entrySet().stream()
             .filter(e -> filteredHeaderNames.contains(e.getKey()))
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
-    public ImmutableSet<AccessAttribute> getIncludes() {
+    public Set<AccessAttribute> getIncludes() {
         return includes;
     }
 
     public void setIncludes(Set<AccessAttribute> includes) {
-        this.includes = Sets.immutableEnumSet(includes);
+        this.includes = EnumSet.copyOf(includes);
     }
 
     @Nullable
@@ -98,19 +99,23 @@ public class AccessJsonLayout extends AbstractJsonLayout<IAccessEvent> {
         this.jsonProtocolVersion = jsonProtocolVersion;
     }
 
-    public ImmutableSet<String> getRequestHeaders() {
+    public Set<String> getRequestHeaders() {
         return requestHeaders;
     }
 
     public void setRequestHeaders(Set<String> requestHeaders) {
-        this.requestHeaders = ImmutableSortedSet.copyOf(String::compareToIgnoreCase, requestHeaders);
+        final TreeSet<String> headers = new TreeSet<>(String::compareToIgnoreCase);
+        headers.addAll(requestHeaders);
+        this.requestHeaders = headers;
     }
 
-    public ImmutableSet<String> getResponseHeaders() {
+    public Set<String> getResponseHeaders() {
         return responseHeaders;
     }
 
     public void setResponseHeaders(Set<String> responseHeaders) {
-        this.responseHeaders = ImmutableSortedSet.copyOf(String::compareToIgnoreCase, responseHeaders);
+        final TreeSet<String> headers = new TreeSet<>(String::compareToIgnoreCase);
+        headers.addAll(responseHeaders);
+        this.responseHeaders = headers;
     }
 }

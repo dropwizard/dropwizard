@@ -1,7 +1,7 @@
 package io.dropwizard.client.ssl;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.base.Strings;
+import io.dropwizard.util.Strings;
 import io.dropwizard.validation.ValidationMethod;
 import org.hibernate.validator.constraints.NotEmpty;
 

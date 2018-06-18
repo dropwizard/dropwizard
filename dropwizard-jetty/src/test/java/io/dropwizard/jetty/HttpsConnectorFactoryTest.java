@@ -1,16 +1,14 @@
 package io.dropwizard.jetty;
 
 import com.codahale.metrics.MetricRegistry;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.ImmutableList;
-import com.google.common.io.Resources;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.DiscoverableSubtypeResolver;
 import io.dropwizard.jackson.Jackson;
+import io.dropwizard.util.Resources;
 import io.dropwizard.validation.BaseValidator;
 import org.apache.commons.lang3.SystemUtils;
-import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.ConnectionFactory;
+import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.SecureRequestCustomizer;
@@ -30,9 +28,11 @@ import java.io.File;
 import java.net.URI;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.apache.commons.lang3.reflect.FieldUtils.getField;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -88,26 +88,26 @@ public class HttpsConnectorFactoryTest {
 
     @Test
     public void testSupportedProtocols() {
-        List<String> supportedProtocols = ImmutableList.of("SSLv3", "TLS1");
+        List<String> supportedProtocols = Arrays.asList("SSLv3", "TLS1");
 
         HttpsConnectorFactory factory = new HttpsConnectorFactory();
         factory.setKeyStorePassword("password"); // necessary to avoid a prompt for a password
         factory.setSupportedProtocols(supportedProtocols);
 
         SslContextFactory sslContextFactory = factory.configureSslContextFactory(new SslContextFactory());
-        assertThat(ImmutableList.copyOf(sslContextFactory.getIncludeProtocols())).isEqualTo(supportedProtocols);
+        assertThat(Arrays.asList(sslContextFactory.getIncludeProtocols())).isEqualTo(supportedProtocols);
     }
 
     @Test
     public void testExcludedProtocols() {
-        List<String> excludedProtocols = ImmutableList.of("SSLv3", "TLS1");
+        List<String> excludedProtocols = Arrays.asList("SSLv3", "TLS1");
 
         HttpsConnectorFactory factory = new HttpsConnectorFactory();
         factory.setKeyStorePassword("password"); // necessary to avoid a prompt for a password
         factory.setExcludedProtocols(excludedProtocols);
 
         SslContextFactory sslContextFactory = factory.configureSslContextFactory(new SslContextFactory());
-        assertThat(ImmutableList.copyOf(sslContextFactory.getExcludeProtocols())).isEqualTo(excludedProtocols);
+        assertThat(Arrays.asList(sslContextFactory.getExcludeProtocols())).isEqualTo(excludedProtocols);
     }
 
     @Test
@@ -177,8 +177,8 @@ public class HttpsConnectorFactoryTest {
         https.setEndpointIdentificationAlgorithm("HTTPS");
         https.setValidateCerts(true);
         https.setValidatePeers(true);
-        https.setSupportedProtocols(ImmutableList.of("TLSv1.1", "TLSv1.2"));
-        https.setSupportedCipherSuites(ImmutableList.of("TLS_DHE_RSA.*", "TLS_ECDHE.*"));
+        https.setSupportedProtocols(Arrays.asList("TLSv1.1", "TLSv1.2"));
+        https.setSupportedCipherSuites(Arrays.asList("TLS_DHE_RSA.*", "TLS_ECDHE.*"));
 
         final Server server = new Server();
         final MetricRegistry metrics = new MetricRegistry();
@@ -259,6 +259,8 @@ public class HttpsConnectorFactoryTest {
     }
 
     private <T> Collection<String> getViolationProperties(Set<ConstraintViolation<T>> violations) {
-        return Collections2.transform(violations, input -> input.getPropertyPath().toString());
+        return violations.stream()
+                .map(input -> input.getPropertyPath().toString())
+                .collect(Collectors.toSet());
     }
 }

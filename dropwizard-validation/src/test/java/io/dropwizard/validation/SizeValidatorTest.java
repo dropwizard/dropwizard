@@ -1,12 +1,12 @@
 package io.dropwizard.validation;
 
-import com.google.common.collect.ImmutableList;
 import io.dropwizard.util.Size;
 import io.dropwizard.util.SizeUnit;
 import org.junit.Test;
 
 import javax.validation.Valid;
 import javax.validation.Validator;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -26,15 +26,15 @@ public class SizeValidatorTest {
 
         @Valid
         private List<@MaxSize(value = 30, unit = SizeUnit.KILOBYTES) Size> maxSize =
-            ImmutableList.of(Size.gigabytes(2));
+                Collections.singletonList(Size.gigabytes(2));
 
         @Valid
         private List<@MinSize(value = 30, unit = SizeUnit.KILOBYTES) Size> minSize =
-            ImmutableList.of(Size.bytes(100));
+                Collections.singletonList(Size.bytes(100));
 
         @Valid
         private List<@SizeRange(min = 10, max = 100, unit = SizeUnit.KILOBYTES) Size> rangeSize =
-            ImmutableList.of(Size.megabytes(2));
+                Collections.singletonList(Size.megabytes(2));
 
         public void setTooBig(Size tooBig) {
             this.tooBig = tooBig;
@@ -77,9 +77,9 @@ public class SizeValidatorTest {
         example.setTooBig(Size.bytes(10));
         example.setTooSmall(Size.megabytes(10));
         example.setOutOfRange(Size.kilobytes(64));
-        example.setMaxSize(ImmutableList.of(Size.bytes(10)));
-        example.setMinSize(ImmutableList.of(Size.megabytes(10)));
-        example.setRangeSize(ImmutableList.of(Size.kilobytes(64)));
+        example.setMaxSize(Collections.singletonList(Size.bytes(10)));
+        example.setMinSize(Collections.singletonList(Size.megabytes(10)));
+        example.setRangeSize(Collections.singletonList(Size.kilobytes(64)));
 
         assertThat(validator.validate(example))
                 .isEmpty();

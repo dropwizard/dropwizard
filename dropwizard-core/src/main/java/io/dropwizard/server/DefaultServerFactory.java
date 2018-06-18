@@ -4,7 +4,6 @@ import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.jetty9.InstrumentedQueuedThreadPool;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import com.google.common.base.MoreObjects;
 import io.dropwizard.jetty.ConnectorFactory;
 import io.dropwizard.jetty.HttpConnectorFactory;
 import io.dropwizard.jetty.RoutingHandler;
@@ -238,13 +237,13 @@ public class DefaultServerFactory extends AbstractServerFactory {
 
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(this)
-                .add("applicationConnectors", applicationConnectors)
-                .add("adminConnectors", adminConnectors)
-                .add("adminMaxThreads", adminMaxThreads)
-                .add("adminMinThreads", adminMinThreads)
-                .add("applicationContextPath", applicationContextPath)
-                .add("adminContextPath", adminContextPath)
-                .toString();
+        return "DefaultServerFactory{" +
+                "applicationConnectors=" + applicationConnectors +
+                ", adminConnectors=" + adminConnectors +
+                ", adminMaxThreads=" + adminMaxThreads +
+                ", adminMinThreads=" + adminMinThreads +
+                ", applicationContextPath='" + applicationContextPath + '\'' +
+                ", adminContextPath='" + adminContextPath + '\'' +
+                '}';
     }
 }

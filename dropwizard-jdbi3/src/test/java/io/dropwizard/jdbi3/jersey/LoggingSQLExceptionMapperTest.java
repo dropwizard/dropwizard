@@ -9,12 +9,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 public class LoggingSQLExceptionMapperTest {
-
     @Test
     public void testLogException() throws Exception {
         Logger logger = mock(Logger.class);
-        LoggingSQLExceptionMapper sqlExceptionMapper = new LoggingSQLExceptionMapper();
-        LoggingSQLExceptionMapper.setLogger(logger);
+        LoggingSQLExceptionMapper sqlExceptionMapper = new LoggingSQLExceptionMapper(logger);
 
         RuntimeException runtimeException = new RuntimeException("DB is down");
         SQLException sqlException = new SQLException("DB error", runtimeException);

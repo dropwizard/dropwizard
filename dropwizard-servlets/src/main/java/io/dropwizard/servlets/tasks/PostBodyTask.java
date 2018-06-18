@@ -1,8 +1,8 @@
 package io.dropwizard.servlets.tasks;
 
-import com.google.common.collect.ImmutableMultimap;
-
 import java.io.PrintWriter;
+import java.util.List;
+import java.util.Map;
 
 /**
  * A task which can be performed via the admin interface and provides the post body of the request.
@@ -26,7 +26,7 @@ public abstract class PostBodyTask extends Task {
      * @param output     a {@link PrintWriter} wrapping the output stream of the task
      * @throws Exception
      */
-    public abstract void execute(ImmutableMultimap<String, String> parameters,
+    public abstract void execute(Map<String, List<String>> parameters,
                                  String body,
                                  PrintWriter output) throws Exception;
 
@@ -39,7 +39,7 @@ public abstract class PostBodyTask extends Task {
      */
     @Override
     @Deprecated
-    public void execute(ImmutableMultimap<String, String> parameters, PrintWriter output) throws Exception {
+    public void execute(Map<String, List<String>> parameters, PrintWriter output) throws Exception {
         throw new UnsupportedOperationException("Use `execute(parameters, body, output)`");
     }
 }

@@ -5,14 +5,13 @@ import com.codahale.metrics.MetricFilter;
 import com.codahale.metrics.ScheduledReporter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 import io.dropwizard.util.Duration;
 import io.dropwizard.validation.MinDuration;
 import org.hibernate.validator.valuehandling.UnwrapValidatedValue;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Optional;
 import java.util.Set;
@@ -99,10 +98,10 @@ public abstract class BaseReporterFactory implements ReporterFactory {
     private TimeUnit rateUnit = TimeUnit.SECONDS;
 
     @NotNull
-    private ImmutableSet<String> excludes = ImmutableSet.of();
+    private Set<String> excludes = Collections.emptySet();
 
     @NotNull
-    private ImmutableSet<String> includes = ImmutableSet.of();
+    private Set<String> includes = Collections.emptySet();
 
     @Valid
     @MinDuration(0)
@@ -137,22 +136,22 @@ public abstract class BaseReporterFactory implements ReporterFactory {
     }
 
     @JsonProperty
-    public ImmutableSet<String> getIncludes() {
+    public Set<String> getIncludes() {
         return includes;
     }
 
     @JsonProperty
-    public void setIncludes(ImmutableSet<String> includes) {
+    public void setIncludes(Set<String> includes) {
         this.includes = includes;
     }
 
     @JsonProperty
-    public ImmutableSet<String> getExcludes() {
+    public Set<String> getExcludes() {
         return excludes;
     }
 
     @JsonProperty
-    public void setExcludes(ImmutableSet<String> excludes) {
+    public void setExcludes(Set<String> excludes) {
         this.excludes = excludes;
     }
 
@@ -242,8 +241,8 @@ public abstract class BaseReporterFactory implements ReporterFactory {
     }
 
     protected Set<MetricAttribute> getDisabledAttributes() {
-        return ImmutableSet.copyOf(Sets.union(
-            Sets.difference(EnumSet.allOf(MetricAttribute.class), getIncludesAttributes()),
-            getExcludesAttributes()));
+        final EnumSet<MetricAttribute> metricAttributes = EnumSet.complementOf(getIncludesAttributes());
+        metricAttributes.addAll(getExcludesAttributes());
+        return metricAttributes;
     }
 }

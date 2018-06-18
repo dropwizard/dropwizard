@@ -3,20 +3,20 @@ package io.dropwizard.auth;
 import com.codahale.metrics.Meter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
-import com.google.common.base.Throwables;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheBuilderSpec;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.CacheStats;
 import com.google.common.cache.LoadingCache;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.UncheckedExecutionException;
+import io.dropwizard.util.Sets;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
 import java.security.Principal;
+import java.util.Set;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import static com.codahale.metrics.MetricRegistry.name;
 
@@ -92,7 +92,13 @@ public class CachingAuthorizer<P extends Principal> implements Authorizer<P> {
             final ImmutablePair<P, String> cacheKey = ImmutablePair.of(principal, role);
             return cache.getUnchecked(cacheKey);
         } catch (UncheckedExecutionException e) {
-            Throwables.throwIfUnchecked(e.getCause());
+            Throwable throwable = e.getCause();
+            if (throwable instanceof RuntimeException) {
+              throw (RuntimeException) throwable;
+            }
+            if (throwable instanceof Error) {
+              throw (Error) throwable;
+            }
             throw e;
         } finally {
             context.stop();
@@ -115,10 +121,11 @@ public class CachingAuthorizer<P extends Principal> implements Authorizer<P> {
      * @param principal
      */
     public void invalidate(P principal) {
-        final Predicate<ImmutablePair<P, String>> predicate =
-            cacheKey -> cacheKey.getLeft().equals(principal);
 
-        cache.invalidateAll(Sets.filter(cache.asMap().keySet(), predicate::test));
+        final Set<ImmutablePair<P, String>> keys = cache.asMap().keySet().stream()
+                .filter(cacheKey -> cacheKey.getLeft().equals(principal))
+                .collect(Collectors.toSet());
+        cache.invalidateAll(keys);
     }
 
     /**
@@ -128,10 +135,11 @@ public class CachingAuthorizer<P extends Principal> implements Authorizer<P> {
      * @param principals a list of principals
      */
     public void invalidateAll(Iterable<P> principals) {
-        final Predicate<ImmutablePair<P, String>> predicate =
-            cacheKey -> Iterables.contains(principals, cacheKey.getLeft());
-
-        cache.invalidateAll(Sets.filter(cache.asMap().keySet(), predicate::test));
+        final Set<P> principalSet = Sets.of(principals);
+        final Set<ImmutablePair<P, String>> keys = cache.asMap().keySet().stream()
+                .filter(cacheKey -> principalSet.contains(cacheKey.getLeft()))
+                .collect(Collectors.toSet());
+        cache.invalidateAll(keys);
     }
 
     /**
@@ -141,10 +149,11 @@ public class CachingAuthorizer<P extends Principal> implements Authorizer<P> {
      * @param predicate a predicate to filter credentials
      */
     public void invalidateAll(Predicate<? super P> predicate) {
-        final Predicate<ImmutablePair<P, String>> nestedPredicate =
-            cacheKey -> predicate.test(cacheKey.getLeft());
+        final Set<ImmutablePair<P, String>> keys = cache.asMap().keySet().stream()
+                .filter(cacheKey -> predicate.test(cacheKey.getLeft()))
+                .collect(Collectors.toSet());
 
-        cache.invalidateAll(Sets.filter(cache.asMap().keySet(), nestedPredicate::test));
+        cache.invalidateAll(keys);
     }
 
     /**

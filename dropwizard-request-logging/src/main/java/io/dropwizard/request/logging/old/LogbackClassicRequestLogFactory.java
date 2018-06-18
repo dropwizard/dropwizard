@@ -10,8 +10,6 @@ import ch.qos.logback.core.spi.AppenderAttachableImpl;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import io.dropwizard.logging.AppenderFactory;
 import io.dropwizard.logging.ConsoleAppenderFactory;
 import io.dropwizard.logging.async.AsyncAppenderFactory;
@@ -25,6 +23,8 @@ import org.slf4j.LoggerFactory;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
@@ -68,7 +68,7 @@ public class LogbackClassicRequestLogFactory implements RequestLogFactory {
 
         @Override
         public Map<String, String> getDefaultConverterMap() {
-            return ImmutableMap.of();
+            return Collections.emptyMap();
         }
     }
 
@@ -77,17 +77,17 @@ public class LogbackClassicRequestLogFactory implements RequestLogFactory {
 
     @Valid
     @NotNull
-    private ImmutableList<AppenderFactory<ILoggingEvent>> appenders = ImmutableList.of(
-        new ConsoleAppenderFactory<ILoggingEvent>()
+    private List<AppenderFactory<ILoggingEvent>> appenders = Collections.singletonList(
+            new ConsoleAppenderFactory<ILoggingEvent>()
     );
 
     @JsonProperty
-    public ImmutableList<AppenderFactory<ILoggingEvent>> getAppenders() {
+    public List<AppenderFactory<ILoggingEvent>> getAppenders() {
         return appenders;
     }
 
     @JsonProperty
-    public void setAppenders(ImmutableList<AppenderFactory<ILoggingEvent>> appenders) {
+    public void setAppenders(List<AppenderFactory<ILoggingEvent>> appenders) {
         this.appenders = appenders;
     }
 

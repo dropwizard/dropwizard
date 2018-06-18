@@ -1,6 +1,5 @@
 package io.dropwizard.configuration;
 
-import com.google.common.io.ByteStreams;
 import org.apache.commons.text.StrLookup;
 import org.apache.commons.text.StrSubstitutor;
 import org.junit.Test;
@@ -13,7 +12,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class SubstitutingSourceProviderTest {
     @Test
@@ -26,17 +25,13 @@ public class SubstitutingSourceProviderTest {
         };
         DummySourceProvider dummyProvider = new DummySourceProvider();
         SubstitutingSourceProvider provider = new SubstitutingSourceProvider(dummyProvider, new StrSubstitutor(dummyLookup));
-        String results = new String(ByteStreams.toByteArray(provider.open("foo: ${bar}")), StandardCharsets.UTF_8);
 
-        assertThat(results).isEqualTo("foo: baz");
+        assertThat(provider.open("foo: ${bar}")).hasSameContentAs(new ByteArrayInputStream("foo: baz".getBytes(StandardCharsets.UTF_8)));
 
         // ensure that opened streams are closed
-        try {
-            dummyProvider.lastStream.read();
-            failBecauseExceptionWasNotThrown(IOException.class);
-        } catch (IOException e) {
-            assertThat(e).hasMessage("Stream closed");
-        }
+        assertThatThrownBy(() -> dummyProvider.lastStream.read())
+                .isInstanceOf(IOException.class)
+                .hasMessage("Stream closed");
     }
 
     @Test
@@ -49,9 +44,8 @@ public class SubstitutingSourceProviderTest {
             }
         };
         SubstitutingSourceProvider provider = new SubstitutingSourceProvider(new DummySourceProvider(), new StrSubstitutor(dummyLookup));
-        String results = new String(ByteStreams.toByteArray(provider.open("foo: ${bar}")), StandardCharsets.UTF_8);
 
-        assertThat(results).isEqualTo("foo: ${bar}");
+        assertThat(provider.open("foo: ${bar}")).hasSameContentAs(new ByteArrayInputStream("foo: ${bar}".getBytes(StandardCharsets.UTF_8)));
     }
 
     @Test
@@ -64,13 +58,12 @@ public class SubstitutingSourceProviderTest {
             }
         };
         SubstitutingSourceProvider provider = new SubstitutingSourceProvider(new DummySourceProvider(), new StrSubstitutor(dummyLookup));
-        String results = new String(ByteStreams.toByteArray(provider.open("foo: ${bar:-default}")), StandardCharsets.UTF_8);
 
-        assertThat(results).isEqualTo("foo: default");
+        assertThat(provider.open("foo: ${bar:-default}")).hasSameContentAs(new ByteArrayInputStream("foo: default".getBytes(StandardCharsets.UTF_8)));
     }
 
     private static class DummySourceProvider implements ConfigurationSourceProvider {
-        public InputStream lastStream = new ByteArrayInputStream(new byte[]{});
+        InputStream lastStream = new ByteArrayInputStream(new byte[0]);
 
         @Override
         public InputStream open(String s) throws IOException {

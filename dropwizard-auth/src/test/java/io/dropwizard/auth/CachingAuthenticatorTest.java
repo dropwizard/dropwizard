@@ -2,12 +2,12 @@ package io.dropwizard.auth;
 
 import com.codahale.metrics.MetricRegistry;
 import com.google.common.cache.CacheBuilderSpec;
-import com.google.common.collect.ImmutableSet;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InOrder;
 
 import java.security.Principal;
+import java.util.Collections;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -62,7 +62,7 @@ public class CachingAuthenticatorTest {
     @Test
     public void invalidatesSetsOfCredentials() throws Exception {
         cached.authenticate("credentials");
-        cached.invalidateAll(ImmutableSet.of("credentials"));
+        cached.invalidateAll(Collections.singleton("credentials"));
         cached.authenticate("credentials");
 
         verify(underlying, times(2)).authenticate("credentials");

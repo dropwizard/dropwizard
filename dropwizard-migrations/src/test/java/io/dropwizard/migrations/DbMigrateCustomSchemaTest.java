@@ -1,6 +1,6 @@
 package io.dropwizard.migrations;
 
-import com.google.common.collect.ImmutableMap;
+import io.dropwizard.util.Maps;
 import net.jcip.annotations.NotThreadSafe;
 import net.sourceforge.argparse4j.inf.Namespace;
 import org.assertj.core.data.Index;
@@ -29,13 +29,13 @@ public class DbMigrateCustomSchemaTest extends AbstractMigrationTest {
         String schemaName = "customschema";
         DBI dbi = new DBI(databaseUrl, "sa", "");
         dbi.useHandle(h -> h.execute("create schema " + schemaName));
-        Namespace namespace = new Namespace(ImmutableMap.of("schema", schemaName, "catalog", "public"));
+        Namespace namespace = new Namespace(Maps.of("schema", schemaName, "catalog", "public"));
         migrateCommand.run(null, namespace, conf);
         dbi.useHandle(handle ->
             assertThat(handle
                 .select("select * from " + schemaName + ".persons"))
                 .hasSize(1)
-                .contains(ImmutableMap.of("id", 1, "name", "Bill Smith", "email", "bill@smith.me"), Index.atIndex(0))
+                .contains(Maps.of("id", 1, "name", "Bill Smith", "email", "bill@smith.me"), Index.atIndex(0))
         );
     }
 

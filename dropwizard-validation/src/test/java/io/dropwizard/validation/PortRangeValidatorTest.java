@@ -1,11 +1,11 @@
 package io.dropwizard.validation;
 
-import com.google.common.collect.ImmutableList;
 import org.junit.Before;
 import org.junit.Test;
 
 import javax.validation.Valid;
 import javax.validation.Validator;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -23,7 +23,7 @@ public class PortRangeValidatorTest {
         public int otherPort = 10001;
 
         @Valid
-        List<@PortRange Integer> ports = ImmutableList.of();
+        List<@PortRange Integer> ports = Collections.emptyList();
     }
 
 
@@ -77,7 +77,7 @@ public class PortRangeValidatorTest {
 
     @Test
     public void rejectsInvalidPortsInList() {
-        example.ports = ImmutableList.of(-1);
+        example.ports = Collections.singletonList(-1);
         assertThat(ConstraintViolations.format(validator.validate(example)))
             .containsOnly("ports[0].<collection element> must be between 1 and 65535");
     }

@@ -1,6 +1,5 @@
 package io.dropwizard.migrations;
 
-import com.google.common.annotations.VisibleForTesting;
 import io.dropwizard.Configuration;
 import io.dropwizard.db.DatabaseConfiguration;
 import liquibase.Liquibase;
@@ -22,7 +21,6 @@ public class DbCalculateChecksumCommand<T extends Configuration> extends Abstrac
             configurationClass, migrationsFileName);
     }
 
-    @VisibleForTesting
     void setCheckSumConsumer(Consumer<CheckSum> checkSumConsumer) {
         this.checkSumConsumer = checkSumConsumer;
     }

@@ -7,7 +7,6 @@ import com.codahale.metrics.graphite.GraphiteReporter;
 import com.codahale.metrics.graphite.GraphiteUDP;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import com.google.common.annotations.VisibleForTesting;
 import io.dropwizard.metrics.BaseReporterFactory;
 import io.dropwizard.validation.OneOf;
 import io.dropwizard.validation.PortRange;
@@ -114,7 +113,6 @@ public class GraphiteReporterFactory extends BaseReporterFactory {
         }
     }
 
-    @VisibleForTesting
     protected GraphiteReporter.Builder builder(MetricRegistry registry) {
         return GraphiteReporter.forRegistry(registry)
                 .convertDurationsTo(getDurationUnit())
