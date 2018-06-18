@@ -65,7 +65,9 @@ public class DbMigrateCommandTest extends AbstractMigrationTest {
 
     @Test
     public void testPrintHelp() throws Exception {
-        final Subparser subparser = ArgumentParsers.newArgumentParser("db")
+        final Subparser subparser = ArgumentParsers.newFor("db")
+                .terminalWidthDetection(false)
+                .build()
                 .addSubparsers()
                 .addParser(migrateCommand.getName())
                 .description(migrateCommand.getDescription());

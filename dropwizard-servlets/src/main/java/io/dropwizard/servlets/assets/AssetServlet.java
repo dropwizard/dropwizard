@@ -251,9 +251,9 @@ public class AssetServlet extends HttpServlet {
             final int resourceLength) {
         final ImmutableList.Builder<ByteRange> builder = ImmutableList.builder();
         if (rangeHeader.contains("=")) {
-            final String[] parts = rangeHeader.split("=");
-            if (parts.length > 1) {
-                final List<String> ranges = Splitter.on(",").trimResults().splitToList(parts[1]);
+            final List<String> parts = Splitter.on("=").splitToList(rangeHeader);
+            if (parts.size() > 1) {
+                final List<String> ranges = Splitter.on(",").trimResults().splitToList(parts.get(1));
                 for (final String range : ranges) {
                     builder.add(ByteRange.parse(range, resourceLength));
                 }

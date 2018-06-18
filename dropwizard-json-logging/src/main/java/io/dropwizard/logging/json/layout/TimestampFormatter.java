@@ -6,7 +6,6 @@ import javax.annotation.Nullable;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -15,7 +14,7 @@ import java.util.Optional;
  */
 public class TimestampFormatter {
 
-    private static final Map<String, DateTimeFormatter> FORMATTERS = ImmutableMap.<String, DateTimeFormatter>builder()
+    private static final ImmutableMap<String, DateTimeFormatter> FORMATTERS = ImmutableMap.<String, DateTimeFormatter>builder()
         .put("ISO_LOCAL_DATE", DateTimeFormatter.ISO_LOCAL_DATE)
         .put("ISO_OFFSET_DATE", DateTimeFormatter.ISO_OFFSET_DATE)
         .put("ISO_DATE", DateTimeFormatter.ISO_DATE)

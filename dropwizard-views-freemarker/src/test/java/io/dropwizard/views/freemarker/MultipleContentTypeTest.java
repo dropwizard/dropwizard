@@ -129,7 +129,7 @@ public class MultipleContentTypeTest extends JerseyTest {
 
     @Provider
     @Produces(MediaType.APPLICATION_JSON)
-    public class InfoMessageBodyWriter implements MessageBodyWriter<Info> {
+    public static class InfoMessageBodyWriter implements MessageBodyWriter<Info> {
         @Override
         public boolean isWriteable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
             return Info.class.isAssignableFrom(type);

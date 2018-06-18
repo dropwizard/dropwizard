@@ -35,7 +35,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @NotThreadSafe
 public class DbDumpCommandTest extends AbstractMigrationTest {
 
-    private static final List<String> ATTRIBUTE_NAMES = ImmutableList.of("columns", "foreign-keys", "indexes",
+    private static final ImmutableList<String> ATTRIBUTE_NAMES = ImmutableList.of("columns", "foreign-keys", "indexes",
         "primary-keys", "sequences", "tables", "unique-constraints", "views");
     private static DocumentBuilder xmlParser;
 

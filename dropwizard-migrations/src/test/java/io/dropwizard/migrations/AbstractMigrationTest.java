@@ -11,14 +11,15 @@ import java.util.UUID;
 public class AbstractMigrationTest {
 
     static {
-        ArgumentParsers.setTerminalWidthDetection(false);
         SqlGeneratorFactory.getInstance().unregister(AddColumnGeneratorSQLite.class);
     }
 
     protected static final String UTF_8 = "UTF-8";
 
     protected static Subparser createSubparser(AbstractLiquibaseCommand<?> command) {
-        final Subparser subparser = ArgumentParsers.newArgumentParser("db")
+        final Subparser subparser = ArgumentParsers.newFor("db")
+            .terminalWidthDetection(false)
+            .build()
             .addSubparsers()
             .addParser(command.getName())
             .description(command.getDescription());
