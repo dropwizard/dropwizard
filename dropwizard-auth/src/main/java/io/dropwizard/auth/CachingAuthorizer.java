@@ -3,25 +3,23 @@ package io.dropwizard.auth;
 import com.codahale.metrics.Meter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheBuilderSpec;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.CacheStats;
-import com.google.common.cache.LoadingCache;
-import com.google.common.util.concurrent.UncheckedExecutionException;
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.CaffeineSpec;
+import com.github.benmanes.caffeine.cache.LoadingCache;
+import com.github.benmanes.caffeine.cache.stats.CacheStats;
 import io.dropwizard.util.Sets;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
 import java.security.Principal;
 import java.util.Set;
+import java.util.concurrent.CompletionException;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static com.codahale.metrics.MetricRegistry.name;
 
 /**
- * An {@link Authorizer} decorator which uses a Guava {@link Cache} to
+ * An {@link Authorizer} decorator which uses a {@link Caffeine} cache to
  * temporarily cache principals' role associations.
  * <p>
  * Cache entries include both inclusion and exclusion of a principal
@@ -50,14 +48,13 @@ public class CachingAuthorizer<P extends Principal> implements Authorizer<P> {
      *
      * @param metricRegistry the application's registry of metrics
      * @param authorizer     the underlying authorizer
-     * @param cacheSpec      {@link CacheBuilderSpec}
+     * @param cacheSpec      {@link CaffeineSpec}
      */
     public CachingAuthorizer(
         final MetricRegistry metricRegistry,
         final Authorizer<P> authorizer,
-        final CacheBuilderSpec cacheSpec
-    ) {
-        this(metricRegistry, authorizer, CacheBuilder.from(cacheSpec));
+        final CaffeineSpec cacheSpec) {
+        this(metricRegistry, authorizer, Caffeine.from(cacheSpec));
     }
 
     /**
@@ -65,43 +62,36 @@ public class CachingAuthorizer<P extends Principal> implements Authorizer<P> {
      *
      * @param metricRegistry the application's registry of metrics
      * @param authorizer     the underlying authorizer
-     * @param builder        a {@link CacheBuilder}
+     * @param builder        a {@link CaffeineSpec}
      */
     public CachingAuthorizer(
         final MetricRegistry metricRegistry,
         final Authorizer<P> authorizer,
-        final CacheBuilder<Object, Object> builder
-    ) {
+        final Caffeine<Object, Object> builder) {
         this.underlying = authorizer;
         this.cacheMisses = metricRegistry.meter(name(authorizer.getClass(), "cache-misses"));
         this.getsTimer = metricRegistry.timer(name(authorizer.getClass(), "gets"));
-        this.cache = builder.recordStats().build(new CacheLoader<ImmutablePair<P, String>, Boolean>() {
-            @Override
-            public Boolean load(ImmutablePair<P, String> key) throws Exception {
-                cacheMisses.mark();
-                return underlying.authorize(key.left, key.right);
-            }
+        this.cache = builder.recordStats().build(key -> {
+            cacheMisses.mark();
+            return underlying.authorize(key.left, key.right);
         });
     }
 
     @Override
     public boolean authorize(P principal, String role) {
-        final Timer.Context context = getsTimer.time();
-
-        try {
+        try (Timer.Context context = getsTimer.time()) {
             final ImmutablePair<P, String> cacheKey = ImmutablePair.of(principal, role);
-            return cache.getUnchecked(cacheKey);
-        } catch (UncheckedExecutionException e) {
-            Throwable throwable = e.getCause();
-            if (throwable instanceof RuntimeException) {
-              throw (RuntimeException) throwable;
+            final Boolean result = cache.get(cacheKey);
+            return result == null ? false : result;
+        } catch (CompletionException e) {
+            Throwable cause = e.getCause();
+            if (cause instanceof RuntimeException) {
+                throw (RuntimeException) cause;
             }
-            if (throwable instanceof Error) {
-              throw (Error) throwable;
+            if (cause instanceof Error) {
+                throw (Error) cause;
             }
             throw e;
-        } finally {
-            context.stop();
         }
     }
 
@@ -170,7 +160,7 @@ public class CachingAuthorizer<P extends Principal> implements Authorizer<P> {
      * @return the number of cached principals
      */
     public long size() {
-        return cache.size();
+        return cache.estimatedSize();
     }
 
     /**

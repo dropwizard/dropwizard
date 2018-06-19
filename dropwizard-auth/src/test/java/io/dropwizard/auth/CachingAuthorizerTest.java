@@ -1,7 +1,7 @@
 package io.dropwizard.auth;
 
 import com.codahale.metrics.MetricRegistry;
-import com.google.common.cache.CacheBuilderSpec;
+import com.github.benmanes.caffeine.cache.CaffeineSpec;
 import io.dropwizard.util.Sets;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,7 +25,7 @@ public class CachingAuthorizerTest {
     private final CachingAuthorizer<Principal> cached = new CachingAuthorizer<>(
         new MetricRegistry(),
         underlying,
-        CacheBuilderSpec.parse("maximumSize=1")
+        CaffeineSpec.parse("maximumSize=1")
     );
 
     private final Principal principal = new PrincipalImpl("principal");
@@ -49,8 +49,11 @@ public class CachingAuthorizerTest {
     @Test
     public void respectsTheCacheConfiguration() throws Exception {
         cached.authorize(principal, role);
+        Thread.sleep(10L);
         cached.authorize(principal2, role);
+        Thread.sleep(10L);
         cached.authorize(principal, role);
+        Thread.sleep(10L);
 
         final InOrder inOrder = inOrder(underlying);
         inOrder.verify(underlying, times(1)).authorize(principal, role);

@@ -1,7 +1,7 @@
 package io.dropwizard.jersey.validation;
 
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import io.dropwizard.util.Lists;
 import io.dropwizard.util.Strings;
 import io.dropwizard.validation.ValidationMethod;
@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 public class ConstraintMessage {
 
     private static final Cache<Pair<Path, ? extends ConstraintDescriptor<?>>, String> PREFIX_CACHE =
-            CacheBuilder.newBuilder()
+            Caffeine.newBuilder()
             .expireAfterWrite(1, TimeUnit.HOURS)
             .build();
 

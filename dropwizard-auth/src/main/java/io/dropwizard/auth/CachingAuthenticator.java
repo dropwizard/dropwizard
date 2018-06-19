@@ -3,18 +3,16 @@ package io.dropwizard.auth;
 import com.codahale.metrics.Meter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
-import com.google.common.base.Throwables;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheBuilderSpec;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.CacheStats;
-import com.google.common.cache.LoadingCache;
-import com.google.common.util.concurrent.UncheckedExecutionException;
+import com.github.benmanes.caffeine.cache.CacheLoader;
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.CaffeineSpec;
+import com.github.benmanes.caffeine.cache.LoadingCache;
+import com.github.benmanes.caffeine.cache.stats.CacheStats;
 
 import java.security.Principal;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.CompletionException;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -37,12 +35,12 @@ public class CachingAuthenticator<C, P extends Principal> implements Authenticat
      *
      * @param metricRegistry the application's registry of metrics
      * @param authenticator  the underlying authenticator
-     * @param cacheSpec      a {@link CacheBuilderSpec}
+     * @param cacheSpec      a {@link CaffeineSpec}
      */
     public CachingAuthenticator(final MetricRegistry metricRegistry,
                                 final Authenticator<C, P> authenticator,
-                                final CacheBuilderSpec cacheSpec) {
-        this(metricRegistry, authenticator, CacheBuilder.from(cacheSpec));
+                                final CaffeineSpec cacheSpec) {
+        this(metricRegistry, authenticator, Caffeine.from(cacheSpec));
     }
 
     /**
@@ -50,51 +48,37 @@ public class CachingAuthenticator<C, P extends Principal> implements Authenticat
      *
      * @param metricRegistry the application's registry of metrics
      * @param authenticator  the underlying authenticator
-     * @param builder        a {@link CacheBuilder}
+     * @param builder        a {@link Caffeine}
      */
     public CachingAuthenticator(final MetricRegistry metricRegistry,
                                 final Authenticator<C, P> authenticator,
-                                final CacheBuilder<Object, Object> builder) {
+                                final Caffeine<Object, Object> builder) {
         this.cacheMisses = metricRegistry.meter(name(authenticator.getClass(), "cache-misses"));
         this.gets = metricRegistry.timer(name(authenticator.getClass(), "gets"));
-        this.cache = builder.recordStats().build(new CacheLoader<C, Optional<P>>() {
-            @Override
-            public Optional<P> load(C key) throws Exception {
-                cacheMisses.mark();
-                final Optional<P> optPrincipal = authenticator.authenticate(key);
-                if (!optPrincipal.isPresent()) {
-                    // Prevent caching of unknown credentials
-                    throw new InvalidCredentialsException();
-                }
-                return optPrincipal;
+        this.cache = builder.recordStats().build(key -> {
+            cacheMisses.mark();
+            final Optional<P> optPrincipal = authenticator.authenticate(key);
+            if (!optPrincipal.isPresent()) {
+                // Prevent caching of unknown credentials
+                throw new InvalidCredentialsException();
             }
+            return optPrincipal;
         });
     }
 
     @Override
     public Optional<P> authenticate(C credentials) throws AuthenticationException {
-        final Timer.Context context = gets.time();
-        try {
+        try (Timer.Context context = gets.time()) {
             return cache.get(credentials);
-        } catch (ExecutionException e) {
+        } catch (CompletionException e) {
             final Throwable cause = e.getCause();
             if (cause instanceof InvalidCredentialsException) {
                 return Optional.empty();
             }
-            // Attempt to re-throw as-is
-            Throwables.propagateIfPossible(cause, AuthenticationException.class);
+            if (cause instanceof AuthenticationException) {
+                throw (AuthenticationException) cause;
+            }
             throw new AuthenticationException(cause);
-        } catch (UncheckedExecutionException e) {
-            Throwable throwable = e.getCause();
-            if (throwable instanceof RuntimeException) {
-              throw (RuntimeException) throwable;
-            }
-            if (throwable instanceof Error) {
-              throw (Error) throwable;
-            }
-            throw e;
-        } finally {
-            context.stop();
         }
     }
 
@@ -141,7 +125,7 @@ public class CachingAuthenticator<C, P extends Principal> implements Authenticat
      * @return the number of cached principals
      */
     public long size() {
-        return cache.size();
+        return cache.estimatedSize();
     }
 
     /**

@@ -1,7 +1,7 @@
 package io.dropwizard.configuration;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.cache.CacheBuilderSpec;
+import com.github.benmanes.caffeine.cache.CaffeineSpec;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.util.Maps;
 import io.dropwizard.util.Resources;
@@ -123,7 +123,7 @@ public abstract class BaseConfigurationFactoryTest {
 
         @JsonProperty
         @Valid
-        CacheBuilderSpec cacheBuilderSpec = CacheBuilderSpec.disableCaching();
+        CaffeineSpec cacheBuilderSpec = CaffeineSpec.parse("initialCapacity=0,maximumSize=0");
     }
 
     static class NonInsatiableExample {
@@ -181,7 +181,7 @@ public abstract class BaseConfigurationFactoryTest {
         assertThat(example.cacheBuilderSpec)
             .isNotNull();
         assertThat(example.cacheBuilderSpec)
-            .isEqualTo(CacheBuilderSpec.disableCaching());
+            .isEqualTo(CaffeineSpec.parse("initialCapacity=0,maximumSize=0"));
     }
 
     @Test
