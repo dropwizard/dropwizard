@@ -93,7 +93,7 @@ public class JerseyEnvironment {
      * @param name the name of the Jersey property
      * @see org.glassfish.jersey.server.ResourceConfig
      */
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "TypeParameterUnusedInFormals"})
     @Nullable
     public <T> T getProperty(String name) {
         return (T) config.getProperties().get(name);

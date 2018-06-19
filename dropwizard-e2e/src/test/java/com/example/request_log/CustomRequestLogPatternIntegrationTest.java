@@ -5,11 +5,12 @@ import io.dropwizard.testing.ConfigOverride;
 import org.junit.Test;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class CustomRequestLogPatternIntegrationTest extends AbstractRequestLogPatternIntegrationTest {
@@ -34,7 +35,7 @@ public class CustomRequestLogPatternIntegrationTest extends AbstractRequestLogPa
         Thread.sleep(100); // To let async logs to finish
 
         List<String> logs;
-        try (BufferedReader reader = new BufferedReader(new FileReader(new File(tempFile)))) {
+        try (BufferedReader reader = Files.newBufferedReader(Paths.get(tempFile), UTF_8)) {
             logs = reader.lines().collect(Collectors.toList());
         }
 

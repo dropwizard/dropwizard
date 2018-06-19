@@ -190,7 +190,7 @@ public class DropwizardAppExtension<C extends Configuration> implements Dropwiza
         return testSupport.newApplication();
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "TypeParameterUnusedInFormals"})
     public <A extends Application<C>> A getApplication() {
         return testSupport.getApplication();
     }
