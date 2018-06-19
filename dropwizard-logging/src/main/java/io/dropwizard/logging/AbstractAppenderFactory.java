@@ -16,14 +16,19 @@ import io.dropwizard.logging.async.AsyncAppenderFactory;
 import io.dropwizard.logging.filter.FilterFactory;
 import io.dropwizard.logging.layout.DiscoverableLayoutFactory;
 import io.dropwizard.logging.layout.LayoutFactory;
+import io.dropwizard.util.Duration;
+import io.dropwizard.validation.MaxDuration;
+import io.dropwizard.validation.MinDuration;
 
 import javax.annotation.Nullable;
+import javax.validation.Valid;
 import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.TimeZone;
+import java.util.concurrent.TimeUnit;
 
 import static com.google.common.base.Strings.nullToEmpty;
 
@@ -78,10 +83,10 @@ import static com.google.common.base.Strings.nullToEmpty;
  *         </td>
  *     </tr>
  *     <tr>
- *         <td>{@code maxMessagesPerSecond}</td>
+ *         <td>{@code messageThrottle}</td>
  *         <td>
- *             Throttling: maximum number of messages per second.
- *             Throttled messages are discarded.
+ *             Average duration between messages. Throttled messages are discarded.
+ *             Maximum acceptable duration is 1 minute.
  *             By default, this is not set and throttling is disabled.
  *         </td>
  *     </tr>
@@ -116,8 +121,9 @@ public abstract class AbstractAppenderFactory<E extends DeferredProcessingAware>
     private int discardingThreshold = -1;
 
     @Nullable
-    @DecimalMin(value="0", inclusive = false)
-    private Double maxMessagesPerSecond;
+    @MinDuration(value = 0, unit = TimeUnit.SECONDS, inclusive = false)
+    @MaxDuration(value = 1, unit = TimeUnit.MINUTES)
+    private Duration messageThrottle;
 
     private boolean includeCallerData = false;
 
@@ -147,13 +153,13 @@ public abstract class AbstractAppenderFactory<E extends DeferredProcessingAware>
 
     @JsonProperty
     @Nullable
-    public Double getMaxMessagesPerSecond() {
-        return maxMessagesPerSecond;
+    public Duration getMessageThrottle() {
+        return messageThrottle;
     }
 
     @JsonProperty
-    public void setMaxMessagesPerSecond(Double maxMessagesPerSecond) {
-        this.maxMessagesPerSecond = maxMessagesPerSecond;
+    public void setMessageThrottle(Duration messageThrottle) {
+        this.messageThrottle = messageThrottle;
     }
 
     @JsonProperty
@@ -243,10 +249,10 @@ public abstract class AbstractAppenderFactory<E extends DeferredProcessingAware>
         asyncAppender.addAppender(appender);
         asyncAppender.setNeverBlock(neverBlock);
         asyncAppender.start();
-        if (maxMessagesPerSecond == null) {
+        if (messageThrottle == null) {
             return asyncAppender;
         } else {
-            return new ThrottlingAppenderWrapper(asyncAppender, maxMessagesPerSecond);
+            return new ThrottlingAppenderWrapper(asyncAppender, messageThrottle);
         }
     }
 

@@ -4,6 +4,7 @@ import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.Resources;
+import io.dropwizard.configuration.ConfigurationParsingException;
 import io.dropwizard.configuration.ConfigurationValidationException;
 import io.dropwizard.configuration.FileConfigurationSourceProvider;
 import io.dropwizard.configuration.SubstitutingSourceProvider;
@@ -39,17 +40,17 @@ public class ThrottlingAppenderTest {
     }
 
     @Test(expected = ConfigurationValidationException.class)
-    public void appenderWithZeroMaxMessagesPerSecond() throws Exception {
+    public void appenderWithZeroThrottle() throws Exception {
         final YamlConfigurationFactory<ConsoleAppenderFactory> factory = new YamlConfigurationFactory<>(
             ConsoleAppenderFactory.class, BaseValidator.newValidator(), Jackson.newObjectMapper(), "dw");
         final ConsoleAppenderFactory appender = factory.build(loadResource("yaml/appender_with_zero_throttling.yml"));
     }
 
     @Test(expected = ConfigurationValidationException.class)
-    public void appenderWithNegativeMaxMessagesPerSecond() throws Exception {
+    public void appenderWithInvalidThrottle() throws Exception {
         final YamlConfigurationFactory<ConsoleAppenderFactory> factory = new YamlConfigurationFactory<>(
             ConsoleAppenderFactory.class, BaseValidator.newValidator(), Jackson.newObjectMapper(), "dw");
-        final ConsoleAppenderFactory appender = factory.build(loadResource("yaml/appender_with_negative_throttling.yml"));
+        final ConsoleAppenderFactory appender = factory.build(loadResource("yaml/appender_with_invalid_throttling.yml"));
     }
 
     @Rule
@@ -59,10 +60,10 @@ public class ThrottlingAppenderTest {
         return folder.newFile("throttling.log");
     }
 
-    private DefaultLoggingFactory setup(File defaultLog, double maxMessagesPerSecond) throws Exception {
+    private DefaultLoggingFactory setup(File defaultLog, String messageThrottle) throws Exception {
         StrSubstitutor substitutor = new StrSubstitutor(ImmutableMap.of(
             "default", StringUtils.removeEnd(defaultLog.getAbsolutePath(), ".log"),
-            "maxMessagesPerSecond", maxMessagesPerSecond
+            "messageThrottle", messageThrottle
         ));
         DefaultLoggingFactory config = factory.build(
             new SubstitutingSourceProvider(new FileConfigurationSourceProvider(), substitutor),
@@ -74,7 +75,7 @@ public class ThrottlingAppenderTest {
     @Test
     public void overThrottlingLimit() throws Exception {
         File defaultLog = newLog();
-        DefaultLoggingFactory config = setup(defaultLog, 10);
+        DefaultLoggingFactory config = setup(defaultLog, "100ms");
         Logger logger = LoggerFactory.getLogger("com.example.app");
         Thread.sleep(1000);
         for (int i = 0; i < 100; i++) {
@@ -98,7 +99,7 @@ public class ThrottlingAppenderTest {
     @Test
     public void belowThrottlingLimit() throws Exception {
         File defaultLog = newLog();
-        DefaultLoggingFactory config = setup(defaultLog, 1000);
+        DefaultLoggingFactory config = setup(defaultLog, "1ms");
         Logger logger = LoggerFactory.getLogger("com.example.app");
         Thread.sleep(1000);
         for (int i = 0; i < 1000; i++) {
@@ -111,7 +112,7 @@ public class ThrottlingAppenderTest {
     @Test
     public void overThrottlingLimit2Seconds() throws Exception {
         File defaultLog = newLog();
-        DefaultLoggingFactory config = setup(defaultLog, 10);
+        DefaultLoggingFactory config = setup(defaultLog, "100ms");
         Logger logger = LoggerFactory.getLogger("com.example.app");
         Thread.sleep(1000);
         for (int i = 0; i < 100; i++) {

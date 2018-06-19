@@ -1,2 +1,2 @@
 type: console
-maxMessagesPerSecond: 0
+messageThrottle: 0s

@@ -9,13 +9,14 @@ import ch.qos.logback.core.spi.DeferredProcessingAware;
 import ch.qos.logback.core.spi.FilterReply;
 import ch.qos.logback.core.status.Status;
 import com.google.common.util.concurrent.RateLimiter;
+import io.dropwizard.util.Duration;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
  * An {@link AsyncAppenderBase} that applies throttling to a proxied appender.
- * Throttling is defined by the max number of messages per second.
+ * Throttling is defined by an average duration between messages.
  * Throttled messages are discarded.
  */
 class ThrottlingAppenderWrapper<E extends DeferredProcessingAware> implements Appender<E>, AsyncAppenderBaseProxy<E> {
@@ -23,9 +24,9 @@ class ThrottlingAppenderWrapper<E extends DeferredProcessingAware> implements Ap
     private final AsyncAppenderBase<E> appender;
     private final RateLimiter rateLimiter;
 
-    public ThrottlingAppenderWrapper(AsyncAppenderBase<E> delegate, double maxMessagesPerSecond) {
+    public ThrottlingAppenderWrapper(AsyncAppenderBase<E> delegate, Duration messageThrottle) {
         this.appender = delegate;
-        this.rateLimiter = RateLimiter.create(maxMessagesPerSecond);
+        this.rateLimiter = RateLimiter.create(1_000_000_000.0 / messageThrottle.toNanoseconds());
     }
 
     @Override
