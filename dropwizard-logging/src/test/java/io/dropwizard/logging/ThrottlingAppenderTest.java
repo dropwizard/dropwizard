@@ -4,7 +4,6 @@ import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.Resources;
-import io.dropwizard.configuration.ConfigurationParsingException;
 import io.dropwizard.configuration.ConfigurationValidationException;
 import io.dropwizard.configuration.FileConfigurationSourceProvider;
 import io.dropwizard.configuration.SubstitutingSourceProvider;
@@ -40,17 +39,17 @@ public class ThrottlingAppenderTest {
     }
 
     @Test(expected = ConfigurationValidationException.class)
-    public void appenderWithZeroThrottle() throws Exception {
+    public void appenderWithZeroMessageRate() throws Exception {
         final YamlConfigurationFactory<ConsoleAppenderFactory> factory = new YamlConfigurationFactory<>(
             ConsoleAppenderFactory.class, BaseValidator.newValidator(), Jackson.newObjectMapper(), "dw");
-        final ConsoleAppenderFactory appender = factory.build(loadResource("yaml/appender_with_zero_throttling.yml"));
+        final ConsoleAppenderFactory appender = factory.build(loadResource("yaml/appender_with_zero_message_rate.yml"));
     }
 
     @Test(expected = ConfigurationValidationException.class)
-    public void appenderWithInvalidThrottle() throws Exception {
+    public void appenderWithInvalidMessageRate() throws Exception {
         final YamlConfigurationFactory<ConsoleAppenderFactory> factory = new YamlConfigurationFactory<>(
             ConsoleAppenderFactory.class, BaseValidator.newValidator(), Jackson.newObjectMapper(), "dw");
-        final ConsoleAppenderFactory appender = factory.build(loadResource("yaml/appender_with_invalid_throttling.yml"));
+        final ConsoleAppenderFactory appender = factory.build(loadResource("yaml/appender_with_invalid_message_rate.yml"));
     }
 
     @Rule
@@ -60,14 +59,14 @@ public class ThrottlingAppenderTest {
         return folder.newFile("throttling.log");
     }
 
-    private DefaultLoggingFactory setup(File defaultLog, String messageThrottle) throws Exception {
+    private DefaultLoggingFactory setup(File defaultLog, String messageRate) throws Exception {
         StrSubstitutor substitutor = new StrSubstitutor(ImmutableMap.of(
             "default", StringUtils.removeEnd(defaultLog.getAbsolutePath(), ".log"),
-            "messageThrottle", messageThrottle
+            "messageRate", messageRate
         ));
         DefaultLoggingFactory config = factory.build(
             new SubstitutingSourceProvider(new FileConfigurationSourceProvider(), substitutor),
-            loadResource("yaml/logging-throttling.yml").getPath());
+            loadResource("yaml/logging-message-rate.yml").getPath());
         config.configure(new MetricRegistry(), "test-logger");
         return config;
     }

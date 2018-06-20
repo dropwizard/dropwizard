@@ -21,8 +21,6 @@ import io.dropwizard.validation.MaxDuration;
 import io.dropwizard.validation.MinDuration;
 
 import javax.annotation.Nullable;
-import javax.validation.Valid;
-import javax.validation.constraints.DecimalMin;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -83,11 +81,14 @@ import static com.google.common.base.Strings.nullToEmpty;
  *         </td>
  *     </tr>
  *     <tr>
- *         <td>{@code messageThrottle}</td>
+ *         <td>{@code messageRate}</td>
  *         <td>
- *             Average duration between messages. Throttled messages are discarded.
- *             Maximum acceptable duration is 1 minute.
- *             By default, this is not set and throttling is disabled.
+ *             Maximum message rate: average duration between messages. Extra messages are discarded.
+ *             This setting avoids flooding a paid logging service by accident.
+ *             For example, a duration of 100ms allows for a maximum of 10 messages per second and 30s would mean
+ *             1 message every 30 seconds.
+ *             The maximum acceptable duration is 1 minute.
+ *             By default, this duration is not set and this feature is disabled.
  *         </td>
  *     </tr>
  *     <tr>
@@ -123,7 +124,7 @@ public abstract class AbstractAppenderFactory<E extends DeferredProcessingAware>
     @Nullable
     @MinDuration(value = 0, unit = TimeUnit.SECONDS, inclusive = false)
     @MaxDuration(value = 1, unit = TimeUnit.MINUTES)
-    private Duration messageThrottle;
+    private Duration messageRate;
 
     private boolean includeCallerData = false;
 
@@ -153,13 +154,13 @@ public abstract class AbstractAppenderFactory<E extends DeferredProcessingAware>
 
     @JsonProperty
     @Nullable
-    public Duration getMessageThrottle() {
-        return messageThrottle;
+    public Duration getMessageRate() {
+        return messageRate;
     }
 
     @JsonProperty
-    public void setMessageThrottle(Duration messageThrottle) {
-        this.messageThrottle = messageThrottle;
+    public void setMessageRate(Duration messageRate) {
+        this.messageRate = messageRate;
     }
 
     @JsonProperty
@@ -249,10 +250,10 @@ public abstract class AbstractAppenderFactory<E extends DeferredProcessingAware>
         asyncAppender.addAppender(appender);
         asyncAppender.setNeverBlock(neverBlock);
         asyncAppender.start();
-        if (messageThrottle == null) {
+        if (messageRate == null) {
             return asyncAppender;
         } else {
-            return new ThrottlingAppenderWrapper(asyncAppender, messageThrottle);
+            return new ThrottlingAppenderWrapper(asyncAppender, messageRate);
         }
     }
 

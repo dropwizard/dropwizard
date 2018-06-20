@@ -24,9 +24,9 @@ class ThrottlingAppenderWrapper<E extends DeferredProcessingAware> implements Ap
     private final AsyncAppenderBase<E> appender;
     private final RateLimiter rateLimiter;
 
-    public ThrottlingAppenderWrapper(AsyncAppenderBase<E> delegate, Duration messageThrottle) {
+    public ThrottlingAppenderWrapper(AsyncAppenderBase<E> delegate, Duration messageRate) {
         this.appender = delegate;
-        this.rateLimiter = RateLimiter.create(1_000_000_000.0 / messageThrottle.toNanoseconds());
+        this.rateLimiter = RateLimiter.create(1_000_000_000.0 / messageRate.toNanoseconds());
     }
 
     @Override
