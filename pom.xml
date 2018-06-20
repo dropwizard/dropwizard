@@ -382,10 +382,19 @@
         <profile>
             <id>jdk10</id>
             <activation>
-                <jdk>[9,11]</jdk>
+                <jdk>[9,11)</jdk>
             </activation>
             <properties>
                 <argLine>-Duser.language=en -Duser.region=US --add-modules java.xml.bind</argLine>
+            </properties>
+        </profile>
+        <profile>
+            <id>jdk11</id>
+            <activation>
+                <jdk>11</jdk>
+            </activation>
+            <properties>
+                <argLine>-Duser.language=en -Duser.region=US</argLine>
             </properties>
             <build>
                 <plugins>
@@ -402,7 +411,7 @@
         <profile>
             <id>code-coverage</id>
             <activation>
-                <jdk>[9,11]</jdk>
+                <jdk>[9,11)</jdk>
             </activation>
             <build>
                 <plugins>

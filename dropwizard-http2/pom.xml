@@ -99,10 +99,29 @@
         <profile>
             <id>jdk10</id>
             <activation>
-                <jdk>[9, 11]</jdk>
+                <jdk>[9, 11)</jdk>
             </activation>
             <properties>
                 <argLine>-Duser.language=en -Duser.region=US --add-modules java.xml.bind</argLine>
+            </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.eclipse.jetty</groupId>
+                    <artifactId>jetty-alpn-java-server</artifactId>
+                </dependency>
+                <dependency>
+                    <groupId>org.eclipse.jetty</groupId>
+                    <artifactId>jetty-alpn-java-client</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>jdk11</id>
+            <activation>
+                <jdk>11</jdk>
+            </activation>
+            <properties>
+                <argLine>-Duser.language=en -Duser.region=US</argLine>
             </properties>
             <dependencies>
                 <dependency>
