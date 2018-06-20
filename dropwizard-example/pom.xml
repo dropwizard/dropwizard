@@ -316,6 +316,7 @@
                 <jdk>9</jdk>
             </activation>
             <properties>
+                <maven.compiler.release>9</maven.compiler.release>
                 <maven.compiler.source>1.9</maven.compiler.source>
                 <maven.compiler.target>1.9</maven.compiler.target>
             </properties>
@@ -337,6 +338,7 @@
                 <jdk>10</jdk>
             </activation>
             <properties>
+                <maven.compiler.release>10</maven.compiler.release>
                 <maven.compiler.source>1.10</maven.compiler.source>
                 <maven.compiler.target>1.10</maven.compiler.target>
             </properties>
@@ -358,8 +360,9 @@
                 <jdk>11</jdk>
             </activation>
             <properties>
-                <maven.compiler.source>1.11</maven.compiler.source>
-                <maven.compiler.target>1.11</maven.compiler.target>
+                <maven.compiler.release>11</maven.compiler.release>
+                <maven.compiler.source>11</maven.compiler.source>
+                <maven.compiler.target>11</maven.compiler.target>
             </properties>
             <build>
                 <plugins>
