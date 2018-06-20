@@ -70,12 +70,11 @@ public class LogConfigurationTask extends Task {
             String message = String.format("Configured logging level for %s to %s", loggerName, loggerLevel);
 
             if (loggerLevel != null && duration != null) {
-                // Get the effective level before setting the new level
-                final Level effectiveLevel = logger.getEffectiveLevel();
                 final long millis = duration.toMillis();
                 timer.schedule(new TimerTask() {
+                    @Override
                     public void run() {
-                        logger.setLevel(effectiveLevel);
+                        logger.setLevel(null);
                     }
                 }, millis);
 
@@ -98,6 +97,7 @@ public class LogConfigurationTask extends Task {
         return loggerLevels.isEmpty() ? null : Level.valueOf(loggerLevels.get(0));
     }
 
+    @Nullable
     private Duration getDuration(ImmutableMultimap<String, String> parameters) {
         final List<String> durations = parameters.get("duration").asList();
         return durations.isEmpty() ? null : Duration.parse(durations.get(0));

@@ -15,8 +15,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class LogConfigurationTaskTest {
 
-    private static final Level DEFAULT_LEVEL = Level.ALL;
-
     private final LoggerContext loggerContext = new LoggerContext();
     private final Logger logger1 = loggerContext.getLogger("logger.one");
     private final Logger logger2 = loggerContext.getLogger("logger.two");
@@ -26,15 +24,11 @@ public class LogConfigurationTaskTest {
 
     private final LogConfigurationTask task = new LogConfigurationTask(loggerContext);
 
-    @Before
-    public void setUp() throws Exception {
-        logger1.setLevel(DEFAULT_LEVEL);
-        logger2.setLevel(DEFAULT_LEVEL);
-    }
-
     @Test
     public void configuresSpecificLevelForALogger() throws Exception {
+
         // given
+        Level twoEffectiveBefore = logger2.getEffectiveLevel();
         ImmutableMultimap<String, String> parameters = ImmutableMultimap.of(
                 "logger", "logger.one",
                 "level", "debug");
@@ -43,8 +37,8 @@ public class LogConfigurationTaskTest {
         task.execute(parameters, output);
 
         // then
-        assertThat(logger1.getLevel()).isEqualTo(Level.DEBUG);
-        assertThat(logger2.getLevel()).isEqualTo(DEFAULT_LEVEL);
+        assertThat(logger1.getEffectiveLevel()).isEqualTo(Level.DEBUG);
+        assertThat(logger2.getEffectiveLevel()).isEqualTo(twoEffectiveBefore);
 
         assertThat(stringWriter.toString()).isEqualTo(String.format("Configured logging level for logger.one to DEBUG%n"));
     }
@@ -52,9 +46,9 @@ public class LogConfigurationTaskTest {
     @Test
     public void configuresSpecificLevelForALoggerForADuration() throws Exception {
 
-        long millis = 2000;
-
         // given
+        long millis = 2000;
+        Level oneEffectiveBefore = logger1.getEffectiveLevel();
         ImmutableMultimap<String, String> parameters =
         ImmutableMultimap.of(
             "logger", "logger.one",
@@ -70,12 +64,14 @@ public class LogConfigurationTaskTest {
 
         // after
         Thread.sleep(4000);
-        assertThat(logger1.getLevel()).isEqualTo(DEFAULT_LEVEL);
+        assertThat(logger1.getEffectiveLevel()).isEqualTo(oneEffectiveBefore);
     }
 
     @Test
     public void configuresDefaultLevelForALogger() throws Exception {
         // given
+        Level oneEffectiveBefore = logger1.getEffectiveLevel();
+        Level twoEffectiveBefore = logger2.getEffectiveLevel();
         ImmutableMultimap<String, String> parameters = ImmutableMultimap.of(
                 "logger", "logger.one");
 
@@ -84,7 +80,8 @@ public class LogConfigurationTaskTest {
 
         // then
         assertThat(logger1.getLevel()).isNull();
-        assertThat(logger2.getLevel()).isEqualTo(DEFAULT_LEVEL);
+        assertThat(logger1.getEffectiveLevel()).isEqualTo(oneEffectiveBefore);
+        assertThat(logger2.getEffectiveLevel()).isEqualTo(twoEffectiveBefore);
 
         assertThat(stringWriter.toString()).isEqualTo(String.format("Configured logging level for logger.one to null%n"));
     }
@@ -101,8 +98,8 @@ public class LogConfigurationTaskTest {
         task.execute(parameters, output);
 
         // then
-        assertThat(logger1.getLevel()).isEqualTo(Level.INFO);
-        assertThat(logger2.getLevel()).isEqualTo(Level.INFO);
+        assertThat(logger1.getEffectiveLevel()).isEqualTo(Level.INFO);
+        assertThat(logger2.getEffectiveLevel()).isEqualTo(Level.INFO);
 
         assertThat(stringWriter.toString())
                 .isEqualTo(String.format("Configured logging level for logger.one to INFO%nConfigured logging level for logger.two to INFO%n"));
