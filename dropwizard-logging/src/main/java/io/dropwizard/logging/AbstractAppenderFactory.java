@@ -10,17 +10,15 @@ import ch.qos.logback.core.LayoutBase;
 import ch.qos.logback.core.pattern.PatternLayoutBase;
 import ch.qos.logback.core.spi.DeferredProcessingAware;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
-import io.dropwizard.jackson.Jackson;
 import io.dropwizard.logging.async.AsyncAppenderFactory;
 import io.dropwizard.logging.filter.FilterFactory;
 import io.dropwizard.logging.layout.DiscoverableLayoutFactory;
 import io.dropwizard.logging.layout.LayoutFactory;
+import io.dropwizard.util.Duration;
+import io.dropwizard.validation.MaxDuration;
+import io.dropwizard.validation.MinDuration;
 
 import javax.annotation.Nullable;
 import javax.validation.constraints.Max;
@@ -28,6 +26,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.TimeZone;
+import java.util.concurrent.TimeUnit;
 
 import static com.google.common.base.Strings.nullToEmpty;
 
@@ -82,6 +81,17 @@ import static com.google.common.base.Strings.nullToEmpty;
  *         </td>
  *     </tr>
  *     <tr>
+ *         <td>{@code messageRate}</td>
+ *         <td>
+ *             Maximum message rate: average duration between messages. Extra messages are discarded.
+ *             This setting avoids flooding a paid logging service by accident.
+ *             For example, a duration of 100ms allows for a maximum of 10 messages per second and 30s would mean
+ *             1 message every 30 seconds.
+ *             The maximum acceptable duration is 1 minute.
+ *             By default, this duration is not set and this feature is disabled.
+ *         </td>
+ *     </tr>
+ *     <tr>
  *         <td>{@code filterFactories}</td>
  *         <td>(none)</td>
  *         <td>
@@ -111,6 +121,11 @@ public abstract class AbstractAppenderFactory<E extends DeferredProcessingAware>
 
     private int discardingThreshold = -1;
 
+    @Nullable
+    @MinDuration(value = 0, unit = TimeUnit.SECONDS, inclusive = false)
+    @MaxDuration(value = 1, unit = TimeUnit.MINUTES)
+    private Duration messageRate;
+
     private boolean includeCallerData = false;
 
     private ImmutableList<FilterFactory<E>> filterFactories = ImmutableList.of();
@@ -135,6 +150,17 @@ public abstract class AbstractAppenderFactory<E extends DeferredProcessingAware>
     @JsonProperty
     public void setDiscardingThreshold(int discardingThreshold) {
         this.discardingThreshold = discardingThreshold;
+    }
+
+    @JsonProperty
+    @Nullable
+    public Duration getMessageRate() {
+        return messageRate;
+    }
+
+    @JsonProperty
+    public void setMessageRate(Duration messageRate) {
+        this.messageRate = messageRate;
     }
 
     @JsonProperty
@@ -224,7 +250,11 @@ public abstract class AbstractAppenderFactory<E extends DeferredProcessingAware>
         asyncAppender.addAppender(appender);
         asyncAppender.setNeverBlock(neverBlock);
         asyncAppender.start();
-        return asyncAppender;
+        if (messageRate == null) {
+            return asyncAppender;
+        } else {
+            return new ThrottlingAppenderWrapper(asyncAppender, messageRate);
+        }
     }
 
     @SuppressWarnings("unchecked")
