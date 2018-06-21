@@ -192,7 +192,7 @@ public class DropwizardAppRule<C extends Configuration> extends ExternalResource
         return testSupport.newApplication();
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "TypeParameterUnusedInFormals"})
     public <A extends Application<C>> A getApplication() {
         return testSupport.getApplication();
     }

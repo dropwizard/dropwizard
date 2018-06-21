@@ -266,7 +266,7 @@ public class DropwizardTestSupport<C extends Configuration> {
         }
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked", "TypeParameterUnusedInFormals"})
     public <A extends Application<C>> A getApplication() {
         return (A) requireNonNull(application);
     }

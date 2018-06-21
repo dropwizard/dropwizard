@@ -4,13 +4,60 @@
 Release Notes
 #############
 
+.. _rel-1.3.4:
+
+v1.3.4: Jun 14, 2018
+====================
+
+* Upgrade to Jackson 2.9.6 to fix CVE-2018-12022 and CVE-2018-12023 (`#2392 <https://github.com/dropwizard/dropwizard/issues/2392>`_, `#2393 <https://github.com/dropwizard/dropwizard/pull/2393>`_)
+* Upgrade to Liquibase 3.6.1 (`#2385 <https://github.com/dropwizard/dropwizard/issues/2385>`_, `#2386 <https://github.com/dropwizard/dropwizard/pull/2386>`_)
+
+.. _rel-1.2.7:
+
+v1.2.7: Jun 14, 2018
+====================
+
+* Upgrade to Jackson 2.9.6 to fix CVE-2018-12022 and CVE-2018-12023 (`#2392 <https://github.com/dropwizard/dropwizard/issues/2392>`_, `#2393 <https://github.com/dropwizard/dropwizard/pull/2393>`_)
+
+.. _rel-1.3.3:
+
+v1.3.3: Jun 6, 2018
+===================
+
+* Fix Jersey attempting to resolve auth filter fields `#2324 <https://github.com/dropwizard/dropwizard/pull/2324>`_
+* Upgrade to JUnit5 5.2.0 `#2347 <https://github.com/dropwizard/dropwizard/pull/2347>`_
+* Upgrade to Jdbi3 3.2.1 `#2369 <https://github.com/dropwizard/dropwizard/pull/2369>`_
+* Upgrade Liquibase from 3.5.5 to 3.6.0 `#2325 <https://github.com/dropwizard/dropwizard/pull/2325>`_
+
+.. _rel-1.3.2:
+
+v1.3.2: May 11, 2018
+====================
+
+* Upgrade Jetty to 9.4.10.v20180503 `#2346 <https://github.com/dropwizard/dropwizard/pull/2346>`_
+* Add possibility to disable logging bootstrap for ResourceTestRule `#2333 <https://github.com/dropwizard/dropwizard/pull/2333>`_
+
+.. _rel-1.2.6:
+
+v1.2.6: May 11, 2018
+====================
+
+* Upgrade Jetty to 9.4.10.v20180503 `#2346 <https://github.com/dropwizard/dropwizard/pull/2346>`_
+* Add possibility to disable logging bootstrap for ResourceTestRule `#2333 <https://github.com/dropwizard/dropwizard/pull/2333>`_
+
 .. _rel-1.3.1:
 
-v1.3.1: Unreleased
-==================
+v1.3.1: Apr 4, 2018
+===================
 
 * Upgrade to Jackson 2.9.5 (`CVE-2018-7489 <https://nvd.nist.gov/vuln/detail/CVE-2018-7489>`_)
 
+.. _rel-1.2.5:
+
+v1.2.5: Apr 4, 2018
+===================
+
+* Upgrade to Jackson 2.9.5 (`CVE-2018-7489 <https://nvd.nist.gov/vuln/detail/CVE-2018-7489>`_)
 
 .. _rel-1.3.0:
 

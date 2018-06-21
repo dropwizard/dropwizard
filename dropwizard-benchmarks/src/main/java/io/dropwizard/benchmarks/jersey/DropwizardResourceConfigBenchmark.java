@@ -3,6 +3,7 @@ package io.dropwizard.benchmarks.jersey;
 import com.codahale.metrics.MetricRegistry;
 import com.google.common.collect.ImmutableList;
 import io.dropwizard.jersey.DropwizardResourceConfig;
+import org.glassfish.jersey.test.JerseyTest;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Mode;
@@ -19,6 +20,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.core.Application;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -31,10 +33,20 @@ public class DropwizardResourceConfigBenchmark {
             new DropwizardResourceConfig(true, new MetricRegistry());
 
     @Setup
-    public void setUp() {
+    public void setUp() throws Exception {
         dropwizardResourceConfig.register(DistributionResource.class);
         dropwizardResourceConfig.register(AssetResource.class);
         dropwizardResourceConfig.register(ClustersResource.class);
+
+        final JerseyTest jerseyTest = new JerseyTest() {
+            @Override
+            protected Application configure() {
+                return dropwizardResourceConfig;
+            }
+        };
+
+        jerseyTest.setUp();
+        jerseyTest.tearDown();
     }
 
     @Benchmark
