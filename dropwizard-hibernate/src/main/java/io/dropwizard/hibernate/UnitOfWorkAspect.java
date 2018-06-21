@@ -8,7 +8,6 @@ import org.hibernate.context.internal.ManagedSessionContext;
 import javax.annotation.Nullable;
 import java.util.Map;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -36,30 +35,18 @@ import static java.util.Objects.requireNonNull;
  * </pre>
  */
 public class UnitOfWorkAspect {
-
     private final Map<String, SessionFactory> sessionFactories;
 
     public UnitOfWorkAspect(Map<String, SessionFactory> sessionFactories) {
         this.sessionFactories = sessionFactories;
     }
 
-    // Context variables
-    @Nullable
-    private UnitOfWork unitOfWork;
-
-    @Nullable
-    private Session session;
-
-    @Nullable
-    private SessionFactory sessionFactory;
-
     public void beforeStart(@Nullable UnitOfWork unitOfWork) {
         if (unitOfWork == null) {
             return;
         }
-        this.unitOfWork = unitOfWork;
 
-        sessionFactory = sessionFactories.get(unitOfWork.value());
+        SessionFactory sessionFactory = sessionFactories.get(unitOfWork.value());
         if (sessionFactory == null) {
             // If the user didn't specify the name of a session factory,
             // and we have only one registered, we can assume that it's the right one.
@@ -69,28 +56,30 @@ public class UnitOfWorkAspect {
                 throw new IllegalArgumentException("Unregistered Hibernate bundle: '" + unitOfWork.value() + "'");
             }
         }
-        session = sessionFactory.openSession();
+
+        Session session = sessionFactory.openSession();
         try {
+            setContext(unitOfWork, session);
             configureSession();
-            ManagedSessionContext.bind(session);
             beginTransaction(unitOfWork, session);
         } catch (Throwable th) {
             session.close();
-            session = null;
-            ManagedSessionContext.unbind(sessionFactory);
+            clearContext();
             throw th;
         }
     }
 
     public void afterEnd() {
-        if (unitOfWork == null || session == null) {
+        UnitOfWork unitOfWork = UnitOfWorkContext.getUnitOfWork();
+        SessionFactory sessionFactory = UnitOfWorkContext.getSessionFactory();
+        if (unitOfWork == null || sessionFactory == null) {
             return;
         }
 
         try {
-            commitTransaction(unitOfWork, session);
+            commitTransaction(unitOfWork, sessionFactory.getCurrentSession());
         } catch (Exception e) {
-            rollbackTransaction(unitOfWork, session);
+            rollbackTransaction(unitOfWork, sessionFactory.getCurrentSession());
             throw e;
         }
         // We should not close the session to let the lazy loading work during serializing a response to the client.
@@ -98,12 +87,14 @@ public class UnitOfWorkAspect {
     }
 
     public void onError() {
-        if (unitOfWork == null || session == null) {
+        UnitOfWork unitOfWork = UnitOfWorkContext.getUnitOfWork();
+        SessionFactory sessionFactory = UnitOfWorkContext.getSessionFactory();
+        if (unitOfWork == null || sessionFactory == null) {
             return;
         }
 
         try {
-            rollbackTransaction(unitOfWork, session);
+            rollbackTransaction(unitOfWork, sessionFactory.getCurrentSession());
         } finally {
             onFinish();
         }
@@ -111,18 +102,18 @@ public class UnitOfWorkAspect {
 
     public void onFinish() {
         try {
-            if (session != null) {
-                session.close();
+            SessionFactory sessionFactory = UnitOfWorkContext.getSessionFactory();
+            if (sessionFactory != null) {
+                sessionFactory.getCurrentSession().close();
             }
         } finally {
-            session = null;
-            ManagedSessionContext.unbind(sessionFactory);
+            clearContext();
         }
     }
 
     protected void configureSession() {
-        checkNotNull(unitOfWork);
-        checkNotNull(session);
+        Session session = UnitOfWorkContext.getCurrentSession();
+        UnitOfWork unitOfWork = requireNonNull(UnitOfWorkContext.getUnitOfWork());
         session.setDefaultReadOnly(unitOfWork.readOnly());
         session.setCacheMode(unitOfWork.cacheMode());
         session.setHibernateFlushMode(unitOfWork.flushMode());
@@ -155,12 +146,14 @@ public class UnitOfWorkAspect {
         }
     }
 
-    protected Session getSession() {
-        return requireNonNull(session);
+    private static void setContext(UnitOfWork unitOfWork, Session session) {
+        ManagedSessionContext.bind(session);
+        UnitOfWorkContext.setUnitOfWork(unitOfWork);
+        UnitOfWorkContext.setSessionFactory(session.getSessionFactory());
     }
 
-    protected SessionFactory getSessionFactory() {
-        return requireNonNull(sessionFactory);
+    private static void clearContext() {
+        ManagedSessionContext.unbind(UnitOfWorkContext.getSessionFactory());
+        UnitOfWorkContext.clear();
     }
-
 }

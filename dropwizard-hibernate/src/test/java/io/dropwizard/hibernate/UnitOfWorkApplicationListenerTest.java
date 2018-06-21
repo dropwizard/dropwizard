@@ -52,12 +52,14 @@ public class UnitOfWorkApplicationListenerTest {
         listener.registerSessionFactory("analytics", analyticsSessionFactory);
 
         when(sessionFactory.openSession()).thenReturn(session);
+        when(sessionFactory.getCurrentSession()).thenReturn(session);
         when(session.getSessionFactory()).thenReturn(sessionFactory);
         when(session.beginTransaction()).thenReturn(transaction);
         when(session.getTransaction()).thenReturn(transaction);
         when(transaction.getStatus()).thenReturn(ACTIVE);
 
         when(analyticsSessionFactory.openSession()).thenReturn(analyticsSession);
+        when(analyticsSessionFactory.getCurrentSession()).thenReturn(analyticsSession);
         when(analyticsSession.getSessionFactory()).thenReturn(analyticsSessionFactory);
         when(analyticsSession.beginTransaction()).thenReturn(analyticsTransaction);
         when(analyticsSession.getTransaction()).thenReturn(analyticsTransaction);

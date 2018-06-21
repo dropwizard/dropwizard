@@ -60,7 +60,7 @@ public class SubResourcesTest {
             initDatabase(sessionFactory);
 
             environment.jersey().register(new UnitOfWorkApplicationListener("hr-db", sessionFactory));
-            environment.jersey().register(new PersonResource(new PersonDAO(sessionFactory), new DogDAO(sessionFactory)));
+            environment.jersey().register(new PersonResource(new PersonDAO(), new DogDAO()));
         }
 
         private void initDatabase(SessionFactory sessionFactory) {
@@ -147,20 +147,12 @@ public class SubResourcesTest {
     }
 
     public static class PersonDAO extends AbstractDAO<Person> {
-        PersonDAO(SessionFactory sessionFactory) {
-            super(sessionFactory);
-        }
-
         Optional<Person> findByName(String name) {
             return Optional.ofNullable(get(name));
         }
     }
 
     public static class DogDAO extends AbstractDAO<Dog> {
-        DogDAO(SessionFactory sessionFactory) {
-            super(sessionFactory);
-        }
-
         Optional<Dog> findByOwnerAndName(String ownerName, String dogName) {
             return query("SELECT d FROM Dog d WHERE d.owner.name=:owner AND d.name=:name")
                 .setParameter("owner", ownerName)

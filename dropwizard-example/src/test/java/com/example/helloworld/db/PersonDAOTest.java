@@ -1,6 +1,7 @@
 package com.example.helloworld.db;
 
 import com.example.helloworld.core.Person;
+import io.dropwizard.hibernate.UnitOfWorkContext;
 import io.dropwizard.testing.junit.DAOTestRule;
 import org.hibernate.exception.ConstraintViolationException;
 import org.junit.Before;
@@ -24,7 +25,9 @@ public class PersonDAOTest {
 
     @Before
     public void setUp() throws Exception {
-        personDAO = new PersonDAO(daoTestRule.getSessionFactory());
+        UnitOfWorkContext.setSessionFactory(daoTestRule.getSessionFactory());
+
+        personDAO = new PersonDAO();
     }
 
     @Test
