@@ -15,6 +15,7 @@ import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -64,7 +65,7 @@ public class AssetServlet extends HttpServlet {
         }
     }
 
-    private static final MediaType DEFAULT_MEDIA_TYPE = MediaType.HTML_UTF_8;
+    private static final String DEFAULT_MEDIA_TYPE = "text/html";
 
     private final String resourcePath;
     private final String uriPath;
@@ -192,28 +193,16 @@ public class AssetServlet extends HttpServlet {
             resp.setDateHeader(LAST_MODIFIED, cachedAsset.getLastModifiedTime());
             resp.setHeader(ETAG, cachedAsset.getETag());
 
-            final String mimeTypeOfExtension = req.getServletContext()
-                    .getMimeType(req.getRequestURI());
-            MediaType mediaType = DEFAULT_MEDIA_TYPE;
-
-            if (mimeTypeOfExtension != null) {
-                try {
-                    mediaType = MediaType.parse(mimeTypeOfExtension);
-                    if (defaultCharset != null && mediaType.is(MediaType.ANY_TEXT_TYPE)) {
-                        mediaType = mediaType.withCharset(defaultCharset);
-                    }
-                } catch (IllegalArgumentException ignore) {
-                    // ignore
-                }
-            }
-
-            if (mediaType.is(MediaType.ANY_VIDEO_TYPE)
-                    || mediaType.is(MediaType.ANY_AUDIO_TYPE) || usingRanges) {
+            final String mediaType = Optional.ofNullable(req.getServletContext().getMimeType(req.getRequestURI()))
+                .orElse(DEFAULT_MEDIA_TYPE);
+            if (mediaType.startsWith("video") || mediaType.startsWith("audio") || usingRanges) {
                 resp.addHeader(ACCEPT_RANGES, "bytes");
             }
 
-            resp.setContentType(mediaType.type() + '/' + mediaType.subtype());
-            mediaType.charset().ifPresent(c -> resp.setCharacterEncoding(c.toString()));
+            resp.setContentType(mediaType);
+            if (defaultCharset != null) {
+                resp.setCharacterEncoding(defaultCharset.toString());
+            }
 
             try (ServletOutputStream output = resp.getOutputStream()) {
                 if (usingRanges) {
