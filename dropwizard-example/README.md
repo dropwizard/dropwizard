@@ -29,9 +29,11 @@ As with all the modules the db example is wired up in the `initialize` function 
 
 To test the example application run the following commands.
 
-* To package the example run the following from the root dropwizard directory.
+* To create the example, package the application using [Apache Maven](https://maven.apache.org/) from the root dropwizard directory.
 
-        mvn package
+        cd dropwizard
+        ./mvnw package
+        cd dropwizard-example
 
 * To setup the h2 database run.
 
