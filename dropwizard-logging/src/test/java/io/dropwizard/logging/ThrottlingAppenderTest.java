@@ -1,130 +1,128 @@
 package io.dropwizard.logging;
 
+import ch.qos.logback.classic.spi.ILoggingEvent;
 import com.codahale.metrics.MetricRegistry;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.io.Resources;
+import com.google.common.util.concurrent.RateLimiter;
 import io.dropwizard.configuration.ConfigurationValidationException;
 import io.dropwizard.configuration.FileConfigurationSourceProvider;
 import io.dropwizard.configuration.SubstitutingSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.Jackson;
+import io.dropwizard.util.Duration;
 import io.dropwizard.validation.BaseValidator;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StrSubstitutor;
-import org.junit.Rule;
+import org.assertj.core.api.Condition;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
+import java.io.PrintStream;
 import java.net.URISyntaxException;
-import java.nio.file.Files;
+import java.time.OffsetDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 public class ThrottlingAppenderTest {
-    private final ObjectMapper objectMapper = Jackson.newObjectMapper();
-    private final YamlConfigurationFactory<DefaultLoggingFactory> factory = new YamlConfigurationFactory<>(
-        DefaultLoggingFactory.class,
+    private final YamlConfigurationFactory<ConsoleAppenderFactory> factory = new YamlConfigurationFactory<>(
+        ConsoleAppenderFactory.class,
         BaseValidator.newValidator(),
-        objectMapper, "dw");
+        Jackson.newObjectMapper(),
+        "dw");
 
+    private PrintStream old;
+    private final Condition<String> containsApplicationLog =
+        new Condition<>(o -> o.contains("Application log"), "contains application log");
+
+    private final ByteArrayOutputStream redirectedStream = new ByteArrayOutputStream();
+
+    @Before
+    public void setup() {
+        old = System.out;
+        System.setOut(new PrintStream(redirectedStream));
+    }
+
+    @After
+    public void teardown() {
+        System.setOut(old);
+    }
 
     private static File loadResource(String resourceName) throws URISyntaxException {
         return new File(Resources.getResource(resourceName).toURI());
     }
 
-    @Test(expected = ConfigurationValidationException.class)
-    public void appenderWithZeroMessageRate() throws Exception {
-        final YamlConfigurationFactory<ConsoleAppenderFactory> factory = new YamlConfigurationFactory<>(
-            ConsoleAppenderFactory.class, BaseValidator.newValidator(), Jackson.newObjectMapper(), "dw");
-        final ConsoleAppenderFactory appender = factory.build(loadResource("yaml/appender_with_zero_message_rate.yml"));
-    }
-
-    @Test(expected = ConfigurationValidationException.class)
-    public void appenderWithInvalidMessageRate() throws Exception {
-        final YamlConfigurationFactory<ConsoleAppenderFactory> factory = new YamlConfigurationFactory<>(
-            ConsoleAppenderFactory.class, BaseValidator.newValidator(), Jackson.newObjectMapper(), "dw");
-        final ConsoleAppenderFactory appender = factory.build(loadResource("yaml/appender_with_invalid_message_rate.yml"));
-    }
-
-    @Rule
-    public TemporaryFolder folder = new TemporaryFolder();
-
-    private File newLog() throws IOException {
-        return folder.newFile("throttling.log");
-    }
-
-    private DefaultLoggingFactory setup(File defaultLog, String messageRate) throws Exception {
-        StrSubstitutor substitutor = new StrSubstitutor(ImmutableMap.of(
-            "default", StringUtils.removeEnd(defaultLog.getAbsolutePath(), ".log"),
-            "messageRate", messageRate
-        ));
-        DefaultLoggingFactory config = factory.build(
-            new SubstitutingSourceProvider(new FileConfigurationSourceProvider(), substitutor),
+    @SuppressWarnings("unchecked")
+    private List<String> throttledLines(Duration messageRate) throws Exception {
+        final HashMap<String, Object> variables = new HashMap<>();
+        variables.put("messageRate", messageRate);
+        final ConsoleAppenderFactory<ILoggingEvent> config = factory.build(
+            new SubstitutingSourceProvider(new FileConfigurationSourceProvider(), new StrSubstitutor(variables)),
             loadResource("yaml/logging-message-rate.yml").getPath());
-        config.configure(new MetricRegistry(), "test-logger");
-        return config;
+        final DefaultLoggingFactory defaultLoggingFactory = new DefaultLoggingFactory();
+        defaultLoggingFactory.setAppenders(Collections.singletonList(config));
+        defaultLoggingFactory.configure(new MetricRegistry(), "test-logger");
+
+        final Logger logger = LoggerFactory.getLogger("com.example.app");
+
+        final OffsetDateTime start = OffsetDateTime.now();
+
+        // Creating a ratelimiter that allows 100 acquires a second will
+        // request 100 lines to log over approximately a second
+        final RateLimiter rateLimiter = RateLimiter.create(100);
+        for (int i = 0; i < 100; i++) {
+            rateLimiter.acquire();
+            logger.info("Application log {}", i);
+        }
+
+        // But just as sanity check we ensure that approximately a second has elapsed
+        final OffsetDateTime end = OffsetDateTime.now();
+        assertThat(ChronoUnit.MILLIS.between(start, end)).isBetween(900L, 1500L);
+
+        final String logs = new String(redirectedStream.toByteArray(), UTF_8);
+        return Arrays.asList(logs.split("\\r?\\n"));
+    }
+
+    @Test
+    public void appenderWithZeroMessageRate() {
+        assertThatThrownBy(() -> factory.build(loadResource("yaml/appender_with_zero_message_rate.yml")))
+            .isInstanceOf(ConfigurationValidationException.class)
+            .hasMessageContaining("messageRate must be greater than (or equal to, if in 'inclusive' mode) 0 SECONDS");
+    }
+
+    @Test
+    public void appenderWithInvalidMessageRate() {
+        assertThatThrownBy(() -> factory.build(loadResource("yaml/appender_with_invalid_message_rate.yml")))
+            .isInstanceOf(ConfigurationValidationException.class)
+            .hasMessageContaining("messageRate must be less than (or equal to, if in 'inclusive' mode) 1 MINUTES");
     }
 
     @Test
     public void overThrottlingLimit() throws Exception {
-        File defaultLog = newLog();
-        DefaultLoggingFactory config = setup(defaultLog, "100ms");
-        Logger logger = LoggerFactory.getLogger("com.example.app");
-        Thread.sleep(1000);
-        for (int i = 0; i < 100; i++) {
-            logger.info("Application log {}", i);
-        }
-        config.stop();
-        assertThat(Files.readAllLines(defaultLog.toPath())).containsOnly(
-            "INFO  com.example.app: Application log 0",
-            "INFO  com.example.app: Application log 1",
-            "INFO  com.example.app: Application log 2",
-            "INFO  com.example.app: Application log 3",
-            "INFO  com.example.app: Application log 4",
-            "INFO  com.example.app: Application log 5",
-            "INFO  com.example.app: Application log 6",
-            "INFO  com.example.app: Application log 7",
-            "INFO  com.example.app: Application log 8",
-            "INFO  com.example.app: Application log 9",
-            "INFO  com.example.app: Application log 10");
+        // Allowing a message every 100ms will cause approximately 10 messages to
+        // be logged (fluctuations in how CI is feeling is accounted for)
+        assertThat(throttledLines(Duration.milliseconds(100)))
+            .doesNotHaveDuplicates()
+            .haveAtLeast(9, containsApplicationLog)
+            .haveAtMost(12, containsApplicationLog);
     }
 
     @Test
     public void belowThrottlingLimit() throws Exception {
-        File defaultLog = newLog();
-        DefaultLoggingFactory config = setup(defaultLog, "1ms");
-        Logger logger = LoggerFactory.getLogger("com.example.app");
-        Thread.sleep(1000);
-        for (int i = 0; i < 1000; i++) {
-            logger.info("Application log {}", i);
-        }
-        config.stop();
-        assertThat(Files.readAllLines(defaultLog.toPath())).size().isEqualTo(1000);
+        // Allowing a message every 1ms will most likely cause all 100 messages to be logged
+        assertThat(throttledLines(Duration.milliseconds(1)))
+            .doesNotHaveDuplicates()
+            .haveAtLeast(98, containsApplicationLog)
+            .haveAtMost(100, containsApplicationLog);
     }
-
-    @Test
-    public void overThrottlingLimit2Seconds() throws Exception {
-        File defaultLog = newLog();
-        DefaultLoggingFactory config = setup(defaultLog, "100ms");
-        Logger logger = LoggerFactory.getLogger("com.example.app");
-        Thread.sleep(1000);
-        for (int i = 0; i < 100; i++) {
-            if (i == 50) {
-                Thread.sleep(1000);
-            }
-            logger.info("Application log {}", i);
-        }
-        config.stop();
-        List<String> lines = Files.readAllLines(defaultLog.toPath());
-        assertThat(lines).hasSize(21);
-        assertThat(lines.get(0)).isEqualTo("INFO  com.example.app: Application log 0");
-        assertThat(lines.get(20)).isEqualTo("INFO  com.example.app: Application log 59");
-    }
-
 }
