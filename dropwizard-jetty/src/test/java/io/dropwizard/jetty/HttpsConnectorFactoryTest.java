@@ -30,13 +30,16 @@ import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.apache.commons.lang3.reflect.FieldUtils.getField;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
+import static org.assertj.core.api.Assertions.entry;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assume.assumeFalse;
 import static org.junit.Assume.assumeTrue;
@@ -245,6 +248,50 @@ public class HttpsConnectorFactoryTest {
         server.stop();
     }
 
+    @Test
+    public void partitionSupportOnlyEnable() {
+        final String[] supported = {"SSLv2Hello", "SSLv3", "TLSv1", "TLSv1.1", "TLSv1.2"};
+        final String[] enabled = {"TLSv1", "TLSv1.1", "TLSv1.2"};
+        final Map<Boolean, List<String>> partition =
+            HttpsConnectorFactory.partitionSupport(supported, enabled, new String[]{}, new String[]{});
+
+        assertThat(partition)
+            .containsOnly(
+                entry(true, Arrays.asList("TLSv1", "TLSv1.1", "TLSv1.2")),
+                entry(false, Arrays.asList("SSLv2Hello", "SSLv3"))
+            );
+    }
+
+    @Test
+    public void partitionSupportExclude() {
+        final String[] supported = {"SSLv2Hello", "SSLv3", "TLSv1", "TLSv1.1", "TLSv1.2"};
+        final String[] enabled = {"SSLv3", "TLSv1", "TLSv1.1", "TLSv1.2"};
+        final String[] exclude = {"SSL.*"};
+        final Map<Boolean, List<String>> partition =
+            HttpsConnectorFactory.partitionSupport(supported, enabled, exclude, new String[]{});
+
+        assertThat(partition)
+            .containsOnly(
+                entry(true, Arrays.asList("TLSv1", "TLSv1.1", "TLSv1.2")),
+                entry(false, Arrays.asList("SSLv2Hello", "SSLv3"))
+            );
+    }
+
+    @Test
+    public void partitionSupportInclude() {
+        final String[] supported = {"SSLv2Hello", "SSLv3", "TLSv1", "TLSv1.1", "TLSv1.2"};
+        final String[] enabled = {"SSLv3", "TLSv1", "TLSv1.1", "TLSv1.2"};
+        final String[] exclude = {"SSL*"};
+        final String[] include = {"TLSv1.2|SSLv2Hello"};
+        final Map<Boolean, List<String>> partition =
+            HttpsConnectorFactory.partitionSupport(supported, enabled, exclude, include);
+
+        assertThat(partition)
+            .containsOnly(
+                entry(true, Collections.singletonList("TLSv1.2")),
+                entry(false, Arrays.asList("SSLv2Hello", "SSLv3", "TLSv1", "TLSv1.1"))
+            );
+    }
 
     private boolean canAccessWindowsKeyStore() {
         if (SystemUtils.IS_OS_WINDOWS) {

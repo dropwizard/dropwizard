@@ -36,7 +36,7 @@ public class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
         return DropwizardResourceConfig.forTesting(new MetricRegistry())
                 .packages("io.dropwizard.jersey.validation")
                 .register(new ValidatingResource2())
-                .register(new HibernateValidationFeature(Validators.newValidator()));
+                .register(new HibernateValidationBinder(Validators.newValidator()));
     }
 
     @BeforeClass

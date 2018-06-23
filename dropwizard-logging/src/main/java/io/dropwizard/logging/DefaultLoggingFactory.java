@@ -8,6 +8,7 @@ import ch.qos.logback.classic.jmx.JMXConfigurator;
 import ch.qos.logback.classic.jul.LevelChangePropagator;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.Appender;
+import ch.qos.logback.core.AsyncAppenderBase;
 import ch.qos.logback.core.ConsoleAppender;
 import ch.qos.logback.core.encoder.LayoutWrappingEncoder;
 import ch.qos.logback.core.util.StatusPrinter;
@@ -175,8 +176,10 @@ public class DefaultLoggingFactory implements LoggingFactory {
             final Logger logger = loggerContext.getLogger(org.slf4j.Logger.ROOT_LOGGER_NAME);
             final List<Appender<ILoggingEvent>> appenders = Lists.of(logger.iteratorForAppenders());
             for (Appender<ILoggingEvent> appender : appenders) {
-                if (appender instanceof AsyncAppender) {
-                    flushAppender((AsyncAppender) appender);
+                if (appender instanceof AsyncAppenderBase) {
+                    flushAppender((AsyncAppenderBase) appender);
+                } else if (appender instanceof AsyncAppenderBaseProxy) {
+                    flushAppender(((AsyncAppenderBaseProxy) appender).getAppender());
                 }
             }
         } catch (InterruptedException ignored) {
@@ -214,7 +217,7 @@ public class DefaultLoggingFactory implements LoggingFactory {
         }
     }
 
-    private void flushAppender(AsyncAppender appender) throws InterruptedException {
+    private void flushAppender(AsyncAppenderBase appender) throws InterruptedException {
         int timeWaiting = 0;
         while (timeWaiting < appender.getMaxFlushTime() && appender.getNumberOfElementsInQueue() > 0) {
             Thread.sleep(100);

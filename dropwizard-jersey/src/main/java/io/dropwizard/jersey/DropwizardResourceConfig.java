@@ -65,12 +65,12 @@ public class DropwizardResourceConfig extends ResourceConfig {
         register(new InstrumentedResourceMethodApplicationListener(metricRegistry));
         register(CacheControlledResponseFeature.class);
         register(io.dropwizard.jersey.guava.OptionalMessageBodyWriter.class);
-        register(io.dropwizard.jersey.guava.OptionalParamFeature.class);
+        register(new io.dropwizard.jersey.guava.OptionalParamBinder());
         register(io.dropwizard.jersey.optional.OptionalMessageBodyWriter.class);
         register(io.dropwizard.jersey.optional.OptionalDoubleMessageBodyWriter.class);
         register(io.dropwizard.jersey.optional.OptionalIntMessageBodyWriter.class);
         register(io.dropwizard.jersey.optional.OptionalLongMessageBodyWriter.class);
-        register(io.dropwizard.jersey.optional.OptionalParamFeature.class);
+        register(new io.dropwizard.jersey.optional.OptionalParamBinder());
         register(AbstractParamConverterProvider.class);
         register(new FuzzyEnumParamConverterProvider());
         register(new SessionFactoryProvider.Binder());

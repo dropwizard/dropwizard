@@ -11,9 +11,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.jersey.filter.AllowedMethodsFilter;
-import io.dropwizard.jersey.jackson.JacksonBinder;
+import io.dropwizard.jersey.jackson.JacksonFeature;
 import io.dropwizard.jersey.setup.JerseyEnvironment;
-import io.dropwizard.jersey.validation.HibernateValidationFeature;
+import io.dropwizard.jersey.validation.HibernateValidationBinder;
 import io.dropwizard.jetty.GzipHandlerFactory;
 import io.dropwizard.jetty.MutableServletContextHandler;
 import io.dropwizard.jetty.NonblockingServletHolder;
@@ -544,8 +544,8 @@ public abstract class AbstractServerFactory implements ServerFactory {
         serverPush.addFilter(handler);
         if (jerseyContainer != null) {
             jerseyRootPath.ifPresent(jersey::setUrlPattern);
-            jersey.register(new JacksonBinder(objectMapper));
-            jersey.register(new HibernateValidationFeature(validator));
+            jersey.register(new JacksonFeature(objectMapper));
+            jersey.register(new HibernateValidationBinder(validator));
             if (registerDefaultExceptionMappers == null || registerDefaultExceptionMappers) {
                 jersey.register(new ExceptionMapperBinder(detailedJsonProcessingExceptionMapper));
             }

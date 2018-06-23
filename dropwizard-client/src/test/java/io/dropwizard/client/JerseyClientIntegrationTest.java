@@ -10,8 +10,6 @@ import io.dropwizard.jackson.Jackson;
 import org.apache.http.client.HttpRequestRetryHandler;
 import org.apache.http.protocol.HttpContext;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
-import org.glassfish.jersey.client.rx.RxClient;
-import org.glassfish.jersey.client.rx.java8.RxCompletionStageInvoker;
 import org.glassfish.jersey.logging.LoggingFeature;
 import org.junit.After;
 import org.junit.Before;
@@ -371,9 +369,9 @@ public class JerseyClientIntegrationTest {
         httpServer.start();
 
         ExecutorService executor = Executors.newSingleThreadExecutor();
-        RxClient<RxCompletionStageInvoker> jersey = new JerseyClientBuilder(new MetricRegistry())
+        Client jersey = new JerseyClientBuilder(new MetricRegistry())
             .using(executor, JSON_MAPPER)
-            .buildRx("test-jersey-client", RxCompletionStageInvoker.class);
+            .build("test-jersey-client");
         String uri = "http://127.0.0.1:" + httpServer.getAddress().getPort() + "/test";
         final List<CompletableFuture<String>> requests = new ArrayList<>();
         for (int i = 0; i < 25; i++) {
