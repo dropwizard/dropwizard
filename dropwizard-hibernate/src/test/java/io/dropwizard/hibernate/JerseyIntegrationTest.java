@@ -7,7 +7,7 @@ import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.jersey.errors.ErrorMessage;
-import io.dropwizard.jersey.jackson.JacksonMessageBodyProvider;
+import io.dropwizard.jersey.jackson.JacksonFeature;
 import io.dropwizard.jersey.optional.EmptyOptionalExceptionMapper;
 import io.dropwizard.lifecycle.setup.LifecycleEnvironment;
 import io.dropwizard.logging.BootstrapLogging;
@@ -137,8 +137,8 @@ public class JerseyIntegrationTest extends JerseyTest {
         final DropwizardResourceConfig config = DropwizardResourceConfig.forTesting(new MetricRegistry());
         config.register(new UnitOfWorkApplicationListener("hr-db", sessionFactory));
         config.register(new PersonResource(new PersonDAO(sessionFactory)));
-        config.register(new JacksonMessageBodyProvider(Jackson.newObjectMapper()));
         config.register(new PersistenceExceptionMapper());
+        config.register(new JacksonFeature(Jackson.newObjectMapper()));
         config.register(new DataExceptionMapper());
         config.register(new EmptyOptionalExceptionMapper());
 
@@ -147,7 +147,7 @@ public class JerseyIntegrationTest extends JerseyTest {
 
     @Override
     protected void configureClient(ClientConfig config) {
-        config.register(new JacksonMessageBodyProvider(Jackson.newObjectMapper()));
+        config.register(new JacksonFeature(Jackson.newObjectMapper()));
     }
 
     @Test

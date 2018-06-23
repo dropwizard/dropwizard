@@ -30,8 +30,7 @@ import org.apache.http.impl.client.SystemDefaultCredentialsProvider;
 import org.apache.http.impl.conn.SystemDefaultDnsResolver;
 import org.apache.http.impl.conn.SystemDefaultRoutePlanner;
 import org.glassfish.jersey.client.ClientRequest;
-import org.glassfish.jersey.client.rx.RxClient;
-import org.glassfish.jersey.client.rx.java8.RxCompletionStageInvoker;
+import org.glassfish.jersey.client.rx.rxjava2.RxFlowableInvokerProvider;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -160,9 +159,9 @@ public class JerseyClientBuilderTest {
 
     @Test
     public void createsAnRxEnabledClient() throws Exception {
-        final RxClient<RxCompletionStageInvoker> client =
+        final Client client =
             builder.using(executorService, objectMapper)
-                .buildRx("test", RxCompletionStageInvoker.class);
+                .buildRx("test", RxFlowableInvokerProvider.class);
 
         for (Object o : client.getConfiguration().getInstances()) {
             if (o instanceof DropwizardExecutorProvider) {

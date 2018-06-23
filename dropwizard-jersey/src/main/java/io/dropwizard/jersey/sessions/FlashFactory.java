@@ -1,32 +1,26 @@
 package io.dropwizard.jersey.sessions;
 
-import org.glassfish.jersey.server.internal.inject.AbstractContainerRequestValueFactory;
-
 import javax.annotation.Nullable;
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import javax.ws.rs.core.Context;
 
-public final class FlashFactory extends AbstractContainerRequestValueFactory<Flash<?>> {
-    @Context
-    @Nullable
-    private HttpServletRequest request;
+public final class FlashFactory {
+    private final HttpServletRequest request;
 
-    private boolean doNotCreate;
-
-    public FlashFactory(boolean doNotCreate) {
-        this.doNotCreate = doNotCreate;
+    @Inject
+    public FlashFactory(HttpServletRequest request) {
+        this.request = request;
     }
 
-    @Override
     @SuppressWarnings("rawtypes")
     @Nullable
-    public Flash<?> provide() {
+    public Flash<?> provide(boolean doNotCreate) {
         if (request == null) {
             return null;
         }
 
-        final HttpSession session = request.getSession(!this.doNotCreate);
+        final HttpSession session = request.getSession(!doNotCreate);
         if (session != null) {
             return new Flash(session);
         }

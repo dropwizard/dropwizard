@@ -4,7 +4,6 @@ import com.github.mustachejava.MustacheNotFoundException;
 import com.google.common.base.Throwables;
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
-import io.dropwizard.jersey.optional.EmptyOptionalException;
 import io.dropwizard.jersey.optional.EmptyOptionalNoContentExceptionMapper;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;

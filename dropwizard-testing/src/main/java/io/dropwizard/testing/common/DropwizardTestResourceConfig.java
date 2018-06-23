@@ -2,8 +2,8 @@ package io.dropwizard.testing.common;
 
 import com.codahale.metrics.MetricRegistry;
 import io.dropwizard.jersey.DropwizardResourceConfig;
-import io.dropwizard.jersey.jackson.JacksonBinder;
-import io.dropwizard.jersey.validation.HibernateValidationFeature;
+import io.dropwizard.jersey.jackson.JacksonFeature;
+import io.dropwizard.jersey.validation.HibernateValidationBinder;
 import io.dropwizard.setup.ExceptionMapperBinder;
 import org.glassfish.jersey.server.ServerProperties;
 
@@ -42,8 +42,8 @@ class DropwizardTestResourceConfig extends DropwizardResourceConfig {
         for (Map.Entry<String, Object> property : configuration.properties.entrySet()) {
             property(property.getKey(), property.getValue());
         }
-        register(new JacksonBinder(configuration.mapper));
-        register(new HibernateValidationFeature(configuration.validator));
+        register(new JacksonFeature(configuration.mapper));
+        register(new HibernateValidationBinder(configuration.validator));
         for (Supplier<?> singleton : configuration.singletons) {
             register(singleton.get());
         }

@@ -1,30 +1,30 @@
     package io.dropwizard.jersey.validation;
 
     import com.codahale.metrics.MetricRegistry;
-    import io.dropwizard.jersey.AbstractJerseyTest;
-    import io.dropwizard.jersey.DropwizardResourceConfig;
-    import io.dropwizard.jersey.jackson.JacksonMessageBodyProviderTest.Example;
-    import io.dropwizard.jersey.jackson.JacksonMessageBodyProviderTest.ListExample;
-    import io.dropwizard.jersey.jackson.JacksonMessageBodyProviderTest.PartialExample;
-    import org.junit.AfterClass;
-    import org.junit.BeforeClass;
-    import org.junit.Test;
+import io.dropwizard.jersey.AbstractJerseyTest;
+import io.dropwizard.jersey.DropwizardResourceConfig;
+import io.dropwizard.jersey.jackson.JacksonMessageBodyProviderTest.Example;
+import io.dropwizard.jersey.jackson.JacksonMessageBodyProviderTest.ListExample;
+import io.dropwizard.jersey.jackson.JacksonMessageBodyProviderTest.PartialExample;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
-    import javax.ws.rs.client.Entity;
-    import javax.ws.rs.core.Application;
-    import javax.ws.rs.core.Form;
-    import javax.ws.rs.core.GenericType;
-    import javax.ws.rs.core.MediaType;
-    import javax.ws.rs.core.Response;
-    import java.util.Collection;
-    import java.util.List;
-    import java.util.Locale;
-    import java.util.Map;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.Application;
+import javax.ws.rs.core.Form;
+import javax.ws.rs.core.GenericType;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.util.Collection;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
-    import static java.util.Objects.requireNonNull;
-    import static org.assertj.core.api.Assertions.assertThat;
-    import static org.hamcrest.CoreMatchers.is;
-    import static org.junit.Assume.assumeThat;
+import static java.util.Objects.requireNonNull;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assume.assumeThat;
 
 public class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
 
@@ -36,7 +36,7 @@ public class ConstraintViolationExceptionMapperTest extends AbstractJerseyTest {
         return DropwizardResourceConfig.forTesting(new MetricRegistry())
                 .packages("io.dropwizard.jersey.validation")
                 .register(new ValidatingResource2())
-                .register(new HibernateValidationFeature(Validators.newValidator()));
+                .register(new HibernateValidationBinder(Validators.newValidator()));
     }
 
     @BeforeClass
