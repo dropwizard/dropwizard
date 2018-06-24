@@ -1,9 +1,10 @@
 package io.dropwizard.configuration;
 
+import io.dropwizard.util.CharStreams;
 import org.junit.Test;
 
-import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -23,14 +24,8 @@ public class ResourceConfigurationSourceProviderTest {
     }
 
     private String loadResourceAsString(String path) throws Exception {
-        try (InputStream inputStream = provider.open(path);
-             ByteArrayOutputStream result = new ByteArrayOutputStream()) {
-            byte[] buffer = new byte[1024];
-            int length;
-            while ((length = inputStream.read(buffer)) != -1) {
-                result.write(buffer, 0, length);
-            }
-            return result.toString(StandardCharsets.UTF_8.name());
+        try (InputStream inputStream = provider.open(path)) {
+            return CharStreams.toString(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
         }
     }
 }

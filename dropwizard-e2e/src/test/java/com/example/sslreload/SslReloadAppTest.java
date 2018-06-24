@@ -1,5 +1,6 @@
 package com.example.sslreload;
 
+import com.google.common.io.CharStreams;
 import io.dropwizard.Configuration;
 import io.dropwizard.testing.ConfigOverride;
 import io.dropwizard.testing.ResourceHelpers;
@@ -17,7 +18,6 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -29,7 +29,6 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
 import static org.assertj.core.api.Java6Assertions.assertThat;
-import static org.assertj.core.api.Java6Assertions.in;
 
 public class SslReloadAppTest {
     @ClassRule
@@ -128,14 +127,8 @@ public class SslReloadAppTest {
             assertThat(conn.getResponseCode()).isEqualTo(code);
 
             try (InputStream inputStream = code == 200 ? conn.getInputStream() : conn.getErrorStream();
-                 InputStreamReader inputStreamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8)) {
-                final StringBuilder sb = new StringBuilder();
-                char[] buffer = new char[1024];
-                while (inputStreamReader.read(buffer) != -1) {
-                    sb.append(buffer);
-                }
-                final String actualContent = sb.toString();
-                assertThat(actualContent).startsWith(content);
+                 InputStreamReader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8)) {
+                assertThat(CharStreams.toString(reader)).startsWith(content);
 
                 // The certificates are self signed, so are the only cert in the chain.
                 // Thus, we return the one and only certificate.

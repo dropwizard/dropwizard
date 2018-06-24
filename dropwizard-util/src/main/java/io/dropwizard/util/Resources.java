@@ -1,8 +1,8 @@
 package io.dropwizard.util;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.URL;
 import java.nio.charset.Charset;
@@ -41,14 +41,8 @@ public final class Resources {
      * @throws IOException if an I/O error occurs
      */
     public static byte[] toByteArray(URL url) throws IOException {
-        try (InputStream inputStream = url.openStream();
-             ByteArrayOutputStream result = new ByteArrayOutputStream()) {
-            byte[] buffer = new byte[1024];
-            int length;
-            while ((length = inputStream.read(buffer)) != -1) {
-                result.write(buffer, 0, length);
-            }
-            return result.toByteArray();
+        try (InputStream inputStream = url.openStream()) {
+            return ByteStreams.toByteArray(inputStream);
         }
     }
 
@@ -62,14 +56,8 @@ public final class Resources {
      * @throws IOException if an I/O error occurs.
      */
     public static String toString(URL url, Charset charset) throws IOException {
-        try (InputStream inputStream = url.openStream();
-             ByteArrayOutputStream result = new ByteArrayOutputStream()) {
-            byte[] buffer = new byte[1024];
-            int length;
-            while ((length = inputStream.read(buffer)) != -1) {
-                result.write(buffer, 0, length);
-            }
-            return result.toString(charset.name());
+        try (InputStream inputStream = url.openStream()) {
+            return CharStreams.toString(new InputStreamReader(inputStream, charset));
         }
     }
 
@@ -82,11 +70,7 @@ public final class Resources {
      */
     public static void copy(URL from, OutputStream to) throws IOException {
         try (InputStream inputStream = from.openStream()) {
-            byte[] buffer = new byte[1024];
-            int length;
-            while ((length = inputStream.read(buffer)) != -1) {
-                to.write(buffer, 0, length);
-            }
+            ByteStreams.copy(inputStream, to);
         }
     }
 }

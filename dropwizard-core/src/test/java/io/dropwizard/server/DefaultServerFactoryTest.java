@@ -2,6 +2,7 @@ package io.dropwizard.server;
 
 import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.io.CharStreams;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.DiscoverableSubtypeResolver;
 import io.dropwizard.jackson.Jackson;
@@ -25,9 +26,8 @@ import org.junit.Test;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
@@ -177,15 +177,7 @@ public class DefaultServerFactoryTest {
             URLConnection connection = url.openConnection();
             connection.connect();
 
-            try (InputStream inputStream = connection.getInputStream();
-                 ByteArrayOutputStream result = new ByteArrayOutputStream()) {
-                byte[] buffer = new byte[1024];
-                int length;
-                while ((length = inputStream.read(buffer)) != -1) {
-                    result.write(buffer, 0, length);
-                }
-                return result.toString(StandardCharsets.UTF_8.name());
-            }
+            return CharStreams.toString(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8));
         });
 
         requestReceived.await(10, TimeUnit.SECONDS);

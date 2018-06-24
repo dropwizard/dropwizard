@@ -1,5 +1,6 @@
 package io.dropwizard.jetty;
 
+import io.dropwizard.util.CharStreams;
 import io.dropwizard.util.Resources;
 import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.http.HttpTester;
@@ -164,15 +165,8 @@ public class BiDiGzipHandlerTest {
             assertThat(req.getContentLength()).isEqualTo(-1);
             assertThat(req.getContentLengthLong()).isEqualTo(-1L);
 
-            final StringBuilder sb = new StringBuilder();
-            try(            final BufferedReader reader = req.getReader()) {
-                char[] buf = new char[4096];
-                int nRead;
-                while ((nRead = reader.read(buf)) != -1) {
-                    sb.append(buf, 0, nRead);
-                }
-            }
-            assertThat(sb.toString()).isEqualTo(Resources.toString(Resources.getResource("assets/new-banner.txt"), StandardCharsets.UTF_8));
+            assertThat(CharStreams.toString(req.getReader())).isEqualTo(Resources.toString(
+                Resources.getResource("assets/new-banner.txt"), StandardCharsets.UTF_8));
 
             resp.setContentType(PLAIN_TEXT_UTF_8);
             resp.getWriter().write("Banner has been updated");
