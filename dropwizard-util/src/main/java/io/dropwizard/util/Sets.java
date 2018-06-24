@@ -4,6 +4,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import static java.util.Collections.unmodifiableSet;
+
 public final class Sets {
     private Sets() {
     }
@@ -12,7 +14,7 @@ public final class Sets {
         final Set<T> set = new HashSet<>(2);
         set.add(e1);
         set.add(e2);
-        return set;
+        return unmodifiableSet(set);
     }
 
     public static <T> Set<T> of(T e1, T e2, T e3) {
@@ -20,7 +22,7 @@ public final class Sets {
         set.add(e1);
         set.add(e2);
         set.add(e3);
-        return set;
+        return unmodifiableSet(set);
     }
 
     public static <T> Set<T> of(T e1, T e2, T e3, T e4) {
@@ -29,7 +31,7 @@ public final class Sets {
         set.add(e2);
         set.add(e3);
         set.add(e4);
-        return set;
+        return unmodifiableSet(set);
     }
 
     public static <T> Set<T> of(T e1, T e2, T e3, T e4, T e5) {
@@ -39,14 +41,14 @@ public final class Sets {
         set.add(e3);
         set.add(e4);
         set.add(e5);
-        return set;
+        return unmodifiableSet(set);
     }
 
     @SafeVarargs
     public static <T> Set<T> of(T... elements) {
         final Set<T> set = new HashSet<>(elements.length);
         set.addAll(Arrays.asList(elements));
-        return set;
+        return unmodifiableSet(set);
     }
 
     public static <T> Set<T> of(Iterable<T> elements) {
@@ -54,6 +56,6 @@ public final class Sets {
         for (T element : elements) {
             set.add(element);
         }
-        return set;
+        return unmodifiableSet(set);
     }
 }
