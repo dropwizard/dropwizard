@@ -97,14 +97,14 @@ public class ThrottlingAppenderTest {
     public void appenderWithZeroMessageRate() {
         assertThatThrownBy(() -> factory.build(loadResource("yaml/appender_with_zero_message_rate.yml")))
             .isInstanceOf(ConfigurationValidationException.class)
-            .hasMessageContaining("messageRate must be greater than (or equal to, if in 'inclusive' mode) 0 SECONDS");
+            .hasMessageContaining("messageRate must be greater than 0 SECONDS");
     }
 
     @Test
     public void appenderWithInvalidMessageRate() {
         assertThatThrownBy(() -> factory.build(loadResource("yaml/appender_with_invalid_message_rate.yml")))
             .isInstanceOf(ConfigurationValidationException.class)
-            .hasMessageContaining("messageRate must be less than (or equal to, if in 'inclusive' mode) 1 MINUTES");
+            .hasMessageContaining("messageRate must be less than or equal to 1 MINUTES");
     }
 
     @Test
