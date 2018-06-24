@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.logging.json.AccessAttribute;
 import io.dropwizard.util.Maps;
+import io.dropwizard.util.Sets;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -13,7 +14,6 @@ import org.mockito.Mockito;
 import java.time.ZoneId;
 import java.util.Collections;
 import java.util.EnumSet;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -140,14 +140,8 @@ public class AccessJsonLayoutTest {
     @Test
     public void testEnableEverything() {
         accessJsonLayout.setIncludes(EnumSet.allOf(AccessAttribute.class));
-        final Set<String> requestHeaders = new HashSet<>();
-        requestHeaders.add("Host");
-        requestHeaders.add("User-Agent");
-        accessJsonLayout.setRequestHeaders(requestHeaders);
-        final HashSet<String> responseHeaders = new HashSet<>();
-        responseHeaders.add("Transfer-Encoding");
-        responseHeaders.add("Content-Type");
-        accessJsonLayout.setResponseHeaders(responseHeaders);
+        accessJsonLayout.setRequestHeaders(Sets.of("Host", "User-Agent"));
+        accessJsonLayout.setResponseHeaders(Sets.of("Transfer-Encoding", "Content-Type"));
 
         assertThat(accessJsonLayout.toJsonMap(event)).containsOnly(
             entry("timestamp", timestamp), entry("remoteUser", "john"),
