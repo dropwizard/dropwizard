@@ -28,8 +28,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Collections;
-import java.util.List;
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.concurrent.Future;
 
@@ -93,12 +92,8 @@ public class DropwizardApacheConnector implements Connector {
 
             final ClientResponse jerseyResponse = new ClientResponse(status, jerseyRequest);
             for (Header header : apacheResponse.getAllHeaders()) {
-                final List<String> headerValues = jerseyResponse.getHeaders().get(header.getName());
-                if (headerValues == null) {
-                    jerseyResponse.getHeaders().put(header.getName(), Collections.singletonList(header.getValue()));
-                } else {
-                    headerValues.add(header.getValue());
-                }
+                jerseyResponse.getHeaders().computeIfAbsent(header.getName(), k -> new ArrayList<>())
+                    .add(header.getValue());
             }
 
             final HttpEntity httpEntity = apacheResponse.getEntity();
