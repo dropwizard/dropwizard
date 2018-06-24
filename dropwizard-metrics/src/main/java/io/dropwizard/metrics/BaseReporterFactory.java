@@ -13,6 +13,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.Collections;
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -142,7 +143,7 @@ public abstract class BaseReporterFactory implements ReporterFactory {
 
     @JsonProperty
     public void setIncludes(Set<String> includes) {
-        this.includes = includes;
+        this.includes = new HashSet<>(includes);
     }
 
     @JsonProperty
@@ -152,7 +153,7 @@ public abstract class BaseReporterFactory implements ReporterFactory {
 
     @JsonProperty
     public void setExcludes(Set<String> excludes) {
-        this.excludes = excludes;
+        this.excludes = new HashSet<>(excludes);
     }
 
     @Override
@@ -193,7 +194,7 @@ public abstract class BaseReporterFactory implements ReporterFactory {
 
     @JsonProperty
     public void setExcludesAttributes(EnumSet<MetricAttribute> excludesAttributes) {
-        this.excludesAttributes = excludesAttributes;
+        this.excludesAttributes = EnumSet.copyOf(excludesAttributes);
     }
 
     @JsonProperty
@@ -203,7 +204,7 @@ public abstract class BaseReporterFactory implements ReporterFactory {
 
     @JsonProperty
     public void setIncludesAttributes(EnumSet<MetricAttribute> includesAttributes) {
-        this.includesAttributes = includesAttributes;
+        this.includesAttributes = EnumSet.copyOf(includesAttributes);
     }
 
     /**

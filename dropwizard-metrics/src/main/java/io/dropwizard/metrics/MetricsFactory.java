@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -55,7 +56,7 @@ public class MetricsFactory {
 
     @JsonProperty
     public void setReporters(List<ReporterFactory> reporters) {
-        this.reporters = reporters;
+        this.reporters = new ArrayList<>(reporters);
     }
 
     @JsonProperty
