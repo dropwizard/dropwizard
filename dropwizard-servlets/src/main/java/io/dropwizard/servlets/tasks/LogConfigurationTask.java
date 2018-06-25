@@ -3,6 +3,9 @@ package io.dropwizard.servlets.tasks;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
+import com.google.errorprone.annotations.concurrent.LazyInit;
+import java.sql.Time;
+import javax.annotation.Nonnull;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.LoggerFactory;
 
@@ -32,13 +35,19 @@ import java.util.TimerTask;
  * <td>level</td>
  * <td>An optional {@link Level} to configure. If not provided, the log level will be set to null.</td>
  * </tr>
+ * </tr>
+ * <tr>
+ * <td>duration</td>
+ * <td>An optional {@link Duration} to configure the level. If not provided, the log level will be set forever.</td>
+ * </tr>
  * </table>
  * </p>
  */
 public class LogConfigurationTask extends Task {
 
     private final ILoggerFactory loggerContext;
-    private final Timer timer = new Timer(LogConfigurationTask.class.getSimpleName(), true);
+    @LazyInit
+    private volatile Timer timer;
 
     /**
      * Creates a new LogConfigurationTask.
@@ -72,7 +81,7 @@ public class LogConfigurationTask extends Task {
 
             if (loggerLevel != null && duration != null) {
                 final long millis = duration.toMillis();
-                timer.schedule(new TimerTask() {
+                getTimer().schedule(new TimerTask() {
                     @Override
                     public void run() {
                         logger.setLevel(null);
@@ -99,8 +108,21 @@ public class LogConfigurationTask extends Task {
     }
 
     @Nullable
-    private Duration getDuration(ImmutableMultimap<String, String> parameters) {
-        final List<String> durations = parameters.get("duration").asList();
+    private Duration getDuration(Map<String, List<String>> parameters) {
+        final List<String> durations = parameters.getOrDefault("duration", Collections.emptyList());
         return durations.isEmpty() ? null : Duration.parse(durations.get(0));
+    }
+
+    /**
+     * Lazy create the timer to avoid unnecessary thread creation unless an expirable log configuration task is submitted
+     * Method synchronization is acceptable since a log level task does not need to be highly performant
+     */
+    @Nonnull
+    private final synchronized Timer getTimer() {
+        if (timer == null) {
+            timer = new Timer(LogConfigurationTask.class.getSimpleName(), true);
+        }
+
+        return timer;
     }
 }

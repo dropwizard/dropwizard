@@ -4,7 +4,6 @@ import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
 import io.dropwizard.util.Maps;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.io.PrintWriter;
@@ -53,11 +52,10 @@ public class LogConfigurationTaskTest {
         // given
         long millis = 2000;
         Level oneEffectiveBefore = logger1.getEffectiveLevel();
-        ImmutableMultimap<String, String> parameters =
-        ImmutableMultimap.of(
-            "logger", "logger.one",
-            "level", "debug",
-            "duration", Duration.ofMillis(millis).toString());
+        Map<String, List<String>> parameters = Maps.of(
+            "logger", Collections.singletonList("logger.one"),
+            "level", Collections.singletonList("debug"),
+            "duration", Collections.singletonList(Duration.ofMillis(millis).toString()));
 
         // when
         task.execute(parameters, output);
