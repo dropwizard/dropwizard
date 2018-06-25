@@ -2,7 +2,6 @@ package io.dropwizard.setup;
 
 import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.io.Resources;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.validation.JerseyViolationException;
@@ -12,6 +11,7 @@ import io.dropwizard.logging.FileAppenderFactory;
 import io.dropwizard.logging.SyslogAppenderFactory;
 import io.dropwizard.server.ServerFactory;
 import io.dropwizard.server.SimpleServerFactory;
+import io.dropwizard.util.Resources;
 import io.dropwizard.validation.BaseValidator;
 import org.eclipse.jetty.server.AbstractNetworkConnector;
 import org.eclipse.jetty.server.Server;

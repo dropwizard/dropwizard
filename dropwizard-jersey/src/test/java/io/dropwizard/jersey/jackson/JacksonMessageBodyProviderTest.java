@@ -3,9 +3,8 @@ package io.dropwizard.jersey.jackson;
 import com.fasterxml.jackson.annotation.JsonIgnoreType;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.ImmutableList;
-import com.google.common.reflect.TypeToken;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.validation.Validated;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -27,6 +26,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -73,7 +73,7 @@ public class JacksonMessageBodyProviderTest {
         @NotEmpty
         @Valid
         @JsonProperty
-        public List<Example> examples = ImmutableList.of();
+        public List<Example> examples = Collections.emptyList();
     }
 
     public interface Partial1 {
@@ -261,21 +261,21 @@ public class JacksonMessageBodyProviderTest {
     @Test
     public void returnsValidatedCollectionRequestEntities() throws Exception {
         testValidatedCollectionType(Collection.class,
-            new TypeToken<Collection<Example>>() {
+            new TypeReference<Collection<Example>>() {
             }.getType());
     }
 
     @Test
     public void returnsValidatedSetRequestEntities() throws Exception {
         testValidatedCollectionType(Set.class,
-            new TypeToken<Set<Example>>() {
+            new TypeReference<Set<Example>>() {
             }.getType());
     }
 
     @Test
     public void returnsValidatedListRequestEntities() throws Exception {
         testValidatedCollectionType(List.class,
-            new TypeToken<List<Example>>() {
+            new TypeReference<List<Example>>() {
             }.getType());
     }
 

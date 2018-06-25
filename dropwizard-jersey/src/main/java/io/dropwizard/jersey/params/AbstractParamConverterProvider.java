@@ -1,7 +1,7 @@
 package io.dropwizard.jersey.params;
 
-import com.google.common.base.Strings;
 import io.dropwizard.jersey.validation.JerseyParameterNameProvider;
+import io.dropwizard.util.Strings;
 import org.glassfish.jersey.internal.inject.ExtractorException;
 import org.glassfish.jersey.server.internal.LocalizationMessages;
 

@@ -3,7 +3,6 @@ package io.dropwizard.logging;
 import ch.qos.logback.core.spi.DeferredProcessingAware;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import com.google.common.collect.Iterables;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -366,16 +365,16 @@ public class TlsSocketAppenderFactory<E extends DeferredProcessingAware> extends
         factory.setValidateCerts(validateCerts);
         factory.setValidatePeerCerts(validatePeers);
         if (supportedProtocols != null) {
-            factory.setIncludeProtocols(Iterables.toArray(supportedProtocols, String.class));
+            factory.setIncludeProtocols(supportedProtocols.toArray(new String[0]));
         }
         if (excludedProtocols != null) {
-            factory.setExcludeProtocols(Iterables.toArray(excludedProtocols, String.class));
+            factory.setExcludeProtocols(excludedProtocols.toArray(new String[0]));
         }
         if (supportedCipherSuites != null) {
-            factory.setIncludeCipherSuites(Iterables.toArray(supportedCipherSuites, String.class));
+            factory.setIncludeCipherSuites(supportedCipherSuites.toArray(new String[0]));
         }
         if (excludedCipherSuites != null) {
-            factory.setExcludeCipherSuites(Iterables.toArray(excludedCipherSuites, String.class));
+            factory.setExcludeCipherSuites(excludedCipherSuites.toArray(new String[0]));
         }
         if (jceProvider != null) {
             factory.setProvider(jceProvider);

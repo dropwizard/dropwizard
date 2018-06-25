@@ -1,6 +1,5 @@
 package io.dropwizard.jetty;
 
-import com.google.common.collect.ImmutableSortedSet;
 import org.eclipse.jetty.http.HttpHeader;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.handler.gzip.GzipHandler;
@@ -20,6 +19,8 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.Inflater;
 import java.util.zip.InflaterInputStream;
@@ -111,10 +112,10 @@ public class BiDiGzipHandler extends GzipHandler {
     private HttpServletRequest removeContentHeaders(final HttpServletRequest request) {
         // The decoded content is plain and generated dynamically, therefore the "Content-Encoding" and "Content-Length"
         // headers should be removed after after the processing.
-        return new RemoveHttpHeadersWrapper(request, ImmutableSortedSet.orderedBy(String::compareToIgnoreCase)
-            .add(HttpHeader.CONTENT_ENCODING.asString())
-            .add(HttpHeader.CONTENT_LENGTH.asString())
-            .build());
+        final SortedSet<String> headerNames = new TreeSet<>(String::compareToIgnoreCase);
+        headerNames.add(HttpHeader.CONTENT_ENCODING.asString());
+        headerNames.add(HttpHeader.CONTENT_LENGTH.asString());
+        return new RemoveHttpHeadersWrapper(request, headerNames);
     }
 
     private static class WrappedServletRequest extends HttpServletRequestWrapper {
@@ -235,9 +236,9 @@ public class BiDiGzipHandler extends GzipHandler {
     }
 
     private static class RemoveHttpHeadersWrapper extends HttpServletRequestWrapper {
-        private final ImmutableSortedSet<String> headerNames;
+        private final SortedSet<String> headerNames;
 
-        RemoveHttpHeadersWrapper(final HttpServletRequest request, final ImmutableSortedSet<String> headerNames) {
+        RemoveHttpHeadersWrapper(final HttpServletRequest request, final SortedSet<String> headerNames) {
             super(request);
             this.headerNames = headerNames;
         }

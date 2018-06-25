@@ -1,6 +1,5 @@
 package io.dropwizard.testing.junit5;
 
-import com.google.common.collect.ImmutableMap;
 import io.dropwizard.Application;
 import io.dropwizard.jetty.HttpConnectorFactory;
 import io.dropwizard.server.DefaultServerFactory;
@@ -15,6 +14,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.Collections;
 import java.util.Map;
 
 @ExtendWith(DropwizardExtensionsSupport.class)
@@ -39,7 +39,7 @@ public class DropwizardAppExtensionWithExplicitTest {
         Map<?, ?> response = EXTENSION.client().target("http://localhost:" + EXTENSION.getLocalPort() + "/test")
                 .request()
                 .get(Map.class);
-        Assertions.assertEquals(ImmutableMap.of("message", "stuff!"), response);
+        Assertions.assertEquals(Collections.singletonMap("message", "stuff!"), response);
     }
 
     public static class TestApplication extends Application<TestConfiguration> {
@@ -60,7 +60,7 @@ public class DropwizardAppExtensionWithExplicitTest {
 
         @GET
         public Response get() {
-            return Response.ok(ImmutableMap.of("message", message)).build();
+            return Response.ok(Collections.singletonMap("message", message)).build();
         }
     }
 }

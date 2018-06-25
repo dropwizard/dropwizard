@@ -3,7 +3,6 @@ package io.dropwizard.jersey.jackson;
 import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.ImmutableList;
 import io.dropwizard.jersey.AbstractJerseyTest;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.jersey.errors.LoggingExceptionMapper;
@@ -14,6 +13,9 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -36,16 +38,16 @@ public class JsonProcessingExceptionMapperTest extends AbstractJerseyTest {
     @Test
     public void returnsA500ForNonDeserializableRepresentationClasses() throws Exception {
         Response response = target("/json/broken").request(MediaType.APPLICATION_JSON)
-                .post(Entity.entity(new BrokenRepresentation(ImmutableList.of("whee")), MediaType.APPLICATION_JSON));
+                .post(Entity.entity(new BrokenRepresentation(Collections.singletonList("whee")), MediaType.APPLICATION_JSON));
         assertThat(response.getStatus()).isEqualTo(500);
         assertThat(response.getMediaType()).isEqualTo(MediaType.APPLICATION_JSON_TYPE);
     }
 
     @Test
     public void returnsA500ForListNonDeserializableRepresentationClasses() throws Exception {
-        final ImmutableList<BrokenRepresentation> ent =
-            ImmutableList.of(new BrokenRepresentation(ImmutableList.of()),
-                new BrokenRepresentation(ImmutableList.of("whoo")));
+        final List<BrokenRepresentation> ent =
+                Arrays.asList(new BrokenRepresentation(Collections.emptyList()),
+                new BrokenRepresentation(Collections.singletonList("whoo")));
 
         Response response = target("/json/brokenList").request(MediaType.APPLICATION_JSON)
             .post(Entity.entity(ent, MediaType.APPLICATION_JSON));

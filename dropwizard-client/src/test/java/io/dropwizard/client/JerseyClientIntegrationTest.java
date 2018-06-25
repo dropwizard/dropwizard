@@ -3,7 +3,6 @@ package io.dropwizard.client;
 import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.io.CharStreams;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
@@ -18,23 +17,24 @@ import org.junit.Test;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.InvocationCallback;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
+import static java.util.stream.Collectors.toList;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static javax.ws.rs.core.MediaType.TEXT_PLAIN;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -235,8 +235,7 @@ public class JerseyClientIntegrationTest {
 
         InputStream requestBody = gzip ? new GZIPInputStream(httpExchange.getRequestBody()) :
                 httpExchange.getRequestBody();
-        String body = CharStreams.toString(new InputStreamReader(requestBody, StandardCharsets.UTF_8));
-        assertThat(JSON_MAPPER.readTree(body)).isEqualTo(JSON_MAPPER.createObjectNode()
+        assertThat(JSON_MAPPER.readTree(requestBody)).isEqualTo(JSON_MAPPER.createObjectNode()
                 .put("email", "john@doe.me")
                 .put("name", "John Doe"));
     }
@@ -374,26 +373,27 @@ public class JerseyClientIntegrationTest {
             .using(executor, JSON_MAPPER)
             .build("test-jersey-client");
         String uri = "http://127.0.0.1:" + httpServer.getAddress().getPort() + "/test";
-        CountDownLatch countDownLatch = new CountDownLatch(25); // Big enough that a `dispose` call shutdowns the executor
+        final List<CompletableFuture<String>> requests = new ArrayList<>();
         for (int i = 0; i < 25; i++) {
-            jersey.target(uri)
-                .register(HttpAuthenticationFeature.basic("scott", "t1ger")).request()
-                .async()
-                .get(new InvocationCallback<String>() {
-                    @Override
-                    public void completed(String s) {
-                        assertThat(s).isEqualTo("Hello World!");
-                        countDownLatch.countDown();
-                    }
-
-                    @Override
-                    public void failed(Throwable t) {
-                        t.printStackTrace();
-                    }
-                });
+            requests.add(jersey.target(uri)
+                .register(HttpAuthenticationFeature.basic("scott", "t1ger"))
+                .request()
+                .rx()
+                .get(String.class)
+                .toCompletableFuture());
         }
-        countDownLatch.await(5, TimeUnit.SECONDS);
-        assertThat(countDownLatch.getCount()).isEqualTo(0);
+
+        final CompletableFuture<Void> allDone = CompletableFuture.allOf(requests.toArray(new CompletableFuture[0]));
+        final CompletableFuture<List<String>> futures =
+            allDone.thenApply(x -> requests.stream()
+                .map(CompletableFuture::join)
+                .collect(toList()));
+
+        final List<String> responses = futures.get(5, TimeUnit.SECONDS);
+        assertThat(futures).isCompleted();
+        assertThat(responses)
+            .hasSize(25)
+            .allMatch(x -> x.equals("Hello World!"));
 
         executor.shutdown();
         jersey.close();

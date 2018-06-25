@@ -1,6 +1,5 @@
 package io.dropwizard.testing.common;
 
-import com.google.common.base.Throwables;
 import io.dropwizard.logging.BootstrapLogging;
 import io.dropwizard.testing.junit.DAOTestRule;
 import org.hibernate.Session;
@@ -166,7 +165,9 @@ public class DAOTest {
             return result;
         } catch (final Exception e) {
             transaction.rollback();
-            Throwables.throwIfUnchecked(e);
+            if (e instanceof RuntimeException) {
+              throw (RuntimeException) e;
+            }
             throw new RuntimeException(e);
         }
     }

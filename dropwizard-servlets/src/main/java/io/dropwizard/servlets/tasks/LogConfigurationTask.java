@@ -2,13 +2,14 @@ package io.dropwizard.servlets.tasks;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
-import com.google.common.collect.ImmutableMultimap;
 import org.slf4j.ILoggerFactory;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
 import java.io.PrintWriter;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Sets the logging level for a number of loggers
@@ -54,7 +55,7 @@ public class LogConfigurationTask extends Task {
     }
 
     @Override
-    public void execute(ImmutableMultimap<String, String> parameters, PrintWriter output) throws Exception {
+    public void execute(Map<String, List<String>> parameters, PrintWriter output) throws Exception {
         final List<String> loggerNames = getLoggerNames(parameters);
         final Level loggerLevel = getLoggerLevel(parameters);
 
@@ -65,13 +66,13 @@ public class LogConfigurationTask extends Task {
         }
     }
 
-    private List<String> getLoggerNames(ImmutableMultimap<String, String> parameters) {
-        return parameters.get("logger").asList();
+    private List<String> getLoggerNames(Map<String, List<String>> parameters) {
+        return parameters.getOrDefault("logger", Collections.emptyList());
     }
 
     @Nullable
-    private Level getLoggerLevel(ImmutableMultimap<String, String> parameters) {
-        final List<String> loggerLevels = parameters.get("level").asList();
+    private Level getLoggerLevel(Map<String, List<String>> parameters) {
+        final List<String> loggerLevels = parameters.getOrDefault("level", Collections.emptyList());
         return loggerLevels.isEmpty() ? null : Level.valueOf(loggerLevels.get(0));
     }
 }

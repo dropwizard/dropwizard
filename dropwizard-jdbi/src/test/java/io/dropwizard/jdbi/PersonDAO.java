@@ -1,23 +1,23 @@
 package io.dropwizard.jdbi;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 import org.joda.time.DateTime;
 import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
 import org.skife.jdbi.v2.sqlobject.customizers.SingleValueResult;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public interface PersonDAO {
     @SqlQuery("SELECT name FROM people WHERE name = :name")
     String findByName(@Bind("name") Optional<String> name);
 
     @SqlQuery("SELECT name FROM people ORDER BY name ASC")
-    ImmutableList<String> findAllNames();
+    List<String> findAllNames();
 
     @SqlQuery("SELECT DISTINCT name FROM people")
-    ImmutableSet<String> findAllUniqueNames();
+    Set<String> findAllUniqueNames();
 
     @SqlQuery("SELECT name FROM people WHERE email = :email ")
     @SingleValueResult(String.class)

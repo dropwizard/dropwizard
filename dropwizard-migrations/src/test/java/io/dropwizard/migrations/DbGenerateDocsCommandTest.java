@@ -1,7 +1,5 @@
 package io.dropwizard.migrations;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import liquibase.Liquibase;
 import net.jcip.annotations.NotThreadSafe;
 import net.sourceforge.argparse4j.inf.Namespace;
@@ -11,6 +9,7 @@ import org.mockito.Mockito;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -23,7 +22,7 @@ public class DbGenerateDocsCommandTest extends AbstractMigrationTest {
     @Test
     public void testRun() throws Exception {
         Liquibase liquibase = Mockito.mock(Liquibase.class);
-        generateDocsCommand.run(new Namespace(ImmutableMap.of("output", ImmutableList.of("/tmp/docs"))), liquibase);
+        generateDocsCommand.run(new Namespace(Collections.singletonMap("output", Collections.singletonList("/tmp/docs"))), liquibase);
         Mockito.verify(liquibase).generateDocumentation("/tmp/docs");
     }
 

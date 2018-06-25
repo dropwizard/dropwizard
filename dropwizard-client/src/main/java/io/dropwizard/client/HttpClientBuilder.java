@@ -5,7 +5,6 @@ import com.codahale.metrics.httpclient.HttpClientMetricNameStrategies;
 import com.codahale.metrics.httpclient.HttpClientMetricNameStrategy;
 import com.codahale.metrics.httpclient.InstrumentedHttpClientConnectionManager;
 import com.codahale.metrics.httpclient.InstrumentedHttpRequestExecutor;
-import com.google.common.annotations.VisibleForTesting;
 import io.dropwizard.client.proxy.AuthConfiguration;
 import io.dropwizard.client.proxy.NonProxyListProxyRoutePlanner;
 import io.dropwizard.client.proxy.ProxyConfiguration;
@@ -468,7 +467,6 @@ public class HttpClientBuilder {
         return configureConnectionManager(manager);
     }
 
-    @VisibleForTesting
     Registry<ConnectionSocketFactory> createConfiguredRegistry() {
         if (registry != null) {
             return registry;
@@ -494,7 +492,6 @@ public class HttpClientBuilder {
     }
 
 
-    @VisibleForTesting
     protected InstrumentedHttpClientConnectionManager configureConnectionManager(
             InstrumentedHttpClientConnectionManager connectionManager) {
         connectionManager.setDefaultMaxPerRoute(configuration.getMaxConnectionsPerRoute());

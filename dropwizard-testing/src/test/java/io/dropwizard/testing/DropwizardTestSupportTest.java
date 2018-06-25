@@ -1,8 +1,6 @@
 package io.dropwizard.testing;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.collect.ImmutableCollection;
-import com.google.common.collect.ImmutableMultimap;
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
 import io.dropwizard.servlets.tasks.PostBodyTask;
@@ -19,6 +17,9 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import java.io.PrintWriter;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 import static io.dropwizard.testing.ResourceHelpers.resourceFilePath;
 import static org.hamcrest.core.Is.is;
@@ -134,9 +135,9 @@ public class DropwizardTestSupportTest {
         }
 
         @Override
-        public void execute(ImmutableMultimap<String, String> parameters, PrintWriter output) throws Exception {
-            ImmutableCollection<String> names = parameters.get("name");
-            String name = !names.isEmpty() ? names.asList().get(0) : "Anonymous";
+        public void execute(Map<String, List<String>> parameters, PrintWriter output) throws Exception {
+            List<String> names = parameters.getOrDefault("name", Collections.emptyList());
+            String name = !names.isEmpty() ? names.get(0) : "Anonymous";
             output.print("Hello has been said to " + name);
             output.flush();
         }
@@ -149,7 +150,7 @@ public class DropwizardTestSupportTest {
         }
 
         @Override
-        public void execute(ImmutableMultimap<String, String> parameters, String body, PrintWriter output) throws Exception {
+        public void execute(Map<String, List<String>> parameters, String body, PrintWriter output) throws Exception {
             output.print(body);
             output.flush();
         }

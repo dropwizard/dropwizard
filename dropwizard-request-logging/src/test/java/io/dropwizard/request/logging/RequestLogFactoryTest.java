@@ -1,18 +1,18 @@
 package io.dropwizard.request.logging;
 
-import java.io.File;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.io.Resources;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.DiscoverableSubtypeResolver;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.logging.ConsoleAppenderFactory;
 import io.dropwizard.logging.FileAppenderFactory;
 import io.dropwizard.logging.SyslogAppenderFactory;
+import io.dropwizard.util.Resources;
 import io.dropwizard.validation.BaseValidator;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.io.File;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

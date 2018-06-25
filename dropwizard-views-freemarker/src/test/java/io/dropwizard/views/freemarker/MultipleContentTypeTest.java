@@ -1,7 +1,6 @@
 package io.dropwizard.views.freemarker;
 
 import com.codahale.metrics.MetricRegistry;
-import com.google.common.collect.ImmutableList;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.logging.BootstrapLogging;
@@ -26,6 +25,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
+import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -39,7 +39,7 @@ public class MultipleContentTypeTest extends JerseyTest {
         forceSet(TestProperties.CONTAINER_PORT, "0");
         final ViewRenderer renderer = new FreemarkerViewRenderer();
         return DropwizardResourceConfig.forTesting(new MetricRegistry())
-                .register(new ViewMessageBodyWriter(new MetricRegistry(), ImmutableList.of(renderer)))
+                .register(new ViewMessageBodyWriter(new MetricRegistry(), Collections.singletonList(renderer)))
                 .register(new InfoMessageBodyWriter())
                 .register(new ExampleResource());
     }
@@ -129,7 +129,7 @@ public class MultipleContentTypeTest extends JerseyTest {
 
     @Provider
     @Produces(MediaType.APPLICATION_JSON)
-    public class InfoMessageBodyWriter implements MessageBodyWriter<Info> {
+    public static class InfoMessageBodyWriter implements MessageBodyWriter<Info> {
         @Override
         public boolean isWriteable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
             return Info.class.isAssignableFrom(type);

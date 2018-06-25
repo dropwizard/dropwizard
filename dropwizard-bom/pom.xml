@@ -20,8 +20,8 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <dropwizard.version>${project.version}</dropwizard.version>
         <guava.version>25.0-jre</guava.version>
-        <jersey.version>2.25.1</jersey.version>
-        <jackson.version>2.9.5</jackson.version>
+        <jersey.version>2.27</jersey.version>
+        <jackson.version>2.9.6</jackson.version>
         <jetty.version>9.4.10.v20180503</jetty.version>
         <servlet.version>3.0.0.v201112011016</servlet.version>
         <metrics4.version>4.0.2</metrics4.version>
@@ -54,6 +54,11 @@
                 <version>${guava.version}</version>
             </dependency>
             <dependency>
+                <groupId>com.github.ben-manes.caffeine</groupId>
+                <artifactId>caffeine</artifactId>
+                <version>2.6.2</version>
+            </dependency>
+            <dependency>
                 <groupId>net.sourceforge.argparse4j</groupId>
                 <artifactId>argparse4j</artifactId>
                 <version>0.8.1</version>
@@ -81,7 +86,7 @@
             <dependency>
                 <groupId>javax.servlet</groupId>
                 <artifactId>javax.servlet-api</artifactId>
-                <version>3.1.0</version>
+                <version>4.0.0</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
@@ -152,7 +157,7 @@
             <dependency>
                 <groupId>org.liquibase</groupId>
                 <artifactId>liquibase-core</artifactId>
-                <version>3.6.0</version>
+                <version>3.6.1</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.yaml</groupId>
@@ -349,6 +354,12 @@
                 <version>${jersey.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.glassfish.jersey.inject</groupId>
+                <artifactId>jersey-hk2</artifactId>
+                <version>${jersey.version}</version>
             </dependency>
 
             <!-- Metrics -->

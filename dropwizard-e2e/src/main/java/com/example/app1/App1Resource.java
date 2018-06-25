@@ -1,17 +1,16 @@
 package com.example.app1;
 
-import java.util.OptionalInt;
-
-import com.google.common.collect.ImmutableMap;
+import io.dropwizard.views.View;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
-
-import io.dropwizard.views.View;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.OptionalInt;
 
 @Path("/")
 @Consumes(MediaType.APPLICATION_JSON)
@@ -33,8 +32,10 @@ public class App1Resource {
 
     @POST
     @Path("mapper")
-    public ImmutableMap<String, String> postMapper(ImmutableMap<String, String> map) {
-        return ImmutableMap.<String, String>builder().putAll(map).put("hello", "world").build();
+    public Map<String, String> postMapper(Map<String, String> map) {
+        final Map<String, String> resultMap = new HashMap<>(map);
+        resultMap.put("hello", "world");
+        return resultMap;
     }
 
     @GET

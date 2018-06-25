@@ -8,7 +8,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class DateTimeParamTest {
     @Test
-    public void parsesDateTimes() throws Exception {
+    public void parsesDateTimes() {
         final DateTimeParam param = new DateTimeParam("2012-11-19");
 
         assertThat(param.get())

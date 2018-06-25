@@ -1,9 +1,6 @@
 package io.dropwizard.migrations;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterables;
-import com.google.common.io.Resources;
+import io.dropwizard.util.Resources;
 import net.jcip.annotations.NotThreadSafe;
 import net.sourceforge.argparse4j.inf.Namespace;
 import org.apache.commons.lang3.StringUtils;
@@ -26,6 +23,8 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -35,8 +34,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 @NotThreadSafe
 public class DbDumpCommandTest extends AbstractMigrationTest {
 
-    private static final List<String> ATTRIBUTE_NAMES = ImmutableList.of("columns", "foreign-keys", "indexes",
-        "primary-keys", "sequences", "tables", "unique-constraints", "views");
+    private static final List<String> ATTRIBUTE_NAMES = Arrays.asList("columns", "foreign-keys", "indexes",
+            "primary-keys", "sequences", "tables", "unique-constraints", "views");
     private static DocumentBuilder xmlParser;
 
     private final DbDumpCommand<TestMigrationConfiguration> dumpCommand =
@@ -78,7 +77,7 @@ public class DbDumpCommandTest extends AbstractMigrationTest {
 
     @Test
     public void testDumpOnlyData() throws Exception {
-        dumpCommand.run(null, new Namespace(ImmutableMap.of("data", true)), existedDbConf);
+        dumpCommand.run(null, new Namespace(Collections.singletonMap("data", true)), existedDbConf);
 
         final Element changeSet = getFirstElement(toXmlDocument(baos).getDocumentElement(), "changeSet");
         assertInsertData(changeSet);
@@ -87,7 +86,7 @@ public class DbDumpCommandTest extends AbstractMigrationTest {
     @Test
     public void testWriteToFile() throws Exception {
         final File file = File.createTempFile("migration", ".xml");
-        dumpCommand.run(null, new Namespace(ImmutableMap.of("output", file.getAbsolutePath())), existedDbConf);
+        dumpCommand.run(null, new Namespace(Collections.singletonMap("output", file.getAbsolutePath())), existedDbConf);
         // Check that file is exist, and has some XML content (no reason to make a full-blown XML assertion)
         assertThat(new String(Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8))
             .startsWith("<?xml version=\"1.1\" encoding=\"UTF-8\" standalone=\"no\"?>");

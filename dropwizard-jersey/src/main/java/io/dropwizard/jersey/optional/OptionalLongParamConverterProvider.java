@@ -8,8 +8,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.OptionalLong;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
 @Singleton
 public class OptionalLongParamConverterProvider implements ParamConverterProvider {
     private OptionalLongParamConverter paramConverter = new OptionalLongParamConverter();
@@ -41,7 +39,9 @@ public class OptionalLongParamConverterProvider implements ParamConverterProvide
 
         @Override
         public String toString(final OptionalLong value) {
-            checkArgument(value != null);
+            if (value == null) {
+                throw new IllegalArgumentException("value must not be null");
+            }
             return value.isPresent() ? Long.toString(value.getAsLong()) : "";
         }
     }

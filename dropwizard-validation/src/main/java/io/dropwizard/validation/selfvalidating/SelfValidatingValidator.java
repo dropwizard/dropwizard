@@ -3,14 +3,9 @@ package io.dropwizard.validation.selfvalidating;
 import com.fasterxml.classmate.AnnotationConfiguration;
 import com.fasterxml.classmate.AnnotationInclusion;
 import com.fasterxml.classmate.MemberResolver;
-import com.fasterxml.classmate.ResolvedType;
 import com.fasterxml.classmate.ResolvedTypeWithMembers;
 import com.fasterxml.classmate.TypeResolver;
-import com.fasterxml.classmate.members.RawMethod;
 import com.fasterxml.classmate.members.ResolvedMethod;
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.Maps;
-
 import javassist.ClassPool;
 import javassist.CtClass;
 import javassist.CtMethod;
@@ -20,13 +15,12 @@ import org.slf4j.LoggerFactory;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.IntPredicate;
 import java.util.stream.Collectors;
 
 /**
@@ -39,7 +33,7 @@ public class SelfValidatingValidator implements ConstraintValidator<SelfValidati
     private static final AtomicInteger COUNTER = new AtomicInteger();
     private static final Logger log = LoggerFactory.getLogger(SelfValidatingValidator.class);
 
-    private final ConcurrentMap<Class<?>, List<ValidationCaller<?>>> methodMap = Maps.newConcurrentMap();
+    private final ConcurrentMap<Class<?>, List<ValidationCaller<?>>> methodMap = new ConcurrentHashMap<>();
     private final AnnotationConfiguration annotationConfiguration = new AnnotationConfiguration.StdConfiguration(AnnotationInclusion.INCLUDE_AND_INHERIT_IF_INHERITED);
     private final TypeResolver typeResolver = new TypeResolver();
     private final MemberResolver memberResolver = new MemberResolver(typeResolver);
@@ -107,7 +101,6 @@ public class SelfValidatingValidator implements ConstraintValidator<SelfValidati
         return m.get(SelfValidation.class) != null;
     }
     
-    @VisibleForTesting
     boolean isMethodCorrect(ResolvedMethod m) {
         if (m.getReturnType()!=null) {
             log.error("The method {} is annotated with @SelfValidation but does not return void. It is ignored", m.getRawMember());

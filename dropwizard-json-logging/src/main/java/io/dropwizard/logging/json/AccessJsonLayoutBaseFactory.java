@@ -5,9 +5,9 @@ import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.core.LayoutBase;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import com.google.common.collect.ImmutableSet;
 import io.dropwizard.logging.json.layout.AccessJsonLayout;
 
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Set;
 import java.util.TimeZone;
@@ -44,8 +44,8 @@ public class AccessJsonLayoutBaseFactory extends AbstractJsonLayoutBaseFactory<I
         AccessAttribute.STATUS_CODE, AccessAttribute.METHOD, AccessAttribute.PROTOCOL, AccessAttribute.CONTENT_LENGTH,
         AccessAttribute.USER_AGENT, AccessAttribute.TIMESTAMP);
 
-    private Set<String> responseHeaders = ImmutableSet.of();
-    private Set<String> requestHeaders = ImmutableSet.of();
+    private Set<String> responseHeaders = Collections.emptySet();
+    private Set<String> requestHeaders = Collections.emptySet();
 
     @JsonProperty
     public Set<String> getResponseHeaders() {

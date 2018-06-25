@@ -2,12 +2,12 @@ package io.dropwizard.logging.json.layout;
 
 import ch.qos.logback.classic.pattern.ThrowableHandlingConverter;
 import ch.qos.logback.classic.spi.ILoggingEvent;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
 import io.dropwizard.logging.json.EventAttribute;
 
 import javax.annotation.Nullable;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
  */
 public class EventJsonLayout extends AbstractJsonLayout<ILoggingEvent> {
 
-    private ImmutableSet<EventAttribute> includes;
+    private Set<EventAttribute> includes;
 
     @Nullable
     private String jsonProtocolVersion;
@@ -27,7 +27,7 @@ public class EventJsonLayout extends AbstractJsonLayout<ILoggingEvent> {
     private final Map<String, Object> additionalFields;
     private final Map<String, String> customFieldNames;
 
-    private ImmutableSet<String> includesMdcKeys;
+    private Set<String> includesMdcKeys;
     private final boolean flattenMdc;
 
     public EventJsonLayout(JsonFormatter jsonFormatter, TimestampFormatter timestampFormatter,
@@ -36,11 +36,11 @@ public class EventJsonLayout extends AbstractJsonLayout<ILoggingEvent> {
                            Set<String> includesMdcKeys, boolean flattenMdc) {
         super(jsonFormatter);
         this.timestampFormatter = timestampFormatter;
-        this.additionalFields = ImmutableMap.copyOf(additionalFields);
-        this.customFieldNames = ImmutableMap.copyOf(customFieldNames);
+        this.additionalFields = new HashMap<>(additionalFields);
+        this.customFieldNames = new HashMap<>(customFieldNames);
         this.throwableProxyConverter = throwableProxyConverter;
-        this.includes = ImmutableSet.copyOf(includes);
-        this.includesMdcKeys = ImmutableSet.copyOf(includesMdcKeys);
+        this.includes = new HashSet<>(includes);
+        this.includesMdcKeys = new HashSet<>(includesMdcKeys);
         this.flattenMdc = flattenMdc;
     }
 
@@ -91,12 +91,12 @@ public class EventJsonLayout extends AbstractJsonLayout<ILoggingEvent> {
         return includes.contains(exception);
     }
 
-    public ImmutableSet<EventAttribute> getIncludes() {
+    public Set<EventAttribute> getIncludes() {
         return includes;
     }
 
     public void setIncludes(Set<EventAttribute> includes) {
-        this.includes = Sets.immutableEnumSet(includes);
+        this.includes = EnumSet.copyOf(includes);
     }
 
     @Nullable
@@ -108,11 +108,11 @@ public class EventJsonLayout extends AbstractJsonLayout<ILoggingEvent> {
         this.jsonProtocolVersion = jsonProtocolVersion;
     }
 
-    public ImmutableSet<String> getIncludesMdcKeys() {
+    public Set<String> getIncludesMdcKeys() {
         return includesMdcKeys;
     }
 
     public void setIncludesMdcKeys(Set<String> includesMdcKeys) {
-        this.includesMdcKeys = ImmutableSet.copyOf(includesMdcKeys);
+        this.includesMdcKeys = new HashSet<>(includesMdcKeys);
     }
 }

@@ -1,6 +1,5 @@
 package io.dropwizard.migrations;
 
-import com.google.common.annotations.VisibleForTesting;
 import io.dropwizard.Configuration;
 import io.dropwizard.db.DatabaseConfiguration;
 import liquibase.Liquibase;
@@ -10,8 +9,6 @@ import net.sourceforge.argparse4j.inf.Subparser;
 
 import java.io.PrintStream;
 
-import static com.google.common.base.MoreObjects.firstNonNull;
-
 public class DbLocksCommand<T extends Configuration> extends AbstractLiquibaseCommand<T> {
 
     private PrintStream printStream = System.out;
@@ -20,7 +17,6 @@ public class DbLocksCommand<T extends Configuration> extends AbstractLiquibaseCo
         super("locks", "Manage database migration locks", strategy, configurationClass, migrationsFileName);
     }
 
-    @VisibleForTesting
     void setPrintStream(PrintStream printStream) {
         this.printStream = printStream;
     }
@@ -54,5 +50,9 @@ public class DbLocksCommand<T extends Configuration> extends AbstractLiquibaseCo
         } else {
             liquibase.forceReleaseLocks();
         }
+    }
+
+    private static <T> T firstNonNull(T first, T second) {
+        return first == null ? second : first;
     }
 }

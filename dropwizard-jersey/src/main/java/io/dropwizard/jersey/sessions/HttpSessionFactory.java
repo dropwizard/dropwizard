@@ -1,25 +1,20 @@
 package io.dropwizard.jersey.sessions;
 
-import org.glassfish.jersey.server.internal.inject.AbstractContainerRequestValueFactory;
-
 import javax.annotation.Nullable;
+import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import javax.ws.rs.core.Context;
 
-public final class HttpSessionFactory extends AbstractContainerRequestValueFactory<HttpSession> {
-    @Context
-    @Nullable
-    private HttpServletRequest request;
-    private boolean doNotCreate;
+public final class HttpSessionFactory {
+    private final HttpServletRequest request;
 
-    public HttpSessionFactory(boolean doNotCreate) {
-        this.doNotCreate = doNotCreate;
+    @Inject
+    public HttpSessionFactory(HttpServletRequest request) {
+        this.request = request;
     }
 
-    @Override
     @Nullable
-    public HttpSession provide() {
+    public HttpSession provide(boolean doNotCreate) {
         if (request == null) {
             return null;
         }

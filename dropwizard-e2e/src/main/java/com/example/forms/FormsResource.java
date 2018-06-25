@@ -1,6 +1,5 @@
 package com.example.forms;
 
-import com.google.common.io.ByteStreams;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 
@@ -26,7 +25,12 @@ public class FormsResource {
         // Silly example that echoes back the file name and the contents
         return output -> {
             output.write(String.format("%s:\n", fileDisposition.getFileName()).getBytes(UTF_8));
-            ByteStreams.copy(file, output);
+
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = file.read(buffer)) != -1) {
+                output.write(buffer, 0, length);
+            }
         };
     }
 }

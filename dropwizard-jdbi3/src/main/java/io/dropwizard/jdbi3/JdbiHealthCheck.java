@@ -1,13 +1,14 @@
 package io.dropwizard.jdbi3;
 
 import com.codahale.metrics.health.HealthCheck;
-import com.google.common.util.concurrent.MoreExecutors;
 import io.dropwizard.db.TimeBoundHealthCheck;
+import io.dropwizard.util.DirectExecutorService;
 import io.dropwizard.util.Duration;
 import org.jdbi.v3.core.Handle;
 import org.jdbi.v3.core.Jdbi;
 
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class JdbiHealthCheck extends HealthCheck {
     private final Jdbi jdbi;
@@ -21,7 +22,7 @@ public class JdbiHealthCheck extends HealthCheck {
     }
 
     public JdbiHealthCheck(Jdbi jdbi, String validationQuery) {
-        this(MoreExecutors.newDirectExecutorService(), Duration.seconds(0), jdbi, validationQuery);
+        this(new DirectExecutorService(), Duration.seconds(0), jdbi, validationQuery);
     }
 
     @Override

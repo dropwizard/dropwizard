@@ -8,8 +8,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.OptionalDouble;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
 @Singleton
 public class OptionalDoubleParamConverterProvider implements ParamConverterProvider {
     private final OptionalDoubleParamConverter paramConverter = new OptionalDoubleParamConverter();
@@ -41,7 +39,9 @@ public class OptionalDoubleParamConverterProvider implements ParamConverterProvi
 
         @Override
         public String toString(final OptionalDouble value) {
-            checkArgument(value != null);
+            if (value == null) {
+                throw new IllegalArgumentException("value must not be null");
+            }
             return value.isPresent() ? Double.toString(value.getAsDouble()) : "";
         }
     }

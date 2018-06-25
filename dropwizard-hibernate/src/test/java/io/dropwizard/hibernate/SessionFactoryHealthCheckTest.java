@@ -20,8 +20,7 @@ import static org.mockito.Mockito.when;
 @SuppressWarnings("HibernateResourceOpenedButNotSafelyClosed")
 public class SessionFactoryHealthCheckTest {
     private final SessionFactory factory = mock(SessionFactory.class);
-    private final SessionFactoryHealthCheck healthCheck = new SessionFactoryHealthCheck(factory,
-                                                                                        "SELECT 1");
+    private final SessionFactoryHealthCheck healthCheck = new SessionFactoryHealthCheck(factory, "SELECT 1");
 
     @Test
     public void hasASessionFactory() throws Exception {

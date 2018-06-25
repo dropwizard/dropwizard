@@ -1,6 +1,5 @@
 package io.dropwizard.http2;
 
-import com.google.common.base.Charsets;
 import io.dropwizard.logging.BootstrapLogging;
 import io.dropwizard.testing.ResourceHelpers;
 import org.eclipse.jetty.client.HttpClient;
@@ -14,6 +13,7 @@ import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.junit.After;
 import org.junit.Before;
 
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -62,7 +62,7 @@ public class AbstractHttp2Test {
                         public void onComplete(Result result) {
                             assertThat(result.getResponse().getVersion()).isEqualTo(HttpVersion.HTTP_2);
                             assertThat(result.getResponse().getStatus()).isEqualTo(200);
-                            assertThat(getContentAsString(Charsets.UTF_8)).isEqualTo(FakeApplication.HELLO_WORLD);
+                            assertThat(getContentAsString(StandardCharsets.UTF_8)).isEqualTo(FakeApplication.HELLO_WORLD);
                             latch.countDown();
                         }
                     });

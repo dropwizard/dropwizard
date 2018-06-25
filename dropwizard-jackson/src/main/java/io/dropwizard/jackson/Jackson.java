@@ -55,6 +55,7 @@ public class Jackson {
     private static ObjectMapper configure(ObjectMapper mapper) {
         mapper.registerModule(new GuavaModule());
         mapper.registerModule(new GuavaExtrasModule());
+        mapper.registerModule(new CaffeineModule());
         mapper.registerModule(new JodaModule());
         mapper.registerModule(new AfterburnerModule());
         mapper.registerModule(new FuzzyEnumModule());

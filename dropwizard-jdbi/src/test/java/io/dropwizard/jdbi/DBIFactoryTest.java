@@ -6,8 +6,8 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.LinkedList;
 
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -59,9 +59,9 @@ public class DBIFactoryTest {
         final PooledDataSourceFactory configuration = mock(PooledDataSourceFactory.class);
 
         // Capture what is configured
-        final Deque<Class<?>> af = new LinkedList<>();
-        final Deque<Class<?>> cm = new LinkedList<>();
-        final Deque<Class<?>> cf = new LinkedList<>();
+        final Deque<Class<?>> af = new ArrayDeque<>();
+        final Deque<Class<?>> cm = new ArrayDeque<>();
+        final Deque<Class<?>> cf = new ArrayDeque<>();
 
         Mockito.doAnswer(invocation -> {
             final ArgumentFactory<?> x = invocation.getArgument(0);

@@ -1,16 +1,14 @@
 package io.dropwizard.jetty;
 
 import com.codahale.metrics.MetricRegistry;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.ImmutableList;
-import com.google.common.io.Resources;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.DiscoverableSubtypeResolver;
 import io.dropwizard.jackson.Jackson;
+import io.dropwizard.util.Resources;
 import io.dropwizard.validation.BaseValidator;
 import org.apache.commons.lang3.SystemUtils;
-import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.ConnectionFactory;
+import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.SecureRequestCustomizer;
@@ -30,13 +28,18 @@ import java.io.File;
 import java.net.URI;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.apache.commons.lang3.reflect.FieldUtils.getField;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatIllegalStateException;
+import static org.assertj.core.api.Assertions.entry;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assume.assumeFalse;
 import static org.junit.Assume.assumeTrue;
@@ -88,26 +91,26 @@ public class HttpsConnectorFactoryTest {
 
     @Test
     public void testSupportedProtocols() {
-        List<String> supportedProtocols = ImmutableList.of("SSLv3", "TLS1");
+        List<String> supportedProtocols = Arrays.asList("SSLv3", "TLS1");
 
         HttpsConnectorFactory factory = new HttpsConnectorFactory();
         factory.setKeyStorePassword("password"); // necessary to avoid a prompt for a password
         factory.setSupportedProtocols(supportedProtocols);
 
         SslContextFactory sslContextFactory = factory.configureSslContextFactory(new SslContextFactory());
-        assertThat(ImmutableList.copyOf(sslContextFactory.getIncludeProtocols())).isEqualTo(supportedProtocols);
+        assertThat(Arrays.asList(sslContextFactory.getIncludeProtocols())).isEqualTo(supportedProtocols);
     }
 
     @Test
     public void testExcludedProtocols() {
-        List<String> excludedProtocols = ImmutableList.of("SSLv3", "TLS1");
+        List<String> excludedProtocols = Arrays.asList("SSLv3", "TLS1");
 
         HttpsConnectorFactory factory = new HttpsConnectorFactory();
         factory.setKeyStorePassword("password"); // necessary to avoid a prompt for a password
         factory.setExcludedProtocols(excludedProtocols);
 
         SslContextFactory sslContextFactory = factory.configureSslContextFactory(new SslContextFactory());
-        assertThat(ImmutableList.copyOf(sslContextFactory.getExcludeProtocols())).isEqualTo(excludedProtocols);
+        assertThat(Arrays.asList(sslContextFactory.getExcludeProtocols())).isEqualTo(excludedProtocols);
     }
 
     @Test
@@ -177,8 +180,8 @@ public class HttpsConnectorFactoryTest {
         https.setEndpointIdentificationAlgorithm("HTTPS");
         https.setValidateCerts(true);
         https.setValidatePeers(true);
-        https.setSupportedProtocols(ImmutableList.of("TLSv1.1", "TLSv1.2"));
-        https.setSupportedCipherSuites(ImmutableList.of("TLS_DHE_RSA.*", "TLS_ECDHE.*"));
+        https.setSupportedProtocols(Arrays.asList("TLSv1.1", "TLSv1.2"));
+        https.setSupportedCipherSuites(Arrays.asList("TLS_DHE_RSA.*", "TLS_ECDHE.*"));
 
         final Server server = new Server();
         final MetricRegistry metrics = new MetricRegistry();
@@ -245,6 +248,50 @@ public class HttpsConnectorFactoryTest {
         server.stop();
     }
 
+    @Test
+    public void partitionSupportOnlyEnable() {
+        final String[] supported = {"SSLv2Hello", "SSLv3", "TLSv1", "TLSv1.1", "TLSv1.2"};
+        final String[] enabled = {"TLSv1", "TLSv1.1", "TLSv1.2"};
+        final Map<Boolean, List<String>> partition =
+            HttpsConnectorFactory.partitionSupport(supported, enabled, new String[]{}, new String[]{});
+
+        assertThat(partition)
+            .containsOnly(
+                entry(true, Arrays.asList("TLSv1", "TLSv1.1", "TLSv1.2")),
+                entry(false, Arrays.asList("SSLv2Hello", "SSLv3"))
+            );
+    }
+
+    @Test
+    public void partitionSupportExclude() {
+        final String[] supported = {"SSLv2Hello", "SSLv3", "TLSv1", "TLSv1.1", "TLSv1.2"};
+        final String[] enabled = {"SSLv3", "TLSv1", "TLSv1.1", "TLSv1.2"};
+        final String[] exclude = {"SSL.*"};
+        final Map<Boolean, List<String>> partition =
+            HttpsConnectorFactory.partitionSupport(supported, enabled, exclude, new String[]{});
+
+        assertThat(partition)
+            .containsOnly(
+                entry(true, Arrays.asList("TLSv1", "TLSv1.1", "TLSv1.2")),
+                entry(false, Arrays.asList("SSLv2Hello", "SSLv3"))
+            );
+    }
+
+    @Test
+    public void partitionSupportInclude() {
+        final String[] supported = {"SSLv2Hello", "SSLv3", "TLSv1", "TLSv1.1", "TLSv1.2"};
+        final String[] enabled = {"SSLv3", "TLSv1", "TLSv1.1", "TLSv1.2"};
+        final String[] exclude = {"SSL*"};
+        final String[] include = {"TLSv1.2|SSLv2Hello"};
+        final Map<Boolean, List<String>> partition =
+            HttpsConnectorFactory.partitionSupport(supported, enabled, exclude, include);
+
+        assertThat(partition)
+            .containsOnly(
+                entry(true, Collections.singletonList("TLSv1.2")),
+                entry(false, Arrays.asList("SSLv2Hello", "SSLv3", "TLSv1", "TLSv1.1"))
+            );
+    }
 
     private boolean canAccessWindowsKeyStore() {
         if (SystemUtils.IS_OS_WINDOWS) {
@@ -259,6 +306,8 @@ public class HttpsConnectorFactoryTest {
     }
 
     private <T> Collection<String> getViolationProperties(Set<ConstraintViolation<T>> violations) {
-        return Collections2.transform(violations, input -> input.getPropertyPath().toString());
+        return violations.stream()
+                .map(input -> input.getPropertyPath().toString())
+                .collect(Collectors.toSet());
     }
 }

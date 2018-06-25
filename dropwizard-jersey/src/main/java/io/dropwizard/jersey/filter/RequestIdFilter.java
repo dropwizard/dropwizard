@@ -1,20 +1,19 @@
 package io.dropwizard.jersey.filter;
 
-import java.io.IOException;
-import java.util.Random;
-import java.util.UUID;
-import java.util.concurrent.ThreadLocalRandom;
+import io.dropwizard.util.Strings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.annotation.Priority;
 import javax.ws.rs.Priorities;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerResponseContext;
 import javax.ws.rs.container.ContainerResponseFilter;
 import javax.ws.rs.ext.Provider;
-
-import com.google.common.annotations.VisibleForTesting;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import com.google.common.base.Strings;
+import java.io.IOException;
+import java.util.Random;
+import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * This class adds a "X-Request-Id" HTTP response header and logs the following
@@ -31,7 +30,6 @@ public class RequestIdFilter implements ContainerResponseFilter {
 
     private Logger logger = LoggerFactory.getLogger(RequestIdFilter.class);
 
-    @VisibleForTesting
     void setLogger(Logger logger) {
         this.logger = logger;
     }

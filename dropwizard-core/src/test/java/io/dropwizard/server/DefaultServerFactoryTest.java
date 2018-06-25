@@ -3,7 +3,6 @@ package io.dropwizard.server;
 import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.io.CharStreams;
-import com.google.common.io.Resources;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.DiscoverableSubtypeResolver;
 import io.dropwizard.jackson.Jackson;
@@ -15,6 +14,7 @@ import io.dropwizard.logging.FileAppenderFactory;
 import io.dropwizard.logging.SyslogAppenderFactory;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.setup.ExceptionMapperBinder;
+import io.dropwizard.util.Resources;
 import io.dropwizard.validation.BaseValidator;
 import org.eclipse.jetty.server.AbstractNetworkConnector;
 import org.eclipse.jetty.server.Connector;
@@ -176,6 +176,7 @@ public class DefaultServerFactoryTest {
             URL url = new URL("http://localhost:" + port + "/app/test");
             URLConnection connection = url.openConnection();
             connection.connect();
+
             return CharStreams.toString(new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8));
         });
 
