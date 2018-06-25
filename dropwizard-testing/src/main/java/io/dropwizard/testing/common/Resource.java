@@ -7,6 +7,7 @@ import io.dropwizard.jersey.validation.Validators;
 import io.dropwizard.logging.BootstrapLogging;
 import io.dropwizard.testing.junit5.ResourceExtension;
 import org.glassfish.jersey.client.ClientConfig;
+import org.glassfish.jersey.client.HttpUrlConnectorProvider;
 import org.glassfish.jersey.servlet.ServletProperties;
 import org.glassfish.jersey.test.DeploymentContext;
 import org.glassfish.jersey.test.JerseyTest;
@@ -113,9 +114,13 @@ public class Resource {
             if (bootstrapLogging) {
                 BootstrapLogging.bootstrap();
             }
+            Consumer<ClientConfig> extendedConfigurator = config -> {
+                clientConfigurator.accept(config);
+                config.property(HttpUrlConnectorProvider.SET_METHOD_WORKAROUND, true);
+            };
             return new Resource(new ResourceTestJerseyConfiguration(
                 singletons, providers, properties, mapper, validator,
-                clientConfigurator, testContainerFactory, registerDefaultExceptionMappers));
+                extendedConfigurator, testContainerFactory, registerDefaultExceptionMappers));
         }
     }
 
