@@ -7,9 +7,9 @@ import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.LayoutBase;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import com.google.common.collect.ImmutableSet;
 import io.dropwizard.logging.json.layout.EventJsonLayout;
 
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Set;
 import java.util.TimeZone;
@@ -45,7 +45,7 @@ public class EventJsonLayoutBaseFactory extends AbstractJsonLayoutBaseFactory<IL
         EventAttribute.THREAD_NAME, EventAttribute.MDC, EventAttribute.LOGGER_NAME, EventAttribute.MESSAGE,
         EventAttribute.EXCEPTION, EventAttribute.TIMESTAMP);
 
-    private Set<String> includesMdcKeys = ImmutableSet.of();
+    private Set<String> includesMdcKeys = Collections.emptySet();
     private boolean flattenMdc = false;
 
     @JsonProperty

@@ -8,8 +8,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.OptionalInt;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
 @Singleton
 public class OptionalIntParamConverterProvider implements ParamConverterProvider {
     private final OptionalIntParamConverter paramConverter = new OptionalIntParamConverter();
@@ -41,7 +39,9 @@ public class OptionalIntParamConverterProvider implements ParamConverterProvider
 
         @Override
         public String toString(final OptionalInt value) {
-            checkArgument(value != null);
+            if (value == null) {
+                throw new IllegalArgumentException("value must not be null");
+            }
             return value.isPresent() ? Integer.toString(value.getAsInt()) : "";
         }
     }

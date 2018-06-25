@@ -2,8 +2,7 @@ package io.dropwizard.configuration;
 
 import com.fasterxml.jackson.core.JsonLocation;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableSet;
+import io.dropwizard.util.Strings;
 import org.apache.commons.text.similarity.LevenshteinDistance;
 
 import javax.annotation.Nullable;
@@ -370,7 +369,7 @@ public class ConfigurationParsingException extends ConfigurationException {
      * @param msg    the full error message
      */
     private ConfigurationParsingException(String path, String msg) {
-        super(path, ImmutableSet.of(msg));
+        super(path, Collections.singleton(msg));
     }
 
     /**
@@ -381,7 +380,7 @@ public class ConfigurationParsingException extends ConfigurationException {
      * @param cause  the cause of the parsing error.
      */
     private ConfigurationParsingException(String path, String msg, Throwable cause) {
-        super(path, ImmutableSet.of(msg), cause);
+        super(path, Collections.singleton(msg), cause);
     }
 
 }

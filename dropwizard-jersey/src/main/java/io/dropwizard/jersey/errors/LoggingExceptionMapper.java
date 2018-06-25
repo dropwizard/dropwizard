@@ -10,9 +10,19 @@ import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 import java.util.concurrent.ThreadLocalRandom;
 
+import static java.util.Objects.requireNonNull;
+
 @Provider
 public abstract class LoggingExceptionMapper<E extends Throwable> implements ExceptionMapper<E> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(LoggingExceptionMapper.class);
+    protected final Logger logger;
+
+    protected LoggingExceptionMapper(Logger logger) {
+        this.logger = requireNonNull(logger, "logger");
+    }
+
+    public LoggingExceptionMapper() {
+        this(LoggerFactory.getLogger(LoggingExceptionMapper.class));
+    }
 
     @Override
     public Response toResponse(E exception) {
@@ -29,9 +39,9 @@ public abstract class LoggingExceptionMapper<E extends Throwable> implements Exc
             }
 
             return Response.fromResponse(response)
-                .type(MediaType.APPLICATION_JSON_TYPE)
-                .entity(new ErrorMessage(response.getStatus(), exception.getLocalizedMessage()))
-                .build();
+                    .type(MediaType.APPLICATION_JSON_TYPE)
+                    .entity(new ErrorMessage(response.getStatus(), exception.getLocalizedMessage()))
+                    .build();
         }
 
         // Else the thrown exception is a not a web exception, so the exception is most likely
@@ -56,7 +66,7 @@ public abstract class LoggingExceptionMapper<E extends Throwable> implements Exc
     }
 
     protected void logException(long id, E exception) {
-        LOGGER.error(formatLogMessage(id, exception), exception);
+        logger.error(formatLogMessage(id, exception), exception);
     }
 
     @SuppressWarnings("UnusedParameters")

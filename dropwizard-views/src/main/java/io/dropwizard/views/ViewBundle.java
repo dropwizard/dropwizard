@@ -1,18 +1,16 @@
 package io.dropwizard.views;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import io.dropwizard.Bundle;
 import io.dropwizard.Configuration;
 import io.dropwizard.ConfiguredBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import io.dropwizard.util.Sets;
 
 import java.util.Collections;
 import java.util.Map;
 import java.util.ServiceLoader;
 
-import static com.google.common.base.MoreObjects.firstNonNull;
 
 /**
  * A {@link Bundle}, which by default, enables the rendering of FreeMarker & Mustache views by your application.
@@ -97,12 +95,12 @@ public class ViewBundle<T extends Configuration> implements ConfiguredBundle<T>,
     }
 
     public ViewBundle(Iterable<ViewRenderer> viewRenderers) {
-        this.viewRenderers = ImmutableSet.copyOf(viewRenderers);
+        this.viewRenderers = Sets.of(viewRenderers);
     }
 
     @Override
     public Map<String, Map<String, String>> getViewConfiguration(T configuration) {
-        return ImmutableMap.of();
+        return Collections.emptyMap();
     }
 
     @Override
@@ -110,7 +108,7 @@ public class ViewBundle<T extends Configuration> implements ConfiguredBundle<T>,
         final Map<String, Map<String, String>> options = getViewConfiguration(configuration);
         for (ViewRenderer viewRenderer : viewRenderers) {
             final Map<String, String> viewOptions = options.get(viewRenderer.getConfigurationKey());
-            viewRenderer.configure(firstNonNull(viewOptions, Collections.emptyMap()));
+            viewRenderer.configure(viewOptions == null ? Collections.emptyMap() : viewOptions);
         }
         environment.jersey().register(new ViewMessageBodyWriter(environment.metrics(), viewRenderers));
     }

@@ -12,7 +12,6 @@ import ch.qos.logback.core.rolling.RollingFileAppender;
 import ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy;
 import ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy;
 import ch.qos.logback.core.util.FileSize;
-import com.google.common.collect.ImmutableList;
 import io.dropwizard.jackson.DiscoverableSubtypeResolver;
 import io.dropwizard.logging.async.AsyncLoggingEventAppenderFactory;
 import io.dropwizard.logging.filter.NullLevelFilterFactory;
@@ -26,11 +25,11 @@ import org.junit.rules.TemporaryFolder;
 import org.slf4j.LoggerFactory;
 
 import javax.validation.Validator;
-
 import java.io.File;
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Collection;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -83,7 +82,7 @@ public class FileAppenderFactoryTest {
     public void hasArchivedLogFilenamePattern() throws Exception {
         FileAppenderFactory fileAppenderFactory = new FileAppenderFactory();
         fileAppenderFactory.setCurrentLogFilename(folder.newFile("logfile.log").toString());
-        ImmutableList<String> errors =
+        Collection<String> errors =
                 ConstraintViolations.format(validator.validate(fileAppenderFactory));
         assertThat(errors)
                 .containsOnly("must have archivedLogFilenamePattern if archive is true");
@@ -99,7 +98,7 @@ public class FileAppenderFactoryTest {
         fileAppenderFactory.setCurrentLogFilename(folder.newFile("logfile.log").toString());
         fileAppenderFactory.setArchivedFileCount(0);
         fileAppenderFactory.setArchivedLogFilenamePattern(folder.newFile("example-%d.log.gz").toString());
-        ImmutableList<String> errors =
+        Collection<String> errors =
             ConstraintViolations.format(validator.validate(fileAppenderFactory));
         assertThat(errors).isEmpty();
         assertThat(fileAppenderFactory.buildAppender(new LoggerContext())).isNotNull();
@@ -111,7 +110,7 @@ public class FileAppenderFactoryTest {
         fileAppenderFactory.setCurrentLogFilename(folder.newFile("logfile.log").toString());
         fileAppenderFactory.setMaxFileSize(Size.kilobytes(1));
         fileAppenderFactory.setArchivedLogFilenamePattern(folder.newFile("example-%d.log.gz").toString());
-        ImmutableList<String> errors =
+        Collection<String> errors =
                 ConstraintViolations.format(validator.validate(fileAppenderFactory));
         assertThat(errors)
                 .containsOnly("when specifying maxFileSize, archivedLogFilenamePattern must contain %i");
@@ -125,7 +124,7 @@ public class FileAppenderFactoryTest {
         FileAppenderFactory fileAppenderFactory = new FileAppenderFactory();
         fileAppenderFactory.setCurrentLogFilename(folder.newFile("logfile.log").toString());
         fileAppenderFactory.setArchivedLogFilenamePattern(folder.newFile("example-%i.log.gz").toString());
-        ImmutableList<String> errors =
+        Collection<String> errors =
                 ConstraintViolations.format(validator.validate(fileAppenderFactory));
         assertThat(errors)
                 .containsOnly("when archivedLogFilenamePattern contains %i, maxFileSize must be specified");
@@ -138,7 +137,7 @@ public class FileAppenderFactoryTest {
     public void testCurrentFileNameErrorWhenArchiveIsNotEnabled() throws Exception {
         FileAppenderFactory fileAppenderFactory = new FileAppenderFactory();
         fileAppenderFactory.setArchive(false);
-        ImmutableList<String> errors =
+        Collection<String> errors =
                 ConstraintViolations.format(validator.validate(fileAppenderFactory));
         assertThat(errors)
                 .containsOnly("currentLogFilename can only be null when archiving is enabled");
@@ -153,7 +152,7 @@ public class FileAppenderFactoryTest {
         fileAppenderFactory.setArchive(true);
         fileAppenderFactory.setArchivedLogFilenamePattern("name-to-be-used");
         fileAppenderFactory.setCurrentLogFilename(null);
-        ImmutableList<String> errors =
+        Collection<String> errors =
                 ConstraintViolations.format(validator.validate(fileAppenderFactory));
         assertThat(errors).isEmpty();
     }

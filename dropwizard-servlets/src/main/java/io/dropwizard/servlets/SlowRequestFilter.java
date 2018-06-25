@@ -1,6 +1,5 @@
 package io.dropwizard.servlets;
 
-import com.google.common.annotations.VisibleForTesting;
 import io.dropwizard.util.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,12 +44,10 @@ public class SlowRequestFilter implements Filter {
         this.threshold = threshold.toNanoseconds();
     }
 
-    @VisibleForTesting
     void setCurrentTimeProvider(Supplier<Long> currentTimeProvider) {
         this.currentTimeProvider = currentTimeProvider;
     }
 
-    @VisibleForTesting
     void setLogger(Logger logger) {
         this.logger = logger;
     }

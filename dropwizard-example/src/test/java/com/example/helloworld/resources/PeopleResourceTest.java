@@ -3,7 +3,6 @@ package com.example.helloworld.resources;
 import com.example.helloworld.core.Person;
 import com.example.helloworld.db.PersonDAO;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.google.common.collect.ImmutableList;
 import io.dropwizard.testing.junit.ResourceTestRule;
 import org.junit.After;
 import org.junit.Before;
@@ -18,6 +17,7 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -67,7 +67,7 @@ public class PeopleResourceTest {
 
     @Test
     public void listPeople() throws Exception {
-        final ImmutableList<Person> people = ImmutableList.of(person);
+        final List<Person> people = Collections.singletonList(person);
         when(PERSON_DAO.findAll()).thenReturn(people);
 
         final List<Person> response = RESOURCES.target("/people")

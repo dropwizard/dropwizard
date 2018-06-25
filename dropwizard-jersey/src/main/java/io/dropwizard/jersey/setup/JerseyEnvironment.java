@@ -1,11 +1,11 @@
 package io.dropwizard.jersey.setup;
 
-import com.google.common.base.Function;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import org.glassfish.jersey.server.ResourceConfig;
 
 import javax.annotation.Nullable;
 import javax.servlet.Servlet;
+import java.util.function.Function;
 
 import static java.util.Objects.requireNonNull;
 

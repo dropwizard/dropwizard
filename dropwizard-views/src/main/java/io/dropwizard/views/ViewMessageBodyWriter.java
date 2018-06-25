@@ -2,7 +2,6 @@ package io.dropwizard.views;
 
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
-import com.google.common.annotations.VisibleForTesting;
 import org.glassfish.jersey.message.internal.HeaderValueException;
 
 import javax.annotation.Nullable;
@@ -34,7 +33,6 @@ public class ViewMessageBodyWriter implements MessageBodyWriter<View> {
     @Nullable
     private HttpHeaders headers;
 
-    @VisibleForTesting
     void setHeaders(HttpHeaders headers) {
         this.headers = headers;
     }
@@ -90,7 +88,6 @@ public class ViewMessageBodyWriter implements MessageBodyWriter<View> {
         }
     }
 
-    @VisibleForTesting
     Locale detectLocale(HttpHeaders headers) {
         final List<Locale> languages;
         try {
@@ -107,7 +104,6 @@ public class ViewMessageBodyWriter implements MessageBodyWriter<View> {
         return Locale.getDefault();
     }
 
-    @VisibleForTesting
     Iterable<ViewRenderer> getRenderers() {
         return renderers;
     }

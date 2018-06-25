@@ -1,7 +1,6 @@
 package com.example.helloworld.api;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.base.MoreObjects;
 import org.hibernate.validator.constraints.Length;
 
 public class Saying {
@@ -31,9 +30,6 @@ public class Saying {
 
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(this)
-                .add("id", id)
-                .add("content", content)
-                .toString();
+        return "Saying{" + "id=" + id + ", content='" + content + '\'' + '}';
     }
 }

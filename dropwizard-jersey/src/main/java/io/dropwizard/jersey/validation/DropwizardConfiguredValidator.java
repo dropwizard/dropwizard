@@ -1,6 +1,5 @@
 package io.dropwizard.jersey.validation;
 
-import com.google.common.collect.ImmutableList;
 import io.dropwizard.validation.ConstraintViolations;
 import io.dropwizard.validation.Validated;
 import org.glassfish.jersey.server.internal.inject.ConfiguredValidator;
@@ -16,8 +15,10 @@ import javax.validation.executable.ExecutableValidator;
 import javax.validation.groups.Default;
 import javax.validation.metadata.BeanDescriptor;
 import javax.ws.rs.WebApplicationException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import static java.util.Objects.requireNonNull;
@@ -54,14 +55,13 @@ public class DropwizardConfiguredValidator implements ConfiguredValidator {
      * {@link Default} group
      */
     private Class<?>[] getGroup(Invocable invocable) {
-        final ImmutableList.Builder<Class<?>[]> builder = ImmutableList.builder();
+        final List<Class<?>[]> groups = new ArrayList<>();
         for (Parameter parameter : invocable.getParameters()) {
             if (parameter.isAnnotationPresent(Validated.class)) {
-                builder.add(parameter.getAnnotation(Validated.class).value());
+                groups.add(parameter.getAnnotation(Validated.class).value());
             }
         }
 
-        final ImmutableList<Class<?>[]> groups = builder.build();
         switch (groups.size()) {
             // No parameters were annotated with Validated, so validate under the default group
             case 0: return new Class<?>[] {Default.class};

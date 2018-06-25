@@ -2,19 +2,21 @@ package io.dropwizard.testing.app;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.collect.ImmutableCollection;
-import com.google.common.collect.ImmutableMultimap;
 import io.dropwizard.Application;
 import io.dropwizard.jersey.PATCH;
 import io.dropwizard.servlets.tasks.PostBodyTask;
 import io.dropwizard.servlets.tasks.Task;
 import io.dropwizard.setup.Environment;
 
+import javax.annotation.Nullable;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import java.io.PrintWriter;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public class DropwizardTestApplication extends Application<TestConfiguration> {
@@ -44,7 +46,7 @@ public class DropwizardTestApplication extends Application<TestConfiguration> {
         @GET
         @Produces(MediaType.APPLICATION_JSON)
         public MessageView messageView() {
-            return new MessageView(Optional.of(message));
+            return new MessageView(message);
         }
 
         @Path("echoPatch")
@@ -61,9 +63,9 @@ public class DropwizardTestApplication extends Application<TestConfiguration> {
         }
 
         @Override
-        public void execute(ImmutableMultimap<String, String> parameters, PrintWriter output) throws Exception {
-            ImmutableCollection<String> names = parameters.get("name");
-            String name = !names.isEmpty() ? names.asList().get(0) : "Anonymous";
+        public void execute(Map<String, List<String>> parameters, PrintWriter output) throws Exception {
+            List<String> names = parameters.getOrDefault("name", Collections.emptyList());
+            String name = !names.isEmpty() ? names.get(0) : "Anonymous";
             output.print("Hello has been said to " + name);
             output.flush();
         }
@@ -76,7 +78,7 @@ public class DropwizardTestApplication extends Application<TestConfiguration> {
         }
 
         @Override
-        public void execute(ImmutableMultimap<String, String> parameters, String body, PrintWriter output) throws Exception {
+        public void execute(Map<String, List<String>> parameters, String body, PrintWriter output) throws Exception {
             output.print(body);
             output.flush();
         }
@@ -84,16 +86,17 @@ public class DropwizardTestApplication extends Application<TestConfiguration> {
 
     public static class MessageView {
 
-        private Optional<String> message;
+        @Nullable
+        private String message;
 
         @JsonCreator
-        public MessageView(@JsonProperty("message") Optional<String> message) {
+        public MessageView(@JsonProperty("message") @Nullable String message) {
             this.message = message;
         }
 
         @JsonProperty
         public Optional<String> getMessage() {
-            return message;
+            return Optional.ofNullable(message);
         }
     }
 }

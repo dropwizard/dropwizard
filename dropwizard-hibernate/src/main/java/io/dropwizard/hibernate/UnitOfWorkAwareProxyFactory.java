@@ -1,11 +1,13 @@
 package io.dropwizard.hibernate;
 
-import com.google.common.collect.ImmutableMap;
 import javassist.util.proxy.Proxy;
 import javassist.util.proxy.ProxyFactory;
 import org.hibernate.SessionFactory;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A factory for creating proxies for components that use Hibernate data access objects
@@ -16,18 +18,18 @@ import java.lang.reflect.InvocationTargetException;
  */
 public class UnitOfWorkAwareProxyFactory {
 
-    private final ImmutableMap<String, SessionFactory> sessionFactories;
+    private final Map<String, SessionFactory> sessionFactories;
 
     public UnitOfWorkAwareProxyFactory(String name, SessionFactory sessionFactory) {
-        sessionFactories = ImmutableMap.of(name, sessionFactory);
+        sessionFactories = Collections.singletonMap(name, sessionFactory);
     }
 
     public UnitOfWorkAwareProxyFactory(HibernateBundle<?>... bundles) {
-        final ImmutableMap.Builder<String, SessionFactory> sessionFactoriesBuilder = ImmutableMap.builder();
+        final Map<String, SessionFactory> sessionFactoriesBuilder = new HashMap<>();
         for (HibernateBundle<?> bundle : bundles) {
             sessionFactoriesBuilder.put(bundle.name(), bundle.getSessionFactory());
         }
-        sessionFactories = sessionFactoriesBuilder.build();
+        sessionFactories = Collections.unmodifiableMap(sessionFactoriesBuilder);
     }
 
 
@@ -109,7 +111,7 @@ public class UnitOfWorkAwareProxyFactory {
      * @return a new aspect
      * @param sessionFactories
      */
-    public UnitOfWorkAspect newAspect(ImmutableMap<String, SessionFactory> sessionFactories) {
+    public UnitOfWorkAspect newAspect(Map<String, SessionFactory> sessionFactories) {
         return new UnitOfWorkAspect(sessionFactories);
     }
 }

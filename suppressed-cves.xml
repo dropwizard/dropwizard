@@ -9,6 +9,10 @@
         <cve>CVE-2015-3379</cve>
     </suppress>
     <suppress>
+        <notes><![CDATA[false positive, Dropwizard does not use Drupal]]></notes>
+        <cve>CVE-2015-4345</cve>
+    </suppress>
+    <suppress>
         <notes><![CDATA[false positive]]></notes>
         <cve>CVE-2015-8862</cve>
     </suppress>

@@ -1,7 +1,5 @@
 package io.dropwizard.hibernate;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableList.Builder;
 import io.dropwizard.Configuration;
 import org.glassfish.jersey.server.internal.scanning.AnnotationAcceptingListener;
 import org.glassfish.jersey.server.internal.scanning.PackageNamesScanner;
@@ -9,6 +7,8 @@ import org.glassfish.jersey.server.internal.scanning.PackageNamesScanner;
 import javax.persistence.Entity;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Extension of HibernateBundle that scans given package for entities instead of giving them by hand.
@@ -37,7 +37,7 @@ public abstract class ScanningHibernateBundle<T extends Configuration> extends H
      *             e.g. com.codahale.fake.db.directory.entities
      * @return ImmutableList with classes from given directory annotated with Hibernate @Entity annotation
      */
-    public static ImmutableList<Class<?>> findEntityClassesFromDirectory(String[] pckgs) {
+    public static List<Class<?>> findEntityClassesFromDirectory(String[] pckgs) {
         @SuppressWarnings("unchecked")
         final AnnotationAcceptingListener asl = new AnnotationAcceptingListener(Entity.class);
         try (final PackageNamesScanner scanner = new PackageNamesScanner(pckgs, true)) {
@@ -53,11 +53,6 @@ public abstract class ScanningHibernateBundle<T extends Configuration> extends H
             }
         }
 
-        final Builder<Class<?>> builder = ImmutableList.builder();
-        for (Class<?> clazz : asl.getAnnotatedClasses()) {
-            builder.add(clazz);
-        }
-
-        return builder.build();
+        return new ArrayList<>(asl.getAnnotatedClasses());
     }
 }

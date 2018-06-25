@@ -2,11 +2,11 @@ package io.dropwizard.testing.junit5;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.guava.GuavaModule;
-import com.google.common.base.Strings;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.jersey.validation.JerseyViolationException;
 import io.dropwizard.testing.app.PeopleStore;
 import io.dropwizard.testing.app.PersonResource;
+import io.dropwizard.util.Strings;
 import org.glassfish.jersey.spi.ExtendedExceptionMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

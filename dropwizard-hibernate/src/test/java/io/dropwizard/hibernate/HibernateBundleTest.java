@@ -4,7 +4,6 @@ import com.codahale.metrics.health.HealthCheckRegistry;
 import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
-import com.google.common.collect.ImmutableList;
 import io.dropwizard.Configuration;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.jersey.DropwizardResourceConfig;
@@ -16,6 +15,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
+import java.util.Collections;
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyList;
@@ -26,7 +28,7 @@ import static org.mockito.Mockito.when;
 
 public class HibernateBundleTest {
     private final DataSourceFactory dbConfig = new DataSourceFactory();
-    private final ImmutableList<Class<?>> entities = ImmutableList.of(Person.class);
+    private final List<Class<?>> entities = Collections.singletonList(Person.class);
     private final SessionFactoryFactory factory = mock(SessionFactoryFactory.class);
     private final SessionFactory sessionFactory = mock(SessionFactory.class);
     private final Configuration configuration = mock(Configuration.class);

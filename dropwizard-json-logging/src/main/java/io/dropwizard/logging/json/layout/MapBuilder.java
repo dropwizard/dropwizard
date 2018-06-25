@@ -1,11 +1,10 @@
 package io.dropwizard.logging.json.layout;
 
-import com.google.common.collect.Maps;
-
 import javax.annotation.Nullable;
+import java.util.HashMap;
 import java.util.Map;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.Objects.requireNonNull;
 
 /**
  * Builds a Java map based on the provided configuration and customization.
@@ -29,9 +28,9 @@ public class MapBuilder {
     public MapBuilder(TimestampFormatter timestampFormatter, Map<String, String> customFieldNames,
                       Map<String, Object> additionalFields, int expectedSize) {
         this.timestampFormatter = timestampFormatter;
-        this.customFieldNames = checkNotNull(customFieldNames);
-        this.additionalFields = checkNotNull(additionalFields);
-        this.map = Maps.newHashMapWithExpectedSize(expectedSize);
+        this.customFieldNames = requireNonNull(customFieldNames);
+        this.additionalFields = requireNonNull(additionalFields);
+        this.map = new HashMap<>(expectedSize);
     }
 
     /**

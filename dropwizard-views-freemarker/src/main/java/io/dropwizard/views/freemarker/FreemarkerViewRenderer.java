@@ -1,9 +1,8 @@
 package io.dropwizard.views.freemarker;
 
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
-import com.google.common.collect.ImmutableMap;
+import com.github.benmanes.caffeine.cache.CacheLoader;
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.LoadingCache;
 import freemarker.core.HTMLOutputFormat;
 import freemarker.template.Configuration;
 import freemarker.template.DefaultObjectWrapperBuilder;
@@ -13,11 +12,13 @@ import io.dropwizard.views.View;
 import io.dropwizard.views.ViewRenderException;
 import io.dropwizard.views.ViewRenderer;
 
+import javax.annotation.Nonnull;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -30,10 +31,10 @@ public class FreemarkerViewRenderer implements ViewRenderer {
     private static final Version FREEMARKER_VERSION = Configuration.getVersion();
     private final TemplateLoader loader;
 
-    private static class TemplateLoader extends CacheLoader<Class<?>, Configuration> {
-        private Map<String, String> baseConfig = ImmutableMap.of();
+    private static class TemplateLoader implements CacheLoader<Class<?>, Configuration> {
+        private Map<String, String> baseConfig = Collections.emptyMap();
         @Override
-        public Configuration load(Class<?> key) throws Exception {
+        public Configuration load(@Nonnull Class<?> key) throws Exception {
             final Configuration configuration = new Configuration(FREEMARKER_VERSION);
             configuration.setObjectWrapper(new DefaultObjectWrapperBuilder(FREEMARKER_VERSION).build());
             configuration.loadBuiltInEncodingMap();
@@ -56,9 +57,7 @@ public class FreemarkerViewRenderer implements ViewRenderer {
 
     public FreemarkerViewRenderer() {
         this.loader = new TemplateLoader();
-        this.configurationCache = CacheBuilder.newBuilder()
-                                              .concurrencyLevel(128)
-                                              .build(loader);
+        this.configurationCache = Caffeine.newBuilder().build(loader);
     }
 
     @Override
@@ -70,8 +69,12 @@ public class FreemarkerViewRenderer implements ViewRenderer {
     public void render(View view,
                        Locale locale,
                        OutputStream output) throws IOException {
+        final Configuration configuration = configurationCache.get(view.getClass());
+        if (configuration == null) {
+            throw new ViewRenderException("Couldn't find view class " + view.getClass());
+        }
+
         try {
-            final Configuration configuration = configurationCache.getUnchecked(view.getClass());
             final Charset charset = view.getCharset().orElseGet(() -> Charset.forName(configuration.getEncoding(locale)));
             final Template template = configuration.getTemplate(view.getTemplateName(), locale, charset.name());
             template.process(view, new OutputStreamWriter(output, template.getEncoding()));

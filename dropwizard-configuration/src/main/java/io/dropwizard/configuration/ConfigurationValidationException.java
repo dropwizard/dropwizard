@@ -1,6 +1,5 @@
 package io.dropwizard.configuration;
 
-import com.google.common.collect.ImmutableSet;
 import io.dropwizard.validation.ConstraintViolations;
 
 import javax.validation.ConstraintViolation;
@@ -12,7 +11,7 @@ import java.util.Set;
 public class ConfigurationValidationException extends ConfigurationException {
     private static final long serialVersionUID = 5325162099634227047L;
 
-    private final ImmutableSet<ConstraintViolation<?>> constraintViolations;
+    private final Set<ConstraintViolation<?>> constraintViolations;
 
     /**
      * Creates a new ConfigurationException for the given path with the given errors.
@@ -30,7 +29,7 @@ public class ConfigurationValidationException extends ConfigurationException {
      *
      * @return the set of constraint violations
      */
-    public ImmutableSet<ConstraintViolation<?>> getConstraintViolations() {
+    public Set<ConstraintViolation<?>> getConstraintViolations() {
         return constraintViolations;
     }
 }

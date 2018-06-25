@@ -1,10 +1,12 @@
 package io.dropwizard.servlets.assets;
 
-import com.google.common.base.Splitter;
+import io.dropwizard.util.Strings;
 
 import javax.annotation.concurrent.Immutable;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Immutable
 public final class ByteRange {
@@ -37,7 +39,10 @@ public final class ByteRange {
             final int start = Integer.parseInt(byteRange);
             return new ByteRange(resourceLength + start, resourceLength - 1);
         }
-        final List<String> parts = Splitter.on("-").omitEmptyStrings().splitToList(byteRange);
+        final List<String> parts = Arrays.stream(byteRange.split("-", -1))
+                .map(String::trim)
+                .filter(s -> !Strings.isNullOrEmpty(s))
+                .collect(Collectors.toList());
         if (parts.size() == 2) {
             final int start = Integer.parseInt(parts.get(0));
             int end = Integer.parseInt(parts.get(1));

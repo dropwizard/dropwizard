@@ -12,8 +12,6 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.fasterxml.jackson.databind.node.TreeTraversingParser;
-import com.google.common.base.Joiner;
-import com.google.common.base.Splitter;
 
 import javax.annotation.Nullable;
 import javax.validation.ConstraintViolation;
@@ -21,6 +19,7 @@ import javax.validation.Validator;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -38,9 +37,9 @@ import static java.util.Objects.requireNonNull;
 public abstract class BaseConfigurationFactory<T> implements ConfigurationFactory<T> {
 
     private static final Pattern ESCAPED_COMMA_PATTERN = Pattern.compile("\\\\,");
-    private static final Splitter ESCAPED_COMMA_SPLITTER = Splitter.on(Pattern.compile("(?<!\\\\),")).trimResults();
+    private static final Pattern ESCAPED_COMMA_SPLIT_PATTERN = Pattern.compile("(?<!\\\\),");
     private static final Pattern ESCAPED_DOT_PATTERN = Pattern.compile("\\\\\\.");
-    private static final Splitter ESCAPED_DOT_SPLITTER = Splitter.on(Pattern.compile("(?<!\\\\)\\.")).trimResults();
+    private static final Pattern ESCAPED_DOT_SPLIT_PATTERN = Pattern.compile("(?<!\\\\)\\.");
 
     private final Class<T> klass;
     private final String propertyPrefix;
@@ -159,9 +158,10 @@ public abstract class BaseConfigurationFactory<T> implements ConfigurationFactor
 
     protected void addOverride(JsonNode root, String name, String value) {
         JsonNode node = root;
-        final List<String> parts = ESCAPED_DOT_SPLITTER.splitToList(name).stream()
-            .map(key -> ESCAPED_DOT_PATTERN.matcher(key).replaceAll("."))
-            .collect(Collectors.toList());
+        final List<String> parts = Arrays.stream(ESCAPED_DOT_SPLIT_PATTERN.split(name))
+                .map(String::trim)
+                .map(key -> ESCAPED_DOT_PATTERN.matcher(key).replaceAll("."))
+                .collect(Collectors.toList());
         for (int i = 0; i < parts.size(); i++) {
             final String key = parts.get(i);
 
@@ -170,7 +170,8 @@ public abstract class BaseConfigurationFactory<T> implements ConfigurationFactor
             }
             final ObjectNode obj = (ObjectNode) node;
 
-            final String remainingPath = Joiner.on('.').join(parts.subList(i, parts.size()));
+            final String remainingPath = parts.subList(i, parts.size()).stream()
+                    .collect(Collectors.joining("."));
             if (obj.has(remainingPath) && !remainingPath.equals(key)) {
                 if (obj.get(remainingPath).isValueNode()) {
                     obj.put(remainingPath, value);
@@ -221,9 +222,10 @@ public abstract class BaseConfigurationFactory<T> implements ConfigurationFactor
                 if (node.get(key) != null && node.get(key).isArray()) {
                     final ArrayNode arrayNode = (ArrayNode) obj.get(key);
                     arrayNode.removeAll();
-                    for (String val : ESCAPED_COMMA_SPLITTER.split(value)) {
-                        arrayNode.add(ESCAPED_COMMA_PATTERN.matcher(val).replaceAll(","));
-                    }
+                    Arrays.stream(ESCAPED_COMMA_SPLIT_PATTERN.split(value))
+                            .map(String::trim)
+                            .map(val -> ESCAPED_COMMA_PATTERN.matcher(val).replaceAll(","))
+                            .forEach(arrayNode::add);
                 } else {
                     obj.put(key, value);
                 }
