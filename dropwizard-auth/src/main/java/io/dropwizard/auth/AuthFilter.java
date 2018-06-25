@@ -1,6 +1,5 @@
 package io.dropwizard.auth;
 
-import com.google.common.base.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,6 +12,8 @@ import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.core.SecurityContext;
 import java.security.Principal;
 import java.util.Optional;
+
+import static java.util.Objects.requireNonNull;
 
 @Priority(Priorities.AUTHENTICATION)
 public abstract class AuthFilter<C, P extends Principal> implements ContainerRequestFilter {
@@ -101,11 +102,11 @@ public abstract class AuthFilter<C, P extends Principal> implements ContainerReq
          * @return a new instance of the filter
          */
         public T buildAuthFilter() {
-            Preconditions.checkNotNull(realm, "Realm is not set");
-            Preconditions.checkNotNull(prefix, "Prefix is not set");
-            Preconditions.checkNotNull(authenticator, "Authenticator is not set");
-            Preconditions.checkNotNull(authorizer, "Authorizer is not set");
-            Preconditions.checkNotNull(unauthorizedHandler, "Unauthorized handler is not set");
+            requireNonNull(realm, "Realm is not set");
+            requireNonNull(prefix, "Prefix is not set");
+            requireNonNull(authenticator, "Authenticator is not set");
+            requireNonNull(authorizer, "Authorizer is not set");
+            requireNonNull(unauthorizedHandler, "Unauthorized handler is not set");
 
             final T authFilter = newInstance();
             authFilter.authorizer = authorizer;

@@ -1,9 +1,8 @@
 package io.dropwizard.jersey.validation;
 
-import com.google.common.base.Joiner;
-import com.google.common.base.Strings;
 import io.dropwizard.jersey.errors.ErrorMessage;
 import io.dropwizard.util.Enums;
+import io.dropwizard.util.Strings;
 import org.glassfish.jersey.internal.util.ReflectionHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +19,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.security.AccessController;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 import static io.dropwizard.jersey.validation.JerseyParameterNameProvider.getParameterNameFromAnnotations;
 
@@ -35,8 +36,6 @@ import static io.dropwizard.jersey.validation.JerseyParameterNameProvider.getPar
 @Provider
 public class FuzzyEnumParamConverterProvider implements ParamConverterProvider {
     private static final Logger LOGGER = LoggerFactory.getLogger(ParamConverterProvider.class);
-
-    private final static Joiner JOINER = Joiner.on(", ");
 
     @Override
     @Nullable
@@ -91,7 +90,10 @@ public class FuzzyEnumParamConverterProvider implements ParamConverterProvider {
                     return (T) constant;
                 }
 
-                final String errMsg = String.format("%s must be one of [%s]", parameterName, JOINER.join(constants));
+                final String constantsList = Arrays.stream(constants)
+                        .map(Enum::toString)
+                        .collect(Collectors.joining(", "));
+                final String errMsg = String.format("%s must be one of [%s]", parameterName, constantsList);
                 throw new WebApplicationException(getErrorResponse(errMsg));
             }
 

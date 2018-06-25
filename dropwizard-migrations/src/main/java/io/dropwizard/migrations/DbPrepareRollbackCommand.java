@@ -1,7 +1,5 @@
 package io.dropwizard.migrations;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Joiner;
 import io.dropwizard.Configuration;
 import io.dropwizard.db.DatabaseConfiguration;
 import liquibase.Liquibase;
@@ -13,6 +11,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class DbPrepareRollbackCommand<T extends Configuration> extends AbstractLiquibaseCommand<T> {
 
@@ -22,7 +21,6 @@ public class DbPrepareRollbackCommand<T extends Configuration> extends AbstractL
         super("prepare-rollback", "Generate rollback DDL scripts for pending change sets.", strategy, configurationClass, migrationsFileName);
     }
 
-    @VisibleForTesting
     void setOutputStream(PrintStream outputStream) {
         this.outputStream = outputStream;
     }
@@ -58,6 +56,8 @@ public class DbPrepareRollbackCommand<T extends Configuration> extends AbstractL
         if (contexts == null) {
             return "";
         }
-        return Joiner.on(',').join(contexts);
+        return contexts.stream()
+                .map(Object::toString)
+                .collect(Collectors.joining(","));
     }
 }

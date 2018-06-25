@@ -3,7 +3,6 @@ package io.dropwizard.db;
 import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.primitives.Ints;
 import io.dropwizard.util.Duration;
 import io.dropwizard.validation.MinDuration;
 import io.dropwizard.validation.ValidationMethod;
@@ -903,7 +902,7 @@ public class DataSourceFactory implements PooledDataSourceFactory {
         poolConfig.setUsername(user);
         poolConfig.setPassword(user != null && password == null ? "" : password);
         poolConfig.setRemoveAbandoned(removeAbandoned);
-        poolConfig.setRemoveAbandonedTimeout(Ints.saturatedCast(removeAbandonedTimeout.toSeconds()));
+        poolConfig.setRemoveAbandonedTimeout((int) removeAbandonedTimeout.toSeconds());
 
         poolConfig.setTestWhileIdle(checkConnectionWhileIdle);
         poolConfig.setValidationQuery(validationQuery);

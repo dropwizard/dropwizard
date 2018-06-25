@@ -1,13 +1,14 @@
 package io.dropwizard.auth;
 
 import com.codahale.metrics.MetricRegistry;
+import com.github.benmanes.caffeine.cache.CaffeineSpec;
 import com.google.common.cache.CacheBuilderSpec;
-import com.google.common.collect.ImmutableSet;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InOrder;
 
 import java.security.Principal;
+import java.util.Collections;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -23,7 +24,7 @@ public class CachingAuthenticatorTest {
     @SuppressWarnings("unchecked")
     private final Authenticator<String, Principal> underlying = mock(Authenticator.class);
     private final CachingAuthenticator<String, Principal> cached =
-        new CachingAuthenticator<>(new MetricRegistry(), underlying, CacheBuilderSpec.parse("maximumSize=1"));
+        new CachingAuthenticator<>(new MetricRegistry(), underlying, CaffeineSpec.parse("maximumSize=1"));
 
     @Before
     public void setUp() throws Exception {
@@ -41,8 +42,11 @@ public class CachingAuthenticatorTest {
     @Test
     public void respectsTheCacheConfiguration() throws Exception {
         cached.authenticate("credentials1");
+        Thread.sleep(10L);
         cached.authenticate("credentials2");
+        Thread.sleep(10L);
         cached.authenticate("credentials1");
+        Thread.sleep(10L);
 
         final InOrder inOrder = inOrder(underlying);
         inOrder.verify(underlying, times(1)).authenticate("credentials1");
@@ -62,7 +66,7 @@ public class CachingAuthenticatorTest {
     @Test
     public void invalidatesSetsOfCredentials() throws Exception {
         cached.authenticate("credentials");
-        cached.invalidateAll(ImmutableSet.of("credentials"));
+        cached.invalidateAll(Collections.singleton("credentials"));
         cached.authenticate("credentials");
 
         verify(underlying, times(2)).authenticate("credentials");

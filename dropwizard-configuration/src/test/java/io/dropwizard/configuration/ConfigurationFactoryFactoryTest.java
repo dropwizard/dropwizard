@@ -2,9 +2,9 @@ package io.dropwizard.configuration;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.io.Resources;
 import io.dropwizard.configuration.BaseConfigurationFactoryTest.Example;
 import io.dropwizard.jackson.Jackson;
+import io.dropwizard.util.Resources;
 import io.dropwizard.validation.BaseValidator;
 
 import org.junit.Test;

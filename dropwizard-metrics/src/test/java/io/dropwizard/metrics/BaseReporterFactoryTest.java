@@ -3,27 +3,29 @@ package io.dropwizard.metrics;
 import com.codahale.metrics.Metric;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.ScheduledReporter;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
+import io.dropwizard.util.Sets;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
 @RunWith(Parameterized.class)
 public class BaseReporterFactoryTest {
-    private static final ImmutableSet<String> INCLUDES = ImmutableSet.of("inc", "both", "inc.+");
-    private static final ImmutableSet<String> EXCLUDES = ImmutableSet.of("exc", "both", "exc.+");
-    private static final ImmutableSet<String> EMPTY = ImmutableSet.of();
+    private static final Set<String> INCLUDES = Sets.of("inc", "both", "inc.+");
+    private static final Set<String> EXCLUDES = Sets.of("exc", "both", "exc.+");
+    private static final Set<String> EMPTY = Collections.emptySet();
 
     @Parameterized.Parameters(name = "{index} {6} {2}")
     public static List<Object[]> data() {
 
-        return ImmutableList.of(
+        return Arrays.asList(
                 /*
                  * case1: If include list is empty and exclude list is empty, everything should be
                  * included.
@@ -82,10 +84,10 @@ public class BaseReporterFactoryTest {
     };
 
     @Parameterized.Parameter
-    public ImmutableSet<String> includes = ImmutableSet.of();
+    public Set<String> includes = Collections.emptySet();
 
     @Parameterized.Parameter(1)
-    public ImmutableSet<String> excludes = ImmutableSet.of();
+    public Set<String> excludes = Collections.emptySet();
 
     @Parameterized.Parameter(2)
     public String name = "";

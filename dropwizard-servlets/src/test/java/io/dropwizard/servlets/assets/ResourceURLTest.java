@@ -1,6 +1,6 @@
 package io.dropwizard.servlets.assets;
 
-import com.google.common.io.Resources;
+import io.dropwizard.util.Resources;
 import org.junit.Test;
 
 import java.net.JarURLConnection;

@@ -1,7 +1,6 @@
 package io.dropwizard.migrations;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.io.Resources;
+import io.dropwizard.util.Resources;
 import net.jcip.annotations.NotThreadSafe;
 import net.sourceforge.argparse4j.inf.Namespace;
 import org.apache.commons.lang3.StringUtils;
@@ -10,9 +9,10 @@ import org.junit.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.io.PrintWriter;
-import java.io.OutputStreamWriter;
+import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -37,20 +37,20 @@ public class DbStatusCommandTest extends AbstractMigrationTest {
         final String existedDbUrl = "jdbc:h2:" + StringUtils.removeEnd(existedDbPath, ".mv.db");
         final TestMigrationConfiguration existedDbConf = createConfiguration(existedDbUrl);
 
-        statusCommand.run(null, new Namespace(ImmutableMap.of()), existedDbConf);
+        statusCommand.run(null, new Namespace(Collections.emptyMap()), existedDbConf);
         assertThat(baos.toString(UTF_8)).matches("\\S+ is up to date" + System.lineSeparator());
     }
 
     @Test
     public void testRun() throws Exception {
-        statusCommand.run(null, new Namespace(ImmutableMap.of()), conf);
+        statusCommand.run(null, new Namespace(Collections.emptyMap()), conf);
         assertThat(baos.toString(UTF_8)).matches(
                 "3 change sets have not been applied to \\S+" + System.lineSeparator());
     }
 
     @Test
     public void testVerbose() throws Exception {
-        statusCommand.run(null, new Namespace(ImmutableMap.of("verbose", (Object) true)), conf);
+        statusCommand.run(null, new Namespace(Collections.singletonMap("verbose", true)), conf);
         assertThat(baos.toString(UTF_8)).matches(
                 "3 change sets have not been applied to \\S+" + System.lineSeparator() +
                         "\\s*migrations\\.xml::1::db_dev"  + System.lineSeparator() +

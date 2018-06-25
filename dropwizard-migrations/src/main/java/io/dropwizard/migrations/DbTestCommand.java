@@ -1,6 +1,5 @@
 package io.dropwizard.migrations;
 
-import com.google.common.base.Joiner;
 import io.dropwizard.Configuration;
 import io.dropwizard.db.DatabaseConfiguration;
 import liquibase.Liquibase;
@@ -9,6 +8,7 @@ import net.sourceforge.argparse4j.inf.Namespace;
 import net.sourceforge.argparse4j.inf.Subparser;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class DbTestCommand<T extends Configuration> extends AbstractLiquibaseCommand<T> {
     public DbTestCommand(DatabaseConfiguration<T> strategy, Class<T> configurationClass, String migrationsFileName) {
@@ -35,6 +35,8 @@ public class DbTestCommand<T extends Configuration> extends AbstractLiquibaseCom
         if (contexts == null) {
             return "";
         }
-        return Joiner.on(',').join(contexts);
+        return contexts.stream()
+                .map(Object::toString)
+                .collect(Collectors.joining(","));
     }
 }

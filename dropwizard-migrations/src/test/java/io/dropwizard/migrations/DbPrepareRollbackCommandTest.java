@@ -1,6 +1,5 @@
 package io.dropwizard.migrations;
 
-import com.google.common.collect.ImmutableMap;
 import net.jcip.annotations.NotThreadSafe;
 import net.sourceforge.argparse4j.inf.Namespace;
 import org.junit.Before;
@@ -10,6 +9,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.io.PrintWriter;
+import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -31,7 +31,7 @@ public class DbPrepareRollbackCommandTest extends AbstractMigrationTest {
     public void testRun() throws Exception {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         prepareRollbackCommand.setOutputStream(new PrintStream(baos));
-        prepareRollbackCommand.run(null, new Namespace(ImmutableMap.of()), conf);
+        prepareRollbackCommand.run(null, new Namespace(Collections.emptyMap()), conf);
         assertThat(baos.toString(UTF_8))
             .contains("ALTER TABLE PUBLIC.persons DROP COLUMN email;")
             .contains("DROP TABLE PUBLIC.persons;");
@@ -41,7 +41,7 @@ public class DbPrepareRollbackCommandTest extends AbstractMigrationTest {
     public void testPrepareOnlyChange() throws Exception {
         final ByteArrayOutputStream baos = new ByteArrayOutputStream();
         prepareRollbackCommand.setOutputStream(new PrintStream(baos));
-        prepareRollbackCommand.run(null, new Namespace(ImmutableMap.of("count", 1)), conf);
+        prepareRollbackCommand.run(null, new Namespace(Collections.singletonMap("count", 1)), conf);
         assertThat(baos.toString(UTF_8)).contains("DROP TABLE PUBLIC.persons;");
     }
 

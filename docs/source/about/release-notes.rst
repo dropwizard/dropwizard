@@ -4,6 +4,20 @@
 Release Notes
 #############
 
+.. _rel-2.0.0:
+
+v2.0.0: Unreleased
+==================
+
+* Add TLS socket logging appender (`#2317 <https://github.com/dropwizard/dropwizard/pull/2317>`_)
+* Add opt-in ``EmptyOptionalNoContentExceptionMapper`` for returning 204 responses on empty ``Optional`` responses (`#2356 <https://github.com/dropwizard/dropwizard/pull/2356>`_)
+* Add configuration for excluding mime types and paths to gzip (`#2350 <https://github.com/dropwizard/dropwizard/pull/2350>`_)
+* Add additional syslog logging facilities (`#2381 <https://github.com/dropwizard/dropwizard/pull/2381>`_)
+* Add opt-in logging throttling via the ``messageRate`` config property (`#2384 <https://github.com/dropwizard/dropwizard/pull/2384>`_)
+* Fix ``UUIDParams`` accepting input of incorrect length (`#2382 <https://github.com/dropwizard/dropwizard/pull/2382>`_)
+* Fix usage ``@SelfValidating`` with ``@BeanParam`` (`#2334 <https://github.com/dropwizard/dropwizard/pull/2334>`_)
+* Fix resource endpoints injected via DI not being logged on startup (`#2389 <https://github.com/dropwizard/dropwizard/pull/2389>`_)
+
 .. _rel-1.3.4:
 
 v1.3.4: Jun 14, 2018

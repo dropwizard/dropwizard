@@ -1,13 +1,10 @@
 package io.dropwizard.lifecycle;
 
 import io.dropwizard.util.Duration;
-
-import java.util.concurrent.ExecutorService;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.annotations.VisibleForTesting;
+import java.util.concurrent.ExecutorService;
 
 public class ExecutorServiceManager implements Managed {
 
@@ -48,17 +45,14 @@ public class ExecutorServiceManager implements Managed {
         return super.toString() + '(' + poolName + ')';
     }
 
-    @VisibleForTesting
     public ExecutorService getExecutor() {
         return executor;
     }
 
-    @VisibleForTesting
     public Duration getShutdownPeriod() {
         return shutdownPeriod;
     }
 
-    @VisibleForTesting
     public String getPoolName() {
         return poolName;
     }

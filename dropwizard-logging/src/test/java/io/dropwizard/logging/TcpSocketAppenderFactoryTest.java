@@ -3,14 +3,12 @@ package io.dropwizard.logging;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.io.Resources;
-import io.dropwizard.configuration.FileConfigurationSourceProvider;
 import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.configuration.SubstitutingSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.util.Duration;
+import io.dropwizard.util.Resources;
 import io.dropwizard.util.Size;
 import io.dropwizard.validation.BaseValidator;
 import org.apache.commons.text.StrSubstitutor;
@@ -24,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.URISyntaxException;
+import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -71,7 +70,7 @@ public class TcpSocketAppenderFactoryTest {
     public void testTestTcpLogging() throws Exception {
         DefaultLoggingFactory loggingFactory = yamlConfigurationFactory.build(new SubstitutingSourceProvider(
                 new ResourceConfigurationSourceProvider(),
-                new StrSubstitutor(ImmutableMap.of("tcp.server.port", tcpServer.getPort()))),
+                new StrSubstitutor(Collections.singletonMap("tcp.server.port", tcpServer.getPort()))),
             "yaml/logging-tcp.yml");
         loggingFactory.configure(new MetricRegistry(), "tcp-test");
 
@@ -89,7 +88,7 @@ public class TcpSocketAppenderFactoryTest {
     public void testBufferingTcpLogging() throws Exception {
         DefaultLoggingFactory loggingFactory = yamlConfigurationFactory.build(new SubstitutingSourceProvider(
             new ResourceConfigurationSourceProvider(),
-                new StrSubstitutor(ImmutableMap.of("tcp.server.port", tcpServer.getPort()))),
+                new StrSubstitutor(Collections.singletonMap("tcp.server.port", tcpServer.getPort()))),
             "yaml/logging-tcp-buffered.yml");
         loggingFactory.configure(new MetricRegistry(), "tcp-test");
 

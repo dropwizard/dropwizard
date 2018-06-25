@@ -1,6 +1,5 @@
 package io.dropwizard.auth.basic;
 
-import com.google.common.io.BaseEncoding;
 import io.dropwizard.auth.AuthFilter;
 import io.dropwizard.auth.Authenticator;
 
@@ -14,6 +13,7 @@ import javax.ws.rs.core.SecurityContext;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.security.Principal;
+import java.util.Base64;
 
 @Priority(Priorities.AUTHENTICATION)
 public class BasicCredentialAuthFilter<P extends Principal> extends AuthFilter<BasicCredentials, P> {
@@ -55,7 +55,7 @@ public class BasicCredentialAuthFilter<P extends Principal> extends AuthFilter<B
 
         final String decoded;
         try {
-            decoded = new String(BaseEncoding.base64().decode(header.substring(space + 1)), StandardCharsets.UTF_8);
+            decoded = new String(Base64.getDecoder().decode(header.substring(space + 1)), StandardCharsets.UTF_8);
         } catch (IllegalArgumentException e) {
             logger.warn("Error decoding credentials", e);
             return null;

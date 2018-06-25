@@ -1,7 +1,5 @@
 package io.dropwizard.auth.basic;
 
-import com.google.common.base.MoreObjects;
-
 import java.util.Objects;
 
 import static java.util.Objects.requireNonNull;
@@ -60,11 +58,9 @@ public class BasicCredentials {
         return Objects.equals(this.username, other.username) && Objects.equals(this.password, other.password);
     }
 
+
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(this)
-                .add("username", username)
-                .add("password", "**********")
-                .toString();
+        return "BasicCredentials{username=" + username + ", password=**********}";
     }
 }

@@ -1,7 +1,5 @@
 package io.dropwizard.migrations;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Joiner;
 import io.dropwizard.Configuration;
 import io.dropwizard.db.DatabaseConfiguration;
 import liquibase.Liquibase;
@@ -15,9 +13,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.google.common.base.MoreObjects.firstNonNull;
 
 public class DbRollbackCommand<T extends Configuration> extends AbstractLiquibaseCommand<T> {
 
@@ -31,7 +29,6 @@ public class DbRollbackCommand<T extends Configuration> extends AbstractLiquibas
             migrationsFileName);
     }
 
-    @VisibleForTesting
     void setOutputStream(PrintStream outputStream) {
         this.outputStream = outputStream;
     }
@@ -65,7 +62,7 @@ public class DbRollbackCommand<T extends Configuration> extends AbstractLiquibas
         final String tag = namespace.getString("tag");
         final Integer count = namespace.getInt("count");
         final Date date = namespace.get("date");
-        final Boolean dryRun = firstNonNull(namespace.getBoolean("dry-run"), false);
+        final boolean dryRun = namespace.getBoolean("dry-run") == null ? false : namespace.getBoolean("dry-run");
         final String context = getContext(namespace);
         if (Stream.of(tag, count, date).filter(Objects::nonNull).count() != 1) {
             throw new IllegalArgumentException("Must specify either a count, a tag, or a date.");
@@ -97,6 +94,8 @@ public class DbRollbackCommand<T extends Configuration> extends AbstractLiquibas
         if (contexts == null) {
             return "";
         }
-        return Joiner.on(',').join(contexts);
+        return contexts.stream()
+                .map(Object::toString)
+                .collect(Collectors.joining(","));
     }
 }

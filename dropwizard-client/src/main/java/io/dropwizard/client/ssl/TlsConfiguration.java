@@ -1,7 +1,7 @@
 package io.dropwizard.client.ssl;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.base.Strings;
+import io.dropwizard.util.Strings;
 import io.dropwizard.validation.ValidationMethod;
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -28,6 +28,9 @@ public class TlsConfiguration {
     private String keyStoreType = "JKS";
 
     @Nullable
+    private String keyStoreProvider;
+
+    @Nullable
     private File trustStorePath;
 
     @Nullable
@@ -35,6 +38,9 @@ public class TlsConfiguration {
 
     @NotEmpty
     private String trustStoreType = "JKS";
+
+    @Nullable
+    private String trustStoreProvider;
 
     private boolean trustSelfSignedCertificates = false;
 
@@ -194,5 +200,23 @@ public class TlsConfiguration {
     @ValidationMethod(message = "trustStorePassword should not be null or empty if trustStorePath not null")
     public boolean isValidTrustStorePassword() {
         return trustStorePath == null || trustStoreType.startsWith("Windows-") || !Strings.isNullOrEmpty(trustStorePassword);
+    }
+
+    @Nullable
+    public String getKeyStoreProvider() {
+        return keyStoreProvider;
+    }
+
+    public void setKeyStoreProvider(@Nullable String keyStoreProvider) {
+        this.keyStoreProvider = keyStoreProvider;
+    }
+
+    @Nullable
+    public String getTrustStoreProvider() {
+        return trustStoreProvider;
+    }
+
+    public void setTrustStoreProvider(@Nullable String trustStoreProvider) {
+        this.trustStoreProvider = trustStoreProvider;
     }
 }

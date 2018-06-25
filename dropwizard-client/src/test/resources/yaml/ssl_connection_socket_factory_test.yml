@@ -28,6 +28,12 @@ server:
         keyStorePassword: password
         trustStoreType: PKCS12
         supportedProtocols: ["TLSv1.2"]
+      - type: https
+        port: 0
+        keyStoreType: PKCS12
+        keyStorePassword: password
+        trustStoreType: PKCS12
+        supportedProtocols: ["TLSv1.2"]
   adminConnectors:
       - type: http
         port: 0

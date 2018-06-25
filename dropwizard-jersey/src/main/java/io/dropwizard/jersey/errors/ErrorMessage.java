@@ -3,7 +3,6 @@ package io.dropwizard.jersey.errors;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.base.MoreObjects;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
@@ -70,7 +69,6 @@ public class ErrorMessage {
 
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(this).add("code", code)
-                .add("message", message).add("details", details).toString();
+        return "ErrorMessage{code=" + code + ", message='" + message + "', details='" + details + "'}";
     }
 }

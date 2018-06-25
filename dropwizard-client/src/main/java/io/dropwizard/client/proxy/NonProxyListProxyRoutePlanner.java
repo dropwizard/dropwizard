@@ -1,7 +1,5 @@
 package io.dropwizard.client.proxy;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.ImmutableList;
 import org.apache.http.HttpException;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
@@ -10,6 +8,8 @@ import org.apache.http.impl.conn.DefaultProxyRoutePlanner;
 import org.apache.http.protocol.HttpContext;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -37,18 +37,17 @@ public class NonProxyListProxyRoutePlanner extends DefaultProxyRoutePlanner {
 
     private List<Pattern> getNonProxyHostPatterns(@Nullable List<String> nonProxyHosts) {
         if (nonProxyHosts == null) {
-            return ImmutableList.of();
+            return Collections.emptyList();
         }
 
-        final ImmutableList.Builder<Pattern> patterns = ImmutableList.builder();
+        final List<Pattern> patterns = new ArrayList<>(nonProxyHosts.size());
         for (String nonProxyHost : nonProxyHosts) {
             // Replaces a wildcard to a regular expression
             patterns.add(Pattern.compile(WILDCARD.matcher(nonProxyHost).replaceAll(REGEX_WILDCARD)));
         }
-        return patterns.build();
+        return Collections.unmodifiableList(patterns);
     }
 
-    @VisibleForTesting
     protected List<Pattern> getNonProxyHostPatterns() {
         return nonProxyHostPatterns;
     }

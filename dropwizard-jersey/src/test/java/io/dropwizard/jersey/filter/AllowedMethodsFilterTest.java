@@ -1,7 +1,6 @@
 package io.dropwizard.jersey.filter;
 
 import com.codahale.metrics.MetricRegistry;
-import com.google.common.collect.ImmutableMap;
 import io.dropwizard.jersey.AbstractJerseyTest;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import org.glassfish.jersey.server.ResourceConfig;
@@ -24,6 +23,7 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
@@ -60,8 +60,7 @@ public class AllowedMethodsFilterTest extends AbstractJerseyTest {
     protected DeploymentContext configureDeployment() {
         final ResourceConfig rc = DropwizardResourceConfig.forTesting(new MetricRegistry());
 
-        final Map<String, String> filterParams = ImmutableMap.of(
-                AllowedMethodsFilter.ALLOWED_METHODS_PARAM, "GET,POST");
+        final Map<String, String> filterParams = Collections.singletonMap(AllowedMethodsFilter.ALLOWED_METHODS_PARAM, "GET,POST");
 
         return ServletDeploymentContext.builder(rc)
                 .addFilter(AllowedMethodsFilter.class, "allowedMethodsFilter", filterParams)
