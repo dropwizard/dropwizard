@@ -88,6 +88,7 @@ public class ThrottlingAppenderTest {
         // But just as sanity check we ensure that approximately a second has elapsed
         final OffsetDateTime end = OffsetDateTime.now();
         assertThat(ChronoUnit.MILLIS.between(start, end)).isBetween(900L, 1500L);
+        Thread.sleep(100); // To let async logs to finish
 
         final String logs = new String(redirectedStream.toByteArray(), UTF_8);
         return Arrays.asList(logs.split("\\r?\\n"));
