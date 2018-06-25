@@ -1,23 +1,22 @@
 package io.dropwizard.hibernate;
 
-import com.google.common.collect.ImmutableList;
-
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.NonUniqueResultException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.query.Query;
 import org.hibernate.proxy.HibernateProxy;
 import org.hibernate.proxy.LazyInitializer;
+import org.hibernate.query.Query;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.io.Serializable;
-import java.util.List;
-
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -166,7 +165,7 @@ public class AbstractDAOTest {
     @Test
     public void returnsUniqueResultsFromJpaCriteriaQueries() throws Exception {
         when(session.createQuery(criteriaQuery)).thenReturn(query);
-        when(query.getResultList()).thenReturn(ImmutableList.of("woo"));
+        when(query.getResultList()).thenReturn(Collections.singletonList("woo"));
 
         assertThat(dao.uniqueResult(criteriaQuery))
             .isEqualTo("woo");
@@ -175,7 +174,7 @@ public class AbstractDAOTest {
     @Test
     public void throwsOnNonUniqueResultsFromJpaCriteriaQueries() throws Exception {
         when(session.createQuery(criteriaQuery)).thenReturn(query);
-        when(query.getResultList()).thenReturn(ImmutableList.of("woo", "boo"));
+        when(query.getResultList()).thenReturn(Arrays.asList("woo", "boo"));
 
         assertThatExceptionOfType(NonUniqueResultException.class).isThrownBy(() ->
             dao.uniqueResult(criteriaQuery));
@@ -191,7 +190,7 @@ public class AbstractDAOTest {
 
     @Test
     public void returnsUniqueListsFromCriteriaQueries() throws Exception {
-        when(criteria.list()).thenReturn(ImmutableList.of("woo"));
+        when(criteria.list()).thenReturn(Collections.singletonList("woo"));
 
         assertThat(dao.list(criteria))
                 .containsOnly("woo");
@@ -200,7 +199,7 @@ public class AbstractDAOTest {
     @Test
     public void returnsUniqueListsFromJpaCriteriaQueries() throws Exception {
         when(session.createQuery(criteriaQuery)).thenReturn(query);
-        when(query.getResultList()).thenReturn(ImmutableList.of("woo"));
+        when(query.getResultList()).thenReturn(Collections.singletonList("woo"));
 
         assertThat(dao.list(criteriaQuery))
             .containsOnly("woo");
@@ -208,7 +207,7 @@ public class AbstractDAOTest {
 
     @Test
     public void returnsUniqueListsFromQueries() throws Exception {
-        when(query.list()).thenReturn(ImmutableList.of("woo"));
+        when(query.list()).thenReturn(Collections.singletonList("woo"));
 
         assertThat(dao.list(query))
                 .containsOnly("woo");

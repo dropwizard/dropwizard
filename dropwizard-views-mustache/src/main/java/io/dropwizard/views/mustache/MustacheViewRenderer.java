@@ -1,13 +1,12 @@
 package io.dropwizard.views.mustache;
 
+import com.github.benmanes.caffeine.cache.CacheLoader;
+import com.github.benmanes.caffeine.cache.Caffeine;
+import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.github.mustachejava.DefaultMustacheFactory;
 import com.github.mustachejava.Mustache;
 import com.github.mustachejava.MustacheFactory;
 import com.github.mustachejava.resolver.FileSystemResolver;
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 import io.dropwizard.views.View;
 import io.dropwizard.views.ViewRenderException;
 import io.dropwizard.views.ViewRenderer;
@@ -33,7 +32,7 @@ public class MustacheViewRenderer implements ViewRenderer {
     private Optional<File> fileRoot = Optional.empty();
 
     public MustacheViewRenderer() {
-        this.factories = CacheBuilder.newBuilder().build(new CacheLoader<Class<? extends View>, MustacheFactory>() {
+        this.factories = Caffeine.newBuilder().build(new CacheLoader<Class<? extends View>, MustacheFactory>() {
             @Override
             public MustacheFactory load(Class<? extends View> key) throws Exception {
                 return createNewMustacheFactory(key);
@@ -67,7 +66,6 @@ public class MustacheViewRenderer implements ViewRenderer {
         fileRoot = Optional.ofNullable(options.get("fileRoot")).map(File::new);
     }
 
-    @VisibleForTesting
     boolean isUseCache() {
         return useCache;
     }

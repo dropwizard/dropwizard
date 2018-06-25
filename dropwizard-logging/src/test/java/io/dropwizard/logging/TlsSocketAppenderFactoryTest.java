@@ -3,12 +3,12 @@ package io.dropwizard.logging;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.io.Resources;
 import io.dropwizard.configuration.ResourceConfigurationSourceProvider;
 import io.dropwizard.configuration.SubstitutingSourceProvider;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.Jackson;
+import io.dropwizard.util.Maps;
+import io.dropwizard.util.Resources;
 import io.dropwizard.validation.BaseValidator;
 import org.apache.commons.text.StrSubstitutor;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
@@ -62,7 +62,7 @@ public class TlsSocketAppenderFactoryTest {
     @Test
     public void testTlsLogging() throws Exception {
         DefaultLoggingFactory loggingFactory = yamlConfigurationFactory.build(new SubstitutingSourceProvider(
-            new ResourceConfigurationSourceProvider(), new StrSubstitutor(ImmutableMap.of(
+            new ResourceConfigurationSourceProvider(), new StrSubstitutor(Maps.of(
             "tls.trust_store.path", resourcePath("stores/tls_client.jks").getAbsolutePath(),
             "tls.trust_store.pass", "client_pass",
             "tls.server_port", tcpServer.getPort()

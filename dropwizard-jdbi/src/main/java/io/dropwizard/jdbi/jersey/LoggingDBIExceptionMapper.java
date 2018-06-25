@@ -1,6 +1,5 @@
 package io.dropwizard.jdbi.jersey;
 
-import com.google.common.annotations.VisibleForTesting;
 import io.dropwizard.jersey.errors.LoggingExceptionMapper;
 import org.skife.jdbi.v2.exceptions.DBIException;
 import org.slf4j.Logger;
@@ -14,7 +13,13 @@ import java.sql.SQLException;
  */
 @Provider
 public class LoggingDBIExceptionMapper extends LoggingExceptionMapper<DBIException> {
-    private static Logger logger = LoggerFactory.getLogger(LoggingDBIExceptionMapper.class);
+    public LoggingDBIExceptionMapper() {
+        this(LoggerFactory.getLogger(LoggingDBIExceptionMapper.class));
+    }
+
+    LoggingDBIExceptionMapper(Logger logger) {
+        super(logger);
+    }
 
     @Override
     protected void logException(long id, DBIException exception) {
@@ -26,10 +31,5 @@ public class LoggingDBIExceptionMapper extends LoggingExceptionMapper<DBIExcepti
         } else {
             logger.error(formatLogMessage(id, exception), exception);
         }
-    }
-
-    @VisibleForTesting
-    static synchronized void setLogger(Logger newLogger) {
-        logger = newLogger;
     }
 }

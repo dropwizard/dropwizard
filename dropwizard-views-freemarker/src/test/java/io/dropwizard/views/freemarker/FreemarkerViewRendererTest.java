@@ -1,7 +1,6 @@
 package io.dropwizard.views.freemarker;
 
 import com.codahale.metrics.MetricRegistry;
-import com.google.common.collect.ImmutableList;
 import io.dropwizard.logging.BootstrapLogging;
 import io.dropwizard.views.ViewMessageBodyWriter;
 import io.dropwizard.views.ViewRenderExceptionMapper;
@@ -21,6 +20,7 @@ import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Form;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
@@ -68,7 +68,7 @@ public class FreemarkerViewRendererTest extends JerseyTest {
     protected Application configure() {
         ResourceConfig config = new ResourceConfig();
         final ViewRenderer renderer = new FreemarkerViewRenderer();
-        config.register(new ViewMessageBodyWriter(new MetricRegistry(), ImmutableList.of(renderer)));
+        config.register(new ViewMessageBodyWriter(new MetricRegistry(), Collections.singletonList(renderer)));
         config.register(new ExampleResource());
         config.register(new ViewRenderExceptionMapper());
         return config;

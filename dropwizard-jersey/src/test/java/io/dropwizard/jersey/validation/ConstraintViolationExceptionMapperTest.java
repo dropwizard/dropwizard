@@ -1,6 +1,6 @@
-    package io.dropwizard.jersey.validation;
+package io.dropwizard.jersey.validation;
 
-    import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.MetricRegistry;
 import io.dropwizard.jersey.AbstractJerseyTest;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import io.dropwizard.jersey.jackson.JacksonMessageBodyProviderTest.Example;

@@ -2,7 +2,6 @@ package io.dropwizard.jetty;
 
 import com.codahale.metrics.MetricRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.io.Resources;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.DiscoverableSubtypeResolver;
 import io.dropwizard.jackson.Jackson;
@@ -10,6 +9,7 @@ import io.dropwizard.logging.ConsoleAppenderFactory;
 import io.dropwizard.logging.FileAppenderFactory;
 import io.dropwizard.logging.SyslogAppenderFactory;
 import io.dropwizard.util.Duration;
+import io.dropwizard.util.Resources;
 import io.dropwizard.util.Size;
 import io.dropwizard.validation.BaseValidator;
 import org.eclipse.jetty.http.HttpCompliance;

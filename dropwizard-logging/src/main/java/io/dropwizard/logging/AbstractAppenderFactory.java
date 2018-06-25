@@ -10,12 +10,12 @@ import ch.qos.logback.core.LayoutBase;
 import ch.qos.logback.core.pattern.PatternLayoutBase;
 import ch.qos.logback.core.spi.DeferredProcessingAware;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import io.dropwizard.logging.async.AsyncAppenderFactory;
 import io.dropwizard.logging.filter.FilterFactory;
 import io.dropwizard.logging.layout.DiscoverableLayoutFactory;
 import io.dropwizard.logging.layout.LayoutFactory;
+import io.dropwizard.util.Strings;
 import io.dropwizard.util.Duration;
 import io.dropwizard.validation.MaxDuration;
 import io.dropwizard.validation.MinDuration;
@@ -24,11 +24,11 @@ import javax.annotation.Nullable;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
-
-import static com.google.common.base.Strings.nullToEmpty;
 
 /**
  * A base implementation of {@link AppenderFactory}.
@@ -128,7 +128,7 @@ public abstract class AbstractAppenderFactory<E extends DeferredProcessingAware>
 
     private boolean includeCallerData = false;
 
-    private ImmutableList<FilterFactory<E>> filterFactories = ImmutableList.of();
+    private List<FilterFactory<E>> filterFactories = Collections.emptyList();
 
     private boolean neverBlock = false;
 
@@ -191,7 +191,7 @@ public abstract class AbstractAppenderFactory<E extends DeferredProcessingAware>
 
     @JsonProperty
     public void setTimeZone(String zoneId) {
-        this.timeZone = nullToEmpty(zoneId).equalsIgnoreCase("system") ? TimeZone.getDefault() :
+        this.timeZone = Strings.nullToEmpty(zoneId).equalsIgnoreCase("system") ? TimeZone.getDefault() :
             TimeZone.getTimeZone(zoneId);
     }
 
@@ -211,13 +211,13 @@ public abstract class AbstractAppenderFactory<E extends DeferredProcessingAware>
     }
 
     @JsonProperty
-    public ImmutableList<FilterFactory<E>> getFilterFactories() {
+    public List<FilterFactory<E>> getFilterFactories() {
         return filterFactories;
     }
 
     @JsonProperty
     public void setFilterFactories(List<FilterFactory<E>> appenders) {
-        this.filterFactories = ImmutableList.copyOf(appenders);
+        this.filterFactories = new ArrayList<>(appenders);
     }
 
     @JsonProperty

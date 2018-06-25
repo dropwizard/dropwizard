@@ -1,10 +1,10 @@
 package io.dropwizard.assets;
 
-import com.google.common.io.Resources;
 import io.dropwizard.jetty.setup.ServletEnvironment;
 import io.dropwizard.servlets.assets.AssetServlet;
 import io.dropwizard.servlets.assets.ResourceURL;
 import io.dropwizard.setup.Environment;
+import io.dropwizard.util.Resources;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;

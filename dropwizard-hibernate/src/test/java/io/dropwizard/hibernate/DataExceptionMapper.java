@@ -1,13 +1,12 @@
 package io.dropwizard.hibernate;
 
-import com.google.common.base.Strings;
+import io.dropwizard.jersey.errors.ErrorMessage;
+import io.dropwizard.util.Strings;
 import org.hibernate.exception.DataException;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
-
-import io.dropwizard.jersey.errors.ErrorMessage;
 
 @Provider
 public class DataExceptionMapper implements ExceptionMapper<DataException> {

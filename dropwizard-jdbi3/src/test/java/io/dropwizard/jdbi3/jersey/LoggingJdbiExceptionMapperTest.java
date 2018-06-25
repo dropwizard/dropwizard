@@ -15,15 +15,13 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 public class LoggingJdbiExceptionMapperTest {
-
-    LoggingJdbiExceptionMapper jdbiExceptionMapper;
-    Logger logger;
+    private LoggingJdbiExceptionMapper jdbiExceptionMapper;
+    private Logger logger;
 
     @Before
     public void setUp() throws Exception {
         logger = mock(Logger.class);
-        jdbiExceptionMapper = new LoggingJdbiExceptionMapper();
-        LoggingJdbiExceptionMapper.setLogger(logger);
+        jdbiExceptionMapper = new LoggingJdbiExceptionMapper(logger);
     }
 
     @Test

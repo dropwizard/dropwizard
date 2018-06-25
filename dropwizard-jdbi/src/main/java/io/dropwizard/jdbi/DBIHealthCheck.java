@@ -1,8 +1,8 @@
 package io.dropwizard.jdbi;
 
 import com.codahale.metrics.health.HealthCheck;
-import com.google.common.util.concurrent.MoreExecutors;
 import io.dropwizard.db.TimeBoundHealthCheck;
+import io.dropwizard.util.DirectExecutorService;
 import io.dropwizard.util.Duration;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
@@ -21,7 +21,7 @@ public class DBIHealthCheck extends HealthCheck {
     }
 
     public DBIHealthCheck(DBI dbi, String validationQuery) {
-        this(MoreExecutors.newDirectExecutorService(), Duration.seconds(0), dbi, validationQuery);
+        this(new DirectExecutorService(), Duration.seconds(0), dbi, validationQuery);
     }
 
     @Override

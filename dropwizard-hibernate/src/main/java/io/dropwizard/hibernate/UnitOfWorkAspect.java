@@ -8,7 +8,6 @@ import org.hibernate.context.internal.ManagedSessionContext;
 import javax.annotation.Nullable;
 import java.util.Map;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -121,8 +120,9 @@ public class UnitOfWorkAspect {
     }
 
     protected void configureSession() {
-        checkNotNull(unitOfWork);
-        checkNotNull(session);
+        if (unitOfWork == null || session == null) {
+            throw new NullPointerException("unitOfWork or session is null. This is a bug!");
+        }
         session.setDefaultReadOnly(unitOfWork.readOnly());
         session.setCacheMode(unitOfWork.cacheMode());
         session.setHibernateFlushMode(unitOfWork.flushMode());

@@ -1,7 +1,5 @@
 package io.dropwizard.jersey.jackson;
 
-import com.google.common.collect.ImmutableList;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -9,6 +7,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import java.net.URL;
+import java.util.Collections;
 import java.util.List;
 
 @Path("/json/")
@@ -30,13 +29,13 @@ public class JsonResource {
     @POST
     @Path("/ok")
     public List<Integer> ok(OkRepresentation rep) {
-        return ImmutableList.of(rep.getMessage());
+        return Collections.singletonList(rep.getMessage());
     }
 
     @POST
     @Path("/brokenList")
     public List<Integer> ok(List<BrokenRepresentation> rep) {
-        return ImmutableList.of(rep.size());
+        return Collections.singletonList(rep.size());
     }
 
     @POST

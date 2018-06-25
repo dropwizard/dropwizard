@@ -1,6 +1,5 @@
 package io.dropwizard.jdbi.jersey;
 
-import com.google.common.annotations.VisibleForTesting;
 import io.dropwizard.jersey.errors.LoggingExceptionMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +12,13 @@ import java.sql.SQLException;
  */
 @Provider
 public class LoggingSQLExceptionMapper extends LoggingExceptionMapper<SQLException> {
-    private static Logger logger = LoggerFactory.getLogger(LoggingSQLExceptionMapper.class);
+    LoggingSQLExceptionMapper(Logger logger) {
+        super(logger);
+    }
+
+    public LoggingSQLExceptionMapper() {
+        this(LoggerFactory.getLogger(LoggingSQLExceptionMapper.class));
+    }
 
     @Override
     protected void logException(long id, SQLException exception) {
@@ -21,10 +26,5 @@ public class LoggingSQLExceptionMapper extends LoggingExceptionMapper<SQLExcepti
         for (Throwable throwable : exception) {
             logger.error(message, throwable);
         }
-    }
-
-    @VisibleForTesting
-    static synchronized void setLogger(Logger newLogger) {
-        logger = newLogger;
     }
 }

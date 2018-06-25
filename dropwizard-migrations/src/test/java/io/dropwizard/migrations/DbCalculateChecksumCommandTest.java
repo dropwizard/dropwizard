@@ -1,7 +1,6 @@
 package io.dropwizard.migrations;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
+import io.dropwizard.util.Maps;
 import liquibase.change.CheckSum;
 import net.jcip.annotations.NotThreadSafe;
 import net.sourceforge.argparse4j.inf.Namespace;
@@ -10,6 +9,7 @@ import org.junit.Test;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.util.Collections;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -27,8 +27,10 @@ public class DbCalculateChecksumCommandTest extends AbstractMigrationTest {
             assertThat(checkSum).isEqualTo(CheckSum.parse("8:0f3683b37321ccfb1694a044986de4d9"));
             checkSumVerified.set(true);
         });
-        migrateCommand.run(null, new Namespace(ImmutableMap.of("id", ImmutableList.of("2"),
-            "author", ImmutableList.of("db_dev"))), createConfiguration(getDatabaseUrl()));
+        migrateCommand.run(null, new Namespace(Maps.of(
+                "id", Collections.singletonList("2"),
+                "author", Collections.singletonList("db_dev"))),
+                createConfiguration(getDatabaseUrl()));
         assertThat(checkSumVerified.get()).isTrue();
     }
 

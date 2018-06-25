@@ -1,13 +1,13 @@
 package io.dropwizard.client;
 
 import com.codahale.metrics.MetricRegistry;
-import com.google.common.io.Resources;
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
 import io.dropwizard.jackson.Jackson;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import io.dropwizard.util.Duration;
+import io.dropwizard.util.Resources;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;

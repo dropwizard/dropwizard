@@ -1,7 +1,6 @@
 package io.dropwizard.auth.chained;
 
 import com.codahale.metrics.MetricRegistry;
-import com.google.common.collect.ImmutableList;
 import io.dropwizard.auth.AuthBaseTest;
 import io.dropwizard.auth.AuthDynamicFeature;
 import io.dropwizard.auth.AuthFilter;
@@ -18,6 +17,7 @@ import org.junit.Test;
 
 import javax.ws.rs.core.HttpHeaders;
 import java.security.Principal;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -31,7 +31,7 @@ public class ChainedAuthProviderTest extends AuthBaseTest<ChainedAuthProviderTes
 
             final Authorizer<Principal> authorizer = AuthUtil.getTestAuthorizer(ADMIN_USER, ADMIN_ROLE);
             final AuthFilter<BasicCredentials, Principal> basicAuthFilter = new BasicCredentialAuthFilter.Builder<>()
-                .setAuthenticator(AuthUtil.getBasicAuthenticator(ImmutableList.of(ADMIN_USER, ORDINARY_USER)))
+                .setAuthenticator(AuthUtil.getBasicAuthenticator(Arrays.asList(ADMIN_USER, ORDINARY_USER)))
                 .setAuthorizer(authorizer)
                 .buildAuthFilter();
 
@@ -50,7 +50,7 @@ public class ChainedAuthProviderTest extends AuthBaseTest<ChainedAuthProviderTes
         @SuppressWarnings("unchecked")
         public List<AuthFilter> buildHandlerList(AuthFilter<BasicCredentials, Principal> basicAuthFilter,
                                                  AuthFilter<String, Principal> oAuthFilter) {
-            return ImmutableList.of(basicAuthFilter, oAuthFilter);
+            return Arrays.asList(basicAuthFilter, oAuthFilter);
         }
     }
 

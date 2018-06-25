@@ -3,12 +3,16 @@ package io.dropwizard.servlets.tasks;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
-import com.google.common.collect.ImmutableMultimap;
+import io.dropwizard.util.Maps;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -34,9 +38,9 @@ public class LogConfigurationTaskTest {
     @Test
     public void configuresSpecificLevelForALogger() throws Exception {
         // given
-        ImmutableMultimap<String, String> parameters = ImmutableMultimap.of(
-                "logger", "logger.one",
-                "level", "debug");
+        Map<String, List<String>> parameters = Maps.of(
+                "logger", Collections.singletonList("logger.one"),
+                "level", Collections.singletonList("debug"));
 
         // when
         task.execute(parameters, output);
@@ -51,8 +55,7 @@ public class LogConfigurationTaskTest {
     @Test
     public void configuresDefaultLevelForALogger() throws Exception {
         // given
-        ImmutableMultimap<String, String> parameters = ImmutableMultimap.of(
-                "logger", "logger.one");
+        Map<String, List<String>> parameters = Collections.singletonMap("logger", Collections.singletonList("logger.one"));
 
         // when
         task.execute(parameters, output);
@@ -67,10 +70,9 @@ public class LogConfigurationTaskTest {
     @Test
     public void configuresLevelForMultipleLoggers() throws Exception {
         // given
-        ImmutableMultimap<String, String> parameters = ImmutableMultimap.of(
-                "logger", "logger.one",
-                "logger", "logger.two",
-                "level", "INFO");
+        Map<String, List<String>> parameters = Maps.of(
+                "logger", Arrays.asList("logger.one", "logger.two"),
+                "level", Collections.singletonList("INFO"));
 
         // when
         task.execute(parameters, output);

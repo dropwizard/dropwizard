@@ -1,6 +1,6 @@
 package io.dropwizard.configuration;
 
-import com.google.common.io.ByteStreams;
+import io.dropwizard.util.ByteStreams;
 import org.apache.commons.text.StrSubstitutor;
 
 import java.io.ByteArrayInputStream;
@@ -34,7 +34,7 @@ public class SubstitutingSourceProvider implements ConfigurationSourceProvider {
      */
     @Override
     public InputStream open(String path) throws IOException {
-        try (final InputStream in = delegate.open(path)) {
+        try (InputStream in = delegate.open(path);) {
             final String config = new String(ByteStreams.toByteArray(in), StandardCharsets.UTF_8);
             final String substituted = substitutor.replace(config);
 

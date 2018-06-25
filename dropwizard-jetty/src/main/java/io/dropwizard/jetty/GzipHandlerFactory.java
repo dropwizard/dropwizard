@@ -1,7 +1,6 @@
 package io.dropwizard.jetty;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.collect.Iterables;
 import io.dropwizard.util.Size;
 import org.eclipse.jetty.server.Handler;
 
@@ -259,26 +258,26 @@ public class GzipHandlerFactory {
         gzipHandler.setSyncFlush(syncFlush);
 
         if (compressedMimeTypes != null) {
-            gzipHandler.setIncludedMimeTypes(Iterables.toArray(compressedMimeTypes, String.class));
+            gzipHandler.setIncludedMimeTypes(compressedMimeTypes.toArray(new String[0]));
         }
 
         if (excludedMimeTypes != null) {
-            gzipHandler.setExcludedMimeTypes(Iterables.toArray(excludedMimeTypes, String.class));
+            gzipHandler.setExcludedMimeTypes(excludedMimeTypes.toArray(new String[0]));
         }
 
         if (includedMethods != null) {
-            gzipHandler.setIncludedMethods(Iterables.toArray(includedMethods, String.class));
+            gzipHandler.setIncludedMethods(includedMethods.toArray(new String[0]));
         }
 
         if (excludedPaths != null) {
-            gzipHandler.setExcludedPaths(Iterables.toArray(excludedPaths, String.class));
+            gzipHandler.setExcludedPaths(excludedPaths.toArray(new String[0]));
         }
 
         if (includedPaths != null) {
-            gzipHandler.setIncludedPaths(Iterables.toArray(includedPaths, String.class));
+            gzipHandler.setIncludedPaths(includedPaths.toArray(new String[0]));
         }
 
-        gzipHandler.setExcludedAgentPatterns(Iterables.toArray(excludedUserAgentPatterns, String.class));
+        gzipHandler.setExcludedAgentPatterns(excludedUserAgentPatterns.toArray(new String[0]));
         gzipHandler.setInflateNoWrap(gzipCompatibleInflation);
 
         return gzipHandler;

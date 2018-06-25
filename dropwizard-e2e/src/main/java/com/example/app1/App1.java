@@ -1,12 +1,12 @@
 package com.example.app1;
 
 import com.github.mustachejava.MustacheNotFoundException;
-import com.google.common.base.Throwables;
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
 import io.dropwizard.jersey.optional.EmptyOptionalNoContentExceptionMapper;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import io.dropwizard.util.Throwables;
 import io.dropwizard.views.ViewBundle;
 import org.eclipse.jetty.io.EofException;
 import org.glassfish.jersey.spi.ExtendedExceptionMapper;

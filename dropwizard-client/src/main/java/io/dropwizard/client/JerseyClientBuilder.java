@@ -3,7 +3,6 @@ package io.dropwizard.client;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.httpclient.HttpClientMetricNameStrategy;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.annotations.VisibleForTesting;
 import io.dropwizard.jersey.gzip.ConfiguredGZipEncoder;
 import io.dropwizard.jersey.gzip.GZipDecoder;
 import io.dropwizard.jersey.jackson.JacksonFeature;
@@ -85,7 +84,6 @@ public class JerseyClientBuilder {
         this.apacheHttpClientBuilder = new HttpClientBuilder(metricRegistry);
     }
 
-    @VisibleForTesting
     public void setApacheHttpClientBuilder(HttpClientBuilder apacheHttpClientBuilder) {
         this.apacheHttpClientBuilder = apacheHttpClientBuilder;
     }

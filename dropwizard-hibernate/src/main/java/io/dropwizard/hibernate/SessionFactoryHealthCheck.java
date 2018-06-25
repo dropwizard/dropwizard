@@ -1,8 +1,8 @@
 package io.dropwizard.hibernate;
 
 import com.codahale.metrics.health.HealthCheck;
-import com.google.common.util.concurrent.MoreExecutors;
 import io.dropwizard.db.TimeBoundHealthCheck;
+import io.dropwizard.util.DirectExecutorService;
 import io.dropwizard.util.Duration;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -17,7 +17,7 @@ public class SessionFactoryHealthCheck extends HealthCheck {
 
     public SessionFactoryHealthCheck(SessionFactory sessionFactory,
                                      String validationQuery) {
-        this(MoreExecutors.newDirectExecutorService(), Duration.seconds(0), sessionFactory, validationQuery);
+        this(new DirectExecutorService(), Duration.seconds(0), sessionFactory, validationQuery);
     }
 
     public SessionFactoryHealthCheck(ExecutorService executorService,

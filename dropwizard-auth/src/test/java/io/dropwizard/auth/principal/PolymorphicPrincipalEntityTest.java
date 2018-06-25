@@ -1,7 +1,5 @@
 package io.dropwizard.auth.principal;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import io.dropwizard.auth.AbstractAuthResourceConfig;
 import io.dropwizard.auth.Authenticator;
 import io.dropwizard.auth.PolymorphicAuthDynamicFeature;
@@ -9,6 +7,8 @@ import io.dropwizard.auth.PolymorphicAuthValueFactoryProvider;
 import io.dropwizard.auth.basic.BasicCredentialAuthFilter;
 import io.dropwizard.auth.basic.BasicCredentials;
 import io.dropwizard.logging.BootstrapLogging;
+import io.dropwizard.util.Maps;
+import io.dropwizard.util.Sets;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 import org.glassfish.jersey.servlet.ServletProperties;
 import org.glassfish.jersey.test.DeploymentContext;
@@ -70,7 +70,7 @@ public class PolymorphicPrincipalEntityTest extends JerseyTest {
 
         @Override protected AbstractBinder getAuthBinder() {
             return new PolymorphicAuthValueFactoryProvider.Binder<>(
-                ImmutableSet.of(JsonPrincipal.class, NullPrincipal.class));
+                Sets.of(JsonPrincipal.class, NullPrincipal.class));
         }
 
         @Override protected DynamicFeature getAuthDynamicFeature(ContainerRequestFilter authFilter) {
@@ -98,7 +98,7 @@ public class PolymorphicPrincipalEntityTest extends JerseyTest {
                 .setAuthenticator(nullAuthenticator)
                 .buildAuthFilter();
 
-            return new PolymorphicAuthDynamicFeature<Principal>(ImmutableMap.of(
+            return new PolymorphicAuthDynamicFeature<Principal>(Maps.of(
                 JsonPrincipal.class, jsonAuthFilter,
                 NullPrincipal.class, nullAuthFilter
             ));

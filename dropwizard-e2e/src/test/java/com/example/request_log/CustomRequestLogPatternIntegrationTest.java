@@ -1,12 +1,12 @@
 package com.example.request_log;
 
-import com.google.common.collect.ImmutableList;
 import io.dropwizard.testing.ConfigOverride;
 import org.junit.Test;
 
 import java.io.BufferedReader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,10 +19,9 @@ public class CustomRequestLogPatternIntegrationTest extends AbstractRequestLogPa
 
     @Override
     protected List<ConfigOverride> configOverrides() {
-        return ImmutableList.<ConfigOverride>builder()
-            .addAll(super.configOverrides())
-            .add(ConfigOverride.config("server.requestLog.appenders[0].logFormat", LOG_FORMAT))
-            .build();
+        final List<ConfigOverride> configOverrides = new ArrayList<>(super.configOverrides());
+        configOverrides.add(ConfigOverride.config("server.requestLog.appenders[0].logFormat", LOG_FORMAT));
+        return configOverrides;
     }
 
     @Test

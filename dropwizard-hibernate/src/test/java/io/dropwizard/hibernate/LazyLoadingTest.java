@@ -1,8 +1,6 @@
 package io.dropwizard.hibernate;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
 import io.dropwizard.Application;
 import io.dropwizard.Configuration;
 import io.dropwizard.db.DataSourceFactory;
@@ -13,6 +11,7 @@ import io.dropwizard.setup.Environment;
 import io.dropwizard.testing.ConfigOverride;
 import io.dropwizard.testing.DropwizardTestSupport;
 import io.dropwizard.testing.ResourceHelpers;
+import io.dropwizard.util.Strings;
 import org.glassfish.jersey.client.JerseyClientBuilder;
 import org.hibernate.FlushMode;
 import org.hibernate.HibernateException;
@@ -34,6 +33,7 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
+import java.util.Arrays;
 import java.util.Optional;
 
 import static java.util.Objects.requireNonNull;
@@ -53,7 +53,7 @@ public class LazyLoadingTest {
 
     public static class TestApplication extends io.dropwizard.Application<TestConfiguration> {
         final HibernateBundle<TestConfiguration> hibernate = new HibernateBundle<TestConfiguration>(
-            ImmutableList.of(Person.class, Dog.class), new SessionFactoryFactory()) {
+                Arrays.asList(Person.class, Dog.class), new SessionFactoryFactory()) {
             @Override
             public PooledDataSourceFactory getDataSourceFactory(TestConfiguration configuration) {
                 return configuration.dataSource;

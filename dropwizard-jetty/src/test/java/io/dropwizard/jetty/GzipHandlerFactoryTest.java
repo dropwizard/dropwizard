@@ -1,9 +1,9 @@
 package io.dropwizard.jetty;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.common.io.Resources;
 import io.dropwizard.configuration.YamlConfigurationFactory;
 import io.dropwizard.jackson.Jackson;
+import io.dropwizard.util.Resources;
+import io.dropwizard.util.Sets;
 import io.dropwizard.util.Size;
 import io.dropwizard.validation.BaseValidator;
 import org.eclipse.jetty.server.Handler;
@@ -11,6 +11,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.zip.Deflater;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -47,13 +48,13 @@ public class GzipHandlerFactoryTest {
     @Test
     public void hasExcludedUserAgentPatterns() throws Exception {
         assertThat(gzip.getExcludedUserAgentPatterns())
-                .isEqualTo(ImmutableSet.of("OLD-2.+"));
+                .isEqualTo(Collections.singleton("OLD-2.+"));
     }
 
     @Test
     public void hasCompressedMimeTypes() throws Exception {
         assertThat(gzip.getCompressedMimeTypes())
-                .isEqualTo(ImmutableSet.of("text/plain"));
+                .isEqualTo(Collections.singleton("text/plain"));
     }
 
     @Test
@@ -89,12 +90,12 @@ public class GzipHandlerFactoryTest {
         GzipHandlerFactory gzip = new GzipHandlerFactory();
         gzip.setGzipCompatibleInflation(true); // Also known as "inflate no wrap"
         gzip.setMinimumEntitySize(Size.bytes(4096));
-        gzip.setIncludedMethods(ImmutableSet.of("GET", "POST"));
-        gzip.setExcludedUserAgentPatterns(ImmutableSet.of("MSIE 6.0"));
-        gzip.setCompressedMimeTypes(ImmutableSet.of("text/html", "application/json"));
-        gzip.setExcludedMimeTypes(ImmutableSet.of("application/thrift"));
-        gzip.setIncludedPaths(ImmutableSet.of("/include/me"));
-        gzip.setExcludedPaths(ImmutableSet.of("/exclude/me"));
+        gzip.setIncludedMethods(Sets.of("GET", "POST"));
+        gzip.setExcludedUserAgentPatterns(Collections.singleton("MSIE 6.0"));
+        gzip.setCompressedMimeTypes(Sets.of("text/html", "application/json"));
+        gzip.setExcludedMimeTypes(Collections.singleton("application/thrift"));
+        gzip.setIncludedPaths(Collections.singleton("/include/me"));
+        gzip.setExcludedPaths(Collections.singleton("/exclude/me"));
         Handler handler = mock(Handler.class);
         BiDiGzipHandler biDiGzipHandler = gzip.build(handler);
 

@@ -1,7 +1,6 @@
 package io.dropwizard.jersey.errors;
 
 import com.codahale.metrics.MetricRegistry;
-import com.google.common.collect.ImmutableList;
 import io.dropwizard.jersey.AbstractJerseyTest;
 import io.dropwizard.jersey.DropwizardResourceConfig;
 import org.junit.Test;
@@ -11,6 +10,7 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
@@ -63,7 +63,7 @@ public class LoggingExceptionMapperTest extends AbstractJerseyTest {
         assertThat(thrown).isInstanceOf(WebApplicationException.class);
         final Response resp = ((WebApplicationException) thrown).getResponse();
         assertThat(resp.getStatus()).isEqualTo(405);
-        assertThat(resp.getHeaders()).contains(entry("Allow", ImmutableList.of("GET,OPTIONS")));
+        assertThat(resp.getHeaders()).contains(entry("Allow", Collections.singletonList("GET,OPTIONS")));
         assertThat(resp.readEntity(String.class)).isEqualTo("{\"code\":405,\"message\":\"HTTP 405 Method Not Allowed\"}");
     }
 

@@ -1,11 +1,12 @@
 package io.dropwizard.validation;
 
-import com.google.common.collect.ImmutableList;
 import io.dropwizard.util.Duration;
 import org.junit.Test;
 
 import javax.validation.Valid;
 import javax.validation.Validator;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
@@ -32,15 +33,15 @@ public class DurationValidatorTest {
 
         @Valid
         private List<@MaxDuration(value = 30, unit = TimeUnit.SECONDS) Duration> maxDurs =
-            ImmutableList.of(Duration.minutes(10));
+                Collections.singletonList(Duration.minutes(10));
 
         @Valid
         private List<@MinDuration(value = 30, unit = TimeUnit.SECONDS) Duration> minDurs =
-            ImmutableList.of(Duration.milliseconds(100));
+                Collections.singletonList(Duration.milliseconds(100));
 
         @Valid
         private List<@DurationRange(min = 10, max = 30, unit = TimeUnit.MINUTES) Duration> rangeDurs =
-            ImmutableList.of(Duration.minutes(60));
+                Collections.singletonList(Duration.minutes(60));
 
         public void setTooBig(Duration tooBig) {
             this.tooBig = tooBig;
@@ -73,7 +74,7 @@ public class DurationValidatorTest {
     @Test
     public void returnsASetOfErrorsForAnObject() throws Exception {
         if ("en".equals(Locale.getDefault().getLanguage())) {
-            final ImmutableList<String> errors =
+            final Collection<String> errors =
                     ConstraintViolations.format(validator.validate(new Example()));
 
             assertThat(errors)
@@ -97,9 +98,9 @@ public class DurationValidatorTest {
         example.setTooSmall(Duration.seconds(100));
         example.setTooSmallExclusive(Duration.seconds(31));
         example.setOutOfRange(Duration.minutes(15));
-        example.setMaxDurs(ImmutableList.of(Duration.seconds(10)));
-        example.setMinDurs(ImmutableList.of(Duration.seconds(100)));
-        example.setRangeDurs(ImmutableList.of(Duration.minutes(15)));
+        example.setMaxDurs(Collections.singletonList(Duration.seconds(10)));
+        example.setMinDurs(Collections.singletonList(Duration.seconds(100)));
+        example.setRangeDurs(Collections.singletonList(Duration.minutes(15)));
 
         assertThat(validator.validate(example))
                 .isEmpty();

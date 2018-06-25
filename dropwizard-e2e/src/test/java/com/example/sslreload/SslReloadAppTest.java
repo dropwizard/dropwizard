@@ -1,11 +1,11 @@
 package com.example.sslreload;
 
-import com.google.common.io.CharStreams;
-import com.google.common.io.Resources;
 import io.dropwizard.Configuration;
 import io.dropwizard.testing.ConfigOverride;
 import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit.DropwizardAppRule;
+import io.dropwizard.util.CharStreams;
+import io.dropwizard.util.Resources;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.junit.After;
 import org.junit.BeforeClass;
@@ -18,7 +18,6 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;

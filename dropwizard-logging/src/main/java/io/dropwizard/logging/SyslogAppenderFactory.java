@@ -19,8 +19,6 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
-
 /**
  * An {@link AppenderFactory} implementation which provides an appender that sends events to a
  * syslog server.
@@ -196,7 +194,7 @@ public class SyslogAppenderFactory extends AbstractAppenderFactory<ILoggingEvent
         final SyslogAppender appender = new SyslogAppender();
         appender.setName("syslog-appender");
         appender.setContext(context);
-        if (!isNullOrEmpty(logFormat)) {
+        if (logFormat != null && !logFormat.isEmpty()) {
             appender.setSuffixPattern(logFormat
                     .replaceAll(LOG_TOKEN_PID, pid)
                     .replaceAll(LOG_TOKEN_NAME, Matcher.quoteReplacement(applicationName)));

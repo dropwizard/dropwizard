@@ -1,7 +1,6 @@
 package io.dropwizard.views;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.collect.ImmutableMap;
 import io.dropwizard.Configuration;
 import io.dropwizard.jersey.setup.JerseyEnvironment;
 import io.dropwizard.setup.Environment;
@@ -38,11 +37,7 @@ public class ViewBundleTest {
 
         @JsonProperty("viewRendererConfiguration")
         public void setViewRendererConfiguration(Map<String, Map<String, String>> viewRendererConfiguration) {
-            ImmutableMap.Builder<String, Map<String, String>> builder = ImmutableMap.builder();
-            for (Map.Entry<String, Map<String, String>> entry : viewRendererConfiguration.entrySet()) {
-                builder.put(entry.getKey(), ImmutableMap.copyOf(entry.getValue()));
-            }
-            this.viewRendererConfiguration = builder.build();
+            this.viewRendererConfiguration = viewRendererConfiguration;
         }
     }
 
