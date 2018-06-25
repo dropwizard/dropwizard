@@ -60,11 +60,5 @@
             <version>1.59</version>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.bouncycastle</groupId>
-            <artifactId>bcprov-jdk15on</artifactId>
-            <version>1.59</version>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 </project>
