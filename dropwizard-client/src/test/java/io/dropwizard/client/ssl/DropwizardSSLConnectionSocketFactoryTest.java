@@ -92,13 +92,13 @@ public class DropwizardSSLConnectionSocketFactoryTest {
         ConfigOverride.config("tls", "server.applicationConnectors[3].keyStorePath", ResourceHelpers.resourceFilePath("stores/server/bad_host_keycert.p12")),
         ConfigOverride.config("tls", "server.applicationConnectors[4].keyStorePath", ResourceHelpers.resourceFilePath("stores/server/keycert.p12")),
         ConfigOverride.config("tls", "server.applicationConnectors[4].supportedProtocols", "SSLv1,SSLv2,SSLv3"),
-        ConfigOverride.config("tls", "server.applicationConnectors[5].keyStorePath", ResourceHelpers.resourceFilePath("stores/server/acme-ssl.keystore.p12")),
-        ConfigOverride.config("tls", "server.applicationConnectors[5].trustStorePath", ResourceHelpers.resourceFilePath("stores/server/acme-ssl.truststore.p12")),
+        ConfigOverride.config("tls", "server.applicationConnectors[5].keyStorePath", ResourceHelpers.resourceFilePath("stores/server/acme-weak.keystore.p12")),
+        ConfigOverride.config("tls", "server.applicationConnectors[5].trustStorePath", ResourceHelpers.resourceFilePath("stores/server/acme-weak.truststore.p12")),
         ConfigOverride.config("tls", "server.applicationConnectors[5].wantClientAuth", "true"),
         ConfigOverride.config("tls", "server.applicationConnectors[5].needClientAuth", "true"),
         ConfigOverride.config("tls", "server.applicationConnectors[5].validatePeers", "true"),
-        ConfigOverride.config("tls", "server.applicationConnectors[5].trustStorePassword", "acme01"),
-        ConfigOverride.config("tls", "server.applicationConnectors[5].keyStorePassword", "acme01"),
+        ConfigOverride.config("tls", "server.applicationConnectors[5].trustStorePassword", "acme2"),
+        ConfigOverride.config("tls", "server.applicationConnectors[5].keyStorePassword", "acme2"),
         ConfigOverride.config("tls", "server.applicationConnectors[5].trustStoreProvider", PROVIDER_NAME),
         ConfigOverride.config("tls", "server.applicationConnectors[5].keyStoreProvider", PROVIDER_NAME));
 
@@ -261,12 +261,12 @@ public class DropwizardSSLConnectionSocketFactoryTest {
 
     @Test(expected = SSLInitializationException.class)
     public void shouldFailDueDefaultProviderInsufficiency() throws Exception {
-        tlsConfiguration.setKeyStorePath(new File(ResourceHelpers.resourceFilePath("stores/client/acme-ssl.keystore.p12")));
-        tlsConfiguration.setKeyStorePassword("acme01");
+        tlsConfiguration.setKeyStorePath(new File(ResourceHelpers.resourceFilePath("stores/client/acme-weak.keystore.p12")));
+        tlsConfiguration.setKeyStorePassword("acme2");
         tlsConfiguration.setKeyStoreType("PKCS12");
-        tlsConfiguration.setCertAlias("acme-ssl");
-        tlsConfiguration.setTrustStorePath(new File(ResourceHelpers.resourceFilePath("stores/server/acme-ssl.truststore.p12")));
-        tlsConfiguration.setTrustStorePassword("acme01");
+        tlsConfiguration.setCertAlias("acme-weak");
+        tlsConfiguration.setTrustStorePath(new File(ResourceHelpers.resourceFilePath("stores/server/acme-weak.truststore.p12")));
+        tlsConfiguration.setTrustStorePassword("acme2");
         tlsConfiguration.setTrustStoreType("PKCS12");
 
         new JerseyClientBuilder(TLS_APP_RULE.getEnvironment()).using(jerseyClientConfiguration).build("reject_provider_non_supported");
@@ -277,14 +277,14 @@ public class DropwizardSSLConnectionSocketFactoryTest {
         // switching host verifier off for simplicity
         tlsConfiguration.setVerifyHostname(false);
 
-        tlsConfiguration.setKeyStorePath(new File(ResourceHelpers.resourceFilePath("stores/client/acme-ssl.keystore.p12")));
-        tlsConfiguration.setKeyStorePassword("acme01");
+        tlsConfiguration.setKeyStorePath(new File(ResourceHelpers.resourceFilePath("stores/client/acme-weak.keystore.p12")));
+        tlsConfiguration.setKeyStorePassword("acme2");
         tlsConfiguration.setKeyStoreType("PKCS12");
         tlsConfiguration.setKeyStoreProvider(PROVIDER_NAME);
-        tlsConfiguration.setCertAlias("acme-ssl");
+        tlsConfiguration.setCertAlias("acme-weak");
 
-        tlsConfiguration.setTrustStorePath(new File(ResourceHelpers.resourceFilePath("stores/server/acme-ssl.truststore.p12")));
-        tlsConfiguration.setTrustStorePassword("acme01");
+        tlsConfiguration.setTrustStorePath(new File(ResourceHelpers.resourceFilePath("stores/server/acme-weak.truststore.p12")));
+        tlsConfiguration.setTrustStorePassword("acme2");
         tlsConfiguration.setTrustStoreType("PKCS12");
         tlsConfiguration.setTrustStoreProvider(PROVIDER_NAME);
 
