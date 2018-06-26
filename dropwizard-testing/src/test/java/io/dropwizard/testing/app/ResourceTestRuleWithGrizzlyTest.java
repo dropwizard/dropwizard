@@ -39,6 +39,14 @@ public class ResourceTestRuleWithGrizzlyTest {
         assertThat(resp.readEntity(String.class)).isEqualTo("Can't touch this");
     }
 
+    @Test
+    public void testClientSupportsPatchMethod() {
+        final String resp = resourceTestRule.target("test")
+            .request()
+            .method("PATCH", Entity.text("Patch is working"), String.class);
+        assertThat(resp).isEqualTo("Patch is working");
+    }
+
     private static class RuntimeExceptionMapper implements ExceptionMapper<RuntimeException> {
         @Override
         public Response toResponse(RuntimeException exception) {
