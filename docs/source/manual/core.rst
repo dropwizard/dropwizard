@@ -1302,8 +1302,9 @@ Dropwizard augments Jersey to automatically record runtime information about you
 
 .. important::
 
-    ``@Timed`` and ``@Metered`` cannot be used at the same time. ``@Timed`` includes ``@Metered`` and
-    an ``IllegalArgumentException`` will be thrown if you try to annotate a method with both.
+    ``@Timed`` and ``@Metered`` can only be used on the same resource method at the same time, if
+    their name is unique, also see the annotation parameter ``name``.
+    Otherwise, the generated metrics names will be identical which will cause an ``IllegalArgumentException``.
 
 .. _man-core-resources-parameters:
 
