@@ -1300,6 +1300,11 @@ Dropwizard augments Jersey to automatically record runtime information about you
 * ``@Metered`` measures the rate at which the resource is accessed
 * ``@ExceptionMetered`` measures how often exceptions occur processing the resource
 
+.. important::
+
+    ``@Timed`` and ``@Metered`` cannot be used at the same time. ``@Timed`` includes ``@Metered`` and
+    an ``IllegalArgumentException`` will be thrown if you try to annotate a method with both.
+
 .. _man-core-resources-parameters:
 
 Parameters
