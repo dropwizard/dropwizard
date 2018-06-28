@@ -417,52 +417,52 @@ Extends the attributes that are available to the :ref:`HTTP connector <man-confi
           allowRenegotiation: true
           endpointIdentificationAlgorithm: (none)
 
-================================ ==================  ======================================================================================
-Name                             Default             Description
-================================ ==================  ======================================================================================
-keyStorePath                     REQUIRED            The path to the Java key store which contains the host certificate and private key.
-keyStorePassword                 REQUIRED            The password used to access the key store.
-keyStoreType                     JKS                 The type of key store (usually ``JKS``, ``PKCS12``, ``JCEKS``,
-                                                     ``Windows-MY``}, or ``Windows-ROOT``).
-keyStoreProvider                 (none)              The JCE provider to use to access the key store.
-trustStorePath                   (none)              The path to the Java key store which contains the CA certificates used to establish
-                                                     trust.
-trustStorePassword               (none)              The password used to access the trust store.
-trustStoreType                   JKS                 The type of trust store (usually ``JKS``, ``PKCS12``, ``JCEKS``,
-                                                     ``Windows-MY``, or ``Windows-ROOT``).
-trustStoreProvider               (none)              The JCE provider to use to access the trust store.
-keyManagerPassword               (none)              The password, if any, for the key manager.
-needClientAuth                   (none)              Whether or not client authentication is required.
-wantClientAuth                   (none)              Whether or not client authentication is requested.
-certAlias                        (none)              The alias of the certificate to use.
-crlPath                          (none)              The path to the file which contains the Certificate Revocation List.
-enableCRLDP                      false               Whether or not CRL Distribution Points (CRLDP) support is enabled.
-enableOCSP                       false               Whether or not On-Line Certificate Status Protocol (OCSP) support is enabled.
-maxCertPathLength                (unlimited)         The maximum certification path length.
-ocspResponderUrl                 (none)              The location of the OCSP responder.
-jceProvider                      (none)              The name of the JCE provider to use for cryptographic support. See `Oracle documentation <https://docs.oracle.com/javase/8/docs/technotes/guides/security/SunProviders.html>`_ for more information.
-validateCerts                    false               Whether or not to validate TLS certificates before starting. If enabled, Dropwizard
-                                                     will refuse to start with expired or otherwise invalid certificates. This option will
-                                                     cause unconditional failure in Dropwizard 1.x until a new validation mechanism can be
-                                                     implemented.
-validatePeers                    false               Whether or not to validate TLS peer certificates. This option will
-                                                     cause unconditional failure in Dropwizard 1.x until a new validation mechanism can be
-                                                     implemented.
-supportedProtocols               (none)              A list of protocols (e.g., ``SSLv3``, ``TLSv1``) which are supported. All
-                                                     other protocols will be refused.
-excludedProtocols                (none)              A list of protocols (e.g., ``SSLv3``, ``TLSv1``) which are excluded. These
-                                                     protocols will be refused.
-supportedCipherSuites            (none)              A list of cipher suites (e.g., ``TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256``) which
-                                                     are supported. All other cipher suites will be refused
-excludedCipherSuites             (none)              A list of cipher suites (e.g., ``TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256``) which
-                                                     are excluded. These cipher suites will be refused and exclusion takes higher
-                                                     precedence than inclusion, such that if a cipher suite is listed in
-                                                     ``supportedCipherSuites`` and ``excludedCipherSuites``, the cipher suite will be
-                                                     excluded. To verify that the proper cipher suites are being whitelisted and
-                                                     blacklisted, it is recommended to use the tool `sslyze`_.
-allowRenegotiation               true                Whether or not TLS renegotiation is allowed.
-endpointIdentificationAlgorithm  (none)              Which endpoint identification algorithm, if any, to use during the TLS handshake.
-================================ ==================  ======================================================================================
+================================ ================================ ======================================================================================
+Name                             Default                          Description
+================================ ================================ ======================================================================================
+keyStorePath                     REQUIRED                         The path to the Java key store which contains the host certificate and private key.
+keyStorePassword                 REQUIRED                         The password used to access the key store.
+keyStoreType                     JKS                              The type of key store (usually ``JKS``, ``PKCS12``, ``JCEKS``,
+                                                                  ``Windows-MY``}, or ``Windows-ROOT``).
+keyStoreProvider                 (none)                           The JCE provider to use to access the key store.
+trustStorePath                   (none)                           The path to the Java key store which contains the CA certificates used to establish
+                                                                  trust.
+trustStorePassword               (none)                           The password used to access the trust store.
+trustStoreType                   JKS                              The type of trust store (usually ``JKS``, ``PKCS12``, ``JCEKS``,
+                                                                  ``Windows-MY``, or ``Windows-ROOT``).
+trustStoreProvider               (none)                           The JCE provider to use to access the trust store.
+keyManagerPassword               (none)                           The password, if any, for the key manager.
+needClientAuth                   (none)                           Whether or not client authentication is required.
+wantClientAuth                   (none)                           Whether or not client authentication is requested.
+certAlias                        (none)                           The alias of the certificate to use.
+crlPath                          (none)                           The path to the file which contains the Certificate Revocation List.
+enableCRLDP                      false                            Whether or not CRL Distribution Points (CRLDP) support is enabled.
+enableOCSP                       false                            Whether or not On-Line Certificate Status Protocol (OCSP) support is enabled.
+maxCertPathLength                (unlimited)                      The maximum certification path length.
+ocspResponderUrl                 (none)                           The location of the OCSP responder.
+jceProvider                      (none)                           The name of the JCE provider to use for cryptographic support. See `Oracle documentation <https://docs.oracle.com/javase/8/docs/technotes/guides/security/SunProviders.html>`_ for more information.
+validateCerts                    false                            Whether or not to validate TLS certificates before starting. If enabled, Dropwizard
+                                                                  will refuse to start with expired or otherwise invalid certificates. This option will
+                                                                  cause unconditional failure in Dropwizard 1.x until a new validation mechanism can be
+                                                                  implemented.
+validatePeers                    false                            Whether or not to validate TLS peer certificates. This option will
+                                                                  cause unconditional failure in Dropwizard 1.x until a new validation mechanism can be
+                                                                  implemented.
+supportedProtocols               (none)                           A list of protocols (e.g., ``SSLv3``, ``TLSv1``) which are supported. All
+                                                                  other protocols will be refused.
+excludedProtocols                ["SSL.*", "TLSv1", "TLSv1\\.1"]  A list of protocols (e.g., ``SSLv3``, ``TLSv1``) which are excluded. These
+                                                                  protocols will be refused.
+supportedCipherSuites            (none)                           A list of cipher suites (e.g., ``TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256``) which
+                                                                  are supported. All other cipher suites will be refused
+excludedCipherSuites             (none)                           A list of cipher suites (e.g., ``TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256``) which
+                                                                  are excluded. These cipher suites will be refused and exclusion takes higher
+                                                                  precedence than inclusion, such that if a cipher suite is listed in
+                                                                  ``supportedCipherSuites`` and ``excludedCipherSuites``, the cipher suite will be
+                                                                  excluded. To verify that the proper cipher suites are being whitelisted and
+                                                                  blacklisted, it is recommended to use the tool `sslyze`_.
+allowRenegotiation               true                             Whether or not TLS renegotiation is allowed.
+endpointIdentificationAlgorithm  (none)                           Which endpoint identification algorithm, if any, to use during the TLS handshake.
+================================ ================================ ======================================================================================
 
 .. _sslyze: https://github.com/nabla-c0d3/sslyze
 

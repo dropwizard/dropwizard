@@ -182,7 +182,7 @@ import java.util.stream.Collectors;
  *     </tr>
  *     <tr>
  *         <td>{@code excludedProtocols}</td>
- *         <td>Jetty's default</td>
+ *         <td>["SSL.*", "TLSv1", "TLSv1\.1"]</td>
  *         <td>
  *             A list of protocols (e.g., {@code SSLv3}, {@code TLSv1}) which are excluded. These
  *             protocols will be refused.
@@ -287,7 +287,7 @@ public class HttpsConnectorFactory extends HttpConnectorFactory {
     private List<String> supportedProtocols;
 
     @Nullable
-    private List<String> excludedProtocols;
+    private List<String> excludedProtocols = Arrays.asList("SSL.*", "TLSv1", "TLSv1\\.1");
 
     @Nullable
     private List<String> supportedCipherSuites;
